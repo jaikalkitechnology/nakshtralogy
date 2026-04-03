@@ -520,3 +520,191 @@ class AIInsight(Base):
         Index("ix_insight_chart_type", "chart_id", "insight_type"),
         Index("ix_insight_valid_date", "valid_date"),
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  11. COMMUNICATION — Agora (Voice/Video Call, Live Stream, Chat)
+# ─────────────────────────────────────────────────────────────────────
+
+class AgoraConfig(Base):
+    """Admin-managed Agora credentials. Only one active row at a time."""
+    __tablename__ = "agora_config"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    label = Column(String(100), nullable=False)          # "Production", "Staging"
+    app_id = Column(String(64), nullable=False)
+    app_certificate = Column(String(64), nullable=False)
+    is_active = Column(Boolean, default=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class CallSession(Base):
+    """
+    Voice / Video call between user and astrologer.
+    Per-minute billing. Expires in 60s if astrologer doesn't answer.
+    """
+    __tablename__ = "call_sessions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    channel_name = Column(String(100), unique=True, nullable=False)
+    caller_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    receiver_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    astrologer_profile_id = Column(String(36), ForeignKey("astrologer_profiles.id"), nullable=False)
+    call_type = Column(String(10), nullable=False)       # voice | video
+    rate_per_min = Column(Numeric(10, 2), nullable=False)
+    status = Column(String(20), default="ringing", index=True)
+    # ringing | accepted | active | completed | missed | rejected | cancelled
+    agora_token_caller = Column(Text, nullable=True)
+    agora_token_receiver = Column(Text, nullable=True)
+    started_at = Column(DateTime, nullable=True)
+    ended_at = Column(DateTime, nullable=True)
+    duration_sec = Column(Integer, default=0)
+    total_amount = Column(Numeric(10, 2), default=0)
+    astrologer_earning = Column(Numeric(10, 2), default=0)
+    platform_commission = Column(Numeric(10, 2), default=0)
+    user_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    expires_at = Column(DateTime, nullable=True)          # ringing timeout (60s)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_call_caller", "caller_id"),
+        Index("ix_call_receiver", "receiver_id"),
+    )
+
+
+class LiveStream(Base):
+    """Astrologer-hosted live stream. Users join as viewers."""
+    __tablename__ = "live_streams"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    channel_name = Column(String(100), unique=True, nullable=False)
+    host_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    astrologer_profile_id = Column(String(36), ForeignKey("astrologer_profiles.id"), nullable=False)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    agora_token_host = Column(Text, nullable=True)
+    status = Column(String(20), default="scheduled")
+    # scheduled | live | ended
+    viewer_count = Column(Integer, default=0)
+    peak_viewers = Column(Integer, default=0)
+    total_gifts_amount = Column(Numeric(12, 2), default=0)
+    started_at = Column(DateTime, nullable=True)
+    ended_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    viewers = relationship("LiveStreamViewer", back_populates="stream", cascade="all, delete-orphan")
+    questions = relationship("LiveStreamQuestion", back_populates="stream", cascade="all, delete-orphan")
+    gifts = relationship("LiveStreamGift", back_populates="stream", cascade="all, delete-orphan")
+
+
+class LiveStreamViewer(Base):
+    """Tracks who is currently in a live stream."""
+    __tablename__ = "live_stream_viewers"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    stream_id = Column(String(36), ForeignKey("live_streams.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    display_name = Column(String(150), nullable=True)
+    agora_token = Column(Text, nullable=True)
+    joined_at = Column(DateTime, server_default=func.now(), nullable=False)
+    left_at = Column(DateTime, nullable=True)
+
+    stream = relationship("LiveStream", back_populates="viewers")
+
+    __table_args__ = (
+        Index("ix_lsviewer_stream_user", "stream_id", "user_id"),
+    )
+
+
+class LiveStreamQuestion(Base):
+    """Text questions sent by viewers during live stream (mic off)."""
+    __tablename__ = "live_stream_questions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    stream_id = Column(String(36), ForeignKey("live_streams.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    display_name = Column(String(150), nullable=True)
+    question = Column(Text, nullable=False)
+    is_answered = Column(Boolean, default=False)
+    is_pinned = Column(Boolean, default=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    stream = relationship("LiveStream", back_populates="questions")
+
+
+class GiftPricing(Base):
+    """Gift catalog with pricing. Admin manages."""
+    __tablename__ = "gift_pricing"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    name = Column(String(100), nullable=False)
+    icon = Column(String(10), nullable=False)           # emoji
+    price = Column(Numeric(10, 2), nullable=False)
+    animation_url = Column(Text, nullable=True)         # Lottie/GIF URL
+    sort_order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+class LiveStreamGift(Base):
+    """Gifts sent by viewers during live stream."""
+    __tablename__ = "live_stream_gifts"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    stream_id = Column(String(36), ForeignKey("live_streams.id", ondelete="CASCADE"), nullable=False, index=True)
+    sender_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    gift_pricing_id = Column(String(36), ForeignKey("gift_pricing.id"), nullable=False)
+    sender_name = Column(String(150), nullable=True)
+    amount = Column(Numeric(10, 2), nullable=False)
+    wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    stream = relationship("LiveStream", back_populates="gifts")
+
+
+class ChatSession(Base):
+    """
+    Real-time paid chat session between user and astrologer.
+    Per-minute billing via WebSocket.
+    """
+    __tablename__ = "chat_sessions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    astrologer_id = Column(String(36), ForeignKey("astrologer_profiles.id", ondelete="CASCADE"), nullable=False, index=True)
+    rate_per_min = Column(Numeric(10, 2), nullable=False)
+    status = Column(String(20), default="waiting", index=True)
+    # waiting | active | completed | expired | cancelled
+    started_at = Column(DateTime, nullable=True)
+    ended_at = Column(DateTime, nullable=True)
+    duration_sec = Column(Integer, default=0)
+    total_amount = Column(Numeric(10, 2), default=0)
+    astrologer_earning = Column(Numeric(10, 2), default=0)
+    platform_commission = Column(Numeric(10, 2), default=0)
+    user_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    expires_at = Column(DateTime, nullable=True)          # 60s accept timeout
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    messages = relationship("LiveChatMessage", back_populates="session", cascade="all, delete-orphan")
+
+
+class LiveChatMessage(Base):
+    """Individual messages in a paid chat session."""
+    __tablename__ = "live_chat_messages"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    session_id = Column(String(36), ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False)
+    sender_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    message_type = Column(String(20), default="text")    # text | image | audio
+    content = Column(Text, nullable=True)
+    media_url = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    session = relationship("ChatSession", back_populates="messages")
+
+    __table_args__ = (
+        Index("ix_lcmsg_session", "session_id", "created_at"),
+    )

@@ -45,6 +45,15 @@ class Settings:
     # Redis (for cache/sessions)
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
+    # Agora (loaded from DB AgoraConfig, these are fallback/dev defaults)
+    AGORA_APP_ID: str = os.getenv("AGORA_APP_ID", "")
+    AGORA_APP_CERTIFICATE: str = os.getenv("AGORA_APP_CERTIFICATE", "")
+
+    # Communication
+    CALL_RING_TIMEOUT_SEC: int = 60       # missed if no answer in 60s
+    CHAT_ACCEPT_TIMEOUT_SEC: int = 60     # chat request expires in 60s
+    PLATFORM_COMMISSION_PCT: float = 30.0 # default 30% cut
+
     # CORS
     CORS_ORIGINS: list = ["*"]
 
