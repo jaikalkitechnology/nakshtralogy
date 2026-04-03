@@ -1,0 +1,121 @@
+"""Pydantic schemas for Astrologer auth & CRUD."""
+
+from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, Field
+
+
+# ── Auth (shares some with user but has astrologer-specific signup fields) ──
+
+class AstrologerSignupRequest(BaseModel):
+    name: str = Field(..., min_length=2, max_length=150)
+    email: EmailStr
+    phone: Optional[str] = Field(None, max_length=20)
+    password: str = Field(..., min_length=6, max_length=128)
+    display_name: Optional[str] = Field(None, max_length=150)
+    experience_years: Optional[int] = Field(0, ge=0)
+    languages: Optional[List[str]] = []
+    specializations: Optional[List[str]] = []
+    qualification: Optional[str] = None
+    bio: Optional[str] = None
+
+
+class AstrologerLoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class AstrologerGoogleLoginRequest(BaseModel):
+    id_token: str
+
+
+# ── Profile CRUD ──────────────────────────────────────────────────────
+
+class AstrologerProfileResponse(BaseModel):
+    id: str
+    user_id: str
+    display_name: Optional[str] = None
+    bio: Optional[str] = None
+    experience_years: int = 0
+    languages: Optional[List[str]] = []
+    specializations: Optional[List[str]] = []
+    qualification: Optional[str] = None
+    profile_image_url: Optional[str] = None
+    rate_per_min_chat: float = 0
+    rate_per_min_call: float = 0
+    rate_per_min_video: float = 0
+    rating: float = 0
+    total_reviews: int = 0
+    total_consultations: int = 0
+    total_minutes: int = 0
+    is_approved: bool = False
+    is_online: bool = False
+    is_busy: bool = False
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class AstrologerFullResponse(BaseModel):
+    """User info + astrologer profile combined."""
+    id: str
+    email: str
+    phone: Optional[str] = None
+    name: Optional[str] = None
+    avatar_url: Optional[str] = None
+    role: str
+    is_active: bool
+    is_verified: bool
+    wallet_balance: Optional[float] = 0.0
+    profile: Optional[AstrologerProfileResponse] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class AstrologerTokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    user: AstrologerFullResponse
+
+
+class AstrologerProfileUpdateRequest(BaseModel):
+    display_name: Optional[str] = Field(None, max_length=150)
+    bio: Optional[str] = None
+    experience_years: Optional[int] = Field(None, ge=0)
+    languages: Optional[List[str]] = None
+    specializations: Optional[List[str]] = None
+    qualification: Optional[str] = None
+    profile_image_url: Optional[str] = None
+    rate_per_min_chat: Optional[float] = Field(None, ge=0)
+    rate_per_min_call: Optional[float] = Field(None, ge=0)
+    rate_per_min_video: Optional[float] = Field(None, ge=0)
+
+
+class AstrologerStatusUpdate(BaseModel):
+    is_online: Optional[bool] = None
+    is_busy: Optional[bool] = None
+
+
+class AstrologerListResponse(BaseModel):
+    """For public listing of astrologers."""
+    id: str
+    display_name: Optional[str] = None
+    profile_image_url: Optional[str] = None
+    specializations: Optional[List[str]] = []
+    languages: Optional[List[str]] = []
+    experience_years: int = 0
+    rate_per_min_chat: float = 0
+    rate_per_min_call: float = 0
+    rate_per_min_video: float = 0
+    rating: float = 0
+    total_reviews: int = 0
+    total_consultations: int = 0
+    is_online: bool = False
+    is_busy: bool = False
+
+    class Config:
+        from_attributes = True
