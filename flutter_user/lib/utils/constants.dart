@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+  static const String baseUrl = 'https://api.nakshatralogy.com/api/v1';
   static const String userBase = '$baseUrl/user';
   static const String astrologerBase = '$baseUrl/astrologer';
 
@@ -32,7 +32,7 @@ class ApiConstants {
   static const String gifts = '$commBase/gifts';
 
   // WebSocket
-  static const String wsBase = 'ws://10.0.2.2:8000';
+  static const String wsBase = 'wss://api.nakshatralogy.com';
   static const String wsChat = '$wsBase/ws/chat';
 }
 
