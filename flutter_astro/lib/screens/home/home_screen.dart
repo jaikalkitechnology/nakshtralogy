@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../auth/login_screen.dart';
+import '../charts/client_charts_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<_NavItem> _navItems = [
     _NavItem(Icons.home, 'Home'),
+    _NavItem(Icons.auto_awesome, 'Charts'),
     _NavItem(Icons.notifications, 'Requests'),
     _NavItem(Icons.account_balance_wallet, 'Earnings'),
     _NavItem(Icons.person, 'Profile'),
@@ -92,12 +94,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      body: Center(
-        child: Text(
-          _navItems[_currentIndex].label,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary),
-        ),
-      ),
+      body: _currentIndex == 1
+          ? const ClientChartsScreen()
+          : Center(
+              child: Text(
+                _navItems[_currentIndex].label,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary),
+              ),
+            ),
 
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

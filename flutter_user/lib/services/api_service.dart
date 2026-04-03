@@ -141,5 +141,96 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Services & Charts ─────────────────────────────────────
+
+  Future<List<dynamic>> getServicePricing({String? category}) async {
+    final uri = Uri.parse(ApiConstants.servicePricing).replace(
+      queryParameters: category != null ? {'category': category} : null,
+    );
+    final resp = await http.get(uri, headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> createChart({
+    required String name,
+    String? gender,
+    required String dob,
+    required String tob,
+    required String place,
+    bool isPrimary = false,
+    String? serviceKey,
+  }) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.serviceCharts),
+      headers: _headers,
+      body: jsonEncode({
+        'name': name,
+        'dob': dob,
+        'tob': tob,
+        'place': place,
+        if (gender != null) 'gender': gender,
+        'is_primary': isPrimary,
+        if (serviceKey != null) 'service_key': serviceKey,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> getMyCharts() async {
+    final resp = await http.get(Uri.parse(ApiConstants.serviceCharts), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> getChart(String chartId) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.serviceCharts}/$chartId'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> deleteChart(String chartId) async {
+    final resp = await http.delete(
+      Uri.parse('${ApiConstants.serviceCharts}/$chartId'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> purchaseService(String servicePricingId, String chartId) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.servicePurchase),
+      headers: _headers,
+      body: jsonEncode({'service_pricing_id': servicePricingId, 'chart_id': chartId}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> getMyOrders() async {
+    final resp = await http.get(Uri.parse(ApiConstants.serviceOrders), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> computeDasha(String chartId) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.computeDasha),
+      headers: _headers,
+      body: jsonEncode({'chart_id': chartId, 'service_key': 'vimshottari_dasha'}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getGochar({String? dateStr, int? moonSign}) async {
+    final params = <String, String>{};
+    if (dateStr != null) params['date_str'] = dateStr;
+    if (moonSign != null) params['moon_sign'] = moonSign.toString();
+    final uri = Uri.parse(ApiConstants.computeGochar).replace(queryParameters: params.isNotEmpty ? params : null);
+    final resp = await http.get(uri, headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
