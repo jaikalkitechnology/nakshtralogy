@@ -1,0 +1,5 @@
+package com.example.nakshatralogy_astro
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
