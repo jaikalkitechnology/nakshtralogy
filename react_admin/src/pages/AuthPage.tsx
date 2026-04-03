@@ -10,28 +10,36 @@ import StarField from "@/components/StarField";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [role, setRole] = useState<UserRole>("user");
+  const [role, setRole] = useState<UserRole>("admin");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@nakshatralogy.com");
+  const [password, setPassword] = useState("admin@123");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login, signup } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
+
     if (isLogin) {
-      login(email, password, role);
+      const err = await login(email, password, role);
+      setLoading(false);
+      if (err) {
+        setError(err);
+        return;
+      }
+      navigate("/admin");
     } else {
       signup(name, email, password, role);
+      setLoading(false);
+      navigate("/admin");
     }
-    if (role === "admin") navigate("/admin");
-    else if (role === "astrologer") navigate("/astrologer");
-    else navigate("/dashboard");
   };
 
   const roles: { value: UserRole; label: string; icon: React.ReactNode }[] = [
-    { value: "user", label: "User", icon: <Star className="w-4 h-4" /> },
-    { value: "astrologer", label: "Astrologer", icon: <Moon className="w-4 h-4" /> },
     { value: "admin", label: "Admin", icon: <Sun className="w-4 h-4" /> },
   ];
 
@@ -52,33 +60,21 @@ const AuthPage = () => {
             ✨
           </motion.div>
           <h1 className="text-3xl font-display text-gold-gradient">
-            JyotishConnect
+            Nakshtralogy Admin
           </h1>
-          <p className="text-muted-foreground mt-2">Your Cosmic Journey Awaits</p>
+          <p className="text-muted-foreground mt-2">Platform Management Console</p>
         </div>
 
         <div className="bg-card/80 backdrop-blur-xl border border-border rounded-xl p-6 glow-gold">
-          {/* Role Selection */}
-          <div className="flex gap-2 mb-6">
-            {roles.map((r) => (
-              <button
-                key={r.value}
-                onClick={() => setRole(r.value)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  role === r.value
-                    ? "bg-primary text-primary-foreground glow-gold"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {r.icon}
-                {r.label}
-              </button>
-            ))}
-          </div>
-
           <h2 className="text-xl font-display text-foreground mb-4">
-            {isLogin ? "Sign In" : "Create Account"}
+            {isLogin ? "Admin Sign In" : "Create Account"}
           </h2>
+
+          {error && (
+            <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 mb-4">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
@@ -98,7 +94,7 @@ const AuthPage = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
+                placeholder="admin@nakshatralogy.com"
                 className="bg-muted border-border focus:ring-primary"
               />
             </div>
@@ -112,20 +108,19 @@ const AuthPage = () => {
                 className="bg-muted border-border focus:ring-primary"
               />
             </div>
-            <Button type="submit" className="w-full gradient-gold text-primary-foreground font-semibold">
-              {isLogin ? "Sign In" : "Create Account"}
+            <Button type="submit" disabled={loading} className="w-full gradient-gold text-primary-foreground font-semibold">
+              {loading ? "Signing in..." : isLogin ? "Sign In" : "Create Account"}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline font-medium"
-            >
-              {isLogin ? "Sign Up" : "Sign In"}
-            </button>
-          </p>
+          <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+            <p className="text-xs text-muted-foreground text-center">
+              Default: <code className="text-primary">admin@nakshatralogy.com</code> / <code className="text-primary">admin@123</code>
+            </p>
+            <p className="text-xs text-muted-foreground text-center mt-1">
+              Run <code className="text-primary">POST /api/v1/admin/seed-open</code> first to create admin user
+            </p>
+          </div>
         </div>
       </motion.div>
     </div>

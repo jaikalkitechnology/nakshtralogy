@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.database import create_tables, get_db
 from app.core.dependencies import require_role
-from app.routers import user_router, astrologer_router, service_router, communication_router, ws_chat
+from app.routers import user_router, astrologer_router, service_router, communication_router, ws_chat, admin_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -30,6 +30,7 @@ app.include_router(astrologer_router.router, prefix="/api/v1/astrologer", tags=[
 app.include_router(service_router.router, prefix="/api/v1/service", tags=["Service"])
 app.include_router(communication_router.router, prefix="/api/v1/comm", tags=["Communication"])
 app.include_router(ws_chat.router, tags=["WebSocket"])
+app.include_router(admin_router.router, prefix="/api/v1/admin", tags=["Admin"])
 
 
 @app.on_event("startup")
