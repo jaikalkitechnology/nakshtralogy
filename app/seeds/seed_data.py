@@ -541,7 +541,6 @@ def _seed_notifications(db: Session) -> int:
         ).first()
         if existing:
             continue
-        from app.models.model import Notification
         db.add(Notification(
             user_id=u.id,
             title="Welcome to Nakshtralogy!",
