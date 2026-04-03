@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import create_tables
-from app.routers import user_router, astrologer_router
+from app.routers import user_router, astrologer_router, service_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -25,6 +25,7 @@ app.add_middleware(
 # Routers
 app.include_router(user_router.router, prefix="/api/v1/user", tags=["User"])
 app.include_router(astrologer_router.router, prefix="/api/v1/astrologer", tags=["Astrologer"])
+app.include_router(service_router.router, prefix="/api/v1/service", tags=["Service"])
 
 
 @app.on_event("startup")

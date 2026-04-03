@@ -12,6 +12,15 @@ class ApiConstants {
   static const String astroMe = '$astrologerBase/me';
   static const String astroProfile = '$astrologerBase/me/profile';
   static const String astroStatus = '$astrologerBase/me/status';
+  // Service (astrologers also create charts for clients)
+  static const String serviceBase = '$baseUrl/service';
+  static const String servicePricing = '$serviceBase/pricing';
+  static const String serviceCharts = '$serviceBase/charts';
+  static const String servicePurchase = '$serviceBase/purchase';
+  static const String serviceOrders = '$serviceBase/orders';
+  static const String computeDasha = '$serviceBase/compute/dasha';
+  static const String computeMoola = '$serviceBase/compute/moola';
+  static const String computeGochar = '$serviceBase/compute/gochar';
 }
 
 class AppConstants {

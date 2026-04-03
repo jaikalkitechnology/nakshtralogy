@@ -77,6 +77,7 @@ class User(Base):
     astrologer_profile = relationship("AstrologerProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     wallet = relationship("Wallet", back_populates="user", uselist=False, cascade="all, delete-orphan")
     charts = relationship("Chart", back_populates="user", cascade="all, delete-orphan")
+    service_orders = relationship("ServiceOrder", back_populates="user", cascade="all, delete-orphan")
     consultations_as_user = relationship("Consultation", back_populates="user", foreign_keys="Consultation.user_id")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     ai_chats = relationship("AIChat", back_populates="user", cascade="all, delete-orphan")
@@ -224,6 +225,7 @@ class Chart(Base):
 
     user = relationship("User", back_populates="charts")
     dasha_cache = relationship("DashaCache", back_populates="chart", uselist=False, cascade="all, delete-orphan")
+    service_orders = relationship("ServiceOrder", back_populates="chart")
     consultations = relationship("Consultation", back_populates="chart")
 
 
@@ -248,6 +250,67 @@ class GocharDaily(Base):
     date = Column(Date, primary_key=True)
     scores_json = Column(JSON, nullable=False)
     computed_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  5b. SERVICE PRICING (Platform-level kundli service catalog)
+# ─────────────────────────────────────────────────────────────────────
+
+class ServicePricing(Base):
+    """
+    Platform-level service pricing table.
+    Defines what kundli services are available and their pricing tiers.
+    Admin manages these; users/astrologers consume them.
+    service_key maps to engine functions in nakshralogyV2.py.
+    """
+    __tablename__ = "service_pricing"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    service_key = Column(String(50), unique=True, nullable=False)
+    # birth_chart | vimshottari_dasha | moola_dasha | gochar_daily | gochar_range
+    # divisional_charts | kundli_matching | manglik_check | sade_sati | career_report
+    # love_report | health_report | yearly_prediction | ai_reading
+    service_name = Column(String(150), nullable=False)
+    description = Column(Text, nullable=True)
+    icon = Column(String(10), nullable=True)           # emoji icon for UI
+    category = Column(String(30), default="kundli")    # kundli | report | consultation | ai
+    price = Column(Numeric(10, 2), default=0.00)       # 0 = free
+    original_price = Column(Numeric(10, 2), nullable=True)  # for showing discount
+    currency = Column(String(3), default="INR")
+    is_free = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+    features_json = Column(JSON, nullable=True)        # ["D1-D60 charts", "Full dasha", ...]
+    engine_function = Column(String(100), nullable=True)  # e.g. "calculate_chart", "vimshottari_dasha"
+    requires_birth_data = Column(Boolean, default=True)
+    max_free_per_user = Column(Integer, nullable=True)    # e.g. 1 free chart, then paid
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    orders = relationship("ServiceOrder", back_populates="service_pricing")
+
+
+class ServiceOrder(Base):
+    """
+    Tracks every service purchase/usage per user.
+    Links user + service_pricing + chart (if applicable).
+    Free services also create an order (price=0).
+    """
+    __tablename__ = "service_orders"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    service_pricing_id = Column(String(36), ForeignKey("service_pricing.id"), nullable=False, index=True)
+    chart_id = Column(String(36), ForeignKey("charts.id", ondelete="SET NULL"), nullable=True)
+    amount_paid = Column(Numeric(10, 2), default=0.00)
+    wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    status = Column(String(20), default="completed")   # pending | completed | failed | refunded
+    result_json = Column(JSON, nullable=True)           # computed result data
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    user = relationship("User", back_populates="service_orders")
+    service_pricing = relationship("ServicePricing", back_populates="orders")
+    chart = relationship("Chart", back_populates="service_orders")
 
 
 # ─────────────────────────────────────────────────────────────────────
