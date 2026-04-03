@@ -79,3 +79,8 @@ def seed_database_open(db: Session = Depends(get_db)):
             "astrologer": {"email": "rajesh.sharma@example.com", "password": "astro@123"},
         },
     }
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="127.0.0.1", port=3063, reload=True, log_level="debug")
