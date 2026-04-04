@@ -153,6 +153,9 @@ def login(req: AstrologerLoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account is deactivated")
+    if req.fcm_token:
+        user.fcm_token = req.fcm_token
+        db.commit()
     return _issue_tokens(user, db)
 
 

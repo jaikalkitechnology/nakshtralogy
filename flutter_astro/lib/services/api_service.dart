@@ -81,11 +81,16 @@ class ApiService {
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
+    String? fcmToken,
   }) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.astroLogin),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
     );
     final data = jsonDecode(resp.body);
     if (resp.statusCode == 200) {

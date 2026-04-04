@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/api_service.dart';
+import '../../services/fcm_service.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -30,7 +31,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogin(AuthLoginRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await _api.login(email: event.email, password: event.password);
+      final fcmToken = await FcmService().getToken();
+      final result = await _api.login(email: event.email, password: event.password, fcmToken: fcmToken);
       if (result['statusCode'] == 200) {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
       } else {

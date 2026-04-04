@@ -109,11 +109,14 @@ def signup(req: UserSignupRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 def login(req: UserLoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == req.email, User.role == "user").first()
+    user = db.query(User).filter(User.email == req.email, User.role.in_(["user", "admin"])).first()
     if not user or not user.password_hash or not verify_password(req.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account is deactivated")
+    if req.fcm_token:
+        user.fcm_token = req.fcm_token
+        db.commit()
     return _issue_tokens(user, db)
 
 

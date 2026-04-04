@@ -21,10 +21,12 @@ class UserSignupRequest(BaseModel):
 class UserLoginRequest(BaseModel):
     email: EmailStr
     password: str
+    fcm_token: Optional[str] = None
 
 
 class GoogleLoginRequest(BaseModel):
     id_token: str
+    fcm_token: Optional[str] = None
 
 
 class ForgotPasswordRequest(BaseModel):
