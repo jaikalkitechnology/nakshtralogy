@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
+import 'bloc/auth/auth_bloc.dart';
+import 'bloc/auth/auth_event.dart';
+import 'bloc/auth/auth_state.dart';
+import 'bloc/chart/chart_bloc.dart';
+import 'bloc/service/service_bloc.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 
@@ -15,11 +21,28 @@ class NakshtralogyUserApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Nakshtralogy',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      home: ApiService().isLoggedIn ? const HomeScreen() : const LoginScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => AuthBloc()..add(AuthCheckRequested())),
+        BlocProvider(create: (_) => ChartBloc()),
+        BlocProvider(create: (_) => ServiceBloc()),
+      ],
+      child: MaterialApp(
+        title: 'Nakshtralogy',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.darkTheme,
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthAuthenticated) return const HomeScreen();
+            if (state is AuthInitial) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+            return const LoginScreen();
+          },
+        ),
+      ),
     );
   }
 }
