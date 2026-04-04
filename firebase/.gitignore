@@ -1,0 +1,10 @@
+# Firebase Service Account Keys (NEVER commit real keys)
+# Place your actual JSON files here on the server only
+firebase/firebase-user-sa.json
+firebase/firebase-astro-sa.json
+
+# Flutter google-services
+flutter_user/android/app/google-services.json
+flutter_astro/android/app/google-services.json
+flutter_user/ios/Runner/GoogleService-Info.plist
+flutter_astro/ios/Runner/GoogleService-Info.plist

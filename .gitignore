@@ -1,0 +1,36 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+
+# ── Firebase Service Account Keys (NEVER commit) ─────────────
+firebase/firebase-user-sa.json
+firebase/firebase-astro-sa.json
+
+# ── Flutter google-services (contains API keys) ──────────────
+flutter_user/android/app/google-services.json
+flutter_astro/android/app/google-services.json
+flutter_user/ios/Runner/GoogleService-Info.plist
+flutter_astro/ios/Runner/GoogleService-Info.plist
+
+# ── Flutter build artifacts ───────────────────────────────────
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+
+# ── IDE ───────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+
+# ── React build ──────────────────────────────────────────────
+react_admin/node_modules/
+react_admin/dist/
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

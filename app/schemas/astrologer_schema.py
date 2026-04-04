@@ -23,10 +23,12 @@ class AstrologerSignupRequest(BaseModel):
 class AstrologerLoginRequest(BaseModel):
     email: EmailStr
     password: str
+    fcm_token: Optional[str] = None
 
 
 class AstrologerGoogleLoginRequest(BaseModel):
     id_token: str
+    fcm_token: Optional[str] = None
 
 
 # ── Profile CRUD ──────────────────────────────────────────────────────
