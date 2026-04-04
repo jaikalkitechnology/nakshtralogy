@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginAdmin as apiLogin, logoutAdmin as apiLogout, getStoredUser } from "@/services/api";
+import { loginByRole, logoutUser, getStoredUser, signupUser, signupAstrologer, type LoginRole } from "@/services/api";
 
 export type UserRole = "user" | "astrologer" | "admin";
 
@@ -10,13 +10,15 @@ interface AuthUser {
   role: UserRole;
   avatar?: string;
   walletBalance: number;
+  profile?: any; // astrologer profile data
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string, role: UserRole) => Promise<string | null>;
-  signup: (name: string, email: string, password: string, role: UserRole) => void;
+  login: (email: string, password: string, role: UserRole) => Promise<{ error: string | null; redirectTo: string }>;
+  signupAsUser: (name: string, email: string, password: string, phone?: string) => Promise<{ error: string | null; redirectTo: string }>;
+  signupAsAstrologer: (fields: any) => Promise<{ error: string | null; redirectTo: string }>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -29,6 +31,26 @@ export const useAuth = () => {
   return ctx;
 };
 
+function roleRedirect(role: string): string {
+  switch (role) {
+    case "admin": return "/admin";
+    case "astrologer": return "/astrologer";
+    default: return "/dashboard";
+  }
+}
+
+function mapUser(data: any): AuthUser {
+  return {
+    id: data.id,
+    name: data.name || "",
+    email: data.email,
+    role: data.role,
+    avatar: data.avatar_url,
+    walletBalance: data.wallet_balance || 0,
+    profile: data.profile,
+  };
+}
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,48 +58,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const stored = getStoredUser();
     if (stored) {
-      setUser({
-        id: stored.id,
-        name: stored.name || "Admin",
-        email: stored.email,
-        role: stored.role,
-        walletBalance: stored.wallet_balance || 0,
-      });
+      setUser(mapUser(stored));
     }
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, _role: UserRole): Promise<string | null> => {
-    const { ok, data } = await apiLogin(email, password);
+  const login = async (email: string, password: string, role: UserRole) => {
+    const { ok, data } = await loginByRole(email, password, role as LoginRole);
     if (ok && data.user) {
       const u = data.user;
-      if (u.role !== "admin") {
-        apiLogout();
-        return "Only admin accounts can access this panel";
+      // validate role matches what was requested
+      if (u.role !== role) {
+        logoutUser();
+        return { error: `This account is registered as "${u.role}", not "${role}"`, redirectTo: "" };
       }
-      setUser({
-        id: u.id,
-        name: u.name || "Admin",
-        email: u.email,
-        role: u.role,
-        walletBalance: u.wallet_balance || 0,
-      });
-      return null;
+      setUser(mapUser(u));
+      return { error: null, redirectTo: roleRedirect(u.role) };
     }
-    return data.detail || "Login failed";
+    return { error: data.detail || "Login failed", redirectTo: "" };
   };
 
-  const signup = (_name: string, _email: string, _password: string, _role: UserRole) => {
-    // Admin signup not supported from panel
+  const signupAsUser = async (name: string, email: string, password: string, phone?: string) => {
+    const { ok, data } = await signupUser(name, email, password, phone);
+    if (ok && data.user) {
+      setUser(mapUser(data.user));
+      return { error: null, redirectTo: "/dashboard" };
+    }
+    return { error: data.detail || "Signup failed", redirectTo: "" };
+  };
+
+  const signupAsAstrologer = async (fields: any) => {
+    const { ok, data } = await signupAstrologer(fields);
+    if (ok && data.user) {
+      setUser(mapUser(data.user));
+      return { error: null, redirectTo: "/astrologer" };
+    }
+    return { error: data.detail || "Signup failed", redirectTo: "" };
   };
 
   const logout = () => {
-    apiLogout();
+    logoutUser();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, signupAsUser, signupAsAstrologer, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
