@@ -55,8 +55,8 @@ class Settings:
     PLATFORM_COMMISSION_PCT: float = 30.0 # default 30% cut
 
     # Firebase FCM (dual-project: user app + astro app)
-    FIREBASE_USER_SA_PATH: str = os.getenv("FIREBASE_USER_SA_PATH", "firebase/firebase-user-sa.json")
-    FIREBASE_ASTRO_SA_PATH: str = os.getenv("FIREBASE_ASTRO_SA_PATH", "firebase/firebase-astro-sa.json")
+    FIREBASE_USER_SA_PATH: str = os.getenv("FIREBASE_USER_SA_PATH", "credentials/firebase-user-sa.json")
+    FIREBASE_ASTRO_SA_PATH: str = os.getenv("FIREBASE_ASTRO_SA_PATH", "credentials/firebase-astro-sa.json")
 
     # CORS
     CORS_ORIGINS: list = ["*"]

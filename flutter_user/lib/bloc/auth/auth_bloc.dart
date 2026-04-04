@@ -92,6 +92,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
+    await FcmService().clearToken();
     await _api.clearTokens();
     emit(AuthUnauthenticated());
   }

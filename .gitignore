@@ -5,9 +5,11 @@ __pycache__/
 venv/
 .env
 
-# ── Firebase Service Account Keys (NEVER commit) ─────────────
-firebase/firebase-user-sa.json
-firebase/firebase-astro-sa.json
+# ── Firebase Service Account Keys ─────────────────────────────
+# credentials/ dir has placeholder files — replace with real keys on server
+# If you put real keys, uncomment these lines:
+# credentials/firebase-user-sa.json
+# credentials/firebase-astro-sa.json
 
 # ── Flutter google-services (contains API keys) ──────────────
 flutter_user/android/app/google-services.json
