@@ -26,9 +26,12 @@ async function request<T = any>(
 
 // ── Auth ─────────────────────────────────────────────────────────
 
-export async function loginAdmin(email: string, password: string) {
-  // admin uses user router login (role is checked server-side by stored role)
-  const res = await fetch(`${BASE}/user/login`, {
+export type LoginRole = "user" | "astrologer" | "admin";
+
+export async function loginByRole(email: string, password: string, role: LoginRole) {
+  // user & admin use /user/login, astrologer uses /astrologer/login
+  const endpoint = role === "astrologer" ? "/astrologer/login" : "/user/login";
+  const res = await fetch(`${BASE}${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -37,19 +40,61 @@ export async function loginAdmin(email: string, password: string) {
   if (res.ok) {
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
-    localStorage.setItem("admin_user", JSON.stringify(data.user));
+    const userData = role === "astrologer" ? data.user : data.user;
+    localStorage.setItem("app_user", JSON.stringify(userData));
   }
   return { ok: res.ok, status: res.status, data };
 }
 
-export function logoutAdmin() {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-  localStorage.removeItem("admin_user");
+export async function signupUser(name: string, email: string, password: string, phone?: string) {
+  const res = await fetch(`${BASE}/user/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password, ...(phone ? { phone } : {}) }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("refresh_token", data.refresh_token);
+    localStorage.setItem("app_user", JSON.stringify(data.user));
+  }
+  return { ok: res.ok, status: res.status, data };
 }
 
+export async function signupAstrologer(fields: {
+  name: string; email: string; password: string; phone?: string;
+  display_name?: string; experience_years?: number;
+  languages?: string[]; specializations?: string[];
+  qualification?: string; bio?: string;
+}) {
+  const res = await fetch(`${BASE}/astrologer/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(fields),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("refresh_token", data.refresh_token);
+    localStorage.setItem("app_user", JSON.stringify(data.user));
+  }
+  return { ok: res.ok, status: res.status, data };
+}
+
+// keep backward compat alias
+export const loginAdmin = (email: string, password: string) => loginByRole(email, password, "admin");
+
+export function logoutUser() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("app_user");
+}
+
+// keep backward compat alias
+export const logoutAdmin = logoutUser;
+
 export function getStoredUser() {
-  const raw = localStorage.getItem("admin_user");
+  const raw = localStorage.getItem("app_user");
   return raw ? JSON.parse(raw) : null;
 }
 
