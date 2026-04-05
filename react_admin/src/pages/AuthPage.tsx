@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,8 +18,25 @@ const AuthPage = () => {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, signupAsUser, signupAsAstrologer } = useAuth();
+  const { login, googleLogin, signupAsUser, signupAsAstrologer } = useAuth();
   const navigate = useNavigate();
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    setError("");
+    if (!credentialResponse.credential) {
+      setError("Google sign-in failed: no credential returned");
+      return;
+    }
+    setLoading(true);
+    const { error: err, redirectTo } = await googleLogin(credentialResponse.credential, role);
+    setLoading(false);
+    if (err) { setError(err); return; }
+    navigate(redirectTo);
+  };
+
+  const handleGoogleError = () => {
+    setError("Google sign-in was cancelled or failed");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,6 +190,27 @@ const AuthPage = () => {
               {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
             </Button>
           </form>
+
+          {/* Google Login (not available for admin) */}
+          {role !== "admin" && (
+            <>
+              <div className="flex items-center gap-2 my-4">
+                <div className="flex-1 h-px bg-border" />
+                <span className="text-xs text-muted-foreground">OR</span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+              <div className="flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="filled_black"
+                  text={isLogin ? "signin_with" : "signup_with"}
+                  shape="rectangular"
+                  width="320"
+                />
+              </div>
+            </>
+          )}
 
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground">

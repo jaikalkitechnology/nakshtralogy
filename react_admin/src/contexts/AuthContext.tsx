@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginByRole, logoutUser, getStoredUser, signupUser, signupAstrologer, type LoginRole } from "@/services/api";
+import { loginByRole, googleLoginByRole, logoutUser, getStoredUser, signupUser, signupAstrologer, type LoginRole } from "@/services/api";
 
 export type UserRole = "user" | "astrologer" | "admin";
 
@@ -17,6 +17,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   login: (email: string, password: string, role: UserRole) => Promise<{ error: string | null; redirectTo: string }>;
+  googleLogin: (idToken: string, role: UserRole) => Promise<{ error: string | null; redirectTo: string }>;
   signupAsUser: (name: string, email: string, password: string, phone?: string) => Promise<{ error: string | null; redirectTo: string }>;
   signupAsAstrologer: (fields: any) => Promise<{ error: string | null; redirectTo: string }>;
   logout: () => void;
@@ -78,6 +79,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error: data.detail || "Login failed", redirectTo: "" };
   };
 
+  const googleLogin = async (idToken: string, role: UserRole) => {
+    if (role === "admin") {
+      return { error: "Google login is not available for admin", redirectTo: "" };
+    }
+    const { ok, data } = await googleLoginByRole(idToken, role as LoginRole);
+    if (ok && data.user) {
+      const u = data.user;
+      if (u.role !== role) {
+        logoutUser();
+        return { error: `This account is registered as "${u.role}", not "${role}"`, redirectTo: "" };
+      }
+      setUser(mapUser(u));
+      return { error: null, redirectTo: roleRedirect(u.role) };
+    }
+    return { error: data.detail || "Google login failed", redirectTo: "" };
+  };
+
   const signupAsUser = async (name: string, email: string, password: string, phone?: string) => {
     const { ok, data } = await signupUser(name, email, password, phone);
     if (ok && data.user) {
@@ -102,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signupAsUser, signupAsAstrologer, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, googleLogin, signupAsUser, signupAsAstrologer, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
