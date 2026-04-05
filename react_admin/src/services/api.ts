@@ -343,6 +343,21 @@ export async function adminRejectKyc(kycId: string, reason: string) {
   return request(`/admin/kyc/${kycId}/reject`, { method: "PATCH", body: JSON.stringify({ reason }) });
 }
 
+// ── Public Astrologer data (for user dashboard) ──────────────────
+
+export async function fetchPublicAstrologers(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/astrologer/list${qs ? `?${qs}` : ""}`);
+}
+
+export async function fetchAstrologerDetail(id: string) {
+  return request(`/astrologer/${id}`);
+}
+
+export async function fetchAstrologerReviews(id: string, limit = 10) {
+  return request(`/astrologer/${id}/reviews?limit=${limit}`);
+}
+
 // ── Platform Settings ────────────────────────────────────────────
 
 export async function adminListSettings() {
