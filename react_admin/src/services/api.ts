@@ -29,8 +29,11 @@ async function request<T = any>(
 export type LoginRole = "user" | "astrologer" | "admin";
 
 export async function loginByRole(email: string, password: string, role: LoginRole) {
-  // user & admin use /user/login, astrologer uses /astrologer/login
-  const endpoint = role === "astrologer" ? "/astrologer/login" : "/user/login";
+  // Each role has its own dedicated login endpoint
+  const endpoint =
+    role === "admin" ? "/admin/login" :
+    role === "astrologer" ? "/astrologer/login" :
+    "/user/login";
   const res = await fetch(`${BASE}${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
