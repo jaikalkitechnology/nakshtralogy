@@ -21,6 +21,7 @@ import {
   adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
   adminBlockAstrologer, adminSetCommission,
   adminListKyc, adminApproveKyc, adminRejectKyc,
+  adminListTransactions,
   type WalletAction,
 } from "@/services/api";
 import {
@@ -116,6 +117,19 @@ const AdminPanel = () => {
   // Astrologer detail dialog
   const [astroDetail, setAstroDetail] = useState<any>(null);
 
+  // ── Wallet Management state ──────────────────────────────────────
+  const WALLET_PAGE_SIZE = 20;
+  const [walletPage, setWalletPage] = useState(0);
+  const [walletTotal, setWalletTotal] = useState(0);
+  const [walletSummary, setWalletSummary] = useState<{
+    total_credits: number; total_debits: number; net_flow: number;
+  }>({ total_credits: 0, total_debits: 0, net_flow: 0 });
+  const [walletFilterType, setWalletFilterType] = useState<string>("all");     // all | recharge | consultation_debit | consultation_credit | bonus | refund | withdrawal
+  const [walletFilterRole, setWalletFilterRole] = useState<string>("all");     // all | user | astrologer | admin
+  const [walletSearchTerm, setWalletSearchTerm] = useState<string>("");
+  const [walletDateFrom, setWalletDateFrom] = useState<string>("");
+  const [walletDateTo, setWalletDateTo] = useState<string>("");
+
   // ── KYC Management state ─────────────────────────────────────────
   const [kycDocs, setKycDocs] = useState<any[]>([]);
   const [kycTotal, setKycTotal] = useState(0);
@@ -191,10 +205,29 @@ const AdminPanel = () => {
         setKycTotal(data.total || 0);
       }
       if (activeTab === "wallet") {
+        // totals card (all-time)
         const r = await fetch(`${BASE}/admin/wallet-stats`, { headers: authHeaders() });
         if (r.ok) setWalletStats(await r.json());
-        const t = await fetch(`${BASE}/admin/transactions?limit=20`, { headers: authHeaders() });
-        if (t.ok) { const d = await t.json(); setTransactions(d.transactions || []); }
+
+        // filtered statement
+        const params: Record<string, any> = {
+          skip: walletPage * WALLET_PAGE_SIZE,
+          limit: WALLET_PAGE_SIZE,
+        };
+        if (walletFilterType !== "all") params.txn_type = walletFilterType;
+        if (walletFilterRole !== "all") params.user_role = walletFilterRole;
+        if (walletSearchTerm) params.search = walletSearchTerm;
+        if (walletDateFrom) params.date_from = walletDateFrom;
+        if (walletDateTo) params.date_to = walletDateTo;
+
+        const { data } = await adminListTransactions(params);
+        setTransactions(data.transactions || []);
+        setWalletTotal(data.total || 0);
+        setWalletSummary({
+          total_credits: data.total_credits || 0,
+          total_debits: data.total_debits || 0,
+          net_flow: data.net_flow || 0,
+        });
       }
       if (activeTab === "pricing") {
         const { data } = await fetchServicePricing();
@@ -211,7 +244,9 @@ const AdminPanel = () => {
     } catch (e) { console.error(e); }
     setLoading(false);
   }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
-      astroPage, astroFilter, astroSearch, kycPage, kycFilter]);
+      astroPage, astroFilter, astroSearch, kycPage, kycFilter,
+      walletPage, walletFilterType, walletFilterRole, walletSearchTerm,
+      walletDateFrom, walletDateTo]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -219,6 +254,8 @@ const AdminPanel = () => {
   useEffect(() => { setUserPage(0); }, [userFilterStatus, userFilterRole, searchQuery]);
   useEffect(() => { setAstroPage(0); }, [astroFilter, astroSearch]);
   useEffect(() => { setKycPage(0); }, [kycFilter]);
+  useEffect(() => { setWalletPage(0); },
+    [walletFilterType, walletFilterRole, walletSearchTerm, walletDateFrom, walletDateTo]);
 
   const toggleUser = async (userId: string) => {
     await adminToggleUser(userId);
@@ -1330,47 +1367,246 @@ const AdminPanel = () => {
               </DialogContent>
             </Dialog>
 
-            {/* ══════ WALLET ══════ */}
+            {/* ══════ WALLET — Full Statement ══════ */}
             {activeTab === "wallet" && (
-              <div className="space-y-6">
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    { label: "User Wallets", value: walletStats ? `₹${fmt(walletStats.total_user_wallets)}` : "—", cls: "glow-gold" },
-                    { label: "Astrologer Wallets", value: walletStats ? `₹${fmt(walletStats.total_astro_wallets)}` : "—", cls: "" },
-                    { label: "Total Recharges", value: walletStats ? `₹${fmt(walletStats.total_recharges)}` : "—", cls: "" },
-                  ].map((s) => (
-                    <div key={s.label} className={`bg-card/60 border border-border rounded-xl p-4 text-center ${s.cls}`}>
-                      <p className="text-sm text-muted-foreground">{s.label}</p>
-                      <p className="text-3xl font-display text-gold-gradient mt-2">{s.value}</p>
+              <div className="space-y-4">
+                {/* Platform stats (all-time) */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-card/60 border border-border rounded-xl p-3 glow-gold">
+                    <p className="text-xs text-muted-foreground">User Wallets</p>
+                    <p className="text-xl font-display text-gold-gradient mt-1">
+                      ₹{walletStats ? fmt(walletStats.total_user_wallets) : "—"}
+                    </p>
+                  </div>
+                  <div className="bg-card/60 border border-border rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Astro Wallets</p>
+                    <p className="text-xl font-display text-primary mt-1">
+                      ₹{walletStats ? fmt(walletStats.total_astro_wallets) : "—"}
+                    </p>
+                  </div>
+                  <div className="bg-card/60 border border-border rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Total Recharges</p>
+                    <p className="text-xl font-display text-green-400 mt-1">
+                      ₹{walletStats ? fmt(walletStats.total_recharges) : "—"}
+                    </p>
+                  </div>
+                  <div className="bg-card/60 border border-border rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Platform Balance</p>
+                    <p className="text-xl font-display text-cosmic-light mt-1">
+                      ₹{walletStats ? fmt(walletStats.total_platform_balance) : "—"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Filters */}
+                <div className="bg-card/40 border border-border rounded-xl p-3 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-primary" />
+                    <h3 className="text-sm font-semibold text-primary">Statement Filters</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                    {/* Search */}
+                    <div className="relative lg:col-span-2">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        value={walletSearchTerm}
+                        onChange={(e) => setWalletSearchTerm(e.target.value)}
+                        placeholder="Search user name or email..."
+                        className="pl-10 bg-muted border-border h-9"
+                      />
                     </div>
-                  ))}
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-card/60 border border-border rounded-xl p-4 text-center">
-                    <p className="text-sm text-muted-foreground">Total Debits</p>
-                    <p className="text-2xl font-semibold text-destructive mt-1">₹{walletStats ? fmt(walletStats.total_debits) : "—"}</p>
+                    {/* Transaction type */}
+                    <Select value={walletFilterType} onValueChange={setWalletFilterType}>
+                      <SelectTrigger className="bg-muted border-border h-9">
+                        <SelectValue placeholder="Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="recharge">Add Fund (Recharge)</SelectItem>
+                        <SelectItem value="consultation_debit">Service Deduct</SelectItem>
+                        <SelectItem value="consultation_credit">Commission Credit</SelectItem>
+                        <SelectItem value="bonus">Admin Bonus</SelectItem>
+                        <SelectItem value="refund">Refund</SelectItem>
+                        <SelectItem value="withdrawal">Withdrawal</SelectItem>
+                        <SelectItem value="ai_debit">AI Service</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Role */}
+                    <Select value={walletFilterRole} onValueChange={setWalletFilterRole}>
+                      <SelectTrigger className="bg-muted border-border h-9">
+                        <SelectValue placeholder="Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Roles</SelectItem>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="astrologer">Astrologer</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Date range */}
+                    <div className="grid grid-cols-2 gap-2 lg:col-span-1">
+                      <Input
+                        type="date"
+                        value={walletDateFrom}
+                        onChange={(e) => setWalletDateFrom(e.target.value)}
+                        placeholder="From"
+                        className="bg-muted border-border h-9 text-xs"
+                      />
+                      <Input
+                        type="date"
+                        value={walletDateTo}
+                        onChange={(e) => setWalletDateTo(e.target.value)}
+                        placeholder="To"
+                        className="bg-muted border-border h-9 text-xs"
+                      />
+                    </div>
                   </div>
-                  <div className="bg-card/60 border border-border rounded-xl p-4 text-center">
-                    <p className="text-sm text-muted-foreground">Total Credits</p>
-                    <p className="text-2xl font-semibold text-green-400 mt-1">₹{walletStats ? fmt(walletStats.total_credits) : "—"}</p>
+                  {(walletFilterType !== "all" || walletFilterRole !== "all" || walletSearchTerm || walletDateFrom || walletDateTo) && (
+                    <Button
+                      size="sm" variant="outline"
+                      onClick={() => {
+                        setWalletFilterType("all");
+                        setWalletFilterRole("all");
+                        setWalletSearchTerm("");
+                        setWalletDateFrom("");
+                        setWalletDateTo("");
+                      }}
+                      className="h-7 text-xs border-border"
+                    >
+                      <X className="w-3 h-3 mr-1" /> Clear filters
+                    </Button>
+                  )}
+                </div>
+
+                {/* Filtered summary */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-card/60 border border-green-500/30 rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Credits (filtered)</p>
+                    <p className="text-lg font-semibold text-green-400 mt-1">
+                      + ₹{fmt(walletSummary.total_credits)}
+                    </p>
+                  </div>
+                  <div className="bg-card/60 border border-destructive/30 rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Debits (filtered)</p>
+                    <p className="text-lg font-semibold text-destructive mt-1">
+                      − ₹{fmt(walletSummary.total_debits)}
+                    </p>
+                  </div>
+                  <div className={`bg-card/60 border rounded-xl p-3 ${walletSummary.net_flow >= 0 ? "border-primary/30" : "border-orange-500/30"}`}>
+                    <p className="text-xs text-muted-foreground">Net flow</p>
+                    <p className={`text-lg font-semibold mt-1 ${walletSummary.net_flow >= 0 ? "text-primary" : "text-orange-400"}`}>
+                      {walletSummary.net_flow >= 0 ? "+" : ""}₹{fmt(walletSummary.net_flow)}
+                    </p>
                   </div>
                 </div>
-                <div className="bg-card/60 border border-border rounded-xl p-4">
-                  <h3 className="text-sm font-semibold text-primary mb-3">Recent Transactions</h3>
-                  <div className="space-y-2">
-                    {transactions.map((t: any) => (
-                      <div key={t.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                        <div>
-                          <p className="text-sm text-foreground">{t.description || t.txn_type}</p>
-                          <p className="text-xs text-muted-foreground">{t.user_name} ({t.user_role}) • {t.created_at?.slice(0, 10)}</p>
-                        </div>
-                        <span className={`text-sm font-semibold ${t.txn_type?.includes("credit") || t.txn_type === "recharge" ? "text-green-400" : "text-destructive"}`}>
-                          {t.txn_type?.includes("credit") || t.txn_type === "recharge" ? "+" : "-"}₹{t.amount}
-                        </span>
-                      </div>
-                    ))}
+
+                {/* Statement table */}
+                <div className="bg-card/60 border border-border rounded-xl overflow-hidden">
+                  <div className="flex items-center justify-between p-3 border-b border-border bg-muted/20">
+                    <h3 className="text-sm font-semibold text-primary">
+                      Wallet Statement · {walletTotal} entries
+                    </h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/30">
+                          <th className="text-left p-3 text-muted-foreground font-medium">Date</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">User</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">Role</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">Type</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">Description</th>
+                          <th className="text-right p-3 text-muted-foreground font-medium">Amount</th>
+                          <th className="text-right p-3 text-muted-foreground font-medium hidden lg:table-cell">Balance After</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {transactions.length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="p-8 text-center text-muted-foreground text-sm">
+                              No transactions match the current filters.
+                            </td>
+                          </tr>
+                        )}
+                        {transactions.map((t: any) => {
+                          const isCredit = t.direction === "credit";
+                          const labelClass =
+                            t.txn_type === "recharge" ? "bg-green-500/20 text-green-400 border-green-500/30" :
+                            t.txn_type === "bonus" ? "bg-primary/20 text-primary border-primary/30" :
+                            t.txn_type === "consultation_credit" ? "bg-cosmic-light/20 text-cosmic-light border-cosmic-light/30" :
+                            t.txn_type === "refund" ? "bg-blue-500/20 text-blue-400 border-blue-500/30" :
+                            t.txn_type === "withdrawal" ? "bg-orange-500/20 text-orange-400 border-orange-500/30" :
+                            "bg-destructive/20 text-destructive border-destructive/30";
+                          return (
+                            <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted/10">
+                              <td className="p-3 text-muted-foreground text-xs whitespace-nowrap">
+                                {t.created_at?.slice(0, 16) || "—"}
+                              </td>
+                              <td className="p-3">
+                                <p className="text-foreground text-xs font-medium">{t.user_name || "—"}</p>
+                                <p className="text-[10px] text-muted-foreground">{t.user_email}</p>
+                              </td>
+                              <td className="p-3">
+                                <Badge
+                                  variant="outline"
+                                  className={`border-border text-[10px] capitalize ${
+                                    t.user_role === "astrologer" ? "text-primary border-primary/30" :
+                                    t.user_role === "admin" ? "text-yellow-400 border-yellow-500/30" :
+                                    "text-muted-foreground"
+                                  }`}
+                                >
+                                  {t.user_role}
+                                </Badge>
+                              </td>
+                              <td className="p-3">
+                                <Badge className={`text-[10px] border ${labelClass}`}>
+                                  {t.label}
+                                </Badge>
+                              </td>
+                              <td className="p-3 text-xs text-muted-foreground hidden md:table-cell max-w-[240px] truncate" title={t.description}>
+                                {t.description || "—"}
+                              </td>
+                              <td className={`p-3 text-right font-semibold whitespace-nowrap ${isCredit ? "text-green-400" : "text-destructive"}`}>
+                                {isCredit ? "+" : "−"}₹{fmt(t.amount)}
+                              </td>
+                              <td className="p-3 text-right text-primary text-xs hidden lg:table-cell whitespace-nowrap">
+                                ₹{fmt(t.balance_after)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
+
+                {/* Pagination */}
+                {walletTotal > WALLET_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {walletPage + 1} of {Math.max(1, Math.ceil(walletTotal / WALLET_PAGE_SIZE))}
+                      · Showing {transactions.length} of {walletTotal}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm" variant="outline"
+                        disabled={walletPage === 0}
+                        onClick={() => setWalletPage((p) => Math.max(0, p - 1))}
+                        className="h-8 border-border"
+                      >
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button
+                        size="sm" variant="outline"
+                        disabled={(walletPage + 1) * WALLET_PAGE_SIZE >= walletTotal}
+                        onClick={() => setWalletPage((p) => p + 1)}
+                        className="h-8 border-border"
+                      >
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
