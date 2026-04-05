@@ -18,6 +18,9 @@ import {
   fetchAgoraConfigs, createAgoraConfig, updateAgoraConfig,
   seedServicePricing, seedGiftPricing, seedOpen, updateServicePricing,
   adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
+  adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
+  adminBlockAstrologer, adminSetCommission,
+  adminListKyc, adminApproveKyc, adminRejectKyc,
   type WalletAction,
 } from "@/services/api";
 import {
@@ -39,7 +42,7 @@ function authHeaders() {
   };
 }
 
-type Tab = "overview" | "users" | "astrologers" | "wallet" | "pricing" | "agora" | "gifts" | "settings";
+type Tab = "overview" | "users" | "astrologers" | "kyc" | "wallet" | "pricing" | "agora" | "gifts" | "settings";
 
 const AdminPanel = () => {
   const { user, logout } = useAuth();
@@ -84,12 +87,55 @@ const AdminPanel = () => {
   const [userDetail, setUserDetail] = useState<any>(null);
   const [userDetailLoading, setUserDetailLoading] = useState(false);
 
+  // ── Astrologer Management state ──────────────────────────────────
+  const ASTRO_PAGE_SIZE = 10;
+  const [astroPage, setAstroPage] = useState(0);
+  const [astroTotal, setAstroTotal] = useState(0);
+  const [astroFilter, setAstroFilter] = useState<string>("all"); // all | pending | approved | online
+  const [astroSearch, setAstroSearch] = useState("");
+
+  // Astrologer wallet dialog (reuses same walletDialog pattern)
+  const [astroWalletDialog, setAstroWalletDialog] = useState<{
+    open: boolean; astro: any; action: WalletAction;
+  }>({ open: false, astro: null, action: "add_fund" });
+  const [astroWalletAmount, setAstroWalletAmount] = useState<string>("");
+  const [astroWalletReason, setAstroWalletReason] = useState<string>("");
+
+  // Commission dialog
+  const [commissionDialog, setCommissionDialog] = useState<{ open: boolean; astro: any }>({
+    open: false, astro: null,
+  });
+  const [commissionValue, setCommissionValue] = useState<string>("");
+
+  // Reject astrologer dialog
+  const [rejectDialog, setRejectDialog] = useState<{ open: boolean; astro: any }>({
+    open: false, astro: null,
+  });
+  const [rejectReason, setRejectReason] = useState<string>("");
+
+  // Astrologer detail dialog
+  const [astroDetail, setAstroDetail] = useState<any>(null);
+
+  // ── KYC Management state ─────────────────────────────────────────
+  const [kycDocs, setKycDocs] = useState<any[]>([]);
+  const [kycTotal, setKycTotal] = useState(0);
+  const [kycFilter, setKycFilter] = useState<string>("pending"); // all | pending | approved | rejected
+  const KYC_PAGE_SIZE = 15;
+  const [kycPage, setKycPage] = useState(0);
+
+  // KYC reject dialog
+  const [kycRejectDialog, setKycRejectDialog] = useState<{ open: boolean; kyc: any }>({
+    open: false, kyc: null,
+  });
+  const [kycRejectReason, setKycRejectReason] = useState<string>("");
+
   if (!user) { navigate("/auth"); return null; }
 
   const tabs = [
     { id: "overview" as Tab, icon: <BarChart3 className="w-5 h-5" />, label: "Overview" },
     { id: "users" as Tab, icon: <Users className="w-5 h-5" />, label: "Users" },
     { id: "astrologers" as Tab, icon: <Star className="w-5 h-5" />, label: "Astrologers" },
+    { id: "kyc" as Tab, icon: <Shield className="w-5 h-5" />, label: "KYC" },
     { id: "wallet" as Tab, icon: <Wallet className="w-5 h-5" />, label: "Wallet" },
     { id: "pricing" as Tab, icon: <DollarSign className="w-5 h-5" />, label: "Pricing" },
     { id: "gifts" as Tab, icon: <Gift className="w-5 h-5" />, label: "Gifts" },
@@ -120,8 +166,29 @@ const AdminPanel = () => {
         setUsersTotal(data.total || 0);
       }
       if (activeTab === "astrologers") {
-        const r = await fetch(`${BASE}/admin/astrologers?limit=100${searchQuery ? `&search=${searchQuery}` : ""}`, { headers: authHeaders() });
-        if (r.ok) { const d = await r.json(); setAstrologers(d.astrologers || []); }
+        const params: Record<string, any> = {
+          skip: astroPage * ASTRO_PAGE_SIZE,
+          limit: ASTRO_PAGE_SIZE,
+        };
+        if (astroSearch) params.search = astroSearch;
+        if (astroFilter === "approved") params.approved_only = true;
+        const { data } = await adminListAstrologers(params);
+        let list = data.astrologers || [];
+        // client-side filter for pending / online
+        if (astroFilter === "pending") list = list.filter((a: any) => !a.is_approved);
+        if (astroFilter === "online") list = list.filter((a: any) => a.is_online);
+        setAstrologers(list);
+        setAstroTotal(data.total || 0);
+      }
+      if (activeTab === "kyc") {
+        const params: Record<string, any> = {
+          skip: kycPage * KYC_PAGE_SIZE,
+          limit: KYC_PAGE_SIZE,
+        };
+        if (kycFilter !== "all") params.status = kycFilter;
+        const { data } = await adminListKyc(params);
+        setKycDocs(data.documents || []);
+        setKycTotal(data.total || 0);
       }
       if (activeTab === "wallet") {
         const r = await fetch(`${BASE}/admin/wallet-stats`, { headers: authHeaders() });
@@ -143,12 +210,15 @@ const AdminPanel = () => {
       }
     } catch (e) { console.error(e); }
     setLoading(false);
-  }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole]);
+  }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
+      astroPage, astroFilter, astroSearch, kycPage, kycFilter]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
   // Reset page to 0 when filters change
   useEffect(() => { setUserPage(0); }, [userFilterStatus, userFilterRole, searchQuery]);
+  useEffect(() => { setAstroPage(0); }, [astroFilter, astroSearch]);
+  useEffect(() => { setKycPage(0); }, [kycFilter]);
 
   const toggleUser = async (userId: string) => {
     await adminToggleUser(userId);
@@ -210,12 +280,92 @@ const AdminPanel = () => {
   };
 
   const approveAstrologer = async (profileId: string) => {
-    await fetch(`${BASE}/admin/astrologers/${profileId}/approve`, { method: "PATCH", headers: authHeaders() });
+    await adminApproveAstrologer(profileId);
     fetchData();
   };
 
   const blockAstrologer = async (profileId: string) => {
-    await fetch(`${BASE}/admin/astrologers/${profileId}/block`, { method: "PATCH", headers: authHeaders() });
+    await adminBlockAstrologer(profileId);
+    fetchData();
+  };
+
+  // ── Astrologer wallet dialog ─────────────────────────────────────
+  const openAstroWalletDialog = (astro: any, action: WalletAction) => {
+    setAstroWalletAmount("");
+    setAstroWalletReason("");
+    setAstroWalletDialog({ open: true, astro, action });
+  };
+  const closeAstroWalletDialog = () => {
+    setAstroWalletDialog({ open: false, astro: null, action: "add_fund" });
+    setAstroWalletAmount("");
+    setAstroWalletReason("");
+  };
+  const submitAstroWallet = async () => {
+    const amt = parseFloat(astroWalletAmount);
+    if (!astroWalletDialog.astro || isNaN(amt) || amt <= 0) {
+      alert("Enter a valid amount greater than 0"); return;
+    }
+    if (!astroWalletReason.trim()) {
+      alert("Reason is required (creates statement entry)"); return;
+    }
+    const { ok, data } = await adminAdjustWallet(
+      astroWalletDialog.astro.user_id,
+      astroWalletDialog.action,
+      amt,
+      astroWalletReason.trim(),
+    );
+    if (!ok) {
+      alert(data.detail || "Adjustment failed");
+      return;
+    }
+    closeAstroWalletDialog();
+    fetchData();
+  };
+
+  // ── Commission dialog ────────────────────────────────────────────
+  const openCommissionDialog = (astro: any) => {
+    setCommissionValue(String(astro.commission_pct || 30));
+    setCommissionDialog({ open: true, astro });
+  };
+  const submitCommission = async () => {
+    const pct = parseFloat(commissionValue);
+    if (isNaN(pct) || pct < 0 || pct > 100) {
+      alert("Commission must be between 0 and 100"); return;
+    }
+    await adminSetCommission(commissionDialog.astro.id, pct);
+    setCommissionDialog({ open: false, astro: null });
+    fetchData();
+  };
+
+  // ── Reject astrologer dialog ─────────────────────────────────────
+  const openRejectDialog = (astro: any) => {
+    setRejectReason("");
+    setRejectDialog({ open: true, astro });
+  };
+  const submitReject = async () => {
+    if (!rejectReason.trim()) { alert("Reason is required"); return; }
+    const { ok, data } = await adminRejectAstrologer(rejectDialog.astro.id, rejectReason.trim());
+    if (!ok) { alert(data.detail || "Reject failed"); return; }
+    setRejectDialog({ open: false, astro: null });
+    setRejectReason("");
+    fetchData();
+  };
+
+  // ── KYC actions ──────────────────────────────────────────────────
+  const approveKycDoc = async (kycId: string) => {
+    await adminApproveKyc(kycId);
+    fetchData();
+  };
+  const openKycRejectDialog = (kyc: any) => {
+    setKycRejectReason("");
+    setKycRejectDialog({ open: true, kyc });
+  };
+  const submitKycReject = async () => {
+    if (!kycRejectReason.trim()) { alert("Reason is required"); return; }
+    const { ok, data } = await adminRejectKyc(kycRejectDialog.kyc.id, kycRejectReason.trim());
+    if (!ok) { alert(data.detail || "Reject failed"); return; }
+    setKycRejectDialog({ open: false, kyc: null });
+    setKycRejectReason("");
     fetchData();
   };
 
@@ -641,35 +791,80 @@ const AdminPanel = () => {
             {/* ══════ ASTROLOGERS ══════ */}
             {activeTab === "astrologers" && (
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search astrologers..."
-                    className="pl-10 bg-muted border-border" onKeyDown={(e) => e.key === "Enter" && fetchData()} />
+                {/* Filters */}
+                <div className="flex flex-col md:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      value={astroSearch}
+                      onChange={(e) => setAstroSearch(e.target.value)}
+                      placeholder="Search by name or email..."
+                      className="pl-10 bg-muted border-border"
+                    />
+                  </div>
+                  <Select value={astroFilter} onValueChange={setAstroFilter}>
+                    <SelectTrigger className="w-full md:w-48 bg-muted border-border">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Astrologers</SelectItem>
+                      <SelectItem value="pending">Pending Approval</SelectItem>
+                      <SelectItem value="approved">Approved Only</SelectItem>
+                      <SelectItem value="online">Online Now</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Showing {astrologers.length} of {astroTotal} astrologers
+                  {astroFilter !== "all" && <> · Filter: <span className="text-primary">{astroFilter}</span></>}
+                </p>
+
+                {/* Pending approval banner */}
+                {astroFilter === "pending" && astrologers.length > 0 && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-yellow-400" />
+                    <p className="text-xs text-yellow-400">
+                      {astrologers.length} astrologer{astrologers.length > 1 ? "s" : ""} awaiting approval. Astrologer will receive a push notification.
+                    </p>
+                  </div>
+                )}
+
+                {/* Astrologer cards */}
                 <div className="grid md:grid-cols-2 gap-4">
+                  {astrologers.length === 0 && (
+                    <div className="col-span-2 p-8 text-center text-muted-foreground bg-card/60 border border-border rounded-xl">
+                      No astrologers found for this filter.
+                    </div>
+                  )}
                   {astrologers.map((a: any) => (
-                    <div key={a.id} className="bg-card/60 border border-border rounded-xl p-4">
-                      <div className="flex items-center gap-3">
+                    <div key={a.id} className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
+                      {/* Header */}
+                      <div className="flex items-start gap-3">
                         <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl">🔮</div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-foreground truncate">{a.display_name}</h4>
+                          <h4 className="font-semibold text-foreground truncate">{a.display_name || "—"}</h4>
                           <p className="text-xs text-muted-foreground truncate">{a.email}</p>
-                          <p className="text-xs text-primary">{(a.specializations || []).join(", ")}</p>
+                          {a.phone && <p className="text-xs text-muted-foreground truncate">{a.phone}</p>}
+                          <p className="text-xs text-primary truncate">{(a.specializations || []).join(", ") || "No specialization"}</p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <Badge className={a.is_approved ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}>
                             {a.is_approved ? "Approved" : "Pending"}
                           </Badge>
                           {a.is_online && <Badge className="bg-green-500/20 text-green-400 text-[10px]">Online</Badge>}
+                          {!a.is_active && <Badge className="bg-destructive/20 text-destructive text-[10px]">Blocked</Badge>}
                         </div>
                       </div>
-                      <div className="grid grid-cols-4 gap-2 mt-3 text-center">
+
+                      {/* Stats grid */}
+                      <div className="grid grid-cols-4 gap-2 text-center">
                         <div className="bg-muted rounded-lg p-2">
-                          <p className="text-sm font-semibold text-foreground">⭐ {a.rating}</p>
+                          <p className="text-sm font-semibold text-foreground">⭐ {a.rating || 0}</p>
                           <p className="text-[10px] text-muted-foreground">Rating</p>
                         </div>
                         <div className="bg-muted rounded-lg p-2">
-                          <p className="text-sm font-semibold text-foreground">{a.total_consultations}</p>
+                          <p className="text-sm font-semibold text-foreground">{a.total_consultations || 0}</p>
                           <p className="text-[10px] text-muted-foreground">Sessions</p>
                         </div>
                         <div className="bg-muted rounded-lg p-2">
@@ -681,27 +876,459 @@ const AdminPanel = () => {
                           <p className="text-[10px] text-muted-foreground">Wallet</p>
                         </div>
                       </div>
-                      <div className="grid grid-cols-3 gap-1 mt-2 text-center text-[10px] text-muted-foreground">
-                        <span><MessageCircle className="w-3 h-3 inline" /> ₹{a.rate_per_min_chat}/m</span>
-                        <span><Phone className="w-3 h-3 inline" /> ₹{a.rate_per_min_call}/m</span>
-                        <span><Video className="w-3 h-3 inline" /> ₹{a.rate_per_min_video}/m</span>
+
+                      {/* Rates */}
+                      <div className="grid grid-cols-3 gap-1 text-center text-[10px] text-muted-foreground bg-muted/30 rounded-lg p-2">
+                        <span><MessageCircle className="w-3 h-3 inline" /> ₹{a.rate_per_min_chat}/m Chat</span>
+                        <span><Phone className="w-3 h-3 inline" /> ₹{a.rate_per_min_call}/m Call</span>
+                        <span><Video className="w-3 h-3 inline" /> ₹{a.rate_per_min_video}/m Video</span>
                       </div>
-                      <div className="flex gap-2 mt-3">
-                        {!a.is_approved && (
-                          <Button size="sm" className="flex-1 gradient-gold text-primary-foreground text-xs" onClick={() => approveAstrologer(a.id)}>
-                            <CheckCircle className="w-3 h-3 mr-1" /> Approve
-                          </Button>
+
+                      {/* Primary action row: Approve/Reject (pending) or View/Commission */}
+                      <div className="flex gap-2">
+                        {!a.is_approved ? (
+                          <>
+                            <Button
+                              size="sm"
+                              className="flex-1 gradient-gold text-primary-foreground text-xs"
+                              onClick={() => approveAstrologer(a.id)}
+                              title="Approve (sends FCM notification)"
+                            >
+                              <CheckCircle className="w-3 h-3 mr-1" /> Approve
+                            </Button>
+                            <Button
+                              size="sm" variant="outline"
+                              className="flex-1 border-destructive text-destructive text-xs hover:bg-destructive/10"
+                              onClick={() => openRejectDialog(a)}
+                              title="Reject with reason (sends FCM notification)"
+                            >
+                              <X className="w-3 h-3 mr-1" /> Reject
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              size="sm" variant="outline"
+                              className="flex-1 border-border text-xs"
+                              onClick={() => setAstroDetail(a)}
+                            >
+                              <Eye className="w-3 h-3 mr-1" /> View
+                            </Button>
+                            <Button
+                              size="sm" variant="outline"
+                              className="flex-1 border-primary text-primary text-xs hover:bg-primary/10"
+                              onClick={() => openCommissionDialog(a)}
+                            >
+                              <Pencil className="w-3 h-3 mr-1" /> Commission
+                            </Button>
+                          </>
                         )}
-                        <Button size="sm" variant="outline" onClick={() => blockAstrologer(a.id)}
-                          className={`flex-1 text-xs ${a.is_active ? "border-destructive text-destructive" : "border-green-500 text-green-400"}`}>
-                          {a.is_active ? <><Ban className="w-3 h-3 mr-1" />Block</> : <><CheckCircle className="w-3 h-3 mr-1" />Unblock</>}
+                      </div>
+
+                      {/* Secondary actions: wallet controls + block */}
+                      <div className="grid grid-cols-4 gap-1">
+                        <Button
+                          size="sm" variant="outline"
+                          onClick={() => openAstroWalletDialog(a, "add_fund")}
+                          className="h-7 text-[11px] border-green-500/50 text-green-400 hover:bg-green-500/10"
+                          title="Add funds"
+                        >
+                          <PlusCircle className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm" variant="outline"
+                          onClick={() => openAstroWalletDialog(a, "remove_fund")}
+                          className="h-7 text-[11px] border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
+                          title="Remove funds"
+                        >
+                          <MinusCircle className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm" variant="outline"
+                          onClick={() => openAstroWalletDialog(a, "bonus")}
+                          className="h-7 text-[11px] border-primary/50 text-primary hover:bg-primary/10"
+                          title="Bonus"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm" variant="outline"
+                          onClick={() => blockAstrologer(a.id)}
+                          className={`h-7 text-[11px] ${a.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
+                          title={a.is_active ? "Block" : "Unblock"}
+                        >
+                          {a.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
                         </Button>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                {/* Pagination */}
+                {astroTotal > ASTRO_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {astroPage + 1} of {Math.max(1, Math.ceil(astroTotal / ASTRO_PAGE_SIZE))}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" disabled={astroPage === 0}
+                        onClick={() => setAstroPage((p) => Math.max(0, p - 1))}
+                        className="h-8 border-border">
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button size="sm" variant="outline"
+                        disabled={(astroPage + 1) * ASTRO_PAGE_SIZE >= astroTotal}
+                        onClick={() => setAstroPage((p) => p + 1)}
+                        className="h-8 border-border">
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
+            {/* ══════ KYC MANAGEMENT ══════ */}
+            {activeTab === "kyc" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-display text-gold-gradient">KYC Verification</h2>
+                  <Select value={kycFilter} onValueChange={setKycFilter}>
+                    <SelectTrigger className="w-48 bg-muted border-border">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <p className="text-xs text-muted-foreground">{kycTotal} total KYC documents</p>
+
+                {kycDocs.length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground bg-card/60 border border-border rounded-xl">
+                    No KYC documents for this filter.
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {kycDocs.map((k: any) => (
+                    <div key={k.id} className="bg-card/60 border border-border rounded-xl p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <FileText className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h4 className="font-semibold text-foreground truncate">{k.user_name || "—"}</h4>
+                              <Badge variant="outline" className="border-border text-xs capitalize">{k.user_role}</Badge>
+                              <Badge className={
+                                k.status === "approved" ? "bg-green-500/20 text-green-400" :
+                                k.status === "rejected" ? "bg-destructive/20 text-destructive" :
+                                "bg-yellow-500/20 text-yellow-400"
+                              }>
+                                {k.status}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">{k.user_email}</p>
+                            <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+                              <span>Doc: <span className="text-foreground capitalize">{k.doc_type}</span></span>
+                              {k.doc_number && <span>#{k.doc_number}</span>}
+                              <span>{k.created_at?.slice(0, 16)}</span>
+                            </div>
+                            {k.rejection_reason && (
+                              <p className="text-xs text-destructive mt-1">Rejected: {k.rejection_reason}</p>
+                            )}
+                            {/* Document images */}
+                            <div className="flex gap-2 mt-2 flex-wrap">
+                              {k.front_url && (
+                                <a href={k.front_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Front ↗</a>
+                              )}
+                              {k.back_url && (
+                                <a href={k.back_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Back ↗</a>
+                              )}
+                              {k.selfie_url && (
+                                <a href={k.selfie_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Selfie ↗</a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {k.status === "pending" && (
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              className="gradient-gold text-primary-foreground h-8 text-xs"
+                              onClick={() => approveKycDoc(k.id)}
+                            >
+                              <CheckCircle className="w-3 h-3 mr-1" /> Approve
+                            </Button>
+                            <Button
+                              size="sm" variant="outline"
+                              className="border-destructive text-destructive h-8 text-xs hover:bg-destructive/10"
+                              onClick={() => openKycRejectDialog(k)}
+                            >
+                              <X className="w-3 h-3 mr-1" /> Reject
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* KYC pagination */}
+                {kycTotal > KYC_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {kycPage + 1} of {Math.max(1, Math.ceil(kycTotal / KYC_PAGE_SIZE))}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" disabled={kycPage === 0}
+                        onClick={() => setKycPage((p) => Math.max(0, p - 1))} className="h-8 border-border">
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button size="sm" variant="outline"
+                        disabled={(kycPage + 1) * KYC_PAGE_SIZE >= kycTotal}
+                        onClick={() => setKycPage((p) => p + 1)} className="h-8 border-border">
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ══════ Astrologer Wallet Dialog ══════ */}
+            <Dialog open={astroWalletDialog.open} onOpenChange={(v) => !v && closeAstroWalletDialog()}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    {astroWalletDialog.action === "add_fund" && <><PlusCircle className="w-5 h-5 text-green-400" /> Add to Astrologer Wallet</>}
+                    {astroWalletDialog.action === "remove_fund" && <><MinusCircle className="w-5 h-5 text-orange-400" /> Remove from Astrologer Wallet</>}
+                    {astroWalletDialog.action === "bonus" && <><Sparkles className="w-5 h-5 text-primary" /> Bonus to Astrologer</>}
+                  </DialogTitle>
+                </DialogHeader>
+                {astroWalletDialog.astro && (
+                  <div className="space-y-4 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                      <p className="text-sm text-foreground font-medium">🔮 {astroWalletDialog.astro.display_name}</p>
+                      <p className="text-xs text-muted-foreground">{astroWalletDialog.astro.email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Current balance: <span className="text-primary font-semibold">₹{astroWalletDialog.astro.wallet_balance}</span>
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Amount (₹)</Label>
+                      <Input
+                        type="number" min="0" step="0.01"
+                        value={astroWalletAmount}
+                        onChange={(e) => setAstroWalletAmount(e.target.value)}
+                        placeholder="Enter amount"
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Reason (creates statement)</Label>
+                      <Textarea
+                        value={astroWalletReason}
+                        onChange={(e) => setAstroWalletReason(e.target.value)}
+                        placeholder="Reason for this adjustment..."
+                        className="bg-muted border-border mt-1 min-h-[80px]"
+                      />
+                    </div>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={closeAstroWalletDialog}>Cancel</Button>
+                  <Button onClick={submitAstroWallet} className="gradient-gold text-primary-foreground">
+                    Confirm
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ Commission Dialog ══════ */}
+            <Dialog open={commissionDialog.open} onOpenChange={(v) => !v && setCommissionDialog({ open: false, astro: null })}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Pencil className="w-5 h-5 text-primary" /> Set Commission
+                  </DialogTitle>
+                </DialogHeader>
+                {commissionDialog.astro && (
+                  <div className="space-y-4 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                      <p className="text-sm text-foreground font-medium">🔮 {commissionDialog.astro.display_name}</p>
+                      <p className="text-xs text-muted-foreground">{commissionDialog.astro.email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Current commission: <span className="text-primary font-semibold">{commissionDialog.astro.commission_pct}%</span>
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">New Commission (%)</Label>
+                      <Input
+                        type="number" min="0" max="100" step="0.01"
+                        value={commissionValue}
+                        onChange={(e) => setCommissionValue(e.target.value)}
+                        placeholder="0-100"
+                        className="bg-muted border-border mt-1"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Platform takes this % from every consultation. Astrologer keeps the rest.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setCommissionDialog({ open: false, astro: null })}>Cancel</Button>
+                  <Button onClick={submitCommission} className="gradient-gold text-primary-foreground">
+                    Update Commission
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ Reject Astrologer Dialog ══════ */}
+            <Dialog open={rejectDialog.open} onOpenChange={(v) => !v && setRejectDialog({ open: false, astro: null })}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-destructive">
+                    <X className="w-5 h-5" /> Reject Astrologer Application
+                  </DialogTitle>
+                </DialogHeader>
+                {rejectDialog.astro && (
+                  <div className="space-y-4 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                      <p className="text-sm text-foreground font-medium">🔮 {rejectDialog.astro.display_name}</p>
+                      <p className="text-xs text-muted-foreground">{rejectDialog.astro.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Rejection Reason (sent via FCM)</Label>
+                      <Textarea
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                        placeholder="e.g. Incomplete profile, unclear certificate, invalid documents..."
+                        className="bg-muted border-border mt-1 min-h-[100px]"
+                      />
+                    </div>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setRejectDialog({ open: false, astro: null })}>Cancel</Button>
+                  <Button onClick={submitReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Reject & Notify
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ KYC Reject Dialog ══════ */}
+            <Dialog open={kycRejectDialog.open} onOpenChange={(v) => !v && setKycRejectDialog({ open: false, kyc: null })}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-destructive">
+                    <X className="w-5 h-5" /> Reject KYC Document
+                  </DialogTitle>
+                </DialogHeader>
+                {kycRejectDialog.kyc && (
+                  <div className="space-y-4 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                      <p className="text-sm text-foreground font-medium">{kycRejectDialog.kyc.user_name}</p>
+                      <p className="text-xs text-muted-foreground">{kycRejectDialog.kyc.user_email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Doc: <span className="text-foreground capitalize">{kycRejectDialog.kyc.doc_type}</span>
+                        {kycRejectDialog.kyc.doc_number && <> · #{kycRejectDialog.kyc.doc_number}</>}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Rejection Reason (sent via FCM)</Label>
+                      <Textarea
+                        value={kycRejectReason}
+                        onChange={(e) => setKycRejectReason(e.target.value)}
+                        placeholder="e.g. Document is blurry, doesn't match name, expired..."
+                        className="bg-muted border-border mt-1 min-h-[100px]"
+                      />
+                    </div>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setKycRejectDialog({ open: false, kyc: null })}>Cancel</Button>
+                  <Button onClick={submitKycReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Reject & Notify
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ Astrologer Detail Dialog ══════ */}
+            <Dialog open={astroDetail !== null} onOpenChange={(v) => !v && setAstroDetail(null)}>
+              <DialogContent className="bg-card border-border max-w-2xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-primary" /> Astrologer Details
+                  </DialogTitle>
+                </DialogHeader>
+                {astroDetail && (
+                  <div className="space-y-3 py-2 text-sm">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div><span className="text-muted-foreground">Name:</span> <span className="text-foreground">{astroDetail.display_name}</span></div>
+                      <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{astroDetail.email}</span></div>
+                      <div><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{astroDetail.phone || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Experience:</span> <span className="text-foreground">{astroDetail.experience_years} yrs</span></div>
+                      <div><span className="text-muted-foreground">Qualification:</span> <span className="text-foreground">{astroDetail.qualification || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Commission:</span> <span className="text-primary font-semibold">{astroDetail.commission_pct}%</span></div>
+                      <div><span className="text-muted-foreground">Rating:</span> <span className="text-foreground">⭐ {astroDetail.rating}</span></div>
+                      <div><span className="text-muted-foreground">Reviews:</span> <span className="text-foreground">{astroDetail.total_reviews}</span></div>
+                      <div><span className="text-muted-foreground">Sessions:</span> <span className="text-foreground">{astroDetail.total_consultations}</span></div>
+                      <div><span className="text-muted-foreground">Minutes:</span> <span className="text-foreground">{astroDetail.total_minutes}</span></div>
+                      <div><span className="text-muted-foreground">Wallet:</span> <span className="text-primary font-semibold">₹{astroDetail.wallet_balance}</span></div>
+                      <div><span className="text-muted-foreground">Status:</span>
+                        <Badge className={`ml-2 ${astroDetail.is_approved ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}`}>
+                          {astroDetail.is_approved ? "Approved" : "Pending"}
+                        </Badge>
+                      </div>
+                    </div>
+                    {astroDetail.bio && (
+                      <div>
+                        <p className="text-muted-foreground text-xs mb-1">Bio</p>
+                        <p className="text-foreground text-xs bg-muted/30 rounded-lg p-3 border border-border">{astroDetail.bio}</p>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-muted rounded-lg p-2 text-center">
+                        <p className="text-[10px] text-muted-foreground">Chat</p>
+                        <p className="text-sm font-semibold text-foreground">₹{astroDetail.rate_per_min_chat}/m</p>
+                      </div>
+                      <div className="bg-muted rounded-lg p-2 text-center">
+                        <p className="text-[10px] text-muted-foreground">Call</p>
+                        <p className="text-sm font-semibold text-foreground">₹{astroDetail.rate_per_min_call}/m</p>
+                      </div>
+                      <div className="bg-muted rounded-lg p-2 text-center">
+                        <p className="text-[10px] text-muted-foreground">Video</p>
+                        <p className="text-sm font-semibold text-foreground">₹{astroDetail.rate_per_min_video}/m</p>
+                      </div>
+                    </div>
+                    {(astroDetail.languages || []).length > 0 && (
+                      <div>
+                        <p className="text-muted-foreground text-xs mb-1">Languages</p>
+                        <div className="flex flex-wrap gap-1">
+                          {astroDetail.languages.map((l: string) => (
+                            <Badge key={l} variant="outline" className="border-border text-xs">{l}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAstroDetail(null)}>Close</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             {/* ══════ WALLET ══════ */}
             {activeTab === "wallet" && (

@@ -49,6 +49,7 @@ from app.core.dependencies import require_role
 from app.core.security import (
     verify_password, create_access_token, create_refresh_token,
 )
+from app.services.fcm_service import notify_generic
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
@@ -91,6 +92,10 @@ class WalletAdjustRequest(BaseModel):
     reason: str = Field(..., min_length=1, max_length=255)
 
 class KycRejectRequest(BaseModel):
+    reason: str = Field(..., min_length=1, max_length=500)
+
+
+class AstrologerRejectRequest(BaseModel):
     reason: str = Field(..., min_length=1, max_length=500)
 
 
@@ -448,12 +453,50 @@ def approve_astrologer(
         raise HTTPException(status_code=404, detail="Profile not found")
     profile.is_approved = True
     profile.approved_at = datetime.utcnow()
-    # also approve user profile
     user = db.query(User).filter(User.id == profile.user_id).first()
     if user:
         user.profile_approved = True
     db.commit()
-    return {"id": profile.id, "is_approved": True, "message": "Astrologer approved"}
+
+    # FCM push to astrologer
+    if user and user.fcm_token:
+        notify_generic(
+            fcm_token=user.fcm_token,
+            title="Profile Approved ✅",
+            body="Congratulations! Your astrologer profile has been approved. You can now go online and start consultations.",
+            role="astrologer",
+            data={"type": "profile_approved", "profile_id": profile.id},
+        )
+    return {"id": profile.id, "is_approved": True, "message": "Astrologer approved & notified"}
+
+
+@router.patch("/astrologers/{profile_id}/reject")
+def reject_astrologer(
+    profile_id: str,
+    req: AstrologerRejectRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Reject astrologer application with reason + FCM notification."""
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    profile.is_approved = False
+    profile.is_online = False
+    user = db.query(User).filter(User.id == profile.user_id).first()
+    if user:
+        user.profile_approved = False
+    db.commit()
+
+    if user and user.fcm_token:
+        notify_generic(
+            fcm_token=user.fcm_token,
+            title="Profile Rejected ❌",
+            body=f"Your profile was rejected. Reason: {req.reason}",
+            role="astrologer",
+            data={"type": "profile_rejected", "profile_id": profile.id, "reason": req.reason},
+        )
+    return {"id": profile.id, "is_approved": False, "reason": req.reason, "message": "Astrologer rejected & notified"}
 
 
 @router.patch("/astrologers/{profile_id}/block")
@@ -470,6 +513,16 @@ def block_astrologer(
         user.is_active = not user.is_active
     profile.is_online = False
     db.commit()
+
+    if user and user.fcm_token:
+        status_msg = "unblocked" if user.is_active else "blocked"
+        notify_generic(
+            fcm_token=user.fcm_token,
+            title=f"Account {status_msg.title()}",
+            body=f"Your account has been {status_msg} by admin.",
+            role="astrologer",
+            data={"type": f"account_{status_msg}", "profile_id": profile.id},
+        )
     return {"id": profile.id, "is_active": user.is_active if user else False}
 
 
@@ -694,13 +747,21 @@ def approve_kyc(
     kyc.reviewed_by = current_user.id
     kyc.reviewed_at = datetime.utcnow()
     kyc.rejection_reason = None
-    # auto-verify & approve user profile
     user = db.query(User).filter(User.id == kyc.user_id).first()
     if user:
         user.is_verified = True
         user.profile_approved = True
     db.commit()
-    return {"id": kyc.id, "status": "approved", "message": "KYC approved — user verified"}
+
+    if user and user.fcm_token:
+        notify_generic(
+            fcm_token=user.fcm_token,
+            title="KYC Approved ✅",
+            body=f"Your KYC document ({kyc.doc_type}) has been approved. Your account is now fully verified.",
+            role=user.role if user.role in ("user", "astrologer") else "user",
+            data={"type": "kyc_approved", "kyc_id": kyc.id},
+        )
+    return {"id": kyc.id, "status": "approved", "message": "KYC approved — user verified & notified"}
 
 
 @router.patch("/kyc/{kyc_id}/reject")
@@ -718,4 +779,14 @@ def reject_kyc(
     kyc.reviewed_by = current_user.id
     kyc.reviewed_at = datetime.utcnow()
     db.commit()
-    return {"id": kyc.id, "status": "rejected", "reason": req.reason, "message": "KYC rejected"}
+
+    user = db.query(User).filter(User.id == kyc.user_id).first()
+    if user and user.fcm_token:
+        notify_generic(
+            fcm_token=user.fcm_token,
+            title="KYC Rejected ❌",
+            body=f"Your KYC was rejected. Reason: {req.reason}. Please re-submit with correct documents.",
+            role=user.role if user.role in ("user", "astrologer") else "user",
+            data={"type": "kyc_rejected", "kyc_id": kyc.id, "reason": req.reason},
+        )
+    return {"id": kyc.id, "status": "rejected", "reason": req.reason, "message": "KYC rejected & user notified"}
