@@ -1,6 +1,9 @@
 """
 Admin Router — Full Platform Management
 =========================================
+Auth:
+  POST /login                          — admin-only login
+
 Stats:
   GET  /stats                          — dashboard KPIs
 
@@ -39,14 +42,17 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query, Body
 from sqlalchemy.orm import Session
 from sqlalchemy import func as sqlfunc
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 from app.core.database import get_db
 from app.core.dependencies import require_role
+from app.core.security import (
+    verify_password, create_access_token, create_refresh_token,
+)
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
-    KycDocument,
+    KycDocument, RefreshToken,
 )
 
 router = APIRouter()
@@ -85,6 +91,64 @@ class WalletAdjustRequest(BaseModel):
 
 class KycRejectRequest(BaseModel):
     reason: str = Field(..., min_length=1, max_length=500)
+
+
+class AdminLoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class AdminUserResponse(BaseModel):
+    id: str
+    email: str
+    name: Optional[str] = None
+    role: str
+    is_active: bool
+    wallet_balance: float = 0.0
+
+
+class AdminTokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    user: AdminUserResponse
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  AUTH — Admin-only login
+# ══════════════════════════════════════════════════════════════════════
+
+@router.post("/login", response_model=AdminTokenResponse)
+def admin_login(req: AdminLoginRequest, db: Session = Depends(get_db)):
+    """Admin-only login. Rejects non-admin accounts."""
+    user = db.query(User).filter(User.email == req.email).first()
+    if not user or not user.password_hash or not verify_password(req.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="This account is not an admin")
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Account is deactivated")
+
+    user.last_login_at = datetime.utcnow()
+
+    access = create_access_token(user.id, user.role)
+    raw_refresh, token_hash, expires_at = create_refresh_token(user.id)
+    db.add(RefreshToken(user_id=user.id, token_hash=token_hash, expires_at=expires_at))
+    db.commit()
+
+    wallet = db.query(Wallet).filter(Wallet.user_id == user.id).first()
+    return AdminTokenResponse(
+        access_token=access,
+        refresh_token=raw_refresh,
+        user=AdminUserResponse(
+            id=user.id,
+            email=user.email,
+            name=user.name,
+            role=user.role,
+            is_active=user.is_active,
+            wallet_balance=float(wallet.balance) if wallet else 0.0,
+        ),
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════
