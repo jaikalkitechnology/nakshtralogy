@@ -8,10 +8,10 @@ import { Switch } from "@/components/ui/switch";
 import StarField from "@/components/StarField";
 import {
   Users, Star, Wallet, Settings, LogOut, Search, BarChart3,
-  Shield, Ban, CheckCircle, DollarSign, TrendingUp, Eye,
+  Shield, Ban, CheckCircle, DollarSign, TrendingUp, Eye, EyeOff,
   Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle,
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
-  FileText, Mail, Filter, Trash2,
+  FileText, Mail, Filter, Trash2, MessageSquare,
 } from "lucide-react";
 import {
   fetchAstrologers, fetchServicePricing, fetchGiftPricing,
@@ -24,6 +24,7 @@ import {
   adminBlockAstrologer, adminSetCommission,
   adminListKyc, adminApproveKyc, adminRejectKyc,
   adminListTransactions,
+  adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
   type WalletAction,
 } from "@/services/api";
 import {
@@ -45,7 +46,7 @@ function authHeaders() {
   };
 }
 
-type Tab = "overview" | "users" | "astrologers" | "kyc" | "wallet" | "pricing" | "agora" | "gifts" | "settings";
+type Tab = "overview" | "users" | "astrologers" | "reviews" | "kyc" | "wallet" | "pricing" | "agora" | "gifts" | "settings";
 
 const AdminPanel = () => {
   const { user, logout } = useAuth();
@@ -145,6 +146,28 @@ const AdminPanel = () => {
   });
   const [kycRejectReason, setKycRejectReason] = useState<string>("");
 
+  // ── Reviews Management state ─────────────────────────────────────
+  const REVIEWS_PAGE_SIZE = 15;
+  const [reviewsList, setReviewsList] = useState<any[]>([]);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
+  const [reviewsPage, setReviewsPage] = useState(0);
+  const [reviewsAverage, setReviewsAverage] = useState<number>(0);
+  const [reviewsDistribution, setReviewsDistribution] = useState<Record<string, number>>({
+    "1": 0, "2": 0, "3": 0, "4": 0, "5": 0,
+  });
+  const [reviewsFilterRating, setReviewsFilterRating] = useState<string>("all");
+  const [reviewsFilterVisibility, setReviewsFilterVisibility] = useState<string>("all");
+  const [reviewsSearch, setReviewsSearch] = useState("");
+  const [reviewsDateFrom, setReviewsDateFrom] = useState("");
+  const [reviewsDateTo, setReviewsDateTo] = useState("");
+
+  const [reviewEditDialog, setReviewEditDialog] = useState<{ open: boolean; review: any }>({
+    open: false, review: null,
+  });
+  const [reviewEditForm, setReviewEditForm] = useState<any>({
+    rating: 5, comment: "", is_visible: true,
+  });
+
   // ── Pricing Management state ─────────────────────────────────────
   const PRICING_PAGE_SIZE = 10;
   const [pricingPage, setPricingPage] = useState(0);
@@ -193,6 +216,7 @@ const AdminPanel = () => {
     { id: "overview" as Tab, icon: <BarChart3 className="w-5 h-5" />, label: "Overview" },
     { id: "users" as Tab, icon: <Users className="w-5 h-5" />, label: "Users" },
     { id: "astrologers" as Tab, icon: <Star className="w-5 h-5" />, label: "Astrologers" },
+    { id: "reviews" as Tab, icon: <MessageSquare className="w-5 h-5" />, label: "Reviews" },
     { id: "kyc" as Tab, icon: <Shield className="w-5 h-5" />, label: "KYC" },
     { id: "wallet" as Tab, icon: <Wallet className="w-5 h-5" />, label: "Wallet" },
     { id: "pricing" as Tab, icon: <DollarSign className="w-5 h-5" />, label: "Pricing" },
@@ -247,6 +271,22 @@ const AdminPanel = () => {
         const { data } = await adminListKyc(params);
         setKycDocs(data.documents || []);
         setKycTotal(data.total || 0);
+      }
+      if (activeTab === "reviews") {
+        const params: Record<string, any> = {
+          skip: reviewsPage * REVIEWS_PAGE_SIZE,
+          limit: REVIEWS_PAGE_SIZE,
+        };
+        if (reviewsFilterRating !== "all") params.rating = Number(reviewsFilterRating);
+        if (reviewsFilterVisibility !== "all") params.visibility = reviewsFilterVisibility;
+        if (reviewsSearch) params.search = reviewsSearch;
+        if (reviewsDateFrom) params.date_from = reviewsDateFrom;
+        if (reviewsDateTo) params.date_to = reviewsDateTo;
+        const { data } = await adminListReviews(params);
+        setReviewsList(data.reviews || []);
+        setReviewsTotal(data.total || 0);
+        setReviewsAverage(data.average_rating || 0);
+        setReviewsDistribution(data.distribution || { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 });
       }
       if (activeTab === "wallet") {
         // totals card (all-time)
@@ -311,7 +351,9 @@ const AdminPanel = () => {
       walletPage, walletFilterType, walletFilterRole, walletSearchTerm,
       walletDateFrom, walletDateTo,
       pricingFilterCategory, pricingFilterStatus, pricingSearch,
-      giftsFilterStatus, giftsSearch]);
+      giftsFilterStatus, giftsSearch,
+      reviewsPage, reviewsFilterRating, reviewsFilterVisibility,
+      reviewsSearch, reviewsDateFrom, reviewsDateTo]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -323,6 +365,8 @@ const AdminPanel = () => {
     [walletFilterType, walletFilterRole, walletSearchTerm, walletDateFrom, walletDateTo]);
   useEffect(() => { setPricingPage(0); }, [pricingFilterCategory, pricingFilterStatus, pricingSearch]);
   useEffect(() => { setGiftsPage(0); }, [giftsFilterStatus, giftsSearch]);
+  useEffect(() => { setReviewsPage(0); },
+    [reviewsFilterRating, reviewsFilterVisibility, reviewsSearch, reviewsDateFrom, reviewsDateTo]);
 
   const toggleUser = async (userId: string) => {
     await adminToggleUser(userId);
@@ -654,6 +698,51 @@ const AdminPanel = () => {
     const { ok, data } = await deleteAgoraConfig(c.id);
     if (!ok) { alert(data.detail || "Delete failed"); return; }
     fetchData();
+  };
+
+  // ── Review handlers ──────────────────────────────────────────────
+  const openReviewEdit = (r: any) => {
+    setReviewEditForm({
+      rating: r.rating,
+      comment: r.comment || "",
+      is_visible: r.is_visible,
+    });
+    setReviewEditDialog({ open: true, review: r });
+  };
+  const submitReviewEdit = async () => {
+    if (!reviewEditDialog.review) return;
+    const rating = Number(reviewEditForm.rating);
+    if (!rating || rating < 1 || rating > 5) {
+      alert("Rating must be between 1 and 5"); return;
+    }
+    const payload: any = {
+      rating,
+      comment: reviewEditForm.comment || null,
+      is_visible: !!reviewEditForm.is_visible,
+    };
+    const { ok, data } = await adminEditReview(reviewEditDialog.review.id, payload);
+    if (!ok) { alert(data.detail || "Save failed"); return; }
+    setReviewEditDialog({ open: false, review: null });
+    fetchData();
+  };
+  const toggleReviewVisibility = async (r: any) => {
+    const { ok, data } = await adminToggleReviewVisibility(r.id);
+    if (!ok) { alert(data.detail || "Toggle failed"); return; }
+    fetchData();
+  };
+  const deleteReview = async (r: any) => {
+    if (!confirm(`Delete this ${r.rating}-star review by ${r.user_name || "user"}? This cannot be undone.`)) return;
+    const { ok, data } = await adminDeleteReview(r.id);
+    if (!ok) { alert(data.detail || "Delete failed"); return; }
+    fetchData();
+  };
+
+  const clearReviewsFilters = () => {
+    setReviewsFilterRating("all");
+    setReviewsFilterVisibility("all");
+    setReviewsSearch("");
+    setReviewsDateFrom("");
+    setReviewsDateTo("");
   };
 
   const fmt = (n: number) => new Intl.NumberFormat("en-IN").format(n);
@@ -1361,6 +1450,271 @@ const AdminPanel = () => {
                 )}
               </div>
             )}
+
+            {/* ══════ REVIEWS & RATINGS ══════ */}
+            {activeTab === "reviews" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-display text-gold-gradient">Reviews & Ratings</h2>
+                </div>
+
+                {/* Summary cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-card/60 border border-border rounded-xl p-3 glow-gold">
+                    <p className="text-xs text-muted-foreground">Average Rating</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-2xl font-display text-gold-gradient">{reviewsAverage.toFixed(2)}</span>
+                      <Star className="w-4 h-4 text-primary fill-primary" />
+                    </div>
+                  </div>
+                  <div className="bg-card/60 border border-border rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Total Reviews</p>
+                    <p className="text-2xl font-display text-foreground mt-1">{reviewsTotal}</p>
+                  </div>
+                  <div className="bg-card/60 border border-border rounded-xl p-3 col-span-2">
+                    <p className="text-xs text-muted-foreground mb-2">Rating Distribution</p>
+                    <div className="space-y-1">
+                      {[5, 4, 3, 2, 1].map((star) => {
+                        const count = reviewsDistribution[String(star)] || 0;
+                        const total = Object.values(reviewsDistribution).reduce((a, b) => a + b, 0);
+                        const pct = total > 0 ? (count / total) * 100 : 0;
+                        return (
+                          <div key={star} className="flex items-center gap-2 text-[11px]">
+                            <span className="text-muted-foreground w-4">{star}★</span>
+                            <div className="flex-1 h-1.5 bg-muted rounded overflow-hidden">
+                              <div
+                                className="h-full bg-primary transition-all"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <span className="text-muted-foreground w-8 text-right">{count}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filters */}
+                <div className="bg-card/40 border border-border rounded-xl p-3 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-primary" />
+                    <h3 className="text-sm font-semibold text-primary">Filters</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                    <div className="relative lg:col-span-2">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        value={reviewsSearch}
+                        onChange={(e) => setReviewsSearch(e.target.value)}
+                        placeholder="Search user / astrologer / comment..."
+                        className="pl-10 bg-muted border-border h-9"
+                      />
+                    </div>
+                    <Select value={reviewsFilterRating} onValueChange={setReviewsFilterRating}>
+                      <SelectTrigger className="bg-muted border-border h-9">
+                        <SelectValue placeholder="Rating" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Ratings</SelectItem>
+                        <SelectItem value="5">★★★★★ (5)</SelectItem>
+                        <SelectItem value="4">★★★★ (4)</SelectItem>
+                        <SelectItem value="3">★★★ (3)</SelectItem>
+                        <SelectItem value="2">★★ (2)</SelectItem>
+                        <SelectItem value="1">★ (1)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={reviewsFilterVisibility} onValueChange={setReviewsFilterVisibility}>
+                      <SelectTrigger className="bg-muted border-border h-9">
+                        <SelectValue placeholder="Visibility" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="visible">Visible</SelectItem>
+                        <SelectItem value="hidden">Hidden</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="grid grid-cols-2 gap-2 lg:col-span-1">
+                      <Input
+                        type="date"
+                        value={reviewsDateFrom}
+                        onChange={(e) => setReviewsDateFrom(e.target.value)}
+                        className="bg-muted border-border h-9 text-xs"
+                      />
+                      <Input
+                        type="date"
+                        value={reviewsDateTo}
+                        onChange={(e) => setReviewsDateTo(e.target.value)}
+                        className="bg-muted border-border h-9 text-xs"
+                      />
+                    </div>
+                  </div>
+                  {(reviewsFilterRating !== "all" || reviewsFilterVisibility !== "all" ||
+                    reviewsSearch || reviewsDateFrom || reviewsDateTo) && (
+                    <Button size="sm" variant="outline" onClick={clearReviewsFilters} className="h-7 text-xs border-border">
+                      <X className="w-3 h-3 mr-1" /> Clear filters
+                    </Button>
+                  )}
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Showing {reviewsList.length} of {reviewsTotal} reviews
+                </p>
+
+                {/* Review list */}
+                <div className="space-y-3">
+                  {reviewsList.length === 0 && (
+                    <div className="p-8 text-center text-muted-foreground bg-card/60 border border-border rounded-xl">
+                      No reviews match the current filters.
+                    </div>
+                  )}
+                  {reviewsList.map((r: any) => (
+                    <div key={r.id} className={`bg-card/60 border rounded-xl p-4 ${r.is_visible ? "border-border" : "border-border opacity-60"}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-sm shrink-0">
+                            {r.user_avatar ? "👤" : (r.user_name?.[0] || "?").toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="text-foreground font-medium text-sm">{r.user_name || "Anonymous"}</p>
+                              <span className="text-xs text-muted-foreground">→</span>
+                              <p className="text-primary text-sm font-medium">🔮 {r.astrologer_name}</p>
+                              {!r.is_visible && <Badge className="bg-muted text-muted-foreground text-[10px]">Hidden</Badge>}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="flex items-center">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                  <Star
+                                    key={i}
+                                    className={`w-3.5 h-3.5 ${i <= r.rating ? "text-primary fill-primary" : "text-muted-foreground"}`}
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-[10px] text-muted-foreground">
+                                {r.created_at?.slice(0, 16) || "—"}
+                              </span>
+                            </div>
+                            {r.comment && (
+                              <p className="text-sm text-foreground/80 mt-2 whitespace-pre-wrap">{r.comment}</p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <Button
+                            size="sm" variant="outline"
+                            className="h-7 w-7 p-0 border-primary text-primary hover:bg-primary/10"
+                            onClick={() => openReviewEdit(r)}
+                            title="Edit"
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            size="sm" variant="outline"
+                            className={`h-7 w-7 p-0 ${r.is_visible ? "border-muted-foreground text-muted-foreground hover:bg-muted/20" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
+                            onClick={() => toggleReviewVisibility(r)}
+                            title={r.is_visible ? "Hide review" : "Show review"}
+                          >
+                            {r.is_visible ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                          </Button>
+                          <Button
+                            size="sm" variant="outline"
+                            className="h-7 w-7 p-0 border-destructive text-destructive hover:bg-destructive/10"
+                            onClick={() => deleteReview(r)}
+                            title="Delete"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {reviewsTotal > REVIEWS_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {reviewsPage + 1} of {Math.max(1, Math.ceil(reviewsTotal / REVIEWS_PAGE_SIZE))}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" disabled={reviewsPage === 0}
+                        onClick={() => setReviewsPage((p) => Math.max(0, p - 1))}
+                        className="h-8 border-border">
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button size="sm" variant="outline"
+                        disabled={(reviewsPage + 1) * REVIEWS_PAGE_SIZE >= reviewsTotal}
+                        onClick={() => setReviewsPage((p) => p + 1)}
+                        className="h-8 border-border">
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ══════ Review Edit Dialog ══════ */}
+            <Dialog open={reviewEditDialog.open} onOpenChange={(v) => !v && setReviewEditDialog({ open: false, review: null })}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Pencil className="w-5 h-5 text-primary" /> Edit Review
+                  </DialogTitle>
+                </DialogHeader>
+                {reviewEditDialog.review && (
+                  <div className="space-y-3 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
+                      <p className="text-foreground font-medium">{reviewEditDialog.review.user_name}</p>
+                      <p className="text-muted-foreground">→ 🔮 {reviewEditDialog.review.astrologer_name}</p>
+                      <p className="text-muted-foreground mt-1">{reviewEditDialog.review.created_at?.slice(0, 16)}</p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Rating</Label>
+                      <div className="flex items-center gap-2 mt-2">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setReviewEditForm({ ...reviewEditForm, rating: i })}
+                            className="transition-transform hover:scale-110"
+                          >
+                            <Star
+                              className={`w-8 h-8 ${i <= reviewEditForm.rating ? "text-primary fill-primary" : "text-muted-foreground"}`}
+                            />
+                          </button>
+                        ))}
+                        <span className="text-sm text-muted-foreground ml-2">{reviewEditForm.rating} / 5</span>
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Comment</Label>
+                      <Textarea
+                        value={reviewEditForm.comment}
+                        onChange={(e) => setReviewEditForm({ ...reviewEditForm, comment: e.target.value })}
+                        placeholder="Review text..."
+                        className="bg-muted border-border mt-1 min-h-[100px]"
+                      />
+                    </div>
+                    <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={reviewEditForm.is_visible}
+                        onChange={(e) => setReviewEditForm({ ...reviewEditForm, is_visible: e.target.checked })}
+                      />
+                      Visible to users (counts toward astrologer rating)
+                    </label>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setReviewEditDialog({ open: false, review: null })}>Cancel</Button>
+                  <Button onClick={submitReviewEdit} className="gradient-gold text-primary-foreground">
+                    Save Changes
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             {/* ══════ Astrologer Wallet Dialog ══════ */}
             <Dialog open={astroWalletDialog.open} onOpenChange={(v) => !v && closeAstroWalletDialog()}>
