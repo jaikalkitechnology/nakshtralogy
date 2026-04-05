@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -27,7 +27,11 @@ const UserDashboard = () => {
   const [showEmoji, setShowEmoji] = useState(false);
   const [selectedAstrologer, setSelectedAstrologer] = useState(mockAstrologers[0]);
 
-  if (!user) { navigate("/auth"); return null; }
+  useEffect(() => {
+    if (!user) navigate("/auth");
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   const sendMessage = () => {
     if (!chatInput.trim()) return;

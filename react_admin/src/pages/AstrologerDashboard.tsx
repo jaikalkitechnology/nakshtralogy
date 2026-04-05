@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,11 @@ const AstrologerDashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
 
-  if (!user) { navigate("/auth"); return null; }
+  useEffect(() => {
+    if (!user) navigate("/auth");
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   const pendingRequests = [
     { id: "1", userName: "Rahul Kumar", type: "chat" as const, time: "2 min ago" },
