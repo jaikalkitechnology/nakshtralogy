@@ -39,7 +39,7 @@ from datetime import datetime
 from typing import Optional
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Body
+from fastapi import APIRouter, Depends, HTTPException, Query, Body, UploadFile, File
 from sqlalchemy.orm import Session
 from sqlalchemy import func as sqlfunc
 from pydantic import BaseModel, EmailStr, Field
@@ -54,6 +54,7 @@ from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
     KycDocument, RefreshToken, Review, Consultation,
+    PlatformSetting,
 )
 
 router = APIRouter()
@@ -1065,3 +1066,305 @@ def delete_review(
     _recompute_astrologer_rating(db, astrologer_id)
     db.commit()
     return {"message": "Review deleted"}
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  PLATFORM SETTINGS — Credentials & Configuration
+# ══════════════════════════════════════════════════════════════════════
+
+# Settings schema definition — defines what keys belong to each category
+SETTINGS_SCHEMA = {
+    "google_auth_user": {
+        "label": "Google OAuth — User App",
+        "description": "Google Sign-In credentials for the user Flutter app",
+        "keys": [
+            {"key": "client_id", "label": "Client ID", "secret": False},
+            {"key": "client_secret", "label": "Client Secret", "secret": True},
+            {"key": "redirect_uri", "label": "Redirect URI", "secret": False},
+        ],
+    },
+    "google_auth_astro": {
+        "label": "Google OAuth — Astrologer App",
+        "description": "Google Sign-In credentials for the astrologer Flutter app",
+        "keys": [
+            {"key": "client_id", "label": "Client ID", "secret": False},
+            {"key": "client_secret", "label": "Client Secret", "secret": True},
+            {"key": "redirect_uri", "label": "Redirect URI", "secret": False},
+        ],
+    },
+    "fcm_user": {
+        "label": "Firebase FCM — User App",
+        "description": "Service account JSON file for user Firebase project",
+        "keys": [
+            {"key": "project_id", "label": "Project ID", "secret": False},
+            {"key": "sa_path", "label": "Service Account File Path", "secret": False},
+            {"key": "client_email", "label": "Client Email", "secret": False},
+        ],
+    },
+    "fcm_astro": {
+        "label": "Firebase FCM — Astrologer App",
+        "description": "Service account JSON file for astro Firebase project",
+        "keys": [
+            {"key": "project_id", "label": "Project ID", "secret": False},
+            {"key": "sa_path", "label": "Service Account File Path", "secret": False},
+            {"key": "client_email", "label": "Client Email", "secret": False},
+        ],
+    },
+    "smtp": {
+        "label": "Email / SMTP",
+        "description": "SMTP server configuration for transactional emails",
+        "keys": [
+            {"key": "host", "label": "SMTP Host", "secret": False},
+            {"key": "port", "label": "SMTP Port", "secret": False},
+            {"key": "username", "label": "Username", "secret": False},
+            {"key": "password", "label": "Password", "secret": True},
+            {"key": "from_email", "label": "From Email", "secret": False},
+            {"key": "from_name", "label": "From Name", "secret": False},
+            {"key": "use_tls", "label": "Use TLS (true/false)", "secret": False},
+        ],
+    },
+    "razorpay": {
+        "label": "Razorpay Gateway",
+        "description": "Razorpay payment gateway credentials",
+        "keys": [
+            {"key": "key_id", "label": "Key ID", "secret": False},
+            {"key": "key_secret", "label": "Key Secret", "secret": True},
+            {"key": "webhook_secret", "label": "Webhook Secret", "secret": True},
+            {"key": "mode", "label": "Mode (test/live)", "secret": False},
+        ],
+    },
+    "stripe": {
+        "label": "Stripe Gateway",
+        "description": "Stripe payment gateway credentials",
+        "keys": [
+            {"key": "publishable_key", "label": "Publishable Key", "secret": False},
+            {"key": "secret_key", "label": "Secret Key", "secret": True},
+            {"key": "webhook_secret", "label": "Webhook Secret", "secret": True},
+            {"key": "mode", "label": "Mode (test/live)", "secret": False},
+        ],
+    },
+}
+
+
+class SettingUpsertRequest(BaseModel):
+    settings: dict  # {key: value}
+
+
+def _mask_if_secret(key_meta: dict, value: Optional[str]) -> Optional[str]:
+    """Return masked version of secret values for list response."""
+    if not value:
+        return value
+    if key_meta.get("secret"):
+        if len(value) <= 8:
+            return "••••••••"
+        return value[:4] + "••••" + value[-4:]
+    return value
+
+
+@router.get("/settings")
+def list_settings_schema(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Return full settings schema with current values (secrets masked)."""
+    rows = db.query(PlatformSetting).all()
+    values_by_cat_key = {}
+    for r in rows:
+        values_by_cat_key.setdefault(r.category, {})[r.key] = r.value
+
+    result = []
+    for cat, meta in SETTINGS_SCHEMA.items():
+        cat_values = values_by_cat_key.get(cat, {})
+        keys = []
+        for k in meta["keys"]:
+            raw = cat_values.get(k["key"])
+            keys.append({
+                "key": k["key"],
+                "label": k["label"],
+                "secret": k["secret"],
+                "value": _mask_if_secret(k, raw),
+                "has_value": bool(raw),
+            })
+        result.append({
+            "category": cat,
+            "label": meta["label"],
+            "description": meta["description"],
+            "keys": keys,
+        })
+    return {"categories": result}
+
+
+@router.get("/settings/{category}")
+def get_category_settings(
+    category: str,
+    unmasked: bool = False,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Get all settings for a single category. Pass unmasked=true to reveal secrets."""
+    if category not in SETTINGS_SCHEMA:
+        raise HTTPException(status_code=404, detail="Unknown settings category")
+
+    meta = SETTINGS_SCHEMA[category]
+    rows = db.query(PlatformSetting).filter(PlatformSetting.category == category).all()
+    values = {r.key: r.value for r in rows}
+
+    keys = []
+    for k in meta["keys"]:
+        raw = values.get(k["key"])
+        keys.append({
+            "key": k["key"],
+            "label": k["label"],
+            "secret": k["secret"],
+            "value": raw if unmasked else _mask_if_secret(k, raw),
+            "has_value": bool(raw),
+        })
+    return {
+        "category": category,
+        "label": meta["label"],
+        "description": meta["description"],
+        "keys": keys,
+    }
+
+
+@router.put("/settings/{category}")
+def upsert_category_settings(
+    category: str,
+    req: SettingUpsertRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Upsert all settings in a category. Values must match allowed keys."""
+    if category not in SETTINGS_SCHEMA:
+        raise HTTPException(status_code=404, detail="Unknown settings category")
+
+    allowed_keys = {k["key"]: k for k in SETTINGS_SCHEMA[category]["keys"]}
+    updated = 0
+    for key, value in req.settings.items():
+        if key not in allowed_keys:
+            continue
+        # skip if value is empty and we want to preserve existing secret
+        meta = allowed_keys[key]
+        if meta["secret"] and (value is None or str(value).strip() == ""):
+            continue
+        existing = db.query(PlatformSetting).filter(
+            PlatformSetting.category == category,
+            PlatformSetting.key == key,
+        ).first()
+        if existing:
+            existing.value = str(value) if value is not None else None
+            existing.updated_by = current_user.id
+        else:
+            db.add(PlatformSetting(
+                category=category,
+                key=key,
+                value=str(value) if value is not None else None,
+                is_secret=meta["secret"],
+                updated_by=current_user.id,
+            ))
+        updated += 1
+    db.commit()
+    return {"category": category, "updated_fields": updated, "message": f"{updated} settings saved"}
+
+
+@router.delete("/settings/{category}/{key}")
+def delete_setting(
+    category: str,
+    key: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    row = db.query(PlatformSetting).filter(
+        PlatformSetting.category == category,
+        PlatformSetting.key == key,
+    ).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Setting not found")
+    db.delete(row)
+    db.commit()
+    return {"message": "Setting cleared"}
+
+
+# ── FCM JSON File Upload ─────────────────────────────────────────────
+
+import os
+import json as _json
+from pathlib import Path
+
+CREDENTIALS_DIR = Path("credentials")
+
+
+@router.post("/settings/fcm/upload/{project}")
+async def upload_fcm_credentials(
+    project: str,  # "user" or "astro"
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """
+    Upload Firebase service account JSON file.
+    project: 'user' or 'astro' — determines filename.
+    Saves to credentials/firebase-{project}-sa.json and updates
+    platform_settings with project_id, client_email, sa_path.
+    """
+    if project not in ("user", "astro"):
+        raise HTTPException(status_code=400, detail="project must be 'user' or 'astro'")
+    if not file.filename.endswith(".json"):
+        raise HTTPException(status_code=400, detail="File must be a .json file")
+
+    # Ensure credentials dir exists
+    CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Read and validate content is JSON + has required fields
+    content = await file.read()
+    try:
+        data = _json.loads(content)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON file")
+
+    required = ["type", "project_id", "private_key", "client_email"]
+    missing = [k for k in required if k not in data]
+    if missing:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid Firebase service account JSON. Missing fields: {', '.join(missing)}",
+        )
+    if data.get("type") != "service_account":
+        raise HTTPException(status_code=400, detail="File is not a Firebase service account JSON")
+
+    # Save file
+    filename = f"firebase-{project}-sa.json"
+    file_path = CREDENTIALS_DIR / filename
+    with open(file_path, "wb") as f:
+        f.write(content)
+
+    # Update platform_settings with metadata
+    category = f"fcm_{project}"
+    updates = {
+        "project_id": data.get("project_id", ""),
+        "client_email": data.get("client_email", ""),
+        "sa_path": str(file_path),
+    }
+    for key, value in updates.items():
+        existing = db.query(PlatformSetting).filter(
+            PlatformSetting.category == category,
+            PlatformSetting.key == key,
+        ).first()
+        if existing:
+            existing.value = value
+            existing.updated_by = current_user.id
+        else:
+            db.add(PlatformSetting(
+                category=category, key=key, value=value,
+                is_secret=False, updated_by=current_user.id,
+            ))
+    db.commit()
+
+    return {
+        "project": project,
+        "filename": filename,
+        "path": str(file_path),
+        "project_id": data.get("project_id"),
+        "client_email": data.get("client_email"),
+        "message": f"Firebase {project} credentials uploaded successfully",
+    }

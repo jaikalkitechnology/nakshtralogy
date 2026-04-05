@@ -313,6 +313,40 @@ export async function adminRejectKyc(kycId: string, reason: string) {
   return request(`/admin/kyc/${kycId}/reject`, { method: "PATCH", body: JSON.stringify({ reason }) });
 }
 
+// ── Platform Settings ────────────────────────────────────────────
+
+export async function adminListSettings() {
+  return request("/admin/settings");
+}
+
+export async function adminGetCategorySettings(category: string, unmasked = false) {
+  return request(`/admin/settings/${category}${unmasked ? "?unmasked=true" : ""}`);
+}
+
+export async function adminUpsertSettings(category: string, settings: Record<string, any>) {
+  return request(`/admin/settings/${category}`, {
+    method: "PUT",
+    body: JSON.stringify({ settings }),
+  });
+}
+
+export async function adminDeleteSetting(category: string, key: string) {
+  return request(`/admin/settings/${category}/${key}`, { method: "DELETE" });
+}
+
+export async function adminUploadFcmFile(project: "user" | "astro", file: File) {
+  const token = localStorage.getItem("access_token");
+  const fd = new FormData();
+  fd.append("file", file);
+  const res = await fetch(`https://api.nakshatralogy.com/api/v1/admin/settings/fcm/upload/${project}`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: fd,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
 // ── Seed ─────────────────────────────────────────────────────────
 
 export async function seedAll() {

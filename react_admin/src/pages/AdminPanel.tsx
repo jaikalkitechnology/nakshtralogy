@@ -12,6 +12,7 @@ import {
   Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle,
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
   FileText, Mail, Filter, Trash2, MessageSquare,
+  Upload, Save, KeyRound, CreditCard,
 } from "lucide-react";
 import {
   fetchAstrologers, fetchServicePricing, fetchGiftPricing,
@@ -25,6 +26,7 @@ import {
   adminListKyc, adminApproveKyc, adminRejectKyc,
   adminListTransactions,
   adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
+  adminListSettings, adminGetCategorySettings, adminUpsertSettings, adminUploadFcmFile,
   type WalletAction,
 } from "@/services/api";
 import {
@@ -198,6 +200,16 @@ const AdminPanel = () => {
   const emptyGiftForm = { name: "", icon: "", price: 0, sort_order: 0, animation_url: "" };
   const [giftForm, setGiftForm] = useState<any>(emptyGiftForm);
 
+  // ── Platform Settings state ──────────────────────────────────────
+  const [settingsCategories, setSettingsCategories] = useState<any[]>([]);
+  const [activeSettingsCategory, setActiveSettingsCategory] = useState<string>("google_auth_user");
+  const [settingsForm, setSettingsForm] = useState<Record<string, string>>({});
+  const [settingsLoaded, setSettingsLoaded] = useState<Record<string, any>>({});
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [showSecretFor, setShowSecretFor] = useState<Record<string, boolean>>({});
+  const [fcmUploading, setFcmUploading] = useState<"user" | "astro" | null>(null);
+  const [fcmUploadMsg, setFcmUploadMsg] = useState<string>("");
+
   // ── Agora Config dialog ──────────────────────────────────────────
   const [agoraEditDialog, setAgoraEditDialog] = useState<{ open: boolean; config: any }>({
     open: false, config: null,
@@ -344,6 +356,19 @@ const AdminPanel = () => {
         const { data } = await fetchAgoraConfigs();
         if (Array.isArray(data)) setAgoraConfigs(data);
       }
+      if (activeTab === "settings") {
+        const { data } = await adminListSettings();
+        const cats = data.categories || [];
+        setSettingsCategories(cats);
+        // load unmasked values for the active category to populate the form
+        const { ok, data: catData } = await adminGetCategorySettings(activeSettingsCategory, true);
+        if (ok) {
+          const form: Record<string, string> = {};
+          (catData.keys || []).forEach((k: any) => { form[k.key] = k.value || ""; });
+          setSettingsForm(form);
+          setSettingsLoaded((prev) => ({ ...prev, [activeSettingsCategory]: catData }));
+        }
+      }
     } catch (e) { console.error(e); }
     setLoading(false);
   }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
@@ -353,7 +378,8 @@ const AdminPanel = () => {
       pricingFilterCategory, pricingFilterStatus, pricingSearch,
       giftsFilterStatus, giftsSearch,
       reviewsPage, reviewsFilterRating, reviewsFilterVisibility,
-      reviewsSearch, reviewsDateFrom, reviewsDateTo]);
+      reviewsSearch, reviewsDateFrom, reviewsDateTo,
+      activeSettingsCategory]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -743,6 +769,72 @@ const AdminPanel = () => {
     setReviewsSearch("");
     setReviewsDateFrom("");
     setReviewsDateTo("");
+  };
+
+  // ── Settings handlers ────────────────────────────────────────────
+  const switchSettingsCategory = async (cat: string) => {
+    setActiveSettingsCategory(cat);
+    setShowSecretFor({});
+    setFcmUploadMsg("");
+    const { ok, data } = await adminGetCategorySettings(cat, true);
+    if (ok) {
+      const form: Record<string, string> = {};
+      (data.keys || []).forEach((k: any) => { form[k.key] = k.value || ""; });
+      setSettingsForm(form);
+      setSettingsLoaded((prev) => ({ ...prev, [cat]: data }));
+    }
+  };
+
+  const saveSettings = async () => {
+    setSettingsSaving(true);
+    try {
+      // don't send empty values for secret fields (preserves existing)
+      const activeCatMeta = settingsLoaded[activeSettingsCategory];
+      const secretKeys = new Set(
+        (activeCatMeta?.keys || []).filter((k: any) => k.secret).map((k: any) => k.key),
+      );
+      const payload: Record<string, any> = {};
+      Object.entries(settingsForm).forEach(([k, v]) => {
+        if (secretKeys.has(k) && (!v || v.trim() === "")) return;
+        payload[k] = v;
+      });
+      const { ok, data } = await adminUpsertSettings(activeSettingsCategory, payload);
+      if (!ok) {
+        alert(data.detail || "Save failed");
+      } else {
+        alert(`Saved ${data.updated_fields || 0} settings`);
+        // refresh loaded data
+        const fresh = await adminGetCategorySettings(activeSettingsCategory, true);
+        if (fresh.ok) {
+          const form: Record<string, string> = {};
+          (fresh.data.keys || []).forEach((k: any) => { form[k.key] = k.value || ""; });
+          setSettingsForm(form);
+          setSettingsLoaded((prev) => ({ ...prev, [activeSettingsCategory]: fresh.data }));
+        }
+        fetchData();
+      }
+    } finally {
+      setSettingsSaving(false);
+    }
+  };
+
+  const uploadFcmJson = async (project: "user" | "astro", file: File) => {
+    setFcmUploading(project);
+    setFcmUploadMsg("");
+    try {
+      const { ok, data } = await adminUploadFcmFile(project, file);
+      if (!ok) {
+        setFcmUploadMsg(`❌ ${data.detail || "Upload failed"}`);
+      } else {
+        setFcmUploadMsg(`✅ ${data.message} · ${data.project_id}`);
+        // refresh active category if it's the one we just uploaded
+        if (activeSettingsCategory === `fcm_${project}`) {
+          switchSettingsCategory(activeSettingsCategory);
+        }
+      }
+    } finally {
+      setFcmUploading(null);
+    }
   };
 
   const fmt = (n: number) => new Intl.NumberFormat("en-IN").format(n);
@@ -2871,22 +2963,161 @@ const AdminPanel = () => {
             {activeTab === "settings" && (
               <div className="space-y-4">
                 <h2 className="text-xl font-display text-gold-gradient">Platform Settings</h2>
-                {[
-                  { name: "General Settings", desc: "App name, logo, default commission %" },
-                  { name: "Payment Gateway", desc: "Razorpay / Stripe configuration" },
-                  { name: "Notification Settings", desc: "Firebase FCM push notification config" },
-                  { name: "Content Management", desc: "Zodiac content, daily tips, banners" },
-                  { name: "Report & Analytics", desc: "Revenue reports, user analytics" },
-                  { name: "Support Tickets", desc: "View and manage user support requests" },
-                ].map((item) => (
-                  <div key={item.name} className="bg-card/60 border border-border rounded-lg p-4 flex items-center justify-between cursor-pointer hover:glow-gold transition-all">
-                    <div>
-                      <span className="text-foreground font-medium">{item.name}</span>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+
+                {/* Category tabs */}
+                <div className="flex flex-wrap gap-2">
+                  {settingsCategories.map((cat: any) => {
+                    const isActive = activeSettingsCategory === cat.category;
+                    const icon =
+                      cat.category.startsWith("google_auth") ? <KeyRound className="w-3 h-3" /> :
+                      cat.category.startsWith("fcm") ? <Radio className="w-3 h-3" /> :
+                      cat.category === "smtp" ? <Mail className="w-3 h-3" /> :
+                      <CreditCard className="w-3 h-3" />;
+                    return (
+                      <button
+                        key={cat.category}
+                        onClick={() => switchSettingsCategory(cat.category)}
+                        className={`px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                          isActive
+                            ? "bg-primary/20 text-primary border border-primary/40"
+                            : "bg-card/60 text-muted-foreground border border-border hover:bg-muted/30"
+                        }`}
+                      >
+                        {icon}
+                        {cat.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Active category form */}
+                {settingsCategories.length > 0 && (() => {
+                  const activeCat = settingsCategories.find((c: any) => c.category === activeSettingsCategory);
+                  if (!activeCat) return null;
+                  const loadedCat = settingsLoaded[activeSettingsCategory];
+                  const keys = loadedCat?.keys || activeCat.keys || [];
+                  return (
+                    <div className="bg-card/60 border border-border rounded-xl p-5 space-y-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground">{activeCat.label}</h3>
+                        <p className="text-xs text-muted-foreground mt-1">{activeCat.description}</p>
+                      </div>
+
+                      {/* FCM JSON upload — only for fcm_* categories */}
+                      {activeSettingsCategory.startsWith("fcm_") && (
+                        <div className="bg-muted/20 border border-border rounded-lg p-4 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Upload className="w-4 h-4 text-primary" />
+                            <p className="text-sm text-foreground font-medium">Upload Service Account JSON</p>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground">
+                            Download from Firebase Console → Project Settings → Service Accounts → Generate New Private Key.
+                            File will be saved to <code className="text-primary">credentials/firebase-{activeSettingsCategory.split("_")[1]}-sa.json</code>
+                          </p>
+                          <div className="flex items-center gap-2 pt-1">
+                            <input
+                              type="file"
+                              accept=".json,application/json"
+                              id={`fcm-upload-${activeSettingsCategory}`}
+                              className="hidden"
+                              onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) {
+                                  const project = activeSettingsCategory.split("_")[1] as "user" | "astro";
+                                  uploadFcmJson(project, f);
+                                }
+                                e.target.value = "";
+                              }}
+                            />
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-primary text-primary h-8"
+                              onClick={() => document.getElementById(`fcm-upload-${activeSettingsCategory}`)?.click()}
+                              disabled={fcmUploading !== null}
+                            >
+                              {fcmUploading === activeSettingsCategory.split("_")[1]
+                                ? "Uploading..."
+                                : <><Upload className="w-3 h-3 mr-1" /> Choose JSON File</>
+                              }
+                            </Button>
+                            {fcmUploadMsg && (
+                              <span className={`text-xs ${fcmUploadMsg.startsWith("✅") ? "text-green-400" : "text-destructive"}`}>
+                                {fcmUploadMsg}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Key-value form */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {keys.map((k: any) => {
+                          const val = settingsForm[k.key] ?? "";
+                          const isSecret = k.secret;
+                          const isRevealed = showSecretFor[k.key] === true;
+                          return (
+                            <div key={k.key} className={k.key === "description" ? "md:col-span-2" : ""}>
+                              <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                                {k.label}
+                                {isSecret && <span className="text-[10px] text-destructive">(secret)</span>}
+                                {k.has_value && (
+                                  <Badge className="bg-green-500/20 text-green-400 text-[9px] ml-1">SET</Badge>
+                                )}
+                              </Label>
+                              <div className="flex gap-1 mt-1">
+                                <Input
+                                  type={isSecret && !isRevealed ? "password" : "text"}
+                                  value={val}
+                                  onChange={(e) => setSettingsForm({ ...settingsForm, [k.key]: e.target.value })}
+                                  placeholder={isSecret && k.has_value ? "••••••• (leave blank to keep existing)" : ""}
+                                  className="bg-muted border-border text-xs"
+                                />
+                                {isSecret && (
+                                  <Button
+                                    size="sm" variant="outline"
+                                    className="h-9 w-9 p-0 border-border"
+                                    onClick={() => setShowSecretFor({ ...showSecretFor, [k.key]: !isRevealed })}
+                                    type="button"
+                                    title={isRevealed ? "Hide" : "Show"}
+                                  >
+                                    {isRevealed ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-2 border-t border-border">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => switchSettingsCategory(activeSettingsCategory)}
+                          className="border-border"
+                        >
+                          <RefreshCw className="w-3 h-3 mr-1" /> Reload
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={saveSettings}
+                          disabled={settingsSaving}
+                          className="gradient-gold text-primary-foreground"
+                        >
+                          <Save className="w-3 h-3 mr-1" />
+                          {settingsSaving ? "Saving..." : "Save Settings"}
+                        </Button>
+                      </div>
                     </div>
-                    <span className="text-muted-foreground">›</span>
+                  );
+                })()}
+
+                {settingsCategories.length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground bg-card/60 border border-border rounded-xl">
+                    Loading settings...
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>
