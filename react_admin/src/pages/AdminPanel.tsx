@@ -143,7 +143,11 @@ const AdminPanel = () => {
   });
   const [kycRejectReason, setKycRejectReason] = useState<string>("");
 
-  if (!user) { navigate("/auth"); return null; }
+  // Redirect to /auth if not logged in — must use useEffect, NOT early return,
+  // otherwise hook count changes between renders (violates Rules of Hooks)
+  useEffect(() => {
+    if (!user) navigate("/auth");
+  }, [user, navigate]);
 
   const tabs = [
     { id: "overview" as Tab, icon: <BarChart3 className="w-5 h-5" />, label: "Overview" },
@@ -446,6 +450,8 @@ const AdminPanel = () => {
   };
 
   const fmt = (n: number) => new Intl.NumberFormat("en-IN").format(n);
+
+  if (!user) return null;
 
   return (
     <div className="min-h-screen gradient-mystic relative">
