@@ -1143,6 +1143,17 @@ SETTINGS_SCHEMA = {
             {"key": "mode", "label": "Mode (test/live)", "secret": False},
         ],
     },
+    "withdrawal_config": {
+        "label": "Withdrawal Config",
+        "description": "Rules for astrologer payout withdrawal requests",
+        "keys": [
+            {"key": "min_amount", "label": "Minimum Withdrawal Amount (₹)", "secret": False},
+            {"key": "max_per_day", "label": "Max Amount Per Day (₹)", "secret": False},
+            {"key": "processing_days", "label": "Processing Days (business days)", "secret": False},
+            {"key": "require_bank", "label": "Require Bank Details (true/false)", "secret": False},
+            {"key": "commission_pct", "label": "Processing Commission %", "secret": False},
+        ],
+    },
 }
 
 

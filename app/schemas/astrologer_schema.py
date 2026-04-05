@@ -46,6 +46,11 @@ class AstrologerProfileResponse(BaseModel):
     rate_per_min_chat: float = 0
     rate_per_min_call: float = 0
     rate_per_min_video: float = 0
+    rate_per_session_chat: float = 0
+    rate_per_session_call: float = 0
+    rate_per_session_video: float = 0
+    session_message_limit: int = 45
+    session_validity_hours: int = 24
     rating: float = 0
     total_reviews: int = 0
     total_consultations: int = 0
@@ -95,6 +100,11 @@ class AstrologerProfileUpdateRequest(BaseModel):
     rate_per_min_chat: Optional[float] = Field(None, ge=0)
     rate_per_min_call: Optional[float] = Field(None, ge=0)
     rate_per_min_video: Optional[float] = Field(None, ge=0)
+    rate_per_session_chat: Optional[float] = Field(None, ge=0)
+    rate_per_session_call: Optional[float] = Field(None, ge=0)
+    rate_per_session_video: Optional[float] = Field(None, ge=0)
+    session_message_limit: Optional[int] = Field(None, ge=1, le=500)
+    session_validity_hours: Optional[int] = Field(None, ge=1, le=168)
 
 
 class AstrologerStatusUpdate(BaseModel):

@@ -374,6 +374,48 @@ export async function fetchAstroMe() {
   return request("/astrologer/me");
 }
 
+export async function fetchAstroMeWallet() {
+  return request("/astrologer/me/wallet");
+}
+
+export async function fetchAstroMeWalletTransactions(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/astrologer/me/wallet/transactions${qs ? `?${qs}` : ""}`);
+}
+
+export async function requestAstroWithdrawal(data: {
+  amount: number;
+  bank_account_name?: string;
+  bank_account_number?: string;
+  bank_ifsc?: string;
+  upi_id?: string;
+  notes?: string;
+}) {
+  return request("/astrologer/me/wallet/withdraw", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function fetchAstroMyWithdrawals(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/astrologer/me/withdrawals${qs ? `?${qs}` : ""}`);
+}
+
+export async function updateAstroProfile(data: any) {
+  return request("/astrologer/me/profile", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateAstroUserFields(data: any) {
+  return request("/astrologer/me", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
 // ── Current User — profile / wallet / orders / saved astrologers ────
 
 export async function fetchMe() {
