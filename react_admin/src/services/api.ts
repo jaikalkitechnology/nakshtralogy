@@ -84,6 +84,36 @@ export async function signupAstrologer(fields: {
   return { ok: res.ok, status: res.status, data };
 }
 
+// Start Google OAuth flow by redirecting browser to Google consent URL.
+// Backend builds the URL using credentials stored in platform_settings.
+export async function startGoogleOAuth(role: "user" | "astrologer") {
+  const res = await fetch(`${BASE}/google/login-url?role=${role}`);
+  const data = await res.json();
+  if (!res.ok || !data.url) {
+    return { error: data.detail || "Failed to build Google OAuth URL" };
+  }
+  window.location.href = data.url;
+  return { error: null };
+}
+
+// Save tokens + user data returned via Google OAuth callback query params.
+export function saveGoogleOAuthSession(params: URLSearchParams) {
+  const access = params.get("access_token");
+  const refresh = params.get("refresh_token");
+  if (!access || !refresh) return null;
+  localStorage.setItem("access_token", access);
+  localStorage.setItem("refresh_token", refresh);
+  const user = {
+    id: params.get("user_id") || "",
+    name: params.get("name") || "",
+    email: params.get("email") || "",
+    role: params.get("role") || "user",
+    wallet_balance: 0,
+  };
+  localStorage.setItem("app_user", JSON.stringify(user));
+  return user;
+}
+
 export async function googleLoginByRole(idToken: string, role: LoginRole) {
   const endpoint = role === "astrologer" ? "/astrologer/google-login" : "/user/google-login";
   const res = await fetch(`${BASE}${endpoint}`, {

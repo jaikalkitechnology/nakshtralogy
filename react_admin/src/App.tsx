@@ -9,6 +9,7 @@ import AuthPage from "./pages/AuthPage";
 import UserDashboard from "./pages/UserDashboard";
 import AstrologerDashboard from "./pages/AstrologerDashboard";
 import AdminPanel from "./pages/AdminPanel";
+import GoogleCallback from "./pages/GoogleCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="/astrologer" element={<AstrologerDashboard />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/auth/google-success" element={<GoogleCallback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

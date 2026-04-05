@@ -51,7 +51,7 @@ function authHeaders() {
 type Tab = "overview" | "users" | "astrologers" | "reviews" | "kyc" | "wallet" | "pricing" | "agora" | "gifts" | "settings";
 
 const AdminPanel = () => {
-  const { user, logout } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [searchQuery, setSearchQuery] = useState("");
@@ -218,11 +218,12 @@ const AdminPanel = () => {
     label: "", app_id: "", app_certificate: "", is_active: false,
   });
 
-  // Redirect to /auth if not logged in — must use useEffect, NOT early return,
-  // otherwise hook count changes between renders (violates Rules of Hooks)
+  // Redirect to /auth if not logged in — wait for AuthProvider to finish
+  // restoring session from localStorage (otherwise a reload flashes the
+  // user back to /auth before the stored session is applied)
   useEffect(() => {
-    if (!user) navigate("/auth");
-  }, [user, navigate]);
+    if (!authLoading && !user) navigate("/auth");
+  }, [authLoading, user, navigate]);
 
   const tabs = [
     { id: "overview" as Tab, icon: <BarChart3 className="w-5 h-5" />, label: "Overview" },
@@ -238,6 +239,9 @@ const AdminPanel = () => {
   ];
 
   const fetchData = useCallback(async () => {
+    // Don't fetch while AuthProvider is still restoring session, or when
+    // there's no logged-in user — otherwise every request would 401.
+    if (authLoading || !user) return;
     setLoading(true);
     try {
       if (activeTab === "overview") {
@@ -371,7 +375,8 @@ const AdminPanel = () => {
       }
     } catch (e) { console.error(e); }
     setLoading(false);
-  }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
+  }, [authLoading, user,
+      activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
       astroPage, astroFilter, astroSearch, kycPage, kycFilter,
       walletPage, walletFilterType, walletFilterRole, walletSearchTerm,
       walletDateFrom, walletDateTo,
@@ -848,6 +853,14 @@ const AdminPanel = () => {
     giftsPage * GIFTS_PAGE_SIZE,
     giftsPage * GIFTS_PAGE_SIZE + GIFTS_PAGE_SIZE,
   );
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen gradient-mystic flex items-center justify-center">
+        <p className="text-primary">Loading...</p>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
