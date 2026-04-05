@@ -81,6 +81,22 @@ export async function signupAstrologer(fields: {
   return { ok: res.ok, status: res.status, data };
 }
 
+export async function googleLoginByRole(idToken: string, role: LoginRole) {
+  const endpoint = role === "astrologer" ? "/astrologer/google-login" : "/user/google-login";
+  const res = await fetch(`${BASE}${endpoint}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id_token: idToken }),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("refresh_token", data.refresh_token);
+    localStorage.setItem("app_user", JSON.stringify(data.user));
+  }
+  return { ok: res.ok, status: res.status, data };
+}
+
 // keep backward compat alias
 export const loginAdmin = (email: string, password: string) => loginByRole(email, password, "admin");
 
@@ -100,27 +116,44 @@ export function getStoredUser() {
 
 // ── Users ────────────────────────────────────────────────────────
 
-export async function fetchUsers(skip = 0, limit = 50) {
-  return request(`/user/me`); // admin can list — we'll use a custom admin endpoint
+export async function adminListUsers(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/users?${qs}`);
 }
 
-// For admin, we need a listing endpoint. We'll call seed-open to get users
-// In production, add GET /admin/users. For now, fetch from seed.
-export async function adminListUsers(skip = 0, limit = 50) {
-  return request(`/admin/users?skip=${skip}&limit=${limit}`);
+export async function adminGetUser(userId: string) {
+  return request(`/admin/users/${userId}`);
 }
 
-export async function adminToggleUser(userId: string, isActive: boolean) {
-  return request(`/admin/users/${userId}/toggle`, {
-    method: "PATCH",
-    body: JSON.stringify({ is_active: isActive }),
-  });
+export async function adminEditUser(userId: string, data: any) {
+  return request(`/admin/users/${userId}/edit`, { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function adminToggleUser(userId: string) {
+  return request(`/admin/users/${userId}/toggle`, { method: "PATCH" });
+}
+
+export async function adminApproveProfile(userId: string) {
+  return request(`/admin/users/${userId}/approve-profile`, { method: "PATCH" });
+}
+
+export async function adminVerifyUser(userId: string) {
+  return request(`/admin/users/${userId}/verify`, { method: "PATCH" });
 }
 
 // ── Astrologers ──────────────────────────────────────────────────
 
 export async function fetchAstrologers(skip = 0, limit = 50) {
   return request(`/astrologer/list?skip=${skip}&limit=${limit}`);
+}
+
+export async function adminListAstrologers(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/astrologers?${qs}`);
+}
+
+export async function adminEditAstrologer(profileId: string, data: any) {
+  return request(`/admin/astrologers/${profileId}/edit`, { method: "PUT", body: JSON.stringify(data) });
 }
 
 export async function adminApproveAstrologer(profileId: string) {
@@ -181,6 +214,33 @@ export async function updateAgoraConfig(id: string, data: any) {
 
 export async function adminWalletStats() {
   return request("/admin/wallet-stats");
+}
+
+export async function adminAdjustWallet(userId: string, amount: number, description: string) {
+  return request(`/admin/wallet/${userId}/adjust`, {
+    method: "POST",
+    body: JSON.stringify({ amount, description }),
+  });
+}
+
+export async function adminListTransactions(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/transactions?${qs}`);
+}
+
+// ── KYC ──────────────────────────────────────────────────────────
+
+export async function adminListKyc(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/kyc?${qs}`);
+}
+
+export async function adminApproveKyc(kycId: string) {
+  return request(`/admin/kyc/${kycId}/approve`, { method: "PATCH" });
+}
+
+export async function adminRejectKyc(kycId: string, reason: string) {
+  return request(`/admin/kyc/${kycId}/reject`, { method: "PATCH", body: JSON.stringify({ reason }) });
 }
 
 // ── Seed ─────────────────────────────────────────────────────────

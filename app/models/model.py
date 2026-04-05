@@ -65,6 +65,7 @@ class User(Base):
     fcm_token = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
+    profile_approved = Column(Boolean, default=False, nullable=False)  # admin approves user profile
     otp_code = Column(String(6), nullable=True)
     otp_expires_at = Column(DateTime, nullable=True)
     reset_token = Column(String(255), nullable=True)
@@ -92,6 +93,32 @@ class RefreshToken(Base):
     device_info = Column(String(255), nullable=True)
     expires_at = Column(DateTime, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  1b. KYC VERIFICATION
+# ─────────────────────────────────────────────────────────────────────
+
+class KycDocument(Base):
+    """KYC documents uploaded by user or astrologer for verification."""
+    __tablename__ = "kyc_documents"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    doc_type = Column(String(30), nullable=False)       # aadhaar | pan | passport | license | certificate
+    doc_number = Column(String(50), nullable=True)
+    front_url = Column(Text, nullable=True)
+    back_url = Column(Text, nullable=True)
+    selfie_url = Column(Text, nullable=True)
+    status = Column(String(20), default="pending")      # pending | approved | rejected
+    rejection_reason = Column(Text, nullable=True)
+    reviewed_by = Column(String(36), nullable=True)     # admin user id
+    reviewed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_kyc_user_status", "user_id", "status"),
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────
