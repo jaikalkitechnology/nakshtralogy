@@ -735,3 +735,42 @@ class LiveChatMessage(Base):
     __table_args__ = (
         Index("ix_lcmsg_session", "session_id", "created_at"),
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  12. PLATFORM SETTINGS (Credentials / Config store)
+# ─────────────────────────────────────────────────────────────────────
+
+class PlatformSetting(Base):
+    """
+    Key-value credential store for admin-manageable platform settings:
+      - Google OAuth (user + astrologer projects)
+      - FCM JSON file paths (per project)
+      - Email/SMTP credentials
+      - Payment gateway credentials (Razorpay, Stripe)
+
+    Categories:
+      google_auth_user   — client_id, client_secret for user app Google Login
+      google_auth_astro  — client_id, client_secret for astrologer app
+      fcm_user           — service_account_path (JSON file location)
+      fcm_astro          — service_account_path
+      smtp               — host, port, username, password, from_email
+      razorpay           — key_id, key_secret, webhook_secret
+      stripe             — publishable_key, secret_key, webhook_secret
+    """
+    __tablename__ = "platform_settings"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    category = Column(String(50), nullable=False, index=True)
+    key = Column(String(100), nullable=False)
+    value = Column(Text, nullable=True)
+    is_secret = Column(Boolean, default=False)
+    description = Column(Text, nullable=True)
+    updated_by = Column(String(36), nullable=True)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("category", "key", name="uq_setting_category_key"),
+        Index("ix_setting_category_key", "category", "key"),
+    )
