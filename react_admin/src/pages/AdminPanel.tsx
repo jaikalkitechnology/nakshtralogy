@@ -11,12 +11,14 @@ import {
   Shield, Ban, CheckCircle, DollarSign, TrendingUp, Eye,
   Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle,
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
-  FileText, Mail, Filter,
+  FileText, Mail, Filter, Trash2,
 } from "lucide-react";
 import {
   fetchAstrologers, fetchServicePricing, fetchGiftPricing,
-  fetchAgoraConfigs, createAgoraConfig, updateAgoraConfig,
+  fetchAgoraConfigs, createAgoraConfig, updateAgoraConfig, deleteAgoraConfig,
   seedServicePricing, seedGiftPricing, seedOpen, updateServicePricing,
+  createServicePricing, deleteServicePricing,
+  createGiftPricing, updateGiftPricing, toggleGiftPricing, deleteGiftPricing,
   adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
   adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
   adminBlockAstrologer, adminSetCommission,
@@ -143,6 +145,44 @@ const AdminPanel = () => {
   });
   const [kycRejectReason, setKycRejectReason] = useState<string>("");
 
+  // ── Pricing Management state ─────────────────────────────────────
+  const PRICING_PAGE_SIZE = 10;
+  const [pricingPage, setPricingPage] = useState(0);
+  const [pricingFilterCategory, setPricingFilterCategory] = useState<string>("all");
+  const [pricingFilterStatus, setPricingFilterStatus] = useState<string>("all");
+  const [pricingSearch, setPricingSearch] = useState("");
+
+  const emptyPricingForm = {
+    service_key: "", service_name: "", description: "", icon: "",
+    category: "kundli", price: 0, original_price: 0,
+    is_free: false, sort_order: 0, features_json: [] as string[],
+    engine_function: "", requires_birth_data: true, max_free_per_user: null as number | null,
+  };
+  const [pricingDialog, setPricingDialog] = useState<{ open: boolean; mode: "create" | "edit" }>({
+    open: false, mode: "create",
+  });
+  const [pricingForm, setPricingForm] = useState<any>(emptyPricingForm);
+  const [pricingFeaturesInput, setPricingFeaturesInput] = useState("");
+
+  // ── Gift Management state ────────────────────────────────────────
+  const GIFTS_PAGE_SIZE = 12;
+  const [giftsPage, setGiftsPage] = useState(0);
+  const [giftsFilterStatus, setGiftsFilterStatus] = useState<string>("all");
+  const [giftsSearch, setGiftsSearch] = useState("");
+  const [giftDialog, setGiftDialog] = useState<{ open: boolean; mode: "create" | "edit"; gift: any }>({
+    open: false, mode: "create", gift: null,
+  });
+  const emptyGiftForm = { name: "", icon: "", price: 0, sort_order: 0, animation_url: "" };
+  const [giftForm, setGiftForm] = useState<any>(emptyGiftForm);
+
+  // ── Agora Config dialog ──────────────────────────────────────────
+  const [agoraEditDialog, setAgoraEditDialog] = useState<{ open: boolean; config: any }>({
+    open: false, config: null,
+  });
+  const [agoraEditForm, setAgoraEditForm] = useState<any>({
+    label: "", app_id: "", app_certificate: "", is_active: false,
+  });
+
   // Redirect to /auth if not logged in — must use useEffect, NOT early return,
   // otherwise hook count changes between renders (violates Rules of Hooks)
   useEffect(() => {
@@ -234,12 +274,31 @@ const AdminPanel = () => {
         });
       }
       if (activeTab === "pricing") {
-        const { data } = await fetchServicePricing();
-        if (Array.isArray(data)) setPricing(data);
+        const params: Record<string, any> = { include_inactive: true };
+        if (pricingFilterCategory !== "all") params.category = pricingFilterCategory;
+        if (pricingSearch) params.search = pricingSearch;
+        const { data } = await fetchServicePricing(params);
+        if (Array.isArray(data)) {
+          let list = data;
+          if (pricingFilterStatus === "active") list = list.filter((p: any) => p.is_active);
+          else if (pricingFilterStatus === "inactive") list = list.filter((p: any) => !p.is_active);
+          else if (pricingFilterStatus === "free") list = list.filter((p: any) => p.is_free || p.price === 0);
+          else if (pricingFilterStatus === "paid") list = list.filter((p: any) => !p.is_free && p.price > 0);
+          setPricing(list);
+        }
       }
       if (activeTab === "gifts") {
-        const { data } = await fetchGiftPricing();
-        if (Array.isArray(data)) setGifts(data);
+        const { data } = await fetchGiftPricing(true); // include inactive for admin
+        if (Array.isArray(data)) {
+          let list = data;
+          if (giftsFilterStatus === "active") list = list.filter((g: any) => g.is_active);
+          else if (giftsFilterStatus === "inactive") list = list.filter((g: any) => !g.is_active);
+          if (giftsSearch) {
+            const q = giftsSearch.toLowerCase();
+            list = list.filter((g: any) => (g.name || "").toLowerCase().includes(q));
+          }
+          setGifts(list);
+        }
       }
       if (activeTab === "agora") {
         const { data } = await fetchAgoraConfigs();
@@ -250,7 +309,9 @@ const AdminPanel = () => {
   }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
       astroPage, astroFilter, astroSearch, kycPage, kycFilter,
       walletPage, walletFilterType, walletFilterRole, walletSearchTerm,
-      walletDateFrom, walletDateTo]);
+      walletDateFrom, walletDateTo,
+      pricingFilterCategory, pricingFilterStatus, pricingSearch,
+      giftsFilterStatus, giftsSearch]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -260,6 +321,8 @@ const AdminPanel = () => {
   useEffect(() => { setKycPage(0); }, [kycFilter]);
   useEffect(() => { setWalletPage(0); },
     [walletFilterType, walletFilterRole, walletSearchTerm, walletDateFrom, walletDateTo]);
+  useEffect(() => { setPricingPage(0); }, [pricingFilterCategory, pricingFilterStatus, pricingSearch]);
+  useEffect(() => { setGiftsPage(0); }, [giftsFilterStatus, giftsSearch]);
 
   const toggleUser = async (userId: string) => {
     await adminToggleUser(userId);
@@ -449,7 +512,161 @@ const AdminPanel = () => {
     fetchData();
   };
 
+  // ── Pricing CRUD handlers ────────────────────────────────────────
+  const openPricingCreate = () => {
+    setPricingForm({ ...emptyPricingForm });
+    setPricingFeaturesInput("");
+    setPricingDialog({ open: true, mode: "create" });
+  };
+  const openPricingEdit = (p: any) => {
+    setPricingForm({
+      id: p.id,
+      service_key: p.service_key,
+      service_name: p.service_name,
+      description: p.description || "",
+      icon: p.icon || "",
+      category: p.category || "kundli",
+      price: Number(p.price) || 0,
+      original_price: Number(p.original_price) || 0,
+      is_free: !!p.is_free,
+      is_active: p.is_active !== false,
+      sort_order: p.sort_order || 0,
+      features_json: p.features_json || [],
+      engine_function: p.engine_function || "",
+      requires_birth_data: p.requires_birth_data !== false,
+      max_free_per_user: p.max_free_per_user || null,
+    });
+    setPricingFeaturesInput((p.features_json || []).join(", "));
+    setPricingDialog({ open: true, mode: "edit" });
+  };
+  const submitPricing = async () => {
+    if (!pricingForm.service_key.trim() || !pricingForm.service_name.trim()) {
+      alert("service_key and service_name are required"); return;
+    }
+    const features = pricingFeaturesInput.split(",").map((s) => s.trim()).filter(Boolean);
+    const payload: any = {
+      service_key: pricingForm.service_key.trim(),
+      service_name: pricingForm.service_name.trim(),
+      description: pricingForm.description || null,
+      icon: pricingForm.icon || null,
+      category: pricingForm.category,
+      price: Number(pricingForm.price),
+      original_price: pricingForm.original_price ? Number(pricingForm.original_price) : null,
+      is_free: !!pricingForm.is_free || Number(pricingForm.price) === 0,
+      sort_order: Number(pricingForm.sort_order) || 0,
+      features_json: features,
+      engine_function: pricingForm.engine_function || null,
+      requires_birth_data: !!pricingForm.requires_birth_data,
+      max_free_per_user: pricingForm.max_free_per_user || null,
+    };
+    const { ok, data } =
+      pricingDialog.mode === "create"
+        ? await createServicePricing(payload)
+        : await updateServicePricing(pricingForm.id, payload);
+    if (!ok) { alert(data.detail || "Save failed"); return; }
+    setPricingDialog({ open: false, mode: "create" });
+    fetchData();
+  };
+  const deletePricing = async (p: any) => {
+    if (!confirm(`Delete "${p.service_name}"? This cannot be undone.`)) return;
+    const { ok, data } = await deleteServicePricing(p.id);
+    if (!ok) { alert(data.detail || "Delete failed"); return; }
+    fetchData();
+  };
+  const togglePricingActive = async (p: any) => {
+    await updateServicePricing(p.id, { is_active: !p.is_active });
+    fetchData();
+  };
+
+  // ── Gift CRUD handlers ───────────────────────────────────────────
+  const openGiftCreate = () => {
+    setGiftForm({ ...emptyGiftForm });
+    setGiftDialog({ open: true, mode: "create", gift: null });
+  };
+  const openGiftEdit = (g: any) => {
+    setGiftForm({
+      name: g.name, icon: g.icon, price: Number(g.price),
+      sort_order: g.sort_order || 0, animation_url: g.animation_url || "",
+    });
+    setGiftDialog({ open: true, mode: "edit", gift: g });
+  };
+  const submitGift = async () => {
+    if (!giftForm.name.trim() || !giftForm.icon.trim()) {
+      alert("Name and icon are required"); return;
+    }
+    if (!giftForm.price || Number(giftForm.price) <= 0) {
+      alert("Price must be greater than 0"); return;
+    }
+    const payload = {
+      name: giftForm.name.trim(),
+      icon: giftForm.icon.trim(),
+      price: Number(giftForm.price),
+      sort_order: Number(giftForm.sort_order) || 0,
+      animation_url: giftForm.animation_url || null,
+    };
+    const { ok, data } =
+      giftDialog.mode === "create"
+        ? await createGiftPricing(payload)
+        : await updateGiftPricing(giftDialog.gift.id, payload);
+    if (!ok) { alert(data.detail || "Save failed"); return; }
+    setGiftDialog({ open: false, mode: "create", gift: null });
+    fetchData();
+  };
+  const toggleGiftActive = async (g: any) => {
+    const { ok, data } = await toggleGiftPricing(g.id);
+    if (!ok) { alert(data.detail || "Toggle failed"); return; }
+    fetchData();
+  };
+  const deleteGift = async (g: any) => {
+    if (!confirm(`Delete gift "${g.name}"? This cannot be undone.`)) return;
+    const { ok, data } = await deleteGiftPricing(g.id);
+    if (!ok) { alert(data.detail || "Delete failed"); return; }
+    fetchData();
+  };
+
+  // ── Agora CRUD handlers ──────────────────────────────────────────
+  const openAgoraEdit = (c: any) => {
+    setAgoraEditForm({
+      label: c.label, app_id: c.app_id,
+      app_certificate: "",  // don't pre-fill secret
+      is_active: c.is_active,
+    });
+    setAgoraEditDialog({ open: true, config: c });
+  };
+  const submitAgoraEdit = async () => {
+    if (!agoraEditDialog.config) return;
+    const payload: any = {
+      label: agoraEditForm.label,
+      app_id: agoraEditForm.app_id,
+      is_active: agoraEditForm.is_active,
+    };
+    if (agoraEditForm.app_certificate && agoraEditForm.app_certificate.trim()) {
+      payload.app_certificate = agoraEditForm.app_certificate.trim();
+    }
+    const { ok, data } = await updateAgoraConfig(agoraEditDialog.config.id, payload);
+    if (!ok) { alert(data.detail || "Update failed"); return; }
+    setAgoraEditDialog({ open: false, config: null });
+    fetchData();
+  };
+  const deleteAgora = async (c: any) => {
+    if (c.is_active) { alert("Cannot delete the active config. Activate another one first."); return; }
+    if (!confirm(`Delete Agora config "${c.label}"? This cannot be undone.`)) return;
+    const { ok, data } = await deleteAgoraConfig(c.id);
+    if (!ok) { alert(data.detail || "Delete failed"); return; }
+    fetchData();
+  };
+
   const fmt = (n: number) => new Intl.NumberFormat("en-IN").format(n);
+
+  // ── Pagination helpers for pricing/gifts ─────────────────────────
+  const pricingPageSlice = pricing.slice(
+    pricingPage * PRICING_PAGE_SIZE,
+    pricingPage * PRICING_PAGE_SIZE + PRICING_PAGE_SIZE,
+  );
+  const giftsPageSlice = gifts.slice(
+    giftsPage * GIFTS_PAGE_SIZE,
+    giftsPage * GIFTS_PAGE_SIZE + GIFTS_PAGE_SIZE,
+  );
 
   if (!user) return null;
 
@@ -1618,95 +1835,526 @@ const AdminPanel = () => {
 
             {/* ══════ PRICING ══════ */}
             {activeTab === "pricing" && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-display text-gold-gradient">Service Pricing</h2>
-                  <Button size="sm" onClick={handleSeedPricing} variant="outline" className="border-primary text-primary">
-                    <Plus className="w-3 h-3 mr-1" /> Seed Defaults
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={handleSeedPricing} variant="outline" className="border-border text-muted-foreground">
+                      <RefreshCw className="w-3 h-3 mr-1" /> Seed Defaults
+                    </Button>
+                    <Button size="sm" onClick={openPricingCreate} className="gradient-gold text-primary-foreground">
+                      <Plus className="w-3 h-3 mr-1" /> Add Service
+                    </Button>
+                  </div>
                 </div>
-                {/* Edit modal */}
-                {editPricing && (
-                  <div className="bg-card/80 border border-primary rounded-xl p-4 space-y-3">
-                    <h3 className="text-sm font-semibold text-primary">Editing: {editPricing.service_name}</h3>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <label className="text-xs text-muted-foreground">Price (₹)</label>
-                        <Input type="number" value={editPricing.price} onChange={(e) => setEditPricing({ ...editPricing, price: Number(e.target.value) })} className="bg-muted border-border mt-1" />
-                      </div>
-                      <div>
-                        <label className="text-xs text-muted-foreground">Original Price (₹)</label>
-                        <Input type="number" value={editPricing.original_price || ""} onChange={(e) => setEditPricing({ ...editPricing, original_price: Number(e.target.value) || null })} className="bg-muted border-border mt-1" />
-                      </div>
-                      <div className="flex items-end gap-2">
-                        <Button size="sm" className="gradient-gold text-primary-foreground" onClick={savePricingEdit}>Save</Button>
-                        <Button size="sm" variant="outline" onClick={() => setEditPricing(null)}>Cancel</Button>
-                      </div>
+
+                {/* Filters */}
+                <div className="flex flex-col md:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      value={pricingSearch}
+                      onChange={(e) => setPricingSearch(e.target.value)}
+                      placeholder="Search by name or key..."
+                      className="pl-10 bg-muted border-border"
+                    />
+                  </div>
+                  <Select value={pricingFilterCategory} onValueChange={setPricingFilterCategory}>
+                    <SelectTrigger className="w-full md:w-40 bg-muted border-border">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="kundli">Kundli</SelectItem>
+                      <SelectItem value="report">Report</SelectItem>
+                      <SelectItem value="consultation">Consultation</SelectItem>
+                      <SelectItem value="ai">AI</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={pricingFilterStatus} onValueChange={setPricingFilterStatus}>
+                    <SelectTrigger className="w-full md:w-40 bg-muted border-border">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="free">Free</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Showing {pricingPageSlice.length} of {pricing.length} services
+                </p>
+
+                <div className="bg-card/60 border border-border rounded-xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/30">
+                          <th className="text-left p-3 text-muted-foreground font-medium">Service</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">Key</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">Category</th>
+                          <th className="text-right p-3 text-muted-foreground font-medium">Price</th>
+                          <th className="text-right p-3 text-muted-foreground font-medium hidden lg:table-cell">Original</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">Status</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pricingPageSlice.length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="p-8 text-center text-muted-foreground text-sm">
+                              No services found. Click "Add Service" or "Seed Defaults".
+                            </td>
+                          </tr>
+                        )}
+                        {pricingPageSlice.map((p: any) => (
+                          <tr key={p.id} className="border-b border-border last:border-0 hover:bg-muted/10">
+                            <td className="p-3">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">{p.icon}</span>
+                                <div>
+                                  <p className="text-foreground font-medium">{p.service_name}</p>
+                                  {p.description && (
+                                    <p className="text-[10px] text-muted-foreground truncate max-w-[200px]" title={p.description}>
+                                      {p.description}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-3">
+                              <code className="text-xs text-muted-foreground">{p.service_key}</code>
+                            </td>
+                            <td className="p-3">
+                              <Badge variant="outline" className="border-border text-xs capitalize">
+                                {p.category}
+                              </Badge>
+                            </td>
+                            <td className="p-3 text-right text-primary font-semibold">
+                              {p.is_free || p.price === 0 ? "FREE" : `₹${p.price}`}
+                            </td>
+                            <td className="p-3 text-right text-muted-foreground text-xs line-through hidden lg:table-cell">
+                              {p.original_price ? `₹${p.original_price}` : "—"}
+                            </td>
+                            <td className="p-3 text-center">
+                              <Badge className={p.is_active ? "bg-green-500/20 text-green-400" : "bg-muted text-muted-foreground"}>
+                                {p.is_active ? "Active" : "Inactive"}
+                              </Badge>
+                            </td>
+                            <td className="p-3">
+                              <div className="flex justify-center gap-1">
+                                <Button
+                                  size="sm" variant="outline"
+                                  className="h-7 w-7 p-0 border-primary text-primary hover:bg-primary/10"
+                                  onClick={() => openPricingEdit(p)}
+                                  title="Edit"
+                                >
+                                  <Pencil className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  className={`h-7 w-7 p-0 ${p.is_active ? "border-muted-foreground text-muted-foreground" : "border-green-500 text-green-400"}`}
+                                  onClick={() => togglePricingActive(p)}
+                                  title={p.is_active ? "Deactivate" : "Activate"}
+                                >
+                                  {p.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  className="h-7 w-7 p-0 border-destructive text-destructive hover:bg-destructive/10"
+                                  onClick={() => deletePricing(p)}
+                                  title="Delete"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Pagination */}
+                {pricing.length > PRICING_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {pricingPage + 1} of {Math.max(1, Math.ceil(pricing.length / PRICING_PAGE_SIZE))}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" disabled={pricingPage === 0}
+                        onClick={() => setPricingPage((p) => Math.max(0, p - 1))}
+                        className="h-8 border-border">
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button size="sm" variant="outline"
+                        disabled={(pricingPage + 1) * PRICING_PAGE_SIZE >= pricing.length}
+                        onClick={() => setPricingPage((p) => p + 1)}
+                        className="h-8 border-border">
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 )}
-                <div className="bg-card/60 border border-border rounded-xl overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left p-3 text-muted-foreground font-medium">Service</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium">Category</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium">Price</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">Original</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium">Status</th>
-                        <th className="text-left p-3 text-muted-foreground font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pricing.map((p: any) => (
-                        <tr key={p.id} className="border-b border-border last:border-0">
-                          <td className="p-3 text-foreground">
-                            <span className="mr-2">{p.icon}</span>{p.service_name}
-                          </td>
-                          <td className="p-3"><Badge variant="outline" className="border-border text-muted-foreground text-xs">{p.category}</Badge></td>
-                          <td className="p-3 text-primary font-medium">{p.is_free ? "FREE" : `₹${p.price}`}</td>
-                          <td className="p-3 text-muted-foreground hidden md:table-cell">{p.original_price ? `₹${p.original_price}` : "—"}</td>
-                          <td className="p-3">
-                            <Badge className={p.is_active ? "bg-green-500/20 text-green-400" : "bg-muted text-muted-foreground"}>
-                              {p.is_active ? "Active" : "Inactive"}
-                            </Badge>
-                          </td>
-                          <td className="p-3">
-                            <Button size="sm" variant="outline" className="h-7 text-xs border-primary text-primary" onClick={() => setEditPricing({ ...p })}>
-                              <Pencil className="w-3 h-3 mr-1" /> Edit
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
               </div>
             )}
 
+            {/* ══════ Pricing Create/Edit Dialog ══════ */}
+            <Dialog open={pricingDialog.open} onOpenChange={(v) => !v && setPricingDialog({ open: false, mode: "create" })}>
+              <DialogContent className="bg-card border-border max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    {pricingDialog.mode === "create" ? <PlusCircle className="w-5 h-5 text-primary" /> : <Pencil className="w-5 h-5 text-primary" />}
+                    {pricingDialog.mode === "create" ? "Add New Service" : "Edit Service"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Service Key *</Label>
+                      <Input
+                        value={pricingForm.service_key}
+                        onChange={(e) => setPricingForm({ ...pricingForm, service_key: e.target.value })}
+                        placeholder="e.g. birth_chart"
+                        disabled={pricingDialog.mode === "edit"}
+                        className="bg-muted border-border mt-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Icon (emoji)</Label>
+                      <Input
+                        value={pricingForm.icon}
+                        onChange={(e) => setPricingForm({ ...pricingForm, icon: e.target.value })}
+                        placeholder="📜"
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Service Name *</Label>
+                    <Input
+                      value={pricingForm.service_name}
+                      onChange={(e) => setPricingForm({ ...pricingForm, service_name: e.target.value })}
+                      placeholder="Birth Chart (Janam Kundli)"
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Description</Label>
+                    <Textarea
+                      value={pricingForm.description}
+                      onChange={(e) => setPricingForm({ ...pricingForm, description: e.target.value })}
+                      placeholder="Short description..."
+                      className="bg-muted border-border mt-1 min-h-[60px]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Category</Label>
+                      <Select value={pricingForm.category} onValueChange={(v) => setPricingForm({ ...pricingForm, category: v })}>
+                        <SelectTrigger className="bg-muted border-border mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="kundli">Kundli</SelectItem>
+                          <SelectItem value="report">Report</SelectItem>
+                          <SelectItem value="consultation">Consultation</SelectItem>
+                          <SelectItem value="ai">AI</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Price (₹)</Label>
+                      <Input
+                        type="number" min="0" step="0.01"
+                        value={pricingForm.price}
+                        onChange={(e) => setPricingForm({ ...pricingForm, price: Number(e.target.value) })}
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Original Price</Label>
+                      <Input
+                        type="number" min="0" step="0.01"
+                        value={pricingForm.original_price}
+                        onChange={(e) => setPricingForm({ ...pricingForm, original_price: Number(e.target.value) })}
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Features (comma separated)</Label>
+                    <Input
+                      value={pricingFeaturesInput}
+                      onChange={(e) => setPricingFeaturesInput(e.target.value)}
+                      placeholder="D1 Kundli, Nakshatra, Dignity"
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Engine Function</Label>
+                      <Input
+                        value={pricingForm.engine_function}
+                        onChange={(e) => setPricingForm({ ...pricingForm, engine_function: e.target.value })}
+                        placeholder="calculate_chart"
+                        className="bg-muted border-border mt-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Sort Order</Label>
+                      <Input
+                        type="number" min="0"
+                        value={pricingForm.sort_order}
+                        onChange={(e) => setPricingForm({ ...pricingForm, sort_order: Number(e.target.value) })}
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Max Free/User</Label>
+                      <Input
+                        type="number" min="0"
+                        value={pricingForm.max_free_per_user || ""}
+                        onChange={(e) => setPricingForm({ ...pricingForm, max_free_per_user: e.target.value ? Number(e.target.value) : null })}
+                        placeholder="unlimited"
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 pt-2">
+                    <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={pricingForm.is_free}
+                        onChange={(e) => setPricingForm({ ...pricingForm, is_free: e.target.checked })}
+                      />
+                      Is Free
+                    </label>
+                    <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={pricingForm.requires_birth_data}
+                        onChange={(e) => setPricingForm({ ...pricingForm, requires_birth_data: e.target.checked })}
+                      />
+                      Requires Birth Data
+                    </label>
+                    {pricingDialog.mode === "edit" && (
+                      <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={pricingForm.is_active}
+                          onChange={(e) => setPricingForm({ ...pricingForm, is_active: e.target.checked })}
+                        />
+                        Is Active
+                      </label>
+                    )}
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setPricingDialog({ open: false, mode: "create" })}>Cancel</Button>
+                  <Button onClick={submitPricing} className="gradient-gold text-primary-foreground">
+                    {pricingDialog.mode === "create" ? "Create" : "Update"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
             {/* ══════ GIFTS ══════ */}
             {activeTab === "gifts" && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-display text-gold-gradient">Gift Pricing (Live Stream)</h2>
-                  <Button size="sm" onClick={handleSeedGifts} variant="outline" className="border-primary text-primary">
-                    <Plus className="w-3 h-3 mr-1" /> Seed Defaults
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={handleSeedGifts} variant="outline" className="border-border text-muted-foreground">
+                      <RefreshCw className="w-3 h-3 mr-1" /> Seed Defaults
+                    </Button>
+                    <Button size="sm" onClick={openGiftCreate} className="gradient-gold text-primary-foreground">
+                      <Plus className="w-3 h-3 mr-1" /> Add Gift
+                    </Button>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {gifts.map((g: any) => (
-                    <div key={g.id} className="bg-card/60 border border-border rounded-xl p-4 text-center">
+
+                {/* Filters */}
+                <div className="flex flex-col md:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      value={giftsSearch}
+                      onChange={(e) => setGiftsSearch(e.target.value)}
+                      placeholder="Search by name..."
+                      className="pl-10 bg-muted border-border"
+                    />
+                  </div>
+                  <Select value={giftsFilterStatus} onValueChange={setGiftsFilterStatus}>
+                    <SelectTrigger className="w-full md:w-40 bg-muted border-border">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Showing {giftsPageSlice.length} of {gifts.length} gifts
+                </p>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {giftsPageSlice.length === 0 && (
+                    <div className="col-span-4 p-8 text-center text-muted-foreground bg-card/60 border border-border rounded-xl">
+                      No gifts found.
+                    </div>
+                  )}
+                  {giftsPageSlice.map((g: any) => (
+                    <div
+                      key={g.id}
+                      className={`bg-card/60 border rounded-xl p-4 text-center relative ${g.is_active ? "border-border" : "border-border opacity-60"}`}
+                    >
                       <span className="text-4xl">{g.icon}</span>
-                      <h4 className="text-foreground font-semibold mt-2">{g.name}</h4>
+                      <h4 className="text-foreground font-semibold mt-2 text-sm">{g.name}</h4>
                       <p className="text-primary font-bold text-lg mt-1">₹{g.price}</p>
-                      <Badge className={g.is_active ? "bg-green-500/20 text-green-400 mt-2" : "bg-muted text-muted-foreground mt-2"}>
+                      <p className="text-[10px] text-muted-foreground">Sort: {g.sort_order || 0}</p>
+                      <Badge className={`mt-2 text-[10px] ${g.is_active ? "bg-green-500/20 text-green-400" : "bg-muted text-muted-foreground"}`}>
                         {g.is_active ? "Active" : "Inactive"}
                       </Badge>
+                      <div className="flex justify-center gap-1 mt-3">
+                        <Button
+                          size="sm" variant="outline"
+                          className="h-7 w-7 p-0 border-primary text-primary hover:bg-primary/10"
+                          onClick={() => openGiftEdit(g)}
+                          title="Edit"
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm" variant="outline"
+                          className={`h-7 w-7 p-0 ${g.is_active ? "border-muted-foreground text-muted-foreground" : "border-green-500 text-green-400"}`}
+                          onClick={() => toggleGiftActive(g)}
+                          title={g.is_active ? "Deactivate" : "Activate"}
+                        >
+                          {g.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                        </Button>
+                        <Button
+                          size="sm" variant="outline"
+                          className="h-7 w-7 p-0 border-destructive text-destructive hover:bg-destructive/10"
+                          onClick={() => deleteGift(g)}
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
+
+                {/* Pagination */}
+                {gifts.length > GIFTS_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {giftsPage + 1} of {Math.max(1, Math.ceil(gifts.length / GIFTS_PAGE_SIZE))}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" disabled={giftsPage === 0}
+                        onClick={() => setGiftsPage((p) => Math.max(0, p - 1))}
+                        className="h-8 border-border">
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button size="sm" variant="outline"
+                        disabled={(giftsPage + 1) * GIFTS_PAGE_SIZE >= gifts.length}
+                        onClick={() => setGiftsPage((p) => p + 1)}
+                        className="h-8 border-border">
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
+            {/* ══════ Gift Create/Edit Dialog ══════ */}
+            <Dialog open={giftDialog.open} onOpenChange={(v) => !v && setGiftDialog({ open: false, mode: "create", gift: null })}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Gift className="w-5 h-5 text-primary" />
+                    {giftDialog.mode === "create" ? "Add Gift" : "Edit Gift"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Name *</Label>
+                      <Input
+                        value={giftForm.name}
+                        onChange={(e) => setGiftForm({ ...giftForm, name: e.target.value })}
+                        placeholder="Rose"
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Icon (emoji) *</Label>
+                      <Input
+                        value={giftForm.icon}
+                        onChange={(e) => setGiftForm({ ...giftForm, icon: e.target.value })}
+                        placeholder="🌹"
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Price (₹) *</Label>
+                      <Input
+                        type="number" min="0" step="0.01"
+                        value={giftForm.price}
+                        onChange={(e) => setGiftForm({ ...giftForm, price: Number(e.target.value) })}
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">Sort Order</Label>
+                      <Input
+                        type="number" min="0"
+                        value={giftForm.sort_order}
+                        onChange={(e) => setGiftForm({ ...giftForm, sort_order: Number(e.target.value) })}
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Animation URL (optional)</Label>
+                    <Input
+                      value={giftForm.animation_url}
+                      onChange={(e) => setGiftForm({ ...giftForm, animation_url: e.target.value })}
+                      placeholder="Lottie/GIF URL"
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                  {/* Preview */}
+                  {giftForm.icon && (
+                    <div className="bg-muted/40 rounded-lg p-4 border border-border text-center">
+                      <p className="text-[10px] text-muted-foreground mb-1">Preview</p>
+                      <span className="text-4xl">{giftForm.icon}</span>
+                      <p className="text-foreground font-semibold mt-1">{giftForm.name || "Gift Name"}</p>
+                      <p className="text-primary font-bold">₹{giftForm.price || 0}</p>
+                    </div>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setGiftDialog({ open: false, mode: "create", gift: null })}>Cancel</Button>
+                  <Button onClick={submitGift} className="gradient-gold text-primary-foreground">
+                    {giftDialog.mode === "create" ? "Create" : "Update"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             {/* ══════ AGORA ══════ */}
             {activeTab === "agora" && (
@@ -1745,22 +2393,51 @@ const AdminPanel = () => {
                   </div>
                 )}
 
+                <p className="text-xs text-muted-foreground">{agoraConfigs.length} configs</p>
+
                 <div className="space-y-3">
-                  {agoraConfigs.length === 0 && <p className="text-muted-foreground text-sm">No Agora configs yet. Add one or seed demo data.</p>}
+                  {agoraConfigs.length === 0 && (
+                    <p className="text-muted-foreground text-sm p-6 text-center bg-card/60 border border-border rounded-xl">
+                      No Agora configs yet. Click "Add Config" to create one.
+                    </p>
+                  )}
                   {agoraConfigs.map((c: any) => (
                     <div key={c.id} className={`bg-card/60 border rounded-xl p-4 ${c.is_active ? "border-primary glow-gold" : "border-border"}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-foreground font-semibold">{c.label}</h4>
-                          <p className="text-xs text-muted-foreground mt-1">App ID: <code className="text-primary">{c.app_id}</code></p>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-foreground font-semibold">{c.label}</h4>
+                            {c.is_active && <Badge className="gradient-gold text-primary-foreground text-[10px]">ACTIVE</Badge>}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            App ID: <code className="text-primary break-all">{c.app_id}</code>
+                          </p>
                           <p className="text-xs text-muted-foreground">Created: {c.created_at?.slice(0, 10)}</p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-2 items-end">
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-muted-foreground">Active</span>
                             <Switch checked={c.is_active} onCheckedChange={(val) => toggleAgoraActive(c.id, val)} />
                           </div>
-                          {c.is_active && <Badge className="gradient-gold text-primary-foreground">ACTIVE</Badge>}
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm" variant="outline"
+                              className="h-7 w-7 p-0 border-primary text-primary hover:bg-primary/10"
+                              onClick={() => openAgoraEdit(c)}
+                              title="Edit"
+                            >
+                              <Pencil className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm" variant="outline"
+                              className="h-7 w-7 p-0 border-destructive text-destructive hover:bg-destructive/10"
+                              onClick={() => deleteAgora(c)}
+                              title={c.is_active ? "Cannot delete active config" : "Delete"}
+                              disabled={c.is_active}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1778,6 +2455,63 @@ const AdminPanel = () => {
                 </div>
               </div>
             )}
+
+            {/* ══════ Agora Edit Dialog ══════ */}
+            <Dialog open={agoraEditDialog.open} onOpenChange={(v) => !v && setAgoraEditDialog({ open: false, config: null })}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Pencil className="w-5 h-5 text-primary" /> Edit Agora Config
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Label</Label>
+                    <Input
+                      value={agoraEditForm.label}
+                      onChange={(e) => setAgoraEditForm({ ...agoraEditForm, label: e.target.value })}
+                      placeholder="e.g. Production"
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">App ID</Label>
+                    <Input
+                      value={agoraEditForm.app_id}
+                      onChange={(e) => setAgoraEditForm({ ...agoraEditForm, app_id: e.target.value })}
+                      placeholder="Your Agora App ID"
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">
+                      App Certificate <span className="text-[10px]">(leave blank to keep existing)</span>
+                    </Label>
+                    <Input
+                      value={agoraEditForm.app_certificate}
+                      onChange={(e) => setAgoraEditForm({ ...agoraEditForm, app_certificate: e.target.value })}
+                      placeholder="New certificate (optional)"
+                      className="bg-muted border-border mt-1"
+                      type="password"
+                    />
+                  </div>
+                  <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={agoraEditForm.is_active}
+                      onChange={(e) => setAgoraEditForm({ ...agoraEditForm, is_active: e.target.checked })}
+                    />
+                    Set as Active (auto-deactivates all others)
+                  </label>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAgoraEditDialog({ open: false, config: null })}>Cancel</Button>
+                  <Button onClick={submitAgoraEdit} className="gradient-gold text-primary-foreground">
+                    Save Changes
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             {/* ══════ SETTINGS ══════ */}
             {activeTab === "settings" && (

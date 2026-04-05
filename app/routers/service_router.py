@@ -124,12 +124,25 @@ def _get_birth_jd(nk, dob, tob, place):
 @router.get("/pricing", response_model=List[ServicePricingResponse])
 def list_pricing(
     category: Optional[str] = None,
+    include_inactive: bool = False,
+    search: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    """Public: list all active service pricing."""
-    q = db.query(ServicePricing).filter(ServicePricing.is_active == True)
+    """
+    Public: list active service pricing.
+    Admin can pass include_inactive=true and search to see all entries.
+    """
+    q = db.query(ServicePricing)
+    if not include_inactive:
+        q = q.filter(ServicePricing.is_active == True)
     if category:
         q = q.filter(ServicePricing.category == category)
+    if search:
+        like = f"%{search}%"
+        q = q.filter(
+            (ServicePricing.service_name.like(like)) |
+            (ServicePricing.service_key.like(like))
+        )
     return q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
 
 
@@ -172,6 +185,21 @@ def update_pricing(
     db.commit()
     db.refresh(sp)
     return sp
+
+
+@router.delete("/pricing/{pricing_id}", response_model=MessageResponse)
+def delete_pricing(
+    pricing_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin-only: delete a service pricing entry."""
+    sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
+    if not sp:
+        raise HTTPException(status_code=404, detail="Service not found")
+    db.delete(sp)
+    db.commit()
+    return MessageResponse(message=f"Service '{sp.service_name}' deleted")
 
 
 @router.post("/pricing/seed", response_model=MessageResponse)

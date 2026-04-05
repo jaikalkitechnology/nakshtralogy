@@ -184,6 +184,22 @@ def update_agora_config(
     return cfg
 
 
+@router.delete("/agora-config/{config_id}", response_model=MessageResponse)
+def delete_agora_config(
+    config_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    cfg = db.query(AgoraConfig).filter(AgoraConfig.id == config_id).first()
+    if not cfg:
+        raise HTTPException(status_code=404, detail="Config not found")
+    if cfg.is_active:
+        raise HTTPException(status_code=400, detail="Cannot delete the active Agora config. Activate another config first.")
+    db.delete(cfg)
+    db.commit()
+    return MessageResponse(message="Agora config deleted")
+
+
 # ══════════════════════════════════════════════════════════════════════
 #  GIFT PRICING (Admin)
 # ══════════════════════════════════════════════════════════════════════
@@ -202,9 +218,62 @@ def create_gift(
 
 
 @router.get("/gifts", response_model=List[GiftPricingResponse])
-def list_gifts(db: Session = Depends(get_db)):
-    """Public: list available gifts."""
-    return db.query(GiftPricing).filter(GiftPricing.is_active == True).order_by(GiftPricing.sort_order).all()
+def list_gifts(
+    include_inactive: bool = False,
+    db: Session = Depends(get_db),
+):
+    """Public: list available gifts. Admin can set include_inactive=true to see all."""
+    q = db.query(GiftPricing)
+    if not include_inactive:
+        q = q.filter(GiftPricing.is_active == True)
+    return q.order_by(GiftPricing.sort_order).all()
+
+
+@router.put("/gifts/{gift_id}", response_model=GiftPricingResponse)
+def update_gift(
+    gift_id: str,
+    req: GiftPricingCreate,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
+    if not g:
+        raise HTTPException(status_code=404, detail="Gift not found")
+    data = req.model_dump(exclude_unset=True)
+    for k, v in data.items():
+        setattr(g, k, v)
+    db.commit()
+    db.refresh(g)
+    return g
+
+
+@router.patch("/gifts/{gift_id}/toggle", response_model=GiftPricingResponse)
+def toggle_gift(
+    gift_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
+    if not g:
+        raise HTTPException(status_code=404, detail="Gift not found")
+    g.is_active = not g.is_active
+    db.commit()
+    db.refresh(g)
+    return g
+
+
+@router.delete("/gifts/{gift_id}", response_model=MessageResponse)
+def delete_gift(
+    gift_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
+    if not g:
+        raise HTTPException(status_code=404, detail="Gift not found")
+    db.delete(g)
+    db.commit()
+    return MessageResponse(message="Gift deleted")
 
 
 @router.post("/gifts/seed", response_model=MessageResponse)
