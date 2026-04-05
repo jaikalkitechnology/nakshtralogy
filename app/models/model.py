@@ -140,6 +140,14 @@ class AstrologerProfile(Base):
     rate_per_min_chat = Column(Numeric(10, 2), default=0)
     rate_per_min_call = Column(Numeric(10, 2), default=0)
     rate_per_min_video = Column(Numeric(10, 2), default=0)
+    # Per-session pricing (flat fee per session)
+    rate_per_session_chat = Column(Numeric(10, 2), default=0)
+    rate_per_session_call = Column(Numeric(10, 2), default=0)
+    rate_per_session_video = Column(Numeric(10, 2), default=0)
+    # Chat session = N user messages, validity in hours (session ends when
+    # user clicks end or validity expires or message limit hit)
+    session_message_limit = Column(Integer, default=45)
+    session_validity_hours = Column(Integer, default=24)
     commission_pct = Column(Numeric(5, 2), default=30.00)
     rating = Column(Numeric(3, 2), default=0.00)
     total_reviews = Column(Integer, default=0)
@@ -798,3 +806,38 @@ class SavedAstrologer(Base):
         UniqueConstraint("user_id", "astrologer_profile_id", name="uq_saved_user_astro"),
         Index("ix_saved_user_astro", "user_id", "astrologer_profile_id"),
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  14. WITHDRAWAL REQUESTS (Astrologer payout workflow)
+# ─────────────────────────────────────────────────────────────────────
+
+class WithdrawalRequest(Base):
+    """
+    Astrologer-initiated withdrawal request.
+    Flow:
+      1. Astrologer clicks Withdraw in app, min_amount check
+      2. WithdrawalRequest row created with status=pending,
+         wallet debited immediately via WalletTransaction
+      3. Admin approves/rejects → status=paid|rejected,
+         bank_ref + admin_note captured
+      4. If rejected → funds are re-credited via WalletTransaction
+    """
+    __tablename__ = "withdrawal_requests"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    amount = Column(Numeric(10, 2), nullable=False)
+    status = Column(String(20), default="pending", index=True)
+    # pending | approved | paid | rejected
+    bank_account_name = Column(String(150), nullable=True)
+    bank_account_number = Column(String(50), nullable=True)
+    bank_ifsc = Column(String(20), nullable=True)
+    upi_id = Column(String(100), nullable=True)
+    notes = Column(Text, nullable=True)           # astrologer's note
+    admin_note = Column(Text, nullable=True)      # admin's reason
+    bank_ref = Column(String(100), nullable=True) # txn ref after payout
+    debit_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    refund_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    requested_at = Column(DateTime, server_default=func.now(), nullable=False)
+    processed_at = Column(DateTime, nullable=True)

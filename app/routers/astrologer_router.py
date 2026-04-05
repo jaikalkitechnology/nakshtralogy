@@ -63,6 +63,11 @@ def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResp
         rate_per_min_chat=float(profile.rate_per_min_chat or 0),
         rate_per_min_call=float(profile.rate_per_min_call or 0),
         rate_per_min_video=float(profile.rate_per_min_video or 0),
+        rate_per_session_chat=float(getattr(profile, "rate_per_session_chat", 0) or 0),
+        rate_per_session_call=float(getattr(profile, "rate_per_session_call", 0) or 0),
+        rate_per_session_video=float(getattr(profile, "rate_per_session_video", 0) or 0),
+        session_message_limit=getattr(profile, "session_message_limit", 45) or 45,
+        session_validity_hours=getattr(profile, "session_validity_hours", 24) or 24,
         rating=float(profile.rating or 0),
         total_reviews=profile.total_reviews,
         total_consultations=profile.total_consultations,
@@ -710,3 +715,256 @@ def get_my_recent_requests(
     # Sort combined by created_at desc, take top `limit`
     items.sort(key=lambda x: x["created_at"] or "", reverse=True)
     return {"items": items[:limit]}
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  WALLET + WITHDRAWAL (astrologer self-service)
+# ══════════════════════════════════════════════════════════════════════
+
+from decimal import Decimal as _Decimal
+from app.models.model import (
+    WithdrawalRequest as _Withdrawal,
+    PlatformSetting as _Setting,
+    WalletTransaction as _WalletTxn2,
+)
+
+
+def _get_withdrawal_config(db: Session) -> dict:
+    """Fetch withdrawal_config from platform_settings with safe defaults."""
+    rows = db.query(_Setting).filter(_Setting.category == "withdrawal_config").all()
+    cfg = {r.key: r.value for r in rows}
+    return {
+        "min_amount": float(cfg.get("min_amount") or 100),
+        "max_per_day": float(cfg.get("max_per_day") or 50000),
+        "processing_days": int(cfg.get("processing_days") or 3),
+        "require_bank": (cfg.get("require_bank") or "true").lower() in ("true", "1", "yes"),
+        "commission_pct": float(cfg.get("commission_pct") or 0),
+    }
+
+
+@router.get("/me/wallet")
+def get_astro_wallet(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Astrologer wallet summary with earnings + withdrawals breakdown."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        wallet = Wallet(user_id=current_user.id)
+        db.add(wallet)
+        db.commit()
+        db.refresh(wallet)
+
+    from sqlalchemy import func as _fn
+    # Earnings = consultation_credit (per-min calls/chats) + bonus
+    total_earned = db.query(_fn.coalesce(_fn.sum(_WalletTxn2.amount), 0)).filter(
+        _WalletTxn2.wallet_id == wallet.id,
+        _WalletTxn2.txn_type.in_(["consultation_credit", "bonus"]),
+    ).scalar() or 0
+    total_withdrawn = db.query(_fn.coalesce(_fn.sum(_WalletTxn2.amount), 0)).filter(
+        _WalletTxn2.wallet_id == wallet.id,
+        _WalletTxn2.txn_type == "withdrawal",
+    ).scalar() or 0
+
+    pending_withdrawal = db.query(_fn.coalesce(_fn.sum(_Withdrawal.amount), 0)).filter(
+        _Withdrawal.user_id == current_user.id,
+        _Withdrawal.status == "pending",
+    ).scalar() or 0
+
+    cfg = _get_withdrawal_config(db)
+    return {
+        "balance": float(wallet.balance),
+        "currency": wallet.currency,
+        "total_earned": float(total_earned),
+        "total_withdrawn": float(total_withdrawn),
+        "pending_withdrawal": float(pending_withdrawal),
+        "withdrawable": max(0.0, float(wallet.balance) - float(pending_withdrawal)),
+        "withdrawal_config": cfg,
+    }
+
+
+@router.get("/me/wallet/transactions")
+def list_astro_wallet_transactions(
+    skip: int = 0,
+    limit: int = 20,
+    kind: Optional[str] = None,  # all | earning | withdrawal
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Astrologer wallet statement — earnings + withdrawals."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        return {"total": 0, "transactions": []}
+
+    q = db.query(_WalletTxn2).filter(_WalletTxn2.wallet_id == wallet.id)
+    if kind == "earning":
+        q = q.filter(_WalletTxn2.txn_type.in_(["consultation_credit", "bonus"]))
+    elif kind == "withdrawal":
+        q = q.filter(_WalletTxn2.txn_type == "withdrawal")
+
+    total = q.count()
+    rows = q.order_by(_WalletTxn2.created_at.desc()).offset(skip).limit(limit).all()
+
+    label_map = {
+        "consultation_credit": "Consultation Earning",
+        "bonus": "Bonus / Gift",
+        "withdrawal": "Withdrawal",
+        "refund": "Refund",
+    }
+    return {
+        "total": total,
+        "transactions": [
+            {
+                "id": t.id,
+                "txn_type": t.txn_type,
+                "label": label_map.get(t.txn_type, t.txn_type.replace("_", " ").title()),
+                "direction": "credit" if t.txn_type in ("consultation_credit", "bonus", "refund") else "debit",
+                "amount": float(t.amount),
+                "balance_after": float(t.balance_after),
+                "description": t.description,
+                "created_at": str(t.created_at) if t.created_at else None,
+            }
+            for t in rows
+        ],
+    }
+
+
+class WithdrawalRequestPayload(_BaseModel):
+    amount: float = _Field(..., gt=0)
+    bank_account_name: Optional[str] = None
+    bank_account_number: Optional[str] = None
+    bank_ifsc: Optional[str] = None
+    upi_id: Optional[str] = None
+    notes: Optional[str] = None
+
+
+@router.post("/me/wallet/withdraw")
+def request_withdrawal(
+    req: WithdrawalRequestPayload,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Request a withdrawal — validates min amount, debits wallet, creates
+    pending WithdrawalRequest row."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    cfg = _get_withdrawal_config(db)
+    if req.amount < cfg["min_amount"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Minimum withdrawal amount is ₹{cfg['min_amount']}",
+        )
+    if cfg["require_bank"] and not (req.upi_id or (req.bank_account_number and req.bank_ifsc)):
+        raise HTTPException(
+            status_code=400,
+            detail="Bank details or UPI ID are required for withdrawal",
+        )
+
+    # Enforce max per day
+    from sqlalchemy import func as _fn
+    from datetime import date as _date
+    today = _date.today()
+    today_total = db.query(_fn.coalesce(_fn.sum(_Withdrawal.amount), 0)).filter(
+        _Withdrawal.user_id == current_user.id,
+        _fn.date(_Withdrawal.requested_at) == today,
+        _Withdrawal.status != "rejected",
+    ).scalar() or 0
+    if float(today_total) + req.amount > cfg["max_per_day"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Daily withdrawal limit ₹{cfg['max_per_day']} would be exceeded",
+        )
+
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        raise HTTPException(status_code=400, detail="Wallet not found")
+
+    # Calculate available (exclude already-pending withdrawals)
+    pending = db.query(_fn.coalesce(_fn.sum(_Withdrawal.amount), 0)).filter(
+        _Withdrawal.user_id == current_user.id,
+        _Withdrawal.status == "pending",
+    ).scalar() or 0
+    available = float(wallet.balance) - float(pending)
+    if req.amount > available:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Insufficient available balance. Withdrawable: ₹{available:.2f}",
+        )
+
+    # Create debit transaction
+    amount_dec = _Decimal(str(req.amount))
+    new_bal = _Decimal(str(float(wallet.balance) - req.amount))
+    wallet.balance = new_bal
+    txn = _WalletTxn2(
+        wallet_id=wallet.id,
+        txn_type="withdrawal",
+        amount=amount_dec,
+        balance_after=new_bal,
+        description=f"Withdrawal request · {req.notes or 'pending admin approval'}",
+        reference_type="withdrawal",
+    )
+    db.add(txn)
+    db.flush()
+
+    wr = _Withdrawal(
+        user_id=current_user.id,
+        amount=amount_dec,
+        status="pending",
+        bank_account_name=req.bank_account_name,
+        bank_account_number=req.bank_account_number,
+        bank_ifsc=req.bank_ifsc,
+        upi_id=req.upi_id,
+        notes=req.notes,
+        debit_txn_id=txn.id,
+    )
+    db.add(wr)
+    db.commit()
+    db.refresh(wr)
+    return {
+        "id": wr.id,
+        "amount": float(wr.amount),
+        "status": wr.status,
+        "new_balance": float(new_bal),
+        "message": f"Withdrawal request of ₹{req.amount} submitted for admin approval",
+    }
+
+
+@router.get("/me/withdrawals")
+def list_my_withdrawals(
+    skip: int = 0,
+    limit: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List astrologer's withdrawal request history."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+    q = db.query(_Withdrawal).filter(_Withdrawal.user_id == current_user.id)
+    total = q.count()
+    rows = q.order_by(_Withdrawal.requested_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "withdrawals": [
+            {
+                "id": w.id,
+                "amount": float(w.amount),
+                "status": w.status,
+                "bank_account_name": w.bank_account_name,
+                "bank_account_number": (w.bank_account_number[-4:] if w.bank_account_number else None),
+                "upi_id": w.upi_id,
+                "notes": w.notes,
+                "admin_note": w.admin_note,
+                "bank_ref": w.bank_ref,
+                "requested_at": str(w.requested_at) if w.requested_at else None,
+                "processed_at": str(w.processed_at) if w.processed_at else None,
+            }
+            for w in rows
+        ],
+    }

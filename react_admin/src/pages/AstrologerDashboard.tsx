@@ -9,11 +9,18 @@ import StarField from "@/components/StarField";
 import {
   Home, MessageCircle, Phone, Video, Wallet, User as UserIcon, LogOut, Clock,
   Star, CheckCircle, XCircle, Bell, Shield, AlertCircle, Hourglass,
-  FileText, TrendingUp, Users as UsersIcon,
+  FileText, TrendingUp, Users as UsersIcon, Pencil, Download, ArrowUpRight,
+  ArrowDownLeft, Banknote, Save, Info,
 } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import {
   fetchAstroMeKycStatus, submitAstroKyc, fetchAstroMeStats,
   fetchAstroMeRecentRequests,
+  fetchAstroMe, fetchAstroMeWallet, fetchAstroMeWalletTransactions,
+  requestAstroWithdrawal, fetchAstroMyWithdrawals,
+  updateAstroProfile, updateAstroUserFields,
 } from "@/services/api";
 
 type Tab = "home" | "requests" | "earnings" | "profile";
@@ -31,6 +38,54 @@ const AstrologerDashboard = () => {
   // Dashboard data
   const [stats, setStats] = useState<any>(null);
   const [recentRequests, setRecentRequests] = useState<any[]>([]);
+
+  // Wallet / earnings tab state
+  const [walletData, setWalletData] = useState<any>(null);
+  const [walletTxns, setWalletTxns] = useState<any[]>([]);
+  const [walletTxnTotal, setWalletTxnTotal] = useState(0);
+  const [walletTxnKind, setWalletTxnKind] = useState<string>("all"); // all | earning | withdrawal
+  const [walletTxnPage, setWalletTxnPage] = useState(0);
+  const ASTRO_WALLET_PAGE_SIZE = 10;
+  const [withdrawalHistory, setWithdrawalHistory] = useState<any[]>([]);
+
+  // Withdraw dialog
+  const [withdrawDialog, setWithdrawDialog] = useState(false);
+  const [withdrawForm, setWithdrawForm] = useState({
+    amount: "",
+    upi_id: "",
+    bank_account_name: "",
+    bank_account_number: "",
+    bank_ifsc: "",
+    notes: "",
+    use_bank: false,
+  });
+  const [withdrawSubmitting, setWithdrawSubmitting] = useState(false);
+  const [withdrawError, setWithdrawError] = useState("");
+
+  // Full profile + edit dialog
+  const [astroMe, setAstroMe] = useState<any>(null);
+  const [editProfileDialog, setEditProfileDialog] = useState(false);
+  const [profileForm, setProfileForm] = useState<any>({
+    name: "",
+    phone: "",
+    display_name: "",
+    bio: "",
+    experience_years: 0,
+    languages: "",         // comma-separated string for editing
+    specializations: "",
+    qualification: "",
+    profile_image_url: "",
+    rate_per_min_chat: 0,
+    rate_per_min_call: 0,
+    rate_per_min_video: 0,
+    rate_per_session_chat: 0,
+    rate_per_session_call: 0,
+    rate_per_session_video: 0,
+    session_message_limit: 45,
+    session_validity_hours: 24,
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState("");
 
   // KYC submit form
   const [kycForm, setKycForm] = useState({
@@ -83,6 +138,171 @@ const AstrologerDashboard = () => {
   }, [kycStatus]);
 
   useEffect(() => { loadDashboard(); }, [loadDashboard]);
+
+  // ── Wallet data loader ─────────────────────────────────────────
+  const loadWallet = useCallback(async () => {
+    if (kycStatus !== "approved") return;
+    const [walletRes, txnRes, whRes] = await Promise.all([
+      fetchAstroMeWallet(),
+      fetchAstroMeWalletTransactions({
+        skip: walletTxnPage * ASTRO_WALLET_PAGE_SIZE,
+        limit: ASTRO_WALLET_PAGE_SIZE,
+        ...(walletTxnKind !== "all" ? { kind: walletTxnKind } : {}),
+      }),
+      fetchAstroMyWithdrawals({ limit: 10 }),
+    ]);
+    if (walletRes.ok) setWalletData(walletRes.data);
+    if (txnRes.ok) {
+      setWalletTxns(txnRes.data.transactions || []);
+      setWalletTxnTotal(txnRes.data.total || 0);
+    }
+    if (whRes.ok) setWithdrawalHistory(whRes.data.withdrawals || []);
+  }, [kycStatus, walletTxnPage, walletTxnKind]);
+
+  useEffect(() => {
+    if (activeTab === "earnings") loadWallet();
+  }, [activeTab, loadWallet]);
+
+  useEffect(() => { setWalletTxnPage(0); }, [walletTxnKind]);
+
+  // ── Profile data loader ────────────────────────────────────────
+  const loadAstroMe = useCallback(async () => {
+    if (kycStatus !== "approved") return;
+    const { ok, data } = await fetchAstroMe();
+    if (ok) {
+      setAstroMe(data);
+      const p = data.profile || {};
+      setProfileForm({
+        name: data.name || "",
+        phone: data.phone || "",
+        display_name: p.display_name || "",
+        bio: p.bio || "",
+        experience_years: p.experience_years || 0,
+        languages: (p.languages || []).join(", "),
+        specializations: (p.specializations || []).join(", "),
+        qualification: p.qualification || "",
+        profile_image_url: p.profile_image_url || "",
+        rate_per_min_chat: p.rate_per_min_chat || 0,
+        rate_per_min_call: p.rate_per_min_call || 0,
+        rate_per_min_video: p.rate_per_min_video || 0,
+        rate_per_session_chat: p.rate_per_session_chat || 0,
+        rate_per_session_call: p.rate_per_session_call || 0,
+        rate_per_session_video: p.rate_per_session_video || 0,
+        session_message_limit: p.session_message_limit || 45,
+        session_validity_hours: p.session_validity_hours || 24,
+      });
+    }
+  }, [kycStatus]);
+
+  useEffect(() => {
+    if (activeTab === "profile") loadAstroMe();
+  }, [activeTab, loadAstroMe]);
+
+  // ── Withdraw handler ───────────────────────────────────────────
+  const openWithdrawDialog = () => {
+    setWithdrawError("");
+    setWithdrawForm({
+      amount: "",
+      upi_id: "",
+      bank_account_name: "",
+      bank_account_number: "",
+      bank_ifsc: "",
+      notes: "",
+      use_bank: false,
+    });
+    setWithdrawDialog(true);
+  };
+
+  const submitWithdraw = async () => {
+    setWithdrawError("");
+    const amt = parseFloat(withdrawForm.amount);
+    if (isNaN(amt) || amt <= 0) {
+      setWithdrawError("Enter a valid amount"); return;
+    }
+    const minAmt = walletData?.withdrawal_config?.min_amount || 100;
+    if (amt < minAmt) {
+      setWithdrawError(`Minimum withdrawal amount is ₹${minAmt}`); return;
+    }
+    const withdrawable = walletData?.withdrawable || 0;
+    if (amt > withdrawable) {
+      setWithdrawError(`Only ₹${withdrawable} is withdrawable`); return;
+    }
+    if (walletData?.withdrawal_config?.require_bank) {
+      if (!withdrawForm.upi_id && !(withdrawForm.bank_account_number && withdrawForm.bank_ifsc)) {
+        setWithdrawError("Provide either UPI ID or full bank details"); return;
+      }
+    }
+    setWithdrawSubmitting(true);
+    try {
+      const payload: any = {
+        amount: amt,
+        notes: withdrawForm.notes || undefined,
+      };
+      if (withdrawForm.upi_id) payload.upi_id = withdrawForm.upi_id;
+      if (withdrawForm.use_bank) {
+        payload.bank_account_name = withdrawForm.bank_account_name;
+        payload.bank_account_number = withdrawForm.bank_account_number;
+        payload.bank_ifsc = withdrawForm.bank_ifsc;
+      }
+      const { ok, data } = await requestAstroWithdrawal(payload);
+      if (!ok) {
+        setWithdrawError(data.detail || "Withdrawal failed");
+      } else {
+        setWithdrawDialog(false);
+        await loadWallet();
+        alert(`✓ ${data.message}`);
+      }
+    } finally {
+      setWithdrawSubmitting(false);
+    }
+  };
+
+  // ── Profile save handler ───────────────────────────────────────
+  const submitProfile = async () => {
+    setProfileError("");
+    setProfileSaving(true);
+    try {
+      // 1. Update user-level fields (name, phone)
+      if (profileForm.name || profileForm.phone) {
+        const u = await updateAstroUserFields({
+          name: profileForm.name,
+          phone: profileForm.phone || null,
+        });
+        if (!u.ok) {
+          setProfileError(u.data.detail || "User update failed");
+          return;
+        }
+      }
+      // 2. Update astrologer profile fields
+      const payload: any = {
+        display_name: profileForm.display_name,
+        bio: profileForm.bio || null,
+        experience_years: Number(profileForm.experience_years) || 0,
+        languages: (profileForm.languages || "").split(",").map((s: string) => s.trim()).filter(Boolean),
+        specializations: (profileForm.specializations || "").split(",").map((s: string) => s.trim()).filter(Boolean),
+        qualification: profileForm.qualification || null,
+        profile_image_url: profileForm.profile_image_url || null,
+        rate_per_min_chat: Number(profileForm.rate_per_min_chat) || 0,
+        rate_per_min_call: Number(profileForm.rate_per_min_call) || 0,
+        rate_per_min_video: Number(profileForm.rate_per_min_video) || 0,
+        rate_per_session_chat: Number(profileForm.rate_per_session_chat) || 0,
+        rate_per_session_call: Number(profileForm.rate_per_session_call) || 0,
+        rate_per_session_video: Number(profileForm.rate_per_session_video) || 0,
+        session_message_limit: Number(profileForm.session_message_limit) || 45,
+        session_validity_hours: Number(profileForm.session_validity_hours) || 24,
+      };
+      const p = await updateAstroProfile(payload);
+      if (!p.ok) {
+        setProfileError(p.data.detail || "Profile update failed");
+        return;
+      }
+      setEditProfileDialog(false);
+      await loadAstroMe();
+      await loadDashboard();
+    } finally {
+      setProfileSaving(false);
+    }
+  };
 
   const submitKyc = async () => {
     setKycSubmitError("");
@@ -590,94 +810,663 @@ const AstrologerDashboard = () => {
         )}
 
         {activeTab === "earnings" && (
-          <div className="p-4 space-y-6">
+          <div className="p-4 space-y-4">
+            {/* Balance card */}
             <div className="bg-card/60 border border-border rounded-xl p-6 text-center glow-gold">
-              <p className="text-sm text-muted-foreground">Total Earnings</p>
-              <p className="text-4xl font-display text-gold-gradient mt-2">
-                ₹{stats ? stats.total_earning : "—"}
+              <p className="text-xs text-muted-foreground">Current Balance</p>
+              <p className="text-4xl font-display text-gold-gradient mt-1">
+                ₹{walletData ? walletData.balance : "—"}
               </p>
-              <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
+              <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-border">
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Today</p>
+                  <p className="text-[10px] text-muted-foreground">Total Earned</p>
                   <p className="text-sm font-semibold text-green-400">
-                    ₹{stats ? stats.today_earning : "—"}
+                    ₹{walletData ? walletData.total_earned : "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-muted-foreground">Wallet Balance</p>
+                  <p className="text-[10px] text-muted-foreground">Withdrawn</p>
+                  <p className="text-sm font-semibold text-destructive">
+                    ₹{walletData ? walletData.total_withdrawn : "—"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground">Withdrawable</p>
                   <p className="text-sm font-semibold text-primary">
-                    ₹{stats ? stats.wallet_balance : "—"}
+                    ₹{walletData ? walletData.withdrawable.toFixed(2) : "—"}
                   </p>
                 </div>
               </div>
-              <Button className="mt-4 gradient-gold text-primary-foreground w-full">Withdraw</Button>
+              {walletData?.pending_withdrawal > 0 && (
+                <p className="text-[10px] text-yellow-400 mt-2">
+                  ₹{walletData.pending_withdrawal} pending in withdrawal requests
+                </p>
+              )}
+              <Button
+                className="mt-4 gradient-gold text-primary-foreground w-full"
+                onClick={openWithdrawDialog}
+                disabled={!walletData || walletData.withdrawable <= 0}
+              >
+                <Download className="w-4 h-4 mr-1" /> Withdraw Funds
+              </Button>
+              {walletData?.withdrawal_config && (
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  Min ₹{walletData.withdrawal_config.min_amount} · Processing: {walletData.withdrawal_config.processing_days} days
+                </p>
+              )}
             </div>
 
-            {/* Recent completed sessions for earnings history */}
-            <div>
-              <h3 className="text-sm font-semibold text-primary mb-3">Earnings History</h3>
-              <div className="space-y-2">
-                {recentRequests.filter((r: any) => r.status === "completed" && r.earning > 0).length === 0 && (
-                  <p className="text-xs text-muted-foreground text-center py-4">No completed sessions yet</p>
-                )}
-                {recentRequests
-                  .filter((r: any) => r.status === "completed" && r.earning > 0)
-                  .map((t: any) => (
-                    <div key={`earn-${t.type}-${t.id}`} className="bg-card/60 border border-border rounded-lg p-3 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {typeIcon(t.type)}
-                        <div>
-                          <p className="text-sm text-foreground">
-                            {t.type === "chat" ? "Chat" : t.type === "voice" ? "Voice Call" : "Video Call"} — {t.user_name}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {Math.floor((t.duration_sec || 0) / 60)} min · {timeAgo(t.created_at)}
-                          </p>
+            {/* Statement filter */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-primary">Wallet Statement</h3>
+              <select
+                value={walletTxnKind}
+                onChange={(e) => setWalletTxnKind(e.target.value)}
+                className="bg-muted border border-border rounded-lg text-xs px-2 py-1 text-foreground"
+              >
+                <option value="all">All</option>
+                <option value="earning">Earnings</option>
+                <option value="withdrawal">Withdrawals</option>
+              </select>
+            </div>
+
+            {/* Statement list */}
+            <div className="space-y-2">
+              {walletTxns.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-6">
+                  No transactions yet
+                </p>
+              )}
+              {walletTxns.map((t: any) => (
+                <div key={t.id} className="bg-card/60 border border-border rounded-lg p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-2 flex-1 min-w-0">
+                      {t.direction === "credit" ? (
+                        <ArrowDownLeft className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
+                      ) : (
+                        <ArrowUpRight className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1">
+                          <Badge variant="outline" className={`text-[9px] border ${
+                            t.direction === "credit"
+                              ? "border-green-500/30 text-green-400"
+                              : "border-destructive/30 text-destructive"
+                          }`}>{t.label}</Badge>
                         </div>
+                        <p className="text-xs text-foreground mt-1 truncate" title={t.description}>
+                          {t.description || "—"}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          {t.created_at?.slice(0, 16)}
+                        </p>
                       </div>
-                      <span className="text-sm font-semibold text-green-400">+₹{t.earning}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-sm font-bold ${t.direction === "credit" ? "text-green-400" : "text-destructive"}`}>
+                        {t.direction === "credit" ? "+" : "−"}₹{t.amount}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">Bal: ₹{t.balance_after}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {walletTxnTotal > ASTRO_WALLET_PAGE_SIZE && (
+              <div className="flex items-center justify-between pt-2">
+                <p className="text-xs text-muted-foreground">
+                  Page {walletTxnPage + 1} of {Math.max(1, Math.ceil(walletTxnTotal / ASTRO_WALLET_PAGE_SIZE))}
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" disabled={walletTxnPage === 0}
+                    onClick={() => setWalletTxnPage((p) => Math.max(0, p - 1))}
+                    className="h-8 border-border">Prev</Button>
+                  <Button size="sm" variant="outline"
+                    disabled={(walletTxnPage + 1) * ASTRO_WALLET_PAGE_SIZE >= walletTxnTotal}
+                    onClick={() => setWalletTxnPage((p) => p + 1)}
+                    className="h-8 border-border">Next</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Withdrawal requests history */}
+            {withdrawalHistory.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-primary mt-6 mb-2">Withdrawal Requests</h3>
+                <div className="space-y-2">
+                  {withdrawalHistory.map((w: any) => (
+                    <div key={w.id} className="bg-card/60 border border-border rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">₹{w.amount}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {w.requested_at?.slice(0, 16)}
+                            {w.upi_id && <> · UPI: {w.upi_id}</>}
+                            {w.bank_account_number && <> · Bank: ••••{w.bank_account_number}</>}
+                          </p>
+                          {w.admin_note && (
+                            <p className="text-[10px] text-yellow-400 mt-1">Note: {w.admin_note}</p>
+                          )}
+                        </div>
+                        <Badge className={
+                          w.status === "paid" ? "bg-green-500/20 text-green-400" :
+                          w.status === "pending" ? "bg-yellow-500/20 text-yellow-400" :
+                          w.status === "approved" ? "bg-primary/20 text-primary" :
+                          "bg-destructive/20 text-destructive"
+                        }>
+                          {w.status}
+                        </Badge>
+                      </div>
                     </div>
                   ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
         {activeTab === "profile" && (
           <div className="p-4 space-y-4">
+            {/* Profile header */}
             <div className="bg-card/60 border border-border rounded-xl p-6 text-center">
               <div className="w-20 h-20 rounded-full bg-secondary mx-auto flex items-center justify-center text-3xl overflow-hidden">
-                {user.avatar
-                  ? <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+                {astroMe?.profile?.profile_image_url
+                  ? <img src={astroMe.profile.profile_image_url} alt="" className="w-full h-full object-cover" />
                   : "🔮"}
               </div>
-              <h3 className="text-lg font-display text-foreground mt-3">{user.name}</h3>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <h3 className="text-lg font-display text-foreground mt-3">
+                {astroMe?.profile?.display_name || astroMe?.name || user.name}
+              </h3>
+              <p className="text-sm text-muted-foreground">{astroMe?.email || user.email}</p>
+              {astroMe?.phone && <p className="text-xs text-muted-foreground">{astroMe.phone}</p>}
               {stats && (
                 <div className="flex justify-center gap-4 mt-3 text-sm text-muted-foreground">
                   <span>⭐ {stats.rating.toFixed(1)}</span>
-                  <span>{stats.total_consultations}+ sessions</span>
+                  <span>{stats.total_consultations} sessions</span>
                   <span>{stats.commission_pct}% commission</span>
                 </div>
               )}
               <Badge className="mt-3 bg-green-500/20 text-green-400">
                 <Shield className="w-3 h-3 mr-1" /> KYC Verified
               </Badge>
+              <Button
+                className="mt-4 gradient-gold text-primary-foreground w-full"
+                onClick={() => setEditProfileDialog(true)}
+              >
+                <Pencil className="w-3.5 h-3.5 mr-1" /> Edit Profile
+              </Button>
             </div>
-            <div className="space-y-2">
-              {["Edit Profile", "Set Pricing", "Availability", "Languages", "Reviews", "Settings"].map((item) => (
-                <div key={item} className="bg-card/60 border border-border rounded-lg p-3 flex items-center justify-between cursor-pointer hover:glow-gold transition-all">
-                  <span className="text-sm text-foreground">{item}</span>
-                  <span className="text-muted-foreground">›</span>
+
+            {/* About */}
+            {astroMe?.profile?.bio && (
+              <div className="bg-card/60 border border-border rounded-xl p-4">
+                <h3 className="text-sm font-semibold text-primary mb-2">About</h3>
+                <p className="text-xs text-foreground/80 whitespace-pre-wrap">{astroMe.profile.bio}</p>
+              </div>
+            )}
+
+            {/* Professional details */}
+            <div className="bg-card/60 border border-border rounded-xl p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-primary">Professional Details</h3>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <p className="text-muted-foreground">Experience</p>
+                  <p className="text-foreground font-medium">{astroMe?.profile?.experience_years || 0} years</p>
                 </div>
-              ))}
+                <div>
+                  <p className="text-muted-foreground">Qualification</p>
+                  <p className="text-foreground font-medium truncate">{astroMe?.profile?.qualification || "—"}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-muted-foreground">Specializations</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {(astroMe?.profile?.specializations || []).length > 0
+                      ? astroMe.profile.specializations.map((s: string) => (
+                          <Badge key={s} variant="outline" className="border-border text-xs">{s}</Badge>
+                        ))
+                      : <span className="text-foreground/60">—</span>}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-muted-foreground">Languages</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {(astroMe?.profile?.languages || []).length > 0
+                      ? astroMe.profile.languages.map((l: string) => (
+                          <Badge key={l} variant="outline" className="border-border text-xs">{l}</Badge>
+                        ))
+                      : <span className="text-foreground/60">—</span>}
+                  </div>
+                </div>
+              </div>
             </div>
-            <Button variant="outline" className="w-full border-destructive text-destructive" onClick={() => { logout(); navigate("/"); }}>
+
+            {/* Per-minute rate card */}
+            <div className="bg-card/60 border border-border rounded-xl p-4">
+              <h3 className="text-sm font-semibold text-primary mb-2">Per-Minute Rates</h3>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-muted/30 rounded-lg p-3 text-center border border-border">
+                  <MessageCircle className="w-4 h-4 text-primary mx-auto" />
+                  <p className="text-[10px] text-muted-foreground mt-1">Chat</p>
+                  <p className="text-sm font-bold text-primary">₹{astroMe?.profile?.rate_per_min_chat || 0}/m</p>
+                </div>
+                <div className="bg-muted/30 rounded-lg p-3 text-center border border-border">
+                  <Phone className="w-4 h-4 text-green-400 mx-auto" />
+                  <p className="text-[10px] text-muted-foreground mt-1">Voice</p>
+                  <p className="text-sm font-bold text-primary">₹{astroMe?.profile?.rate_per_min_call || 0}/m</p>
+                </div>
+                <div className="bg-muted/30 rounded-lg p-3 text-center border border-border">
+                  <Video className="w-4 h-4 text-cosmic-light mx-auto" />
+                  <p className="text-[10px] text-muted-foreground mt-1">Video</p>
+                  <p className="text-sm font-bold text-primary">₹{astroMe?.profile?.rate_per_min_video || 0}/m</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Per-session rate card */}
+            <div className="bg-card/60 border border-border rounded-xl p-4">
+              <h3 className="text-sm font-semibold text-primary mb-2">Per-Session Rates</h3>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-muted/30 rounded-lg p-3 text-center border border-border">
+                  <MessageCircle className="w-4 h-4 text-primary mx-auto" />
+                  <p className="text-[10px] text-muted-foreground mt-1">Chat</p>
+                  <p className="text-sm font-bold text-primary">₹{astroMe?.profile?.rate_per_session_chat || 0}</p>
+                </div>
+                <div className="bg-muted/30 rounded-lg p-3 text-center border border-border">
+                  <Phone className="w-4 h-4 text-green-400 mx-auto" />
+                  <p className="text-[10px] text-muted-foreground mt-1">Voice</p>
+                  <p className="text-sm font-bold text-primary">₹{astroMe?.profile?.rate_per_session_call || 0}</p>
+                </div>
+                <div className="bg-muted/30 rounded-lg p-3 text-center border border-border">
+                  <Video className="w-4 h-4 text-cosmic-light mx-auto" />
+                  <p className="text-[10px] text-muted-foreground mt-1">Video</p>
+                  <p className="text-sm font-bold text-primary">₹{astroMe?.profile?.rate_per_session_video || 0}</p>
+                </div>
+              </div>
+              <div className="mt-3 bg-primary/5 border border-primary/20 rounded-lg p-2 flex items-start gap-2">
+                <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                <p className="text-[10px] text-muted-foreground">
+                  1 chat session = <span className="text-foreground font-semibold">
+                    {astroMe?.profile?.session_message_limit || 45} messages
+                  </span> from user side, valid for <span className="text-foreground font-semibold">
+                    {astroMe?.profile?.session_validity_hours || 24} hours
+                  </span>, ends when user clicks end session.
+                </p>
+              </div>
+            </div>
+
+            <Button
+              variant="outline"
+              className="w-full border-destructive text-destructive"
+              onClick={() => { logout(); navigate("/"); }}
+            >
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
           </div>
         )}
       </main>
+
+      {/* ══════ Withdraw Dialog ══════ */}
+      <Dialog open={withdrawDialog} onOpenChange={(v) => !v && setWithdrawDialog(false)}>
+        <DialogContent className="bg-card border-border max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Download className="w-5 h-5 text-primary" /> Withdraw Funds
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            {walletData && (
+              <div className="bg-muted/30 border border-border rounded-lg p-3 text-center">
+                <p className="text-[10px] text-muted-foreground">Withdrawable Balance</p>
+                <p className="text-2xl font-display text-gold-gradient mt-1">
+                  ₹{walletData.withdrawable.toFixed(2)}
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  Min ₹{walletData.withdrawal_config.min_amount} · Max/day ₹{walletData.withdrawal_config.max_per_day}
+                </p>
+              </div>
+            )}
+
+            {withdrawError && (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-2">
+                <p className="text-xs text-destructive">{withdrawError}</p>
+              </div>
+            )}
+
+            <div>
+              <Label className="text-foreground/80 text-xs">Amount (₹) *</Label>
+              <Input
+                type="number"
+                min="0"
+                step="1"
+                value={withdrawForm.amount}
+                onChange={(e) => setWithdrawForm({ ...withdrawForm, amount: e.target.value })}
+                placeholder="Enter amount"
+                className="bg-muted border-border mt-1"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setWithdrawForm({ ...withdrawForm, use_bank: false })}
+                className={`flex-1 py-2 rounded-lg text-xs font-medium ${
+                  !withdrawForm.use_bank ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"
+                }`}
+              >
+                UPI
+              </button>
+              <button
+                type="button"
+                onClick={() => setWithdrawForm({ ...withdrawForm, use_bank: true })}
+                className={`flex-1 py-2 rounded-lg text-xs font-medium ${
+                  withdrawForm.use_bank ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"
+                }`}
+              >
+                Bank Transfer
+              </button>
+            </div>
+
+            {!withdrawForm.use_bank ? (
+              <div>
+                <Label className="text-foreground/80 text-xs">UPI ID *</Label>
+                <Input
+                  value={withdrawForm.upi_id}
+                  onChange={(e) => setWithdrawForm({ ...withdrawForm, upi_id: e.target.value })}
+                  placeholder="yourname@bank"
+                  className="bg-muted border-border mt-1"
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div>
+                  <Label className="text-foreground/80 text-xs">Account Holder Name *</Label>
+                  <Input
+                    value={withdrawForm.bank_account_name}
+                    onChange={(e) => setWithdrawForm({ ...withdrawForm, bank_account_name: e.target.value })}
+                    placeholder="Full name"
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Account Number *</Label>
+                    <Input
+                      value={withdrawForm.bank_account_number}
+                      onChange={(e) => setWithdrawForm({ ...withdrawForm, bank_account_number: e.target.value })}
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">IFSC *</Label>
+                    <Input
+                      value={withdrawForm.bank_ifsc}
+                      onChange={(e) => setWithdrawForm({ ...withdrawForm, bank_ifsc: e.target.value })}
+                      placeholder="HDFC0000123"
+                      className="bg-muted border-border mt-1"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <Label className="text-foreground/80 text-xs">Note (optional)</Label>
+              <Input
+                value={withdrawForm.notes}
+                onChange={(e) => setWithdrawForm({ ...withdrawForm, notes: e.target.value })}
+                placeholder="e.g. monthly payout"
+                className="bg-muted border-border mt-1"
+              />
+            </div>
+
+            <p className="text-[10px] text-muted-foreground">
+              Withdrawal requests are reviewed by admin and processed within{" "}
+              {walletData?.withdrawal_config?.processing_days || 3} business days.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setWithdrawDialog(false)}>Cancel</Button>
+            <Button
+              onClick={submitWithdraw}
+              disabled={withdrawSubmitting}
+              className="gradient-gold text-primary-foreground"
+            >
+              {withdrawSubmitting ? "Submitting..." : "Request Withdrawal"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ══════ Edit Profile Dialog ══════ */}
+      <Dialog open={editProfileDialog} onOpenChange={(v) => !v && setEditProfileDialog(false)}>
+        <DialogContent className="bg-card border-border max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="w-5 h-5 text-primary" /> Edit Profile
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            {profileError && (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-2">
+                <p className="text-xs text-destructive">{profileError}</p>
+              </div>
+            )}
+
+            {/* Personal */}
+            <div>
+              <h4 className="text-sm font-semibold text-primary mb-2">Personal Info</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-foreground/80 text-xs">Full Name</Label>
+                  <Input
+                    value={profileForm.name}
+                    onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs">Phone</Label>
+                  <Input
+                    value={profileForm.phone}
+                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs">Display Name</Label>
+                  <Input
+                    value={profileForm.display_name}
+                    onChange={(e) => setProfileForm({ ...profileForm, display_name: e.target.value })}
+                    placeholder="Shown to users"
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs">Profile Image URL</Label>
+                  <Input
+                    value={profileForm.profile_image_url}
+                    onChange={(e) => setProfileForm({ ...profileForm, profile_image_url: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Professional */}
+            <div>
+              <h4 className="text-sm font-semibold text-primary mb-2">Professional Info</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-foreground/80 text-xs">Experience (years)</Label>
+                  <Input
+                    type="number" min="0"
+                    value={profileForm.experience_years}
+                    onChange={(e) => setProfileForm({ ...profileForm, experience_years: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs">Qualification</Label>
+                  <Input
+                    value={profileForm.qualification}
+                    onChange={(e) => setProfileForm({ ...profileForm, qualification: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-foreground/80 text-xs">Languages (comma separated)</Label>
+                  <Input
+                    value={profileForm.languages}
+                    onChange={(e) => setProfileForm({ ...profileForm, languages: e.target.value })}
+                    placeholder="Hindi, English, Sanskrit"
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-foreground/80 text-xs">Specializations (comma separated)</Label>
+                  <Input
+                    value={profileForm.specializations}
+                    onChange={(e) => setProfileForm({ ...profileForm, specializations: e.target.value })}
+                    placeholder="Vedic Astrology, Kundli Matching, Numerology"
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-foreground/80 text-xs">Bio</Label>
+                  <textarea
+                    value={profileForm.bio}
+                    onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                    rows={3}
+                    className="w-full bg-muted border border-border rounded-lg mt-1 px-3 py-2 text-sm text-foreground"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Per-minute rates */}
+            <div>
+              <h4 className="text-sm font-semibold text-primary mb-2">Per-Minute Rates (₹/min)</h4>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                    <MessageCircle className="w-3 h-3" /> Chat
+                  </Label>
+                  <Input
+                    type="number" min="0" step="0.5"
+                    value={profileForm.rate_per_min_chat}
+                    onChange={(e) => setProfileForm({ ...profileForm, rate_per_min_chat: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                    <Phone className="w-3 h-3" /> Voice
+                  </Label>
+                  <Input
+                    type="number" min="0" step="0.5"
+                    value={profileForm.rate_per_min_call}
+                    onChange={(e) => setProfileForm({ ...profileForm, rate_per_min_call: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                    <Video className="w-3 h-3" /> Video
+                  </Label>
+                  <Input
+                    type="number" min="0" step="0.5"
+                    value={profileForm.rate_per_min_video}
+                    onChange={(e) => setProfileForm({ ...profileForm, rate_per_min_video: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Per-session rates */}
+            <div>
+              <h4 className="text-sm font-semibold text-primary mb-2">Per-Session Rates (₹/session)</h4>
+              <p className="text-[10px] text-muted-foreground mb-2">
+                Flat fee for 1 session. A chat session = N user messages, valid for X hours.
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                    <MessageCircle className="w-3 h-3" /> Chat
+                  </Label>
+                  <Input
+                    type="number" min="0" step="1"
+                    value={profileForm.rate_per_session_chat}
+                    onChange={(e) => setProfileForm({ ...profileForm, rate_per_session_chat: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                    <Phone className="w-3 h-3" /> Voice
+                  </Label>
+                  <Input
+                    type="number" min="0" step="1"
+                    value={profileForm.rate_per_session_call}
+                    onChange={(e) => setProfileForm({ ...profileForm, rate_per_session_call: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs flex items-center gap-1">
+                    <Video className="w-3 h-3" /> Video
+                  </Label>
+                  <Input
+                    type="number" min="0" step="1"
+                    value={profileForm.rate_per_session_video}
+                    onChange={(e) => setProfileForm({ ...profileForm, rate_per_session_video: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Session limits */}
+            <div>
+              <h4 className="text-sm font-semibold text-primary mb-2">Chat Session Limits</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-foreground/80 text-xs">User Message Limit</Label>
+                  <Input
+                    type="number" min="1" max="500"
+                    value={profileForm.session_message_limit}
+                    onChange={(e) => setProfileForm({ ...profileForm, session_message_limit: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">Default: 45 messages = 1 session</p>
+                </div>
+                <div>
+                  <Label className="text-foreground/80 text-xs">Session Validity (hours)</Label>
+                  <Input
+                    type="number" min="1" max="168"
+                    value={profileForm.session_validity_hours}
+                    onChange={(e) => setProfileForm({ ...profileForm, session_validity_hours: e.target.value })}
+                    className="bg-muted border-border mt-1"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">Default: 24 hours</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2 border-t border-border">
+            <Button variant="outline" onClick={() => setEditProfileDialog(false)}>Cancel</Button>
+            <Button
+              onClick={submitProfile}
+              disabled={profileSaving}
+              className="gradient-gold text-primary-foreground"
+            >
+              <Save className="w-3.5 h-3.5 mr-1" /> {profileSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <nav className="fixed bottom-0 left-0 right-0 z-20 bg-card/90 backdrop-blur-lg border-t border-border">
         <div className="flex">
