@@ -774,3 +774,27 @@ class PlatformSetting(Base):
         UniqueConstraint("category", "key", name="uq_setting_category_key"),
         Index("ix_setting_category_key", "category", "key"),
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  13. SAVED ASTROLOGERS (User favourites)
+# ─────────────────────────────────────────────────────────────────────
+
+class SavedAstrologer(Base):
+    """
+    User's saved/favourite astrologers.
+    Unique per (user, astrologer) pair — a user can save an astrologer
+    at most once. Stores an optional note.
+    """
+    __tablename__ = "saved_astrologers"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    astrologer_profile_id = Column(String(36), ForeignKey("astrologer_profiles.id", ondelete="CASCADE"), nullable=False, index=True)
+    note = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "astrologer_profile_id", name="uq_saved_user_astro"),
+        Index("ix_saved_user_astro", "user_id", "astrologer_profile_id"),
+    )

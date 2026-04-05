@@ -14,9 +14,12 @@ DELETE /me            — deactivate account
 """
 
 from datetime import datetime, timedelta
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.core.database import get_db
 from app.core.security import (
@@ -269,3 +272,292 @@ def deactivate_me(
     current_user.is_active = False
     db.commit()
     return MessageResponse(message="Account deactivated")
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  WALLET — Statement + Recharge
+# ══════════════════════════════════════════════════════════════════════
+
+from decimal import Decimal
+from pydantic import Field as _Field
+from app.models.model import (
+    WalletTransaction as _WalletTxn,
+    ServiceOrder as _ServiceOrder,
+    ServicePricing as _ServicePricing,
+    AstrologerProfile as _AstroProfile,
+    SavedAstrologer as _SavedAstro,
+)
+
+
+class WalletRechargeRequest(BaseModel):
+    amount: float = _Field(..., gt=0, le=100000)
+    note: Optional[str] = None
+    payment_ref: Optional[str] = None  # gateway txn id
+
+
+class SaveAstrologerRequest(BaseModel):
+    astrologer_profile_id: str
+    note: Optional[str] = None
+
+
+@router.get("/me/wallet")
+def get_my_wallet(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Current user's wallet balance and summary."""
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        wallet = Wallet(user_id=current_user.id)
+        db.add(wallet)
+        db.commit()
+        db.refresh(wallet)
+
+    # totals across all time
+    total_credit = db.query(func.coalesce(func.sum(_WalletTxn.amount), 0)).filter(
+        _WalletTxn.wallet_id == wallet.id,
+        _WalletTxn.txn_type.in_(["recharge", "bonus", "consultation_credit", "refund"]),
+    ).scalar() or 0
+    total_debit = db.query(func.coalesce(func.sum(_WalletTxn.amount), 0)).filter(
+        _WalletTxn.wallet_id == wallet.id,
+        _WalletTxn.txn_type.in_(["consultation_debit", "withdrawal", "ai_debit"]),
+    ).scalar() or 0
+
+    return {
+        "balance": float(wallet.balance),
+        "currency": wallet.currency,
+        "total_credit": float(total_credit),
+        "total_debit": float(total_debit),
+    }
+
+
+@router.get("/me/wallet/transactions")
+def list_my_wallet_transactions(
+    skip: int = 0,
+    limit: int = 20,
+    txn_type: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Paginated wallet statement for the current user with type labels."""
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        return {"total": 0, "transactions": []}
+
+    q = db.query(_WalletTxn).filter(_WalletTxn.wallet_id == wallet.id)
+    if txn_type and txn_type != "all":
+        q = q.filter(_WalletTxn.txn_type == txn_type)
+
+    total = q.count()
+    rows = q.order_by(_WalletTxn.created_at.desc()).offset(skip).limit(limit).all()
+
+    credit_types = {"recharge", "bonus", "consultation_credit", "refund"}
+    label_map = {
+        "recharge": "Wallet Recharge",
+        "bonus": "Bonus Credit",
+        "consultation_debit": "Service / Consultation",
+        "consultation_credit": "Refund / Credit",
+        "refund": "Refund",
+        "withdrawal": "Withdrawal",
+        "ai_debit": "AI Service",
+    }
+
+    return {
+        "total": total,
+        "transactions": [
+            {
+                "id": t.id,
+                "txn_type": t.txn_type,
+                "direction": "credit" if t.txn_type in credit_types else "debit",
+                "label": label_map.get(t.txn_type, t.txn_type.replace("_", " ").title()),
+                "amount": float(t.amount),
+                "balance_after": float(t.balance_after),
+                "description": t.description,
+                "reference_type": t.reference_type,
+                "created_at": str(t.created_at) if t.created_at else None,
+            }
+            for t in rows
+        ],
+    }
+
+
+@router.post("/me/wallet/recharge")
+def recharge_my_wallet(
+    req: WalletRechargeRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Add balance to current user's wallet.
+    In production this would be called AFTER the payment gateway confirms
+    a successful payment (Razorpay webhook) — for now it's a direct add.
+    """
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        wallet = Wallet(user_id=current_user.id)
+        db.add(wallet)
+        db.flush()
+
+    amount = Decimal(str(req.amount))
+    new_balance = Decimal(str(float(wallet.balance) + float(amount)))
+    wallet.balance = new_balance
+
+    description = req.note or "Wallet recharge"
+    if req.payment_ref:
+        description = f"{description} · ref {req.payment_ref}"
+
+    txn = _WalletTxn(
+        wallet_id=wallet.id,
+        txn_type="recharge",
+        amount=amount,
+        balance_after=new_balance,
+        description=description,
+        reference_type="recharge",
+        reference_id=req.payment_ref,
+    )
+    db.add(txn)
+    db.commit()
+    db.refresh(txn)
+    return {
+        "balance": float(new_balance),
+        "amount": float(amount),
+        "txn_id": txn.id,
+        "message": f"₹{float(amount)} added to wallet",
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  ORDERS — Current user's service order history
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/me/orders")
+def list_my_orders(
+    skip: int = 0,
+    limit: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List of service orders placed by the current user."""
+    q = (
+        db.query(_ServiceOrder, _ServicePricing)
+        .join(_ServicePricing, _ServiceOrder.service_pricing_id == _ServicePricing.id)
+        .filter(_ServiceOrder.user_id == current_user.id)
+    )
+    total = q.count()
+    rows = q.order_by(_ServiceOrder.created_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "orders": [
+            {
+                "id": o.id,
+                "service_id": sp.id,
+                "service_name": sp.service_name,
+                "service_key": sp.service_key,
+                "icon": sp.icon,
+                "category": sp.category,
+                "amount_paid": float(o.amount_paid or 0),
+                "status": o.status,
+                "chart_id": o.chart_id,
+                "created_at": str(o.created_at) if o.created_at else None,
+            }
+            for o, sp in rows
+        ],
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  SAVED ASTROLOGERS — Favourites
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/me/saved-astrologers")
+def list_my_saved_astrologers(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List of astrologer profiles saved by the current user, online-first."""
+    rows = (
+        db.query(_SavedAstro, _AstroProfile)
+        .join(_AstroProfile, _SavedAstro.astrologer_profile_id == _AstroProfile.id)
+        .filter(_SavedAstro.user_id == current_user.id)
+        .order_by(
+            _AstroProfile.is_online.desc(),
+            _AstroProfile.is_busy.asc(),
+            _AstroProfile.rating.desc(),
+        )
+        .all()
+    )
+    return {
+        "total": len(rows),
+        "saved": [
+            {
+                "saved_id": s.id,
+                "id": p.id,
+                "display_name": p.display_name,
+                "profile_image_url": p.profile_image_url,
+                "specializations": p.specializations or [],
+                "languages": p.languages or [],
+                "experience_years": p.experience_years,
+                "rate_per_min_chat": float(p.rate_per_min_chat or 0),
+                "rate_per_min_call": float(p.rate_per_min_call or 0),
+                "rate_per_min_video": float(p.rate_per_min_video or 0),
+                "rating": float(p.rating or 0),
+                "total_reviews": p.total_reviews,
+                "total_consultations": p.total_consultations,
+                "is_online": p.is_online,
+                "is_busy": p.is_busy,
+                "note": s.note,
+                "saved_at": str(s.created_at) if s.created_at else None,
+            }
+            for s, p in rows
+        ],
+    }
+
+
+@router.post("/me/saved-astrologers")
+def save_astrologer(
+    req: SaveAstrologerRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Add an astrologer to the current user's saved list."""
+    profile = db.query(_AstroProfile).filter(_AstroProfile.id == req.astrologer_profile_id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Astrologer not found")
+
+    existing = db.query(_SavedAstro).filter(
+        _SavedAstro.user_id == current_user.id,
+        _SavedAstro.astrologer_profile_id == req.astrologer_profile_id,
+    ).first()
+    if existing:
+        # idempotent: update note if different
+        if req.note is not None:
+            existing.note = req.note
+            db.commit()
+        return {"id": existing.id, "message": "Already saved", "already_saved": True}
+
+    saved = _SavedAstro(
+        user_id=current_user.id,
+        astrologer_profile_id=req.astrologer_profile_id,
+        note=req.note,
+    )
+    db.add(saved)
+    db.commit()
+    db.refresh(saved)
+    return {"id": saved.id, "message": "Astrologer saved", "already_saved": False}
+
+
+@router.delete("/me/saved-astrologers/{astrologer_profile_id}")
+def unsave_astrologer(
+    astrologer_profile_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    row = db.query(_SavedAstro).filter(
+        _SavedAstro.user_id == current_user.id,
+        _SavedAstro.astrologer_profile_id == astrologer_profile_id,
+    ).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Not in saved list")
+    db.delete(row)
+    db.commit()
+    return {"message": "Removed from saved list"}

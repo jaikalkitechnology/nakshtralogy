@@ -12,12 +12,16 @@ import StarField from "@/components/StarField";
 import { zodiacSigns, chatEmojis } from "@/data/mockData";
 import {
   fetchPublicAstrologers, fetchAstrologerDetail, fetchAstrologerReviews,
-  fetchServicePricing,
+  fetchServicePricing, fetchMe, updateMe,
+  fetchMyWallet, fetchMyWalletTransactions, rechargeMyWallet,
+  fetchMyOrders, fetchMySavedAstrologers, saveAstrologer, unsaveAstrologer,
 } from "@/services/api";
+import { Label } from "@/components/ui/label";
 import {
   Star, MessageCircle, Phone, Video, Wallet, LogOut, Search,
   User, Home, BookOpen, Clock, Settings, Send, Smile,
   ChevronRight, ChevronLeft, ArrowRight, Circle,
+  Plus, Heart, HeartOff, Pencil, Package, Bookmark,
 } from "lucide-react";
 
 type Tab = "home" | "astrologers" | "services" | "chat" | "wallet" | "profile";
@@ -46,6 +50,33 @@ const UserDashboard = () => {
   });
   const [profileReviews, setProfileReviews] = useState<any[]>([]);
   const [profileLoading, setProfileLoading] = useState(false);
+
+  // ── Wallet state ─────────────────────────────────────────────────
+  const [walletData, setWalletData] = useState<any>(null);
+  const [walletTxns, setWalletTxns] = useState<any[]>([]);
+  const [walletTxnTotal, setWalletTxnTotal] = useState(0);
+  const [walletTypeFilter, setWalletTypeFilter] = useState<string>("all");
+  const [walletTxnPage, setWalletTxnPage] = useState(0);
+  const WALLET_TXN_PAGE_SIZE = 10;
+  const [rechargeDialog, setRechargeDialog] = useState(false);
+  const [rechargeAmount, setRechargeAmount] = useState<string>("500");
+  const [rechargeNote, setRechargeNote] = useState("");
+  const [rechargeSubmitting, setRechargeSubmitting] = useState(false);
+
+  // ── Profile state ────────────────────────────────────────────────
+  const [meProfile, setMeProfile] = useState<any>(null);
+  const [editProfileDialog, setEditProfileDialog] = useState(false);
+  const [profileForm, setProfileForm] = useState<any>({
+    name: "", phone: "", gender: "", dob: "", tob: "", birth_place: "",
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+
+  // ── Orders state ─────────────────────────────────────────────────
+  const [myOrders, setMyOrders] = useState<any[]>([]);
+  const [myOrdersTotal, setMyOrdersTotal] = useState(0);
+
+  // ── Saved astrologers state ──────────────────────────────────────
+  const [savedAstros, setSavedAstros] = useState<any[]>([]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -82,6 +113,16 @@ const UserDashboard = () => {
     if (activeTab === "astrologers") loadAllAstrologers();
   }, [activeTab, loadAllAstrologers]);
 
+  // Pre-load saved astrologer ids once so the Home slider & Astrologers
+  // list can show the heart icon state without waiting for Profile tab.
+  useEffect(() => {
+    if (!authLoading && user) {
+      fetchMySavedAstrologers().then(({ ok, data }) => {
+        if (ok) setSavedAstros(data.saved || []);
+      });
+    }
+  }, [authLoading, user]);
+
   // Open astrologer profile dialog
   const openAstrologerProfile = async (astroId: string) => {
     setProfileDialog({ open: true, astro: null });
@@ -102,6 +143,112 @@ const UserDashboard = () => {
   const closeAstrologerProfile = () => {
     setProfileDialog({ open: false, astro: null });
     setProfileReviews([]);
+  };
+
+  // ── Wallet data loader ──────────────────────────────────────────
+  const loadWallet = useCallback(async () => {
+    const [walletRes, txnRes] = await Promise.all([
+      fetchMyWallet(),
+      fetchMyWalletTransactions({
+        skip: walletTxnPage * WALLET_TXN_PAGE_SIZE,
+        limit: WALLET_TXN_PAGE_SIZE,
+        txn_type: walletTypeFilter,
+      }),
+    ]);
+    if (walletRes.ok) setWalletData(walletRes.data);
+    if (txnRes.ok) {
+      setWalletTxns(txnRes.data.transactions || []);
+      setWalletTxnTotal(txnRes.data.total || 0);
+    }
+  }, [walletTxnPage, walletTypeFilter]);
+
+  // ── Profile / orders / saved astrologers loader ─────────────────
+  const loadProfile = useCallback(async () => {
+    const [meRes, ordersRes, savedRes] = await Promise.all([
+      fetchMe(),
+      fetchMyOrders({ limit: 20 }),
+      fetchMySavedAstrologers(),
+    ]);
+    if (meRes.ok) {
+      setMeProfile(meRes.data);
+      setProfileForm({
+        name: meRes.data.name || "",
+        phone: meRes.data.phone || "",
+        gender: meRes.data.gender || "",
+        dob: meRes.data.dob || "",
+        tob: meRes.data.tob || "",
+        birth_place: meRes.data.birth_place || "",
+      });
+    }
+    if (ordersRes.ok) {
+      setMyOrders(ordersRes.data.orders || []);
+      setMyOrdersTotal(ordersRes.data.total || 0);
+    }
+    if (savedRes.ok) setSavedAstros(savedRes.data.saved || []);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "wallet") loadWallet();
+  }, [activeTab, loadWallet]);
+
+  useEffect(() => {
+    if (activeTab === "profile") loadProfile();
+  }, [activeTab, loadProfile]);
+
+  useEffect(() => { setWalletTxnPage(0); }, [walletTypeFilter]);
+
+  // Set of saved astrologer profile ids for quick lookup
+  const savedIdSet = new Set(savedAstros.map((s: any) => s.id));
+
+  // ── Recharge handler ────────────────────────────────────────────
+  const submitRecharge = async () => {
+    const amt = parseFloat(rechargeAmount);
+    if (isNaN(amt) || amt <= 0) {
+      alert("Enter a valid amount greater than 0"); return;
+    }
+    setRechargeSubmitting(true);
+    try {
+      const { ok, data } = await rechargeMyWallet(amt, rechargeNote || undefined);
+      if (!ok) {
+        alert(data.detail || "Recharge failed");
+      } else {
+        setRechargeDialog(false);
+        setRechargeAmount("500");
+        setRechargeNote("");
+        await loadWallet();
+        alert(`✓ ₹${amt} added. New balance: ₹${data.balance}`);
+      }
+    } finally {
+      setRechargeSubmitting(false);
+    }
+  };
+
+  // ── Profile save handler ────────────────────────────────────────
+  const submitProfile = async () => {
+    setProfileSaving(true);
+    try {
+      const { ok, data } = await updateMe(profileForm);
+      if (!ok) {
+        alert(data.detail || "Update failed");
+      } else {
+        setEditProfileDialog(false);
+        await loadProfile();
+      }
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  // ── Save / Unsave astrologer ────────────────────────────────────
+  const toggleSaveAstrologer = async (astroId: string) => {
+    if (savedIdSet.has(astroId)) {
+      await unsaveAstrologer(astroId);
+    } else {
+      await saveAstrologer(astroId);
+    }
+    // Refresh saved list if profile tab, otherwise refetch
+    const savedRes = await fetchMySavedAstrologers();
+    if (savedRes.ok) setSavedAstros(savedRes.data.saved || []);
   };
 
   if (authLoading) {
@@ -371,6 +518,15 @@ const UserDashboard = () => {
                         <span className="truncate">{(a.languages || []).join(", ")}</span>
                       </div>
                     </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggleSaveAstrologer(a.id); }}
+                      className={`transition-transform hover:scale-110 ${
+                        savedIdSet.has(a.id) ? "text-destructive" : "text-muted-foreground"
+                      }`}
+                      title={savedIdSet.has(a.id) ? "Remove from saved" : "Save astrologer"}
+                    >
+                      <Heart className={`w-5 h-5 ${savedIdSet.has(a.id) ? "fill-destructive" : ""}`} />
+                    </button>
                   </div>
 
                   {/* Rate card */}
@@ -536,51 +692,301 @@ const UserDashboard = () => {
         )}
 
         {activeTab === "wallet" && (
-          <div className="p-4 space-y-6">
+          <div className="p-4 space-y-4">
+            {/* Balance card */}
             <div className="bg-card/60 border border-border rounded-xl p-6 text-center glow-gold">
               <p className="text-sm text-muted-foreground">Wallet Balance</p>
-              <p className="text-4xl font-display text-gold-gradient mt-2">₹{user.walletBalance}</p>
-              <Button className="mt-4 gradient-gold text-primary-foreground">Add Money</Button>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-primary mb-3">Recent Transactions</h3>
-              <div className="space-y-2">
-                {[
-                  { type: "debit", amount: 100, desc: "Chat with Pandit Rajesh - 5 min", date: "Today" },
-                  { type: "credit", amount: 500, desc: "Wallet Recharge", date: "Yesterday" },
-                  { type: "debit", amount: 299, desc: "Birth Chart (Janam Kundli)", date: "Mar 28" },
-                ].map((t, i) => (
-                  <div key={i} className="bg-card/60 border border-border rounded-lg p-3 flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-foreground">{t.desc}</p>
-                      <p className="text-xs text-muted-foreground">{t.date}</p>
-                    </div>
-                    <span className={`text-sm font-semibold ${t.type === "credit" ? "text-green-400" : "text-destructive"}`}>
-                      {t.type === "credit" ? "+" : "-"}₹{t.amount}
-                    </span>
-                  </div>
-                ))}
+              <p className="text-4xl font-display text-gold-gradient mt-2">
+                ₹{walletData ? walletData.balance : "..."}
+              </p>
+              <div className="flex gap-2 mt-4 justify-center">
+                <Button
+                  className="gradient-gold text-primary-foreground"
+                  onClick={() => { setRechargeDialog(true); setRechargeAmount("500"); setRechargeNote(""); }}
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Balance
+                </Button>
               </div>
+              {walletData && (
+                <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-border">
+                  <div className="text-center">
+                    <p className="text-[10px] text-muted-foreground">Total Credit</p>
+                    <p className="text-sm font-semibold text-green-400">+₹{walletData.total_credit}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[10px] text-muted-foreground">Total Debit</p>
+                    <p className="text-sm font-semibold text-destructive">−₹{walletData.total_debit}</p>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Quick recharge chips */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-thin">
+              {[100, 500, 1000, 2000, 5000].map((amt) => (
+                <button
+                  key={amt}
+                  onClick={() => { setRechargeAmount(String(amt)); setRechargeDialog(true); setRechargeNote(""); }}
+                  className="flex-shrink-0 px-4 py-2 rounded-full text-xs bg-card/60 border border-border text-foreground hover:border-primary hover:text-primary transition-all"
+                >
+                  + ₹{amt}
+                </button>
+              ))}
+            </div>
+
+            {/* Statement header + filter */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-primary">Wallet Statement</h3>
+              <select
+                value={walletTypeFilter}
+                onChange={(e) => setWalletTypeFilter(e.target.value)}
+                className="bg-muted border border-border rounded-lg text-xs px-2 py-1 text-foreground"
+              >
+                <option value="all">All types</option>
+                <option value="recharge">Recharge</option>
+                <option value="bonus">Bonus</option>
+                <option value="consultation_debit">Service / Call</option>
+                <option value="consultation_credit">Credit / Refund</option>
+                <option value="refund">Refund</option>
+              </select>
+            </div>
+
+            {/* Statement list */}
+            <div className="space-y-2">
+              {walletTxns.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-6">
+                  No transactions yet. Recharge to get started.
+                </p>
+              )}
+              {walletTxns.map((t: any) => (
+                <div key={t.id} className="bg-card/60 border border-border rounded-lg p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className={`text-[9px] border ${
+                            t.direction === "credit"
+                              ? "border-green-500/30 text-green-400"
+                              : "border-destructive/30 text-destructive"
+                          }`}
+                        >
+                          {t.label}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-foreground mt-1 truncate" title={t.description}>
+                        {t.description || "—"}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {t.created_at?.slice(0, 16)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-sm font-bold ${t.direction === "credit" ? "text-green-400" : "text-destructive"}`}>
+                        {t.direction === "credit" ? "+" : "−"}₹{t.amount}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Bal: ₹{t.balance_after}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {walletTxnTotal > WALLET_TXN_PAGE_SIZE && (
+              <div className="flex items-center justify-between pt-2">
+                <p className="text-xs text-muted-foreground">
+                  Page {walletTxnPage + 1} of {Math.max(1, Math.ceil(walletTxnTotal / WALLET_TXN_PAGE_SIZE))}
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm" variant="outline"
+                    disabled={walletTxnPage === 0}
+                    onClick={() => setWalletTxnPage((p) => Math.max(0, p - 1))}
+                    className="h-8 border-border"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Prev
+                  </Button>
+                  <Button
+                    size="sm" variant="outline"
+                    disabled={(walletTxnPage + 1) * WALLET_TXN_PAGE_SIZE >= walletTxnTotal}
+                    onClick={() => setWalletTxnPage((p) => p + 1)}
+                    className="h-8 border-border"
+                  >
+                    Next <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "profile" && (
           <div className="p-4 space-y-4">
-            <div className="bg-card/60 border border-border rounded-xl p-6 text-center">
-              <div className="w-20 h-20 rounded-full bg-secondary mx-auto flex items-center justify-center text-3xl">🧑</div>
-              <h3 className="text-lg font-display text-foreground mt-3">{user.name}</h3>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+            {/* Profile card */}
+            <div className="bg-card/60 border border-border rounded-xl p-6 text-center glow-gold">
+              <div className="w-20 h-20 rounded-full bg-secondary mx-auto flex items-center justify-center text-3xl overflow-hidden">
+                {meProfile?.avatar_url
+                  ? <img src={meProfile.avatar_url} alt="" className="w-full h-full object-cover" />
+                  : "🧑"}
+              </div>
+              <h3 className="text-lg font-display text-foreground mt-3">{meProfile?.name || user.name}</h3>
+              <p className="text-sm text-muted-foreground">{meProfile?.email || user.email}</p>
+              {meProfile?.phone && (
+                <p className="text-xs text-muted-foreground mt-0.5">{meProfile.phone}</p>
+              )}
+              <Button
+                size="sm" variant="outline"
+                className="mt-4 border-primary text-primary"
+                onClick={() => setEditProfileDialog(true)}
+              >
+                <Pencil className="w-3 h-3 mr-1" /> Edit Profile
+              </Button>
             </div>
-            <div className="space-y-2">
-              {["My Orders", "Consultation History", "Saved Astrologers", "Settings", "Help & Support"].map((item) => (
-                <div key={item} className="bg-card/60 border border-border rounded-lg p-3 flex items-center justify-between cursor-pointer hover:glow-gold transition-all">
-                  <span className="text-sm text-foreground">{item}</span>
-                  <span className="text-muted-foreground">›</span>
+
+            {/* Birth details card */}
+            {meProfile && (
+              <div className="bg-card/60 border border-border rounded-xl p-4 space-y-2">
+                <h3 className="text-sm font-semibold text-primary">Birth Details</h3>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <p className="text-muted-foreground">Gender</p>
+                    <p className="text-foreground font-medium capitalize">{meProfile.gender || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Date of Birth</p>
+                    <p className="text-foreground font-medium">{meProfile.dob || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Time of Birth</p>
+                    <p className="text-foreground font-medium">{meProfile.tob || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Birth Place</p>
+                    <p className="text-foreground font-medium truncate">{meProfile.birth_place || "—"}</p>
+                  </div>
                 </div>
-              ))}
+              </div>
+            )}
+
+            {/* Saved Astrologers */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-primary flex items-center gap-1">
+                  <Bookmark className="w-3.5 h-3.5" /> Saved Astrologers ({savedAstros.length})
+                </h3>
+                {savedAstros.length > 0 && (
+                  <button
+                    onClick={() => setActiveTab("astrologers")}
+                    className="text-[10px] text-primary hover:underline"
+                  >
+                    Browse more →
+                  </button>
+                )}
+              </div>
+              {savedAstros.length === 0 ? (
+                <div className="bg-card/60 border border-border rounded-xl p-6 text-center">
+                  <Heart className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">No saved astrologers yet</p>
+                  <button
+                    onClick={() => setActiveTab("astrologers")}
+                    className="text-xs text-primary hover:underline mt-2"
+                  >
+                    Explore astrologers →
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {savedAstros.map((a: any) => (
+                    <div
+                      key={a.saved_id}
+                      className="bg-card/60 border border-border rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:glow-gold transition-all"
+                      onClick={() => openAstrologerProfile(a.id)}
+                    >
+                      <div className="relative">
+                        <div className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-lg overflow-hidden">
+                          {a.profile_image_url
+                            ? <img src={a.profile_image_url} alt="" className="w-full h-full object-cover" />
+                            : "🔮"}
+                        </div>
+                        {a.is_online && !a.is_busy && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-card" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-semibold text-foreground truncate">{a.display_name}</h4>
+                        <p className="text-[10px] text-primary truncate">{(a.specializations || [])[0] || "Astrologer"}</p>
+                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground">
+                          <span className="flex items-center gap-0.5">
+                            <Star className="w-2.5 h-2.5 text-primary fill-primary" /> {(a.rating || 0).toFixed(1)}
+                          </span>
+                          <span>₹{a.rate_per_min_chat}/m</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSaveAstrologer(a.id);
+                        }}
+                        className="text-destructive hover:scale-110 transition-transform"
+                        title="Remove from saved"
+                      >
+                        <Heart className="w-4 h-4 fill-destructive" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <Button variant="outline" className="w-full border-destructive text-destructive" onClick={() => { logout(); navigate("/"); }}>
+
+            {/* My Orders */}
+            <div>
+              <h3 className="text-sm font-semibold text-primary mb-2 flex items-center gap-1">
+                <Package className="w-3.5 h-3.5" /> My Orders ({myOrdersTotal})
+              </h3>
+              {myOrders.length === 0 ? (
+                <div className="bg-card/60 border border-border rounded-xl p-6 text-center">
+                  <p className="text-xs text-muted-foreground">No orders yet</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {myOrders.map((o: any) => (
+                    <div key={o.id} className="bg-card/60 border border-border rounded-xl p-3 flex items-center gap-3">
+                      <span className="text-2xl">{o.icon || "📜"}</span>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-semibold text-foreground truncate">{o.service_name}</h4>
+                        <p className="text-[10px] text-muted-foreground">{o.created_at?.slice(0, 10)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-primary">
+                          {o.amount_paid > 0 ? `₹${o.amount_paid}` : "FREE"}
+                        </p>
+                        <Badge
+                          className={`text-[9px] mt-0.5 ${
+                            o.status === "completed"
+                              ? "bg-green-500/20 text-green-400"
+                              : o.status === "pending"
+                              ? "bg-yellow-500/20 text-yellow-400"
+                              : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {o.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Logout */}
+            <Button
+              variant="outline"
+              className="w-full border-destructive text-destructive"
+              onClick={() => { logout(); navigate("/"); }}
+            >
               <LogOut className="w-4 h-4 mr-2" /> Logout
             </Button>
           </div>
@@ -742,8 +1148,23 @@ const UserDashboard = () => {
                 )}
               </div>
 
+              {/* Save / Unsave toggle */}
+              <div className="pt-2 border-t border-border">
+                <Button
+                  size="sm" variant="outline"
+                  className={`w-full ${savedIdSet.has(profileDialog.astro.id) ? "border-destructive text-destructive" : "border-border"}`}
+                  onClick={() => toggleSaveAstrologer(profileDialog.astro.id)}
+                >
+                  {savedIdSet.has(profileDialog.astro.id) ? (
+                    <><Heart className="w-3.5 h-3.5 mr-1 fill-destructive" /> Saved</>
+                  ) : (
+                    <><Heart className="w-3.5 h-3.5 mr-1" /> Save Astrologer</>
+                  )}
+                </Button>
+              </div>
+
               {/* Action buttons */}
-              <div className="flex gap-2 pt-2 border-t border-border">
+              <div className="flex gap-2">
                 <Button
                   size="sm"
                   className="flex-1 gradient-gold text-primary-foreground"
@@ -773,6 +1194,156 @@ const UserDashboard = () => {
               </div>
             </div>
           ) : null}
+        </DialogContent>
+      </Dialog>
+
+      {/* ══════ Wallet Recharge Dialog ══════ */}
+      <Dialog open={rechargeDialog} onOpenChange={(v) => !v && setRechargeDialog(false)}>
+        <DialogContent className="bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5 text-primary" /> Add Balance
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="bg-muted/30 border border-border rounded-lg p-3 text-center">
+              <p className="text-xs text-muted-foreground">Current Balance</p>
+              <p className="text-2xl font-display text-gold-gradient mt-1">
+                ₹{walletData?.balance ?? 0}
+              </p>
+            </div>
+            <div>
+              <Label className="text-foreground/80 text-xs">Amount to Add (₹)</Label>
+              <Input
+                type="number" min="1" step="1"
+                value={rechargeAmount}
+                onChange={(e) => setRechargeAmount(e.target.value)}
+                className="bg-muted border-border mt-1"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {[100, 500, 1000, 2000, 5000].map((amt) => (
+                <button
+                  key={amt}
+                  onClick={() => setRechargeAmount(String(amt))}
+                  className={`px-3 py-1.5 rounded-full text-xs transition-all ${
+                    rechargeAmount === String(amt)
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted border border-border text-muted-foreground hover:border-primary"
+                  }`}
+                >
+                  ₹{amt}
+                </button>
+              ))}
+            </div>
+            <div>
+              <Label className="text-foreground/80 text-xs">Note (optional)</Label>
+              <Input
+                value={rechargeNote}
+                onChange={(e) => setRechargeNote(e.target.value)}
+                placeholder="e.g. monthly recharge"
+                className="bg-muted border-border mt-1"
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              💳 In production this will redirect to Razorpay/Stripe. For testing, the
+              amount is added directly to your wallet.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setRechargeDialog(false)}>Cancel</Button>
+            <Button
+              onClick={submitRecharge}
+              disabled={rechargeSubmitting}
+              className="gradient-gold text-primary-foreground"
+            >
+              {rechargeSubmitting ? "Adding..." : `Add ₹${rechargeAmount || 0}`}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ══════ Edit Profile Dialog ══════ */}
+      <Dialog open={editProfileDialog} onOpenChange={(v) => !v && setEditProfileDialog(false)}>
+        <DialogContent className="bg-card border-border max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="w-5 h-5 text-primary" /> Edit Profile
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div>
+              <Label className="text-foreground/80 text-xs">Full Name</Label>
+              <Input
+                value={profileForm.name}
+                onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                className="bg-muted border-border mt-1"
+              />
+            </div>
+            <div>
+              <Label className="text-foreground/80 text-xs">Phone</Label>
+              <Input
+                value={profileForm.phone}
+                onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                placeholder="+91 98765 43210"
+                className="bg-muted border-border mt-1"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-foreground/80 text-xs">Gender</Label>
+                <select
+                  value={profileForm.gender}
+                  onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+                  className="w-full bg-muted border border-border rounded-lg mt-1 px-2 py-2 text-sm text-foreground"
+                >
+                  <option value="">—</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-foreground/80 text-xs">Date of Birth (DD/MM/YYYY)</Label>
+                <Input
+                  value={profileForm.dob}
+                  onChange={(e) => setProfileForm({ ...profileForm, dob: e.target.value })}
+                  placeholder="15/08/1992"
+                  className="bg-muted border-border mt-1"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-foreground/80 text-xs">Time of Birth (HH:MM)</Label>
+                <Input
+                  value={profileForm.tob}
+                  onChange={(e) => setProfileForm({ ...profileForm, tob: e.target.value })}
+                  placeholder="06:30"
+                  className="bg-muted border-border mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-foreground/80 text-xs">Birth Place</Label>
+                <Input
+                  value={profileForm.birth_place}
+                  onChange={(e) => setProfileForm({ ...profileForm, birth_place: e.target.value })}
+                  placeholder="Delhi"
+                  className="bg-muted border-border mt-1"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setEditProfileDialog(false)}>Cancel</Button>
+            <Button
+              onClick={submitProfile}
+              disabled={profileSaving}
+              className="gradient-gold text-primary-foreground"
+            >
+              {profileSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 

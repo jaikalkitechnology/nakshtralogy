@@ -343,6 +343,52 @@ export async function adminRejectKyc(kycId: string, reason: string) {
   return request(`/admin/kyc/${kycId}/reject`, { method: "PATCH", body: JSON.stringify({ reason }) });
 }
 
+// ── Current User — profile / wallet / orders / saved astrologers ────
+
+export async function fetchMe() {
+  return request("/user/me");
+}
+
+export async function updateMe(data: any) {
+  return request("/user/me", { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function fetchMyWallet() {
+  return request("/user/me/wallet");
+}
+
+export async function fetchMyWalletTransactions(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/user/me/wallet/transactions${qs ? `?${qs}` : ""}`);
+}
+
+export async function rechargeMyWallet(amount: number, note?: string, paymentRef?: string) {
+  return request("/user/me/wallet/recharge", {
+    method: "POST",
+    body: JSON.stringify({ amount, note, payment_ref: paymentRef }),
+  });
+}
+
+export async function fetchMyOrders(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/user/me/orders${qs ? `?${qs}` : ""}`);
+}
+
+export async function fetchMySavedAstrologers() {
+  return request("/user/me/saved-astrologers");
+}
+
+export async function saveAstrologer(astrologerProfileId: string, note?: string) {
+  return request("/user/me/saved-astrologers", {
+    method: "POST",
+    body: JSON.stringify({ astrologer_profile_id: astrologerProfileId, note }),
+  });
+}
+
+export async function unsaveAstrologer(astrologerProfileId: string) {
+  return request(`/user/me/saved-astrologers/${astrologerProfileId}`, { method: "DELETE" });
+}
+
 // ── Public Astrologer data (for user dashboard) ──────────────────
 
 export async function fetchPublicAstrologers(params: Record<string, any> = {}) {
