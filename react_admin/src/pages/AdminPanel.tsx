@@ -9,13 +9,25 @@ import StarField from "@/components/StarField";
 import {
   Users, Star, Wallet, Settings, LogOut, Search, BarChart3,
   Shield, Ban, CheckCircle, DollarSign, TrendingUp, Eye,
-  Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle
+  Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle,
+  ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
+  FileText, Mail, Filter,
 } from "lucide-react";
 import {
   fetchAstrologers, fetchServicePricing, fetchGiftPricing,
   fetchAgoraConfigs, createAgoraConfig, updateAgoraConfig,
   seedServicePricing, seedGiftPricing, seedOpen, updateServicePricing,
+  adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
+  type WalletAction,
 } from "@/services/api";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 
 const BASE = "https://api.nakshatralogy.com/api/v1";
 
@@ -54,6 +66,24 @@ const AdminPanel = () => {
   // pricing edit
   const [editPricing, setEditPricing] = useState<any>(null);
 
+  // ── User Management state ────────────────────────────────────────
+  const USERS_PAGE_SIZE = 10;
+  const [userPage, setUserPage] = useState(0);
+  const [userFilterStatus, setUserFilterStatus] = useState<string>("all"); // all | active | blocked
+  const [userFilterRole, setUserFilterRole] = useState<string>("user");    // user | astrologer | admin | all
+
+  // Wallet action dialog
+  const [walletDialog, setWalletDialog] = useState<{
+    open: boolean; user: any; action: WalletAction;
+  }>({ open: false, user: null, action: "add_fund" });
+  const [walletAmount, setWalletAmount] = useState<string>("");
+  const [walletReason, setWalletReason] = useState<string>("");
+  const [walletSubmitting, setWalletSubmitting] = useState(false);
+
+  // User detail dialog
+  const [userDetail, setUserDetail] = useState<any>(null);
+  const [userDetailLoading, setUserDetailLoading] = useState(false);
+
   if (!user) { navigate("/auth"); return null; }
 
   const tabs = [
@@ -77,8 +107,17 @@ const AdminPanel = () => {
         if (t.ok) { const d = await t.json(); setTransactions(d.transactions || []); }
       }
       if (activeTab === "users") {
-        const r = await fetch(`${BASE}/admin/users?role=user&limit=100${searchQuery ? `&search=${searchQuery}` : ""}`, { headers: authHeaders() });
-        if (r.ok) { const d = await r.json(); setUsers(d.users || []); setUsersTotal(d.total || 0); }
+        const params: Record<string, any> = {
+          skip: userPage * USERS_PAGE_SIZE,
+          limit: USERS_PAGE_SIZE,
+        };
+        if (userFilterRole && userFilterRole !== "all") params.role = userFilterRole;
+        if (userFilterStatus === "active") params.is_active = true;
+        else if (userFilterStatus === "blocked") params.is_active = false;
+        if (searchQuery) params.search = searchQuery;
+        const { data } = await adminListUsers(params);
+        setUsers(data.users || []);
+        setUsersTotal(data.total || 0);
       }
       if (activeTab === "astrologers") {
         const r = await fetch(`${BASE}/admin/astrologers?limit=100${searchQuery ? `&search=${searchQuery}` : ""}`, { headers: authHeaders() });
@@ -104,13 +143,70 @@ const AdminPanel = () => {
       }
     } catch (e) { console.error(e); }
     setLoading(false);
-  }, [activeTab, searchQuery]);
+  }, [activeTab, searchQuery, userPage, userFilterStatus, userFilterRole]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // Reset page to 0 when filters change
+  useEffect(() => { setUserPage(0); }, [userFilterStatus, userFilterRole, searchQuery]);
+
   const toggleUser = async (userId: string) => {
-    await fetch(`${BASE}/admin/users/${userId}/toggle`, { method: "PATCH", headers: authHeaders() });
+    await adminToggleUser(userId);
     fetchData();
+  };
+
+  // ── Wallet action (add fund / remove fund / bonus) ─────────────
+  const openWalletDialog = (u: any, action: WalletAction) => {
+    setWalletAmount("");
+    setWalletReason("");
+    setWalletDialog({ open: true, user: u, action });
+  };
+
+  const closeWalletDialog = () => {
+    setWalletDialog({ open: false, user: null, action: "add_fund" });
+    setWalletAmount("");
+    setWalletReason("");
+  };
+
+  const submitWalletAction = async () => {
+    const amt = parseFloat(walletAmount);
+    if (!walletDialog.user || isNaN(amt) || amt <= 0) {
+      alert("Enter a valid amount greater than 0");
+      return;
+    }
+    if (!walletReason.trim()) {
+      alert("Reason is required (creates statement entry)");
+      return;
+    }
+    setWalletSubmitting(true);
+    try {
+      const { ok, data } = await adminAdjustWallet(
+        walletDialog.user.id,
+        walletDialog.action,
+        amt,
+        walletReason.trim(),
+      );
+      if (!ok) {
+        alert(data.detail || "Adjustment failed");
+      } else {
+        closeWalletDialog();
+        fetchData();
+      }
+    } finally {
+      setWalletSubmitting(false);
+    }
+  };
+
+  const openUserDetail = async (userId: string) => {
+    setUserDetailLoading(true);
+    setUserDetail({ id: userId, _loading: true });
+    try {
+      const { ok, data } = await adminGetUser(userId);
+      if (ok) setUserDetail(data);
+      else setUserDetail(null);
+    } finally {
+      setUserDetailLoading(false);
+    }
   };
 
   const approveAstrologer = async (profileId: string) => {
@@ -247,42 +343,131 @@ const AdminPanel = () => {
             {/* ══════ USERS ══════ */}
             {activeTab === "users" && (
               <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search users by name, email, phone..." className="pl-10 bg-muted border-border"
-                    onKeyDown={(e) => e.key === "Enter" && fetchData()} />
+                {/* Filters */}
+                <div className="flex flex-col md:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by name, email, phone..."
+                      className="pl-10 bg-muted border-border"
+                    />
+                  </div>
+                  <Select value={userFilterRole} onValueChange={setUserFilterRole}>
+                    <SelectTrigger className="w-full md:w-40 bg-muted border-border">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="astrologer">Astrologer</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={userFilterStatus} onValueChange={setUserFilterStatus}>
+                    <SelectTrigger className="w-full md:w-40 bg-muted border-border">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="blocked">Blocked</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <p className="text-xs text-muted-foreground">{usersTotal} total users</p>
+
+                {/* Summary & Pagination info */}
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    Showing {users.length} of {usersTotal} users
+                    {userFilterRole !== "all" && <> · Role: <span className="text-primary">{userFilterRole}</span></>}
+                    {userFilterStatus !== "all" && <> · Status: <span className="text-primary">{userFilterStatus}</span></>}
+                  </p>
+                </div>
+
+                {/* Users table */}
                 <div className="bg-card/60 border border-border rounded-xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-border">
+                        <tr className="border-b border-border bg-muted/30">
                           <th className="text-left p-3 text-muted-foreground font-medium">Name</th>
                           <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">Email</th>
-                          <th className="text-left p-3 text-muted-foreground font-medium hidden md:table-cell">Phone</th>
-                          <th className="text-left p-3 text-muted-foreground font-medium">Balance</th>
-                          <th className="text-left p-3 text-muted-foreground font-medium">Status</th>
-                          <th className="text-left p-3 text-muted-foreground font-medium">Actions</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium hidden lg:table-cell">Phone</th>
+                          <th className="text-left p-3 text-muted-foreground font-medium">Role</th>
+                          <th className="text-right p-3 text-muted-foreground font-medium">Balance</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">Status</th>
+                          <th className="text-center p-3 text-muted-foreground font-medium">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
+                        {users.length === 0 && (
+                          <tr>
+                            <td colSpan={7} className="p-8 text-center text-muted-foreground text-sm">
+                              No users found. Adjust filters or run seed.
+                            </td>
+                          </tr>
+                        )}
                         {users.map((u: any) => (
-                          <tr key={u.id} className="border-b border-border last:border-0">
-                            <td className="p-3 text-foreground">{u.name || "—"}</td>
+                          <tr key={u.id} className="border-b border-border last:border-0 hover:bg-muted/20">
+                            <td className="p-3 text-foreground font-medium">{u.name || "—"}</td>
                             <td className="p-3 text-muted-foreground hidden md:table-cell">{u.email}</td>
-                            <td className="p-3 text-muted-foreground hidden md:table-cell">{u.phone || "—"}</td>
-                            <td className="p-3 text-primary font-medium">₹{u.wallet_balance}</td>
+                            <td className="p-3 text-muted-foreground hidden lg:table-cell">{u.phone || "—"}</td>
                             <td className="p-3">
+                              <Badge variant="outline" className="border-border text-xs capitalize">
+                                {u.role}
+                              </Badge>
+                            </td>
+                            <td className="p-3 text-primary font-semibold text-right">₹{u.wallet_balance}</td>
+                            <td className="p-3 text-center">
                               <Badge className={u.is_active ? "bg-green-500/20 text-green-400" : "bg-destructive/20 text-destructive"}>
                                 {u.is_active ? "active" : "blocked"}
                               </Badge>
                             </td>
                             <td className="p-3">
-                              <Button size="sm" variant="outline" onClick={() => toggleUser(u.id)}
-                                className={`h-7 text-xs ${u.is_active ? "border-destructive text-destructive" : "border-green-500 text-green-400"}`}>
-                                {u.is_active ? <><Ban className="w-3 h-3 mr-1" />Block</> : <><CheckCircle className="w-3 h-3 mr-1" />Activate</>}
-                              </Button>
+                              <div className="flex gap-1 justify-center flex-wrap">
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => openUserDetail(u.id)}
+                                  className="h-7 text-xs border-border"
+                                  title="View details"
+                                >
+                                  <Eye className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => openWalletDialog(u, "add_fund")}
+                                  className="h-7 text-xs border-green-500/50 text-green-400 hover:bg-green-500/10"
+                                  title="Add funds"
+                                >
+                                  <PlusCircle className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => openWalletDialog(u, "remove_fund")}
+                                  className="h-7 text-xs border-orange-500/50 text-orange-400 hover:bg-orange-500/10"
+                                  title="Remove funds"
+                                >
+                                  <MinusCircle className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => openWalletDialog(u, "bonus")}
+                                  className="h-7 text-xs border-primary/50 text-primary hover:bg-primary/10"
+                                  title="Give bonus"
+                                >
+                                  <Sparkles className="w-3 h-3" />
+                                </Button>
+                                <Button
+                                  size="sm" variant="outline"
+                                  onClick={() => toggleUser(u.id)}
+                                  className={`h-7 text-xs ${u.is_active ? "border-destructive text-destructive hover:bg-destructive/10" : "border-green-500 text-green-400 hover:bg-green-500/10"}`}
+                                  title={u.is_active ? "Block user" : "Activate user"}
+                                >
+                                  {u.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                                </Button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -290,8 +475,168 @@ const AdminPanel = () => {
                     </table>
                   </div>
                 </div>
+
+                {/* Pagination */}
+                {usersTotal > USERS_PAGE_SIZE && (
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Page {userPage + 1} of {Math.max(1, Math.ceil(usersTotal / USERS_PAGE_SIZE))}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm" variant="outline"
+                        onClick={() => setUserPage((p) => Math.max(0, p - 1))}
+                        disabled={userPage === 0}
+                        className="h-8 border-border"
+                      >
+                        <ChevronLeft className="w-4 h-4" /> Prev
+                      </Button>
+                      <Button
+                        size="sm" variant="outline"
+                        onClick={() => setUserPage((p) => p + 1)}
+                        disabled={(userPage + 1) * USERS_PAGE_SIZE >= usersTotal}
+                        className="h-8 border-border"
+                      >
+                        Next <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
+            {/* ══════ Wallet Action Dialog ══════ */}
+            <Dialog open={walletDialog.open} onOpenChange={(v) => !v && closeWalletDialog()}>
+              <DialogContent className="bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    {walletDialog.action === "add_fund" && <><PlusCircle className="w-5 h-5 text-green-400" /> Add Funds</>}
+                    {walletDialog.action === "remove_fund" && <><MinusCircle className="w-5 h-5 text-orange-400" /> Remove Funds</>}
+                    {walletDialog.action === "bonus" && <><Sparkles className="w-5 h-5 text-primary" /> Give Bonus</>}
+                  </DialogTitle>
+                </DialogHeader>
+                {walletDialog.user && (
+                  <div className="space-y-4 py-2">
+                    <div className="bg-muted/40 rounded-lg p-3 border border-border">
+                      <p className="text-sm text-foreground font-medium">{walletDialog.user.name || "—"}</p>
+                      <p className="text-xs text-muted-foreground">{walletDialog.user.email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Current balance: <span className="text-primary font-semibold">₹{walletDialog.user.wallet_balance}</span>
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Amount (₹)</Label>
+                      <Input
+                        type="number" min="0" step="0.01"
+                        value={walletAmount}
+                        onChange={(e) => setWalletAmount(e.target.value)}
+                        placeholder="Enter amount"
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Reason (creates statement entry)</Label>
+                      <Textarea
+                        value={walletReason}
+                        onChange={(e) => setWalletReason(e.target.value)}
+                        placeholder={
+                          walletDialog.action === "add_fund" ? "e.g. Manual recharge - user paid via UPI" :
+                          walletDialog.action === "remove_fund" ? "e.g. Refund reversal due to dispute" :
+                          "e.g. Festival bonus / loyalty reward"
+                        }
+                        className="bg-muted border-border mt-1 min-h-[80px]"
+                      />
+                    </div>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={closeWalletDialog} disabled={walletSubmitting}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={submitWalletAction}
+                    disabled={walletSubmitting}
+                    className="gradient-gold text-primary-foreground"
+                  >
+                    {walletSubmitting ? "Processing..." : `Confirm ${walletDialog.action.replace("_", " ")}`}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ User Detail Dialog ══════ */}
+            <Dialog open={userDetail !== null} onOpenChange={(v) => !v && setUserDetail(null)}>
+              <DialogContent className="bg-card border-border max-w-2xl max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-primary" /> User Details
+                  </DialogTitle>
+                </DialogHeader>
+                {userDetailLoading || userDetail?._loading ? (
+                  <div className="py-8 text-center text-muted-foreground">Loading...</div>
+                ) : userDetail ? (
+                  <div className="space-y-4 py-2">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div><span className="text-muted-foreground">Name:</span> <span className="text-foreground">{userDetail.name || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Role:</span> <span className="text-foreground capitalize">{userDetail.role}</span></div>
+                      <div><span className="text-muted-foreground">Email:</span> <span className="text-foreground">{userDetail.email}</span></div>
+                      <div><span className="text-muted-foreground">Phone:</span> <span className="text-foreground">{userDetail.phone || "—"}</span></div>
+                      <div><span className="text-muted-foreground">DOB:</span> <span className="text-foreground">{userDetail.dob || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Birth Place:</span> <span className="text-foreground">{userDetail.birth_place || "—"}</span></div>
+                      <div><span className="text-muted-foreground">Balance:</span> <span className="text-primary font-semibold">₹{userDetail.wallet_balance}</span></div>
+                      <div><span className="text-muted-foreground">Status:</span> <Badge className={userDetail.is_active ? "bg-green-500/20 text-green-400" : "bg-destructive/20 text-destructive"}>{userDetail.is_active ? "active" : "blocked"}</Badge></div>
+                      <div className="col-span-2"><span className="text-muted-foreground">Created:</span> <span className="text-foreground">{userDetail.created_at?.slice(0, 16) || "—"}</span></div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-semibold text-primary mb-2">Wallet Statement (last 30)</h3>
+                      <div className="bg-muted/30 rounded-lg border border-border max-h-72 overflow-y-auto">
+                        {!userDetail.transactions?.length ? (
+                          <p className="p-4 text-sm text-muted-foreground text-center">No transactions yet</p>
+                        ) : (
+                          <table className="w-full text-xs">
+                            <thead className="sticky top-0 bg-muted/80">
+                              <tr className="border-b border-border">
+                                <th className="text-left p-2 text-muted-foreground">Type</th>
+                                <th className="text-left p-2 text-muted-foreground">Description</th>
+                                <th className="text-right p-2 text-muted-foreground">Amount</th>
+                                <th className="text-right p-2 text-muted-foreground">After</th>
+                                <th className="text-left p-2 text-muted-foreground">Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {userDetail.transactions.map((t: any) => {
+                                const isCredit = t.txn_type?.includes("credit") || t.txn_type === "recharge" || t.txn_type === "bonus";
+                                return (
+                                  <tr key={t.id} className="border-b border-border/50 last:border-0">
+                                    <td className="p-2">
+                                      <Badge variant="outline" className="border-border text-[10px] capitalize">
+                                        {t.txn_type?.replace(/_/g, " ")}
+                                      </Badge>
+                                    </td>
+                                    <td className="p-2 text-foreground text-[11px] max-w-[200px] truncate" title={t.description}>
+                                      {t.description || "—"}
+                                    </td>
+                                    <td className={`p-2 text-right font-semibold ${isCredit ? "text-green-400" : "text-destructive"}`}>
+                                      {isCredit ? "+" : "-"}₹{t.amount}
+                                    </td>
+                                    <td className="p-2 text-right text-primary">₹{t.balance_after}</td>
+                                    <td className="p-2 text-muted-foreground text-[10px]">{t.created_at?.slice(0, 16) || "—"}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setUserDetail(null)}>Close</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             {/* ══════ ASTROLOGERS ══════ */}
             {activeTab === "astrologers" && (
