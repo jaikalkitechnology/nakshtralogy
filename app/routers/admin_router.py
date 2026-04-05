@@ -584,27 +584,99 @@ def list_transactions(
     limit: int = Query(50, ge=1, le=200),
     txn_type: Optional[str] = None,
     user_id: Optional[str] = None,
+    user_role: Optional[str] = None,
+    search: Optional[str] = None,
+    date_from: Optional[str] = None,  # YYYY-MM-DD
+    date_to: Optional[str] = None,    # YYYY-MM-DD
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
+    """
+    Wallet transaction statement with full filters:
+    - txn_type: recharge | consultation_debit | consultation_credit | refund | withdrawal | bonus | ai_debit
+    - user_role: user | astrologer | admin
+    - search: matches user name / email
+    - date_from / date_to: inclusive date range (YYYY-MM-DD)
+    """
     q = db.query(WalletTransaction, Wallet, User).join(
         Wallet, WalletTransaction.wallet_id == Wallet.id
     ).join(User, Wallet.user_id == User.id)
+
     if txn_type:
         q = q.filter(WalletTransaction.txn_type == txn_type)
     if user_id:
         q = q.filter(User.id == user_id)
+    if user_role:
+        q = q.filter(User.role == user_role)
+    if search:
+        like = f"%{search}%"
+        q = q.filter((User.name.like(like)) | (User.email.like(like)))
+    if date_from:
+        try:
+            dt_from = datetime.strptime(date_from, "%Y-%m-%d")
+            q = q.filter(WalletTransaction.created_at >= dt_from)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="date_from must be YYYY-MM-DD")
+    if date_to:
+        try:
+            dt_to = datetime.strptime(date_to, "%Y-%m-%d")
+            # include entire end day
+            dt_to = dt_to.replace(hour=23, minute=59, second=59)
+            q = q.filter(WalletTransaction.created_at <= dt_to)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="date_to must be YYYY-MM-DD")
+
     total = q.count()
+
+    # Aggregates for filtered range (totals across ALL matching rows, not just page)
+    total_credits = 0.0
+    total_debits = 0.0
+    for t, w, u in q.all():
+        amt = float(t.amount)
+        if t.txn_type in ("recharge", "bonus", "consultation_credit", "refund"):
+            total_credits += amt
+        else:
+            total_debits += amt
+
     rows = q.order_by(WalletTransaction.created_at.desc()).offset(skip).limit(limit).all()
+
+    def _direction(txn_type: str) -> str:
+        credit_types = {"recharge", "bonus", "consultation_credit", "refund"}
+        return "credit" if txn_type in credit_types else "debit"
+
+    def _label(txn_type: str, user_role: str) -> str:
+        """Human readable label — distinguishes user vs astrologer flows."""
+        mapping = {
+            "recharge": "User Add Fund",
+            "bonus": "Admin Bonus",
+            "consultation_debit": "Service Deduct" if user_role == "user" else "Fund Removed",
+            "consultation_credit": "Commission Earned" if user_role == "astrologer" else "Service Credit",
+            "refund": "Refund",
+            "withdrawal": "Astro Withdrawal",
+            "ai_debit": "AI Service Deduct",
+        }
+        return mapping.get(txn_type, txn_type.replace("_", " ").title())
+
     return {
         "total": total,
+        "total_credits": round(total_credits, 2),
+        "total_debits": round(total_debits, 2),
+        "net_flow": round(total_credits - total_debits, 2),
         "transactions": [
             {
-                "id": t.id, "user_id": u.id,
-                "user_name": u.name, "user_email": u.email, "user_role": u.role,
-                "txn_type": t.txn_type, "amount": float(t.amount),
+                "id": t.id,
+                "user_id": u.id,
+                "user_name": u.name,
+                "user_email": u.email,
+                "user_role": u.role,
+                "txn_type": t.txn_type,
+                "direction": _direction(t.txn_type),
+                "label": _label(t.txn_type, u.role),
+                "amount": float(t.amount),
                 "balance_after": float(t.balance_after),
                 "description": t.description,
+                "reference_type": t.reference_type,
+                "reference_id": t.reference_id,
                 "created_at": str(t.created_at) if t.created_at else None,
             }
             for t, w, u in rows
