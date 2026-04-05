@@ -12,14 +12,21 @@ import {
 type Tab = "home" | "requests" | "earnings" | "profile";
 
 const AstrologerDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
 
   useEffect(() => {
-    if (!user) navigate("/auth");
-  }, [user, navigate]);
+    if (!authLoading && !user) navigate("/auth");
+  }, [authLoading, user, navigate]);
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen gradient-mystic flex items-center justify-center">
+        <p className="text-primary">Loading...</p>
+      </div>
+    );
+  }
   if (!user) return null;
 
   const pendingRequests = [

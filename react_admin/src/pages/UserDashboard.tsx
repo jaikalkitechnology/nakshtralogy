@@ -16,7 +16,7 @@ import { chatEmojis } from "@/data/mockData";
 type Tab = "home" | "astrologers" | "services" | "chat" | "wallet" | "profile";
 
 const UserDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,9 +28,16 @@ const UserDashboard = () => {
   const [selectedAstrologer, setSelectedAstrologer] = useState(mockAstrologers[0]);
 
   useEffect(() => {
-    if (!user) navigate("/auth");
-  }, [user, navigate]);
+    if (!authLoading && !user) navigate("/auth");
+  }, [authLoading, user, navigate]);
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen gradient-mystic flex items-center justify-center">
+        <p className="text-primary">Loading...</p>
+      </div>
+    );
+  }
   if (!user) return null;
 
   const sendMessage = () => {

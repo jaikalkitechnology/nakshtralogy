@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Star, Moon, Sun } from "lucide-react";
 import StarField from "@/components/StarField";
+import { startGoogleOAuth } from "@/services/api";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -208,6 +209,19 @@ const AuthPage = () => {
                   shape="rectangular"
                   width="320"
                 />
+              </div>
+              {/* Server-side OAuth flow (uses credentials stored in admin settings) */}
+              <div className="flex justify-center mt-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const result = await startGoogleOAuth(role === "admin" ? "user" : (role as "user" | "astrologer"));
+                    if (result.error) setError(result.error);
+                  }}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Or continue with Google (server flow)
+                </button>
               </div>
             </>
           )}
