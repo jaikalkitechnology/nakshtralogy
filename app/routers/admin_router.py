@@ -53,7 +53,7 @@ from app.services.fcm_service import notify_generic
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
-    KycDocument, RefreshToken,
+    KycDocument, RefreshToken, Review, Consultation,
 )
 
 router = APIRouter()
@@ -97,6 +97,12 @@ class KycRejectRequest(BaseModel):
 
 class AstrologerRejectRequest(BaseModel):
     reason: str = Field(..., min_length=1, max_length=500)
+
+
+class ReviewEditRequest(BaseModel):
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=2000)
+    is_visible: Optional[bool] = None
 
 
 class AdminLoginRequest(BaseModel):
@@ -862,3 +868,200 @@ def reject_kyc(
             data={"type": "kyc_rejected", "kyc_id": kyc.id, "reason": req.reason},
         )
     return {"id": kyc.id, "status": "rejected", "reason": req.reason, "message": "KYC rejected & user notified"}
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  REVIEWS & RATINGS — List, Edit, Toggle Visibility, Delete
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/reviews")
+def list_reviews(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    astrologer_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+    rating: Optional[int] = Query(None, ge=1, le=5),
+    visibility: Optional[str] = None,      # all | visible | hidden
+    search: Optional[str] = None,          # searches user name, astrologer display_name, comment
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """
+    List reviews with admin filters. Joins user (reviewer) and
+    astrologer profile for display.
+    """
+    q = db.query(Review, User, AstrologerProfile).join(
+        User, Review.user_id == User.id
+    ).join(
+        AstrologerProfile, Review.astrologer_id == AstrologerProfile.id
+    )
+
+    if astrologer_id:
+        q = q.filter(Review.astrologer_id == astrologer_id)
+    if user_id:
+        q = q.filter(Review.user_id == user_id)
+    if rating:
+        q = q.filter(Review.rating == rating)
+    if visibility == "visible":
+        q = q.filter(Review.is_visible == True)
+    elif visibility == "hidden":
+        q = q.filter(Review.is_visible == False)
+    if search:
+        like = f"%{search}%"
+        q = q.filter(
+            (User.name.like(like)) |
+            (AstrologerProfile.display_name.like(like)) |
+            (Review.comment.like(like))
+        )
+    if date_from:
+        try:
+            q = q.filter(Review.created_at >= datetime.strptime(date_from, "%Y-%m-%d"))
+        except ValueError:
+            raise HTTPException(status_code=400, detail="date_from must be YYYY-MM-DD")
+    if date_to:
+        try:
+            dt_to = datetime.strptime(date_to, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+            q = q.filter(Review.created_at <= dt_to)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="date_to must be YYYY-MM-DD")
+
+    total = q.count()
+
+    # rating distribution across filtered set
+    all_rows = q.all()
+    distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    sum_rating = 0
+    for r, _, _ in all_rows:
+        distribution[r.rating] = distribution.get(r.rating, 0) + 1
+        sum_rating += r.rating
+    avg_rating = round(sum_rating / len(all_rows), 2) if all_rows else 0.0
+
+    rows = q.order_by(Review.created_at.desc()).offset(skip).limit(limit).all()
+
+    return {
+        "total": total,
+        "average_rating": avg_rating,
+        "distribution": distribution,
+        "reviews": [
+            {
+                "id": r.id,
+                "consultation_id": r.consultation_id,
+                "user_id": u.id,
+                "user_name": u.name,
+                "user_email": u.email,
+                "user_avatar": u.avatar_url,
+                "astrologer_id": p.id,
+                "astrologer_name": p.display_name,
+                "rating": r.rating,
+                "comment": r.comment,
+                "is_visible": r.is_visible,
+                "created_at": str(r.created_at) if r.created_at else None,
+            }
+            for r, u, p in rows
+        ],
+    }
+
+
+@router.get("/reviews/{review_id}")
+def get_review(
+    review_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    row = db.query(Review, User, AstrologerProfile).join(
+        User, Review.user_id == User.id
+    ).join(
+        AstrologerProfile, Review.astrologer_id == AstrologerProfile.id
+    ).filter(Review.id == review_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Review not found")
+    r, u, p = row
+    return {
+        "id": r.id,
+        "consultation_id": r.consultation_id,
+        "user_id": u.id,
+        "user_name": u.name,
+        "user_email": u.email,
+        "astrologer_id": p.id,
+        "astrologer_name": p.display_name,
+        "rating": r.rating,
+        "comment": r.comment,
+        "is_visible": r.is_visible,
+        "created_at": str(r.created_at) if r.created_at else None,
+    }
+
+
+def _recompute_astrologer_rating(db: Session, astrologer_id: str) -> None:
+    """Recalculate astrologer's aggregate rating from visible reviews."""
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
+    if not profile:
+        return
+    visible_reviews = db.query(Review).filter(
+        Review.astrologer_id == astrologer_id,
+        Review.is_visible == True,
+    ).all()
+    if visible_reviews:
+        avg = sum(r.rating for r in visible_reviews) / len(visible_reviews)
+        profile.rating = Decimal(str(round(avg, 2)))
+        profile.total_reviews = len(visible_reviews)
+    else:
+        profile.rating = Decimal("0.00")
+        profile.total_reviews = 0
+
+
+@router.put("/reviews/{review_id}")
+def edit_review(
+    review_id: str,
+    req: ReviewEditRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    review = db.query(Review).filter(Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    data = req.model_dump(exclude_unset=True)
+    for k, v in data.items():
+        setattr(review, k, v)
+    db.flush()
+    _recompute_astrologer_rating(db, review.astrologer_id)
+    db.commit()
+    return {
+        "id": review.id,
+        "message": "Review updated",
+        "updated_fields": list(data.keys()),
+    }
+
+
+@router.patch("/reviews/{review_id}/toggle-visibility")
+def toggle_review_visibility(
+    review_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    review = db.query(Review).filter(Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    review.is_visible = not review.is_visible
+    db.flush()
+    _recompute_astrologer_rating(db, review.astrologer_id)
+    db.commit()
+    return {"id": review.id, "is_visible": review.is_visible}
+
+
+@router.delete("/reviews/{review_id}")
+def delete_review(
+    review_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    review = db.query(Review).filter(Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    astrologer_id = review.astrologer_id
+    db.delete(review)
+    db.flush()
+    _recompute_astrologer_rating(db, astrologer_id)
+    db.commit()
+    return {"message": "Review deleted"}

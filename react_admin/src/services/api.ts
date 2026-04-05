@@ -272,6 +272,32 @@ export async function adminListTransactions(params: Record<string, any> = {}) {
   return request(`/admin/transactions?${qs}`);
 }
 
+// ── Reviews ──────────────────────────────────────────────────────
+
+export async function adminListReviews(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/reviews${qs ? `?${qs}` : ""}`);
+}
+
+export async function adminGetReview(reviewId: string) {
+  return request(`/admin/reviews/${reviewId}`);
+}
+
+export async function adminEditReview(reviewId: string, data: any) {
+  return request(`/admin/reviews/${reviewId}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function adminToggleReviewVisibility(reviewId: string) {
+  return request(`/admin/reviews/${reviewId}/toggle-visibility`, { method: "PATCH" });
+}
+
+export async function adminDeleteReview(reviewId: string) {
+  return request(`/admin/reviews/${reviewId}`, { method: "DELETE" });
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {
