@@ -163,6 +163,19 @@ export async function adminApproveAstrologer(profileId: string) {
   return request(`/admin/astrologers/${profileId}/approve`, { method: "PATCH" });
 }
 
+export async function adminRejectAstrologer(profileId: string, reason: string) {
+  return request(`/admin/astrologers/${profileId}/reject`, {
+    method: "PATCH",
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export async function adminSetCommission(profileId: string, commissionPct: number) {
+  return request(`/admin/astrologers/${profileId}/commission?commission_pct=${commissionPct}`, {
+    method: "PATCH",
+  });
+}
+
 export async function adminBlockAstrologer(profileId: string) {
   return request(`/admin/astrologers/${profileId}/block`, { method: "PATCH" });
 }
