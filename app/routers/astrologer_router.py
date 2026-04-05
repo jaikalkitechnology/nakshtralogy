@@ -461,3 +461,252 @@ def list_public_reviews(
             for r, u in rows
         ],
     }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  KYC / Stats / Recent Requests  (for astrologer dashboard gating)
+# ══════════════════════════════════════════════════════════════════════
+
+from pydantic import BaseModel as _BaseModel, Field as _Field
+from sqlalchemy import func as _sqlfunc
+from app.models.model import (
+    KycDocument as _Kyc,
+    CallSession as _Call,
+    ChatSession as _Chat,
+    Review as _Review,
+    WalletTransaction as _WalletTxn,
+)
+
+
+class KycSubmitRequest(_BaseModel):
+    doc_type: str = _Field(..., max_length=30)       # aadhaar | pan | passport | license | certificate
+    doc_number: Optional[str] = _Field(None, max_length=50)
+    front_url: Optional[str] = None
+    back_url: Optional[str] = None
+    selfie_url: Optional[str] = None
+
+
+@router.get("/me/kyc-status")
+def get_my_kyc_status(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Return current user's KYC status — used by the astrologer dashboard
+    to decide whether to show the KYC form, pending page, or full app.
+
+    Response.status values:
+      - "none"     — no KYC document on file
+      - "pending"  — submitted but not yet reviewed
+      - "approved" — admin approved (full access)
+      - "rejected" — admin rejected, show reason and allow re-submit
+    """
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    # pick the latest KYC document (in case of re-submission)
+    kyc = (
+        db.query(_Kyc)
+        .filter(_Kyc.user_id == current_user.id)
+        .order_by(_Kyc.created_at.desc())
+        .first()
+    )
+    if not kyc:
+        return {
+            "status": "none",
+            "message": "Please submit your KYC documents to start accepting consultations.",
+        }
+    return {
+        "status": kyc.status,  # pending | approved | rejected
+        "doc_id": kyc.id,
+        "doc_type": kyc.doc_type,
+        "doc_number": kyc.doc_number,
+        "front_url": kyc.front_url,
+        "back_url": kyc.back_url,
+        "selfie_url": kyc.selfie_url,
+        "rejection_reason": kyc.rejection_reason,
+        "submitted_at": str(kyc.created_at) if kyc.created_at else None,
+        "reviewed_at": str(kyc.reviewed_at) if kyc.reviewed_at else None,
+    }
+
+
+@router.post("/me/kyc")
+def submit_my_kyc(
+    req: KycSubmitRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Submit or re-submit KYC documents. Creates a new KycDocument row."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    kyc = _Kyc(
+        user_id=current_user.id,
+        doc_type=req.doc_type,
+        doc_number=req.doc_number,
+        front_url=req.front_url,
+        back_url=req.back_url,
+        selfie_url=req.selfie_url,
+        status="pending",
+    )
+    db.add(kyc)
+    db.commit()
+    db.refresh(kyc)
+    return {
+        "id": kyc.id,
+        "status": "pending",
+        "message": "KYC submitted for review. You'll be notified once approved.",
+    }
+
+
+@router.get("/me/stats")
+def get_my_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Dashboard stats for logged-in astrologer."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    profile = db.query(AstrologerProfile).filter(
+        AstrologerProfile.user_id == current_user.id
+    ).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    # Wallet balance (astrologer earnings held in wallet)
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    balance = float(wallet.balance) if wallet else 0.0
+
+    # Total earning across all call+chat consultations
+    total_call_earning = db.query(_sqlfunc.coalesce(_sqlfunc.sum(_Call.astrologer_earning), 0)).filter(
+        _Call.astrologer_profile_id == profile.id,
+        _Call.status == "completed",
+    ).scalar() or 0
+    total_chat_earning = db.query(_sqlfunc.coalesce(_sqlfunc.sum(_Chat.astrologer_earning), 0)).filter(
+        _Chat.astrologer_id == profile.id,
+        _Chat.status == "completed",
+    ).scalar() or 0
+    total_earning = float(total_call_earning) + float(total_chat_earning)
+
+    # Today's earning (rough — completed sessions ending today)
+    from datetime import date
+    today = date.today()
+    today_call = db.query(_sqlfunc.coalesce(_sqlfunc.sum(_Call.astrologer_earning), 0)).filter(
+        _Call.astrologer_profile_id == profile.id,
+        _Call.status == "completed",
+        _sqlfunc.date(_Call.ended_at) == today,
+    ).scalar() or 0
+    today_chat = db.query(_sqlfunc.coalesce(_sqlfunc.sum(_Chat.astrologer_earning), 0)).filter(
+        _Chat.astrologer_id == profile.id,
+        _Chat.status == "completed",
+        _sqlfunc.date(_Chat.ended_at) == today,
+    ).scalar() or 0
+    today_earning = float(today_call) + float(today_chat)
+
+    # Request counts by type
+    chat_total = db.query(_sqlfunc.count(_Chat.id)).filter(_Chat.astrologer_id == profile.id).scalar() or 0
+    voice_total = db.query(_sqlfunc.count(_Call.id)).filter(
+        _Call.astrologer_profile_id == profile.id,
+        _Call.call_type == "voice",
+    ).scalar() or 0
+    video_total = db.query(_sqlfunc.count(_Call.id)).filter(
+        _Call.astrologer_profile_id == profile.id,
+        _Call.call_type == "video",
+    ).scalar() or 0
+
+    pending_chat = db.query(_sqlfunc.count(_Chat.id)).filter(
+        _Chat.astrologer_id == profile.id,
+        _Chat.status == "waiting",
+    ).scalar() or 0
+    pending_call = db.query(_sqlfunc.count(_Call.id)).filter(
+        _Call.astrologer_profile_id == profile.id,
+        _Call.status == "ringing",
+    ).scalar() or 0
+
+    return {
+        "wallet_balance": balance,
+        "total_earning": round(total_earning, 2),
+        "today_earning": round(today_earning, 2),
+        "rating": float(profile.rating or 0),
+        "total_reviews": profile.total_reviews or 0,
+        "total_consultations": profile.total_consultations or 0,
+        "total_minutes": profile.total_minutes or 0,
+        "commission_pct": float(profile.commission_pct or 0),
+        "is_online": profile.is_online,
+        "is_busy": profile.is_busy,
+        "requests": {
+            "chat_total": chat_total,
+            "voice_total": voice_total,
+            "video_total": video_total,
+            "pending_chat": pending_chat,
+            "pending_call": pending_call,
+            "pending_total": pending_chat + pending_call,
+        },
+    }
+
+
+@router.get("/me/recent-requests")
+def get_my_recent_requests(
+    limit: int = 10,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Recent call + chat session requests for this astrologer (newest first)."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+
+    profile = db.query(AstrologerProfile).filter(
+        AstrologerProfile.user_id == current_user.id
+    ).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    # Recent calls
+    calls = (
+        db.query(_Call, User)
+        .join(User, _Call.caller_id == User.id)
+        .filter(_Call.astrologer_profile_id == profile.id)
+        .order_by(_Call.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    # Recent chat sessions
+    chats = (
+        db.query(_Chat, User)
+        .join(User, _Chat.user_id == User.id)
+        .filter(_Chat.astrologer_id == profile.id)
+        .order_by(_Chat.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+    items = []
+    for c, u in calls:
+        items.append({
+            "id": c.id,
+            "type": c.call_type,  # voice | video
+            "user_name": u.name or "Anonymous",
+            "user_avatar": u.avatar_url,
+            "status": c.status,
+            "duration_sec": c.duration_sec or 0,
+            "earning": float(c.astrologer_earning or 0),
+            "rate_per_min": float(c.rate_per_min),
+            "created_at": str(c.created_at) if c.created_at else None,
+        })
+    for c, u in chats:
+        items.append({
+            "id": c.id,
+            "type": "chat",
+            "user_name": u.name or "Anonymous",
+            "user_avatar": u.avatar_url,
+            "status": c.status,
+            "duration_sec": c.duration_sec or 0,
+            "earning": float(c.astrologer_earning or 0),
+            "rate_per_min": float(c.rate_per_min),
+            "created_at": str(c.created_at) if c.created_at else None,
+        })
+
+    # Sort combined by created_at desc, take top `limit`
+    items.sort(key=lambda x: x["created_at"] or "", reverse=True)
+    return {"items": items[:limit]}

@@ -343,6 +343,37 @@ export async function adminRejectKyc(kycId: string, reason: string) {
   return request(`/admin/kyc/${kycId}/reject`, { method: "PATCH", body: JSON.stringify({ reason }) });
 }
 
+// ── Astrologer self-service (for astrologer dashboard) ──────────
+
+export async function fetchAstroMeKycStatus() {
+  return request("/astrologer/me/kyc-status");
+}
+
+export async function submitAstroKyc(data: {
+  doc_type: string;
+  doc_number?: string;
+  front_url?: string;
+  back_url?: string;
+  selfie_url?: string;
+}) {
+  return request("/astrologer/me/kyc", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function fetchAstroMeStats() {
+  return request("/astrologer/me/stats");
+}
+
+export async function fetchAstroMeRecentRequests(limit = 10) {
+  return request(`/astrologer/me/recent-requests?limit=${limit}`);
+}
+
+export async function fetchAstroMe() {
+  return request("/astrologer/me");
+}
+
 // ── Current User — profile / wallet / orders / saved astrologers ────
 
 export async function fetchMe() {
