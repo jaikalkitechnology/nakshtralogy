@@ -219,10 +219,17 @@ export async function adminWalletStats() {
   return request("/admin/wallet-stats");
 }
 
-export async function adminAdjustWallet(userId: string, amount: number, description: string) {
+export type WalletAction = "add_fund" | "remove_fund" | "bonus";
+
+export async function adminAdjustWallet(
+  userId: string,
+  action: WalletAction,
+  amount: number,
+  reason: string,
+) {
   return request(`/admin/wallet/${userId}/adjust`, {
     method: "POST",
-    body: JSON.stringify({ amount, description }),
+    body: JSON.stringify({ action, amount, reason }),
   });
 }
 

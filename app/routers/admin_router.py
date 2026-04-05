@@ -86,8 +86,9 @@ class EditAstrologerRequest(BaseModel):
     is_approved: Optional[bool] = None
 
 class WalletAdjustRequest(BaseModel):
-    amount: float = Field(..., description="Positive=credit, negative=debit")
-    description: str = Field(..., min_length=1, max_length=255)
+    action: str = Field(..., description="add_fund | remove_fund | bonus")
+    amount: float = Field(..., gt=0, description="Amount in INR (always positive)")
+    reason: str = Field(..., min_length=1, max_length=255)
 
 class KycRejectRequest(BaseModel):
     reason: str = Field(..., min_length=1, max_length=500)
@@ -565,7 +566,13 @@ def adjust_wallet(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
-    """Admin credit or debit any user's wallet. Positive=credit, negative=debit."""
+    """
+    Admin wallet adjustment with action type + reason (creates statement entry).
+    action: add_fund (credit) | remove_fund (debit) | bonus (credit)
+    """
+    if req.action not in ("add_fund", "remove_fund", "bonus"):
+        raise HTTPException(status_code=400, detail="action must be add_fund, remove_fund, or bonus")
+
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -575,27 +582,44 @@ def adjust_wallet(
         db.add(wallet)
         db.flush()
 
-    amount = req.amount
-    new_balance = float(wallet.balance) + amount
+    amount = abs(req.amount)
+    is_credit = req.action in ("add_fund", "bonus")
+    signed_delta = amount if is_credit else -amount
+    new_balance = float(wallet.balance) + signed_delta
+
     if new_balance < 0:
-        raise HTTPException(status_code=400, detail=f"Cannot debit more than balance (₹{wallet.balance})")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot debit ₹{amount}. Current balance is ₹{float(wallet.balance)}",
+        )
 
     wallet.balance = Decimal(str(new_balance))
-    txn_type = "bonus" if amount > 0 else "consultation_debit"
+
+    # Map action -> txn_type (matches existing model check constraint values)
+    txn_type_map = {
+        "add_fund": "recharge",
+        "bonus": "bonus",
+        "remove_fund": "consultation_debit",
+    }
     txn = WalletTransaction(
         wallet_id=wallet.id,
-        txn_type=txn_type,
-        amount=Decimal(str(abs(amount))),
+        txn_type=txn_type_map[req.action],
+        amount=Decimal(str(amount)),
         balance_after=wallet.balance,
-        description=f"[Admin] {req.description}",
+        description=f"[Admin:{req.action}] {req.reason} — by {current_user.email}",
         reference_type="admin_adjust",
     )
     db.add(txn)
     db.commit()
     return {
-        "user_id": user_id, "user_name": user.name,
-        "adjustment": amount, "new_balance": float(wallet.balance),
-        "txn_id": txn.id, "message": f"Wallet {'credited' if amount > 0 else 'debited'} ₹{abs(amount)}",
+        "user_id": user_id,
+        "user_name": user.name,
+        "action": req.action,
+        "amount": amount,
+        "new_balance": float(wallet.balance),
+        "txn_id": txn.id,
+        "reason": req.reason,
+        "message": f"{req.action.replace('_', ' ').title()} of ₹{amount} applied",
     }
 
 
