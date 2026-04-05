@@ -1,4 +1,4 @@
-package com.example.nakshatralogy_user
+package com.nakshtralogy.astro
 
 import io.flutter.embedding.android.FlutterActivity
 
