@@ -182,8 +182,9 @@ export async function adminBlockAstrologer(profileId: string) {
 
 // ── Service Pricing ──────────────────────────────────────────────
 
-export async function fetchServicePricing() {
-  return request("/service/pricing");
+export async function fetchServicePricing(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/service/pricing${qs ? `?${qs}` : ""}`);
 }
 
 export async function createServicePricing(data: any) {
@@ -194,18 +195,34 @@ export async function updateServicePricing(id: string, data: any) {
   return request(`/service/pricing/${id}`, { method: "PUT", body: JSON.stringify(data) });
 }
 
+export async function deleteServicePricing(id: string) {
+  return request(`/service/pricing/${id}`, { method: "DELETE" });
+}
+
 export async function seedServicePricing() {
   return request("/service/pricing/seed", { method: "POST" });
 }
 
 // ── Gift Pricing ─────────────────────────────────────────────────
 
-export async function fetchGiftPricing() {
-  return request("/comm/gifts");
+export async function fetchGiftPricing(includeInactive = false) {
+  return request(`/comm/gifts${includeInactive ? "?include_inactive=true" : ""}`);
 }
 
 export async function createGiftPricing(data: any) {
   return request("/comm/gifts", { method: "POST", body: JSON.stringify(data) });
+}
+
+export async function updateGiftPricing(id: string, data: any) {
+  return request(`/comm/gifts/${id}`, { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function toggleGiftPricing(id: string) {
+  return request(`/comm/gifts/${id}/toggle`, { method: "PATCH" });
+}
+
+export async function deleteGiftPricing(id: string) {
+  return request(`/comm/gifts/${id}`, { method: "DELETE" });
 }
 
 export async function seedGiftPricing() {
@@ -224,6 +241,10 @@ export async function createAgoraConfig(data: any) {
 
 export async function updateAgoraConfig(id: string, data: any) {
   return request(`/comm/agora-config/${id}`, { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function deleteAgoraConfig(id: string) {
+  return request(`/comm/agora-config/${id}`, { method: "DELETE" });
 }
 
 // ── Wallet / Transactions ────────────────────────────────────────
