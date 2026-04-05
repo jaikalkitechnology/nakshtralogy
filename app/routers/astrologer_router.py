@@ -382,7 +382,14 @@ def list_astrologers(
     if language:
         q = q.filter(AstrologerProfile.languages.op("LIKE")(f'%"{language}"%'))
 
-    profiles = q.order_by(AstrologerProfile.rating.desc()).offset(skip).limit(limit).all()
+    profiles = (
+        q.order_by(
+            AstrologerProfile.is_online.desc(),  # online first
+            AstrologerProfile.is_busy.asc(),     # available before busy
+            AstrologerProfile.rating.desc(),     # then highest rated
+        )
+        .offset(skip).limit(limit).all()
+    )
     return [
         AstrologerListResponse(
             id=p.id,
@@ -415,3 +422,42 @@ def get_astrologer(astrologer_id: str, db: Session = Depends(get_db)):
     if not profile:
         raise HTTPException(status_code=404, detail="Astrologer not found")
     return _build_profile_response(profile)
+
+
+@router.get("/{astrologer_id}/reviews")
+def list_public_reviews(
+    astrologer_id: str,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=50),
+    db: Session = Depends(get_db),
+):
+    """Public: list visible reviews for an astrologer (newest first)."""
+    from app.models.model import Review, User as UserModel
+
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Astrologer not found")
+
+    q = db.query(Review, UserModel).join(
+        UserModel, Review.user_id == UserModel.id,
+    ).filter(
+        Review.astrologer_id == astrologer_id,
+        Review.is_visible == True,
+    )
+    total = q.count()
+    rows = q.order_by(Review.created_at.desc()).offset(skip).limit(limit).all()
+    return {
+        "total": total,
+        "rating": float(profile.rating or 0),
+        "reviews": [
+            {
+                "id": r.id,
+                "user_name": u.name or "Anonymous",
+                "user_avatar": u.avatar_url,
+                "rating": r.rating,
+                "comment": r.comment,
+                "created_at": str(r.created_at) if r.created_at else None,
+            }
+            for r, u in rows
+        ],
+    }
