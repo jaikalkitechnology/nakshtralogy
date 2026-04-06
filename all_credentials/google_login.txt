@@ -1,0 +1,3 @@
+callback_url:https://api.nakshatralogy.com/api/v1/google/callback
+ClientId:410358361509-5h98nfjhdc9bu92rq7o39idkq3r9nieh.apps.googleusercontent.com
+SectretKey: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

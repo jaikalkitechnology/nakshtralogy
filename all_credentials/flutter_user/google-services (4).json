@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "679324920376",
+    "project_id": "nakshtralogy-d69b8",
+    "storage_bucket": "nakshtralogy-d69b8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679324920376:android:60b477ab10526f9128d4cd",
+        "android_client_info": {
+          "package_name": "com.nakshtralogy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK5XTm_6_rXttNLkxPyGSK63_ESjWs9TE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679324920376:android:53a3f0ce4e153d4c28d4cd",
+        "android_client_info": {
+          "package_name": "com.nakshtralogy.astro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAK5XTm_6_rXttNLkxPyGSK63_ESjWs9TE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
