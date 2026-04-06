@@ -18,7 +18,11 @@ import 'screens/home/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiService().loadTokens();
-  await FcmService().init();
+  try {
+    await FcmService().init();
+  } catch (e) {
+    debugPrint('FCM init failed (non-fatal): $e');
+  }
   runApp(const NakshtralogyAstroApp());
 }
 
