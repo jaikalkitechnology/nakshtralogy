@@ -33,11 +33,11 @@ const _callChannel = AndroidNotificationChannel(
   playSound: true,
 );
 
-// ── Action IDs ──────���──────────────────────────────────────────────
+// ── Action IDs ─────────────────────────────────────────────────────
 
 const _replyActionId = 'reply_chat';
 
-// ── Background handler ───��─────────────────────────────────────────
+// ── Background handler ─────────────────────────────────────────────
 
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
@@ -122,7 +122,7 @@ void _navigateFromNotification(Map<String, dynamic> data) {
 
 // ═══════════════════════════════════════════════════════════════════
 //  FCM SERVICE CLASS
-// ═════��═════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
 class FcmService {
   static final FcmService _instance = FcmService._internal();
