@@ -11,6 +11,7 @@ import '../tabs/astrologers_tab.dart';
 import '../tabs/services_tab.dart';
 import '../tabs/wallet_tab.dart';
 import '../tabs/profile_tab.dart';
+import '../communication/live_viewer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,6 +56,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           actions: [
+            // Live streams button
+            GestureDetector(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LiveReelsScreen())),
+              child: Container(
+                margin: const EdgeInsets.only(right: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.error.withOpacity(0.4)),
+                ),
+                child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.live_tv, size: 14, color: AppColors.error),
+                  SizedBox(width: 4),
+                  Text('Live', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600, fontSize: 12)),
+                ]),
+              ),
+            ),
             // Live wallet balance chip
             BlocBuilder<WalletBloc, WalletState>(
               builder: (context, state) {

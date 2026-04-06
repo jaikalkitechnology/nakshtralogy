@@ -4,6 +4,8 @@ import '../../theme/app_theme.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../bloc/dashboard/dashboard_event.dart';
 import '../../bloc/dashboard/dashboard_state.dart';
+import '../../services/api_service.dart';
+import '../communication/live_host_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -12,6 +14,46 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  Future<void> _startLive(BuildContext context) async {
+    final titleCtrl = TextEditingController();
+    final descCtrl = TextEditingController();
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text('Go Live', style: TextStyle(color: AppColors.primary)),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Stream Title', prefixIcon: Icon(Icons.title))),
+          const SizedBox(height: 10),
+          TextField(controller: descCtrl, maxLines: 2, decoration: const InputDecoration(labelText: 'Description (optional)', prefixIcon: Icon(Icons.description))),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+          ElevatedButton(
+            onPressed: () {
+              if (titleCtrl.text.trim().isEmpty) return;
+              Navigator.pop(ctx, {'title': titleCtrl.text.trim(), 'description': descCtrl.text.trim()});
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white),
+            child: const Text('Start'),
+          ),
+        ],
+      ),
+    );
+    if (result == null || !context.mounted) return;
+    final resp = await ApiService().createLiveStream(result['title']!, description: result['description']!.isEmpty ? null : result['description']);
+    if (!context.mounted) return;
+    if (resp['statusCode'] == 201 || resp['statusCode'] == 200) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => LiveHostScreen(
+        streamId: resp['id'], channelName: resp['channel_name'],
+        agoraToken: resp['agora_token'], agoraAppId: resp['agora_app_id'],
+        title: result['title']!,
+      )));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(resp['detail'] ?? 'Failed'), backgroundColor: AppColors.error));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +99,19 @@ class _HomeTabState extends State<HomeTab> {
             const SizedBox(height: 20),
 
             // ── Request Counts ──
+            // ── Go Live Button ──
+            ElevatedButton.icon(
+              onPressed: () => _startLive(context),
+              icon: const Icon(Icons.live_tv, size: 20),
+              label: const Text('Go Live'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
+              ),
+            ),
+            const SizedBox(height: 20),
+
             const Text('Request Summary', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
             Row(children: [

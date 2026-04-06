@@ -1,9 +1,9 @@
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../theme/app_theme.dart';
-import '../../utils/constants.dart';
+import '../../services/api_service.dart';
 
 class LiveHostScreen extends StatefulWidget {
   final String streamId;
@@ -26,248 +26,276 @@ class LiveHostScreen extends StatefulWidget {
 }
 
 class _LiveHostScreenState extends State<LiveHostScreen> {
+  final _api = ApiService();
+  RtcEngine? _engine;
   List<dynamic> _questions = [];
+  List<dynamic> _superChats = [];
   int _viewerCount = 0;
   int _peakViewers = 0;
   double _totalGifts = 0;
   bool _isLive = false;
+  bool _isMuted = false;
+  Timer? _pollTimer;
+  int _seconds = 0;
+  Timer? _durationTimer;
 
   @override
   void initState() {
     super.initState();
-    // TODO: Init Agora RTC as broadcaster with widget.agoraAppId, widget.agoraToken
-    // Join channel widget.channelName
+    _initAgora();
   }
 
-  Future<Map<String, String>> get _headers async {
-    final prefs = await SharedPreferences.getInstance();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${prefs.getString('access_token')}',
-    };
+  Future<void> _initAgora() async {
+    await [Permission.camera, Permission.microphone].request();
+
+    _engine = createAgoraRtcEngine();
+    await _engine!.initialize(RtcEngineContext(
+      appId: widget.agoraAppId,
+      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+    ));
+
+    _engine!.registerEventHandler(RtcEngineEventHandler(
+      onJoinChannelSuccess: (connection, elapsed) => debugPrint('Host joined channel'),
+      onError: (err, msg) => debugPrint('Agora error: $err $msg'),
+    ));
+
+    await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await _engine!.enableVideo();
+    await _engine!.startPreview();
   }
 
   Future<void> _goLive() async {
-    final h = await _headers;
-    final resp = await http.post(
-      Uri.parse('${ApiConstants.commBase}/live/${widget.streamId}/start'),
-      headers: h,
+    await _engine!.joinChannel(
+      token: widget.agoraToken,
+      channelId: widget.channelName,
+      uid: 0,
+      options: const ChannelMediaOptions(
+        publishMicrophoneTrack: true,
+        publishCameraTrack: true,
+        clientRoleType: ClientRoleType.clientRoleBroadcaster,
+      ),
     );
-    if (resp.statusCode == 200) {
+
+    final resp = await _api.startLiveStream(widget.streamId);
+    if (resp['statusCode'] == 200) {
       setState(() => _isLive = true);
-      _pollData();
+      _startPolling();
+      _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() => _seconds++));
     }
   }
 
   Future<void> _endStream() async {
-    final h = await _headers;
-    await http.post(
-      Uri.parse('${ApiConstants.commBase}/live/${widget.streamId}/end'),
-      headers: h,
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text('End Stream?', style: TextStyle(color: AppColors.primary)),
+        content: const Text('This will disconnect all viewers.', style: TextStyle(color: AppColors.textPrimary)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: AppColors.error), child: const Text('End')),
+        ],
+      ),
     );
-    // TODO: Leave Agora channel
+    if (confirm != true) return;
+    _pollTimer?.cancel();
+    _durationTimer?.cancel();
+    await _engine?.leaveChannel();
+    await _engine?.release();
+    _engine = null;
+    await _api.endLiveStream(widget.streamId);
     if (mounted) Navigator.pop(context);
   }
 
-  Future<void> _pollData() async {
-    // Poll questions and viewers periodically
-    while (_isLive && mounted) {
-      await Future.delayed(const Duration(seconds: 3));
-      if (!mounted) break;
-      final h = await _headers;
+  void _startPolling() {
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      if (!_isLive || !mounted) return;
+      final v = await _api.getLiveViewers(widget.streamId);
+      final q = await _api.getLiveQuestions(widget.streamId);
+      final sc = await _api.getLiveSuperChats(widget.streamId);
+      if (!mounted) return;
+      setState(() {
+        _viewerCount = v['total'] ?? 0;
+        _peakViewers = v['peak'] ?? _peakViewers;
+        _questions = q;
+        _superChats = sc;
+      });
+    });
+  }
 
-      // questions
-      final qResp = await http.get(
-        Uri.parse('${ApiConstants.commBase}/live/${widget.streamId}/questions'),
-        headers: h,
-      );
-      if (qResp.statusCode == 200) {
-        setState(() => _questions = jsonDecode(qResp.body));
-      }
+  String get _formattedDuration {
+    final m = (_seconds % 3600) ~/ 60;
+    final s = _seconds % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
 
-      // viewers
-      final vResp = await http.get(
-        Uri.parse('${ApiConstants.commBase}/live/${widget.streamId}/viewers'),
-        headers: h,
-      );
-      if (vResp.statusCode == 200) {
-        final data = jsonDecode(vResp.body);
-        setState(() {
-          _viewerCount = data['total'] ?? 0;
-          _peakViewers = data['peak'] ?? 0;
-        });
-      }
-    }
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    _durationTimer?.cancel();
+    _engine?.leaveChannel();
+    _engine?.release();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.black,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: const BoxDecoration(color: AppColors.card, border: Border(bottom: BorderSide(color: AppColors.border))),
-              child: Row(
-                children: [
-                  if (_isLive)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(color: AppColors.error.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.circle, color: AppColors.error, size: 8),
-                          SizedBox(width: 4),
-                          Text('LIVE', style: TextStyle(color: AppColors.error, fontSize: 11, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(widget.title, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 15), overflow: TextOverflow.ellipsis)),
-                  const Icon(Icons.people, color: AppColors.textSecondary, size: 18),
+        child: Stack(children: [
+          // Camera preview
+          if (_engine != null)
+            Positioned.fill(
+              child: AgoraVideoView(controller: VideoViewController(rtcEngine: _engine!, canvas: const VideoCanvas(uid: 0))),
+            ),
+
+          // Pre-live overlay
+          if (!_isLive)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  const Text('\u{1F52E}', style: TextStyle(fontSize: 64)),
+                  const SizedBox(height: 16),
+                  Text(widget.title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                  const SizedBox(height: 8),
+                  const Text('Preview your camera before going live', style: TextStyle(color: Colors.white60, fontSize: 14)),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _goLive,
+                    icon: const Icon(Icons.videocam),
+                    label: const Text('Go Live'),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, minimumSize: const Size(180, 52)),
+                  ),
+                ]),
+              ),
+            ),
+
+          // Top bar
+          if (_isLive)
+            Positioned(
+              top: 0, left: 0, right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: const BoxDecoration(gradient: LinearGradient(colors: [Colors.black87, Colors.transparent], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                child: Row(children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(6)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.circle, color: Colors.white, size: 8),
+                      const SizedBox(width: 4),
+                      Text('LIVE $_formattedDuration', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                    ]),
+                  ),
+                  const SizedBox(width: 10),
+                  const Icon(Icons.people, color: Colors.white70, size: 16),
                   const SizedBox(width: 4),
-                  Text('$_viewerCount', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-                  const SizedBox(width: 12),
-                  Text('Peak: $_peakViewers', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                ],
+                  Text('$_viewerCount', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                  const Spacer(),
+                  Text('Peak: $_peakViewers', style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                ]),
               ),
             ),
 
-            // Camera preview area (Agora local view)
-            Expanded(
-              flex: 3,
-              child: Container(
-                color: Colors.black,
-                child: Center(
-                  child: _isLive
-                      ? const Text('Camera Preview', style: TextStyle(color: Colors.white54, fontSize: 16))
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('🔮', style: TextStyle(fontSize: 64)),
-                            const SizedBox(height: 16),
-                            const Text('Ready to go live?', style: TextStyle(color: Colors.white70, fontSize: 18)),
-                            const SizedBox(height: 20),
-                            ElevatedButton.icon(
-                              onPressed: _goLive,
-                              icon: const Icon(Icons.videocam),
-                              label: const Text('Go Live'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.error,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(160, 48),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-            ),
-
-            // Questions from viewers
-            Expanded(
-              flex: 2,
-              child: Container(
-                color: AppColors.surface,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Text('Questions (${_questions.length})', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 14)),
-                    ),
-                    Expanded(
-                      child: _questions.isEmpty
-                          ? const Center(child: Text('No questions yet', style: TextStyle(color: AppColors.textSecondary)))
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              itemCount: _questions.length,
-                              itemBuilder: (_, i) {
-                                final q = _questions[i];
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.card,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: q['is_pinned'] == true ? AppColors.primary : AppColors.border),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(q['display_name'] ?? 'User', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
-                                            const SizedBox(height: 2),
-                                            Text(q['question'] ?? '', style: const TextStyle(color: AppColors.textPrimary, fontSize: 13)),
-                                          ],
-                                        ),
-                                      ),
-                                      if (q['is_answered'] == true)
-                                        const Icon(Icons.check_circle, color: AppColors.success, size: 16),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Bottom controls
-            if (_isLive)
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(color: AppColors.card, border: Border(top: BorderSide(color: AppColors.border))),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _controlBtn(Icons.flip_camera_ios, 'Flip', () {}),
-                    _controlBtn(Icons.mic, 'Mute', () {}),
-                    GestureDetector(
-                      onTap: _endStream,
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error),
-                        child: const Icon(Icons.stop, color: Colors.white, size: 28),
+          // Pinned super chats
+          if (_isLive && _superChats.isNotEmpty)
+            Positioned(
+              top: 48, left: 8, right: 8,
+              child: SizedBox(
+                height: 56,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _superChats.length > 5 ? 5 : _superChats.length,
+                  itemBuilder: (_, i) {
+                    final sc = _superChats[i];
+                    return Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(maxWidth: 200),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [AppColors.primary.withOpacity(0.85), AppColors.accent.withOpacity(0.7)]),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                    _controlBtn(Icons.chat_bubble, 'Chat', () {}),
-                    _controlBtn(Icons.more_horiz, 'More', () {}),
-                  ],
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                        Row(children: [
+                          Text(sc['sender_name'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                          const Spacer(),
+                          Text('\u20b9${(sc['amount'] as num?)?.toStringAsFixed(0) ?? '0'}', style: const TextStyle(color: Colors.white, fontSize: 10)),
+                        ]),
+                        Text(sc['message'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ]),
+                    );
+                  },
                 ),
               ),
-          ],
-        ),
+            ),
+
+          // Questions chat overlay
+          if (_isLive)
+            Positioned(
+              bottom: 80, left: 8, right: 80,
+              child: SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  reverse: true,
+                  itemCount: _questions.length,
+                  itemBuilder: (_, i) {
+                    final q = _questions[i];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(16)),
+                        child: RichText(text: TextSpan(children: [
+                          TextSpan(text: '${q['display_name'] ?? 'User'} ', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                          TextSpan(text: q['question'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                        ])),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+          // Bottom controls
+          if (_isLive)
+            Positioned(
+              bottom: 0, left: 0, right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                decoration: const BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, Colors.black87], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                  _ctrl(Icons.flip_camera_ios, 'Flip', () => _engine?.switchCamera()),
+                  _ctrl(_isMuted ? Icons.mic_off : Icons.mic, _isMuted ? 'Unmute' : 'Mute', () {
+                    setState(() => _isMuted = !_isMuted);
+                    _engine?.muteLocalAudioStream(_isMuted);
+                  }),
+                  GestureDetector(
+                    onTap: _endStream,
+                    child: Container(width: 56, height: 56, decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error), child: const Icon(Icons.stop, color: Colors.white, size: 28)),
+                  ),
+                ]),
+              ),
+            ),
+
+          // Close (pre-live)
+          if (!_isLive)
+            Positioned(top: 8, right: 8, child: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white, size: 28))),
+        ]),
       ),
     );
   }
 
-  Widget _controlBtn(IconData icon, String label, VoidCallback onTap) {
+  Widget _ctrl(IconData icon, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.surface, border: Border.all(color: AppColors.border)),
-            child: Icon(icon, color: AppColors.textPrimary, size: 20),
-          ),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
-        ],
-      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(width: 44, height: 44, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white12, border: Border.all(color: Colors.white24)), child: Icon(icon, color: Colors.white, size: 20)),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 10)),
+      ]),
     );
   }
 }

@@ -632,6 +632,7 @@ class LiveStream(Base):
     viewers = relationship("LiveStreamViewer", back_populates="stream", cascade="all, delete-orphan")
     questions = relationship("LiveStreamQuestion", back_populates="stream", cascade="all, delete-orphan")
     gifts = relationship("LiveStreamGift", back_populates="stream", cascade="all, delete-orphan")
+    super_chats = relationship("LiveStreamSuperChat", back_populates="stream", cascade="all, delete-orphan")
 
 
 class LiveStreamViewer(Base):
@@ -697,6 +698,27 @@ class LiveStreamGift(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     stream = relationship("LiveStream", back_populates="gifts")
+
+
+class LiveStreamSuperChat(Base):
+    """Paid pinned message in a live stream. Deducted from user wallet, credited to astrologer."""
+    __tablename__ = "live_stream_super_chats"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    stream_id = Column(String(36), ForeignKey("live_streams.id", ondelete="CASCADE"), nullable=False, index=True)
+    sender_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    sender_name = Column(String(150), nullable=True)
+    message = Column(Text, nullable=False)
+    amount = Column(Numeric(10, 2), nullable=False)
+    is_pinned = Column(Boolean, default=True)
+    wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    stream = relationship("LiveStream", back_populates="super_chats")
+
+    __table_args__ = (
+        Index("ix_superchat_stream", "stream_id", "created_at"),
+    )
 
 
 class ChatSession(Base):

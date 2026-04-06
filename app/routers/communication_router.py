@@ -53,7 +53,7 @@ from app.models.model import (
     User, AstrologerProfile, Wallet, WalletTransaction,
     AgoraConfig, CallSession, LiveStream, LiveStreamViewer,
     LiveStreamQuestion, LiveStreamGift, GiftPricing,
-    ChatSession, LiveChatMessage,
+    ChatSession, LiveChatMessage, LiveStreamSuperChat,
 )
 from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
 from app.schemas.communication_schema import (
@@ -63,6 +63,7 @@ from app.schemas.communication_schema import (
     JoinStreamResponse, StreamQuestionRequest, StreamQuestionResponse,
     GiftPricingCreate, GiftPricingResponse, SendGiftRequest, GiftSentResponse,
     InitiateChatRequest, ChatSessionResponse, ChatMessageRequest, ChatMessageResponse,
+    SuperChatRequest, SuperChatResponse,
     MessageResponse,
 )
 
@@ -655,16 +656,22 @@ def end_live_stream(
 
 @router.get("/live/active", response_model=List[LiveStreamListResponse])
 def list_active_streams(db: Session = Depends(get_db)):
-    """Public: list all live streams."""
-    streams = db.query(LiveStream, User).join(
+    """Public: list all active live streams with astrologer profile info."""
+    streams = db.query(LiveStream, User, AstrologerProfile).join(
         User, LiveStream.host_id == User.id
+    ).outerjoin(
+        AstrologerProfile, LiveStream.astrologer_profile_id == AstrologerProfile.id
     ).filter(LiveStream.status == "live").all()
     return [
         LiveStreamListResponse(
-            id=s.id, host_name=u.name, host_avatar=u.avatar_url,
-            title=s.title, status=s.status, viewer_count=s.viewer_count,
+            id=s.id, host_name=p.display_name if p else u.name,
+            host_avatar=u.avatar_url,
+            host_profile_image=p.profile_image_url if p else None,
+            title=s.title, description=s.description,
+            status=s.status, viewer_count=s.viewer_count,
+            total_gifts_amount=float(s.total_gifts_amount or 0),
             started_at=s.started_at,
-        ) for s, u in streams
+        ) for s, u, p in streams
     ]
 
 
@@ -839,6 +846,72 @@ def send_gift(
         gift_name=gift.name, gift_icon=gift.icon,
         amount=price, created_at=lg.created_at,
     )
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  SUPER CHAT (Paid pinned messages in live stream)
+# ══════════════════════════════════════════════════════════════════════
+
+@router.post("/live/{stream_id}/super-chat", response_model=SuperChatResponse)
+def send_super_chat(
+    stream_id: str,
+    req: SuperChatRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Send a paid pinned message in a live stream. Deducted from wallet, credited to astrologer."""
+    stream = db.query(LiveStream).filter(
+        LiveStream.id == stream_id, LiveStream.status == "live"
+    ).first()
+    if not stream:
+        raise HTTPException(status_code=404, detail="Stream not live")
+
+    amount = req.amount
+    txn_id = _debit_wallet(db, current_user.id, amount, f"Super Chat in live stream: ₹{amount}")
+
+    sc = LiveStreamSuperChat(
+        stream_id=stream.id,
+        sender_id=current_user.id,
+        sender_name=current_user.name,
+        message=req.message,
+        amount=Decimal(str(amount)),
+        is_pinned=True,
+        wallet_txn_id=txn_id,
+    )
+    db.add(sc)
+    stream.total_gifts_amount = Decimal(str(float(stream.total_gifts_amount or 0) + amount))
+
+    # Credit astrologer (minus commission)
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == stream.astrologer_profile_id).first()
+    commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
+    commission = amount * commission_pct / 100
+    earning = amount - commission
+    if profile:
+        _credit_wallet(db, profile.user_id, earning, f"Super Chat earning: ₹{amount} ({commission_pct}% commission)")
+
+    db.commit()
+    db.refresh(sc)
+    return SuperChatResponse(
+        id=sc.id, sender_name=sc.sender_name, message=sc.message,
+        amount=float(sc.amount), is_pinned=sc.is_pinned, created_at=sc.created_at,
+    )
+
+
+@router.get("/live/{stream_id}/super-chats", response_model=List[SuperChatResponse])
+def get_super_chats(
+    stream_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    chats = db.query(LiveStreamSuperChat).filter(
+        LiveStreamSuperChat.stream_id == stream_id
+    ).order_by(LiveStreamSuperChat.created_at.desc()).limit(50).all()
+    return [
+        SuperChatResponse(
+            id=c.id, sender_name=c.sender_name, message=c.message,
+            amount=float(c.amount), is_pinned=c.is_pinned, created_at=c.created_at,
+        ) for c in chats
+    ]
 
 
 # ══════════════════════════════════════════════════════════════════════

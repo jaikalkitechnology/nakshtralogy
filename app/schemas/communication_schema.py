@@ -92,9 +92,12 @@ class LiveStreamListResponse(BaseModel):
     id: str
     host_name: Optional[str] = None
     host_avatar: Optional[str] = None
+    host_profile_image: Optional[str] = None
     title: str
+    description: Optional[str] = None
     status: str
     viewer_count: int = 0
+    total_gifts_amount: float = 0
     started_at: Optional[datetime] = None
 
 
@@ -153,6 +156,22 @@ class GiftSentResponse(BaseModel):
     gift_name: str
     gift_icon: str
     amount: float
+    created_at: Optional[datetime] = None
+
+
+# ─── Super Chat ───────────────────────────────────────────────────────
+
+class SuperChatRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=300)
+    amount: float = Field(..., gt=0)
+
+
+class SuperChatResponse(BaseModel):
+    id: str
+    sender_name: Optional[str] = None
+    message: str
+    amount: float
+    is_pinned: bool = True
     created_at: Optional[datetime] = None
 
 
