@@ -8,6 +8,9 @@ import 'bloc/auth/auth_event.dart';
 import 'bloc/auth/auth_state.dart';
 import 'bloc/chart/chart_bloc.dart';
 import 'bloc/service/service_bloc.dart';
+import 'bloc/astrologer/astrologer_bloc.dart';
+import 'bloc/wallet/wallet_bloc.dart';
+import 'bloc/profile/profile_bloc.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 
@@ -28,6 +31,9 @@ class NakshtralogyUserApp extends StatelessWidget {
         BlocProvider(create: (_) => AuthBloc()..add(AuthCheckRequested())),
         BlocProvider(create: (_) => ChartBloc()),
         BlocProvider(create: (_) => ServiceBloc()),
+        BlocProvider(create: (_) => AstrologerBloc()),
+        BlocProvider(create: (_) => WalletBloc()),
+        BlocProvider(create: (_) => ProfileBloc()),
       ],
       child: MaterialApp(
         title: 'Nakshtralogy',
