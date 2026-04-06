@@ -335,6 +335,61 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Live Streams ──────────────────────────────────────────────────
+
+  Future<List<dynamic>> getActiveLiveStreams() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.liveActive}'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> joinLiveStream(String streamId) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/join'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<void> leaveLiveStream(String streamId) async {
+    await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/leave'), headers: _headers);
+  }
+
+  Future<Map<String, dynamic>> getLiveViewers(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/viewers'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    return {};
+  }
+
+  Future<List<dynamic>> getLiveQuestions(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/questions'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<void> sendLiveQuestion(String streamId, String question) async {
+    await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/question'), headers: _headers, body: jsonEncode({'question': question}));
+  }
+
+  Future<List<dynamic>> getGifts() async {
+    final resp = await http.get(Uri.parse(ApiConstants.gifts), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> sendLiveGift(String streamId, String giftPricingId) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/gift'), headers: _headers, body: jsonEncode({'gift_pricing_id': giftPricingId}));
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> getLiveSuperChats(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/super-chats'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<Map<String, dynamic>> sendSuperChat(String streamId, String message, double amount) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/super-chat'), headers: _headers, body: jsonEncode({'message': message, 'amount': amount}));
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> initiateCall(String astrologerProfileId, String callType) async {

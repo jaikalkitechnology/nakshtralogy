@@ -347,6 +347,45 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Live Stream (Host) ────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> createLiveStream(String title, {String? description}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.liveCreate}'),
+      headers: _headers,
+      body: jsonEncode({'title': title, if (description != null) 'description': description}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> startLiveStream(String streamId) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/start'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> endLiveStream(String streamId) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/end'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getLiveViewers(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/viewers'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    return {};
+  }
+
+  Future<List<dynamic>> getLiveQuestions(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/questions'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<List<dynamic>> getLiveSuperChats(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/super-chats'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> callAction(String callId, String action) async {
