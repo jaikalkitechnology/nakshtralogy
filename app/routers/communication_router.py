@@ -55,13 +55,14 @@ from app.models.model import (
     LiveStreamQuestion, LiveStreamGift, GiftPricing,
     ChatSession, LiveChatMessage,
 )
+from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
 from app.schemas.communication_schema import (
     AgoraConfigCreate, AgoraConfigResponse, AgoraConfigUpdate,
     InitiateCallRequest, CallSessionResponse, CallActionRequest,
     CreateLiveStreamRequest, LiveStreamResponse, LiveStreamListResponse,
     JoinStreamResponse, StreamQuestionRequest, StreamQuestionResponse,
     GiftPricingCreate, GiftPricingResponse, SendGiftRequest, GiftSentResponse,
-    InitiateChatRequest, ChatSessionResponse, ChatMessageResponse,
+    InitiateChatRequest, ChatSessionResponse, ChatMessageRequest, ChatMessageResponse,
     MessageResponse,
 )
 
@@ -871,7 +872,18 @@ def initiate_chat(
     db.commit()
     db.refresh(session)
 
-    # TODO: FCM push to astrologer
+    # FCM push to astrologer
+    astro_user = db.query(User).filter(User.id == profile.user_id).first()
+    if astro_user and astro_user.fcm_token:
+        notify_chat_request(
+            fcm_token=astro_user.fcm_token,
+            user_name=current_user.name or "User",
+            session_id=session.id,
+            rate_per_min=float(session.rate_per_min or 0),
+            rate_per_session=float(session.rate_per_session or 0),
+            billing_mode=session.billing_mode or "per_session",
+            session_message_limit=session.session_message_limit or 45,
+        )
 
     return ChatSessionResponse(
         id=session.id, user_id=session.user_id,
@@ -917,6 +929,18 @@ def chat_action(
         if session.billing_mode == "per_session":
             session.session_expires_at = datetime.utcnow() + timedelta(
                 hours=session.session_validity_hours or 24
+            )
+        # FCM push to user that chat is accepted
+        chat_user = db.query(User).filter(User.id == session.user_id).first()
+        if chat_user and chat_user.fcm_token:
+            notify_chat_accepted(
+                fcm_token=chat_user.fcm_token,
+                astrologer_name=current_user.name or "Astrologer",
+                session_id=session.id,
+                rate_per_min=float(session.rate_per_min or 0),
+                rate_per_session=float(session.rate_per_session or 0),
+                billing_mode=session.billing_mode or "per_session",
+                session_message_limit=session.session_message_limit or 45,
             )
 
     elif req.action == "end":
@@ -1056,6 +1080,99 @@ def chat_history(
         ))
     ).order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
     return [_chat_session_response(s) for s in sessions]
+
+
+# ── Send Message via REST (for inline notification reply) ────────────
+
+@router.post("/chat/{session_id}/message", response_model=ChatMessageResponse)
+def send_chat_message_rest(
+    session_id: str,
+    req: ChatMessageRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Send a chat message via REST API (used for inline notification replies).
+    This endpoint persists the message and sends FCM to the other participant.
+    WebSocket-connected clients will NOT see this message unless they refresh.
+    """
+    session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    if session.status != "active":
+        raise HTTPException(status_code=400, detail="Session not active")
+
+    # Verify participant
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
+    astro_user_id = profile.user_id if profile else None
+    if current_user.id != session.user_id and current_user.id != astro_user_id:
+        raise HTTPException(status_code=403, detail="Not a participant")
+
+    is_user = current_user.id == session.user_id
+
+    # Track user message count
+    if is_user:
+        session.user_message_count = (session.user_message_count or 0) + 1
+
+    msg = LiveChatMessage(
+        session_id=session_id,
+        sender_id=current_user.id,
+        message_type=req.message_type,
+        content=req.content,
+        media_url=req.media_url,
+        file_name=req.file_name,
+        file_size=req.file_size,
+    )
+    db.add(msg)
+    db.commit()
+    db.refresh(msg)
+
+    # Send FCM to the other participant
+    if is_user and profile:
+        astro_u = db.query(User).filter(User.id == profile.user_id).first()
+        if astro_u and astro_u.fcm_token:
+            send_push(
+                fcm_token=astro_u.fcm_token,
+                title=f"Message from {current_user.name or 'User'}",
+                body=req.content[:200] if req.message_type == "text" else "📎 Attachment",
+                role="astrologer",
+                data={
+                    "type": "chat_message",
+                    "session_id": session_id,
+                    "sender_name": current_user.name or "User",
+                    "user_name": current_user.name or "User",
+                    "rate_per_min": str(float(session.rate_per_min or 0)),
+                    "rate_per_session": str(float(session.rate_per_session or 0)),
+                    "billing_mode": session.billing_mode or "per_session",
+                    "session_message_limit": str(session.session_message_limit or 45),
+                },
+            )
+    elif not is_user:
+        chat_user = db.query(User).filter(User.id == session.user_id).first()
+        if chat_user and chat_user.fcm_token:
+            send_push(
+                fcm_token=chat_user.fcm_token,
+                title=f"Message from {current_user.name or 'Astrologer'}",
+                body=req.content[:200] if req.message_type == "text" else "📎 Attachment",
+                role="user",
+                data={
+                    "type": "chat_message",
+                    "session_id": session_id,
+                    "sender_name": current_user.name or "Astrologer",
+                    "astrologer_name": current_user.name or "Astrologer",
+                    "rate_per_min": str(float(session.rate_per_min or 0)),
+                    "rate_per_session": str(float(session.rate_per_session or 0)),
+                    "billing_mode": session.billing_mode or "per_session",
+                    "session_message_limit": str(session.session_message_limit or 45),
+                },
+            )
+
+    return ChatMessageResponse(
+        id=msg.id, session_id=msg.session_id, sender_id=msg.sender_id,
+        message_type=msg.message_type, content=msg.content,
+        media_url=msg.media_url, file_name=msg.file_name,
+        file_size=msg.file_size, created_at=msg.created_at,
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════

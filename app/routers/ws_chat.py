@@ -16,6 +16,7 @@ Billing integration:
 
 import json
 import math
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Dict
@@ -30,6 +31,9 @@ from app.models.model import (
     ChatSession, LiveChatMessage, User, AstrologerProfile,
     Wallet, WalletTransaction,
 )
+from app.services.fcm_service import send_push
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -73,6 +77,75 @@ def _credit_astro_wallet(db: Session, user_id: str, amount: float, desc: str):
     db.add(txn)
     db.flush()
     return txn.id
+
+
+def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_astrologer: bool, content: str, message_type: str):
+    """
+    Send FCM push to the OTHER participant in the chat.
+    - If sender is user → push to astrologer (role=astrologer)
+    - If sender is astrologer → push to user (role=user)
+    Only sends if the recipient is NOT currently connected via WebSocket.
+    """
+    session_id = session.id
+
+    if sender_is_astrologer:
+        # Push to user
+        recipient = db.query(User).filter(User.id == session.user_id).first()
+        if not recipient or not recipient.fcm_token:
+            return
+        # Check if user is connected to WS already
+        if session_id in _connections and recipient.id in _connections[session_id]:
+            return  # already connected, no push needed
+
+        body = content if message_type == "text" else ("📷 Photo" if message_type == "image" else "📄 Document")
+        send_push(
+            fcm_token=recipient.fcm_token,
+            title=f"Message from {sender.name or 'Astrologer'}",
+            body=body[:200],
+            role="user",
+            data={
+                "type": "chat_message",
+                "session_id": session_id,
+                "sender_name": sender.name or "Astrologer",
+                "sender_id": sender.id,
+                "message_type": message_type,
+                "rate_per_min": str(float(session.rate_per_min or 0)),
+                "rate_per_session": str(float(session.rate_per_session or 0)),
+                "billing_mode": session.billing_mode or "per_session",
+                "session_message_limit": str(session.session_message_limit or 45),
+            },
+        )
+    else:
+        # Push to astrologer
+        profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
+        if not profile:
+            return
+        astro_user = db.query(User).filter(User.id == profile.user_id).first()
+        if not astro_user or not astro_user.fcm_token:
+            return
+        # Check if astrologer is connected
+        if session_id in _connections and astro_user.id in _connections[session_id]:
+            return
+
+        body = content if message_type == "text" else ("📷 Photo" if message_type == "image" else "📄 Document")
+        send_push(
+            fcm_token=astro_user.fcm_token,
+            title=f"Message from {sender.name or 'User'}",
+            body=body[:200],
+            role="astrologer",
+            data={
+                "type": "chat_message",
+                "session_id": session_id,
+                "sender_name": sender.name or "User",
+                "sender_id": sender.id,
+                "user_name": sender.name or "User",
+                "message_type": message_type,
+                "rate_per_min": str(float(session.rate_per_min or 0)),
+                "rate_per_session": str(float(session.rate_per_session or 0)),
+                "billing_mode": session.billing_mode or "per_session",
+                "session_message_limit": str(session.session_message_limit or 45),
+            },
+        )
 
 
 @router.websocket("/ws/chat/{session_id}")
@@ -205,6 +278,12 @@ async def websocket_chat(
                     "user_message_count": session.user_message_count or 0,
                     "remaining_messages": max(0, (session.session_message_limit or 45) - (session.user_message_count or 0)),
                 })
+
+                # ── Send FCM push to the OTHER participant ──
+                try:
+                    _send_chat_fcm(db, session, user, is_astrologer, content, message_type)
+                except Exception as fcm_err:
+                    logger.warning(f"FCM push failed: {fcm_err}")
 
                 # Check if user hit message limit (per-session mode)
                 if is_user and session.billing_mode == "per_session":
