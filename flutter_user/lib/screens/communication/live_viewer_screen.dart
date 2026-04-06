@@ -167,12 +167,15 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
           const SizedBox(height: 10),
           TextField(controller: amountCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Amount (min \u20b9${minRate.toInt()})', prefixIcon: const Icon(Icons.currency_rupee))),
           const SizedBox(height: 8),
-          Wrap(spacing: 8, children: [minRate.toInt(), 100, 200, 500].where((a) => a >= minRate).toSet().toList()..sort()..take(4).toList().map((a) => ActionChip(
-            label: Text('\u20b9$a'),
-            onPressed: () => amountCtrl.text = '$a',
-            backgroundColor: AppColors.surface,
-            labelStyle: const TextStyle(color: AppColors.primary),
-          )).toList()),
+          Wrap(spacing: 8, children: (() {
+            final amounts = <int>{minRate.toInt(), 100, 200, 500}.where((a) => a >= minRate).toList()..sort();
+            return amounts.take(4).map<Widget>((a) => ActionChip(
+              label: Text('\u20b9$a'),
+              onPressed: () => amountCtrl.text = '$a',
+              backgroundColor: AppColors.surface,
+              labelStyle: const TextStyle(color: AppColors.primary),
+            )).toList();
+          })()),
         ]),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),

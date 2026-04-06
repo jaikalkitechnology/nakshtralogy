@@ -24,7 +24,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       emit(state.copyWith(
         loading: false,
         wallet: walletRes['statusCode'] == 200
-            ? Map<String, dynamic>.from(walletRes)..remove('statusCode')
+            ? (Map<String, dynamic>.from(walletRes)..remove('statusCode'))
             : state.wallet,
         transactions: txnRes['statusCode'] == 200 ? (txnRes['transactions'] as List? ?? []) : [],
         total: txnRes['statusCode'] == 200 ? (txnRes['total'] as int? ?? 0) : 0,
