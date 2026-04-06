@@ -125,6 +125,7 @@ def signup(req: AstrologerSignupRequest, db: Session = Depends(get_db)):
         password_hash=hash_password(req.password),
         name=req.name,
         role="astrologer",
+        fcm_token=req.fcm_token,
     )
     db.add(user)
     db.flush()
@@ -183,6 +184,8 @@ def google_login(req: AstrologerGoogleLoginRequest, db: Session = Depends(get_db
             user.google_id = info["google_id"]
         if not user.avatar_url and info.get("avatar_url"):
             user.avatar_url = info["avatar_url"]
+        if req.fcm_token:
+            user.fcm_token = req.fcm_token
         db.commit()
     else:
         user = User(
@@ -192,6 +195,7 @@ def google_login(req: AstrologerGoogleLoginRequest, db: Session = Depends(get_db
             google_id=info["google_id"],
             is_verified=True,
             role="astrologer",
+            fcm_token=req.fcm_token,
         )
         db.add(user)
         db.flush()

@@ -52,6 +52,7 @@ class ApiService {
     List<String>? specializations,
     String? qualification,
     String? bio,
+    String? fcmToken,
   }) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.astroSignup),
@@ -67,6 +68,7 @@ class ApiService {
         if (specializations != null) 'specializations': specializations,
         if (qualification != null) 'qualification': qualification,
         if (bio != null) 'bio': bio,
+        if (fcmToken != null) 'fcm_token': fcmToken,
       }),
     );
     final data = jsonDecode(resp.body);
@@ -101,11 +103,11 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...data};
   }
 
-  Future<Map<String, dynamic>> googleLogin(String idToken) async {
+  Future<Map<String, dynamic>> googleLogin(String idToken, {String? fcmToken}) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.astroGoogleLogin),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'id_token': idToken}),
+      body: jsonEncode({'id_token': idToken, if (fcmToken != null) 'fcm_token': fcmToken}),
     );
     final data = jsonDecode(resp.body);
     if (resp.statusCode == 200) {

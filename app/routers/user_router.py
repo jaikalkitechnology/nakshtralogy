@@ -96,6 +96,7 @@ def signup(req: UserSignupRequest, db: Session = Depends(get_db)):
         tob=req.tob,
         birth_place=req.birth_place,
         role="user",
+        fcm_token=req.fcm_token,
     )
     db.add(user)
     db.flush()
@@ -141,6 +142,8 @@ def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
             user.google_id = info["google_id"]
         if not user.avatar_url and info.get("avatar_url"):
             user.avatar_url = info["avatar_url"]
+        if req.fcm_token:
+            user.fcm_token = req.fcm_token
         db.commit()
     else:
         # new user via Google
@@ -151,6 +154,7 @@ def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
             google_id=info["google_id"],
             is_verified=True,
             role="user",
+            fcm_token=req.fcm_token,
         )
         db.add(user)
         db.flush()
