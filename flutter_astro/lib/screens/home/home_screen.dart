@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<KycBloc>().add(KycStatusRequested());
+      context.read<StatusBloc>().add(StatusLoadRequested());
     });
   }
 
@@ -92,20 +93,57 @@ class _HomeScreenState extends State<HomeScreen> {
                 BlocBuilder<StatusBloc, StatusState>(
                   builder: (context, state) {
                     final isOnline = state is StatusIdle && state.isOnline;
+                    final isBusy = state is StatusIdle && (state as StatusIdle).isBusy;
+                    final isUpdating = state is StatusUpdating;
+
+                    Color dotColor;
+                    Color bgColor;
+                    Color borderColor;
+                    String label;
+                    if (isBusy) {
+                      dotColor = Colors.orange;
+                      bgColor = Colors.orange.withOpacity(0.2);
+                      borderColor = Colors.orange.withOpacity(0.5);
+                      label = 'Busy';
+                    } else if (isOnline) {
+                      dotColor = AppColors.success;
+                      bgColor = AppColors.success.withOpacity(0.2);
+                      borderColor = AppColors.success.withOpacity(0.5);
+                      label = 'Online';
+                    } else {
+                      dotColor = AppColors.textSecondary;
+                      bgColor = AppColors.surface;
+                      borderColor = AppColors.border;
+                      label = 'Offline';
+                    }
+
                     return GestureDetector(
-                      onTap: () => context.read<StatusBloc>().add(StatusToggleOnline(isOnline: !isOnline)),
+                      onTap: isUpdating ? null : () {
+                        if (isBusy) {
+                          // Busy → go back Online
+                          context.read<StatusBloc>().add(const StatusSetBusy(isBusy: false));
+                        } else if (isOnline) {
+                          // Online → go Offline
+                          context.read<StatusBloc>().add(const StatusToggleOnline(isOnline: false));
+                        } else {
+                          // Offline → go Online
+                          context.read<StatusBloc>().add(const StatusToggleOnline(isOnline: true));
+                        }
+                      },
                       child: Container(
                         margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isOnline ? AppColors.success.withOpacity(0.2) : AppColors.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: isOnline ? AppColors.success.withOpacity(0.5) : AppColors.border),
+                          color: bgColor, borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: borderColor),
                         ),
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Container(width: 8, height: 8, decoration: BoxDecoration(color: isOnline ? AppColors.success : AppColors.textSecondary, shape: BoxShape.circle)),
+                          if (isUpdating)
+                            const SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.primary))
+                          else
+                            Container(width: 8, height: 8, decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle)),
                           const SizedBox(width: 6),
-                          Text(isOnline ? 'Online' : 'Offline', style: TextStyle(color: isOnline ? AppColors.success : AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
+                          Text(label, style: TextStyle(color: dotColor, fontSize: 13, fontWeight: FontWeight.w500)),
                         ]),
                       ),
                     );

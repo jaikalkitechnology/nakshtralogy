@@ -8,9 +8,10 @@ abstract class StatusState extends Equatable {
 
 class StatusIdle extends StatusState {
   final bool isOnline;
-  const StatusIdle({this.isOnline = false});
+  final bool isBusy;
+  const StatusIdle({this.isOnline = false, this.isBusy = false});
   @override
-  List<Object?> get props => [isOnline];
+  List<Object?> get props => [isOnline, isBusy];
 }
 
 class StatusUpdating extends StatusState {}
