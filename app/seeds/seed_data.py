@@ -23,6 +23,7 @@ from app.core.security import hash_password
 from app.models.model import (
     User, Wallet, AstrologerProfile, AstrologerAvailability,
     ServicePricing, GiftPricing, AgoraConfig, Notification,
+    PlatformSetting,
 )
 
 
@@ -35,6 +36,7 @@ def seed_all(db: Session) -> dict:
     summary["service_pricing"] = _seed_service_pricing(db)
     summary["gift_pricing"] = _seed_gift_pricing(db)
     summary["agora_config"] = _seed_agora_config(db)
+    summary["platform_settings"] = _seed_platform_settings(db)
     summary["notifications"] = _seed_notifications(db)
     db.commit()
     return summary
@@ -152,6 +154,13 @@ DEMO_ASTROLOGERS = [
         "rate_chat": "20.00",
         "rate_call": "25.00",
         "rate_video": "35.00",
+        "rate_session_chat": "299.00",
+        "rate_session_call": "399.00",
+        "rate_session_video": "599.00",
+        "rate_per_msg_chat": "5.00",
+        "super_chat_rate": "50.00",
+        "session_message_limit": 45,
+        "session_validity_hours": 24,
         "rating": "4.80",
         "total_reviews": 342,
         "total_consultations": 3500,
@@ -171,6 +180,13 @@ DEMO_ASTROLOGERS = [
         "rate_chat": "15.00",
         "rate_call": "20.00",
         "rate_video": "30.00",
+        "rate_session_chat": "199.00",
+        "rate_session_call": "299.00",
+        "rate_session_video": "499.00",
+        "rate_per_msg_chat": "3.00",
+        "super_chat_rate": "30.00",
+        "session_message_limit": 50,
+        "session_validity_hours": 24,
         "rating": "4.60",
         "total_reviews": 218,
         "total_consultations": 2100,
@@ -190,6 +206,13 @@ DEMO_ASTROLOGERS = [
         "rate_chat": "25.00",
         "rate_call": "30.00",
         "rate_video": "45.00",
+        "rate_session_chat": "399.00",
+        "rate_session_call": "499.00",
+        "rate_session_video": "799.00",
+        "rate_per_msg_chat": "8.00",
+        "super_chat_rate": "100.00",
+        "session_message_limit": 40,
+        "session_validity_hours": 12,
         "rating": "4.90",
         "total_reviews": 487,
         "total_consultations": 1800,
@@ -209,6 +232,13 @@ DEMO_ASTROLOGERS = [
         "rate_chat": "30.00",
         "rate_call": "40.00",
         "rate_video": "50.00",
+        "rate_session_chat": "499.00",
+        "rate_session_call": "699.00",
+        "rate_session_video": "999.00",
+        "rate_per_msg_chat": "10.00",
+        "super_chat_rate": "100.00",
+        "session_message_limit": 45,
+        "session_validity_hours": 24,
         "rating": "4.70",
         "total_reviews": 562,
         "total_consultations": 5200,
@@ -228,6 +258,13 @@ DEMO_ASTROLOGERS = [
         "rate_chat": "18.00",
         "rate_call": "22.00",
         "rate_video": "32.00",
+        "rate_session_chat": "249.00",
+        "rate_session_call": "349.00",
+        "rate_session_video": "549.00",
+        "rate_per_msg_chat": "4.00",
+        "super_chat_rate": "50.00",
+        "session_message_limit": 45,
+        "session_validity_hours": 24,
         "rating": "4.50",
         "total_reviews": 298,
         "total_consultations": 2800,
@@ -247,6 +284,13 @@ DEMO_ASTROLOGERS = [
         "rate_chat": "22.00",
         "rate_call": "28.00",
         "rate_video": "40.00",
+        "rate_session_chat": "349.00",
+        "rate_session_call": "499.00",
+        "rate_session_video": "699.00",
+        "rate_per_msg_chat": "6.00",
+        "super_chat_rate": "50.00",
+        "session_message_limit": 45,
+        "session_validity_hours": 24,
         "rating": "4.80",
         "total_reviews": 425,
         "total_consultations": 4100,
@@ -284,12 +328,20 @@ def _seed_astrologers(db: Session) -> int:
             rate_per_min_chat=Decimal(a["rate_chat"]),
             rate_per_min_call=Decimal(a["rate_call"]),
             rate_per_min_video=Decimal(a["rate_video"]),
+            rate_per_session_chat=Decimal(a["rate_session_chat"]),
+            rate_per_session_call=Decimal(a["rate_session_call"]),
+            rate_per_session_video=Decimal(a["rate_session_video"]),
+            rate_per_msg_chat=Decimal(a["rate_per_msg_chat"]),
+            super_chat_rate=Decimal(a["super_chat_rate"]),
+            session_message_limit=a["session_message_limit"],
+            session_validity_hours=a["session_validity_hours"],
             rating=Decimal(a["rating"]),
             total_reviews=a["total_reviews"],
             total_consultations=a["total_consultations"],
             total_minutes=a["total_minutes"],
             is_approved=True,
             is_online=True,
+            approved_at=datetime.utcnow(),
             commission_pct=Decimal("30.00"),
         )
         db.add(profile)
@@ -529,7 +581,52 @@ def _seed_agora_config(db: Session) -> str:
     return "created (update with real credentials)"
 
 
-# ─── 7. Sample Notifications ──────────────────────────────────────────
+# ─── 7. Platform Settings (Defaults) ─────────────────────────────────
+
+PLATFORM_SETTINGS = [
+    # Withdrawal config
+    {"category": "withdrawal_config", "key": "min_amount", "value": "500", "description": "Minimum withdrawal amount (₹)"},
+    {"category": "withdrawal_config", "key": "max_per_day", "value": "50000", "description": "Maximum withdrawal per day (₹)"},
+    {"category": "withdrawal_config", "key": "processing_days", "value": "3", "description": "Processing time in business days"},
+    {"category": "withdrawal_config", "key": "require_bank", "value": "false", "description": "Require bank details (vs UPI only)"},
+    # Google Auth placeholders
+    {"category": "google_auth_user", "key": "client_id", "value": "", "description": "Google OAuth Client ID for user app"},
+    {"category": "google_auth_user", "key": "client_secret", "value": "", "is_secret": True, "description": "Google OAuth Client Secret for user app"},
+    {"category": "google_auth_astro", "key": "client_id", "value": "", "description": "Google OAuth Client ID for astro app"},
+    {"category": "google_auth_astro", "key": "client_secret", "value": "", "is_secret": True, "description": "Google OAuth Client Secret for astro app"},
+    # FCM placeholders
+    {"category": "fcm_user", "key": "project_id", "value": "", "description": "Firebase project ID for user app"},
+    {"category": "fcm_user", "key": "sa_path", "value": "credentials/firebase-user-sa.json", "description": "Service account JSON path"},
+    {"category": "fcm_astro", "key": "project_id", "value": "", "description": "Firebase project ID for astro app"},
+    {"category": "fcm_astro", "key": "sa_path", "value": "credentials/firebase-astro-sa.json", "description": "Service account JSON path"},
+    # SMTP placeholder
+    {"category": "smtp", "key": "host", "value": "", "description": "SMTP server host"},
+    {"category": "smtp", "key": "port", "value": "587", "description": "SMTP port"},
+    {"category": "smtp", "key": "from_email", "value": "noreply@nakshatralogy.com", "description": "Sender email"},
+]
+
+
+def _seed_platform_settings(db: Session) -> int:
+    created = 0
+    for s in PLATFORM_SETTINGS:
+        existing = db.query(PlatformSetting).filter(
+            PlatformSetting.category == s["category"],
+            PlatformSetting.key == s["key"],
+        ).first()
+        if existing:
+            continue
+        db.add(PlatformSetting(
+            category=s["category"],
+            key=s["key"],
+            value=s.get("value", ""),
+            is_secret=s.get("is_secret", False),
+            description=s.get("description"),
+        ))
+        created += 1
+    return created
+
+
+# ─── 8. Sample Notifications ──────────────────────────────────────────
 
 def _seed_notifications(db: Session) -> int:
     # Add welcome notifications for all demo users
