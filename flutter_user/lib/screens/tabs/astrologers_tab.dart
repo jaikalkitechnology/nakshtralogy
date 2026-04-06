@@ -6,6 +6,8 @@ import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
+import '../../services/api_service.dart';
+import '../communication/chat_screen.dart';
 
 class AstrologersTab extends StatefulWidget {
   const AstrologersTab({super.key});
@@ -32,6 +34,28 @@ class _AstrologersTabState extends State<AstrologersTab> {
     _debounce?.cancel();
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _startChat(BuildContext context, Map<String, dynamic> astro) async {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Initiating chat...'), duration: Duration(seconds: 2)));
+    try {
+      final result = await ApiService().initiateChat(astro['id'] as String);
+      if (!mounted) return;
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(
+          sessionId: result['id'] as String,
+          astrologerName: astro['display_name'] ?? 'Astrologer',
+          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
+          ratePerSession: (result['rate_per_session'] as num?)?.toDouble() ?? 0,
+          billingMode: result['billing_mode'] ?? 'per_session',
+          sessionMessageLimit: result['session_message_limit'] ?? 45,
+        )));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed to start chat'), backgroundColor: AppColors.error));
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+    }
   }
 
   void _onSearchChanged(String q) {
@@ -247,7 +271,7 @@ class _AstroRow extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       textStyle: const TextStyle(fontSize: 11),
                     ),
-                    onPressed: isOnline ? () {} : null,
+                    onPressed: isOnline ? () => _startChat(context, astro) : null,
                     icon: const Icon(Icons.chat_bubble_outline, size: 13),
                     label: const Text('Chat'),
                   ),

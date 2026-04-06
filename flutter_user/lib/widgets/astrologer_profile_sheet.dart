@@ -4,6 +4,8 @@ import '../theme/app_theme.dart';
 import '../bloc/astrologer/astrologer_bloc.dart';
 import '../bloc/astrologer/astrologer_event.dart';
 import '../bloc/astrologer/astrologer_state.dart';
+import '../services/api_service.dart';
+import '../screens/communication/chat_screen.dart';
 
 /// Bottom sheet that shows full astrologer profile with rate card and reviews.
 /// Dispatches AstrologerDetailRequested when opened and clears on close.
@@ -26,6 +28,41 @@ Future<void> showAstrologerProfileSheet(BuildContext context, String astrologerI
 
 class _AstrologerProfileSheet extends StatelessWidget {
   const _AstrologerProfileSheet();
+
+  Future<void> _startChat(BuildContext context, Map<String, dynamic> astrologer) async {
+    Navigator.pop(context); // close the sheet
+    final scaffold = ScaffoldMessenger.of(context);
+    final nav = Navigator.of(context);
+
+    scaffold.showSnackBar(const SnackBar(content: Text('Initiating chat...'), duration: Duration(seconds: 2)));
+
+    try {
+      final result = await ApiService().initiateChat(astrologer['id'] as String);
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        final sessionId = result['id'] as String;
+        final ratePerMin = (result['rate_per_min'] as num?)?.toDouble() ?? 0;
+        final ratePerSession = (result['rate_per_session'] as num?)?.toDouble() ?? 0;
+        final billingMode = result['billing_mode'] ?? 'per_session';
+        final msgLimit = result['session_message_limit'] ?? 45;
+
+        nav.push(MaterialPageRoute(builder: (_) => ChatScreen(
+          sessionId: sessionId,
+          astrologerName: astrologer['display_name'] ?? 'Astrologer',
+          ratePerMin: ratePerMin,
+          ratePerSession: ratePerSession,
+          billingMode: billingMode,
+          sessionMessageLimit: msgLimit,
+        )));
+      } else {
+        scaffold.showSnackBar(SnackBar(
+          content: Text(result['detail'] ?? 'Failed to start chat'),
+          backgroundColor: AppColors.error,
+        ));
+      }
+    } catch (e) {
+      scaffold.showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +329,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: isOnline ? () {} : null,
+                            onPressed: isOnline ? () => _startChat(context, a) : null,
                             icon: const Icon(Icons.chat_bubble_outline, size: 16),
                             label: const Text('Chat'),
                           ),

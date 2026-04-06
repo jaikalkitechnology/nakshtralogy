@@ -6,18 +6,30 @@ WS /ws/chat/{session_id}?token=<JWT>
 Real-time messaging for paid chat sessions.
 Both user and astrologer connect to the same session_id.
 Messages are broadcast to both participants and persisted to DB.
+
+Billing integration:
+  - Tracks user_message_count against session_message_limit
+  - When astrologer sends first reply → charge is confirmed
+  - Session auto-completes when message limit hit or validity expires
+  - Supports text, image, and pdf message types
 """
 
 import json
-from datetime import datetime
-from typing import Dict, Set
+import math
+from datetime import datetime, timedelta
+from decimal import Decimal
+from typing import Dict
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import SessionLocal
+from app.core.config import settings
 from app.core.security import decode_access_token
-from app.models.model import ChatSession, LiveChatMessage, User
+from app.models.model import (
+    ChatSession, LiveChatMessage, User, AstrologerProfile,
+    Wallet, WalletTransaction,
+)
 
 router = APIRouter()
 
@@ -44,6 +56,25 @@ def _auth_ws(token: str, db: Session):
     return user
 
 
+def _credit_astro_wallet(db: Session, user_id: str, amount: float, desc: str):
+    """Credit amount to astrologer wallet."""
+    wallet = db.query(Wallet).filter(Wallet.user_id == user_id).first()
+    if not wallet:
+        return None
+    wallet.balance = Decimal(str(float(wallet.balance) + amount))
+    txn = WalletTransaction(
+        wallet_id=wallet.id,
+        txn_type="consultation_credit",
+        amount=Decimal(str(amount)),
+        balance_after=wallet.balance,
+        description=desc,
+        reference_type="communication",
+    )
+    db.add(txn)
+    db.flush()
+    return txn.id
+
+
 @router.websocket("/ws/chat/{session_id}")
 async def websocket_chat(
     websocket: WebSocket,
@@ -51,6 +82,7 @@ async def websocket_chat(
     token: str = Query(...),
 ):
     db = SessionLocal()
+    user = None
     try:
         # authenticate
         user = _auth_ws(token, db)
@@ -76,11 +108,20 @@ async def websocket_chat(
             _connections[session_id] = {}
         _connections[session_id][user.id] = websocket
 
+        # Determine who is user vs astrologer
+        profile = db.query(AstrologerProfile).filter(
+            AstrologerProfile.id == session.astrologer_id
+        ).first()
+        astrologer_user_id = profile.user_id if profile else None
+        is_user = user.id == session.user_id
+        is_astrologer = user.id == astrologer_user_id
+
         # send join event
         await _broadcast(session_id, {
             "type": "user_joined",
             "user_id": user.id,
             "name": user.name,
+            "is_astrologer": is_astrologer,
             "timestamp": datetime.utcnow().isoformat(),
         }, exclude=user.id)
 
@@ -89,7 +130,13 @@ async def websocket_chat(
             "type": "session_info",
             "session_id": session_id,
             "status": session.status,
-            "rate_per_min": float(session.rate_per_min),
+            "billing_mode": session.billing_mode or "per_session",
+            "rate_per_min": float(session.rate_per_min or 0),
+            "rate_per_session": float(session.rate_per_session or 0),
+            "blocked_amount": float(session.blocked_amount or 0),
+            "session_message_limit": session.session_message_limit or 45,
+            "user_message_count": session.user_message_count or 0,
+            "session_expires_at": str(session.session_expires_at) if session.session_expires_at else None,
             "started_at": str(session.started_at) if session.started_at else None,
         })
 
@@ -97,21 +144,46 @@ async def websocket_chat(
         while True:
             raw = await websocket.receive_text()
             data = json.loads(raw)
-
             msg_type = data.get("type", "text")
 
             if msg_type == "message":
+                # Refresh session from DB
+                db.refresh(session)
+
+                # Check if session is still active
+                if session.status != "active":
+                    await websocket.send_json({"type": "error", "message": "Session is no longer active"})
+                    continue
+
+                # Check session validity expiry
+                if session.session_expires_at and datetime.utcnow() > session.session_expires_at:
+                    await _complete_session(db, session, profile)
+                    await _broadcast(session_id, {
+                        "type": "session_ended",
+                        "reason": "Session validity expired",
+                        "timestamp": datetime.utcnow().isoformat(),
+                    })
+                    break
+
                 content = data.get("content", "")
                 media_url = data.get("media_url")
                 message_type = data.get("message_type", "text")
+                file_name = data.get("file_name")
+                file_size = data.get("file_size")
 
-                # persist
+                # Track user message count (only user messages count toward limit)
+                if is_user:
+                    session.user_message_count = (session.user_message_count or 0) + 1
+
+                # persist message
                 msg = LiveChatMessage(
                     session_id=session_id,
                     sender_id=user.id,
                     message_type=message_type,
                     content=content,
                     media_url=media_url,
+                    file_name=file_name,
+                    file_size=file_size,
                 )
                 db.add(msg)
                 db.commit()
@@ -123,11 +195,27 @@ async def websocket_chat(
                     "id": msg.id,
                     "sender_id": user.id,
                     "sender_name": user.name,
+                    "is_astrologer": is_astrologer,
                     "message_type": message_type,
                     "content": content,
                     "media_url": media_url,
+                    "file_name": file_name,
+                    "file_size": file_size,
                     "timestamp": msg.created_at.isoformat(),
+                    "user_message_count": session.user_message_count or 0,
+                    "remaining_messages": max(0, (session.session_message_limit or 45) - (session.user_message_count or 0)),
                 })
+
+                # Check if user hit message limit (per-session mode)
+                if is_user and session.billing_mode == "per_session":
+                    if (session.user_message_count or 0) >= (session.session_message_limit or 45):
+                        await _complete_session(db, session, profile)
+                        await _broadcast(session_id, {
+                            "type": "session_ended",
+                            "reason": f"Message limit reached ({session.session_message_limit})",
+                            "timestamp": datetime.utcnow().isoformat(),
+                        })
+                        break
 
             elif msg_type == "typing":
                 await _broadcast(session_id, {
@@ -141,6 +229,17 @@ async def websocket_chat(
                     "type": "stop_typing",
                     "user_id": user.id,
                 }, exclude=user.id)
+
+            elif msg_type == "end_session":
+                db.refresh(session)
+                if session.status == "active":
+                    await _complete_session(db, session, profile)
+                    await _broadcast(session_id, {
+                        "type": "session_ended",
+                        "reason": f"Ended by {'astrologer' if is_astrologer else 'user'}",
+                        "timestamp": datetime.utcnow().isoformat(),
+                    })
+                break
 
     except WebSocketDisconnect:
         pass
@@ -160,6 +259,38 @@ async def websocket_chat(
                 "timestamp": datetime.utcnow().isoformat(),
             })
         db.close()
+
+
+async def _complete_session(db: Session, session: ChatSession, profile):
+    """Finalize session billing and mark as completed."""
+    session.status = "completed"
+    session.ended_at = datetime.utcnow()
+    if session.started_at:
+        session.duration_sec = int((session.ended_at - session.started_at).total_seconds())
+
+    if session.billing_mode == "per_session":
+        total = float(session.blocked_amount or session.rate_per_session or 0)
+    else:
+        minutes = max(1, math.ceil(session.duration_sec / 60))
+        total = minutes * float(session.rate_per_min or 0)
+
+    commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
+    commission = total * commission_pct / 100
+    earning = total - commission
+    session.total_amount = Decimal(str(total))
+    session.astrologer_earning = Decimal(str(earning))
+    session.platform_commission = Decimal(str(commission))
+    session.user_wallet_txn_id = session.block_txn_id
+
+    if profile:
+        session.astro_wallet_txn_id = _credit_astro_wallet(
+            db, profile.user_id, earning,
+            f"Chat earning — ₹{total} ({commission_pct}% commission)"
+        )
+        profile.is_busy = False
+        profile.total_consultations = (profile.total_consultations or 0) + 1
+
+    db.commit()
 
 
 async def _broadcast(session_id: str, data: dict, exclude: str = None):

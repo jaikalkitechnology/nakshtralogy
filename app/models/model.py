@@ -702,24 +702,37 @@ class LiveStreamGift(Base):
 class ChatSession(Base):
     """
     Real-time paid chat session between user and astrologer.
-    Per-minute billing via WebSocket.
+    Supports both per-minute and per-session billing.
+    Per-session: user pays upfront (blocked from wallet), astrologer gets
+    their share when they send their first reply. Session ends when user
+    sends session_message_limit messages, or session_validity_hours expires,
+    or either party ends it.
     """
     __tablename__ = "chat_sessions"
 
     id = Column(String(36), primary_key=True, default=new_uuid)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     astrologer_id = Column(String(36), ForeignKey("astrologer_profiles.id", ondelete="CASCADE"), nullable=False, index=True)
-    rate_per_min = Column(Numeric(10, 2), nullable=False)
+    rate_per_min = Column(Numeric(10, 2), nullable=False, default=0)
+    # Session-based pricing
+    rate_per_session = Column(Numeric(10, 2), nullable=True)
+    session_message_limit = Column(Integer, default=45)
+    session_validity_hours = Column(Integer, default=24)
+    billing_mode = Column(String(20), default="per_session")  # per_session | per_minute
+    blocked_amount = Column(Numeric(10, 2), default=0)     # amount blocked from user wallet at initiation
+    user_message_count = Column(Integer, default=0)        # track user msgs for session limit
     status = Column(String(20), default="waiting", index=True)
     # waiting | active | completed | expired | cancelled
     started_at = Column(DateTime, nullable=True)
     ended_at = Column(DateTime, nullable=True)
+    session_expires_at = Column(DateTime, nullable=True)   # per-session validity expiry
     duration_sec = Column(Integer, default=0)
     total_amount = Column(Numeric(10, 2), default=0)
     astrologer_earning = Column(Numeric(10, 2), default=0)
     platform_commission = Column(Numeric(10, 2), default=0)
     user_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    block_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     expires_at = Column(DateTime, nullable=True)          # 60s accept timeout
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
@@ -733,9 +746,11 @@ class LiveChatMessage(Base):
     id = Column(String(36), primary_key=True, default=new_uuid)
     session_id = Column(String(36), ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False)
     sender_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    message_type = Column(String(20), default="text")    # text | image | audio
+    message_type = Column(String(20), default="text")    # text | image | pdf | audio
     content = Column(Text, nullable=True)
     media_url = Column(Text, nullable=True)
+    file_name = Column(String(255), nullable=True)       # original file name for downloads
+    file_size = Column(Integer, nullable=True)            # file size in bytes
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     session = relationship("ChatSession", back_populates="messages")
