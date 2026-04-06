@@ -17,10 +17,13 @@ GET  /list              — public: list approved astrologers (for user app)
 GET  /{astrologer_id}   — public: single astrologer detail
 """
 
+import os
+import uuid as _uuid
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -68,6 +71,8 @@ def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResp
         rate_per_session_video=float(getattr(profile, "rate_per_session_video", 0) or 0),
         session_message_limit=getattr(profile, "session_message_limit", 45) or 45,
         session_validity_hours=getattr(profile, "session_validity_hours", 24) or 24,
+        rate_per_msg_chat=float(getattr(profile, "rate_per_msg_chat", 0) or 0),
+        super_chat_rate=float(getattr(profile, "super_chat_rate", 50) or 50),
         rating=float(profile.rating or 0),
         total_reviews=profile.total_reviews,
         total_consultations=profile.total_consultations,
@@ -566,6 +571,62 @@ def submit_my_kyc(
         "status": "pending",
         "message": "KYC submitted for review. You'll be notified once approved.",
     }
+
+
+# ── KYC Document Upload ───────────────────────────────────────────────
+
+KYC_UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", "kyc")
+KYC_ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf"}
+KYC_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+
+@router.post("/me/kyc/upload")
+async def upload_kyc_document(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+):
+    """Upload a KYC document image or PDF. Returns the file URL."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail="Not an astrologer account")
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in KYC_ALLOWED_EXT:
+        raise HTTPException(status_code=400, detail=f"File type not allowed. Use: {', '.join(KYC_ALLOWED_EXT)}")
+
+    contents = await file.read()
+    if len(contents) > KYC_MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="File too large. Max 10 MB")
+
+    unique_name = f"{_uuid.uuid4().hex}{ext}"
+    folder_path = os.path.join(KYC_UPLOAD_DIR, current_user.id)
+    os.makedirs(folder_path, exist_ok=True)
+
+    file_path = os.path.join(folder_path, unique_name)
+    with open(file_path, "wb") as f:
+        f.write(contents)
+
+    media_url = f"/api/v1/astrologer/me/kyc/file/{current_user.id}/{unique_name}"
+    return {
+        "media_url": media_url,
+        "file_name": file.filename,
+        "file_size": len(contents),
+    }
+
+
+@router.get("/me/kyc/file/{user_id}/{filename}")
+def download_kyc_file(
+    user_id: str, filename: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Download a KYC file. Only the owner or admin can access."""
+    if current_user.id != user_id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Access denied")
+    file_path = os.path.join(KYC_UPLOAD_DIR, user_id, filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path, filename=filename)
 
 
 @router.get("/me/stats")

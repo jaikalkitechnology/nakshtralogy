@@ -23,7 +23,7 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   void _showEditDialog(Map<String, dynamic> me) {
-    final profile = me['astrologer_profile'] ?? {};
+    final profile = (me['profile'] ?? me['astrologer_profile'] ?? {}) as Map<String, dynamic>;
     final nameCtrl = TextEditingController(text: me['name'] ?? '');
     final phoneCtrl = TextEditingController(text: me['phone'] ?? '');
     final displayCtrl = TextEditingController(text: profile['display_name'] ?? '');
@@ -167,7 +167,7 @@ class _ProfileTabState extends State<ProfileTab> {
           return const Center(child: CircularProgressIndicator(color: AppColors.primary));
         }
         final me = state.me ?? {};
-        final profile = me['astrologer_profile'] ?? <String, dynamic>{};
+        final profile = (me['profile'] ?? me['astrologer_profile'] ?? <String, dynamic>{}) as Map<String, dynamic>;
         final name = me['name'] ?? '';
         final email = me['email'] ?? '';
         final phone = me['phone'] ?? '';
@@ -177,7 +177,7 @@ class _ProfileTabState extends State<ProfileTab> {
         final langs = (profile['languages'] as List?)?.join(', ') ?? '';
         final specs = (profile['specializations'] as List?)?.join(', ') ?? '';
         final qual = profile['qualification'] ?? '';
-        final rating = profile['avg_rating'] ?? 0.0;
+        final rating = profile['rating'] ?? 0.0;
         final totalReviews = profile['total_reviews'] ?? 0;
         final imgUrl = profile['profile_image_url'] ?? '';
 
