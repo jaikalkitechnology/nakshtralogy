@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nakshtralogy - API Test Client</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0F0A1A;--surface:#1A1030;--card:#231845;--primary:#D4A54A;--accent:#7C5CFC;--success:#4CAF50;--error:#EF5350;--text:#F5F5F5;--text2:#B0A8C0;--border:#2D2050}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.tab{flex:1;padding:14px;text-align:center;cursor:pointer;color:var(--text2);font-size:14px;font-weight:600;border-bottom:3px solid transparent;transition:.2s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab:hover{color:var(--primary)}
+.panel{display:none;padding:20px;max-width:900px;margin:0 auto}
+.panel.active{display:block}
+h2{color:var(--primary);margin-bottom:16px;font-size:20px}
+h3{color:var(--text);margin:16px 0 8px;font-size:15px}
+.row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.row>*{flex:1;min-width:200px}
+input,select,textarea{width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none}
+input:focus,textarea:focus{border-color:var(--primary)}
+textarea{min-height:80px;resize:vertical}
+label{display:block;color:var(--text2);font-size:12px;margin-bottom:4px}
+button{padding:10px 20px;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s}
+.btn-primary{background:var(--primary);color:#000}
+.btn-primary:hover{opacity:.9}
+.btn-danger{background:var(--error);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--primary);color:var(--primary)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.log{background:#000;border-radius:10px;padding:12px;font-family:'Fira Code',monospace;font-size:12px;max-height:300px;overflow-y:auto;margin-top:8px;white-space:pre-wrap;word-break:break-all;color:#0f0}
+.log .err{color:var(--error)}.log .info{color:var(--primary)}.log .msg{color:#0ff}
+.status{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.status.online{background:rgba(76,175,80,.2);color:var(--success)}
+.status.offline{background:rgba(239,83,80,.2);color:var(--error)}
+.chat-box{display:flex;flex-direction:column;height:350px;background:var(--surface);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.chat-messages{flex:1;overflow-y:auto;padding:12px}
+.chat-msg{margin-bottom:8px;max-width:75%}
+.chat-msg.me{margin-left:auto;text-align:right}
+.chat-msg .bubble{display:inline-block;padding:8px 14px;border-radius:14px;font-size:13px;max-width:100%}
+.chat-msg.me .bubble{background:var(--primary);color:#000;border-bottom-right-radius:4px}
+.chat-msg.other .bubble{background:var(--card);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:4px}
+.chat-msg .name{font-size:10px;color:var(--accent);margin-bottom:2px}
+.chat-msg .time{font-size:9px;color:var(--text2);margin-top:2px}
+.chat-input{display:flex;gap:8px;padding:10px;background:var(--card);border-top:1px solid var(--border)}
+.chat-input input{flex:1;border-radius:20px}
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.video-box{background:#000;border-radius:14px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:13px;border:1px solid var(--border);overflow:hidden;position:relative}
+.video-box video{width:100%;height:100%;object-fit:cover}
+.video-label{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.7);padding:3px 8px;border-radius:6px;font-size:11px;color:#fff}
+.controls{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+.ctrl-btn{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;border:1px solid var(--border);transition:.2s}
+.ctrl-btn:hover{transform:scale(1.1)}
+.ctrl-btn.end{background:var(--error);border:none}
+.badge{background:var(--accent);color:#fff;padding:2px 8px;border-radius:8px;font-size:11px;margin-left:6px}
+#authStatus{margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="tabs">
+  <div class="tab active" onclick="showTab('auth')">Auth</div>
+  <div class="tab" onclick="showTab('chat')">Chat</div>
+  <div class="tab" onclick="showTab('call')">Voice/Video Call</div>
+  <div class="tab" onclick="showTab('live')">Live Stream</div>
+</div>
+
+<!-- ═══════ AUTH TAB ═══════ -->
+<div id="auth" class="panel active">
+  <h2>Authentication</h2>
+  <div id="authStatus"></div>
+  <div class="card">
+    <h3>Server</h3>
+    <div class="row">
+      <div><label>Base URL</label><input id="baseUrl" value="https://api.nakshatralogy.com/api/v1"></div>
+      <div><label>Role</label>
+        <select id="role"><option value="user">User</option><option value="astrologer">Astrologer</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Login</h3>
+    <div class="row">
+      <div><label>Email</label><input id="loginEmail" value="rahul@example.com"></div>
+      <div><label>Password</label><input id="loginPass" type="password" value="user@123"></div>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Login</button>
+  </div>
+  <div class="card">
+    <h3>Signup</h3>
+    <div class="row">
+      <div><label>Name</label><input id="signupName" value="Test User"></div>
+      <div><label>Email</label><input id="signupEmail" value="test@example.com"></div>
+      <div><label>Password</label><input id="signupPass" value="test@123"></div>
+    </div>
+    <button class="btn-accent" onclick="doSignup()">Signup</button>
+  </div>
+  <div class="log" id="authLog">Ready. Login or signup to start testing.</div>
+</div>
+
+<!-- ═══════ CHAT TAB ═══════ -->
+<div id="chat" class="panel">
+  <h2>Chat Testing</h2>
+  <div class="card">
+    <h3>1. Initiate Chat</h3>
+    <div class="row">
+      <div><label>Astrologer Profile ID</label><input id="chatAstroId" placeholder="paste astrologer profile id"></div>
+    </div>
+    <button class="btn-primary" onclick="initiateChat()">Start Chat Session</button>
+    <span id="chatStatus" class="status offline" style="margin-left:10px">Not connected</span>
+  </div>
+  <div class="card">
+    <h3>2. Accept Chat (as Astrologer)</h3>
+    <div class="row">
+      <div><label>Session ID</label><input id="chatSessionId" placeholder="auto-filled or paste"></div>
+    </div>
+    <div class="row">
+      <button class="btn-success" onclick="chatAction('accept')">Accept</button>
+      <button class="btn-danger" onclick="chatAction('end')">End</button>
+      <button class="btn-outline" onclick="chatAction('cancel')">Cancel</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>3. WebSocket Chat</h3>
+    <button class="btn-accent" onclick="connectWS()" id="wsConnBtn">Connect WebSocket</button>
+    <button class="btn-danger" onclick="disconnectWS()" style="margin-left:8px">Disconnect</button>
+    <div class="chat-box" style="margin-top:10px">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input">
+        <input id="chatMsgInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChatMsg()">
+        <button class="btn-primary" onclick="sendChatMsg()" style="flex:none;border-radius:50%;width:40px;height:40px;padding:0">&#9654;</button>
+      </div>
+    </div>
+  </div>
+  <div class="log" id="chatLog">Chat log...</div>
+</div>
+
+<!-- ═══════ CALL TAB ═══════ -->
+<div id="call" class="panel">
+  <h2>Voice / Video Call Testing</h2>
+  <div class="card">
+    <h3>1. Initiate Call (as User)</h3>
+    <div class="row">
+      <div><label>Astrologer Profile ID</label><input id="callAstroId" placeholder="paste astrologer profile id"></div>
+      <div><label>Call Type</label>
+        <select id="callType"><option value="voice">Voice</option><option value="video">Video</option></select>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="initiateCall()">Start Call</button>
+    <span id="callStatusBadge" class="status offline" style="margin-left:10px">Idle</span>
+  </div>
+  <div class="card">
+    <h3>2. Respond to Call (as Astrologer)</h3>
+    <div class="row">
+      <div><label>Call ID</label><input id="callId" placeholder="auto-filled or paste"></div>
+    </div>
+    <div class="row">
+      <button class="btn-success" onclick="callAction('accept')">Accept</button>
+      <button class="btn-danger" onclick="callAction('reject')">Reject</button>
+      <button class="btn-outline" onclick="callAction('end')">End Call</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>3. Call Info</h3>
+    <div class="video-grid">
+      <div class="video-box" id="localVideoBox"><span>Local Video</span><div class="video-label">You</div></div>
+      <div class="video-box" id="remoteVideoBox"><span>Remote Video</span><div class="video-label">Peer</div></div>
+    </div>
+    <div style="text-align:center;margin:8px 0">
+      <span id="callTimer" style="font-size:24px;font-family:monospace;color:var(--primary)">00:00</span>
+      <span id="callCost" style="margin-left:12px;color:var(--text2)"></span>
+    </div>
+    <div class="controls">
+      <div class="ctrl-btn" onclick="toggleMute()" id="muteBtn" title="Mute" style="background:var(--surface)">&#128266;</div>
+      <div class="ctrl-btn" onclick="toggleCamera()" id="camBtn" title="Camera" style="background:var(--surface)">&#128249;</div>
+      <div class="ctrl-btn end" onclick="callAction('end')" title="End Call">&#128308;</div>
+    </div>
+  </div>
+  <div class="log" id="callLog">Call log...</div>
+</div>
+
+<!-- ═══════ LIVE TAB ═══════ -->
+<div id="live" class="panel">
+  <h2>Live Stream Testing</h2>
+  <div class="card">
+    <h3>Host (Astrologer)</h3>
+    <div class="row">
+      <div><label>Stream Title</label><input id="liveTitle" value="Vedic Astrology Q&A"></div>
+    </div>
+    <div class="row">
+      <button class="btn-primary" onclick="createStream()">Create Stream</button>
+      <button class="btn-success" onclick="startStream()">Go Live</button>
+      <button class="btn-danger" onclick="endStream()">End Stream</button>
+    </div>
+    <div><label>Stream ID</label><input id="liveStreamId" placeholder="auto-filled" style="margin-top:4px"></div>
+  </div>
+  <div class="card">
+    <h3>Viewer (User)</h3>
+    <button class="btn-accent" onclick="listStreams()">List Active Streams</button>
+    <button class="btn-success" onclick="joinStream()" style="margin-left:8px">Join Stream</button>
+    <button class="btn-outline" onclick="leaveStream()" style="margin-left:8px">Leave</button>
+    <div id="streamList" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h3>Interaction</h3>
+    <div class="row">
+      <div style="flex:2"><label>Question / Message</label><input id="liveQuestion" placeholder="Ask a question..."></div>
+      <div style="flex:none"><label>&nbsp;</label><button class="btn-primary" onclick="sendQuestion()">Send</button></div>
+    </div>
+    <div class="row">
+      <div><label>Gift ID</label><input id="giftId" placeholder="gift pricing id"></div>
+      <div style="flex:none"><label>&nbsp;</label><button class="btn-accent" onclick="sendGift()">Send Gift</button></div>
+    </div>
+    <div class="row">
+      <div><label>Super Chat Message</label><input id="superMsg" placeholder="Pinned message..."></div>
+      <div><label>Amount (INR)</label><input id="superAmt" value="100" type="number"></div>
+      <div style="flex:none"><label>&nbsp;</label><button class="btn-primary" onclick="sendSuperChat()">Super Chat</button></div>
+    </div>
+    <button class="btn-outline" onclick="loadGifts()" style="margin-top:8px">Load Gift Catalog</button>
+    <div id="giftCatalog" style="margin-top:8px"></div>
+  </div>
+  <div class="log" id="liveLog">Live stream log...</div>
+</div>
+
+<script>
+// ═══════ GLOBALS ═══════
+let TOKEN = '';
+let BASE = '';
+let WS = null;
+let callSeconds = 0;
+let callTimerInterval = null;
+let callRate = 0;
+
+function getBase() { return document.getElementById('baseUrl').value.replace(/\/+$/,''); }
+function getRole() { return document.getElementById('role').value; }
+function headers() { return { 'Content-Type':'application/json', ...(TOKEN ? {'Authorization':'Bearer '+TOKEN} : {}) }; }
+
+function log(id, msg, cls='') {
+  const el = document.getElementById(id);
+  const t = new Date().toLocaleTimeString();
+  el.innerHTML += `<span class="${cls}">[${t}] ${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', t.textContent.toLowerCase().includes(name));
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+}
+
+function updateAuthStatus() {
+  const el = document.getElementById('authStatus');
+  if (TOKEN) {
+    el.innerHTML = `<span class="status online">Authenticated</span> <span class="badge">${getRole()}</span>`;
+  } else {
+    el.innerHTML = `<span class="status offline">Not logged in</span>`;
+  }
+}
+
+// ═══════ AUTH ═══════
+async function doLogin() {
+  BASE = getBase();
+  const role = getRole();
+  const prefix = role === 'astrologer' ? '/astrologer' : '/user';
+  try {
+    const res = await fetch(BASE + prefix + '/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPass').value })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      TOKEN = data.access_token;
+      log('authLog', `Login OK! User: ${data.user?.name || data.user?.email || 'unknown'}`, 'info');
+      log('authLog', `Token: ${TOKEN.substring(0,30)}...`, 'info');
+    } else {
+      log('authLog', `Login failed: ${data.detail || JSON.stringify(data)}`, 'err');
+    }
+  } catch(e) { log('authLog', `Error: ${e.message}`, 'err'); }
+  updateAuthStatus();
+}
+
+async function doSignup() {
+  BASE = getBase();
+  const role = getRole();
+  const prefix = role === 'astrologer' ? '/astrologer' : '/user';
+  const body = { name: document.getElementById('signupName').value, email: document.getElementById('signupEmail').value, password: document.getElementById('signupPass').value };
+  try {
+    const res = await fetch(BASE + prefix + '/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (res.ok) {
+      TOKEN = data.access_token;
+      log('authLog', `Signup OK! User: ${data.user?.name || 'created'}`, 'info');
+    } else {
+      log('authLog', `Signup failed: ${data.detail || JSON.stringify(data)}`, 'err');
+    }
+  } catch(e) { log('authLog', `Error: ${e.message}`, 'err'); }
+  updateAuthStatus();
+}
+
+// ═══════ CHAT ═══════
+async function initiateChat() {
+  BASE = getBase();
+  try {
+    const res = await fetch(BASE + '/comm/chat/initiate', {
+      method:'POST', headers: headers(),
+      body: JSON.stringify({ astrologer_profile_id: document.getElementById('chatAstroId').value })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('chatSessionId').value = data.id;
+      log('chatLog', `Chat initiated! Session: ${data.id}`, 'info');
+      log('chatLog', `Status: ${data.status} | Billing: ${data.billing_mode} | Blocked: ${data.blocked_amount}`, 'info');
+      log('chatLog', `Msg limit: ${data.session_message_limit} | Rate/session: ${data.rate_per_session}`, 'info');
+    } else {
+      log('chatLog', `Failed: ${data.detail || JSON.stringify(data)}`, 'err');
+    }
+  } catch(e) { log('chatLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function chatAction(action) {
+  BASE = getBase();
+  const sid = document.getElementById('chatSessionId').value;
+  if (!sid) return log('chatLog','Enter session ID','err');
+  try {
+    const res = await fetch(BASE + `/comm/chat/${sid}/action`, { method:'POST', headers:headers(), body:JSON.stringify({action}) });
+    const data = await res.json();
+    log('chatLog', `Action "${action}" => ${res.ok ? 'OK' : 'FAIL'}: status=${data.status || data.detail}`, res.ok?'info':'err');
+  } catch(e) { log('chatLog', `Error: ${e.message}`, 'err'); }
+}
+
+function connectWS() {
+  const sid = document.getElementById('chatSessionId').value;
+  if (!sid || !TOKEN) return log('chatLog','Need session ID and auth token','err');
+  const wsBase = getBase().replace('https://','wss://').replace('http://','ws://').replace('/api/v1','');
+  const url = `${wsBase}/ws/chat/${sid}?token=${TOKEN}`;
+  log('chatLog', `Connecting WS: ${url.substring(0,80)}...`, 'info');
+  WS = new WebSocket(url);
+  WS.onopen = () => {
+    document.getElementById('chatStatus').className = 'status online';
+    document.getElementById('chatStatus').textContent = 'Connected';
+    log('chatLog', 'WebSocket connected!', 'info');
+  };
+  WS.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    log('chatLog', `WS: ${JSON.stringify(data)}`, 'msg');
+    if (data.type === 'message') {
+      addChatBubble(data.sender_name || 'User', data.content, data.sender_id === 'me', data.timestamp);
+    }
+    if (data.type === 'session_ended') {
+      addChatBubble('System', `Session ended: ${data.reason}`, false);
+    }
+  };
+  WS.onerror = (e) => log('chatLog', `WS error`, 'err');
+  WS.onclose = () => {
+    document.getElementById('chatStatus').className = 'status offline';
+    document.getElementById('chatStatus').textContent = 'Disconnected';
+    log('chatLog', 'WebSocket closed', 'err');
+  };
+}
+
+function disconnectWS() { if(WS) WS.close(); WS=null; }
+
+function sendChatMsg() {
+  const input = document.getElementById('chatMsgInput');
+  if (!input.value.trim() || !WS) return;
+  WS.send(JSON.stringify({ type:'message', content: input.value.trim(), message_type:'text' }));
+  addChatBubble('You', input.value.trim(), true);
+  input.value = '';
+}
+
+function addChatBubble(name, text, isMe, ts) {
+  const box = document.getElementById('chatMessages');
+  const time = ts ? new Date(ts).toLocaleTimeString() : new Date().toLocaleTimeString();
+  box.innerHTML += `<div class="chat-msg ${isMe?'me':'other'}"><div class="name">${name}</div><div class="bubble">${text}</div><div class="time">${time}</div></div>`;
+  box.scrollTop = box.scrollHeight;
+}
+
+// ═══════ CALL ═══════
+async function initiateCall() {
+  BASE = getBase();
+  try {
+    const res = await fetch(BASE + '/comm/call/initiate', {
+      method:'POST', headers:headers(),
+      body: JSON.stringify({ astrologer_profile_id: document.getElementById('callAstroId').value, call_type: document.getElementById('callType').value })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('callId').value = data.id;
+      callRate = data.rate_per_min || 0;
+      document.getElementById('callStatusBadge').className = 'status online';
+      document.getElementById('callStatusBadge').textContent = `Ringing (${data.eligible_minutes} min eligible)`;
+      log('callLog', `Call initiated! ID: ${data.id}`, 'info');
+      log('callLog', `Channel: ${data.channel_name} | Rate: ${data.rate_per_min}/min | Eligible: ${data.eligible_minutes} min`, 'info');
+      log('callLog', `Agora Token: ${(data.agora_token||'').substring(0,30)}...`, 'info');
+    } else {
+      log('callLog', `Failed: ${data.detail || JSON.stringify(data)}`, 'err');
+    }
+  } catch(e) { log('callLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function callAction(action) {
+  BASE = getBase();
+  const cid = document.getElementById('callId').value;
+  if (!cid) return log('callLog','Enter call ID','err');
+  try {
+    const res = await fetch(BASE + `/comm/call/${cid}/action`, { method:'POST', headers:headers(), body:JSON.stringify({action}) });
+    const data = await res.json();
+    if (res.ok) {
+      log('callLog', `Action "${action}" => status: ${data.status}`, 'info');
+      if (action === 'accept') {
+        document.getElementById('callStatusBadge').textContent = 'Active';
+        log('callLog', `Agora Token: ${(data.agora_token||'').substring(0,30)}...`, 'info');
+        startCallTimer();
+      }
+      if (action === 'end' || action === 'reject') {
+        document.getElementById('callStatusBadge').className = 'status offline';
+        document.getElementById('callStatusBadge').textContent = `${data.status} (${data.duration_sec}s, INR ${data.total_amount})`;
+        stopCallTimer();
+      }
+    } else {
+      log('callLog', `Failed: ${data.detail}`, 'err');
+    }
+  } catch(e) { log('callLog', `Error: ${e.message}`, 'err'); }
+}
+
+function startCallTimer() {
+  callSeconds = 0;
+  callTimerInterval = setInterval(() => {
+    callSeconds++;
+    const m = String(Math.floor(callSeconds/60)).padStart(2,'0');
+    const s = String(callSeconds%60).padStart(2,'0');
+    document.getElementById('callTimer').textContent = `${m}:${s}`;
+    document.getElementById('callCost').textContent = `INR ${Math.ceil(callSeconds/60) * callRate}`;
+  }, 1000);
+}
+
+function stopCallTimer() { clearInterval(callTimerInterval); }
+
+let muted = false, camOff = false;
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('muteBtn').style.background = muted ? 'var(--error)' : 'var(--surface)';
+  log('callLog', muted ? 'Muted' : 'Unmuted', 'info');
+}
+function toggleCamera() {
+  camOff = !camOff;
+  document.getElementById('camBtn').style.background = camOff ? 'var(--error)' : 'var(--surface)';
+  log('callLog', camOff ? 'Camera off' : 'Camera on', 'info');
+}
+
+// ═══════ LIVE STREAM ═══════
+async function createStream() {
+  BASE = getBase();
+  try {
+    const res = await fetch(BASE + '/comm/live/create', {
+      method:'POST', headers:headers(),
+      body: JSON.stringify({ title: document.getElementById('liveTitle').value })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById('liveStreamId').value = data.id;
+      log('liveLog', `Stream created! ID: ${data.id} | Channel: ${data.channel_name}`, 'info');
+    } else { log('liveLog', `Failed: ${data.detail}`, 'err'); }
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function startStream() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  if (!id) return log('liveLog','Create stream first','err');
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/start`, { method:'POST', headers:headers() });
+    const data = await res.json();
+    log('liveLog', res.ok ? `LIVE! Viewers: ${data.viewer_count}` : `Failed: ${data.detail}`, res.ok?'info':'err');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function endStream() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/end`, { method:'POST', headers:headers() });
+    const data = await res.json();
+    log('liveLog', res.ok ? `Stream ended. Peak: ${data.peak_viewers}, Gifts: INR ${data.total_gifts_amount}` : `Failed: ${data.detail}`, res.ok?'info':'err');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function listStreams() {
+  BASE = getBase();
+  try {
+    const res = await fetch(BASE + '/comm/live/active', { headers:headers() });
+    const data = await res.json();
+    const el = document.getElementById('streamList');
+    if (!data.length) { el.innerHTML = '<p style="color:var(--text2)">No live streams</p>'; return; }
+    el.innerHTML = data.map(s => `<div class="card" style="cursor:pointer" onclick="document.getElementById('liveStreamId').value='${s.id}'">
+      <strong>${s.host_name}</strong> - ${s.title} <span class="badge">${s.viewer_count} viewers</span>
+      <br><small style="color:var(--text2)">ID: ${s.id}</small>
+    </div>`).join('');
+    log('liveLog', `Found ${data.length} live streams`, 'info');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function joinStream() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  if (!id) return log('liveLog','Select a stream','err');
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/join`, { method:'POST', headers:headers() });
+    const data = await res.json();
+    log('liveLog', res.ok ? `Joined! Agora channel: ${data.channel_name}` : `Failed: ${data.detail}`, res.ok?'info':'err');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function leaveStream() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/leave`, { method:'POST', headers:headers() });
+    log('liveLog', 'Left stream', 'info');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function sendQuestion() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  const q = document.getElementById('liveQuestion').value;
+  if (!id || !q) return;
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/question`, { method:'POST', headers:headers(), body:JSON.stringify({question:q}) });
+    const data = await res.json();
+    log('liveLog', res.ok ? `Question sent: "${q}"` : `Failed: ${data.detail}`, res.ok?'info':'err');
+    document.getElementById('liveQuestion').value = '';
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function sendGift() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  const gid = document.getElementById('giftId').value;
+  if (!id || !gid) return log('liveLog','Need stream ID and gift ID','err');
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/gift`, { method:'POST', headers:headers(), body:JSON.stringify({gift_pricing_id:gid}) });
+    const data = await res.json();
+    log('liveLog', res.ok ? `Gift sent! ${data.gift_icon} ${data.gift_name} (INR ${data.amount})` : `Failed: ${data.detail}`, res.ok?'info':'err');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function sendSuperChat() {
+  BASE = getBase();
+  const id = document.getElementById('liveStreamId').value;
+  const msg = document.getElementById('superMsg').value;
+  const amt = parseFloat(document.getElementById('superAmt').value);
+  if (!id || !msg || !amt) return log('liveLog','Fill all super chat fields','err');
+  try {
+    const res = await fetch(BASE + `/comm/live/${id}/super-chat`, { method:'POST', headers:headers(), body:JSON.stringify({message:msg, amount:amt}) });
+    const data = await res.json();
+    log('liveLog', res.ok ? `Super Chat sent! INR ${data.amount}: "${data.message}"` : `Failed: ${data.detail}`, res.ok?'info':'err');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+async function loadGifts() {
+  BASE = getBase();
+  try {
+    const res = await fetch(BASE + '/comm/gifts', { headers:headers() });
+    const data = await res.json();
+    document.getElementById('giftCatalog').innerHTML = data.map(g =>
+      `<span style="display:inline-block;text-align:center;margin:6px;cursor:pointer;padding:8px;background:var(--surface);border-radius:12px;border:1px solid var(--border)" onclick="document.getElementById('giftId').value='${g.id}'">${g.icon}<br><small>${g.name}<br>INR ${g.price}</small></span>`
+    ).join('');
+    log('liveLog', `Loaded ${data.length} gifts`, 'info');
+  } catch(e) { log('liveLog', `Error: ${e.message}`, 'err'); }
+}
+
+updateAuthStatus();
+</script>
+</body>
+</html>
