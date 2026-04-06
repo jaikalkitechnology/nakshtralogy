@@ -3,6 +3,7 @@ import { useAuth, UserRole } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { isGoogleConfigured } from "@/main";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -201,14 +202,20 @@ const AuthPage = () => {
                 <div className="flex-1 h-px bg-border" />
               </div>
               <div className="flex justify-center">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={handleGoogleError}
-                  theme="filled_black"
-                  text={isLogin ? "signin_with" : "signup_with"}
-                  shape="rectangular"
-                  width="320"
-                />
+                {isGoogleConfigured ? (
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleError}
+                    theme="filled_black"
+                    text={isLogin ? "signin_with" : "signup_with"}
+                    shape="rectangular"
+                    width="320"
+                  />
+                ) : (
+                  <p className="text-xs text-muted-foreground text-center">
+                    Google Sign-In not configured. Set VITE_GOOGLE_CLIENT_ID in .env
+                  </p>
+                )}
               </div>
               {/* Server-side OAuth flow (uses credentials stored in admin settings) */}
               <div className="flex justify-center mt-2">

@@ -31,12 +31,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _googleSignIn() async {
     try {
-      final googleUser = await GoogleSignIn(scopes: ['email', 'profile']).signIn();
+      final googleUser = await GoogleSignIn(
+        scopes: ['email', 'profile'],
+        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: ''),
+      ).signIn();
       if (googleUser == null) return;
       final auth = await googleUser.authentication;
       final idToken = auth.idToken;
       if (idToken == null) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to get Google token')));
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Google Sign-In: No ID token received. Ensure GOOGLE_WEB_CLIENT_ID is set and google-services.json is configured.'),
+          backgroundColor: AppColors.error, duration: Duration(seconds: 5),
+        ));
         return;
       }
       if (mounted) context.read<AuthBloc>().add(AuthGoogleLoginRequested(idToken: idToken));
