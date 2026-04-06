@@ -155,14 +155,27 @@ def notify_call_incoming(fcm_token: str, caller_name: str, call_type: str, call_
     )
 
 
-def notify_chat_request(fcm_token: str, user_name: str, session_id: str):
+def notify_chat_request(
+    fcm_token: str, user_name: str, session_id: str,
+    rate_per_min: float = 0, rate_per_session: float = 0,
+    billing_mode: str = "per_session", session_message_limit: int = 45,
+):
     """Push to astrologer when user requests a chat."""
     return send_push(
         fcm_token=fcm_token,
         title="New Chat Request",
         body=f"{user_name} wants to chat with you",
         role="astrologer",
-        data={"type": "chat_request", "session_id": session_id, "user_name": user_name},
+        data={
+            "type": "chat_request",
+            "session_id": session_id,
+            "user_name": user_name,
+            "sender_name": user_name,
+            "rate_per_min": str(rate_per_min),
+            "rate_per_session": str(rate_per_session),
+            "billing_mode": billing_mode,
+            "session_message_limit": str(session_message_limit),
+        },
     )
 
 
@@ -177,14 +190,27 @@ def notify_call_accepted(fcm_token: str, astrologer_name: str, call_id: str):
     )
 
 
-def notify_chat_accepted(fcm_token: str, astrologer_name: str, session_id: str):
+def notify_chat_accepted(
+    fcm_token: str, astrologer_name: str, session_id: str,
+    rate_per_min: float = 0, rate_per_session: float = 0,
+    billing_mode: str = "per_session", session_message_limit: int = 45,
+):
     """Push to user when astrologer accepts chat."""
     return send_push(
         fcm_token=fcm_token,
         title="Chat Started",
         body=f"{astrologer_name} is ready to chat",
         role="user",
-        data={"type": "chat_accepted", "session_id": session_id},
+        data={
+            "type": "chat_accepted",
+            "session_id": session_id,
+            "astrologer_name": astrologer_name,
+            "sender_name": astrologer_name,
+            "rate_per_min": str(rate_per_min),
+            "rate_per_session": str(rate_per_session),
+            "billing_mode": billing_mode,
+            "session_message_limit": str(session_message_limit),
+        },
     )
 
 

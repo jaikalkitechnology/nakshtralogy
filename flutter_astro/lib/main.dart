@@ -41,6 +41,7 @@ class NakshtralogyAstroApp extends StatelessWidget {
         title: 'Nakshtralogy Astro',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
+        navigatorKey: navigatorKey,
         home: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is AuthAuthenticated) return const HomeScreen();

@@ -381,6 +381,17 @@ class ApiService {
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};
   }
 
+  /// Send a chat message via REST API (used for inline notification reply).
+  Future<Map<String, dynamic>> sendChatMessageViaApi(String sessionId, String content) async {
+    await loadTokens();
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/chat/$sessionId/message'),
+      headers: _headers,
+      body: jsonEncode({'content': content, 'message_type': 'text'}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   String get accessToken => _accessToken ?? '';
 
   bool get isLoggedIn => _accessToken != null;
