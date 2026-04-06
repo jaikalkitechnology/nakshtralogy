@@ -41,15 +41,15 @@ class _AstrologerProfileSheet extends StatelessWidget {
       final result = await ApiService().initiateCall(astrologer['id'] as String, callType);
       if (result['statusCode'] == 200 || result['statusCode'] == 201) {
         nav.push(MaterialPageRoute(builder: (_) => CallScreen(
-          callId: result['id'] as String,
-          channelName: result['channel_name'] as String,
-          agoraToken: result['agora_token'] as String,
-          agoraAppId: result['agora_app_id'] as String,
+          callId: result['id'] as String? ?? '',
+          channelName: result['channel_name'] as String? ?? '',
+          agoraToken: result['agora_token'] as String? ?? '',
+          agoraAppId: result['agora_app_id'] as String? ?? '',
           callType: callType,
           astrologerName: astrologer['display_name'] ?? 'Astrologer',
           ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
-          eligibleMinutes: result['eligible_minutes'] ?? 0,
-          maxCallSeconds: result['max_call_seconds'] ?? 0,
+          eligibleMinutes: result['eligible_minutes'] as int? ?? 0,
+          maxCallSeconds: result['max_call_seconds'] as int? ?? 0,
         )));
       } else {
         scaffold.showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed to start call'), backgroundColor: AppColors.error));
@@ -69,7 +69,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
     try {
       final result = await ApiService().initiateChat(astrologer['id'] as String);
       if (result['statusCode'] == 200 || result['statusCode'] == 201) {
-        final sessionId = result['id'] as String;
+        final sessionId = result['id'] as String? ?? '';
         final ratePerMin = (result['rate_per_min'] as num?)?.toDouble() ?? 0;
         final ratePerSession = (result['rate_per_session'] as num?)?.toDouble() ?? 0;
         final billingMode = result['billing_mode'] ?? 'per_session';

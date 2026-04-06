@@ -112,7 +112,7 @@ class _AstroRow extends StatelessWidget {
       if (!context.mounted) return;
       if (result['statusCode'] == 200 || result['statusCode'] == 201) {
         Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(
-          sessionId: result['id'] as String,
+          sessionId: result['id'] as String? ?? '',
           astrologerName: a['display_name'] ?? 'Astrologer',
           ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
           ratePerSession: (result['rate_per_session'] as num?)?.toDouble() ?? 0,
@@ -134,10 +134,10 @@ class _AstroRow extends StatelessWidget {
       if (!context.mounted) return;
       if (result['statusCode'] == 200 || result['statusCode'] == 201) {
         Navigator.of(context).push(MaterialPageRoute(builder: (_) => CallScreen(
-          callId: result['id'] as String,
-          channelName: result['channel_name'] as String,
-          agoraToken: result['agora_token'] as String,
-          agoraAppId: result['agora_app_id'] as String,
+          callId: result['id'] as String? ?? '',
+          channelName: result['channel_name'] as String? ?? '',
+          agoraToken: result['agora_token'] as String? ?? '',
+          agoraAppId: result['agora_app_id'] as String? ?? '',
           callType: callType,
           astrologerName: a['display_name'] ?? 'Astrologer',
           ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,

@@ -182,7 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final resp = await _api.uploadChatFile(result, result.split('/').last);
       if (resp['statusCode'] == 200) {
-        _sendFileMessage(resp['media_url'], resp['file_name'], resp['file_size'], resp['file_type']);
+        _sendFileMessage(resp['media_url'] ?? '', resp['file_name'] ?? 'file', resp['file_size'] ?? 0, resp['file_type'] ?? 'pdf');
       } else {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(resp['detail'] ?? 'Upload failed')));
       }

@@ -207,7 +207,8 @@ class _CallScreenState extends State<CallScreen> {
     } catch (_) {}
 
     try {
-      await _api.callAction(widget.callId, _status == 'active' ? 'end' : 'cancel');
+      final action = (_status == 'active' || _remoteJoined) ? 'end' : 'cancel';
+      await _api.callAction(widget.callId, action);
     } catch (_) {}
 
     if (mounted) Navigator.pop(context);
