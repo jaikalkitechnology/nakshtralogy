@@ -725,7 +725,7 @@ def join_stream(
     return JoinStreamResponse(
         stream_id=stream.id, agora_token=viewer_token,
         agora_app_id=app_id, channel_name=stream.channel_name,
-        viewer_id=viewer.id,
+        viewer_id=viewer.id, agora_uid=uid,
     )
 
 
