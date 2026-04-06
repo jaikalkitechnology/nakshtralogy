@@ -16,6 +16,7 @@ class UserSignupRequest(BaseModel):
     dob: Optional[str] = None       # DD/MM/YYYY
     tob: Optional[str] = None       # HH:MM
     birth_place: Optional[str] = None
+    fcm_token: Optional[str] = None
 
 
 class UserLoginRequest(BaseModel):

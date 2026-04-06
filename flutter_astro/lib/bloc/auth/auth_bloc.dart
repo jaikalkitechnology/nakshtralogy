@@ -47,12 +47,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onSignup(AuthSignupRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
+      final fcmToken = await FcmService().getToken();
       final result = await _api.signup(
         name: event.name, email: event.email, password: event.password,
         phone: event.phone, displayName: event.displayName,
         experienceYears: event.experienceYears, languages: event.languages,
         specializations: event.specializations, qualification: event.qualification,
-        bio: event.bio,
+        bio: event.bio, fcmToken: fcmToken,
       );
       if (result['statusCode'] == 201) {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
@@ -67,7 +68,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onGoogleLogin(AuthGoogleLoginRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await _api.googleLogin(event.idToken);
+      final fcmToken = await FcmService().getToken();
+      final result = await _api.googleLogin(event.idToken, fcmToken: fcmToken);
       if (result['statusCode'] == 200) {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
       } else {

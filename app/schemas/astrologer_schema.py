@@ -18,6 +18,7 @@ class AstrologerSignupRequest(BaseModel):
     specializations: Optional[List[str]] = []
     qualification: Optional[str] = None
     bio: Optional[str] = None
+    fcm_token: Optional[str] = None
 
 
 class AstrologerLoginRequest(BaseModel):
