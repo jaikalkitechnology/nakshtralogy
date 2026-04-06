@@ -164,10 +164,16 @@ class ChatSessionResponse(BaseModel):
     id: str
     user_id: str
     astrologer_id: str
-    rate_per_min: float
+    rate_per_min: float = 0
+    rate_per_session: float = 0
+    billing_mode: str = "per_session"
+    blocked_amount: float = 0
+    session_message_limit: int = 45
+    user_message_count: int = 0
     status: str
     started_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
+    session_expires_at: Optional[datetime] = None
     duration_sec: int = 0
     total_amount: float = 0
     expires_at: Optional[datetime] = None
@@ -176,8 +182,10 @@ class ChatSessionResponse(BaseModel):
 
 class ChatMessageRequest(BaseModel):
     content: str = Field(..., min_length=1, max_length=2000)
-    message_type: str = Field("text", pattern=r'^(text|image|audio)$')
+    message_type: str = Field("text", pattern=r'^(text|image|pdf|audio)$')
     media_url: Optional[str] = None
+    file_name: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 class ChatMessageResponse(BaseModel):
@@ -187,6 +195,8 @@ class ChatMessageResponse(BaseModel):
     message_type: str
     content: Optional[str] = None
     media_url: Optional[str] = None
+    file_name: Optional[str] = None
+    file_size: Optional[int] = None
     created_at: Optional[datetime] = None
 
 

@@ -34,6 +34,7 @@ WebSocket:
   WS     /ws/chat/{session_id}       — real-time messaging (in ws_chat.py)
 """
 
+import os
 import uuid
 import time
 import math
@@ -41,7 +42,8 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -803,7 +805,15 @@ def initiate_chat(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """User requests a paid chat. Astrologer has 60s to accept."""
+    """
+    User requests a paid chat. Astrologer has 60s to accept.
+    Billing: session-based (rate_per_session_chat) preferred, falls back to per-minute.
+    Amount is blocked from user wallet upfront.
+    When astrologer sends first reply, the charge is finalized:
+      - platform commission deducted
+      - astrologer share credited to their wallet
+    Session ends when: user hits message limit, validity expires, or either party ends.
+    """
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == req.astrologer_profile_id,
         AstrologerProfile.is_approved == True,
@@ -813,18 +823,46 @@ def initiate_chat(
     if not profile.is_online or profile.is_busy:
         raise HTTPException(status_code=400, detail="Astrologer not available")
 
-    rate = float(profile.rate_per_min_chat)
-    if rate <= 0:
+    # Determine billing mode
+    session_rate = float(profile.rate_per_session_chat or 0)
+    minute_rate = float(profile.rate_per_min_chat or 0)
+    if session_rate > 0:
+        billing_mode = "per_session"
+        block_amount = session_rate
+    elif minute_rate > 0:
+        billing_mode = "per_minute"
+        block_amount = minute_rate * 5  # block 5 min worth
+    else:
         raise HTTPException(status_code=400, detail="Chat rate not set")
 
+    # Check & block wallet amount
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
-    if not wallet or float(wallet.balance) < rate * 5:
-        raise HTTPException(status_code=402, detail=f"Need at least ₹{rate * 5} (5 min)")
+    if not wallet or float(wallet.balance) < block_amount:
+        raise HTTPException(status_code=402, detail=f"Insufficient balance. Need ₹{block_amount}")
+
+    # Debit (block) from user wallet
+    wallet.balance = Decimal(str(float(wallet.balance) - block_amount))
+    block_txn = WalletTransaction(
+        wallet_id=wallet.id,
+        txn_type="consultation_debit",
+        amount=Decimal(str(block_amount)),
+        balance_after=wallet.balance,
+        description=f"Chat blocked - {'session' if billing_mode == 'per_session' else '5 min'}",
+        reference_type="chat_block",
+    )
+    db.add(block_txn)
+    db.flush()
 
     session = ChatSession(
         user_id=current_user.id,
         astrologer_id=profile.id,
-        rate_per_min=rate,
+        rate_per_min=Decimal(str(minute_rate)),
+        rate_per_session=Decimal(str(session_rate)) if session_rate > 0 else None,
+        session_message_limit=profile.session_message_limit or 45,
+        session_validity_hours=profile.session_validity_hours or 24,
+        billing_mode=billing_mode,
+        blocked_amount=Decimal(str(block_amount)),
+        block_txn_id=block_txn.id,
         status="waiting",
         expires_at=datetime.utcnow() + timedelta(seconds=settings.CHAT_ACCEPT_TIMEOUT_SEC),
     )
@@ -838,7 +876,13 @@ def initiate_chat(
     return ChatSessionResponse(
         id=session.id, user_id=session.user_id,
         astrologer_id=session.astrologer_id,
-        rate_per_min=float(rate), status=session.status,
+        rate_per_min=float(session.rate_per_min),
+        rate_per_session=float(session.rate_per_session or 0),
+        billing_mode=session.billing_mode,
+        blocked_amount=float(session.blocked_amount or 0),
+        session_message_limit=session.session_message_limit,
+        user_message_count=session.user_message_count,
+        status=session.status,
         expires_at=session.expires_at, created_at=session.created_at,
     )
 
@@ -863,53 +907,105 @@ def chat_action(
             raise HTTPException(status_code=400, detail="Cannot accept")
         if session.expires_at and datetime.utcnow() > session.expires_at:
             session.status = "expired"
+            _refund_blocked(db, session)
             if profile:
                 profile.is_busy = False
             db.commit()
             raise HTTPException(status_code=400, detail="Chat request expired")
         session.status = "active"
         session.started_at = datetime.utcnow()
+        if session.billing_mode == "per_session":
+            session.session_expires_at = datetime.utcnow() + timedelta(
+                hours=session.session_validity_hours or 24
+            )
 
     elif req.action == "end":
         if session.status != "active":
             raise HTTPException(status_code=400, detail="Chat not active")
-        session.status = "completed"
-        session.ended_at = datetime.utcnow()
-        if session.started_at:
-            session.duration_sec = int((session.ended_at - session.started_at).total_seconds())
-            minutes = math.ceil(session.duration_sec / 60)
-            total = minutes * float(session.rate_per_min)
-            commission = total * settings.PLATFORM_COMMISSION_PCT / 100
-            earning = total - commission
-            session.total_amount = Decimal(str(total))
-            session.astrologer_earning = Decimal(str(earning))
-            session.platform_commission = Decimal(str(commission))
-            try:
-                session.user_wallet_txn_id = _debit_wallet(
-                    db, session.user_id, total, f"Chat session - {minutes} min"
-                )
-            except HTTPException:
-                pass
-            if profile:
-                session.astro_wallet_txn_id = _credit_wallet(
-                    db, profile.user_id, earning, f"Chat earning - {minutes} min"
-                )
-        if profile:
-            profile.is_busy = False
+        _finalize_chat_billing(db, session, profile)
 
     elif req.action == "cancel":
         session.status = "cancelled"
         session.ended_at = datetime.utcnow()
+        _refund_blocked(db, session)
         if profile:
             profile.is_busy = False
 
     db.commit()
     db.refresh(session)
+    return _chat_session_response(session)
+
+
+def _refund_blocked(db: Session, session: ChatSession):
+    """Refund blocked amount back to user wallet if not yet charged."""
+    if session.blocked_amount and float(session.blocked_amount) > 0 and not session.user_wallet_txn_id:
+        wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
+        if wallet:
+            refund_amt = float(session.blocked_amount)
+            wallet.balance = Decimal(str(float(wallet.balance) + refund_amt))
+            txn = WalletTransaction(
+                wallet_id=wallet.id,
+                txn_type="refund",
+                amount=Decimal(str(refund_amt)),
+                balance_after=wallet.balance,
+                description="Chat cancelled/expired — blocked amount refunded",
+                reference_type="chat_refund",
+            )
+            db.add(txn)
+            db.flush()
+
+
+def _finalize_chat_billing(db: Session, session: ChatSession, profile):
+    """End session and settle billing."""
+    session.status = "completed"
+    session.ended_at = datetime.utcnow()
+    if session.started_at:
+        session.duration_sec = int((session.ended_at - session.started_at).total_seconds())
+
+    if session.billing_mode == "per_session":
+        total = float(session.blocked_amount or session.rate_per_session or 0)
+    else:
+        minutes = max(1, math.ceil(session.duration_sec / 60))
+        total = minutes * float(session.rate_per_min)
+        blocked = float(session.blocked_amount or 0)
+        if total > blocked:
+            # Debit additional from wallet
+            extra = total - blocked
+            try:
+                _debit_wallet(db, session.user_id, extra, f"Chat extra - {minutes} min")
+            except HTTPException:
+                total = blocked  # cap at blocked if insufficient
+
+    commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
+    commission = total * commission_pct / 100
+    earning = total - commission
+    session.total_amount = Decimal(str(total))
+    session.astrologer_earning = Decimal(str(earning))
+    session.platform_commission = Decimal(str(commission))
+    session.user_wallet_txn_id = session.block_txn_id  # the block txn IS the debit
+
+    if profile:
+        session.astro_wallet_txn_id = _credit_wallet(
+            db, profile.user_id, earning,
+            f"Chat earning — ₹{total} ({commission_pct}% commission)"
+        )
+        profile.is_busy = False
+        profile.total_consultations = (profile.total_consultations or 0) + 1
+
+
+def _chat_session_response(session: ChatSession) -> ChatSessionResponse:
     return ChatSessionResponse(
         id=session.id, user_id=session.user_id,
         astrologer_id=session.astrologer_id,
-        rate_per_min=float(session.rate_per_min), status=session.status,
+        rate_per_min=float(session.rate_per_min or 0),
+        rate_per_session=float(session.rate_per_session or 0),
+        billing_mode=session.billing_mode or "per_session",
+        blocked_amount=float(session.blocked_amount or 0),
+        session_message_limit=session.session_message_limit or 45,
+        user_message_count=session.user_message_count or 0,
+        status=session.status,
         started_at=session.started_at, ended_at=session.ended_at,
+        session_expires_at=session.session_expires_at,
         duration_sec=session.duration_sec, total_amount=float(session.total_amount or 0),
         expires_at=session.expires_at, created_at=session.created_at,
     )
@@ -924,14 +1020,7 @@ def get_chat_session(
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    return ChatSessionResponse(
-        id=session.id, user_id=session.user_id,
-        astrologer_id=session.astrologer_id,
-        rate_per_min=float(session.rate_per_min), status=session.status,
-        started_at=session.started_at, ended_at=session.ended_at,
-        duration_sec=session.duration_sec, total_amount=float(session.total_amount or 0),
-        expires_at=session.expires_at, created_at=session.created_at,
-    )
+    return _chat_session_response(session)
 
 
 @router.get("/chat/{session_id}/messages", response_model=List[ChatMessageResponse])
@@ -948,7 +1037,8 @@ def get_chat_messages(
         ChatMessageResponse(
             id=m.id, session_id=m.session_id, sender_id=m.sender_id,
             message_type=m.message_type, content=m.content,
-            media_url=m.media_url, created_at=m.created_at,
+            media_url=m.media_url, file_name=m.file_name,
+            file_size=m.file_size, created_at=m.created_at,
         ) for m in msgs
     ]
 
@@ -965,12 +1055,67 @@ def chat_history(
             db.query(AstrologerProfile.id).filter(AstrologerProfile.user_id == current_user.id)
         ))
     ).order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
-    return [
-        ChatSessionResponse(
-            id=s.id, user_id=s.user_id, astrologer_id=s.astrologer_id,
-            rate_per_min=float(s.rate_per_min), status=s.status,
-            started_at=s.started_at, ended_at=s.ended_at,
-            duration_sec=s.duration_sec, total_amount=float(s.total_amount or 0),
-            created_at=s.created_at,
-        ) for s in sessions
-    ]
+    return [_chat_session_response(s) for s in sessions]
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  FILE UPLOAD / DOWNLOAD (Chat media — photo + PDF only)
+# ══════════════════════════════════════════════════════════════════════
+
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", "chat")
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".pdf"}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+
+
+@router.post("/chat/upload")
+async def upload_chat_file(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Upload a photo or PDF for chat. Returns the file URL.
+    Only .jpg/.png/.gif/.webp/.pdf allowed, max 10 MB.
+    """
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
+
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"File type not allowed. Use: {', '.join(ALLOWED_EXTENSIONS)}")
+
+    contents = await file.read()
+    if len(contents) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=400, detail="File too large. Max 10 MB")
+
+    # Generate unique filename
+    unique_name = f"{uuid.uuid4().hex}{ext}"
+    date_folder = datetime.utcnow().strftime("%Y/%m/%d")
+    folder_path = os.path.join(UPLOAD_DIR, date_folder)
+    os.makedirs(folder_path, exist_ok=True)
+
+    file_path = os.path.join(folder_path, unique_name)
+    with open(file_path, "wb") as f:
+        f.write(contents)
+
+    # Return relative URL that can be used for download
+    media_url = f"/api/v1/comm/chat/file/{date_folder}/{unique_name}"
+    file_type = "pdf" if ext == ".pdf" else "image"
+
+    return {
+        "media_url": media_url,
+        "file_name": file.filename,
+        "file_size": len(contents),
+        "file_type": file_type,
+    }
+
+
+@router.get("/chat/file/{year}/{month}/{day}/{filename}")
+def download_chat_file(
+    year: str, month: str, day: str, filename: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Download a chat file. Requires authentication (only chat participants can access)."""
+    file_path = os.path.join(UPLOAD_DIR, year, month, day, filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path, filename=filename)

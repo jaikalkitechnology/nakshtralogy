@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -33,6 +34,22 @@ class _LoginScreenState extends State<LoginScreen> {
     context.read<AuthBloc>().add(
       AuthLoginRequested(email: _emailCtrl.text.trim(), password: _passCtrl.text),
     );
+  }
+
+  Future<void> _googleSignIn() async {
+    try {
+      final googleUser = await GoogleSignIn(scopes: ['email', 'profile']).signIn();
+      if (googleUser == null) return; // user cancelled
+      final auth = await googleUser.authentication;
+      final idToken = auth.idToken;
+      if (idToken == null) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to get Google token')));
+        return;
+      }
+      if (mounted) context.read<AuthBloc>().add(AuthGoogleLoginRequested(idToken: idToken));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In error: $e'), backgroundColor: AppColors.error));
+    }
   }
 
   @override
@@ -130,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ]),
                         const SizedBox(height: 16),
                         OutlinedButton.icon(
-                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Google Sign-In coming soon'))),
+                          onPressed: _googleSignIn,
                           icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primary)),
                           label: const Text('Continue with Google'),
                         ),

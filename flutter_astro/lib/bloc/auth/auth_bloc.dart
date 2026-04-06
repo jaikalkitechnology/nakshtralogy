@@ -13,6 +13,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthCheckRequested>(_onCheck);
     on<AuthLoginRequested>(_onLogin);
     on<AuthSignupRequested>(_onSignup);
+    on<AuthGoogleLoginRequested>(_onGoogleLogin);
     on<AuthForgotPasswordRequested>(_onForgotPassword);
     on<AuthLogoutRequested>(_onLogout);
   }
@@ -57,6 +58,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
       } else {
         emit(AuthFailure(message: result['detail'] ?? 'Signup failed'));
+      }
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _onGoogleLogin(AuthGoogleLoginRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final result = await _api.googleLogin(event.idToken);
+      if (result['statusCode'] == 200) {
+        emit(AuthAuthenticated(user: result['user'] ?? {}));
+      } else {
+        emit(AuthFailure(message: result['detail'] ?? 'Google login failed'));
       }
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
