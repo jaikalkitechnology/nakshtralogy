@@ -56,6 +56,8 @@ from app.models.model import (
     ChatSession, LiveChatMessage, LiveStreamSuperChat,
 )
 from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
+from app.routers.ws_astrologer import push_to_astrologer
+import asyncio
 from app.schemas.communication_schema import (
     AgoraConfigCreate, AgoraConfigResponse, AgoraConfigUpdate,
     InitiateCallRequest, CallSessionResponse, CallActionRequest,
@@ -368,19 +370,34 @@ def initiate_call(
     db.commit()
     db.refresh(call)
 
-    # FCM push to astrologer with incoming call
+    # FCM + WebSocket push to astrologer with incoming call
     from app.services.fcm_service import notify_call_incoming
-    if astro_user and astro_user.fcm_token:
-        notify_call_incoming(
-            fcm_token=astro_user.fcm_token,
-            caller_name=current_user.name or "User",
-            call_type=req.call_type,
-            call_id=call.id,
-            rate_per_min=rate,
-            channel_name=channel,
-            agora_token=token_receiver,
-            agora_app_id=app_id,
-        )
+    if astro_user:
+        call_data = {
+            "type": "incoming_call",
+            "call_id": call.id,
+            "call_type": req.call_type,
+            "caller_name": current_user.name or "User",
+            "rate_per_min": str(rate),
+            "channel_name": channel,
+            "agora_token": token_receiver,
+            "agora_app_id": app_id,
+        }
+        try:
+            asyncio.get_event_loop().create_task(push_to_astrologer(astro_user.id, call_data))
+        except Exception:
+            pass
+        if astro_user.fcm_token:
+            notify_call_incoming(
+                fcm_token=astro_user.fcm_token,
+                caller_name=current_user.name or "User",
+                call_type=req.call_type,
+                call_id=call.id,
+                rate_per_min=rate,
+                channel_name=channel,
+                agora_token=token_receiver,
+                agora_app_id=app_id,
+            )
 
     return CallSessionResponse(
         id=call.id, channel_name=channel,
@@ -996,18 +1013,35 @@ def initiate_chat(
     db.commit()
     db.refresh(session)
 
-    # FCM push to astrologer
+    # FCM push + WebSocket push to astrologer
     astro_user = db.query(User).filter(User.id == profile.user_id).first()
-    if astro_user and astro_user.fcm_token:
-        notify_chat_request(
-            fcm_token=astro_user.fcm_token,
-            user_name=current_user.name or "User",
-            session_id=session.id,
-            rate_per_min=float(session.rate_per_min or 0),
-            rate_per_session=float(session.rate_per_session or 0),
-            billing_mode=session.billing_mode or "per_session",
-            session_message_limit=session.session_message_limit or 45,
-        )
+    if astro_user:
+        chat_data = {
+            "type": "chat_request",
+            "session_id": session.id,
+            "user_name": current_user.name or "User",
+            "sender_name": current_user.name or "User",
+            "rate_per_min": str(float(session.rate_per_min or 0)),
+            "rate_per_session": str(float(session.rate_per_session or 0)),
+            "billing_mode": session.billing_mode or "per_session",
+            "session_message_limit": str(session.session_message_limit or 45),
+        }
+        # Real-time WebSocket push (instant, no delay)
+        try:
+            asyncio.get_event_loop().create_task(push_to_astrologer(astro_user.id, chat_data))
+        except Exception:
+            pass
+        # FCM push (backup for background/terminated)
+        if astro_user.fcm_token:
+            notify_chat_request(
+                fcm_token=astro_user.fcm_token,
+                user_name=current_user.name or "User",
+                session_id=session.id,
+                rate_per_min=float(session.rate_per_min or 0),
+                rate_per_session=float(session.rate_per_session or 0),
+                billing_mode=session.billing_mode or "per_session",
+                session_message_limit=session.session_message_limit or 45,
+            )
 
     return ChatSessionResponse(
         id=session.id, user_id=session.user_id,

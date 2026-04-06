@@ -50,11 +50,54 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   final data = message.data;
   final type = data['type'] ?? '';
 
-  // For incoming call in background, show a high-priority notification
-  // with accept/reject action buttons
   if (type == 'incoming_call') {
     await _showCallNotification(data);
+  } else if (type == 'chat_request') {
+    await _showChatRequestNotification(data);
   }
+}
+
+Future<void> _showChatRequestNotification(Map<String, dynamic> data) async {
+  final userName = data['user_name'] ?? data['sender_name'] ?? 'User';
+
+  const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+  await _localNotifications.initialize(
+    const InitializationSettings(android: androidInit),
+    onDidReceiveNotificationResponse: _onNotificationResponse,
+    onDidReceiveBackgroundNotificationResponse: _onNotificationResponse,
+  );
+
+  final androidPlugin = _localNotifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+  if (androidPlugin != null) {
+    await androidPlugin.createNotificationChannel(_callChannel);
+  }
+
+  await _localNotifications.show(
+    data['session_id'].hashCode,
+    'Chat Request from $userName',
+    data['billing_mode'] == 'per_session'
+        ? '\u20b9${data['rate_per_session'] ?? '0'}/session'
+        : '\u20b9${data['rate_per_min'] ?? '0'}/min',
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        _callChannel.id, _callChannel.name,
+        channelDescription: _callChannel.description,
+        importance: Importance.max,
+        priority: Priority.max,
+        playSound: true,
+        enableVibration: true,
+        icon: '@mipmap/ic_launcher',
+        timeoutAfter: 60000,
+        fullScreenIntent: true,
+        actions: const [
+          AndroidNotificationAction('accept_chat', 'Accept', showsUserInterface: true, cancelNotification: true),
+          AndroidNotificationAction('decline_chat', 'Decline', cancelNotification: true),
+        ],
+      ),
+      iOS: const DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+    ),
+    payload: jsonEncode(data),
+  );
 }
 
 Future<void> _showCallNotification(Map<String, dynamic> data) async {
@@ -138,6 +181,43 @@ void _onNotificationResponse(NotificationResponse response) {
   // ── Handle call Reject from notification action ──
   if (response.actionId == _rejectCallActionId) {
     _handleRejectCallFromNotification(data);
+    return;
+  }
+
+  // ── Handle chat Accept from notification action ──
+  if (response.actionId == 'accept_chat') {
+    final sessionId = data['session_id'];
+    if (sessionId != null) {
+      ApiService().loadTokens().then((_) {
+        ApiService().chatAction(sessionId, 'accept').then((resp) {
+          if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
+            navigatorKey.currentState?.push(MaterialPageRoute(
+              builder: (_) => AstroChatScreen(
+                sessionId: sessionId,
+                userName: data['user_name'] ?? data['sender_name'] ?? 'User',
+                ratePerMin: double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0,
+                ratePerSession: double.tryParse(data['rate_per_session']?.toString() ?? '0') ?? 0,
+                billingMode: data['billing_mode'] ?? 'per_session',
+                sessionMessageLimit: int.tryParse(data['session_message_limit']?.toString() ?? '45') ?? 45,
+              ),
+            ));
+          }
+        });
+      });
+    }
+    return;
+  }
+
+  // ── Handle chat Decline from notification action ──
+  if (response.actionId == 'decline_chat') {
+    final sessionId = data['session_id'];
+    if (sessionId != null) {
+      ApiService().loadTokens().then((_) {
+        ApiService().chatAction(sessionId, 'cancel').catchError((e) {
+          debugPrint('Decline chat failed: $e');
+        });
+      });
+    }
     return;
   }
 
@@ -418,10 +498,42 @@ class FcmService {
           ),
         ));
       }
-      return; // don't show notification, we showed the ringing screen
+      return;
     }
 
-    // ── Other notifications (chat etc.) → show local notification ──
+    // ── Chat request in foreground → show notification with Accept/Decline ──
+    if (type == 'chat_request') {
+      final title2 = 'Chat Request from ${data['user_name'] ?? 'User'}';
+      final body2 = data['billing_mode'] == 'per_session'
+          ? '\u20b9${data['rate_per_session'] ?? '0'}/session'
+          : '\u20b9${data['rate_per_min'] ?? '0'}/min';
+      _localNotifications.show(
+        data['session_id'].hashCode,
+        title2,
+        body2,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _callChannel.id, _callChannel.name,
+            channelDescription: _callChannel.description,
+            importance: Importance.max,
+            priority: Priority.max,
+            playSound: true,
+            enableVibration: true,
+            icon: '@mipmap/ic_launcher',
+            timeoutAfter: 60000,
+            actions: const [
+              AndroidNotificationAction('accept_chat', 'Accept', showsUserInterface: true, cancelNotification: true),
+              AndroidNotificationAction('decline_chat', 'Decline', cancelNotification: true),
+            ],
+          ),
+          iOS: const DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+        ),
+        payload: jsonEncode(data),
+      );
+      return;
+    }
+
+    // ── Other notifications (chat messages etc.) → show local notification ──
     final title = notification?.title ?? data['title'] ?? 'Nakshtralogy Astro';
     final body = notification?.body ?? data['body'] ?? '';
 
