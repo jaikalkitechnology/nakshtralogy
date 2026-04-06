@@ -347,6 +347,25 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Calls ─────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> callAction(String callId, String action) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/call/$callId/action'),
+      headers: _headers,
+      body: jsonEncode({'action': action}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getCall(String callId) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.commBase}/call/$callId'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ── Chat ──────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> chatAction(String sessionId, String action) async {

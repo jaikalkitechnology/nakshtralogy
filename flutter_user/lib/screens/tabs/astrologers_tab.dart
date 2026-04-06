@@ -8,6 +8,7 @@ import '../../bloc/astrologer/astrologer_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../../services/api_service.dart';
 import '../communication/chat_screen.dart';
+import '../communication/call_screen.dart';
 
 class AstrologersTab extends StatefulWidget {
   const AstrologersTab({super.key});
@@ -34,6 +35,31 @@ class _AstrologersTabState extends State<AstrologersTab> {
     _debounce?.cancel();
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _startCall(BuildContext context, Map<String, dynamic> astro, String callType) async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Starting $callType call...'), duration: const Duration(seconds: 2)));
+    try {
+      final result = await ApiService().initiateCall(astro['id'] as String, callType);
+      if (!mounted) return;
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => CallScreen(
+          callId: result['id'] as String,
+          channelName: result['channel_name'] as String,
+          agoraToken: result['agora_token'] as String,
+          agoraAppId: result['agora_app_id'] as String,
+          callType: callType,
+          astrologerName: astro['display_name'] ?? 'Astrologer',
+          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
+          eligibleMinutes: result['eligible_minutes'] ?? 0,
+          maxCallSeconds: result['max_call_seconds'] ?? 0,
+        )));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed'), backgroundColor: AppColors.error));
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+    }
   }
 
   Future<void> _startChat(BuildContext context, Map<String, dynamic> astro) async {
@@ -283,7 +309,7 @@ class _AstroRow extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       textStyle: const TextStyle(fontSize: 11),
                     ),
-                    onPressed: isOnline ? () {} : null,
+                    onPressed: isOnline ? () => _startCall(context, astro, 'voice') : null,
                     icon: const Icon(Icons.call, size: 13),
                     label: const Text('Call'),
                   ),
@@ -295,7 +321,7 @@ class _AstroRow extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       textStyle: const TextStyle(fontSize: 11),
                     ),
-                    onPressed: isOnline ? () {} : null,
+                    onPressed: isOnline ? () => _startCall(context, astro, 'video') : null,
                     icon: const Icon(Icons.videocam, size: 13),
                     label: const Text('Video'),
                   ),

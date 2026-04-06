@@ -144,14 +144,26 @@ def send_push_multi(
 
 # ── Notification Helpers ──────────────────────────────────────────────
 
-def notify_call_incoming(fcm_token: str, caller_name: str, call_type: str, call_id: str):
+def notify_call_incoming(
+    fcm_token: str, caller_name: str, call_type: str, call_id: str,
+    rate_per_min: float = 0, channel_name: str = "", agora_token: str = "", agora_app_id: str = "",
+):
     """Push to astrologer when user initiates a call."""
     return send_push(
         fcm_token=fcm_token,
         title=f"Incoming {call_type.title()} Call",
         body=f"{caller_name} is calling you",
         role="astrologer",
-        data={"type": "incoming_call", "call_id": call_id, "call_type": call_type, "caller_name": caller_name},
+        data={
+            "type": "incoming_call",
+            "call_id": call_id,
+            "call_type": call_type,
+            "caller_name": caller_name,
+            "rate_per_min": str(rate_per_min),
+            "channel_name": channel_name,
+            "agora_token": agora_token,
+            "agora_app_id": agora_app_id,
+        },
     )
 
 

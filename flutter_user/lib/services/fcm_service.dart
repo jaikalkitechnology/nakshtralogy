@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/communication/chat_screen.dart';
+import '../screens/communication/call_screen.dart';
 import '../services/api_service.dart';
 
 /// Global navigator key — set in MaterialApp so FCM can navigate from anywhere.
@@ -47,7 +48,7 @@ void _onNotificationResponse(NotificationResponse response) {
   }
 
   // Handle notification tap — navigate to chat
-  _navigateToChat(data);
+  _navigateFromNotification(data);
 }
 
 void _handleInlineReply(Map<String, dynamic> data, String replyText) {
@@ -63,8 +64,35 @@ void _handleInlineReply(Map<String, dynamic> data, String replyText) {
   });
 }
 
-void _navigateToChat(Map<String, dynamic> data) {
+void _navigateFromNotification(Map<String, dynamic> data) {
   final type = data['type'];
+
+  // Handle call_accepted — user taps notification to open call screen
+  if (type == 'call_accepted') {
+    final callId = data['call_id'];
+    if (callId != null) {
+      // Fetch call details and navigate
+      ApiService().getCall(callId).then((resp) {
+        if (resp['statusCode'] == 200) {
+          navigatorKey.currentState?.push(MaterialPageRoute(
+            builder: (_) => CallScreen(
+              callId: resp['id'] ?? callId,
+              channelName: resp['channel_name'] ?? '',
+              agoraToken: resp['agora_token'] ?? '',
+              agoraAppId: resp['agora_app_id'] ?? '',
+              callType: resp['call_type'] ?? 'voice',
+              astrologerName: data['astrologer_name'] ?? 'Astrologer',
+              ratePerMin: (resp['rate_per_min'] as num?)?.toDouble() ?? 0,
+              eligibleMinutes: resp['eligible_minutes'] ?? 0,
+              maxCallSeconds: resp['max_call_seconds'] ?? 0,
+            ),
+          ));
+        }
+      });
+    }
+    return;
+  }
+
   if (type == 'chat_message' || type == 'chat_accepted' || type == 'chat_request') {
     final sessionId = data['session_id'];
     final senderName = data['sender_name'] ?? data['astrologer_name'] ?? 'Astrologer';

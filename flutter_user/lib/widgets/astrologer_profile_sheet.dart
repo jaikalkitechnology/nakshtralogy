@@ -6,6 +6,7 @@ import '../bloc/astrologer/astrologer_event.dart';
 import '../bloc/astrologer/astrologer_state.dart';
 import '../services/api_service.dart';
 import '../screens/communication/chat_screen.dart';
+import '../screens/communication/call_screen.dart';
 
 /// Bottom sheet that shows full astrologer profile with rate card and reviews.
 /// Dispatches AstrologerDetailRequested when opened and clears on close.
@@ -28,6 +29,35 @@ Future<void> showAstrologerProfileSheet(BuildContext context, String astrologerI
 
 class _AstrologerProfileSheet extends StatelessWidget {
   const _AstrologerProfileSheet();
+
+  Future<void> _startCall(BuildContext context, Map<String, dynamic> astrologer, String callType) async {
+    Navigator.pop(context);
+    final scaffold = ScaffoldMessenger.of(context);
+    final nav = Navigator.of(context);
+
+    scaffold.showSnackBar(SnackBar(content: Text('Starting ${callType} call...'), duration: const Duration(seconds: 2)));
+
+    try {
+      final result = await ApiService().initiateCall(astrologer['id'] as String, callType);
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        nav.push(MaterialPageRoute(builder: (_) => CallScreen(
+          callId: result['id'] as String,
+          channelName: result['channel_name'] as String,
+          agoraToken: result['agora_token'] as String,
+          agoraAppId: result['agora_app_id'] as String,
+          callType: callType,
+          astrologerName: astrologer['display_name'] ?? 'Astrologer',
+          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
+          eligibleMinutes: result['eligible_minutes'] ?? 0,
+          maxCallSeconds: result['max_call_seconds'] ?? 0,
+        )));
+      } else {
+        scaffold.showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed to start call'), backgroundColor: AppColors.error));
+      }
+    } catch (e) {
+      scaffold.showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+    }
+  }
 
   Future<void> _startChat(BuildContext context, Map<String, dynamic> astrologer) async {
     Navigator.pop(context); // close the sheet
@@ -337,7 +367,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                         const SizedBox(width: 6),
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: isOnline ? () {} : null,
+                            onPressed: isOnline ? () => _startCall(context, a, 'voice') : null,
                             icon: const Icon(Icons.call, size: 16),
                             label: const Text('Call'),
                           ),
@@ -345,7 +375,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                         const SizedBox(width: 6),
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: isOnline ? () {} : null,
+                            onPressed: isOnline ? () => _startCall(context, a, 'video') : null,
                             icon: const Icon(Icons.videocam, size: 16),
                             label: const Text('Video'),
                           ),

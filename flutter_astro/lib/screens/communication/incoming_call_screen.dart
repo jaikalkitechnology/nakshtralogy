@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../theme/app_theme.dart';
-import '../../utils/constants.dart';
+import '../../services/api_service.dart';
+import 'active_call_screen.dart';
 
 class IncomingCallScreen extends StatefulWidget {
   final String callId;
@@ -28,6 +26,8 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
   late AnimationController _pulseCtrl;
   int _countdown = 60;
   Timer? _timer;
+  final _api = ApiService();
+  bool _responding = false;
 
   @override
   void initState() {
@@ -37,26 +37,40 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
       setState(() => _countdown--);
       if (_countdown <= 0) {
         _timer?.cancel();
-        Navigator.pop(context); // auto-dismiss
+        if (mounted) Navigator.pop(context);
       }
     });
   }
 
   Future<void> _respond(String action) async {
+    if (_responding) return;
+    _responding = true;
     _timer?.cancel();
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('access_token');
-    final resp = await http.post(
-      Uri.parse('${ApiConstants.commBase}/call/${widget.callId}/action'),
-      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'},
-      body: jsonEncode({'action': action}),
-    );
-    if (mounted) {
-      if (action == 'accept' && resp.statusCode == 200) {
-        final data = jsonDecode(resp.body);
-        // TODO: Navigate to active call screen with Agora token
-        Navigator.pop(context, data);
+
+    try {
+      final resp = await _api.callAction(widget.callId, action);
+      if (!mounted) return;
+
+      if (action == 'accept' && (resp['statusCode'] == 200 || resp['statusCode'] == 201)) {
+        // Navigate to active call screen with Agora details
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (_) => ActiveCallScreen(
+            callId: widget.callId,
+            channelName: resp['channel_name'] ?? '',
+            agoraToken: resp['agora_token'] ?? '',
+            agoraAppId: resp['agora_app_id'] ?? '',
+            callType: widget.callType,
+            peerName: widget.callerName,
+            ratePerMin: widget.ratePerMin,
+            isAstrologer: true,
+          ),
+        ));
       } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
         Navigator.pop(context);
       }
     }
@@ -86,15 +100,14 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
                 return Transform.scale(scale: scale, child: child);
               },
               child: Container(
-                width: 120,
-                height: 120,
+                width: 120, height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.card,
                   border: Border.all(color: AppColors.primary, width: 3),
                   boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 30, spreadRadius: 5)],
                 ),
-                child: const Center(child: Text('🧑', style: TextStyle(fontSize: 48))),
+                child: const Center(child: Text('\u{1F9D1}', style: TextStyle(fontSize: 48))),
               ),
             ),
             const SizedBox(height: 24),
@@ -106,39 +119,32 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
             const SizedBox(height: 4),
             Text('\u20b9${widget.ratePerMin.toInt()}/min', style: const TextStyle(color: AppColors.primary, fontSize: 16)),
             const SizedBox(height: 16),
-
-            // Countdown
             Text('Auto-decline in ${_countdown}s', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
 
             const Spacer(flex: 3),
 
-            // Accept / Reject buttons
+            // Accept / Reject
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 60),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Reject
                   GestureDetector(
-                    onTap: () => _respond('reject'),
+                    onTap: _responding ? null : () => _respond('reject'),
                     child: Container(
-                      width: 72,
-                      height: 72,
+                      width: 72, height: 72,
                       decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error),
                       child: const Icon(Icons.call_end, color: Colors.white, size: 32),
                     ),
                   ),
-                  // Accept
                   GestureDetector(
-                    onTap: () => _respond('accept'),
+                    onTap: _responding ? null : () => _respond('accept'),
                     child: Container(
-                      width: 72,
-                      height: 72,
+                      width: 72, height: 72,
                       decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.success),
                       child: Icon(
                         widget.callType == 'video' ? Icons.videocam : Icons.call,
-                        color: Colors.white,
-                        size: 32,
+                        color: Colors.white, size: 32,
                       ),
                     ),
                   ),
