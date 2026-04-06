@@ -5,7 +5,6 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
 /// Single live stream viewer — full screen, chat overlay, gifts, super chat.
-/// User mic OFF, user camera OFF. Only subscribes to astrologer's audio+video.
 class LiveViewerScreen extends StatefulWidget {
   final String streamId;
   final String title;
@@ -33,14 +32,16 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   String? _agoraToken;
   String? _agoraAppId;
   String? _channelName;
+  int _agoraUid = 0;
   List<dynamic> _questions = [];
   List<dynamic> _superChats = [];
   List<dynamic> _gifts = [];
+  List<dynamic> _recentGiftAnimations = []; // for gift overlay
   int _viewerCount = 0;
   bool _joined = false;
   int? _remoteUid;
   Timer? _pollTimer;
-  bool _showChat = true;
+  String? _error;
 
   @override
   void initState() {
@@ -52,16 +53,14 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   Future<void> _joinStream() async {
     final resp = await _api.joinLiveStream(widget.streamId);
     if (resp['statusCode'] != 200) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(resp['detail'] ?? 'Failed to join'), backgroundColor: AppColors.error));
-        Navigator.pop(context);
-      }
+      if (mounted) setState(() => _error = resp['detail'] ?? 'Failed to join stream');
       return;
     }
 
     _agoraToken = resp['agora_token'];
     _agoraAppId = resp['agora_app_id'];
     _channelName = resp['channel_name'];
+    _agoraUid = resp['agora_uid'] ?? 0;
 
     await _initAgora();
     _startPolling();
@@ -76,7 +75,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
 
     _engine!.registerEventHandler(RtcEngineEventHandler(
       onJoinChannelSuccess: (connection, elapsed) {
-        debugPrint('Viewer joined channel');
+        debugPrint('Viewer joined channel: ${connection.channelId}');
         setState(() => _joined = true);
       },
       onUserJoined: (connection, remoteUid, elapsed) {
@@ -86,7 +85,6 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
       onUserOffline: (connection, remoteUid, reason) {
         debugPrint('Host left: $remoteUid');
         setState(() => _remoteUid = null);
-        // Host ended stream
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Stream ended')));
           _leaveStream();
@@ -95,21 +93,21 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
       onError: (err, msg) => debugPrint('Agora error: $err $msg'),
     ));
 
-    // Viewer = audience role, mic OFF, camera OFF
+    // Audience role — subscribe to remote audio+video, don't publish local
     await _engine!.setClientRole(role: ClientRoleType.clientRoleAudience);
-    await _engine!.disableVideo(); // don't publish local video
-    await _engine!.muteLocalAudioStream(true); // mic off
+    await _engine!.enableVideo(); // MUST enable video to receive remote video
+    await _engine!.enableAudio();
 
-    // Join channel with subscriber UID
+    // Join channel with the UID assigned by backend
     await _engine!.joinChannel(
       token: _agoraToken!,
       channelId: _channelName!,
-      uid: 0,
+      uid: _agoraUid,
       options: const ChannelMediaOptions(
         autoSubscribeAudio: true,
         autoSubscribeVideo: true,
-        publishMicrophoneTrack: false,
-        publishCameraTrack: false,
+        publishMicrophoneTrack: false, // don't publish local audio
+        publishCameraTrack: false,     // don't publish local video
         clientRoleType: ClientRoleType.clientRoleAudience,
       ),
     );
@@ -121,17 +119,21 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   }
 
   void _startPolling() {
-    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
-      if (!mounted) return;
-      final v = await _api.getLiveViewers(widget.streamId);
-      final q = await _api.getLiveQuestions(widget.streamId);
-      final sc = await _api.getLiveSuperChats(widget.streamId);
-      if (!mounted) return;
-      setState(() {
-        _viewerCount = v['total'] ?? 0;
-        _questions = q;
-        _superChats = sc;
-      });
+    // Initial load
+    _poll();
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) => _poll());
+  }
+
+  Future<void> _poll() async {
+    if (!mounted) return;
+    final v = await _api.getLiveViewers(widget.streamId);
+    final q = await _api.getLiveQuestions(widget.streamId);
+    final sc = await _api.getLiveSuperChats(widget.streamId);
+    if (!mounted) return;
+    setState(() {
+      _viewerCount = v['total'] ?? 0;
+      _questions = q;
+      _superChats = sc;
     });
   }
 
@@ -139,15 +141,22 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
     if (_questionCtrl.text.trim().isEmpty) return;
     await _api.sendLiveQuestion(widget.streamId, _questionCtrl.text.trim());
     _questionCtrl.clear();
+    _poll(); // refresh immediately
   }
 
-  Future<void> _sendGift(String giftId) async {
-    final resp = await _api.sendLiveGift(widget.streamId, giftId);
+  Future<void> _sendGift(Map<String, dynamic> gift) async {
+    final resp = await _api.sendLiveGift(widget.streamId, gift['id']);
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(resp['statusCode'] == 200 ? 'Gift sent! ${resp['gift_icon'] ?? ''}' : resp['detail'] ?? 'Failed'),
-        backgroundColor: resp['statusCode'] == 200 ? AppColors.success : AppColors.error,
-      ));
+      if (resp['statusCode'] == 200) {
+        // Show gift animation overlay
+        setState(() => _recentGiftAnimations.add({'icon': gift['icon'], 'name': gift['name'], 'sender': 'You'}));
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) setState(() { if (_recentGiftAnimations.isNotEmpty) _recentGiftAnimations.removeAt(0); });
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${gift['icon']} ${gift['name']} sent!'), backgroundColor: AppColors.success, duration: const Duration(seconds: 1)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(resp['detail'] ?? 'Failed to send gift'), backgroundColor: AppColors.error));
+      }
     }
   }
 
@@ -196,6 +205,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                   content: Text(resp['statusCode'] == 200 ? 'Super Chat sent!' : resp['detail'] ?? 'Failed'),
                   backgroundColor: resp['statusCode'] == 200 ? AppColors.success : AppColors.error,
                 ));
+                if (resp['statusCode'] == 200) _poll();
               }
             },
             child: const Text('Send'),
@@ -213,23 +223,30 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(20),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Send a Gift', style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w600)),
+          Row(children: [
+            const Text('Send a Gift', style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w600)),
+            const Spacer(),
+            Text('${_gifts.length} gifts', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          ]),
           const SizedBox(height: 16),
-          Wrap(spacing: 12, runSpacing: 12, children: _gifts.map((g) {
-            return GestureDetector(
-              onTap: () { Navigator.pop(ctx); _sendGift(g['id']); },
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Container(
-                  width: 56, height: 56,
-                  decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
-                  child: Center(child: Text(g['icon'] ?? '', style: const TextStyle(fontSize: 28))),
-                ),
-                const SizedBox(height: 4),
-                Text(g['name'] ?? '', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
-                Text('\u20b9${(g['price'] as num).toInt()}', style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.w600)),
-              ]),
-            );
-          }).toList()),
+          if (_gifts.isEmpty)
+            const Center(child: Padding(padding: EdgeInsets.all(20), child: Text('No gifts available', style: TextStyle(color: AppColors.textSecondary))))
+          else
+            Wrap(spacing: 12, runSpacing: 12, children: _gifts.map((g) {
+              return GestureDetector(
+                onTap: () { Navigator.pop(ctx); _sendGift(g); },
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Container(
+                    width: 56, height: 56,
+                    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
+                    child: Center(child: Text(g['icon'] ?? '', style: const TextStyle(fontSize: 28))),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(g['name'] ?? '', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                  Text('\u20b9${(g['price'] as num).toInt()}', style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.w600)),
+                ]),
+              );
+            }).toList()),
           const SizedBox(height: 12),
         ]),
       ),
@@ -256,6 +273,20 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Error state
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          const SizedBox(height: 12),
+          Text(_error!, style: const TextStyle(color: Colors.white, fontSize: 16)),
+          const SizedBox(height: 16),
+          ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Go Back')),
+        ])),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(children: [
@@ -271,12 +302,34 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
             ),
           )
         else
-          const Positioned.fill(
+          Positioned.fill(
             child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-              CircularProgressIndicator(color: AppColors.primary),
-              SizedBox(height: 12),
-              Text('Connecting to stream...', style: TextStyle(color: Colors.white60, fontSize: 14)),
+              if (!_joined) ...[
+                const CircularProgressIndicator(color: AppColors.primary),
+                const SizedBox(height: 12),
+                const Text('Connecting to stream...', style: TextStyle(color: Colors.white60, fontSize: 14)),
+              ] else ...[
+                const Text('\u{1F52E}', style: TextStyle(fontSize: 48)),
+                const SizedBox(height: 12),
+                const Text('Waiting for host video...', style: TextStyle(color: Colors.white60, fontSize: 14)),
+              ],
             ])),
+          ),
+
+        // Gift animation overlay (right side)
+        if (_recentGiftAnimations.isNotEmpty)
+          Positioned(
+            right: 16, top: MediaQuery.of(context).padding.top + 100,
+            child: Column(children: _recentGiftAnimations.map((g) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.8), borderRadius: BorderRadius.circular(20)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Text(g['icon'] ?? '', style: const TextStyle(fontSize: 20)),
+                const SizedBox(width: 6),
+                Text('${g['sender']} sent ${g['name']}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+              ]),
+            )).toList()),
           ),
 
         // Top bar
@@ -286,7 +339,6 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(children: [
-                // Host info
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: AppColors.card,
@@ -312,7 +364,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                   onTap: _leaveStream,
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(color: Colors.white12, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(color: Colors.white12, shape: BoxShape.circle),
                     child: const Icon(Icons.close, color: Colors.white, size: 20),
                   ),
                 ),
@@ -355,31 +407,32 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
           ),
 
         // Chat messages overlay (bottom-left)
-        if (_showChat)
-          Positioned(
-            bottom: 70, left: 8, right: 80,
-            child: SizedBox(
-              height: 220,
-              child: ListView.builder(
-                reverse: true,
-                itemCount: _questions.length,
-                itemBuilder: (_, i) {
-                  final q = _questions[i];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(16)),
-                      child: RichText(text: TextSpan(children: [
-                        TextSpan(text: '${q['display_name'] ?? 'User'} ', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
-                        TextSpan(text: q['question'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 12)),
-                      ])),
-                    ),
-                  );
-                },
-              ),
-            ),
+        Positioned(
+          bottom: 70, left: 8, right: 80,
+          child: SizedBox(
+            height: 220,
+            child: _questions.isEmpty
+                ? const SizedBox()
+                : ListView.builder(
+                    reverse: true,
+                    itemCount: _questions.length,
+                    itemBuilder: (_, i) {
+                      final q = _questions[i];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(16)),
+                          child: RichText(text: TextSpan(children: [
+                            TextSpan(text: '${q['display_name'] ?? 'User'} ', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                            TextSpan(text: q['question'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                          ])),
+                        ),
+                      );
+                    },
+                  ),
           ),
+        ),
 
         // Bottom input bar
         Positioned(
@@ -388,8 +441,8 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
             top: false,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: const BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent, Colors.black54], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
               child: Row(children: [
-                // Chat input
                 Expanded(
                   child: TextField(
                     controller: _questionCtrl,
@@ -405,13 +458,11 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                   ),
                 ),
                 const SizedBox(width: 6),
-                // Send
                 GestureDetector(
                   onTap: _sendQuestion,
                   child: Container(width: 38, height: 38, decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary), child: const Icon(Icons.send, color: Colors.black, size: 18)),
                 ),
                 const SizedBox(width: 6),
-                // Gift button
                 GestureDetector(
                   onTap: _showGiftSheet,
                   child: Container(
@@ -421,7 +472,6 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                   ),
                 ),
                 const SizedBox(width: 6),
-                // Super chat button
                 GestureDetector(
                   onTap: _showSuperChatDialog,
                   child: Container(

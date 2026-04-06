@@ -108,6 +108,7 @@ class JoinStreamResponse(BaseModel):
     agora_app_id: Optional[str] = None
     channel_name: str
     viewer_id: str
+    agora_uid: int = 0
 
 
 class StreamQuestionRequest(BaseModel):

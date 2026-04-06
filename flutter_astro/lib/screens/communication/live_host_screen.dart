@@ -107,20 +107,44 @@ class _LiveHostScreenState extends State<LiveHostScreen> {
     if (mounted) Navigator.pop(context);
   }
 
+  List<dynamic> _giftAnimations = [];
+
   void _startPolling() {
-    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
-      if (!_isLive || !mounted) return;
-      final v = await _api.getLiveViewers(widget.streamId);
-      final q = await _api.getLiveQuestions(widget.streamId);
-      final sc = await _api.getLiveSuperChats(widget.streamId);
-      if (!mounted) return;
-      setState(() {
-        _viewerCount = v['total'] ?? 0;
-        _peakViewers = v['peak'] ?? _peakViewers;
-        _questions = q;
-        _superChats = sc;
-      });
+    // Initial load
+    _poll();
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) => _poll());
+  }
+
+  Future<void> _poll() async {
+    if (!_isLive || !mounted) return;
+    final v = await _api.getLiveViewers(widget.streamId);
+    final q = await _api.getLiveQuestions(widget.streamId);
+    final sc = await _api.getLiveSuperChats(widget.streamId);
+    if (!mounted) return;
+
+    // Detect new gifts in super chats
+    final oldCount = _superChats.length;
+    setState(() {
+      _viewerCount = v['total'] ?? 0;
+      _peakViewers = v['peak'] ?? _peakViewers;
+      _questions = q;
+      _superChats = sc;
+      // Update total gifts from super chats
+      double total = 0;
+      for (final c in sc) {
+        total += (c['amount'] as num?)?.toDouble() ?? 0;
+      }
+      _totalGifts = total;
     });
+
+    // Show animation for new super chats
+    if (sc.length > oldCount && sc.isNotEmpty) {
+      final latest = sc.first;
+      setState(() => _giftAnimations.add(latest));
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) setState(() { if (_giftAnimations.isNotEmpty) _giftAnimations.removeAt(0); });
+      });
+    }
   }
 
   String get _formattedDuration {
@@ -194,6 +218,14 @@ class _LiveHostScreenState extends State<LiveHostScreen> {
                   const SizedBox(width: 4),
                   Text('$_viewerCount', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
                   const Spacer(),
+                  if (_totalGifts > 0) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.3), borderRadius: BorderRadius.circular(6)),
+                      child: Text('\u20b9${_totalGifts.toStringAsFixed(0)}', style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                    ),
+                    const SizedBox(width: 6),
+                  ],
                   Text('Peak: $_peakViewers', style: const TextStyle(color: Colors.white60, fontSize: 11)),
                 ]),
               ),
@@ -230,6 +262,23 @@ class _LiveHostScreenState extends State<LiveHostScreen> {
                   },
                 ),
               ),
+            ),
+
+          // Gift received animation (right side)
+          if (_isLive && _giftAnimations.isNotEmpty)
+            Positioned(
+              right: 16, top: 120,
+              child: Column(children: _giftAnimations.map((g) => Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(color: AppColors.success.withOpacity(0.85), borderRadius: BorderRadius.circular(20)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Text('\u20b9', style: TextStyle(fontSize: 16, color: Colors.white)),
+                  const SizedBox(width: 4),
+                  Text('${g['sender_name'] ?? 'User'} • \u20b9${(g['amount'] as num?)?.toStringAsFixed(0) ?? '0'}',
+                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                ]),
+              )).toList()),
             ),
 
           // Questions chat overlay
