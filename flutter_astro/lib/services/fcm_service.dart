@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/communication/chat_screen.dart';
+import '../screens/communication/incoming_call_screen.dart';
 import '../services/api_service.dart';
 
 /// Global navigator key — set in MaterialApp so FCM can navigate from anywhere.
@@ -46,7 +47,7 @@ void _onNotificationResponse(NotificationResponse response) {
   }
 
   // Handle notification tap — navigate to chat
-  _navigateToChat(data);
+  _navigateFromNotification(data);
 }
 
 void _handleInlineReply(Map<String, dynamic> data, String replyText) {
@@ -59,8 +60,29 @@ void _handleInlineReply(Map<String, dynamic> data, String replyText) {
   });
 }
 
-void _navigateToChat(Map<String, dynamic> data) {
+void _navigateFromNotification(Map<String, dynamic> data) {
   final type = data['type'];
+
+  // Handle incoming call — navigate to ringing screen
+  if (type == 'incoming_call') {
+    final callId = data['call_id'];
+    final callerName = data['caller_name'] ?? 'User';
+    final callType = data['call_type'] ?? 'voice';
+    final ratePerMin = double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0;
+
+    if (callId != null) {
+      navigatorKey.currentState?.push(MaterialPageRoute(
+        builder: (_) => IncomingCallScreen(
+          callId: callId,
+          callerName: callerName,
+          callType: callType,
+          ratePerMin: ratePerMin,
+        ),
+      ));
+    }
+    return;
+  }
+
   if (type == 'chat_message' || type == 'chat_request' || type == 'chat_accepted') {
     final sessionId = data['session_id'];
     final senderName = data['sender_name'] ?? data['user_name'] ?? 'User';

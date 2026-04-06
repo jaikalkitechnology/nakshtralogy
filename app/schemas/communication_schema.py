@@ -49,6 +49,8 @@ class CallSessionResponse(BaseModel):
     status: str
     agora_token: Optional[str] = None    # token for the requesting party
     agora_app_id: Optional[str] = None
+    eligible_minutes: int = 0            # max minutes user can afford
+    max_call_seconds: int = 0            # max seconds before auto-disconnect
     started_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
     duration_sec: int = 0

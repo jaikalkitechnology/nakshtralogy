@@ -314,7 +314,13 @@ def initiate_call(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """User initiates a voice/video call to an astrologer. Rings for 60s."""
+    """
+    User initiates a voice/video call to an astrologer.
+    - Checks wallet balance, calculates eligible minutes
+    - Generates Agora tokens for both parties
+    - Sends FCM push to astrologer
+    - Rings for 60s, then expires
+    """
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == req.astrologer_profile_id,
         AstrologerProfile.is_approved == True,
@@ -329,11 +335,13 @@ def initiate_call(
     if rate <= 0:
         raise HTTPException(status_code=400, detail=f"Astrologer hasn't set {req.call_type} rate")
 
-    # check user has at least 5 min balance
+    # check wallet & calculate eligible minutes
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
-    min_balance = rate * 5
-    if not wallet or float(wallet.balance) < min_balance:
-        raise HTTPException(status_code=402, detail=f"Need at least ₹{min_balance} (5 min) to start call")
+    balance = float(wallet.balance) if wallet else 0
+    eligible_minutes = int(balance / rate) if rate > 0 else 0
+    if eligible_minutes < 1:
+        raise HTTPException(status_code=402, detail=f"Insufficient balance. Need at least ₹{rate} (1 min)")
+    max_call_seconds = eligible_minutes * 60
 
     astro_user = db.query(User).filter(User.id == profile.user_id).first()
     channel = _generate_channel_name("call")
@@ -359,13 +367,27 @@ def initiate_call(
     db.commit()
     db.refresh(call)
 
-    # TODO: send FCM push notification to astrologer with call details
+    # FCM push to astrologer with incoming call
+    from app.services.fcm_service import notify_call_incoming
+    if astro_user and astro_user.fcm_token:
+        notify_call_incoming(
+            fcm_token=astro_user.fcm_token,
+            caller_name=current_user.name or "User",
+            call_type=req.call_type,
+            call_id=call.id,
+            rate_per_min=rate,
+            channel_name=channel,
+            agora_token=token_receiver,
+            agora_app_id=app_id,
+        )
 
     return CallSessionResponse(
         id=call.id, channel_name=channel,
         caller_id=call.caller_id, receiver_id=call.receiver_id,
         call_type=call.call_type, rate_per_min=float(rate),
         status="ringing", agora_token=token_caller, agora_app_id=app_id,
+        eligible_minutes=eligible_minutes,
+        max_call_seconds=max_call_seconds,
         expires_at=call.expires_at, created_at=call.created_at,
     )
 
@@ -381,12 +403,18 @@ def call_action(
     if not call:
         raise HTTPException(status_code=404, detail="Call not found")
 
-    # verify participant
     if current_user.id not in (call.caller_id, call.receiver_id):
         raise HTTPException(status_code=403, detail="Not a participant")
 
     app_id, _ = _get_agora_creds(db)
     my_token = call.agora_token_caller if current_user.id == call.caller_id else call.agora_token_receiver
+
+    # Calculate eligible minutes for response
+    rate = float(call.rate_per_min or 0)
+    wallet = db.query(Wallet).filter(Wallet.user_id == call.caller_id).first()
+    balance = float(wallet.balance) if wallet else 0
+    eligible_minutes = int(balance / rate) if rate > 0 else 0
+    max_call_seconds = eligible_minutes * 60
 
     if req.action == "accept":
         if current_user.id != call.receiver_id:
@@ -395,10 +423,21 @@ def call_action(
             raise HTTPException(status_code=400, detail=f"Cannot accept call in '{call.status}' state")
         if call.expires_at and datetime.utcnow() > call.expires_at:
             call.status = "missed"
+            _release_astrologer(db, call.astrologer_profile_id)
             db.commit()
             raise HTTPException(status_code=400, detail="Call expired")
         call.status = "active"
         call.started_at = datetime.utcnow()
+
+        # FCM push to user that call is accepted
+        from app.services.fcm_service import notify_call_accepted as _notify_call_accepted
+        caller = db.query(User).filter(User.id == call.caller_id).first()
+        if caller and caller.fcm_token:
+            _notify_call_accepted(
+                fcm_token=caller.fcm_token,
+                astrologer_name=current_user.name or "Astrologer",
+                call_id=call.id,
+            )
 
     elif req.action == "reject":
         if current_user.id != call.receiver_id:
@@ -421,28 +460,30 @@ def call_action(
         call.ended_at = datetime.utcnow()
         if call.started_at:
             call.duration_sec = int((call.ended_at - call.started_at).total_seconds())
-            minutes = math.ceil(call.duration_sec / 60)
+            minutes = max(1, math.ceil(call.duration_sec / 60))
             total = minutes * float(call.rate_per_min)
-            commission = total * settings.PLATFORM_COMMISSION_PCT / 100
+            profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == call.astrologer_profile_id).first()
+            commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
+            commission = total * commission_pct / 100
             earning = total - commission
             call.total_amount = Decimal(str(total))
             call.astrologer_earning = Decimal(str(earning))
             call.platform_commission = Decimal(str(commission))
 
-            # wallet transactions
-            profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == call.astrologer_profile_id).first()
             try:
                 call.user_wallet_txn_id = _debit_wallet(
                     db, call.caller_id, total,
-                    f"{call.call_type.title()} call - {minutes} min"
+                    f"{call.call_type.title()} call — {minutes} min × ₹{rate}/min"
                 )
             except HTTPException:
                 pass
             if profile:
                 call.astro_wallet_txn_id = _credit_wallet(
                     db, profile.user_id, earning,
-                    f"{call.call_type.title()} call earning - {minutes} min"
+                    f"{call.call_type.title()} call earning — ₹{total} ({commission_pct}% commission)"
                 )
+                profile.total_consultations = (profile.total_consultations or 0) + 1
+                profile.total_minutes = (profile.total_minutes or 0) + minutes
         _release_astrologer(db, call.astrologer_profile_id)
 
     db.commit()
@@ -453,6 +494,8 @@ def call_action(
         caller_id=call.caller_id, receiver_id=call.receiver_id,
         call_type=call.call_type, rate_per_min=float(call.rate_per_min),
         status=call.status, agora_token=my_token, agora_app_id=app_id,
+        eligible_minutes=eligible_minutes,
+        max_call_seconds=max_call_seconds,
         started_at=call.started_at, ended_at=call.ended_at,
         duration_sec=call.duration_sec, total_amount=float(call.total_amount or 0),
         expires_at=call.expires_at, created_at=call.created_at,
