@@ -11,6 +11,7 @@ class LiveViewerScreen extends StatefulWidget {
   final String title;
   final String hostName;
   final String? hostAvatar;
+  final double superChatRate;
 
   const LiveViewerScreen({
     super.key,
@@ -18,6 +19,7 @@ class LiveViewerScreen extends StatefulWidget {
     required this.title,
     required this.hostName,
     this.hostAvatar,
+    this.superChatRate = 50,
   });
 
   @override
@@ -150,21 +152,22 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   }
 
   void _showSuperChatDialog() {
+    final minRate = widget.superChatRate;
     final msgCtrl = TextEditingController();
-    final amountCtrl = TextEditingController(text: '50');
+    final amountCtrl = TextEditingController(text: '${minRate.toInt()}');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.card,
         title: const Text('Super Chat', style: TextStyle(color: AppColors.primary)),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Text('Send a paid pinned message', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+          Text('Send a paid pinned message (min \u20b9${minRate.toInt()})', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
           const SizedBox(height: 12),
           TextField(controller: msgCtrl, maxLength: 300, decoration: const InputDecoration(labelText: 'Message', prefixIcon: Icon(Icons.message))),
           const SizedBox(height: 10),
-          TextField(controller: amountCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount (\u20b9)', prefixIcon: Icon(Icons.currency_rupee))),
+          TextField(controller: amountCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Amount (min \u20b9${minRate.toInt()})', prefixIcon: const Icon(Icons.currency_rupee))),
           const SizedBox(height: 8),
-          Wrap(spacing: 8, children: [50, 100, 200, 500].map((a) => ActionChip(
+          Wrap(spacing: 8, children: [minRate.toInt(), 100, 200, 500].where((a) => a >= minRate).toSet().toList()..sort()..take(4).toList().map((a) => ActionChip(
             label: Text('\u20b9$a'),
             onPressed: () => amountCtrl.text = '$a',
             backgroundColor: AppColors.surface,
@@ -177,7 +180,12 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
             onPressed: () async {
               final amount = double.tryParse(amountCtrl.text.trim());
               final message = msgCtrl.text.trim();
-              if (amount == null || amount <= 0 || message.isEmpty) return;
+              if (amount == null || amount < minRate || message.isEmpty) {
+                if (amount != null && amount < minRate) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Minimum amount is \u20b9${minRate.toInt()}'), backgroundColor: AppColors.error));
+                }
+                return;
+              }
               Navigator.pop(ctx);
               final resp = await _api.sendSuperChat(widget.streamId, message, amount);
               if (mounted) {
@@ -486,6 +494,7 @@ class _LiveReelsScreenState extends State<LiveReelsScreen> {
             title: s['title'] ?? '',
             hostName: s['host_name'] ?? 'Astrologer',
             hostAvatar: s['host_profile_image'] ?? s['host_avatar'],
+            superChatRate: (s['super_chat_rate'] as num?)?.toDouble() ?? 50,
           );
         },
       ),

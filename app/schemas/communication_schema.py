@@ -98,6 +98,7 @@ class LiveStreamListResponse(BaseModel):
     status: str
     viewer_count: int = 0
     total_gifts_amount: float = 0
+    super_chat_rate: float = 50
     started_at: Optional[datetime] = None
 
 
