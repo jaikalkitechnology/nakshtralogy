@@ -521,3 +521,124 @@ export async function seedOpen() {
   const res = await fetch(`${BASE}/admin/seed-open`, { method: "POST" });
   return { ok: res.ok, status: res.status, data: await res.json() };
 }
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  COMMUNICATION — Chat, Call, Live Stream
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Chat ──
+export async function initiateChat(astrologerProfileId: string) {
+  const res = await fetch(`${BASE}/comm/chat/initiate`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ astrologer_profile_id: astrologerProfileId }) });
+  return res.json();
+}
+export async function chatAction(sessionId: string, action: string) {
+  const res = await fetch(`${BASE}/comm/chat/${sessionId}/action`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ action }) });
+  return res.json();
+}
+export async function getChatSession(sessionId: string) {
+  const res = await fetch(`${BASE}/comm/chat/${sessionId}`, { headers: authHeaders() });
+  return res.json();
+}
+export async function getChatMessages(sessionId: string, skip = 0, limit = 100) {
+  const res = await fetch(`${BASE}/comm/chat/${sessionId}/messages?skip=${skip}&limit=${limit}`, { headers: authHeaders() });
+  return res.json();
+}
+export async function getChatHistory(skip = 0, limit = 20) {
+  const res = await fetch(`${BASE}/comm/chat/history?skip=${skip}&limit=${limit}`, { headers: authHeaders() });
+  return res.json();
+}
+export async function sendChatMessage(sessionId: string, content: string) {
+  const res = await fetch(`${BASE}/comm/chat/${sessionId}/message`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ content, message_type: "text" }) });
+  return res.json();
+}
+export async function uploadChatFile(file: File) {
+  const fd = new FormData(); fd.append("file", file);
+  const token = localStorage.getItem("access_token");
+  const res = await fetch(`${BASE}/comm/chat/upload`, { method: "POST", headers: token ? { Authorization: `Bearer ${token}` } : {}, body: fd });
+  return res.json();
+}
+
+// ── Calls ──
+export async function initiateCall(astrologerProfileId: string, callType: "voice" | "video") {
+  const res = await fetch(`${BASE}/comm/call/initiate`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ astrologer_profile_id: astrologerProfileId, call_type: callType }) });
+  return res.json();
+}
+export async function callAction(callId: string, action: string) {
+  const res = await fetch(`${BASE}/comm/call/${callId}/action`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ action }) });
+  return res.json();
+}
+export async function getCall(callId: string) {
+  const res = await fetch(`${BASE}/comm/call/${callId}`, { headers: authHeaders() });
+  return res.json();
+}
+export async function getCallHistory(skip = 0, limit = 20) {
+  const res = await fetch(`${BASE}/comm/call/history?skip=${skip}&limit=${limit}`, { headers: authHeaders() });
+  return res.json();
+}
+
+// ── Live Stream ──
+export async function getActiveLiveStreams() {
+  const res = await fetch(`${BASE}/comm/live/active`, { headers: authHeaders() });
+  return res.json();
+}
+export async function createLiveStream(title: string, description?: string) {
+  const res = await fetch(`${BASE}/comm/live/create`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ title, description }) });
+  return res.json();
+}
+export async function startLiveStream(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/start`, { method: "POST", headers: authHeaders() });
+  return res.json();
+}
+export async function endLiveStream(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/end`, { method: "POST", headers: authHeaders() });
+  return res.json();
+}
+export async function joinLiveStream(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/join`, { method: "POST", headers: authHeaders() });
+  return res.json();
+}
+export async function leaveLiveStream(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/leave`, { method: "POST", headers: authHeaders() });
+  return res.json();
+}
+export async function sendLiveQuestion(streamId: string, question: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/question`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ question }) });
+  return res.json();
+}
+export async function getLiveQuestions(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/questions`, { headers: authHeaders() });
+  return res.json();
+}
+export async function getLiveViewers(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/viewers`, { headers: authHeaders() });
+  return res.json();
+}
+export async function sendLiveGift(streamId: string, giftPricingId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/gift`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ gift_pricing_id: giftPricingId }) });
+  return res.json();
+}
+export async function sendSuperChat(streamId: string, message: string, amount: number) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/super-chat`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ message, amount }) });
+  return res.json();
+}
+export async function getLiveSuperChats(streamId: string) {
+  const res = await fetch(`${BASE}/comm/live/${streamId}/super-chats`, { headers: authHeaders() });
+  return res.json();
+}
+export async function fetchGifts() {
+  const res = await fetch(`${BASE}/comm/gifts`, { headers: authHeaders() });
+  return res.json();
+}
+
+// ── WebSocket URL builders ──
+export function getWsChatUrl(sessionId: string) {
+  const token = localStorage.getItem("access_token");
+  const wsBase = BASE.replace("https://", "wss://").replace("http://", "ws://").replace("/api/v1", "");
+  return `${wsBase}/ws/chat/${sessionId}?token=${token}`;
+}
+export function getWsAstrologerUrl() {
+  const token = localStorage.getItem("access_token");
+  const wsBase = BASE.replace("https://", "wss://").replace("http://", "ws://").replace("/api/v1", "");
+  return `${wsBase}/ws/astrologer?token=${token}`;
+}
