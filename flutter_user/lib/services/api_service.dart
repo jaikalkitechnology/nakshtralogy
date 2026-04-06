@@ -237,5 +237,103 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Public Astrologer discovery ──────────────────────────────
+
+  Future<List<dynamic>> fetchAstrologers({int limit = 20, int skip = 0, String? search}) async {
+    final params = <String, String>{'limit': '$limit', 'skip': '$skip'};
+    if (search != null && search.isNotEmpty) params['search'] = search;
+    final uri = Uri.parse('${ApiConstants.astrologerBase}/list').replace(queryParameters: params);
+    final resp = await http.get(uri, headers: _headers);
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      if (body is List) return body;
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>> fetchAstrologerDetail(String id) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/$id'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> fetchAstrologerReviews(String id, {int limit = 10}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/$id/reviews?limit=$limit'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── User Wallet ─────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> fetchMyWallet() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.userBase}/me/wallet'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> fetchMyWalletTransactions({int skip = 0, int limit = 20, String? txnType}) async {
+    final params = <String, String>{'skip': '$skip', 'limit': '$limit'};
+    if (txnType != null && txnType != 'all') params['txn_type'] = txnType;
+    final uri = Uri.parse('${ApiConstants.userBase}/me/wallet/transactions').replace(queryParameters: params);
+    final resp = await http.get(uri, headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> rechargeMyWallet({required double amount, String? note, String? paymentRef}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.userBase}/me/wallet/recharge'),
+      headers: _headers,
+      body: jsonEncode({
+        'amount': amount,
+        if (note != null) 'note': note,
+        if (paymentRef != null) 'payment_ref': paymentRef,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── User Orders ─────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> fetchMyOrdersPaginated({int skip = 0, int limit = 20}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.userBase}/me/orders?skip=$skip&limit=$limit'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── Saved Astrologers ───────────────────────────────────────
+
+  Future<Map<String, dynamic>> fetchMySavedAstrologers() async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.userBase}/me/saved-astrologers'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> saveAstrologer(String astrologerProfileId, {String? note}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.userBase}/me/saved-astrologers'),
+      headers: _headers,
+      body: jsonEncode({
+        'astrologer_profile_id': astrologerProfileId,
+        if (note != null) 'note': note,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> unsaveAstrologer(String astrologerProfileId) async {
+    final resp = await http.delete(
+      Uri.parse('${ApiConstants.userBase}/me/saved-astrologers/$astrologerProfileId'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }

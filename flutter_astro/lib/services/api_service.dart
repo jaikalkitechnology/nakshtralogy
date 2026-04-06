@@ -238,5 +238,114 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── KYC ─────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> getKycStatus() async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/kyc-status'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> submitKyc({
+    required String docType,
+    String? docNumber,
+    String? frontUrl,
+    String? backUrl,
+    String? selfieUrl,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/me/kyc'),
+      headers: _headers,
+      body: jsonEncode({
+        'doc_type': docType,
+        if (docNumber != null) 'doc_number': docNumber,
+        if (frontUrl != null) 'front_url': frontUrl,
+        if (backUrl != null) 'back_url': backUrl,
+        if (selfieUrl != null) 'selfie_url': selfieUrl,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── Dashboard (stats + recent requests) ─────────────────────
+
+  Future<Map<String, dynamic>> getMyStats() async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/stats'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getRecentRequests({int limit = 10}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/recent-requests?limit=$limit'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── Astrologer Wallet + Withdrawal ──────────────────────────
+
+  Future<Map<String, dynamic>> getMyWallet() async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/wallet'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getMyWalletTransactions({int skip = 0, int limit = 20, String? kind}) async {
+    final params = <String, String>{'skip': '$skip', 'limit': '$limit'};
+    if (kind != null && kind != 'all') params['kind'] = kind;
+    final uri = Uri.parse('${ApiConstants.astrologerBase}/me/wallet/transactions').replace(queryParameters: params);
+    final resp = await http.get(uri, headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> requestWithdrawal({
+    required double amount,
+    String? upiId,
+    String? bankAccountName,
+    String? bankAccountNumber,
+    String? bankIfsc,
+    String? notes,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/me/wallet/withdraw'),
+      headers: _headers,
+      body: jsonEncode({
+        'amount': amount,
+        if (upiId != null) 'upi_id': upiId,
+        if (bankAccountName != null) 'bank_account_name': bankAccountName,
+        if (bankAccountNumber != null) 'bank_account_number': bankAccountNumber,
+        if (bankIfsc != null) 'bank_ifsc': bankIfsc,
+        if (notes != null) 'notes': notes,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getMyWithdrawals({int limit = 20}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/withdrawals?limit=$limit'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── Profile (user-level + astrologer-level updates) ─────────
+
+  Future<Map<String, dynamic>> updateMeFields(Map<String, dynamic> fields) async {
+    final resp = await http.put(
+      Uri.parse(ApiConstants.astroMe),
+      headers: _headers,
+      body: jsonEncode(fields),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
