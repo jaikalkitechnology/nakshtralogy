@@ -37,53 +37,6 @@ class _AstrologersTabState extends State<AstrologersTab> {
     super.dispose();
   }
 
-  Future<void> _startCall(BuildContext context, Map<String, dynamic> astro, String callType) async {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Starting $callType call...'), duration: const Duration(seconds: 2)));
-    try {
-      final result = await ApiService().initiateCall(astro['id'] as String, callType);
-      if (!mounted) return;
-      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => CallScreen(
-          callId: result['id'] as String,
-          channelName: result['channel_name'] as String,
-          agoraToken: result['agora_token'] as String,
-          agoraAppId: result['agora_app_id'] as String,
-          callType: callType,
-          astrologerName: astro['display_name'] ?? 'Astrologer',
-          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
-          eligibleMinutes: result['eligible_minutes'] ?? 0,
-          maxCallSeconds: result['max_call_seconds'] ?? 0,
-        )));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed'), backgroundColor: AppColors.error));
-      }
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
-    }
-  }
-
-  Future<void> _startChat(BuildContext context, Map<String, dynamic> astro) async {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Initiating chat...'), duration: Duration(seconds: 2)));
-    try {
-      final result = await ApiService().initiateChat(astro['id'] as String);
-      if (!mounted) return;
-      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(
-          sessionId: result['id'] as String,
-          astrologerName: astro['display_name'] ?? 'Astrologer',
-          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
-          ratePerSession: (result['rate_per_session'] as num?)?.toDouble() ?? 0,
-          billingMode: result['billing_mode'] ?? 'per_session',
-          sessionMessageLimit: result['session_message_limit'] ?? 45,
-        )));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed to start chat'), backgroundColor: AppColors.error));
-      }
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
-    }
-  }
-
   void _onSearchChanged(String q) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () {
@@ -151,6 +104,53 @@ class _AstroRow extends StatelessWidget {
   final dynamic astro;
   final bool saved;
   const _AstroRow({required this.astro, required this.saved});
+
+  Future<void> _startChat(BuildContext context, Map<String, dynamic> a) async {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Initiating chat...'), duration: Duration(seconds: 2)));
+    try {
+      final result = await ApiService().initiateChat(a['id'] as String);
+      if (!context.mounted) return;
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(
+          sessionId: result['id'] as String,
+          astrologerName: a['display_name'] ?? 'Astrologer',
+          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
+          ratePerSession: (result['rate_per_session'] as num?)?.toDouble() ?? 0,
+          billingMode: result['billing_mode'] ?? 'per_session',
+          sessionMessageLimit: result['session_message_limit'] ?? 45,
+        )));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed'), backgroundColor: AppColors.error));
+      }
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+    }
+  }
+
+  Future<void> _startCall(BuildContext context, Map<String, dynamic> a, String callType) async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Starting $callType call...'), duration: const Duration(seconds: 2)));
+    try {
+      final result = await ApiService().initiateCall(a['id'] as String, callType);
+      if (!context.mounted) return;
+      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => CallScreen(
+          callId: result['id'] as String,
+          channelName: result['channel_name'] as String,
+          agoraToken: result['agora_token'] as String,
+          agoraAppId: result['agora_app_id'] as String,
+          callType: callType,
+          astrologerName: a['display_name'] ?? 'Astrologer',
+          ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
+          eligibleMinutes: result['eligible_minutes'] ?? 0,
+          maxCallSeconds: result['max_call_seconds'] ?? 0,
+        )));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed'), backgroundColor: AppColors.error));
+      }
+    } catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
