@@ -198,6 +198,9 @@ async def websocket_chat(
             "timestamp": datetime.utcnow().isoformat(),
         }, exclude=user.id)
 
+        # Per-message rate from astrologer profile
+        rate_per_msg = float(profile.rate_per_msg_chat or 0) if profile else 0
+
         # send session info
         await websocket.send_json({
             "type": "session_info",
@@ -206,6 +209,7 @@ async def websocket_chat(
             "billing_mode": session.billing_mode or "per_session",
             "rate_per_min": float(session.rate_per_min or 0),
             "rate_per_session": float(session.rate_per_session or 0),
+            "rate_per_msg": rate_per_msg,
             "blocked_amount": float(session.blocked_amount or 0),
             "session_message_limit": session.session_message_limit or 45,
             "user_message_count": session.user_message_count or 0,
@@ -247,6 +251,37 @@ async def websocket_chat(
                 # Track user message count (only user messages count toward limit)
                 if is_user:
                     session.user_message_count = (session.user_message_count or 0) + 1
+
+                    # Per-message billing: deduct from user, credit astrologer per message
+                    if rate_per_msg > 0:
+                        try:
+                            user_wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
+                            if user_wallet and float(user_wallet.balance) >= rate_per_msg:
+                                # Deduct from user
+                                user_wallet.balance = Decimal(str(float(user_wallet.balance) - rate_per_msg))
+                                db.add(WalletTransaction(
+                                    wallet_id=user_wallet.id, txn_type="consultation_debit",
+                                    amount=Decimal(str(rate_per_msg)), balance_after=user_wallet.balance,
+                                    description=f"Chat message #{session.user_message_count}",
+                                    reference_type="chat_per_msg",
+                                ))
+                                # Credit astrologer after commission
+                                comm_pct = float(profile.commission_pct) if profile else 30.0
+                                earning = rate_per_msg * (1 - comm_pct / 100)
+                                if profile:
+                                    _credit_astro_wallet(db, profile.user_id, earning,
+                                        f"Chat msg earning #{session.user_message_count}")
+                            else:
+                                # Insufficient balance → end session
+                                await _complete_session(db, session, profile)
+                                await _broadcast(session_id, {
+                                    "type": "session_ended",
+                                    "reason": "Insufficient balance for next message",
+                                    "timestamp": datetime.utcnow().isoformat(),
+                                })
+                                break
+                        except Exception as billing_err:
+                            logger.warning(f"Per-message billing error: {billing_err}")
 
                 # persist message
                 msg = LiveChatMessage(

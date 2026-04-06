@@ -670,6 +670,7 @@ def list_active_streams(db: Session = Depends(get_db)):
             title=s.title, description=s.description,
             status=s.status, viewer_count=s.viewer_count,
             total_gifts_amount=float(s.total_gifts_amount or 0),
+            super_chat_rate=float(p.super_chat_rate or 50) if p else 50,
             started_at=s.started_at,
         ) for s, u, p in streams
     ]
@@ -866,7 +867,12 @@ def send_super_chat(
     if not stream:
         raise HTTPException(status_code=404, detail="Stream not live")
 
+    # Enforce astrologer's minimum super chat rate
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == stream.astrologer_profile_id).first()
+    min_rate = float(profile.super_chat_rate or 50) if profile else 50
     amount = req.amount
+    if amount < min_rate:
+        raise HTTPException(status_code=400, detail=f"Minimum super chat amount is ₹{min_rate}")
     txn_id = _debit_wallet(db, current_user.id, amount, f"Super Chat in live stream: ₹{amount}")
 
     sc = LiveStreamSuperChat(

@@ -41,6 +41,8 @@ class _ProfileTabState extends State<ProfileTab> {
     final videoSessCtrl = TextEditingController(text: '${profile['rate_per_session_video'] ?? ''}');
     final msgLimitCtrl = TextEditingController(text: '${profile['session_message_limit'] ?? 45}');
     final validityCtrl = TextEditingController(text: '${profile['session_validity_hours'] ?? 24}');
+    final perMsgCtrl = TextEditingController(text: '${profile['rate_per_msg_chat'] ?? ''}');
+    final superChatCtrl = TextEditingController(text: '${profile['super_chat_rate'] ?? 50}');
 
     showDialog(
       context: context,
@@ -85,6 +87,16 @@ class _ProfileTabState extends State<ProfileTab> {
               const SizedBox(width: 8),
               Expanded(child: _field(validityCtrl, 'Validity (hrs)', Icons.timer, isNum: true)),
             ]),
+            const Divider(color: AppColors.border, height: 28),
+            const Align(alignment: Alignment.centerLeft, child: Text('Per-Message & Super Chat', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
+            const SizedBox(height: 4),
+            const Text('Per-message charges each user message individually', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+            const SizedBox(height: 8),
+            Row(children: [
+              Expanded(child: _field(perMsgCtrl, 'Chat ₹/message', Icons.message, isNum: true)),
+              const SizedBox(width: 8),
+              Expanded(child: _field(superChatCtrl, 'Super Chat min ₹', Icons.attach_money, isNum: true)),
+            ]),
           ])),
         ),
         actions: [
@@ -112,6 +124,8 @@ class _ProfileTabState extends State<ProfileTab> {
                 if (videoSessCtrl.text.trim().isNotEmpty) pf['rate_per_session_video'] = double.tryParse(videoSessCtrl.text.trim());
                 if (msgLimitCtrl.text.trim().isNotEmpty) pf['session_message_limit'] = int.tryParse(msgLimitCtrl.text.trim());
                 if (validityCtrl.text.trim().isNotEmpty) pf['session_validity_hours'] = int.tryParse(validityCtrl.text.trim());
+                if (perMsgCtrl.text.trim().isNotEmpty) pf['rate_per_msg_chat'] = double.tryParse(perMsgCtrl.text.trim());
+                if (superChatCtrl.text.trim().isNotEmpty) pf['super_chat_rate'] = double.tryParse(superChatCtrl.text.trim());
 
                 context.read<AstroProfileBloc>().add(AstroProfileUpdateRequested(userFields: userFields, profileFields: pf));
                 Navigator.pop(ctx);
@@ -245,6 +259,17 @@ class _ProfileTabState extends State<ProfileTab> {
                 const SizedBox(height: 10),
                 Text('Session: ${profile['session_message_limit'] ?? 45} msgs, ${profile['session_validity_hours'] ?? 24}hr validity',
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                if ((profile['rate_per_msg_chat'] ?? 0) > 0 || (profile['super_chat_rate'] ?? 0) > 0) ...[
+                  const SizedBox(height: 12),
+                  const Text('Other Charges', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                  const SizedBox(height: 6),
+                  Row(children: [
+                    if ((profile['rate_per_msg_chat'] ?? 0) > 0)
+                      _RateChip(label: 'Per-Msg', value: '₹${profile['rate_per_msg_chat']}/msg', color: Colors.orange),
+                    if ((profile['rate_per_msg_chat'] ?? 0) > 0) const SizedBox(width: 8),
+                    _RateChip(label: 'Super Chat', value: '₹${profile['super_chat_rate'] ?? 50} min', color: Colors.amber),
+                  ]),
+                ],
               ]),
             ),
             const SizedBox(height: 20),
