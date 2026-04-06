@@ -249,56 +249,131 @@ class FcmService {
 
   FirebaseMessaging? _messaging;
   String? _fcmToken;
+  bool _initialized = false;
+  String? _initError;
 
   String? get fcmToken => _fcmToken;
+  bool get isInitialized => _initialized;
+  String? get initError => _initError;
 
   Future<void> init() async {
     try {
       await Firebase.initializeApp();
     } catch (e) {
-      debugPrint('Firebase already initialized or error: $e');
+      _initError = 'Firebase init: $e';
+      debugPrint('Firebase init error: $e');
+      return;
     }
 
-    _messaging = FirebaseMessaging.instance;
+    try {
+      _messaging = FirebaseMessaging.instance;
 
-    final settings = await _messaging!.requestPermission(
-      alert: true, badge: true, sound: true, provisional: false,
-    );
-    debugPrint('FCM permission: ${settings.authorizationStatus}');
+      final settings = await _messaging!.requestPermission(
+        alert: true, badge: true, sound: true, provisional: false,
+      );
+      debugPrint('FCM permission: ${settings.authorizationStatus}');
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        _initError = 'Notification permission denied. Enable in device settings.';
+        debugPrint(_initError!);
+      }
 
-    await _initLocalNotifications();
+      FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-    _fcmToken = await _messaging!.getToken();
-    debugPrint('FCM Token: $_fcmToken');
+      await _initLocalNotifications();
 
-    if (_fcmToken != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fcm_token', _fcmToken!);
-    }
+      await _fetchAndSaveToken();
 
-    _messaging!.onTokenRefresh.listen((newToken) async {
-      _fcmToken = newToken;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fcm_token', newToken);
-    });
-
-    // ── Foreground messages ──
-    FirebaseMessaging.onMessage.listen(_onForegroundMessage);
-
-    // ── Background tap ──
-    FirebaseMessaging.onMessageOpenedApp.listen((msg) {
-      _navigateFromNotification(Map<String, dynamic>.from(msg.data));
-    });
-
-    // ── Cold start ──
-    final initialMessage = await _messaging!.getInitialMessage();
-    if (initialMessage != null) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _navigateFromNotification(Map<String, dynamic>.from(initialMessage.data));
+      _messaging!.onTokenRefresh.listen((newToken) async {
+        debugPrint('FCM token refreshed: ${newToken.substring(0, 20)}...');
+        _fcmToken = newToken;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('fcm_token', newToken);
+        _sendTokenToBackend(newToken);
       });
+
+      FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+
+      FirebaseMessaging.onMessageOpenedApp.listen((msg) {
+        _navigateFromNotification(Map<String, dynamic>.from(msg.data));
+      });
+
+      final initialMessage = await _messaging!.getInitialMessage();
+      if (initialMessage != null) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _navigateFromNotification(Map<String, dynamic>.from(initialMessage.data));
+        });
+      }
+
+      _initialized = true;
+    } catch (e) {
+      _initError = 'FCM setup error: $e';
+      debugPrint(_initError!);
     }
+  }
+
+  Future<void> _fetchAndSaveToken() async {
+    try {
+      _fcmToken = await _messaging?.getToken();
+      debugPrint('FCM Token: ${_fcmToken != null ? "${_fcmToken!.substring(0, 20)}..." : "NULL"}');
+      if (_fcmToken != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('fcm_token', _fcmToken!);
+      } else {
+        _initError = 'FCM token is null. Check google-services.json and internet.';
+        debugPrint(_initError!);
+      }
+    } catch (e) {
+      _initError = 'FCM getToken error: $e';
+      debugPrint(_initError!);
+    }
+  }
+
+  Future<String?> getToken() async {
+    if (_fcmToken != null && _fcmToken!.isNotEmpty) return _fcmToken;
+    final prefs = await SharedPreferences.getInstance();
+    _fcmToken = prefs.getString('fcm_token');
+    if (_fcmToken != null && _fcmToken!.isNotEmpty) return _fcmToken;
+    if (_messaging != null) {
+      await _fetchAndSaveToken();
+      return _fcmToken;
+    }
+    try {
+      await Firebase.initializeApp();
+      _messaging = FirebaseMessaging.instance;
+      await _fetchAndSaveToken();
+    } catch (e) {
+      debugPrint('FCM getToken retry failed: $e');
+    }
+    return _fcmToken;
+  }
+
+  void _sendTokenToBackend(String token) {
+    ApiService().loadTokens().then((_) {
+      if (ApiService().isLoggedIn) {
+        ApiService().updateMeFields({'fcm_token': token}).then((res) {
+          debugPrint('FCM token sent to backend: ${res['statusCode']}');
+        }).catchError((e) {
+          debugPrint('Failed to send FCM token to backend: $e');
+        });
+      }
+    });
+  }
+
+  Future<void> ensureTokenSynced() async {
+    final token = await getToken();
+    if (token != null && token.isNotEmpty) {
+      _sendTokenToBackend(token);
+    } else {
+      debugPrint('FCM token not available for sync');
+    }
+  }
+
+  String getStatusMessage() {
+    if (_fcmToken != null && _fcmToken!.isNotEmpty) return 'FCM active';
+    if (_initError != null) return _initError!;
+    if (!_initialized) return 'FCM not initialized. Check Firebase config.';
+    return 'FCM token not generated. Check google-services.json and internet connection.';
   }
 
   Future<void> _initLocalNotifications() async {
@@ -382,13 +457,6 @@ class FcmService {
       ),
       payload: jsonEncode(data),
     );
-  }
-
-  Future<String?> getToken() async {
-    if (_fcmToken != null) return _fcmToken;
-    final prefs = await SharedPreferences.getInstance();
-    _fcmToken = prefs.getString('fcm_token');
-    return _fcmToken;
   }
 
   Future<void> clearToken() async {
