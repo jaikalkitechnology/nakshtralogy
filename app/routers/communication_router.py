@@ -437,6 +437,8 @@ def call_action(
                 fcm_token=caller.fcm_token,
                 astrologer_name=current_user.name or "Astrologer",
                 call_id=call.id,
+                call_type=call.call_type,
+                channel_name=call.channel_name,
             )
 
     elif req.action == "reject":

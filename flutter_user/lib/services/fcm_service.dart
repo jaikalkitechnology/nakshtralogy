@@ -15,7 +15,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 /// Flutter local notifications plugin instance.
 final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
-/// Notification channel for chat messages (Android).
+// ── Notification Channels ──────────────────────────────────────────
+
 const _chatChannel = AndroidNotificationChannel(
   'chat_messages',
   'Chat Messages',
@@ -24,8 +25,19 @@ const _chatChannel = AndroidNotificationChannel(
   playSound: true,
 );
 
-/// Reply action key.
+const _callChannel = AndroidNotificationChannel(
+  'call_status',
+  'Call Status',
+  description: 'Call accepted/rejected notifications',
+  importance: Importance.max,
+  playSound: true,
+);
+
+// ── Action IDs ──────���──────────────────────────────────────────────
+
 const _replyActionId = 'reply_chat';
+
+// ── Background handler ───��─────────────────────────────────────────
 
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
@@ -33,89 +45,84 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   debugPrint('FCM background: ${message.messageId}');
 }
 
-/// Called when user taps a notification action (like reply) in background.
+// ── Notification response handler ──────────────────────────────────
+
 @pragma('vm:entry-point')
 void _onNotificationResponse(NotificationResponse response) {
-  debugPrint('Notification response: ${response.actionId} payload=${response.payload}');
+  debugPrint('Notification response: actionId=${response.actionId} payload=${response.payload}');
   if (response.payload == null) return;
 
-  final data = jsonDecode(response.payload!);
+  final data = jsonDecode(response.payload!) as Map<String, dynamic>;
 
-  // Handle inline reply
+  // Handle inline chat reply
   if (response.actionId == _replyActionId && response.input != null && response.input!.isNotEmpty) {
-    _handleInlineReply(data, response.input!);
-    return;
-  }
-
-  // Handle notification tap — navigate to chat
-  _navigateFromNotification(data);
-}
-
-void _handleInlineReply(Map<String, dynamic> data, String replyText) {
-  // Send reply via WebSocket is not possible from background isolate.
-  // Instead, we use the REST API to send a message.
-  final sessionId = data['session_id'];
-  if (sessionId == null) return;
-  // Fire-and-forget via API
-  ApiService().sendChatMessageViaApi(sessionId, replyText).then((_) {
-    debugPrint('Inline reply sent for session $sessionId');
-  }).catchError((e) {
-    debugPrint('Inline reply failed: $e');
-  });
-}
-
-void _navigateFromNotification(Map<String, dynamic> data) {
-  final type = data['type'];
-
-  // Handle call_accepted — user taps notification to open call screen
-  if (type == 'call_accepted') {
-    final callId = data['call_id'];
-    if (callId != null) {
-      // Fetch call details and navigate
-      ApiService().getCall(callId).then((resp) {
-        if (resp['statusCode'] == 200) {
-          navigatorKey.currentState?.push(MaterialPageRoute(
-            builder: (_) => CallScreen(
-              callId: resp['id'] ?? callId,
-              channelName: resp['channel_name'] ?? '',
-              agoraToken: resp['agora_token'] ?? '',
-              agoraAppId: resp['agora_app_id'] ?? '',
-              callType: resp['call_type'] ?? 'voice',
-              astrologerName: data['astrologer_name'] ?? 'Astrologer',
-              ratePerMin: (resp['rate_per_min'] as num?)?.toDouble() ?? 0,
-              eligibleMinutes: resp['eligible_minutes'] ?? 0,
-              maxCallSeconds: resp['max_call_seconds'] ?? 0,
-            ),
-          ));
-        }
+    final sessionId = data['session_id'];
+    if (sessionId != null) {
+      ApiService().sendChatMessageViaApi(sessionId, response.input!).catchError((e) {
+        debugPrint('Inline reply failed: $e');
       });
     }
     return;
   }
 
+  // Handle notification tap
+  _navigateFromNotification(data);
+}
+
+// ── Navigation router ──────────────────────────────────────────────
+
+void _navigateFromNotification(Map<String, dynamic> data) {
+  final type = data['type'];
+
+  // Call accepted → fetch call details and navigate to CallScreen
+  if (type == 'call_accepted') {
+    final callId = data['call_id'];
+    if (callId != null) {
+      ApiService().loadTokens().then((_) {
+        ApiService().getCall(callId).then((resp) {
+          if (resp['statusCode'] == 200) {
+            navigatorKey.currentState?.push(MaterialPageRoute(
+              builder: (_) => CallScreen(
+                callId: resp['id'] ?? callId,
+                channelName: resp['channel_name'] ?? '',
+                agoraToken: resp['agora_token'] ?? '',
+                agoraAppId: resp['agora_app_id'] ?? '',
+                callType: resp['call_type'] ?? 'voice',
+                astrologerName: data['astrologer_name'] ?? 'Astrologer',
+                ratePerMin: (resp['rate_per_min'] as num?)?.toDouble() ?? 0,
+                eligibleMinutes: resp['eligible_minutes'] ?? 0,
+                maxCallSeconds: resp['max_call_seconds'] ?? 0,
+              ),
+            ));
+          }
+        });
+      });
+    }
+    return;
+  }
+
+  // Chat notifications
   if (type == 'chat_message' || type == 'chat_accepted' || type == 'chat_request') {
     final sessionId = data['session_id'];
-    final senderName = data['sender_name'] ?? data['astrologer_name'] ?? 'Astrologer';
-    final ratePerMin = double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0;
-    final ratePerSession = double.tryParse(data['rate_per_session']?.toString() ?? '0') ?? 0;
-    final billingMode = data['billing_mode'] ?? 'per_session';
-    final msgLimit = int.tryParse(data['session_message_limit']?.toString() ?? '45') ?? 45;
-
     if (sessionId != null) {
       navigatorKey.currentState?.push(MaterialPageRoute(
         builder: (_) => ChatScreen(
           sessionId: sessionId,
-          astrologerName: senderName,
-          ratePerMin: ratePerMin,
-          ratePerSession: ratePerSession,
-          billingMode: billingMode,
-          sessionMessageLimit: msgLimit,
+          astrologerName: data['sender_name'] ?? data['astrologer_name'] ?? 'Astrologer',
+          ratePerMin: double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0,
+          ratePerSession: double.tryParse(data['rate_per_session']?.toString() ?? '0') ?? 0,
+          billingMode: data['billing_mode'] ?? 'per_session',
+          sessionMessageLimit: int.tryParse(data['session_message_limit']?.toString() ?? '45') ?? 45,
         ),
       ));
     }
   }
 }
 
+
+// ═══════════════════════════════════════════════════════════════════
+//  FCM SERVICE CLASS
+// ═════��═════════════════════════════════════════════════════════════
 
 class FcmService {
   static final FcmService _instance = FcmService._internal();
@@ -143,7 +150,6 @@ class FcmService {
 
     FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-    // Initialize local notifications
     await _initLocalNotifications();
 
     _fcmToken = await _messaging!.getToken();
@@ -160,18 +166,19 @@ class FcmService {
       await prefs.setString('fcm_token', newToken);
     });
 
-    // ── Foreground messages → show local notification ──
+    // ── Foreground messages ──
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
 
-    // ── Tap on notification while app in background ──
-    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
+    // ── Background tap ──
+    FirebaseMessaging.onMessageOpenedApp.listen((msg) {
+      _navigateFromNotification(Map<String, dynamic>.from(msg.data));
+    });
 
-    // ── Cold start from terminated state ──
+    // ── Cold start ──
     final initialMessage = await _messaging!.getInitialMessage();
     if (initialMessage != null) {
-      // Delay to let navigator initialize
       Future.delayed(const Duration(milliseconds: 500), () {
-        _navigateFromRemoteMessage(initialMessage);
+        _navigateFromNotification(Map<String, dynamic>.from(initialMessage.data));
       });
     }
   }
@@ -190,10 +197,10 @@ class FcmService {
       onDidReceiveBackgroundNotificationResponse: _onNotificationResponse,
     );
 
-    // Create Android notification channel
     final androidPlugin = _localNotifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(_chatChannel);
+      await androidPlugin.createNotificationChannel(_callChannel);
     }
   }
 
@@ -201,14 +208,39 @@ class FcmService {
     debugPrint('FCM foreground: ${message.notification?.title}');
     final data = message.data;
     final notification = message.notification;
-
     if (notification == null && data.isEmpty) return;
 
+    final type = data['type'] ?? '';
     final title = notification?.title ?? data['title'] ?? 'Nakshtralogy';
     final body = notification?.body ?? data['body'] ?? '';
-    final type = data['type'] ?? '';
 
-    // Build actions based on notification type
+    // ── Call accepted while user is on ringing screen → no notification needed,
+    // the CallScreen is already polling/waiting for remote user to join via Agora.
+    // But if user left the screen, show notification. ──
+    if (type == 'call_accepted') {
+      _localNotifications.show(
+        data['call_id'].hashCode,
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _callChannel.id, _callChannel.name,
+            channelDescription: _callChannel.description,
+            importance: Importance.max,
+            priority: Priority.max,
+            playSound: true,
+            icon: '@mipmap/ic_launcher',
+          ),
+          iOS: const DarwinNotificationDetails(
+            presentAlert: true, presentBadge: true, presentSound: true,
+          ),
+        ),
+        payload: jsonEncode(data),
+      );
+      return;
+    }
+
+    // ── Chat notifications ──
     List<AndroidNotificationAction> actions = [];
     if (type == 'chat_message') {
       actions = [
@@ -227,8 +259,7 @@ class FcmService {
       body,
       NotificationDetails(
         android: AndroidNotificationDetails(
-          _chatChannel.id,
-          _chatChannel.name,
+          _chatChannel.id, _chatChannel.name,
           channelDescription: _chatChannel.description,
           importance: Importance.high,
           priority: Priority.high,
@@ -237,22 +268,11 @@ class FcmService {
           actions: actions,
         ),
         iOS: const DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
+          presentAlert: true, presentBadge: true, presentSound: true,
         ),
       ),
       payload: jsonEncode(data),
     );
-  }
-
-  void _onMessageOpenedApp(RemoteMessage message) {
-    debugPrint('FCM opened app: ${message.data}');
-    _navigateFromRemoteMessage(message);
-  }
-
-  void _navigateFromRemoteMessage(RemoteMessage message) {
-    _navigateToChat(Map<String, dynamic>.from(message.data));
   }
 
   Future<String?> getToken() async {

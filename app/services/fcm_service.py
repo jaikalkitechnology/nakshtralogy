@@ -191,14 +191,23 @@ def notify_chat_request(
     )
 
 
-def notify_call_accepted(fcm_token: str, astrologer_name: str, call_id: str):
+def notify_call_accepted(
+    fcm_token: str, astrologer_name: str, call_id: str,
+    call_type: str = "voice", channel_name: str = "",
+):
     """Push to user when astrologer accepts call."""
     return send_push(
         fcm_token=fcm_token,
         title="Call Connected",
-        body=f"{astrologer_name} accepted your call",
+        body=f"{astrologer_name} accepted your {call_type} call",
         role="user",
-        data={"type": "call_accepted", "call_id": call_id},
+        data={
+            "type": "call_accepted",
+            "call_id": call_id,
+            "astrologer_name": astrologer_name,
+            "call_type": call_type,
+            "channel_name": channel_name,
+        },
     )
 
 
