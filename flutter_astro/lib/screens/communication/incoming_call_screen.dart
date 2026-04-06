@@ -61,14 +61,19 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
       if (!mounted) return;
       final status = resp['status'] ?? '';
       if (status != 'ringing') {
-        // Call already expired, missed, cancelled, or accepted elsewhere
         setState(() => _expired = true);
         _timer?.cancel();
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) Navigator.pop(context);
         });
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Call status check failed: $e — will retry');
+      // Retry after 3 seconds
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted && !_expired && !_responding) _checkCallStatus();
+      });
+    }
   }
 
   Future<void> _respond(String action) async {

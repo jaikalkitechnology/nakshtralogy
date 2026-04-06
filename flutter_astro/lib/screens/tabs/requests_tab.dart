@@ -158,13 +158,31 @@ class _RequestActionCardState extends State<_RequestActionCard> {
     if (mounted) setState(() => _loading = false);
   }
 
-  void _enterChat(String sessionId, String userName) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => AstroChatScreen(
-        sessionId: sessionId,
-        userName: userName,
-      ),
-    ));
+  Future<void> _enterChat(String sessionId, String userName) async {
+    // Fetch fresh session data to get rates
+    setState(() => _loading = true);
+    try {
+      final resp = await _api.getChatSession(sessionId);
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => AstroChatScreen(
+          sessionId: sessionId,
+          userName: userName,
+          ratePerMin: (resp['rate_per_min'] as num?)?.toDouble() ?? 0,
+          ratePerSession: (resp['rate_per_session'] as num?)?.toDouble() ?? 0,
+          billingMode: resp['billing_mode'] as String? ?? 'per_session',
+          sessionMessageLimit: (resp['session_message_limit'] as num?)?.toInt() ?? 45,
+        ),
+      ));
+    } catch (_) {
+      // Fallback: open with defaults
+      if (mounted) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => AstroChatScreen(sessionId: sessionId, userName: userName),
+        ));
+      }
+    }
+    if (mounted) setState(() => _loading = false);
   }
 
   @override

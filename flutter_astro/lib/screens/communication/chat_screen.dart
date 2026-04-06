@@ -118,6 +118,16 @@ class _AstroChatScreenState extends State<AstroChatScreen> {
     return '${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
+  double get _currentEarning {
+    double gross;
+    if (widget.billingMode == 'per_session') {
+      gross = widget.ratePerSession;
+    } else {
+      gross = (_seconds / 60).ceil() * widget.ratePerMin;
+    }
+    return gross * 0.7; // approx after 30% commission
+  }
+
   void _sendMessage() {
     if (_msgCtrl.text.trim().isEmpty || _channel == null) return;
     _channel!.sink.add(jsonEncode({
@@ -171,7 +181,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> {
     try {
       final resp = await _api.uploadChatFile(result, result.split('/').last);
       if (resp['statusCode'] == 200) {
-        _sendFileMessage(resp['media_url'], resp['file_name'], resp['file_size'], resp['file_type']);
+        _sendFileMessage(resp['media_url'] ?? '', resp['file_name'] ?? 'file', resp['file_size'] ?? 0, resp['file_type'] ?? 'pdf');
       } else {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(resp['detail'] ?? 'Upload failed')));
       }
@@ -236,7 +246,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> {
             Text(widget.userName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
             Text(
               _connected
-                  ? '$_formattedTime • $_remainingMessages msgs left'
+                  ? '$_formattedTime • $_remainingMessages msgs left • Earning: \u20b9${_currentEarning.toStringAsFixed(0)}'
                   : 'Connecting...',
               style: TextStyle(color: _connected ? AppColors.success : AppColors.textSecondary, fontSize: 12),
             ),
