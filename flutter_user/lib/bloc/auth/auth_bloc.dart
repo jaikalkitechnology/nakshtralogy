@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/api_service.dart';
@@ -28,6 +29,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         emit(AuthAuthenticated(user: {}));
       }
+      // Sync FCM token to backend in background (in case it changed or wasn't sent before)
+      _syncFcmTokenInBackground();
     } else {
       emit(AuthUnauthenticated());
     }
@@ -37,9 +40,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final fcmToken = await FcmService().getToken();
+      debugPrint('Login FCM token: ${fcmToken != null ? "${fcmToken.substring(0, 20)}..." : "NULL - ${FcmService().getStatusMessage()}"}');
       final result = await _api.login(email: event.email, password: event.password, fcmToken: fcmToken);
       if (result['statusCode'] == 200) {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
+        // Ensure FCM token synced after login
+        _syncFcmTokenInBackground();
       } else {
         emit(AuthFailure(message: result['detail'] ?? 'Login failed'));
       }
@@ -52,6 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final fcmToken = await FcmService().getToken();
+      debugPrint('Signup FCM token: ${fcmToken != null ? "${fcmToken.substring(0, 20)}..." : "NULL - ${FcmService().getStatusMessage()}"}');
       final result = await _api.signup(
         name: event.name,
         email: event.email,
@@ -61,6 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       if (result['statusCode'] == 201) {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
+        _syncFcmTokenInBackground();
       } else {
         emit(AuthFailure(message: result['detail'] ?? 'Signup failed'));
       }
@@ -73,9 +81,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final fcmToken = await FcmService().getToken();
+      debugPrint('Google login FCM token: ${fcmToken != null ? "${fcmToken.substring(0, 20)}..." : "NULL - ${FcmService().getStatusMessage()}"}');
       final result = await _api.googleLogin(event.idToken, fcmToken: fcmToken);
       if (result['statusCode'] == 200) {
         emit(AuthAuthenticated(user: result['user'] ?? {}));
+        _syncFcmTokenInBackground();
       } else {
         emit(AuthFailure(message: result['detail'] ?? 'Google login failed'));
       }
@@ -95,8 +105,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
+    // Clear FCM token from backend before logout
+    try {
+      await _api.updateMe({'fcm_token': ''});
+    } catch (_) {}
     await FcmService().clearToken();
     await _api.clearTokens();
     emit(AuthUnauthenticated());
+  }
+
+  /// Sync FCM token to backend via PUT /me in background.
+  /// Retries getting the token if not available yet.
+  void _syncFcmTokenInBackground() {
+    Future.delayed(const Duration(seconds: 2), () async {
+      try {
+        await FcmService().ensureTokenSynced();
+      } catch (e) {
+        debugPrint('FCM background sync failed: $e');
+      }
+    });
   }
 }
