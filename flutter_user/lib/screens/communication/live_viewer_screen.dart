@@ -62,8 +62,16 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
     _channelName = resp['channel_name'];
     _agoraUid = resp['agora_uid'] ?? 0;
 
-    await _initAgora();
+    // Mark as joined immediately so chat/gifts are visible
+    setState(() => _joined = true);
     _startPolling();
+
+    // Try Agora connection (may fail with dev tokens — that's OK, chat still works)
+    try {
+      await _initAgora();
+    } catch (e) {
+      debugPrint('Agora init failed (chat still works): $e');
+    }
   }
 
   Future<void> _initAgora() async {

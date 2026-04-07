@@ -40,6 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
   String? _myUserId;
   int _seconds = 0;
   Timer? _timer;
+  Timer? _pollTimer;
   bool _connected = false;
   int _userMessageCount = 0;
   int _remainingMessages = 0;
@@ -76,15 +77,29 @@ class _ChatScreenState extends State<ChatScreen> {
             _scrollToBottom();
             break;
           case 'session_info':
+            final isActive = data['status'] == 'active';
             setState(() {
-              _connected = data['status'] == 'active';
+              _connected = isActive;
               _userMessageCount = data['user_message_count'] ?? 0;
               _remainingMessages = (data['session_message_limit'] ?? widget.sessionMessageLimit) - _userMessageCount;
             });
-            if (_connected) _startTimer();
+            if (isActive) {
+              _startTimer();
+              _pollTimer?.cancel(); // stop polling once connected
+            } else {
+              // Session is still "waiting" — poll backend to detect acceptance
+              _startPollingForAcceptance();
+            }
+            break;
+          case 'session_accepted':
+            // Backend pushed acceptance notification through WS
+            setState(() => _connected = true);
+            _startTimer();
+            _pollTimer?.cancel();
             break;
           case 'session_ended':
             _timer?.cancel();
+            _pollTimer?.cancel();
             if (mounted) {
               showDialog(
                 context: context,
@@ -110,7 +125,32 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  void _startPollingForAcceptance() {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
+      try {
+        final resp = await _api.getChatSession(widget.sessionId);
+        final status = resp['status'] ?? '';
+        if (status == 'active') {
+          _pollTimer?.cancel();
+          // Reconnect WS to get active session
+          _channel?.sink.close();
+          setState(() => _connected = true);
+          _startTimer();
+          _connect(); // reconnect WS which will now get active status
+        } else if (status == 'expired' || status == 'cancelled') {
+          _pollTimer?.cancel();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Chat request $status'), backgroundColor: AppColors.error));
+            Navigator.pop(context);
+          }
+        }
+      } catch (_) {}
+    });
+  }
+
   void _startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() => _seconds++);
     });
@@ -226,6 +266,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _pollTimer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();

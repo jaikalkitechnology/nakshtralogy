@@ -148,6 +148,16 @@ def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_as
         )
 
 
+async def notify_session_accepted(session_id: str):
+    """Push session_accepted event to all connected clients in a chat session."""
+    await _broadcast(session_id, {
+        "type": "session_accepted",
+        "session_id": session_id,
+        "status": "active",
+        "timestamp": datetime.utcnow().isoformat(),
+    })
+
+
 @router.websocket("/ws/chat/{session_id}")
 async def websocket_chat(
     websocket: WebSocket,

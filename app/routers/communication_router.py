@@ -1088,6 +1088,12 @@ def chat_action(
             session.session_expires_at = datetime.utcnow() + timedelta(
                 hours=session.session_validity_hours or 24
             )
+        # Notify user through WebSocket that session is accepted
+        from app.routers.ws_chat import notify_session_accepted
+        try:
+            asyncio.get_event_loop().create_task(notify_session_accepted(session.id))
+        except Exception:
+            pass
         # FCM push to user that chat is accepted
         chat_user = db.query(User).filter(User.id == session.user_id).first()
         if chat_user and chat_user.fcm_token:
