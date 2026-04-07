@@ -60,58 +60,91 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> {
       await Permission.microphone.request();
     }
 
-    _engine = createAgoraRtcEngine();
-    await _engine!.initialize(RtcEngineContext(
-      appId: widget.agoraAppId,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
-    ));
+    try {
+      _engine = createAgoraRtcEngine();
+      await _engine!.initialize(RtcEngineContext(
+        appId: widget.agoraAppId,
+        channelProfile: ChannelProfileType.channelProfileCommunication,
+      ));
 
-    _engine!.registerEventHandler(RtcEngineEventHandler(
-      onJoinChannelSuccess: (connection, elapsed) {
-        debugPrint('Astro joined channel: ${connection.channelId}');
-      },
-      onUserJoined: (connection, remoteUid, elapsed) {
-        debugPrint('Remote user joined: $remoteUid');
-        setState(() {
-          _remoteJoined = true;
-          _remoteUid = remoteUid;
-        });
-        _startTimer();
-      },
-      onUserOffline: (connection, remoteUid, reason) {
-        debugPrint('Remote user left: $remoteUid');
-        setState(() {
-          _remoteJoined = false;
-          _remoteUid = null;
-        });
-        _endCall();
-      },
-      onError: (err, msg) {
-        debugPrint('Agora error: $err $msg');
-      },
-    ));
+      _engine!.registerEventHandler(RtcEngineEventHandler(
+        onJoinChannelSuccess: (connection, elapsed) {
+          debugPrint('Astro joined channel: ${connection.channelId}');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Joined channel ${connection.channelId}'),
+              backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
+            ));
+          }
+        },
+        onUserJoined: (connection, remoteUid, elapsed) {
+          debugPrint('Remote user joined: $remoteUid');
+          setState(() {
+            _remoteJoined = true;
+            _remoteUid = remoteUid;
+          });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: const Text('User connected! Call active'),
+              backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
+            ));
+          }
+        },
+        onUserOffline: (connection, remoteUid, reason) {
+          debugPrint('Remote user left: $remoteUid reason=$reason');
+          setState(() { _remoteJoined = false; _remoteUid = null; });
+          _endCall();
+        },
+        onConnectionStateChanged: (connection, state, reason) {
+          debugPrint('Agora connection: state=$state reason=$reason');
+          if (mounted && state == ConnectionStateType.connectionStateFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Connection failed: $reason. Check Agora credentials.'),
+              backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
+            ));
+          }
+        },
+        onError: (err, msg) {
+          debugPrint('Agora error: $err $msg');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Agora error: $err${msg.isNotEmpty ? " — $msg" : ""}'),
+              backgroundColor: AppColors.error, duration: const Duration(seconds: 4),
+            ));
+          }
+        },
+      ));
 
-    if (widget.callType == 'video') {
-      await _engine!.enableVideo();
-      await _engine!.startPreview();
-    } else {
-      await _engine!.disableVideo();
+      if (widget.callType == 'video') {
+        await _engine!.enableVideo();
+        await _engine!.startPreview();
+      } else {
+        await _engine!.disableVideo();
+      }
+      await _engine!.setDefaultAudioRouteToSpeakerphone(false);
+
+      // Join as UID=2 (astrologer/receiver)
+      await _engine!.joinChannel(
+        token: widget.agoraToken,
+        channelId: widget.channelName,
+        uid: 2,
+        options: const ChannelMediaOptions(
+          autoSubscribeAudio: true,
+          autoSubscribeVideo: true,
+          publishMicrophoneTrack: true,
+          publishCameraTrack: true,
+          clientRoleType: ClientRoleType.clientRoleBroadcaster,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Agora init error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Agora init failed: $e'),
+          backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
+        ));
+      }
     }
-    await _engine!.setDefaultAudioRouteToSpeakerphone(false);
-
-    // Join as UID=2 (astrologer/receiver)
-    await _engine!.joinChannel(
-      token: widget.agoraToken,
-      channelId: widget.channelName,
-      uid: 2,
-      options: const ChannelMediaOptions(
-        autoSubscribeAudio: true,
-        autoSubscribeVideo: true,
-        publishMicrophoneTrack: true,
-        publishCameraTrack: true,
-        clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      ),
-    );
   }
 
   void _startTimer() {

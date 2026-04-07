@@ -88,17 +88,24 @@ class _CallScreenState extends State<CallScreen> {
       await Permission.microphone.request();
     }
 
-    // Create RTC engine
-    _engine = createAgoraRtcEngine();
-    await _engine!.initialize(RtcEngineContext(
-      appId: widget.agoraAppId,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
-    ));
+    try {
+      // Create RTC engine
+      _engine = createAgoraRtcEngine();
+      await _engine!.initialize(RtcEngineContext(
+        appId: widget.agoraAppId,
+        channelProfile: ChannelProfileType.channelProfileCommunication,
+      ));
 
     // Register event handlers
     _engine!.registerEventHandler(RtcEngineEventHandler(
       onJoinChannelSuccess: (connection, elapsed) {
         debugPrint('User joined channel: ${connection.channelId}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Joined channel ${connection.channelId}'),
+            backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
+          ));
+        }
       },
       onUserJoined: (connection, remoteUid, elapsed) {
         debugPrint('Remote user joined: $remoteUid');
@@ -107,8 +114,15 @@ class _CallScreenState extends State<CallScreen> {
           _remoteUid = remoteUid;
           _status = 'active';
         });
+        _pollTimer?.cancel();
         _startTimer();
         _startMaxTimer();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Connected! Call active'),
+            backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
+          ));
+        }
       },
       onUserOffline: (connection, remoteUid, reason) {
         debugPrint('Remote user left: $remoteUid reason=$reason');
@@ -116,11 +130,25 @@ class _CallScreenState extends State<CallScreen> {
           _remoteJoined = false;
           _remoteUid = null;
         });
-        // Astrologer disconnected, end call
         _endCall();
+      },
+      onConnectionStateChanged: (connection, state, reason) {
+        debugPrint('Agora connection: state=$state reason=$reason');
+        if (mounted && state == ConnectionStateType.connectionStateFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Connection failed: $reason. Check Agora credentials.'),
+            backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
+          ));
+        }
       },
       onError: (err, msg) {
         debugPrint('Agora error: $err $msg');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Agora error: $err${msg.isNotEmpty ? " — $msg" : ""}'),
+            backgroundColor: AppColors.error, duration: const Duration(seconds: 4),
+          ));
+        }
       },
     ));
 
@@ -146,6 +174,15 @@ class _CallScreenState extends State<CallScreen> {
         clientRoleType: ClientRoleType.clientRoleBroadcaster,
       ),
     );
+    } catch (e) {
+      debugPrint('Agora init error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Agora init failed: $e'),
+          backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
+        ));
+      }
+    }
   }
 
   void _startTimer() {
