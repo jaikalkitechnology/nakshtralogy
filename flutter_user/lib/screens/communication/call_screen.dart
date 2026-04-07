@@ -41,6 +41,7 @@ class _CallScreenState extends State<CallScreen> {
   int _seconds = 0;
   Timer? _timer;
   Timer? _maxTimer;
+  Timer? _pollTimer;
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -52,6 +53,31 @@ class _CallScreenState extends State<CallScreen> {
   void initState() {
     super.initState();
     _initAgora();
+    _startPollingCallStatus();
+  }
+
+  /// Poll backend every 2s to detect when call becomes active/completed.
+  /// This handles the case where Agora onUserJoined doesn't fire (dev tokens).
+  void _startPollingCallStatus() {
+    _pollTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
+      if (_status == 'active' || _ending) { _pollTimer?.cancel(); return; }
+      try {
+        final resp = await _api.getCall(widget.callId);
+        final callStatus = resp['status'] ?? '';
+        if (callStatus == 'active' && _status != 'active') {
+          setState(() => _status = 'active');
+          _startTimer();
+          _startMaxTimer();
+          _pollTimer?.cancel();
+        } else if (callStatus == 'missed' || callStatus == 'rejected' || callStatus == 'cancelled' || callStatus == 'expired') {
+          _pollTimer?.cancel();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Call $callStatus')));
+            _endCall();
+          }
+        }
+      } catch (_) {}
+    });
   }
 
   Future<void> _initAgora() async {
@@ -218,6 +244,7 @@ class _CallScreenState extends State<CallScreen> {
   void dispose() {
     _timer?.cancel();
     _maxTimer?.cancel();
+    _pollTimer?.cancel();
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();

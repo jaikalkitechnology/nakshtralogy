@@ -101,8 +101,9 @@ void _navigateFromNotification(Map<String, dynamic> data) {
     return;
   }
 
-  // Chat notifications
-  if (type == 'chat_message' || type == 'chat_accepted' || type == 'chat_request') {
+  // Chat notifications — only navigate for new messages, NOT for chat_accepted
+  // (chat_accepted is handled by the existing ChatScreen via WS/polling)
+  if (type == 'chat_message') {
     final sessionId = data['session_id'];
     if (sessionId != null) {
       navigatorKey.currentState?.push(MaterialPageRoute(

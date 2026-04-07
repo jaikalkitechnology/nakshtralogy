@@ -48,6 +48,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> {
   @override
   void initState() {
     super.initState();
+    // Start timer immediately since call is already accepted
+    _startTimer();
     _initAgora();
   }
 
