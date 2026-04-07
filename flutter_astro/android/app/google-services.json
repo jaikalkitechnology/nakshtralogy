@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "nakshtralogy-astro",
-    "storage_bucket": "nakshtralogy-astro.appspot.com"
+    "project_number": "402075039713",
+    "project_id": "nakshtralogy-bf371",
+    "storage_bucket": "nakshtralogy-bf371.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000001",
+        "mobilesdk_app_id": "1:402075039713:android:3bf7ee50ff8831580704a0",
         "android_client_info": {
           "package_name": "com.nakshtralogy.astro"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "PLACEHOLDER_API_KEY_REPLACE_WITH_REAL"
+          "current_key": "AIzaSyB7Kw55pLD3swLR75DJKxRCAEJJsnpcl6E"
         }
       ],
       "services": {
