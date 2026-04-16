@@ -1,79 +1,106 @@
 # Nakshtralogy — Project Notes for Claude
 
-## Kundli System (V2 Engine)
+## Kundli System (v3 — Complete)
 
-The Vedic birth chart engine is in `app/kundli/` based on `nakshralogyV2`
-(originally from `scripts/nakshralogyV2.py` — kept there for reference).
+The Vedic astrology engine is in `app/kundli/` based on:
+- `scripts/nakshtralogy_v2.py` (265 KB — full engine with 15+ analysis functions)
+- `scripts/nakshatralogy_helper.py` (NakshtraEngine wrapper class)
+- `scripts/nakshtralogy_v3.py` (reference FastAPI router)
 
-### How Kundli Works
+### Architecture
 
-1. **Engine** (`app/kundli/engine.py`) — direct copy of `nakshralogyV2.py`.
-   Uses `pyswisseph` with Lahiri ayanamsa for sidereal planetary positions.
-   Falls back to built-in VSOP87 (~0.5° accuracy) if pyswisseph is missing.
-   Key functions:
-   - `calculate_chart(name, gender, dob, tob, place)` → returns `(pdata, all_divs)`
-     - `pdata`: dict of planet → {lon, rashi_idx, deg_rashi, nak_idx, pada,
-       nak_name, nak_lord, nav_rashi, dignity, vakri, combust, vargottam}
-     - `all_divs`: dict of planet → {D: sign_idx} for 20 divisional charts
-   - `vimshottari_dasha(moon_sid_lon, birth_jd)` → `(dashas, balance, lord)`
-     - 6-level tree: MD → AD → PD → SD → PRD → DD
-   - `moola_dasha_lagna(pdata, birth_jd)` → `(dashas, balance, info)`
-     - Lagna Kendradi Graha Dasha (PVR Narasimha Rao method)
-     - Uses D-60 (Shashtyamsha) for cycle ordering
+```
+app/kundli/
+├── __init__.py      — exposes `engine` singleton + `NakshtraEngine` class
+├── engine.py        — direct copy of nakshtralogy_v2.py (with _USE_SWEPH alias)
+└── helper.py        — NakshtraEngine class with 14 analysis methods
+```
 
-2. **Helper** (`app/kundli/helper.py`) — wraps the engine to produce
-   clean JSON-serializable data (no print statements). Key functions:
-   - `generate_full_kundli(name, gender, dob, tob, place)` — one-shot bundle
-   - `get_planet_positions(pdata)` — formatted planet table
-   - `get_kundli_grid(pdata, base)` — 12-house grid for lagna/moon/sun charts
-   - `get_divisional_charts(all_divs)` — all 20 D-charts table
-   - `get_divisional_grid(all_divs, division)` — single D-chart kundli grid
-   - `get_vimshottari_dasha(pdata, jd, max_depth)` — flattened tree
-   - `get_moola_dasha(pdata, jd, max_depth)` — flattened tree
-   - Flattened dasha nodes: `{planet, years, start_date, end_date, level, children}`
-   - `level`: 1=MD, 2=AD, 3=PD, 4=SD, 5=PRD, 6=DD
+### NakshtraEngine API (via `app.kundli.engine`)
 
-3. **Router** (`app/routers/kundli_router.py`) — all endpoints at `/api/v1/kundli/`:
-   - `POST /compute` — compute from raw birth data (no DB save)
-   - `GET /{chart_id}` — full kundli bundle (caches in chart.chart_json)
-   - `GET /{chart_id}/summary` — lagna/moon/sun quick card
-   - `GET /{chart_id}/planets` — planet positions table
-   - `GET /{chart_id}/{lagna|moon|sun}` — kundli grid for that base
-   - `GET /{chart_id}/divisionals` — all 20 D-charts summary
-   - `GET /{chart_id}/divisional/{d}` — single D-chart grid (d ∈ D_CHART_ORDER)
-   - `GET /{chart_id}/dasha/vimshottari?depth=3` — Vimshottari tree
-   - `GET /{chart_id}/dasha/moola?depth=3` — Moola dasha tree
+| Method | Returns |
+|--------|---------|
+| `get_chart(name, gender, dob, tob, place)` | chart dict with `planets`, `divisionals`, `lagna`, `birth_jd`, `_pdata` |
+| `get_vimshottari(pdata, jd, levels)` | Vimshottari dasha tree (1-6 levels deep) |
+| `get_moola_dasha(pdata, jd, levels)` | Lagna Kendradi Graha dasha tree |
+| `get_gochar(date, moon_sign)` | 12-rashi transit scores |
+| `get_gochar_range(start, end, moon_sign)` | daily scores over date range |
+| `get_dosh_analysis(pdata)` | 33 doshas with probability scores |
+| `get_yoga_analysis(pdata)` | 51 yogas with strength scores |
+| `get_shadbala(pdata)` | 6-source planet strength (rupas + /100) |
+| `get_ashtakavarga(pdata)` | BAV + SAV for all 7 planets |
+| `get_aspect_matrix(pdata)` | Graha Drishti + Rashi Drishti |
+| `get_life_areas(pdata)` | Career/Wealth/Marriage/Health/Spirituality scores |
+| `get_bhava_strength(pdata)` | 12-house strength |
+| `get_dasha_activation(pdata, jd, query_date)` | active yogas/doshas in current MD/AD |
+| `get_chakra_health(pdata)` | 7-chakra risk/benefit analysis |
+| `get_full_analysis(...)` | one-call everything |
+
+### Router (`/api/v1/kundli/`) — 16 endpoints
+
+All envelope responses: `{status, data, meta?}`
+
+- `POST /compute` — raw birth data, no DB
+- `GET /{chart_id}` — full analysis
+- `GET /{chart_id}/chart` — chart only
+- `GET /{chart_id}/dashboard` — lightweight bundle
+- `GET /{chart_id}/dasha/vimshottari?levels=N`
+- `GET /{chart_id}/dasha/moola?levels=N`
+- `GET /gochar/today`, `/gochar/date/{YYYY-MM-DD}`, `POST /gochar/range`
+- `GET /{chart_id}/analysis/dosh`
+- `GET /{chart_id}/analysis/yoga`
+- `GET /{chart_id}/analysis/shadbala`
+- `GET /{chart_id}/analysis/ashtakavarga`
+- `GET /{chart_id}/analysis/aspects`
+- `GET /{chart_id}/analysis/life-areas`
+- `GET /{chart_id}/analysis/bhava`
+- `GET /{chart_id}/analysis/dasha-activation?query_date=DD/MM/YYYY`
+- `GET /{chart_id}/analysis/chakra-health`
+- `GET /{chart_id}/analysis/complete` — all analyses bundled
 
 ### Flutter Astro Integration
 
 `flutter_astro/lib/screens/kundli/` contains:
-- `kundli_viewer_screen.dart` — main screen with 6 tabs (Summary, Planets,
-  Kundli, Divisions, Vimshottari, Moola Dasha)
-- `widgets/kundli_grid_widget.dart` — North-Indian 4x4 kundli graphic
-- `widgets/planet_positions_widget.dart` — planet details cards
-- `widgets/divisional_charts_widget.dart` — D-1..D-60 list + drill-down
-- `widgets/dasha_tree_widget.dart` — hierarchical MD → AD → PD navigation
-  with breadcrumb, "RUNNING" badge for current period, past/future styling
+- `kundli_viewer_screen.dart` — 16-tab viewer
+- `widgets/`:
+  - `_section_loader.dart` — shared loader + card components
+  - `planet_positions_widget.dart`, `kundli_grid_widget.dart`
+  - `divisional_charts_widget.dart`, `dasha_tree_widget.dart`
+  - `dosh_widget.dart`, `yoga_widget.dart`, `shadbala_widget.dart`
+  - `ashtakavarga_widget.dart`, `aspects_widget.dart`, `life_areas_widget.dart`
+  - `bhava_widget.dart`, `chakra_health_widget.dart`
+  - `dasha_activation_widget.dart`, `gochar_widget.dart`
 
-The "View Kundli" button is wired in `client_charts_screen.dart` — tap a
-chart card to open the full kundli viewer.
+Entry point: tap a chart in `client_charts_screen.dart` → opens `KundliViewerScreen`.
 
-### Dasha Drill-Down Flow
+### Dasha Drill-Down
 
-In `DashaTreeWidget`:
-- Initial view shows MDs (level 1)
-- Tap an MD → pushes new level showing its ADs (level 2)
-- Tap an AD → pushes new level showing its PDs (level 3)
-- Back button pops the stack, breadcrumb shows MD › AD › PD
-- Uses the `children` array in each dasha node (pre-flattened by helper)
-- Default depth = 3 (MD+AD+PD); increase with `?depth=4` for SD/PRD/DD
+`DashaTreeWidget` supports infinite depth:
+- Initial view: Mahadashas (MD)
+- Tap MD → Antardashas (AD)
+- Tap AD → Pratyantardashas (PD)
+- Tap PD → Sookshmadashas (SD) ... up to 6 levels
+- Breadcrumb (`MD › AD › PD`) + back button
+- "RUNNING" badge on current period (date-aware)
+- Past periods greyed out
+- Per-planet color coding
+
+### Response Shapes
+
+- `chart.planets`: `{Sun: {sign, sign_full, sign_idx, degree, longitude, nakshatra, nak_lord, pada, dignity, vakri, combust, vargottam}}`
+- `chart.divisionals`: `{Sun: {D1: "Ar", D2: "Ta", ..., D60: "Pi"}}`
+- `vimshottari/moola.dashas`: list of `{planet, years, start, end, sub: [...]}`
+- `dosh_analysis`: `{total, active, doshas: [...], top: [...]}`
+- `yoga_analysis`: same shape as dosh
+- `shadbala.planets`: `{Sun: {score_100, total_rupas, components: {...}}}`
+- `ashtakavarga`: `{sav: {Ar: 28, ...}, sav_total: 337, planets_bav: {Sun: {bav_per_sign, total_rekha, natal_sign_score}}}`
+- `aspect_matrix`: `{graha_drishti, rashi_drishti, lagna_aspects_received}`
+- `life_areas`: `{career: {score, grade, factors}, wealth: {...}, ...}`
+- `bhava_strength`: `{H01: {house, sign, lord, sav, score, occupants}, H02: ...}`
+- `chakra_health`: `{overall_score, overall_status, chakras: [{number, name, beej, color, body_parts, chakra_score, chakra_status, planets: [...]}]}`
 
 ### D-Charts Supported
 
-`D_CHART_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27,
-30, 40, 45, 60]` — all 20 classical BPHS divisional charts.
+`[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60]`
 
-### Dignity Calculation
-
-Engine checks: Exaltation, Debilitation, Moolatrikona, Own sign, Friend,
-Enemy, Neutral — based on classical tables in `nakshralogyV2.py`.
+All 20 classical BPHS divisional charts.

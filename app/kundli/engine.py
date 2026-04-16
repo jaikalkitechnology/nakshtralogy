@@ -18,6 +18,9 @@ try:
 except ImportError:
     SWE_AVAILABLE = False
 
+# Alias used by the helper layer (keeps helper code unchanged)
+_USE_SWEPH = SWE_AVAILABLE
+
 import math
 
 # ═══════════════════════════════════════════════════════════════════
@@ -594,6 +597,2878 @@ _GOCHAR_WEIGHT = {
     "Sun":1.0, "Moon":1.5, "Mars":1.2, "Mercury":0.8,
     "Jupiter":2.0, "Venus":1.0, "Saturn":2.0, "Rahu":1.2, "Ketu":1.0
 }
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  DOSH ANALYSIS MODULE
+#  Calculates 33 dosha presence as a probability (0–100%)
+#  Sources: BPHS, Phaladeepika, Muhurta Chintamani, Saravali
+#
+#  SCORE BANDS:
+#    0%      = Dosh completely absent
+#    1–30%   = Mild / trace presence
+#    31–60%  = Moderate (standard dosh)
+#    61–80%  = Strong (significant impact)
+#    81–100% = Severe (full dosh, no cancellations)
+# ═══════════════════════════════════════════════════════════════════
+
+_MRITYU_BHAGA = {
+    "Sun":     {0:20,1:9, 2:12,3:6, 4:3, 5:27,6:25,7:18,8:22,9:2, 10:26,11:15},
+    "Moon":    {0:26,1:12,2:13,3:25,4:24,5:11,6:26,7:14,8:13,9:25,10:5, 11:12},
+    "Mars":    {0:2, 1:28,2:10,3:17,4:3, 5:28,6:2, 7:18,8:19,9:28,10:3, 11:22},
+    "Mercury": {0:18,1:9, 2:17,3:22,4:3, 5:8, 6:20,7:19,8:15,9:25,10:7, 11:13},
+    "Jupiter": {0:17,1:11,2:22,3:6, 4:13,5:6, 6:23,7:20,8:14,9:28,10:14,11:13},
+    "Venus":   {0:23,1:11,2:17,3:11,4:22,5:4, 6:24,7:21,8:18,9:14,10:19,11:6},
+    "Saturn":  {0:23,1:9, 2:9, 3:3, 4:9, 5:12,6:24,7:22,8:19,9:3, 10:19,11:3},
+}
+_GANDMOOL_NAK  = {0, 9, 10, 17, 18, 26}
+_GANDANTA_NAK  = {9, 17, 26}
+_NADI = {}
+for _n in [0,7,9,13,14,20,21,22,26]: _NADI[_n] = 0
+for _n in [1,6,10,12,15,19,23,25]:   _NADI[_n] = 1
+for _n in [2,3,4,5,8,11,16,17,18,24]: _NADI[_n] = 2
+
+def _dh(ps, rs): return (ps - rs) % 12 + 1
+def _jup_asp(js, ts): return _dh(ts, js) in {5, 7, 9}
+def _sat_asp(ss, ts): return _dh(ts, ss) in {3, 7, 10}
+def _mar_asp(ms, ts): return _dh(ts, ms) in {4, 7, 8}
+def _clp(v): return max(0.0, min(100.0, v))
+def _gs(pd, p): return pd.get(p, {}).get("rashi_idx", 0)
+def _gd(pd, p): return pd.get(p, {}).get("deg_rashi", 0.0)
+def _dig(pd, p): return pd.get(p, {}).get("dignity", "Normal")
+
+def _in_arc(sign, start, end):
+    s, e = start % 12, end % 12
+    if s < e: return s <= sign <= e
+    return sign >= s or sign <= e
+
+def _orb_between(pd, p1, p2):
+    l1 = pd.get(p1,{}).get("lon",0); l2 = pd.get(p2,{}).get("lon",0)
+    d = abs(l1-l2); return min(d, 360-d)
+
+SIGN_LORD_D = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+               6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
+
+def _res(name, cat, score, desc, factors, cancels):
+    sev = ("None" if score < 5 else "Mild" if score < 31 else
+           "Moderate" if score < 61 else "Strong" if score < 81 else "Severe")
+    return {"name":name,"category":cat,"score":round(_clp(score),1),
+            "present":score>5,"severity":sev,"description":desc,
+            "factors":factors,"cancels":cancels}
+
+
+def analyze_all_dosh(pdata: dict) -> list:
+    """
+    Analyze 33 doshas from pdata dict.
+    Each planet key must have: rashi_idx, deg_rashi, lon, dignity, vakri, combust, nak_idx, pada
+    Returns list of dosh result dicts.
+    """
+    L  = _gs(pdata,"Lagna"); Su = _gs(pdata,"Sun");  Mo = _gs(pdata,"Moon")
+    Ma = _gs(pdata,"Mars");  Me = _gs(pdata,"Mercury"); Ju = _gs(pdata,"Jupiter")
+    Ve = _gs(pdata,"Venus"); Sa = _gs(pdata,"Saturn");  Ra = _gs(pdata,"Rahu")
+    Ke = _gs(pdata,"Ketu")
+    mo_nak = pdata.get("Moon",{}).get("nak_idx",0)
+    mo_pada = pdata.get("Moon",{}).get("pada",1)
+    H = {p: _dh(_gs(pdata,p), L)
+         for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]}
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    res = []
+
+    # ── 1. KAAL SARP DOSH ────────────────────────────────────────
+    p7 = [Su,Mo,Ma,Me,Ju,Ve,Sa]
+    arc_rk = [_in_arc(p,Ra,Ke) for p in p7]
+    arc_kr = [_in_arc(p,Ke,Ra) for p in p7]
+    in_one = all(arc_rk) or all(arc_kr)
+    n_trap = min(sum(arc_rk), sum(arc_kr))
+    ks_f, ks_c, ks_s = [], [], 0.0
+    if in_one: ks_s=85.0; ks_f.append("All 7 planets between Rahu–Ketu")
+    elif n_trap>=6: ks_s=55.0; ks_f.append(f"{n_trap}/7 planets in arc")
+    elif n_trap>=4: ks_s=25.0; ks_f.append(f"{n_trap}/7 planets in arc (partial)")
+    if ks_s>0:
+        if _in_arc(L,Ra,Ke) or _in_arc(L,Ke,Ra): ks_s+=10; ks_f.append("Lagna inside arc")
+        if _in_arc(Mo,Ra,Ke) or _in_arc(Mo,Ke,Ra): ks_s+=8; ks_f.append("Moon inside arc")
+        if not (_in_arc(Ju,Ra,Ke) or _in_arc(Ju,Ke,Ra)): ks_s-=15; ks_c.append("Jupiter outside arc (protection)")
+    res.append(_res("Kaal Sarp Dosh","Karmic/Rahu-Ketu",ks_s,"All planets hemmed between Rahu–Ketu",ks_f,ks_c))
+
+    # ── 2. PITRA DOSH ────────────────────────────────────────────
+    pt_f,pt_c,pt_s=[], [],0.0
+    if Su==Ra: pt_s+=50; pt_f.append("Sun conjunct Rahu")
+    elif Su==Ke: pt_s+=45; pt_f.append("Sun conjunct Ketu")
+    if H["Sun"] in {8,12}: pt_s+=20; pt_f.append(f"Sun in H{H['Sun']}")
+    for p in ["Rahu","Ketu","Saturn","Mars"]:
+        if H[p]==9: pt_s+=25; pt_f.append(f"9th house: {p}")
+    if _sat_asp(Sa,Su): pt_s+=15; pt_f.append("Saturn aspects Sun")
+    if _jup_asp(Ju,Su): pt_s-=20; pt_c.append("Jupiter aspects Sun")
+    res.append(_res("Pitra Dosh","Karmic/Rahu-Ketu",pt_s,"Ancestral karma: Sun/9th afflicted",pt_f,pt_c))
+
+    # ── 3. GRAHAN DOSH ───────────────────────────────────────────
+    gr_f,gr_c,gr_s=[],[],0.0
+    for lum in ["Sun","Moon"]:
+        for nd in ["Rahu","Ketu"]:
+            if _gs(pdata,lum)==_gs(pdata,nd):
+                orb=_orb_between(pdata,lum,nd)
+                if orb<=6: gr_s+=55; gr_f.append(f"{lum}+{nd} orb={orb:.1f}° (tight)")
+                elif orb<=12: gr_s+=30; gr_f.append(f"{lum}+{nd} orb={orb:.1f}°")
+    if _jup_asp(Ju,Mo): gr_s-=20; gr_c.append("Jupiter aspects Moon")
+    res.append(_res("Grahan Dosh","Karmic/Rahu-Ketu",gr_s,"Sun/Moon conjunct Rahu or Ketu",gr_f,gr_c))
+
+    # ── 4. GURU CHANDAL DOSH ─────────────────────────────────────
+    gc_f,gc_c,gc_s=[],[],0.0
+    if Ju==Ra: gc_s=70; gc_f.append("Jupiter conjunct Rahu")
+    elif Ju==Ke: gc_s=65; gc_f.append("Jupiter conjunct Ketu")
+    elif _dh(Ju,Ra)==7 or _dh(Ju,Ke)==7: gc_s=30; gc_f.append("Jupiter aspected by Ra/Ke")
+    if gc_s>0:
+        dg=_dig(pdata,"Jupiter")
+        if dg=="Debilitated": gc_s+=20; gc_f.append("Jupiter debilitated")
+        elif dg in ("Exalted","Own"): gc_s-=20; gc_c.append(f"Jupiter {dg}")
+    res.append(_res("Guru Chandal Dosh","Karmic/Rahu-Ketu",gc_s,"Jupiter corrupted by Rahu/Ketu",gc_f,gc_c))
+
+    # ── 5. SHRAPIT DOSH ──────────────────────────────────────────
+    sr_f,sr_c,sr_s=[],[],0.0
+    if Sa==Ra: sr_s=75; sr_f.append("Saturn conjunct Rahu")
+    elif _dh(Sa,Ra)==7: sr_s=30; sr_f.append("Saturn opposite Rahu")
+    if sr_s>0 and H["Saturn"] in {1,7}: sr_s+=15; sr_f.append(f"In H{H['Saturn']}")
+    if sr_s>0 and (_jup_asp(Ju,Sa) or Ju==Sa): sr_s-=20; sr_c.append("Jupiter with/aspects Saturn")
+    res.append(_res("Shrapit Dosh","Karmic/Rahu-Ketu",sr_s,"Saturn conjunct Rahu",sr_f,sr_c))
+
+    # ── 6. ANGARAK DOSH ──────────────────────────────────────────
+    ag_f,ag_c,ag_s=[],[],0.0
+    if Ma==Ra: ag_s=70; ag_f.append("Mars conjunct Rahu")
+    elif _mar_asp(Ma,Ra): ag_s=25; ag_f.append("Mars aspects Rahu")
+    if ag_s>0 and H["Mars"] in {1,4,7,8}: ag_s+=15; ag_f.append(f"In H{H['Mars']}")
+    if ag_s>0 and _jup_asp(Ju,Ma): ag_s-=15; ag_c.append("Jupiter aspects Mars")
+    res.append(_res("Angarak Dosh","Karmic/Rahu-Ketu",ag_s,"Mars conjunct Rahu: anger, accidents",ag_f,ag_c))
+
+    # ── 7. MANGAL DOSH ───────────────────────────────────────────
+    mg_f,mg_c,mg_s=[],[],0.0
+    h_ma_L=H["Mars"]; h_ma_Mo=_dh(Ma,Mo); h_ma_Ve=_dh(Ma,Ve)
+    if h_ma_L in {1,2,4,7,8,12}:
+        mg_s+=50; mg_f.append(f"Mars H{h_ma_L} from Lagna")
+        if h_ma_L in {1,7,8}: mg_s+=15; mg_f.append("Worst house (1/7/8)")
+    if h_ma_Mo in {2,4,7,8,12}: mg_s+=15; mg_f.append(f"Mars H{h_ma_Mo} from Moon")
+    if h_ma_Ve in {2,4,7,8,12}: mg_s+=10; mg_f.append(f"Mars H{h_ma_Ve} from Venus")
+    if mg_s>0:
+        dg=_dig(pdata,"Mars")
+        if dg in ("Own","Exalted"): mg_s*=0.5; mg_c.append(f"Mars {dg} (50% reduction)")
+        if L in {0,7,9,3}: mg_s-=15; mg_c.append(f"Lagna {SS[L]} partial cancel")
+        if _jup_asp(Ju,Ma): mg_s-=20; mg_c.append("Jupiter aspects Mars")
+    res.append(_res("Mangal Dosh","Planet-Based",mg_s,"Mars in 1/2/4/7/8/12 from Lagna",mg_f,mg_c))
+
+    # ── 8. SHANI DOSH ────────────────────────────────────────────
+    sn_f,sn_c,sn_s=[],[],0.0
+    if H["Saturn"] in {1,3,7,10,12}:
+        sn_s+=45; sn_f.append(f"Saturn H{H['Saturn']} from Lagna")
+        if H["Saturn"] in {1,7,10}: sn_s+=15; sn_f.append("Angle (worse)")
+    dg=_dig(pdata,"Saturn")
+    if dg=="Exalted": sn_s-=25; sn_c.append("Saturn exalted (Li)")
+    elif dg=="Own": sn_s-=20; sn_c.append("Saturn own sign")
+    elif dg=="Debilitated": sn_s+=20; sn_f.append("Saturn debilitated")
+    if _jup_asp(Ju,Sa): sn_s-=15; sn_c.append("Jupiter aspects Saturn")
+    res.append(_res("Shani Dosh","Planet-Based",sn_s,"Saturn in bad houses: delays, obstacles",sn_f,sn_c))
+
+    # ── 9. CHANDRA DOSH ──────────────────────────────────────────
+    cd_f,cd_c,cd_s=[],[],0.0
+    if H["Moon"] in {6,8,12}: cd_s+=40; cd_f.append(f"Moon H{H['Moon']}")
+    if _dig(pdata,"Moon")=="Debilitated": cd_s+=25; cd_f.append("Moon debilitated (Sc)")
+    mal_w_mo=[p for p in ["Saturn","Mars","Rahu","Ketu"] if _gs(pdata,p)==Mo]
+    if mal_w_mo: cd_s+=15*len(mal_w_mo); cd_f.append(f"Moon conjunct {'+'.join(mal_w_mo)}")
+    if _jup_asp(Ju,Mo): cd_s-=20; cd_c.append("Jupiter aspects Moon")
+    if _dig(pdata,"Moon") in ("Exalted","Own"): cd_s-=20; cd_c.append("Moon exalted/own")
+    res.append(_res("Chandra Dosh","Planet-Based",cd_s,"Moon afflicted: mind, mother, emotions",cd_f,cd_c))
+
+    # ── 10. SURYA DOSH ───────────────────────────────────────────
+    sd_f,sd_c,sd_s=[],[],0.0
+    if H["Sun"] in {6,8,12}: sd_s+=40; sd_f.append(f"Sun H{H['Sun']}")
+    if _dig(pdata,"Sun")=="Debilitated": sd_s+=25; sd_f.append("Sun debilitated (Li)")
+    if Su==Sa or _sat_asp(Sa,Su): sd_s+=20; sd_f.append("Saturn with/aspects Sun")
+    if Su==Ra or Su==Ke: sd_s+=15; sd_f.append("Sun with Rahu/Ketu")
+    if _dig(pdata,"Sun") in ("Exalted","Own"): sd_s-=20; sd_c.append("Sun exalted/own")
+    res.append(_res("Surya Dosh","Planet-Based",sd_s,"Sun afflicted: father, authority, vitality",sd_f,sd_c))
+
+    # ── 11. BUDH DOSH ────────────────────────────────────────────
+    bu_f,bu_c,bu_s=[],[],0.0
+    if H["Mercury"] in {6,8,12}: bu_s+=35; bu_f.append(f"Mercury H{H['Mercury']}")
+    if _dig(pdata,"Mercury")=="Debilitated": bu_s+=25; bu_f.append("Mercury debilitated (Pi)")
+    if pdata.get("Mercury",{}).get("combust",False): bu_s+=20; bu_f.append("Mercury combust")
+    if Me==Ra or Me==Ke: bu_s+=15; bu_f.append("Mercury with Rahu/Ketu")
+    if _dig(pdata,"Mercury") in ("Exalted","Own","Moolatrikona"): bu_s-=20; bu_c.append("Mercury strong sign")
+    res.append(_res("Budh Dosh","Planet-Based",bu_s,"Mercury afflicted: intellect, speech, siblings",bu_f,bu_c))
+
+    # ── 12. SHUKRA DOSH ──────────────────────────────────────────
+    sk_f,sk_c,sk_s=[],[],0.0
+    if H["Venus"] in {6,8,12}: sk_s+=35; sk_f.append(f"Venus H{H['Venus']}")
+    if _dig(pdata,"Venus")=="Debilitated": sk_s+=25; sk_f.append("Venus debilitated (Vi)")
+    if Ve==Ra or Ve==Ke: sk_s+=20; sk_f.append("Venus with Rahu/Ketu")
+    if Sa==Ve: sk_s+=15; sk_f.append("Saturn conjunct Venus")
+    if _dig(pdata,"Venus") in ("Exalted","Own"): sk_s-=20; sk_c.append("Venus strong sign")
+    res.append(_res("Shukra Dosh","Planet-Based",sk_s,"Venus afflicted: love, marriage, luxury",sk_f,sk_c))
+
+    # ── 13. GURU DOSH ────────────────────────────────────────────
+    gd_f,gd_c,gd_s=[],[],0.0
+    if H["Jupiter"] in {6,8,12}: gd_s+=35; gd_f.append(f"Jupiter H{H['Jupiter']}")
+    if _dig(pdata,"Jupiter")=="Debilitated": gd_s+=30; gd_f.append("Jupiter debilitated (Cp)")
+    if Ju==Ra or Ju==Ke: gd_s+=20; gd_f.append("Jupiter with Rahu/Ketu")
+    if pdata.get("Jupiter",{}).get("vakri",False) and gd_s>0: gd_s+=10; gd_f.append("Jupiter retrograde")
+    if _dig(pdata,"Jupiter") in ("Exalted","Own"): gd_s-=25; gd_c.append("Jupiter exalted/own")
+    res.append(_res("Guru Dosh","Planet-Based",gd_s,"Jupiter afflicted: wisdom, children, husband",gd_f,gd_c))
+
+    # ── 14. KEMADRUMA DOSH ───────────────────────────────────────
+    km_f,km_c,km_s=[],[],0.0
+    p2m=(Mo+1)%12; p12m=(Mo-1)%12
+    p_non_rk={p:_gs(pdata,p) for p in ["Sun","Mars","Mercury","Jupiter","Venus","Saturn"]}
+    in2=any(s==p2m for s in p_non_rk.values())
+    in12=any(s==p12m for s in p_non_rk.values())
+    in_same=any(s==Mo for s in p_non_rk.values())
+    if not in2 and not in12:
+        km_s=60; km_f.append("No planet in 2nd or 12th from Moon")
+        if in_same: km_s-=20; km_c.append("Planet conjunct Moon")
+    elif not in2 or not in12: km_s=25; km_f.append("Planet only on one side of Moon")
+    if H["Moon"] in {1,4,7,10}: km_s-=20; km_c.append("Moon in Kendra from Lagna")
+    if _jup_asp(Ju,Mo): km_s-=20; km_c.append("Jupiter aspects Moon")
+    res.append(_res("Kemadruma Dosh","Moon/Mind",km_s,"Moon isolated: no planet in 2nd/12th",km_f,km_c))
+
+    # ── 15. VISH DOSH ────────────────────────────────────────────
+    vd_f,vd_c,vd_s=[],[],0.0
+    if Mo==Sa: vd_s=70; vd_f.append("Moon conjunct Saturn")
+    elif _sat_asp(Sa,Mo): vd_s=30; vd_f.append("Saturn aspects Moon")
+    if vd_s>0 and H["Moon"] in {1,6,8,12}: vd_s+=15; vd_f.append(f"In H{H['Moon']}")
+    if vd_s>0 and _dig(pdata,"Moon")=="Debilitated": vd_s+=15; vd_f.append("Moon debilitated")
+    if _jup_asp(Ju,Mo) and vd_s>0: vd_s-=20; vd_c.append("Jupiter aspects Moon")
+    res.append(_res("Vish Dosh","Moon/Mind",vd_s,"Moon+Saturn: poisoned mind, depression",vd_f,vd_c))
+
+    # ── 16. DARIDRA DOSH ─────────────────────────────────────────
+    dr_f,dr_c,dr_s=[],[],0.0
+    ll=SIGN_LORD_D.get(L,"Sun"); ll_h=_dh(_gs(pdata,ll),L)
+    h11l=SIGN_LORD_D.get((L+10)%12,"Sun"); h11l_h=_dh(_gs(pdata,h11l),L)
+    if ll_h in {6,8,12}: dr_s+=40; dr_f.append(f"Lagna lord ({ll}) in H{ll_h}")
+    if h11l_h in {6,8,12}: dr_s+=30; dr_f.append(f"11th lord ({h11l}) in H{h11l_h}")
+    if H["Jupiter"] in {6,8,12}: dr_s+=20; dr_f.append(f"Jupiter in H{H['Jupiter']}")
+    if _jup_asp(Ju,L): dr_s-=25; dr_c.append("Jupiter aspects Lagna")
+    res.append(_res("Daridra Dosh","Moon/Mind",dr_s,"Poverty yoga: Lagna/11th lords in dusthana",dr_f,dr_c))
+
+    # ── 17. GANDMOOL DOSH ────────────────────────────────────────
+    gm_f,gm_c,gm_s=[],[],0.0
+    nak_names={0:"Ashwini",9:"Ashlesha",10:"Magha",17:"Jyeshtha",18:"Mula",26:"Revati"}
+    if mo_nak in _GANDMOOL_NAK:
+        gm_s=55; gm_f.append(f"Moon in {nak_names.get(mo_nak,'')} (Gandmool nakshatra)")
+        if mo_nak in _GANDANTA_NAK: gm_s+=20; gm_f.append("Gandanta (sign junction, severe)")
+        if mo_pada in {1,4}: gm_s+=10; gm_f.append(f"Pada {mo_pada} (boundary pada)")
+    if gm_s>0 and _jup_asp(Ju,Mo): gm_s-=20; gm_c.append("Jupiter aspects Moon")
+    res.append(_res("Gandmool Dosh","Misc/Advanced",gm_s,"Moon in Ra/Ke/Me sign-junction nakshatras",gm_f,gm_c))
+
+    # ── 18. PAP KARTARI DOSH ─────────────────────────────────────
+    pk_f,pk_c,pk_s=[],[],0.0
+    mal_signs={_gs(pdata,p) for p in ["Saturn","Mars","Sun","Rahu","Ketu"]}
+    for p in ["Moon","Venus","Jupiter","Mercury"]:
+        ps=_gs(pdata,p); bef=(ps-1)%12; aft=(ps+1)%12
+        if bef in mal_signs and aft in mal_signs:
+            pk_s+=30; pk_f.append(f"{p} hemmed by malefics")
+    bl=(L-1)%12; al=(L+1)%12
+    if bl in mal_signs and al in mal_signs: pk_s+=35; pk_f.append("Lagna hemmed (Lagna Pap Kartari)")
+    pk_s=_clp(pk_s)
+    res.append(_res("Pap Kartari Dosh","House/Yoga",pk_s,"Benefic/Lagna hemmed between malefics",pk_f,pk_c))
+
+    # ── 19. SHAKAT DOSH ──────────────────────────────────────────
+    sh_f,sh_c,sh_s=[],[],0.0
+    h_mo_ju=_dh(Mo,Ju); h_ju_mo=_dh(Ju,Mo)
+    if h_mo_ju in {6,8} or h_ju_mo in {6,8}: sh_s=55; sh_f.append("Moon-Jupiter in 6-8 axis")
+    elif h_mo_ju in {12,2}: sh_s=25; sh_f.append("Moon-Jupiter in 2-12 axis")
+    if sh_s>0 and _jup_asp(Ju,Mo): sh_s-=15; sh_c.append("Jupiter also aspects Moon")
+    res.append(_res("Shakat Dosh","House/Yoga",sh_s,"Moon-Jupiter in 6/8 axis",sh_f,sh_c))
+
+    # ── 20. BALARISHTA DOSH ──────────────────────────────────────
+    ba_f,ba_c,ba_s=[],[],0.0
+    if H["Moon"] in {6,8,12}: ba_s+=40; ba_f.append(f"Moon H{H['Moon']}")
+    mal_k=[p for p in ["Saturn","Mars","Rahu","Ketu"] if H[p] in {1,4,7,10}]
+    if mal_k: ba_s+=15*len(mal_k); ba_f.append(f"Malefics in Kendra: {', '.join(mal_k)}")
+    ben_k=[p for p in ["Jupiter","Venus"] if H[p] in {1,4,7,10}]
+    if ben_k: ba_s-=20; ba_c.append(f"Benefics in Kendra: {', '.join(ben_k)}")
+    if H["Jupiter"] in {1,4,7,10}: ba_s-=20; ba_c.append("Jupiter in Kendra (strong)")
+    res.append(_res("Balarishta Dosh","House/Yoga",ba_s,"Child health: Moon in dusthana + malefics in Kendra",ba_f,ba_c))
+
+    # ── 21. KENDRAADHIPATI DOSH ──────────────────────────────────
+    ka_f,ka_c,ka_s=[],[],0.0
+    DUAL_L={2,5,8,11}
+    if L in DUAL_L:
+        kl={SIGN_LORD_D.get((L+h-1)%12,"Sun") for h in [1,4,7,10]}
+        nb=kl & {"Jupiter","Venus","Mercury","Moon"}
+        if nb: ka_s=30; ka_f.append(f"Natural benefics {nb} rule Kendra for {SS[L]} lagna"); ka_f.append("Mixed results in their dashas")
+    res.append(_res("Kendraadhipati Dosh","House/Yoga",ka_s,"Benefics ruling Kendra lose beneficence",ka_f,ka_c))
+
+    # ── 22. MARAKA DOSH ──────────────────────────────────────────
+    mk_f,mk_c,mk_s=[],[],0.0
+    mk_pl=[p for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"] if H[p] in {2,7}]
+    if mk_pl: mk_s+=20*len(mk_pl); mk_f.append(f"Planets in 2/7: {', '.join(mk_pl)}")
+    h2l=SIGN_LORD_D.get((L+1)%12,"Sun"); h7l=SIGN_LORD_D.get((L+6)%12,"Sun")
+    if _gs(pdata,h2l)==_gs(pdata,h7l): mk_s+=25; mk_f.append(f"2nd+7th lords ({h2l},{h7l}) together")
+    mk_s=_clp(mk_s)
+    res.append(_res("Maraka Dosh","House/Yoga",mk_s,"Planets in 2nd/7th: death inflicters",mk_f,mk_c))
+
+    # ── 23. TRIK BHAVA DOSH ──────────────────────────────────────
+    tb_f,tb_c,tb_s=[],[],0.0
+    for p in ["Saturn","Mars","Sun","Rahu","Ketu"]:
+        if H[p] in {6,8,12}:
+            add=15 if p in {"Saturn","Rahu"} else 12
+            tb_s+=add; tb_f.append(f"{p} in H{H[p]}")
+    for p in ["Jupiter","Venus"]:
+        if H[p] in {6,8,12}: tb_s+=10; tb_f.append(f"{p} in H{H[p]} (benefic)")
+    tb_s=_clp(tb_s)
+    res.append(_res("Trik Bhava Dosh","Misc/Advanced",tb_s,"Malefics in 6/8/12 accumulation",tb_f,tb_c))
+
+    # ── 24. MRITYU BHAGA DOSH ────────────────────────────────────
+    mb_f,mb_c,mb_s=[],[],0.0
+    for p,mb_map in _MRITYU_BHAGA.items():
+        ps=_gs(pdata,p); pdeg=_gd(pdata,p); crit=mb_map.get(ps,-99)
+        if crit>=0 and abs(pdeg-crit)<=1.0:
+            orb=abs(pdeg-crit)
+            add=35 if orb<=0.5 else 20
+            mb_s+=add; mb_f.append(f"{p} at {pdeg:.1f}° near Mrityu Bhaga {crit}° in {SS[ps]} (orb={orb:.1f}°)")
+    mb_s=_clp(mb_s)
+    res.append(_res("Mrityu Bhaga Dosh","Misc/Advanced",mb_s,"Planets at critical death degrees",mb_f,mb_c))
+
+    # ── 25. DAINYA DOSH ──────────────────────────────────────────
+    dy_f,dy_c,dy_s=[],[],0.0
+    for h1 in [6,8,12]:
+        l1=SIGN_LORD_D.get((L+h1-1)%12,"Sun"); s1=(L+h1-1)%12
+        for h2 in range(1,13):
+            if h2==h1: continue
+            l2=SIGN_LORD_D.get((L+h2-1)%12,"Sun"); s2=(L+h2-1)%12
+            if _gs(pdata,l1)==s2 and _gs(pdata,l2)==s1:
+                dy_s+=30; dy_f.append(f"Parivartana H{h1}({l1}) ↔ H{h2}({l2})")
+    dy_s=_clp(dy_s)
+    res.append(_res("Dainya Dosh","Misc/Advanced",dy_s,"Trik lord in Parivartana with other houses",dy_f,dy_c))
+
+    # ── 26. KHALA DOSH ───────────────────────────────────────────
+    kh_f,kh_c,kh_s=[],[],0.0
+    for h1,h2 in [(6,8),(6,12),(8,12)]:
+        l1=SIGN_LORD_D.get((L+h1-1)%12,"Sun"); l2=SIGN_LORD_D.get((L+h2-1)%12,"Sun")
+        s1=(L+h1-1)%12; s2=(L+h2-1)%12
+        if _gs(pdata,l1)==s2 and _gs(pdata,l2)==s1:
+            kh_s+=50; kh_f.append(f"Khala Parivartana H{h1}({l1}) ↔ H{h2}({l2})")
+    kh_s=_clp(kh_s)
+    res.append(_res("Khala Dosh","Misc/Advanced",kh_s,"Dusthana lord exchange (6↔8, 6↔12, 8↔12)",kh_f,kh_c))
+
+    # ── 27. VIPREET RAJ YOGA ─────────────────────────────────────
+    vr_f,vr_c,vr_s=[],[],0.0
+    for h in [6,8,12]:
+        lord=SIGN_LORD_D.get((L+h-1)%12,"Sun")
+        lh=_dh(_gs(pdata,lord),L)
+        if lh in {6,8,12} and lh!=h: vr_s+=33; vr_f.append(f"H{h} lord ({lord}) in H{lh}")
+    vr_s=_clp(vr_s)
+    res.append(_res("Vipreet Raj Yoga","Misc/Advanced",vr_s,"Trik lords in trik: misfortune reverses to fortune",vr_f,["Higher score = stronger protective yoga"]))
+
+    # ── 28. CHANDAL YOGA (variation) ─────────────────────────────
+    cy_f,cy_c,cy_s=[],[],0.0
+    for p in ["Moon","Venus","Mercury"]:
+        if _gs(pdata,p)==Ra: cy_s+=25; cy_f.append(f"{p} conjunct Rahu")
+        elif _gs(pdata,p)==Ke: cy_s+=20; cy_f.append(f"{p} conjunct Ketu")
+    cy_s=_clp(cy_s)
+    res.append(_res("Chandal Yoga","Karmic/Rahu-Ketu",cy_s,"Benefics (Moon/Venus/Merc) corrupted by Ra/Ke",cy_f,cy_c))
+
+    # ── 29. NADI DOSH (single chart — informational) ─────────────
+    nd_nadi=_NADI.get(mo_nak,0)
+    nd_nm=["Aadi (Vata)","Madhya (Pitta)","Antya (Kapha)"][nd_nadi]
+    nk_n={0:"Ashwini",1:"Bharani",2:"Krittika",3:"Rohini",4:"Mrigashira",5:"Ardra",6:"Punarvasu",
+           7:"Pushya",8:"Ashlesha",9:"Magha",10:"P.Phalguni",11:"U.Phalguni",12:"Hasta",
+           13:"Chitra",14:"Swati",15:"Vishakha",16:"Anuradha",17:"Jyeshtha",18:"Mula",
+           19:"P.Ashadha",20:"U.Ashadha",21:"Sravana",22:"Dhanishtha",23:"Shatabhisha",
+           24:"P.Bhadra",25:"U.Bhadra",26:"Revati"}
+    res.append(_res("Nadi Dosh","Marriage",0.0,f"Native Nadi: {nd_nm} (Moon nak: {nk_n.get(mo_nak,str(mo_nak))})",
+                    [f"Nadi: {nd_nm}","Nadi Dosh requires two charts (marriage compatibility)"],
+                    ["Full dosh calculated between couple charts"]))
+
+    # ── 30. BHAKOOT DOSH (informational) ─────────────────────────
+    res.append(_res("Bhakoot Dosh","Marriage",0.0,f"Native Moon sign: {RASHI_FULL[Mo]} (for compatibility)",
+                    ["Bhakoot Dosh requires partner chart","6-8 axis = severe; 2-12 = moderate"],
+                    ["Requires two charts for calculation"]))
+
+    # ── 31. GANA DOSH (informational) ────────────────────────────
+    GANA_MAP={0:"Deva",5:"Deva",6:"Deva",8:"Deva",15:"Deva",17:"Deva",22:"Deva",23:"Deva",24:"Deva",
+              1:"Manushya",2:"Manushya",3:"Manushya",4:"Manushya",7:"Manushya",10:"Manushya",11:"Manushya",14:"Manushya",18:"Manushya",
+              9:"Rakshasa",12:"Rakshasa",13:"Rakshasa",16:"Rakshasa",19:"Rakshasa",20:"Rakshasa",21:"Rakshasa",25:"Rakshasa",26:"Rakshasa"}
+    gana=GANA_MAP.get(mo_nak,"Manushya")
+    res.append(_res("Gana Dosh","Marriage",0.0,f"Native Gana: {gana}",
+                    [f"Gana: {gana}","Gana Dosh requires two charts"],["Requires two charts"]))
+
+    # ── 32. VARNA DOSH (informational) ───────────────────────────
+    VARNA_MAP={4:"Brahmin",3:"Brahmin",1:"Kshatriya",0:"Kshatriya",2:"Vaishya",11:"Vaishya",
+               5:"Shudra",6:"Shudra",7:"Shudra",8:"Shudra",9:"Shudra",10:"Shudra"}
+    varna=VARNA_MAP.get(Mo,"Shudra")
+    res.append(_res("Varna Dosh","Marriage",0.0,f"Native Varna: {varna}",
+                    [f"Varna: {varna}","Requires two charts"],["Requires two charts"]))
+
+    # ── 33. YONI DOSH (informational) ────────────────────────────
+    YONI_NAK={0:"Horse",1:"Elephant",2:"Sheep",3:"Snake",4:"Dog",5:"Cat",6:"Rat",7:"Cow",
+              8:"Buffalo",9:"Tiger",10:"Deer",11:"Monkey",12:"Mongoose",13:"Lion",14:"Horse",
+              15:"Elephant",16:"Sheep",17:"Deer",18:"Dog",19:"Monkey",20:"Cat",21:"Rat",
+              22:"Cow",23:"Buffalo",24:"Tiger",25:"Lion",26:"Mongoose"}
+    yoni=YONI_NAK.get(mo_nak,"—")
+    res.append(_res("Yoni Dosh","Marriage",0.0,f"Native Yoni: {yoni}",
+                    [f"Yoni: {yoni}","Requires two charts"],["Requires two charts"]))
+
+    return res
+
+
+def display_dosh_analysis(pdata: dict) -> None:
+    """
+    Print formatted dosh analysis table with probability scores.
+    All 33 doshas categorized as per classical Vedic astrology.
+    """
+    results = analyze_all_dosh(pdata)
+
+    # User-specified category order and names
+    CAT_ORDER = [
+        "Karmic/Rahu-Ketu",
+        "Planet-Based",
+        "Moon/Mind",
+        "Marriage",
+        "House/Yoga",
+        "Misc/Advanced",
+    ]
+    CAT_EMOJI = {
+        "Karmic/Rahu-Ketu": "🐍",
+        "Planet-Based":     "🔥",
+        "Moon/Mind":        "🌙",
+        "Marriage":         "💍",
+        "House/Yoga":       "🧿",
+        "Misc/Advanced":    "⚡",
+    }
+    CAT_LABEL = {
+        "Karmic/Rahu-Ketu": "Karmic / Rahu-Ketu Related",
+        "Planet-Based":     "Planet-Based Dosha",
+        "Moon/Mind":        "Moon / Mind Related",
+        "Marriage":         "Marriage / Compatibility Dosha",
+        "House/Yoga":       "House / Yoga Based Dosha",
+        "Misc/Advanced":    "Misc / Advanced",
+    }
+    SEV_BAR_CHAR = {"None":"░","Mild":"█","Moderate":"▓","Strong":"▒","Severe":"▒"}
+
+    def _bar(score, width=22):
+        """Color-coded bar: green=low, yellow=mid, red=high."""
+        filled = int(score / 100.0 * width)
+        if   score < 35:  ch = "█"    # mild   – solid
+        elif score < 65:  ch = "▓"    # moderate
+        else:              ch = "▒"   # strong/severe
+        return ch * filled + "░" * (width - filled)
+
+    def _sev_icon(sev):
+        return {"None":"  ·  ","Mild":" ▪   ","Moderate":" ▪▪  ",
+                "Strong":" ▪▪▪ ","Severe":" ◆◆◆◆"}.get(sev,"     ")
+
+    # Group by category
+    by_cat = {c: [] for c in CAT_ORDER}
+    for r in results:
+        by_cat.setdefault(r["category"], []).append(r)
+
+    W = 78
+    print(f"\n  ╔{'═'*W}╗")
+    print(f"  ║{'DOSH ANALYSIS  —  Probability (0–100%) & Intensity':^{W}}║")
+    print(f"  ║{'Sources: BPHS · Phaladeepika · Muhurta Chintamani · Saravali':^{W}}║")
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  {'#':<3} {'Dosh Name':<26} {'Score':>6}  {'Severity':<10}  {'[░ mild ── moderate ── severe ░]':^24}  ║")
+    print(f"  ╠{'═'*W}╣")
+
+    dosh_num = 1
+    for cat in CAT_ORDER:
+        items = by_cat.get(cat, [])
+        if not items:
+            continue
+        emoji = CAT_EMOJI.get(cat, "•")
+        label = CAT_LABEL.get(cat, cat)
+        print(f"  ║  {emoji} {label:<{W-5}}║")
+        print(f"  ║  {'─'*W}║")
+
+        for r in items:
+            sc  = r["score"]
+            sev = r["severity"]
+            present_mark = "●" if r["present"] else " "
+            bar = _bar(sc)
+
+            # Main dosh row
+            print(f"  ║  {present_mark} {dosh_num:>2}. {r['name']:<24} "
+                  f"{sc:>5.1f}%  {sev:<10}  [{bar}]  ║")
+
+            # Factors (max 2)
+            for fac in r["factors"][:2]:
+                print(f"  ║        ↳ {fac[:68]:<68}  ║")
+
+            # Cancellations (max 1, only if dosh present)
+            if r["present"] and r["cancels"]:
+                print(f"  ║        ✘ {r['cancels'][0][:68]:<68}  ║")
+
+            dosh_num += 1
+
+        print(f"  ╠{'═'*W}╣")
+
+    # ── Summary: only active doshas ────────────────────────────────────
+    active = sorted([r for r in results if r["present"]], key=lambda x: -x["score"])
+    total_score = sum(r["score"] for r in results if r["present"])
+
+    print(f"  ║  📊 SUMMARY — {len(active)} Active Doshas  (Total intensity: {total_score:.0f} pts){'':<{W-52}}║")
+    print(f"  ║  {'─'*W}║")
+    print(f"  ║  {'Rank':<5} {'Dosh':<28} {'Score':>6}  {'Severity':<10}  {'Category':<22}  ║")
+    print(f"  ║  {'─'*W}║")
+
+    for rank, r in enumerate(active, 1):
+        sym = "◆" if r["severity"] == "Severe" else ("▲" if r["severity"] == "Strong" else "●")
+        print(f"  ║  {sym} {rank:<3} {r['name']:<28} {r['score']:>5.1f}%  "
+              f"{r['severity']:<10}  {r['category']:<22}  ║")
+
+    if not active:
+        print(f"  ║  {'✔  No significant doshas found in this chart':<{W}}║")
+
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  Score bands: Mild 1–30%  │  Moderate 31–60%  │  "
+          f"Strong 61–80%  │  Severe 81–100%{'':<{W-73}}║")
+    print(f"  ║  💍 Marriage doshas (Nadi/Bhakoot/Gana/Varna/Yoni) require two charts{'':<{W-71}}║")
+    print(f"  ║  ✨ Vipreet Raj Yoga: higher score = stronger protective reversal{'':<{W-66}}║")
+    print(f"  ╚{'═'*W}╝\n")
+
+
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  YOGA ANALYSIS MODULE
+#
+#  Calculates 48 yoga presence as a probability (0–100%).
+#  Sources: BPHS, Phaladeepika, Saravali, Brihat Jataka
+#
+#  STRENGTH BANDS:
+#    0%       = Yoga absent
+#    1–25%    = Weak / trace presence
+#    26–50%   = Moderate strength
+#    51–75%   = Strong yoga
+#    76–100%  = Very Strong / Classical full yoga
+# ═══════════════════════════════════════════════════════════════════
+
+_Y_OWN = {
+    "Sun":{4},"Moon":{3},"Mars":{0,7},"Mercury":{2,5},
+    "Jupiter":{8,11},"Venus":{1,6},"Saturn":{9,10},
+}
+_Y_EXALT = {
+    "Sun":0,"Moon":1,"Mars":9,"Mercury":5,"Jupiter":3,"Venus":11,"Saturn":6
+}
+_Y_DEBI  = {
+    "Sun":6,"Moon":7,"Mars":3,"Mercury":11,"Jupiter":9,"Venus":5,"Saturn":0
+}
+_Y_SIGN_LORD = {
+    0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+    6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"
+}
+
+KENDRA   = {1,4,7,10}
+TRIKONA  = {1,5,9}
+DUSTHANA = {6,8,12}
+UPACHAYA = {3,6,10,11}
+
+def _y_dig(pdata, p):
+    s = pdata.get(p,{}).get("rashi_idx",0)
+    if s in _Y_OWN.get(p,set()): return "Own"
+    if _Y_EXALT.get(p,-1)==s:     return "Exalted"
+    if _Y_DEBI.get(p,-1)==s:      return "Debilitated"
+    return "Normal"
+
+def _y_house(ps, lagna): return (ps - lagna) % 12 + 1
+
+def _y_strength(pdata, p):
+    """0.5-2.0 multiplier: 2=exalt, 1.5=own, 1=normal, 0.5=debi/combust"""
+    d = _y_dig(pdata, p)
+    base = 2.0 if d=="Exalted" else (1.5 if d=="Own" else (0.5 if d=="Debilitated" else 1.0))
+    if pdata.get(p,{}).get("combust",False): base *= 0.6
+    return base
+
+def _y_jup_asp(j_sign, t_sign): return (t_sign - j_sign) % 12 in {4,6,8}
+def _y_7th_asp(a_sign, b_sign): return (b_sign - a_sign) % 12 == 6
+
+def _y_connected(pdata, p1, p2):
+    """True if p1 and p2 conjunct OR in mutual 7th aspect."""
+    s1 = pdata.get(p1,{}).get("rashi_idx",0)
+    s2 = pdata.get(p2,{}).get("rashi_idx",0)
+    return s1 == s2 or _y_7th_asp(s1, s2)
+
+def _y_malefic_count_in_house(pdata, house, lagna):
+    mal = ["Saturn","Mars","Sun","Rahu","Ketu"]
+    return sum(1 for p in mal if _y_house(pdata.get(p,{}).get("rashi_idx",0), lagna)==house)
+
+def _y_result(name, cat, score, desc, factors, enhancers=None, reducers=None):
+    band = ("Absent" if score < 1 else "Weak" if score < 26 else
+            "Moderate" if score < 51 else "Strong" if score < 76 else "Very Strong")
+    return {
+        "name":name,"category":cat,
+        "score":round(max(0.0,min(100.0,score)),1),
+        "present":score>=10,
+        "strength":band,
+        "description":desc,
+        "factors":factors or [],
+        "enhancers":enhancers or [],
+        "reducers":reducers or [],
+    }
+
+
+def analyze_all_yoga(pdata: dict) -> list:
+    """
+    Analyze 48 yogas from natal chart pdata.
+    Returns list of yoga result dicts with probability scores (0-100%).
+    """
+    L   = pdata.get("Lagna",{}).get("rashi_idx",0)
+    Su  = pdata.get("Sun",{}).get("rashi_idx",0)
+    Mo  = pdata.get("Moon",{}).get("rashi_idx",0)
+    Ma  = pdata.get("Mars",{}).get("rashi_idx",0)
+    Me  = pdata.get("Mercury",{}).get("rashi_idx",0)
+    Ju  = pdata.get("Jupiter",{}).get("rashi_idx",0)
+    Ve  = pdata.get("Venus",{}).get("rashi_idx",0)
+    Sa  = pdata.get("Saturn",{}).get("rashi_idx",0)
+    Ra  = pdata.get("Rahu",{}).get("rashi_idx",0)
+    Ke  = pdata.get("Ketu",{}).get("rashi_idx",0)
+
+    def hs(p): return _y_house(pdata.get(p,{}).get("rashi_idx",0), L)
+    def hm(p): return _y_house(pdata.get(p,{}).get("rashi_idx",0), Mo)
+    def dig(p): return _y_dig(pdata, p)
+    def st(p): return _y_strength(pdata, p)
+    def lord(h): return _Y_SIGN_LORD.get((L+h-1)%12, "Sun")
+    def lord_sign(h): return pdata.get(lord(h),{}).get("rashi_idx",0)
+    def lord_house(h): return _y_house(lord_sign(h), L)
+    def conn(p1,p2): return _y_connected(pdata, p1, p2)
+    def con2(s1,s2): return s1==s2 or _y_7th_asp(s1,s2)
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+
+    RES = []
+
+    # ── helper: affliction reducer for a sign/house ──────────────
+    def _aff(planet):
+        """Extra penalty if planet is in dusthana or with malefics."""
+        h = hs(planet); pen = 0.0
+        if h in DUSTHANA: pen += 20
+        mal_in = [p for p in ["Saturn","Mars","Rahu","Ketu"]
+                  if pdata.get(p,{}).get("rashi_idx",0)==pdata.get(planet,{}).get("rashi_idx",0)]
+        pen += 8 * len(mal_in)
+        return pen
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 1. RAJ YOGA
+    # ══════════════════════════════════════════════════════════════
+    ry_f, ry_e, ry_r = [], [], []
+    ry_score = 0.0
+    kendra_lords  = {lord(h) for h in [1,4,7,10]}
+    trikona_lords = {lord(h) for h in [1,5,9]}
+    pairs_seen = set()
+    for kl in kendra_lords:
+        for tl in trikona_lords:
+            if kl == tl: continue  # H1 lord counts for both but skip self-pair
+            pair = tuple(sorted([kl,tl]))
+            if pair in pairs_seen: continue
+            if conn(kl, tl):
+                pairs_seen.add(pair)
+                base = 30.0
+                s1, s2 = st(kl), st(tl)
+                base *= (s1 + s2) / 2.0
+                kl_h, tl_h = hs(kl), hs(tl)
+                if kl_h in KENDRA|TRIKONA and tl_h in KENDRA|TRIKONA: base *= 1.2
+                ry_score += base
+                ry_f.append(f"{kl}(H{lord_house(1 if kl==lord(1) else (4 if kl==lord(4) else (7 if kl==lord(7) else 10)))}) + "
+                            f"{tl} conjunct/aspecting")
+    ry_score = min(ry_score, 100.0)
+    if ry_score > 0:
+        ry_e.append(f"{len(pairs_seen)} Kendra-Trikona lord pair(s) connected")
+    RES.append(_y_result("Raj Yoga","Raj Yoga",ry_score,
+        "Kendra lord + Trikona lord conjunct/aspect — power and authority",ry_f,ry_e,ry_r))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 2. MAHA RAJ YOGA
+    # ══════════════════════════════════════════════════════════════
+    mr_f, mr_score = [], 0.0
+    # 3+ planets in own/exalt sign in Kendra/Trikona
+    strong_in_kt = [p for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+                    if dig(p) in ("Own","Exalted") and hs(p) in KENDRA|TRIKONA]
+    mr_score = len(strong_in_kt) * 20.0
+    for p in strong_in_kt: mr_f.append(f"{p} {dig(p)} in H{hs(p)}")
+    # Bonus if multiple Raj Yogas (use ry_score as proxy)
+    if ry_score > 50: mr_score += 20; mr_f.append(f"Strong Raj Yoga present ({ry_score:.0f}%)")
+    mr_score = min(mr_score, 100.0)
+    RES.append(_y_result("Maha Raj Yoga","Raj Yoga",mr_score,
+        "Multiple exalted/own planets in Kendra/Trikona — supreme success",mr_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 3. DHARMA KARMA ADHIPATI YOGA
+    # ══════════════════════════════════════════════════════════════
+    dka_f, dka_score = [], 0.0
+    l9 = lord(9); l10 = lord(10)
+    if conn(l9, l10):
+        base = 60.0
+        base *= (st(l9) + st(l10)) / 2.0
+        dka_score = min(base, 100.0)
+        dka_f.append(f"9th lord ({l9}) + 10th lord ({l10}) connected")
+        if hs(l9) in KENDRA|TRIKONA: dka_score = min(dka_score+15, 100); dka_f.append(f"{l9} in Kendra/Trikona")
+        if hs(l10) in KENDRA|TRIKONA: dka_score = min(dka_score+15, 100); dka_f.append(f"{l10} in Kendra/Trikona")
+    RES.append(_y_result("Dharma Karma Adhipati Yoga","Raj Yoga",dka_score,
+        "9th lord + 10th lord united — dharmic career, high authority",dka_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 4-8. PANCHA MAHAPURUSHA YOGAS
+    # ══════════════════════════════════════════════════════════════
+    PMP = [
+        ("Ruchaka Yoga","Mars",{0,7},9),
+        ("Bhadra Yoga","Mercury",{2,5},5),
+        ("Hamsa Yoga","Jupiter",{8,11},3),
+        ("Malavya Yoga","Venus",{1,6},11),
+        ("Shasha Yoga","Saturn",{9,10},6),
+    ]
+    for yname, planet, own_s, exalt_s in PMP:
+        pmp_f, pmp_score = [], 0.0
+        ps = pdata.get(planet,{}).get("rashi_idx",0)
+        ph = hs(planet)
+        in_own   = ps in own_s
+        in_exalt = ps == exalt_s
+        in_kendra = ph in KENDRA
+        if (in_own or in_exalt) and in_kendra:
+            base = 75.0 if in_exalt else 60.0
+            pmp_score = base
+            pmp_f.append(f"{planet} in {'exaltation' if in_exalt else 'own sign'} ({SS[ps]}) in H{ph} (Kendra)")
+            # Reduce for malefic conjunction
+            mal_conj = [p for p in ["Saturn","Mars","Sun","Rahu","Ketu"]
+                        if p!=planet and pdata.get(p,{}).get("rashi_idx",0)==ps]
+            if mal_conj: pmp_score -= 15*len(mal_conj); pmp_f.append(f"Malefics conjunct: {mal_conj}")
+            pmp_score = min(100, max(0, pmp_score))
+        elif (in_own or in_exalt):
+            pmp_score = 25.0
+            pmp_f.append(f"{planet} {'exalted' if in_exalt else 'own sign'} but NOT in Kendra (H{ph})")
+        RES.append(_y_result(yname,"Raj Yoga",pmp_score,
+            f"Mars/Me/Ju/Ve/Sa in own/exalt in Kendra — great personality traits",pmp_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 9. GAJ KESARI YOGA
+    # ══════════════════════════════════════════════════════════════
+    gk_f, gk_score = [], 0.0
+    ju_from_mo = _y_house(Ju, Mo)
+    ju_from_la = hs("Jupiter")
+    if ju_from_mo in KENDRA:
+        gk_score += 55.0; gk_f.append(f"Jupiter in H{ju_from_mo} from Moon")
+    if ju_from_la in KENDRA:
+        gk_score += 25.0; gk_f.append(f"Jupiter in H{ju_from_la} from Lagna")
+    if gk_score > 0:
+        d = dig("Jupiter")
+        if d == "Exalted": gk_score = min(gk_score*1.4, 100); gk_f.append("Jupiter exalted")
+        elif d == "Own":   gk_score = min(gk_score*1.2, 100); gk_f.append("Jupiter own sign")
+        elif d == "Debilitated": gk_score *= 0.4; gk_f.append("Jupiter debilitated (weak)")
+        if _aff("Jupiter") > 20: gk_score *= 0.7; gk_f.append("Jupiter afflicted")
+    RES.append(_y_result("Gaj Kesari Yoga","Raj Yoga",gk_score,
+        "Jupiter in Kendra from Moon/Lagna — wisdom, fame, prosperity",gk_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 10. LAKSHMI YOGA
+    # ══════════════════════════════════════════════════════════════
+    lx_f, lx_score = [], 0.0
+    l1 = lord(1); l9l = lord(9)
+    l9_h = lord_house(9)
+    l1_dig = dig(l1); l9_dig = dig(l9l)
+    if l9_dig in ("Own","Exalted") and l9_h in KENDRA|TRIKONA:
+        base = 65.0 if l9_dig=="Exalted" else 50.0
+        lx_score += base; lx_f.append(f"9th lord ({l9l}) {l9_dig} in H{l9_h}")
+        if l1_dig in ("Own","Exalted"):
+            lx_score += 20; lx_f.append(f"Lagna lord ({l1}) also {l1_dig}")
+    elif l9_dig in ("Own","Exalted"):
+        lx_score = 25.0; lx_f.append(f"9th lord ({l9l}) {l9_dig} but in H{l9_h}")
+    lx_score = min(lx_score, 100)
+    RES.append(_y_result("Lakshmi Yoga","Raj Yoga",lx_score,
+        "9th lord in own/exalt in Kendra/Trikona — wealth and grace of Lakshmi",lx_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 11. CHANDRA MANGAL YOGA
+    # ══════════════════════════════════════════════════════════════
+    cm_f, cm_score = [], 0.0
+    ma_from_mo = _y_house(Ma, Mo)
+    if Mo == Ma:
+        cm_score = 65.0; cm_f.append("Moon and Mars in same sign (conjunct)")
+    elif _y_7th_asp(Mo, Ma):
+        cm_score = 40.0; cm_f.append("Moon and Mars in mutual 7th aspect")
+    elif ma_from_mo in {2,11}:
+        cm_score = 35.0; cm_f.append(f"Mars in H{ma_from_mo} from Moon (wealth axis)")
+    if cm_score > 0:
+        if dig("Moon") in ("Exalted","Own"): cm_score = min(cm_score+15,100); cm_f.append("Moon strong")
+        if dig("Mars") in ("Exalted","Own"): cm_score = min(cm_score+15,100); cm_f.append("Mars strong")
+        pen = _aff("Moon") + _aff("Mars")
+        if pen > 25: cm_score = max(0, cm_score-20); cm_f.append("Planets afflicted")
+    RES.append(_y_result("Chandra Mangal Yoga","Raj Yoga",cm_score,
+        "Moon + Mars together — financial enterprise, wealth through effort",cm_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 12. NEECH BHANG RAJ YOGA
+    # ══════════════════════════════════════════════════════════════
+    nb_f, nb_score = [], 0.0
+    for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]:
+        debi_s = _Y_DEBI.get(p,-1)
+        if pdata.get(p,{}).get("rashi_idx",0) == debi_s:
+            # Check cancellations
+            cancel_count = 0
+            dispositor = _Y_SIGN_LORD.get(debi_s, "Sun")
+            disp_h = _y_house(pdata.get(dispositor,{}).get("rashi_idx",0), L)
+            disp_h_mo = _y_house(pdata.get(dispositor,{}).get("rashi_idx",0), Mo)
+            if disp_h in KENDRA: cancel_count += 1; nb_f.append(f"{p} debil: {dispositor} in Kendra from Lagna")
+            if disp_h_mo in KENDRA: cancel_count += 1; nb_f.append(f"{p} debil: {dispositor} in Kendra from Moon")
+            # Exalt lord in Kendra
+            exalt_lord = _Y_SIGN_LORD.get(_Y_EXALT.get(p,-1), "Sun")
+            exl_h = _y_house(pdata.get(exalt_lord,{}).get("rashi_idx",0), L)
+            if exl_h in KENDRA: cancel_count += 1; nb_f.append(f"Exalt lord of {p} ({exalt_lord}) in Kendra")
+            if cancel_count > 0:
+                nb_score += 30.0 * cancel_count
+                nb_f.append(f"{p} debilitated but CANCELLED ({cancel_count} factors)")
+    nb_score = min(nb_score, 100.0)
+    RES.append(_y_result("Neech Bhang Raj Yoga","Raj Yoga",nb_score,
+        "Debilitated planet's weakness cancelled — reversal to strength",nb_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 13. PARIVARTAN RAJ YOGA (mutual exchange in good houses)
+    # ══════════════════════════════════════════════════════════════
+    prv_f, prv_score = [], 0.0
+    for h1 in range(1,13):
+        l1p = lord(h1); s1 = (L+h1-1)%12
+        for h2 in range(h1+1,13):
+            l2p = lord(h2); s2 = (L+h2-1)%12
+            if l1p==l2p: continue
+            l1_in_s2 = pdata.get(l1p,{}).get("rashi_idx",0)==s2
+            l2_in_s1 = pdata.get(l2p,{}).get("rashi_idx",0)==s1
+            if l1_in_s2 and l2_in_s1:
+                both_kt = h1 in KENDRA|TRIKONA and h2 in KENDRA|TRIKONA
+                neither_dust = h1 not in DUSTHANA and h2 not in DUSTHANA
+                if both_kt:
+                    prv_score += 45; prv_f.append(f"Exchange H{h1}({l1p}) ↔ H{h2}({l2p}) [KT-KT Raja]")
+                elif neither_dust:
+                    prv_score += 20; prv_f.append(f"Exchange H{h1}({l1p}) ↔ H{h2}({l2p})")
+    prv_score = min(prv_score, 100.0)
+    RES.append(_y_result("Parivartan Raj Yoga","Raj Yoga",prv_score,
+        "Lords exchange signs in Kendra/Trikona — elevation through karma",prv_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 👑 14. ADHI YOGA
+    # ══════════════════════════════════════════════════════════════
+    adhi_f, adhi_score = [], 0.0
+    BENEFICS_NAT = ["Jupiter","Venus","Mercury"]
+    # From Moon: benefics in 6,7,8 from Moon
+    bens_from_mo = [p for p in BENEFICS_NAT if hm(p) in {6,7,8}]
+    bens_from_la = [p for p in BENEFICS_NAT if hs(p) in {6,7,8}]
+    if len(bens_from_mo) == 3:
+        adhi_score += 70; adhi_f.append(f"All 3 benefics in 6/7/8 from Moon: {bens_from_mo}")
+    elif len(bens_from_mo) == 2:
+        adhi_score += 40; adhi_f.append(f"2 benefics in 6/7/8 from Moon: {bens_from_mo}")
+    elif len(bens_from_mo) == 1:
+        adhi_score += 20; adhi_f.append(f"1 benefic in 6/7/8 from Moon: {bens_from_mo}")
+    if len(bens_from_la) >= 2:
+        adhi_score += 20; adhi_f.append(f"{len(bens_from_la)} benefics in 6/7/8 from Lagna")
+    adhi_score = min(adhi_score, 100.0)
+    RES.append(_y_result("Adhi Yoga","Raj Yoga",adhi_score,
+        "Natural benefics in 6/7/8 from Moon — minister/leader qualities",adhi_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💰 15. DHAN YOGA
+    # ══════════════════════════════════════════════════════════════
+    dh_f, dh_score = [], 0.0
+    l2 = lord(2); l11 = lord(11); l5 = lord(5)
+    # 2nd lord + 11th lord connected
+    if conn(l2, l11):
+        base = 50.0 * (st(l2)+st(l11))/2; dh_score += base
+        dh_f.append(f"2nd lord ({l2}) + 11th lord ({l11}) connected")
+    # 2nd or 11th with lagna lord
+    if conn(l2, lord(1)): dh_score += 20; dh_f.append(f"2nd lord ({l2}) + Lagna lord connected")
+    if conn(l11, lord(1)): dh_score += 20; dh_f.append(f"11th lord ({l11}) + Lagna lord connected")
+    # 2nd or 11th with 5th/9th lord
+    if conn(l2, l5): dh_score += 15; dh_f.append(f"2nd lord ({l2}) + 5th lord ({l5})")
+    if conn(l11, lord(9)): dh_score += 15; dh_f.append(f"11th lord ({l11}) + 9th lord ({lord(9)})")
+    dh_score = min(dh_score, 100.0)
+    RES.append(_y_result("Dhan Yoga","Dhan Yoga",dh_score,
+        "2nd/11th lords connected with 1st/5th/9th — wealth accumulation",dh_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💰 16. MAHA DHAN YOGA
+    # ══════════════════════════════════════════════════════════════
+    mdh_f, mdh_score = [], 0.0
+    # Jupiter + Venus + 2nd lord all in Kendra or strong
+    strong_wealth = [(p, dig(p)) for p in ["Jupiter","Venus",l2,l11]
+                     if dig(p) in ("Exalted","Own") and hs(p) in KENDRA|TRIKONA]
+    if len(strong_wealth) >= 3:
+        mdh_score = 70 + (len(strong_wealth)-3)*10
+        for p,d in strong_wealth: mdh_f.append(f"{p} {d} in H{hs(p)}")
+    elif len(strong_wealth) == 2:
+        mdh_score = 35
+        for p,d in strong_wealth: mdh_f.append(f"{p} {d}")
+    mdh_score = min(mdh_score, 100.0)
+    RES.append(_y_result("Maha Dhan Yoga","Dhan Yoga",mdh_score,
+        "3+ wealth planets exalted/own in Kendra — enormous wealth",mdh_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💰 17. VASUMATI YOGA
+    # ══════════════════════════════════════════════════════════════
+    vs_f, vs_score = [], 0.0
+    bens_in_upa_la = [p for p in BENEFICS_NAT if hs(p) in UPACHAYA]
+    bens_in_upa_mo = [p for p in BENEFICS_NAT if hm(p) in UPACHAYA]
+    if len(bens_in_upa_la) == 3:
+        vs_score += 70; vs_f.append(f"All 3 benefics in Upachaya from Lagna: {bens_in_upa_la}")
+    elif len(bens_in_upa_la) == 2:
+        vs_score += 40; vs_f.append(f"2 benefics in Upachaya from Lagna: {bens_in_upa_la}")
+    elif len(bens_in_upa_la) == 1:
+        vs_score += 20; vs_f.append(f"1 benefic in Upachaya: {bens_in_upa_la}")
+    if len(bens_in_upa_mo) >= 2:
+        vs_score += 15; vs_f.append(f"{len(bens_in_upa_mo)} benefics in Upachaya from Moon")
+    vs_score = min(vs_score, 100.0)
+    RES.append(_y_result("Vasumati Yoga","Dhan Yoga",vs_score,
+        "Natural benefics in Upachaya houses — self-earned wealth",vs_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💰 18. DHANA KUBER YOGA
+    # ══════════════════════════════════════════════════════════════
+    dk_f, dk_score = [], 0.0
+    conds = 0
+    if dig("Jupiter") in ("Exalted","Own") and hs("Jupiter") in KENDRA|TRIKONA:
+        conds += 1; dk_f.append(f"Jupiter {dig('Jupiter')} in H{hs('Jupiter')}")
+    if dig(l2) in ("Exalted","Own") and lord_house(2) in KENDRA|TRIKONA:
+        conds += 1; dk_f.append(f"2nd lord ({l2}) {dig(l2)}")
+    if dig(l11) in ("Exalted","Own") and lord_house(11) in KENDRA|TRIKONA:
+        conds += 1; dk_f.append(f"11th lord ({l11}) {dig(l11)}")
+    dk_score = [0,30,60,100][min(conds,3)]
+    RES.append(_y_result("Dhana Kuber Yoga","Dhan Yoga",dk_score,
+        "Jupiter + 2nd lord + 11th lord all strong — billionaire potential",dk_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💰 19. INDRA YOGA
+    # ══════════════════════════════════════════════════════════════
+    ind_f, ind_score = [], 0.0
+    mo_ve_h = _y_house(Ve, Mo)
+    ve_mo_h = _y_house(Mo, Ve)
+    if mo_ve_h in {9,11} or ve_mo_h in {9,11}:
+        ind_score = 55.0; ind_f.append(f"Moon and Venus in 9/11 axis from each other")
+        if dig("Moon") in ("Exalted","Own"): ind_score += 15; ind_f.append("Moon strong")
+        if dig("Venus") in ("Exalted","Own"): ind_score += 15; ind_f.append("Venus strong")
+    ind_score = min(ind_score, 100.0)
+    RES.append(_y_result("Indra Yoga","Dhan Yoga",ind_score,
+        "Moon and Venus in 9/11 mutual axis — prosperity and luxury",ind_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💰 20. PARIJATA YOGA
+    # ══════════════════════════════════════════════════════════════
+    pj_f, pj_score = [], 0.0
+    ll = lord(1); ll_sign = pdata.get(ll,{}).get("rashi_idx",0)
+    disp_of_ll = _Y_SIGN_LORD.get(ll_sign, "Sun")
+    d_sign = pdata.get(disp_of_ll,{}).get("rashi_idx",0)
+    d_h = _y_house(d_sign, L)
+    disp_dig = dig(disp_of_ll)
+    if disp_dig in ("Own","Exalted"):
+        pj_score = 60.0; pj_f.append(f"Dispositor of Lagna lord ({disp_of_ll}) in {disp_dig}")
+    if d_h in KENDRA|TRIKONA:
+        pj_score = min(pj_score+20,100); pj_f.append(f"{disp_of_ll} in Kendra/Trikona H{d_h}")
+    RES.append(_y_result("Parijata Yoga","Dhan Yoga",pj_score,
+        "Dispositor of Lagna lord in own/exalt — sustained fortune",pj_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧠 21. BUDHADITYA YOGA
+    # ══════════════════════════════════════════════════════════════
+    ba_f, ba_score = [], 0.0
+    if Su == Me:
+        ba_score = 65.0; ba_f.append(f"Sun + Mercury in same sign ({SS[Su]})")
+        if pdata.get("Mercury",{}).get("combust",False):
+            ba_score *= 0.4; ba_f.append("Mercury combust — yoga severely weakened!")
+        else:
+            ba_f.append("Mercury NOT combust — yoga active")
+        d = dig("Mercury")
+        if d in ("Exalted","Own"): ba_score = min(ba_score+20,100); ba_f.append(f"Mercury {d}")
+        if hs("Mercury") in KENDRA|TRIKONA: ba_score = min(ba_score+15,100); ba_f.append(f"In H{hs('Mercury')} Kendra/Trikona")
+    RES.append(_y_result("Budhaditya Yoga","Buddhi Yoga",ba_score,
+        "Sun + Mercury conjunct — sharp intellect, fame through knowledge",ba_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧠 22. SARASWATI YOGA
+    # ══════════════════════════════════════════════════════════════
+    sr_f, sr_score = [], 0.0
+    good_houses = KENDRA | TRIKONA | {2}
+    sv_conds = [(p, dig(p), hs(p)) for p in ["Jupiter","Venus","Mercury"]
+                if dig(p) in ("Own","Exalted","Moolatrikona") and hs(p) in good_houses]
+    if len(sv_conds) == 3:
+        sr_score = 80.0; [sr_f.append(f"{p} {d} in H{h}") for p,d,h in sv_conds]
+    elif len(sv_conds) == 2:
+        sr_score = 45.0; [sr_f.append(f"{p} {d} in H{h}") for p,d,h in sv_conds]
+    elif len(sv_conds) == 1:
+        sr_score = 20.0; [sr_f.append(f"{p} {d} in H{h}") for p,d,h in sv_conds]
+    RES.append(_y_result("Saraswati Yoga","Buddhi Yoga",sr_score,
+        "Jupiter+Venus+Mercury all strong in Kendra/Trikona/2nd — great scholar",sr_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧠 23. MEDHA YOGA
+    # ══════════════════════════════════════════════════════════════
+    mh_f, mh_score = [], 0.0
+    if hs("Mercury") in KENDRA|TRIKONA:
+        mh_score = 35.0; mh_f.append(f"Mercury in H{hs('Mercury')} (Kendra/Trikona)")
+        if dig("Mercury") in ("Own","Exalted"): mh_score += 25; mh_f.append(f"Mercury {dig('Mercury')}")
+        if _y_jup_asp(Ju, Me): mh_score += 25; mh_f.append("Jupiter aspects Mercury")
+        elif Ju==Me: mh_score += 20; mh_f.append("Jupiter conjunct Mercury")
+    mh_score = min(mh_score, 100.0)
+    RES.append(_y_result("Medha Yoga","Buddhi Yoga",mh_score,
+        "Mercury in Kendra/Trikona + Jupiter aspect — intelligence, memory",mh_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💼 24. AMALA YOGA
+    # ══════════════════════════════════════════════════════════════
+    am_f, am_score = [], 0.0
+    p_in_10_la = [p for p in pdata if p!="Lagna" and _y_house(pdata.get(p,{}).get("rashi_idx",0),L)==10]
+    p_in_10_mo = [p for p in pdata if p!="Lagna" and _y_house(pdata.get(p,{}).get("rashi_idx",0),Mo)==10]
+    benef_set = set(BENEFICS_NAT)
+    malef_set = {"Saturn","Mars","Sun","Rahu","Ketu"}
+    la_10_bens = [p for p in p_in_10_la if p in benef_set]
+    la_10_mal  = [p for p in p_in_10_la if p in malef_set]
+    if la_10_bens and not la_10_mal:
+        am_score += 55; am_f.append(f"Only benefics in 10th from Lagna: {la_10_bens}")
+    mo_10_bens = [p for p in p_in_10_mo if p in benef_set]
+    mo_10_mal  = [p for p in p_in_10_mo if p in malef_set]
+    if mo_10_bens and not mo_10_mal:
+        am_score += 30; am_f.append(f"Only benefics in 10th from Moon: {mo_10_bens}")
+    am_score = min(am_score, 100.0)
+    RES.append(_y_result("Amala Yoga","Career Yoga",am_score,
+        "Only benefics in 10th house — spotless reputation",am_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💼 25. KAHALA YOGA
+    # ══════════════════════════════════════════════════════════════
+    kh_f, kh_score = [], 0.0
+    l4 = lord(4); ll_1 = lord(1)
+    if _y_7th_asp(pdata.get(l4,{}).get("rashi_idx",0), Ju) or        pdata.get(l4,{}).get("rashi_idx",0)==Ju:
+        kh_score += 40; kh_f.append(f"4th lord ({l4}) in mutual quadrant with Jupiter")
+    if dig(ll_1) in ("Exalted","Own"):
+        kh_score += 30; kh_f.append(f"Lagna lord ({ll_1}) {dig(ll_1)}")
+    if _y_house(pdata.get(l4,{}).get("rashi_idx",0),L) in KENDRA:
+        kh_score += 20; kh_f.append(f"4th lord ({l4}) in Kendra")
+    kh_score = min(kh_score, 100.0)
+    RES.append(_y_result("Kahala Yoga","Career Yoga",kh_score,
+        "4th lord + Jupiter united + strong Lagna lord — boldness, authority",kh_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💼 26. RAJA SAMBANDHA YOGA
+    # ══════════════════════════════════════════════════════════════
+    rb_f, rb_score = [], 0.0
+    # Sun in 10th or 1st, or Sun + 10th lord together
+    if hs("Sun") in {1,10}: rb_score += 35; rb_f.append(f"Sun in H{hs('Sun')} (power position)")
+    l10 = lord(10)
+    if conn("Sun", l10): rb_score += 35; rb_f.append(f"Sun connected with 10th lord ({l10})")
+    if dig("Sun") in ("Exalted","Own"): rb_score += 20; rb_f.append(f"Sun {dig('Sun')}")
+    rb_score = min(rb_score, 100.0)
+    RES.append(_y_result("Raja Sambandha Yoga","Career Yoga",rb_score,
+        "Sun + 10th lord connected — royal/government connections",rb_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💼 27-29. VESI / VASI / UBHAYACHARI YOGA
+    # ══════════════════════════════════════════════════════════════
+    # Vesi: planet in 2nd from Sun (except Moon)
+    vesi_f, vesi_score = [], 0.0
+    vasi_f, vasi_score = [], 0.0
+    sun_p2 = (Su+1)%12; sun_m1 = (Su-1)%12
+    for p in ["Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]:
+        ps2 = pdata.get(p,{}).get("rashi_idx",0)
+        if ps2 == sun_p2:
+            if p in BENEFICS_NAT: vesi_score += 40; vesi_f.append(f"{p} (benefic) in 2nd from Sun → Shubha Vesi")
+            else:                  vesi_score += 15; vesi_f.append(f"{p} (malefic) in 2nd from Sun → Papa Vesi")
+        if ps2 == sun_m1:
+            if p in BENEFICS_NAT: vasi_score += 40; vasi_f.append(f"{p} (benefic) in 12th from Sun → Shubha Vasi")
+            else:                  vasi_score += 15; vasi_f.append(f"{p} (malefic) in 12th from Sun → Papa Vasi")
+    vesi_score = min(vesi_score, 100)
+    vasi_score = min(vasi_score, 100)
+    ubh_score  = min((vesi_score + vasi_score)/2 + 20, 100) if vesi_score>0 and vasi_score>0 else 0
+    RES.append(_y_result("Vesi Yoga","Career Yoga",vesi_score,"Planet in 2nd from Sun — eloquence, wealth",vesi_f,[],[]))
+    RES.append(_y_result("Vasi Yoga","Career Yoga",vasi_score,"Planet in 12th from Sun — comfort, service",vasi_f,[],[]))
+    ubh_f = vesi_f + vasi_f
+    RES.append(_y_result("Ubhayachari Yoga","Career Yoga",ubh_score,
+        "Planets in both 2nd and 12th from Sun — balanced all-round success",ubh_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧘 30. SANYASA YOGA
+    # ══════════════════════════════════════════════════════════════
+    sy_f, sy_score = [], 0.0
+    sign_counts = {}
+    for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]:
+        s = pdata.get(p,{}).get("rashi_idx",0); sign_counts[s] = sign_counts.get(s,0)+1
+    max_in_sign = max(sign_counts.values()) if sign_counts else 0
+    if max_in_sign >= 5:
+        sy_score = 80; sy_f.append(f"{max_in_sign} planets in one sign")
+    elif max_in_sign == 4:
+        sy_score = 50; sy_f.append(f"4 planets in one sign")
+    elif max_in_sign == 3:
+        sy_score = 20; sy_f.append(f"3 planets in one sign (weak)")
+    # Additional: Saturn in 1st/12th/9th, Ketu strong
+    if hs("Saturn") in {1,9,12}: sy_score += 15; sy_f.append(f"Saturn in H{hs('Saturn')} (renunciation)")
+    sy_score = min(sy_score, 100)
+    RES.append(_y_result("Sanyasa Yoga","Spiritual Yoga",sy_score,
+        "4+ planets in one sign — tendency toward renunciation/spirituality",sy_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧘 31. MOKSHA YOGA
+    # ══════════════════════════════════════════════════════════════
+    mk_f, mk_score = [], 0.0
+    if hs(lord(1)) == 12: mk_score += 30; mk_f.append(f"Lagna lord ({lord(1)}) in 12th")
+    if lord_house(12) in KENDRA|TRIKONA: mk_score += 20; mk_f.append(f"12th lord ({lord(12)}) in Kendra/Trikona")
+    if hs("Moon") == 12 and _y_jup_asp(Ju, Mo): mk_score += 25; mk_f.append("Moon in 12th aspected by Jupiter")
+    if hs("Ketu") in {1,9,12}: mk_score += 15; mk_f.append(f"Ketu in H{hs('Ketu')} (spiritual liberation)")
+    mk_score = min(mk_score, 100)
+    RES.append(_y_result("Moksha Yoga","Spiritual Yoga",mk_score,
+        "Lagna lord in 12th / 12th lord strong — path to liberation",mk_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧘 32. PARIVRAJA YOGA
+    # ══════════════════════════════════════════════════════════════
+    pv_f, pv_score = [], 0.0
+    # Saturn or Ketu strong in 9th or 12th
+    if hs("Saturn") in {9,12} and dig("Saturn") in ("Own","Exalted"):
+        pv_score += 40; pv_f.append(f"Saturn {dig('Saturn')} in H{hs('Saturn')} (ascetic)")
+    if hs("Ketu") in {9,12}: pv_score += 30; pv_f.append(f"Ketu in H{hs('Ketu')} (detachment)")
+    if max_in_sign >= 4: pv_score += 25; pv_f.append(f"{max_in_sign} planets in one sign")
+    pv_score = min(pv_score, 100)
+    RES.append(_y_result("Parivraja Yoga","Spiritual Yoga",pv_score,
+        "Strong ascetic indicators — wandering ascetic / monk tendency",pv_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🌙 33. SUNAPHA YOGA
+    # ══════════════════════════════════════════════════════════════
+    sun_f, sun_score = [], 0.0
+    mo_p2 = (Mo+1)%12
+    p2_from_mo = [p for p in ["Mars","Mercury","Jupiter","Venus","Saturn"]
+                  if pdata.get(p,{}).get("rashi_idx",0)==mo_p2]
+    if p2_from_mo:
+        sun_score = 50; sun_f.append(f"Planets in 2nd from Moon: {p2_from_mo}")
+        bens_p2 = [p for p in p2_from_mo if p in BENEFICS_NAT]
+        if bens_p2: sun_score += 20; sun_f.append(f"Benefics in 2nd from Moon: {bens_p2}")
+    RES.append(_y_result("Sunapha Yoga","Moon Yoga",sun_score,
+        "Planet(s) in 2nd from Moon — self-earned wealth, good mind",sun_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🌙 34. ANAPHA YOGA
+    # ══════════════════════════════════════════════════════════════
+    an_f, an_score = [], 0.0
+    mo_m1 = (Mo-1)%12
+    p12_from_mo = [p for p in ["Mars","Mercury","Jupiter","Venus","Saturn"]
+                   if pdata.get(p,{}).get("rashi_idx",0)==mo_m1]
+    if p12_from_mo:
+        an_score = 50; an_f.append(f"Planets in 12th from Moon: {p12_from_mo}")
+        bens_m1 = [p for p in p12_from_mo if p in BENEFICS_NAT]
+        if bens_m1: an_score += 20; an_f.append(f"Benefics in 12th from Moon: {bens_m1}")
+    RES.append(_y_result("Anapha Yoga","Moon Yoga",an_score,
+        "Planet(s) in 12th from Moon — fame, generosity, comforts",an_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🌙 35. DURUDHARA YOGA
+    # ══════════════════════════════════════════════════════════════
+    du_score = min((sun_score + an_score)/2 + 15, 100) if sun_score>0 and an_score>0 else 0
+    du_f = sun_f + an_f
+    RES.append(_y_result("Durudhara Yoga","Moon Yoga",du_score,
+        "Planets both in 2nd and 12th from Moon — great all-round personality",du_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🌙 36. CHANDRA ADHI YOGA
+    # ══════════════════════════════════════════════════════════════
+    ca_f, ca_score = [], 0.0
+    bens_678_mo = [p for p in BENEFICS_NAT if hm(p) in {6,7,8}]
+    if len(bens_678_mo) == 3:
+        ca_score = 75; ca_f.append(f"All 3 benefics in 6/7/8 from Moon: {bens_678_mo}")
+    elif len(bens_678_mo) == 2:
+        ca_score = 45; ca_f.append(f"2 benefics in 6/7/8 from Moon: {bens_678_mo}")
+    elif len(bens_678_mo) == 1:
+        ca_score = 20; ca_f.append(f"1 benefic in 6/7/8 from Moon")
+    RES.append(_y_result("Chandra Adhi Yoga","Moon Yoga",ca_score,
+        "Benefics in 6/7/8 from Moon — leadership, prosperity (same as Adhi from Moon)",ca_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # ⚡ 37-39. VIPREET RAJ YOGA (Harsha / Sarala / Vimala)
+    # ══════════════════════════════════════════════════════════════
+    for yname, h_check in [("Harsha Yoga",6),("Sarala Yoga",8),("Vimala Yoga",12)]:
+        vr_f, vr_score = [], 0.0
+        trik_lord = lord(h_check)
+        trik_lord_h = lord_house(h_check)
+        if trik_lord_h in DUSTHANA:
+            vr_score = 60; vr_f.append(f"H{h_check} lord ({trik_lord}) in H{trik_lord_h} (trik)")
+            if dig(trik_lord) in ("Own","Exalted"): vr_score += 15; vr_f.append(f"{trik_lord} {dig(trik_lord)}")
+        RES.append(_y_result(yname,"Special Yoga",vr_score,
+            f"H{h_check} lord in dusthana — misfortune reverses to fortune",vr_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # ⚡ 40. KALPADRUMA YOGA
+    # ══════════════════════════════════════════════════════════════
+    kd_f, kd_score = [], 0.0
+    ll_sign = pdata.get(lord(1),{}).get("rashi_idx",0)
+    disp1 = _Y_SIGN_LORD.get(ll_sign,"Sun")
+    disp1_sign = pdata.get(disp1,{}).get("rashi_idx",0)
+    disp2 = _Y_SIGN_LORD.get(disp1_sign,"Sun")
+    disp2_sign = pdata.get(disp2,{}).get("rashi_idx",0)
+    disp2_h = _y_house(disp2_sign,L)
+    disp2_dig = dig(disp2)
+    if disp2_dig in ("Own","Exalted") and disp2_h in KENDRA|TRIKONA:
+        kd_score = 70; kd_f.append(f"2nd dispositor of Lagna lord ({disp2}) {disp2_dig} in H{disp2_h}")
+    elif disp2_dig in ("Own","Exalted"):
+        kd_score = 35; kd_f.append(f"2nd dispositor ({disp2}) {disp2_dig}")
+    RES.append(_y_result("Kalpadruma Yoga","Special Yoga",kd_score,
+        "2nd dispositor of Lagna lord strong — wishfulfilling tree (rare yoga)",kd_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # ⚡ 41. CHATUSSAGARA YOGA
+    # ══════════════════════════════════════════════════════════════
+    cs_f, cs_score = [], 0.0
+    kendras_occupied = [h for h in [1,4,7,10]
+                        if any(_y_house(pdata.get(p,{}).get("rashi_idx",0),L)==h
+                               for p in pdata if p!="Lagna")]
+    cs_score = len(kendras_occupied) * 22.0
+    if len(kendras_occupied)==4: cs_score = 85; cs_f.append("All 4 Kendras occupied")
+    elif len(kendras_occupied)==3: cs_score = 55; cs_f.append(f"3 Kendras occupied: H{kendras_occupied}")
+    elif len(kendras_occupied)==2: cs_score = 28; cs_f.append(f"2 Kendras occupied")
+    RES.append(_y_result("Chatussagara Yoga","Special Yoga",cs_score,
+        "All 4 Kendra houses occupied — powerful, commanding personality",cs_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # ⚡ 42. BRAHMA YOGA
+    # ══════════════════════════════════════════════════════════════
+    br_f, br_score = [], 0.0
+    brahma_conds = [
+        ("Jupiter", {1,4,7,10}),
+        ("Venus", {1,4,7,10}),
+        ("Mercury", {1,4,7,10,11}),
+    ]
+    bc = sum(1 for p,hs_set in brahma_conds if hs(p) in hs_set)
+    br_score = [0,25,55,85][bc]
+    for p,hs_set in brahma_conds:
+        if hs(p) in hs_set: br_f.append(f"{p} in H{hs(p)}")
+    RES.append(_y_result("Brahma Yoga","Special Yoga",br_score,
+        "Jupiter in Kendra + Venus in Kendra + Mercury in Kendra/11th — creator energy",br_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # ⚡ 43. VISHNU YOGA
+    # ══════════════════════════════════════════════════════════════
+    vn_f, vn_score = [], 0.0
+    l9s = pdata.get(lord(9),{}).get("rashi_idx",0)
+    l9h = _y_house(l9s,L)
+    l10s = pdata.get(lord(10),{}).get("rashi_idx",0)
+    l10h = _y_house(l10s,L)
+    l1s = pdata.get(lord(1),{}).get("rashi_idx",0)
+    l1h = _y_house(l1s,L)
+    if l9h==2: vn_score+=30; vn_f.append(f"9th lord ({lord(9)}) in H2")
+    if l9s==l10s: vn_score+=35; vn_f.append(f"9th lord + 10th lord together")
+    if l1s==l9s or l1s==l10s: vn_score+=25; vn_f.append(f"Lagna lord joins 9/10 lords")
+    vn_score = min(vn_score, 100)
+    RES.append(_y_result("Vishnu Yoga","Special Yoga",vn_score,
+        "9th lord in 2nd + 9th+10th lords together + Lagna lord — sustainer energy",vn_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # ⚡ 44. SHIVA YOGA
+    # ══════════════════════════════════════════════════════════════
+    shv_f, shv_score = [], 0.0
+    l5h = lord_house(5); l9h2 = lord_house(9); l10h2 = lord_house(10)
+    if l5h==9: shv_score+=35; shv_f.append(f"5th lord ({lord(5)}) in H9")
+    if l9h2==10: shv_score+=35; shv_f.append(f"9th lord ({lord(9)}) in H10")
+    if l10h2==5: shv_score+=35; shv_f.append(f"10th lord ({lord(10)}) in H5")
+    shv_score = min(shv_score, 100)
+    RES.append(_y_result("Shiva Yoga","Special Yoga",shv_score,
+        "5th→9th, 9th→10th, 10th→5th lords — destroyer of obstacles, divine favor",shv_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧿 45. DARIDRA YOGA (negative) — wealth lost
+    # ══════════════════════════════════════════════════════════════
+    dr2_f, dr2_score = [], 0.0
+    if lord_house(2) in DUSTHANA: dr2_score+=30; dr2_f.append(f"2nd lord ({lord(2)}) in dusthana H{lord_house(2)}")
+    if lord_house(11) in DUSTHANA: dr2_score+=25; dr2_f.append(f"11th lord ({lord(11)}) in dusthana H{lord_house(11)}")
+    if hs("Jupiter") in DUSTHANA: dr2_score+=20; dr2_f.append(f"Jupiter in dusthana H{hs('Jupiter')}")
+    dr2_score = min(dr2_score, 100)
+    RES.append(_y_result("Daridra Yoga","Negative Yoga",dr2_score,
+        "Wealth lords in dusthana — poverty, financial struggles",dr2_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧿 46. SHAKAT YOGA (neg) — Moon-Jupiter 6/8
+    # ══════════════════════════════════════════════════════════════
+    sk2_f, sk2_score = [], 0.0
+    if _y_house(Mo,Ju) in {6,8} or _y_house(Ju,Mo) in {6,8}:
+        sk2_score=55; sk2_f.append("Moon and Jupiter in 6-8 axis")
+    RES.append(_y_result("Shakat Yoga","Negative Yoga",sk2_score,
+        "Moon-Jupiter in 6/8 axis — repeated ups and downs in fortune",sk2_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧿 47. GRAHAN YOGA (negative) — eclipse energy
+    # ══════════════════════════════════════════════════════════════
+    gr2_f, gr2_score = [], 0.0
+    for lum in ["Sun","Moon"]:
+        for nd in ["Rahu","Ketu"]:
+            if pdata.get(lum,{}).get("rashi_idx",0)==pdata.get(nd,{}).get("rashi_idx",0):
+                gr2_score += 45; gr2_f.append(f"{lum} with {nd}")
+    gr2_score = min(gr2_score, 100)
+    RES.append(_y_result("Grahan Yoga","Negative Yoga",gr2_score,
+        "Luminaries with Rahu/Ketu — eclipse energy, health/mental challenges",gr2_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 🧿 48. GURU CHANDAL YOGA (negative)
+    # ══════════════════════════════════════════════════════════════
+    gc2_f, gc2_score = [], 0.0
+    if Ju==Ra: gc2_score=70; gc2_f.append("Jupiter conjunct Rahu")
+    elif Ju==Ke: gc2_score=65; gc2_f.append("Jupiter conjunct Ketu")
+    elif _y_7th_asp(Ju,Ra): gc2_score=30; gc2_f.append("Jupiter-Rahu in 7th aspect")
+    RES.append(_y_result("Guru Chandal Yoga","Negative Yoga",gc2_score,
+        "Jupiter corrupted by Rahu/Ketu — loss of wisdom, unconventional beliefs",gc2_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💍 49. VIVAHA YOGA
+    # ══════════════════════════════════════════════════════════════
+    vv_f, vv_score = [], 0.0
+    l7 = lord(7); l7h = lord_house(7)
+    if dig("Venus") in ("Exalted","Own") and hs("Venus") in KENDRA|TRIKONA:
+        vv_score += 35; vv_f.append(f"Venus {dig('Venus')} in H{hs('Venus')}")
+    if dig(l7) in ("Exalted","Own") and l7h in KENDRA|TRIKONA:
+        vv_score += 35; vv_f.append(f"7th lord ({l7}) {dig(l7)} in H{l7h}")
+    if hs("Jupiter") in KENDRA|TRIKONA and _y_jup_asp(Ju, (L+6)%12):
+        vv_score += 20; vv_f.append("Jupiter aspects 7th house")
+    vv_score = min(vv_score, 100)
+    RES.append(_y_result("Vivaha Yoga","Marriage Yoga",vv_score,
+        "Strong 7th house + Venus — auspicious marriage yoga",vv_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💍 50. KUJA DOSHA IMPACT YOGA
+    # ══════════════════════════════════════════════════════════════
+    kj_f, kj_score = [], 0.0
+    ma_h_ve = _y_house(Ma,Ve)
+    if hs("Mars") in {1,2,4,7,8,12}:
+        kj_score += 40; kj_f.append(f"Mars in H{hs('Mars')} from Lagna (Mangal Dosh axis)")
+    if ma_h_ve in {1,2,4,7,8,12}:
+        kj_score += 25; kj_f.append(f"Mars in H{ma_h_ve} from Venus")
+    kj_score = min(kj_score, 100)
+    RES.append(_y_result("Kuja Dosha Impact Yoga","Marriage Yoga",kj_score,
+        "Mars in marriage houses — delays or intensity in relationships",kj_f,[],[]))
+
+    # ══════════════════════════════════════════════════════════════
+    # 💍 51. KALATRA YOGA
+    # ══════════════════════════════════════════════════════════════
+    kt_f, kt_score = [], 0.0
+    l7_h2 = lord_house(7)
+    if dig("Venus") in ("Exalted","Own"): kt_score+=35; kt_f.append(f"Venus {dig('Venus')}")
+    if dig(l7) in ("Exalted","Own"): kt_score+=35; kt_f.append(f"7th lord ({l7}) {dig(l7)}")
+    if hs("Venus") in KENDRA|TRIKONA: kt_score+=15; kt_f.append(f"Venus in Kendra/Trikona H{hs('Venus')}")
+    aff_7th = _malefic_count_in_house(pdata, 7, L)
+    if aff_7th > 0: kt_score -= 20*aff_7th; kt_f.append(f"7th house afflicted by {aff_7th} malefic(s)")
+    kt_score = min(max(kt_score,0), 100)
+    RES.append(_y_result("Kalatra Yoga","Marriage Yoga",kt_score,
+        "Strong Venus + 7th lord — blessed spouse, harmonious marriage",kt_f,[],[]))
+
+    return RES
+
+
+def _malefic_count_in_house(pdata, house, lagna):
+    return sum(1 for p in ["Saturn","Mars","Sun","Rahu","Ketu"]
+               if _y_house(pdata.get(p,{}).get("rashi_idx",0), lagna)==house)
+
+
+def display_yoga_analysis(pdata: dict) -> None:
+    """Print formatted yoga analysis with probability scores (0–100%)."""
+    results = analyze_all_yoga(pdata)
+
+    CAT_ORDER = [
+        "Raj Yoga","Dhan Yoga","Buddhi Yoga","Career Yoga",
+        "Spiritual Yoga","Moon Yoga","Special Yoga","Negative Yoga","Marriage Yoga",
+    ]
+    CAT_EMOJI = {
+        "Raj Yoga":"👑","Dhan Yoga":"💰","Buddhi Yoga":"🧠","Career Yoga":"💼",
+        "Spiritual Yoga":"🧘","Moon Yoga":"🌙","Special Yoga":"⚡",
+        "Negative Yoga":"🧿","Marriage Yoga":"💍",
+    }
+    CAT_LABEL = {
+        "Raj Yoga":"Raj Yoga (Power / Success)",
+        "Dhan Yoga":"Dhan Yoga (Wealth)",
+        "Buddhi Yoga":"Buddhi / Intelligence Yogas",
+        "Career Yoga":"Career / Success Yogas",
+        "Spiritual Yoga":"Spiritual / Moksha Yogas",
+        "Moon Yoga":"Moon-Based Yogas",
+        "Special Yoga":"Special / Rare Yogas",
+        "Negative Yoga":"Negative Yogas (Dosha-Type)",
+        "Marriage Yoga":"Marriage / Relationship Yogas",
+    }
+
+    def _bar(score, width=22):
+        f = int(score / 100.0 * width)
+        ch = "█" if score < 35 else ("▓" if score < 65 else "▒")
+        return ch * f + "░" * (width - f)
+
+    by_cat = {c: [] for c in CAT_ORDER}
+    for r in results: by_cat.setdefault(r["category"], []).append(r)
+
+    W = 78
+    print(f"\n  ╔{'═'*W}╗")
+    print(f"  ║{'YOGA ANALYSIS  —  Probability (0–100%) & Strength':^{W}}║")
+    print(f"  ║{'Sources: BPHS · Phaladeepika · Saravali · Brihat Jataka':^{W}}║")
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  {'#':<3} {'Yoga Name':<28} {'Score':>6}  {'Strength':<12}  {'[weak ── strong]':^22}  ║")
+    print(f"  ╠{'═'*W}╣")
+
+    num = 1
+    for cat in CAT_ORDER:
+        items = by_cat.get(cat, [])
+        if not items: continue
+        label = CAT_LABEL.get(cat, cat)
+        emoji = CAT_EMOJI.get(cat, "•")
+        print(f"  ║  {emoji} {label:<{W-5}}║")
+        print(f"  ║  {'─'*W}║")
+        for r in items:
+            sc = r["score"]; st = r["strength"]
+            mark = "●" if r["present"] else " "
+            bar = _bar(sc)
+            print(f"  ║  {mark} {num:>2}. {r['name']:<27} {sc:>5.1f}%  {st:<12}  [{bar}]  ║")
+            for fac in r["factors"][:2]:
+                print(f"  ║        ↳ {fac[:68]:<68}  ║")
+            num += 1
+        print(f"  ╠{'═'*W}╣")
+
+    # Summary: active yogas ranked
+    active = sorted([r for r in results if r["present"]], key=lambda x: -x["score"])
+    total = sum(r["score"] for r in active)
+    print(f"  ║  🌟 ACTIVE YOGAS ({len(active)} present)  ·  Total strength: {total:.0f} pts{'':<{W-52}}║")
+    print(f"  ║  {'─'*W}║")
+    for rank, r in enumerate(active, 1):
+        sym = "◆" if r["strength"]=="Very Strong" else ("▲" if r["strength"]=="Strong" else "●")
+        print(f"  ║  {sym} {rank:<3} {r['name']:<28} {r['score']:>5.1f}%  {r['strength']:<12}  {r['category']:<20}  ║")
+    if not active:
+        print(f"  ║  {'No significant yogas found in this chart':<{W}}║")
+    print(f"  ╠{'═'*W}╣")
+    footer = f"  ║  Strength: Weak 1-25%  Moderate 26-50%  Strong 51-75%  Very Strong 76-100%"
+    print(footer + " " * (W + 4 - len(footer)) + "║")
+    print(f"  ╚{'═'*W}╝\n")
+
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE A: FULL ASPECT SYSTEM
+#  Graha Drishti (Parashari) + Rashi Drishti (Jaimini)
+#  Planet-to-Planet Aspect Matrix
+# ═══════════════════════════════════════════════════════════════════
+
+# Graha Drishti: each planet aspects 7th from itself.
+# Special aspects:
+#   Mars: also 4th and 8th
+#   Jupiter: also 5th and 9th
+#   Saturn: also 3rd and 10th
+# Aspect strength by house distance (from Phaladeepika):
+_ASPECT_STRENGTH = {1:0,2:0,3:0.25,4:0.5,5:0.5,6:0,7:1.0,8:0.5,9:0.5,10:0.25,11:0,12:0}
+_SPECIAL_ASPECTS = {
+    "Mars":    {4:0.5, 7:1.0, 8:0.5},
+    "Jupiter": {5:0.5, 7:1.0, 9:0.5},
+    "Saturn":  {3:0.25,7:1.0,10:0.25},
+    "Rahu":    {5:0.5, 7:1.0, 9:0.5},  # Rahu/Ketu like Jupiter aspects (school-dependent)
+    "Ketu":    {5:0.5, 7:1.0, 9:0.5},
+}
+
+def graha_drishti(from_planet: str, from_sign: int, to_sign: int) -> float:
+    """
+    Returns aspect strength (0-1) of from_planet aspecting to_sign.
+    0 = no aspect, 1 = full aspect (7th house).
+    """
+    h = (to_sign - from_sign) % 12 + 1
+    special = _SPECIAL_ASPECTS.get(from_planet, {7: 1.0})
+    return special.get(h, _ASPECT_STRENGTH.get(h, 0))
+
+
+def rashi_drishti(from_sign: int, to_sign: int) -> bool:
+    """
+    Jaimini Rashi Drishti:
+    - Movable signs (Ar/Cn/Li/Cp) aspect all Fixed signs except adjacent
+    - Fixed signs (Ta/Le/Sc/Aq) aspect all Movable signs except adjacent
+    - Dual signs (Ge/Vi/Sg/Pi) aspect all other Dual signs
+    Returns True if from_sign aspects to_sign.
+    """
+    MOVABLE = {0,3,6,9}   # Ar,Cn,Li,Cp
+    FIXED   = {1,4,7,10}  # Ta,Le,Sc,Aq
+    DUAL    = {2,5,8,11}  # Ge,Vi,Sg,Pi
+
+    if from_sign in MOVABLE:
+        return to_sign in FIXED and abs(from_sign - to_sign) % 12 != 1
+    elif from_sign in FIXED:
+        return to_sign in MOVABLE and abs(from_sign - to_sign) % 12 != 1
+    elif from_sign in DUAL:
+        return to_sign in DUAL and to_sign != from_sign
+    return False
+
+
+def build_aspect_matrix(pdata: dict) -> dict:
+    """
+    Build complete Graha Drishti aspect matrix.
+    Returns dict: {aspector: {aspected: strength (0-1)}}
+    Also includes Rashi Drishti for each planet's sign.
+    """
+    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]
+    matrix = {}
+
+    for asp in PLANETS:
+        asp_sign = pdata.get(asp, {}).get("rashi_idx", 0)
+        matrix[asp] = {}
+        for tgt in PLANETS:
+            if tgt == asp:
+                matrix[asp][tgt] = 0.0
+                continue
+            tgt_sign = pdata.get(tgt, {}).get("rashi_idx", 0)
+            strength = graha_drishti(asp, asp_sign, tgt_sign)
+            matrix[asp][tgt] = round(strength, 2)
+
+    # Add Lagna aspects received
+    lagna_sign = pdata.get("Lagna", {}).get("rashi_idx", 0)
+    matrix["Lagna_received"] = {}
+    for asp in PLANETS:
+        asp_sign = pdata.get(asp, {}).get("rashi_idx", 0)
+        matrix["Lagna_received"][asp] = round(graha_drishti(asp, asp_sign, lagna_sign), 2)
+
+    return matrix
+
+
+def aspects_on_planet(pdata: dict, target_planet: str) -> dict:
+    """
+    Return all planets aspecting target_planet with their strength.
+    """
+    matrix = build_aspect_matrix(pdata)
+    tgt_sign = pdata.get(target_planet, {}).get("rashi_idx", 0)
+    result = {}
+    for asp, aspects in matrix.items():
+        if asp in ["Lagna_received"]: continue
+        if asp == target_planet: continue
+        s = aspects.get(target_planet, 0)
+        if s > 0:
+            result[asp] = s
+    return result
+
+
+def aspects_on_house(pdata: dict, house: int) -> dict:
+    """Return planets aspecting a specific house number from Lagna."""
+    lagna = pdata.get("Lagna", {}).get("rashi_idx", 0)
+    house_sign = (lagna + house - 1) % 12
+    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]
+    result = {}
+    for asp in PLANETS:
+        asp_sign = pdata.get(asp, {}).get("rashi_idx", 0)
+        s = graha_drishti(asp, asp_sign, house_sign)
+        if s > 0:
+            result[asp] = s
+    return result
+
+
+def display_aspect_matrix(pdata: dict) -> None:
+    """Print Graha Drishti aspect matrix + Rashi Drishti table."""
+    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]
+    P_ABBR  = {"Sun":"Su","Moon":"Mo","Mars":"Ma","Mercury":"Me",
+                "Jupiter":"Ju","Venus":"Ve","Saturn":"Sa","Rahu":"Ra","Ketu":"Ke"}
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    NATURE  = {"Sun":"M","Moon":"B","Mars":"M","Mercury":"N",
+               "Jupiter":"B","Venus":"B","Saturn":"M","Rahu":"M","Ketu":"M"}
+    MOVABLE = {0,3,6,9}; FIXED={1,4,7,10}; DUAL={2,5,8,11}
+    SIGN_TYPE = {s:("Mv" if s in MOVABLE else "Fx" if s in FIXED else "Dl") for s in range(12)}
+
+    matrix = build_aspect_matrix(pdata)
+    lagna  = pdata.get("Lagna",{}).get("rashi_idx",0)
+
+    print(f"\n  ╔{'═'*76}╗")
+    print(f"  ║  GRAHA DRISHTI — Planet Aspect Matrix (Parashari)")
+    print(f"  ║  Full=1.0 · Half=0.5 · Quarter=0.25 · None=·")
+    print(f"  ╠{'═'*76}╣")
+
+    # Header
+    hdr = "  ║  Aspector→ ║ " + " ".join(f"{P_ABBR[p]:>4}" for p in PLANETS) + "  ║"
+    print(hdr)
+    print(f"  ╠{'═'*76}╣")
+
+    for asp in PLANETS:
+        asp_sign = pdata.get(asp,{}).get("rashi_idx",0)
+        row_parts = []
+        for tgt in PLANETS:
+            s = matrix[asp].get(tgt, 0)
+            if s == 0:  row_parts.append("   ·")
+            elif s == 1.0: row_parts.append("  1·")
+            elif s == 0.5: row_parts.append(" ½· ")
+            else: row_parts.append(" ¼· ")
+        n = NATURE.get(asp,"N")
+        print(f"  ║  {P_ABBR[asp]}({SS[asp_sign]})[{n}] ║ {''.join(row_parts)}  ║")
+
+    # Aspects ON lagna
+    la_row = []
+    for asp in PLANETS:
+        s = matrix["Lagna_received"].get(asp, 0)
+        if s == 0: la_row.append("   ·")
+        elif s == 1.0: la_row.append("  1·")
+        elif s == 0.5: la_row.append(" ½· ")
+        else: la_row.append(" ¼· ")
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  Lagna({SS[lagna]})   ║ {''.join(la_row)}  ║")
+
+    print(f"  ╠{'═'*76}╣")
+
+    # Summary: who aspects whom (benefic/malefic net)
+    print(f"  ║  ASPECT SUMMARY per planet:")
+    for tgt in PLANETS:
+        tgt_sign = pdata.get(tgt,{}).get("rashi_idx",0)
+        asp_from = [(asp, matrix[asp].get(tgt,0)) for asp in PLANETS
+                    if asp!=tgt and matrix[asp].get(tgt,0)>0]
+        if not asp_from: continue
+        ben_sum = sum(s for a,s in asp_from if NATURE.get(a,"M")=="B")
+        mal_sum = sum(s for a,s in asp_from if NATURE.get(a,"M")=="M")
+        asp_str = ", ".join(f"{P_ABBR[a]}({s})" for a,s in asp_from)
+        print(f"  ║    {P_ABBR[tgt]}({SS[tgt_sign]}): aspected by {asp_str}")
+        print(f"  ║      → Benefic net: {ben_sum:.2f}  Malefic net: {mal_sum:.2f}  Balance: {ben_sum-mal_sum:+.2f}")
+
+    # Rashi Drishti
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  RASHI DRISHTI (Jaimini Sign Aspects):")
+    for s1 in range(12):
+        aspected = [SS[s2] for s2 in range(12) if s2!=s1 and rashi_drishti(s1,s2)]
+        if aspected:
+            stype = SIGN_TYPE[s1]
+            print(f"  ║    {SS[s1]}({stype}) aspects: {', '.join(aspected)}")
+
+    print(f"  ╚{'═'*76}╝\n")
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE B: SHADBALA ENGINE (SIMPLIFIED)
+#  6 Sources of Planetary Strength → Total 0-100%
+# ═══════════════════════════════════════════════════════════════════
+
+# Natural (Naisargika) Bala — fixed values (in Rupas, normalized)
+_NAISARGIKA = {
+    "Sun": 60, "Moon": 51.43, "Mars": 17.14, "Mercury": 25.71,
+    "Jupiter": 34.29, "Venus": 42.86, "Saturn": 8.57
+}
+
+# Dig Bala (directional strength) - strongest house
+_DIG_BALA_HOUSE = {
+    "Sun": 10, "Mars": 10,    # strong in 10th
+    "Moon": 4, "Venus": 4,    # strong in 4th
+    "Jupiter": 1, "Mercury": 1,  # strong in 1st
+    "Saturn": 7,               # strong in 7th
+}
+
+# Friendship table (compact)
+_FRIENDS = {
+    "Sun":     {"Moon","Mars","Jupiter"},
+    "Moon":    {"Sun","Mercury"},
+    "Mars":    {"Sun","Moon","Jupiter"},
+    "Mercury": {"Sun","Venus"},
+    "Jupiter": {"Sun","Moon","Mars"},
+    "Venus":   {"Mercury","Saturn"},
+    "Saturn":  {"Mercury","Venus"},
+}
+_ENEMIES = {
+    "Sun":     {"Venus","Saturn"},
+    "Moon":    {"None"},
+    "Mars":    {"Mercury"},
+    "Mercury": {"Moon"},
+    "Jupiter": {"Mercury","Venus"},
+    "Venus":   {"Sun","Moon"},
+    "Saturn":  {"Sun","Moon","Mars"},
+}
+
+def _sthana_bala(planet: str, sign: int, deg: float, pdata: dict) -> float:
+    """Positional/Dignity strength 0-60 (Rupas)."""
+    OWN = {"Sun":{4},"Moon":{3},"Mars":{0,7},"Mercury":{2,5},
+           "Jupiter":{8,11},"Venus":{1,6},"Saturn":{9,10}}
+    EXALT = {"Sun":0,"Moon":1,"Mars":9,"Mercury":5,"Jupiter":3,"Venus":11,"Saturn":6}
+    MT    = {"Sun":4,"Moon":1,"Mars":0,"Mercury":5,"Jupiter":8,"Venus":6,"Saturn":10}
+    DEBI  = {"Sun":6,"Moon":7,"Mars":3,"Mercury":11,"Jupiter":9,"Venus":5,"Saturn":0}
+
+    if EXALT.get(planet,-1)==sign: return 60.0
+    if sign in OWN.get(planet,set()):
+        return 45.0 if MT.get(planet,-1)==sign else 30.0
+    if DEBI.get(planet,-1)==sign: return 0.0
+    # Friend/enemy
+    sign_lord = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+                 6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
+    lord = sign_lord.get(sign,"Sun")
+    if lord in _FRIENDS.get(planet,set()): return 22.5
+    if lord in _ENEMIES.get(planet,set()): return 7.5
+    return 15.0  # neutral
+
+
+def _dig_bala(planet: str, house: int) -> float:
+    """Directional strength 0-60 Rupas."""
+    best_h = _DIG_BALA_HOUSE.get(planet, 1)
+    worst_h = (best_h + 6) % 12 or 12  # opposite house
+    if house == best_h: return 60.0
+    if house == worst_h: return 0.0
+    # Linear interpolation
+    dist = min(abs(house - best_h), 12 - abs(house - best_h))
+    return max(0.0, 60.0 - dist * (60.0/6.0))
+
+
+def _chesta_bala(planet: str, speed: float) -> float:
+    """Motional strength based on speed. Retrograde = full; fast = reduced."""
+    if planet in ("Sun","Moon"): return 30.0  # luminaries use mean motion
+    if speed < 0: return 60.0   # retrograde = full Chesta Bala
+    if speed == 0: return 45.0  # stationary
+    # Mean motions (approx degrees/day)
+    MEAN = {"Mars":0.524,"Mercury":1.383,"Jupiter":0.083,"Venus":1.2,"Saturn":0.034}
+    mean = MEAN.get(planet, 1.0)
+    ratio = min(speed / mean, 2.0)
+    return max(0.0, 60.0 * (1.0 - ratio * 0.5))
+
+
+def _kala_bala_simple(planet: str, pdata: dict) -> float:
+    """Simplified temporal strength (day/night, paksha)."""
+    # Day planets strong in day: Sun, Jupiter, Saturn
+    # Night planets strong at night: Moon, Venus, Mars
+    # Mercury: both
+    # Simplified: use Moon position (above horizon = day-ish)
+    moon_h = (pdata.get("Moon",{}).get("rashi_idx",0) - pdata.get("Lagna",{}).get("rashi_idx",0)) % 12 + 1
+    is_day = moon_h in {7,8,9,10,11,12}  # Moon above horizon
+    day_planets   = {"Sun","Jupiter","Saturn"}
+    night_planets = {"Moon","Venus","Mars"}
+    if planet in day_planets:   return 60.0 if is_day else 30.0
+    if planet in night_planets: return 30.0 if is_day else 60.0
+    return 45.0  # Mercury
+
+
+def _naisargika_bala(planet: str) -> float:
+    """Natural strength (fixed)."""
+    return _NAISARGIKA.get(planet, 20.0)
+
+
+def _drik_bala(planet: str, pdata: dict) -> float:
+    """
+    Aspect-based strength: benefic aspects add, malefic reduce.
+    Range: -60 to +60 Rupas.
+    """
+    BENEFIC = {"Jupiter","Venus","Mercury","Moon"}
+    MALEFIC = {"Saturn","Mars","Sun","Rahu","Ketu"}
+    asp = aspects_on_planet(pdata, planet)
+    score = 0.0
+    for asp_planet, strength in asp.items():
+        if asp_planet in BENEFIC: score += 30.0 * strength
+        elif asp_planet in MALEFIC: score -= 30.0 * strength
+    return max(-60.0, min(60.0, score))
+
+
+def calculate_shadbala(pdata: dict) -> dict:
+    """
+    Calculate simplified Shadbala for all 7 planets.
+    Returns dict: {planet: {bala_components, total_rupas, score_100}}
+    """
+    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    results = {}
+
+    # Minimum required Rupas for each planet (classical standards)
+    MIN_RUPAS = {
+        "Sun":140,"Moon":160,"Mars":130,"Mercury":140,
+        "Jupiter":150,"Venus":140,"Saturn":110
+    }
+    MAX_RUPAS = {
+        "Sun":320,"Moon":340,"Mars":310,"Mercury":320,
+        "Jupiter":340,"Venus":330,"Saturn":300
+    }
+
+    for p in PLANETS:
+        sign  = pdata.get(p,{}).get("rashi_idx",0)
+        deg   = pdata.get(p,{}).get("deg_rashi",0.0)
+        house = (sign - lagna) % 12 + 1
+        speed = pdata.get(p,{}).get("speed",0.5)
+
+        sth = _sthana_bala(p, sign, deg, pdata)
+        dig = _dig_bala(p, house)
+        che = _chesta_bala(p, speed)
+        kal = _kala_bala_simple(p, pdata)
+        nai = _naisargika_bala(p)
+        drk = _drik_bala(p, pdata)
+
+        total = sth + dig + che + kal + nai + drk
+        min_r = MIN_RUPAS.get(p, 300)
+        max_r = MAX_RUPAS.get(p, 540)
+        score = round(min(100.0, max(0.0, (total - min_r) / (max_r - min_r) * 100)), 1)
+
+        results[p] = {
+            "sthana_bala":    round(sth,1),
+            "dig_bala":       round(dig,1),
+            "chesta_bala":    round(che,1),
+            "kala_bala":      round(kal,1),
+            "naisargika_bala":round(nai,1),
+            "drik_bala":      round(drk,1),
+            "total_rupas":    round(total,1),
+            "min_required":   min_r,
+            "score_100":      score,
+            "house":          house,
+        }
+
+    return results
+
+
+def display_shadbala(pdata: dict) -> None:
+    """Display Shadbala table and Dig Bala."""
+    sb = calculate_shadbala(pdata)
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+
+    def _bar(s, w=15):
+        f = int(s/100*w)
+        ch = "█" if s<35 else ("▓" if s<65 else "▒")
+        return ch*f + "░"*(w-f)
+
+    print(f"\n  ╔{'═'*80}╗")
+    print(f"  ║  SHADBALA (Simplified) — 6-Source Planetary Strength")
+    print(f"  ║  Sthana(positional) · Dig(directional) · Chesta(motional)")
+    print(f"  ║  Kala(temporal) · Naisargika(natural) · Drik(aspect-based)")
+    print(f"  ╠{'═'*80}╣")
+    print(f"  ║  {'Planet':<10} {'Sign':>4} {'H':>3}  {'Sth':>5} {'Dig':>5} {'Che':>5} "
+          f"{'Kal':>5} {'Nai':>5} {'Drk':>6}  {'Total':>6}  {'Score':>5}  {'[strength bar]':^16}  ║")
+    print(f"  ╠{'═'*80}╣")
+
+    for p in PLANETS:
+        d = sb[p]
+        sign = pdata.get(p,{}).get("rashi_idx",0)
+        print(f"  ║  {p:<10} {SS[sign]:>4} {d['house']:>3}  "
+              f"{d['sthana_bala']:>5.1f} {d['dig_bala']:>5.1f} {d['chesta_bala']:>5.1f} "
+              f"{d['kala_bala']:>5.1f} {d['naisargika_bala']:>5.1f} {d['drik_bala']:>6.1f}  "
+              f"{d['total_rupas']:>6.1f}  {d['score_100']:>4.0f}%  [{_bar(d['score_100'])}]  ║")
+
+    print(f"  ╠{'═'*80}╣")
+    # Dig Bala summary
+    print(f"  ║  DIG BALA (Directional Strength):")
+    dig_info = {
+        "Sun/Mars": ("10th",10), "Moon/Venus": ("4th",4),
+        "Jupiter/Mercury": ("1st",1), "Saturn": ("7th",7)
+    }
+    for grp, (best, bh) in dig_info.items():
+        bh_sign = SS[(lagna + bh - 1) % 12]
+        print(f"  ║    {grp}: strongest in {best} house ({bh_sign})")
+    print(f"  ╚{'═'*80}╝\n")
+
+
+def planet_strength_score(pdata: dict) -> dict:
+    """Return overall 0-100 strength score for each planet."""
+    sb = calculate_shadbala(pdata)
+    return {p: v["score_100"] for p,v in sb.items()}
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE C: ASHTAKAVARGA
+#  Bhinnashtakavarga (BAV) + Sarvashtakavarga (SAV)
+#  Classical 8-source benefic point tables
+# ═══════════════════════════════════════════════════════════════════
+
+# BAV contribution tables: for each planet P, from each contributor C,
+# which houses (counted from C's natal sign) get a benefic point (rekha)
+# Source: Standard classical Ashtakavarga tables (BPHS / Brihat Jataka)
+_AV_TABLES = {
+    "Sun": {
+        "Sun":    {1,2,4,7,8,9,10,11},
+        "Moon":   {3,6,10,11},
+        "Mars":   {1,2,4,7,8,9,10,11},
+        "Mercury":{3,5,6,9,10,11,12},
+        "Jupiter":{5,6,9,11},
+        "Venus":  {6,7,12},
+        "Saturn": {1,2,4,7,8,9,10,11},
+        "Lagna":  {3,4,6,10,11,12},
+    },
+    "Moon": {
+        "Sun":    {3,6,7,8,10,11},
+        "Moon":   {1,3,6,7,10,11},
+        "Mars":   {2,3,5,6,9,10,11},
+        "Mercury":{1,3,4,5,7,8,10,11},
+        "Jupiter":{1,4,7,8,10,11,12},
+        "Venus":  {3,4,5,7,9,10,11},
+        "Saturn": {3,5,6,11},
+        "Lagna":  {3,6,10,11},
+    },
+    "Mars": {
+        "Sun":    {3,5,6,10,11},
+        "Moon":   {3,6,11},
+        "Mars":   {1,2,4,7,8,10,11},
+        "Mercury":{3,5,6,11},
+        "Jupiter":{6,10,11,12},
+        "Venus":  {6,8,11,12},
+        "Saturn": {1,4,7,8,9,10,11},
+        "Lagna":  {1,4,6,8,10,11,12},
+    },
+    "Mercury": {
+        "Sun":    {5,6,9,11,12},
+        "Moon":   {2,4,6,8,10,11},
+        "Mars":   {1,2,4,7,8,9,10,11},
+        "Mercury":{1,3,5,6,9,10,11,12},
+        "Jupiter":{6,8,11,12},
+        "Venus":  {1,2,3,4,5,8,9,11},
+        "Saturn": {1,2,4,7,8,9,10,11},
+        "Lagna":  {1,2,4,6,8,10,11},
+    },
+    "Jupiter": {
+        "Sun":    {1,2,3,4,7,8,9,10,11},
+        "Moon":   {2,5,7,9,11},
+        "Mars":   {1,2,4,7,8,10,11},
+        "Mercury":{1,2,4,5,6,9,10,11},
+        "Jupiter":{1,2,3,4,5,6,7,8,10,11},
+        "Venus":  {2,5,6,9,10,11},
+        "Saturn": {3,5,6,12},
+        "Lagna":  {1,2,4,5,6,7,9,10,11},
+    },
+    "Venus": {
+        "Sun":    {8,11,12},
+        "Moon":   {1,2,3,4,5,8,9,11,12},
+        "Mars":   {3,4,6,9,11,12},
+        "Mercury":{3,5,6,9,11},
+        "Jupiter":{5,8,9,10,11},
+        "Venus":  {1,2,3,4,5,8,9,10,11},
+        "Saturn": {3,4,5,8,9,10,11},
+        "Lagna":  {1,2,3,4,5,8,9,11},
+    },
+    "Saturn": {
+        "Sun":    {1,2,4,7,8,10,11},
+        "Moon":   {3,6,11},
+        "Mars":   {3,5,6,10,11,12},
+        "Mercury":{6,8,9,10,11,12},
+        "Jupiter":{5,6,11,12},
+        "Venus":  {6,11,12},
+        "Saturn": {3,5,6,11},
+        "Lagna":  {1,3,4,6,10,11},
+    },
+}
+
+def calculate_ashtakavarga(pdata: dict) -> dict:
+    """
+    Calculate Ashtakavarga for all 7 planets.
+    Returns:
+      {planet: {
+          "bav":  [8 rekhaas per sign, indices 0-11],  # Bhinnashtakavarga
+          "total": int,  # sum of BAV (should be 56)
+          "sign_scores": {sign_idx: rekha_count},
+       },
+       "sav": [total rekha per sign, 0-11],   # Sarvashtakavarga
+       "sav_total": int,   # should be ~337
+      }
+    """
+    PLANETS7 = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+    CONTRIBUTORS = PLANETS7 + ["Lagna"]
+    lagna_sign = pdata.get("Lagna",{}).get("rashi_idx",0)
+
+    result = {}
+    sav = [0] * 12
+
+    for planet in PLANETS7:
+        table = _AV_TABLES.get(planet, {})
+        bav = [0] * 12  # rekha count per sign
+
+        for contrib in CONTRIBUTORS:
+            if contrib == "Lagna":
+                ref_sign = lagna_sign
+            else:
+                ref_sign = pdata.get(contrib,{}).get("rashi_idx",0)
+
+            rekha_houses = table.get(contrib, set())
+            for h in rekha_houses:
+                sign_idx = (ref_sign + h - 1) % 12
+                bav[sign_idx] += 1
+
+        total = sum(bav)
+        sign_scores = {i: bav[i] for i in range(12)}
+
+        result[planet] = {
+            "bav": bav,
+            "total": total,
+            "sign_scores": sign_scores,
+        }
+
+        for i in range(12):
+            sav[i] += bav[i]
+
+    result["sav"] = sav
+    result["sav_total"] = sum(sav)
+    return result
+
+
+def display_ashtakavarga(pdata: dict) -> None:
+    """Display Ashtakavarga table."""
+    av = calculate_ashtakavarga(pdata)
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    PLANETS7 = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    P3    = {"Sun":"Su","Moon":"Mo","Mars":"Ma","Mercury":"Me",
+             "Jupiter":"Ju","Venus":"Ve","Saturn":"Sa"}
+
+    # House numbers from lagna
+    house_of = lambda s: (s - lagna) % 12 + 1
+
+    print(f"\n  ╔{'═'*80}╗")
+    print(f"  ║  ASHTAKAVARGA — Bhinnashtakavarga (BAV) & Sarvashtakavarga (SAV)")
+    print(f"  ║  Rekha (benefic points) per sign  ·  4+ = strong  ·  3 = avg  ·  <3 = weak")
+    print(f"  ╠{'═'*80}╣")
+
+    # Sign header
+    hdr = "  ║  Planet  " + " ".join(f"{SS[s]:>4}" for s in range(12)) + "  Σ  ║"
+    print(hdr)
+    hdr2 = "  ║  (H from L) " + " ".join(f"H{house_of(s):02d}" for s in range(12)) + "     ║"
+    print(hdr2)
+    print(f"  ╠{'═'*80}╣")
+
+    for p in PLANETS7:
+        bav = av[p]["bav"]
+        total = av[p]["total"]
+        ps = pdata.get(p,{}).get("rashi_idx",0)
+        # Highlight planet's own sign with brackets
+        row = " ".join(
+            f"[{bav[s]:1d}]" if s==ps else f"  {bav[s]:1d} "
+            for s in range(12)
+        )
+        print(f"  ║  {P3[p]:<7}  {row}  {total:>2}  ║")
+
+    print(f"  ╠{'═'*80}╣")
+    sav = av["sav"]
+    sav_row = " ".join(f" {sav[s]:>2} " for s in range(12))
+    print(f"  ║  SAV      {sav_row}  {av['sav_total']:>3}  ║")
+    print(f"  ╠{'═'*80}╣")
+
+    # Strongest/weakest signs from SAV
+    sorted_signs = sorted(range(12), key=lambda s: sav[s], reverse=True)
+    print(f"  ║  SAV Strength Ranking:")
+    top3 = [(SS[s], house_of(s), sav[s]) for s in sorted_signs[:4]]
+    bot3 = [(SS[s], house_of(s), sav[s]) for s in sorted_signs[-4:]]
+    print(f"  ║    Best  signs: " + "  ".join(f"{n}(H{h})={v}" for n,h,v in top3))
+    print(f"  ║    Weak  signs: " + "  ".join(f"{n}(H{h})={v}" for n,h,v in bot3))
+
+    # Planet BAV in its own transit sign
+    print(f"  ╠{'═'*80}╣")
+    print(f"  ║  BAV score of planet in its own natal sign:")
+    for p in PLANETS7:
+        ps = pdata.get(p,{}).get("rashi_idx",0)
+        score = av[p]["bav"][ps]
+        quality = "Strong (4+)" if score>=4 else ("Average" if score==3 else "Weak (<3)")
+        print(f"  ║    {P3[p]:<5} in {SS[ps]}: {score} rekhas — {quality}")
+
+    print(f"  ╚{'═'*80}╝\n")
+
+
+def ashtakavarga_house_score(pdata: dict, house: int) -> dict:
+    """Return SAV + each planet's BAV score for a given house."""
+    av  = calculate_ashtakavarga(pdata)
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    house_sign = (lagna + house - 1) % 12
+    PLANETS7 = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+    return {
+        "house": house,
+        "sign": house_sign,
+        "sav": av["sav"][house_sign],
+        "bav": {p: av[p]["bav"][house_sign] for p in PLANETS7},
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE D: LIFE AREA SCORING
+#  Career · Wealth · Marriage · Health · Spirituality
+#  Uses: Shadbala + Ashtakavarga + Yoga/Dosh scores + Aspect engine
+# ═══════════════════════════════════════════════════════════════════
+
+def calculate_life_areas(pdata: dict) -> dict:
+    """
+    Score 5 major life areas on a 0-100 scale.
+    Returns dict with area scores + breakdown.
+    """
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    SIGN_LORD = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+                 6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
+
+    sb  = calculate_shadbala(pdata)
+    av  = calculate_ashtakavarga(pdata)
+    mat = build_aspect_matrix(pdata)
+
+    def hs(p): return (pdata.get(p,{}).get("rashi_idx",0) - lagna) % 12 + 1
+    def lord(h): return SIGN_LORD.get((lagna+h-1)%12,"Sun")
+    def dig(p):
+        s = pdata.get(p,{}).get("rashi_idx",0)
+        OWN={"Sun":{4},"Moon":{3},"Mars":{0,7},"Mercury":{2,5},"Jupiter":{8,11},"Venus":{1,6},"Saturn":{9,10}}
+        EXALT={"Sun":0,"Moon":1,"Mars":9,"Mercury":5,"Jupiter":3,"Venus":11,"Saturn":6}
+        if EXALT.get(p,-1)==s: return 2.0
+        if s in OWN.get(p,set()): return 1.5
+        return 1.0
+    def sav_h(h): return av["sav"][(lagna+h-1)%12]
+    def ben_asp(house):
+        BENEFIC = {"Jupiter","Venus","Mercury","Moon"}
+        asp = aspects_on_house(pdata, house)
+        return sum(v for p,v in asp.items() if p in BENEFIC)
+    def mal_asp(house):
+        MALEFIC = {"Saturn","Mars","Sun","Rahu","Ketu"}
+        asp = aspects_on_house(pdata, house)
+        return sum(v for p,v in asp.items() if p in MALEFIC)
+    def strength(p):
+        return sb.get(p,{}).get("score_100",50) if p in sb else 50
+
+    areas = {}
+
+    # Each area scored via weighted components, then normalized to 0-100.
+    # Max theoretical raw score ~100 before normalization.
+    def _norm(raw, mx=100.0): return round(min(100, max(0, raw/mx*100)), 1)
+
+    # ── CAREER (10th, 6th, Sun, Saturn) ──────────────────────────
+    l10 = lord(10); l6 = lord(6)
+    car  = (sav_h(10)/8 * 35)                     # SAV H10: 0-35
+    car += (sav_h(6) /8 * 10)                      # SAV H6:  0-10
+    car += strength("Sun")    * 0.15               # Sun:     0-15
+    car += strength("Saturn") * 0.15               # Saturn:  0-15
+    car += strength(l10)      * 0.12               # 10L:     0-12
+    car += ben_asp(10)        * 3                  # Ben asp: 0-9  (max 3 full)
+    car -= mal_asp(10)        * 2                  # Mal asp: penalty
+    car_factors = [
+        f"10th house SAV: {sav_h(10)}/8",
+        f"10th lord ({l10}) strength: {strength(l10):.0f}%",
+        f"Sun strength: {strength('Sun'):.0f}%",
+        f"Benefic aspects on 10th: {ben_asp(10):.1f}",
+    ]
+    areas["Career"] = {
+        "score": _norm(car, 100.0),
+        "factors": car_factors,
+        "key_planets": ["Sun","Saturn",l10],
+        "houses": [6,10],
+    }
+
+    # ── WEALTH (2nd, 11th, 5th, Jupiter, Venus) ──────────────────
+    l2 = lord(2); l11 = lord(11)
+    wlt  = (sav_h(2) /8 * 25) + (sav_h(11)/8 * 25) + (sav_h(5)/8 * 8)
+    wlt += strength("Jupiter") * 0.12 + strength("Venus") * 0.08
+    wlt += strength(l2) * 0.12  + strength(l11) * 0.10
+    wlt -= mal_asp(2)*2 + mal_asp(11)*1.5
+    areas["Wealth"] = {
+        "score": _norm(wlt, 100.0),
+        "factors": [
+            f"2nd house SAV: {sav_h(2)}/8",
+            f"11th house SAV: {sav_h(11)}/8",
+            f"Jupiter strength: {strength('Jupiter'):.0f}%",
+            f"2nd lord ({l2}) strength: {strength(l2):.0f}%",
+        ],
+        "key_planets": ["Jupiter","Venus",l2,l11],
+        "houses": [2,5,11],
+    }
+
+    # ── MARRIAGE (7th, 5th, Venus, Jupiter) ──────────────────────
+    l7 = lord(7); l5 = lord(5)
+    mar  = (sav_h(7)/8 * 40) + (sav_h(5)/8 * 12)
+    mar += strength("Venus") * 0.20 + strength(l7) * 0.15
+    mar += ben_asp(7)*3 - mal_asp(7)*3
+    areas["Marriage"] = {
+        "score": _norm(mar, 100.0),
+        "factors": [
+            f"7th house SAV: {sav_h(7)}/8",
+            f"Venus strength: {strength('Venus'):.0f}%",
+            f"7th lord ({l7}) strength: {strength(l7):.0f}%",
+            f"Benefic aspects on 7th: {ben_asp(7):.1f}",
+        ],
+        "key_planets": ["Venus","Jupiter",l7],
+        "houses": [5,7],
+    }
+
+    # ── HEALTH (1st, 8th, 6th, Moon, Sun, Lagna lord) ────────────
+    l1 = lord(1)
+    hlt  = (sav_h(1)/8 * 35) + (sav_h(8)/8 * 10)
+    hlt += strength("Moon") * 0.20 + strength("Sun") * 0.10 + strength(l1) * 0.15
+    hlt += ben_asp(1)*3 - mal_asp(1)*2 - mal_asp(6)*1.5
+    areas["Health"] = {
+        "score": _norm(hlt, 100.0),
+        "factors": [
+            f"Lagna SAV: {sav_h(1)}/8",
+            f"Moon strength: {strength('Moon'):.0f}%",
+            f"Lagna lord ({l1}) strength: {strength(l1):.0f}%",
+            f"Malefic aspects on Lagna: {mal_asp(1):.1f}",
+        ],
+        "key_planets": ["Moon","Sun",l1],
+        "houses": [1,6,8],
+    }
+
+    # ── SPIRITUALITY (9th, 12th, Ketu, Jupiter, Moon) ────────────
+    l9 = lord(9); l12 = lord(12)
+    spr  = (sav_h(9)/8 * 35) + (sav_h(12)/8 * 20)
+    spr += strength("Jupiter") * 0.20 + strength("Moon") * 0.10 + strength(l9) * 0.10
+    spr += 15 if hs("Ketu") in {9,12,4} else 0
+    areas["Spirituality"] = {
+        "score": _norm(spr, 100.0),
+        "factors": [
+            f"9th house SAV: {sav_h(9)}/8",
+            f"12th house SAV: {sav_h(12)}/8",
+            f"Jupiter strength: {strength('Jupiter'):.0f}%",
+            f"Ketu in 9/12/4: {'Yes' if hs('Ketu') in {9,12,4} else 'No'}",
+        ],
+        "key_planets": ["Jupiter","Moon",l9],
+        "houses": [9,12],
+    }
+
+    return areas
+
+
+def display_life_areas(pdata: dict) -> None:
+    """Display life area scoring dashboard."""
+    areas = calculate_life_areas(pdata)
+    EMOJIS = {"Career":"💼","Wealth":"💰","Marriage":"💍","Health":"🏥","Spirituality":"🧘"}
+
+    def _bar(s, w=24):
+        f = int(s/100*w)
+        ch = "█" if s < 35 else ("▓" if s < 65 else "▒")
+        return ch*f + "░"*(w-f)
+
+    print(f"\n  ╔{'═'*76}╗")
+    print(f"  ║  LIFE AREA SCORING — Career · Wealth · Marriage · Health · Spirituality")
+    print(f"  ║  Based on Shadbala · Ashtakavarga · Aspects · House Analysis")
+    print(f"  ╠{'═'*76}╣")
+
+    for area, data in areas.items():
+        sc = data["score"]
+        emoji = EMOJIS.get(area,"•")
+        band = ("Excellent" if sc>=75 else "Good" if sc>=55 else "Average" if sc>=35 else "Challenging")
+        print(f"  ║  {emoji} {area:<14} {sc:>5.1f}%  [{_bar(sc)}]  {band}")
+        for fac in data["factors"][:2]:
+            print(f"  ║      ↳ {fac[:66]:<66}  ║")
+
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  Scale: Excellent 75-100%  Good 55-74%  Average 35-54%  Challenging <35%")
+    print(f"  ╚{'═'*76}╝\n")
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE E: DASHA ACTIVATION ENGINE
+#  Which Yogas/Doshas are active in current Mahadasha/Antardasha?
+#  Transit + Dasha Combined Prediction
+# ═══════════════════════════════════════════════════════════════════
+
+def get_current_dasha_lords(pdata: dict, birth_jd: float, query_jd: float = None) -> dict:
+    """
+    Find current MD, AD, PD lords at query_jd (default: today).
+    Returns dict with lord names, period dates, and time remaining.
+    """
+    from datetime import date
+    if query_jd is None:
+        today = date.today()
+        query_jd = to_julian_day(today.year, today.month, today.day, 0)
+
+    moon_lon = pdata.get("Moon",{}).get("lon",0)
+    v_dashas, v_balance, v_lord = vimshottari_dasha(moon_lon, birth_jd)
+    ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, birth_jd)
+
+    def _find_level(dashas, jd, depth=0):
+        for md in dashas:
+            if md["start_jd"] <= jd <= md["end_jd"]:
+                if depth == 0:
+                    # Find AD
+                    for ad in md.get("sub", []):
+                        if ad["start_jd"] <= jd <= ad["end_jd"]:
+                            pd_lord = None
+                            for pd in ad.get("sub", []):
+                                if pd["start_jd"] <= jd <= pd["end_jd"]:
+                                    pd_lord = pd["planet"]
+                                    break
+                            return {
+                                "md": md["planet"],
+                                "md_start": jd_to_date(md["start_jd"]),
+                                "md_end":   jd_to_date(md["end_jd"]),
+                                "ad": ad["planet"],
+                                "ad_start": jd_to_date(ad["start_jd"]),
+                                "ad_end":   jd_to_date(ad["end_jd"]),
+                                "pd": pd_lord,
+                            }
+        return {}
+
+    vim_lords  = _find_level(v_dashas, query_jd)
+    moola_lords = _find_level(ml_dashas, query_jd)
+
+    return {
+        "vimshottari": vim_lords,
+        "moola":        moola_lords,
+        "query_date":   jd_to_date(query_jd),
+    }
+
+
+def _planet_in_yoga(planet: str, yoga_result: dict) -> bool:
+    """Check if a planet name appears in a yoga's factor text."""
+    text = " ".join(yoga_result.get("factors",[])).lower()
+    return planet.lower() in text
+
+
+def dasha_activated_events(pdata: dict, birth_jd: float, query_jd: float = None) -> dict:
+    """
+    Find which yogas/doshas are triggered in current MD/AD period.
+
+    Logic:
+    - A yoga is "active" if the MD or AD lord is a key planet in that yoga
+      OR the MD/AD lord rules a house relevant to that yoga
+    - A dosh is "active" if the MD or AD lord is the afflicted/afflicting planet
+    - Additional weight if current gochar supports the activation
+    """
+    from datetime import date
+    if query_jd is None:
+        today = date.today()
+        query_jd = to_julian_day(today.year, today.month, today.day, 0)
+
+    lords = get_current_dasha_lords(pdata, birth_jd, query_jd)
+    vim   = lords.get("vimshottari", {})
+    moola = lords.get("moola", {})
+
+    md_lord = vim.get("md","")
+    ad_lord = vim.get("ad","")
+    md_lord_m = moola.get("md","")
+
+    active_lords = {md_lord, ad_lord, md_lord_m}
+
+    # Get all yoga + dosh results
+    yogas  = analyze_all_yoga(pdata)
+    doshas = analyze_all_dosh(pdata)
+
+    # Gochar today
+    today_date = date.today()
+    gj = to_julian_day(today_date.year, today_date.month, today_date.day, 6.5)
+    gpos = get_all_positions(gj)
+    transit_signs = {p: int(gpos.get(p,{}).get("lon",0)/30)
+                     for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]
+                     if p in gpos}
+
+    # Score gochar for MD lord's natal sign
+    md_lord_sign = pdata.get(md_lord,{}).get("rashi_idx",0)
+    gochar_for_md, _, gochar_flags = gochar_score_rashi(transit_signs, md_lord_sign)
+
+    activated_yogas  = []
+    activated_doshas = []
+
+    for y in yogas:
+        if not y["present"]: continue
+        # Check if any active lord appears in yoga factors
+        triggered = any(l and l in " ".join(y["factors"]) for l in active_lords if l)
+        # Also check by yoga category alignment
+        if not triggered:
+            if md_lord in ("Jupiter","Venus","Moon") and y["category"] in ("Raj Yoga","Dhan Yoga","Buddhi Yoga"):
+                triggered = True
+            elif md_lord in ("Saturn","Mars") and y["category"] in ("Career Yoga","Special Yoga"):
+                triggered = True
+            elif md_lord in ("Sun",) and y["category"] in ("Raj Yoga","Career Yoga"):
+                triggered = True
+        if triggered:
+            activation = y["score"] * (1.1 if gochar_for_md > 2 else 0.9)
+            activated_yogas.append({
+                "name":       y["name"],
+                "category":   y["category"],
+                "base_score": y["score"],
+                "activation": round(min(100,activation),1),
+                "strength":   y["strength"],
+                "via_lord":   md_lord or ad_lord,
+            })
+
+    for d in doshas:
+        if not d["present"]: continue
+        triggered = any(l and l in " ".join(d["factors"]) for l in active_lords if l)
+        if not triggered:
+            if md_lord in ("Saturn","Rahu","Ketu") and d["category"] in ("Karmic/Rahu-Ketu","Planet-Based"):
+                triggered = True
+            elif md_lord == "Mars" and "Mangal" in d["name"]:
+                triggered = True
+        if triggered:
+            activation = d["score"] * (1.1 if gochar_for_md < -2 else 0.9)
+            activated_doshas.append({
+                "name":       d["name"],
+                "category":   d["category"],
+                "base_score": d["score"],
+                "activation": round(min(100,activation),1),
+                "severity":   d["severity"],
+                "via_lord":   md_lord or ad_lord,
+            })
+
+    return {
+        "query_date": lords["query_date"],
+        "vimshottari": vim,
+        "moola": moola,
+        "gochar_score_for_md_lord": round(gochar_for_md,2),
+        "gochar_flags": gochar_flags,
+        "activated_yogas":  sorted(activated_yogas,  key=lambda x: -x["activation"]),
+        "activated_doshas": sorted(activated_doshas, key=lambda x: -x["activation"]),
+    }
+
+
+def display_dasha_activation(pdata: dict, birth_jd: float) -> None:
+    """Display current dasha activation analysis — what's happening NOW."""
+    ev = dasha_activated_events(pdata, birth_jd)
+    vim   = ev["vimshottari"]
+    moola = ev["moola"]
+    SS    = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+
+    print(f"\n  ╔{'═'*76}╗")
+    print(f"  ║  DASHA ACTIVATION ENGINE  —  Current Period Analysis")
+    print(f"  ║  Date: {ev['query_date']}")
+    print(f"  ╠{'═'*76}╣")
+
+    # Current periods
+    if vim:
+        print(f"  ║  VIMSHOTTARI:")
+        print(f"  ║    Mahadasha : {vim.get('md','?'):<12}  {vim.get('md_start','?')} → {vim.get('md_end','?')}")
+        print(f"  ║    Antardasha: {vim.get('ad','?'):<12}  {vim.get('ad_start','?')} → {vim.get('ad_end','?')}")
+        if vim.get("pd"): print(f"  ║    Pratyantardasha: {vim['pd']}")
+    if moola:
+        print(f"  ║  MOOLA DASHA:")
+        print(f"  ║    Mahadasha : {moola.get('md','?'):<12}  {moola.get('md_start','?')} → {moola.get('md_end','?')}")
+        print(f"  ║    Antardasha: {moola.get('ad','?'):<12}  {moola.get('ad_start','?')} → {moola.get('ad_end','?')}")
+
+    # Gochar context
+    gc = ev["gochar_score_for_md_lord"]
+    gc_grade = ("Favorable" if gc > 2 else ("Unfavorable" if gc < -2 else "Neutral"))
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  GOCHAR (Transit) for MD Lord's sign: {gc:+.2f} → {gc_grade}")
+    if ev["gochar_flags"]:
+        print(f"  ║    Alerts: {' | '.join(ev['gochar_flags'][:3])}")
+
+    # Activated Yogas
+    print(f"  ╠{'═'*76}╣")
+    ay = ev["activated_yogas"]
+    print(f"  ║  ✨ ACTIVATED YOGAS in current period ({len(ay)} found):")
+    if ay:
+        for y in ay[:8]:
+            bar_w = int(y["activation"]/100*20)
+            bar   = "▒"*bar_w + "░"*(20-bar_w)
+            print(f"  ║    {y['name']:<28} {y['activation']:>5.1f}%  [{bar}]  via {y['via_lord']}")
+    else:
+        print(f"  ║    (No significant yogas activated in current dasha)")
+
+    # Activated Doshas
+    ad_ = ev["activated_doshas"]
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  ⚠ ACTIVATED DOSHAS in current period ({len(ad_)} found):")
+    if ad_:
+        for d in ad_[:6]:
+            bar_w = int(d["activation"]/100*20)
+            bar   = "█"*bar_w + "░"*(20-bar_w)
+            print(f"  ║    {d['name']:<28} {d['activation']:>5.1f}%  [{bar}]  {d['severity']}")
+    else:
+        print(f"  ║    (No significant doshas activated in current dasha)")
+
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  Note: Activation = yoga/dosh base score × dasha relevance × gochar factor")
+    print(f"  ╚{'═'*76}╝\n")
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE F: BHAVA CHALITA (Equal House System)
+#  House Strength Calculation
+# ═══════════════════════════════════════════════════════════════════
+
+def calculate_bhava_strength(pdata: dict) -> dict:
+    """
+    Calculate strength of each Bhava (house) using:
+    1. Planets in the house (occupant strength)
+    2. House lord's strength (Shadbala)
+    3. SAV rekha count for the house
+    4. Benefic/malefic aspects on the house
+    Returns dict: {house_num: {"score_100": float, "factors": list}}
+    """
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    SIGN_LORD = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+                 6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
+    BENEFIC = {"Jupiter","Venus","Mercury","Moon"}
+    MALEFIC = {"Saturn","Mars","Sun","Rahu","Ketu"}
+    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+
+    sb  = calculate_shadbala(pdata)
+    av  = calculate_ashtakavarga(pdata)
+
+    house_scores = {}
+    for h in range(1, 13):
+        h_sign  = (lagna + h - 1) % 12
+        h_lord  = SIGN_LORD.get(h_sign, "Sun")
+        factors = []
+
+        # 1. SAV score (0-8 points) → weight 35%
+        sav_score = av["sav"][h_sign]
+        sav_factor = (sav_score / 8.0) * 35
+        factors.append(f"SAV: {sav_score}/8 → {sav_factor:.1f}pts")
+
+        # 2. House lord strength → weight 30%
+        lord_strength = sb.get(h_lord, {}).get("score_100", 50)
+        lord_factor   = lord_strength * 0.30
+        factors.append(f"Lord({h_lord}) Shadbala: {lord_strength:.0f}% → {lord_factor:.1f}pts")
+
+        # 3. Occupants strength → weight 25%
+        occupants = [p for p in PLANETS
+                     if (pdata.get(p,{}).get("rashi_idx",0)-lagna)%12+1 == h]
+        occ_score = 0
+        if occupants:
+            for p in occupants:
+                p_strength = sb.get(p, {}).get("score_100", 50)
+                modifier   = 1.2 if p in BENEFIC else 0.8
+                occ_score += p_strength * modifier
+            occ_score = min(occ_score / len(occupants), 100) * 0.25
+            factors.append(f"Occupants: {occupants} → {occ_score:.1f}pts")
+        else:
+            occ_score = 12.5  # empty house gets average
+            factors.append("Empty house (avg pts)")
+
+        # 4. Aspect score → weight 10%
+        asp_on_h = aspects_on_house(pdata, h)
+        ben_asp  = sum(v for p,v in asp_on_h.items() if p in BENEFIC)
+        mal_asp  = sum(v for p,v in asp_on_h.items() if p in MALEFIC)
+        asp_net  = (ben_asp - mal_asp * 0.5) * 5
+        asp_factor = max(-10, min(10, asp_net))
+        if asp_on_h:
+            factors.append(f"Aspects: ben={ben_asp:.1f} mal={mal_asp:.1f} → {asp_factor:+.1f}pts")
+
+        total = sav_factor + lord_factor + occ_score + asp_factor
+        total = max(0, min(100, total))
+
+        house_scores[h] = {
+            "score_100":  round(total, 1),
+            "sign":       h_sign,
+            "lord":       h_lord,
+            "sav":        sav_score,
+            "occupants":  occupants,
+            "factors":    factors,
+        }
+
+    return house_scores
+
+
+def display_bhava_strength(pdata: dict) -> None:
+    """Display house strength scores for all 12 bhavas."""
+    hs = calculate_bhava_strength(pdata)
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    PURPOSES = {
+        1:"Self, Body, Personality", 2:"Wealth, Family, Speech",
+        3:"Siblings, Courage, Communication", 4:"Home, Mother, Comforts",
+        5:"Children, Intelligence, Creativity", 6:"Health, Enemies, Service",
+        7:"Marriage, Partnership, Travel", 8:"Longevity, Mysteries, Transformation",
+        9:"Dharma, Father, Fortune", 10:"Career, Fame, Authority",
+        11:"Income, Gains, Aspirations", 12:"Losses, Moksha, Foreign"
+    }
+
+    def _bar(s, w=18):
+        f = int(s/100*w)
+        ch = "█" if s<35 else ("▓" if s<65 else "▒")
+        return ch*f+"░"*(w-f)
+
+    print(f"\n  ╔{'═'*76}╗")
+    print(f"  ║  BHAVA STRENGTH — All 12 Houses")
+    print(f"  ║  SAV(35%) + Lord Shadbala(30%) + Occupants(25%) + Aspects(10%)")
+    print(f"  ╠{'═'*76}╣")
+    print(f"  ║  {'H':>2}  {'Sign':>4}  {'Lord':>7}  {'SAV':>4}  "
+          f"{'Score':>6}  {'[strength]':^20}  {'Purpose'}")
+    print(f"  ╠{'═'*76}╣")
+
+    for h in range(1, 13):
+        d = hs[h]
+        occ_str = ",".join(p[:2] for p in d["occupants"]) if d["occupants"] else "—"
+        band = ("★★★" if d["score_100"]>=75 else "★★ " if d["score_100"]>=50 else "★  " if d["score_100"]>=25 else "·  ")
+        print(f"  ║  {h:>2}  {SS[d['sign']]:>4}  {d['lord']:>7}  "
+              f"{d['sav']:>4}  {d['score_100']:>5.1f}%  [{_bar(d['score_100'])}]  "
+              f"{band} {PURPOSES.get(h,'')[:28]}")
+        if d["occupants"]:
+            print(f"  ║      Occupants: {occ_str}")
+
+    print(f"  ╠{'═'*76}╣")
+    sorted_h = sorted(range(1,13), key=lambda x: hs[x]["score_100"], reverse=True)
+    print(f"  ║  STRONGEST: H{sorted_h[0]}({SS[hs[sorted_h[0]]['sign']]})={hs[sorted_h[0]]['score_100']:.0f}%  "
+          f"H{sorted_h[1]}={hs[sorted_h[1]]['score_100']:.0f}%  H{sorted_h[2]}={hs[sorted_h[2]]['score_100']:.0f}%")
+    print(f"  ║  WEAKEST  : H{sorted_h[-1]}({SS[hs[sorted_h[-1]]['sign']]})={hs[sorted_h[-1]]['score_100']:.0f}%  "
+          f"H{sorted_h[-2]}={hs[sorted_h[-2]]['score_100']:.0f}%  H{sorted_h[-3]}={hs[sorted_h[-3]]['score_100']:.0f}%")
+    print(f"  ╚{'═'*76}╝\n")
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  MODULE G: CHAKRA-PLANET HEALTH ANALYSIS
+#
+#  Maps each of the 7 chakras to their ruling planets.
+#  Uses Shadbala planet strength (0-100%) to determine:
+#    - Health risk probability for each weak-planet condition
+#    - Health benefit probability for each strong-planet condition
+#    - Per-chakra activation score (0-100%)
+#    - Overall health vulnerability score
+#
+#  Source: Vedic Astrology + Yogic Chakra system
+#  JSON Data: user-provided body_mapping with planet weak/strong effects
+# ═══════════════════════════════════════════════════════════════════
+
+_CHAKRA_MAP = [
+    {
+        "name": "Muladhara", "number": 1, "beej": "LAM",
+        "body_parts": ["Legs", "Knees", "Feet", "Bones"],
+        "planets": {
+            "Saturn": {
+                "weak":   ["Knee pain","Arthritis","Joint stiffness","Bone weakness","Chronic pain"],
+                "strong": ["Strong bones","Stability","Endurance","Discipline"],
+            },
+            "Mars": {
+                "weak":   ["Muscle weakness","Low energy","Lack of movement","Injury risk"],
+                "strong": ["Physical strength","Energy","Fast recovery","Good mobility"],
+            },
+        },
+    },
+    {
+        "name": "Swadhisthana", "number": 2, "beej": "VAM",
+        "body_parts": ["Reproductive organs", "Kidneys", "Bladder"],
+        "planets": {
+            "Venus": {
+                "weak":   ["Fertility issues","Sexual problems","Hormonal imbalance","Kidney issues"],
+                "strong": ["Healthy reproductive system","Creativity","Emotional balance","Attraction"],
+            },
+            "Moon": {
+                "weak":   ["Emotional instability","Water retention","Urinary problems","Mood swings"],
+                "strong": ["Emotional stability","Fluid balance","Mental peace"],
+            },
+        },
+    },
+    {
+        "name": "Manipura", "number": 3, "beej": "RAM",
+        "body_parts": ["Stomach", "Liver", "Pancreas"],
+        "planets": {
+            "Sun": {
+                "weak":   ["Low digestion","Fatigue","Low confidence","Metabolism issues"],
+                "strong": ["Strong digestion","Confidence","Leadership","High energy"],
+            },
+            "Jupiter": {
+                "weak":   ["Liver problems","Obesity","Diabetes","Fat metabolism issues"],
+                "strong": ["Healthy liver","Wisdom","Growth","Good metabolism"],
+            },
+        },
+    },
+    {
+        "name": "Anahata", "number": 4, "beej": "YAM",
+        "body_parts": ["Heart", "Lungs", "Hands"],
+        "planets": {
+            "Venus": {
+                "weak":   ["Relationship stress","Heart weakness","Lack of emotional balance"],
+                "strong": ["Love and harmony","Healthy heart","Emotional warmth"],
+            },
+            "Mercury": {
+                "weak":   ["Respiratory issues","Anxiety","Communication problems"],
+                "strong": ["Good communication","Mental clarity","Healthy lungs"],
+            },
+        },
+    },
+    {
+        "name": "Vishuddha", "number": 5, "beej": "HAM",
+        "body_parts": ["Throat", "Thyroid", "Voice"],
+        "planets": {
+            "Mercury": {
+                "weak":   ["Thyroid imbalance","Speech problems","Nervous issues","Throat infections"],
+                "strong": ["Clear communication","Sharp mind","Healthy throat"],
+            },
+        },
+    },
+    {
+        "name": "Ajna", "number": 6, "beej": "OM",
+        "body_parts": ["Brain", "Eyes", "Pituitary gland"],
+        "planets": {
+            "Saturn": {
+                "weak":   ["Depression","Mental blockage","Fear","Slow thinking"],
+                "strong": ["Focus","Deep thinking","Discipline"],
+            },
+            "Rahu": {
+                "weak":   ["Confusion","Illusion","Anxiety","Overthinking"],
+                "strong": ["Innovation","Vision","Analytical power"],
+            },
+        },
+    },
+    {
+        "name": "Sahasrara", "number": 7, "beej": "Silence",
+        "body_parts": ["Crown", "Pineal gland", "Full nervous system"],
+        "planets": {
+            "Ketu": {
+                "weak":   ["Lack of direction","Spiritual disconnection","Confusion"],
+                "strong": ["Spiritual awakening","Detachment","Inner peace"],
+            },
+        },
+    },
+]
+
+_CHAKRA_ICON = {
+    "Muladhara":"🔴","Swadhisthana":"🟠","Manipura":"🟡",
+    "Anahata":"🟢","Vishuddha":"🔵","Ajna":"🟣","Sahasrara":"⚪",
+}
+_CHAKRA_COLOR = {
+    "Muladhara":"Red","Swadhisthana":"Orange","Manipura":"Yellow",
+    "Anahata":"Green","Vishuddha":"Blue","Ajna":"Indigo","Sahasrara":"Violet",
+}
+
+
+def _rk_proxy_strength(planet: str, pdata: dict) -> float:
+    """Proxy Shadbala for Rahu/Ketu using house position + affliction."""
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    h = (pdata.get(planet,{}).get("rashi_idx",0) - lagna) % 12 + 1
+    base = 50.0 if h in {1,4,7,10} else (25.0 if h in {6,8,12} else 38.0)
+    sign = pdata.get(planet,{}).get("rashi_idx",0)
+    mal_conj = sum(1 for p in ["Saturn","Mars","Sun"]
+                   if p != planet and pdata.get(p,{}).get("rashi_idx",0) == sign)
+    return max(5.0, base - mal_conj * 10)
+
+
+def analyze_chakra_health(pdata: dict) -> list:
+    """
+    Analyze all 7 chakras using planet Shadbala strength.
+
+    Returns list of dicts (7 chakras + 1 overall summary):
+    Each chakra dict has:
+      name, number, beej, color, body_parts,
+      chakra_score (0-100), chakra_status,
+      planet_data: list of {planet, strength, status, risk_items, benefit_items}
+
+    Risk    probability = (100 - strength) * 0.90
+    Benefit probability = strength * 0.95
+    """
+    sb = calculate_shadbala(pdata)
+
+    def strength(planet):
+        if planet in sb:
+            return sb[planet]["score_100"]
+        return _rk_proxy_strength(planet, pdata)
+
+    results = []
+    all_scores = []
+
+    for chakra in _CHAKRA_MAP:
+        planet_rows = []
+        c_scores    = []
+
+        for planet, effects in chakra["planets"].items():
+            st = round(strength(planet), 1)
+            c_scores.append(st)
+
+            if st >= 65:
+                status = "STRONG"
+            elif st >= 35:
+                status = "MIXED"
+            else:
+                status = "WEAK"
+
+            risk_p    = round((100 - st) * 0.90, 1)
+            benefit_p = round(st * 0.95, 1)
+
+            # Show risks always (scale by weakness); benefits scale by strength
+            risk_items    = [(c, round(risk_p    * (1 - i*0.04), 1))
+                             for i,c in enumerate(effects["weak"])]
+            benefit_items = [(c, round(benefit_p * (1 - i*0.04), 1))
+                             for i,c in enumerate(effects["strong"])]
+
+            planet_rows.append({
+                "planet":         planet,
+                "strength":       st,
+                "status":         status,
+                "risk_items":     risk_items,
+                "benefit_items":  benefit_items,
+            })
+
+        chakra_score = round(sum(c_scores) / len(c_scores), 1) if c_scores else 50
+        all_scores.append(chakra_score)
+
+        chakra_status = (
+            "Balanced"   if chakra_score >= 65 else
+            "Moderate"   if chakra_score >= 40 else
+            "Imbalanced" if chakra_score >= 20 else
+            "Blocked"
+        )
+
+        results.append({
+            "name":          chakra["name"],
+            "number":        chakra["number"],
+            "beej":          chakra["beej"],
+            "color":         _CHAKRA_COLOR.get(chakra["name"], "White"),
+            "icon":          _CHAKRA_ICON.get(chakra["name"], "•"),
+            "body_parts":    chakra["body_parts"],
+            "planet_data":   planet_rows,
+            "chakra_score":  chakra_score,
+            "chakra_status": chakra_status,
+        })
+
+    overall = round(sum(all_scores) / len(all_scores), 1)
+    results.append({
+        "overall_health_score": overall,
+        "overall_status": (
+            "Excellent"  if overall >= 70 else
+            "Good"       if overall >= 50 else
+            "Average"    if overall >= 35 else
+            "Vulnerable"
+        ),
+    })
+    return results
+
+
+def display_chakra_health(pdata: dict) -> None:
+    """Print the full Chakra-Planet Health Analysis dashboard."""
+    results       = analyze_chakra_health(pdata)
+    overall       = results[-1]
+    chakras       = results[:-1]
+    ov_score      = overall["overall_health_score"]
+    ov_status     = overall["overall_status"]
+
+    def _bar(s, w=20, risk=False):
+        f  = int(s / 100 * w)
+        ch = ("█" if risk else "▒") if s >= 65 else ("▓" if s >= 35 else "░" if s == 0 else "█")
+        return ch * f + "░" * (w - f)
+
+    def _rbar(p, w=14):          # red-toned risk bar
+        f = int(p / 100 * w)
+        return "█" * f + "░" * (w - f)
+
+    def _bbar(p, w=14):          # green-toned benefit bar
+        f = int(p / 100 * w)
+        return "▒" * f + "░" * (w - f)
+
+    def _st_icon(s):
+        return ("✅" if s == "STRONG" else "⚡" if s == "MIXED" else "⚠ ")
+
+    W = 78
+    print(f"\n  ╔{'═'*W}╗")
+    print(f"  ║{'CHAKRA-PLANET HEALTH ANALYSIS':^{W}}║")
+    print(f"  ║{'Planet Strength (Shadbala) → Risk & Benefit Probability':^{W}}║")
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  OVERALL HEALTH SCORE: {ov_score:>5.1f}%  "
+          f"[{_bar(ov_score)}]  {ov_status:<12}              ║")
+    print(f"  ╠{'═'*W}╣")
+
+    for ch in chakras:
+        cs  = ch["chakra_score"]
+        cst = ch["chakra_status"]
+        parts_str = "  ·  ".join(ch["body_parts"])
+
+        print(f"  ║  {ch['icon']} {ch['number']}. {ch['name']:<14} "
+              f"Beej:{ch['beej']:<8} Color:{ch['color']:<8} "
+              f"Score:{cs:>5.1f}%  [{cst}]")
+        print(f"  ║     Body Parts: {parts_str[:60]}")
+        print(f"  ║  {'·'*W}║")
+
+        for pd in ch["planet_data"]:
+            p   = pd["planet"]
+            pst = pd["strength"]
+            st  = pd["status"]
+
+            print(f"  ║     {_st_icon(st)} {p:<10}  "
+                  f"Shadbala: {pst:>5.1f}%  [{_bar(pst)}]  {st}")
+
+            # Risks
+            if pd["risk_items"]:
+                print(f"  ║       ⚠  Risks  (if planet weak):")
+                for condition, prob in pd["risk_items"][:4]:
+                    print(f"  ║          {condition:<36} {prob:>5.1f}%  [{_rbar(prob)}]")
+
+            # Benefits
+            if pd["benefit_items"]:
+                print(f"  ║       ✨ Benefits (if planet strong):")
+                for condition, prob in pd["benefit_items"][:3]:
+                    print(f"  ║          {condition:<36} {prob:>5.1f}%  [{_bbar(prob)}]")
+
+        print(f"  ╠{'═'*W}╣")
+
+    # ── Global top risks ───────────────────────────────────────────
+    all_risks = []
+    all_bens  = []
+    for ch in chakras:
+        for pd in ch["planet_data"]:
+            for cond, prob in pd["risk_items"]:
+                all_risks.append((cond, prob, ch["name"], pd["planet"]))
+            for cond, prob in pd["benefit_items"]:
+                all_bens.append((cond, prob, ch["name"], pd["planet"]))
+
+    all_risks.sort(key=lambda x: -x[1])
+    all_bens.sort(key=lambda x:  -x[1])
+
+    print(f"  ║  🩺 TOP 8 HEALTH RISKS  (sorted by probability):")
+    print(f"  ║  {'#':<3} {'Condition':<36} {'Prob':>6}  {'Chakra':<14} Planet")
+    print(f"  ║  {'─'*W}║")
+    for i, (cond, prob, chakra, planet) in enumerate(all_risks[:8], 1):
+        bar = "█" * int(prob/100*12) + "░"*(12-int(prob/100*12))
+        print(f"  ║  {i:<3} {cond:<36} {prob:>5.1f}%  [{bar}]  {chakra:<13} {planet}")
+
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  ✨ TOP 5 HEALTH BENEFITS (sorted by probability):")
+    print(f"  ║  {'─'*W}║")
+    for i, (cond, prob, chakra, planet) in enumerate(all_bens[:5], 1):
+        bar = "▒" * int(prob/100*12) + "░"*(12-int(prob/100*12))
+        print(f"  ║  {i:<3} {cond:<36} {prob:>5.1f}%  [{bar}]  {chakra:<13} {planet}")
+
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  Formula:  Risk % = (100 - Shadbala) × 0.90  │  "
+          f"Benefit % = Shadbala × 0.95")
+    print(f"  ║  Status:   STRONG ≥65%  │  MIXED 35-64%  │  WEAK <35%")
+    print(f"  ╚{'═'*W}╝\n")
+
 
 def gochar_score_rashi(transit_signs, ref_rashi):
     """
@@ -1685,7 +4560,7 @@ def moola_dasha_lagna(pdata, birth_jd, mt_correction_yrs=0):
 
 
     # ── Build planet sequence ────────────────────────────────────────
-    #
+    # 
     # CONFIRMED HOUSE ORDERING RULES (from Govind chart):
     #
     # Within each group (K/P/A), houses are ordered by:
@@ -2341,6 +5216,33 @@ def calculate_chart(name, gender, dob, tob, place):
         print(f"  ║  · Within house: non-shadow by degree DESC, then shadow (Ra before Ke)")
         print(f"  ╚{'═'*76}╝")
 
+    # ═══ DOSH ANALYSIS ═════════════════════════════════════════════
+    display_dosh_analysis(pdata)
+
+    # ═══ YOGA ANALYSIS ═════════════════════════════════════════════
+    display_yoga_analysis(pdata)
+
+    # ═══ ASPECT MATRIX ═════════════════════════════════════════════
+    display_aspect_matrix(pdata)
+
+    # ═══ SHADBALA ══════════════════════════════════════════════════
+    display_shadbala(pdata)
+
+    # ═══ ASHTAKAVARGA ══════════════════════════════════════════════
+    display_ashtakavarga(pdata)
+
+    # ═══ BHAVA STRENGTH ════════════════════════════════════════════
+    display_bhava_strength(pdata)
+
+    # ═══ LIFE AREA SCORING ═════════════════════════════════════════
+    display_life_areas(pdata)
+
+    # ═══ CHAKRA-PLANET HEALTH ANALYSIS ════════════════════════════
+    display_chakra_health(pdata)
+
+    # ═══ DASHA ACTIVATION ENGINE ═══════════════════════════════════
+    display_dasha_activation(pdata, jd)
+
     # ═══ GOCHAR — CURRENT TRANSIT SCORE ═══════════════════════════
     # Show today's gochar with native's Moon sign highlighted
     native_moon_sign = pdata["Moon"]["rashi_idx"]
@@ -2415,3 +5317,4 @@ def run_test_charts():
     print("  TEST CHART 2 — Krunal (matches JHora Image 2)")
     print(f"{'═'*70}")
     calculate_chart("Krunal","Male","29/05/1987","20:55","Mumbai")
+

@@ -466,64 +466,50 @@ class ApiService {
 
   String get accessToken => _accessToken ?? '';
 
-  // ── Kundli (Birth Chart Sections) ───────────────────────────────
+  // ── Kundli (v3 — all 14 analysis sections) ─────────────────────────
+  //
+  // All endpoints return envelope: { status, data, meta? }
+  // Callers should read resp['data'] for the actual payload.
 
-  Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaDepth = 3}) async {
-    final resp = await http.get(
-      Uri.parse('${ApiConstants.kundliBase}/$chartId?dasha_depth=$dashaDepth'),
-      headers: _headers,
-    );
+  Future<Map<String, dynamic>> _kundliGet(String path) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}$path'), headers: _headers);
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> getKundliSummary(String chartId) async {
-    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/summary'), headers: _headers);
+  // Full kundli with all sections + dashes + gochar + analyses
+  Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaLevels = 2}) =>
+      _kundliGet('/$chartId?dasha_levels=$dashaLevels');
+
+  // Chart only (planets + divisionals, no analyses)
+  Future<Map<String, dynamic>> getKundliChart(String chartId) => _kundliGet('/$chartId/chart');
+
+  // Dashboard bundle (chart + gochar + dashes + life areas)
+  Future<Map<String, dynamic>> getKundliDashboard(String chartId) => _kundliGet('/$chartId/dashboard');
+
+  // Dashas
+  Future<Map<String, dynamic>> getKundliVimshottari(String chartId, {int levels = 3}) =>
+      _kundliGet('/$chartId/dasha/vimshottari?levels=$levels');
+  Future<Map<String, dynamic>> getKundliMoola(String chartId, {int levels = 3}) =>
+      _kundliGet('/$chartId/dasha/moola?levels=$levels');
+
+  // Gochar (transit scores) — public endpoints
+  Future<Map<String, dynamic>> getGocharToday({int? moonSign}) async {
+    final q = moonSign != null ? '?moon_sign=$moonSign' : '';
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/gochar/today$q'));
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<List<dynamic>> getKundliPlanets(String chartId) async {
-    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/planets'), headers: _headers);
-    if (resp.statusCode == 200) {
-      final data = jsonDecode(resp.body);
-      return (data['planets'] as List?) ?? [];
-    }
-    return [];
-  }
-
-  Future<Map<String, dynamic>> getKundliGrid(String chartId, String base) async {
-    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/$base'), headers: _headers);
-    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
-  }
-
-  Future<List<dynamic>> getKundliDivisionals(String chartId) async {
-    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/divisionals'), headers: _headers);
-    if (resp.statusCode == 200) {
-      final data = jsonDecode(resp.body);
-      return (data['divisional_charts'] as List?) ?? [];
-    }
-    return [];
-  }
-
-  Future<Map<String, dynamic>> getKundliDivision(String chartId, int division) async {
-    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/divisional/$division'), headers: _headers);
-    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
-  }
-
-  Future<Map<String, dynamic>> getKundliVimshottari(String chartId, {int depth = 3}) async {
-    final resp = await http.get(
-      Uri.parse('${ApiConstants.kundliBase}/$chartId/dasha/vimshottari?depth=$depth'),
-      headers: _headers,
-    );
-    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
-  }
-
-  Future<Map<String, dynamic>> getKundliMoola(String chartId, {int depth = 3}) async {
-    final resp = await http.get(
-      Uri.parse('${ApiConstants.kundliBase}/$chartId/dasha/moola?depth=$depth'),
-      headers: _headers,
-    );
-    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
-  }
+  // All 14 analysis endpoints
+  Future<Map<String, dynamic>> getKundliDosh(String chartId) => _kundliGet('/$chartId/analysis/dosh');
+  Future<Map<String, dynamic>> getKundliYoga(String chartId) => _kundliGet('/$chartId/analysis/yoga');
+  Future<Map<String, dynamic>> getKundliShadbala(String chartId) => _kundliGet('/$chartId/analysis/shadbala');
+  Future<Map<String, dynamic>> getKundliAshtakavarga(String chartId) => _kundliGet('/$chartId/analysis/ashtakavarga');
+  Future<Map<String, dynamic>> getKundliAspects(String chartId) => _kundliGet('/$chartId/analysis/aspects');
+  Future<Map<String, dynamic>> getKundliLifeAreas(String chartId) => _kundliGet('/$chartId/analysis/life-areas');
+  Future<Map<String, dynamic>> getKundliBhava(String chartId) => _kundliGet('/$chartId/analysis/bhava');
+  Future<Map<String, dynamic>> getKundliDashaActivation(String chartId) => _kundliGet('/$chartId/analysis/dasha-activation');
+  Future<Map<String, dynamic>> getKundliChakraHealth(String chartId) => _kundliGet('/$chartId/analysis/chakra-health');
+  Future<Map<String, dynamic>> getKundliAnalysisComplete(String chartId) => _kundliGet('/$chartId/analysis/complete');
 
   bool get isLoggedIn => _accessToken != null;
 }

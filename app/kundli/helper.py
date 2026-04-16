@@ -1,429 +1,509 @@
 """
-Kundli Helper — Structured JSON data extractors
-================================================
-Wraps the V2 engine to return clean, JSON-serializable data
-for API consumption (instead of the engine's print-heavy output).
+nakshtra_helper.py
+==================
+FastAPI helper layer for nakshtralogy_v2.py
+Wraps every public function into clean, JSON-serialisable outputs.
+Import this in your routers; never import nakshtralogy_v2 directly.
 
-Functions:
-  - generate_full_kundli(name, gender, dob, tob, place) → dict with all sections
-  - get_planet_positions(pdata) → list of planet detail dicts
-  - get_kundli_grid(pdata, base_sign) → 12-house grid for rendering
-  - get_divisional_charts(all_divs) → list of D-1..D-60 per-planet signs
-  - get_vimshottari_dasha(moon_lon, jd) → dasha tree with MD/AD/PD levels
-  - get_moola_dasha(pdata, jd) → moola dasha tree
-  - get_chart_summary(pdata) → top-level summary (lagna, moon, sun, nakshatra)
-  - build_dasha_tree(dashas) → recursively flatten to tree for UI
+Usage
+-----
+from nakshtra_helper import NakshtraEngine
 
-All dates are returned as DD/MM/YYYY strings. JDs are included for debugging.
+engine = NakshtraEngine()                      # singleton, safe to share
+chart  = engine.get_chart("Krunal","M","29/05/1987","20:55","Mumbai")
+doshas = engine.get_dosh_analysis(chart["_pdata"])
 """
 
-from __future__ import annotations
+import io
+import contextlib
+import logging
+from datetime import date, timedelta
+from typing import Optional
 
-from typing import Any, Dict, List, Optional
+# ── Engine import ─────────────────────────────────────────────────────────────
+from . import engine as _nk
+_ENGINE_LABEL = "pyswisseph" if _nk._USE_SWEPH else "VSOP87-fallback"
 
-from . import engine as nk
+# ── Logger ────────────────────────────────────────────────────────────────────
+logger = logging.getLogger("nakshtra_helper")
 
-
-# ─────────────────────────────────────────────────────────────────────
-#  METADATA CONSTANTS (for UI labels)
-# ─────────────────────────────────────────────────────────────────────
-
-D_CHART_META = {
-    1: {"name": "Rasi", "full": "D-1 Rasi (Birth Chart)", "purpose": "Physical existence, all matters"},
-    2: {"name": "Hora", "full": "D-2 Hora", "purpose": "Wealth, money"},
-    3: {"name": "Drekkana", "full": "D-3 Drekkana", "purpose": "Siblings, courage"},
-    4: {"name": "Chaturthamsa", "full": "D-4 Chaturthamsa", "purpose": "Property, residence, fortune"},
-    5: {"name": "Panchamsa", "full": "D-5 Panchamsa", "purpose": "Fame, authority, power"},
-    6: {"name": "Shashthamsa", "full": "D-6 Shashthamsa", "purpose": "Health troubles"},
-    7: {"name": "Saptamsa", "full": "D-7 Saptamsa", "purpose": "Children, grandchildren"},
-    8: {"name": "Ashtamsa", "full": "D-8 Ashtamsa", "purpose": "Sudden troubles, litigation"},
-    9: {"name": "Navamsha", "full": "D-9 Navamsha", "purpose": "Marriage, spouse, dharma"},
-    10: {"name": "Dasamsha", "full": "D-10 Dasamsha", "purpose": "Career, profession"},
-    11: {"name": "Rudramsha", "full": "D-11 Rudramsha", "purpose": "Death, destruction"},
-    12: {"name": "Dwadasamsha", "full": "D-12 Dwadasamsha", "purpose": "Parents, blood-relatives"},
-    16: {"name": "Shodasamsha", "full": "D-16 Shodasamsha", "purpose": "Vehicles, comforts, pleasures"},
-    20: {"name": "Vimsamsha", "full": "D-20 Vimsamsha", "purpose": "Spiritual matters, religious"},
-    24: {"name": "Chaturvimsamsha", "full": "D-24 Chaturvimsamsha", "purpose": "Learning, knowledge, education"},
-    27: {"name": "Nakshatramsha", "full": "D-27 Nakshatramsha", "purpose": "Strengths, weaknesses, nature"},
-    30: {"name": "Trimsamsha", "full": "D-30 Trimsamsha", "purpose": "Evils, sub-conscious, punishment"},
-    40: {"name": "Khavedamsha", "full": "D-40 Khavedamsha", "purpose": "Auspicious/inauspicious (maternal)"},
-    45: {"name": "Akshavedamsha", "full": "D-45 Akshavedamsha", "purpose": "All matters (paternal)"},
-    60: {"name": "Shashtyamsha", "full": "D-60 Shashtyamsha", "purpose": "Past-life karma — MOST IMPORTANT"},
-}
-
-D_CHART_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60]
+# ── Constants ─────────────────────────────────────────────────────────────────
+SIGNS_FULL  = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+               'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
+SIGNS_SHORT = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+PLANETS_ALL = ["Sun","Moon","Mars","Mercury","Jupiter","Venus",
+               "Saturn","Rahu","Ketu","Lagna"]
 
 
-# ─────────────────────────────────────────────────────────────────────
-#  CORE COMPUTE (wraps engine.calculate_chart without printing)
-# ─────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+#  INTERNAL UTILITIES
+# ═══════════════════════════════════════════════════════════════════════════════
 
-def _silent_compute(name, gender, dob, tob, place):
-    """
-    Run the V2 engine but suppress its print output.
-    Returns (pdata, all_divs, birth_jd, lat, lon_deg, tz).
-    """
-    import io
-    import contextlib
-
+def _silent(fn, *args, **kwargs):
+    """Run fn with stdout suppressed; return result."""
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
-        pdata, all_divs = nk.calculate_chart(name, gender, dob, tob, place)
-
-    # Recompute birth_jd, lat, lon for separate dasha calls
-    day, month, year = map(int, dob.split("/"))
-    hour, minute = map(int, tob.split(":"))
-    local_h = hour + minute / 60.0
-    coords = nk.get_city(place)
-    if coords is None:
-        lat, lon_deg, tz = 19.076, 72.8777, 5.5
-    else:
-        lat, lon_deg, tz = coords
-    ut_hour = local_h - tz
-    birth_jd = nk.to_julian_day(year, month, day, ut_hour)
-
-    return pdata, all_divs, birth_jd, lat, lon_deg, tz
-
-
-# ─────────────────────────────────────────────────────────────────────
-#  PLANET POSITIONS
-# ─────────────────────────────────────────────────────────────────────
-
-def get_planet_positions(pdata: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Return list of planet detail dicts for UI display."""
-    result = []
-    for p in nk.PLANETS_ORDER:
-        if p not in pdata:
-            continue
-        d = pdata[p]
-        result.append({
-            "planet": p,
-            "longitude": round(d["lon"], 4),
-            "longitude_dms": nk.dms(d["lon"]),
-            "rashi_idx": d["rashi_idx"],
-            "rashi": nk.RASHI_FULL[d["rashi_idx"]],
-            "rashi_short": nk.RASHI_SHORT[d["rashi_idx"]],
-            "rashi_lord": nk.RASHI_LORDS[d["rashi_idx"]],
-            "degree_in_rashi": round(d["deg_rashi"], 4),
-            "nakshatra_idx": d["nak_idx"],
-            "nakshatra": d["nak_name"],
-            "nakshatra_lord": d["nak_lord"],
-            "pada": d["pada"],
-            "navamsha_rashi_idx": d["nav_rashi"],
-            "navamsha_rashi": nk.RASHI_FULL[d["nav_rashi"]],
-            "dignity": d["dignity"],
-            "retrograde": d["vakri"],
-            "combust": d["combust"],
-            "vargottam": d["vargottam"],
-            "speed": round(d.get("speed", 0), 6),
-        })
+        result = fn(*args, **kwargs)
     return result
 
 
-# ─────────────────────────────────────────────────────────────────────
-#  KUNDLI GRID (12 houses in order from Lagna/Moon/Sun)
-# ─────────────────────────────────────────────────────────────────────
+def _parse_dob(dob: str):
+    """Parse DD/MM/YYYY → (year, month, day)."""
+    parts = dob.replace("-", "/").split("/")
+    if len(parts[0]) == 4:          # YYYY/MM/DD
+        return int(parts[0]), int(parts[1]), int(parts[2])
+    return int(parts[2]), int(parts[1]), int(parts[0])   # DD/MM/YYYY
 
-def get_kundli_grid(pdata: Dict[str, Any], base: str = "Lagna") -> Dict[str, Any]:
-    """
-    Build a kundli grid — 12 houses with planets in each.
-    base: "Lagna" | "Moon" | "Sun"
-    Returns { base_rashi_idx, base_rashi, houses: [{ house, rashi_idx, rashi,
-      rashi_short, planets: [...] }] }
-    """
-    if base not in pdata:
-        base = "Lagna"
-    base_ri = pdata[base]["rashi_idx"]
 
-    # Group planets by rashi
-    by_rashi: Dict[int, List[str]] = {}
-    for p in nk.PLANETS_ORDER:
-        if p not in pdata or p == "Lagna":
-            continue
-        ri = pdata[p]["rashi_idx"]
-        by_rashi.setdefault(ri, []).append(p)
+def _tob_to_decimal(tob: str) -> float:
+    """HH:MM → decimal hours (IST local)."""
+    h, m = map(int, tob.split(":"))
+    return h + m / 60.0
 
-    houses = []
-    for h in range(12):
-        ri = (base_ri + h) % 12
-        house_planets = []
-        for planet_name in by_rashi.get(ri, []):
-            pd = pdata[planet_name]
-            flags = []
-            if pd.get("vakri"):
-                flags.append("R")
-            if pd.get("combust"):
-                flags.append("C")
-            if pd.get("vargottam"):
-                flags.append("V")
-            house_planets.append({
-                "planet": planet_name,
-                "degree": round(pd["deg_rashi"], 2),
-                "flags": flags,
-                "dignity": pd.get("dignity", ""),
-            })
-        houses.append({
-            "house": h + 1,
-            "rashi_idx": ri,
-            "rashi": nk.RASHI_FULL[ri],
-            "rashi_short": nk.RASHI_SHORT[ri],
-            "rashi_lord": nk.RASHI_LORDS[ri],
-            "planets": house_planets,
-            "is_lagna": ri == pdata.get("Lagna", {}).get("rashi_idx", -1),
-        })
 
+def _birth_jd(dob: str, tob: str) -> float:
+    """Convert birth date+time (IST) to Julian Day (UTC)."""
+    y, mo, d  = _parse_dob(dob)
+    local_h   = _tob_to_decimal(tob)
+    utc_h     = local_h - 5.5          # IST → UTC
+    return _nk.to_julian_day(y, mo, d, utc_h)
+
+
+def _planet_dict(p_entry: dict) -> dict:
+    """Normalise a single planet entry from pdata."""
+    s = p_entry.get("rashi_idx", 0)
     return {
-        "base": base,
-        "base_rashi_idx": base_ri,
-        "base_rashi": nk.RASHI_FULL[base_ri],
-        "base_rashi_short": nk.RASHI_SHORT[base_ri],
-        "houses": houses,
+        "sign":      SIGNS_SHORT[s],
+        "sign_full": SIGNS_FULL[s],
+        "sign_idx":  s,
+        "degree":    round(p_entry.get("deg_rashi", 0), 4),
+        "longitude": round(p_entry.get("lon", 0), 4),
+        "nakshatra": p_entry.get("nak_name", ""),
+        "nak_lord":  p_entry.get("nak_lord", ""),
+        "pada":      p_entry.get("pada", 1),
+        "dignity":   p_entry.get("dignity", "Normal"),
+        "vakri":     p_entry.get("vakri", False),
+        "combust":   p_entry.get("combust", False),
+        "vargottam": p_entry.get("vargottam", False),
     }
 
 
-# ─────────────────────────────────────────────────────────────────────
-#  DIVISIONAL CHARTS
-# ─────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+#  NAKSHTRA ENGINE  (main class)
+# ═══════════════════════════════════════════════════════════════════════════════
 
-def get_divisional_charts(all_divs: Dict[str, Dict[int, int]]) -> List[Dict[str, Any]]:
+class NakshtraEngine:
     """
-    Return a list of all 20 divisional charts (D-1..D-60) with each
-    planet's sign in that chart.
+    Single entry-point for all nakshtralogy calculations.
+    All methods return plain dicts / lists — ready for FastAPI JSON responses.
+    The `_pdata` key in chart responses carries the raw planet-data dict
+    needed by downstream analysis functions.
     """
-    out = []
-    for d in D_CHART_ORDER:
-        meta = D_CHART_META.get(d, {"name": f"D-{d}", "full": f"D-{d}", "purpose": ""})
-        planets = {}
-        for p in nk.PLANETS_ORDER:
-            if p in all_divs and d in all_divs[p]:
-                sign_idx = all_divs[p][d]
-                planets[p] = {
-                    "rashi_idx": sign_idx,
-                    "rashi": nk.RASHI_FULL[sign_idx],
-                    "rashi_short": nk.RASHI_SHORT[sign_idx],
-                }
-        out.append({
-            "division": d,
-            "name": meta["name"],
-            "full_name": meta["full"],
-            "purpose": meta["purpose"],
-            "planets": planets,
-        })
-    return out
 
+    # ── 1. CHART ──────────────────────────────────────────────────────────────
 
-def get_divisional_grid(all_divs: Dict[str, Dict[int, int]], division: int) -> Dict[str, Any]:
-    """
-    Build a kundli-grid-style view for a specific divisional chart.
-    Base cell = the sign containing Lagna in that division.
-    """
-    if "Lagna" not in all_divs or division not in all_divs["Lagna"]:
-        return {}
-    base_ri = all_divs["Lagna"][division]
+    def get_chart(self, name: str, gender: str,
+                  dob: str, tob: str, place: str) -> dict:
+        """
+        Generate complete natal chart.
 
-    # Group planets by their sign in this division
-    by_rashi: Dict[int, List[str]] = {}
-    for p in nk.PLANETS_ORDER:
-        if p == "Lagna" or p not in all_divs or division not in all_divs[p]:
-            continue
-        ri = all_divs[p][division]
-        by_rashi.setdefault(ri, []).append(p)
-
-    houses = []
-    for h in range(12):
-        ri = (base_ri + h) % 12
-        planets = [{"planet": p} for p in by_rashi.get(ri, [])]
-        houses.append({
-            "house": h + 1,
-            "rashi_idx": ri,
-            "rashi": nk.RASHI_FULL[ri],
-            "rashi_short": nk.RASHI_SHORT[ri],
-            "planets": planets,
-            "is_lagna": ri == base_ri,
-        })
-
-    meta = D_CHART_META.get(division, {"full": f"D-{division}", "purpose": ""})
-    return {
-        "division": division,
-        "full_name": meta["full"],
-        "purpose": meta["purpose"],
-        "base_rashi_idx": base_ri,
-        "base_rashi": nk.RASHI_FULL[base_ri],
-        "houses": houses,
-    }
-
-
-# ─────────────────────────────────────────────────────────────────────
-#  DASHA TREES — Vimshottari + Moola
-# ─────────────────────────────────────────────────────────────────────
-
-def _jd_to_iso(jd: float) -> str:
-    """Convert Julian Day to DD/MM/YYYY string."""
-    try:
-        y, m, d = nk.jd_to_date(jd)
-        return f"{int(d):02d}/{int(m):02d}/{int(y):04d}"
-    except Exception:
-        return ""
-
-
-def _flatten_subs(subs: List[Dict], level: int, max_level: int = 3) -> List[Dict]:
-    """
-    Recursively flatten a sub-dasha list into API-friendly format.
-    level: current depth (1=MD, 2=AD, 3=PD, 4=SD, 5=PRD, 6=DD)
-    max_level: how deep to go (3 = MD→AD→PD by default)
-    """
-    out = []
-    for sub in subs:
-        node = {
-            "planet": sub["planet"],
-            "years": round(sub.get("years", 0), 4),
-            "months": round(sub.get("months", 0), 2),
-            "start_date": _jd_to_iso(sub["start_jd"]),
-            "end_date": _jd_to_iso(sub["end_jd"]),
-            "level": level,
+        Returns
+        -------
+        {
+          chart_id : str  (name_dob slug)
+          lagna    : {sign, sign_full, sign_idx, degree}
+          planets  : {Sun: {...}, Moon: {...}, ...}
+          divisionals : {Sun: {D1:…, D2:…, …D60:…}, ...}
+          birth_jd : float
+          engine   : str
+          _pdata   : dict   ← keep for downstream calls
         }
-        if "sub" in sub and level < max_level:
-            node["children"] = _flatten_subs(sub["sub"], level + 1, max_level)
-        else:
-            node["children"] = []
-        out.append(node)
-    return out
+        """
+        logger.info("get_chart | name=%s dob=%s place=%s", name, dob, place)
+        pdata, divs = _silent(_nk.calculate_chart, name, gender, dob, tob, place)
+        if pdata is None:
+            raise ValueError(f"Could not compute chart for {name} — check birth data")
 
-
-def get_vimshottari_dasha(pdata: Dict, birth_jd: float, max_depth: int = 3) -> Dict[str, Any]:
-    """
-    Return Vimshottari Dasha tree with MD→AD→PD levels by default.
-    max_depth controls nesting: 1=MD only, 2=MD→AD, 3=MD→AD→PD, etc.
-    """
-    if "Moon" not in pdata:
-        return {"error": "Moon position not available"}
-    moon_lon = pdata["Moon"]["lon"]
-    dashas, balance, lord = nk.vimshottari_dasha(moon_lon, birth_jd)
-
-    tree = []
-    for md in dashas:
-        node = {
-            "planet": md["planet"],
-            "years": round(md["years"], 4),
-            "start_date": _jd_to_iso(md["start_jd"]),
-            "end_date": _jd_to_iso(md["end_jd"]),
-            "level": 1,
+        planets_out = {p: _planet_dict(pdata[p]) for p in PLANETS_ALL if p in pdata}
+        divs_out    = {
+            p: {f"D{d}": SIGNS_SHORT[s] for d, s in chart_map.items()}
+            for p, chart_map in divs.items()
         }
-        if max_depth >= 2 and "antardashas" in md:
-            node["children"] = _flatten_subs(md["antardashas"], 2, max_depth)
-        else:
-            node["children"] = []
-        tree.append(node)
+        jd = _birth_jd(dob, tob)
+        slug = f"{name.lower().replace(' ','_')}_{dob.replace('/','')}"
 
-    return {
-        "type": "vimshottari",
-        "birth_nak_lord": lord,
-        "balance_years": round(balance, 4),
-        "dashas": tree,
-    }
-
-
-def get_moola_dasha(pdata: Dict, birth_jd: float, max_depth: int = 3) -> Dict[str, Any]:
-    """
-    Return Moola Dasha (Lagna Kendradi Graha) tree.
-    """
-    try:
-        dashas, balance, info = nk.moola_dasha_lagna(pdata, birth_jd)
-    except Exception as e:
-        return {"error": f"Moola dasha failed: {e}"}
-
-    tree = []
-    for md in dashas:
-        node = {
-            "planet": md.get("planet", ""),
-            "years": round(md.get("years", 0), 4),
-            "start_date": _jd_to_iso(md.get("start_jd", birth_jd)),
-            "end_date": _jd_to_iso(md.get("end_jd", birth_jd)),
-            "level": 1,
-        }
-        if max_depth >= 2 and "sub" in md:
-            node["children"] = _flatten_subs(md["sub"], 2, max_depth)
-        else:
-            node["children"] = []
-        tree.append(node)
-
-    return {
-        "type": "moola",
-        "info": info if isinstance(info, dict) else {},
-        "balance_years": round(balance, 4) if isinstance(balance, (int, float)) else 0,
-        "dashas": tree,
-    }
-
-
-# ─────────────────────────────────────────────────────────────────────
-#  CHART SUMMARY (quick overview card)
-# ─────────────────────────────────────────────────────────────────────
-
-def get_chart_summary(pdata: Dict) -> Dict[str, Any]:
-    """Quick summary: lagna, moon, sun signs + nakshatra + rashi lord."""
-    def _p(name):
-        if name not in pdata:
-            return None
-        d = pdata[name]
         return {
-            "rashi": nk.RASHI_FULL[d["rashi_idx"]],
-            "rashi_short": nk.RASHI_SHORT[d["rashi_idx"]],
-            "rashi_lord": nk.RASHI_LORDS[d["rashi_idx"]],
-            "nakshatra": d.get("nak_name", ""),
-            "nak_lord": d.get("nak_lord", ""),
-            "pada": d.get("pada", 0),
-            "degree": round(d.get("deg_rashi", 0), 2),
+            "chart_id":   slug,
+            "name":       name,
+            "dob":        dob,
+            "tob":        tob,
+            "place":      place,
+            "lagna":      planets_out.get("Lagna", {}),
+            "planets":    planets_out,
+            "divisionals": divs_out,
+            "birth_jd":   round(jd, 6),
+            "engine":     _ENGINE_LABEL,
+            "_pdata":     pdata,          # raw — not serialisable, internal only
         }
-    return {
-        "lagna": _p("Lagna"),
-        "moon_sign": _p("Moon"),
-        "sun_sign": _p("Sun"),
-    }
+
+    # ── 2. VIMSHOTTARI DASHA ──────────────────────────────────────────────────
+
+    def get_vimshottari(self, pdata: dict, birth_jd: float,
+                        levels: int = 2) -> dict:
+        """
+        levels=1 → MD only
+        levels=2 → MD + AD  (default)
+        levels=3 → MD + AD + PD
+        """
+        moon_lon = pdata.get("Moon", {}).get("lon", 0)
+        dashas, balance, lord = _nk.vimshottari_dasha(moon_lon, birth_jd)
+
+        def _sub(node: dict, depth: int):
+            if depth <= 0 or "sub" not in node:
+                return []
+            return [
+                {
+                    "planet": s["planet"],
+                    "start":  _nk.jd_to_date(s["start_jd"]),
+                    "end":    _nk.jd_to_date(s["end_jd"]),
+                    "months": round(s["months"], 3),
+                    "sub":    _sub(s, depth - 1),
+                }
+                for s in node["sub"]
+                if s["end_jd"] - s["start_jd"] > 0.01
+            ]
+
+        result = []
+        for md in dashas:
+            result.append({
+                "planet": md["planet"],
+                "years":  md["years"],
+                "start":  _nk.jd_to_date(md["start_jd"]),
+                "end":    _nk.jd_to_date(md["end_jd"]),
+                "sub":    _sub(md, levels - 1),
+            })
+
+        return {
+            "system":      "Vimshottari",
+            "total_years": 120,
+            "moon_lord":   lord,
+            "balance_yrs": round(balance, 4),
+            "dashas":      result,
+        }
+
+    # ── 3. MOOLA DASHA ────────────────────────────────────────────────────────
+
+    def get_moola_dasha(self, pdata: dict, birth_jd: float,
+                        levels: int = 2) -> dict:
+        dashas, balance, info = _nk.moola_dasha_lagna(pdata, birth_jd)
+        if not info:
+            return {"error": "Could not compute Moola Dasha"}
+
+        def _sub(node: dict, depth: int):
+            if depth <= 0 or "sub" not in node:
+                return []
+            return [
+                {
+                    "planet": s["planet"],
+                    "start":  _nk.jd_to_date(s["start_jd"]),
+                    "end":    _nk.jd_to_date(s["end_jd"]),
+                    "days":   round(s["end_jd"] - s["start_jd"], 2),
+                    "sub":    _sub(s, depth - 1),
+                }
+                for s in node["sub"]
+                if s["end_jd"] - s["start_jd"] > 0.1
+            ]
+
+        result = []
+        for md in dashas:
+            result.append({
+                "planet":  md["planet"],
+                "cycle":   md["cycle"],
+                "group":   md["group"],
+                "bhava":   md["bhava"],
+                "c1_yrs":  md["c1_yrs"],
+                "c2_yrs":  md["c2_yrs"],
+                "eff_yrs": md["eff_yrs"],
+                "start":   _nk.jd_to_date(md["start_jd"]),
+                "end":     _nk.jd_to_date(md["end_jd"]),
+                "sub":     _sub(md, levels - 1),
+            })
+
+        return {
+            "system":      "Moola Dasha (Lagna Kendradi)",
+            "lagna_sign":  info.get("lagna_sign_name", ""),
+            "group_order": info.get("group_order", []),
+            "balance_yrs": round(balance, 4),
+            "dashas":      result,
+        }
+
+    # ── 4. GOCHAR (transit scoring) ───────────────────────────────────────────
+
+    def get_gochar(self, date_str: Optional[str] = None,
+                   native_moon_sign: Optional[int] = None) -> dict:
+        """
+        date_str: DD/MM/YYYY | 'today' | 'yesterday' | 'tomorrow'
+        native_moon_sign: 0-11 (optional — highlights native's rashi)
+        """
+        results = _silent(_nk.gochar_chart,
+                          date_str=date_str,
+                          native_moon_sign=native_moon_sign,
+                          show_detail=False)
+        rashis_out = []
+        for r in results:
+            gr_label, _ = r["grade"]
+            rashis_out.append({
+                "rashi":     SIGNS_FULL[r["rashi"]],
+                "rashi_idx": r["rashi"],
+                "score":     r["score"],
+                "grade":     gr_label.strip(),
+                "flags":     r["flags"],
+            })
+        return {
+            "date":        date_str or "today",
+            "moon_sign":   SIGNS_FULL[native_moon_sign] if native_moon_sign is not None else None,
+            "rashis":      rashis_out,
+            "best":        max(rashis_out, key=lambda x: x["score"])["rashi"],
+            "worst":       min(rashis_out, key=lambda x: x["score"])["rashi"],
+        }
+
+    def get_gochar_range(self, start: str, end: str,
+                         native_moon_sign: Optional[int] = None) -> list:
+        """
+        Return daily gochar score for date range.
+        start/end: YYYY-MM-DD
+        """
+        from datetime import datetime
+        d     = datetime.strptime(start, "%Y-%m-%d").date()
+        end_d = datetime.strptime(end,   "%Y-%m-%d").date()
+        out   = []
+        while d <= end_d:
+            ds  = d.strftime("%d/%m/%Y")
+            res = self.get_gochar(ds, native_moon_sign)
+            score = (
+                next((r["score"] for r in res["rashis"]
+                      if r["rashi_idx"] == native_moon_sign), 0)
+                if native_moon_sign is not None
+                else max(r["score"] for r in res["rashis"])
+            )
+            grade = (
+                next((r["grade"] for r in res["rashis"]
+                      if r["rashi_idx"] == native_moon_sign), "Normal")
+                if native_moon_sign is not None
+                else res["best"]
+            )
+            out.append({"date": d.isoformat(), "score": score, "grade": grade})
+            d += timedelta(days=1)
+        return out
+
+    # ── 5. DOSH ANALYSIS ──────────────────────────────────────────────────────
+
+    def get_dosh_analysis(self, pdata: dict) -> dict:
+        """Returns all 33 doshas with probability scores."""
+        results = _nk.analyze_all_dosh(pdata)
+        active  = [r for r in results if r["present"]]
+        active.sort(key=lambda x: -x["score"])
+        return {
+            "total":   len(results),
+            "active":  len(active),
+            "doshas":  results,
+            "top":     active[:10],
+        }
+
+    # ── 6. YOGA ANALYSIS ──────────────────────────────────────────────────────
+
+    def get_yoga_analysis(self, pdata: dict) -> dict:
+        """Returns all 51 yogas with strength scores."""
+        results = _nk.analyze_all_yoga(pdata)
+        active  = [r for r in results if r["present"]]
+        active.sort(key=lambda x: -x["score"])
+        return {
+            "total":  len(results),
+            "active": len(active),
+            "yogas":  results,
+            "top":    active[:10],
+        }
+
+    # ── 7. SHADBALA ───────────────────────────────────────────────────────────
+
+    def get_shadbala(self, pdata: dict) -> dict:
+        """Planet strength via 6-source Shadbala."""
+        sb = _nk.calculate_shadbala(pdata)
+        return {
+            "planets": sb,
+            "summary": {
+                p: {"score": d["score_100"], "total_rupas": d["total_rupas"]}
+                for p, d in sb.items()
+            },
+        }
+
+    # ── 8. ASHTAKAVARGA ───────────────────────────────────────────────────────
+
+    def get_ashtakavarga(self, pdata: dict) -> dict:
+        """BAV + SAV for all 7 planets."""
+        av = _nk.calculate_ashtakavarga(pdata)
+        lagna = pdata.get("Lagna", {}).get("rashi_idx", 0)
+
+        sav_with_signs = {
+            SIGNS_SHORT[i]: av["sav"][i] for i in range(12)
+        }
+        planets_bav = {}
+        for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]:
+            bav = av[p]["bav"]
+            planets_bav[p] = {
+                "bav_per_sign":  {SIGNS_SHORT[i]: bav[i] for i in range(12)},
+                "total_rekha":   av[p]["total"],
+                "natal_sign_score": bav[pdata.get(p,{}).get("rashi_idx",0)],
+            }
+        return {
+            "sav":          sav_with_signs,
+            "sav_total":    av["sav_total"],
+            "planets_bav":  planets_bav,
+        }
+
+    # ── 9. ASPECT MATRIX ──────────────────────────────────────────────────────
+
+    def get_aspect_matrix(self, pdata: dict) -> dict:
+        """Full Graha Drishti matrix + Rashi Drishti."""
+        matrix = _nk.build_aspect_matrix(pdata)
+        # Convert to JSON-friendly format
+        graha = {}
+        for asp, targets in matrix.items():
+            if asp == "Lagna_received":
+                continue
+            graha[asp] = {t: v for t, v in targets.items() if v > 0}
+
+        rashi = {}
+        for s1 in range(12):
+            aspected = [SIGNS_SHORT[s2] for s2 in range(12)
+                        if s2 != s1 and _nk.rashi_drishti(s1, s2)]
+            if aspected:
+                rashi[SIGNS_SHORT[s1]] = aspected
+
+        return {
+            "graha_drishti": graha,
+            "rashi_drishti": rashi,
+            "lagna_aspects_received": matrix.get("Lagna_received", {}),
+        }
+
+    # ── 10. LIFE AREAS ────────────────────────────────────────────────────────
+
+    def get_life_areas(self, pdata: dict) -> dict:
+        """Score 5 life areas: Career, Wealth, Marriage, Health, Spirituality."""
+        return _nk.calculate_life_areas(pdata)
+
+    # ── 11. BHAVA STRENGTH ────────────────────────────────────────────────────
+
+    def get_bhava_strength(self, pdata: dict) -> dict:
+        """Strength score for all 12 houses."""
+        bh = _nk.calculate_bhava_strength(pdata)
+        out = {}
+        for h, data in bh.items():
+            out[f"H{h:02d}"] = {
+                "house":      h,
+                "sign":       SIGNS_SHORT[data["sign"]],
+                "lord":       data["lord"],
+                "sav":        data["sav"],
+                "score":      data["score_100"],
+                "occupants":  data["occupants"],
+            }
+        return out
+
+    # ── 12. DASHA ACTIVATION ─────────────────────────────────────────────────
+
+    def get_dasha_activation(self, pdata: dict, birth_jd: float,
+                              query_date: Optional[str] = None) -> dict:
+        """
+        Find which yogas/doshas are triggered in current MD/AD.
+        query_date: DD/MM/YYYY (default today)
+        """
+        query_jd = None
+        if query_date:
+            y, mo, d = _parse_dob(query_date)
+            query_jd = _nk.to_julian_day(y, mo, d, 0)
+        ev = _nk.dasha_activated_events(pdata, birth_jd, query_jd)
+        return ev
+
+    # ── 13. CHAKRA HEALTH ─────────────────────────────────────────────────────
+
+    def get_chakra_health(self, pdata: dict) -> dict:
+        """
+        7-chakra health analysis based on Shadbala planet strength.
+        Returns risk/benefit probabilities for each condition.
+        """
+        results  = _nk.analyze_chakra_health(pdata)
+        overall  = results[-1]
+        chakras  = results[:-1]
+
+        chakras_out = []
+        for ch in chakras:
+            planets_out = []
+            for pd in ch["planet_data"]:
+                planets_out.append({
+                    "planet":         pd["planet"],
+                    "strength":       pd["strength"],
+                    "status":         pd["status"],
+                    "risk_items":     [
+                        {"condition": c, "probability": p}
+                        for c, p in pd["risk_items"]
+                    ],
+                    "benefit_items":  [
+                        {"condition": c, "probability": p}
+                        for c, p in pd["benefit_items"]
+                    ],
+                })
+            chakras_out.append({
+                "name":          ch["name"],
+                "number":        ch["number"],
+                "beej":          ch["beej"],
+                "color":         ch["color"],
+                "body_parts":    ch["body_parts"],
+                "chakra_score":  ch["chakra_score"],
+                "chakra_status": ch["chakra_status"],
+                "planets":       planets_out,
+            })
+
+        return {
+            "overall_score":  overall["overall_health_score"],
+            "overall_status": overall["overall_status"],
+            "chakras":        chakras_out,
+        }
+
+    # ── 14. FULL ANALYSIS (everything) ───────────────────────────────────────
+
+    def get_full_analysis(self, name: str, gender: str,
+                          dob: str, tob: str, place: str,
+                          dasha_levels: int = 2) -> dict:
+        """
+        One-call complete analysis: chart + all modules.
+        Use for initial chart generation; cache result in DB.
+        """
+        logger.info("get_full_analysis | name=%s dob=%s", name, dob)
+
+        chart  = self.get_chart(name, gender, dob, tob, place)
+        pdata  = chart["_pdata"]
+        bj     = chart["birth_jd"]
+
+        result = {
+            "chart":           {k: v for k, v in chart.items() if k != "_pdata"},
+            "vimshottari":     self.get_vimshottari(pdata, bj, dasha_levels),
+            "moola_dasha":     self.get_moola_dasha(pdata, bj, dasha_levels),
+            "dosh_analysis":   self.get_dosh_analysis(pdata),
+            "yoga_analysis":   self.get_yoga_analysis(pdata),
+            "shadbala":        self.get_shadbala(pdata),
+            "ashtakavarga":    self.get_ashtakavarga(pdata),
+            "aspect_matrix":   self.get_aspect_matrix(pdata),
+            "life_areas":      self.get_life_areas(pdata),
+            "bhava_strength":  self.get_bhava_strength(pdata),
+            "dasha_activation":self.get_dasha_activation(pdata, bj),
+            "chakra_health":   self.get_chakra_health(pdata),
+            "gochar_today":    self.get_gochar(
+                                   "today",
+                                   pdata.get("Moon",{}).get("rashi_idx")),
+        }
+        logger.info("get_full_analysis complete | chart_id=%s", chart["chart_id"])
+        return result
 
 
-# ─────────────────────────────────────────────────────────────────────
-#  FULL KUNDLI — one-shot, everything bundled
-# ─────────────────────────────────────────────────────────────────────
-
-def generate_full_kundli(
-    name: str, gender: str, dob: str, tob: str, place: str,
-    include_dasha: bool = True, dasha_depth: int = 3,
-) -> Dict[str, Any]:
-    """
-    Compute EVERYTHING for a birth chart and return a single structured dict.
-    """
-    pdata, all_divs, birth_jd, lat, lon_deg, tz = _silent_compute(
-        name, gender, dob, tob, place,
-    )
-
-    out = {
-        "meta": {
-            "name": name,
-            "gender": gender,
-            "dob": dob,
-            "tob": tob,
-            "place": place,
-            "latitude": lat,
-            "longitude": lon_deg,
-            "timezone": tz,
-            "birth_jd": birth_jd,
-            "engine": "nakshralogyV2 (pyswisseph)" if nk.SWE_AVAILABLE else "VSOP87 fallback",
-        },
-        "summary": get_chart_summary(pdata),
-        "planets": get_planet_positions(pdata),
-        "lagna_chart": get_kundli_grid(pdata, base="Lagna"),
-        "moon_chart": get_kundli_grid(pdata, base="Moon"),
-        "sun_chart": get_kundli_grid(pdata, base="Sun"),
-        "divisional_charts": get_divisional_charts(all_divs),
-        "divisional_grids": {
-            "D9": get_divisional_grid(all_divs, 9),
-            "D10": get_divisional_grid(all_divs, 10),
-            "D60": get_divisional_grid(all_divs, 60),
-        },
-    }
-
-    if include_dasha:
-        out["vimshottari_dasha"] = get_vimshottari_dasha(pdata, birth_jd, max_depth=dasha_depth)
-        out["moola_dasha"] = get_moola_dasha(pdata, birth_jd, max_depth=dasha_depth)
-
-    return out
+# ── Module-level singleton ─────────────────────────────────────────────────────
+engine = NakshtraEngine()
