@@ -24,6 +24,9 @@ class ApiConstants {
 
   // Communication
   static const String kundliBase = '$baseUrl/kundli';
+
+  // Rashi (zodiac predictions)
+  static const String rashiBase = '$baseUrl/rashi';
   static const String commBase = '$baseUrl/comm';
   static const String liveCreate = '$commBase/live/create';
   static const String chatHistory = '$commBase/chat/history';
