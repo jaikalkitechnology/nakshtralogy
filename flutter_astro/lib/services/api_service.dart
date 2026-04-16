@@ -466,5 +466,64 @@ class ApiService {
 
   String get accessToken => _accessToken ?? '';
 
+  // ── Kundli (Birth Chart Sections) ───────────────────────────────
+
+  Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaDepth = 3}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.kundliBase}/$chartId?dasha_depth=$dashaDepth'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getKundliSummary(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/summary'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> getKundliPlanets(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/planets'), headers: _headers);
+    if (resp.statusCode == 200) {
+      final data = jsonDecode(resp.body);
+      return (data['planets'] as List?) ?? [];
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>> getKundliGrid(String chartId, String base) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/$base'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> getKundliDivisionals(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/divisionals'), headers: _headers);
+    if (resp.statusCode == 200) {
+      final data = jsonDecode(resp.body);
+      return (data['divisional_charts'] as List?) ?? [];
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>> getKundliDivision(String chartId, int division) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.kundliBase}/$chartId/divisional/$division'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getKundliVimshottari(String chartId, {int depth = 3}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.kundliBase}/$chartId/dasha/vimshottari?depth=$depth'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getKundliMoola(String chartId, {int depth = 3}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.kundliBase}/$chartId/dasha/moola?depth=$depth'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
