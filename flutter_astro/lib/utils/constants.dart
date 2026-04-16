@@ -23,6 +23,7 @@ class ApiConstants {
   static const String computeGochar = '$serviceBase/compute/gochar';
 
   // Communication
+  static const String kundliBase = '$baseUrl/kundli';
   static const String commBase = '$baseUrl/comm';
   static const String liveCreate = '$commBase/live/create';
   static const String chatHistory = '$commBase/chat/history';

@@ -6,6 +6,7 @@ import '../../bloc/chart/chart_event.dart';
 import '../../bloc/chart/chart_state.dart';
 import '../../services/api_service.dart';
 import 'add_client_chart_screen.dart';
+import '../kundli/kundli_viewer_screen.dart';
 
 class ClientChartsScreen extends StatelessWidget {
   const ClientChartsScreen({super.key});
@@ -54,33 +55,42 @@ class ClientChartsScreen extends StatelessWidget {
                             final c = charts[i];
                             return Container(
                               margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
-                              child: Row(children: [
-                                Container(
-                                  width: 48, height: 48,
-                                  decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
-                                  child: const Center(child: Text('\U0001f4dc', style: TextStyle(fontSize: 22))),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: () => Navigator.push(context, MaterialPageRoute(
+                                  builder: (_) => KundliViewerScreen(chartId: c['id'], clientName: c['name'] ?? 'Client'),
+                                )),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(children: [
+                                    Container(
+                                      width: 48, height: 48,
+                                      decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
+                                      child: const Center(child: Text('\U0001f4dc', style: TextStyle(fontSize: 22))),
+                                    ),
+                                    const SizedBox(width: 14),
+                                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                      Text(c['name'] ?? '', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
+                                      const SizedBox(height: 4),
+                                      Text('${c['dob']} ${c['tob']} \u2022 ${c['place']}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12), overflow: TextOverflow.ellipsis),
+                                      const SizedBox(height: 6),
+                                      Row(children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                                          child: const Text('View Kundli', style: TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                                        ),
+                                      ]),
+                                    ])),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+                                      onPressed: () => context.read<ChartBloc>().add(ChartDeleteRequested(chartId: c['id'])),
+                                    ),
+                                    const Icon(Icons.chevron_right, color: AppColors.primary),
+                                  ]),
                                 ),
-                                const SizedBox(width: 14),
-                                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  Text(c['name'] ?? '', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
-                                  const SizedBox(height: 4),
-                                  Text('${c['dob']} ${c['tob']} \u2022 ${c['place']}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12), overflow: TextOverflow.ellipsis),
-                                ])),
-                                IconButton(
-                                  icon: const Icon(Icons.timeline, color: AppColors.primary, size: 20),
-                                  tooltip: 'Dasha',
-                                  onPressed: () async {
-                                    final result = await ApiService().computeDasha(c['id']);
-                                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['statusCode'] == 200 ? 'Dasha computed' : 'Error')));
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
-                                  onPressed: () => context.read<ChartBloc>().add(ChartDeleteRequested(chartId: c['id'])),
-                                ),
-                              ]),
+                              ),
                             );
                           },
                         ),
