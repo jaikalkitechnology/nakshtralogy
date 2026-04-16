@@ -6,6 +6,7 @@ import '../../bloc/dashboard/dashboard_event.dart';
 import '../../bloc/dashboard/dashboard_state.dart';
 import '../../services/api_service.dart';
 import '../communication/live_host_screen.dart';
+import '../rashi/rashi_list_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -108,6 +109,34 @@ class _HomeTabState extends State<HomeTab> {
                 backgroundColor: AppColors.error,
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 48),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // ── Rashi Predictions quick access ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiListScreen())),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [AppColors.primary.withOpacity(0.18), AppColors.accent.withOpacity(0.08)]),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.4)),
+                ),
+                child: Row(children: [
+                  const Text('\u2648\u2649\u264a', style: TextStyle(fontSize: 22)),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Rashi Predictions', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
+                      SizedBox(height: 2),
+                      Text("Today's gochar for all 12 signs — tap to drill in",
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                    ]),
+                  ),
+                  const Icon(Icons.chevron_right, color: AppColors.primary),
+                ]),
               ),
             ),
             const SizedBox(height: 20),

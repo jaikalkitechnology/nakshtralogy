@@ -18,6 +18,9 @@ class ApiConstants {
   // Kundli
   static const String kundliBase = '$baseUrl/kundli';
 
+  // Rashi (zodiac)
+  static const String rashiBase = '$baseUrl/rashi';
+
   // Service
   static const String serviceBase = '$baseUrl/service';
   static const String servicePricing = '$serviceBase/pricing';

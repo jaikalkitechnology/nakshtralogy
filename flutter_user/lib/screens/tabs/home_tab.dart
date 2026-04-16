@@ -7,7 +7,9 @@ import '../../bloc/astrologer/astrologer_state.dart';
 import '../../bloc/service/service_bloc.dart';
 import '../../bloc/service/service_event.dart';
 import '../../bloc/service/service_state.dart';
+import '../../services/api_service.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
+import '../rashi/rashi_detail_screen.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
@@ -19,20 +21,22 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  static const _zodiac = [
-    {'name': 'Aries', 'symbol': '♈'},
-    {'name': 'Taurus', 'symbol': '♉'},
-    {'name': 'Gemini', 'symbol': '♊'},
-    {'name': 'Cancer', 'symbol': '♋'},
-    {'name': 'Leo', 'symbol': '♌'},
-    {'name': 'Virgo', 'symbol': '♍'},
-    {'name': 'Libra', 'symbol': '♎'},
-    {'name': 'Scorpio', 'symbol': '♏'},
-    {'name': 'Sagittarius', 'symbol': '♐'},
-    {'name': 'Capricorn', 'symbol': '♑'},
-    {'name': 'Aquarius', 'symbol': '♒'},
-    {'name': 'Pisces', 'symbol': '♓'},
+  static const _zodiacFallback = [
+    {'idx': 0,  'name': 'Aries',       'emoji': '♈'},
+    {'idx': 1,  'name': 'Taurus',      'emoji': '♉'},
+    {'idx': 2,  'name': 'Gemini',      'emoji': '♊'},
+    {'idx': 3,  'name': 'Cancer',      'emoji': '♋'},
+    {'idx': 4,  'name': 'Leo',         'emoji': '♌'},
+    {'idx': 5,  'name': 'Virgo',       'emoji': '♍'},
+    {'idx': 6,  'name': 'Libra',       'emoji': '♎'},
+    {'idx': 7,  'name': 'Scorpio',     'emoji': '♏'},
+    {'idx': 8,  'name': 'Sagittarius', 'emoji': '♐'},
+    {'idx': 9,  'name': 'Capricorn',   'emoji': '♑'},
+    {'idx': 10, 'name': 'Aquarius',    'emoji': '♒'},
+    {'idx': 11, 'name': 'Pisces',      'emoji': '♓'},
   ];
+
+  List<Map<String, dynamic>> _rashis = List<Map<String, dynamic>>.from(_zodiacFallback);
 
   @override
   void initState() {
@@ -41,7 +45,30 @@ class _HomeTabState extends State<HomeTab> {
       context.read<AstrologerBloc>().add(const AstrologerLoadRequested(limit: 10));
       context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
       context.read<ServiceBloc>().add(const ServiceLoadRequested());
+      _loadRashiToday();
     });
+  }
+
+  Future<void> _loadRashiToday() async {
+    try {
+      final resp = await ApiService().getRashiToday();
+      if (!mounted) return;
+      if (resp['statusCode'] == 200 && resp['status'] == 'success') {
+        final list = ((resp['data'] as Map)['rashis'] as List).cast<Map>();
+        setState(() {
+          _rashis = list.map((e) => e.cast<String, dynamic>()).toList();
+        });
+      }
+    } catch (_) {/* keep fallback */}
+  }
+
+  Color _scoreColor(num? s) {
+    final v = (s ?? 0).toDouble();
+    if (v >= 2.5) return AppColors.success;
+    if (v >= 0.5) return Colors.lightGreen;
+    if (v >= -1.5) return Colors.amber;
+    if (v >= -3.5) return Colors.orange;
+    return AppColors.error;
   }
 
   @override
@@ -66,36 +93,65 @@ class _HomeTabState extends State<HomeTab> {
           ),
           const SizedBox(height: 20),
 
-          // Zodiac strip
-          const Text('Your Zodiac',
-              style: TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
+          // Zodiac strip — today's gochar prediction, tap to open detail
+          Row(children: const [
+            Text('Rashi — Today\'s Prediction',
+                style: TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
+            Spacer(),
+            Text('Tap to read more',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+          ]),
           const SizedBox(height: 10),
           SizedBox(
-            height: 82,
+            height: 110,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _zodiac.length,
+              itemCount: _rashis.length,
               separatorBuilder: (_, __) => const SizedBox(width: 10),
               itemBuilder: (_, i) {
-                final z = _zodiac[i];
-                return Container(
-                  width: 72,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(z['symbol']!, style: const TextStyle(fontSize: 26)),
-                      const SizedBox(height: 4),
-                      Text(
-                        z['name']!,
-                        style: const TextStyle(color: AppColors.textPrimary, fontSize: 10),
-                      ),
-                    ],
+                final z = _rashis[i];
+                final idx = (z['idx'] as num?)?.toInt() ?? i;
+                final score = z['score'] as num?;
+                final grade = z['grade']?.toString();
+                final color = _scoreColor(score);
+                return GestureDetector(
+                  onTap: () => Navigator.push(context, MaterialPageRoute(
+                    builder: (_) => RashiDetailScreen(
+                      rashiIdx: idx,
+                      initialName: z['name']?.toString(),
+                    ),
+                  )),
+                  child: Container(
+                    width: 86,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.card,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: score != null ? color.withOpacity(0.5) : AppColors.border),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(z['emoji']?.toString() ?? z['symbol']?.toString() ?? '',
+                            style: const TextStyle(fontSize: 26)),
+                        const SizedBox(height: 2),
+                        Text(
+                          z['name']?.toString() ?? '',
+                          style: const TextStyle(color: AppColors.textPrimary, fontSize: 10, fontWeight: FontWeight.w600),
+                          maxLines: 1, overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        if (score != null) Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                          child: Text(
+                            grade ?? score.toStringAsFixed(1),
+                            style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w700),
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                          ),
+                        ) else const Text('tap', style: TextStyle(color: AppColors.textSecondary, fontSize: 8)),
+                      ],
+                    ),
                   ),
                 );
               },

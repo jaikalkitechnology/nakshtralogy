@@ -13,6 +13,7 @@ from app.routers import (
     user_router, astrologer_router, service_router,
     communication_router, ws_chat, ws_astrologer,
     admin_router, google_auth_router, kundli_router,
+    rashi_router,
 )
 
 
@@ -50,6 +51,7 @@ app.include_router(ws_astrologer.router, tags=["WebSocket"])
 app.include_router(admin_router.router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(google_auth_router.router, prefix="/api/v1/google", tags=["Google OAuth"])
 app.include_router(kundli_router.router, prefix="/api/v1/kundli", tags=["Kundli"])
+app.include_router(rashi_router.router, prefix="/api/v1/rashi", tags=["Rashi"])
 
 
 

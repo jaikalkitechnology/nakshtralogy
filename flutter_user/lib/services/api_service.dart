@@ -489,6 +489,24 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  //  RASHI (zodiac predictions) — public, no auth required
+  // ═══════════════════════════════════════════════════════════════════
+
+  Future<Map<String, dynamic>> _rashiGet(String path) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.rashiBase}$path'));
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getRashiList() => _rashiGet('');
+  Future<Map<String, dynamic>> getRashiToday() => _rashiGet('/today');
+  Future<Map<String, dynamic>> getRashiDetail(int idx) => _rashiGet('/$idx');
+  Future<Map<String, dynamic>> getRashiDaily(int idx, {String? date}) =>
+      _rashiGet('/$idx/daily${date != null ? '?date=$date' : ''}');
+  Future<Map<String, dynamic>> getRashiWeekly(int idx) => _rashiGet('/$idx/weekly');
+  Future<Map<String, dynamic>> getRashiMonthly(int idx) => _rashiGet('/$idx/monthly');
+  Future<Map<String, dynamic>> getRashiFull(int idx) => _rashiGet('/$idx/full');
+
   Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaLevels = 2}) =>
       _kundliGet('/$chartId?dasha_levels=$dashaLevels');
 
