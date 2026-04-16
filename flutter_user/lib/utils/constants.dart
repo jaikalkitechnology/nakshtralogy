@@ -15,6 +15,9 @@ class ApiConstants {
   // Astrologer public
   static const String astrologerList = '$astrologerBase/list';
 
+  // Kundli
+  static const String kundliBase = '$baseUrl/kundli';
+
   // Service
   static const String serviceBase = '$baseUrl/service';
   static const String servicePricing = '$serviceBase/pricing';

@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
 import '../../bloc/chart/chart_state.dart';
+import '../kundli/kundli_viewer_screen.dart';
 import 'add_chart_screen.dart';
 
 class MyChartsScreen extends StatelessWidget {
@@ -65,12 +66,21 @@ class MyChartsScreen extends StatelessWidget {
                 final isPrimary = c['is_primary'] == true;
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: AppColors.card, borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: isPrimary ? AppColors.primary.withOpacity(0.5) : AppColors.border),
                   ),
-                  child: Row(children: [
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(
+                      builder: (_) => KundliViewerScreen(
+                        chartId: c['id']?.toString() ?? '',
+                        clientName: c['name']?.toString() ?? 'Chart',
+                      ),
+                    )),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(children: [
                     Container(
                       width: 48, height: 48,
                       decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
@@ -117,7 +127,10 @@ class MyChartsScreen extends StatelessWidget {
                         );
                       },
                     ),
-                  ]),
+                    const Icon(Icons.chevron_right, color: AppColors.primary, size: 20),
+                      ]),
+                    ),
+                  ),
                 );
               },
             ),
