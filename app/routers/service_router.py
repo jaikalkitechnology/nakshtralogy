@@ -469,13 +469,15 @@ def create_chart(
 
 @router.get("/charts", response_model=List[BirthChartListResponse])
 def list_charts(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """List all birth charts for the current user (without heavy chart_json)."""
+    """List birth charts for the current user with pagination."""
     charts = db.query(Chart).filter(
         Chart.user_id == current_user.id
-    ).order_by(Chart.created_at.desc()).all()
+    ).order_by(Chart.created_at.desc()).offset(skip).limit(limit).all()
     return charts
 
 
@@ -906,3 +908,40 @@ def list_orders(
         )
         for order, sp, chart in rows
     ]
+
+
+# ═══════════════════════════════════════════════════════════════════
+# CITY SEARCH (Nominatim / OpenStreetMap geocoding)
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/city-search")
+def city_search(q: str = Query(..., min_length=2, max_length=100)):
+    """Search cities by name using Nominatim (OSM). Returns up to 8 results
+    with name, display_name, latitude, longitude, and timezone offset."""
+    import requests as _req
+    url = "https://nominatim.openstreetmap.org/search"
+    try:
+        resp = _req.get(url, params={
+            "q": q, "format": "json", "limit": 8,
+            "addressdetails": 1, "accept-language": "en",
+        }, headers={"User-Agent": "Nakshtralogy/1.0"}, timeout=5)
+        if resp.status_code != 200:
+            return []
+        raw = resp.json()
+        results = []
+        for r in raw:
+            addr = r.get("address", {})
+            city = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("county") or ""
+            state = addr.get("state", "")
+            country = addr.get("country", "")
+            parts = [p for p in [city, state, country] if p]
+            results.append({
+                "name": city or r.get("name", q),
+                "display_name": ", ".join(parts) if parts else r.get("display_name", ""),
+                "latitude": float(r.get("lat", 0)),
+                "longitude": float(r.get("lon", 0)),
+                "country": country,
+            })
+        return results
+    except Exception:
+        return []

@@ -18,6 +18,7 @@ class ApiConstants {
   static const String serviceCharts = '$serviceBase/charts';
   static const String servicePurchase = '$serviceBase/purchase';
   static const String serviceOrders = '$serviceBase/orders';
+  static const String citySearch = '$serviceBase/city-search';
   static const String computeDasha = '$serviceBase/compute/dasha';
   static const String computeMoola = '$serviceBase/compute/moola';
   static const String computeGochar = '$serviceBase/compute/gochar';
