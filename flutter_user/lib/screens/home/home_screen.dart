@@ -47,12 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
-              Text('\u2728 ', style: TextStyle(fontSize: 20)),
-              Text(
-                'Nakshtralogy',
-                style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18),
-              ),
+            children: [
+              Text('Nakshtra', style: TextStyle(color: AppColors.ivory, fontWeight: FontWeight.w700, fontSize: 18)),
+              Text('logy', style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700, fontSize: 18, fontStyle: FontStyle.italic)),
             ],
           ),
           actions: [
@@ -119,9 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.card,
-            border: Border(top: BorderSide(color: AppColors.border)),
+          decoration: BoxDecoration(
+            color: AppColors.midnight.withOpacity(0.95),
+            border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
           ),
           child: SafeArea(
             top: false,
