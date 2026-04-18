@@ -332,7 +332,7 @@ class NakshtraEngine:
         return {
             "planets": sb,
             "summary": {
-                p: {"score": d["score_100"], "total_rupas": d["total_rupas"]}
+                p: {"score": d["score_100"], "total_rupas": d.get("total_rupas", d.get("total_virupas", 0))}
                 for p, d in sb.items()
             },
         }
