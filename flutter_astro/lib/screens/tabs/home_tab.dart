@@ -91,10 +91,10 @@ class _HomeTabState extends State<HomeTab> {
               crossAxisSpacing: 12,
               childAspectRatio: 1.6,
               children: [
-                _KpiCard(icon: Icons.currency_rupee, label: "Today's Earning", value: '₹${stats['today_earning'] ?? 0}', color: AppColors.success),
-                _KpiCard(icon: Icons.account_balance_wallet, label: 'Wallet Balance', value: '₹${stats['wallet_balance'] ?? 0}', color: AppColors.accent),
-                _KpiCard(icon: Icons.star, label: 'Rating', value: '${(stats['avg_rating'] ?? 0.0).toStringAsFixed(1)}', color: Colors.amber),
-                _KpiCard(icon: Icons.headset_mic, label: 'Total Sessions', value: '${stats['total_sessions'] ?? 0}', color: AppColors.primary),
+                _KpiCard(icon: Icons.currency_rupee, label: "Today's Earning", value: '₹${stats['today_earning'] ?? 0}', isPrimary: true),
+                _KpiCard(icon: Icons.account_balance_wallet, label: 'Wallet Balance', value: '₹${stats['wallet_balance'] ?? 0}'),
+                _KpiCard(icon: Icons.star, label: 'Rating', value: '${(stats['avg_rating'] ?? 0.0).toStringAsFixed(1)}'),
+                _KpiCard(icon: Icons.headset_mic, label: 'Total Sessions', value: '${stats['total_sessions'] ?? 0}'),
               ],
             ),
             const SizedBox(height: 20),
@@ -135,7 +135,7 @@ class _HomeTabState extends State<HomeTab> {
                           style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                     ]),
                   ),
-                  const Icon(Icons.chevron_right, color: AppColors.primary),
+                  const Icon(Icons.chevron_right),
                 ]),
               ),
             ),
@@ -144,18 +144,18 @@ class _HomeTabState extends State<HomeTab> {
             const Text('Request Summary', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
             Row(children: [
-              _RequestCountChip(icon: Icons.chat_bubble, label: 'Chat', count: stats['chat_requests'] ?? 0, color: AppColors.accent),
+              _RequestCountChip(icon: Icons.chat_bubble, label: 'Chat', count: stats['chat_requests'] ?? 0),
               const SizedBox(width: 10),
-              _RequestCountChip(icon: Icons.phone, label: 'Voice', count: stats['voice_requests'] ?? 0, color: AppColors.success),
+              _RequestCountChip(icon: Icons.phone, label: 'Voice', count: stats['voice_requests'] ?? 0, isPrimary: true),
               const SizedBox(width: 10),
-              _RequestCountChip(icon: Icons.videocam, label: 'Video', count: stats['video_requests'] ?? 0, color: AppColors.primary),
+              _RequestCountChip(icon: Icons.videocam, label: 'Video', count: stats['video_requests'] ?? 0),
             ]),
             const SizedBox(height: 20),
 
             // ── Recent Requests ──
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               const Text('Recent Requests', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
-              if (state.loading) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
+              if (state.loading) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
             ]),
             const SizedBox(height: 10),
             if (state.recentRequests.isEmpty)
@@ -177,23 +177,28 @@ class _KpiCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final Color color;
-  const _KpiCard({required this.icon, required this.label, required this.value, required this.color});
+  final bool isPrimary;
+  const _KpiCard({required this.icon, required this.label, required this.value, this.isPrimary = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
+        gradient: isPrimary
+            ? const LinearGradient(colors: [AppColors.gold, AppColors.saffron])
+            : LinearGradient(colors: [AppColors.nebula.withOpacity(0.8), AppColors.indigo.withOpacity(0.4)]),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isPrimary ? Colors.transparent : AppColors.gold.withOpacity(0.2)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon, color: color, size: 26),
-        const SizedBox(height: 8),
-        Text(value, style: TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        Text(label, style: TextStyle(
+          fontFamily: 'Manrope', fontSize: 9, letterSpacing: 1,
+          color: isPrimary ? AppColors.midnight.withOpacity(0.7) : AppColors.smoke, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 6),
+        Text(value, style: TextStyle(
+          fontFamily: 'Manrope', fontSize: 24, fontWeight: FontWeight.w700,
+          color: isPrimary ? AppColors.midnight : AppColors.ivory)),
       ]),
     );
   }

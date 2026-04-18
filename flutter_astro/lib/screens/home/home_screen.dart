@@ -230,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             bottomNavigationBar: Container(
-              decoration: const BoxDecoration(color: AppColors.card, border: Border(top: BorderSide(color: AppColors.border))),
+              decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.95), border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15)))),
               child: Row(
                 children: List.generate(_navItems.length, (i) {
                   final selected = _currentIndex == i;
