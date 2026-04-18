@@ -373,8 +373,6 @@ async def websocket_chat(
         # cleanup
         if session_id in _connections and user and user.id in _connections.get(session_id, {}):
             del _connections[session_id][user.id]
-            if not _connections[session_id]:
-                del _connections[session_id]
 
             await _broadcast(session_id, {
                 "type": "user_left",
@@ -382,6 +380,25 @@ async def websocket_chat(
                 "name": user.name if user else "Unknown",
                 "timestamp": datetime.utcnow().isoformat(),
             })
+
+            # Auto-end session if BOTH parties have disconnected
+            remaining = _connections.get(session_id, {})
+            if not remaining:
+                del _connections[session_id]
+                try:
+                    db2 = SessionLocal()
+                    sess = db2.query(ChatSession).filter(ChatSession.id == session_id).first()
+                    if sess and sess.status == "active":
+                        prof = db2.query(AstrologerProfile).filter(
+                            AstrologerProfile.id == sess.astrologer_id
+                        ).first()
+                        import asyncio
+                        loop = asyncio.get_event_loop()
+                        loop.create_task(_complete_session(db2, sess, prof))
+                        logger.info("Auto-ended chat session %s (both parties disconnected)", session_id)
+                    db2.close()
+                except Exception as e:
+                    logger.warning("Auto-end cleanup failed: %s", e)
         db.close()
 
 

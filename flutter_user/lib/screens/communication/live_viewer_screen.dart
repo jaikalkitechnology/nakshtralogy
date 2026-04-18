@@ -36,11 +36,12 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   List<dynamic> _questions = [];
   List<dynamic> _superChats = [];
   List<dynamic> _gifts = [];
-  List<dynamic> _recentGiftAnimations = []; // for gift overlay
+  List<dynamic> _recentGiftAnimations = [];
   int _viewerCount = 0;
   bool _joined = false;
   int? _remoteUid;
   Timer? _pollTimer;
+  Timer? _hostTimeout;
   String? _error;
 
   @override
@@ -72,6 +73,17 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
     } catch (e) {
       debugPrint('Agora init failed (chat still works): $e');
     }
+
+    // 15-second timeout: if host (broadcaster) doesn't connect, auto-leave
+    _hostTimeout = Timer(const Duration(seconds: 15), () {
+      if (_remoteUid == null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Astrologer not available. Ending stream.'),
+          backgroundColor: AppColors.error,
+        ));
+        _leaveStream();
+      }
+    });
   }
 
   Future<void> _initAgora() async {
@@ -88,6 +100,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
       },
       onUserJoined: (connection, remoteUid, elapsed) {
         debugPrint('Host video available: $remoteUid');
+        _hostTimeout?.cancel();
         setState(() => _remoteUid = remoteUid);
       },
       onUserOffline: (connection, remoteUid, reason) {
@@ -263,6 +276,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
 
   Future<void> _leaveStream() async {
     _pollTimer?.cancel();
+    _hostTimeout?.cancel();
     await _engine?.leaveChannel();
     await _engine?.release();
     _engine = null;
@@ -273,6 +287,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _hostTimeout?.cancel();
     _questionCtrl.dispose();
     _engine?.leaveChannel();
     _engine?.release();

@@ -30,7 +30,7 @@ class AstroChatScreen extends StatefulWidget {
   State<AstroChatScreen> createState() => _AstroChatScreenState();
 }
 
-class _AstroChatScreenState extends State<AstroChatScreen> {
+class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingObserver {
   final _msgCtrl = TextEditingController();
   final _scrollCtrl = ScrollController();
   final _api = ApiService();
@@ -47,8 +47,22 @@ class _AstroChatScreenState extends State<AstroChatScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _remainingMessages = widget.sessionMessageLimit;
     _connect();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      _sendEndSession();
+    }
+  }
+
+  void _sendEndSession() {
+    try {
+      _channel?.sink.add(jsonEncode({'type': 'end_session'}));
+    } catch (_) {}
   }
 
   Future<void> _connect() async {
@@ -224,6 +238,8 @@ class _AstroChatScreenState extends State<AstroChatScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _sendEndSession();
     _timer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();

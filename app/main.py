@@ -1,13 +1,16 @@
 """Nakshtralogy — FastAPI Entry Point."""
 
+import asyncio
+import logging
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta
 
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.database import create_tables, get_db
+from app.core.database import create_tables, get_db, SessionLocal
 from app.core.dependencies import require_role
 from app.routers import (
     user_router, astrologer_router, service_router,
@@ -16,13 +19,96 @@ from app.routers import (
     rashi_router,
 )
 
+logger = logging.getLogger("session_cleanup")
+
+
+async def _cleanup_stale_sessions():
+    """Background task: every 30s, end stale calls, chats, and streams."""
+    from app.models.model import CallSession, ChatSession, LiveStream, AstrologerProfile
+    while True:
+        await asyncio.sleep(30)
+        try:
+            db = SessionLocal()
+            now = datetime.utcnow()
+
+            # 1. Calls stuck in "ringing" past expiry
+            expired_calls = db.query(CallSession).filter(
+                CallSession.status == "ringing",
+                CallSession.expires_at < now,
+            ).all()
+            for call in expired_calls:
+                call.status = "missed"
+                call.ended_at = now
+            if expired_calls:
+                logger.info("Cleaned %d expired ringing calls", len(expired_calls))
+
+            # 2. Calls stuck in "active" for >3 hours (safety net)
+            stale_cutoff = now - timedelta(hours=3)
+            stale_calls = db.query(CallSession).filter(
+                CallSession.status == "active",
+                CallSession.started_at < stale_cutoff,
+            ).all()
+            for call in stale_calls:
+                call.status = "completed"
+                call.ended_at = now
+                if call.started_at:
+                    call.duration_sec = int((now - call.started_at).total_seconds())
+            if stale_calls:
+                logger.info("Force-ended %d stale active calls", len(stale_calls))
+
+            # 3. Chat sessions stuck in "waiting" past expiry
+            expired_chats = db.query(ChatSession).filter(
+                ChatSession.status == "waiting",
+                ChatSession.expires_at < now,
+            ).all()
+            for chat in expired_chats:
+                chat.status = "expired"
+                chat.ended_at = now
+            if expired_chats:
+                logger.info("Expired %d waiting chats", len(expired_chats))
+
+            # 4. Chat sessions active but past session_expires_at
+            expired_active = db.query(ChatSession).filter(
+                ChatSession.status == "active",
+                ChatSession.session_expires_at != None,
+                ChatSession.session_expires_at < now,
+            ).all()
+            for chat in expired_active:
+                chat.status = "completed"
+                chat.ended_at = now
+                if chat.started_at:
+                    chat.duration_sec = int((now - chat.started_at).total_seconds())
+                prof = db.query(AstrologerProfile).filter(
+                    AstrologerProfile.id == chat.astrologer_id
+                ).first()
+                if prof:
+                    prof.is_busy = False
+            if expired_active:
+                logger.info("Auto-completed %d expired active chats", len(expired_active))
+
+            # 5. Live streams stuck in "live" for >6 hours
+            stale_streams = db.query(LiveStream).filter(
+                LiveStream.status == "live",
+                LiveStream.started_at < now - timedelta(hours=6),
+            ).all()
+            for stream in stale_streams:
+                stream.status = "ended"
+                stream.ended_at = now
+            if stale_streams:
+                logger.info("Force-ended %d stale live streams", len(stale_streams))
+
+            db.commit()
+            db.close()
+        except Exception as e:
+            logger.warning("Session cleanup error: %s", e)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     create_tables()
+    task = asyncio.create_task(_cleanup_stale_sessions())
     yield
-    # Shutdown (cleanup if needed)
+    task.cancel()
 
 
 app = FastAPI(
