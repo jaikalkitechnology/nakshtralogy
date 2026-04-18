@@ -281,7 +281,7 @@ def shadbala(
 ):
     chart = _load_chart(chart_id, current_user, db)
     data = _chart_from_row(chart)
-    return _ok(nk_engine.get_shadbala(data["_pdata"]))
+    return _ok(nk_engine.get_shadbala(data["_pdata"], data["birth_jd"]))
 
 
 # ═══════════════════════════════════════════════════════════════════

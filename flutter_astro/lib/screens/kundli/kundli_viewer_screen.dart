@@ -30,7 +30,7 @@ class KundliViewerScreen extends StatefulWidget {
 class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProviderStateMixin {
   final _api = ApiService();
   late final TabController _tabs;
-  Map<String, dynamic>? _full;
+  Map<String, dynamic>? _chart;
   bool _loading = true;
   String? _error;
 
@@ -69,10 +69,10 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final resp = await _api.getKundliFull(widget.chartId, dashaLevels: 2);
+      final resp = await _api.getKundliChart(widget.chartId);
       if (resp['statusCode'] == 200 && resp['status'] == 'success') {
         setState(() {
-          _full = (resp['data'] as Map).cast<String, dynamic>();
+          _chart = (resp['data'] as Map).cast<String, dynamic>();
           _loading = false;
         });
       } else {
@@ -112,41 +112,37 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _error != null
               ? _errorView()
-              : _full == null
+              : _chart == null
                   ? const SizedBox.shrink()
                   : TabBarView(
                       controller: _tabs,
                       children: [
-                        _SummaryTab(full: _full!),
+                        _SummaryTab(chart: _chart!),
                         PlanetPositionsWidget(planetsMap: _planetsMap()),
-                        _KundliTab(full: _full!),
+                        _KundliTab(chart: _chart!),
                         DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap()),
-                        DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari', initial: _full!['vimshottari']),
-                        DashaTreeWidget(chartId: widget.chartId, type: 'moola', initial: _full!['moola_dasha']),
-                        GocharWidget(chartId: widget.chartId, initial: _full!['gochar_today']),
-                        DoshWidget(chartId: widget.chartId, initial: _full!['dosh_analysis']),
-                        YogaWidget(chartId: widget.chartId, initial: _full!['yoga_analysis']),
-                        ShadbalaWidget(chartId: widget.chartId, initial: _full!['shadbala']),
-                        AshtakavargaWidget(chartId: widget.chartId, initial: _full!['ashtakavarga']),
-                        AspectsWidget(chartId: widget.chartId, initial: _full!['aspect_matrix']),
-                        LifeAreasWidget(chartId: widget.chartId, initial: _full!['life_areas']),
-                        BhavaWidget(chartId: widget.chartId, initial: _full!['bhava_strength']),
-                        ChakraHealthWidget(chartId: widget.chartId, initial: _full!['chakra_health']),
-                        DashaActivationWidget(chartId: widget.chartId, initial: _full!['dasha_activation']),
+                        DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari'),
+                        DashaTreeWidget(chartId: widget.chartId, type: 'moola'),
+                        GocharWidget(chartId: widget.chartId),
+                        DoshWidget(chartId: widget.chartId),
+                        YogaWidget(chartId: widget.chartId),
+                        ShadbalaWidget(chartId: widget.chartId),
+                        AshtakavargaWidget(chartId: widget.chartId),
+                        AspectsWidget(chartId: widget.chartId),
+                        LifeAreasWidget(chartId: widget.chartId),
+                        BhavaWidget(chartId: widget.chartId),
+                        ChakraHealthWidget(chartId: widget.chartId),
+                        DashaActivationWidget(chartId: widget.chartId),
                       ],
                     ),
     );
   }
 
-  Map<String, dynamic> _planetsMap() {
-    final chart = _full?['chart'] as Map?;
-    return ((chart?['planets'] as Map?) ?? {}).cast<String, dynamic>();
-  }
+  Map<String, dynamic> _planetsMap() =>
+      ((_chart?['planets'] as Map?) ?? {}).cast<String, dynamic>();
 
-  Map<String, dynamic> _divisionalsMap() {
-    final chart = _full?['chart'] as Map?;
-    return ((chart?['divisionals'] as Map?) ?? {}).cast<String, dynamic>();
-  }
+  Map<String, dynamic> _divisionalsMap() =>
+      ((_chart?['divisionals'] as Map?) ?? {}).cast<String, dynamic>();
 
   Widget _errorView() => Center(child: Padding(
     padding: const EdgeInsets.all(24),
@@ -166,12 +162,11 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 // ═══════════════════════════════════════════════════════════════════
 
 class _SummaryTab extends StatelessWidget {
-  final Map<String, dynamic> full;
-  const _SummaryTab({required this.full});
+  final Map<String, dynamic> chart;
+  const _SummaryTab({required this.chart});
 
   @override
   Widget build(BuildContext context) {
-    final chart = (full['chart'] as Map? ?? {}).cast<String, dynamic>();
     final planets = (chart['planets'] as Map? ?? {}).cast<String, dynamic>();
     final lagna = (planets['Lagna'] as Map?)?.cast<String, dynamic>();
     final moon = (planets['Moon'] as Map?)?.cast<String, dynamic>();
@@ -248,8 +243,8 @@ class _SummaryTab extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════
 
 class _KundliTab extends StatefulWidget {
-  final Map<String, dynamic> full;
-  const _KundliTab({required this.full});
+  final Map<String, dynamic> chart;
+  const _KundliTab({required this.chart});
 
   @override
   State<_KundliTab> createState() => _KundliTabState();
@@ -260,8 +255,7 @@ class _KundliTabState extends State<_KundliTab> {
 
   @override
   Widget build(BuildContext context) {
-    final chart = (widget.full['chart'] as Map? ?? {}).cast<String, dynamic>();
-    final planets = (chart['planets'] as Map? ?? {}).cast<String, dynamic>();
+    final planets = (widget.chart['planets'] as Map? ?? {}).cast<String, dynamic>();
     // Build houses relative to base planet
     final basePlanet = (planets[_base] as Map?)?.cast<String, dynamic>();
     final baseSignIdx = (basePlanet?['sign_idx'] as num?)?.toInt() ?? 0;

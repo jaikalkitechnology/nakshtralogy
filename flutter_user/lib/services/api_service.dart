@@ -39,6 +39,47 @@ class ApiService {
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
+  bool _refreshing = false;
+
+  Future<bool> _tryRefresh() async {
+    if (_refreshToken == null || _refreshing) return false;
+    _refreshing = true;
+    try {
+      final resp = await http.post(
+        Uri.parse(ApiConstants.userRefresh),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refresh_token': _refreshToken}),
+      );
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        await _saveTokens(data['access_token'], data['refresh_token']);
+        return true;
+      }
+    } catch (_) {}
+    _refreshing = false;
+    return false;
+  }
+
+  Future<http.Response> _authGet(Uri url) async {
+    var resp = await http.get(url, headers: _headers);
+    if (resp.statusCode == 401 && await _tryRefresh()) {
+      _refreshing = false;
+      resp = await http.get(url, headers: _headers);
+    }
+    _refreshing = false;
+    return resp;
+  }
+
+  Future<http.Response> _authPost(Uri url, {Object? body}) async {
+    var resp = await http.post(url, headers: _headers, body: body);
+    if (resp.statusCode == 401 && await _tryRefresh()) {
+      _refreshing = false;
+      resp = await http.post(url, headers: _headers, body: body);
+    }
+    _refreshing = false;
+    return resp;
+  }
+
   // ── Auth ─────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> signup({

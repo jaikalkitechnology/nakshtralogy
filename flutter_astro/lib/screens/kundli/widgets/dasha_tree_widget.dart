@@ -42,8 +42,8 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> {
     setState(() { _loading = true; _error = null; });
     try {
       final resp = widget.type == 'moola'
-          ? await ApiService().getKundliMoola(widget.chartId, levels: 3)
-          : await ApiService().getKundliVimshottari(widget.chartId, levels: 3);
+          ? await ApiService().getKundliMoola(widget.chartId, levels: 5)
+          : await ApiService().getKundliVimshottari(widget.chartId, levels: 5);
       if (resp['statusCode'] == 200 && resp['status'] == 'success') {
         _root = (resp['data'] as Map).cast<String, dynamic>();
         _pushRoot();
@@ -158,7 +158,7 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> {
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Text(planet, style: TextStyle(color: past ? AppColors.textSecondary : AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
+                Flexible(child: Text(planet, style: TextStyle(color: past ? AppColors.textSecondary : AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis)),
                 const SizedBox(width: 8),
                 if (running) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(4)), child: const Text('RUNNING', style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold))),
                 if (past) const Text('  (past)', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),

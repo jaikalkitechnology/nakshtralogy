@@ -2812,7 +2812,7 @@ def calculate_shadbala(pdata: dict, birth_jd: float = 0) -> dict:
             "total_virupas":    round(total, 1),
             "min_required":     minv,
             "pct_of_min":       pct,
-            "score_100":        round(min(pct, 100.0), 1),  # capped at 100 for bars
+            "score_100":        round(pct, 1),  # uncapped — actual % of minimum
             "house":            house,
         }
     return results
@@ -3147,7 +3147,8 @@ def calculate_life_areas(pdata: dict) -> dict:
         asp = aspects_on_house(pdata, house)
         return sum(v for p,v in asp.items() if p in MALEFIC)
     def strength(p):
-        return sb.get(p,{}).get("score_100",50) if p in sb else 50
+        pct = sb.get(p,{}).get("pct_of_min", 100) if p in sb else 100
+        return min(100, max(0, (pct - 50) / 1.5))
 
     areas = {}
 
