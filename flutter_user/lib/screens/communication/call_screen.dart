@@ -352,21 +352,24 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
               children: [
                 if (!isVideo || _status != 'active') ...[
                   const Spacer(flex: 2),
-                  // Avatar
+                  // Cosmic Avatar with ripple
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 140, height: 140,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.card,
-                      border: Border.all(color: AppColors.primary.withOpacity(0.5), width: 3),
+                      gradient: const LinearGradient(colors: [AppColors.saffron, AppColors.cosmicPink]),
+                      border: Border.all(color: AppColors.gold.withOpacity(0.5), width: 3),
+                      boxShadow: [BoxShadow(color: AppColors.cosmicPink.withOpacity(0.4), blurRadius: 40, spreadRadius: 5)],
                     ),
-                    child: const Center(child: Text('\u{1F52E}', style: TextStyle(fontSize: 48))),
+                    child: Center(child: Text(
+                      widget.astrologerName.isNotEmpty ? widget.astrologerName[0].toUpperCase() : 'A',
+                      style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w700, color: Colors.white),
+                    )),
                   ),
                   const SizedBox(height: 20),
-                  Text(widget.astrologerName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w600)),
+                  Text(widget.astrologerName, style: const TextStyle(color: AppColors.ivory, fontSize: 22, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 4),
-                  Text(isVideo ? 'Video Call' : 'Voice Call', style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                  Text(isVideo ? 'Video Call' : 'Voice Call', style: const TextStyle(color: AppColors.smoke, fontSize: 14)),
                   const SizedBox(height: 16),
                 ] else ...[
                   const Spacer(flex: 1),
@@ -375,15 +378,18 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
                 // Timer & Cost
                 if (_status == 'active') ...[
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.gold.withOpacity(0.3)),
                     ),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Text(_formattedTime, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-                      Text('\u20b9${_currentCost.toStringAsFixed(0)} • \u20b9${widget.ratePerMin.toInt()}/min',
-                          style: const TextStyle(color: AppColors.primary, fontSize: 13)),
+                      Text('\u25cf CONNECTED', style: TextStyle(color: AppColors.success, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 2)),
+                      const SizedBox(height: 4),
+                      Text(_formattedTime, style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w500, fontFamily: 'monospace')),
+                      Text('\u20b9${_currentCost.toStringAsFixed(0)} \u00b7 \u20b9${widget.ratePerMin.toInt()}/min',
+                          style: const TextStyle(color: AppColors.gold, fontSize: 12)),
                       if (_remainingTime.isNotEmpty)
                         Text(_remainingTime, style: TextStyle(
                           color: _remainingSeconds < 120 ? AppColors.error : AppColors.textSecondary,
@@ -431,13 +437,16 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
                           color: !_isVideoEnabled ? AppColors.error.withOpacity(0.3) : AppColors.surface,
                           onTap: _toggleVideo,
                         ),
-                      // End call
                       GestureDetector(
-                        onTap: _endCall,
+                        onTap: () => _endCall(),
                         child: Container(
-                          width: 72, height: 72,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error),
-                          child: const Icon(Icons.call_end, color: Colors.white, size: 32),
+                          width: 56, height: 56,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.error,
+                            boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.5), blurRadius: 20, spreadRadius: 2)],
+                          ),
+                          child: const Icon(Icons.call_end, color: Colors.white, size: 24),
                         ),
                       ),
                       _controlBtn(
@@ -470,12 +479,16 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       onTap: onTap,
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Container(
-          width: 52, height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: color, border: Border.all(color: AppColors.border)),
-          child: Icon(icon, color: AppColors.textPrimary, size: 22),
+          width: 48, height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white.withOpacity(0.15),
+            border: Border.all(color: Colors.white.withOpacity(0.2)),
+          ),
+          child: Icon(icon, color: Colors.white, size: 20),
         ),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+        Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9)),
       ]),
     );
   }

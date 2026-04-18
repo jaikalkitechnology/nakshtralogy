@@ -293,60 +293,113 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.astrologerName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
-            Text(
-              _connected
-                  ? widget.billingMode == 'per_session'
-                      ? '$_formattedTime • $_remainingMessages msgs left'
-                      : '$_formattedTime • ₹${_currentCost.toStringAsFixed(0)}'
-                  : 'Connecting...',
-              style: TextStyle(color: _connected ? AppColors.primary : AppColors.textSecondary, fontSize: 12),
-            ),
-          ],
-        ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-            child: Text(
-              widget.billingMode == 'per_session'
-                  ? '₹${widget.ratePerSession.toInt()}/sess'
-                  : '₹${widget.ratePerMin.toInt()}/min',
-              style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColors.midnight,
+            border: Border(bottom: BorderSide(color: AppColors.twilight, width: 1)),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: AppColors.ivory),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  // Astrologer avatar gradient circle
+                  Container(
+                    width: 40, height: 40,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [AppColors.indigo, AppColors.lavender],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        widget.astrologerName.isNotEmpty ? widget.astrologerName[0].toUpperCase() : '?',
+                        style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Astrologer name + status
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(widget.astrologerName, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(
+                          _connected ? 'Online' : 'Connecting...',
+                          style: TextStyle(color: _connected ? AppColors.success : AppColors.smoke, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Timer badge (gold border, mono font)
+                  if (_connected)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.gold, width: 1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _formattedTime,
+                        style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'monospace'),
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.call_end, color: AppColors.error, size: 22),
+                    onPressed: _endSession,
+                  ),
+                ],
+              ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.call_end, color: AppColors.error, size: 22),
-            onPressed: _endSession,
-          ),
-        ],
+        ),
       ),
       body: Column(
         children: [
-          // Session info banner
-          if (widget.billingMode == 'per_session')
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              color: AppColors.accent.withOpacity(0.1),
-              child: Row(children: [
-                const Icon(Icons.info_outline, size: 14, color: AppColors.accent),
-                const SizedBox(width: 6),
-                Expanded(child: Text(
-                  'Session: $_userMessageCount/${widget.sessionMessageLimit} messages used',
-                  style: const TextStyle(color: AppColors.accent, fontSize: 12),
-                )),
-                Text('$_remainingMessages left', style: const TextStyle(color: AppColors.accent, fontSize: 12, fontWeight: FontWeight.w600)),
-              ]),
+          // Session info strip
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.indigo.withOpacity(0.2),
+              border: const Border(bottom: BorderSide(color: AppColors.twilight, width: 0.5)),
             ),
+            child: Row(children: [
+              const Icon(Icons.auto_awesome, size: 14, color: AppColors.lavender),
+              const SizedBox(width: 6),
+              Expanded(child: Text(
+                widget.billingMode == 'per_session'
+                    ? 'Session: $_userMessageCount/${widget.sessionMessageLimit} msgs ($_remainingMessages left)'
+                    : 'Duration: $_formattedTime',
+                style: const TextStyle(color: AppColors.lavender, fontSize: 12),
+              )),
+              // Rate badge (gold-saffron gradient)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  widget.billingMode == 'per_session'
+                      ? '\u20b9${widget.ratePerSession.toInt()}/sess'
+                      : '\u20b9${_currentCost.toStringAsFixed(0)}',
+                  style: const TextStyle(color: AppColors.midnight, fontSize: 11, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ]),
+          ),
 
           // Messages list
           Expanded(
@@ -366,59 +419,76 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           if (_uploading)
             Container(
               padding: const EdgeInsets.all(8),
-              color: AppColors.card,
+              color: AppColors.nebula,
               child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)),
+                SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
                 SizedBox(width: 8),
-                Text('Uploading file...', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text('Uploading file...', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
               ]),
             ),
 
-          // Input bar
+          // Input bar — cosmic pill style
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            decoration: const BoxDecoration(color: AppColors.card, border: Border(top: BorderSide(color: AppColors.border))),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: const BoxDecoration(
+              color: AppColors.nebula,
+              border: Border(top: BorderSide(color: AppColors.twilight)),
+            ),
             child: Row(
               children: [
                 // Attach button
                 PopupMenuButton<String>(
                   onSelected: _pickAndUploadFile,
-                  icon: const Icon(Icons.attach_file, color: AppColors.primary),
-                  color: AppColors.card,
+                  icon: const Icon(Icons.attach_file, color: AppColors.gold),
+                  color: AppColors.nebula,
                   itemBuilder: (_) => [
                     const PopupMenuItem(value: 'image', child: Row(children: [
-                      Icon(Icons.image, color: AppColors.primary, size: 20),
+                      Icon(Icons.image, color: AppColors.gold, size: 20),
                       SizedBox(width: 8),
-                      Text('Photo', style: TextStyle(color: AppColors.textPrimary)),
+                      Text('Photo', style: TextStyle(color: AppColors.ivory)),
                     ])),
                     const PopupMenuItem(value: 'pdf', child: Row(children: [
-                      Icon(Icons.picture_as_pdf, color: AppColors.error, size: 20),
+                      Icon(Icons.picture_as_pdf, color: AppColors.saffron, size: 20),
                       SizedBox(width: 8),
-                      Text('PDF', style: TextStyle(color: AppColors.textPrimary)),
+                      Text('PDF', style: TextStyle(color: AppColors.ivory)),
                     ])),
                   ],
                 ),
                 Expanded(
                   child: TextField(
                     controller: _msgCtrl,
-                    style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                    style: const TextStyle(color: AppColors.ivory, fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'Type a message...',
-                      hintStyle: const TextStyle(color: AppColors.textSecondary),
-                      filled: true, fillColor: AppColors.surface,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
+                      hintStyle: const TextStyle(color: AppColors.smoke),
+                      filled: true, fillColor: AppColors.nebula,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: const BorderSide(color: AppColors.gold, width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide(color: AppColors.gold.withOpacity(0.4), width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: const BorderSide(color: AppColors.gold, width: 1.5),
+                      ),
                     ),
                     onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 GestureDetector(
                   onTap: _sendMessage,
                   child: Container(
                     width: 44, height: 44,
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary),
-                    child: const Icon(Icons.send, color: Colors.black, size: 20),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+                    ),
+                    child: const Icon(Icons.send, color: AppColors.midnight, size: 20),
                   ),
                 ),
               ],
@@ -446,80 +516,102 @@ class _MessageBubble extends StatelessWidget {
     final fileSize = message['file_size'] ?? 0;
     final timestamp = message['timestamp']?.toString().substring(11, 16) ?? '';
     final senderName = message['sender_name'] ?? '';
-    final isAstrologer = message['is_astrologer'] == true;
 
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
-        decoration: BoxDecoration(
-          color: isMe ? AppColors.primary : AppColors.card,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 4),
-            bottomRight: Radius.circular(isMe ? 4 : 16),
-          ),
-          border: isMe ? null : Border.all(color: AppColors.border),
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          if (!isMe)
+    // In user app: isMe = user (gold-saffron gradient, right-aligned)
+    //              !isMe = astrologer (indigo glass, left-aligned)
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        children: [
+          // Timestamp centered, smoke color, mono font
+          if (timestamp.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(senderName, style: TextStyle(
-                color: isAstrologer ? AppColors.accent : AppColors.textSecondary,
-                fontSize: 11, fontWeight: FontWeight.w600,
-              )),
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                timestamp,
+                style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontFamily: 'monospace'),
+              ),
             ),
-
-          // Image message
-          if (msgType == 'image' && mediaUrl != null)
-            GestureDetector(
-              onTap: () => _showFullImage(context, mediaUrl),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  mediaUrl.startsWith('http') ? mediaUrl : '$baseUrl$mediaUrl',
-                  width: 200, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 200, height: 100,
-                    color: AppColors.surface,
-                    child: const Icon(Icons.broken_image, color: AppColors.textSecondary),
-                  ),
-                ),
-              ),
-            )
-          // PDF message
-          else if (msgType == 'pdf' && mediaUrl != null)
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: (isMe ? Colors.black : AppColors.surface).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(children: [
-                Icon(Icons.picture_as_pdf, color: isMe ? Colors.black87 : AppColors.error, size: 32),
-                const SizedBox(width: 8),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(fileName, style: TextStyle(color: isMe ? Colors.black : AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500), maxLines: 2, overflow: TextOverflow.ellipsis),
-                  if (fileSize > 0)
-                    Text(_formatFileSize(fileSize), style: TextStyle(color: isMe ? Colors.black54 : AppColors.textSecondary, fontSize: 11)),
-                ])),
-                Icon(Icons.download, color: isMe ? Colors.black54 : AppColors.primary, size: 22),
-              ]),
-            )
-          // Text message
-          else
-            Text(content, style: TextStyle(color: isMe ? Colors.black : AppColors.textPrimary, fontSize: 14)),
-
-          const SizedBox(height: 2),
           Align(
-            alignment: Alignment.bottomRight,
-            child: Text(timestamp, style: TextStyle(color: isMe ? Colors.black54 : AppColors.textSecondary, fontSize: 10)),
+            alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+              decoration: BoxDecoration(
+                // User (me): gold-saffron gradient
+                // Astrologer (!me): indigo glass
+                gradient: isMe
+                    ? const LinearGradient(colors: [AppColors.gold, AppColors.saffron])
+                    : null,
+                color: isMe ? null : const Color(0xFF4A3B8C).withOpacity(0.4),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isMe ? 16 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 16),
+                ),
+                border: isMe ? null : Border.all(color: AppColors.lavender.withOpacity(0.2)),
+              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                if (!isMe && senderName.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(senderName, style: const TextStyle(
+                      color: AppColors.lavender,
+                      fontSize: 11, fontWeight: FontWeight.w600,
+                    )),
+                  ),
+
+                // Image message
+                if (msgType == 'image' && mediaUrl != null)
+                  GestureDetector(
+                    onTap: () => _showFullImage(context, mediaUrl),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        mediaUrl.startsWith('http') ? mediaUrl : '$baseUrl$mediaUrl',
+                        width: 200, fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 200, height: 100,
+                          color: AppColors.nebula,
+                          child: const Icon(Icons.broken_image, color: AppColors.smoke),
+                        ),
+                      ),
+                    ),
+                  )
+                // PDF message
+                else if (msgType == 'pdf' && mediaUrl != null)
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: (isMe ? AppColors.midnight : AppColors.nebula).withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(children: [
+                      Icon(Icons.picture_as_pdf, color: isMe ? AppColors.midnight : AppColors.saffron, size: 32),
+                      const SizedBox(width: 8),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(fileName, style: TextStyle(color: isMe ? AppColors.midnight : AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w500), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        if (fileSize > 0)
+                          Text(_formatFileSize(fileSize), style: TextStyle(color: isMe ? AppColors.midnight.withOpacity(0.6) : AppColors.smoke, fontSize: 11)),
+                      ])),
+                      Icon(Icons.download, color: isMe ? AppColors.midnight.withOpacity(0.6) : AppColors.gold, size: 22),
+                    ]),
+                  )
+                // Text message
+                else
+                  Text(
+                    content,
+                    style: TextStyle(
+                      color: isMe ? AppColors.midnight : AppColors.ivory,
+                      fontSize: 14,
+                      fontWeight: isMe ? FontWeight.w500 : FontWeight.w400,
+                    ),
+                  ),
+              ]),
+            ),
           ),
-        ]),
+        ],
       ),
     );
   }

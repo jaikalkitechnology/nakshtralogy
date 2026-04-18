@@ -273,15 +273,20 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                 if (!isVideo) ...[
                   const Spacer(flex: 2),
                   Container(
-                    width: 120, height: 120,
+                    width: 140, height: 140,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: AppColors.card,
-                      border: Border.all(color: AppColors.success.withOpacity(0.5), width: 3),
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(colors: [AppColors.saffron, AppColors.cosmicPink]),
+                      border: Border.all(color: AppColors.gold.withOpacity(0.5), width: 3),
+                      boxShadow: [BoxShadow(color: AppColors.cosmicPink.withOpacity(0.5), blurRadius: 60)],
                     ),
-                    child: const Center(child: Text('\u{1F9D1}', style: TextStyle(fontSize: 48))),
+                    child: Center(child: Text(
+                      widget.peerName.isNotEmpty ? widget.peerName[0].toUpperCase() : 'U',
+                      style: const TextStyle(fontSize: 56, fontWeight: FontWeight.w700, color: Colors.white),
+                    )),
                   ),
                   const SizedBox(height: 20),
-                  Text(widget.peerName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w600)),
+                  Text(widget.peerName, style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 4),
                   Text(isVideo ? 'Video Call' : 'Voice Call', style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                   const SizedBox(height: 16),
@@ -291,8 +296,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
 
                 // Timer & earnings
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.3))),
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Text(_formattedTime, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
                     Text('\u20b9${widget.ratePerMin.toInt()}/min • Earning: \u20b9${_earning.toStringAsFixed(0)}',
@@ -308,23 +313,29 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _controlBtn(icon: _isMuted ? Icons.mic_off : Icons.mic, label: _isMuted ? 'Unmute' : 'Mute',
-                          color: _isMuted ? AppColors.error.withOpacity(0.3) : AppColors.surface, onTap: _toggleMute),
-                      if (isVideo)
-                        _controlBtn(icon: _isVideoEnabled ? Icons.videocam : Icons.videocam_off, label: 'Camera',
-                            color: !_isVideoEnabled ? AppColors.error.withOpacity(0.3) : AppColors.surface, onTap: _toggleVideo),
+                      _controlBtn(icon: _isMuted ? Icons.mic_off : Icons.mic, onTap: _toggleMute),
+                      const SizedBox(width: 14),
+                      if (isVideo) ...[
+                        _controlBtn(icon: _isVideoEnabled ? Icons.videocam : Icons.videocam_off, onTap: _toggleVideo),
+                        const SizedBox(width: 14),
+                      ],
                       GestureDetector(
                         onTap: _endCall,
                         child: Container(
-                          width: 72, height: 72,
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error),
-                          child: const Icon(Icons.call_end, color: Colors.white, size: 32),
+                          width: 56, height: 56,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: AppColors.error,
+                            boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.5), blurRadius: 20)],
+                          ),
+                          child: const Icon(Icons.call_end, color: Colors.white, size: 24),
                         ),
                       ),
-                      _controlBtn(icon: _isSpeaker ? Icons.volume_up : Icons.volume_down, label: 'Speaker',
-                          color: _isSpeaker ? AppColors.primary.withOpacity(0.3) : AppColors.surface, onTap: _toggleSpeaker),
-                      if (isVideo)
-                        _controlBtn(icon: Icons.cameraswitch, label: 'Flip', color: AppColors.surface, onTap: _switchCamera),
+                      const SizedBox(width: 14),
+                      _controlBtn(icon: _isSpeaker ? Icons.volume_up : Icons.volume_down, onTap: _toggleSpeaker),
+                      if (isVideo) ...[
+                        const SizedBox(width: 14),
+                        _controlBtn(icon: Icons.cameraswitch, onTap: _switchCamera),
+                      ],
                     ],
                   ),
                 ),
@@ -337,18 +348,18 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
     );
   }
 
-  Widget _controlBtn({required IconData icon, required String label, required Color color, required VoidCallback onTap}) {
+  Widget _controlBtn({required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          width: 52, height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: color, border: Border.all(color: AppColors.border)),
-          child: Icon(icon, color: AppColors.textPrimary, size: 22),
+      child: Container(
+        width: 48, height: 48,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white.withOpacity(0.15),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
         ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
-      ]),
+        child: Icon(icon, color: Colors.white, size: 20),
+      ),
     );
   }
 }

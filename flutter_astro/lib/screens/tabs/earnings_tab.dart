@@ -131,18 +131,22 @@ class _EarningsTabState extends State<EarningsTab> {
           color: AppColors.primary,
           onRefresh: () async => context.read<AstroWalletBloc>().add(AstroWalletLoadRequested(page: state.page, kind: state.kind)),
           child: ListView(padding: const EdgeInsets.all(16), children: [
-            // ── Balance Card ──
+            // ── Gold Hero Card ──
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF2D1B69), Color(0xFF1A1030)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                gradient: const LinearGradient(
+                  colors: [AppColors.gold, AppColors.saffron],
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(children: [
-                const Text('Wallet Balance', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-                const SizedBox(height: 6),
-                Text('₹$balance', style: const TextStyle(color: AppColors.primary, fontSize: 32, fontWeight: FontWeight.bold)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('THIS MONTH', style: TextStyle(
+                  fontSize: 9, letterSpacing: 2,
+                  color: AppColors.midnight.withOpacity(0.7), fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text('\u20b9$balance', style: const TextStyle(color: AppColors.midnight, fontSize: 40, fontWeight: FontWeight.w700, height: 1)),
                 const SizedBox(height: 14),
                 Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
                   _WalletStat(label: 'Total Earned', value: '₹$totalEarned'),
@@ -257,11 +261,17 @@ class _TxnRow extends StatelessWidget {
     final isCredit = type == 'consultation_credit' || type == 'bonus' || type == 'refund';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.border)),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.gold.withOpacity(0.08)))),
       child: Row(children: [
-        Icon(isCredit ? Icons.arrow_downward : Icons.arrow_upward, color: isCredit ? AppColors.success : AppColors.error, size: 20),
+        Container(
+          width: 30, height: 30,
+          decoration: BoxDecoration(
+            color: (isCredit ? AppColors.success : AppColors.error).withOpacity(0.15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(isCredit ? Icons.arrow_downward : Icons.arrow_upward, color: isCredit ? AppColors.success : AppColors.error, size: 14),
+        ),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(desc.toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500)),
