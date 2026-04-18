@@ -17,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthGoogleLoginRequested>(_onGoogleLogin);
     on<AuthForgotPasswordRequested>(_onForgotPassword);
     on<AuthLogoutRequested>(_onLogout);
+    _api.onAuthExpired = () => add(AuthLogoutRequested());
   }
 
   Future<void> _onCheck(AuthCheckRequested event, Emitter<AuthState> emit) async {
