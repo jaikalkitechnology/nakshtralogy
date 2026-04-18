@@ -468,96 +468,201 @@ def compute_all_divisionals(sid_lon):
 
 
 # ═══════════════════════════════════════════════════════════════════
-#  NORTH-INDIAN LAGNA KUNDLI (Text Art)
-#  Layout:  12 | 1 | 2 | 3
-#           11 |   |   | 4
-#           10 |   |   | 5
-#            9 | 8 | 7 | 6
+#  SOUTH-INDIAN KUNDLI (Text Art) — Fixed Sign Grid
+#
+#  Layout (signs always in same position):
+#
+#  ┌───────┬───────┬───────┬───────┐
+#  │  Pi   │  Ar   │  Ta   │  Ge   │
+#  ├───────┼───────┴───────┼───────┤
+#  │  Aq   │               │  Cn   │
+#  ├───────┤    CENTER     ├───────┤
+#  │  Cp   │               │  Le   │
+#  ├───────┼───────┬───────┼───────┤
+#  │  Sg   │  Sc   │  Li   │  Vi   │
+#  └───────┴───────┴───────┴───────┘
+#
+#  Signs FIXED. Lagna marked with "La". House # shown per sign.
+#  Markers: * Retrograde  ^ Combust  □ Vargottama  ↑ Exalt  ↓ Debilitated
 # ═══════════════════════════════════════════════════════════════════
+
+# South Indian fixed sign grid (row, col) → sign_idx
+_SI_GRID = {
+    (0,0):11, (0,1):0,  (0,2):1,  (0,3):2,   # Pi Ar Ta Ge
+    (1,0):10,                      (1,3):3,   # Aq         Cn
+    (2,0):9,                       (2,3):4,   # Cp         Le
+    (3,0):8,  (3,1):7,  (3,2):6,  (3,3):5,   # Sg Sc Li Vi
+}
+_SI_CENTER = {(1,1),(1,2),(2,1),(2,2)}
+
+_SS_FULL = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+            'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
+_SS_3    = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+
+
+def make_south_indian_chart(lagna_rashi: int,
+                             planets_by_rashi: dict,
+                             label: str = "LAGNA",
+                             show_sign_name: bool = True) -> str:
+    """
+    Draw a South Indian style Kundli in Unicode text art.
+
+    Parameters
+    ----------
+    lagna_rashi      : 0-11 — sign index of Lagna
+    planets_by_rashi : {sign_idx: [abbr_strings]} — planet abbreviations per sign
+                       e.g. {"Sun":"Su□", "Moon":"Mo"} already formatted
+    label            : chart label shown in center
+    show_sign_name   : show sign name in top of each box
+
+    Returns
+    -------
+    Multi-line string of the chart grid.
+    """
+    W  = 16   # cell width (inner)
+    H  = 5    # cell height (lines per cell)
+    LW = 2    # separator width
+
+    SIGNS_3 = _SS_3
+
+    def h_num(sign_idx: int) -> int:
+        """House number counted from lagna."""
+        return (sign_idx - lagna_rashi) % 12 + 1
+
+    def cell_lines(sign_idx: int) -> list:
+        """Build lines for one sign cell."""
+        h = h_num(sign_idx)
+        is_lagna = (sign_idx == lagna_rashi)
+        sign_abbr = SIGNS_3[sign_idx]
+
+        # Line 1: house number + sign name + La marker
+        la = " La" if is_lagna else ""
+        line1 = f"H{h:02d} {sign_abbr}{la}"
+
+        # Lines 2-4: planets
+        planet_list = planets_by_rashi.get(sign_idx, [])
+        lines = [line1]
+        row = []
+        for p in planet_list:
+            row.append(p)
+            if len(row) == 2:
+                lines.append("  " + "  ".join(row))
+                row = []
+        if row:
+            lines.append("  " + "  ".join(row))
+        return lines
+
+    def pad(lines: list) -> list:
+        """Pad/trim list to H lines, each W chars wide."""
+        result = []
+        for l in lines[:H]:
+            s = l[:W]
+            result.append(s.ljust(W))
+        while len(result) < H:
+            result.append(" " * W)
+        return result
+
+    def center_lines(row: int, col: int) -> list:
+        """Content for the 4 center cells."""
+        center_map = {
+            (1,1): f"  ╔{'═'*10}╗",
+            (1,2): f"  ║ {label[:8]:<8} ║",
+            (2,1): f"  ║ {_SS_3[lagna_rashi]}-{'Lagna':<5} ║",
+            (2,2): f"  ╚{'═'*10}╝",
+        }
+        text = center_map.get((row,col), "")
+        lines = ["",text,"","",""]
+        return lines
+
+    # ─── Build grid ────────────────────────────────────────────────
+    # Horizontal border line
+    SEP = "─" * W
+    OUTER_TOP  = "┌" + ("─"*W + "┬") * 3 + "─"*W + "┐"
+    OUTER_BOT  = "└" + ("─"*W + "┴") * 3 + "─"*W + "┘"
+    MID_FULL   = "├" + ("─"*W + "┼") * 3 + "─"*W + "┤"
+    MID_OUTER  = "├" + "─"*W + "┼" + "─"*(W*2+1) + "┼" + "─"*W + "┤"
+    MID_INNER  = "│" + " "*(W*2+1)                            # filler
+
+    output_lines = []
+
+    def col_sep(row, col):
+        """Return the separator character between columns."""
+        # Center cells merge into one block
+        if col == 0:    return "│"
+        if col == 3:    return "│"
+        if (row in (1,2)) and col in (1,2): return " "  # inside center block
+        if (row in (1,2)) and col == 2:     return "│"
+        return "│"
+
+    def h_border(row_after):
+        """Build horizontal separator after a given row (0-3)."""
+        if row_after == -1:      return OUTER_TOP
+        if row_after == 3:       return OUTER_BOT
+        if row_after in (0, 2):  return MID_FULL
+        # row_after == 1: only outer columns have separators (center merged)
+        return MID_OUTER
+
+    # Row 0
+    output_lines.append(OUTER_TOP)
+    row_cells = []
+    for col in range(4):
+        sign = _SI_GRID.get((0,col))
+        row_cells.append(pad(cell_lines(sign) if sign is not None else []))
+
+    for li in range(H):
+        line = "│"
+        for col in range(4):
+            line += row_cells[col][li] + "│"
+        output_lines.append(line)
+
+    output_lines.append(MID_FULL)
+
+    # Rows 1 and 2 — outer cells + merged center
+    for row in (1, 2):
+        left_sign  = _SI_GRID.get((row,0))
+        right_sign = _SI_GRID.get((row,3))
+        left_cell  = pad(cell_lines(left_sign) if left_sign is not None else [])
+        right_cell = pad(cell_lines(right_sign) if right_sign is not None else [])
+
+        # Center content for this row
+        c1 = pad(center_lines(row,1))
+        c2 = pad(center_lines(row,2))
+
+        for li in range(H):
+            # Combine center two cells into one merged visual
+            center_str = (c1[li] + " " + c2[li])[:W*2+1]
+            center_str = center_str.ljust(W*2+1)
+            line = "│" + left_cell[li] + "│" + center_str + "│" + right_cell[li] + "│"
+            output_lines.append(line)
+
+        output_lines.append(MID_FULL)
+
+    # Row 3
+    row_cells = []
+    for col in range(4):
+        sign = _SI_GRID.get((3,col))
+        row_cells.append(pad(cell_lines(sign) if sign is not None else []))
+
+    for li in range(H):
+        line = "│"
+        for col in range(4):
+            line += row_cells[col][li] + "│"
+        output_lines.append(line)
+
+    output_lines.append(OUTER_BOT)
+    return "\n".join(output_lines)
+
 
 def make_kundli_grid(base_rashi_idx, planets_by_rashi, label="LAGNA KUNDLI"):
     """
-    Draw a North-Indian style 4×4 kundli in text.
-    base_rashi_idx: 0-11, the sign that goes in H1 (top-center-left cell)
-    planets_by_rashi: dict {rashi_idx: [planet_names]}
+    Backward-compatible wrapper — now renders South Indian style.
+    base_rashi_idx: Lagna sign (0-11)
+    planets_by_rashi: {sign_idx: [planet_abbr_strings]}
     """
-    # Map house number → rashi index
-    # House 1 = base_rashi_idx, House 2 = next, etc.
-    def h2r(h): return (base_rashi_idx + h - 1) % 12
+    return make_south_indian_chart(base_rashi_idx, planets_by_rashi, label)
 
-    # North Indian fixed layout: which house goes in which cell (row, col) 0-indexed
-    # 4×4 grid. Center 4 cells are empty.
-    LAYOUT = {
-        (0,0): 12, (0,1):  1, (0,2):  2, (0,3):  3,
-        (1,0): 11,             (1,3):  4,
-        (2,0): 10,             (2,3):  5,
-        (3,0):  9, (3,1):  8, (3,2):  7, (3,3):  6,
-    }
-    CENTER_CELLS = [(1,1),(1,2),(2,1),(2,2)]
 
-    W = 14  # cell width
-    H = 4   # cell height
 
-    def cell_content(house):
-        ri = h2r(house)
-        planets = planets_by_rashi.get(ri, [])
-        sign_str = f"H{house:02d} {RASHI_SHORT[ri]}"
-        lines = [sign_str]
-        # pack planets 2 per line
-        chunk = []
-        for p in planets:
-            abbr = p[:3] if p != "Lagna" else "ASC"
-            chunk.append(abbr)
-            if len(chunk) == 2:
-                lines.append(" ".join(chunk)); chunk = []
-        if chunk: lines.append(" ".join(chunk))
-        return lines
-
-    def center_content(row, col):
-        if (row,col) == (1,1): return ["", f"  {label[:12]}", ""]
-        if (row,col) == (1,2): return ["", "  Vedic Chart", ""]
-        if (row,col) == (2,1): return ["", f"  Base: {RASHI_SHORT[base_rashi_idx]}", ""]
-        if (row,col) == (2,2): return ["", "  Kundli ✦", ""]
-        return ["","",""]
-
-    def pad_lines(lines, width, height):
-        padded = []
-        for l in lines[:height]:
-            padded.append(l[:width].ljust(width))
-        while len(padded) < height:
-            padded.append(" " * width)
-        return padded
-
-    # Build grid row by row
-    output = []
-    border_h = "+" + (("-" * W + "+") * 4)
-    output.append(border_h)
-
-    for row in range(4):
-        # Build H lines for this grid row
-        row_lines = []
-        for r_line in range(H):
-            row_lines.append([])
-
-        for col in range(4):
-            if (row,col) in LAYOUT:
-                house = LAYOUT[(row,col)]
-                lines = cell_content(house)
-                padded = pad_lines(lines, W, H)
-            elif (row,col) in CENTER_CELLS:
-                lines = center_content(row,col)
-                padded = pad_lines(lines, W, H)
-            else:
-                padded = [" "*W]*H
-
-            for r_line in range(H):
-                row_lines[r_line].append(padded[r_line])
-
-        for r_line in range(H):
-            output.append("|" + "|".join(row_lines[r_line]) + "|")
-        output.append(border_h)
-
-    return "\n".join(output)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -577,23 +682,166 @@ def make_kundli_grid(base_rashi_idx, planets_by_rashi, label="LAGNA KUNDLI"):
 #  · Guru Balam:    Jupiter in 2nd/5th/9th/11th → extra protection
 # ═══════════════════════════════════════════════════════════════════
 
-# Gochar good-house tables (from natal Moon / reference rashi)
-_GOCHAR_GOOD = {
-    "Sun":     {3,6,10,11},
-    "Moon":    {1,3,6,7,10,11},
-    "Mars":    {3,6,11},
-    "Mercury": {2,4,6,8,10,11},
-    "Jupiter": {2,5,7,9,11},
-    "Venus":   {1,2,3,4,5,8,9,11,12},
-    "Saturn":  {3,6,11},
-    "Rahu":    {3,6,10,11},
-    "Ketu":    {3,6,10,11},
+# ═══════════════════════════════════════════════════════════════════
+#  GOCHAR (TRANSIT) SCORING — Classical PDF Tables
+#  Source: "Vedic Astrology: An Integrated Approach"
+#  Tables 53-59: Planet transit results from Janma Rasi
+#  Section 25.5: Ashtakavarga rekha thresholds
+#  Table 63: Vedha sthanas (obstruction houses)
+# ═══════════════════════════════════════════════════════════════════
+
+# Transit results per planet per house from Janma Rasi
+# Good houses marked as positive, bad as negative
+_GOCHAR_TABLES = {
+    "Sun": {
+        "good": {3,6,10,11},
+        "bad":  {1,2,4,5,7,8,9,12},
+        "results": {
+            1:"Financial loss, travels, discomfort",         2:"Unhappiness, eye troubles, fear",
+            3:"Wealth, good health, victory",               4:"Marital disharmony, loss of name",
+            5:"Bad health, fear from enemies",              6:"Success over enemies, good health",
+            7:"Travels, physical pain",                     8:"Disease, setbacks in marriage",
+            9:"Mental worries, obstacles",                  10:"Success, honors, gains",
+            11:"Good health, prosperity, honors",           12:"Expenditure, losses",
+        },
+    },
+    "Moon": {
+        "good": {1,3,6,7,10,11},
+        "bad":  {2,4,5,8,9,12},
+        "results": {
+            1:"Comfort, good spirits",                      2:"Obstacles, losses",
+            3:"Gains, happiness",                           4:"Lack of peace of mind, distrust",
+            5:"Failures, disappointments, sadness",         6:"Happiness, health, wealth",
+            7:"Respect, gains",                             8:"Losses, tension, worries",
+            9:"Mental uneasiness",                          10:"Success, gains, authority",
+            11:"Prosperity, comforts, gains",               12:"Injuries, expenditure, sadness",
+        },
+    },
+    "Mars": {
+        "good": {3,6,11},
+        "bad":  {1,2,4,5,7,8,9,10,12},
+        "results": {
+            1:"Troubles, bodily afflictions",               2:"Accidents, losses, thefts, quarrels",
+            3:"Gains, power, wealth",                       4:"Stomach problems, fevers, bad health",
+            5:"Troubles from enemies, trouble with children",6:"Success over enemies, wealth",
+            7:"Quarrels, marital troubles, eye problems",   8:"Worries, accidents, bad name, losses",
+            9:"Losses, insults, illness",                   10:"Change of place, unexpected wealth",
+            11:"Authority, gains, good name",               12:"Expenses, quarrels, diseases",
+        },
+    },
+    "Mercury": {
+        "good": {2,4,6,8,10,11},
+        "bad":  {1,3,5,7,9,12},
+        "results": {
+            1:"Quarrels, imprisonment, losses, poor advice",2:"Success, wealth, gains",
+            3:"Wandering, losses, trouble from authorities",4:"Prosperity in family, gains",
+            5:"Quarrels with wife and children, suffering",  6:"Renown, success, ornaments",
+            7:"Quarrels, mental discomfort, addictions",    8:"Childbirth, happiness, gains, success",
+            9:"Mental worries, obstacles",                  10:"Money, happiness, domestic harmony",
+            11:"Childbirth, happiness, wealth",             12:"Disease, domestic disharmony, losses",
+        },
+    },
+    "Jupiter": {
+        "good": {2,5,7,9,11},
+        "bad":  {1,3,4,6,8,10,12},
+        "results": {
+            1:"Loss of money and intelligence, Wandering",  2:"Happiness, domestic harmony, success",
+            3:"Obstacles, loss of position, travels",       4:"Troubles, defeat, losses",
+            5:"Childbirth, intelligence, prosperity, wealth",6:"Mental uneasiness, enemies, worries",
+            7:"Health, happiness, erotic pleasures",        8:"Disease, imprisonment, illness, grief",
+            9:"Success, wealth, childbirth, religiousness", 10:"Loss of position and money, ill-health",
+            11:"Recovery of health and position, happiness",12:"Fall from grace, misconduct, grief",
+        },
+    },
+    "Venus": {
+        "good": {1,2,3,4,5,9,11,12},
+        "bad":  {6,7,8,10},
+        "results": {
+            1:"Comforts, pleasures, happiness, good spirits",2:"Money, fortune, erotic pleasures",
+            3:"Respect, wealth, good spirits",              4:"Prosperity, success of enemies, comforts",
+            5:"Fame, power, good name",                     6:"Loss of fame, bad name, quarrels",
+            7:"Humiliation, disease, troubles",             8:"Fears, mental worries, troubles from women",
+            9:"Fortune, luxuries, marital happiness",       10:"Virtuous acts, troubles, disgrace",
+            11:"Gains, happiness, prosperity, comforts",    12:"New friends, money, pleasures, gains",
+        },
+    },
+    "Saturn": {
+        "good": {3,6,11},
+        "bad":  {1,2,4,5,7,8,9,10,12},
+        "results": {
+            1:"Fear of incarceration, worries, foreign trips",2:"Physical weakness, discomfort, unhappiness",
+            3:"Wealth, health, happiness, all-round success",4:"Stomach problems, separation from family",
+            5:"Separation from children, uneasiness, quarrels",6:"Freedom from disease and enemies, success",
+            7:"Wandering, quarrels with spouse, trouble from authorities",
+            8:"Suffering, loss of status and balance, imprisonment",
+            9:"Diseases, suffering, loss of status",        10:"Loss of money, bad name, career changes",
+            11:"Wealth, success, gains",                    12:"Grief, misery, losses, ill-health",
+        },
+    },
+    # Rahu like Saturn, Ketu like Mars (from PDF: "Rahu's behavior is similar to Saturn's, Ketu's to Mars's")
+    "Rahu": {
+        "good": {3,6,11},
+        "bad":  {1,2,4,5,7,8,9,10,12},
+        "results": {
+            3:"Gains, power, wealth",  6:"Success, freedom from enemies",
+            11:"Authority, gains, good name",
+        },
+    },
+    "Ketu": {
+        "good": {3,6,11},
+        "bad":  {1,2,4,5,7,8,9,10,12},
+        "results": {
+            3:"Gains, power, wealth",  6:"Success, freedom from enemies",
+            11:"Authority, gains, good name",
+        },
+    },
 }
 
+# Weights: planets with most influence on human affairs get higher weight
 _GOCHAR_WEIGHT = {
     "Sun":1.0, "Moon":1.5, "Mars":1.2, "Mercury":0.8,
     "Jupiter":2.0, "Venus":1.0, "Saturn":2.0, "Rahu":1.2, "Ketu":1.0
 }
+
+# Vedha sthanas (Table 63): when a planet is in auspicious house,
+# another planet in the vedha house obstructs the good results.
+# Format: {planet: {good_house: vedha_house, ...}}
+# Exceptions: Sun-Saturn don't vedha each other; Moon-Mercury don't vedha each other
+_VEDHA_TABLE = {
+    "Sun":    {3:9, 6:12, 10:4, 11:5},
+    "Moon":   {1:5, 3:9, 6:12, 7:2, 10:4, 11:8},
+    "Mars":   {3:12, 6:9, 11:5},
+    "Mercury":{2:5, 4:3, 6:9, 8:1, 10:8, 11:12},
+    "Jupiter":{2:12, 5:4, 7:3, 9:10, 11:8},
+    "Venus":  {1:8, 2:7, 3:1, 4:10, 5:9, 8:5, 9:11, 11:6, 12:3},
+    "Saturn": {3:12, 6:9, 11:5},
+}
+_VEDHA_EXCEPTION_PAIRS = {("Sun","Saturn"),("Saturn","Sun"),("Moon","Mercury"),("Mercury","Moon")}
+
+# BAV rekha scoring thresholds (Section 25.5 of PDF)
+# "6-7 rekhas: invariably excellent; 1-0 rekhas: very poor"
+def _bav_score(rekhas: int) -> float:
+    if rekhas >= 6: return  3.0
+    if rekhas == 5: return  1.5
+    if rekhas == 4: return  0.0
+    if rekhas == 3: return -1.0
+    if rekhas == 2: return -2.0
+    return -3.0  # 0 or 1 rekhas
+
+# SAV rekha threshold (Section 25.5.1)
+# ">30: favorable; <25: unfavorable"
+def _sav_score(sav: int) -> float:
+    if sav >= 35: return  2.5
+    if sav >= 30: return  1.5
+    if sav >= 25: return  0.0
+    if sav >= 20: return -1.5
+    return -2.5  # < 20
+
+
+# Backward-compat aliases used elsewhere in the engine
+_GOCHAR_GOOD = {p: t["good"] for p, t in _GOCHAR_TABLES.items()}
+
+
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -2216,217 +2464,436 @@ def display_aspect_matrix(pdata: dict) -> None:
 # ═══════════════════════════════════════════════════════════════════
 
 # Natural (Naisargika) Bala — fixed values (in Rupas, normalized)
-_NAISARGIKA = {
-    "Sun": 60, "Moon": 51.43, "Mars": 17.14, "Mercury": 25.71,
-    "Jupiter": 34.29, "Venus": 42.86, "Saturn": 8.57
+# ═══════════════════════════════════════════════════════════════════
+#  SHADBALA ENGINE — Classical BPHS Implementation
+#  Sources: BPHS (Parasara), Graha & Bhava Balas (B.V. Raman)
+#  6 sources of strength → total Virupas → % of minimum required
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Constants ──────────────────────────────────────────────────────
+_NAISARGIKA = {                  # Natural strength (fixed, Virupas)
+    "Sun":60.00, "Moon":51.43, "Venus":42.86, "Jupiter":34.29,
+    "Mercury":25.71, "Mars":17.14, "Saturn":8.57,
 }
-
-# Dig Bala (directional strength) - strongest house
-_DIG_BALA_HOUSE = {
-    "Sun": 10, "Mars": 10,    # strong in 10th
-    "Moon": 4, "Venus": 4,    # strong in 4th
-    "Jupiter": 1, "Mercury": 1,  # strong in 1st
-    "Saturn": 7,               # strong in 7th
+_MIN_VIRUPAS = {                 # Classical minimum required Shadbala
+    "Sun":390, "Moon":360, "Mars":300, "Mercury":420,
+    "Jupiter":390, "Venus":330, "Saturn":300,
 }
-
-# Friendship table (compact)
-_FRIENDS = {
-    "Sun":     {"Moon","Mars","Jupiter"},
-    "Moon":    {"Sun","Mercury"},
-    "Mars":    {"Sun","Moon","Jupiter"},
-    "Mercury": {"Sun","Venus"},
-    "Jupiter": {"Sun","Moon","Mars"},
-    "Venus":   {"Mercury","Saturn"},
-    "Saturn":  {"Mercury","Venus"},
+_DEEP_EXALT_LON = {              # Deep exaltation sidereal longitude
+    "Sun":10, "Moon":33, "Mars":298, "Mercury":165,
+    "Jupiter":95, "Venus":357, "Saturn":200,
 }
-_ENEMIES = {
-    "Sun":     {"Venus","Saturn"},
-    "Moon":    {"None"},
-    "Mars":    {"Mercury"},
-    "Mercury": {"Moon"},
-    "Jupiter": {"Mercury","Venus"},
-    "Venus":   {"Sun","Moon"},
-    "Saturn":  {"Sun","Moon","Mars"},
+_DEEP_DEBI_LON = {p:(v+180)%360 for p,v in _DEEP_EXALT_LON.items()}
+
+_SB_OWN   = {"Sun":{4},"Moon":{3},"Mars":{0,7},"Mercury":{2,5},
+             "Jupiter":{8,11},"Venus":{1,6},"Saturn":{9,10}}
+_SB_EXALT = {"Sun":0,"Moon":1,"Mars":9,"Mercury":5,"Jupiter":3,"Venus":11,"Saturn":6}
+_SB_MT    = {"Sun":4,"Moon":1,"Mars":0,"Mercury":5,"Jupiter":8,"Venus":6,"Saturn":10}
+_SB_DEBI  = {"Sun":6,"Moon":7,"Mars":3,"Mercury":11,"Jupiter":9,"Venus":5,"Saturn":0}
+_SB_SLORD = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+             6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
+
+# 5-fold natural friendship (BPHS)
+_SB_NAT = {
+    "Sun":     {"gf":{"Moon"}, "f":{"Mars","Jupiter"}, "n":{"Mercury"},
+                "e":{"Venus","Saturn"}, "ge":set()},
+    "Moon":    {"gf":set(), "f":{"Sun","Mercury"}, "n":{"Mars","Jupiter","Venus","Saturn"},
+                "e":set(), "ge":set()},
+    "Mars":    {"gf":set(), "f":{"Sun","Moon","Jupiter"}, "n":{"Venus","Saturn"},
+                "e":{"Mercury"}, "ge":set()},
+    "Mercury": {"gf":set(), "f":{"Sun","Venus"}, "n":{"Mars","Jupiter","Saturn"},
+                "e":{"Moon"}, "ge":set()},
+    "Jupiter": {"gf":set(), "f":{"Sun","Moon","Mars"}, "n":{"Saturn"},
+                "e":{"Mercury","Venus"}, "ge":set()},
+    "Venus":   {"gf":set(), "f":{"Mercury","Saturn"}, "n":{"Mars","Jupiter"},
+                "e":{"Sun","Moon"}, "ge":set()},
+    "Saturn":  {"gf":set(), "f":{"Mercury","Venus"}, "n":{"Jupiter"},
+                "e":{"Sun","Moon","Mars"}, "ge":set()},
 }
+# Saptavargaja dignity → Virupas
+_SAPTA_VAL = {"exalt":45,"mt":45,"own":30,"gf":22.5,"f":15,"n":7.5,"e":3.75,"ge":1.875,"debi":1.875}
+_DIG_BEST  = {"Sun":10,"Mars":10,"Moon":4,"Venus":4,"Jupiter":1,"Mercury":1,"Saturn":7}
+_MEAN_SPD  = {"Mars":0.524,"Mercury":1.383,"Jupiter":0.083,"Venus":1.2,"Saturn":0.034}
 
-def _sthana_bala(planet: str, sign: int, deg: float, pdata: dict) -> float:
-    """Positional/Dignity strength 0-60 (Rupas)."""
-    OWN = {"Sun":{4},"Moon":{3},"Mars":{0,7},"Mercury":{2,5},
-           "Jupiter":{8,11},"Venus":{1,6},"Saturn":{9,10}}
-    EXALT = {"Sun":0,"Moon":1,"Mars":9,"Mercury":5,"Jupiter":3,"Venus":11,"Saturn":6}
-    MT    = {"Sun":4,"Moon":1,"Mars":0,"Mercury":5,"Jupiter":8,"Venus":6,"Saturn":10}
-    DEBI  = {"Sun":6,"Moon":7,"Mars":3,"Mercury":11,"Jupiter":9,"Venus":5,"Saturn":0}
-
-    if EXALT.get(planet,-1)==sign: return 60.0
-    if sign in OWN.get(planet,set()):
-        return 45.0 if MT.get(planet,-1)==sign else 30.0
-    if DEBI.get(planet,-1)==sign: return 0.0
-    # Friend/enemy
-    sign_lord = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
-                 6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
-    lord = sign_lord.get(sign,"Sun")
-    if lord in _FRIENDS.get(planet,set()): return 22.5
-    if lord in _ENEMIES.get(planet,set()): return 7.5
-    return 15.0  # neutral
+# Vara (weekday) lords — Python weekday() 0=Mon
+_VARA_LORD = {6:"Sun",0:"Moon",1:"Mars",2:"Mercury",3:"Jupiter",4:"Venus",5:"Saturn"}
+# Hora lord sequence (planetary hour cycle)
+_HORA_SEQ  = ["Sun","Venus","Mercury","Moon","Saturn","Jupiter","Mars"]
 
 
-def _dig_bala(planet: str, house: int) -> float:
-    """Directional strength 0-60 Rupas."""
-    best_h = _DIG_BALA_HOUSE.get(planet, 1)
-    worst_h = (best_h + 6) % 12 or 12  # opposite house
-    if house == best_h: return 60.0
-    if house == worst_h: return 0.0
-    # Linear interpolation
-    dist = min(abs(house - best_h), 12 - abs(house - best_h))
-    return max(0.0, 60.0 - dist * (60.0/6.0))
+def _sb_dtype(planet: str, sign: int) -> str:
+    """Return 5-fold dignity type for Saptavargaja."""
+    if sign == _SB_EXALT.get(planet,-1): return "exalt"
+    if sign == _SB_DEBI.get(planet,-1):  return "debi"
+    if sign == _SB_MT.get(planet,-1):    return "mt"
+    if sign in _SB_OWN.get(planet,set()): return "own"
+    lord = _SB_SLORD.get(sign,"Sun")
+    nf = _SB_NAT.get(planet,{})
+    for rel in ("gf","f","n","e","ge"):
+        if lord in nf.get(rel,set()): return rel
+    return "n"
 
 
-def _chesta_bala(planet: str, speed: float) -> float:
-    """Motional strength based on speed. Retrograde = full; fast = reduced."""
-    if planet in ("Sun","Moon"): return 30.0  # luminaries use mean motion
-    if speed < 0: return 60.0   # retrograde = full Chesta Bala
-    if speed == 0: return 45.0  # stationary
-    # Mean motions (approx degrees/day)
-    MEAN = {"Mars":0.524,"Mercury":1.383,"Jupiter":0.083,"Venus":1.2,"Saturn":0.034}
-    mean = MEAN.get(planet, 1.0)
-    ratio = min(speed / mean, 2.0)
-    return max(0.0, 60.0 * (1.0 - ratio * 0.5))
+# ── A. STHANA BALA ─────────────────────────────────────────────────
+def _sb_sthana(planet: str, pdata: dict) -> dict:
+    """
+    Sthana Bala = Uchcha + Saptavargaja + Ojhayugma + Kendradi + Drekkana
+    Returns dict of components + total (all in Virupas).
+    """
+    lon  = pdata[planet]["lon"]
+    sign = pdata[planet]["rashi_idx"]
+    deg  = pdata[planet]["deg_rashi"]
+    lagna= pdata["Lagna"]["rashi_idx"]
+    ODD  = {0,2,4,6,8,10}
+
+    # 1. Uchcha Bala (0–60): distance from deep debilitation point
+    debi = _DEEP_DEBI_LON[planet]
+    dist = abs(lon - debi)
+    if dist > 180: dist = 360 - dist
+    uchcha = round(dist / 180.0 * 60, 3)
+
+    # 2. Saptavargaja Bala: SUM of dignity Virupas across 7 divisionals
+    sapta = sum(
+        _SAPTA_VAL.get(_sb_dtype(planet, divisional_sign(lon, d)), 7.5)
+        for d in [1, 2, 3, 7, 9, 12, 30]
+    )
+
+    # 3. Ojhayugma Rasyamsa Bala (0–30)
+    nav  = divisional_sign(lon, 9)
+    ODD_P= {"Sun","Mars","Jupiter"}
+    oja  = 0.0
+    if planet in ODD_P:
+        if sign in ODD: oja += 15
+        if nav  in ODD: oja += 15
+    else:
+        if sign not in ODD: oja += 15
+        if nav  not in ODD: oja += 15
+
+    # 4. Kendradi Bala: Kendra=60, Panaphara=30, Apoklima=15
+    h    = (sign - lagna) % 12 + 1
+    kend = 60 if h in {1,4,7,10} else (30 if h in {2,5,8,11} else 15)
+
+    # 5. Drekkana Bala (0–15): strength in decanate
+    decan= int(deg / 10)
+    drek = 0.0
+    if planet in {"Sun","Mars","Jupiter"} and decan == 0: drek = 15
+    elif planet in {"Moon","Venus","Saturn"} and decan == 1: drek = 15
+    elif planet == "Mercury" and decan == 2: drek = 15
+
+    total = uchcha + sapta + oja + kend + drek
+    return {"uchcha":round(uchcha,1), "sapta":round(sapta,1), "oja":round(oja,1),
+            "kend":round(kend,1), "drek":round(drek,1), "total":round(total,1)}
 
 
-def _kala_bala_simple(planet: str, pdata: dict) -> float:
-    """Simplified temporal strength (day/night, paksha)."""
-    # Day planets strong in day: Sun, Jupiter, Saturn
-    # Night planets strong at night: Moon, Venus, Mars
-    # Mercury: both
-    # Simplified: use Moon position (above horizon = day-ish)
-    moon_h = (pdata.get("Moon",{}).get("rashi_idx",0) - pdata.get("Lagna",{}).get("rashi_idx",0)) % 12 + 1
+# ── B. DIG BALA ────────────────────────────────────────────────────
+def _sb_dig(planet: str, pdata: dict) -> float:
+    """
+    Dig Bala (0–60 Virupas): based on degree-distance from weakest house.
+    Classical formula: (distance_from_worst_deg / 180°) × 60
+    """
+    lagna   = pdata["Lagna"]["rashi_idx"]
+    p_sign  = pdata[planet]["rashi_idx"]
+    p_deg   = pdata[planet]["deg_rashi"]
+    best_h  = _DIG_BEST[planet]
+
+    # Planet's longitude counted from Lagna (0–360°)
+    planet_lon = ((p_sign - lagna) % 12) * 30 + p_deg
+    # Worst house is 7 houses after best house
+    worst_lon  = (((best_h - 1) + 6) % 12) * 30
+
+    diff = abs(planet_lon - worst_lon)
+    if diff > 180: diff = 360 - diff
+    return round(diff / 180.0 * 60, 1)
+
+
+# ── C. KALA BALA ───────────────────────────────────────────────────
+def _sb_kala(planet: str, pdata: dict, birth_jd: float = 0) -> dict:
+    """
+    Kala Bala — 7 temporal sub-components (all in Virupas):
+      1. Nathonnatha  (day/night)           0 or 60
+      2. Paksha       (Moon phase)          0–60
+      3. Tribhaga     (1/3 of day or night) 0 or 30
+      4. Abda         (year lord)           0 or 15
+      5. Masa         (month lord)          0 or 30
+      6. Vara         (weekday lord)        0 or 45
+      7. Hora         (planetary hour lord) 0 or 60
+    """
+    lagna    = pdata["Lagna"]["rashi_idx"]
+    sun_lon  = pdata["Sun"]["lon"]
+    moon_lon = pdata["Moon"]["lon"]
+
+    # Determine day/night from Moon's house position from Lagna
+    moon_h = (pdata["Moon"]["rashi_idx"] - lagna) % 12 + 1
     is_day = moon_h in {7,8,9,10,11,12}  # Moon above horizon
-    day_planets   = {"Sun","Jupiter","Saturn"}
-    night_planets = {"Moon","Venus","Mars"}
-    if planet in day_planets:   return 60.0 if is_day else 30.0
-    if planet in night_planets: return 30.0 if is_day else 60.0
-    return 45.0  # Mercury
+
+    # 1. Nathonnatha Bala
+    DAY_P  = {"Sun","Jupiter","Saturn"}
+    NITE_P = {"Moon","Venus","Mars"}
+    nath   = 60 if (planet in DAY_P and is_day) or (planet in NITE_P and not is_day) else 0
+    if planet == "Mercury": nath = 30  # Mercury always 30
+
+    # 2. Paksha Bala (waxing/waning Moon)
+    phase = (moon_lon - sun_lon) % 360  # 0=new, 180=full
+    BENEF = {"Moon","Mercury","Jupiter","Venus"}
+    MALEF = {"Sun","Mars","Saturn"}
+    if planet in BENEF:
+        pak = (phase/180)*60 if phase <= 180 else ((360-phase)/180)*60
+    elif planet in MALEF:
+        pak = max(0, ((180-phase)/180)*60) if phase <= 180 else max(0, ((phase-180)/180)*60)
+    else:
+        pak = 30
+    pak = max(0, min(60, pak))
+
+    # 3. Tribhaga Bala — which third of day/night?
+    # Day: divided in 3 parts: Mercury(1st), Sun(2nd), Saturn(3rd)
+    # Night: Moon(1st), Venus(2nd), Mars(3rd)
+    # We approximate using Moon position as phase proxy
+    # If birth_jd provided, calculate precisely; else use approximation
+    if is_day:
+        phase_part = (phase % 180) / 60  # rough 3-part index
+        tri_lord = ["Mercury","Sun","Saturn"][min(int(phase_part), 2)]
+    else:
+        phase_part = ((360-phase) if phase > 180 else phase) / 60
+        tri_lord = ["Moon","Venus","Mars"][min(int(phase_part % 3), 2)]
+    trib = 30 if planet == tri_lord else 0
+
+    # 4. Abda Bala — year lord (lord of weekday of solar ingress into Aries)
+    # Approximate: cycle through weekday lords by year
+    # More accurate would require computing solar ingress JD
+    abda_lord = list(_VARA_LORD.values())[(int(birth_jd) % 7)] if birth_jd else "Sun"
+    abda = 15 if planet == abda_lord else 0
+
+    # 5. Masa Bala — lord of lunar month (lord of weekday at new moon)
+    # Approximate from current Moon phase cycle
+    masa_lord = list(_VARA_LORD.values())[int((phase / 360) * 7) % 7]
+    masa = 30 if planet == masa_lord else 0
+
+    # 6. Vara Bala — weekday lord (birth weekday)
+    if birth_jd > 0:
+        from datetime import date as _date
+        jd_int  = int(birth_jd + 0.5)
+        # JD 2440588 = 1970-01-01 (Thursday, weekday=3)
+        weekday = (jd_int + 1) % 7  # 0=Mon per Python convention
+        vara_lord = _VARA_LORD.get(weekday, "Sun")
+        vara = 45 if planet == vara_lord else 0
+    else:
+        vara = 0
+
+    # 7. Hora Bala — planetary hour lord at birth time
+    # Each hora = 1 hour; sequence starts from sunrise with weekday lord
+    if birth_jd > 0:
+        from datetime import date as _date
+        jd_int    = int(birth_jd + 0.5)
+        weekday   = (jd_int + 1) % 7
+        day_lord  = _VARA_LORD.get(weekday, "Sun")
+        # Find index of day_lord in HORA_SEQ
+        start_idx = _HORA_SEQ.index(day_lord) if day_lord in _HORA_SEQ else 0
+        # Birth fraction of day (0–1)
+        frac      = (birth_jd + 0.5) % 1.0
+        hora_num  = int(frac * 24)  # which hora (0–23)
+        hora_lord = _HORA_SEQ[(start_idx + hora_num) % 7]
+        hora = 60 if planet == hora_lord else 0
+    else:
+        hora = 0
+
+    total = nath + pak + trib + abda + masa + vara + hora
+    return {"nath":round(nath,1), "pak":round(pak,1), "trib":trib,
+            "abda":abda, "masa":masa, "vara":vara, "hora":hora,
+            "total":round(total,1)}
 
 
-def _naisargika_bala(planet: str) -> float:
-    """Natural strength (fixed)."""
+# ── D. CHESTA BALA ─────────────────────────────────────────────────
+def _sb_chesta(planet: str, pdata: dict) -> float:
+    """
+    Chesta Bala (motional strength, 0–60 Virupas).
+    Sun/Moon: equals their Paksha Bala.
+    Others: based on actual speed vs mean speed.
+      Retrograde = 60, Stationary = 30, Direct > mean = lower.
+    """
+    if planet in ("Sun", "Moon"):
+        # Luminaries: Chesta = Paksha Bala
+        sun_lon  = pdata["Sun"]["lon"]
+        moon_lon = pdata["Moon"]["lon"]
+        phase    = (moon_lon - sun_lon) % 360
+        BENEF    = {"Sun","Moon"}
+        pak = (phase/180)*60 if phase <= 180 else ((360-phase)/180)*60
+        return round(max(0, min(60, pak)), 1)
+
+    speed = pdata.get(planet, {}).get("speed", 0)
+    vakri = pdata.get(planet, {}).get("vakri", False)
+
+    if vakri or speed < 0:   return 60.0   # retrograde = full Chesta Bala
+    if speed == 0:           return 45.0   # stationary (or VSOP87 fallback)
+
+    mean  = _MEAN_SPD.get(planet, 1.0)
+    ratio = min(speed / mean, 2.0)
+    return round(max(0.0, 60.0 * (1.0 - ratio * 0.5)), 1)
+
+
+# ── E. NAISARGIKA BALA ─────────────────────────────────────────────
+def _sb_naisargika(planet: str) -> float:
+    """Fixed natural strength (Virupas)."""
     return _NAISARGIKA.get(planet, 20.0)
 
 
-def _drik_bala(planet: str, pdata: dict) -> float:
+# ── F. DRIK BALA ───────────────────────────────────────────────────
+def _sb_drik(planet: str, pdata: dict) -> float:
     """
-    Aspect-based strength: benefic aspects add, malefic reduce.
-    Range: -60 to +60 Rupas.
+    Drik Bala (aspect strength, Virupas ± 60).
+    Benefic aspect on planet = +15 Virupas × aspect_strength
+    Malefic aspect on planet = −15 Virupas × aspect_strength
     """
     BENEFIC = {"Jupiter","Venus","Mercury","Moon"}
     MALEFIC = {"Saturn","Mars","Sun","Rahu","Ketu"}
-    asp = aspects_on_planet(pdata, planet)
-    score = 0.0
-    for asp_planet, strength in asp.items():
-        if asp_planet in BENEFIC: score += 30.0 * strength
-        elif asp_planet in MALEFIC: score -= 30.0 * strength
-    return max(-60.0, min(60.0, score))
+    asp     = aspects_on_planet(pdata, planet)
+    score   = 0.0
+    for asp_p, strength in asp.items():
+        if asp_p in BENEFIC:  score += 15.0 * strength
+        elif asp_p in MALEFIC: score -= 15.0 * strength
+    return round(max(-60.0, min(60.0, score)), 1)
 
 
-def calculate_shadbala(pdata: dict) -> dict:
+# ── MASTER FUNCTION ────────────────────────────────────────────────
+def calculate_shadbala(pdata: dict, birth_jd: float = 0) -> dict:
     """
-    Calculate simplified Shadbala for all 7 planets.
-    Returns dict: {planet: {bala_components, total_rupas, score_100}}
+    Calculate full classical BPHS Shadbala for all 7 planets.
+    Returns dict: {planet: {all_components, total_virupas, pct_of_min, score_100}}
+
+    score_100  = (total / min_required) × 100   [same as JHora % display]
+    pct_of_min = same value, not capped at 100
     """
     PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
-    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
     results = {}
 
-    # Minimum required Rupas for each planet (classical standards)
-    MIN_RUPAS = {
-        "Sun":140,"Moon":160,"Mars":130,"Mercury":140,
-        "Jupiter":150,"Venus":140,"Saturn":110
-    }
-    MAX_RUPAS = {
-        "Sun":320,"Moon":340,"Mars":310,"Mercury":320,
-        "Jupiter":340,"Venus":330,"Saturn":300
-    }
-
     for p in PLANETS:
-        sign  = pdata.get(p,{}).get("rashi_idx",0)
-        deg   = pdata.get(p,{}).get("deg_rashi",0.0)
-        house = (sign - lagna) % 12 + 1
-        speed = pdata.get(p,{}).get("speed",0.5)
+        sth_d = _sb_sthana(p, pdata)
+        dig   = _sb_dig(p, pdata)
+        kal_d = _sb_kala(p, pdata, birth_jd)
+        che   = _sb_chesta(p, pdata)
+        nai   = _sb_naisargika(p)
+        drk   = _sb_drik(p, pdata)
 
-        sth = _sthana_bala(p, sign, deg, pdata)
-        dig = _dig_bala(p, house)
-        che = _chesta_bala(p, speed)
-        kal = _kala_bala_simple(p, pdata)
-        nai = _naisargika_bala(p)
-        drk = _drik_bala(p, pdata)
-
+        sth   = sth_d["total"]
+        kal   = kal_d["total"]
         total = sth + dig + che + kal + nai + drk
-        min_r = MIN_RUPAS.get(p, 300)
-        max_r = MAX_RUPAS.get(p, 540)
-        score = round(min(100.0, max(0.0, (total - min_r) / (max_r - min_r) * 100)), 1)
+        minv  = _MIN_VIRUPAS[p]
+        pct   = round(total / minv * 100, 1)
+
+        sign  = pdata[p]["rashi_idx"]
+        house = (sign - pdata["Lagna"]["rashi_idx"]) % 12 + 1
 
         results[p] = {
-            "sthana_bala":    round(sth,1),
-            "dig_bala":       round(dig,1),
-            "chesta_bala":    round(che,1),
-            "kala_bala":      round(kal,1),
-            "naisargika_bala":round(nai,1),
-            "drik_bala":      round(drk,1),
-            "total_rupas":    round(total,1),
-            "min_required":   min_r,
-            "score_100":      score,
-            "house":          house,
+            # ── Sthana sub-breakdown ──
+            "uchcha_bala":      sth_d["uchcha"],
+            "saptavargaja_bala":sth_d["sapta"],
+            "ojhayugma_bala":   sth_d["oja"],
+            "kendradi_bala":    sth_d["kend"],
+            "drekkana_bala":    sth_d["drek"],
+            "sthana_bala":      sth,
+            # ── Main 6 ──
+            "dig_bala":         dig,
+            "chesta_bala":      che,
+            # ── Kala sub-breakdown ──
+            "nathonnatha_bala": kal_d["nath"],
+            "paksha_bala":      kal_d["pak"],
+            "tribhaga_bala":    kal_d["trib"],
+            "abda_bala":        kal_d["abda"],
+            "masa_bala":        kal_d["masa"],
+            "vara_bala":        kal_d["vara"],
+            "hora_bala":        kal_d["hora"],
+            "kala_bala":        kal,
+            # ── Remaining ──
+            "naisargika_bala":  nai,
+            "drik_bala":        drk,
+            # ── Totals ──
+            "total_virupas":    round(total, 1),
+            "min_required":     minv,
+            "pct_of_min":       pct,
+            "score_100":        round(min(pct, 100.0), 1),  # capped at 100 for bars
+            "house":            house,
         }
-
     return results
 
 
-def display_shadbala(pdata: dict) -> None:
-    """Display Shadbala table and Dig Bala."""
-    sb = calculate_shadbala(pdata)
-    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
-    PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
-    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+def display_shadbala(pdata: dict, birth_jd: float = 0) -> None:
+    """
+    Display full classical BPHS Shadbala table.
+    Columns: Planet · Sign · H · Sthana · Dig · Chesta · Kala · Naisargika · Drik · Total · %Min
+    Also prints Sthana sub-breakdown and Kala sub-breakdown per planet.
+    """
+    sb     = calculate_shadbala(pdata, birth_jd)
+    SS     = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
+    PLANETS= ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"]
+    lagna  = pdata["Lagna"]["rashi_idx"]
 
-    def _bar(s, w=15):
-        f = int(s/100*w)
-        ch = "█" if s<35 else ("▓" if s<65 else "▒")
-        return ch*f + "░"*(w-f)
+    def _bar(s, w=16):
+        f  = int(min(s,100)/100*w)
+        ch = "█" if s < 75 else ("▓" if s < 110 else "▒")
+        return ch * f + "░" * (w - f)
 
-    print(f"\n  ╔{'═'*80}╗")
-    print(f"  ║  SHADBALA (Simplified) — 6-Source Planetary Strength")
-    print(f"  ║  Sthana(positional) · Dig(directional) · Chesta(motional)")
-    print(f"  ║  Kala(temporal) · Naisargika(natural) · Drik(aspect-based)")
-    print(f"  ╠{'═'*80}╣")
-    print(f"  ║  {'Planet':<10} {'Sign':>4} {'H':>3}  {'Sth':>5} {'Dig':>5} {'Che':>5} "
-          f"{'Kal':>5} {'Nai':>5} {'Drk':>6}  {'Total':>6}  {'Score':>5}  {'[strength bar]':^16}  ║")
-    print(f"  ╠{'═'*80}╣")
+    W = 88
+    print(f"\n  ╔{'═'*W}╗")
+    print(f"  ║  SHADBALA — Classical BPHS 6-Source Planetary Strength (in Virupas)")
+    print(f"  ║  Sthana · Dig · Chesta · Kala · Naisargika · Drik  →  Total vs Min Required")
+    print(f"  ║  Score = Total / Min × 100%   (100%+ = above minimum = adequate strength)")
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  {'Planet':<10} {'Sgn':>4} {'H':>2}  "
+          f"{'Sth':>6} {'Dig':>6} {'Che':>6} {'Kal':>6} {'Nai':>6} {'Drk':>6}  "
+          f"{'Total':>6}  {'%Min':>5}  {'[bar: 100%=min]':^18}  ║")
+    print(f"  ╠{'═'*W}╣")
 
     for p in PLANETS:
-        d = sb[p]
-        sign = pdata.get(p,{}).get("rashi_idx",0)
-        print(f"  ║  {p:<10} {SS[sign]:>4} {d['house']:>3}  "
-              f"{d['sthana_bala']:>5.1f} {d['dig_bala']:>5.1f} {d['chesta_bala']:>5.1f} "
-              f"{d['kala_bala']:>5.1f} {d['naisargika_bala']:>5.1f} {d['drik_bala']:>6.1f}  "
-              f"{d['total_rupas']:>6.1f}  {d['score_100']:>4.0f}%  [{_bar(d['score_100'])}]  ║")
+        d    = sb[p]
+        sign = pdata[p]["rashi_idx"]
+        pct  = d["pct_of_min"]
+        bar  = _bar(pct)
+        print(f"  ║  {p:<10} {SS[sign]:>4} {d['house']:>2}  "
+              f"{d['sthana_bala']:>6.1f} {d['dig_bala']:>6.1f} {d['chesta_bala']:>6.1f} "
+              f"{d['kala_bala']:>6.1f} {d['naisargika_bala']:>6.1f} {d['drik_bala']:>6.1f}  "
+              f"{d['total_virupas']:>6.1f}  {pct:>4.0f}%  [{bar}]  ║")
+        # Sthana sub-breakdown
+        print(f"  ║    Sthana: Uchcha={d['uchcha_bala']:.1f}  "
+              f"Sapta7={d['saptavargaja_bala']:.1f}  "
+              f"Oja={d['ojhayugma_bala']:.0f}  "
+              f"Kend={d['kendradi_bala']:.0f}  "
+              f"Drek={d['drekkana_bala']:.0f}")
+        # Kala sub-breakdown
+        print(f"  ║    Kala  : Nath={d['nathonnatha_bala']:.0f}  "
+              f"Pak={d['paksha_bala']:.1f}  "
+              f"Trib={d['tribhaga_bala']}  "
+              f"Abda={d['abda_bala']}  "
+              f"Masa={d['masa_bala']}  "
+              f"Vara={d['vara_bala']}  "
+              f"Hora={d['hora_bala']}")
 
-    print(f"  ╠{'═'*80}╣")
-    # Dig Bala summary
-    print(f"  ║  DIG BALA (Directional Strength):")
-    dig_info = {
-        "Sun/Mars": ("10th",10), "Moon/Venus": ("4th",4),
-        "Jupiter/Mercury": ("1st",1), "Saturn": ("7th",7)
-    }
-    for grp, (best, bh) in dig_info.items():
-        bh_sign = SS[(lagna + bh - 1) % 12]
-        print(f"  ║    {grp}: strongest in {best} house ({bh_sign})")
-    print(f"  ╚{'═'*80}╝\n")
+    print(f"  ╠{'═'*W}╣")
+    # Summary ranking
+    ranked = sorted(PLANETS, key=lambda x: -sb[x]["total_virupas"])
+    print(f"  ║  STRENGTH RANK: " +
+          "  ".join(f"{p[:2]}={sb[p]['pct_of_min']:.0f}%" for p in ranked))
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  DIG BALA — Strongest direction per planet:")
+    dig_rows = [("Sun/Mars","10th",10), ("Moon/Venus","4th",4),
+                ("Jupiter/Mercury","1st",1), ("Saturn","7th",7)]
+    for grp, best, h_num in dig_rows:
+        h_sign = SS[(lagna + h_num - 1) % 12]
+        print(f"  ║    {grp}: strongest in {best} house ({h_sign})")
+    print(f"  ╠{'═'*W}╣")
+    print(f"  ║  KALA BALA sub-components:")
+    print(f"  ║    Nathonnatha(0/60) + Paksha(0-60) + Tribhaga(0/30) +")
+    print(f"  ║    Abda(0/15) + Masa(0/30) + Vara(0/45) + Hora(0/60)")
+    print(f"  ║  Note: Abda/Masa/Vara/Hora require birth JD for precision.")
+    print(f"  ║  Pass birth_jd to calculate_shadbala() for full Kala Bala.")
+    print(f"  ╚{'═'*W}╝\n")
 
 
-def planet_strength_score(pdata: dict) -> dict:
-    """Return overall 0-100 strength score for each planet."""
-    sb = calculate_shadbala(pdata)
-    return {p: v["score_100"] for p,v in sb.items()}
+def planet_strength_score(pdata: dict, birth_jd: float = 0) -> dict:
+    """
+    Return normalised 0-100 strength score for each planet.
+    Uses score_100 from calculate_shadbala (capped at 100).
+    """
+    sb = calculate_shadbala(pdata, birth_jd)
+    return {p: v["score_100"] for p, v in sb.items()}
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -3030,23 +3497,28 @@ def display_dasha_activation(pdata: dict, birth_jd: float) -> None:
 
 def calculate_bhava_strength(pdata: dict) -> dict:
     """
-    Calculate strength of each Bhava (house) using:
-    1. Planets in the house (occupant strength)
-    2. House lord's strength (Shadbala)
-    3. SAV rekha count for the house
-    4. Benefic/malefic aspects on the house
-    Returns dict: {house_num: {"score_100": float, "factors": list}}
+    Calculate strength of each Bhava (house) 0-100%.
+
+    Components (weighted):
+      35% — SAV score for the house sign  (normalised: SAV max = 56 = 7 planets × 8)
+      30% — House lord Shadbala (pct_of_min, capped 100)
+      25% — Occupant planet strengths (avg, benefic×1.2, malefic×0.8)
+      10% — Aspect balance on the house (benefic +, malefic −)
+
+    Bug fix: SAV values are 20-40 (not 0-8), so we normalise as sav/56.
     """
-    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    lagna   = pdata.get("Lagna",{}).get("rashi_idx",0)
     SIGN_LORD = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
                  6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
     BENEFIC = {"Jupiter","Venus","Mercury","Moon"}
     MALEFIC = {"Saturn","Mars","Sun","Rahu","Ketu"}
     PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]
-    SS = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi']
 
     sb  = calculate_shadbala(pdata)
     av  = calculate_ashtakavarga(pdata)
+
+    # True SAV maximum = 8 sources × 7 planets = 56 Virupas per sign
+    SAV_MAX = 56.0
 
     house_scores = {}
     for h in range(1, 13):
@@ -3054,50 +3526,62 @@ def calculate_bhava_strength(pdata: dict) -> dict:
         h_lord  = SIGN_LORD.get(h_sign, "Sun")
         factors = []
 
-        # 1. SAV score (0-8 points) → weight 35%
-        sav_score = av["sav"][h_sign]
-        sav_factor = (sav_score / 8.0) * 35
-        factors.append(f"SAV: {sav_score}/8 → {sav_factor:.1f}pts")
+        # ── 1. SAV (35%) — normalised to 0-35 ─────────────────
+        sav_raw    = av["sav"][h_sign]                        # typically 18-40
+        sav_factor = (sav_raw / SAV_MAX) * 35.0              # 0-35
+        factors.append(f"SAV: {sav_raw}/{int(SAV_MAX)} → {sav_factor:.1f}pts")
 
-        # 2. House lord strength → weight 30%
-        lord_strength = sb.get(h_lord, {}).get("score_100", 50)
-        lord_factor   = lord_strength * 0.30
-        factors.append(f"Lord({h_lord}) Shadbala: {lord_strength:.0f}% → {lord_factor:.1f}pts")
+        # ── 2. Lord Shadbala (30%) — pct_of_min 0-100 ─────────
+        # Use pct_of_min (can exceed 100 for very strong planets),
+        # cap at 100 before applying weight.
+        lord_pct    = min(sb.get(h_lord, {}).get("pct_of_min", 50), 150)
+        lord_factor = (lord_pct / 100.0) * 30.0              # 0-30 (or up to 45 if very strong)
+        lord_factor = min(lord_factor, 30.0)                 # cap at 30
+        factors.append(f"Lord({h_lord}) {lord_pct:.0f}% → {lord_factor:.1f}pts")
 
-        # 3. Occupants strength → weight 25%
+        # ── 3. Occupants (25%) ─────────────────────────────────
         occupants = [p for p in PLANETS
-                     if (pdata.get(p,{}).get("rashi_idx",0)-lagna)%12+1 == h]
-        occ_score = 0
+                     if (pdata.get(p,{}).get("rashi_idx",0) - lagna) % 12 + 1 == h]
         if occupants:
+            occ_raw = []
             for p in occupants:
-                p_strength = sb.get(p, {}).get("score_100", 50)
-                modifier   = 1.2 if p in BENEFIC else 0.8
-                occ_score += p_strength * modifier
-            occ_score = min(occ_score / len(occupants), 100) * 0.25
-            factors.append(f"Occupants: {occupants} → {occ_score:.1f}pts")
+                p_pct = min(sb.get(p, {}).get("pct_of_min", 50), 150)
+                mod   = 1.2 if p in BENEFIC else 0.8
+                occ_raw.append(p_pct * mod)
+            occ_avg    = sum(occ_raw) / len(occ_raw)
+            occ_factor = (min(occ_avg, 150) / 100.0) * 25.0
+            occ_factor = min(occ_factor, 25.0)
+            factors.append(f"Occ {[p[:2] for p in occupants]}: avg {occ_avg:.0f}% → {occ_factor:.1f}pts")
         else:
-            occ_score = 12.5  # empty house gets average
-            factors.append("Empty house (avg pts)")
+            occ_factor = 12.0  # empty house: half of max
+            factors.append("Empty house → 12.0pts")
 
-        # 4. Aspect score → weight 10%
+        # ── 4. Aspect balance (10%) ────────────────────────────
         asp_on_h = aspects_on_house(pdata, h)
         ben_asp  = sum(v for p,v in asp_on_h.items() if p in BENEFIC)
         mal_asp  = sum(v for p,v in asp_on_h.items() if p in MALEFIC)
-        asp_net  = (ben_asp - mal_asp * 0.5) * 5
-        asp_factor = max(-10, min(10, asp_net))
+        asp_net  = (ben_asp * 1.5 - mal_asp * 1.0) * 3.0
+        asp_factor = max(-10.0, min(10.0, asp_net))
         if asp_on_h:
-            factors.append(f"Aspects: ben={ben_asp:.1f} mal={mal_asp:.1f} → {asp_factor:+.1f}pts")
+            factors.append(f"Aspects ben={ben_asp:.1f} mal={mal_asp:.1f} → {asp_factor:+.1f}pts")
 
-        total = sav_factor + lord_factor + occ_score + asp_factor
-        total = max(0, min(100, total))
+        total = sav_factor + lord_factor + occ_factor + asp_factor
+        total = max(0.0, min(100.0, total))
 
         house_scores[h] = {
-            "score_100":  round(total, 1),
-            "sign":       h_sign,
-            "lord":       h_lord,
-            "sav":        sav_score,
-            "occupants":  occupants,
-            "factors":    factors,
+            "score_100":    round(total, 1),
+            "sign":         h_sign,
+            "lord":         h_lord,
+            "sav":          sav_raw,
+            "lord_pct":     round(lord_pct, 1),
+            "occupants":    occupants,
+            "factors":      factors,
+            "breakdown": {
+                "sav_factor":   round(sav_factor, 1),
+                "lord_factor":  round(lord_factor, 1),
+                "occ_factor":   round(occ_factor, 1),
+                "asp_factor":   round(asp_factor, 1),
+            },
         }
 
     return house_scores
@@ -3467,41 +3951,105 @@ def display_chakra_health(pdata: dict) -> None:
     print(f"  ╚{'═'*W}╝\n")
 
 
-def gochar_score_rashi(transit_signs, ref_rashi):
+def gochar_score_rashi(transit_signs, ref_rashi, natal_av=None):
     """
-    Score a rashi for a given transit configuration.
-    transit_signs: dict {planet_name: sign_idx (0-11)}
-    ref_rashi: reference rashi index (0-11)
-    Returns: (score, planet_detail_dict, special_flags_list)
+    Score a rashi for a given transit configuration using classical PDF tables.
+
+    Sources used:
+    - Tables 53-59: Planet transit good/bad houses from Janma Rasi
+    - Section 25.5: BAV rekha scoring (0-8 per sign: 6-7=excellent, 0-1=very poor)
+    - Section 25.5.1: SAV thresholds (>30=favorable, <25=unfavorable)
+    - Table 63: Vedha sthanas (obstruction check)
+    - Special flags: Chandrashtama, Sade Sati, Kantaka, Guru Balam
+
+    Parameters
+    ----------
+    transit_signs : dict {planet: sign_idx 0-11}
+    ref_rashi     : natal Moon sign index (0-11) as primary reference
+    natal_av      : optional dict from calculate_ashtakavarga(pdata)
+
+    Returns
+    -------
+    (score, planet_detail_dict, special_flags_list)
+      score: composite float (positive=good, negative=bad)
+      Each planet_detail has:
+        house, good, weight, house_contrib, bav_contrib, vedha, result_text, total_contrib
     """
-    score = 0.0
+    score   = 0.0
     details = {}
     flags   = []
 
-    for p, sign in transit_signs.items():
-        house  = (sign - ref_rashi) % 12 + 1
-        good   = house in _GOCHAR_GOOD.get(p, set())
-        weight = _GOCHAR_WEIGHT.get(p, 1.0)
-        contrib = weight * (1.0 if good else -1.0)
-        score  += contrib
-        details[p] = {"house": house, "good": good, "contrib": round(contrib, 2)}
+    PLANETS_ORDERED = ["Saturn","Jupiter","Mars","Sun","Moon","Venus","Mercury","Rahu","Ketu"]
+    all_houses = {p: (transit_signs.get(p, 0) - ref_rashi) % 12 + 1 for p in transit_signs}
 
-        # Special modifiers
+    for p in PLANETS_ORDERED:
+        if p not in transit_signs:
+            continue
+        sign   = transit_signs[p]
+        house  = (sign - ref_rashi) % 12 + 1
+        tbl    = _GOCHAR_TABLES.get(p, _GOCHAR_TABLES["Saturn"])
+        is_good= house in tbl.get("good", set())
+        weight = _GOCHAR_WEIGHT.get(p, 1.0)
+
+        # ── 1. House-based contribution ──────────────────────────
+        house_contrib = weight * (1.5 if is_good else -1.5)
+
+        # ── 2. BAV contribution (if Ashtakavarga available) ──────
+        bav_contrib = 0.0
+        bav_rekhas  = None
+        sav_val     = None
+        if natal_av is not None and p in natal_av:
+            bav_rekhas  = natal_av[p]["bav"][sign]
+            bav_contrib = _bav_score(bav_rekhas) * (weight * 0.5)
+            sav_val     = natal_av["sav"][sign]
+            bav_contrib += _sav_score(sav_val) * 0.3
+
+        # ── 3. Vedha check (obstruction) ─────────────────────────
+        vedha_blocked = False
+        if is_good:
+            vedha_house = _VEDHA_TABLE.get(p, {}).get(house)
+            if vedha_house:
+                for other_p, other_h in all_houses.items():
+                    if other_p == p: continue
+                    if other_h == vedha_house:
+                        pair = (p, other_p)
+                        if pair not in _VEDHA_EXCEPTION_PAIRS:
+                            vedha_blocked = True
+                            flags.append(f"⛔ {p} vedha by {other_p}")
+                            house_contrib *= 0.3  # reduce good result by ~70%
+                            break
+
+        total_contrib = house_contrib + bav_contrib
+        score += total_contrib
+
+        details[p] = {
+            "house":        house,
+            "good":         is_good,
+            "weight":       weight,
+            "house_contrib":round(house_contrib, 2),
+            "bav_contrib":  round(bav_contrib, 2),
+            "bav_rekhas":   bav_rekhas,
+            "sav":          sav_val,
+            "vedha_blocked":vedha_blocked,
+            "result_text":  tbl.get("results", {}).get(house, "—"),
+            "total_contrib":round(total_contrib, 2),
+        }
+
+        # ── 4. Special flags ──────────────────────────────────────
         if p == "Moon" and house == 8:
-            score -= 2.0
-            flags.append("☽ Chandrashtama")
-        elif p == "Saturn":
-            if   house == 1:  score -= 2.0; flags.append("♄ Sade Sati Peak")
-            elif house == 12: score -= 1.0; flags.append("♄ Sade Sati Start")
-            elif house == 2:  score -= 1.0; flags.append("♄ Sade Sati End")
-            elif house == 4:  score -= 1.0; flags.append("♄ Kantaka H4")
-            elif house == 7:  score -= 1.0; flags.append("♄ Kantaka H7")
-            elif house == 10: score -= 1.0; flags.append("♄ Kantaka H10")
-        if p == "Jupiter" and house in (2, 5, 9, 11):
-            score += 0.5
-            flags.append("♃ Guru Balam")
+            score -= 2.0; flags.append("☽ Chandrashtama (H8 Moon)")
+        if p == "Saturn":
+            if   house == 1:  score -= 2.0; flags.append("♄ Sade Sati — Peak (H1)")
+            elif house == 12: score -= 1.0; flags.append("♄ Sade Sati — Start (H12)")
+            elif house == 2:  score -= 1.0; flags.append("♄ Sade Sati — End (H2)")
+            elif house == 4:  score -= 1.0; flags.append("♄ Kantaka Shani (H4)")
+            elif house == 7:  score -= 1.0; flags.append("♄ Kantaka Shani (H7)")
+            elif house == 10: score -= 1.0; flags.append("♄ Kantaka Shani (H10)")
+        if p == "Jupiter" and house in {2,5,9,11}:
+            score += 0.8; flags.append("♃ Guru Balam")
 
     return round(score, 2), details, flags
+
 
 
 def gochar_grade(score):
@@ -3654,21 +4202,26 @@ def gochar_chart(date_str=None, native_moon_sign=None, show_detail=False):
     # ── Per-planet detail for native Moon sign ────────────────────
     if show_detail and native_moon_sign is not None:
         print(f"  ╠{'═'*76}")
-        print(f"  ║  Detail for {RASHI_FULL[native_moon_sign]} (your Moon sign):")
-        print(f"  ║    {'Planet':<10} {'In Sign':<14} {'House':>6}  {'Effect':>8}  {'Score':>7}")
-        print(f"  ║    {'─'*10} {'─'*14} {'─'*6}  {'─'*8}  {'─'*7}")
+        print(f"  ║  Planet-wise analysis for {RASHI_FULL[native_moon_sign]} (Moon sign):")
+        print(f"  ║    {'Planet':<10} {'In':<14} {'H':>3}  {'Effect':<8}  {'Score':>7}  Result text")
+        print(f"  ║    {'─'*70}")
         nd = results[native_moon_sign]["detail"]
-        for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]:
+        for p in ["Saturn","Jupiter","Mars","Sun","Moon","Venus","Mercury","Rahu","Ketu"]:
             if p not in nd: continue
-            info = nd[p]
-            effect = "✓ Good  " if info["good"] else "✗ Bad   "
-            print(f"  ║    {p:<10} {RASHI_FULL[transit_signs[p]]:<14} "
-                  f"H{info['house']:>2}    {effect}  {info['contrib']:>+7.2f}")
+            info   = nd[p]
+            effect = "✓ Good" if info["good"] else "✗ Bad "
+            vedha  = " [VEDHA]" if info.get("vedha_blocked") else ""
+            result = info.get("result_text","—")[:38]
+            print(f"  ║    {p:<10} {RASHI_FULL[transit_signs.get(p,0)]:<14} "
+                  f"H{info['house']:>2}  {effect}  {info['total_contrib']:>+7.2f}{vedha}")
+            if result and result != "—":
+                print(f"  ║      ↳ {result}")
 
     print(f"  ╠{'═'*76}")
-    print(f"  ║  Grade scale:  Excellent>6.5  Very Good>4.5  Good>2.5  Normal>0.5")
-    print(f"  ║               Caution>-1.5   Bad>-3.5   Very Bad>-5.5   Critical≤-5.5")
+    print(f"  ║  Grade:  Excellent>6.5  VeryGood>4.5  Good>2.5  Normal>0.5  Caution>-1.5")
+    print(f"  ║          Bad>-3.5  VeryBad>-5.5  Critical≤-5.5")
     print(f"  ║  Weights: ♃Jupiter×2  ♄Saturn×2  ☽Moon×1.5  ♂Mars×1.2  ☊Rahu×1.2")
+    print(f"  ║  Source: Vedic Astrology An Integrated Approach Tables 53-59")
     print(f"  ╚{'═'*76}\n")
 
     return results
@@ -4557,7 +5110,7 @@ def moola_dasha_lagna(pdata, birth_jd, mt_correction_yrs=0):
 
 
     # ── Build planet sequence ────────────────────────────────────────
-    # 
+    #
     # CONFIRMED HOUSE ORDERING RULES (from Govind chart):
     #
     # Within each group (K/P/A), houses are ordered by:
@@ -4912,19 +5465,40 @@ def calculate_chart(name, gender, dob, tob, place):
               f"{d['nak_idx']+1:>4} {d['pada']}  {RASHI_SHORT[d['nav_rashi']]:<10}│")
     print(f"  └{'─'*76}┘")
 
-    # ═══ LAGNA KUNDLI (D-1) ════════════════════════════════════════
-    lagna_ri = pdata["Lagna"]["rashi_idx"]
+    # ═══ LAGNA KUNDLI (D-1) — South Indian Style ══════════════════
+    lagna_ri  = pdata["Lagna"]["rashi_idx"]
+    lagna_deg = pdata["Lagna"]["deg_rashi"]
+
+    P_ABBR  = {"Sun":"Su","Moon":"Mo","Mars":"Ma","Mercury":"Me",
+               "Jupiter":"Ju","Venus":"Ve","Saturn":"Sa","Rahu":"Ra","Ketu":"Ke"}
+    EXALT_S = {"Sun":0,"Moon":1,"Mars":9,"Mercury":5,"Jupiter":3,"Venus":11,"Saturn":6}
+    DEBI_S  = {"Sun":6,"Moon":7,"Mars":3,"Mercury":11,"Jupiter":9,"Venus":5,"Saturn":0}
+
     planets_by_rashi_d1 = {}
     for p in PLANETS_ORDER:
         if p not in pdata: continue
-        ri = pdata[p]["rashi_idx"]
-        planets_by_rashi_d1.setdefault(ri, []).append(p)
+        if p == "Lagna": continue           # ← added separately below
+        d    = pdata[p]; ri = d["rashi_idx"]
+        abbr = P_ABBR.get(p, p[:2])
+        mk   = ""
+        if d.get("vakri"):     mk += "*"   # * Retrograde
+        if d.get("combust"):   mk += "^"   # ^ Combust
+        if d.get("vargottam"): mk += "□"   # □ Vargottam
+        if p in EXALT_S and EXALT_S[p] == ri: mk += "↑"  # ↑ Exalted
+        if p in DEBI_S  and DEBI_S[p]  == ri: mk += "↓"  # ↓ Debilitated
+        deg_str = f"{int(d['deg_rashi']):02d}"
+        planets_by_rashi_d1.setdefault(ri, []).append(f"{abbr}{mk} {deg_str}")
 
-    print(f"\n  ╔{'═'*60}╗")
-    print(f"  ║  LAGNA KUNDLI — D-1 (North Indian Style)")
-    print(f"  ║  Lagna: {RASHIS[lagna_ri]}")
-    print(f"  ╚{'═'*60}╝")
-    grid = make_kundli_grid(lagna_ri, planets_by_rashi_d1, "LAGNA KUNDLI")
+    # Lagna entry first in its sign
+    planets_by_rashi_d1.setdefault(lagna_ri, []).insert(0,
+        f"La {int(lagna_deg):02d}")
+
+    print(f"\n  ╔{'═'*72}╗")
+    print(f"  ║  LAGNA KUNDLI — D-1  (South Indian Style)")
+    print(f"  ║  Lagna: {RASHIS[lagna_ri]} ({_SS_3[lagna_ri]})")
+    print(f"  ║  * Retrograde  □ Vargottam  ↑ Exalt  ↓ Debilitated  ^ Combust")
+    print(f"  ╚{'═'*72}╝")
+    grid = make_south_indian_chart(lagna_ri, planets_by_rashi_d1, "D-1")
     for line in grid.split("\n"):
         print(f"  {line}")
 
@@ -4975,19 +5549,21 @@ def calculate_chart(name, gender, dob, tob, place):
         print(f"  {chart_name:<22} {purpose:<36} {signs_str}{marker}")
 
     # ═══ D-60 KUNDLI (Visual) ══════════════════════════════════════
-    # Build D-60 positions
     d60_lagna_sign = all_divs["Lagna"][60]
     planets_by_rashi_d60 = {}
     for p in PLANETS_ORDER:
         if p not in all_divs: continue
+        if p == "Lagna": continue           # added separately below
         ri = all_divs[p][60]
-        planets_by_rashi_d60.setdefault(ri, []).append(p)
+        abbr = P_ABBR.get(p, p[:2])
+        planets_by_rashi_d60.setdefault(ri, []).append(abbr)
+    planets_by_rashi_d60.setdefault(d60_lagna_sign, []).insert(0, "La")
 
-    print(f"\n  ╔{'═'*60}╗")
-    print(f"  ║  D-60 SHASHTYAMSHA KUNDLI (North Indian Style)")
-    print(f"  ║  D-60 Lagna: {RASHI_FULL[d60_lagna_sign]} ({RASHI_SHORT[d60_lagna_sign]})")
-    print(f"  ╚{'═'*60}╝")
-    grid60 = make_kundli_grid(d60_lagna_sign, planets_by_rashi_d60, "D-60 KUNDLI")
+    print(f"\n  ╔{'═'*72}╗")
+    print(f"  ║  D-60 SHASHTYAMSHA KUNDLI (South Indian Style)")
+    print(f"  ║  D-60 Lagna: {RASHI_FULL[d60_lagna_sign]} ({_SS_3[d60_lagna_sign]})")
+    print(f"  ╚{'═'*72}╝")
+    grid60 = make_south_indian_chart(d60_lagna_sign, planets_by_rashi_d60, "D-60")
     for line in grid60.split("\n"):
         print(f"  {line}")
 
@@ -5223,7 +5799,7 @@ def calculate_chart(name, gender, dob, tob, place):
     display_aspect_matrix(pdata)
 
     # ═══ SHADBALA ══════════════════════════════════════════════════
-    display_shadbala(pdata)
+    display_shadbala(pdata, jd)
 
     # ═══ ASHTAKAVARGA ══════════════════════════════════════════════
     display_ashtakavarga(pdata)
@@ -5314,4 +5890,3 @@ def run_test_charts():
     print("  TEST CHART 2 — Krunal (matches JHora Image 2)")
     print(f"{'═'*70}")
     calculate_chart("Krunal","Male","29/05/1987","20:55","Mumbai")
-

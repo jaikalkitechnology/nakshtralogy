@@ -9,8 +9,9 @@ plugins {
 android {
     namespace = "com.nakshtralogy.astro"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
+    //ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
+    //buildToolsVersion = "35.0.1"
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
