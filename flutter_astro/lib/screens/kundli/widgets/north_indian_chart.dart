@@ -112,7 +112,10 @@ class NorthIndianChartWidget extends StatelessWidget {
     final isLagna = house['is_lagna'] == true;
     final fontSize = w < 340 ? 9.0 : 10.0;
 
-    return Column(
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.center,
+      child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -127,7 +130,7 @@ class NorthIndianChartWidget extends StatelessWidget {
         ),
         // Planets
         if (planets.isNotEmpty)
-          ...planets.take(4).map<Widget>((p) {
+          ...planets.take(3).map<Widget>((p) {
             final planet = p as Map;
             final name = (planet['planet'] ?? '').toString();
             final degree = (planet['degree'] as num?)?.toInt() ?? 0;
@@ -163,7 +166,7 @@ class NorthIndianChartWidget extends StatelessWidget {
             );
           }),
       ],
-    );
+    ));
   }
 
   Widget _legend() {

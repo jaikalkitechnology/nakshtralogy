@@ -326,9 +326,9 @@ class NakshtraEngine:
 
     # ── 7. SHADBALA ───────────────────────────────────────────────────────────
 
-    def get_shadbala(self, pdata: dict) -> dict:
+    def get_shadbala(self, pdata: dict, birth_jd: float = 0) -> dict:
         """Planet strength via 6-source Shadbala."""
-        sb = _nk.calculate_shadbala(pdata)
+        sb = _nk.calculate_shadbala(pdata, birth_jd)
         return {
             "planets": sb,
             "summary": {
@@ -490,7 +490,7 @@ class NakshtraEngine:
             "moola_dasha":     self.get_moola_dasha(pdata, bj, dasha_levels),
             "dosh_analysis":   self.get_dosh_analysis(pdata),
             "yoga_analysis":   self.get_yoga_analysis(pdata),
-            "shadbala":        self.get_shadbala(pdata),
+            "shadbala":        self.get_shadbala(pdata, bj),
             "ashtakavarga":    self.get_ashtakavarga(pdata),
             "aspect_matrix":   self.get_aspect_matrix(pdata),
             "life_areas":      self.get_life_areas(pdata),
