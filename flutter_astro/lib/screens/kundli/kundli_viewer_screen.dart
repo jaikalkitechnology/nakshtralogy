@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'widgets/planet_positions_widget.dart';
-import 'widgets/kundli_grid_widget.dart';
+import 'widgets/north_indian_chart.dart';
 import 'widgets/divisional_charts_widget.dart';
 import 'widgets/dasha_tree_widget.dart';
 import 'widgets/dosh_widget.dart';
@@ -275,6 +275,7 @@ class _KundliTabState extends State<_KundliTab> {
         'planet': name,
         'sign': p['sign'],
         'degree': p['degree'],
+        'dignity': p['dignity'],
         'flags': [
           if (p['vakri'] == true) 'R',
           if (p['combust'] == true) 'C',
@@ -312,7 +313,7 @@ class _KundliTabState extends State<_KundliTab> {
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
       const SizedBox(height: 12),
-      KundliGridWidget(houses: houses),
+      NorthIndianChartWidget(houses: houses, chartTitle: '$_base Chart'),
     ]);
   }
 
