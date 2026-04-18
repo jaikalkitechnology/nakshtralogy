@@ -10,6 +10,8 @@ import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
+import '../communication/call_history_screen.dart';
+import '../communication/chat_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -417,6 +419,25 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
               const SizedBox(height: 20),
 
+              // Communication History
+              Row(children: [
+                const Icon(Icons.history, color: AppColors.primary, size: 18),
+                const SizedBox(width: 8),
+                const Text('Communication History',
+                    style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
+              ]),
+              const SizedBox(height: 10),
+              Row(children: [
+                Expanded(child: _historyTile(Icons.call, 'Call History', AppColors.success, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CallHistoryScreen()));
+                })),
+                const SizedBox(width: 10),
+                Expanded(child: _historyTile(Icons.chat_bubble_outline, 'Chat History', AppColors.accent, () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatHistoryScreen()));
+                })),
+              ]),
+              const SizedBox(height: 20),
+
               // Logout
               OutlinedButton.icon(
                 onPressed: () {
@@ -431,6 +452,26 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
         );
       },
+    );
+  }
+
+  Widget _historyTile(IconData icon, String label, Color color, VoidCallback onTap) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+        ]),
+      ),
     );
   }
 

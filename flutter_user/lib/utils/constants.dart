@@ -34,8 +34,10 @@ class ApiConstants {
   // Communication
   static const String commBase = '$baseUrl/comm';
   static const String callInitiate = '$commBase/call/initiate';
+  static const String callHistory = '$commBase/call/history';
   static const String liveActive = '$commBase/live/active';
   static const String chatInitiate = '$commBase/chat/initiate';
+  static const String chatHistory = '$commBase/chat/history';
   static const String gifts = '$commBase/gifts';
 
   // WebSocket

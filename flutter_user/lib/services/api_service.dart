@@ -40,6 +40,7 @@ class ApiService {
   };
 
   bool _refreshing = false;
+  void Function()? onAuthExpired;
 
   Future<bool> _tryRefresh() async {
     if (_refreshToken == null || _refreshing) return false;
@@ -50,33 +51,43 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refresh_token': _refreshToken}),
       );
+      _refreshing = false;
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);
         await _saveTokens(data['access_token'], data['refresh_token']);
         return true;
       }
-    } catch (_) {}
-    _refreshing = false;
-    return false;
+      // Refresh token also expired — force logout
+      await clearTokens();
+      onAuthExpired?.call();
+      return false;
+    } catch (_) {
+      _refreshing = false;
+      return false;
+    }
   }
 
   Future<http.Response> _authGet(Uri url) async {
     var resp = await http.get(url, headers: _headers);
     if (resp.statusCode == 401 && await _tryRefresh()) {
-      _refreshing = false;
       resp = await http.get(url, headers: _headers);
     }
-    _refreshing = false;
     return resp;
   }
 
   Future<http.Response> _authPost(Uri url, {Object? body}) async {
     var resp = await http.post(url, headers: _headers, body: body);
     if (resp.statusCode == 401 && await _tryRefresh()) {
-      _refreshing = false;
       resp = await http.post(url, headers: _headers, body: body);
     }
-    _refreshing = false;
+    return resp;
+  }
+
+  Future<http.Response> _authDelete(Uri url) async {
+    var resp = await http.delete(url, headers: _headers);
+    if (resp.statusCode == 401 && await _tryRefresh()) {
+      resp = await http.delete(url, headers: _headers);
+    }
     return resp;
   }
 
@@ -606,6 +617,28 @@ class ApiService {
       body: jsonEncode({'service_pricing_id': servicePricingId, 'chart_id': chartId}),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  //  COMMUNICATION HISTORY
+  // ═══════════════════════════════════════════════════════════════════
+
+  Future<List<dynamic>> getCallHistory({int skip = 0, int limit = 20}) async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.callHistory}?skip=$skip&limit=$limit'));
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<List<dynamic>> getChatHistory({int skip = 0, int limit = 20}) async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.chatHistory}?skip=$skip&limit=$limit'));
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<List<dynamic>> getChatMessages(String sessionId, {int skip = 0, int limit = 100}) async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.commBase}/chat/$sessionId/messages?skip=$skip&limit=$limit'));
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
   }
 
   bool get isLoggedIn => _accessToken != null;
