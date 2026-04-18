@@ -225,9 +225,8 @@ class ApiService {
     bool isPrimary = false,
     String? serviceKey,
   }) async {
-    final resp = await http.post(
+    final resp = await _authPost(
       Uri.parse(ApiConstants.serviceCharts),
-      headers: _headers,
       body: jsonEncode({
         'name': name,
         'dob': dob,
@@ -241,18 +240,21 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<List<dynamic>> getMyCharts() async {
-    final resp = await http.get(Uri.parse(ApiConstants.serviceCharts), headers: _headers);
+  Future<List<dynamic>> getMyCharts({int skip = 0, int limit = 50}) async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.serviceCharts}?skip=$skip&limit=$limit'));
     if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
     return [];
   }
 
   Future<Map<String, dynamic>> getChart(String chartId) async {
-    final resp = await http.get(
-      Uri.parse('${ApiConstants.serviceCharts}/$chartId'),
-      headers: _headers,
-    );
+    final resp = await _authGet(Uri.parse('${ApiConstants.serviceCharts}/$chartId'));
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> searchCities(String query) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.citySearch}?q=${Uri.encodeComponent(query)}'));
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
   }
 
   Future<Map<String, dynamic>> deleteChart(String chartId) async {

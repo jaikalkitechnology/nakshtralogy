@@ -225,8 +225,14 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<List<dynamic>> getMyCharts() async {
-    final resp = await http.get(Uri.parse(ApiConstants.serviceCharts), headers: _headers);
+  Future<List<dynamic>> getMyCharts({int skip = 0, int limit = 50}) async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.serviceCharts}?skip=$skip&limit=$limit'));
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  Future<List<dynamic>> searchCities(String query) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.citySearch}?q=${Uri.encodeComponent(query)}'));
     if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
     return [];
   }
