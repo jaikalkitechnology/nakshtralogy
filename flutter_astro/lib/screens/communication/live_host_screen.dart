@@ -25,7 +25,7 @@ class LiveHostScreen extends StatefulWidget {
   State<LiveHostScreen> createState() => _LiveHostScreenState();
 }
 
-class _LiveHostScreenState extends State<LiveHostScreen> {
+class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObserver {
   final _api = ApiService();
   RtcEngine? _engine;
   List<dynamic> _questions = [];
@@ -42,7 +42,15 @@ class _LiveHostScreenState extends State<LiveHostScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initAgora();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached && _isLive) {
+      _endStream();
+    }
   }
 
   Future<void> _initAgora() async {
@@ -155,6 +163,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pollTimer?.cancel();
     _durationTimer?.cancel();
     _engine?.leaveChannel();

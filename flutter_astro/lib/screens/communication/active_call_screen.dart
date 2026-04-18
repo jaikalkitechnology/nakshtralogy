@@ -33,7 +33,7 @@ class ActiveCallScreen extends StatefulWidget {
   State<ActiveCallScreen> createState() => _ActiveCallScreenState();
 }
 
-class _ActiveCallScreenState extends State<ActiveCallScreen> {
+class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBindingObserver {
   final _api = ApiService();
   RtcEngine? _engine;
   int _seconds = 0;
@@ -48,6 +48,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Start timer immediately since call is already accepted
     _startTimer();
     _initAgora();
@@ -186,6 +187,13 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> {
     await _engine?.switchCamera();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+      _endCall();
+    }
+  }
+
   Future<void> _endCall() async {
     if (_ending) return;
     _ending = true;
@@ -205,6 +213,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _engine?.leaveChannel();
     _engine?.release();

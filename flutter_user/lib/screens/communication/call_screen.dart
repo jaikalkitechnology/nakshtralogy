@@ -34,7 +34,7 @@ class CallScreen extends StatefulWidget {
   State<CallScreen> createState() => _CallScreenState();
 }
 
-class _CallScreenState extends State<CallScreen> {
+class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   final _api = ApiService();
   RtcEngine? _engine;
   String _status = 'ringing';
@@ -52,8 +52,16 @@ class _CallScreenState extends State<CallScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initAgora();
     _startPollingCallStatus();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+      _endCall(fromLifecycle: true);
+    }
   }
 
   /// Poll backend every 2s to detect when call becomes active/completed.
@@ -258,7 +266,7 @@ class _CallScreenState extends State<CallScreen> {
     await _engine?.switchCamera();
   }
 
-  Future<void> _endCall() async {
+  Future<void> _endCall({bool fromLifecycle = false}) async {
     if (_ending) return;
     _ending = true;
     _timer?.cancel();
@@ -279,6 +287,7 @@ class _CallScreenState extends State<CallScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _maxTimer?.cancel();
     _pollTimer?.cancel();
