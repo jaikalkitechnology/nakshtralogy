@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
+import '../../../services/api_service.dart';
+import '_section_loader.dart';
 
 class GocharWidget extends StatelessWidget {
   final String chartId;
@@ -8,8 +10,20 @@ class GocharWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (initial is! Map) return const Center(child: Text('No gochar data', style: TextStyle(color: AppColors.textSecondary)));
-    final data = (initial as Map).cast<String, dynamic>();
+    return SectionLoader(
+      initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
+      loader: () => ApiService().getGocharToday(),
+      builder: (ctx, data) => _GocharBody(data: data),
+    );
+  }
+}
+
+class _GocharBody extends StatelessWidget {
+  final Map<String, dynamic> data;
+  const _GocharBody({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
     final rashis = (data['rashis'] as List? ?? []);
     final best = data['best']?.toString() ?? '';
     final worst = data['worst']?.toString() ?? '';
@@ -17,7 +31,6 @@ class GocharWidget extends StatelessWidget {
     final moonSign = data['moon_sign']?.toString();
 
     return ListView(padding: const EdgeInsets.all(16), children: [
-      // Header
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -29,7 +42,7 @@ class GocharWidget extends StatelessWidget {
           Row(children: [
             const Icon(Icons.wb_sunny, color: AppColors.primary, size: 22),
             const SizedBox(width: 10),
-            Expanded(child: Text('Gochar (Transit Scores) — $date',
+            Expanded(child: Text('Gochar (Transit Scores) \u2014 $date',
                 style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700))),
           ]),
           if (moonSign != null && moonSign.isNotEmpty)
@@ -43,9 +56,6 @@ class GocharWidget extends StatelessWidget {
         ]),
       ),
       const SizedBox(height: 12),
-      // All 12 rashis
-      const Text('ALL RASHIS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
-      const SizedBox(height: 6),
       ...rashis.map<Widget>((r) {
         final rm = (r as Map).cast<String, dynamic>();
         final score = (rm['score'] as num?)?.toDouble() ?? 0;

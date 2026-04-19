@@ -3138,6 +3138,7 @@ def calculate_life_areas(pdata: dict) -> dict:
         if s in OWN.get(p,set()): return 1.5
         return 1.0
     def sav_h(h): return av["sav"][(lagna+h-1)%12]
+    SAV_MAX = 56.0
     def ben_asp(house):
         BENEFIC = {"Jupiter","Venus","Mercury","Moon"}
         asp = aspects_on_house(pdata, house)
@@ -3158,8 +3159,8 @@ def calculate_life_areas(pdata: dict) -> dict:
 
     # ── CAREER (10th, 6th, Sun, Saturn) ──────────────────────────
     l10 = lord(10); l6 = lord(6)
-    car  = (sav_h(10)/8 * 35)                     # SAV H10: 0-35
-    car += (sav_h(6) /8 * 10)                      # SAV H6:  0-10
+    car  = (sav_h(10)/SAV_MAX * 35)                # SAV H10: 0-35
+    car += (sav_h(6) /SAV_MAX * 10)                 # SAV H6:  0-10
     car += strength("Sun")    * 0.15               # Sun:     0-15
     car += strength("Saturn") * 0.15               # Saturn:  0-15
     car += strength(l10)      * 0.12               # 10L:     0-12
@@ -3180,7 +3181,7 @@ def calculate_life_areas(pdata: dict) -> dict:
 
     # ── WEALTH (2nd, 11th, 5th, Jupiter, Venus) ──────────────────
     l2 = lord(2); l11 = lord(11)
-    wlt  = (sav_h(2) /8 * 25) + (sav_h(11)/8 * 25) + (sav_h(5)/8 * 8)
+    wlt  = (sav_h(2)/SAV_MAX * 25) + (sav_h(11)/SAV_MAX * 25) + (sav_h(5)/SAV_MAX * 8)
     wlt += strength("Jupiter") * 0.12 + strength("Venus") * 0.08
     wlt += strength(l2) * 0.12  + strength(l11) * 0.10
     wlt -= mal_asp(2)*2 + mal_asp(11)*1.5
@@ -3198,7 +3199,7 @@ def calculate_life_areas(pdata: dict) -> dict:
 
     # ── MARRIAGE (7th, 5th, Venus, Jupiter) ──────────────────────
     l7 = lord(7); l5 = lord(5)
-    mar  = (sav_h(7)/8 * 40) + (sav_h(5)/8 * 12)
+    mar  = (sav_h(7)/SAV_MAX * 40) + (sav_h(5)/SAV_MAX * 12)
     mar += strength("Venus") * 0.20 + strength(l7) * 0.15
     mar += ben_asp(7)*3 - mal_asp(7)*3
     areas["Marriage"] = {
@@ -3215,7 +3216,7 @@ def calculate_life_areas(pdata: dict) -> dict:
 
     # ── HEALTH (1st, 8th, 6th, Moon, Sun, Lagna lord) ────────────
     l1 = lord(1)
-    hlt  = (sav_h(1)/8 * 35) + (sav_h(8)/8 * 10)
+    hlt  = (sav_h(1)/SAV_MAX * 35) + (sav_h(8)/SAV_MAX * 10)
     hlt += strength("Moon") * 0.20 + strength("Sun") * 0.10 + strength(l1) * 0.15
     hlt += ben_asp(1)*3 - mal_asp(1)*2 - mal_asp(6)*1.5
     areas["Health"] = {
@@ -3232,7 +3233,7 @@ def calculate_life_areas(pdata: dict) -> dict:
 
     # ── SPIRITUALITY (9th, 12th, Ketu, Jupiter, Moon) ────────────
     l9 = lord(9); l12 = lord(12)
-    spr  = (sav_h(9)/8 * 35) + (sav_h(12)/8 * 20)
+    spr  = (sav_h(9)/SAV_MAX * 35) + (sav_h(12)/SAV_MAX * 20)
     spr += strength("Jupiter") * 0.20 + strength("Moon") * 0.10 + strength(l9) * 0.10
     spr += 15 if hs("Ketu") in {9,12,4} else 0
     areas["Spirituality"] = {
@@ -3361,6 +3362,17 @@ def dasha_activated_events(pdata: dict, birth_jd: float, query_jd: float = None)
     md_lord_m = moola.get("md","")
 
     active_lords = {md_lord, ad_lord, md_lord_m}
+    active_lords.discard("")
+
+    # Also include house lordships of active lords for broader matching
+    SIGN_LORD = {0:"Mars",1:"Venus",2:"Mercury",3:"Moon",4:"Sun",5:"Mercury",
+                 6:"Venus",7:"Mars",8:"Jupiter",9:"Saturn",10:"Saturn",11:"Jupiter"}
+    lagna = pdata.get("Lagna",{}).get("rashi_idx",0)
+    active_houses = set()
+    for lord_name in active_lords:
+        if lord_name and lord_name in pdata:
+            h = (pdata[lord_name].get("rashi_idx",0) - lagna) % 12 + 1
+            active_houses.add(h)
 
     # Get all yoga + dosh results
     yogas  = analyze_all_yoga(pdata)
@@ -3383,15 +3395,19 @@ def dasha_activated_events(pdata: dict, birth_jd: float, query_jd: float = None)
 
     for y in yogas:
         if not y["present"]: continue
-        # Check if any active lord appears in yoga factors
-        triggered = any(l and l in " ".join(y["factors"]) for l in active_lords if l)
-        # Also check by yoga category alignment
-        if not triggered:
+        factors_text = " ".join(str(f) for f in y.get("factors",[])).lower()
+        # Check if any active lord name appears in yoga factors
+        triggered = any(l.lower() in factors_text for l in active_lords if l)
+        # Check if yoga involves houses lorded by active dasha lords
+        if not triggered and y.get("houses"):
+            triggered = bool(set(y["houses"]) & active_houses)
+        # Broad category alignment with current MD lord
+        if not triggered and md_lord:
             if md_lord in ("Jupiter","Venus","Moon") and y["category"] in ("Raj Yoga","Dhan Yoga","Buddhi Yoga"):
                 triggered = True
-            elif md_lord in ("Saturn","Mars") and y["category"] in ("Career Yoga","Special Yoga"):
+            elif md_lord in ("Saturn","Mars","Sun") and y["category"] in ("Career Yoga","Special Yoga","Raj Yoga"):
                 triggered = True
-            elif md_lord in ("Sun",) and y["category"] in ("Raj Yoga","Career Yoga"):
+            elif md_lord in ("Mercury",) and y["category"] in ("Buddhi Yoga",):
                 triggered = True
         if triggered:
             activation = y["score"] * (1.1 if gochar_for_md > 2 else 0.9)
@@ -3406,11 +3422,14 @@ def dasha_activated_events(pdata: dict, birth_jd: float, query_jd: float = None)
 
     for d in doshas:
         if not d["present"]: continue
-        triggered = any(l and l in " ".join(d["factors"]) for l in active_lords if l)
-        if not triggered:
+        factors_text = " ".join(str(f) for f in d.get("factors",[])).lower()
+        triggered = any(l.lower() in factors_text for l in active_lords if l)
+        if not triggered and md_lord:
             if md_lord in ("Saturn","Rahu","Ketu") and d["category"] in ("Karmic/Rahu-Ketu","Planet-Based"):
                 triggered = True
-            elif md_lord == "Mars" and "Mangal" in d["name"]:
+            elif md_lord == "Mars" and "mangal" in d["name"].lower():
+                triggered = True
+            elif md_lord in ("Rahu","Ketu") and ("rahu" in d["name"].lower() or "ketu" in d["name"].lower()):
                 triggered = True
         if triggered:
             activation = d["score"] * (1.1 if gochar_for_md < -2 else 0.9)

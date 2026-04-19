@@ -175,8 +175,7 @@ def get_chart_only(
     """Just chart (planets + divisionals + lagna) without analyses."""
     chart = _load_chart(chart_id, current_user, db)
     data = _chart_from_row(chart)
-    data.pop("_pdata", None)
-    return _ok(data)
+    return _ok({k: v for k, v in data.items() if k != "_pdata"})
 
 
 # ═══════════════════════════════════════════════════════════════════
