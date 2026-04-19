@@ -1,0 +1,483 @@
+import "app_localizations.dart";
+
+class AppLocalizationsMr extends AppLocalizations {
+  AppLocalizationsMr([super.locale = "mr"]);
+
+  @override
+  String get appName => 'नक्षत्रलॉजी';
+
+  @override
+  String get cosmicJourneyAwaits => 'तुमचा वैश्विक प्रवास वाट पाहतोय';
+
+  @override
+  String get home => 'मुख्यपृष्ठ';
+
+  @override
+  String get astrologers => 'ज्योतिषी';
+
+  @override
+  String get services => 'सेवा';
+
+  @override
+  String get wallet => 'वॉलेट';
+
+  @override
+  String get profile => 'प्रोफाइल';
+
+  @override
+  String get live => 'लाइव्ह';
+
+  @override
+  String get kundli => 'कुंडली';
+
+  @override
+  String get chat => 'चॅट';
+
+  @override
+  String get call => 'कॉल';
+
+  @override
+  String get video => 'व्हिडिओ';
+
+  @override
+  String get signIn => 'साइन इन';
+
+  @override
+  String get createAccount => 'खाते तयार करा';
+
+  @override
+  String get email => 'ईमेल';
+
+  @override
+  String get password => 'पासवर्ड';
+
+  @override
+  String get confirmPassword => 'पासवर्ड पुन्हा लिहा';
+
+  @override
+  String get fullName => 'पूर्ण नाव';
+
+  @override
+  String get phone => 'फोन (ऐच्छिक)';
+
+  @override
+  String get forgotPassword => 'पासवर्ड विसरलात?';
+
+  @override
+  String get sendResetLink => 'रीसेट लिंक पाठवा';
+
+  @override
+  String get backToSignIn => 'साइन इन वर परत जा';
+
+  @override
+  String get dontHaveAccount => 'खाते नाही?';
+
+  @override
+  String get alreadyHaveAccount => 'आधीच खाते आहे?';
+
+  @override
+  String get continueGoogle => 'Google ने सुरू ठेवा';
+
+  @override
+  String get required => 'आवश्यक';
+
+  @override
+  String get minSixChars => 'किमान ६ अक्षरे';
+
+  @override
+  String get passwordsMismatch => 'पासवर्ड जुळत नाहीत';
+
+  @override
+  String get validEmailRequired => 'वैध ईमेल आवश्यक';
+
+  @override
+  String get loginFailed => 'लॉगिन अयशस्वी';
+
+  @override
+  String get signupFailed => 'साइनअप अयशस्वी';
+
+  @override
+  String get welcomeBack => 'पुन्हा स्वागत';
+
+  @override
+  String get todaysHoroscope => 'आजचे राशिभविष्य';
+
+  @override
+  String get todaysRashi => 'आजची राशी';
+
+  @override
+  String get tapDetails => 'तपशीलांसाठी टॅप करा';
+
+  @override
+  String get allServices => 'सर्व सेवा';
+
+  @override
+  String get seeAll => 'सर्व पहा';
+
+  @override
+  String get topAstrologers => 'शीर्ष ज्योतिषी';
+
+  @override
+  String get onlineExperts => 'सल्लामसलतीसाठी ऑनलाइन तज्ञ';
+
+  @override
+  String get searchAstrologers => 'ज्योतिषी शोधा...';
+
+  @override
+  String get noAstrologersFound => 'ज्योतिषी सापडले नाहीत';
+
+  @override
+  String get online => 'ऑनलाइन';
+
+  @override
+  String get offline => 'ऑफलाइन';
+
+  @override
+  String get busy => 'व्यस्त';
+
+  @override
+  String get perMin => '/मिनिट';
+
+  @override
+  String get noCharts => 'अद्याप जन्म कुंडली नाही';
+
+  @override
+  String get createFirst => 'तुमची पहिली जन्म कुंडली तयार करा';
+
+  @override
+  String get createChart => 'कुंडली तयार करा';
+
+  @override
+  String get newBirthChart => 'नवीन जन्म कुंडली';
+
+  @override
+  String get clientName => 'नाव';
+
+  @override
+  String get gender => 'लिंग';
+
+  @override
+  String get male => 'पुरुष';
+
+  @override
+  String get female => 'स्त्री';
+
+  @override
+  String get other => 'इतर';
+
+  @override
+  String get dateOfBirth => 'जन्मतारीख';
+
+  @override
+  String get timeOfBirth => 'जन्मवेळ';
+
+  @override
+  String get birthPlace => 'जन्मस्थान';
+
+  @override
+  String get birthPlaceHint => 'शहराचे नाव टाइप करा...';
+
+  @override
+  String get generateKundli => 'कुंडली तयार करा';
+
+  @override
+  String get birthChartCreated => 'जन्म कुंडली तयार झाली!';
+
+  @override
+  String get deleteChart => 'कुंडली हटवायची?';
+
+  @override
+  String get cannotUndo => 'हे पूर्ववत करता येणार नाही.';
+
+  @override
+  String get primary => 'प्राथमिक';
+
+  @override
+  String get viewKundli => 'कुंडली पहा';
+
+  @override
+  String get completeBirthChart => 'संपूर्ण जन्म कुंडली';
+
+  @override
+  String get birthDetails => 'जन्म तपशील';
+
+  @override
+  String get name => 'नाव';
+
+  @override
+  String get dob => 'जन्मतारीख';
+
+  @override
+  String get tob => 'जन्मवेळ';
+
+  @override
+  String get place => 'ठिकाण';
+
+  @override
+  String get summary => 'सारांश';
+
+  @override
+  String get planets => 'ग्रह';
+
+  @override
+  String get divisions => 'विभाग';
+
+  @override
+  String get vimshottari => 'विंशोत्तरी';
+
+  @override
+  String get moola => 'मूळ';
+
+  @override
+  String get gochar => 'गोचर';
+
+  @override
+  String get dosh => 'दोष';
+
+  @override
+  String get yoga => 'योग';
+
+  @override
+  String get shadbala => 'षड्बल';
+
+  @override
+  String get ashtakavarga => 'अष्टकवर्ग';
+
+  @override
+  String get aspects => 'दृष्टी';
+
+  @override
+  String get lifeAreas => 'जीवन क्षेत्रे';
+
+  @override
+  String get bhava => 'भाव';
+
+  @override
+  String get chakras => 'चक्रे';
+
+  @override
+  String get dashaActive => 'दशा सक्रिय';
+
+  @override
+  String get lagna => 'लग्न';
+
+  @override
+  String get moon => 'चंद्र';
+
+  @override
+  String get sun => 'सूर्य';
+
+  @override
+  String get premiumSection => 'प्रीमियम विभाग';
+
+  @override
+  String get unlockReading => 'तपशीलवार विश्लेषण पाहण्यासाठी अनलॉक करा.';
+
+  @override
+  String get unlock => 'अनलॉक';
+
+  @override
+  String get retrograde => 'वक्री';
+
+  @override
+  String get combust => 'अस्त';
+
+  @override
+  String get vargottama => 'वर्गोत्तम';
+
+  @override
+  String get exalted => 'उच्च';
+
+  @override
+  String get debilitated => 'नीच';
+
+  @override
+  String get addBalance => 'शिल्लक जोडा';
+
+  @override
+  String get amount => 'रक्कम';
+
+  @override
+  String get walletBalance => 'वॉलेट शिल्लक';
+
+  @override
+  String get recharge => 'रिचार्ज';
+
+  @override
+  String get bonus => 'बोनस';
+
+  @override
+  String get serviceLabel => 'सेवा';
+
+  @override
+  String get refund => 'परतावा';
+
+  @override
+  String get noTransactions => 'व्यवहार नाहीत';
+
+  @override
+  String get editProfile => 'प्रोफाइल संपादित करा';
+
+  @override
+  String get savedAstrologers => 'जतन केलेले ज्योतिषी';
+
+  @override
+  String get noSavedAstrologers => 'अद्याप जतन केलेले ज्योतिषी नाहीत';
+
+  @override
+  String get myOrders => 'माझ्या ऑर्डर';
+
+  @override
+  String get communicationHistory => 'संवाद इतिहास';
+
+  @override
+  String get chatHistory => 'चॅट इतिहास';
+
+  @override
+  String get callHistory => 'कॉल इतिहास';
+
+  @override
+  String get logout => 'लॉगआउट';
+
+  @override
+  String get chatMessages => 'चॅट संदेश';
+
+  @override
+  String get typeMessage => 'संदेश लिहा...';
+
+  @override
+  String get sessionEnded => 'सत्र संपले';
+
+  @override
+  String get endChat => 'चॅट संपवायची?';
+
+  @override
+  String get endChatConfirm => 'तुम्हाला खात्री आहे की हे चॅट सत्र संपवायचे आहे?';
+
+  @override
+  String get sendPhoto => 'फोटो पाठवा';
+
+  @override
+  String get sendPDF => 'PDF पाठवा';
+
+  @override
+  String get upload => 'अपलोड';
+
+  @override
+  String get fileNotFound => 'फाइल सापडली नाही';
+
+  @override
+  String get voiceCall => 'व्हॉइस कॉल';
+
+  @override
+  String get videoCall => 'व्हिडिओ कॉल';
+
+  @override
+  String get ringing => 'रिंग होत आहे...';
+
+  @override
+  String get connected => 'जोडलेले';
+
+  @override
+  String get endCall => 'कॉल संपवा';
+
+  @override
+  String get mute => 'म्यूट';
+
+  @override
+  String get unmute => 'अनम्यूट';
+
+  @override
+  String get speaker => 'स्पीकर';
+
+  @override
+  String get camera => 'कॅमेरा';
+
+  @override
+  String get flip => 'फ्लिप';
+
+  @override
+  String get liveStreams => 'लाइव्ह स्ट्रीम्स';
+
+  @override
+  String get noLiveStreams => 'सध्या लाइव्ह स्ट्रीम नाहीत';
+
+  @override
+  String get astrologerUnavailable => 'ज्योतिषी उपलब्ध नाहीत. स्ट्रीम संपत आहे.';
+
+  @override
+  String get streamEnded => 'स्ट्रीम संपली';
+
+  @override
+  String get superChat => 'सुपर चॅट';
+
+  @override
+  String get sendGift => 'भेट पाठवा';
+
+  @override
+  String get goBack => 'मागे जा';
+
+  @override
+  String get appPermissions => 'अॅप परवानग्या';
+
+  @override
+  String get grantPermissions => 'परवानग्या द्या';
+
+  @override
+  String get skipForNow => 'सध्या वगळा';
+
+  @override
+  String get microphone => 'मायक्रोफोन';
+
+  @override
+  String get notifications => 'सूचना';
+
+  @override
+  String get storage => 'स्टोरेज';
+
+  @override
+  String get ok => 'ठीक आहे';
+
+  @override
+  String get cancel => 'रद्द करा';
+
+  @override
+  String get save => 'जतन करा';
+
+  @override
+  String get edit => 'संपादित करा';
+
+  @override
+  String get delete => 'हटवा';
+
+  @override
+  String get retry => 'पुन्हा प्रयत्न करा';
+
+  @override
+  String get send => 'पाठवा';
+
+  @override
+  String get refresh => 'रिफ्रेश';
+
+  @override
+  String get loading => 'लोड होत आहे...';
+
+  @override
+  String get noData => 'डेटा उपलब्ध नाही';
+
+  @override
+  String get error => 'त्रुटी';
+
+  @override
+  String get success => 'यशस्वी';
+
+  @override
+  String get selectLanguage => 'भाषा निवडा';
+
+  @override
+  String get language => 'भाषा';
+
+  @override
+  String get english => 'English';
+
+}

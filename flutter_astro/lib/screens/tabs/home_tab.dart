@@ -144,11 +144,11 @@ class _HomeTabState extends State<HomeTab> {
             const Text('Request Summary', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
             Row(children: [
-              _RequestCountChip(icon: Icons.chat_bubble, label: 'Chat', count: stats['chat_requests'] ?? 0),
+              _RequestCountChip(icon: Icons.chat_bubble, label: 'Chat', count: stats['chat_requests'] ?? 0, color: AppColors.aurora),
               const SizedBox(width: 10),
-              _RequestCountChip(icon: Icons.phone, label: 'Voice', count: stats['voice_requests'] ?? 0, isPrimary: true),
+              _RequestCountChip(icon: Icons.phone, label: 'Voice', count: stats['voice_requests'] ?? 0, color: AppColors.success),
               const SizedBox(width: 10),
-              _RequestCountChip(icon: Icons.videocam, label: 'Video', count: stats['video_requests'] ?? 0),
+              _RequestCountChip(icon: Icons.videocam, label: 'Video', count: stats['video_requests'] ?? 0, color: AppColors.gold),
             ]),
             const SizedBox(height: 20),
 
