@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
 import 'services/fcm_service.dart';
@@ -17,6 +20,7 @@ import 'screens/home/home_screen.dart';
 import 'screens/permission_screen.dart';
 
 bool _showPermissions = false;
+Locale? _savedLocale;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,11 +31,30 @@ void main() async {
     debugPrint('FCM init failed (non-fatal): $e');
   }
   _showPermissions = await shouldShowPermissionScreen();
+  final prefs = await SharedPreferences.getInstance();
+  final langCode = prefs.getString('app_language');
+  if (langCode != null) _savedLocale = Locale(langCode);
   runApp(const NakshtralogyAstroApp());
 }
 
-class NakshtralogyAstroApp extends StatelessWidget {
+class NakshtralogyAstroApp extends StatefulWidget {
   const NakshtralogyAstroApp({super.key});
+
+  static void setLocale(BuildContext context, Locale locale) {
+    context.findAncestorStateOfType<_NakshtralogyAstroAppState>()?.setLocale(locale);
+  }
+
+  @override
+  State<NakshtralogyAstroApp> createState() => _NakshtralogyAstroAppState();
+}
+
+class _NakshtralogyAstroAppState extends State<NakshtralogyAstroApp> {
+  Locale? _locale = _savedLocale;
+
+  void setLocale(Locale locale) {
+    setState(() => _locale = locale);
+    SharedPreferences.getInstance().then((p) => p.setString('app_language', locale.languageCode));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +73,9 @@ class NakshtralogyAstroApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
         navigatorKey: navigatorKey,
+        locale: _locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         home: _showPermissions ? const _PermissionGate() : const _AuthGate(),
       ),
     );
