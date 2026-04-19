@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -23,13 +24,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<_NavItem> _navItems = const [
-    _NavItem(Icons.home, 'Home'),
-    _NavItem(Icons.star, 'Astrologers'),
-    _NavItem(Icons.menu_book, 'Services'),
-    _NavItem(Icons.account_balance_wallet, 'Wallet'),
-    _NavItem(Icons.person, 'Profile'),
-  ];
+  List<_NavItem> _navItems(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return [
+      _NavItem(Icons.home, l.home),
+      _NavItem(Icons.star, l.astrologers),
+      _NavItem(Icons.menu_book, l.services),
+      _NavItem(Icons.account_balance_wallet, l.wallet),
+      _NavItem(Icons.person, l.profile),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SafeArea(
             top: false,
             child: Row(
-              children: List.generate(_navItems.length, (i) {
+              children: List.generate(_navItems(context).length, (i) {
                 final selected = _currentIndex == i;
+                final items = _navItems(context);
                 return Expanded(
                   child: InkWell(
                     onTap: () => setState(() => _currentIndex = i),
@@ -134,16 +139,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _navItems[i].icon,
+                            items[i].icon,
                             size: 22,
-                            color: selected ? AppColors.primary : AppColors.textSecondary,
+                            color: selected ? AppColors.gold : AppColors.smoke,
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            _navItems[i].label,
+                            items[i].label,
                             style: TextStyle(
                               fontSize: 10,
-                              color: selected ? AppColors.primary : AppColors.textSecondary,
+                              color: selected ? AppColors.gold : AppColors.smoke,
                             ),
                           ),
                         ],

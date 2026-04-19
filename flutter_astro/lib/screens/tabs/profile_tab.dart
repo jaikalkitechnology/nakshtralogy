@@ -6,6 +6,7 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/astro_profile/astro_profile_bloc.dart';
 import '../../bloc/astro_profile/astro_profile_event.dart';
 import '../../bloc/astro_profile/astro_profile_state.dart';
+import '../../widgets/language_selector.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -273,6 +274,30 @@ class _ProfileTabState extends State<ProfileTab> {
               ]),
             ),
             const SizedBox(height: 20),
+
+            // ── Language ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => LanguageSelector.show(context),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.language, color: AppColors.gold, size: 22),
+                  const SizedBox(width: 12),
+                  const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('Language / \u092d\u093e\u0937\u093e', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text('Tap to change app language', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  ])),
+                  const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                ]),
+              ),
+            ),
 
             // ── Logout ──
             OutlinedButton.icon(

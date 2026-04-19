@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -112,13 +113,16 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  static const _navItems = [
-    _NavItem(Icons.home, 'Home'),
-    _NavItem(Icons.auto_awesome, 'Charts'),
-    _NavItem(Icons.notifications, 'Requests'),
-    _NavItem(Icons.account_balance_wallet, 'Earnings'),
-    _NavItem(Icons.person, 'Profile'),
-  ];
+  List<_NavItem> _navItems(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return [
+      _NavItem(Icons.home, l.dashboard),
+      _NavItem(Icons.auto_awesome, l.charts),
+      _NavItem(Icons.notifications, l.requests),
+      _NavItem(Icons.account_balance_wallet, l.earnings),
+      _NavItem(Icons.person, l.profile),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -232,14 +236,15 @@ class _HomeScreenState extends State<HomeScreen> {
             bottomNavigationBar: Container(
               decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.95), border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15)))),
               child: Row(
-                children: List.generate(_navItems.length, (i) {
+                children: List.generate(_navItems(context).length, (i) {
                   final selected = _currentIndex == i;
+                  final items = _navItems(context);
                   return Expanded(child: InkWell(
                     onTap: () => setState(() => _currentIndex = i),
                     child: Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(_navItems[i].icon, size: 24, color: selected ? AppColors.primary : AppColors.textSecondary),
+                      Icon(items[i].icon, size: 24, color: selected ? AppColors.gold : AppColors.smoke),
                       const SizedBox(height: 2),
-                      Text(_navItems[i].label, style: TextStyle(fontSize: 11, color: selected ? AppColors.primary : AppColors.textSecondary)),
+                      Text(items[i].label, style: TextStyle(fontSize: 11, color: selected ? AppColors.gold : AppColors.smoke)),
                     ])),
                   ));
                 }),
