@@ -13,6 +13,7 @@ import '../tabs/services_tab.dart';
 import '../tabs/wallet_tab.dart';
 import '../tabs/profile_tab.dart';
 import '../communication/live_viewer_screen.dart';
+import '../charts/my_charts_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -112,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
             HomeTab(
               onSeeAllAstrologers: () => setState(() => _currentIndex = 1),
               onSeeAllServices: () => setState(() => _currentIndex = 2),
+              onOpenKundli: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyChartsScreen())),
             ),
             const AstrologersTab(),
             const ServicesTab(),

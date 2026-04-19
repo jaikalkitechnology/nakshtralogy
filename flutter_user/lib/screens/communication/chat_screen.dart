@@ -62,9 +62,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   void _sendEndSession() {
-    try {
-      _channel?.sink.add(jsonEncode({'type': 'end_session'}));
-    } catch (_) {}
+    if (!_connected) {
+      // Still in "waiting" state — cancel via REST API to get refund
+      _api.chatAction(widget.sessionId, 'cancel').catchError((_) {});
+    } else {
+      try {
+        _channel?.sink.add(jsonEncode({'type': 'end_session'}));
+      } catch (_) {}
+    }
   }
 
   Future<void> _connect() async {
@@ -259,7 +264,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              _channel?.sink.add(jsonEncode({'type': 'end_session'}));
+              _sendEndSession();
+              Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             child: const Text('End Chat'),

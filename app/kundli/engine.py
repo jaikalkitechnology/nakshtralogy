@@ -3297,29 +3297,36 @@ def get_current_dasha_lords(pdata: dict, birth_jd: float, query_jd: float = None
 
     moon_lon = pdata.get("Moon",{}).get("lon",0)
     v_dashas, v_balance, v_lord = vimshottari_dasha(moon_lon, birth_jd)
-    ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, birth_jd)
+    try:
+        ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, birth_jd)
+    except Exception:
+        ml_dashas = []
 
-    def _find_level(dashas, jd, depth=0):
+    def _find_level(dashas, jd):
         for md in dashas:
-            if md["start_jd"] <= jd <= md["end_jd"]:
-                if depth == 0:
-                    # Find AD
-                    for ad in md.get("sub", []):
-                        if ad["start_jd"] <= jd <= ad["end_jd"]:
-                            pd_lord = None
-                            for pd in ad.get("sub", []):
-                                if pd["start_jd"] <= jd <= pd["end_jd"]:
-                                    pd_lord = pd["planet"]
-                                    break
-                            return {
-                                "md": md["planet"],
-                                "md_start": jd_to_date(md["start_jd"]),
-                                "md_end":   jd_to_date(md["end_jd"]),
-                                "ad": ad["planet"],
-                                "ad_start": jd_to_date(ad["start_jd"]),
-                                "ad_end":   jd_to_date(ad["end_jd"]),
-                                "pd": pd_lord,
-                            }
+            s, e = md.get("start_jd",0), md.get("end_jd",0)
+            if s <= jd <= e:
+                ad_info = {}
+                for ad in md.get("sub", md.get("antardashas", [])):
+                    if ad.get("start_jd",0) <= jd <= ad.get("end_jd",0):
+                        pd_lord = None
+                        for pd in ad.get("sub", []):
+                            if pd.get("start_jd",0) <= jd <= pd.get("end_jd",0):
+                                pd_lord = pd["planet"]
+                                break
+                        ad_info = {
+                            "ad": ad["planet"],
+                            "ad_start": jd_to_date(ad["start_jd"]),
+                            "ad_end":   jd_to_date(ad["end_jd"]),
+                            "pd": pd_lord,
+                        }
+                        break
+                return {
+                    "md": md["planet"],
+                    "md_start": jd_to_date(s),
+                    "md_end":   jd_to_date(e),
+                    **ad_info,
+                }
         return {}
 
     vim_lords  = _find_level(v_dashas, query_jd)

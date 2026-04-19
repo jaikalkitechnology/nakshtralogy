@@ -323,6 +323,15 @@ class ApiService {
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};
   }
 
+  Future<Map<String, dynamic>> uploadProfileImage(String filePath, String fileName) async {
+    final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.commBase}/chat/file/upload'));
+    request.headers.addAll(_headers);
+    request.files.add(await http.MultipartFile.fromPath('file', filePath, filename: fileName));
+    final streamedResp = await request.send();
+    final body = await streamedResp.stream.bytesToString();
+    return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};
+  }
+
   // ── Dashboard (stats + recent requests) ─────────────────────
 
   Future<Map<String, dynamic>> getMyStats() async {
