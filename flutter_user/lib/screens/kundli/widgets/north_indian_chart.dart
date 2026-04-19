@@ -82,25 +82,28 @@ class NorthIndianChartWidget extends StatelessWidget {
     ]);
   }
 
-  /// Positions & sizes for each house's text area (center x,y + width,height).
+  /// House positions — North Indian traditional (counterclockwise from H1 at top).
+  /// H1=top, H2=upper-left, H3=left-corner, H4=left, H5=lower-left,
+  /// H6=bottom-left, H7=bottom, H8=bottom-right, H9=right-corner,
+  /// H10=right, H11=upper-right, H12=top-right.
   Map<int, Map<String, double>> _housePositions(double w) {
-    final cw = w * 0.22; // cell width for corner houses
-    final ch = w * 0.16; // cell height for corner houses
-    final dw = w * 0.24; // diamond cell width
-    final dh = w * 0.20; // diamond cell height
+    final cw = w * 0.22;
+    final ch = w * 0.16;
+    final dw = w * 0.24;
+    final dh = w * 0.20;
     return {
       1:  {'x': w * 0.50, 'y': w * 0.18, 'w': dw, 'h': dh},
-      2:  {'x': w * 0.74, 'y': w * 0.08, 'w': cw, 'h': ch},
-      3:  {'x': w * 0.90, 'y': w * 0.24, 'w': cw, 'h': ch},
-      4:  {'x': w * 0.78, 'y': w * 0.50, 'w': dw, 'h': dh},
-      5:  {'x': w * 0.90, 'y': w * 0.76, 'w': cw, 'h': ch},
-      6:  {'x': w * 0.74, 'y': w * 0.92, 'w': cw, 'h': ch},
+      2:  {'x': w * 0.26, 'y': w * 0.08, 'w': cw, 'h': ch},
+      3:  {'x': w * 0.10, 'y': w * 0.24, 'w': cw, 'h': ch},
+      4:  {'x': w * 0.22, 'y': w * 0.50, 'w': dw, 'h': dh},
+      5:  {'x': w * 0.10, 'y': w * 0.76, 'w': cw, 'h': ch},
+      6:  {'x': w * 0.26, 'y': w * 0.92, 'w': cw, 'h': ch},
       7:  {'x': w * 0.50, 'y': w * 0.82, 'w': dw, 'h': dh},
-      8:  {'x': w * 0.26, 'y': w * 0.92, 'w': cw, 'h': ch},
-      9:  {'x': w * 0.10, 'y': w * 0.76, 'w': cw, 'h': ch},
-      10: {'x': w * 0.22, 'y': w * 0.50, 'w': dw, 'h': dh},
-      11: {'x': w * 0.10, 'y': w * 0.24, 'w': cw, 'h': ch},
-      12: {'x': w * 0.26, 'y': w * 0.08, 'w': cw, 'h': ch},
+      8:  {'x': w * 0.74, 'y': w * 0.92, 'w': cw, 'h': ch},
+      9:  {'x': w * 0.90, 'y': w * 0.76, 'w': cw, 'h': ch},
+      10: {'x': w * 0.78, 'y': w * 0.50, 'w': dw, 'h': dh},
+      11: {'x': w * 0.90, 'y': w * 0.24, 'w': cw, 'h': ch},
+      12: {'x': w * 0.74, 'y': w * 0.08, 'w': cw, 'h': ch},
     };
   }
 
