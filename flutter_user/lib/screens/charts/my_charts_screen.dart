@@ -69,8 +69,9 @@ class MyChartsScreen extends StatelessWidget {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.card, borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isPrimary ? AppColors.primary.withOpacity(0.5) : AppColors.border),
+                    color: Colors.white.withOpacity(0.04),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: isPrimary ? AppColors.gold.withOpacity(0.4) : AppColors.gold.withOpacity(0.12)),
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
@@ -92,18 +93,19 @@ class MyChartsScreen extends StatelessWidget {
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Row(children: [
-                          Text(c['name'] ?? '', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 15)),
+                          Flexible(child: Text(c['name'] ?? '', style: const TextStyle(color: AppColors.ivory, fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis)),
                           if (isPrimary) ...[
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                              decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
-                              child: Text(l.primary, style: const TextStyle(color: AppColors.primary, fontSize: 9, fontWeight: FontWeight.bold)),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
+                              child: Text(l.primary, style: const TextStyle(color: AppColors.gold, fontSize: 8, fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ]),
                         const SizedBox(height: 4),
-                        Text('${c['dob']} ${c['tob']} \u2022 ${c['place']}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12), overflow: TextOverflow.ellipsis),
+                        Text('${c['dob']} ${c['tob']}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                        Text(c['place']?.toString() ?? '', style: const TextStyle(color: AppColors.smoke, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
                       ]),
                     ),
                     IconButton(
