@@ -889,4 +889,3183 @@
     margin-left: 8px;
   }
 
-  .
+  .super-chat {
+    position: absolute;
+    bottom: 160px;
+    left: 16px;
+    right: 60px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #E8689C 0%, #E07A3C 100%);
+    border-radius: 12px;
+    border-top-left-radius: 4px;
+    z-index: 3;
+    box-shadow: 0 10px 30px rgba(232,104,156,0.4);
+  }
+
+  .super-chat .sc-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+  }
+
+  .super-chat .sc-amount {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    margin-left: auto;
+  }
+
+  .super-chat .sc-msg {
+    font-size: 10px;
+    color: white;
+    font-weight: 500;
+  }
+
+  .regular-chat {
+    position: absolute;
+    bottom: 130px;
+    left: 16px;
+    font-size: 10px;
+    color: white;
+    z-index: 3;
+  }
+
+  .regular-chat strong { color: var(--gold); font-weight: 600; }
+
+  .stream-actions {
+    position: absolute;
+    bottom: 70px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 3;
+  }
+
+  .stream-input {
+    flex: 1;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    padding: 8px 14px;
+    color: rgba(255,255,255,0.6);
+    font-size: 10px;
+  }
+
+  .stream-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .stream-btn.gold {
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    border: 0;
+    color: var(--midnight);
+  }
+
+  /* === ASTROLOGER SCREENS === */
+  .astro-header {
+    padding: 12px 20px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .astro-greeting .greeting-sub {
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .astro-greeting .greeting-name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .astro-greeting .greeting-name em { color: var(--gold); font-style: italic; }
+
+  .online-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(107,184,138,0.15);
+    border: 1px solid rgba(107,184,138,0.4);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 9px;
+    color: var(--success);
+    font-weight: 600;
+  }
+
+  .online-dot {
+    width: 8px; height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--success);
+  }
+
+  /* === ASTRO STATS === */
+  .stats-grid {
+    padding: 12px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, rgba(26,22,66,0.8), rgba(74,59,140,0.4));
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 16px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card.primary {
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    border: 0;
+  }
+
+  .stat-card.primary .stat-label,
+  .stat-card.primary .stat-value,
+  .stat-card.primary .stat-change { color: var(--midnight); }
+
+  .stat-label {
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-change {
+    font-size: 9px;
+    color: var(--success);
+    font-family: var(--font-mono);
+  }
+
+  .dashboard-section {
+    padding: 12px 20px 0;
+  }
+
+  .booking-item {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.12);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .booking-time {
+    background: rgba(232,181,71,0.15);
+    border: 1px solid rgba(232,181,71,0.3);
+    border-radius: 10px;
+    padding: 6px 8px;
+    text-align: center;
+    min-width: 46px;
+  }
+
+  .booking-time .time {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .booking-time .period {
+    font-size: 7px;
+    color: var(--gold);
+    font-family: var(--font-mono);
+  }
+
+  .booking-info { flex: 1; }
+
+  .booking-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 2px;
+  }
+
+  .booking-type {
+    font-size: 9px;
+    color: var(--smoke);
+  }
+
+  .booking-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--cosmic-pink));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+  }
+
+  /* === ASTRO VIDEO CALL === */
+  .video-call-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, #4A3B8C 0%, #1A1642 60%, #06061A 100%);
+  }
+
+  .client-video {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory);
+  }
+
+  .client-video-avatar {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--saffron), var(--cosmic-pink));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 600;
+    color: white;
+    border: 3px solid rgba(232,181,71,0.5);
+    box-shadow: 0 0 60px rgba(232,104,156,0.5);
+    position: relative;
+  }
+
+  .client-video-avatar::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(232,181,71,0.3);
+    animation: ripple 3s infinite;
+  }
+
+  @keyframes ripple {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+
+  .client-video-name {
+    position: absolute;
+    bottom: 180px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--ivory);
+    z-index: 3;
+  }
+
+  .call-timer {
+    position: absolute;
+    top: 50px; left: 0; right: 0;
+    text-align: center;
+    z-index: 3;
+  }
+
+  .call-status {
+    font-size: 9px;
+    color: var(--success);
+    font-family: var(--font-mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .call-time {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ivory);
+    font-weight: 500;
+  }
+
+  .self-video {
+    position: absolute;
+    top: 90px; right: 16px;
+    width: 80px; height: 110px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--indigo), var(--twilight));
+    border: 1px solid rgba(232,181,71,0.3);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 6px;
+    z-index: 3;
+  }
+
+  .self-video-label {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+  }
+
+  .call-controls {
+    position: absolute;
+    bottom: 40px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    z-index: 3;
+  }
+
+  .call-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .call-btn.end {
+    background: var(--danger);
+    border: 0;
+    box-shadow: 0 8px 20px rgba(217,85,85,0.5);
+  }
+
+  .call-earnings {
+    position: absolute;
+    top: 90px; left: 16px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(232,181,71,0.3);
+    border-radius: 10px;
+    padding: 6px 10px;
+    z-index: 3;
+  }
+
+  .call-earnings .amount {
+    font-family: var(--font-display);
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .call-earnings .label {
+    font-size: 7px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+
+  /* === ASTRO CHAT === */
+  .chat-header {
+    padding: 10px 20px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(232,181,71,0.1);
+  }
+
+  .chat-back {
+    width: 28px; height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory);
+  }
+
+  .chat-client {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--aurora), var(--indigo));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-family: var(--font-display);
+  }
+
+  .chat-client-info { flex: 1; }
+
+  .chat-client-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+
+  .chat-client-status {
+    font-size: 9px;
+    color: var(--success);
+    font-family: var(--font-mono);
+  }
+
+  .timer-badge {
+    background: rgba(232,181,71,0.15);
+    border: 1px solid rgba(232,181,71,0.4);
+    color: var(--gold);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .chat-messages {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: calc(100% - 200px);
+    overflow: hidden;
+  }
+
+  .chat-bubble.client {
+    background: rgba(74,59,140,0.4);
+    border: 1px solid rgba(184,167,224,0.2);
+    color: var(--ivory);
+    align-self: flex-start;
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    border-bottom-left-radius: 4px;
+    font-size: 10px;
+  }
+
+  .chat-bubble.astro {
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    color: var(--midnight);
+    align-self: flex-end;
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    border-bottom-right-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+
+  .chat-timestamp {
+    font-size: 7px;
+    color: var(--smoke);
+    text-align: center;
+    font-family: var(--font-mono);
+    margin: 4px 0;
+  }
+
+  /* === ASTRO EARNINGS === */
+  .earnings-hero {
+    margin: 12px 20px;
+    padding: 20px;
+    border-radius: 20px;
+    background:
+      linear-gradient(135deg, rgba(232,181,71,0.9), rgba(224,122,60,0.9)),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3), transparent 50%);
+    color: var(--midnight);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .earnings-hero::before {
+    content: '✧';
+    position: absolute;
+    top: -20px; right: -10px;
+    font-size: 120px;
+    color: rgba(255,255,255,0.15);
+  }
+
+  .earnings-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+
+  .earnings-amount {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .earnings-amount .currency {
+    font-size: 20px;
+    vertical-align: super;
+  }
+
+  .earnings-sub {
+    font-size: 10px;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+
+  .earnings-chart {
+    margin: 12px 20px;
+    padding: 14px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 16px;
+  }
+
+  .chart-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 80px;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .chart-bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--gold), rgba(232,181,71,0.2));
+    border-radius: 4px 4px 0 0;
+    position: relative;
+  }
+
+  .chart-bar.active {
+    background: linear-gradient(180deg, var(--gold-bright), var(--saffron));
+    box-shadow: 0 0 10px rgba(232,181,71,0.5);
+  }
+
+  .chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+  }
+
+  .transactions-list {
+    padding: 0 20px;
+  }
+
+  .txn-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(232,181,71,0.08);
+  }
+
+  .txn-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: rgba(107,184,138,0.15);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .txn-info { flex: 1; }
+
+  .txn-title {
+    font-size: 10px;
+    color: var(--ivory);
+    font-weight: 500;
+  }
+
+  .txn-time {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+  }
+
+  .txn-amount {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--success);
+    font-size: 13px;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-top: 1px solid rgba(232,181,71,0.15);
+    background: radial-gradient(ellipse at bottom, rgba(74,59,140,0.2), transparent 70%);
+  }
+
+  .footer-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .footer-title em { font-style: italic; color: var(--gold); }
+
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--smoke);
+    letter-spacing: 0.1em;
+  }
+
+  /* === PRINT + RESPONSIVE === */
+  @media (max-width: 768px) {
+    .type-grid { grid-template-columns: 1fr; }
+    .section { padding: 60px 20px; }
+    .hero h1 { font-size: 56px; }
+    .section-title { font-size: 32px; }
+  }
+
+  /* === NEW: FILTER CHIPS === */
+  .filter-bar {
+    padding: 8px 16px 12px;
+    display: flex;
+    gap: 6px;
+    overflow-x: hidden;
+  }
+
+  .filter-chip {
+    font-size: 9px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(232,181,71,0.2);
+    color: var(--lavender);
+    white-space: nowrap;
+  }
+
+  .filter-chip.active {
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    color: var(--midnight);
+    border-color: transparent;
+    font-weight: 700;
+  }
+
+  .search-field {
+    margin: 8px 20px;
+    background: rgba(26,22,66,0.6);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 999px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--smoke);
+    font-size: 10px;
+  }
+
+  .search-field svg { flex-shrink: 0; color: var(--gold); }
+
+  /* === NEW: SERVICE CARDS === */
+  .service-card {
+    background: linear-gradient(135deg, rgba(26,22,66,0.8), rgba(74,59,140,0.3));
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 16px;
+    padding: 14px;
+    margin: 0 20px 10px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .service-card.featured {
+    background: linear-gradient(135deg, rgba(232,181,71,0.2), rgba(224,122,60,0.15));
+    border: 1px solid rgba(232,181,71,0.4);
+  }
+
+  .service-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .service-info { flex: 1; min-width: 0; }
+
+  .service-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 2px;
+  }
+
+  .service-desc {
+    font-size: 9px;
+    color: var(--smoke);
+    line-height: 1.3;
+  }
+
+  .service-price {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .service-price .amount {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .service-price .label {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+  }
+
+  /* === NEW: CHART LIST === */
+  .chart-list-item {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.12);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin: 0 20px 8px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .chart-list-avatar {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--indigo), var(--cosmic-pink));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .chart-list-info { flex: 1; min-width: 0; }
+
+  .chart-list-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 2px;
+  }
+
+  .chart-list-meta {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  .chart-list-tag {
+    font-size: 8px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(232,181,71,0.15);
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* === NEW: SLIDER CAROUSEL FOR KUNDLI VIEWS === */
+  .slider-wrap {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 0 20px 20px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .slider-wrap::-webkit-scrollbar { display: none; }
+  .slider-wrap { scrollbar-width: none; }
+
+  .slider-phone {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+  }
+
+  .page-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    position: absolute;
+    bottom: 78px;
+    left: 0; right: 0;
+    z-index: 3;
+  }
+
+  .page-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .page-dot.active {
+    width: 18px;
+    border-radius: 3px;
+    background: var(--gold);
+  }
+
+  /* === NEW: PROFILE === */
+  .profile-header {
+    padding: 24px 20px 16px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .profile-avatar-lg {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--midnight);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 34px;
+    border: 3px solid rgba(232,181,71,0.5);
+    box-shadow: 0 0 30px rgba(232,181,71,0.3);
+  }
+
+  .profile-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 3px;
+  }
+
+  .profile-sign {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .profile-stats-row {
+    display: flex;
+    justify-content: space-around;
+    padding: 14px 20px;
+    margin: 10px 16px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 14px;
+  }
+
+  .profile-stat { text-align: center; }
+
+  .profile-stat-value {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .profile-stat-label {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-top: 3px;
+  }
+
+  .profile-menu {
+    padding: 8px 16px;
+  }
+
+  .profile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    color: var(--ivory);
+    margin-bottom: 4px;
+    background: rgba(26,22,66,0.3);
+  }
+
+  .profile-menu-icon {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, rgba(232,181,71,0.2), rgba(232,181,71,0.05));
+    border: 1px solid rgba(232,181,71,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  .profile-menu-label { flex: 1; }
+
+  .profile-menu-arrow {
+    color: var(--smoke);
+    font-size: 12px;
+  }
+
+  /* === NEW: KUNDLI DETAIL SECTIONS === */
+  .detail-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px 6px;
+    color: var(--ivory);
+  }
+
+  .detail-section-title em { font-style: italic; color: var(--gold); }
+
+  .yog-card {
+    margin: 0 20px 8px;
+    background: linear-gradient(135deg, rgba(232,181,71,0.12), rgba(232,181,71,0.02));
+    border: 1px solid rgba(232,181,71,0.25);
+    border-radius: 14px;
+    padding: 12px;
+  }
+
+  .yog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .yog-name {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  .yog-badge {
+    font-size: 8px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  .yog-badge.auspicious { background: rgba(107,184,138,0.2); color: var(--success); }
+  .yog-badge.caution { background: rgba(217,85,85,0.2); color: var(--danger); }
+
+  .yog-desc {
+    font-size: 9px;
+    color: var(--lavender);
+    line-height: 1.4;
+  }
+
+  .career-item {
+    margin: 0 20px 8px;
+    padding: 12px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .career-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--aurora), var(--indigo));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .career-info { flex: 1; }
+
+  .career-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 2px;
+  }
+
+  .career-desc {
+    font-size: 9px;
+    color: var(--smoke);
+    line-height: 1.3;
+  }
+
+  .career-score {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 20px 10px;
+  }
+
+  .summary-item {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.12);
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  .summary-item .label {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .summary-item .value {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+
+  /* Pill-style slide header */
+  .slide-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 8px 20px 10px;
+    overflow-x: hidden;
+  }
+
+  .slide-tab {
+    font-size: 9px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    color: var(--smoke);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .slide-tab.active {
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    color: var(--midnight);
+    font-weight: 700;
+  }
+
+  /* Sort/filter FAB */
+  .floating-action {
+    position: absolute;
+    bottom: 86px; right: 16px;
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--midnight);
+    box-shadow: 0 8px 20px rgba(232,181,71,0.4);
+    z-index: 4;
+  }
+
+  .new-vol-label {
+    display: inline-block;
+    padding: 8px 24px;
+    background: linear-gradient(135deg, rgba(232,104,156,0.2), rgba(224,122,60,0.15));
+    border: 1px solid rgba(232,104,156,0.3);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--cosmic-pink);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow">✦ Nakshtralogy Design System ✦</div>
+    <h1>The <em>Cosmic</em><br/>Blueprint</h1>
+    <div class="divider-star">
+      <span class="line"></span>
+      <span>✧</span>
+      <span class="line"></span>
+    </div>
+    <p>A unified design language for Nakshtralogy — where ancient Vedic wisdom meets contemporary digital craft. Built for the astrologer and the seeker.</p>
+  </header>
+
+  <!-- COLOR PALETTE -->
+  <section class="section">
+    <div class="section-label">01 — The Palette</div>
+    <h2 class="section-title">Celestial <em>chromatics</em></h2>
+    <p class="section-sub">Deep cosmic midnights anchor the experience. Sacred gold and saffron carry warmth and ceremony. Mystical lavenders and auroras add breath and movement.</p>
+
+    <div class="palette">
+      <div class="swatch"><div class="swatch-color" style="background:#0B0B2E"></div><div class="swatch-info"><div class="swatch-name">Midnight</div><div class="swatch-hex">#0B0B2E</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#06061A"></div><div class="swatch-info"><div class="swatch-name">Cosmic Void</div><div class="swatch-hex">#06061A</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1A1642"></div><div class="swatch-info"><div class="swatch-name">Nebula</div><div class="swatch-hex">#1A1642</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2D2458"></div><div class="swatch-info"><div class="swatch-name">Twilight</div><div class="swatch-hex">#2D2458</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E8B547"></div><div class="swatch-info"><div class="swatch-name">Sacred Gold</div><div class="swatch-hex">#E8B547</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F4CC6B"></div><div class="swatch-info"><div class="swatch-name">Gold Bright</div><div class="swatch-hex">#F4CC6B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E07A3C"></div><div class="swatch-info"><div class="swatch-name">Saffron</div><div class="swatch-hex">#E07A3C</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#D4896B"></div><div class="swatch-info"><div class="swatch-name">Rose Gold</div><div class="swatch-hex">#D4896B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#B8A7E0"></div><div class="swatch-info"><div class="swatch-name">Lavender</div><div class="swatch-hex">#B8A7E0</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#4A3B8C"></div><div class="swatch-info"><div class="swatch-name">Indigo</div><div class="swatch-hex">#4A3B8C</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E8689C"></div><div class="swatch-info"><div class="swatch-name">Cosmic Pink</div><div class="swatch-hex">#E8689C</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#7BC4C4"></div><div class="swatch-info"><div class="swatch-name">Aurora</div><div class="swatch-hex">#7BC4C4</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F5EEE0"></div><div class="swatch-info"><div class="swatch-name">Ivory</div><div class="swatch-hex">#F5EEE0</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EDE4D0"></div><div class="swatch-info"><div class="swatch-name">Parchment</div><div class="swatch-hex">#EDE4D0</div></div></div>
+    </div>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section class="section">
+    <div class="section-label">02 — Typography</div>
+    <h2 class="section-title">Voice in <em>print</em></h2>
+    <p class="section-sub">A serif for ritual and occasion. A sans for clarity and flow. A mono for data and precision.</p>
+
+    <div class="type-grid">
+      <div class="type-card">
+        <div class="type-card-label">Display — Headings</div>
+        <div class="type-sample-display">Aa <em>Bb</em></div>
+        <div class="type-meta">Cormorant Garamond · 400 / 500 / 600 / 700 + Italic</div>
+      </div>
+      <div class="type-card">
+        <div class="type-card-label">Body — UI Text</div>
+        <div class="type-sample-body">The stars align tonight.</div>
+        <div class="type-meta">Manrope · 300 / 400 / 500 / 600 / 700 / 800</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USER SCREENS -->
+  <section class="section">
+    <div class="screens-intro">
+      <div class="section-label">03 — The Experience</div>
+      <h2 class="section-title">For the <em>Seeker</em></h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Four essential moments in the user journey — from discovery to divine conversation.</p>
+      <div class="screen-group-label">USER APP · flutter_user</div>
+    </div>
+
+    <div class="screens-grid">
+
+      <!-- USER SCREEN 1: HOME -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div>
+                  <div style="font-size:9px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">NAMASTE, PRIYA</div>
+                  <div class="nav-title">Nakshtra<em>logy</em></div>
+                </div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+              </div>
+
+              <div class="hero-banner">
+                <div class="banner-eyebrow">Today's horoscope</div>
+                <div class="banner-title">Jupiter favors <em>bold moves</em></div>
+                <div class="banner-sub">Your career sector is illuminated — trust your instincts.</div>
+              </div>
+
+              <div class="quick-actions">
+                <div class="quick-action"><div class="qa-icon">💬</div><div class="qa-label">Chat</div></div>
+                <div class="quick-action"><div class="qa-icon">📞</div><div class="qa-label">Call</div></div>
+                <div class="quick-action"><div class="qa-icon">🎥</div><div class="qa-label">Video</div></div>
+                <div class="quick-action"><div class="qa-icon">📊</div><div class="qa-label">Kundli</div></div>
+              </div>
+
+              <div class="section-heading">
+                <div class="sh-title">Live Now</div>
+                <div class="sh-link">SEE ALL →</div>
+              </div>
+
+              <div class="astrologer-list">
+                <div class="astrologer-card">
+                  <div class="astrologer-avatar">R</div>
+                  <div class="astrologer-info">
+                    <div class="astrologer-name">Pandit Rajesh Sharma</div>
+                    <div class="astrologer-spec">Vedic · Kundli · Love</div>
+                    <div class="astrologer-stats">
+                      <span class="stat-pill">★ 4.9</span>
+                      <span class="stat-pill">· ₹25/min</span>
+                    </div>
+                  </div>
+                  <div class="cta-mini">CHAT</div>
+                </div>
+                <div class="astrologer-card">
+                  <div class="astrologer-avatar" style="background:linear-gradient(135deg,#7BC4C4,#4A3B8C);">A</div>
+                  <div class="astrologer-info">
+                    <div class="astrologer-name">Acharya Anjali Verma</div>
+                    <div class="astrologer-spec">Tarot · Numerology</div>
+                    <div class="astrologer-stats">
+                      <span class="stat-pill">★ 4.8</span>
+                      <span class="stat-pill">· ₹30/min</span>
+                    </div>
+                  </div>
+                  <div class="cta-mini">CALL</div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Home & Discovery</div>
+        <div class="screen-desc">USER · 01</div>
+      </div>
+
+      <!-- USER SCREEN 2: KUNDLI -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title">Your <em>Kundli</em></div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51L8.59 10.49"/></svg>
+                </div>
+              </div>
+
+              <div class="kundli-container">
+                <div class="kundli-chart">
+                  <svg viewBox="0 0 260 260" class="kundli-svg">
+                    <!-- North Indian style kundli -->
+                    <defs>
+                      <linearGradient id="kgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#E8B547" stop-opacity="0.3"/>
+                        <stop offset="100%" stop-color="#4A3B8C" stop-opacity="0.3"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- Outer square -->
+                    <rect x="10" y="10" width="240" height="240" fill="url(#kgrad)" stroke="#E8B547" stroke-width="2" rx="8"/>
+                    <!-- Diagonals -->
+                    <line x1="10" y1="10" x2="250" y2="250" stroke="#E8B547" stroke-width="1.5"/>
+                    <line x1="250" y1="10" x2="10" y2="250" stroke="#E8B547" stroke-width="1.5"/>
+                    <!-- Inner diamond -->
+                    <polygon points="130,10 250,130 130,250 10,130" fill="rgba(26,22,66,0.5)" stroke="#E8B547" stroke-width="1.5"/>
+                    <!-- House numbers with planets -->
+                    <text x="130" y="50" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="12" font-weight="600">1</text>
+                    <text x="130" y="65" text-anchor="middle" fill="#E8B547" font-size="9">Su Me</text>
+
+                    <text x="70" y="75" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">12</text>
+                    <text x="70" y="88" text-anchor="middle" fill="#B8A7E0" font-size="8">Ke</text>
+
+                    <text x="45" y="135" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">11</text>
+                    <text x="45" y="148" text-anchor="middle" fill="#E8689C" font-size="8">Sa</text>
+
+                    <text x="70" y="195" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">10</text>
+
+                    <text x="130" y="225" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">9</text>
+                    <text x="130" y="238" text-anchor="middle" fill="#E8B547" font-size="8">Ju Ma</text>
+
+                    <text x="190" y="195" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">8</text>
+
+                    <text x="215" y="135" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">7</text>
+                    <text x="215" y="148" text-anchor="middle" fill="#7BC4C4" font-size="8">Ve</text>
+
+                    <text x="190" y="75" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="11">6</text>
+                    <text x="190" y="88" text-anchor="middle" fill="#B8A7E0" font-size="8">Mo Ra</text>
+
+                    <text x="95" y="130" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="10">2</text>
+                    <text x="130" y="100" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="10">3</text>
+                    <text x="165" y="130" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="10">4</text>
+                    <text x="130" y="170" text-anchor="middle" fill="#F5EEE0" font-family="Cormorant Garamond" font-size="10">5</text>
+                  </svg>
+                </div>
+
+                <div class="kundli-info-card">
+                  <div class="kundli-info-row"><span class="label">Ascendant</span><span class="value">Leo (Simha)</span></div>
+                  <div class="kundli-info-row"><span class="label">Moon Sign</span><span class="value">Cancer (Karka)</span></div>
+                  <div class="kundli-info-row"><span class="label">Nakshatra</span><span class="value">Pushya · Pada 2</span></div>
+                  <div class="kundli-info-row"><span class="label">Current Dasha</span><span class="value">Jupiter · 3y 4m</span></div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Kundli & Charts</div>
+        <div class="screen-desc">USER · 02</div>
+      </div>
+
+      <!-- USER SCREEN 3: AI CHAT -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="ai-avatar-row">
+                <div class="icon-btn" style="width:28px;height:28px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="ai-avatar">✦</div>
+                <div>
+                  <div class="ai-name">Tara <em style="color:var(--gold);font-style:italic;">AI</em></div>
+                  <div class="ai-status">● Reading the stars</div>
+                </div>
+              </div>
+
+              <div class="ai-chat-body">
+                <div class="chat-bubble ai">Namaste Priya! ✨ I sense your energy is seeking clarity. What weighs on your heart today?</div>
+
+                <div class="chat-bubble user">Will this year be good for my career? I'm thinking of switching jobs.</div>
+
+                <div class="chat-bubble ai">The stars whisper of transformation. With Jupiter transiting your 10th house and Saturn's aspect on your Lagna, the next 90 days are auspicious for bold career moves.</div>
+
+                <div class="chat-bubble ai">However, wait until after Mercury retrograde ends on <strong style="color:var(--gold);">April 25th</strong> before signing any contracts. 🌙</div>
+
+                <div class="chat-bubble user">Which direction is best?</div>
+              </div>
+
+              <div class="chat-suggestions">
+                <div class="suggestion">💼 Career advice</div>
+                <div class="suggestion">💕 Love forecast</div>
+                <div class="suggestion">🌙 Today's transits</div>
+              </div>
+
+              <div class="chat-input">
+                <input placeholder="Ask the stars anything..." />
+                <button class="send-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+                </button>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">AI Chat · Tara</div>
+        <div class="screen-desc">USER · 03</div>
+      </div>
+
+      <!-- USER SCREEN 4: LIVE STREAM -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen">
+              <div class="live-stream-bg"></div>
+
+              <div class="status-bar" style="color:white;">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="stream-top">
+                <span class="live-badge">LIVE</span>
+                <span class="viewer-count">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+                  2.4K
+                </span>
+              </div>
+
+              <div class="streamer-info">
+                <div class="streamer-avatar">A</div>
+                <div>
+                  <div class="streamer-name">Acharya Anjali</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,0.7);">Live Q&A · Tarot reading</div>
+                </div>
+                <div class="follow-btn">+ FOLLOW</div>
+              </div>
+
+              <!-- Central streamer visual placeholder -->
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;text-align:center;">
+                <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--cosmic-pink),var(--saffron));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:48px;font-weight:600;color:white;border:3px solid rgba(232,181,71,0.5);box-shadow:0 0 40px rgba(232,104,156,0.5);margin:0 auto 10px;">A</div>
+                <div style="color:white;font-family:var(--font-display);font-size:16px;">Ask Anjali Anything</div>
+              </div>
+
+              <!-- Regular chat messages -->
+              <div style="position:absolute;bottom:220px;left:16px;z-index:3;font-size:10px;color:white;">
+                <div style="margin-bottom:4px;"><strong style="color:#B8A7E0;">Ravi:</strong> Amazing reading! 🙏</div>
+                <div style="margin-bottom:4px;"><strong style="color:#7BC4C4;">Meera:</strong> Please do my zodiac next</div>
+              </div>
+
+              <!-- SUPER CHAT -->
+              <div class="super-chat">
+                <div class="sc-header">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <strong>Kavya</strong>
+                  <span class="sc-amount">₹ 500</span>
+                </div>
+                <div class="sc-msg">When will I meet my soulmate? 💫</div>
+              </div>
+
+              <div class="stream-actions">
+                <div class="stream-input">Say something nice...</div>
+                <div class="stream-btn gold">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <div class="stream-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Live Stream + Super Chat</div>
+        <div class="screen-desc">USER · 04</div>
+      </div>
+
+    </div>
+
+    <!-- ASTROLOGER SCREENS -->
+    <div class="screens-intro">
+      <div class="section-label">04 — The Practice</div>
+      <h2 class="section-title">For the <em>Astrologer</em></h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Four command screens — dashboard, live consultation, chat with billing, and earnings.</p>
+      <div class="screen-group-label">ASTROLOGER APP · flutter_astro</div>
+    </div>
+
+    <div class="screens-grid">
+
+      <!-- ASTRO SCREEN 1: DASHBOARD -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="astro-header">
+                <div class="astro-greeting">
+                  <div class="greeting-sub">SATURDAY · APRIL 18</div>
+                  <div class="greeting-name">Namaste, <em>Rajesh ji</em></div>
+                </div>
+                <div class="online-toggle">
+                  <div class="online-dot"></div>
+                  ONLINE
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-card primary">
+                  <div class="stat-label">TODAY'S EARNINGS</div>
+                  <div class="stat-value">₹4,250</div>
+                  <div class="stat-change">↑ 18% vs yesterday</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">CONSULTATIONS</div>
+                  <div class="stat-value">12</div>
+                  <div class="stat-change">3 ongoing</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">RATING</div>
+                  <div class="stat-value">4.9★</div>
+                  <div class="stat-change" style="color:var(--lavender);">248 reviews</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">RESPONSE</div>
+                  <div class="stat-value">94%</div>
+                  <div class="stat-change">Avg 2 min</div>
+                </div>
+              </div>
+
+              <div class="dashboard-section">
+                <div class="section-heading" style="margin:0 0 8px;">
+                  <div class="sh-title">Upcoming</div>
+                  <div class="sh-link">VIEW ALL →</div>
+                </div>
+
+                <div class="booking-item">
+                  <div class="booking-time">
+                    <div class="time">11:30</div>
+                    <div class="period">AM</div>
+                  </div>
+                  <div class="booking-info">
+                    <div class="booking-name">Priya Sharma</div>
+                    <div class="booking-type">Video · 30 min · Career</div>
+                  </div>
+                  <div class="booking-icon">🎥</div>
+                </div>
+
+                <div class="booking-item">
+                  <div class="booking-time">
+                    <div class="time">2:00</div>
+                    <div class="period">PM</div>
+                  </div>
+                  <div class="booking-info">
+                    <div class="booking-name">Amit Patel</div>
+                    <div class="booking-type">Chat · 20 min · Kundli</div>
+                  </div>
+                  <div class="booking-icon" style="background:linear-gradient(135deg,var(--aurora),var(--indigo));">💬</div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <span>Bookings</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chats</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                  <span>Earnings</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Dashboard</div>
+        <div class="screen-desc">ASTROLOGER · 01</div>
+      </div>
+
+      <!-- ASTRO SCREEN 2: VIDEO CALL -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen">
+              <div class="video-call-bg"></div>
+
+              <div class="status-bar" style="color:white;">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="call-timer">
+                <div class="call-status">● CONNECTED</div>
+                <div class="call-time">00 : 12 : 34</div>
+              </div>
+
+              <div class="call-earnings">
+                <div class="amount">₹ 312</div>
+                <div class="label">EARNED</div>
+              </div>
+
+              <div class="self-video">
+                <div class="self-video-label">YOU</div>
+              </div>
+
+              <div class="client-video">
+                <div class="client-video-avatar">P</div>
+              </div>
+
+              <div class="client-video-name">Priya Sharma</div>
+
+              <div class="call-controls">
+                <div class="call-btn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                </div>
+                <div class="call-btn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                </div>
+                <div class="call-btn end">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.29-.71.29-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+                </div>
+                <div class="call-btn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+                <div class="call-btn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Video Consultation</div>
+        <div class="screen-desc">ASTROLOGER · 02</div>
+      </div>
+
+      <!-- ASTRO SCREEN 3: CHAT -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="chat-header">
+                <div class="chat-back">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="chat-client">A</div>
+                <div class="chat-client-info">
+                  <div class="chat-client-name">Amit Patel</div>
+                  <div class="chat-client-status">● Active now</div>
+                </div>
+                <div class="timer-badge">18:42</div>
+              </div>
+
+              <div style="padding:8px 16px;display:flex;gap:6px;">
+                <div style="flex:1;background:rgba(26,22,66,0.6);border:1px solid rgba(232,181,71,0.2);border-radius:10px;padding:8px 10px;font-size:9px;">
+                  <div style="color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">CLIENT KUNDLI</div>
+                  <div style="color:var(--gold);font-weight:600;margin-top:2px;">Libra · Moon in Pisces</div>
+                </div>
+                <div style="background:linear-gradient(135deg,var(--gold),var(--saffron));color:var(--midnight);border-radius:10px;padding:8px 12px;font-size:9px;font-weight:700;display:flex;align-items:center;">
+                  ₹ 468
+                </div>
+              </div>
+
+              <div class="chat-messages">
+                <div class="chat-timestamp">Today · 2:00 PM</div>
+                <div class="chat-bubble client">Namaste Panditji, I want to know about my marriage prospects this year</div>
+                <div class="chat-bubble astro">Namaste Amit ji. Let me analyze your 7th house and Venus placement first.</div>
+                <div class="chat-bubble astro">Your Venus is in exalted position in Pisces — very favorable for love and marriage.</div>
+                <div class="chat-bubble client">Really? When can I expect someone?</div>
+                <div class="chat-bubble astro">The period between <strong>July to October 2026</strong> looks most auspicious. Jupiter will transit your 7th house.</div>
+                <div class="chat-bubble client">Should I do any remedies?</div>
+              </div>
+
+              <div class="chat-input" style="bottom:20px;">
+                <input placeholder="Type your guidance..." />
+                <button class="send-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Client Chat + Billing</div>
+        <div class="screen-desc">ASTROLOGER · 03</div>
+      </div>
+
+      <!-- ASTRO SCREEN 4: EARNINGS -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title"><em>Earnings</em></div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                </div>
+              </div>
+
+              <div class="earnings-hero">
+                <div class="earnings-label">THIS MONTH</div>
+                <div class="earnings-amount"><span class="currency">₹</span>82,450</div>
+                <div class="earnings-sub">↑ 24% from last month · 3 withdrawals pending</div>
+              </div>
+
+              <div class="earnings-chart">
+                <div class="chart-title">Weekly Trend</div>
+                <div class="chart-bars">
+                  <div class="chart-bar" style="height:45%"></div>
+                  <div class="chart-bar" style="height:60%"></div>
+                  <div class="chart-bar" style="height:30%"></div>
+                  <div class="chart-bar" style="height:75%"></div>
+                  <div class="chart-bar" style="height:55%"></div>
+                  <div class="chart-bar" style="height:85%"></div>
+                  <div class="chart-bar active" style="height:95%"></div>
+                </div>
+                <div class="chart-labels">
+                  <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+              </div>
+
+              <div style="padding:0 20px;">
+                <div class="section-heading" style="margin:8px 0;">
+                  <div class="sh-title">Recent Transactions</div>
+                  <div class="sh-link">ALL →</div>
+                </div>
+
+                <div class="txn-item">
+                  <div class="txn-icon">🎥</div>
+                  <div class="txn-info">
+                    <div class="txn-title">Video · Priya Sharma</div>
+                    <div class="txn-time">Today · 11:30 AM · 30 min</div>
+                  </div>
+                  <div class="txn-amount">+₹750</div>
+                </div>
+                <div class="txn-item">
+                  <div class="txn-icon">💬</div>
+                  <div class="txn-info">
+                    <div class="txn-title">Chat · Amit Patel</div>
+                    <div class="txn-time">Today · 10:15 AM · 20 min</div>
+                  </div>
+                  <div class="txn-amount">+₹500</div>
+                </div>
+                <div class="txn-item">
+                  <div class="txn-icon">📞</div>
+                  <div class="txn-info">
+                    <div class="txn-title">Call · Neha Kumar</div>
+                    <div class="txn-time">Yesterday · 8:45 PM · 15 min</div>
+                  </div>
+                  <div class="txn-amount">+₹375</div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <span>Bookings</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chats</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                  <span>Earnings</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Earnings & Analytics</div>
+        <div class="screen-desc">ASTROLOGER · 04</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================= -->
+  <!-- VOLUME TWO: EXTENDED SCREENS -->
+  <!-- ================================================= -->
+  <section class="section">
+    <div class="screens-intro">
+      <div class="section-label">05 — Extended Journey</div>
+      <h2 class="section-title">Deeper into the <em>cosmos</em></h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">More touchpoints in the Nakshtralogy experience — browsing, services, profile, and the full Kundli story told across swipeable slides.</p>
+      <div class="new-vol-label">USER APP · VOLUME TWO</div>
+    </div>
+
+    <div class="screens-grid">
+
+      <!-- ============================================= -->
+      <!-- USER 05: ASTROLOGER LIST WITH FILTERS -->
+      <!-- ============================================= -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title"><em>Astrologers</em></div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+                </div>
+              </div>
+
+              <div class="search-field">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                Search by name, speciality...
+              </div>
+
+              <div class="filter-bar">
+                <div class="filter-chip active">All</div>
+                <div class="filter-chip">Vedic</div>
+                <div class="filter-chip">Tarot</div>
+                <div class="filter-chip">Numerology</div>
+                <div class="filter-chip">Kundli</div>
+              </div>
+
+              <div class="filter-bar" style="padding-top:0;">
+                <div class="filter-chip">● Online</div>
+                <div class="filter-chip">Hindi</div>
+                <div class="filter-chip">English</div>
+                <div class="filter-chip">₹ Low</div>
+              </div>
+
+              <div style="padding:0 20px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px;">
+                  <div style="font-size:10px;color:var(--smoke);font-family:var(--font-mono);">247 astrologers · Sorted by rating</div>
+                </div>
+              </div>
+
+              <div class="astrologer-list" style="padding:0 20px;">
+                <div class="astrologer-card">
+                  <div class="astrologer-avatar">R</div>
+                  <div class="astrologer-info">
+                    <div class="astrologer-name">Pandit Rajesh Sharma</div>
+                    <div class="astrologer-spec">Vedic · Kundli · 12 yrs</div>
+                    <div class="astrologer-stats">
+                      <span class="stat-pill">★ 4.9 (2.1k)</span>
+                      <span class="stat-pill">· ₹25/min</span>
+                    </div>
+                  </div>
+                  <div class="cta-mini">CHAT</div>
+                </div>
+                <div class="astrologer-card">
+                  <div class="astrologer-avatar" style="background:linear-gradient(135deg,#7BC4C4,#4A3B8C);">A</div>
+                  <div class="astrologer-info">
+                    <div class="astrologer-name">Acharya Anjali Verma</div>
+                    <div class="astrologer-spec">Tarot · Numerology · 8 yrs</div>
+                    <div class="astrologer-stats">
+                      <span class="stat-pill">★ 4.8 (850)</span>
+                      <span class="stat-pill">· ₹30/min</span>
+                    </div>
+                  </div>
+                  <div class="cta-mini">CALL</div>
+                </div>
+                <div class="astrologer-card">
+                  <div class="astrologer-avatar" style="background:linear-gradient(135deg,#E8689C,#E07A3C);">K</div>
+                  <div class="astrologer-info">
+                    <div class="astrologer-name">Guru Kamal Joshi</div>
+                    <div class="astrologer-spec">Lal Kitab · Remedy · 20 yrs</div>
+                    <div class="astrologer-stats">
+                      <span class="stat-pill">★ 4.9 (3.4k)</span>
+                      <span class="stat-pill">· ₹45/min</span>
+                    </div>
+                  </div>
+                  <div class="cta-mini">CHAT</div>
+                </div>
+                <div class="astrologer-card">
+                  <div class="astrologer-avatar" style="background:linear-gradient(135deg,#B8A7E0,#4A3B8C);">S</div>
+                  <div class="astrologer-info">
+                    <div class="astrologer-name">Dr. Sunita Mishra</div>
+                    <div class="astrologer-spec">KP · Prashna · 15 yrs</div>
+                    <div class="astrologer-stats">
+                      <span class="stat-pill">★ 4.7 (1.2k)</span>
+                      <span class="stat-pill">· ₹35/min</span>
+                    </div>
+                  </div>
+                  <div class="cta-mini">CHAT</div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Astrologer List + Filters</div>
+        <div class="screen-desc">USER · 05</div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- USER 06: SERVICES WITH PRICING -->
+      <!-- ============================================= -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title"><em>Services</em></div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                </div>
+              </div>
+
+              <div style="padding:0 20px 6px;">
+                <div style="font-size:10px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">UNLOCK THE WISDOM OF YOUR CHART</div>
+              </div>
+
+              <div class="service-card featured">
+                <div class="service-icon">✦</div>
+                <div class="service-info">
+                  <div class="service-title">Kundli Summary</div>
+                  <div class="service-desc">Full birth chart with planetary positions &amp; predictions</div>
+                </div>
+                <div class="service-price">
+                  <div class="amount">₹ 199</div>
+                  <div class="label">ONE-TIME</div>
+                </div>
+              </div>
+
+              <div class="service-card">
+                <div class="service-icon" style="background:linear-gradient(135deg,var(--indigo),var(--cosmic-pink));">☾</div>
+                <div class="service-info">
+                  <div class="service-title">Dasha Analysis</div>
+                  <div class="service-desc">120-year Vimshottari Dasha breakdown with timing</div>
+                </div>
+                <div class="service-price">
+                  <div class="amount">₹ 299</div>
+                  <div class="label">ONE-TIME</div>
+                </div>
+              </div>
+
+              <div class="service-card">
+                <div class="service-icon" style="background:linear-gradient(135deg,var(--aurora),var(--indigo));">☉</div>
+                <div class="service-info">
+                  <div class="service-title">Yog Report</div>
+                  <div class="service-desc">32+ auspicious yogas in your chart explained</div>
+                </div>
+                <div class="service-price">
+                  <div class="amount">₹ 249</div>
+                  <div class="label">ONE-TIME</div>
+                </div>
+              </div>
+
+              <div class="service-card">
+                <div class="service-icon" style="background:linear-gradient(135deg,var(--danger),#8A2F2F);">⚠</div>
+                <div class="service-info">
+                  <div class="service-title">Dosh &amp; Remedies</div>
+                  <div class="service-desc">Mangal, Kaal Sarp, Pitra dosh with Vedic remedies</div>
+                </div>
+                <div class="service-price">
+                  <div class="amount">₹ 399</div>
+                  <div class="label">ONE-TIME</div>
+                </div>
+              </div>
+
+              <div class="service-card">
+                <div class="service-icon" style="background:linear-gradient(135deg,#6BB88A,#4A3B8C);">♡</div>
+                <div class="service-info">
+                  <div class="service-title">Match Making</div>
+                  <div class="service-desc">Ashtakoota Guna Milan for marriage compatibility</div>
+                </div>
+                <div class="service-price">
+                  <div class="amount">₹ 349</div>
+                  <div class="label">ONE-TIME</div>
+                </div>
+              </div>
+
+              <div class="service-card featured">
+                <div class="service-icon">★</div>
+                <div class="service-info">
+                  <div class="service-title">Premium Bundle</div>
+                  <div class="service-desc">All 5 reports + 1 free consultation · Save 40%</div>
+                </div>
+                <div class="service-price">
+                  <div class="amount">₹ 999</div>
+                  <div class="label" style="text-decoration:line-through;">₹1,595</div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Services</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Services &amp; Pricing</div>
+        <div class="screen-desc">USER · 06</div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- USER 07: USER PROFILE -->
+      <!-- ============================================= -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title"><em>Profile</em></div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                </div>
+              </div>
+
+              <div class="profile-header">
+                <div class="profile-avatar-lg">P</div>
+                <div class="profile-name">Priya Sharma</div>
+                <div class="profile-sign">LEO · PUSHYA NAKSHATRA</div>
+              </div>
+
+              <div class="profile-stats-row">
+                <div class="profile-stat">
+                  <div class="profile-stat-value">24</div>
+                  <div class="profile-stat-label">CONSULTS</div>
+                </div>
+                <div style="width:1px;background:rgba(232,181,71,0.2);"></div>
+                <div class="profile-stat">
+                  <div class="profile-stat-value">5</div>
+                  <div class="profile-stat-label">CHARTS</div>
+                </div>
+                <div style="width:1px;background:rgba(232,181,71,0.2);"></div>
+                <div class="profile-stat">
+                  <div class="profile-stat-value">₹850</div>
+                  <div class="profile-stat-label">WALLET</div>
+                </div>
+              </div>
+
+              <div class="profile-menu">
+                <div class="profile-menu-item">
+                  <div class="profile-menu-icon">👤</div>
+                  <div class="profile-menu-label">My Details</div>
+                  <div class="profile-menu-arrow">›</div>
+                </div>
+                <div class="profile-menu-item">
+                  <div class="profile-menu-icon">📜</div>
+                  <div class="profile-menu-label">My Kundlis</div>
+                  <div class="profile-menu-arrow">›</div>
+                </div>
+                <div class="profile-menu-item">
+                  <div class="profile-menu-icon">💳</div>
+                  <div class="profile-menu-label">Wallet &amp; Recharge</div>
+                  <div class="profile-menu-arrow">›</div>
+                </div>
+                <div class="profile-menu-item">
+                  <div class="profile-menu-icon">🕐</div>
+                  <div class="profile-menu-label">Consultation History</div>
+                  <div class="profile-menu-arrow">›</div>
+                </div>
+                <div class="profile-menu-item">
+                  <div class="profile-menu-icon">🔔</div>
+                  <div class="profile-menu-label">Notifications</div>
+                  <div class="profile-menu-arrow">›</div>
+                </div>
+                <div class="profile-menu-item">
+                  <div class="profile-menu-icon">❓</div>
+                  <div class="profile-menu-label">Help &amp; Support</div>
+                  <div class="profile-menu-arrow">›</div>
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">User Profile</div>
+        <div class="screen-desc">USER · 07</div>
+      </div>
+
+      <!-- ============================================= -->
+      <!-- USER 08: CHARTS LIST WITH SEARCH/FILTER -->
+      <!-- ============================================= -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title">My <em>Charts</em></div>
+                <div class="icon-btn" style="background:linear-gradient(135deg,var(--gold),var(--saffron));border:0;color:var(--midnight);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+              </div>
+
+              <div class="search-field">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                Search by name or birth date...
+              </div>
+
+              <div class="filter-bar">
+                <div class="filter-chip active">All (12)</div>
+                <div class="filter-chip">Family</div>
+                <div class="filter-chip">Friends</div>
+                <div class="filter-chip">Recent</div>
+                <div class="filter-chip">Leo</div>
+              </div>
+
+              <div style="padding:4px 20px 8px;font-size:9px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">RECENT</div>
+
+              <div class="chart-list-item">
+                <div class="chart-list-avatar">P</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Priya Sharma (Me)</div>
+                  <div class="chart-list-meta">15 AUG 1995 · 08:30 · MUMBAI</div>
+                </div>
+                <div class="chart-list-tag">LEO</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--saffron),var(--cosmic-pink));">R</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Rohan Sharma</div>
+                  <div class="chart-list-meta">22 JAN 1992 · 14:15 · DELHI</div>
+                </div>
+                <div class="chart-list-tag">AQR</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--aurora),var(--indigo));">M</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Mom (Sunita)</div>
+                  <div class="chart-list-meta">03 MAR 1968 · 06:45 · PUNE</div>
+                </div>
+                <div class="chart-list-tag">PIS</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--lavender),var(--indigo));">A</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Aarav (Son)</div>
+                  <div class="chart-list-meta">11 NOV 2020 · 22:08 · BANGALORE</div>
+                </div>
+                <div class="chart-list-tag">SCO</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--gold),var(--saffron));">D</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Divya (Sister)</div>
+                  <div class="chart-list-meta">07 JUL 1998 · 11:20 · MUMBAI</div>
+                </div>
+                <div class="chart-list-tag">CAN</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,#8A5A1F,#E07A3C);">V</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Vikram (Dad)</div>
+                  <div class="chart-list-meta">19 APR 1965 · 17:30 · JAIPUR</div>
+                </div>
+                <div class="chart-list-tag">ARI</div>
+              </div>
+
+              <div class="floating-action">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Charts List + Search</div>
+        <div class="screen-desc">USER · 08</div>
+      </div>
+
+    </div>
+
+    <!-- ================================================= -->
+    <!-- KUNDLI DETAIL SLIDES -->
+    <!-- ================================================= -->
+    <div class="screens-intro" style="margin-top:40px;">
+      <div class="section-label">Swipeable Detail Views</div>
+      <h2 class="section-title">Kundli, <em>slide by slide</em></h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">The Kundli unfolds across four horizontal slides — summary, yogas, doshas, and career. Swipe left to journey deeper into your chart.</p>
+      <div class="new-vol-label">USER · KUNDLI DETAIL · 4 SLIDES</div>
+    </div>
+
+    <div class="slider-wrap">
+
+      <!-- SLIDE 1: KUNDLI SUMMARY -->
+      <div class="slider-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div style="text-align:center;">
+                  <div class="nav-title" style="font-size:18px;">Priya <em>Sharma</em></div>
+                  <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">15 AUG 1995 · 08:30</div>
+                </div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                </div>
+              </div>
+
+              <div class="slide-tabs">
+                <div class="slide-tab active">Summary</div>
+                <div class="slide-tab">Yog</div>
+                <div class="slide-tab">Dosh</div>
+                <div class="slide-tab">Career</div>
+              </div>
+
+              <div style="padding:4px 20px 8px;">
+                <svg viewBox="0 0 260 140" style="width:100%;height:140px;">
+                  <defs>
+                    <linearGradient id="mini-grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#E8B547" stop-opacity="0.4"/>
+                      <stop offset="100%" stop-color="#4A3B8C" stop-opacity="0.4"/>
+                    </linearGradient>
+                  </defs>
+                  <rect x="5" y="5" width="250" height="130" fill="url(#mini-grad1)" stroke="#E8B547" stroke-width="1.5" rx="6"/>
+                  <line x1="5" y1="5" x2="255" y2="135" stroke="#E8B547" stroke-width="1"/>
+                  <line x1="255" y1="5" x2="5" y2="135" stroke="#E8B547" stroke-width="1"/>
+                  <polygon points="130,5 255,70 130,135 5,70" fill="rgba(26,22,66,0.5)" stroke="#E8B547" stroke-width="1"/>
+                  <text x="130" y="28" text-anchor="middle" fill="#E8B547" font-size="10" font-family="Cormorant Garamond" font-weight="600">1 · Su Me</text>
+                  <text x="50" y="42" text-anchor="middle" fill="#B8A7E0" font-size="9">12 · Ke</text>
+                  <text x="30" y="72" text-anchor="middle" fill="#E8689C" font-size="9">11 · Sa</text>
+                  <text x="50" y="105" text-anchor="middle" fill="#F5EEE0" font-size="9">10</text>
+                  <text x="130" y="125" text-anchor="middle" fill="#E8B547" font-size="9">9 · Ju Ma</text>
+                  <text x="210" y="105" text-anchor="middle" fill="#F5EEE0" font-size="9">8</text>
+                  <text x="230" y="72" text-anchor="middle" fill="#7BC4C4" font-size="9">7 · Ve</text>
+                  <text x="210" y="42" text-anchor="middle" fill="#B8A7E0" font-size="9">6 · Mo Ra</text>
+                </svg>
+              </div>
+
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <div class="label">Ascendant</div>
+                  <div class="value">Leo · Simha</div>
+                </div>
+                <div class="summary-item">
+                  <div class="label">Moon Sign</div>
+                  <div class="value">Cancer · Karka</div>
+                </div>
+                <div class="summary-item">
+                  <div class="label">Nakshatra</div>
+                  <div class="value">Pushya · 2</div>
+                </div>
+                <div class="summary-item">
+                  <div class="label">Current Dasha</div>
+                  <div class="value">Jupiter · 3y</div>
+                </div>
+                <div class="summary-item">
+                  <div class="label">Tithi</div>
+                  <div class="value">Shukla · 8</div>
+                </div>
+                <div class="summary-item">
+                  <div class="label">Yoga</div>
+                  <div class="value">Ayushman</div>
+                </div>
+              </div>
+
+              <div class="page-dots">
+                <div class="page-dot active"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title" style="margin-top:20px;">Summary</div>
+        <div class="screen-desc" style="text-align:center;">SLIDE 01/04</div>
+      </div>
+
+      <!-- SLIDE 2: YOG SCREEN -->
+      <div class="slider-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div style="text-align:center;">
+                  <div class="nav-title" style="font-size:18px;">Priya <em>Sharma</em></div>
+                  <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">15 AUG 1995 · 08:30</div>
+                </div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                </div>
+              </div>
+
+              <div class="slide-tabs">
+                <div class="slide-tab">Summary</div>
+                <div class="slide-tab active">Yog</div>
+                <div class="slide-tab">Dosh</div>
+                <div class="slide-tab">Career</div>
+              </div>
+
+              <div style="padding:4px 20px 8px;">
+                <div style="font-size:10px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">✦ 7 AUSPICIOUS YOGAS FOUND</div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Gaj Kesari Yoga</div>
+                  <div class="yog-badge auspicious">STRONG</div>
+                </div>
+                <div class="yog-desc">Moon &amp; Jupiter in kendra — brings wisdom, fame, wealth, and long life. Highly beneficial placement.</div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Budh Aditya Yoga</div>
+                  <div class="yog-badge auspicious">ACTIVE</div>
+                </div>
+                <div class="yog-desc">Sun with Mercury in 1st house — grants intelligence, analytical mind, and leadership qualities.</div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Dhan Yoga</div>
+                  <div class="yog-badge auspicious">MEDIUM</div>
+                </div>
+                <div class="yog-desc">Lord of 2nd and 11th houses are connected — indicates wealth accumulation through career.</div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Raj Yoga</div>
+                  <div class="yog-badge auspicious">STRONG</div>
+                </div>
+                <div class="yog-desc">Kendra-Trikona connection forming — authority, status, and respected position in society.</div>
+              </div>
+
+              <div class="page-dots">
+                <div class="page-dot"></div>
+                <div class="page-dot active"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title" style="margin-top:20px;">Yog</div>
+        <div class="screen-desc" style="text-align:center;">SLIDE 02/04</div>
+      </div>
+
+      <!-- SLIDE 3: DOSH SCREEN -->
+      <div class="slider-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div style="text-align:center;">
+                  <div class="nav-title" style="font-size:18px;">Priya <em>Sharma</em></div>
+                  <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">15 AUG 1995 · 08:30</div>
+                </div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                </div>
+              </div>
+
+              <div class="slide-tabs">
+                <div class="slide-tab">Summary</div>
+                <div class="slide-tab">Yog</div>
+                <div class="slide-tab active">Dosh</div>
+                <div class="slide-tab">Career</div>
+              </div>
+
+              <div style="padding:4px 20px 8px;">
+                <div style="font-size:10px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">⚠ 2 DOSHAS DETECTED · REMEDIES AVAILABLE</div>
+              </div>
+
+              <div class="yog-card" style="background:linear-gradient(135deg,rgba(217,85,85,0.15),rgba(217,85,85,0.02));border-color:rgba(217,85,85,0.3);">
+                <div class="yog-header">
+                  <div class="yog-name" style="color:var(--danger);">Mangal Dosh</div>
+                  <div class="yog-badge caution">MILD</div>
+                </div>
+                <div class="yog-desc">Mars in the 4th house — may cause delays in marriage or domestic tension. Cancelled partially due to aspect of Jupiter.</div>
+                <div style="margin-top:8px;padding:8px;background:rgba(107,184,138,0.1);border-radius:8px;">
+                  <div style="font-size:8px;color:var(--success);font-family:var(--font-mono);letter-spacing:0.1em;">✓ REMEDY</div>
+                  <div style="font-size:9px;color:var(--ivory);margin-top:2px;">Recite Hanuman Chalisa on Tuesdays. Offer red flowers.</div>
+                </div>
+              </div>
+
+              <div class="yog-card" style="background:linear-gradient(135deg,rgba(217,85,85,0.15),rgba(217,85,85,0.02));border-color:rgba(217,85,85,0.3);">
+                <div class="yog-header">
+                  <div class="yog-name" style="color:var(--danger);">Shani Sade Sati</div>
+                  <div class="yog-badge caution">ACTIVE</div>
+                </div>
+                <div class="yog-desc">Saturn's 7.5 year transit — currently in peak phase. Expect karmic lessons, slow but steady growth.</div>
+                <div style="margin-top:8px;padding:8px;background:rgba(107,184,138,0.1);border-radius:8px;">
+                  <div style="font-size:8px;color:var(--success);font-family:var(--font-mono);letter-spacing:0.1em;">✓ REMEDY</div>
+                  <div style="font-size:9px;color:var(--ivory);margin-top:2px;">Light mustard oil lamp on Saturdays. Donate black sesame.</div>
+                </div>
+              </div>
+
+              <div class="yog-card" style="background:rgba(107,184,138,0.08);border-color:rgba(107,184,138,0.25);">
+                <div class="yog-header">
+                  <div class="yog-name" style="color:var(--success);">Kaal Sarp Dosh</div>
+                  <div class="yog-badge auspicious">ABSENT</div>
+                </div>
+                <div class="yog-desc">No Kaal Sarp configuration in your chart. This is a favorable indication.</div>
+              </div>
+
+              <div class="page-dots">
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot active"></div>
+                <div class="page-dot"></div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title" style="margin-top:20px;">Dosh</div>
+        <div class="screen-desc" style="text-align:center;">SLIDE 03/04</div>
+      </div>
+
+      <!-- SLIDE 4: CAREER SCREEN -->
+      <div class="slider-phone">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div style="text-align:center;">
+                  <div class="nav-title" style="font-size:18px;">Priya <em>Sharma</em></div>
+                  <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">15 AUG 1995 · 08:30</div>
+                </div>
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                </div>
+              </div>
+
+              <div class="slide-tabs">
+                <div class="slide-tab">Summary</div>
+                <div class="slide-tab">Yog</div>
+                <div class="slide-tab">Dosh</div>
+                <div class="slide-tab active">Career</div>
+              </div>
+
+              <div style="padding:6px 20px;">
+                <div style="background:linear-gradient(135deg,rgba(232,181,71,0.15),rgba(74,59,140,0.15));border:1px solid rgba(232,181,71,0.3);border-radius:14px;padding:12px;">
+                  <div style="font-size:9px;color:var(--gold);font-family:var(--font-mono);letter-spacing:0.15em;margin-bottom:4px;">10TH HOUSE LORD</div>
+                  <div style="font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--ivory);">Venus in Taurus</div>
+                  <div style="font-size:9px;color:var(--lavender);margin-top:4px;">Exalted placement — strong indicator of creative &amp; aesthetic professions.</div>
+                </div>
+              </div>
+
+              <div style="padding:8px 20px 4px;">
+                <div style="font-size:10px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">TOP CAREER MATCHES</div>
+              </div>
+
+              <div class="career-item">
+                <div class="career-icon">🎨</div>
+                <div class="career-info">
+                  <div class="career-title">Creative Arts &amp; Design</div>
+                  <div class="career-desc">Fashion, interior, graphic design</div>
+                </div>
+                <div class="career-score">92</div>
+              </div>
+
+              <div class="career-item">
+                <div class="career-icon" style="background:linear-gradient(135deg,var(--cosmic-pink),var(--saffron));">💼</div>
+                <div class="career-info">
+                  <div class="career-title">Business &amp; Luxury</div>
+                  <div class="career-desc">Entrepreneurship in beauty, jewelry</div>
+                </div>
+                <div class="career-score">87</div>
+              </div>
+
+              <div class="career-item">
+                <div class="career-icon" style="background:linear-gradient(135deg,var(--gold),var(--saffron));">🎭</div>
+                <div class="career-info">
+                  <div class="career-title">Media &amp; Entertainment</div>
+                  <div class="career-desc">Performing arts, film, content</div>
+                </div>
+                <div class="career-score">83</div>
+              </div>
+
+              <div class="career-item">
+                <div class="career-icon" style="background:linear-gradient(135deg,#6BB88A,#4A3B8C);">💻</div>
+                <div class="career-info">
+                  <div class="career-title">Tech &amp; Innovation</div>
+                  <div class="career-desc">Design-tech, product, UX</div>
+                </div>
+                <div class="career-score">76</div>
+              </div>
+
+              <div style="margin:6px 20px;padding:10px;background:rgba(107,184,138,0.1);border:1px solid rgba(107,184,138,0.3);border-radius:12px;">
+                <div style="font-size:9px;color:var(--success);font-family:var(--font-mono);letter-spacing:0.1em;">✦ FAVORABLE PERIOD</div>
+                <div style="font-size:10px;color:var(--ivory);margin-top:3px;">Jupiter Dasha (until 2028) — ideal for career growth &amp; recognition.</div>
+              </div>
+
+              <div class="page-dots">
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot active"></div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Kundli</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  <span>Chat</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/></svg>
+                  <span>Live</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title" style="margin-top:20px;">Career</div>
+        <div class="screen-desc" style="text-align:center;">SLIDE 04/04</div>
+      </div>
+
+    </div>
+
+    <!-- ================================================= -->
+    <!-- ASTROLOGER EXTENDED SCREENS -->
+    <!-- ================================================= -->
+    <div class="screens-intro" style="margin-top:60px;">
+      <div class="section-label">Astrologer · Extended</div>
+      <h2 class="section-title">Charts <em>at hand</em></h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto;">Tools for the practitioner — a searchable library of client charts, with the same swipeable detail journey.</p>
+      <div class="new-vol-label">ASTROLOGER APP · VOLUME TWO</div>
+    </div>
+
+    <div class="screens-grid">
+
+      <!-- ASTROLOGER 05: CLIENT CHARTS LIST -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div class="nav-title">Client <em>Charts</em></div>
+                <div class="icon-btn" style="background:linear-gradient(135deg,var(--gold),var(--saffron));border:0;color:var(--midnight);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+              </div>
+
+              <div class="search-field">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                Search by name, birth date, city...
+              </div>
+
+              <div class="filter-bar">
+                <div class="filter-chip active">All (148)</div>
+                <div class="filter-chip">Today</div>
+                <div class="filter-chip">Starred</div>
+                <div class="filter-chip">Follow-up</div>
+              </div>
+
+              <div class="filter-bar" style="padding-top:0;">
+                <div class="filter-chip">♈-♍</div>
+                <div class="filter-chip">♎-♓</div>
+                <div class="filter-chip">Date ↓</div>
+                <div class="filter-chip">Name ↑</div>
+              </div>
+
+              <div style="padding:4px 20px 6px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div style="font-size:9px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">TODAY'S CLIENTS</div>
+                  <div style="font-size:9px;color:var(--gold);font-family:var(--font-mono);">3 scheduled</div>
+                </div>
+              </div>
+
+              <div class="chart-list-item" style="border-left:3px solid var(--gold);">
+                <div class="chart-list-avatar">P</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Priya Sharma</div>
+                  <div class="chart-list-meta">15 AUG 1995 · 08:30 · MUMBAI</div>
+                </div>
+                <div class="chart-list-tag">11:30</div>
+              </div>
+
+              <div class="chart-list-item" style="border-left:3px solid var(--gold);">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--aurora),var(--indigo));">A</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Amit Patel</div>
+                  <div class="chart-list-meta">03 OCT 1988 · 16:45 · AHMEDABAD</div>
+                </div>
+                <div class="chart-list-tag">2:00P</div>
+              </div>
+
+              <div style="padding:6px 20px 6px;">
+                <div style="font-size:9px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">RECENT</div>
+              </div>
+
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--cosmic-pink),var(--saffron));">N</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Neha Kumar</div>
+                  <div class="chart-list-meta">22 FEB 1993 · 21:15 · PUNE</div>
+                </div>
+                <div class="chart-list-tag">PIS</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--lavender),var(--indigo));">K</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Kavya Reddy</div>
+                  <div class="chart-list-meta">11 DEC 1990 · 05:30 · HYDERABAD</div>
+                </div>
+                <div class="chart-list-tag">SAG</div>
+              </div>
+              <div class="chart-list-item">
+                <div class="chart-list-avatar" style="background:linear-gradient(135deg,var(--gold),var(--saffron));">S</div>
+                <div class="chart-list-info">
+                  <div class="chart-list-name">Suresh Nair</div>
+                  <div class="chart-list-meta">18 JUN 1975 · 12:40 · KOCHI</div>
+                </div>
+                <div class="chart-list-tag">GEM</div>
+              </div>
+
+              <div class="floating-action">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <span>Bookings</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Charts</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                  <span>Earnings</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Client Charts List</div>
+        <div class="screen-desc">ASTROLOGER · 05</div>
+      </div>
+
+      <!-- ASTROLOGER 06: CLIENT KUNDLI DETAIL (PRO VIEW) -->
+      <div class="screen-card">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="screen screen-bg-cosmos">
+              <div class="status-bar">
+                <span>9:41</span>
+                <span class="right">
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                  <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <div class="nav-header">
+                <div class="icon-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+                <div style="text-align:center;">
+                  <div class="nav-title" style="font-size:16px;">Priya <em>Sharma</em></div>
+                  <div style="font-size:8px;color:var(--success);font-family:var(--font-mono);letter-spacing:0.1em;">● CONSULT IN 8 MIN</div>
+                </div>
+                <div class="icon-btn" style="background:linear-gradient(135deg,var(--gold),var(--saffron));border:0;color:var(--midnight);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                </div>
+              </div>
+
+              <div class="slide-tabs">
+                <div class="slide-tab">Summary</div>
+                <div class="slide-tab active">Yog</div>
+                <div class="slide-tab">Dosh</div>
+                <div class="slide-tab">Career</div>
+                <div class="slide-tab">Notes</div>
+              </div>
+
+              <div style="padding:4px 20px 6px;display:flex;justify-content:space-between;align-items:center;">
+                <div style="font-size:9px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;">✦ 7 YOGAS · PRO ANALYSIS</div>
+                <div style="font-size:9px;color:var(--gold);font-family:var(--font-mono);">⌕ Divisional</div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Gaj Kesari Yoga</div>
+                  <div class="yog-badge auspicious">D-1 · D-9</div>
+                </div>
+                <div class="yog-desc">Moon &amp; Jupiter in kendra from Lagna AND Moon — double confirmation. Strong in both Rasi &amp; Navamsa.</div>
+                <div style="margin-top:6px;display:flex;gap:6px;">
+                  <div style="font-size:8px;padding:2px 6px;background:rgba(232,181,71,0.15);color:var(--gold);border-radius:4px;font-family:var(--font-mono);">STR: 8.5/10</div>
+                  <div style="font-size:8px;padding:2px 6px;background:rgba(184,167,224,0.15);color:var(--lavender);border-radius:4px;font-family:var(--font-mono);">ACTIVE NOW</div>
+                </div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Budh Aditya Yoga</div>
+                  <div class="yog-badge auspicious">D-1</div>
+                </div>
+                <div class="yog-desc">Sun + Mercury in Leo · 1st house. Note Mercury is not combust (separation 7°). Favorable for intellect.</div>
+                <div style="margin-top:6px;display:flex;gap:6px;">
+                  <div style="font-size:8px;padding:2px 6px;background:rgba(232,181,71,0.15);color:var(--gold);border-radius:4px;font-family:var(--font-mono);">STR: 7.2/10</div>
+                </div>
+              </div>
+
+              <div class="yog-card">
+                <div class="yog-header">
+                  <div class="yog-name">Dhan Yoga</div>
+                  <div class="yog-badge auspicious">2L · 11L</div>
+                </div>
+                <div class="yog-desc">2nd lord (Mercury) conjunct 11th lord (Mercury) — self-referential but strengthened by Jupiter's 5th aspect.</div>
+              </div>
+
+              <div style="margin:8px 20px;padding:10px;background:rgba(74,59,140,0.3);border:1px solid rgba(184,167,224,0.3);border-radius:12px;">
+                <div style="font-size:9px;color:var(--lavender);font-family:var(--font-mono);letter-spacing:0.1em;">📝 MY NOTES</div>
+                <div style="font-size:10px;color:var(--ivory);margin-top:4px;line-height:1.4;">Client asked about career change. Focus on Jupiter Dasha timing — 2025-2028 is ideal window.</div>
+              </div>
+
+              <div style="position:absolute;bottom:80px;left:12px;right:12px;display:flex;gap:8px;z-index:4;">
+                <div style="flex:1;padding:10px;background:rgba(26,22,66,0.9);backdrop-filter:blur(10px);border:1px solid rgba(232,181,71,0.3);border-radius:12px;text-align:center;font-size:10px;color:var(--ivory);">
+                  📞 Call Client
+                </div>
+                <div style="flex:1;padding:10px;background:linear-gradient(135deg,var(--gold),var(--saffron));border-radius:12px;text-align:center;font-size:10px;color:var(--midnight);font-weight:700;">
+                  Start Session →
+                </div>
+              </div>
+
+              <div class="bottom-nav">
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg>
+                  <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <span>Bookings</span>
+                </div>
+                <div class="nav-item active">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                  <span>Charts</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                  <span>Earnings</span>
+                </div>
+                <div class="nav-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                  <span>Profile</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">Client Kundli · Pro View</div>
+        <div class="screen-desc">ASTROLOGER · 06</div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <footer class="footer">
+    <div class="divider-star">
+      <span class="line"></span>
+      <span>✧</span>
+      <span class="line"></span>
+    </div>
+    <div class="footer-title"><em>Nakshtra</em>logy</div>
+    <div class="footer-meta">DESIGN SYSTEM · v2.0 · 18 SCREENS</div>
+  </footer>
+
+</div>
+</body>
+</html>
