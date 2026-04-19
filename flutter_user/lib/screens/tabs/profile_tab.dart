@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -59,7 +60,7 @@ class _ProfileTabState extends State<ProfileTab> {
           },
           child: AlertDialog(
             backgroundColor: AppColors.card,
-            title: const Text('Edit Profile', style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+            title: Text(l.editProfile, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
             content: SingleChildScrollView(
               child: StatefulBuilder(
                 builder: (ctx, setSt) => Column(
@@ -143,6 +144,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, profState) {
         final me = profState.me;
@@ -192,7 +194,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     OutlinedButton.icon(
                       onPressed: me == null ? null : () => _openEditDialog(me),
                       icon: const Icon(Icons.edit, size: 14),
-                      label: const Text('Edit Profile'),
+                      label: Text(l.editProfile),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(120, 36),
                       ),
@@ -214,8 +216,8 @@ class _ProfileTabState extends State<ProfileTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Birth Details',
-                          style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                      Text(l.birthDetails,
+                          style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
                       _detailRow('Gender', (me['gender'] as String?) ?? '—'),
                       _detailRow('Date of Birth', (me['dob'] as String?) ?? '—'),
@@ -245,18 +247,18 @@ class _ProfileTabState extends State<ProfileTab> {
                           children: [
                             const Icon(Icons.bookmark, color: AppColors.primary, size: 14),
                             const SizedBox(width: 6),
-                            Text('Saved Astrologers (${saved.length})',
+                            Text('${l.savedAstrologers} (${saved.length})',
                                 style: const TextStyle(
                                     color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
                           ],
                         ),
                         const SizedBox(height: 8),
                         if (saved.isEmpty)
-                          const Center(
+                          Center(
                             child: Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Text('No saved astrologers yet',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                              padding: const EdgeInsets.all(12),
+                              child: Text(l.noSavedAstrologers,
+                                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ),
                           )
                         else
@@ -338,7 +340,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       children: [
                         const Icon(Icons.shopping_bag_outlined, color: AppColors.primary, size: 14),
                         const SizedBox(width: 6),
-                        Text('My Orders (${profState.ordersTotal})',
+                        Text('${l.myOrders} (${profState.ordersTotal})',
                             style: const TextStyle(
                                 color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
                       ],
@@ -448,16 +450,16 @@ class _ProfileTabState extends State<ProfileTab> {
               Row(children: [
                 const Icon(Icons.history, color: AppColors.primary, size: 18),
                 const SizedBox(width: 8),
-                const Text('Communication History',
-                    style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(l.communicationHistory,
+                    style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
               ]),
               const SizedBox(height: 10),
               Row(children: [
-                Expanded(child: _historyTile(Icons.call, 'Call History', AppColors.success, () {
+                Expanded(child: _historyTile(Icons.call, l.callHistory, AppColors.success, () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => const CallHistoryScreen()));
                 })),
                 const SizedBox(width: 10),
-                Expanded(child: _historyTile(Icons.chat_bubble_outline, 'Chat History', AppColors.accent, () {
+                Expanded(child: _historyTile(Icons.chat_bubble_outline, l.chatHistory, AppColors.accent, () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatHistoryScreen()));
                 })),
               ]),
@@ -469,7 +471,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   context.read<AuthBloc>().add(AuthLogoutRequested());
                 },
                 icon: const Icon(Icons.logout, color: AppColors.error),
-                label: const Text('Logout', style: TextStyle(color: AppColors.error)),
+                label: Text(l.logout, style: const TextStyle(color: AppColors.error)),
                 style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.error)),
               ),
               const SizedBox(height: 20),

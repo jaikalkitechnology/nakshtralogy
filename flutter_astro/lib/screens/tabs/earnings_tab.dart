@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/astro_wallet/astro_wallet_bloc.dart';
 import '../../bloc/astro_wallet/astro_wallet_event.dart';
@@ -21,6 +22,7 @@ class _EarningsTabState extends State<EarningsTab> {
   }
 
   void _showWithdrawDialog() {
+    final l = AppLocalizations.of(context)!;
     final amountCtrl = TextEditingController();
     final upiCtrl = TextEditingController();
     final bankNameCtrl = TextEditingController();
@@ -33,7 +35,7 @@ class _EarningsTabState extends State<EarningsTab> {
       builder: (ctx) => StatefulBuilder(builder: (ctx, setDialogState) {
         return AlertDialog(
           backgroundColor: AppColors.card,
-          title: const Text('Request Withdrawal', style: TextStyle(color: AppColors.primary)),
+          title: Text(l.requestWithdrawal, style: const TextStyle(color: AppColors.primary)),
           content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
             TextField(
               controller: amountCtrl,
@@ -81,7 +83,7 @@ class _EarningsTabState extends State<EarningsTab> {
             ],
           ])),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel, style: const TextStyle(color: AppColors.textSecondary))),
             BlocBuilder<AstroWalletBloc, AstroWalletState>(builder: (context, state) {
               return ElevatedButton(
                 onPressed: state.withdrawing ? null : () {
@@ -96,7 +98,7 @@ class _EarningsTabState extends State<EarningsTab> {
                   ));
                   Navigator.pop(ctx);
                 },
-                child: state.withdrawing ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Submit'),
+                child: state.withdrawing ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.submit),
               );
             }),
           ],
@@ -107,6 +109,7 @@ class _EarningsTabState extends State<EarningsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocConsumer<AstroWalletBloc, AstroWalletState>(
       listener: (context, state) {
         if (state.successMessage != null) {
@@ -167,13 +170,13 @@ class _EarningsTabState extends State<EarningsTab> {
             const SizedBox(height: 20),
 
             // ── Filter chips ──
-            const Text('Statement', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
+            Text(l.statement, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(children: ['all', 'consultation_credit', 'withdrawal', 'bonus', 'refund'].map((k) {
                 final selected = state.kind == k;
-                final label = k == 'all' ? 'All' : k == 'consultation_credit' ? 'Credits' : k == 'withdrawal' ? 'Withdrawals' : k == 'bonus' ? 'Bonus' : 'Refunds';
+                final label = k == 'all' ? l.all : k == 'consultation_credit' ? l.credits : k == 'withdrawal' ? l.withdrawals : k == 'bonus' ? l.bonus : l.refunds;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
@@ -195,7 +198,7 @@ class _EarningsTabState extends State<EarningsTab> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
-                child: const Center(child: Text('No transactions', style: TextStyle(color: AppColors.textSecondary))),
+                child: Center(child: Text(l.noTransactions, style: const TextStyle(color: AppColors.textSecondary))),
               )
             else
               ...state.transactions.map((txn) => _TxnRow(txn: txn as Map<String, dynamic>)),
@@ -223,7 +226,7 @@ class _EarningsTabState extends State<EarningsTab> {
 
             // ── Withdrawal History ──
             if (state.withdrawals.isNotEmpty) ...[
-              const Text('Withdrawal History', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(l.withdrawalHistory, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
               ...state.withdrawals.map((w) => _WithdrawalRow(withdrawal: w as Map<String, dynamic>)),
             ],

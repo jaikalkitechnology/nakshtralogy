@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
@@ -158,6 +159,7 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocListener<ChartBloc, ChartState>(
       listener: (context, state) {
         if (state is ChartCreated) Navigator.pop(context);
@@ -170,7 +172,7 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context)),
-          title: const Text('New Client Chart'),
+          title: Text(l.newClientChart),
         ),
         body: GestureDetector(
           onTap: () { FocusScope.of(context).unfocus(); _removeOverlay(); },
@@ -182,18 +184,18 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
               child: Form(
                 key: _formKey,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('Client Birth Details', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 20)),
+                  Text(l.clientBirthDetails, style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 20)),
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _nameCtrl,
-                    decoration: const InputDecoration(labelText: 'Client Name', prefixIcon: Icon(Icons.person_outline, color: AppColors.textSecondary)),
-                    validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                    decoration: InputDecoration(labelText: l.clientName, prefixIcon: const Icon(Icons.person_outline, color: AppColors.textSecondary)),
+                    validator: (v) => (v == null || v.isEmpty) ? l.required : null,
                   ),
                   const SizedBox(height: 16),
-                  Text('Gender', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                  Text(l.gender, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                   const SizedBox(height: 8),
                   Row(children: ['M', 'F', 'O'].map((g) {
-                    final labels = {'M': 'Male', 'F': 'Female', 'O': 'Other'};
+                    final labels = {'M': l.male, 'F': l.female, 'O': l.other};
                     final selected = _gender == g;
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
@@ -210,14 +212,14 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _dobCtrl, readOnly: true, onTap: _pickDate,
-                    decoration: const InputDecoration(labelText: 'Date of Birth', hintText: 'DD/MM/YYYY', prefixIcon: Icon(Icons.calendar_today, color: AppColors.textSecondary)),
-                    validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                    decoration: InputDecoration(labelText: l.dateOfBirth, hintText: 'DD/MM/YYYY', prefixIcon: const Icon(Icons.calendar_today, color: AppColors.textSecondary)),
+                    validator: (v) => (v == null || v.isEmpty) ? l.required : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _tobCtrl, readOnly: true, onTap: _pickTime,
-                    decoration: const InputDecoration(labelText: 'Time of Birth', hintText: 'HH:MM', prefixIcon: Icon(Icons.access_time, color: AppColors.textSecondary)),
-                    validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                    decoration: InputDecoration(labelText: l.timeOfBirth, hintText: 'HH:MM', prefixIcon: const Icon(Icons.access_time, color: AppColors.textSecondary)),
+                    validator: (v) => (v == null || v.isEmpty) ? l.required : null,
                   ),
                   const SizedBox(height: 16),
                   CompositedTransformTarget(
@@ -227,14 +229,14 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
                       focusNode: _placeFocus,
                       onChanged: _onPlaceChanged,
                       decoration: InputDecoration(
-                        labelText: 'Birth Place',
+                        labelText: l.birthPlace,
                         hintText: 'Type city name to search...',
                         prefixIcon: const Icon(Icons.place_outlined, color: AppColors.textSecondary),
                         suffixIcon: _citySearching
                             ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary)))
                             : null,
                       ),
-                      validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                      validator: (v) => (v == null || v.isEmpty) ? l.required : null,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -246,7 +248,7 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
                         onPressed: loading ? null : _submit,
                         child: loading
                             ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
-                            : const Text('Generate Kundli'),
+                            : Text(l.generateKundli),
                       ),
                     );
                   }),

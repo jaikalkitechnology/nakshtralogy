@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -24,6 +25,7 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   void _showEditDialog(Map<String, dynamic> me) {
+    final l = AppLocalizations.of(context)!;
     final profile = (me['profile'] ?? me['astrologer_profile'] ?? {}) as Map<String, dynamic>;
     final nameCtrl = TextEditingController(text: me['name'] ?? '');
     final phoneCtrl = TextEditingController(text: me['phone'] ?? '');
@@ -49,7 +51,7 @@ class _ProfileTabState extends State<ProfileTab> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: const Text('Edit Profile', style: TextStyle(color: AppColors.primary)),
+        title: Text('${l.edit} Profile', style: const TextStyle(color: AppColors.primary)),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -101,7 +103,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ])),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel, style: const TextStyle(color: AppColors.textSecondary))),
           BlocBuilder<AstroProfileBloc, AstroProfileState>(builder: (context, state) {
             return ElevatedButton(
               onPressed: state.saving ? null : () {
@@ -154,6 +156,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocConsumer<AstroProfileBloc, AstroProfileState>(
       listener: (context, state) {
         if (state.successMessage != null) {
@@ -213,7 +216,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ElevatedButton.icon(
                   onPressed: () => _showEditDialog(me),
                   icon: const Icon(Icons.edit, size: 18),
-                  label: const Text('Edit Profile'),
+                  label: Text('${l.edit} Profile'),
                   style: ElevatedButton.styleFrom(minimumSize: const Size(200, 42)),
                 ),
               ]),
@@ -303,7 +306,7 @@ class _ProfileTabState extends State<ProfileTab> {
             OutlinedButton.icon(
               onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
               icon: const Icon(Icons.logout),
-              label: const Text('Logout'),
+              label: Text(l.logout),
               style: OutlinedButton.styleFrom(foregroundColor: AppColors.error, side: const BorderSide(color: AppColors.error)),
             ),
             const SizedBox(height: 20),

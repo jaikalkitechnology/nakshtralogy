@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -62,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
@@ -97,12 +99,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Sign In', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22)),
+                        Text(l.signIn, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22)),
                         const SizedBox(height: 24),
                         TextFormField(
                           controller: _emailCtrl,
                           keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(labelText: 'Email', hintText: 'your@email.com', prefixIcon: Icon(Icons.email_outlined, color: AppColors.textSecondary)),
+                          decoration: InputDecoration(labelText: l.email, hintText: 'your@email.com', prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary)),
                           validator: (v) {
                             if (v == null || v.isEmpty) return 'Email is required';
                             if (!v.contains('@')) return 'Enter a valid email';
@@ -114,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _passCtrl,
                           obscureText: _obscure,
                           decoration: InputDecoration(
-                            labelText: 'Password', hintText: '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022',
+                            labelText: l.password, hintText: '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022',
                             prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary),
                             suffixIcon: IconButton(
                               icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary),
@@ -132,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())),
-                            child: const Text('Forgot Password?', style: TextStyle(color: AppColors.primary)),
+                            child: Text(l.forgotPassword, style: const TextStyle(color: AppColors.primary)),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -143,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: loading ? null : _login,
                               child: loading
                                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
-                                  : const Text('Sign In'),
+                                  : Text(l.signIn),
                             );
                           },
                         ),
@@ -157,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         OutlinedButton.icon(
                           onPressed: _googleSignIn,
                           icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                          label: const Text('Continue with Google'),
+                          label: Text(l.continueGoogle),
                         ),
                       ],
                     ),
@@ -167,10 +169,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? ", style: TextStyle(color: AppColors.textSecondary)),
+                    Text('${l.dontHaveAccount} ', style: TextStyle(color: AppColors.textSecondary)),
                     TextButton(
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SignupScreen())),
-                      child: const Text('Sign Up', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
+                      child: Text(l.createAccount, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),

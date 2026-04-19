@@ -506,15 +506,6 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<List<dynamic>> getChatMessages(String sessionId, {int skip = 0, int limit = 100}) async {
-    final resp = await http.get(
-      Uri.parse('${ApiConstants.commBase}/chat/$sessionId/messages?skip=$skip&limit=$limit'),
-      headers: _headers,
-    );
-    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
-    return [];
-  }
-
   Future<Map<String, dynamic>> uploadChatFile(String filePath, String fileName) async {
     final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.commBase}/chat/upload'));
     request.headers.addAll(_headers);
