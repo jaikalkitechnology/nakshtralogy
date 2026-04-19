@@ -10,9 +10,14 @@ import '../../bloc/profile/profile_state.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
-import '../../widgets/astrologer_profile_sheet.dart';
+import '../../bloc/chart/chart_bloc.dart';
+import '../../bloc/chart/chart_state.dart';
+import '../../bloc/wallet/wallet_bloc.dart';
+import '../../bloc/wallet/wallet_state.dart';
 import '../communication/call_history_screen.dart';
 import '../communication/chat_history_screen.dart';
+import '../charts/my_charts_screen.dart';
+import '../tabs/wallet_tab.dart';
 import '../../widgets/language_selector.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -143,6 +148,114 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
+  void _openConsultationHistorySheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.nebula,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 42,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.gold.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text('CONSULTATION HISTORY',
+                  style: TextStyle(
+                      color: AppColors.gold,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 2,
+                      fontFamily: 'monospace')),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: AppColors.nebula,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.gold.withOpacity(0.25)),
+                  ),
+                  child: const Icon(Icons.call, color: AppColors.success, size: 20),
+                ),
+                title: const Text('Call History',
+                    style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                subtitle: const Text('Past voice consultations',
+                    style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                trailing: const Icon(Icons.chevron_right, color: AppColors.gold),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CallHistoryScreen()));
+                },
+              ),
+              const SizedBox(height: 4),
+              ListTile(
+                leading: Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: AppColors.nebula,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.gold.withOpacity(0.25)),
+                  ),
+                  child: const Icon(Icons.chat_bubble_outline, color: AppColors.aurora, size: 20),
+                ),
+                title: const Text('Chat History',
+                    style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                subtitle: const Text('Past text conversations',
+                    style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                trailing: const Icon(Icons.chevron_right, color: AppColors.gold),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatHistoryScreen()));
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showComingSoon(String label) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$label  -  Coming soon',
+            style: const TextStyle(color: AppColors.ivory, fontFamily: 'Manrope')),
+        backgroundColor: AppColors.nebula,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: AppColors.gold.withOpacity(0.3)),
+        ),
+      ),
+    );
+  }
+
+  String _resolveSignNakshatra(Map<String, dynamic>? me) {
+    if (me == null) return '';
+    final sign = me['sun_sign'] ?? me['zodiac'] ?? me['rashi'];
+    final nak = me['nakshatra'] ?? me['nak'];
+    if (sign == null && nak == null) return '';
+    final parts = <String>[];
+    if (sign != null) parts.add(sign.toString().toUpperCase());
+    if (nak != null) parts.add('${nak.toString().toUpperCase()} NAKSHATRA');
+    return parts.join(' \u00b7 ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -152,173 +265,288 @@ class _ProfileTabState extends State<ProfileTab> {
         if (profState.loading && me == null) {
           return const Center(child: CircularProgressIndicator(color: AppColors.primary));
         }
+        final initial = (me?['name']?.toString().isNotEmpty == true)
+            ? me!['name'].toString().trim().substring(0, 1).toUpperCase()
+            : '\u{1F464}';
+        final signNak = _resolveSignNakshatra(me);
+
         return RefreshIndicator(
-          color: AppColors.primary,
+          color: AppColors.gold,
           onRefresh: () async {
             context.read<ProfileBloc>().add(ProfileLoadRequested());
             context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
           },
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(vertical: 24),
             children: [
-              // Profile header
+              // ============ HEADER ============
+              Center(
+                child: GestureDetector(
+                  onTap: me == null ? null : () => _openEditDialog(me),
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [AppColors.gold, AppColors.saffron],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(color: AppColors.gold.withOpacity(0.4), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.gold.withOpacity(0.2),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: (me?['avatar_url'] != null)
+                          ? ClipOval(
+                              child: Image.network(
+                                me!['avatar_url'] as String,
+                                width: 76,
+                                height: 76,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Text(initial,
+                                    style: const TextStyle(
+                                        color: AppColors.midnight,
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w800)),
+                              ),
+                            )
+                          : Text(
+                              initial,
+                              style: const TextStyle(
+                                color: AppColors.midnight,
+                                fontSize: 32,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Center(
+                child: Text(
+                  me?['name']?.toString() ?? '\u2014',
+                  style: const TextStyle(
+                    color: AppColors.ivory,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: 'Manrope',
+                  ),
+                ),
+              ),
+              if (signNak.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Center(
+                  child: Text(
+                    signNak,
+                    style: const TextStyle(
+                      color: AppColors.gold,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.5,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ),
+              ] else if (me?['email'] != null) ...[
+                const SizedBox(height: 4),
+                Center(
+                  child: Text(
+                    (me!['email'] as String).toUpperCase(),
+                    style: const TextStyle(
+                      color: AppColors.gold,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 20),
+
+              // ============ STATS ROW ============
+              BlocBuilder<ChartBloc, ChartState>(
+                builder: (context, chartState) {
+                  final chartsCount = chartState is ChartLoaded ? chartState.charts.length : 0;
+                  return BlocBuilder<WalletBloc, WalletState>(
+                    builder: (context, walletState) {
+                      final balance = (walletState.wallet?['balance'] as num?)?.toDouble() ?? 0.0;
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.nebula,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                        ),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Expanded(
+                                child: _profileStat(
+                                  profState.ordersTotal.toString(),
+                                  'CONSULTS',
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                color: AppColors.gold.withOpacity(0.15),
+                              ),
+                              Expanded(
+                                child: _profileStat(
+                                  chartsCount.toString(),
+                                  'CHARTS',
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                color: AppColors.gold.withOpacity(0.15),
+                              ),
+                              Expanded(
+                                child: _profileStat(
+                                  '\u20b9${balance.toStringAsFixed(0)}',
+                                  'WALLET',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+
+              // ============ MENU LIST ============
               Container(
-                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.card,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.35)),
+                  color: Colors.white.withOpacity(0.02),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.1)),
                 ),
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: AppColors.surface,
-                      backgroundImage: me?['avatar_url'] != null ? NetworkImage(me!['avatar_url'] as String) : null,
-                      child: me?['avatar_url'] == null
-                          ? const Text('🧑', style: TextStyle(fontSize: 32))
-                          : null,
+                    _menuItem(
+                      emoji: '\u{1F464}',
+                      label: 'My Details',
+                      onTap: me == null ? null : () => _openEditDialog(me),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      me?['name'] ?? '—',
-                      style: const TextStyle(
-                          color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    if (me?['email'] != null)
-                      Text(me!['email'] as String,
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                    if (me?['phone'] != null)
-                      Text(me!['phone'] as String,
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                    const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                      onPressed: me == null ? null : () => _openEditDialog(me),
-                      icon: const Icon(Icons.edit, size: 14),
-                      label: Text(l.editProfile),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(120, 36),
+                    _menuDivider(),
+                    _menuItem(
+                      emoji: '\u{1F4DC}',
+                      label: 'My Kundlis',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const MyChartsScreen()),
                       ),
+                    ),
+                    _menuDivider(),
+                    _menuItem(
+                      emoji: '\u{1F4B3}',
+                      label: 'Wallet & Recharge',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => Scaffold(
+                            appBar: AppBar(title: Text(l.wallet)),
+                            body: const WalletTab(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    _menuDivider(),
+                    _menuItem(
+                      emoji: '\u{1F550}',
+                      label: 'Consultation History',
+                      onTap: _openConsultationHistorySheet,
+                    ),
+                    _menuDivider(),
+                    _menuItem(
+                      emoji: '\u{1F514}',
+                      label: 'Notifications',
+                      onTap: () => _showComingSoon('Notifications'),
+                    ),
+                    _menuDivider(),
+                    _menuItem(
+                      emoji: '\u2753',
+                      label: 'Help & Support',
+                      onTap: () => _showComingSoon('Help & Support'),
+                      isLast: true,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Birth details
-              if (me != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l.birthDetails,
-                          style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 8),
-                      _detailRow('Gender', (me['gender'] as String?) ?? '—'),
-                      _detailRow('Date of Birth', (me['dob'] as String?) ?? '—'),
-                      _detailRow('Time of Birth', (me['tob'] as String?) ?? '—'),
-                      _detailRow('Birth Place', (me['birth_place'] as String?) ?? '—'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              // Saved astrologers
+              // ============ SAVED ASTROLOGERS (preserved) ============
               BlocBuilder<AstrologerBloc, AstrologerState>(
                 builder: (context, aState) {
                   final saved = aState.saved;
+                  if (saved.isEmpty) return const SizedBox.shrink();
                   return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: AppColors.card,
+                      color: AppColors.nebula,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: AppColors.gold.withOpacity(0.15)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.bookmark, color: AppColors.primary, size: 14),
+                            const Icon(Icons.bookmark, color: AppColors.gold, size: 14),
                             const SizedBox(width: 6),
                             Text('${l.savedAstrologers} (${saved.length})',
                                 style: const TextStyle(
-                                    color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                                    color: AppColors.gold, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.2)),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        if (saved.isEmpty)
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Text(l.noSavedAstrologers,
-                                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                            ),
-                          )
-                        else
-                          ...saved.map((a) => Padding(
-                                padding: const EdgeInsets.only(bottom: 6),
-                                child: InkWell(
-                                  onTap: () => showAstrologerProfileSheet(context, a['id'] as String),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.surface,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 18,
-                                          backgroundColor: AppColors.card,
-                                          backgroundImage: a['profile_image_url'] != null
-                                              ? NetworkImage(a['profile_image_url'] as String)
-                                              : null,
-                                          child: a['profile_image_url'] == null
-                                              ? const Text('🔮', style: TextStyle(fontSize: 14))
-                                              : null,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                a['display_name'] ?? '—',
-                                                style: const TextStyle(
-                                                    color: AppColors.textPrimary,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w600),
-                                              ),
-                                              Text(
-                                                '₹${(a['rate_per_min_chat'] as num?)?.toInt() ?? 0}/m · ⭐ ${((a['rating'] as num?)?.toDouble() ?? 0).toStringAsFixed(1)}',
-                                                style: const TextStyle(
-                                                    color: AppColors.textSecondary, fontSize: 9),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.favorite, color: AppColors.error, size: 18),
-                                          onPressed: () {
-                                            context
-                                                .read<AstrologerBloc>()
-                                                .add(AstrologerToggleSave(a['id'] as String));
-                                          },
-                                        ),
-                                      ],
+                        ...saved.take(3).map((a) => Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 16,
+                                    backgroundColor: AppColors.card,
+                                    backgroundImage: a['profile_image_url'] != null
+                                        ? NetworkImage(a['profile_image_url'] as String)
+                                        : null,
+                                    child: a['profile_image_url'] == null
+                                        ? const Text('\u{1F52E}', style: TextStyle(fontSize: 12))
+                                        : null,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      a['display_name'] ?? '\u2014',
+                                      style: const TextStyle(
+                                          color: AppColors.ivory,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ),
-                                ),
-                              )),
+                                  Text(
+                                    '\u2605 ${((a['rating'] as num?)?.toDouble() ?? 0).toStringAsFixed(1)}',
+                                    style: const TextStyle(
+                                        color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700),
+                                  ),
+                                ],
+                              ),
+                            )),
                       ],
                     ),
                   );
@@ -326,156 +554,64 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
               const SizedBox(height: 16),
 
-              // My Orders
+              // ============ LANGUAGE ============
               Container(
-                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.card,
+                  color: Colors.white.withOpacity(0.02),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.1)),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                child: _menuItem(
+                  emoji: '\u{1F310}',
+                  label: 'Language / \u092d\u093e\u0937\u093e',
+                  onTap: () => LanguageSelector.show(context),
+                  isLast: true,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // ============ LOGOUT ============
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: Row(
                       children: [
-                        const Icon(Icons.shopping_bag_outlined, color: AppColors.primary, size: 14),
-                        const SizedBox(width: 6),
-                        Text('${l.myOrders} (${profState.ordersTotal})',
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: AppColors.error.withOpacity(0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.logout, color: AppColors.error, size: 16),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            l.logout,
                             style: const TextStyle(
-                                color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                              color: AppColors.error,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    if (profState.orders.isEmpty)
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Text('No orders yet',
-                              style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                        ),
-                      )
-                    else
-                      ...profState.orders.map((o) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: AppColors.surface,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(o['icon'] ?? '📜', style: const TextStyle(fontSize: 22)),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          o['service_name'] ?? '—',
-                                          style: const TextStyle(
-                                              color: AppColors.textPrimary,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        Text(
-                                          (o['created_at'] as String?)?.substring(0, 10) ?? '',
-                                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 9),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        (o['amount_paid'] as num?) != null && (o['amount_paid'] as num) > 0
-                                            ? '₹${(o['amount_paid'] as num).toInt()}'
-                                            : 'FREE',
-                                        style: const TextStyle(
-                                            color: AppColors.primary,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.success.withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          o['status'] ?? '',
-                                          style: const TextStyle(
-                                              color: AppColors.success,
-                                              fontSize: 8,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Language Selector
-              InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: () => LanguageSelector.show(context),
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.gold.withOpacity(0.15)),
                   ),
-                  child: Row(children: [
-                    const Icon(Icons.language, color: AppColors.gold, size: 22),
-                    const SizedBox(width: 12),
-                    const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Language / \u092d\u093e\u0937\u093e', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                      Text('Tap to change app language', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
-                    ])),
-                    const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                  ]),
                 ),
               ),
-              const SizedBox(height: 20),
-
-              // Communication History
-              Row(children: [
-                const Icon(Icons.history, color: AppColors.primary, size: 18),
-                const SizedBox(width: 8),
-                Text(l.communicationHistory,
-                    style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w600)),
-              ]),
-              const SizedBox(height: 10),
-              Row(children: [
-                Expanded(child: _historyTile(Icons.call, l.callHistory, AppColors.success, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CallHistoryScreen()));
-                })),
-                const SizedBox(width: 10),
-                Expanded(child: _historyTile(Icons.chat_bubble_outline, l.chatHistory, AppColors.accent, () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatHistoryScreen()));
-                })),
-              ]),
-              const SizedBox(height: 20),
-
-              // Logout
-              OutlinedButton.icon(
-                onPressed: () {
-                  context.read<AuthBloc>().add(AuthLogoutRequested());
-                },
-                icon: const Icon(Icons.logout, color: AppColors.error),
-                label: Text(l.logout, style: const TextStyle(color: AppColors.error)),
-                style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.error)),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
             ],
           ),
         );
@@ -483,44 +619,87 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  Widget _historyTile(IconData icon, String label, Color color, VoidCallback onTap) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.3)),
+  Widget _profileStat(String value, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppColors.ivory,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'Manrope',
+          ),
         ),
-        child: Column(children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600)),
-        ]),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.smoke,
+            fontSize: 9,
+            letterSpacing: 1.8,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'monospace',
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _menuItem({
+    required String emoji,
+    required String label,
+    required VoidCallback? onTap,
+    bool isLast = false,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: isLast
+            ? const BorderRadius.vertical(bottom: Radius.circular(14))
+            : BorderRadius.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  color: AppColors.nebula,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(emoji, style: const TextStyle(fontSize: 14)),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.ivory,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Manrope',
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppColors.gold, size: 18),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _detailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: const TextStyle(color: AppColors.textPrimary, fontSize: 11, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
-      ),
+  Widget _menuDivider() {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      color: AppColors.gold.withOpacity(0.08),
     );
   }
 }
