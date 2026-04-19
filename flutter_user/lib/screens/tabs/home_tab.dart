@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
@@ -71,6 +72,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return RefreshIndicator(
       color: AppColors.gold,
       onRefresh: () async {
@@ -82,14 +84,14 @@ class _HomeTabState extends State<HomeTab> {
         padding: EdgeInsets.zero,
         children: [
           // Hero banner
-          _heroBanner(),
+          _heroBanner(l),
 
           // Quick actions
-          _quickActions(),
+          _quickActions(l),
 
           // Rashi carousel
           const SizedBox(height: 12),
-          _sectionHeader('Today\'s Rashi', 'Tap for details'),
+          _sectionHeader(l.todaysRashi, l.tapDetails),
           const SizedBox(height: 10),
           _rashiCarousel(),
 
@@ -98,11 +100,11 @@ class _HomeTabState extends State<HomeTab> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(children: [
-              const Expanded(child: Text('All Services',
-                  style: TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
+              Expanded(child: Text(l.allServices,
+                  style: const TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
               GestureDetector(
                 onTap: widget.onSeeAllServices,
-                child: Text('SEE ALL \u2192', style: TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1)),
+                child: Text('${l.seeAll} \u2192', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1)),
               ),
             ]),
           ),
@@ -114,18 +116,18 @@ class _HomeTabState extends State<HomeTab> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(children: [
-              const Expanded(child: Text('Top Astrologers',
-                  style: TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
+              Expanded(child: Text(l.topAstrologers,
+                  style: const TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
               GestureDetector(
                 onTap: widget.onSeeAllAstrologers,
-                child: Text('SEE ALL \u2192', style: TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1)),
+                child: Text('${l.seeAll} \u2192', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1)),
               ),
             ]),
           ),
           const SizedBox(height: 4),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Online experts ready for consultation', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(l.onlineExperts, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
           ),
           const SizedBox(height: 10),
           _astrologersList(),
@@ -135,7 +137,7 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _heroBanner() {
+  Widget _heroBanner(AppLocalizations l) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       padding: const EdgeInsets.all(20),
@@ -149,7 +151,7 @@ class _HomeTabState extends State<HomeTab> {
         border: Border.all(color: AppColors.gold.withOpacity(0.3)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('TODAY\'S HOROSCOPE', style: TextStyle(
+        Text(l.todaysHoroscope, style: TextStyle(
           fontFamily: 'Manrope', fontSize: 9, letterSpacing: 3, color: AppColors.gold, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         const Text('Jupiter favors bold moves',
@@ -161,12 +163,12 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _quickActions() {
+  Widget _quickActions(AppLocalizations l) {
     final actions = [
-      {'icon': Icons.chat_bubble, 'label': 'Chat', 'color': AppColors.gold},
-      {'icon': Icons.call, 'label': 'Call', 'color': AppColors.saffron},
-      {'icon': Icons.videocam, 'label': 'Video', 'color': AppColors.cosmicPink},
-      {'icon': Icons.auto_awesome, 'label': 'Kundli', 'color': AppColors.aurora},
+      {'icon': Icons.chat_bubble, 'label': l.chat, 'color': AppColors.gold},
+      {'icon': Icons.call, 'label': l.call, 'color': AppColors.saffron},
+      {'icon': Icons.videocam, 'label': l.video, 'color': AppColors.cosmicPink},
+      {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora},
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -335,6 +337,7 @@ class _AstroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final rating = (astro['rating'] as num?)?.toDouble() ?? 0.0;
     final isOnline = astro['is_online'] == true && astro['is_busy'] != true;
     final isBusy = astro['is_busy'] == true;
@@ -392,7 +395,7 @@ class _AstroCard extends StatelessWidget {
               gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text('CHAT', style: TextStyle(color: AppColors.midnight, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+            child: Text(l.chat, style: const TextStyle(color: AppColors.midnight, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
           ),
         ]),
       ),

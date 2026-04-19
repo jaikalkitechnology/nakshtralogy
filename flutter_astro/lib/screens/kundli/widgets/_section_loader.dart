@@ -13,10 +13,13 @@ class SectionLoader extends StatefulWidget {
   State<SectionLoader> createState() => _SectionLoaderState();
 }
 
-class _SectionLoaderState extends State<SectionLoader> {
+class _SectionLoaderState extends State<SectionLoader> with AutomaticKeepAliveClientMixin {
   Map<String, dynamic>? _data;
   bool _loading = false;
   String? _error;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -44,6 +47,7 @@ class _SectionLoaderState extends State<SectionLoader> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_loading) return const Center(child: CircularProgressIndicator(color: AppColors.primary));
     if (_error != null) {
       return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
@@ -13,6 +14,7 @@ class ClientChartsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final bloc = context.read<ChartBloc>();
     if (bloc.state is ChartInitial) bloc.add(ChartLoadRequested());
 
@@ -29,10 +31,10 @@ class ClientChartsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text('Client Charts', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 20)),
+              Text(l.clientCharts, style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 20)),
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddClientChartScreen())),
-                icon: const Icon(Icons.add, size: 18), label: const Text('New Chart'),
+                icon: const Icon(Icons.add, size: 18), label: Text(l.newChart),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(0, 40)),
               ),
             ]),
@@ -44,7 +46,7 @@ class ClientChartsScreen extends StatelessWidget {
                     ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                         const Text('\U0001f4dc', style: TextStyle(fontSize: 56)),
                         const SizedBox(height: 16),
-                        const Text('No charts created yet', style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+                        Text(l.noChartsCreated, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
                       ]))
                     : RefreshIndicator(
                         onRefresh: () async => context.read<ChartBloc>().add(ChartLoadRequested()),
@@ -79,7 +81,7 @@ class ClientChartsScreen extends StatelessWidget {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                           decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                                          child: const Text('View Kundli', style: TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                                          child: Text(l.viewKundli, style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
                                         ),
                                       ]),
                                     ])),

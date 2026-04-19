@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
@@ -12,6 +13,7 @@ class MyChartsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     // load on first build
     final bloc = context.read<ChartBloc>();
     if (bloc.state is ChartInitial) {
@@ -42,14 +44,14 @@ class MyChartsScreen extends StatelessWidget {
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               const Text('\U0001f4dc', style: TextStyle(fontSize: 56)),
               const SizedBox(height: 16),
-              const Text('No birth charts yet', style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+              Text(l.noCharts, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
               const SizedBox(height: 4),
-              Text('Create your first Janam Kundli', style: TextStyle(color: AppColors.textSecondary)),
+              Text(l.createFirst, style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddChartScreen())),
                 icon: const Icon(Icons.add),
-                label: const Text('Create Chart'),
+                label: Text(l.createChart),
               ),
             ]),
           );
@@ -96,7 +98,7 @@ class MyChartsScreen extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                               decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
-                              child: const Text('PRIMARY', style: TextStyle(color: AppColors.primary, fontSize: 9, fontWeight: FontWeight.bold)),
+                              child: Text(l.primary, style: const TextStyle(color: AppColors.primary, fontSize: 9, fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ]),
@@ -111,16 +113,16 @@ class MyChartsScreen extends StatelessWidget {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             backgroundColor: AppColors.card,
-                            title: const Text('Delete Chart?', style: TextStyle(color: AppColors.textPrimary)),
-                            content: const Text('This cannot be undone.', style: TextStyle(color: AppColors.textSecondary)),
+                            title: Text(l.deleteChart, style: const TextStyle(color: AppColors.textPrimary)),
+                            content: Text(l.cannotUndo, style: const TextStyle(color: AppColors.textSecondary)),
                             actions: [
-                              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                              TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel)),
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(ctx);
                                   context.read<ChartBloc>().add(ChartDeleteRequested(chartId: c['id']));
                                 },
-                                child: const Text('Delete', style: TextStyle(color: AppColors.error)),
+                                child: Text(l.delete, style: const TextStyle(color: AppColors.error)),
                               ),
                             ],
                           ),

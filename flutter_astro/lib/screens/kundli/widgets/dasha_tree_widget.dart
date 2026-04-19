@@ -21,7 +21,10 @@ class DashaTreeWidget extends StatefulWidget {
   State<DashaTreeWidget> createState() => _DashaTreeWidgetState();
 }
 
-class _DashaTreeWidgetState extends State<DashaTreeWidget> {
+class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   Map<String, dynamic>? _root;
   bool _loading = false;
   String? _error;
@@ -83,6 +86,7 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_loading) return const Center(child: CircularProgressIndicator(color: AppColors.primary));
     if (_error != null) return _errView();
     if (_stack.isEmpty) return const SizedBox.shrink();

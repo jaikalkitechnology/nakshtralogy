@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'widgets/planet_positions_widget.dart';
@@ -88,12 +89,13 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           Text(widget.clientName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
-          const Text('Complete Birth Chart', style: TextStyle(color: AppColors.primary, fontSize: 11)),
+          Text(l.completeBirthChart, style: const TextStyle(color: AppColors.primary, fontSize: 11)),
         ]),
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _load)],
         bottom: TabBar(
@@ -151,7 +153,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center),
       const SizedBox(height: 16),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)!.retry)),
     ]),
   ));
 }
@@ -172,8 +174,9 @@ class _SummaryTab extends StatelessWidget {
     final moon = (planets['Moon'] as Map?)?.cast<String, dynamic>();
     final sun = (planets['Sun'] as Map?)?.cast<String, dynamic>();
 
+    final l = AppLocalizations.of(context)!;
     return ListView(padding: const EdgeInsets.all(16), children: [
-      _birthCard(chart),
+      _birthCard(chart, l),
       const SizedBox(height: 12),
       if (lagna != null) _planetSummaryCard('Ascendant (Lagna)', lagna, AppColors.primary, Icons.wb_twilight),
       if (moon != null) _planetSummaryCard('Moon Sign (Rashi)', moon, AppColors.accent, Icons.nightlight_round),
@@ -185,15 +188,15 @@ class _SummaryTab extends StatelessWidget {
     ]);
   }
 
-  Widget _birthCard(Map<String, dynamic> chart) {
+  Widget _birthCard(Map<String, dynamic> chart, AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Row(children: [
-          Icon(Icons.info_outline, color: AppColors.primary, size: 18),
-          SizedBox(width: 8),
-          Text('Birth Details', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
+        Row(children: [
+          const Icon(Icons.info_outline, color: AppColors.primary, size: 18),
+          const SizedBox(width: 8),
+          Text(l.birthDetails, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 10),
         _row('Name', chart['name']?.toString() ?? ''),

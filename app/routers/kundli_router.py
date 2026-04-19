@@ -93,12 +93,22 @@ def _load_chart(chart_id: str, current_user: User, db: Session) -> Chart:
     return chart
 
 
+_chart_cache: dict = {}
+_CACHE_MAX = 50
+
 def _chart_from_row(chart: Chart) -> dict:
-    """Compute full chart data from a saved Chart row."""
+    """Compute chart data from a saved Chart row, with in-memory caching."""
+    cid = chart.id
+    if cid in _chart_cache:
+        return _chart_cache[cid]
     try:
-        return nk_engine.get_chart(
+        result = nk_engine.get_chart(
             chart.name, chart.gender or "M", chart.dob, chart.tob, chart.place,
         )
+        if len(_chart_cache) >= _CACHE_MAX:
+            _chart_cache.pop(next(iter(_chart_cache)))
+        _chart_cache[cid] = result
+        return result
     except Exception as e:
         logger.error("get_chart failed: %s\n%s", e, traceback.format_exc())
         _err(500, "Chart compute failed", str(e))

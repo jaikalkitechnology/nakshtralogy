@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../bloc/dashboard/dashboard_event.dart';
@@ -16,13 +17,14 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   Future<void> _startLive(BuildContext context) async {
+    final l = AppLocalizations.of(context)!;
     final titleCtrl = TextEditingController();
     final descCtrl = TextEditingController();
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: const Text('Go Live', style: TextStyle(color: AppColors.primary)),
+        title: Text(l.goLive, style: const TextStyle(color: AppColors.primary)),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
           TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Stream Title', prefixIcon: Icon(Icons.title))),
           const SizedBox(height: 10),
@@ -65,6 +67,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         if (state.loading && state.stats == null) {
@@ -74,7 +77,7 @@ class _HomeTabState extends State<HomeTab> {
           return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
             Text(state.error!, style: const TextStyle(color: AppColors.error)),
             const SizedBox(height: 12),
-            ElevatedButton(onPressed: () => context.read<DashboardBloc>().add(DashboardLoadRequested()), child: const Text('Retry')),
+            ElevatedButton(onPressed: () => context.read<DashboardBloc>().add(DashboardLoadRequested()), child: Text(l.retry)),
           ]));
         }
         final stats = state.stats ?? {};
@@ -104,7 +107,7 @@ class _HomeTabState extends State<HomeTab> {
             ElevatedButton.icon(
               onPressed: () => _startLive(context),
               icon: const Icon(Icons.live_tv, size: 20),
-              label: const Text('Go Live'),
+              label: Text(l.goLive),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.error,
                 foregroundColor: Colors.white,
@@ -127,11 +130,11 @@ class _HomeTabState extends State<HomeTab> {
                 child: Row(children: [
                   const Text('\u2648\u2649\u264a', style: TextStyle(fontSize: 22)),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Rashi Predictions', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
-                      SizedBox(height: 2),
-                      Text("Today's gochar for all 12 signs — tap to drill in",
+                      Text(l.rashiPredictions, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 2),
+                      const Text("Today's gochar for all 12 signs — tap to drill in",
                           style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                     ]),
                   ),
@@ -141,10 +144,10 @@ class _HomeTabState extends State<HomeTab> {
             ),
             const SizedBox(height: 20),
 
-            const Text('Request Summary', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
+            Text(l.requests, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 10),
             Row(children: [
-              _RequestCountChip(icon: Icons.chat_bubble, label: 'Chat', count: stats['chat_requests'] ?? 0, color: AppColors.aurora),
+              _RequestCountChip(icon: Icons.chat_bubble, label: l.chats, count: stats['chat_requests'] ?? 0, color: AppColors.aurora),
               const SizedBox(width: 10),
               _RequestCountChip(icon: Icons.phone, label: 'Voice', count: stats['voice_requests'] ?? 0, color: AppColors.success),
               const SizedBox(width: 10),
@@ -154,7 +157,7 @@ class _HomeTabState extends State<HomeTab> {
 
             // ── Recent Requests ──
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text('Recent Requests', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(l.recentRequests, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
               if (state.loading) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
             ]),
             const SizedBox(height: 10),
@@ -162,7 +165,7 @@ class _HomeTabState extends State<HomeTab> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
-                child: const Center(child: Text('No recent requests', style: TextStyle(color: AppColors.textSecondary))),
+                child: Center(child: Text(l.noRecentRequests, style: const TextStyle(color: AppColors.textSecondary))),
               )
             else
               ...state.recentRequests.map((req) => _RequestCard(request: req)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'paywall.dart';
@@ -38,30 +39,32 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
+  static const _sectionCount = 16;
+
   // [label, icon, section-key used by paywall]
-  static const _sections = <List<Object>>[
-    ['Summary', Icons.dashboard, 'summary'],
-    ['Planets', Icons.public, 'planets'],
-    ['Kundli', Icons.grid_on, 'kundli'],
-    ['Divisions', Icons.apps, 'divisions'],
-    ['Vimshottari', Icons.timeline, 'vimshottari'],
-    ['Moola', Icons.schedule, 'moola'],
-    ['Gochar', Icons.wb_sunny, 'gochar'],
-    ['Dosh', Icons.warning, 'dosh'],
-    ['Yoga', Icons.auto_awesome, 'yoga'],
-    ['Shadbala', Icons.bar_chart, 'shadbala'],
-    ['Ashtakavarga', Icons.table_chart, 'ashtakavarga'],
-    ['Aspects', Icons.hub, 'aspects'],
-    ['Life Areas', Icons.work, 'life_areas'],
-    ['Bhava', Icons.home, 'bhava'],
-    ['Chakras', Icons.radio_button_checked, 'chakra'],
-    ['Dasha Active', Icons.flash_on, 'dasha_activation'],
+  static List<List<Object>> _sections(AppLocalizations l) => <List<Object>>[
+    [l.summary, Icons.dashboard, 'summary'],
+    [l.planets, Icons.public, 'planets'],
+    [l.kundli, Icons.grid_on, 'kundli'],
+    [l.divisions, Icons.apps, 'divisions'],
+    [l.vimshottari, Icons.timeline, 'vimshottari'],
+    [l.moola, Icons.schedule, 'moola'],
+    [l.gochar, Icons.wb_sunny, 'gochar'],
+    [l.dosh, Icons.warning, 'dosh'],
+    [l.yoga, Icons.auto_awesome, 'yoga'],
+    [l.shadbala, Icons.bar_chart, 'shadbala'],
+    [l.ashtakavarga, Icons.table_chart, 'ashtakavarga'],
+    [l.aspects, Icons.hub, 'aspects'],
+    [l.lifeAreas, Icons.work, 'life_areas'],
+    [l.bhava, Icons.home, 'bhava'],
+    [l.chakras, Icons.radio_button_checked, 'chakra'],
+    [l.dashaActive, Icons.flash_on, 'dasha_activation'],
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: _sections.length, vsync: this);
+    _tabs = TabController(length: _sectionCount, vsync: this);
     _load();
   }
 
@@ -93,12 +96,14 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final sections = _sections(l);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           Text(widget.clientName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
-          const Text('Complete Birth Chart', style: TextStyle(color: AppColors.primary, fontSize: 11)),
+          Text(l.completeBirthChart, style: const TextStyle(color: AppColors.primary, fontSize: 11)),
         ]),
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _load)],
         bottom: TabBar(
@@ -107,7 +112,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primary,
-          tabs: _sections.map((s) => Tab(
+          tabs: sections.map((s) => Tab(
             icon: Icon(s[1] as IconData, size: 16),
             text: s[0] as String,
           )).toList(),
@@ -116,7 +121,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _error != null
-              ? _errorView()
+              ? _errorView(l)
               : _chart == null
                   ? const SizedBox.shrink()
                   : TabBarView(
@@ -165,14 +170,14 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   Map<String, dynamic> _divisionalsMap() =>
       ((_chart?['divisionals'] as Map?) ?? {}).cast<String, dynamic>();
 
-  Widget _errorView() => Center(child: Padding(
+  Widget _errorView(AppLocalizations l) => Center(child: Padding(
     padding: const EdgeInsets.all(24),
     child: Column(mainAxisSize: MainAxisSize.min, children: [
       const Icon(Icons.error_outline, color: AppColors.error, size: 48),
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center),
       const SizedBox(height: 16),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(l.retry)),
     ]),
   ));
 }
@@ -237,20 +242,21 @@ class _LockedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Center(child: Padding(
       padding: const EdgeInsets.all(32),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         const Icon(Icons.lock_outline, size: 56, color: AppColors.primary),
         const SizedBox(height: 16),
-        const Text('Premium Section', style: TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w700)),
+        Text(l.premiumSection, style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w700)),
         const SizedBox(height: 6),
-        const Text('Unlock this reading to view detailed analysis.',
-            textAlign: TextAlign.center, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        Text(l.unlockReading,
+            textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
         const SizedBox(height: 20),
         ElevatedButton.icon(
           onPressed: onUnlock,
           icon: const Icon(Icons.lock_open, size: 16),
-          label: const Text('Unlock'),
+          label: Text(l.unlock),
         ),
       ]),
     ));
@@ -268,13 +274,14 @@ class _SummaryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final planets = (chart['planets'] as Map? ?? {}).cast<String, dynamic>();
     final lagna = (planets['Lagna'] as Map?)?.cast<String, dynamic>();
     final moon = (planets['Moon'] as Map?)?.cast<String, dynamic>();
     final sun = (planets['Sun'] as Map?)?.cast<String, dynamic>();
 
     return ListView(padding: const EdgeInsets.all(16), children: [
-      _birthCard(chart),
+      _birthCard(chart, l),
       const SizedBox(height: 12),
       if (lagna != null) _planetSummaryCard('Ascendant (Lagna)', lagna, AppColors.primary, Icons.wb_twilight),
       if (moon != null) _planetSummaryCard('Moon Sign (Rashi)', moon, AppColors.accent, Icons.nightlight_round),
@@ -286,15 +293,15 @@ class _SummaryTab extends StatelessWidget {
     ]);
   }
 
-  Widget _birthCard(Map<String, dynamic> chart) {
+  Widget _birthCard(Map<String, dynamic> chart, AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Row(children: [
-          Icon(Icons.info_outline, color: AppColors.primary, size: 18),
-          SizedBox(width: 8),
-          Text('Birth Details', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
+        Row(children: [
+          const Icon(Icons.info_outline, color: AppColors.primary, size: 18),
+          const SizedBox(width: 8),
+          Text(l.birthDetails, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 10),
         _row('Name', chart['name']?.toString() ?? ''),
