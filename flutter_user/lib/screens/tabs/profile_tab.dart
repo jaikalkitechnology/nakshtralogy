@@ -33,6 +33,7 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   void _openEditDialog(Map<String, dynamic> me) {
+    final l = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController(text: me['name'] ?? '');
     final phoneCtrl = TextEditingController(text: me['phone'] ?? '');
     final dobCtrl = TextEditingController(text: me['dob'] ?? '');
