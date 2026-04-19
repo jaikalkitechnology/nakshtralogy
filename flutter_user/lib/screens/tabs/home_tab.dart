@@ -273,7 +273,7 @@ class _HomeTabState extends State<HomeTab> {
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.5,
+            crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.2,
           ),
           itemCount: preview.length,
           itemBuilder: (_, i) {
@@ -288,24 +288,25 @@ class _HomeTabState extends State<HomeTab> {
                 border: Border.all(color: AppColors.gold.withOpacity(0.12)),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(s['icon'] ?? '\u{1F4DC}', style: const TextStyle(fontSize: 22)),
+                Row(children: [
+                  Text(s['icon'] ?? '\u{1F4DC}', style: const TextStyle(fontSize: 20)),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: isFree ? AppColors.success.withOpacity(0.15) : AppColors.gold.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(isFree ? 'FREE' : '\u20b9${price.toInt()}',
+                        style: TextStyle(color: isFree ? AppColors.success : AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700)),
+                  ),
+                ]),
                 const SizedBox(height: 8),
                 Text(s['service_name'] ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 12, fontWeight: FontWeight.w600),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 2),
+                    maxLines: 2, overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 4),
                 Expanded(child: Text(s['description'] ?? '', style: const TextStyle(color: AppColors.smoke, fontSize: 9),
-                    maxLines: 2, overflow: TextOverflow.ellipsis)),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    gradient: isFree
-                        ? LinearGradient(colors: [AppColors.success.withOpacity(0.2), AppColors.success.withOpacity(0.1)])
-                        : LinearGradient(colors: [AppColors.gold.withOpacity(0.2), AppColors.saffron.withOpacity(0.1)]),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(isFree ? 'FREE' : '\u20b9${price.toInt()}',
-                      style: TextStyle(color: isFree ? AppColors.success : AppColors.gold, fontSize: 10, fontWeight: FontWeight.w700)),
-                ),
+                    maxLines: 3, overflow: TextOverflow.ellipsis)),
               ]),
             );
           },
