@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -35,36 +36,40 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
   }
 
   Future<void> _pickAndUpload(String field) async {
-    // Use a text input for file path (in production, use file_picker/image_picker)
-    final pathCtrl = TextEditingController();
-    final result = await showDialog<String>(
+    final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.card,
-        title: Text('Select ${field == 'front' ? 'Front Image' : field == 'back' ? 'Back Image' : 'Selfie'}',
-            style: const TextStyle(color: AppColors.primary)),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Text('Select an image (.jpg, .png) or PDF file', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 12),
-          TextField(controller: pathCtrl, decoration: const InputDecoration(labelText: 'File path', hintText: '/path/to/document.jpg')),
+      backgroundColor: AppColors.card,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('Select ${field == 'selfie' ? 'Selfie' : 'Document'}',
+              style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: const Icon(Icons.camera_alt, color: AppColors.gold),
+            title: const Text('Camera', style: TextStyle(color: AppColors.ivory)),
+            onTap: () => Navigator.pop(ctx, ImageSource.camera),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library, color: AppColors.gold),
+            title: const Text('Gallery', style: TextStyle(color: AppColors.ivory)),
+            onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+          ),
         ]),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, pathCtrl.text.trim()), child: const Text('Upload')),
-        ],
       ),
     );
-    if (result == null || result.isEmpty) return;
+    if (source == null) return;
 
-    final file = File(result);
-    if (!await file.exists()) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('File not found'), backgroundColor: AppColors.error));
-      return;
-    }
+    final picker = ImagePicker();
+    final XFile? picked = await picker.pickImage(source: source, imageQuality: 80, maxWidth: 1200);
+    if (picked == null) return;
+
+    final file = File(picked.path);
 
     setState(() => _uploading = true);
     try {
-      final resp = await _api.uploadKycFile(result, result.split('/').last);
+      final resp = await _api.uploadKycFile(picked.path, picked.name);
       if (resp['statusCode'] == 200) {
         setState(() {
           switch (field) {

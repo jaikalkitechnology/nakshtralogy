@@ -15,7 +15,8 @@ import '../rashi/rashi_detail_screen.dart';
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
   final VoidCallback onSeeAllServices;
-  const HomeTab({super.key, required this.onSeeAllAstrologers, required this.onSeeAllServices});
+  final VoidCallback? onOpenKundli;
+  const HomeTab({super.key, required this.onSeeAllAstrologers, required this.onSeeAllServices, this.onOpenKundli});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -165,15 +166,17 @@ class _HomeTabState extends State<HomeTab> {
 
   Widget _quickActions(AppLocalizations l) {
     final actions = [
-      {'icon': Icons.chat_bubble, 'label': l.chat, 'color': AppColors.gold},
-      {'icon': Icons.call, 'label': l.call, 'color': AppColors.saffron},
-      {'icon': Icons.videocam, 'label': l.video, 'color': AppColors.cosmicPink},
-      {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora},
+      {'icon': Icons.chat_bubble, 'label': l.chat, 'color': AppColors.gold, 'onTap': widget.onSeeAllAstrologers},
+      {'icon': Icons.call, 'label': l.call, 'color': AppColors.saffron, 'onTap': widget.onSeeAllAstrologers},
+      {'icon': Icons.videocam, 'label': l.video, 'color': AppColors.cosmicPink, 'onTap': widget.onSeeAllAstrologers},
+      {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora, 'onTap': widget.onOpenKundli},
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Row(children: actions.map((a) => Expanded(
-        child: Container(
+        child: GestureDetector(
+          onTap: a['onTap'] as VoidCallback?,
+          child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
@@ -193,7 +196,7 @@ class _HomeTabState extends State<HomeTab> {
             const SizedBox(height: 6),
             Text(a['label'] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 10, fontWeight: FontWeight.w600)),
           ]),
-        ),
+        )),
       )).toList()),
     );
   }
