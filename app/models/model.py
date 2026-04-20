@@ -260,6 +260,7 @@ class Chart(Base):
     timezone = Column(String(50), nullable=True)
     chart_json = Column(JSON, nullable=False)
     is_primary = Column(Boolean, default=False)
+    category = Column(String(20), nullable=True)  # family, friend, other, self
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     user = relationship("User", back_populates="charts")

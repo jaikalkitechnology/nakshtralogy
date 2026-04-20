@@ -33,6 +33,7 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
         place: event.place,
         isPrimary: event.isPrimary,
         serviceKey: event.serviceKey,
+        category: event.category,
       );
       if (result['statusCode'] == 201) {
         emit(ChartCreated(chart: result));

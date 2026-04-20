@@ -71,7 +71,8 @@ class BirthChartCreateRequest(BaseModel):
     tob: str = Field(..., pattern=r'^\d{2}:\d{2}$')         # HH:MM
     place: str = Field(..., min_length=1, max_length=255)
     is_primary: bool = False
-    service_key: Optional[str] = None  # which service to run (e.g. "birth_chart")
+    category: Optional[str] = None  # self, family, friend, other
+    service_key: Optional[str] = None
 
 
 class BirthChartResponse(BaseModel):
@@ -86,6 +87,7 @@ class BirthChartResponse(BaseModel):
     longitude: Optional[float] = None
     timezone: Optional[str] = None
     is_primary: bool = False
+    category: Optional[str] = None
     chart_json: Optional[Any] = None
     created_at: Optional[datetime] = None
 
@@ -102,6 +104,7 @@ class BirthChartListResponse(BaseModel):
     tob: str
     place: str
     is_primary: bool = False
+    category: Optional[str] = None
     created_at: Optional[datetime] = None
 
     class Config:
@@ -115,6 +118,7 @@ class BirthChartUpdateRequest(BaseModel):
     tob: Optional[str] = Field(None, pattern=r'^\d{2}:\d{2}$')
     place: Optional[str] = Field(None, max_length=255)
     is_primary: Optional[bool] = None
+    category: Optional[str] = None
 
 
 # ─── Service Order ───────────────────────────────────────────────────

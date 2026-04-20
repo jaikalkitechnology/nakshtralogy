@@ -219,10 +219,10 @@ class ApiService {
     required String place,
     bool isPrimary = false,
     String? serviceKey,
+    String? category,
   }) async {
-    final resp = await http.post(
+    final resp = await _authPost(
       Uri.parse(ApiConstants.serviceCharts),
-      headers: _headers,
       body: jsonEncode({
         'name': name,
         'dob': dob,
@@ -231,6 +231,7 @@ class ApiService {
         if (gender != null) 'gender': gender,
         'is_primary': isPrimary,
         if (serviceKey != null) 'service_key': serviceKey,
+        if (category != null) 'category': category,
       }),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
@@ -462,9 +463,8 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> callAction(String callId, String action) async {
-    final resp = await http.post(
+    final resp = await _authPost(
       Uri.parse('${ApiConstants.commBase}/call/$callId/action'),
-      headers: _headers,
       body: jsonEncode({'action': action}),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};

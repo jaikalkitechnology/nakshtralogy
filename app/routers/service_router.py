@@ -429,6 +429,7 @@ def create_chart(
         timezone=tz,
         chart_json=chart_json,
         is_primary=req.is_primary,
+        category=req.category,
     )
     db.add(chart)
     db.flush()

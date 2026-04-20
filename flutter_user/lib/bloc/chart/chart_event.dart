@@ -16,13 +16,14 @@ class ChartCreateRequested extends ChartEvent {
   final String place;
   final bool isPrimary;
   final String? serviceKey;
+  final String? category;
   const ChartCreateRequested({
     required this.name, this.gender, required this.dob,
     required this.tob, required this.place,
-    this.isPrimary = false, this.serviceKey,
+    this.isPrimary = false, this.serviceKey, this.category,
   });
   @override
-  List<Object?> get props => [name, gender, dob, tob, place, isPrimary];
+  List<Object?> get props => [name, gender, dob, tob, place, isPrimary, category];
 }
 
 class ChartDeleteRequested extends ChartEvent {
