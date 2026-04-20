@@ -12,6 +12,10 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 
 from app.kundli import engine as nk_engine
+from app.kundli import engine as _engine_pkg  # same package but used for singleton
+# Import the underlying engine module for low-level functions
+from app.kundli import helper as _helper
+_nk_raw = _helper._nk  # direct reference to engine module
 
 router = APIRouter()
 
@@ -209,3 +213,159 @@ def rashi_full(rashi_idx: int):
             "avg": round(sum(m_scores) / len(m_scores), 2),
         },
     })
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  LIFE-AREA PREDICTIONS (based on current gochar transit positions)
+# ═══════════════════════════════════════════════════════════════════
+
+# Houses associated with each life area (from native Moon sign)
+_AREA_HOUSES = {
+    "career":     {"houses": [10, 6, 2, 11], "primary_planets": ["Sun", "Saturn", "Jupiter"]},
+    "health":     {"houses": [1, 6, 8, 12],  "primary_planets": ["Sun", "Mars", "Saturn"]},
+    "love":       {"houses": [5, 7, 11],     "primary_planets": ["Venus", "Moon", "Jupiter"]},
+    "wealth":     {"houses": [2, 11, 5, 9],  "primary_planets": ["Jupiter", "Venus", "Mercury"]},
+    "family":     {"houses": [4, 3, 9, 11],  "primary_planets": ["Moon", "Jupiter", "Mercury"]},
+    "conflict":   {"houses": [6, 3, 8],      "primary_planets": ["Mars", "Saturn", "Rahu"]},
+    "ego":        {"houses": [1, 5, 10],     "primary_planets": ["Sun", "Mars"]},
+    "aggression": {"houses": [1, 3, 6, 8],   "primary_planets": ["Mars", "Rahu", "Ketu"]},
+    "mind":       {"houses": [3, 5, 9],      "primary_planets": ["Mercury", "Moon", "Jupiter"]},
+    "spiritual":  {"houses": [9, 12, 5],     "primary_planets": ["Jupiter", "Ketu", "Saturn"]},
+}
+
+# Base descriptive verbs for each area at different score levels
+_AREA_DESC = {
+    "career":     ("excellent growth opportunities", "steady progress", "mixed signals, focus on priorities", "challenges, avoid impulsive decisions", "delays likely, stay patient"),
+    "health":     ("vibrant energy and vitality", "good stamina, maintain routine", "average — rest adequately", "watch for fatigue", "take precautions, avoid overwork"),
+    "love":       ("romantic bliss, cherished moments", "harmony in relationships", "balanced — communicate openly", "minor tensions, give space", "misunderstandings, practice patience"),
+    "wealth":     ("financial gains likely", "steady income flow", "moderate — avoid impulse spending", "expenses may rise", "defer major purchases"),
+    "family":     ("warm family bonds", "supportive atmosphere", "routine family matters", "minor disagreements", "tension at home, listen more"),
+    "conflict":   ("peaceful, no disputes", "minor disagreements possible", "some friction — stay calm", "conflicts may arise", "avoid confrontation actively"),
+    "ego":        ("confident self-expression", "healthy self-esteem", "balanced confidence", "pride may cloud judgment", "ego clashes likely, stay humble"),
+    "aggression": ("calm and composed", "mild irritability", "mood swings possible", "anger flares up", "high temper — pause before reacting"),
+    "mind":       ("sharp intellect, creative flow", "clear thinking", "average focus", "mental fatigue", "confusion, seek quiet"),
+    "spiritual":  ("deep spiritual insights", "peaceful meditation", "routine practice", "distracted mind", "disconnected, return to basics"),
+}
+
+
+def _compute_predictions(rashi_idx: int) -> dict:
+    """
+    Compute life-area scores for a native rashi based on current transit positions.
+    The native's Moon sign acts as house 1; other planets' current signs form houses.
+
+    For each area:
+      - Check which planets are transiting relevant houses
+      - Benefic (Jup/Ven/Moon/Mer) in favorable house → positive
+      - Malefic (Sat/Mars/Sun/Rahu/Ketu) in house → negative unless area needs malefic
+    """
+    from datetime import date as _date
+    t = _date.today()
+    jd = _nk_raw.to_julian_day(t.year, t.month, t.day, 6.5)
+    pos = _nk_raw.get_all_positions(jd)
+
+    transit_signs = {}
+    for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]:
+        if p in pos:
+            lon = pos[p].get("lon", 0) if isinstance(pos[p], dict) else pos[p]
+            transit_signs[p] = int(lon / 30)
+
+    BENEFIC = {"Jupiter", "Venus", "Moon", "Mercury"}
+    MALEFIC = {"Saturn", "Mars", "Sun", "Rahu", "Ketu"}
+
+    # House from native rashi = (transit_sign - native_sign) % 12 + 1
+    def house_of(planet: str) -> int:
+        if planet not in transit_signs: return 0
+        return (transit_signs[planet] - rashi_idx) % 12 + 1
+
+    predictions = {}
+    for area, cfg in _AREA_HOUSES.items():
+        target_houses = set(cfg["houses"])
+        score = 50.0
+        factors = []
+        is_malefic_area = area in ("conflict", "aggression")
+
+        # Check primary planets (stronger influence)
+        for planet in cfg["primary_planets"]:
+            h = house_of(planet)
+            if h == 0: continue
+            if h in target_houses:
+                if planet in BENEFIC:
+                    score += 12; factors.append(f"{planet} favorably in H{h}")
+                elif is_malefic_area:
+                    score += 10; factors.append(f"{planet} active in H{h}")
+                else:
+                    score -= 8; factors.append(f"{planet} challenging in H{h}")
+            # Adverse houses (6,8,12 from native = dusthanas)
+            elif h in (6, 8, 12):
+                if planet in BENEFIC:
+                    score -= 5; factors.append(f"{planet} weakened in H{h}")
+                elif not is_malefic_area:
+                    score -= 6; factors.append(f"{planet} trouble in H{h}")
+                else:
+                    score += 4
+
+        # Check all 9 planets for general influence
+        for planet, sign in transit_signs.items():
+            h = (sign - rashi_idx) % 12 + 1
+            if h in target_houses and planet not in cfg["primary_planets"]:
+                if planet in BENEFIC:
+                    score += 4
+                elif is_malefic_area:
+                    score += 3
+                else:
+                    score -= 3
+
+        score = max(5, min(95, score))
+        # Grade
+        if score >= 75: grade = "Excellent"
+        elif score >= 60: grade = "Good"
+        elif score >= 45: grade = "Average"
+        elif score >= 30: grade = "Caution"
+        else: grade = "Challenging"
+
+        # Description based on score level
+        level_idx = 0 if score >= 75 else 1 if score >= 60 else 2 if score >= 45 else 3 if score >= 30 else 4
+        desc = _AREA_DESC[area][level_idx]
+
+        predictions[area] = {
+            "score": round(score, 1),
+            "grade": grade,
+            "description": desc,
+            "factors": factors[:3],  # top 3 factors
+        }
+
+    # Build current transit chart (houses from native Moon sign)
+    planets_by_house = {h: [] for h in range(1, 13)}
+    for planet, sign in transit_signs.items():
+        h = (sign - rashi_idx) % 12 + 1
+        planets_by_house[h].append(planet)
+
+    return {
+        "predictions": predictions,
+        "transit_chart": {
+            "native_sign_idx": rashi_idx,
+            "houses": [
+                {
+                    "house": h,
+                    "sign_idx": (rashi_idx + h - 1) % 12,
+                    "planets": planets_by_house[h],
+                }
+                for h in range(1, 13)
+            ],
+        },
+    }
+
+
+@router.get("/{rashi_idx}/predictions")
+def rashi_predictions(rashi_idx: int):
+    """Detailed life-area predictions (career, health, love, wealth, family,
+    conflict, ego, aggression, mind, spiritual) based on current transits."""
+    _validate_idx(rashi_idx)
+    try:
+        result = _compute_predictions(rashi_idx)
+        return _ok({
+            **_meta_plus_traits(rashi_idx),
+            **result,
+        })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
