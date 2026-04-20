@@ -13,8 +13,10 @@ from typing import Optional
 
 logger = logging.getLogger("llm_service")
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-70b-versatile")
+from app.core.config import settings
+
+GROQ_API_KEY = settings.GROQ_API_KEY
+GROQ_MODEL = settings.GROQ_MODEL
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
