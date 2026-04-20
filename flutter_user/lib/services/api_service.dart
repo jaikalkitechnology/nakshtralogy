@@ -557,6 +557,37 @@ class ApiService {
   Future<Map<String, dynamic>> getRashiFull(int idx) => _rashiGet('/$idx/full');
   Future<Map<String, dynamic>> getRashiPredictions(int idx) => _rashiGet('/$idx/predictions');
 
+  // ═══════════════════════════════════════════════════════════════════
+  //  AI AGENT (12 specialist chatbots)
+  // ═══════════════════════════════════════════════════════════════════
+
+  Future<List<dynamic>> getAgentDomains() async {
+    final resp = await _authGet(Uri.parse(ApiConstants.agentDomains));
+    if (resp.statusCode == 200) {
+      final decoded = jsonDecode(resp.body);
+      if (decoded is List) return decoded;
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>> agentChat({
+    required String chartId,
+    required String query,
+    String? domain,
+    String language = 'english',
+  }) async {
+    final resp = await _authPost(
+      Uri.parse(ApiConstants.agentChat),
+      body: jsonEncode({
+        'chart_id': chartId,
+        'query': query,
+        if (domain != null) 'domain': domain,
+        'language': language,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaLevels = 2}) =>
       _kundliGet('/$chartId?dasha_levels=$dashaLevels');
 

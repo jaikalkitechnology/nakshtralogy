@@ -11,6 +11,7 @@ import '../../bloc/service/service_state.dart';
 import '../../services/api_service.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../rashi/rashi_detail_screen.dart';
+import '../ai/ai_specialist_chat_screen.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
@@ -90,8 +91,14 @@ class _HomeTabState extends State<HomeTab> {
           // Quick actions
           _quickActions(l),
 
+          // AI Specialists
+          const SizedBox(height: 16),
+          _sectionHeader('Chat with AI Specialist', 'Tap to start'),
+          const SizedBox(height: 10),
+          _aiSpecialistCarousel(),
+
           // Rashi carousel
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _sectionHeader(l.todaysRashi, l.tapDetails),
           const SizedBox(height: 10),
           _rashiCarousel(),
@@ -209,6 +216,61 @@ class _HomeTabState extends State<HomeTab> {
         const Spacer(),
         Text(trailing, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
       ]),
+    );
+  }
+
+  static const _aiSpecialists = [
+    {'key': 'career_job',       'label': 'Career & Job',          'emoji': '\u{1F4BC}', 'color': AppColors.gold},
+    {'key': 'business_startup', 'label': 'Business & Startup',    'emoji': '\u{1F680}', 'color': AppColors.saffron},
+    {'key': 'education_career', 'label': 'Education',             'emoji': '\u{1F393}', 'color': AppColors.aurora},
+    {'key': 'money_wealth',     'label': 'Money & Wealth',        'emoji': '\u{1F4B0}', 'color': AppColors.goldBright},
+    {'key': 'debt_recovery',    'label': 'Debt Recovery',         'emoji': '\u{1F4C9}', 'color': AppColors.error},
+    {'key': 'love_relationship','label': 'Love & Relationship',   'emoji': '\u2764\ufe0f','color': AppColors.cosmicPink},
+    {'key': 'marriage_family',  'label': 'Marriage & Family',     'emoji': '\u{1F492}', 'color': AppColors.lavender},
+    {'key': 'health_wellness',  'label': 'Health & Wellness',     'emoji': '\u{1F3E5}', 'color': AppColors.success},
+    {'key': 'mental_stress',    'label': 'Mental Stress',         'emoji': '\u{1F9E0}', 'color': AppColors.indigo},
+    {'key': 'property_assets',  'label': 'Property & Assets',     'emoji': '\u{1F3E0}', 'color': AppColors.saffron},
+    {'key': 'legal_dispute',    'label': 'Legal & Dispute',       'emoji': '\u2696\ufe0f','color': AppColors.smoke},
+    {'key': 'life_path_luck',   'label': 'Life Path & Luck',      'emoji': '\u{1F31F}', 'color': AppColors.gold},
+  ];
+
+  Widget _aiSpecialistCarousel() {
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _aiSpecialists.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (_, i) {
+          final s = _aiSpecialists[i];
+          final color = s['color'] as Color;
+          return GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(
+              builder: (_) => AiSpecialistChatScreen(
+                domainKey: s['key'] as String,
+                label: s['label'] as String,
+                emoji: s['emoji'] as String,
+              ),
+            )),
+            child: Container(
+              width: 90,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: color.withOpacity(0.3)),
+              ),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(s['emoji'] as String, style: const TextStyle(fontSize: 26)),
+                const SizedBox(height: 4),
+                Text(s['label'] as String, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w700),
+                    maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
+              ]),
+            ),
+          );
+        },
+      ),
     );
   }
 
