@@ -545,6 +545,7 @@ class ApiService {
   Future<Map<String, dynamic>> getRashiWeekly(int idx) => _rashiGet('/$idx/weekly');
   Future<Map<String, dynamic>> getRashiMonthly(int idx) => _rashiGet('/$idx/monthly');
   Future<Map<String, dynamic>> getRashiFull(int idx) => _rashiGet('/$idx/full');
+  Future<Map<String, dynamic>> getRashiPredictions(int idx) => _rashiGet('/$idx/predictions');
 
   // Full kundli with all sections + dashes + gochar + analyses
   Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaLevels = 2}) =>
