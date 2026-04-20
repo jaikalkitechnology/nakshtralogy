@@ -21,6 +21,11 @@ class ApiConstants {
   // Rashi (zodiac)
   static const String rashiBase = '$baseUrl/rashi';
 
+  // AI Agent
+  static const String agentBase = '$baseUrl/agent';
+  static const String agentChat = '$agentBase/chat';
+  static const String agentDomains = '$agentBase/domains';
+
   // Service
   static const String serviceBase = '$baseUrl/service';
   static const String servicePricing = '$serviceBase/pricing';

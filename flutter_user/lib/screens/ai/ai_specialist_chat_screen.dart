@@ -1,0 +1,370 @@
+import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
+import '../../services/api_service.dart';
+
+/// Chat screen for a specific AI specialist domain.
+/// User selects a birth chart first, then chats with the specialist.
+class AiSpecialistChatScreen extends StatefulWidget {
+  final String domainKey;
+  final String label;
+  final String emoji;
+
+  const AiSpecialistChatScreen({
+    super.key,
+    required this.domainKey,
+    required this.label,
+    required this.emoji,
+  });
+
+  @override
+  State<AiSpecialistChatScreen> createState() => _AiSpecialistChatScreenState();
+}
+
+class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
+  final _api = ApiService();
+  final _msgCtrl = TextEditingController();
+  final _scrollCtrl = ScrollController();
+  final List<Map<String, dynamic>> _messages = [];
+
+  List<dynamic> _charts = [];
+  String? _selectedChartId;
+  String? _selectedChartName;
+  bool _loadingCharts = true;
+  bool _sending = false;
+  String _language = 'english';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCharts();
+  }
+
+  Future<void> _loadCharts() async {
+    _charts = await _api.getMyCharts(limit: 50);
+    if (mounted) setState(() => _loadingCharts = false);
+  }
+
+  @override
+  void dispose() {
+    _msgCtrl.dispose();
+    _scrollCtrl.dispose();
+    super.dispose();
+  }
+
+  void _selectChart(Map<String, dynamic> chart) {
+    setState(() {
+      _selectedChartId = chart['id']?.toString();
+      _selectedChartName = chart['name']?.toString() ?? 'Chart';
+    });
+    _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nI\'ll analyze the birth chart of **$_selectedChartName** to answer your questions.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _msgCtrl.text.trim();
+    if (text.isEmpty || _selectedChartId == null || _sending) return;
+
+    setState(() {
+      _messages.add({'role': 'user', 'text': text});
+      _sending = true;
+    });
+    _msgCtrl.clear();
+    _scrollToBottom();
+
+    try {
+      final resp = await _api.agentChat(
+        chartId: _selectedChartId!,
+        query: text,
+        domain: widget.domainKey,
+        language: _language,
+      );
+
+      if (resp['statusCode'] == 200) {
+        final msg = resp['message']?.toString() ?? 'No response';
+        final prob = (resp['probability'] as num?)?.toDouble();
+        final band = resp['band']?.toString();
+        _addBotMessage(msg, probability: prob, band: band);
+      } else {
+        _addBotMessage('\u26a0\ufe0f ${resp['detail'] ?? 'Something went wrong. Please try again.'}');
+      }
+    } catch (e) {
+      _addBotMessage('\u26a0\ufe0f Connection error. Please check your network.');
+    }
+
+    if (mounted) setState(() => _sending = false);
+  }
+
+  void _addBotMessage(String text, {double? probability, String? band}) {
+    setState(() {
+      _messages.add({
+        'role': 'bot',
+        'text': text,
+        if (probability != null) 'probability': probability,
+        if (band != null) 'band': band,
+      });
+    });
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollCtrl.hasClients) {
+        _scrollCtrl.animateTo(_scrollCtrl.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.cosmicVoid,
+      appBar: AppBar(
+        title: Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(widget.emoji, style: const TextStyle(fontSize: 22)),
+          const SizedBox(width: 8),
+          Flexible(child: Text(widget.label, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+        ]),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.language, size: 20),
+            color: AppColors.nebula,
+            onSelected: (v) => setState(() => _language = v),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'english', child: Text('English', style: TextStyle(color: _language == 'english' ? AppColors.gold : AppColors.ivory))),
+              PopupMenuItem(value: 'hindi', child: Text('\u0939\u093f\u0902\u0926\u0940', style: TextStyle(color: _language == 'hindi' ? AppColors.gold : AppColors.ivory))),
+              PopupMenuItem(value: 'hinglish', child: Text('Hinglish', style: TextStyle(color: _language == 'hinglish' ? AppColors.gold : AppColors.ivory))),
+            ],
+          ),
+        ],
+      ),
+      body: _selectedChartId == null ? _chartSelector() : _chatView(),
+    );
+  }
+
+  Widget _chartSelector() {
+    if (_loadingCharts) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
+    if (_charts.isEmpty) {
+      return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+        const Text('\U0001f4dc', style: TextStyle(fontSize: 48)),
+        const SizedBox(height: 12),
+        const Text('No birth charts found', style: TextStyle(color: AppColors.ivory, fontSize: 16)),
+        const SizedBox(height: 4),
+        const Text('Create a birth chart first to chat with AI', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+      ]));
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('${widget.emoji} ${widget.label}', style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          const Text('Select a birth chart to begin analysis', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+        ]),
+      ),
+      Expanded(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: _charts.length,
+          itemBuilder: (_, i) {
+            final c = _charts[i] as Map;
+            return GestureDetector(
+              onTap: () => _selectChart(c.cast<String, dynamic>()),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.04),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: Row(children: [
+                  Container(
+                    width: 42, height: 42,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(child: Text(
+                      (c['name']?.toString() ?? 'C').substring(0, 1).toUpperCase(),
+                      style: const TextStyle(color: AppColors.midnight, fontSize: 18, fontWeight: FontWeight.w700),
+                    )),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text('${c['dob']} \u00b7 ${c['tob']} \u00b7 ${c['place']}',
+                        style: const TextStyle(color: AppColors.smoke, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ])),
+                  const Icon(Icons.arrow_forward_ios, color: AppColors.gold, size: 14),
+                ]),
+              ),
+            );
+          },
+        ),
+      ),
+    ]);
+  }
+
+  Widget _chatView() {
+    return Column(children: [
+      // Chart info strip
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        color: AppColors.nebula.withOpacity(0.5),
+        child: Row(children: [
+          const Icon(Icons.auto_awesome, size: 12, color: AppColors.gold),
+          const SizedBox(width: 6),
+          Text('Analyzing: $_selectedChartName', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+          const Spacer(),
+          GestureDetector(
+            onTap: () => setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); }),
+            child: const Text('Change', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+          ),
+        ]),
+      ),
+      // Messages
+      Expanded(
+        child: ListView.builder(
+          controller: _scrollCtrl,
+          padding: const EdgeInsets.all(16),
+          itemCount: _messages.length,
+          itemBuilder: (_, i) => _messageBubble(_messages[i]),
+        ),
+      ),
+      // Typing indicator
+      if (_sending) Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        child: Row(children: [
+          SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
+          const SizedBox(width: 8),
+          const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+        ]),
+      ),
+      // Suggestion chips (only if no messages yet besides welcome)
+      if (_messages.length <= 1) _suggestions(),
+      // Input
+      Container(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+        decoration: BoxDecoration(
+          color: AppColors.nebula,
+          border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Row(children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.04),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.2)),
+                ),
+                child: TextField(
+                  controller: _msgCtrl,
+                  style: const TextStyle(color: AppColors.ivory, fontSize: 13),
+                  decoration: const InputDecoration(
+                    hintText: 'Ask the stars anything...',
+                    hintStyle: TextStyle(color: AppColors.smoke, fontSize: 12),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  onSubmitted: (_) => _sendMessage(),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: _sending ? null : _sendMessage,
+              child: Container(
+                width: 38, height: 38,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+                  borderRadius: BorderRadius.circular(19),
+                ),
+                child: Icon(_sending ? Icons.hourglass_top : Icons.send, color: AppColors.midnight, size: 18),
+              ),
+            ),
+          ]),
+        ),
+      ),
+    ]);
+  }
+
+  Widget _suggestions() {
+    final samples = {
+      'career_job': ['Will I get promotion?', 'Job change kab hoga?', 'Career growth'],
+      'business_startup': ['Should I start business?', 'Partnership success?'],
+      'money_wealth': ['When will wealth increase?', 'Financial growth kab?'],
+      'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?'],
+      'marriage_family': ['Marriage kab hogi?', 'Family harmony?'],
+      'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?'],
+      'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?'],
+    };
+    final chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions'];
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Wrap(spacing: 6, runSpacing: 6, children: chips.map((c) => GestureDetector(
+        onTap: () { _msgCtrl.text = c; _sendMessage(); },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.gold.withOpacity(0.2)),
+          ),
+          child: Text(c, style: const TextStyle(color: AppColors.lavender, fontSize: 11)),
+        ),
+      )).toList()),
+    );
+  }
+
+  Widget _messageBubble(Map<String, dynamic> msg) {
+    final isUser = msg['role'] == 'user';
+    final text = msg['text']?.toString() ?? '';
+    final prob = msg['probability'] as double?;
+    final band = msg['band']?.toString();
+
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          gradient: isUser ? const LinearGradient(colors: [AppColors.gold, AppColors.saffron]) : null,
+          color: isUser ? null : AppColors.indigo.withOpacity(0.3),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(16), topRight: const Radius.circular(16),
+            bottomLeft: Radius.circular(isUser ? 16 : 4),
+            bottomRight: Radius.circular(isUser ? 4 : 16),
+          ),
+          border: isUser ? null : Border.all(color: AppColors.lavender.withOpacity(0.2)),
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (prob != null && !isUser) ...[
+            Row(children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(color: _probColor(prob).withOpacity(0.2), borderRadius: BorderRadius.circular(6)),
+                child: Text('${prob.toInt()}% $band', style: TextStyle(color: _probColor(prob), fontSize: 10, fontWeight: FontWeight.w700)),
+              ),
+            ]),
+            const SizedBox(height: 8),
+          ],
+          Text(text, style: TextStyle(
+            color: isUser ? AppColors.midnight : AppColors.ivory,
+            fontSize: 13, fontWeight: isUser ? FontWeight.w500 : FontWeight.normal, height: 1.4,
+          )),
+        ]),
+      ),
+    );
+  }
+
+  Color _probColor(double p) {
+    if (p >= 65) return AppColors.success;
+    if (p >= 45) return AppColors.aurora;
+    if (p >= 30) return AppColors.saffron;
+    return AppColors.error;
+  }
+}
