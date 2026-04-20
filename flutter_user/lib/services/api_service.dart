@@ -616,14 +616,24 @@ class ApiService {
   // ═══════════════════════════════════════════════════════════════════
 
   Future<List<dynamic>> getCallHistory({int skip = 0, int limit = 20}) async {
-    final resp = await _authGet(Uri.parse('${ApiConstants.callHistory}?skip=$skip&limit=$limit'));
-    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.callHistory}?skip=$skip&limit=$limit'));
+      if (resp.statusCode == 200) {
+        final decoded = jsonDecode(resp.body);
+        if (decoded is List) return decoded;
+      }
+    } catch (_) {}
     return [];
   }
 
   Future<List<dynamic>> getChatHistory({int skip = 0, int limit = 20}) async {
-    final resp = await _authGet(Uri.parse('${ApiConstants.chatHistory}?skip=$skip&limit=$limit'));
-    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.chatHistory}?skip=$skip&limit=$limit'));
+      if (resp.statusCode == 200) {
+        final decoded = jsonDecode(resp.body);
+        if (decoded is List) return decoded;
+      }
+    } catch (_) {}
     return [];
   }
 

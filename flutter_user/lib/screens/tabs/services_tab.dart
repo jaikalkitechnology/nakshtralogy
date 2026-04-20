@@ -5,6 +5,7 @@ import '../../theme/app_theme.dart';
 import '../../bloc/service/service_bloc.dart';
 import '../../bloc/service/service_event.dart';
 import '../../bloc/service/service_state.dart';
+import '../charts/my_charts_screen.dart';
 
 class ServicesTab extends StatefulWidget {
   const ServicesTab({super.key});
@@ -77,10 +78,15 @@ class _ServicesTabState extends State<ServicesTab> {
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (_, i) {
                     final s = services[i] as Map;
-                    return _ServiceCard(
-                      service: Map<String, dynamic>.from(s),
-                      index: i,
-                      featured: (s['is_featured'] == true) || i == 1,
+                    final sKey = s['service_key']?.toString() ?? '';
+                    final isAI = sKey.contains('ai');
+                    return GestureDetector(
+                      onTap: isAI ? null : () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyChartsScreen())),
+                      child: _ServiceCard(
+                        service: Map<String, dynamic>.from(s),
+                        index: i,
+                        featured: (s['is_featured'] == true) || i == 1,
+                      ),
                     );
                   },
                 ),

@@ -156,7 +156,7 @@ class NakshtraEngine:
         levels=3 → MD + AD + PD
         """
         moon_lon = pdata.get("Moon", {}).get("lon", 0)
-        dashas, balance, lord = _nk.vimshottari_dasha(moon_lon, birth_jd)
+        dashas, balance, lord = _silent(_nk.vimshottari_dasha, moon_lon, birth_jd)
 
         def _sub(node: dict, depth: int):
             if depth <= 0 or "sub" not in node:
@@ -195,7 +195,7 @@ class NakshtraEngine:
 
     def get_moola_dasha(self, pdata: dict, birth_jd: float,
                         levels: int = 2) -> dict:
-        dashas, balance, info = _nk.moola_dasha_lagna(pdata, birth_jd)
+        dashas, balance, info = _silent(_nk.moola_dasha_lagna, pdata, birth_jd)
         if not info:
             return {"error": "Could not compute Moola Dasha"}
 
@@ -300,7 +300,7 @@ class NakshtraEngine:
 
     def get_dosh_analysis(self, pdata: dict) -> dict:
         """Returns all 33 doshas with probability scores."""
-        results = _nk.analyze_all_dosh(pdata)
+        results = _silent(_nk.analyze_all_dosh, pdata)
         active  = [r for r in results if r["present"]]
         active.sort(key=lambda x: -x["score"])
         return {
@@ -314,7 +314,7 @@ class NakshtraEngine:
 
     def get_yoga_analysis(self, pdata: dict) -> dict:
         """Returns all 51 yogas with strength scores."""
-        results = _nk.analyze_all_yoga(pdata)
+        results = _silent(_nk.analyze_all_yoga, pdata)
         active  = [r for r in results if r["present"]]
         active.sort(key=lambda x: -x["score"])
         return {
@@ -328,7 +328,7 @@ class NakshtraEngine:
 
     def get_shadbala(self, pdata: dict, birth_jd: float = 0) -> dict:
         """Planet strength via 6-source Shadbala."""
-        sb = _nk.calculate_shadbala(pdata, birth_jd)
+        sb = _silent(_nk.calculate_shadbala, pdata, birth_jd)
         return {
             "planets": sb,
             "summary": {
@@ -341,7 +341,7 @@ class NakshtraEngine:
 
     def get_ashtakavarga(self, pdata: dict) -> dict:
         """BAV + SAV for all 7 planets."""
-        av = _nk.calculate_ashtakavarga(pdata)
+        av = _silent(_nk.calculate_ashtakavarga, pdata)
         lagna = pdata.get("Lagna", {}).get("rashi_idx", 0)
 
         sav_with_signs = {
@@ -365,7 +365,7 @@ class NakshtraEngine:
 
     def get_aspect_matrix(self, pdata: dict) -> dict:
         """Full Graha Drishti matrix + Rashi Drishti."""
-        matrix = _nk.build_aspect_matrix(pdata)
+        matrix = _silent(_nk.build_aspect_matrix, pdata)
         # Convert to JSON-friendly format
         graha = {}
         for asp, targets in matrix.items():
@@ -390,13 +390,13 @@ class NakshtraEngine:
 
     def get_life_areas(self, pdata: dict) -> dict:
         """Score 5 life areas: Career, Wealth, Marriage, Health, Spirituality."""
-        return _nk.calculate_life_areas(pdata)
+        return _silent(_nk.calculate_life_areas, pdata)
 
     # ── 11. BHAVA STRENGTH ────────────────────────────────────────────────────
 
     def get_bhava_strength(self, pdata: dict) -> dict:
         """Strength score for all 12 houses."""
-        bh = _nk.calculate_bhava_strength(pdata)
+        bh = _silent(_nk.calculate_bhava_strength, pdata)
         out = {}
         for h, data in bh.items():
             out[f"H{h:02d}"] = {
@@ -421,7 +421,7 @@ class NakshtraEngine:
         if query_date:
             y, mo, d = _parse_dob(query_date)
             query_jd = _nk.to_julian_day(y, mo, d, 0)
-        ev = _nk.dasha_activated_events(pdata, birth_jd, query_jd)
+        ev = _silent(_nk.dasha_activated_events, pdata, birth_jd, query_jd)
         return ev
 
     # ── 13. CHAKRA HEALTH ─────────────────────────────────────────────────────
@@ -431,7 +431,7 @@ class NakshtraEngine:
         7-chakra health analysis based on Shadbala planet strength.
         Returns risk/benefit probabilities for each condition.
         """
-        results  = _nk.analyze_chakra_health(pdata)
+        results  = _silent(_nk.analyze_chakra_health, pdata)
         overall  = results[-1]
         chakras  = results[:-1]
 
