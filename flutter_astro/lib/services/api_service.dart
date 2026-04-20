@@ -452,9 +452,8 @@ class ApiService {
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> callAction(String callId, String action) async {
-    final resp = await http.post(
+    final resp = await _authPost(
       Uri.parse('${ApiConstants.commBase}/call/$callId/action'),
-      headers: _headers,
       body: jsonEncode({'action': action}),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};

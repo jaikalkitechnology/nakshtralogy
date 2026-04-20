@@ -23,6 +23,7 @@ class _AddChartScreenState extends State<AddChartScreen> {
   final _placeCtrl = TextEditingController();
   String _gender = 'M';
   bool _isPrimary = false;
+  String _category = 'self';
 
   List<Map<String, dynamic>> _citySuggestions = [];
   bool _citySearching = false;
@@ -115,7 +116,7 @@ class _AddChartScreenState extends State<AddChartScreen> {
       name: _nameCtrl.text.trim(), gender: _gender,
       dob: _dobCtrl.text.trim(), tob: _tobCtrl.text.trim(),
       place: _placeCtrl.text.trim(), isPrimary: _isPrimary,
-      serviceKey: 'birth_chart',
+      serviceKey: 'birth_chart', category: _category,
     ));
   }
 
@@ -202,6 +203,19 @@ class _AddChartScreenState extends State<AddChartScreen> {
                       validator: (v) => (v == null || v.isEmpty) ? l.required : null,
                     ),
                   ),
+                  const SizedBox(height: 14),
+                  Text('Category', style: const TextStyle(color: AppColors.smoke, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  Wrap(spacing: 8, children: ['self', 'family', 'friend', 'other'].map((c) {
+                    final labels = {'self': '\u{1F464} Self', 'family': '\u{1F46A} Family', 'friend': '\u{1F91D} Friend', 'other': '\u{2728} Other'};
+                    final sel = _category == c;
+                    return ChoiceChip(
+                      label: Text(labels[c]!, style: TextStyle(color: sel ? AppColors.midnight : AppColors.smoke, fontSize: 12)),
+                      selected: sel, selectedColor: AppColors.gold, backgroundColor: AppColors.nebula,
+                      side: BorderSide(color: sel ? AppColors.gold : AppColors.ash),
+                      onSelected: (_) => setState(() => _category = c),
+                    );
+                  }).toList()),
                   const SizedBox(height: 14),
                   SwitchListTile(
                     title: Text(l.primary, style: const TextStyle(color: AppColors.ivory, fontSize: 13)),

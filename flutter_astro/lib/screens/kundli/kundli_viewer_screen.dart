@@ -35,29 +35,31 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sections = [
-    ['Summary', Icons.dashboard],
-    ['Planets', Icons.public],
-    ['Kundli', Icons.grid_on],
-    ['Divisions', Icons.apps],
-    ['Vimshottari', Icons.timeline],
-    ['Moola', Icons.schedule],
-    ['Gochar', Icons.wb_sunny],
-    ['Dosh', Icons.warning],
-    ['Yoga', Icons.auto_awesome],
-    ['Shadbala', Icons.bar_chart],
-    ['Ashtakavarga', Icons.table_chart],
-    ['Aspects', Icons.hub],
-    ['Life Areas', Icons.work],
-    ['Bhava', Icons.home],
-    ['Chakras', Icons.radio_button_checked],
-    ['Dasha Active', Icons.flash_on],
+  static const _sectionCount = 16;
+
+  static List<List<Object>> _sections(AppLocalizations l) => [
+    [l.summary, Icons.dashboard],
+    [l.planets, Icons.public],
+    [l.kundli, Icons.grid_on],
+    [l.divisions, Icons.apps],
+    [l.vimshottari, Icons.timeline],
+    [l.moola, Icons.schedule],
+    [l.gochar, Icons.wb_sunny],
+    [l.dosh, Icons.warning],
+    [l.yoga, Icons.auto_awesome],
+    [l.shadbala, Icons.bar_chart],
+    [l.ashtakavarga, Icons.table_chart],
+    [l.aspects, Icons.hub],
+    [l.lifeAreas, Icons.work],
+    [l.bhava, Icons.home],
+    [l.chakras, Icons.radio_button_checked],
+    [l.dashaActive, Icons.flash_on],
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: _sections.length, vsync: this);
+    _tabs = TabController(length: _sectionCount, vsync: this);
     _load();
   }
 
@@ -104,7 +106,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primary,
-          tabs: _sections.map((s) => Tab(
+          tabs: _sections(AppLocalizations.of(context)!).map((s) => Tab(
             icon: Icon(s[1] as IconData, size: 16),
             text: s[0] as String,
           )).toList(),

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
-import 'kundli_detail_slides_screen.dart';
+import 'kundli_viewer_screen.dart';
 
 /// Astrologer's Pro View of a client's kundli.
-/// Extends the 4-slide summary/yog/dosh/career flow with a 5th "Notes" tab
-/// and action buttons (Call Client + Start Session) at the bottom.
+/// Wraps the full 16-tab KundliViewerScreen with action buttons
+/// (Call Client + Start Session + Notes) at the bottom.
 class ClientKundliProScreen extends StatefulWidget {
   final String chartId;
   final String clientName;
   final String? dob;
   final String? tob;
-  final String? userId; // client user_id for call/chat initiation
+  final String? userId;
 
   const ClientKundliProScreen({
     super.key,
@@ -39,53 +39,11 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cosmicVoid,
-      appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new, size: 18), onPressed: () => Navigator.pop(context)),
-        title: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text.rich(TextSpan(children: [
-            TextSpan(text: widget.clientName.split(' ').first, style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
-            if (widget.clientName.split(' ').length > 1)
-              TextSpan(text: ' ${widget.clientName.split(' ').skip(1).join(' ')}',
-                  style: const TextStyle(color: AppColors.gold, fontSize: 15, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic)),
-          ])),
-          const Text('\u25cf CONSULT READY', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5)),
-        ]),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Container(
-              width: 32, height: 32,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.chat_bubble, size: 16, color: AppColors.midnight),
-            ),
-          ),
-        ],
-        centerTitle: true,
-      ),
       body: Column(children: [
-        // Header info strip
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-          child: Row(children: [
-            const Text('\u2728 PRO ANALYSIS', style: TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 1.5, fontWeight: FontWeight.w600)),
-            const Spacer(),
-            Row(children: [
-              const Icon(Icons.grid_on, size: 10, color: AppColors.gold),
-              const SizedBox(width: 4),
-              Text(widget.dob ?? '', style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1)),
-            ]),
-          ]),
-        ),
-        // Main content: reuse the slides screen (summary/yog/dosh/career)
         Expanded(
-          child: KundliDetailSlidesScreen(
+          child: KundliViewerScreen(
             chartId: widget.chartId,
             clientName: widget.clientName,
-            dob: widget.dob,
-            tob: widget.tob,
           ),
         ),
         // Bottom action buttons
@@ -95,13 +53,16 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
             color: AppColors.midnight.withOpacity(0.95),
             border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
           ),
-          child: Row(children: [
-            Expanded(child: _actionBtn(Icons.phone, 'Call Client', () => _callClient())),
-            const SizedBox(width: 8),
-            Expanded(child: _startSessionBtn()),
-            const SizedBox(width: 8),
-            _notesBtn(),
-          ]),
+          child: SafeArea(
+            top: false,
+            child: Row(children: [
+              Expanded(child: _actionBtn(Icons.phone, 'Call Client', _callClient)),
+              const SizedBox(width: 8),
+              Expanded(child: _startSessionBtn()),
+              const SizedBox(width: 8),
+              _notesBtn(),
+            ]),
+          ),
         ),
       ]),
     );
@@ -135,7 +96,7 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
           gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+        child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('Start Session', style: TextStyle(color: AppColors.midnight, fontSize: 11, fontWeight: FontWeight.w800)),
           SizedBox(width: 4),
           Icon(Icons.arrow_forward, size: 14, color: AppColors.midnight),
@@ -178,50 +139,30 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
       backgroundColor: AppColors.nebula,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 16, right: 16, top: 16,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 16,
-        ),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: MediaQuery.of(ctx).viewInsets.bottom + 16),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.smoke, borderRadius: BorderRadius.circular(2))),
           const SizedBox(height: 16),
-          const Text('\u{1F4DD} MY NOTES', style: TextStyle(color: AppColors.lavender, fontSize: 10, letterSpacing: 1.5)),
-          const SizedBox(height: 8),
-          Text('Private notes for ${widget.clientName}',
-              style: const TextStyle(color: AppColors.gold, fontSize: 14, fontWeight: FontWeight.w700)),
+          Text('Notes for ${widget.clientName}', style: const TextStyle(color: AppColors.gold, fontSize: 14, fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
           TextField(
             controller: _notesCtrl,
             maxLines: 6,
             style: const TextStyle(color: AppColors.ivory, fontSize: 13),
             decoration: InputDecoration(
-              hintText: 'Add notes about client questions, patterns...',
+              hintText: 'Add notes about client...',
               hintStyle: const TextStyle(color: AppColors.smoke, fontSize: 12),
-              filled: true,
-              fillColor: Colors.white.withOpacity(0.04),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.gold.withOpacity(0.2)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.gold),
-              ),
+              filled: true, fillColor: Colors.white.withOpacity(0.04),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.gold.withOpacity(0.2))),
             ),
           ),
           const SizedBox(height: 12),
           Row(children: [
-            Expanded(child: OutlinedButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.smoke)),
-            )),
+            Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel'))),
             const SizedBox(width: 10),
             Expanded(child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notes saved')));
-              },
-              child: const Text('Save Notes'),
+              onPressed: () { Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notes saved'))); },
+              child: const Text('Save'),
             )),
           ]),
         ]),
