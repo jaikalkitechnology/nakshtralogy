@@ -179,8 +179,10 @@ async def stream_provider(
     provider_key: str,
     messages: list,
     websocket,
+    token_collector: list = None,
 ) -> None:
-    """Stream tokens from any provider to the WebSocket."""
+    """Stream tokens from any provider to the WebSocket.
+    If token_collector is provided, appends each token text to it."""
     import httpx
 
     provider = PROVIDERS.get(provider_key)
@@ -190,12 +192,12 @@ async def stream_provider(
         return
 
     if provider["type"] == "ollama":
-        await _stream_ollama(provider, messages, websocket)
+        await _stream_ollama(provider, messages, websocket, token_collector)
     else:
-        await _stream_openai(provider, messages, websocket)
+        await _stream_openai(provider, messages, websocket, token_collector)
 
 
-async def _stream_ollama(provider: dict, messages: list, websocket) -> None:
+async def _stream_ollama(provider: dict, messages: list, websocket, token_collector: list = None) -> None:
     import httpx
     try:
         # No read timeout — let the model finish regardless of how long it takes
@@ -227,6 +229,8 @@ async def _stream_ollama(provider: dict, messages: list, websocket) -> None:
                     text = chunk.get("message", {}).get("content", "")
                     if text:
                         await websocket.send_json({"type": "token", "text": text})
+                        if token_collector is not None:
+                            token_collector.append(text)
                     if chunk.get("done"):
                         break
     except Exception as e:
@@ -234,7 +238,7 @@ async def _stream_ollama(provider: dict, messages: list, websocket) -> None:
         await websocket.send_json({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
 
 
-async def _stream_openai(provider: dict, messages: list, websocket) -> None:
+async def _stream_openai(provider: dict, messages: list, websocket, token_collector: list = None) -> None:
     import httpx
     if not provider["api_key"]:
         await websocket.send_json({"type": "token", "text": f"⚠️ {provider['label']} API key not configured."})
@@ -280,6 +284,8 @@ async def _stream_openai(provider: dict, messages: list, websocket) -> None:
                     text = delta.get("content", "")
                     if text:
                         await websocket.send_json({"type": "token", "text": text})
+                        if token_collector is not None:
+                            token_collector.append(text)
     except Exception as e:
         logger.warning("%s stream failed: %s", provider["label"], e)
         await websocket.send_json({"type": "token", "text": f"⚠️ {provider['label']} error: {e}"})

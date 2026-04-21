@@ -40,6 +40,11 @@ _nk = NakshtraEngine()
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
+# Session memory: keyed by (user_id, chart_id) → last 3 Q&A pairs
+# Each entry: [{"q": "user query", "a": "LLM response summary"}, ...]
+_sessions: dict = {}
+_SESSION_MAX_TURNS = 3
+
 
 def _auth_ws(token: str):
     try:
@@ -177,22 +182,38 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     },
                 })
 
-                # Build rich kundli context
+                # Build rich kundli context + session memory
                 t1 = time.time()
                 chart_context = _build_chart_context(data, result)
                 user_prompt = build_rich_prompt(query, chart_context)
-                messages = [
-                    {"role": "system", "content": build_system_prompt(language)},
-                    {"role": "user", "content": user_prompt},
-                ]
-                logger.info("Context built in %.2fs, streaming via %s", time.time() - t1, provider_key)
 
+                # Inject previous conversation as chat history
+                session_key = (user.id, chart_id)
+                history = _sessions.get(session_key, [])
+
+                messages = [{"role": "system", "content": build_system_prompt(language)}]
+                for turn in history:
+                    messages.append({"role": "user", "content": turn["q"]})
+                    messages.append({"role": "assistant", "content": turn["a"]})
+                messages.append({"role": "user", "content": user_prompt})
+
+                logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
+
+                # Stream and collect the full response
+                collected_tokens = []
                 try:
-                    await stream_provider(provider_key, messages, websocket)
+                    await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens)
                 except Exception as e:
                     logger.warning("Stream failed (%s): %s", provider_key, e)
                     fallback = _fallback_response(query, result, language)
                     await websocket.send_json({"type": "token", "text": fallback})
+                    collected_tokens.append(fallback)
+
+                # Store Q&A in session memory (keep last 3 turns per chart)
+                full_response = "".join(collected_tokens)
+                if full_response:
+                    history.append({"q": query, "a": full_response[:500]})
+                    _sessions[session_key] = history[-_SESSION_MAX_TURNS:]
 
                 await websocket.send_json({"type": "done"})
 
