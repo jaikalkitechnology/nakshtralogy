@@ -43,8 +43,49 @@ _CACHE_MAX = 30
 
 # Session memory: keyed by (user_id, chart_id) → last 3 Q&A pairs
 # Each entry: [{"q": "user query", "a": "LLM response summary"}, ...]
+# Persisted to Redis when available; falls back to in-memory dict.
 _sessions: dict = {}
 _SESSION_MAX_TURNS = 3
+_SESSION_TTL_SEC = 60 * 60 * 24 * 7   # 1 week
+
+_redis = None
+try:
+    import redis as _redis_lib  # sync client is fine — operations are tiny
+    _redis = _redis_lib.from_url(settings.REDIS_URL, decode_responses=True, socket_timeout=2)
+    _redis.ping()
+    logger.info("Redis connected — session memory will persist across restarts")
+except Exception as _e:
+    _redis = None
+    logger.info("Redis unavailable (%s) — using in-memory session store", _e)
+
+
+def _session_key_str(user_id: str, chart_id: str) -> str:
+    return f"agent:session:{user_id}:{chart_id}"
+
+
+def _load_session(user_id: str, chart_id: str) -> list:
+    if _redis:
+        try:
+            raw = _redis.get(_session_key_str(user_id, chart_id))
+            if raw:
+                return json.loads(raw)
+        except Exception as e:
+            logger.debug("Redis read failed: %s", e)
+    return _sessions.get((user_id, chart_id), [])
+
+
+def _save_session(user_id: str, chart_id: str, history: list) -> None:
+    if _redis:
+        try:
+            _redis.setex(
+                _session_key_str(user_id, chart_id),
+                _SESSION_TTL_SEC,
+                json.dumps(history),
+            )
+            return
+        except Exception as e:
+            logger.debug("Redis write failed: %s", e)
+    _sessions[(user_id, chart_id)] = history
 
 
 def _auth_ws(token: str):
@@ -90,6 +131,7 @@ def _build_chart_context(data: dict, result: dict) -> dict:
 
     ctx = {
         "planets": planets,
+        "divisionals": data.get("divisionals", {}),
         "probability": result,
         "active_yogas": result.get("active_yogas", []),
         "active_doshas": result.get("active_doshas", []),
@@ -263,9 +305,14 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 if language == "auto" or not language:
                     effective_lang = detect_language(query)
 
+                # Unique message_id so the user's 👍/👎 feedback can reference this response
+                import uuid as _uuid
+                message_id = str(_uuid.uuid4())
+
                 await websocket.send_json({
                     "type": "prob",
                     "data": {
+                        "message_id": message_id,
                         "domain": result["domain"],
                         "label": result["label"],
                         "emoji": result["emoji"],
@@ -275,6 +322,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         "active_yogas": result["active_yogas"],
                         "active_doshas": result["active_doshas"],
                         "detected_language": effective_lang,
+                        "provider": provider_key,
                     },
                 })
 
@@ -294,9 +342,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 detected_domain = result.get("domain") or domain
                 logger.info("Effective language: %s (from %r)", effective_lang, query[:30])
 
-                # Inject previous conversation as chat history
-                session_key = (user.id, chart_id)
-                history = _sessions.get(session_key, [])
+                # Inject previous conversation as chat history (Redis-backed)
+                history = _load_session(user.id, chart_id)
 
                 messages = [{
                     "role": "system",
@@ -343,7 +390,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Store Q&A in session memory (keep last 3 turns per chart)
                 if main_answer:
                     history.append({"q": query, "a": main_answer[:500]})
-                    _sessions[session_key] = history[-_SESSION_MAX_TURNS:]
+                    _save_session(user.id, chart_id, history[-_SESSION_MAX_TURNS:])
 
                 await websocket.send_json({"type": "done"})
 

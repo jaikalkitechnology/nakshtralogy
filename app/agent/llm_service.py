@@ -8,6 +8,26 @@ import logging
 import time
 
 from app.agent.remedies import format_remedies_for_prompt
+from app.agent.classical_citations import get_citations_for, format_citations_for_prompt
+
+# ═══════════════════════════════════════════════════════════════════
+# D-CHART RELEVANCE BY DOMAIN
+# Varga (divisional) charts each specialize in a life area.
+# ═══════════════════════════════════════════════════════════════════
+DOMAIN_DIVISIONALS = {
+    "career_job":        ["D10", "D1"],          # Dashamsa — career
+    "business_startup":  ["D10", "D9", "D1"],    # Dashamsa + Navamsa
+    "education_career":  ["D24", "D4", "D1"],    # Chaturvimsamsa — learning
+    "money_wealth":      ["D2", "D11", "D1"],    # Hora (wealth) + Rudramsa (gains)
+    "debt_recovery":     ["D6", "D8", "D1"],     # Shashtamsa + Ashtamsa
+    "love_relationship": ["D7", "D9", "D1"],     # Saptamsa + Navamsa
+    "marriage_family":   ["D9", "D1", "D12"],    # Navamsa — marriage
+    "health_wellness":   ["D30", "D1"],          # Trimsamsa — afflictions
+    "mental_stress":     ["D30", "D1", "D27"],   # + Bhamsa (mind)
+    "property_assets":   ["D4", "D1"],           # Chaturthamsa — home/land
+    "legal_dispute":     ["D6", "D1"],           # Shashtamsa — enemies
+    "life_path_luck":    ["D9", "D1", "D60"],    # + Shashtyamsa (fine karma)
+}
 from typing import AsyncIterator, Optional
 
 logger = logging.getLogger("llm_service")
@@ -533,6 +553,23 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
         else:
             parts.append(f"\n🪐 Saturn transit: currently in {saturn_sign} — no Sade Sati/Dhaiya active (natal Moon in {moon_sign}). Clear period from Saturn.")
 
+    # ⭐️ DIVISIONAL CHARTS — domain-specific Vargas (D9/D10/D30 etc.)
+    divs = chart_context.get("divisionals", {})
+    domain = chart_context.get("probability", {}).get("domain", "life_path_luck")
+    relevant_dcharts = DOMAIN_DIVISIONALS.get(domain, ["D9", "D1"])
+    if divs and relevant_dcharts:
+        # Show each planet's placement across the relevant D-charts
+        parts.append(f"\nDIVISIONAL CHARTS (relevant for {domain}):")
+        planet_order = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu", "Lagna"]
+        header = "  Planet     | " + " | ".join(f"{d:4}" for d in relevant_dcharts)
+        parts.append(header)
+        for p in planet_order:
+            if p not in divs:
+                continue
+            pdiv = divs[p]
+            row = f"  {p:10} | " + " | ".join(f"{pdiv.get(d,'--'):4}" for d in relevant_dcharts)
+            parts.append(row)
+
     # ⭐️ REMEDY LIBRARY — verified mantras/gems (prevents LLM hallucination)
     key_planets = chart_context.get("domain_planets", ["Sun", "Moon", "Saturn"])
     rem_text = format_remedies_for_prompt(
@@ -541,6 +578,18 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
     )
     if rem_text:
         parts.append(f"\n{rem_text}")
+
+    # ⭐️ CLASSICAL CITATIONS — BPHS/Jaimini shlokas relevant to this scenario
+    sade_active = bool(chart_context.get("sade_sati", {}).get("status"))
+    citations = get_citations_for(
+        domain=domain,
+        active_yogas=chart_context.get("active_yogas", []),
+        active_doshas=chart_context.get("active_doshas", []),
+        sade_sati_active=sade_active,
+    )
+    cit_text = format_citations_for_prompt(citations)
+    if cit_text:
+        parts.append(f"\n{cit_text}")
 
     # ═════════════════════════════════════════════════════════════════
     # INTENT-AWARE INSTRUCTIONS — adapt answer format to question type

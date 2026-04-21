@@ -883,3 +883,26 @@ class WithdrawalRequest(Base):
     refund_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     requested_at = Column(DateTime, server_default=func.now(), nullable=False)
     processed_at = Column(DateTime, nullable=True)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  AGENT FEEDBACK (thumbs up/down on AI responses)
+# ─────────────────────────────────────────────────────────────────────
+
+class AgentFeedback(Base):
+    """User ratings on AI bot responses — drives quality analytics +
+    A/B testing between LLM providers."""
+    __tablename__ = "agent_feedback"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    chart_id = Column(String(36), nullable=True, index=True)
+    message_id = Column(String(36), nullable=False, index=True)  # client-supplied per-response ID
+    rating = Column(Integer, nullable=False)   # +1 = up, -1 = down
+    provider = Column(String(40), nullable=True)  # ollama-3b | groq | gemini | ...
+    domain = Column(String(40), nullable=True)    # career_job | marriage_family | ...
+    language = Column(String(20), nullable=True)
+    query = Column(Text, nullable=True)
+    response_snippet = Column(Text, nullable=True)  # first ~300 chars for analytics
+    note = Column(Text, nullable=True)              # optional user comment
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)

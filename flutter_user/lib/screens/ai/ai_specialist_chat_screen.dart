@@ -130,6 +130,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           'streaming': true,
           'probability': (d['probability'] as num?)?.toDouble(),
           'band': d['band']?.toString(),
+          'message_id': d['message_id']?.toString(),
+          'provider': d['provider']?.toString(),
+          'domain': d['domain']?.toString(),
+          'feedback': 0,  // 0 = none, +1 = up, -1 = down
         });
       });
       _scrollToBottom();
@@ -214,6 +218,38 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         _addBotMessage('⚠️ Connection error. Please try again.');
       }
       if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  Future<void> _sendFeedback(Map<String, dynamic> msg, int rating) async {
+    final messageId = msg['message_id']?.toString();
+    if (messageId == null || messageId.isEmpty) return;
+    if (msg['feedback'] == rating) return;  // already sent
+    setState(() => msg['feedback'] = rating);
+
+    // Find the user query that preceded this bot message
+    String? userQuery;
+    final idx = _messages.indexOf(msg);
+    for (int i = idx - 1; i >= 0; i--) {
+      if (_messages[i]['role'] == 'user') {
+        userQuery = _messages[i]['text']?.toString();
+        break;
+      }
+    }
+    final responseText = msg['text']?.toString() ?? '';
+
+    final ok = await _api.submitAgentFeedback(
+      messageId: messageId,
+      rating: rating,
+      chartId: _selectedChartId,
+      provider: msg['provider']?.toString(),
+      domain: msg['domain']?.toString(),
+      language: _detectedLanguage ?? _language,
+      query: userQuery,
+      responseSnippet: responseText.length > 300 ? responseText.substring(0, 300) : responseText,
+    );
+    if (!ok && mounted) {
+      setState(() => msg['feedback'] = 0);  // revert on failure
     }
   }
 
@@ -586,7 +622,51 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
               padding: const EdgeInsets.only(top: 4),
               child: SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1, color: AppColors.gold.withOpacity(0.5))),
             ),
+          // 👍/👎 feedback row — only on completed bot messages with a message_id
+          if (!isUser && !streaming && text.isNotEmpty && msg['message_id'] != null)
+            _feedbackRow(msg),
         ]),
+      ),
+    );
+  }
+
+  Widget _feedbackRow(Map<String, dynamic> msg) {
+    final rating = (msg['feedback'] as int?) ?? 0;
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        _thumbButton(
+          icon: Icons.thumb_up_outlined, iconSelected: Icons.thumb_up,
+          active: rating == 1, color: AppColors.success,
+          onTap: () => _sendFeedback(msg, 1),
+        ),
+        const SizedBox(width: 6),
+        _thumbButton(
+          icon: Icons.thumb_down_outlined, iconSelected: Icons.thumb_down,
+          active: rating == -1, color: AppColors.error,
+          onTap: () => _sendFeedback(msg, -1),
+        ),
+        if (rating != 0) ...[
+          const SizedBox(width: 8),
+          Text(rating == 1 ? 'Thanks!' : 'Feedback noted',
+              style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+        ],
+      ]),
+    );
+  }
+
+  Widget _thumbButton({required IconData icon, required IconData iconSelected,
+                       required bool active, required Color color, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: active ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: active ? color.withOpacity(0.18) : Colors.transparent,
+          shape: BoxShape.circle,
+          border: Border.all(color: active ? color : AppColors.smoke.withOpacity(0.3), width: 1),
+        ),
+        child: Icon(active ? iconSelected : icon, size: 13, color: active ? color : AppColors.smoke),
       ),
     );
   }
