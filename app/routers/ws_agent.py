@@ -117,6 +117,27 @@ def _build_chart_context(data: dict, result: dict) -> dict:
     except Exception:
         pass
 
+    # ⭐️ ASHTAKAVARGA — SAV per sign, tells which years/transits activate
+    try:
+        av = _nk.get_ashtakavarga(pdata)
+        ctx["ashtakavarga"] = av
+    except Exception as e:
+        logger.warning("ashtakavarga failed: %s", e)
+
+    # ⭐️ GRAHA DRISHTI — planet-to-planet aspects, tells WHY a house is afflicted
+    try:
+        aspects = _nk.get_aspect_matrix(pdata)
+        ctx["aspects"] = aspects
+    except Exception as e:
+        logger.warning("aspects failed: %s", e)
+
+    # ⭐️ CHAKRA HEALTH — per-chakra risk for health vulnerability
+    try:
+        chakra = _nk.get_chakra_health(pdata)
+        ctx["chakra_health"] = chakra
+    except Exception as e:
+        logger.warning("chakra_health failed: %s", e)
+
     try:
         vd = _nk.get_vimshottari(pdata, birth_jd, levels=2)
         dashas = vd.get("dashas", [])
