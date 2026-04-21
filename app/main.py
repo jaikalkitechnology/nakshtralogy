@@ -107,6 +107,9 @@ async def _cleanup_stale_sessions():
 async def lifespan(app: FastAPI):
     create_tables()
     task = asyncio.create_task(_cleanup_stale_sessions())
+    # Pre-load Qwen model into RAM so first chat request is fast
+    from app.agent.llm_service import warmup_llm
+    await warmup_llm()
     yield
     task.cancel()
 
