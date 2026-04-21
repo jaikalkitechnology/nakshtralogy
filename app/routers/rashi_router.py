@@ -261,7 +261,10 @@ def _compute_predictions(rashi_idx: int) -> dict:
     from datetime import date as _date
     t = _date.today()
     jd = _nk_raw.to_julian_day(t.year, t.month, t.day, 6.5)
-    pos = _nk_raw.get_all_positions(jd)
+    import io, contextlib
+    _buf = io.StringIO()
+    with contextlib.redirect_stdout(_buf):
+        pos = _nk_raw.get_all_positions(jd)
 
     transit_signs = {}
     for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]:

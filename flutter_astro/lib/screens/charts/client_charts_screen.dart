@@ -6,7 +6,7 @@ import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
 import '../../bloc/chart/chart_state.dart';
 import 'add_client_chart_screen.dart';
-import '../kundli/client_kundli_pro_screen.dart';
+import '../kundli/kundli_viewer_screen.dart';
 
 const _months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
@@ -379,12 +379,9 @@ class _ClientChartsScreenState extends State<ClientChartsScreen> {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ClientKundliProScreen(
+              builder: (_) => KundliViewerScreen(
                 chartId: c['id'],
                 clientName: c['name'] ?? 'Client',
-                dob: c['dob']?.toString(),
-                tob: c['tob']?.toString(),
-                userId: c['user_id']?.toString(),
               ),
             ),
           ),

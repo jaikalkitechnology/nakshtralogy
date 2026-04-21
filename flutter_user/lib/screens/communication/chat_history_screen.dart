@@ -32,7 +32,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _sessions.isEmpty
-              ? const Center(child: Text('No chats yet', style: TextStyle(color: AppColors.textSecondary)))
+              ? _emptyView()
               : RefreshIndicator(
                   onRefresh: _load,
                   child: ListView.builder(
@@ -43,6 +43,54 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
                 ),
     );
   }
+
+  Widget _emptyView() => RefreshIndicator(
+    onRefresh: _load,
+    child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        const SizedBox(height: 80),
+        Center(
+          child: Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              color: AppColors.accent.withOpacity(0.12),
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.accent.withOpacity(0.3), width: 2),
+            ),
+            child: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.accent, size: 46),
+          ),
+        ),
+        const SizedBox(height: 18),
+        const Center(
+          child: Text('No Chat Sessions Yet',
+              style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700)),
+        ),
+        const SizedBox(height: 8),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Text('Your conversations with astrologers will appear here. Pull down to refresh.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.4)),
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: ElevatedButton.icon(
+            onPressed: () => Navigator.pushNamed(context, '/astrologers'),
+            icon: const Icon(Icons.search, size: 18),
+            label: const Text('Browse Astrologers'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.background,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 
   Widget _sessionCard(dynamic session) {
     final s = session as Map;

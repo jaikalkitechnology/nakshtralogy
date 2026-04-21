@@ -652,8 +652,12 @@ class ApiService {
       if (resp.statusCode == 200) {
         final decoded = jsonDecode(resp.body);
         if (decoded is List) return decoded;
+        if (decoded is Map && decoded['data'] is List) return decoded['data'] as List;
       }
-    } catch (_) {}
+    } catch (e) {
+      // ignore: avoid_print
+      print('getCallHistory error: $e');
+    }
     return [];
   }
 
@@ -663,8 +667,12 @@ class ApiService {
       if (resp.statusCode == 200) {
         final decoded = jsonDecode(resp.body);
         if (decoded is List) return decoded;
+        if (decoded is Map && decoded['data'] is List) return decoded['data'] as List;
       }
-    } catch (_) {}
+    } catch (e) {
+      // ignore: avoid_print
+      print('getChatHistory error: $e');
+    }
     return [];
   }
 
