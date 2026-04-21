@@ -102,6 +102,21 @@ def _build_chart_context(data: dict, result: dict) -> dict:
     except Exception:
         pass
 
+    # ⭐️ DASHA ACTIVATION — which yogas/doshas are TRIGGERED in current MD/AD
+    try:
+        da = _nk.get_dasha_activation(pdata, birth_jd)
+        ctx["dasha_activation"] = da
+    except Exception as e:
+        logger.warning("dasha_activation failed: %s", e)
+
+    # Today's gochar (transit) scores — bonus timing context
+    try:
+        moon_sign_idx = (pdata.get("Moon", {}).get("rashi_idx", None))
+        gochar = _nk.get_gochar(None, moon_sign_idx)
+        ctx["gochar_today"] = gochar
+    except Exception:
+        pass
+
     try:
         vd = _nk.get_vimshottari(pdata, birth_jd, levels=2)
         dashas = vd.get("dashas", [])

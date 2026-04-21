@@ -288,6 +288,51 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
     if dasha:
         parts.append(f"\nCURRENT DASHA: MD={dasha.get('md','')} ({dasha.get('md_start','')}-{dasha.get('md_end','')}) | AD={dasha.get('ad','')} ({dasha.get('ad_start','')}-{dasha.get('ad_end','')})")
 
+    # ⭐️ DASHA ACTIVATION — which yogas/doshas are triggered RIGHT NOW
+    da = chart_context.get("dasha_activation", {})
+    if da:
+        vim = da.get("vimshottari", {})
+        moola = da.get("moola", {})
+        activated_y = da.get("activated_yogas", [])
+        activated_d = da.get("activated_doshas", [])
+        gochar_for_md = da.get("gochar_score_for_md_lord", 0)
+        query_date = da.get("query_date", "today")
+
+        parts.append(f"\nDASHA ACTIVATION (as of {query_date}):")
+        parts.append(f"  Vimshottari: MD={vim.get('md','')} until {vim.get('md_end','')} | AD={vim.get('ad','')} until {vim.get('ad_end','')} | PD={vim.get('pd','')}")
+        if moola and moola.get('md'):
+            parts.append(f"  Moola Dasha: MD={moola.get('md','')} ({moola.get('md_start','')}-{moola.get('md_end','')}) | AD={moola.get('ad','')}")
+        gochar_note = "favorable" if gochar_for_md > 2 else "adverse" if gochar_for_md < -2 else "neutral"
+        parts.append(f"  Current transit on MD lord's sign: {gochar_for_md:+.1f} ({gochar_note})")
+
+        if activated_y:
+            top = activated_y[:5]
+            y_text = "; ".join(f"{y['name']} ({y['activation']:.0f}% via {y['via_lord']})" for y in top)
+            parts.append(f"  ▶ YOGAS ACTIVE NOW: {y_text}")
+        else:
+            parts.append("  ▶ YOGAS ACTIVE NOW: None (await next dasha shift)")
+
+        if activated_d:
+            top = activated_d[:5]
+            d_text = "; ".join(f"{d['name']} ({d['activation']:.0f}% via {d['via_lord']})" for d in top)
+            parts.append(f"  ⚠ DOSHAS ACTIVE NOW: {d_text}")
+
+    # Gochar today — current transit scores for all 12 rashis
+    gochar = chart_context.get("gochar_today", {})
+    if gochar:
+        rashis = gochar.get("rashis", [])
+        best = gochar.get("best", "")
+        worst = gochar.get("worst", "")
+        moon_sign = gochar.get("moon_sign", "")
+        # Find user's moon sign score
+        moon_score_note = ""
+        if moon_sign:
+            for r in rashis:
+                if r.get("rashi") == moon_sign:
+                    moon_score_note = f" | Your moon sign ({moon_sign}): {r.get('score',0):.1f} ({r.get('grade','')})"
+                    break
+        parts.append(f"\nTODAY'S GOCHAR: Best={best}, Worst={worst}{moon_score_note}")
+
     # Probability + breakdown
     prob_data = chart_context.get("probability", {})
     if prob_data:
@@ -318,6 +363,18 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
         if la_parts:
             parts.append(f"\nLIFE AREAS: {' | '.join(la_parts)}")
 
+    # Detect timing-intent queries — instruct LLM to cite specific dasha periods
+    timing_keywords = ["when", "kab", "time", "timing", "date", "year", "month", "period", "how long", "kitna samay"]
+    is_timing_q = any(kw in query.lower() for kw in timing_keywords)
+    if is_timing_q:
+        parts.append(
+            "\n⏰ TIMING QUESTION DETECTED — In your answer:\n"
+            "  1. Cite the SPECIFIC current MD/AD dasha period with end date as the active window\n"
+            "  2. If activated yogas support the question → say 'favorable window is [MD lord] dasha until [end_date]'\n"
+            "  3. If current dasha is adverse → mention the NEXT dasha shift that would help\n"
+            "  4. Use phrases like 'favorable window', 'peak activation period', 'shift toward' — never guaranteed dates\n"
+            "  5. Reference the activated yogas/doshas list above by name"
+        )
     parts.append("\nRespond with astrological analysis referencing the specific chart data above. If the question is not astrology-related, suggest 3 questions the user could ask.")
     return "\n".join(parts)
 
