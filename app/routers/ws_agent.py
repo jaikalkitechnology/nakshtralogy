@@ -1,10 +1,10 @@
 """
-WebSocket Agent Chat — streams Ollama LLM tokens to the client in real time.
+WebSocket Agent Chat — multi-LLM streaming with rich kundli context.
 
 Flow:
 1. Client connects: ws://host/ws/agent/chat?token=<jwt>
-2. Client sends JSON: {"chart_id": "...", "query": "...", "domain": "...", "language": "english"}
-3. Server sends probability immediately: {"type": "prob", "data": {...}}
+2. Client sends: {"chart_id", "query", "provider", "language", "domain"}
+3. Server sends probability: {"type": "prob", "data": {...}}
 4. Server streams tokens: {"type": "token", "text": "..."}
 5. Server sends done: {"type": "done"}
 """
@@ -14,6 +14,7 @@ import logging
 import time
 import io
 import contextlib
+from datetime import date
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from jose import jwt, JWTError
@@ -22,25 +23,25 @@ from app.core.config import settings
 from app.core.database import SessionLocal
 from app.models.model import User, Chart
 from app.kundli import engine as nk_engine
+from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent
 from app.agent.llm_service import (
-    _build_system_prompt,
-    _build_user_prompt,
-    _check_ollama,
+    build_system_prompt,
+    build_rich_prompt,
+    stream_provider,
     _fallback_response,
-    OLLAMA_URL,
-    OLLAMA_MODEL,
 )
 
 logger = logging.getLogger("ws_agent")
 router = APIRouter()
 _agent = NakshtraAgent()
+_nk = NakshtraEngine()
 
 _chart_cache: dict = {}
 _CACHE_MAX = 30
 
 
-def _auth_ws(token: str) -> User | None:
+def _auth_ws(token: str):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         user_id = payload.get("sub")
@@ -70,6 +71,52 @@ def _get_chart_data(chart: Chart) -> dict:
     return result
 
 
+def _build_chart_context(data: dict, result: dict) -> dict:
+    """Build rich context from chart data for the LLM prompt."""
+    pdata = data["_pdata"]
+    birth_jd = data["birth_jd"]
+    planets = data.get("planets", {})
+
+    ctx = {
+        "planets": planets,
+        "probability": result,
+        "active_yogas": result.get("active_yogas", []),
+        "active_doshas": result.get("active_doshas", []),
+    }
+
+    try:
+        bhava = _nk.get_bhava_strength(pdata)
+        ctx["bhava"] = bhava
+    except Exception:
+        pass
+
+    try:
+        vd = _nk.get_vimshottari(pdata, birth_jd, levels=2)
+        dashas = vd.get("dashas", [])
+        today_str = date.today().strftime("%d/%m/%Y")
+        from app.kundli.engine import jd_to_date
+        for md in dashas:
+            md_start = md.get("start", "")
+            md_end = md.get("end", "")
+            for ad in md.get("sub", []):
+                ad_start = ad.get("start", "")
+                ad_end = ad.get("end", "")
+                ctx["current_dasha"] = {
+                    "md": md["planet"], "md_start": md_start, "md_end": md_end,
+                    "ad": ad["planet"], "ad_start": ad_start, "ad_end": ad_end,
+                }
+    except Exception:
+        pass
+
+    try:
+        life = _nk.get_life_areas(pdata)
+        ctx["life_areas"] = life
+    except Exception:
+        pass
+
+    return ctx
+
+
 @router.websocket("/ws/agent/chat")
 async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
     user = _auth_ws(token)
@@ -93,6 +140,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
             query = req.get("query", "").strip()
             domain = req.get("domain")
             language = req.get("language", "english")
+            provider_key = req.get("provider", "ollama")
 
             if not chart_id or not query:
                 await websocket.send_json({"type": "error", "text": "chart_id and query required"})
@@ -108,15 +156,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     await websocket.send_json({"type": "error", "text": "Not authorized"})
                     continue
 
-                # 1. Compute probability (fast — ~0.1s)
                 t0 = time.time()
                 data = _get_chart_data(chart)
                 pdata = data["_pdata"]
                 birth_jd = data["birth_jd"]
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain)
-                logger.info("Probability computed in %.2fs", time.time() - t0)
+                logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
 
-                # Send probability immediately
                 await websocket.send_json({
                     "type": "prob",
                     "data": {
@@ -131,46 +177,20 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     },
                 })
 
-                # 2. Stream LLM tokens
+                # Build rich kundli context
                 t1 = time.time()
-                try:
-                    import httpx
-                    async with httpx.AsyncClient(
-                        timeout=httpx.Timeout(connect=5.0, read=120.0, write=10.0, pool=5.0)
-                    ) as client:
-                        async with client.stream(
-                            "POST",
-                            f"{OLLAMA_URL}/api/chat",
-                            json={
-                                "model": OLLAMA_MODEL,
-                                "messages": [
-                                    {"role": "system", "content": _build_system_prompt(language)},
-                                    {"role": "user", "content": _build_user_prompt(query, result)},
-                                ],
-                                "stream": True,
-                                "options": {
-                                    "temperature": 0.7,
-                                    "num_predict": 200,
-                                    "num_ctx": 1024,
-                                },
-                            },
-                        ) as stream:
-                            async for line in stream.aiter_lines():
-                                if not line.strip():
-                                    continue
-                                try:
-                                    chunk = json.loads(line)
-                                except json.JSONDecodeError:
-                                    continue
-                                token_text = chunk.get("message", {}).get("content", "")
-                                if token_text:
-                                    await websocket.send_json({"type": "token", "text": token_text})
-                                if chunk.get("done"):
-                                    break
+                chart_context = _build_chart_context(data, result)
+                user_prompt = build_rich_prompt(query, chart_context)
+                messages = [
+                    {"role": "system", "content": build_system_prompt(language)},
+                    {"role": "user", "content": user_prompt},
+                ]
+                logger.info("Context built in %.2fs, streaming via %s", time.time() - t1, provider_key)
 
-                    logger.info("Stream done in %.1fs", time.time() - t1)
+                try:
+                    await stream_provider(provider_key, messages, websocket)
                 except Exception as e:
-                    logger.warning("Ollama stream failed: %s — sending fallback", e)
+                    logger.warning("Stream failed (%s): %s", provider_key, e)
                     fallback = _fallback_response(query, result, language)
                     await websocket.send_json({"type": "token", "text": fallback})
 

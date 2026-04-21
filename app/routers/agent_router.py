@@ -20,12 +20,17 @@ from app.core.dependencies import get_current_user
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
-from app.agent.llm_service import generate_llm_response
+from app.agent.llm_service import generate_llm_response, get_available_providers
 
 logger = logging.getLogger("agent_router")
 router = APIRouter()
 
 _agent = NakshtraAgent()
+
+
+@router.get("/providers")
+def list_providers():
+    return get_available_providers()
 
 
 class AgentChatRequest(BaseModel):

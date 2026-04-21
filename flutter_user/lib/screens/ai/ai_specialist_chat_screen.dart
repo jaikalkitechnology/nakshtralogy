@@ -28,8 +28,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   final List<Map<String, dynamic>> _messages = [];
 
   List<dynamic> _charts = [];
+  List<dynamic> _providers = [];
   String? _selectedChartId;
   String? _selectedChartName;
+  String _selectedProvider = 'ollama';
   bool _loadingCharts = true;
   bool _sending = false;
   String _language = 'english';
@@ -37,15 +39,32 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   WebSocketChannel? _ws;
   bool _wsConnected = false;
 
+  static const _providerIcons = {
+    'ollama': Icons.computer,
+    'gemini': Icons.auto_awesome,
+    'groq': Icons.bolt,
+    'openrouter': Icons.hub,
+    'deepseek': Icons.psychology,
+  };
+
   @override
   void initState() {
     super.initState();
     _loadCharts();
+    _loadProviders();
   }
 
   Future<void> _loadCharts() async {
     _charts = await _api.getMyCharts(limit: 50);
     if (mounted) setState(() => _loadingCharts = false);
+  }
+
+  Future<void> _loadProviders() async {
+    _providers = await _api.getAgentProviders();
+    if (_providers.isEmpty) {
+      _providers = [{'key': 'ollama', 'label': 'Ollama (Offline)', 'model': 'qwen2.5:3b', 'available': true}];
+    }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -57,8 +76,9 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   }
 
   void _connectWs() {
+    _ws?.sink.close();
     final token = _api.accessToken;
-    if (token == null) return;
+    if (token.isEmpty) return;
     final uri = Uri.parse('${ApiConstants.wsAgentChat}?token=$token');
     _ws = WebSocketChannel.connect(uri);
     _wsConnected = true;
@@ -75,9 +95,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           _addBotMessage('⚠️ Connection lost. Please try again.');
         }
       },
-      onDone: () {
-        _wsConnected = false;
-      },
+      onDone: () => _wsConnected = false,
     );
   }
 
@@ -86,24 +104,20 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
     if (type == 'prob') {
       final d = msg['data'] as Map<String, dynamic>? ?? {};
-      final prob = (d['probability'] as num?)?.toDouble();
-      final band = d['band']?.toString();
       setState(() {
         _messages.add({
           'role': 'bot',
           'text': '',
           'streaming': true,
-          if (prob != null) 'probability': prob,
-          if (band != null) 'band': band,
+          'probability': (d['probability'] as num?)?.toDouble(),
+          'band': d['band']?.toString(),
         });
       });
       _scrollToBottom();
     } else if (type == 'token') {
       final text = msg['text']?.toString() ?? '';
       if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
-        setState(() {
-          _messages.last['text'] = (_messages.last['text'] ?? '') + text;
-        });
+        setState(() => _messages.last['text'] = (_messages.last['text'] ?? '') + text);
         _scrollToBottom();
       }
     } else if (type == 'done') {
@@ -125,7 +139,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       _selectedChartName = chart['name']?.toString() ?? 'Chart';
     });
     _connectWs();
-    _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nI\'ll analyze the birth chart of **$_selectedChartName** to answer your questions.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
+    _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nAnalyzing the birth chart of **$_selectedChartName**.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
   }
 
   Future<void> _sendMessage() async {
@@ -150,22 +164,18 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         'query': text,
         'domain': widget.domainKey,
         'language': _language,
+        'provider': _selectedProvider,
       }));
     } else {
-      // Fallback to REST if WS fails
       try {
         final resp = await _api.agentChat(
-          chartId: _selectedChartId!,
-          query: text,
-          domain: widget.domainKey,
-          language: _language,
+          chartId: _selectedChartId!, query: text,
+          domain: widget.domainKey, language: _language,
         );
         if (resp['statusCode'] == 200) {
-          _addBotMessage(
-            resp['message']?.toString() ?? 'No response',
-            probability: (resp['probability'] as num?)?.toDouble(),
-            band: resp['band']?.toString(),
-          );
+          _addBotMessage(resp['message']?.toString() ?? 'No response',
+              probability: (resp['probability'] as num?)?.toDouble(),
+              band: resp['band']?.toString());
         } else {
           _addBotMessage('⚠️ ${resp['detail'] ?? 'Something went wrong.'}');
         }
@@ -179,8 +189,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   void _addBotMessage(String text, {double? probability, String? band}) {
     setState(() {
       _messages.add({
-        'role': 'bot',
-        'text': text,
+        'role': 'bot', 'text': text,
         if (probability != null) 'probability': probability,
         if (band != null) 'band': band,
       });
@@ -224,6 +233,8 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     );
   }
 
+  // ── Chart Selector ──────────────────────────────────────────────────
+
   Widget _chartSelector() {
     if (_loadingCharts) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
     if (_charts.isEmpty) {
@@ -263,20 +274,13 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                 child: Row(children: [
                   Container(
                     width: 42, height: 42,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(child: Text(
-                      (c['name']?.toString() ?? 'C').substring(0, 1).toUpperCase(),
-                      style: const TextStyle(color: AppColors.midnight, fontSize: 18, fontWeight: FontWeight.w700),
-                    )),
+                    decoration: BoxDecoration(gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]), borderRadius: BorderRadius.circular(12)),
+                    child: Center(child: Text((c['name']?.toString() ?? 'C').substring(0, 1).toUpperCase(), style: const TextStyle(color: AppColors.midnight, fontSize: 18, fontWeight: FontWeight.w700))),
                   ),
                   const SizedBox(width: 12),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                    Text('${c['dob']} · ${c['tob']} · ${c['place']}',
-                        style: const TextStyle(color: AppColors.smoke, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Text('${c['dob']} · ${c['tob']} · ${c['place']}', style: const TextStyle(color: AppColors.smoke, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
                   ])),
                   const Icon(Icons.arrow_forward_ios, color: AppColors.gold, size: 14),
                 ]),
@@ -288,8 +292,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     ]);
   }
 
+  // ── Chat View ───────────────────────────────────────────────────────
+
   Widget _chatView() {
     return Column(children: [
+      // Chart info strip
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         color: AppColors.nebula.withOpacity(0.5),
@@ -299,15 +306,12 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           Text('Analyzing: $_selectedChartName', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
           const Spacer(),
           GestureDetector(
-            onTap: () {
-              _ws?.sink.close();
-              _wsConnected = false;
-              setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); });
-            },
+            onTap: () { _ws?.sink.close(); _wsConnected = false; setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); }); },
             child: const Text('Change', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
           ),
         ]),
       ),
+      // Messages
       Expanded(
         child: ListView.builder(
           controller: _scrollCtrl,
@@ -316,6 +320,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           itemBuilder: (_, i) => _messageBubble(_messages[i]),
         ),
       ),
+      // Streaming indicator
       if (_sending && (_messages.isEmpty || _messages.last['streaming'] != true))
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
@@ -325,16 +330,60 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
           ]),
         ),
+      // Suggestions
       if (_messages.length <= 1) _suggestions(),
-      Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-        decoration: BoxDecoration(
-          color: AppColors.nebula,
-          border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Row(children: [
+      // Input bar with provider selector
+      _inputBar(),
+    ]);
+  }
+
+  // ── Provider Selector + Input ───────────────────────────────────────
+
+  Widget _inputBar() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
+      decoration: BoxDecoration(
+        color: AppColors.nebula,
+        border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          // Provider chips row
+          SizedBox(
+            height: 32,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: _providers.where((p) => p['available'] == true).map<Widget>((p) {
+                final key = p['key']?.toString() ?? '';
+                final label = p['label']?.toString() ?? key;
+                final selected = key == _selectedProvider;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: GestureDetector(
+                    onTap: _sending ? null : () => setState(() => _selectedProvider = key),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: selected ? AppColors.gold.withOpacity(0.2) : Colors.white.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: selected ? AppColors.gold : AppColors.smoke.withOpacity(0.3)),
+                      ),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Icon(_providerIcons[key] ?? Icons.smart_toy, size: 13, color: selected ? AppColors.gold : AppColors.smoke),
+                        const SizedBox(width: 4),
+                        Text(label.split(' ').first, style: TextStyle(color: selected ? AppColors.gold : AppColors.smoke, fontSize: 10, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+                      ]),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 6),
+          // Text input + send
+          Row(children: [
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -369,10 +418,12 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
               ),
             ),
           ]),
-        ),
+        ]),
       ),
-    ]);
+    );
   }
+
+  // ── Suggestions ─────────────────────────────────────────────────────
 
   Widget _suggestions() {
     final samples = {
@@ -401,6 +452,8 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       )).toList()),
     );
   }
+
+  // ── Message Bubble ──────────────────────────────────────────────────
 
   Widget _messageBubble(Map<String, dynamic> msg) {
     final isUser = msg['role'] == 'user';
@@ -443,7 +496,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             )),
           if (streaming && text.isEmpty)
             Row(mainAxisSize: MainAxisSize.min, children: [
-              SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.gold)),
+              const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.gold)),
               const SizedBox(width: 6),
               const Text('Thinking...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
             ]),
