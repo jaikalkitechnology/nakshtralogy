@@ -7,6 +7,7 @@ Falls back to template-based responses if Ollama is unavailable.
 """
 
 import logging
+import time
 
 logger = logging.getLogger("llm_service")
 
@@ -16,15 +17,7 @@ OLLAMA_URL = settings.OLLAMA_URL.rstrip("/")
 OLLAMA_MODEL = settings.OLLAMA_MODEL
 OLLAMA_API_URL = f"{OLLAMA_URL}/api/chat"
 
-_http_client = None
-
-def _get_client():
-    """Reuse a single httpx client across requests to avoid connection overhead."""
-    global _http_client
-    if _http_client is None:
-        import httpx
-        _http_client = httpx.AsyncClient(timeout=180.0)
-    return _http_client
+_ollama_available = True
 
 
 def _build_system_prompt(language: str = "english") -> str:
@@ -66,66 +59,98 @@ Active Doshas: {dosh_text}
 Reply in 3-5 sentences with the probability, mention yogas/doshas, and give 1 practical suggestion."""
 
 
+async def _check_ollama() -> bool:
+    """Quick health check — returns False if Ollama is unreachable."""
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=3.0) as c:
+            r = await c.get(f"{OLLAMA_URL}/api/tags")
+            return r.status_code == 200
+    except Exception:
+        return False
+
+
 async def generate_llm_response(
     query: str,
     agent_result: dict,
     language: str = "english",
 ) -> str:
     """Generate natural language explanation using local Qwen via Ollama."""
+    global _ollama_available
 
+    if not _ollama_available:
+        ok = await _check_ollama()
+        if not ok:
+            logger.debug("Ollama still down, using template")
+            return _fallback_response(query, agent_result, language)
+        _ollama_available = True
+        logger.info("Ollama is back online")
+
+    t0 = time.time()
     try:
-        client = _get_client()
-        resp = await client.post(
-            OLLAMA_API_URL,
-            json={
-                "model": OLLAMA_MODEL,
-                "messages": [
-                    {"role": "system", "content": _build_system_prompt(language)},
-                    {"role": "user", "content": _build_user_prompt(query, agent_result)},
-                ],
-                "stream": False,
-                "options": {
-                    "temperature": 0.7,
-                    "num_predict": 256,
-                    "num_ctx": 2048,
+        import httpx
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=5.0, read=120.0, write=10.0, pool=5.0)
+        ) as client:
+            logger.info("Sending to Ollama (%s)...", OLLAMA_MODEL)
+            resp = await client.post(
+                OLLAMA_API_URL,
+                json={
+                    "model": OLLAMA_MODEL,
+                    "messages": [
+                        {"role": "system", "content": _build_system_prompt(language)},
+                        {"role": "user", "content": _build_user_prompt(query, agent_result)},
+                    ],
+                    "stream": False,
+                    "options": {
+                        "temperature": 0.7,
+                        "num_predict": 200,
+                        "num_ctx": 1024,
+                    },
                 },
-            },
-        )
-        if resp.status_code == 200:
-            data = resp.json()
-            content = data.get("message", {}).get("content", "")
-            if content:
-                return content
-            logger.warning("Ollama returned empty content: %s", data)
-            return _fallback_response(query, agent_result, language)
-        else:
-            logger.warning("Ollama API error %d: %s", resp.status_code, resp.text[:200])
-            return _fallback_response(query, agent_result, language)
+            )
+            elapsed = time.time() - t0
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data.get("message", {}).get("content", "")
+                logger.info("Ollama responded in %.1fs (%d chars)", elapsed, len(content))
+                if content:
+                    return content
+            else:
+                logger.warning("Ollama error %d (%.1fs): %s", resp.status_code, elapsed, resp.text[:200])
     except Exception as e:
-        logger.warning("Ollama LLM failed: %s", e)
-        return _fallback_response(query, agent_result, language)
+        elapsed = time.time() - t0
+        logger.warning("Ollama failed after %.1fs: %s", elapsed, e)
+        _ollama_available = False
+
+    return _fallback_response(query, agent_result, language)
 
 
 async def warmup_llm():
-    """Pre-load model into RAM on server startup. Call from FastAPI lifespan."""
+    """Pre-load model into RAM on server startup."""
+    global _ollama_available
     try:
-        client = _get_client()
+        import httpx
         logger.info("Warming up Ollama model %s ...", OLLAMA_MODEL)
-        resp = await client.post(
-            OLLAMA_API_URL,
-            json={
-                "model": OLLAMA_MODEL,
-                "messages": [{"role": "user", "content": "Hello"}],
-                "stream": False,
-                "options": {"num_predict": 4},
-            },
-        )
-        if resp.status_code == 200:
-            logger.info("Ollama warmup done — model loaded in RAM")
-        else:
-            logger.warning("Ollama warmup failed: %d", resp.status_code)
+        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=5.0, read=300.0, write=10.0, pool=5.0)) as client:
+            resp = await client.post(
+                OLLAMA_API_URL,
+                json={
+                    "model": OLLAMA_MODEL,
+                    "messages": [{"role": "user", "content": "Hello"}],
+                    "stream": False,
+                    "options": {"num_predict": 4},
+                },
+            )
+            if resp.status_code == 200:
+                logger.info("Ollama warmup done — model loaded in RAM")
+                _ollama_available = True
+            else:
+                logger.warning("Ollama warmup failed: %d — will use template fallback", resp.status_code)
+                _ollama_available = False
     except Exception as e:
-        logger.warning("Ollama warmup error: %s", e)
+        logger.warning("Ollama not reachable: %s — will use template fallback", e)
+        _ollama_available = False
 
 
 def _fallback_response(query: str, result: dict, language: str) -> str:

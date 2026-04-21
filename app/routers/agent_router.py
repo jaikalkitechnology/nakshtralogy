@@ -8,6 +8,7 @@ GET  /agent/domain/{key} — single domain info
 
 import logging
 import traceback
+import time
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -116,17 +117,23 @@ async def agent_chat(
         raise HTTPException(403, "Not authorized")
 
     try:
+        t0 = time.time()
         data = _get_chart_data(chart)
         pdata = data["_pdata"]
         birth_jd = data["birth_jd"]
+        logger.info("Chart loaded in %.2fs", time.time() - t0)
 
+        t1 = time.time()
         result = _agent.query(req.query, pdata, birth_jd, domain_override=req.domain)
+        logger.info("Agent probability in %.2fs — %s %.0f%%", time.time() - t1, result["domain"], result["probability"])
 
+        t2 = time.time()
         message = await generate_llm_response(
             query=req.query,
             agent_result=result,
             language=req.language,
         )
+        logger.info("LLM response in %.2fs (total %.2fs)", time.time() - t2, time.time() - t0)
 
         return AgentChatResponse(
             domain=result["domain"],
