@@ -1,25 +1,21 @@
 """
-Groq LLM Service — generates natural language explanations
-from agent probability data using Llama 3.1 70B.
+Local LLM Service — generates natural language explanations
+from agent probability data using Qwen 2.5 7B via Ollama.
 
-Set GROQ_API_KEY in environment or .env file.
-Falls back to template-based responses if Groq is unavailable.
+Runs entirely offline on the server. No external API key needed.
+Falls back to template-based responses if Ollama is unavailable.
 """
 
-import os
 import logging
-import json
 from typing import Optional
 
 logger = logging.getLogger("llm_service")
 
 from app.core.config import settings
 
-GROQ_API_KEY = settings.GROQ_API_KEY
-GROQ_MODEL = settings.GROQ_MODEL or "llama-3.3-70b-versatile"
-if "3.1" in GROQ_MODEL:
-    GROQ_MODEL = "llama-3.3-70b-versatile"
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+OLLAMA_URL = settings.OLLAMA_URL.rstrip("/")
+OLLAMA_MODEL = settings.OLLAMA_MODEL
+OLLAMA_CHAT_URL = f"{OLLAMA_URL}/v1/chat/completions"
 
 
 def _build_system_prompt(language: str = "english") -> str:
@@ -79,22 +75,15 @@ async def generate_llm_response(
     agent_result: dict,
     language: str = "english",
 ) -> str:
-    """Generate natural language explanation using Groq/Llama."""
-
-    if not GROQ_API_KEY:
-        return _fallback_response(query, agent_result, language)
+    """Generate natural language explanation using local Qwen via Ollama."""
 
     try:
         import httpx
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        async with httpx.AsyncClient(timeout=60.0) as client:
             resp = await client.post(
-                GROQ_URL,
-                headers={
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type": "application/json",
-                },
+                OLLAMA_CHAT_URL,
                 json={
-                    "model": GROQ_MODEL,
+                    "model": OLLAMA_MODEL,
                     "messages": [
                         {"role": "system", "content": _build_system_prompt(language)},
                         {"role": "user", "content": _build_user_prompt(query, agent_result)},
@@ -107,10 +96,10 @@ async def generate_llm_response(
                 data = resp.json()
                 return data["choices"][0]["message"]["content"]
             else:
-                logger.warning("Groq API error %d: %s", resp.status_code, resp.text[:200])
+                logger.warning("Ollama API error %d: %s", resp.status_code, resp.text[:200])
                 return _fallback_response(query, agent_result, language)
     except Exception as e:
-        logger.warning("Groq LLM failed: %s", e)
+        logger.warning("Ollama LLM failed: %s", e)
         return _fallback_response(query, agent_result, language)
 
 
@@ -125,11 +114,11 @@ def _fallback_response(query: str, result: dict, language: str) -> str:
 
     if language == "hindi":
         if prob >= 65:
-            msg = f"{emoji} **{label}**\n\n\u0906\u092a\u0915\u0940 \u0915\u0941\u0902\u0921\u0932\u0940 \u092e\u0947\u0902 \u092f\u0939 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 **{prob}% ({band})** \u0905\u0928\u0941\u0915\u0942\u0932 \u0939\u0948\u0964"
+            msg = f"{emoji} **{label}**\n\nआपकी कुंडली में यह क्षेत्र **{prob}% ({band})** अनुकूल है।"
         elif prob >= 40:
-            msg = f"{emoji} **{label}**\n\n\u0906\u092a\u0915\u0940 \u0915\u0941\u0902\u0921\u0932\u0940 \u092e\u0947\u0902 \u092f\u0939 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 **{prob}% ({band})** \u092e\u093f\u0936\u094d\u0930\u093f\u0924 \u0939\u0948\u0964 \u092a\u094d\u0930\u092f\u093e\u0938 \u091c\u093e\u0930\u0940 \u0930\u0916\u0947\u0902\u0964"
+            msg = f"{emoji} **{label}**\n\nआपकी कुंडली में यह क्षेत्र **{prob}% ({band})** मिश्रित है। प्रयास जारी रखें।"
         else:
-            msg = f"{emoji} **{label}**\n\n\u0906\u092a\u0915\u0940 \u0915\u0941\u0902\u0921\u0932\u0940 \u092e\u0947\u0902 \u092f\u0939 \u0915\u094d\u0937\u0947\u0924\u094d\u0930 **{prob}% ({band})** \u091a\u0941\u0928\u094c\u0924\u0940\u092a\u0942\u0930\u094d\u0923 \u0939\u0948\u0964 \u0927\u0948\u0930\u094d\u092f \u0930\u0916\u0947\u0902\u0964"
+            msg = f"{emoji} **{label}**\n\nआपकी कुंडली में यह क्षेत्र **{prob}% ({band})** चुनौतीपूर्ण है। धैर्य रखें।"
     elif language == "hinglish":
         if prob >= 65:
             msg = f"{emoji} **{label}**\n\nAapki kundli mein yeh area **{prob}% ({band})** favorable hai. Chances acche hain!"
@@ -147,9 +136,9 @@ def _fallback_response(query: str, result: dict, language: str) -> str:
 
     if yogas:
         yoga_names = ", ".join(y["name"] for y in yogas[:3])
-        msg += f"\n\n\u2728 Active Yogas: {yoga_names}"
+        msg += f"\n\n✨ Active Yogas: {yoga_names}"
     if doshas:
         dosh_names = ", ".join(d["name"] for d in doshas[:3])
-        msg += f"\n\n\u26a0\ufe0f Active Doshas: {dosh_names}"
+        msg += f"\n\n⚠️ Active Doshas: {dosh_names}"
 
     return msg
