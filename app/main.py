@@ -14,7 +14,7 @@ from app.core.database import create_tables, get_db, SessionLocal
 from app.core.dependencies import require_role
 from app.routers import (
     user_router, astrologer_router, service_router,
-    communication_router, ws_chat, ws_astrologer,
+    communication_router, ws_chat, ws_astrologer, ws_agent,
     admin_router, google_auth_router, kundli_router,
     rashi_router, agent_router,
 )
@@ -137,6 +137,7 @@ app.include_router(service_router.router, prefix="/api/v1/service", tags=["Servi
 app.include_router(communication_router.router, prefix="/api/v1/comm", tags=["Communication"])
 app.include_router(ws_chat.router, tags=["WebSocket"])
 app.include_router(ws_astrologer.router, tags=["WebSocket"])
+app.include_router(ws_agent.router, tags=["WebSocket"])
 app.include_router(admin_router.router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(google_auth_router.router, prefix="/api/v1/google", tags=["Google OAuth"])
 app.include_router(kundli_router.router, prefix="/api/v1/kundli", tags=["Kundli"])

@@ -48,6 +48,7 @@ class ApiConstants {
   // WebSocket
   static const String wsBase = 'wss://api.nakshatralogy.com';
   static const String wsChat = '$wsBase/ws/chat';
+  static const String wsAgentChat = '$wsBase/ws/agent/chat';
 }
 
 class AppConstants {

@@ -701,5 +701,6 @@ class ApiService {
     return [];
   }
 
+  String? get accessToken => _accessToken;
   bool get isLoggedIn => _accessToken != null;
 }
