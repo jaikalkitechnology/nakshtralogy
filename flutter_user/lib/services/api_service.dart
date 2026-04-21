@@ -579,6 +579,38 @@ class ApiService {
     return [];
   }
 
+  Future<bool> submitAgentFeedback({
+    required String messageId,
+    required int rating, // +1 or -1
+    String? chartId,
+    String? provider,
+    String? domain,
+    String? language,
+    String? query,
+    String? responseSnippet,
+    String? note,
+  }) async {
+    try {
+      final resp = await _authPost(
+        Uri.parse('${ApiConstants.agentBase}/feedback'),
+        body: jsonEncode({
+          'message_id': messageId,
+          'rating': rating,
+          if (chartId != null) 'chart_id': chartId,
+          if (provider != null) 'provider': provider,
+          if (domain != null) 'domain': domain,
+          if (language != null) 'language': language,
+          if (query != null) 'query': query,
+          if (responseSnippet != null) 'response_snippet': responseSnippet,
+          if (note != null) 'note': note,
+        }),
+      );
+      return resp.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<Map<String, dynamic>> agentChat({
     required String chartId,
     required String query,

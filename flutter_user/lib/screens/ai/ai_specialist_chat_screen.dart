@@ -36,6 +36,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   bool _sending = false;
   String _language = 'auto';  // auto-detect by default
   String? _detectedLanguage;    // last detected language from server
+  List<String> _followupSuggestions = []; // LLM-generated chips after each reply
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -129,15 +130,30 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           'streaming': true,
           'probability': (d['probability'] as num?)?.toDouble(),
           'band': d['band']?.toString(),
+          'message_id': d['message_id']?.toString(),
+          'provider': d['provider']?.toString(),
+          'domain': d['domain']?.toString(),
+          'feedback': 0,  // 0 = none, +1 = up, -1 = down
         });
       });
       _scrollToBottom();
     } else if (type == 'token') {
       final text = msg['text']?.toString() ?? '';
       if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
-        setState(() => _messages.last['text'] = (_messages.last['text'] ?? '') + text);
+        setState(() {
+          final current = (_messages.last['text'] ?? '') as String;
+          final combined = current + text;
+          // Hide the LLM's follow-up marker and everything after it from the bubble
+          final markerIdx = combined.indexOf('---FOLLOWUPS---');
+          _messages.last['text'] = markerIdx >= 0 ? combined.substring(0, markerIdx).trimRight() : combined;
+        });
         _scrollToBottom();
       }
+    } else if (type == 'followups') {
+      final items = (msg['items'] as List?) ?? [];
+      setState(() {
+        _followupSuggestions = items.map((e) => e.toString()).toList();
+      });
     } else if (type == 'done') {
       if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
         setState(() {
@@ -167,6 +183,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     setState(() {
       _messages.add({'role': 'user', 'text': text});
       _sending = true;
+      _followupSuggestions = [];  // clear old suggestions
     });
     _msgCtrl.clear();
     _scrollToBottom();
@@ -201,6 +218,38 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         _addBotMessage('⚠️ Connection error. Please try again.');
       }
       if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  Future<void> _sendFeedback(Map<String, dynamic> msg, int rating) async {
+    final messageId = msg['message_id']?.toString();
+    if (messageId == null || messageId.isEmpty) return;
+    if (msg['feedback'] == rating) return;  // already sent
+    setState(() => msg['feedback'] = rating);
+
+    // Find the user query that preceded this bot message
+    String? userQuery;
+    final idx = _messages.indexOf(msg);
+    for (int i = idx - 1; i >= 0; i--) {
+      if (_messages[i]['role'] == 'user') {
+        userQuery = _messages[i]['text']?.toString();
+        break;
+      }
+    }
+    final responseText = msg['text']?.toString() ?? '';
+
+    final ok = await _api.submitAgentFeedback(
+      messageId: messageId,
+      rating: rating,
+      chartId: _selectedChartId,
+      provider: msg['provider']?.toString(),
+      domain: msg['domain']?.toString(),
+      language: _detectedLanguage ?? _language,
+      query: userQuery,
+      responseSnippet: responseText.length > 300 ? responseText.substring(0, 300) : responseText,
+    );
+    if (!ok && mounted) {
+      setState(() => msg['feedback'] = 0);  // revert on failure
     }
   }
 
@@ -361,8 +410,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
           ]),
         ),
-      // Suggestions
+      // Initial sample suggestions (before any chat)
       if (_messages.length <= 1) _suggestions(),
+      // LLM-generated follow-up chips (after each bot reply)
+      if (_followupSuggestions.isNotEmpty && !_sending) _followupChips(),
       // Input bar with provider selector
       _inputBar(),
     ]);
@@ -484,6 +535,41 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     );
   }
 
+  // ── LLM-generated follow-up question chips ──────────────────────────
+
+  Widget _followupChips() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.lightbulb_outline, size: 12, color: AppColors.gold),
+          const SizedBox(width: 4),
+          const Text('Suggested follow-ups', style: TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+        ]),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6, runSpacing: 6,
+          children: _followupSuggestions.map((q) => GestureDetector(
+            onTap: _sending ? null : () { _msgCtrl.text = q; _sendMessage(); },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.saffron.withOpacity(0.1)]),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.gold.withOpacity(0.35)),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Text(q, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w500)),
+                const SizedBox(width: 4),
+                const Icon(Icons.north_east, size: 10, color: AppColors.gold),
+              ]),
+            ),
+          )).toList(),
+        ),
+      ]),
+    );
+  }
+
   // ── Message Bubble ──────────────────────────────────────────────────
 
   Widget _messageBubble(Map<String, dynamic> msg) {
@@ -536,7 +622,51 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
               padding: const EdgeInsets.only(top: 4),
               child: SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1, color: AppColors.gold.withOpacity(0.5))),
             ),
+          // 👍/👎 feedback row — only on completed bot messages with a message_id
+          if (!isUser && !streaming && text.isNotEmpty && msg['message_id'] != null)
+            _feedbackRow(msg),
         ]),
+      ),
+    );
+  }
+
+  Widget _feedbackRow(Map<String, dynamic> msg) {
+    final rating = (msg['feedback'] as int?) ?? 0;
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        _thumbButton(
+          icon: Icons.thumb_up_outlined, iconSelected: Icons.thumb_up,
+          active: rating == 1, color: AppColors.success,
+          onTap: () => _sendFeedback(msg, 1),
+        ),
+        const SizedBox(width: 6),
+        _thumbButton(
+          icon: Icons.thumb_down_outlined, iconSelected: Icons.thumb_down,
+          active: rating == -1, color: AppColors.error,
+          onTap: () => _sendFeedback(msg, -1),
+        ),
+        if (rating != 0) ...[
+          const SizedBox(width: 8),
+          Text(rating == 1 ? 'Thanks!' : 'Feedback noted',
+              style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+        ],
+      ]),
+    );
+  }
+
+  Widget _thumbButton({required IconData icon, required IconData iconSelected,
+                       required bool active, required Color color, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: active ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: active ? color.withOpacity(0.18) : Colors.transparent,
+          shape: BoxShape.circle,
+          border: Border.all(color: active ? color : AppColors.smoke.withOpacity(0.3), width: 1),
+        ),
+        child: Icon(active ? iconSelected : icon, size: 13, color: active ? color : AppColors.smoke),
       ),
     );
   }
