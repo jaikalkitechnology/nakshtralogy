@@ -31,7 +31,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   List<dynamic> _providers = [];
   String? _selectedChartId;
   String? _selectedChartName;
-  String _selectedProvider = 'ollama';
+  String _selectedProvider = 'ollama-3b';
   bool _loadingCharts = true;
   bool _sending = false;
   String _language = 'english';
@@ -40,11 +40,21 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   bool _wsConnected = false;
 
   static const _providerIcons = {
-    'ollama': Icons.computer,
-    'gemini': Icons.auto_awesome,
+    'ollama-3b': Icons.flash_on,
+    'ollama-7b': Icons.memory,
     'groq': Icons.bolt,
+    'gemini': Icons.auto_awesome,
     'openrouter': Icons.hub,
     'deepseek': Icons.psychology,
+  };
+
+  static const _providerShortNames = {
+    'ollama-3b': 'Qwen 3B',
+    'ollama-7b': 'Qwen 7B',
+    'groq': 'Groq',
+    'gemini': 'Gemini',
+    'openrouter': 'Router',
+    'deepseek': 'DeepSeek',
   };
 
   @override
@@ -62,7 +72,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   Future<void> _loadProviders() async {
     _providers = await _api.getAgentProviders();
     if (_providers.isEmpty) {
-      _providers = [{'key': 'ollama', 'label': 'Ollama (Offline)', 'model': 'qwen2.5:3b', 'available': true}];
+      _providers = [
+        {'key': 'ollama-3b', 'label': 'Qwen 3B (Offline Fast)', 'model': 'qwen2.5:3b', 'available': true},
+        {'key': 'ollama-7b', 'label': 'Qwen 7B (Offline Deep)', 'model': 'qwen2.5:7b-instruct-q4_K_M', 'available': true},
+      ];
     }
     if (mounted) setState(() {});
   }
@@ -356,7 +369,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
               scrollDirection: Axis.horizontal,
               children: _providers.where((p) => p['available'] == true).map<Widget>((p) {
                 final key = p['key']?.toString() ?? '';
-                final label = p['label']?.toString() ?? key;
+                final shortName = _providerShortNames[key] ?? (p['label']?.toString() ?? key).split(' ').first;
                 final selected = key == _selectedProvider;
                 return Padding(
                   padding: const EdgeInsets.only(right: 6),
@@ -373,7 +386,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         Icon(_providerIcons[key] ?? Icons.smart_toy, size: 13, color: selected ? AppColors.gold : AppColors.smoke),
                         const SizedBox(width: 4),
-                        Text(label.split(' ').first, style: TextStyle(color: selected ? AppColors.gold : AppColors.smoke, fontSize: 10, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+                        Text(shortName, style: TextStyle(color: selected ? AppColors.gold : AppColors.smoke, fontSize: 10, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
                       ]),
                     ),
                   ),
