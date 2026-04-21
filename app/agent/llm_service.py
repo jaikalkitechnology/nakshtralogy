@@ -16,7 +16,9 @@ logger = logging.getLogger("llm_service")
 from app.core.config import settings
 
 GROQ_API_KEY = settings.GROQ_API_KEY
-GROQ_MODEL = settings.GROQ_MODEL
+GROQ_MODEL = settings.GROQ_MODEL or "llama-3.3-70b-versatile"
+if "3.1" in GROQ_MODEL:
+    GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
