@@ -1,9 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../utils/constants.dart';
 
-/// Chat screen for a specific AI specialist domain.
-/// User selects a birth chart first, then chats with the specialist.
 class AiSpecialistChatScreen extends StatefulWidget {
   final String domainKey;
   final String label;
@@ -33,6 +34,9 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   bool _sending = false;
   String _language = 'english';
 
+  WebSocketChannel? _ws;
+  bool _wsConnected = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,9 +50,73 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   @override
   void dispose() {
+    _ws?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
     super.dispose();
+  }
+
+  void _connectWs() {
+    final token = _api.accessToken;
+    if (token == null) return;
+    final uri = Uri.parse('${ApiConstants.wsAgentChat}?token=$token');
+    _ws = WebSocketChannel.connect(uri);
+    _wsConnected = true;
+
+    _ws!.stream.listen(
+      (data) {
+        final msg = jsonDecode(data as String) as Map<String, dynamic>;
+        _handleWsMessage(msg);
+      },
+      onError: (e) {
+        _wsConnected = false;
+        if (mounted && _sending) {
+          setState(() => _sending = false);
+          _addBotMessage('⚠️ Connection lost. Please try again.');
+        }
+      },
+      onDone: () {
+        _wsConnected = false;
+      },
+    );
+  }
+
+  void _handleWsMessage(Map<String, dynamic> msg) {
+    final type = msg['type']?.toString();
+
+    if (type == 'prob') {
+      final d = msg['data'] as Map<String, dynamic>? ?? {};
+      final prob = (d['probability'] as num?)?.toDouble();
+      final band = d['band']?.toString();
+      setState(() {
+        _messages.add({
+          'role': 'bot',
+          'text': '',
+          'streaming': true,
+          if (prob != null) 'probability': prob,
+          if (band != null) 'band': band,
+        });
+      });
+      _scrollToBottom();
+    } else if (type == 'token') {
+      final text = msg['text']?.toString() ?? '';
+      if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
+        setState(() {
+          _messages.last['text'] = (_messages.last['text'] ?? '') + text;
+        });
+        _scrollToBottom();
+      }
+    } else if (type == 'done') {
+      if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
+        setState(() {
+          _messages.last.remove('streaming');
+          _sending = false;
+        });
+      }
+    } else if (type == 'error') {
+      setState(() => _sending = false);
+      _addBotMessage('⚠️ ${msg['text'] ?? 'Something went wrong'}');
+    }
   }
 
   void _selectChart(Map<String, dynamic> chart) {
@@ -56,6 +124,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       _selectedChartId = chart['id']?.toString();
       _selectedChartName = chart['name']?.toString() ?? 'Chart';
     });
+    _connectWs();
     _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nI\'ll analyze the birth chart of **$_selectedChartName** to answer your questions.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
   }
 
@@ -70,27 +139,41 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     _msgCtrl.clear();
     _scrollToBottom();
 
-    try {
-      final resp = await _api.agentChat(
-        chartId: _selectedChartId!,
-        query: text,
-        domain: widget.domainKey,
-        language: _language,
-      );
-
-      if (resp['statusCode'] == 200) {
-        final msg = resp['message']?.toString() ?? 'No response';
-        final prob = (resp['probability'] as num?)?.toDouble();
-        final band = resp['band']?.toString();
-        _addBotMessage(msg, probability: prob, band: band);
-      } else {
-        _addBotMessage('\u26a0\ufe0f ${resp['detail'] ?? 'Something went wrong. Please try again.'}');
-      }
-    } catch (e) {
-      _addBotMessage('\u26a0\ufe0f Connection error. Please check your network.');
+    if (!_wsConnected || _ws == null) {
+      _connectWs();
+      await Future.delayed(const Duration(milliseconds: 500));
     }
 
-    if (mounted) setState(() => _sending = false);
+    if (_wsConnected && _ws != null) {
+      _ws!.sink.add(jsonEncode({
+        'chart_id': _selectedChartId,
+        'query': text,
+        'domain': widget.domainKey,
+        'language': _language,
+      }));
+    } else {
+      // Fallback to REST if WS fails
+      try {
+        final resp = await _api.agentChat(
+          chartId: _selectedChartId!,
+          query: text,
+          domain: widget.domainKey,
+          language: _language,
+        );
+        if (resp['statusCode'] == 200) {
+          _addBotMessage(
+            resp['message']?.toString() ?? 'No response',
+            probability: (resp['probability'] as num?)?.toDouble(),
+            band: resp['band']?.toString(),
+          );
+        } else {
+          _addBotMessage('⚠️ ${resp['detail'] ?? 'Something went wrong.'}');
+        }
+      } catch (e) {
+        _addBotMessage('⚠️ Connection error. Please try again.');
+      }
+      if (mounted) setState(() => _sending = false);
+    }
   }
 
   void _addBotMessage(String text, {double? probability, String? band}) {
@@ -131,7 +214,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             onSelected: (v) => setState(() => _language = v),
             itemBuilder: (_) => [
               PopupMenuItem(value: 'english', child: Text('English', style: TextStyle(color: _language == 'english' ? AppColors.gold : AppColors.ivory))),
-              PopupMenuItem(value: 'hindi', child: Text('\u0939\u093f\u0902\u0926\u0940', style: TextStyle(color: _language == 'hindi' ? AppColors.gold : AppColors.ivory))),
+              PopupMenuItem(value: 'hindi', child: Text('हिंदी', style: TextStyle(color: _language == 'hindi' ? AppColors.gold : AppColors.ivory))),
               PopupMenuItem(value: 'hinglish', child: Text('Hinglish', style: TextStyle(color: _language == 'hinglish' ? AppColors.gold : AppColors.ivory))),
             ],
           ),
@@ -192,7 +275,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                   const SizedBox(width: 12),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                    Text('${c['dob']} \u00b7 ${c['tob']} \u00b7 ${c['place']}',
+                    Text('${c['dob']} · ${c['tob']} · ${c['place']}',
                         style: const TextStyle(color: AppColors.smoke, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
                   ])),
                   const Icon(Icons.arrow_forward_ios, color: AppColors.gold, size: 14),
@@ -207,7 +290,6 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   Widget _chatView() {
     return Column(children: [
-      // Chart info strip
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         color: AppColors.nebula.withOpacity(0.5),
@@ -217,12 +299,15 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           Text('Analyzing: $_selectedChartName', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
           const Spacer(),
           GestureDetector(
-            onTap: () => setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); }),
+            onTap: () {
+              _ws?.sink.close();
+              _wsConnected = false;
+              setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); });
+            },
             child: const Text('Change', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
           ),
         ]),
       ),
-      // Messages
       Expanded(
         child: ListView.builder(
           controller: _scrollCtrl,
@@ -231,18 +316,16 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           itemBuilder: (_, i) => _messageBubble(_messages[i]),
         ),
       ),
-      // Typing indicator
-      if (_sending) Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-        child: Row(children: [
-          SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
-          const SizedBox(width: 8),
-          const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
-        ]),
-      ),
-      // Suggestion chips (only if no messages yet besides welcome)
+      if (_sending && (_messages.isEmpty || _messages.last['streaming'] != true))
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          child: Row(children: [
+            const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
+            const SizedBox(width: 8),
+            const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+          ]),
+        ),
       if (_messages.length <= 1) _suggestions(),
-      // Input
       Container(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
         decoration: BoxDecoration(
@@ -324,6 +407,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     final text = msg['text']?.toString() ?? '';
     final prob = msg['probability'] as double?;
     final band = msg['band']?.toString();
+    final streaming = msg['streaming'] == true;
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -352,10 +436,22 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             ]),
             const SizedBox(height: 8),
           ],
-          Text(text, style: TextStyle(
-            color: isUser ? AppColors.midnight : AppColors.ivory,
-            fontSize: 13, fontWeight: isUser ? FontWeight.w500 : FontWeight.normal, height: 1.4,
-          )),
+          if (text.isNotEmpty)
+            Text(text, style: TextStyle(
+              color: isUser ? AppColors.midnight : AppColors.ivory,
+              fontSize: 13, fontWeight: isUser ? FontWeight.w500 : FontWeight.normal, height: 1.4,
+            )),
+          if (streaming && text.isEmpty)
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.gold)),
+              const SizedBox(width: 6),
+              const Text('Thinking...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+            ]),
+          if (streaming && text.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1, color: AppColors.gold.withOpacity(0.5))),
+            ),
         ]),
       ),
     );
