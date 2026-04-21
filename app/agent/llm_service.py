@@ -248,12 +248,15 @@ async def _stream_openai(provider: dict, messages: list, websocket) -> None:
         headers["HTTP-Referer"] = "https://nakshtralogy.com"
         headers["X-Title"] = "Nakshtralogy"
 
-    # Do NOT send max_tokens — let provider use its maximum default
+    # Cap API providers at 1000 tokens — some (e.g. OpenRouter) default to
+    # as low as 512 if unspecified, causing truncated responses. 1000 gives
+    # ~6-8 paragraphs which fits a detailed astrology reply comfortably.
     payload = {
         "model": provider["model"],
         "messages": messages,
         "stream": True,
         "temperature": 0.7,
+        "max_tokens": 1000,
     }
 
     try:
