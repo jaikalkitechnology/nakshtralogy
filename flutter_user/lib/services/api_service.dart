@@ -570,6 +570,15 @@ class ApiService {
     return [];
   }
 
+  Future<List<dynamic>> getAgentProviders() async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.agentBase}/providers'));
+    if (resp.statusCode == 200) {
+      final decoded = jsonDecode(resp.body);
+      if (decoded is List) return decoded;
+    }
+    return [];
+  }
+
   Future<Map<String, dynamic>> agentChat({
     required String chartId,
     required String query,
