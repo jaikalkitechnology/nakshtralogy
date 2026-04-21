@@ -283,10 +283,41 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
         parts.append("\nHOUSE STRENGTHS (Bhava):")
         parts.extend(lines)
 
-    # Dasha
-    dasha = chart_context.get("current_dasha", {})
-    if dasha:
-        parts.append(f"\nCURRENT DASHA: MD={dasha.get('md','')} ({dasha.get('md_start','')}-{dasha.get('md_end','')}) | AD={dasha.get('ad','')} ({dasha.get('ad_start','')}-{dasha.get('ad_end','')})")
+    # Current Dasha — BOTH Vimshottari (Parashari) and Moola (Jaimini) systems
+    vim_dasha = chart_context.get("current_dasha", {})
+    moola_dasha = chart_context.get("current_dasha_moola", {})
+    if vim_dasha or moola_dasha:
+        parts.append("\nCURRENT DASHA PERIODS (both systems):")
+        if vim_dasha:
+            pd_str = f" | PD={vim_dasha.get('pd','')}" if vim_dasha.get('pd') else ""
+            parts.append(
+                f"  Vimshottari (Parashari): MD={vim_dasha.get('md','')} ({vim_dasha.get('md_start','')}-{vim_dasha.get('md_end','')}) | "
+                f"AD={vim_dasha.get('ad','')} ({vim_dasha.get('ad_start','')}-{vim_dasha.get('ad_end','')}){pd_str}"
+            )
+        if moola_dasha:
+            pd_str = f" | PD={moola_dasha.get('pd','')}" if moola_dasha.get('pd') else ""
+            parts.append(
+                f"  Moola Dasha (Jaimini):  MD={moola_dasha.get('md','')} ({moola_dasha.get('md_start','')}-{moola_dasha.get('md_end','')}) | "
+                f"AD={moola_dasha.get('ad','')} ({moola_dasha.get('ad_start','')}-{moola_dasha.get('ad_end','')}){pd_str}"
+            )
+
+        # Cross-system agreement analysis — strongest timing indicator
+        vim_md = vim_dasha.get("md") if vim_dasha else None
+        moola_md = moola_dasha.get("md") if moola_dasha else None
+        vim_ad = vim_dasha.get("ad") if vim_dasha else None
+        moola_ad = moola_dasha.get("ad") if moola_dasha else None
+
+        agreement_notes = []
+        if vim_md and moola_md:
+            if vim_md == moola_md:
+                agreement_notes.append(f"✅ HIGH-CONFIDENCE: Both systems show {vim_md} as MD — strongest timing signal")
+            elif vim_md == moola_ad or vim_ad == moola_md:
+                agreement_notes.append(f"✅ MEDIUM-CONFIDENCE: {vim_md}/{moola_md} overlap between MD/AD across systems")
+            else:
+                agreement_notes.append(f"⚠ DIVERGENT: Vimshottari {vim_md} vs Moola {moola_md} — weigh both, check yoga activation below")
+        if agreement_notes:
+            for note in agreement_notes:
+                parts.append(f"  {note}")
 
     # ⭐️ DASHA ACTIVATION — which yogas/doshas are triggered RIGHT NOW
     da = chart_context.get("dasha_activation", {})
@@ -443,11 +474,15 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
     if is_timing_q:
         parts.append(
             "\n⏰ TIMING QUESTION DETECTED — In your answer:\n"
-            "  1. Cite the SPECIFIC current MD/AD dasha period with end date as the active window\n"
-            "  2. If activated yogas support the question → say 'favorable window is [MD lord] dasha until [end_date]'\n"
-            "  3. If current dasha is adverse → mention the NEXT dasha shift that would help\n"
-            "  4. Use phrases like 'favorable window', 'peak activation period', 'shift toward' — never guaranteed dates\n"
-            "  5. Reference the activated yogas/doshas list above by name"
+            "  1. Cite the SPECIFIC current MD/AD from BOTH Vimshottari AND Moola Dasha with end dates\n"
+            "  2. If both systems agree on the same planet (HIGH-CONFIDENCE flag above), emphasize this\n"
+            "     as 'both classical systems confirm' — highest certainty window\n"
+            "  3. If systems DIVERGE, weigh which dasha aligns better with the activated yogas/doshas\n"
+            "     list — that's the dominant influence right now\n"
+            "  4. If activated yogas support the question → 'favorable window is [lord] dasha until [end_date]'\n"
+            "  5. If current dasha is adverse → mention the NEXT dasha shift that would help (in either system)\n"
+            "  6. Use phrases like 'favorable window', 'peak activation period', 'shift toward' — never guaranteed dates\n"
+            "  7. Reference the activated yogas/doshas list above by name"
         )
     if is_year_q:
         parts.append(
