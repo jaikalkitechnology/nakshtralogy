@@ -96,6 +96,13 @@ def _build_chart_context(data: dict, result: dict) -> dict:
         pass
 
     try:
+        sb = _nk.get_shadbala(pdata, birth_jd)
+        # Shadbala summary format: {Sun: {score, total_rupas}, ...}
+        ctx["shadbala"] = sb.get("summary", {})
+    except Exception:
+        pass
+
+    try:
         vd = _nk.get_vimshottari(pdata, birth_jd, levels=2)
         dashas = vd.get("dashas", [])
         today_str = date.today().strftime("%d/%m/%Y")
@@ -145,7 +152,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
             query = req.get("query", "").strip()
             domain = req.get("domain")
             language = req.get("language", "english")
-            provider_key = req.get("provider", "ollama-3b")
+            provider_key = req.get("provider", "ollama-7b")
 
             if not chart_id or not query:
                 await websocket.send_json({"type": "error", "text": "chart_id and query required"})
@@ -187,11 +194,24 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 chart_context = _build_chart_context(data, result)
                 user_prompt = build_rich_prompt(query, chart_context)
 
+                # Personalize system prompt with chart holder's details + detected domain
+                chart_holder = {
+                    "name": chart.name,
+                    "dob": chart.dob,
+                    "tob": chart.tob,
+                    "place": chart.place,
+                    "gender": chart.gender,
+                }
+                detected_domain = result.get("domain") or domain
+
                 # Inject previous conversation as chat history
                 session_key = (user.id, chart_id)
                 history = _sessions.get(session_key, [])
 
-                messages = [{"role": "system", "content": build_system_prompt(language)}]
+                messages = [{
+                    "role": "system",
+                    "content": build_system_prompt(language, domain=detected_domain, user=chart_holder),
+                }]
                 for turn in history:
                     messages.append({"role": "user", "content": turn["q"]})
                     messages.append({"role": "assistant", "content": turn["a"]})

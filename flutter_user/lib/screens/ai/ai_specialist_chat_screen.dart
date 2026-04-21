@@ -31,7 +31,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   List<dynamic> _providers = [];
   String? _selectedChartId;
   String? _selectedChartName;
-  String _selectedProvider = 'ollama-3b';
+  String _selectedProvider = 'ollama-7b';
   bool _loadingCharts = true;
   bool _sending = false;
   String _language = 'english';

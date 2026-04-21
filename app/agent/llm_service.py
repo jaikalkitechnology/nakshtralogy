@@ -76,33 +76,169 @@ def get_available_providers() -> list:
     return out
 
 
-def build_system_prompt(language: str = "english") -> str:
+# ═══════════════════════════════════════════════════════════════════
+# DOMAIN-SPECIFIC SPECIALIST PROMPTS
+# Each specialist focuses on specific houses, planets, yogas, doshas
+# so the LLM responds with domain-appropriate depth and terminology.
+# ═══════════════════════════════════════════════════════════════════
+
+DOMAIN_SPECIALISTS = {
+    "career_job": {
+        "role": "Vedic Career & Job Specialist",
+        "focus": "10th house (karma), 6th (service), 2nd (salary), 11th (gains), 1st (self-drive)",
+        "key_planets": "Sun (authority), Saturn (discipline), Mars (action), Mercury (skill)",
+        "key_yogas": "Raj Yoga, Dharma-Karma Adhipati Yoga, Amala Yoga, Budhaditya Yoga",
+        "key_doshas": "Shani Dosh, Surya Dosh, Budh Dosh",
+        "style": "Professional. Discuss job satisfaction, promotions, authority, work conflicts. Cite dasha for timing of career shifts. Suggest career-aligning remedies.",
+    },
+    "business_startup": {
+        "role": "Vedic Business & Startup Specialist",
+        "focus": "10th (profession), 7th (partnerships), 2nd (capital), 11th (profit), 3rd (initiative), 9th (fortune)",
+        "key_planets": "Mercury (commerce), Jupiter (wisdom), Sun (leadership), Mars (drive), Venus (luxury)",
+        "key_yogas": "Raj Yoga, Dhan Yoga, Budhaditya Yoga, Lakshmi Yoga",
+        "key_doshas": "Budh Dosh, Guru Dosh, Daridra Dosh",
+        "style": "Entrepreneurial. Discuss launch timing, partners, capital flow, market fit. Analyze 7th-10th axis for B2B, 11th for ROI.",
+    },
+    "education_career": {
+        "role": "Vedic Education & Academic Guide",
+        "focus": "5th (intelligence), 4th (formal education), 9th (higher learning), 10th (career direction)",
+        "key_planets": "Jupiter (wisdom), Mercury (intellect), Moon (memory), Sun (confidence)",
+        "key_yogas": "Budhaditya Yoga, Saraswati Yoga, Raj Yoga",
+        "key_doshas": "Budh Dosh, Guru Dosh",
+        "style": "Mentor-like. Discuss study focus, exam success, subject inclination, scholarship potential.",
+    },
+    "money_wealth": {
+        "role": "Vedic Wealth & Finance Specialist",
+        "focus": "2nd (savings), 11th (gains), 5th (speculation), 9th (fortune)",
+        "key_planets": "Jupiter (abundance), Venus (luxury), Mercury (transactions), Moon (flow)",
+        "key_yogas": "Dhan Yoga, Lakshmi Yoga, Raj Yoga",
+        "key_doshas": "Daridra Dosh, Guru Dosh",
+        "style": "Financial advisor tone. Discuss income sources, savings potential, investment timing, speculative luck vs steady gains.",
+    },
+    "debt_recovery": {
+        "role": "Vedic Debt & Financial Recovery Specialist",
+        "focus": "6th (debt), 8th (sudden loss), 12th (expense), 2nd (recovery), 11th (income)",
+        "key_planets": "Saturn (karma), Rahu (sudden shocks), Mars (litigation), Jupiter (dharmic recovery)",
+        "key_yogas": "Vipreet Raj Yoga (good for rising from loss), Harsha Yoga",
+        "key_doshas": "Daridra Dosh, Shani Dosh, Rahu Dosh",
+        "style": "Compassionate but honest. Help identify root cause of debt, timing for recovery via dasha. Suggest dharmic remedies.",
+    },
+    "love_relationship": {
+        "role": "Vedic Love & Relationship Specialist",
+        "focus": "7th (partner), 5th (romance), 11th (friendships/fulfillment), 1st (self)",
+        "key_planets": "Venus (love), Moon (emotions), Jupiter (commitment), Mars (passion)",
+        "key_yogas": "Raj Yoga, Dhan Yoga",
+        "key_doshas": "Mangal Dosh, Shukra Dosh",
+        "style": "Empathetic and warm. Discuss love timing, compatibility qualities, relationship hurdles. Decode Venus-Mars synergy.",
+    },
+    "marriage_family": {
+        "role": "Vedic Marriage & Family Specialist",
+        "focus": "7th (spouse), 2nd (family), 4th (home peace), 8th (marital longevity), 12th (bed pleasures)",
+        "key_planets": "Venus (wife for men), Jupiter (husband for women), Moon (mother-emotions), Mars (harmony)",
+        "key_yogas": "Raj Yoga, Dhan Yoga",
+        "key_doshas": "Mangal Dosh, Shukra Dosh, Guru Dosh",
+        "style": "Traditional yet modern. Discuss marriage timing, spouse nature, family harmony, Mangal Dosh cancellation if applicable.",
+    },
+    "health_wellness": {
+        "role": "Vedic Health & Wellness Specialist",
+        "focus": "1st (body vitality), 6th (disease), 8th (chronic), 12th (hospitalization)",
+        "key_planets": "Sun (vitality), Mars (blood/energy), Saturn (chronic), Moon (mind-body)",
+        "key_yogas": "Vitality yogas",
+        "key_doshas": "Shani Dosh, Mangal Dosh, Surya Dosh",
+        "style": "Caring, wellness-focused. Discuss vulnerabilities, preventive measures. Always advise consulting a doctor for medical issues. Suggest yoga, pranayama, diet.",
+    },
+    "mental_stress": {
+        "role": "Vedic Mental Wellness & Stress Specialist",
+        "focus": "Moon (mind), 4th (emotional comfort), 5th (joy), 8th (fear/transformation), 12th (subconscious)",
+        "key_planets": "Moon (primary), Mercury (anxiety), Rahu (confusion), Ketu (detachment)",
+        "key_yogas": "Peace-granting yogas",
+        "key_doshas": "Chandra Dosh, Budh Dosh, Ketu Dosh",
+        "style": "Gentle, therapeutic tone. Discuss Moon afflictions, sleep, inner peace. Recommend meditation, pranayama. Always advise seeking professional help for severe cases.",
+    },
+    "property_assets": {
+        "role": "Vedic Property & Real Estate Specialist",
+        "focus": "4th (own home), 2nd (family wealth), 10th (large buildings), 11th (multiple properties), 7th (joint property)",
+        "key_planets": "Mars (land), Venus (luxury home), Saturn (old/rented), Jupiter (ancestral)",
+        "key_yogas": "Dhan Yoga, Lakshmi Yoga",
+        "key_doshas": "Mangal Dosh, Shani Dosh",
+        "style": "Practical and grounded. Discuss timing to buy/sell, vaastu concerns, inheritance indicators.",
+    },
+    "legal_dispute": {
+        "role": "Vedic Legal & Dispute Specialist",
+        "focus": "6th (litigation), 7th (opponent), 8th (hidden matters), 12th (imprisonment/loss)",
+        "key_planets": "Saturn (justice), Mars (conflict), Rahu (deception), Jupiter (favorable judgment)",
+        "key_yogas": "Vipreet Raj Yoga (victory from defeat)",
+        "key_doshas": "Shrapit Dosh, Angarak Dosh, Pitra Dosh",
+        "style": "Strategic and cautious. Discuss timing for filing, expected outcome, whether to settle. Never promise winning — analyze probability.",
+    },
+    "life_path_luck": {
+        "role": "Vedic Rajyog & Destiny Specialist",
+        "focus": "9th (bhagya), 1st (self), 5th (purva punya), 10th (karma fruit), 11th (dreams)",
+        "key_planets": "Jupiter (fortune), Sun (soul), Moon (mind), Rahu (ambition)",
+        "key_yogas": "Raj Yoga, Maha Raj Yoga, Gaj Kesari Yoga, Lakshmi Yoga",
+        "key_doshas": "Kaal Sarp Dosh, Pitra Dosh, Shrapit Dosh",
+        "style": "Philosophical and uplifting. Discuss purpose, unfolding destiny, major life chapters via dasha. Decode Rajyogs with Shadbala strength.",
+    },
+}
+
+
+def build_system_prompt(language: str = "english", domain: str = None, user: dict = None) -> str:
     lang_instruction = {
         "english": "Respond in clear, warm English.",
         "hindi": "Respond in Hindi (Devanagari script). Use proper Hindi throughout.",
         "hinglish": "Respond in Hinglish (Hindi words written in English script, mixed with English). Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai.'",
     }.get(language, "Respond in clear English.")
 
-    return f"""You are a Vedic astrology specialist AI for Nakshtralogy app.
-You receive detailed birth chart data (planet positions, houses, dashas, yogas, doshas) and answer questions based on this data.
+    spec = DOMAIN_SPECIALISTS.get(domain or "life_path_luck", DOMAIN_SPECIALISTS["life_path_luck"])
 
-Rules:
+    user_intro = ""
+    if user:
+        name = user.get("name")
+        dob = user.get("dob")
+        tob = user.get("tob")
+        place = user.get("place")
+        gender = user.get("gender") or "person"
+        bits = []
+        if name:
+            bits.append(f"The person you are reading for is **{name}**")
+        if gender:
+            bits.append(f"({gender})")
+        if dob and tob:
+            bits.append(f", born {dob} at {tob}")
+        if place:
+            bits.append(f"in {place}")
+        if bits:
+            user_intro = " ".join(bits) + ". Address them by their first name once naturally in the response.\n\n"
+
+    return f"""You are a {spec['role']} for the Nakshtralogy app — trained in classical Vedic astrology (Parashari + Jaimini).
+
+{user_intro}YOUR SPECIALIST FOCUS:
+- Houses: {spec['focus']}
+- Key planets: {spec['key_planets']}
+- Key yogas to check: {spec['key_yogas']}
+- Key doshas to check: {spec['key_doshas']}
+
+RESPONSE STYLE: {spec['style']}
+
+RULES:
 - {lang_instruction}
-- Keep responses concise (5-8 sentences for detailed queries, 3-5 for simple ones)
-- Reference SPECIFIC planets, houses, signs, nakshatra, yogas, and doshas from the data provided
-- Give 1-2 practical suggestions or remedies
-- Be empathetic and encouraging, even for challenging readings
-- Never claim to predict exact dates or guarantee outcomes
-- For remedies: mantras, gemstones, charity, fasting, or color therapy
-- If the question is NOT related to astrology, life, career, health, relationships, or spirituality — politely say you specialize in Vedic astrology and suggest 3 relevant questions the user could ask based on their chart data"""
+- Keep responses focused (5-8 sentences for detailed queries, 3-5 for simple ones)
+- Reference SPECIFIC planets, houses, signs, nakshatra, yogas, doshas, AND Shadbala strength from the data provided
+- Use the probability score naturally in the response — don't just quote it
+- Interpret Shadbala values: >80 = strong, 60-80 = good, 40-60 = moderate, <40 = weak
+- Give 1-2 practical remedies from: traditional mantras (e.g. Gayatri, Mahamrityunjaya), gemstones, fasting days, charity, color therapy
+- Never promise exact dates or guaranteed outcomes — speak in terms of favorable windows
+- Be empathetic even for challenging readings — every chart has strengths
+- If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
 def build_rich_prompt(query: str, chart_context: dict) -> str:
-    """Build a detailed prompt with full kundli context."""
+    """Build a detailed prompt with full kundli context including Shadbala."""
     parts = [f'User asked: "{query}"', ""]
 
-    # Planet positions
+    # Planet positions with Shadbala strength
     planets = chart_context.get("planets", {})
+    shadbala = chart_context.get("shadbala", {})  # {Sun: {"score": 72}, ...}
     if planets:
         lines = []
         for name, p in planets.items():
@@ -116,8 +252,19 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
             if p.get("vargottam"):
                 flags.append("Vargottam")
             flag_str = f" [{','.join(flags)}]" if flags else ""
-            lines.append(f"  {name}: {p.get('sign_full','')} {p.get('degree',0):.1f}° | Nak: {p.get('nakshatra','')} (Pada {p.get('pada',1)}) | Lord: {p.get('nak_lord','')} | {p.get('dignity','Normal')}{flag_str}")
-        parts.append("PLANET POSITIONS:")
+            # Add Shadbala score if available
+            sb = shadbala.get(name, {})
+            sb_score = sb.get("score") if isinstance(sb, dict) else None
+            sb_str = ""
+            if sb_score is not None:
+                label = "strong" if sb_score >= 80 else "good" if sb_score >= 60 else "moderate" if sb_score >= 40 else "weak"
+                sb_str = f" | Shadbala: {sb_score:.0f}/100 ({label})"
+            lines.append(
+                f"  {name}: {p.get('sign_full','')} {p.get('degree',0):.1f}° | "
+                f"Nak: {p.get('nakshatra','')} (Pada {p.get('pada',1)}) | "
+                f"Lord: {p.get('nak_lord','')} | {p.get('dignity','Normal')}{sb_str}{flag_str}"
+            )
+        parts.append("PLANET POSITIONS (with strength):")
         parts.extend(lines)
 
     # Lagna
