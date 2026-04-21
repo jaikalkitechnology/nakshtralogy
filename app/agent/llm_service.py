@@ -6,6 +6,8 @@ Each provider streams via OpenAI-compatible API or native API.
 import json
 import logging
 import time
+
+from app.agent.remedies import format_remedies_for_prompt
 from typing import AsyncIterator, Optional
 
 logger = logging.getLogger("llm_service")
@@ -516,6 +518,30 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
             body = ", ".join(c.get("body_parts", [])[:3])
             parts.append(f"  ⚠ {c.get('name','')} (#{c.get('number','')}): {c.get('chakra_score',0):.0f}/100 — {c.get('chakra_status','')} | Body: {body}")
 
+    # ⭐️ SADE SATI / DHAIYA — Saturn transit over Moon-sign axis (critical in Vedic)
+    sade = chart_context.get("sade_sati", {})
+    if sade:
+        saturn_sign = sade.get("saturn_current_sign", "")
+        moon_sign = sade.get("natal_moon_sign", "")
+        status_obj = sade.get("status")
+        if status_obj:
+            parts.append(
+                f"\n🪐 SADE SATI / SATURN TRANSIT ACTIVE: {status_obj.get('phase','')} "
+                f"(Saturn currently in {saturn_sign}, {status_obj.get('house_from_moon','')}th from natal Moon in {moon_sign})"
+            )
+            parts.append(f"  Effect: {status_obj.get('note','')}")
+        else:
+            parts.append(f"\n🪐 Saturn transit: currently in {saturn_sign} — no Sade Sati/Dhaiya active (natal Moon in {moon_sign}). Clear period from Saturn.")
+
+    # ⭐️ REMEDY LIBRARY — verified mantras/gems (prevents LLM hallucination)
+    key_planets = chart_context.get("domain_planets", ["Sun", "Moon", "Saturn"])
+    rem_text = format_remedies_for_prompt(
+        chart_context.get("active_doshas", []),
+        key_planets,
+    )
+    if rem_text:
+        parts.append(f"\n{rem_text}")
+
     # ═════════════════════════════════════════════════════════════════
     # INTENT-AWARE INSTRUCTIONS — adapt answer format to question type
     # ═════════════════════════════════════════════════════════════════
@@ -575,7 +601,18 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
             "  4. ALWAYS add: 'Please consult a qualified doctor for medical concerns — astrology complements, never replaces, medical advice.'"
         )
 
-    parts.append("\nRespond with astrological analysis referencing the specific chart data above. If the question is not astrology-related, suggest 3 questions the user could ask.")
+    # Final response instructions — remedy constraint + follow-up suggestions
+    parts.append(
+        "\nRESPONSE FORMAT (strict):\n"
+        "1. Write your astrological analysis (5-8 sentences, referencing the specific chart data above)\n"
+        "2. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
+        "   Never invent mantras, gemstone names, or rituals. If a remedy isn't in the library, skip it.\n"
+        "3. After your analysis, on a NEW LINE output EXACTLY this marker: ---FOLLOWUPS---\n"
+        "4. Then list EXACTLY 3 short follow-up questions the user might ask next,\n"
+        "   each on its own line, each under 60 chars, relevant to this chart's data.\n"
+        "   Format: Q: What does my 10th house say about authority?\n"
+        "5. If the question is NOT astrology-related, politely redirect AND still provide 3 Q: follow-ups from the chart."
+    )
     return "\n".join(parts)
 
 

@@ -83,11 +83,17 @@ def _build_chart_context(data: dict, result: dict) -> dict:
     birth_jd = data["birth_jd"]
     planets = data.get("planets", {})
 
+    # Pull the domain's key planets from DOMAINS config (for remedy filtering)
+    from app.agent.engine import DOMAINS
+    domain_key = result.get("domain", "life_path_luck")
+    domain_planets = DOMAINS.get(domain_key, {}).get("key_planets", ["Sun", "Moon", "Saturn"])
+
     ctx = {
         "planets": planets,
         "probability": result,
         "active_yogas": result.get("active_yogas", []),
         "active_doshas": result.get("active_doshas", []),
+        "domain_planets": domain_planets,
     }
 
     try:
@@ -138,6 +144,41 @@ def _build_chart_context(data: dict, result: dict) -> dict:
         ctx["chakra_health"] = chakra
     except Exception as e:
         logger.warning("chakra_health failed: %s", e)
+
+    # ⭐️ SADE SATI + DHAIYA — Saturn's transit over/around natal Moon sign
+    try:
+        from app.kundli.engine import to_julian_day, get_all_positions
+        today = date.today()
+        jd = to_julian_day(today.year, today.month, today.day, 6.5)
+        import io, contextlib
+        _buf = io.StringIO()
+        with contextlib.redirect_stdout(_buf):
+            transit = get_all_positions(jd)
+        saturn_sign = int(transit.get("Saturn", {}).get("lon", 0) / 30)
+        moon_sign = pdata.get("Moon", {}).get("rashi_idx", 0)
+        offset = (saturn_sign - moon_sign) % 12  # 0..11 from Moon
+
+        SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
+        sade_sati_status = None
+        if offset == 11:   # Saturn in 12th from Moon
+            sade_sati_status = {"phase": "Phase 1 (Rising)",    "house_from_moon": 12, "note": "Early impact — mental strain, uncertainty, ending of old patterns"}
+        elif offset == 0:  # Saturn in Moon sign
+            sade_sati_status = {"phase": "Phase 2 (Peak)",      "house_from_moon": 1,  "note": "Full intensity — health, mind, relationships tested; maturation period"}
+        elif offset == 1:  # Saturn in 2nd from Moon
+            sade_sati_status = {"phase": "Phase 3 (Setting)",   "house_from_moon": 2,  "note": "Winding down — financial/family tests, lessons crystallize"}
+        elif offset == 3:  # Saturn in 4th from Moon (Kantak Shani / first Dhaiya)
+            sade_sati_status = {"phase": "Dhaiya (Kantak Shani)", "house_from_moon": 4, "note": "Mini-Saturn period — home/mother/property tested for ~2.5 years"}
+        elif offset == 7:  # Saturn in 8th from Moon (Ashtama Shani / second Dhaiya)
+            sade_sati_status = {"phase": "Dhaiya (Ashtama Shani)", "house_from_moon": 8, "note": "Mini-Saturn period — transformation, sudden changes, health focus"}
+
+        ctx["sade_sati"] = {
+            "saturn_current_sign": SIGNS[saturn_sign],
+            "natal_moon_sign": SIGNS[moon_sign],
+            "house_offset": offset + 1,  # 1-indexed house from Moon
+            "status": sade_sati_status,  # None means clear period
+        }
+    except Exception as e:
+        logger.warning("sade_sati failed: %s", e)
 
     # Current Vimshottari + Moola dasha lords (correctly filtered to TODAY)
     # Previously this loop would just assign the LAST dasha in the tree — bug.
@@ -278,10 +319,30 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     await websocket.send_json({"type": "token", "text": fallback})
                     collected_tokens.append(fallback)
 
-                # Store Q&A in session memory (keep last 3 turns per chart)
+                # Parse follow-up suggestions from end of response
                 full_response = "".join(collected_tokens)
-                if full_response:
-                    history.append({"q": query, "a": full_response[:500]})
+                followups = []
+                main_answer = full_response
+                if "---FOLLOWUPS---" in full_response:
+                    main_answer, tail = full_response.split("---FOLLOWUPS---", 1)
+                    for line in tail.strip().split("\n"):
+                        line = line.strip().lstrip("-•* ").lstrip()
+                        if line.upper().startswith("Q:"):
+                            q = line[2:].strip().strip("?.!").strip()
+                            if q and len(q) <= 100:
+                                followups.append(q + "?" if not q.endswith("?") else q)
+                        elif line and len(followups) < 3 and 10 <= len(line) <= 100 and "?" in line:
+                            followups.append(line)
+                        if len(followups) >= 3:
+                            break
+
+                # Send follow-ups as a separate frame for Flutter to render as chips
+                if followups:
+                    await websocket.send_json({"type": "followups", "items": followups[:3]})
+
+                # Store Q&A in session memory (keep last 3 turns per chart)
+                if main_answer:
+                    history.append({"q": query, "a": main_answer[:500]})
                     _sessions[session_key] = history[-_SESSION_MAX_TURNS:]
 
                 await websocket.send_json({"type": "done"})

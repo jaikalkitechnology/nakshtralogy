@@ -36,6 +36,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   bool _sending = false;
   String _language = 'auto';  // auto-detect by default
   String? _detectedLanguage;    // last detected language from server
+  List<String> _followupSuggestions = []; // LLM-generated chips after each reply
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -135,9 +136,20 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     } else if (type == 'token') {
       final text = msg['text']?.toString() ?? '';
       if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
-        setState(() => _messages.last['text'] = (_messages.last['text'] ?? '') + text);
+        setState(() {
+          final current = (_messages.last['text'] ?? '') as String;
+          final combined = current + text;
+          // Hide the LLM's follow-up marker and everything after it from the bubble
+          final markerIdx = combined.indexOf('---FOLLOWUPS---');
+          _messages.last['text'] = markerIdx >= 0 ? combined.substring(0, markerIdx).trimRight() : combined;
+        });
         _scrollToBottom();
       }
+    } else if (type == 'followups') {
+      final items = (msg['items'] as List?) ?? [];
+      setState(() {
+        _followupSuggestions = items.map((e) => e.toString()).toList();
+      });
     } else if (type == 'done') {
       if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
         setState(() {
@@ -167,6 +179,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     setState(() {
       _messages.add({'role': 'user', 'text': text});
       _sending = true;
+      _followupSuggestions = [];  // clear old suggestions
     });
     _msgCtrl.clear();
     _scrollToBottom();
@@ -361,8 +374,10 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
           ]),
         ),
-      // Suggestions
+      // Initial sample suggestions (before any chat)
       if (_messages.length <= 1) _suggestions(),
+      // LLM-generated follow-up chips (after each bot reply)
+      if (_followupSuggestions.isNotEmpty && !_sending) _followupChips(),
       // Input bar with provider selector
       _inputBar(),
     ]);
@@ -481,6 +496,41 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           child: Text(c, style: const TextStyle(color: AppColors.lavender, fontSize: 11)),
         ),
       )).toList()),
+    );
+  }
+
+  // ── LLM-generated follow-up question chips ──────────────────────────
+
+  Widget _followupChips() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.lightbulb_outline, size: 12, color: AppColors.gold),
+          const SizedBox(width: 4),
+          const Text('Suggested follow-ups', style: TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+        ]),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6, runSpacing: 6,
+          children: _followupSuggestions.map((q) => GestureDetector(
+            onTap: _sending ? null : () { _msgCtrl.text = q; _sendMessage(); },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.saffron.withOpacity(0.1)]),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.gold.withOpacity(0.35)),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Text(q, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w500)),
+                const SizedBox(width: 4),
+                const Icon(Icons.north_east, size: 10, color: AppColors.gold),
+              ]),
+            ),
+          )).toList(),
+        ),
+      ]),
     );
   }
 
