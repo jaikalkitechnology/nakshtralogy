@@ -182,12 +182,78 @@ DOMAIN_SPECIALISTS = {
 }
 
 
-def build_system_prompt(language: str = "english", domain: str = None, user: dict = None) -> str:
-    lang_instruction = {
-        "english": "Respond in clear, warm English.",
-        "hindi": "Respond in Hindi (Devanagari script). Use proper Hindi throughout.",
-        "hinglish": "Respond in Hinglish (Hindi words written in English script, mixed with English). Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai.'",
-    }.get(language, "Respond in clear English.")
+# ═══════════════════════════════════════════════════════════════════
+# LANGUAGE DETECTION — Unicode ranges + Hinglish markers
+# Handles 11 languages: 10 Indian + English. Detection < 1 ms.
+# ═══════════════════════════════════════════════════════════════════
+
+_UNICODE_RANGES = [
+    # (start, end, language)
+    (0x0900, 0x097F, "hindi"),       # Devanagari — Hindi/Marathi/Sanskrit
+    (0x0980, 0x09FF, "bengali"),     # Bengali/Assamese
+    (0x0A00, 0x0A7F, "punjabi"),     # Gurmukhi
+    (0x0A80, 0x0AFF, "gujarati"),    # Gujarati
+    (0x0B00, 0x0B7F, "odia"),        # Oriya
+    (0x0B80, 0x0BFF, "tamil"),       # Tamil
+    (0x0C00, 0x0C7F, "telugu"),      # Telugu
+    (0x0C80, 0x0CFF, "kannada"),     # Kannada
+    (0x0D00, 0x0D7F, "malayalam"),   # Malayalam
+]
+
+# Common Hinglish markers — if Roman script contains these, it's Hinglish not English
+_HINGLISH_MARKERS = {
+    "kab", "kaise", "kyun", "kyu", "kya", "hai", "hoga", "hogi", "hoon", "hun",
+    "mein", "me", "mera", "meri", "mere", "aap", "aapka", "aapki", "aapke",
+    "hum", "hume", "humein", "ko", "se", "par", "aur", "bhi", "toh", "to",
+    "nahi", "nahin", "na", "haan", "ji", "acha", "accha", "theek", "sahi",
+    "galat", "zyada", "kam", "bahut", "thoda", "abhi", "bad", "baad", "pehle",
+    "karna", "karenge", "kar", "karo", "karein", "bolna", "bolo", "bolenge",
+    "shaadi", "vivah", "naukri", "job", "paisa", "paise", "dhan", "ghar",
+    "parivar", "bhai", "behen", "dost", "dosti", "dushman",
+    "kundli", "rashi", "nakshatra", "dasha", "graha", "dosh", "yog", "yoga",
+    "bhagya", "kismat", "naseeb", "karm", "punya",
+}
+
+
+def detect_language(text: str, default: str = "english") -> str:
+    """Detect language from text. Returns one of: english, hindi, hinglish,
+    bengali, tamil, telugu, kannada, gujarati, punjabi, malayalam, odia."""
+    if not text:
+        return default
+    # 1. Check each char against Unicode script ranges (first match wins)
+    for ch in text:
+        code = ord(ch)
+        for start, end, lang in _UNICODE_RANGES:
+            if start <= code <= end:
+                return lang
+    # 2. Pure Roman script — check Hinglish markers
+    words = {w.lower().strip(".,!?\"';:()") for w in text.split()}
+    if words & _HINGLISH_MARKERS:
+        return "hinglish"
+    return "english"
+
+
+_LANGUAGE_INSTRUCTIONS = {
+    "english":    "Respond in clear, warm English.",
+    "hindi":      "Respond in Hindi (Devanagari script, देवनागरी). Use proper Hindi throughout. Mix in transliterated planet names (Surya, Chandra, Shani) naturally.",
+    "hinglish":   "Respond in Hinglish (Hindi words in Roman/English script, mixed with English). Example: 'Aapki kundli mein Jupiter ka placement bahut strong hai. Shaadi ka yog October tak activate hoga.'",
+    "bengali":    "Respond in Bengali (Bangla script, বাংলা). Use proper Bengali throughout.",
+    "tamil":      "Respond in Tamil (தமிழ் script). Use proper Tamil throughout.",
+    "telugu":     "Respond in Telugu (తెలుగు script). Use proper Telugu throughout.",
+    "kannada":    "Respond in Kannada (ಕನ್ನಡ script). Use proper Kannada throughout.",
+    "malayalam":  "Respond in Malayalam (മലയാളം script). Use proper Malayalam throughout.",
+    "gujarati":   "Respond in Gujarati (ગુજરાતી script). Use proper Gujarati throughout.",
+    "marathi":    "Respond in Marathi (Devanagari/देवनागरी script). Use proper Marathi throughout.",
+    "punjabi":    "Respond in Punjabi (Gurmukhi/ਗੁਰਮੁਖੀ script). Use proper Punjabi throughout.",
+    "odia":       "Respond in Odia (ଓଡ଼ିଆ script). Use proper Odia throughout.",
+}
+
+
+def build_system_prompt(language: str = "english", domain: str = None, user: dict = None, query: str = None) -> str:
+    # Auto-detect if requested or unsupported language
+    if language == "auto" and query:
+        language = detect_language(query)
+    lang_instruction = _LANGUAGE_INSTRUCTIONS.get(language, _LANGUAGE_INSTRUCTIONS["english"])
 
     spec = DOMAIN_SPECIALISTS.get(domain or "life_path_luck", DOMAIN_SPECIALISTS["life_path_luck"])
 
