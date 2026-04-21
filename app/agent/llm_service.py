@@ -16,26 +16,32 @@ OLLAMA_URL = settings.OLLAMA_URL.rstrip("/")
 OLLAMA_MODEL = settings.OLLAMA_MODEL
 
 PROVIDERS = {
-    "ollama": {
-        "label": "Ollama (Offline)",
+    "ollama-3b": {
+        "label": "Qwen 3B (Offline Fast)",
         "url": f"{OLLAMA_URL}/api/chat",
-        "stream_url": f"{OLLAMA_URL}/api/chat",
-        "model": OLLAMA_MODEL,
+        "model": "qwen2.5:3b",
         "api_key": "",
         "type": "ollama",
     },
-    "gemini": {
-        "label": "Gemini",
-        "url": "https://generativelanguage.googleapis.com/v1beta/chat/completions",
-        "model": "gemini-2.0-flash",
-        "api_key": settings.GEMINI_API_KEY,
-        "type": "openai",
+    "ollama-7b": {
+        "label": "Qwen 7B (Offline Deep)",
+        "url": f"{OLLAMA_URL}/api/chat",
+        "model": "qwen2.5:7b-instruct-q4_K_M",
+        "api_key": "",
+        "type": "ollama",
     },
     "groq": {
-        "label": "Groq",
+        "label": "Groq (Llama 3.3-70B)",
         "url": "https://api.groq.com/openai/v1/chat/completions",
         "model": "llama-3.3-70b-versatile",
         "api_key": settings.GROQ_API_KEY,
+        "type": "openai",
+    },
+    "gemini": {
+        "label": "Gemini 2.0 Flash",
+        "url": "https://generativelanguage.googleapis.com/v1beta/chat/completions",
+        "model": "gemini-2.0-flash",
+        "api_key": settings.GEMINI_API_KEY,
         "type": "openai",
     },
     "openrouter": {
@@ -46,7 +52,7 @@ PROVIDERS = {
         "type": "openai",
     },
     "deepseek": {
-        "label": "DeepSeek",
+        "label": "DeepSeek Chat",
         "url": "https://api.deepseek.com/chat/completions",
         "model": "deepseek-chat",
         "api_key": settings.DEEPSEEK_API_KEY,
@@ -58,11 +64,9 @@ PROVIDERS = {
 def get_available_providers() -> list:
     out = []
     for key, p in PROVIDERS.items():
-        available = True
-        if key == "ollama":
-            available = True
-        elif not p["api_key"]:
-            available = False
+        # Ollama providers are always "available" if the key starts with "ollama"
+        # External providers require an API key
+        available = key.startswith("ollama") or bool(p["api_key"])
         out.append({
             "key": key,
             "label": p["label"],
@@ -194,8 +198,9 @@ async def stream_provider(
 async def _stream_ollama(provider: dict, messages: list, websocket) -> None:
     import httpx
     try:
+        # No read timeout — let the model finish regardless of how long it takes
         async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=5.0, read=120.0, write=10.0, pool=5.0)
+            timeout=httpx.Timeout(connect=5.0, read=None, write=10.0, pool=5.0)
         ) as client:
             async with client.stream(
                 "POST",
@@ -204,7 +209,12 @@ async def _stream_ollama(provider: dict, messages: list, websocket) -> None:
                     "model": provider["model"],
                     "messages": messages,
                     "stream": True,
-                    "options": {"temperature": 0.7, "num_predict": 300, "num_ctx": 2048},
+                    "options": {
+                        "temperature": 0.7,
+                        "num_ctx": 4096,
+                        # num_predict: -1 = unlimited output tokens
+                        "num_predict": -1,
+                    },
                 },
             ) as stream:
                 async for line in stream.aiter_lines():
@@ -220,7 +230,7 @@ async def _stream_ollama(provider: dict, messages: list, websocket) -> None:
                     if chunk.get("done"):
                         break
     except Exception as e:
-        logger.warning("Ollama stream failed: %s", e)
+        logger.warning("Ollama stream failed (%s): %s", provider.get("model"), e)
         await websocket.send_json({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
 
 
@@ -234,24 +244,24 @@ async def _stream_openai(provider: dict, messages: list, websocket) -> None:
         "Authorization": f"Bearer {provider['api_key']}",
         "Content-Type": "application/json",
     }
-    if provider.get("label") == "OpenRouter":
+    if provider["url"].startswith("https://openrouter.ai"):
         headers["HTTP-Referer"] = "https://nakshtralogy.com"
+        headers["X-Title"] = "Nakshtralogy"
+
+    # Do NOT send max_tokens — let provider use its maximum default
+    payload = {
+        "model": provider["model"],
+        "messages": messages,
+        "stream": True,
+        "temperature": 0.7,
+    }
 
     try:
         async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=5.0)
+            timeout=httpx.Timeout(connect=10.0, read=None, write=10.0, pool=5.0)
         ) as client:
             async with client.stream(
-                "POST",
-                provider["url"],
-                headers=headers,
-                json={
-                    "model": provider["model"],
-                    "messages": messages,
-                    "stream": True,
-                    "temperature": 0.7,
-                    "max_tokens": 500,
-                },
+                "POST", provider["url"], headers=headers, json=payload,
             ) as stream:
                 async for line in stream.aiter_lines():
                     line = line.strip()
@@ -280,7 +290,7 @@ async def generate_llm_response(
     try:
         import httpx
         async with httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=5.0, read=120.0, write=10.0, pool=5.0)
+            timeout=httpx.Timeout(connect=5.0, read=None, write=10.0, pool=5.0)
         ) as client:
             resp = await client.post(
                 f"{OLLAMA_URL}/api/chat",
@@ -291,7 +301,7 @@ async def generate_llm_response(
                         {"role": "user", "content": build_rich_prompt(query, {"probability": agent_result, "active_yogas": agent_result.get("active_yogas", []), "active_doshas": agent_result.get("active_doshas", [])})},
                     ],
                     "stream": False,
-                    "options": {"temperature": 0.7, "num_predict": 200, "num_ctx": 1024},
+                    "options": {"temperature": 0.7, "num_predict": -1, "num_ctx": 4096},
                 },
             )
             if resp.status_code == 200:

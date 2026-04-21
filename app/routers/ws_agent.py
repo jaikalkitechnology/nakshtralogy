@@ -140,7 +140,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
             query = req.get("query", "").strip()
             domain = req.get("domain")
             language = req.get("language", "english")
-            provider_key = req.get("provider", "ollama")
+            provider_key = req.get("provider", "ollama-3b")
 
             if not chart_id or not query:
                 await websocket.send_json({"type": "error", "text": "chart_id and query required"})
