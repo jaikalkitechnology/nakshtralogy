@@ -7,7 +7,6 @@ Falls back to template-based responses if Ollama is unavailable.
 """
 
 import logging
-from typing import Optional
 
 logger = logging.getLogger("llm_service")
 
@@ -15,7 +14,17 @@ from app.core.config import settings
 
 OLLAMA_URL = settings.OLLAMA_URL.rstrip("/")
 OLLAMA_MODEL = settings.OLLAMA_MODEL
-OLLAMA_CHAT_URL = f"{OLLAMA_URL}/v1/chat/completions"
+OLLAMA_API_URL = f"{OLLAMA_URL}/api/chat"
+
+_http_client = None
+
+def _get_client():
+    """Reuse a single httpx client across requests to avoid connection overhead."""
+    global _http_client
+    if _http_client is None:
+        import httpx
+        _http_client = httpx.AsyncClient(timeout=180.0)
+    return _http_client
 
 
 def _build_system_prompt(language: str = "english") -> str:
@@ -30,12 +39,11 @@ You receive probability scores and astrological data, then explain them in a fri
 
 Rules:
 - {lang_instruction}
-- Keep responses concise (3-5 sentences for simple queries, 5-8 for detailed ones)
-- Reference specific planets, houses, yogas, and doshas from the data provided
-- Give practical advice based on the astrological analysis
-- Be empathetic and encouraging, even for challenging readings
-- Never claim to predict exact dates or guarantee outcomes
-- Use appropriate emojis sparingly for warmth
+- Keep responses concise (3-5 sentences max)
+- Reference specific planets, yogas, and doshas from the data
+- Give 1-2 practical suggestions
+- Be empathetic and encouraging
+- Never predict exact dates or guarantee outcomes
 - For remedies, suggest traditional Vedic remedies (mantras, gemstones, charity)"""
 
 
@@ -46,28 +54,16 @@ def _build_user_prompt(query: str, agent_result: dict) -> str:
     yogas = agent_result.get("active_yogas", [])
     doshas = agent_result.get("active_doshas", [])
     breakdown = agent_result.get("breakdown", {})
-    time_frame = agent_result.get("intent", {}).get("time_frame", "future")
 
-    yoga_text = ", ".join(y["name"] for y in yogas) if yogas else "None active"
-    dosh_text = ", ".join(d["name"] for d in doshas) if doshas else "None detected"
+    yoga_text = ", ".join(y["name"] for y in yogas[:3]) if yogas else "None"
+    dosh_text = ", ".join(d["name"] for d in doshas[:3]) if doshas else "None"
 
-    return f"""User asked: "{query}"
-
-Domain: {domain}
-Time frame: {time_frame}
-Overall probability: {prob}% ({band})
-
-Breakdown:
-- House strength: {breakdown.get('house_score', 0)}%
-- Planet strength: {breakdown.get('planet_score', 0)}%
-- Yoga support: {breakdown.get('yoga_score', 0)}%
-- Dosh factor: {breakdown.get('dosh_factor', 0)}%
-- Transit modifier: {breakdown.get('gochar_modifier', 0):+.1f}
-
+    return f"""User: "{query}"
+Domain: {domain} | Probability: {prob}% ({band})
+House: {breakdown.get('house_score', 0)}% | Planet: {breakdown.get('planet_score', 0)}% | Yoga: {breakdown.get('yoga_score', 0)}% | Dosh: {breakdown.get('dosh_factor', 0)}% | Transit: {breakdown.get('gochar_modifier', 0):+.1f}
 Active Yogas: {yoga_text}
 Active Doshas: {dosh_text}
-
-Generate a personalized astrological response addressing their question. Include the probability naturally, mention relevant yogas/doshas, and provide 1-2 practical suggestions."""
+Reply in 3-5 sentences with the probability, mention yogas/doshas, and give 1 practical suggestion."""
 
 
 async def generate_llm_response(
@@ -78,29 +74,58 @@ async def generate_llm_response(
     """Generate natural language explanation using local Qwen via Ollama."""
 
     try:
-        import httpx
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(
-                OLLAMA_CHAT_URL,
-                json={
-                    "model": OLLAMA_MODEL,
-                    "messages": [
-                        {"role": "system", "content": _build_system_prompt(language)},
-                        {"role": "user", "content": _build_user_prompt(query, agent_result)},
-                    ],
+        client = _get_client()
+        resp = await client.post(
+            OLLAMA_API_URL,
+            json={
+                "model": OLLAMA_MODEL,
+                "messages": [
+                    {"role": "system", "content": _build_system_prompt(language)},
+                    {"role": "user", "content": _build_user_prompt(query, agent_result)},
+                ],
+                "stream": False,
+                "options": {
                     "temperature": 0.7,
-                    "max_tokens": 500,
+                    "num_predict": 256,
+                    "num_ctx": 2048,
                 },
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                return data["choices"][0]["message"]["content"]
-            else:
-                logger.warning("Ollama API error %d: %s", resp.status_code, resp.text[:200])
-                return _fallback_response(query, agent_result, language)
+            },
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            content = data.get("message", {}).get("content", "")
+            if content:
+                return content
+            logger.warning("Ollama returned empty content: %s", data)
+            return _fallback_response(query, agent_result, language)
+        else:
+            logger.warning("Ollama API error %d: %s", resp.status_code, resp.text[:200])
+            return _fallback_response(query, agent_result, language)
     except Exception as e:
         logger.warning("Ollama LLM failed: %s", e)
         return _fallback_response(query, agent_result, language)
+
+
+async def warmup_llm():
+    """Pre-load model into RAM on server startup. Call from FastAPI lifespan."""
+    try:
+        client = _get_client()
+        logger.info("Warming up Ollama model %s ...", OLLAMA_MODEL)
+        resp = await client.post(
+            OLLAMA_API_URL,
+            json={
+                "model": OLLAMA_MODEL,
+                "messages": [{"role": "user", "content": "Hello"}],
+                "stream": False,
+                "options": {"num_predict": 4},
+            },
+        )
+        if resp.status_code == 200:
+            logger.info("Ollama warmup done — model loaded in RAM")
+        else:
+            logger.warning("Ollama warmup failed: %d", resp.status_code)
+    except Exception as e:
+        logger.warning("Ollama warmup error: %s", e)
 
 
 def _fallback_response(query: str, result: dict, language: str) -> str:
