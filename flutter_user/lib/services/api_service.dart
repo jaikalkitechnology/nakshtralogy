@@ -576,16 +576,35 @@ class ApiService {
     String? domain,
     String language = 'english',
   }) async {
-    final resp = await _authPost(
-      Uri.parse(ApiConstants.agentChat),
-      body: jsonEncode({
-        'chart_id': chartId,
-        'query': query,
-        if (domain != null) 'domain': domain,
-        'language': language,
-      }),
-    );
-    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+    final client = http.Client();
+    try {
+      final request = http.Request('POST', Uri.parse(ApiConstants.agentChat))
+        ..headers.addAll(_headers)
+        ..body = jsonEncode({
+          'chart_id': chartId,
+          'query': query,
+          if (domain != null) 'domain': domain,
+          'language': language,
+        });
+      final streamed = await client.send(request).timeout(const Duration(seconds: 120));
+      final resp = await http.Response.fromStream(streamed).timeout(const Duration(seconds: 120));
+      if (resp.statusCode == 401 && await _tryRefresh()) {
+        final req2 = http.Request('POST', Uri.parse(ApiConstants.agentChat))
+          ..headers.addAll(_headers)
+          ..body = jsonEncode({
+            'chart_id': chartId,
+            'query': query,
+            if (domain != null) 'domain': domain,
+            'language': language,
+          });
+        final s2 = await client.send(req2).timeout(const Duration(seconds: 120));
+        final r2 = await http.Response.fromStream(s2).timeout(const Duration(seconds: 120));
+        return {'statusCode': r2.statusCode, ...jsonDecode(r2.body)};
+      }
+      return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+    } finally {
+      client.close();
+    }
   }
 
   Future<Map<String, dynamic>> getKundliFull(String chartId, {int dashaLevels = 2}) =>
