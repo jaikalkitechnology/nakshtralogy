@@ -138,23 +138,28 @@ def _build_chart_context(data: dict, result: dict) -> dict:
     except Exception as e:
         logger.warning("chakra_health failed: %s", e)
 
+    # Current Vimshottari + Moola dasha lords (correctly filtered to TODAY)
+    # Previously this loop would just assign the LAST dasha in the tree — bug.
+    # Use engine's get_current_dasha_lords which properly finds current period.
     try:
-        vd = _nk.get_vimshottari(pdata, birth_jd, levels=2)
-        dashas = vd.get("dashas", [])
-        today_str = date.today().strftime("%d/%m/%Y")
-        from app.kundli.engine import jd_to_date
-        for md in dashas:
-            md_start = md.get("start", "")
-            md_end = md.get("end", "")
-            for ad in md.get("sub", []):
-                ad_start = ad.get("start", "")
-                ad_end = ad.get("end", "")
-                ctx["current_dasha"] = {
-                    "md": md["planet"], "md_start": md_start, "md_end": md_end,
-                    "ad": ad["planet"], "ad_start": ad_start, "ad_end": ad_end,
-                }
-    except Exception:
-        pass
+        from app.kundli.engine import get_current_dasha_lords
+        lords = get_current_dasha_lords(pdata, birth_jd)
+        vim = lords.get("vimshottari", {})
+        if vim:
+            ctx["current_dasha"] = {
+                "md": vim.get("md", ""), "md_start": vim.get("md_start", ""), "md_end": vim.get("md_end", ""),
+                "ad": vim.get("ad", ""), "ad_start": vim.get("ad_start", ""), "ad_end": vim.get("ad_end", ""),
+                "pd": vim.get("pd", ""),
+            }
+        moola = lords.get("moola", {})
+        if moola:
+            ctx["current_dasha_moola"] = {
+                "md": moola.get("md", ""), "md_start": moola.get("md_start", ""), "md_end": moola.get("md_end", ""),
+                "ad": moola.get("ad", ""), "ad_start": moola.get("ad_start", ""), "ad_end": moola.get("ad_end", ""),
+                "pd": moola.get("pd", ""),
+            }
+    except Exception as e:
+        logger.warning("current_dasha_lords failed: %s", e)
 
     try:
         life = _nk.get_life_areas(pdata)
