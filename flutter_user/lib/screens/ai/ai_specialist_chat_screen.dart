@@ -34,7 +34,8 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   String _selectedProvider = 'ollama-7b';
   bool _loadingCharts = true;
   bool _sending = false;
-  String _language = 'english';
+  String _language = 'auto';  // auto-detect by default
+  String? _detectedLanguage;    // last detected language from server
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -117,7 +118,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
     if (type == 'prob') {
       final d = msg['data'] as Map<String, dynamic>? ?? {};
+      final detected = d['detected_language']?.toString();
       setState(() {
+        if (detected != null && detected.isNotEmpty) {
+          _detectedLanguage = detected;
+        }
         _messages.add({
           'role': 'bot',
           'text': '',
@@ -233,11 +238,24 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           PopupMenuButton<String>(
             icon: const Icon(Icons.language, size: 20),
             color: AppColors.nebula,
+            tooltip: _language == 'auto'
+                ? (_detectedLanguage != null ? 'Auto → ${_displayLang(_detectedLanguage!)}' : 'Auto-detect')
+                : 'Language: ${_displayLang(_language)}',
             onSelected: (v) => setState(() => _language = v),
-            itemBuilder: (_) => [
-              PopupMenuItem(value: 'english', child: Text('English', style: TextStyle(color: _language == 'english' ? AppColors.gold : AppColors.ivory))),
-              PopupMenuItem(value: 'hindi', child: Text('हिंदी', style: TextStyle(color: _language == 'hindi' ? AppColors.gold : AppColors.ivory))),
-              PopupMenuItem(value: 'hinglish', child: Text('Hinglish', style: TextStyle(color: _language == 'hinglish' ? AppColors.gold : AppColors.ivory))),
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: 'auto',      child: Row(children: [Icon(Icons.auto_fix_high, size: 14), SizedBox(width: 8), Text('🌐 Auto-detect')])),
+              PopupMenuDivider(),
+              PopupMenuItem(value: 'english',   child: Text('English')),
+              PopupMenuItem(value: 'hindi',     child: Text('हिंदी  Hindi')),
+              PopupMenuItem(value: 'hinglish',  child: Text('Hinglish')),
+              PopupMenuItem(value: 'bengali',   child: Text('বাংলা  Bengali')),
+              PopupMenuItem(value: 'tamil',     child: Text('தமிழ்  Tamil')),
+              PopupMenuItem(value: 'telugu',    child: Text('తెలుగు  Telugu')),
+              PopupMenuItem(value: 'kannada',   child: Text('ಕನ್ನಡ  Kannada')),
+              PopupMenuItem(value: 'malayalam', child: Text('മലയാളം  Malayalam')),
+              PopupMenuItem(value: 'gujarati',  child: Text('ગુજરાતી  Gujarati')),
+              PopupMenuItem(value: 'marathi',   child: Text('मराठी  Marathi')),
+              PopupMenuItem(value: 'punjabi',   child: Text('ਪੰਜਾਬੀ  Punjabi')),
             ],
           ),
         ],
@@ -529,4 +547,22 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     if (p >= 30) return AppColors.saffron;
     return AppColors.error;
   }
+
+  static const _langDisplay = {
+    'auto':      'Auto',
+    'english':   'English',
+    'hindi':     'हिंदी',
+    'hinglish':  'Hinglish',
+    'bengali':   'বাংলা',
+    'tamil':     'தமிழ்',
+    'telugu':    'తెలుగు',
+    'kannada':   'ಕನ್ನಡ',
+    'malayalam': 'മലയാളം',
+    'gujarati':  'ગુજરાતી',
+    'marathi':   'मराठी',
+    'punjabi':   'ਪੰਜਾਬੀ',
+    'odia':      'ଓଡ଼ିଆ',
+  };
+
+  String _displayLang(String code) => _langDisplay[code] ?? code;
 }

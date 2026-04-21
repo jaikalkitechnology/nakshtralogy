@@ -30,6 +30,7 @@ from app.agent.llm_service import (
     build_rich_prompt,
     stream_provider,
     _fallback_response,
+    detect_language,
 )
 
 logger = logging.getLogger("ws_agent")
@@ -216,6 +217,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 result = _agent.query(query, pdata, birth_jd, domain_override=domain)
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
 
+                # Auto-detect language up front so we can include it in prob frame
+                effective_lang = language
+                if language == "auto" or not language:
+                    effective_lang = detect_language(query)
+
                 await websocket.send_json({
                     "type": "prob",
                     "data": {
@@ -227,6 +233,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         "breakdown": result["breakdown"],
                         "active_yogas": result["active_yogas"],
                         "active_doshas": result["active_doshas"],
+                        "detected_language": effective_lang,
                     },
                 })
 
@@ -244,6 +251,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     "gender": chart.gender,
                 }
                 detected_domain = result.get("domain") or domain
+                logger.info("Effective language: %s (from %r)", effective_lang, query[:30])
 
                 # Inject previous conversation as chat history
                 session_key = (user.id, chart_id)
@@ -251,7 +259,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 messages = [{
                     "role": "system",
-                    "content": build_system_prompt(language, domain=detected_domain, user=chart_holder),
+                    "content": build_system_prompt(effective_lang, domain=detected_domain, user=chart_holder, query=query),
                 }]
                 for turn in history:
                     messages.append({"role": "user", "content": turn["q"]})
