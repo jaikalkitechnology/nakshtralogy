@@ -66,15 +66,15 @@ class _GocharBody extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(8), border: Border.all(color: _color(score).withOpacity(0.4))),
           child: Row(children: [
-            Text(rm['rashi']?.toString() ?? '', style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
-            const Spacer(),
-            if (flags.isNotEmpty) Padding(padding: const EdgeInsets.only(right: 8),
-                child: Text(flags.join(' '), style: const TextStyle(color: AppColors.error, fontSize: 10))),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(rm['rashi']?.toString() ?? '', style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
+              if (flags.isNotEmpty) Text(flags.take(2).join(' · '), style: const TextStyle(color: AppColors.smoke, fontSize: 9), maxLines: 1, overflow: TextOverflow.ellipsis),
+            ])),
             Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(color: _color(score).withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
-                child: Text(grade, style: TextStyle(color: _color(score), fontSize: 10, fontWeight: FontWeight.w600))),
-            const SizedBox(width: 8),
-            Text(score.toStringAsFixed(1), style: TextStyle(color: _color(score), fontSize: 14, fontWeight: FontWeight.w700)),
+                child: Text(grade, style: TextStyle(color: _color(score), fontSize: 9, fontWeight: FontWeight.w600))),
+            const SizedBox(width: 6),
+            SizedBox(width: 40, child: Text(score.toStringAsFixed(1), style: TextStyle(color: _color(score), fontSize: 13, fontWeight: FontWeight.w700), textAlign: TextAlign.right)),
           ]),
         );
       }),

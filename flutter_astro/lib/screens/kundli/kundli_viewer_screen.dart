@@ -32,6 +32,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   final _api = ApiService();
   late final TabController _tabs;
   Map<String, dynamic>? _chart;
+  Map<String, dynamic>? _complete;
   bool _loading = true;
   String? _error;
 
@@ -78,6 +79,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           _chart = (resp['data'] as Map).cast<String, dynamic>();
           _loading = false;
         });
+        _prefetchComplete();
       } else {
         setState(() {
           _error = (resp['detail'] is Map ? (resp['detail'] as Map)['error'] : resp['detail'])?.toString() ?? 'Failed to load';
@@ -87,6 +89,18 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     } catch (e) {
       setState(() { _error = e.toString(); _loading = false; });
     }
+  }
+
+  Future<void> _prefetchComplete() async {
+    try {
+      final resp = await _api.getKundliAnalysisComplete(widget.chartId);
+      if (!mounted) return;
+      if (resp['statusCode'] == 200 && resp['status'] == 'success') {
+        setState(() {
+          _complete = (resp['data'] as Map).cast<String, dynamic>();
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -128,14 +142,14 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari'),
                         DashaTreeWidget(chartId: widget.chartId, type: 'moola'),
                         GocharWidget(chartId: widget.chartId),
-                        DoshWidget(chartId: widget.chartId),
-                        YogaWidget(chartId: widget.chartId),
-                        ShadbalaWidget(chartId: widget.chartId),
+                        DoshWidget(chartId: widget.chartId, initial: _complete?['dosh_analysis']),
+                        YogaWidget(chartId: widget.chartId, initial: _complete?['yoga_analysis']),
+                        ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala']),
                         AshtakavargaWidget(chartId: widget.chartId),
                         AspectsWidget(chartId: widget.chartId),
-                        LifeAreasWidget(chartId: widget.chartId),
-                        BhavaWidget(chartId: widget.chartId),
-                        ChakraHealthWidget(chartId: widget.chartId),
+                        LifeAreasWidget(chartId: widget.chartId, initial: _complete?['life_areas']),
+                        BhavaWidget(chartId: widget.chartId, initial: _complete?['bhava_strength']),
+                        ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health']),
                         DashaActivationWidget(chartId: widget.chartId),
                       ],
                     ),

@@ -36,6 +36,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   final _api = ApiService();
   late final TabController _tabs;
   Map<String, dynamic>? _chart;
+  Map<String, dynamic>? _complete;
   bool _loading = true;
   String? _error;
 
@@ -83,6 +84,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           _chart = (resp['data'] as Map).cast<String, dynamic>();
           _loading = false;
         });
+        _prefetchComplete();
       } else {
         setState(() {
           _error = (resp['detail'] is Map ? (resp['detail'] as Map)['error'] : resp['detail'])?.toString() ?? 'Failed to load';
@@ -92,6 +94,18 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     } catch (e) {
       setState(() { _error = e.toString(); _loading = false; });
     }
+  }
+
+  Future<void> _prefetchComplete() async {
+    try {
+      final resp = await _api.getKundliAnalysisComplete(widget.chartId);
+      if (!mounted) return;
+      if (resp['statusCode'] == 200 && resp['status'] == 'success') {
+        setState(() {
+          _complete = (resp['data'] as Map).cast<String, dynamic>();
+        });
+      }
+    } catch (_) {}
   }
 
   @override
@@ -142,21 +156,21 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         _PaidTab(chartId: widget.chartId, section: 'gochar',
                             builder: (_) => GocharWidget(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'dosh',
-                            builder: (_) => DoshWidget(chartId: widget.chartId)),
+                            builder: (_) => DoshWidget(chartId: widget.chartId, initial: _complete?['dosh_analysis'])),
                         _PaidTab(chartId: widget.chartId, section: 'yoga',
-                            builder: (_) => YogaWidget(chartId: widget.chartId)),
+                            builder: (_) => YogaWidget(chartId: widget.chartId, initial: _complete?['yoga_analysis'])),
                         _PaidTab(chartId: widget.chartId, section: 'shadbala',
-                            builder: (_) => ShadbalaWidget(chartId: widget.chartId)),
+                            builder: (_) => ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala'])),
                         _PaidTab(chartId: widget.chartId, section: 'ashtakavarga',
                             builder: (_) => AshtakavargaWidget(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'aspects',
                             builder: (_) => AspectsWidget(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'life_areas',
-                            builder: (_) => LifeAreasWidget(chartId: widget.chartId)),
+                            builder: (_) => LifeAreasWidget(chartId: widget.chartId, initial: _complete?['life_areas'])),
                         _PaidTab(chartId: widget.chartId, section: 'bhava',
-                            builder: (_) => BhavaWidget(chartId: widget.chartId)),
+                            builder: (_) => BhavaWidget(chartId: widget.chartId, initial: _complete?['bhava_strength'])),
                         _PaidTab(chartId: widget.chartId, section: 'chakra',
-                            builder: (_) => ChakraHealthWidget(chartId: widget.chartId)),
+                            builder: (_) => ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health'])),
                         _PaidTab(chartId: widget.chartId, section: 'dasha_activation',
                             builder: (_) => DashaActivationWidget(chartId: widget.chartId)),
                       ],
