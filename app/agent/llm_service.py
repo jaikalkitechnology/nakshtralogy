@@ -363,9 +363,83 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
         if la_parts:
             parts.append(f"\nLIFE AREAS: {' | '.join(la_parts)}")
 
-    # Detect timing-intent queries — instruct LLM to cite specific dasha periods
+    # ⭐️ ASHTAKAVARGA — Per-sign strength for transit activation analysis
+    av = chart_context.get("ashtakavarga", {})
+    if av:
+        sav = av.get("sav", {})
+        sav_total = av.get("sav_total", 0)
+        if sav:
+            sorted_signs = sorted(sav.items(), key=lambda x: -x[1])
+            strong = [f"{s}:{v}" for s, v in sorted_signs[:3]]
+            weak = [f"{s}:{v}" for s, v in sorted_signs[-3:]]
+            parts.append(f"\nASHTAKAVARGA (SAV total {sav_total}/337):")
+            parts.append(f"  Strong signs (>30 = years when transits activate well): {', '.join(strong)}")
+            parts.append(f"  Weak signs (<25 = avoid major moves when planets transit here): {', '.join(weak)}")
+
+        # Natal bindus for Sun/Moon/Jupiter/Saturn — key planets for yearly activation
+        pbav = av.get("planets_bav", {})
+        key_bindus = []
+        for p in ["Sun", "Moon", "Jupiter", "Saturn"]:
+            pd_av = pbav.get(p, {})
+            if pd_av:
+                natal = pd_av.get("natal_sign_score", 0)
+                note = "strong" if natal >= 5 else "good" if natal >= 4 else "moderate" if natal >= 3 else "weak"
+                key_bindus.append(f"{p}:{natal}/8 ({note})")
+        if key_bindus:
+            parts.append(f"  Natal-sign bindus: {' | '.join(key_bindus)}")
+
+    # ⭐️ GRAHA DRISHTI — Planetary aspects, key for 'why' questions
+    aspects = chart_context.get("aspects", {})
+    if aspects:
+        graha = aspects.get("graha_drishti", {})
+        lagna_asp = aspects.get("lagna_aspects_received", {})
+        # Show only strong aspects (>=50%) to avoid bloat
+        asp_lines = []
+        for planet, targets in graha.items():
+            strong_asp = [f"{t}({v}%)" for t, v in targets.items() if v >= 50]
+            if strong_asp:
+                asp_lines.append(f"  {planet} aspects: {', '.join(strong_asp[:4])}")
+        if asp_lines:
+            parts.append("\nGRAHA DRISHTI (key aspects, ≥50%):")
+            parts.extend(asp_lines[:6])  # cap to 6 planets
+        if lagna_asp:
+            lagna_parts = [f"{p}({v}%)" for p, v in lagna_asp.items() if v >= 50]
+            if lagna_parts:
+                parts.append(f"  Lagna (self) aspected by: {', '.join(lagna_parts)}")
+
+    # ⭐️ CHAKRA HEALTH — 7-chakra risk analysis
+    chakra = chart_context.get("chakra_health", {})
+    if chakra:
+        overall = chakra.get("overall_score", 0)
+        status = chakra.get("overall_status", "")
+        parts.append(f"\nCHAKRA HEALTH: Overall {overall}/100 ({status})")
+        # Only show chakras that are NOT Healthy (to keep prompt tight)
+        weak_chakras = [c for c in chakra.get("chakras", []) if c.get("chakra_status", "") != "Healthy"]
+        for c in weak_chakras[:4]:
+            body = ", ".join(c.get("body_parts", [])[:3])
+            parts.append(f"  ⚠ {c.get('name','')} (#{c.get('number','')}): {c.get('chakra_score',0):.0f}/100 — {c.get('chakra_status','')} | Body: {body}")
+
+    # ═════════════════════════════════════════════════════════════════
+    # INTENT-AWARE INSTRUCTIONS — adapt answer format to question type
+    # ═════════════════════════════════════════════════════════════════
+    q_lower = query.lower()
+
+    # Timing intent → cite dasha periods with dates
     timing_keywords = ["when", "kab", "time", "timing", "date", "year", "month", "period", "how long", "kitna samay"]
-    is_timing_q = any(kw in query.lower() for kw in timing_keywords)
+    is_timing_q = any(kw in q_lower for kw in timing_keywords)
+
+    # Cause/reason intent → cite aspects and afflictions
+    why_keywords = ["why", "kyun", "kyu", "reason", "cause", "wajah", "karan", "difficult", "problem", "issue"]
+    is_why_q = any(kw in q_lower for kw in why_keywords)
+
+    # Health intent → cite chakras and health houses
+    health_keywords = ["health", "body", "disease", "illness", "pain", "swasthya", "bimari", "dard", "rog", "sick", "chronic"]
+    is_health_q = any(kw in q_lower for kw in health_keywords)
+
+    # Year/annual intent → cite Ashtakavarga + dasha overlap
+    year_keywords = ["year", "saal", "annual", "2025", "2026", "2027", "which year", "kaunsa saal"]
+    is_year_q = any(kw in q_lower for kw in year_keywords)
+
     if is_timing_q:
         parts.append(
             "\n⏰ TIMING QUESTION DETECTED — In your answer:\n"
@@ -375,6 +449,31 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
             "  4. Use phrases like 'favorable window', 'peak activation period', 'shift toward' — never guaranteed dates\n"
             "  5. Reference the activated yogas/doshas list above by name"
         )
+    if is_year_q:
+        parts.append(
+            "\n📅 YEAR-QUALITY QUESTION DETECTED — In your answer:\n"
+            "  1. Overlay the current Dasha (lord) with Ashtakavarga SAV score of that sign\n"
+            "  2. Say 'the year is supportive' if MD lord's natal sign has bindus ≥4/8\n"
+            "  3. If weak sign (<25 SAV) is activated during the year, flag it as 'caution year'\n"
+            "  4. Suggest which planet's transit in next 12 months to watch"
+        )
+    if is_why_q:
+        parts.append(
+            "\n🔍 CAUSE/REASON QUESTION DETECTED — In your answer:\n"
+            "  1. Identify the specific house lord or planet from the CHART DATA causing difficulty\n"
+            "  2. Name the GRAHA DRISHTI aspect responsible (e.g. 'Saturn's 10th aspect afflicts 4th')\n"
+            "  3. Mention the ACTIVATED DOSH from Dasha Activation list if it applies\n"
+            "  4. Connect root cause to practical remedy (mantra for the afflicted planet)"
+        )
+    if is_health_q:
+        parts.append(
+            "\n🏥 HEALTH QUESTION DETECTED — In your answer:\n"
+            "  1. Reference the specific CHAKRA HEALTH scores and body parts listed above\n"
+            "  2. Name the planet afflicting the 1st/6th/8th house from aspects\n"
+            "  3. Suggest the chakra-balancing beej mantra and color therapy from data\n"
+            "  4. ALWAYS add: 'Please consult a qualified doctor for medical concerns — astrology complements, never replaces, medical advice.'"
+        )
+
     parts.append("\nRespond with astrological analysis referencing the specific chart data above. If the question is not astrology-related, suggest 3 questions the user could ask.")
     return "\n".join(parts)
 
