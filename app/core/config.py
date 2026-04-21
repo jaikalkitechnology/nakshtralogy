@@ -38,7 +38,7 @@ class Settings:
 
     # Local LLM via Ollama (AI Agent)
     OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
-    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5:7b-instruct-q4_K_M")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 
     # Google OAuth
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
