@@ -31,7 +31,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   List<dynamic> _providers = [];
   String? _selectedChartId;
   String? _selectedChartName;
-  String _selectedProvider = 'ollama-7b';
+  String _selectedProvider = 'ollama-3b';
   bool _loadingCharts = true;
   bool _sending = false;
   String _language = 'auto';  // auto-detect by default
@@ -43,7 +43,6 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   static const _providerIcons = {
     'ollama-3b': Icons.flash_on,
-    'ollama-7b': Icons.memory,
     'groq': Icons.bolt,
     'gemini': Icons.auto_awesome,
     'openrouter': Icons.hub,
@@ -52,7 +51,6 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   static const _providerShortNames = {
     'ollama-3b': 'Qwen 3B',
-    'ollama-7b': 'Qwen 7B',
     'groq': 'Groq',
     'gemini': 'Gemini',
     'openrouter': 'Router',
@@ -75,8 +73,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     _providers = await _api.getAgentProviders();
     if (_providers.isEmpty) {
       _providers = [
-        {'key': 'ollama-3b', 'label': 'Qwen 3B (Offline Fast)', 'model': 'qwen2.5:3b', 'available': true},
-        {'key': 'ollama-7b', 'label': 'Qwen 7B (Offline Deep)', 'model': 'qwen2.5:7b-instruct-q4_K_M', 'available': true},
+        {'key': 'ollama-3b', 'label': 'Qwen 3B (Offline)', 'model': 'qwen2.5:3b', 'available': true},
       ];
     }
     if (mounted) setState(() {});
