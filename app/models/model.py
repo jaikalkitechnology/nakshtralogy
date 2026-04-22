@@ -906,3 +906,27 @@ class AgentFeedback(Base):
     response_snippet = Column(Text, nullable=True)  # first ~300 chars for analytics
     note = Column(Text, nullable=True)              # optional user comment
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  AGENT LOG (tracks every LLM request for debugging)
+# ─────────────────────────────────────────────────────────────────────
+
+class AgentLog(Base):
+    __tablename__ = "agent_logs"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), nullable=True, index=True)
+    chart_id = Column(String(36), nullable=True)
+    message_id = Column(String(36), nullable=True, index=True)
+    provider = Column(String(40), nullable=False, index=True)
+    domain = Column(String(40), nullable=True)
+    language = Column(String(20), nullable=True)
+    query = Column(Text, nullable=True)
+    status = Column(String(20), nullable=False, index=True)  # success | error | timeout | interrupted
+    error_message = Column(Text, nullable=True)
+    http_status = Column(Integer, nullable=True)
+    response_tokens = Column(Integer, nullable=True)
+    latency_ms = Column(Integer, nullable=True)
+    prompt_chars = Column(Integer, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)

@@ -21,7 +21,7 @@ from jose import jwt, JWTError
 
 from app.core.config import settings
 from app.core.database import SessionLocal
-from app.models.model import User, Chart
+from app.models.model import User, Chart, AgentLog
 from app.kundli import engine as nk_engine
 from app.kundli.helper import NakshtraEngine
 from app.agent.engine import NakshtraAgent
@@ -271,7 +271,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
         if _ws_closed:
             return False
         try:
-            await _send(data)
+            await websocket.send_json(data)
             return True
         except Exception:
             _ws_closed = True
@@ -284,6 +284,12 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 req = json.loads(raw)
             except json.JSONDecodeError:
                 await _send({"type": "error", "text": "Invalid JSON"})
+                continue
+
+            # Handle interrupt signal from client
+            if req.get("type") == "interrupt":
+                logger.info("Client requested interrupt: user=%s", user.id)
+                await _send({"type": "interrupted"})
                 continue
 
             chart_id = req.get("chart_id")
@@ -371,13 +377,50 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 # Stream and collect the full response
                 collected_tokens = []
+                stream_t0 = time.time()
+                log_status = "success"
+                log_error = None
+                log_http = None
                 try:
                     await stream_provider(provider_key, messages, websocket, token_collector=collected_tokens)
+                    # Check if tokens contain error markers
+                    joined = "".join(collected_tokens)
+                    if joined.startswith("⚠️") and len(collected_tokens) <= 2:
+                        log_status = "error"
+                        log_error = joined[:300]
                 except Exception as e:
                     logger.warning("Stream failed (%s): %s", provider_key, e)
+                    log_status = "error"
+                    log_error = str(e)[:500]
                     fallback = _fallback_response(query, result, language)
                     await _send({"type": "token", "text": fallback})
                     collected_tokens.append(fallback)
+
+                # Write agent log
+                try:
+                    log_db = SessionLocal()
+                    try:
+                        log_entry = AgentLog(
+                            user_id=user.id,
+                            chart_id=chart_id,
+                            message_id=message_id,
+                            provider=provider_key,
+                            domain=detected_domain,
+                            language=effective_lang,
+                            query=query[:500],
+                            status=log_status,
+                            error_message=log_error,
+                            http_status=log_http,
+                            response_tokens=len(collected_tokens),
+                            latency_ms=int((time.time() - stream_t0) * 1000),
+                            prompt_chars=len(user_prompt),
+                        )
+                        log_db.add(log_entry)
+                        log_db.commit()
+                    finally:
+                        log_db.close()
+                except Exception as le:
+                    logger.debug("Agent log write failed: %s", le)
 
                 # Parse follow-up suggestions from end of response
                 full_response = "".join(collected_tokens)

@@ -54,7 +54,7 @@ PROVIDERS = {
     },
     "gemini": {
         "label": "Gemini 2.0 Flash",
-        "url": "https://generativelanguage.googleapis.com/v1beta/chat/completions",
+        "url": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
         "model": "gemini-2.0-flash",
         "api_key": settings.GEMINI_API_KEY,
         "type": "openai",
@@ -734,13 +734,24 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
     import httpx
     _send = _safe_send or (lambda d: websocket.send_json(d))
     if not provider["api_key"]:
-        await _send({"type": "token", "text": f"⚠️ {provider['label']} API key not configured."})
+        err = f"⚠️ {provider['label']} API key not configured."
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
         return
 
+    url = provider["url"]
     headers = {
-        "Authorization": f"Bearer {provider['api_key']}",
         "Content-Type": "application/json",
     }
+
+    is_gemini = "generativelanguage.googleapis.com" in url
+    if is_gemini:
+        sep = "&" if "?" in url else "?"
+        url = f"{url}{sep}key={provider['api_key']}"
+    else:
+        headers["Authorization"] = f"Bearer {provider['api_key']}"
+
     if provider["url"].startswith("https://openrouter.ai"):
         headers["HTTP-Referer"] = "https://nakshtralogy.com"
         headers["X-Title"] = "Nakshtralogy"
@@ -758,8 +769,18 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
             timeout=httpx.Timeout(connect=10.0, read=None, write=10.0, pool=5.0)
         ) as client:
             async with client.stream(
-                "POST", provider["url"], headers=headers, json=payload,
+                "POST", url, headers=headers, json=payload,
             ) as stream:
+                if stream.status_code != 200:
+                    body = await stream.aread()
+                    err_text = body.decode("utf-8", errors="replace")[:300]
+                    logger.error("%s HTTP %d: %s", provider["label"], stream.status_code, err_text)
+                    err = f"⚠️ {provider['label']} error (HTTP {stream.status_code}): {err_text[:150]}"
+                    await _send({"type": "token", "text": err})
+                    if token_collector is not None:
+                        token_collector.append(err)
+                    return
+
                 async for line in stream.aiter_lines():
                     line = line.strip()
                     if not line or line == "data: [DONE]":
@@ -770,6 +791,15 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
                         chunk = json.loads(line)
                     except json.JSONDecodeError:
                         continue
+                    # Handle error responses embedded in stream
+                    if "error" in chunk:
+                        err_msg = chunk["error"].get("message", str(chunk["error"])) if isinstance(chunk["error"], dict) else str(chunk["error"])
+                        logger.error("%s stream error: %s", provider["label"], err_msg)
+                        err = f"⚠️ {provider['label']}: {err_msg[:200]}"
+                        await _send({"type": "token", "text": err})
+                        if token_collector is not None:
+                            token_collector.append(err)
+                        return
                     delta = chunk.get("choices", [{}])[0].get("delta", {})
                     text = delta.get("content", "")
                     if text:
@@ -779,9 +809,24 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
                             return
                         if token_collector is not None:
                             token_collector.append(text)
+    except httpx.ConnectError as e:
+        logger.error("%s connection refused: %s", provider["label"], e)
+        err = f"⚠️ {provider['label']}: Cannot connect — check API key and network."
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
+    except httpx.ReadTimeout as e:
+        logger.error("%s read timeout: %s", provider["label"], e)
+        err = f"⚠️ {provider['label']}: Response timed out. Try again."
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
     except Exception as e:
         logger.warning("%s stream failed: %s", provider["label"], e)
-        await _send({"type": "token", "text": f"⚠️ {provider['label']} error: {e}"})
+        err = f"⚠️ {provider['label']} error: {e}"
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
 
 
 # Legacy non-streaming function for REST fallback
