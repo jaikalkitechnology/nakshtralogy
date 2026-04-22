@@ -43,18 +43,16 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   static const _providerIcons = {
     'ollama-3b': Icons.flash_on,
-    'groq': Icons.bolt,
     'gemini': Icons.auto_awesome,
+    'groq': Icons.bolt,
     'openrouter': Icons.hub,
-    'deepseek': Icons.psychology,
   };
 
   static const _providerShortNames = {
     'ollama-3b': 'Qwen 3B',
-    'groq': 'Groq',
     'gemini': 'Gemini',
+    'groq': 'Groq',
     'openrouter': 'Router',
-    'deepseek': 'DeepSeek',
   };
 
   @override
