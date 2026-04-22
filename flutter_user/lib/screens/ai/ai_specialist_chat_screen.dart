@@ -151,10 +151,16 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       setState(() {
         _followupSuggestions = items.map((e) => e.toString()).toList();
       });
-    } else if (type == 'done') {
+    } else if (type == 'done' || type == 'interrupted') {
       if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
         setState(() {
           _messages.last.remove('streaming');
+          if (type == 'interrupted') {
+            final current = (_messages.last['text'] ?? '') as String;
+            if (current.isNotEmpty) {
+              _messages.last['text'] = '$current\n\n_[stopped]_';
+            }
+          }
           _sending = false;
         });
       }
@@ -171,6 +177,25 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     });
     _connectWs();
     _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nAnalyzing the birth chart of **$_selectedChartName**.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
+  }
+
+  void _stopGeneration() {
+    if (!_sending) return;
+    if (_wsConnected && _ws != null) {
+      _ws!.sink.add(jsonEncode({'type': 'interrupt'}));
+    }
+    if (_messages.isNotEmpty && _messages.last['streaming'] == true) {
+      setState(() {
+        _messages.last.remove('streaming');
+        final current = (_messages.last['text'] ?? '') as String;
+        if (current.isNotEmpty) {
+          _messages.last['text'] = '$current\n\n_[stopped]_';
+        }
+        _sending = false;
+      });
+    } else {
+      setState(() => _sending = false);
+    }
   }
 
   Future<void> _sendMessage() async {
@@ -486,14 +511,22 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             ),
             const SizedBox(width: 8),
             GestureDetector(
-              onTap: _sending ? null : _sendMessage,
+              onTap: _sending ? _stopGeneration : _sendMessage,
               child: Container(
                 width: 38, height: 38,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+                  gradient: LinearGradient(
+                    colors: _sending
+                        ? [Colors.red.shade400, Colors.red.shade600]
+                        : [AppColors.gold, AppColors.saffron],
+                  ),
                   borderRadius: BorderRadius.circular(19),
                 ),
-                child: Icon(_sending ? Icons.hourglass_top : Icons.send, color: AppColors.midnight, size: 18),
+                child: Icon(
+                  _sending ? Icons.stop : Icons.send,
+                  color: _sending ? Colors.white : AppColors.midnight,
+                  size: 18,
+                ),
               ),
             ),
           ]),

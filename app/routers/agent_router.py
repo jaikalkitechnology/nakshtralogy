@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.model import Chart, User
+from app.models.model import Chart, User, AgentLog
 from app.kundli import engine as nk_engine
 from app.agent.engine import NakshtraAgent, DOMAINS, detect_intent
 from app.agent.llm_service import generate_llm_response, get_available_providers
@@ -145,6 +145,40 @@ def get_domain(domain_key: str):
         "doshas": cfg["doshas"],
         "keywords": cfg["keywords"],
     }
+
+
+@router.get("/logs")
+def get_agent_logs(
+    limit: int = Query(50, ge=1, le=200),
+    provider: Optional[str] = None,
+    status: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Get recent agent logs for debugging LLM issues."""
+    q = db.query(AgentLog)
+    if current_user.role not in ("admin",):
+        q = q.filter(AgentLog.user_id == current_user.id)
+    if provider:
+        q = q.filter(AgentLog.provider == provider)
+    if status:
+        q = q.filter(AgentLog.status == status)
+    logs = q.order_by(AgentLog.created_at.desc()).limit(limit).all()
+    return [
+        {
+            "id": l.id,
+            "provider": l.provider,
+            "domain": l.domain,
+            "query": (l.query or "")[:100],
+            "status": l.status,
+            "error_message": l.error_message,
+            "http_status": l.http_status,
+            "response_tokens": l.response_tokens,
+            "latency_ms": l.latency_ms,
+            "created_at": str(l.created_at) if l.created_at else None,
+        }
+        for l in logs
+    ]
 
 
 @router.post("/chat", response_model=AgentChatResponse)
