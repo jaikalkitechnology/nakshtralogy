@@ -45,6 +45,13 @@ PROVIDERS = {
         "api_key": "",
         "type": "ollama",
     },
+    "gemini": {
+        "label": "Gemini 2.5 Flash Lite",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse",
+        "model": "gemini-2.5-flash-lite",
+        "api_key": "AIzaSyCKZnHsQTPlPjWEjoKmxwINc2YDzwL0uWo",
+        "type": "gemini",
+    },
     "groq": {
         "label": "Groq (Llama 3.3-70B)",
         "url": "https://api.groq.com/openai/v1/chat/completions",
@@ -670,6 +677,8 @@ async def stream_provider(
     ptype = provider.get("type")
     if ptype == "ollama":
         await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
+    elif ptype == "gemini":
+        await _stream_gemini(provider, messages, websocket, token_collector, _safe_send)
     else:
         await _stream_openai(provider, messages, websocket, token_collector, _safe_send)
 
@@ -716,6 +725,97 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
         logger.warning("Ollama stream failed (%s): %s", provider.get("model"), e)
         await _send({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
 
+
+async def _stream_gemini(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
+    """Stream from Gemini native API with SSE (alt=sse)."""
+    import httpx
+    _send = _safe_send or (lambda d: websocket.send_json(d))
+    if not provider["api_key"]:
+        err = f"⚠️ {provider['label']} API key not configured."
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
+        return
+
+    url = f"{provider['url']}&key={provider['api_key']}"
+
+    system_text = ""
+    gemini_contents = []
+    for msg in messages:
+        role = msg.get("role")
+        content = msg.get("content", "")
+        if role == "system":
+            system_text = content
+        else:
+            gemini_contents.append({
+                "role": "user" if role == "user" else "model",
+                "parts": [{"text": content}],
+            })
+
+    payload = {
+        "contents": gemini_contents,
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 1000,
+        },
+    }
+    if system_text:
+        payload["systemInstruction"] = {"parts": [{"text": system_text}]}
+
+    try:
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=5.0)
+        ) as client:
+            async with client.stream("POST", url, json=payload) as stream:
+                if stream.status_code != 200:
+                    body = await stream.aread()
+                    err_text = body.decode("utf-8", errors="replace")[:300]
+                    logger.error("Gemini HTTP %d: %s", stream.status_code, err_text)
+                    err = f"⚠️ Gemini error (HTTP {stream.status_code}): {err_text[:150]}"
+                    await _send({"type": "token", "text": err})
+                    if token_collector is not None:
+                        token_collector.append(err)
+                    return
+
+                async for line in stream.aiter_lines():
+                    line = line.strip()
+                    if not line or line.startswith("event:"):
+                        continue
+                    if line.startswith("data: "):
+                        line = line[6:]
+                    elif line.startswith("data:"):
+                        line = line[5:]
+                    else:
+                        continue
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+
+                    if "error" in chunk:
+                        err_msg = chunk["error"].get("message", str(chunk["error"])) if isinstance(chunk["error"], dict) else str(chunk["error"])
+                        logger.error("Gemini stream error: %s", err_msg)
+                        err = f"⚠️ Gemini: {err_msg[:200]}"
+                        await _send({"type": "token", "text": err})
+                        if token_collector is not None:
+                            token_collector.append(err)
+                        return
+
+                    for cand in chunk.get("candidates", []):
+                        for part in cand.get("content", {}).get("parts", []):
+                            text = part.get("text", "")
+                            if text:
+                                ok = await _send({"type": "token", "text": text})
+                                if ok is False:
+                                    return
+                                if token_collector is not None:
+                                    token_collector.append(text)
+    except Exception as e:
+        logger.warning("Gemini stream failed: %s", e)
+        err = f"⚠️ Gemini error: {e}"
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
 
 
 async def _stream_openai(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
