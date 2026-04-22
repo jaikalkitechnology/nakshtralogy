@@ -264,33 +264,46 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
     await websocket.accept()
     logger.info("WS agent connected: user=%s", user.id)
 
+    _ws_closed = False
+
+    async def _send(data: dict) -> bool:
+        nonlocal _ws_closed
+        if _ws_closed:
+            return False
+        try:
+            await _send(data)
+            return True
+        except Exception:
+            _ws_closed = True
+            return False
+
     try:
         while True:
             raw = await websocket.receive_text()
             try:
                 req = json.loads(raw)
             except json.JSONDecodeError:
-                await websocket.send_json({"type": "error", "text": "Invalid JSON"})
+                await _send({"type": "error", "text": "Invalid JSON"})
                 continue
 
             chart_id = req.get("chart_id")
             query = req.get("query", "").strip()
             domain = req.get("domain")
             language = req.get("language", "english")
-            provider_key = req.get("provider", "ollama-7b")
+            provider_key = req.get("provider", "ollama-3b")
 
             if not chart_id or not query:
-                await websocket.send_json({"type": "error", "text": "chart_id and query required"})
+                await _send({"type": "error", "text": "chart_id and query required"})
                 continue
 
             db = SessionLocal()
             try:
                 chart = db.query(Chart).filter(Chart.id == chart_id).first()
                 if not chart:
-                    await websocket.send_json({"type": "error", "text": "Chart not found"})
+                    await _send({"type": "error", "text": "Chart not found"})
                     continue
                 if chart.user_id != user.id and user.role not in ("astrologer", "admin"):
-                    await websocket.send_json({"type": "error", "text": "Not authorized"})
+                    await _send({"type": "error", "text": "Not authorized"})
                     continue
 
                 t0 = time.time()
@@ -309,7 +322,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 import uuid as _uuid
                 message_id = str(_uuid.uuid4())
 
-                await websocket.send_json({
+                await _send({
                     "type": "prob",
                     "data": {
                         "message_id": message_id,
@@ -363,7 +376,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 except Exception as e:
                     logger.warning("Stream failed (%s): %s", provider_key, e)
                     fallback = _fallback_response(query, result, language)
-                    await websocket.send_json({"type": "token", "text": fallback})
+                    await _send({"type": "token", "text": fallback})
                     collected_tokens.append(fallback)
 
                 # Parse follow-up suggestions from end of response
@@ -385,14 +398,14 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
 
                 # Send follow-ups as a separate frame for Flutter to render as chips
                 if followups:
-                    await websocket.send_json({"type": "followups", "items": followups[:3]})
+                    await _send({"type": "followups", "items": followups[:3]})
 
                 # Store Q&A in session memory (keep last 3 turns per chart)
                 if main_answer:
                     history.append({"q": query, "a": main_answer[:500]})
                     _save_session(user.id, chart_id, history[-_SESSION_MAX_TURNS:])
 
-                await websocket.send_json({"type": "done"})
+                await _send({"type": "done"})
 
             finally:
                 db.close()

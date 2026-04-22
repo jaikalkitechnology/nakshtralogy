@@ -39,16 +39,9 @@ OLLAMA_MODEL = settings.OLLAMA_MODEL
 
 PROVIDERS = {
     "ollama-3b": {
-        "label": "Qwen 3B (Offline Fast)",
+        "label": "Qwen 3B (Offline)",
         "url": f"{OLLAMA_URL}/api/chat",
         "model": "qwen2.5:3b",
-        "api_key": "",
-        "type": "ollama",
-    },
-    "ollama-7b": {
-        "label": "Qwen 7B (Offline Deep)",
-        "url": f"{OLLAMA_URL}/api/chat",
-        "model": "qwen2.5:7b-instruct-q4_K_M",
         "api_key": "",
         "type": "ollama",
     },
@@ -675,22 +668,29 @@ async def stream_provider(
     If token_collector is provided, appends each token text to it."""
     import httpx
 
+    async def _safe_send(data: dict) -> bool:
+        """Send JSON to websocket, return False if connection is closed."""
+        try:
+            await websocket.send_json(data)
+            return True
+        except Exception:
+            return False
+
     provider = PROVIDERS.get(provider_key)
     if not provider:
-        await websocket.send_json({"type": "token", "text": "Unknown provider."})
-        await websocket.send_json({"type": "done"})
+        await _safe_send({"type": "token", "text": "Unknown provider."})
         return
 
     if provider["type"] == "ollama":
-        await _stream_ollama(provider, messages, websocket, token_collector)
+        await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
     else:
-        await _stream_openai(provider, messages, websocket, token_collector)
+        await _stream_openai(provider, messages, websocket, token_collector, _safe_send)
 
 
-async def _stream_ollama(provider: dict, messages: list, websocket, token_collector: list = None) -> None:
+async def _stream_ollama(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
     import httpx
+    _send = _safe_send or (lambda d: websocket.send_json(d))
     try:
-        # No read timeout — let the model finish regardless of how long it takes
         async with httpx.AsyncClient(
             timeout=httpx.Timeout(connect=5.0, read=None, write=10.0, pool=5.0)
         ) as client:
@@ -704,7 +704,6 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "options": {
                         "temperature": 0.7,
                         "num_ctx": 4096,
-                        # num_predict: -1 = unlimited output tokens
                         "num_predict": -1,
                     },
                 },
@@ -718,20 +717,24 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                         continue
                     text = chunk.get("message", {}).get("content", "")
                     if text:
-                        await websocket.send_json({"type": "token", "text": text})
+                        ok = await _send({"type": "token", "text": text})
+                        if ok is False:
+                            logger.info("Client disconnected mid-stream (ollama)")
+                            return
                         if token_collector is not None:
                             token_collector.append(text)
                     if chunk.get("done"):
                         break
     except Exception as e:
         logger.warning("Ollama stream failed (%s): %s", provider.get("model"), e)
-        await websocket.send_json({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
+        await _send({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
 
 
-async def _stream_openai(provider: dict, messages: list, websocket, token_collector: list = None) -> None:
+async def _stream_openai(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
     import httpx
+    _send = _safe_send or (lambda d: websocket.send_json(d))
     if not provider["api_key"]:
-        await websocket.send_json({"type": "token", "text": f"⚠️ {provider['label']} API key not configured."})
+        await _send({"type": "token", "text": f"⚠️ {provider['label']} API key not configured."})
         return
 
     headers = {
@@ -742,9 +745,6 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
         headers["HTTP-Referer"] = "https://nakshtralogy.com"
         headers["X-Title"] = "Nakshtralogy"
 
-    # Cap API providers at 1000 tokens — some (e.g. OpenRouter) default to
-    # as low as 512 if unspecified, causing truncated responses. 1000 gives
-    # ~6-8 paragraphs which fits a detailed astrology reply comfortably.
     payload = {
         "model": provider["model"],
         "messages": messages,
@@ -773,12 +773,15 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
                     delta = chunk.get("choices", [{}])[0].get("delta", {})
                     text = delta.get("content", "")
                     if text:
-                        await websocket.send_json({"type": "token", "text": text})
+                        ok = await _send({"type": "token", "text": text})
+                        if ok is False:
+                            logger.info("Client disconnected mid-stream (%s)", provider["label"])
+                            return
                         if token_collector is not None:
                             token_collector.append(text)
     except Exception as e:
         logger.warning("%s stream failed: %s", provider["label"], e)
-        await websocket.send_json({"type": "token", "text": f"⚠️ {provider['label']} error: {e}"})
+        await _send({"type": "token", "text": f"⚠️ {provider['label']} error: {e}"})
 
 
 # Legacy non-streaming function for REST fallback
