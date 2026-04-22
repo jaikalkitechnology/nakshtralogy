@@ -54,23 +54,16 @@ PROVIDERS = {
     },
     "gemini": {
         "label": "Gemini 2.0 Flash",
-        "url": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent",
         "model": "gemini-2.0-flash",
         "api_key": settings.GEMINI_API_KEY,
-        "type": "openai",
+        "type": "gemini",
     },
     "openrouter": {
         "label": "OpenRouter",
         "url": "https://openrouter.ai/api/v1/chat/completions",
         "model": "meta-llama/llama-3.3-70b-instruct",
         "api_key": settings.OPENROUTER_API_KEY,
-        "type": "openai",
-    },
-    "deepseek": {
-        "label": "DeepSeek Chat",
-        "url": "https://api.deepseek.com/chat/completions",
-        "model": "deepseek-chat",
-        "api_key": settings.DEEPSEEK_API_KEY,
         "type": "openai",
     },
 }
@@ -681,8 +674,11 @@ async def stream_provider(
         await _safe_send({"type": "token", "text": "Unknown provider."})
         return
 
-    if provider["type"] == "ollama":
+    ptype = provider.get("type")
+    if ptype == "ollama":
         await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
+    elif ptype == "gemini":
+        await _stream_gemini(provider, messages, websocket, token_collector, _safe_send)
     else:
         await _stream_openai(provider, messages, websocket, token_collector, _safe_send)
 
@@ -703,8 +699,8 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
                     "stream": True,
                     "options": {
                         "temperature": 0.7,
-                        "num_ctx": 4096,
-                        "num_predict": -1,
+                        "num_ctx": 2048,  # Reduced from 4096 for faster response
+                        "num_predict": 400,  # Reduced from -1 (unlimited) to 400 tokens
                     },
                 },
             ) as stream:
@@ -730,6 +726,97 @@ async def _stream_ollama(provider: dict, messages: list, websocket, token_collec
         await _send({"type": "token", "text": f"⚠️ Ollama offline: {e}"})
 
 
+async def _stream_gemini(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
+    """Stream from Gemini's native streaming API."""
+    import httpx
+    _send = _safe_send or (lambda d: websocket.send_json(d))
+    if not provider["api_key"]:
+        err = f"⚠️ {provider['label']} API key not configured."
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
+        return
+
+    url = f"{provider['url']}?key={provider['api_key']}"
+
+    # Convert OpenAI format messages to Gemini format
+    system_text = ""
+    gemini_messages = []
+    for msg in messages:
+        role = msg.get("role")
+        content = msg.get("content", "")
+        if role == "system":
+            system_text = content
+        else:
+            gemini_messages.append({
+                "role": "user" if role == "user" else "model",
+                "parts": [{"text": content}]
+            })
+
+    payload = {
+        "contents": gemini_messages,
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 500,  # Gemini uses maxOutputTokens not max_tokens
+        }
+    }
+    if system_text:
+        payload["systemInstruction"] = {"parts": [{"text": system_text}]}
+
+    try:
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=10.0, read=None, write=10.0, pool=5.0)
+        ) as client:
+            async with client.stream("POST", url, json=payload) as stream:
+                if stream.status_code != 200:
+                    body = await stream.aread()
+                    err_text = body.decode("utf-8", errors="replace")[:300]
+                    logger.error("%s HTTP %d: %s", provider["label"], stream.status_code, err_text)
+                    err = f"⚠️ Gemini error (HTTP {stream.status_code}): {err_text[:150]}"
+                    await _send({"type": "token", "text": err})
+                    if token_collector is not None:
+                        token_collector.append(err)
+                    return
+
+                async for line in stream.aiter_lines():
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+
+                    if "error" in chunk:
+                        err_msg = chunk["error"].get("message", str(chunk["error"])) if isinstance(chunk["error"], dict) else str(chunk["error"])
+                        logger.error("Gemini stream error: %s", err_msg)
+                        err = f"⚠️ Gemini: {err_msg[:200]}"
+                        await _send({"type": "token", "text": err})
+                        if token_collector is not None:
+                            token_collector.append(err)
+                        return
+
+                    candidates = chunk.get("candidates", [])
+                    if candidates:
+                        content = candidates[0].get("content", {})
+                        parts = content.get("parts", [])
+                        for part in parts:
+                            text = part.get("text", "")
+                            if text:
+                                ok = await _send({"type": "token", "text": text})
+                                if ok is False:
+                                    logger.info("Client disconnected mid-stream (Gemini)")
+                                    return
+                                if token_collector is not None:
+                                    token_collector.append(text)
+    except Exception as e:
+        logger.warning("Gemini stream failed: %s", e)
+        err = f"⚠️ Gemini error: {e}"
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
+
+
 async def _stream_openai(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
     import httpx
     _send = _safe_send or (lambda d: websocket.send_json(d))
@@ -742,16 +829,9 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
 
     url = provider["url"]
     headers = {
+        "Authorization": f"Bearer {provider['api_key']}",
         "Content-Type": "application/json",
     }
-
-    is_gemini = "generativelanguage.googleapis.com" in url
-    if is_gemini:
-        sep = "&" if "?" in url else "?"
-        url = f"{url}{sep}key={provider['api_key']}"
-    else:
-        headers["Authorization"] = f"Bearer {provider['api_key']}"
-
     if provider["url"].startswith("https://openrouter.ai"):
         headers["HTTP-Referer"] = "https://nakshtralogy.com"
         headers["X-Title"] = "Nakshtralogy"
@@ -848,7 +928,7 @@ async def generate_llm_response(
                         {"role": "user", "content": build_rich_prompt(query, {"probability": agent_result, "active_yogas": agent_result.get("active_yogas", []), "active_doshas": agent_result.get("active_doshas", [])})},
                     ],
                     "stream": False,
-                    "options": {"temperature": 0.7, "num_predict": -1, "num_ctx": 4096},
+                    "options": {"temperature": 0.7, "num_predict": 400, "num_ctx": 2048},
                 },
             )
             if resp.status_code == 200:
