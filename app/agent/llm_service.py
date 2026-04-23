@@ -886,12 +886,25 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
         headers["HTTP-Referer"] = "https://nakshtralogy.com"
         headers["X-Title"] = "Nakshtralogy"
 
+    # Truncate messages if total chars exceed provider limits
+    total_chars = sum(len(m.get("content", "")) for m in messages)
+    send_messages = messages
+    if total_chars > 12000:
+        send_messages = []
+        for m in messages:
+            content = m.get("content", "")
+            if m.get("role") == "user" and len(content) > 6000:
+                content = content[:6000] + "\n...[truncated for model context limit]"
+            elif m.get("role") == "system" and len(content) > 4000:
+                content = content[:4000] + "\n...[truncated]"
+            send_messages.append({**m, "content": content})
+
     payload = {
         "model": provider["model"],
-        "messages": messages,
+        "messages": send_messages,
         "stream": True,
         "temperature": 0.7,
-        "max_tokens": 1000,
+        "max_tokens": 500,
     }
 
     try:

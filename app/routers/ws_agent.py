@@ -256,12 +256,13 @@ def _build_chart_context(data: dict, result: dict) -> dict:
 
 @router.websocket("/ws/agent/chat")
 async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
+    await websocket.accept()
+
     user = _auth_ws(token)
     if not user:
         await websocket.close(code=4001, reason="Unauthorized")
         return
 
-    await websocket.accept()
     logger.info("WS agent connected: user=%s", user.id)
 
     _ws_closed = False
