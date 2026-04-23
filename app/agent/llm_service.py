@@ -904,7 +904,7 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
         "messages": send_messages,
         "stream": True,
         "temperature": 0.7,
-        "max_tokens": 1000,
+        "max_tokens": 500,
     }
 
     try:
