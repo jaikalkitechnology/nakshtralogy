@@ -355,8 +355,13 @@ RULES:
 - If the question is NOT related to astrology/life/career/health/relationships/spirituality, politely redirect and suggest 3 astrology questions based on the user's chart data."""
 
 
-def build_rich_prompt(query: str, chart_context: dict) -> str:
-    """Build a detailed prompt with full kundli context including Shadbala."""
+def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> str:
+    """Build a detailed prompt with full kundli context including Shadbala.
+
+    intent: 8-section intent dict from detect_intent() — if present, drives
+    response format (urgency, sentiment, depth, sub_domain).
+    """
+    intent = intent or chart_context.get("intent") or {}
     parts = [f'User asked: "{query}"', ""]
 
     # Planet positions with Shadbala strength
@@ -627,75 +632,170 @@ def build_rich_prompt(query: str, chart_context: dict) -> str:
         parts.append(f"\n{cit_text}")
 
     # ═════════════════════════════════════════════════════════════════
-    # INTENT-AWARE INSTRUCTIONS — adapt answer format to question type
+    # INTENT-AWARE INSTRUCTIONS — driven by detect_intent() output
     # ═════════════════════════════════════════════════════════════════
-    q_lower = query.lower()
+    question_type   = intent.get("question_type", "explanation")
+    urgency         = intent.get("urgency", "medium")
+    sentiment       = intent.get("sentiment", "neutral")
+    response_depth  = intent.get("response_depth", "moderate")
+    sub_domain      = intent.get("sub_domain")
+    time_frame      = intent.get("time_frame", "future")
+    time_specific   = intent.get("time_specificity") == "specific"
+    domain          = intent.get("domain") or chart_context.get("probability", {}).get("domain", "life_path_luck")
 
-    # Timing intent → cite dasha periods with dates
-    timing_keywords = ["when", "kab", "time", "timing", "date", "year", "month", "period", "how long", "kitna samay"]
-    is_timing_q = any(kw in q_lower for kw in timing_keywords)
-
-    # Cause/reason intent → cite aspects and afflictions
-    why_keywords = ["why", "kyun", "kyu", "reason", "cause", "wajah", "karan", "difficult", "problem", "issue"]
-    is_why_q = any(kw in q_lower for kw in why_keywords)
-
-    # Health intent → cite chakras and health houses
-    health_keywords = ["health", "body", "disease", "illness", "pain", "swasthya", "bimari", "dard", "rog", "sick", "chronic"]
-    is_health_q = any(kw in q_lower for kw in health_keywords)
-
-    # Year/annual intent → cite Ashtakavarga + dasha overlap
-    year_keywords = ["year", "saal", "annual", "2025", "2026", "2027", "which year", "kaunsa saal"]
-    is_year_q = any(kw in q_lower for kw in year_keywords)
-
-    if is_timing_q:
+    # Emotional tone block — opens response with empathy if needed
+    if sentiment == "distressed":
         parts.append(
-            "\n⏰ TIMING QUESTION DETECTED — In your answer:\n"
-            "  1. Cite the SPECIFIC current MD/AD from BOTH Vimshottari AND Moola Dasha with end dates\n"
-            "  2. If both systems agree on the same planet (HIGH-CONFIDENCE flag above), emphasize this\n"
-            "     as 'both classical systems confirm' — highest certainty window\n"
-            "  3. If systems DIVERGE, weigh which dasha aligns better with the activated yogas/doshas\n"
-            "     list — that's the dominant influence right now\n"
-            "  4. If activated yogas support the question → 'favorable window is [lord] dasha until [end_date]'\n"
-            "  5. If current dasha is adverse → mention the NEXT dasha shift that would help (in either system)\n"
-            "  6. Use phrases like 'favorable window', 'peak activation period', 'shift toward' — never guaranteed dates\n"
-            "  7. Reference the activated yogas/doshas list above by name"
+            "\n💔 USER IS DISTRESSED — Open with genuine empathy (1 short sentence).\n"
+            "  - Acknowledge their worry before diving into chart analysis.\n"
+            "  - Avoid starting with cold technical terms like 'Your 10th house...'.\n"
+            "  - End with reassurance grounded in the chart (a strong yoga, favorable dasha shift, etc.)."
         )
-    if is_year_q:
+    elif sentiment == "worried":
         parts.append(
-            "\n📅 YEAR-QUALITY QUESTION DETECTED — In your answer:\n"
-            "  1. Overlay the current Dasha (lord) with Ashtakavarga SAV score of that sign\n"
-            "  2. Say 'the year is supportive' if MD lord's natal sign has bindus ≥4/8\n"
-            "  3. If weak sign (<25 SAV) is activated during the year, flag it as 'caution year'\n"
-            "  4. Suggest which planet's transit in next 12 months to watch"
+            "\n😟 USER IS WORRIED — Acknowledge their concern briefly, then give the analysis.\n"
+            "  - Validate the feeling in 1 sentence before technical content.\n"
+            "  - Always end on a constructive note with a concrete next step or remedy."
         )
-    if is_why_q:
+    elif sentiment == "hopeful":
         parts.append(
-            "\n🔍 CAUSE/REASON QUESTION DETECTED — In your answer:\n"
-            "  1. Identify the specific house lord or planet from the CHART DATA causing difficulty\n"
-            "  2. Name the GRAHA DRISHTI aspect responsible (e.g. 'Saturn's 10th aspect afflicts 4th')\n"
-            "  3. Mention the ACTIVATED DOSH from Dasha Activation list if it applies\n"
-            "  4. Connect root cause to practical remedy (mantra for the afflicted planet)"
-        )
-    if is_health_q:
-        parts.append(
-            "\n🏥 HEALTH QUESTION DETECTED — In your answer:\n"
-            "  1. Reference the specific CHAKRA HEALTH scores and body parts listed above\n"
-            "  2. Name the planet afflicting the 1st/6th/8th house from aspects\n"
-            "  3. Suggest the chakra-balancing beej mantra and color therapy from data\n"
-            "  4. ALWAYS add: 'Please consult a qualified doctor for medical concerns — astrology complements, never replaces, medical advice.'"
+            "\n🌟 USER IS HOPEFUL — Match their energy. Lead with the chart's positive indicators,\n"
+            "  then note realistic cautions. Don't undercut their optimism unless the chart strongly requires it."
         )
 
-    # Final response instructions — remedy constraint + follow-up suggestions
-    parts.append(
-        "\nRESPONSE FORMAT (strict):\n"
-        "1. Write your astrological analysis (5-8 sentences, referencing the specific chart data above)\n"
-        "2. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
-        "   Never invent mantras, gemstone names, or rituals. If a remedy isn't in the library, skip it.\n"
-        "3. After your analysis, on a NEW LINE output EXACTLY this marker: ---FOLLOWUPS---\n"
+    # Urgency block — influences tone and brevity
+    if urgency == "crisis":
+        parts.append(
+            "\n🚨 CRISIS URGENCY — Keep response DIRECT and ACTIONABLE.\n"
+            "  - Max 3-4 sentences before remedy.\n"
+            "  - Lead with the most immediate remedy (mantra/gemstone/action from REMEDY LIBRARY).\n"
+            "  - Name the next favorable dasha shift with approximate window."
+        )
+    elif urgency == "high":
+        parts.append(
+            "\n⚡ HIGH URGENCY — User wants quick clarity. Keep to 4-6 sentences.\n"
+            "  - State the chart's view in 2 sentences, then go to remedy + timeline."
+        )
+    elif urgency == "low":
+        parts.append(
+            "\n🪷 LOW URGENCY — User is casually exploring. Feel free to be thorough and educational."
+        )
+
+    # Question-type block — structures the response
+    if question_type == "timing":
+        parts.append(
+            "\n⏰ TIMING QUESTION — Structure your answer around dasha periods:\n"
+            "  1. Cite SPECIFIC current MD/AD from BOTH Vimshottari AND Moola Dasha with end dates.\n"
+            "  2. If both systems agree on the MD lord (HIGH-CONFIDENCE flag above), emphasize this\n"
+            "     as 'both classical systems confirm' — highest certainty window.\n"
+            "  3. If systems DIVERGE, weigh which dasha aligns with activated yogas/doshas.\n"
+            "  4. If activated yogas support the question → 'favorable window is [lord] dasha until [end_date]'.\n"
+            "  5. If current dasha is adverse → mention the NEXT dasha shift that helps.\n"
+            "  6. Use phrases like 'favorable window', 'peak activation period' — never guaranteed dates.\n"
+            "  7. Reference the activated yogas/doshas list above by name."
+        )
+        if time_specific:
+            parts.append("  8. User asked about a SPECIFIC window — confirm or refute whether that window is favorable using dasha end-dates.")
+    elif question_type == "reason":
+        parts.append(
+            "\n🔍 CAUSE/REASON QUESTION — Your answer must:\n"
+            "  1. Identify the specific house lord or planet from the CHART DATA causing difficulty.\n"
+            "  2. Name the GRAHA DRISHTI aspect responsible (e.g. 'Saturn's 10th aspect afflicts 4th').\n"
+            "  3. Mention the ACTIVATED DOSH from Dasha Activation list if it applies.\n"
+            "  4. Connect root cause to a practical remedy for the afflicted planet."
+        )
+    elif question_type == "remedy":
+        parts.append(
+            "\n🕉 REMEDY QUESTION — User is asking what to do. Your answer must:\n"
+            "  1. Name the specific planet/dosh being remedied (from CHART DATA).\n"
+            "  2. Give 1-2 remedies ONLY from the REMEDY LIBRARY above (mantra, gemstone, fast, charity).\n"
+            "  3. Specify the day/time if classical tradition prescribes it.\n"
+            "  4. End with realistic expectations — 'traditionally worn for 40 days' etc., not guaranteed results."
+        )
+    elif question_type == "yes_no":
+        parts.append(
+            "\n✅ YES/NO QUESTION — Give a clear stance in the first sentence, then 2-3 sentences of reasoning.\n"
+            "  - Use: 'Yes, the chart supports…' / 'The chart suggests caution because…' / 'Likely, with timing favoring…'\n"
+            "  - Never dodge the question with only generic text."
+        )
+    elif question_type == "prediction":
+        parts.append(
+            "\n🔮 PREDICTION QUESTION — Give the forecast but stay humble:\n"
+            "  - Lead with probability band (Very High/High/Moderate/Low) and what drives it.\n"
+            "  - Reference the specific yoga or dosha shaping the outcome.\n"
+            "  - Give the activation window via current/upcoming dasha."
+        )
+    elif question_type == "explanation":
+        parts.append(
+            "\n📚 EXPLANATION QUESTION — User wants to understand. Teach, don't just assess:\n"
+            "  - Walk through the relevant chart factors in a logical order.\n"
+            "  - Explain what a yoga/dosh/planet DOES before saying how it applies here."
+        )
+
+    # Sub-domain nuance — focused guidance per specific topic
+    sub_domain_hints = {
+        "promotion": "Focus on 10th-house lord's current dasha + 11th house (gains) strength. Check for Raj Yoga activation.",
+        "job_change": "Weigh 6th-12th axis (job transitions). A 10th-lord dasha ending = natural shift window.",
+        "job_loss": "Check 6th house + 8th-house aspects from malefics. If present, prescribe mitigating remedy FIRST.",
+        "marriage_timing": "Cite Venus/Jupiter dasha-antardasha + 7th-lord transit. Name 2-3 favorable years.",
+        "divorce": "Handle with EXTRA sensitivity. Never predict divorce — say 'period of marital strain' or 'need for communication remedy'.",
+        "children": "Check 5th house, 5th lord, Jupiter. Note dashas that activate 5th house.",
+        "disease": "Specify the chakra/body-part linkage. MANDATORY: end with 'consult qualified doctor — astrology complements, never replaces, medical advice.'",
+        "surgery": "Name the malefic aspect causing risk. Remedy + mandatory medical consultation disclaimer.",
+        "financial_crisis": "Be practical and gentle. Identify Vipreet Raj Yoga if present (turns loss into gain). Name upcoming recovery window.",
+        "exam_result": "Cite Mercury + Jupiter + 5th-lord strength. Note dasha at exam date.",
+        "abroad_study": "Focus on 9th house, 12th house, Rahu placement.",
+        "buy_timing": "Check Mars (property), 4th house, 4th-lord dasha for timing of purchase.",
+        "case_outcome": "6th house rules litigation. 11th house = gains (winning). Handle with caution — never promise victory.",
+        "purpose": "Read 9th house (dharma), 10th house (karma), atmakaraka. Explain the SOUL's arc, not a to-do list.",
+        "anxiety":  "Moon + 4th house + Chandra Dosh. Add mental-health disclaimer if distressed.",
+        "depression": "Handle gently. Moon + Mercury affliction. MANDATORY disclaimer: 'If these feelings persist, please reach out to a mental health professional.'",
+    }
+    if sub_domain and sub_domain in sub_domain_hints:
+        parts.append(f"\n🎯 SUB-TOPIC ({sub_domain}): {sub_domain_hints[sub_domain]}")
+
+    # Response depth — governs final length
+    if response_depth == "brief":
+        length_rule = "Write 2-4 sentences ONLY. Skip the follow-ups section for crisis urgency."
+    elif response_depth == "detailed":
+        length_rule = "Write 8-12 sentences with full reasoning. Cover multiple chart factors."
+    else:
+        length_rule = "Write 5-8 sentences — balanced analysis with 1-2 key chart references."
+
+    # Health-domain mandatory disclaimer
+    health_disclaimer = ""
+    if domain == "health_wellness" or sub_domain in ("disease", "surgery", "chronic", "recovery"):
+        health_disclaimer = (
+            "\n4. MANDATORY: end with 'Please consult a qualified doctor — astrology complements, "
+            "never replaces, medical advice.'"
+        )
+    # Mental-health mandatory disclaimer
+    mental_disclaimer = ""
+    if domain == "mental_stress" or sub_domain in ("depression", "anxiety"):
+        mental_disclaimer = (
+            "\n4. MANDATORY: end with 'If these feelings persist, please reach out to a qualified "
+            "mental-health professional — astrology supports, never replaces, clinical care.'"
+        )
+
+    # Follow-ups — skip for brief/crisis
+    skip_followups = (response_depth == "brief" and urgency == "crisis")
+    followup_rule = (
+        "" if skip_followups else
+        "\n3. After your analysis, on a NEW LINE output EXACTLY this marker: ---FOLLOWUPS---\n"
         "4. Then list EXACTLY 3 short follow-up questions the user might ask next,\n"
         "   each on its own line, each under 60 chars, relevant to this chart's data.\n"
-        "   Format: Q: What does my 10th house say about authority?\n"
-        "5. If the question is NOT astrology-related, politely redirect AND still provide 3 Q: follow-ups from the chart."
+        "   Format: Q: What does my 10th house say about authority?"
+    )
+
+    parts.append(
+        f"\nRESPONSE FORMAT (strict):\n"
+        f"1. {length_rule} Reference the specific chart data above.\n"
+        f"2. For any remedy you mention, use ONLY entries from the REMEDY LIBRARY above.\n"
+        f"   Never invent mantras, gemstone names, or rituals. If a remedy isn't in the library, skip it."
+        f"{health_disclaimer}{mental_disclaimer}"
+        f"{followup_rule}\n"
+        f"5. If the question is NOT astrology-related, politely redirect "
+        f"{'(skip follow-ups due to crisis urgency).' if skip_followups else 'AND still provide 3 Q: follow-ups from the chart.'}"
     )
     return "\n".join(parts)
 
@@ -988,7 +1088,13 @@ async def generate_llm_response(
                     "model": OLLAMA_MODEL,
                     "messages": [
                         {"role": "system", "content": build_system_prompt(language)},
-                        {"role": "user", "content": build_rich_prompt(query, {"probability": agent_result, "active_yogas": agent_result.get("active_yogas", []), "active_doshas": agent_result.get("active_doshas", [])})},
+                        {"role": "user", "content": build_rich_prompt(
+                            query,
+                            {"probability": agent_result,
+                             "active_yogas": agent_result.get("active_yogas", []),
+                             "active_doshas": agent_result.get("active_doshas", [])},
+                            intent=agent_result.get("intent"),
+                        )},
                     ],
                     "stream": False,
                     "options": {"temperature": 0.7, "num_predict": 400, "num_ctx": 2048},

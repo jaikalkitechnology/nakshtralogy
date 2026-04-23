@@ -351,7 +351,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Build rich kundli context + session memory
                 t1 = time.time()
                 chart_context = _build_chart_context(data, result)
-                user_prompt = build_rich_prompt(query, chart_context)
+                user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"))
 
                 # Personalize system prompt with chart holder's details + detected domain
                 chart_holder = {
@@ -450,6 +450,12 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     log_db = SessionLocal()
                     try:
                         # Store full user_prompt in query field for debugging
+                        # Serialize intent for offline analysis
+                        try:
+                            intent_obj = result.get("intent") or {}
+                            intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
+                        except Exception:
+                            intent_json_str = None
                         log_entry = AgentLog(
                             user_id=user.id,
                             chart_id=chart_id,
@@ -458,6 +464,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             domain=detected_domain,
                             language=effective_lang,
                             query=user_prompt[:5000],  # Store full rich prompt (up to 5K chars)
+                            intent_json=intent_json_str,
                             status=log_status,
                             error_message=log_error,
                             http_status=log_http,

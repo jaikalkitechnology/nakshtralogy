@@ -923,6 +923,9 @@ class AgentLog(Base):
     domain = Column(String(40), nullable=True)
     language = Column(String(20), nullable=True)
     query = Column(Text, nullable=True)
+    # 8-section intent output from detect_intent() serialized as JSON (sub_domain,
+    # question_type, urgency, sentiment, response_depth, time_frame, confidence, etc.)
+    intent_json = Column(Text, nullable=True)
     status = Column(String(20), nullable=False, index=True)  # success | error | timeout | interrupted
     error_message = Column(Text, nullable=True)
     http_status = Column(Integer, nullable=True)
