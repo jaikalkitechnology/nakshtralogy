@@ -97,7 +97,7 @@ DOMAINS = {
         "planet_weights": {"Venus":0.30,"Jupiter":0.30,"Moon":0.20,"Mars":0.20},
         "yogas": ["Raj Yoga","Dhan Yoga"],
         "doshas": ["Mangal Dosh","Shukra Dosh","Guru Dosh"],
-        "keywords": ["marriage","shaadi","wife","husband","family","divorce","vivah","parivar"],
+        "keywords": ["marriage","married","shaadi","wedding","wife","husband","family","divorce","vivah","parivar"],
     },
     "health_wellness": {
         "label": "Health & Wellness Specialist", "emoji": "\U0001f3e5",
@@ -152,121 +152,155 @@ DOMAINS = {
 }
 
 TIME_PAST = {"was","were","happened","had","did","before","past","pehle","tha","thi","ho gaya"}
-TIME_CURRENT = {"is","are","currently","now","today","present","abhi","aaj","chal raha"}
+TIME_CURRENT = {"currently","now","today","present","abhi","aaj","chal raha"}
 TIME_FUTURE = {"will","when will","shall","going to","predict","future","kab hoga","hoga","milega","kab"}
 
-# Sub-domain detection within each domain
+# Sub-domain detection within each domain — all 12 domains covered
 SUB_DOMAINS = {
     "career_job": {
         "promotion": ["promotion","raise","increment","salary increase","appraisal","hike","bonus"],
-        "job_change": ["job change","new job","switch","career change","move to","switch job"],
+        "job_change": ["job change","new job","switch job","career change","move to company"],
         "job_loss": ["job loss","layoff","retrench","fired","unemploy","naukri gava","resign"],
-        "interview": ["interview","selection","hire","candidate","placement","recruitment"],
-        "job_stability": ["stable job","job security","stability","secure job"],
+        "interview": ["interview","selection","hired","candidate","placement","recruitment"],
+        "job_stability": ["stable job","job security","job stability","secure job"],
     },
     "business_startup": {
-        "business_launch": ["start business","launch startup","open business","business plan"],
-        "profit": ["profit","revenue","sales","income","business grow"],
-        "partnership": ["partner","partnership","joint venture","collaborate"],
-        "business_loss": ["loss","business fail","closure","shutdown"],
+        "business_launch": ["start business","launch startup","open business","business plan","start company"],
+        "profit": ["profit","revenue","sales","business grow","business income"],
+        "partnership": ["business partner","partnership","joint venture","collaborate"],
+        "business_loss": ["business fail","business closure","shutdown","business loss"],
     },
-    "marriage_family": {
-        "marriage_timing": ["marriage when","shaadi kab","wedding date","get married"],
-        "spouse_nature": ["spouse type","partner nature","life partner","match"],
-        "divorce": ["divorce","separation","split","breakup","conflict"],
-        "children": ["children","baby","kids","pregnancy","conception"],
+    "education_career": {
+        "exam_result": ["exam","result","pass","fail","marks","percentage","grade"],
+        "admission": ["admission","college admission","university admission","entrance"],
+        "scholarship": ["scholarship","fellowship","grant","stipend"],
+        "abroad_study": ["abroad","foreign study","study abroad","overseas education","visa"],
+    },
+    "money_wealth": {
+        "income_growth": ["salary","earning","income","wages","paisa kamana"],
+        "investment": ["investment","stock","mutual fund","crypto","trading","share market"],
+        "savings": ["save money","saving","accumulate wealth","build wealth"],
+        "sudden_wealth": ["lottery","inheritance","sudden money","jackpot"],
+    },
+    "debt_recovery": {
+        "recovery_timing": ["when will recover","recovery","pay back","clear debt"],
+        "new_loan_risk": ["new loan","take loan","should i borrow","apply loan"],
+        "lender_dispute": ["lender","borrower","dispute","repayment problem"],
     },
     "love_relationship": {
         "new_relationship": ["new love","fall in love","dating","romance","relationship start"],
         "relationship_status": ["current love","existing relationship","boyfriend","girlfriend"],
-        "relationship_problem": ["fight","conflict","problem","issue","break up"],
-        "future_relationship": ["future love","will i find","soulmate"],
+        "relationship_problem": ["fight","conflict","issue","break up","breakup"],
+        "future_relationship": ["future love","will i find","soulmate","true love"],
+    },
+    "marriage_family": {
+        "marriage_timing": ["marriage when","shaadi kab","wedding date","get married","marriage year"],
+        "spouse_nature": ["spouse type","partner nature","life partner","match"],
+        "divorce": ["divorce","separation","split","marital conflict"],
+        "children": ["children","baby","kids","pregnancy","conception"],
     },
     "health_wellness": {
         "disease": ["disease","illness","sick","health problem","infection"],
-        "surgery": ["surgery","operation","hospital","treatment"],
+        "surgery": ["surgery","operation","hospital","medical treatment"],
         "recovery": ["recover","healing","get well","medicine"],
         "chronic": ["chronic","long term","recurring","ongoing"],
     },
-    "money_wealth": {
-        "income": ["income","earning","salary","wages","paisa kamana"],
-        "investment": ["investment","stock","mutual fund","crypto","trading"],
-        "savings": ["save","saving","accumulate","build wealth"],
-        "financial_crisis": ["financial crisis","debt trap","loss","bankruptcy"],
+    "mental_stress": {
+        "sleep_issue": ["sleep","insomnia","neend","nightmare"],
+        "anxiety": ["anxiety","panic","restless","overthinking"],
+        "depression": ["depression","depressed","sad","hopeless","empty"],
+        "relationship_stress": ["relationship stress","family stress","work stress"],
+    },
+    "property_assets": {
+        "buy_timing": ["buy property","purchase land","buy house","buy flat"],
+        "sell_timing": ["sell property","sell house","sell land","sell flat"],
+        "dispute": ["property dispute","land dispute","boundary","title"],
+        "inheritance": ["inheritance","ancestral property","family property","will property"],
+    },
+    "legal_dispute": {
+        "case_outcome": ["case outcome","verdict","judgement","win case","lose case"],
+        "court_date": ["court date","hearing","trial","appearance"],
+        "settlement": ["settlement","compromise","out of court","mediate"],
+    },
+    "life_path_luck": {
+        "purpose": ["life purpose","dharma","meaning of life","calling"],
+        "major_change": ["major change","big decision","turning point","life change"],
+        "spiritual_growth": ["spiritual","meditation","enlightenment","awakening"],
     },
 }
 
 QUESTION_TYPE_KEYWORDS = {
-    "yes_no": {
-        "en": ["will i","can i","should i","is there","do i have","am i","are there","is my"],
-        "hi": ["kya","kya mai","hoga kya","chahiye"],
-        "hinglish": ["kya mujhe","will i"]
-    },
+    # Order matters for tie-breaks: timing before yes_no so "when will I" → timing.
     "timing": {
-        "en": ["when","how long","how many","how many years","within","till","by","before","after"],
-        "hi": ["kab","kitna samay","saal","mahine","din","kab tak"],
-        "hinglish": ["kab milega","kab hoga"]
+        "en": ["when","when will","how long","how many years","how many months","within","till","by when"],
+        "hi": ["kab","kitna samay","kab tak","kab hoga"],
+        "hinglish": ["kab milega","kab hoga","kab tak"]
+    },
+    "yes_no": {
+        "en": ["will i","can i","should i","is there","do i have","am i","are there","is my","will my","can my"],
+        "hi": ["kya mai","kya mujhe","hoga kya","chahiye kya"],
+        "hinglish": ["kya mujhe","should i"]
     },
     "remedy": {
-        "en": ["remedy","solution","mantra","gemstone","gem","stone","upaay","what should","what to do"],
+        "en": ["remedy","solution","mantra","gemstone","what should i do","what to do","upaay"],
         "hi": ["upay","ilaj","upchar","mantra","ratna"],
-        "hinglish": ["remedy kya hai","solution"]
+        "hinglish": ["remedy kya","solution kya","upay kya"]
     },
     "reason": {
         "en": ["why","reason","cause","because","due to","what is causing","how come"],
-        "hi": ["kyu","reason","kaaran","wajah"],
+        "hi": ["kyun","kaaran","wajah"],
         "hinglish": ["kyun","why"]
     },
     "prediction": {
-        "en": ["will","predict","future","what will","what is","possibility","chance","likely"],
+        "en": ["predict","future","what will","possibility","chance","likely","forecast"],
         "hi": ["hoga","milega","aayega","hogi"],
         "hinglish": ["kya hoga","milega kya"]
     },
     "explanation": {
-        "en": ["explain","tell me","what is","meaning","understand","how does","what does"],
-        "hi": ["samjhao","matlab","kya hai","samajhiye"],
-        "hinglish": ["explain karo","matlab"]
+        "en": ["explain","tell me about","meaning","understand","how does","what does it mean"],
+        "hi": ["samjhao","matlab","samajhiye","kya hai matlab"],
+        "hinglish": ["explain karo","matlab kya"]
     },
 }
 
 URGENCY_KEYWORDS = {
     "crisis": {
-        "en": ["urgent","emergency","immediately","asap","right now","quick","critical","severe"],
-        "hi": ["turant","aapaat","turant karo","fauran"],
+        "en": ["urgent","emergency","immediately","asap","right now","critical","severe"],
+        "hi": ["turant","aapaat","fauran"],
         "hinglish": ["urgent","asap"]
     },
     "high": {
-        "en": ["worried","concerned","anxious","stress","problem","issue","help","please help"],
-        "hi": ["pareshaan","chinta","dar","fiqr","tension","takleef"],
-        "hinglish": ["worried","stress"]
+        "en": ["worried","concerned","anxious","stressed","problem","please help","help me"],
+        "hi": ["pareshaan","chinta","fiqr","takleef"],
+        "hinglish": ["tension","stress"]
     },
     "medium": {
         "en": ["wondering","curious","thinking","planning","considering","want to know"],
-        "hi": ["sochna","plan","soच","vichar"],
+        "hi": ["sochna","plan","vichar"],
         "hinglish": ["planning","soch raha"]
     },
     "low": {
         "en": ["just wondering","out of curiosity","casual","for fun","out of interest"],
-        "hi": ["bas","meher","khel","masti"],
-        "hinglish": ["just","casual"]
+        "hi": ["bas aise","masti"],
+        "hinglish": ["just asking","casual"]
     },
 }
 
 SENTIMENT_KEYWORDS = {
     "distressed": {
-        "en": ["help","please","desperate","afraid","scared","terrified","panic","afraid","suffer"],
-        "hi": ["madad","dar","bhaya","sangat","bura"],
-        "hinglish": ["help","scared"]
+        "en": ["desperate","afraid","scared","terrified","panic","suffer","hopeless","please help"],
+        "hi": ["madad karo","bahut dar","bura haal"],
+        "hinglish": ["scared","hopeless"]
     },
     "worried": {
-        "en": ["worried","concerned","anxious","stress","tension","fear","nervous"],
-        "hi": ["chinta","pareshaan","fiqr","dar","tension"],
+        "en": ["worried","concerned","anxious","stressed","tension","fear","nervous"],
+        "hi": ["chinta","pareshaan","fiqr"],
         "hinglish": ["worried","tension"]
     },
     "hopeful": {
-        "en": ["hope","excited","positive","will succeed","confident","believe","good","best"],
-        "hi": ["asha","khushi","vishwas","safal","acha"],
-        "hinglish": ["hope","confident"]
+        "en": ["hope","excited","positive","confident","believe","grateful","blessed"],
+        "hi": ["asha","khushi","vishwas","safal"],
+        "hinglish": ["hopeful","confident"]
     },
     "neutral": {
         "en": [],
@@ -275,148 +309,220 @@ SENTIMENT_KEYWORDS = {
     },
 }
 
+# Negation words — if they appear within 3 tokens BEFORE an emotion/urgency keyword,
+# the match is discarded. "I am NOT worried" → worried=0.
+NEGATIONS = {
+    "not","no","never","none","nothing","cant","cannot","cant't","dont","don't",
+    "doesnt","doesn't","isnt","isn't","arent","aren't","wont","won't","shouldnt","shouldn't",
+    "nahi","nahin","na","mat","kabhi nahi","bilkul nahi"
+}
 
-def detect_intent(query: str) -> dict:
+# ───────────────────────────────────────────────────────────────────
+# Pre-compiled regex patterns (built once at module load)
+# ───────────────────────────────────────────────────────────────────
+
+def _compile_bounded(keywords):
+    """Compile an alternation regex with word boundaries. Returns None if empty."""
+    if not keywords:
+        return None
+    # Longest-first so "will i find" wins over "will i"
+    sorted_kws = sorted(set(keywords), key=len, reverse=True)
+    pattern = r'(?<!\w)(?:' + '|'.join(re.escape(k) for k in sorted_kws) + r')(?!\w)'
+    return re.compile(pattern, re.IGNORECASE)
+
+
+def _flatten_lang_keywords(lang_dict):
+    """{lang: [kw, ...], ...} → flat list."""
+    out = []
+    for lang_kws in lang_dict.values():
+        out.extend(lang_kws)
+    return out
+
+
+# Per-keyword compiled patterns for DOMAIN (to preserve per-keyword weighting)
+_DOMAIN_KW_COMPILED = {
+    domain: [(2 if " " in kw else 1, _compile_bounded([kw]))
+             for kw in cfg["keywords"]]
+    for domain, cfg in DOMAINS.items()
+}
+_SUB_DOMAIN_KW_COMPILED = {
+    dom: {
+        sub: [(2 if " " in kw else 1, _compile_bounded([kw])) for kw in kws]
+        for sub, kws in subs.items()
+    }
+    for dom, subs in SUB_DOMAINS.items()
+}
+
+# Combined patterns for categorical detection
+_QTYPE_PATTERNS = {k: _compile_bounded(_flatten_lang_keywords(v))
+                   for k, v in QUESTION_TYPE_KEYWORDS.items()}
+_URGENCY_PATTERNS = {k: _compile_bounded(_flatten_lang_keywords(v))
+                     for k, v in URGENCY_KEYWORDS.items()}
+_SENTIMENT_PATTERNS = {k: _compile_bounded(_flatten_lang_keywords(v))
+                       for k, v in SENTIMENT_KEYWORDS.items()}
+
+_TIME_PAST_RX = _compile_bounded(TIME_PAST)
+_TIME_CURRENT_RX = _compile_bounded(TIME_CURRENT)
+_TIME_FUTURE_RX = _compile_bounded(TIME_FUTURE)
+_NEGATION_RX = _compile_bounded(NEGATIONS)
+
+_SPECIFIC_TIME_PATTERNS = [
+    re.compile(r'\b\d+\s*(month|year|week|day|saal|mahina|mahine)\b', re.IGNORECASE),
+    re.compile(r'\b(next|within|till|by|before|after)\s+(?:few|\d+|one|two|three|six|twelve)\b', re.IGNORECASE),
+    re.compile(r'\b(january|february|march|april|may|june|july|august|september|october|november|december)\b', re.IGNORECASE),
+]
+
+_HINGLISH_MARKERS = {"kya","kab","kyun","upay","naukri","shaadi","pyaar","dhan","kismat","bhagya"}
+_HINGLISH_RX = _compile_bounded(_HINGLISH_MARKERS)
+
+
+def _has_negation_before(text: str, match_start: int, window: int = 3) -> bool:
+    """True if any negation word appears within `window` tokens before match_start."""
+    prefix = text[:match_start].strip()
+    if not prefix:
+        return False
+    tokens = prefix.split()[-window:]
+    joined = " ".join(tokens)
+    return bool(_NEGATION_RX and _NEGATION_RX.search(joined))
+
+
+def _count_hits(pattern, text: str, skip_negated: bool = False) -> int:
+    """Count regex matches in text. If skip_negated, discard matches preceded by negation."""
+    if pattern is None:
+        return 0
+    if not skip_negated:
+        return sum(1 for _ in pattern.finditer(text))
+    return sum(1 for m in pattern.finditer(text)
+               if not _has_negation_before(text, m.start()))
+
+
+def detect_intent(query: str, user_language: Optional[str] = None) -> dict:
     """
     8-section intent detection for comprehensive AI agent routing.
+
+    Args:
+        query: user's natural language question
+        user_language: explicit language choice from UI ("english"/"hindi"/"hinglish").
+                       When provided, overrides auto-detection.
+
     Returns: {domain, sub_domain, time_frame, time_specificity, question_type,
               urgency, sentiment, response_depth, language_preference, confidence}
     """
     q_lower = query.lower()
-    words = set(re.findall(r'\w+', q_lower))
 
-    # ══════════════════════════════════════════════════════════════════
-    # 1. DOMAIN DETECTION
-    # ══════════════════════════════════════════════════════════════════
+    # ═══ 1. DOMAIN DETECTION (word-boundary regex) ═══
     domain_scores = {}
-    for domain, cfg in DOMAINS.items():
-        score = sum(2 if " " in kw else 1 for kw in cfg["keywords"] if kw in q_lower)
-        domain_scores[domain] = score
-
+    for domain, kw_list in _DOMAIN_KW_COMPILED.items():
+        domain_scores[domain] = sum(weight for weight, rx in kw_list if rx.search(q_lower))
     best_domain = max(domain_scores, key=domain_scores.get)
     best_score = domain_scores[best_domain]
     if best_score == 0:
         best_domain = "life_path_luck"
 
-    # ══════════════════════════════════════════════════════════════════
-    # 2. SUB-DOMAIN DETECTION
-    # ══════════════════════════════════════════════════════════════════
+    # ═══ 2. SUB-DOMAIN (multi-word weighted) ═══
     sub_domain = None
-    if best_domain in SUB_DOMAINS:
+    sub_score_value = 0
+    if best_domain in _SUB_DOMAIN_KW_COMPILED:
         sub_scores = {}
-        for sub, keywords in SUB_DOMAINS[best_domain].items():
-            sub_scores[sub] = sum(1 for kw in keywords if kw in q_lower)
-        if max(sub_scores.values()) > 0:
+        for sub, kw_list in _SUB_DOMAIN_KW_COMPILED[best_domain].items():
+            sub_scores[sub] = sum(weight for weight, rx in kw_list if rx.search(q_lower))
+        if sub_scores and max(sub_scores.values()) > 0:
             sub_domain = max(sub_scores, key=sub_scores.get)
+            sub_score_value = sub_scores[sub_domain]
 
-    # ══════════════════════════════════════════════════════════════════
-    # 3. TIME FRAME & SPECIFICITY
-    # ══════════════════════════════════════════════════════════════════
-    past_hits = sum(1 for kw in TIME_PAST if kw in q_lower)
-    curr_hits = sum(1 for kw in TIME_CURRENT if kw in q_lower)
-    fut_hits = sum(1 for kw in TIME_FUTURE if kw in q_lower)
+    # ═══ 3. TIME FRAME & SPECIFICITY ═══
+    past_hits = _count_hits(_TIME_PAST_RX, q_lower)
+    curr_hits = _count_hits(_TIME_CURRENT_RX, q_lower)
+    fut_hits = _count_hits(_TIME_FUTURE_RX, q_lower)
 
-    if fut_hits >= curr_hits and fut_hits >= past_hits:
+    if fut_hits >= curr_hits and fut_hits >= past_hits and fut_hits > 0:
         time_frame = "future"
-    elif curr_hits >= past_hits:
+    elif past_hits > curr_hits and past_hits > 0:
+        time_frame = "past"
+    elif curr_hits > 0:
         time_frame = "current"
     else:
-        time_frame = "past"
+        # No explicit tense markers — lean on question_type detected later, default future
+        time_frame = "future"
 
-    # Time specificity: specific window (e.g., "next 3 months") vs vague
-    specific_time_patterns = [
-        r'\d+\s*(month|year|week|day|saal|mahina)',
-        r'(next|within|till|by|before|after)\s+(few|3|6|12)',
-        r'(january|february|march|april|may|june|july|august|september|october|november|december)',
-    ]
-    has_specific_time = any(re.search(p, q_lower) for p in specific_time_patterns)
+    has_specific_time = any(p.search(q_lower) for p in _SPECIFIC_TIME_PATTERNS)
     time_specificity = "specific" if has_specific_time else "vague"
 
-    # ══════════════════════════════════════════════════════════════════
-    # 4. QUESTION TYPE
-    # ══════════════════════════════════════════════════════════════════
-    question_type = "explanation"  # default
-    type_scores = {}
-    for q_type, keywords_by_lang in QUESTION_TYPE_KEYWORDS.items():
-        all_keywords = set()
-        for lang_keywords in keywords_by_lang.values():
-            all_keywords.update(lang_keywords)
-        type_scores[q_type] = sum(1 for kw in all_keywords if kw in q_lower)
-
+    # ═══ 4. QUESTION TYPE ═══
+    type_scores = {k: _count_hits(rx, q_lower) for k, rx in _QTYPE_PATTERNS.items()}
     if max(type_scores.values()) > 0:
         question_type = max(type_scores, key=type_scores.get)
+    else:
+        question_type = "explanation"  # default
 
-    # ══════════════════════════════════════════════════════════════════
-    # 5. URGENCY LEVEL
-    # ══════════════════════════════════════════════════════════════════
-    urgency = "medium"  # default
-    urgency_scores = {}
-    for level, keywords_by_lang in URGENCY_KEYWORDS.items():
-        all_keywords = set()
-        for lang_keywords in keywords_by_lang.values():
-            all_keywords.update(lang_keywords)
-        urgency_scores[level] = sum(1 for kw in all_keywords if kw in q_lower)
-
+    # ═══ 5. URGENCY (negation-aware) ═══
+    urgency_scores = {
+        k: _count_hits(rx, q_lower, skip_negated=True)
+        for k, rx in _URGENCY_PATTERNS.items()
+    }
     if max(urgency_scores.values()) > 0:
         urgency = max(urgency_scores, key=urgency_scores.get)
+    else:
+        urgency = "medium"
 
-    # ══════════════════════════════════════════════════════════════════
-    # 6. SENTIMENT/EMOTIONAL TONE
-    # ══════════════════════════════════════════════════════════════════
-    sentiment = "neutral"  # default
-    sentiment_scores = {}
-    for emotion, keywords_by_lang in SENTIMENT_KEYWORDS.items():
-        all_keywords = set()
-        for lang_keywords in keywords_by_lang.values():
-            all_keywords.update(lang_keywords)
-        sentiment_scores[emotion] = sum(1 for kw in all_keywords if kw in q_lower)
-
+    # ═══ 6. SENTIMENT (negation-aware) ═══
+    sentiment_scores = {
+        k: _count_hits(rx, q_lower, skip_negated=True)
+        for k, rx in _SENTIMENT_PATTERNS.items()
+    }
     if max(sentiment_scores.values()) > 0:
         sentiment = max(sentiment_scores, key=sentiment_scores.get)
+    else:
+        sentiment = "neutral"
 
-    # ══════════════════════════════════════════════════════════════════
-    # 7. RESPONSE DEPTH
-    # ══════════════════════════════════════════════════════════════════
-    response_depth = "moderate"  # default
-    # Brief: short yes/no, urgent, distressed
-    if question_type in ("yes_no", "prediction") and urgency in ("crisis", "high") and sentiment in ("distressed", "worried"):
-        response_depth = "brief"
-    # Detailed: explanation, low urgency, hopeful
-    elif question_type in ("explanation", "remedy") and urgency == "low" and sentiment != "distressed":
-        response_depth = "detailed"
+    # ═══ 7. RESPONSE DEPTH (aggregated signals) ═══
+    depth_scores = {"brief": 0, "moderate": 1, "detailed": 0}  # moderate baseline
+    # Brief signals
+    if urgency == "crisis": depth_scores["brief"] += 3
+    if urgency == "high":   depth_scores["brief"] += 1
+    if question_type == "yes_no":     depth_scores["brief"] += 2
+    if sentiment == "distressed":     depth_scores["brief"] += 1
+    # Detailed signals
+    if question_type == "explanation": depth_scores["detailed"] += 3
+    if question_type == "remedy":      depth_scores["detailed"] += 2
+    if question_type == "reason":      depth_scores["detailed"] += 1
+    if urgency == "low":               depth_scores["detailed"] += 1
+    if sentiment == "hopeful":         depth_scores["detailed"] += 1
+    # Moderate bias for timing/prediction
+    if question_type == "timing":      depth_scores["moderate"] += 2
+    if question_type == "prediction":  depth_scores["moderate"] += 1
+    response_depth = max(depth_scores, key=depth_scores.get)
 
-    # ══════════════════════════════════════════════════════════════════
-    # 8. LANGUAGE PREFERENCE
-    # ══════════════════════════════════════════════════════════════════
-    language_preference = "english"  # default
-    # Simple heuristic: if query has Devanagari script, prefer hindi/hinglish
-    if any('ऀ' <= c <= 'ॿ' for c in query):
+    # ═══ 8. LANGUAGE PREFERENCE (UI choice wins) ═══
+    if user_language in ("english", "hindi", "hinglish"):
+        language_preference = user_language
+    elif any('ऀ' <= c <= 'ॿ' for c in query):
         language_preference = "hindi"
-    # If query has English words mixed with some Hindi patterns
-    elif any(kw in q_lower for kw in ['kya', 'kab', 'kyun', 'upay', 'naukri']):
+    elif _HINGLISH_RX and _HINGLISH_RX.search(q_lower):
         language_preference = "hinglish"
+    else:
+        language_preference = "english"
 
-    # ══════════════════════════════════════════════════════════════════
-    # CONFIDENCE SCORE (weighted across all 8 dimensions)
-    # ══════════════════════════════════════════════════════════════════
-    domain_conf = min(100, best_score * 25) if best_score > 0 else 40
-    subdomain_conf = 20 if sub_domain else 0
-    qtype_conf = min(100, max(type_scores.values()) * 33) if max(type_scores.values()) > 0 else 0
-    urgency_conf = min(100, urgency_scores.get(urgency, 0) * 50)
-    sentiment_conf = min(100, sentiment_scores.get(sentiment, 0) * 50)
+    # ═══ CONFIDENCE (weighted across 8 dimensions, no artificial floor) ═══
+    domain_conf     = min(100, best_score * 25) if best_score > 0 else 15
+    subdomain_conf  = min(100, sub_score_value * 30) if sub_domain else 0
+    qtype_conf      = min(100, max(type_scores.values()) * 30) if max(type_scores.values()) > 0 else 0
+    urgency_conf    = min(100, urgency_scores.get(urgency, 0) * 40) if max(urgency_scores.values()) > 0 else 0
+    sentiment_conf  = min(100, sentiment_scores.get(sentiment, 0) * 40) if max(sentiment_scores.values()) > 0 else 0
+    time_conf       = min(100, (past_hits + curr_hits + fut_hits) * 25)
 
-    # Weighted confidence: domain (30%), subdomain (10%), question_type (20%),
-    # urgency (15%), sentiment (15%), time_frame (10%)
     confidence = round(
-        domain_conf * 0.30 +
+        domain_conf    * 0.30 +
         subdomain_conf * 0.10 +
-        qtype_conf * 0.20 +
-        urgency_conf * 0.15 +
-        sentiment_conf * 0.15 +
-        (min(100, (past_hits + curr_hits + fut_hits) * 30) * 0.10),
+        qtype_conf     * 0.20 +
+        urgency_conf   * 0.10 +
+        sentiment_conf * 0.10 +
+        time_conf      * 0.10 +
+        (100 if has_specific_time else 0) * 0.05 +
+        (100 if language_preference != "english" or user_language == "english" else 50) * 0.05,
         1
     )
-    confidence = max(20, min(100, confidence))
+    confidence = max(0, min(100, confidence))
 
     return {
         "domain": best_domain,
@@ -490,8 +596,8 @@ def compute_domain_probability(pdata: dict, birth_jd: float, domain: str) -> dic
 
 class NakshtraAgent:
     def query(self, user_query: str, pdata: dict, birth_jd: float,
-              domain_override: str = None) -> dict:
-        intent = detect_intent(user_query)
+              domain_override: str = None, user_language: Optional[str] = None) -> dict:
+        intent = detect_intent(user_query, user_language=user_language)
         domain = domain_override or intent["domain"]
         if domain not in DOMAINS:
             domain = "life_path_luck"

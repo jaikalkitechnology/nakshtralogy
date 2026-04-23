@@ -317,7 +317,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 data = _get_chart_data(chart)
                 pdata = data["_pdata"]
                 birth_jd = data["birth_jd"]
-                result = _agent.query(query, pdata, birth_jd, domain_override=domain)
+                # Pass UI language (english/hindi/hinglish) — detect_intent ignores "auto"
+                ui_lang = language if language in ("english", "hindi", "hinglish") else None
+                result = _agent.query(query, pdata, birth_jd, domain_override=domain, user_language=ui_lang)
                 logger.info("Probability in %.2fs: %s %.0f%%", time.time() - t0, result["domain"], result["probability"])
 
                 # Auto-detect language up front so we can include it in prob frame
