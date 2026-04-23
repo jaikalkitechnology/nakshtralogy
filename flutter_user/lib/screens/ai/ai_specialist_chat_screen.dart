@@ -44,14 +44,30 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   static const _providerIcons = {
     'ollama-3b': Icons.flash_on,
     'gemini': Icons.auto_awesome,
-    'groq': Icons.bolt,
+    'groq-llama-3.1-8b': Icons.bolt,
+    'groq-llama-3.3-70b': Icons.bolt,
+    'groq-qwen-32b': Icons.bolt,
+    'groq-mistral': Icons.bolt,
+    'groq-deepseek-r1': Icons.bolt,
+    'groq-llama-4-scout': Icons.bolt,
+    'groq-llama-4-maverick': Icons.bolt,
+    'groq-gpt-oss-20b': Icons.bolt,
+    'groq-gpt-oss-120b': Icons.bolt,
     'openrouter': Icons.hub,
   };
 
   static const _providerShortNames = {
     'ollama-3b': 'Qwen 3B',
     'gemini': 'Gemini',
-    'groq': 'Groq',
+    'groq-llama-3.1-8b': 'Llama 3.1 8B',
+    'groq-llama-3.3-70b': 'Llama 3.3 70B',
+    'groq-qwen-32b': 'Qwen 32B',
+    'groq-mistral': 'Mistral',
+    'groq-deepseek-r1': 'DeepSeek R1',
+    'groq-llama-4-scout': 'Llama Scout',
+    'groq-llama-4-maverick': 'Llama Mav',
+    'groq-gpt-oss-20b': 'GPT-OSS 20B',
+    'groq-gpt-oss-120b': 'GPT-OSS 120B',
     'openrouter': 'Router',
   };
 
