@@ -239,7 +239,7 @@ async def agent_chat(
         logger.info("Chart loaded in %.2fs", time.time() - t0)
 
         t1 = time.time()
-        result = _agent.query(req.query, pdata, birth_jd, domain_override=req.domain)
+        result = _agent.query(req.query, pdata, birth_jd, domain_override=req.domain, user_language=req.language)
         logger.info("Agent probability in %.2fs — %s %.0f%%", time.time() - t1, result["domain"], result["probability"])
 
         t2 = time.time()
