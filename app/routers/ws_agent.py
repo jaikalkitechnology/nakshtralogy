@@ -362,6 +362,42 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 detected_domain = result.get("domain") or domain
                 logger.info("Effective language: %s (from %r)", effective_lang, query[:30])
 
+                # ⭐️ LOG THE EXACT DATA BEING SENT
+                logger.info("=" * 80)
+                logger.info("CHART CONTEXT FOR LLM:")
+                logger.info("=" * 80)
+                logger.info("Chart: %s | Lagna: %s", chart.name, data.get("_pdata", {}).get("Lagna", {}).get("sign_full", "?"))
+                logger.info("Query: %s", query[:100])
+                logger.info("Domain: %s", detected_domain)
+                logger.info("")
+
+                # Log planets
+                planets = chart_context.get("planets", {})
+                if planets:
+                    logger.info("PLANETS:")
+                    for name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
+                        if name in planets:
+                            p = planets[name]
+                            logger.info("  %s: %s @ %.1f° (rashi_idx=%d)",
+                                      name, p.get("sign_full", "?"), p.get("degree", 0), p.get("rashi_idx", 0))
+
+                # Log houses
+                bhava = chart_context.get("bhava", {})
+                if bhava:
+                    logger.info("")
+                    logger.info("HOUSES (what gets sent to LLM):")
+                    for hkey in sorted(bhava.keys()):
+                        h = bhava[hkey]
+                        occ = ", ".join(h.get("occupants", [])) or "Empty"
+                        logger.info("  H%02d: %s (lord=%s, sav=%d) | %s",
+                                  h.get("house", 0), h.get("sign", "?"), h.get("lord", "?"),
+                                  h.get("sav", 0), occ)
+
+                logger.info("")
+                logger.info("USER PROMPT CHARS: %d (~%d tokens)", len(user_prompt), len(user_prompt)//4)
+                logger.info("=" * 80)
+                logger.info("")
+
                 # Inject previous conversation as chat history (Redis-backed)
                 history = _load_session(user.id, chart_id)
 
@@ -375,6 +411,16 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 messages.append({"role": "user", "content": user_prompt})
 
                 logger.info("Context built in %.2fs, %d history turns, streaming via %s", time.time() - t1, len(history), provider_key)
+
+                # ⭐️ LOG MESSAGE BREAKDOWN
+                logger.info("MESSAGES SENT TO LLM (%s):", provider_key)
+                for i, msg in enumerate(messages):
+                    role = msg.get("role", "?")
+                    content = msg.get("content", "")
+                    logger.info("  Message %d (%s): %d chars (~%d tokens)", i, role, len(content), len(content)//4)
+                    if role == "system":
+                        logger.info("    System prompt first 200 chars: %s...", content[:200])
+                logger.info("TOTAL: %d messages, ~%d total tokens", len(messages), sum(len(m.get("content", ""))//4 for m in messages))
 
                 # Stream and collect the full response
                 collected_tokens = []
@@ -401,6 +447,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 try:
                     log_db = SessionLocal()
                     try:
+                        # Store full user_prompt in query field for debugging
                         log_entry = AgentLog(
                             user_id=user.id,
                             chart_id=chart_id,
@@ -408,7 +455,7 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             provider=provider_key,
                             domain=detected_domain,
                             language=effective_lang,
-                            query=query[:500],
+                            query=user_prompt[:5000],  # Store full rich prompt (up to 5K chars)
                             status=log_status,
                             error_message=log_error,
                             http_status=log_http,
@@ -418,10 +465,11 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                         )
                         log_db.add(log_entry)
                         log_db.commit()
+                        logger.info("Agent log saved: id=%s, status=%s, latency=%dms", log_entry.id, log_status, int((time.time() - stream_t0) * 1000))
                     finally:
                         log_db.close()
                 except Exception as le:
-                    logger.debug("Agent log write failed: %s", le)
+                    logger.error("Agent log write failed: %s", le)
 
                 # Parse follow-up suggestions from end of response
                 full_response = "".join(collected_tokens)

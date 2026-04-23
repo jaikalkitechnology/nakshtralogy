@@ -170,15 +170,49 @@ def get_agent_logs(
             "provider": l.provider,
             "domain": l.domain,
             "query": (l.query or "")[:100],
+            "full_query": l.query,  # Full rich prompt for inspection
             "status": l.status,
             "error_message": l.error_message,
             "http_status": l.http_status,
             "response_tokens": l.response_tokens,
             "latency_ms": l.latency_ms,
+            "prompt_chars": l.prompt_chars,
             "created_at": str(l.created_at) if l.created_at else None,
         }
         for l in logs
     ]
+
+
+@router.get("/logs/{log_id}")
+def get_agent_log_detail(
+    log_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Get full details of a specific agent log including full prompt."""
+    log = db.query(AgentLog).filter(AgentLog.id == log_id).first()
+    if not log:
+        raise HTTPException(404, "Log not found")
+    if current_user.role not in ("admin",) and log.user_id != current_user.id:
+        raise HTTPException(403, "Not authorized")
+
+    return {
+        "id": log.id,
+        "user_id": log.user_id,
+        "chart_id": log.chart_id,
+        "provider": log.provider,
+        "domain": log.domain,
+        "language": log.language,
+        "query_first_100": (log.query or "")[:100],
+        "full_query_prompt": log.query,  # Full rich prompt with all houses/planets/yogas
+        "status": log.status,
+        "error_message": log.error_message,
+        "http_status": log.http_status,
+        "response_tokens": log.response_tokens,
+        "latency_ms": log.latency_ms,
+        "prompt_chars": log.prompt_chars,
+        "created_at": str(log.created_at) if log.created_at else None,
+    }
 
 
 @router.post("/chat", response_model=AgentChatResponse)
