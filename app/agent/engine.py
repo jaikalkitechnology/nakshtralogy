@@ -57,7 +57,7 @@ DOMAINS = {
         "planet_weights": {"Jupiter":0.30,"Mercury":0.30,"Moon":0.20,"Sun":0.20},
         "yogas": ["Budhaditya Yoga","Saraswati Yoga","Raj Yoga"],
         "doshas": ["Budh Dosh","Guru Dosh"],
-        "keywords": ["education","study","exam","college","degree","padhai","school","university"],
+        "keywords": ["education","study","studies","studying","exam","college","degree","padhai","school","university"],
     },
     "money_wealth": {
         "label": "Money & Wealth Specialist", "emoji": "\U0001f4b0",
@@ -97,7 +97,7 @@ DOMAINS = {
         "planet_weights": {"Venus":0.30,"Jupiter":0.30,"Moon":0.20,"Mars":0.20},
         "yogas": ["Raj Yoga","Dhan Yoga"],
         "doshas": ["Mangal Dosh","Shukra Dosh","Guru Dosh"],
-        "keywords": ["marriage","married","shaadi","wedding","wife","husband","family","divorce","vivah","parivar"],
+        "keywords": ["marriage","married","shaadi","wedding","wife","husband","family","children","divorce","vivah","parivar"],
     },
     "health_wellness": {
         "label": "Health & Wellness Specialist", "emoji": "\U0001f3e5",
@@ -159,7 +159,7 @@ TIME_FUTURE = {"will","when will","shall","going to","predict","future","kab hog
 SUB_DOMAINS = {
     "career_job": {
         "promotion": ["promotion","raise","increment","salary increase","appraisal","hike","bonus"],
-        "job_change": ["job change","new job","switch job","career change","move to company"],
+        "job_change": ["job change","new job","switch job","career change","change my job","change job","move to company"],
         "job_loss": ["job loss","layoff","retrench","fired","unemploy","naukri gava","resign"],
         "interview": ["interview","selection","hired","candidate","placement","recruitment"],
         "job_stability": ["stable job","job security","job stability","secure job"],
@@ -230,16 +230,12 @@ SUB_DOMAINS = {
 }
 
 QUESTION_TYPE_KEYWORDS = {
-    # Order matters for tie-breaks: timing before yes_no so "when will I" → timing.
+    # Tie-break priority via dict order: specific intents (timing/remedy/reason)
+    # BEFORE generic yes_no so "Why am I stuck" → reason, not yes_no via "am i".
     "timing": {
         "en": ["when","when will","how long","how many years","how many months","within","till","by when"],
         "hi": ["kab","kitna samay","kab tak","kab hoga"],
         "hinglish": ["kab milega","kab hoga","kab tak"]
-    },
-    "yes_no": {
-        "en": ["will i","can i","should i","is there","do i have","am i","are there","is my","will my","can my"],
-        "hi": ["kya mai","kya mujhe","hoga kya","chahiye kya"],
-        "hinglish": ["kya mujhe","should i"]
     },
     "remedy": {
         "en": ["remedy","solution","mantra","gemstone","what should i do","what to do","upaay"],
@@ -247,19 +243,25 @@ QUESTION_TYPE_KEYWORDS = {
         "hinglish": ["remedy kya","solution kya","upay kya"]
     },
     "reason": {
-        "en": ["why","reason","cause","because","due to","what is causing","how come"],
+        "en": ["why","reason","cause","because","due to","what is causing","how come","stuck"],
         "hi": ["kyun","kaaran","wajah"],
         "hinglish": ["kyun","why"]
+    },
+    "explanation": {
+        "en": ["explain","tell me about","meaning","understand","how does","how is","what does it mean"],
+        "hi": ["samjhao","matlab","samajhiye","kya hai matlab"],
+        "hinglish": ["explain karo","matlab kya"]
+    },
+    "yes_no": {
+        # Unambiguous question-form triggers only — "is my" dropped (too generic).
+        "en": ["will i","can i","should i","is there","do i have","am i","are there"],
+        "hi": ["kya mai","kya mujhe","hoga kya","chahiye kya"],
+        "hinglish": ["kya mujhe","should i"]
     },
     "prediction": {
         "en": ["predict","future","what will","possibility","chance","likely","forecast"],
         "hi": ["hoga","milega","aayega","hogi"],
         "hinglish": ["kya hoga","milega kya"]
-    },
-    "explanation": {
-        "en": ["explain","tell me about","meaning","understand","how does","what does it mean"],
-        "hi": ["samjhao","matlab","samajhiye","kya hai matlab"],
-        "hinglish": ["explain karo","matlab kya"]
     },
 }
 

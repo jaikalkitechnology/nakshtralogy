@@ -171,6 +171,7 @@ def get_agent_logs(
             "domain": l.domain,
             "query": (l.query or "")[:100],
             "full_query": l.query,  # Full rich prompt for inspection
+            "intent_json": getattr(l, "intent_json", None),  # 8-section detected intent
             "status": l.status,
             "error_message": l.error_message,
             "http_status": l.http_status,
@@ -196,6 +197,16 @@ def get_agent_log_detail(
     if current_user.role not in ("admin",) and log.user_id != current_user.id:
         raise HTTPException(403, "Not authorized")
 
+    # Parse intent_json (stored as JSON string) so the frontend gets a real object
+    intent_obj = None
+    raw_intent = getattr(log, "intent_json", None)
+    if raw_intent:
+        import json as _json
+        try:
+            intent_obj = _json.loads(raw_intent)
+        except Exception:
+            intent_obj = {"_parse_error": True, "raw": raw_intent[:500]}
+
     return {
         "id": log.id,
         "user_id": log.user_id,
@@ -205,6 +216,7 @@ def get_agent_log_detail(
         "language": log.language,
         "query_first_100": (log.query or "")[:100],
         "full_query_prompt": log.query,  # Full rich prompt with all houses/planets/yogas
+        "intent": intent_obj,  # Parsed 8-section intent dict (may be null for older logs)
         "status": log.status,
         "error_message": log.error_message,
         "http_status": log.http_status,
