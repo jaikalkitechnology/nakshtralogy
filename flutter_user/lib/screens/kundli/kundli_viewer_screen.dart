@@ -17,6 +17,7 @@ import 'widgets/bhava_widget.dart';
 import 'widgets/chakra_health_widget.dart';
 import 'widgets/dasha_activation_widget.dart';
 import 'widgets/gochar_widget.dart';
+import 'widgets/career_widget.dart';
 
 /// User-side kundli viewer with per-tab paywall.
 /// Fetches only the lightweight chart on open; each tab paywall-gates its
@@ -40,7 +41,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 16;
+  static const _sectionCount = 17;
 
   // [label, icon, section-key used by paywall]
   static List<List<Object>> _sections(AppLocalizations l) => <List<Object>>[
@@ -60,6 +61,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.bhava, Icons.home, 'bhava'],
     [l.chakras, Icons.radio_button_checked, 'chakra'],
     [l.dashaActive, Icons.flash_on, 'dasha_activation'],
+    ['Career', Icons.business_center, 'career'],
   ];
 
   @override
@@ -173,6 +175,8 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                             builder: (_) => ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health'])),
                         _PaidTab(chartId: widget.chartId, section: 'dasha_activation',
                             builder: (_) => DashaActivationWidget(chartId: widget.chartId)),
+                        _PaidTab(chartId: widget.chartId, section: 'career',
+                            builder: (_) => CareerWidget(chartId: widget.chartId)),
                       ],
                     ),
     );

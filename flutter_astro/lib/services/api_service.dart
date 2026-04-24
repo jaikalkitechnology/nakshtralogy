@@ -581,5 +581,22 @@ class ApiService {
   Future<Map<String, dynamic>> getKundliChakraHealth(String chartId) => _kundliGet('/$chartId/analysis/chakra-health');
   Future<Map<String, dynamic>> getKundliAnalysisComplete(String chartId) => _kundliGet('/$chartId/analysis/complete');
 
+  // ── Career Specialist ──
+  Future<Map<String, dynamic>> getCareerAnalysis(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.careerBase}/$chartId'), headers: _headers);
+    if (resp.statusCode == 401) await _tryRefresh();
+    final body = jsonDecode(resp.body);
+    if (body is Map) return body.cast<String, dynamic>();
+    return {'statusCode': resp.statusCode, 'status': 'error', 'data': {}};
+  }
+
+  Future<Map<String, dynamic>> getCareerSummary(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.careerBase}/$chartId/summary'), headers: _headers);
+    if (resp.statusCode == 401) await _tryRefresh();
+    final body = jsonDecode(resp.body);
+    if (body is Map) return body.cast<String, dynamic>();
+    return {'statusCode': resp.statusCode, 'status': 'error', 'data': {}};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
