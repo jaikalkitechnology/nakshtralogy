@@ -702,6 +702,27 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Kundli Milan ──
+  Future<Map<String, dynamic>> milanFullMatch(String chartId1, String chartId2) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.milanBase}/match'),
+      headers: {..._headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'chart_id_1': chartId1, 'chart_id_2': chartId2}),
+    );
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> milanPhase1(String chartId1, String chartId2) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.milanBase}/match/phase1'),
+      headers: {..._headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'chart_id_1': chartId1, 'chart_id_2': chartId2}),
+    );
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   /// Fetch pricing for a specific service key (e.g. "dosh_analysis")
   Future<Map<String, dynamic>?> getServicePricingByKey(String serviceKey) async {
     final resp = await http.get(
