@@ -27,7 +27,11 @@ from datetime import date, datetime
 logger = logging.getLogger("career_specialist_v2")
 
 try:
-    from app.kundli import engine as _nk
+    # app.kundli.__init__.py shadows the engine module with a NakshtraEngine
+    # singleton, so `from app.kundli import engine` gives the wrapper, not the
+    # raw module. importlib bypasses the package attribute and gets the real module.
+    from importlib import import_module as _imp
+    _nk = _imp('app.kundli.engine')
 except ImportError:
     try:
         import nakshtralogy_v2 as _nk
