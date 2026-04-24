@@ -680,17 +680,13 @@ class ApiService {
   Future<Map<String, dynamic>> getCareerAnalysis(String chartId) async {
     final resp = await http.get(Uri.parse('${ApiConstants.careerBase}/$chartId'), headers: _headers);
     if (resp.statusCode == 401) await _tryRefresh();
-    final body = jsonDecode(resp.body);
-    if (body is Map) return body.cast<String, dynamic>();
-    return {'statusCode': resp.statusCode, 'status': 'error', 'data': {}};
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
   Future<Map<String, dynamic>> getCareerSummary(String chartId) async {
     final resp = await http.get(Uri.parse('${ApiConstants.careerBase}/$chartId/summary'), headers: _headers);
     if (resp.statusCode == 401) await _tryRefresh();
-    final body = jsonDecode(resp.body);
-    if (body is Map) return body.cast<String, dynamic>();
-    return {'statusCode': resp.statusCode, 'status': 'error', 'data': {}};
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
   /// Fetch pricing for a specific service key (e.g. "dosh_analysis")
