@@ -29,6 +29,9 @@ class ApiConstants {
   // Career Specialist
   static const String careerBase = '$baseUrl/career';
 
+  // Character Analysis
+  static const String characterBase = '$baseUrl/character';
+
   // Rashi (zodiac predictions)
   static const String rashiBase = '$baseUrl/rashi';
   static const String commBase = '$baseUrl/comm';

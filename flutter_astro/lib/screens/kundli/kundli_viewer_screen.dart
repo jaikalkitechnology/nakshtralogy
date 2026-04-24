@@ -17,6 +17,7 @@ import 'widgets/chakra_health_widget.dart';
 import 'widgets/dasha_activation_widget.dart';
 import 'widgets/gochar_widget.dart';
 import 'widgets/career_widget.dart';
+import 'widgets/character_widget.dart';
 
 /// Main kundli viewer — 17 tabs for all Vedic analysis sections.
 class KundliViewerScreen extends StatefulWidget {
@@ -37,7 +38,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 17;
+  static const _sectionCount = 18;
 
   static List<List<Object>> _sections(AppLocalizations l) => [
     [l.summary, Icons.dashboard],
@@ -57,6 +58,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.chakras, Icons.radio_button_checked],
     [l.dashaActive, Icons.flash_on],
     ['Career', Icons.business_center],
+    ['Character', Icons.person_search],
   ];
 
   @override
@@ -154,6 +156,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health']),
                         DashaActivationWidget(chartId: widget.chartId),
                         CareerWidget(chartId: widget.chartId),
+                        CharacterWidget(chartId: widget.chartId),
                       ],
                     ),
     );
