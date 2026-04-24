@@ -689,6 +689,19 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Character Analysis ──
+  Future<Map<String, dynamic>> getCharacterAnalysis(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.characterBase}/$chartId'), headers: _headers);
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getCharacterSummary(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.characterBase}/$chartId/summary'), headers: _headers);
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   /// Fetch pricing for a specific service key (e.g. "dosh_analysis")
   Future<Map<String, dynamic>?> getServicePricingByKey(String serviceKey) async {
     final resp = await http.get(
