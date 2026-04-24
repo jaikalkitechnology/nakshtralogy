@@ -32,6 +32,9 @@ class ApiConstants {
   // Character Analysis
   static const String characterBase = '$baseUrl/character';
 
+  // Kundli Milan
+  static const String milanBase = '$baseUrl/milan';
+
   // Rashi (zodiac predictions)
   static const String rashiBase = '$baseUrl/rashi';
   static const String commBase = '$baseUrl/comm';

@@ -12,6 +12,7 @@ import '../../services/api_service.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../rashi/rashi_detail_screen.dart';
 import '../ai/ai_specialist_chat_screen.dart';
+import '../milan/milan_chart_selector.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
@@ -177,6 +178,8 @@ class _HomeTabState extends State<HomeTab> {
       {'icon': Icons.call, 'label': l.call, 'color': AppColors.saffron, 'onTap': widget.onSeeAllAstrologers},
       {'icon': Icons.videocam, 'label': l.video, 'color': AppColors.cosmicPink, 'onTap': widget.onSeeAllAstrologers},
       {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora, 'onTap': widget.onOpenKundli},
+      {'icon': Icons.favorite, 'label': 'Milan', 'color': AppColors.cosmicPink, 'onTap': () =>
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector()))},
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),

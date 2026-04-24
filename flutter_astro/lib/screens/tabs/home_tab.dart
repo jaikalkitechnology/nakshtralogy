@@ -8,6 +8,7 @@ import '../../bloc/dashboard/dashboard_state.dart';
 import '../../services/api_service.dart';
 import '../communication/live_host_screen.dart';
 import '../rashi/rashi_list_screen.dart';
+import '../milan/milan_chart_selector.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -139,6 +140,34 @@ class _HomeTabState extends State<HomeTab> {
                     ]),
                   ),
                   const Icon(Icons.chevron_right),
+                ]),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // ── Kundli Milan quick access ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector())),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [Colors.pink.withOpacity(0.18), Colors.pink.withOpacity(0.05)]),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.pink.withOpacity(0.4)),
+                ),
+                child: const Row(children: [
+                  Text('❤️', style: TextStyle(fontSize: 22)),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Kundli Milan', style: TextStyle(color: Colors.pink, fontSize: 14, fontWeight: FontWeight.w700)),
+                      SizedBox(height: 2),
+                      Text('Match two charts — Ashtakoot, Navamsa, Transit timing & more',
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                    ]),
+                  ),
+                  Icon(Icons.chevron_right),
                 ]),
               ),
             ),
