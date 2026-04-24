@@ -16,7 +16,7 @@ from app.routers import (
     user_router, astrologer_router, service_router,
     communication_router, ws_chat, ws_astrologer, ws_agent,
     admin_router, google_auth_router, kundli_router,
-    rashi_router, agent_router,
+    rashi_router, agent_router, career_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -143,6 +143,7 @@ app.include_router(google_auth_router.router, prefix="/api/v1/google", tags=["Go
 app.include_router(kundli_router.router, prefix="/api/v1/kundli", tags=["Kundli"])
 app.include_router(rashi_router.router, prefix="/api/v1/rashi", tags=["Rashi"])
 app.include_router(agent_router.router, prefix="/api/v1/agent", tags=["AI Agent"])
+app.include_router(career_router.router, prefix="/api/v1/career", tags=["Career Specialist"])
 
 
 
