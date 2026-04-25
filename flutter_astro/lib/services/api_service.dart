@@ -634,6 +634,16 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  Future<Map<String, dynamic>> runSpecialistMilan(String chartId1, String chartId2) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.specialistBase}/kundli_milan/analyze'),
+      headers: {..._headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'chart_id_1': chartId1, 'chart_id_2': chartId2}),
+    );
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> runSpecialist(String key, String chartId) async {
     final resp = await http.post(
       Uri.parse('${ApiConstants.specialistBase}/$key/analyze'),
