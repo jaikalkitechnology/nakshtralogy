@@ -110,6 +110,11 @@ async def lifespan(app: FastAPI):
     # Load AI config (languages, domains, engines) from DB into memory cache
     from app.ai_config import ai_cache
     ai_cache.load_from_db()
+    # Load question bank + answer templates for template-first routing
+    from app.ai_config.question_matcher import load_questions
+    from app.ai_config.template_resolver import load_templates
+    load_questions()
+    load_templates()
     task = asyncio.create_task(_cleanup_stale_sessions())
     # Pre-load Qwen model into RAM so first chat request is fast
     from app.agent.llm_service import warmup_llm

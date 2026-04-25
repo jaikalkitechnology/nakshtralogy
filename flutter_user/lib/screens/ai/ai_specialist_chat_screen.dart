@@ -38,6 +38,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   String _language = 'auto';  // auto-detect by default
   String? _detectedLanguage;    // last detected language from server
   List<String> _followupSuggestions = []; // LLM-generated chips after each reply
+  List<dynamic> _suggestedQuestions = []; // DB-loaded question chips per domain
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -82,6 +83,15 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     try {
       final langs = await _api.getAiLanguages();
       if (mounted && langs.isNotEmpty) setState(() => _dbLanguages = langs);
+    } catch (_) {}
+  }
+
+  Future<void> _loadSuggestedQuestions() async {
+    if (widget.domainKey == null) return;
+    try {
+      final langCode = _language == 'auto' ? 'english' : _language;
+      final qs = await _api.getAiQuestions(widget.domainKey!, lang: langCode);
+      if (mounted && qs.isNotEmpty) setState(() => _suggestedQuestions = qs);
     } catch (_) {}
   }
 
@@ -197,6 +207,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       _selectedChartName = chart['name']?.toString() ?? 'Chart';
     });
     _connectWs();
+    _loadSuggestedQuestions();
     _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nAnalyzing the birth chart of **$_selectedChartName**.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
   }
 
@@ -567,20 +578,38 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // ── Suggestions ─────────────────────────────────────────────────────
 
   Widget _suggestions() {
-    final samples = {
-      'career_job': ['Will I get promotion?', 'Job change kab hoga?', 'Career growth'],
-      'business_startup': ['Should I start business?', 'Partnership success?'],
-      'money_wealth': ['When will wealth increase?', 'Financial growth kab?'],
-      'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?'],
-      'marriage_family': ['Marriage kab hogi?', 'Family harmony?'],
-      'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?'],
-      'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?'],
-    };
-    final chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions'];
+    // DB-loaded questions take priority, fallback to hardcoded
+    List<String> chips;
+    if (_suggestedQuestions.isNotEmpty) {
+      chips = _suggestedQuestions.map<String>((q) =>
+          (q is Map ? (q['short_label'] ?? q['text'] ?? '') : q).toString()
+      ).where((s) => s.isNotEmpty).toList();
+    } else {
+      final samples = {
+        'career_job': ['Will I get promotion?', 'Job change kab hoga?', 'Career growth'],
+        'business_startup': ['Should I start business?', 'Partnership success?'],
+        'money_wealth': ['When will wealth increase?', 'Financial growth kab?'],
+        'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?'],
+        'marriage_family': ['Marriage kab hogi?', 'Family harmony?'],
+        'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?'],
+        'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?'],
+      };
+      chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions'];
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Wrap(spacing: 6, runSpacing: 6, children: chips.map((c) => GestureDetector(
-        onTap: () { _msgCtrl.text = c; _sendMessage(); },
+        onTap: () {
+          // For DB questions, send the full text (not just label)
+          final fullText = _suggestedQuestions.isNotEmpty
+              ? (_suggestedQuestions.firstWhere(
+                  (q) => q is Map && ((q['short_label'] ?? q['text'] ?? '') == c),
+                  orElse: () => {'text': c},
+                ) as Map)['text']?.toString() ?? c
+              : c;
+          _msgCtrl.text = fullText;
+          _sendMessage();
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(

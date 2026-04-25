@@ -351,6 +351,62 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 # Build rich kundli context + session memory
                 t1 = time.time()
                 chart_context = _build_chart_context(data, result)
+
+                # ⭐️ TEMPLATE-FIRST ROUTING — check templates before LLM
+                template_text = None
+                match_info = None
+                try:
+                    from app.ai_config.question_matcher import match_question, _question_cache
+                    from app.ai_config.template_resolver import resolve_template, _template_cache
+                    if _question_cache and _template_cache:
+                        match_info = match_question(query, result.get("domain", "life_path_luck"))
+                        if match_info:
+                            template_text = resolve_template(
+                                question_id=match_info["question_id"],
+                                domain_key=result.get("domain", "life_path_luck"),
+                                chart_context=chart_context,
+                                agent_result=result,
+                                lang_code=effective_lang,
+                            )
+                            if template_text:
+                                logger.info("TEMPLATE HIT: q=%s score=%.2f — skipping LLM",
+                                            match_info["question_id"], match_info["score"])
+                except Exception as te:
+                    logger.warning("Template routing error (falling through to LLM): %s", te)
+
+                if template_text:
+                    # Send template response directly — no LLM call
+                    await _send({"type": "token", "text": template_text})
+                    await _send({"type": "done"})
+                    collected_tokens = [template_text]
+                    stream_t0 = time.time()
+                    log_status = "success"
+                    log_error = None
+                    log_http = None
+
+                    # Save session + log
+                    _save_session(user.id, chart_id, query, template_text)
+                    try:
+                        log_db = SessionLocal()
+                        try:
+                            intent_obj = result.get("intent") or {}
+                            intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
+                            log_entry = AgentLog(
+                                user_id=user.id, chart_id=chart_id, message_id=message_id,
+                                provider="template", domain=detected_domain, language=effective_lang,
+                                query=query[:500], intent_json=intent_json_str,
+                                status="success", response_tokens=1,
+                                latency_ms=int((time.time() - t0) * 1000),
+                                prompt_chars=len(template_text),
+                            )
+                            log_db.add(log_entry)
+                            log_db.commit()
+                        finally:
+                            log_db.close()
+                    except Exception as le:
+                        logger.error("Template log write failed: %s", le)
+                    continue
+
                 user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"))
 
                 # Personalize system prompt with chart holder's details + detected domain

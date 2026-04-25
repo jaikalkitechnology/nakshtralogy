@@ -58,12 +58,35 @@ def get_engines():
     return ai_cache.get_all_engines()
 
 
+@router.get("/questions/{domain_key}")
+def get_questions(domain_key: str, lang: str = "english"):
+    """Get suggested questions for a domain (for Flutter chips)."""
+    from app.ai_config.question_matcher import get_questions_for_domain
+    return get_questions_for_domain(domain_key, lang)
+
+
+@router.get("/questions")
+def get_all_questions(lang: str = "english"):
+    """Get all suggested questions grouped by domain."""
+    from app.ai_config.question_matcher import _question_cache, get_questions_for_domain
+    result = {}
+    for domain_key in _question_cache:
+        qs = get_questions_for_domain(domain_key, lang)
+        if qs:
+            result[domain_key] = qs
+    return result
+
+
 @router.post("/reload")
 def reload_cache(current_user: User = Depends(get_current_user)):
     """Hot-reload AI config from DB. Admin only."""
     if current_user.role not in ("admin",):
         raise HTTPException(403, "Admin only")
     ai_cache.reload()
+    from app.ai_config.question_matcher import load_questions
+    from app.ai_config.template_resolver import load_templates
+    load_questions()
+    load_templates()
     return {
         "status": "ok",
         "languages": len(ai_cache.get_all_languages()),

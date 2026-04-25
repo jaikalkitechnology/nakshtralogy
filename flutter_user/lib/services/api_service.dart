@@ -733,6 +733,18 @@ class ApiService {
     return [];
   }
 
+  Future<List<dynamic>> getAiQuestions(String domainKey, {String lang = 'english'}) async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.aiConfigBase}/questions/$domainKey?lang=$lang'),
+      headers: _headers,
+    );
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      if (body is List) return body;
+    }
+    return [];
+  }
+
   Future<List<dynamic>> getAiDomains() async {
     final resp = await http.get(Uri.parse('${ApiConstants.aiConfigBase}/domains'), headers: _headers);
     if (resp.statusCode == 200) {
