@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_chart_picker.dart';
+import 'specialist_milan_picker.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   const SpecialistListScreen({super.key});
@@ -26,6 +27,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     {'key': 'life_path',     'label': 'Life Path & Luck',     'emoji': '🌟', 'desc': 'Dharma, fortune, karmic momentum'},
     {'key': 'character',     'label': 'Character Analysis',   'emoji': '🔍', 'desc': '51 personality traits, trust, loyalty, ethics'},
     {'key': 'past_life',     'label': 'Past Life & Karma',    'emoji': '🔮', 'desc': 'Past life themes, karmic carry-forward'},
+    {'key': 'kundli_milan', 'label': 'Kundli Milan',          'emoji': '💑', 'desc': 'Match 2 charts — compatibility, doshas, timing'},
   ];
 
   static const _colors = <String, Color>{
@@ -34,6 +36,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     'marriage': Colors.deepOrange, 'health': Colors.red, 'mental_stress': Colors.purple,
     'property': Colors.brown, 'legal': Colors.blueGrey, 'life_path': Colors.amber,
     'character': Colors.teal, 'past_life': Colors.deepPurple,
+    'kundli_milan': Colors.pink,
   };
 
   @override
@@ -50,13 +53,15 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           final s = _specialists[i];
           final color = _colors[s['key']] ?? Colors.blue;
           return GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(
-              builder: (_) => SpecialistChartPicker(
-                specialistKey: s['key']!,
-                specialistLabel: s['label']!,
-                specialistEmoji: s['emoji']!,
-              ),
-            )),
+            onTap: () {
+              if (s['key'] == 'kundli_milan') {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
+              } else {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => SpecialistChartPicker(
+                    specialistKey: s['key']!, specialistLabel: s['label']!, specialistEmoji: s['emoji']!)));
+              }
+            },
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),

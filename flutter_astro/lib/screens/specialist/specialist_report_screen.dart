@@ -4,9 +4,16 @@ import '../../services/api_service.dart';
 
 class SpecialistReportScreen extends StatefulWidget {
   final String specialistKey, specialistLabel, specialistEmoji, chartId, chartName;
+  final Map<String, dynamic>? preloadedData;
+
   const SpecialistReportScreen({super.key, required this.specialistKey,
     required this.specialistLabel, required this.specialistEmoji,
-    required this.chartId, required this.chartName});
+    required this.chartId, required this.chartName, this.preloadedData});
+
+  SpecialistReportScreen.fromData({super.key,
+    required this.specialistLabel, required this.specialistEmoji,
+    required this.chartName, required Map<String, dynamic> data})
+      : specialistKey = '', chartId = '', preloadedData = data;
 
   @override
   State<SpecialistReportScreen> createState() => _SpecialistReportScreenState();
@@ -19,7 +26,15 @@ class _SpecialistReportScreenState extends State<SpecialistReportScreen> {
   String? _error;
 
   @override
-  void initState() { super.initState(); _load(); }
+  void initState() {
+    super.initState();
+    if (widget.preloadedData != null) {
+      _data = widget.preloadedData;
+      _loading = false;
+    } else {
+      _load();
+    }
+  }
 
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
