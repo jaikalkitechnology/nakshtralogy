@@ -2,8 +2,11 @@
 Dept Reports — 15 specialist engines unified under one router
 =============================================================
 GET  /specialist/list                        — all 15 specialists
-POST /specialist/{key}/analyze               — run analysis (single chart)
 POST /specialist/kundli_milan/analyze        — run milan (needs 2 charts)
+POST /specialist/{key}/analyze               — run analysis (single chart)
+
+IMPORTANT: /kundli_milan/analyze MUST be declared before /{key}/analyze
+so FastAPI matches the literal path before the parameterized one.
 """
 
 import logging
@@ -64,54 +67,6 @@ def list_specialists():
     ]
 
 
-@router.post("/{key}/analyze")
-def run_specialist(
-    key: str,
-    req: AnalyzeRequest,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    """Run any single-chart specialist analysis by key."""
-    if key == "kundli_milan":
-        raise HTTPException(400, "Use POST /specialist/kundli_milan/analyze with two chart IDs")
-    if key not in SPECIALISTS:
-        raise HTTPException(404, f"Unknown specialist: {key}")
-
-    chart = db.query(Chart).filter(Chart.id == req.chart_id).first()
-    if not chart:
-        raise HTTPException(404, "Chart not found")
-    if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
-
-    try:
-        t0 = time.time()
-        data = _get_chart_data(chart)
-        engine = get_engine(key)
-
-        if key == "marriage":
-            result = engine.analyze(data["_pdata"], data["birth_jd"],
-                                     name=chart.name, gender=chart.gender or "M")
-        else:
-            result = engine.analyze(data["_pdata"], data["birth_jd"], name=chart.name)
-
-        latency = int((time.time() - t0) * 1000)
-        logger.info("Specialist %s for %s in %dms", key, chart.name, latency)
-
-        return {
-            "status": "success",
-            "data": result,
-            "meta": {
-                "specialist": key,
-                "label": SPECIALISTS[key]["label"],
-                "chart_name": chart.name,
-                "latency_ms": latency,
-            },
-        }
-    except Exception as e:
-        logger.error("Specialist %s error: %s", key, e, exc_info=True)
-        raise HTTPException(500, f"Specialist analysis failed: {e}")
-
-
 @router.post("/kundli_milan/analyze")
 def run_milan_specialist(
     req: MilanAnalyzeRequest,
@@ -156,3 +111,51 @@ def run_milan_specialist(
     except Exception as e:
         logger.error("Milan specialist error: %s", e, exc_info=True)
         raise HTTPException(500, f"Milan specialist failed: {e}")
+
+
+@router.post("/{key}/analyze")
+def run_specialist(
+    key: str,
+    req: AnalyzeRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Run any single-chart specialist analysis by key."""
+    if key not in SPECIALISTS:
+        raise HTTPException(404, f"Unknown specialist: {key}")
+    if key == "kundli_milan":
+        raise HTTPException(400, "Use POST /specialist/kundli_milan/analyze with two chart IDs")
+
+    chart = db.query(Chart).filter(Chart.id == req.chart_id).first()
+    if not chart:
+        raise HTTPException(404, "Chart not found")
+    if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
+        raise HTTPException(403, "Not authorized")
+
+    try:
+        t0 = time.time()
+        data = _get_chart_data(chart)
+        engine = get_engine(key)
+
+        if key == "marriage":
+            result = engine.analyze(data["_pdata"], data["birth_jd"],
+                                     name=chart.name, gender=chart.gender or "M")
+        else:
+            result = engine.analyze(data["_pdata"], data["birth_jd"], name=chart.name)
+
+        latency = int((time.time() - t0) * 1000)
+        logger.info("Specialist %s for %s in %dms", key, chart.name, latency)
+
+        return {
+            "status": "success",
+            "data": result,
+            "meta": {
+                "specialist": key,
+                "label": SPECIALISTS[key]["label"],
+                "chart_name": chart.name,
+                "latency_ms": latency,
+            },
+        }
+    except Exception as e:
+        logger.error("Specialist %s error: %s", key, e, exc_info=True)
+        raise HTTPException(500, f"Specialist analysis failed: {e}")
