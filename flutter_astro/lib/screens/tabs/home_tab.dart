@@ -9,6 +9,7 @@ import '../../services/api_service.dart';
 import '../communication/live_host_screen.dart';
 import '../rashi/rashi_list_screen.dart';
 import '../milan/milan_chart_selector.dart';
+import '../specialist/specialist_list_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -140,6 +141,34 @@ class _HomeTabState extends State<HomeTab> {
                     ]),
                   ),
                   const Icon(Icons.chevron_right),
+                ]),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // ── Dept Reports quick access ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistListScreen())),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [Colors.purple.withOpacity(0.18), Colors.purple.withOpacity(0.05)]),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.purple.withOpacity(0.4)),
+                ),
+                child: const Row(children: [
+                  Text('📊', style: TextStyle(fontSize: 22)),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Dept Reports', style: TextStyle(color: Colors.purple, fontSize: 14, fontWeight: FontWeight.w700)),
+                      SizedBox(height: 2),
+                      Text('15 specialist analyses — Career, Wealth, Health, Love & more',
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                    ]),
+                  ),
+                  Icon(Icons.chevron_right),
                 ]),
               ),
             ),

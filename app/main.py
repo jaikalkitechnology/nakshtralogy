@@ -17,7 +17,7 @@ from app.routers import (
     communication_router, ws_chat, ws_astrologer, ws_agent,
     admin_router, google_auth_router, kundli_router,
     rashi_router, agent_router, career_router, character_router,
-    milan_router,
+    milan_router, specialist_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -147,6 +147,7 @@ app.include_router(agent_router.router, prefix="/api/v1/agent", tags=["AI Agent"
 app.include_router(career_router.router, prefix="/api/v1/career", tags=["Career Specialist"])
 app.include_router(character_router.router, prefix="/api/v1/character", tags=["Character Analysis"])
 app.include_router(milan_router.router, prefix="/api/v1/milan", tags=["Kundli Milan"])
+app.include_router(specialist_router.router, prefix="/api/v1/specialist", tags=["Dept Reports"])
 
 
 

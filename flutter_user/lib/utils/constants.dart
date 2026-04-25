@@ -27,6 +27,9 @@ class ApiConstants {
   // Kundli Milan
   static const String milanBase = '$baseUrl/milan';
 
+  // Dept Reports (15 specialists)
+  static const String specialistBase = '$baseUrl/specialist';
+
   // Rashi (zodiac)
   static const String rashiBase = '$baseUrl/rashi';
 
