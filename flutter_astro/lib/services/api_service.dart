@@ -628,5 +628,21 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Dept Reports (15 Specialists) ──
+  Future<Map<String, dynamic>> getSpecialistList() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.specialistBase}/list'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> runSpecialist(String key, String chartId) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.specialistBase}/$key/analyze'),
+      headers: {..._headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'chart_id': chartId}),
+    );
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
