@@ -29,6 +29,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   List<dynamic> _charts = [];
   List<dynamic> _providers = [];
+  List<dynamic> _dbLanguages = [];  // loaded from DB via API
   String? _selectedChartId;
   String? _selectedChartName;
   String _selectedProvider = 'ollama-3b';
@@ -74,6 +75,14 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     super.initState();
     _loadCharts();
     _loadProviders();
+    _loadLanguages();
+  }
+
+  Future<void> _loadLanguages() async {
+    try {
+      final langs = await _api.getAiLanguages();
+      if (mounted && langs.isNotEmpty) setState(() => _dbLanguages = langs);
+    } catch (_) {}
   }
 
   Future<void> _loadCharts() async {
@@ -325,20 +334,28 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                 ? (_detectedLanguage != null ? 'Auto → ${_displayLang(_detectedLanguage!)}' : 'Auto-detect')
                 : 'Language: ${_displayLang(_language)}',
             onSelected: (v) => setState(() => _language = v),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'auto',      child: Row(children: [Icon(Icons.auto_fix_high, size: 14), SizedBox(width: 8), Text('🌐 Auto-detect')])),
-              PopupMenuDivider(),
-              PopupMenuItem(value: 'english',   child: Text('English')),
-              PopupMenuItem(value: 'hindi',     child: Text('हिंदी  Hindi')),
-              PopupMenuItem(value: 'hinglish',  child: Text('Hinglish')),
-              PopupMenuItem(value: 'bengali',   child: Text('বাংলা  Bengali')),
-              PopupMenuItem(value: 'tamil',     child: Text('தமிழ்  Tamil')),
-              PopupMenuItem(value: 'telugu',    child: Text('తెలుగు  Telugu')),
-              PopupMenuItem(value: 'kannada',   child: Text('ಕನ್ನಡ  Kannada')),
-              PopupMenuItem(value: 'malayalam', child: Text('മലയാളം  Malayalam')),
-              PopupMenuItem(value: 'gujarati',  child: Text('ગુજરાતી  Gujarati')),
-              PopupMenuItem(value: 'marathi',   child: Text('मराठी  Marathi')),
-              PopupMenuItem(value: 'punjabi',   child: Text('ਪੰਜਾਬੀ  Punjabi')),
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'auto', child: Row(children: [Icon(Icons.auto_fix_high, size: 14), SizedBox(width: 8), Text('🌐 Auto-detect')])),
+              const PopupMenuDivider(),
+              // Dynamic from DB (fallback to hardcoded if DB empty)
+              ...(_dbLanguages.isNotEmpty
+                  ? _dbLanguages.map<PopupMenuEntry<String>>((l) => PopupMenuItem(
+                      value: l['code']?.toString() ?? '',
+                      child: Text('${l['native_label'] ?? ''}  ${l['label'] ?? ''}'),
+                    ))
+                  : <PopupMenuEntry<String>>[
+                      const PopupMenuItem(value: 'english',   child: Text('English')),
+                      const PopupMenuItem(value: 'hindi',     child: Text('हिंदी  Hindi')),
+                      const PopupMenuItem(value: 'hinglish',  child: Text('Hinglish')),
+                      const PopupMenuItem(value: 'bengali',   child: Text('বাংলা  Bengali')),
+                      const PopupMenuItem(value: 'tamil',     child: Text('தமிழ்  Tamil')),
+                      const PopupMenuItem(value: 'telugu',    child: Text('తెలుగు  Telugu')),
+                      const PopupMenuItem(value: 'kannada',   child: Text('ಕನ್ನಡ  Kannada')),
+                      const PopupMenuItem(value: 'malayalam', child: Text('മലയാളം  Malayalam')),
+                      const PopupMenuItem(value: 'gujarati',  child: Text('ગુજરાતી  Gujarati')),
+                      const PopupMenuItem(value: 'marathi',   child: Text('मराठी  Marathi')),
+                      const PopupMenuItem(value: 'punjabi',   child: Text('ਪੰਜਾਬੀ  Punjabi')),
+                    ]),
             ],
           ),
         ],

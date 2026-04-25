@@ -38,6 +38,9 @@ class ApiConstants {
   // Dept Reports (15 specialists)
   static const String specialistBase = '$baseUrl/specialist';
 
+  // AI Config (languages, domains from DB)
+  static const String aiConfigBase = '$baseUrl/ai-config';
+
   // Rashi (zodiac predictions)
   static const String rashiBase = '$baseUrl/rashi';
   static const String commBase = '$baseUrl/comm';

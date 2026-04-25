@@ -17,7 +17,7 @@ from app.routers import (
     communication_router, ws_chat, ws_astrologer, ws_agent,
     admin_router, google_auth_router, kundli_router,
     rashi_router, agent_router, career_router, character_router,
-    milan_router, specialist_router,
+    milan_router, specialist_router, ai_config_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -107,6 +107,9 @@ async def _cleanup_stale_sessions():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    # Load AI config (languages, domains, engines) from DB into memory cache
+    from app.ai_config import ai_cache
+    ai_cache.load_from_db()
     task = asyncio.create_task(_cleanup_stale_sessions())
     # Pre-load Qwen model into RAM so first chat request is fast
     from app.agent.llm_service import warmup_llm
@@ -148,6 +151,7 @@ app.include_router(career_router.router, prefix="/api/v1/career", tags=["Career 
 app.include_router(character_router.router, prefix="/api/v1/character", tags=["Character Analysis"])
 app.include_router(milan_router.router, prefix="/api/v1/milan", tags=["Kundli Milan"])
 app.include_router(specialist_router.router, prefix="/api/v1/specialist", tags=["Dept Reports"])
+app.include_router(ai_config_router.router, prefix="/api/v1/ai-config", tags=["AI Config"])
 
 
 
