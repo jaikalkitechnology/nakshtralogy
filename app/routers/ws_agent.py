@@ -394,7 +394,12 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             log_entry = AgentLog(
                                 user_id=user.id, chart_id=chart_id, message_id=message_id,
                                 provider="template", domain=detected_domain, language=effective_lang,
+                                raw_query=query[:2000],
                                 query=query[:500], intent_json=intent_json_str,
+                                matched_question_id=match_info.get("question_id") if match_info else None,
+                                match_score=match_info.get("score") if match_info else None,
+                                routing="template",
+                                response_text=template_text[:5000],
                                 status="success", response_tokens=1,
                                 latency_ms=int((time.time() - t0) * 1000),
                                 prompt_chars=len(template_text),
@@ -526,6 +531,8 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             intent_json_str = json.dumps(intent_obj, ensure_ascii=False)[:2000]
                         except Exception:
                             intent_json_str = None
+                        full_response = "".join(collected_tokens)
+                        routing_type = "sharpened_llm" if match_info else "llm"
                         log_entry = AgentLog(
                             user_id=user.id,
                             chart_id=chart_id,
@@ -533,8 +540,13 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                             provider=provider_key,
                             domain=detected_domain,
                             language=effective_lang,
-                            query=user_prompt[:15000],  # Full rich prompt incl. intent blocks (up to 15K chars)
+                            raw_query=query[:2000],
+                            query=user_prompt[:15000],
                             intent_json=intent_json_str,
+                            matched_question_id=match_info.get("question_id") if match_info else None,
+                            match_score=match_info.get("score") if match_info else None,
+                            routing=routing_type,
+                            response_text=full_response[:5000],
                             status=log_status,
                             error_message=log_error,
                             http_status=log_http,

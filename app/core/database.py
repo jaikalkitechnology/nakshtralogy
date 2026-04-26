@@ -27,6 +27,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # are swallowed so this is idempotent.
 _DEV_COLUMN_MIGRATIONS = [
     ("agent_logs", "intent_json", "TEXT"),
+    ("agent_logs", "raw_query", "TEXT"),
+    ("agent_logs", "matched_question_id", "VARCHAR(36)"),
+    ("agent_logs", "match_score", "FLOAT"),
+    ("agent_logs", "routing", "VARCHAR(20)"),
+    ("agent_logs", "response_text", "TEXT"),
 ]
 
 
