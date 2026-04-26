@@ -44,6 +44,7 @@ class Settings:
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "AIzaSyBMu7cPo2FKzimGViEhP3hl0JoHFN2DyTw")
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "sk-or-v1-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")
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "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")
+    SARVAM_API_KEY: str = os.getenv("SARVAM_API_KEY", "sk_q55qrb36_OUYtekZUouTkH03QKQ5iE2OC")
     DEEPSEEK_API_KEY: str = os.getenv("DEEPSEEK_API_KEY", "sk-427b160ab48c4e00aeebe8abe24d8aa9")
 
     # Google OAuth

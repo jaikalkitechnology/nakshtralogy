@@ -55,6 +55,9 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     'groq-compound': Icons.bolt,
     'groq-compound-mini': Icons.bolt,
     'openrouter': Icons.hub,
+    'sarvam-m': Icons.translate,
+    'sarvam-30b': Icons.translate,
+    'sarvam-105b': Icons.translate,
   };
 
   static const _providerShortNames = {
@@ -69,6 +72,9 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     'groq-compound': 'Compound',
     'groq-compound-mini': 'Comp Mini',
     'openrouter': 'Router',
+    'sarvam-m': 'Sarvam M',
+    'sarvam-30b': 'Sarvam 30B',
+    'sarvam-105b': 'Sarvam 105B',
   };
 
   @override

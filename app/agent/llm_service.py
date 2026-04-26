@@ -115,6 +115,27 @@ PROVIDERS = {
         "api_key": settings.OPENROUTER_API_KEY,
         "type": "openai",
     },
+    "sarvam-m": {
+        "label": "Sarvam M (Indic)",
+        "url": "https://api.sarvam.ai/v1/chat/completions",
+        "model": "sarvam-m",
+        "api_key": settings.SARVAM_API_KEY,
+        "type": "sarvam",
+    },
+    "sarvam-30b": {
+        "label": "Sarvam 30B (Indic)",
+        "url": "https://api.sarvam.ai/v1/chat/completions",
+        "model": "sarvam-30b",
+        "api_key": settings.SARVAM_API_KEY,
+        "type": "sarvam",
+    },
+    "sarvam-105b": {
+        "label": "Sarvam 105B (Indic)",
+        "url": "https://api.sarvam.ai/v1/chat/completions",
+        "model": "sarvam-105b",
+        "api_key": settings.SARVAM_API_KEY,
+        "type": "sarvam",
+    },
 }
 
 
@@ -843,6 +864,8 @@ async def stream_provider(
         await _stream_ollama(provider, messages, websocket, token_collector, _safe_send)
     elif ptype == "gemini":
         await _stream_gemini(provider, messages, websocket, token_collector, _safe_send)
+    elif ptype == "sarvam":
+        await _stream_sarvam(provider, messages, websocket, token_collector, _safe_send)
     else:
         await _stream_openai(provider, messages, websocket, token_collector, _safe_send)
 
@@ -977,6 +1000,53 @@ async def _stream_gemini(provider: dict, messages: list, websocket, token_collec
     except Exception as e:
         logger.warning("Gemini stream failed: %s", e)
         err = f"⚠️ Gemini error: {e}"
+        await _send({"type": "token", "text": err})
+        if token_collector is not None:
+            token_collector.append(err)
+
+
+async def _stream_sarvam(provider: dict, messages: list, websocket, token_collector: list = None, _safe_send=None) -> None:
+    """Stream from Sarvam AI — OpenAI-compatible but uses api-subscription-key header."""
+    import httpx
+    _send = _safe_send or (lambda d: websocket.send_json(d))
+    try:
+        headers = {
+            "Content-Type": "application/json",
+            "api-subscription-key": provider["api_key"],
+        }
+        body = {
+            "model": provider["model"],
+            "messages": messages,
+            "stream": True,
+            "temperature": 0.7,
+            "max_tokens": 500,
+        }
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=5.0)
+        ) as client:
+            async with client.stream("POST", provider["url"], headers=headers, json=body) as stream:
+                async for line in stream.aiter_lines():
+                    line = line.strip()
+                    if not line or line == "data: [DONE]":
+                        continue
+                    if line.startswith("data: "):
+                        line = line[6:]
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    delta = chunk.get("choices", [{}])[0].get("delta", {})
+                    text = delta.get("content", "")
+                    if text:
+                        ok = await _send({"type": "token", "text": text})
+                        if ok is False:
+                            logger.info("Client disconnected mid-stream (sarvam)")
+                            return
+                        if token_collector is not None:
+                            token_collector.append(text)
+    except Exception as e:
+        logger.warning("Sarvam stream failed (%s): %s", provider.get("model"), e)
+        err = f"⚠️ Sarvam error: {e}"
         await _send({"type": "token", "text": err})
         if token_collector is not None:
             token_collector.append(err)
