@@ -96,13 +96,13 @@ def match_question(query: str, domain_key: str) -> Optional[Dict[str, Any]]:
         if not keywords:
             continue
 
-        # Keyword overlap scoring
         hit_count = 0
         hit_weight = 0.0
         for kw in keywords:
             kw_lower = kw.lower()
             if " " in kw_lower:
-                if kw_lower in q_lower:
+                kw_parts = set(kw_lower.split())
+                if kw_parts.issubset(q_words):
                     hit_count += 1
                     hit_weight += 2.0
             else:
@@ -113,8 +113,10 @@ def match_question(query: str, domain_key: str) -> Optional[Dict[str, Any]]:
         if hit_count == 0:
             continue
 
+        # Cap denominator at 5 so having many keyword variants doesn't
+        # penalize the score. 2 keyword hits ≈ 40-60%, enough to match.
         max_weight = sum(2.0 if " " in kw else 1.0 for kw in keywords)
-        score = hit_weight / max_weight if max_weight > 0 else 0.0
+        score = min(1.0, hit_weight / min(max_weight, 5.0))
 
         if score > best_score:
             best_score = score

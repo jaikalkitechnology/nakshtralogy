@@ -358,9 +358,9 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                 try:
                     from app.ai_config.question_matcher import match_question, _question_cache
                     from app.ai_config.template_resolver import resolve_template, _template_cache
-                    if _question_cache and _template_cache:
+                    if _question_cache:
                         match_info = match_question(query, result.get("domain", "life_path_luck"))
-                        if match_info:
+                        if match_info and _template_cache:
                             template_text = resolve_template(
                                 question_id=match_info["question_id"],
                                 domain_key=result.get("domain", "life_path_luck"),
@@ -406,6 +406,20 @@ async def ws_agent_chat(websocket: WebSocket, token: str = Query(...)):
                     except Exception as le:
                         logger.error("Template log write failed: %s", le)
                     continue
+
+                # ⭐️ QUESTION MATCH WITHOUT TEMPLATE — sharpen intent for LLM
+                # DB-curated sub_domain/question_type is more precise than keyword detection
+                if match_info:
+                    intent = result.get("intent") or {}
+                    if match_info.get("sub_domain"):
+                        intent["sub_domain"] = match_info["sub_domain"]
+                    if match_info.get("question_type"):
+                        intent["question_type"] = match_info["question_type"]
+                    intent["matched_question_id"] = match_info["question_id"]
+                    intent["match_score"] = match_info["score"]
+                    result["intent"] = intent
+                    logger.info("QUESTION MATCH (no template) score=%.2f → sharpened sub=%s qtype=%s",
+                                match_info["score"], match_info.get("sub_domain"), match_info.get("question_type"))
 
                 user_prompt = build_rich_prompt(query, chart_context, intent=result.get("intent"))
 

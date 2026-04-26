@@ -254,6 +254,21 @@ async def agent_chat(
         result = _agent.query(req.query, pdata, birth_jd, domain_override=req.domain, user_language=req.language)
         logger.info("Agent probability in %.2fs — %s %.0f%%", time.time() - t1, result["domain"], result["probability"])
 
+        # Question match → sharpen intent even for REST endpoint
+        try:
+            from app.ai_config.question_matcher import match_question, _question_cache
+            if _question_cache:
+                match_info = match_question(req.query, result.get("domain", "life_path_luck"))
+                if match_info:
+                    intent = result.get("intent") or {}
+                    if match_info.get("sub_domain"):
+                        intent["sub_domain"] = match_info["sub_domain"]
+                    if match_info.get("question_type"):
+                        intent["question_type"] = match_info["question_type"]
+                    result["intent"] = intent
+        except Exception:
+            pass
+
         t2 = time.time()
         message = await generate_llm_response(
             query=req.query,

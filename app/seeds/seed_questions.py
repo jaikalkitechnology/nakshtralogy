@@ -16,84 +16,88 @@ from app.models.model import (
 logger = logging.getLogger("seed_questions")
 
 QUESTIONS = [
+    # Keywords expanded with natural phrasing + Hindi variants.
+    # match_threshold lowered via the model default (0.70→0.45 in seed below)
+    # so 2-out-of-6 keyword hits still match for intent sharpening.
+
     # ── Career (5) ──
-    {"domain": "career_job", "sub": "promotion", "qtype": "timing", "kw": ["promotion","when","kab","timing"],
+    {"domain": "career_job", "sub": "promotion", "qtype": "timing", "kw": ["promotion","promoted","get promoted","when","kab","increment","hike","raise","appraisal"],
      "en": "When will I get a promotion?", "hi": "मेरी प्रमोशन कब होगी?", "label": "Promotion timing"},
-    {"domain": "career_job", "sub": "job_change", "qtype": "yes_no", "kw": ["job change","switch","new job","naukri"],
+    {"domain": "career_job", "sub": "job_change", "qtype": "yes_no", "kw": ["job change","change my job","switch job","new job","naukri badal","should i leave"],
      "en": "Should I change my job?", "hi": "क्या मुझे नौकरी बदलनी चाहिए?", "label": "Job change"},
-    {"domain": "career_job", "sub": "job_stability", "qtype": "prediction", "kw": ["job","stable","security","safe"],
+    {"domain": "career_job", "sub": "job_stability", "qtype": "prediction", "kw": ["job stable","job security","safe","job loss","fired","layoff","naukri safe"],
      "en": "Is my job stable right now?", "hi": "क्या मेरी नौकरी अभी सुरक्षित है?", "label": "Job stability"},
-    {"domain": "career_job", "sub": "interview", "qtype": "timing", "kw": ["interview","selection","placement","hire"],
+    {"domain": "career_job", "sub": "interview", "qtype": "timing", "kw": ["interview","selection","clear interview","placement","hire","crack interview"],
      "en": "Will I clear the interview?", "hi": "क्या मेरा इंटरव्यू क्लियर होगा?", "label": "Interview success"},
-    {"domain": "career_job", "sub": None, "qtype": "explanation", "kw": ["career","path","direction","future"],
+    {"domain": "career_job", "sub": None, "qtype": "explanation", "kw": ["career","career path","direction","future career","job future","kaisa rahega"],
      "en": "What does my career path look like?", "hi": "मेरा करियर कैसा रहेगा?", "label": "Career overview"},
 
     # ── Marriage (4) ──
-    {"domain": "marriage_family", "sub": "marriage_timing", "qtype": "timing", "kw": ["marriage","when","shaadi","kab","wedding"],
+    {"domain": "marriage_family", "sub": "marriage_timing", "qtype": "timing", "kw": ["marriage","get married","when married","shaadi kab","wedding","vivah kab"],
      "en": "When will I get married?", "hi": "मेरी शादी कब होगी?", "label": "Marriage timing"},
-    {"domain": "marriage_family", "sub": "spouse_nature", "qtype": "explanation", "kw": ["spouse","partner","husband","wife","nature"],
+    {"domain": "marriage_family", "sub": "spouse_nature", "qtype": "explanation", "kw": ["spouse","life partner","husband","wife","partner nature","jeevansathi kaisa"],
      "en": "What will my spouse be like?", "hi": "मेरा जीवनसाथी कैसा होगा?", "label": "Spouse nature"},
-    {"domain": "marriage_family", "sub": "divorce", "qtype": "prediction", "kw": ["divorce","separation","problem","conflict"],
+    {"domain": "marriage_family", "sub": "divorce", "qtype": "prediction", "kw": ["divorce","separation","talaq","conflict","marriage problem","rishta toot"],
      "en": "Is there any divorce risk in my chart?", "hi": "क्या मेरी कुंडली में तलाक का योग है?", "label": "Divorce risk"},
-    {"domain": "marriage_family", "sub": "children", "qtype": "timing", "kw": ["children","baby","kids","pregnancy","santaan"],
+    {"domain": "marriage_family", "sub": "children", "qtype": "timing", "kw": ["children","baby","kids","pregnancy","santaan kab","child birth"],
      "en": "When will I have children?", "hi": "मुझे संतान कब होगी?", "label": "Children timing"},
 
     # ── Wealth (3) ──
-    {"domain": "money_wealth", "sub": None, "qtype": "prediction", "kw": ["rich","wealthy","money","dhan","paisa"],
+    {"domain": "money_wealth", "sub": None, "qtype": "prediction", "kw": ["rich","wealthy","become rich","money","dhan","paisa","ameer"],
      "en": "Will I become wealthy?", "hi": "क्या मैं अमीर बनूंगा?", "label": "Wealth prediction"},
-    {"domain": "money_wealth", "sub": None, "qtype": "timing", "kw": ["income","increase","growth","salary","earning"],
+    {"domain": "money_wealth", "sub": None, "qtype": "timing", "kw": ["income increase","salary increase","income","earning","growth","aay badhe"],
      "en": "When will my income increase?", "hi": "मेरी आय कब बढ़ेगी?", "label": "Income growth"},
-    {"domain": "money_wealth", "sub": None, "qtype": "remedy", "kw": ["wealth","remedy","upay","mantra","dhan"],
+    {"domain": "money_wealth", "sub": None, "qtype": "remedy", "kw": ["wealth remedy","money remedy","upay","mantra","dhan vriddhi","financial remedy"],
      "en": "What remedies for wealth growth?", "hi": "धन वृद्धि के लिए क्या उपाय करें?", "label": "Wealth remedy"},
 
     # ── Health (3) ──
-    {"domain": "health_wellness", "sub": "disease", "qtype": "prediction", "kw": ["health","disease","illness","bimari","problem"],
+    {"domain": "health_wellness", "sub": "disease", "qtype": "prediction", "kw": ["health problem","disease","illness","bimari","health issue","sick","rog"],
      "en": "Are there health problems in my chart?", "hi": "क्या मेरी कुंडली में स्वास्थ्य समस्या है?", "label": "Health overview"},
-    {"domain": "health_wellness", "sub": None, "qtype": "explanation", "kw": ["body","constitution","prakriti","type"],
+    {"domain": "health_wellness", "sub": None, "qtype": "explanation", "kw": ["body type","constitution","prakriti","body constitution","sharir prakriti"],
      "en": "What is my body constitution?", "hi": "मेरी शारीरिक प्रकृति क्या है?", "label": "Constitution"},
-    {"domain": "health_wellness", "sub": "chronic", "qtype": "timing", "kw": ["chronic","long","recover","healing","theek"],
+    {"domain": "health_wellness", "sub": "chronic", "qtype": "timing", "kw": ["health improve","recover","healing","theek","get better","chronic","long illness"],
      "en": "When will my health improve?", "hi": "मेरी सेहत कब सुधरेगी?", "label": "Recovery timing"},
 
     # ── Love (2) ──
-    {"domain": "love_relationship", "sub": "new_relationship", "qtype": "timing", "kw": ["love","find","partner","relationship","pyaar"],
+    {"domain": "love_relationship", "sub": "new_relationship", "qtype": "timing", "kw": ["find love","when love","partner milega","relationship","pyaar kab","true love"],
      "en": "When will I find love?", "hi": "मुझे प्यार कब मिलेगा?", "label": "Love timing"},
-    {"domain": "love_relationship", "sub": "relationship_problem", "qtype": "reason", "kw": ["breakup","fight","conflict","problem","issue"],
+    {"domain": "love_relationship", "sub": "relationship_problem", "qtype": "reason", "kw": ["relationship fail","breakup","fight","why relationship","rishta kyun","problem"],
      "en": "Why do my relationships fail?", "hi": "मेरे रिश्ते क्यों टूटते हैं?", "label": "Relationship issues"},
 
     # ── Business (2) ──
-    {"domain": "business_startup", "sub": None, "qtype": "yes_no", "kw": ["business","start","startup","company","own"],
+    {"domain": "business_startup", "sub": None, "qtype": "yes_no", "kw": ["start business","own business","startup","company start","business karu","entrepreneur"],
      "en": "Should I start my own business?", "hi": "क्या मुझे खुद का बिज़नेस शुरू करना चाहिए?", "label": "Start business"},
-    {"domain": "business_startup", "sub": None, "qtype": "timing", "kw": ["business","profit","success","growth","safal"],
+    {"domain": "business_startup", "sub": None, "qtype": "timing", "kw": ["business success","business profit","when profit","safal","business grow","vyapaar"],
      "en": "When will my business succeed?", "hi": "मेरा बिज़नेस कब सफल होगा?", "label": "Business success"},
 
     # ── Education (2) ──
-    {"domain": "education_career", "sub": "exam_result", "qtype": "prediction", "kw": ["exam","result","pass","clear","competitive"],
+    {"domain": "education_career", "sub": "exam_result", "qtype": "prediction", "kw": ["exam pass","exam result","clear exam","competitive exam","pass hoga","pariksha"],
      "en": "Will I pass my exams?", "hi": "क्या मैं परीक्षा पास करूंगा?", "label": "Exam result"},
-    {"domain": "education_career", "sub": "abroad_study", "qtype": "prediction", "kw": ["abroad","foreign","study","overseas","videsh"],
+    {"domain": "education_career", "sub": "abroad_study", "qtype": "prediction", "kw": ["abroad study","foreign study","overseas","videsh","go abroad","study abroad"],
      "en": "Will I go abroad for studies?", "hi": "क्या मैं विदेश पढ़ने जाऊंगा?", "label": "Foreign study"},
 
     # ── Mental (2) ──
-    {"domain": "mental_stress", "sub": "anxiety", "qtype": "reason", "kw": ["anxiety","stress","tension","worried","chinta"],
+    {"domain": "mental_stress", "sub": "anxiety", "qtype": "reason", "kw": ["anxiety","anxious","always worried","stress","tension","chinta kyun","why stressed"],
      "en": "Why am I always anxious?", "hi": "मुझे हमेशा चिंता क्यों रहती है?", "label": "Anxiety cause"},
-    {"domain": "mental_stress", "sub": "sleep_issue", "qtype": "remedy", "kw": ["sleep","insomnia","neend","rest"],
+    {"domain": "mental_stress", "sub": "sleep_issue", "qtype": "remedy", "kw": ["sleep problem","insomnia","neend nahi","sleep remedy","can't sleep","rest"],
      "en": "Remedies for sleep issues?", "hi": "नींद की समस्या का उपाय?", "label": "Sleep remedy"},
 
     # ── Property (1) ──
-    {"domain": "property_assets", "sub": "buy_timing", "qtype": "timing", "kw": ["property","buy","house","ghar","flat","land"],
+    {"domain": "property_assets", "sub": "buy_timing", "qtype": "timing", "kw": ["buy property","buy house","property kab","ghar kab","flat","land","real estate"],
      "en": "When should I buy property?", "hi": "प्रॉपर्टी कब खरीदनी चाहिए?", "label": "Buy timing"},
 
     # ── Legal (1) ──
-    {"domain": "legal_dispute", "sub": "case_outcome", "qtype": "prediction", "kw": ["court","case","legal","win","jeet"],
+    {"domain": "legal_dispute", "sub": "case_outcome", "qtype": "prediction", "kw": ["court case","win case","legal case","case jeet","lawsuit","case result"],
      "en": "Will I win my court case?", "hi": "क्या मैं कोर्ट केस जीतूंगा?", "label": "Case outcome"},
 
     # ── Debt (1) ──
-    {"domain": "debt_recovery", "sub": None, "qtype": "timing", "kw": ["debt","loan","karz","clear","free"],
+    {"domain": "debt_recovery", "sub": None, "qtype": "timing", "kw": ["debt free","loan clear","karz mukt","when debt","pay off","loan kab"],
      "en": "When will I be debt-free?", "hi": "मैं कर्ज़ मुक्त कब होऊंगा?", "label": "Debt freedom"},
 
     # ── Life Path (2) ──
-    {"domain": "life_path_luck", "sub": "purpose", "qtype": "explanation", "kw": ["purpose","life","destiny","bhagya","path"],
+    {"domain": "life_path_luck", "sub": "purpose", "qtype": "explanation", "kw": ["life purpose","purpose","destiny","bhagya","life path","jeevan ka uddeshya"],
      "en": "What is my life purpose?", "hi": "मेरे जीवन का उद्देश्य क्या है?", "label": "Life purpose"},
-    {"domain": "life_path_luck", "sub": None, "qtype": "prediction", "kw": ["luck","fortune","rajyog","lucky","kismat"],
+    {"domain": "life_path_luck", "sub": None, "qtype": "prediction", "kw": ["rajyog","luck","fortune","lucky","kismat","bhagya","raj yoga"],
      "en": "Do I have Rajyog in my chart?", "hi": "क्या मेरी कुंडली में राजयोग है?", "label": "Rajyog check"},
 ]
 
@@ -173,6 +177,7 @@ def seed_questions(db):
                 sub_domain=q.get("sub"),
                 question_type=q["qtype"],
                 keywords=q["kw"],
+                match_threshold=0.35,
                 sort_order=i + 1,
             )
             db.add(aq)
