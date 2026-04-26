@@ -770,6 +770,16 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  Future<Map<String, dynamic>> runRelationshipAnalysis(List<String> chartIds, {String context = 'general'}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.specialistBase}/relationship/analyze'),
+      headers: {..._headers, 'Content-Type': 'application/json'},
+      body: jsonEncode({'chart_ids': chartIds, 'context': context}),
+    );
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> runSpecialist(String key, String chartId) async {
     final resp = await http.post(
       Uri.parse('${ApiConstants.specialistBase}/$key/analyze'),
