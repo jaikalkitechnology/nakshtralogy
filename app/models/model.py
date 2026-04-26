@@ -926,6 +926,12 @@ class AgentLog(Base):
     # 8-section intent output from detect_intent() serialized as JSON (sub_domain,
     # question_type, urgency, sentiment, response_depth, time_frame, confidence, etc.)
     intent_json = Column(Text, nullable=True)
+    # Question matching + routing tracking
+    raw_query = Column(Text, nullable=True)
+    matched_question_id = Column(String(36), nullable=True, index=True)
+    match_score = Column(Float, nullable=True)
+    routing = Column(String(20), nullable=True)  # template | sharpened_llm | llm | rejected
+    response_text = Column(Text, nullable=True)
     status = Column(String(20), nullable=False, index=True)  # success | error | timeout | interrupted
     error_message = Column(Text, nullable=True)
     http_status = Column(Integer, nullable=True)
