@@ -628,6 +628,25 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── AI Config (languages, domains from DB) ──
+  Future<List<dynamic>> getAiLanguages() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.aiConfigBase}/languages'), headers: _headers);
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      if (body is List) return body;
+    }
+    return [];
+  }
+
+  Future<List<dynamic>> getAiDomains() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.aiConfigBase}/domains'), headers: _headers);
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      if (body is List) return body;
+    }
+    return [];
+  }
+
   // ── Dept Reports (15 Specialists) ──
   Future<Map<String, dynamic>> getSpecialistList() async {
     final resp = await http.get(Uri.parse('${ApiConstants.specialistBase}/list'), headers: _headers);

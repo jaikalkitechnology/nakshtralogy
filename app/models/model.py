@@ -933,3 +933,140 @@ class AgentLog(Base):
     latency_ms = Column(Integer, nullable=True)
     prompt_chars = Column(Integer, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  AI CONFIG — DB-driven languages, domains, engines, questions, templates
+# ─────────────────────────────────────────────────────────────────────
+
+class AiLanguage(Base):
+    __tablename__ = "ai_languages"
+
+    code = Column(String(20), primary_key=True)
+    label = Column(String(50), nullable=False)
+    native_label = Column(String(100), nullable=False)
+    script = Column(String(30), nullable=True)
+    llm_instruction = Column(Text, nullable=False)
+    script_range_start = Column(Integer, nullable=True)
+    script_range_end = Column(Integer, nullable=True)
+    detection_keywords = Column(JSON, nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    sort_order = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AiDomainConfig(Base):
+    __tablename__ = "ai_domain_config"
+
+    key = Column(String(40), primary_key=True)
+    label = Column(String(100), nullable=False)
+    emoji = Column(String(10), nullable=True)
+    icon_name = Column(String(40), nullable=True)
+    # Specialist prompt fields
+    specialist_role = Column(String(200), nullable=True)
+    specialist_focus = Column(Text, nullable=True)
+    specialist_key_planets = Column(Text, nullable=True)
+    specialist_key_yogas = Column(Text, nullable=True)
+    specialist_key_doshas = Column(Text, nullable=True)
+    specialist_style = Column(Text, nullable=True)
+    # Domain config
+    houses = Column(JSON, nullable=True)
+    house_weights = Column(JSON, nullable=True)
+    key_planets = Column(JSON, nullable=True)
+    planet_weights = Column(JSON, nullable=True)
+    yogas = Column(JSON, nullable=True)
+    doshas = Column(JSON, nullable=True)
+    keywords_en = Column(JSON, nullable=True)
+    keywords_hi = Column(JSON, nullable=True)
+    keywords_hinglish = Column(JSON, nullable=True)
+    divisional_charts = Column(JSON, nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    sort_order = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AiEngine(Base):
+    __tablename__ = "ai_engines"
+
+    code = Column(String(40), primary_key=True)
+    label = Column(String(100), nullable=False)
+    emoji = Column(String(10), nullable=True)
+    icon_name = Column(String(40), nullable=True)
+    description = Column(Text, nullable=True)
+    required_houses = Column(JSON, nullable=True)
+    required_planets = Column(JSON, nullable=True)
+    supports_streaming = Column(Boolean, default=False, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    sort_order = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+class AiQuestion(Base):
+    __tablename__ = "ai_questions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    domain_key = Column(String(40), nullable=False, index=True)
+    sub_domain = Column(String(40), nullable=True)
+    question_type = Column(String(30), nullable=True)
+    keywords = Column(JSON, nullable=True)
+    match_threshold = Column(Float, default=0.70, nullable=False)
+    difficulty = Column(String(20), default="normal", nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    sort_order = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    translations = relationship("AiQuestionTranslation", back_populates="question",
+                                 cascade="all, delete-orphan")
+
+
+class AiQuestionTranslation(Base):
+    __tablename__ = "ai_question_translations"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    question_id = Column(String(36), ForeignKey("ai_questions.id", ondelete="CASCADE"), nullable=False)
+    lang_code = Column(String(20), nullable=False)
+    text = Column(Text, nullable=False)
+    short_label = Column(String(100), nullable=True)
+    keywords_lang = Column(JSON, nullable=True)
+
+    question = relationship("AiQuestion", back_populates="translations")
+
+    __table_args__ = (
+        UniqueConstraint("question_id", "lang_code", name="uq_question_lang"),
+    )
+
+
+class AiAnswerTemplate(Base):
+    __tablename__ = "ai_answer_templates"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    question_id = Column(String(36), ForeignKey("ai_questions.id", ondelete="CASCADE"), nullable=True)
+    domain_key = Column(String(40), nullable=True, index=True)
+    condition_key = Column(String(80), nullable=True)
+    condition_op = Column(String(10), nullable=True)
+    condition_val = Column(JSON, nullable=True)
+    priority = Column(Integer, default=0, nullable=False)
+    use_llm_fill = Column(Boolean, default=False, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    translations = relationship("AiTemplateTranslation", back_populates="template",
+                                 cascade="all, delete-orphan")
+
+
+class AiTemplateTranslation(Base):
+    __tablename__ = "ai_template_translations"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    template_id = Column(String(36), ForeignKey("ai_answer_templates.id", ondelete="CASCADE"), nullable=False)
+    lang_code = Column(String(20), nullable=False)
+    body = Column(Text, nullable=False)
+    placeholders = Column(JSON, nullable=True)
+
+    template = relationship("AiAnswerTemplate", back_populates="translations")
+
+    __table_args__ = (
+        UniqueConstraint("template_id", "lang_code", name="uq_template_lang"),
+    )

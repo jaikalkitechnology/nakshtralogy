@@ -29,6 +29,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   List<dynamic> _charts = [];
   List<dynamic> _providers = [];
+  List<dynamic> _dbLanguages = [];  // loaded from DB via API
   String? _selectedChartId;
   String? _selectedChartName;
   String _selectedProvider = 'ollama-3b';
@@ -37,6 +38,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   String _language = 'auto';  // auto-detect by default
   String? _detectedLanguage;    // last detected language from server
   List<String> _followupSuggestions = []; // LLM-generated chips after each reply
+  List<dynamic> _suggestedQuestions = []; // DB-loaded question chips per domain
 
   WebSocketChannel? _ws;
   bool _wsConnected = false;
@@ -74,6 +76,23 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
     super.initState();
     _loadCharts();
     _loadProviders();
+    _loadLanguages();
+  }
+
+  Future<void> _loadLanguages() async {
+    try {
+      final langs = await _api.getAiLanguages();
+      if (mounted && langs.isNotEmpty) setState(() => _dbLanguages = langs);
+    } catch (_) {}
+  }
+
+  Future<void> _loadSuggestedQuestions() async {
+    if (widget.domainKey == null) return;
+    try {
+      final langCode = _language == 'auto' ? 'english' : _language;
+      final qs = await _api.getAiQuestions(widget.domainKey!, lang: langCode);
+      if (mounted && qs.isNotEmpty) setState(() => _suggestedQuestions = qs);
+    } catch (_) {}
   }
 
   Future<void> _loadCharts() async {
@@ -188,6 +207,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       _selectedChartName = chart['name']?.toString() ?? 'Chart';
     });
     _connectWs();
+    _loadSuggestedQuestions();
     _addBotMessage('${widget.emoji} Welcome! I\'m your **${widget.label}**.\n\nAnalyzing the birth chart of **$_selectedChartName**.\n\nAsk me anything about ${widget.label.toLowerCase()}!');
   }
 
@@ -325,20 +345,28 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                 ? (_detectedLanguage != null ? 'Auto → ${_displayLang(_detectedLanguage!)}' : 'Auto-detect')
                 : 'Language: ${_displayLang(_language)}',
             onSelected: (v) => setState(() => _language = v),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'auto',      child: Row(children: [Icon(Icons.auto_fix_high, size: 14), SizedBox(width: 8), Text('🌐 Auto-detect')])),
-              PopupMenuDivider(),
-              PopupMenuItem(value: 'english',   child: Text('English')),
-              PopupMenuItem(value: 'hindi',     child: Text('हिंदी  Hindi')),
-              PopupMenuItem(value: 'hinglish',  child: Text('Hinglish')),
-              PopupMenuItem(value: 'bengali',   child: Text('বাংলা  Bengali')),
-              PopupMenuItem(value: 'tamil',     child: Text('தமிழ்  Tamil')),
-              PopupMenuItem(value: 'telugu',    child: Text('తెలుగు  Telugu')),
-              PopupMenuItem(value: 'kannada',   child: Text('ಕನ್ನಡ  Kannada')),
-              PopupMenuItem(value: 'malayalam', child: Text('മലയാളം  Malayalam')),
-              PopupMenuItem(value: 'gujarati',  child: Text('ગુજરાતી  Gujarati')),
-              PopupMenuItem(value: 'marathi',   child: Text('मराठी  Marathi')),
-              PopupMenuItem(value: 'punjabi',   child: Text('ਪੰਜਾਬੀ  Punjabi')),
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'auto', child: Row(children: [Icon(Icons.auto_fix_high, size: 14), SizedBox(width: 8), Text('🌐 Auto-detect')])),
+              const PopupMenuDivider(),
+              // Dynamic from DB (fallback to hardcoded if DB empty)
+              ...(_dbLanguages.isNotEmpty
+                  ? _dbLanguages.map<PopupMenuEntry<String>>((l) => PopupMenuItem(
+                      value: l['code']?.toString() ?? '',
+                      child: Text('${l['native_label'] ?? ''}  ${l['label'] ?? ''}'),
+                    ))
+                  : <PopupMenuEntry<String>>[
+                      const PopupMenuItem(value: 'english',   child: Text('English')),
+                      const PopupMenuItem(value: 'hindi',     child: Text('हिंदी  Hindi')),
+                      const PopupMenuItem(value: 'hinglish',  child: Text('Hinglish')),
+                      const PopupMenuItem(value: 'bengali',   child: Text('বাংলা  Bengali')),
+                      const PopupMenuItem(value: 'tamil',     child: Text('தமிழ்  Tamil')),
+                      const PopupMenuItem(value: 'telugu',    child: Text('తెలుగు  Telugu')),
+                      const PopupMenuItem(value: 'kannada',   child: Text('ಕನ್ನಡ  Kannada')),
+                      const PopupMenuItem(value: 'malayalam', child: Text('മലയാളം  Malayalam')),
+                      const PopupMenuItem(value: 'gujarati',  child: Text('ગુજરાતી  Gujarati')),
+                      const PopupMenuItem(value: 'marathi',   child: Text('मराठी  Marathi')),
+                      const PopupMenuItem(value: 'punjabi',   child: Text('ਪੰਜਾਬੀ  Punjabi')),
+                    ]),
             ],
           ),
         ],
@@ -550,20 +578,38 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // ── Suggestions ─────────────────────────────────────────────────────
 
   Widget _suggestions() {
-    final samples = {
-      'career_job': ['Will I get promotion?', 'Job change kab hoga?', 'Career growth'],
-      'business_startup': ['Should I start business?', 'Partnership success?'],
-      'money_wealth': ['When will wealth increase?', 'Financial growth kab?'],
-      'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?'],
-      'marriage_family': ['Marriage kab hogi?', 'Family harmony?'],
-      'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?'],
-      'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?'],
-    };
-    final chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions'];
+    // DB-loaded questions take priority, fallback to hardcoded
+    List<String> chips;
+    if (_suggestedQuestions.isNotEmpty) {
+      chips = _suggestedQuestions.map<String>((q) =>
+          (q is Map ? (q['short_label'] ?? q['text'] ?? '') : q).toString()
+      ).where((s) => s.isNotEmpty).toList();
+    } else {
+      final samples = {
+        'career_job': ['Will I get promotion?', 'Job change kab hoga?', 'Career growth'],
+        'business_startup': ['Should I start business?', 'Partnership success?'],
+        'money_wealth': ['When will wealth increase?', 'Financial growth kab?'],
+        'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?'],
+        'marriage_family': ['Marriage kab hogi?', 'Family harmony?'],
+        'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?'],
+        'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?'],
+      };
+      chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions'];
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Wrap(spacing: 6, runSpacing: 6, children: chips.map((c) => GestureDetector(
-        onTap: () { _msgCtrl.text = c; _sendMessage(); },
+        onTap: () {
+          // For DB questions, send the full text (not just label)
+          final fullText = _suggestedQuestions.isNotEmpty
+              ? (_suggestedQuestions.firstWhere(
+                  (q) => q is Map && ((q['short_label'] ?? q['text'] ?? '') == c),
+                  orElse: () => {'text': c},
+                ) as Map)['text']?.toString() ?? c
+              : c;
+          _msgCtrl.text = fullText;
+          _sendMessage();
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(

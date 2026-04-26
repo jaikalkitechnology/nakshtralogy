@@ -310,9 +310,19 @@ def build_system_prompt(language: str = "english", domain: str = None, user: dic
     # Auto-detect if requested or unsupported language
     if language == "auto" and query:
         language = detect_language(query)
-    lang_instruction = _LANGUAGE_INSTRUCTIONS.get(language, _LANGUAGE_INSTRUCTIONS["english"])
 
-    spec = DOMAIN_SPECIALISTS.get(domain or "life_path_luck", DOMAIN_SPECIALISTS["life_path_luck"])
+    # Try DB cache first, fallback to hardcoded
+    try:
+        from app.ai_config import ai_cache
+        if ai_cache.is_loaded:
+            lang_instruction = ai_cache.get_language_instruction(language)
+            spec = ai_cache.get_domain_specialist(domain or "life_path_luck")
+        else:
+            lang_instruction = _LANGUAGE_INSTRUCTIONS.get(language, _LANGUAGE_INSTRUCTIONS["english"])
+            spec = DOMAIN_SPECIALISTS.get(domain or "life_path_luck", DOMAIN_SPECIALISTS["life_path_luck"])
+    except Exception:
+        lang_instruction = _LANGUAGE_INSTRUCTIONS.get(language, _LANGUAGE_INSTRUCTIONS["english"])
+        spec = DOMAIN_SPECIALISTS.get(domain or "life_path_luck", DOMAIN_SPECIALISTS["life_path_luck"])
 
     user_intro = ""
     if user:
@@ -596,7 +606,12 @@ def build_rich_prompt(query: str, chart_context: dict, intent: dict = None) -> s
     # ⭐️ DIVISIONAL CHARTS — domain-specific Vargas (D9/D10/D30 etc.)
     divs = chart_context.get("divisionals", {})
     domain = chart_context.get("probability", {}).get("domain", "life_path_luck")
-    relevant_dcharts = DOMAIN_DIVISIONALS.get(domain, ["D9", "D1"])
+    # Try DB cache for divisional charts, fallback to hardcoded
+    try:
+        from app.ai_config import ai_cache
+        relevant_dcharts = ai_cache.get_domain_divisionals(domain) if ai_cache.is_loaded else DOMAIN_DIVISIONALS.get(domain, ["D9", "D1"])
+    except Exception:
+        relevant_dcharts = DOMAIN_DIVISIONALS.get(domain, ["D9", "D1"])
     if divs and relevant_dcharts:
         # Show each planet's placement across the relevant D-charts
         parts.append(f"\nDIVISIONAL CHARTS (relevant for {domain}):")
