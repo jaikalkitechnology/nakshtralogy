@@ -3,6 +3,7 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_chart_picker.dart';
 import 'specialist_milan_picker.dart';
+import 'specialist_relationship_picker.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   const SpecialistListScreen({super.key});
@@ -28,6 +29,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     {'key': 'character',     'label': 'Character Analysis',   'emoji': '🔍', 'desc': '51 personality traits, trust, loyalty, ethics'},
     {'key': 'past_life',     'label': 'Past Life & Karma',    'emoji': '🔮', 'desc': 'Past life themes, karmic carry-forward'},
     {'key': 'kundli_milan', 'label': 'Kundli Milan',          'emoji': '💑', 'desc': 'Match 2 charts — compatibility, doshas, timing'},
+    {'key': 'relationship','label': 'Relationship Intel',    'emoji': '🔗', 'desc': '2-5 charts — trust, power, karmic bonds, group dynamics'},
   ];
 
   static const _colors = <String, Color>{
@@ -37,6 +39,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     'property': Colors.brown, 'legal': Colors.blueGrey, 'life_path': Colors.amber,
     'character': Colors.teal, 'past_life': Colors.deepPurple,
     'kundli_milan': Colors.pink,
+    'relationship': Colors.purple,
   };
 
   @override
@@ -56,6 +59,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             onTap: () {
               if (s['key'] == 'kundli_milan') {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
+              } else if (s['key'] == 'relationship') {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
               } else {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (_) => SpecialistChartPicker(

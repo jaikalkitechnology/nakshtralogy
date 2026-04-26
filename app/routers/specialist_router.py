@@ -43,6 +43,12 @@ class MilanAnalyzeRequest(BaseModel):
     gender_2: str = "F"
 
 
+class RelationshipAnalyzeRequest(BaseModel):
+    chart_ids: list = Field(..., min_length=2, max_length=5,
+                            description="2-5 chart IDs for relationship analysis")
+    context: str = Field("general", description="general|business|love|family|team|friendship")
+
+
 def _get_chart_data(chart: Chart) -> dict:
     cid = chart.id
     if cid in _chart_cache:
@@ -113,6 +119,57 @@ def run_milan_specialist(
         raise HTTPException(500, f"Milan specialist failed: {e}")
 
 
+@router.post("/relationship/analyze")
+def run_relationship_specialist(
+    req: RelationshipAnalyzeRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Run Relationship Intelligence specialist (2-5 charts)."""
+    if len(req.chart_ids) < 2 or len(req.chart_ids) > 5:
+        raise HTTPException(400, "Requires 2-5 chart IDs")
+
+    charts_input = []
+    names = []
+    for cid in req.chart_ids:
+        chart = db.query(Chart).filter(Chart.id == cid).first()
+        if not chart:
+            raise HTTPException(404, f"Chart {cid} not found")
+        if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
+            raise HTTPException(403, f"Not authorized for chart {cid}")
+        data = _get_chart_data(chart)
+        charts_input.append({
+            "pdata": data["_pdata"],
+            "birth_jd": data["birth_jd"],
+            "name": chart.name,
+            "gender": chart.gender or "U",
+        })
+        names.append(chart.name)
+
+    try:
+        t0 = time.time()
+        engine = get_engine("relationship")
+        result = engine.analyze(charts_input, relationship_context=req.context)
+        latency = int((time.time() - t0) * 1000)
+        logger.info("Relationship Intel %s in %dms", " × ".join(names), latency)
+
+        return {
+            "status": "success",
+            "data": result,
+            "meta": {
+                "specialist": "relationship",
+                "label": "Relationship Intelligence",
+                "participants": names,
+                "chart_count": len(names),
+                "context": req.context,
+                "latency_ms": latency,
+            },
+        }
+    except Exception as e:
+        logger.error("Relationship specialist error: %s", e, exc_info=True)
+        raise HTTPException(500, f"Relationship analysis failed: {e}")
+
+
 @router.post("/{key}/analyze")
 def run_specialist(
     key: str,
@@ -125,6 +182,8 @@ def run_specialist(
         raise HTTPException(404, f"Unknown specialist: {key}")
     if key == "kundli_milan":
         raise HTTPException(400, "Use POST /specialist/kundli_milan/analyze with two chart IDs")
+    if key == "relationship":
+        raise HTTPException(400, "Use POST /specialist/relationship/analyze with 2-5 chart IDs")
 
     chart = db.query(Chart).filter(Chart.id == req.chart_id).first()
     if not chart:

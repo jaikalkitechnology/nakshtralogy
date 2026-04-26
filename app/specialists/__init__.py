@@ -23,6 +23,11 @@ from all_engine.all_specialist_engine.past_life_specialist import past_life_spec
 from all_engine.all_specialist_engine.property_assets_specialist import property_assets_specialist_engine
 from all_engine.all_specialist_engine.wealth_specialist import wealth_specialist_engine
 
+# Hyphen in filename requires importlib
+from importlib import import_module as _imp
+_ri_mod = _imp('all_engine.all_specialist_engine.relationship_intelligence_specialist-2')
+relationship_intelligence_engine = _ri_mod.relationship_intelligence_specialist_engine
+
 SPECIALISTS = {
     "career":            {"engine": career_specialist_engine,            "label": "Career & Job",          "emoji": "💼", "icon": "work"},
     "business":          {"engine": business_startup_specialist_engine,  "label": "Business & Startup",    "emoji": "🚀", "icon": "rocket_launch"},
@@ -39,6 +44,7 @@ SPECIALISTS = {
     "character":         {"engine": character_specialist_engine,         "label": "Character Analysis",    "emoji": "🔍", "icon": "person_search"},
     "past_life":         {"engine": past_life_specialist_engine,         "label": "Past Life & Karma",     "emoji": "🔮", "icon": "history"},
     "kundli_milan":      {"engine": kundli_milan_specialist_engine,      "label": "Kundli Milan",          "emoji": "💑", "icon": "people"},
+    "relationship":      {"engine": relationship_intelligence_engine,   "label": "Relationship Intel",    "emoji": "🔗", "icon": "hub"},
 }
 
 
