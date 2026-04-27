@@ -4,6 +4,7 @@ import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
 import 'career_report_screen.dart';
 import 'business_report_screen.dart';
+import 'education_report_screen.dart';
 
 class SpecialistChartPicker extends StatefulWidget {
   final String specialistKey, specialistLabel, specialistEmoji;
@@ -67,6 +68,8 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                               ? CareerReportScreen(chartId: id, chartName: name)
                               : widget.specialistKey == 'business'
                               ? BusinessReportScreen(chartId: id, chartName: name)
+                              : widget.specialistKey == 'education'
+                              ? EducationReportScreen(chartId: id, chartName: name)
                               : SpecialistReportScreen(
                                   specialistKey: widget.specialistKey,
                                   specialistLabel: widget.specialistLabel,
