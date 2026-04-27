@@ -8,106 +8,169 @@ import 'specialist_relationship_picker.dart';
 class SpecialistListScreen extends StatefulWidget {
   final bool showAppBar;
   const SpecialistListScreen({super.key, this.showAppBar = true});
-
   @override
-  State<SpecialistListScreen> createState() => _SpecialistListScreenState();
+  State<SpecialistListScreen> createState() => _S();
 }
 
-class _SpecialistListScreenState extends State<SpecialistListScreen> {
-  static const _specialists = <Map<String, String>>[
-    {'key': 'career',        'label': 'Career & Job',         'emoji': '💼', 'desc': 'Career path, promotion, job stability'},
-    {'key': 'business',      'label': 'Business & Startup',   'emoji': '🚀', 'desc': 'Business potential, partnership, growth'},
-    {'key': 'education',     'label': 'Education & Learning', 'emoji': '🎓', 'desc': 'Academic success, exams, higher studies'},
-    {'key': 'wealth',        'label': 'Wealth & Finance',     'emoji': '💰', 'desc': 'Income, investments, financial growth'},
-    {'key': 'debt_recovery', 'label': 'Debt & Recovery',      'emoji': '📉', 'desc': 'Debt load, recovery timing, financial healing'},
-    {'key': 'love',          'label': 'Love & Relationships', 'emoji': '❤️', 'desc': 'Love capacity, romantic style, timing'},
-    {'key': 'marriage',      'label': 'Marriage & Family',    'emoji': '💒', 'desc': 'Marriage timing, spouse nature, family harmony'},
-    {'key': 'health',        'label': 'Health & Wellness',    'emoji': '🏥', 'desc': 'Vitality, immunity, constitutional type'},
-    {'key': 'mental_stress', 'label': 'Mental & Stress',      'emoji': '🧠', 'desc': 'Mental stability, anxiety, resilience'},
-    {'key': 'property',      'label': 'Property & Assets',    'emoji': '🏠', 'desc': 'Property acquisition, real estate, assets'},
-    {'key': 'legal',         'label': 'Legal & Disputes',     'emoji': '⚖️', 'desc': 'Legal issues, court cases, dispute resolution'},
-    {'key': 'life_path',     'label': 'Life Path & Luck',     'emoji': '🌟', 'desc': 'Dharma, fortune, karmic momentum'},
-    {'key': 'character',     'label': 'Character Analysis',   'emoji': '🔍', 'desc': '51 personality traits, trust, loyalty, ethics'},
-    {'key': 'past_life',     'label': 'Past Life & Karma',    'emoji': '🔮', 'desc': 'Past life themes, karmic carry-forward'},
-    {'key': 'kundli_milan', 'label': 'Kundli Milan',          'emoji': '💑', 'desc': 'Match 2 charts — compatibility, doshas, timing'},
-    {'key': 'relationship','label': 'Relationship Intel',    'emoji': '🔗', 'desc': '2-5 charts — trust, power, karmic bonds, group dynamics'},
+class _S extends State<SpecialistListScreen> {
+  String _filter = 'all';
+
+  static const _groups = <Map<String, dynamic>>[
+    {'label': '⚡ CAREER & PURPOSE', 'filter': 'career', 'engines': [
+      {'key': 'career', 'num': '01', 'icon': '💼', 'title': 'Career &', 'em': 'Profession', 'sub': '98 KEYS · 9 SECTIONS', 'premium': false},
+      {'key': 'business', 'num': '02', 'icon': '🚀', 'title': 'Business &', 'em': 'Startup', 'sub': '~90 KEYS · 14 SECTIONS', 'premium': false},
+      {'key': 'education', 'num': '03', 'icon': '📚', 'title': 'Education &', 'em': 'Learning', 'sub': '~120 KEYS · 15 SECTIONS', 'premium': false},
+      {'key': 'life_path', 'num': '12', 'icon': '✦', 'title': 'Life Path &', 'em': 'Luck', 'sub': '~150 KEYS · 18 SECTIONS', 'premium': true},
+    ]},
+    {'label': '💰 WEALTH & ASSETS', 'filter': 'wealth', 'engines': [
+      {'key': 'wealth', 'num': '04', 'icon': '💎', 'title': 'Wealth &', 'em': 'Finance', 'sub': '~85 KEYS · 16 SECTIONS', 'premium': false},
+      {'key': 'debt_recovery', 'num': '05', 'icon': '⚖', 'title': 'Debt &', 'em': 'Recovery', 'sub': '~100 KEYS · 17 SECTIONS', 'premium': false},
+      {'key': 'property', 'num': '10', 'icon': '🏘', 'title': 'Property &', 'em': 'Assets', 'sub': '~140 KEYS · 18 SECTIONS', 'premium': false},
+      {'key': 'legal', 'num': '11', 'icon': '⚖️', 'title': 'Legal &', 'em': 'Disputes', 'sub': '~140 KEYS · 17 SECTIONS', 'premium': false},
+    ]},
+    {'label': '💕 LOVE & RELATIONSHIPS', 'filter': 'love', 'engines': [
+      {'key': 'love', 'num': '06', 'icon': '💕', 'title': 'Love &', 'em': 'Romance', 'sub': '~120 KEYS · 18 SECTIONS', 'premium': false},
+      {'key': 'marriage', 'num': '07', 'icon': '💍', 'title': 'Marriage &', 'em': 'Family', 'sub': '~150 KEYS · 19 SECTIONS', 'premium': true},
+      {'key': 'kundli_milan', 'num': '15', 'icon': '⚭', 'title': 'Kundli', 'em': 'Milan', 'sub': '186 KEYS · DUAL CHART', 'premium': true},
+      {'key': 'relationship', 'num': '16', 'icon': '🔗', 'title': 'Relationship', 'em': 'Intel', 'sub': '~120 PER PAIR · MULTI', 'premium': true},
+    ]},
+    {'label': '🌿 HEALTH & WELLNESS', 'filter': 'health', 'engines': [
+      {'key': 'health', 'num': '08', 'icon': '❤', 'title': 'Health &', 'em': 'Wellness', 'sub': '~130 KEYS · 18 SECTIONS', 'premium': false},
+      {'key': 'mental_stress', 'num': '09', 'icon': '🧠', 'title': 'Mental &', 'em': 'Stress', 'sub': '~160 KEYS · 18 SECTIONS', 'premium': false},
+    ]},
+    {'label': '☥ SOUL & KARMA', 'filter': 'soul', 'engines': [
+      {'key': 'character', 'num': '13', 'icon': '👤', 'title': 'Character', 'em': 'Analysis', 'sub': '177 KEYS · 20 SECTIONS', 'premium': false},
+      {'key': 'past_life', 'num': '14', 'icon': '☥', 'title': 'Past Life &', 'em': 'Karma', 'sub': '116 KEYS · 16 SECTIONS', 'premium': true},
+    ]},
   ];
 
-  static const _colors = <String, Color>{
-    'career': Colors.blue, 'business': Colors.indigo, 'education': Colors.cyan,
-    'wealth': Colors.green, 'debt_recovery': Colors.orange, 'love': Colors.pink,
-    'marriage': Colors.deepOrange, 'health': Colors.red, 'mental_stress': Colors.purple,
-    'property': Colors.brown, 'legal': Colors.blueGrey, 'life_path': Colors.amber,
-    'character': Colors.teal, 'past_life': Colors.deepPurple,
-    'kundli_milan': Colors.pink,
-    'relationship': Colors.purple,
-  };
+  static const _filters = ['all', 'career', 'wealth', 'love', 'health', 'soul'];
+  static const _filterLabels = {'all': 'All · 16', 'career': 'Career · 4', 'wealth': 'Wealth · 4', 'love': 'Love · 4', 'health': 'Health · 2', 'soul': 'Soul · 2'};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: widget.showAppBar
-          ? AppBar(title: const Text('Reports', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)))
-          : null,
-      body: ListView.builder(
-        padding: EdgeInsets.fromLTRB(12, widget.showAppBar ? 12 : 16, 12, 12),
-        itemCount: _specialists.length + (widget.showAppBar ? 0 : 1),
-        itemBuilder: (ctx, idx) {
-          if (!widget.showAppBar && idx == 0) {
-            return Padding(padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Specialist Reports',
-                    style: TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-                const SizedBox(height: 4),
-                Text('${_specialists.length} deep Vedic analyses, tap any to start',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-              ]));
-          }
-          final i = widget.showAppBar ? idx : idx - 1;
-          final s = _specialists[i];
-          final color = _colors[s['key']] ?? Colors.blue;
-          return GestureDetector(
-            onTap: () {
-              if (s['key'] == 'kundli_milan') {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
-              } else if (s['key'] == 'relationship') {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
-              } else {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => SpecialistChartPicker(
-                    specialistKey: s['key']!, specialistLabel: s['label']!, specialistEmoji: s['emoji']!)));
-              }
-            },
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [color.withOpacity(0.12), color.withOpacity(0.03)]),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: color.withOpacity(0.25)),
-              ),
-              child: Row(children: [
-                Container(
-                  width: 44, height: 44,
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(child: Text(s['emoji']!, style: const TextStyle(fontSize: 22))),
-                ),
-                const SizedBox(width: 14),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(s['label']!, style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 2),
-                  Text(s['desc']!, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                ])),
-                Icon(Icons.chevron_right, color: color.withOpacity(0.6), size: 22),
-              ]),
-            ),
-          );
-        },
-      ),
+      backgroundColor: const Color(0xFF0A0A24),
+      appBar: widget.showAppBar ? AppBar(backgroundColor: const Color(0xFF0A0A24),
+        title: const Text.rich(TextSpan(children: [
+          TextSpan(text: 'All ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+          TextSpan(text: 'Insights', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+        ]))) : null,
+      body: ListView(padding: EdgeInsets.only(top: widget.showAppBar ? 0 : 12), children: [
+        _banner(),
+        _filterPills(),
+        ..._groups.where((g) => _filter == 'all' || g['filter'] == _filter).expand((g) => [
+          _groupDivider(g['label'] as String),
+          _engineGrid((g['engines'] as List).cast<Map<String, dynamic>>()),
+        ]),
+        const SizedBox(height: 80),
+      ]),
     );
+  }
+
+  Widget _banner() => Container(
+    margin: const EdgeInsets.fromLTRB(16, 8, 16, 12), padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+        colors: [AppColors.gold.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.15)]),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: AppColors.gold.withOpacity(0.25))),
+    child: Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)), const SizedBox(width: 6),
+        const Text('★ YOUR COMPLETE READING', style: TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        const SizedBox(width: 6), Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
+      ]),
+      const SizedBox(height: 10),
+      const Text.rich(TextSpan(children: [
+        TextSpan(text: '16 expert ', style: TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
+        TextSpan(text: 'engines', style: TextStyle(color: AppColors.gold, fontSize: 20, fontStyle: FontStyle.italic, fontFamily: 'serif')),
+      ])),
+      const SizedBox(height: 4),
+      const Text('Each insight is a complete consultation', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+      const SizedBox(height: 12),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        _bannerStat('16', 'ENGINES'), _bannerStat('2,000+', 'DATA POINTS'), _bannerStat('14', 'SINGLE'),
+      ]),
+    ]));
+
+  Widget _bannerStat(String num, String label) => Column(children: [
+    Text(num, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+    Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace')),
+  ]);
+
+  Widget _filterPills() => SizedBox(height: 32, child: ListView(
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    children: _filters.map((f) {
+      final active = _filter == f;
+      return GestureDetector(
+        onTap: () => setState(() => _filter = f),
+        child: Container(
+          margin: const EdgeInsets.only(right: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            gradient: active ? const LinearGradient(colors: [AppColors.gold, AppColors.saffron]) : null,
+            color: active ? null : Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: active ? Colors.transparent : AppColors.gold.withOpacity(0.2))),
+          child: Text(_filterLabels[f]!, style: TextStyle(
+            color: active ? AppColors.midnight : AppColors.smoke,
+            fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500, fontFamily: 'monospace'))));
+    }).toList()));
+
+  Widget _groupDivider(String label) => Container(
+    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+    child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)));
+
+  Widget _engineGrid(List<Map<String, dynamic>> engines) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    child: Wrap(spacing: 8, runSpacing: 8, children: engines.map((e) => _engineTile(e)).toList()));
+
+  Widget _engineTile(Map<String, dynamic> e) {
+    final premium = e['premium'] == true;
+    return GestureDetector(
+      onTap: () => _openEngine(e['key'] as String, '${e['title']} ${e['em']}', e['icon'] as String),
+      child: SizedBox(
+        width: (MediaQuery.of(context).size.width - 40) / 2,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: [AppColors.gold.withOpacity(0.08), const Color(0xFF1A1642).withOpacity(0.6)]),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.gold.withOpacity(0.2))),
+          child: Stack(children: [
+            if (premium) Positioned(top: -2, right: -2,
+              child: Container(padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
+                child: const Text('★', style: TextStyle(color: AppColors.gold, fontSize: 8)))),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Text(e['num'] as String, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+                const Spacer(),
+                Text(e['icon'] as String, style: const TextStyle(fontSize: 20)),
+              ]),
+              const SizedBox(height: 8),
+              Text.rich(TextSpan(children: [
+                TextSpan(text: '${e['title']} ', style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600)),
+                TextSpan(text: e['em'] as String, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontStyle: FontStyle.italic)),
+              ])),
+              const SizedBox(height: 3),
+              Text(e['sub'] as String, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 0.5)),
+            ]),
+          ]),
+        )));
+  }
+
+  void _openEngine(String key, String label, String emoji) {
+    if (key == 'kundli_milan') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
+    } else if (key == 'relationship') {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
+    } else {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (_) => SpecialistChartPicker(specialistKey: key, specialistLabel: label, specialistEmoji: emoji)));
+    }
   }
 }
