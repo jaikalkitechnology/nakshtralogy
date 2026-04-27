@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nakshtralogy — Engine Hub · 16 Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --midnight: #0B0B2E;
+    --cosmic-void: #0A0A24;
+    --indigo: #4A3B8C;
+    --aurora: #1F2459;
+    --gold: #E8B547;
+    --gold-bright: #F4C95D;
+    --saffron: #E07A3C;
+    --cosmic-pink: #E8689C;
+    --lavender: #B8A7E0;
+    --aurora-mint: #7BC4C4;
+    --ivory: #F5EEE0;
+    --smoke: #8B8AB5;
+    --success: #6BB88A;
+    --warning: #E5A93A;
+    --danger: #D95555;
+    --rose: #F07A7A;
+    --sky: #7FC5E8;
+
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Manrope', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cosmic-void);
+    color: var(--ivory);
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(232,181,71,0.12), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(74,59,140,0.25), transparent 50%),
+      radial-gradient(2px 2px at 20% 30%, white, transparent),
+      radial-gradient(1px 1px at 60% 70%, white, transparent),
+      radial-gradient(1px 1px at 50% 50%, white, transparent),
+      radial-gradient(1.5px 1.5px at 80% 10%, white, transparent),
+      radial-gradient(1px 1px at 90% 60%, white, transparent),
+      radial-gradient(1px 1px at 33% 80%, white, transparent),
+      radial-gradient(2px 2px at 15% 65%, white, transparent);
+    background-size: 100% 100%, 100% 100%, 250px 250px, 250px 250px, 250px 250px, 250px 250px, 250px 250px, 250px 250px, 250px 250px;
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; }
+
+  /* === HERO === */
+  .page-hero {
+    padding: 80px 40px 50px;
+    text-align: center;
+    position: relative;
+  }
+
+  .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(232,181,71,0.08);
+    border: 1px solid rgba(232,181,71,0.25);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .page-eyebrow .dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--gold);
+  }
+
+  .page-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .page-hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .page-hero p {
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--lavender);
+    font-size: 17px;
+    font-weight: 300;
+  }
+
+  /* === SCREEN === */
+  .screen-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .screen-card {
+    text-align: center;
+  }
+
+  /* PHONE */
+  .phone {
+    width: 380px;
+    height: 800px;
+    margin: 0 auto;
+    background: #0A0A0A;
+    border-radius: 52px;
+    padding: 14px;
+    box-shadow:
+      0 40px 100px -20px rgba(232,181,71,0.18),
+      0 0 0 2px rgba(232,181,71,0.1),
+      inset 0 0 0 1px rgba(255,255,255,0.05);
+    position: relative;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 28px;
+    background: #0A0A0A;
+    border-radius: 0 0 18px 18px;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 38px;
+    overflow: hidden;
+    position: relative;
+    background: var(--cosmic-void);
+  }
+
+  .screen-bg {
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(ellipse at top, rgba(74,59,140,0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(232,181,71,0.08) 0%, transparent 50%),
+      var(--cosmic-void);
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .screen-bg::-webkit-scrollbar { display: none; }
+
+  .screen-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 25% 15%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 70% 30%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 45% 55%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 55% 25%, rgba(255,255,255,0.4), transparent);
+    background-size: 200px 200px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .status-bar {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px 0 32px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ivory);
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    backdrop-filter: blur(20px);
+  }
+
+  .status-bar .right { display: flex; gap: 6px; align-items: center; }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 20px 10px;
+    position: sticky;
+    top: 50px;
+    z-index: 8;
+    background: linear-gradient(180deg, rgba(10,10,36,0.95) 0%, rgba(10,10,36,0.7) 100%);
+    backdrop-filter: blur(20px);
+  }
+
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(232,181,71,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory);
+  }
+
+  .nav-title-block { text-align: center; }
+
+  .nav-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .nav-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1;
+  }
+
+  .nav-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+
+  /* === HUB HERO BANNER === */
+  .hub-banner {
+    margin: 8px 16px 14px;
+    padding: 22px 18px;
+    background:
+      radial-gradient(ellipse at top right, rgba(232,104,156,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(232,181,71,0.15) 0%, transparent 60%),
+      linear-gradient(135deg, rgba(74,59,140,0.5) 0%, rgba(26,22,66,0.6) 100%);
+    border: 1px solid rgba(232,181,71,0.3);
+    border-radius: 22px;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+  }
+
+  .hub-banner::before {
+    content: '✦';
+    position: absolute;
+    top: 14px; right: 18px;
+    font-size: 22px;
+    color: rgba(232,181,71,0.5);
+  }
+
+  .hub-banner-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .hub-banner-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.05;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .hub-banner-title em { font-style: italic; color: var(--gold); }
+
+  .hub-banner-sub {
+    font-size: 11px;
+    color: var(--lavender);
+    line-height: 1.4;
+    max-width: 280px;
+  }
+
+  .hub-banner-stats {
+    display: flex;
+    gap: 14px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(232,181,71,0.25);
+  }
+
+  .hub-stat-item {
+    flex: 1;
+  }
+
+  .hub-stat-num {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .hub-stat-lbl {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* === FILTER PILLS === */
+  .filter-row {
+    padding: 4px 16px 10px;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 2;
+  }
+
+  .filter-row::-webkit-scrollbar { display: none; }
+
+  .filter-pill {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(232,181,71,0.2);
+    font-size: 10px;
+    color: var(--lavender);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .filter-pill.active {
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    color: var(--midnight);
+    border-color: transparent;
+    font-weight: 700;
+  }
+
+  /* === SECTION HEADER === */
+  .sec-h {
+    padding: 14px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+
+  .sec-h-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+
+  .sec-h-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+
+  .sec-h-count {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--smoke);
+    letter-spacing: 0.15em;
+    background: rgba(255,255,255,0.05);
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(232,181,71,0.15);
+  }
+
+  /* === GROUP DIVIDER === */
+  .group-divider {
+    padding: 10px 20px 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .group-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .group-label::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  /* === PRIMARY ENGINE GRID (LARGE TILES) === */
+  .engine-grid-primary {
+    padding: 0 16px 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .engine-tile {
+    aspect-ratio: 1 / 1.05;
+    border-radius: 18px;
+    padding: 14px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(232,181,71,0.18);
+    background: rgba(26,22,66,0.5);
+  }
+
+  /* Variant gradients per engine */
+  .engine-tile.career {
+    background: linear-gradient(135deg, rgba(232,181,71,0.18) 0%, rgba(232,181,71,0.04) 100%);
+    border-color: rgba(232,181,71,0.4);
+  }
+
+  .engine-tile.business {
+    background: linear-gradient(135deg, rgba(224,122,60,0.18) 0%, rgba(224,122,60,0.04) 100%);
+    border-color: rgba(224,122,60,0.4);
+  }
+
+  .engine-tile.education {
+    background: linear-gradient(135deg, rgba(123,196,196,0.18) 0%, rgba(123,196,196,0.04) 100%);
+    border-color: rgba(123,196,196,0.4);
+  }
+
+  .engine-tile.wealth {
+    background: linear-gradient(135deg, rgba(244,201,93,0.18) 0%, rgba(244,201,93,0.04) 100%);
+    border-color: rgba(244,201,93,0.4);
+  }
+
+  .engine-tile.debt {
+    background: linear-gradient(135deg, rgba(229,169,58,0.15) 0%, rgba(229,169,58,0.03) 100%);
+    border-color: rgba(229,169,58,0.35);
+  }
+
+  .engine-tile.love {
+    background: linear-gradient(135deg, rgba(232,104,156,0.18) 0%, rgba(232,104,156,0.04) 100%);
+    border-color: rgba(232,104,156,0.4);
+  }
+
+  .engine-tile.marriage {
+    background: linear-gradient(135deg, rgba(240,122,122,0.18) 0%, rgba(240,122,122,0.04) 100%);
+    border-color: rgba(240,122,122,0.4);
+  }
+
+  .engine-tile.health {
+    background: linear-gradient(135deg, rgba(107,184,138,0.18) 0%, rgba(107,184,138,0.04) 100%);
+    border-color: rgba(107,184,138,0.4);
+  }
+
+  .engine-tile.mental {
+    background: linear-gradient(135deg, rgba(127,197,232,0.18) 0%, rgba(127,197,232,0.04) 100%);
+    border-color: rgba(127,197,232,0.4);
+  }
+
+  .engine-tile.property {
+    background: linear-gradient(135deg, rgba(184,167,224,0.18) 0%, rgba(184,167,224,0.04) 100%);
+    border-color: rgba(184,167,224,0.4);
+  }
+
+  .engine-tile.legal {
+    background: linear-gradient(135deg, rgba(217,85,85,0.15) 0%, rgba(217,85,85,0.03) 100%);
+    border-color: rgba(217,85,85,0.35);
+  }
+
+  .engine-tile.lifepath {
+    background: linear-gradient(135deg, rgba(232,181,71,0.2) 0%, rgba(74,59,140,0.15) 100%);
+    border-color: rgba(232,181,71,0.45);
+  }
+
+  .engine-tile.character {
+    background: linear-gradient(135deg, rgba(184,167,224,0.18) 0%, rgba(123,196,196,0.1) 100%);
+    border-color: rgba(184,167,224,0.4);
+  }
+
+  .engine-tile.pastlife {
+    background: linear-gradient(135deg, rgba(184,167,224,0.18) 0%, rgba(74,59,140,0.2) 100%);
+    border-color: rgba(184,167,224,0.4);
+  }
+
+  .engine-tile.milan {
+    background: linear-gradient(135deg, rgba(232,104,156,0.18) 0%, rgba(232,181,71,0.1) 100%);
+    border-color: rgba(232,104,156,0.4);
+  }
+
+  .engine-tile.relint {
+    background: linear-gradient(135deg, rgba(123,196,196,0.18) 0%, rgba(184,167,224,0.1) 100%);
+    border-color: rgba(123,196,196,0.4);
+  }
+
+  .engine-tile::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; right: -30px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.15;
+  }
+
+  .engine-tile.career::after { background: var(--gold); }
+  .engine-tile.business::after { background: var(--saffron); }
+  .engine-tile.education::after { background: var(--aurora-mint); }
+  .engine-tile.wealth::after { background: var(--gold-bright); }
+  .engine-tile.debt::after { background: var(--warning); }
+  .engine-tile.love::after { background: var(--cosmic-pink); }
+  .engine-tile.marriage::after { background: var(--rose); }
+  .engine-tile.health::after { background: var(--success); }
+  .engine-tile.mental::after { background: var(--sky); }
+  .engine-tile.property::after { background: var(--lavender); }
+  .engine-tile.legal::after { background: var(--danger); }
+  .engine-tile.lifepath::after { background: var(--gold); }
+  .engine-tile.character::after { background: var(--lavender); }
+  .engine-tile.pastlife::after { background: var(--lavender); }
+  .engine-tile.milan::after { background: var(--cosmic-pink); }
+  .engine-tile.relint::after { background: var(--aurora-mint); }
+
+  .engine-tile-num {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--smoke);
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .engine-tile-icon {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .engine-tile.career .engine-tile-icon { background: linear-gradient(135deg, var(--gold), var(--saffron)); color: var(--midnight); }
+  .engine-tile.business .engine-tile-icon { background: linear-gradient(135deg, var(--saffron), var(--cosmic-pink)); }
+  .engine-tile.education .engine-tile-icon { background: linear-gradient(135deg, var(--aurora-mint), var(--lavender)); color: var(--midnight); }
+  .engine-tile.wealth .engine-tile-icon { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: var(--midnight); }
+  .engine-tile.debt .engine-tile-icon { background: linear-gradient(135deg, var(--warning), var(--saffron)); }
+  .engine-tile.love .engine-tile-icon { background: linear-gradient(135deg, var(--cosmic-pink), var(--rose)); }
+  .engine-tile.marriage .engine-tile-icon { background: linear-gradient(135deg, var(--rose), var(--cosmic-pink)); }
+  .engine-tile.health .engine-tile-icon { background: linear-gradient(135deg, var(--success), var(--aurora-mint)); color: var(--midnight); }
+  .engine-tile.mental .engine-tile-icon { background: linear-gradient(135deg, var(--sky), var(--lavender)); color: var(--midnight); }
+  .engine-tile.property .engine-tile-icon { background: linear-gradient(135deg, var(--lavender), var(--indigo)); }
+  .engine-tile.legal .engine-tile-icon { background: linear-gradient(135deg, var(--danger), #8A2F2F); }
+  .engine-tile.lifepath .engine-tile-icon { background: linear-gradient(135deg, var(--gold), var(--indigo)); }
+  .engine-tile.character .engine-tile-icon { background: linear-gradient(135deg, var(--lavender), var(--aurora-mint)); color: var(--midnight); }
+  .engine-tile.pastlife .engine-tile-icon { background: linear-gradient(135deg, var(--lavender), var(--indigo)); }
+  .engine-tile.milan .engine-tile-icon { background: linear-gradient(135deg, var(--cosmic-pink), var(--gold)); color: var(--midnight); }
+  .engine-tile.relint .engine-tile-icon { background: linear-gradient(135deg, var(--aurora-mint), var(--lavender)); color: var(--midnight); }
+
+  .engine-tile-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.1;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 2;
+    letter-spacing: -0.01em;
+  }
+
+  .engine-tile-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+  .engine-tile.business .engine-tile-title em { color: var(--saffron); }
+  .engine-tile.education .engine-tile-title em { color: var(--aurora-mint); }
+  .engine-tile.wealth .engine-tile-title em { color: var(--gold-bright); }
+  .engine-tile.debt .engine-tile-title em { color: var(--warning); }
+  .engine-tile.love .engine-tile-title em { color: var(--cosmic-pink); }
+  .engine-tile.marriage .engine-tile-title em { color: var(--rose); }
+  .engine-tile.health .engine-tile-title em { color: var(--success); }
+  .engine-tile.mental .engine-tile-title em { color: var(--sky); }
+  .engine-tile.property .engine-tile-title em { color: var(--lavender); }
+  .engine-tile.legal .engine-tile-title em { color: var(--danger); }
+  .engine-tile.character .engine-tile-title em { color: var(--lavender); }
+  .engine-tile.pastlife .engine-tile-title em { color: var(--lavender); }
+  .engine-tile.milan .engine-tile-title em { color: var(--cosmic-pink); }
+  .engine-tile.relint .engine-tile-title em { color: var(--aurora-mint); }
+
+  .engine-tile-sub {
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+    margin-bottom: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .engine-tile-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 2;
+  }
+
+  .engine-tile-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .engine-tile.business .engine-tile-score { color: var(--saffron); }
+  .engine-tile.education .engine-tile-score { color: var(--aurora-mint); }
+  .engine-tile.wealth .engine-tile-score { color: var(--gold-bright); }
+  .engine-tile.debt .engine-tile-score { color: var(--warning); }
+  .engine-tile.love .engine-tile-score { color: var(--cosmic-pink); }
+  .engine-tile.marriage .engine-tile-score { color: var(--rose); }
+  .engine-tile.health .engine-tile-score { color: var(--success); }
+  .engine-tile.mental .engine-tile-score { color: var(--sky); }
+  .engine-tile.property .engine-tile-score { color: var(--lavender); }
+  .engine-tile.legal .engine-tile-score { color: var(--danger); }
+  .engine-tile.character .engine-tile-score { color: var(--lavender); }
+  .engine-tile.pastlife .engine-tile-score { color: var(--lavender); }
+  .engine-tile.milan .engine-tile-score { color: var(--cosmic-pink); }
+  .engine-tile.relint .engine-tile-score { color: var(--aurora-mint); }
+
+  .engine-tile-arrow {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory);
+    font-size: 11px;
+  }
+
+  .engine-tile-status {
+    font-size: 7px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .engine-tile-status.fresh { background: rgba(107,184,138,0.2); color: var(--success); }
+  .engine-tile-status.update { background: rgba(229,169,58,0.2); color: var(--warning); }
+  .engine-tile-status.locked { background: rgba(255,255,255,0.06); color: var(--smoke); }
+  .engine-tile-status.new { background: linear-gradient(135deg, var(--gold), var(--saffron)); color: var(--midnight); }
+
+  /* Premium star ribbon */
+  .premium-ribbon {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 9px;
+    color: var(--gold);
+    z-index: 3;
+  }
+
+  /* === COMPACT LIST (FOR DEEP/SPECIAL ENGINES) === */
+  .engine-list {
+    padding: 0 16px 8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .engine-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 14px;
+    margin-bottom: 6px;
+  }
+
+  .engine-row.featured {
+    background: linear-gradient(135deg, rgba(232,181,71,0.12), rgba(232,181,71,0.02));
+    border-color: rgba(232,181,71,0.4);
+  }
+
+  .engine-row-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .engine-row-info { flex: 1; min-width: 0; }
+
+  .engine-row-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+
+  .engine-row-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+
+  .engine-row-sub {
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  .engine-row-arrow {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(232,181,71,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* === BOTTOM CTA === */
+  .bottom-cta {
+    margin: 12px 16px 80px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(232,181,71,0.15), rgba(224,122,60,0.1));
+    border: 1px dashed rgba(232,181,71,0.4);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .bottom-cta-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    color: var(--midnight);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .bottom-cta-info { flex: 1; }
+
+  .bottom-cta-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+
+  .bottom-cta-title em { font-style: italic; color: var(--gold); }
+
+  .bottom-cta-sub {
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  .bottom-cta-btn {
+    padding: 8px 14px;
+    background: linear-gradient(135deg, var(--gold), var(--saffron));
+    color: var(--midnight);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* === BOTTOM NAV === */
+  .bot-nav {
+    position: sticky;
+    bottom: 0;
+    background: rgba(11,11,46,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(232,181,71,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 16px 16px;
+    z-index: 9;
+  }
+
+  .bn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: var(--smoke);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  .bn-item.active { color: var(--gold); }
+
+  .bn-item svg { width: 20px; height: 20px; }
+
+  /* === SCREEN TITLE BELOW PHONE === */
+  .screen-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-top: 30px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .screen-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+
+  .screen-desc {
+    color: var(--smoke);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* === DESIGN NOTES === */
+  .notes-section {
+    max-width: 1000px;
+    margin: 60px auto 0;
+    padding: 0 40px;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .note-card {
+    padding: 24px;
+    background: rgba(26,22,66,0.4);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 20px;
+  }
+
+  .note-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .note-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 8px;
+  }
+
+  .note-title em { font-style: italic; color: var(--gold); }
+
+  .note-text {
+    font-size: 13px;
+    color: var(--lavender);
+    line-height: 1.6;
+  }
+
+  .note-text strong { color: var(--ivory); font-weight: 600; }
+
+  .note-text code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(232,181,71,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--gold);
+  }
+
+  /* === FOOTER === */
+  .footer {
+    padding: 80px 40px;
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .footer-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .footer-divider .line {
+    flex: 1;
+    max-width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .footer-divider .star { color: var(--gold); }
+
+  .footer-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ivory);
+    margin-bottom: 8px;
+  }
+
+  .footer-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--smoke);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .notes-grid { grid-template-columns: 1fr; }
+    .screen-section { padding: 40px 20px; }
+    .page-hero { padding: 60px 20px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HERO -->
+  <header class="page-hero">
+    <div class="page-eyebrow">
+      <span class="dot"></span>
+      Engine Hub · 16 Insights
+    </div>
+    <h1>Sixteen <em>doors</em>,<br/>one chart.</h1>
+    <p>Every dimension of your destiny — Career, Wealth, Love, Health, Past Lives, Compatibility — accessible from a single, beautiful hub. Tap any tile to dive deep.</p>
+  </header>
+
+  <!-- SCREEN -->
+  <section class="screen-section">
+    <div class="screen-card">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="screen-bg">
+
+            <!-- STATUS BAR -->
+            <div class="status-bar">
+              <span>9:41</span>
+              <span class="right">
+                <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="3" width="3" height="7" rx="0.5"/><rect x="4" y="1.5" width="3" height="8.5" rx="0.5"/><rect x="8" y="0" width="3" height="10" rx="0.5"/><rect x="12" y="-1" width="3" height="11" rx="0.5"/></svg>
+                <svg width="16" height="10" viewBox="0 0 20 14" fill="none" stroke="currentColor"><rect x="1" y="3" width="16" height="8" rx="2"/><rect x="2.5" y="4.5" width="11" height="5" rx="1" fill="currentColor"/></svg>
+              </span>
+            </div>
+
+            <!-- NAV HEADER -->
+            <div class="nav-header">
+              <div class="icon-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+              <div class="nav-title-block">
+                <div class="nav-eyebrow">PRIYA SHARMA · 15 AUG 1995</div>
+                <div class="nav-title">All <em>Insights</em></div>
+              </div>
+              <div class="icon-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              </div>
+            </div>
+
+            <!-- HUB BANNER -->
+            <div class="hub-banner">
+              <div class="hub-banner-eyebrow">★ YOUR COMPLETE READING</div>
+              <div class="hub-banner-title">16 expert <em>engines</em>,<br/>at your fingertips</div>
+              <div class="hub-banner-sub">Each insight is a complete consultation in itself — discuss any with our AI council.</div>
+              <div class="hub-banner-stats">
+                <div class="hub-stat-item">
+                  <div class="hub-stat-num">16</div>
+                  <div class="hub-stat-lbl">ENGINES</div>
+                </div>
+                <div class="hub-stat-item">
+                  <div class="hub-stat-num">2,000+</div>
+                  <div class="hub-stat-lbl">DATA POINTS</div>
+                </div>
+                <div class="hub-stat-item">
+                  <div class="hub-stat-num">12</div>
+                  <div class="hub-stat-lbl">FRESH</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FILTER PILLS -->
+            <div class="filter-row">
+              <div class="filter-pill active">All · 16</div>
+              <div class="filter-pill">Career · 3</div>
+              <div class="filter-pill">Wealth · 3</div>
+              <div class="filter-pill">Love · 4</div>
+              <div class="filter-pill">Health · 2</div>
+              <div class="filter-pill">Soul · 2</div>
+              <div class="filter-pill">Other · 2</div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- GROUP 1: CAREER & PURPOSE -->
+            <!-- ============================================ -->
+            <div class="group-divider">
+              <div class="group-label">⚡ CAREER &amp; PURPOSE</div>
+            </div>
+
+            <div class="engine-grid-primary">
+
+              <!-- 01 CAREER -->
+              <div class="engine-tile career">
+                <div class="engine-tile-num">01</div>
+                <div class="engine-tile-icon">💼</div>
+                <div class="engine-tile-title">Career &amp; <em>Profession</em></div>
+                <div class="engine-tile-sub">98 KEYS · 9 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">79.8</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 02 BUSINESS -->
+              <div class="engine-tile business">
+                <div class="engine-tile-num">02</div>
+                <div class="engine-tile-icon">🚀</div>
+                <div class="engine-tile-title">Business &amp; <em>Startup</em></div>
+                <div class="engine-tile-sub">~90 KEYS · 14 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">67.1</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 03 EDUCATION -->
+              <div class="engine-tile education">
+                <div class="engine-tile-num">03</div>
+                <div class="engine-tile-icon">📚</div>
+                <div class="engine-tile-title">Education &amp; <em>Learning</em></div>
+                <div class="engine-tile-sub">~120 KEYS · 15 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">61.3</div>
+                  <div class="engine-tile-status update">UPDATED</div>
+                </div>
+              </div>
+
+              <!-- 12 LIFE PATH -->
+              <div class="engine-tile lifepath">
+                <span class="premium-ribbon">★</span>
+                <div class="engine-tile-num">12</div>
+                <div class="engine-tile-icon">✦</div>
+                <div class="engine-tile-title">Life Path &amp; <em>Luck</em></div>
+                <div class="engine-tile-sub">~150 KEYS · 18 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">94.8</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ============================================ -->
+            <!-- GROUP 2: WEALTH & ASSETS -->
+            <!-- ============================================ -->
+            <div class="group-divider">
+              <div class="group-label">💰 WEALTH &amp; ASSETS</div>
+            </div>
+
+            <div class="engine-grid-primary">
+
+              <!-- 04 WEALTH -->
+              <div class="engine-tile wealth">
+                <div class="engine-tile-num">04</div>
+                <div class="engine-tile-icon">💎</div>
+                <div class="engine-tile-title">Wealth &amp; <em>Finance</em></div>
+                <div class="engine-tile-sub">~85 KEYS · 16 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">83.2</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 05 DEBT -->
+              <div class="engine-tile debt">
+                <div class="engine-tile-num">05</div>
+                <div class="engine-tile-icon">⚖</div>
+                <div class="engine-tile-title">Debt &amp; <em>Recovery</em></div>
+                <div class="engine-tile-sub">~100 KEYS · 17 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">82.3</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 10 PROPERTY -->
+              <div class="engine-tile property">
+                <div class="engine-tile-num">10</div>
+                <div class="engine-tile-icon">🏘</div>
+                <div class="engine-tile-title">Property &amp; <em>Assets</em></div>
+                <div class="engine-tile-sub">~140 KEYS · 18 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">79.5</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 11 LEGAL -->
+              <div class="engine-tile legal">
+                <div class="engine-tile-num">11</div>
+                <div class="engine-tile-icon">⚖</div>
+                <div class="engine-tile-title">Legal &amp; <em>Disputes</em></div>
+                <div class="engine-tile-sub">~140 KEYS · 17 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">90.1</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ============================================ -->
+            <!-- GROUP 3: LOVE & RELATIONSHIPS -->
+            <!-- ============================================ -->
+            <div class="group-divider">
+              <div class="group-label">💕 LOVE &amp; RELATIONSHIPS</div>
+            </div>
+
+            <div class="engine-grid-primary">
+
+              <!-- 06 LOVE -->
+              <div class="engine-tile love">
+                <div class="engine-tile-num">06</div>
+                <div class="engine-tile-icon">💕</div>
+                <div class="engine-tile-title">Love &amp; <em>Romance</em></div>
+                <div class="engine-tile-sub">~120 KEYS · 18 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">58.9</div>
+                  <div class="engine-tile-status update">UPDATED</div>
+                </div>
+              </div>
+
+              <!-- 07 MARRIAGE -->
+              <div class="engine-tile marriage">
+                <span class="premium-ribbon">★</span>
+                <div class="engine-tile-num">07</div>
+                <div class="engine-tile-icon">💍</div>
+                <div class="engine-tile-title">Marriage &amp; <em>Family</em></div>
+                <div class="engine-tile-sub">~150 KEYS · 19 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">67.7</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 15 KUNDLI MILAN -->
+              <div class="engine-tile milan">
+                <span class="premium-ribbon">★</span>
+                <div class="engine-tile-num">15</div>
+                <div class="engine-tile-icon">⚭</div>
+                <div class="engine-tile-title">Kundli <em>Milan</em></div>
+                <div class="engine-tile-sub">186 KEYS · DUAL CHART</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">57.8</div>
+                  <div class="engine-tile-status new">NEW</div>
+                </div>
+              </div>
+
+              <!-- 16 RELATIONSHIP INTEL -->
+              <div class="engine-tile relint">
+                <span class="premium-ribbon">★</span>
+                <div class="engine-tile-num">16</div>
+                <div class="engine-tile-icon">🔗</div>
+                <div class="engine-tile-title">Relationship <em>Intel</em></div>
+                <div class="engine-tile-sub">~120 PER PAIR · MULTI</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">59.9</div>
+                  <div class="engine-tile-status new">NEW</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ============================================ -->
+            <!-- GROUP 4: HEALTH & WELLNESS -->
+            <!-- ============================================ -->
+            <div class="group-divider">
+              <div class="group-label">🌿 HEALTH &amp; WELLNESS</div>
+            </div>
+
+            <div class="engine-grid-primary">
+
+              <!-- 08 HEALTH -->
+              <div class="engine-tile health">
+                <div class="engine-tile-num">08</div>
+                <div class="engine-tile-icon">❤</div>
+                <div class="engine-tile-title">Health &amp; <em>Wellness</em></div>
+                <div class="engine-tile-sub">~130 KEYS · 18 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">62.0</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 09 MENTAL -->
+              <div class="engine-tile mental">
+                <div class="engine-tile-num">09</div>
+                <div class="engine-tile-icon">🧠</div>
+                <div class="engine-tile-title">Mental &amp; <em>Stress</em></div>
+                <div class="engine-tile-sub">~160 KEYS · 18 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">66.4</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ============================================ -->
+            <!-- GROUP 5: SOUL & KARMA -->
+            <!-- ============================================ -->
+            <div class="group-divider">
+              <div class="group-label">☥ SOUL &amp; KARMA</div>
+            </div>
+
+            <div class="engine-grid-primary">
+
+              <!-- 13 CHARACTER -->
+              <div class="engine-tile character">
+                <div class="engine-tile-num">13</div>
+                <div class="engine-tile-icon">👤</div>
+                <div class="engine-tile-title">Character <em>Analysis</em></div>
+                <div class="engine-tile-sub">177 KEYS · 20 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">76.7</div>
+                  <div class="engine-tile-status fresh">FRESH</div>
+                </div>
+              </div>
+
+              <!-- 14 PAST LIFE -->
+              <div class="engine-tile pastlife">
+                <span class="premium-ribbon">★</span>
+                <div class="engine-tile-num">14</div>
+                <div class="engine-tile-icon">☥</div>
+                <div class="engine-tile-title">Past Life &amp; <em>Karma</em></div>
+                <div class="engine-tile-sub">116 KEYS · 16 SECTIONS</div>
+                <div class="engine-tile-foot">
+                  <div class="engine-tile-score">68.7</div>
+                  <div class="engine-tile-status update">UPDATED</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- BOTTOM CTA - DISCUSS WITH AI -->
+            <div class="bottom-cta">
+              <div class="bottom-cta-icon">✦</div>
+              <div class="bottom-cta-info">
+                <div class="bottom-cta-title">Discuss with <em>AI Council</em></div>
+                <div class="bottom-cta-sub">CHATGPT · CLAUDE · GEMINI</div>
+              </div>
+              <div class="bottom-cta-btn">OPEN ↗</div>
+            </div>
+
+            <!-- BOTTOM NAV -->
+            <div class="bot-nav">
+              <div class="bn-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l10-8 10 8v9a2 2 0 01-2 2h-4v-7H9v7H5a2 2 0 01-2-2z"/></svg>
+                <span>HOME</span>
+              </div>
+              <div class="bn-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+                <span>KUNDLI</span>
+              </div>
+              <div class="bn-item active">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                <span>INSIGHTS</span>
+              </div>
+              <div class="bn-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                <span>CHAT</span>
+              </div>
+              <div class="bn-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
+                <span>PROFILE</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="screen-title">Engine <em>Hub</em></div>
+      <div class="screen-desc">USER · ALL 16 INSIGHTS · TAP TO OPEN</div>
+    </div>
+  </section>
+
+  <!-- IMPLEMENTATION NOTES -->
+  <div class="notes-section">
+    <div class="notes-grid">
+
+      <div class="note-card">
+        <div class="note-eyebrow">Layout · 5 Groups</div>
+        <div class="note-title">Grouped, not <em>listed</em></div>
+        <div class="note-text">
+          16 tiles in a flat grid feels overwhelming. Instead, the screen groups them into <strong>5 thematic sections</strong>: Career &amp; Purpose (4), Wealth &amp; Assets (4), Love &amp; Relationships (4), Health &amp; Wellness (2), Soul &amp; Karma (2). Each group gets a small mono-spaced label header. The eye lands on a group at a time.
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">Design · Color-coded</div>
+        <div class="note-title">Each engine, its <em>own gradient</em></div>
+        <div class="note-text">
+          Every tile uses a different gradient pulled from the cosmic palette: gold for Career, saffron for Business, teal-mint for Education, sky-blue for Mental, rose for Marriage, lavender for Past Life. Users learn the color language fast — soon they'll recognize "the gold one" or "the rose one" without reading labels.
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">Tile · Anatomy</div>
+        <div class="note-title">Five <em>data points</em>, one tap</div>
+        <div class="note-text">
+          Each tile shows: <code>engine #</code>, <code>colored icon</code>, <code>title with em-italic</code>, <code>keys/sections count</code>, <code>core score</code>, and a <code>status pill</code> (FRESH / UPDATED / NEW). The premium ★ ribbon flags the deepest engines (Marriage, Life Path, Past Life, Kundli Milan, Relationship Intel).
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">Filter · Pills</div>
+        <div class="note-title">Quick <em>narrowing</em></div>
+        <div class="note-text">
+          Filter pills at the top let users jump to a category: <code>All · 16</code>, <code>Career · 3</code>, <code>Wealth · 3</code>, <code>Love · 4</code>, <code>Health · 2</code>, <code>Soul · 2</code>. Combined with the visual groups below, this gives both <strong>scan</strong> and <strong>search</strong> entry points.
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">Hero · Banner</div>
+        <div class="note-title">Set the <em>scope</em></div>
+        <div class="note-text">
+          The top hero banner shows <code>16 ENGINES · 2,000+ DATA POINTS · 12 FRESH</code> — establishing the depth of analysis available before the user starts tapping. The "FRESH" stat hints at when reports update so users don't worry about stale data.
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">CTA · AI Council</div>
+        <div class="note-title">Single <em>discuss</em> entry</div>
+        <div class="note-text">
+          A persistent CTA at the bottom — "Discuss with AI Council · ChatGPT · Claude · Gemini" — lets users open a meta-conversation across ALL their reports, not just one. The dashed gold border signals it's special / different from regular tiles.
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">Status · Pills</div>
+        <div class="note-title">Three <em>signals</em></div>
+        <div class="note-text">
+          <code>FRESH</code> (green) = report generated recently. <code>UPDATED</code> (amber) = chart data changed, regenerate recommended. <code>NEW</code> (gold gradient) = engine just released, user hasn't tapped yet. The <code>★ ribbon</code> on premium tiles is for deepest-content engines — marketed as "longest reading."
+        </div>
+      </div>
+
+      <div class="note-card">
+        <div class="note-eyebrow">Tab · Insights</div>
+        <div class="note-title">New <em>nav slot</em></div>
+        <div class="note-text">
+          The bottom nav now has <strong>HOME · KUNDLI · INSIGHTS · CHAT · PROFILE</strong>. The Insights tab (active here) replaces the previous "Live" or service-list tab. This makes the engine hub a first-class destination, not buried inside Kundli detail.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-divider">
+      <span class="line"></span>
+      <span class="star">✧</span>
+      <span class="line"></span>
+    </div>
+    <div class="footer-title"><em>Nakshtra</em>logy</div>
+    <div class="footer-meta">ENGINE HUB · 16 INSIGHTS · 5 GROUPS</div>
+  </footer>
+
+</div>
+</body>
+</html>
