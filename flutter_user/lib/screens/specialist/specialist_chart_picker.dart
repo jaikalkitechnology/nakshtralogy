@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
+import 'career_report_screen.dart';
 
 class SpecialistChartPicker extends StatefulWidget {
   final String specialistKey, specialistLabel, specialistEmoji;
@@ -61,13 +62,15 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                       final place = c['place']?.toString() ?? '';
                       return GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => SpecialistReportScreen(
-                            specialistKey: widget.specialistKey,
-                            specialistLabel: widget.specialistLabel,
-                            specialistEmoji: widget.specialistEmoji,
-                            chartId: id,
-                            chartName: name,
-                          ),
+                          builder: (_) => widget.specialistKey == 'career'
+                              ? CareerReportScreen(chartId: id, chartName: name)
+                              : SpecialistReportScreen(
+                                  specialistKey: widget.specialistKey,
+                                  specialistLabel: widget.specialistLabel,
+                                  specialistEmoji: widget.specialistEmoji,
+                                  chartId: id,
+                                  chartName: name,
+                                ),
                         )),
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 8),
