@@ -9,11 +9,11 @@ import '../../bloc/wallet/wallet_state.dart';
 import '../auth/login_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
-import '../tabs/services_tab.dart';
 import '../tabs/wallet_tab.dart';
 import '../tabs/profile_tab.dart';
 import '../communication/live_viewer_screen.dart';
 import '../charts/my_charts_screen.dart';
+import '../specialist/specialist_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       _NavItem(Icons.home, l.home),
       _NavItem(Icons.star, l.astrologers),
-      _NavItem(Icons.menu_book, l.services),
+      _NavItem(Icons.assessment, 'Reports'),
       _NavItem(Icons.account_balance_wallet, l.wallet),
       _NavItem(Icons.person, l.profile),
     ];
@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onOpenKundli: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyChartsScreen())),
             ),
             const AstrologersTab(),
-            const ServicesTab(),
+            const SpecialistListScreen(showAppBar: false),
             const WalletTab(),
             const ProfileTab(),
           ],
