@@ -1072,16 +1072,22 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
         headers["X-Title"] = "Nakshtralogy"
 
     # Truncate messages if total chars exceed provider limits
+    # Groq models have aggressive idle timeouts with large prompts
     total_chars = sum(len(m.get("content", "")) for m in messages)
+    is_groq = "groq.com" in provider.get("url", "")
+    max_user = 4000 if is_groq else 6000
+    max_system = 3000 if is_groq else 4000
+    threshold = 8000 if is_groq else 12000
+
     send_messages = messages
-    if total_chars > 12000:
+    if total_chars > threshold:
         send_messages = []
         for m in messages:
             content = m.get("content", "")
-            if m.get("role") == "user" and len(content) > 6000:
-                content = content[:6000] + "\n...[truncated for model context limit]"
-            elif m.get("role") == "system" and len(content) > 4000:
-                content = content[:4000] + "\n...[truncated]"
+            if m.get("role") == "user" and len(content) > max_user:
+                content = content[:max_user] + "\n...[truncated for model context limit]"
+            elif m.get("role") == "system" and len(content) > max_system:
+                content = content[:max_system] + "\n...[truncated]"
             send_messages.append({**m, "content": content})
 
     payload = {
@@ -1123,7 +1129,14 @@ async def _stream_openai(provider: dict, messages: list, websocket, token_collec
                     if "error" in chunk:
                         err_msg = chunk["error"].get("message", str(chunk["error"])) if isinstance(chunk["error"], dict) else str(chunk["error"])
                         logger.error("%s stream error: %s", provider["label"], err_msg)
-                        err = f"⚠️ {provider['label']}: {err_msg[:200]}"
+                        # Groq idle timeout — model took too long between tokens
+                        if "idle timeout" in err_msg.lower() or "partial response" in err_msg.lower():
+                            if token_collector and len(token_collector) > 0:
+                                logger.info("Groq idle timeout after %d tokens — sending partial", len(token_collector))
+                                return
+                            err = f"⚠️ Model was too slow to respond. Try a smaller model (Llama 8B) or rephrase your question shorter."
+                        else:
+                            err = f"⚠️ {provider['label']}: {err_msg[:200]}"
                         await _send({"type": "token", "text": err})
                         if token_collector is not None:
                             token_collector.append(err)
