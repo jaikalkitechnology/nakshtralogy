@@ -5,6 +5,17 @@ import 'specialist_report_screen.dart';
 import 'career_report_screen.dart';
 import 'business_report_screen.dart';
 import 'education_report_screen.dart';
+import 'wealth_report_screen.dart';
+import 'debt_report_screen.dart';
+import 'love_report_screen.dart';
+import 'marriage_report_screen.dart';
+import 'health_report_screen.dart';
+import 'mental_report_screen.dart';
+import 'property_report_screen.dart';
+import 'legal_report_screen.dart';
+import 'lifepath_report_screen.dart';
+import 'character_report_screen.dart';
+import 'pastlife_report_screen.dart';
 
 class SpecialistChartPicker extends StatefulWidget {
   final String specialistKey, specialistLabel, specialistEmoji;
@@ -64,19 +75,27 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                       final place = c['place']?.toString() ?? '';
                       return GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => widget.specialistKey == 'career'
-                              ? CareerReportScreen(chartId: id, chartName: name)
-                              : widget.specialistKey == 'business'
-                              ? BusinessReportScreen(chartId: id, chartName: name)
-                              : widget.specialistKey == 'education'
-                              ? EducationReportScreen(chartId: id, chartName: name)
-                              : SpecialistReportScreen(
-                                  specialistKey: widget.specialistKey,
-                                  specialistLabel: widget.specialistLabel,
-                                  specialistEmoji: widget.specialistEmoji,
-                                  chartId: id,
-                                  chartName: name,
-                                ),
+                          builder: (_) {
+                            switch (widget.specialistKey) {
+                              case 'career': return CareerReportScreen(chartId: id, chartName: name);
+                              case 'business': return BusinessReportScreen(chartId: id, chartName: name);
+                              case 'education': return EducationReportScreen(chartId: id, chartName: name);
+                              case 'wealth': return WealthReportScreen(chartId: id, chartName: name);
+                              case 'debt_recovery': return DebtReportScreen(chartId: id, chartName: name);
+                              case 'love': return LoveReportScreen(chartId: id, chartName: name);
+                              case 'marriage': return MarriageReportScreen(chartId: id, chartName: name);
+                              case 'health': return HealthReportScreen(chartId: id, chartName: name);
+                              case 'mental_stress': return MentalReportScreen(chartId: id, chartName: name);
+                              case 'property': return PropertyReportScreen(chartId: id, chartName: name);
+                              case 'legal': return LegalReportScreen(chartId: id, chartName: name);
+                              case 'life_path': return LifePathReportScreen(chartId: id, chartName: name);
+                              case 'character': return CharacterReportScreen(chartId: id, chartName: name);
+                              case 'past_life': return PastLifeReportScreen(chartId: id, chartName: name);
+                              default: return SpecialistReportScreen(
+                                  specialistKey: widget.specialistKey, specialistLabel: widget.specialistLabel,
+                                  specialistEmoji: widget.specialistEmoji, chartId: id, chartName: name);
+                            }
+                          },
                         )),
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 8),
