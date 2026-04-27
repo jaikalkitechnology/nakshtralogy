@@ -6,7 +6,8 @@ import 'specialist_milan_picker.dart';
 import 'specialist_relationship_picker.dart';
 
 class SpecialistListScreen extends StatefulWidget {
-  const SpecialistListScreen({super.key});
+  final bool showAppBar;
+  const SpecialistListScreen({super.key, this.showAppBar = true});
 
   @override
   State<SpecialistListScreen> createState() => _SpecialistListScreenState();
@@ -46,13 +47,24 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Dept Reports', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
-      ),
+      appBar: widget.showAppBar
+          ? AppBar(title: const Text('Reports', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)))
+          : null,
       body: ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: _specialists.length,
-        itemBuilder: (ctx, i) {
+        padding: EdgeInsets.fromLTRB(12, widget.showAppBar ? 12 : 16, 12, 12),
+        itemCount: _specialists.length + (widget.showAppBar ? 0 : 1),
+        itemBuilder: (ctx, idx) {
+          if (!widget.showAppBar && idx == 0) {
+            return Padding(padding: const EdgeInsets.fromLTRB(4, 0, 4, 16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Specialist Reports',
+                    style: TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                const SizedBox(height: 4),
+                Text('${_specialists.length} deep Vedic analyses, tap any to start',
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              ]));
+          }
+          final i = widget.showAppBar ? idx : idx - 1;
           final s = _specialists[i];
           final color = _colors[s['key']] ?? Colors.blue;
           return GestureDetector(

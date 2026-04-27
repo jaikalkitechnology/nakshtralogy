@@ -14,6 +14,9 @@ import '../rashi/rashi_detail_screen.dart';
 import '../ai/ai_specialist_chat_screen.dart';
 import '../milan/milan_chart_selector.dart';
 import '../specialist/specialist_list_screen.dart';
+import '../specialist/specialist_chart_picker.dart';
+import '../specialist/specialist_milan_picker.dart';
+import '../specialist/specialist_relationship_picker.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
@@ -105,13 +108,13 @@ class _HomeTabState extends State<HomeTab> {
           const SizedBox(height: 10),
           _rashiCarousel(),
 
-          // Services
+          // Reports (replaces Services)
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(children: [
-              Expanded(child: Text(l.allServices,
-                  style: const TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
+              const Expanded(child: Text('Specialist Reports',
+                  style: TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
               GestureDetector(
                 onTap: widget.onSeeAllServices,
                 child: Text('${l.seeAll} \u2192', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 1)),
@@ -119,7 +122,7 @@ class _HomeTabState extends State<HomeTab> {
             ]),
           ),
           const SizedBox(height: 10),
-          _servicesGrid(),
+          _reportsGrid(),
 
           // Astrologers
           const SizedBox(height: 20),
@@ -324,6 +327,61 @@ class _HomeTabState extends State<HomeTab> {
           );
         },
       ),
+    );
+  }
+
+  static const _reportsPreview = <Map<String, String>>[
+    {'key': 'career',        'label': 'Career & Job',      'emoji': '💼'},
+    {'key': 'wealth',        'label': 'Wealth',            'emoji': '💰'},
+    {'key': 'marriage',      'label': 'Marriage',          'emoji': '💒'},
+    {'key': 'love',          'label': 'Love',              'emoji': '❤️'},
+    {'key': 'health',        'label': 'Health',            'emoji': '🏥'},
+    {'key': 'business',      'label': 'Business',          'emoji': '🚀'},
+    {'key': 'kundli_milan',  'label': 'Kundli Milan',      'emoji': '💑'},
+    {'key': 'relationship',  'label': 'Relationships',     'emoji': '🔗'},
+  ];
+
+  Widget _reportsGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.6,
+      ),
+      itemCount: _reportsPreview.length,
+      itemBuilder: (_, i) {
+        final r = _reportsPreview[i];
+        return GestureDetector(
+          onTap: () {
+            if (r['key'] == 'kundli_milan') {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
+            } else if (r['key'] == 'relationship') {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
+            } else {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => SpecialistChartPicker(
+                  specialistKey: r['key']!, specialistLabel: r['label']!, specialistEmoji: r['emoji']!)));
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.10), AppColors.saffron.withOpacity(0.04)]),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.gold.withOpacity(0.2)),
+            ),
+            child: Row(children: [
+              Container(width: 38, height: 38,
+                decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
+                child: Center(child: Text(r['emoji']!, style: const TextStyle(fontSize: 18)))),
+              const SizedBox(width: 10),
+              Expanded(child: Text(r['label']!, maxLines: 2, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w700))),
+            ]),
+          ),
+        );
+      },
     );
   }
 
