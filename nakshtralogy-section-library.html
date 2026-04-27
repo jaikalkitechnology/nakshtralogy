@@ -1,0 +1,2733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nakshtralogy — Section Design Library (11 Engines)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --midnight: #0B0B2E;
+    --cosmic-void: #0A0A24;
+    --indigo: #4A3B8C;
+    --aurora: #1F2459;
+    --gold: #E8B547;
+    --gold-bright: #F4C95D;
+    --saffron: #E07A3C;
+    --cosmic-pink: #E8689C;
+    --lavender: #B8A7E0;
+    --aurora-mint: #7BC4C4;
+    --ivory: #F5EEE0;
+    --smoke: #8B8AB5;
+    --success: #6BB88A;
+    --warning: #E5A93A;
+    --danger: #D95555;
+    --rose: #F07A7A;
+    --sky: #7FC5E8;
+
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body: 'Manrope', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cosmic-void);
+    color: var(--ivory);
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(232,181,71,0.1), transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(74,59,140,0.2), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 40px 60px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(232,181,71,0.08);
+    border: 1px solid rgba(232,181,71,0.25);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--gold);
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+  .hero p {
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--lavender);
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  /* TOC */
+  .toc {
+    max-width: 1200px;
+    margin: 40px auto 0;
+    padding: 24px;
+    background: rgba(26,22,66,0.4);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 20px;
+    text-align: left;
+  }
+
+  .toc-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 6px 16px;
+  }
+
+  .toc-item {
+    color: var(--lavender);
+    font-size: 12px;
+    padding: 4px 0;
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .toc-item:hover { color: var(--gold); }
+
+  .toc-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--smoke);
+    min-width: 26px;
+  }
+
+  /* ENGINE BLOCK */
+  .engine-block {
+    max-width: 1400px;
+    margin: 80px auto 0;
+    padding: 0 40px;
+  }
+
+  .engine-header {
+    border-top: 1px solid rgba(232,181,71,0.2);
+    padding-top: 60px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .engine-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--saffron);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .engine-tag::before, .engine-tag::after {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--saffron);
+  }
+
+  .engine-name {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ivory);
+    margin-bottom: 12px;
+  }
+
+  .engine-name em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+  .engine-meta {
+    color: var(--smoke);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+
+  .engine-recipe {
+    margin: 30px auto;
+    max-width: 700px;
+    padding: 16px 20px;
+    background: rgba(232,181,71,0.05);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 12px 12px 0;
+    text-align: left;
+    font-size: 12px;
+    color: var(--lavender);
+    line-height: 1.7;
+  }
+
+  .engine-recipe strong {
+    color: var(--gold);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  /* SECTION GRID */
+  .section-row {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+    align-items: start;
+  }
+
+  .section-spec {
+    position: sticky;
+    top: 20px;
+  }
+
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+
+  .section-desc {
+    color: var(--lavender);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .section-keys {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--smoke);
+    line-height: 1.6;
+  }
+
+  .section-keys strong { color: var(--gold); }
+
+  .section-preview {
+    background: var(--cosmic-void);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 24px;
+    padding: 24px 20px;
+    width: 360px;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(74,59,140,0.3) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* === ALL THE SECTION COMPONENT STYLES === */
+  /* Hero scores */
+  .hero-scores {
+    padding: 18px 14px;
+    background:
+      radial-gradient(ellipse at top, rgba(232,181,71,0.15) 0%, transparent 70%),
+      linear-gradient(135deg, rgba(74,59,140,0.4) 0%, rgba(26,22,66,0.6) 100%);
+    border: 1px solid rgba(232,181,71,0.25);
+    border-radius: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-scores-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .ring-row {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .ring { flex: 1; text-align: center; }
+
+  .ring-svg {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 6px;
+    position: relative;
+  }
+
+  .ring-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .ring-label {
+    font-size: 8px;
+    color: var(--lavender);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  /* Single score card */
+  .single-score {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(232,181,71,0.12), rgba(232,181,71,0.02));
+    border: 1px solid rgba(232,181,71,0.3);
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .single-score-icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .single-score-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--smoke);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .single-score-value {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .single-score-sub {
+    font-size: 9px;
+    color: var(--lavender);
+    margin-top: 6px;
+  }
+
+  /* Karaka strength table */
+  .karaka-table {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 14px;
+    padding: 12px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .karaka-table-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 60px 50px;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.06);
+  }
+
+  .karaka-table-row:last-child { border: 0; }
+
+  .karaka-table-row.primary { background: linear-gradient(90deg, rgba(232,181,71,0.1), transparent); border-radius: 6px; padding: 6px 4px; }
+
+  .karaka-glyph {
+    text-align: center;
+    font-size: 14px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .karaka-table-name {
+    font-size: 10px;
+    color: var(--ivory);
+    font-weight: 600;
+  }
+
+  .karaka-table-name .meta {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    margin-top: 1px;
+    display: block;
+  }
+
+  .karaka-table-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .karaka-table-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--lavender), var(--gold));
+    border-radius: 2px;
+  }
+
+  .karaka-table-row.primary .karaka-table-bar-fill {
+    background: linear-gradient(90deg, var(--gold), var(--saffron));
+  }
+
+  .karaka-table-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 12px;
+    text-align: right;
+  }
+
+  /* Yoga ledger */
+  .yoga-ledger {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 14px;
+    padding: 12px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .yoga-ledger-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 10px;
+    border-bottom: 1px dashed rgba(255,255,255,0.05);
+  }
+
+  .yoga-ledger-row:last-of-type { border: 0; }
+
+  .yoga-ledger-name {
+    color: var(--ivory);
+    font-weight: 600;
+  }
+
+  .yoga-ledger-delta {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .yoga-ledger-delta.plus { color: var(--success); }
+  .yoga-ledger-delta.minus { color: var(--danger); }
+
+  .yoga-ledger-total {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(232,181,71,0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .yoga-ledger-total-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .yoga-ledger-total-val {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 16px;
+  }
+
+  /* Trend chart */
+  .trend-chart {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .trend-chart-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .trend-chart-title {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+
+  .trend-chart-range {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .trend-svg {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 6px;
+  }
+
+  .trend-axis {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--smoke);
+    letter-spacing: 0.05em;
+  }
+
+  .trend-markers {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(232,181,71,0.15);
+  }
+
+  .trend-marker {
+    font-size: 8px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .trend-marker.peak { background: rgba(107,184,138,0.2); color: var(--success); }
+  .trend-marker.dip { background: rgba(217,85,85,0.2); color: var(--danger); }
+
+  /* Wealth class card */
+  .wealth-class-card {
+    padding: 18px;
+    background: linear-gradient(135deg, rgba(232,181,71,0.18), rgba(232,104,156,0.1));
+    border: 2px solid rgba(232,181,71,0.4);
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .wealth-class-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .wealth-class-name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .wealth-class-name em { font-style: italic; color: var(--gold); }
+
+  .wealth-class-range {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .wealth-class-peak {
+    font-size: 10px;
+    color: var(--lavender);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  /* Income sources list */
+  .income-sources {
+    position: relative;
+    z-index: 2;
+  }
+
+  .income-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 12px;
+    margin-bottom: 6px;
+  }
+
+  .income-row.primary {
+    background: linear-gradient(135deg, rgba(232,181,71,0.15), rgba(232,181,71,0.02));
+    border-color: var(--gold);
+  }
+
+  .income-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    background: rgba(232,181,71,0.2);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .income-info { flex: 1; }
+
+  .income-name {
+    font-size: 10px;
+    color: var(--ivory);
+    font-weight: 600;
+  }
+
+  .income-tag {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  .income-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 14px;
+  }
+
+  /* Investment mix donut */
+  .invest-mix {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 14px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .donut-svg { width: 100px; height: 100px; }
+
+  .donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 9px;
+  }
+
+  .donut-legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .donut-legend-name {
+    flex: 1;
+    color: var(--ivory);
+    font-weight: 600;
+  }
+
+  .donut-legend-pct {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 11px;
+  }
+
+  /* Period card */
+  .period-card {
+    padding: 12px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 12px;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .period-card.good { background: linear-gradient(135deg, rgba(107,184,138,0.12), rgba(107,184,138,0.02)); border-color: rgba(107,184,138,0.3); }
+  .period-card.bad { background: linear-gradient(135deg, rgba(217,85,85,0.12), rgba(217,85,85,0.02)); border-color: rgba(217,85,85,0.3); }
+
+  .period-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .period-dasha {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .period-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .period-score.good { color: var(--success); }
+  .period-score.bad { color: var(--danger); }
+
+  .period-dates {
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+  }
+
+  .period-note {
+    font-size: 9px;
+    color: var(--lavender);
+    line-height: 1.3;
+    font-style: italic;
+  }
+
+  /* Stat cluster */
+  .stat-cluster {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .stat-tile {
+    padding: 12px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .stat-tile-icon { font-size: 18px; margin-bottom: 4px; }
+
+  .stat-tile-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--smoke);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .stat-tile-val {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-tile-val.success { color: var(--success); }
+  .stat-tile-val.warning { color: var(--warning); }
+  .stat-tile-val.danger { color: var(--danger); }
+
+  .stat-tile-sub {
+    font-size: 8px;
+    color: var(--smoke);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  /* Spectrum bar */
+  .spectrum-bar {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .spectrum-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .spectrum-track {
+    height: 6px;
+    background: linear-gradient(90deg, var(--lavender), rgba(255,255,255,0.1), var(--gold));
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .spectrum-marker {
+    position: absolute;
+    top: -3px;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 12px rgba(232,181,71,0.6);
+  }
+
+  .spectrum-current {
+    text-align: center;
+    margin-top: 8px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--gold);
+    text-transform: capitalize;
+  }
+
+  /* Compatibility card (Kundli Milan style) */
+  .gun-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .gun-card {
+    padding: 10px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .gun-card.full { background: linear-gradient(135deg, rgba(107,184,138,0.15), rgba(107,184,138,0.03)); border-color: rgba(107,184,138,0.4); }
+  .gun-card.partial { background: linear-gradient(135deg, rgba(229,169,58,0.12), rgba(229,169,58,0.02)); border-color: rgba(229,169,58,0.3); }
+  .gun-card.fail { background: linear-gradient(135deg, rgba(217,85,85,0.12), rgba(217,85,85,0.02)); border-color: rgba(217,85,85,0.3); }
+
+  .gun-name {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 4px;
+  }
+
+  .gun-score {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .gun-score-max {
+    font-size: 10px;
+    color: var(--smoke);
+  }
+
+  .gun-status {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    margin-top: 3px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .gun-card.full .gun-status { color: var(--success); }
+  .gun-card.partial .gun-status { color: var(--warning); }
+  .gun-card.fail .gun-status { color: var(--danger); }
+
+  /* Verdict block (richer) */
+  .verdict-rich {
+    padding: 18px;
+    background:
+      linear-gradient(135deg, rgba(232,104,156,0.18) 0%, rgba(232,181,71,0.12) 100%);
+    border: 2px solid rgba(232,104,156,0.4);
+    border-radius: 18px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .verdict-rich-tag {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--cosmic-pink);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .verdict-rich-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.05;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+  }
+
+  .verdict-rich-name em { font-style: italic; color: var(--cosmic-pink); }
+
+  .verdict-rich-prob {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+  }
+
+  .verdict-rich-prob-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--smoke);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .verdict-rich-prob-val {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  /* Spouse / partner profile */
+  .spouse-card {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(184,167,224,0.15), rgba(232,104,156,0.08));
+    border: 1px solid rgba(184,167,224,0.3);
+    border-radius: 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .spouse-archetype {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--lavender);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .spouse-name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.1;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+  }
+
+  .spouse-name em { font-style: italic; color: var(--cosmic-pink); }
+
+  .spouse-traits {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .spouse-trait {
+    padding: 3px 8px;
+    background: rgba(184,167,224,0.15);
+    border: 1px solid rgba(184,167,224,0.3);
+    border-radius: 999px;
+    font-size: 8px;
+    color: var(--lavender);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    font-weight: 700;
+  }
+
+  /* Therapy / modality ranking */
+  .modality-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    background: rgba(26,22,66,0.5);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .modality-row.top {
+    background: linear-gradient(90deg, rgba(123,196,196,0.12), rgba(123,196,196,0.02));
+    border: 1px solid rgba(123,196,196,0.3);
+  }
+
+  .modality-rank {
+    width: 18px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--smoke);
+    text-align: center;
+  }
+
+  .modality-row.top .modality-rank { color: var(--aurora-mint); }
+
+  .modality-name {
+    flex: 1;
+    font-size: 10px;
+    color: var(--ivory);
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .modality-bar {
+    width: 70px;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .modality-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--lavender), var(--aurora-mint));
+    border-radius: 2px;
+  }
+
+  .modality-row.top .modality-fill {
+    background: linear-gradient(90deg, var(--aurora-mint), var(--gold));
+  }
+
+  .modality-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--aurora-mint);
+    font-size: 11px;
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Body map (12 zones) */
+  .body-map-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .body-zone {
+    padding: 8px 6px;
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.15);
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .body-zone.high { background: linear-gradient(135deg, rgba(217,85,85,0.15), rgba(217,85,85,0.03)); border-color: rgba(217,85,85,0.3); }
+  .body-zone.med { background: linear-gradient(135deg, rgba(229,169,58,0.12), rgba(229,169,58,0.02)); border-color: rgba(229,169,58,0.3); }
+  .body-zone.low { background: rgba(107,184,138,0.08); border-color: rgba(107,184,138,0.2); }
+
+  .body-zone-name {
+    font-size: 8px;
+    color: var(--ivory);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .body-zone-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .body-zone.high .body-zone-score { color: var(--danger); }
+  .body-zone.med .body-zone-score { color: var(--warning); }
+  .body-zone.low .body-zone-score { color: var(--success); }
+
+  /* Constitution (Vata-Pitta-Kapha) */
+  .constitution-card {
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(127,197,232,0.15), rgba(232,104,156,0.08));
+    border: 1px solid rgba(127,197,232,0.3);
+    border-radius: 14px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .constitution-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ivory);
+    text-align: center;
+    margin-bottom: 12px;
+    text-transform: capitalize;
+  }
+
+  .constitution-name em { font-style: italic; color: var(--sky); }
+
+  .constitution-bars { margin-top: 8px; }
+
+  .constitution-bar-row {
+    margin-bottom: 6px;
+  }
+
+  .constitution-bar-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-bottom: 3px;
+  }
+
+  .constitution-bar-name { color: var(--ivory); font-weight: 600; }
+  .constitution-bar-val { color: var(--gold); font-family: var(--font-display); font-weight: 700; }
+
+  .constitution-bar-track {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .constitution-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .cb-vata { background: var(--sky); }
+  .cb-pitta { background: var(--rose); }
+  .cb-kapha { background: var(--success); }
+
+  /* Pairwise relationship matrix */
+  .pair-matrix {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pair-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(232,181,71,0.2);
+  }
+
+  .pair-names {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ivory);
+  }
+
+  .pair-names em { font-style: italic; color: var(--cosmic-pink); }
+
+  .pair-unified {
+    text-align: right;
+  }
+
+  .pair-unified-val {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .pair-unified-tag {
+    font-size: 8px;
+    color: var(--smoke);
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+
+  .pair-dim-row {
+    display: grid;
+    grid-template-columns: 1fr 50px 30px;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 10px;
+  }
+
+  .pair-dim-name { color: var(--ivory); font-weight: 600; }
+
+  .pair-dim-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .pair-dim-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cosmic-pink), var(--gold));
+    border-radius: 2px;
+  }
+
+  .pair-dim-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 11px;
+    text-align: right;
+  }
+
+  /* Type-of-relationship list */
+  .reltype-list {
+    background: rgba(26,22,66,0.5);
+    border: 1px solid rgba(232,181,71,0.2);
+    border-radius: 14px;
+    padding: 12px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .reltype-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 10px;
+  }
+
+  .reltype-row.top {
+    background: linear-gradient(90deg, rgba(232,181,71,0.1), transparent);
+    border-radius: 6px;
+    padding: 6px 4px;
+    margin: 2px 0;
+  }
+
+  .reltype-name {
+    color: var(--ivory);
+    font-weight: 600;
+  }
+
+  .reltype-row.top .reltype-name { color: var(--gold); }
+
+  .reltype-bar-wrap {
+    flex: 1;
+    margin: 0 10px;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 100px;
+  }
+
+  .reltype-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--lavender), var(--gold));
+    border-radius: 2px;
+  }
+
+  .reltype-row.top .reltype-bar-fill {
+    background: linear-gradient(90deg, var(--gold), var(--saffron));
+  }
+
+  .reltype-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--gold);
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Past life card */
+  .pastlife-card {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(184,167,224,0.18), rgba(74,59,140,0.2));
+    border: 1px solid rgba(184,167,224,0.3);
+    border-radius: 16px;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+  }
+
+  .pastlife-card::before {
+    content: '☥';
+    position: absolute;
+    right: 14px; bottom: 14px;
+    font-size: 60px;
+    color: rgba(184,167,224,0.15);
+  }
+
+  .pastlife-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--lavender);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .pastlife-theme {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ivory);
+    text-transform: capitalize;
+    line-height: 1.05;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pastlife-theme em { font-style: italic; color: var(--lavender); }
+
+  .pastlife-axis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pastlife-axis-card {
+    padding: 8px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+  }
+
+  .pastlife-axis-tag {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .pastlife-axis-card.ketu .pastlife-axis-tag { color: var(--aurora-mint); }
+  .pastlife-axis-card.rahu .pastlife-axis-tag { color: var(--cosmic-pink); }
+
+  .pastlife-axis-name {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 2px;
+  }
+
+  .pastlife-axis-detail {
+    font-size: 8px;
+    color: var(--lavender);
+    line-height: 1.3;
+  }
+
+  /* Confidence */
+  .conf-block {
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(123,196,196,0.15), rgba(74,59,140,0.2));
+    border: 1px solid rgba(123,196,196,0.3);
+    border-radius: 14px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .conf-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .conf-ring-svg {
+    width: 60px; height: 60px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .conf-ring-val {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--aurora-mint);
+  }
+
+  .conf-info { flex: 1; }
+
+  .conf-tag {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--aurora-mint);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .conf-headline {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ivory);
+    line-height: 1.2;
+  }
+
+  .conf-bar { margin-bottom: 4px; }
+
+  .conf-bar-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    margin-bottom: 2px;
+  }
+
+  .conf-bar-name { color: var(--lavender); }
+  .conf-bar-pct { color: var(--gold); font-family: var(--font-mono); font-weight: 700; }
+
+  .conf-bar-track {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .conf-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--aurora-mint), var(--gold));
+    border-radius: 2px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 80px 40px;
+    text-align: center;
+    margin-top: 100px;
+    border-top: 1px solid rgba(232,181,71,0.2);
+  }
+
+  .footer-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ivory);
+    margin-bottom: 8px;
+  }
+
+  .footer-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--smoke);
+    letter-spacing: 0.3em;
+  }
+
+  @media (max-width: 900px) {
+    .section-row { grid-template-columns: 1fr; }
+    .section-spec { position: static; }
+    .engine-block { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow"><span class="dot"></span>Section Design Library · 11 Engines</div>
+  <h1>Every <em>section</em>, every engine.</h1>
+  <p>The reusable section components needed to build all 11 remaining engine screens. Each engine below shows its unique sections plus a recipe pointing to existing sections you've already built (Career, Business, Education).</p>
+
+  <div class="toc">
+    <div class="toc-label">★ Engines covered</div>
+    <div class="toc-grid">
+      <a href="#wealth" class="toc-item"><span class="toc-num">04</span>Wealth & Finance</a>
+      <a href="#debt" class="toc-item"><span class="toc-num">05</span>Debt & Recovery</a>
+      <a href="#love" class="toc-item"><span class="toc-num">06</span>Love & Relationships</a>
+      <a href="#marriage" class="toc-item"><span class="toc-num">07</span>Marriage & Family</a>
+      <a href="#health" class="toc-item"><span class="toc-num">08</span>Health & Wellness</a>
+      <a href="#mental" class="toc-item"><span class="toc-num">09</span>Mental & Stress</a>
+      <a href="#property" class="toc-item"><span class="toc-num">10</span>Property & Assets</a>
+      <a href="#legal" class="toc-item"><span class="toc-num">11</span>Legal & Disputes</a>
+      <a href="#lifepath" class="toc-item"><span class="toc-num">12</span>Life Path & Luck</a>
+      <a href="#character" class="toc-item"><span class="toc-num">13</span>Character Analysis</a>
+      <a href="#pastlife" class="toc-item"><span class="toc-num">14</span>Past Life & Karma</a>
+      <a href="#milan" class="toc-item"><span class="toc-num">15</span>Kundli Milan</a>
+      <a href="#relint" class="toc-item"><span class="toc-num">16</span>Relationship Intelligence</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================ -->
+<!-- 04. WEALTH & FINANCE -->
+<!-- ============================================ -->
+<section class="engine-block" id="wealth">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 04</div>
+    <h2 class="engine-name">Wealth &amp; <em>Finance</em></h2>
+    <div class="engine-meta">~85 KEYS · 16 SECTIONS · 84% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse from previous engines: SectionHeader, RingScore, AiChatBar, KeyValueTable. <strong>NEW SECTIONS BELOW</strong> · WealthClassCard, KarakaStrengthTable, YogaLedger, IncomeSourcesList, InvestmentMixDonut, FifteenYearTrend, GoodBadPeriodCards, MoneyPersonalitySpectrum, StatTilesCluster.
+    </div>
+  </div>
+
+  <!-- 04.01 Hero scores (3 rings) -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 01</div>
+      <div class="section-title">Hero <em>Scores</em></div>
+      <div class="section-desc">Three rings: Wealth Strength (83.2), Accumulation (68.1), Income Flow (71.6).</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>wealth_strength_score · accumulation_capacity · income_flow</div>
+    </div>
+    <div class="section-preview">
+      <div class="hero-scores">
+        <div class="hero-scores-label">💰 Core Wealth Scores</div>
+        <div class="ring-row">
+          <div class="ring">
+            <div class="ring-svg">
+              <svg viewBox="0 0 80 80" width="72" height="72">
+                <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+                <circle cx="40" cy="40" r="34" stroke="#E8B547" stroke-width="6" fill="none" stroke-dasharray="213.6" stroke-dashoffset="36" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              </svg>
+              <div class="ring-value">83.2</div>
+            </div>
+            <div class="ring-label">WEALTH<br/>STRENGTH</div>
+          </div>
+          <div class="ring">
+            <div class="ring-svg">
+              <svg viewBox="0 0 80 80" width="72" height="72">
+                <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+                <circle cx="40" cy="40" r="34" stroke="#7BC4C4" stroke-width="6" fill="none" stroke-dasharray="213.6" stroke-dashoffset="68" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              </svg>
+              <div class="ring-value" style="color:#7BC4C4;">68.1</div>
+            </div>
+            <div class="ring-label">ACCUMU-<br/>LATION</div>
+          </div>
+          <div class="ring">
+            <div class="ring-svg">
+              <svg viewBox="0 0 80 80" width="72" height="72">
+                <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+                <circle cx="40" cy="40" r="34" stroke="#E8689C" stroke-width="6" fill="none" stroke-dasharray="213.6" stroke-dashoffset="61" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              </svg>
+              <div class="ring-value" style="color:#E8689C;">71.6</div>
+            </div>
+            <div class="ring-label">INCOME<br/>FLOW</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.02 Wealth class -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 02 · NEW</div>
+      <div class="section-title">Wealth <em>Class</em> Card</div>
+      <div class="section-desc">Headline lifetime financial trajectory — class label + INR range + peak age.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>wealth_class · lifetime_range · peak_net_worth_age</div>
+    </div>
+    <div class="section-preview">
+      <div class="wealth-class-card">
+        <div class="wealth-class-tag">LIFETIME WEALTH CLASS</div>
+        <div class="wealth-class-name">Very <em>Wealthy</em></div>
+        <div class="wealth-class-range">₹25 Cr – ₹100 Cr</div>
+        <div class="wealth-class-peak">PEAK NET WORTH · AGE 70–75</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.03 Karaka strength table -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 03 · NEW</div>
+      <div class="section-title">Karaka <em>Strength</em> Table</div>
+      <div class="section-desc">Multi-karaka horizontal bar list with primary highlighted. Reusable across Wealth, Health, Legal, Mental — anywhere multiple karakas need ranking.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>primary_karaka · secondary_karaka · karaka_strength_table[]</div>
+    </div>
+    <div class="section-preview">
+      <div class="karaka-table">
+        <div class="karaka-table-row primary">
+          <div class="karaka-glyph">♂</div>
+          <div class="karaka-table-name">Mars<span class="meta">PRIMARY · LAND/REAL-ESTATE</span></div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:80.9%"></div></div>
+          <div class="karaka-table-score">80.9</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">♄</div>
+          <div class="karaka-table-name">Saturn<span class="meta">SECONDARY · DURABLE</span></div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:72.6%"></div></div>
+          <div class="karaka-table-score">72.6</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">♃</div>
+          <div class="karaka-table-name">Jupiter<span class="meta">DHANA</span></div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:65.4%"></div></div>
+          <div class="karaka-table-score">65.4</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">♀</div>
+          <div class="karaka-table-name">Venus<span class="meta">LAKSHMI</span></div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:58.2%"></div></div>
+          <div class="karaka-table-score">58.2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.04 Yoga ledger -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 04 · NEW</div>
+      <div class="section-title">Yoga <em>Ledger</em></div>
+      <div class="section-desc">Boost vs drain accounting: each yoga as a +/− line item, total at the bottom. The most powerful pattern for Wealth, Debt, Health, Mental, Legal, Property.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>active_yogas[] · active_doshas[] · total_boost</div>
+    </div>
+    <div class="section-preview">
+      <div class="yoga-ledger">
+        <div class="yoga-ledger-row">
+          <div class="yoga-ledger-name">Dharma Karma Adhipati</div>
+          <div class="yoga-ledger-delta plus">+6.0</div>
+        </div>
+        <div class="yoga-ledger-row">
+          <div class="yoga-ledger-name">Dhana Yoga</div>
+          <div class="yoga-ledger-delta plus">+4.7</div>
+        </div>
+        <div class="yoga-ledger-row">
+          <div class="yoga-ledger-name">Gaj Kesari</div>
+          <div class="yoga-ledger-delta plus">+4.5</div>
+        </div>
+        <div class="yoga-ledger-row">
+          <div class="yoga-ledger-name">Raj Yoga</div>
+          <div class="yoga-ledger-delta plus">+2.4</div>
+        </div>
+        <div class="yoga-ledger-row">
+          <div class="yoga-ledger-name">Adhi Yoga</div>
+          <div class="yoga-ledger-delta plus">+1.3</div>
+        </div>
+        <div class="yoga-ledger-row">
+          <div class="yoga-ledger-name">Pap Kartari Dosh</div>
+          <div class="yoga-ledger-delta minus">−1.0</div>
+        </div>
+        <div class="yoga-ledger-total">
+          <div class="yoga-ledger-total-label">★ NET BOOST</div>
+          <div class="yoga-ledger-total-val">+17.9</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.05 Income sources -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 05 · NEW</div>
+      <div class="section-title">Income <em>Sources</em> List</div>
+      <div class="section-desc">Ranked vertical list with primary highlighted in gold. Reusable for Wealth (income types), Property (asset types), Education (subjects).</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>primary_source · secondary_sources[] · multiple_streams_likelihood</div>
+    </div>
+    <div class="section-preview">
+      <div class="income-sources">
+        <div class="income-row primary">
+          <div class="income-icon">🏘</div>
+          <div class="income-info">
+            <div class="income-name">Real Estate</div>
+            <div class="income-tag">PRIMARY · MARS-DRIVEN</div>
+          </div>
+          <div class="income-score">69.0</div>
+        </div>
+        <div class="income-row">
+          <div class="income-icon">⊕</div>
+          <div class="income-info">
+            <div class="income-name">Passive · Royalty</div>
+            <div class="income-tag">SECONDARY</div>
+          </div>
+          <div class="income-score">64.8</div>
+        </div>
+        <div class="income-row">
+          <div class="income-icon">📈</div>
+          <div class="income-info">
+            <div class="income-name">Investments</div>
+            <div class="income-tag">SECONDARY</div>
+          </div>
+          <div class="income-score">61.1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.06 Investment mix donut -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 06 · NEW</div>
+      <div class="section-title">Investment <em>Mix</em> Donut</div>
+      <div class="section-desc">SVG donut chart with allocation legend. Three asset classes color-coded by driving planet.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>investment_mix[] · asset_class_allocations</div>
+    </div>
+    <div class="section-preview">
+      <div class="invest-mix">
+        <svg class="donut-svg" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="#E8B547" stroke-width="6" stroke-dasharray="36.5 100" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="#7BC4C4" stroke-width="6" stroke-dasharray="32.8 100" stroke-dashoffset="-11.5" transform="rotate(-90 21 21)"/>
+          <circle cx="21" cy="21" r="15.915" fill="none" stroke="#E8689C" stroke-width="6" stroke-dasharray="30.7 100" stroke-dashoffset="-44.3" transform="rotate(-90 21 21)"/>
+        </svg>
+        <div>
+          <div class="donut-legend-item">
+            <div class="donut-legend-dot" style="background:#E8B547"></div>
+            <div class="donut-legend-name">Land · Aggressive</div>
+            <div class="donut-legend-pct">36.5%</div>
+          </div>
+          <div class="donut-legend-item">
+            <div class="donut-legend-dot" style="background:#7BC4C4"></div>
+            <div class="donut-legend-name">RE · Bonds</div>
+            <div class="donut-legend-pct">32.8%</div>
+          </div>
+          <div class="donut-legend-item">
+            <div class="donut-legend-dot" style="background:#E8689C"></div>
+            <div class="donut-legend-name">Equity · MF</div>
+            <div class="donut-legend-pct">30.7%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.07 15-year trend -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 07 · NEW</div>
+      <div class="section-title">15-Year <em>Trend</em> Chart</div>
+      <div class="section-desc">Compact line chart of yearly scores with peak/dip markers below. Reusable across Wealth, Debt, Love, Health, Mental, Property, Life Path — any engine with annual forecast.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>yearly_trend[] · peak_years[] · dip_years[]</div>
+    </div>
+    <div class="section-preview">
+      <div class="trend-chart">
+        <div class="trend-chart-head">
+          <div class="trend-chart-title">Wealth · 2026–2040</div>
+          <div class="trend-chart-range">15 YEARS</div>
+        </div>
+        <svg class="trend-svg" viewBox="0 0 300 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="trendgrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#E8B547" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#E8B547" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M 0 60 L 20 65 L 40 70 L 60 50 L 80 65 L 100 30 L 120 25 L 140 30 L 160 40 L 180 50 L 200 55 L 220 75 L 240 80 L 260 70 L 280 60 L 300 55 L 300 100 L 0 100 Z" fill="url(#trendgrad)"/>
+          <path d="M 0 60 L 20 65 L 40 70 L 60 50 L 80 65 L 100 30 L 120 25 L 140 30 L 160 40 L 180 50 L 200 55 L 220 75 L 240 80 L 260 70 L 280 60 L 300 55" fill="none" stroke="#E8B547" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="120" cy="25" r="3" fill="#6BB88A"/>
+          <circle cx="240" cy="80" r="3" fill="#D95555"/>
+        </svg>
+        <div class="trend-axis">
+          <span>2026</span>
+          <span>2031</span>
+          <span>2036</span>
+          <span>2040</span>
+        </div>
+        <div class="trend-markers">
+          <div class="trend-marker peak">★ PEAK 2031–32</div>
+          <div class="trend-marker dip">⚠ DIP 2027</div>
+          <div class="trend-marker dip">⚠ DIP 2037–38</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.08 Good/bad period cards -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 08 · NEW</div>
+      <div class="section-title">Good · Bad <em>Period</em> Cards</div>
+      <div class="section-desc">Color-tinted period cards for highlighting specific dasha windows. Green for favorable, red for caution.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>good_periods[] · bad_periods[]</div>
+    </div>
+    <div class="section-preview">
+      <div class="period-card good">
+        <div class="period-head">
+          <div class="period-dasha">MARS / JUPITER</div>
+          <div class="period-score good">71.3%</div>
+        </div>
+        <div class="period-dates">MAR 2031 — FEB 2032</div>
+        <div class="period-note">Strongest wealth-acquisition window. Buy property, IPO, expand.</div>
+      </div>
+      <div class="period-card bad">
+        <div class="period-head">
+          <div class="period-dasha">RAHU / RAHU</div>
+          <div class="period-score bad">33.6%</div>
+        </div>
+        <div class="period-dates">SEP 2036 — JUN 2039</div>
+        <div class="period-note">Volatile cash. Avoid leverage; conserve reserves.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.09 Money personality spectrum -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 09 · NEW</div>
+      <div class="section-title">Money <em>Personality</em></div>
+      <div class="section-desc">Spectrum bars positioning the user between extremes — risk appetite, investment style, spender vs saver.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>risk_appetite · investment_style · money_personality · spending</div>
+    </div>
+    <div class="section-preview">
+      <div class="spectrum-bar">
+        <div class="spectrum-label"><span>CONSERVATIVE</span><span>AGGRESSIVE</span></div>
+        <div class="spectrum-track"><div class="spectrum-marker" style="left:25%"></div></div>
+        <div class="spectrum-current">Conservative</div>
+      </div>
+      <div class="spectrum-bar">
+        <div class="spectrum-label"><span>SAVER</span><span>SPENDER</span></div>
+        <div class="spectrum-track"><div class="spectrum-marker" style="left:30%"></div></div>
+        <div class="spectrum-current">Saver</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04.10 Stat cluster -->
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">04 · 10 · NEW</div>
+      <div class="section-title">Stat <em>Cluster</em> 2×2</div>
+      <div class="section-desc">Quad-grid for 4 standalone stats — debt %, spouse boost, success probability, etc. Most-used cluster across all engines.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>debt_probability · spouse_wealth_boost · success_probability · joint_finance</div>
+    </div>
+    <div class="section-preview">
+      <div class="stat-cluster">
+        <div class="stat-tile">
+          <div class="stat-tile-icon">💳</div>
+          <div class="stat-tile-label">DEBT PROB</div>
+          <div class="stat-tile-val success">25%</div>
+          <div class="stat-tile-sub">LOW</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-icon">💑</div>
+          <div class="stat-tile-label">SPOUSE BOOST</div>
+          <div class="stat-tile-val">55%</div>
+          <div class="stat-tile-sub">MODERATE</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-icon">★</div>
+          <div class="stat-tile-label">SUCCESS PROB</div>
+          <div class="stat-tile-val success">79.8%</div>
+          <div class="stat-tile-sub">HIGH</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-tile-icon">🤝</div>
+          <div class="stat-tile-label">JOINT FIN</div>
+          <div class="stat-tile-val">50.9</div>
+          <div class="stat-tile-sub">FAIR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 05. DEBT & RECOVERY -->
+<!-- ============================================ -->
+<section class="engine-block" id="debt">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 05</div>
+    <h2 class="engine-name">Debt &amp; <em>Recovery</em></h2>
+    <div class="engine-meta">~100 KEYS · 17 SECTIONS · 83% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (use 2 rings, not 3 — debt has only 2 core scores), KarakaStrengthTable, YogaLedger (twin: creating + clearing), FifteenYearTrend, GoodBadPeriodCards, StatTilesCluster, RemedyCard, ConfidencePanel. <strong>NEW</strong> · DebtCategoryHeatList, ChronicDebtRoot, CrisisPreventionGrid.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">05 · 01</div>
+      <div class="section-title">Debt <em>Hero</em> · Twin</div>
+      <div class="section-desc">Two-ring layout: current load (lower=better, red), recovery capacity (higher=better, green). Visual pairing tells the story instantly.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>current_debt_load · debt_recovery_capacity</div>
+    </div>
+    <div class="section-preview">
+      <div class="hero-scores">
+        <div class="hero-scores-label">⚖ Debt Position</div>
+        <div class="ring-row">
+          <div class="ring">
+            <div class="ring-svg">
+              <svg viewBox="0 0 80 80" width="80" height="80">
+                <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+                <circle cx="40" cy="40" r="34" stroke="#D95555" stroke-width="6" fill="none" stroke-dasharray="213.6" stroke-dashoffset="117" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              </svg>
+              <div class="ring-value" style="color:#D95555;">45.4</div>
+            </div>
+            <div class="ring-label">CURRENT<br/>DEBT LOAD</div>
+          </div>
+          <div class="ring">
+            <div class="ring-svg">
+              <svg viewBox="0 0 80 80" width="80" height="80">
+                <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.08)" stroke-width="6" fill="none"/>
+                <circle cx="40" cy="40" r="34" stroke="#6BB88A" stroke-width="6" fill="none" stroke-dasharray="213.6" stroke-dashoffset="38" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              </svg>
+              <div class="ring-value" style="color:#6BB88A;">82.3</div>
+            </div>
+            <div class="ring-label">RECOVERY<br/>CAPACITY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">05 · 02 · NEW</div>
+      <div class="section-title">Debt Category <em>Heat List</em></div>
+      <div class="section-desc">11 debt types ranked vertically. Heat color shows vulnerability — red zone for highest. Reuses subject ranking pattern from Education.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>debt_categories{} · home_loan · personal_loan · vehicle · business · tax_legal</div>
+    </div>
+    <div class="section-preview">
+      <div class="karaka-table">
+        <div class="karaka-table-row primary">
+          <div class="karaka-glyph">🏠</div>
+          <div class="karaka-table-name">Home Loan<span class="meta">HIGHEST EXPOSURE</span></div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:68.9%;background:linear-gradient(90deg,#E5A93A,#D95555)"></div></div>
+          <div class="karaka-table-score" style="color:#D95555;">68.9</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">💳</div>
+          <div class="karaka-table-name">Personal Loan</div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:64.8%;background:#E5A93A"></div></div>
+          <div class="karaka-table-score" style="color:#E5A93A;">64.8</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">🚗</div>
+          <div class="karaka-table-name">Vehicle Loan</div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:62.6%;background:#E5A93A"></div></div>
+          <div class="karaka-table-score" style="color:#E5A93A;">62.6</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">🏛</div>
+          <div class="karaka-table-name">Tax / Legal</div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:61.9%;background:#E5A93A"></div></div>
+          <div class="karaka-table-score" style="color:#E5A93A;">61.9</div>
+        </div>
+        <div class="karaka-table-row">
+          <div class="karaka-glyph">💼</div>
+          <div class="karaka-table-name">Business Loan</div>
+          <div class="karaka-table-bar"><div class="karaka-table-bar-fill" style="width:61.2%;background:#E5A93A"></div></div>
+          <div class="karaka-table-score" style="color:#E5A93A;">61.2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">05 · 03 · NEW</div>
+      <div class="section-title">Chronic <em>Root</em> Card</div>
+      <div class="section-desc">Single deep-insight card for the karmic root cause + behavioral pattern. Used wherever an engine has a "core blocker" key.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>chronic_probability · re_indebtedness_trigger · behavioral_root</div>
+    </div>
+    <div class="section-preview">
+      <div class="pastlife-card" style="background:linear-gradient(135deg,rgba(217,85,85,0.15),rgba(74,59,140,0.2));border-color:rgba(217,85,85,0.3)">
+        <div class="pastlife-tag" style="color:#D95555">CHRONIC ROOT</div>
+        <div class="pastlife-theme">Rahu in <em style="color:#D95555">2nd House</em></div>
+        <div style="font-size:10px;color:var(--lavender);line-height:1.4;position:relative;z-index:2;">
+          Behavioral root: <strong style="color:var(--ivory)">Rahu-driven desire</strong>. Re-indebtedness trigger: <strong style="color:var(--ivory)">lifestyle inflation</strong>. Chronic probability: <strong style="color:#D95555">42%</strong>.
+        </div>
+        <div style="margin-top:10px;padding:10px;background:rgba(107,184,138,0.1);border-radius:8px;position:relative;z-index:2;">
+          <div style="font-family:var(--font-mono);font-size:8px;color:#6BB88A;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:3px">✓ REMEDY DIRECTION</div>
+          <div style="font-size:9px;color:var(--ivory);line-height:1.4">12-month cash reserve before any new credit. Avalanche method for existing debt.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 06. LOVE & RELATIONSHIPS -->
+<!-- ============================================ -->
+<section class="engine-block" id="love">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 06</div>
+    <h2 class="engine-name">Love &amp; <em>Relationships</em></h2>
+    <div class="engine-meta">~120 KEYS · 18 SECTIONS · 81% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (3 rings), KarakaStrengthTable (Venus/Moon/Mars), YogaLedger (love blocks), FifteenYearTrend, GoodBadPeriodCards (3 new-relationship windows), MoneyPersonalitySpectrum (renamed: AttractionSpectrum), StatTilesCluster, ConfidencePanel. <strong>NEW</strong> · IdealPartnerCard, LoveLanguagePair, AttractionArchetypeChips, FidelityMeter.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">06 · 01 · NEW</div>
+      <div class="section-title">Ideal <em>Partner</em> Card</div>
+      <div class="section-desc">Reusable as Spouse Profile (Marriage), Partner Profile (Love), Co-Founder Profile (Business). Sun-sign families + traits + dealbreakers.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>sun_sign_families[] · traits[] · dealbreakers[]</div>
+    </div>
+    <div class="section-preview">
+      <div class="spouse-card">
+        <div class="spouse-archetype">IDEAL PARTNER</div>
+        <div class="spouse-name">Witty <em>Communicative</em> Air-sign</div>
+        <div style="font-size:10px;color:var(--lavender);line-height:1.4;margin-top:6px">
+          Sun-sign families: airy + fiery. Sapiosexual draw — chemistry kindles through conversation, not appearance alone.
+        </div>
+        <div style="margin-top:10px;font-family:var(--font-mono);font-size:8px;color:#6BB88A;letter-spacing:0.15em">★ SEEK</div>
+        <div class="spouse-traits">
+          <div class="spouse-trait" style="color:#6BB88A;border-color:rgba(107,184,138,0.4)">COMMUNICATIVE</div>
+          <div class="spouse-trait" style="color:#6BB88A;border-color:rgba(107,184,138,0.4)">INTELLECTUAL</div>
+          <div class="spouse-trait" style="color:#6BB88A;border-color:rgba(107,184,138,0.4)">WISE</div>
+          <div class="spouse-trait" style="color:#6BB88A;border-color:rgba(107,184,138,0.4)">CONFIDENT</div>
+        </div>
+        <div style="margin-top:8px;font-family:var(--font-mono);font-size:8px;color:#D95555;letter-spacing:0.15em">⚠ AVOID</div>
+        <div class="spouse-traits">
+          <div class="spouse-trait" style="color:#D95555;border-color:rgba(217,85,85,0.4)">DISHONESTY</div>
+          <div class="spouse-trait" style="color:#D95555;border-color:rgba(217,85,85,0.4)">PASSIVE-AGGRESSIVE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">06 · 02 · NEW</div>
+      <div class="section-title">Love <em>Language</em> Pair</div>
+      <div class="section-desc">Two-card pair: what you give vs what you need to receive. Helps identify mismatches.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>love_language_given · love_language_received</div>
+    </div>
+    <div class="section-preview">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="single-score" style="background:linear-gradient(135deg,rgba(232,104,156,0.15),rgba(232,104,156,0.03));border-color:rgba(232,104,156,0.3)">
+          <div class="single-score-icon">🤝</div>
+          <div class="single-score-label">YOU GIVE</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--cosmic-pink)">Touch</div>
+          <div class="single-score-sub">Physical affection, presence</div>
+        </div>
+        <div class="single-score" style="background:linear-gradient(135deg,rgba(123,196,196,0.15),rgba(123,196,196,0.03));border-color:rgba(123,196,196,0.3)">
+          <div class="single-score-icon">⏱</div>
+          <div class="single-score-label">YOU NEED</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--aurora-mint)">Quality Time</div>
+          <div class="single-score-sub">Undivided attention</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 07. MARRIAGE & FAMILY -->
+<!-- ============================================ -->
+<section class="engine-block" id="marriage">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 07</div>
+    <h2 class="engine-name">Marriage &amp; <em>Family</em></h2>
+    <div class="engine-meta">~150 KEYS · 19 SECTIONS · 75% CONFIDENCE · LARGEST ENGINE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (6 rings split 3+3), Atmakaraka card (from Career), HouseTriple (7H + Venus + Jupiter — adapt to single 7H card), DignityTabs (D9/D10/D60), YogaLedger (Mangal Dosh + cancellation), FifteenYearTrend, IdealPartnerCard, StatTilesCluster, RemedyCards, VerdictRich. <strong>NEW</strong> · DarakarakaCard, UpapadaLagnaCard, HarmonyRadar (9-axis), PhaseLifecycleTimeline (early/mid/mature/late).
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">07 · 01 · NEW</div>
+      <div class="section-title">Darakaraka (Spouse) <em>Card</em></div>
+      <div class="section-desc">Hero card for the spouse signifier. House, sign, nakshatra, D9 dignity, archetype. Specific to Marriage.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>darakaraka_planet · spouse_archetype · d9_dignity · profession[]</div>
+    </div>
+    <div class="section-preview">
+      <div class="spouse-card">
+        <div class="spouse-archetype">DARAKARAKA · SPOUSE SIGNIFIER</div>
+        <div class="spouse-name">Moon · <em>Nurturing Partner</em></div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <div style="padding:3px 8px;background:rgba(184,167,224,0.2);border-radius:6px;font-family:var(--font-mono);font-size:8px;color:var(--lavender);font-weight:700;letter-spacing:0.05em">LEO · H7</div>
+          <div style="padding:3px 8px;background:rgba(107,184,138,0.25);border-radius:6px;font-family:var(--font-mono);font-size:8px;color:#6BB88A;font-weight:700;letter-spacing:0.05em">D9 EXALTED ★</div>
+          <div style="padding:3px 8px;background:rgba(184,167,224,0.2);border-radius:6px;font-family:var(--font-mono);font-size:8px;color:var(--lavender);font-weight:700;letter-spacing:0.05em">MAGHA · BHAGA</div>
+        </div>
+        <div style="font-size:10px;color:var(--lavender);line-height:1.4;margin-top:10px">
+          Nurturing, emotional, public-facing spouse. <strong style="color:var(--ivory)">D9 Exalted</strong> = exceptional marriage karma.
+        </div>
+        <div style="margin-top:8px;font-family:var(--font-mono);font-size:8px;color:var(--gold);letter-spacing:0.15em">LIKELY PROFESSION</div>
+        <div class="spouse-traits">
+          <div class="spouse-trait">HOSPITALITY</div>
+          <div class="spouse-trait">HEALTHCARE</div>
+          <div class="spouse-trait">PUBLIC-FACING</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">07 · 02 · NEW</div>
+      <div class="section-title">Harmony <em>Radar</em> 9-axis</div>
+      <div class="section-desc">SVG radar/spider chart of 9 harmony dimensions. The single most informative chart for marriage compatibility — shows where the relationship will thrive vs where conscious work is needed.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>emotional · intellectual · physical · financial · spiritual · communication · conflict · domestic · family</div>
+    </div>
+    <div class="section-preview">
+      <div class="trend-chart" style="text-align:center">
+        <div class="trend-chart-head">
+          <div class="trend-chart-title">9 Harmony Axes</div>
+          <div class="trend-chart-range">RADAR</div>
+        </div>
+        <svg viewBox="0 0 200 200" width="200" height="200" style="margin:0 auto">
+          <g stroke="rgba(232,181,71,0.15)" fill="none">
+            <polygon points="100,20 169,60 169,140 100,180 31,140 31,60"/>
+            <polygon points="100,40 152,70 152,130 100,160 48,130 48,70"/>
+            <polygon points="100,60 134,80 134,120 100,140 66,120 66,80"/>
+            <polygon points="100,80 117,90 117,110 100,120 83,110 83,90"/>
+          </g>
+          <g stroke="rgba(232,181,71,0.2)" stroke-width="0.5">
+            <line x1="100" y1="100" x2="100" y2="20"/>
+            <line x1="100" y1="100" x2="169" y2="60"/>
+            <line x1="100" y1="100" x2="169" y2="140"/>
+            <line x1="100" y1="100" x2="100" y2="180"/>
+            <line x1="100" y1="100" x2="31" y2="140"/>
+            <line x1="100" y1="100" x2="31" y2="60"/>
+          </g>
+          <polygon points="100,46 138,68 144,124 100,156 58,128 56,72" fill="rgba(232,181,71,0.25)" stroke="#E8B547" stroke-width="2"/>
+          <g fill="#E8B547">
+            <circle cx="100" cy="46" r="3"/>
+            <circle cx="138" cy="68" r="3"/>
+            <circle cx="144" cy="124" r="3"/>
+            <circle cx="100" cy="156" r="3"/>
+            <circle cx="58" cy="128" r="3"/>
+            <circle cx="56" cy="72" r="3"/>
+          </g>
+          <g font-family="JetBrains Mono" font-size="7" fill="#8B8AB5" text-anchor="middle">
+            <text x="100" y="13">EMOTIONAL 56</text>
+            <text x="178" y="58">INTEL 54</text>
+            <text x="178" y="148">PHYSICAL 60</text>
+            <text x="100" y="195">FINANCE 56</text>
+            <text x="22" y="148">SPIRITUAL 53</text>
+            <text x="22" y="58">COMM 52</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 08. HEALTH & WELLNESS -->
+<!-- ============================================ -->
+<section class="engine-block" id="health">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 08</div>
+    <h2 class="engine-name">Health &amp; <em>Wellness</em></h2>
+    <div class="engine-meta">~130 KEYS · 18 SECTIONS · 84% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (2 rings — Vitality + Immunity), KarakaStrengthTable (9-planet body map), YogaLedger (creating + protective), FifteenYearTrend, GoodBadPeriodCards, StatTilesCluster, RemedyCards. <strong>NEW</strong> · ConstitutionCard (Vata-Pitta-Kapha), BodyZoneMap (12 zones), DiseaseHeatList, LifestyleSpectrums.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">08 · 01 · NEW</div>
+      <div class="section-title">Ayurvedic <em>Constitution</em></div>
+      <div class="section-desc">Vata/Pitta/Kapha bars stacked under the dominant type. Three-color system: sky (vata), rose (pitta), green (kapha).</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>type · dominant · secondary · vata_score · pitta_score · kapha_score</div>
+    </div>
+    <div class="section-preview">
+      <div class="constitution-card">
+        <div class="constitution-name"><em>Vata</em>-Pitta</div>
+        <div style="text-align:center;font-size:9px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.1em;margin-bottom:10px">DUAL CONSTITUTION · DOMINANT VATA</div>
+        <div class="constitution-bars">
+          <div class="constitution-bar-row">
+            <div class="constitution-bar-head">
+              <div class="constitution-bar-name">☉ Vata · Air</div>
+              <div class="constitution-bar-val">62</div>
+            </div>
+            <div class="constitution-bar-track"><div class="constitution-bar-fill cb-vata" style="width:62%"></div></div>
+          </div>
+          <div class="constitution-bar-row">
+            <div class="constitution-bar-head">
+              <div class="constitution-bar-name">🔥 Pitta · Fire</div>
+              <div class="constitution-bar-val">54</div>
+            </div>
+            <div class="constitution-bar-track"><div class="constitution-bar-fill cb-pitta" style="width:54%"></div></div>
+          </div>
+          <div class="constitution-bar-row">
+            <div class="constitution-bar-head">
+              <div class="constitution-bar-name">🌿 Kapha · Earth</div>
+              <div class="constitution-bar-val">38</div>
+            </div>
+            <div class="constitution-bar-track"><div class="constitution-bar-fill cb-kapha" style="width:38%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">08 · 02 · NEW</div>
+      <div class="section-title">Body <em>Zone</em> Map</div>
+      <div class="section-desc">12 body zones in a 3×4 grid, color-coded by vulnerability. Top-3 zones get red highlighting. The fastest visual scan for any health screen.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>body_area_vulnerability{12_zones}</div>
+    </div>
+    <div class="section-preview">
+      <div class="body-map-grid">
+        <div class="body-zone low"><div class="body-zone-name">HEAD</div><div class="body-zone-score">18</div></div>
+        <div class="body-zone med"><div class="body-zone-name">FACE/THROAT</div><div class="body-zone-score">29</div></div>
+        <div class="body-zone low"><div class="body-zone-name">CHEST</div><div class="body-zone-score">22</div></div>
+        <div class="body-zone low"><div class="body-zone-name">HEART</div><div class="body-zone-score">19</div></div>
+        <div class="body-zone med"><div class="body-zone-name">LUNGS</div><div class="body-zone-score">26</div></div>
+        <div class="body-zone med"><div class="body-zone-name">DIGESTIVE</div><div class="body-zone-score">29</div></div>
+        <div class="body-zone low"><div class="body-zone-name">LIVER</div><div class="body-zone-score">23</div></div>
+        <div class="body-zone high"><div class="body-zone-name">EXCRETORY</div><div class="body-zone-score">32</div></div>
+        <div class="body-zone low"><div class="body-zone-name">KIDNEYS</div><div class="body-zone-score">21</div></div>
+        <div class="body-zone low"><div class="body-zone-name">JOINTS</div><div class="body-zone-score">24</div></div>
+        <div class="body-zone low"><div class="body-zone-name">SKIN</div><div class="body-zone-score">22</div></div>
+        <div class="body-zone low"><div class="body-zone-name">FEET</div><div class="body-zone-score">17</div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 09. MENTAL & STRESS -->
+<!-- ============================================ -->
+<section class="engine-block" id="mental">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 09</div>
+    <h2 class="engine-name">Mental &amp; <em>Stress</em></h2>
+    <div class="engine-meta">~160 KEYS · 18 SECTIONS · 84% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (5 rings split 3+2), KarakaStrengthTable, YogaLedger (stress yogas + protective), FifteenYearTrend, BodyZoneMap (renamed: AnxietyTypes), StatTilesCluster, RemedyCards. <strong>NEW</strong> · TherapyModalityRanking, EmotionalConstitutionCard, SadeSatiTimelineMarkers, CopingPatternList.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">09 · 01 · NEW</div>
+      <div class="section-title">Therapy <em>Modality</em> Ranking</div>
+      <div class="section-desc">9 therapy modalities ranked by chart-fit. Top one (Somatic 72.7) gets aurora-mint highlight. Most actionable section for users seeking help.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>therapy_fit{9_modalities}</div>
+    </div>
+    <div class="section-preview">
+      <div style="background:rgba(26,22,66,0.5);border:1px solid rgba(232,181,71,0.2);border-radius:14px;padding:8px">
+        <div class="modality-row top">
+          <div class="modality-rank">★</div>
+          <div class="modality-name">Somatic Therapy</div>
+          <div class="modality-bar"><div class="modality-fill" style="width:72.7%"></div></div>
+          <div class="modality-score">72.7</div>
+        </div>
+        <div class="modality-row">
+          <div class="modality-rank">2</div>
+          <div class="modality-name">Talk Therapy</div>
+          <div class="modality-bar"><div class="modality-fill" style="width:69.6%"></div></div>
+          <div class="modality-score">69.6</div>
+        </div>
+        <div class="modality-row">
+          <div class="modality-rank">3</div>
+          <div class="modality-name">CBT</div>
+          <div class="modality-bar"><div class="modality-fill" style="width:63.3%"></div></div>
+          <div class="modality-score">63.3</div>
+        </div>
+        <div class="modality-row">
+          <div class="modality-rank">4</div>
+          <div class="modality-name">Expressive Arts</div>
+          <div class="modality-bar"><div class="modality-fill" style="width:62.1%"></div></div>
+          <div class="modality-score">62.1</div>
+        </div>
+        <div class="modality-row">
+          <div class="modality-rank">5</div>
+          <div class="modality-name">EMDR</div>
+          <div class="modality-bar"><div class="modality-fill" style="width:41.6%"></div></div>
+          <div class="modality-score">41.6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 10. PROPERTY & ASSETS -->
+<!-- ============================================ -->
+<section class="engine-block" id="property">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 10</div>
+    <h2 class="engine-name">Property &amp; <em>Assets</em></h2>
+    <div class="engine-meta">~140 KEYS · 18 SECTIONS · 85% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (3 rings), KarakaStrengthTable (9-planet property map), YogaLedger (6 yogas + 2 doshas), FifteenYearTrend, GoodBadPeriodCards (5 buying windows!), StatTilesCluster, IncomeSourcesList (asset types), RemedyCards. <strong>NEW</strong> · DueDiligenceChecklist, PropertyEnvironmentCard, InheritanceProbabilityTriple.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">10 · 01 · NEW</div>
+      <div class="section-title">Due Diligence <em>Checklist</em></div>
+      <div class="section-desc">5 priority pre-purchase checks as a clean to-do list. Most utility-driven section in any engine — actually saves money.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>due_diligence_checklist[]</div>
+    </div>
+    <div class="section-preview">
+      <div style="background:rgba(26,22,66,0.5);border:1px solid rgba(232,181,71,0.2);border-radius:14px;padding:14px">
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px">★ PRE-PURCHASE PRIORITIES</div>
+        <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(232,181,71,0.15)">
+          <div style="width:20px;height:20px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:11px;flex-shrink:0">1</div>
+          <div style="font-size:10px;color:var(--ivory);font-weight:600">RERA registration verified</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(232,181,71,0.15)">
+          <div style="width:20px;height:20px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:11px;flex-shrink:0">2</div>
+          <div style="font-size:10px;color:var(--ivory);font-weight:600">30-year title chain audit</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(232,181,71,0.15)">
+          <div style="width:20px;height:20px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:11px;flex-shrink:0">3</div>
+          <div style="font-size:10px;color:var(--ivory);font-weight:600">Encumbrance certificate</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(232,181,71,0.15)">
+          <div style="width:20px;height:20px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:11px;flex-shrink:0">4</div>
+          <div style="font-size:10px;color:var(--ivory);font-weight:600">Municipal approvals</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;padding:6px 0">
+          <div style="width:20px;height:20px;border:1.5px solid var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:11px;flex-shrink:0">5</div>
+          <div style="font-size:10px;color:var(--ivory);font-weight:600">Neighborhood &amp; vastu walk-through</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 11. LEGAL & DISPUTES -->
+<!-- ============================================ -->
+<section class="engine-block" id="legal">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 11</div>
+    <h2 class="engine-name">Legal &amp; <em>Disputes</em></h2>
+    <div class="engine-meta">~140 KEYS · 17 SECTIONS · 81% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (4 rings — split 2+2), KarakaStrengthTable, YogaLedger (creating + protective), FifteenYearTrend, BodyZoneMap (renamed: DisputeCategoryHeat — 12 categories), StatTilesCluster, RemedyCards. <strong>NEW</strong> · VictoryAnalysisDual (plaintiff vs defendant), EnemyTypeRadar, ContractKarmaSpectrum.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">11 · 01 · NEW</div>
+      <div class="section-title">Victory <em>Analysis</em> Dual</div>
+      <div class="section-desc">Twin large-number cards: as Plaintiff vs as Defendant. The "if you go to court, will you win?" answer.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>victory_as_plaintiff · victory_as_defendant · strategy</div>
+    </div>
+    <div class="section-preview">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="single-score" style="background:linear-gradient(135deg,rgba(107,184,138,0.15),rgba(107,184,138,0.03));border-color:rgba(107,184,138,0.4)">
+          <div class="single-score-icon">⚔</div>
+          <div class="single-score-label">AS PLAINTIFF</div>
+          <div style="font-family:var(--font-display);font-size:36px;font-weight:700;color:#6BB88A;line-height:1">88.8%</div>
+          <div class="single-score-sub">VERY HIGH</div>
+        </div>
+        <div class="single-score" style="background:linear-gradient(135deg,rgba(107,184,138,0.15),rgba(107,184,138,0.03));border-color:rgba(107,184,138,0.4)">
+          <div class="single-score-icon">🛡</div>
+          <div class="single-score-label">AS DEFENDANT</div>
+          <div style="font-family:var(--font-display);font-size:36px;font-weight:700;color:#6BB88A;line-height:1">89.3%</div>
+          <div class="single-score-sub">VERY HIGH</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 12. LIFE PATH & LUCK -->
+<!-- ============================================ -->
+<section class="engine-block" id="lifepath">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 12</div>
+    <h2 class="engine-name">Life Path &amp; <em>Luck</em></h2>
+    <div class="engine-meta">~150 KEYS · 18 SECTIONS · 81% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (4 rings split 2+2), Atmakaraka card, DignityTabs (D9/D60), YogaLedger (6 boost + 2 drain), FifteenYearTrend (renamed: GoldenEra), GoodBadPeriodCards (5 golden windows), StatTilesCluster, IncomeSourcesList (renamed: PurposeDomains), RemedyCards. <strong>NEW</strong> · DestinyVsFreeWillSpectrum, MajorMilestoneTimeline, KarmicLessonsCard.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">12 · 01 · NEW</div>
+      <div class="section-title">Destiny vs <em>Free Will</em></div>
+      <div class="section-desc">A philosophical spectrum bar. The most evocative section in the engine — answers a question users actually ask.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>destiny_weight · free_will · self_creation · fate_strength</div>
+    </div>
+    <div class="section-preview">
+      <div style="padding:18px;background:linear-gradient(135deg,rgba(184,167,224,0.18),rgba(74,59,140,0.2));border:1px solid rgba(184,167,224,0.3);border-radius:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--lavender);letter-spacing:0.2em;text-transform:uppercase;text-align:center;margin-bottom:12px">★ DESTINY ↔ FREE WILL</div>
+        <div style="display:flex;gap:12px;margin-bottom:14px">
+          <div style="flex:1;text-align:center">
+            <div style="font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--lavender);line-height:1">63.5%</div>
+            <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.15em;margin-top:4px">DESTINY</div>
+          </div>
+          <div style="flex:1;text-align:center">
+            <div style="font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--gold);line-height:1">36.5%</div>
+            <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);letter-spacing:0.15em;margin-top:4px">FREE WILL</div>
+          </div>
+        </div>
+        <div class="spectrum-track" style="height:8px;background:linear-gradient(90deg,#B8A7E0 0%,#B8A7E0 63%,#E8B547 63%,#E8B547 100%)"></div>
+        <div style="margin-top:10px;font-size:10px;color:var(--lavender);font-style:italic;text-align:center;line-height:1.4">
+          Strong fate-line — your chart pulls; effort optimizes within it.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 13. CHARACTER ANALYSIS -->
+<!-- ============================================ -->
+<section class="engine-block" id="character">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 13</div>
+    <h2 class="engine-name">Character <em>Analysis</em></h2>
+    <div class="engine-meta">177 KEYS · 20 SECTIONS · 57% CONFIDENCE · LARGEST OUTPUT</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (6 rings split 3+3), Atmakaraka card (highest-degree treatment!), KarakaStrengthTable (Lagna/Moon/Sun/Mercury), DignityTabs (D9/D12/D30/D60), YogaLedger, ConstitutionCard (renamed: DoshaGunaProfile), HarmonyRadar (renamed: InterpersonalRadar), TherapyModalityRanking (renamed: VirtuesList), FifteenYearTrend (renamed: CharacterTimeline), VerdictRich. <strong>NEW</strong> · ArudhaLagnaCard (perception-vs-essence gap), ShadowPatternsList.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">13 · 01 · NEW</div>
+      <div class="section-title">Arudha <em>Lagna</em> Card</div>
+      <div class="section-desc">Unique to Character — the "how the world sees you" vs "who you actually are" gap. The persona-authenticity number is one of the most-clicked stats users encounter.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>arudha_sign · arudha_lord · persona_authenticity_gap</div>
+    </div>
+    <div class="section-preview">
+      <div style="padding:16px;background:linear-gradient(135deg,rgba(123,196,196,0.15),rgba(232,104,156,0.1));border:1px solid rgba(123,196,196,0.3);border-radius:16px">
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--aurora-mint);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:6px">ARUDHA LAGNA · PUBLIC IMAGE</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--ivory);line-height:1.05;margin-bottom:8px">
+          The world sees a <em style="font-style:italic;color:var(--aurora-mint)">Libran balance</em>
+        </div>
+        <div style="font-size:10px;color:var(--lavender);line-height:1.4;margin-bottom:12px">
+          Arudha: Libra · Lord Venus in H1. But your <strong style="color:var(--ivory)">essence is Aquarian</strong> — humanitarian, unconventional.
+        </div>
+        <div style="padding:10px;background:rgba(255,255,255,0.06);border-radius:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-family:var(--font-mono);font-size:8px;color:var(--smoke);letter-spacing:0.15em">PERSONA ↔ ESSENCE GAP</div>
+            <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--cosmic-pink)">59</div>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:2.5px;overflow:hidden">
+            <div style="height:100%;width:59%;background:linear-gradient(90deg,var(--aurora-mint),var(--cosmic-pink));border-radius:2.5px"></div>
+          </div>
+          <div style="font-size:8px;color:var(--smoke);font-family:var(--font-mono);margin-top:6px;letter-spacing:0.05em">SIGNIFICANT — work on alignment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 14. PAST LIFE & KARMA -->
+<!-- ============================================ -->
+<section class="engine-block" id="pastlife">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 14</div>
+    <h2 class="engine-name">Past Life &amp; <em>Karma</em></h2>
+    <div class="engine-meta">116 KEYS · 16 SECTIONS · 69% CONFIDENCE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Reuse: HeroScores (4 rings split 2+2), DignityTabs (D9/D60 only), StatTilesCluster, IncomeSourcesList (renamed: PastLifeInfluences), RemedyCards, ConfidencePanel. <strong>NEW</strong> · PastLifeThemeCard (Ketu↔Rahu axis), PastLifeProfessionCard, KarmicDebtTable, MemoryAccessSpectrum.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">14 · 01 · NEW</div>
+      <div class="section-title">Past Life <em>Theme</em> Card</div>
+      <div class="section-desc">Hero card with Ketu (mastery brought forward) and Rahu (unfinished work) as the primary axis. Lavender + cosmic-pink palette signals the otherworldly nature.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>past_life_theme · ketu_mastery · rahu_unfinished</div>
+    </div>
+    <div class="section-preview">
+      <div class="pastlife-card">
+        <div class="pastlife-tag">PAST LIFE THEME</div>
+        <div class="pastlife-theme">The <em>Healer-Physician</em></div>
+        <div style="font-size:10px;color:var(--lavender);line-height:1.4;position:relative;z-index:2">
+          A soul returning with healing wisdom and the unfinished task of finding its voice.
+        </div>
+        <div class="pastlife-axis">
+          <div class="pastlife-axis-card ketu">
+            <div class="pastlife-axis-tag">☋ KETU · MASTERED</div>
+            <div class="pastlife-axis-name">Occult · Transformation</div>
+            <div class="pastlife-axis-detail">Research depth · transformation comfort · esoteric sensitivity</div>
+          </div>
+          <div class="pastlife-axis-card rahu">
+            <div class="pastlife-axis-tag">☊ RAHU · UNFINISHED</div>
+            <div class="pastlife-axis-name">Wealth · Voice</div>
+            <div class="pastlife-axis-detail">Build the spoken-wisdom platform · master material world</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 15. KUNDLI MILAN -->
+<!-- ============================================ -->
+<section class="engine-block" id="milan">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 15</div>
+    <h2 class="engine-name">Kundli <em>Milan</em></h2>
+    <div class="engine-meta">186 KEYS · 19 SECTIONS · 58% CONFIDENCE · DUAL-CHART ENGINE</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · This is a TWO-PERSON engine — most sections need a comparative layout. Reuse: HeroScores (just 1 unified score ring), DignityTabs (cross-chart), HarmonyRadar (9-domain compatibility), FifteenYearTrend (joint dasha), VerdictRich. <strong>NEW</strong> · AshtakootGrid (8 gun cards), ManglikCrossCard, NavamsaCrossCard, MarriageWindowsTimeline. <strong>HEADER VARIANT</strong> · Show "Person 1 · Person 2" instead of single chart subject.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">15 · 01 · NEW</div>
+      <div class="section-title">Ashtakoot <em>Grid</em></div>
+      <div class="section-desc">8-gun compatibility cards in a 4×2 grid. Color-coded by status: full (green), partial (amber), fail (red). Total at top.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>ashtakoot_total · 8 gun objects</div>
+    </div>
+    <div class="section-preview">
+      <div style="padding:14px;background:rgba(26,22,66,0.5);border:1px solid rgba(232,181,71,0.2);border-radius:14px">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase">ASHTAKOOT TOTAL</div>
+          <div style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--gold);line-height:1;margin-top:4px">24.5<span style="font-size:18px;color:var(--smoke)">/36</span></div>
+          <div style="font-size:9px;color:#6BB88A;font-family:var(--font-mono);letter-spacing:0.1em;margin-top:4px;font-weight:700">68% · GRADE: GOOD</div>
+        </div>
+        <div class="gun-grid" style="grid-template-columns:repeat(4,1fr);gap:5px">
+          <div class="gun-card full"><div class="gun-name">Varna</div><div class="gun-score">1<span class="gun-score-max">/1</span></div><div class="gun-status">FULL</div></div>
+          <div class="gun-card fail"><div class="gun-name">Vashya</div><div class="gun-score">0<span class="gun-score-max">/2</span></div><div class="gun-status">FAIL</div></div>
+          <div class="gun-card partial"><div class="gun-name">Tara</div><div class="gun-score">1.5<span class="gun-score-max">/3</span></div><div class="gun-status">PART</div></div>
+          <div class="gun-card partial"><div class="gun-name">Yoni</div><div class="gun-score">2<span class="gun-score-max">/4</span></div><div class="gun-status">NEUT</div></div>
+          <div class="gun-card full"><div class="gun-name">Maitri</div><div class="gun-score">4<span class="gun-score-max">/5</span></div><div class="gun-status">V.GOOD</div></div>
+          <div class="gun-card fail"><div class="gun-name">Gana</div><div class="gun-score">1<span class="gun-score-max">/6</span></div><div class="gun-status">CHAL</div></div>
+          <div class="gun-card full"><div class="gun-name">Bhakoot</div><div class="gun-score">7<span class="gun-score-max">/7</span></div><div class="gun-status">★ FULL</div></div>
+          <div class="gun-card full"><div class="gun-name">Nadi</div><div class="gun-score">8<span class="gun-score-max">/8</span></div><div class="gun-status">★ FULL</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================ -->
+<!-- 16. RELATIONSHIP INTELLIGENCE -->
+<!-- ============================================ -->
+<section class="engine-block" id="relint">
+  <div class="engine-header">
+    <div class="engine-tag">Engine 16</div>
+    <h2 class="engine-name">Relationship <em>Intelligence</em></h2>
+    <div class="engine-meta">~120 KEYS PER PAIR · 17 SECTIONS · 72% CONFIDENCE · MULTI-CHART</div>
+    <div class="engine-recipe">
+      <strong>RECIPE</strong> · Multi-chart engine (2-N people). Most distinct from any other engine. Reuse: HeroScores (single unified pair score), VerdictRich. <strong>NEW</strong> · PairwiseMatrixCard (the hero component — repeated for every pair), RelationshipTypeRanking (11 types), TrustBetrayalSpectrum, PowerDynamicsBar, PairwiseDimensionalRadar.
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">16 · 01 · NEW</div>
+      <div class="section-title">Pairwise <em>Matrix</em> Card</div>
+      <div class="section-desc">The signature component. Per-pair card with names, unified score, and 4 dimensional bars (Character / Karmic / Power / Love). Repeats for every (N choose 2) pairing.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>pairwise_matrix[].character · karmic · power · love · unified_score</div>
+    </div>
+    <div class="section-preview">
+      <div class="pair-matrix">
+        <div class="pair-head">
+          <div class="pair-names">Arjun <em>×</em> Radha</div>
+          <div class="pair-unified">
+            <div class="pair-unified-val">59.9</div>
+            <div class="pair-unified-tag">WORKABLE</div>
+          </div>
+        </div>
+        <div class="pair-dim-row">
+          <div class="pair-dim-name">Character</div>
+          <div class="pair-dim-bar"><div class="pair-dim-fill" style="width:60.5%"></div></div>
+          <div class="pair-dim-score">60.5</div>
+        </div>
+        <div class="pair-dim-row">
+          <div class="pair-dim-name">Karmic</div>
+          <div class="pair-dim-bar"><div class="pair-dim-fill" style="width:64%"></div></div>
+          <div class="pair-dim-score">64.0</div>
+        </div>
+        <div class="pair-dim-row">
+          <div class="pair-dim-name">Power Balance</div>
+          <div class="pair-dim-bar"><div class="pair-dim-fill" style="width:60%"></div></div>
+          <div class="pair-dim-score">60.0</div>
+        </div>
+        <div class="pair-dim-row">
+          <div class="pair-dim-name">Love</div>
+          <div class="pair-dim-bar"><div class="pair-dim-fill" style="width:57.4%"></div></div>
+          <div class="pair-dim-score">57.4</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-spec">
+      <div class="section-num">16 · 02 · NEW</div>
+      <div class="section-title">Relationship <em>Type</em> Ranking</div>
+      <div class="section-desc">11 archetypal relationship types ranked. The top type often surprises users — Trusted Allies, Karmic Teachers, Hidden Enemies, etc. Most clickable section.</div>
+      <div class="section-keys"><strong>KEYS</strong><br/>relationship_types{11_archetypes}</div>
+    </div>
+    <div class="section-preview">
+      <div class="reltype-list">
+        <div class="reltype-row top">
+          <div class="reltype-name">★ Trusted Allies</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:97.2%"></div></div>
+          <div class="reltype-score">97.2</div>
+        </div>
+        <div class="reltype-row top">
+          <div class="reltype-name">Complementary Opposites</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:93%"></div></div>
+          <div class="reltype-score">93.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Strategic Partners</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:78%"></div></div>
+          <div class="reltype-score">78.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Soul Family</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:72%"></div></div>
+          <div class="reltype-score">72.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Karmic Teachers</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:64%"></div></div>
+          <div class="reltype-score">64.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Romantic Match</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:57.4%"></div></div>
+          <div class="reltype-score">57.4</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Mentor-Mentee</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:42%"></div></div>
+          <div class="reltype-score">42.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Casual</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:35%"></div></div>
+          <div class="reltype-score">35.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Rivals</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:28%"></div></div>
+          <div class="reltype-score">28.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Hidden Enemies</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:18%"></div></div>
+          <div class="reltype-score">18.0</div>
+        </div>
+        <div class="reltype-row">
+          <div class="reltype-name">Toxic Bond</div>
+          <div class="reltype-bar-wrap"><div class="reltype-bar-fill" style="width:12%"></div></div>
+          <div class="reltype-score">12.0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-title">Section Design <em>Library</em></div>
+  <div class="footer-meta">11 ENGINES · ~30 NEW SECTIONS · ALL VARIANTS COVERED</div>
+</footer>
+
+</div>
+</body>
+</html>
