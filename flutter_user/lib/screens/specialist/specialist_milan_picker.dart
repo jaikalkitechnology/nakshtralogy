@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
+import 'milan_report_screen.dart';
 
 class SpecialistMilanPicker extends StatefulWidget {
   const SpecialistMilanPicker({super.key});
@@ -51,10 +52,8 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
       setState(() => _analyzing = false);
       if (resp['statusCode'] == 200 && resp['status'] == 'success') {
         Navigator.push(context, MaterialPageRoute(
-          builder: (_) => SpecialistReportScreen.fromData(
-            specialistLabel: 'Kundli Milan',
-            specialistEmoji: '💑',
-            chartName: '$name1 & $name2',
+          builder: (_) => MilanReportScreen(
+            name1: name1, name2: name2,
             data: (resp['data'] as Map).cast<String, dynamic>(),
           ),
         ));
