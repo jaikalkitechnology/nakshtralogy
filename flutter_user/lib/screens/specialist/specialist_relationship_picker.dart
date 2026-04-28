@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
-import 'specialist_report_screen.dart';
+import 'relationship_report_screen.dart';
 
 class SpecialistRelationshipPicker extends StatefulWidget {
   const SpecialistRelationshipPicker({super.key});
@@ -62,10 +62,8 @@ class _State extends State<SpecialistRelationshipPicker> {
           return c['name']?.toString() ?? '?';
         }).join(' & ');
         Navigator.push(context, MaterialPageRoute(
-          builder: (_) => SpecialistReportScreen.fromData(
-            specialistLabel: 'Relationship Intelligence',
-            specialistEmoji: '🔗',
-            chartName: names,
+          builder: (_) => RelationshipReportScreen(
+            names: names,
             data: (resp['data'] as Map).cast<String, dynamic>(),
           ),
         ));
