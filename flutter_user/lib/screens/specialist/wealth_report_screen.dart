@@ -96,7 +96,7 @@ class _S extends EngineReportBaseState<WealthReportScreen> {
       ReportHeader('Income', 'Sources', '${sorted.length} TYPES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
-        child: Column(children: sorted.take(8).asMap().entries.map((e) {
+        child: Column(children: sorted.take(8).toList().asMap().entries.map((e) {
           final v = (e.value.value as num).toDouble();
           final isTop = e.key < 3;
           final c = isTop ? AppColors.gold : AppColors.smoke;

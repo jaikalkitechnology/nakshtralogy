@@ -305,7 +305,7 @@ class _BizState extends State<BusinessReportScreen> {
     if (list.isEmpty) return const SizedBox.shrink();
     return Column(children: [
       _secH('Recommended', 'Domains', 'TOP ${list.length}'),
-      ...list.take(5).asMap().entries.map((e) {
+      ...list.take(5).toList().asMap().entries.map((e) {
         final i = e.key; final item = (e.value as Map).cast<String, dynamic>();
         final domain = _tc(item['domain']?.toString() ?? '');
         final score = (item['score'] as num?)?.toDouble() ?? 0;
