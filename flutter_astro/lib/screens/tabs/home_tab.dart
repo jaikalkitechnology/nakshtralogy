@@ -10,6 +10,8 @@ import '../communication/live_host_screen.dart';
 import '../rashi/rashi_list_screen.dart';
 import '../milan/milan_chart_selector.dart';
 import '../specialist/specialist_list_screen.dart';
+import '../forecast/forecast_chart_picker.dart';
+import '../forecast/rashi_report_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -200,6 +202,36 @@ class _HomeTabState extends State<HomeTab> {
                 ]),
               ),
             ),
+            const SizedBox(height: 12),
+
+            // ── Today's Forecast + Rashi Reports ──
+            Row(children: [
+              Expanded(child: InkWell(borderRadius: BorderRadius.circular(14),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForecastChartPicker())),
+                child: Container(padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [Colors.orange.withOpacity(0.18), Colors.orange.withOpacity(0.05)]),
+                    borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.orange.withOpacity(0.4))),
+                  child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('☀', style: TextStyle(fontSize: 22)),
+                    SizedBox(height: 6),
+                    Text("Today's Forecast", style: TextStyle(color: Colors.orange, fontSize: 13, fontWeight: FontWeight.w700)),
+                    Text('Daily probability', style: TextStyle(color: AppColors.textSecondary, fontSize: 9)),
+                  ])))),
+              const SizedBox(width: 10),
+              Expanded(child: InkWell(borderRadius: BorderRadius.circular(14),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiReportScreen())),
+                child: Container(padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [AppColors.aurora.withOpacity(0.18), AppColors.aurora.withOpacity(0.05)]),
+                    borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.aurora.withOpacity(0.4))),
+                  child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('♈', style: TextStyle(fontSize: 22)),
+                    SizedBox(height: 6),
+                    Text('Rashi Reports', style: TextStyle(color: AppColors.aurora, fontSize: 13, fontWeight: FontWeight.w700)),
+                    Text('12 zodiac analysis', style: TextStyle(color: AppColors.textSecondary, fontSize: 9)),
+                  ])))),
+            ]),
             const SizedBox(height: 20),
 
             Text(l.requests, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),

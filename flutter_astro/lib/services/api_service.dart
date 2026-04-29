@@ -647,6 +647,20 @@ class ApiService {
     return [];
   }
 
+  // ── Daily Forecast & Rashi ──
+  Future<Map<String, dynamic>> getDailyForecast(String chartId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.forecastBase}/daily/$chartId'), headers: _headers);
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> getRashiAnalysis({String? chartId}) async {
+    final url = chartId != null ? '${ApiConstants.forecastBase}/rashi/$chartId' : '${ApiConstants.forecastBase}/rashi';
+    final resp = await http.get(Uri.parse(url), headers: _headers);
+    if (resp.statusCode == 401) await _tryRefresh();
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ── Dept Reports (15 Specialists) ──
   Future<Map<String, dynamic>> getSpecialistList() async {
     final resp = await http.get(Uri.parse('${ApiConstants.specialistBase}/list'), headers: _headers);

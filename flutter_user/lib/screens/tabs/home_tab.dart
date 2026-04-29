@@ -17,6 +17,8 @@ import '../specialist/specialist_list_screen.dart';
 import '../specialist/specialist_chart_picker.dart';
 import '../specialist/specialist_milan_picker.dart';
 import '../specialist/specialist_relationship_picker.dart';
+import '../forecast/forecast_chart_picker.dart';
+import '../forecast/rashi_report_screen.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
@@ -186,6 +188,10 @@ class _HomeTabState extends State<HomeTab> {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector()))},
       {'icon': Icons.assessment, 'label': 'Reports', 'color': Colors.purple, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistListScreen()))},
+      {'icon': Icons.wb_sunny, 'label': 'Forecast', 'color': Colors.orange, 'onTap': () =>
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const ForecastChartPicker()))},
+      {'icon': Icons.auto_awesome, 'label': 'Rashi', 'color': AppColors.aurora, 'onTap': () =>
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiReportScreen()))},
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
