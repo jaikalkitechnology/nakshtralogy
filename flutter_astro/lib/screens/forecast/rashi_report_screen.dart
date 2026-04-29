@@ -30,7 +30,8 @@ class _S extends State<RashiReportScreen> {
     } catch (e) { if (!mounted) return; setState(() { _error = e.toString(); _loading = false; }); }
   }
 
-  static const _rashiEmojis = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+  static const _rashiEmojis = {'Aries': '♈', 'Taurus': '♉', 'Gemini': '♊', 'Cancer': '♋', 'Leo': '♌', 'Virgo': '♍',
+    'Libra': '♎', 'Scorpio': '♏', 'Sagittarius': '♐', 'Capricorn': '♑', 'Aquarius': '♒', 'Pisces': '♓'};
   static const _rashiColors = [Colors.red, Colors.green, Colors.amber, Colors.blue,
     Colors.orange, Colors.teal, Colors.pink, Colors.deepOrange, Colors.purple,
     Colors.brown, Colors.cyan, Colors.indigo];
@@ -52,9 +53,14 @@ class _S extends State<RashiReportScreen> {
   Widget _report() {
     final d = _d!;
     final mode = d['mode']?.toString() ?? 'standalone';
-    final rashis = (d['rashis'] as List?) ?? [];
-    final summary = (d['summary'] as Map?)?.cast<String, dynamic>() ?? {};
-    final overview = (d['rashi_classification_overview'] as Map?)?.cast<String, dynamic>() ?? {};
+    // rashis is a DICT keyed by '1_mesha', '2_vrishabha', etc.
+    final rashisRaw = d['rashis'];
+    final rashiEntries = <MapEntry<String, Map<String, dynamic>>>[];
+    if (rashisRaw is Map) {
+      rashisRaw.forEach((k, v) {
+        if (v is Map) rashiEntries.add(MapEntry(k.toString(), v.cast<String, dynamic>()));
+      });
+    }
 
     return CustomScrollView(slivers: [
       SliverAppBar(backgroundColor: const Color(0xFF0A0A24), pinned: true,
@@ -82,56 +88,47 @@ class _S extends State<RashiReportScreen> {
             ]),
             const SizedBox(height: 10),
             Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              _bannerStat('12', 'RASHIS'), _bannerStat('14', 'SEC/RASHI'), _bannerStat(mode == 'personalized' ? 'CHART' : 'CLASSIC', 'MODE'),
+              _stat('12', 'RASHIS'), _stat('14', 'SEC/RASHI'), _stat(mode == 'personalized' ? 'CHART' : 'CLASSIC', 'MODE'),
             ]),
           ])),
         // Rashi grid
         Container(padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Wrap(spacing: 8, runSpacing: 8, children: rashis.take(12).toList().asMap().entries.map((e) {
+          child: Wrap(spacing: 8, runSpacing: 8, children: rashiEntries.toList().asMap().entries.map((e) {
             final i = e.key;
-            final r = e.value is Map ? (e.value as Map).cast<String, dynamic>() : <String, dynamic>{};
-            final name = r['rashi_name']?.toString() ?? r['name']?.toString() ?? 'Rashi ${i + 1}';
-            final emoji = i < _rashiEmojis.length ? _rashiEmojis[i] : '★';
+            final r = e.value.value;
+            final engName = r['rashi_name_english']?.toString() ?? '';
+            final sanName = r['rashi_name_sanskrit']?.toString() ?? '';
+            final symbol = r['rashi_glyph']?.toString() ?? _rashiEmojis[engName] ?? '★';
+            final lord = r['swami_lord']?.toString() ?? '';
+            final sig = r['rashi_signature']?.toString() ?? '';
             final color = i < _rashiColors.length ? _rashiColors[i] : AppColors.gold;
-            return _rashiTile(name, emoji, color, r, i);
+            return GestureDetector(
+              onTap: () => _showDetail(engName.isNotEmpty ? engName : sanName, symbol, color, r),
+              child: SizedBox(width: (MediaQuery.of(context).size.width - 40) / 2,
+                child: Container(padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [color.withOpacity(0.10), const Color(0xFF1A1642).withOpacity(0.5)]),
+                    borderRadius: BorderRadius.circular(14), border: Border.all(color: color.withOpacity(0.25))),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      Text('${(i + 1).toString().padLeft(2, '0')}', style: TextStyle(color: color.withOpacity(0.5), fontSize: 9, fontFamily: 'monospace')),
+                      const Spacer(), Text(symbol, style: const TextStyle(fontSize: 20)),
+                    ]),
+                    const SizedBox(height: 6),
+                    Text(engName.isNotEmpty ? engName : sanName, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                    if (sanName.isNotEmpty && engName.isNotEmpty) Text(sanName, style: const TextStyle(color: AppColors.smoke, fontSize: 8)),
+                    Text('Lord: $lord', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+                    if (sig.isNotEmpty) ...[const SizedBox(height: 4),
+                      Text(sig, maxLines: 2, overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: color.withOpacity(0.7), fontSize: 8, fontStyle: FontStyle.italic, height: 1.3))],
+                  ]))));
           }).toList())),
-        // Summary
-        if (summary.isNotEmpty) ...[
-          ReportHeader('Analysis', 'Summary', 'OVERVIEW'),
-          Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-              summary.entries.where((e) => e.value is String && (e.value as String).isNotEmpty).take(8).map((e) =>
-                Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(titleCase(e.key), style: const TextStyle(color: AppColors.gold, fontSize: 9, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-                  Text(e.value.toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
-                ]))).toList())),
-        ],
         const SizedBox(height: 30),
       ])),
     ]);
   }
 
-  Widget _rashiTile(String name, String emoji, Color color, Map<String, dynamic> r, int index) {
-    return GestureDetector(
-      onTap: () => _showRashiDetail(name, emoji, color, r),
-      child: SizedBox(width: (MediaQuery.of(context).size.width - 40) / 2,
-        child: Container(padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [color.withOpacity(0.10), const Color(0xFF1A1642).withOpacity(0.5)]),
-            borderRadius: BorderRadius.circular(14), border: Border.all(color: color.withOpacity(0.25))),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Text('${(index + 1).toString().padLeft(2, '0')}', style: TextStyle(color: color.withOpacity(0.5), fontSize: 9, fontFamily: 'monospace')),
-              const Spacer(), Text(emoji, style: const TextStyle(fontSize: 20)),
-            ]),
-            const SizedBox(height: 6),
-            Text(name, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-            Text(r['element']?.toString() ?? r['tattva']?.toString() ?? '', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
-          ]))));
-  }
-
-  void _showRashiDetail(String name, String emoji, Color color, Map<String, dynamic> r) {
+  void _showDetail(String name, String emoji, Color color, Map<String, dynamic> r) {
     showModalBottomSheet(context: context, isScrollControlled: true,
       backgroundColor: const Color(0xFF0A0A24),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
@@ -142,34 +139,38 @@ class _S extends State<RashiReportScreen> {
             decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
           Text('$emoji $name', style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'serif')),
           const SizedBox(height: 12),
-          ...r.entries.where((e) => e.key != 'rashi_name' && e.key != 'name').map((e) {
-            if (e.value is String && (e.value as String).isNotEmpty) return _detailRow(e.key, e.value.toString(), color);
-            if (e.value is num) return _detailRow(e.key, e.value.toString(), color);
+          ...r.entries.where((e) => !{'rashi_name_english', 'rashi_name_sanskrit', 'rashi_glyph', 'rashi_number'}.contains(e.key)).map((e) {
+            if (e.value is String && (e.value as String).isNotEmpty) return _row(e.key, e.value.toString(), color);
+            if (e.value is num) return _row(e.key, e.value.toString(), color);
             if (e.value is List && (e.value as List).isNotEmpty) return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(height: 8),
-              Text(titleCase(e.key), style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-              ...(e.value as List).take(5).map((item) => Padding(padding: const EdgeInsets.only(left: 8, top: 3),
-                child: Text('• $item', style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3)))),
+              Text(_tc(e.key), style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+              ...(e.value as List).take(6).map((item) => Padding(padding: const EdgeInsets.only(left: 8, top: 3),
+                child: Text('• ${item is Map ? (item as Map).values.join(" · ") : item}',
+                  style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3)))),
             ]);
             if (e.value is Map) return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(height: 8),
-              Text(titleCase(e.key), style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-              ...(e.value as Map).entries.where((x) => x.value is String || x.value is num).take(6).map((x) =>
-                _detailRow(x.key, x.value.toString(), color)),
+              Text(_tc(e.key), style: TextStyle(color: color, fontSize: 10, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+              ...(e.value as Map).entries.where((x) => x.value is String || x.value is num).take(8).map((x) =>
+                _row(x.key, x.value.toString(), color)),
             ]);
             return const SizedBox.shrink();
           }),
         ])));
   }
 
-  Widget _detailRow(String key, String value, Color color) => Padding(padding: const EdgeInsets.only(bottom: 4),
+  Widget _row(String k, String v, Color c) => Padding(padding: const EdgeInsets.only(bottom: 4),
     child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SizedBox(width: 90, child: Text(titleCase(key), style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
-      Expanded(child: Text(value, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3))),
+      SizedBox(width: 90, child: Text(_tc(k), style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
+      Expanded(child: Text(v, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3))),
     ]));
 
-  Widget _bannerStat(String num, String label) => Column(children: [
+  Widget _stat(String num, String label) => Column(children: [
     Text(num, style: const TextStyle(color: AppColors.gold, fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'serif')),
     Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
   ]);
+
+  static String _tc(String s) => s.replaceAll('_', ' ').split(' ')
+    .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
 }
