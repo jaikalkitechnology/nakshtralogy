@@ -180,26 +180,24 @@ class _HomeTabState extends State<HomeTab> {
 
   Widget _quickActions(AppLocalizations l) {
     final actions = [
-      {'icon': Icons.chat_bubble, 'label': l.chat, 'color': AppColors.gold, 'onTap': widget.onSeeAllAstrologers},
-      {'icon': Icons.call, 'label': l.call, 'color': AppColors.saffron, 'onTap': widget.onSeeAllAstrologers},
-      {'icon': Icons.videocam, 'label': l.video, 'color': AppColors.cosmicPink, 'onTap': widget.onSeeAllAstrologers},
+      {'icon': Icons.star, 'label': 'Astrologer', 'color': AppColors.gold, 'onTap': widget.onSeeAllAstrologers},
       {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora, 'onTap': widget.onOpenKundli},
-      {'icon': Icons.favorite, 'label': 'Milan', 'color': AppColors.cosmicPink, 'onTap': () =>
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector()))},
       {'icon': Icons.assessment, 'label': 'Reports', 'color': Colors.purple, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistListScreen()))},
+      {'icon': Icons.favorite, 'label': 'Milan', 'color': AppColors.cosmicPink, 'onTap': () =>
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector()))},
       {'icon': Icons.wb_sunny, 'label': 'Forecast', 'color': Colors.orange, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const ForecastChartPicker()))},
-      {'icon': Icons.auto_awesome, 'label': 'Rashi', 'color': AppColors.aurora, 'onTap': () =>
+      {'icon': Icons.auto_awesome_mosaic, 'label': 'Rashi', 'color': AppColors.aurora, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiReportScreen()))},
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Row(children: actions.map((a) => Expanded(
+      child: Wrap(spacing: 8, runSpacing: 8, children: actions.map((a) => SizedBox(
+        width: (MediaQuery.of(context).size.width - 48) / 3,
         child: GestureDetector(
           onTap: a['onTap'] as VoidCallback?,
           child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.05),
