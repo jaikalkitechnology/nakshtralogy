@@ -146,16 +146,17 @@ class _S extends State<DailyForecastScreen> {
                 decoration: BoxDecoration(color: hc.withOpacity(0.06), borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: hc.withOpacity(0.2))),
                 child: Row(children: [
-                  Container(width: 32, height: 32, decoration: BoxDecoration(color: hc.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
-                    child: Center(child: Text('H$hNum', style: TextStyle(color: hc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')))),
-                  const SizedBox(width: 10),
+                  Container(width: 30, height: 30, decoration: BoxDecoration(color: hc.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
+                    child: Center(child: Text('H$hNum', style: TextStyle(color: hc, fontSize: 9, fontWeight: FontWeight.w700, fontFamily: 'monospace')))),
+                  const SizedBox(width: 8),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(domain, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600)),
-                    if (sig.isNotEmpty) Text(sig, style: TextStyle(color: hc, fontSize: 9, fontStyle: FontStyle.italic)),
+                    Text(domain, style: const TextStyle(color: AppColors.ivory, fontSize: 10, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (sig.isNotEmpty) Text(sig, style: TextStyle(color: hc, fontSize: 8, fontStyle: FontStyle.italic), maxLines: 1, overflow: TextOverflow.ellipsis),
                   ])),
-                  Text('${topScore.toStringAsFixed(0)}%', style: TextStyle(color: hc, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
                   const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right, size: 14, color: AppColors.smoke),
+                  Text('${topScore.toStringAsFixed(0)}%', style: TextStyle(color: hc, fontSize: 13, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                  const SizedBox(width: 2),
+                  const Icon(Icons.chevron_right, size: 12, color: AppColors.smoke),
                 ])));
           }),
         ],
@@ -206,9 +207,11 @@ class _S extends State<DailyForecastScreen> {
               vc = d >= 70 ? AppColors.success : d >= 50 ? AppColors.gold : d >= 30 ? AppColors.warning : AppColors.error;
             }
             return Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [
-              Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.smoke, fontSize: 9))),
-              Text(v is num ? '${v is double ? v.toStringAsFixed(1) : v}' : v.toString(),
-                style: TextStyle(color: vc ?? AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600)),
+              Expanded(flex: 2, child: Text(_tc(e.key), style: const TextStyle(color: AppColors.smoke, fontSize: 9), maxLines: 1, overflow: TextOverflow.ellipsis)),
+              const SizedBox(width: 6),
+              Flexible(child: Text(v is num ? '${v is double ? v.toStringAsFixed(1) : v}' : v.toString(),
+                style: TextStyle(color: vc ?? AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600),
+                maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.right)),
             ]));
           }).toList())),
     ]);
