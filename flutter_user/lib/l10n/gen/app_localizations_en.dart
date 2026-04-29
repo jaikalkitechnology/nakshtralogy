@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([super.locale = "en"]);
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
   String get appName => 'Nakshtralogy';
@@ -352,7 +357,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get endChat => 'End Chat?';
 
   @override
-  String get endChatConfirm => 'Are you sure you want to end this chat session?';
+  String get endChatConfirm =>
+      'Are you sure you want to end this chat session?';
 
   @override
   String get sendPhoto => 'Send Photo';
@@ -403,7 +409,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noLiveStreams => 'No live streams right now';
 
   @override
-  String get astrologerUnavailable => 'Astrologer not available. Ending stream.';
+  String get astrologerUnavailable =>
+      'Astrologer not available. Ending stream.';
 
   @override
   String get streamEnded => 'Stream ended';
@@ -479,5 +486,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

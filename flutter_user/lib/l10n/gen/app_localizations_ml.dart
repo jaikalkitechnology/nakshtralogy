@@ -1,13 +1,19 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Malayalam (`ml`).
 class AppLocalizationsMl extends AppLocalizations {
-  AppLocalizationsMl([super.locale = "ml"]);
+  AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
   String get appName => 'നക്ഷത്രലോജി';
 
   @override
-  String get cosmicJourneyAwaits => 'നിങ്ങളുടെ പ്രാപഞ്ചിക യാത്ര കാത്തിരിക്കുന്നു';
+  String get cosmicJourneyAwaits =>
+      'നിങ്ങളുടെ പ്രാപഞ്ചിക യാത്ര കാത്തിരിക്കുന്നു';
 
   @override
   String get home => 'ഹോം';
@@ -352,7 +358,8 @@ class AppLocalizationsMl extends AppLocalizations {
   String get endChat => 'ചാറ്റ് അവസാനിപ്പിക്കണോ?';
 
   @override
-  String get endChatConfirm => 'ഈ ചാറ്റ് സെഷന്‍ തീര്‍ച്ചയായും അവസാനിപ്പിക്കണമെന്ന് ഉറപ്പാണോ?';
+  String get endChatConfirm =>
+      'ഈ ചാറ്റ് സെഷന്‍ തീര്‍ച്ചയായും അവസാനിപ്പിക്കണമെന്ന് ഉറപ്പാണോ?';
 
   @override
   String get sendPhoto => 'ഫോട്ടോ അയയ്ക്കുക';
@@ -403,7 +410,8 @@ class AppLocalizationsMl extends AppLocalizations {
   String get noLiveStreams => 'ഇപ്പോള്‍ ലൈവ് സ്ട്രീമുകളില്ല';
 
   @override
-  String get astrologerUnavailable => 'ജ്യോതിഷി ലഭ്യമല്ല. സ്ട്രീം അവസാനിക്കുന്നു.';
+  String get astrologerUnavailable =>
+      'ജ്യോതിഷി ലഭ്യമല്ല. സ്ട്രീം അവസാനിക്കുന്നു.';
 
   @override
   String get streamEnded => 'സ്ട്രീം അവസാനിച്ചു';
@@ -479,5 +487,4 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

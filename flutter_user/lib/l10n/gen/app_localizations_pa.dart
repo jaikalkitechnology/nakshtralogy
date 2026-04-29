@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Panjabi Punjabi (`pa`).
 class AppLocalizationsPa extends AppLocalizations {
-  AppLocalizationsPa([super.locale = "pa"]);
+  AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
   String get appName => 'ਨਕਸ਼ਤਰਲੋਜੀ';
@@ -352,7 +357,8 @@ class AppLocalizationsPa extends AppLocalizations {
   String get endChat => 'ਚੈਟ ਖ਼ਤਮ ਕਰਨੀ ਹੈ?';
 
   @override
-  String get endChatConfirm => 'ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਹੋ ਕਿ ਇਹ ਚੈਟ ਸੈਸ਼ਨ ਖ਼ਤਮ ਕਰਨਾ ਹੈ?';
+  String get endChatConfirm =>
+      'ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਹੋ ਕਿ ਇਹ ਚੈਟ ਸੈਸ਼ਨ ਖ਼ਤਮ ਕਰਨਾ ਹੈ?';
 
   @override
   String get sendPhoto => 'ਫ਼ੋਟੋ ਭੇਜੋ';
@@ -403,7 +409,8 @@ class AppLocalizationsPa extends AppLocalizations {
   String get noLiveStreams => 'ਇਸ ਵੇਲੇ ਕੋਈ ਲਾਈਵ ਸਟ੍ਰੀਮ ਨਹੀਂ';
 
   @override
-  String get astrologerUnavailable => 'ਜੋਤਿਸ਼ੀ ਉਪਲਬਧ ਨਹੀਂ। ਸਟ੍ਰੀਮ ਖ਼ਤਮ ਹੋ ਰਹੀ ਹੈ।';
+  String get astrologerUnavailable =>
+      'ਜੋਤਿਸ਼ੀ ਉਪਲਬਧ ਨਹੀਂ। ਸਟ੍ਰੀਮ ਖ਼ਤਮ ਹੋ ਰਹੀ ਹੈ।';
 
   @override
   String get streamEnded => 'ਸਟ੍ਰੀਮ ਖ਼ਤਮ ਹੋਈ';
@@ -479,5 +486,4 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

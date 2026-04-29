@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Gujarati (`gu`).
 class AppLocalizationsGu extends AppLocalizations {
-  AppLocalizationsGu([super.locale = "gu"]);
+  AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
   String get appName => 'નક્ષત્રલોજી';
@@ -403,7 +408,8 @@ class AppLocalizationsGu extends AppLocalizations {
   String get noLiveStreams => 'હમણાં કોઈ લાઇવ સ્ટ્રીમ નથી';
 
   @override
-  String get astrologerUnavailable => 'જ્યોતિષી ઉપલબ્ધ નથી. સ્ટ્રીમ સમાપ્ત થઈ રહી છે.';
+  String get astrologerUnavailable =>
+      'જ્યોતિષી ઉપલબ્ધ નથી. સ્ટ્રીમ સમાપ્ત થઈ રહી છે.';
 
   @override
   String get streamEnded => 'સ્ટ્રીમ સમાપ્ત';
@@ -479,5 +485,4 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

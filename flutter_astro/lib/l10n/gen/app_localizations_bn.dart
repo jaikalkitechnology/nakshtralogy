@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Bengali Bangla (`bn`).
 class AppLocalizationsBn extends AppLocalizations {
-  AppLocalizationsBn([super.locale = "bn"]);
+  AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
   String get appName => 'নক্ষত্রলজি অ্যাস্ট্রো';
@@ -136,7 +141,8 @@ class AppLocalizationsBn extends AppLocalizations {
   String get rashiPredictions => 'রাশি ফলাফল';
 
   @override
-  String get todaysGochar => 'আজকের গোচর সব ১২ রাশির জন্য — বিস্তারিত দেখতে ট্যাপ করুন';
+  String get todaysGochar =>
+      'আজকের গোচর সব ১২ রাশির জন্য — বিস্তারিত দেখতে ট্যাপ করুন';
 
   @override
   String get recentRequests => 'সাম্প্রতিক অনুরোধ';
@@ -449,5 +455,4 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC প্রত্যাখ্যাত';
-
 }

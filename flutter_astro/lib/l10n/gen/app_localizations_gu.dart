@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Gujarati (`gu`).
 class AppLocalizationsGu extends AppLocalizations {
-  AppLocalizationsGu([super.locale = "gu"]);
+  AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
   String get appName => 'નક્ષત્રલોજી એસ્ટ્રો';
@@ -449,5 +454,4 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC નકારેલ';
-
 }

@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Bengali Bangla (`bn`).
 class AppLocalizationsBn extends AppLocalizations {
-  AppLocalizationsBn([super.locale = "bn"]);
+  AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
   String get appName => 'নক্ষত্রলজি';
@@ -479,5 +484,4 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

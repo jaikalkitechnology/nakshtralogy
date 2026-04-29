@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Hindi (`hi`).
 class AppLocalizationsHi extends AppLocalizations {
-  AppLocalizationsHi([super.locale = "hi"]);
+  AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
   String get appName => 'नक्षत्रलॉजी';
@@ -352,7 +357,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get endChat => 'चैट समाप्त करें?';
 
   @override
-  String get endChatConfirm => 'क्या आप वाकई इस चैट सत्र को समाप्त करना चाहते हैं?';
+  String get endChatConfirm =>
+      'क्या आप वाकई इस चैट सत्र को समाप्त करना चाहते हैं?';
 
   @override
   String get sendPhoto => 'फ़ोटो भेजें';
@@ -403,7 +409,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noLiveStreams => 'अभी कोई लाइव स्ट्रीम नहीं';
 
   @override
-  String get astrologerUnavailable => 'ज्योतिषी उपलब्ध नहीं। स्ट्रीम समाप्त हो रही है।';
+  String get astrologerUnavailable =>
+      'ज्योतिषी उपलब्ध नहीं। स्ट्रीम समाप्त हो रही है।';
 
   @override
   String get streamEnded => 'स्ट्रीम समाप्त';
@@ -479,5 +486,4 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

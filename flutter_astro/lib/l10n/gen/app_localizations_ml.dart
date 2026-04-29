@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Malayalam (`ml`).
 class AppLocalizationsMl extends AppLocalizations {
-  AppLocalizationsMl([super.locale = "ml"]);
+  AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
   String get appName => 'നക്ഷത്രലോജി ആസ്ട്രോ';
@@ -136,7 +141,8 @@ class AppLocalizationsMl extends AppLocalizations {
   String get rashiPredictions => 'രാശി ഫലങ്ങള്‍';
 
   @override
-  String get todaysGochar => 'ഇന്നത്തെ ഗോചരം എല്ലാ 12 രാശികള്‍ക്കും — വിശദാംശങ്ങള്‍ക്ക് ടാപ്പ് ചെയ്യുക';
+  String get todaysGochar =>
+      'ഇന്നത്തെ ഗോചരം എല്ലാ 12 രാശികള്‍ക്കും — വിശദാംശങ്ങള്‍ക്ക് ടാപ്പ് ചെയ്യുക';
 
   @override
   String get recentRequests => 'സമീപകാല അഭ്യര്‍ത്ഥനകള്‍';
@@ -449,5 +455,4 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC നിരസിക്കപ്പെട്ടു';
-
 }

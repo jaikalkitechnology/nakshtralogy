@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Tamil (`ta`).
 class AppLocalizationsTa extends AppLocalizations {
-  AppLocalizationsTa([super.locale = "ta"]);
+  AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
   String get appName => 'நக்ஷத்ரலாஜி';
@@ -352,7 +357,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get endChat => 'அரட்டையை முடிக்கவா?';
 
   @override
-  String get endChatConfirm => 'இந்த அரட்டை அமர்வை நிச்சயமாக முடிக்க விரும்புகிறீர்களா?';
+  String get endChatConfirm =>
+      'இந்த அரட்டை அமர்வை நிச்சயமாக முடிக்க விரும்புகிறீர்களா?';
 
   @override
   String get sendPhoto => 'புகைப்படம் அனுப்பு';
@@ -403,7 +409,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get noLiveStreams => 'தற்போது நேரலை ஸ்ட்ரீம் இல்லை';
 
   @override
-  String get astrologerUnavailable => 'ஜோதிடர் கிடைக்கவில்லை. ஸ்ட்ரீம் முடிகிறது.';
+  String get astrologerUnavailable =>
+      'ஜோதிடர் கிடைக்கவில்லை. ஸ்ட்ரீம் முடிகிறது.';
 
   @override
   String get streamEnded => 'ஸ்ட்ரீம் முடிந்தது';
@@ -479,5 +486,4 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }

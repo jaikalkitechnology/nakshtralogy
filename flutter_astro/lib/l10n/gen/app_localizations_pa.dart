@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Panjabi Punjabi (`pa`).
 class AppLocalizationsPa extends AppLocalizations {
-  AppLocalizationsPa([super.locale = "pa"]);
+  AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
   String get appName => 'ਨਕਸ਼ਤਰਲੋਜੀ ਐਸਟ੍ਰੋ';
@@ -136,7 +141,8 @@ class AppLocalizationsPa extends AppLocalizations {
   String get rashiPredictions => 'ਰਾਸ਼ੀ ਭਵਿੱਖਬਾਣੀ';
 
   @override
-  String get todaysGochar => 'ਅੱਜ ਦਾ ਗੋਚਰ ਸਾਰੀਆਂ 12 ਰਾਸ਼ੀਆਂ ਲਈ — ਵੇਰਵੇ ਲਈ ਟੈਪ ਕਰੋ';
+  String get todaysGochar =>
+      'ਅੱਜ ਦਾ ਗੋਚਰ ਸਾਰੀਆਂ 12 ਰਾਸ਼ੀਆਂ ਲਈ — ਵੇਰਵੇ ਲਈ ਟੈਪ ਕਰੋ';
 
   @override
   String get recentRequests => 'ਹਾਲੀਆ ਬੇਨਤੀਆਂ';
@@ -449,5 +455,4 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC ਰੱਦ ਕੀਤਾ';
-
 }

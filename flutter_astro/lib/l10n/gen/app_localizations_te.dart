@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Telugu (`te`).
 class AppLocalizationsTe extends AppLocalizations {
-  AppLocalizationsTe([super.locale = "te"]);
+  AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
   String get appName => 'నక్షత్రలాజీ ఆస్ట్రో';
@@ -136,7 +141,8 @@ class AppLocalizationsTe extends AppLocalizations {
   String get rashiPredictions => 'రాశి ఫలాలు';
 
   @override
-  String get todaysGochar => 'ఈ రోజు గోచారం అన్ని 12 రాశులకు — వివరాలకు నొక్కండి';
+  String get todaysGochar =>
+      'ఈ రోజు గోచారం అన్ని 12 రాశులకు — వివరాలకు నొక్కండి';
 
   @override
   String get recentRequests => 'ఇటీవల అభ్యర్థనలు';
@@ -449,5 +455,4 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC తిరస్కరించబడింది';
-
 }

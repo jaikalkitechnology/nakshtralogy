@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Kannada (`kn`).
 class AppLocalizationsKn extends AppLocalizations {
-  AppLocalizationsKn([super.locale = "kn"]);
+  AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
   String get appName => 'ನಕ್ಷತ್ರಲಾಜಿ ಆಸ್ಟ್ರೋ';
@@ -136,7 +141,8 @@ class AppLocalizationsKn extends AppLocalizations {
   String get rashiPredictions => 'ರಾಶಿ ಭವಿಷ್ಯ';
 
   @override
-  String get todaysGochar => 'ಇಂದಿನ ಗೋಚಾರ ಎಲ್ಲಾ 12 ರಾಶಿಗಳಿಗೆ — ವಿವರಗಳಿಗೆ ಟ್ಯಾಪ್ ಮಾಡಿ';
+  String get todaysGochar =>
+      'ಇಂದಿನ ಗೋಚಾರ ಎಲ್ಲಾ 12 ರಾಶಿಗಳಿಗೆ — ವಿವರಗಳಿಗೆ ಟ್ಯಾಪ್ ಮಾಡಿ';
 
   @override
   String get recentRequests => 'ಇತ್ತೀಚಿನ ವಿನಂತಿಗಳು';
@@ -449,5 +455,4 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC ತಿರಸ್ಕರಿಸಲಾಗಿದೆ';
-
 }

@@ -1,7 +1,12 @@
-import "app_localizations.dart";
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
 
+// ignore_for_file: type=lint
+
+/// The translations for Marathi (`mr`).
 class AppLocalizationsMr extends AppLocalizations {
-  AppLocalizationsMr([super.locale = "mr"]);
+  AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
   String get appName => 'नक्षत्रलॉजी';
@@ -352,7 +357,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get endChat => 'चॅट संपवायची?';
 
   @override
-  String get endChatConfirm => 'तुम्हाला खात्री आहे की हे चॅट सत्र संपवायचे आहे?';
+  String get endChatConfirm =>
+      'तुम्हाला खात्री आहे की हे चॅट सत्र संपवायचे आहे?';
 
   @override
   String get sendPhoto => 'फोटो पाठवा';
@@ -403,7 +409,8 @@ class AppLocalizationsMr extends AppLocalizations {
   String get noLiveStreams => 'सध्या लाइव्ह स्ट्रीम नाहीत';
 
   @override
-  String get astrologerUnavailable => 'ज्योतिषी उपलब्ध नाहीत. स्ट्रीम संपत आहे.';
+  String get astrologerUnavailable =>
+      'ज्योतिषी उपलब्ध नाहीत. स्ट्रीम संपत आहे.';
 
   @override
   String get streamEnded => 'स्ट्रीम संपली';
@@ -479,5 +486,4 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get english => 'English';
-
 }
