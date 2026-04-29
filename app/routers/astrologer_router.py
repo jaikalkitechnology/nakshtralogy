@@ -387,7 +387,22 @@ def list_astrologers(
     online_only: bool = False,
     db: Session = Depends(get_db),
 ):
-    q = db.query(AstrologerProfile).filter(AstrologerProfile.is_approved == True)
+    from app.models.model import KycDocument
+
+    # Only show astrologers who are: approved AND have at least one KYC document approved
+    approved_kyc_user_ids = (
+        db.query(KycDocument.user_id)
+        .filter(KycDocument.status == "approved")
+        .distinct()
+        .subquery()
+    )
+
+    q = (
+        db.query(AstrologerProfile)
+        .filter(AstrologerProfile.is_approved == True)
+        .filter(AstrologerProfile.user_id.in_(approved_kyc_user_ids))
+    )
+
     if online_only:
         q = q.filter(AstrologerProfile.is_online == True, AstrologerProfile.is_busy == False)
     # JSON column search for MySQL — use JSON_CONTAINS
@@ -429,11 +444,19 @@ def list_astrologers(
 
 @router.get("/{astrologer_id}", response_model=AstrologerProfileResponse)
 def get_astrologer(astrologer_id: str, db: Session = Depends(get_db)):
+    from app.models.model import KycDocument
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == astrologer_id,
         AstrologerProfile.is_approved == True,
     ).first()
     if not profile:
+        raise HTTPException(status_code=404, detail="Astrologer not found")
+    # Check KYC approved
+    kyc_ok = db.query(KycDocument).filter(
+        KycDocument.user_id == profile.user_id,
+        KycDocument.status == "approved",
+    ).first()
+    if not kyc_ok:
         raise HTTPException(status_code=404, detail="Astrologer not found")
     return _build_profile_response(profile)
 
