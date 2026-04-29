@@ -18,6 +18,7 @@ from app.routers import (
     admin_router, google_auth_router, kundli_router,
     rashi_router, agent_router, career_router, character_router,
     milan_router, specialist_router, ai_config_router,
+    forecast_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -157,6 +158,7 @@ app.include_router(character_router.router, prefix="/api/v1/character", tags=["C
 app.include_router(milan_router.router, prefix="/api/v1/milan", tags=["Kundli Milan"])
 app.include_router(specialist_router.router, prefix="/api/v1/specialist", tags=["Dept Reports"])
 app.include_router(ai_config_router.router, prefix="/api/v1/ai-config", tags=["AI Config"])
+app.include_router(forecast_router.router, prefix="/api/v1/forecast", tags=["Daily Forecast & Rashi"])
 
 
 
