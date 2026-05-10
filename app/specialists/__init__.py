@@ -10,10 +10,12 @@ Usage:
     result = engine.analyze(pdata, birth_jd, name)
 """
 
-# ── Upgraded engines (all_new_upgraded_specialist_engine) ──
+# ── Upgraded engines for career/business/education (vimshottari_dasha re-enabled) ──
 from all_engine.all_new_upgraded_specialist_engine.career_specialist_v5 import career_specialist_engine
 from all_engine.all_new_upgraded_specialist_engine.business_specialist_v3 import business_specialist_engine as business_startup_specialist_engine
 from all_engine.all_new_upgraded_specialist_engine.education_specialist_v2 import education_specialist_engine
+
+# ── Upgraded engines (compatible format) ──
 from all_engine.all_new_upgraded_specialist_engine.wealth_specialist import wealth_specialist_engine
 from all_engine.all_new_upgraded_specialist_engine.love_relationships_specialist import love_relationships_specialist_engine
 from all_engine.all_new_upgraded_specialist_engine.marriage_family_specialist import marriage_family_specialist_engine
