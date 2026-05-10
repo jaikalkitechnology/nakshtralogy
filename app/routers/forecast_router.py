@@ -44,7 +44,7 @@ def daily_forecast(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Today's actionable daily forecast using Moola Dasha + Gochar."""
+    """Today's probability forecast for a birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
         raise HTTPException(404, "Chart not found")
@@ -53,12 +53,14 @@ def daily_forecast(
 
     try:
         t0 = time.time()
-        from all_engine.all_new_upgraded_specialist_engine.daily_rashi_forecast_specialist import generate_daily_forecast
-        result = generate_daily_forecast(
-            chart.name, chart.gender or "M", chart.dob, chart.tob, chart.place,
+        data = _get_chart_data(chart)
+        from all_engine.all_specialist_engine.daily_probability_forecast_specialist import daily_probability_forecast_specialist_engine
+        result = daily_probability_forecast_specialist_engine.analyze(
+            data["_pdata"], data["birth_jd"],
+            chart_metadata={"name": chart.name, "dob": chart.dob, "tob": chart.tob, "place": chart.place},
         )
         return {"status": "success", "data": result,
-                "meta": {"engine": "daily_rashi_forecast_v1", "chart_name": chart.name, "latency_ms": int((time.time() - t0) * 1000)}}
+                "meta": {"engine": "daily_forecast_v1", "chart_name": chart.name, "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
         logger.error("Daily forecast error: %s", e, exc_info=True)
         raise HTTPException(500, f"Forecast failed: {e}")

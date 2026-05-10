@@ -46,28 +46,27 @@ class _S extends State<DailyForecastScreen> {
 
   Widget _report() {
     final d = _d!;
-    final header = (d['day_header'] as Map?)?.cast<String, dynamic>() ?? {};
-    final grade = (d['day_grade'] as Map?)?.cast<String, dynamic>() ?? {};
-    final score = (grade['day_score'] as num?)?.toDouble() ?? 0;
-    final gradeLabel = grade['day_grade']?.toString() ?? '';
-    final weekday = header['weekday']?.toString() ?? '';
-    final dateStr = header['date']?.toString() ?? '';
-    final vara = header['vara']?.toString() ?? '';
-    final tithi = header['tithi']?.toString() ?? '';
-    final nak = header['nakshatra']?.toString() ?? '';
-    final sunrise = header['sunrise']?.toString() ?? '';
-    final sunset = header['sunset']?.toString() ?? '';
-    final rahuKaal = header['rahu_kaal']?.toString() ?? '';
-    final moola = 'MD=${header['moola_dasha_md'] ?? "?"} · AD=${header['moola_dasha_ad'] ?? "?"} · PD=${header['moola_dasha_pd'] ?? "?"}';
-    final favorable = (d['favorable_fields'] as List?) ?? [];
-    final challenging = (d['challenging_fields'] as List?) ?? [];
-    final doToday = (d['do_today'] as List?) ?? [];
-    final avoidToday = (d['avoid_today'] as List?) ?? [];
-    final hourly = (d['hourly_windows'] as Map?)?.cast<String, dynamic>() ?? {};
-    final alerts = (d['alerts'] as List?) ?? [];
-    final cgm = (d['color_gemstone_mantra'] as Map?)?.cast<String, dynamic>() ?? {};
-    final summary = (d['summary'] as Map?)?.cast<String, dynamic>() ?? {};
-    final c = score >= 70 ? AppColors.success : score >= 50 ? AppColors.gold : score >= 35 ? AppColors.warning : AppColors.error;
+    final dayScore = (d['day_quality_score'] as num?)?.toDouble() ?? 0;
+    final dayOverall = (d['day_quality_overall'] as Map?)?.cast<String, dynamic>() ?? {};
+    final grade = dayOverall['day_grade']?.toString() ?? d['day_grade']?.toString() ?? '';
+    final theme = dayOverall['day_theme']?.toString() ?? '';
+    final summary = d['day_summary']?.toString() ?? '';
+    final weekday = d['target_weekday']?.toString() ?? '';
+    final targetDate = d['target_date']?.toString() ?? '';
+    final actions = (d['key_actions_today'] as List?) ?? [];
+    final cautions = (d['key_cautions_today'] as List?) ?? [];
+    // house_event_probabilities is a DICT keyed "1"-"12"
+    final housesRaw = d['house_event_probabilities'];
+    final houses = <Map<String, dynamic>>[];
+    if (housesRaw is Map) {
+      housesRaw.forEach((k, v) { if (v is Map) houses.add(v.cast<String, dynamic>()); });
+    }
+    final flags = (d['critical_event_flags'] as List?) ?? [];
+    final timing = (d['timing_windows'] as Map?)?.cast<String, dynamic>() ?? {};
+    final relationships = (d['relationships_today'] as Map?)?.cast<String, dynamic>() ?? {};
+    final opportunities = (d['opportunities_vs_risks'] as Map?)?.cast<String, dynamic>() ?? {};
+    final income = (d['income_vs_expense'] as Map?)?.cast<String, dynamic>() ?? {};
+    final c = dayScore >= 70 ? AppColors.success : dayScore >= 50 ? AppColors.gold : dayScore >= 35 ? AppColors.warning : AppColors.error;
 
     return CustomScrollView(slivers: [
       SliverAppBar(backgroundColor: const Color(0xFF0A0A24), pinned: true,
@@ -76,166 +75,182 @@ class _S extends State<DailyForecastScreen> {
           Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
           Text.rich(TextSpan(children: [
             const TextSpan(text: "Today's ", style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-            TextSpan(text: 'Forecast', style: TextStyle(color: c, fontSize: 18, fontStyle: FontStyle.italic)),
+            TextSpan(text: 'Forecast', style: TextStyle(color: c, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
           ])),
         ]),
         centerTitle: true, actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)]),
       SliverList(delegate: SliverChildListDelegate([
-        // ═══ DAY SCORE HERO ═══
+        // Day hero
         Container(margin: const EdgeInsets.fromLTRB(16, 12, 16, 12), padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             gradient: LinearGradient(colors: [c.withOpacity(0.15), const Color(0xFF4A3B8C).withOpacity(0.1)]),
             borderRadius: BorderRadius.circular(20), border: Border.all(color: c.withOpacity(0.3))),
           child: Column(children: [
-            Text('$weekday · $dateStr', style: TextStyle(color: c, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(width: 16, height: 1, color: c.withOpacity(0.4)), const SizedBox(width: 6),
+              Text('☀ $weekday · $targetDate', style: TextStyle(color: c, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+              const SizedBox(width: 6), Container(width: 16, height: 1, color: c.withOpacity(0.4)),
+            ]),
             const SizedBox(height: 14),
             SizedBox(width: 100, height: 100, child: Stack(alignment: Alignment.center, children: [
-              SizedBox(width: 100, height: 100, child: CircularProgressIndicator(value: score / 100, strokeWidth: 8,
+              SizedBox(width: 100, height: 100, child: CircularProgressIndicator(value: dayScore / 100, strokeWidth: 8,
                 backgroundColor: Colors.white.withOpacity(0.08), valueColor: AlwaysStoppedAnimation(c))),
               Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(score.toStringAsFixed(0), style: TextStyle(color: c, fontSize: 28, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-                Text(gradeLabel, style: TextStyle(color: c, fontSize: 9, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+                Text(dayScore.toStringAsFixed(0), style: TextStyle(color: c, fontSize: 28, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                Text(grade, style: TextStyle(color: c, fontSize: 9, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
               ]),
             ])),
-            const SizedBox(height: 12),
-            // Panchanga row
-            Wrap(spacing: 8, runSpacing: 4, alignment: WrapAlignment.center, children: [
-              _tag(vara, AppColors.gold), _tag(tithi, AppColors.lavender),
-              _tag(nak, AppColors.aurora),
-            ]),
-            const SizedBox(height: 8),
-            Text(moola, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace')),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text('☀ $sunrise', style: const TextStyle(color: AppColors.smoke, fontSize: 8)),
-              const SizedBox(width: 12),
-              Text('🌙 $sunset', style: const TextStyle(color: AppColors.smoke, fontSize: 8)),
-              const SizedBox(width: 12),
-              Text('⚠ Rahu: $rahuKaal', style: const TextStyle(color: AppColors.error, fontSize: 8)),
-            ]),
+            if (theme.isNotEmpty) ...[const SizedBox(height: 8),
+              Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(color: c.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                child: Text(theme, style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w600)))],
+            if (summary.isNotEmpty) ...[const SizedBox(height: 8),
+              Text(summary, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.5))],
           ])),
-        // ═══ BEST/WORST HOURS ═══
-        if (hourly.isNotEmpty) Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
-          child: Row(children: [
-            Expanded(child: Column(children: [
-              const Text('BEST HOUR', style: TextStyle(color: AppColors.success, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-              Text(hourly['best_hour_today']?.toString() ?? '—', textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w600), maxLines: 2, overflow: TextOverflow.ellipsis),
-            ])),
-            Container(width: 1, height: 30, color: Colors.white12),
-            Expanded(child: Column(children: [
-              const Text('WORST HOUR', style: TextStyle(color: AppColors.error, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-              Text(hourly['worst_hour_today']?.toString() ?? '—', textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.error, fontSize: 11, fontWeight: FontWeight.w600), maxLines: 2, overflow: TextOverflow.ellipsis),
-            ])),
-          ])),
-        // ═══ DO TODAY ═══
-        if (doToday.isNotEmpty) ...[
-          ReportHeader('Do', 'Today', '${doToday.length}'),
-          ...doToday.take(6).map((a) => _actionCard(a.toString(), AppColors.success, '✓')),
+        // Actions
+        if (actions.isNotEmpty) ...[
+          ReportHeader('Key', 'Actions', '${actions.length}'),
+          ...actions.take(6).map((a) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: AppColors.success.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.success.withOpacity(0.2))),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('✓ ', style: TextStyle(color: AppColors.success, fontSize: 12)),
+              Expanded(child: Text(a.toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 11, height: 1.4))),
+            ]))),
         ],
-        // ═══ AVOID TODAY ═══
-        if (avoidToday.isNotEmpty) ...[
-          ReportHeader('Avoid', 'Today', '${avoidToday.length}'),
-          ...avoidToday.take(6).map((a) => _actionCard(a.toString(), AppColors.error, '✗')),
+        // Cautions
+        if (cautions.isNotEmpty) ...[
+          ReportHeader('Key', 'Cautions', '${cautions.length}'),
+          ...cautions.take(6).map((a) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.warning.withOpacity(0.2))),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('⚠ ', style: TextStyle(color: AppColors.warning, fontSize: 12)),
+              Expanded(child: Text(a.toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 11, height: 1.4))),
+            ]))),
         ],
-        // ═══ FAVORABLE FIELDS ═══
-        if (favorable.isNotEmpty) ...[
-          ReportHeader('Favorable', 'Fields', '${favorable.length}'),
-          ...favorable.take(5).map((f) {
-            if (f is! Map) return const SizedBox.shrink();
-            final fld = (f as Map).cast<String, dynamic>();
-            final fScore = (fld['score'] as num?)?.toDouble() ?? 0;
-            final fc = fScore >= 70 ? AppColors.success : AppColors.gold;
+        // 12 House probabilities
+        if (houses.isNotEmpty) ...[
+          ReportHeader('12 House', 'Probabilities', '${houses.length} HOUSES'),
+          ...houses.map((h) {
+            final hNum = h['house']?.toString() ?? '?';
+            final domain = h['domain']?.toString() ?? '';
+            final sig = h['h${hNum}_event_signature']?.toString() ?? h['event_signature']?.toString() ?? '';
+            // Find the main probability score
+            final scores = h.entries.where((e) => e.value is num && e.key.contains('probability')).toList();
+            final topScore = scores.isNotEmpty ? scores.map((e) => (e.value as num).toDouble()).reduce((a, b) => a > b ? a : b) : 50.0;
+            final hc = topScore >= 70 ? AppColors.success : topScore >= 50 ? AppColors.gold : topScore >= 35 ? AppColors.warning : AppColors.error;
+            return GestureDetector(
+              onTap: () => _showHouseDetail(h, hc),
+              child: Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: hc.withOpacity(0.06), borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: hc.withOpacity(0.2))),
+                child: Row(children: [
+                  Container(width: 32, height: 32, decoration: BoxDecoration(color: hc.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
+                    child: Center(child: Text('H$hNum', style: TextStyle(color: hc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')))),
+                  const SizedBox(width: 10),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(domain, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600)),
+                    if (sig.isNotEmpty) Text(sig, style: TextStyle(color: hc, fontSize: 9, fontStyle: FontStyle.italic)),
+                  ])),
+                  Text('${topScore.toStringAsFixed(0)}%', style: TextStyle(color: hc, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right, size: 14, color: AppColors.smoke),
+                ])));
+          }),
+        ],
+        // Income vs expense
+        if (income.isNotEmpty) _sectionCard('Income vs Expense', income),
+        // Relationships
+        if (relationships.isNotEmpty) _sectionCard('Relationships Today', relationships),
+        // Opportunities
+        if (opportunities.isNotEmpty) _sectionCard('Opportunities vs Risks', opportunities),
+        // Timing windows
+        if (timing.isNotEmpty) _sectionCard('Timing Windows', timing),
+        // Critical flags
+        if (flags.isNotEmpty) ...[
+          ReportHeader('Critical', 'Flags', '${flags.length}'),
+          ...flags.take(5).map((f) {
+            final text = f is Map ? (f as Map)['description']?.toString() ?? f.toString() : f.toString();
             return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: fc.withOpacity(0.06), borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: fc.withOpacity(0.2))),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Expanded(child: Text(fld['field']?.toString() ?? '', style: TextStyle(color: fc, fontSize: 12, fontWeight: FontWeight.w700))),
-                  Text('${fScore.toStringAsFixed(0)}', style: TextStyle(color: fc, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-                ]),
-                if (fld['reason'] != null) Text(fld['reason'].toString(), maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.lavender, fontSize: 9, height: 1.3, fontStyle: FontStyle.italic)),
-                if (fld['what_to_do'] is List) ...[const SizedBox(height: 4),
-                  Wrap(spacing: 4, runSpacing: 4, children: (fld['what_to_do'] as List).take(3).map((w) => _tag(w.toString(), fc)).toList())],
-              ]));
+              decoration: BoxDecoration(color: AppColors.error.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.error.withOpacity(0.2))),
+              child: Text(text, style: const TextStyle(color: AppColors.ivory, fontSize: 11)));
           }),
         ],
-        // ═══ CHALLENGING FIELDS ═══
-        if (challenging.isNotEmpty) ...[
-          ReportHeader('Challenging', 'Fields', '${challenging.length}'),
-          ...challenging.take(4).map((f) {
-            if (f is! Map) return const SizedBox.shrink();
-            final fld = (f as Map).cast<String, dynamic>();
-            return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.06), borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.warning.withOpacity(0.2))),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Expanded(child: Text(fld['field']?.toString() ?? '', style: const TextStyle(color: AppColors.warning, fontSize: 12, fontWeight: FontWeight.w700))),
-                  Text('${(fld['score'] as num?)?.toStringAsFixed(0) ?? "?"}', style: const TextStyle(color: AppColors.warning, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-                ]),
-                if (fld['reason'] != null) Text(fld['reason'].toString(), maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.lavender, fontSize: 9, height: 1.3, fontStyle: FontStyle.italic)),
-                if (fld['what_to_avoid'] is List) ...[const SizedBox(height: 4),
-                  Wrap(spacing: 4, runSpacing: 4, children: (fld['what_to_avoid'] as List).take(3).map((w) => _tag(w.toString(), AppColors.warning)).toList())],
-              ]));
-          }),
+        // Confidence
+        if (d['confidence_score'] is num) ...[
+          ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+          ConfidenceBlock(score: (d['confidence_score'] as num).toDouble(),
+            statement: d['confidence_explanation']?.toString(),
+            breakdown: (d['confidence_breakdown'] is Map) ? (d['confidence_breakdown'] as Map).cast<String, dynamic>() : {}),
         ],
-        // ═══ COLOR/GEMSTONE/MANTRA ═══
-        if (cgm.isNotEmpty) ...[
-          ReportHeader('Today\'s', 'Remedy', '3 KEYS'),
-          Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
-            child: Column(children: [
-              if (cgm['color'] != null) _remedyRow('🎨 COLOR', cgm['color'].toString()),
-              if (cgm['gemstone'] != null) _remedyRow('💎 GEMSTONE', cgm['gemstone'].toString()),
-              if (cgm['mantra'] != null) _remedyRow('🕉 MANTRA', cgm['mantra'].toString()),
-            ])),
-        ],
-        // ═══ ALERTS ═══
-        if (alerts.isNotEmpty) ...[
-          ReportHeader('Daily', 'Alerts', '${alerts.length}'),
-          ...alerts.take(5).map((a) {
-            final text = a is Map ? (a as Map)['alert']?.toString() ?? a.toString() : a.toString();
-            return _actionCard(text, AppColors.cosmicPink, '⚡');
-          }),
-        ],
-        // ═══ SUMMARY ═══
-        if (summary.isNotEmpty) Container(margin: const EdgeInsets.fromLTRB(16, 12, 16, 12), padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.06), borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gold.withOpacity(0.2))),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('DAY SUMMARY', style: TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-            const SizedBox(height: 6),
-            if (summary['one_line'] != null) Text(summary['one_line'].toString(),
-              style: const TextStyle(color: AppColors.ivory, fontSize: 12, fontWeight: FontWeight.w600, height: 1.4)),
-            if (summary['detailed'] != null) ...[const SizedBox(height: 4),
-              Text(summary['detailed'].toString(), style: const TextStyle(color: AppColors.lavender, fontSize: 10, height: 1.4))],
-          ])),
         const SizedBox(height: 30),
       ])),
     ]);
   }
 
-  Widget _actionCard(String text, Color c, String icon) => Container(
-    margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: c.withOpacity(0.2))),
-    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text('$icon ', style: TextStyle(color: c, fontSize: 12)),
-      Expanded(child: Text(text, style: const TextStyle(color: AppColors.ivory, fontSize: 11, height: 1.4))),
-    ]));
+  Widget _sectionCard(String title, Map<String, dynamic> data) {
+    final parts = title.split(' ');
+    final p1 = parts.first; final p2 = parts.skip(1).join(' ');
+    return Column(children: [
+      ReportHeader(p1, p2, '${data.length} KEYS'),
+      Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+          data.entries.where((e) => e.value is String || e.value is num || e.value is bool).take(10).map((e) {
+            final v = e.value;
+            Color? vc;
+            if (v is num) {
+              final d = v.toDouble();
+              vc = d >= 70 ? AppColors.success : d >= 50 ? AppColors.gold : d >= 30 ? AppColors.warning : AppColors.error;
+            }
+            return Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [
+              Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.smoke, fontSize: 9))),
+              Text(v is num ? '${v is double ? v.toStringAsFixed(1) : v}' : v.toString(),
+                style: TextStyle(color: vc ?? AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600)),
+            ]));
+          }).toList())),
+    ]);
+  }
 
-  Widget _remedyRow(String label, String value) => Padding(padding: const EdgeInsets.only(bottom: 6),
-    child: Row(children: [
-      SizedBox(width: 80, child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
-      Expanded(child: Text(value, style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w600))),
-    ]));
+  void _showHouseDetail(Map<String, dynamic> h, Color c) {
+    final hNum = h['house']?.toString() ?? '?';
+    final domain = h['domain']?.toString() ?? '';
+    showModalBottomSheet(context: context, isScrollControlled: true,
+      backgroundColor: const Color(0xFF0A0A24),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.7, minChildSize: 0.4, maxChildSize: 0.95, expand: false,
+        builder: (_, sc) => ListView(controller: sc, padding: const EdgeInsets.all(16), children: [
+          Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
+          Text('House $hNum · $domain', style: TextStyle(color: c, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+          const SizedBox(height: 12),
+          ...h.entries.where((e) => e.key != 'house' && e.key != 'domain').map((e) {
+            if (e.value is num) {
+              final v = (e.value as num).toDouble();
+              final bc = v >= 70 ? AppColors.success : v >= 50 ? AppColors.gold : v >= 30 ? AppColors.warning : AppColors.error;
+              return Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(children: [
+                Row(children: [
+                  Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 10))),
+                  Text(v.toStringAsFixed(1), style: TextStyle(color: bc, fontSize: 11, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+                ]),
+                ClipRRect(borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(value: v / 100, minHeight: 4, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(bc))),
+              ]));
+            }
+            if (e.value is String && (e.value as String).isNotEmpty) {
+              return Padding(padding: const EdgeInsets.only(bottom: 6), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                SizedBox(width: 90, child: Text(_tc(e.key), style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
+                Expanded(child: Text(e.value.toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3))),
+              ]));
+            }
+            return const SizedBox.shrink();
+          }),
+        ])));
+  }
 
-  Widget _tag(String text, Color c) => Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-    decoration: BoxDecoration(color: c.withOpacity(0.12), borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: c.withOpacity(0.3))),
-    child: Text(text, style: TextStyle(color: c, fontSize: 8, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis));
+  static String _tc(String s) => s.replaceAll('_', ' ').split(' ')
+    .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
 }

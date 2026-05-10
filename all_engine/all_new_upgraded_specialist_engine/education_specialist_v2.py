@@ -47,13 +47,9 @@ from datetime import date, datetime
 logger = logging.getLogger("education_specialist")
 
 try:
-    from importlib import import_module as _imp
-    _nk = _imp("app.kundli.engine")
+    import nakshtralogy_v2 as _nk
 except ImportError:
-    try:
-        import nakshtralogy_v2 as _nk
-    except ImportError:
-        raise RuntimeError("Neither app.kundli.engine nor nakshtralogy_v2 found")
+    raise RuntimeError("nakshtralogy_v2.py not found in Python path")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -376,11 +372,10 @@ class EducationChart:
         try:
             self.dasha = _nk.get_current_dasha_lords(p, self.birth_jd)
             moon_lon = p["Moon"]["lon"]
-            moola_data = _nk.moola_dasha(p, self.birth_jd)
-            if isinstance(moola_data, tuple):
-                self.moola_full = moola_data[0] if moola_data[0] else []
-            elif isinstance(moola_data, list):
-                self.moola_full = moola_data
+            # MIGRATED: Moola removed — use Moola via get_current_dasha_lords
+
+            # vd, _, _ = _nk.vimshottari_dasha(moon_lon, self.birth_jd)
+            # MIGRATED: moola_full removed
 
             # self.moola_full = vd
         except Exception as e: logger.warning("Dasha: %s", e)
@@ -1165,7 +1160,7 @@ def _analyze_education_timeline(ec: EducationChart, today: date,
 
     all_phases = []
     for md in ec.moola_full:
-        for ad in md.get("antardashas", md.get("sub", [])):
+        for ad in md.get("sub", []):
             start = _date_from_str(_nk.jd_to_date(ad["start_jd"]))
             end   = _date_from_str(_nk.jd_to_date(ad["end_jd"]))
             if start is None or end is None: continue
