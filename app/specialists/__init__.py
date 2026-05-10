@@ -10,10 +10,10 @@ Usage:
     result = engine.analyze(pdata, birth_jd, name)
 """
 
-# ── Use ORIGINAL engines for career/business/education (Flutter screens expect their format) ──
-from all_engine.all_specialist_engine.career_specialist import career_specialist_engine
-from all_engine.all_specialist_engine.business_startup_specialist import business_startup_specialist_engine
-from all_engine.all_specialist_engine.education_specialist import education_specialist_engine
+# ── Upgraded engines for career/business/education (vimshottari_dasha re-enabled) ──
+from all_engine.all_new_upgraded_specialist_engine.career_specialist_v5 import career_specialist_engine
+from all_engine.all_new_upgraded_specialist_engine.business_specialist_v3 import business_specialist_engine as business_startup_specialist_engine
+from all_engine.all_new_upgraded_specialist_engine.education_specialist_v2 import education_specialist_engine
 
 # ── Upgraded engines (compatible format) ──
 from all_engine.all_new_upgraded_specialist_engine.wealth_specialist import wealth_specialist_engine

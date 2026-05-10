@@ -406,13 +406,11 @@ class CareerChart:
 
         try:
             self.dasha = _nk.get_current_dasha_lords(p, self.birth_jd)
-            moon_lon = p["Moon"]["lon"]
-            # MIGRATED: Moola removed — use Moola via get_current_dasha_lords
-
-            # vd, _, _ = _nk.vimshottari_dasha(moon_lon, self.birth_jd)
-            # MIGRATED: moola_full removed
-
-            # self.moola_full = vd
+            moola_data = _nk.moola_dasha(p, self.birth_jd)
+            if isinstance(moola_data, tuple):
+                self.moola_full = moola_data[0] if moola_data[0] else []
+            elif isinstance(moola_data, list):
+                self.moola_full = moola_data
         except Exception as e: logger.warning("Dasha: %s", e)
 
         # Planet house positions
@@ -884,7 +882,7 @@ def _analyze_timeline(cc: CareerChart, today: date) -> Dict[str, Any]:
     all_phases = []
     for md in cc.moola_full:
         md_lord = md["planet"]
-        for ad in md.get("sub", []):
+        for ad in md.get("antardashas", md.get("sub", [])):
             ad_lord = ad["planet"]
             start = _date_from_str(_nk.jd_to_date(ad["start_jd"]))
             end   = _date_from_str(_nk.jd_to_date(ad["end_jd"]))
