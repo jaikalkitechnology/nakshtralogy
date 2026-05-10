@@ -36,9 +36,13 @@ from datetime import date, datetime
 logger = logging.getLogger("relationship_intelligence_specialist")
 
 try:
-    import nakshtralogy_v2 as _nk
+    from importlib import import_module as _imp
+    _nk = _imp("app.kundli.engine")
 except ImportError:
-    raise RuntimeError("nakshtralogy_v2.py not found in Python path")
+    try:
+        import nakshtralogy_v2 as _nk
+    except ImportError:
+        raise RuntimeError("Neither app.kundli.engine nor nakshtralogy_v2 found")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # CLASSICAL CONSTANTS (inherited from kundli_milan/character_specialist patterns)
