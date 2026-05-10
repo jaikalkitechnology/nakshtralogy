@@ -387,12 +387,11 @@ class WealthChart:
         try:
             self.dasha = _nk.get_current_dasha_lords(p, self.birth_jd)
             moon_lon = p["Moon"]["lon"]
-            # MIGRATED: Moola removed — use Moola via get_current_dasha_lords
-
-            # vd, _, _ = _nk.vimshottari_dasha(moon_lon, self.birth_jd)
-            # MIGRATED: moola_full removed
-
-            # self.moola_full = vd
+            moola_data = _nk.moola_dasha(p, self.birth_jd)
+            if isinstance(moola_data, tuple):
+                self.moola_full = moola_data[0] if moola_data[0] else []
+            elif isinstance(moola_data, list):
+                self.moola_full = moola_data
         except Exception as e: logger.warning("Dasha: %s", e)
 
         for pl in PLANETS:
@@ -1075,7 +1074,7 @@ def _wealth_timeline(wc: WealthChart, today: date, d2_mult: float) -> Dict[str, 
         probe = date(yr, 7, 1)
         active_ad = None
         for md in wc.moola_full:
-            for ad in md.get("sub", []):
+            for ad in md.get("antardashas", md.get("sub", [])):
                 s = _date_from_str(_nk.jd_to_date(ad["start_jd"]))
                 e = _date_from_str(_nk.jd_to_date(ad["end_jd"]))
                 if s and e and s <= probe <= e:
@@ -1127,7 +1126,7 @@ def _wealth_timeline(wc: WealthChart, today: date, d2_mult: float) -> Dict[str, 
     # Good/bad period lists (from all ADs, not just yearly probes)
     good = []; bad = []; sudden_gain = []; sudden_loss = []
     for md in wc.moola_full:
-        for ad in md.get("sub", []):
+        for ad in md.get("antardashas", md.get("sub", [])):
             s = _date_from_str(_nk.jd_to_date(ad["start_jd"]))
             e = _date_from_str(_nk.jd_to_date(ad["end_jd"]))
             if s is None or e is None: continue
