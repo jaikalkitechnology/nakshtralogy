@@ -77,9 +77,13 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                         onTap: () => Navigator.push(context, MaterialPageRoute(
                           builder: (_) {
                             switch (widget.specialistKey) {
-                              case 'career': return CareerReportScreen(chartId: id, chartName: name);
-                              case 'business': return BusinessReportScreen(chartId: id, chartName: name);
-                              case 'education': return EducationReportScreen(chartId: id, chartName: name);
+                              // career/business/education use generic renderer (upgraded engines have different format)
+                              case 'career':
+                              case 'business':
+                              case 'education':
+                                return SpecialistReportScreen(
+                                  specialistKey: widget.specialistKey, specialistLabel: widget.specialistLabel,
+                                  specialistEmoji: widget.specialistEmoji, chartId: id, chartName: name);
                               case 'wealth': return WealthReportScreen(chartId: id, chartName: name);
                               case 'debt_recovery': return DebtReportScreen(chartId: id, chartName: name);
                               case 'love': return LoveReportScreen(chartId: id, chartName: name);
