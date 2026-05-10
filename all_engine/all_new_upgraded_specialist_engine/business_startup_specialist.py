@@ -37,13 +37,9 @@ from datetime import date, datetime
 logger = logging.getLogger("business_startup_specialist")
 
 try:
-    from importlib import import_module as _imp
-    _nk = _imp("app.kundli.engine")
+    import nakshtralogy_v2 as _nk
 except ImportError:
-    try:
-        import nakshtralogy_v2 as _nk
-    except ImportError:
-        raise RuntimeError("Neither app.kundli.engine nor nakshtralogy_v2 found")
+    raise RuntimeError("nakshtralogy_v2.py not found in Python path")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # CLASSICAL CONSTANTS (same as other specialists)

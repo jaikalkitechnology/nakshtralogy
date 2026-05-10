@@ -25,13 +25,9 @@ logger = logging.getLogger("kundli_milan")
 
 # ── Engine import ──────────────────────────────────────────────────────────────
 try:
-    from importlib import import_module as _imp
-    _nk = _imp("app.kundli.engine")
+    import nakshtralogy_v2 as _nk
 except ImportError:
-    try:
-        import nakshtralogy_v2 as _nk
-    except ImportError:
-        raise RuntimeError("Neither app.kundli.engine nor nakshtralogy_v2 found")
+    raise RuntimeError("nakshtralogy_v2.py not found in path.")
 
 # ── Custom exception ───────────────────────────────────────────────────────────
 class KundliMilanError(ValueError):
@@ -857,7 +853,7 @@ def analyze_navamsa_compatibility(pd1: dict, pd2: dict,
 
     Returns: compatibility score (0-100), detailed analysis
     """
-    divisional_sign = _nk.divisional_sign
+    from nakshtralogy_v2 import divisional_sign
 
     def _d9(pdata, planet):
         lon = pdata.get(planet, {}).get("lon", 0)
@@ -1043,7 +1039,7 @@ def analyze_venus_compatibility(pd1: dict, pd2: dict,
     - Venus-Moon relationship between charts
     - Physical attraction indicators
     """
-    divisional_sign = _nk.divisional_sign; aspects_on_planet = _nk.aspects_on_planet; calculate_shadbala = _nk.calculate_shadbala
+    from nakshtralogy_v2 import divisional_sign, aspects_on_planet, calculate_shadbala
 
     factors = []
     score   = 0
@@ -1178,10 +1174,10 @@ def analyze_dasha_sync(pd1: dict, bj1: float,
     - Dasha periods overlapping in favorable houses from each other = sync
     - D-9 Narayana dasha alignment
     """
-    vimshottari_dasha = _nk.vimshottari_dasha; get_current_dasha_lords = _nk.get_current_dasha_lords; jd_to_date = _nk.jd_to_date
+    from nakshtralogy_v2 import vimshottari_dasha, get_current_dasha_lords, jd_to_date
     from datetime import date
 
-    today_jd  = _nk.to_julian_day(
+    today_jd  = __import__("nakshtralogy_v2").to_julian_day(
         date.today().year, date.today().month, date.today().day, 0)
 
     # ── Get current Moola dasha for both ────────────────────
@@ -1577,8 +1573,8 @@ def analyze_seventh_house(pdata: dict, name: str = "Person") -> dict:
     - Ashtakavarga support
     - D-9 7th house
     """
-    calculate_shadbala = _nk.calculate_shadbala; calculate_ashtakavarga = _nk.calculate_ashtakavarga
-    aspects_on_house = _nk.aspects_on_house; aspects_on_planet = _nk.aspects_on_planet; divisional_sign = _nk.divisional_sign
+    from nakshtralogy_v2 import (calculate_shadbala, calculate_ashtakavarga,
+                                   aspects_on_house, aspects_on_planet, divisional_sign)
 
     lagna    = pdata.get("Lagna",{}).get("rashi_idx",0)
     h7_sign  = (lagna + 6) % 12
@@ -1741,7 +1737,7 @@ def analyze_gochar_marriage(pdata: dict, target_year: int = None) -> dict:
     - Jupiter transiting UL sign → marriage possible
     - 7th lord transiting own natal sign → activation
     """
-    get_all_positions = _nk.get_all_positions; to_julian_day = _nk.to_julian_day
+    from nakshtralogy_v2 import get_all_positions, to_julian_day
     from datetime import date
 
     lagna   = pdata.get("Lagna",{}).get("rashi_idx",0)
@@ -1872,7 +1868,7 @@ def predict_marriage_dasha_timeline(pdata: dict, birth_jd: float,
     9. Bad houses (6/8/12) lord in MD/AD → -15
     10. Malefic in 7th lord role → -5
     """
-    vimshottari_dasha = _nk.vimshottari_dasha; jd_to_date = _nk.jd_to_date; to_julian_day = _nk.to_julian_day
+    from nakshtralogy_v2 import vimshottari_dasha, jd_to_date, to_julian_day
     from datetime import datetime, date
 
     today = date.today()
