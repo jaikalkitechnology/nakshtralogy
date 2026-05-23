@@ -56,6 +56,7 @@ from app.models.model import (
     ChatSession, LiveChatMessage, LiveStreamSuperChat,
 )
 from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
+from app.routers.notification_router import save_notification
 from app.routers.ws_astrologer import push_to_astrologer
 import asyncio
 from app.schemas.communication_schema import (
@@ -398,6 +399,9 @@ def initiate_call(
                 agora_token=token_receiver,
                 agora_app_id=app_id,
             )
+        save_notification(db, astro_user.id, f"Incoming {req.call_type.title()} Call",
+            f"{current_user.name or 'User'} is calling you", "incoming_call",
+            {"call_id": call.id, "call_type": req.call_type})
 
     return CallSessionResponse(
         id=call.id, channel_name=channel,
@@ -458,6 +462,10 @@ def call_action(
                 call_type=call.call_type,
                 channel_name=call.channel_name,
             )
+        if caller:
+            save_notification(db, caller.id, "Call Connected",
+                f"{current_user.name or 'Astrologer'} accepted your {call.call_type} call", "call_accepted",
+                {"call_id": call.id})
 
     elif req.action == "reject":
         if current_user.id != call.receiver_id:
@@ -1048,6 +1056,9 @@ def initiate_chat(
                 billing_mode=session.billing_mode or "per_session",
                 session_message_limit=session.session_message_limit or 45,
             )
+        save_notification(db, astro_user.id, "New Chat Request",
+            f"{current_user.name or 'User'} wants to chat with you", "chat_request",
+            {"session_id": session.id})
 
     return _chat_session_response(session, db)
 
@@ -1101,6 +1112,10 @@ def chat_action(
                 billing_mode=session.billing_mode or "per_session",
                 session_message_limit=session.session_message_limit or 45,
             )
+        if chat_user:
+            save_notification(db, chat_user.id, "Chat Started",
+                f"{current_user.name or 'Astrologer'} is ready to chat", "chat_accepted",
+                {"session_id": session.id})
 
     elif req.action == "end":
         if session.status != "active":

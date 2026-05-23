@@ -870,5 +870,35 @@ class ApiService {
     return [];
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  // NOTIFICATIONS
+  // ═══════════════════════════════════════════════════════════════════
+
+  Future<Map<String, dynamic>> getNotifications({int skip = 0, int limit = 50}) async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.notifications}?skip=$skip&limit=$limit'));
+      if (resp.statusCode == 200) return {'statusCode': 200, ...jsonDecode(resp.body)};
+    } catch (e) {
+      print('getNotifications error: $e');
+    }
+    return {'statusCode': 500, 'items': [], 'unread': 0};
+  }
+
+  Future<int> getUnreadCount() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.notifications}/unread'));
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['unread'] as num?)?.toInt() ?? 0;
+    } catch (_) {}
+    return 0;
+  }
+
+  Future<void> markNotificationRead(String id) async {
+    await _authPost(Uri.parse('${ApiConstants.notifications}/$id/read'));
+  }
+
+  Future<void> markAllNotificationsRead() async {
+    await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
