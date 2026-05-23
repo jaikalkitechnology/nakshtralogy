@@ -761,6 +761,7 @@ def get_my_recent_requests(
             "status": c.status,
             "duration_sec": c.duration_sec or 0,
             "earning": float(c.astrologer_earning or 0),
+            "total_amount": float(c.total_amount or 0),
             "rate_per_min": float(c.rate_per_min),
             "created_at": str(c.created_at) if c.created_at else None,
         })
@@ -773,7 +774,12 @@ def get_my_recent_requests(
             "status": c.status,
             "duration_sec": c.duration_sec or 0,
             "earning": float(c.astrologer_earning or 0),
+            "total_amount": float(c.total_amount or 0),
             "rate_per_min": float(c.rate_per_min),
+            "rate_per_session": float(c.rate_per_session or 0),
+            "billing_mode": c.billing_mode or "per_session",
+            "user_message_count": c.user_message_count or 0,
+            "session_message_limit": c.session_message_limit or 45,
             "created_at": str(c.created_at) if c.created_at else None,
         })
 
