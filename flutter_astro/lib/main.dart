@@ -34,21 +34,21 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final langCode = prefs.getString('app_language');
   if (langCode != null) _savedLocale = Locale(langCode);
-  runApp(const NakshtralogyAstroApp());
+  runApp(const NakshatralogyAstroApp());
 }
 
-class NakshtralogyAstroApp extends StatefulWidget {
-  const NakshtralogyAstroApp({super.key});
+class NakshatralogyAstroApp extends StatefulWidget {
+  const NakshatralogyAstroApp({super.key});
 
   static void setLocale(BuildContext context, Locale locale) {
-    context.findAncestorStateOfType<_NakshtralogyAstroAppState>()?.setLocale(locale);
+    context.findAncestorStateOfType<_NakshatralogyAstroAppState>()?.setLocale(locale);
   }
 
   @override
-  State<NakshtralogyAstroApp> createState() => _NakshtralogyAstroAppState();
+  State<NakshatralogyAstroApp> createState() => _NakshatralogyAstroAppState();
 }
 
-class _NakshtralogyAstroAppState extends State<NakshtralogyAstroApp> {
+class _NakshatralogyAstroAppState extends State<NakshatralogyAstroApp> {
   Locale? _locale = _savedLocale;
 
   void setLocale(Locale locale) {
@@ -69,7 +69,7 @@ class _NakshtralogyAstroAppState extends State<NakshtralogyAstroApp> {
         BlocProvider(create: (_) => AstroProfileBloc()),
       ],
       child: MaterialApp(
-        title: 'Nakshtralogy Astro',
+        title: 'Nakshatralogy Astro',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
         navigatorKey: navigatorKey,

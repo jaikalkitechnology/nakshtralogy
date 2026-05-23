@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Nakshtralogy';
+  String get appName => 'Nakshatralogy';
 
   @override
   String get cosmicJourneyAwaits => 'Your Cosmic Journey Awaits';

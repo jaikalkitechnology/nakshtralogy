@@ -70,6 +70,6 @@ class ApiConstants {
 }
 
 class AppConstants {
-  static const String appName = 'Nakshtralogy';
+  static const String appName = 'Nakshatralogy';
   static const String tagline = 'Your Cosmic Journey Awaits';
 }

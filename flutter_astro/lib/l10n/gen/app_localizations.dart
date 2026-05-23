@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Nakshtralogy Astro'**
+  /// **'Nakshatralogy Astro'**
   String get appName;
 
   /// No description provided for @astrologerPanel.

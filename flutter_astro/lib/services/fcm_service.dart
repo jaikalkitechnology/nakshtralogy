@@ -534,7 +534,7 @@ class FcmService {
     }
 
     // ── Other notifications (chat messages etc.) → show local notification ──
-    final title = notification?.title ?? data['title'] ?? 'Nakshtralogy Astro';
+    final title = notification?.title ?? data['title'] ?? 'Nakshatralogy Astro';
     final body = notification?.body ?? data['body'] ?? '';
 
     List<AndroidNotificationAction> actions = [];
