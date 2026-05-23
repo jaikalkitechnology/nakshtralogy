@@ -19,6 +19,13 @@ class AuthAuthenticated extends AuthState {
 
 class AuthUnauthenticated extends AuthState {}
 
+class AuthBiometricLocked extends AuthState {
+  final Map<String, dynamic> user;
+  const AuthBiometricLocked({required this.user});
+  @override
+  List<Object?> get props => [user];
+}
+
 class AuthFailure extends AuthState {
   final String message;
   const AuthFailure({required this.message});

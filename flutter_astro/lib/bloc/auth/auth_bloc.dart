@@ -17,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthGoogleLoginRequested>(_onGoogleLogin);
     on<AuthForgotPasswordRequested>(_onForgotPassword);
     on<AuthLogoutRequested>(_onLogout);
+    on<AuthBiometricVerified>(_onBiometricVerified);
   }
 
   Future<void> _onCheck(AuthCheckRequested event, Emitter<AuthState> emit) async {
@@ -24,12 +25,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (_api.isLoggedIn) {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString('user_data');
-      emit(AuthAuthenticated(user: raw != null ? jsonDecode(raw) : {}));
-      // Sync FCM token to backend in background
+      final user = raw != null ? jsonDecode(raw) as Map<String, dynamic> : <String, dynamic>{};
+      final biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
+      if (biometricEnabled) {
+        emit(AuthBiometricLocked(user: user));
+      } else {
+        emit(AuthAuthenticated(user: user));
+      }
       _syncFcmTokenInBackground();
     } else {
       emit(AuthUnauthenticated());
     }
+  }
+
+  Future<void> _onBiometricVerified(AuthBiometricVerified event, Emitter<AuthState> emit) async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('user_data');
+    final user = raw != null ? jsonDecode(raw) as Map<String, dynamic> : <String, dynamic>{};
+    emit(AuthAuthenticated(user: user));
   }
 
   Future<void> _onLogin(AuthLoginRequested event, Emitter<AuthState> emit) async {
