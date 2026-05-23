@@ -455,4 +455,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC Rejected';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get biometricLogin => 'Biometric Login';
+
+  @override
+  String get editProfile => 'Edit Profile';
 }

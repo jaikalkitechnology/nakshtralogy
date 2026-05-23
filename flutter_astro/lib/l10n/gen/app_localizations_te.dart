@@ -455,4 +455,13 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC తిరస్కరించబడింది';
+
+  @override
+  String get notifications => 'నోటిఫికేషన్లు';
+
+  @override
+  String get biometricLogin => 'బయోమెట్రిక్ లాగిన్';
+
+  @override
+  String get editProfile => 'ప్రొఫైల్ సవరించు';
 }

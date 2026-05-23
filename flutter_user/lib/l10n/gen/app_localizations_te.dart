@@ -485,4 +485,23 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get myDetails => 'నా వివరాలు';
+  @override
+  String get myKundlis => 'నా కుండలీలు';
+  @override
+  String get walletRecharge => 'వాలెట్ & రీఛార్జ్';
+  @override
+  String get consultationHistory => 'సంప్రదింపు చరిత్ర';
+  @override
+  String get helpSupport => 'సహాయం & మద్దతు';
+  @override
+  String get biometricLogin => 'బయోమెట్రిక్ లాగిన్';
+  @override
+  String get pastVoiceConsultations => 'గత వాయిస్ సంప్రదింపులు';
+  @override
+  String get pastTextConversations => 'గత టెక్స్ట్ సంభాషణలు';
+  @override
+  String get comingSoon => 'త్వరలో వస్తోంది';
 }

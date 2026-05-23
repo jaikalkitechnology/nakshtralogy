@@ -270,7 +270,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ElevatedButton.icon(
                   onPressed: () => _showEditDialog(me),
                   icon: const Icon(Icons.edit, size: 18),
-                  label: Text('${l.edit} Profile'),
+                  label: Text(l.editProfile),
                   style: ElevatedButton.styleFrom(minimumSize: const Size(200, 42)),
                 ),
               ]),
@@ -350,7 +350,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: Row(children: [
                   const Icon(Icons.notifications_outlined, color: AppColors.gold, size: 22),
                   const SizedBox(width: 12),
-                  const Expanded(child: Text('Notifications', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
+                  Expanded(child: Text(l.notifications, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
                   if (_unreadNotifs > 0) Container(
                     margin: const EdgeInsets.only(right: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
@@ -374,7 +374,7 @@ class _ProfileTabState extends State<ProfileTab> {
               child: Row(children: [
                 const Icon(Icons.fingerprint, color: AppColors.gold, size: 22),
                 const SizedBox(width: 12),
-                const Expanded(child: Text('Biometric Login', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
+                Expanded(child: Text(l.biometricLogin, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
                 SizedBox(height: 28, child: Switch.adaptive(
                   value: _biometricEnabled, onChanged: _toggleBiometric,
                   activeColor: AppColors.gold)),

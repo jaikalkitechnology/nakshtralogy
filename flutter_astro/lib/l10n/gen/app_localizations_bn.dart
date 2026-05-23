@@ -455,4 +455,13 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC প্রত্যাখ্যাত';
+
+  @override
+  String get notifications => 'বিজ্ঞপ্তি';
+
+  @override
+  String get biometricLogin => 'বায়োমেট্রিক লগইন';
+
+  @override
+  String get editProfile => 'প্রোফাইল সম্পাদনা করুন';
 }

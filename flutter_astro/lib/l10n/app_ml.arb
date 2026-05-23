@@ -161,5 +161,9 @@
 
   "kycSubmit": "KYC സമര്‍പ്പിക്കുക",
   "kycPending": "KYC പരിശോധനയിലാണ്",
-  "kycRejected": "KYC നിരസിക്കപ്പെട്ടു"
+  "kycRejected": "KYC നിരസിക്കപ്പെട്ടു",
+
+  "notifications": "അറിയിപ്പുകൾ",
+  "biometricLogin": "ബയോമെട്രിക് ലോഗിൻ",
+  "editProfile": "പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യുക"
 }

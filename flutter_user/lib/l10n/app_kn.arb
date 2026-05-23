@@ -171,5 +171,15 @@
 
   "selectLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ",
   "language": "ಭಾಷೆ",
-  "english": "English"
+  "english": "English",
+
+  "myDetails": "ನನ್ನ ವಿವರಗಳು",
+  "myKundlis": "ನನ್ನ ಕುಂಡಲಿಗಳು",
+  "walletRecharge": "ವಾಲೆಟ್ & ರೀಚಾರ್ಜ್",
+  "consultationHistory": "ಸಮಾಲೋಚನೆ ಇತಿಹಾಸ",
+  "helpSupport": "ಸಹಾಯ & ಬೆಂಬಲ",
+  "biometricLogin": "ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್",
+  "pastVoiceConsultations": "ಹಿಂದಿನ ಧ್ವನಿ ಸಮಾಲೋಚನೆಗಳು",
+  "pastTextConversations": "ಹಿಂದಿನ ಪಠ್ಯ ಸಂಭಾಷಣೆಗಳು",
+  "comingSoon": "ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ"
 }

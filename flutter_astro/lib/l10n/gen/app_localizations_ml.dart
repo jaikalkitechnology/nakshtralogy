@@ -455,4 +455,13 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC നിരസിക്കപ്പെട്ടു';
+
+  @override
+  String get notifications => 'അറിയിപ്പുകൾ';
+
+  @override
+  String get biometricLogin => 'ബയോമെട്രിക് ലോഗിൻ';
+
+  @override
+  String get editProfile => 'പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യുക';
 }

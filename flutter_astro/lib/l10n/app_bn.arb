@@ -161,5 +161,9 @@
 
   "kycSubmit": "KYC জমা দিন",
   "kycPending": "KYC পর্যালোচনাধীন",
-  "kycRejected": "KYC প্রত্যাখ্যাত"
+  "kycRejected": "KYC প্রত্যাখ্যাত",
+
+  "notifications": "বিজ্ঞপ্তি",
+  "biometricLogin": "বায়োমেট্রিক লগইন",
+  "editProfile": "প্রোফাইল সম্পাদনা করুন"
 }

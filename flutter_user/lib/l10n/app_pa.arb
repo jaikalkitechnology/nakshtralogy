@@ -171,5 +171,15 @@
 
   "selectLanguage": "ਭਾਸ਼ਾ ਚੁਣੋ",
   "language": "ਭਾਸ਼ਾ",
-  "english": "English"
+  "english": "English",
+
+  "myDetails": "ਮੇਰੇ ਵੇਰਵੇ",
+  "myKundlis": "ਮੇਰੀਆਂ ਕੁੰਡਲੀਆਂ",
+  "walletRecharge": "ਵਾਲਿਟ ਅਤੇ ਰੀਚਾਰਜ",
+  "consultationHistory": "ਸਲਾਹ ਇਤਿਹਾਸ",
+  "helpSupport": "ਮਦਦ ਅਤੇ ਸਹਾਇਤਾ",
+  "biometricLogin": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਿਨ",
+  "pastVoiceConsultations": "ਪਿਛਲੀਆਂ ਵੌਇਸ ਸਲਾਹਾਂ",
+  "pastTextConversations": "ਪਿਛਲੀਆਂ ਟੈਕਸਟ ਗੱਲਬਾਤ",
+  "comingSoon": "ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ"
 }

@@ -161,5 +161,9 @@
 
   "kycSubmit": "KYC सबमिट करा",
   "kycPending": "KYC पुनरावलोकनाधीन",
-  "kycRejected": "KYC नाकारले"
+  "kycRejected": "KYC नाकारले",
+
+  "notifications": "सूचना",
+  "biometricLogin": "बायोमेट्रिक लॉगिन",
+  "editProfile": "प्रोफाइल संपादित करा"
 }

@@ -161,5 +161,9 @@
 
   "kycSubmit": "Submit KYC",
   "kycPending": "KYC Under Review",
-  "kycRejected": "KYC Rejected"
+  "kycRejected": "KYC Rejected",
+
+  "notifications": "Notifications",
+  "biometricLogin": "Biometric Login",
+  "editProfile": "Edit Profile"
 }

@@ -454,4 +454,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC अस्वीकृत';
+
+  @override
+  String get notifications => 'सूचनाएं';
+
+  @override
+  String get biometricLogin => 'बायोमेट्रिक लॉगिन';
+
+  @override
+  String get editProfile => 'प्रोफ़ाइल संपादित करें';
 }
