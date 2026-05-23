@@ -455,4 +455,13 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC ਰੱਦ ਕੀਤਾ';
+
+  @override
+  String get notifications => 'ਸੂਚਨਾਵਾਂ';
+
+  @override
+  String get biometricLogin => 'ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਿਨ';
+
+  @override
+  String get editProfile => 'ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ';
 }

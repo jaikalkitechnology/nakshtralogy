@@ -454,4 +454,13 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC नाकारले';
+
+  @override
+  String get notifications => 'सूचना';
+
+  @override
+  String get biometricLogin => 'बायोमेट्रिक लॉगिन';
+
+  @override
+  String get editProfile => 'प्रोफाइल संपादित करा';
 }

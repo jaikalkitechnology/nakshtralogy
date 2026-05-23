@@ -161,5 +161,9 @@
 
   "kycSubmit": "KYC ਜਮ੍ਹਾਂ ਕਰੋ",
   "kycPending": "KYC ਸਮੀਖਿਆ ਅਧੀਨ",
-  "kycRejected": "KYC ਰੱਦ ਕੀਤਾ"
+  "kycRejected": "KYC ਰੱਦ ਕੀਤਾ",
+
+  "notifications": "ਸੂਚਨਾਵਾਂ",
+  "biometricLogin": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਿਨ",
+  "editProfile": "ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ"
 }

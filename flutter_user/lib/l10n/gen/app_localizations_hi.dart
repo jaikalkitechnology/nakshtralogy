@@ -486,4 +486,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get english => 'English';
+
+  @override
+  String get myDetails => 'मेरा विवरण';
+  @override
+  String get myKundlis => 'मेरी कुंडलियां';
+  @override
+  String get walletRecharge => 'वॉलेट और रिचार्ज';
+  @override
+  String get consultationHistory => 'परामर्श इतिहास';
+  @override
+  String get helpSupport => 'सहायता और समर्थन';
+  @override
+  String get biometricLogin => 'बायोमेट्रिक लॉगिन';
+  @override
+  String get pastVoiceConsultations => 'पिछले वॉइस परामर्श';
+  @override
+  String get pastTextConversations => 'पिछली टेक्स्ट बातचीत';
+  @override
+  String get comingSoon => 'जल्द आ रहा है';
 }

@@ -161,5 +161,9 @@
 
   "kycSubmit": "KYC ಸಲ್ಲಿಸಿ",
   "kycPending": "KYC ಪರಿಶೀಲನೆಯಲ್ಲಿದೆ",
-  "kycRejected": "KYC ತಿರಸ್ಕರಿಸಲಾಗಿದೆ"
+  "kycRejected": "KYC ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
+
+  "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+  "biometricLogin": "ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್",
+  "editProfile": "ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ"
 }

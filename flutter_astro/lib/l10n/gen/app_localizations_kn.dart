@@ -455,4 +455,13 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC ತಿರಸ್ಕರಿಸಲಾಗಿದೆ';
+
+  @override
+  String get notifications => 'ಅಧಿಸೂಚನೆಗಳು';
+
+  @override
+  String get biometricLogin => 'ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್';
+
+  @override
+  String get editProfile => 'ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ';
 }

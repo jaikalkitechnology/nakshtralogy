@@ -454,4 +454,13 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC નકારેલ';
+
+  @override
+  String get notifications => 'સૂચનાઓ';
+
+  @override
+  String get biometricLogin => 'બાયોમેટ્રિક લૉગિન';
+
+  @override
+  String get editProfile => 'પ્રોફાઇલ સંપાદિત કરો';
 }

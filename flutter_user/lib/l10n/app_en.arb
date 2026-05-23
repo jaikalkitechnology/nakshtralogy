@@ -171,5 +171,15 @@
 
   "selectLanguage": "Select Language",
   "language": "Language",
-  "english": "English"
+  "english": "English",
+
+  "myDetails": "My Details",
+  "myKundlis": "My Kundlis",
+  "walletRecharge": "Wallet & Recharge",
+  "consultationHistory": "Consultation History",
+  "helpSupport": "Help & Support",
+  "biometricLogin": "Biometric Login",
+  "pastVoiceConsultations": "Past voice consultations",
+  "pastTextConversations": "Past text conversations",
+  "comingSoon": "Coming soon"
 }

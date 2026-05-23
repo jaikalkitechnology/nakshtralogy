@@ -188,6 +188,7 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   void _openConsultationHistorySheet() {
+    final l = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.nebula,
@@ -210,7 +211,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('CONSULTATION HISTORY',
+              Text(l.consultationHistory.toUpperCase(),
                   style: TextStyle(
                       color: AppColors.gold,
                       fontSize: 11,
@@ -229,10 +230,10 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                   child: const Icon(Icons.call, color: AppColors.success, size: 20),
                 ),
-                title: const Text('Call History',
-                    style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                subtitle: const Text('Past voice consultations',
-                    style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                title: Text(l.callHistory,
+                    style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                subtitle: Text(l.pastVoiceConsultations,
+                    style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                 trailing: const Icon(Icons.chevron_right, color: AppColors.gold),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -251,10 +252,10 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                   child: const Icon(Icons.chat_bubble_outline, color: AppColors.aurora, size: 20),
                 ),
-                title: const Text('Chat History',
-                    style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                subtitle: const Text('Past text conversations',
-                    style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                title: Text(l.chatHistory,
+                    style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                subtitle: Text(l.pastTextConversations,
+                    style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                 trailing: const Icon(Icons.chevron_right, color: AppColors.gold),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -272,7 +273,7 @@ class _ProfileTabState extends State<ProfileTab> {
   void _showComingSoon(String label) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$label  -  Coming soon',
+        content: Text('$label  -  ${AppLocalizations.of(context)?.comingSoon ?? "Coming soon"}',
             style: const TextStyle(color: AppColors.ivory, fontFamily: 'Manrope')),
         backgroundColor: AppColors.nebula,
         behavior: SnackBarBehavior.floating,
@@ -479,13 +480,13 @@ class _ProfileTabState extends State<ProfileTab> {
                   children: [
                     _menuItem(
                       emoji: '\u{1F464}',
-                      label: 'My Details',
+                      label: l.myDetails,
                       onTap: me == null ? null : () => _openEditDialog(me),
                     ),
                     _menuDivider(),
                     _menuItem(
                       emoji: '\u{1F4DC}',
-                      label: 'My Kundlis',
+                      label: l.myKundlis,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const MyChartsScreen()),
@@ -494,7 +495,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     _menuDivider(),
                     _menuItem(
                       emoji: '\u{1F4B3}',
-                      label: 'Wallet & Recharge',
+                      label: l.walletRecharge,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -508,13 +509,13 @@ class _ProfileTabState extends State<ProfileTab> {
                     _menuDivider(),
                     _menuItem(
                       emoji: '\u{1F550}',
-                      label: 'Consultation History',
+                      label: l.consultationHistory,
                       onTap: _openConsultationHistorySheet,
                     ),
                     _menuDivider(),
                     _menuItemWithBadge(
                       emoji: '\u{1F514}',
-                      label: 'Notifications',
+                      label: l.notifications,
                       badge: _unreadNotifs,
                       onTap: () async {
                         await Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
@@ -523,13 +524,13 @@ class _ProfileTabState extends State<ProfileTab> {
                     ),
                     if (_biometricAvailable) ...[
                       _menuDivider(),
-                      _biometricToggle(),
+                      _biometricToggle(l),
                     ],
                     _menuDivider(),
                     _menuItem(
                       emoji: '\u2753',
-                      label: 'Help & Support',
-                      onTap: () => _showComingSoon('Help & Support'),
+                      label: l.helpSupport,
+                      onTap: () => _showComingSoon(l.helpSupport),
                       isLast: true,
                     ),
                   ],
@@ -743,14 +744,14 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  Widget _biometricToggle() => Padding(
+  Widget _biometricToggle(AppLocalizations l) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
     child: Row(children: [
       Container(width: 28, height: 28,
         decoration: const BoxDecoration(color: AppColors.nebula, shape: BoxShape.circle),
         child: const Center(child: Icon(Icons.fingerprint, size: 16, color: AppColors.gold))),
       const SizedBox(width: 14),
-      const Expanded(child: Text('Biometric Login', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
+      Expanded(child: Text(l.biometricLogin, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
       SizedBox(height: 28, child: Switch.adaptive(
         value: _biometricEnabled, onChanged: _toggleBiometric,
         activeColor: AppColors.gold)),

@@ -161,5 +161,9 @@
 
   "kycSubmit": "KYC जमा करें",
   "kycPending": "KYC समीक्षाधीन",
-  "kycRejected": "KYC अस्वीकृत"
+  "kycRejected": "KYC अस्वीकृत",
+
+  "notifications": "सूचनाएं",
+  "biometricLogin": "बायोमेट्रिक लॉगिन",
+  "editProfile": "प्रोफ़ाइल संपादित करें"
 }

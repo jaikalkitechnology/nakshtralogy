@@ -171,5 +171,15 @@
 
   "selectLanguage": "భాష ఎంచుకోండి",
   "language": "భాష",
-  "english": "English"
+  "english": "English",
+
+  "myDetails": "నా వివరాలు",
+  "myKundlis": "నా కుండలీలు",
+  "walletRecharge": "వాలెట్ & రీఛార్జ్",
+  "consultationHistory": "సంప్రదింపు చరిత్ర",
+  "helpSupport": "సహాయం & మద్దతు",
+  "biometricLogin": "బయోమెట్రిక్ లాగిన్",
+  "pastVoiceConsultations": "గత వాయిస్ సంప్రదింపులు",
+  "pastTextConversations": "గత టెక్స్ట్ సంభాషణలు",
+  "comingSoon": "త్వరలో వస్తోంది"
 }

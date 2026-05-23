@@ -455,4 +455,13 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get kycRejected => 'KYC நிராகரிக்கப்பட்டது';
+
+  @override
+  String get notifications => 'அறிவிப்புகள்';
+
+  @override
+  String get biometricLogin => 'பயோமெட்ரிக் உள்நுழைவு';
+
+  @override
+  String get editProfile => 'சுயவிவரத்தைத் திருத்து';
 }

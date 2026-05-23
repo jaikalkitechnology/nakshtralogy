@@ -15,6 +15,7 @@ import 'app_localizations_mr.dart';
 import 'app_localizations_pa.dart';
 import 'app_localizations_ta.dart';
 import 'app_localizations_te.dart';
+import 'app_localizations_hi_Latn.dart';
 
 // ignore_for_file: type=lint
 
@@ -106,6 +107,7 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('gu'),
     Locale('hi'),
+    Locale.fromSubtags(languageCode: 'hi', scriptCode: 'Latn'),
     Locale('kn'),
     Locale('ml'),
     Locale('mr'),
@@ -1007,6 +1009,10 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'KYC Rejected'**
   String get kycRejected;
+
+  String get notifications;
+  String get biometricLogin;
+  String get editProfile;
 }
 
 class _AppLocalizationsDelegate
@@ -1046,6 +1052,7 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'gu':
       return AppLocalizationsGu();
     case 'hi':
+      if (locale.scriptCode == 'Latn') return AppLocalizationsHiLatn();
       return AppLocalizationsHi();
     case 'kn':
       return AppLocalizationsKn();

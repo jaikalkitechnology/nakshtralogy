@@ -6,6 +6,7 @@ class LanguageSelector {
   static const languages = [
     {'code': 'en', 'name': 'English',   'native': 'English'},
     {'code': 'hi', 'name': 'Hindi',     'native': 'हिन्दी'},
+    {'code': 'hi_Latn', 'name': 'Hinglish', 'native': 'Hinglish'},
     {'code': 'mr', 'name': 'Marathi',   'native': 'मराठी'},
     {'code': 'gu', 'name': 'Gujarati',  'native': 'ગુજરાતી'},
     {'code': 'ta', 'name': 'Tamil',     'native': 'தமிழ்'},
@@ -17,7 +18,10 @@ class LanguageSelector {
   ];
 
   static void show(BuildContext context) {
-    final currentLocale = Localizations.localeOf(context).languageCode;
+    final locale = Localizations.localeOf(context);
+    final currentLocale = locale.scriptCode != null
+        ? '${locale.languageCode}_${locale.scriptCode}'
+        : locale.languageCode;
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.nebula,
@@ -54,7 +58,12 @@ class LanguageSelector {
                   subtitle: Text(lang['name']!, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                   trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.gold, size: 22) : null,
                   onTap: () {
-                    NakshatralogyUserApp.setLocale(context, Locale(lang['code']!));
+                    final code = lang['code']!;
+                    final parts = code.split('_');
+                    final newLocale = parts.length > 1
+                        ? Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1])
+                        : Locale(code);
+                    NakshatralogyUserApp.setLocale(context, newLocale);
                     Navigator.pop(ctx);
                   },
                 );

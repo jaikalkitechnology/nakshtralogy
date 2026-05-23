@@ -171,5 +171,15 @@
 
   "selectLanguage": "மொழி தேர்வு செய்",
   "language": "மொழி",
-  "english": "English"
+  "english": "English",
+
+  "myDetails": "என் விவரங்கள்",
+  "myKundlis": "என் குண்டலிகள்",
+  "walletRecharge": "வாலட் & ரீசார்ஜ்",
+  "consultationHistory": "ஆலோசனை வரலாறு",
+  "helpSupport": "உதவி & ஆதரவு",
+  "biometricLogin": "பயோமெட்ரிக் உள்நுழைவு",
+  "pastVoiceConsultations": "முந்தைய குரல் ஆலோசனைகள்",
+  "pastTextConversations": "முந்தைய உரை உரையாடல்கள்",
+  "comingSoon": "விரைவில் வருகிறது"
 }
