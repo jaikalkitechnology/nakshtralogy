@@ -8,6 +8,8 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/astro_profile/astro_profile_bloc.dart';
 import '../../bloc/astro_profile/astro_profile_event.dart';
 import '../../bloc/astro_profile/astro_profile_state.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/language_selector.dart';
 import '../../services/api_service.dart';
 import '../notifications/notification_screen.dart';
@@ -20,6 +22,8 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   int _unreadNotifs = 0;
+  bool _biometricEnabled = false;
+  bool _biometricAvailable = false;
 
   @override
   void initState() {
@@ -27,12 +31,37 @@ class _ProfileTabState extends State<ProfileTab> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AstroProfileBloc>().add(AstroProfileLoadRequested());
       _loadUnread();
+      _loadBiometric();
     });
   }
 
   Future<void> _loadUnread() async {
     final count = await ApiService().getUnreadCount();
     if (mounted) setState(() => _unreadNotifs = count);
+  }
+
+  Future<void> _loadBiometric() async {
+    final auth = LocalAuthentication();
+    final available = await auth.canCheckBiometrics || await auth.isDeviceSupported();
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) setState(() {
+      _biometricAvailable = available;
+      _biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
+    });
+  }
+
+  Future<void> _toggleBiometric(bool value) async {
+    if (value) {
+      final auth = LocalAuthentication();
+      final ok = await auth.authenticate(
+        localizedReason: 'Verify to enable biometric login',
+        options: const AuthenticationOptions(biometricOnly: false),
+      );
+      if (!ok) return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('biometric_enabled', value);
+    if (mounted) setState(() => _biometricEnabled = value);
   }
 
   void _showEditDialog(Map<String, dynamic> me) {
@@ -331,6 +360,25 @@ class _ProfileTabState extends State<ProfileTab> {
                   const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                 ]),
               ),
+            ),
+
+            // ── Biometric Toggle ──
+            if (_biometricAvailable) Container(
+              padding: const EdgeInsets.all(14),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+              ),
+              child: Row(children: [
+                const Icon(Icons.fingerprint, color: AppColors.gold, size: 22),
+                const SizedBox(width: 12),
+                const Expanded(child: Text('Biometric Login', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
+                SizedBox(height: 28, child: Switch.adaptive(
+                  value: _biometricEnabled, onChanged: _toggleBiometric,
+                  activeColor: AppColors.gold)),
+              ]),
             ),
 
             // ── Language ──

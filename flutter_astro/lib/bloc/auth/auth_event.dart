@@ -51,3 +51,5 @@ class AuthForgotPasswordRequested extends AuthEvent {
 }
 
 class AuthLogoutRequested extends AuthEvent {}
+
+class AuthBiometricVerified extends AuthEvent {}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:local_auth/local_auth.dart';
 import 'l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
@@ -105,11 +106,79 @@ class _AuthGate extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthAuthenticated) return const HomeScreen();
+        if (state is AuthBiometricLocked) return const _BiometricLockScreen();
         if (state is AuthInitial) {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         return const LoginScreen();
       },
+    );
+  }
+}
+
+class _BiometricLockScreen extends StatefulWidget {
+  const _BiometricLockScreen();
+  @override
+  State<_BiometricLockScreen> createState() => _BiometricLockScreenState();
+}
+
+class _BiometricLockScreenState extends State<_BiometricLockScreen> {
+  final _auth = LocalAuthentication();
+  bool _checking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _authenticate());
+  }
+
+  Future<void> _authenticate() async {
+    if (_checking) return;
+    setState(() => _checking = true);
+    try {
+      final ok = await _auth.authenticate(
+        localizedReason: 'Verify your identity to continue',
+        options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
+      );
+      if (ok && mounted) context.read<AuthBloc>().add(AuthBiometricVerified());
+    } catch (_) {}
+    if (mounted) setState(() => _checking = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A0A24),
+      body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+          width: 80, height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.08), shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withOpacity(0.15))),
+          child: const Icon(Icons.fingerprint, size: 42, color: Colors.white70),
+        ),
+        const SizedBox(height: 20),
+        const Text('Nakshatralogy', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 8),
+        const Text('Tap to unlock with biometrics', style: TextStyle(color: Colors.white54, fontSize: 13)),
+        const SizedBox(height: 24),
+        if (_checking)
+          const CircularProgressIndicator(color: Colors.white54)
+        else
+          ElevatedButton.icon(
+            onPressed: _authenticate,
+            icon: const Icon(Icons.fingerprint, size: 20),
+            label: const Text('Unlock'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))),
+          ),
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
+          child: const Text('Sign in with password', style: TextStyle(color: Colors.white38, fontSize: 12)),
+        ),
+      ])),
     );
   }
 }
