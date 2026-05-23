@@ -10,6 +10,7 @@ import '../../bloc/astro_profile/astro_profile_event.dart';
 import '../../bloc/astro_profile/astro_profile_state.dart';
 import '../../widgets/language_selector.dart';
 import '../../services/api_service.dart';
+import '../notifications/notification_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -18,12 +19,20 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
+  int _unreadNotifs = 0;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AstroProfileBloc>().add(AstroProfileLoadRequested());
+      _loadUnread();
     });
+  }
+
+  Future<void> _loadUnread() async {
+    final count = await ApiService().getUnreadCount();
+    if (mounted) setState(() => _unreadNotifs = count);
   }
 
   void _showEditDialog(Map<String, dynamic> me) {
@@ -293,6 +302,36 @@ class _ProfileTabState extends State<ProfileTab> {
               ]),
             ),
             const SizedBox(height: 20),
+
+            // ── Notifications ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
+                _loadUnread();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.notifications_outlined, color: AppColors.gold, size: 22),
+                  const SizedBox(width: 12),
+                  const Expanded(child: Text('Notifications', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
+                  if (_unreadNotifs > 0) Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(10)),
+                    child: Text('$_unreadNotifs', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)),
+                  ),
+                  const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                ]),
+              ),
+            ),
 
             // ── Language ──
             InkWell(

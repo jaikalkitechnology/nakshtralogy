@@ -52,6 +52,9 @@ class ApiConstants {
   static const String callHistory = '$commBase/call/history';
   static const String gifts = '$commBase/gifts';
 
+  // Notifications
+  static const String notifications = '$baseUrl/notifications';
+
   // WebSocket
   static const String wsBase = 'wss://api.nakshatralogy.com';
   static const String wsChat = '$wsBase/ws/chat';

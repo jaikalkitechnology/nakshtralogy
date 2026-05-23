@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../services/api_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
@@ -17,6 +18,7 @@ import '../../bloc/wallet/wallet_state.dart';
 import '../communication/call_history_screen.dart';
 import '../communication/chat_history_screen.dart';
 import '../charts/my_charts_screen.dart';
+import '../notifications/notification_screen.dart';
 import '../tabs/wallet_tab.dart';
 import '../../widgets/language_selector.dart';
 
@@ -28,13 +30,21 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
+  int _unreadNotifs = 0;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileBloc>().add(ProfileLoadRequested());
       context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
+      _loadUnread();
     });
+  }
+
+  Future<void> _loadUnread() async {
+    final count = await ApiService().getUnreadCount();
+    if (mounted) setState(() => _unreadNotifs = count);
   }
 
   void _openEditDialog(Map<String, dynamic> me) {
@@ -275,6 +285,7 @@ class _ProfileTabState extends State<ProfileTab> {
           onRefresh: () async {
             context.read<ProfileBloc>().add(ProfileLoadRequested());
             context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
+            _loadUnread();
           },
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: 24),
@@ -472,10 +483,14 @@ class _ProfileTabState extends State<ProfileTab> {
                       onTap: _openConsultationHistorySheet,
                     ),
                     _menuDivider(),
-                    _menuItem(
+                    _menuItemWithBadge(
                       emoji: '\u{1F514}',
                       label: 'Notifications',
-                      onTap: () => _showComingSoon('Notifications'),
+                      badge: _unreadNotifs,
+                      onTap: () async {
+                        await Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
+                        _loadUnread();
+                      },
                     ),
                     _menuDivider(),
                     _menuItem(
@@ -690,6 +705,36 @@ class _ProfileTabState extends State<ProfileTab> {
               const Icon(Icons.chevron_right, color: AppColors.gold, size: 18),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _menuItemWithBadge({
+    required String emoji, required String label,
+    required VoidCallback? onTap, int badge = 0, bool isLast = false,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: isLast ? const BorderRadius.vertical(bottom: Radius.circular(14)) : BorderRadius.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(children: [
+            Container(width: 28, height: 28,
+              decoration: const BoxDecoration(color: AppColors.nebula, shape: BoxShape.circle),
+              child: Center(child: Text(emoji, style: const TextStyle(fontSize: 14)))),
+            const SizedBox(width: 14),
+            Expanded(child: Text(label, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
+            if (badge > 0) Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(10)),
+              child: Text('$badge', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)),
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.gold, size: 18),
+          ]),
         ),
       ),
     );
