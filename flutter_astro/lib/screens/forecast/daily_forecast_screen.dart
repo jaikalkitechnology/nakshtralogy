@@ -160,13 +160,13 @@ class _S extends State<DailyForecastScreen> {
           }),
         ],
         // Income vs expense
-        if (income.isNotEmpty) _sectionCard('Income vs Expense', income),
+        if (income.isNotEmpty) _incomeCard(income),
         // Relationships
-        if (relationships.isNotEmpty) _sectionCard('Relationships Today', relationships),
+        if (relationships.isNotEmpty) _relationshipsCard(relationships),
         // Opportunities
-        if (opportunities.isNotEmpty) _sectionCard('Opportunities vs Risks', opportunities),
+        if (opportunities.isNotEmpty) _opportunitiesCard(opportunities),
         // Timing windows
-        if (timing.isNotEmpty) _sectionCard('Timing Windows', timing),
+        if (timing.isNotEmpty) _timingCard(timing),
         // Critical flags
         if (flags.isNotEmpty) ...[
           ReportHeader('Critical', 'Flags', '${flags.length}'),
@@ -190,29 +190,213 @@ class _S extends State<DailyForecastScreen> {
     ]);
   }
 
-  Widget _sectionCard(String title, Map<String, dynamic> data) {
-    final parts = title.split(' ');
-    final p1 = parts.first; final p2 = parts.skip(1).join(' ');
+  Widget _incomeCard(Map<String, dynamic> data) {
+    final inc = (data['income_forecast'] as Map?)?.cast<String, dynamic>() ?? {};
+    final exp = (data['expense_forecast'] as Map?)?.cast<String, dynamic>() ?? {};
+    final bal = (data['net_financial_balance_today'] as Map?)?.cast<String, dynamic>() ?? {};
+    final expl = data['explanation']?.toString() ?? '';
+    final incScore = (inc['composite_income_score'] as num?)?.toDouble() ?? 0;
+    final expScore = (exp['composite_expense_score'] as num?)?.toDouble() ?? 0;
+    final balScore = (bal['balance_score'] as num?)?.toDouble() ?? 0;
+    final ic = incScore >= 60 ? AppColors.success : AppColors.gold;
+    final ec = expScore >= 60 ? AppColors.error : AppColors.warning;
+    final bc = balScore >= 60 ? AppColors.success : balScore >= 40 ? AppColors.gold : AppColors.error;
     return Column(children: [
-      ReportHeader(p1, p2, '${data.length} KEYS'),
+      ReportHeader('Income vs', 'Expense', 'FINANCE'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-          data.entries.where((e) => e.value is String || e.value is num || e.value is bool).take(10).map((e) {
-            final v = e.value;
-            Color? vc;
-            if (v is num) {
-              final d = v.toDouble();
-              vc = d >= 70 ? AppColors.success : d >= 50 ? AppColors.gold : d >= 30 ? AppColors.warning : AppColors.error;
-            }
-            return Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [
-              Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.smoke, fontSize: 9))),
-              Text(v is num ? '${v is double ? v.toStringAsFixed(1) : v}' : v.toString(),
-                style: TextStyle(color: vc ?? AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600)),
-            ]));
-          }).toList())),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: _miniScore('INCOME', incScore, ic, inc['income_likelihood']?.toString())),
+            Container(width: 1, height: 50, color: Colors.white12),
+            Expanded(child: _miniScore('EXPENSE', expScore, ec, exp['expense_likelihood']?.toString())),
+          ]),
+          const SizedBox(height: 8),
+          _kvRow('Net Balance', '${balScore.toStringAsFixed(0)}', bc),
+          if (bal['balance_signature'] != null) _kvRow('Signature', bal['balance_signature'].toString(), AppColors.lavender),
+          if (bal['financial_advice'] != null) Padding(padding: const EdgeInsets.only(top: 4),
+            child: Text(bal['financial_advice'].toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3, fontStyle: FontStyle.italic))),
+          if (inc['best_time_window_for_income'] != null) ...[const SizedBox(height: 6),
+            _kvRow('Best Time for Income', inc['best_time_window_for_income'].toString(), AppColors.success)],
+          if (exp['expense_caution_window'] != null)
+            _kvRow('Expense Caution', exp['expense_caution_window'].toString(), AppColors.warning),
+          if (inc['income_drivers'] is List) ...[const SizedBox(height: 4),
+            Wrap(spacing: 4, runSpacing: 4, children: (inc['income_drivers'] as List).take(3).map((d) => _chip(d.toString(), AppColors.success)).toList())],
+          if (exp['expense_drivers'] is List)
+            Wrap(spacing: 4, runSpacing: 4, children: (exp['expense_drivers'] as List).take(3).map((d) => _chip(d.toString(), AppColors.warning)).toList()),
+          if (expl.isNotEmpty) ...[const SizedBox(height: 6),
+            Text(expl, style: const TextStyle(color: AppColors.smoke, fontSize: 9, height: 1.3))],
+        ])),
     ]);
   }
+
+  Widget _relationshipsCard(Map<String, dynamic> data) {
+    final scores = <MapEntry<String, double>>[];
+    data.forEach((k, v) { if (v is num) scores.add(MapEntry(k, v.toDouble())); });
+    final bestDomain = data['best_domain_for_meetings']?.toString();
+    final avoid = data['domains_to_avoid_for_conversations'];
+    final expl = data['explanation']?.toString() ?? '';
+    return Column(children: [
+      ReportHeader('Relationships', 'Today', '${scores.length} AREAS'),
+      Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          ...scores.map((e) {
+            final sc = e.value >= 70 ? AppColors.success : e.value >= 50 ? AppColors.gold : e.value >= 30 ? AppColors.warning : AppColors.error;
+            return Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(children: [
+              Row(children: [
+                Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 10))),
+                Text(e.value.toStringAsFixed(0), style: TextStyle(color: sc, fontSize: 11, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+              ]),
+              const SizedBox(height: 2),
+              ClipRRect(borderRadius: BorderRadius.circular(2),
+                child: LinearProgressIndicator(value: (e.value / 100).clamp(0, 1), minHeight: 3, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(sc))),
+            ]));
+          }),
+          if (bestDomain != null) ...[const SizedBox(height: 4), _kvRow('Best For Meetings', bestDomain, AppColors.success)],
+          if (avoid is List && avoid.isNotEmpty && avoid.first != 'none flagged')
+            Wrap(spacing: 4, runSpacing: 4, children: [
+              const Text('Avoid: ', style: TextStyle(color: AppColors.warning, fontSize: 9)),
+              ...avoid.take(3).map((a) => _chip(a.toString(), AppColors.warning)),
+            ]),
+          if (expl.isNotEmpty) ...[const SizedBox(height: 6),
+            Text(expl, style: const TextStyle(color: AppColors.smoke, fontSize: 9, height: 1.3))],
+        ])),
+    ]);
+  }
+
+  Widget _opportunitiesCard(Map<String, dynamic> data) {
+    final opp = (data['opportunities_today'] as Map?)?.cast<String, dynamic>() ?? {};
+    final risk = (data['risks_today'] as Map?)?.cast<String, dynamic>() ?? {};
+    final expl = data['explanation']?.toString() ?? '';
+    final oppScore = (opp['new_opportunity_score'] as num?)?.toDouble() ?? 0;
+    final riskScore = (risk['composite_risk_score'] as num?)?.toDouble() ?? 0;
+    final oc = oppScore >= 60 ? AppColors.success : AppColors.gold;
+    final rc = riskScore >= 60 ? AppColors.error : AppColors.warning;
+    final topOpp = (opp['top_opportunity_domains'] as List?) ?? [];
+    final topRisk = (risk['top_risk_domains'] as List?) ?? [];
+    return Column(children: [
+      ReportHeader('Opportunities vs', 'Risks', 'OUTLOOK'),
+      Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: _miniScore('OPPORTUNITY', oppScore, oc, opp['opportunity_signature']?.toString())),
+            Container(width: 1, height: 50, color: Colors.white12),
+            Expanded(child: _miniScore('RISK', riskScore, rc, risk['risk_signature']?.toString())),
+          ]),
+          if (topOpp.isNotEmpty) ...[const SizedBox(height: 8),
+            const Text('TOP OPPORTUNITIES', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            const SizedBox(height: 4),
+            ...topOpp.take(3).map((o) {
+              if (o is! Map) return const SizedBox.shrink();
+              final m = (o as Map).cast<String, dynamic>();
+              return Padding(padding: const EdgeInsets.only(bottom: 3), child: Row(children: [
+                const Text('+ ', style: TextStyle(color: AppColors.success, fontSize: 10)),
+                Expanded(child: Text('${m['domain'] ?? ''}: ${m['event'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 10), overflow: TextOverflow.ellipsis, maxLines: 2)),
+                if (m['score'] is num) Text('${(m['score'] as num).toStringAsFixed(0)}', style: TextStyle(color: oc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+              ]));
+            }),
+          ],
+          if (topRisk.isNotEmpty) ...[const SizedBox(height: 8),
+            const Text('TOP RISKS', style: TextStyle(color: AppColors.error, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            const SizedBox(height: 4),
+            ...topRisk.take(3).map((o) {
+              if (o is! Map) return const SizedBox.shrink();
+              final m = (o as Map).cast<String, dynamic>();
+              return Padding(padding: const EdgeInsets.only(bottom: 3), child: Row(children: [
+                const Text('- ', style: TextStyle(color: AppColors.error, fontSize: 10)),
+                Expanded(child: Text('${m['domain'] ?? ''}: ${m['event'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 10), overflow: TextOverflow.ellipsis, maxLines: 2)),
+                if (m['score'] is num) Text('${(m['score'] as num).toStringAsFixed(0)}', style: TextStyle(color: rc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+              ]));
+            }),
+          ],
+          if (opp['recommended_action'] != null) ...[const SizedBox(height: 6),
+            _kvRow('Action', opp['recommended_action'].toString(), AppColors.success)],
+          if (risk['recommended_protective_action'] != null)
+            _kvRow('Protect', risk['recommended_protective_action'].toString(), AppColors.warning),
+          if (expl.isNotEmpty) ...[const SizedBox(height: 6),
+            Text(expl, style: const TextStyle(color: AppColors.smoke, fontSize: 9, height: 1.3))],
+        ])),
+    ]);
+  }
+
+  Widget _timingCard(Map<String, dynamic> data) {
+    final best = (data['best_time_windows'] as List?) ?? [];
+    final worst = (data['worst_time_windows'] as List?) ?? [];
+    final expl = data['explanation']?.toString() ?? '';
+    return Column(children: [
+      ReportHeader('Timing', 'Windows', '${best.length + worst.length} SLOTS'),
+      Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          if (best.isNotEmpty) ...[
+            const Text('BEST WINDOWS', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            const SizedBox(height: 4),
+            ...best.take(3).map((w) {
+              if (w is! Map) return const SizedBox.shrink();
+              final m = (w as Map).cast<String, dynamic>();
+              final qs = (m['quality_score'] as num?)?.toDouble() ?? 0;
+              final qc = qs >= 70 ? AppColors.success : AppColors.gold;
+              return Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: AppColors.success.withOpacity(0.06), borderRadius: BorderRadius.circular(8)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Text(m['window']?.toString() ?? '', style: TextStyle(color: qc, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+                    const Spacer(),
+                    Text('${qs.toStringAsFixed(0)}', style: TextStyle(color: qc, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                  ]),
+                  if (m['driver'] != null) Text(m['driver'].toString(), style: const TextStyle(color: AppColors.smoke, fontSize: 8, height: 1.3)),
+                  if (m['favoured_actions'] is List) Wrap(spacing: 4, runSpacing: 3, children:
+                    (m['favoured_actions'] as List).take(3).map((a) => _chip(a.toString(), AppColors.success)).toList()),
+                ]));
+            }),
+          ],
+          if (worst.isNotEmpty) ...[const SizedBox(height: 6),
+            const Text('WORST WINDOWS', style: TextStyle(color: AppColors.error, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            const SizedBox(height: 4),
+            ...worst.take(3).map((w) {
+              if (w is! Map) return const SizedBox.shrink();
+              final m = (w as Map).cast<String, dynamic>();
+              final qs = (m['quality_score'] as num?)?.toDouble() ?? 0;
+              final qc = qs >= 40 ? AppColors.warning : AppColors.error;
+              return Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: AppColors.error.withOpacity(0.06), borderRadius: BorderRadius.circular(8)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Text(m['window']?.toString() ?? '', style: TextStyle(color: qc, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+                    const Spacer(),
+                    Text('${qs.toStringAsFixed(0)}', style: TextStyle(color: qc, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+                  ]),
+                  if (m['driver'] != null) Text(m['driver'].toString(), style: const TextStyle(color: AppColors.smoke, fontSize: 8, height: 1.3)),
+                  if (m['avoid_actions'] is List) Wrap(spacing: 4, runSpacing: 3, children:
+                    (m['avoid_actions'] as List).take(3).map((a) => _chip(a.toString(), AppColors.error)).toList()),
+                ]));
+            }),
+          ],
+          if (expl.isNotEmpty) ...[const SizedBox(height: 6),
+            Text(expl, style: const TextStyle(color: AppColors.smoke, fontSize: 9, height: 1.3))],
+        ])),
+    ]);
+  }
+
+  Widget _miniScore(String label, double score, Color c, String? sub) => Column(children: [
+    Text(label, style: TextStyle(color: c, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+    const SizedBox(height: 4),
+    Text(score.toStringAsFixed(0), style: TextStyle(color: c, fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+    if (sub != null) Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(sub, style: TextStyle(color: c.withOpacity(0.7), fontSize: 8), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis)),
+  ]);
+
+  Widget _kvRow(String label, String value, Color vc) => Padding(padding: const EdgeInsets.only(bottom: 3),
+    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      SizedBox(width: 100, child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
+      Expanded(child: Text(value, style: TextStyle(color: vc, fontSize: 10, fontWeight: FontWeight.w600), maxLines: 3, overflow: TextOverflow.ellipsis)),
+    ]));
+
+  Widget _chip(String text, Color c) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    decoration: BoxDecoration(color: c.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: c.withOpacity(0.25))),
+    child: Text(text, style: TextStyle(color: c, fontSize: 8, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis));
 
   void _showHouseDetail(Map<String, dynamic> h, Color c) {
     final hNum = h['house']?.toString() ?? '?';
