@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Nakshtralogy Astro';
+  String get appName => 'Nakshatralogy Astro';
 
   @override
   String get astrologerPanel => 'Astrologer Panel';

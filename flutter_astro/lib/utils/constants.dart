@@ -58,6 +58,6 @@ class ApiConstants {
 }
 
 class AppConstants {
-  static const String appName = 'Nakshtralogy Astro';
+  static const String appName = 'Nakshatralogy Astro';
   static const String tagline = 'Astrologer Panel';
 }

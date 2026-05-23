@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 12),
               Text('Astrologer Panel', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: AppColors.primary, fontSize: 28)),
               const SizedBox(height: 4),
-              Text('Nakshtralogy for Astrologers', style: Theme.of(context).textTheme.bodyMedium),
+              Text('Nakshatralogy for Astrologers', style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 40),
               Container(
                 padding: const EdgeInsets.all(24),

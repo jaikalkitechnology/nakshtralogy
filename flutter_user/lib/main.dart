@@ -34,21 +34,21 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final langCode = prefs.getString('app_language');
   if (langCode != null) _savedLocale = Locale(langCode);
-  runApp(const NakshtralogyUserApp());
+  runApp(const NakshatralogyUserApp());
 }
 
-class NakshtralogyUserApp extends StatefulWidget {
-  const NakshtralogyUserApp({super.key});
+class NakshatralogyUserApp extends StatefulWidget {
+  const NakshatralogyUserApp({super.key});
 
   static void setLocale(BuildContext context, Locale locale) {
-    context.findAncestorStateOfType<_NakshtralogyUserAppState>()?.setLocale(locale);
+    context.findAncestorStateOfType<_NakshatralogyUserAppState>()?.setLocale(locale);
   }
 
   @override
-  State<NakshtralogyUserApp> createState() => _NakshtralogyUserAppState();
+  State<NakshatralogyUserApp> createState() => _NakshatralogyUserAppState();
 }
 
-class _NakshtralogyUserAppState extends State<NakshtralogyUserApp> {
+class _NakshatralogyUserAppState extends State<NakshatralogyUserApp> {
   Locale? _locale = _savedLocale;
 
   void setLocale(Locale locale) {
@@ -68,7 +68,7 @@ class _NakshtralogyUserAppState extends State<NakshtralogyUserApp> {
         BlocProvider(create: (_) => ProfileBloc()),
       ],
       child: MaterialApp(
-        title: 'Nakshtralogy',
+        title: 'Nakshatralogy',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkTheme,
         navigatorKey: navigatorKey,

@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Nakshtra', style: TextStyle(color: AppColors.ivory, fontWeight: FontWeight.w700, fontSize: 18)),
+              Text('Nakshatra', style: TextStyle(color: AppColors.ivory, fontWeight: FontWeight.w700, fontSize: 18)),
               Text('logy', style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700, fontSize: 18, fontStyle: FontStyle.italic)),
             ],
           ),

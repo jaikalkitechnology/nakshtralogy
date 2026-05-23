@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 60),
                 const Text('\u2728', style: TextStyle(fontSize: 56)),
                 const SizedBox(height: 12),
-                Text('Nakshtralogy', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: AppColors.primary, fontSize: 28)),
+                Text('Nakshatralogy', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: AppColors.primary, fontSize: 28)),
                 const SizedBox(height: 4),
                 Text('Your Cosmic Journey Awaits', style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),

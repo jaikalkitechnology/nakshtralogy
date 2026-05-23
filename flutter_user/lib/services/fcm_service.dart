@@ -305,7 +305,7 @@ class FcmService {
     if (notification == null && data.isEmpty) return;
 
     final type = data['type'] ?? '';
-    final title = notification?.title ?? data['title'] ?? 'Nakshtralogy';
+    final title = notification?.title ?? data['title'] ?? 'Nakshatralogy';
     final body = notification?.body ?? data['body'] ?? '';
 
     // ── Call accepted while user is on ringing screen → no notification needed,

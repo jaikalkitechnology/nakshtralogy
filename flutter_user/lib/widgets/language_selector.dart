@@ -54,7 +54,7 @@ class LanguageSelector {
                   subtitle: Text(lang['name']!, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                   trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.gold, size: 22) : null,
                   onTap: () {
-                    NakshtralogyUserApp.setLocale(context, Locale(lang['code']!));
+                    NakshatralogyUserApp.setLocale(context, Locale(lang['code']!));
                     Navigator.pop(ctx);
                   },
                 );
