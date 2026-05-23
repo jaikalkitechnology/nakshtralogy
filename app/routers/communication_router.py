@@ -560,17 +560,23 @@ def call_history(
         (CallSession.caller_id == current_user.id) | (CallSession.receiver_id == current_user.id)
     ).order_by(CallSession.created_at.desc()).offset(skip).limit(limit).all()
     app_id, _ = _get_agora_creds(db)
-    return [
-        CallSessionResponse(
+    results = []
+    for c in calls:
+        astrologer_name = None
+        if c.astrologer_profile_id:
+            profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == c.astrologer_profile_id).first()
+            if profile:
+                astrologer_name = profile.display_name
+        results.append(CallSessionResponse(
             id=c.id, channel_name=c.channel_name,
             caller_id=c.caller_id, receiver_id=c.receiver_id,
             call_type=c.call_type, rate_per_min=float(c.rate_per_min),
             status=c.status, agora_app_id=app_id,
             started_at=c.started_at, ended_at=c.ended_at,
             duration_sec=c.duration_sec, total_amount=float(c.total_amount or 0),
-            created_at=c.created_at,
-        ) for c in calls
-    ]
+            created_at=c.created_at, astrologer_name=astrologer_name,
+        ))
+    return results
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1043,18 +1049,7 @@ def initiate_chat(
                 session_message_limit=session.session_message_limit or 45,
             )
 
-    return ChatSessionResponse(
-        id=session.id, user_id=session.user_id,
-        astrologer_id=session.astrologer_id,
-        rate_per_min=float(session.rate_per_min),
-        rate_per_session=float(session.rate_per_session or 0),
-        billing_mode=session.billing_mode,
-        blocked_amount=float(session.blocked_amount or 0),
-        session_message_limit=session.session_message_limit,
-        user_message_count=session.user_message_count,
-        status=session.status,
-        expires_at=session.expires_at, created_at=session.created_at,
-    )
+    return _chat_session_response(session, db)
 
 
 @router.post("/chat/{session_id}/action", response_model=ChatSessionResponse)
@@ -1121,7 +1116,7 @@ def chat_action(
 
     db.commit()
     db.refresh(session)
-    return _chat_session_response(session)
+    return _chat_session_response(session, db)
 
 
 def _refund_blocked(db: Session, session: ChatSession):
@@ -1181,7 +1176,12 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile):
         profile.total_consultations = (profile.total_consultations or 0) + 1
 
 
-def _chat_session_response(session: ChatSession) -> ChatSessionResponse:
+def _chat_session_response(session: ChatSession, db=None) -> ChatSessionResponse:
+    astrologer_name = None
+    if db and session.astrologer_id:
+        profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
+        if profile:
+            astrologer_name = profile.display_name
     return ChatSessionResponse(
         id=session.id, user_id=session.user_id,
         astrologer_id=session.astrologer_id,
@@ -1196,6 +1196,7 @@ def _chat_session_response(session: ChatSession) -> ChatSessionResponse:
         session_expires_at=session.session_expires_at,
         duration_sec=session.duration_sec, total_amount=float(session.total_amount or 0),
         expires_at=session.expires_at, created_at=session.created_at,
+        astrologer_name=astrologer_name,
     )
 
 
@@ -1208,7 +1209,7 @@ def get_chat_session(
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-    return _chat_session_response(session)
+    return _chat_session_response(session, db)
 
 
 @router.get("/chat/{session_id}/messages", response_model=List[ChatMessageResponse])
@@ -1243,7 +1244,7 @@ def chat_history(
             db.query(AstrologerProfile.id).filter(AstrologerProfile.user_id == current_user.id)
         ))
     ).order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
-    return [_chat_session_response(s) for s in sessions]
+    return [_chat_session_response(s, db) for s in sessions]
 
 
 # ── Send Message via REST (for inline notification reply) ────────────

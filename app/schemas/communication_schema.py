@@ -57,6 +57,7 @@ class CallSessionResponse(BaseModel):
     total_amount: float = 0
     expires_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
+    astrologer_name: Optional[str] = None
 
 
 class CallActionRequest(BaseModel):
@@ -201,6 +202,7 @@ class ChatSessionResponse(BaseModel):
     total_amount: float = 0
     expires_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
+    astrologer_name: Optional[str] = None
 
 
 class ChatMessageRequest(BaseModel):
