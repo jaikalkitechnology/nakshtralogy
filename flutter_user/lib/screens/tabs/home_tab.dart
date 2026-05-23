@@ -8,9 +8,8 @@ import '../../bloc/astrologer/astrologer_state.dart';
 import '../../bloc/service/service_bloc.dart';
 import '../../bloc/service/service_event.dart';
 import '../../bloc/service/service_state.dart';
-import '../../services/api_service.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
-import '../rashi/rashi_detail_screen.dart';
+import '../rashi/rashi_list_screen.dart';
 import '../ai/ai_specialist_chat_screen.dart';
 import '../milan/milan_chart_selector.dart';
 import '../specialist/specialist_list_screen.dart';
@@ -18,7 +17,6 @@ import '../specialist/specialist_chart_picker.dart';
 import '../specialist/specialist_milan_picker.dart';
 import '../specialist/specialist_relationship_picker.dart';
 import '../forecast/forecast_chart_picker.dart';
-import '../forecast/rashi_report_screen.dart';
 
 class HomeTab extends StatefulWidget {
   final VoidCallback onSeeAllAstrologers;
@@ -31,23 +29,6 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  static const _zodiacFallback = [
-    {'idx': 0,  'name': 'Aries',       'emoji': '\u2648'},
-    {'idx': 1,  'name': 'Taurus',      'emoji': '\u2649'},
-    {'idx': 2,  'name': 'Gemini',      'emoji': '\u264a'},
-    {'idx': 3,  'name': 'Cancer',      'emoji': '\u264b'},
-    {'idx': 4,  'name': 'Leo',         'emoji': '\u264c'},
-    {'idx': 5,  'name': 'Virgo',       'emoji': '\u264d'},
-    {'idx': 6,  'name': 'Libra',       'emoji': '\u264e'},
-    {'idx': 7,  'name': 'Scorpio',     'emoji': '\u264f'},
-    {'idx': 8,  'name': 'Sagittarius', 'emoji': '\u2650'},
-    {'idx': 9,  'name': 'Capricorn',   'emoji': '\u2651'},
-    {'idx': 10, 'name': 'Aquarius',    'emoji': '\u2652'},
-    {'idx': 11, 'name': 'Pisces',      'emoji': '\u2653'},
-  ];
-
-  List<Map<String, dynamic>> _rashis = List<Map<String, dynamic>>.from(_zodiacFallback);
-
   @override
   void initState() {
     super.initState();
@@ -55,28 +36,7 @@ class _HomeTabState extends State<HomeTab> {
       context.read<AstrologerBloc>().add(const AstrologerLoadRequested(limit: 10));
       context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
       context.read<ServiceBloc>().add(const ServiceLoadRequested());
-      _loadRashiToday();
     });
-  }
-
-  Future<void> _loadRashiToday() async {
-    try {
-      final resp = await ApiService().getRashiToday();
-      if (!mounted) return;
-      if (resp['statusCode'] == 200 && resp['status'] == 'success') {
-        final list = ((resp['data'] as Map)['rashis'] as List).cast<Map>();
-        setState(() { _rashis = list.map((e) => e.cast<String, dynamic>()).toList(); });
-      }
-    } catch (_) {}
-  }
-
-  Color _scoreColor(num? s) {
-    final v = (s ?? 0).toDouble();
-    if (v >= 2.5) return AppColors.success;
-    if (v >= 0.5) return AppColors.aurora;
-    if (v >= -1.5) return AppColors.goldBright;
-    if (v >= -3.5) return AppColors.saffron;
-    return AppColors.error;
   }
 
   @override
@@ -87,7 +47,6 @@ class _HomeTabState extends State<HomeTab> {
       onRefresh: () async {
         context.read<AstrologerBloc>().add(const AstrologerLoadRequested(limit: 10));
         context.read<ServiceBloc>().add(const ServiceLoadRequested());
-        _loadRashiToday();
       },
       child: ListView(
         padding: EdgeInsets.zero,
@@ -103,12 +62,6 @@ class _HomeTabState extends State<HomeTab> {
           _sectionHeader('Chat with AI Specialist', 'Tap to start'),
           const SizedBox(height: 10),
           _aiSpecialistCarousel(),
-
-          // Rashi carousel
-          const SizedBox(height: 16),
-          _sectionHeader(l.todaysRashi, l.tapDetails),
-          const SizedBox(height: 10),
-          _rashiCarousel(),
 
           // Reports (replaces Services)
           const SizedBox(height: 20),
@@ -189,7 +142,7 @@ class _HomeTabState extends State<HomeTab> {
       {'icon': Icons.wb_sunny, 'label': 'Forecast', 'color': Colors.orange, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const ForecastChartPicker()))},
       {'icon': Icons.auto_awesome_mosaic, 'label': 'Rashi', 'color': AppColors.aurora, 'onTap': () =>
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiReportScreen()))},
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiListScreen()))},
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -279,53 +232,6 @@ class _HomeTabState extends State<HomeTab> {
                 const SizedBox(height: 4),
                 Text(s['label'] as String, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w700),
                     maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
-              ]),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _rashiCarousel() {
-    return SizedBox(
-      height: 100,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _rashis.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (_, i) {
-          final z = _rashis[i];
-          final idx = (z['idx'] as num?)?.toInt() ?? i;
-          final score = z['score'] as num?;
-          final grade = z['grade']?.toString();
-          final color = _scoreColor(score);
-          return GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(
-              builder: (_) => RashiDetailScreen(rashiIdx: idx, initialName: z['name']?.toString()),
-            )),
-            child: Container(
-              width: 78,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: score != null ? color.withOpacity(0.4) : AppColors.gold.withOpacity(0.12)),
-              ),
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(z['emoji']?.toString() ?? '', style: const TextStyle(fontSize: 24)),
-                const SizedBox(height: 2),
-                Text(z['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w600),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                if (score != null) Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                  child: Text(grade ?? score.toStringAsFixed(1),
-                      style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.w700),
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
-                ),
               ]),
             ),
           );
