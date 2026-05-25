@@ -300,9 +300,12 @@ class ApiService {
 
   // ── Public Astrologer discovery ──────────────────────────────
 
-  Future<List<dynamic>> fetchAstrologers({int limit = 20, int skip = 0, String? search}) async {
+  Future<List<dynamic>> fetchAstrologers({int limit = 20, int skip = 0, String? search, String? specialization, String? language, bool onlineOnly = false}) async {
     final params = <String, String>{'limit': '$limit', 'skip': '$skip'};
     if (search != null && search.isNotEmpty) params['search'] = search;
+    if (specialization != null && specialization.isNotEmpty) params['specialization'] = specialization;
+    if (language != null && language.isNotEmpty) params['language'] = language;
+    if (onlineOnly) params['online_only'] = 'true';
     final uri = Uri.parse('${ApiConstants.astrologerBase}/list').replace(queryParameters: params);
     final resp = await http.get(uri, headers: _headers);
     if (resp.statusCode == 200) {

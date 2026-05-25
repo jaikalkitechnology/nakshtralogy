@@ -22,19 +22,18 @@ class _AstrologersTabState extends State<AstrologersTab> {
   final _searchCtrl = TextEditingController();
   Timer? _debounce;
 
-  // Primary filters (category)
   String _selectedCategory = 'All';
-  // Secondary filters (attributes)
-  final Set<String> _selectedAttrs = <String>{};
+  bool _onlineOnly = false;
+  String? _selectedLanguage;
 
   static const _categories = ['All', 'Vedic', 'Tarot', 'Numerology', 'Kundli'];
-  static const _attributes = ['● Online', 'Hindi', 'English', '₹ Low'];
+  static const _languages = ['Hindi', 'English', 'Marathi', 'Gujarati', 'Tamil', 'Telugu', 'Kannada', 'Bengali', 'Punjabi', 'Malayalam'];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AstrologerBloc>().add(const AstrologerLoadRequested(limit: 50));
+      _loadFiltered();
       context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
     });
   }
@@ -46,11 +45,19 @@ class _AstrologersTabState extends State<AstrologersTab> {
     super.dispose();
   }
 
+  void _loadFiltered() {
+    context.read<AstrologerBloc>().add(AstrologerLoadRequested(
+      limit: 50,
+      search: _searchCtrl.text.isEmpty ? null : _searchCtrl.text,
+      specialization: _selectedCategory == 'All' ? null : _selectedCategory,
+      language: _selectedLanguage,
+      onlineOnly: _onlineOnly,
+    ));
+  }
+
   void _onSearchChanged(String q) {
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 400), () {
-      context.read<AstrologerBloc>().add(AstrologerLoadRequested(limit: 50, search: q.isEmpty ? null : q));
-    });
+    _debounce = Timer(const Duration(milliseconds: 400), () => _loadFiltered());
   }
 
   @override
@@ -81,9 +88,7 @@ class _AstrologersTabState extends State<AstrologersTab> {
               }
               return RefreshIndicator(
                 color: AppColors.gold,
-                onRefresh: () async {
-                  context.read<AstrologerBloc>().add(const AstrologerLoadRequested(limit: 50));
-                },
+                onRefresh: () async => _loadFiltered(),
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
                   itemCount: state.list.length,
@@ -158,37 +163,30 @@ class _AstrologersTabState extends State<AstrologersTab> {
           return _chip(
             label: c,
             active: active,
-            onTap: () => setState(() => _selectedCategory = c),
+            onTap: () { setState(() => _selectedCategory = c); _loadFiltered(); },
           );
         },
       ),
     );
   }
 
-  // ---------- ATTRIBUTE CHIPS (Row 2) ----------
   Widget _attributeChipsRow() {
     return SizedBox(
       height: 30,
-      child: ListView.separated(
+      child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: _attributes.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (_, i) {
-          final a = _attributes[i];
-          final active = _selectedAttrs.contains(a);
-          return _chip(
-            label: a,
-            active: active,
-            onTap: () => setState(() {
-              if (active) {
-                _selectedAttrs.remove(a);
-              } else {
-                _selectedAttrs.add(a);
-              }
+        children: [
+          _chip(label: '● Online', active: _onlineOnly, onTap: () { setState(() => _onlineOnly = !_onlineOnly); _loadFiltered(); }),
+          const SizedBox(width: 8),
+          ..._languages.map((lang) => Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: _chip(label: lang, active: _selectedLanguage == lang, onTap: () {
+              setState(() => _selectedLanguage = _selectedLanguage == lang ? null : lang);
+              _loadFiltered();
             }),
-          );
-        },
+          )),
+        ],
       ),
     );
   }

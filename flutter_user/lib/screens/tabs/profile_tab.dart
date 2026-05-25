@@ -22,6 +22,7 @@ import '../communication/chat_history_screen.dart';
 import '../charts/my_charts_screen.dart';
 import '../notifications/notification_screen.dart';
 import '../tabs/wallet_tab.dart';
+import '../../widgets/astrologer_profile_sheet.dart';
 import '../../widgets/language_selector.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -564,7 +565,12 @@ class _ProfileTabState extends State<ProfileTab> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        ...saved.take(3).map((a) => Padding(
+                        ...saved.take(3).map((a) => GestureDetector(
+                              onTap: () {
+                                final id = a['id']?.toString();
+                                if (id != null) showAstrologerProfileSheet(context, id);
+                              },
+                              child: Padding(
                               padding: const EdgeInsets.only(bottom: 6),
                               child: Row(
                                 children: [
@@ -593,9 +599,11 @@ class _ProfileTabState extends State<ProfileTab> {
                                     style: const TextStyle(
                                         color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700),
                                   ),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.chevron_right, size: 14, color: AppColors.smoke),
                                 ],
                               ),
-                            )),
+                            ))),
                       ],
                     ),
                   );
