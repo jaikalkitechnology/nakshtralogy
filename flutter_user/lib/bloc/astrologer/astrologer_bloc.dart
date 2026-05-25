@@ -17,7 +17,7 @@ class AstrologerBloc extends Bloc<AstrologerEvent, AstrologerState> {
   Future<void> _onLoad(AstrologerLoadRequested event, Emitter<AstrologerState> emit) async {
     emit(state.copyWith(loading: true, clearError: true));
     try {
-      final list = await _api.fetchAstrologers(limit: event.limit, search: event.search);
+      final list = await _api.fetchAstrologers(limit: event.limit, search: event.search, specialization: event.specialization, language: event.language, onlineOnly: event.onlineOnly);
       emit(state.copyWith(loading: false, list: list));
     } catch (e) {
       emit(state.copyWith(loading: false, error: e.toString()));

@@ -9,9 +9,12 @@ abstract class AstrologerEvent extends Equatable {
 class AstrologerLoadRequested extends AstrologerEvent {
   final int limit;
   final String? search;
-  const AstrologerLoadRequested({this.limit = 20, this.search});
+  final String? specialization;
+  final String? language;
+  final bool onlineOnly;
+  const AstrologerLoadRequested({this.limit = 20, this.search, this.specialization, this.language, this.onlineOnly = false});
   @override
-  List<Object?> get props => [limit, search];
+  List<Object?> get props => [limit, search, specialization, language, onlineOnly];
 }
 
 class AstrologerSavedLoadRequested extends AstrologerEvent {}
