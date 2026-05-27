@@ -52,12 +52,24 @@ class _ProfileTabState extends State<ProfileTab> {
 
   Future<void> _toggleBiometric(bool value) async {
     if (value) {
-      final auth = LocalAuthentication();
-      final ok = await auth.authenticate(
-        localizedReason: 'Verify to enable biometric login',
-        options: const AuthenticationOptions(biometricOnly: false),
-      );
-      if (!ok) return;
+      try {
+        final auth = LocalAuthentication();
+        final available = await auth.canCheckBiometrics || await auth.isDeviceSupported();
+        if (!available) {
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Biometric not available on this device')));
+          return;
+        }
+        final ok = await auth.authenticate(
+          localizedReason: 'Verify to enable biometric login',
+          options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
+        );
+        if (!ok) return;
+      } catch (e) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Biometric error: $e')));
+        return;
+      }
     }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('biometric_enabled', value);
