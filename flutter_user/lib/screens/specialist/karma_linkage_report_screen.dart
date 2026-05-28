@@ -30,7 +30,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
     final moolaTiming = _asMap(data['moola_dasha_karmic_timing']);
     final audit = _asMap(data['deep_audit_parameter_table']);
     final summary = _asMap(data['summary']);
-    final conf = (data['confidence_score'] as num?)?.toDouble();
+    final conf = data['confidence_score'] is num ? (data['confidence_score'] as num).toDouble() : double.tryParse(data['confidence_score']?.toString() ?? '');
     final confExp = data['confidence_explanation']?.toString();
 
     return Scaffold(
@@ -2040,8 +2040,12 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
   static List _asList(dynamic v) => v is List ? v : [];
 
-  static double _num(Map<String, dynamic> m, String k) =>
-      (m[k] as num?)?.toDouble() ?? 0;
+  static double _num(Map<String, dynamic> m, String k) {
+    final v = m[k];
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v) ?? 0;
+    return 0;
+  }
 
   static String _titleCase(String s) => s
       .replaceAll('_', ' ')

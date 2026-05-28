@@ -2006,8 +2006,12 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   static Map<String, dynamic> _asMap(dynamic v) =>
       v is Map ? v.cast<String, dynamic>() : <String, dynamic>{};
 
-  static double _num(Map<String, dynamic> m, String k) =>
-      (m[k] as num?)?.toDouble() ?? 0;
+  static double _num(Map<String, dynamic> m, String k) {
+    final v = m[k];
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v) ?? 0;
+    return 0;
+  }
 
   static String _titleCase(String s) => s
       .replaceAll('_', ' ')
