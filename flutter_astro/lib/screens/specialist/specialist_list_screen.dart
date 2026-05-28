@@ -4,6 +4,7 @@ import '../../services/api_service.dart';
 import 'specialist_chart_picker.dart';
 import 'specialist_milan_picker.dart';
 import 'specialist_relationship_picker.dart';
+import 'multi_chart_picker.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final bool showAppBar;
@@ -33,6 +34,8 @@ class _S extends State<SpecialistListScreen> {
       {'key': 'marriage', 'num': '07', 'icon': '💍', 'title': 'Marriage &', 'em': 'Family', 'sub': '~150 KEYS · 19 SECTIONS', 'premium': true},
       {'key': 'kundli_milan', 'num': '15', 'icon': '⚭', 'title': 'Kundli', 'em': 'Milan', 'sub': '186 KEYS · DUAL CHART', 'premium': true},
       {'key': 'relationship', 'num': '16', 'icon': '🔗', 'title': 'Relationship', 'em': 'Intel', 'sub': '~120 PER PAIR · MULTI', 'premium': true},
+      {'key': 'love_compatibility', 'num': '17', 'icon': '💞', 'title': 'Love', 'em': 'Compatibility', 'sub': 'DUAL CHART · M+F', 'premium': true, 'multi': true},
+      {'key': 'child_probability', 'num': '18', 'icon': '👶', 'title': 'Child', 'em': 'Probability', 'sub': 'DUAL CHART · M+F', 'premium': true, 'multi': true},
     ]},
     {'label': '🌿 HEALTH & WELLNESS', 'filter': 'health', 'engines': [
       {'key': 'health', 'num': '08', 'icon': '❤', 'title': 'Health &', 'em': 'Wellness', 'sub': '~130 KEYS · 18 SECTIONS', 'premium': false},
@@ -41,11 +44,12 @@ class _S extends State<SpecialistListScreen> {
     {'label': '☥ SOUL & KARMA', 'filter': 'soul', 'engines': [
       {'key': 'character', 'num': '13', 'icon': '👤', 'title': 'Character', 'em': 'Analysis', 'sub': '177 KEYS · 20 SECTIONS', 'premium': false},
       {'key': 'past_life', 'num': '14', 'icon': '☥', 'title': 'Past Life &', 'em': 'Karma', 'sub': '116 KEYS · 16 SECTIONS', 'premium': true},
+      {'key': 'karma_linkage', 'num': '19', 'icon': '🔮', 'title': 'Past Life Karma', 'em': 'Linkage', 'sub': '2-5 CHARTS · MULTI', 'premium': true, 'multi': true},
     ]},
   ];
 
   static const _filters = ['all', 'career', 'wealth', 'love', 'health', 'soul'];
-  static const _filterLabels = {'all': 'All · 16', 'career': 'Career · 4', 'wealth': 'Wealth · 4', 'love': 'Love · 4', 'health': 'Health · 2', 'soul': 'Soul · 2'};
+  static const _filterLabels = {'all': 'All · 19', 'career': 'Career · 4', 'wealth': 'Wealth · 4', 'love': 'Love · 6', 'health': 'Health · 2', 'soul': 'Soul · 3'};
 
   @override
   Widget build(BuildContext context) {
@@ -83,14 +87,14 @@ class _S extends State<SpecialistListScreen> {
       ]),
       const SizedBox(height: 10),
       const Text.rich(TextSpan(children: [
-        TextSpan(text: '16 expert ', style: TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
+        TextSpan(text: '19 expert ', style: TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
         TextSpan(text: 'engines', style: TextStyle(color: AppColors.gold, fontSize: 20, fontStyle: FontStyle.italic, fontFamily: 'serif')),
       ])),
       const SizedBox(height: 4),
       const Text('Each insight is a complete consultation', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
       const SizedBox(height: 12),
       Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        _bannerStat('16', 'ENGINES'), _bannerStat('2,000+', 'DATA POINTS'), _bannerStat('14', 'SINGLE'),
+        _bannerStat('19', 'ENGINES'), _bannerStat('2,000+', 'DATA POINTS'), _bannerStat('16', 'SINGLE'),
       ]),
     ]));
 
@@ -168,6 +172,12 @@ class _S extends State<SpecialistListScreen> {
       Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()));
     } else if (key == 'relationship') {
       Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistRelationshipPicker()));
+    } else if (key == 'child_probability' || key == 'love_compatibility') {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (_) => MultiChartPicker(specialistKey: key, specialistLabel: label, specialistEmoji: emoji, maxCharts: 2)));
+    } else if (key == 'karma_linkage') {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (_) => MultiChartPicker(specialistKey: key, specialistLabel: label, specialistEmoji: emoji, maxCharts: 5)));
     } else {
       Navigator.push(context, MaterialPageRoute(
         builder: (_) => SpecialistChartPicker(specialistKey: key, specialistLabel: label, specialistEmoji: emoji)));
