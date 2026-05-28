@@ -499,7 +499,8 @@ class KarmaLinkageReportScreen extends StatelessWidget {
     final relMeaning = p['relationship_type_meaning']?.toString() ?? '';
     final relReasoning = p['relationship_type_reasoning']?.toString() ?? '';
     final factors = _asList(p['linkage_factors']);
-    final activeCount = (p['active_factors_count'] as num?)?.toInt() ?? 0;
+    final acRaw = p['active_factors_count'];
+    final activeCount = acRaw is num ? acRaw.toInt() : (acRaw is String ? int.tryParse(acRaw) ?? 0 : 0);
     final pastConn = p['past_life_connection']?.toString() ?? '';
     final currentDyn = p['current_life_dynamic']?.toString() ?? '';
     final teach = p['what_they_teach_each_other']?.toString() ?? '';
@@ -1536,7 +1537,8 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
   Widget _buildAuditTable(Map<String, dynamic> audit) {
     final params = _asList(audit['audited_parameters']);
-    final total = (audit['total_parameters_audited'] as num?)?.toInt() ?? params.length;
+    final totalRaw = audit['total_parameters_audited'];
+    final total = totalRaw is num ? totalRaw.toInt() : (totalRaw is String ? int.tryParse(totalRaw) ?? params.length : params.length);
     final completeness = audit['audit_completeness']?.toString() ?? '';
 
     return Container(
@@ -1547,22 +1549,31 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         border: Border.all(color: AppColors.ash.withOpacity(0.4)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Header info
+        // Header info — stacked for mobile responsiveness
         Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(children: [
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              '$total PARAMETERS',
+              '$total PARAMETERS AUDITED',
               style: const TextStyle(
-                color: AppColors.smoke,
-                fontSize: 9,
-                letterSpacing: 1,
+                color: AppColors.gold,
+                fontSize: 10,
+                letterSpacing: 1.5,
                 fontFamily: 'monospace',
+                fontWeight: FontWeight.w700,
               ),
             ),
-            const Spacer(),
-            if (completeness.isNotEmpty)
-              _badge(completeness, AppColors.aurora),
+            if (completeness.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                completeness,
+                style: const TextStyle(
+                  color: AppColors.aurora,
+                  fontSize: 9,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
           ]),
         ),
 
