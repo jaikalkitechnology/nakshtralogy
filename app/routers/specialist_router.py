@@ -170,6 +170,102 @@ def run_relationship_specialist(
         raise HTTPException(500, f"Relationship analysis failed: {e}")
 
 
+class MultiChartRequest(BaseModel):
+    chart_ids: list = Field(..., min_length=2, max_length=5,
+                            description="2-5 chart IDs")
+    focus_question: str = Field("", description="Optional focus question")
+
+
+class TwoChartRequest(BaseModel):
+    chart_id_1: str
+    chart_id_2: str
+
+
+@router.post("/child_probability/analyze")
+def run_child_probability(
+    req: TwoChartRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
+    chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
+    if not chart1: raise HTTPException(404, "Chart 1 not found")
+    if not chart2: raise HTTPException(404, "Chart 2 not found")
+    for c in [chart1, chart2]:
+        if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
+            raise HTTPException(403, f"Not authorized for chart {c.id}")
+    try:
+        t0 = time.time()
+        from all_engine.multi_charts_engines.child_probability_specialist import generate_child_probability
+        result = generate_child_probability(
+            chart1.name, chart1.gender or "M", chart1.dob, chart1.tob, chart1.place,
+            chart2.name, chart2.gender or "F", chart2.dob, chart2.tob, chart2.place,
+        )
+        latency = int((time.time() - t0) * 1000)
+        return {"status": "success", "data": result, "meta": {
+            "specialist": "child_probability", "label": "Child Probability",
+            "participants": [chart1.name, chart2.name], "latency_ms": latency}}
+    except Exception as e:
+        logger.error("Child probability error: %s", e, exc_info=True)
+        raise HTTPException(500, f"Child probability analysis failed: {e}")
+
+
+@router.post("/love_compatibility/analyze")
+def run_love_compatibility(
+    req: TwoChartRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
+    chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
+    if not chart1: raise HTTPException(404, "Chart 1 not found")
+    if not chart2: raise HTTPException(404, "Chart 2 not found")
+    for c in [chart1, chart2]:
+        if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
+            raise HTTPException(403, f"Not authorized for chart {c.id}")
+    try:
+        t0 = time.time()
+        from all_engine.multi_charts_engines.love_compatibility_specialist import generate_love_compatibility
+        result = generate_love_compatibility(
+            chart1.name, chart1.gender or "M", chart1.dob, chart1.tob, chart1.place,
+            chart2.name, chart2.gender or "F", chart2.dob, chart2.tob, chart2.place,
+        )
+        latency = int((time.time() - t0) * 1000)
+        return {"status": "success", "data": result, "meta": {
+            "specialist": "love_compatibility", "label": "Love Compatibility",
+            "participants": [chart1.name, chart2.name], "latency_ms": latency}}
+    except Exception as e:
+        logger.error("Love compatibility error: %s", e, exc_info=True)
+        raise HTTPException(500, f"Love compatibility analysis failed: {e}")
+
+
+@router.post("/karma_linkage/analyze")
+def run_karma_linkage(
+    req: MultiChartRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    charts_db = []
+    for cid in req.chart_ids:
+        c = db.query(Chart).filter(Chart.id == cid).first()
+        if not c: raise HTTPException(404, f"Chart {cid} not found")
+        if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
+            raise HTTPException(403, f"Not authorized for chart {c.id}")
+        charts_db.append(c)
+    try:
+        t0 = time.time()
+        from all_engine.multi_charts_engines.past_life_karma_linkage_specialist import generate_karma_linkage
+        charts_input = [{"name": c.name, "gender": c.gender or "M", "dob": c.dob, "tob": c.tob, "place": c.place} for c in charts_db]
+        result = generate_karma_linkage(charts_input, focus_question=req.focus_question or None)
+        latency = int((time.time() - t0) * 1000)
+        return {"status": "success", "data": result, "meta": {
+            "specialist": "karma_linkage", "label": "Past Life Karma Linkage",
+            "participants": [c.name for c in charts_db], "latency_ms": latency}}
+    except Exception as e:
+        logger.error("Karma linkage error: %s", e, exc_info=True)
+        raise HTTPException(500, f"Karma linkage analysis failed: {e}")
+
+
 @router.post("/{key}/analyze")
 def run_specialist(
     key: str,
@@ -184,6 +280,8 @@ def run_specialist(
         raise HTTPException(400, "Use POST /specialist/kundli_milan/analyze with two chart IDs")
     if key == "relationship":
         raise HTTPException(400, "Use POST /specialist/relationship/analyze with 2-5 chart IDs")
+    if key in ("child_probability", "love_compatibility", "karma_linkage"):
+        raise HTTPException(400, f"Use POST /specialist/{key}/analyze with chart IDs")
 
     chart = db.query(Chart).filter(Chart.id == req.chart_id).first()
     if not chart:

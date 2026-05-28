@@ -905,5 +905,29 @@ class ApiService {
     await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
   }
 
+  Future<Map<String, dynamic>> runChildProbability(String chartId1, String chartId2) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.specialistBase}/child_probability/analyze'),
+      body: jsonEncode({'chart_id_1': chartId1, 'chart_id_2': chartId2}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> runLoveCompatibility(String chartId1, String chartId2) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.specialistBase}/love_compatibility/analyze'),
+      body: jsonEncode({'chart_id_1': chartId1, 'chart_id_2': chartId2}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> runKarmaLinkage(List<String> chartIds, {String focusQuestion = ''}) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.specialistBase}/karma_linkage/analyze'),
+      body: jsonEncode({'chart_ids': chartIds, 'focus_question': focusQuestion}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }
