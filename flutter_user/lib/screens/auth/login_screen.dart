@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../services/api_service.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
 import '../home/home_screen.dart';
@@ -22,6 +25,44 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   bool _obscure = true;
+  bool _biometricAvailable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometric();
+  }
+
+  Future<void> _checkBiometric() async {
+    final prefs = await SharedPreferences.getInstance();
+    final enabled = prefs.getBool('biometric_enabled') ?? false;
+    if (!enabled) return;
+    final hasTokens = ApiService().isLoggedIn;
+    if (!hasTokens) {
+      await ApiService().loadTokens();
+    }
+    if (!ApiService().isLoggedIn) return;
+    try {
+      final auth = LocalAuthentication();
+      final canCheck = await auth.canCheckBiometrics || await auth.isDeviceSupported();
+      if (canCheck && mounted) {
+        setState(() => _biometricAvailable = true);
+        _doBiometric();
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _doBiometric() async {
+    try {
+      final ok = await LocalAuthentication().authenticate(
+        localizedReason: 'Sign in with biometrics',
+        options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
+      );
+      if (ok && mounted) {
+        context.read<AuthBloc>().add(AuthBiometricVerified());
+      }
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -161,6 +202,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primary)),
                           label: Text(l.continueGoogle),
                         ),
+                        if (_biometricAvailable) ...[
+                          const SizedBox(height: 16),
+                          OutlinedButton.icon(
+                            onPressed: _doBiometric,
+                            icon: const Icon(Icons.fingerprint, size: 22),
+                            label: Text(l.biometricLogin),
+                          ),
+                        ],
                       ],
                     ),
                   ),
