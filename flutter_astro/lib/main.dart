@@ -174,7 +174,7 @@ class _BiometricLockScreenState extends State<_BiometricLockScreen> {
           ),
         const SizedBox(height: 16),
         TextButton(
-          onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
+          onPressed: () => context.read<AuthBloc>().add(AuthBiometricSkipped()),
           child: const Text('Sign in with password', style: TextStyle(color: Colors.white38, fontSize: 12)),
         ),
       ])),

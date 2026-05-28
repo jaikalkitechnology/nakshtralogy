@@ -18,6 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthForgotPasswordRequested>(_onForgotPassword);
     on<AuthLogoutRequested>(_onLogout);
     on<AuthBiometricVerified>(_onBiometricVerified);
+    on<AuthBiometricSkipped>(_onBiometricSkipped);
   }
 
   Future<void> _onCheck(AuthCheckRequested event, Emitter<AuthState> emit) async {
@@ -43,6 +44,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final raw = prefs.getString('user_data');
     final user = raw != null ? jsonDecode(raw) as Map<String, dynamic> : <String, dynamic>{};
     emit(AuthAuthenticated(user: user));
+  }
+
+  Future<void> _onBiometricSkipped(AuthBiometricSkipped event, Emitter<AuthState> emit) async {
+    emit(AuthUnauthenticated());
   }
 
   Future<void> _onLogin(AuthLoginRequested event, Emitter<AuthState> emit) async {
