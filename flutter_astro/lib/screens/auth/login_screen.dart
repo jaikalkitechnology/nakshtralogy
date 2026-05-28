@@ -40,10 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final auth = LocalAuthentication();
       final canCheck = await auth.canCheckBiometrics || await auth.isDeviceSupported();
-      if (canCheck && mounted) {
-        setState(() => _biometricAvailable = true);
-        _doBiometric();
-      }
+      if (canCheck && mounted) setState(() => _biometricAvailable = true);
     } catch (_) {}
   }
 
@@ -100,7 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
               const SizedBox(height: 60),
-              const Text('\U0001f52e', style: TextStyle(fontSize: 56)),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset('assets/icon/ic_launcher_foreground.png', width: 80, height: 80),
+              ),
               const SizedBox(height: 12),
               Text('Astrologer Panel', style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: AppColors.primary, fontSize: 28)),
               const SizedBox(height: 4),
