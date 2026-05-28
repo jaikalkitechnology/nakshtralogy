@@ -123,6 +123,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (_) {}
     await FcmService().clearToken();
     await _api.clearTokens();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('biometric_enabled');
     emit(AuthUnauthenticated());
   }
 

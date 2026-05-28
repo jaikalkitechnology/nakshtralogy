@@ -120,12 +120,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
-    // Clear FCM token from backend before logout
     try {
       await _api.updateMe({'fcm_token': ''});
     } catch (_) {}
     await FcmService().clearToken();
     await _api.clearTokens();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('biometric_enabled');
     emit(AuthUnauthenticated());
   }
 

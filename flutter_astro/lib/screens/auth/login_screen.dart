@@ -35,8 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     final enabled = prefs.getBool('biometric_enabled') ?? false;
     if (!enabled) return;
-    if (!ApiService().isLoggedIn) await ApiService().loadTokens();
-    if (!ApiService().isLoggedIn) return;
     try {
       final auth = LocalAuthentication();
       final canCheck = await auth.canCheckBiometrics || await auth.isDeviceSupported();
@@ -50,7 +48,14 @@ class _LoginScreenState extends State<LoginScreen> {
         localizedReason: 'Sign in with biometrics',
         options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
       );
-      if (ok && mounted) context.read<AuthBloc>().add(AuthBiometricVerified());
+      if (!ok || !mounted) return;
+      await ApiService().loadTokens();
+      if (ApiService().isLoggedIn) {
+        context.read<AuthBloc>().add(AuthBiometricVerified());
+      } else {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Session expired. Please sign in with password.')));
+      }
     } catch (_) {}
   }
 
