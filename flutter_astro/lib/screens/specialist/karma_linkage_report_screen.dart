@@ -1128,7 +1128,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
           ]),
         ),
 
-      // Mutual teaching map table
+      // Mutual teaching map
       if (teachMap.isNotEmpty) ...[
         Container(
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -1140,54 +1140,58 @@ class KarmaLinkageReportScreen extends StatelessWidget {
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             _subHeader('MUTUAL TEACHING MAP', _accent),
-            const SizedBox(height: 6),
-            // Table header
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.04),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
-              ),
-              child: const Row(children: [
-                Expanded(child: Text('Teacher', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-                Expanded(child: Text('Student', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-                Expanded(flex: 2, child: Text('Subject', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              ]),
-            ),
+            const SizedBox(height: 8),
             ...teachMap.map((t) {
               final tm = _asMap(t);
+              final teacher = tm['teacher']?.toString() ?? '';
+              final student = tm['student']?.toString() ?? '';
+              final subject = tm['subject']?.toString() ?? '';
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.04))),
+                  color: Colors.white.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: _accent.withOpacity(0.1)),
                 ),
-                child: Row(children: [
-                  Expanded(
-                    child: Text(
-                      tm['teacher']?.toString() ?? '—',
-                      style: const TextStyle(color: AppColors.aurora, fontSize: 10, fontWeight: FontWeight.w600),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(color: AppColors.aurora.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                      child: Text(teacher.isNotEmpty ? teacher : '—', style: const TextStyle(color: AppColors.aurora, fontSize: 10, fontWeight: FontWeight.w700)),
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Icon(Icons.arrow_forward, size: 10, color: AppColors.smoke),
-                  ),
-                  Expanded(
-                    child: Text(
-                      tm['student']?.toString() ?? '—',
-                      style: const TextStyle(color: AppColors.cosmicPink, fontSize: 10, fontWeight: FontWeight.w600),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6),
+                      child: Icon(Icons.arrow_forward, size: 12, color: AppColors.smoke),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      tm['subject']?.toString() ?? '—',
-                      style: const TextStyle(color: AppColors.ivory, fontSize: 9, height: 1.3),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(color: AppColors.cosmicPink.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                      child: Text(student.isNotEmpty ? student : '—', style: const TextStyle(color: AppColors.cosmicPink, fontSize: 10, fontWeight: FontWeight.w700)),
                     ),
-                  ),
+                  ]),
+                  if (subject.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(subject, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
+                  ],
                 ]),
               );
             }),
+          ]),
+        ),
+      ] else ...[
+        Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: _cardBg.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _subHeader('MUTUAL TEACHING MAP', _accent),
+            const SizedBox(height: 6),
+            const Text('Teaching dynamics will emerge as karmic connections deepen.', style: TextStyle(color: AppColors.smoke, fontSize: 10, fontStyle: FontStyle.italic)),
           ]),
         ),
       ],
@@ -1562,75 +1566,49 @@ class KarmaLinkageReportScreen extends StatelessWidget {
           ]),
         ),
 
-        // Scrollable table
+        // Parameter cards (mobile-friendly)
         if (params.isNotEmpty)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            child: DataTable(
-              columnSpacing: 16,
-              horizontalMargin: 8,
-              headingRowHeight: 32,
-              dataRowMinHeight: 28,
-              dataRowMaxHeight: 48,
-              headingTextStyle: const TextStyle(
-                color: AppColors.gold,
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'monospace',
-              ),
-              dataTextStyle: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 9,
-              ),
-              columns: const [
-                DataColumn(label: Text('Parameter')),
-                DataColumn(label: Text('Raw Value')),
-                DataColumn(label: Text('Score'), numeric: true),
-                DataColumn(label: Text('Weight'), numeric: true),
-                DataColumn(label: Text('Classical Basis')),
-              ],
-              rows: params.take(50).map((p) {
+            child: Column(
+              children: params.take(50).map((p) {
                 final pm = _asMap(p);
                 final sc = _num(pm, 'score');
                 final scC = _scoreColor(sc);
-                return DataRow(cells: [
-                  DataCell(SizedBox(
-                    width: 120,
-                    child: Text(
-                      pm['parameter']?.toString() ?? '—',
-                      style: const TextStyle(color: AppColors.ivory, fontSize: 9),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
-                  DataCell(SizedBox(
-                    width: 80,
-                    child: Text(
-                      pm['raw_value']?.toString() ?? '—',
-                      style: const TextStyle(color: AppColors.smoke, fontSize: 9),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
-                  DataCell(Text(
-                    sc.toStringAsFixed(1),
-                    style: TextStyle(color: scC, fontSize: 9, fontWeight: FontWeight.w700, fontFamily: 'monospace'),
-                  )),
-                  DataCell(Text(
-                    _num(pm, 'weight').toStringAsFixed(2),
-                    style: const TextStyle(color: AppColors.gold, fontSize: 9, fontFamily: 'monospace'),
-                  )),
-                  DataCell(SizedBox(
-                    width: 140,
-                    child: Text(
-                      pm['classical_basis']?.toString() ?? '—',
-                      style: const TextStyle(color: AppColors.smoke, fontSize: 8),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
-                ]);
+                final param = pm['parameter']?.toString() ?? '—';
+                final raw = pm['raw_value']?.toString() ?? '—';
+                final weight = _num(pm, 'weight');
+                final basis = pm['classical_basis']?.toString() ?? '';
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.03),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: scC.withOpacity(0.15)),
+                  ),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      Expanded(child: Text(param, style: const TextStyle(color: AppColors.ivory, fontSize: 10, fontWeight: FontWeight.w600), maxLines: 2, overflow: TextOverflow.ellipsis)),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(color: scC.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                        child: Text(sc.toStringAsFixed(1), style: TextStyle(color: scC, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
+                      ),
+                    ]),
+                    const SizedBox(height: 4),
+                    Row(children: [
+                      Text('Value: ', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+                      Expanded(child: Text(raw, style: const TextStyle(color: AppColors.gold, fontSize: 9), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      Text('W: ${weight.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+                    ]),
+                    if (basis.isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(basis, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontStyle: FontStyle.italic, height: 1.3), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ],
+                  ]),
+                );
               }).toList(),
             ),
           ),
