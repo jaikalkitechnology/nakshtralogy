@@ -489,20 +489,28 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get myDetails => 'माझा तपशील';
+
   @override
   String get myKundlis => 'माझ्या कुंडल्या';
+
   @override
   String get walletRecharge => 'वॉलेट आणि रिचार्ज';
+
   @override
   String get consultationHistory => 'सल्ला इतिहास';
+
   @override
   String get helpSupport => 'मदत आणि समर्थन';
+
   @override
   String get biometricLogin => 'बायोमेट्रिक लॉगिन';
+
   @override
   String get pastVoiceConsultations => 'मागील व्हॉइस सल्ला';
+
   @override
   String get pastTextConversations => 'मागील मजकूर संभाषणे';
+
   @override
   String get comingSoon => 'लवकरच येत आहे';
 }

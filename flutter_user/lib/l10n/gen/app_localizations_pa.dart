@@ -489,20 +489,28 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get myDetails => 'ਮੇਰੇ ਵੇਰਵੇ';
+
   @override
   String get myKundlis => 'ਮੇਰੀਆਂ ਕੁੰਡਲੀਆਂ';
+
   @override
   String get walletRecharge => 'ਵਾਲਿਟ ਅਤੇ ਰੀਚਾਰਜ';
+
   @override
   String get consultationHistory => 'ਸਲਾਹ ਇਤਿਹਾਸ';
+
   @override
   String get helpSupport => 'ਮਦਦ ਅਤੇ ਸਹਾਇਤਾ';
+
   @override
   String get biometricLogin => 'ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਿਨ';
+
   @override
   String get pastVoiceConsultations => 'ਪਿਛਲੀਆਂ ਵੌਇਸ ਸਲਾਹਾਂ';
+
   @override
   String get pastTextConversations => 'ਪਿਛਲੀਆਂ ਟੈਕਸਟ ਗੱਲਬਾਤ';
+
   @override
   String get comingSoon => 'ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ';
 }

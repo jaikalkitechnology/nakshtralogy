@@ -15,7 +15,6 @@ import 'app_localizations_mr.dart';
 import 'app_localizations_pa.dart';
 import 'app_localizations_ta.dart';
 import 'app_localizations_te.dart';
-import 'app_localizations_hi_Latn.dart';
 
 // ignore_for_file: type=lint
 
@@ -1070,14 +1069,58 @@ abstract class AppLocalizations {
   /// **'English'**
   String get english;
 
+  /// No description provided for @myDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'My Details'**
   String get myDetails;
+
+  /// No description provided for @myKundlis.
+  ///
+  /// In en, this message translates to:
+  /// **'My Kundlis'**
   String get myKundlis;
+
+  /// No description provided for @walletRecharge.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet & Recharge'**
   String get walletRecharge;
+
+  /// No description provided for @consultationHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation History'**
   String get consultationHistory;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
   String get helpSupport;
+
+  /// No description provided for @biometricLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Login'**
   String get biometricLogin;
+
+  /// No description provided for @pastVoiceConsultations.
+  ///
+  /// In en, this message translates to:
+  /// **'Past voice consultations'**
   String get pastVoiceConsultations;
+
+  /// No description provided for @pastTextConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'Past text conversations'**
   String get pastTextConversations;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
   String get comingSoon;
 }
 
@@ -1109,6 +1152,18 @@ class _AppLocalizationsDelegate
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'hi':
+      {
+        switch (locale.scriptCode) {
+          case 'Latn':
+            return AppLocalizationsHiLatn();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'bn':
@@ -1118,7 +1173,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'gu':
       return AppLocalizationsGu();
     case 'hi':
-      if (locale.scriptCode == 'Latn') return AppLocalizationsHiLatn();
       return AppLocalizationsHi();
     case 'kn':
       return AppLocalizationsKn();

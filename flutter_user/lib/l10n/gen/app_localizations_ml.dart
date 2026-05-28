@@ -490,20 +490,28 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get myDetails => 'എന്റെ വിശദാംശങ്ങൾ';
+
   @override
   String get myKundlis => 'എന്റെ കുണ്ഡലികൾ';
+
   @override
   String get walletRecharge => 'വാലറ്റ് & റീചാർജ്';
+
   @override
   String get consultationHistory => 'കൺസൾട്ടേഷൻ ചരിത്രം';
+
   @override
   String get helpSupport => 'സഹായം & പിന്തുണ';
+
   @override
   String get biometricLogin => 'ബയോമെട്രിക് ലോഗിൻ';
+
   @override
   String get pastVoiceConsultations => 'മുൻ വോയ്‌സ് കൺസൾട്ടേഷനുകൾ';
+
   @override
   String get pastTextConversations => 'മുൻ ടെക്‌സ്‌റ്റ് സംഭാഷണങ്ങൾ';
+
   @override
   String get comingSoon => 'ഉടൻ വരുന്നു';
 }

@@ -489,20 +489,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myDetails => 'My Details';
+
   @override
   String get myKundlis => 'My Kundlis';
+
   @override
   String get walletRecharge => 'Wallet & Recharge';
+
   @override
   String get consultationHistory => 'Consultation History';
+
   @override
   String get helpSupport => 'Help & Support';
+
   @override
   String get biometricLogin => 'Biometric Login';
+
   @override
   String get pastVoiceConsultations => 'Past voice consultations';
+
   @override
   String get pastTextConversations => 'Past text conversations';
+
   @override
   String get comingSoon => 'Coming soon';
 }

@@ -489,20 +489,28 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get myDetails => 'ನನ್ನ ವಿವರಗಳು';
+
   @override
   String get myKundlis => 'ನನ್ನ ಕುಂಡಲಿಗಳು';
+
   @override
   String get walletRecharge => 'ವಾಲೆಟ್ & ರೀಚಾರ್ಜ್';
+
   @override
   String get consultationHistory => 'ಸಮಾಲೋಚನೆ ಇತಿಹಾಸ';
+
   @override
   String get helpSupport => 'ಸಹಾಯ & ಬೆಂಬಲ';
+
   @override
   String get biometricLogin => 'ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್';
+
   @override
   String get pastVoiceConsultations => 'ಹಿಂದಿನ ಧ್ವನಿ ಸಮಾಲೋಚನೆಗಳು';
+
   @override
   String get pastTextConversations => 'ಹಿಂದಿನ ಪಠ್ಯ ಸಂಭಾಷಣೆಗಳು';
+
   @override
   String get comingSoon => 'ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ';
 }

@@ -488,20 +488,28 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get myDetails => 'મારી વિગતો';
+
   @override
   String get myKundlis => 'મારી કુંડળીઓ';
+
   @override
   String get walletRecharge => 'વૉલેટ અને રિચાર્જ';
+
   @override
   String get consultationHistory => 'પરામર્શ ઇતિહાસ';
+
   @override
   String get helpSupport => 'મદદ અને સહાય';
+
   @override
   String get biometricLogin => 'બાયોમેટ્રિક લૉગિન';
+
   @override
   String get pastVoiceConsultations => 'ભૂતકાળના વૉઇસ પરામર્શ';
+
   @override
   String get pastTextConversations => 'ભૂતકાળની ટેક્સ્ટ વાતચીત';
+
   @override
   String get comingSoon => 'ટૂંક સમયમાં આવી રહ્યું છે';
 }

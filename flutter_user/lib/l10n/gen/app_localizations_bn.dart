@@ -487,20 +487,28 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get myDetails => 'আমার বিবরণ';
+
   @override
   String get myKundlis => 'আমার কুণ্ডলী';
+
   @override
   String get walletRecharge => 'ওয়ালেট ও রিচার্জ';
+
   @override
   String get consultationHistory => 'পরামর্শ ইতিহাস';
+
   @override
   String get helpSupport => 'সাহায্য ও সহায়তা';
+
   @override
   String get biometricLogin => 'বায়োমেট্রিক লগইন';
+
   @override
   String get pastVoiceConsultations => 'আগের ভয়েস পরামর্শ';
+
   @override
   String get pastTextConversations => 'আগের টেক্সট কথোপকথন';
+
   @override
   String get comingSoon => 'শীঘ্রই আসছে';
 }

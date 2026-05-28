@@ -489,20 +489,28 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get myDetails => 'என் விவரங்கள்';
+
   @override
   String get myKundlis => 'என் குண்டலிகள்';
+
   @override
   String get walletRecharge => 'வாலட் & ரீசார்ஜ்';
+
   @override
   String get consultationHistory => 'ஆலோசனை வரலாறு';
+
   @override
   String get helpSupport => 'உதவி & ஆதரவு';
+
   @override
   String get biometricLogin => 'பயோமெட்ரிக் உள்நுழைவு';
+
   @override
   String get pastVoiceConsultations => 'முந்தைய குரல் ஆலோசனைகள்';
+
   @override
   String get pastTextConversations => 'முந்தைய உரை உரையாடல்கள்';
+
   @override
   String get comingSoon => 'விரைவில் வருகிறது';
 }
