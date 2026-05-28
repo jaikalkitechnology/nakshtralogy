@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -718,11 +719,18 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> runKarmaLinkage(List<String> chartIds, {String focusQuestion = ''}) async {
-    final resp = await _authPost(
-      Uri.parse('${ApiConstants.specialistBase}/karma_linkage/analyze'),
-      body: jsonEncode({'chart_ids': chartIds, 'focus_question': focusQuestion}),
-    );
-    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+    final timeout = Duration(seconds: 30 + chartIds.length * 15);
+    try {
+      final resp = await _authPost(
+        Uri.parse('${ApiConstants.specialistBase}/karma_linkage/analyze'),
+        body: jsonEncode({'chart_ids': chartIds, 'focus_question': focusQuestion}),
+      ).timeout(timeout);
+      return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+    } on TimeoutException {
+      return {'statusCode': 504, 'detail': 'Analysis timed out. Try fewer charts.'};
+    } catch (e) {
+      return {'statusCode': 500, 'detail': 'Error: $e'};
+    }
   }
 
   // ═══ Notifications ═══
