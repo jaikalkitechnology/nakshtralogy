@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'multi_chart_report_screen.dart';
+import 'child_probability_report_screen.dart';
 
 class MultiChartPicker extends StatefulWidget {
   final String specialistKey;
@@ -98,17 +99,16 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
       setState(() => _analyzing = false);
 
       if (resp['statusCode'] == 200 && resp['status'] == 'success') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => MultiChartReportScreen(
-              specialistKey: widget.specialistKey,
-              specialistLabel: widget.specialistLabel,
-              data: (resp['data'] as Map).cast<String, dynamic>(),
-              participants: participants,
-            ),
-          ),
-        );
+        final reportData = (resp['data'] as Map).cast<String, dynamic>();
+        final Widget screen;
+        if (widget.specialistKey == 'child_probability') {
+          screen = ChildProbabilityReportScreen(data: reportData, participants: participants);
+        } else {
+          screen = MultiChartReportScreen(
+            specialistKey: widget.specialistKey, specialistLabel: widget.specialistLabel,
+            data: reportData, participants: participants);
+        }
+        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(resp['detail']?.toString() ?? 'Analysis failed')),
