@@ -25,13 +25,15 @@ class ApiService {
     await prefs.setString('refresh_token', refresh);
   }
 
-  Future<void> clearTokens() async {
+  Future<void> clearTokens({bool keepForBiometric = false}) async {
     _accessToken = null;
     _refreshToken = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('access_token');
-    await prefs.remove('refresh_token');
-    await prefs.remove('user_data');
+    if (!keepForBiometric) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('access_token');
+      await prefs.remove('refresh_token');
+      await prefs.remove('user_data');
+    }
   }
 
   Map<String, String> get _headers => {
