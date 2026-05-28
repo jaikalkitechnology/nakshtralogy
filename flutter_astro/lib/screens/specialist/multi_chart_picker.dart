@@ -3,6 +3,8 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'multi_chart_report_screen.dart';
 import 'child_probability_report_screen.dart';
+import 'love_compatibility_report_screen.dart';
+import 'karma_linkage_report_screen.dart';
 
 class MultiChartPicker extends StatefulWidget {
   final String specialistKey;
@@ -103,6 +105,10 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
         final Widget screen;
         if (widget.specialistKey == 'child_probability') {
           screen = ChildProbabilityReportScreen(data: reportData, participants: participants);
+        } else if (widget.specialistKey == 'love_compatibility') {
+          screen = LoveCompatibilityReportScreen(data: reportData, participants: participants);
+        } else if (widget.specialistKey == 'karma_linkage') {
+          screen = KarmaLinkageReportScreen(data: reportData, participants: participants);
         } else {
           screen = MultiChartReportScreen(
             specialistKey: widget.specialistKey, specialistLabel: widget.specialistLabel,
