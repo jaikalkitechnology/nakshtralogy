@@ -569,4 +569,19 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get specialistReports => 'నిపుణుల నివేదికలు';
+
+  @override
+  String get searchByNameSpeciality => 'పేరు, ప్రత్యేకత ద్వారా వెతకండి...';
+
+  @override
+  String get sortedByRating => 'రేటింగ్ ప్రకారం';
+
+  @override
+  String get initiatingChat => 'చాట్ ప్రారంభమవుతోంది...';
+
+  @override
+  String get startingCall => 'కాల్ ప్రారంభమవుతోంది...';
+
+  @override
+  String get yrs => 'సంవత్సరాలు';
 }

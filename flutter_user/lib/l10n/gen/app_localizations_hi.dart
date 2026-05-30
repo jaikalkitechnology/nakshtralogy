@@ -1099,4 +1099,19 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get specialistReports => 'विशेषज्ञ रिपोर्ट';
+
+  @override
+  String get searchByNameSpeciality => 'नाम, विशेषता से खोजें...';
+
+  @override
+  String get sortedByRating => 'रेटिंग के अनुसार';
+
+  @override
+  String get initiatingChat => 'चैट शुरू हो रही है...';
+
+  @override
+  String get startingCall => 'कॉल शुरू हो रही है...';
+
+  @override
+  String get yrs => 'वर्ष';
 }

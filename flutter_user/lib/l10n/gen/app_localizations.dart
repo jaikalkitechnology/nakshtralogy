@@ -1236,6 +1236,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Specialist Reports'**
   String get specialistReports;
+
+  /// No description provided for @searchByNameSpeciality.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name, speciality...'**
+  String get searchByNameSpeciality;
+
+  /// No description provided for @sortedByRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorted by rating'**
+  String get sortedByRating;
+
+  /// No description provided for @initiatingChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Initiating chat...'**
+  String get initiatingChat;
+
+  /// No description provided for @startingCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting call...'**
+  String get startingCall;
+
+  /// No description provided for @yrs.
+  ///
+  /// In en, this message translates to:
+  /// **'yrs'**
+  String get yrs;
 }
 
 class _AppLocalizationsDelegate

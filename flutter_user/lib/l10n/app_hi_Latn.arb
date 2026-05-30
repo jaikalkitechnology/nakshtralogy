@@ -200,5 +200,10 @@
   "loveRelationships": "LOVE & RELATIONSHIPS",
   "healthWellness": "HEALTH & WELLNESS",
   "soulKarma": "SOUL & KARMA",
-  "specialistReports": "Specialist Reports"
+  "specialistReports": "Specialist Reports",
+  "searchByNameSpeciality": "Naam, speciality se khojein...",
+  "sortedByRating": "Rating ke anusaar",
+  "initiatingChat": "Chat shuru ho rahi hai...",
+  "startingCall": "Call shuru ho rahi hai...",
+  "yrs": "saal"
 }

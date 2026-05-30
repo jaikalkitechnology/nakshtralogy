@@ -570,4 +570,19 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get specialistReports => 'तज्ञ अहवाल';
+
+  @override
+  String get searchByNameSpeciality => 'नाव, विशेषता शोधा...';
+
+  @override
+  String get sortedByRating => 'रेटिंगनुसार';
+
+  @override
+  String get initiatingChat => 'चॅट सुरू होत आहे...';
+
+  @override
+  String get startingCall => 'कॉल सुरू होत आहे...';
+
+  @override
+  String get yrs => 'वर्षे';
 }

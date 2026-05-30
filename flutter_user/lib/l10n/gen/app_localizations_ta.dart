@@ -570,4 +570,19 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get specialistReports => 'நிபுணர் அறிக்கைகள்';
+
+  @override
+  String get searchByNameSpeciality => 'பெயர், நிபுணத்துவத்தால் தேடுங்கள்...';
+
+  @override
+  String get sortedByRating => 'மதிப்பீட்டின் படி';
+
+  @override
+  String get initiatingChat => 'அரட்டை தொடங்குகிறது...';
+
+  @override
+  String get startingCall => 'அழைப்பு தொடங்குகிறது...';
+
+  @override
+  String get yrs => 'ஆண்டுகள்';
 }

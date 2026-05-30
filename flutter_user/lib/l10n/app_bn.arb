@@ -200,5 +200,10 @@
   "loveRelationships": "প্রেম ও সম্পর্ক",
   "healthWellness": "স্বাস্থ্য ও সুস্থতা",
   "soulKarma": "আত্মা ও কর্ম",
-  "specialistReports": "বিশেষজ্ঞ প্রতিবেদন"
+  "specialistReports": "বিশেষজ্ঞ প্রতিবেদন",
+  "searchByNameSpeciality": "নাম, বিশেষত্ব দিয়ে খুঁজুন...",
+  "sortedByRating": "রেটিং অনুযায়ী",
+  "initiatingChat": "চ্যাট শুরু হচ্ছে...",
+  "startingCall": "কল শুরু হচ্ছে...",
+  "yrs": "বছর"
 }

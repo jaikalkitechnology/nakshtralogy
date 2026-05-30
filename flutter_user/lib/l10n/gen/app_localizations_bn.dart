@@ -568,4 +568,19 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get specialistReports => 'বিশেষজ্ঞ প্রতিবেদন';
+
+  @override
+  String get searchByNameSpeciality => 'নাম, বিশেষত্ব দিয়ে খুঁজুন...';
+
+  @override
+  String get sortedByRating => 'রেটিং অনুযায়ী';
+
+  @override
+  String get initiatingChat => 'চ্যাট শুরু হচ্ছে...';
+
+  @override
+  String get startingCall => 'কল শুরু হচ্ছে...';
+
+  @override
+  String get yrs => 'বছর';
 }

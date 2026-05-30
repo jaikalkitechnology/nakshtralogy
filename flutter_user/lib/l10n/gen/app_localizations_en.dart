@@ -570,4 +570,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get searchByNameSpeciality => 'Search by name, speciality...';
+
+  @override
+  String get sortedByRating => 'Sorted by rating';
+
+  @override
+  String get initiatingChat => 'Initiating chat...';
+
+  @override
+  String get startingCall => 'Starting call...';
+
+  @override
+  String get yrs => 'yrs';
 }

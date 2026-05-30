@@ -200,5 +200,10 @@
   "loveRelationships": "LOVE & RELATIONSHIPS",
   "healthWellness": "HEALTH & WELLNESS",
   "soulKarma": "SOUL & KARMA",
-  "specialistReports": "Specialist Reports"
+  "specialistReports": "Specialist Reports",
+  "searchByNameSpeciality": "Search by name, speciality...",
+  "sortedByRating": "Sorted by rating",
+  "initiatingChat": "Initiating chat...",
+  "startingCall": "Starting call...",
+  "yrs": "yrs"
 }

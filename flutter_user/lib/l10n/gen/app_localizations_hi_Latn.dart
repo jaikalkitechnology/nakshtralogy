@@ -571,4 +571,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get searchByNameSpeciality => 'Naam, speciality se khojein...';
+
+  @override
+  String get sortedByRating => 'Rating ke anusaar';
+
+  @override
+  String get initiatingChat => 'Chat shuru ho rahi hai...';
+
+  @override
+  String get startingCall => 'Call shuru ho rahi hai...';
+
+  @override
+  String get yrs => 'saal';
 }

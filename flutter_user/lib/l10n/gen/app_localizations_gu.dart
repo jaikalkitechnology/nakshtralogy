@@ -569,4 +569,19 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get specialistReports => 'નિષ્ણાત રિપોર્ટ';
+
+  @override
+  String get searchByNameSpeciality => 'નામ, વિશેષતા દ્વારા શોધો...';
+
+  @override
+  String get sortedByRating => 'રેટિંગ અનુસાર';
+
+  @override
+  String get initiatingChat => 'ચેટ શરૂ થઈ રહી છે...';
+
+  @override
+  String get startingCall => 'કૉલ શરૂ થઈ રહ્યો છે...';
+
+  @override
+  String get yrs => 'વર્ષ';
 }

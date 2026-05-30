@@ -200,5 +200,10 @@
   "loveRelationships": "പ്രണയം & ബന്ധങ്ങൾ",
   "healthWellness": "ആരോഗ്യം & ക്ഷേമം",
   "soulKarma": "ആത്മാവ് & കർമ്മം",
-  "specialistReports": "വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ"
+  "specialistReports": "വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ",
+  "searchByNameSpeciality": "പേര്, വിശേഷത ഉപയോഗിച്ച് തിരയുക...",
+  "sortedByRating": "റേറ്റിംഗ് അനുസരിച്ച്",
+  "initiatingChat": "ചാറ്റ് ആരംഭിക്കുന്നു...",
+  "startingCall": "കോൾ ആരംഭിക്കുന്നു...",
+  "yrs": "വർഷങ്ങൾ"
 }

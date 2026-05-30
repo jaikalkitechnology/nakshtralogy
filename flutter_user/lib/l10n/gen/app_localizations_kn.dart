@@ -570,4 +570,19 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get specialistReports => 'ತಜ್ಞ ವರದಿಗಳು';
+
+  @override
+  String get searchByNameSpeciality => 'ಹೆಸರು, ವಿಶೇಷತೆಯಿಂದ ಹುಡುಕಿ...';
+
+  @override
+  String get sortedByRating => 'ರೇಟಿಂಗ್ ಪ್ರಕಾರ';
+
+  @override
+  String get initiatingChat => 'ಚಾಟ್ ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ...';
+
+  @override
+  String get startingCall => 'ಕರೆ ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ...';
+
+  @override
+  String get yrs => 'ವರ್ಷಗಳು';
 }
