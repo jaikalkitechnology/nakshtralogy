@@ -187,5 +187,18 @@
   "statement": "Statement",
   "allTypes": "Sabhi Types",
   "prev": "Pichla",
-  "next": "Agla"
+  "next": "Agla",
+  "allInsights": "Sabhi Insights",
+  "yourCompleteReading": "AAPKA COMPLETE READING",
+  "expertEngines": "expert engines",
+  "eachInsightConsultation": "Har insight ek complete consultation hai",
+  "engines": "ENGINES",
+  "dataPoints": "DATA POINTS",
+  "singleChart": "SINGLE",
+  "careerPurpose": "CAREER & PURPOSE",
+  "wealthAssets": "WEALTH & ASSETS",
+  "loveRelationships": "LOVE & RELATIONSHIPS",
+  "healthWellness": "HEALTH & WELLNESS",
+  "soulKarma": "SOUL & KARMA",
+  "specialistReports": "Specialist Reports"
 }

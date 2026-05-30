@@ -187,5 +187,18 @@
   "statement": "স্টেটমেন্ট",
   "allTypes": "সব ধরনের",
   "prev": "আগের",
-  "next": "পরের"
+  "next": "পরের",
+  "allInsights": "সমস্ত বিশ্লেষণ",
+  "yourCompleteReading": "আপনার সম্পূর্ণ পঠন",
+  "expertEngines": "বিশেষজ্ঞ ইঞ্জিন",
+  "eachInsightConsultation": "প্রতিটি বিশ্লেষণ একটি সম্পূর্ণ পরামর্শ",
+  "engines": "ইঞ্জিন",
+  "dataPoints": "ডেটা পয়েন্ট",
+  "singleChart": "সিঙ্গেল",
+  "careerPurpose": "ক্যারিয়ার ও উদ্দেশ্য",
+  "wealthAssets": "সম্পদ ও সম্পত্তি",
+  "loveRelationships": "প্রেম ও সম্পর্ক",
+  "healthWellness": "স্বাস্থ্য ও সুস্থতা",
+  "soulKarma": "আত্মা ও কর্ম",
+  "specialistReports": "বিশেষজ্ঞ প্রতিবেদন"
 }

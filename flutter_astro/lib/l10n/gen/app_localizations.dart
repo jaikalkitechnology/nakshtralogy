@@ -1049,6 +1049,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Page'**
   String get page;
+
+  /// No description provided for @allInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'All Insights'**
+  String get allInsights;
+
+  /// No description provided for @yourCompleteReading.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR COMPLETE READING'**
+  String get yourCompleteReading;
+
+  /// No description provided for @expertEngines.
+  ///
+  /// In en, this message translates to:
+  /// **'expert engines'**
+  String get expertEngines;
+
+  /// No description provided for @eachInsightConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Each insight is a complete consultation'**
+  String get eachInsightConsultation;
+
+  /// No description provided for @engines.
+  ///
+  /// In en, this message translates to:
+  /// **'ENGINES'**
+  String get engines;
+
+  /// No description provided for @dataPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'DATA POINTS'**
+  String get dataPoints;
+
+  /// No description provided for @singleChart.
+  ///
+  /// In en, this message translates to:
+  /// **'SINGLE'**
+  String get singleChart;
+
+  /// No description provided for @careerPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'CAREER & PURPOSE'**
+  String get careerPurpose;
+
+  /// No description provided for @wealthAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'WEALTH & ASSETS'**
+  String get wealthAssets;
+
+  /// No description provided for @loveRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'LOVE & RELATIONSHIPS'**
+  String get loveRelationships;
+
+  /// No description provided for @healthWellness.
+  ///
+  /// In en, this message translates to:
+  /// **'HEALTH & WELLNESS'**
+  String get healthWellness;
+
+  /// No description provided for @soulKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'SOUL & KARMA'**
+  String get soulKarma;
+
+  /// No description provided for @specialistReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist Reports'**
+  String get specialistReports;
 }
 
 class _AppLocalizationsDelegate

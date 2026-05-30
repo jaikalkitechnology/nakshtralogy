@@ -171,5 +171,18 @@
   "allTypes": "All types",
   "prev": "Prev",
   "next": "Next",
-  "page": "Page"
+  "page": "Page",
+  "allInsights": "All Insights",
+  "yourCompleteReading": "YOUR COMPLETE READING",
+  "expertEngines": "expert engines",
+  "eachInsightConsultation": "Each insight is a complete consultation",
+  "engines": "ENGINES",
+  "dataPoints": "DATA POINTS",
+  "singleChart": "SINGLE",
+  "careerPurpose": "CAREER & PURPOSE",
+  "wealthAssets": "WEALTH & ASSETS",
+  "loveRelationships": "LOVE & RELATIONSHIPS",
+  "healthWellness": "HEALTH & WELLNESS",
+  "soulKarma": "SOUL & KARMA",
+  "specialistReports": "Specialist Reports"
 }

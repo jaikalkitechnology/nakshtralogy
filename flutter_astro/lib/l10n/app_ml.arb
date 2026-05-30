@@ -171,5 +171,18 @@
   "allTypes": "എല്ലാ തരങ്ങളും",
   "prev": "മുമ്പത്തെ",
   "next": "അടുത്തത്",
-  "page": "പേജ്"
+  "page": "പേജ്",
+  "allInsights": "എല്ലാ വിശകലനങ്ങളും",
+  "yourCompleteReading": "നിങ്ങളുടെ പൂർണ്ണ വായന",
+  "expertEngines": "വിദഗ്ദ്ധ എഞ്ചിനുകൾ",
+  "eachInsightConsultation": "ഓരോ വിശകലനവും ഒരു പൂർണ്ണ കൺസൾട്ടേഷൻ",
+  "engines": "എഞ്ചിനുകൾ",
+  "dataPoints": "ഡാറ്റ പോയിന്റുകൾ",
+  "singleChart": "സിംഗിൾ",
+  "careerPurpose": "കരിയർ & ലക്ഷ്യം",
+  "wealthAssets": "സമ്പത്ത് & ആസ്തികൾ",
+  "loveRelationships": "പ്രണയം & ബന്ധങ്ങൾ",
+  "healthWellness": "ആരോഗ്യം & ക്ഷേമം",
+  "soulKarma": "ആത്മാവ് & കർമ്മം",
+  "specialistReports": "വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ"
 }

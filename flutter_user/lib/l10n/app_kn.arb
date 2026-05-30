@@ -187,5 +187,18 @@
   "statement": "ಹೇಳಿಕೆ",
   "allTypes": "ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು",
   "prev": "ಹಿಂದಿನ",
-  "next": "ಮುಂದಿನ"
+  "next": "ಮುಂದಿನ",
+  "allInsights": "ಎಲ್ಲಾ ವಿಶ್ಲೇಷಣೆಗಳು",
+  "yourCompleteReading": "ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಓದು",
+  "expertEngines": "ತಜ್ಞ ಎಂಜಿನ್‌ಗಳು",
+  "eachInsightConsultation": "ಪ್ರತಿ ವಿಶ್ಲೇಷಣೆಯು ಸಂಪೂರ್ಣ ಸಮಾಲೋಚನೆ",
+  "engines": "ಎಂಜಿನ್‌ಗಳು",
+  "dataPoints": "ಡೇಟಾ ಪಾಯಿಂಟ್‌ಗಳು",
+  "singleChart": "ಸಿಂಗಲ್",
+  "careerPurpose": "ವೃತ್ತಿ & ಉದ್ದೇಶ",
+  "wealthAssets": "ಸಂಪತ್ತು & ಆಸ್ತಿಗಳು",
+  "loveRelationships": "ಪ್ರೀತಿ & ಸಂಬಂಧಗಳು",
+  "healthWellness": "ಆರೋಗ್ಯ & ಕ್ಷೇಮ",
+  "soulKarma": "ಆತ್ಮ & ಕರ್ಮ",
+  "specialistReports": "ತಜ್ಞ ವರದಿಗಳು"
 }

@@ -1060,4 +1060,43 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get next => 'Agla';
+
+  @override
+  String get allInsights => 'सभी विश्लेषण';
+
+  @override
+  String get yourCompleteReading => 'आपका पूर्ण पठन';
+
+  @override
+  String get expertEngines => 'विशेषज्ञ इंजन';
+
+  @override
+  String get eachInsightConsultation => 'प्रत्येक विश्लेषण एक पूर्ण परामर्श है';
+
+  @override
+  String get engines => 'इंजन';
+
+  @override
+  String get dataPoints => 'डेटा पॉइंट';
+
+  @override
+  String get singleChart => 'सिंगल';
+
+  @override
+  String get careerPurpose => 'करियर और उद्देश्य';
+
+  @override
+  String get wealthAssets => 'धन और संपत्ति';
+
+  @override
+  String get loveRelationships => 'प्रेम और रिश्ते';
+
+  @override
+  String get healthWellness => 'स्वास्थ्य और कल्याण';
+
+  @override
+  String get soulKarma => 'आत्मा और कर्म';
+
+  @override
+  String get specialistReports => 'विशेषज्ञ रिपोर्ट';
 }

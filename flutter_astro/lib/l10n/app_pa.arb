@@ -171,5 +171,18 @@
   "allTypes": "ਸਭ ਕਿਸਮਾਂ",
   "prev": "ਪਿਛਲਾ",
   "next": "ਅਗਲਾ",
-  "page": "ਪੰਨਾ"
+  "page": "ਪੰਨਾ",
+  "allInsights": "ਸਾਰੇ ਵਿਸ਼ਲੇਸ਼ਣ",
+  "yourCompleteReading": "ਤੁਹਾਡਾ ਪੂਰਾ ਪਠਨ",
+  "expertEngines": "ਮਾਹਿਰ ਇੰਜਣ",
+  "eachInsightConsultation": "ਹਰ ਵਿਸ਼ਲੇਸ਼ਣ ਇੱਕ ਪੂਰੀ ਸਲਾਹ ਹੈ",
+  "engines": "ਇੰਜਣ",
+  "dataPoints": "ਡੇਟਾ ਪੁਆਇੰਟ",
+  "singleChart": "ਸਿੰਗਲ",
+  "careerPurpose": "ਕੈਰੀਅਰ ਅਤੇ ਮਕਸਦ",
+  "wealthAssets": "ਧਨ ਅਤੇ ਸੰਪਤੀ",
+  "loveRelationships": "ਪਿਆਰ ਅਤੇ ਰਿਸ਼ਤੇ",
+  "healthWellness": "ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ",
+  "soulKarma": "ਆਤਮਾ ਅਤੇ ਕਰਮ",
+  "specialistReports": "ਮਾਹਿਰ ਰਿਪੋਰਟ"
 }

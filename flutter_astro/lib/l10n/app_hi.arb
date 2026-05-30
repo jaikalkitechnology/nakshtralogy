@@ -171,5 +171,18 @@
   "allTypes": "सभी प्रकार",
   "prev": "पिछला",
   "next": "अगला",
-  "page": "पृष्ठ"
+  "page": "पृष्ठ",
+  "allInsights": "सभी विश्लेषण",
+  "yourCompleteReading": "आपका पूर्ण पठन",
+  "expertEngines": "विशेषज्ञ इंजन",
+  "eachInsightConsultation": "प्रत्येक विश्लेषण एक पूर्ण परामर्श है",
+  "engines": "इंजन",
+  "dataPoints": "डेटा पॉइंट",
+  "singleChart": "सिंगल",
+  "careerPurpose": "करियर और उद्देश्य",
+  "wealthAssets": "धन और संपत्ति",
+  "loveRelationships": "प्रेम और रिश्ते",
+  "healthWellness": "स्वास्थ्य और कल्याण",
+  "soulKarma": "आत्मा और कर्म",
+  "specialistReports": "विशेषज्ञ रिपोर्ट"
 }

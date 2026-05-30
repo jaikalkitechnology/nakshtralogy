@@ -171,5 +171,18 @@
   "allTypes": "అన్ని రకాలు",
   "prev": "మునుపటి",
   "next": "తదుపరి",
-  "page": "పేజీ"
+  "page": "పేజీ",
+  "allInsights": "అన్ని విశ్లేషణలు",
+  "yourCompleteReading": "మీ పూర్తి పఠనం",
+  "expertEngines": "నిపుణుల ఇంజిన్లు",
+  "eachInsightConsultation": "ప్రతి విశ్లేషణ ఒక పూర్తి సంప్రదింపు",
+  "engines": "ఇంజిన్లు",
+  "dataPoints": "డేటా పాయింట్లు",
+  "singleChart": "సింగిల్",
+  "careerPurpose": "కెరీర్ & ఉద్దేశ్యం",
+  "wealthAssets": "సంపద & ఆస్తులు",
+  "loveRelationships": "ప్రేమ & సంబంధాలు",
+  "healthWellness": "ఆరోగ్యం & సంక్షేమం",
+  "soulKarma": "ఆత్మ & కర్మ",
+  "specialistReports": "నిపుణుల నివేదికలు"
 }
