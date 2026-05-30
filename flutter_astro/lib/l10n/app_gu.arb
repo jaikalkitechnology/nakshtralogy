@@ -184,5 +184,10 @@
   "loveRelationships": "પ્રેમ અને સંબંધો",
   "healthWellness": "આરોગ્ય અને કલ્યાણ",
   "soulKarma": "આત્મા અને કર્મ",
-  "specialistReports": "નિષ્ણાત રિપોર્ટ"
+  "specialistReports": "નિષ્ણાત રિપોર્ટ",
+  "deptReports": "વિભાગ રિપોર્ટ",
+  "specialistAnalysesDesc": "15 નિષ્ણાત વિશ્લેષણ — કારકિર્દી, સંપત્તિ, આરોગ્ય, પ્રેમ અને વધુ",
+  "matchTwoChartsDesc": "બે કુંડળીઓ મેળવો — અષ્ટકૂટ, નવાંશ, ગોચર સમય અને વધુ",
+  "todaysForecast": "આજનું ભવિષ્ય",
+  "dailyProbability": "કોઈપણ કુંડળી માટે દૈનિક સંભાવના ભવિષ્ય"
 }

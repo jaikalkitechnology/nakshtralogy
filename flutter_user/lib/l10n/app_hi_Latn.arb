@@ -205,5 +205,15 @@
   "sortedByRating": "Rating ke anusaar",
   "initiatingChat": "Chat shuru ho rahi hai...",
   "startingCall": "Call shuru ho rahi hai...",
-  "yrs": "saal"
+  "yrs": "saal",
+  "chatWithAISpecialist": "AI Specialist Se Chat Karein",
+  "tapToStart": "Shuru karne ke liye tap karein",
+  "astrologer": "Jyotishi",
+  "reports": "Reports",
+  "milan": "Milan",
+  "forecast": "Forecast",
+  "rashi": "Rashi",
+  "jupiterFavorsBold": "Jupiter bold moves ko support karta hai",
+  "careerIlluminated": "Aapka career sector illuminated hai — apni instinct par trust karein.",
+  "todaysForecast": "Aaj Ka Forecast"
 }

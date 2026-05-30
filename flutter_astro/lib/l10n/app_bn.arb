@@ -184,5 +184,10 @@
   "loveRelationships": "প্রেম ও সম্পর্ক",
   "healthWellness": "স্বাস্থ্য ও সুস্থতা",
   "soulKarma": "আত্মা ও কর্ম",
-  "specialistReports": "বিশেষজ্ঞ প্রতিবেদন"
+  "specialistReports": "বিশেষজ্ঞ প্রতিবেদন",
+  "deptReports": "বিভাগ রিপোর্ট",
+  "specialistAnalysesDesc": "১৫টি বিশেষজ্ঞ বিশ্লেষণ — ক্যারিয়ার, সম্পদ, স্বাস্থ্য, প্রেম ও আরও",
+  "matchTwoChartsDesc": "দুটি কুণ্ডলী মেলান — অষ্টকূট, নবাংশ, গোচর সময় ও আরও",
+  "todaysForecast": "আজকের পূর্বাভাস",
+  "dailyProbability": "যেকোনো কুণ্ডলীর জন্য দৈনিক সম্ভাবনা পূর্বাভাস"
 }

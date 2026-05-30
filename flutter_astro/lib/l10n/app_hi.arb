@@ -184,5 +184,10 @@
   "loveRelationships": "प्रेम और रिश्ते",
   "healthWellness": "स्वास्थ्य और कल्याण",
   "soulKarma": "आत्मा और कर्म",
-  "specialistReports": "विशेषज्ञ रिपोर्ट"
+  "specialistReports": "विशेषज्ञ रिपोर्ट",
+  "deptReports": "विभाग रिपोर्ट",
+  "specialistAnalysesDesc": "15 विशेषज्ञ विश्लेषण — करियर, धन, स्वास्थ्य, प्रेम और अधिक",
+  "matchTwoChartsDesc": "दो कुंडलियों का मिलान — अष्टकूट, नवांश, गोचर समय और अधिक",
+  "todaysForecast": "आज का पूर्वानुमान",
+  "dailyProbability": "किसी भी कुंडली के लिए दैनिक संभावना पूर्वानुमान"
 }

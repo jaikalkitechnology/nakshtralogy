@@ -205,5 +205,15 @@
   "sortedByRating": "Sorted by rating",
   "initiatingChat": "Initiating chat...",
   "startingCall": "Starting call...",
-  "yrs": "yrs"
+  "yrs": "yrs",
+  "chatWithAISpecialist": "Chat with AI Specialist",
+  "tapToStart": "Tap to start",
+  "astrologer": "Astrologer",
+  "reports": "Reports",
+  "milan": "Milan",
+  "forecast": "Forecast",
+  "rashi": "Rashi",
+  "jupiterFavorsBold": "Jupiter favors bold moves",
+  "careerIlluminated": "Your career sector is illuminated — trust your instincts.",
+  "todaysForecast": "Today's Forecast"
 }

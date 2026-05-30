@@ -205,5 +205,15 @@
   "sortedByRating": "மதிப்பீட்டின் படி",
   "initiatingChat": "அரட்டை தொடங்குகிறது...",
   "startingCall": "அழைப்பு தொடங்குகிறது...",
-  "yrs": "ஆண்டுகள்"
+  "yrs": "ஆண்டுகள்",
+  "chatWithAISpecialist": "AI நிபுணருடன் அரட்டை",
+  "tapToStart": "தொடங்க தட்டவும்",
+  "astrologer": "ஜோதிடர்",
+  "reports": "அறிக்கைகள்",
+  "milan": "மிலன்",
+  "forecast": "முன்னறிவிப்பு",
+  "rashi": "ராசி",
+  "jupiterFavorsBold": "குரு தைரியமான நடவடிக்கைகளை ஆதரிக்கிறார்",
+  "careerIlluminated": "உங்கள் தொழில் துறை ஒளிரும் — உங்கள் உள்ளுணர்வை நம்புங்கள்.",
+  "todaysForecast": "இன்றைய முன்னறிவிப்பு"
 }

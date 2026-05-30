@@ -205,5 +205,15 @@
   "sortedByRating": "ರೇಟಿಂಗ್ ಪ್ರಕಾರ",
   "initiatingChat": "ಚಾಟ್ ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ...",
   "startingCall": "ಕರೆ ಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ...",
-  "yrs": "ವರ್ಷಗಳು"
+  "yrs": "ವರ್ಷಗಳು",
+  "chatWithAISpecialist": "AI ತಜ್ಞರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ",
+  "tapToStart": "ಪ್ರಾರಂಭಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
+  "astrologer": "ಜ್ಯೋತಿಷಿ",
+  "reports": "ವರದಿಗಳು",
+  "milan": "ಮಿಲನ್",
+  "forecast": "ಮುನ್ಸೂಚನೆ",
+  "rashi": "ರಾಶಿ",
+  "jupiterFavorsBold": "ಗುರುವು ಧೈರ್ಯದ ಕ್ರಮಗಳಿಗೆ ಅನುಕೂಲ",
+  "careerIlluminated": "ನಿಮ್ಮ ವೃತ್ತಿ ಕ್ಷೇತ್ರ ಬೆಳಗುತ್ತಿದೆ — ನಿಮ್ಮ ಅಂತಃಪ್ರಜ್ಞೆಯನ್ನು ನಂಬಿ.",
+  "todaysForecast": "ಇಂದಿನ ಮುನ್ಸೂಚನೆ"
 }

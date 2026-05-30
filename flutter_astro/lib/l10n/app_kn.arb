@@ -184,5 +184,10 @@
   "loveRelationships": "ಪ್ರೀತಿ & ಸಂಬಂಧಗಳು",
   "healthWellness": "ಆರೋಗ್ಯ & ಕ್ಷೇಮ",
   "soulKarma": "ಆತ್ಮ & ಕರ್ಮ",
-  "specialistReports": "ತಜ್ಞ ವರದಿಗಳು"
+  "specialistReports": "ತಜ್ಞ ವರದಿಗಳು",
+  "deptReports": "ವಿಭಾಗ ವರದಿಗಳು",
+  "specialistAnalysesDesc": "15 ತಜ್ಞ ವಿಶ್ಲೇಷಣೆಗಳು — ವೃತ್ತಿ, ಸಂಪತ್ತು, ಆರೋಗ್ಯ, ಪ್ರೀತಿ ಮತ್ತು ಇನ್ನಷ್ಟು",
+  "matchTwoChartsDesc": "ಎರಡು ಕುಂಡಲಿಗಳನ್ನು ಹೊಂದಿಸಿ — ಅಷ್ಟಕೂಟ, ನವಾಂಶ, ಗೋಚರ ಸಮಯ ಮತ್ತು ಇನ್ನಷ್ಟು",
+  "todaysForecast": "ಇಂದಿನ ಮುನ್ಸೂಚನೆ",
+  "dailyProbability": "ಯಾವುದೇ ಕುಂಡಲಿಗೆ ದೈನಂದಿನ ಸಂಭವನೀಯತೆ ಮುನ್ಸೂಚನೆ"
 }

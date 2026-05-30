@@ -184,5 +184,10 @@
   "loveRelationships": "LOVE & RELATIONSHIPS",
   "healthWellness": "HEALTH & WELLNESS",
   "soulKarma": "SOUL & KARMA",
-  "specialistReports": "Specialist Reports"
+  "specialistReports": "Specialist Reports",
+  "deptReports": "Dept Reports",
+  "specialistAnalysesDesc": "15 specialist analyses — Career, Wealth, Health, Love & more",
+  "matchTwoChartsDesc": "Do kundliyon ka milan — Ashtakoot, Navamsa, Gochar timing & more",
+  "todaysForecast": "Aaj Ka Forecast",
+  "dailyProbability": "Kisi bhi kundli ke liye daily probability forecast"
 }

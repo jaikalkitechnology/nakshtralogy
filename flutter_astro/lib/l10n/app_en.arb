@@ -184,5 +184,10 @@
   "loveRelationships": "LOVE & RELATIONSHIPS",
   "healthWellness": "HEALTH & WELLNESS",
   "soulKarma": "SOUL & KARMA",
-  "specialistReports": "Specialist Reports"
+  "specialistReports": "Specialist Reports",
+  "deptReports": "Dept Reports",
+  "specialistAnalysesDesc": "15 specialist analyses — Career, Wealth, Health, Love & more",
+  "matchTwoChartsDesc": "Match two charts — Ashtakoot, Navamsa, Transit timing & more",
+  "todaysForecast": "Today's Forecast",
+  "dailyProbability": "Daily probability forecast for any chart"
 }

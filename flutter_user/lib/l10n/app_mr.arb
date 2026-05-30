@@ -205,5 +205,15 @@
   "sortedByRating": "रेटिंगनुसार",
   "initiatingChat": "चॅट सुरू होत आहे...",
   "startingCall": "कॉल सुरू होत आहे...",
-  "yrs": "वर्षे"
+  "yrs": "वर्षे",
+  "chatWithAISpecialist": "AI तज्ञांशी चॅट करा",
+  "tapToStart": "सुरू करण्यासाठी टॅप करा",
+  "astrologer": "ज्योतिषी",
+  "reports": "अहवाल",
+  "milan": "मिलन",
+  "forecast": "भविष्यवाणी",
+  "rashi": "राशी",
+  "jupiterFavorsBold": "गुरू धाडसी पावलांना अनुकूल आहे",
+  "careerIlluminated": "तुमचे करिअर क्षेत्र प्रकाशमान आहे — तुमच्या अंतर्ज्ञानावर विश्वास ठेवा.",
+  "todaysForecast": "आजचे भविष्य"
 }
