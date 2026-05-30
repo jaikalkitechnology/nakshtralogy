@@ -571,4 +571,19 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get specialistReports => 'വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ';
+
+  @override
+  String get searchByNameSpeciality => 'പേര്, വിശേഷത ഉപയോഗിച്ച് തിരയുക...';
+
+  @override
+  String get sortedByRating => 'റേറ്റിംഗ് അനുസരിച്ച്';
+
+  @override
+  String get initiatingChat => 'ചാറ്റ് ആരംഭിക്കുന്നു...';
+
+  @override
+  String get startingCall => 'കോൾ ആരംഭിക്കുന്നു...';
+
+  @override
+  String get yrs => 'വർഷങ്ങൾ';
 }

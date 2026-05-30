@@ -570,4 +570,19 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get specialistReports => 'ਮਾਹਿਰ ਰਿਪੋਰਟ';
+
+  @override
+  String get searchByNameSpeciality => 'ਨਾਮ, ਵਿਸ਼ੇਸ਼ਤਾ ਨਾਲ ਖੋਜੋ...';
+
+  @override
+  String get sortedByRating => 'ਰੇਟਿੰਗ ਅਨੁਸਾਰ';
+
+  @override
+  String get initiatingChat => 'ਚੈਟ ਸ਼ੁਰੂ ਹੋ ਰਹੀ ਹੈ...';
+
+  @override
+  String get startingCall => 'ਕਾਲ ਸ਼ੁਰੂ ਹੋ ਰਹੀ ਹੈ...';
+
+  @override
+  String get yrs => 'ਸਾਲ';
 }
