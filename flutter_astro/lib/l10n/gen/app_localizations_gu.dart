@@ -481,4 +481,43 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get page => 'પૃષ્ઠ';
+
+  @override
+  String get allInsights => 'બધા વિશ્લેષણ';
+
+  @override
+  String get yourCompleteReading => 'તમારું સંપૂર્ણ વાંચન';
+
+  @override
+  String get expertEngines => 'નિષ્ણાત એન્જિન';
+
+  @override
+  String get eachInsightConsultation => 'દરેક વિશ્લેષણ એક સંપૂર્ણ પરામર્શ છે';
+
+  @override
+  String get engines => 'એન્જિન';
+
+  @override
+  String get dataPoints => 'ડેટા પોઈન્ટ';
+
+  @override
+  String get singleChart => 'સિંગલ';
+
+  @override
+  String get careerPurpose => 'કારકિર્દી અને હેતુ';
+
+  @override
+  String get wealthAssets => 'ધન અને સંપત્તિ';
+
+  @override
+  String get loveRelationships => 'પ્રેમ અને સંબંધો';
+
+  @override
+  String get healthWellness => 'આરોગ્ય અને કલ્યાણ';
+
+  @override
+  String get soulKarma => 'આત્મા અને કર્મ';
+
+  @override
+  String get specialistReports => 'નિષ્ણાત રિપોર્ટ';
 }

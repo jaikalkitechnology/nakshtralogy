@@ -483,4 +483,43 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get page => 'Page';
+
+  @override
+  String get allInsights => 'Sabhi Insights';
+
+  @override
+  String get yourCompleteReading => 'AAPKA COMPLETE READING';
+
+  @override
+  String get expertEngines => 'expert engines';
+
+  @override
+  String get eachInsightConsultation => 'Har insight ek complete consultation hai';
+
+  @override
+  String get engines => 'ENGINES';
+
+  @override
+  String get dataPoints => 'DATA POINTS';
+
+  @override
+  String get singleChart => 'SINGLE';
+
+  @override
+  String get careerPurpose => 'CAREER & PURPOSE';
+
+  @override
+  String get wealthAssets => 'WEALTH & ASSETS';
+
+  @override
+  String get loveRelationships => 'LOVE & RELATIONSHIPS';
+
+  @override
+  String get healthWellness => 'HEALTH & WELLNESS';
+
+  @override
+  String get soulKarma => 'SOUL & KARMA';
+
+  @override
+  String get specialistReports => 'Specialist Reports';
 }

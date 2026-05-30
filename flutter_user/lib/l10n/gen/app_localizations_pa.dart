@@ -531,4 +531,43 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get next => 'ਅਗਲਾ';
+
+  @override
+  String get allInsights => 'ਸਾਰੇ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get yourCompleteReading => 'ਤੁਹਾਡਾ ਪੂਰਾ ਪਠਨ';
+
+  @override
+  String get expertEngines => 'ਮਾਹਿਰ ਇੰਜਣ';
+
+  @override
+  String get eachInsightConsultation => 'ਹਰ ਵਿਸ਼ਲੇਸ਼ਣ ਇੱਕ ਪੂਰੀ ਸਲਾਹ ਹੈ';
+
+  @override
+  String get engines => 'ਇੰਜਣ';
+
+  @override
+  String get dataPoints => 'ਡੇਟਾ ਪੁਆਇੰਟ';
+
+  @override
+  String get singleChart => 'ਸਿੰਗਲ';
+
+  @override
+  String get careerPurpose => 'ਕੈਰੀਅਰ ਅਤੇ ਮਕਸਦ';
+
+  @override
+  String get wealthAssets => 'ਧਨ ਅਤੇ ਸੰਪਤੀ';
+
+  @override
+  String get loveRelationships => 'ਪਿਆਰ ਅਤੇ ਰਿਸ਼ਤੇ';
+
+  @override
+  String get healthWellness => 'ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ';
+
+  @override
+  String get soulKarma => 'ਆਤਮਾ ਅਤੇ ਕਰਮ';
+
+  @override
+  String get specialistReports => 'ਮਾਹਿਰ ਰਿਪੋਰਟ';
 }

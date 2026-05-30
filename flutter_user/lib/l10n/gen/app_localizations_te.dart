@@ -530,4 +530,43 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get next => 'తదుపరి';
+
+  @override
+  String get allInsights => 'అన్ని విశ్లేషణలు';
+
+  @override
+  String get yourCompleteReading => 'మీ పూర్తి పఠనం';
+
+  @override
+  String get expertEngines => 'నిపుణుల ఇంజిన్లు';
+
+  @override
+  String get eachInsightConsultation => 'ప్రతి విశ్లేషణ ఒక పూర్తి సంప్రదింపు';
+
+  @override
+  String get engines => 'ఇంజిన్లు';
+
+  @override
+  String get dataPoints => 'డేటా పాయింట్లు';
+
+  @override
+  String get singleChart => 'సింగిల్';
+
+  @override
+  String get careerPurpose => 'కెరీర్ & ఉద్దేశ్యం';
+
+  @override
+  String get wealthAssets => 'సంపద & ఆస్తులు';
+
+  @override
+  String get loveRelationships => 'ప్రేమ & సంబంధాలు';
+
+  @override
+  String get healthWellness => 'ఆరోగ్యం & సంక్షేమం';
+
+  @override
+  String get soulKarma => 'ఆత్మ & కర్మ';
+
+  @override
+  String get specialistReports => 'నిపుణుల నివేదికలు';
 }

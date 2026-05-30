@@ -532,4 +532,43 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get next => 'അടുത്തത്';
+
+  @override
+  String get allInsights => 'എല്ലാ വിശകലനങ്ങളും';
+
+  @override
+  String get yourCompleteReading => 'നിങ്ങളുടെ പൂർണ്ണ വായന';
+
+  @override
+  String get expertEngines => 'വിദഗ്ദ്ധ എഞ്ചിനുകൾ';
+
+  @override
+  String get eachInsightConsultation => 'ഓരോ വിശകലനവും ഒരു പൂർണ്ണ കൺസൾട്ടേഷൻ';
+
+  @override
+  String get engines => 'എഞ്ചിനുകൾ';
+
+  @override
+  String get dataPoints => 'ഡാറ്റ പോയിന്റുകൾ';
+
+  @override
+  String get singleChart => 'സിംഗിൾ';
+
+  @override
+  String get careerPurpose => 'കരിയർ & ലക്ഷ്യം';
+
+  @override
+  String get wealthAssets => 'സമ്പത്ത് & ആസ്തികൾ';
+
+  @override
+  String get loveRelationships => 'പ്രണയം & ബന്ധങ്ങൾ';
+
+  @override
+  String get healthWellness => 'ആരോഗ്യം & ക്ഷേമം';
+
+  @override
+  String get soulKarma => 'ആത്മാവ് & കർമ്മം';
+
+  @override
+  String get specialistReports => 'വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ';
 }

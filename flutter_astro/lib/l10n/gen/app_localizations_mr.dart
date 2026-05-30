@@ -481,4 +481,43 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get page => 'पृष्ठ';
+
+  @override
+  String get allInsights => 'सर्व विश्लेषण';
+
+  @override
+  String get yourCompleteReading => 'तुमचे पूर्ण वाचन';
+
+  @override
+  String get expertEngines => 'तज्ञ इंजिन';
+
+  @override
+  String get eachInsightConsultation => 'प्रत्येक विश्लेषण एक पूर्ण सल्ला आहे';
+
+  @override
+  String get engines => 'इंजिन';
+
+  @override
+  String get dataPoints => 'डेटा पॉइंट';
+
+  @override
+  String get singleChart => 'सिंगल';
+
+  @override
+  String get careerPurpose => 'करिअर आणि उद्देश';
+
+  @override
+  String get wealthAssets => 'संपत्ती आणि मालमत्ता';
+
+  @override
+  String get loveRelationships => 'प्रेम आणि नाते';
+
+  @override
+  String get healthWellness => 'आरोग्य आणि कल्याण';
+
+  @override
+  String get soulKarma => 'आत्मा आणि कर्म';
+
+  @override
+  String get specialistReports => 'तज्ञ अहवाल';
 }

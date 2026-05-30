@@ -531,4 +531,43 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get next => 'அடுத்த';
+
+  @override
+  String get allInsights => 'அனைத்து பகுப்பாய்வுகள்';
+
+  @override
+  String get yourCompleteReading => 'உங்கள் முழு வாசிப்பு';
+
+  @override
+  String get expertEngines => 'நிபுணர் இயந்திரங்கள்';
+
+  @override
+  String get eachInsightConsultation => 'ஒவ்வொரு பகுப்பாய்வும் ஒரு முழு ஆலோசனை';
+
+  @override
+  String get engines => 'இயந்திரங்கள்';
+
+  @override
+  String get dataPoints => 'தரவு புள்ளிகள்';
+
+  @override
+  String get singleChart => 'ஒற்றை';
+
+  @override
+  String get careerPurpose => 'தொழில் & நோக்கம்';
+
+  @override
+  String get wealthAssets => 'செல்வம் & சொத்துகள்';
+
+  @override
+  String get loveRelationships => 'காதல் & உறவுகள்';
+
+  @override
+  String get healthWellness => 'ஆரோக்கியம் & நல்வாழ்வு';
+
+  @override
+  String get soulKarma => 'ஆன்மா & கர்மா';
+
+  @override
+  String get specialistReports => 'நிபுணர் அறிக்கைகள்';
 }
