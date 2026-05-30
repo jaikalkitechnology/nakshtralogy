@@ -520,4 +520,19 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get specialistReports => 'નિષ્ણાત રિપોર્ટ';
+
+  @override
+  String get deptReports => 'વિભાગ રિપોર્ટ';
+
+  @override
+  String get specialistAnalysesDesc => '15 નિષ્ણાત વિશ્લેષણ — કારકિર્દી, સંપત્તિ, આરોગ્ય, પ્રેમ અને વધુ';
+
+  @override
+  String get matchTwoChartsDesc => 'બે કુંડળીઓ મેળવો — અષ્ટકૂટ, નવાંશ, ગોચર સમય અને વધુ';
+
+  @override
+  String get todaysForecast => 'આજનું ભવિષ્ય';
+
+  @override
+  String get dailyProbability => 'કોઈપણ કુંડળી માટે દૈનિક સંભાવના ભવિષ્ય';
 }

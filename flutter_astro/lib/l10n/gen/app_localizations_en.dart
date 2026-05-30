@@ -521,4 +521,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get deptReports => 'Dept Reports';
+
+  @override
+  String get specialistAnalysesDesc => '15 specialist analyses — Career, Wealth, Health, Love & more';
+
+  @override
+  String get matchTwoChartsDesc => 'Match two charts — Ashtakoot, Navamsa, Transit timing & more';
+
+  @override
+  String get todaysForecast => 'Today\'s Forecast';
+
+  @override
+  String get dailyProbability => 'Daily probability forecast for any chart';
 }

@@ -184,5 +184,10 @@
   "loveRelationships": "പ്രണയം & ബന്ധങ്ങൾ",
   "healthWellness": "ആരോഗ്യം & ക്ഷേമം",
   "soulKarma": "ആത്മാവ് & കർമ്മം",
-  "specialistReports": "വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ"
+  "specialistReports": "വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ",
+  "deptReports": "വിഭാഗ റിപ്പോർട്ടുകൾ",
+  "specialistAnalysesDesc": "15 വിദഗ്ദ്ധ വിശകലനങ്ങൾ — കരിയർ, സമ്പത്ത്, ആരോഗ്യം, പ്രണയം തുടങ്ങിയവ",
+  "matchTwoChartsDesc": "രണ്ട് ജാതകങ്ങൾ ഒത്തുനോക്കുക — അഷ്ടകൂട്, നവാംശ, ഗോചര സമയം തുടങ്ങിയവ",
+  "todaysForecast": "ഇന്നത്തെ പ്രവചനം",
+  "dailyProbability": "ഏത് ജാതകത്തിനും ദൈനംദിന സാധ്യതാ പ്രവചനം"
 }

@@ -586,4 +586,34 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get yrs => 'saal';
+
+  @override
+  String get chatWithAISpecialist => 'AI Specialist Se Chat Karein';
+
+  @override
+  String get tapToStart => 'Shuru karne ke liye tap karein';
+
+  @override
+  String get astrologer => 'Jyotishi';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get forecast => 'Forecast';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get jupiterFavorsBold => 'Jupiter bold moves ko support karta hai';
+
+  @override
+  String get careerIlluminated => 'Aapka career sector illuminated hai — apni instinct par trust karein.';
+
+  @override
+  String get todaysForecast => 'Aaj Ka Forecast';
 }

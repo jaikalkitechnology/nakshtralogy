@@ -521,4 +521,19 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get specialistReports => 'நிபுணர் அறிக்கைகள்';
+
+  @override
+  String get deptReports => 'துறை அறிக்கைகள்';
+
+  @override
+  String get specialistAnalysesDesc => '15 நிபுணர் பகுப்பாய்வுகள் — தொழில், செல்வம், ஆரோக்கியம், காதல் மற்றும் மேலும்';
+
+  @override
+  String get matchTwoChartsDesc => 'இரண்டு ஜாதகங்களை பொருத்துங்கள் — அஷ்டகூட், நவாம்சம், கோசர நேரம் மற்றும் மேலும்';
+
+  @override
+  String get todaysForecast => 'இன்றைய முன்னறிவிப்பு';
+
+  @override
+  String get dailyProbability => 'எந்த ஜாதகத்திற்கும் தினசரி நிகழ்தகவு முன்னறிவிப்பு';
 }

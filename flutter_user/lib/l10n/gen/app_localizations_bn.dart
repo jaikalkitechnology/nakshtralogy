@@ -583,4 +583,34 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get yrs => 'বছর';
+
+  @override
+  String get chatWithAISpecialist => 'AI বিশেষজ্ঞের সাথে চ্যাট করুন';
+
+  @override
+  String get tapToStart => 'শুরু করতে ট্যাপ করুন';
+
+  @override
+  String get astrologer => 'জ্যোতিষী';
+
+  @override
+  String get reports => 'রিপোর্ট';
+
+  @override
+  String get milan => 'মিলন';
+
+  @override
+  String get forecast => 'পূর্বাভাস';
+
+  @override
+  String get rashi => 'রাশি';
+
+  @override
+  String get jupiterFavorsBold => 'বৃহস্পতি সাহসী পদক্ষেপে সহায়ক';
+
+  @override
+  String get careerIlluminated => 'আপনার ক্যারিয়ার ক্ষেত্র আলোকিত — আপনার অন্তর্দৃষ্টিতে বিশ্বাস রাখুন।';
+
+  @override
+  String get todaysForecast => 'আজকের পূর্বাভাস';
 }

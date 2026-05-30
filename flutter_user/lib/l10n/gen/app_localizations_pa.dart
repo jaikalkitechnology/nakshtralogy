@@ -585,4 +585,34 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get yrs => 'ਸਾਲ';
+
+  @override
+  String get chatWithAISpecialist => 'AI ਮਾਹਿਰ ਨਾਲ ਚੈਟ ਕਰੋ';
+
+  @override
+  String get tapToStart => 'ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get astrologer => 'ਜੋਤਸ਼ੀ';
+
+  @override
+  String get reports => 'ਰਿਪੋਰਟ';
+
+  @override
+  String get milan => 'ਮਿਲਾਨ';
+
+  @override
+  String get forecast => 'ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get rashi => 'ਰਾਸ਼ੀ';
+
+  @override
+  String get jupiterFavorsBold => 'ਗੁਰੂ ਹਿੰਮਤੀ ਕਦਮਾਂ ਦਾ ਸਮਰਥਨ ਕਰਦਾ ਹੈ';
+
+  @override
+  String get careerIlluminated => 'ਤੁਹਾਡਾ ਕੈਰੀਅਰ ਖੇਤਰ ਰੌਸ਼ਨ ਹੈ — ਆਪਣੀ ਸੂਝ ਤੇ ਭਰੋਸਾ ਕਰੋ।';
+
+  @override
+  String get todaysForecast => 'ਅੱਜ ਦੀ ਭਵਿੱਖਬਾਣੀ';
 }

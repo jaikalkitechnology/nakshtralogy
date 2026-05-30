@@ -521,4 +521,19 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get specialistReports => 'ತಜ್ಞ ವರದಿಗಳು';
+
+  @override
+  String get deptReports => 'ವಿಭಾಗ ವರದಿಗಳು';
+
+  @override
+  String get specialistAnalysesDesc => '15 ತಜ್ಞ ವಿಶ್ಲೇಷಣೆಗಳು — ವೃತ್ತಿ, ಸಂಪತ್ತು, ಆರೋಗ್ಯ, ಪ್ರೀತಿ ಮತ್ತು ಇನ್ನಷ್ಟು';
+
+  @override
+  String get matchTwoChartsDesc => 'ಎರಡು ಕುಂಡಲಿಗಳನ್ನು ಹೊಂದಿಸಿ — ಅಷ್ಟಕೂಟ, ನವಾಂಶ, ಗೋಚರ ಸಮಯ ಮತ್ತು ಇನ್ನಷ್ಟು';
+
+  @override
+  String get todaysForecast => 'ಇಂದಿನ ಮುನ್ಸೂಚನೆ';
+
+  @override
+  String get dailyProbability => 'ಯಾವುದೇ ಕುಂಡಲಿಗೆ ದೈನಂದಿನ ಸಂಭವನೀಯತೆ ಮುನ್ಸೂಚನೆ';
 }

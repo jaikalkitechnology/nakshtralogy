@@ -522,4 +522,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get deptReports => 'Dept Reports';
+
+  @override
+  String get specialistAnalysesDesc => '15 specialist analyses — Career, Wealth, Health, Love & more';
+
+  @override
+  String get matchTwoChartsDesc => 'Do kundliyon ka milan — Ashtakoot, Navamsa, Gochar timing & more';
+
+  @override
+  String get todaysForecast => 'Aaj Ka Forecast';
+
+  @override
+  String get dailyProbability => 'Kisi bhi kundli ke liye daily probability forecast';
 }

@@ -584,4 +584,34 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get yrs => 'సంవత్సరాలు';
+
+  @override
+  String get chatWithAISpecialist => 'AI నిపుణులతో చాట్ చేయండి';
+
+  @override
+  String get tapToStart => 'ప్రారంభించడానికి ట్యాప్ చేయండి';
+
+  @override
+  String get astrologer => 'జ్యోతిష్కుడు';
+
+  @override
+  String get reports => 'నివేదికలు';
+
+  @override
+  String get milan => 'మిలన్';
+
+  @override
+  String get forecast => 'అంచనా';
+
+  @override
+  String get rashi => 'రాశి';
+
+  @override
+  String get jupiterFavorsBold => 'గురుడు ధైర్యమైన చర్యలకు అనుకూలం';
+
+  @override
+  String get careerIlluminated => 'మీ కెరీర్ రంగం ప్రకాశిస్తోంది — మీ అంతర్ దృష్టిని నమ్మండి.';
+
+  @override
+  String get todaysForecast => 'ఈరోజు అంచనా';
 }

@@ -1127,6 +1127,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Specialist Reports'**
   String get specialistReports;
+
+  /// No description provided for @deptReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Dept Reports'**
+  String get deptReports;
+
+  /// No description provided for @specialistAnalysesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'15 specialist analyses — Career, Wealth, Health, Love & more'**
+  String get specialistAnalysesDesc;
+
+  /// No description provided for @matchTwoChartsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Match two charts — Ashtakoot, Navamsa, Transit timing & more'**
+  String get matchTwoChartsDesc;
+
+  /// No description provided for @todaysForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Forecast'**
+  String get todaysForecast;
+
+  /// No description provided for @dailyProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily probability forecast for any chart'**
+  String get dailyProbability;
 }
 
 class _AppLocalizationsDelegate

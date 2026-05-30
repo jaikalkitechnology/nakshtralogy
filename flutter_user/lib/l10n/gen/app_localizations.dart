@@ -1266,6 +1266,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'yrs'**
   String get yrs;
+
+  /// No description provided for @chatWithAISpecialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with AI Specialist'**
+  String get chatWithAISpecialist;
+
+  /// No description provided for @tapToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start'**
+  String get tapToStart;
+
+  /// No description provided for @astrologer.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrologer'**
+  String get astrologer;
+
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
+  /// No description provided for @milan.
+  ///
+  /// In en, this message translates to:
+  /// **'Milan'**
+  String get milan;
+
+  /// No description provided for @forecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Forecast'**
+  String get forecast;
+
+  /// No description provided for @rashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi'**
+  String get rashi;
+
+  /// No description provided for @jupiterFavorsBold.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter favors bold moves'**
+  String get jupiterFavorsBold;
+
+  /// No description provided for @careerIlluminated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your career sector is illuminated — trust your instincts.'**
+  String get careerIlluminated;
+
+  /// No description provided for @todaysForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Forecast'**
+  String get todaysForecast;
 }
 
 class _AppLocalizationsDelegate

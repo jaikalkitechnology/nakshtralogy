@@ -584,4 +584,34 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get yrs => 'વર્ષ';
+
+  @override
+  String get chatWithAISpecialist => 'AI નિષ્ણાત સાથે ચેટ કરો';
+
+  @override
+  String get tapToStart => 'શરૂ કરવા ટેપ કરો';
+
+  @override
+  String get astrologer => 'જ્યોતિષી';
+
+  @override
+  String get reports => 'રિપોર્ટ';
+
+  @override
+  String get milan => 'મિલન';
+
+  @override
+  String get forecast => 'ભવિષ્યવાણી';
+
+  @override
+  String get rashi => 'રાશિ';
+
+  @override
+  String get jupiterFavorsBold => 'ગુરુ હિંમતભર્યા પગલાંને સમર્થન આપે છે';
+
+  @override
+  String get careerIlluminated => 'તમારું કારકિર્દી ક્ષેત્ર પ્રકાશિત છે — તમારી સૂઝ પર વિશ્વાસ રાખો.';
+
+  @override
+  String get todaysForecast => 'આજનું ભવિષ્ય';
 }

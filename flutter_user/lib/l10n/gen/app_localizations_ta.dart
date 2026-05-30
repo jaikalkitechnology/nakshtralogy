@@ -585,4 +585,34 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get yrs => 'ஆண்டுகள்';
+
+  @override
+  String get chatWithAISpecialist => 'AI நிபுணருடன் அரட்டை';
+
+  @override
+  String get tapToStart => 'தொடங்க தட்டவும்';
+
+  @override
+  String get astrologer => 'ஜோதிடர்';
+
+  @override
+  String get reports => 'அறிக்கைகள்';
+
+  @override
+  String get milan => 'மிலன்';
+
+  @override
+  String get forecast => 'முன்னறிவிப்பு';
+
+  @override
+  String get rashi => 'ராசி';
+
+  @override
+  String get jupiterFavorsBold => 'குரு தைரியமான நடவடிக்கைகளை ஆதரிக்கிறார்';
+
+  @override
+  String get careerIlluminated => 'உங்கள் தொழில் துறை ஒளிரும் — உங்கள் உள்ளுணர்வை நம்புங்கள்.';
+
+  @override
+  String get todaysForecast => 'இன்றைய முன்னறிவிப்பு';
 }

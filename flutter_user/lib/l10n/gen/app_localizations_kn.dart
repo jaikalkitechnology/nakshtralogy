@@ -585,4 +585,34 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get yrs => 'ವರ್ಷಗಳು';
+
+  @override
+  String get chatWithAISpecialist => 'AI ತಜ್ಞರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ';
+
+  @override
+  String get tapToStart => 'ಪ್ರಾರಂಭಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get astrologer => 'ಜ್ಯೋತಿಷಿ';
+
+  @override
+  String get reports => 'ವರದಿಗಳು';
+
+  @override
+  String get milan => 'ಮಿಲನ್';
+
+  @override
+  String get forecast => 'ಮುನ್ಸೂಚನೆ';
+
+  @override
+  String get rashi => 'ರಾಶಿ';
+
+  @override
+  String get jupiterFavorsBold => 'ಗುರುವು ಧೈರ್ಯದ ಕ್ರಮಗಳಿಗೆ ಅನುಕೂಲ';
+
+  @override
+  String get careerIlluminated => 'ನಿಮ್ಮ ವೃತ್ತಿ ಕ್ಷೇತ್ರ ಬೆಳಗುತ್ತಿದೆ — ನಿಮ್ಮ ಅಂತಃಪ್ರಜ್ಞೆಯನ್ನು ನಂಬಿ.';
+
+  @override
+  String get todaysForecast => 'ಇಂದಿನ ಮುನ್ಸೂಚನೆ';
 }

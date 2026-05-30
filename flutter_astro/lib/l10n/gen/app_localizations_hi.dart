@@ -520,4 +520,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get specialistReports => 'विशेषज्ञ रिपोर्ट';
+
+  @override
+  String get deptReports => 'विभाग रिपोर्ट';
+
+  @override
+  String get specialistAnalysesDesc => '15 विशेषज्ञ विश्लेषण — करियर, धन, स्वास्थ्य, प्रेम और अधिक';
+
+  @override
+  String get matchTwoChartsDesc => 'दो कुंडलियों का मिलान — अष्टकूट, नवांश, गोचर समय और अधिक';
+
+  @override
+  String get todaysForecast => 'आज का पूर्वानुमान';
+
+  @override
+  String get dailyProbability => 'किसी भी कुंडली के लिए दैनिक संभावना पूर्वानुमान';
 }

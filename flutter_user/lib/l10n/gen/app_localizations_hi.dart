@@ -531,6 +531,36 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get next => 'अगला';
+
+  @override
+  String get chatWithAISpecialist => 'AI विशेषज्ञ से चैट करें';
+
+  @override
+  String get tapToStart => 'शुरू करने के लिए टैप करें';
+
+  @override
+  String get astrologer => 'ज्योतिषी';
+
+  @override
+  String get reports => 'रिपोर्ट';
+
+  @override
+  String get milan => 'मिलान';
+
+  @override
+  String get forecast => 'भविष्यवाणी';
+
+  @override
+  String get rashi => 'राशि';
+
+  @override
+  String get jupiterFavorsBold => 'बृहस्पति साहसी कदमों का समर्थन करता है';
+
+  @override
+  String get careerIlluminated => 'आपका करियर क्षेत्र प्रकाशमान है — अपनी अंतर्ज्ञान पर विश्वास करें।';
+
+  @override
+  String get todaysForecast => 'आज का पूर्वानुमान';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1114,4 +1144,34 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get yrs => 'वर्ष';
+
+  @override
+  String get chatWithAISpecialist => 'AI Specialist Se Chat Karein';
+
+  @override
+  String get tapToStart => 'Shuru karne ke liye tap karein';
+
+  @override
+  String get astrologer => 'Jyotishi';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get forecast => 'Forecast';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get jupiterFavorsBold => 'Jupiter bold moves ko support karta hai';
+
+  @override
+  String get careerIlluminated => 'Aapka career sector illuminated hai — apni instinct par trust karein.';
+
+  @override
+  String get todaysForecast => 'Aaj Ka Forecast';
 }

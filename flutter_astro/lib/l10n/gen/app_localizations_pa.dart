@@ -521,4 +521,19 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get specialistReports => 'ਮਾਹਿਰ ਰਿਪੋਰਟ';
+
+  @override
+  String get deptReports => 'ਵਿਭਾਗ ਰਿਪੋਰਟ';
+
+  @override
+  String get specialistAnalysesDesc => '15 ਮਾਹਿਰ ਵਿਸ਼ਲੇਸ਼ਣ — ਕੈਰੀਅਰ, ਧਨ, ਸਿਹਤ, ਪਿਆਰ ਅਤੇ ਹੋਰ';
+
+  @override
+  String get matchTwoChartsDesc => 'ਦੋ ਕੁੰਡਲੀਆਂ ਮਿਲਾਓ — ਅਸ਼ਟਕੂਟ, ਨਵਾਂਸ਼, ਗੋਚਰ ਸਮਾਂ ਅਤੇ ਹੋਰ';
+
+  @override
+  String get todaysForecast => 'ਅੱਜ ਦੀ ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get dailyProbability => 'ਕਿਸੇ ਵੀ ਕੁੰਡਲੀ ਲਈ ਰੋਜ਼ਾਨਾ ਸੰਭਾਵਨਾ ਭਵਿੱਖਬਾਣੀ';
 }

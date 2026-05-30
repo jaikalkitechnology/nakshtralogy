@@ -586,4 +586,34 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get yrs => 'വർഷങ്ങൾ';
+
+  @override
+  String get chatWithAISpecialist => 'AI വിദഗ്ദ്ധനുമായി ചാറ്റ് ചെയ്യുക';
+
+  @override
+  String get tapToStart => 'ആരംഭിക്കാൻ ടാപ്പ് ചെയ്യുക';
+
+  @override
+  String get astrologer => 'ജ്യോത്സ്യൻ';
+
+  @override
+  String get reports => 'റിപ്പോർട്ടുകൾ';
+
+  @override
+  String get milan => 'മിലൻ';
+
+  @override
+  String get forecast => 'പ്രവചനം';
+
+  @override
+  String get rashi => 'രാശി';
+
+  @override
+  String get jupiterFavorsBold => 'വ്യാഴം ധീരമായ നടപടികൾക്ക് അനുകൂലം';
+
+  @override
+  String get careerIlluminated => 'നിങ്ങളുടെ കരിയർ മേഖല പ്രകാശിതമാണ് — നിങ്ങളുടെ സഹജവാസനയെ വിശ്വസിക്കുക.';
+
+  @override
+  String get todaysForecast => 'ഇന്നത്തെ പ്രവചനം';
 }

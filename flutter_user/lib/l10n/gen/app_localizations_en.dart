@@ -585,4 +585,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yrs => 'yrs';
+
+  @override
+  String get chatWithAISpecialist => 'Chat with AI Specialist';
+
+  @override
+  String get tapToStart => 'Tap to start';
+
+  @override
+  String get astrologer => 'Astrologer';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get forecast => 'Forecast';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get jupiterFavorsBold => 'Jupiter favors bold moves';
+
+  @override
+  String get careerIlluminated => 'Your career sector is illuminated — trust your instincts.';
+
+  @override
+  String get todaysForecast => 'Today\'s Forecast';
 }

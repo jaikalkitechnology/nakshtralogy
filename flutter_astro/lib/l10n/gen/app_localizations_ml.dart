@@ -521,4 +521,19 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get specialistReports => 'വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ';
+
+  @override
+  String get deptReports => 'വിഭാഗ റിപ്പോർട്ടുകൾ';
+
+  @override
+  String get specialistAnalysesDesc => '15 വിദഗ്ദ്ധ വിശകലനങ്ങൾ — കരിയർ, സമ്പത്ത്, ആരോഗ്യം, പ്രണയം തുടങ്ങിയവ';
+
+  @override
+  String get matchTwoChartsDesc => 'രണ്ട് ജാതകങ്ങൾ ഒത്തുനോക്കുക — അഷ്ടകൂട്, നവാംശ, ഗോചര സമയം തുടങ്ങിയവ';
+
+  @override
+  String get todaysForecast => 'ഇന്നത്തെ പ്രവചനം';
+
+  @override
+  String get dailyProbability => 'ഏത് ജാതകത്തിനും ദൈനംദിന സാധ്യതാ പ്രവചനം';
 }

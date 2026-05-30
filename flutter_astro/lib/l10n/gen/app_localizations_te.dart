@@ -521,4 +521,19 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get specialistReports => 'నిపుణుల నివేదికలు';
+
+  @override
+  String get deptReports => 'విభాగం నివేదికలు';
+
+  @override
+  String get specialistAnalysesDesc => '15 నిపుణుల విశ్లేషణలు — కెరీర్, సంపద, ఆరోగ్యం, ప్రేమ మరియు మరిన్ని';
+
+  @override
+  String get matchTwoChartsDesc => 'రెండు జాతకాలను సరిపోల్చండి — అష్టకూట్, నవాంశ, గోచర సమయం మరియు మరిన్ని';
+
+  @override
+  String get todaysForecast => 'ఈరోజు అంచనా';
+
+  @override
+  String get dailyProbability => 'ఏదైనా జాతకానికి రోజువారీ సంభావ్యత అంచనా';
 }

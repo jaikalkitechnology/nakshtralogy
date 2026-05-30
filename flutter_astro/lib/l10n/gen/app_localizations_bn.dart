@@ -521,4 +521,19 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get specialistReports => 'বিশেষজ্ঞ প্রতিবেদন';
+
+  @override
+  String get deptReports => 'বিভাগ রিপোর্ট';
+
+  @override
+  String get specialistAnalysesDesc => '১৫টি বিশেষজ্ঞ বিশ্লেষণ — ক্যারিয়ার, সম্পদ, স্বাস্থ্য, প্রেম ও আরও';
+
+  @override
+  String get matchTwoChartsDesc => 'দুটি কুণ্ডলী মেলান — অষ্টকূট, নবাংশ, গোচর সময় ও আরও';
+
+  @override
+  String get todaysForecast => 'আজকের পূর্বাভাস';
+
+  @override
+  String get dailyProbability => 'যেকোনো কুণ্ডলীর জন্য দৈনিক সম্ভাবনা পূর্বাভাস';
 }
