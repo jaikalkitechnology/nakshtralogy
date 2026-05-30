@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_chart_picker.dart';
@@ -53,18 +54,26 @@ class _S extends State<SpecialistListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final groupLabels = {
+      'career': '⚡ ${l.careerPurpose}',
+      'wealth': '💰 ${l.wealthAssets}',
+      'love': '💕 ${l.loveRelationships}',
+      'health': '🌿 ${l.healthWellness}',
+      'soul': '☥ ${l.soulKarma}',
+    };
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A24),
       appBar: widget.showAppBar ? AppBar(backgroundColor: const Color(0xFF0A0A24),
-        title: const Text.rich(TextSpan(children: [
-          TextSpan(text: 'All ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-          TextSpan(text: 'Insights', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+        title: Text.rich(TextSpan(children: [
+          TextSpan(text: '${l.allInsights.split(' ').first} ', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+          TextSpan(text: l.allInsights.split(' ').skip(1).join(' ').isEmpty ? 'Insights' : l.allInsights.split(' ').skip(1).join(' '), style: const TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
         ]))) : null,
       body: ListView(padding: EdgeInsets.only(top: widget.showAppBar ? 0 : 12), children: [
-        _banner(),
+        _banner(l),
         _filterPills(),
         ..._groups.where((g) => _filter == 'all' || g['filter'] == _filter).expand((g) => [
-          _groupDivider(g['label'] as String),
+          _groupDivider(groupLabels[g['filter']] ?? g['label'] as String),
           _engineGrid((g['engines'] as List).cast<Map<String, dynamic>>()),
         ]),
         const SizedBox(height: 80),
@@ -72,7 +81,7 @@ class _S extends State<SpecialistListScreen> {
     );
   }
 
-  Widget _banner() => Container(
+  Widget _banner(AppLocalizations l) => Container(
     margin: const EdgeInsets.fromLTRB(16, 8, 16, 12), padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -82,19 +91,19 @@ class _S extends State<SpecialistListScreen> {
     child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)), const SizedBox(width: 6),
-        const Text('★ YOUR COMPLETE READING', style: TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text('★ ${l.yourCompleteReading}', style: const TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
         const SizedBox(width: 6), Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
       ]),
       const SizedBox(height: 10),
-      const Text.rich(TextSpan(children: [
-        TextSpan(text: '19 expert ', style: TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-        TextSpan(text: 'engines', style: TextStyle(color: AppColors.gold, fontSize: 20, fontStyle: FontStyle.italic, fontFamily: 'serif')),
+      Text.rich(TextSpan(children: [
+        const TextSpan(text: '19 ', style: TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
+        TextSpan(text: l.expertEngines, style: const TextStyle(color: AppColors.gold, fontSize: 20, fontStyle: FontStyle.italic, fontFamily: 'serif')),
       ])),
       const SizedBox(height: 4),
-      const Text('Each insight is a complete consultation', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+      Text(l.eachInsightConsultation, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
       const SizedBox(height: 12),
       Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        _bannerStat('19', 'ENGINES'), _bannerStat('2,000+', 'DATA POINTS'), _bannerStat('14', 'SINGLE'),
+        _bannerStat('19', l.engines), _bannerStat('2,000+', l.dataPoints), _bannerStat('14', l.singleChart),
       ]),
     ]));
 

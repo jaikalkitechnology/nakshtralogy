@@ -68,7 +68,7 @@ class _HomeTabState extends State<HomeTab> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(children: [
-              const Expanded(child: Text('Specialist Reports',
+              Expanded(child: Text(l.specialistReports,
                   style: TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
               GestureDetector(
                 onTap: widget.onSeeAllServices,
