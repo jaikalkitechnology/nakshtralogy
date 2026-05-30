@@ -464,4 +464,22 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get editProfile => 'പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യുക';
+
+  @override
+  String get totalCredit => 'ആകെ ക്രെഡിറ്റ്';
+
+  @override
+  String get totalDebit => 'ആകെ ഡെബിറ്റ്';
+
+  @override
+  String get allTypes => 'എല്ലാ തരങ്ങളും';
+
+  @override
+  String get prev => 'മുമ്പത്തെ';
+
+  @override
+  String get next => 'അടുത്തത്';
+
+  @override
+  String get page => 'പേജ്';
 }

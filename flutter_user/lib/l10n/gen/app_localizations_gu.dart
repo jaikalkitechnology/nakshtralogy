@@ -512,4 +512,22 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get comingSoon => 'ટૂંક સમયમાં આવી રહ્યું છે';
+
+  @override
+  String get totalCredit => 'કુલ ક્રેડિટ';
+
+  @override
+  String get totalDebit => 'કુલ ડેબિટ';
+
+  @override
+  String get statement => 'સ્ટેટમેન્ટ';
+
+  @override
+  String get allTypes => 'બધા પ્રકાર';
+
+  @override
+  String get prev => 'પાછળ';
+
+  @override
+  String get next => 'આગળ';
 }

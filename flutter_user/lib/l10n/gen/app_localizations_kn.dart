@@ -513,4 +513,22 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get comingSoon => 'ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ';
+
+  @override
+  String get totalCredit => 'ಒಟ್ಟು ಕ್ರೆಡಿಟ್';
+
+  @override
+  String get totalDebit => 'ಒಟ್ಟು ಡೆಬಿಟ್';
+
+  @override
+  String get statement => 'ಹೇಳಿಕೆ';
+
+  @override
+  String get allTypes => 'ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು';
+
+  @override
+  String get prev => 'ಹಿಂದಿನ';
+
+  @override
+  String get next => 'ಮುಂದಿನ';
 }

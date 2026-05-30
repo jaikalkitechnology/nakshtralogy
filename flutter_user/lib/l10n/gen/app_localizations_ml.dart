@@ -514,4 +514,22 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get comingSoon => 'ഉടൻ വരുന്നു';
+
+  @override
+  String get totalCredit => 'ആകെ ക്രെഡിറ്റ്';
+
+  @override
+  String get totalDebit => 'ആകെ ഡെബിറ്റ്';
+
+  @override
+  String get statement => 'സ്റ്റേറ്റ്‌മെന്റ്';
+
+  @override
+  String get allTypes => 'എല്ലാ തരങ്ങളും';
+
+  @override
+  String get prev => 'മുമ്പത്തെ';
+
+  @override
+  String get next => 'അടുത്തത്';
 }

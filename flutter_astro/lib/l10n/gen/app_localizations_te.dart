@@ -464,4 +464,22 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get editProfile => 'ప్రొఫైల్ సవరించు';
+
+  @override
+  String get totalCredit => 'మొత్తం క్రెడిట్';
+
+  @override
+  String get totalDebit => 'మొత్తం డెబిట్';
+
+  @override
+  String get allTypes => 'అన్ని రకాలు';
+
+  @override
+  String get prev => 'మునుపటి';
+
+  @override
+  String get next => 'తదుపరి';
+
+  @override
+  String get page => 'పేజీ';
 }

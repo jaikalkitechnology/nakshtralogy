@@ -463,4 +463,22 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get editProfile => 'પ્રોફાઇલ સંપાદિત કરો';
+
+  @override
+  String get totalCredit => 'કુલ ક્રેડિટ';
+
+  @override
+  String get totalDebit => 'કુલ ડેબિટ';
+
+  @override
+  String get allTypes => 'બધા પ્રકાર';
+
+  @override
+  String get prev => 'પાછળ';
+
+  @override
+  String get next => 'આગળ';
+
+  @override
+  String get page => 'પૃષ્ઠ';
 }

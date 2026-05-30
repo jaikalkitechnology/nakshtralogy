@@ -464,4 +464,22 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get editProfile => 'ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ';
+
+  @override
+  String get totalCredit => 'ਕੁੱਲ ਕ੍ਰੈਡਿਟ';
+
+  @override
+  String get totalDebit => 'ਕੁੱਲ ਡੈਬਿਟ';
+
+  @override
+  String get allTypes => 'ਸਭ ਕਿਸਮਾਂ';
+
+  @override
+  String get prev => 'ਪਿਛਲਾ';
+
+  @override
+  String get next => 'ਅਗਲਾ';
+
+  @override
+  String get page => 'ਪੰਨਾ';
 }

@@ -465,4 +465,22 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get editProfile => 'Profile Edit Karein';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get allTypes => 'Sabhi Types';
+
+  @override
+  String get prev => 'Pichla';
+
+  @override
+  String get next => 'Agla';
+
+  @override
+  String get page => 'Page';
 }

@@ -464,4 +464,22 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get editProfile => 'ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ';
+
+  @override
+  String get totalCredit => 'ಒಟ್ಟು ಕ್ರೆಡಿಟ್';
+
+  @override
+  String get totalDebit => 'ಒಟ್ಟು ಡೆಬಿಟ್';
+
+  @override
+  String get allTypes => 'ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು';
+
+  @override
+  String get prev => 'ಹಿಂದಿನ';
+
+  @override
+  String get next => 'ಮುಂದಿನ';
+
+  @override
+  String get page => 'ಪುಟ';
 }

@@ -513,4 +513,22 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get comingSoon => 'விரைவில் வருகிறது';
+
+  @override
+  String get totalCredit => 'மொத்த கிரெடிட்';
+
+  @override
+  String get totalDebit => 'மொத்த டெபிட்';
+
+  @override
+  String get statement => 'அறிக்கை';
+
+  @override
+  String get allTypes => 'அனைத்து வகைகள்';
+
+  @override
+  String get prev => 'முந்தைய';
+
+  @override
+  String get next => 'அடுத்த';
 }

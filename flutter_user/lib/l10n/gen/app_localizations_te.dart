@@ -512,4 +512,22 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get comingSoon => 'త్వరలో వస్తోంది';
+
+  @override
+  String get totalCredit => 'మొత్తం క్రెడిట్';
+
+  @override
+  String get totalDebit => 'మొత్తం డెబిట్';
+
+  @override
+  String get statement => 'స్టేట్‌మెంట్';
+
+  @override
+  String get allTypes => 'అన్ని రకాలు';
+
+  @override
+  String get prev => 'మునుపటి';
+
+  @override
+  String get next => 'తదుపరి';
 }

@@ -513,4 +513,22 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get comingSoon => 'ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ';
+
+  @override
+  String get totalCredit => 'ਕੁੱਲ ਕ੍ਰੈਡਿਟ';
+
+  @override
+  String get totalDebit => 'ਕੁੱਲ ਡੈਬਿਟ';
+
+  @override
+  String get statement => 'ਸਟੇਟਮੈਂਟ';
+
+  @override
+  String get allTypes => 'ਸਭ ਕਿਸਮਾਂ';
+
+  @override
+  String get prev => 'ਪਿਛਲਾ';
+
+  @override
+  String get next => 'ਅਗਲਾ';
 }

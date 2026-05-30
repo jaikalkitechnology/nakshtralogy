@@ -463,4 +463,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editProfile => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get totalCredit => 'कुल क्रेडिट';
+
+  @override
+  String get totalDebit => 'कुल डेबिट';
+
+  @override
+  String get allTypes => 'सभी प्रकार';
+
+  @override
+  String get prev => 'पिछला';
+
+  @override
+  String get next => 'अगला';
+
+  @override
+  String get page => 'पृष्ठ';
 }

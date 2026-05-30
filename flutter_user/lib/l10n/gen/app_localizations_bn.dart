@@ -511,4 +511,22 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get comingSoon => 'শীঘ্রই আসছে';
+
+  @override
+  String get totalCredit => 'মোট ক্রেডিট';
+
+  @override
+  String get totalDebit => 'মোট ডেবিট';
+
+  @override
+  String get statement => 'স্টেটমেন্ট';
+
+  @override
+  String get allTypes => 'সব ধরনের';
+
+  @override
+  String get prev => 'আগের';
+
+  @override
+  String get next => 'পরের';
 }

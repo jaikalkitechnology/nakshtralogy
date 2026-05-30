@@ -464,4 +464,22 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get editProfile => 'প্রোফাইল সম্পাদনা করুন';
+
+  @override
+  String get totalCredit => 'মোট ক্রেডিট';
+
+  @override
+  String get totalDebit => 'মোট ডেবিট';
+
+  @override
+  String get allTypes => 'সব ধরনের';
+
+  @override
+  String get prev => 'আগের';
+
+  @override
+  String get next => 'পরের';
+
+  @override
+  String get page => 'পৃষ্ঠা';
 }
