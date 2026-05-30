@@ -165,5 +165,11 @@
 
   "notifications": "ಅಧಿಸೂಚನೆಗಳು",
   "biometricLogin": "ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್",
-  "editProfile": "ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ"
+  "editProfile": "ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ",
+  "totalCredit": "ಒಟ್ಟು ಕ್ರೆಡಿಟ್",
+  "totalDebit": "ಒಟ್ಟು ಡೆಬಿಟ್",
+  "allTypes": "ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು",
+  "prev": "ಹಿಂದಿನ",
+  "next": "ಮುಂದಿನ",
+  "page": "ಪುಟ"
 }

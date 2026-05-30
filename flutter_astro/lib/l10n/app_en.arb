@@ -165,5 +165,11 @@
 
   "notifications": "Notifications",
   "biometricLogin": "Biometric Login",
-  "editProfile": "Edit Profile"
+  "editProfile": "Edit Profile",
+  "totalCredit": "Total Credit",
+  "totalDebit": "Total Debit",
+  "allTypes": "All types",
+  "prev": "Prev",
+  "next": "Next",
+  "page": "Page"
 }

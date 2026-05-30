@@ -181,5 +181,11 @@
   "biometricLogin": "Biometric Login",
   "pastVoiceConsultations": "Pichle voice consultations",
   "pastTextConversations": "Pichli text baatcheet",
-  "comingSoon": "Jaldi aa raha hai"
+  "comingSoon": "Jaldi aa raha hai",
+  "totalCredit": "Total Credit",
+  "totalDebit": "Total Debit",
+  "statement": "Statement",
+  "allTypes": "Sabhi Types",
+  "prev": "Pichla",
+  "next": "Agla"
 }

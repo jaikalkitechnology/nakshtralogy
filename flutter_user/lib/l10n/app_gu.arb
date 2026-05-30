@@ -181,5 +181,11 @@
   "biometricLogin": "બાયોમેટ્રિક લૉગિન",
   "pastVoiceConsultations": "ભૂતકાળના વૉઇસ પરામર્શ",
   "pastTextConversations": "ભૂતકાળની ટેક્સ્ટ વાતચીત",
-  "comingSoon": "ટૂંક સમયમાં આવી રહ્યું છે"
+  "comingSoon": "ટૂંક સમયમાં આવી રહ્યું છે",
+  "totalCredit": "કુલ ક્રેડિટ",
+  "totalDebit": "કુલ ડેબિટ",
+  "statement": "સ્ટેટમેન્ટ",
+  "allTypes": "બધા પ્રકાર",
+  "prev": "પાછળ",
+  "next": "આગળ"
 }

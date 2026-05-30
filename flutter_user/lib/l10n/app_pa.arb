@@ -181,5 +181,11 @@
   "biometricLogin": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਿਨ",
   "pastVoiceConsultations": "ਪਿਛਲੀਆਂ ਵੌਇਸ ਸਲਾਹਾਂ",
   "pastTextConversations": "ਪਿਛਲੀਆਂ ਟੈਕਸਟ ਗੱਲਬਾਤ",
-  "comingSoon": "ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ"
+  "comingSoon": "ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ",
+  "totalCredit": "ਕੁੱਲ ਕ੍ਰੈਡਿਟ",
+  "totalDebit": "ਕੁੱਲ ਡੈਬਿਟ",
+  "statement": "ਸਟੇਟਮੈਂਟ",
+  "allTypes": "ਸਭ ਕਿਸਮਾਂ",
+  "prev": "ਪਿਛਲਾ",
+  "next": "ਅਗਲਾ"
 }

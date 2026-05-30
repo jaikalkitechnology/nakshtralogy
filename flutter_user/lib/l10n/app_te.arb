@@ -181,5 +181,11 @@
   "biometricLogin": "బయోమెట్రిక్ లాగిన్",
   "pastVoiceConsultations": "గత వాయిస్ సంప్రదింపులు",
   "pastTextConversations": "గత టెక్స్ట్ సంభాషణలు",
-  "comingSoon": "త్వరలో వస్తోంది"
+  "comingSoon": "త్వరలో వస్తోంది",
+  "totalCredit": "మొత్తం క్రెడిట్",
+  "totalDebit": "మొత్తం డెబిట్",
+  "statement": "స్టేట్‌మెంట్",
+  "allTypes": "అన్ని రకాలు",
+  "prev": "మునుపటి",
+  "next": "తదుపరి"
 }

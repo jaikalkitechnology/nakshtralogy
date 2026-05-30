@@ -181,5 +181,11 @@
   "biometricLogin": "ബയോമെട്രിക് ലോഗിൻ",
   "pastVoiceConsultations": "മുൻ വോയ്‌സ് കൺസൾട്ടേഷനുകൾ",
   "pastTextConversations": "മുൻ ടെക്‌സ്‌റ്റ് സംഭാഷണങ്ങൾ",
-  "comingSoon": "ഉടൻ വരുന്നു"
+  "comingSoon": "ഉടൻ വരുന്നു",
+  "totalCredit": "ആകെ ക്രെഡിറ്റ്",
+  "totalDebit": "ആകെ ഡെബിറ്റ്",
+  "statement": "സ്റ്റേറ്റ്‌മെന്റ്",
+  "allTypes": "എല്ലാ തരങ്ങളും",
+  "prev": "മുമ്പത്തെ",
+  "next": "അടുത്തത്"
 }

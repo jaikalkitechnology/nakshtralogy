@@ -165,5 +165,11 @@
 
   "notifications": "বিজ্ঞপ্তি",
   "biometricLogin": "বায়োমেট্রিক লগইন",
-  "editProfile": "প্রোফাইল সম্পাদনা করুন"
+  "editProfile": "প্রোফাইল সম্পাদনা করুন",
+  "totalCredit": "মোট ক্রেডিট",
+  "totalDebit": "মোট ডেবিট",
+  "allTypes": "সব ধরনের",
+  "prev": "আগের",
+  "next": "পরের",
+  "page": "পৃষ্ঠা"
 }

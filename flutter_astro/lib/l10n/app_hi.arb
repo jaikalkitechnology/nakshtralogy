@@ -165,5 +165,11 @@
 
   "notifications": "सूचनाएं",
   "biometricLogin": "बायोमेट्रिक लॉगिन",
-  "editProfile": "प्रोफ़ाइल संपादित करें"
+  "editProfile": "प्रोफ़ाइल संपादित करें",
+  "totalCredit": "कुल क्रेडिट",
+  "totalDebit": "कुल डेबिट",
+  "allTypes": "सभी प्रकार",
+  "prev": "पिछला",
+  "next": "अगला",
+  "page": "पृष्ठ"
 }

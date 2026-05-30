@@ -165,5 +165,11 @@
 
   "notifications": "Notifications",
   "biometricLogin": "Biometric Login",
-  "editProfile": "Profile Edit Karein"
+  "editProfile": "Profile Edit Karein",
+  "totalCredit": "Total Credit",
+  "totalDebit": "Total Debit",
+  "allTypes": "Sabhi Types",
+  "prev": "Pichla",
+  "next": "Agla",
+  "page": "Page"
 }

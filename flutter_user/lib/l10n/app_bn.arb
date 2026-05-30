@@ -181,5 +181,11 @@
   "biometricLogin": "বায়োমেট্রিক লগইন",
   "pastVoiceConsultations": "আগের ভয়েস পরামর্শ",
   "pastTextConversations": "আগের টেক্সট কথোপকথন",
-  "comingSoon": "শীঘ্রই আসছে"
+  "comingSoon": "শীঘ্রই আসছে",
+  "totalCredit": "মোট ক্রেডিট",
+  "totalDebit": "মোট ডেবিট",
+  "statement": "স্টেটমেন্ট",
+  "allTypes": "সব ধরনের",
+  "prev": "আগের",
+  "next": "পরের"
 }

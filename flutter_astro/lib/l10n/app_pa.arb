@@ -165,5 +165,11 @@
 
   "notifications": "ਸੂਚਨਾਵਾਂ",
   "biometricLogin": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਿਨ",
-  "editProfile": "ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ"
+  "editProfile": "ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ",
+  "totalCredit": "ਕੁੱਲ ਕ੍ਰੈਡਿਟ",
+  "totalDebit": "ਕੁੱਲ ਡੈਬਿਟ",
+  "allTypes": "ਸਭ ਕਿਸਮਾਂ",
+  "prev": "ਪਿਛਲਾ",
+  "next": "ਅਗਲਾ",
+  "page": "ਪੰਨਾ"
 }

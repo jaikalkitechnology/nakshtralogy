@@ -145,18 +145,18 @@ class _EarningsTabState extends State<EarningsTab> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('THIS MONTH', style: TextStyle(
+                Text(l.thisMonth, style: TextStyle(
                   fontSize: 9, letterSpacing: 2,
                   color: AppColors.midnight.withOpacity(0.7), fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text('\u20b9$balance', style: const TextStyle(color: AppColors.midnight, fontSize: 40, fontWeight: FontWeight.w700, height: 1)),
                 const SizedBox(height: 14),
                 Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  _WalletStat(label: 'Total Earned', value: '₹$totalEarned'),
+                  _WalletStat(label: l.totalCredit, value: '₹$totalEarned'),
                   Container(width: 1, height: 30, color: AppColors.border),
-                  _WalletStat(label: 'Withdrawn', value: '₹$totalWithdrawn'),
+                  _WalletStat(label: l.totalDebit, value: '₹$totalWithdrawn'),
                   Container(width: 1, height: 30, color: AppColors.border),
-                  _WalletStat(label: 'Withdrawable', value: '₹$withdrawable'),
+                  _WalletStat(label: l.withdraw, value: '₹$withdrawable'),
                 ]),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
@@ -213,7 +213,7 @@ class _EarningsTabState extends State<EarningsTab> {
                     icon: const Icon(Icons.chevron_left),
                     color: AppColors.primary,
                   ),
-                  Text('Page ${state.page + 1}', style: const TextStyle(color: AppColors.textSecondary)),
+                  Text('${l.page} ${state.page + 1}', style: const TextStyle(color: AppColors.textSecondary)),
                   IconButton(
                     onPressed: (state.page + 1) * 10 < state.total ? () => context.read<AstroWalletBloc>().add(AstroWalletLoadRequested(page: state.page + 1, kind: state.kind)) : null,
                     icon: const Icon(Icons.chevron_right),

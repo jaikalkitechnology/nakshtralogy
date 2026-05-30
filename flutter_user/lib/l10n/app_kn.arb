@@ -181,5 +181,11 @@
   "biometricLogin": "ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್",
   "pastVoiceConsultations": "ಹಿಂದಿನ ಧ್ವನಿ ಸಮಾಲೋಚನೆಗಳು",
   "pastTextConversations": "ಹಿಂದಿನ ಪಠ್ಯ ಸಂಭಾಷಣೆಗಳು",
-  "comingSoon": "ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ"
+  "comingSoon": "ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ",
+  "totalCredit": "ಒಟ್ಟು ಕ್ರೆಡಿಟ್",
+  "totalDebit": "ಒಟ್ಟು ಡೆಬಿಟ್",
+  "statement": "ಹೇಳಿಕೆ",
+  "allTypes": "ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು",
+  "prev": "ಹಿಂದಿನ",
+  "next": "ಮುಂದಿನ"
 }

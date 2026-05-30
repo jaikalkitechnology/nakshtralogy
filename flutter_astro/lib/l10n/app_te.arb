@@ -165,5 +165,11 @@
 
   "notifications": "నోటిఫికేషన్లు",
   "biometricLogin": "బయోమెట్రిక్ లాగిన్",
-  "editProfile": "ప్రొఫైల్ సవరించు"
+  "editProfile": "ప్రొఫైల్ సవరించు",
+  "totalCredit": "మొత్తం క్రెడిట్",
+  "totalDebit": "మొత్తం డెబిట్",
+  "allTypes": "అన్ని రకాలు",
+  "prev": "మునుపటి",
+  "next": "తదుపరి",
+  "page": "పేజీ"
 }

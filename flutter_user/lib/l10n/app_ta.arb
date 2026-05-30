@@ -181,5 +181,11 @@
   "biometricLogin": "பயோமெட்ரிக் உள்நுழைவு",
   "pastVoiceConsultations": "முந்தைய குரல் ஆலோசனைகள்",
   "pastTextConversations": "முந்தைய உரை உரையாடல்கள்",
-  "comingSoon": "விரைவில் வருகிறது"
+  "comingSoon": "விரைவில் வருகிறது",
+  "totalCredit": "மொத்த கிரெடிட்",
+  "totalDebit": "மொத்த டெபிட்",
+  "statement": "அறிக்கை",
+  "allTypes": "அனைத்து வகைகள்",
+  "prev": "முந்தைய",
+  "next": "அடுத்த"
 }

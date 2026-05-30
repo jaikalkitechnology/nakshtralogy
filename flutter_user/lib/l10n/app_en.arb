@@ -181,5 +181,11 @@
   "biometricLogin": "Biometric Login",
   "pastVoiceConsultations": "Past voice consultations",
   "pastTextConversations": "Past text conversations",
-  "comingSoon": "Coming soon"
+  "comingSoon": "Coming soon",
+  "totalCredit": "Total Credit",
+  "totalDebit": "Total Debit",
+  "statement": "Statement",
+  "allTypes": "All types",
+  "prev": "Prev",
+  "next": "Next"
 }
