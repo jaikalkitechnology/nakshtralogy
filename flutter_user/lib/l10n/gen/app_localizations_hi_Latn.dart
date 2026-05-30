@@ -514,4 +514,22 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get comingSoon => 'Jaldi aa raha hai';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get statement => 'Statement';
+
+  @override
+  String get allTypes => 'Sabhi Types';
+
+  @override
+  String get prev => 'Pichla';
+
+  @override
+  String get next => 'Agla';
 }

@@ -513,6 +513,24 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get comingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get totalCredit => 'कुल क्रेडिट';
+
+  @override
+  String get totalDebit => 'कुल डेबिट';
+
+  @override
+  String get statement => 'विवरण';
+
+  @override
+  String get allTypes => 'सभी प्रकार';
+
+  @override
+  String get prev => 'पिछला';
+
+  @override
+  String get next => 'अगला';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1024,4 +1042,22 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get comingSoon => 'Jaldi aa raha hai';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get statement => 'Statement';
+
+  @override
+  String get allTypes => 'Sabhi Types';
+
+  @override
+  String get prev => 'Pichla';
+
+  @override
+  String get next => 'Agla';
 }

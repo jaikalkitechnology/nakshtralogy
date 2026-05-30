@@ -513,4 +513,22 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get comingSoon => 'लवकरच येत आहे';
+
+  @override
+  String get totalCredit => 'एकूण क्रेडिट';
+
+  @override
+  String get totalDebit => 'एकूण डेबिट';
+
+  @override
+  String get statement => 'विवरण';
+
+  @override
+  String get allTypes => 'सर्व प्रकार';
+
+  @override
+  String get prev => 'मागील';
+
+  @override
+  String get next => 'पुढील';
 }
