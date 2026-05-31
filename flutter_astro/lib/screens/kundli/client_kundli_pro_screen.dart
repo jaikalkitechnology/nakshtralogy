@@ -163,7 +163,7 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
             const SizedBox(width: 10),
             Expanded(child: ElevatedButton(
               onPressed: () { Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notes saved'))); },
-              child: const Text('Save'),
+              child: Text(AppLocalizations.of(context)?.save ?? 'Save'),
             )),
           ]),
         ]),

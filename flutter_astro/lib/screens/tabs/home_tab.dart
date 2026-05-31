@@ -41,7 +41,7 @@ class _HomeTabState extends State<HomeTab> {
               Navigator.pop(ctx, {'title': titleCtrl.text.trim(), 'description': descCtrl.text.trim()});
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white),
-            child: const Text('Start'),
+            child: Text(AppLocalizations.of(context)?.start ?? 'Start'),
           ),
         ],
       ),

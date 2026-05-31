@@ -129,7 +129,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 onPressed: _requesting ? null : _requestAll,
                 child: _requesting
                     ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
-                    : const Text('Grant Permissions'),
+                    : Text(AppLocalizations.of(context)?.grantPermissions ?? 'Grant Permissions'),
               ),
               const SizedBox(height: 8),
               TextButton(

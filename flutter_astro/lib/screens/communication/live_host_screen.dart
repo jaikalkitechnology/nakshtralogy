@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../theme/app_theme.dart';
@@ -198,7 +199,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                   ElevatedButton.icon(
                     onPressed: _goLive,
                     icon: const Icon(Icons.videocam),
-                    label: const Text('Go Live'),
+                    label: Text(AppLocalizations.of(context)?.goLive ?? 'Go Live'),
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, minimumSize: const Size(180, 52)),
                   ),
                 ]),

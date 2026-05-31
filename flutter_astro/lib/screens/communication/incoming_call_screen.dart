@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'active_call_screen.dart';
@@ -261,7 +262,7 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(minimumSize: const Size(200, 48)),
-                child: const Text('Close'),
+                child: Text(AppLocalizations.of(context)?.ok ?? 'Close'),
               ),
             const SizedBox(height: 60),
           ],

@@ -98,7 +98,7 @@ class KycPendingScreen extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: () => context.read<KycBloc>().add(KycStatusRequested()),
                             icon: const Icon(Icons.refresh, size: 16),
-                            label: const Text('Refresh'),
+                            label: Text(AppLocalizations.of(context)?.refresh ?? 'Refresh'),
                           ),
                         ),
                         const SizedBox(width: 8),

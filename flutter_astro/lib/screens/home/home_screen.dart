@@ -407,7 +407,7 @@ class _ChatRequestDialogState extends State<_ChatRequestDialog> {
           icon: _loading
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
               : const Icon(Icons.check, size: 18),
-          label: const Text('Accept'),
+          label: Text(AppLocalizations.of(context)?.accept ?? 'Accept'),
           style: ElevatedButton.styleFrom(minimumSize: const Size(120, 44)),
         ),
       ],
