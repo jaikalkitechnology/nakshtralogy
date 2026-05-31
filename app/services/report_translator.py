@@ -86,6 +86,47 @@ TRANSLATIONS = {
         # Swakshetra dignity
         "Swakshetra 🏠": "स्वगृही 🏠",
         "Normal": "सामान्य",
+        # Education archetypes
+        "classical-scholar": "शास्त्रीय-विद्वान",
+        "intellect-with-authority": "प्रतिभा-सह-अधिकार",
+        "researcher-investigator": "शोधकर्ता-जांचकर्ता",
+        "modern-technologist": "आधुनिक-प्रौद्योगिकीविद",
+        "wisdom-teacher": "ज्ञान-गुरु",
+        "creative-artist": "सृजनात्मक-कलाकार",
+        "patient-builder": "धैर्यवान-निर्माता",
+        "generalist-learner": "बहुमुखी-शिक्षार्थी",
+        # Education learning styles
+        "quick-analytical-visual": "तेज-विश्लेषणात्मक-दृश्य",
+        "deep-philosophical-synthesizing": "गहन-दार्शनिक-संश्लेषण",
+        "intuitive-emotional-kinesthetic": "अंतर्ज्ञानी-भावनात्मक-गतिज",
+        "action-experiential-competitive": "क्रियाशील-अनुभवात्मक-प्रतिस्पर्धी",
+        "systematic-methodical-disciplined": "व्यवस्थित-पद्धतिगत-अनुशासित",
+        "aesthetic-creative-associative": "सौंदर्यपरक-सृजनात्मक-साहचर्य",
+        "unconventional-innovative-research-oriented": "अपरंपरागत-नवोन्मेषी-शोध-उन्मुख",
+        "mixed-adaptive-balanced": "मिश्रित-अनुकूली-संतुलित",
+        # Education subject directions
+        "leadership/administration/political-science/medicine/government-studies": "नेतृत्व/प्रशासन/राजनीति-विज्ञान/चिकित्सा/सरकारी-अध्ययन",
+        "psychology/nursing/hospitality/liquids/food-science/public-relations": "मनोविज्ञान/नर्सिंग/आतिथ्य/खाद्य-विज्ञान/जनसंपर्क",
+        "engineering/military-studies/surgery/sports/real-estate/mechanics": "इंजीनियरिंग/सैन्य-अध्ययन/शल्यचिकित्सा/खेल/रियल-एस्टेट/यांत्रिकी",
+        "commerce/IT/communication/accounting/writing/linguistics/data-analytics": "वाणिज्य/आईटी/संचार/लेखा/लेखन/भाषा-विज्ञान/डेटा-विश्लेषण",
+        "law/philosophy/education/finance/religion/advisory-studies": "कानून/दर्शन/शिक्षा/वित्त/धर्म/सलाहकार-अध्ययन",
+        "arts/design/music/luxury-brands/fashion/entertainment/beauty": "कला/डिज़ाइन/संगीत/विलास-ब्रांड/फैशन/मनोरंजन/सौंदर्य",
+        "research/engineering/infrastructure/mining/service-industry/labor-studies": "अनुसंधान/इंजीनियरिंग/अवसंरचना/खनन/सेवा-उद्योग/श्रम-अध्ययन",
+        # Wealth types
+        "earned": "अर्जित", "inherited": "विरासत",
+        "speculative": "सट्टा", "mixed": "मिश्रित",
+        "professional": "पेशेवर", "business": "व्यापार",
+        "passive": "निष्क्रिय",
+        # Investment styles
+        "accumulator": "संचयकर्ता", "trader": "व्यापारी",
+        "speculator": "सट्टेबाज", "passive-holder": "निष्क्रिय-धारक",
+        "balanced-investor": "संतुलित-निवेशक",
+        # Wealth acquisition styles
+        "effort-based": "प्रयास-आधारित",
+        "relationship-based": "संबंध-आधारित",
+        "balanced": "संतुलित",
+        # Risk categories
+        "high": "उच्च", "medium": "मध्यम", "low": "निम्न",
     },
     "mr": {
         "leadership-executive": "नेतृत्व-कार्यकारी",
@@ -181,6 +222,13 @@ _TRANSLATE_VALUE_KEYS = {
     "tenth_lord_dignity", "eleventh_lord_dignity",
     "amatyakaraka_business_direction", "primary_business_direction_recommendation",
     "current_business_phase_signature",
+    # Education
+    "intellectual_archetype", "learning_style_signature",
+    "amatyakaraka_subject_direction", "primary_subject_direction",
+    "primary_education_direction_recommendation", "action_direction",
+    # Wealth
+    "wealth_type", "investment_style", "expense_risk_category",
+    "wealth_acquisition_style",
 }
 
 # Keys whose values are planet names
