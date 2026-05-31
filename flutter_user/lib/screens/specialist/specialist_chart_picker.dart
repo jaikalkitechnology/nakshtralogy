@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
@@ -57,12 +58,12 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _charts.isEmpty
-              ? const Center(child: Text('No charts. Create a birth chart first.', style: TextStyle(color: AppColors.textSecondary)))
+              ? Center(child: Text(AppLocalizations.of(context)?.noCharts ?? 'No charts. Create a birth chart first.', style: const TextStyle(color: AppColors.textSecondary)))
               : Column(children: [
                   Container(
                     width: double.infinity, padding: const EdgeInsets.all(14),
                     color: AppColors.primary.withOpacity(0.06),
-                    child: const Text('Select a birth chart to analyze', style: TextStyle(color: AppColors.primary, fontSize: 13)),
+                    child: Text(AppLocalizations.of(context)?.selectChart ?? 'Select a birth chart to analyze', style: const TextStyle(color: AppColors.primary, fontSize: 13)),
                   ),
                   Expanded(child: ListView.builder(
                     padding: const EdgeInsets.all(12),

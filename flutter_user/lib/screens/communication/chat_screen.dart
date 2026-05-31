@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../theme/app_theme.dart';
@@ -128,7 +129,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   title: const Text('Session Ended', style: TextStyle(color: AppColors.primary)),
                   content: Text(data['reason'] ?? 'Chat session has ended', style: const TextStyle(color: AppColors.textPrimary)),
                   actions: [
-                    ElevatedButton(onPressed: () { Navigator.pop(ctx); Navigator.pop(context); }, child: const Text('OK')),
+                    ElevatedButton(onPressed: () { Navigator.pop(ctx); Navigator.pop(context); }, child: Text(AppLocalizations.of(context)?.ok ?? 'OK')),
                   ],
                 ),
               );
@@ -225,7 +226,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: const Text('Upload')),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: Text(AppLocalizations.of(context)?.upload ?? 'Upload')),
         ],
       ),
     );
@@ -233,7 +234,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (result == null || result.isEmpty) return;
     final file = File(result);
     if (!await file.exists()) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('File not found')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.fileNotFound ?? 'File not found')));
       return;
     }
 
@@ -268,7 +269,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('End Chat'),
+            child: Text(AppLocalizations.of(context)?.endChat ?? 'End Chat'),
           ),
         ],
       ),
