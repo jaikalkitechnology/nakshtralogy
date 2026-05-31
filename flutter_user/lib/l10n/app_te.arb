@@ -321,5 +321,17 @@
   "bhakootAxis": "భకూట్ అక్షం",
   "basis": "ఆధారం",
   "selectChartsForMilan": "మిలన్ కోసం 2 జాతకాలు ఎంచుకోండి",
-  "selectMultiCharts": "2-5 జాతకాలు ఎంచుకోండి"
+  "selectMultiCharts": "2-5 జాతకాలు ఎంచుకోండి",
+  "running": "నడుస్తోంది",
+  "past": "గతం",
+  "topActiveDoshas": "టాప్ యాక్టివ్ దోషాలు",
+  "allDoshas": "అన్ని దోషాలు",
+  "activeYogas": "యాక్టివ్ యోగాలు",
+  "activeDoshas": "యాక్టివ్ దోషాలు",
+  "yogaAnalysis": "యోగ విశ్లేషణ",
+  "factors": "కారకాలు",
+  "dominantPlanet": "ప్రధాన గ్రహం",
+  "startSession": "సెషన్ ప్రారంభించండి",
+  "notesSaved": "నోట్స్ సేవ్ అయ్యాయి",
+  "unlocked": "అన్‌లాక్! మీ రీడింగ్ ఆనందించండి."
 }

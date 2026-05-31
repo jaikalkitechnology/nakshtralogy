@@ -321,5 +321,17 @@
   "bhakootAxis": "ભકૂટ અક્ષ",
   "basis": "આધાર",
   "selectChartsForMilan": "મિલન માટે 2 કુંડળીઓ પસંદ કરો",
-  "selectMultiCharts": "2-5 કુંડળીઓ પસંદ કરો"
+  "selectMultiCharts": "2-5 કુંડળીઓ પસંદ કરો",
+  "running": "ચાલુ",
+  "past": "ભૂતકાળ",
+  "topActiveDoshas": "ટોચના સક્રિય દોષ",
+  "allDoshas": "બધા દોષ",
+  "activeYogas": "સક્રિય યોગ",
+  "activeDoshas": "સક્રિય દોષ",
+  "yogaAnalysis": "યોગ વિશ્લેષણ",
+  "factors": "કારણો",
+  "dominantPlanet": "પ્રમુખ ગ્રહ",
+  "startSession": "સત્ર શરૂ કરો",
+  "notesSaved": "નોંધ સાચવાયા",
+  "unlocked": "અનલૉક! તમારું વાંચન માણો."
 }

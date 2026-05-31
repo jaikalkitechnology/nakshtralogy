@@ -153,14 +153,14 @@ class CharacterWidget extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (yogas.isNotEmpty) ...[
-          const Text('Active Yogas', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)?.activeYogas ?? 'Active Yogas', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Wrap(spacing: 6, runSpacing: 4, children: yogas.take(6).map<Widget>((y) =>
               _chip('', y.toString(), Colors.green)).toList()),
         ],
         if (yogas.isNotEmpty && doshas.isNotEmpty) const SizedBox(height: 10),
         if (doshas.isNotEmpty) ...[
-          const Text('Active Doshas', style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)?.activeDoshas ?? 'Active Doshas', style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Wrap(spacing: 6, runSpacing: 4, children: doshas.take(6).map<Widget>((d) =>
               _chip('', d.toString(), Colors.redAccent)).toList()),

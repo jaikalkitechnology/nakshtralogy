@@ -52,7 +52,7 @@ class LifeAreasWidget extends StatelessWidget {
                   child: Text('Grade: ${info['grade']}', style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600))),
               if (factors.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                const Text('Factors:', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+                Text('${AppLocalizations.of(context)?.factors ?? "Factors"}:', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 ...factors.map<Widget>((f) => Padding(padding: const EdgeInsets.only(bottom: 2),
                   child: Text('• ${f.toString()}', style: const TextStyle(color: AppColors.textPrimary, fontSize: 11)))),

@@ -321,5 +321,17 @@
   "bhakootAxis": "BHAKOOT AXIS",
   "basis": "BASIS",
   "selectChartsForMilan": "Milan ke liye 2 kundliyan chunein",
-  "selectMultiCharts": "2-5 kundliyan chunein"
+  "selectMultiCharts": "2-5 kundliyan chunein",
+  "running": "RUNNING",
+  "past": "beeta hua",
+  "topActiveDoshas": "TOP ACTIVE DOSHAS",
+  "allDoshas": "ALL DOSHAS",
+  "activeYogas": "Active Yogas",
+  "activeDoshas": "Active Doshas",
+  "yogaAnalysis": "Yoga Analysis",
+  "factors": "Factors",
+  "dominantPlanet": "Dominant Grah",
+  "startSession": "Session Shuru Karein",
+  "notesSaved": "Notes save ho gaye",
+  "unlocked": "Unlock ho gaya! Reading enjoy karein."
 }

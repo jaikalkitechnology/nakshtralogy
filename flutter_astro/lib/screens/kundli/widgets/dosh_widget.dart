@@ -39,12 +39,12 @@ class DoshWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           if (top.isNotEmpty) ...[
-            const Text('TOP ACTIVE DOSHAS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+            Text(AppLocalizations.of(context)?.topActiveDoshas ?? 'TOP ACTIVE DOSHAS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             ...top.map<Widget>((d) => _doshCard(d as Map, active: true)),
             const SizedBox(height: 12),
           ],
-          const Text('ALL DOSHAS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)?.allDoshas ?? 'ALL DOSHAS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...doshas.where((d) => (d as Map)['present'] != true).map<Widget>((d) => _doshCard(d as Map, active: false)),
         ]);

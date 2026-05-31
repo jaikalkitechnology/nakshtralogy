@@ -98,7 +98,7 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text('Start Session', style: TextStyle(color: AppColors.midnight, fontSize: 11, fontWeight: FontWeight.w800)),
+          Text(AppLocalizations.of(context)?.startSession ?? 'Start Session', style: TextStyle(color: AppColors.midnight, fontSize: 11, fontWeight: FontWeight.w800)),
           SizedBox(width: 4),
           Icon(Icons.arrow_forward, size: 14, color: AppColors.midnight),
         ]),
@@ -123,13 +123,13 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
 
   void _callClient() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Client will be notified of incoming call')),
+      const SnackBar(content: Text(AppLocalizations.of(context)?.noData ?? 'Client notified')),
     );
   }
 
   void _startSession() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Session start requires active booking')),
+      const SnackBar(content: Text(AppLocalizations.of(context)?.noData ?? 'Active booking required')),
     );
   }
 
@@ -162,7 +162,7 @@ class _ClientKundliProScreenState extends State<ClientKundliProScreen> {
             Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'))),
             const SizedBox(width: 10),
             Expanded(child: ElevatedButton(
-              onPressed: () { Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notes saved'))); },
+              onPressed: () { Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(AppLocalizations.of(context)?.notesSaved ?? 'Notes saved'))); },
               child: Text(AppLocalizations.of(context)?.save ?? 'Save'),
             )),
           ]),

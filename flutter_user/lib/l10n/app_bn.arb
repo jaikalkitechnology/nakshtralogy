@@ -321,5 +321,17 @@
   "bhakootAxis": "ভকূট অক্ষ",
   "basis": "ভিত্তি",
   "selectChartsForMilan": "মিলনের জন্য 2 কুণ্ডলী নির্বাচন করুন",
-  "selectMultiCharts": "2-5 কুণ্ডলী নির্বাচন করুন"
+  "selectMultiCharts": "2-5 কুণ্ডলী নির্বাচন করুন",
+  "running": "চলমান",
+  "past": "অতীত",
+  "topActiveDoshas": "শীর্ষ সক্রিয় দোষ",
+  "allDoshas": "সমস্ত দোষ",
+  "activeYogas": "সক্রিয় যোগ",
+  "activeDoshas": "সক্রিয় দোষ",
+  "yogaAnalysis": "যোগ বিশ্লেষণ",
+  "factors": "কারণ",
+  "dominantPlanet": "প্রধান গ্রহ",
+  "startSession": "সেশন শুরু করুন",
+  "notesSaved": "নোট সংরক্ষিত",
+  "unlocked": "আনলক! আপনার পড়া উপভোগ করুন।"
 }

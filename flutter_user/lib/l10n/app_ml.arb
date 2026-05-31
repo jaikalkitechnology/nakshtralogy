@@ -321,5 +321,17 @@
   "bhakootAxis": "ഭകൂട് അക്ഷം",
   "basis": "അടിസ്ഥാനം",
   "selectChartsForMilan": "മിലനായി 2 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക",
-  "selectMultiCharts": "2-5 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക"
+  "selectMultiCharts": "2-5 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക",
+  "running": "പ്രവർത്തിക്കുന്നു",
+  "past": "കഴിഞ്ഞ",
+  "topActiveDoshas": "ടോപ്പ് ആക്ടീവ് ദോഷങ്ങൾ",
+  "allDoshas": "എല്ലാ ദോഷങ്ങളും",
+  "activeYogas": "ആക്ടീവ് യോഗങ്ങൾ",
+  "activeDoshas": "ആക്ടീവ് ദോഷങ്ങൾ",
+  "yogaAnalysis": "യോഗ വിശകലനം",
+  "factors": "ഘടകങ്ങൾ",
+  "dominantPlanet": "പ്രധാന ഗ്രഹം",
+  "startSession": "സെഷൻ ആരംഭിക്കുക",
+  "notesSaved": "കുറിപ്പുകൾ സംരക്ഷിച്ചു",
+  "unlocked": "അൺലോക്ക്! നിങ്ങളുടെ വായന ആസ്വദിക്കൂ."
 }

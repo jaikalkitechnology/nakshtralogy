@@ -133,7 +133,7 @@ class PaywallService {
           actions: [
             TextButton(
               onPressed: purchasing ? null : () => Navigator.pop(ctx, false),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel', style: TextStyle(color: AppColors.textSecondary)),
             ),
             ElevatedButton.icon(
               onPressed: purchasing ? null : () async {
@@ -142,7 +142,7 @@ class PaywallService {
                 if (!ctx.mounted) return;
                 if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Unlocked! Enjoy your reading.'),
+                    content: Text(AppLocalizations.of(context)?.unlocked ?? 'Unlocked!'),
                     backgroundColor: AppColors.success,
                   ));
                   Navigator.pop(ctx, true);

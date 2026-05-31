@@ -192,7 +192,7 @@ class CareerWidget extends StatelessWidget {
             Row(children: [
               const Icon(Icons.stars, color: AppColors.primary, size: 16),
               const SizedBox(width: 6),
-              Text('Dominant Planet: ', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+              Text('${AppLocalizations.of(context)?.dominantPlanet ?? "Dominant Planet"}: ', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
               Text(cd['dominant_planet'].toString(),
                   style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
             ]),

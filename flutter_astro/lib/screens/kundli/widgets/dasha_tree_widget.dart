@@ -165,8 +165,8 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
               Row(children: [
                 Flexible(child: Text(planet, style: TextStyle(color: past ? AppColors.textSecondary : AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis)),
                 const SizedBox(width: 8),
-                if (running) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(4)), child: const Text('RUNNING', style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold))),
-                if (past) const Text('  (past)', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                if (running) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(4)), child: Text(AppLocalizations.of(context)?.running ?? 'RUNNING', style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold))),
+                if (past) Text('  (${AppLocalizations.of(context)?.past ?? "past"})', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
               ]),
               const SizedBox(height: 4),
               Text('$start → $end', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontFamily: 'monospace')),

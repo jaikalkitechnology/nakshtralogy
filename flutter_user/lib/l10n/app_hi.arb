@@ -321,5 +321,17 @@
   "bhakootAxis": "भकूट अक्ष",
   "basis": "आधार",
   "selectChartsForMilan": "मिलान के लिए 2 कुंडलियां चुनें",
-  "selectMultiCharts": "2-5 कुंडलियां चुनें"
+  "selectMultiCharts": "2-5 कुंडलियां चुनें",
+  "running": "चालू",
+  "past": "बीता हुआ",
+  "topActiveDoshas": "शीर्ष सक्रिय दोष",
+  "allDoshas": "सभी दोष",
+  "activeYogas": "सक्रिय योग",
+  "activeDoshas": "सक्रिय दोष",
+  "yogaAnalysis": "योग विश्लेषण",
+  "factors": "कारक",
+  "dominantPlanet": "प्रमुख ग्रह",
+  "startSession": "सत्र शुरू करें",
+  "notesSaved": "नोट्स सहेजे गए",
+  "unlocked": "अनलॉक! अपना पठन आनंद लें।"
 }

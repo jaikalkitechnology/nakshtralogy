@@ -321,5 +321,17 @@
   "bhakootAxis": "BHAKOOT AXIS",
   "basis": "BASIS",
   "selectChartsForMilan": "Select 2 Charts for Milan Analysis",
-  "selectMultiCharts": "Select 2–5 Charts"
+  "selectMultiCharts": "Select 2–5 Charts",
+  "running": "RUNNING",
+  "past": "past",
+  "topActiveDoshas": "TOP ACTIVE DOSHAS",
+  "allDoshas": "ALL DOSHAS",
+  "activeYogas": "Active Yogas",
+  "activeDoshas": "Active Doshas",
+  "yogaAnalysis": "Yoga Analysis",
+  "factors": "Factors",
+  "dominantPlanet": "Dominant Planet",
+  "startSession": "Start Session",
+  "notesSaved": "Notes saved",
+  "unlocked": "Unlocked! Enjoy your reading."
 }
