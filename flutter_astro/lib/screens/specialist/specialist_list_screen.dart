@@ -112,7 +112,17 @@ class _S extends State<SpecialistListScreen> {
     Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontWeight: FontWeight.w600)),
   ]);
 
-  Widget _filterPills() => SizedBox(height: 32, child: ListView(
+  Widget _filterPills() {
+    final l = AppLocalizations.of(context)!;
+    final labels = {
+      'all': '${l.allInsights.split(' ').first} · 19',
+      'career': '${l.careerPurpose.split(' ').first} · 4',
+      'wealth': '${l.wealthAssets.split(' ').first} · 4',
+      'love': '${l.loveRelationships.split(' ').first} · 6',
+      'health': '${l.healthWellness.split(' ').first} · 2',
+      'soul': '${l.soulKarma.split(' ').first} · 3',
+    };
+    return SizedBox(height: 32, child: ListView(
     scrollDirection: Axis.horizontal,
     padding: const EdgeInsets.symmetric(horizontal: 16),
     children: _filters.map((f) {
@@ -127,10 +137,11 @@ class _S extends State<SpecialistListScreen> {
             color: active ? null : Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: active ? Colors.transparent : AppColors.gold.withOpacity(0.2))),
-          child: Text(_filterLabels[f]!, style: TextStyle(
+          child: Text(labels[f] ?? f, style: TextStyle(
             color: active ? AppColors.midnight : AppColors.smoke,
             fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500))));
     }).toList()));
+  }
 
   Widget _groupDivider(String label) => Container(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
