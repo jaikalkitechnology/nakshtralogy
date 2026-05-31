@@ -514,4 +514,106 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get comingSoon => 'Jaldi aa raha hai';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get statement => 'Statement';
+
+  @override
+  String get allTypes => 'Sabhi Types';
+
+  @override
+  String get prev => 'Pichla';
+
+  @override
+  String get next => 'Agla';
+
+  @override
+  String get allInsights => 'Sabhi Insights';
+
+  @override
+  String get yourCompleteReading => 'AAPKA COMPLETE READING';
+
+  @override
+  String get expertEngines => 'expert engines';
+
+  @override
+  String get eachInsightConsultation => 'Har insight ek complete consultation hai';
+
+  @override
+  String get engines => 'ENGINES';
+
+  @override
+  String get dataPoints => 'DATA POINTS';
+
+  @override
+  String get singleChart => 'SINGLE';
+
+  @override
+  String get careerPurpose => 'CAREER & PURPOSE';
+
+  @override
+  String get wealthAssets => 'WEALTH & ASSETS';
+
+  @override
+  String get loveRelationships => 'LOVE & RELATIONSHIPS';
+
+  @override
+  String get healthWellness => 'HEALTH & WELLNESS';
+
+  @override
+  String get soulKarma => 'SOUL & KARMA';
+
+  @override
+  String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get searchByNameSpeciality => 'Naam, speciality se khojein...';
+
+  @override
+  String get sortedByRating => 'Rating ke anusaar';
+
+  @override
+  String get initiatingChat => 'Chat shuru ho rahi hai...';
+
+  @override
+  String get startingCall => 'Call shuru ho rahi hai...';
+
+  @override
+  String get yrs => 'saal';
+
+  @override
+  String get chatWithAISpecialist => 'AI Specialist Se Chat Karein';
+
+  @override
+  String get tapToStart => 'Shuru karne ke liye tap karein';
+
+  @override
+  String get astrologer => 'Jyotishi';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get forecast => 'Forecast';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get jupiterFavorsBold => 'Jupiter bold moves ko support karta hai';
+
+  @override
+  String get careerIlluminated => 'Aapka career sector illuminated hai — apni instinct par trust karein.';
+
+  @override
+  String get todaysForecast => 'Aaj Ka Forecast';
 }

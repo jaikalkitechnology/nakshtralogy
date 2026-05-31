@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/wallet/wallet_bloc.dart';
 import '../../bloc/wallet/wallet_event.dart';
@@ -24,6 +25,7 @@ class _WalletTabState extends State<WalletTab> {
   }
 
   void _openRechargeDialog() {
+    final l = AppLocalizations.of(context)!;
     final amountCtrl = TextEditingController(text: '500');
     final noteCtrl = TextEditingController();
     showDialog(
@@ -51,7 +53,7 @@ class _WalletTabState extends State<WalletTab> {
               children: const [
                 Icon(Icons.add_circle_outline, color: AppColors.primary, size: 20),
                 SizedBox(width: 8),
-                Text('Add Balance', style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+                Text(l.addBalance, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
               ],
             ),
             content: SingleChildScrollView(
@@ -100,7 +102,7 @@ class _WalletTabState extends State<WalletTab> {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(dctx), child: const Text('Cancel')),
+              TextButton(onPressed: () => Navigator.pop(dctx), child: Text(l.cancel)),
               BlocBuilder<WalletBloc, WalletState>(
                 builder: (ctx, state) => ElevatedButton(
                   onPressed: state.recharging
@@ -114,7 +116,7 @@ class _WalletTabState extends State<WalletTab> {
                         },
                   child: state.recharging
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Text('Add Balance'),
+                      : Text(l.addBalance),
                 ),
               ),
             ],
@@ -126,6 +128,7 @@ class _WalletTabState extends State<WalletTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocBuilder<WalletBloc, WalletState>(
       builder: (context, state) {
         final wallet = state.wallet;
@@ -155,8 +158,8 @@ class _WalletTabState extends State<WalletTab> {
                 ),
                 child: Column(
                   children: [
-                    const Text('Wallet Balance',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    Text(l.walletBalance,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     const SizedBox(height: 6),
                     Text(
                       '₹${balance.toStringAsFixed(2)}',
@@ -172,7 +175,7 @@ class _WalletTabState extends State<WalletTab> {
                       child: ElevatedButton.icon(
                         onPressed: _openRechargeDialog,
                         icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Add Balance'),
+                        label: Text(l.addBalance),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -181,8 +184,8 @@ class _WalletTabState extends State<WalletTab> {
                         Expanded(
                           child: Column(
                             children: [
-                              const Text('Total Credit',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 9)),
+                              Text(l.totalCredit,
+                                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
                               Text('+₹${totalCredit.toStringAsFixed(0)}',
                                   style: const TextStyle(color: AppColors.success, fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
@@ -192,8 +195,8 @@ class _WalletTabState extends State<WalletTab> {
                         Expanded(
                           child: Column(
                             children: [
-                              const Text('Total Debit',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 9)),
+                              Text(l.totalDebit,
+                                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
                               Text('−₹${totalDebit.toStringAsFixed(0)}',
                                   style: const TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
@@ -236,8 +239,8 @@ class _WalletTabState extends State<WalletTab> {
               // Filter + statement
               Row(
                 children: [
-                  const Text('Statement',
-                      style: TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(l.statement,
+                      style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
                   const Spacer(),
                   DropdownButton<String>(
                     value: _filter,
@@ -245,11 +248,11 @@ class _WalletTabState extends State<WalletTab> {
                     underline: const SizedBox.shrink(),
                     style: const TextStyle(color: AppColors.textPrimary, fontSize: 11),
                     items: const [
-                      DropdownMenuItem(value: 'all', child: Text('All types')),
-                      DropdownMenuItem(value: 'recharge', child: Text('Recharge')),
-                      DropdownMenuItem(value: 'bonus', child: Text('Bonus')),
-                      DropdownMenuItem(value: 'consultation_debit', child: Text('Service')),
-                      DropdownMenuItem(value: 'refund', child: Text('Refund')),
+                      DropdownMenuItem(value: 'all', child: Text(l.allTypes)),
+                      DropdownMenuItem(value: 'recharge', child: Text(l.recharge)),
+                      DropdownMenuItem(value: 'bonus', child: Text(l.bonus)),
+                      DropdownMenuItem(value: 'consultation_debit', child: Text(l.serviceLabel)),
+                      DropdownMenuItem(value: 'refund', child: Text(l.refund)),
                     ],
                     onChanged: (v) {
                       if (v == null) return;
@@ -269,8 +272,8 @@ class _WalletTabState extends State<WalletTab> {
                 const Padding(
                   padding: EdgeInsets.all(20),
                   child: Center(
-                    child: Text('No transactions yet',
-                        style: TextStyle(color: AppColors.textSecondary)),
+                    child: Text(l.noTransactions,
+                        style: const TextStyle(color: AppColors.textSecondary)),
                   ),
                 )
               else
@@ -366,7 +369,7 @@ class _WalletTabState extends State<WalletTab> {
                             minimumSize: const Size(70, 32),
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                           ),
-                          child: const Text('Prev', style: TextStyle(fontSize: 11)),
+                          child: Text(l.prev, style: const TextStyle(fontSize: 11)),
                         ),
                         const SizedBox(width: 8),
                         OutlinedButton(
@@ -379,7 +382,7 @@ class _WalletTabState extends State<WalletTab> {
                             minimumSize: const Size(70, 32),
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                           ),
-                          child: const Text('Next', style: TextStyle(fontSize: 11)),
+                          child: Text(l.next, style: const TextStyle(fontSize: 11)),
                         ),
                       ],
                     ),

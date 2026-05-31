@@ -463,4 +463,76 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get editProfile => 'પ્રોફાઇલ સંપાદિત કરો';
+
+  @override
+  String get totalCredit => 'કુલ ક્રેડિટ';
+
+  @override
+  String get totalDebit => 'કુલ ડેબિટ';
+
+  @override
+  String get allTypes => 'બધા પ્રકાર';
+
+  @override
+  String get prev => 'પાછળ';
+
+  @override
+  String get next => 'આગળ';
+
+  @override
+  String get page => 'પૃષ્ઠ';
+
+  @override
+  String get allInsights => 'બધા વિશ્લેષણ';
+
+  @override
+  String get yourCompleteReading => 'તમારું સંપૂર્ણ વાંચન';
+
+  @override
+  String get expertEngines => 'નિષ્ણાત એન્જિન';
+
+  @override
+  String get eachInsightConsultation => 'દરેક વિશ્લેષણ એક સંપૂર્ણ પરામર્શ છે';
+
+  @override
+  String get engines => 'એન્જિન';
+
+  @override
+  String get dataPoints => 'ડેટા પોઈન્ટ';
+
+  @override
+  String get singleChart => 'સિંગલ';
+
+  @override
+  String get careerPurpose => 'કારકિર્દી અને હેતુ';
+
+  @override
+  String get wealthAssets => 'ધન અને સંપત્તિ';
+
+  @override
+  String get loveRelationships => 'પ્રેમ અને સંબંધો';
+
+  @override
+  String get healthWellness => 'આરોગ્ય અને કલ્યાણ';
+
+  @override
+  String get soulKarma => 'આત્મા અને કર્મ';
+
+  @override
+  String get specialistReports => 'નિષ્ણાત રિપોર્ટ';
+
+  @override
+  String get deptReports => 'વિભાગ રિપોર્ટ';
+
+  @override
+  String get specialistAnalysesDesc => '15 નિષ્ણાત વિશ્લેષણ — કારકિર્દી, સંપત્તિ, આરોગ્ય, પ્રેમ અને વધુ';
+
+  @override
+  String get matchTwoChartsDesc => 'બે કુંડળીઓ મેળવો — અષ્ટકૂટ, નવાંશ, ગોચર સમય અને વધુ';
+
+  @override
+  String get todaysForecast => 'આજનું ભવિષ્ય';
+
+  @override
+  String get dailyProbability => 'કોઈપણ કુંડળી માટે દૈનિક સંભાવના ભવિષ્ય';
 }

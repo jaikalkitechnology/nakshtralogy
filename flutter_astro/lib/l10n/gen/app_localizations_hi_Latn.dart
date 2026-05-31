@@ -465,4 +465,76 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get editProfile => 'Profile Edit Karein';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get allTypes => 'Sabhi Types';
+
+  @override
+  String get prev => 'Pichla';
+
+  @override
+  String get next => 'Agla';
+
+  @override
+  String get page => 'Page';
+
+  @override
+  String get allInsights => 'Sabhi Insights';
+
+  @override
+  String get yourCompleteReading => 'AAPKA COMPLETE READING';
+
+  @override
+  String get expertEngines => 'expert engines';
+
+  @override
+  String get eachInsightConsultation => 'Har insight ek complete consultation hai';
+
+  @override
+  String get engines => 'ENGINES';
+
+  @override
+  String get dataPoints => 'DATA POINTS';
+
+  @override
+  String get singleChart => 'SINGLE';
+
+  @override
+  String get careerPurpose => 'CAREER & PURPOSE';
+
+  @override
+  String get wealthAssets => 'WEALTH & ASSETS';
+
+  @override
+  String get loveRelationships => 'LOVE & RELATIONSHIPS';
+
+  @override
+  String get healthWellness => 'HEALTH & WELLNESS';
+
+  @override
+  String get soulKarma => 'SOUL & KARMA';
+
+  @override
+  String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get deptReports => 'Dept Reports';
+
+  @override
+  String get specialistAnalysesDesc => '15 specialist analyses — Career, Wealth, Health, Love & more';
+
+  @override
+  String get matchTwoChartsDesc => 'Do kundliyon ka milan — Ashtakoot, Navamsa, Gochar timing & more';
+
+  @override
+  String get todaysForecast => 'Aaj Ka Forecast';
+
+  @override
+  String get dailyProbability => 'Kisi bhi kundli ke liye daily probability forecast';
 }

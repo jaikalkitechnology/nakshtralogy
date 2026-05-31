@@ -513,4 +513,106 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get comingSoon => 'लवकरच येत आहे';
+
+  @override
+  String get totalCredit => 'एकूण क्रेडिट';
+
+  @override
+  String get totalDebit => 'एकूण डेबिट';
+
+  @override
+  String get statement => 'विवरण';
+
+  @override
+  String get allTypes => 'सर्व प्रकार';
+
+  @override
+  String get prev => 'मागील';
+
+  @override
+  String get next => 'पुढील';
+
+  @override
+  String get allInsights => 'सर्व विश्लेषण';
+
+  @override
+  String get yourCompleteReading => 'तुमचे पूर्ण वाचन';
+
+  @override
+  String get expertEngines => 'तज्ञ इंजिन';
+
+  @override
+  String get eachInsightConsultation => 'प्रत्येक विश्लेषण एक पूर्ण सल्ला आहे';
+
+  @override
+  String get engines => 'इंजिन';
+
+  @override
+  String get dataPoints => 'डेटा पॉइंट';
+
+  @override
+  String get singleChart => 'सिंगल';
+
+  @override
+  String get careerPurpose => 'करिअर आणि उद्देश';
+
+  @override
+  String get wealthAssets => 'संपत्ती आणि मालमत्ता';
+
+  @override
+  String get loveRelationships => 'प्रेम आणि नाते';
+
+  @override
+  String get healthWellness => 'आरोग्य आणि कल्याण';
+
+  @override
+  String get soulKarma => 'आत्मा आणि कर्म';
+
+  @override
+  String get specialistReports => 'तज्ञ अहवाल';
+
+  @override
+  String get searchByNameSpeciality => 'नाव, विशेषता शोधा...';
+
+  @override
+  String get sortedByRating => 'रेटिंगनुसार';
+
+  @override
+  String get initiatingChat => 'चॅट सुरू होत आहे...';
+
+  @override
+  String get startingCall => 'कॉल सुरू होत आहे...';
+
+  @override
+  String get yrs => 'वर्षे';
+
+  @override
+  String get chatWithAISpecialist => 'AI तज्ञांशी चॅट करा';
+
+  @override
+  String get tapToStart => 'सुरू करण्यासाठी टॅप करा';
+
+  @override
+  String get astrologer => 'ज्योतिषी';
+
+  @override
+  String get reports => 'अहवाल';
+
+  @override
+  String get milan => 'मिलन';
+
+  @override
+  String get forecast => 'भविष्यवाणी';
+
+  @override
+  String get rashi => 'राशी';
+
+  @override
+  String get jupiterFavorsBold => 'गुरू धाडसी पावलांना अनुकूल आहे';
+
+  @override
+  String get careerIlluminated => 'तुमचे करिअर क्षेत्र प्रकाशमान आहे — तुमच्या अंतर्ज्ञानावर विश्वास ठेवा.';
+
+  @override
+  String get todaysForecast => 'आजचे भविष्य';
 }

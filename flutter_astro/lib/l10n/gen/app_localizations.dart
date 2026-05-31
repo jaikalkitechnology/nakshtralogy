@@ -1013,6 +1013,150 @@ abstract class AppLocalizations {
   String get notifications;
   String get biometricLogin;
   String get editProfile;
+
+  /// No description provided for @totalCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Credit'**
+  String get totalCredit;
+
+  /// No description provided for @totalDebit.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Debit'**
+  String get totalDebit;
+
+  /// No description provided for @allTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get allTypes;
+
+  /// No description provided for @prev.
+  ///
+  /// In en, this message translates to:
+  /// **'Prev'**
+  String get prev;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @page.
+  ///
+  /// In en, this message translates to:
+  /// **'Page'**
+  String get page;
+
+  /// No description provided for @allInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'All Insights'**
+  String get allInsights;
+
+  /// No description provided for @yourCompleteReading.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR COMPLETE READING'**
+  String get yourCompleteReading;
+
+  /// No description provided for @expertEngines.
+  ///
+  /// In en, this message translates to:
+  /// **'expert engines'**
+  String get expertEngines;
+
+  /// No description provided for @eachInsightConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Each insight is a complete consultation'**
+  String get eachInsightConsultation;
+
+  /// No description provided for @engines.
+  ///
+  /// In en, this message translates to:
+  /// **'ENGINES'**
+  String get engines;
+
+  /// No description provided for @dataPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'DATA POINTS'**
+  String get dataPoints;
+
+  /// No description provided for @singleChart.
+  ///
+  /// In en, this message translates to:
+  /// **'SINGLE'**
+  String get singleChart;
+
+  /// No description provided for @careerPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'CAREER & PURPOSE'**
+  String get careerPurpose;
+
+  /// No description provided for @wealthAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'WEALTH & ASSETS'**
+  String get wealthAssets;
+
+  /// No description provided for @loveRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'LOVE & RELATIONSHIPS'**
+  String get loveRelationships;
+
+  /// No description provided for @healthWellness.
+  ///
+  /// In en, this message translates to:
+  /// **'HEALTH & WELLNESS'**
+  String get healthWellness;
+
+  /// No description provided for @soulKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'SOUL & KARMA'**
+  String get soulKarma;
+
+  /// No description provided for @specialistReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist Reports'**
+  String get specialistReports;
+
+  /// No description provided for @deptReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Dept Reports'**
+  String get deptReports;
+
+  /// No description provided for @specialistAnalysesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'15 specialist analyses — Career, Wealth, Health, Love & more'**
+  String get specialistAnalysesDesc;
+
+  /// No description provided for @matchTwoChartsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Match two charts — Ashtakoot, Navamsa, Transit timing & more'**
+  String get matchTwoChartsDesc;
+
+  /// No description provided for @todaysForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Forecast'**
+  String get todaysForecast;
+
+  /// No description provided for @dailyProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily probability forecast for any chart'**
+  String get dailyProbability;
 }
 
 class _AppLocalizationsDelegate

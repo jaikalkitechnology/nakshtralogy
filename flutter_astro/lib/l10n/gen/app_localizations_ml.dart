@@ -464,4 +464,76 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get editProfile => 'പ്രൊഫൈൽ എഡിറ്റ് ചെയ്യുക';
+
+  @override
+  String get totalCredit => 'ആകെ ക്രെഡിറ്റ്';
+
+  @override
+  String get totalDebit => 'ആകെ ഡെബിറ്റ്';
+
+  @override
+  String get allTypes => 'എല്ലാ തരങ്ങളും';
+
+  @override
+  String get prev => 'മുമ്പത്തെ';
+
+  @override
+  String get next => 'അടുത്തത്';
+
+  @override
+  String get page => 'പേജ്';
+
+  @override
+  String get allInsights => 'എല്ലാ വിശകലനങ്ങളും';
+
+  @override
+  String get yourCompleteReading => 'നിങ്ങളുടെ പൂർണ്ണ വായന';
+
+  @override
+  String get expertEngines => 'വിദഗ്ദ്ധ എഞ്ചിനുകൾ';
+
+  @override
+  String get eachInsightConsultation => 'ഓരോ വിശകലനവും ഒരു പൂർണ്ണ കൺസൾട്ടേഷൻ';
+
+  @override
+  String get engines => 'എഞ്ചിനുകൾ';
+
+  @override
+  String get dataPoints => 'ഡാറ്റ പോയിന്റുകൾ';
+
+  @override
+  String get singleChart => 'സിംഗിൾ';
+
+  @override
+  String get careerPurpose => 'കരിയർ & ലക്ഷ്യം';
+
+  @override
+  String get wealthAssets => 'സമ്പത്ത് & ആസ്തികൾ';
+
+  @override
+  String get loveRelationships => 'പ്രണയം & ബന്ധങ്ങൾ';
+
+  @override
+  String get healthWellness => 'ആരോഗ്യം & ക്ഷേമം';
+
+  @override
+  String get soulKarma => 'ആത്മാവ് & കർമ്മം';
+
+  @override
+  String get specialistReports => 'വിദഗ്ദ്ധ റിപ്പോർട്ടുകൾ';
+
+  @override
+  String get deptReports => 'വിഭാഗ റിപ്പോർട്ടുകൾ';
+
+  @override
+  String get specialistAnalysesDesc => '15 വിദഗ്ദ്ധ വിശകലനങ്ങൾ — കരിയർ, സമ്പത്ത്, ആരോഗ്യം, പ്രണയം തുടങ്ങിയവ';
+
+  @override
+  String get matchTwoChartsDesc => 'രണ്ട് ജാതകങ്ങൾ ഒത്തുനോക്കുക — അഷ്ടകൂട്, നവാംശ, ഗോചര സമയം തുടങ്ങിയവ';
+
+  @override
+  String get todaysForecast => 'ഇന്നത്തെ പ്രവചനം';
+
+  @override
+  String get dailyProbability => 'ഏത് ജാതകത്തിനും ദൈനംദിന സാധ്യതാ പ്രവചനം';
 }

@@ -513,4 +513,106 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get comingSoon => 'ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ';
+
+  @override
+  String get totalCredit => 'ਕੁੱਲ ਕ੍ਰੈਡਿਟ';
+
+  @override
+  String get totalDebit => 'ਕੁੱਲ ਡੈਬਿਟ';
+
+  @override
+  String get statement => 'ਸਟੇਟਮੈਂਟ';
+
+  @override
+  String get allTypes => 'ਸਭ ਕਿਸਮਾਂ';
+
+  @override
+  String get prev => 'ਪਿਛਲਾ';
+
+  @override
+  String get next => 'ਅਗਲਾ';
+
+  @override
+  String get allInsights => 'ਸਾਰੇ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get yourCompleteReading => 'ਤੁਹਾਡਾ ਪੂਰਾ ਪਠਨ';
+
+  @override
+  String get expertEngines => 'ਮਾਹਿਰ ਇੰਜਣ';
+
+  @override
+  String get eachInsightConsultation => 'ਹਰ ਵਿਸ਼ਲੇਸ਼ਣ ਇੱਕ ਪੂਰੀ ਸਲਾਹ ਹੈ';
+
+  @override
+  String get engines => 'ਇੰਜਣ';
+
+  @override
+  String get dataPoints => 'ਡੇਟਾ ਪੁਆਇੰਟ';
+
+  @override
+  String get singleChart => 'ਸਿੰਗਲ';
+
+  @override
+  String get careerPurpose => 'ਕੈਰੀਅਰ ਅਤੇ ਮਕਸਦ';
+
+  @override
+  String get wealthAssets => 'ਧਨ ਅਤੇ ਸੰਪਤੀ';
+
+  @override
+  String get loveRelationships => 'ਪਿਆਰ ਅਤੇ ਰਿਸ਼ਤੇ';
+
+  @override
+  String get healthWellness => 'ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ';
+
+  @override
+  String get soulKarma => 'ਆਤਮਾ ਅਤੇ ਕਰਮ';
+
+  @override
+  String get specialistReports => 'ਮਾਹਿਰ ਰਿਪੋਰਟ';
+
+  @override
+  String get searchByNameSpeciality => 'ਨਾਮ, ਵਿਸ਼ੇਸ਼ਤਾ ਨਾਲ ਖੋਜੋ...';
+
+  @override
+  String get sortedByRating => 'ਰੇਟਿੰਗ ਅਨੁਸਾਰ';
+
+  @override
+  String get initiatingChat => 'ਚੈਟ ਸ਼ੁਰੂ ਹੋ ਰਹੀ ਹੈ...';
+
+  @override
+  String get startingCall => 'ਕਾਲ ਸ਼ੁਰੂ ਹੋ ਰਹੀ ਹੈ...';
+
+  @override
+  String get yrs => 'ਸਾਲ';
+
+  @override
+  String get chatWithAISpecialist => 'AI ਮਾਹਿਰ ਨਾਲ ਚੈਟ ਕਰੋ';
+
+  @override
+  String get tapToStart => 'ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get astrologer => 'ਜੋਤਸ਼ੀ';
+
+  @override
+  String get reports => 'ਰਿਪੋਰਟ';
+
+  @override
+  String get milan => 'ਮਿਲਾਨ';
+
+  @override
+  String get forecast => 'ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get rashi => 'ਰਾਸ਼ੀ';
+
+  @override
+  String get jupiterFavorsBold => 'ਗੁਰੂ ਹਿੰਮਤੀ ਕਦਮਾਂ ਦਾ ਸਮਰਥਨ ਕਰਦਾ ਹੈ';
+
+  @override
+  String get careerIlluminated => 'ਤੁਹਾਡਾ ਕੈਰੀਅਰ ਖੇਤਰ ਰੌਸ਼ਨ ਹੈ — ਆਪਣੀ ਸੂਝ ਤੇ ਭਰੋਸਾ ਕਰੋ।';
+
+  @override
+  String get todaysForecast => 'ਅੱਜ ਦੀ ਭਵਿੱਖਬਾਣੀ';
 }

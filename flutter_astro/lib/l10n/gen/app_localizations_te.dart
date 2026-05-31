@@ -464,4 +464,76 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get editProfile => 'ప్రొఫైల్ సవరించు';
+
+  @override
+  String get totalCredit => 'మొత్తం క్రెడిట్';
+
+  @override
+  String get totalDebit => 'మొత్తం డెబిట్';
+
+  @override
+  String get allTypes => 'అన్ని రకాలు';
+
+  @override
+  String get prev => 'మునుపటి';
+
+  @override
+  String get next => 'తదుపరి';
+
+  @override
+  String get page => 'పేజీ';
+
+  @override
+  String get allInsights => 'అన్ని విశ్లేషణలు';
+
+  @override
+  String get yourCompleteReading => 'మీ పూర్తి పఠనం';
+
+  @override
+  String get expertEngines => 'నిపుణుల ఇంజిన్లు';
+
+  @override
+  String get eachInsightConsultation => 'ప్రతి విశ్లేషణ ఒక పూర్తి సంప్రదింపు';
+
+  @override
+  String get engines => 'ఇంజిన్లు';
+
+  @override
+  String get dataPoints => 'డేటా పాయింట్లు';
+
+  @override
+  String get singleChart => 'సింగిల్';
+
+  @override
+  String get careerPurpose => 'కెరీర్ & ఉద్దేశ్యం';
+
+  @override
+  String get wealthAssets => 'సంపద & ఆస్తులు';
+
+  @override
+  String get loveRelationships => 'ప్రేమ & సంబంధాలు';
+
+  @override
+  String get healthWellness => 'ఆరోగ్యం & సంక్షేమం';
+
+  @override
+  String get soulKarma => 'ఆత్మ & కర్మ';
+
+  @override
+  String get specialistReports => 'నిపుణుల నివేదికలు';
+
+  @override
+  String get deptReports => 'విభాగం నివేదికలు';
+
+  @override
+  String get specialistAnalysesDesc => '15 నిపుణుల విశ్లేషణలు — కెరీర్, సంపద, ఆరోగ్యం, ప్రేమ మరియు మరిన్ని';
+
+  @override
+  String get matchTwoChartsDesc => 'రెండు జాతకాలను సరిపోల్చండి — అష్టకూట్, నవాంశ, గోచర సమయం మరియు మరిన్ని';
+
+  @override
+  String get todaysForecast => 'ఈరోజు అంచనా';
+
+  @override
+  String get dailyProbability => 'ఏదైనా జాతకానికి రోజువారీ సంభావ్యత అంచనా';
 }

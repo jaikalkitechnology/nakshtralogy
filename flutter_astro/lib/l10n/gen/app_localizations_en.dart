@@ -464,4 +464,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfile => 'Edit Profile';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get allTypes => 'All types';
+
+  @override
+  String get prev => 'Prev';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get page => 'Page';
+
+  @override
+  String get allInsights => 'All Insights';
+
+  @override
+  String get yourCompleteReading => 'YOUR COMPLETE READING';
+
+  @override
+  String get expertEngines => 'expert engines';
+
+  @override
+  String get eachInsightConsultation => 'Each insight is a complete consultation';
+
+  @override
+  String get engines => 'ENGINES';
+
+  @override
+  String get dataPoints => 'DATA POINTS';
+
+  @override
+  String get singleChart => 'SINGLE';
+
+  @override
+  String get careerPurpose => 'CAREER & PURPOSE';
+
+  @override
+  String get wealthAssets => 'WEALTH & ASSETS';
+
+  @override
+  String get loveRelationships => 'LOVE & RELATIONSHIPS';
+
+  @override
+  String get healthWellness => 'HEALTH & WELLNESS';
+
+  @override
+  String get soulKarma => 'SOUL & KARMA';
+
+  @override
+  String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get deptReports => 'Dept Reports';
+
+  @override
+  String get specialistAnalysesDesc => '15 specialist analyses — Career, Wealth, Health, Love & more';
+
+  @override
+  String get matchTwoChartsDesc => 'Match two charts — Ashtakoot, Navamsa, Transit timing & more';
+
+  @override
+  String get todaysForecast => 'Today\'s Forecast';
+
+  @override
+  String get dailyProbability => 'Daily probability forecast for any chart';
 }

@@ -1122,6 +1122,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon'**
   String get comingSoon;
+
+  /// No description provided for @totalCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Credit'**
+  String get totalCredit;
+
+  /// No description provided for @totalDebit.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Debit'**
+  String get totalDebit;
+
+  /// No description provided for @statement.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement'**
+  String get statement;
+
+  /// No description provided for @allTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get allTypes;
+
+  /// No description provided for @prev.
+  ///
+  /// In en, this message translates to:
+  /// **'Prev'**
+  String get prev;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @allInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'All Insights'**
+  String get allInsights;
+
+  /// No description provided for @yourCompleteReading.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR COMPLETE READING'**
+  String get yourCompleteReading;
+
+  /// No description provided for @expertEngines.
+  ///
+  /// In en, this message translates to:
+  /// **'expert engines'**
+  String get expertEngines;
+
+  /// No description provided for @eachInsightConsultation.
+  ///
+  /// In en, this message translates to:
+  /// **'Each insight is a complete consultation'**
+  String get eachInsightConsultation;
+
+  /// No description provided for @engines.
+  ///
+  /// In en, this message translates to:
+  /// **'ENGINES'**
+  String get engines;
+
+  /// No description provided for @dataPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'DATA POINTS'**
+  String get dataPoints;
+
+  /// No description provided for @singleChart.
+  ///
+  /// In en, this message translates to:
+  /// **'SINGLE'**
+  String get singleChart;
+
+  /// No description provided for @careerPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'CAREER & PURPOSE'**
+  String get careerPurpose;
+
+  /// No description provided for @wealthAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'WEALTH & ASSETS'**
+  String get wealthAssets;
+
+  /// No description provided for @loveRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'LOVE & RELATIONSHIPS'**
+  String get loveRelationships;
+
+  /// No description provided for @healthWellness.
+  ///
+  /// In en, this message translates to:
+  /// **'HEALTH & WELLNESS'**
+  String get healthWellness;
+
+  /// No description provided for @soulKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'SOUL & KARMA'**
+  String get soulKarma;
+
+  /// No description provided for @specialistReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist Reports'**
+  String get specialistReports;
+
+  /// No description provided for @searchByNameSpeciality.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name, speciality...'**
+  String get searchByNameSpeciality;
+
+  /// No description provided for @sortedByRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorted by rating'**
+  String get sortedByRating;
+
+  /// No description provided for @initiatingChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Initiating chat...'**
+  String get initiatingChat;
+
+  /// No description provided for @startingCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting call...'**
+  String get startingCall;
+
+  /// No description provided for @yrs.
+  ///
+  /// In en, this message translates to:
+  /// **'yrs'**
+  String get yrs;
+
+  /// No description provided for @chatWithAISpecialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with AI Specialist'**
+  String get chatWithAISpecialist;
+
+  /// No description provided for @tapToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start'**
+  String get tapToStart;
+
+  /// No description provided for @astrologer.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrologer'**
+  String get astrologer;
+
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
+  /// No description provided for @milan.
+  ///
+  /// In en, this message translates to:
+  /// **'Milan'**
+  String get milan;
+
+  /// No description provided for @forecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Forecast'**
+  String get forecast;
+
+  /// No description provided for @rashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi'**
+  String get rashi;
+
+  /// No description provided for @jupiterFavorsBold.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter favors bold moves'**
+  String get jupiterFavorsBold;
+
+  /// No description provided for @careerIlluminated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your career sector is illuminated — trust your instincts.'**
+  String get careerIlluminated;
+
+  /// No description provided for @todaysForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Forecast'**
+  String get todaysForecast;
 }
 
 class _AppLocalizationsDelegate

@@ -464,4 +464,76 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get editProfile => 'சுயவிவரத்தைத் திருத்து';
+
+  @override
+  String get totalCredit => 'மொத்த கிரெடிட்';
+
+  @override
+  String get totalDebit => 'மொத்த டெபிட்';
+
+  @override
+  String get allTypes => 'அனைத்து வகைகள்';
+
+  @override
+  String get prev => 'முந்தைய';
+
+  @override
+  String get next => 'அடுத்த';
+
+  @override
+  String get page => 'பக்கம்';
+
+  @override
+  String get allInsights => 'அனைத்து பகுப்பாய்வுகள்';
+
+  @override
+  String get yourCompleteReading => 'உங்கள் முழு வாசிப்பு';
+
+  @override
+  String get expertEngines => 'நிபுணர் இயந்திரங்கள்';
+
+  @override
+  String get eachInsightConsultation => 'ஒவ்வொரு பகுப்பாய்வும் ஒரு முழு ஆலோசனை';
+
+  @override
+  String get engines => 'இயந்திரங்கள்';
+
+  @override
+  String get dataPoints => 'தரவு புள்ளிகள்';
+
+  @override
+  String get singleChart => 'ஒற்றை';
+
+  @override
+  String get careerPurpose => 'தொழில் & நோக்கம்';
+
+  @override
+  String get wealthAssets => 'செல்வம் & சொத்துகள்';
+
+  @override
+  String get loveRelationships => 'காதல் & உறவுகள்';
+
+  @override
+  String get healthWellness => 'ஆரோக்கியம் & நல்வாழ்வு';
+
+  @override
+  String get soulKarma => 'ஆன்மா & கர்மா';
+
+  @override
+  String get specialistReports => 'நிபுணர் அறிக்கைகள்';
+
+  @override
+  String get deptReports => 'துறை அறிக்கைகள்';
+
+  @override
+  String get specialistAnalysesDesc => '15 நிபுணர் பகுப்பாய்வுகள் — தொழில், செல்வம், ஆரோக்கியம், காதல் மற்றும் மேலும்';
+
+  @override
+  String get matchTwoChartsDesc => 'இரண்டு ஜாதகங்களை பொருத்துங்கள் — அஷ்டகூட், நவாம்சம், கோசர நேரம் மற்றும் மேலும்';
+
+  @override
+  String get todaysForecast => 'இன்றைய முன்னறிவிப்பு';
+
+  @override
+  String get dailyProbability => 'எந்த ஜாதகத்திற்கும் தினசரி நிகழ்தகவு முன்னறிவிப்பு';
 }

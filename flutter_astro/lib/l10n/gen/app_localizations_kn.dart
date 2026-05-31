@@ -464,4 +464,76 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get editProfile => 'ಪ್ರೊಫೈಲ್ ಸಂಪಾದಿಸಿ';
+
+  @override
+  String get totalCredit => 'ಒಟ್ಟು ಕ್ರೆಡಿಟ್';
+
+  @override
+  String get totalDebit => 'ಒಟ್ಟು ಡೆಬಿಟ್';
+
+  @override
+  String get allTypes => 'ಎಲ್ಲಾ ಪ್ರಕಾರಗಳು';
+
+  @override
+  String get prev => 'ಹಿಂದಿನ';
+
+  @override
+  String get next => 'ಮುಂದಿನ';
+
+  @override
+  String get page => 'ಪುಟ';
+
+  @override
+  String get allInsights => 'ಎಲ್ಲಾ ವಿಶ್ಲೇಷಣೆಗಳು';
+
+  @override
+  String get yourCompleteReading => 'ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಓದು';
+
+  @override
+  String get expertEngines => 'ತಜ್ಞ ಎಂಜಿನ್‌ಗಳು';
+
+  @override
+  String get eachInsightConsultation => 'ಪ್ರತಿ ವಿಶ್ಲೇಷಣೆಯು ಸಂಪೂರ್ಣ ಸಮಾಲೋಚನೆ';
+
+  @override
+  String get engines => 'ಎಂಜಿನ್‌ಗಳು';
+
+  @override
+  String get dataPoints => 'ಡೇಟಾ ಪಾಯಿಂಟ್‌ಗಳು';
+
+  @override
+  String get singleChart => 'ಸಿಂಗಲ್';
+
+  @override
+  String get careerPurpose => 'ವೃತ್ತಿ & ಉದ್ದೇಶ';
+
+  @override
+  String get wealthAssets => 'ಸಂಪತ್ತು & ಆಸ್ತಿಗಳು';
+
+  @override
+  String get loveRelationships => 'ಪ್ರೀತಿ & ಸಂಬಂಧಗಳು';
+
+  @override
+  String get healthWellness => 'ಆರೋಗ್ಯ & ಕ್ಷೇಮ';
+
+  @override
+  String get soulKarma => 'ಆತ್ಮ & ಕರ್ಮ';
+
+  @override
+  String get specialistReports => 'ತಜ್ಞ ವರದಿಗಳು';
+
+  @override
+  String get deptReports => 'ವಿಭಾಗ ವರದಿಗಳು';
+
+  @override
+  String get specialistAnalysesDesc => '15 ತಜ್ಞ ವಿಶ್ಲೇಷಣೆಗಳು — ವೃತ್ತಿ, ಸಂಪತ್ತು, ಆರೋಗ್ಯ, ಪ್ರೀತಿ ಮತ್ತು ಇನ್ನಷ್ಟು';
+
+  @override
+  String get matchTwoChartsDesc => 'ಎರಡು ಕುಂಡಲಿಗಳನ್ನು ಹೊಂದಿಸಿ — ಅಷ್ಟಕೂಟ, ನವಾಂಶ, ಗೋಚರ ಸಮಯ ಮತ್ತು ಇನ್ನಷ್ಟು';
+
+  @override
+  String get todaysForecast => 'ಇಂದಿನ ಮುನ್ಸೂಚನೆ';
+
+  @override
+  String get dailyProbability => 'ಯಾವುದೇ ಕುಂಡಲಿಗೆ ದೈನಂದಿನ ಸಂಭವನೀಯತೆ ಮುನ್ಸೂಚನೆ';
 }

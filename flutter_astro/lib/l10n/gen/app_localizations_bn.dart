@@ -464,4 +464,76 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get editProfile => 'প্রোফাইল সম্পাদনা করুন';
+
+  @override
+  String get totalCredit => 'মোট ক্রেডিট';
+
+  @override
+  String get totalDebit => 'মোট ডেবিট';
+
+  @override
+  String get allTypes => 'সব ধরনের';
+
+  @override
+  String get prev => 'আগের';
+
+  @override
+  String get next => 'পরের';
+
+  @override
+  String get page => 'পৃষ্ঠা';
+
+  @override
+  String get allInsights => 'সমস্ত বিশ্লেষণ';
+
+  @override
+  String get yourCompleteReading => 'আপনার সম্পূর্ণ পঠন';
+
+  @override
+  String get expertEngines => 'বিশেষজ্ঞ ইঞ্জিন';
+
+  @override
+  String get eachInsightConsultation => 'প্রতিটি বিশ্লেষণ একটি সম্পূর্ণ পরামর্শ';
+
+  @override
+  String get engines => 'ইঞ্জিন';
+
+  @override
+  String get dataPoints => 'ডেটা পয়েন্ট';
+
+  @override
+  String get singleChart => 'সিঙ্গেল';
+
+  @override
+  String get careerPurpose => 'ক্যারিয়ার ও উদ্দেশ্য';
+
+  @override
+  String get wealthAssets => 'সম্পদ ও সম্পত্তি';
+
+  @override
+  String get loveRelationships => 'প্রেম ও সম্পর্ক';
+
+  @override
+  String get healthWellness => 'স্বাস্থ্য ও সুস্থতা';
+
+  @override
+  String get soulKarma => 'আত্মা ও কর্ম';
+
+  @override
+  String get specialistReports => 'বিশেষজ্ঞ প্রতিবেদন';
+
+  @override
+  String get deptReports => 'বিভাগ রিপোর্ট';
+
+  @override
+  String get specialistAnalysesDesc => '১৫টি বিশেষজ্ঞ বিশ্লেষণ — ক্যারিয়ার, সম্পদ, স্বাস্থ্য, প্রেম ও আরও';
+
+  @override
+  String get matchTwoChartsDesc => 'দুটি কুণ্ডলী মেলান — অষ্টকূট, নবাংশ, গোচর সময় ও আরও';
+
+  @override
+  String get todaysForecast => 'আজকের পূর্বাভাস';
+
+  @override
+  String get dailyProbability => 'যেকোনো কুণ্ডলীর জন্য দৈনিক সম্ভাবনা পূর্বাভাস';
 }

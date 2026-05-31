@@ -513,6 +513,54 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get comingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get totalCredit => 'कुल क्रेडिट';
+
+  @override
+  String get totalDebit => 'कुल डेबिट';
+
+  @override
+  String get statement => 'विवरण';
+
+  @override
+  String get allTypes => 'सभी प्रकार';
+
+  @override
+  String get prev => 'पिछला';
+
+  @override
+  String get next => 'अगला';
+
+  @override
+  String get chatWithAISpecialist => 'AI विशेषज्ञ से चैट करें';
+
+  @override
+  String get tapToStart => 'शुरू करने के लिए टैप करें';
+
+  @override
+  String get astrologer => 'ज्योतिषी';
+
+  @override
+  String get reports => 'रिपोर्ट';
+
+  @override
+  String get milan => 'मिलान';
+
+  @override
+  String get forecast => 'भविष्यवाणी';
+
+  @override
+  String get rashi => 'राशि';
+
+  @override
+  String get jupiterFavorsBold => 'बृहस्पति साहसी कदमों का समर्थन करता है';
+
+  @override
+  String get careerIlluminated => 'आपका करियर क्षेत्र प्रकाशमान है — अपनी अंतर्ज्ञान पर विश्वास करें।';
+
+  @override
+  String get todaysForecast => 'आज का पूर्वानुमान';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1024,4 +1072,106 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get comingSoon => 'Jaldi aa raha hai';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get statement => 'Statement';
+
+  @override
+  String get allTypes => 'Sabhi Types';
+
+  @override
+  String get prev => 'Pichla';
+
+  @override
+  String get next => 'Agla';
+
+  @override
+  String get allInsights => 'सभी विश्लेषण';
+
+  @override
+  String get yourCompleteReading => 'आपका पूर्ण पठन';
+
+  @override
+  String get expertEngines => 'विशेषज्ञ इंजन';
+
+  @override
+  String get eachInsightConsultation => 'प्रत्येक विश्लेषण एक पूर्ण परामर्श है';
+
+  @override
+  String get engines => 'इंजन';
+
+  @override
+  String get dataPoints => 'डेटा पॉइंट';
+
+  @override
+  String get singleChart => 'सिंगल';
+
+  @override
+  String get careerPurpose => 'करियर और उद्देश्य';
+
+  @override
+  String get wealthAssets => 'धन और संपत्ति';
+
+  @override
+  String get loveRelationships => 'प्रेम और रिश्ते';
+
+  @override
+  String get healthWellness => 'स्वास्थ्य और कल्याण';
+
+  @override
+  String get soulKarma => 'आत्मा और कर्म';
+
+  @override
+  String get specialistReports => 'विशेषज्ञ रिपोर्ट';
+
+  @override
+  String get searchByNameSpeciality => 'नाम, विशेषता से खोजें...';
+
+  @override
+  String get sortedByRating => 'रेटिंग के अनुसार';
+
+  @override
+  String get initiatingChat => 'चैट शुरू हो रही है...';
+
+  @override
+  String get startingCall => 'कॉल शुरू हो रही है...';
+
+  @override
+  String get yrs => 'वर्ष';
+
+  @override
+  String get chatWithAISpecialist => 'AI Specialist Se Chat Karein';
+
+  @override
+  String get tapToStart => 'Shuru karne ke liye tap karein';
+
+  @override
+  String get astrologer => 'Jyotishi';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get forecast => 'Forecast';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get jupiterFavorsBold => 'Jupiter bold moves ko support karta hai';
+
+  @override
+  String get careerIlluminated => 'Aapka career sector illuminated hai — apni instinct par trust karein.';
+
+  @override
+  String get todaysForecast => 'Aaj Ka Forecast';
 }

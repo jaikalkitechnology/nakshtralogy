@@ -130,8 +130,8 @@ class _AstrologersTabState extends State<AstrologersTab> {
                 fontSize: 12,
                 fontFamily: 'Manrope',
               ),
-              decoration: const InputDecoration(
-                hintText: 'Search by name, speciality...',
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)?.searchByNameSpeciality ?? 'Search by name, speciality...',
                 hintStyle: TextStyle(
                   color: AppColors.smoke,
                   fontSize: 12,
@@ -231,7 +231,7 @@ class _AstrologersTabState extends State<AstrologersTab> {
           child: Row(
             children: [
               Text(
-                '$count astrologers \u00b7 Sorted by rating',
+                '$count ${AppLocalizations.of(context)?.astrologers ?? 'astrologers'} \u00b7 ${AppLocalizations.of(context)?.sortedByRating ?? 'Sorted by rating'}',
                 style: const TextStyle(
                   fontFamily: 'monospace',
                   color: AppColors.smoke,
@@ -280,7 +280,7 @@ class _AstroCard extends StatelessWidget {
 
   Future<void> _startChat(BuildContext context, Map<String, dynamic> a) async {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Initiating chat...'), duration: Duration(seconds: 2)),
+      SnackBar(content: Text(AppLocalizations.of(context)?.initiatingChat ?? 'Initiating chat...'), duration: const Duration(seconds: 2)),
     );
     try {
       final result = await ApiService().initiateChat(a['id'] as String);
@@ -312,7 +312,7 @@ class _AstroCard extends StatelessWidget {
 
   Future<void> _startCall(BuildContext context, Map<String, dynamic> a, String callType) async {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Starting $callType call...'), duration: const Duration(seconds: 2)),
+      SnackBar(content: Text('${AppLocalizations.of(context)?.startingCall ?? 'Starting call...'}'), duration: const Duration(seconds: 2)),
     );
     try {
       final result = await ApiService().initiateCall(a['id'] as String, callType);
@@ -359,7 +359,7 @@ class _AstroCard extends StatelessWidget {
 
     final specs = (a['specializations'] as List?)?.cast<dynamic>() ?? const [];
     final specTail = specs.isNotEmpty ? specs.take(2).join(' \u00b7 ') : 'Astrologer';
-    final specLine = years > 0 ? '$specTail \u00b7 $years yrs' : specTail;
+    final specLine = years > 0 ? '$specTail \u00b7 $years ${l?.yrs ?? 'yrs'}' : specTail;
 
     final chatRate = (a['rate_per_min_chat'] as num?)?.toInt() ?? 0;
 

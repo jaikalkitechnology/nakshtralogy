@@ -512,4 +512,106 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get comingSoon => 'త్వరలో వస్తోంది';
+
+  @override
+  String get totalCredit => 'మొత్తం క్రెడిట్';
+
+  @override
+  String get totalDebit => 'మొత్తం డెబిట్';
+
+  @override
+  String get statement => 'స్టేట్‌మెంట్';
+
+  @override
+  String get allTypes => 'అన్ని రకాలు';
+
+  @override
+  String get prev => 'మునుపటి';
+
+  @override
+  String get next => 'తదుపరి';
+
+  @override
+  String get allInsights => 'అన్ని విశ్లేషణలు';
+
+  @override
+  String get yourCompleteReading => 'మీ పూర్తి పఠనం';
+
+  @override
+  String get expertEngines => 'నిపుణుల ఇంజిన్లు';
+
+  @override
+  String get eachInsightConsultation => 'ప్రతి విశ్లేషణ ఒక పూర్తి సంప్రదింపు';
+
+  @override
+  String get engines => 'ఇంజిన్లు';
+
+  @override
+  String get dataPoints => 'డేటా పాయింట్లు';
+
+  @override
+  String get singleChart => 'సింగిల్';
+
+  @override
+  String get careerPurpose => 'కెరీర్ & ఉద్దేశ్యం';
+
+  @override
+  String get wealthAssets => 'సంపద & ఆస్తులు';
+
+  @override
+  String get loveRelationships => 'ప్రేమ & సంబంధాలు';
+
+  @override
+  String get healthWellness => 'ఆరోగ్యం & సంక్షేమం';
+
+  @override
+  String get soulKarma => 'ఆత్మ & కర్మ';
+
+  @override
+  String get specialistReports => 'నిపుణుల నివేదికలు';
+
+  @override
+  String get searchByNameSpeciality => 'పేరు, ప్రత్యేకత ద్వారా వెతకండి...';
+
+  @override
+  String get sortedByRating => 'రేటింగ్ ప్రకారం';
+
+  @override
+  String get initiatingChat => 'చాట్ ప్రారంభమవుతోంది...';
+
+  @override
+  String get startingCall => 'కాల్ ప్రారంభమవుతోంది...';
+
+  @override
+  String get yrs => 'సంవత్సరాలు';
+
+  @override
+  String get chatWithAISpecialist => 'AI నిపుణులతో చాట్ చేయండి';
+
+  @override
+  String get tapToStart => 'ప్రారంభించడానికి ట్యాప్ చేయండి';
+
+  @override
+  String get astrologer => 'జ్యోతిష్కుడు';
+
+  @override
+  String get reports => 'నివేదికలు';
+
+  @override
+  String get milan => 'మిలన్';
+
+  @override
+  String get forecast => 'అంచనా';
+
+  @override
+  String get rashi => 'రాశి';
+
+  @override
+  String get jupiterFavorsBold => 'గురుడు ధైర్యమైన చర్యలకు అనుకూలం';
+
+  @override
+  String get careerIlluminated => 'మీ కెరీర్ రంగం ప్రకాశిస్తోంది — మీ అంతర్ దృష్టిని నమ్మండి.';
+
+  @override
+  String get todaysForecast => 'ఈరోజు అంచనా';
 }

@@ -513,4 +513,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoon => 'Coming soon';
+
+  @override
+  String get totalCredit => 'Total Credit';
+
+  @override
+  String get totalDebit => 'Total Debit';
+
+  @override
+  String get statement => 'Statement';
+
+  @override
+  String get allTypes => 'All types';
+
+  @override
+  String get prev => 'Prev';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get allInsights => 'All Insights';
+
+  @override
+  String get yourCompleteReading => 'YOUR COMPLETE READING';
+
+  @override
+  String get expertEngines => 'expert engines';
+
+  @override
+  String get eachInsightConsultation => 'Each insight is a complete consultation';
+
+  @override
+  String get engines => 'ENGINES';
+
+  @override
+  String get dataPoints => 'DATA POINTS';
+
+  @override
+  String get singleChart => 'SINGLE';
+
+  @override
+  String get careerPurpose => 'CAREER & PURPOSE';
+
+  @override
+  String get wealthAssets => 'WEALTH & ASSETS';
+
+  @override
+  String get loveRelationships => 'LOVE & RELATIONSHIPS';
+
+  @override
+  String get healthWellness => 'HEALTH & WELLNESS';
+
+  @override
+  String get soulKarma => 'SOUL & KARMA';
+
+  @override
+  String get specialistReports => 'Specialist Reports';
+
+  @override
+  String get searchByNameSpeciality => 'Search by name, speciality...';
+
+  @override
+  String get sortedByRating => 'Sorted by rating';
+
+  @override
+  String get initiatingChat => 'Initiating chat...';
+
+  @override
+  String get startingCall => 'Starting call...';
+
+  @override
+  String get yrs => 'yrs';
+
+  @override
+  String get chatWithAISpecialist => 'Chat with AI Specialist';
+
+  @override
+  String get tapToStart => 'Tap to start';
+
+  @override
+  String get astrologer => 'Astrologer';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get forecast => 'Forecast';
+
+  @override
+  String get rashi => 'Rashi';
+
+  @override
+  String get jupiterFavorsBold => 'Jupiter favors bold moves';
+
+  @override
+  String get careerIlluminated => 'Your career sector is illuminated — trust your instincts.';
+
+  @override
+  String get todaysForecast => 'Today\'s Forecast';
 }

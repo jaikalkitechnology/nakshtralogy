@@ -463,4 +463,76 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editProfile => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get totalCredit => 'कुल क्रेडिट';
+
+  @override
+  String get totalDebit => 'कुल डेबिट';
+
+  @override
+  String get allTypes => 'सभी प्रकार';
+
+  @override
+  String get prev => 'पिछला';
+
+  @override
+  String get next => 'अगला';
+
+  @override
+  String get page => 'पृष्ठ';
+
+  @override
+  String get allInsights => 'सभी विश्लेषण';
+
+  @override
+  String get yourCompleteReading => 'आपका पूर्ण पठन';
+
+  @override
+  String get expertEngines => 'विशेषज्ञ इंजन';
+
+  @override
+  String get eachInsightConsultation => 'प्रत्येक विश्लेषण एक पूर्ण परामर्श है';
+
+  @override
+  String get engines => 'इंजन';
+
+  @override
+  String get dataPoints => 'डेटा पॉइंट';
+
+  @override
+  String get singleChart => 'सिंगल';
+
+  @override
+  String get careerPurpose => 'करियर और उद्देश्य';
+
+  @override
+  String get wealthAssets => 'धन और संपत्ति';
+
+  @override
+  String get loveRelationships => 'प्रेम और रिश्ते';
+
+  @override
+  String get healthWellness => 'स्वास्थ्य और कल्याण';
+
+  @override
+  String get soulKarma => 'आत्मा और कर्म';
+
+  @override
+  String get specialistReports => 'विशेषज्ञ रिपोर्ट';
+
+  @override
+  String get deptReports => 'विभाग रिपोर्ट';
+
+  @override
+  String get specialistAnalysesDesc => '15 विशेषज्ञ विश्लेषण — करियर, धन, स्वास्थ्य, प्रेम और अधिक';
+
+  @override
+  String get matchTwoChartsDesc => 'दो कुंडलियों का मिलान — अष्टकूट, नवांश, गोचर समय और अधिक';
+
+  @override
+  String get todaysForecast => 'आज का पूर्वानुमान';
+
+  @override
+  String get dailyProbability => 'किसी भी कुंडली के लिए दैनिक संभावना पूर्वानुमान';
 }

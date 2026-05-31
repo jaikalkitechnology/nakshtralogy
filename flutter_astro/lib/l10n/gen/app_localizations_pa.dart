@@ -464,4 +464,76 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get editProfile => 'ਪ੍ਰੋਫ਼ਾਈਲ ਸੰਪਾਦਿਤ ਕਰੋ';
+
+  @override
+  String get totalCredit => 'ਕੁੱਲ ਕ੍ਰੈਡਿਟ';
+
+  @override
+  String get totalDebit => 'ਕੁੱਲ ਡੈਬਿਟ';
+
+  @override
+  String get allTypes => 'ਸਭ ਕਿਸਮਾਂ';
+
+  @override
+  String get prev => 'ਪਿਛਲਾ';
+
+  @override
+  String get next => 'ਅਗਲਾ';
+
+  @override
+  String get page => 'ਪੰਨਾ';
+
+  @override
+  String get allInsights => 'ਸਾਰੇ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get yourCompleteReading => 'ਤੁਹਾਡਾ ਪੂਰਾ ਪਠਨ';
+
+  @override
+  String get expertEngines => 'ਮਾਹਿਰ ਇੰਜਣ';
+
+  @override
+  String get eachInsightConsultation => 'ਹਰ ਵਿਸ਼ਲੇਸ਼ਣ ਇੱਕ ਪੂਰੀ ਸਲਾਹ ਹੈ';
+
+  @override
+  String get engines => 'ਇੰਜਣ';
+
+  @override
+  String get dataPoints => 'ਡੇਟਾ ਪੁਆਇੰਟ';
+
+  @override
+  String get singleChart => 'ਸਿੰਗਲ';
+
+  @override
+  String get careerPurpose => 'ਕੈਰੀਅਰ ਅਤੇ ਮਕਸਦ';
+
+  @override
+  String get wealthAssets => 'ਧਨ ਅਤੇ ਸੰਪਤੀ';
+
+  @override
+  String get loveRelationships => 'ਪਿਆਰ ਅਤੇ ਰਿਸ਼ਤੇ';
+
+  @override
+  String get healthWellness => 'ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ';
+
+  @override
+  String get soulKarma => 'ਆਤਮਾ ਅਤੇ ਕਰਮ';
+
+  @override
+  String get specialistReports => 'ਮਾਹਿਰ ਰਿਪੋਰਟ';
+
+  @override
+  String get deptReports => 'ਵਿਭਾਗ ਰਿਪੋਰਟ';
+
+  @override
+  String get specialistAnalysesDesc => '15 ਮਾਹਿਰ ਵਿਸ਼ਲੇਸ਼ਣ — ਕੈਰੀਅਰ, ਧਨ, ਸਿਹਤ, ਪਿਆਰ ਅਤੇ ਹੋਰ';
+
+  @override
+  String get matchTwoChartsDesc => 'ਦੋ ਕੁੰਡਲੀਆਂ ਮਿਲਾਓ — ਅਸ਼ਟਕੂਟ, ਨਵਾਂਸ਼, ਗੋਚਰ ਸਮਾਂ ਅਤੇ ਹੋਰ';
+
+  @override
+  String get todaysForecast => 'ਅੱਜ ਦੀ ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get dailyProbability => 'ਕਿਸੇ ਵੀ ਕੁੰਡਲੀ ਲਈ ਰੋਜ਼ਾਨਾ ਸੰਭਾਵਨਾ ਭਵਿੱਖਬਾਣੀ';
 }

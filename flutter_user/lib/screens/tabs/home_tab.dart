@@ -59,7 +59,7 @@ class _HomeTabState extends State<HomeTab> {
 
           // AI Specialists
           const SizedBox(height: 16),
-          _sectionHeader('Chat with AI Specialist', 'Tap to start'),
+          _sectionHeader(l.chatWithAISpecialist, l.tapToStart),
           const SizedBox(height: 10),
           _aiSpecialistCarousel(),
 
@@ -68,7 +68,7 @@ class _HomeTabState extends State<HomeTab> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(children: [
-              const Expanded(child: Text('Specialist Reports',
+              Expanded(child: Text(l.specialistReports,
                   style: TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
               GestureDetector(
                 onTap: widget.onSeeAllServices,
@@ -122,26 +122,26 @@ class _HomeTabState extends State<HomeTab> {
         Text(l.todaysHoroscope, style: TextStyle(
           fontFamily: 'Manrope', fontSize: 9, letterSpacing: 3, color: AppColors.gold, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
-        const Text('Jupiter favors bold moves',
-            style: TextStyle(fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.ivory, height: 1.1)),
+        Text(l.jupiterFavorsBold,
+            style: const TextStyle(fontFamily: 'Manrope', fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.ivory, height: 1.1)),
         const SizedBox(height: 6),
-        const Text('Your career sector is illuminated \u2014 trust your instincts.',
-            style: TextStyle(color: AppColors.lavender, fontSize: 12)),
+        Text(l.careerIlluminated,
+            style: const TextStyle(color: AppColors.lavender, fontSize: 12)),
       ]),
     );
   }
 
   Widget _quickActions(AppLocalizations l) {
     final actions = [
-      {'icon': Icons.star, 'label': 'Astrologer', 'color': AppColors.gold, 'onTap': widget.onSeeAllAstrologers},
+      {'icon': Icons.star, 'label': l.astrologer, 'color': AppColors.gold, 'onTap': widget.onSeeAllAstrologers},
       {'icon': Icons.auto_awesome, 'label': l.kundli, 'color': AppColors.aurora, 'onTap': widget.onOpenKundli},
-      {'icon': Icons.assessment, 'label': 'Reports', 'color': Colors.purple, 'onTap': () =>
+      {'icon': Icons.assessment, 'label': l.reports, 'color': Colors.purple, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistListScreen()))},
-      {'icon': Icons.favorite, 'label': 'Milan', 'color': AppColors.cosmicPink, 'onTap': () =>
+      {'icon': Icons.favorite, 'label': l.milan, 'color': AppColors.cosmicPink, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector()))},
-      {'icon': Icons.wb_sunny, 'label': 'Forecast', 'color': Colors.orange, 'onTap': () =>
+      {'icon': Icons.wb_sunny, 'label': l.forecast, 'color': Colors.orange, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const ForecastChartPicker()))},
-      {'icon': Icons.auto_awesome_mosaic, 'label': 'Rashi', 'color': AppColors.aurora, 'onTap': () =>
+      {'icon': Icons.auto_awesome_mosaic, 'label': l.rashi, 'color': AppColors.aurora, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const RashiListScreen()))},
     ];
     return Padding(
