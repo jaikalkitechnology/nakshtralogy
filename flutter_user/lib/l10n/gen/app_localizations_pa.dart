@@ -969,4 +969,22 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get unlocked => 'ਅਨਲਾਕ! ਆਪਣੀ ਰੀਡਿੰਗ ਦਾ ਆਨੰਦ ਲਓ।';
+
+  @override
+  String get todaysGochar => 'ਅੱਜ ਦਾ ਗੋਚਰ';
+
+  @override
+  String get todaysTransitChart => 'ਅੱਜ ਦਾ ਗੋਚਰ ਚਾਰਟ';
+
+  @override
+  String get lifeAreaPredictions => 'ਜੀਵਨ ਖੇਤਰ ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get strengths => 'ਸ਼ਕਤੀਆਂ';
+
+  @override
+  String get weaknesses => 'ਕਮਜ਼ੋਰੀਆਂ';
+
+  @override
+  String get ruledBy => 'ਸਵਾਮੀ';
 }

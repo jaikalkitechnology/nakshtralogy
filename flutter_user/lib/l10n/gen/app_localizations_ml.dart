@@ -970,4 +970,22 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get unlocked => 'അൺലോക്ക്! നിങ്ങളുടെ വായന ആസ്വദിക്കൂ.';
+
+  @override
+  String get todaysGochar => 'ഇന്നത്തെ ഗോചരം';
+
+  @override
+  String get todaysTransitChart => 'ഇന്നത്തെ ഗോചര ചാർട്ട്';
+
+  @override
+  String get lifeAreaPredictions => 'ജീവിത മേഖല പ്രവചനങ്ങൾ';
+
+  @override
+  String get strengths => 'ശക്തികൾ';
+
+  @override
+  String get weaknesses => 'ദൗർബല്യങ്ങൾ';
+
+  @override
+  String get ruledBy => 'അധിപൻ';
 }

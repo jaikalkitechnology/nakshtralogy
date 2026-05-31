@@ -967,4 +967,22 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get unlocked => 'আনলক! আপনার পড়া উপভোগ করুন।';
+
+  @override
+  String get todaysGochar => 'আজকের গোচর';
+
+  @override
+  String get todaysTransitChart => 'আজকের গোচর চার্ট';
+
+  @override
+  String get lifeAreaPredictions => 'জীবন ক্ষেত্র ভবিষ্যদ্বাণী';
+
+  @override
+  String get strengths => 'শক্তি';
+
+  @override
+  String get weaknesses => 'দুর্বলতা';
+
+  @override
+  String get ruledBy => 'অধিপতি';
 }
