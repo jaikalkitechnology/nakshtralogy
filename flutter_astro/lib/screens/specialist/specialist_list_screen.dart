@@ -91,7 +91,7 @@ class _S extends State<SpecialistListScreen> {
     child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)), const SizedBox(width: 6),
-        Text('★ ${l.yourCompleteReading}', style: const TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text('★ ${l.yourCompleteReading}', style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700)),
         const SizedBox(width: 6), Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
       ]),
       const SizedBox(height: 10),
@@ -109,7 +109,7 @@ class _S extends State<SpecialistListScreen> {
 
   Widget _bannerStat(String num, String label) => Column(children: [
     Text(num, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-    Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace')),
+    Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontWeight: FontWeight.w600)),
   ]);
 
   Widget _filterPills() => SizedBox(height: 32, child: ListView(
@@ -129,12 +129,12 @@ class _S extends State<SpecialistListScreen> {
             border: Border.all(color: active ? Colors.transparent : AppColors.gold.withOpacity(0.2))),
           child: Text(_filterLabels[f]!, style: TextStyle(
             color: active ? AppColors.midnight : AppColors.smoke,
-            fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500, fontFamily: 'monospace'))));
+            fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500))));
     }).toList()));
 
   Widget _groupDivider(String label) => Container(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-    child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)));
+    child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)));
 
   Widget _engineGrid(List<Map<String, dynamic>> engines) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 12),
