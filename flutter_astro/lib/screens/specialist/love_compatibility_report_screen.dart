@@ -382,7 +382,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Venus cross contacts table
           if (contacts.isNotEmpty) ...[
-            const Text('VENUS CROSS CONTACTS',
+            Text(l.venusContacts,
                 style: TextStyle(
                     color: _accent,
                     fontSize: 8,
@@ -402,14 +402,14 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: const Row(children: [
                   Expanded(
                       flex: 3,
-                      child: Text('Contact',
+                      child: Text(l.contact,
                           style: TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 3,
-                      child: Text('Effect',
+                      child: Text(l.effect,
                           style: TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
@@ -547,7 +547,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('MOON SIGN COMPATIBILITY',
+                      Text(l.moonSignCompat,
                           style: TextStyle(
                               color: AppColors.aurora,
                               fontSize: 8,
@@ -558,7 +558,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                       Row(children: [
                         Expanded(
                             child: Column(children: [
-                          const Text('HIS MOON',
+                          Text(l.hisMoon,
                               style: TextStyle(
                                   color: AppColors.smoke,
                                   fontSize: 7,
@@ -583,7 +583,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                                     color: _accent, size: 14))),
                         Expanded(
                             child: Column(children: [
-                          const Text('HER MOON',
+                          Text(l.herMoon,
                               style: TextStyle(
                                   color: AppColors.smoke,
                                   fontSize: 7,
@@ -632,7 +632,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('NAKSHATRA COMPATIBILITY',
+                      Text(l.nakshatraCompat,
                           style: TextStyle(
                               color: AppColors.lavender,
                               fontSize: 8,
@@ -927,7 +927,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Ketu contacts chips
           if (ketuContacts.isNotEmpty) ...[
-            const Text('KETU CONTACTS',
+            Text(l.ketuContacts,
                 style: TextStyle(
                     color: AppColors.smoke,
                     fontSize: 8,
@@ -947,7 +947,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Rahu contacts chips
           if (rahuContacts.isNotEmpty) ...[
-            const Text('RAHU CONTACTS',
+            Text(l.rahuContacts,
                 style: TextStyle(
                     color: AppColors.smoke,
                     fontSize: 8,
@@ -983,7 +983,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('PAST LIFE INDICATION',
+                      Text(l.pastLifeIndication,
                           style: TextStyle(
                               color: AppColors.lavender,
                               fontSize: 8,
@@ -1033,7 +1033,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               const Expanded(
-                  child: Text('TOTAL CHALLENGE PENALTY',
+                  child: Text(l.totalChallengePenalty,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 9,
@@ -1106,7 +1106,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                   // Manifestation
                   if (manifestation.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    const Text('MANIFESTATION',
+                    Text(l.manifestation,
                         style: TextStyle(
                             color: AppColors.smoke,
                             fontSize: 8,
@@ -1133,7 +1133,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('CANCELLATION',
+                              Text(l.cancellation,
                                   style: TextStyle(
                                       color: AppColors.success,
                                       fontSize: 8,
@@ -1162,7 +1162,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('NAVIGATION',
+                              Text(l.navigation,
                                   style: TextStyle(
                                       color: AppColors.gold,
                                       fontSize: 8,
@@ -1427,7 +1427,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Potential strengths chips
           if (strengths.isNotEmpty) ...[
-            const Text('POTENTIAL STRENGTHS',
+            Text(l.potentialStrengths,
                 style: TextStyle(
                     color: AppColors.success,
                     fontSize: 8,
@@ -1446,7 +1446,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Areas to nurture chips
           if (nurture.isNotEmpty) ...[
-            const Text('AREAS TO NURTURE',
+            Text(l.areasToNurture,
                 style: TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
@@ -1590,7 +1590,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('RELATIONSHIP GUIDANCE',
+                      Text(l.relationshipGuidance,
                           style: TextStyle(
                               color: AppColors.gold,
                               fontSize: 8,
@@ -1697,7 +1697,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Human summary
           if (humanSummary.isNotEmpty) ...[
-            const Text('DETAILED SUMMARY',
+            Text(l.detailedSummary,
                 style: TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
@@ -1730,7 +1730,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(children: [
-          const Text('DISCUSS WITH AI',
+          Text(l.discussWithAI,
               style: TextStyle(
                   color: AppColors.gold,
                   fontSize: 9,
