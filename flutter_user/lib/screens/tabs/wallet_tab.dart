@@ -50,9 +50,9 @@ class _WalletTabState extends State<WalletTab> {
             backgroundColor: AppColors.card,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             title: Row(
-              children: const [
-                Icon(Icons.add_circle_outline, color: AppColors.primary, size: 20),
-                SizedBox(width: 8),
+              children: [
+                const Icon(Icons.add_circle_outline, color: AppColors.primary, size: 20),
+                const SizedBox(width: 8),
                 Text(l.addBalance, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
               ],
             ),
@@ -247,7 +247,7 @@ class _WalletTabState extends State<WalletTab> {
                     dropdownColor: AppColors.card,
                     underline: const SizedBox.shrink(),
                     style: const TextStyle(color: AppColors.textPrimary, fontSize: 11),
-                    items: const [
+                    items: [
                       DropdownMenuItem(value: 'all', child: Text(l.allTypes)),
                       DropdownMenuItem(value: 'recharge', child: Text(l.recharge)),
                       DropdownMenuItem(value: 'bonus', child: Text(l.bonus)),
@@ -269,8 +269,8 @@ class _WalletTabState extends State<WalletTab> {
                   child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
                 )
               else if (state.transactions.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(20),
+                Padding(
+                  padding: const EdgeInsets.all(20),
                   child: Center(
                     child: Text(l.noTransactions,
                         style: const TextStyle(color: AppColors.textSecondary)),
