@@ -333,5 +333,11 @@
   "dominantPlanet": "ప్రధాన గ్రహం",
   "startSession": "సెషన్ ప్రారంభించండి",
   "notesSaved": "నోట్స్ సేవ్ అయ్యాయి",
-  "unlocked": "అన్‌లాక్! మీ రీడింగ్ ఆనందించండి."
+  "unlocked": "అన్‌లాక్! మీ రీడింగ్ ఆనందించండి.",
+  "todaysGochar": "ఈరోజు గోచారం",
+  "todaysTransitChart": "ఈరోజు గోచార చార్ట్",
+  "lifeAreaPredictions": "జీవిత రంగ అంచనాలు",
+  "strengths": "బలాలు",
+  "weaknesses": "బలహీనతలు",
+  "ruledBy": "అధిపతి"
 }

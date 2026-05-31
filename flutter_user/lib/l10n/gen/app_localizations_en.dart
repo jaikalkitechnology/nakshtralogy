@@ -969,4 +969,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unlocked => 'Unlocked! Enjoy your reading.';
+
+  @override
+  String get todaysGochar => 'Today\'s Gochar';
+
+  @override
+  String get todaysTransitChart => 'Today\'s Transit Chart';
+
+  @override
+  String get lifeAreaPredictions => 'Life Area Predictions';
+
+  @override
+  String get strengths => 'Strengths';
+
+  @override
+  String get weaknesses => 'Weaknesses';
+
+  @override
+  String get ruledBy => 'Ruled by';
 }

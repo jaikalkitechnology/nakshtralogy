@@ -333,5 +333,11 @@
   "dominantPlanet": "प्रमुख ग्रह",
   "startSession": "सत्र शुरू करें",
   "notesSaved": "नोट्स सहेजे गए",
-  "unlocked": "अनलॉक! अपना पठन आनंद लें।"
+  "unlocked": "अनलॉक! अपना पठन आनंद लें।",
+  "todaysGochar": "आज का गोचर",
+  "todaysTransitChart": "आज का गोचर चार्ट",
+  "lifeAreaPredictions": "जीवन क्षेत्र भविष्यवाणी",
+  "strengths": "शक्तियां",
+  "weaknesses": "कमजोरियां",
+  "ruledBy": "स्वामी"
 }

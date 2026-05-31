@@ -968,4 +968,22 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get unlocked => 'అన్‌లాక్! మీ రీడింగ్ ఆనందించండి.';
+
+  @override
+  String get todaysGochar => 'ఈరోజు గోచారం';
+
+  @override
+  String get todaysTransitChart => 'ఈరోజు గోచార చార్ట్';
+
+  @override
+  String get lifeAreaPredictions => 'జీవిత రంగ అంచనాలు';
+
+  @override
+  String get strengths => 'బలాలు';
+
+  @override
+  String get weaknesses => 'బలహీనతలు';
+
+  @override
+  String get ruledBy => 'అధిపతి';
 }

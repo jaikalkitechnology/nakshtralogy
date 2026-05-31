@@ -333,5 +333,11 @@
   "dominantPlanet": "Dominant Planet",
   "startSession": "Start Session",
   "notesSaved": "Notes saved",
-  "unlocked": "Unlocked! Enjoy your reading."
+  "unlocked": "Unlocked! Enjoy your reading.",
+  "todaysGochar": "Today's Gochar",
+  "todaysTransitChart": "Today's Transit Chart",
+  "lifeAreaPredictions": "Life Area Predictions",
+  "strengths": "Strengths",
+  "weaknesses": "Weaknesses",
+  "ruledBy": "Ruled by"
 }

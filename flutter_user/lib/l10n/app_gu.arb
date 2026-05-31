@@ -333,5 +333,11 @@
   "dominantPlanet": "પ્રમુખ ગ્રહ",
   "startSession": "સત્ર શરૂ કરો",
   "notesSaved": "નોંધ સાચવાયા",
-  "unlocked": "અનલૉક! તમારું વાંચન માણો."
+  "unlocked": "અનલૉક! તમારું વાંચન માણો.",
+  "todaysGochar": "આજનું ગોચર",
+  "todaysTransitChart": "આજનો ગોચર ચાર્ટ",
+  "lifeAreaPredictions": "જીવન ક્ષેત્ર ભવિષ્ય",
+  "strengths": "શક્તિઓ",
+  "weaknesses": "નબળાઈઓ",
+  "ruledBy": "સ્વામી"
 }

@@ -969,4 +969,22 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get unlocked => 'ಅನ್‌ಲಾಕ್! ನಿಮ್ಮ ಓದನ್ನು ಆನಂದಿಸಿ.';
+
+  @override
+  String get todaysGochar => 'ಇಂದಿನ ಗೋಚಾರ';
+
+  @override
+  String get todaysTransitChart => 'ಇಂದಿನ ಗೋಚಾರ ಚಾರ್ಟ್';
+
+  @override
+  String get lifeAreaPredictions => 'ಜೀವನ ಕ್ಷೇತ್ರ ಭವಿಷ್ಯ';
+
+  @override
+  String get strengths => 'ಶಕ್ತಿಗಳು';
+
+  @override
+  String get weaknesses => 'ದೌರ್ಬಲ್ಯಗಳು';
+
+  @override
+  String get ruledBy => 'ಅಧಿಪತಿ';
 }

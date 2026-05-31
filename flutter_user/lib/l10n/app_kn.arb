@@ -333,5 +333,11 @@
   "dominantPlanet": "ಪ್ರಮುಖ ಗ್ರಹ",
   "startSession": "ಅವಧಿ ಪ್ರಾರಂಭಿಸಿ",
   "notesSaved": "ಟಿಪ್ಪಣಿ ಉಳಿಸಲಾಗಿದೆ",
-  "unlocked": "ಅನ್‌ಲಾಕ್! ನಿಮ್ಮ ಓದನ್ನು ಆನಂದಿಸಿ."
+  "unlocked": "ಅನ್‌ಲಾಕ್! ನಿಮ್ಮ ಓದನ್ನು ಆನಂದಿಸಿ.",
+  "todaysGochar": "ಇಂದಿನ ಗೋಚಾರ",
+  "todaysTransitChart": "ಇಂದಿನ ಗೋಚಾರ ಚಾರ್ಟ್",
+  "lifeAreaPredictions": "ಜೀವನ ಕ್ಷೇತ್ರ ಭವಿಷ್ಯ",
+  "strengths": "ಶಕ್ತಿಗಳು",
+  "weaknesses": "ದೌರ್ಬಲ್ಯಗಳು",
+  "ruledBy": "ಅಧಿಪತಿ"
 }

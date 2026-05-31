@@ -969,4 +969,22 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get unlocked => 'திறக்கப்பட்டது! உங்கள் வாசிப்பை அனுபவிக்கவும்.';
+
+  @override
+  String get todaysGochar => 'இன்றைய கோசாரம்';
+
+  @override
+  String get todaysTransitChart => 'இன்றைய கோசார வரைபடம்';
+
+  @override
+  String get lifeAreaPredictions => 'வாழ்க்கை துறை கணிப்புகள்';
+
+  @override
+  String get strengths => 'பலங்கள்';
+
+  @override
+  String get weaknesses => 'பலவீனங்கள்';
+
+  @override
+  String get ruledBy => 'அதிபதி';
 }

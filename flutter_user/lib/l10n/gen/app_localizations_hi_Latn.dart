@@ -970,4 +970,22 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get unlocked => 'Unlock ho gaya! Reading enjoy karein.';
+
+  @override
+  String get todaysGochar => 'Aaj Ka Gochar';
+
+  @override
+  String get todaysTransitChart => 'Aaj Ka Transit Chart';
+
+  @override
+  String get lifeAreaPredictions => 'Life Area Predictions';
+
+  @override
+  String get strengths => 'Strengths';
+
+  @override
+  String get weaknesses => 'Weaknesses';
+
+  @override
+  String get ruledBy => 'Swami';
 }

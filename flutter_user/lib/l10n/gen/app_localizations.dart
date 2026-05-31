@@ -2034,6 +2034,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlocked! Enjoy your reading.'**
   String get unlocked;
+
+  /// No description provided for @todaysGochar.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Gochar'**
+  String get todaysGochar;
+
+  /// No description provided for @todaysTransitChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Transit Chart'**
+  String get todaysTransitChart;
+
+  /// No description provided for @lifeAreaPredictions.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Area Predictions'**
+  String get lifeAreaPredictions;
+
+  /// No description provided for @strengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths'**
+  String get strengths;
+
+  /// No description provided for @weaknesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Weaknesses'**
+  String get weaknesses;
+
+  /// No description provided for @ruledBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruled by'**
+  String get ruledBy;
 }
 
 class _AppLocalizationsDelegate

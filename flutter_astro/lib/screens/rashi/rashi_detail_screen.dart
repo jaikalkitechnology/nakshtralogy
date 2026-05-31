@@ -132,7 +132,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
           Text('${d['sanskrit']} \u2022 ${d['symbol']}',
               style: const TextStyle(color: AppColors.gold, fontSize: 12)),
           const SizedBox(height: 2),
-          Text('Ruled by ${d['lord']}',
+          Text('${AppLocalizations.of(context)?.ruledBy ?? "Ruled by"} ${d["lord"]}',
               style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
         ])),
       ]),
@@ -152,7 +152,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: const [
           Icon(Icons.today, color: AppColors.gold, size: 18),
           SizedBox(width: 8),
-          Text('Today\'s Gochar', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(AppLocalizations.of(context)?.todaysGochar ?? 'Gochar', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 12),
         Row(children: [
@@ -216,7 +216,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: const [
           Icon(Icons.grid_view, color: AppColors.gold, size: 18),
           SizedBox(width: 8),
-          Text('Today\'s Transit Chart', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(AppLocalizations.of(context)?.todaysTransitChart ?? 'Transit Chart', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
         Text(AppLocalizations.of(context)?.currentPlanetPositions ?? 'Current planet positions',
@@ -239,7 +239,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: const [
           Icon(Icons.auto_awesome, color: AppColors.gold, size: 18),
           SizedBox(width: 8),
-          Text('Life Area Predictions', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(AppLocalizations.of(context)?.lifeAreaPredictions ?? 'Life Area Predictions', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
         Text(AppLocalizations.of(context)?.basedOnTransits ?? 'Based on current transits',
@@ -348,7 +348,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: const [
           Icon(Icons.thumb_up_alt_outlined, color: AppColors.success, size: 16),
           SizedBox(width: 6),
-          Text('Strengths', style: TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(AppLocalizations.of(context)?.strengths ?? 'Strengths', style: TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 6),
         Wrap(spacing: 6, runSpacing: 4, children: s.map((x) => _chip(x, AppColors.success)).toList()),
@@ -356,7 +356,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: const [
           Icon(Icons.thumb_down_alt_outlined, color: AppColors.error, size: 16),
           SizedBox(width: 6),
-          Text('Weaknesses', style: TextStyle(color: AppColors.error, fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(AppLocalizations.of(context)?.weaknesses ?? 'Weaknesses', style: TextStyle(color: AppColors.error, fontSize: 12, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 6),
         Wrap(spacing: 6, runSpacing: 4, children: w.map((x) => _chip(x, AppColors.error)).toList()),

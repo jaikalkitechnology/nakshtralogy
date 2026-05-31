@@ -968,4 +968,22 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get unlocked => 'અનલૉક! તમારું વાંચન માણો.';
+
+  @override
+  String get todaysGochar => 'આજનું ગોચર';
+
+  @override
+  String get todaysTransitChart => 'આજનો ગોચર ચાર્ટ';
+
+  @override
+  String get lifeAreaPredictions => 'જીવન ક્ષેત્ર ભવિષ્ય';
+
+  @override
+  String get strengths => 'શક્તિઓ';
+
+  @override
+  String get weaknesses => 'નબળાઈઓ';
+
+  @override
+  String get ruledBy => 'સ્વામી';
 }

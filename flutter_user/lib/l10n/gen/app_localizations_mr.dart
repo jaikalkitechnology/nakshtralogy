@@ -969,4 +969,22 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get unlocked => 'अनलॉक! तुमचे वाचन आनंद घ्या.';
+
+  @override
+  String get todaysGochar => 'आजचे गोचर';
+
+  @override
+  String get todaysTransitChart => 'आजचा गोचर तक्ता';
+
+  @override
+  String get lifeAreaPredictions => 'जीवन क्षेत्र भविष्य';
+
+  @override
+  String get strengths => 'शक्ती';
+
+  @override
+  String get weaknesses => 'कमकुवतपणा';
+
+  @override
+  String get ruledBy => 'स्वामी';
 }

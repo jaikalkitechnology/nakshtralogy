@@ -333,5 +333,11 @@
   "dominantPlanet": "Dominant Grah",
   "startSession": "Session Shuru Karein",
   "notesSaved": "Notes save ho gaye",
-  "unlocked": "Unlock ho gaya! Reading enjoy karein."
+  "unlocked": "Unlock ho gaya! Reading enjoy karein.",
+  "todaysGochar": "Aaj Ka Gochar",
+  "todaysTransitChart": "Aaj Ka Transit Chart",
+  "lifeAreaPredictions": "Life Area Predictions",
+  "strengths": "Strengths",
+  "weaknesses": "Weaknesses",
+  "ruledBy": "Swami"
 }

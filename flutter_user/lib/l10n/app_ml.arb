@@ -333,5 +333,11 @@
   "dominantPlanet": "പ്രധാന ഗ്രഹം",
   "startSession": "സെഷൻ ആരംഭിക്കുക",
   "notesSaved": "കുറിപ്പുകൾ സംരക്ഷിച്ചു",
-  "unlocked": "അൺലോക്ക്! നിങ്ങളുടെ വായന ആസ്വദിക്കൂ."
+  "unlocked": "അൺലോക്ക്! നിങ്ങളുടെ വായന ആസ്വദിക്കൂ.",
+  "todaysGochar": "ഇന്നത്തെ ഗോചരം",
+  "todaysTransitChart": "ഇന്നത്തെ ഗോചര ചാർട്ട്",
+  "lifeAreaPredictions": "ജീവിത മേഖല പ്രവചനങ്ങൾ",
+  "strengths": "ശക്തികൾ",
+  "weaknesses": "ദൗർബല്യങ്ങൾ",
+  "ruledBy": "അധിപൻ"
 }
