@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../bloc/dashboard/dashboard_event.dart';
@@ -25,11 +26,11 @@ class RequestsTab extends StatelessWidget {
           return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
             const Icon(Icons.inbox, size: 56, color: AppColors.textSecondary),
             const SizedBox(height: 12),
-            const Text('No requests', style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
+            Text(AppLocalizations.of(context)?.noRequests ?? 'No requests', style: const TextStyle(color: AppColors.textSecondary, fontSize: 16)),
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: () => context.read<DashboardBloc>().add(DashboardLoadRequested()),
-              child: const Text('Refresh'),
+              child: Text(AppLocalizations.of(context)?.refresh ?? 'Refresh'),
             ),
           ]));
         }
@@ -133,7 +134,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
         await _api.callAction(id, 'reject');
       }
       widget.onUpdated();
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request declined')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.requestDeclined ?? 'Request declined')));
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -150,7 +151,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
       }
       if (mounted) context.read<StatusBloc>().add(const StatusToggleOnline(isOnline: true));
       widget.onUpdated();
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Session ended'), backgroundColor: AppColors.success));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.sessionEnded ?? 'Session ended'), backgroundColor: AppColors.success));
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -260,7 +261,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(userName, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 16)),
               const SizedBox(height: 2),
-              Text('${type.toString().toUpperCase()} consultation', style: TextStyle(color: typeColor, fontSize: 13, fontWeight: FontWeight.w500)),
+              Text('${type.toString().toUpperCase()} ${AppLocalizations.of(context)?.consultation ?? 'consultation'}', style: TextStyle(color: typeColor, fontSize: 13, fontWeight: FontWeight.w500)),
             ])),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -286,7 +287,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
             child: Row(children: [
               Icon(type == 'chat' ? Icons.chat_bubble_outline : Icons.info_outline, size: 14, color: AppColors.accent),
               const SizedBox(width: 4),
-              Text(type == 'chat' ? 'Tap to view chat history' : 'Tap to view call details',
+              Text(type == 'chat' ? (AppLocalizations.of(context)?.tapViewChat ?? 'Tap to view chat history') : (AppLocalizations.of(context)?.tapViewCall ?? 'Tap to view call details'),
                   style: TextStyle(color: AppColors.accent, fontSize: 11, fontWeight: FontWeight.w500)),
               const Spacer(),
               const Icon(Icons.chevron_right, size: 16, color: AppColors.accent),
@@ -305,7 +306,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
                 child: OutlinedButton.icon(
                   onPressed: () => _decline(id, type),
                   icon: const Icon(Icons.close, size: 18),
-                  label: const Text('Decline'),
+                  label: Text(AppLocalizations.of(context)?.decline ?? 'Decline'),
                   style: OutlinedButton.styleFrom(foregroundColor: AppColors.error, side: const BorderSide(color: AppColors.error), minimumSize: const Size(0, 42)),
                 ),
               ),
@@ -317,7 +318,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
                     else _acceptCall(id, userName, type);
                   },
                   icon: Icon(type == 'chat' ? Icons.chat : type == 'video' ? Icons.videocam : Icons.call, size: 18),
-                  label: const Text('Accept'),
+                  label: Text(AppLocalizations.of(context)?.accept ?? 'Accept'),
                   style: ElevatedButton.styleFrom(minimumSize: const Size(0, 42)),
                 ),
               ),
@@ -332,7 +333,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
                     if (type == 'chat') _enterChat(id, userName);
                   },
                   icon: Icon(type == 'chat' ? Icons.chat : Icons.open_in_new, size: 18),
-                  label: Text(type == 'chat' ? 'Enter Chat' : 'In Progress'),
+                  label: Text(type == 'chat' ? (AppLocalizations.of(context)?.enterChat ?? 'Enter Chat') : (AppLocalizations.of(context)?.inProgress ?? 'In Progress')),
                   style: ElevatedButton.styleFrom(backgroundColor: AppColors.accent, minimumSize: const Size(0, 42)),
                 ),
               ),
@@ -341,7 +342,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
                 child: OutlinedButton.icon(
                   onPressed: () => _endSession(id, type),
                   icon: const Icon(Icons.stop, size: 18),
-                  label: const Text('End Session'),
+                  label: Text(AppLocalizations.of(context)?.endSession ?? 'End Session'),
                   style: OutlinedButton.styleFrom(foregroundColor: AppColors.error, side: const BorderSide(color: AppColors.error), minimumSize: const Size(0, 42)),
                 ),
               ),
