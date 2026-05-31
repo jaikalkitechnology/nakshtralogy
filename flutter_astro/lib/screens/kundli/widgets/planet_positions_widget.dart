@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// Displays planet positions using the new V2/helper response shape where
@@ -20,7 +21,7 @@ class PlanetPositionsWidget extends StatelessWidget {
     }
 
     if (items.isEmpty) {
-      return const Center(child: Text('No planet data', style: TextStyle(color: AppColors.textSecondary)));
+      return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.textSecondary)));
     }
 
     return ListView.builder(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -27,7 +28,7 @@ class ShadbalaWidget extends StatelessWidget {
             child: const Row(children: [
               Icon(Icons.bar_chart, color: AppColors.primary, size: 22),
               SizedBox(width: 10),
-              Expanded(child: Text('Shadbala — 6-source Planet Strength', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700))),
+              Expanded(child: Text(AppLocalizations.of(context)?.shadbala ?? 'Shadbala', style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700))),
             ]),
           ),
           const SizedBox(height: 12),

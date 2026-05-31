@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// North Indian diamond-style kundli chart drawn with CustomPainter.
@@ -186,11 +187,11 @@ class NorthIndianChartWidget extends StatelessWidget {
         spacing: 16,
         runSpacing: 4,
         children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('* ', style: boldStyle), Text('Retrograde', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('^ ', style: boldStyle), Text('Combust', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u25A1 ', style: boldStyle), Text('Vargottama', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2191 ', style: boldStyle), Text('Exalted', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2193 ', style: boldStyle), Text('Debilitated', style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [Text('* ', style: boldStyle), Text(AppLocalizations.of(context)?.retrograde ?? 'Retrograde', style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [Text('^ ', style: boldStyle), Text(AppLocalizations.of(context)?.combust ?? 'Combust', style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u25A1 ', style: boldStyle), Text(AppLocalizations.of(context)?.vargottama ?? 'Vargottama', style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2191 ', style: boldStyle), Text(AppLocalizations.of(context)?.exalted ?? 'Exalted', style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2193 ', style: boldStyle), Text(AppLocalizations.of(context)?.debilitated ?? 'Debilitated', style: style)]),
         ],
       ),
     );

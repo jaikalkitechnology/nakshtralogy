@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -31,7 +32,7 @@ class ChakraHealthWidget extends StatelessWidget {
               const Icon(Icons.spa, color: AppColors.primary, size: 28),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Overall Health', style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
+                Text(AppLocalizations.of(context)?.health ?? 'Overall Health', style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
                 Text(overallStatus, style: TextStyle(color: _sColor(overallScore), fontSize: 13, fontWeight: FontWeight.w600)),
               ])),
               Text(overallScore.toStringAsFixed(0), style: TextStyle(color: _sColor(overallScore), fontSize: 28, fontWeight: FontWeight.w700)),

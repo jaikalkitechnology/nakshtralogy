@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -31,7 +32,7 @@ class DoshWidget extends StatelessWidget {
               const Icon(Icons.warning, color: AppColors.error, size: 32),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Dosha Analysis', style: TextStyle(color: AppColors.error, fontSize: 16, fontWeight: FontWeight.w700)),
+                Text(AppLocalizations.of(context)?.dosh ?? 'Dosha Analysis', style: TextStyle(color: AppColors.error, fontSize: 16, fontWeight: FontWeight.w700)),
                 Text('$active active / $total checked', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               ])),
             ]),

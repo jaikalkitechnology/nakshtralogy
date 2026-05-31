@@ -59,7 +59,7 @@ class _SectionLoaderState extends State<SectionLoader> with AutomaticKeepAliveCl
         ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
       ]));
     }
-    if (_data == null) return const Center(child: Text('No data', style: TextStyle(color: AppColors.textSecondary)));
+    if (_data == null) return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.textSecondary)));
     return widget.builder(context, _data!);
   }
 }
