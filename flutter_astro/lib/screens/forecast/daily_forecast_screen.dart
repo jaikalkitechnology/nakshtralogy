@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../specialist/report_components.dart';
@@ -286,7 +287,7 @@ class _S extends State<DailyForecastScreen> {
             Expanded(child: _miniScore('RISK', riskScore, rc, risk['risk_signature']?.toString())),
           ]),
           if (topOpp.isNotEmpty) ...[const SizedBox(height: 8),
-            const Text('TOP OPPORTUNITIES', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            Text(AppLocalizations.of(context)?.topOpportunities ?? 'TOP OPPORTUNITIES', style: const TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1)),
             const SizedBox(height: 4),
             ...topOpp.take(3).map((o) {
               if (o is! Map) return const SizedBox.shrink();
@@ -299,7 +300,7 @@ class _S extends State<DailyForecastScreen> {
             }),
           ],
           if (topRisk.isNotEmpty) ...[const SizedBox(height: 8),
-            const Text('TOP RISKS', style: TextStyle(color: AppColors.error, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            Text(AppLocalizations.of(context)?.topRisks ?? 'TOP RISKS', style: const TextStyle(color: AppColors.error, fontSize: 8, letterSpacing: 1)),
             const SizedBox(height: 4),
             ...topRisk.take(3).map((o) {
               if (o is! Map) return const SizedBox.shrink();
@@ -331,7 +332,7 @@ class _S extends State<DailyForecastScreen> {
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (best.isNotEmpty) ...[
-            const Text('BEST WINDOWS', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            Text(AppLocalizations.of(context)?.bestWindows ?? 'BEST WINDOWS', style: const TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1)),
             const SizedBox(height: 4),
             ...best.take(3).map((w) {
               if (w is! Map) return const SizedBox.shrink();
@@ -353,7 +354,7 @@ class _S extends State<DailyForecastScreen> {
             }),
           ],
           if (worst.isNotEmpty) ...[const SizedBox(height: 6),
-            const Text('WORST WINDOWS', style: TextStyle(color: AppColors.error, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+            Text(AppLocalizations.of(context)?.worstWindows ?? 'WORST WINDOWS', style: const TextStyle(color: AppColors.error, fontSize: 8, letterSpacing: 1)),
             const SizedBox(height: 4),
             ...worst.take(3).map((w) {
               if (w is! Map) return const SizedBox.shrink();

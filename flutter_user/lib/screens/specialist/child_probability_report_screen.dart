@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'report_components.dart';
 
@@ -936,7 +937,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
       // Planet table
       if (d7Planets.isNotEmpty) ...[
         const SizedBox(height: 10),
-        const Text('D7 PLANET POSITIONS',
+        const Text('PLANET POSITIONS',
             style: TextStyle(
                 color: AppColors.smoke,
                 fontSize: 8,
