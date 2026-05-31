@@ -535,4 +535,61 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get dailyProbability => 'किसी भी कुंडली के लिए दैनिक संभावना पूर्वानुमान';
+
+  @override
+  String get engCareer => 'करियर और नौकरी';
+
+  @override
+  String get engBusiness => 'व्यापार और स्टार्टअप';
+
+  @override
+  String get engEducation => 'शिक्षा और अध्ययन';
+
+  @override
+  String get engLifePath => 'जीवन पथ और भाग्य';
+
+  @override
+  String get engWealth => 'धन और वित्त';
+
+  @override
+  String get engDebt => 'ऋण और वसूली';
+
+  @override
+  String get engProperty => 'संपत्ति और आस्तियां';
+
+  @override
+  String get engLegal => 'कानूनी और विवाद';
+
+  @override
+  String get engLove => 'प्रेम और रोमांस';
+
+  @override
+  String get engMarriage => 'विवाह और परिवार';
+
+  @override
+  String get engKundliMilan => 'कुंडली मिलान';
+
+  @override
+  String get engRelationship => 'रिश्ता विश्लेषण';
+
+  @override
+  String get engLoveCompat => 'प्रेम अनुकूलता';
+
+  @override
+  String get engChildProb => 'संतान संभावना';
+
+  @override
+  String get engHealth => 'स्वास्थ्य और कल्याण';
+
+  @override
+  String get engMental => 'मानसिक और तनाव';
+
+  @override
+  String get engCharacter => 'चरित्र विश्लेषण';
+
+  @override
+  String get engPastLife => 'पूर्वजन्म और कर्म';
+
+  @override
+  String get engKarmaLink => 'कर्म संबंध';
 }

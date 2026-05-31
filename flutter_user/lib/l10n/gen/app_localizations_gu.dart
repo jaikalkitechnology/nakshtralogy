@@ -614,4 +614,61 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get todaysForecast => 'આજનું ભવિષ્ય';
+
+  @override
+  String get engCareer => 'કારકિર્દી અને નોકરી';
+
+  @override
+  String get engBusiness => 'વ્યવસાય અને સ્ટાર્ટઅપ';
+
+  @override
+  String get engEducation => 'શિક્ષણ અને અભ્યાસ';
+
+  @override
+  String get engLifePath => 'જીવન માર્ગ અને ભાગ્ય';
+
+  @override
+  String get engWealth => 'સંપત્તિ અને નાણાં';
+
+  @override
+  String get engDebt => 'દેવું અને વસૂલાત';
+
+  @override
+  String get engProperty => 'મિલકત અને અસ્કયામત';
+
+  @override
+  String get engLegal => 'કાનૂની અને વિવાદ';
+
+  @override
+  String get engLove => 'પ્રેમ અને રોમાન્સ';
+
+  @override
+  String get engMarriage => 'લગ્ન અને કુટુંબ';
+
+  @override
+  String get engKundliMilan => 'કુંડળી મિલન';
+
+  @override
+  String get engRelationship => 'સંબંધ વિશ્લેષણ';
+
+  @override
+  String get engLoveCompat => 'પ્રેમ અનુકૂળતા';
+
+  @override
+  String get engChildProb => 'સંતાન સંભાવના';
+
+  @override
+  String get engHealth => 'આરોગ્ય અને કલ્યાણ';
+
+  @override
+  String get engMental => 'માનસિક અને તણાવ';
+
+  @override
+  String get engCharacter => 'વ્યક્તિત્વ વિશ્લેષણ';
+
+  @override
+  String get engPastLife => 'પૂર્વજન્મ અને કર્મ';
+
+  @override
+  String get engKarmaLink => 'કર્મ સંબંધ';
 }

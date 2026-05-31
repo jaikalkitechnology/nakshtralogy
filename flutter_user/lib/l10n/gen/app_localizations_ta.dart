@@ -615,4 +615,61 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get todaysForecast => 'இன்றைய முன்னறிவிப்பு';
+
+  @override
+  String get engCareer => 'தொழில் & வேலை';
+
+  @override
+  String get engBusiness => 'வணிகம் & தொடக்கம்';
+
+  @override
+  String get engEducation => 'கல்வி & கற்றல்';
+
+  @override
+  String get engLifePath => 'வாழ்க்கை பாதை & அதிர்ஷ்டம்';
+
+  @override
+  String get engWealth => 'செல்வம் & நிதி';
+
+  @override
+  String get engDebt => 'கடன் & மீட்பு';
+
+  @override
+  String get engProperty => 'சொத்து & சொத்துகள்';
+
+  @override
+  String get engLegal => 'சட்ட & தகராறு';
+
+  @override
+  String get engLove => 'காதல் & காதல்';
+
+  @override
+  String get engMarriage => 'திருமணம் & குடும்பம்';
+
+  @override
+  String get engKundliMilan => 'குண்டலி மிலன்';
+
+  @override
+  String get engRelationship => 'உறவு புலனாய்வு';
+
+  @override
+  String get engLoveCompat => 'காதல் இணக்கம்';
+
+  @override
+  String get engChildProb => 'குழந்தை வாய்ப்பு';
+
+  @override
+  String get engHealth => 'ஆரோக்கியம் & நல்வாழ்வு';
+
+  @override
+  String get engMental => 'மன & மன அழுத்தம்';
+
+  @override
+  String get engCharacter => 'குணம் பகுப்பாய்வு';
+
+  @override
+  String get engPastLife => 'முற்பிறவி & கர்மா';
+
+  @override
+  String get engKarmaLink => 'கர்மா இணைப்பு';
 }

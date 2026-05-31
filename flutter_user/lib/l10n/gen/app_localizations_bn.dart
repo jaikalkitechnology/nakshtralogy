@@ -613,4 +613,61 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get todaysForecast => 'আজকের পূর্বাভাস';
+
+  @override
+  String get engCareer => 'ক্যারিয়ার ও চাকরি';
+
+  @override
+  String get engBusiness => 'ব্যবসা ও স্টার্টআপ';
+
+  @override
+  String get engEducation => 'শিক্ষা ও পড়াশোনা';
+
+  @override
+  String get engLifePath => 'জীবন পথ ও ভাগ্য';
+
+  @override
+  String get engWealth => 'সম্পদ ও অর্থ';
+
+  @override
+  String get engDebt => 'ঋণ ও পুনরুদ্ধার';
+
+  @override
+  String get engProperty => 'সম্পত্তি ও আস্তি';
+
+  @override
+  String get engLegal => 'আইনি ও বিরোধ';
+
+  @override
+  String get engLove => 'প্রেম ও রোমান্স';
+
+  @override
+  String get engMarriage => 'বিবাহ ও পরিবার';
+
+  @override
+  String get engKundliMilan => 'কুণ্ডলী মিলন';
+
+  @override
+  String get engRelationship => 'সম্পর্ক বিশ্লেষণ';
+
+  @override
+  String get engLoveCompat => 'প্রেম সামঞ্জস্য';
+
+  @override
+  String get engChildProb => 'সন্তান সম্ভাবনা';
+
+  @override
+  String get engHealth => 'স্বাস্থ্য ও সুস্থতা';
+
+  @override
+  String get engMental => 'মানসিক ও চাপ';
+
+  @override
+  String get engCharacter => 'চরিত্র বিশ্লেষণ';
+
+  @override
+  String get engPastLife => 'পূর্বজন্ম ও কর্ম';
+
+  @override
+  String get engKarmaLink => 'কর্ম সংযোগ';
 }

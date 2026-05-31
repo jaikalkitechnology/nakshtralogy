@@ -537,4 +537,61 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get dailyProbability => 'Kisi bhi kundli ke liye daily probability forecast';
+
+  @override
+  String get engCareer => 'Career & Job';
+
+  @override
+  String get engBusiness => 'Business & Startup';
+
+  @override
+  String get engEducation => 'Education & Learning';
+
+  @override
+  String get engLifePath => 'Life Path & Luck';
+
+  @override
+  String get engWealth => 'Wealth & Finance';
+
+  @override
+  String get engDebt => 'Debt & Recovery';
+
+  @override
+  String get engProperty => 'Property & Assets';
+
+  @override
+  String get engLegal => 'Legal & Disputes';
+
+  @override
+  String get engLove => 'Love & Romance';
+
+  @override
+  String get engMarriage => 'Marriage & Family';
+
+  @override
+  String get engKundliMilan => 'Kundli Milan';
+
+  @override
+  String get engRelationship => 'Relationship Intel';
+
+  @override
+  String get engLoveCompat => 'Love Compatibility';
+
+  @override
+  String get engChildProb => 'Child Probability';
+
+  @override
+  String get engHealth => 'Health & Wellness';
+
+  @override
+  String get engMental => 'Mental & Stress';
+
+  @override
+  String get engCharacter => 'Character Analysis';
+
+  @override
+  String get engPastLife => 'Past Life & Karma';
+
+  @override
+  String get engKarmaLink => 'Karma Linkage';
 }

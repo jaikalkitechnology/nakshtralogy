@@ -1326,6 +1326,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today\'s Forecast'**
   String get todaysForecast;
+
+  /// No description provided for @engCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Job'**
+  String get engCareer;
+
+  /// No description provided for @engBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business & Startup'**
+  String get engBusiness;
+
+  /// No description provided for @engEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education & Learning'**
+  String get engEducation;
+
+  /// No description provided for @engLifePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path & Luck'**
+  String get engLifePath;
+
+  /// No description provided for @engWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth & Finance'**
+  String get engWealth;
+
+  /// No description provided for @engDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt & Recovery'**
+  String get engDebt;
+
+  /// No description provided for @engProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property & Assets'**
+  String get engProperty;
+
+  /// No description provided for @engLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal & Disputes'**
+  String get engLegal;
+
+  /// No description provided for @engLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love & Romance'**
+  String get engLove;
+
+  /// No description provided for @engMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage & Family'**
+  String get engMarriage;
+
+  /// No description provided for @engKundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan'**
+  String get engKundliMilan;
+
+  /// No description provided for @engRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Intel'**
+  String get engRelationship;
+
+  /// No description provided for @engLoveCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Compatibility'**
+  String get engLoveCompat;
+
+  /// No description provided for @engChildProb.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Probability'**
+  String get engChildProb;
+
+  /// No description provided for @engHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & Wellness'**
+  String get engHealth;
+
+  /// No description provided for @engMental.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental & Stress'**
+  String get engMental;
+
+  /// No description provided for @engCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Analysis'**
+  String get engCharacter;
+
+  /// No description provided for @engPastLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Life & Karma'**
+  String get engPastLife;
+
+  /// No description provided for @engKarmaLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma Linkage'**
+  String get engKarmaLink;
 }
 
 class _AppLocalizationsDelegate

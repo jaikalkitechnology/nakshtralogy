@@ -536,4 +536,61 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get dailyProbability => 'ਕਿਸੇ ਵੀ ਕੁੰਡਲੀ ਲਈ ਰੋਜ਼ਾਨਾ ਸੰਭਾਵਨਾ ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get engCareer => 'ਕੈਰੀਅਰ ਅਤੇ ਨੌਕਰੀ';
+
+  @override
+  String get engBusiness => 'ਕਾਰੋਬਾਰ ਅਤੇ ਸਟਾਰਟਅੱਪ';
+
+  @override
+  String get engEducation => 'ਸਿੱਖਿਆ ਅਤੇ ਪੜ੍ਹਾਈ';
+
+  @override
+  String get engLifePath => 'ਜੀਵਨ ਮਾਰਗ ਅਤੇ ਕਿਸਮਤ';
+
+  @override
+  String get engWealth => 'ਧਨ ਅਤੇ ਵਿੱਤ';
+
+  @override
+  String get engDebt => 'ਕਰਜ਼ ਅਤੇ ਵਸੂਲੀ';
+
+  @override
+  String get engProperty => 'ਜਾਇਦਾਦ ਅਤੇ ਸੰਪਤੀ';
+
+  @override
+  String get engLegal => 'ਕਾਨੂੰਨੀ ਅਤੇ ਵਿਵਾਦ';
+
+  @override
+  String get engLove => 'ਪਿਆਰ ਅਤੇ ਰੋਮਾਂਸ';
+
+  @override
+  String get engMarriage => 'ਵਿਆਹ ਅਤੇ ਪਰਿਵਾਰ';
+
+  @override
+  String get engKundliMilan => 'ਕੁੰਡਲੀ ਮਿਲਾਨ';
+
+  @override
+  String get engRelationship => 'ਰਿਸ਼ਤਾ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get engLoveCompat => 'ਪਿਆਰ ਅਨੁਕੂਲਤਾ';
+
+  @override
+  String get engChildProb => 'ਸੰਤਾਨ ਸੰਭਾਵਨਾ';
+
+  @override
+  String get engHealth => 'ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ';
+
+  @override
+  String get engMental => 'ਮਾਨਸਿਕ ਅਤੇ ਤਣਾਅ';
+
+  @override
+  String get engCharacter => 'ਚਰਿੱਤਰ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get engPastLife => 'ਪਿਛਲਾ ਜਨਮ ਅਤੇ ਕਰਮ';
+
+  @override
+  String get engKarmaLink => 'ਕਰਮ ਸੰਬੰਧ';
 }
