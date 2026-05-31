@@ -847,4 +847,91 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI യുമായി ചർച്ച ചെയ്യുക';
+
+  @override
+  String get planet => 'ഗ്രഹം';
+
+  @override
+  String get sign => 'രാശി';
+
+  @override
+  String get house => 'ഭാവം';
+
+  @override
+  String get strength => 'ബലം';
+
+  @override
+  String get copy => 'പകർപ്പ്';
+
+  @override
+  String get confidence => 'ആത്മവിശ്വാസം';
+
+  @override
+  String get d7Saptamsa => 'D7 സപ്താംശം';
+
+  @override
+  String get numberExplanation => 'സംഖ്യ വിശദീകരണം';
+
+  @override
+  String get genderExplanation => 'ലിംഗ വിശദീകരണം';
+
+  @override
+  String get inFifth => '5-ാം ല്‍?';
+
+  @override
+  String get primaryArchetype => 'പ്രാഥമിക മൂലരൂപം';
+
+  @override
+  String get mitigation => 'ലഘൂകരണം';
+
+  @override
+  String get soulCareerAlign => 'ആത്മാവ് ↔ കരിയർ സമന്വയം';
+
+  @override
+  String get favorablePeriods => 'അനുകൂല കാലം';
+
+  @override
+  String get challengingPeriods => 'വെല്ലുവിളി കാലം';
+
+  @override
+  String get keyHouses => 'പ്രധാന ഭാവങ്ങൾ';
+
+  @override
+  String get keyPlanets => 'പ്രധാന ഗ്രഹങ്ങൾ';
+
+  @override
+  String get characterOverview => 'സ്വഭാവ അവലോകനം';
+
+  @override
+  String get noYogasActive => 'ഈ ജാതകത്തിൽ നിലവിൽ യോഗങ്ങളില്ല.';
+
+  @override
+  String get basedOnPlanetStrengths => 'ഗ്രഹ ബലങ്ങളുടെയും ഭാവ സ്ഥാനങ്ങളുടെയും അടിസ്ഥാനത്തിൽ';
+
+  @override
+  String get basedOnTransits => 'നിലവിലെ ഗ്രഹ ഗോചരത്തെ അടിസ്ഥാനമാക്കി';
+
+  @override
+  String get currentPlanetPositions => 'നിങ്ങളുടെ രാശിയെ 1-ാം ഭാവമായി കണക്കാക്കി നിലവിലെ ഗ്രഹ സ്ഥാനങ്ങൾ';
+
+  @override
+  String get favorablePeriodAdvice => 'അനുകൂല കാലം — കരിയർ വളർച്ചയിലും ബന്ധങ്ങളിലും ശ്രദ്ധ കേന്ദ്രീകരിക്കുക.';
+
+  @override
+  String get noClassicalYogas => 'ശാസ്ത്രീയ വിദ്യാ യോഗങ്ങളില്ലാതെ, വിജയം സ്ഥിരമായ പരിശ്രമത്തിലൂടെ വരുന്നു.';
+
+  @override
+  String get walletDeduction => 'തുക നിങ്ങളുടെ വാലറ്റിൽ നിന്ന് കുറയ്ക്കും';
+
+  @override
+  String get bhakootAxis => 'ഭകൂട് അക്ഷം';
+
+  @override
+  String get basis => 'അടിസ്ഥാനം';
+
+  @override
+  String get selectChartsForMilan => 'മിലനായി 2 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get selectMultiCharts => '2-5 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക';
 }

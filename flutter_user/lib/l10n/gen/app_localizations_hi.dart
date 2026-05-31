@@ -678,6 +678,93 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI से चर्चा करें';
+
+  @override
+  String get planet => 'ग्रह';
+
+  @override
+  String get sign => 'राशि';
+
+  @override
+  String get house => 'भाव';
+
+  @override
+  String get strength => 'बल';
+
+  @override
+  String get copy => 'कॉपी';
+
+  @override
+  String get confidence => 'विश्वास';
+
+  @override
+  String get d7Saptamsa => 'डी7 सप्तांश';
+
+  @override
+  String get numberExplanation => 'संख्या विवरण';
+
+  @override
+  String get genderExplanation => 'लिंग विवरण';
+
+  @override
+  String get inFifth => '5वें में?';
+
+  @override
+  String get primaryArchetype => 'प्राथमिक प्रारूप';
+
+  @override
+  String get mitigation => 'शमन';
+
+  @override
+  String get soulCareerAlign => 'आत्मा ↔ करियर संरेखण';
+
+  @override
+  String get favorablePeriods => 'अनुकूल काल';
+
+  @override
+  String get challengingPeriods => 'चुनौतीपूर्ण काल';
+
+  @override
+  String get keyHouses => 'प्रमुख भाव';
+
+  @override
+  String get keyPlanets => 'प्रमुख ग्रह';
+
+  @override
+  String get characterOverview => 'चरित्र अवलोकन';
+
+  @override
+  String get noYogasActive => 'इस कुंडली में अभी कोई योग सक्रिय नहीं है।';
+
+  @override
+  String get basedOnPlanetStrengths => 'ग्रह बल और भाव स्थिति के आधार पर';
+
+  @override
+  String get basedOnTransits => 'वर्तमान ग्रह गोचर के आधार पर';
+
+  @override
+  String get currentPlanetPositions => 'आपकी राशि को प्रथम भाव मानते हुए वर्तमान ग्रह स्थिति';
+
+  @override
+  String get favorablePeriodAdvice => 'अनुकूल काल — करियर विकास और रिश्तों पर ध्यान दें।';
+
+  @override
+  String get noClassicalYogas => 'शास्त्रीय शिक्षा योगों के बिना, सफलता निरंतर प्रयास से आती है।';
+
+  @override
+  String get walletDeduction => 'राशि आपके वॉलेट से कटेगी';
+
+  @override
+  String get bhakootAxis => 'भकूट अक्ष';
+
+  @override
+  String get basis => 'आधार';
+
+  @override
+  String get selectChartsForMilan => 'मिलान के लिए 2 कुंडलियां चुनें';
+
+  @override
+  String get selectMultiCharts => '2-5 कुंडलियां चुनें';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1522,4 +1609,91 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get discussWithAI => 'AI SE DISCUSS KAREIN';
+
+  @override
+  String get planet => 'Grah';
+
+  @override
+  String get sign => 'Rashi';
+
+  @override
+  String get house => 'Bhav';
+
+  @override
+  String get strength => 'Bal';
+
+  @override
+  String get copy => 'COPY';
+
+  @override
+  String get confidence => 'CONFIDENCE';
+
+  @override
+  String get d7Saptamsa => 'D7 SAPTAMSA';
+
+  @override
+  String get numberExplanation => 'NUMBER EXPLANATION';
+
+  @override
+  String get genderExplanation => 'GENDER EXPLANATION';
+
+  @override
+  String get inFifth => '5th mein?';
+
+  @override
+  String get primaryArchetype => 'PRIMARY ARCHETYPE';
+
+  @override
+  String get mitigation => 'MITIGATION';
+
+  @override
+  String get soulCareerAlign => 'Soul ↔ Career Alignment';
+
+  @override
+  String get favorablePeriods => 'Anukool Kaal';
+
+  @override
+  String get challengingPeriods => 'Chunautipurna Kaal';
+
+  @override
+  String get keyHouses => 'Key Houses';
+
+  @override
+  String get keyPlanets => 'Key Grah';
+
+  @override
+  String get characterOverview => 'Character Overview';
+
+  @override
+  String get noYogasActive => 'Is kundli mein abhi koi yoga active nahi.';
+
+  @override
+  String get basedOnPlanetStrengths => 'Grah bal aur bhav placement ke basis par';
+
+  @override
+  String get basedOnTransits => 'Current grah gochar ke basis par';
+
+  @override
+  String get currentPlanetPositions => 'Aapki rashi ko first house maante hue grah sthiti';
+
+  @override
+  String get favorablePeriodAdvice => 'Anukool kaal — career growth aur relationships par dhyaan dein.';
+
+  @override
+  String get noClassicalYogas => 'Classical yogas ke bina, safalta consistent effort se aati hai.';
+
+  @override
+  String get walletDeduction => 'Amount aapke wallet se kategi';
+
+  @override
+  String get bhakootAxis => 'BHAKOOT AXIS';
+
+  @override
+  String get basis => 'BASIS';
+
+  @override
+  String get selectChartsForMilan => 'Milan ke liye 2 kundliyan chunein';
+
+  @override
+  String get selectMultiCharts => '2-5 kundliyan chunein';
 }

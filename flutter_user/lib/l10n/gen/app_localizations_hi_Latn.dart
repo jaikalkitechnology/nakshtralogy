@@ -847,4 +847,91 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI SE DISCUSS KAREIN';
+
+  @override
+  String get planet => 'Grah';
+
+  @override
+  String get sign => 'Rashi';
+
+  @override
+  String get house => 'Bhav';
+
+  @override
+  String get strength => 'Bal';
+
+  @override
+  String get copy => 'COPY';
+
+  @override
+  String get confidence => 'CONFIDENCE';
+
+  @override
+  String get d7Saptamsa => 'D7 SAPTAMSA';
+
+  @override
+  String get numberExplanation => 'NUMBER EXPLANATION';
+
+  @override
+  String get genderExplanation => 'GENDER EXPLANATION';
+
+  @override
+  String get inFifth => '5th mein?';
+
+  @override
+  String get primaryArchetype => 'PRIMARY ARCHETYPE';
+
+  @override
+  String get mitigation => 'MITIGATION';
+
+  @override
+  String get soulCareerAlign => 'Soul ↔ Career Alignment';
+
+  @override
+  String get favorablePeriods => 'Anukool Kaal';
+
+  @override
+  String get challengingPeriods => 'Chunautipurna Kaal';
+
+  @override
+  String get keyHouses => 'Key Houses';
+
+  @override
+  String get keyPlanets => 'Key Grah';
+
+  @override
+  String get characterOverview => 'Character Overview';
+
+  @override
+  String get noYogasActive => 'Is kundli mein abhi koi yoga active nahi.';
+
+  @override
+  String get basedOnPlanetStrengths => 'Grah bal aur bhav placement ke basis par';
+
+  @override
+  String get basedOnTransits => 'Current grah gochar ke basis par';
+
+  @override
+  String get currentPlanetPositions => 'Aapki rashi ko first house maante hue grah sthiti';
+
+  @override
+  String get favorablePeriodAdvice => 'Anukool kaal — career growth aur relationships par dhyaan dein.';
+
+  @override
+  String get noClassicalYogas => 'Classical yogas ke bina, safalta consistent effort se aati hai.';
+
+  @override
+  String get walletDeduction => 'Amount aapke wallet se kategi';
+
+  @override
+  String get bhakootAxis => 'BHAKOOT AXIS';
+
+  @override
+  String get basis => 'BASIS';
+
+  @override
+  String get selectChartsForMilan => 'Milan ke liye 2 kundliyan chunein';
+
+  @override
+  String get selectMultiCharts => '2-5 kundliyan chunein';
 }

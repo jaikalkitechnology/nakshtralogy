@@ -845,4 +845,91 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI తో చర్చించండి';
+
+  @override
+  String get planet => 'గ్రహం';
+
+  @override
+  String get sign => 'రాశి';
+
+  @override
+  String get house => 'భావం';
+
+  @override
+  String get strength => 'బలం';
+
+  @override
+  String get copy => 'కాపీ';
+
+  @override
+  String get confidence => 'విశ్వాసం';
+
+  @override
+  String get d7Saptamsa => 'D7 సప్తాంశం';
+
+  @override
+  String get numberExplanation => 'సంఖ్య వివరణ';
+
+  @override
+  String get genderExplanation => 'లింగ వివరణ';
+
+  @override
+  String get inFifth => '5వ లో?';
+
+  @override
+  String get primaryArchetype => 'ప్రాథమిక ఆదర్శరూపం';
+
+  @override
+  String get mitigation => 'ఉపశమనం';
+
+  @override
+  String get soulCareerAlign => 'ఆత్మ ↔ కెరీర్ సమలేఖనం';
+
+  @override
+  String get favorablePeriods => 'అనుకూల కాలం';
+
+  @override
+  String get challengingPeriods => 'సవాలు కాలం';
+
+  @override
+  String get keyHouses => 'ముఖ్య భావాలు';
+
+  @override
+  String get keyPlanets => 'ముఖ్య గ్రహాలు';
+
+  @override
+  String get characterOverview => 'వ్యక్తిత్వ అవలోకనం';
+
+  @override
+  String get noYogasActive => 'ఈ జాతకంలో ప్రస్తుతం యోగాలు లేవు.';
+
+  @override
+  String get basedOnPlanetStrengths => 'గ్రహ బలాలు & భావ స్థానాల ఆధారంగా';
+
+  @override
+  String get basedOnTransits => 'ప్రస్తుత గ్రహ గోచారం ఆధారంగా';
+
+  @override
+  String get currentPlanetPositions => 'మీ రాశిని 1వ భావంగా భావించి ప్రస్తుత గ్రహ స్థానాలు';
+
+  @override
+  String get favorablePeriodAdvice => 'అనుకూల కాలం — కెరీర్ పెరుగుదల మరియు సంబంధాలపై దృష్టి పెట్టండి.';
+
+  @override
+  String get noClassicalYogas => 'శాస్త్రీయ విద్యా యోగాలు లేకుండా, విజయం స్థిరమైన కృషి ద్వారా వస్తుంది.';
+
+  @override
+  String get walletDeduction => 'మొత్తం మీ వాలెట్ నుండి తీసివేయబడుతుంది';
+
+  @override
+  String get bhakootAxis => 'భకూట్ అక్షం';
+
+  @override
+  String get basis => 'ఆధారం';
+
+  @override
+  String get selectChartsForMilan => 'మిలన్ కోసం 2 జాతకాలు ఎంచుకోండి';
+
+  @override
+  String get selectMultiCharts => '2-5 జాతకాలు ఎంచుకోండి';
 }

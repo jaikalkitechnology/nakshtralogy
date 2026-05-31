@@ -846,4 +846,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discussWithAI => 'DISCUSS WITH AI';
+
+  @override
+  String get planet => 'Planet';
+
+  @override
+  String get sign => 'Sign';
+
+  @override
+  String get house => 'House';
+
+  @override
+  String get strength => 'Strength';
+
+  @override
+  String get copy => 'COPY';
+
+  @override
+  String get confidence => 'CONFIDENCE';
+
+  @override
+  String get d7Saptamsa => 'D7 SAPTAMSA';
+
+  @override
+  String get numberExplanation => 'NUMBER EXPLANATION';
+
+  @override
+  String get genderExplanation => 'GENDER EXPLANATION';
+
+  @override
+  String get inFifth => 'In 5th?';
+
+  @override
+  String get primaryArchetype => 'PRIMARY ARCHETYPE';
+
+  @override
+  String get mitigation => 'MITIGATION';
+
+  @override
+  String get soulCareerAlign => 'Soul ↔ Career Alignment';
+
+  @override
+  String get favorablePeriods => 'Favorable Periods';
+
+  @override
+  String get challengingPeriods => 'Challenging Periods';
+
+  @override
+  String get keyHouses => 'Key Houses';
+
+  @override
+  String get keyPlanets => 'Key Planets';
+
+  @override
+  String get characterOverview => 'Character Overview';
+
+  @override
+  String get noYogasActive => 'No yogas currently active in this chart.';
+
+  @override
+  String get basedOnPlanetStrengths => 'Based on planetary strengths & house placements';
+
+  @override
+  String get basedOnTransits => 'Based on current planetary transits';
+
+  @override
+  String get currentPlanetPositions => 'Current planet positions with your sign as house 1';
+
+  @override
+  String get favorablePeriodAdvice => 'Favorable period — focus on career growth and relationships.';
+
+  @override
+  String get noClassicalYogas => 'Without classical learning yogas, success comes from consistent effort.';
+
+  @override
+  String get walletDeduction => 'Amount will be deducted from your wallet';
+
+  @override
+  String get bhakootAxis => 'BHAKOOT AXIS';
+
+  @override
+  String get basis => 'BASIS';
+
+  @override
+  String get selectChartsForMilan => 'Select 2 Charts for Milan Analysis';
+
+  @override
+  String get selectMultiCharts => 'Select 2–5 Charts';
 }

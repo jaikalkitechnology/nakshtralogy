@@ -845,4 +845,91 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI સાથે ચર્ચા કરો';
+
+  @override
+  String get planet => 'ગ્રહ';
+
+  @override
+  String get sign => 'રાશિ';
+
+  @override
+  String get house => 'ભાવ';
+
+  @override
+  String get strength => 'બળ';
+
+  @override
+  String get copy => 'કૉપી';
+
+  @override
+  String get confidence => 'વિશ્વાસ';
+
+  @override
+  String get d7Saptamsa => 'ડી7 સપ્તાંશ';
+
+  @override
+  String get numberExplanation => 'સંખ્યા સ્પષ્ટીકરણ';
+
+  @override
+  String get genderExplanation => 'લિંગ સ્પષ્ટીકરણ';
+
+  @override
+  String get inFifth => '5માં?';
+
+  @override
+  String get primaryArchetype => 'પ્રાથમિક પ્રારૂપ';
+
+  @override
+  String get mitigation => 'શમન';
+
+  @override
+  String get soulCareerAlign => 'આત્મા ↔ કારકિર્દી સંરેખણ';
+
+  @override
+  String get favorablePeriods => 'અનુકૂળ સમય';
+
+  @override
+  String get challengingPeriods => 'પડકારજનક સમય';
+
+  @override
+  String get keyHouses => 'મુખ્ય ભાવ';
+
+  @override
+  String get keyPlanets => 'મુખ્ય ગ્રહ';
+
+  @override
+  String get characterOverview => 'વ્યક્તિત્વ અવલોકન';
+
+  @override
+  String get noYogasActive => 'આ કુંડળીમાં હાલ કોઈ યોગ સક્રિય નથી.';
+
+  @override
+  String get basedOnPlanetStrengths => 'ગ્રહ બળ અને ભાવ સ્થિતિ પર આધારિત';
+
+  @override
+  String get basedOnTransits => 'વર્તમાન ગ્રહ ગોચર પર આધારિત';
+
+  @override
+  String get currentPlanetPositions => 'તમારી રાશિને પ્રથમ ભાવ માનીને વર્તમાન ગ્રહ સ્થિતિ';
+
+  @override
+  String get favorablePeriodAdvice => 'અનુકૂળ સમય — કારકિર્દી વૃદ્ધિ અને સંબંધો પર ધ્યાન આપો.';
+
+  @override
+  String get noClassicalYogas => 'શાસ્ત્રીય યોગો વિના, સફળતા સતત પ્રયત્નથી આવે છે.';
+
+  @override
+  String get walletDeduction => 'રકમ તમારા વૉલેટમાંથી કાપવામાં આવશે';
+
+  @override
+  String get bhakootAxis => 'ભકૂટ અક્ષ';
+
+  @override
+  String get basis => 'આધાર';
+
+  @override
+  String get selectChartsForMilan => 'મિલન માટે 2 કુંડળીઓ પસંદ કરો';
+
+  @override
+  String get selectMultiCharts => '2-5 કુંડળીઓ પસંદ કરો';
 }

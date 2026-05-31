@@ -846,4 +846,91 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI உடன் விவாதிக்கவும்';
+
+  @override
+  String get planet => 'கிரகம்';
+
+  @override
+  String get sign => 'ராசி';
+
+  @override
+  String get house => 'பாவம்';
+
+  @override
+  String get strength => 'பலம்';
+
+  @override
+  String get copy => 'நகல்';
+
+  @override
+  String get confidence => 'நம்பிக்கை';
+
+  @override
+  String get d7Saptamsa => 'D7 சப்தாம்சம்';
+
+  @override
+  String get numberExplanation => 'எண் விளக்கம்';
+
+  @override
+  String get genderExplanation => 'பாலின விளக்கம்';
+
+  @override
+  String get inFifth => '5வதில்?';
+
+  @override
+  String get primaryArchetype => 'முதன்மை முன்மாதிரி';
+
+  @override
+  String get mitigation => 'தணிப்பு';
+
+  @override
+  String get soulCareerAlign => 'ஆன்மா ↔ தொழில் சீரமைப்பு';
+
+  @override
+  String get favorablePeriods => 'சாதகமான காலம்';
+
+  @override
+  String get challengingPeriods => 'சவாலான காலம்';
+
+  @override
+  String get keyHouses => 'முக்கிய பாவங்கள்';
+
+  @override
+  String get keyPlanets => 'முக்கிய கிரகங்கள்';
+
+  @override
+  String get characterOverview => 'குணம் மேலோட்டம்';
+
+  @override
+  String get noYogasActive => 'இந்த ஜாதகத்தில் தற்போது யோகங்கள் இல்லை.';
+
+  @override
+  String get basedOnPlanetStrengths => 'கிரக பலங்கள் & பாவ நிலைகளின் அடிப்படையில்';
+
+  @override
+  String get basedOnTransits => 'தற்போதைய கிரக கோசாரத்தின் அடிப்படையில்';
+
+  @override
+  String get currentPlanetPositions => 'உங்கள் ராசியை 1ம் பாவமாகக் கொண்டு தற்போதைய கிரக நிலைகள்';
+
+  @override
+  String get favorablePeriodAdvice => 'சாதகமான காலம் — தொழில் வளர்ச்சி மற்றும் உறவுகளில் கவனம் செலுத்துங்கள்.';
+
+  @override
+  String get noClassicalYogas => 'சாஸ்திர கல்வி யோகங்கள் இல்லாமல், வெற்றி நிலையான முயற்சியால் வருகிறது.';
+
+  @override
+  String get walletDeduction => 'தொகை உங்கள் வாலட்டிலிருந்து கழிக்கப்படும்';
+
+  @override
+  String get bhakootAxis => 'பகூட் அச்சு';
+
+  @override
+  String get basis => 'அடிப்படை';
+
+  @override
+  String get selectChartsForMilan => 'மிலனுக்கு 2 ஜாதகங்களைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get selectMultiCharts => '2-5 ஜாதகங்களைத் தேர்ந்தெடுக்கவும்';
 }

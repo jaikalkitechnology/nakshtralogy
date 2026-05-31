@@ -846,4 +846,91 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI शी चर्चा करा';
+
+  @override
+  String get planet => 'ग्रह';
+
+  @override
+  String get sign => 'राशी';
+
+  @override
+  String get house => 'भाव';
+
+  @override
+  String get strength => 'बल';
+
+  @override
+  String get copy => 'कॉपी';
+
+  @override
+  String get confidence => 'विश्वास';
+
+  @override
+  String get d7Saptamsa => 'डी7 सप्तांश';
+
+  @override
+  String get numberExplanation => 'संख्या स्पष्टीकरण';
+
+  @override
+  String get genderExplanation => 'लिंग स्पष्टीकरण';
+
+  @override
+  String get inFifth => '5व्या मध्ये?';
+
+  @override
+  String get primaryArchetype => 'प्राथमिक प्रारूप';
+
+  @override
+  String get mitigation => 'शमन';
+
+  @override
+  String get soulCareerAlign => 'आत्मा ↔ करिअर संरेखन';
+
+  @override
+  String get favorablePeriods => 'अनुकूल काळ';
+
+  @override
+  String get challengingPeriods => 'आव्हानात्मक काळ';
+
+  @override
+  String get keyHouses => 'प्रमुख भाव';
+
+  @override
+  String get keyPlanets => 'प्रमुख ग्रह';
+
+  @override
+  String get characterOverview => 'व्यक्तिमत्व अवलोकन';
+
+  @override
+  String get noYogasActive => 'या कुंडलीत सध्या कोणताही योग सक्रिय नाही.';
+
+  @override
+  String get basedOnPlanetStrengths => 'ग्रह बल आणि भाव स्थितीवर आधारित';
+
+  @override
+  String get basedOnTransits => 'सध्याच्या ग्रह गोचरावर आधारित';
+
+  @override
+  String get currentPlanetPositions => 'तुमची राशी पहिला भाव मानून सध्याच्या ग्रह स्थिती';
+
+  @override
+  String get favorablePeriodAdvice => 'अनुकूल काळ — करिअर वाढ आणि नात्यांवर लक्ष केंद्रित करा.';
+
+  @override
+  String get noClassicalYogas => 'शास्त्रीय योगांशिवाय, यश सातत्याने प्रयत्नातून येते.';
+
+  @override
+  String get walletDeduction => 'रक्कम तुमच्या वॉलेटमधून कापली जाईल';
+
+  @override
+  String get bhakootAxis => 'भकूट अक्ष';
+
+  @override
+  String get basis => 'आधार';
+
+  @override
+  String get selectChartsForMilan => 'मिलनासाठी 2 कुंडल्या निवडा';
+
+  @override
+  String get selectMultiCharts => '2-5 कुंडल्या निवडा';
 }

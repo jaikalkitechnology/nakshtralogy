@@ -846,4 +846,91 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI ਨਾਲ ਚਰਚਾ ਕਰੋ';
+
+  @override
+  String get planet => 'ਗ੍ਰਹਿ';
+
+  @override
+  String get sign => 'ਰਾਸ਼ੀ';
+
+  @override
+  String get house => 'ਭਾਵ';
+
+  @override
+  String get strength => 'ਬਲ';
+
+  @override
+  String get copy => 'ਕਾਪੀ';
+
+  @override
+  String get confidence => 'ਭਰੋਸਾ';
+
+  @override
+  String get d7Saptamsa => 'D7 ਸਪਤਾਂਸ਼';
+
+  @override
+  String get numberExplanation => 'ਸੰਖਿਆ ਵਿਆਖਿਆ';
+
+  @override
+  String get genderExplanation => 'ਲਿੰਗ ਵਿਆਖਿਆ';
+
+  @override
+  String get inFifth => '5ਵੇਂ ਵਿੱਚ?';
+
+  @override
+  String get primaryArchetype => 'ਮੁੱਖ ਪ੍ਰਾਰੂਪ';
+
+  @override
+  String get mitigation => 'ਸ਼ਮਨ';
+
+  @override
+  String get soulCareerAlign => 'ਆਤਮਾ ↔ ਕੈਰੀਅਰ ਸੰਰੇਖਣ';
+
+  @override
+  String get favorablePeriods => 'ਅਨੁਕੂਲ ਸਮਾਂ';
+
+  @override
+  String get challengingPeriods => 'ਚੁਣੌਤੀਪੂਰਨ ਸਮਾਂ';
+
+  @override
+  String get keyHouses => 'ਮੁੱਖ ਭਾਵ';
+
+  @override
+  String get keyPlanets => 'ਮੁੱਖ ਗ੍ਰਹਿ';
+
+  @override
+  String get characterOverview => 'ਚਰਿੱਤਰ ਸੰਖੇਪ';
+
+  @override
+  String get noYogasActive => 'ਇਸ ਕੁੰਡਲੀ ਵਿੱਚ ਹਾਲ ਕੋਈ ਯੋਗ ਸਰਗਰਮ ਨਹੀਂ।';
+
+  @override
+  String get basedOnPlanetStrengths => 'ਗ੍ਰਹਿ ਬਲ ਅਤੇ ਭਾਵ ਸਥਿਤੀ ਦੇ ਆਧਾਰ ਤੇ';
+
+  @override
+  String get basedOnTransits => 'ਮੌਜੂਦਾ ਗ੍ਰਹਿ ਗੋਚਰ ਦੇ ਆਧਾਰ ਤੇ';
+
+  @override
+  String get currentPlanetPositions => 'ਤੁਹਾਡੀ ਰਾਸ਼ੀ ਨੂੰ ਪਹਿਲਾ ਭਾਵ ਮੰਨ ਕੇ ਮੌਜੂਦਾ ਗ੍ਰਹਿ ਸਥਿਤੀ';
+
+  @override
+  String get favorablePeriodAdvice => 'ਅਨੁਕੂਲ ਸਮਾਂ — ਕੈਰੀਅਰ ਵਿਕਾਸ ਅਤੇ ਰਿਸ਼ਤਿਆਂ ਤੇ ਧਿਆਨ ਦਿਓ।';
+
+  @override
+  String get noClassicalYogas => 'ਸ਼ਾਸਤਰੀ ਵਿੱਦਿਆ ਯੋਗਾਂ ਤੋਂ ਬਿਨਾਂ, ਸਫ਼ਲਤਾ ਲਗਾਤਾਰ ਕੋਸ਼ਿਸ਼ ਨਾਲ ਆਉਂਦੀ ਹੈ।';
+
+  @override
+  String get walletDeduction => 'ਰਕਮ ਤੁਹਾਡੇ ਵਾਲਿਟ ਤੋਂ ਕੱਟੀ ਜਾਵੇਗੀ';
+
+  @override
+  String get bhakootAxis => 'ਭਕੂਟ ਧੁਰਾ';
+
+  @override
+  String get basis => 'ਆਧਾਰ';
+
+  @override
+  String get selectChartsForMilan => 'ਮਿਲਾਨ ਲਈ 2 ਕੁੰਡਲੀਆਂ ਚੁਣੋ';
+
+  @override
+  String get selectMultiCharts => '2-5 ਕੁੰਡਲੀਆਂ ਚੁਣੋ';
 }

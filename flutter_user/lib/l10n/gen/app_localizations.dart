@@ -1788,6 +1788,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DISCUSS WITH AI'**
   String get discussWithAI;
+
+  /// No description provided for @planet.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet'**
+  String get planet;
+
+  /// No description provided for @sign.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign'**
+  String get sign;
+
+  /// No description provided for @house.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get house;
+
+  /// No description provided for @strength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get strength;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'COPY'**
+  String get copy;
+
+  /// No description provided for @confidence.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIDENCE'**
+  String get confidence;
+
+  /// No description provided for @d7Saptamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'D7 SAPTAMSA'**
+  String get d7Saptamsa;
+
+  /// No description provided for @numberExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'NUMBER EXPLANATION'**
+  String get numberExplanation;
+
+  /// No description provided for @genderExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'GENDER EXPLANATION'**
+  String get genderExplanation;
+
+  /// No description provided for @inFifth.
+  ///
+  /// In en, this message translates to:
+  /// **'In 5th?'**
+  String get inFifth;
+
+  /// No description provided for @primaryArchetype.
+  ///
+  /// In en, this message translates to:
+  /// **'PRIMARY ARCHETYPE'**
+  String get primaryArchetype;
+
+  /// No description provided for @mitigation.
+  ///
+  /// In en, this message translates to:
+  /// **'MITIGATION'**
+  String get mitigation;
+
+  /// No description provided for @soulCareerAlign.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul ↔ Career Alignment'**
+  String get soulCareerAlign;
+
+  /// No description provided for @favorablePeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorable Periods'**
+  String get favorablePeriods;
+
+  /// No description provided for @challengingPeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging Periods'**
+  String get challengingPeriods;
+
+  /// No description provided for @keyHouses.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Houses'**
+  String get keyHouses;
+
+  /// No description provided for @keyPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Planets'**
+  String get keyPlanets;
+
+  /// No description provided for @characterOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Overview'**
+  String get characterOverview;
+
+  /// No description provided for @noYogasActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No yogas currently active in this chart.'**
+  String get noYogasActive;
+
+  /// No description provided for @basedOnPlanetStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on planetary strengths & house placements'**
+  String get basedOnPlanetStrengths;
+
+  /// No description provided for @basedOnTransits.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on current planetary transits'**
+  String get basedOnTransits;
+
+  /// No description provided for @currentPlanetPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Current planet positions with your sign as house 1'**
+  String get currentPlanetPositions;
+
+  /// No description provided for @favorablePeriodAdvice.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorable period — focus on career growth and relationships.'**
+  String get favorablePeriodAdvice;
+
+  /// No description provided for @noClassicalYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Without classical learning yogas, success comes from consistent effort.'**
+  String get noClassicalYogas;
+
+  /// No description provided for @walletDeduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount will be deducted from your wallet'**
+  String get walletDeduction;
+
+  /// No description provided for @bhakootAxis.
+  ///
+  /// In en, this message translates to:
+  /// **'BHAKOOT AXIS'**
+  String get bhakootAxis;
+
+  /// No description provided for @basis.
+  ///
+  /// In en, this message translates to:
+  /// **'BASIS'**
+  String get basis;
+
+  /// No description provided for @selectChartsForMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Select 2 Charts for Milan Analysis'**
+  String get selectChartsForMilan;
+
+  /// No description provided for @selectMultiCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select 2–5 Charts'**
+  String get selectMultiCharts;
 }
 
 class _AppLocalizationsDelegate

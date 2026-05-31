@@ -846,4 +846,91 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI ಜೊತೆ ಚರ್ಚಿಸಿ';
+
+  @override
+  String get planet => 'ಗ್ರಹ';
+
+  @override
+  String get sign => 'ರಾಶಿ';
+
+  @override
+  String get house => 'ಭಾವ';
+
+  @override
+  String get strength => 'ಬಲ';
+
+  @override
+  String get copy => 'ನಕಲು';
+
+  @override
+  String get confidence => 'ವಿಶ್ವಾಸ';
+
+  @override
+  String get d7Saptamsa => 'D7 ಸಪ್ತಾಂಶ';
+
+  @override
+  String get numberExplanation => 'ಸಂಖ್ಯೆ ವಿವರಣೆ';
+
+  @override
+  String get genderExplanation => 'ಲಿಂಗ ವಿವರಣೆ';
+
+  @override
+  String get inFifth => '5ನೇ ಯಲ್ಲಿ?';
+
+  @override
+  String get primaryArchetype => 'ಪ್ರಾಥಮಿಕ ಮೂಲರೂಪ';
+
+  @override
+  String get mitigation => 'ಶಮನ';
+
+  @override
+  String get soulCareerAlign => 'ಆತ್ಮ ↔ ವೃತ್ತಿ ಸಮನ್ವಯ';
+
+  @override
+  String get favorablePeriods => 'ಅನುಕೂಲ ಅವಧಿ';
+
+  @override
+  String get challengingPeriods => 'ಸವಾಲಿನ ಅವಧಿ';
+
+  @override
+  String get keyHouses => 'ಪ್ರಮುಖ ಭಾವಗಳು';
+
+  @override
+  String get keyPlanets => 'ಪ್ರಮುಖ ಗ್ರಹಗಳು';
+
+  @override
+  String get characterOverview => 'ವ್ಯಕ್ತಿತ್ವ ಅವಲೋಕನ';
+
+  @override
+  String get noYogasActive => 'ಈ ಜಾತಕದಲ್ಲಿ ಪ್ರಸ್ತುತ ಯೋಗಗಳಿಲ್ಲ.';
+
+  @override
+  String get basedOnPlanetStrengths => 'ಗ್ರಹ ಬಲ ಮತ್ತು ಭಾವ ಸ್ಥಾನಗಳ ಆಧಾರ';
+
+  @override
+  String get basedOnTransits => 'ಪ್ರಸ್ತುತ ಗ್ರಹ ಗೋಚಾರ ಆಧಾರ';
+
+  @override
+  String get currentPlanetPositions => 'ನಿಮ್ಮ ರಾಶಿಯನ್ನು 1ನೇ ಭಾವವೆಂದು ಪರಿಗಣಿಸಿ ಪ್ರಸ್ತುತ ಗ್ರಹ ಸ್ಥಾನಗಳು';
+
+  @override
+  String get favorablePeriodAdvice => 'ಅನುಕೂಲ ಅವಧಿ — ವೃತ್ತಿ ಬೆಳವಣಿಗೆ ಮತ್ತು ಸಂಬಂಧಗಳ ಮೇಲೆ ಗಮನ ಹರಿಸಿ.';
+
+  @override
+  String get noClassicalYogas => 'ಶಾಸ್ತ್ರೀಯ ಯೋಗಗಳಿಲ್ಲದೆ, ಯಶಸ್ಸು ನಿರಂತರ ಪ್ರಯತ್ನದಿಂದ ಬರುತ್ತದೆ.';
+
+  @override
+  String get walletDeduction => 'ಮೊತ್ತ ನಿಮ್ಮ ವಾಲೆಟ್‌ನಿಂದ ಕಡಿತಗೊಳ್ಳುತ್ತದೆ';
+
+  @override
+  String get bhakootAxis => 'ಭಕೂಟ್ ಅಕ್ಷ';
+
+  @override
+  String get basis => 'ಆಧಾರ';
+
+  @override
+  String get selectChartsForMilan => 'ಮಿಲನ್‌ಗಾಗಿ 2 ಜಾತಕ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get selectMultiCharts => '2-5 ಜಾತಕ ಆಯ್ಕೆಮಾಡಿ';
 }

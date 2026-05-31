@@ -844,4 +844,91 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get discussWithAI => 'AI এর সাথে আলোচনা';
+
+  @override
+  String get planet => 'গ্রহ';
+
+  @override
+  String get sign => 'রাশি';
+
+  @override
+  String get house => 'ভাব';
+
+  @override
+  String get strength => 'বল';
+
+  @override
+  String get copy => 'কপি';
+
+  @override
+  String get confidence => 'আত্মবিশ্বাস';
+
+  @override
+  String get d7Saptamsa => 'D7 সপ্তাংশ';
+
+  @override
+  String get numberExplanation => 'সংখ্যা ব্যাখ্যা';
+
+  @override
+  String get genderExplanation => 'লিঙ্গ ব্যাখ্যা';
+
+  @override
+  String get inFifth => '5ম এ?';
+
+  @override
+  String get primaryArchetype => 'প্রাথমিক আদর্শরূপ';
+
+  @override
+  String get mitigation => 'প্রশমন';
+
+  @override
+  String get soulCareerAlign => 'আত্মা ↔ ক্যারিয়ার সামঞ্জস্য';
+
+  @override
+  String get favorablePeriods => 'অনুকূল কাল';
+
+  @override
+  String get challengingPeriods => 'চ্যালেঞ্জিং কাল';
+
+  @override
+  String get keyHouses => 'প্রধান ভাব';
+
+  @override
+  String get keyPlanets => 'প্রধান গ্রহ';
+
+  @override
+  String get characterOverview => 'চরিত্র সংক্ষেপ';
+
+  @override
+  String get noYogasActive => 'এই কুণ্ডলীতে বর্তমানে কোনো যোগ সক্রিয় নেই।';
+
+  @override
+  String get basedOnPlanetStrengths => 'গ্রহ বল ও ভাব স্থানের ভিত্তিতে';
+
+  @override
+  String get basedOnTransits => 'বর্তমান গ্রহ গোচরের ভিত্তিতে';
+
+  @override
+  String get currentPlanetPositions => 'আপনার রাশিকে প্রথম ভাব ধরে বর্তমান গ্রহ অবস্থান';
+
+  @override
+  String get favorablePeriodAdvice => 'অনুকূল কাল — ক্যারিয়ার বৃদ্ধি ও সম্পর্কে মনোযোগ দিন।';
+
+  @override
+  String get noClassicalYogas => 'শাস্ত্রীয় বিদ্যা যোগ ছাড়া, সাফল্য ধারাবাহিক প্রচেষ্টায় আসে।';
+
+  @override
+  String get walletDeduction => 'পরিমাণ আপনার ওয়ালেট থেকে কাটা হবে';
+
+  @override
+  String get bhakootAxis => 'ভকূট অক্ষ';
+
+  @override
+  String get basis => 'ভিত্তি';
+
+  @override
+  String get selectChartsForMilan => 'মিলনের জন্য 2 কুণ্ডলী নির্বাচন করুন';
+
+  @override
+  String get selectMultiCharts => '2-5 কুণ্ডলী নির্বাচন করুন';
 }
