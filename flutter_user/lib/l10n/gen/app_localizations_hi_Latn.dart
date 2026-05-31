@@ -790,4 +790,61 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get overallVerdict => 'OVERALL VERDICT';
+
+  @override
+  String get venusContacts => 'VENUS CROSS CONTACTS';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get effect => 'Effect';
+
+  @override
+  String get moonSignCompat => 'MOON SIGN COMPATIBILITY';
+
+  @override
+  String get hisMoon => 'HIS MOON';
+
+  @override
+  String get herMoon => 'HER MOON';
+
+  @override
+  String get nakshatraCompat => 'NAKSHATRA COMPATIBILITY';
+
+  @override
+  String get ketuContacts => 'KETU CONTACTS';
+
+  @override
+  String get rahuContacts => 'RAHU CONTACTS';
+
+  @override
+  String get pastLifeIndication => 'PAST LIFE INDICATION';
+
+  @override
+  String get totalChallengePenalty => 'TOTAL CHALLENGE PENALTY';
+
+  @override
+  String get manifestation => 'MANIFESTATION';
+
+  @override
+  String get cancellation => 'CANCELLATION';
+
+  @override
+  String get navigation => 'NAVIGATION';
+
+  @override
+  String get potentialStrengths => 'STRENGTHS';
+
+  @override
+  String get areasToNurture => 'NURTURE AREAS';
+
+  @override
+  String get relationshipGuidance => 'RELATIONSHIP GUIDANCE';
+
+  @override
+  String get detailedSummary => 'DETAILED SUMMARY';
+
+  @override
+  String get discussWithAI => 'AI SE DISCUSS KAREIN';
 }

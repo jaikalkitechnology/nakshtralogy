@@ -788,4 +788,61 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get overallVerdict => 'మొత్తం తీర్పు';
+
+  @override
+  String get venusContacts => 'శుక్ర సంపర్కాలు';
+
+  @override
+  String get contact => 'సంపర్కం';
+
+  @override
+  String get effect => 'ప్రభావం';
+
+  @override
+  String get moonSignCompat => 'చంద్ర రాశి అనుకూలత';
+
+  @override
+  String get hisMoon => 'అతని చంద్రుడు';
+
+  @override
+  String get herMoon => 'ఆమె చంద్రుడు';
+
+  @override
+  String get nakshatraCompat => 'నక్షత్ర అనుకూలత';
+
+  @override
+  String get ketuContacts => 'కేతు సంపర్కాలు';
+
+  @override
+  String get rahuContacts => 'రాహు సంపర్కాలు';
+
+  @override
+  String get pastLifeIndication => 'పూర్వజన్మ సూచన';
+
+  @override
+  String get totalChallengePenalty => 'మొత్తం సవాలు శిక్ష';
+
+  @override
+  String get manifestation => 'వ్యక్తీకరణ';
+
+  @override
+  String get cancellation => 'రద్దు';
+
+  @override
+  String get navigation => 'మార్గదర్శకత్వం';
+
+  @override
+  String get potentialStrengths => 'సంభావ్య బలాలు';
+
+  @override
+  String get areasToNurture => 'పెంపొందించాల్సిన రంగాలు';
+
+  @override
+  String get relationshipGuidance => 'సంబంధ మార్గదర్శకత్వం';
+
+  @override
+  String get detailedSummary => 'వివరమైన సారాంశం';
+
+  @override
+  String get discussWithAI => 'AI తో చర్చించండి';
 }

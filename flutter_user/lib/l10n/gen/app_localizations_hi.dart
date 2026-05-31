@@ -621,6 +621,63 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get overallVerdict => 'समग्र निर्णय';
+
+  @override
+  String get venusContacts => 'शुक्र क्रॉस संपर्क';
+
+  @override
+  String get contact => 'संपर्क';
+
+  @override
+  String get effect => 'प्रभाव';
+
+  @override
+  String get moonSignCompat => 'चंद्र राशि अनुकूलता';
+
+  @override
+  String get hisMoon => 'उनका चंद्र';
+
+  @override
+  String get herMoon => 'उनका चंद्र';
+
+  @override
+  String get nakshatraCompat => 'नक्षत्र अनुकूलता';
+
+  @override
+  String get ketuContacts => 'केतु संपर्क';
+
+  @override
+  String get rahuContacts => 'राहु संपर्क';
+
+  @override
+  String get pastLifeIndication => 'पूर्वजन्म संकेत';
+
+  @override
+  String get totalChallengePenalty => 'कुल चुनौती दंड';
+
+  @override
+  String get manifestation => 'अभिव्यक्ति';
+
+  @override
+  String get cancellation => 'निरसन';
+
+  @override
+  String get navigation => 'मार्गदर्शन';
+
+  @override
+  String get potentialStrengths => 'संभावित शक्तियां';
+
+  @override
+  String get areasToNurture => 'पोषण क्षेत्र';
+
+  @override
+  String get relationshipGuidance => 'रिश्ता मार्गदर्शन';
+
+  @override
+  String get detailedSummary => 'विस्तृत सारांश';
+
+  @override
+  String get discussWithAI => 'AI से चर्चा करें';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1408,4 +1465,61 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get overallVerdict => 'OVERALL VERDICT';
+
+  @override
+  String get venusContacts => 'VENUS CROSS CONTACTS';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get effect => 'Effect';
+
+  @override
+  String get moonSignCompat => 'MOON SIGN COMPATIBILITY';
+
+  @override
+  String get hisMoon => 'HIS MOON';
+
+  @override
+  String get herMoon => 'HER MOON';
+
+  @override
+  String get nakshatraCompat => 'NAKSHATRA COMPATIBILITY';
+
+  @override
+  String get ketuContacts => 'KETU CONTACTS';
+
+  @override
+  String get rahuContacts => 'RAHU CONTACTS';
+
+  @override
+  String get pastLifeIndication => 'PAST LIFE INDICATION';
+
+  @override
+  String get totalChallengePenalty => 'TOTAL CHALLENGE PENALTY';
+
+  @override
+  String get manifestation => 'MANIFESTATION';
+
+  @override
+  String get cancellation => 'CANCELLATION';
+
+  @override
+  String get navigation => 'NAVIGATION';
+
+  @override
+  String get potentialStrengths => 'STRENGTHS';
+
+  @override
+  String get areasToNurture => 'NURTURE AREAS';
+
+  @override
+  String get relationshipGuidance => 'RELATIONSHIP GUIDANCE';
+
+  @override
+  String get detailedSummary => 'DETAILED SUMMARY';
+
+  @override
+  String get discussWithAI => 'AI SE DISCUSS KAREIN';
 }

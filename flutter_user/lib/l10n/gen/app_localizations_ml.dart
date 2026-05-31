@@ -790,4 +790,61 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get overallVerdict => 'മൊത്തം വിധി';
+
+  @override
+  String get venusContacts => 'ശുക്ര സമ്പർക്കങ്ങൾ';
+
+  @override
+  String get contact => 'സമ്പർക്കം';
+
+  @override
+  String get effect => 'ഫലം';
+
+  @override
+  String get moonSignCompat => 'ചന്ദ്ര രാശി അനുയോജ്യത';
+
+  @override
+  String get hisMoon => 'അദ്ദേഹത്തിന്റെ ചന്ദ്രൻ';
+
+  @override
+  String get herMoon => 'അവളുടെ ചന്ദ്രൻ';
+
+  @override
+  String get nakshatraCompat => 'നക്ഷത്ര അനുയോജ്യത';
+
+  @override
+  String get ketuContacts => 'കേതു സമ്പർക്കങ്ങൾ';
+
+  @override
+  String get rahuContacts => 'രാഹു സമ്പർക്കങ്ങൾ';
+
+  @override
+  String get pastLifeIndication => 'പൂർവജന്മ സൂചന';
+
+  @override
+  String get totalChallengePenalty => 'ആകെ വെല്ലുവിളി ദണ്ഡം';
+
+  @override
+  String get manifestation => 'പ്രകടനം';
+
+  @override
+  String get cancellation => 'റദ്ദാക്കൽ';
+
+  @override
+  String get navigation => 'മാർഗനിർദേശം';
+
+  @override
+  String get potentialStrengths => 'സാധ്യമായ ശക്തികൾ';
+
+  @override
+  String get areasToNurture => 'പരിപോഷിക്കേണ്ട മേഖലകൾ';
+
+  @override
+  String get relationshipGuidance => 'ബന്ധ മാർഗനിർദേശം';
+
+  @override
+  String get detailedSummary => 'വിശദമായ സംഗ്രഹം';
+
+  @override
+  String get discussWithAI => 'AI യുമായി ചർച്ച ചെയ്യുക';
 }

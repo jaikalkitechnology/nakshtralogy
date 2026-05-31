@@ -789,4 +789,61 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get overallVerdict => 'ಒಟ್ಟಾರೆ ತೀರ್ಪು';
+
+  @override
+  String get venusContacts => 'ಶುಕ್ರ ಸಂಪರ್ಕಗಳು';
+
+  @override
+  String get contact => 'ಸಂಪರ್ಕ';
+
+  @override
+  String get effect => 'ಪರಿಣಾಮ';
+
+  @override
+  String get moonSignCompat => 'ಚಂದ್ರ ರಾಶಿ ಹೊಂದಾಣಿಕೆ';
+
+  @override
+  String get hisMoon => 'ಅವನ ಚಂದ್ರ';
+
+  @override
+  String get herMoon => 'ಅವಳ ಚಂದ್ರ';
+
+  @override
+  String get nakshatraCompat => 'ನಕ್ಷತ್ರ ಹೊಂದಾಣಿಕೆ';
+
+  @override
+  String get ketuContacts => 'ಕೇತು ಸಂಪರ್ಕಗಳು';
+
+  @override
+  String get rahuContacts => 'ರಾಹು ಸಂಪರ್ಕಗಳು';
+
+  @override
+  String get pastLifeIndication => 'ಪೂರ್ವಜನ್ಮ ಸೂಚನೆ';
+
+  @override
+  String get totalChallengePenalty => 'ಒಟ್ಟು ಸವಾಲು ದಂಡ';
+
+  @override
+  String get manifestation => 'ಅಭಿವ್ಯಕ್ತಿ';
+
+  @override
+  String get cancellation => 'ರದ್ದತಿ';
+
+  @override
+  String get navigation => 'ಮಾರ್ಗದರ್ಶನ';
+
+  @override
+  String get potentialStrengths => 'ಸಂಭಾವ್ಯ ಶಕ್ತಿಗಳು';
+
+  @override
+  String get areasToNurture => 'ಪೋಷಿಸಬೇಕಾದ ಕ್ಷೇತ್ರಗಳು';
+
+  @override
+  String get relationshipGuidance => 'ಸಂಬಂಧ ಮಾರ್ಗದರ್ಶನ';
+
+  @override
+  String get detailedSummary => 'ವಿವರವಾದ ಸಾರಾಂಶ';
+
+  @override
+  String get discussWithAI => 'AI ಜೊತೆ ಚರ್ಚಿಸಿ';
 }

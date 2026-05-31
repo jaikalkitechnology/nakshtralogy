@@ -789,4 +789,61 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get overallVerdict => 'ਸਮੁੱਚਾ ਫੈਸਲਾ';
+
+  @override
+  String get venusContacts => 'ਸ਼ੁੱਕਰ ਸੰਪਰਕ';
+
+  @override
+  String get contact => 'ਸੰਪਰਕ';
+
+  @override
+  String get effect => 'ਪ੍ਰਭਾਵ';
+
+  @override
+  String get moonSignCompat => 'ਚੰਦਰ ਰਾਸ਼ੀ ਅਨੁਕੂਲਤਾ';
+
+  @override
+  String get hisMoon => 'ਉਸਦਾ ਚੰਦਰ';
+
+  @override
+  String get herMoon => 'ਉਸਦਾ ਚੰਦਰ';
+
+  @override
+  String get nakshatraCompat => 'ਨਕਸ਼ਤਰ ਅਨੁਕੂਲਤਾ';
+
+  @override
+  String get ketuContacts => 'ਕੇਤੂ ਸੰਪਰਕ';
+
+  @override
+  String get rahuContacts => 'ਰਾਹੂ ਸੰਪਰਕ';
+
+  @override
+  String get pastLifeIndication => 'ਪਿਛਲੇ ਜਨਮ ਸੰਕੇਤ';
+
+  @override
+  String get totalChallengePenalty => 'ਕੁੱਲ ਚੁਣੌਤੀ ਸਜ਼ਾ';
+
+  @override
+  String get manifestation => 'ਪ੍ਰਗਟਾਵਾ';
+
+  @override
+  String get cancellation => 'ਰੱਦ';
+
+  @override
+  String get navigation => 'ਮਾਰਗਦਰਸ਼ਨ';
+
+  @override
+  String get potentialStrengths => 'ਸੰਭਾਵਿਤ ਸ਼ਕਤੀਆਂ';
+
+  @override
+  String get areasToNurture => 'ਪੋਸ਼ਣ ਖੇਤਰ';
+
+  @override
+  String get relationshipGuidance => 'ਰਿਸ਼ਤਾ ਮਾਰਗਦਰਸ਼ਨ';
+
+  @override
+  String get detailedSummary => 'ਵਿਸਤ੍ਰਿਤ ਸਾਰ';
+
+  @override
+  String get discussWithAI => 'AI ਨਾਲ ਚਰਚਾ ਕਰੋ';
 }

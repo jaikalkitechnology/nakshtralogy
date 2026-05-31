@@ -789,4 +789,61 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get overallVerdict => 'ஒட்டுமொத்த தீர்ப்பு';
+
+  @override
+  String get venusContacts => 'சுக்கிர தொடர்புகள்';
+
+  @override
+  String get contact => 'தொடர்பு';
+
+  @override
+  String get effect => 'விளைவு';
+
+  @override
+  String get moonSignCompat => 'சந்திர ராசி இணக்கம்';
+
+  @override
+  String get hisMoon => 'அவரது சந்திரன்';
+
+  @override
+  String get herMoon => 'அவளது சந்திரன்';
+
+  @override
+  String get nakshatraCompat => 'நட்சத்திர இணக்கம்';
+
+  @override
+  String get ketuContacts => 'கேது தொடர்புகள்';
+
+  @override
+  String get rahuContacts => 'ராகு தொடர்புகள்';
+
+  @override
+  String get pastLifeIndication => 'முற்பிறவி குறிகாட்டி';
+
+  @override
+  String get totalChallengePenalty => 'மொத்த சவால் தண்டனை';
+
+  @override
+  String get manifestation => 'வெளிப்பாடு';
+
+  @override
+  String get cancellation => 'ரத்து';
+
+  @override
+  String get navigation => 'வழிநடத்தல்';
+
+  @override
+  String get potentialStrengths => 'சாத்தியமான பலங்கள்';
+
+  @override
+  String get areasToNurture => 'வளர்க்க வேண்டிய பகுதிகள்';
+
+  @override
+  String get relationshipGuidance => 'உறவு வழிகாட்டுதல்';
+
+  @override
+  String get detailedSummary => 'விரிவான சுருக்கம்';
+
+  @override
+  String get discussWithAI => 'AI உடன் விவாதிக்கவும்';
 }

@@ -1674,6 +1674,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OVERALL VERDICT'**
   String get overallVerdict;
+
+  /// No description provided for @venusContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'VENUS CROSS CONTACTS'**
+  String get venusContacts;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @effect.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect'**
+  String get effect;
+
+  /// No description provided for @moonSignCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'MOON SIGN COMPATIBILITY'**
+  String get moonSignCompat;
+
+  /// No description provided for @hisMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'HIS MOON'**
+  String get hisMoon;
+
+  /// No description provided for @herMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'HER MOON'**
+  String get herMoon;
+
+  /// No description provided for @nakshatraCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'NAKSHATRA COMPATIBILITY'**
+  String get nakshatraCompat;
+
+  /// No description provided for @ketuContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'KETU CONTACTS'**
+  String get ketuContacts;
+
+  /// No description provided for @rahuContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'RAHU CONTACTS'**
+  String get rahuContacts;
+
+  /// No description provided for @pastLifeIndication.
+  ///
+  /// In en, this message translates to:
+  /// **'PAST LIFE INDICATION'**
+  String get pastLifeIndication;
+
+  /// No description provided for @totalChallengePenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL CHALLENGE PENALTY'**
+  String get totalChallengePenalty;
+
+  /// No description provided for @manifestation.
+  ///
+  /// In en, this message translates to:
+  /// **'MANIFESTATION'**
+  String get manifestation;
+
+  /// No description provided for @cancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCELLATION'**
+  String get cancellation;
+
+  /// No description provided for @navigation.
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get navigation;
+
+  /// No description provided for @potentialStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'POTENTIAL STRENGTHS'**
+  String get potentialStrengths;
+
+  /// No description provided for @areasToNurture.
+  ///
+  /// In en, this message translates to:
+  /// **'AREAS TO NURTURE'**
+  String get areasToNurture;
+
+  /// No description provided for @relationshipGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'RELATIONSHIP GUIDANCE'**
+  String get relationshipGuidance;
+
+  /// No description provided for @detailedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'DETAILED SUMMARY'**
+  String get detailedSummary;
+
+  /// No description provided for @discussWithAI.
+  ///
+  /// In en, this message translates to:
+  /// **'DISCUSS WITH AI'**
+  String get discussWithAI;
 }
 
 class _AppLocalizationsDelegate

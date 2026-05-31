@@ -787,4 +787,61 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get overallVerdict => 'সামগ্রিক রায়';
+
+  @override
+  String get venusContacts => 'শুক্র সংযোগ';
+
+  @override
+  String get contact => 'সংযোগ';
+
+  @override
+  String get effect => 'প্রভাব';
+
+  @override
+  String get moonSignCompat => 'চন্দ্র রাশি সামঞ্জস্য';
+
+  @override
+  String get hisMoon => 'তার চন্দ্র';
+
+  @override
+  String get herMoon => 'তার চন্দ্র';
+
+  @override
+  String get nakshatraCompat => 'নক্ষত্র সামঞ্জস্য';
+
+  @override
+  String get ketuContacts => 'কেতু সংযোগ';
+
+  @override
+  String get rahuContacts => 'রাহু সংযোগ';
+
+  @override
+  String get pastLifeIndication => 'পূর্বজন্ম ইঙ্গিত';
+
+  @override
+  String get totalChallengePenalty => 'মোট চ্যালেঞ্জ শাস্তি';
+
+  @override
+  String get manifestation => 'প্রকাশ';
+
+  @override
+  String get cancellation => 'বাতিল';
+
+  @override
+  String get navigation => 'দিকনির্দেশনা';
+
+  @override
+  String get potentialStrengths => 'সম্ভাব্য শক্তি';
+
+  @override
+  String get areasToNurture => 'লালনপালনের ক্ষেত্র';
+
+  @override
+  String get relationshipGuidance => 'সম্পর্ক নির্দেশিকা';
+
+  @override
+  String get detailedSummary => 'বিস্তারিত সারাংশ';
+
+  @override
+  String get discussWithAI => 'AI এর সাথে আলোচনা';
 }
