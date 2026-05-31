@@ -257,7 +257,7 @@ class _S extends State<DailyForecastScreen> {
           if (bestDomain != null) ...[const SizedBox(height: 4), _kvRow('Best For Meetings', bestDomain, AppColors.success)],
           if (avoid is List && avoid.isNotEmpty && avoid.first != 'none flagged')
             Wrap(spacing: 4, runSpacing: 4, children: [
-              const Text('Avoid: ', style: TextStyle(color: AppColors.warning, fontSize: 9)),
+              Text('${AppLocalizations.of(context)?.weaknesses ?? 'Avoid'}: ', style: const TextStyle(color: AppColors.warning, fontSize: 9)),
               ...avoid.take(3).map((a) => _chip(a.toString(), AppColors.warning)),
             ]),
           if (expl.isNotEmpty) ...[const SizedBox(height: 6),
