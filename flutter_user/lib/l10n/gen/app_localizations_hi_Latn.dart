@@ -934,4 +934,40 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 kundliyan chunein';
+
+  @override
+  String get running => 'RUNNING';
+
+  @override
+  String get past => 'beeta hua';
+
+  @override
+  String get topActiveDoshas => 'TOP ACTIVE DOSHAS';
+
+  @override
+  String get allDoshas => 'ALL DOSHAS';
+
+  @override
+  String get activeYogas => 'Active Yogas';
+
+  @override
+  String get activeDoshas => 'Active Doshas';
+
+  @override
+  String get yogaAnalysis => 'Yoga Analysis';
+
+  @override
+  String get factors => 'Factors';
+
+  @override
+  String get dominantPlanet => 'Dominant Grah';
+
+  @override
+  String get startSession => 'Session Shuru Karein';
+
+  @override
+  String get notesSaved => 'Notes save ho gaye';
+
+  @override
+  String get unlocked => 'Unlock ho gaya! Reading enjoy karein.';
 }

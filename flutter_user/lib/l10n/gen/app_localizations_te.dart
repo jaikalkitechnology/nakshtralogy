@@ -932,4 +932,40 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 జాతకాలు ఎంచుకోండి';
+
+  @override
+  String get running => 'నడుస్తోంది';
+
+  @override
+  String get past => 'గతం';
+
+  @override
+  String get topActiveDoshas => 'టాప్ యాక్టివ్ దోషాలు';
+
+  @override
+  String get allDoshas => 'అన్ని దోషాలు';
+
+  @override
+  String get activeYogas => 'యాక్టివ్ యోగాలు';
+
+  @override
+  String get activeDoshas => 'యాక్టివ్ దోషాలు';
+
+  @override
+  String get yogaAnalysis => 'యోగ విశ్లేషణ';
+
+  @override
+  String get factors => 'కారకాలు';
+
+  @override
+  String get dominantPlanet => 'ప్రధాన గ్రహం';
+
+  @override
+  String get startSession => 'సెషన్ ప్రారంభించండి';
+
+  @override
+  String get notesSaved => 'నోట్స్ సేవ్ అయ్యాయి';
+
+  @override
+  String get unlocked => 'అన్‌లాక్! మీ రీడింగ్ ఆనందించండి.';
 }

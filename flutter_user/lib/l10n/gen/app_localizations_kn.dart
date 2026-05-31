@@ -933,4 +933,40 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 ಜಾತಕ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get running => 'ಚಾಲನೆಯಲ್ಲಿ';
+
+  @override
+  String get past => 'ಕಳೆದ';
+
+  @override
+  String get topActiveDoshas => 'ಟಾಪ್ ಸಕ್ರಿಯ ದೋಷಗಳು';
+
+  @override
+  String get allDoshas => 'ಎಲ್ಲಾ ದೋಷಗಳು';
+
+  @override
+  String get activeYogas => 'ಸಕ್ರಿಯ ಯೋಗಗಳು';
+
+  @override
+  String get activeDoshas => 'ಸಕ್ರಿಯ ದೋಷಗಳು';
+
+  @override
+  String get yogaAnalysis => 'ಯೋಗ ವಿಶ್ಲೇಷಣೆ';
+
+  @override
+  String get factors => 'ಅಂಶಗಳು';
+
+  @override
+  String get dominantPlanet => 'ಪ್ರಮುಖ ಗ್ರಹ';
+
+  @override
+  String get startSession => 'ಅವಧಿ ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
+  String get notesSaved => 'ಟಿಪ್ಪಣಿ ಉಳಿಸಲಾಗಿದೆ';
+
+  @override
+  String get unlocked => 'ಅನ್‌ಲಾಕ್! ನಿಮ್ಮ ಓದನ್ನು ಆನಂದಿಸಿ.';
 }

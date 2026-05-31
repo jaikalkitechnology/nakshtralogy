@@ -933,4 +933,40 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 ஜாதகங்களைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get running => 'இயங்குகிறது';
+
+  @override
+  String get past => 'கடந்த';
+
+  @override
+  String get topActiveDoshas => 'முக்கிய செயலில் தோஷங்கள்';
+
+  @override
+  String get allDoshas => 'அனைத்து தோஷங்கள்';
+
+  @override
+  String get activeYogas => 'செயலில் யோகங்கள்';
+
+  @override
+  String get activeDoshas => 'செயலில் தோஷங்கள்';
+
+  @override
+  String get yogaAnalysis => 'யோக பகுப்பாய்வு';
+
+  @override
+  String get factors => 'காரணிகள்';
+
+  @override
+  String get dominantPlanet => 'ஆதிக்க கிரகம்';
+
+  @override
+  String get startSession => 'அமர்வு தொடங்கவும்';
+
+  @override
+  String get notesSaved => 'குறிப்புகள் சேமிக்கப்பட்டன';
+
+  @override
+  String get unlocked => 'திறக்கப்பட்டது! உங்கள் வாசிப்பை அனுபவிக்கவும்.';
 }

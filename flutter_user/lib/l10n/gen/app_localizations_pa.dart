@@ -933,4 +933,40 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 ਕੁੰਡਲੀਆਂ ਚੁਣੋ';
+
+  @override
+  String get running => 'ਚੱਲ ਰਿਹਾ';
+
+  @override
+  String get past => 'ਬੀਤਿਆ';
+
+  @override
+  String get topActiveDoshas => 'ਟੌਪ ਸਰਗਰਮ ਦੋਸ਼';
+
+  @override
+  String get allDoshas => 'ਸਾਰੇ ਦੋਸ਼';
+
+  @override
+  String get activeYogas => 'ਸਰਗਰਮ ਯੋਗ';
+
+  @override
+  String get activeDoshas => 'ਸਰਗਰਮ ਦੋਸ਼';
+
+  @override
+  String get yogaAnalysis => 'ਯੋਗ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get factors => 'ਕਾਰਨ';
+
+  @override
+  String get dominantPlanet => 'ਮੁੱਖ ਗ੍ਰਹਿ';
+
+  @override
+  String get startSession => 'ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ';
+
+  @override
+  String get notesSaved => 'ਨੋਟ ਸੇਵ ਹੋ ਗਏ';
+
+  @override
+  String get unlocked => 'ਅਨਲਾਕ! ਆਪਣੀ ਰੀਡਿੰਗ ਦਾ ਆਨੰਦ ਲਓ।';
 }

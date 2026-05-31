@@ -931,4 +931,40 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 কুণ্ডলী নির্বাচন করুন';
+
+  @override
+  String get running => 'চলমান';
+
+  @override
+  String get past => 'অতীত';
+
+  @override
+  String get topActiveDoshas => 'শীর্ষ সক্রিয় দোষ';
+
+  @override
+  String get allDoshas => 'সমস্ত দোষ';
+
+  @override
+  String get activeYogas => 'সক্রিয় যোগ';
+
+  @override
+  String get activeDoshas => 'সক্রিয় দোষ';
+
+  @override
+  String get yogaAnalysis => 'যোগ বিশ্লেষণ';
+
+  @override
+  String get factors => 'কারণ';
+
+  @override
+  String get dominantPlanet => 'প্রধান গ্রহ';
+
+  @override
+  String get startSession => 'সেশন শুরু করুন';
+
+  @override
+  String get notesSaved => 'নোট সংরক্ষিত';
+
+  @override
+  String get unlocked => 'আনলক! আপনার পড়া উপভোগ করুন।';
 }

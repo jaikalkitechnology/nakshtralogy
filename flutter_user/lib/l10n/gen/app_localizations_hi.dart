@@ -765,6 +765,42 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 कुंडलियां चुनें';
+
+  @override
+  String get running => 'चालू';
+
+  @override
+  String get past => 'बीता हुआ';
+
+  @override
+  String get topActiveDoshas => 'शीर्ष सक्रिय दोष';
+
+  @override
+  String get allDoshas => 'सभी दोष';
+
+  @override
+  String get activeYogas => 'सक्रिय योग';
+
+  @override
+  String get activeDoshas => 'सक्रिय दोष';
+
+  @override
+  String get yogaAnalysis => 'योग विश्लेषण';
+
+  @override
+  String get factors => 'कारक';
+
+  @override
+  String get dominantPlanet => 'प्रमुख ग्रह';
+
+  @override
+  String get startSession => 'सत्र शुरू करें';
+
+  @override
+  String get notesSaved => 'नोट्स सहेजे गए';
+
+  @override
+  String get unlocked => 'अनलॉक! अपना पठन आनंद लें।';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1696,4 +1732,40 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get selectMultiCharts => '2-5 kundliyan chunein';
+
+  @override
+  String get running => 'RUNNING';
+
+  @override
+  String get past => 'beeta hua';
+
+  @override
+  String get topActiveDoshas => 'TOP ACTIVE DOSHAS';
+
+  @override
+  String get allDoshas => 'ALL DOSHAS';
+
+  @override
+  String get activeYogas => 'Active Yogas';
+
+  @override
+  String get activeDoshas => 'Active Doshas';
+
+  @override
+  String get yogaAnalysis => 'Yoga Analysis';
+
+  @override
+  String get factors => 'Factors';
+
+  @override
+  String get dominantPlanet => 'Dominant Grah';
+
+  @override
+  String get startSession => 'Session Shuru Karein';
+
+  @override
+  String get notesSaved => 'Notes save ho gaye';
+
+  @override
+  String get unlocked => 'Unlock ho gaya! Reading enjoy karein.';
 }

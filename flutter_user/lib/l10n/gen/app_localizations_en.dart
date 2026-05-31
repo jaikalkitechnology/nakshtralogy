@@ -933,4 +933,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectMultiCharts => 'Select 2–5 Charts';
+
+  @override
+  String get running => 'RUNNING';
+
+  @override
+  String get past => 'past';
+
+  @override
+  String get topActiveDoshas => 'TOP ACTIVE DOSHAS';
+
+  @override
+  String get allDoshas => 'ALL DOSHAS';
+
+  @override
+  String get activeYogas => 'Active Yogas';
+
+  @override
+  String get activeDoshas => 'Active Doshas';
+
+  @override
+  String get yogaAnalysis => 'Yoga Analysis';
+
+  @override
+  String get factors => 'Factors';
+
+  @override
+  String get dominantPlanet => 'Dominant Planet';
+
+  @override
+  String get startSession => 'Start Session';
+
+  @override
+  String get notesSaved => 'Notes saved';
+
+  @override
+  String get unlocked => 'Unlocked! Enjoy your reading.';
 }

@@ -1962,6 +1962,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select 2–5 Charts'**
   String get selectMultiCharts;
+
+  /// No description provided for @running.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNNING'**
+  String get running;
+
+  /// No description provided for @past.
+  ///
+  /// In en, this message translates to:
+  /// **'past'**
+  String get past;
+
+  /// No description provided for @topActiveDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP ACTIVE DOSHAS'**
+  String get topActiveDoshas;
+
+  /// No description provided for @allDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL DOSHAS'**
+  String get allDoshas;
+
+  /// No description provided for @activeYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Yogas'**
+  String get activeYogas;
+
+  /// No description provided for @activeDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Doshas'**
+  String get activeDoshas;
+
+  /// No description provided for @yogaAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga Analysis'**
+  String get yogaAnalysis;
+
+  /// No description provided for @factors.
+  ///
+  /// In en, this message translates to:
+  /// **'Factors'**
+  String get factors;
+
+  /// No description provided for @dominantPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant Planet'**
+  String get dominantPlanet;
+
+  /// No description provided for @startSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Session'**
+  String get startSession;
+
+  /// No description provided for @notesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes saved'**
+  String get notesSaved;
+
+  /// No description provided for @unlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked! Enjoy your reading.'**
+  String get unlocked;
 }
 
 class _AppLocalizationsDelegate

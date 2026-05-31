@@ -932,4 +932,40 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 કુંડળીઓ પસંદ કરો';
+
+  @override
+  String get running => 'ચાલુ';
+
+  @override
+  String get past => 'ભૂતકાળ';
+
+  @override
+  String get topActiveDoshas => 'ટોચના સક્રિય દોષ';
+
+  @override
+  String get allDoshas => 'બધા દોષ';
+
+  @override
+  String get activeYogas => 'સક્રિય યોગ';
+
+  @override
+  String get activeDoshas => 'સક્રિય દોષ';
+
+  @override
+  String get yogaAnalysis => 'યોગ વિશ્લેષણ';
+
+  @override
+  String get factors => 'કારણો';
+
+  @override
+  String get dominantPlanet => 'પ્રમુખ ગ્રહ';
+
+  @override
+  String get startSession => 'સત્ર શરૂ કરો';
+
+  @override
+  String get notesSaved => 'નોંધ સાચવાયા';
+
+  @override
+  String get unlocked => 'અનલૉક! તમારું વાંચન માણો.';
 }

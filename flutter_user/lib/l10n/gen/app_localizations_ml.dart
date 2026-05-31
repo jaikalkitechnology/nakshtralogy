@@ -934,4 +934,40 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get selectMultiCharts => '2-5 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get running => 'പ്രവർത്തിക്കുന്നു';
+
+  @override
+  String get past => 'കഴിഞ്ഞ';
+
+  @override
+  String get topActiveDoshas => 'ടോപ്പ് ആക്ടീവ് ദോഷങ്ങൾ';
+
+  @override
+  String get allDoshas => 'എല്ലാ ദോഷങ്ങളും';
+
+  @override
+  String get activeYogas => 'ആക്ടീവ് യോഗങ്ങൾ';
+
+  @override
+  String get activeDoshas => 'ആക്ടീവ് ദോഷങ്ങൾ';
+
+  @override
+  String get yogaAnalysis => 'യോഗ വിശകലനം';
+
+  @override
+  String get factors => 'ഘടകങ്ങൾ';
+
+  @override
+  String get dominantPlanet => 'പ്രധാന ഗ്രഹം';
+
+  @override
+  String get startSession => 'സെഷൻ ആരംഭിക്കുക';
+
+  @override
+  String get notesSaved => 'കുറിപ്പുകൾ സംരക്ഷിച്ചു';
+
+  @override
+  String get unlocked => 'അൺലോക്ക്! നിങ്ങളുടെ വായന ആസ്വദിക്കൂ.';
 }
