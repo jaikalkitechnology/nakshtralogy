@@ -1440,6 +1440,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Karma Linkage'**
   String get engKarmaLink;
+
+  /// No description provided for @noChatSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No Chat Sessions Yet'**
+  String get noChatSessions;
+
+  /// No description provided for @chatAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your conversations with astrologers will appear here.'**
+  String get chatAppearHere;
+
+  /// No description provided for @noCallsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No Calls Yet'**
+  String get noCallsYet;
+
+  /// No description provided for @callAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your call history with astrologers will appear here.'**
+  String get callAppearHere;
+
+  /// No description provided for @chatWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with'**
+  String get chatWith;
+
+  /// No description provided for @msgs.
+  ///
+  /// In en, this message translates to:
+  /// **'msgs'**
+  String get msgs;
+
+  /// No description provided for @voiceCallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice call'**
+  String get voiceCallLabel;
+
+  /// No description provided for @videoCallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Video call'**
+  String get videoCallLabel;
+
+  /// No description provided for @pullToRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull down to refresh'**
+  String get pullToRefresh;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired'**
+  String get sessionExpired;
+
+  /// No description provided for @connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed'**
+  String get connectionFailed;
+
+  /// No description provided for @callActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Call active'**
+  String get callActive;
+
+  /// No description provided for @lessThanOneMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Less than 1 minute remaining'**
+  String get lessThanOneMin;
+
+  /// No description provided for @noMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages in this session'**
+  String get noMessages;
+
+  /// No description provided for @gocharForAllSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s gochar for all 12 signs'**
+  String get gocharForAllSigns;
+
+  /// No description provided for @selectChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a chart to analyze'**
+  String get selectChart;
+
+  /// No description provided for @selectTwoCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select two charts'**
+  String get selectTwoCharts;
+
+  /// No description provided for @analyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing...'**
+  String get analyzing;
+
+  /// No description provided for @browseAstrologers.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Astrologers'**
+  String get browseAstrologers;
 }
 
 class _AppLocalizationsDelegate

@@ -673,4 +673,61 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'Karma Linkage';
+
+  @override
+  String get noChatSessions => 'Abhi koi chat session nahi';
+
+  @override
+  String get chatAppearHere => 'Jyotishiyon ke saath aapki baatcheet yahan dikhegi.';
+
+  @override
+  String get noCallsYet => 'Abhi koi call nahi';
+
+  @override
+  String get callAppearHere => 'Jyotishiyon ke saath aapka call history yahan dikhega.';
+
+  @override
+  String get chatWith => 'Ke saath chat';
+
+  @override
+  String get msgs => 'msgs';
+
+  @override
+  String get voiceCallLabel => 'Voice call';
+
+  @override
+  String get videoCallLabel => 'Video call';
+
+  @override
+  String get pullToRefresh => 'Refresh karne ke liye neeche khenchein';
+
+  @override
+  String get sessionExpired => 'Session khatam';
+
+  @override
+  String get connectionFailed => 'Connection fail';
+
+  @override
+  String get callActive => 'Call active';
+
+  @override
+  String get lessThanOneMin => '1 minute se kam baaki';
+
+  @override
+  String get noMessages => 'Is session mein koi message nahi';
+
+  @override
+  String get gocharForAllSigns => 'Sabhi 12 rashiyon ka aaj ka gochar';
+
+  @override
+  String get selectChart => 'Analysis ke liye kundli chunein';
+
+  @override
+  String get selectTwoCharts => 'Do kundliyan chunein';
+
+  @override
+  String get analyzing => 'Analysis ho raha hai...';
+
+  @override
+  String get browseAstrologers => 'Jyotishi khojein';
 }

@@ -672,4 +672,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'Karma Linkage';
+
+  @override
+  String get noChatSessions => 'No Chat Sessions Yet';
+
+  @override
+  String get chatAppearHere => 'Your conversations with astrologers will appear here.';
+
+  @override
+  String get noCallsYet => 'No Calls Yet';
+
+  @override
+  String get callAppearHere => 'Your call history with astrologers will appear here.';
+
+  @override
+  String get chatWith => 'Chat with';
+
+  @override
+  String get msgs => 'msgs';
+
+  @override
+  String get voiceCallLabel => 'Voice call';
+
+  @override
+  String get videoCallLabel => 'Video call';
+
+  @override
+  String get pullToRefresh => 'Pull down to refresh';
+
+  @override
+  String get sessionExpired => 'Session expired';
+
+  @override
+  String get connectionFailed => 'Connection failed';
+
+  @override
+  String get callActive => 'Call active';
+
+  @override
+  String get lessThanOneMin => 'Less than 1 minute remaining';
+
+  @override
+  String get noMessages => 'No messages in this session';
+
+  @override
+  String get gocharForAllSigns => 'Today\'s gochar for all 12 signs';
+
+  @override
+  String get selectChart => 'Select a chart to analyze';
+
+  @override
+  String get selectTwoCharts => 'Select two charts';
+
+  @override
+  String get analyzing => 'Analyzing...';
+
+  @override
+  String get browseAstrologers => 'Browse Astrologers';
 }

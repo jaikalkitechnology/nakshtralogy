@@ -1231,4 +1231,61 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get engKarmaLink => 'कर्म संबंध';
+
+  @override
+  String get noChatSessions => 'अभी कोई चैट सत्र नहीं';
+
+  @override
+  String get chatAppearHere => 'ज्योतिषियों के साथ आपकी बातचीत यहां दिखाई देगी।';
+
+  @override
+  String get noCallsYet => 'अभी कोई कॉल नहीं';
+
+  @override
+  String get callAppearHere => 'ज्योतिषियों के साथ आपका कॉल इतिहास यहां दिखाई देगा।';
+
+  @override
+  String get chatWith => 'के साथ चैट';
+
+  @override
+  String get msgs => 'संदेश';
+
+  @override
+  String get voiceCallLabel => 'वॉइस कॉल';
+
+  @override
+  String get videoCallLabel => 'वीडियो कॉल';
+
+  @override
+  String get pullToRefresh => 'रीफ्रेश करने के लिए नीचे खींचें';
+
+  @override
+  String get sessionExpired => 'सत्र समाप्त';
+
+  @override
+  String get connectionFailed => 'कनेक्शन विफल';
+
+  @override
+  String get callActive => 'कॉल सक्रिय';
+
+  @override
+  String get lessThanOneMin => '1 मिनट से कम शेष';
+
+  @override
+  String get noMessages => 'इस सत्र में कोई संदेश नहीं';
+
+  @override
+  String get gocharForAllSigns => 'सभी 12 राशियों का आज का गोचर';
+
+  @override
+  String get selectChart => 'विश्लेषण के लिए कुंडली चुनें';
+
+  @override
+  String get selectTwoCharts => 'दो कुंडलियां चुनें';
+
+  @override
+  String get analyzing => 'विश्लेषण हो रहा है...';
+
+  @override
+  String get browseAstrologers => 'ज्योतिषी खोजें';
 }
