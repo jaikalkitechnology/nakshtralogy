@@ -672,4 +672,61 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'கர்மா இணைப்பு';
+
+  @override
+  String get noChatSessions => 'இன்னும் அரட்டை அமர்வுகள் இல்லை';
+
+  @override
+  String get chatAppearHere => 'ஜோதிடர்களுடன் உங்கள் உரையாடல்கள் இங்கே தோன்றும்.';
+
+  @override
+  String get noCallsYet => 'இன்னும் அழைப்புகள் இல்லை';
+
+  @override
+  String get callAppearHere => 'ஜோதிடர்களுடன் உங்கள் அழைப்பு வரலாறு இங்கே தோன்றும்.';
+
+  @override
+  String get chatWith => 'உடன் அரட்டை';
+
+  @override
+  String get msgs => 'செய்திகள்';
+
+  @override
+  String get voiceCallLabel => 'குரல் அழைப்பு';
+
+  @override
+  String get videoCallLabel => 'வீடியோ அழைப்பு';
+
+  @override
+  String get pullToRefresh => 'புதுப்பிக்க கீழே இழுக்கவும்';
+
+  @override
+  String get sessionExpired => 'அமர்வு காலாவதியானது';
+
+  @override
+  String get connectionFailed => 'இணைப்பு தோல்வி';
+
+  @override
+  String get callActive => 'அழைப்பு செயலில்';
+
+  @override
+  String get lessThanOneMin => '1 நிமிடத்திற்கும் குறைவாக மீதம்';
+
+  @override
+  String get noMessages => 'இந்த அமர்வில் செய்திகள் இல்லை';
+
+  @override
+  String get gocharForAllSigns => 'அனைத்து 12 ராசிகளுக்கும் இன்றைய கோசாரம்';
+
+  @override
+  String get selectChart => 'பகுப்பாய்வுக்கு ஜாதகம் தேர்வு செய்யவும்';
+
+  @override
+  String get selectTwoCharts => 'இரண்டு ஜாதகங்களைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get analyzing => 'பகுப்பாய்வு நடைபெறுகிறது...';
+
+  @override
+  String get browseAstrologers => 'ஜோதிடர்களைக் கண்டறியவும்';
 }

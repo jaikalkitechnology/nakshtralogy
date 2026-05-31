@@ -671,4 +671,61 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'కర్మ అనుబంధం';
+
+  @override
+  String get noChatSessions => 'ఇంకా చాట్ సెషన్లు లేవు';
+
+  @override
+  String get chatAppearHere => 'జ్యోతిష్కులతో మీ సంభాషణలు ఇక్కడ కనిపిస్తాయి.';
+
+  @override
+  String get noCallsYet => 'ఇంకా కాల్‌లు లేవు';
+
+  @override
+  String get callAppearHere => 'జ్యోతిష్కులతో మీ కాల్ చరిత్ర ఇక్కడ కనిపిస్తుంది.';
+
+  @override
+  String get chatWith => 'తో చాట్';
+
+  @override
+  String get msgs => 'సందేశాలు';
+
+  @override
+  String get voiceCallLabel => 'వాయిస్ కాల్';
+
+  @override
+  String get videoCallLabel => 'వీడియో కాల్';
+
+  @override
+  String get pullToRefresh => 'రిఫ్రెష్ చేయడానికి కిందకు లాగండి';
+
+  @override
+  String get sessionExpired => 'సెషన్ ముగిసింది';
+
+  @override
+  String get connectionFailed => 'కనెక్షన్ విఫలం';
+
+  @override
+  String get callActive => 'కాల్ యాక్టివ్';
+
+  @override
+  String get lessThanOneMin => '1 నిమిషం కంటే తక్కువ మిగిలి ఉంది';
+
+  @override
+  String get noMessages => 'ఈ సెషన్‌లో సందేశాలు లేవు';
+
+  @override
+  String get gocharForAllSigns => 'అన్ని 12 రాశులకు ఈరోజు గోచారం';
+
+  @override
+  String get selectChart => 'విశ్లేషణ కోసం జాతకం ఎంచుకోండి';
+
+  @override
+  String get selectTwoCharts => 'రెండు జాతకాలు ఎంచుకోండి';
+
+  @override
+  String get analyzing => 'విశ్లేషణ జరుగుతోంది...';
+
+  @override
+  String get browseAstrologers => 'జ్యోతిష్కులను కనుగొనండి';
 }

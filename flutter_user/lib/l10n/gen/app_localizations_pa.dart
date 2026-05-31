@@ -672,4 +672,61 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'ਕਰਮ ਸੰਬੰਧ';
+
+  @override
+  String get noChatSessions => 'ਅਜੇ ਕੋਈ ਚੈਟ ਸੈਸ਼ਨ ਨਹੀਂ';
+
+  @override
+  String get chatAppearHere => 'ਜੋਤਸ਼ੀਆਂ ਨਾਲ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਇੱਥੇ ਦਿਖਾਈ ਦੇਵੇਗੀ।';
+
+  @override
+  String get noCallsYet => 'ਅਜੇ ਕੋਈ ਕਾਲ ਨਹੀਂ';
+
+  @override
+  String get callAppearHere => 'ਜੋਤਸ਼ੀਆਂ ਨਾਲ ਤੁਹਾਡਾ ਕਾਲ ਇਤਿਹਾਸ ਇੱਥੇ ਦਿਖਾਈ ਦੇਵੇਗਾ।';
+
+  @override
+  String get chatWith => 'ਨਾਲ ਚੈਟ';
+
+  @override
+  String get msgs => 'ਸੁਨੇਹੇ';
+
+  @override
+  String get voiceCallLabel => 'ਵੌਇਸ ਕਾਲ';
+
+  @override
+  String get videoCallLabel => 'ਵੀਡੀਓ ਕਾਲ';
+
+  @override
+  String get pullToRefresh => 'ਰਿਫ੍ਰੈਸ਼ ਕਰਨ ਲਈ ਹੇਠਾਂ ਖਿੱਚੋ';
+
+  @override
+  String get sessionExpired => 'ਸੈਸ਼ਨ ਖਤਮ';
+
+  @override
+  String get connectionFailed => 'ਕਨੈਕਸ਼ਨ ਅਸਫਲ';
+
+  @override
+  String get callActive => 'ਕਾਲ ਐਕਟਿਵ';
+
+  @override
+  String get lessThanOneMin => '1 ਮਿੰਟ ਤੋਂ ਘੱਟ ਬਾਕੀ';
+
+  @override
+  String get noMessages => 'ਇਸ ਸੈਸ਼ਨ ਵਿੱਚ ਕੋਈ ਸੁਨੇਹਾ ਨਹੀਂ';
+
+  @override
+  String get gocharForAllSigns => 'ਸਾਰੀਆਂ 12 ਰਾਸ਼ੀਆਂ ਦਾ ਅੱਜ ਦਾ ਗੋਚਰ';
+
+  @override
+  String get selectChart => 'ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ ਕੁੰਡਲੀ ਚੁਣੋ';
+
+  @override
+  String get selectTwoCharts => 'ਦੋ ਕੁੰਡਲੀਆਂ ਚੁਣੋ';
+
+  @override
+  String get analyzing => 'ਵਿਸ਼ਲੇਸ਼ਣ ਹੋ ਰਿਹਾ ਹੈ...';
+
+  @override
+  String get browseAstrologers => 'ਜੋਤਸ਼ੀ ਲੱਭੋ';
 }

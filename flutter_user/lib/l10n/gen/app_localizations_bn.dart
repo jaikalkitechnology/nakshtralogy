@@ -670,4 +670,61 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'কর্ম সংযোগ';
+
+  @override
+  String get noChatSessions => 'এখনও কোনো চ্যাট সেশন নেই';
+
+  @override
+  String get chatAppearHere => 'জ্যোতিষীদের সাথে আপনার কথোপকথন এখানে দেখা যাবে।';
+
+  @override
+  String get noCallsYet => 'এখনও কোনো কল নেই';
+
+  @override
+  String get callAppearHere => 'জ্যোতিষীদের সাথে আপনার কল ইতিহাস এখানে দেখা যাবে।';
+
+  @override
+  String get chatWith => 'এর সাথে চ্যাট';
+
+  @override
+  String get msgs => 'বার্তা';
+
+  @override
+  String get voiceCallLabel => 'ভয়েস কল';
+
+  @override
+  String get videoCallLabel => 'ভিডিও কল';
+
+  @override
+  String get pullToRefresh => 'রিফ্রেশ করতে নিচে টানুন';
+
+  @override
+  String get sessionExpired => 'সেশন শেষ';
+
+  @override
+  String get connectionFailed => 'সংযোগ ব্যর্থ';
+
+  @override
+  String get callActive => 'কল সক্রিয়';
+
+  @override
+  String get lessThanOneMin => '1 মিনিটেরও কম বাকি';
+
+  @override
+  String get noMessages => 'এই সেশনে কোনো বার্তা নেই';
+
+  @override
+  String get gocharForAllSigns => 'সমস্ত 12 রাশির আজকের গোচর';
+
+  @override
+  String get selectChart => 'বিশ্লেষণের জন্য কুণ্ডলী নির্বাচন করুন';
+
+  @override
+  String get selectTwoCharts => 'দুটি কুণ্ডলী নির্বাচন করুন';
+
+  @override
+  String get analyzing => 'বিশ্লেষণ চলছে...';
+
+  @override
+  String get browseAstrologers => 'জ্যোতিষী খুঁজুন';
 }

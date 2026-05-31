@@ -672,4 +672,61 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'कर्म संबंध';
+
+  @override
+  String get noChatSessions => 'अद्याप चॅट सत्र नाहीत';
+
+  @override
+  String get chatAppearHere => 'ज्योतिषींशी तुमच्या संवाद येथे दिसतील.';
+
+  @override
+  String get noCallsYet => 'अद्याप कॉल नाहीत';
+
+  @override
+  String get callAppearHere => 'ज्योतिषींशी तुमचा कॉल इतिहास येथे दिसेल.';
+
+  @override
+  String get chatWith => 'शी चॅट';
+
+  @override
+  String get msgs => 'संदेश';
+
+  @override
+  String get voiceCallLabel => 'व्हॉइस कॉल';
+
+  @override
+  String get videoCallLabel => 'व्हिडिओ कॉल';
+
+  @override
+  String get pullToRefresh => 'रिफ्रेश करण्यासाठी खाली ओढा';
+
+  @override
+  String get sessionExpired => 'सत्र संपले';
+
+  @override
+  String get connectionFailed => 'कनेक्शन अयशस्वी';
+
+  @override
+  String get callActive => 'कॉल सक्रिय';
+
+  @override
+  String get lessThanOneMin => '1 मिनिटापेक्षा कमी शिल्लक';
+
+  @override
+  String get noMessages => 'या सत्रात संदेश नाहीत';
+
+  @override
+  String get gocharForAllSigns => 'सर्व 12 राशींचा आजचा गोचर';
+
+  @override
+  String get selectChart => 'विश्लेषणासाठी कुंडली निवडा';
+
+  @override
+  String get selectTwoCharts => 'दोन कुंडल्या निवडा';
+
+  @override
+  String get analyzing => 'विश्लेषण सुरू आहे...';
+
+  @override
+  String get browseAstrologers => 'ज्योतिषी शोधा';
 }

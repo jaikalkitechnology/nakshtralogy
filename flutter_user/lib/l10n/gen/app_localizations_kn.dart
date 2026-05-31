@@ -672,4 +672,61 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'ಕರ್ಮ ಸಂಬಂಧ';
+
+  @override
+  String get noChatSessions => 'ಇನ್ನೂ ಚಾಟ್ ಅವಧಿಗಳಿಲ್ಲ';
+
+  @override
+  String get chatAppearHere => 'ಜ್ಯೋತಿಷಿಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಸಂಭಾಷಣೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.';
+
+  @override
+  String get noCallsYet => 'ಇನ್ನೂ ಕರೆಗಳಿಲ್ಲ';
+
+  @override
+  String get callAppearHere => 'ಜ್ಯೋತಿಷಿಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಕರೆ ಇತಿಹಾಸ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.';
+
+  @override
+  String get chatWith => 'ಜೊತೆ ಚಾಟ್';
+
+  @override
+  String get msgs => 'ಸಂದೇಶಗಳು';
+
+  @override
+  String get voiceCallLabel => 'ಧ್ವನಿ ಕರೆ';
+
+  @override
+  String get videoCallLabel => 'ವೀಡಿಯೋ ಕರೆ';
+
+  @override
+  String get pullToRefresh => 'ರಿಫ್ರೆಶ್ ಮಾಡಲು ಕೆಳಗೆ ಎಳೆಯಿರಿ';
+
+  @override
+  String get sessionExpired => 'ಅವಧಿ ಮುಗಿದಿದೆ';
+
+  @override
+  String get connectionFailed => 'ಸಂಪರ್ಕ ವಿಫಲ';
+
+  @override
+  String get callActive => 'ಕರೆ ಸಕ್ರಿಯ';
+
+  @override
+  String get lessThanOneMin => '1 ನಿಮಿಷಕ್ಕಿಂತ ಕಡಿಮೆ ಉಳಿದಿದೆ';
+
+  @override
+  String get noMessages => 'ಈ ಅವಧಿಯಲ್ಲಿ ಸಂದೇಶಗಳಿಲ್ಲ';
+
+  @override
+  String get gocharForAllSigns => 'ಎಲ್ಲಾ 12 ರಾಶಿಗಳಿಗೆ ಇಂದಿನ ಗೋಚಾರ';
+
+  @override
+  String get selectChart => 'ವಿಶ್ಲೇಷಣೆಗಾಗಿ ಜಾತಕ ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get selectTwoCharts => 'ಎರಡು ಜಾತಕಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ';
+
+  @override
+  String get analyzing => 'ವಿಶ್ಲೇಷಣೆ ನಡೆಯುತ್ತಿದೆ...';
+
+  @override
+  String get browseAstrologers => 'ಜ್ಯೋತಿಷಿಗಳನ್ನು ಹುಡುಕಿ';
 }
