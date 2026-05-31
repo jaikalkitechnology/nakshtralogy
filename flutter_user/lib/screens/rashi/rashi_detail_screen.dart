@@ -219,7 +219,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
           Text('Today\'s Transit Chart', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
-        const Text('Current planet positions with your sign as house 1',
+        Text(AppLocalizations.of(context)?.currentPlanetPositions ?? 'Current planet positions',
             style: TextStyle(color: AppColors.smoke, fontSize: 11)),
         const SizedBox(height: 12),
         NorthIndianChartWidget(houses: houses, chartTitle: 'Transit'),
@@ -242,7 +242,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
           Text('Life Area Predictions', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
-        const Text('Based on current planetary transits',
+        Text(AppLocalizations.of(context)?.basedOnTransits ?? 'Based on current transits',
             style: TextStyle(color: AppColors.smoke, fontSize: 11)),
         const SizedBox(height: 12),
         ..._areaMeta.map((meta) {

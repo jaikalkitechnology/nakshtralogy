@@ -194,7 +194,7 @@ class _CareerReportState extends State<CareerReportScreen> {
           border: Border.all(color: AppColors.lavender.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Soul ↔ Career Alignment',
+            Text(AppLocalizations.of(context)?.soulCareerAlign ?? 'Soul ↔ Career Alignment',
               style: TextStyle(color: AppColors.lavender, fontSize: 10, fontWeight: FontWeight.w600)),
             Text(soulAlign.toStringAsFixed(1),
               style: const TextStyle(color: AppColors.cosmicPink, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
@@ -407,7 +407,7 @@ class _CareerReportState extends State<CareerReportScreen> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('PRIMARY ARCHETYPE',
+          Text(AppLocalizations.of(context)?.primaryArchetype ?? 'PRIMARY ARCHETYPE',
             style: TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           Text(_titleCase(archetype),
@@ -790,7 +790,7 @@ class _CareerReportState extends State<CareerReportScreen> {
             ])),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('CONFIDENCE',
+              Text(AppLocalizations.of(context)?.confidence ?? 'CONFIDENCE',
                 style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
               Text(_confidenceLabel(pct),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -67,7 +68,7 @@ class _YogaWidgetState extends State<YogaWidget> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.border)),
-              child: const Text('No yogas currently active in this chart.',
+              child: Text(AppLocalizations.of(context)?.noYogasActive ?? 'No yogas currently active.',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             )
           else

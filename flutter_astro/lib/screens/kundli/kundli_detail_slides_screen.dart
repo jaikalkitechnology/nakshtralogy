@@ -333,7 +333,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const Text('LIFE AREA SCORES', style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          const Text('Based on planetary strengths & house placements',
+          Text(AppLocalizations.of(context)?.basedOnPlanetStrengths ?? 'Based on planetary strengths',
               style: TextStyle(color: AppColors.lavender, fontSize: 10)),
         ]),
       ),
