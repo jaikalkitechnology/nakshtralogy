@@ -144,9 +144,9 @@ class _ProfileTabState extends State<ProfileTab> {
                       dropdownColor: AppColors.card,
                       style: const TextStyle(color: AppColors.textPrimary),
                       items: const [
-                        DropdownMenuItem(value: 'male', child: Text('Male')),
-                        DropdownMenuItem(value: 'female', child: Text('Female')),
-                        DropdownMenuItem(value: 'other', child: Text('Other')),
+                        DropdownMenuItem(value: 'male', child: Text(l.male)),
+                        DropdownMenuItem(value: 'female', child: Text(l.female)),
+                        DropdownMenuItem(value: 'other', child: Text(l.other)),
                       ],
                       onChanged: (v) => setSt(() => gender = v ?? ''),
                     ),
@@ -173,7 +173,7 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(dctx), child: const Text('Cancel')),
+              TextButton(onPressed: () => Navigator.pop(dctx), child: Text(l.cancel)),
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (ctx, state) => ElevatedButton(
                   onPressed: state.saving
@@ -190,7 +190,7 @@ class _ProfileTabState extends State<ProfileTab> {
                         },
                   child: state.saving
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Text('Save'),
+                      : Text(l.save),
                 ),
               ),
             ],

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -156,7 +157,7 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
         final isRejected = state.status == 'rejected';
         return Scaffold(
           appBar: AppBar(
-            title: const Text('KYC Verification'),
+            title: Text(AppLocalizations.of(context)?.kycSubmit ?? 'KYC Verification'),
             actions: [
               IconButton(icon: const Icon(Icons.logout), onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested())),
             ],
@@ -246,7 +247,7 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
                       onPressed: state.submitting || _uploading ? null : _submit,
                       child: state.submitting
                           ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Text('Submit for Review'),
+                          : Text(AppLocalizations.of(context)?.submit ?? 'Submit for Review'),
                     ),
                   ),
                   const SizedBox(height: 8),
