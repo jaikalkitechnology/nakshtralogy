@@ -56,13 +56,36 @@ TRANSLATIONS = {
         "Cancer": "कर्क", "Leo": "सिंह", "Virgo": "कन्या",
         "Libra": "तुला", "Scorpio": "वृश्चिक", "Sagittarius": "धनु",
         "Capricorn": "मकर", "Aquarius": "कुंभ", "Pisces": "मीन",
-        # Section labels
-        "career_disclaimer": "अस्वीकरण",
-        "disclaimer": "अस्वीकरण",
-        # Common words in interpretations
-        "house": "भाव",
-        "strength": "बल",
-        "score": "अंक",
+        # Founder archetypes
+        "Visionary-Leader-Founder": "दूरदर्शी-नेता-संस्थापक",
+        "Wealth-Compounder-Founder": "धन-संवर्धक-संस्थापक",
+        "Action-Driven-Founder": "कर्मशील-संस्थापक",
+        "Tech-Innovator-Founder": "तकनीकी-नवप्रवर्तक-संस्थापक",
+        "Advisory-Dharmic-Founder": "सलाहकार-धार्मिक-संस्थापक",
+        "Brand-Aesthetic-Founder": "ब्रांड-सौंदर्य-संस्थापक",
+        "Disciplined-Operator-Founder": "अनुशासित-संचालक-संस्थापक",
+        "People-Facing-Founder": "जन-संपर्क-संस्थापक",
+        "Research-Niche-Founder": "अनुसंधान-विशिष्ट-संस्थापक",
+        "Generalist-Adaptive-Founder": "बहुमुखी-अनुकूलनीय-संस्थापक",
+        # Business directions
+        "authority-leader ventures (government-liaison, medical-practice, administrative-consulting)": "प्राधिकरण-नेतृत्व उद्यम (सरकारी-संपर्क, चिकित्सा-अभ्यास, प्रशासनिक-परामर्श)",
+        "public-facing ventures (hospitality, retail, food-service, media, nurturing-services)": "जन-सेवा उद्यम (आतिथ्य, खुदरा, खाद्य-सेवा, मीडिया, पोषण-सेवाएं)",
+        "action-oriented ventures (engineering, real-estate, sports, manufacturing, security)": "कर्म-उन्मुख उद्यम (इंजीनियरिंग, रियल-एस्टेट, खेल, विनिर्माण, सुरक्षा)",
+        "commerce-communication ventures (IT, consulting, trading, media, analytics, writing)": "वाणिज्य-संचार उद्यम (आईटी, परामर्श, व्यापार, मीडिया, विश्लेषण, लेखन)",
+        "advisory-educational ventures (teaching, counseling, finance-advisory, publishing, legal)": "सलाहकार-शैक्षिक उद्यम (शिक्षण, परामर्श, वित्त-सलाह, प्रकाशन, कानूनी)",
+        "aesthetic-luxury ventures (design, fashion, entertainment, hospitality-luxury, beauty)": "सौंदर्य-विलास उद्यम (डिज़ाइन, फैशन, मनोरंजन, आतिथ्य-विलास, सौंदर्य)",
+        "infrastructure-service ventures (manufacturing, logistics, institutional-services, research)": "अवसंरचना-सेवा उद्यम (विनिर्माण, रसद, संस्थागत-सेवाएं, अनुसंधान)",
+        "balanced ventures": "संतुलित उद्यम",
+        # Leadership styles
+        "Authoritative Leader": "अधिकारपूर्ण नेता",
+        "Innovative Disruptor": "नवीन विघ्नकर्ता",
+        "Strategic Planner": "रणनीतिक योजनाकार",
+        "Collaborative Builder": "सहयोगी निर्माता",
+        "Visionary Pioneer": "दूरदर्शी अग्रणी",
+        "Steady Operator": "स्थिर संचालक",
+        # Swakshetra dignity
+        "Swakshetra 🏠": "स्वगृही 🏠",
+        "Normal": "सामान्य",
     },
     "mr": {
         "leadership-executive": "नेतृत्व-कार्यकारी",
@@ -150,12 +173,22 @@ _TRANSLATE_VALUE_KEYS = {
     "day_grade", "grade", "career_grade", "strength_rating",
     "dignity", "lord_dignity", "d7_jupiter_dignity",
     "progeny_favorability", "love_favorability",
+    "founder_archetype", "ideal_cofounder_archetype",
+    "leadership_style", "amatyakaraka_dignity",
+    "amatyakaraka_d10_dignity", "d10_tenth_lord_dignity",
+    "d10_amatyakaraka_dignity", "d9_amatyakaraka_dignity",
+    "d11_eleventh_lord_dignity", "d60_tenth_lord_dignity",
+    "tenth_lord_dignity", "eleventh_lord_dignity",
+    "amatyakaraka_business_direction", "primary_business_direction_recommendation",
+    "current_business_phase_signature",
 }
 
 # Keys whose values are planet names
 _PLANET_VALUE_KEYS = {
     "lord", "fifth_lord", "d7_fifth_lord", "planet", "atmakaraka",
     "amatyakaraka", "md", "ad", "pd", "tenth_lord",
+    "atmakaraka_planet", "amatyakaraka_planet", "darakaraka_planet",
+    "eleventh_lord", "d10_tenth_lord", "d11_eleventh_lord",
 }
 
 # Keys whose values are sign names
