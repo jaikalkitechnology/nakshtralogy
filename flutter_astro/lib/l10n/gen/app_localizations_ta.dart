@@ -373,7 +373,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get clientKundli => 'வாடிக்கையாளர் குண்டலி';
 
   @override
-  String get earned => 'வருமானம்';
+  String get earned => 'சம்பாதிப்பு';
 
   @override
   String get connected => 'இணைக்கப்பட்டது';
@@ -593,4 +593,55 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'கர்மா இணைப்பு';
+
+  @override
+  String get decline => 'மறுப்பு';
+
+  @override
+  String get accept => 'ஏற்றுக்கொள்';
+
+  @override
+  String get endSession => 'அமர்வு முடி';
+
+  @override
+  String get enterChat => 'அரட்டையில் நுழை';
+
+  @override
+  String get inProgress => 'நடைபெறுகிறது';
+
+  @override
+  String get requestDeclined => 'கோரிக்கை நிராகரிக்கப்பட்டது';
+
+  @override
+  String get noRequests => 'கோரிக்கைகள் இல்லை';
+
+  @override
+  String get tapViewChat => 'அரட்டை வரலாற்றைக் காண தட்டவும்';
+
+  @override
+  String get tapViewCall => 'அழைப்பு விவரங்களைக் காண தட்டவும்';
+
+  @override
+  String get consultation => 'ஆலோசனை';
+
+  @override
+  String get charged => 'கட்டணம்';
+
+  @override
+  String get messages => 'செய்திகள்';
+
+  @override
+  String get duration => 'காலம்';
+
+  @override
+  String get rate => 'கட்டணம்';
+
+  @override
+  String get callDetails => 'அழைப்பு விவரங்கள்';
+
+  @override
+  String get yourEarning => 'உங்கள் சம்பாதிப்பு';
+
+  @override
+  String get totalCharged => 'மொத்த கட்டணம்';
 }

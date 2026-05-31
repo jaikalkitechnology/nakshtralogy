@@ -373,7 +373,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get clientKundli => 'ক্লায়েন্ট কুণ্ডলী';
 
   @override
-  String get earned => 'আয়';
+  String get earned => 'উপার্জন';
 
   @override
   String get connected => 'সংযুক্ত';
@@ -593,4 +593,55 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'কর্ম সংযোগ';
+
+  @override
+  String get decline => 'প্রত্যাখ্যান';
+
+  @override
+  String get accept => 'গ্রহণ';
+
+  @override
+  String get endSession => 'সেশন শেষ করুন';
+
+  @override
+  String get enterChat => 'চ্যাটে যান';
+
+  @override
+  String get inProgress => 'চলমান';
+
+  @override
+  String get requestDeclined => 'অনুরোধ প্রত্যাখ্যাত';
+
+  @override
+  String get noRequests => 'কোনো অনুরোধ নেই';
+
+  @override
+  String get tapViewChat => 'চ্যাট ইতিহাস দেখতে ট্যাপ করুন';
+
+  @override
+  String get tapViewCall => 'কল বিবরণ দেখতে ট্যাপ করুন';
+
+  @override
+  String get consultation => 'পরামর্শ';
+
+  @override
+  String get charged => 'চার্জ';
+
+  @override
+  String get messages => 'বার্তা';
+
+  @override
+  String get duration => 'সময়কাল';
+
+  @override
+  String get rate => 'হার';
+
+  @override
+  String get callDetails => 'কল বিবরণ';
+
+  @override
+  String get yourEarning => 'আপনার উপার্জন';
+
+  @override
+  String get totalCharged => 'মোট চার্জ';
 }

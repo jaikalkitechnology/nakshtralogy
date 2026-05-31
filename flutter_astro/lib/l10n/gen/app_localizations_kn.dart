@@ -373,7 +373,7 @@ class AppLocalizationsKn extends AppLocalizations {
   String get clientKundli => 'ಕ್ಲೈಂಟ್ ಕುಂಡಲಿ';
 
   @override
-  String get earned => 'ಗಳಿಕೆ';
+  String get earned => 'ಗಳಿಸಿದ್ದು';
 
   @override
   String get connected => 'ಸಂಪರ್ಕಿತ';
@@ -593,4 +593,55 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'ಕರ್ಮ ಸಂಬಂಧ';
+
+  @override
+  String get decline => 'ನಿರಾಕರಿಸಿ';
+
+  @override
+  String get accept => 'ಸ್ವೀಕರಿಸಿ';
+
+  @override
+  String get endSession => 'ಅವಧಿ ಮುಗಿಸಿ';
+
+  @override
+  String get enterChat => 'ಚಾಟ್‌ಗೆ ಹೋಗಿ';
+
+  @override
+  String get inProgress => 'ಪ್ರಗತಿಯಲ್ಲಿ';
+
+  @override
+  String get requestDeclined => 'ವಿನಂತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ';
+
+  @override
+  String get noRequests => 'ವಿನಂತಿಗಳಿಲ್ಲ';
+
+  @override
+  String get tapViewChat => 'ಚಾಟ್ ಇತಿಹಾಸ ನೋಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get tapViewCall => 'ಕರೆ ವಿವರಗಳನ್ನು ನೋಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get consultation => 'ಸಮಾಲೋಚನೆ';
+
+  @override
+  String get charged => 'ಶುಲ್ಕ';
+
+  @override
+  String get messages => 'ಸಂದೇಶಗಳು';
+
+  @override
+  String get duration => 'ಅವಧಿ';
+
+  @override
+  String get rate => 'ದರ';
+
+  @override
+  String get callDetails => 'ಕರೆ ವಿವರಗಳು';
+
+  @override
+  String get yourEarning => 'ನಿಮ್ಮ ಗಳಿಕೆ';
+
+  @override
+  String get totalCharged => 'ಒಟ್ಟು ಶುಲ್ಕ';
 }

@@ -372,7 +372,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get clientKundli => 'ગ્રાહક કુંડળી';
 
   @override
-  String get earned => 'કમાયેલ';
+  String get earned => 'કમાણી';
 
   @override
   String get connected => 'કનેક્ટેડ';
@@ -592,4 +592,55 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'કર્મ સંબંધ';
+
+  @override
+  String get decline => 'નકાર';
+
+  @override
+  String get accept => 'સ્વીકાર';
+
+  @override
+  String get endSession => 'સત્ર સમાપ્ત';
+
+  @override
+  String get enterChat => 'ચેટમાં જાઓ';
+
+  @override
+  String get inProgress => 'પ્રગતિમાં';
+
+  @override
+  String get requestDeclined => 'વિનંતી નકારાઈ';
+
+  @override
+  String get noRequests => 'કોઈ વિનંતી નથી';
+
+  @override
+  String get tapViewChat => 'ચેટ ઇતિહાસ જોવા ટેપ કરો';
+
+  @override
+  String get tapViewCall => 'કૉલ વિગતો જોવા ટેપ કરો';
+
+  @override
+  String get consultation => 'પરામર્શ';
+
+  @override
+  String get charged => 'શુલ્ક';
+
+  @override
+  String get messages => 'સંદેશ';
+
+  @override
+  String get duration => 'અવધિ';
+
+  @override
+  String get rate => 'દર';
+
+  @override
+  String get callDetails => 'કૉલ વિગતો';
+
+  @override
+  String get yourEarning => 'તમારી કમાણી';
+
+  @override
+  String get totalCharged => 'કુલ શુલ્ક';
 }

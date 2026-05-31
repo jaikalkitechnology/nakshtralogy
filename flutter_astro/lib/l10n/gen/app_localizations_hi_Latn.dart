@@ -374,7 +374,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get clientKundli => 'CLIENT KUNDLI';
 
   @override
-  String get earned => 'KAMAI';
+  String get earned => 'Kamai';
 
   @override
   String get connected => 'CONNECTED';
@@ -594,4 +594,55 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'Karma Linkage';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get endSession => 'Session Khatam';
+
+  @override
+  String get enterChat => 'Chat Mein Jayein';
+
+  @override
+  String get inProgress => 'Progress Mein';
+
+  @override
+  String get requestDeclined => 'Request decline hui';
+
+  @override
+  String get noRequests => 'Koi request nahi';
+
+  @override
+  String get tapViewChat => 'Chat history dekhne ke liye tap karein';
+
+  @override
+  String get tapViewCall => 'Call details dekhne ke liye tap karein';
+
+  @override
+  String get consultation => 'consultation';
+
+  @override
+  String get charged => 'Charge';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get rate => 'Rate';
+
+  @override
+  String get callDetails => 'Call Details';
+
+  @override
+  String get yourEarning => 'Aapki Kamai';
+
+  @override
+  String get totalCharged => 'Total Charge';
 }

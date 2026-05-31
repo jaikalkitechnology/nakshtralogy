@@ -373,7 +373,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get clientKundli => 'క్లయింట్ కుండలి';
 
   @override
-  String get earned => 'ఆదాయం';
+  String get earned => 'సంపాదన';
 
   @override
   String get connected => 'కనెక్ట్ అయింది';
@@ -593,4 +593,55 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'కర్మ అనుబంధం';
+
+  @override
+  String get decline => 'తిరస్కరించు';
+
+  @override
+  String get accept => 'అంగీకరించు';
+
+  @override
+  String get endSession => 'సెషన్ ముగించు';
+
+  @override
+  String get enterChat => 'చాట్‌లో చేరండి';
+
+  @override
+  String get inProgress => 'ప్రగతిలో';
+
+  @override
+  String get requestDeclined => 'అభ్యర్థన తిరస్కరించబడింది';
+
+  @override
+  String get noRequests => 'అభ్యర్థనలు లేవు';
+
+  @override
+  String get tapViewChat => 'చాట్ చరిత్ర చూడటానికి ట్యాప్ చేయండి';
+
+  @override
+  String get tapViewCall => 'కాల్ వివరాలు చూడటానికి ట్యాప్ చేయండి';
+
+  @override
+  String get consultation => 'సంప్రదింపు';
+
+  @override
+  String get charged => 'ఛార్జ్';
+
+  @override
+  String get messages => 'సందేశాలు';
+
+  @override
+  String get duration => 'వ్యవధి';
+
+  @override
+  String get rate => 'రేటు';
+
+  @override
+  String get callDetails => 'కాల్ వివరాలు';
+
+  @override
+  String get yourEarning => 'మీ సంపాదన';
+
+  @override
+  String get totalCharged => 'మొత్తం ఛార్జ్';
 }

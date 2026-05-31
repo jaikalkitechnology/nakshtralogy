@@ -845,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @earned.
   ///
   /// In en, this message translates to:
-  /// **'EARNED'**
+  /// **'Earned'**
   String get earned;
 
   /// No description provided for @connected.

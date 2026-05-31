@@ -593,4 +593,55 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'ਕਰਮ ਸੰਬੰਧ';
+
+  @override
+  String get decline => 'ਇਨਕਾਰ';
+
+  @override
+  String get accept => 'ਸਵੀਕਾਰ';
+
+  @override
+  String get endSession => 'ਸੈਸ਼ਨ ਖਤਮ';
+
+  @override
+  String get enterChat => 'ਚੈਟ ਵਿੱਚ ਜਾਓ';
+
+  @override
+  String get inProgress => 'ਚੱਲ ਰਿਹਾ ਹੈ';
+
+  @override
+  String get requestDeclined => 'ਬੇਨਤੀ ਰੱਦ';
+
+  @override
+  String get noRequests => 'ਕੋਈ ਬੇਨਤੀ ਨਹੀਂ';
+
+  @override
+  String get tapViewChat => 'ਚੈਟ ਇਤਿਹਾਸ ਵੇਖਣ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get tapViewCall => 'ਕਾਲ ਵੇਰਵੇ ਵੇਖਣ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get consultation => 'ਸਲਾਹ';
+
+  @override
+  String get charged => 'ਚਾਰਜ';
+
+  @override
+  String get messages => 'ਸੁਨੇਹੇ';
+
+  @override
+  String get duration => 'ਅਵਧੀ';
+
+  @override
+  String get rate => 'ਦਰ';
+
+  @override
+  String get callDetails => 'ਕਾਲ ਵੇਰਵੇ';
+
+  @override
+  String get yourEarning => 'ਤੁਹਾਡੀ ਕਮਾਈ';
+
+  @override
+  String get totalCharged => 'ਕੁੱਲ ਚਾਰਜ';
 }
