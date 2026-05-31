@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'report_components.dart';
 
@@ -30,6 +31,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
     final summary = _asMap(data['summary']);
     final header = _asMap(data['analysis_header']);
     final conf = (data['confidence_score'] as num?)?.toDouble();
+    final l = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: _bg,
@@ -71,73 +73,73 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
         SliverList(
             delegate: SliverChildListDelegate([
           // 1. HERO
-          _buildHero(overall),
+          _buildHero(l, overall),
 
           // 2. PARTNER CARDS
-          if (header.isNotEmpty) _buildPartnerCards(header),
+          if (header.isNotEmpty) _buildPartnerCards(l, header),
 
           // 3. ATTRACTION & CHEMISTRY
           if (attraction.isNotEmpty) ...[
             _header('Attraction &', 'Chemistry'),
-            _buildAttractionChemistry(attraction),
+            _buildAttractionChemistry(l, attraction),
           ],
 
           // 4. EMOTIONAL HARMONY
           if (emotional.isNotEmpty) ...[
             _header('Emotional', 'Harmony'),
-            _buildEmotionalHarmony(emotional),
+            _buildEmotionalHarmony(l, emotional),
           ],
 
           // 5. MENTAL RAPPORT
           if (mental.isNotEmpty) ...[
             _header('Mental', 'Rapport'),
-            _buildMentalRapport(mental),
+            _buildMentalRapport(l, mental),
           ],
 
           // 6. PASSION & PHYSICAL
           if (passion.isNotEmpty) ...[
             _header('Passion &', 'Physical'),
-            _buildPassionPhysical(passion),
+            _buildPassionPhysical(l, passion),
           ],
 
           // 7. LONG-TERM HARMONY
           if (longterm.isNotEmpty) ...[
             _header('Long-term', 'Harmony'),
-            _buildLongtermHarmony(longterm),
+            _buildLongtermHarmony(l, longterm),
           ],
 
           // 8. KARMIC LOVE BOND
           if (karmic.isNotEmpty) ...[
             _header('Karmic Love', 'Bond'),
-            _buildKarmicBond(karmic),
+            _buildKarmicBond(l, karmic),
           ],
 
           // 9. CHALLENGES & FRICTION
           if (challenges.isNotEmpty) ...[
             _header('Challenges &', 'Friction'),
-            _buildChallenges(challenges),
+            _buildChallenges(l, challenges),
           ],
 
           // 10. TIMING (MOOLA DASHA)
           if (timing.isNotEmpty) ...[
             _header('Love Timing', 'Moola Dasha'),
-            _buildTiming(timing),
+            _buildTiming(l, timing),
           ],
 
           // 11. RELATIONSHIP DYNAMICS
           if (dynamics.isNotEmpty) ...[
             _header('Relationship', 'Dynamics'),
-            _buildDynamics(dynamics),
+            _buildDynamics(l, dynamics),
           ],
 
           // 12. REMEDIES
           if (remedies.isNotEmpty) ...[
             _header('Remedies &', 'Guidance'),
-            _buildRemedies(remedies),
+            _buildRemedies(l, remedies),
           ],
 
           // 13. SUMMARY
-          if (summary.isNotEmpty) _buildSummary(summary),
+          if (summary.isNotEmpty) _buildSummary(l, summary),
 
           // 14. CONFIDENCE
           if (conf != null) ...[
@@ -149,7 +151,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
           ],
 
           // 15. AI COPY BAR
-          _buildAiCopyBar(context),
+          _buildAiCopyBar(l, context),
           const SizedBox(height: 40),
         ])),
       ]),
@@ -160,7 +162,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 1. HERO — Big score ring + grade + verdict + 7 score component chips
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildHero(Map<String, dynamic> overall) {
+  Widget _buildHero(AppLocalizations l, Map<String, dynamic> overall) {
     final mainScore =
         (overall['overall_love_score'] as num?)?.toDouble() ?? 0;
     final grade = overall['compatibility_grade']?.toString() ?? '';
@@ -294,7 +296,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 2. PARTNER CARDS — side-by-side info cards
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildPartnerCards(Map<String, dynamic> header) {
+  Widget _buildPartnerCards(AppLocalizations l, Map<String, dynamic> header) {
     final p1 = _asMap(header['partner1']);
     final p2 = _asMap(header['partner2']);
     if (p1.isEmpty && p2.isEmpty) return const SizedBox.shrink();
@@ -358,7 +360,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 3. ATTRACTION & CHEMISTRY
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildAttractionChemistry(Map<String, dynamic> a) {
+  Widget _buildAttractionChemistry(AppLocalizations l, Map<String, dynamic> a) {
     final score = (a['attraction_score'] as num?)?.toDouble() ?? 0;
     final contacts = (a['venus_cross_contacts'] as List?) ?? [];
     final activeCount = (a['active_contacts_count'] as num?)?.toInt() ?? 0;
@@ -514,7 +516,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 4. EMOTIONAL HARMONY
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildEmotionalHarmony(Map<String, dynamic> e) {
+  Widget _buildEmotionalHarmony(AppLocalizations l, Map<String, dynamic> e) {
     final score = (e['emotional_score'] as num?)?.toDouble() ?? 0;
     final moonCompat = _asMap(e['moon_sign_compatibility']);
     final nakCompat = _asMap(e['moon_nakshatra_compatibility']);
@@ -757,7 +759,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 5. MENTAL RAPPORT
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildMentalRapport(Map<String, dynamic> m) {
+  Widget _buildMentalRapport(AppLocalizations l, Map<String, dynamic> m) {
     final score = (m['mental_score'] as num?)?.toDouble() ?? 0;
     final mercury = m['mercury_dynamics']?.toString() ?? '';
     final commStyle = m['communication_style_match']?.toString() ?? '';
@@ -804,7 +806,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 6. PASSION & PHYSICAL
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildPassionPhysical(Map<String, dynamic> p) {
+  Widget _buildPassionPhysical(AppLocalizations l, Map<String, dynamic> p) {
     final score = (p['passion_score'] as num?)?.toDouble() ?? 0;
     final marsVenus = p['mars_venus_interplay']?.toString() ?? '';
     final physChem = p['physical_chemistry']?.toString() ?? '';
@@ -849,7 +851,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 7. LONG-TERM HARMONY
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildLongtermHarmony(Map<String, dynamic> lt) {
+  Widget _buildLongtermHarmony(AppLocalizations l, Map<String, dynamic> lt) {
     final score = (lt['longterm_score'] as num?)?.toDouble() ?? 0;
     final seventh = lt['seventh_house_synastry']?.toString() ?? '';
     final commitment = lt['commitment_potential']?.toString() ?? '';
@@ -904,7 +906,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 8. KARMIC LOVE BOND
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildKarmicBond(Map<String, dynamic> k) {
+  Widget _buildKarmicBond(AppLocalizations l, Map<String, dynamic> k) {
     final score = (k['karmic_score'] as num?)?.toDouble() ?? 0;
     final ketuContacts = (k['ketu_contacts'] as List?) ?? [];
     final rahuContacts = (k['rahu_contacts'] as List?) ?? [];
@@ -1012,7 +1014,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 9. CHALLENGES & FRICTION
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildChallenges(Map<String, dynamic> ch) {
+  Widget _buildChallenges(AppLocalizations l, Map<String, dynamic> ch) {
     final detected = (ch['challenges_detected'] as List?) ?? [];
     final totalPenalty =
         (ch['total_challenge_penalty'] as num?)?.toDouble() ?? 0;
@@ -1184,7 +1186,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 10. TIMING (MOOLA DASHA)
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildTiming(Map<String, dynamic> timing) {
+  Widget _buildTiming(AppLocalizations l, Map<String, dynamic> timing) {
     final combinedScore =
         (timing['combined_timing_score'] as num?)?.toDouble() ?? 0;
     final timingVerdict = timing['timing_verdict']?.toString() ?? '';
@@ -1311,8 +1313,8 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        const Text('NEXT FAVORABLE WINDOW',
-                            style: TextStyle(
+                        Text(l.nextFavorableWindow,
+                            style: const TextStyle(
                                 color: AppColors.success,
                                 fontSize: 8,
                                 fontFamily: 'monospace',
@@ -1388,7 +1390,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 11. RELATIONSHIP DYNAMICS
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildDynamics(Map<String, dynamic> d) {
+  Widget _buildDynamics(AppLocalizations l, Map<String, dynamic> d) {
     final emotionalGiver = d['emotional_giver_receiver']?.toString() ?? '';
     final powerBalance = d['power_balance']?.toString() ?? '';
     final growthDynamic = d['growth_dynamic']?.toString() ?? '';
@@ -1475,7 +1477,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 12. REMEDIES & GUIDANCE
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildRemedies(Map<String, dynamic> remedies) {
+  Widget _buildRemedies(AppLocalizations l, Map<String, dynamic> remedies) {
     final recommended = (remedies['recommended_remedies'] as List?) ?? [];
     final guidance = remedies['relationship_guidance']?.toString() ?? '';
     final note = remedies['note']?.toString() ?? '';
@@ -1635,7 +1637,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 13. SUMMARY — key insights + human summary
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildSummary(Map<String, dynamic> s) {
+  Widget _buildSummary(AppLocalizations l, Map<String, dynamic> s) {
     final keyInsights = (s['key_insights'] as List?) ?? [];
     final humanSummary = s['human_summary']?.toString() ?? '';
 
@@ -1652,8 +1654,8 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Key insights as numbered list
           if (keyInsights.isNotEmpty) ...[
-            const Text('KEY INSIGHTS',
-                style: TextStyle(
+            Text(l.keyInsights,
+                style: const TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
                     letterSpacing: 1,
@@ -1716,7 +1718,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
   // 15. AI COPY BAR
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildAiCopyBar(BuildContext ctx) {
+  Widget _buildAiCopyBar(AppLocalizations l, BuildContext ctx) {
     return Container(
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         padding: const EdgeInsets.all(14),

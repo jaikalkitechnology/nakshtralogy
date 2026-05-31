@@ -30,6 +30,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
     final summary = _asMap(data['summary']);
     final header = _asMap(data['analysis_header']);
     final conf = (data['confidence_score'] as num?)?.toDouble();
+    final l = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: _bg,
@@ -74,61 +75,61 @@ class ChildProbabilityReportScreen extends StatelessWidget {
         SliverList(
             delegate: SliverChildListDelegate([
           // 1. HERO
-          _buildHero(overall),
+          _buildHero(l, overall),
 
           // 2. PARTNER CARDS
-          if (header.isNotEmpty) _buildPartnerCards(header),
+          if (header.isNotEmpty) _buildPartnerCards(l, header),
 
           // 3. NUMBER OF CHILDREN
           if (number.isNotEmpty) ...[
             _header('Number of', 'Children'),
-            _buildNumberOfChildren(number),
+            _buildNumberOfChildren(l, number),
           ],
 
           // 4. TIMING (MOOLA DASHA)
           if (timing.isNotEmpty) ...[
             _header('Timing', 'Moola Dasha'),
-            _buildTiming(timing),
+            _buildTiming(l, timing),
           ],
 
           // 5. 5TH HOUSE ANALYSIS
           if (fifth.isNotEmpty) ...[
             _header('5th House', 'Analysis'),
-            ...fifth.entries.map((e) => _buildFifthHouseCard(e.key, _asMap(e.value))),
+            ...fifth.entries.map((e) => _buildFifthHouseCard(l, e.key, _asMap(e.value))),
           ],
 
           // 6. JUPITER ANALYSIS
           if (jupiter.isNotEmpty) ...[
             _header('Jupiter', 'Analysis'),
-            ...jupiter.entries.map((e) => _buildJupiterCard(e.key, _asMap(e.value))),
+            ...jupiter.entries.map((e) => _buildJupiterCard(l, e.key, _asMap(e.value))),
           ],
 
           // 7. D7 SAPTAMSA
           if (d7.isNotEmpty) ...[
             _header('D7 Saptamsa', 'Analysis'),
-            ...d7.entries.map((e) => _buildD7Card(e.key, _asMap(e.value))),
+            ...d7.entries.map((e) => _buildD7Card(l, e.key, _asMap(e.value))),
           ],
 
           // 8. BEEJA & KSHETRA
           if (beeja.isNotEmpty) ...[
             _header('Beeja & Kshetra', 'Sphuta'),
-            _buildBeejaKshetra(beeja),
+            _buildBeejaKshetra(l, beeja),
           ],
 
           // 9. DOSHA ANALYSIS
           if (dosha.isNotEmpty) ...[
             _header('Dosha', 'Analysis'),
-            _buildDoshaAnalysis(dosha),
+            _buildDoshaAnalysis(l, dosha),
           ],
 
           // 10. REMEDIES
           if (remedies.isNotEmpty) ...[
             _header('Vedic', 'Remedies'),
-            _buildRemedies(remedies),
+            _buildRemedies(l, remedies),
           ],
 
           // 11. SUMMARY
-          if (summary.isNotEmpty) _buildSummary(summary),
+          if (summary.isNotEmpty) _buildSummary(l, summary),
 
           // 12. CONFIDENCE
           if (conf != null) ...[
@@ -151,7 +152,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 1. HERO — Big score ring + grade + verdict + score component chips
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildHero(Map<String, dynamic> overall) {
+  Widget _buildHero(AppLocalizations l, Map<String, dynamic> overall) {
     final mainScore =
         (overall['overall_probability_score'] as num?)?.toDouble() ?? 0;
     final grade = overall['probability_grade']?.toString() ?? '';
@@ -285,7 +286,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 2. PARTNER CARDS — side-by-side info cards
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildPartnerCards(Map<String, dynamic> header) {
+  Widget _buildPartnerCards(AppLocalizations l, Map<String, dynamic> header) {
     final p1 = _asMap(header['partner1']);
     final p2 = _asMap(header['partner2']);
     if (p1.isEmpty && p2.isEmpty) return const SizedBox.shrink();
@@ -350,7 +351,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 3. NUMBER OF CHILDREN
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildNumberOfChildren(Map<String, dynamic> number) {
+  Widget _buildNumberOfChildren(AppLocalizations l, Map<String, dynamic> number) {
     final probable = number['probable_number']?.toString() ?? '—';
     final genderTendency = number['gender_tendency']?.toString() ?? '';
     final genderScore = _asMap(number['gender_tendency_score']);
@@ -371,8 +372,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
           // Big number
           Center(
               child: Column(children: [
-            const Text('PROBABLE NUMBER',
-                style: TextStyle(
+            Text(l.probableNumber,
+                style: const TextStyle(
                     color: _accent,
                     fontSize: 8,
                     letterSpacing: 2,
@@ -392,7 +393,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
           if (genderTendency.isNotEmpty) ...[
             Row(children: [
               Expanded(
-                  child: Text('GENDER TENDENCY',
+                  child: Text(l.genderTendency,
                       style: TextStyle(
                           color: AppColors.smoke.withOpacity(0.8),
                           fontSize: 9,
@@ -410,8 +411,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    const Text('SON',
-                        style: TextStyle(
+                    Text(l.son,
+                        style: const TextStyle(
                             color: AppColors.aurora,
                             fontSize: 8,
                             fontFamily: 'monospace',
@@ -440,8 +441,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    const Text('DAUGHTER',
-                        style: TextStyle(
+                    Text(l.daughter,
+                        style: const TextStyle(
                             color: _accent,
                             fontSize: 8,
                             fontFamily: 'monospace',
@@ -523,7 +524,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 4. TIMING (MOOLA DASHA)
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildTiming(Map<String, dynamic> timing) {
+  Widget _buildTiming(AppLocalizations l, Map<String, dynamic> timing) {
     final combinedScore =
         (timing['combined_timing_score'] as num?)?.toDouble() ?? 0;
     final timingVerdict = timing['timing_verdict']?.toString() ?? '';
@@ -647,8 +648,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        const Text('NEXT FAVORABLE WINDOW',
-                            style: TextStyle(
+                        Text(l.nextFavorableWindow,
+                            style: const TextStyle(
                                 color: AppColors.success,
                                 fontSize: 8,
                                 fontFamily: 'monospace',
@@ -730,7 +731,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 5. 5TH HOUSE ANALYSIS — per person
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildFifthHouseCard(String key, Map<String, dynamic> m) {
+  Widget _buildFifthHouseCard(AppLocalizations l, String key, Map<String, dynamic> m) {
     final name = _personLabel(key);
     final sign = m['sign']?.toString() ?? '';
     final signEn = m['sign_english']?.toString() ?? '';
@@ -773,8 +774,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
       // Occupants
       if (occupants.isNotEmpty) ...[
         const SizedBox(height: 8),
-        const Text('OCCUPANTS',
-            style: TextStyle(
+        Text(l.occupants,
+            style: const TextStyle(
                 color: AppColors.smoke,
                 fontSize: 8,
                 fontFamily: 'monospace',
@@ -791,8 +792,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
       // Benefic aspects
       if (benefics.isNotEmpty) ...[
         const SizedBox(height: 8),
-        const Text('BENEFIC ASPECTS',
-            style: TextStyle(
+        Text(l.beneficAspects,
+            style: const TextStyle(
                 color: AppColors.success,
                 fontSize: 8,
                 fontFamily: 'monospace',
@@ -809,8 +810,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
       // Malefic aspects
       if (malefics.isNotEmpty) ...[
         const SizedBox(height: 8),
-        const Text('MALEFIC ASPECTS',
-            style: TextStyle(
+        Text(l.maleficAspects,
+            style: const TextStyle(
                 color: AppColors.error,
                 fontSize: 8,
                 fontFamily: 'monospace',
@@ -841,7 +842,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 6. JUPITER ANALYSIS — per person
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildJupiterCard(String key, Map<String, dynamic> m) {
+  Widget _buildJupiterCard(AppLocalizations l, String key, Map<String, dynamic> m) {
     final name = _personLabel(key);
     final sign = m['sign']?.toString() ?? '';
     final house = m['house']?.toString() ?? '';
@@ -903,7 +904,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 7. D7 SAPTAMSA ANALYSIS — per person
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildD7Card(String key, Map<String, dynamic> m) {
+  Widget _buildD7Card(AppLocalizations l, String key, Map<String, dynamic> m) {
     final name = _personLabel(key);
     final d7Lagna = m['d7_lagna']?.toString() ?? '';
     final d7Fifth = m['d7_fifth_sign']?.toString() ?? '';
@@ -937,8 +938,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
       // Planet table
       if (d7Planets.isNotEmpty) ...[
         const SizedBox(height: 10),
-        const Text('PLANET POSITIONS',
-            style: TextStyle(
+        Text(l.planetPositions,
+            style: const TextStyle(
                 color: AppColors.smoke,
                 fontSize: 8,
                 fontFamily: 'monospace',
@@ -1043,7 +1044,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 8. BEEJA & KSHETRA SPHUTA
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildBeejaKshetra(Map<String, dynamic> bk) {
+  Widget _buildBeejaKshetra(AppLocalizations l, Map<String, dynamic> bk) {
     final beeja = _asMap(bk['beeja_sphuta']);
     final kshetra = _asMap(bk['kshetra_sphuta']);
     final combined = bk['combined_fertility_indication']?.toString() ?? '';
@@ -1074,8 +1075,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('COMBINED FERTILITY INDICATION',
-                      style: TextStyle(
+                  Text(l.combinedFertility,
+                      style: const TextStyle(
                           color: AppColors.gold,
                           fontSize: 8,
                           letterSpacing: 1,
@@ -1187,7 +1188,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 9. DOSHA ANALYSIS
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildDoshaAnalysis(Map<String, dynamic> dosha) {
+  Widget _buildDoshaAnalysis(AppLocalizations l, Map<String, dynamic> dosha) {
     final doshas = (dosha['doshas_detected'] as List?) ?? [];
     final totalPenalty =
         (dosha['total_dosha_penalty'] as num?)?.toDouble() ?? 0;
@@ -1205,9 +1206,9 @@ class ChildProbabilityReportScreen extends StatelessWidget {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              const Expanded(
-                  child: Text('TOTAL DOSHA PENALTY',
-                      style: TextStyle(
+              Expanded(
+                  child: Text(l.totalDoshaPenalty,
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 9,
                           fontFamily: 'monospace',
@@ -1296,8 +1297,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('CANCELLATION FACTORS',
-                                  style: TextStyle(
+                              Text(l.cancellationFactors,
+                                  style: const TextStyle(
                                       color: AppColors.success,
                                       fontSize: 8,
                                       letterSpacing: 1,
@@ -1320,7 +1321,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 10. REMEDIES — five categorized lists
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildRemedies(Map<String, dynamic> remedies) {
+  Widget _buildRemedies(AppLocalizations l, Map<String, dynamic> remedies) {
     final gemstone = (remedies['gemstone_remedies'] as List?) ?? [];
     final mantra = (remedies['mantra_remedies'] as List?) ?? [];
     final ritual = (remedies['ritual_remedies'] as List?) ?? [];
@@ -1415,8 +1416,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('COMBINED ADVICE',
-                          style: TextStyle(
+                      Text(l.remedies,
+                          style: const TextStyle(
                               color: AppColors.gold,
                               fontSize: 8,
                               letterSpacing: 1,
@@ -1438,7 +1439,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // 11. SUMMARY — gold card
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildSummary(Map<String, dynamic> s) {
+  Widget _buildSummary(AppLocalizations l, Map<String, dynamic> s) {
     final oneLiner = s['one_liner']?.toString() ?? '';
     final humanSummary = s['human_summary']?.toString() ?? '';
     final actionable = s['actionable_advice']?.toString() ?? '';
@@ -1515,8 +1516,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             const SizedBox(height: 10),
           ],
           if (outlook.isNotEmpty) ...[
-            const Text('OVERALL OUTLOOK',
-                style: TextStyle(
+            Text(l.overallVerdict,
+                style: const TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
                     letterSpacing: 1,
