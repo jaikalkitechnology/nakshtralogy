@@ -127,6 +127,43 @@ TRANSLATIONS = {
         "balanced": "संतुलित",
         # Risk categories
         "high": "उच्च", "medium": "मध्यम", "low": "निम्न",
+        # Love styles
+        "romantic": "रोमांटिक", "cautious": "सतर्क",
+        "slow-warmth": "धीमी-उष्णता", "magnetic": "चुंबकीय",
+        "quick-falls": "तेज-प्रेम", "passionate": "भावुक",
+        "steady": "स्थिर", "detached": "अलग",
+        # Marriage archetypes
+        "refined-partner": "परिष्कृत-साथी",
+        "unconventional-partner": "अपरंपरागत-साथी",
+        "service-oriented-partner": "सेवा-उन्मुख-साथी",
+        # Health types
+        "acute": "तीव्र", "psychosomatic": "मनोदैहिक",
+        "chronic": "दीर्घकालिक", "structural": "संरचनात्मक",
+        # Mental stress styles
+        "open": "खुला", "measured": "संयमित",
+        "suppressed": "दबा हुआ", "explosive": "विस्फोटक",
+        "withdrawn": "अंतर्मुखी",
+        # Property types
+        "acquisitive": "अधिग्रहणकारी", "protective": "सुरक्षात्मक",
+        "volatile": "अस्थिर", "minimal": "न्यूनतम",
+        "luxury-car": "विलासिता-वाहन", "practical-sedan": "व्यावहारिक-सेडान",
+        "utility-vehicle": "उपयोगी-वाहन",
+        # Legal types
+        "litigation-prone": "मुकदमा-प्रवण", "defensive-prone": "रक्षात्मक-प्रवण",
+        "protracted-cases": "दीर्घ-मुकदमे", "settlement-prone": "समझौता-प्रवण",
+        "quick-resolution": "त्वरित-समाधान",
+        # Life path karma types
+        "dharmic-continuation": "धार्मिक-निरंतरता",
+        "mastery-completion": "निपुणता-पूर्णता",
+        "karmic-resolution": "कर्म-समाधान",
+        "wisdom-teaching": "ज्ञान-शिक्षण",
+        "purification-focused": "शुद्धिकरण-केंद्रित",
+        "service-karma": "सेवा-कर्म",
+        "new-beginning": "नई-शुरुआत",
+        # Past life
+        "peaceful-natural": "शांत-प्राकृतिक",
+        # Debt
+        "secured": "सुरक्षित", "unsecured": "असुरक्षित",
     },
     "mr": {
         "leadership-executive": "नेतृत्व-कार्यकारी",
@@ -229,6 +266,31 @@ _TRANSLATE_VALUE_KEYS = {
     # Wealth
     "wealth_type", "investment_style", "expense_risk_category",
     "wealth_acquisition_style",
+    # Love
+    "love_style", "current_relationship_phase",
+    # Marriage
+    "marriage_type_signature", "spouse_primary_archetype",
+    "domestic_comforts_level", "spouse_education_level_signature",
+    # Health
+    "d6_disease_karma_type", "constitutional_type",
+    # Mental
+    "current_stress_level", "active_emotional_phase",
+    "communication_style", "conflict_engagement_style",
+    # Property
+    "d4_property_karma_type", "vehicle_type",
+    # Legal
+    "d6_litigation_karma_type", "legal_karma_type",
+    "soul_level_legal_karma",
+    # Life path
+    "past_life_karma_type",
+    # Character
+    "atmakaraka_soul_character_archetype",
+    # Past life
+    "cultural_archetype", "past_life_partner_archetype",
+    "past_life_spiritual_level", "primary_karmic_debt_type",
+    # Debt
+    "active_debt_phase", "primary_debt_category",
+    "best_loan_type_if_needed", "dti_category", "remedy_direction",
 }
 
 # Keys whose values are planet names
