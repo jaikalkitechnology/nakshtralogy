@@ -592,4 +592,55 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get engKarmaLink => 'कर्म संबंध';
+
+  @override
+  String get decline => 'अस्वीकार';
+
+  @override
+  String get accept => 'स्वीकार';
+
+  @override
+  String get endSession => 'सत्र समाप्त';
+
+  @override
+  String get enterChat => 'चैट में जाएं';
+
+  @override
+  String get inProgress => 'प्रगति में';
+
+  @override
+  String get requestDeclined => 'अनुरोध अस्वीकृत';
+
+  @override
+  String get noRequests => 'कोई अनुरोध नहीं';
+
+  @override
+  String get tapViewChat => 'चैट इतिहास देखने के लिए टैप करें';
+
+  @override
+  String get tapViewCall => 'कॉल विवरण देखने के लिए टैप करें';
+
+  @override
+  String get consultation => 'परामर्श';
+
+  @override
+  String get charged => 'शुल्क';
+
+  @override
+  String get messages => 'संदेश';
+
+  @override
+  String get duration => 'अवधि';
+
+  @override
+  String get rate => 'दर';
+
+  @override
+  String get callDetails => 'कॉल विवरण';
+
+  @override
+  String get yourEarning => 'आपकी कमाई';
+
+  @override
+  String get totalCharged => 'कुल शुल्क';
 }

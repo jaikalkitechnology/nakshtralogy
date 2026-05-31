@@ -1271,6 +1271,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Karma Linkage'**
   String get engKarmaLink;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @endSession.
+  ///
+  /// In en, this message translates to:
+  /// **'End Session'**
+  String get endSession;
+
+  /// No description provided for @enterChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Chat'**
+  String get enterChat;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgress;
+
+  /// No description provided for @requestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined'**
+  String get requestDeclined;
+
+  /// No description provided for @noRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests'**
+  String get noRequests;
+
+  /// No description provided for @tapViewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view chat history'**
+  String get tapViewChat;
+
+  /// No description provided for @tapViewCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view call details'**
+  String get tapViewCall;
+
+  /// No description provided for @consultation.
+  ///
+  /// In en, this message translates to:
+  /// **'consultation'**
+  String get consultation;
+
+  /// No description provided for @charged.
+  ///
+  /// In en, this message translates to:
+  /// **'Charged'**
+  String get charged;
+
+  /// No description provided for @messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messages;
+
+  /// No description provided for @duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// No description provided for @rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get rate;
+
+  /// No description provided for @callDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Details'**
+  String get callDetails;
+
+  /// No description provided for @yourEarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Earning'**
+  String get yourEarning;
+
+  /// No description provided for @totalCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charged'**
+  String get totalCharged;
 }
 
 class _AppLocalizationsDelegate
