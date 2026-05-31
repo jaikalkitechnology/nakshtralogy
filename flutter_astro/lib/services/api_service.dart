@@ -690,9 +690,15 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> runSpecialist(String key, String chartId) async {
+  Future<String> _appLang() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('app_language') ?? 'en';
+  }
+
+  Future<Map<String, dynamic>> runSpecialist(String key, String chartId, {String? lang}) async {
+    final l = lang ?? await _appLang();
     final resp = await http.post(
-      Uri.parse('${ApiConstants.specialistBase}/$key/analyze'),
+      Uri.parse('${ApiConstants.specialistBase}/$key/analyze?lang=$l'),
       headers: {..._headers, 'Content-Type': 'application/json'},
       body: jsonEncode({'chart_id': chartId}),
     );
