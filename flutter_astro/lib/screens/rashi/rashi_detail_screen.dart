@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../kundli/widgets/north_indian_chart.dart';
@@ -432,7 +433,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center),
       const SizedBox(height: 12),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
     ]),
   ));
 }

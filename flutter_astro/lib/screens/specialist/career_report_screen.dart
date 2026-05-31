@@ -54,7 +54,7 @@ class _CareerReportState extends State<CareerReportScreen> {
                   const SizedBox(height: 12),
                   Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
                 ])))
               : _data != null
                   ? _buildReport()

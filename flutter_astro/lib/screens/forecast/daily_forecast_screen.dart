@@ -42,7 +42,7 @@ class _S extends State<DailyForecastScreen> {
     const Icon(Icons.error_outline, color: AppColors.error, size: 48), const SizedBox(height: 12),
     Padding(padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center)),
-    const SizedBox(height: 16), ElevatedButton(onPressed: _load, child: const Text('Retry')),
+    const SizedBox(height: 16), ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
   ]));
 
   Widget _report() {

@@ -60,7 +60,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13), textAlign: TextAlign.center),
       const SizedBox(height: 16),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
     ]),
   ));
 
@@ -213,7 +213,7 @@ class _ChatMessagesViewState extends State<_ChatMessagesView> {
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Text(_error!, style: const TextStyle(color: AppColors.error)),
                   const SizedBox(height: 12),
-                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
                 ]))
               : _messages.isEmpty
                   ? Center(child: Text(AppLocalizations.of(context)?.noMessages ?? 'No messages in this session', style: const TextStyle(color: AppColors.textSecondary)))

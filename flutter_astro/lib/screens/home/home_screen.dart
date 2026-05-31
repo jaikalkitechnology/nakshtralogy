@@ -399,7 +399,7 @@ class _ChatRequestDialogState extends State<_ChatRequestDialog> {
         OutlinedButton.icon(
           onPressed: _loading ? null : _decline,
           icon: const Icon(Icons.close, size: 18),
-          label: const Text('Decline'),
+          label: Text(AppLocalizations.of(context)?.decline ?? 'Decline'),
           style: OutlinedButton.styleFrom(foregroundColor: AppColors.error, side: const BorderSide(color: AppColors.error), minimumSize: const Size(120, 44)),
         ),
         ElevatedButton.icon(

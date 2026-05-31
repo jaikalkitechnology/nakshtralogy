@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -72,7 +73,7 @@ class _MilanViewerScreenState extends State<MilanViewerScreen> with TickerProvid
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center)),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
                 ]))
               : TabBarView(controller: _tabs, children: [
                   _OverviewTab(data: _data!),

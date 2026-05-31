@@ -151,7 +151,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center),
       const SizedBox(height: 12),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
     ]),
   ));
 }
