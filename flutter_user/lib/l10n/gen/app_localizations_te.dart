@@ -986,4 +986,25 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get ruledBy => 'అధిపతి';
+
+  @override
+  String get kundliMilan => 'కుండలి మిలన్';
+
+  @override
+  String get startKundliMilan => 'కుండలి మిలన్ ప్రారంభించండి';
+
+  @override
+  String get recommendations => 'సిఫార్సులు';
+
+  @override
+  String get cancellations => 'రద్దులు';
+
+  @override
+  String get dashaSync => 'దశా సింక్';
+
+  @override
+  String get transitMarriageWindows => 'గోచార వివాహ సమయాలు';
+
+  @override
+  String get overlappingWindows => 'అతిపాత వివాహ సమయాలు';
 }
