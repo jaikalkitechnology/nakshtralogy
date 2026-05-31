@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -33,7 +34,7 @@ class _CallHistoryScreenState extends State<CallHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Call History'),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)?.callHistory ?? 'Call History'),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh, size: 20))]),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
@@ -79,12 +80,12 @@ class _CallHistoryScreenState extends State<CallHistoryScreen> {
           ),
         ),
         const SizedBox(height: 18),
-        const Center(child: Text('No Calls Yet',
-            style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700))),
+        Center(child: Text(AppLocalizations.of(context)?.noCallsYet ?? 'No Calls Yet',
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700))),
         const SizedBox(height: 8),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
-          child: Text('Your call history with astrologers will appear here. Pull down to refresh.',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Text('${AppLocalizations.of(context)?.callAppearHere ?? 'Your call history with astrologers will appear here.'} ${AppLocalizations.of(context)?.pullToRefresh ?? 'Pull down to refresh.'}',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.4)),
         ),

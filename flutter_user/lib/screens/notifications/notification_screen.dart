@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -41,7 +42,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Notifications', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
+        title: Text(AppLocalizations.of(context)?.notifications ?? 'Notifications', style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [
           if (unread > 0) TextButton(
             onPressed: _markAllRead,
@@ -78,9 +79,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
           child: const Icon(Icons.notifications_none, color: AppColors.primary, size: 40),
         )),
         const SizedBox(height: 16),
-        const Center(child: Text('No notifications yet', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600))),
+        Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No notifications yet', style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600))),
         const SizedBox(height: 6),
-        const Center(child: Text('Pull down to refresh', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+        Center(child: Text(AppLocalizations.of(context)?.pullToRefresh ?? 'Pull down to refresh', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
       ],
     ),
   );

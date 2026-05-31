@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'rashi_detail_screen.dart';
@@ -62,7 +63,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Rashi Predictions',
+        title: Text(AppLocalizations.of(context)?.rashi ?? 'Rashi Predictions',
             style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh))],
       ),
@@ -76,7 +77,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
                     padding: const EdgeInsets.all(14),
                     color: AppColors.primary.withOpacity(0.08),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Gochar for ${_date ?? 'today'}',
+                      Text('${AppLocalizations.of(context)?.gocharForAllSigns ?? 'Gochar for'} ${_date ?? ''}',
                           style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
                       Text('Best: ${_best ?? '-'}    Worst: ${_worst ?? '-'}',
