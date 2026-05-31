@@ -561,6 +561,66 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get todaysForecast => 'आज का पूर्वानुमान';
+
+  @override
+  String get probableNumber => 'संभावित संख्या';
+
+  @override
+  String get genderTendency => 'लिंग प्रवृत्ति';
+
+  @override
+  String get son => 'पुत्र';
+
+  @override
+  String get daughter => 'पुत्री';
+
+  @override
+  String get occupants => 'निवासी ग्रह';
+
+  @override
+  String get beneficAspects => 'शुभ दृष्टि';
+
+  @override
+  String get maleficAspects => 'पाप दृष्टि';
+
+  @override
+  String get nextFavorableWindow => 'अगली अनुकूल अवधि';
+
+  @override
+  String get totalDoshaPenalty => 'कुल दोष दंड';
+
+  @override
+  String get cancellationFactors => 'निरसन कारक';
+
+  @override
+  String get combinedFertility => 'संयुक्त प्रजनन संकेत';
+
+  @override
+  String get planetPositions => 'ग्रह स्थिति';
+
+  @override
+  String get bestWindows => 'सर्वोत्तम अवधि';
+
+  @override
+  String get worstWindows => 'प्रतिकूल अवधि';
+
+  @override
+  String get scoreComponents => 'अंक घटक';
+
+  @override
+  String get topOpportunities => 'शीर्ष अवसर';
+
+  @override
+  String get topRisks => 'शीर्ष जोखिम';
+
+  @override
+  String get remedies => 'उपाय';
+
+  @override
+  String get keyInsights => 'मुख्य अंतर्दृष्टि';
+
+  @override
+  String get overallVerdict => 'समग्र निर्णय';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1288,4 +1348,64 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get browseAstrologers => 'ज्योतिषी खोजें';
+
+  @override
+  String get probableNumber => 'PROBABLE NUMBER';
+
+  @override
+  String get genderTendency => 'GENDER TENDENCY';
+
+  @override
+  String get son => 'SON';
+
+  @override
+  String get daughter => 'DAUGHTER';
+
+  @override
+  String get occupants => 'OCCUPANTS';
+
+  @override
+  String get beneficAspects => 'SHUBH ASPECTS';
+
+  @override
+  String get maleficAspects => 'PAAP ASPECTS';
+
+  @override
+  String get nextFavorableWindow => 'NEXT FAVORABLE WINDOW';
+
+  @override
+  String get totalDoshaPenalty => 'TOTAL DOSHA PENALTY';
+
+  @override
+  String get cancellationFactors => 'CANCELLATION FACTORS';
+
+  @override
+  String get combinedFertility => 'COMBINED FERTILITY INDICATION';
+
+  @override
+  String get planetPositions => 'GRAH POSITIONS';
+
+  @override
+  String get bestWindows => 'BEST WINDOWS';
+
+  @override
+  String get worstWindows => 'WORST WINDOWS';
+
+  @override
+  String get scoreComponents => 'SCORE COMPONENTS';
+
+  @override
+  String get topOpportunities => 'TOP OPPORTUNITIES';
+
+  @override
+  String get topRisks => 'TOP RISKS';
+
+  @override
+  String get remedies => 'UPAAY';
+
+  @override
+  String get keyInsights => 'KEY INSIGHTS';
+
+  @override
+  String get overallVerdict => 'OVERALL VERDICT';
 }

@@ -729,4 +729,64 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get browseAstrologers => 'ஜோதிடர்களைக் கண்டறியவும்';
+
+  @override
+  String get probableNumber => 'சாத்தியமான எண்ணிக்கை';
+
+  @override
+  String get genderTendency => 'பாலின போக்கு';
+
+  @override
+  String get son => 'மகன்';
+
+  @override
+  String get daughter => 'மகள்';
+
+  @override
+  String get occupants => 'குடியிருப்பு கிரகங்கள்';
+
+  @override
+  String get beneficAspects => 'சுப பார்வை';
+
+  @override
+  String get maleficAspects => 'பாப பார்வை';
+
+  @override
+  String get nextFavorableWindow => 'அடுத்த சாதகமான காலம்';
+
+  @override
+  String get totalDoshaPenalty => 'மொத்த தோஷ தண்டனை';
+
+  @override
+  String get cancellationFactors => 'ரத்து காரணிகள்';
+
+  @override
+  String get combinedFertility => 'ஒருங்கிணைந்த கருவுறுதல் குறிகாட்டி';
+
+  @override
+  String get planetPositions => 'கிரக நிலைகள்';
+
+  @override
+  String get bestWindows => 'சிறந்த காலங்கள்';
+
+  @override
+  String get worstWindows => 'மோசமான காலங்கள்';
+
+  @override
+  String get scoreComponents => 'மதிப்பெண் கூறுகள்';
+
+  @override
+  String get topOpportunities => 'முக்கிய வாய்ப்புகள்';
+
+  @override
+  String get topRisks => 'முக்கிய அபாயங்கள்';
+
+  @override
+  String get remedies => 'பரிகாரங்கள்';
+
+  @override
+  String get keyInsights => 'முக்கிய நுண்ணறிவுகள்';
+
+  @override
+  String get overallVerdict => 'ஒட்டுமொத்த தீர்ப்பு';
 }

@@ -1554,6 +1554,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Browse Astrologers'**
   String get browseAstrologers;
+
+  /// No description provided for @probableNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'PROBABLE NUMBER'**
+  String get probableNumber;
+
+  /// No description provided for @genderTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'GENDER TENDENCY'**
+  String get genderTendency;
+
+  /// No description provided for @son.
+  ///
+  /// In en, this message translates to:
+  /// **'SON'**
+  String get son;
+
+  /// No description provided for @daughter.
+  ///
+  /// In en, this message translates to:
+  /// **'DAUGHTER'**
+  String get daughter;
+
+  /// No description provided for @occupants.
+  ///
+  /// In en, this message translates to:
+  /// **'OCCUPANTS'**
+  String get occupants;
+
+  /// No description provided for @beneficAspects.
+  ///
+  /// In en, this message translates to:
+  /// **'BENEFIC ASPECTS'**
+  String get beneficAspects;
+
+  /// No description provided for @maleficAspects.
+  ///
+  /// In en, this message translates to:
+  /// **'MALEFIC ASPECTS'**
+  String get maleficAspects;
+
+  /// No description provided for @nextFavorableWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT FAVORABLE WINDOW'**
+  String get nextFavorableWindow;
+
+  /// No description provided for @totalDoshaPenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL DOSHA PENALTY'**
+  String get totalDoshaPenalty;
+
+  /// No description provided for @cancellationFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCELLATION FACTORS'**
+  String get cancellationFactors;
+
+  /// No description provided for @combinedFertility.
+  ///
+  /// In en, this message translates to:
+  /// **'COMBINED FERTILITY INDICATION'**
+  String get combinedFertility;
+
+  /// No description provided for @planetPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'PLANET POSITIONS'**
+  String get planetPositions;
+
+  /// No description provided for @bestWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST WINDOWS'**
+  String get bestWindows;
+
+  /// No description provided for @worstWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'WORST WINDOWS'**
+  String get worstWindows;
+
+  /// No description provided for @scoreComponents.
+  ///
+  /// In en, this message translates to:
+  /// **'SCORE COMPONENTS'**
+  String get scoreComponents;
+
+  /// No description provided for @topOpportunities.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP OPPORTUNITIES'**
+  String get topOpportunities;
+
+  /// No description provided for @topRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP RISKS'**
+  String get topRisks;
+
+  /// No description provided for @remedies.
+  ///
+  /// In en, this message translates to:
+  /// **'REMEDIES'**
+  String get remedies;
+
+  /// No description provided for @keyInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'KEY INSIGHTS'**
+  String get keyInsights;
+
+  /// No description provided for @overallVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERALL VERDICT'**
+  String get overallVerdict;
 }
 
 class _AppLocalizationsDelegate

@@ -730,4 +730,64 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get browseAstrologers => 'Jyotishi khojein';
+
+  @override
+  String get probableNumber => 'PROBABLE NUMBER';
+
+  @override
+  String get genderTendency => 'GENDER TENDENCY';
+
+  @override
+  String get son => 'SON';
+
+  @override
+  String get daughter => 'DAUGHTER';
+
+  @override
+  String get occupants => 'OCCUPANTS';
+
+  @override
+  String get beneficAspects => 'SHUBH ASPECTS';
+
+  @override
+  String get maleficAspects => 'PAAP ASPECTS';
+
+  @override
+  String get nextFavorableWindow => 'NEXT FAVORABLE WINDOW';
+
+  @override
+  String get totalDoshaPenalty => 'TOTAL DOSHA PENALTY';
+
+  @override
+  String get cancellationFactors => 'CANCELLATION FACTORS';
+
+  @override
+  String get combinedFertility => 'COMBINED FERTILITY INDICATION';
+
+  @override
+  String get planetPositions => 'GRAH POSITIONS';
+
+  @override
+  String get bestWindows => 'BEST WINDOWS';
+
+  @override
+  String get worstWindows => 'WORST WINDOWS';
+
+  @override
+  String get scoreComponents => 'SCORE COMPONENTS';
+
+  @override
+  String get topOpportunities => 'TOP OPPORTUNITIES';
+
+  @override
+  String get topRisks => 'TOP RISKS';
+
+  @override
+  String get remedies => 'UPAAY';
+
+  @override
+  String get keyInsights => 'KEY INSIGHTS';
+
+  @override
+  String get overallVerdict => 'OVERALL VERDICT';
 }

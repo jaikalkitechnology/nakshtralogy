@@ -728,4 +728,64 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get browseAstrologers => 'జ్యోతిష్కులను కనుగొనండి';
+
+  @override
+  String get probableNumber => 'సంభావ్య సంఖ్య';
+
+  @override
+  String get genderTendency => 'లింగ ధోరణి';
+
+  @override
+  String get son => 'కుమారుడు';
+
+  @override
+  String get daughter => 'కుమార్తె';
+
+  @override
+  String get occupants => 'నివాస గ్రహాలు';
+
+  @override
+  String get beneficAspects => 'శుభ దృష్టి';
+
+  @override
+  String get maleficAspects => 'పాప దృష్టి';
+
+  @override
+  String get nextFavorableWindow => 'తదుపరి అనుకూల సమయం';
+
+  @override
+  String get totalDoshaPenalty => 'మొత్తం దోష శిక్ష';
+
+  @override
+  String get cancellationFactors => 'రద్దు కారకాలు';
+
+  @override
+  String get combinedFertility => 'సంయుక్త సంతానోత్పత్తి సూచన';
+
+  @override
+  String get planetPositions => 'గ్రహ స్థానాలు';
+
+  @override
+  String get bestWindows => 'ఉత్తమ సమయాలు';
+
+  @override
+  String get worstWindows => 'ప్రతికూల సమయాలు';
+
+  @override
+  String get scoreComponents => 'స్కోర్ భాగాలు';
+
+  @override
+  String get topOpportunities => 'ప్రధాన అవకాశాలు';
+
+  @override
+  String get topRisks => 'ప్రధాన నష్టాలు';
+
+  @override
+  String get remedies => 'పరిహారాలు';
+
+  @override
+  String get keyInsights => 'ముఖ్య అంతర్దృష్టులు';
+
+  @override
+  String get overallVerdict => 'మొత్తం తీర్పు';
 }

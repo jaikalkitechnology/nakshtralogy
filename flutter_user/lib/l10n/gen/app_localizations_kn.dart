@@ -729,4 +729,64 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get browseAstrologers => 'ಜ್ಯೋತಿಷಿಗಳನ್ನು ಹುಡುಕಿ';
+
+  @override
+  String get probableNumber => 'ಸಂಭಾವ್ಯ ಸಂಖ್ಯೆ';
+
+  @override
+  String get genderTendency => 'ಲಿಂಗ ಪ್ರವೃತ್ತಿ';
+
+  @override
+  String get son => 'ಪುತ್ರ';
+
+  @override
+  String get daughter => 'ಪುತ್ರಿ';
+
+  @override
+  String get occupants => 'ನಿವಾಸಿ ಗ್ರಹಗಳು';
+
+  @override
+  String get beneficAspects => 'ಶುಭ ದೃಷ್ಟಿ';
+
+  @override
+  String get maleficAspects => 'ಪಾಪ ದೃಷ್ಟಿ';
+
+  @override
+  String get nextFavorableWindow => 'ಮುಂದಿನ ಅನುಕೂಲ ಸಮಯ';
+
+  @override
+  String get totalDoshaPenalty => 'ಒಟ್ಟು ದೋಷ ದಂಡ';
+
+  @override
+  String get cancellationFactors => 'ರದ್ದತಿ ಅಂಶಗಳು';
+
+  @override
+  String get combinedFertility => 'ಸಂಯುಕ್ತ ಫಲವತ್ತತೆ ಸೂಚನೆ';
+
+  @override
+  String get planetPositions => 'ಗ್ರಹ ಸ್ಥಾನಗಳು';
+
+  @override
+  String get bestWindows => 'ಅತ್ಯುತ್ತಮ ಸಮಯ';
+
+  @override
+  String get worstWindows => 'ಪ್ರತಿಕೂಲ ಸಮಯ';
+
+  @override
+  String get scoreComponents => 'ಸ್ಕೋರ್ ಅಂಶಗಳು';
+
+  @override
+  String get topOpportunities => 'ಪ್ರಮುಖ ಅವಕಾಶಗಳು';
+
+  @override
+  String get topRisks => 'ಪ್ರಮುಖ ಅಪಾಯಗಳು';
+
+  @override
+  String get remedies => 'ಪರಿಹಾರಗಳು';
+
+  @override
+  String get keyInsights => 'ಪ್ರಮುಖ ಒಳನೋಟಗಳು';
+
+  @override
+  String get overallVerdict => 'ಒಟ್ಟಾರೆ ತೀರ್ಪು';
 }

@@ -727,4 +727,64 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get browseAstrologers => 'জ্যোতিষী খুঁজুন';
+
+  @override
+  String get probableNumber => 'সম্ভাব্য সংখ্যা';
+
+  @override
+  String get genderTendency => 'লিঙ্গ প্রবণতা';
+
+  @override
+  String get son => 'পুত্র';
+
+  @override
+  String get daughter => 'কন্যা';
+
+  @override
+  String get occupants => 'অধিবাসী গ্রহ';
+
+  @override
+  String get beneficAspects => 'শুভ দৃষ্টি';
+
+  @override
+  String get maleficAspects => 'পাপ দৃষ্টি';
+
+  @override
+  String get nextFavorableWindow => 'পরবর্তী অনুকূল সময়';
+
+  @override
+  String get totalDoshaPenalty => 'মোট দোষ শাস্তি';
+
+  @override
+  String get cancellationFactors => 'বাতিল কারণ';
+
+  @override
+  String get combinedFertility => 'সম্মিলিত উর্বরতা সূচক';
+
+  @override
+  String get planetPositions => 'গ্রহ অবস্থান';
+
+  @override
+  String get bestWindows => 'সেরা সময়';
+
+  @override
+  String get worstWindows => 'প্রতিকূল সময়';
+
+  @override
+  String get scoreComponents => 'স্কোর উপাদান';
+
+  @override
+  String get topOpportunities => 'শীর্ষ সুযোগ';
+
+  @override
+  String get topRisks => 'শীর্ষ ঝুঁকি';
+
+  @override
+  String get remedies => 'প্রতিকার';
+
+  @override
+  String get keyInsights => 'মূল অন্তর্দৃষ্টি';
+
+  @override
+  String get overallVerdict => 'সামগ্রিক রায়';
 }

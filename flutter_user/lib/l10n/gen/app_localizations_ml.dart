@@ -730,4 +730,64 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get browseAstrologers => 'ജ്യോത്സ്യന്മാരെ കണ്ടെത്തുക';
+
+  @override
+  String get probableNumber => 'സാധ്യമായ എണ്ണം';
+
+  @override
+  String get genderTendency => 'ലിംഗ പ്രവണത';
+
+  @override
+  String get son => 'പുത്രൻ';
+
+  @override
+  String get daughter => 'പുത്രി';
+
+  @override
+  String get occupants => 'നിവാസി ഗ്രഹങ്ങൾ';
+
+  @override
+  String get beneficAspects => 'ശുഭ ദൃഷ്ടി';
+
+  @override
+  String get maleficAspects => 'പാപ ദൃഷ്ടി';
+
+  @override
+  String get nextFavorableWindow => 'അടുത്ത അനുകൂല സമയം';
+
+  @override
+  String get totalDoshaPenalty => 'ആകെ ദോഷ ദണ്ഡം';
+
+  @override
+  String get cancellationFactors => 'റദ്ദാക്കൽ ഘടകങ്ങൾ';
+
+  @override
+  String get combinedFertility => 'സംയുക്ത ഫലഭൂയിഷ്ഠത സൂചന';
+
+  @override
+  String get planetPositions => 'ഗ്രഹ സ്ഥാനങ്ങൾ';
+
+  @override
+  String get bestWindows => 'മികച്ച സമയം';
+
+  @override
+  String get worstWindows => 'പ്രതികൂല സമയം';
+
+  @override
+  String get scoreComponents => 'സ്കോർ ഘടകങ്ങൾ';
+
+  @override
+  String get topOpportunities => 'പ്രധാന അവസരങ്ങൾ';
+
+  @override
+  String get topRisks => 'പ്രധാന അപകടങ്ങൾ';
+
+  @override
+  String get remedies => 'പരിഹാരങ്ങൾ';
+
+  @override
+  String get keyInsights => 'പ്രധാന ഉൾക്കാഴ്ചകൾ';
+
+  @override
+  String get overallVerdict => 'മൊത്തം വിധി';
 }
