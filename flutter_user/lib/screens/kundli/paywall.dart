@@ -125,7 +125,7 @@ class PaywallService {
               child: Row(children: [
                 const Icon(Icons.account_balance_wallet, color: AppColors.accent, size: 16),
                 const SizedBox(width: 6),
-                const Expanded(child: Text('Amount will be deducted from your wallet',
+                Expanded(child: Text(AppLocalizations.of(context)?.walletDeduction ?? 'Amount deducted',
                     style: TextStyle(color: AppColors.accent, fontSize: 11))),
               ]),
             ),

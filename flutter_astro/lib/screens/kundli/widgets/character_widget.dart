@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -101,7 +102,7 @@ class CharacterWidget extends StatelessWidget {
         Row(children: [
           const Icon(Icons.person_pin, color: Colors.indigo, size: 22),
           const SizedBox(width: 8),
-          const Expanded(child: Text('Character Overview',
+          Expanded(child: Text(AppLocalizations.of(context)?.characterOverview ?? 'Character Overview',
               style: TextStyle(color: Colors.indigo, fontSize: 15, fontWeight: FontWeight.w700))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

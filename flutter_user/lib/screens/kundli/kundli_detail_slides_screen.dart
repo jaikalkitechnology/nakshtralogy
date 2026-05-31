@@ -392,7 +392,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
         child: Row(children: const [
           Icon(Icons.auto_awesome, color: AppColors.success, size: 14),
           SizedBox(width: 8),
-          Expanded(child: Text('Favorable period — focus on career growth and relationships.',
+          Expanded(child: Text(AppLocalizations.of(context)?.favorablePeriodAdvice ?? 'Favorable period',
               style: TextStyle(color: AppColors.ivory, fontSize: 11))),
         ]),
       ),

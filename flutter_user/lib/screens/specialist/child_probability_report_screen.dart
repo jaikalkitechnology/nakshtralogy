@@ -472,7 +472,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
 
           // Explanations
           if (numExp.isNotEmpty) ...[
-            const Text('NUMBER EXPLANATION',
+            Text(l.numberExplanation,
                 style: TextStyle(
                     color: AppColors.smoke,
                     fontSize: 8,
@@ -487,7 +487,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             const SizedBox(height: 8),
           ],
           if (genderExp.isNotEmpty) ...[
-            const Text('GENDER EXPLANATION',
+            Text(l.genderExplanation,
                 style: TextStyle(
                     color: AppColors.smoke,
                     fontSize: 8,
@@ -916,7 +916,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
     final d7Planets = (m['d7_planets'] as List?) ?? [];
 
     return _personCard(name, AppColors.indigo, [
-      const Text('D7 SAPTAMSA',
+      Text(l.d7Saptamsa,
           style: TextStyle(
               color: AppColors.lavender,
               fontSize: 8,
@@ -955,28 +955,28 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             child: const Row(children: [
               Expanded(
                   flex: 3,
-                  child: Text('Planet',
+                  child: Text(l.planet,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text('Sign',
+                  child: Text(l.sign,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text('House',
+                  child: Text(l.house,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text('In 5th?',
+                  child: Text(l.inFifth,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
@@ -1628,7 +1628,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  const Text('COPY',
+                  Text(l.copy,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,

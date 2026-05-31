@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -224,14 +225,14 @@ class CareerWidget extends StatelessWidget {
           const Divider(color: Colors.white12, height: 20),
         ],
         if (good.isNotEmpty) ...[
-          const Text('Favorable Periods',
+          Text(AppLocalizations.of(context)?.favorablePeriods ?? 'Favorable Periods',
               style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...good.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), isGood: true)),
         ],
         if (bad.isNotEmpty) ...[
           const SizedBox(height: 10),
-          const Text('Challenging Periods',
+          Text(AppLocalizations.of(context)?.challengingPeriods ?? 'Challenging Periods',
               style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...bad.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), isGood: false)),
@@ -358,7 +359,7 @@ class CareerWidget extends StatelessWidget {
       color: Colors.blueGrey,
       children: [
         if (houses.isNotEmpty) ...[
-          const Text('Key Houses (Career)',
+          Text(AppLocalizations.of(context)?.keyHouses ?? 'Key Houses',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...houses.entries.take(6).map<Widget>((e) {
@@ -375,7 +376,7 @@ class CareerWidget extends StatelessWidget {
         ],
         if (keyPlanets.isNotEmpty) ...[
           const SizedBox(height: 10),
-          const Text('Key Career Planets',
+          Text(AppLocalizations.of(context)?.keyPlanets ?? 'Key Planets',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...keyPlanets.entries.take(6).map<Widget>((e) {

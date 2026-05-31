@@ -416,7 +416,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 2,
-                      child: Text('Strength',
+                      child: Text(l.strength,
                           style: TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
@@ -689,7 +689,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     children: [
                       Row(children: [
                         const Expanded(
-                            child: Text('BHAKOOT AXIS',
+                            child: Text(l.bhakootAxis,
                                 style: TextStyle(
                                     color: AppColors.smoke,
                                     fontSize: 8,
@@ -1559,7 +1559,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                             child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('BASIS  ',
+                                  Text(l.basis,
                                       style: TextStyle(
                                           color: AppColors.gold,
                                           fontSize: 7,
@@ -1809,7 +1809,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  const Text('COPY',
+                  Text(l.copy,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,

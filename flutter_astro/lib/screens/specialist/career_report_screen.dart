@@ -666,7 +666,7 @@ class _CareerReportState extends State<CareerReportScreen> {
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: AppColors.success.withOpacity(0.2))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('✓ MITIGATION',
+              Text(l.mitigation,
                 style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text(mitigation, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
