@@ -1786,4 +1786,25 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get ruledBy => 'स्वामी';
+
+  @override
+  String get kundliMilan => 'कुंडली मिलान';
+
+  @override
+  String get startKundliMilan => 'कुंडली मिलान शुरू करें';
+
+  @override
+  String get recommendations => 'सिफारिशें';
+
+  @override
+  String get cancellations => 'निरसन';
+
+  @override
+  String get dashaSync => 'दशा समन्वय';
+
+  @override
+  String get transitMarriageWindows => 'गोचर विवाह अवधि';
+
+  @override
+  String get overlappingWindows => 'ओवरलैपिंग विवाह अवधि';
 }

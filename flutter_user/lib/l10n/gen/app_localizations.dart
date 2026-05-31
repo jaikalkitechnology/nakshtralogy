@@ -2070,6 +2070,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ruled by'**
   String get ruledBy;
+
+  /// No description provided for @kundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan'**
+  String get kundliMilan;
+
+  /// No description provided for @startKundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Kundli Milan'**
+  String get startKundliMilan;
+
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @cancellations.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellations'**
+  String get cancellations;
+
+  /// No description provided for @dashaSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Sync'**
+  String get dashaSync;
+
+  /// No description provided for @transitMarriageWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Marriage Windows'**
+  String get transitMarriageWindows;
+
+  /// No description provided for @overlappingWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Overlapping Marriage Windows'**
+  String get overlappingWindows;
 }
 
 class _AppLocalizationsDelegate

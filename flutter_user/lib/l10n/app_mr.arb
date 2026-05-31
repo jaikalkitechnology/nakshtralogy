@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "जीवन क्षेत्र भविष्य",
   "strengths": "शक्ती",
   "weaknesses": "कमकुवतपणा",
-  "ruledBy": "स्वामी"
+  "ruledBy": "स्वामी",
+  "kundliMilan": "कुंडली मिलन",
+  "startKundliMilan": "कुंडली मिलन सुरू करा",
+  "recommendations": "शिफारसी",
+  "cancellations": "निरसन",
+  "dashaSync": "दशा समन्वय",
+  "transitMarriageWindows": "गोचर विवाह कालावधी",
+  "overlappingWindows": "ओव्हरलॅपिंग विवाह कालावधी"
 }

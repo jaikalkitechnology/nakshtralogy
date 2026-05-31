@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "Life Area Predictions",
   "strengths": "Strengths",
   "weaknesses": "Weaknesses",
-  "ruledBy": "Ruled by"
+  "ruledBy": "Ruled by",
+  "kundliMilan": "Kundli Milan",
+  "startKundliMilan": "Start Kundli Milan",
+  "recommendations": "Recommendations",
+  "cancellations": "Cancellations",
+  "dashaSync": "Dasha Sync",
+  "transitMarriageWindows": "Transit Marriage Windows",
+  "overlappingWindows": "Overlapping Marriage Windows"
 }

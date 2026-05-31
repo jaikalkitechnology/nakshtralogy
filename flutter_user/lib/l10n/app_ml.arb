@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "ജീവിത മേഖല പ്രവചനങ്ങൾ",
   "strengths": "ശക്തികൾ",
   "weaknesses": "ദൗർബല്യങ്ങൾ",
-  "ruledBy": "അധിപൻ"
+  "ruledBy": "അധിപൻ",
+  "kundliMilan": "കുണ്ഡലി മിലൻ",
+  "startKundliMilan": "കുണ്ഡലി മിലൻ ആരംഭിക്കുക",
+  "recommendations": "ശുപാർശകൾ",
+  "cancellations": "റദ്ദാക്കലുകൾ",
+  "dashaSync": "ദശാ സിങ്ക്",
+  "transitMarriageWindows": "ഗോചര വിവാഹ സമയം",
+  "overlappingWindows": "ഓവർലാപ്പിംഗ് വിവാഹ സമയം"
 }

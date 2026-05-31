@@ -986,4 +986,25 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get ruledBy => 'સ્વામી';
+
+  @override
+  String get kundliMilan => 'કુંડળી મિલન';
+
+  @override
+  String get startKundliMilan => 'કુંડળી મિલન શરૂ કરો';
+
+  @override
+  String get recommendations => 'ભલામણો';
+
+  @override
+  String get cancellations => 'રદ્દ';
+
+  @override
+  String get dashaSync => 'દશા સિંક';
+
+  @override
+  String get transitMarriageWindows => 'ગોચર લગ્ન અવધિ';
+
+  @override
+  String get overlappingWindows => 'ઓવરલેપિંગ લગ્ન અવધિ';
 }

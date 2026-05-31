@@ -987,4 +987,25 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get ruledBy => 'ಅಧಿಪತಿ';
+
+  @override
+  String get kundliMilan => 'ಕುಂಡಲಿ ಮಿಲನ್';
+
+  @override
+  String get startKundliMilan => 'ಕುಂಡಲಿ ಮಿಲನ್ ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
+  String get recommendations => 'ಶಿಫಾರಸುಗಳು';
+
+  @override
+  String get cancellations => 'ರದ್ದುಗಳು';
+
+  @override
+  String get dashaSync => 'ದಶಾ ಸಿಂಕ್';
+
+  @override
+  String get transitMarriageWindows => 'ಗೋಚಾರ ವಿವಾಹ ಸಮಯ';
+
+  @override
+  String get overlappingWindows => 'ಅತಿಕ್ರಮಣ ವಿವಾಹ ಸಮಯ';
 }

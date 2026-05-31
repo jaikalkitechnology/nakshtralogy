@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "జీవిత రంగ అంచనాలు",
   "strengths": "బలాలు",
   "weaknesses": "బలహీనతలు",
-  "ruledBy": "అధిపతి"
+  "ruledBy": "అధిపతి",
+  "kundliMilan": "కుండలి మిలన్",
+  "startKundliMilan": "కుండలి మిలన్ ప్రారంభించండి",
+  "recommendations": "సిఫార్సులు",
+  "cancellations": "రద్దులు",
+  "dashaSync": "దశా సింక్",
+  "transitMarriageWindows": "గోచార వివాహ సమయాలు",
+  "overlappingWindows": "అతిపాత వివాహ సమయాలు"
 }

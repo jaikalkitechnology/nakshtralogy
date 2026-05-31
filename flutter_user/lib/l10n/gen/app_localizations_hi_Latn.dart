@@ -988,4 +988,25 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get ruledBy => 'Swami';
+
+  @override
+  String get kundliMilan => 'Kundli Milan';
+
+  @override
+  String get startKundliMilan => 'Kundli Milan Shuru Karein';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get cancellations => 'Cancellations';
+
+  @override
+  String get dashaSync => 'Dasha Sync';
+
+  @override
+  String get transitMarriageWindows => 'Transit Marriage Windows';
+
+  @override
+  String get overlappingWindows => 'Overlapping Marriage Windows';
 }

@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "জীবন ক্ষেত্র ভবিষ্যদ্বাণী",
   "strengths": "শক্তি",
   "weaknesses": "দুর্বলতা",
-  "ruledBy": "অধিপতি"
+  "ruledBy": "অধিপতি",
+  "kundliMilan": "কুণ্ডলী মিলন",
+  "startKundliMilan": "কুণ্ডলী মিলন শুরু করুন",
+  "recommendations": "সুপারিশ",
+  "cancellations": "বাতিল",
+  "dashaSync": "দশা সিঙ্ক",
+  "transitMarriageWindows": "গোচর বিবাহ সময়",
+  "overlappingWindows": "ওভারল্যাপিং বিবাহ সময়"
 }

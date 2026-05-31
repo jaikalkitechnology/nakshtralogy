@@ -987,4 +987,25 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get ruledBy => 'स्वामी';
+
+  @override
+  String get kundliMilan => 'कुंडली मिलन';
+
+  @override
+  String get startKundliMilan => 'कुंडली मिलन सुरू करा';
+
+  @override
+  String get recommendations => 'शिफारसी';
+
+  @override
+  String get cancellations => 'निरसन';
+
+  @override
+  String get dashaSync => 'दशा समन्वय';
+
+  @override
+  String get transitMarriageWindows => 'गोचर विवाह कालावधी';
+
+  @override
+  String get overlappingWindows => 'ओव्हरलॅपिंग विवाह कालावधी';
 }

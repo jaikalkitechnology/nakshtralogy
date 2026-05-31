@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "ਜੀਵਨ ਖੇਤਰ ਭਵਿੱਖਬਾਣੀ",
   "strengths": "ਸ਼ਕਤੀਆਂ",
   "weaknesses": "ਕਮਜ਼ੋਰੀਆਂ",
-  "ruledBy": "ਸਵਾਮੀ"
+  "ruledBy": "ਸਵਾਮੀ",
+  "kundliMilan": "ਕੁੰਡਲੀ ਮਿਲਾਨ",
+  "startKundliMilan": "ਕੁੰਡਲੀ ਮਿਲਾਨ ਸ਼ੁਰੂ ਕਰੋ",
+  "recommendations": "ਸਿਫ਼ਾਰਸ਼ਾਂ",
+  "cancellations": "ਰੱਦ",
+  "dashaSync": "ਦਸ਼ਾ ਸਿੰਕ",
+  "transitMarriageWindows": "ਗੋਚਰ ਵਿਆਹ ਸਮਾਂ",
+  "overlappingWindows": "ਓਵਰਲੈਪਿੰਗ ਵਿਆਹ ਸਮਾਂ"
 }

@@ -985,4 +985,25 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get ruledBy => 'অধিপতি';
+
+  @override
+  String get kundliMilan => 'কুণ্ডলী মিলন';
+
+  @override
+  String get startKundliMilan => 'কুণ্ডলী মিলন শুরু করুন';
+
+  @override
+  String get recommendations => 'সুপারিশ';
+
+  @override
+  String get cancellations => 'বাতিল';
+
+  @override
+  String get dashaSync => 'দশা সিঙ্ক';
+
+  @override
+  String get transitMarriageWindows => 'গোচর বিবাহ সময়';
+
+  @override
+  String get overlappingWindows => 'ওভারল্যাপিং বিবাহ সময়';
 }

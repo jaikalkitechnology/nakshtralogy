@@ -987,4 +987,25 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get ruledBy => 'ਸਵਾਮੀ';
+
+  @override
+  String get kundliMilan => 'ਕੁੰਡਲੀ ਮਿਲਾਨ';
+
+  @override
+  String get startKundliMilan => 'ਕੁੰਡਲੀ ਮਿਲਾਨ ਸ਼ੁਰੂ ਕਰੋ';
+
+  @override
+  String get recommendations => 'ਸਿਫ਼ਾਰਸ਼ਾਂ';
+
+  @override
+  String get cancellations => 'ਰੱਦ';
+
+  @override
+  String get dashaSync => 'ਦਸ਼ਾ ਸਿੰਕ';
+
+  @override
+  String get transitMarriageWindows => 'ਗੋਚਰ ਵਿਆਹ ਸਮਾਂ';
+
+  @override
+  String get overlappingWindows => 'ਓਵਰਲੈਪਿੰਗ ਵਿਆਹ ਸਮਾਂ';
 }

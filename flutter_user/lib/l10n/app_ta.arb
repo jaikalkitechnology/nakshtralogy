@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "வாழ்க்கை துறை கணிப்புகள்",
   "strengths": "பலங்கள்",
   "weaknesses": "பலவீனங்கள்",
-  "ruledBy": "அதிபதி"
+  "ruledBy": "அதிபதி",
+  "kundliMilan": "குண்டலி மிலன்",
+  "startKundliMilan": "குண்டலி மிலன் தொடங்கவும்",
+  "recommendations": "பரிந்துரைகள்",
+  "cancellations": "ரத்துகள்",
+  "dashaSync": "தசா ஒத்திசைவு",
+  "transitMarriageWindows": "கோசார திருமண காலம்",
+  "overlappingWindows": "மேலோட்ட திருமண காலம்"
 }

@@ -987,4 +987,25 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get ruledBy => 'அதிபதி';
+
+  @override
+  String get kundliMilan => 'குண்டலி மிலன்';
+
+  @override
+  String get startKundliMilan => 'குண்டலி மிலன் தொடங்கவும்';
+
+  @override
+  String get recommendations => 'பரிந்துரைகள்';
+
+  @override
+  String get cancellations => 'ரத்துகள்';
+
+  @override
+  String get dashaSync => 'தசா ஒத்திசைவு';
+
+  @override
+  String get transitMarriageWindows => 'கோசார திருமண காலம்';
+
+  @override
+  String get overlappingWindows => 'மேலோட்ட திருமண காலம்';
 }

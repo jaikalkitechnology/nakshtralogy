@@ -988,4 +988,25 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get ruledBy => 'അധിപൻ';
+
+  @override
+  String get kundliMilan => 'കുണ്ഡലി മിലൻ';
+
+  @override
+  String get startKundliMilan => 'കുണ്ഡലി മിലൻ ആരംഭിക്കുക';
+
+  @override
+  String get recommendations => 'ശുപാർശകൾ';
+
+  @override
+  String get cancellations => 'റദ്ദാക്കലുകൾ';
+
+  @override
+  String get dashaSync => 'ദശാ സിങ്ക്';
+
+  @override
+  String get transitMarriageWindows => 'ഗോചര വിവാഹ സമയം';
+
+  @override
+  String get overlappingWindows => 'ഓവർലാപ്പിംഗ് വിവാഹ സമയം';
 }

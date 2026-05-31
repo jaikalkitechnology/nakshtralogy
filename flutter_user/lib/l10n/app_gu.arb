@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "જીવન ક્ષેત્ર ભવિષ્ય",
   "strengths": "શક્તિઓ",
   "weaknesses": "નબળાઈઓ",
-  "ruledBy": "સ્વામી"
+  "ruledBy": "સ્વામી",
+  "kundliMilan": "કુંડળી મિલન",
+  "startKundliMilan": "કુંડળી મિલન શરૂ કરો",
+  "recommendations": "ભલામણો",
+  "cancellations": "રદ્દ",
+  "dashaSync": "દશા સિંક",
+  "transitMarriageWindows": "ગોચર લગ્ન અવધિ",
+  "overlappingWindows": "ઓવરલેપિંગ લગ્ન અવધિ"
 }

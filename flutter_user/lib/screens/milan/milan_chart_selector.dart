@@ -68,7 +68,7 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Kundli Milan', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
+        title: Text(AppLocalizations.of(context)?.kundliMilan ?? 'Kundli Milan', style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
@@ -164,7 +164,7 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Start Kundli Milan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                child: Text(AppLocalizations.of(context)?.startKundliMilan ?? 'Start Kundli Milan', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               ),
             ))
           : null,

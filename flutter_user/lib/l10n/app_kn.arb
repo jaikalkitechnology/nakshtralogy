@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "ಜೀವನ ಕ್ಷೇತ್ರ ಭವಿಷ್ಯ",
   "strengths": "ಶಕ್ತಿಗಳು",
   "weaknesses": "ದೌರ್ಬಲ್ಯಗಳು",
-  "ruledBy": "ಅಧಿಪತಿ"
+  "ruledBy": "ಅಧಿಪತಿ",
+  "kundliMilan": "ಕುಂಡಲಿ ಮಿಲನ್",
+  "startKundliMilan": "ಕುಂಡಲಿ ಮಿಲನ್ ಪ್ರಾರಂಭಿಸಿ",
+  "recommendations": "ಶಿಫಾರಸುಗಳು",
+  "cancellations": "ರದ್ದುಗಳು",
+  "dashaSync": "ದಶಾ ಸಿಂಕ್",
+  "transitMarriageWindows": "ಗೋಚಾರ ವಿವಾಹ ಸಮಯ",
+  "overlappingWindows": "ಅತಿಕ್ರಮಣ ವಿವಾಹ ಸಮಯ"
 }

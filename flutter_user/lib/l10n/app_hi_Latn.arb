@@ -339,5 +339,12 @@
   "lifeAreaPredictions": "Life Area Predictions",
   "strengths": "Strengths",
   "weaknesses": "Weaknesses",
-  "ruledBy": "Swami"
+  "ruledBy": "Swami",
+  "kundliMilan": "Kundli Milan",
+  "startKundliMilan": "Kundli Milan Shuru Karein",
+  "recommendations": "Recommendations",
+  "cancellations": "Cancellations",
+  "dashaSync": "Dasha Sync",
+  "transitMarriageWindows": "Transit Marriage Windows",
+  "overlappingWindows": "Overlapping Marriage Windows"
 }
