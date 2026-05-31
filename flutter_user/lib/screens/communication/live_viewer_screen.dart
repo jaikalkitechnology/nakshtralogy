@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';

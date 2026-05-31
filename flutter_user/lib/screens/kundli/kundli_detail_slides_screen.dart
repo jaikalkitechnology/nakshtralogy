@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'widgets/north_indian_chart.dart';
