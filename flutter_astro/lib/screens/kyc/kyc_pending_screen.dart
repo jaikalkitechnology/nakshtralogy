@@ -1,3 +1,4 @@
+import '../../l10n/gen/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../theme/app_theme.dart';
@@ -15,7 +16,7 @@ class KycPendingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('KYC Under Review'),
+        title: Text(AppLocalizations.of(context)?.kycPending ?? 'KYC Under Review'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

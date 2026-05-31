@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'milan_viewer_screen.dart';
@@ -72,7 +73,7 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _charts.isEmpty
-              ? const Center(child: Text('No charts found. Create charts first.',
+              ? Center(child: Text(AppLocalizations.of(context)?.noCharts ?? 'No charts found.',
                   style: TextStyle(color: AppColors.textSecondary)))
               : Column(children: [
                   Container(
@@ -82,7 +83,7 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
                       gradient: LinearGradient(colors: [AppColors.primary.withOpacity(0.1), Colors.transparent]),
                     ),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Select 2 Charts for Matching',
+                      Text(AppLocalizations.of(context)?.selectTwoCharts ?? 'Select 2 Charts',
                           style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
                       Text('${_selected.length}/2 selected',

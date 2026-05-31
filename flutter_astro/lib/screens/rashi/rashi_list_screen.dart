@@ -62,7 +62,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Rashi Predictions',
+        title: Text(AppLocalizations.of(context)?.rashi ?? 'Rashi Predictions',
             style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh))],
       ),

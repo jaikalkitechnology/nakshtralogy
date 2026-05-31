@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
@@ -844,7 +845,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
           const SizedBox(width: 8),
-          const Text('★ DISCUSS THIS REPORT WITH AI ★',
+          Text(AppLocalizations.of(context)?.discussWithAI ?? 'DISCUSS WITH AI',
             style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(width: 8),
           Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),

@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../l10n/gen/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -73,7 +77,8 @@ class _CareerReportState extends State<CareerReportScreen> {
         _risksSection(d),
         _remediesSection(d),
         _confidenceSection(d),
-        const SizedBox(height: 80),
+        _aiDiscussBar(d),
+        const SizedBox(height: 30),
       ])),
     ]);
   }
@@ -825,6 +830,133 @@ class _CareerReportState extends State<CareerReportScreen> {
     if (pct >= 65) return 'High reliability across all chart layers.';
     if (pct >= 50) return 'Moderate reliability with mixed support.';
     return 'Low reliability — interpret as guidance, not certainty.';
+  }
+
+  // ── AI DISCUSS BAR ──
+  Widget _aiDiscussBar(Map<String, dynamic> d) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.gold.withOpacity(0.25))),
+      child: Column(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
+          const SizedBox(width: 8),
+          Text(AppLocalizations.of(context)?.discussWithAI ?? 'DISCUSS WITH AI',
+            style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          const SizedBox(width: 8),
+          Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
+        ]),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(child: _aiBtn('G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]),
+            () => _launchAi(d, 'chatgpt'))),
+          const SizedBox(width: 8),
+          Expanded(child: _aiBtn('C', 'Claude', const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]),
+            () => _launchAi(d, 'claude'))),
+          const SizedBox(width: 8),
+          Expanded(child: _aiBtn('✦', 'Gemini', const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]),
+            () => _launchAi(d, 'gemini'))),
+        ]),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () => _copyReportData(d),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.1))),
+            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(Icons.copy, size: 14, color: AppColors.smoke),
+              SizedBox(width: 6),
+              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+            ])),
+        ),
+      ]),
+    );
+  }
+
+  Widget _aiBtn(String icon, String name, Gradient gradient, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.gold.withOpacity(0.2))),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(width: 26, height: 26,
+            decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(8)),
+            child: Center(child: Text(icon,
+              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
+          const SizedBox(height: 5),
+          Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
+          const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace')),
+        ]),
+      ),
+    );
+  }
+
+  String _buildPrompt(Map<String, dynamic> d) {
+    final name = widget.chartName;
+    final overall = d['overall_career_strength_score'] ?? '?';
+    final archetype = d['primary_career_archetype'] ?? '';
+    final verdict = d['overall_career_verdict'] ?? '';
+    final jsonStr = const JsonEncoder.withIndent('  ').convert(d);
+    return '''You are a Vedic career advisor. Analyze this career report for $name and provide actionable insights.
+
+Key highlights:
+- Overall career strength: $overall/100
+- Career archetype: $archetype
+- Career verdict: $verdict
+
+Full report data (JSON):
+$jsonStr
+
+Please explain the key findings in simple language, highlight the most important timing windows, and suggest practical next steps.''';
+  }
+
+  void _copyReportData(Map<String, dynamic> d) {
+    final prompt = _buildPrompt(d);
+    Clipboard.setData(ClipboardData(text: prompt));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Report data copied! Paste it into any AI chat.'),
+        duration: Duration(seconds: 2)));
+  }
+
+  Future<void> _launchAi(Map<String, dynamic> d, String ai) async {
+    final prompt = _buildPrompt(d);
+    await Clipboard.setData(ClipboardData(text: prompt));
+
+    String url;
+    switch (ai) {
+      case 'chatgpt':
+        url = 'https://chat.openai.com/';
+        break;
+      case 'claude':
+        url = 'https://claude.ai/new';
+        break;
+      case 'gemini':
+        url = 'https://gemini.google.com/app';
+        break;
+      default:
+        return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Report copied! Opening $ai — paste to discuss.'),
+        duration: const Duration(seconds: 3)));
+
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }
 

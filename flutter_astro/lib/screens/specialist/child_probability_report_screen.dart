@@ -1468,7 +1468,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             const SizedBox(height: 10),
           ],
           if (humanSummary.isNotEmpty) ...[
-            const Text('DETAILED SUMMARY',
+            Text(l.detailedSummary,
                 style: TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
@@ -1484,7 +1484,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             const SizedBox(height: 10),
           ],
           if (actionable.isNotEmpty) ...[
-            const Text('ACTIONABLE ADVICE',
+            Text(l.overallVerdict,
                 style: TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
@@ -1500,7 +1500,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             const SizedBox(height: 10),
           ],
           if (timingSummary.isNotEmpty) ...[
-            const Text('TIMING SUMMARY',
+            Text(l.bestWindows,
                 style: TextStyle(
                     color: AppColors.gold,
                     fontSize: 8,
@@ -1549,7 +1549,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(children: [
-          const Text('DISCUSS WITH AI',
+          Text(l.discussWithAI,
               style: TextStyle(
                   color: AppColors.gold,
                   fontSize: 9,
