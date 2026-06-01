@@ -1549,7 +1549,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(children: [
-          Text(l.discussWithAI,
+          Text('DISCUSS WITH AI',
               style: TextStyle(
                   color: AppColors.gold,
                   fontSize: 9,
@@ -1628,7 +1628,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  Text(l.copy,
+                  Text('COPY',
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,

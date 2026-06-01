@@ -213,10 +213,10 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         Timer(Duration(seconds: warnAt), () {
           if (mounted && _status == 'active') {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(AppLocalizations.of(context)?.lessThanOneMin ?? 'Less than 1 minute remaining'),
                 backgroundColor: Colors.orange,
-                duration: Duration(seconds: 5),
+                duration: const Duration(seconds: 5),
               ),
             );
           }

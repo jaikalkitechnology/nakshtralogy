@@ -423,7 +423,7 @@ class _KundliTabState extends State<_KundliTab> {
 
     return ListView(padding: const EdgeInsets.all(16), children: [
       SegmentedButton<String>(
-        segments: const [
+        segments: [
           ButtonSegment(value: 'Lagna', label: Text(l.lagna)),
           ButtonSegment(value: 'Moon', label: Text(l.moon)),
           ButtonSegment(value: 'Sun', label: Text(l.sun)),
