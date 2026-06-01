@@ -399,29 +399,29 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     color: Colors.white.withOpacity(0.04),
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(6))),
-                child: const Row(children: [
+                child: Row(children: [
                   Expanded(
                       flex: 3,
                       child: Text(l.contact,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 3,
                       child: Text(l.effect,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 2,
                       child: Text(l.strength,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
-                  Expanded(
+                  const Expanded(
                       flex: 1,
                       child: Text('',
                           style: TextStyle(
@@ -688,9 +688,9 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
-                        const Expanded(
+                        Expanded(
                             child: Text(l.bhakootAxis,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: AppColors.smoke,
                                     fontSize: 8,
                                     letterSpacing: 1.5,
@@ -1032,9 +1032,9 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              const Expanded(
+              Expanded(
                   child: Text(l.totalChallengePenalty,
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 9,
                           fontFamily: 'monospace',

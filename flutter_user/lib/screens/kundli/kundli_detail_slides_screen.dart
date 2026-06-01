@@ -389,11 +389,11 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.success.withOpacity(0.3)),
         ),
-        child: Row(children: const [
-          Icon(Icons.auto_awesome, color: AppColors.success, size: 14),
-          SizedBox(width: 8),
+        child: Row(children: [
+          const Icon(Icons.auto_awesome, color: AppColors.success, size: 14),
+          const SizedBox(width: 8),
           Expanded(child: Text(AppLocalizations.of(context)?.favorablePeriodAdvice ?? 'Favorable period',
-              style: TextStyle(color: AppColors.ivory, fontSize: 11))),
+              style: const TextStyle(color: AppColors.ivory, fontSize: 11))),
         ]),
       ),
     ]);
