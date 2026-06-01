@@ -952,7 +952,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                 color: Colors.white.withOpacity(0.04),
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(6))),
-            child: const Row(children: [
+            child: Row(children: [
               Expanded(
                   flex: 3,
                   child: Text(l.planet,
@@ -1549,7 +1549,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(children: [
-          Text(l.discussWithAI,
+          Text(AppLocalizations.of(ctx)!.discussWithAI,
               style: TextStyle(
                   color: AppColors.gold,
                   fontSize: 9,
