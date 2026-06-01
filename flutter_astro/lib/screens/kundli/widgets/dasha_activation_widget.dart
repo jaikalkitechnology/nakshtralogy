@@ -31,10 +31,10 @@ class DashaActivationWidget extends StatelessWidget {
               border: Border.all(color: AppColors.primary.withOpacity(0.4)),
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Row(children: [
-                Icon(Icons.flash_on, color: AppColors.primary, size: 22),
-                SizedBox(width: 10),
-                Text(AppLocalizations.of(context)?.dashaActive ?? 'Current Dasha Period', style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
+              Row(children: [
+                const Icon(Icons.flash_on, color: AppColors.primary, size: 22),
+                const SizedBox(width: 10),
+                Text(AppLocalizations.of(context)?.dashaActive ?? 'Current Dasha Period', style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
               ]),
               const SizedBox(height: 8),
               Row(children: [

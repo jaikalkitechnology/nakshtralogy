@@ -399,7 +399,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     color: Colors.white.withOpacity(0.04),
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(6))),
-                child: const Row(children: [
+                child: Row(children: [
                   Expanded(
                       flex: 3,
                       child: Text(l.contact,
@@ -688,7 +688,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
-                        const Expanded(
+                        Expanded(
                             child: Text(l.bhakootAxis,
                                 style: TextStyle(
                                     color: AppColors.smoke,
@@ -1032,7 +1032,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              const Expanded(
+              Expanded(
                   child: Text(l.totalChallengePenalty,
                       style: TextStyle(
                           color: AppColors.smoke,

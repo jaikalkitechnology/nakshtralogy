@@ -59,10 +59,10 @@ class CharacterWidget extends StatelessWidget {
         final groups = (data['group_summaries'] as Map?)?.cast<String, dynamic>() ?? {};
 
         return ListView(padding: const EdgeInsets.all(16), children: [
-          _overviewCard(overall, lagna, moon, guna, gunaCounts, dasha),
+          _overviewCard(context, overall, lagna, moon, guna, gunaCounts, dasha),
           const SizedBox(height: 14),
           if (yogas.isNotEmpty || doshas.isNotEmpty) ...[
-            _yogaDoshaCard(yogas, doshas),
+            _yogaDoshaCard(context, yogas, doshas),
             const SizedBox(height: 14),
           ],
           ..._groupMeta.entries.map((entry) {
@@ -88,7 +88,7 @@ class CharacterWidget extends StatelessWidget {
     );
   }
 
-  Widget _overviewCard(double overall, String lagna, String moon,
+  Widget _overviewCard(BuildContext context, double overall, String lagna, String moon,
       String guna, Map<String, dynamic> gunaCounts, String dasha) {
     final overallColor = overall >= 65 ? Colors.green : overall >= 45 ? Colors.orange : Colors.red;
     return Container(
@@ -143,7 +143,7 @@ class CharacterWidget extends StatelessWidget {
     ]));
   }
 
-  Widget _yogaDoshaCard(List yogas, List doshas) {
+  Widget _yogaDoshaCard(BuildContext context, List yogas, List doshas) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(

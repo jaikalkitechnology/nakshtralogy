@@ -183,7 +183,7 @@ class NorthIndianChartWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.border),
       ),
-      child: const Wrap(
+      child: Wrap(
         spacing: 16,
         runSpacing: 4,
         children: [

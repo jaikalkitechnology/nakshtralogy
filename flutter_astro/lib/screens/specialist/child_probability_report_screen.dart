@@ -952,7 +952,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                 color: Colors.white.withOpacity(0.04),
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(6))),
-            child: const Row(children: [
+            child: Row(children: [
               Expanded(
                   flex: 3,
                   child: Text(l.planet,

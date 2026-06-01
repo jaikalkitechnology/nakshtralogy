@@ -294,9 +294,9 @@ class _DoshaTab extends StatelessWidget {
         )).toList()),
         const SizedBox(height: 14),
       ],
-      _mangalCard('Mangal Dosha — Groom', mangalG, mangalG2),
+      _mangalCard(context, 'Mangal Dosha — Groom', mangalG, mangalG2),
       const SizedBox(height: 10),
-      _mangalCard('Mangal Dosha — Bride', mangalB, mangalB2),
+      _mangalCard(context, 'Mangal Dosha — Bride', mangalB, mangalB2),
       const SizedBox(height: 10),
       _doshaCard('Rajju Dosha', rajju['has_rajju_dosha'] == true, [
         if (rajju['status'] != null) rajju['status'].toString(),
@@ -321,7 +321,7 @@ class _DoshaTab extends StatelessWidget {
     ]);
   }
 
-  Widget _mangalCard(String title, Map<String, dynamic> m, Map<String, dynamic> m2) {
+  Widget _mangalCard(BuildContext context, String title, Map<String, dynamic> m, Map<String, dynamic> m2) {
     final has = m['has_mangal_dosh'] == true;
     final severity = m['severity']?.toString() ?? 'None';
     final cancellations = (m2['cancellations'] as List?) ?? [];
@@ -405,7 +405,7 @@ class _AdvancedTab extends StatelessWidget {
           (venus['venus_score'] as num?)?.toDouble() ?? 0, venus['grade']?.toString() ?? '',
           (venus['factors'] as List?) ?? []),
       const SizedBox(height: 10),
-      _dashaSync(dasha),
+      _dashaSync(context, dasha),
     ]);
   }
 
@@ -449,7 +449,7 @@ class _AdvancedTab extends StatelessWidget {
     );
   }
 
-  Widget _dashaSync(Map<String, dynamic> d) {
+  Widget _dashaSync(BuildContext context, Map<String, dynamic> d) {
     final score = (d['sync_score'] as num?)?.toDouble() ?? 0;
     final syncType = d['sync_type']?.toString() ?? '';
     final color = score >= 70 ? Colors.green : score >= 45 ? Colors.orange : Colors.red;

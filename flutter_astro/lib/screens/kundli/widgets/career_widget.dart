@@ -30,9 +30,9 @@ class CareerWidget extends StatelessWidget {
           const SizedBox(height: 14),
           _scoresCard(scores),
           const SizedBox(height: 14),
-          _careerTypeCard(careerType, careerDomain),
+          _careerTypeCard(context, careerType, careerDomain),
           const SizedBox(height: 14),
-          _timelineCard(timeline),
+          _timelineCard(context, timeline),
           if (risks.isNotEmpty) ...[
             const SizedBox(height: 14),
             _risksCard(risks),
@@ -42,7 +42,7 @@ class CareerWidget extends StatelessWidget {
             _suggestionsCard(suggestions),
           ],
           const SizedBox(height: 14),
-          _detailsCard(details),
+          _detailsCard(context, details),
           const SizedBox(height: 24),
         ]);
       },
@@ -151,7 +151,7 @@ class CareerWidget extends StatelessWidget {
     ]);
   }
 
-  Widget _careerTypeCard(Map<String, dynamic> ct, Map<String, dynamic> cd) {
+  Widget _careerTypeCard(BuildContext context, Map<String, dynamic> ct, Map<String, dynamic> cd) {
     final scoresPct = (ct['scores_pct'] as Map?)?.cast<String, dynamic>() ?? {};
     return _Card(
       title: 'Career Type & Domain',
@@ -210,7 +210,7 @@ class CareerWidget extends StatelessWidget {
     );
   }
 
-  Widget _timelineCard(Map<String, dynamic> tl) {
+  Widget _timelineCard(BuildContext context, Map<String, dynamic> tl) {
     final current = (tl['current'] as Map?)?.cast<String, dynamic>() ?? {};
     final good = (tl['good_periods'] as List?) ?? [];
     final bad = (tl['bad_periods'] as List?) ?? [];
@@ -349,7 +349,7 @@ class CareerWidget extends StatelessWidget {
     );
   }
 
-  Widget _detailsCard(Map<String, dynamic> det) {
+  Widget _detailsCard(BuildContext context, Map<String, dynamic> det) {
     final houses = (det['houses'] as Map?)?.cast<String, dynamic>() ?? {};
     final keyPlanets = (det['key_planets'] as Map?)?.cast<String, dynamic>() ?? {};
     if (houses.isEmpty && keyPlanets.isEmpty) return const SizedBox.shrink();
