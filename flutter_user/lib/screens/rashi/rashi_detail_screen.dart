@@ -152,7 +152,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: [
           const Icon(Icons.today, color: AppColors.gold, size: 18),
           const SizedBox(width: 8),
-          Text('Today's Gochar', style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text("Today's Gochar", style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 12),
         Row(children: [
@@ -216,7 +216,7 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         Row(children: [
           const Icon(Icons.grid_view, color: AppColors.gold, size: 18),
           const SizedBox(width: 8),
-          Text('Today's Transit Chart', style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text("Today's Transit Chart", style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
         Text(AppLocalizations.of(context)?.currentPlanetPositions ?? 'Current planet positions',
