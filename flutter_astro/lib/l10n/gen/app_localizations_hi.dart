@@ -643,4 +643,318 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get totalCharged => 'कुल शुल्क';
+  @override
+  String get activeDoshas => 'Active Doshas';
+
+  @override
+  String get activeYogas => 'Active Yogas';
+
+  @override
+  String get allDoshas => 'ALL DOSHAS';
+
+  @override
+  String get areasToNurture => 'Areas to Nurture';
+
+  @override
+  String get basedOnPlanetStrengths => 'Based on planetary strengths';
+
+  @override
+  String get basedOnTransits => 'Based on current transits';
+
+  @override
+  String get basis => 'Basis';
+
+  @override
+  String get beneficAspects => 'Benefic Aspects';
+
+  @override
+  String get bestWindows => 'BEST WINDOWS';
+
+  @override
+  String get bhakootAxis => 'Bhakoot Axis';
+
+  @override
+  String get cancellation => 'Cancellation';
+
+  @override
+  String get cancellationFactors => 'Cancellation Factors';
+
+  @override
+  String get cancellations => 'Cancellations';
+
+  @override
+  String get challengingPeriods => 'Challenging Periods';
+
+  @override
+  String get characterOverview => 'Character Overview';
+
+  @override
+  String get combinedFertility => 'Combined Fertility';
+
+  @override
+  String get combust => 'Combust';
+
+  @override
+  String get confidence => 'CONFIDENCE';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get copy => 'COPY';
+
+  @override
+  String get currentPlanetPositions => 'Current planet positions';
+
+  @override
+  String get d7Saptamsa => 'D7 Saptamsa';
+
+  @override
+  String get dashaSync => 'Dasha Sync';
+
+  @override
+  String get daughter => 'Daughter';
+
+  @override
+  String get debilitated => 'Debilitated';
+
+  @override
+  String get detailedSummary => 'Detailed Summary';
+
+  @override
+  String get discussWithAI => 'DISCUSS WITH AI';
+
+  @override
+  String get dominantPlanet => 'Dominant Planet';
+
+  @override
+  String get effect => 'Effect';
+
+  @override
+  String get exalted => 'Exalted';
+
+  @override
+  String get factors => 'Factors';
+
+  @override
+  String get favorablePeriodAdvice => 'Favorable period';
+
+  @override
+  String get favorablePeriods => 'Favorable Periods';
+
+  @override
+  String get genderExplanation => 'Gender Explanation';
+
+  @override
+  String get genderTendency => 'Gender Tendency';
+
+  @override
+  String get grantPermissions => 'Grant Permissions';
+
+  @override
+  String get health => 'Overall Health';
+
+  @override
+  String get herMoon => 'Her Moon';
+
+  @override
+  String get hisMoon => 'His Moon';
+
+  @override
+  String get house => 'House';
+
+  @override
+  String get inFifth => 'In 5th';
+
+  @override
+  String get ketuContacts => 'Ketu Contacts';
+
+  @override
+  String get key => 'Key';
+
+  @override
+  String get keyHouses => 'Key Houses';
+
+  @override
+  String get keyInsights => 'Key Insights';
+
+  @override
+  String get keyPlanets => 'Key Planets';
+
+  @override
+  String get kundliMilan => 'Kundli Milan';
+
+  @override
+  String get lifeAreaPredictions => 'Life Area Predictions';
+
+  @override
+  String get maleficAspects => 'Malefic Aspects';
+
+  @override
+  String get manifestation => 'Manifestation';
+
+  @override
+  String get milan => 'Milan';
+
+  @override
+  String get mitigation => 'Mitigation';
+
+  @override
+  String get moonSignCompat => 'Moon Sign Compatibility';
+
+  @override
+  String get nakshatraCompat => 'Nakshatra Compatibility';
+
+  @override
+  String get navigation => 'Navigation';
+
+  @override
+  String get nextFavorableWindow => 'Next Favorable Window';
+
+  @override
+  String get noCharts => 'No charts';
+
+  @override
+  String get noClassicalYogas => 'Success comes from consistent effort.';
+
+  @override
+  String get noYogasActive => 'No active yogas in this chart.';
+
+  @override
+  String get notesSaved => 'Notes saved';
+
+  @override
+  String get numberExplanation => 'Number Explanation';
+
+  @override
+  String get occupants => 'Occupants';
+
+  @override
+  String get overallVerdict => 'Overall Verdict';
+
+  @override
+  String get overlappingWindows => 'Overlapping Marriage Windows';
+
+  @override
+  String get past => 'past';
+
+  @override
+  String get pastLifeIndication => 'Past Life Indication';
+
+  @override
+  String get planet => 'Planet';
+
+  @override
+  String get planetPositions => 'Planet Placements';
+
+  @override
+  String get potentialStrengths => 'Potential Strengths';
+
+  @override
+  String get primaryArchetype => 'PRIMARY ARCHETYPE';
+
+  @override
+  String get probableNumber => 'Probable Number';
+
+  @override
+  String get rahuContacts => 'Rahu Contacts';
+
+  @override
+  String get rashi => 'Rashi Predictions';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get relationshipGuidance => 'Relationship Guidance';
+
+  @override
+  String get remedies => 'REMEDY';
+
+  @override
+  String get retrograde => 'Retrograde';
+
+  @override
+  String get ruledBy => 'Ruled by';
+
+  @override
+  String get running => 'RUNNING';
+
+  @override
+  String get scoreComponents => 'Score Components';
+
+  @override
+  String get selectChartsForMilan => 'Select 2 Charts';
+
+  @override
+  String get selectMultiCharts => 'Select Charts';
+
+  @override
+  String get selectTwoCharts => 'Select 2 Charts for Matching';
+
+  @override
+  String get sign => 'Sign';
+
+  @override
+  String get son => 'Son';
+
+  @override
+  String get soulCareerAlign => 'Soul ↔ Career Alignment';
+
+  @override
+  String get startKundliMilan => 'Start Kundli Milan';
+
+  @override
+  String get startSession => 'Start Session';
+
+  @override
+  String get strength => 'Strength';
+
+  @override
+  String get strengths => 'Strengths';
+
+  @override
+  String get todaysTransitChart => 'Transit Chart';
+
+  @override
+  String get topActiveDoshas => 'TOP ACTIVE DOSHAS';
+
+  @override
+  String get topOpportunities => 'TOP AREAS';
+
+  @override
+  String get topRisks => 'TOP RISKS';
+
+  @override
+  String get totalChallengePenalty => 'Total Challenge Penalty';
+
+  @override
+  String get totalDoshaPenalty => 'Total Dosha Penalty';
+
+  @override
+  String get transitMarriageWindows => 'Transit Marriage Windows';
+
+  @override
+  String get value => 'Value';
+
+  @override
+  String get vargottama => 'Vargottama';
+
+  @override
+  String get venusContacts => 'Venus Contacts';
+
+  @override
+  String get weaknesses => 'Weaknesses';
+
+  @override
+  String get worstWindows => 'WORST WINDOWS';
+
+  @override
+  String get yogaAnalysis => 'Yoga Analysis';
+  @override
+  String get unlocked => 'Unlocked!';
+
+  @override
+  String get lessThanOneMin => 'Less than 1 minute remaining';
+
 }
