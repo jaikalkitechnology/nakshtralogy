@@ -344,7 +344,7 @@ class _DoshaTab extends StatelessWidget {
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
           if (effective == false && cancellations.isNotEmpty) ...[
             const SizedBox(height: 6),
-            Text('${AppLocalizations.of(context)?.cancellations ?? 'Cancellations'}:', style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.w600)),
+            const Text('Cancellations:', style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.w600)),
             ...cancellations.take(3).map<Widget>((c) {
               final canc = (c as Map).cast<String, dynamic>();
               return Text('  ✓ ${canc['rule']}: ${canc['desc'] ?? ''}',
