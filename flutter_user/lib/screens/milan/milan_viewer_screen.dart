@@ -461,7 +461,7 @@ class _AdvancedTab extends StatelessWidget {
         Row(children: [
           Icon(Icons.sync, color: color, size: 18),
           const SizedBox(width: 8),
-          Expanded(child: Text(AppLocalizations.of(context)?.dashaSync ?? 'Dasha Sync', style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w700))),
+          Expanded(child: Text('Dasha Sync', style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w700))),
           Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700)),
         ]),
         if (syncType.isNotEmpty) Text(syncType, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),

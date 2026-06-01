@@ -143,7 +143,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       decoration: const InputDecoration(labelText: 'Gender'),
                       dropdownColor: AppColors.card,
                       style: const TextStyle(color: AppColors.textPrimary),
-                      items: const [
+                      items: [
                         DropdownMenuItem(value: 'male', child: Text(l.male)),
                         DropdownMenuItem(value: 'female', child: Text(l.female)),
                         DropdownMenuItem(value: 'other', child: Text(l.other)),

@@ -1809,7 +1809,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  Text(AppLocalizations.of(ctx)!.copy,
+                  Text('COPY',
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,

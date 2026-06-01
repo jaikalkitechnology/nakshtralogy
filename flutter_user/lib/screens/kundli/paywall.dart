@@ -141,7 +141,7 @@ class PaywallService {
                 final resp = await ApiService().purchaseKundliSection(pricing['id'] as String, chartId);
                 if (!ctx.mounted) return;
                 if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(AppLocalizations.of(context)?.unlocked ?? 'Unlocked!'),
                     backgroundColor: AppColors.success,
                   ));

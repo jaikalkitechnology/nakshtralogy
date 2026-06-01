@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../l10n/gen/app_localizations.dart';
+import '../../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// Shared base widget that loads a section lazily or uses the initial data.

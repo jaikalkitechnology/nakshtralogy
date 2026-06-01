@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../l10n/gen/app_localizations.dart';
+import '../../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -192,7 +192,7 @@ class CareerWidget extends StatelessWidget {
             Row(children: [
               const Icon(Icons.stars, color: AppColors.primary, size: 16),
               const SizedBox(width: 6),
-              Text('${AppLocalizations.of(context)?.dominantPlanet ?? "Dominant Planet"}: ', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+              Text('Dominant Planet: ', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
               Text(cd['dominant_planet'].toString(),
                   style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
             ]),
@@ -225,14 +225,14 @@ class CareerWidget extends StatelessWidget {
           const Divider(color: Colors.white12, height: 20),
         ],
         if (good.isNotEmpty) ...[
-          Text(AppLocalizations.of(context)?.favorablePeriods ?? 'Favorable Periods',
+          Text('Favorable Periods',
               style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...good.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), isGood: true)),
         ],
         if (bad.isNotEmpty) ...[
           const SizedBox(height: 10),
-          Text(AppLocalizations.of(context)?.challengingPeriods ?? 'Challenging Periods',
+          Text('Challenging Periods',
               style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...bad.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), isGood: false)),
@@ -359,7 +359,7 @@ class CareerWidget extends StatelessWidget {
       color: Colors.blueGrey,
       children: [
         if (houses.isNotEmpty) ...[
-          Text(AppLocalizations.of(context)?.keyHouses ?? 'Key Houses',
+          Text('Key Houses (Career)',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...houses.entries.take(6).map<Widget>((e) {
@@ -376,7 +376,7 @@ class CareerWidget extends StatelessWidget {
         ],
         if (keyPlanets.isNotEmpty) ...[
           const SizedBox(height: 10),
-          Text(AppLocalizations.of(context)?.keyPlanets ?? 'Key Planets',
+          Text('Key Career Planets',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...keyPlanets.entries.take(6).map<Widget>((e) {
