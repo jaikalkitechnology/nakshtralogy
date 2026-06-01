@@ -29,6 +29,31 @@ TRANSLATIONS = {
         "service-hospitality": "सेवा-आतिथ्य",
         "research-scientific": "अनुसंधान-वैज्ञानिक",
         "medical-healing": "चिकित्सा-उपचार",
+        # Karaka roles
+        "Soul significator": "आत्म कारक",
+        "Career significator": "करियर कारक",
+        "Partner significator": "साझीदार कारक",
+        # Soul contracts
+        "soul-contract of authority/leadership expression across lifetimes": "अधिकार/नेतृत्व अभिव्यक्ति का आत्म-अनुबंध",
+        "soul-contract of public-service/caretaking/emotional-labor": "जन-सेवा/देखभाल/भावनात्मक-श्रम का आत्म-अनुबंध",
+        "soul-contract of courage/protection/action-direction": "साहस/सुरक्षा/कर्म-दिशा का आत्म-अनुबंध",
+        "soul-contract of intellect/communication/teaching": "बुद्धि/संचार/शिक्षण का आत्म-अनुबंध",
+        "soul-contract of wisdom/teaching/dharmic-authority": "ज्ञान/शिक्षण/धार्मिक-अधिकार का आत्म-अनुबंध",
+        "soul-contract of love/artistry/beauty-creation": "प्रेम/कला/सौंदर्य-सृजन का आत्म-अनुबंध",
+        "soul-contract of service/discipline/endurance": "सेवा/अनुशासन/धैर्य का आत्म-अनुबंध",
+        # AmK career directions
+        "authority-driven / leadership / government / medicine": "अधिकार-चालित / नेतृत्व / सरकार / चिकित्सा",
+        "public-service / caretaking / emotional-labor / hospitality": "जन-सेवा / देखभाल / भावनात्मक-श्रम / आतिथ्य",
+        "action-driven / engineering / military / surgery / sports": "कर्म-चालित / इंजीनियरिंग / सैन्य / शल्य / खेल",
+        "intellect-driven / IT / commerce / writing / analytics": "बुद्धि-चालित / आईटी / वाणिज्य / लेखन / विश्लेषण",
+        "wisdom-driven / teaching / finance / legal / advisory": "ज्ञान-चालित / शिक्षण / वित्त / कानूनी / सलाहकार",
+        "aesthetic-driven / arts / design / luxury / entertainment": "सौंदर्य-चालित / कला / डिज़ाइन / विलास / मनोरंजन",
+        "structure-driven / research / infrastructure / manufacturing": "संरचना-चालित / अनुसंधान / अवसंरचना / विनिर्माण",
+        # Dignity labels
+        "Swakshetra 🏠": "स्वक्षेत्र 🏠",
+        "Friend Sign": "मित्र राशि",
+        "Enemy Sign": "शत्रु राशि",
+        "Moolatrikona": "मूलत्रिकोण",
         # Grades
         "Very High": "बहुत उच्च",
         "High": "उच्च",
@@ -1379,10 +1404,14 @@ TRANSLATIONS = {
 _TRANSLATE_VALUE_KEYS = {
     "primary_career_category", "probability_grade", "compatibility_grade",
     "day_grade", "grade", "career_grade", "strength_rating",
-    "dignity", "lord_dignity", "d7_jupiter_dignity",
+    "dignity", "lord_dignity", "d7_jupiter_dignity", "d9_dignity",
     "progeny_favorability", "love_favorability",
     "founder_archetype", "ideal_cofounder_archetype",
     "leadership_style", "amatyakaraka_dignity",
+    # Karaka roles and descriptions
+    "atmakaraka_role", "amatyakaraka_role", "darakaraka_role",
+    "atmakaraka_soul_description", "amatyakaraka_career_direction",
+    "atmakaraka_soul_contract",
     "amatyakaraka_d10_dignity", "d10_tenth_lord_dignity",
     "d10_amatyakaraka_dignity", "d9_amatyakaraka_dignity",
     "d11_eleventh_lord_dignity", "d60_tenth_lord_dignity",
@@ -1462,6 +1491,6 @@ def _translate_field(key: str, value, trans: dict):
     if isinstance(value, str):
         if key in _TRANSLATE_VALUE_KEYS or key in _PLANET_VALUE_KEYS or key in _SIGN_VALUE_KEYS:
             return trans.get(value, value)
-        if key.endswith("_grade") or key.endswith("_rating"):
+        if key.endswith("_grade") or key.endswith("_rating") or key.endswith("_dignity") or key.endswith("_role") or key.endswith("_direction") or key.endswith("_contract"):
             return trans.get(value, value)
     return value
