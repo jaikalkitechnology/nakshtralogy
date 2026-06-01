@@ -63,6 +63,7 @@ class _CareerReportState extends State<CareerReportScreen> {
   }
 
   Widget _buildReport() {
+    final l = AppLocalizations.of(context)!;
     final d = _data!;
     return CustomScrollView(slivers: [
       _appBar(),
@@ -124,7 +125,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 1, height: 8, color: AppColors.gold.withOpacity(0.4)),
           const SizedBox(width: 6),
-          const Text('CORE CAREER SCORES', style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)!.scoreComponents, style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(width: 6),
           Container(width: 1, height: 8, color: AppColors.gold.withOpacity(0.4)),
         ]),
@@ -268,13 +269,13 @@ class _CareerReportState extends State<CareerReportScreen> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.gold.withOpacity(0.2))),
         child: Column(children: [
-          _houseRow('SIGN', sign),
+          _houseRow(AppLocalizations.of(context)!.sign, sign),
           _houseRow('LORD', lord),
           _houseRow('LORD PLACED IN', '${lordHouse}th house'),
           _houseRow('LORD DIGNITY', lordDignity),
           _houseRow('D9 DIGNITY', lordD9),
-          _houseRow('OCCUPANTS', occupants.isEmpty ? 'Empty' : occupants),
-          _houseRow('STRENGTH', '${strength.toStringAsFixed(1)} / 100', valueColor: strengthColor),
+          _houseRow(AppLocalizations.of(context)!.occupants, occupants.isEmpty ? 'Empty' : occupants),
+          _houseRow(AppLocalizations.of(context)!.strength, '${strength.toStringAsFixed(1)} / 100', valueColor: strengthColor),
           if (indication.isNotEmpty) ...[
             const SizedBox(height: 10),
             Container(padding: const EdgeInsets.all(10),
@@ -666,7 +667,7 @@ class _CareerReportState extends State<CareerReportScreen> {
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: AppColors.success.withOpacity(0.2))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('✓ MITIGATION',
+              Text('✓ ${AppLocalizations.of(context)!.mitigation}',
                 style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text(mitigation, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
@@ -845,7 +846,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
           const SizedBox(width: 8),
-          Text(AppLocalizations.of(context)?.discussWithAI ?? 'DISCUSS WITH AI',
+          Text(AppLocalizations.of(context)!.discussWithAI,
             style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(width: 8),
           Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
