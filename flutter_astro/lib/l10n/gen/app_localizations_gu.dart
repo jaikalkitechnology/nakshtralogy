@@ -951,4 +951,10 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get yogaAnalysis => 'Yoga Analysis';
+  @override
+  String get unlocked => 'Unlocked!';
+
+  @override
+  String get lessThanOneMin => 'Less than 1 minute remaining';
+
 }

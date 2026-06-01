@@ -1374,6 +1374,9 @@ abstract class AppLocalizations {
   /// **'Total Charged'**
   String get totalCharged;
 
+  String get unlocked;
+  String get lessThanOneMin;
+
   String get activeDoshas;
   String get activeYogas;
   String get allDoshas;
