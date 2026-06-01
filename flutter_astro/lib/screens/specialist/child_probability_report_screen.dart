@@ -1628,7 +1628,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  Text(l.copy,
+                  Text(AppLocalizations.of(ctx)!.copy,
                       style: TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,
