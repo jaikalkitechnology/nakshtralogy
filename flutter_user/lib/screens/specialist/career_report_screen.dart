@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
@@ -53,7 +54,7 @@ class _CareerReportState extends State<CareerReportScreen> {
                   const SizedBox(height: 12),
                   Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
                 ])))
               : _data != null
                   ? _buildReport()
@@ -193,7 +194,7 @@ class _CareerReportState extends State<CareerReportScreen> {
           border: Border.all(color: AppColors.lavender.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Soul ↔ Career Alignment',
+            Text(AppLocalizations.of(context)?.soulCareerAlign ?? 'Soul ↔ Career Alignment',
               style: TextStyle(color: AppColors.lavender, fontSize: 10, fontWeight: FontWeight.w600)),
             Text(soulAlign.toStringAsFixed(1),
               style: const TextStyle(color: AppColors.cosmicPink, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
@@ -406,7 +407,7 @@ class _CareerReportState extends State<CareerReportScreen> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('PRIMARY ARCHETYPE',
+          Text(AppLocalizations.of(context)?.primaryArchetype ?? 'PRIMARY ARCHETYPE',
             style: TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           Text(_titleCase(archetype),
@@ -665,7 +666,7 @@ class _CareerReportState extends State<CareerReportScreen> {
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: AppColors.success.withOpacity(0.2))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('✓ MITIGATION',
+              Text(l.mitigation,
                 style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
               Text(mitigation, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
@@ -789,7 +790,7 @@ class _CareerReportState extends State<CareerReportScreen> {
             ])),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('CONFIDENCE',
+              Text(AppLocalizations.of(context)?.confidence ?? 'CONFIDENCE',
                 style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
               Text(_confidenceLabel(pct),
@@ -844,7 +845,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
           const SizedBox(width: 8),
-          const Text('★ DISCUSS THIS REPORT WITH AI ★',
+          Text(AppLocalizations.of(context)?.discussWithAI ?? 'DISCUSS WITH AI',
             style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(width: 8),
           Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import 'north_indian_chart.dart';
 
@@ -43,7 +44,7 @@ class DivisionalChartsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (divisionalsMap.isEmpty) {
-      return const Center(child: Text('No divisional data', style: TextStyle(color: AppColors.textSecondary)));
+      return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.textSecondary)));
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -147,7 +148,7 @@ class DivisionalChartsWidget extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('Planet Placements', style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700)),
+              Text(AppLocalizations.of(context)?.planetPositions ?? 'Planet Placements', style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               ...signsByPlanet.entries.map((e) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),

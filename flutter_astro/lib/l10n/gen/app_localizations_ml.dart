@@ -373,7 +373,7 @@ class AppLocalizationsMl extends AppLocalizations {
   String get clientKundli => 'ക്ലയന്റ് കുണ്ഡലി';
 
   @override
-  String get earned => 'വരുമാനം';
+  String get earned => 'സമ്പാദ്യം';
 
   @override
   String get connected => 'കണക്റ്റ് ആയി';
@@ -536,4 +536,112 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get dailyProbability => 'ഏത് ജാതകത്തിനും ദൈനംദിന സാധ്യതാ പ്രവചനം';
+
+  @override
+  String get engCareer => 'കരിയർ & ജോലി';
+
+  @override
+  String get engBusiness => 'ബിസിനസ് & സ്റ്റാർട്ടപ്പ്';
+
+  @override
+  String get engEducation => 'വിദ്യാഭ്യാസം & പഠനം';
+
+  @override
+  String get engLifePath => 'ജീവിത പാത & ഭാഗ്യം';
+
+  @override
+  String get engWealth => 'സമ്പത്ത് & ധനകാര്യം';
+
+  @override
+  String get engDebt => 'കടം & വീണ്ടെടുക്കൽ';
+
+  @override
+  String get engProperty => 'സ്വത്ത് & ആസ്തി';
+
+  @override
+  String get engLegal => 'നിയമ & തർക്കം';
+
+  @override
+  String get engLove => 'പ്രണയം & റൊമാൻസ്';
+
+  @override
+  String get engMarriage => 'വിവാഹം & കുടുംബം';
+
+  @override
+  String get engKundliMilan => 'കുണ്ഡലി മിലൻ';
+
+  @override
+  String get engRelationship => 'ബന്ധ വിശകലനം';
+
+  @override
+  String get engLoveCompat => 'പ്രണയ അനുയോജ്യത';
+
+  @override
+  String get engChildProb => 'സന്താന സാധ്യത';
+
+  @override
+  String get engHealth => 'ആരോഗ്യം & ക്ഷേമം';
+
+  @override
+  String get engMental => 'മാനസിക & സമ്മർദ്ദം';
+
+  @override
+  String get engCharacter => 'സ്വഭാവ വിശകലനം';
+
+  @override
+  String get engPastLife => 'പൂർവജന്മം & കർമ്മം';
+
+  @override
+  String get engKarmaLink => 'കർമ്മ ബന്ധം';
+
+  @override
+  String get decline => 'നിരസിക്കുക';
+
+  @override
+  String get accept => 'സ്വീകരിക്കുക';
+
+  @override
+  String get endSession => 'സെഷൻ അവസാനിപ്പിക്കുക';
+
+  @override
+  String get enterChat => 'ചാറ്റിൽ പ്രവേശിക്കുക';
+
+  @override
+  String get inProgress => 'പുരോഗതിയിൽ';
+
+  @override
+  String get requestDeclined => 'അഭ്യർത്ഥന നിരസിച്ചു';
+
+  @override
+  String get noRequests => 'അഭ്യർത്ഥനകളില്ല';
+
+  @override
+  String get tapViewChat => 'ചാറ്റ് ചരിത്രം കാണാൻ ടാപ്പ് ചെയ്യുക';
+
+  @override
+  String get tapViewCall => 'കോൾ വിശദാംശങ്ങൾ കാണാൻ ടാപ്പ് ചെയ്യുക';
+
+  @override
+  String get consultation => 'കൺസൾട്ടേഷൻ';
+
+  @override
+  String get charged => 'ചാർജ്';
+
+  @override
+  String get messages => 'സന്ദേശങ്ങൾ';
+
+  @override
+  String get duration => 'കാലാവധി';
+
+  @override
+  String get rate => 'നിരക്ക്';
+
+  @override
+  String get callDetails => 'കോൾ വിശദാംശങ്ങൾ';
+
+  @override
+  String get yourEarning => 'നിങ്ങളുടെ സമ്പാദ്യം';
+
+  @override
+  String get totalCharged => 'ആകെ ചാർജ്';
 }

@@ -845,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @earned.
   ///
   /// In en, this message translates to:
-  /// **'EARNED'**
+  /// **'Earned'**
   String get earned;
 
   /// No description provided for @connected.
@@ -1157,6 +1157,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daily probability forecast for any chart'**
   String get dailyProbability;
+
+  /// No description provided for @engCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Job'**
+  String get engCareer;
+
+  /// No description provided for @engBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business & Startup'**
+  String get engBusiness;
+
+  /// No description provided for @engEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education & Learning'**
+  String get engEducation;
+
+  /// No description provided for @engLifePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path & Luck'**
+  String get engLifePath;
+
+  /// No description provided for @engWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth & Finance'**
+  String get engWealth;
+
+  /// No description provided for @engDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt & Recovery'**
+  String get engDebt;
+
+  /// No description provided for @engProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property & Assets'**
+  String get engProperty;
+
+  /// No description provided for @engLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal & Disputes'**
+  String get engLegal;
+
+  /// No description provided for @engLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love & Romance'**
+  String get engLove;
+
+  /// No description provided for @engMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage & Family'**
+  String get engMarriage;
+
+  /// No description provided for @engKundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan'**
+  String get engKundliMilan;
+
+  /// No description provided for @engRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Intel'**
+  String get engRelationship;
+
+  /// No description provided for @engLoveCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Compatibility'**
+  String get engLoveCompat;
+
+  /// No description provided for @engChildProb.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Probability'**
+  String get engChildProb;
+
+  /// No description provided for @engHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & Wellness'**
+  String get engHealth;
+
+  /// No description provided for @engMental.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental & Stress'**
+  String get engMental;
+
+  /// No description provided for @engCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Analysis'**
+  String get engCharacter;
+
+  /// No description provided for @engPastLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Life & Karma'**
+  String get engPastLife;
+
+  /// No description provided for @engKarmaLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma Linkage'**
+  String get engKarmaLink;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @endSession.
+  ///
+  /// In en, this message translates to:
+  /// **'End Session'**
+  String get endSession;
+
+  /// No description provided for @enterChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Chat'**
+  String get enterChat;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgress;
+
+  /// No description provided for @requestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Request declined'**
+  String get requestDeclined;
+
+  /// No description provided for @noRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests'**
+  String get noRequests;
+
+  /// No description provided for @tapViewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view chat history'**
+  String get tapViewChat;
+
+  /// No description provided for @tapViewCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view call details'**
+  String get tapViewCall;
+
+  /// No description provided for @consultation.
+  ///
+  /// In en, this message translates to:
+  /// **'consultation'**
+  String get consultation;
+
+  /// No description provided for @charged.
+  ///
+  /// In en, this message translates to:
+  /// **'Charged'**
+  String get charged;
+
+  /// No description provided for @messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messages;
+
+  /// No description provided for @duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// No description provided for @rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get rate;
+
+  /// No description provided for @callDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Details'**
+  String get callDetails;
+
+  /// No description provided for @yourEarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Earning'**
+  String get yourEarning;
+
+  /// No description provided for @totalCharged.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charged'**
+  String get totalCharged;
 }
 
 class _AppLocalizationsDelegate

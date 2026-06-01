@@ -1,3 +1,4 @@
+import '../../l10n/gen/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../theme/app_theme.dart';
@@ -15,7 +16,7 @@ class KycPendingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('KYC Under Review'),
+        title: Text(AppLocalizations.of(context)?.kycPending ?? 'KYC Under Review'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -97,7 +98,7 @@ class KycPendingScreen extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: () => context.read<KycBloc>().add(KycStatusRequested()),
                             icon: const Icon(Icons.refresh, size: 16),
-                            label: const Text('Refresh'),
+                            label: Text(AppLocalizations.of(context)?.refresh ?? 'Refresh'),
                           ),
                         ),
                         const SizedBox(width: 8),

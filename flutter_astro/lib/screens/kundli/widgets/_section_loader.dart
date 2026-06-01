@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// Shared base widget that loads a section lazily or uses the initial data.
@@ -55,10 +56,10 @@ class _SectionLoaderState extends State<SectionLoader> with AutomaticKeepAliveCl
         const SizedBox(height: 12),
         Text(_error!, style: const TextStyle(color: AppColors.textSecondary)),
         const SizedBox(height: 12),
-        ElevatedButton(onPressed: _load, child: const Text('Retry')),
+        ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
       ]));
     }
-    if (_data == null) return const Center(child: Text('No data', style: TextStyle(color: AppColors.textSecondary)));
+    if (_data == null) return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.textSecondary)));
     return widget.builder(context, _data!);
   }
 }

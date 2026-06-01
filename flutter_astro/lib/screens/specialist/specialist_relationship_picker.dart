@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
@@ -136,7 +137,7 @@ class _State extends State<SpecialistRelationshipPicker> {
                     width: double.infinity, padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                     decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.purple.withOpacity(0.1), Colors.transparent])),
                     child: Row(children: [
-                      Expanded(child: Text('Select 2–5 Charts',
+                      Expanded(child: Text(AppLocalizations.of(context)?.selectMultiCharts ?? 'Select Charts',
                           style: TextStyle(color: Colors.purple, fontSize: 14, fontWeight: FontWeight.w700))),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

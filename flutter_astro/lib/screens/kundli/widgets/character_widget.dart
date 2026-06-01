@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -101,7 +102,7 @@ class CharacterWidget extends StatelessWidget {
         Row(children: [
           const Icon(Icons.person_pin, color: Colors.indigo, size: 22),
           const SizedBox(width: 8),
-          const Expanded(child: Text('Character Overview',
+          Expanded(child: Text(AppLocalizations.of(context)?.characterOverview ?? 'Character Overview',
               style: TextStyle(color: Colors.indigo, fontSize: 15, fontWeight: FontWeight.w700))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -152,14 +153,14 @@ class CharacterWidget extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (yogas.isNotEmpty) ...[
-          const Text('Active Yogas', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)?.activeYogas ?? 'Active Yogas', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Wrap(spacing: 6, runSpacing: 4, children: yogas.take(6).map<Widget>((y) =>
               _chip('', y.toString(), Colors.green)).toList()),
         ],
         if (yogas.isNotEmpty && doshas.isNotEmpty) const SizedBox(height: 10),
         if (doshas.isNotEmpty) ...[
-          const Text('Active Doshas', style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)?.activeDoshas ?? 'Active Doshas', style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Wrap(spacing: 6, runSpacing: 4, children: doshas.take(6).map<Widget>((d) =>
               _chip('', d.toString(), Colors.redAccent)).toList()),

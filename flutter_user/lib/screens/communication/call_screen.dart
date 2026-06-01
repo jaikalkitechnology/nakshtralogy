@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -127,7 +128,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         _startMaxTimer();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text('Connected! Call active'),
+            content: Text(AppLocalizations.of(context)?.callActive ?? 'Call active'),
             backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
           ));
         }
@@ -213,7 +214,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
           if (mounted && _status == 'active') {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('⚠️ Less than 1 minute remaining based on your balance'),
+                content: Text(AppLocalizations.of(context)?.lessThanOneMin ?? 'Less than 1 minute remaining'),
                 backgroundColor: Colors.orange,
                 duration: Duration(seconds: 5),
               ),

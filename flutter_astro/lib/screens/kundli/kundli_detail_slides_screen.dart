@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'widgets/north_indian_chart.dart';
@@ -172,7 +173,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
   // ─────────────────────────────────────────────────────────────
   Widget _summarySlide() {
     if (_loadingChart) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
-    if (_chart == null) return const Center(child: Text('No data', style: TextStyle(color: AppColors.smoke)));
+    if (_chart == null) return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.smoke)));
     final planets = (_chart!['planets'] as Map? ?? {}).cast<String, dynamic>();
     final lagna = (planets['Lagna'] as Map?)?.cast<String, dynamic>();
     final moon = (planets['Moon'] as Map?)?.cast<String, dynamic>();
@@ -240,7 +241,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
   // ─────────────────────────────────────────────────────────────
   Widget _yogaSlide() {
     if (_loadingYoga) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
-    if (_yoga == null) return const Center(child: Text('No data', style: TextStyle(color: AppColors.smoke)));
+    if (_yoga == null) return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.smoke)));
     final yogas = (_yoga!['yogas'] as List?) ?? [];
     final active = yogas.where((y) => (y as Map)['present'] == true).toList();
     return ListView(padding: const EdgeInsets.all(16), children: [
@@ -251,7 +252,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.circular(12)),
-          child: const Text('No active yogas in this chart.', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+          child: Text(AppLocalizations.of(context)?.noYogasActive ?? 'No active yogas in this chart.', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
         )
       else
         ...active.map((y) {
@@ -273,7 +274,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
   // ─────────────────────────────────────────────────────────────
   Widget _doshSlide() {
     if (_loadingDosh) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
-    if (_dosh == null) return const Center(child: Text('No data', style: TextStyle(color: AppColors.smoke)));
+    if (_dosh == null) return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.smoke)));
     final doshas = (_dosh!['doshas'] as List?) ?? [];
     final active = doshas.where((d) => (d as Map)['present'] == true).toList();
     return ListView(padding: const EdgeInsets.all(16), children: [
@@ -284,7 +285,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(color: AppColors.success.withOpacity(0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.success.withOpacity(0.25))),
-          child: const Text('\u2713 No major doshas in this chart.', style: TextStyle(color: AppColors.success, fontSize: 12)),
+          child: Text('✓ ${AppLocalizations.of(context)?.noData ?? "No major doshas"}', style: TextStyle(color: AppColors.success, fontSize: 12)),
         )
       else
         ...active.map((d) {
@@ -309,7 +310,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
   // ─────────────────────────────────────────────────────────────
   Widget _careerSlide() {
     if (_loadingLife) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
-    if (_life == null) return const Center(child: Text('No data', style: TextStyle(color: AppColors.smoke)));
+    if (_life == null) return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.smoke)));
     final career = (_life!['Career'] as Map?)?.cast<String, dynamic>() ?? {};
     final wealth = (_life!['Wealth'] as Map?)?.cast<String, dynamic>() ?? {};
     final marriage = (_life!['Marriage'] as Map?)?.cast<String, dynamic>() ?? {};
@@ -330,14 +331,14 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
           border: Border.all(color: AppColors.gold.withOpacity(0.3)),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('LIFE AREA SCORES', style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontWeight: FontWeight.w600)),
+          Text(AppLocalizations.of(context)?.lifeAreas ?? 'LIFE AREA SCORES', style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          const Text('Based on planetary strengths & house placements',
+          Text(AppLocalizations.of(context)?.basedOnPlanetStrengths ?? 'Based on planetary strengths',
               style: TextStyle(color: AppColors.lavender, fontSize: 10)),
         ]),
       ),
       const SizedBox(height: 12),
-      const Text('TOP AREAS', style: TextStyle(color: AppColors.smoke, fontSize: 10, letterSpacing: 1.2)),
+      Text(AppLocalizations.of(context)?.topOpportunities ?? 'TOP AREAS', style: TextStyle(color: AppColors.smoke, fontSize: 10, letterSpacing: 1.2)),
       const SizedBox(height: 8),
       ...areas.map((a) {
         final data = a['data'] as Map<String, dynamic>;
@@ -391,7 +392,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
         child: Row(children: const [
           Icon(Icons.auto_awesome, color: AppColors.success, size: 14),
           SizedBox(width: 8),
-          Expanded(child: Text('Favorable period — focus on career growth and relationships.',
+          Expanded(child: Text(AppLocalizations.of(context)?.favorablePeriodAdvice ?? 'Favorable period',
               style: TextStyle(color: AppColors.ivory, fontSize: 11))),
         ]),
       ),
@@ -434,7 +435,7 @@ class _KundliDetailSlidesScreenState extends State<KundliDetailSlidesScreen> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: AppColors.success.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('\u2713 REMEDY', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.2, fontWeight: FontWeight.w700)),
+              Text(AppLocalizations.of(context)?.remedies ?? 'REMEDY', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.2, fontWeight: FontWeight.w700)),
               const SizedBox(height: 2),
               Text(remedy, style: const TextStyle(color: AppColors.ivory, fontSize: 10)),
             ]),

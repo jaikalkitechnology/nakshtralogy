@@ -373,7 +373,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientKundli => 'CLIENT KUNDLI';
 
   @override
-  String get earned => 'EARNED';
+  String get earned => 'Earned';
 
   @override
   String get connected => 'CONNECTED';
@@ -536,4 +536,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dailyProbability => 'Daily probability forecast for any chart';
+
+  @override
+  String get engCareer => 'Career & Job';
+
+  @override
+  String get engBusiness => 'Business & Startup';
+
+  @override
+  String get engEducation => 'Education & Learning';
+
+  @override
+  String get engLifePath => 'Life Path & Luck';
+
+  @override
+  String get engWealth => 'Wealth & Finance';
+
+  @override
+  String get engDebt => 'Debt & Recovery';
+
+  @override
+  String get engProperty => 'Property & Assets';
+
+  @override
+  String get engLegal => 'Legal & Disputes';
+
+  @override
+  String get engLove => 'Love & Romance';
+
+  @override
+  String get engMarriage => 'Marriage & Family';
+
+  @override
+  String get engKundliMilan => 'Kundli Milan';
+
+  @override
+  String get engRelationship => 'Relationship Intel';
+
+  @override
+  String get engLoveCompat => 'Love Compatibility';
+
+  @override
+  String get engChildProb => 'Child Probability';
+
+  @override
+  String get engHealth => 'Health & Wellness';
+
+  @override
+  String get engMental => 'Mental & Stress';
+
+  @override
+  String get engCharacter => 'Character Analysis';
+
+  @override
+  String get engPastLife => 'Past Life & Karma';
+
+  @override
+  String get engKarmaLink => 'Karma Linkage';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get endSession => 'End Session';
+
+  @override
+  String get enterChat => 'Enter Chat';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get requestDeclined => 'Request declined';
+
+  @override
+  String get noRequests => 'No requests';
+
+  @override
+  String get tapViewChat => 'Tap to view chat history';
+
+  @override
+  String get tapViewCall => 'Tap to view call details';
+
+  @override
+  String get consultation => 'consultation';
+
+  @override
+  String get charged => 'Charged';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get rate => 'Rate';
+
+  @override
+  String get callDetails => 'Call Details';
+
+  @override
+  String get yourEarning => 'Your Earning';
+
+  @override
+  String get totalCharged => 'Total Charged';
 }

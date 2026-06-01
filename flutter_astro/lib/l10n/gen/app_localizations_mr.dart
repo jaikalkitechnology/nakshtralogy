@@ -535,4 +535,112 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get dailyProbability => 'कोणत्याही कुंडलीसाठी दैनिक संभाव्यता भविष्य';
+
+  @override
+  String get engCareer => 'करिअर आणि नोकरी';
+
+  @override
+  String get engBusiness => 'व्यवसाय आणि स्टार्टअप';
+
+  @override
+  String get engEducation => 'शिक्षण आणि अभ्यास';
+
+  @override
+  String get engLifePath => 'जीवन मार्ग आणि नशीब';
+
+  @override
+  String get engWealth => 'संपत्ती आणि वित्त';
+
+  @override
+  String get engDebt => 'कर्ज आणि वसुली';
+
+  @override
+  String get engProperty => 'मालमत्ता आणि आस्ति';
+
+  @override
+  String get engLegal => 'कायदेशीर आणि वाद';
+
+  @override
+  String get engLove => 'प्रेम आणि रोमान्स';
+
+  @override
+  String get engMarriage => 'विवाह आणि कुटुंब';
+
+  @override
+  String get engKundliMilan => 'कुंडली मिलन';
+
+  @override
+  String get engRelationship => 'नाते विश्लेषण';
+
+  @override
+  String get engLoveCompat => 'प्रेम अनुकूलता';
+
+  @override
+  String get engChildProb => 'अपत्य संभावना';
+
+  @override
+  String get engHealth => 'आरोग्य आणि कल्याण';
+
+  @override
+  String get engMental => 'मानसिक आणि ताण';
+
+  @override
+  String get engCharacter => 'व्यक्तिमत्व विश्लेषण';
+
+  @override
+  String get engPastLife => 'पूर्वजन्म आणि कर्म';
+
+  @override
+  String get engKarmaLink => 'कर्म संबंध';
+
+  @override
+  String get decline => 'नकार';
+
+  @override
+  String get accept => 'स्वीकार';
+
+  @override
+  String get endSession => 'सत्र संपवा';
+
+  @override
+  String get enterChat => 'चॅटमध्ये जा';
+
+  @override
+  String get inProgress => 'प्रगतीपथावर';
+
+  @override
+  String get requestDeclined => 'विनंती नाकारली';
+
+  @override
+  String get noRequests => 'विनंत्या नाहीत';
+
+  @override
+  String get tapViewChat => 'चॅट इतिहास पाहण्यासाठी टॅप करा';
+
+  @override
+  String get tapViewCall => 'कॉल तपशील पाहण्यासाठी टॅप करा';
+
+  @override
+  String get consultation => 'सल्ला';
+
+  @override
+  String get charged => 'शुल्क';
+
+  @override
+  String get messages => 'संदेश';
+
+  @override
+  String get duration => 'कालावधी';
+
+  @override
+  String get rate => 'दर';
+
+  @override
+  String get callDetails => 'कॉल तपशील';
+
+  @override
+  String get yourEarning => 'तुमची कमाई';
+
+  @override
+  String get totalCharged => 'एकूण शुल्क';
 }

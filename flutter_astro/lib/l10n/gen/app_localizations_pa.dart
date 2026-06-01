@@ -536,4 +536,112 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get dailyProbability => 'ਕਿਸੇ ਵੀ ਕੁੰਡਲੀ ਲਈ ਰੋਜ਼ਾਨਾ ਸੰਭਾਵਨਾ ਭਵਿੱਖਬਾਣੀ';
+
+  @override
+  String get engCareer => 'ਕੈਰੀਅਰ ਅਤੇ ਨੌਕਰੀ';
+
+  @override
+  String get engBusiness => 'ਕਾਰੋਬਾਰ ਅਤੇ ਸਟਾਰਟਅੱਪ';
+
+  @override
+  String get engEducation => 'ਸਿੱਖਿਆ ਅਤੇ ਪੜ੍ਹਾਈ';
+
+  @override
+  String get engLifePath => 'ਜੀਵਨ ਮਾਰਗ ਅਤੇ ਕਿਸਮਤ';
+
+  @override
+  String get engWealth => 'ਧਨ ਅਤੇ ਵਿੱਤ';
+
+  @override
+  String get engDebt => 'ਕਰਜ਼ ਅਤੇ ਵਸੂਲੀ';
+
+  @override
+  String get engProperty => 'ਜਾਇਦਾਦ ਅਤੇ ਸੰਪਤੀ';
+
+  @override
+  String get engLegal => 'ਕਾਨੂੰਨੀ ਅਤੇ ਵਿਵਾਦ';
+
+  @override
+  String get engLove => 'ਪਿਆਰ ਅਤੇ ਰੋਮਾਂਸ';
+
+  @override
+  String get engMarriage => 'ਵਿਆਹ ਅਤੇ ਪਰਿਵਾਰ';
+
+  @override
+  String get engKundliMilan => 'ਕੁੰਡਲੀ ਮਿਲਾਨ';
+
+  @override
+  String get engRelationship => 'ਰਿਸ਼ਤਾ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get engLoveCompat => 'ਪਿਆਰ ਅਨੁਕੂਲਤਾ';
+
+  @override
+  String get engChildProb => 'ਸੰਤਾਨ ਸੰਭਾਵਨਾ';
+
+  @override
+  String get engHealth => 'ਸਿਹਤ ਅਤੇ ਤੰਦਰੁਸਤੀ';
+
+  @override
+  String get engMental => 'ਮਾਨਸਿਕ ਅਤੇ ਤਣਾਅ';
+
+  @override
+  String get engCharacter => 'ਚਰਿੱਤਰ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get engPastLife => 'ਪਿਛਲਾ ਜਨਮ ਅਤੇ ਕਰਮ';
+
+  @override
+  String get engKarmaLink => 'ਕਰਮ ਸੰਬੰਧ';
+
+  @override
+  String get decline => 'ਇਨਕਾਰ';
+
+  @override
+  String get accept => 'ਸਵੀਕਾਰ';
+
+  @override
+  String get endSession => 'ਸੈਸ਼ਨ ਖਤਮ';
+
+  @override
+  String get enterChat => 'ਚੈਟ ਵਿੱਚ ਜਾਓ';
+
+  @override
+  String get inProgress => 'ਚੱਲ ਰਿਹਾ ਹੈ';
+
+  @override
+  String get requestDeclined => 'ਬੇਨਤੀ ਰੱਦ';
+
+  @override
+  String get noRequests => 'ਕੋਈ ਬੇਨਤੀ ਨਹੀਂ';
+
+  @override
+  String get tapViewChat => 'ਚੈਟ ਇਤਿਹਾਸ ਵੇਖਣ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get tapViewCall => 'ਕਾਲ ਵੇਰਵੇ ਵੇਖਣ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get consultation => 'ਸਲਾਹ';
+
+  @override
+  String get charged => 'ਚਾਰਜ';
+
+  @override
+  String get messages => 'ਸੁਨੇਹੇ';
+
+  @override
+  String get duration => 'ਅਵਧੀ';
+
+  @override
+  String get rate => 'ਦਰ';
+
+  @override
+  String get callDetails => 'ਕਾਲ ਵੇਰਵੇ';
+
+  @override
+  String get yourEarning => 'ਤੁਹਾਡੀ ਕਮਾਈ';
+
+  @override
+  String get totalCharged => 'ਕੁੱਲ ਚਾਰਜ';
 }

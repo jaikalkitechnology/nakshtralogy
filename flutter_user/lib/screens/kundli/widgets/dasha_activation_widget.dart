@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -33,7 +34,7 @@ class DashaActivationWidget extends StatelessWidget {
               const Row(children: [
                 Icon(Icons.flash_on, color: AppColors.primary, size: 22),
                 SizedBox(width: 10),
-                Text('Current Dasha Period', style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
+                Text(AppLocalizations.of(context)?.dashaActive ?? 'Current Dasha Period', style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
               ]),
               const SizedBox(height: 8),
               Row(children: [
@@ -50,7 +51,7 @@ class DashaActivationWidget extends StatelessWidget {
             title: 'Active Yogas in Current Period (${activeYogas.length})',
             icon: Icons.auto_awesome, color: AppColors.success,
             child: activeYogas.isEmpty
-                ? const Text('No yogas triggered', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
+                ? Text(AppLocalizations.of(context)?.noYogasActive ?? 'No yogas triggered', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
                 : Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: activeYogas.map<Widget>((y) => Padding(padding: const EdgeInsets.only(bottom: 4),
                       child: Text('• ${y is Map ? (y['name'] ?? y.toString()) : y}', style: const TextStyle(color: AppColors.success, fontSize: 12)))).toList()),
@@ -59,7 +60,7 @@ class DashaActivationWidget extends StatelessWidget {
             title: 'Active Doshas in Current Period (${activeDoshas.length})',
             icon: Icons.warning, color: AppColors.error,
             child: activeDoshas.isEmpty
-                ? const Text('No doshas triggered', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
+                ? Text(AppLocalizations.of(context)?.noData ?? 'No doshas triggered', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
                 : Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: activeDoshas.map<Widget>((d) => Padding(padding: const EdgeInsets.only(bottom: 4),
                       child: Text('• ${d is Map ? (d['name'] ?? d.toString()) : d}', style: const TextStyle(color: AppColors.error, fontSize: 12)))).toList()),

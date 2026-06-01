@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -53,7 +54,7 @@ class _MilanViewerScreenState extends State<MilanViewerScreen> with TickerProvid
       appBar: AppBar(
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           Text('${widget.name1} & ${widget.name2}', style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
-          const Text('Kundli Milan', style: TextStyle(color: AppColors.primary, fontSize: 11)),
+          Text(AppLocalizations.of(context)?.kundliMilan ?? 'Kundli Milan', style: const TextStyle(color: AppColors.primary, fontSize: 11)),
         ]),
         actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _load)],
         bottom: TabBar(
@@ -72,7 +73,7 @@ class _MilanViewerScreenState extends State<MilanViewerScreen> with TickerProvid
                   Padding(padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center)),
                   const SizedBox(height: 16),
-                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
                 ]))
               : TabBarView(controller: _tabs, children: [
                   _OverviewTab(data: _data!),
@@ -140,7 +141,7 @@ class _OverviewTab extends StatelessWidget {
       const SizedBox(height: 14),
       // Component breakdown
       if (components.isNotEmpty) ...[
-        const Text('Score Components', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
+        Text(AppLocalizations.of(context)?.scoreComponents ?? 'Score Components', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         ...components.entries.map((e) {
           final v = (e.value as num?)?.toDouble() ?? 0;
@@ -308,7 +309,7 @@ class _DoshaTab extends StatelessWidget {
       ], isGood: papa['balanced'] == true),
       if (recs.isNotEmpty) ...[
         const SizedBox(height: 14),
-        const Text('Recommendations', style: TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(AppLocalizations.of(context)?.recommendations ?? 'Recommendations', style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         ...recs.map<Widget>((r) => Padding(padding: const EdgeInsets.only(bottom: 4),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -343,7 +344,7 @@ class _DoshaTab extends StatelessWidget {
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
           if (effective == false && cancellations.isNotEmpty) ...[
             const SizedBox(height: 6),
-            const Text('Cancellations:', style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.w600)),
+            Text('${AppLocalizations.of(context)?.cancellations ?? 'Cancellations'}:', style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.w600)),
             ...cancellations.take(3).map<Widget>((c) {
               final canc = (c as Map).cast<String, dynamic>();
               return Text('  ✓ ${canc['rule']}: ${canc['desc'] ?? ''}',
@@ -460,7 +461,7 @@ class _AdvancedTab extends StatelessWidget {
         Row(children: [
           Icon(Icons.sync, color: color, size: 18),
           const SizedBox(width: 8),
-          const Expanded(child: Text('Dasha Sync', style: TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w700))),
+          Expanded(child: Text(AppLocalizations.of(context)?.dashaSync ?? 'Dasha Sync', style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w700))),
           Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700)),
         ]),
         if (syncType.isNotEmpty) Text(syncType, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
@@ -515,7 +516,7 @@ class _TimingTab extends StatelessWidget {
       const SizedBox(height: 14),
       // Gochar windows
       if ((gochar['windows'] as List?)?.isNotEmpty == true) ...[
-        const Text('Transit Marriage Windows', style: TextStyle(color: Colors.teal, fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(AppLocalizations.of(context)?.transitMarriageWindows ?? 'Transit Marriage Windows', style: const TextStyle(color: Colors.teal, fontSize: 13, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         ...((gochar['windows'] as List?) ?? []).take(5).map<Widget>((w) {
           final win = (w as Map).cast<String, dynamic>();
@@ -544,7 +545,7 @@ class _TimingTab extends StatelessWidget {
       // Overlapping windows
       if (overlaps.isNotEmpty) ...[
         const SizedBox(height: 14),
-        const Text('Overlapping Marriage Windows', style: TextStyle(color: Colors.green, fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(AppLocalizations.of(context)?.overlappingWindows ?? 'Overlapping Marriage Windows', style: const TextStyle(color: Colors.green, fontSize: 13, fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         ...overlaps.take(5).map<Widget>((o) {
           final ol = (o as Map).cast<String, dynamic>();

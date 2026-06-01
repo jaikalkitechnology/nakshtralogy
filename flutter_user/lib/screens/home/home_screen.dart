@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       _NavItem(Icons.home, l.home),
       _NavItem(Icons.star, l.astrologers),
-      _NavItem(Icons.assessment, 'Reports'),
+      _NavItem(Icons.assessment, l.reports),
       _NavItem(Icons.account_balance_wallet, l.wallet),
       _NavItem(Icons.person, l.profile),
     ];

@@ -15,7 +15,7 @@ import contextlib
 import time
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -270,6 +270,7 @@ def run_karma_linkage(
 def run_specialist(
     key: str,
     req: AnalyzeRequest,
+    lang: str = Query("en", description="Response language: en, hi, mr, gu, ta, te, kn, bn, pa, ml"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -303,6 +304,10 @@ def run_specialist(
         latency = int((time.time() - t0) * 1000)
         logger.info("Specialist %s for %s in %dms", key, chart.name, latency)
 
+        if lang and lang != "en":
+            from app.services.report_translator import translate_report
+            result = translate_report(result, lang)
+
         return {
             "status": "success",
             "data": result,
@@ -311,6 +316,7 @@ def run_specialist(
                 "label": SPECIALISTS[key]["label"],
                 "chart_name": chart.name,
                 "latency_ms": latency,
+                "lang": lang,
             },
         }
     except Exception as e:

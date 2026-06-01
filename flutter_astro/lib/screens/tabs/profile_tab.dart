@@ -199,7 +199,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 context.read<AstroProfileBloc>().add(AstroProfileUpdateRequested(userFields: userFields, profileFields: pf));
                 Navigator.pop(ctx);
               },
-              child: state.saving ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Save'),
+              child: state.saving ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : Text(AppLocalizations.of(context)?.save ?? 'Save'),
             );
           }),
         ],

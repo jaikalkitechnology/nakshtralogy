@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
@@ -54,7 +55,7 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
     const Icon(Icons.error_outline, color: AppColors.error, size: 48), const SizedBox(height: 12),
     Padding(padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center)),
-    const SizedBox(height: 16), ElevatedButton(onPressed: load, child: const Text('Retry')),
+    const SizedBox(height: 16), ElevatedButton(onPressed: load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
   ]));
 
   Widget _report() {

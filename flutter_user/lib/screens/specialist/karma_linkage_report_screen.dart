@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'report_components.dart';
 
@@ -31,6 +32,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
     final audit = _asMap(data['deep_audit_parameter_table']);
     final summary = _asMap(data['summary']);
     final conf = data['confidence_score'] is num ? (data['confidence_score'] as num).toDouble() : double.tryParse(data['confidence_score']?.toString() ?? '');
+    final l = AppLocalizations.of(context)!;
     final confExp = data['confidence_explanation']?.toString();
 
     return Scaffold(

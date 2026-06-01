@@ -399,7 +399,7 @@ class _ChatRequestDialogState extends State<_ChatRequestDialog> {
         OutlinedButton.icon(
           onPressed: _loading ? null : _decline,
           icon: const Icon(Icons.close, size: 18),
-          label: const Text('Decline'),
+          label: Text(AppLocalizations.of(context)?.decline ?? 'Decline'),
           style: OutlinedButton.styleFrom(foregroundColor: AppColors.error, side: const BorderSide(color: AppColors.error), minimumSize: const Size(120, 44)),
         ),
         ElevatedButton.icon(
@@ -407,7 +407,7 @@ class _ChatRequestDialogState extends State<_ChatRequestDialog> {
           icon: _loading
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
               : const Icon(Icons.check, size: 18),
-          label: const Text('Accept'),
+          label: Text(AppLocalizations.of(context)?.accept ?? 'Accept'),
           style: ElevatedButton.styleFrom(minimumSize: const Size(120, 44)),
         ),
       ],

@@ -374,7 +374,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get clientKundli => 'CLIENT KUNDLI';
 
   @override
-  String get earned => 'KAMAI';
+  String get earned => 'Kamai';
 
   @override
   String get connected => 'CONNECTED';
@@ -537,4 +537,112 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get dailyProbability => 'Kisi bhi kundli ke liye daily probability forecast';
+
+  @override
+  String get engCareer => 'Career & Job';
+
+  @override
+  String get engBusiness => 'Business & Startup';
+
+  @override
+  String get engEducation => 'Education & Learning';
+
+  @override
+  String get engLifePath => 'Life Path & Luck';
+
+  @override
+  String get engWealth => 'Wealth & Finance';
+
+  @override
+  String get engDebt => 'Debt & Recovery';
+
+  @override
+  String get engProperty => 'Property & Assets';
+
+  @override
+  String get engLegal => 'Legal & Disputes';
+
+  @override
+  String get engLove => 'Love & Romance';
+
+  @override
+  String get engMarriage => 'Marriage & Family';
+
+  @override
+  String get engKundliMilan => 'Kundli Milan';
+
+  @override
+  String get engRelationship => 'Relationship Intel';
+
+  @override
+  String get engLoveCompat => 'Love Compatibility';
+
+  @override
+  String get engChildProb => 'Child Probability';
+
+  @override
+  String get engHealth => 'Health & Wellness';
+
+  @override
+  String get engMental => 'Mental & Stress';
+
+  @override
+  String get engCharacter => 'Character Analysis';
+
+  @override
+  String get engPastLife => 'Past Life & Karma';
+
+  @override
+  String get engKarmaLink => 'Karma Linkage';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get endSession => 'Session Khatam';
+
+  @override
+  String get enterChat => 'Chat Mein Jayein';
+
+  @override
+  String get inProgress => 'Progress Mein';
+
+  @override
+  String get requestDeclined => 'Request decline hui';
+
+  @override
+  String get noRequests => 'Koi request nahi';
+
+  @override
+  String get tapViewChat => 'Chat history dekhne ke liye tap karein';
+
+  @override
+  String get tapViewCall => 'Call details dekhne ke liye tap karein';
+
+  @override
+  String get consultation => 'consultation';
+
+  @override
+  String get charged => 'Charge';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get rate => 'Rate';
+
+  @override
+  String get callDetails => 'Call Details';
+
+  @override
+  String get yourEarning => 'Aapki Kamai';
+
+  @override
+  String get totalCharged => 'Total Charge';
 }

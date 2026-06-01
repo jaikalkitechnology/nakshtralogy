@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
@@ -95,7 +96,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                       gradient: LinearGradient(colors: [Colors.pink.withOpacity(0.1), Colors.transparent]),
                     ),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Select 2 Charts for Milan Analysis',
+                      Text(AppLocalizations.of(context)?.selectChartsForMilan ?? 'Select 2 Charts',
                           style: TextStyle(color: Colors.pink, fontSize: 14, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
                       Text('${_selected.length}/2 selected',

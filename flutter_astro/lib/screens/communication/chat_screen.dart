@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
@@ -107,7 +108,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
                   title: const Text('Session Ended', style: TextStyle(color: AppColors.primary)),
                   content: Text(data['reason'] ?? 'Chat session has ended', style: const TextStyle(color: AppColors.textPrimary)),
                   actions: [
-                    ElevatedButton(onPressed: () { Navigator.pop(ctx); Navigator.pop(context); }, child: const Text('OK')),
+                    ElevatedButton(onPressed: () { Navigator.pop(ctx); Navigator.pop(context); }, child: Text(AppLocalizations.of(context)?.ok ?? 'OK')),
                   ],
                 ),
               );
@@ -221,7 +222,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
               _channel?.sink.add(jsonEncode({'type': 'end_session'}));
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('End Chat'),
+            child: Text(AppLocalizations.of(context)?.endChat ?? 'End Chat'),
           ),
         ],
       ),

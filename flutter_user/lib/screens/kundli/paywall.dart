@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -124,7 +125,7 @@ class PaywallService {
               child: Row(children: [
                 const Icon(Icons.account_balance_wallet, color: AppColors.accent, size: 16),
                 const SizedBox(width: 6),
-                const Expanded(child: Text('Amount will be deducted from your wallet',
+                Expanded(child: Text(AppLocalizations.of(context)?.walletDeduction ?? 'Amount deducted',
                     style: TextStyle(color: AppColors.accent, fontSize: 11))),
               ]),
             ),
@@ -132,7 +133,7 @@ class PaywallService {
           actions: [
             TextButton(
               onPressed: purchasing ? null : () => Navigator.pop(ctx, false),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
+              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel', style: TextStyle(color: AppColors.textSecondary)),
             ),
             ElevatedButton.icon(
               onPressed: purchasing ? null : () async {
@@ -141,7 +142,7 @@ class PaywallService {
                 if (!ctx.mounted) return;
                 if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Unlocked! Enjoy your reading.'),
+                    content: Text(AppLocalizations.of(context)?.unlocked ?? 'Unlocked!'),
                     backgroundColor: AppColors.success,
                   ));
                   Navigator.pop(ctx, true);

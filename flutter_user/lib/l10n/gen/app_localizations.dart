@@ -1326,6 +1326,792 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today\'s Forecast'**
   String get todaysForecast;
+
+  /// No description provided for @engCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Job'**
+  String get engCareer;
+
+  /// No description provided for @engBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business & Startup'**
+  String get engBusiness;
+
+  /// No description provided for @engEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education & Learning'**
+  String get engEducation;
+
+  /// No description provided for @engLifePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path & Luck'**
+  String get engLifePath;
+
+  /// No description provided for @engWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth & Finance'**
+  String get engWealth;
+
+  /// No description provided for @engDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt & Recovery'**
+  String get engDebt;
+
+  /// No description provided for @engProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property & Assets'**
+  String get engProperty;
+
+  /// No description provided for @engLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal & Disputes'**
+  String get engLegal;
+
+  /// No description provided for @engLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love & Romance'**
+  String get engLove;
+
+  /// No description provided for @engMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage & Family'**
+  String get engMarriage;
+
+  /// No description provided for @engKundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan'**
+  String get engKundliMilan;
+
+  /// No description provided for @engRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Intel'**
+  String get engRelationship;
+
+  /// No description provided for @engLoveCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Compatibility'**
+  String get engLoveCompat;
+
+  /// No description provided for @engChildProb.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Probability'**
+  String get engChildProb;
+
+  /// No description provided for @engHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & Wellness'**
+  String get engHealth;
+
+  /// No description provided for @engMental.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental & Stress'**
+  String get engMental;
+
+  /// No description provided for @engCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Analysis'**
+  String get engCharacter;
+
+  /// No description provided for @engPastLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Life & Karma'**
+  String get engPastLife;
+
+  /// No description provided for @engKarmaLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma Linkage'**
+  String get engKarmaLink;
+
+  /// No description provided for @noChatSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No Chat Sessions Yet'**
+  String get noChatSessions;
+
+  /// No description provided for @chatAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your conversations with astrologers will appear here.'**
+  String get chatAppearHere;
+
+  /// No description provided for @noCallsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No Calls Yet'**
+  String get noCallsYet;
+
+  /// No description provided for @callAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your call history with astrologers will appear here.'**
+  String get callAppearHere;
+
+  /// No description provided for @chatWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with'**
+  String get chatWith;
+
+  /// No description provided for @msgs.
+  ///
+  /// In en, this message translates to:
+  /// **'msgs'**
+  String get msgs;
+
+  /// No description provided for @voiceCallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice call'**
+  String get voiceCallLabel;
+
+  /// No description provided for @videoCallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Video call'**
+  String get videoCallLabel;
+
+  /// No description provided for @pullToRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull down to refresh'**
+  String get pullToRefresh;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired'**
+  String get sessionExpired;
+
+  /// No description provided for @connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed'**
+  String get connectionFailed;
+
+  /// No description provided for @callActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Call active'**
+  String get callActive;
+
+  /// No description provided for @lessThanOneMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Less than 1 minute remaining'**
+  String get lessThanOneMin;
+
+  /// No description provided for @noMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages in this session'**
+  String get noMessages;
+
+  /// No description provided for @gocharForAllSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s gochar for all 12 signs'**
+  String get gocharForAllSigns;
+
+  /// No description provided for @selectChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a chart to analyze'**
+  String get selectChart;
+
+  /// No description provided for @selectTwoCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select two charts'**
+  String get selectTwoCharts;
+
+  /// No description provided for @analyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing...'**
+  String get analyzing;
+
+  /// No description provided for @browseAstrologers.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Astrologers'**
+  String get browseAstrologers;
+
+  /// No description provided for @probableNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'PROBABLE NUMBER'**
+  String get probableNumber;
+
+  /// No description provided for @genderTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'GENDER TENDENCY'**
+  String get genderTendency;
+
+  /// No description provided for @son.
+  ///
+  /// In en, this message translates to:
+  /// **'SON'**
+  String get son;
+
+  /// No description provided for @daughter.
+  ///
+  /// In en, this message translates to:
+  /// **'DAUGHTER'**
+  String get daughter;
+
+  /// No description provided for @occupants.
+  ///
+  /// In en, this message translates to:
+  /// **'OCCUPANTS'**
+  String get occupants;
+
+  /// No description provided for @beneficAspects.
+  ///
+  /// In en, this message translates to:
+  /// **'BENEFIC ASPECTS'**
+  String get beneficAspects;
+
+  /// No description provided for @maleficAspects.
+  ///
+  /// In en, this message translates to:
+  /// **'MALEFIC ASPECTS'**
+  String get maleficAspects;
+
+  /// No description provided for @nextFavorableWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT FAVORABLE WINDOW'**
+  String get nextFavorableWindow;
+
+  /// No description provided for @totalDoshaPenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL DOSHA PENALTY'**
+  String get totalDoshaPenalty;
+
+  /// No description provided for @cancellationFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCELLATION FACTORS'**
+  String get cancellationFactors;
+
+  /// No description provided for @combinedFertility.
+  ///
+  /// In en, this message translates to:
+  /// **'COMBINED FERTILITY INDICATION'**
+  String get combinedFertility;
+
+  /// No description provided for @planetPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'PLANET POSITIONS'**
+  String get planetPositions;
+
+  /// No description provided for @bestWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST WINDOWS'**
+  String get bestWindows;
+
+  /// No description provided for @worstWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'WORST WINDOWS'**
+  String get worstWindows;
+
+  /// No description provided for @scoreComponents.
+  ///
+  /// In en, this message translates to:
+  /// **'SCORE COMPONENTS'**
+  String get scoreComponents;
+
+  /// No description provided for @topOpportunities.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP OPPORTUNITIES'**
+  String get topOpportunities;
+
+  /// No description provided for @topRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP RISKS'**
+  String get topRisks;
+
+  /// No description provided for @remedies.
+  ///
+  /// In en, this message translates to:
+  /// **'REMEDIES'**
+  String get remedies;
+
+  /// No description provided for @keyInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'KEY INSIGHTS'**
+  String get keyInsights;
+
+  /// No description provided for @overallVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERALL VERDICT'**
+  String get overallVerdict;
+
+  /// No description provided for @venusContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'VENUS CROSS CONTACTS'**
+  String get venusContacts;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @effect.
+  ///
+  /// In en, this message translates to:
+  /// **'Effect'**
+  String get effect;
+
+  /// No description provided for @moonSignCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'MOON SIGN COMPATIBILITY'**
+  String get moonSignCompat;
+
+  /// No description provided for @hisMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'HIS MOON'**
+  String get hisMoon;
+
+  /// No description provided for @herMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'HER MOON'**
+  String get herMoon;
+
+  /// No description provided for @nakshatraCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'NAKSHATRA COMPATIBILITY'**
+  String get nakshatraCompat;
+
+  /// No description provided for @ketuContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'KETU CONTACTS'**
+  String get ketuContacts;
+
+  /// No description provided for @rahuContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'RAHU CONTACTS'**
+  String get rahuContacts;
+
+  /// No description provided for @pastLifeIndication.
+  ///
+  /// In en, this message translates to:
+  /// **'PAST LIFE INDICATION'**
+  String get pastLifeIndication;
+
+  /// No description provided for @totalChallengePenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL CHALLENGE PENALTY'**
+  String get totalChallengePenalty;
+
+  /// No description provided for @manifestation.
+  ///
+  /// In en, this message translates to:
+  /// **'MANIFESTATION'**
+  String get manifestation;
+
+  /// No description provided for @cancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCELLATION'**
+  String get cancellation;
+
+  /// No description provided for @navigation.
+  ///
+  /// In en, this message translates to:
+  /// **'NAVIGATION'**
+  String get navigation;
+
+  /// No description provided for @potentialStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'POTENTIAL STRENGTHS'**
+  String get potentialStrengths;
+
+  /// No description provided for @areasToNurture.
+  ///
+  /// In en, this message translates to:
+  /// **'AREAS TO NURTURE'**
+  String get areasToNurture;
+
+  /// No description provided for @relationshipGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'RELATIONSHIP GUIDANCE'**
+  String get relationshipGuidance;
+
+  /// No description provided for @detailedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'DETAILED SUMMARY'**
+  String get detailedSummary;
+
+  /// No description provided for @discussWithAI.
+  ///
+  /// In en, this message translates to:
+  /// **'DISCUSS WITH AI'**
+  String get discussWithAI;
+
+  /// No description provided for @planet.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet'**
+  String get planet;
+
+  /// No description provided for @sign.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign'**
+  String get sign;
+
+  /// No description provided for @house.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get house;
+
+  /// No description provided for @strength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get strength;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'COPY'**
+  String get copy;
+
+  /// No description provided for @confidence.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIDENCE'**
+  String get confidence;
+
+  /// No description provided for @d7Saptamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'D7 SAPTAMSA'**
+  String get d7Saptamsa;
+
+  /// No description provided for @numberExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'NUMBER EXPLANATION'**
+  String get numberExplanation;
+
+  /// No description provided for @genderExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'GENDER EXPLANATION'**
+  String get genderExplanation;
+
+  /// No description provided for @inFifth.
+  ///
+  /// In en, this message translates to:
+  /// **'In 5th?'**
+  String get inFifth;
+
+  /// No description provided for @primaryArchetype.
+  ///
+  /// In en, this message translates to:
+  /// **'PRIMARY ARCHETYPE'**
+  String get primaryArchetype;
+
+  /// No description provided for @mitigation.
+  ///
+  /// In en, this message translates to:
+  /// **'MITIGATION'**
+  String get mitigation;
+
+  /// No description provided for @soulCareerAlign.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul ↔ Career Alignment'**
+  String get soulCareerAlign;
+
+  /// No description provided for @favorablePeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorable Periods'**
+  String get favorablePeriods;
+
+  /// No description provided for @challengingPeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging Periods'**
+  String get challengingPeriods;
+
+  /// No description provided for @keyHouses.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Houses'**
+  String get keyHouses;
+
+  /// No description provided for @keyPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Planets'**
+  String get keyPlanets;
+
+  /// No description provided for @characterOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Overview'**
+  String get characterOverview;
+
+  /// No description provided for @noYogasActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No yogas currently active in this chart.'**
+  String get noYogasActive;
+
+  /// No description provided for @basedOnPlanetStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on planetary strengths & house placements'**
+  String get basedOnPlanetStrengths;
+
+  /// No description provided for @basedOnTransits.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on current planetary transits'**
+  String get basedOnTransits;
+
+  /// No description provided for @currentPlanetPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Current planet positions with your sign as house 1'**
+  String get currentPlanetPositions;
+
+  /// No description provided for @favorablePeriodAdvice.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorable period — focus on career growth and relationships.'**
+  String get favorablePeriodAdvice;
+
+  /// No description provided for @noClassicalYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Without classical learning yogas, success comes from consistent effort.'**
+  String get noClassicalYogas;
+
+  /// No description provided for @walletDeduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount will be deducted from your wallet'**
+  String get walletDeduction;
+
+  /// No description provided for @bhakootAxis.
+  ///
+  /// In en, this message translates to:
+  /// **'BHAKOOT AXIS'**
+  String get bhakootAxis;
+
+  /// No description provided for @basis.
+  ///
+  /// In en, this message translates to:
+  /// **'BASIS'**
+  String get basis;
+
+  /// No description provided for @selectChartsForMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Select 2 Charts for Milan Analysis'**
+  String get selectChartsForMilan;
+
+  /// No description provided for @selectMultiCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select 2–5 Charts'**
+  String get selectMultiCharts;
+
+  /// No description provided for @running.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNNING'**
+  String get running;
+
+  /// No description provided for @past.
+  ///
+  /// In en, this message translates to:
+  /// **'past'**
+  String get past;
+
+  /// No description provided for @topActiveDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP ACTIVE DOSHAS'**
+  String get topActiveDoshas;
+
+  /// No description provided for @allDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'ALL DOSHAS'**
+  String get allDoshas;
+
+  /// No description provided for @activeYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Yogas'**
+  String get activeYogas;
+
+  /// No description provided for @activeDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Doshas'**
+  String get activeDoshas;
+
+  /// No description provided for @yogaAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga Analysis'**
+  String get yogaAnalysis;
+
+  /// No description provided for @factors.
+  ///
+  /// In en, this message translates to:
+  /// **'Factors'**
+  String get factors;
+
+  /// No description provided for @dominantPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant Planet'**
+  String get dominantPlanet;
+
+  /// No description provided for @startSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Session'**
+  String get startSession;
+
+  /// No description provided for @notesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes saved'**
+  String get notesSaved;
+
+  /// No description provided for @unlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked! Enjoy your reading.'**
+  String get unlocked;
+
+  /// No description provided for @todaysGochar.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Gochar'**
+  String get todaysGochar;
+
+  /// No description provided for @todaysTransitChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Transit Chart'**
+  String get todaysTransitChart;
+
+  /// No description provided for @lifeAreaPredictions.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Area Predictions'**
+  String get lifeAreaPredictions;
+
+  /// No description provided for @strengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths'**
+  String get strengths;
+
+  /// No description provided for @weaknesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Weaknesses'**
+  String get weaknesses;
+
+  /// No description provided for @ruledBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruled by'**
+  String get ruledBy;
+
+  /// No description provided for @kundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan'**
+  String get kundliMilan;
+
+  /// No description provided for @startKundliMilan.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Kundli Milan'**
+  String get startKundliMilan;
+
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @cancellations.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellations'**
+  String get cancellations;
+
+  /// No description provided for @dashaSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Sync'**
+  String get dashaSync;
+
+  /// No description provided for @transitMarriageWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Marriage Windows'**
+  String get transitMarriageWindows;
+
+  /// No description provided for @overlappingWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Overlapping Marriage Windows'**
+  String get overlappingWindows;
 }
 
 class _AppLocalizationsDelegate

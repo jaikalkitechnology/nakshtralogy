@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'daily_forecast_screen.dart';
@@ -37,7 +38,7 @@ class _S extends State<ForecastChartPicker> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _charts.isEmpty
-              ? const Center(child: Text('No charts. Create a birth chart first.', style: TextStyle(color: AppColors.smoke)))
+              ? Center(child: Text(AppLocalizations.of(context)?.noCharts ?? 'No charts', style: const TextStyle(color: AppColors.smoke)))
               : ListView.builder(padding: const EdgeInsets.all(12), itemCount: _charts.length,
                   itemBuilder: (ctx, i) {
                     final c = _charts[i];

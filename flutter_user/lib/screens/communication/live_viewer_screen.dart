@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
@@ -229,7 +230,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                 if (resp['statusCode'] == 200) _poll();
               }
             },
-            child: const Text('Send'),
+            child: Text(AppLocalizations.of(context)?.send ?? 'Send'),
           ),
         ],
       ),
@@ -305,7 +306,7 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
           const SizedBox(height: 12),
           Text(_error!, style: const TextStyle(color: Colors.white, fontSize: 16)),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Go Back')),
+          ElevatedButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.goBack ?? 'Go Back')),
         ])),
       );
     }
@@ -547,7 +548,7 @@ class _LiveReelsScreenState extends State<LiveReelsScreen> {
     if (_streams.isEmpty) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Live Streams')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)?.liveStreams ?? 'Live Streams')),
         body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
           const Icon(Icons.live_tv, size: 56, color: AppColors.textSecondary),
           const SizedBox(height: 12),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'milan_viewer_screen.dart';
@@ -67,12 +68,12 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Kundli Milan', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
+        title: Text(AppLocalizations.of(context)?.kundliMilan ?? 'Kundli Milan', style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _charts.isEmpty
-              ? const Center(child: Text('No charts found. Create charts first.',
+              ? Center(child: Text(AppLocalizations.of(context)?.noCharts ?? 'No charts found.',
                   style: TextStyle(color: AppColors.textSecondary)))
               : Column(children: [
                   Container(
@@ -82,7 +83,7 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
                       gradient: LinearGradient(colors: [AppColors.primary.withOpacity(0.1), Colors.transparent]),
                     ),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Select 2 Charts for Matching',
+                      Text(AppLocalizations.of(context)?.selectTwoCharts ?? 'Select 2 Charts for Matching',
                           style: TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
                       Text('${_selected.length}/2 selected',
@@ -163,7 +164,7 @@ class _MilanChartSelectorState extends State<MilanChartSelector> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Start Kundli Milan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                child: Text(AppLocalizations.of(context)?.startKundliMilan ?? 'Start Kundli Milan', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               ),
             ))
           : null,

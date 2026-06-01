@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -43,7 +44,7 @@ class _YogaWidgetState extends State<YogaWidget> {
               const Icon(Icons.auto_awesome, color: AppColors.success, size: 32),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Yoga Analysis', style: TextStyle(color: AppColors.success, fontSize: 16, fontWeight: FontWeight.w700)),
+                Text(AppLocalizations.of(context)?.yogaAnalysis ?? 'Yoga Analysis', style: TextStyle(color: AppColors.success, fontSize: 16, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
                 Text('$active active / $total yogas checked', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               ])),
@@ -67,7 +68,7 @@ class _YogaWidgetState extends State<YogaWidget> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.border)),
-              child: const Text('No yogas currently active in this chart.',
+              child: Text(AppLocalizations.of(context)?.noYogasActive ?? 'No yogas currently active.',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             )
           else

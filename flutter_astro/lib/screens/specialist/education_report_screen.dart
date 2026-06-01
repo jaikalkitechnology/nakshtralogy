@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
@@ -50,7 +51,7 @@ class _EduState extends State<EducationReportScreen> {
     const Icon(Icons.error_outline, color: AppColors.error, size: 48), const SizedBox(height: 12),
     Padding(padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center)),
-    const SizedBox(height: 16), ElevatedButton(onPressed: _load, child: const Text('Retry')),
+    const SizedBox(height: 16), ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
   ]));
 
   Widget _report() {
@@ -253,7 +254,7 @@ class _EduState extends State<EducationReportScreen> {
         decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.1),
           borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
           border: const Border(left: BorderSide(color: AppColors.warning, width: 3))),
-        child: const Text('Without classical learning yogas, success comes from consistent effort rather than natural brilliance — well within reach with discipline.',
+        child: Text(AppLocalizations.of(context)?.noClassicalYogas ?? 'Success comes from consistent effort.',
           style: TextStyle(color: AppColors.ivory, fontSize: 9, height: 1.4, fontStyle: FontStyle.italic))),
     ]);
   }

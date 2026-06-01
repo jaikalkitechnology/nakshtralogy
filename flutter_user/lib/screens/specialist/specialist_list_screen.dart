@@ -112,7 +112,17 @@ class _S extends State<SpecialistListScreen> {
     Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontWeight: FontWeight.w600)),
   ]);
 
-  Widget _filterPills() => SizedBox(height: 32, child: ListView(
+  Widget _filterPills() {
+    final l = AppLocalizations.of(context)!;
+    final labels = {
+      'all': '${l.allInsights.split(' ').first} · 19',
+      'career': '${l.careerPurpose.split(' ').first} · 4',
+      'wealth': '${l.wealthAssets.split(' ').first} · 4',
+      'love': '${l.loveRelationships.split(' ').first} · 6',
+      'health': '${l.healthWellness.split(' ').first} · 2',
+      'soul': '${l.soulKarma.split(' ').first} · 3',
+    };
+    return SizedBox(height: 32, child: ListView(
     scrollDirection: Axis.horizontal,
     padding: const EdgeInsets.symmetric(horizontal: 16),
     children: _filters.map((f) {
@@ -127,10 +137,11 @@ class _S extends State<SpecialistListScreen> {
             color: active ? null : Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: active ? Colors.transparent : AppColors.gold.withOpacity(0.2))),
-          child: Text(_filterLabels[f]!, style: TextStyle(
+          child: Text(labels[f] ?? f, style: TextStyle(
             color: active ? AppColors.midnight : AppColors.smoke,
             fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500))));
     }).toList()));
+  }
 
   Widget _groupDivider(String label) => Container(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -141,9 +152,25 @@ class _S extends State<SpecialistListScreen> {
     child: Wrap(spacing: 8, runSpacing: 8, children: engines.map((e) => _engineTile(e)).toList()));
 
   Widget _engineTile(Map<String, dynamic> e) {
+    final l = AppLocalizations.of(context)!;
     final premium = e['premium'] == true;
+    final key = e['key'] as String;
+    final engNames = <String, String>{
+      'career': l.engCareer, 'business': l.engBusiness, 'education': l.engEducation,
+      'life_path': l.engLifePath, 'wealth': l.engWealth, 'debt_recovery': l.engDebt,
+      'property': l.engProperty, 'legal': l.engLegal, 'love': l.engLove,
+      'marriage': l.engMarriage, 'kundli_milan': l.engKundliMilan,
+      'relationship': l.engRelationship, 'love_compatibility': l.engLoveCompat,
+      'child_probability': l.engChildProb, 'health': l.engHealth,
+      'mental_stress': l.engMental, 'character': l.engCharacter,
+      'past_life': l.engPastLife, 'karma_linkage': l.engKarmaLink,
+    };
+    final localName = engNames[key] ?? '${e['title']} ${e['em']}';
+    final parts = localName.split(RegExp(r'\s*[&]\s*'));
+    final title = parts.isNotEmpty ? parts[0] : localName;
+    final em = parts.length > 1 ? parts[1] : '';
     return GestureDetector(
-      onTap: () => _openEngine(e['key'] as String, '${e['title']} ${e['em']}', e['icon'] as String),
+      onTap: () => _openEngine(key, localName, e['icon'] as String),
       child: SizedBox(
         width: (MediaQuery.of(context).size.width - 40) / 2,
         child: Container(
@@ -166,8 +193,8 @@ class _S extends State<SpecialistListScreen> {
               ]),
               const SizedBox(height: 8),
               Text.rich(TextSpan(children: [
-                TextSpan(text: '${e['title']} ', style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600)),
-                TextSpan(text: e['em'] as String, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontStyle: FontStyle.italic)),
+                TextSpan(text: em.isNotEmpty ? '$title & ' : title, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600)),
+                if (em.isNotEmpty) TextSpan(text: em, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontStyle: FontStyle.italic)),
               ])),
               const SizedBox(height: 3),
               Text(e['sub'] as String, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 0.5)),

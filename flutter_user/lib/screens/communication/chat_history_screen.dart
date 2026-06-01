@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 
@@ -33,7 +34,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat History'),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)?.chatHistory ?? 'Chat History'),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh, size: 20))]),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
@@ -59,7 +60,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13), textAlign: TextAlign.center),
       const SizedBox(height: 16),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
     ]),
   ));
 
@@ -79,12 +80,12 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           ),
         ),
         const SizedBox(height: 18),
-        const Center(child: Text('No Chat Sessions Yet',
-            style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700))),
+        Center(child: Text(AppLocalizations.of(context)?.noChatSessions ?? 'No Chat Sessions Yet',
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700))),
         const SizedBox(height: 8),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
-          child: Text('Your conversations with astrologers will appear here. Pull down to refresh.',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Text('${AppLocalizations.of(context)?.chatAppearHere ?? 'Your conversations with astrologers will appear here.'} ${AppLocalizations.of(context)?.pullToRefresh ?? 'Pull down to refresh.'}',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.4)),
         ),
@@ -205,17 +206,17 @@ class _ChatMessagesViewState extends State<_ChatMessagesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chat with ${widget.astrologerName}')),
+      appBar: AppBar(title: Text('${AppLocalizations.of(context)?.chatWith ?? 'Chat with'} ${widget.astrologerName}')),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _error != null
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Text(_error!, style: const TextStyle(color: AppColors.error)),
                   const SizedBox(height: 12),
-                  ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
                 ]))
               : _messages.isEmpty
-                  ? const Center(child: Text('No messages in this session', style: TextStyle(color: AppColors.textSecondary)))
+                  ? Center(child: Text(AppLocalizations.of(context)?.noMessages ?? 'No messages in this session', style: const TextStyle(color: AppColors.textSecondary)))
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: _messages.length,

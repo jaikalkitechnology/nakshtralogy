@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -109,14 +110,14 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(height: 24),
                   BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                     final loading = state is AuthLoading;
-                    return ElevatedButton(onPressed: loading ? null : _signup, child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : const Text('Register'));
+                    return ElevatedButton(onPressed: loading ? null : _signup, child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(AppLocalizations.of(context)?.createAccount ?? 'Register'));
                   }),
                 ])),
               ),
               const SizedBox(height: 20),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text('Already registered? ', style: TextStyle(color: AppColors.textSecondary)),
-                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Sign In', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600))),
+                TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.signIn ?? 'Sign In', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600))),
               ]),
               const SizedBox(height: 20),
             ]),

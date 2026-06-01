@@ -372,7 +372,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get clientKundli => 'ગ્રાહક કુંડળી';
 
   @override
-  String get earned => 'કમાયેલ';
+  String get earned => 'કમાણી';
 
   @override
   String get connected => 'કનેક્ટેડ';
@@ -535,4 +535,112 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get dailyProbability => 'કોઈપણ કુંડળી માટે દૈનિક સંભાવના ભવિષ્ય';
+
+  @override
+  String get engCareer => 'કારકિર્દી અને નોકરી';
+
+  @override
+  String get engBusiness => 'વ્યવસાય અને સ્ટાર્ટઅપ';
+
+  @override
+  String get engEducation => 'શિક્ષણ અને અભ્યાસ';
+
+  @override
+  String get engLifePath => 'જીવન માર્ગ અને ભાગ્ય';
+
+  @override
+  String get engWealth => 'સંપત્તિ અને નાણાં';
+
+  @override
+  String get engDebt => 'દેવું અને વસૂલાત';
+
+  @override
+  String get engProperty => 'મિલકત અને અસ્કયામત';
+
+  @override
+  String get engLegal => 'કાનૂની અને વિવાદ';
+
+  @override
+  String get engLove => 'પ્રેમ અને રોમાન્સ';
+
+  @override
+  String get engMarriage => 'લગ્ન અને કુટુંબ';
+
+  @override
+  String get engKundliMilan => 'કુંડળી મિલન';
+
+  @override
+  String get engRelationship => 'સંબંધ વિશ્લેષણ';
+
+  @override
+  String get engLoveCompat => 'પ્રેમ અનુકૂળતા';
+
+  @override
+  String get engChildProb => 'સંતાન સંભાવના';
+
+  @override
+  String get engHealth => 'આરોગ્ય અને કલ્યાણ';
+
+  @override
+  String get engMental => 'માનસિક અને તણાવ';
+
+  @override
+  String get engCharacter => 'વ્યક્તિત્વ વિશ્લેષણ';
+
+  @override
+  String get engPastLife => 'પૂર્વજન્મ અને કર્મ';
+
+  @override
+  String get engKarmaLink => 'કર્મ સંબંધ';
+
+  @override
+  String get decline => 'નકાર';
+
+  @override
+  String get accept => 'સ્વીકાર';
+
+  @override
+  String get endSession => 'સત્ર સમાપ્ત';
+
+  @override
+  String get enterChat => 'ચેટમાં જાઓ';
+
+  @override
+  String get inProgress => 'પ્રગતિમાં';
+
+  @override
+  String get requestDeclined => 'વિનંતી નકારાઈ';
+
+  @override
+  String get noRequests => 'કોઈ વિનંતી નથી';
+
+  @override
+  String get tapViewChat => 'ચેટ ઇતિહાસ જોવા ટેપ કરો';
+
+  @override
+  String get tapViewCall => 'કૉલ વિગતો જોવા ટેપ કરો';
+
+  @override
+  String get consultation => 'પરામર્શ';
+
+  @override
+  String get charged => 'શુલ્ક';
+
+  @override
+  String get messages => 'સંદેશ';
+
+  @override
+  String get duration => 'અવધિ';
+
+  @override
+  String get rate => 'દર';
+
+  @override
+  String get callDetails => 'કૉલ વિગતો';
+
+  @override
+  String get yourEarning => 'તમારી કમાણી';
+
+  @override
+  String get totalCharged => 'કુલ શુલ્ક';
 }

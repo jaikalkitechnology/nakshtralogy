@@ -616,4 +616,397 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get todaysForecast => 'ഇന്നത്തെ പ്രവചനം';
+
+  @override
+  String get engCareer => 'കരിയർ & ജോലി';
+
+  @override
+  String get engBusiness => 'ബിസിനസ് & സ്റ്റാർട്ടപ്പ്';
+
+  @override
+  String get engEducation => 'വിദ്യാഭ്യാസം & പഠനം';
+
+  @override
+  String get engLifePath => 'ജീവിത പാത & ഭാഗ്യം';
+
+  @override
+  String get engWealth => 'സമ്പത്ത് & ധനകാര്യം';
+
+  @override
+  String get engDebt => 'കടം & വീണ്ടെടുക്കൽ';
+
+  @override
+  String get engProperty => 'സ്വത്ത് & ആസ്തി';
+
+  @override
+  String get engLegal => 'നിയമ & തർക്കം';
+
+  @override
+  String get engLove => 'പ്രണയം & റൊമാൻസ്';
+
+  @override
+  String get engMarriage => 'വിവാഹം & കുടുംബം';
+
+  @override
+  String get engKundliMilan => 'കുണ്ഡലി മിലൻ';
+
+  @override
+  String get engRelationship => 'ബന്ധ വിശകലനം';
+
+  @override
+  String get engLoveCompat => 'പ്രണയ അനുയോജ്യത';
+
+  @override
+  String get engChildProb => 'സന്താന സാധ്യത';
+
+  @override
+  String get engHealth => 'ആരോഗ്യം & ക്ഷേമം';
+
+  @override
+  String get engMental => 'മാനസിക & സമ്മർദ്ദം';
+
+  @override
+  String get engCharacter => 'സ്വഭാവ വിശകലനം';
+
+  @override
+  String get engPastLife => 'പൂർവജന്മം & കർമ്മം';
+
+  @override
+  String get engKarmaLink => 'കർമ്മ ബന്ധം';
+
+  @override
+  String get noChatSessions => 'ഇതുവരെ ചാറ്റ് സെഷനുകളില്ല';
+
+  @override
+  String get chatAppearHere => 'ജ്യോത്സ്യന്മാരുമായുള്ള നിങ്ങളുടെ സംഭാഷണങ്ങൾ ഇവിടെ കാണാം.';
+
+  @override
+  String get noCallsYet => 'ഇതുവരെ കോളുകളില്ല';
+
+  @override
+  String get callAppearHere => 'ജ്യോത്സ്യന്മാരുമായുള്ള നിങ്ങളുടെ കോൾ ചരിത്രം ഇവിടെ കാണാം.';
+
+  @override
+  String get chatWith => 'ഉമായി ചാറ്റ്';
+
+  @override
+  String get msgs => 'സന്ദേശങ്ങൾ';
+
+  @override
+  String get voiceCallLabel => 'വോയ്‌സ് കോൾ';
+
+  @override
+  String get videoCallLabel => 'വീഡിയോ കോൾ';
+
+  @override
+  String get pullToRefresh => 'പുതുക്കാൻ താഴേക്ക് വലിക്കുക';
+
+  @override
+  String get sessionExpired => 'സെഷൻ കാലഹരണപ്പെട്ടു';
+
+  @override
+  String get connectionFailed => 'കണക്ഷൻ പരാജയം';
+
+  @override
+  String get callActive => 'കോൾ ആക്ടീവ്';
+
+  @override
+  String get lessThanOneMin => '1 മിനിറ്റിൽ കുറവ് ബാക്കി';
+
+  @override
+  String get noMessages => 'ഈ സെഷനിൽ സന്ദേശങ്ങളില്ല';
+
+  @override
+  String get gocharForAllSigns => 'എല്ലാ 12 രാശികൾക്കും ഇന്നത്തെ ഗോചരം';
+
+  @override
+  String get selectChart => 'വിശകലനത്തിനായി ജാതകം തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get selectTwoCharts => 'രണ്ട് ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get analyzing => 'വിശകലനം നടക്കുന്നു...';
+
+  @override
+  String get browseAstrologers => 'ജ്യോത്സ്യന്മാരെ കണ്ടെത്തുക';
+
+  @override
+  String get probableNumber => 'സാധ്യമായ എണ്ണം';
+
+  @override
+  String get genderTendency => 'ലിംഗ പ്രവണത';
+
+  @override
+  String get son => 'പുത്രൻ';
+
+  @override
+  String get daughter => 'പുത്രി';
+
+  @override
+  String get occupants => 'നിവാസി ഗ്രഹങ്ങൾ';
+
+  @override
+  String get beneficAspects => 'ശുഭ ദൃഷ്ടി';
+
+  @override
+  String get maleficAspects => 'പാപ ദൃഷ്ടി';
+
+  @override
+  String get nextFavorableWindow => 'അടുത്ത അനുകൂല സമയം';
+
+  @override
+  String get totalDoshaPenalty => 'ആകെ ദോഷ ദണ്ഡം';
+
+  @override
+  String get cancellationFactors => 'റദ്ദാക്കൽ ഘടകങ്ങൾ';
+
+  @override
+  String get combinedFertility => 'സംയുക്ത ഫലഭൂയിഷ്ഠത സൂചന';
+
+  @override
+  String get planetPositions => 'ഗ്രഹ സ്ഥാനങ്ങൾ';
+
+  @override
+  String get bestWindows => 'മികച്ച സമയം';
+
+  @override
+  String get worstWindows => 'പ്രതികൂല സമയം';
+
+  @override
+  String get scoreComponents => 'സ്കോർ ഘടകങ്ങൾ';
+
+  @override
+  String get topOpportunities => 'പ്രധാന അവസരങ്ങൾ';
+
+  @override
+  String get topRisks => 'പ്രധാന അപകടങ്ങൾ';
+
+  @override
+  String get remedies => 'പരിഹാരങ്ങൾ';
+
+  @override
+  String get keyInsights => 'പ്രധാന ഉൾക്കാഴ്ചകൾ';
+
+  @override
+  String get overallVerdict => 'മൊത്തം വിധി';
+
+  @override
+  String get venusContacts => 'ശുക്ര സമ്പർക്കങ്ങൾ';
+
+  @override
+  String get contact => 'സമ്പർക്കം';
+
+  @override
+  String get effect => 'ഫലം';
+
+  @override
+  String get moonSignCompat => 'ചന്ദ്ര രാശി അനുയോജ്യത';
+
+  @override
+  String get hisMoon => 'അദ്ദേഹത്തിന്റെ ചന്ദ്രൻ';
+
+  @override
+  String get herMoon => 'അവളുടെ ചന്ദ്രൻ';
+
+  @override
+  String get nakshatraCompat => 'നക്ഷത്ര അനുയോജ്യത';
+
+  @override
+  String get ketuContacts => 'കേതു സമ്പർക്കങ്ങൾ';
+
+  @override
+  String get rahuContacts => 'രാഹു സമ്പർക്കങ്ങൾ';
+
+  @override
+  String get pastLifeIndication => 'പൂർവജന്മ സൂചന';
+
+  @override
+  String get totalChallengePenalty => 'ആകെ വെല്ലുവിളി ദണ്ഡം';
+
+  @override
+  String get manifestation => 'പ്രകടനം';
+
+  @override
+  String get cancellation => 'റദ്ദാക്കൽ';
+
+  @override
+  String get navigation => 'മാർഗനിർദേശം';
+
+  @override
+  String get potentialStrengths => 'സാധ്യമായ ശക്തികൾ';
+
+  @override
+  String get areasToNurture => 'പരിപോഷിക്കേണ്ട മേഖലകൾ';
+
+  @override
+  String get relationshipGuidance => 'ബന്ധ മാർഗനിർദേശം';
+
+  @override
+  String get detailedSummary => 'വിശദമായ സംഗ്രഹം';
+
+  @override
+  String get discussWithAI => 'AI യുമായി ചർച്ച ചെയ്യുക';
+
+  @override
+  String get planet => 'ഗ്രഹം';
+
+  @override
+  String get sign => 'രാശി';
+
+  @override
+  String get house => 'ഭാവം';
+
+  @override
+  String get strength => 'ബലം';
+
+  @override
+  String get copy => 'പകർപ്പ്';
+
+  @override
+  String get confidence => 'ആത്മവിശ്വാസം';
+
+  @override
+  String get d7Saptamsa => 'D7 സപ്താംശം';
+
+  @override
+  String get numberExplanation => 'സംഖ്യ വിശദീകരണം';
+
+  @override
+  String get genderExplanation => 'ലിംഗ വിശദീകരണം';
+
+  @override
+  String get inFifth => '5-ാം ല്‍?';
+
+  @override
+  String get primaryArchetype => 'പ്രാഥമിക മൂലരൂപം';
+
+  @override
+  String get mitigation => 'ലഘൂകരണം';
+
+  @override
+  String get soulCareerAlign => 'ആത്മാവ് ↔ കരിയർ സമന്വയം';
+
+  @override
+  String get favorablePeriods => 'അനുകൂല കാലം';
+
+  @override
+  String get challengingPeriods => 'വെല്ലുവിളി കാലം';
+
+  @override
+  String get keyHouses => 'പ്രധാന ഭാവങ്ങൾ';
+
+  @override
+  String get keyPlanets => 'പ്രധാന ഗ്രഹങ്ങൾ';
+
+  @override
+  String get characterOverview => 'സ്വഭാവ അവലോകനം';
+
+  @override
+  String get noYogasActive => 'ഈ ജാതകത്തിൽ നിലവിൽ യോഗങ്ങളില്ല.';
+
+  @override
+  String get basedOnPlanetStrengths => 'ഗ്രഹ ബലങ്ങളുടെയും ഭാവ സ്ഥാനങ്ങളുടെയും അടിസ്ഥാനത്തിൽ';
+
+  @override
+  String get basedOnTransits => 'നിലവിലെ ഗ്രഹ ഗോചരത്തെ അടിസ്ഥാനമാക്കി';
+
+  @override
+  String get currentPlanetPositions => 'നിങ്ങളുടെ രാശിയെ 1-ാം ഭാവമായി കണക്കാക്കി നിലവിലെ ഗ്രഹ സ്ഥാനങ്ങൾ';
+
+  @override
+  String get favorablePeriodAdvice => 'അനുകൂല കാലം — കരിയർ വളർച്ചയിലും ബന്ധങ്ങളിലും ശ്രദ്ധ കേന്ദ്രീകരിക്കുക.';
+
+  @override
+  String get noClassicalYogas => 'ശാസ്ത്രീയ വിദ്യാ യോഗങ്ങളില്ലാതെ, വിജയം സ്ഥിരമായ പരിശ്രമത്തിലൂടെ വരുന്നു.';
+
+  @override
+  String get walletDeduction => 'തുക നിങ്ങളുടെ വാലറ്റിൽ നിന്ന് കുറയ്ക്കും';
+
+  @override
+  String get bhakootAxis => 'ഭകൂട് അക്ഷം';
+
+  @override
+  String get basis => 'അടിസ്ഥാനം';
+
+  @override
+  String get selectChartsForMilan => 'മിലനായി 2 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get selectMultiCharts => '2-5 ജാതകങ്ങൾ തിരഞ്ഞെടുക്കുക';
+
+  @override
+  String get running => 'പ്രവർത്തിക്കുന്നു';
+
+  @override
+  String get past => 'കഴിഞ്ഞ';
+
+  @override
+  String get topActiveDoshas => 'ടോപ്പ് ആക്ടീവ് ദോഷങ്ങൾ';
+
+  @override
+  String get allDoshas => 'എല്ലാ ദോഷങ്ങളും';
+
+  @override
+  String get activeYogas => 'ആക്ടീവ് യോഗങ്ങൾ';
+
+  @override
+  String get activeDoshas => 'ആക്ടീവ് ദോഷങ്ങൾ';
+
+  @override
+  String get yogaAnalysis => 'യോഗ വിശകലനം';
+
+  @override
+  String get factors => 'ഘടകങ്ങൾ';
+
+  @override
+  String get dominantPlanet => 'പ്രധാന ഗ്രഹം';
+
+  @override
+  String get startSession => 'സെഷൻ ആരംഭിക്കുക';
+
+  @override
+  String get notesSaved => 'കുറിപ്പുകൾ സംരക്ഷിച്ചു';
+
+  @override
+  String get unlocked => 'അൺലോക്ക്! നിങ്ങളുടെ വായന ആസ്വദിക്കൂ.';
+
+  @override
+  String get todaysGochar => 'ഇന്നത്തെ ഗോചരം';
+
+  @override
+  String get todaysTransitChart => 'ഇന്നത്തെ ഗോചര ചാർട്ട്';
+
+  @override
+  String get lifeAreaPredictions => 'ജീവിത മേഖല പ്രവചനങ്ങൾ';
+
+  @override
+  String get strengths => 'ശക്തികൾ';
+
+  @override
+  String get weaknesses => 'ദൗർബല്യങ്ങൾ';
+
+  @override
+  String get ruledBy => 'അധിപൻ';
+
+  @override
+  String get kundliMilan => 'കുണ്ഡലി മിലൻ';
+
+  @override
+  String get startKundliMilan => 'കുണ്ഡലി മിലൻ ആരംഭിക്കുക';
+
+  @override
+  String get recommendations => 'ശുപാർശകൾ';
+
+  @override
+  String get cancellations => 'റദ്ദാക്കലുകൾ';
+
+  @override
+  String get dashaSync => 'ദശാ സിങ്ക്';
+
+  @override
+  String get transitMarriageWindows => 'ഗോചര വിവാഹ സമയം';
+
+  @override
+  String get overlappingWindows => 'ഓവർലാപ്പിംഗ് വിവാഹ സമയം';
 }

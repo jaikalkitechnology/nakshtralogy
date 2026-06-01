@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'rashi_detail_screen.dart';
@@ -62,7 +63,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Rashi Predictions',
+        title: Text(AppLocalizations.of(context)?.rashi ?? 'Rashi Predictions',
             style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh))],
       ),
@@ -150,7 +151,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center),
       const SizedBox(height: 12),
-      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
     ]),
   ));
 }

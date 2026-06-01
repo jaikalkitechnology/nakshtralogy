@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
@@ -128,7 +129,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 onPressed: _requesting ? null : _requestAll,
                 child: _requesting
                     ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
-                    : const Text('Grant Permissions'),
+                    : Text(AppLocalizations.of(context)?.grantPermissions ?? 'Grant Permissions'),
               ),
               const SizedBox(height: 8),
               TextButton(
