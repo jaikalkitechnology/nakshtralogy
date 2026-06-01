@@ -28,7 +28,7 @@ class ShadbalaWidget extends StatelessWidget {
             child: Row(children: [
               const Icon(Icons.bar_chart, color: AppColors.primary, size: 22),
               const SizedBox(width: 10),
-              Expanded(child: Text(AppLocalizations.of(context)?.shadbala ?? 'Shadbala', style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700))),
+              Expanded(child: Text('Shadbala', style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700))),
             ]),
           ),
           const SizedBox(height: 12),

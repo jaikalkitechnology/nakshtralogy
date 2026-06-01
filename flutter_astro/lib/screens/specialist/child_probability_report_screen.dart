@@ -952,32 +952,32 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                 color: Colors.white.withOpacity(0.04),
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(6))),
-            child: const Row(children: [
+            child: Row(children: [
               Expanded(
                   flex: 3,
-                  child: Text(l.planet,
-                      style: TextStyle(
+                  child: Text('Planet',
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text(l.sign,
-                      style: TextStyle(
+                  child: Text('Sign',
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text(l.house,
-                      style: TextStyle(
+                  child: Text('House',
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text(l.inFifth,
-                      style: TextStyle(
+                  child: Text('In 5th?',
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'),

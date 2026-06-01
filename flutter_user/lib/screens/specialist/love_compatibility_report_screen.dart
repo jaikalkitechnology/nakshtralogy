@@ -402,21 +402,21 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: Row(children: [
                   Expanded(
                       flex: 3,
-                      child: Text(l.contact,
+                      child: Text('Contact',
                           style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 3,
-                      child: Text(l.effect,
+                      child: Text('Effect',
                           style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 2,
-                      child: Text(l.strength,
+                      child: Text('Strength',
                           style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
@@ -689,7 +689,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     children: [
                       Row(children: [
                         Expanded(
-                            child: Text(l.bhakootAxis,
+                            child: Text('BHAKOOT AXIS',
                                 style: const TextStyle(
                                     color: AppColors.smoke,
                                     fontSize: 8,
@@ -1033,7 +1033,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Expanded(
-                  child: Text(l.totalChallengePenalty,
+                  child: Text('TOTAL CHALLENGE PENALTY',
                       style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 9,

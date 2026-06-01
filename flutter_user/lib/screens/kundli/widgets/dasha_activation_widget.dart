@@ -34,7 +34,7 @@ class DashaActivationWidget extends StatelessWidget {
               Row(children: [
                 const Icon(Icons.flash_on, color: AppColors.primary, size: 22),
                 const SizedBox(width: 10),
-                Text(AppLocalizations.of(context)?.dashaActive ?? 'Current Dasha Period', style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
+                Text('Current Dasha Period', style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
               ]),
               const SizedBox(height: 8),
               Row(children: [
