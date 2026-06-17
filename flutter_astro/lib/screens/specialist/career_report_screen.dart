@@ -131,17 +131,17 @@ class _CareerReportState extends State<CareerReportScreen> {
         ]),
         const SizedBox(height: 14),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _scoreRing(overall, 'OVERALL\nSTRENGTH', AppColors.gold),
-          _scoreRing(stability, 'STABILITY', AppColors.aurora),
-          _scoreRing(growth, 'GROWTH', AppColors.cosmicPink),
+          _scoreRing(overall, AppLocalizations.of(context)!.overallStrength, AppColors.gold),
+          _scoreRing(stability, AppLocalizations.of(context)!.stability, AppColors.aurora),
+          _scoreRing(growth, AppLocalizations.of(context)!.growth, AppColors.cosmicPink),
         ]),
         const SizedBox(height: 14),
         Container(padding: const EdgeInsets.only(top: 10),
           decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.2), width: 0.5))),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _miniScore(clarity, 'CLARITY'),
-            _miniScore(recognition, 'RECOGNITION'),
-            _miniScore(satisfaction, 'SATISFACTION'),
+            _miniScore(clarity, AppLocalizations.of(context)!.clarity),
+            _miniScore(recognition, AppLocalizations.of(context)!.recognition),
+            _miniScore(satisfaction, AppLocalizations.of(context)!.satisfaction),
           ])),
       ]),
     );
@@ -270,10 +270,10 @@ class _CareerReportState extends State<CareerReportScreen> {
           border: Border.all(color: AppColors.gold.withOpacity(0.2))),
         child: Column(children: [
           _houseRow(AppLocalizations.of(context)!.sign, sign),
-          _houseRow('LORD', lord),
-          _houseRow('LORD PLACED IN', '${lordHouse}th house'),
-          _houseRow('LORD DIGNITY', lordDignity),
-          _houseRow('D9 DIGNITY', lordD9),
+          _houseRow(AppLocalizations.of(context)!.lord, lord),
+          _houseRow(AppLocalizations.of(context)!.lordPlacedIn, '${lordHouse}th house'),
+          _houseRow(AppLocalizations.of(context)!.lordDignity, lordDignity),
+          _houseRow(AppLocalizations.of(context)!.d9Dignity, lordD9),
           _houseRow(AppLocalizations.of(context)!.occupants, occupants.isEmpty ? 'Empty' : occupants),
           _houseRow(AppLocalizations.of(context)!.strength, '${strength.toStringAsFixed(1)} / 100', valueColor: strengthColor),
           if (indication.isNotEmpty) ...[
@@ -311,19 +311,19 @@ class _CareerReportState extends State<CareerReportScreen> {
     return Column(children: [
       _sectionHeader('Divisional', 'Validation', 'D9 · D10 · D60'),
       _divCard('D-10 KARMA · DASAMSHA', d10, [
-        ['Lagna Lord', d10['d10_lagna_lord_dignity']?.toString()],
+        [AppLocalizations.of(context)!.lagnaLord, d10['d10_lagna_lord_dignity']?.toString()],
         ['Sun', d10['d10_sun_dignity']?.toString()],
         ['Saturn', d10['d10_saturn_dignity']?.toString()],
         ['Jupiter', d10['d10_jupiter_dignity']?.toString()],
-        ['10th Lord', d10['d10_tenth_lord_dignity']?.toString()],
+        [AppLocalizations.of(context)!.tenthLord, d10['d10_tenth_lord_dignity']?.toString()],
         ['Amatyakaraka', d10['d10_amatyakaraka_dignity']?.toString()],
       ], summary: d10['d10_overall_career_standing']?.toString(), notes: d10['d10_primary_career_signature']?.toString()),
       _divCard('D-9 DHARMA · NAVAMSA', d9, [
-        ['10th Lord', d9['d9_tenth_lord_dignity']?.toString()],
+        [AppLocalizations.of(context)!.tenthLord, d9['d9_tenth_lord_dignity']?.toString()],
         ['Amatyakaraka', d9['d9_amatyakaraka_dignity']?.toString()],
       ], summary: '${(d9['d9_career_dharma_alignment_score'] as num?)?.toStringAsFixed(0) ?? "?"}% alignment', notes: d9['d9_career_notes']?.toString()),
       _divCard('D-60 KARMIC · SHASHTYAMSA', d60, [
-        ['10th Lord', d60['d60_tenth_lord_dignity']?.toString()],
+        [AppLocalizations.of(context)!.tenthLord, d60['d60_tenth_lord_dignity']?.toString()],
         ['Amatyakaraka', d60['d60_amatyakaraka_dignity']?.toString()],
       ], summary: '${(d60['d60_past_life_work_capital_score'] as num?)?.toStringAsFixed(0) ?? "?"}% past-life capital', notes: d60['d60_career_past_life_signature']?.toString()),
     ]);
@@ -351,7 +351,7 @@ class _CareerReportState extends State<CareerReportScreen> {
               color: AppColors.gold.withOpacity(0.08),
               borderRadius: BorderRadius.circular(6)),
             child: Row(children: [
-              const Text('VERDICT', style: TextStyle(color: AppColors.smoke, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
+              Text(AppLocalizations.of(context)!.verdict, style: TextStyle(color: AppColors.smoke, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
               const Spacer(),
               Text(summary.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700)),
             ])),
@@ -426,19 +426,19 @@ class _CareerReportState extends State<CareerReportScreen> {
       ],
       // Strengths
       if (strengths.isNotEmpty) ...[
-        _chipsLabel('● STRENGTHS'),
+        _chipsLabel('● ${AppLocalizations.of(context)!.strengths}'),
         Container(margin: const EdgeInsets.symmetric(horizontal: 16),
           child: Wrap(spacing: 6, runSpacing: 6, children: strengths.take(8).map((s) => _chip(s.toString(), AppColors.success)).toList())),
       ],
       // Weaknesses
       if (weaknesses.isNotEmpty) ...[
-        _chipsLabel('⚠ AREAS FOR GROWTH'),
+        _chipsLabel('⚠ ${AppLocalizations.of(context)!.areasForGrowth}'),
         Container(margin: const EdgeInsets.symmetric(horizontal: 16),
           child: Wrap(spacing: 6, runSpacing: 6, children: weaknesses.take(6).map((w) => _chip(w.toString(), AppColors.warning)).toList())),
       ],
       // Industries
       if (industries.isNotEmpty) ...[
-        _chipsLabel('☆ BEST INDUSTRIES'),
+        _chipsLabel('☆ ${AppLocalizations.of(context)!.bestIndustries}'),
         Container(margin: const EdgeInsets.symmetric(horizontal: 16),
           child: Wrap(spacing: 6, runSpacing: 6, children: industries.take(8).map((i) => _chip(i.toString(), AppColors.aurora)).toList())),
       ],
@@ -474,16 +474,16 @@ class _CareerReportState extends State<CareerReportScreen> {
       _sectionHeader('Work', 'Structure', '8 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
-          Expanded(child: _structCard('🏢', 'Employment', emp, recommended == 'employment')),
+          Expanded(child: _structCard('🏢', AppLocalizations.of(context)!.employment, emp, recommended == 'employment')),
           const SizedBox(width: 8),
-          Expanded(child: _structCard('🚀', 'Entrepreneurship', ent, recommended == 'entrepreneurship')),
+          Expanded(child: _structCard('🚀', AppLocalizations.of(context)!.entrepreneurship, ent, recommended == 'entrepreneurship')),
         ])),
       const SizedBox(height: 8),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
-          Expanded(child: _structCard('💻', 'Freelance', freelance, recommended == 'freelance_consulting')),
+          Expanded(child: _structCard('💻', AppLocalizations.of(context)!.freelance, freelance, recommended == 'freelance_consulting')),
           const SizedBox(width: 8),
-          Expanded(child: _structCard('🎯', 'Portfolio', mixed, recommended == 'mixed_portfolio')),
+          Expanded(child: _structCard('🎯', AppLocalizations.of(context)!.portfolio, mixed, recommended == 'mixed_portfolio')),
         ])),
       const SizedBox(height: 8),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -624,9 +624,9 @@ class _CareerReportState extends State<CareerReportScreen> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.warning.withOpacity(0.2))),
         child: Column(children: [
-          _riskBar('Burnout Risk', burnout),
-          _riskBar('Career Stagnation', stagnation),
-          _riskBar('Workplace Conflict', conflict),
+          _riskBar(AppLocalizations.of(context)!.burnoutRisk, burnout),
+          _riskBar(AppLocalizations.of(context)!.careerStagnation, stagnation),
+          _riskBar(AppLocalizations.of(context)!.workplaceConflict, conflict),
         ])),
     ]);
   }
