@@ -2274,6 +2274,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'D9 DIGNITY'**
   String get d9Dignity;
+
+  /// No description provided for @careerAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Analysis'**
+  String get careerAnalysis;
+
+  /// No description provided for @launchWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch Windows'**
+  String get launchWindows;
+
+  /// No description provided for @peakWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Windows'**
+  String get peakWindows;
+
+  /// No description provided for @promotionWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion Windows'**
+  String get promotionWindows;
+
+  /// No description provided for @riskWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Windows'**
+  String get riskWindows;
+
+  /// No description provided for @timingWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Timing Windows'**
+  String get timingWindows;
+
+  /// No description provided for @careerRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Risks'**
+  String get careerRisks;
+
+  /// No description provided for @astrologicalRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrological Remedies'**
+  String get astrologicalRemedies;
+
+  /// No description provided for @practicalSolutions.
+  ///
+  /// In en, this message translates to:
+  /// **'Practical Solutions'**
+  String get practicalSolutions;
+
+  /// No description provided for @analysisConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis Confidence'**
+  String get analysisConfidence;
+
+  /// No description provided for @careerArchetype.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Archetype'**
+  String get careerArchetype;
+
+  /// No description provided for @workStructure.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Structure'**
+  String get workStructure;
+
+  /// No description provided for @teamLeadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Leadership'**
+  String get teamLeadership;
+
+  /// No description provided for @idealEnvironment.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal Environment'**
+  String get idealEnvironment;
+
+  /// No description provided for @idealOrgSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal Org Size'**
+  String get idealOrgSize;
+
+  /// No description provided for @fitScore.
+  ///
+  /// In en, this message translates to:
+  /// **'FIT SCORE'**
+  String get fitScore;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOMMENDED'**
+  String get recommended;
+
+  /// No description provided for @divisionalValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisional Validation'**
+  String get divisionalValidation;
+
+  /// No description provided for @houseAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'House Analysis'**
+  String get houseAnalysis;
+
+  /// No description provided for @jaiminiKarakas.
+  ///
+  /// In en, this message translates to:
+  /// **'Jaimini Karakas'**
+  String get jaiminiKarakas;
+
+  /// No description provided for @copyFullReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy full report data'**
+  String get copyFullReport;
+
+  /// No description provided for @reportCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Report data copied!'**
+  String get reportCopied;
 }
 
 class _AppLocalizationsDelegate
