@@ -1007,4 +1007,85 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'అతిపాత వివాహ సమయాలు';
+
+  @override
+  String get overallStrength => 'మొత్తం బలం';
+
+  @override
+  String get stability => 'స్థిరత్వం';
+
+  @override
+  String get growth => 'వృద్ధి';
+
+  @override
+  String get clarity => 'స్పష్టత';
+
+  @override
+  String get recognition => 'గుర్తింపు';
+
+  @override
+  String get satisfaction => 'సంతృప్తి';
+
+  @override
+  String get verdict => 'తీర్పు';
+
+  @override
+  String get topRoles => 'ముఖ్య పాత్రలు';
+
+  @override
+  String get areasForGrowth => 'వృద్ధి రంగాలు';
+
+  @override
+  String get bestIndustries => 'ఉత్తమ పరిశ్రమలు';
+
+  @override
+  String get employment => 'ఉద్యోగం';
+
+  @override
+  String get entrepreneurship => 'వ్యవసాయదారిత్వం';
+
+  @override
+  String get freelance => 'ఫ్రీలాన్స్';
+
+  @override
+  String get portfolio => 'పోర్ట్‌ఫోలియో';
+
+  @override
+  String get burnoutRisk => 'అలసట ప్రమాదం';
+
+  @override
+  String get careerStagnation => 'వృత్తి స్తబ్ధత';
+
+  @override
+  String get workplaceConflict => 'కార్యస్థల ఘర్షణ';
+
+  @override
+  String get positioning => 'స్థాన నిర్ధారణ';
+
+  @override
+  String get skillDevelopment => 'నైపుణ్య అభివృద్ధి';
+
+  @override
+  String get network => 'నెట్‌వర్క్';
+
+  @override
+  String get visibility => 'కనిపింపు';
+
+  @override
+  String get lagnaLord => 'లగ్న అధిపతి';
+
+  @override
+  String get tenthLord => 'పదవ అధిపతి';
+
+  @override
+  String get lord => 'అధిపతి';
+
+  @override
+  String get lordPlacedIn => 'అధిపతి స్థితం';
+
+  @override
+  String get lordDignity => 'అధిపతి గౌరవం';
+
+  @override
+  String get d9Dignity => 'డి9 గౌరవం';
 }

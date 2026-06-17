@@ -1008,4 +1008,85 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'ಅತಿಕ್ರಮಣ ವಿವಾಹ ಸಮಯ';
+
+  @override
+  String get overallStrength => 'ಒಟ್ಟಾರೆ ಬಲ';
+
+  @override
+  String get stability => 'ಸ್ಥಿರತೆ';
+
+  @override
+  String get growth => 'ಬೆಳವಣಿಗೆ';
+
+  @override
+  String get clarity => 'ಸ್ಪಷ್ಟತೆ';
+
+  @override
+  String get recognition => 'ಗುರುತಿಸುವಿಕೆ';
+
+  @override
+  String get satisfaction => 'ತೃಪ್ತಿ';
+
+  @override
+  String get verdict => 'ತೀರ್ಪು';
+
+  @override
+  String get topRoles => 'ಪ್ರಮುಖ ಪಾತ್ರಗಳು';
+
+  @override
+  String get areasForGrowth => 'ಬೆಳವಣಿಗೆ ಕ್ಷೇತ್ರಗಳು';
+
+  @override
+  String get bestIndustries => 'ಅತ್ಯುತ್ತಮ ಉದ್ಯಮಗಳು';
+
+  @override
+  String get employment => 'ಉದ್ಯೋಗ';
+
+  @override
+  String get entrepreneurship => 'ಉದ್ಯಮಶೀಲತೆ';
+
+  @override
+  String get freelance => 'ಫ್ರೀಲ್ಯಾನ್ಸ್';
+
+  @override
+  String get portfolio => 'ಪೋರ್ಟ್‌ಫೋಲಿಯೊ';
+
+  @override
+  String get burnoutRisk => 'ಆಯಾಸ ಅಪಾಯ';
+
+  @override
+  String get careerStagnation => 'ವೃತ್ತಿ ನಿಶ್ಚಲತೆ';
+
+  @override
+  String get workplaceConflict => 'ಕಾರ್ಯಸ್ಥಳ ಸಂಘರ್ಷ';
+
+  @override
+  String get positioning => 'ಸ್ಥಾನ ನಿರ್ಧಾರ';
+
+  @override
+  String get skillDevelopment => 'ಕೌಶಲ್ಯ ಅಭಿವೃದ್ಧಿ';
+
+  @override
+  String get network => 'ನೆಟ್‌ವರ್ಕ್';
+
+  @override
+  String get visibility => 'ಗೋಚರತೆ';
+
+  @override
+  String get lagnaLord => 'ಲಗ್ನ ಅಧಿಪತಿ';
+
+  @override
+  String get tenthLord => 'ಹತ್ತನೇ ಅಧಿಪತಿ';
+
+  @override
+  String get lord => 'ಅಧಿಪತಿ';
+
+  @override
+  String get lordPlacedIn => 'ಅಧಿಪತಿ ಸ್ಥಿತ';
+
+  @override
+  String get lordDignity => 'ಅಧಿಪತಿ ಗೌರವ';
+
+  @override
+  String get d9Dignity => 'ಡಿ9 ಗೌರವ';
 }

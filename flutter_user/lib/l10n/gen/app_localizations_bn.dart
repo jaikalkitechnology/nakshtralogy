@@ -1006,4 +1006,85 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'ওভারল্যাপিং বিবাহ সময়';
+
+  @override
+  String get overallStrength => 'সামগ্রিক শক্তি';
+
+  @override
+  String get stability => 'স্থিতিশীলতা';
+
+  @override
+  String get growth => 'বৃদ্ধি';
+
+  @override
+  String get clarity => 'স্পষ্টতা';
+
+  @override
+  String get recognition => 'স্বীকৃতি';
+
+  @override
+  String get satisfaction => 'সন্তুষ্টি';
+
+  @override
+  String get verdict => 'রায়';
+
+  @override
+  String get topRoles => 'শীর্ষ ভূমিকা';
+
+  @override
+  String get areasForGrowth => 'বৃদ্ধির ক্ষেত্র';
+
+  @override
+  String get bestIndustries => 'সেরা শিল্প';
+
+  @override
+  String get employment => 'চাকরি';
+
+  @override
+  String get entrepreneurship => 'উদ্যোক্তা';
+
+  @override
+  String get freelance => 'ফ্রিল্যান্স';
+
+  @override
+  String get portfolio => 'পোর্টফোলিও';
+
+  @override
+  String get burnoutRisk => 'অবসাদ ঝুঁকি';
+
+  @override
+  String get careerStagnation => 'পেশা স্থবিরতা';
+
+  @override
+  String get workplaceConflict => 'কর্মস্থল সংঘাত';
+
+  @override
+  String get positioning => 'অবস্থান নির্ধারণ';
+
+  @override
+  String get skillDevelopment => 'দক্ষতা উন্নয়ন';
+
+  @override
+  String get network => 'নেটওয়ার্ক';
+
+  @override
+  String get visibility => 'দৃশ্যমানতা';
+
+  @override
+  String get lagnaLord => 'লগ্ন স্বামী';
+
+  @override
+  String get tenthLord => 'দশম স্বামী';
+
+  @override
+  String get lord => 'স্বামী';
+
+  @override
+  String get lordPlacedIn => 'স্বামী স্থিত';
+
+  @override
+  String get lordDignity => 'স্বামী মর্যাদা';
+
+  @override
+  String get d9Dignity => 'ডি9 মর্যাদা';
 }

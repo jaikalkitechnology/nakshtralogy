@@ -1007,4 +1007,85 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'ઓવરલેપિંગ લગ્ન અવધિ';
+
+  @override
+  String get overallStrength => 'એકંદર બળ';
+
+  @override
+  String get stability => 'સ્થિરતા';
+
+  @override
+  String get growth => 'વિકાસ';
+
+  @override
+  String get clarity => 'સ્પષ્ટતા';
+
+  @override
+  String get recognition => 'ઓળખ';
+
+  @override
+  String get satisfaction => 'સંતોષ';
+
+  @override
+  String get verdict => 'ચુકાદો';
+
+  @override
+  String get topRoles => 'ટોચની ભૂમિકાઓ';
+
+  @override
+  String get areasForGrowth => 'વિકાસ ક્ષેત્રો';
+
+  @override
+  String get bestIndustries => 'શ્રેષ્ઠ ઉદ્યોગો';
+
+  @override
+  String get employment => 'નોકરી';
+
+  @override
+  String get entrepreneurship => 'ઉદ્યોગસાહસિકતા';
+
+  @override
+  String get freelance => 'ફ્રીલાન્સ';
+
+  @override
+  String get portfolio => 'પોર્ટફોલિયો';
+
+  @override
+  String get burnoutRisk => 'થાક જોખમ';
+
+  @override
+  String get careerStagnation => 'કારકિર્દી સ્થગિતતા';
+
+  @override
+  String get workplaceConflict => 'કાર્યસ્થળ સંઘર્ષ';
+
+  @override
+  String get positioning => 'સ્થિતિ નિર્ધારણ';
+
+  @override
+  String get skillDevelopment => 'કૌશલ્ય વિકાસ';
+
+  @override
+  String get network => 'નેટવર્ક';
+
+  @override
+  String get visibility => 'દૃશ્યતા';
+
+  @override
+  String get lagnaLord => 'લગ્ન સ્વામી';
+
+  @override
+  String get tenthLord => 'દસમા સ્વામી';
+
+  @override
+  String get lord => 'સ્વામી';
+
+  @override
+  String get lordPlacedIn => 'સ્વામી સ્થિત';
+
+  @override
+  String get lordDignity => 'સ્વામી ગૌરવ';
+
+  @override
+  String get d9Dignity => 'ડી9 ગૌરવ';
 }

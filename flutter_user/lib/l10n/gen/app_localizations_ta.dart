@@ -1008,4 +1008,85 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'மேலோட்ட திருமண காலம்';
+
+  @override
+  String get overallStrength => 'ஒட்டுமொத்த வலிமை';
+
+  @override
+  String get stability => 'நிலைத்தன்மை';
+
+  @override
+  String get growth => 'வளர்ச்சி';
+
+  @override
+  String get clarity => 'தெளிவு';
+
+  @override
+  String get recognition => 'அங்கீகாரம்';
+
+  @override
+  String get satisfaction => 'திருப்தி';
+
+  @override
+  String get verdict => 'தீர்ப்பு';
+
+  @override
+  String get topRoles => 'முக்கிய பாத்திரங்கள்';
+
+  @override
+  String get areasForGrowth => 'வளர்ச்சி துறைகள்';
+
+  @override
+  String get bestIndustries => 'சிறந்த தொழில்கள்';
+
+  @override
+  String get employment => 'வேலை';
+
+  @override
+  String get entrepreneurship => 'தொழில்முனைவு';
+
+  @override
+  String get freelance => 'ஃப்ரீலான்ஸ்';
+
+  @override
+  String get portfolio => 'போர்ட்ஃபோலியோ';
+
+  @override
+  String get burnoutRisk => 'சோர்வு ஆபத்து';
+
+  @override
+  String get careerStagnation => 'தொழில் தேக்கம்';
+
+  @override
+  String get workplaceConflict => 'பணியிட மோதல்';
+
+  @override
+  String get positioning => 'நிலைப்படுத்துதல்';
+
+  @override
+  String get skillDevelopment => 'திறன் மேம்பாடு';
+
+  @override
+  String get network => 'நெட்வொர்க்';
+
+  @override
+  String get visibility => 'தெரிவுநிலை';
+
+  @override
+  String get lagnaLord => 'லக்ன அதிபதி';
+
+  @override
+  String get tenthLord => 'பத்தாம் அதிபதி';
+
+  @override
+  String get lord => 'அதிபதி';
+
+  @override
+  String get lordPlacedIn => 'அதிபதி நிலை';
+
+  @override
+  String get lordDignity => 'அதிபதி கௌரவம்';
+
+  @override
+  String get d9Dignity => 'டி9 கௌரவம்';
 }
