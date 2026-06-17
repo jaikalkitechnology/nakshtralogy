@@ -2112,6 +2112,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Overlapping Marriage Windows'**
   String get overlappingWindows;
+
+  /// No description provided for @overallStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERALL STRENGTH'**
+  String get overallStrength;
+
+  /// No description provided for @stability.
+  ///
+  /// In en, this message translates to:
+  /// **'STABILITY'**
+  String get stability;
+
+  /// No description provided for @growth.
+  ///
+  /// In en, this message translates to:
+  /// **'GROWTH'**
+  String get growth;
+
+  /// No description provided for @clarity.
+  ///
+  /// In en, this message translates to:
+  /// **'CLARITY'**
+  String get clarity;
+
+  /// No description provided for @recognition.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOGNITION'**
+  String get recognition;
+
+  /// No description provided for @satisfaction.
+  ///
+  /// In en, this message translates to:
+  /// **'SATISFACTION'**
+  String get satisfaction;
+
+  /// No description provided for @verdict.
+  ///
+  /// In en, this message translates to:
+  /// **'VERDICT'**
+  String get verdict;
+
+  /// No description provided for @topRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP ROLES'**
+  String get topRoles;
+
+  /// No description provided for @areasForGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'AREAS FOR GROWTH'**
+  String get areasForGrowth;
+
+  /// No description provided for @bestIndustries.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST INDUSTRIES'**
+  String get bestIndustries;
+
+  /// No description provided for @employment.
+  ///
+  /// In en, this message translates to:
+  /// **'Employment'**
+  String get employment;
+
+  /// No description provided for @entrepreneurship.
+  ///
+  /// In en, this message translates to:
+  /// **'Entrepreneurship'**
+  String get entrepreneurship;
+
+  /// No description provided for @freelance.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelance'**
+  String get freelance;
+
+  /// No description provided for @portfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio'**
+  String get portfolio;
+
+  /// No description provided for @burnoutRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout Risk'**
+  String get burnoutRisk;
+
+  /// No description provided for @careerStagnation.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Stagnation'**
+  String get careerStagnation;
+
+  /// No description provided for @workplaceConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace Conflict'**
+  String get workplaceConflict;
+
+  /// No description provided for @positioning.
+  ///
+  /// In en, this message translates to:
+  /// **'POSITIONING'**
+  String get positioning;
+
+  /// No description provided for @skillDevelopment.
+  ///
+  /// In en, this message translates to:
+  /// **'SKILL DEVELOPMENT'**
+  String get skillDevelopment;
+
+  /// No description provided for @network.
+  ///
+  /// In en, this message translates to:
+  /// **'NETWORK'**
+  String get network;
+
+  /// No description provided for @visibility.
+  ///
+  /// In en, this message translates to:
+  /// **'VISIBILITY'**
+  String get visibility;
+
+  /// No description provided for @lagnaLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna Lord'**
+  String get lagnaLord;
+
+  /// No description provided for @tenthLord.
+  ///
+  /// In en, this message translates to:
+  /// **'10th Lord'**
+  String get tenthLord;
+
+  /// No description provided for @lord.
+  ///
+  /// In en, this message translates to:
+  /// **'LORD'**
+  String get lord;
+
+  /// No description provided for @lordPlacedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'LORD PLACED IN'**
+  String get lordPlacedIn;
+
+  /// No description provided for @lordDignity.
+  ///
+  /// In en, this message translates to:
+  /// **'LORD DIGNITY'**
+  String get lordDignity;
+
+  /// No description provided for @d9Dignity.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 DIGNITY'**
+  String get d9Dignity;
 }
 
 class _AppLocalizationsDelegate

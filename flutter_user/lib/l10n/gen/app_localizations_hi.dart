@@ -1807,4 +1807,85 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get overlappingWindows => 'ओवरलैपिंग विवाह अवधि';
+
+  @override
+  String get overallStrength => 'समग्र बल';
+
+  @override
+  String get stability => 'स्थिरता';
+
+  @override
+  String get growth => 'विकास';
+
+  @override
+  String get clarity => 'स्पष्टता';
+
+  @override
+  String get recognition => 'पहचान';
+
+  @override
+  String get satisfaction => 'संतुष्टि';
+
+  @override
+  String get verdict => 'निर्णय';
+
+  @override
+  String get topRoles => 'शीर्ष भूमिकाएं';
+
+  @override
+  String get areasForGrowth => 'विकास क्षेत्र';
+
+  @override
+  String get bestIndustries => 'सर्वोत्तम उद्योग';
+
+  @override
+  String get employment => 'नौकरी';
+
+  @override
+  String get entrepreneurship => 'उद्यमिता';
+
+  @override
+  String get freelance => 'फ्रीलांस';
+
+  @override
+  String get portfolio => 'पोर्टफोलियो';
+
+  @override
+  String get burnoutRisk => 'थकान जोखिम';
+
+  @override
+  String get careerStagnation => 'करियर ठहराव';
+
+  @override
+  String get workplaceConflict => 'कार्यस्थल संघर्ष';
+
+  @override
+  String get positioning => 'स्थिति निर्धारण';
+
+  @override
+  String get skillDevelopment => 'कौशल विकास';
+
+  @override
+  String get network => 'नेटवर्क';
+
+  @override
+  String get visibility => 'दृश्यता';
+
+  @override
+  String get lagnaLord => 'लग्न स्वामी';
+
+  @override
+  String get tenthLord => 'दसवां स्वामी';
+
+  @override
+  String get lord => 'स्वामी';
+
+  @override
+  String get lordPlacedIn => 'स्वामी स्थित';
+
+  @override
+  String get lordDignity => 'स्वामी गरिमा';
+
+  @override
+  String get d9Dignity => 'डी9 गरिमा';
 }
