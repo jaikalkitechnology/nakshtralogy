@@ -93,9 +93,9 @@ class _CareerReportState extends State<CareerReportScreen> {
         Text(widget.chartName.toUpperCase(),
             style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
         const SizedBox(height: 2),
-        const Text.rich(TextSpan(children: [
-          TextSpan(text: 'Career ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-          TextSpan(text: 'Analysis', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+        Text.rich(TextSpan(children: [
+          TextSpan(text: '${AppLocalizations.of(context)!.careerAnalysis.split(' ').first} ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+          TextSpan(text: AppLocalizations.of(context)!.careerAnalysis.split(' ').last, style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
         ])),
       ]),
       actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],
@@ -179,7 +179,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     final amatyaTheme = d['amatyakaraka_career_theme']?.toString() ?? '';
 
     return Column(children: [
-      _sectionHeader('Jaimini', 'Karakas', '8 KEYS'),
+      _sectionHeader(AppLocalizations.of(context)!.jaiminiKarakas.split(' ').first, AppLocalizations.of(context)!.jaiminiKarakas.split(' ').last, '8 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(children: [
           Expanded(child: _karakaCard('ATMAKARAKA', atma, 'Soul significator', soulContract)),
@@ -261,7 +261,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     final strengthColor = strength >= 70 ? AppColors.success : strength >= 50 ? AppColors.gold : AppColors.warning;
 
     return Column(children: [
-      _sectionHeader('10th', 'House Analysis', '14 KEYS'),
+      _sectionHeader('10th', AppLocalizations.of(context)!.houseAnalysis, '14 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -309,7 +309,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     final d60 = (d['d60_career_validation'] as Map?)?.cast<String, dynamic>() ?? {};
 
     return Column(children: [
-      _sectionHeader('Divisional', 'Validation', 'D9 · D10 · D60'),
+      _sectionHeader(AppLocalizations.of(context)!.divisionalValidation.split(' ').first, AppLocalizations.of(context)!.divisionalValidation.split(' ').last, 'D9 · D10 · D60'),
       _divCard('D-10 KARMA · DASAMSHA', d10, [
         [AppLocalizations.of(context)!.lagnaLord, d10['d10_lagna_lord_dignity']?.toString()],
         ['Sun', d10['d10_sun_dignity']?.toString()],
@@ -398,7 +398,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     if (archetype.isEmpty && roles.isEmpty) return const SizedBox.shrink();
 
     return Column(children: [
-      _sectionHeader('Career', 'Archetype', '${roles.length + strengths.length + 2} KEYS'),
+      _sectionHeader(AppLocalizations.of(context)!.careerArchetype.split(' ').first, AppLocalizations.of(context)!.careerArchetype.split(' ').last, '${roles.length + strengths.length + 2} KEYS'),
       // Archetype card
       if (archetype.isNotEmpty) Container(margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.all(14),
@@ -471,7 +471,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     final orgSize = d['ideal_organization_size']?.toString() ?? '';
 
     return Column(children: [
-      _sectionHeader('Work', 'Structure', '8 KEYS'),
+      _sectionHeader(AppLocalizations.of(context)!.workStructure.split(' ').first, AppLocalizations.of(context)!.workStructure.split(' ').last, '8 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
           Expanded(child: _structCard('🏢', AppLocalizations.of(context)!.employment, emp, recommended == 'employment')),
@@ -492,9 +492,9 @@ class _CareerReportState extends State<CareerReportScreen> {
           color: const Color(0xFF1A1642).withOpacity(0.5),
           borderRadius: BorderRadius.circular(12)),
         child: Column(children: [
-          _miniRow('Team Leadership', '${teamFit.toStringAsFixed(1)}'),
-          if (environment.isNotEmpty) _miniRow('Ideal Environment', _titleCase(environment)),
-          if (orgSize.isNotEmpty) _miniRow('Ideal Org Size', _titleCase(orgSize)),
+          _miniRow(AppLocalizations.of(context)!.teamLeadership, '${teamFit.toStringAsFixed(1)}'),
+          if (environment.isNotEmpty) _miniRow(AppLocalizations.of(context)!.idealEnvironment, _titleCase(environment)),
+          if (orgSize.isNotEmpty) _miniRow(AppLocalizations.of(context)!.idealOrgSize, _titleCase(orgSize)),
         ])),
     ]);
   }
@@ -515,7 +515,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         const SizedBox(height: 2),
         Text(score.toStringAsFixed(1),
           style: TextStyle(color: recommended ? AppColors.gold : AppColors.lavender, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-        Text(recommended ? 'RECOMMENDED ★' : 'FIT SCORE',
+        Text(recommended ? '${AppLocalizations.of(context)!.recommended} ★' : AppLocalizations.of(context)!.fitScore,
           style: TextStyle(color: recommended ? AppColors.gold : AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
       ]));
   }
@@ -538,11 +538,11 @@ class _CareerReportState extends State<CareerReportScreen> {
     if (launch.isEmpty && peak.isEmpty && promo.isEmpty && risk.isEmpty) return const SizedBox.shrink();
 
     return Column(children: [
-      _sectionHeader('Timing', 'Windows', '${launch.length + peak.length + promo.length + risk.length} ENTRIES'),
-      if (launch.isNotEmpty) _timingCard('Launch Windows', '→', AppColors.aurora, launch),
-      if (peak.isNotEmpty) _timingCard('Peak Windows ★', '★', AppColors.gold, peak, isPeak: true),
-      if (promo.isNotEmpty) _timingCard('Promotion Windows', '▲', AppColors.cosmicPink, promo),
-      if (risk.isNotEmpty) _timingCard('Risk Windows', '⚠', AppColors.warning, risk),
+      _sectionHeader(AppLocalizations.of(context)!.timingWindows.split(' ').first, AppLocalizations.of(context)!.timingWindows.split(' ').last, '${launch.length + peak.length + promo.length + risk.length} ENTRIES'),
+      if (launch.isNotEmpty) _timingCard(AppLocalizations.of(context)!.launchWindows, '→', AppColors.aurora, launch),
+      if (peak.isNotEmpty) _timingCard('${AppLocalizations.of(context)!.peakWindows} ★', '★', AppColors.gold, peak, isPeak: true),
+      if (promo.isNotEmpty) _timingCard(AppLocalizations.of(context)!.promotionWindows, '▲', AppColors.cosmicPink, promo),
+      if (risk.isNotEmpty) _timingCard(AppLocalizations.of(context)!.riskWindows, '⚠', AppColors.warning, risk),
     ]);
   }
 
@@ -605,7 +605,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     if (risks.isEmpty && burnout == 0 && stagnation == 0) return const SizedBox.shrink();
 
     return Column(children: [
-      _sectionHeader('Career', 'Risks', '${risks.length + 3} KEYS'),
+      _sectionHeader(AppLocalizations.of(context)!.careerRisks.split(' ').first, AppLocalizations.of(context)!.careerRisks.split(' ').last, '${risks.length + 3} KEYS'),
       ...risks.take(5).map((r) {
         final risk = (r as Map).cast<String, dynamic>();
         final severity = risk['severity']?.toString() ?? 'low';
@@ -701,7 +701,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     if (remedies.isEmpty && practical.isEmpty) return const SizedBox.shrink();
 
     return Column(children: [
-      _sectionHeader('Astrological', 'Remedies', '${remedies.length} KEYS'),
+      _sectionHeader(AppLocalizations.of(context)!.astrologicalRemedies.split(' ').first, AppLocalizations.of(context)!.astrologicalRemedies.split(' ').last, '${remedies.length} KEYS'),
       ...remedies.take(6).map((r) {
         final rem = (r as Map).cast<String, dynamic>();
         final deity = rem['deity']?.toString() ?? '';
@@ -709,7 +709,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         return _remedyCard(deity, text);
       }),
       if (practical.isNotEmpty) ...[
-        _sectionHeader('Practical', 'Solutions', '${practical.length} KEYS'),
+        _sectionHeader(AppLocalizations.of(context)!.practicalSolutions.split(' ').first, AppLocalizations.of(context)!.practicalSolutions.split(' ').last, '${practical.length} KEYS'),
         ...practical.take(5).map((p) {
           final sol = (p as Map).cast<String, dynamic>();
           return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
@@ -771,7 +771,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     ].where((l) => l['val'] != null).toList();
 
     return Column(children: [
-      _sectionHeader('Analysis', 'Confidence', 'QUALITY'),
+      _sectionHeader(AppLocalizations.of(context)!.analysisConfidence.split(' ').first, AppLocalizations.of(context)!.analysisConfidence.split(' ').last, 'QUALITY'),
       Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -875,7 +875,7 @@ class _CareerReportState extends State<CareerReportScreen> {
             child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Icon(Icons.copy, size: 14, color: AppColors.smoke),
               SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+              Text(AppLocalizations.of(context)!.copyFullReport, style: TextStyle(color: AppColors.smoke, fontSize: 10)),
             ])),
         ),
       ]),
@@ -927,7 +927,7 @@ Please explain the key findings in simple language, highlight the most important
     final prompt = _buildPrompt(d);
     Clipboard.setData(ClipboardData(text: prompt));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Report data copied! Paste it into any AI chat.'),
+      SnackBar(content: Text(AppLocalizations.of(context)!.reportCopied),
         duration: Duration(seconds: 2)));
   }
 
