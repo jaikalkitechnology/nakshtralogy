@@ -1008,4 +1008,85 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'ਓਵਰਲੈਪਿੰਗ ਵਿਆਹ ਸਮਾਂ';
+
+  @override
+  String get overallStrength => 'ਸਮੁੱਚਾ ਬਲ';
+
+  @override
+  String get stability => 'ਸਥਿਰਤਾ';
+
+  @override
+  String get growth => 'ਵਿਕਾਸ';
+
+  @override
+  String get clarity => 'ਸਪੱਸ਼ਟਤਾ';
+
+  @override
+  String get recognition => 'ਪਛਾਣ';
+
+  @override
+  String get satisfaction => 'ਸੰਤੁਸ਼ਟੀ';
+
+  @override
+  String get verdict => 'ਫੈਸਲਾ';
+
+  @override
+  String get topRoles => 'ਪ੍ਰਮੁੱਖ ਭੂਮਿਕਾਵਾਂ';
+
+  @override
+  String get areasForGrowth => 'ਵਿਕਾਸ ਖੇਤਰ';
+
+  @override
+  String get bestIndustries => 'ਸਭ ਤੋਂ ਵਧੀਆ ਉਦਯੋਗ';
+
+  @override
+  String get employment => 'ਨੌਕਰੀ';
+
+  @override
+  String get entrepreneurship => 'ਉੱਦਮਤਾ';
+
+  @override
+  String get freelance => 'ਫ੍ਰੀਲਾਂਸ';
+
+  @override
+  String get portfolio => 'ਪੋਰਟਫੋਲੀਓ';
+
+  @override
+  String get burnoutRisk => 'ਥਕਾਵਟ ਖ਼ਤਰਾ';
+
+  @override
+  String get careerStagnation => 'ਕੈਰੀਅਰ ਰੁਕਾਵਟ';
+
+  @override
+  String get workplaceConflict => 'ਕੰਮ ਥਾਂ ਝਗੜਾ';
+
+  @override
+  String get positioning => 'ਸਥਿਤੀ ਨਿਰਧਾਰਨ';
+
+  @override
+  String get skillDevelopment => 'ਹੁਨਰ ਵਿਕਾਸ';
+
+  @override
+  String get network => 'ਨੈੱਟਵਰਕ';
+
+  @override
+  String get visibility => 'ਦਿੱਖ';
+
+  @override
+  String get lagnaLord => 'ਲਗਨ ਸਵਾਮੀ';
+
+  @override
+  String get tenthLord => 'ਦਸਵਾਂ ਸਵਾਮੀ';
+
+  @override
+  String get lord => 'ਸਵਾਮੀ';
+
+  @override
+  String get lordPlacedIn => 'ਸਵਾਮੀ ਸਥਿਤ';
+
+  @override
+  String get lordDignity => 'ਸਵਾਮੀ ਮਾਣ';
+
+  @override
+  String get d9Dignity => 'ਡੀ9 ਮਾਣ';
 }

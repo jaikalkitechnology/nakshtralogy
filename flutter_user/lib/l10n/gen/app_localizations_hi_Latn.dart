@@ -1009,4 +1009,85 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get overlappingWindows => 'Overlapping Marriage Windows';
+
+  @override
+  String get overallStrength => 'OVERALL STRENGTH';
+
+  @override
+  String get stability => 'STABILITY';
+
+  @override
+  String get growth => 'GROWTH';
+
+  @override
+  String get clarity => 'CLARITY';
+
+  @override
+  String get recognition => 'RECOGNITION';
+
+  @override
+  String get satisfaction => 'SATISFACTION';
+
+  @override
+  String get verdict => 'VERDICT';
+
+  @override
+  String get topRoles => 'TOP ROLES';
+
+  @override
+  String get areasForGrowth => 'AREAS FOR GROWTH';
+
+  @override
+  String get bestIndustries => 'BEST INDUSTRIES';
+
+  @override
+  String get employment => 'Employment';
+
+  @override
+  String get entrepreneurship => 'Entrepreneurship';
+
+  @override
+  String get freelance => 'Freelance';
+
+  @override
+  String get portfolio => 'Portfolio';
+
+  @override
+  String get burnoutRisk => 'Burnout Risk';
+
+  @override
+  String get careerStagnation => 'Career Stagnation';
+
+  @override
+  String get workplaceConflict => 'Workplace Conflict';
+
+  @override
+  String get positioning => 'POSITIONING';
+
+  @override
+  String get skillDevelopment => 'SKILL DEVELOPMENT';
+
+  @override
+  String get network => 'NETWORK';
+
+  @override
+  String get visibility => 'VISIBILITY';
+
+  @override
+  String get lagnaLord => 'Lagna Lord';
+
+  @override
+  String get tenthLord => '10th Lord';
+
+  @override
+  String get lord => 'LORD';
+
+  @override
+  String get lordPlacedIn => 'LORD PLACED IN';
+
+  @override
+  String get lordDignity => 'LORD DIGNITY';
+
+  @override
+  String get d9Dignity => 'D9 DIGNITY';
 }
