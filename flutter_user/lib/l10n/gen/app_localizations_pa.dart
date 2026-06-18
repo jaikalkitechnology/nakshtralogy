@@ -1089,4 +1089,70 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get d9Dignity => 'ਡੀ9 ਮਾਣ';
+
+  @override
+  String get careerAnalysis => 'ਕੈਰੀਅਰ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get launchWindows => 'ਸ਼ੁਰੂਆਤ ਸਮਾਂ';
+
+  @override
+  String get peakWindows => 'ਸਿਖਰ ਸਮਾਂ';
+
+  @override
+  String get promotionWindows => 'ਤਰੱਕੀ ਸਮਾਂ';
+
+  @override
+  String get riskWindows => 'ਖ਼ਤਰਾ ਸਮਾਂ';
+
+  @override
+  String get timingWindows => 'ਸਮਾਂ ਵਿੰਡੋ';
+
+  @override
+  String get careerRisks => 'ਕੈਰੀਅਰ ਖ਼ਤਰੇ';
+
+  @override
+  String get astrologicalRemedies => 'ਜੋਤਿਸ਼ ਉਪਾਅ';
+
+  @override
+  String get practicalSolutions => 'ਵਿਹਾਰਕ ਹੱਲ';
+
+  @override
+  String get analysisConfidence => 'ਵਿਸ਼ਲੇਸ਼ਣ ਭਰੋਸੇਯੋਗਤਾ';
+
+  @override
+  String get careerArchetype => 'ਕੈਰੀਅਰ ਆਦਰਸ਼ਰੂਪ';
+
+  @override
+  String get workStructure => 'ਕੰਮ ਢਾਂਚਾ';
+
+  @override
+  String get teamLeadership => 'ਟੀਮ ਅਗਵਾਈ';
+
+  @override
+  String get idealEnvironment => 'ਆਦਰਸ਼ ਮਾਹੌਲ';
+
+  @override
+  String get idealOrgSize => 'ਆਦਰਸ਼ ਸੰਸਥਾ ਆਕਾਰ';
+
+  @override
+  String get fitScore => 'ਫਿਟ ਸਕੋਰ';
+
+  @override
+  String get recommended => 'ਸਿਫ਼ਾਰਸ਼ੀ';
+
+  @override
+  String get divisionalValidation => 'ਵਿਭਾਗੀ ਪੁਸ਼ਟੀ';
+
+  @override
+  String get houseAnalysis => 'ਭਾਵ ਵਿਸ਼ਲੇਸ਼ਣ';
+
+  @override
+  String get jaiminiKarakas => 'ਜੈਮਿਨੀ ਕਾਰਕ';
+
+  @override
+  String get copyFullReport => 'ਪੂਰੀ ਰਿਪੋਰਟ ਕਾਪੀ ਕਰੋ';
+
+  @override
+  String get reportCopied => 'ਰਿਪੋਰਟ ਕਾਪੀ ਹੋ ਗਈ!';
 }

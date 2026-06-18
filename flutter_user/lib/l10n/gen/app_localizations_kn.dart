@@ -1089,4 +1089,70 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get d9Dignity => 'ಡಿ9 ಗೌರವ';
+
+  @override
+  String get careerAnalysis => 'ವೃತ್ತಿ ವಿಶ್ಲೇಷಣೆ';
+
+  @override
+  String get launchWindows => 'ಆರಂಭ ಸಮಯ';
+
+  @override
+  String get peakWindows => 'ಉತ್ತುಂಗ ಸಮಯ';
+
+  @override
+  String get promotionWindows => 'ಬಡ್ತಿ ಸಮಯ';
+
+  @override
+  String get riskWindows => 'ಅಪಾಯ ಸಮಯ';
+
+  @override
+  String get timingWindows => 'ಸಮಯ ವಿಂಡೋ';
+
+  @override
+  String get careerRisks => 'ವೃತ್ತಿ ಅಪಾಯಗಳು';
+
+  @override
+  String get astrologicalRemedies => 'ಜ್ಯೋತಿಷ ಪರಿಹಾರಗಳು';
+
+  @override
+  String get practicalSolutions => 'ಪ್ರಾಯೋಗಿಕ ಪರಿಹಾರಗಳು';
+
+  @override
+  String get analysisConfidence => 'ವಿಶ್ಲೇಷಣೆ ವಿಶ್ವಾಸಾರ್ಹತೆ';
+
+  @override
+  String get careerArchetype => 'ವೃತ್ತಿ ಮೂಲಮಾದರಿ';
+
+  @override
+  String get workStructure => 'ಕೆಲಸ ರಚನೆ';
+
+  @override
+  String get teamLeadership => 'ತಂಡ ನಾಯಕತ್ವ';
+
+  @override
+  String get idealEnvironment => 'ಆದರ್ಶ ವಾತಾವರಣ';
+
+  @override
+  String get idealOrgSize => 'ಆದರ್ಶ ಸಂಸ್ಥೆ ಗಾತ್ರ';
+
+  @override
+  String get fitScore => 'ಫಿಟ್ ಸ್ಕೋರ್';
+
+  @override
+  String get recommended => 'ಶಿಫಾರಸು';
+
+  @override
+  String get divisionalValidation => 'ವಿಭಾಗ ಮೌಲ್ಯೀಕರಣ';
+
+  @override
+  String get houseAnalysis => 'ಭಾವ ವಿಶ್ಲೇಷಣೆ';
+
+  @override
+  String get jaiminiKarakas => 'ಜೈಮಿನಿ ಕಾರಕಗಳು';
+
+  @override
+  String get copyFullReport => 'ಸಂಪೂರ್ಣ ವರದಿ ನಕಲಿಸಿ';
+
+  @override
+  String get reportCopied => 'ವರದಿ ನಕಲಾಗಿದೆ!';
 }

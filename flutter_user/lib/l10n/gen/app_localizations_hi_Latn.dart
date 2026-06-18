@@ -1090,4 +1090,70 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get d9Dignity => 'D9 DIGNITY';
+
+  @override
+  String get careerAnalysis => 'Career Analysis';
+
+  @override
+  String get launchWindows => 'Launch Windows';
+
+  @override
+  String get peakWindows => 'Peak Windows';
+
+  @override
+  String get promotionWindows => 'Promotion Windows';
+
+  @override
+  String get riskWindows => 'Risk Windows';
+
+  @override
+  String get timingWindows => 'Timing Windows';
+
+  @override
+  String get careerRisks => 'Career Risks';
+
+  @override
+  String get astrologicalRemedies => 'Astrological Remedies';
+
+  @override
+  String get practicalSolutions => 'Practical Solutions';
+
+  @override
+  String get analysisConfidence => 'Analysis Confidence';
+
+  @override
+  String get careerArchetype => 'Career Archetype';
+
+  @override
+  String get workStructure => 'Work Structure';
+
+  @override
+  String get teamLeadership => 'Team Leadership';
+
+  @override
+  String get idealEnvironment => 'Ideal Environment';
+
+  @override
+  String get idealOrgSize => 'Ideal Org Size';
+
+  @override
+  String get fitScore => 'FIT SCORE';
+
+  @override
+  String get recommended => 'RECOMMENDED';
+
+  @override
+  String get divisionalValidation => 'Divisional Validation';
+
+  @override
+  String get houseAnalysis => 'House Analysis';
+
+  @override
+  String get jaiminiKarakas => 'Jaimini Karakas';
+
+  @override
+  String get copyFullReport => 'Poori report copy karein';
+
+  @override
+  String get reportCopied => 'Report copy ho gayi!';
 }
