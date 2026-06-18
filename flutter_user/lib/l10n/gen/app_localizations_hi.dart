@@ -801,6 +801,72 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get unlocked => 'अनलॉक! अपना पठन आनंद लें।';
+
+  @override
+  String get careerAnalysis => 'करियर विश्लेषण';
+
+  @override
+  String get launchWindows => 'शुभारंभ अवधि';
+
+  @override
+  String get peakWindows => 'शिखर अवधि';
+
+  @override
+  String get promotionWindows => 'पदोन्नति अवधि';
+
+  @override
+  String get riskWindows => 'जोखिम अवधि';
+
+  @override
+  String get timingWindows => 'समय अवधि';
+
+  @override
+  String get careerRisks => 'करियर जोखिम';
+
+  @override
+  String get astrologicalRemedies => 'ज्योतिषीय उपाय';
+
+  @override
+  String get practicalSolutions => 'व्यावहारिक समाधान';
+
+  @override
+  String get analysisConfidence => 'विश्लेषण विश्वसनीयता';
+
+  @override
+  String get careerArchetype => 'करियर प्रारूप';
+
+  @override
+  String get workStructure => 'कार्य संरचना';
+
+  @override
+  String get teamLeadership => 'टीम नेतृत्व';
+
+  @override
+  String get idealEnvironment => 'आदर्श वातावरण';
+
+  @override
+  String get idealOrgSize => 'आदर्श संगठन आकार';
+
+  @override
+  String get fitScore => 'फिट स्कोर';
+
+  @override
+  String get recommended => 'अनुशंसित';
+
+  @override
+  String get divisionalValidation => 'विभागीय सत्यापन';
+
+  @override
+  String get houseAnalysis => 'भाव विश्लेषण';
+
+  @override
+  String get jaiminiKarakas => 'जैमिनी कारक';
+
+  @override
+  String get copyFullReport => 'पूरी रिपोर्ट कॉपी करें';
+
+  @override
+  String get reportCopied => 'रिपोर्ट कॉपी हो गई!';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -1888,4 +1954,70 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get d9Dignity => 'डी9 गरिमा';
+
+  @override
+  String get careerAnalysis => 'Career Analysis';
+
+  @override
+  String get launchWindows => 'Launch Windows';
+
+  @override
+  String get peakWindows => 'Peak Windows';
+
+  @override
+  String get promotionWindows => 'Promotion Windows';
+
+  @override
+  String get riskWindows => 'Risk Windows';
+
+  @override
+  String get timingWindows => 'Timing Windows';
+
+  @override
+  String get careerRisks => 'Career Risks';
+
+  @override
+  String get astrologicalRemedies => 'Astrological Remedies';
+
+  @override
+  String get practicalSolutions => 'Practical Solutions';
+
+  @override
+  String get analysisConfidence => 'Analysis Confidence';
+
+  @override
+  String get careerArchetype => 'Career Archetype';
+
+  @override
+  String get workStructure => 'Work Structure';
+
+  @override
+  String get teamLeadership => 'Team Leadership';
+
+  @override
+  String get idealEnvironment => 'Ideal Environment';
+
+  @override
+  String get idealOrgSize => 'Ideal Org Size';
+
+  @override
+  String get fitScore => 'FIT SCORE';
+
+  @override
+  String get recommended => 'RECOMMENDED';
+
+  @override
+  String get divisionalValidation => 'Divisional Validation';
+
+  @override
+  String get houseAnalysis => 'House Analysis';
+
+  @override
+  String get jaiminiKarakas => 'Jaimini Karakas';
+
+  @override
+  String get copyFullReport => 'Poori report copy karein';
+
+  @override
+  String get reportCopied => 'Report copy ho gayi!';
 }

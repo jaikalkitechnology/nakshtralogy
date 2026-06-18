@@ -872,10 +872,10 @@ class _CareerReportState extends State<CareerReportScreen> {
               color: Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.white.withOpacity(0.1))),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke),
-              SizedBox(width: 6),
-              Text(AppLocalizations.of(context)!.copyFullReport, style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke),
+              const SizedBox(width: 6),
+              Text(AppLocalizations.of(context)!.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
             ])),
         ),
       ]),

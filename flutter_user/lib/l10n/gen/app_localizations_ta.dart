@@ -1089,4 +1089,70 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get d9Dignity => 'டி9 கௌரவம்';
+
+  @override
+  String get careerAnalysis => 'தொழில் பகுப்பாய்வு';
+
+  @override
+  String get launchWindows => 'தொடக்க காலம்';
+
+  @override
+  String get peakWindows => 'உச்ச காலம்';
+
+  @override
+  String get promotionWindows => 'பதவி உயர்வு காலம்';
+
+  @override
+  String get riskWindows => 'ஆபத்து காலம்';
+
+  @override
+  String get timingWindows => 'நேர சாளரம்';
+
+  @override
+  String get careerRisks => 'தொழில் அபாயங்கள்';
+
+  @override
+  String get astrologicalRemedies => 'ஜோதிட பரிகாரங்கள்';
+
+  @override
+  String get practicalSolutions => 'நடைமுறை தீர்வுகள்';
+
+  @override
+  String get analysisConfidence => 'பகுப்பாய்வு நம்பகத்தன்மை';
+
+  @override
+  String get careerArchetype => 'தொழில் முன்மாதிரி';
+
+  @override
+  String get workStructure => 'பணி அமைப்பு';
+
+  @override
+  String get teamLeadership => 'குழு தலைமை';
+
+  @override
+  String get idealEnvironment => 'சிறந்த சூழல்';
+
+  @override
+  String get idealOrgSize => 'சிறந்த நிறுவன அளவு';
+
+  @override
+  String get fitScore => 'பொருத்த மதிப்பெண்';
+
+  @override
+  String get recommended => 'பரிந்துரை';
+
+  @override
+  String get divisionalValidation => 'பிரிவு சரிபார்ப்பு';
+
+  @override
+  String get houseAnalysis => 'பாவ பகுப்பாய்வு';
+
+  @override
+  String get jaiminiKarakas => 'ஜைமினி காரகங்கள்';
+
+  @override
+  String get copyFullReport => 'முழு அறிக்கையை நகலெடுக்கவும்';
+
+  @override
+  String get reportCopied => 'அறிக்கை நகலெடுக்கப்பட்டது!';
 }
