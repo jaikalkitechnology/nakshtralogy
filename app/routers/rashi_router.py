@@ -6,11 +6,13 @@ Lahiri sidereal frame). Endpoints are public (no auth) since they serve
 static zodiac metadata + today's sky for a home-page carousel.
 """
 
+import re
 from datetime import date, timedelta
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.core.i18n import get_lang, t
 from app.kundli import engine as nk_engine
 from app.kundli import engine as _engine_pkg  # same package but used for singleton
 # Import the underlying engine module for low-level functions
@@ -67,9 +69,9 @@ def _ok(data, meta=None):
     return out
 
 
-def _validate_idx(rashi_idx: int):
+def _validate_idx(rashi_idx: int, lang: str = "english"):
     if not 0 <= rashi_idx <= 11:
-        raise HTTPException(status_code=400, detail="rashi_idx must be 0-11")
+        raise HTTPException(status_code=400, detail=t("err.rashi_idx_range", lang))
 
 
 def _score_for(rashi_idx: int, date_str: Optional[str] = None) -> dict:
@@ -81,9 +83,44 @@ def _score_for(rashi_idx: int, date_str: Optional[str] = None) -> dict:
     return {"rashi_idx": rashi_idx, "score": 0, "grade": "Normal", "flags": []}
 
 
-def _meta_plus_traits(idx: int) -> dict:
+# ── i18n helpers ────────────────────────────────────────────────────────
+# The metadata/traits above are enum-like display strings (finite value
+# sets). We translate them at response-build time via catalog keys keyed
+# by a slug of the English value — machine fields (idx, lord, sanskrit,
+# lucky_number, emoji) are left untouched since clients don't branch on
+# the translated display text.
+
+def _slug(s) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", str(s).lower()).strip("_")
+
+
+def _tv(namespace: str, value, lang: str):
+    """Translate an enum-like display value: catalog key `rashi.{namespace}.{slug(value)}`."""
+    if not value:
+        return value
+    return t(f"rashi.{namespace}.{_slug(value)}", lang)
+
+
+def _tg(grade, lang: str):
+    """Translate a gochar/prediction grade band, e.g. 'Very Good' -> grade.very_good."""
+    if not grade:
+        return grade
+    return t(f"grade.{_slug(grade)}", lang)
+
+
+def _meta_plus_traits(idx: int, lang: str = "english") -> dict:
     m = dict(_RASHI_META[idx])
-    m.update(_TRAITS[idx])
+    m["name"] = _tv("name", m["name"], lang)
+    m["symbol"] = _tv("symbol", m["symbol"], lang)
+    m["element"] = _tv("element", m["element"], lang)
+    m["quality"] = _tv("quality", m["quality"], lang)
+    m["lucky_color"] = _tv("color", m["lucky_color"], lang)
+    m["lucky_day"] = _tv("day", m["lucky_day"], lang)
+    m["gem"] = _tv("gem", m["gem"], lang)
+    m["body_part"] = _tv("bodypart", m["body_part"], lang)
+    traits = _TRAITS[idx]
+    m["strengths"] = [_tv("trait", w, lang) for w in traits["strengths"]]
+    m["weaknesses"] = [_tv("trait", w, lang) for w in traits["weaknesses"]]
     return m
 
 
@@ -92,66 +129,72 @@ def _meta_plus_traits(idx: int) -> dict:
 # ─────────────────────────────────────────────────────────────────────
 
 @router.get("")
-def list_rashis():
+def list_rashis(lang: str = Depends(get_lang)):
     """All 12 rashis with metadata + traits (static)."""
-    return _ok([_meta_plus_traits(i) for i in range(12)])
+    return _ok([_meta_plus_traits(i, lang) for i in range(12)])
 
 
 @router.get("/today")
-def today_all():
+def today_all(lang: str = Depends(get_lang)):
     """All 12 rashis with today's gochar score + grade.
     Optimised single-call for home-page carousel."""
     res = nk_engine.get_gochar(None)
     merged = []
     by_idx = {r["rashi_idx"]: r for r in res["rashis"]}
     for i in range(12):
-        m = _meta_plus_traits(i)
+        m = _meta_plus_traits(i, lang)
         g = by_idx.get(i, {})
         m["score"] = g.get("score", 0)
-        m["grade"] = g.get("grade", "Normal")
+        m["grade"] = _tg(g.get("grade", "Normal"), lang)
         m["flags"] = g.get("flags", [])
         merged.append(m)
     return _ok({
         "date": res.get("date"),
-        "best": res.get("best"),
-        "worst": res.get("worst"),
+        "best": _tv("name", res.get("best"), lang),
+        "worst": _tv("name", res.get("worst"), lang),
         "rashis": merged,
     })
 
 
 @router.get("/{rashi_idx}")
-def rashi_detail(rashi_idx: int):
+def rashi_detail(rashi_idx: int, lang: str = Depends(get_lang)):
     """Metadata + traits for a single rashi."""
-    _validate_idx(rashi_idx)
-    return _ok(_meta_plus_traits(rashi_idx))
+    _validate_idx(rashi_idx, lang)
+    return _ok(_meta_plus_traits(rashi_idx, lang))
 
 
 @router.get("/{rashi_idx}/daily")
-def rashi_daily(rashi_idx: int, date: Optional[str] = Query(None, description="DD/MM/YYYY | today | tomorrow | yesterday")):
+def rashi_daily(
+    rashi_idx: int,
+    date: Optional[str] = Query(None, description="DD/MM/YYYY | today | tomorrow | yesterday"),
+    lang: str = Depends(get_lang),
+):
     """Daily gochar prediction for a single rashi."""
-    _validate_idx(rashi_idx)
+    _validate_idx(rashi_idx, lang)
     row = _score_for(rashi_idx, date)
     return _ok({
-        **_meta_plus_traits(rashi_idx),
+        **_meta_plus_traits(rashi_idx, lang),
         "date": date or "today",
         "score": row["score"],
-        "grade": row["grade"],
+        "grade": _tg(row["grade"], lang),
         "flags": row["flags"],
     })
 
 
 @router.get("/{rashi_idx}/weekly")
-def rashi_weekly(rashi_idx: int):
+def rashi_weekly(rashi_idx: int, lang: str = Depends(get_lang)):
     """Next 7 days gochar for a rashi."""
-    _validate_idx(rashi_idx)
+    _validate_idx(rashi_idx, lang)
     today = date.today()
     end = today + timedelta(days=6)
     series = nk_engine.get_gochar_range(
         today.isoformat(), end.isoformat(), native_moon_sign=rashi_idx,
     )
     scores = [s["score"] for s in series] or [0]
+    for s in series:
+        s["grade"] = _tg(s.get("grade"), lang)
     return _ok({
-        "rashi": _meta_plus_traits(rashi_idx),
+        "rashi": _meta_plus_traits(rashi_idx, lang),
         "start": today.isoformat(),
         "end": end.isoformat(),
         "days": series,
@@ -162,17 +205,19 @@ def rashi_weekly(rashi_idx: int):
 
 
 @router.get("/{rashi_idx}/monthly")
-def rashi_monthly(rashi_idx: int):
+def rashi_monthly(rashi_idx: int, lang: str = Depends(get_lang)):
     """Next 30 days gochar for a rashi."""
-    _validate_idx(rashi_idx)
+    _validate_idx(rashi_idx, lang)
     today = date.today()
     end = today + timedelta(days=29)
     series = nk_engine.get_gochar_range(
         today.isoformat(), end.isoformat(), native_moon_sign=rashi_idx,
     )
     scores = [s["score"] for s in series] or [0]
+    for s in series:
+        s["grade"] = _tg(s.get("grade"), lang)
     return _ok({
-        "rashi": _meta_plus_traits(rashi_idx),
+        "rashi": _meta_plus_traits(rashi_idx, lang),
         "start": today.isoformat(),
         "end": end.isoformat(),
         "days": series,
@@ -183,25 +228,29 @@ def rashi_monthly(rashi_idx: int):
 
 
 @router.get("/{rashi_idx}/full")
-def rashi_full(rashi_idx: int):
+def rashi_full(rashi_idx: int, lang: str = Depends(get_lang)):
     """One-shot: meta + traits + today + weekly + monthly summaries.
     Powers the in-app rashi detail screen."""
-    _validate_idx(rashi_idx)
+    _validate_idx(rashi_idx, lang)
     today_row = _score_for(rashi_idx, None)
-    t = date.today()
+    today_date = date.today()
     week = nk_engine.get_gochar_range(
-        t.isoformat(), (t + timedelta(days=6)).isoformat(), native_moon_sign=rashi_idx,
+        today_date.isoformat(), (today_date + timedelta(days=6)).isoformat(), native_moon_sign=rashi_idx,
     )
     month = nk_engine.get_gochar_range(
-        t.isoformat(), (t + timedelta(days=29)).isoformat(), native_moon_sign=rashi_idx,
+        today_date.isoformat(), (today_date + timedelta(days=29)).isoformat(), native_moon_sign=rashi_idx,
     )
     w_scores = [s["score"] for s in week] or [0]
     m_scores = [s["score"] for s in month] or [0]
+    for s in week:
+        s["grade"] = _tg(s.get("grade"), lang)
+    for s in month:
+        s["grade"] = _tg(s.get("grade"), lang)
     return _ok({
-        **_meta_plus_traits(rashi_idx),
+        **_meta_plus_traits(rashi_idx, lang),
         "today": {
             "score": today_row["score"],
-            "grade": today_row["grade"],
+            "grade": _tg(today_row["grade"], lang),
             "flags": today_row["flags"],
         },
         "weekly": {
@@ -360,15 +409,17 @@ def _compute_predictions(rashi_idx: int) -> dict:
 
 
 @router.get("/{rashi_idx}/predictions")
-def rashi_predictions(rashi_idx: int):
+def rashi_predictions(rashi_idx: int, lang: str = Depends(get_lang)):
     """Detailed life-area predictions (career, health, love, wealth, family,
     conflict, ego, aggression, mind, spiritual) based on current transits."""
-    _validate_idx(rashi_idx)
+    _validate_idx(rashi_idx, lang)
     try:
         result = _compute_predictions(rashi_idx)
+        for area_data in result["predictions"].values():
+            area_data["grade"] = _tg(area_data.get("grade"), lang)
         return _ok({
-            **_meta_plus_traits(rashi_idx),
+            **_meta_plus_traits(rashi_idx, lang),
             **result,
         })
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
+        raise HTTPException(status_code=500, detail=t("err.prediction_failed", lang, error=str(e)))

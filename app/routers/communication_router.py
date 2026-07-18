@@ -49,6 +49,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.config import settings
 from app.core.dependencies import get_current_user, require_role
+from app.core.i18n import get_lang, t, CATALOG
 from app.models.model import (
     User, AstrologerProfile, Wallet, WalletTransaction,
     AgoraConfig, CallSession, LiveStream, LiveStreamViewer,
@@ -107,11 +108,22 @@ def _generate_channel_name(prefix: str) -> str:
     return f"{prefix}_{uuid.uuid4().hex[:12]}"
 
 
-def _debit_wallet(db: Session, user_id: str, amount: float, description: str) -> Optional[str]:
+def _gift_display_name(name: str, lang: str) -> str:
+    """Localized label for a known gift catalog name (fallback: stored name as-is
+    for custom/admin-created gifts not in the catalog)."""
+    if not name:
+        return name
+    key = f"label.gift.{name.strip().lower().replace(' ', '_')}"
+    if key in CATALOG:
+        return t(key, lang)
+    return name
+
+
+def _debit_wallet(db: Session, user_id: str, amount: float, description: str, lang: str = "english") -> Optional[str]:
     """Debit user wallet. Returns txn_id or raises."""
     wallet = db.query(Wallet).filter(Wallet.user_id == user_id).first()
     if not wallet or float(wallet.balance) < amount:
-        raise HTTPException(status_code=402, detail=f"Insufficient balance. Need ₹{amount}")
+        raise HTTPException(status_code=402, detail=t("err.insufficient_balance_amount", lang, amount=amount))
     wallet.balance = Decimal(str(float(wallet.balance) - amount))
     txn = WalletTransaction(
         wallet_id=wallet.id,
@@ -177,10 +189,11 @@ def update_agora_config(
     req: AgoraConfigUpdate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     cfg = db.query(AgoraConfig).filter(AgoraConfig.id == config_id).first()
     if not cfg:
-        raise HTTPException(status_code=404, detail="Config not found")
+        raise HTTPException(status_code=404, detail=t("err.config_not_found", lang))
     data = req.model_dump(exclude_unset=True)
     if data.get("is_active"):
         db.query(AgoraConfig).filter(AgoraConfig.id != config_id).update({"is_active": False})
@@ -196,15 +209,16 @@ def delete_agora_config(
     config_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     cfg = db.query(AgoraConfig).filter(AgoraConfig.id == config_id).first()
     if not cfg:
-        raise HTTPException(status_code=404, detail="Config not found")
+        raise HTTPException(status_code=404, detail=t("err.config_not_found", lang))
     if cfg.is_active:
-        raise HTTPException(status_code=400, detail="Cannot delete the active Agora config. Activate another config first.")
+        raise HTTPException(status_code=400, detail=t("err.cannot_delete_active_config", lang))
     db.delete(cfg)
     db.commit()
-    return MessageResponse(message="Agora config deleted")
+    return MessageResponse(message=t("msg.agora_config_deleted", lang))
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -228,12 +242,25 @@ def create_gift(
 def list_gifts(
     include_inactive: bool = False,
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Public: list available gifts. Admin can set include_inactive=true to see all."""
     q = db.query(GiftPricing)
     if not include_inactive:
         q = q.filter(GiftPricing.is_active == True)
-    return q.order_by(GiftPricing.sort_order).all()
+    gifts = q.order_by(GiftPricing.sort_order).all()
+    return [
+        GiftPricingResponse(
+            id=g.id,
+            name=_gift_display_name(g.name, lang),
+            icon=g.icon,
+            price=float(g.price),
+            animation_url=g.animation_url,
+            sort_order=g.sort_order,
+            is_active=g.is_active,
+        )
+        for g in gifts
+    ]
 
 
 @router.put("/gifts/{gift_id}", response_model=GiftPricingResponse)
@@ -242,10 +269,11 @@ def update_gift(
     req: GiftPricingCreate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
     if not g:
-        raise HTTPException(status_code=404, detail="Gift not found")
+        raise HTTPException(status_code=404, detail=t("err.gift_not_found", lang))
     data = req.model_dump(exclude_unset=True)
     for k, v in data.items():
         setattr(g, k, v)
@@ -259,10 +287,11 @@ def toggle_gift(
     gift_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
     if not g:
-        raise HTTPException(status_code=404, detail="Gift not found")
+        raise HTTPException(status_code=404, detail=t("err.gift_not_found", lang))
     g.is_active = not g.is_active
     db.commit()
     db.refresh(g)
@@ -274,19 +303,21 @@ def delete_gift(
     gift_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
     if not g:
-        raise HTTPException(status_code=404, detail="Gift not found")
+        raise HTTPException(status_code=404, detail=t("err.gift_not_found", lang))
     db.delete(g)
     db.commit()
-    return MessageResponse(message="Gift deleted")
+    return MessageResponse(message=t("msg.gift_deleted", lang))
 
 
 @router.post("/gifts/seed", response_model=MessageResponse)
 def seed_gifts(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     defaults = [
         {"name": "Rose", "icon": "🌹", "price": 10, "sort_order": 1},
@@ -305,7 +336,7 @@ def seed_gifts(
             db.add(GiftPricing(**d))
             created += 1
     db.commit()
-    return MessageResponse(message=f"Seeded {created} gifts")
+    return MessageResponse(message=t("msg.gifts_seeded", lang, count=created))
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -317,6 +348,7 @@ def initiate_call(
     req: InitiateCallRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """
     User initiates a voice/video call to an astrologer.
@@ -330,21 +362,21 @@ def initiate_call(
         AstrologerProfile.is_approved == True,
     ).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
     if not profile.is_online or profile.is_busy:
-        raise HTTPException(status_code=400, detail="Astrologer is not available")
+        raise HTTPException(status_code=400, detail=t("err.astrologer_not_available", lang))
 
     # determine rate
     rate = float(profile.rate_per_min_call) if req.call_type == "voice" else float(profile.rate_per_min_video)
     if rate <= 0:
-        raise HTTPException(status_code=400, detail=f"Astrologer hasn't set {req.call_type} rate")
+        raise HTTPException(status_code=400, detail=t("err.call_rate_not_set", lang, call_type=req.call_type))
 
     # check wallet & calculate eligible minutes
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     balance = float(wallet.balance) if wallet else 0
     eligible_minutes = int(balance / rate) if rate > 0 else 0
     if eligible_minutes < 1:
-        raise HTTPException(status_code=402, detail=f"Insufficient balance. Need at least ₹{rate} (1 min)")
+        raise HTTPException(status_code=402, detail=t("err.insufficient_balance_min_call", lang, rate=rate))
     max_call_seconds = eligible_minutes * 60
 
     astro_user = db.query(User).filter(User.id == profile.user_id).first()
@@ -374,11 +406,12 @@ def initiate_call(
     # FCM + WebSocket push to astrologer with incoming call
     from app.services.fcm_service import notify_call_incoming
     if astro_user:
+        caller_display_name = current_user.name or t("label.default_user_name", lang)
         call_data = {
             "type": "incoming_call",
             "call_id": call.id,
             "call_type": req.call_type,
-            "caller_name": current_user.name or "User",
+            "caller_name": caller_display_name,
             "rate_per_min": str(rate),
             "channel_name": channel,
             "agora_token": token_receiver,
@@ -391,7 +424,7 @@ def initiate_call(
         if astro_user.fcm_token:
             notify_call_incoming(
                 fcm_token=astro_user.fcm_token,
-                caller_name=current_user.name or "User",
+                caller_name=caller_display_name,
                 call_type=req.call_type,
                 call_id=call.id,
                 rate_per_min=rate,
@@ -399,9 +432,13 @@ def initiate_call(
                 agora_token=token_receiver,
                 agora_app_id=app_id,
             )
-        save_notification(db, astro_user.id, f"Incoming {req.call_type.title()} Call",
-            f"{current_user.name or 'User'} is calling you", "incoming_call",
-            {"call_id": call.id, "call_type": req.call_type})
+        save_notification(
+            db, astro_user.id,
+            t("label.notif.incoming_call_title", lang, call_type=t(f"label.call_type.{req.call_type}", lang)),
+            t("label.notif.incoming_call_body", lang, name=caller_display_name),
+            "incoming_call",
+            {"call_id": call.id, "call_type": req.call_type},
+        )
 
     return CallSessionResponse(
         id=call.id, channel_name=channel,
@@ -420,13 +457,14 @@ def call_action(
     req: CallActionRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     call = db.query(CallSession).filter(CallSession.id == call_id).first()
     if not call:
-        raise HTTPException(status_code=404, detail="Call not found")
+        raise HTTPException(status_code=404, detail=t("err.call_not_found", lang))
 
     if current_user.id not in (call.caller_id, call.receiver_id):
-        raise HTTPException(status_code=403, detail="Not a participant")
+        raise HTTPException(status_code=403, detail=t("err.not_participant", lang))
 
     app_id, _ = _get_agora_creds(db)
     my_token = call.agora_token_caller if current_user.id == call.caller_id else call.agora_token_receiver
@@ -440,50 +478,55 @@ def call_action(
 
     if req.action == "accept":
         if current_user.id != call.receiver_id:
-            raise HTTPException(status_code=400, detail="Only receiver can accept")
+            raise HTTPException(status_code=400, detail=t("err.only_receiver_accept", lang))
         if call.status != "ringing":
-            raise HTTPException(status_code=400, detail=f"Cannot accept call in '{call.status}' state")
+            raise HTTPException(status_code=400, detail=t("err.cannot_accept_call_state", lang, status=call.status))
         if call.expires_at and datetime.utcnow() > call.expires_at:
             call.status = "missed"
             _release_astrologer(db, call.astrologer_profile_id)
             db.commit()
-            raise HTTPException(status_code=400, detail="Call expired")
+            raise HTTPException(status_code=400, detail=t("err.call_expired", lang))
         call.status = "active"
         call.started_at = datetime.utcnow()
 
         # FCM push to user that call is accepted
         from app.services.fcm_service import notify_call_accepted as _notify_call_accepted
         caller = db.query(User).filter(User.id == call.caller_id).first()
+        astrologer_display_name = current_user.name or t("label.default_astrologer_name", lang)
         if caller and caller.fcm_token:
             _notify_call_accepted(
                 fcm_token=caller.fcm_token,
-                astrologer_name=current_user.name or "Astrologer",
+                astrologer_name=astrologer_display_name,
                 call_id=call.id,
                 call_type=call.call_type,
                 channel_name=call.channel_name,
             )
         if caller:
-            save_notification(db, caller.id, "Call Connected",
-                f"{current_user.name or 'Astrologer'} accepted your {call.call_type} call", "call_accepted",
-                {"call_id": call.id})
+            save_notification(
+                db, caller.id,
+                t("label.notif.call_connected_title", lang),
+                t("label.notif.call_connected_body", lang, name=astrologer_display_name, call_type=call.call_type),
+                "call_accepted",
+                {"call_id": call.id},
+            )
 
     elif req.action == "reject":
         if current_user.id != call.receiver_id:
-            raise HTTPException(status_code=400, detail="Only receiver can reject")
+            raise HTTPException(status_code=400, detail=t("err.only_receiver_reject", lang))
         call.status = "rejected"
         call.ended_at = datetime.utcnow()
         _release_astrologer(db, call.astrologer_profile_id)
 
     elif req.action == "cancel":
         if current_user.id != call.caller_id:
-            raise HTTPException(status_code=400, detail="Only caller can cancel")
+            raise HTTPException(status_code=400, detail=t("err.only_caller_cancel", lang))
         call.status = "cancelled"
         call.ended_at = datetime.utcnow()
         _release_astrologer(db, call.astrologer_profile_id)
 
     elif req.action == "end":
         if call.status != "active":
-            raise HTTPException(status_code=400, detail="Call is not active")
+            raise HTTPException(status_code=400, detail=t("err.call_not_active", lang))
         call.status = "completed"
         call.ended_at = datetime.utcnow()
         if call.started_at:
@@ -501,7 +544,8 @@ def call_action(
             try:
                 call.user_wallet_txn_id = _debit_wallet(
                     db, call.caller_id, total,
-                    f"{call.call_type.title()} call — {minutes} min × ₹{rate}/min"
+                    f"{call.call_type.title()} call — {minutes} min × ₹{rate}/min",
+                    lang=lang,
                 )
             except HTTPException:
                 pass
@@ -541,10 +585,11 @@ def get_call(
     call_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     call = db.query(CallSession).filter(CallSession.id == call_id).first()
     if not call or current_user.id not in (call.caller_id, call.receiver_id):
-        raise HTTPException(status_code=404, detail="Call not found")
+        raise HTTPException(status_code=404, detail=t("err.call_not_found", lang))
     app_id, _ = _get_agora_creds(db)
     token = call.agora_token_caller if current_user.id == call.caller_id else call.agora_token_receiver
     return CallSessionResponse(
@@ -596,15 +641,16 @@ def create_live_stream(
     req: CreateLiveStreamRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Astrologer creates a live stream session."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Only astrologers can go live")
+        raise HTTPException(status_code=403, detail=t("err.astrologers_only", lang))
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.user_id == current_user.id
     ).first()
     if not profile or not profile.is_approved:
-        raise HTTPException(status_code=403, detail="Profile not approved")
+        raise HTTPException(status_code=403, detail=t("err.profile_not_approved", lang))
 
     channel = _generate_channel_name("live")
     app_id, app_cert = _get_agora_creds(db)
@@ -636,12 +682,13 @@ def start_live_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.host_id == current_user.id
     ).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not found")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
     stream.status = "live"
     stream.started_at = datetime.utcnow()
     db.commit()
@@ -661,12 +708,13 @@ def end_live_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.host_id == current_user.id
     ).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not found")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
     stream.status = "ended"
     stream.ended_at = datetime.utcnow()
     # mark all viewers as left
@@ -712,12 +760,13 @@ def join_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
     ).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not found or not live")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found_or_not_live", lang))
 
     app_id, app_cert = _get_agora_creds(db)
     # viewers join as subscribers (role=2), uid based on hash
@@ -748,6 +797,7 @@ def leave_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     viewer = db.query(LiveStreamViewer).filter(
         LiveStreamViewer.stream_id == stream_id,
@@ -760,7 +810,7 @@ def leave_stream(
     if stream and stream.viewer_count > 0:
         stream.viewer_count -= 1
     db.commit()
-    return MessageResponse(message="Left stream")
+    return MessageResponse(message=t("msg.left_stream", lang))
 
 
 @router.post("/live/{stream_id}/question", response_model=StreamQuestionResponse)
@@ -769,12 +819,13 @@ def send_question(
     req: StreamQuestionRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
     ).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not live")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_live", lang))
     q = LiveStreamQuestion(
         stream_id=stream.id,
         user_id=current_user.id,
@@ -813,10 +864,11 @@ def get_viewers(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     stream = db.query(LiveStream).filter(LiveStream.id == stream_id).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not found")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
     viewers = db.query(LiveStreamViewer).filter(
         LiveStreamViewer.stream_id == stream_id,
         LiveStreamViewer.left_at == None,
@@ -837,21 +889,22 @@ def send_gift(
     req: SendGiftRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
     ).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not live")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_live", lang))
 
     gift = db.query(GiftPricing).filter(
         GiftPricing.id == req.gift_pricing_id, GiftPricing.is_active == True
     ).first()
     if not gift:
-        raise HTTPException(status_code=404, detail="Gift not found")
+        raise HTTPException(status_code=404, detail=t("err.gift_not_found", lang))
 
     price = float(gift.price)
-    txn_id = _debit_wallet(db, current_user.id, price, f"Gift: {gift.name} in live stream")
+    txn_id = _debit_wallet(db, current_user.id, price, f"Gift: {gift.name} in live stream", lang=lang)
 
     lg = LiveStreamGift(
         stream_id=stream.id,
@@ -875,7 +928,7 @@ def send_gift(
     db.refresh(lg)
     return GiftSentResponse(
         id=lg.id, sender_name=lg.sender_name,
-        gift_name=gift.name, gift_icon=gift.icon,
+        gift_name=_gift_display_name(gift.name, lang), gift_icon=gift.icon,
         amount=price, created_at=lg.created_at,
     )
 
@@ -890,21 +943,22 @@ def send_super_chat(
     req: SuperChatRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Send a paid pinned message in a live stream. Deducted from wallet, credited to astrologer."""
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
     ).first()
     if not stream:
-        raise HTTPException(status_code=404, detail="Stream not live")
+        raise HTTPException(status_code=404, detail=t("err.stream_not_live", lang))
 
     # Enforce astrologer's minimum super chat rate
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == stream.astrologer_profile_id).first()
     min_rate = float(profile.super_chat_rate or 50) if profile else 50
     amount = req.amount
     if amount < min_rate:
-        raise HTTPException(status_code=400, detail=f"Minimum super chat amount is ₹{min_rate}")
-    txn_id = _debit_wallet(db, current_user.id, amount, f"Super Chat in live stream: ₹{amount}")
+        raise HTTPException(status_code=400, detail=t("err.min_super_chat_amount", lang, amount=min_rate))
+    txn_id = _debit_wallet(db, current_user.id, amount, f"Super Chat in live stream: ₹{amount}", lang=lang)
 
     sc = LiveStreamSuperChat(
         stream_id=stream.id,
@@ -960,6 +1014,7 @@ def initiate_chat(
     req: InitiateChatRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """
     User requests a paid chat. Astrologer has 60s to accept.
@@ -975,9 +1030,9 @@ def initiate_chat(
         AstrologerProfile.is_approved == True,
     ).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
     if not profile.is_online or profile.is_busy:
-        raise HTTPException(status_code=400, detail="Astrologer not available")
+        raise HTTPException(status_code=400, detail=t("err.astrologer_not_available", lang))
 
     # Determine billing mode
     session_rate = float(profile.rate_per_session_chat or 0)
@@ -989,12 +1044,12 @@ def initiate_chat(
         billing_mode = "per_minute"
         block_amount = minute_rate * 5  # block 5 min worth
     else:
-        raise HTTPException(status_code=400, detail="Chat rate not set")
+        raise HTTPException(status_code=400, detail=t("err.chat_rate_not_set", lang))
 
     # Check & block wallet amount
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet or float(wallet.balance) < block_amount:
-        raise HTTPException(status_code=402, detail=f"Insufficient balance. Need ₹{block_amount}")
+        raise HTTPException(status_code=402, detail=t("err.insufficient_balance_amount", lang, amount=block_amount))
 
     # Debit (block) from user wallet
     wallet.balance = Decimal(str(float(wallet.balance) - block_amount))
@@ -1030,11 +1085,12 @@ def initiate_chat(
     # FCM push + WebSocket push to astrologer
     astro_user = db.query(User).filter(User.id == profile.user_id).first()
     if astro_user:
+        user_display_name = current_user.name or t("label.default_user_name", lang)
         chat_data = {
             "type": "chat_request",
             "session_id": session.id,
-            "user_name": current_user.name or "User",
-            "sender_name": current_user.name or "User",
+            "user_name": user_display_name,
+            "sender_name": user_display_name,
             "rate_per_min": str(float(session.rate_per_min or 0)),
             "rate_per_session": str(float(session.rate_per_session or 0)),
             "billing_mode": session.billing_mode or "per_session",
@@ -1049,16 +1105,20 @@ def initiate_chat(
         if astro_user.fcm_token:
             notify_chat_request(
                 fcm_token=astro_user.fcm_token,
-                user_name=current_user.name or "User",
+                user_name=user_display_name,
                 session_id=session.id,
                 rate_per_min=float(session.rate_per_min or 0),
                 rate_per_session=float(session.rate_per_session or 0),
                 billing_mode=session.billing_mode or "per_session",
                 session_message_limit=session.session_message_limit or 45,
             )
-        save_notification(db, astro_user.id, "New Chat Request",
-            f"{current_user.name or 'User'} wants to chat with you", "chat_request",
-            {"session_id": session.id})
+        save_notification(
+            db, astro_user.id,
+            t("label.notif.chat_request_title", lang),
+            t("label.notif.chat_request_body", lang, name=user_display_name),
+            "chat_request",
+            {"session_id": session.id},
+        )
 
     return _chat_session_response(session, db)
 
@@ -1069,25 +1129,26 @@ def chat_action(
     req: CallActionRequest,   # reuse: accept | end | cancel
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=404, detail=t("err.session_not_found", lang))
 
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
 
     if req.action == "accept":
         if not profile or current_user.id != profile.user_id:
-            raise HTTPException(status_code=403, detail="Only astrologer can accept")
+            raise HTTPException(status_code=403, detail=t("err.only_astrologer_accept", lang))
         if session.status != "waiting":
-            raise HTTPException(status_code=400, detail="Cannot accept")
+            raise HTTPException(status_code=400, detail=t("err.cannot_accept_chat", lang))
         if session.expires_at and datetime.utcnow() > session.expires_at:
             session.status = "expired"
             _refund_blocked(db, session)
             if profile:
                 profile.is_busy = False
             db.commit()
-            raise HTTPException(status_code=400, detail="Chat request expired")
+            raise HTTPException(status_code=400, detail=t("err.chat_request_expired", lang))
         session.status = "active"
         session.started_at = datetime.utcnow()
         if session.billing_mode == "per_session":
@@ -1102,10 +1163,11 @@ def chat_action(
             pass
         # FCM push to user that chat is accepted
         chat_user = db.query(User).filter(User.id == session.user_id).first()
+        astrologer_display_name = current_user.name or t("label.default_astrologer_name", lang)
         if chat_user and chat_user.fcm_token:
             notify_chat_accepted(
                 fcm_token=chat_user.fcm_token,
-                astrologer_name=current_user.name or "Astrologer",
+                astrologer_name=astrologer_display_name,
                 session_id=session.id,
                 rate_per_min=float(session.rate_per_min or 0),
                 rate_per_session=float(session.rate_per_session or 0),
@@ -1113,14 +1175,18 @@ def chat_action(
                 session_message_limit=session.session_message_limit or 45,
             )
         if chat_user:
-            save_notification(db, chat_user.id, "Chat Started",
-                f"{current_user.name or 'Astrologer'} is ready to chat", "chat_accepted",
-                {"session_id": session.id})
+            save_notification(
+                db, chat_user.id,
+                t("label.notif.chat_started_title", lang),
+                t("label.notif.chat_started_body", lang, name=astrologer_display_name),
+                "chat_accepted",
+                {"session_id": session.id},
+            )
 
     elif req.action == "end":
         if session.status != "active":
-            raise HTTPException(status_code=400, detail="Chat not active")
-        _finalize_chat_billing(db, session, profile)
+            raise HTTPException(status_code=400, detail=t("err.chat_not_active", lang))
+        _finalize_chat_billing(db, session, profile, lang=lang)
 
     elif req.action == "cancel":
         session.status = "cancelled"
@@ -1153,7 +1219,7 @@ def _refund_blocked(db: Session, session: ChatSession):
             db.flush()
 
 
-def _finalize_chat_billing(db: Session, session: ChatSession, profile):
+def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str = "english"):
     """End session and settle billing."""
     session.status = "completed"
     session.ended_at = datetime.utcnow()
@@ -1170,7 +1236,7 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile):
             # Debit additional from wallet
             extra = total - blocked
             try:
-                _debit_wallet(db, session.user_id, extra, f"Chat extra - {minutes} min")
+                _debit_wallet(db, session.user_id, extra, f"Chat extra - {minutes} min", lang=lang)
             except HTTPException:
                 total = blocked  # cap at blocked if insufficient
 
@@ -1220,10 +1286,11 @@ def get_chat_session(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=404, detail=t("err.session_not_found", lang))
     return _chat_session_response(session, db)
 
 
@@ -1270,6 +1337,7 @@ def send_chat_message_rest(
     req: ChatMessageRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """
     Send a chat message via REST API (used for inline notification replies).
@@ -1278,15 +1346,15 @@ def send_chat_message_rest(
     """
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=404, detail=t("err.session_not_found", lang))
     if session.status != "active":
-        raise HTTPException(status_code=400, detail="Session not active")
+        raise HTTPException(status_code=400, detail=t("err.session_not_active", lang))
 
     # Verify participant
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
     astro_user_id = profile.user_id if profile else None
     if current_user.id != session.user_id and current_user.id != astro_user_id:
-        raise HTTPException(status_code=403, detail="Not a participant")
+        raise HTTPException(status_code=403, detail=t("err.not_participant", lang))
 
     is_user = current_user.id == session.user_id
 
@@ -1310,17 +1378,18 @@ def send_chat_message_rest(
     # Send FCM to the other participant
     if is_user and profile:
         astro_u = db.query(User).filter(User.id == profile.user_id).first()
+        sender_display_name = current_user.name or t("label.default_user_name", lang)
         if astro_u and astro_u.fcm_token:
             send_push(
                 fcm_token=astro_u.fcm_token,
-                title=f"Message from {current_user.name or 'User'}",
-                body=req.content[:200] if req.message_type == "text" else "📎 Attachment",
+                title=t("label.notif.message_from", lang, name=sender_display_name),
+                body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", lang),
                 role="astrologer",
                 data={
                     "type": "chat_message",
                     "session_id": session_id,
-                    "sender_name": current_user.name or "User",
-                    "user_name": current_user.name or "User",
+                    "sender_name": sender_display_name,
+                    "user_name": sender_display_name,
                     "rate_per_min": str(float(session.rate_per_min or 0)),
                     "rate_per_session": str(float(session.rate_per_session or 0)),
                     "billing_mode": session.billing_mode or "per_session",
@@ -1329,17 +1398,18 @@ def send_chat_message_rest(
             )
     elif not is_user:
         chat_user = db.query(User).filter(User.id == session.user_id).first()
+        sender_display_name = current_user.name or t("label.default_astrologer_name", lang)
         if chat_user and chat_user.fcm_token:
             send_push(
                 fcm_token=chat_user.fcm_token,
-                title=f"Message from {current_user.name or 'Astrologer'}",
-                body=req.content[:200] if req.message_type == "text" else "📎 Attachment",
+                title=t("label.notif.message_from", lang, name=sender_display_name),
+                body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", lang),
                 role="user",
                 data={
                     "type": "chat_message",
                     "session_id": session_id,
-                    "sender_name": current_user.name or "Astrologer",
-                    "astrologer_name": current_user.name or "Astrologer",
+                    "sender_name": sender_display_name,
+                    "astrologer_name": sender_display_name,
                     "rate_per_min": str(float(session.rate_per_min or 0)),
                     "rate_per_session": str(float(session.rate_per_session or 0)),
                     "billing_mode": session.billing_mode or "per_session",
@@ -1368,21 +1438,22 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 async def upload_chat_file(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang),
 ):
     """
     Upload a photo or PDF for chat. Returns the file URL.
     Only .jpg/.png/.gif/.webp/.pdf allowed, max 10 MB.
     """
     if not file.filename:
-        raise HTTPException(status_code=400, detail="No file provided")
+        raise HTTPException(status_code=400, detail=t("err.no_file_provided", lang))
 
     ext = os.path.splitext(file.filename)[1].lower()
     if ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(status_code=400, detail=f"File type not allowed. Use: {', '.join(ALLOWED_EXTENSIONS)}")
+        raise HTTPException(status_code=400, detail=t("err.file_type_not_allowed", lang, allowed=", ".join(ALLOWED_EXTENSIONS)))
 
     contents = await file.read()
     if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="File too large. Max 10 MB")
+        raise HTTPException(status_code=400, detail=t("err.file_too_large", lang))
 
     # Generate unique filename
     unique_name = f"{uuid.uuid4().hex}{ext}"
@@ -1410,9 +1481,10 @@ async def upload_chat_file(
 def download_chat_file(
     year: str, month: str, day: str, filename: str,
     current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang),
 ):
     """Download a chat file. Requires authentication (only chat participants can access)."""
     file_path = os.path.join(UPLOAD_DIR, year, month, day, filename)
     if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
+        raise HTTPException(status_code=404, detail=t("err.chat_file_not_found", lang))
     return FileResponse(file_path, filename=filename)

@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.i18n import get_lang, t
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.character import character_engine
@@ -46,13 +47,14 @@ def get_character_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Full 51-score character analysis for a birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang))
 
     try:
         t0 = time.time()
@@ -66,7 +68,7 @@ def get_character_analysis(
         }
     except Exception as e:
         logger.error("Character analysis error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Character analysis failed: {e}")
+        raise HTTPException(500, t("err.character_analysis_failed", lang, error=str(e)))
 
 
 @router.get("/{chart_id}/summary")
@@ -74,13 +76,14 @@ def get_character_summary(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Lightweight character summary — group averages + key scores."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang))
 
     try:
         t0 = time.time()
@@ -103,4 +106,4 @@ def get_character_summary(
         }
     except Exception as e:
         logger.error("Character summary error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Character summary failed: {e}")
+        raise HTTPException(500, t("err.character_summary_failed", lang, error=str(e)))

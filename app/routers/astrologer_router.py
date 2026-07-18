@@ -34,6 +34,7 @@ from app.core.security import (
 )
 from app.core.config import settings
 from app.core.dependencies import get_current_user
+from app.core.i18n import get_lang, t
 from app.models.model import User, RefreshToken, Wallet, AstrologerProfile
 from app.schemas.user_schema import (
     ForgotPasswordRequest, ResetPasswordRequest, RefreshTokenRequest,
@@ -118,11 +119,11 @@ def _issue_tokens(user: User, db: Session) -> AstrologerTokenResponse:
 # ── Signup ────────────────────────────────────────────────────────────
 
 @router.post("/signup", response_model=AstrologerTokenResponse, status_code=status.HTTP_201_CREATED)
-def signup(req: AstrologerSignupRequest, db: Session = Depends(get_db)):
+def signup(req: AstrologerSignupRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     if db.query(User).filter(User.email == req.email).first():
-        raise HTTPException(status_code=409, detail="Email already registered")
+        raise HTTPException(status_code=409, detail=t("err.email_registered", lang))
     if req.phone and db.query(User).filter(User.phone == req.phone).first():
-        raise HTTPException(status_code=409, detail="Phone already registered")
+        raise HTTPException(status_code=409, detail=t("err.phone_registered", lang))
 
     user = User(
         email=req.email,
@@ -158,12 +159,12 @@ def signup(req: AstrologerSignupRequest, db: Session = Depends(get_db)):
 # ── Login ─────────────────────────────────────────────────────────────
 
 @router.post("/login", response_model=AstrologerTokenResponse)
-def login(req: AstrologerLoginRequest, db: Session = Depends(get_db)):
+def login(req: AstrologerLoginRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     user = db.query(User).filter(User.email == req.email, User.role == "astrologer").first()
     if not user or not user.password_hash or not verify_password(req.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(status_code=401, detail=t("err.invalid_credentials", lang))
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account is deactivated")
+        raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     if req.fcm_token:
         user.fcm_token = req.fcm_token
         db.commit()
@@ -173,10 +174,10 @@ def login(req: AstrologerLoginRequest, db: Session = Depends(get_db)):
 # ── Google Login ──────────────────────────────────────────────────────
 
 @router.post("/google-login", response_model=AstrologerTokenResponse)
-def google_login(req: AstrologerGoogleLoginRequest, db: Session = Depends(get_db)):
+def google_login(req: AstrologerGoogleLoginRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     info = verify_google_token(req.id_token)
     if not info or not info.get("email"):
-        raise HTTPException(status_code=401, detail="Invalid Google token")
+        raise HTTPException(status_code=401, detail=t("err.invalid_google_token", lang))
 
     user = db.query(User).filter(User.google_id == info["google_id"]).first()
     if not user:
@@ -184,7 +185,7 @@ def google_login(req: AstrologerGoogleLoginRequest, db: Session = Depends(get_db
 
     if user:
         if user.role != "astrologer":
-            raise HTTPException(status_code=409, detail="This email is registered with a different role")
+            raise HTTPException(status_code=409, detail=t("err.email_role_mismatch", lang))
         if not user.google_id:
             user.google_id = info["google_id"]
         if not user.avatar_url and info.get("avatar_url"):
@@ -213,17 +214,17 @@ def google_login(req: AstrologerGoogleLoginRequest, db: Session = Depends(get_db
         db.refresh(user)
 
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account is deactivated")
+        raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     return _issue_tokens(user, db)
 
 
 # ── Forgot Password ──────────────────────────────────────────────────
 
 @router.post("/forgot-password", response_model=MessageResponse)
-def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
+def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     user = db.query(User).filter(User.email == req.email, User.role == "astrologer").first()
     if not user:
-        return MessageResponse(message="If this email is registered, a reset link has been sent")
+        return MessageResponse(message=t("msg.reset_link_sent", lang))
 
     token = generate_reset_token()
     user.reset_token = hash_token(token)
@@ -232,43 +233,43 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
 
     # TODO: send email with reset link containing `token`
 
-    return MessageResponse(message="If this email is registered, a reset link has been sent")
+    return MessageResponse(message=t("msg.reset_link_sent", lang))
 
 
 # ── Reset Password ───────────────────────────────────────────────────
 
 @router.post("/reset-password", response_model=MessageResponse)
-def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
+def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     hashed = hash_token(req.token)
     user = db.query(User).filter(
         User.reset_token == hashed,
         User.reset_token_expires > datetime.utcnow(),
     ).first()
     if not user:
-        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        raise HTTPException(status_code=400, detail=t("err.invalid_reset_token", lang))
 
     user.password_hash = hash_password(req.new_password)
     user.reset_token = None
     user.reset_token_expires = None
     db.commit()
-    return MessageResponse(message="Password reset successfully")
+    return MessageResponse(message=t("msg.password_reset", lang))
 
 
 # ── Refresh Token ─────────────────────────────────────────────────────
 
 @router.post("/refresh", response_model=AstrologerTokenResponse)
-def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db)):
+def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     hashed = hash_token(req.refresh_token)
     token_row = db.query(RefreshToken).filter(
         RefreshToken.token_hash == hashed,
         RefreshToken.expires_at > datetime.utcnow(),
     ).first()
     if not token_row:
-        raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
+        raise HTTPException(status_code=401, detail=t("err.invalid_refresh_token", lang))
 
     user = db.query(User).filter(User.id == token_row.user_id, User.role == "astrologer").first()
     if not user or not user.is_active:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail=t("err.user_not_found", lang))
 
     db.delete(token_row)
     db.commit()
@@ -278,9 +279,13 @@ def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db)):
 # ── Get My Profile ────────────────────────────────────────────────────
 
 @router.get("/me", response_model=AstrologerFullResponse)
-def get_me(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_me(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     return _build_full_response(current_user, db)
 
 
@@ -291,9 +296,10 @@ def update_me(
     req: UserUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     update_data = req.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(current_user, field, value)
@@ -309,12 +315,13 @@ def update_profile(
     req: AstrologerProfileUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     profile = current_user.astrologer_profile
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer profile not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_profile_not_found", lang))
 
     update_data = req.model_dump(exclude_unset=True)
     for field, value in update_data.items():
@@ -331,12 +338,13 @@ def update_status(
     req: AstrologerStatusUpdate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     profile = current_user.astrologer_profile
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer profile not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_profile_not_found", lang))
 
     if req.is_online is not None:
         profile.is_online = req.is_online
@@ -354,12 +362,13 @@ def change_password(
     req: ChangePasswordRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     if not current_user.password_hash or not verify_password(req.old_password, current_user.password_hash):
-        raise HTTPException(status_code=400, detail="Incorrect current password")
+        raise HTTPException(status_code=400, detail=t("err.incorrect_password", lang))
     current_user.password_hash = hash_password(req.new_password)
     db.commit()
-    return MessageResponse(message="Password changed successfully")
+    return MessageResponse(message=t("msg.password_changed", lang))
 
 
 # ── Deactivate ────────────────────────────────────────────────────────
@@ -368,12 +377,13 @@ def change_password(
 def deactivate_me(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     current_user.is_active = False
     if current_user.astrologer_profile:
         current_user.astrologer_profile.is_online = False
     db.commit()
-    return MessageResponse(message="Account deactivated")
+    return MessageResponse(message=t("msg.account_deactivated", lang))
 
 
 # ── Public: List Astrologers ─────────────────────────────────────────
@@ -428,13 +438,13 @@ def list_astrologers(
 # ── Public: Single Astrologer ────────────────────────────────────────
 
 @router.get("/{astrologer_id}", response_model=AstrologerProfileResponse)
-def get_astrologer(astrologer_id: str, db: Session = Depends(get_db)):
+def get_astrologer(astrologer_id: str, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == astrologer_id,
         AstrologerProfile.is_approved == True,
     ).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
     return _build_profile_response(profile)
 
 
@@ -444,13 +454,14 @@ def list_public_reviews(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Public: list visible reviews for an astrologer (newest first)."""
     from app.models.model import Review, User as UserModel
 
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
 
     q = db.query(Review, UserModel).join(
         UserModel, Review.user_id == UserModel.id,
@@ -466,7 +477,7 @@ def list_public_reviews(
         "reviews": [
             {
                 "id": r.id,
-                "user_name": u.name or "Anonymous",
+                "user_name": u.name or t("label.anonymous", lang),
                 "user_avatar": u.avatar_url,
                 "rating": r.rating,
                 "comment": r.comment,
@@ -504,6 +515,7 @@ class KycSubmitRequest(_BaseModel):
 def get_my_kyc_status(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """
     Return current user's KYC status — used by the astrologer dashboard
@@ -516,7 +528,7 @@ def get_my_kyc_status(
       - "rejected" — admin rejected, show reason and allow re-submit
     """
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     # pick the latest KYC document (in case of re-submission)
     kyc = (
@@ -528,7 +540,7 @@ def get_my_kyc_status(
     if not kyc:
         return {
             "status": "none",
-            "message": "Please submit your KYC documents to start accepting consultations.",
+            "message": t("msg.kyc_please_submit", lang),
         }
     return {
         "status": kyc.status,  # pending | approved | rejected
@@ -549,10 +561,11 @@ def submit_my_kyc(
     req: KycSubmitRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Submit or re-submit KYC documents. Creates a new KycDocument row."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     kyc = _Kyc(
         user_id=current_user.id,
@@ -569,7 +582,7 @@ def submit_my_kyc(
     return {
         "id": kyc.id,
         "status": "pending",
-        "message": "KYC submitted for review. You'll be notified once approved.",
+        "message": t("msg.kyc_submitted", lang),
     }
 
 
@@ -584,20 +597,24 @@ KYC_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 async def upload_kyc_document(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang),
 ):
     """Upload a KYC document image or PDF. Returns the file URL."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     if not file.filename:
-        raise HTTPException(status_code=400, detail="No file provided")
+        raise HTTPException(status_code=400, detail=t("err.no_file_provided", lang))
 
     ext = os.path.splitext(file.filename)[1].lower()
     if ext not in KYC_ALLOWED_EXT:
-        raise HTTPException(status_code=400, detail=f"File type not allowed. Use: {', '.join(KYC_ALLOWED_EXT)}")
+        raise HTTPException(
+            status_code=400,
+            detail=t("err.file_type_not_allowed", lang, allowed=", ".join(KYC_ALLOWED_EXT)),
+        )
 
     contents = await file.read()
     if len(contents) > KYC_MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="File too large. Max 10 MB")
+        raise HTTPException(status_code=400, detail=t("err.file_too_large", lang))
 
     unique_name = f"{_uuid.uuid4().hex}{ext}"
     folder_path = os.path.join(KYC_UPLOAD_DIR, current_user.id)
@@ -619,13 +636,14 @@ async def upload_kyc_document(
 def download_kyc_file(
     user_id: str, filename: str,
     current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang),
 ):
     """Download a KYC file. Only the owner or admin can access."""
     if current_user.id != user_id and current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Access denied")
+        raise HTTPException(status_code=403, detail=t("err.access_denied", lang))
     file_path = os.path.join(KYC_UPLOAD_DIR, user_id, filename)
     if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
+        raise HTTPException(status_code=404, detail=t("err.file_not_found", lang))
     return FileResponse(file_path, filename=filename)
 
 
@@ -633,16 +651,17 @@ def download_kyc_file(
 def get_my_stats(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Dashboard stats for logged-in astrologer."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.user_id == current_user.id
     ).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
 
     # Wallet balance (astrologer earnings held in wallet)
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
@@ -721,16 +740,17 @@ def get_my_recent_requests(
     limit: int = 10,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Recent call + chat session requests for this astrologer (newest first)."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.user_id == current_user.id
     ).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
 
     # Recent calls
     calls = (
@@ -756,7 +776,7 @@ def get_my_recent_requests(
         items.append({
             "id": c.id,
             "type": c.call_type,  # voice | video
-            "user_name": u.name or "Anonymous",
+            "user_name": u.name or t("label.anonymous", lang),
             "user_avatar": u.avatar_url,
             "status": c.status,
             "duration_sec": c.duration_sec or 0,
@@ -769,7 +789,7 @@ def get_my_recent_requests(
         items.append({
             "id": c.id,
             "type": "chat",
-            "user_name": u.name or "Anonymous",
+            "user_name": u.name or t("label.anonymous", lang),
             "user_avatar": u.avatar_url,
             "status": c.status,
             "duration_sec": c.duration_sec or 0,
@@ -817,10 +837,11 @@ def _get_withdrawal_config(db: Session) -> dict:
 def get_astro_wallet(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Astrologer wallet summary with earnings + withdrawals breakdown."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
@@ -864,10 +885,11 @@ def list_astro_wallet_transactions(
     kind: Optional[str] = None,  # all | earning | withdrawal
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Astrologer wallet statement — earnings + withdrawals."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
@@ -883,10 +905,10 @@ def list_astro_wallet_transactions(
     rows = q.order_by(_WalletTxn2.created_at.desc()).offset(skip).limit(limit).all()
 
     label_map = {
-        "consultation_credit": "Consultation Earning",
-        "bonus": "Bonus / Gift",
-        "withdrawal": "Withdrawal",
-        "refund": "Refund",
+        "consultation_credit": t("label.wallet.consultation_earning", lang),
+        "bonus": t("label.wallet.bonus_gift", lang),
+        "withdrawal": t("label.wallet.withdrawal", lang),
+        "refund": t("label.wallet.refund", lang),
     }
     return {
         "total": total,
@@ -920,22 +942,23 @@ def request_withdrawal(
     req: WithdrawalRequestPayload,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Request a withdrawal — validates min amount, debits wallet, creates
     pending WithdrawalRequest row."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
 
     cfg = _get_withdrawal_config(db)
     if req.amount < cfg["min_amount"]:
         raise HTTPException(
             status_code=400,
-            detail=f"Minimum withdrawal amount is ₹{cfg['min_amount']}",
+            detail=t("err.min_withdrawal_amount", lang, amount=cfg["min_amount"]),
         )
     if cfg["require_bank"] and not (req.upi_id or (req.bank_account_number and req.bank_ifsc)):
         raise HTTPException(
             status_code=400,
-            detail="Bank details or UPI ID are required for withdrawal",
+            detail=t("err.bank_details_required", lang),
         )
 
     # Enforce max per day
@@ -950,12 +973,12 @@ def request_withdrawal(
     if float(today_total) + req.amount > cfg["max_per_day"]:
         raise HTTPException(
             status_code=400,
-            detail=f"Daily withdrawal limit ₹{cfg['max_per_day']} would be exceeded",
+            detail=t("err.daily_withdrawal_limit_exceeded", lang, limit=cfg["max_per_day"]),
         )
 
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
-        raise HTTPException(status_code=400, detail="Wallet not found")
+        raise HTTPException(status_code=400, detail=t("err.wallet_not_found", lang))
 
     # Calculate available (exclude already-pending withdrawals)
     pending = db.query(_fn.coalesce(_fn.sum(_Withdrawal.amount), 0)).filter(
@@ -966,7 +989,7 @@ def request_withdrawal(
     if req.amount > available:
         raise HTTPException(
             status_code=400,
-            detail=f"Insufficient available balance. Withdrawable: ₹{available:.2f}",
+            detail=t("err.insufficient_available_balance", lang, available=f"{available:.2f}"),
         )
 
     # Create debit transaction
@@ -1003,7 +1026,7 @@ def request_withdrawal(
         "amount": float(wr.amount),
         "status": wr.status,
         "new_balance": float(new_bal),
-        "message": f"Withdrawal request of ₹{req.amount} submitted for admin approval",
+        "message": t("msg.withdrawal_submitted", lang, amount=req.amount),
     }
 
 
@@ -1013,10 +1036,11 @@ def list_my_withdrawals(
     limit: int = 20,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """List astrologer's withdrawal request history."""
     if current_user.role != "astrologer":
-        raise HTTPException(status_code=403, detail="Not an astrologer account")
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     q = db.query(_Withdrawal).filter(_Withdrawal.user_id == current_user.id)
     total = q.count()
     rows = q.order_by(_Withdrawal.requested_at.desc()).offset(skip).limit(limit).all()

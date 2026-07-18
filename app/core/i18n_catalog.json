@@ -128,5 +128,1103 @@
     "english": "AI Service",
     "hindi": "AI सेवा",
     "hinglish": "AI Service"
+  },
+  "err.not_astrologer_account": {
+    "english": "Not an astrologer account"
+  },
+  "err.astrologer_profile_not_found": {
+    "english": "Astrologer profile not found"
+  },
+  "err.profile_not_found": {
+    "english": "Profile not found"
+  },
+  "err.email_role_mismatch": {
+    "english": "This email is registered with a different role"
+  },
+  "err.no_file_provided": {
+    "english": "No file provided"
+  },
+  "err.file_type_not_allowed": {
+    "english": "File type not allowed. Use: {allowed}"
+  },
+  "err.file_too_large": {
+    "english": "File too large. Max 10 MB"
+  },
+  "err.access_denied": {
+    "english": "Access denied"
+  },
+  "err.file_not_found": {
+    "english": "File not found"
+  },
+  "err.min_withdrawal_amount": {
+    "english": "Minimum withdrawal amount is ₹{amount}"
+  },
+  "err.bank_details_required": {
+    "english": "Bank details or UPI ID are required for withdrawal"
+  },
+  "err.daily_withdrawal_limit_exceeded": {
+    "english": "Daily withdrawal limit ₹{limit} would be exceeded"
+  },
+  "err.wallet_not_found": {
+    "english": "Wallet not found"
+  },
+  "err.insufficient_available_balance": {
+    "english": "Insufficient available balance. Withdrawable: ₹{available}"
+  },
+  "msg.withdrawal_submitted": {
+    "english": "Withdrawal request of ₹{amount} submitted for admin approval"
+  },
+  "msg.kyc_please_submit": {
+    "english": "Please submit your KYC documents to start accepting consultations."
+  },
+  "msg.kyc_submitted": {
+    "english": "KYC submitted for review. You'll be notified once approved."
+  },
+  "label.anonymous": {
+    "english": "Anonymous"
+  },
+  "label.wallet.consultation_earning": {
+    "english": "Consultation Earning"
+  },
+  "label.wallet.bonus_gift": {
+    "english": "Bonus / Gift"
+  },
+  "err.service_not_found": {
+    "english": "Service not found"
+  },
+  "err.service_key_exists": {
+    "english": "service_key already exists"
+  },
+  "msg.service_deleted": {
+    "english": "Service '{name}' deleted"
+  },
+  "msg.services_seeded": {
+    "english": "Seeded {created} services ({existing} already existed)"
+  },
+  "err.chart_computation_failed": {
+    "english": "Chart computation failed: {error}"
+  },
+  "err.chart_compute_no_data": {
+    "english": "Could not compute chart — check birth data"
+  },
+  "err.chart_not_found": {
+    "english": "Chart not found"
+  },
+  "msg.chart_deleted": {
+    "english": "Chart deleted"
+  },
+  "err.paid_service_required": {
+    "english": "This is a paid service (₹{price}). Purchase it first via /purchase"
+  },
+  "err.service_unavailable": {
+    "english": "Service is not available"
+  },
+  "err.already_purchased": {
+    "english": "Already purchased for this chart"
+  },
+  "err.free_limit_reached": {
+    "english": "Free limit reached ({limit}). Upgrade to continue."
+  },
+  "err.insufficient_balance": {
+    "english": "Insufficient balance. Need ₹{price}, have ₹{balance}"
+  },
+  "err.invalid_role": {
+    "english": "role must be 'user' or 'astrologer'"
+  },
+  "err.google_oauth_not_configured": {
+    "english": "Google OAuth not configured for {role}. Set client_id and client_secret in admin settings → {category}."
+  },
+  "err.missing_auth_code": {
+    "english": "Missing authorization code"
+  },
+  "err.google_token_exchange_failed": {
+    "english": "Google token exchange failed: {detail}"
+  },
+  "err.no_google_access_token": {
+    "english": "No access_token in Google response"
+  },
+  "err.google_userinfo_failed": {
+    "english": "Failed to fetch Google user info: {detail}"
+  },
+  "err.google_profile_incomplete": {
+    "english": "Google profile missing email or sub"
+  },
+  "rashi.name.aries": {
+    "english": "Aries"
+  },
+  "rashi.name.taurus": {
+    "english": "Taurus"
+  },
+  "rashi.name.gemini": {
+    "english": "Gemini"
+  },
+  "rashi.name.cancer": {
+    "english": "Cancer"
+  },
+  "rashi.name.leo": {
+    "english": "Leo"
+  },
+  "rashi.name.virgo": {
+    "english": "Virgo"
+  },
+  "rashi.name.libra": {
+    "english": "Libra"
+  },
+  "rashi.name.scorpio": {
+    "english": "Scorpio"
+  },
+  "rashi.name.sagittarius": {
+    "english": "Sagittarius"
+  },
+  "rashi.name.capricorn": {
+    "english": "Capricorn"
+  },
+  "rashi.name.aquarius": {
+    "english": "Aquarius"
+  },
+  "rashi.name.pisces": {
+    "english": "Pisces"
+  },
+  "rashi.symbol.ram": {
+    "english": "Ram"
+  },
+  "rashi.symbol.bull": {
+    "english": "Bull"
+  },
+  "rashi.symbol.twins": {
+    "english": "Twins"
+  },
+  "rashi.symbol.crab": {
+    "english": "Crab"
+  },
+  "rashi.symbol.lion": {
+    "english": "Lion"
+  },
+  "rashi.symbol.maiden": {
+    "english": "Maiden"
+  },
+  "rashi.symbol.scales": {
+    "english": "Scales"
+  },
+  "rashi.symbol.scorpion": {
+    "english": "Scorpion"
+  },
+  "rashi.symbol.archer": {
+    "english": "Archer"
+  },
+  "rashi.symbol.sea_goat": {
+    "english": "Sea-Goat"
+  },
+  "rashi.symbol.water_bearer": {
+    "english": "Water Bearer"
+  },
+  "rashi.symbol.fish": {
+    "english": "Fish"
+  },
+  "rashi.element.fire": {
+    "english": "Fire"
+  },
+  "rashi.element.earth": {
+    "english": "Earth"
+  },
+  "rashi.element.air": {
+    "english": "Air"
+  },
+  "rashi.element.water": {
+    "english": "Water"
+  },
+  "rashi.quality.movable": {
+    "english": "Movable"
+  },
+  "rashi.quality.fixed": {
+    "english": "Fixed"
+  },
+  "rashi.quality.dual": {
+    "english": "Dual"
+  },
+  "rashi.color.red": {
+    "english": "Red"
+  },
+  "rashi.color.white": {
+    "english": "White"
+  },
+  "rashi.color.green": {
+    "english": "Green"
+  },
+  "rashi.color.silver": {
+    "english": "Silver"
+  },
+  "rashi.color.gold": {
+    "english": "Gold"
+  },
+  "rashi.color.light_blue": {
+    "english": "Light Blue"
+  },
+  "rashi.color.maroon": {
+    "english": "Maroon"
+  },
+  "rashi.color.yellow": {
+    "english": "Yellow"
+  },
+  "rashi.color.dark_blue": {
+    "english": "Dark Blue"
+  },
+  "rashi.color.blue": {
+    "english": "Blue"
+  },
+  "rashi.color.sea_green": {
+    "english": "Sea Green"
+  },
+  "rashi.day.sunday": {
+    "english": "Sunday"
+  },
+  "rashi.day.monday": {
+    "english": "Monday"
+  },
+  "rashi.day.tuesday": {
+    "english": "Tuesday"
+  },
+  "rashi.day.wednesday": {
+    "english": "Wednesday"
+  },
+  "rashi.day.thursday": {
+    "english": "Thursday"
+  },
+  "rashi.day.friday": {
+    "english": "Friday"
+  },
+  "rashi.day.saturday": {
+    "english": "Saturday"
+  },
+  "rashi.gem.red_coral": {
+    "english": "Red Coral"
+  },
+  "rashi.gem.diamond": {
+    "english": "Diamond"
+  },
+  "rashi.gem.emerald": {
+    "english": "Emerald"
+  },
+  "rashi.gem.pearl": {
+    "english": "Pearl"
+  },
+  "rashi.gem.ruby": {
+    "english": "Ruby"
+  },
+  "rashi.gem.yellow_sapphire": {
+    "english": "Yellow Sapphire"
+  },
+  "rashi.gem.blue_sapphire": {
+    "english": "Blue Sapphire"
+  },
+  "rashi.bodypart.head": {
+    "english": "Head"
+  },
+  "rashi.bodypart.throat_face": {
+    "english": "Throat, Face"
+  },
+  "rashi.bodypart.arms_shoulders": {
+    "english": "Arms, Shoulders"
+  },
+  "rashi.bodypart.chest_heart": {
+    "english": "Chest, Heart"
+  },
+  "rashi.bodypart.stomach_spine": {
+    "english": "Stomach, Spine"
+  },
+  "rashi.bodypart.digestive_system": {
+    "english": "Digestive System"
+  },
+  "rashi.bodypart.kidneys_lower_back": {
+    "english": "Kidneys, Lower Back"
+  },
+  "rashi.bodypart.reproductive": {
+    "english": "Reproductive"
+  },
+  "rashi.bodypart.hips_thighs": {
+    "english": "Hips, Thighs"
+  },
+  "rashi.bodypart.knees_bones": {
+    "english": "Knees, Bones"
+  },
+  "rashi.bodypart.ankles_calves": {
+    "english": "Ankles, Calves"
+  },
+  "rashi.bodypart.feet": {
+    "english": "Feet"
+  },
+  "rashi.trait.courageous": {
+    "english": "Courageous"
+  },
+  "rashi.trait.confident": {
+    "english": "Confident"
+  },
+  "rashi.trait.pioneering": {
+    "english": "Pioneering"
+  },
+  "rashi.trait.energetic": {
+    "english": "Energetic"
+  },
+  "rashi.trait.reliable": {
+    "english": "Reliable"
+  },
+  "rashi.trait.patient": {
+    "english": "Patient"
+  },
+  "rashi.trait.practical": {
+    "english": "Practical"
+  },
+  "rashi.trait.devoted": {
+    "english": "Devoted"
+  },
+  "rashi.trait.witty": {
+    "english": "Witty"
+  },
+  "rashi.trait.adaptable": {
+    "english": "Adaptable"
+  },
+  "rashi.trait.communicative": {
+    "english": "Communicative"
+  },
+  "rashi.trait.curious": {
+    "english": "Curious"
+  },
+  "rashi.trait.intuitive": {
+    "english": "Intuitive"
+  },
+  "rashi.trait.caring": {
+    "english": "Caring"
+  },
+  "rashi.trait.loyal": {
+    "english": "Loyal"
+  },
+  "rashi.trait.emotional": {
+    "english": "Emotional"
+  },
+  "rashi.trait.generous": {
+    "english": "Generous"
+  },
+  "rashi.trait.warm": {
+    "english": "Warm"
+  },
+  "rashi.trait.charismatic": {
+    "english": "Charismatic"
+  },
+  "rashi.trait.creative": {
+    "english": "Creative"
+  },
+  "rashi.trait.analytical": {
+    "english": "Analytical"
+  },
+  "rashi.trait.diligent": {
+    "english": "Diligent"
+  },
+  "rashi.trait.precise": {
+    "english": "Precise"
+  },
+  "rashi.trait.diplomatic": {
+    "english": "Diplomatic"
+  },
+  "rashi.trait.charming": {
+    "english": "Charming"
+  },
+  "rashi.trait.balanced": {
+    "english": "Balanced"
+  },
+  "rashi.trait.social": {
+    "english": "Social"
+  },
+  "rashi.trait.passionate": {
+    "english": "Passionate"
+  },
+  "rashi.trait.resourceful": {
+    "english": "Resourceful"
+  },
+  "rashi.trait.brave": {
+    "english": "Brave"
+  },
+  "rashi.trait.determined": {
+    "english": "Determined"
+  },
+  "rashi.trait.optimistic": {
+    "english": "Optimistic"
+  },
+  "rashi.trait.philosophical": {
+    "english": "Philosophical"
+  },
+  "rashi.trait.adventurous": {
+    "english": "Adventurous"
+  },
+  "rashi.trait.honest": {
+    "english": "Honest"
+  },
+  "rashi.trait.disciplined": {
+    "english": "Disciplined"
+  },
+  "rashi.trait.responsible": {
+    "english": "Responsible"
+  },
+  "rashi.trait.self_controlled": {
+    "english": "Self-controlled"
+  },
+  "rashi.trait.wise": {
+    "english": "Wise"
+  },
+  "rashi.trait.original": {
+    "english": "Original"
+  },
+  "rashi.trait.humanitarian": {
+    "english": "Humanitarian"
+  },
+  "rashi.trait.independent": {
+    "english": "Independent"
+  },
+  "rashi.trait.inventive": {
+    "english": "Inventive"
+  },
+  "rashi.trait.compassionate": {
+    "english": "Compassionate"
+  },
+  "rashi.trait.artistic": {
+    "english": "Artistic"
+  },
+  "rashi.trait.gentle": {
+    "english": "Gentle"
+  },
+  "rashi.trait.impulsive": {
+    "english": "Impulsive"
+  },
+  "rashi.trait.short_tempered": {
+    "english": "Short-tempered"
+  },
+  "rashi.trait.impatient": {
+    "english": "Impatient"
+  },
+  "rashi.trait.stubborn": {
+    "english": "Stubborn"
+  },
+  "rashi.trait.possessive": {
+    "english": "Possessive"
+  },
+  "rashi.trait.materialistic": {
+    "english": "Materialistic"
+  },
+  "rashi.trait.indecisive": {
+    "english": "Indecisive"
+  },
+  "rashi.trait.restless": {
+    "english": "Restless"
+  },
+  "rashi.trait.superficial": {
+    "english": "Superficial"
+  },
+  "rashi.trait.moody": {
+    "english": "Moody"
+  },
+  "rashi.trait.clingy": {
+    "english": "Clingy"
+  },
+  "rashi.trait.overly_sensitive": {
+    "english": "Overly sensitive"
+  },
+  "rashi.trait.arrogant": {
+    "english": "Arrogant"
+  },
+  "rashi.trait.self_centered": {
+    "english": "Self-centered"
+  },
+  "rashi.trait.over_critical": {
+    "english": "Over-critical"
+  },
+  "rashi.trait.worrier": {
+    "english": "Worrier"
+  },
+  "rashi.trait.perfectionist": {
+    "english": "Perfectionist"
+  },
+  "rashi.trait.avoids_conflict": {
+    "english": "Avoids conflict"
+  },
+  "rashi.trait.self_pitying": {
+    "english": "Self-pitying"
+  },
+  "rashi.trait.secretive": {
+    "english": "Secretive"
+  },
+  "rashi.trait.jealous": {
+    "english": "Jealous"
+  },
+  "rashi.trait.resentful": {
+    "english": "Resentful"
+  },
+  "rashi.trait.tactless": {
+    "english": "Tactless"
+  },
+  "rashi.trait.overconfident": {
+    "english": "Overconfident"
+  },
+  "rashi.trait.pessimistic": {
+    "english": "Pessimistic"
+  },
+  "rashi.trait.unforgiving": {
+    "english": "Unforgiving"
+  },
+  "rashi.trait.condescending": {
+    "english": "Condescending"
+  },
+  "rashi.trait.aloof": {
+    "english": "Aloof"
+  },
+  "rashi.trait.unpredictable": {
+    "english": "Unpredictable"
+  },
+  "rashi.trait.detached": {
+    "english": "Detached"
+  },
+  "rashi.trait.escapist": {
+    "english": "Escapist"
+  },
+  "rashi.trait.over_trusting": {
+    "english": "Over-trusting"
+  },
+  "rashi.trait.melancholic": {
+    "english": "Melancholic"
+  },
+  "grade.excellent": {
+    "english": "Excellent"
+  },
+  "grade.very_good": {
+    "english": "Very Good"
+  },
+  "grade.good": {
+    "english": "Good"
+  },
+  "grade.normal": {
+    "english": "Normal"
+  },
+  "grade.caution": {
+    "english": "Caution"
+  },
+  "grade.bad": {
+    "english": "Bad"
+  },
+  "grade.very_bad": {
+    "english": "Very Bad"
+  },
+  "grade.critical": {
+    "english": "Critical"
+  },
+  "grade.average": {
+    "english": "Average"
+  },
+  "grade.challenging": {
+    "english": "Challenging"
+  },
+  "band.excellent": {
+    "english": "Excellent"
+  },
+  "band.good": {
+    "english": "Good"
+  },
+  "band.average": {
+    "english": "Average"
+  },
+  "band.vulnerable": {
+    "english": "Vulnerable"
+  },
+  "band.balanced": {
+    "english": "Balanced"
+  },
+  "band.moderate": {
+    "english": "Moderate"
+  },
+  "band.imbalanced": {
+    "english": "Imbalanced"
+  },
+  "band.blocked": {
+    "english": "Blocked"
+  },
+  "band.strong": {
+    "english": "Strong"
+  },
+  "band.mixed": {
+    "english": "Mixed"
+  },
+  "band.weak": {
+    "english": "Weak"
+  },
+  "err.not_authorized": {
+    "english": "Not authorized"
+  },
+  "err.chart_compute_failed": {
+    "english": "Chart compute failed"
+  },
+  "err.full_analysis_failed": {
+    "english": "Full analysis failed"
+  },
+  "err.gochar_failed": {
+    "english": "Gochar failed"
+  },
+  "err.invalid_date": {
+    "english": "Invalid date"
+  },
+  "err.gochar_range_failed": {
+    "english": "Gochar range failed"
+  },
+  "err.rashi_idx_range": {
+    "english": "rashi_idx must be 0-11"
+  },
+  "err.prediction_failed": {
+    "english": "Prediction failed: {error}"
+  },
+  "err.forecast_failed": {
+    "english": "Forecast failed: {error}"
+  },
+  "err.rashi_analysis_failed": {
+    "english": "Rashi analysis failed: {error}"
+  },
+  "err.chart_n_not_found": {
+    "english": "Chart {n} not found"
+  },
+  "err.chart_id_not_found": {
+    "english": "Chart {chart_id} not found"
+  },
+  "err.not_authorized_for_chart": {
+    "english": "Not authorized for chart {chart_id}"
+  },
+  "err.requires_2_5_charts": {
+    "english": "Requires 2-5 chart IDs"
+  },
+  "err.unknown_specialist": {
+    "english": "Unknown specialist: {key}"
+  },
+  "err.use_milan_endpoint": {
+    "english": "Use POST /specialist/kundli_milan/analyze with two chart IDs"
+  },
+  "err.use_relationship_endpoint": {
+    "english": "Use POST /specialist/relationship/analyze with 2-5 chart IDs"
+  },
+  "err.use_specialist_endpoint": {
+    "english": "Use POST /specialist/{key}/analyze with chart IDs"
+  },
+  "err.milan_specialist_failed": {
+    "english": "Milan specialist failed: {error}"
+  },
+  "err.relationship_analysis_failed": {
+    "english": "Relationship analysis failed: {error}"
+  },
+  "err.child_probability_failed": {
+    "english": "Child probability analysis failed: {error}"
+  },
+  "err.love_compatibility_failed": {
+    "english": "Love compatibility analysis failed: {error}"
+  },
+  "err.karma_linkage_failed": {
+    "english": "Karma linkage analysis failed: {error}"
+  },
+  "err.specialist_analysis_failed": {
+    "english": "Specialist analysis failed: {error}"
+  },
+  "err.career_analysis_failed": {
+    "english": "Career analysis failed: {error}"
+  },
+  "err.career_summary_failed": {
+    "english": "Career summary failed: {error}"
+  },
+  "err.character_analysis_failed": {
+    "english": "Character analysis failed: {error}"
+  },
+  "err.character_summary_failed": {
+    "english": "Character summary failed: {error}"
+  },
+  "err.milan_match_failed": {
+    "english": "Milan match failed: {error}"
+  },
+  "err.milan_phase1_failed": {
+    "english": "Milan phase1 failed: {error}"
+  },
+  "err.admin_only": {
+    "english": "Admin only"
+  },
+  "label.specialist.career": {
+    "english": "Career & Job"
+  },
+  "label.specialist.business": {
+    "english": "Business & Startup"
+  },
+  "label.specialist.education": {
+    "english": "Education & Learning"
+  },
+  "label.specialist.wealth": {
+    "english": "Wealth & Finance"
+  },
+  "label.specialist.debt_recovery": {
+    "english": "Debt & Recovery"
+  },
+  "label.specialist.love": {
+    "english": "Love & Relationships"
+  },
+  "label.specialist.marriage": {
+    "english": "Marriage & Family"
+  },
+  "label.specialist.health": {
+    "english": "Health & Wellness"
+  },
+  "label.specialist.mental_stress": {
+    "english": "Mental & Stress"
+  },
+  "label.specialist.property": {
+    "english": "Property & Assets"
+  },
+  "label.specialist.legal": {
+    "english": "Legal & Disputes"
+  },
+  "label.specialist.life_path": {
+    "english": "Life Path & Luck"
+  },
+  "label.specialist.character": {
+    "english": "Character Analysis"
+  },
+  "label.specialist.past_life": {
+    "english": "Past Life & Karma"
+  },
+  "label.specialist.kundli_milan": {
+    "english": "Kundli Milan"
+  },
+  "label.specialist.relationship": {
+    "english": "Relationship Intel"
+  },
+  "label.specialist.relationship_full": {
+    "english": "Relationship Intelligence"
+  },
+  "label.specialist.child_probability": {
+    "english": "Child Probability"
+  },
+  "label.specialist.love_compatibility": {
+    "english": "Love Compatibility"
+  },
+  "label.specialist.karma_linkage": {
+    "english": "Past Life Karma Linkage"
+  },
+  "err.astrologer_not_available": {
+    "english": "Astrologer is not available"
+  },
+  "err.astrologers_only": {
+    "english": "Only astrologers can go live"
+  },
+  "err.call_expired": {
+    "english": "Call expired"
+  },
+  "err.call_not_active": {
+    "english": "Call is not active"
+  },
+  "err.call_not_found": {
+    "english": "Call not found"
+  },
+  "err.call_rate_not_set": {
+    "english": "Astrologer hasn't set {call_type} rate"
+  },
+  "err.cannot_accept_call_state": {
+    "english": "Cannot accept call in '{status}' state"
+  },
+  "err.cannot_accept_chat": {
+    "english": "Cannot accept"
+  },
+  "err.cannot_debit_balance": {
+    "english": "Cannot debit ₹{amount}. Current balance is ₹{balance}"
+  },
+  "err.cannot_delete_active_config": {
+    "english": "Cannot delete the active Agora config. Activate another config first."
+  },
+  "err.chat_file_not_found": {
+    "english": "File not found"
+  },
+  "err.chat_not_active": {
+    "english": "Chat not active"
+  },
+  "err.chat_rate_not_set": {
+    "english": "Chat rate not set"
+  },
+  "err.chat_request_expired": {
+    "english": "Chat request expired"
+  },
+  "err.config_not_found": {
+    "english": "Config not found"
+  },
+  "err.date_from_format": {
+    "english": "date_from must be YYYY-MM-DD"
+  },
+  "err.date_to_format": {
+    "english": "date_to must be YYYY-MM-DD"
+  },
+  "err.file_must_be_json": {
+    "english": "File must be a .json file"
+  },
+  "err.gift_not_found": {
+    "english": "Gift not found"
+  },
+  "err.insufficient_balance_min_call": {
+    "english": "Insufficient balance. Need at least ₹{rate} (1 min)"
+  },
+  "err.invalid_fcm_project": {
+    "english": "project must be 'user' or 'astro'"
+  },
+  "err.invalid_json_file": {
+    "english": "Invalid JSON file"
+  },
+  "err.invalid_wallet_action": {
+    "english": "action must be add_fund, remove_fund, or bonus"
+  },
+  "err.kyc_not_found": {
+    "english": "KYC document not found"
+  },
+  "err.min_super_chat_amount": {
+    "english": "Minimum super chat amount is ₹{amount}"
+  },
+  "err.missing_fcm_fields": {
+    "english": "Invalid Firebase service account JSON. Missing fields: {fields}"
+  },
+  "err.not_admin_account": {
+    "english": "This account is not an admin"
+  },
+  "err.not_firebase_sa": {
+    "english": "File is not a Firebase service account JSON"
+  },
+  "err.not_participant": {
+    "english": "Not a participant"
+  },
+  "err.notification_not_found": {
+    "english": "Notification not found"
+  },
+  "err.only_astrologer_accept": {
+    "english": "Only astrologer can accept"
+  },
+  "err.only_caller_cancel": {
+    "english": "Only caller can cancel"
+  },
+  "err.only_receiver_accept": {
+    "english": "Only receiver can accept"
+  },
+  "err.only_receiver_reject": {
+    "english": "Only receiver can reject"
+  },
+  "err.profile_not_approved": {
+    "english": "Profile not approved"
+  },
+  "err.review_not_found": {
+    "english": "Review not found"
+  },
+  "err.session_not_active": {
+    "english": "Session not active"
+  },
+  "err.session_not_found": {
+    "english": "Session not found"
+  },
+  "err.setting_not_found": {
+    "english": "Setting not found"
+  },
+  "err.stream_not_found": {
+    "english": "Stream not found"
+  },
+  "err.stream_not_found_or_not_live": {
+    "english": "Stream not found or not live"
+  },
+  "err.stream_not_live": {
+    "english": "Stream not live"
+  },
+  "err.unknown_settings_category": {
+    "english": "Unknown settings category"
+  },
+  "label.chat.attachment": {
+    "english": "📎 Attachment"
+  },
+  "label.default_astrologer_name": {
+    "english": "Astrologer"
+  },
+  "label.default_user_name": {
+    "english": "User"
+  },
+  "label.call_type.voice": {
+    "english": "Voice"
+  },
+  "label.call_type.video": {
+    "english": "Video"
+  },
+  "label.notif.account_blocked_body": {
+    "english": "Your account has been blocked by admin."
+  },
+  "label.notif.account_blocked_title": {
+    "english": "Account Blocked"
+  },
+  "label.notif.account_unblocked_body": {
+    "english": "Your account has been unblocked by admin."
+  },
+  "label.notif.account_unblocked_title": {
+    "english": "Account Unblocked"
+  },
+  "label.notif.call_connected_body": {
+    "english": "{name} accepted your {call_type} call"
+  },
+  "label.notif.call_connected_title": {
+    "english": "Call Connected"
+  },
+  "label.notif.chat_request_body": {
+    "english": "{name} wants to chat with you"
+  },
+  "label.notif.chat_request_title": {
+    "english": "New Chat Request"
+  },
+  "label.notif.chat_started_body": {
+    "english": "{name} is ready to chat"
+  },
+  "label.notif.chat_started_title": {
+    "english": "Chat Started"
+  },
+  "label.notif.incoming_call_body": {
+    "english": "{name} is calling you"
+  },
+  "label.notif.incoming_call_title": {
+    "english": "Incoming {call_type} Call"
+  },
+  "label.notif.kyc_approved_body": {
+    "english": "Your KYC document ({doc_type}) has been approved. Your account is now fully verified."
+  },
+  "label.notif.kyc_approved_title": {
+    "english": "KYC Approved ✅"
+  },
+  "label.notif.kyc_rejected_body": {
+    "english": "Your KYC was rejected. Reason: {reason}. Please re-submit with correct documents."
+  },
+  "label.notif.kyc_rejected_title": {
+    "english": "KYC Rejected ❌"
+  },
+  "label.notif.message_from": {
+    "english": "Message from {name}"
+  },
+  "label.notif.profile_approved_body": {
+    "english": "Congratulations! Your astrologer profile has been approved. You can now go online and start consultations."
+  },
+  "label.notif.profile_approved_title": {
+    "english": "Profile Approved ✅"
+  },
+  "label.notif.profile_rejected_body": {
+    "english": "Your profile was rejected. Reason: {reason}"
+  },
+  "label.notif.profile_rejected_title": {
+    "english": "Profile Rejected ❌"
+  },
+  "label.gift.rose": {
+    "english": "Rose"
+  },
+  "label.gift.star": {
+    "english": "Star"
+  },
+  "label.gift.heart": {
+    "english": "Heart"
+  },
+  "label.gift.crystal_ball": {
+    "english": "Crystal Ball"
+  },
+  "label.gift.diamond": {
+    "english": "Diamond"
+  },
+  "label.gift.crown": {
+    "english": "Crown"
+  },
+  "label.gift.lotus": {
+    "english": "Lotus"
+  },
+  "label.gift.om": {
+    "english": "Om"
+  },
+  "label.gift.rocket": {
+    "english": "Rocket"
+  },
+  "label.txn.recharge": {
+    "english": "User Add Fund"
+  },
+  "label.txn.bonus": {
+    "english": "Admin Bonus"
+  },
+  "label.txn.consultation_debit_user": {
+    "english": "Service Deduct"
+  },
+  "label.txn.fund_removed": {
+    "english": "Fund Removed"
+  },
+  "label.txn.commission_earned": {
+    "english": "Commission Earned"
+  },
+  "label.txn.service_credit": {
+    "english": "Service Credit"
+  },
+  "label.txn.astro_withdrawal": {
+    "english": "Astro Withdrawal"
+  },
+  "label.txn.ai_debit": {
+    "english": "AI Service Deduct"
+  },
+  "label.wallet_action.add_fund": {
+    "english": "Add Fund"
+  },
+  "label.wallet_action.remove_fund": {
+    "english": "Remove Fund"
+  },
+  "label.wallet_action.bonus": {
+    "english": "Bonus"
+  },
+  "msg.agora_config_deleted": {
+    "english": "Agora config deleted"
+  },
+  "msg.astrologer_approved_notified": {
+    "english": "Astrologer approved & notified"
+  },
+  "msg.astrologer_rejected_notified": {
+    "english": "Astrologer rejected & notified"
+  },
+  "msg.astrologer_updated": {
+    "english": "Astrologer updated"
+  },
+  "msg.fcm_uploaded": {
+    "english": "Firebase {project} credentials uploaded successfully"
+  },
+  "msg.gift_deleted": {
+    "english": "Gift deleted"
+  },
+  "msg.gifts_seeded": {
+    "english": "Seeded {count} gifts"
+  },
+  "msg.kyc_approved_notified": {
+    "english": "KYC approved — user verified & notified"
+  },
+  "msg.kyc_rejected_notified": {
+    "english": "KYC rejected & user notified"
+  },
+  "msg.left_stream": {
+    "english": "Left stream"
+  },
+  "msg.profile_approved": {
+    "english": "Profile approved"
+  },
+  "msg.review_deleted": {
+    "english": "Review deleted"
+  },
+  "msg.review_updated": {
+    "english": "Review updated"
+  },
+  "msg.setting_cleared": {
+    "english": "Setting cleared"
+  },
+  "msg.settings_saved": {
+    "english": "{count} settings saved"
+  },
+  "msg.user_updated": {
+    "english": "User updated"
+  },
+  "msg.wallet_adjustment_applied": {
+    "english": "{action} of ₹{amount} applied"
+  },
+  "err.insufficient_balance_amount": {
+    "english": "Insufficient balance. Need ₹{amount}"
   }
 }
