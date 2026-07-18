@@ -9,76 +9,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
-  String get appName => 'Nakshatralogy';
-
-  @override
-  String get cosmicJourneyAwaits => 'Aapki Cosmic Journey Shuru Hoti Hai';
-
-  @override
-  String get home => 'Home';
-
-  @override
-  String get astrologers => 'Jyotishi';
-
-  @override
-  String get services => 'Sevayein';
-
-  @override
-  String get wallet => 'Wallet';
-
-  @override
-  String get profile => 'Profile';
-
-  @override
-  String get live => 'Live';
-
-  @override
-  String get kundli => 'Kundli';
-
-  @override
-  String get chat => 'Chat';
-
-  @override
-  String get call => 'Call';
-
-  @override
-  String get video => 'Video';
-
-  @override
-  String get signIn => 'Sign In';
-
-  @override
-  String get createAccount => 'Account Banayein';
-
-  @override
-  String get email => 'Email';
-
-  @override
-  String get password => 'Password';
-
-  @override
-  String get confirmPassword => 'Password Confirm Karein';
-
-  @override
-  String get fullName => 'Poora Naam';
-
-  @override
-  String get phone => 'Phone (optional)';
-
-  @override
-  String get forgotPassword => 'Password Bhool Gaye?';
-
-  @override
   String get favorableLoveWindowsLabel => 'Favorable Love Windows';
 
   @override
-  String get lordLabel => 'Lord';
+  String get lordLabel => 'Swami';
 
   @override
-  String get lordPlacementLabel => 'Lord Placement';
+  String get lordPlacementLabel => 'Swami ki Sthiti';
 
   @override
-  String get lordDignityLabel => 'Lord Dignity';
+  String get lordDignityLabel => 'Swami ki Dignity';
 
   @override
   String get categoriesSuffix => 'Categories';
@@ -94,7 +34,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String dominantLabel(Object value) {
-    return 'Dominant: ${value}';
+    return 'Pradhan: ${value}';
   }
 
   @override
@@ -142,16 +82,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get debtPrimaryCategoryLabel => 'PRIMARY CATEGORY';
 
   @override
-  String get debtWord => 'Debt';
+  String get debtWord => 'Karz';
 
   @override
   String get debtYogasTitle => 'Debt Yogas';
 
   @override
-  String get debtCreatingLabel => 'DEBT-CREATING';
+  String get debtCreatingLabel => 'KARZ-BADHANE WALE';
 
   @override
-  String get debtClearingLabel => 'DEBT-CLEARING';
+  String get debtClearingLabel => 'KARZ-CHUKANE WALE';
 
   @override
   String get yearlyDebtTitle => 'Yearly Debt';
@@ -176,15 +116,15 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String debtRecoveryTimelineSubtitle(Object pct, Object years) {
-    return 'Recovery: ${pct}% · Timeline: ${years}yrs';
+    return 'Recovery: ${pct}% · Timeline: ${years}saal';
   }
 
   @override
-  String get debtFreeWindowLabel => '🎯 DEBT-FREE WINDOW';
+  String get debtFreeWindowLabel => '🎯 KARZ-MUKT WINDOW';
 
   @override
   String debtFreeYear(Object year) {
-    return 'Year ${year}';
+    return 'Saal ${year}';
   }
 
   @override
@@ -236,16 +176,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get legalStressTrendTitle => 'Legal Stress';
 
   @override
-  String get legalVisibleEnemiesStat => 'VISIBLE ENEMIES';
+  String get legalVisibleEnemiesStat => 'SAMNE KE DUSHMAN';
 
   @override
-  String get legalHiddenEnemiesStat => 'HIDDEN ENEMIES';
+  String get legalHiddenEnemiesStat => 'CHUPE DUSHMAN';
 
   @override
   String get legalCriminalRiskStat => 'CRIMINAL RISK';
 
   @override
-  String get legalFalseAccusationStat => 'FALSE ACCUSATION';
+  String get legalFalseAccusationStat => 'JHOOTHA AAROP';
 
   @override
   String get legalContractKarmaTitle => 'Contract Karma';
@@ -268,22 +208,22 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   }
 
   @override
-  String get legalVictoryWord => 'Victory';
+  String get legalVictoryWord => 'Jeet';
 
   @override
   String get legalAnalysisSuffix => 'Analysis';
 
   @override
-  String get legalAsPlaintiff => 'AS PLAINTIFF';
+  String get legalAsPlaintiff => 'PLAINTIFF KE ROOP MEIN';
 
   @override
-  String get legalAsDefendant => 'AS DEFENDANT';
+  String get legalAsDefendant => 'DEFENDANT KE ROOP MEIN';
 
   @override
-  String get legalWinProbability => 'WIN PROBABILITY';
+  String get legalWinProbability => 'JEET KI SAMBHAVNA';
 
   @override
-  String get legalDisputeWord => 'Dispute';
+  String get legalDisputeWord => 'Vivaad';
 
   @override
   String get lifepathScoresHeader => '🌟 LIFE PATH SCORES';
@@ -331,7 +271,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lifepathWisdomTeachStat => 'WISDOM/TEACH';
 
   @override
-  String get lifepathServiceStat => 'SERVICE';
+  String get lifepathServiceStat => 'SEVA';
 
   @override
   String get lifepathHealingStat => 'HEALING';
@@ -340,7 +280,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lifepathFortuneYogasTitle => 'Fortune Yogas';
 
   @override
-  String get lifepathLuckBlocksLabel => 'LUCK BLOCKS';
+  String get lifepathLuckBlocksLabel => 'KISMAT KE BLOCKS';
 
   @override
   String get lifepathFortuneBoostersLabel => 'FORTUNE BOOSTERS';
@@ -367,19 +307,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lifepathKetuSurrenderLabel => 'KETU SURRENDER';
 
   @override
-  String get lifepathSaturnLessonLabel => 'SATURN LESSON';
+  String get lifepathSaturnLessonLabel => 'SHANI LESSON';
 
   @override
   String get lifepathLifeDifficultyLabel => 'LIFE DIFFICULTY';
 
   @override
-  String get lifepathSoulExperienceTitle => '★ SOUL CAME TO EXPERIENCE';
+  String get lifepathSoulExperienceTitle => '★ AATMA JO ANUBHAV KARNE AAYI';
 
   @override
   String get lifepathBlessingsTitle => '● BLESSINGS';
 
   @override
-  String get lifepathLifeWord => 'Life';
+  String get lifepathLifeWord => 'Jeevan';
 
   @override
   String get lifepathArchetypeSuffix => 'Archetype';
@@ -390,13 +330,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   }
 
   @override
-  String get lifepathDestinyVsWord => 'Destiny vs';
+  String get lifepathDestinyVsWord => 'Bhagya vs';
 
   @override
   String get lifepathFreeWillSuffix => 'Free Will';
 
   @override
-  String get lifepathDestinyStat => 'DESTINY';
+  String get lifepathDestinyStat => 'BHAGYA';
 
   @override
   String get lifepathFreeWillStat => 'FREE WILL';
@@ -414,7 +354,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pastlifeMasteryPreservedStat => 'MASTERY\nPRESERVED';
 
   @override
-  String get pastlifeUnfinishedStat => 'UNFINISHED';
+  String get pastlifeUnfinishedStat => 'ADHOORA';
 
   @override
   String get pastlifeKarmicDebtStat => 'KARMIC DEBT';
@@ -447,13 +387,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pastlifeFamilyRoleLabel => 'FAMILY ROLE';
 
   @override
-  String get pastlifeSkillsCarriedTitle => '★ SKILLS CARRIED FORWARD';
+  String get pastlifeSkillsCarriedTitle => '★ SAATH LAAYE HUE SKILLS';
 
   @override
   String get pastlifeNaturalAttractionsTitle => '● NATURAL ATTRACTIONS';
 
   @override
-  String get pastlifeUnexplainedFearsTitle => '⚠ UNEXPLAINED FEARS';
+  String get pastlifeUnexplainedFearsTitle => '⚠ ANJAAN DAR';
 
   @override
   String get pastlifeMagneticPullsTitle => '→ MAGNETIC PULLS';
@@ -465,22 +405,22 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pastlifeFinancialStat => 'FINANCIAL';
 
   @override
-  String get pastlifeServiceStat => 'SERVICE';
+  String get pastlifeServiceStat => 'SEVA';
 
   @override
   String get pastlifeDharmicStat => 'DHARMIC';
 
   @override
-  String get pastlifeOnRelationsStat => 'ON RELATIONS';
+  String get pastlifeOnRelationsStat => 'RISHTON PAR';
 
   @override
-  String get pastlifeOnCareerStat => 'ON CAREER';
+  String get pastlifeOnCareerStat => 'CAREER PAR';
 
   @override
-  String get pastlifeOnHealthStat => 'ON HEALTH';
+  String get pastlifeOnHealthStat => 'HEALTH PAR';
 
   @override
-  String get pastlifeOnSpiritualStat => 'ON SPIRITUAL';
+  String get pastlifeOnSpiritualStat => 'SPIRITUAL PAR';
 
   @override
   String get pastlifeKarmicResolutionTitle => 'Karmic Resolution';
@@ -495,7 +435,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pastlifeClearingProgressLabel => 'CLEARING PROGRESS';
 
   @override
-  String get pastlifeRemainingWorkLabel => 'REMAINING WORK';
+  String get pastlifeRemainingWorkLabel => 'BAAKI KAAM';
 
   @override
   String get pastlifeDebtTimelineLabel => 'DEBT TIMELINE';
@@ -527,7 +467,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pastlifePastMasterySuffix => 'Past Mastery';
 
   @override
-  String get pastlifeKetuMasteredLabel => 'KETU · WHAT YOU MASTERED';
+  String get pastlifeKetuMasteredLabel => 'KETU · JO AAPNE MASTER KIYA';
 
   @override
   String get pastlifeRahuWord => 'Rahu';
@@ -536,7 +476,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pastlifeFutureGrowthSuffix => 'Future Growth';
 
   @override
-  String get pastlifeRahuPullsLabel => 'RAHU · WHAT PULLS YOU FORWARD';
+  String get pastlifeRahuPullsLabel => 'RAHU · JO AAPKO AAGE KHEENCHTA HAI';
 
   @override
   String pastlifeShadowPrefix(Object shadow) {
@@ -664,16 +604,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get characterNakshatraLabel => 'NAKSHATRA';
 
   @override
-  String get characterDeityLabel => 'DEITY';
+  String get characterDeityLabel => 'DEVTA';
 
   @override
-  String get characterMoonManasTitle => 'Moon Manas';
+  String get characterMoonManasTitle => 'Chandra Manas';
 
   @override
-  String get characterSignLabel => 'SIGN';
+  String get characterSignLabel => 'RASHI';
 
   @override
-  String get characterHouseLabel => 'HOUSE';
+  String get characterHouseLabel => 'BHAAV';
 
   @override
   String get characterWarmthStat => 'WARMTH';
@@ -691,10 +631,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get characterDharmaStat => 'DHARMA';
 
   @override
-  String get characterTruthStat => 'TRUTH';
+  String get characterTruthStat => 'SATYA';
 
   @override
-  String get characterCompassionStat => 'COMPASSION';
+  String get characterCompassionStat => 'KARUNA';
 
   @override
   String get characterGenerosityStat => 'GENEROSITY';
@@ -822,7 +762,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get healthVulnerabilitySuffix => 'Vulnerability';
 
   @override
-  String get healthDiseaseWord => 'Disease';
+  String get healthDiseaseWord => 'Rog';
 
   @override
   String get healthSusceptibilitySuffix => 'Susceptibility';
@@ -870,7 +810,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get wealthRetentionStat => 'RETENTION';
 
   @override
-  String get wealthWord => 'Wealth';
+  String get wealthWord => 'Dhan';
 
   @override
   String get wealthYogasTitle => 'Wealth Yogas';
@@ -952,7 +892,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String wealthDrivenByLabel(Object planet) {
-    return 'Driven by ${planet}';
+    return '${planet} dwara chalit';
   }
 
   @override
@@ -983,7 +923,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get marriagePhasesTitle => 'Marriage Phases';
 
   @override
-  String get marriageInLawRelationsStat => 'IN-LAW RELATIONS';
+  String get marriageInLawRelationsStat => 'SASURAAL RISHTE';
 
   @override
   String get marriageFamilyHarmonyStat => 'FAMILY HARMONY';
@@ -1007,10 +947,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get marriageDistanceStat => 'DISTANCE';
 
   @override
-  String get marriageSeekInPartnerTitle => '★ SEEK IN PARTNER';
+  String get marriageSeekInPartnerTitle => '★ PARTNER MEIN DHOONDHEIN';
 
   @override
-  String get marriageAvoidInPartnerTitle => '⚠ AVOID IN PARTNER';
+  String get marriageAvoidInPartnerTitle => '⚠ PARTNER MEIN BACHEIN';
 
   @override
   String marriageRealizationSubtitle(Object pct) {
@@ -1030,25 +970,25 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get marriage7thWord => '7th';
 
   @override
-  String get marriageSignLabel => 'SIGN';
+  String get marriageSignLabel => 'RASHI';
 
   @override
-  String get marriageLordInLabel => 'LORD IN';
+  String get marriageLordInLabel => 'SWAMI YAHAN';
 
   @override
   String get marriageStrengthLabel => 'STRENGTH';
 
   @override
-  String get marriageSpouseWord => 'Spouse';
+  String get marriageSpouseWord => 'Jeevansaathi';
 
   @override
   String get marriageProfileSuffix => 'Profile';
 
   @override
-  String get marriageSpouseTraitsTitle => '★ SPOUSE TRAITS';
+  String get marriageSpouseTraitsTitle => '★ JEEVANSAATHI KE GUN';
 
   @override
-  String get marriageLikelyProfessionsTitle => '● LIKELY PROFESSIONS';
+  String get marriageLikelyProfessionsTitle => '● SAMBHAVIT PROFESSIONS';
 
   @override
   String get marriageHarmonyWord => 'Harmony';
@@ -1085,7 +1025,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get marriageNavamsaSuffix => 'Navamsa';
 
   @override
-  String get multiChartTitleChild => 'Child';
+  String get multiChartTitleChild => 'Santaan';
 
   @override
   String get multiChartTitleLove => 'Love';
@@ -1122,35 +1062,35 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String multiChartPromptChatgpt(Object formatted) {
-    return 'Analyze this Vedic astrology report and give detailed insights:\n\n${formatted}';
+    return 'Is Vedic astrology report ko analyze karein aur detailed insights dein:\n\n${formatted}';
   }
 
   @override
   String multiChartPromptClaude(Object formatted) {
-    return 'Here is a Vedic astrology specialist report. Please analyze it thoroughly and provide actionable insights:\n\n${formatted}';
+    return 'Yeh ek Vedic astrology specialist report hai. Kripya ise achhe se analyze karein aur actionable insights dein:\n\n${formatted}';
   }
 
   @override
   String multiChartPromptGemini(Object formatted) {
-    return 'Review this Vedic astrology analysis and explain the key findings in simple language:\n\n${formatted}';
+    return 'Is Vedic astrology analysis ko review karein aur key findings ko simple bhasha mein samjhayein:\n\n${formatted}';
   }
 
   @override
   String multiChartCopiedForLabel(Object label) {
-    return 'Copied for ${label}!';
+    return '${label} ke liye copy ho gaya!';
   }
 
   @override
-  String get childProbTitle1 => 'Child';
+  String get childProbTitle1 => 'Santaan';
 
   @override
   String get childProbTitle2 => 'Probability';
 
   @override
-  String get childNumberOfChildrenHeader1 => 'Number of';
+  String get childNumberOfChildrenHeader1 => 'Bachchon ki';
 
   @override
-  String get childNumberOfChildrenHeader2 => 'Children';
+  String get childNumberOfChildrenHeader2 => 'Sankhya';
 
   @override
   String get childTimingHeader1 => 'Timing';
@@ -1165,7 +1105,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get analysisWord => 'Analysis';
 
   @override
-  String get jupiterWord => 'Jupiter';
+  String get jupiterWord => 'Guru';
 
   @override
   String get childD7Header1 => 'D7 Saptamsa';
@@ -1183,10 +1123,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get childVedicHeader1 => 'Vedic';
 
   @override
-  String get childVedicHeader2 => 'Remedies';
+  String get childVedicHeader2 => 'Upay';
 
   @override
-  String get progenyProbabilityLabel => 'PROGENY PROBABILITY';
+  String get progenyProbabilityLabel => 'SANTAAN KI SAMBHAVNA';
 
   @override
   String get favorableWindowsLabel => 'FAVORABLE WINDOWS';
@@ -1198,13 +1138,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get partnerTwoLabel => 'Partner 2';
 
   @override
-  String get moonSignLabel => 'Moon Sign';
+  String get moonSignLabel => 'Chandra Rashi';
 
   @override
-  String get lordInDusthana => 'Lord in Dusthana';
+  String get lordInDusthana => 'Swami Dusthana Mein';
 
   @override
-  String get lordStrengthLabel => 'Lord Strength';
+  String get lordStrengthLabel => 'Swami ki Strength';
 
   @override
   String get houseStrengthLabel => 'House Strength';
@@ -1219,42 +1159,42 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get notCombustBadge => 'Not Combust';
 
   @override
-  String get in5thHouseBadge => 'In 5th House';
+  String get in5thHouseBadge => '5th House Mein';
 
   @override
-  String get aspects5thBadge => 'Aspects 5th';
+  String get aspects5thBadge => '5th Par Drishti';
 
   @override
   String get no5thConnectionBadge => 'No 5th Connection';
 
   @override
   String jupiterInSignHeading(String sign) {
-    return 'Jupiter in ${sign}';
+    return 'Guru ${sign} mein';
   }
 
   @override
   String get d7LagnaLabel => 'D7 Lagna';
 
   @override
-  String get d7FifthSignLabel => 'D7 5th Sign';
+  String get d7FifthSignLabel => 'D7 5th Rashi';
 
   @override
-  String get d7FifthLordLabel => 'D7 5th Lord';
+  String get d7FifthLordLabel => 'D7 5th Swami';
 
   @override
-  String get jupiterInD7Label => 'Jupiter in D7';
+  String get jupiterInD7Label => 'Guru D7 mein';
 
   @override
-  String get jupiterDignityLabel => 'Jupiter Dignity';
+  String get jupiterDignityLabel => 'Guru Dignity';
 
   @override
   String get d7StrengthLabel => 'D7 Strength';
 
   @override
-  String get yesWord => 'Yes';
+  String get yesWord => 'Haan';
 
   @override
-  String get noWord => 'No';
+  String get noWord => 'Nahi';
 
   @override
   String get beejaSphutaTitle => 'BEEJA SPHUTA';
@@ -1266,32 +1206,32 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get degreeLabel => 'Degree';
 
   @override
-  String get signLordLabel => 'Sign Lord';
+  String get signLordLabel => 'Rashi Swami';
 
   @override
-  String get presentInLabel => 'Present In';
+  String get presentInLabel => 'Yahan Sthit';
 
   @override
   String get netPenaltyLabel => 'Net Penalty';
 
   @override
-  String get remedyGemstone => 'Gemstone Remedies';
+  String get remedyGemstone => 'Ratna Upay';
 
   @override
-  String get remedyMantra => 'Mantra Remedies';
+  String get remedyMantra => 'Mantra Upay';
 
   @override
-  String get remedyRitual => 'Ritual Remedies';
+  String get remedyRitual => 'Anushthan Upay';
 
   @override
-  String get remedyLifestyle => 'Lifestyle Remedies';
+  String get remedyLifestyle => 'Lifestyle Upay';
 
   @override
-  String get remedyCharitable => 'Charitable Remedies';
+  String get remedyCharitable => 'Daan Upay';
 
   @override
   String copiedForName(String name) {
-    return 'Copied for ${name}!';
+    return '${name} ke liye copy ho gaya!';
   }
 
   @override
@@ -1392,7 +1332,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get nakshatraLabel => 'Nakshatra';
 
   @override
-  String get deityLabel => 'Deity';
+  String get deityLabel => 'Devta';
 
   @override
   String get masteryScoreLabel => 'Mastery Score';
@@ -1407,7 +1347,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get karmaAtmakaraka => 'ATMAKARAKA';
 
   @override
-  String get karmaSaturnKarma => 'SATURN KARMA';
+  String get karmaSaturnKarma => 'SHANI KARMA';
 
   @override
   String get karma12thHouse => '12TH HOUSE';
@@ -1439,7 +1379,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get weightColumnLabel => 'Weight';
 
   @override
-  String get meaningColumnLabel => 'Meaning';
+  String get meaningColumnLabel => 'Arth';
 
   @override
   String get statusColumnLabel => 'Status';
@@ -1451,7 +1391,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get karmaCurrentLifeDynamic => 'CURRENT LIFE DYNAMIC';
 
   @override
-  String get karmaWhatTheyTeach => 'WHAT THEY TEACH EACH OTHER';
+  String get karmaWhatTheyTeach => 'EK DOOSRE KO KYA SIKHATE HAIN';
 
   @override
   String get karmaGroupThemeHeader => 'GROUP KARMIC THEME';
@@ -1469,7 +1409,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get housesPrefixLabel => 'Houses: ';
 
   @override
-  String get signsPrefixLabel => 'Signs: ';
+  String get signsPrefixLabel => 'Rashiyan: ';
 
   @override
   String get karmicCohesionLabel => 'Karmic Cohesion';
@@ -1478,13 +1418,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get karmaGroupSoulContractHeader => 'GROUP SOUL CONTRACT';
 
   @override
-  String get goalLabel => 'Goal';
+  String get goalLabel => 'Lakshya';
 
   @override
   String get karmaSharedGoalHeader => 'SHARED PAST LIFE GOAL';
 
   @override
-  String get howToGrowHeader => 'HOW TO GROW';
+  String get howToGrowHeader => 'GROW KAISE KAREIN';
 
   @override
   String moolaDashaPrefix(String value) {
@@ -1498,7 +1438,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get karmaMutualTeachingHeader => 'MUTUAL TEACHING MAP';
 
   @override
-  String get karmaTeachingDynamicsPlaceholder => 'Teaching dynamics will emerge as karmic connections deepen.';
+  String get karmaTeachingDynamicsPlaceholder => 'Karmic connections gehri hone par teaching dynamics samne aayenge.';
 
   @override
   String get typeFieldLabel => 'Type';
@@ -1600,7 +1540,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get loveRelationshipHeader2 => 'Dynamics';
 
   @override
-  String get loveRemediesHeader1 => 'Remedies &';
+  String get loveRemediesHeader1 => 'Upay &';
 
   @override
   String get loveRemediesHeader2 => 'Guidance';
@@ -1618,7 +1558,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get loveChipChallenge => 'Challenge';
 
   @override
-  String get venusSignLabel => 'Venus Sign';
+  String get venusSignLabel => 'Shukra Rashi';
 
   @override
   String get attractionScoreLabel => 'Attraction Score';
@@ -1651,7 +1591,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kootaTara => 'TARA';
 
   @override
-  String get doshaPresentBadge => 'Dosha Present';
+  String get doshaPresentBadge => 'Dosha Hai';
 
   @override
   String get noDoshaBadge => 'No Dosha';
@@ -1663,7 +1603,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get mentalScoreLabel => 'Mental Score';
 
   @override
-  String get mercuryDynamicsLabel => 'MERCURY DYNAMICS';
+  String get mercuryDynamicsLabel => 'BUDH DYNAMICS';
 
   @override
   String get communicationStyleLabel => 'COMMUNICATION STYLE MATCH';
@@ -1675,7 +1615,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get passionScoreLabel => 'Passion Score';
 
   @override
-  String get marsVenusLabel => 'MARS-VENUS INTERPLAY';
+  String get marsVenusLabel => 'MANGAL-SHUKRA INTERPLAY';
 
   @override
   String get physicalChemistryLabel => 'PHYSICAL CHEMISTRY';
@@ -1693,13 +1633,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get commitmentPotentialLabel => 'COMMITMENT POTENTIAL';
 
   @override
-  String get jupiterBlessingLabel => 'JUPITER BLESSING';
+  String get jupiterBlessingLabel => 'GURU BLESSING';
 
   @override
   String get d9NavamsaResonanceLabel => 'D9 NAVAMSA RESONANCE';
 
   @override
-  String get saturnLongevityLabel => 'SATURN LONGEVITY';
+  String get saturnLongevityLabel => 'SHANI LONGEVITY';
 
   @override
   String get karmicScoreLabel => 'Karmic Score';
@@ -1771,13 +1711,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get attractedToLabel => 'ATTRACTED TO';
 
   @override
-  String get whatPartnerSeesLabel => 'WHAT PARTNER SEES';
+  String get whatPartnerSeesLabel => 'PARTNER KYA DEKHTA HAI';
 
   @override
   String get romancePatternTitle => 'Romance Pattern';
 
   @override
-  String get firstLoveAgeLabel => 'FIRST LOVE AGE';
+  String get firstLoveAgeLabel => 'PEHLE PYAAR KI UMAR';
 
   @override
   String get relationshipCountLabel => 'RELATIONSHIP COUNT';
@@ -1824,10 +1764,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get languagesWord => 'Languages';
 
   @override
-  String get givesLabel => 'GIVES';
+  String get givesLabel => 'DETA HAI';
 
   @override
-  String get receivesLabel => 'RECEIVES';
+  String get receivesLabel => 'LETA HAI';
 
   @override
   String get idealWord => 'Ideal';
@@ -1836,7 +1776,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get partnerWord => 'Partner';
 
   @override
-  String get seekTheseTraitsLabel => 'SEEK THESE TRAITS';
+  String get seekTheseTraitsLabel => 'YE GUN DHOONDHEIN';
 
   @override
   String get dealbreakersLabel => 'DEALBREAKERS';
@@ -1857,7 +1797,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get rentalWord => 'RENTAL';
 
   @override
-  String get vehiclesWord => 'VEHICLES';
+  String get vehiclesWord => 'VAAHAN';
 
   @override
   String get landPctLabel => 'LAND %';
@@ -1905,10 +1845,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get constructionWindowsTitle => 'Construction Windows';
 
   @override
-  String get maternalInherPctLabel => 'MATERNAL INHER %';
+  String get maternalInherPctLabel => 'MAAYKE SE VIRASAT %';
 
   @override
-  String get paternalInherPctLabel => 'PATERNAL INHER %';
+  String get paternalInherPctLabel => 'PITA SE VIRASAT %';
 
   @override
   String get multiHomePctLabel => 'MULTI-HOME %';
@@ -1943,7 +1883,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get protectionWord => 'PROTECTION';
 
   @override
-  String get astrologicalWord => 'Astrological';
+  String get astrologicalWord => 'Jyotish';
 
   @override
   String get keyRisksHeader1 => 'Key';
@@ -1952,7 +1892,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get keyRisksHeader2 => 'Risks';
 
   @override
-  String get reportCopiedShort => 'Report copied!';
+  String get reportCopiedShort => 'Report copy ho gayi!';
 
   @override
   String get keyScoresLabel => 'KEY SCORES';
@@ -1966,33 +1906,33 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get windowsWord => 'Windows';
 
   @override
-  String get genericFailedMsg => 'Failed';
+  String get genericFailedMsg => 'Fail ho gaya';
 
   @override
-  String get unknownWord => 'Unknown';
+  String get unknownWord => 'Anjaan';
 
   @override
   String selectKarmaChartsLabel(int max) {
-    return 'Select 2-${max} Charts';
+    return '2-${max} Charts Chunein';
   }
 
   @override
   String selectChartsLabelCount(int max) {
-    return 'Select ${max} Charts';
+    return '${max} Charts Chunein';
   }
 
   @override
   String runningAnalysisLabel(String label) {
-    return 'Running ${label} analysis...';
+    return '${label} analysis chal raha hai...';
   }
 
   @override
   String pickKarmicChartsHint(int max) {
-    return 'Pick 2 to ${max} charts to analyze karmic links';
+    return 'Karmic links analyze karne ke liye 2 se ${max} charts chunein';
   }
 
   @override
-  String get pickMaleFemaleHint => 'Pick a Male and Female chart';
+  String get pickMaleFemaleHint => 'Ek Male aur Female chart chunein';
 
   @override
   String get personOneLabel => 'Person 1';
@@ -2001,11 +1941,11 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get personTwoLabel => 'Person 2';
 
   @override
-  String get analysisFailedMsg => 'Analysis failed';
+  String get analysisFailedMsg => 'Analysis fail ho gaya';
 
   @override
   String analyzeChartsCountLabel(int count) {
-    return 'Analyze ${count} Charts';
+    return '${count} Charts Analyze Karein';
   }
 
   @override
@@ -2024,14 +1964,14 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get contextTeamLabel => 'Team';
 
   @override
-  String get contextFriendshipLabel => 'Friendship';
+  String get contextFriendshipLabel => 'Dosti';
 
   @override
   String get relationshipIntelTitle => 'Relationship Intelligence';
 
   @override
   String analyzingChartsCountLabel(int count) {
-    return 'Analyzing ${count} charts...';
+    return '${count} charts analyze ho rahe hain...';
   }
 
   @override
@@ -2041,7 +1981,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kundliMilanReportTitle => 'Kundli Milan Report';
 
   @override
-  String get runningMilanAnalysisLabel => 'Running Milan analysis...';
+  String get runningMilanAnalysisLabel => 'Milan analysis chal raha hai...';
 
   @override
   String selectedCountOfTwoLabel(int count) {
@@ -2049,13 +1989,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   }
 
   @override
-  String get runMilanAnalysisBtn => 'Run Milan Analysis';
+  String get runMilanAnalysisBtn => 'Milan Analysis Chalayein';
 
   @override
-  String get noChartsCreateFirst => 'No charts. Create a birth chart first.';
+  String get noChartsCreateFirst => 'Koi chart nahi. Pehle birth chart banayein.';
 
   @override
-  String get selectBirthChartAnalyze => 'Select a birth chart to analyze';
+  String get selectBirthChartAnalyze => 'Analyze karne ke liye ek birth chart chunein';
 
   @override
   String get doshAnalysis => 'Dosha Analysis';
@@ -2077,16 +2017,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String yogaHideInactiveCount(Object count) {
-    return 'Hide inactive yogas (${count})';
+    return 'Inactive yogas chhupayein (${count})';
   }
 
   @override
   String yogaShowInactiveCount(Object count) {
-    return 'Show inactive yogas (${count})';
+    return 'Inactive yogas dikhayein (${count})';
   }
 
   @override
-  String get loadFailed => 'Failed';
+  String get loadFailed => 'Fail ho gaya';
 
   @override
   String dashaDrillMd(Object planet) {
@@ -2110,17 +2050,17 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String dashaBirthLordBalance(Object lord, Object balance) {
-    return 'Birth Lord: ${lord} • Balance: ${balance} yrs';
+    return 'Birth Lord: ${lord} • Balance: ${balance} saal';
   }
 
   @override
   String dashaLagnaBalance(Object lagna, Object balance) {
-    return 'Lagna: ${lagna} • Balance: ${balance} yrs';
+    return 'Lagna: ${lagna} • Balance: ${balance} saal';
   }
 
   @override
   String dashaYearsValue(Object years) {
-    return '${years} years';
+    return '${years} saal';
   }
 
   @override
@@ -2133,73 +2073,73 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String dashaActiveYogasCount(Object count) {
-    return 'Active Yogas in Current Period (${count})';
+    return 'Current Period ke Active Yogas (${count})';
   }
 
   @override
   String dashaActiveDoshasCount(Object count) {
-    return 'Active Doshas in Current Period (${count})';
+    return 'Current Period ke Active Doshas (${count})';
   }
 
   @override
-  String get dashaNoYogasTriggered => 'No yogas triggered';
+  String get dashaNoYogasTriggered => 'Koi yoga trigger nahi hua';
 
   @override
-  String get dashaNoDoshasTriggered => 'No doshas triggered';
+  String get dashaNoDoshasTriggered => 'Koi dosha trigger nahi hua';
 
   @override
   String get divD1Name => 'Rasi (D-1)';
 
   @override
-  String get divD1Desc => 'Physical existence, all matters';
+  String get divD1Desc => 'Sharirik astitva, sabhi vishay';
 
   @override
   String get divD2Name => 'Hora (D-2)';
 
   @override
-  String get divD2Desc => 'Wealth, money';
+  String get divD2Desc => 'Dhan, paisa';
 
   @override
   String get divD3Name => 'Drekkana (D-3)';
 
   @override
-  String get divD3Desc => 'Siblings, courage';
+  String get divD3Desc => 'Bhai-behen, saahas';
 
   @override
   String get divD4Name => 'Chaturthamsa (D-4)';
 
   @override
-  String get divD4Desc => 'Property, residence, fortune';
+  String get divD4Desc => 'Sampatti, nivaas, bhagya';
 
   @override
   String get divD5Name => 'Panchamsa (D-5)';
 
   @override
-  String get divD5Desc => 'Fame, authority, power';
+  String get divD5Desc => 'Yash, satta, shakti';
 
   @override
   String get divD6Name => 'Shashthamsa (D-6)';
 
   @override
-  String get divD6Desc => 'Health troubles';
+  String get divD6Desc => 'Swasthya samasyaayein';
 
   @override
   String get divD7Name => 'Saptamsa (D-7)';
 
   @override
-  String get divD7Desc => 'Children, grandchildren';
+  String get divD7Desc => 'Santaan, potey-potiyaan';
 
   @override
   String get divD8Name => 'Ashtamsa (D-8)';
 
   @override
-  String get divD8Desc => 'Sudden troubles, litigation';
+  String get divD8Desc => 'Achanak pareshaani, mukadma';
 
   @override
   String get divD9Name => 'Navamsha (D-9)';
 
   @override
-  String get divD9Desc => 'Marriage, spouse, dharma';
+  String get divD9Desc => 'Vivah, jeevansaathi, dharma';
 
   @override
   String get divD10Name => 'Dasamsha (D-10)';
@@ -2211,76 +2151,76 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get divD11Name => 'Rudramsha (D-11)';
 
   @override
-  String get divD11Desc => 'Death, destruction';
+  String get divD11Desc => 'Mrityu, vinaash';
 
   @override
   String get divD12Name => 'Dwadasamsha (D-12)';
 
   @override
-  String get divD12Desc => 'Parents, blood-relatives';
+  String get divD12Desc => 'Maata-pita, rakt-sambandhi';
 
   @override
   String get divD16Name => 'Shodasamsha (D-16)';
 
   @override
-  String get divD16Desc => 'Vehicles, comforts, pleasures';
+  String get divD16Desc => 'Vaahan, sukh-suvidha, aanand';
 
   @override
   String get divD20Name => 'Vimsamsha (D-20)';
 
   @override
-  String get divD20Desc => 'Spiritual matters, religious';
+  String get divD20Desc => 'Aadhyaatmik vishay, dharmik';
 
   @override
   String get divD24Name => 'Chaturvimsamsha (D-24)';
 
   @override
-  String get divD24Desc => 'Learning, knowledge, education';
+  String get divD24Desc => 'Vidya, gyaan, shiksha';
 
   @override
   String get divD27Name => 'Nakshatramsha (D-27)';
 
   @override
-  String get divD27Desc => 'Strengths, weaknesses, nature';
+  String get divD27Desc => 'Taakat, kamzoriyaan, swabhav';
 
   @override
   String get divD30Name => 'Trimsamsha (D-30)';
 
   @override
-  String get divD30Desc => 'Evils, sub-conscious, punishment';
+  String get divD30Desc => 'Buraiyaan, avchetan, dand';
 
   @override
   String get divD40Name => 'Khavedamsha (D-40)';
 
   @override
-  String get divD40Desc => 'Auspicious/inauspicious (maternal)';
+  String get divD40Desc => 'Shubh/ashubh (maatri paksh)';
 
   @override
   String get divD45Name => 'Akshavedamsha (D-45)';
 
   @override
-  String get divD45Desc => 'All matters (paternal)';
+  String get divD45Desc => 'Sabhi vishay (pitri paksh)';
 
   @override
   String get divD60Name => 'Shashtyamsha (D-60)';
 
   @override
-  String get divD60Desc => 'Past-life karma — MOST IMPORTANT';
+  String get divD60Desc => 'Poorv-janm karma — SABSE MEHATVAPURN';
 
   @override
   String get lifeAreaCareer => 'Career';
 
   @override
-  String get lifeAreaWealth => 'Wealth';
+  String get lifeAreaWealth => 'Dhan';
 
   @override
-  String get lifeAreaMarriage => 'Marriage';
+  String get lifeAreaMarriage => 'Vivah';
 
   @override
-  String get lifeAreaHealth => 'Health';
+  String get lifeAreaHealth => 'Swasthya';
 
   @override
-  String get lifeAreaSpirituality => 'Spirituality';
+  String get lifeAreaSpirituality => 'Aadhyaatm';
 
   @override
   String lifeAreaGrade(Object grade) {
@@ -2312,16 +2252,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get careerWord => 'Career';
 
   @override
-  String get failedToLoad => 'Failed to load';
+  String get failedToLoad => 'Load fail ho gaya';
 
   @override
   String get kundliAscendantLagna => 'Ascendant (Lagna)';
 
   @override
-  String get kundliMoonSignRashi => 'Moon Sign (Rashi)';
+  String get kundliMoonSignRashi => 'Chandra Rashi';
 
   @override
-  String get kundliSunSign => 'Sun Sign';
+  String get kundliSunSign => 'Surya Rashi';
 
   @override
   String kundliEngineLabel(Object engine) {
@@ -2335,7 +2275,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String kundliNakLordDignity(Object lord, Object dignity) {
-    return 'Nakshatra Lord: ${lord}  •  Dignity: ${dignity}';
+    return 'Nakshatra Swami: ${lord}  •  Dignity: ${dignity}';
   }
 
   @override
@@ -2367,7 +2307,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get growthLabel => 'Growth';
 
   @override
-  String get gradeExcellent => 'Excellent';
+  String get gradeExcellent => 'Behtareen';
 
   @override
   String get gradeGood => 'Achha';
@@ -2379,7 +2319,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get gradeBelowAvg => 'Below Avg';
 
   @override
-  String get gradeWeak => 'Weak';
+  String get gradeWeak => 'Kamzor';
 
   @override
   String get careerTypeDomain => 'Career & Domain';
@@ -2402,10 +2342,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get keyHousesCareer => 'Key Houses (Career)';
 
   @override
-  String get keyCareerPlanets => 'Key Career Planets';
+  String get keyCareerPlanets => 'Key Career Grah';
 
   @override
-  String get empty => 'Empty';
+  String get empty => 'Khaali';
 
   @override
   String get guna => 'Guna';
@@ -2426,7 +2366,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get charGroupCorePersonality => 'Core Personality';
 
   @override
-  String get charGroupTrustHonesty => 'Trust & Honesty';
+  String get charGroupTrustHonesty => 'Vishwas & Imaandari';
 
   @override
   String get charGroupLoyaltyCommitment => 'Loyalty & Commitment';
@@ -2438,13 +2378,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get charGroupFinancial => 'Financial';
 
   @override
-  String get charGroupAngerConflict => 'Anger & Conflict';
+  String get charGroupAngerConflict => 'Gussa & Conflict';
 
   @override
-  String get charGroupMoralDharmic => 'Moral & Dharmic';
+  String get charGroupMoralDharmic => 'Naitik & Dharmic';
 
   @override
-  String get charGroupIntellectCommunication => 'Intellect & Communication';
+  String get charGroupIntellectCommunication => 'Buddhi & Communication';
 
   @override
   String get charGroupEmotionalProfile => 'Emotional Profile';
@@ -2456,65 +2396,65 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get charGroupRomantic => 'Romantic';
 
   @override
-  String get charGroupMarriageFamily => 'Marriage & Family';
+  String get charGroupMarriageFamily => 'Vivah & Parivaar';
 
   @override
   String get charGroupOverallLife => 'Overall Life';
 
   @override
-  String get grahaDrishti => 'Graha Drishti (Planet Aspects)';
+  String get grahaDrishti => 'Graha Drishti (Grah Drishti)';
 
   @override
   String get grahaDrishtiSubtitle => 'Kaun kise dekhta hai (%)';
 
   @override
-  String get lagnaAspectsReceived => 'Lagna Aspects Received';
+  String get lagnaAspectsReceived => 'Lagna Par Aayi Drishti';
 
   @override
-  String get rashiDrishti => 'Rashi Drishti (Sign Aspects)';
+  String get rashiDrishti => 'Rashi Drishti (Rashi Drishti)';
 
   @override
   String get shadbalaRupas => 'rupas';
 
   @override
-  String get bhavaHouse1 => 'Self / Body';
+  String get bhavaHouse1 => 'Swayam / Sharir';
 
   @override
-  String get bhavaHouse2 => 'Wealth / Family';
+  String get bhavaHouse2 => 'Dhan / Parivaar';
 
   @override
-  String get bhavaHouse3 => 'Siblings / Courage';
+  String get bhavaHouse3 => 'Bhai-Behen / Saahas';
 
   @override
-  String get bhavaHouse4 => 'Home / Mother';
+  String get bhavaHouse4 => 'Ghar / Maata';
 
   @override
-  String get bhavaHouse5 => 'Children / Intellect';
+  String get bhavaHouse5 => 'Santaan / Buddhi';
 
   @override
-  String get bhavaHouse6 => 'Enemies / Health';
+  String get bhavaHouse6 => 'Dushman / Swasthya';
 
   @override
-  String get bhavaHouse7 => 'Marriage / Partner';
+  String get bhavaHouse7 => 'Vivah / Partner';
 
   @override
-  String get bhavaHouse8 => 'Longevity';
+  String get bhavaHouse8 => 'Aayu';
 
   @override
-  String get bhavaHouse9 => 'Fortune / Guru';
+  String get bhavaHouse9 => 'Bhagya / Guru';
 
   @override
-  String get bhavaHouse10 => 'Career / Father';
+  String get bhavaHouse10 => 'Career / Pita';
 
   @override
-  String get bhavaHouse11 => 'Gains / Friends';
+  String get bhavaHouse11 => 'Laabh / Dost';
 
   @override
-  String get bhavaHouse12 => 'Loss / Moksha';
+  String get bhavaHouse12 => 'Haani / Moksha';
 
   @override
   String bhavaSignLord(Object sign, Object lord) {
-    return '${sign} • Lord: ${lord}';
+    return '${sign} • Swami: ${lord}';
   }
 
   @override
@@ -2527,7 +2467,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String savSubtitle(Object total, Object avg) {
-    return 'Total: ${total} rekhas (average sign = ${avg})';
+    return 'Total: ${total} rekhas (average rashi = ${avg})';
   }
 
   @override
@@ -2537,7 +2477,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String bavSubtitle(Object total, Object score) {
-    return 'Total: ${total} rekhas • At natal sign: ${score}';
+    return 'Total: ${total} rekhas • Janm rashi par: ${score}';
   }
 
   @override
@@ -2550,7 +2490,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String gocharNativeMoon(Object sign) {
-    return 'Native Moon: ${sign}';
+    return 'Janm Chandra: ${sign}';
   }
 
   @override
@@ -2561,14 +2501,14 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String copiedOpening(Object ai) {
-    return 'Copied! Opening ${ai}...';
+    return 'Copy ho gaya! ${ai} khul raha hai...';
   }
 
   @override
   String get openLink => 'OPEN ↗';
 
   @override
-  String get discussReportWithAI => 'DISCUSS THIS REPORT WITH AI';
+  String get discussReportWithAI => 'IS REPORT PAR AI SE BAAT KAREIN';
 
   @override
   String get reliabilityHigh => 'High reliability';
@@ -2577,7 +2517,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get reliabilityModerate => 'Moderate reliability';
 
   @override
-  String get reliabilityLow => 'Lower — guidance only';
+  String get reliabilityLow => 'Kam — sirf guidance';
 
   @override
   String get reliabilityGoodEdu => 'Good reliability · D-24 verified';
@@ -2610,7 +2550,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get warmth => 'Warmth';
 
   @override
-  String get trustWord => 'Trust';
+  String get trustWord => 'Vishwas';
 
   @override
   String get assertLabel => 'Assert';
@@ -2628,7 +2568,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get karmic => 'Karmic';
 
   @override
-  String get enmityRisk => 'Enmity Risk';
+  String get enmityRisk => 'Dushmani Risk';
 
   @override
   String get hdrChartProfiles => 'Chart Profiles';
@@ -2736,7 +2676,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get marriageVerdict => 'MARRIAGE VERDICT';
 
   @override
-  String get educationWord => 'Education';
+  String get educationWord => 'Shiksha';
 
   @override
   String get learningSuffix => '& Learning';
@@ -2772,7 +2712,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get hdrHouseFoundations => 'House Foundations';
 
   @override
-  String get hdrMercuryJupiter => 'Mercury & Jupiter';
+  String get hdrMercuryJupiter => 'Budh & Guru';
 
   @override
   String get hdrEducationYogas => 'Education Yogas';
@@ -2817,7 +2757,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get naturalAbilities => 'NATURAL ABILITIES';
 
   @override
-  String get hdrSaraswatiRemedies => 'Saraswati Remedies';
+  String get hdrSaraswatiRemedies => 'Saraswati Upay';
 
   @override
   String get studentVerdict => 'STUDENT VERDICT';
@@ -2892,7 +2832,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get recoveryCapacity => 'RECOVERY CAPACITY';
 
   @override
-  String get hdrRemediesSolutions => 'Remedies & Solutions';
+  String get hdrRemediesSolutions => 'Upay & Solutions';
 
   @override
   String get aiConnectionLost => 'Connection lost ho gaya. Please dobara try karein.';
@@ -2949,7 +2889,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get aiThinking => 'Soch raha hai...';
 
   @override
-  String get aiThanks => 'Thanks!';
+  String get aiThanks => 'Shukriya!';
 
   @override
   String get aiFeedbackNoted => 'Feedback note kar liya';
@@ -3014,6 +2954,66 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get resendLink => 'Link dobara bhejein';
+
+  @override
+  String get appName => 'Nakshatralogy';
+
+  @override
+  String get cosmicJourneyAwaits => 'Aapki Cosmic Journey Shuru Hoti Hai';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get astrologers => 'Jyotishi';
+
+  @override
+  String get services => 'Sevayein';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get live => 'Live';
+
+  @override
+  String get kundli => 'Kundli';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get call => 'Call';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get signIn => 'Sign In';
+
+  @override
+  String get createAccount => 'Account Banayein';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get confirmPassword => 'Password Confirm Karein';
+
+  @override
+  String get fullName => 'Poora Naam';
+
+  @override
+  String get phone => 'Phone (optional)';
+
+  @override
+  String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
   String get sendResetLink => 'Reset Link Bhejein';
@@ -3223,8 +3223,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get premiumSection => 'Premium Section';
 
   @override
-  String get unlockReading =>
-      'Detailed analysis dekhne ke liye unlock karein.';
+  String get unlockReading => 'Detailed analysis dekhne ke liye unlock karein.';
 
   @override
   String get unlock => 'Unlock';
@@ -3305,8 +3304,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get endChat => 'Chat Khatam Karein?';
 
   @override
-  String get endChatConfirm =>
-      'Kya aap sach mein is chat session ko khatam karna chahte hain?';
+  String get endChatConfirm => 'Kya aap sach mein is chat session ko khatam karna chahte hain?';
 
   @override
   String get sendPhoto => 'Photo Bhejein';
@@ -3357,8 +3355,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get noLiveStreams => 'Abhi koi live stream nahi';
 
   @override
-  String get astrologerUnavailable =>
-      'Jyotishi available nahi. Stream khatam ho rahi hai.';
+  String get astrologerUnavailable => 'Jyotishi available nahi. Stream khatam ho rahi hai.';
 
   @override
   String get streamEnded => 'Stream Khatam';
@@ -3571,28 +3568,28 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get engBusiness => 'Business & Startup';
 
   @override
-  String get engEducation => 'Education & Learning';
+  String get engEducation => 'Shiksha & Learning';
 
   @override
   String get engLifePath => 'Life Path & Luck';
 
   @override
-  String get engWealth => 'Wealth & Finance';
+  String get engWealth => 'Dhan & Finance';
 
   @override
-  String get engDebt => 'Debt & Recovery';
+  String get engDebt => 'Karz & Recovery';
 
   @override
   String get engProperty => 'Property & Assets';
 
   @override
-  String get engLegal => 'Legal & Disputes';
+  String get engLegal => 'Legal & Vivaad';
 
   @override
   String get engLove => 'Love & Romance';
 
   @override
-  String get engMarriage => 'Marriage & Family';
+  String get engMarriage => 'Vivah & Parivaar';
 
   @override
   String get engKundliMilan => 'Kundli Milan';
@@ -3604,7 +3601,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get engLoveCompat => 'Love Compatibility';
 
   @override
-  String get engChildProb => 'Child Probability';
+  String get engChildProb => 'Santaan Probability';
 
   @override
   String get engHealth => 'Health & Wellness';
@@ -3679,16 +3676,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get browseAstrologers => 'Jyotishi khojein';
 
   @override
-  String get probableNumber => 'PROBABLE NUMBER';
+  String get probableNumber => 'SAMBHAVIT SANKHYA';
 
   @override
   String get genderTendency => 'GENDER TENDENCY';
 
   @override
-  String get son => 'SON';
+  String get son => 'BETA';
 
   @override
-  String get daughter => 'DAUGHTER';
+  String get daughter => 'BETI';
 
   @override
   String get occupants => 'OCCUPANTS';
@@ -3700,7 +3697,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get maleficAspects => 'PAAP ASPECTS';
 
   @override
-  String get nextFavorableWindow => 'NEXT FAVORABLE WINDOW';
+  String get nextFavorableWindow => 'AGLA FAVORABLE WINDOW';
 
   @override
   String get totalDoshaPenalty => 'TOTAL DOSHA PENALTY';
@@ -3739,7 +3736,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get overallVerdict => 'OVERALL VERDICT';
 
   @override
-  String get venusContacts => 'VENUS CROSS CONTACTS';
+  String get venusContacts => 'SHUKRA CROSS CONTACTS';
 
   @override
   String get contact => 'Contact';
@@ -3748,13 +3745,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get effect => 'Effect';
 
   @override
-  String get moonSignCompat => 'MOON SIGN COMPATIBILITY';
+  String get moonSignCompat => 'CHANDRA RASHI COMPATIBILITY';
 
   @override
-  String get hisMoon => 'HIS MOON';
+  String get hisMoon => 'USKA CHANDRA';
 
   @override
-  String get herMoon => 'HER MOON';
+  String get herMoon => 'USKA CHANDRA';
 
   @override
   String get nakshatraCompat => 'NAKSHATRA COMPATIBILITY';
@@ -3817,10 +3814,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get d7Saptamsa => 'D7 SAPTAMSA';
 
   @override
-  String get numberExplanation => 'NUMBER EXPLANATION';
+  String get numberExplanation => 'SANKHYA KA SPASHTIKARAN';
 
   @override
-  String get genderExplanation => 'GENDER EXPLANATION';
+  String get genderExplanation => 'GENDER KA SPASHTIKARAN';
 
   @override
   String get inFifth => '5th mein?';
@@ -3928,10 +3925,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lifeAreaPredictions => 'Life Area Predictions';
 
   @override
-  String get strengths => 'Strengths';
+  String get strengths => 'Khoobiyaan';
 
   @override
-  String get weaknesses => 'Weaknesses';
+  String get weaknesses => 'Kamzoriyaan';
 
   @override
   String get ruledBy => 'Swami';
@@ -4021,19 +4018,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get visibility => 'VISIBILITY';
 
   @override
-  String get lagnaLord => 'Lagna Lord';
+  String get lagnaLord => 'Lagna Swami';
 
   @override
-  String get tenthLord => '10th Lord';
+  String get tenthLord => '10th Swami';
 
   @override
-  String get lord => 'LORD';
+  String get lord => 'SWAMI';
 
   @override
-  String get lordPlacedIn => 'LORD PLACED IN';
+  String get lordPlacedIn => 'SWAMI YAHAN STHIT';
 
   @override
-  String get lordDignity => 'LORD DIGNITY';
+  String get lordDignity => 'SWAMI DIGNITY';
 
   @override
   String get d9Dignity => 'D9 DIGNITY';
@@ -4060,7 +4057,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get careerRisks => 'Career Risks';
 
   @override
-  String get astrologicalRemedies => 'Astrological Remedies';
+  String get astrologicalRemedies => 'Jyotish Upay';
 
   @override
   String get practicalSolutions => 'Practical Solutions';

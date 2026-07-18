@@ -9,1453 +9,1453 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get favorableLoveWindowsLabel => 'Favorable Love Windows';
+  String get favorableLoveWindowsLabel => 'अनुकूल प्रेम अवधि';
 
   @override
-  String get lordLabel => 'Lord';
+  String get lordLabel => 'स्वामी';
 
   @override
-  String get lordPlacementLabel => 'Lord Placement';
+  String get lordPlacementLabel => 'स्वामी स्थिति';
 
   @override
-  String get lordDignityLabel => 'Lord Dignity';
+  String get lordDignityLabel => 'स्वामी बल';
 
   @override
-  String get categoriesSuffix => 'Categories';
+  String get categoriesSuffix => 'श्रेणियाँ';
 
   @override
-  String get coreBlockerLabel => 'CORE BLOCKER';
+  String get coreBlockerLabel => 'मुख्य बाधा';
 
   @override
-  String get coreGiftLabel => '✦ CORE GIFT';
+  String get coreGiftLabel => '✦ मुख्य उपहार';
 
   @override
-  String get coreThemeLabel => '● CORE THEME';
+  String get coreThemeLabel => '● मुख्य विषय';
 
   @override
   String dominantLabel(Object value) {
-    return 'Dominant: ${value}';
+    return 'प्रमुख: ${value}';
   }
 
   @override
-  String get karakasSuffix => 'Karakas';
+  String get karakasSuffix => 'कारक';
 
   @override
-  String get protectiveLabel => 'PROTECTIVE';
+  String get protectiveLabel => 'रक्षक';
 
   @override
   String secondaryLabel(Object value) {
-    return ' · Secondary: ${value}';
+    return ' · द्वितीयक: ${value}';
   }
 
   @override
-  String get tagCore => 'CORE';
+  String get tagCore => 'मुख्य';
 
   @override
-  String get debtScoresHeader => '📉 DEBT SCORES';
+  String get debtScoresHeader => '📉 ऋण स्कोर';
 
   @override
-  String get debtCurrentLoadStat => 'CURRENT\nDEBT LOAD';
+  String get debtCurrentLoadStat => 'वर्तमान\nऋण भार';
 
   @override
-  String get debtRecoveryCapacityStat => 'RECOVERY\nCAPACITY';
+  String get debtRecoveryCapacityStat => 'उबरने की\nक्षमता';
 
   @override
-  String get debtIntensityStat => 'INTENSITY';
+  String get debtIntensityStat => 'तीव्रता';
 
   @override
-  String get debtDefaultRiskStat => 'DEFAULT RISK';
+  String get debtDefaultRiskStat => 'चूक जोखिम';
 
   @override
-  String get debtProfileTitle => 'Debt Profile';
+  String get debtProfileTitle => 'ऋण प्रोफ़ाइल';
 
   @override
-  String get debtKarmaLabel => 'KARMA';
+  String get debtKarmaLabel => 'कर्म';
 
   @override
-  String get debtPersonalityLabel => 'PERSONALITY';
+  String get debtPersonalityLabel => 'व्यक्तित्व';
 
   @override
-  String get debtPhaseLabel => 'PHASE';
+  String get debtPhaseLabel => 'चरण';
 
   @override
-  String get debtPrimaryCategoryLabel => 'PRIMARY CATEGORY';
+  String get debtPrimaryCategoryLabel => 'मुख्य श्रेणी';
 
   @override
-  String get debtWord => 'Debt';
+  String get debtWord => 'ऋण';
 
   @override
-  String get debtYogasTitle => 'Debt Yogas';
+  String get debtYogasTitle => 'ऋण योग';
 
   @override
-  String get debtCreatingLabel => 'DEBT-CREATING';
+  String get debtCreatingLabel => 'ऋण-कारक';
 
   @override
-  String get debtClearingLabel => 'DEBT-CLEARING';
+  String get debtClearingLabel => 'ऋण-मुक्तिकारक';
 
   @override
-  String get yearlyDebtTitle => 'Yearly Debt';
+  String get yearlyDebtTitle => 'वार्षिक ऋण';
 
   @override
-  String get debtRepaymentTitle => 'Repayment';
+  String get debtRepaymentTitle => 'चुकौती';
 
   @override
-  String get debtDangerPeriodsTitle => 'Danger Periods';
+  String get debtDangerPeriodsTitle => 'जोखिम अवधि';
 
   @override
-  String get debtDefaultPctStat => 'DEFAULT %';
+  String get debtDefaultPctStat => 'चूक %';
 
   @override
-  String get debtBankruptcyPctStat => 'BANKRUPTCY %';
+  String get debtBankruptcyPctStat => 'दिवालिया %';
 
   @override
-  String get debtChronicPctStat => 'CHRONIC %';
+  String get debtChronicPctStat => 'दीर्घकालिक %';
 
   @override
-  String get debtResilienceStat => 'RESILIENCE';
+  String get debtResilienceStat => 'सहनशीलता';
 
   @override
   String debtRecoveryTimelineSubtitle(Object pct, Object years) {
-    return 'Recovery: ${pct}% · Timeline: ${years}yrs';
+    return 'उबरना: ${pct}% · अवधि: ${years} वर्ष';
   }
 
   @override
-  String get debtFreeWindowLabel => '🎯 DEBT-FREE WINDOW';
+  String get debtFreeWindowLabel => '🎯 ऋण-मुक्त अवधि';
 
   @override
   String debtFreeYear(Object year) {
-    return 'Year ${year}';
+    return 'वर्ष ${year}';
   }
 
   @override
-  String get legalScoresHeader => '⚖️ LEGAL SCORES';
+  String get legalScoresHeader => '⚖️ कानूनी स्कोर';
 
   @override
-  String get legalVulnerabilityStat => 'LEGAL\nVULNERABILITY';
+  String get legalVulnerabilityStat => 'कानूनी\nसंवेदनशीलता';
 
   @override
-  String get legalVictoryPotentialStat => 'VICTORY\nPOTENTIAL';
+  String get legalVictoryPotentialStat => 'विजय\nसंभावना';
 
   @override
-  String get legalConflictStat => 'CONFLICT';
+  String get legalConflictStat => 'विवाद';
 
   @override
-  String get legalResolutionStat => 'RESOLUTION';
+  String get legalResolutionStat => 'समाधान';
 
   @override
-  String get legalProfileTitle => 'Legal Profile';
+  String get legalProfileTitle => 'कानूनी प्रोफ़ाइल';
 
   @override
-  String get legalKarmaTypeLabel => 'KARMA TYPE';
+  String get legalKarmaTypeLabel => 'कर्म प्रकार';
 
   @override
-  String get legalConflictStyleLabel => 'CONFLICT STYLE';
+  String get legalConflictStyleLabel => 'विवाद शैली';
 
   @override
-  String get legalStrategyLabel => 'STRATEGY';
+  String get legalStrategyLabel => 'रणनीति';
 
   @override
-  String get legalCaseDurationLabel => 'CASE DURATION';
+  String get legalCaseDurationLabel => 'मामले की अवधि';
 
   @override
-  String get legalCurrentStatusLabel => 'CURRENT STATUS';
+  String get legalCurrentStatusLabel => 'वर्तमान स्थिति';
 
   @override
-  String get legalWord => 'Legal';
+  String get legalWord => 'कानूनी';
 
   @override
-  String get legalYogasTitle => 'Legal Yogas';
+  String get legalYogasTitle => 'कानूनी योग';
 
   @override
-  String get legalDisputePressureLabel => 'DISPUTE PRESSURE';
+  String get legalDisputePressureLabel => 'विवाद दबाव';
 
   @override
-  String get legalProtectionLabel => 'LEGAL PROTECTION';
+  String get legalProtectionLabel => 'कानूनी सुरक्षा';
 
   @override
-  String get legalStressTrendTitle => 'Legal Stress';
+  String get legalStressTrendTitle => 'कानूनी तनाव';
 
   @override
-  String get legalVisibleEnemiesStat => 'VISIBLE ENEMIES';
+  String get legalVisibleEnemiesStat => 'प्रत्यक्ष शत्रु';
 
   @override
-  String get legalHiddenEnemiesStat => 'HIDDEN ENEMIES';
+  String get legalHiddenEnemiesStat => 'गुप्त शत्रु';
 
   @override
-  String get legalCriminalRiskStat => 'CRIMINAL RISK';
+  String get legalCriminalRiskStat => 'आपराधिक जोखिम';
 
   @override
-  String get legalFalseAccusationStat => 'FALSE ACCUSATION';
+  String get legalFalseAccusationStat => 'झूठा आरोप';
 
   @override
-  String get legalContractKarmaTitle => 'Contract Karma';
+  String get legalContractKarmaTitle => 'अनुबंध कर्म';
 
   @override
-  String get legalDocumentationLabel => 'DOCUMENTATION';
+  String get legalDocumentationLabel => 'दस्तावेज़ीकरण';
 
   @override
-  String get legalFinePrintAwareLabel => 'FINE PRINT AWARE';
+  String get legalFinePrintAwareLabel => 'बारीक शर्तों की जानकारी';
 
   @override
-  String get legalNegotiationSkillLabel => 'NEGOTIATION SKILL';
+  String get legalNegotiationSkillLabel => 'वार्ता कौशल';
 
   @override
-  String get legalSignatureCautionLabel => 'SIGNATURE CAUTION';
+  String get legalSignatureCautionLabel => 'हस्ताक्षर सावधानी';
 
   @override
   String legalResilienceSubtitle(Object pct) {
-    return 'Resilience: ${pct}/100';
+    return 'सहनशीलता: ${pct}/100';
   }
 
   @override
-  String get legalVictoryWord => 'Victory';
+  String get legalVictoryWord => 'विजय';
 
   @override
-  String get legalAnalysisSuffix => 'Analysis';
+  String get legalAnalysisSuffix => 'विश्लेषण';
 
   @override
-  String get legalAsPlaintiff => 'AS PLAINTIFF';
+  String get legalAsPlaintiff => 'वादी के रूप में';
 
   @override
-  String get legalAsDefendant => 'AS DEFENDANT';
+  String get legalAsDefendant => 'प्रतिवादी के रूप में';
 
   @override
-  String get legalWinProbability => 'WIN PROBABILITY';
+  String get legalWinProbability => 'जीत की संभावना';
 
   @override
-  String get legalDisputeWord => 'Dispute';
+  String get legalDisputeWord => 'विवाद';
 
   @override
-  String get lifepathScoresHeader => '🌟 LIFE PATH SCORES';
+  String get lifepathScoresHeader => '🌟 जीवन पथ स्कोर';
 
   @override
-  String get lifepathDharmaClarityStat => 'DHARMA\nCLARITY';
+  String get lifepathDharmaClarityStat => 'धर्म\nस्पष्टता';
 
   @override
-  String get lifepathFortuneBaselineStat => 'FORTUNE\nBASELINE';
+  String get lifepathFortuneBaselineStat => 'भाग्य\nआधार';
 
   @override
-  String get lifepathCoherenceStat => 'LIFE PATH\nCOHERENCE';
+  String get lifepathCoherenceStat => 'जीवन पथ\nसामंजस्य';
 
   @override
-  String get lifepathKarmaStat => 'KARMA';
+  String get lifepathKarmaStat => 'कर्म';
 
   @override
-  String get lifepathSpiritualStat => 'SPIRITUAL';
+  String get lifepathSpiritualStat => 'आध्यात्मिक';
 
   @override
-  String get lifepathFameStat => 'FAME';
+  String get lifepathFameStat => 'प्रसिद्धि';
 
   @override
-  String get lifepathSoulContractTitle => 'Soul Contract';
+  String get lifepathSoulContractTitle => 'आत्मा अनुबंध';
 
   @override
-  String get lifepathAtmakarakaLabel => 'ATMAKARAKA';
+  String get lifepathAtmakarakaLabel => 'आत्मकारक';
 
   @override
-  String get lifepathAkFocusLabel => 'AK FOCUS';
+  String get lifepathAkFocusLabel => 'AK केंद्र';
 
   @override
-  String get lifepathSoulPurposeLabel => 'SOUL PURPOSE';
+  String get lifepathSoulPurposeLabel => 'आत्मा उद्देश्य';
 
   @override
-  String get lifepathLifeChapterLabel => 'LIFE CHAPTER';
+  String get lifepathLifeChapterLabel => 'जीवन अध्याय';
 
   @override
-  String get lifepathPrimaryDomainLabel => 'PRIMARY DOMAIN';
+  String get lifepathPrimaryDomainLabel => 'मुख्य क्षेत्र';
 
   @override
-  String get lifepathLeadershipStat => 'LEADERSHIP';
+  String get lifepathLeadershipStat => 'नेतृत्व';
 
   @override
-  String get lifepathWisdomTeachStat => 'WISDOM/TEACH';
+  String get lifepathWisdomTeachStat => 'ज्ञान/शिक्षण';
 
   @override
-  String get lifepathServiceStat => 'SERVICE';
+  String get lifepathServiceStat => 'सेवा';
 
   @override
-  String get lifepathHealingStat => 'HEALING';
+  String get lifepathHealingStat => 'उपचार';
 
   @override
-  String get lifepathFortuneYogasTitle => 'Fortune Yogas';
+  String get lifepathFortuneYogasTitle => 'भाग्य योग';
 
   @override
-  String get lifepathLuckBlocksLabel => 'LUCK BLOCKS';
+  String get lifepathLuckBlocksLabel => 'भाग्य बाधाएँ';
 
   @override
-  String get lifepathFortuneBoostersLabel => 'FORTUNE BOOSTERS';
+  String get lifepathFortuneBoostersLabel => 'भाग्य वर्धक';
 
   @override
-  String get lifepathFortuneTrendTitle => 'Fortune Trend';
+  String get lifepathFortuneTrendTitle => 'भाग्य प्रवृत्ति';
 
   @override
-  String get lifepathGoldenWindowsTitle => 'Golden Windows ★';
+  String get lifepathGoldenWindowsTitle => 'स्वर्णिम अवधि ★';
 
   @override
-  String get lifepathTransformationTitle => 'Transformation';
+  String get lifepathTransformationTitle => 'रूपांतरण';
 
   @override
-  String get lifepathMilestonesTitle => 'Life Milestones';
+  String get lifepathMilestonesTitle => 'जीवन के पड़ाव';
 
   @override
-  String get lifepathKarmicLessonsTitle => 'Karmic Lessons';
+  String get lifepathKarmicLessonsTitle => 'कार्मिक सीख';
 
   @override
-  String get lifepathRahuGrowthLabel => 'RAHU GROWTH';
+  String get lifepathRahuGrowthLabel => 'राहु विकास';
 
   @override
-  String get lifepathKetuSurrenderLabel => 'KETU SURRENDER';
+  String get lifepathKetuSurrenderLabel => 'केतु समर्पण';
 
   @override
-  String get lifepathSaturnLessonLabel => 'SATURN LESSON';
+  String get lifepathSaturnLessonLabel => 'शनि की सीख';
 
   @override
-  String get lifepathLifeDifficultyLabel => 'LIFE DIFFICULTY';
+  String get lifepathLifeDifficultyLabel => 'जीवन कठिनाई';
 
   @override
-  String get lifepathSoulExperienceTitle => '★ SOUL CAME TO EXPERIENCE';
+  String get lifepathSoulExperienceTitle => '★ आत्मा अनुभव के लिए आई';
 
   @override
-  String get lifepathBlessingsTitle => '● BLESSINGS';
+  String get lifepathBlessingsTitle => '● आशीर्वाद';
 
   @override
-  String get lifepathLifeWord => 'Life';
+  String get lifepathLifeWord => 'जीवन';
 
   @override
-  String get lifepathArchetypeSuffix => 'Archetype';
+  String get lifepathArchetypeSuffix => 'मूल स्वरूप';
 
   @override
   String lifepathFulfillmentSubtitle(Object pct) {
-    return 'Fulfillment: ${pct}%';
+    return 'पूर्णता: ${pct}%';
   }
 
   @override
-  String get lifepathDestinyVsWord => 'Destiny vs';
+  String get lifepathDestinyVsWord => 'भाग्य बनाम';
 
   @override
-  String get lifepathFreeWillSuffix => 'Free Will';
+  String get lifepathFreeWillSuffix => 'स्वतंत्र इच्छा';
 
   @override
-  String get lifepathDestinyStat => 'DESTINY';
+  String get lifepathDestinyStat => 'भाग्य';
 
   @override
-  String get lifepathFreeWillStat => 'FREE WILL';
+  String get lifepathFreeWillStat => 'स्वतंत्र इच्छा';
 
   @override
-  String get pastlifeScoresHeader => '🔮 PAST LIFE SCORES';
+  String get pastlifeScoresHeader => '🔮 पूर्वजन्म स्कोर';
 
   @override
-  String get pastlifeSignatureStrengthStat => 'SIGNATURE\nSTRENGTH';
+  String get pastlifeSignatureStrengthStat => 'विशिष्ट\nबल';
 
   @override
-  String get pastlifeCarryForwardStat => 'CARRY-\nFORWARD';
+  String get pastlifeCarryForwardStat => 'आगे लाया\nगया';
 
   @override
-  String get pastlifeMasteryPreservedStat => 'MASTERY\nPRESERVED';
+  String get pastlifeMasteryPreservedStat => 'संरक्षित\nदक्षता';
 
   @override
-  String get pastlifeUnfinishedStat => 'UNFINISHED';
+  String get pastlifeUnfinishedStat => 'अधूरा';
 
   @override
-  String get pastlifeKarmicDebtStat => 'KARMIC DEBT';
+  String get pastlifeKarmicDebtStat => 'कार्मिक ऋण';
 
   @override
-  String get pastlifeProfileTitle => 'Past Life Profile';
+  String get pastlifeProfileTitle => 'पूर्वजन्म प्रोफ़ाइल';
 
   @override
-  String get pastlifeThemeLabel => 'THEME';
+  String get pastlifeThemeLabel => 'विषय';
 
   @override
-  String get pastlifeProfessionLabel => 'PROFESSION';
+  String get pastlifeProfessionLabel => 'पेशा';
 
   @override
-  String get pastlifeSocialStandingLabel => 'SOCIAL STANDING';
+  String get pastlifeSocialStandingLabel => 'सामाजिक स्थिति';
 
   @override
-  String get pastlifeRegionLabel => 'REGION';
+  String get pastlifeRegionLabel => 'क्षेत्र';
 
   @override
-  String get pastlifeSpiritualLevelLabel => 'SPIRITUAL LEVEL';
+  String get pastlifeSpiritualLevelLabel => 'आध्यात्मिक स्तर';
 
   @override
-  String get pastlifeGenderLabel => 'GENDER';
+  String get pastlifeGenderLabel => 'लिंग';
 
   @override
-  String get pastlifeWealthLevelLabel => 'WEALTH LEVEL';
+  String get pastlifeWealthLevelLabel => 'धन स्तर';
 
   @override
-  String get pastlifeFamilyRoleLabel => 'FAMILY ROLE';
+  String get pastlifeFamilyRoleLabel => 'पारिवारिक भूमिका';
 
   @override
-  String get pastlifeSkillsCarriedTitle => '★ SKILLS CARRIED FORWARD';
+  String get pastlifeSkillsCarriedTitle => '★ आगे लाए गए कौशल';
 
   @override
-  String get pastlifeNaturalAttractionsTitle => '● NATURAL ATTRACTIONS';
+  String get pastlifeNaturalAttractionsTitle => '● स्वाभाविक आकर्षण';
 
   @override
-  String get pastlifeUnexplainedFearsTitle => '⚠ UNEXPLAINED FEARS';
+  String get pastlifeUnexplainedFearsTitle => '⚠ अस्पष्ट भय';
 
   @override
-  String get pastlifeMagneticPullsTitle => '→ MAGNETIC PULLS';
+  String get pastlifeMagneticPullsTitle => '→ चुंबकीय खिंचाव';
 
   @override
-  String get pastlifeRelationshipStat => 'RELATIONSHIP';
+  String get pastlifeRelationshipStat => 'संबंध';
 
   @override
-  String get pastlifeFinancialStat => 'FINANCIAL';
+  String get pastlifeFinancialStat => 'वित्तीय';
 
   @override
-  String get pastlifeServiceStat => 'SERVICE';
+  String get pastlifeServiceStat => 'सेवा';
 
   @override
-  String get pastlifeDharmicStat => 'DHARMIC';
+  String get pastlifeDharmicStat => 'धार्मिक';
 
   @override
-  String get pastlifeOnRelationsStat => 'ON RELATIONS';
+  String get pastlifeOnRelationsStat => 'संबंधों पर';
 
   @override
-  String get pastlifeOnCareerStat => 'ON CAREER';
+  String get pastlifeOnCareerStat => 'करियर पर';
 
   @override
-  String get pastlifeOnHealthStat => 'ON HEALTH';
+  String get pastlifeOnHealthStat => 'स्वास्थ्य पर';
 
   @override
-  String get pastlifeOnSpiritualStat => 'ON SPIRITUAL';
+  String get pastlifeOnSpiritualStat => 'आध्यात्म पर';
 
   @override
-  String get pastlifeKarmicResolutionTitle => 'Karmic Resolution';
+  String get pastlifeKarmicResolutionTitle => 'कार्मिक समाधान';
 
   @override
-  String get pastlifePrimaryPathLabel => 'PRIMARY PATH';
+  String get pastlifePrimaryPathLabel => 'मुख्य मार्ग';
 
   @override
-  String get pastlifeSecondaryPathLabel => 'SECONDARY PATH';
+  String get pastlifeSecondaryPathLabel => 'द्वितीयक मार्ग';
 
   @override
-  String get pastlifeClearingProgressLabel => 'CLEARING PROGRESS';
+  String get pastlifeClearingProgressLabel => 'मुक्ति प्रगति';
 
   @override
-  String get pastlifeRemainingWorkLabel => 'REMAINING WORK';
+  String get pastlifeRemainingWorkLabel => 'शेष कार्य';
 
   @override
-  String get pastlifeDebtTimelineLabel => 'DEBT TIMELINE';
+  String get pastlifeDebtTimelineLabel => 'ऋण समयरेखा';
 
   @override
-  String get pastlifeMemoryAccessStat => 'MEMORY ACCESS';
+  String get pastlifeMemoryAccessStat => 'स्मृति पहुँच';
 
   @override
-  String get pastlifeDreamVisitsStat => 'DREAM VISITS';
+  String get pastlifeDreamVisitsStat => 'स्वप्न दर्शन';
 
   @override
-  String get pastlifeDejaVuStat => 'DEJA VU';
+  String get pastlifeDejaVuStat => 'देजा वू';
 
   @override
-  String get pastlifeRegressionFitStat => 'REGRESSION FIT';
+  String get pastlifeRegressionFitStat => 'रिग्रेशन अनुकूलता';
 
   @override
-  String get pastlifeActivationTitle => 'Past Life Activation';
+  String get pastlifeActivationTitle => 'पूर्वजन्म सक्रियता';
 
   @override
   String pastlifeMaturityStatusSubtitle(Object maturity, Object status) {
-    return 'Maturity: ${maturity} · Status: ${status}';
+    return 'परिपक्वता: ${maturity} · स्थिति: ${status}';
   }
 
   @override
-  String get pastlifeKetuWord => 'Ketu';
+  String get pastlifeKetuWord => 'केतु';
 
   @override
-  String get pastlifePastMasterySuffix => 'Past Mastery';
+  String get pastlifePastMasterySuffix => 'पूर्व दक्षता';
 
   @override
-  String get pastlifeKetuMasteredLabel => 'KETU · WHAT YOU MASTERED';
+  String get pastlifeKetuMasteredLabel => 'केतु · आपने जिसमें दक्षता पाई';
 
   @override
-  String get pastlifeRahuWord => 'Rahu';
+  String get pastlifeRahuWord => 'राहु';
 
   @override
-  String get pastlifeFutureGrowthSuffix => 'Future Growth';
+  String get pastlifeFutureGrowthSuffix => 'भविष्य विकास';
 
   @override
-  String get pastlifeRahuPullsLabel => 'RAHU · WHAT PULLS YOU FORWARD';
+  String get pastlifeRahuPullsLabel => 'राहु · जो आपको आगे खींचता है';
 
   @override
   String pastlifeShadowPrefix(Object shadow) {
-    return '⚠ Shadow: ${shadow}';
+    return '⚠ छाया: ${shadow}';
   }
 
   @override
-  String get mentalScoresHeader => '🧠 MENTAL SCORES';
+  String get mentalScoresHeader => '🧠 मानसिक स्कोर';
 
   @override
-  String get mentalStabilityStat => 'MENTAL\nSTABILITY';
+  String get mentalStabilityStat => 'मानसिक\nस्थिरता';
 
   @override
-  String get mentalEmotionalBaselineStat => 'EMOTIONAL\nBASELINE';
+  String get mentalEmotionalBaselineStat => 'भावनात्मक\nआधार';
 
   @override
-  String get mentalResilienceStat => 'RESILIENCE';
+  String get mentalResilienceStat => 'सहनशीलता';
 
   @override
-  String get mentalAnxietyStat => 'ANXIETY';
+  String get mentalAnxietyStat => 'चिंता';
 
   @override
-  String get mentalDepressionStat => 'DEPRESSION';
+  String get mentalDepressionStat => 'अवसाद';
 
   @override
-  String get mentalRegulationStat => 'REGULATION';
+  String get mentalRegulationStat => 'नियमन';
 
   @override
-  String get mentalProfileTitle => 'Mental Profile';
+  String get mentalProfileTitle => 'मानसिक प्रोफ़ाइल';
 
   @override
-  String get mentalConstitutionLabel => 'CONSTITUTION';
+  String get mentalConstitutionLabel => 'प्रकृति';
 
   @override
-  String get mentalStressDriverLabel => 'STRESS DRIVER';
+  String get mentalStressDriverLabel => 'तनाव कारक';
 
   @override
-  String get mentalStabilityAnchorLabel => 'STABILITY ANCHOR';
+  String get mentalStabilityAnchorLabel => 'स्थिरता आधार';
 
   @override
-  String get mentalStressResponseLabel => 'STRESS RESPONSE';
+  String get mentalStressResponseLabel => 'तनाव प्रतिक्रिया';
 
   @override
-  String get mentalAttachmentStyleLabel => 'ATTACHMENT STYLE';
+  String get mentalAttachmentStyleLabel => 'लगाव शैली';
 
   @override
-  String get mentalBurnoutStageLabel => 'BURNOUT STAGE';
+  String get mentalBurnoutStageLabel => 'बर्नआउट चरण';
 
   @override
-  String get mentalWord => 'Mental';
+  String get mentalWord => 'मानसिक';
 
   @override
-  String get mentalYogasTitle => 'Mental Yogas';
+  String get mentalYogasTitle => 'मानसिक योग';
 
   @override
-  String get mentalStressPressureLabel => 'STRESS PRESSURE';
+  String get mentalStressPressureLabel => 'तनाव दबाव';
 
   @override
-  String get mentalWellnessTrendTitle => 'Wellness Trend';
+  String get mentalWellnessTrendTitle => 'कल्याण प्रवृत्ति';
 
   @override
-  String get mentalHealthyCopingTitle => '✓ HEALTHY COPING';
+  String get mentalHealthyCopingTitle => '✓ स्वस्थ सामना';
 
   @override
-  String get mentalUnhealthyRisksTitle => '⚠ UNHEALTHY RISKS';
+  String get mentalUnhealthyRisksTitle => '⚠ अस्वस्थ जोखिम';
 
   @override
-  String get mentalRecommendedAlternativesTitle => '✦ RECOMMENDED ALTERNATIVES';
+  String get mentalRecommendedAlternativesTitle => '✦ अनुशंसित विकल्प';
 
   @override
-  String get mentalSleepQualityStat => 'SLEEP QUALITY';
+  String get mentalSleepQualityStat => 'नींद गुणवत्ता';
 
   @override
-  String get mentalSocialSupportStat => 'SOCIAL SUPPORT';
+  String get mentalSocialSupportStat => 'सामाजिक सहयोग';
 
   @override
-  String get mentalBurnoutVulnStat => 'BURNOUT VULN';
+  String get mentalBurnoutVulnStat => 'बर्नआउट जोखिम';
 
   @override
-  String get mentalSelfAwarenessStat => 'SELF-AWARENESS';
+  String get mentalSelfAwarenessStat => 'आत्म-जागरूकता';
 
   @override
-  String get mentalAnxietyWord => 'Anxiety';
+  String get mentalAnxietyWord => 'चिंता';
 
   @override
-  String get mentalTypesSuffix => 'Types';
+  String get mentalTypesSuffix => 'प्रकार';
 
   @override
-  String get mentalTherapyWord => 'Therapy';
+  String get mentalTherapyWord => 'थेरेपी';
 
   @override
-  String get mentalModalityFitSuffix => 'Modality Fit';
+  String get mentalModalityFitSuffix => 'पद्धति अनुकूलता';
 
   @override
-  String get characterScoresHeader => '🔍 CHARACTER SCORES';
+  String get characterScoresHeader => '🔍 चरित्र स्कोर';
 
   @override
-  String get characterStrengthStat => 'CHARACTER\nSTRENGTH';
+  String get characterStrengthStat => 'चरित्र\nबल';
 
   @override
-  String get characterIntegrityStat => 'INTEGRITY';
+  String get characterIntegrityStat => 'सत्यनिष्ठा';
 
   @override
-  String get characterResilienceStat => 'RESILIENCE';
+  String get characterResilienceStat => 'सहनशीलता';
 
   @override
-  String get characterAwarenessStat => 'AWARENESS';
+  String get characterAwarenessStat => 'जागरूकता';
 
   @override
-  String get characterStabilityStat => 'STABILITY';
+  String get characterStabilityStat => 'स्थिरता';
 
   @override
-  String get characterEthicsStat => 'ETHICS';
+  String get characterEthicsStat => 'नैतिकता';
 
   @override
-  String get characterSurfacePersonalityTitle => 'Surface Personality';
+  String get characterSurfacePersonalityTitle => 'बाह्य व्यक्तित्व';
 
   @override
-  String get characterLagnaLabel => 'LAGNA';
+  String get characterLagnaLabel => 'लग्न';
 
   @override
-  String get characterConstitutionLabel => 'CONSTITUTION';
+  String get characterConstitutionLabel => 'प्रकृति';
 
   @override
-  String get characterNakshatraLabel => 'NAKSHATRA';
+  String get characterNakshatraLabel => 'नक्षत्र';
 
   @override
-  String get characterDeityLabel => 'DEITY';
+  String get characterDeityLabel => 'देवता';
 
   @override
-  String get characterMoonManasTitle => 'Moon Manas';
+  String get characterMoonManasTitle => 'चंद्र मानस';
 
   @override
-  String get characterSignLabel => 'SIGN';
+  String get characterSignLabel => 'राशि';
 
   @override
-  String get characterHouseLabel => 'HOUSE';
+  String get characterHouseLabel => 'भाव';
 
   @override
-  String get characterWarmthStat => 'WARMTH';
+  String get characterWarmthStat => 'स्नेह';
 
   @override
-  String get characterEmpathyStat => 'EMPATHY';
+  String get characterEmpathyStat => 'सहानुभूति';
 
   @override
-  String get characterLoyaltyStat => 'LOYALTY';
+  String get characterLoyaltyStat => 'निष्ठा';
 
   @override
-  String get characterBoundariesStat => 'BOUNDARIES';
+  String get characterBoundariesStat => 'सीमाएँ';
 
   @override
-  String get characterDharmaStat => 'DHARMA';
+  String get characterDharmaStat => 'धर्म';
 
   @override
-  String get characterTruthStat => 'TRUTH';
+  String get characterTruthStat => 'सत्य';
 
   @override
-  String get characterCompassionStat => 'COMPASSION';
+  String get characterCompassionStat => 'करुणा';
 
   @override
-  String get characterGenerosityStat => 'GENEROSITY';
+  String get characterGenerosityStat => 'उदारता';
 
   @override
-  String get characterSignatureVirtuesTitle => '★ SIGNATURE VIRTUES';
+  String get characterSignatureVirtuesTitle => '★ विशिष्ट गुण';
 
   @override
-  String get characterNaturalTalentsTitle => '● NATURAL TALENTS';
+  String get characterNaturalTalentsTitle => '● स्वाभाविक प्रतिभाएँ';
 
   @override
-  String get characterShadowPatternsTitle => '⚠ SHADOW PATTERNS';
+  String get characterShadowPatternsTitle => '⚠ छाया प्रवृत्तियाँ';
 
   @override
-  String get characterYogasTitle => 'Character Yogas';
+  String get characterYogasTitle => 'चरित्र योग';
 
   @override
-  String get characterTestsLabel => 'TESTS';
+  String get characterTestsLabel => 'परीक्षाएँ';
 
   @override
-  String get characterGiftsLabel => 'GIFTS';
+  String get characterGiftsLabel => 'उपहार';
 
   @override
-  String get characterSelfAwareEiStat => 'SELF-AWARE EI';
+  String get characterSelfAwareEiStat => 'आत्म-जागरूक EI';
 
   @override
-  String get characterSelfRegulateStat => 'SELF-REGULATE';
+  String get characterSelfRegulateStat => 'आत्म-नियमन';
 
   @override
-  String get characterEmpathyEiStat => 'EMPATHY EI';
+  String get characterEmpathyEiStat => 'सहानुभूति EI';
 
   @override
-  String get characterSocialSkillsStat => 'SOCIAL SKILLS';
+  String get characterSocialSkillsStat => 'सामाजिक कौशल';
 
   @override
   String characterRealizationSubtitle(Object pct) {
-    return 'Realization: ${pct}%';
+    return 'अनुभूति: ${pct}%';
   }
 
   @override
-  String get characterAtmakarakaWord => 'Atmakaraka';
+  String get characterAtmakarakaWord => 'आत्मकारक';
 
   @override
-  String get characterSoulSignatureSuffix => 'Soul Signature';
+  String get characterSoulSignatureSuffix => 'आत्मा हस्ताक्षर';
 
   @override
-  String get characterAtmakarakaLabel => 'ATMAKARAKA';
+  String get characterAtmakarakaLabel => 'आत्मकारक';
 
   @override
-  String get characterGunaWord => 'Guna';
+  String get characterGunaWord => 'गुण';
 
   @override
-  String get characterProfileSuffix => 'Profile';
+  String get characterProfileSuffix => 'प्रोफ़ाइल';
 
   @override
-  String get characterSattvaLabel => 'Sattva';
+  String get characterSattvaLabel => 'सत्त्व';
 
   @override
-  String get characterRajasLabel => 'Rajas';
+  String get characterRajasLabel => 'रजस';
 
   @override
-  String get characterTamasLabel => 'Tamas';
+  String get characterTamasLabel => 'तमस';
 
   @override
-  String get healthScoresHeader => '🏥 HEALTH SCORES';
+  String get healthScoresHeader => '🏥 स्वास्थ्य स्कोर';
 
   @override
-  String get healthVitalityStat => 'VITALITY';
+  String get healthVitalityStat => 'ओज';
 
   @override
-  String get healthImmunityStat => 'IMMUNITY';
+  String get healthImmunityStat => 'रोग प्रतिरोधक';
 
   @override
-  String get healthRecoveryStat => 'RECOVERY';
+  String get healthRecoveryStat => 'स्वास्थ्य लाभ';
 
   @override
-  String get healthMentalStat => 'MENTAL';
+  String get healthMentalStat => 'मानसिक';
 
   @override
-  String get healthStressTolStat => 'STRESS TOL';
+  String get healthStressTolStat => 'तनाव सहन';
 
   @override
-  String get healthYogasTitle => 'Health Yogas';
+  String get healthYogasTitle => 'स्वास्थ्य योग';
 
   @override
-  String get healthDiseasePressureLabel => 'DISEASE PRESSURE';
+  String get healthDiseasePressureLabel => 'रोग दबाव';
 
   @override
-  String get healthTrendTitle => 'Health Trend';
+  String get healthTrendTitle => 'स्वास्थ्य प्रवृत्ति';
 
   @override
-  String get healthRecoveryWindowsTitle => 'Recovery Windows';
+  String get healthRecoveryWindowsTitle => 'स्वास्थ्य लाभ अवधि';
 
   @override
-  String get healthCautionPeriodsTitle => 'Caution Periods';
+  String get healthCautionPeriodsTitle => 'सावधानी अवधि';
 
   @override
-  String get healthFertilityStat => 'FERTILITY';
+  String get healthFertilityStat => 'प्रजनन क्षमता';
 
   @override
-  String get healthBurnoutRiskStat => 'BURNOUT RISK';
+  String get healthBurnoutRiskStat => 'बर्नआउट जोखिम';
 
   @override
-  String get healthAddictionVulnStat => 'ADDICTION VULN';
+  String get healthAddictionVulnStat => 'व्यसन जोखिम';
 
   @override
-  String get healthWorkLifeBalStat => 'WORK-LIFE BAL';
+  String get healthWorkLifeBalStat => 'कार्य-जीवन संतुलन';
 
   @override
-  String get healthAyurvedicWord => 'Ayurvedic';
+  String get healthAyurvedicWord => 'आयुर्वेदिक';
 
   @override
-  String get healthConstitutionSuffix => 'Constitution';
+  String get healthConstitutionSuffix => 'प्रकृति';
 
   @override
-  String get healthBodyWord => 'Body';
+  String get healthBodyWord => 'शरीर';
 
   @override
-  String get healthSystemMapSuffix => 'System Map';
+  String get healthSystemMapSuffix => 'तंत्र मानचित्र';
 
   @override
-  String get healthBodyZoneWord => 'Body Zone';
+  String get healthBodyZoneWord => 'शरीर क्षेत्र';
 
   @override
-  String get healthVulnerabilitySuffix => 'Vulnerability';
+  String get healthVulnerabilitySuffix => 'संवेदनशीलता';
 
   @override
-  String get healthDiseaseWord => 'Disease';
+  String get healthDiseaseWord => 'रोग';
 
   @override
-  String get healthSusceptibilitySuffix => 'Susceptibility';
+  String get healthSusceptibilitySuffix => 'प्रवृत्ति';
 
   @override
-  String get healthLifestyleFactorsTitle => 'Lifestyle Factors';
+  String get healthLifestyleFactorsTitle => 'जीवनशैली कारक';
 
   @override
-  String get healthSleepDisciplineLabel => 'SLEEP DISCIPLINE';
+  String get healthSleepDisciplineLabel => 'नींद अनुशासन';
 
   @override
-  String get healthDietDisciplineLabel => 'DIET DISCIPLINE';
+  String get healthDietDisciplineLabel => 'आहार अनुशासन';
 
   @override
-  String get healthExerciseNeedLabel => 'EXERCISE NEED';
+  String get healthExerciseNeedLabel => 'व्यायाम आवश्यकता';
 
   @override
-  String get healthSunlightNeedLabel => 'SUNLIGHT NEED';
+  String get healthSunlightNeedLabel => 'धूप आवश्यकता';
 
   @override
-  String get healthSocialTypeLabel => 'SOCIAL TYPE';
+  String get healthSocialTypeLabel => 'सामाजिक प्रकार';
 
   @override
-  String get healthHealingSpeedLabel => 'HEALING SPEED';
+  String get healthHealingSpeedLabel => 'उपचार गति';
 
   @override
-  String get wealthScoresHeader => '💰 WEALTH SCORES';
+  String get wealthScoresHeader => '💰 धन स्कोर';
 
   @override
-  String get wealthStrengthStat => 'WEALTH\nSTRENGTH';
+  String get wealthStrengthStat => 'धन\nबल';
 
   @override
-  String get wealthAccumulationStat => 'ACCUMU-\nLATION';
+  String get wealthAccumulationStat => 'संचय';
 
   @override
-  String get wealthIncomeFlowStat => 'INCOME\nFLOW';
+  String get wealthIncomeFlowStat => 'आय\nप्रवाह';
 
   @override
-  String get wealthSustainStat => 'SUSTAIN';
+  String get wealthSustainStat => 'स्थायित्व';
 
   @override
-  String get wealthMultiStreamStat => 'MULTI-STREAM';
+  String get wealthMultiStreamStat => 'बहु-स्रोत';
 
   @override
-  String get wealthRetentionStat => 'RETENTION';
+  String get wealthRetentionStat => 'धारण';
 
   @override
-  String get wealthWord => 'Wealth';
+  String get wealthWord => 'धन';
 
   @override
-  String get wealthYogasTitle => 'Wealth Yogas';
+  String get wealthYogasTitle => 'धन योग';
 
   @override
-  String get wealthDrainsLabel => 'DRAINS';
+  String get wealthDrainsLabel => 'क्षय';
 
   @override
-  String get wealthBoostersLabel => 'BOOSTERS';
+  String get wealthBoostersLabel => 'वर्धक';
 
   @override
-  String get wealthYearlyTrendTitle => 'Yearly Trend';
+  String get wealthYearlyTrendTitle => 'वार्षिक प्रवृत्ति';
 
   @override
-  String get wealthGrowthTitle => 'Wealth Growth';
+  String get wealthGrowthTitle => 'धन वृद्धि';
 
   @override
-  String get wealthCashPressureTitle => 'Cash Pressure';
+  String get wealthCashPressureTitle => 'नकदी दबाव';
 
   @override
-  String get wealthMoneyPersonalityTitle => 'Money Personality';
+  String get wealthMoneyPersonalityTitle => 'धन व्यक्तित्व';
 
   @override
-  String get wealthTypeLabel => 'WEALTH TYPE';
+  String get wealthTypeLabel => 'धन प्रकार';
 
   @override
-  String get wealthRiskAppetiteLabel => 'RISK APPETITE';
+  String get wealthRiskAppetiteLabel => 'जोखिम रुचि';
 
   @override
-  String get wealthInvestmentStyleLabel => 'INVESTMENT STYLE';
+  String get wealthInvestmentStyleLabel => 'निवेश शैली';
 
   @override
-  String get wealthMoneyPersonalityLabel => 'MONEY PERSONALITY';
+  String get wealthMoneyPersonalityLabel => 'धन व्यक्तित्व';
 
   @override
-  String get wealthSpendingLabel => 'SPENDING';
+  String get wealthSpendingLabel => 'व्यय';
 
   @override
-  String get wealthDebtProbStat => 'DEBT PROB %';
+  String get wealthDebtProbStat => 'ऋण संभावना %';
 
   @override
-  String get wealthInheritanceStat => 'INHERITANCE %';
+  String get wealthInheritanceStat => 'विरासत %';
 
   @override
-  String get wealthSuddenGainsStat => 'SUDDEN GAINS %';
+  String get wealthSuddenGainsStat => 'आकस्मिक लाभ %';
 
   @override
-  String get wealthSpouseBoostStat => 'SPOUSE BOOST %';
+  String get wealthSpouseBoostStat => 'जीवनसाथी लाभ %';
 
   @override
   String wealthSuccessProbabilitySubtitle(Object pct) {
-    return 'Success probability: ${pct}%';
+    return 'सफलता संभावना: ${pct}%';
   }
 
   @override
-  String get wealthLifetimeClassLabel => 'LIFETIME WEALTH CLASS';
+  String get wealthLifetimeClassLabel => 'जीवनकाल धन वर्ग';
 
   @override
   String wealthPrimaryLabel(Object value) {
-    return 'Primary: ${value}';
+    return 'मुख्य: ${value}';
   }
 
   @override
   String wealthPeakLabel(Object value) {
-    return 'Peak: ${value}';
+    return 'शिखर: ${value}';
   }
 
   @override
-  String get wealthIncomeWord => 'Income';
+  String get wealthIncomeWord => 'आय';
 
   @override
-  String get wealthSourcesSuffix => 'Sources';
+  String get wealthSourcesSuffix => 'स्रोत';
 
   @override
-  String get wealthInvestmentWord => 'Investment';
+  String get wealthInvestmentWord => 'निवेश';
 
   @override
-  String get wealthMixSuffix => 'Mix';
+  String get wealthMixSuffix => 'मिश्रण';
 
   @override
   String wealthDrivenByLabel(Object planet) {
-    return 'Driven by ${planet}';
+    return '${planet} द्वारा संचालित';
   }
 
   @override
-  String get marriageScoresHeader => '💒 MARRIAGE SCORES';
+  String get marriageScoresHeader => '💒 विवाह स्कोर';
 
   @override
-  String get marriageOverallStat => 'OVERALL\nMARRIAGE';
+  String get marriageOverallStat => 'समग्र\nविवाह';
 
   @override
-  String get marriageHarmonyStat => 'MARITAL\nHARMONY';
+  String get marriageHarmonyStat => 'वैवाहिक\nसामंजस्य';
 
   @override
-  String get marriageDomesticStabilityStat => 'DOMESTIC\nSTABILITY';
+  String get marriageDomesticStabilityStat => 'घरेलू\nस्थिरता';
 
   @override
-  String get marriageLongevityStat => 'LONGEVITY';
+  String get marriageLongevityStat => 'दीर्घायु';
 
   @override
-  String get marriageSatisfactionStat => 'SATISFACTION';
+  String get marriageSatisfactionStat => 'संतुष्टि';
 
   @override
-  String get marriageClarityStat => 'CLARITY';
+  String get marriageClarityStat => 'स्पष्टता';
 
   @override
-  String get marriageWindowsTitle => 'Marriage Windows';
+  String get marriageWindowsTitle => 'विवाह अवधि';
 
   @override
-  String get marriagePhasesTitle => 'Marriage Phases';
+  String get marriagePhasesTitle => 'विवाह चरण';
 
   @override
-  String get marriageInLawRelationsStat => 'IN-LAW RELATIONS';
+  String get marriageInLawRelationsStat => 'ससुराल संबंध';
 
   @override
-  String get marriageFamilyHarmonyStat => 'FAMILY HARMONY';
+  String get marriageFamilyHarmonyStat => 'पारिवारिक सामंजस्य';
 
   @override
-  String get marriageFertilityStat => 'FERTILITY';
+  String get marriageFertilityStat => 'प्रजनन क्षमता';
 
   @override
-  String get marriageHomeOwnershipStat => 'HOME OWNERSHIP';
+  String get marriageHomeOwnershipStat => 'गृह स्वामित्व';
 
   @override
-  String get marriageDivorceRiskStat => 'DIVORCE RISK';
+  String get marriageDivorceRiskStat => 'तलाक जोखिम';
 
   @override
-  String get marriageInfidelityStat => 'INFIDELITY';
+  String get marriageInfidelityStat => 'बेवफाई';
 
   @override
-  String get marriageConflictStat => 'CONFLICT';
+  String get marriageConflictStat => 'विवाद';
 
   @override
-  String get marriageDistanceStat => 'DISTANCE';
+  String get marriageDistanceStat => 'दूरी';
 
   @override
-  String get marriageSeekInPartnerTitle => '★ SEEK IN PARTNER';
+  String get marriageSeekInPartnerTitle => '★ साथी में तलाशें';
 
   @override
-  String get marriageAvoidInPartnerTitle => '⚠ AVOID IN PARTNER';
+  String get marriageAvoidInPartnerTitle => '⚠ साथी में टालें';
 
   @override
   String marriageRealizationSubtitle(Object pct) {
-    return 'Realization: ${pct}%';
+    return 'अनुभूति: ${pct}%';
   }
 
   @override
-  String get marriageDarakarakaWord => 'Darakaraka';
+  String get marriageDarakarakaWord => 'दाराकारक';
 
   @override
-  String get marriageSpouseKarakaSuffix => 'Spouse Karaka';
+  String get marriageSpouseKarakaSuffix => 'जीवनसाथी कारक';
 
   @override
-  String get marriageDarakarakaDkLabel => 'DARAKARAKA (DK)';
+  String get marriageDarakarakaDkLabel => 'दाराकारक (DK)';
 
   @override
-  String get marriage7thWord => '7th';
+  String get marriage7thWord => 'सप्तम';
 
   @override
-  String get marriageSignLabel => 'SIGN';
+  String get marriageSignLabel => 'राशि';
 
   @override
-  String get marriageLordInLabel => 'LORD IN';
+  String get marriageLordInLabel => 'स्वामी स्थित';
 
   @override
-  String get marriageStrengthLabel => 'STRENGTH';
+  String get marriageStrengthLabel => 'बल';
 
   @override
-  String get marriageSpouseWord => 'Spouse';
+  String get marriageSpouseWord => 'जीवनसाथी';
 
   @override
-  String get marriageProfileSuffix => 'Profile';
+  String get marriageProfileSuffix => 'प्रोफ़ाइल';
 
   @override
-  String get marriageSpouseTraitsTitle => '★ SPOUSE TRAITS';
+  String get marriageSpouseTraitsTitle => '★ जीवनसाथी गुण';
 
   @override
-  String get marriageLikelyProfessionsTitle => '● LIKELY PROFESSIONS';
+  String get marriageLikelyProfessionsTitle => '● संभावित पेशे';
 
   @override
-  String get marriageHarmonyWord => 'Harmony';
+  String get marriageHarmonyWord => 'सामंजस्य';
 
   @override
-  String get marriageRadarSuffix => 'Radar';
+  String get marriageRadarSuffix => 'रडार';
 
   @override
-  String get marriagePhysicalLabel => 'Physical';
+  String get marriagePhysicalLabel => 'शारीरिक';
 
   @override
-  String get marriageSharedValuesLabel => 'Shared Values';
+  String get marriageSharedValuesLabel => 'साझा मूल्य';
 
   @override
-  String get marriageConflictResolutionLabel => 'Conflict Resolution';
+  String get marriageConflictResolutionLabel => 'विवाद समाधान';
 
   @override
-  String get marriageMangalDoshLabel => '⚠ MANGAL DOSH';
+  String get marriageMangalDoshLabel => '⚠ मंगल दोष';
 
   @override
   String marriageSeveritySubtitle(Object value) {
-    return 'Severity: ${value}';
+    return 'गंभीरता: ${value}';
   }
 
   @override
   String marriageCancellationSubtitle(Object value) {
-    return 'Cancellation: ${value}';
+    return 'निवारण: ${value}';
   }
 
   @override
   String get marriageD9Word => 'D-9';
 
   @override
-  String get marriageNavamsaSuffix => 'Navamsa';
+  String get marriageNavamsaSuffix => 'नवांश';
 
   @override
-  String get multiChartTitleChild => 'Child';
+  String get multiChartTitleChild => 'संतान';
 
   @override
-  String get multiChartTitleLove => 'Love';
+  String get multiChartTitleLove => 'प्रेम';
 
   @override
-  String get multiChartTitleKarma => 'Karma';
+  String get multiChartTitleKarma => 'कर्म';
 
   @override
-  String get multiChartTitleDefault => 'Multi-Chart';
+  String get multiChartTitleDefault => 'बहु-कुंडली';
 
   @override
-  String get multiChartSuffixProbability => 'Probability';
+  String get multiChartSuffixProbability => 'संभावना';
 
   @override
-  String get multiChartSuffixCompatibility => 'Compatibility';
+  String get multiChartSuffixCompatibility => 'अनुकूलता';
 
   @override
-  String get multiChartSuffixLinkage => 'Linkage';
+  String get multiChartSuffixLinkage => 'जुड़ाव';
 
   @override
-  String get multiChartSuffixReport => 'Report';
+  String get multiChartSuffixReport => 'रिपोर्ट';
 
   @override
-  String get multiChartParticipantsLabel => 'PARTICIPANTS';
+  String get multiChartParticipantsLabel => 'प्रतिभागी';
 
   @override
-  String get multiChartAnalysisWord => 'Analysis';
+  String get multiChartAnalysisWord => 'विश्लेषण';
 
   @override
-  String get multiChartConfidenceSuffix => 'Confidence';
+  String get multiChartConfidenceSuffix => 'विश्वसनीयता';
 
   @override
-  String get multiChartQualityBadge => 'QUALITY';
+  String get multiChartQualityBadge => 'गुणवत्ता';
 
   @override
   String multiChartPromptChatgpt(Object formatted) {
-    return 'Analyze this Vedic astrology report and give detailed insights:\n\n${formatted}';
+    return 'इस वैदिक ज्योतिष रिपोर्ट का विश्लेषण करें और विस्तृत जानकारी दें:\n\n${formatted}';
   }
 
   @override
   String multiChartPromptClaude(Object formatted) {
-    return 'Here is a Vedic astrology specialist report. Please analyze it thoroughly and provide actionable insights:\n\n${formatted}';
+    return 'यह एक वैदिक ज्योतिष विशेषज्ञ रिपोर्ट है। कृपया इसका गहन विश्लेषण करें और व्यावहारिक सुझाव दें:\n\n${formatted}';
   }
 
   @override
   String multiChartPromptGemini(Object formatted) {
-    return 'Review this Vedic astrology analysis and explain the key findings in simple language:\n\n${formatted}';
+    return 'इस वैदिक ज्योतिष विश्लेषण की समीक्षा करें और मुख्य निष्कर्षों को सरल भाषा में समझाएँ:\n\n${formatted}';
   }
 
   @override
   String multiChartCopiedForLabel(Object label) {
-    return 'Copied for ${label}!';
+    return '${label} के लिए कॉपी किया गया!';
   }
 
   @override
-  String get childProbTitle1 => 'Child';
+  String get childProbTitle1 => 'संतान';
 
   @override
-  String get childProbTitle2 => 'Probability';
+  String get childProbTitle2 => 'संभावना';
 
   @override
-  String get childNumberOfChildrenHeader1 => 'Number of';
+  String get childNumberOfChildrenHeader1 => 'संतानों की';
 
   @override
-  String get childNumberOfChildrenHeader2 => 'Children';
+  String get childNumberOfChildrenHeader2 => 'संख्या';
 
   @override
-  String get childTimingHeader1 => 'Timing';
+  String get childTimingHeader1 => 'समय';
 
   @override
-  String get childTimingHeader2 => 'Moola Dasha';
+  String get childTimingHeader2 => 'मूल दशा';
 
   @override
-  String get child5thHouseHeader1 => '5th House';
+  String get child5thHouseHeader1 => 'पंचम भाव';
 
   @override
-  String get analysisWord => 'Analysis';
+  String get analysisWord => 'विश्लेषण';
 
   @override
-  String get jupiterWord => 'Jupiter';
+  String get jupiterWord => 'गुरु';
 
   @override
-  String get childD7Header1 => 'D7 Saptamsa';
+  String get childD7Header1 => 'D7 सप्तांश';
 
   @override
-  String get childBeejaHeader1 => 'Beeja & Kshetra';
+  String get childBeejaHeader1 => 'बीज व क्षेत्र';
 
   @override
-  String get childBeejaHeader2 => 'Sphuta';
+  String get childBeejaHeader2 => 'स्फुट';
 
   @override
-  String get childDoshaHeader1 => 'Dosha';
+  String get childDoshaHeader1 => 'दोष';
 
   @override
-  String get childVedicHeader1 => 'Vedic';
+  String get childVedicHeader1 => 'वैदिक';
 
   @override
-  String get childVedicHeader2 => 'Remedies';
+  String get childVedicHeader2 => 'उपाय';
 
   @override
-  String get progenyProbabilityLabel => 'PROGENY PROBABILITY';
+  String get progenyProbabilityLabel => 'संतान संभावना';
 
   @override
-  String get favorableWindowsLabel => 'FAVORABLE WINDOWS';
+  String get favorableWindowsLabel => 'अनुकूल अवधि';
 
   @override
-  String get partnerOneLabel => 'Partner 1';
+  String get partnerOneLabel => 'साथी 1';
 
   @override
-  String get partnerTwoLabel => 'Partner 2';
+  String get partnerTwoLabel => 'साथी 2';
 
   @override
-  String get moonSignLabel => 'Moon Sign';
+  String get moonSignLabel => 'चंद्र राशि';
 
   @override
-  String get lordInDusthana => 'Lord in Dusthana';
+  String get lordInDusthana => 'स्वामी दुःस्थान में';
 
   @override
-  String get lordStrengthLabel => 'Lord Strength';
+  String get lordStrengthLabel => 'स्वामी बल';
 
   @override
-  String get houseStrengthLabel => 'House Strength';
+  String get houseStrengthLabel => 'भाव बल';
 
   @override
-  String get dignityLabel => 'Dignity';
+  String get dignityLabel => 'बल';
 
   @override
-  String get directBadge => 'Direct';
+  String get directBadge => 'मार्गी';
 
   @override
-  String get notCombustBadge => 'Not Combust';
+  String get notCombustBadge => 'अस्त नहीं';
 
   @override
-  String get in5thHouseBadge => 'In 5th House';
+  String get in5thHouseBadge => 'पंचम भाव में';
 
   @override
-  String get aspects5thBadge => 'Aspects 5th';
+  String get aspects5thBadge => 'पंचम पर दृष्टि';
 
   @override
-  String get no5thConnectionBadge => 'No 5th Connection';
+  String get no5thConnectionBadge => 'पंचम से कोई संबंध नहीं';
 
   @override
   String jupiterInSignHeading(String sign) {
-    return 'Jupiter in ${sign}';
+    return '${sign} में गुरु';
   }
 
   @override
-  String get d7LagnaLabel => 'D7 Lagna';
+  String get d7LagnaLabel => 'D7 लग्न';
 
   @override
-  String get d7FifthSignLabel => 'D7 5th Sign';
+  String get d7FifthSignLabel => 'D7 पंचम राशि';
 
   @override
-  String get d7FifthLordLabel => 'D7 5th Lord';
+  String get d7FifthLordLabel => 'D7 पंचम स्वामी';
 
   @override
-  String get jupiterInD7Label => 'Jupiter in D7';
+  String get jupiterInD7Label => 'D7 में गुरु';
 
   @override
-  String get jupiterDignityLabel => 'Jupiter Dignity';
+  String get jupiterDignityLabel => 'गुरु बल';
 
   @override
-  String get d7StrengthLabel => 'D7 Strength';
+  String get d7StrengthLabel => 'D7 बल';
 
   @override
-  String get yesWord => 'Yes';
+  String get yesWord => 'हाँ';
 
   @override
-  String get noWord => 'No';
+  String get noWord => 'नहीं';
 
   @override
-  String get beejaSphutaTitle => 'BEEJA SPHUTA';
+  String get beejaSphutaTitle => 'बीज स्फुट';
 
   @override
-  String get kshetraSphutaTitle => 'KSHETRA SPHUTA';
+  String get kshetraSphutaTitle => 'क्षेत्र स्फुट';
 
   @override
-  String get degreeLabel => 'Degree';
+  String get degreeLabel => 'अंश';
 
   @override
-  String get signLordLabel => 'Sign Lord';
+  String get signLordLabel => 'राशि स्वामी';
 
   @override
-  String get presentInLabel => 'Present In';
+  String get presentInLabel => 'स्थित है';
 
   @override
-  String get netPenaltyLabel => 'Net Penalty';
+  String get netPenaltyLabel => 'कुल दंड';
 
   @override
-  String get remedyGemstone => 'Gemstone Remedies';
+  String get remedyGemstone => 'रत्न उपाय';
 
   @override
-  String get remedyMantra => 'Mantra Remedies';
+  String get remedyMantra => 'मंत्र उपाय';
 
   @override
-  String get remedyRitual => 'Ritual Remedies';
+  String get remedyRitual => 'अनुष्ठान उपाय';
 
   @override
-  String get remedyLifestyle => 'Lifestyle Remedies';
+  String get remedyLifestyle => 'जीवनशैली उपाय';
 
   @override
-  String get remedyCharitable => 'Charitable Remedies';
+  String get remedyCharitable => 'दान उपाय';
 
   @override
   String copiedForName(String name) {
-    return 'Copied for ${name}!';
+    return '${name} के लिए कॉपी किया गया!';
   }
 
   @override
-  String get mahadashaLabel => 'Mahadasha';
+  String get mahadashaLabel => 'महादशा';
 
   @override
-  String get mdPeriodLabel => 'MD Period';
+  String get mdPeriodLabel => 'MD अवधि';
 
   @override
-  String get antardashaLabel => 'Antardasha';
+  String get antardashaLabel => 'अंतर्दशा';
 
   @override
-  String get adPeriodLabel => 'AD Period';
+  String get adPeriodLabel => 'AD अवधि';
 
   @override
-  String get pratyantardashaLabel => 'Pratyantardasha';
+  String get pratyantardashaLabel => 'प्रत्यंतर्दशा';
 
   @override
-  String get favorabilityLabel => 'Favorability';
+  String get favorabilityLabel => 'अनुकूलता';
 
   @override
   String factorPrefix(String factor) {
-    return 'Factor: ${factor}';
+    return 'कारक: ${factor}';
   }
 
   @override
   String appliesToLabel(String value) {
-    return 'Applies to: ${value}';
+    return 'लागू: ${value}';
   }
 
   @override
-  String get qualityTag => 'QUALITY';
+  String get qualityTag => 'गुणवत्ता';
 
   @override
-  String get reliabilityVeryHigh => 'Very High reliability';
+  String get reliabilityVeryHigh => 'अत्यधिक विश्वसनीय';
 
   @override
-  String get reliabilityGuidanceLevel => 'Guidance-level reading';
+  String get reliabilityGuidanceLevel => 'मार्गदर्शन-स्तर पठन';
 
   @override
-  String get karmaLinkTitle1 => 'Karma';
+  String get karmaLinkTitle1 => 'कर्म';
 
   @override
-  String get karmaLinkTitle2 => 'Linkage';
+  String get karmaLinkTitle2 => 'जुड़ाव';
 
   @override
-  String get karmaFoundationHeader1 => 'Karmic';
+  String get karmaFoundationHeader1 => 'कार्मिक';
 
   @override
-  String get karmaFoundationHeader2 => 'Foundation';
+  String get karmaFoundationHeader2 => 'आधार';
 
   @override
-  String get karmaPairwiseHeader1 => 'Pairwise';
+  String get karmaPairwiseHeader1 => 'युग्मवार';
 
   @override
-  String get karmaPairwiseHeader2 => 'Linkages';
+  String get karmaPairwiseHeader2 => 'जुड़ाव';
 
   @override
-  String get karmaGroupHeader1 => 'Group';
+  String get karmaGroupHeader1 => 'समूह';
 
   @override
-  String get karmaGroupHeader2 => 'Pattern';
+  String get karmaGroupHeader2 => 'पैटर्न';
 
   @override
-  String get karmaPastLifeHeader1 => 'Past Life';
+  String get karmaPastLifeHeader1 => 'पूर्वजन्म';
 
   @override
-  String get karmaPastLifeHeader2 => 'Goals';
+  String get karmaPastLifeHeader2 => 'लक्ष्य';
 
   @override
-  String get karmaCurrentLifeHeader1 => 'Current Life';
+  String get karmaCurrentLifeHeader1 => 'वर्तमान जीवन';
 
   @override
-  String get karmaCurrentLifeHeader2 => 'Learning';
+  String get karmaCurrentLifeHeader2 => 'सीख';
 
   @override
-  String get karmaDebtsHeader2 => 'Debts';
+  String get karmaDebtsHeader2 => 'ऋण';
 
   @override
-  String get karmaMoolaDashaHeader1 => 'Moola Dasha';
+  String get karmaMoolaDashaHeader1 => 'मूल दशा';
 
   @override
-  String get karmaMoolaDashaHeader2 => 'Timing';
+  String get karmaMoolaDashaHeader2 => 'समय';
 
   @override
-  String get karmaDeepAuditHeader1 => 'Deep Audit';
+  String get karmaDeepAuditHeader1 => 'गहन ऑडिट';
 
   @override
-  String get karmaDeepAuditHeader2 => 'Table';
+  String get karmaDeepAuditHeader2 => 'तालिका';
 
   @override
-  String get karmaHeroLabel => 'PAST LIFE KARMA LINKAGE';
+  String get karmaHeroLabel => 'पूर्वजन्म कर्म जुड़ाव';
 
   @override
-  String get karmaKetuMastery => 'KETU MASTERY';
+  String get karmaKetuMastery => 'केतु दक्षता';
 
   @override
-  String get nakshatraLabel => 'Nakshatra';
+  String get nakshatraLabel => 'नक्षत्र';
 
   @override
-  String get deityLabel => 'Deity';
+  String get deityLabel => 'देवता';
 
   @override
-  String get masteryScoreLabel => 'Mastery Score';
+  String get masteryScoreLabel => 'दक्षता स्कोर';
 
   @override
-  String get karmaRahuGrowth => 'RAHU GROWTH';
+  String get karmaRahuGrowth => 'राहु विकास';
 
   @override
-  String get growthScoreLabel => 'Growth Score';
+  String get growthScoreLabel => 'विकास स्कोर';
 
   @override
-  String get karmaAtmakaraka => 'ATMAKARAKA';
+  String get karmaAtmakaraka => 'आत्मकारक';
 
   @override
-  String get karmaSaturnKarma => 'SATURN KARMA';
+  String get karmaSaturnKarma => 'शनि कर्म';
 
   @override
-  String get karma12thHouse => '12TH HOUSE';
+  String get karma12thHouse => 'द्वादश भाव';
 
   @override
-  String get karma9thHousePunya => '9TH HOUSE PUNYA';
+  String get karma9thHousePunya => 'नवम भाव पुण्य';
 
   @override
-  String get bhavaScoreLabel => 'Bhava Score';
+  String get bhavaScoreLabel => 'भाव स्कोर';
 
   @override
-  String get karmaD60Signature => 'D60 SIGNATURE';
+  String get karmaD60Signature => 'D60 विशिष्टता';
 
   @override
-  String get depthScoreLabel => 'Depth Score';
+  String get depthScoreLabel => 'गहनता स्कोर';
 
   @override
-  String get linkageStrengthLabel => 'Linkage Strength';
+  String get linkageStrengthLabel => 'जुड़ाव बल';
 
   @override
   String karmaLinkageFactorsHeader(int count) {
-    return 'LINKAGE FACTORS (${count} active)';
+    return 'जुड़ाव कारक (${count} सक्रिय)';
   }
 
   @override
-  String get factorColumnLabel => 'Factor';
+  String get factorColumnLabel => 'कारक';
 
   @override
-  String get weightColumnLabel => 'Weight';
+  String get weightColumnLabel => 'भार';
 
   @override
-  String get meaningColumnLabel => 'Meaning';
+  String get meaningColumnLabel => 'अर्थ';
 
   @override
-  String get statusColumnLabel => 'Status';
+  String get statusColumnLabel => 'स्थिति';
 
   @override
-  String get karmaPastLifeConnection => 'PAST LIFE CONNECTION';
+  String get karmaPastLifeConnection => 'पूर्वजन्म संबंध';
 
   @override
-  String get karmaCurrentLifeDynamic => 'CURRENT LIFE DYNAMIC';
+  String get karmaCurrentLifeDynamic => 'वर्तमान जीवन गतिशीलता';
 
   @override
-  String get karmaWhatTheyTeach => 'WHAT THEY TEACH EACH OTHER';
+  String get karmaWhatTheyTeach => 'वे एक-दूसरे को क्या सिखाते हैं';
 
   @override
-  String get karmaGroupThemeHeader => 'GROUP KARMIC THEME';
+  String get karmaGroupThemeHeader => 'समूह कार्मिक विषय';
 
   @override
-  String get karmaSharedSettingHeader => 'SHARED PAST LIFE SETTING';
+  String get karmaSharedSettingHeader => 'साझा पूर्वजन्म परिवेश';
 
   @override
-  String get karmaCollectiveKetuHeader => 'COLLECTIVE KETU PATTERN';
+  String get karmaCollectiveKetuHeader => 'सामूहिक केतु पैटर्न';
 
   @override
-  String get karmaCollectiveRahuHeader => 'COLLECTIVE RAHU PATTERN';
+  String get karmaCollectiveRahuHeader => 'सामूहिक राहु पैटर्न';
 
   @override
-  String get housesPrefixLabel => 'Houses: ';
+  String get housesPrefixLabel => 'भाव: ';
 
   @override
-  String get signsPrefixLabel => 'Signs: ';
+  String get signsPrefixLabel => 'राशियाँ: ';
 
   @override
-  String get karmicCohesionLabel => 'Karmic Cohesion';
+  String get karmicCohesionLabel => 'कार्मिक एकता';
 
   @override
-  String get karmaGroupSoulContractHeader => 'GROUP SOUL CONTRACT';
+  String get karmaGroupSoulContractHeader => 'समूह आत्मा अनुबंध';
 
   @override
-  String get goalLabel => 'Goal';
+  String get goalLabel => 'लक्ष्य';
 
   @override
-  String get karmaSharedGoalHeader => 'SHARED PAST LIFE GOAL';
+  String get karmaSharedGoalHeader => 'साझा पूर्वजन्म लक्ष्य';
 
   @override
-  String get howToGrowHeader => 'HOW TO GROW';
+  String get howToGrowHeader => 'कैसे विकसित हों';
 
   @override
   String moolaDashaPrefix(String value) {
-    return 'Moola Dasha: ${value}';
+    return 'मूल दशा: ${value}';
   }
 
   @override
-  String get karmaSharedLessonHeader => 'SHARED GROUP LESSON';
+  String get karmaSharedLessonHeader => 'साझा समूह सीख';
 
   @override
-  String get karmaMutualTeachingHeader => 'MUTUAL TEACHING MAP';
+  String get karmaMutualTeachingHeader => 'परस्पर शिक्षण मानचित्र';
 
   @override
-  String get karmaTeachingDynamicsPlaceholder => 'Teaching dynamics will emerge as karmic connections deepen.';
+  String get karmaTeachingDynamicsPlaceholder => 'कार्मिक संबंध गहराने के साथ शिक्षण गतिशीलता उभरेगी।';
 
   @override
-  String get typeFieldLabel => 'Type';
+  String get typeFieldLabel => 'प्रकार';
 
   @override
-  String get basisFieldLabel => 'Basis';
+  String get basisFieldLabel => 'आधार';
 
   @override
-  String get resolutionPathHeader => 'RESOLUTION PATH';
+  String get resolutionPathHeader => 'समाधान मार्ग';
 
   @override
   String dashaTimingPrefix(String value) {
-    return 'Dasha Timing: ${value}';
+    return 'दशा समय: ${value}';
   }
 
   @override
-  String get mutualDebtsHeader => 'MUTUAL DEBTS';
+  String get mutualDebtsHeader => 'परस्पर ऋण';
 
   @override
   String get mdLabel => 'MD';
@@ -1467,825 +1467,825 @@ class AppLocalizationsHi extends AppLocalizations {
   String get pdLabel => 'PD';
 
   @override
-  String get datesLabel => 'Dates';
+  String get datesLabel => 'तिथियाँ';
 
   @override
-  String get groupKarmicWindowHeader => 'GROUP KARMIC WINDOW';
+  String get groupKarmicWindowHeader => 'समूह कार्मिक अवधि';
 
   @override
   String parametersAuditedHeading(int count) {
-    return '${count} PARAMETERS AUDITED';
+    return '${count} मापदंड ऑडिट किए गए';
   }
 
   @override
-  String get valuePrefixLabel => 'Value: ';
+  String get valuePrefixLabel => 'मान: ';
 
   @override
   String weightPrefix(String value) {
-    return 'W: ${value}';
+    return 'भार: ${value}';
   }
 
   @override
-  String get loveCompatTitle1 => 'Love';
+  String get loveCompatTitle1 => 'प्रेम';
 
   @override
-  String get loveCompatTitle2 => 'Compatibility';
+  String get loveCompatTitle2 => 'अनुकूलता';
 
   @override
-  String get loveAttractionHeader1 => 'Attraction &';
+  String get loveAttractionHeader1 => 'आकर्षण व';
 
   @override
-  String get loveAttractionHeader2 => 'Chemistry';
+  String get loveAttractionHeader2 => 'रसायन';
 
   @override
-  String get loveEmotionalHeader1 => 'Emotional';
+  String get loveEmotionalHeader1 => 'भावनात्मक';
 
   @override
-  String get loveEmotionalHeader2 => 'Harmony';
+  String get loveEmotionalHeader2 => 'सामंजस्य';
 
   @override
-  String get loveMentalHeader1 => 'Mental';
+  String get loveMentalHeader1 => 'मानसिक';
 
   @override
-  String get loveMentalHeader2 => 'Rapport';
+  String get loveMentalHeader2 => 'तालमेल';
 
   @override
-  String get lovePassionHeader1 => 'Passion &';
+  String get lovePassionHeader1 => 'जुनून व';
 
   @override
-  String get lovePassionHeader2 => 'Physical';
+  String get lovePassionHeader2 => 'शारीरिक';
 
   @override
-  String get loveLongtermHeader1 => 'Long-term';
+  String get loveLongtermHeader1 => 'दीर्घकालिक';
 
   @override
-  String get loveKarmicHeader1 => 'Karmic Love';
+  String get loveKarmicHeader1 => 'कार्मिक प्रेम';
 
   @override
-  String get loveKarmicHeader2 => 'Bond';
+  String get loveKarmicHeader2 => 'बंधन';
 
   @override
-  String get loveChallengesHeader1 => 'Challenges &';
+  String get loveChallengesHeader1 => 'चुनौतियाँ व';
 
   @override
-  String get loveChallengesHeader2 => 'Friction';
+  String get loveChallengesHeader2 => 'टकराव';
 
   @override
-  String get loveTimingHeader1 => 'Love Timing';
+  String get loveTimingHeader1 => 'प्रेम समय';
 
   @override
-  String get loveRelationshipHeader1 => 'Relationship';
+  String get loveRelationshipHeader1 => 'संबंध';
 
   @override
-  String get loveRelationshipHeader2 => 'Dynamics';
+  String get loveRelationshipHeader2 => 'गतिशीलता';
 
   @override
-  String get loveRemediesHeader1 => 'Remedies &';
+  String get loveRemediesHeader1 => 'उपाय व';
 
   @override
-  String get loveRemediesHeader2 => 'Guidance';
+  String get loveRemediesHeader2 => 'मार्गदर्शन';
 
   @override
-  String get loveCompatHeroLabel => 'LOVE COMPATIBILITY';
+  String get loveCompatHeroLabel => 'प्रेम अनुकूलता';
 
   @override
-  String get loveChipAttraction => 'Attraction';
+  String get loveChipAttraction => 'आकर्षण';
 
   @override
-  String get loveChipPassion => 'Passion';
+  String get loveChipPassion => 'जुनून';
 
   @override
-  String get loveChipChallenge => 'Challenge';
+  String get loveChipChallenge => 'चुनौती';
 
   @override
-  String get venusSignLabel => 'Venus Sign';
+  String get venusSignLabel => 'शुक्र राशि';
 
   @override
-  String get attractionScoreLabel => 'Attraction Score';
+  String get attractionScoreLabel => 'आकर्षण स्कोर';
 
   @override
-  String get activeContactsLabel => 'Active Contacts';
+  String get activeContactsLabel => 'सक्रिय संपर्क';
 
   @override
-  String get magneticPullLabel => 'Magnetic Pull';
+  String get magneticPullLabel => 'चुंबकीय खिंचाव';
 
   @override
-  String get initialAttractionLabel => 'Initial Attraction';
+  String get initialAttractionLabel => 'प्रारंभिक आकर्षण';
 
   @override
-  String get emotionalScoreLabel => 'Emotional Score';
+  String get emotionalScoreLabel => 'भावनात्मक स्कोर';
 
   @override
-  String get elementMatchLabel => 'Element Match';
+  String get elementMatchLabel => 'तत्व मेल';
 
   @override
-  String get harmonyLabel => 'Harmony';
+  String get harmonyLabel => 'सामंजस्य';
 
   @override
-  String get kootaYoni => 'YONI';
+  String get kootaYoni => 'योनि';
 
   @override
-  String get kootaGana => 'GANA';
+  String get kootaGana => 'गण';
 
   @override
-  String get kootaTara => 'TARA';
+  String get kootaTara => 'तारा';
 
   @override
-  String get doshaPresentBadge => 'Dosha Present';
+  String get doshaPresentBadge => 'दोष मौजूद';
 
   @override
-  String get noDoshaBadge => 'No Dosha';
+  String get noDoshaBadge => 'कोई दोष नहीं';
 
   @override
-  String get axisLabel => 'Axis';
+  String get axisLabel => 'अक्ष';
 
   @override
-  String get mentalScoreLabel => 'Mental Score';
+  String get mentalScoreLabel => 'मानसिक स्कोर';
 
   @override
-  String get mercuryDynamicsLabel => 'MERCURY DYNAMICS';
+  String get mercuryDynamicsLabel => 'बुध गतिशीलता';
 
   @override
-  String get communicationStyleLabel => 'COMMUNICATION STYLE MATCH';
+  String get communicationStyleLabel => 'संवाद शैली मेल';
 
   @override
-  String get intellectualConnectionLabel => 'INTELLECTUAL CONNECTION';
+  String get intellectualConnectionLabel => 'बौद्धिक जुड़ाव';
 
   @override
-  String get passionScoreLabel => 'Passion Score';
+  String get passionScoreLabel => 'जुनून स्कोर';
 
   @override
-  String get marsVenusLabel => 'MARS-VENUS INTERPLAY';
+  String get marsVenusLabel => 'मंगल-शुक्र परस्पर क्रिया';
 
   @override
-  String get physicalChemistryLabel => 'PHYSICAL CHEMISTRY';
+  String get physicalChemistryLabel => 'शारीरिक रसायन';
 
   @override
-  String get yoniCompatLabel => 'YONI COMPATIBILITY';
+  String get yoniCompatLabel => 'योनि अनुकूलता';
 
   @override
-  String get longtermScoreLabel => 'Long-term Score';
+  String get longtermScoreLabel => 'दीर्घकालिक स्कोर';
 
   @override
-  String get seventhHouseSynastryLabel => '7TH HOUSE SYNASTRY';
+  String get seventhHouseSynastryLabel => 'सप्तम भाव सिनैस्ट्री';
 
   @override
-  String get commitmentPotentialLabel => 'COMMITMENT POTENTIAL';
+  String get commitmentPotentialLabel => 'प्रतिबद्धता संभावना';
 
   @override
-  String get jupiterBlessingLabel => 'JUPITER BLESSING';
+  String get jupiterBlessingLabel => 'गुरु आशीर्वाद';
 
   @override
-  String get d9NavamsaResonanceLabel => 'D9 NAVAMSA RESONANCE';
+  String get d9NavamsaResonanceLabel => 'D9 नवांश तालमेल';
 
   @override
-  String get saturnLongevityLabel => 'SATURN LONGEVITY';
+  String get saturnLongevityLabel => 'शनि दीर्घायु';
 
   @override
-  String get karmicScoreLabel => 'Karmic Score';
+  String get karmicScoreLabel => 'कार्मिक स्कोर';
 
   @override
-  String get darakarakaLinkLabel => 'DARAKARAKA LINK';
+  String get darakarakaLinkLabel => 'दाराकारक जुड़ाव';
 
   @override
-  String get sourceLabel => 'Source';
+  String get sourceLabel => 'स्रोत';
 
   @override
-  String get emotionalGiverReceiverLabel => 'EMOTIONAL GIVER / RECEIVER';
+  String get emotionalGiverReceiverLabel => 'भावनात्मक दाता / ग्रहीता';
 
   @override
-  String get powerBalanceLabel => 'POWER BALANCE';
+  String get powerBalanceLabel => 'शक्ति संतुलन';
 
   @override
-  String get growthDynamicLabel => 'GROWTH DYNAMIC';
+  String get growthDynamicLabel => 'विकास गतिशीलता';
 
   @override
-  String get addressesLabel => 'Addresses';
+  String get addressesLabel => 'संबोधित करता है';
 
   @override
-  String get loveScoresLabel => 'LOVE SCORES';
+  String get loveScoresLabel => 'प्रेम स्कोर';
 
   @override
-  String get loveCapacityLabel => 'LOVE\nCAPACITY';
+  String get loveCapacityLabel => 'प्रेम\nक्षमता';
 
   @override
-  String get emotionalAvailabilityLabel => 'EMOTIONAL\nAVAILABILITY';
+  String get emotionalAvailabilityLabel => 'भावनात्मक\nउपलब्धता';
 
   @override
-  String get romanticAttractionLabel => 'ROMANTIC\nATTRACTION';
+  String get romanticAttractionLabel => 'रोमांटिक\nआकर्षण';
 
   @override
-  String get commitmentWord => 'COMMITMENT';
+  String get commitmentWord => 'प्रतिबद्धता';
 
   @override
-  String get intimacyWord => 'INTIMACY';
+  String get intimacyWord => 'घनिष्ठता';
 
   @override
-  String get fidelityWord => 'FIDELITY';
+  String get fidelityWord => 'निष्ठा';
 
   @override
-  String get loveProfileTitle => 'Love Profile';
+  String get loveProfileTitle => 'प्रेम प्रोफ़ाइल';
 
   @override
-  String get loveStyleLabel => 'LOVE STYLE';
+  String get loveStyleLabel => 'प्रेम शैली';
 
   @override
-  String get attractionStyleLabel => 'ATTRACTION STYLE';
+  String get attractionStyleLabel => 'आकर्षण शैली';
 
   @override
-  String get lovePathLabel => 'LOVE PATH';
+  String get lovePathLabel => 'प्रेम मार्ग';
 
   @override
-  String get currentPhaseLabel => 'CURRENT PHASE';
+  String get currentPhaseLabel => 'वर्तमान चरण';
 
   @override
-  String get commitmentStyleLabel => 'COMMITMENT STYLE';
+  String get commitmentStyleLabel => 'प्रतिबद्धता शैली';
 
   @override
-  String get loveWord => 'Love';
+  String get loveWord => 'प्रेम';
 
   @override
-  String get karakasWord => 'Karakas';
+  String get karakasWord => 'कारक';
 
   @override
-  String get attractedToLabel => 'ATTRACTED TO';
+  String get attractedToLabel => 'किसकी ओर आकर्षित';
 
   @override
-  String get whatPartnerSeesLabel => 'WHAT PARTNER SEES';
+  String get whatPartnerSeesLabel => 'साथी क्या देखता है';
 
   @override
-  String get romancePatternTitle => 'Romance Pattern';
+  String get romancePatternTitle => 'रोमांस पैटर्न';
 
   @override
-  String get firstLoveAgeLabel => 'FIRST LOVE AGE';
+  String get firstLoveAgeLabel => 'पहला प्रेम आयु';
 
   @override
-  String get relationshipCountLabel => 'RELATIONSHIP COUNT';
+  String get relationshipCountLabel => 'संबंधों की संख्या';
 
   @override
-  String get avgDurationLabel => 'AVG DURATION';
+  String get avgDurationLabel => 'औसत अवधि';
 
   @override
-  String get breakupTriggerLabel => 'BREAKUP TRIGGER';
+  String get breakupTriggerLabel => 'ब्रेकअप कारण';
 
   @override
-  String get heartbreakRecoveryLabel => 'HEARTBREAK RECOVERY';
+  String get heartbreakRecoveryLabel => 'दिल टूटने से उबरना';
 
   @override
-  String get loveTrendTitle => 'Love Trend';
+  String get loveTrendTitle => 'प्रेम प्रवृत्ति';
 
   @override
-  String get newLoveWindowsTitle => 'New Love Windows';
+  String get newLoveWindowsTitle => 'नया प्रेम अवधि';
 
   @override
-  String get loveBlocksTitle => 'Love Blocks';
+  String get loveBlocksTitle => 'प्रेम बाधाएँ';
 
   @override
-  String get activeBlocksLabel => 'ACTIVE BLOCKS';
+  String get activeBlocksLabel => 'सक्रिय बाधाएँ';
 
   @override
-  String get loveMarriagePctLabel => 'LOVE MARRIAGE %';
+  String get loveMarriagePctLabel => 'प्रेम विवाह %';
 
   @override
-  String get heartbreakVulnLabel => 'HEARTBREAK VULN';
+  String get heartbreakVulnLabel => 'दिल टूटने का जोखिम';
 
   @override
-  String get selfSabotageLabel => 'SELF-SABOTAGE';
+  String get selfSabotageLabel => 'आत्म-हानि';
 
   @override
-  String get emotionalIqLabel => 'EMOTIONAL IQ';
+  String get emotionalIqLabel => 'भावनात्मक IQ';
 
   @override
   String fulfillmentPctLabel(String pct) {
-    return 'Fulfillment: ${pct}%';
+    return 'पूर्णता: ${pct}%';
   }
 
   @override
-  String get languagesWord => 'Languages';
+  String get languagesWord => 'भाषाएँ';
 
   @override
-  String get givesLabel => 'GIVES';
+  String get givesLabel => 'देता है';
 
   @override
-  String get receivesLabel => 'RECEIVES';
+  String get receivesLabel => 'पाता है';
 
   @override
-  String get idealWord => 'Ideal';
+  String get idealWord => 'आदर्श';
 
   @override
-  String get partnerWord => 'Partner';
+  String get partnerWord => 'साथी';
 
   @override
-  String get seekTheseTraitsLabel => 'SEEK THESE TRAITS';
+  String get seekTheseTraitsLabel => 'इन गुणों को तलाशें';
 
   @override
-  String get dealbreakersLabel => 'DEALBREAKERS';
+  String get dealbreakersLabel => 'अस्वीकार्य बातें';
 
   @override
-  String get propertyScoresLabel => 'PROPERTY SCORES';
+  String get propertyScoresLabel => 'संपत्ति स्कोर';
 
   @override
-  String get acquisitionCapacityLabel => 'ACQUISITION\nCAPACITY';
+  String get acquisitionCapacityLabel => 'अर्जन\nक्षमता';
 
   @override
-  String get homeOwnershipPctLabel => 'HOME\nOWNERSHIP %';
+  String get homeOwnershipPctLabel => 'गृह\nस्वामित्व %';
 
   @override
-  String get reWealthPotentialLabel => 'RE WEALTH\nPOTENTIAL';
+  String get reWealthPotentialLabel => 'रियल एस्टेट धन\nसंभावना';
 
   @override
-  String get rentalWord => 'RENTAL';
+  String get rentalWord => 'किराया';
 
   @override
-  String get vehiclesWord => 'VEHICLES';
+  String get vehiclesWord => 'वाहन';
 
   @override
-  String get landPctLabel => 'LAND %';
+  String get landPctLabel => 'भूमि %';
 
   @override
-  String get propertyProfileTitle => 'Property Profile';
+  String get propertyProfileTitle => 'संपत्ति प्रोफ़ाइल';
 
   @override
-  String get karmaTypeLabel => 'KARMA TYPE';
+  String get karmaTypeLabel => 'कर्म प्रकार';
 
   @override
-  String get environmentLabel => 'ENVIRONMENT';
+  String get environmentLabel => 'परिवेश';
 
   @override
-  String get styleLabel => 'STYLE';
+  String get styleLabel => 'शैली';
 
   @override
-  String get sizeLabel => 'SIZE';
+  String get sizeLabel => 'आकार';
 
   @override
-  String get locationLabel => 'LOCATION';
+  String get locationLabel => 'स्थान';
 
   @override
-  String get actionNext12mLabel => 'ACTION NEXT 12M';
+  String get actionNext12mLabel => 'अगले 12 माह में कार्रवाई';
 
   @override
-  String get propertyWord => 'Property';
+  String get propertyWord => 'संपत्ति';
 
   @override
-  String get propertyYogasTitle => 'Property Yogas';
+  String get propertyYogasTitle => 'संपत्ति योग';
 
   @override
-  String get drainsLabel => 'DRAINS';
+  String get drainsLabel => 'क्षय';
 
   @override
-  String get boostersLabel => 'BOOSTERS';
+  String get boostersLabel => 'वर्धक';
 
   @override
-  String get propertyTrendTitle => 'Property Trend';
+  String get propertyTrendTitle => 'संपत्ति प्रवृत्ति';
 
   @override
-  String get buyingWindowsTitle => 'Buying Windows';
+  String get buyingWindowsTitle => 'खरीद अवधि';
 
   @override
-  String get constructionWindowsTitle => 'Construction Windows';
+  String get constructionWindowsTitle => 'निर्माण अवधि';
 
   @override
-  String get maternalInherPctLabel => 'MATERNAL INHER %';
+  String get maternalInherPctLabel => 'मातृ विरासत %';
 
   @override
-  String get paternalInherPctLabel => 'PATERNAL INHER %';
+  String get paternalInherPctLabel => 'पितृ विरासत %';
 
   @override
-  String get multiHomePctLabel => 'MULTI-HOME %';
+  String get multiHomePctLabel => 'बहु-गृह %';
 
   @override
-  String get investmentPctLabel => 'INVESTMENT %';
+  String get investmentPctLabel => 'निवेश %';
 
   @override
-  String get vehicleProfileTitle => 'Vehicle Profile';
+  String get vehicleProfileTitle => 'वाहन प्रोफ़ाइल';
 
   @override
-  String get countLabel => 'COUNT';
+  String get countLabel => 'संख्या';
 
   @override
-  String get firstAgeLabel => 'FIRST AGE';
+  String get firstAgeLabel => 'पहली आयु';
 
   @override
-  String get categoryLabel => 'CATEGORY';
+  String get categoryLabel => 'श्रेणी';
 
   @override
-  String get luxuryLabel => 'LUXURY';
+  String get luxuryLabel => 'विलासिता';
 
   @override
   String lifetimeCountFulfillmentLabel(String count, String pct) {
-    return 'Lifetime count: ${count} · Fulfillment: ${pct}%';
+    return 'जीवनकाल संख्या: ${count} · पूर्णता: ${pct}%';
   }
 
   @override
-  String get pressureWord => 'PRESSURE';
+  String get pressureWord => 'दबाव';
 
   @override
-  String get protectionWord => 'PROTECTION';
+  String get protectionWord => 'सुरक्षा';
 
   @override
-  String get astrologicalWord => 'Astrological';
+  String get astrologicalWord => 'ज्योतिषीय';
 
   @override
-  String get keyRisksHeader1 => 'Key';
+  String get keyRisksHeader1 => 'मुख्य';
 
   @override
-  String get keyRisksHeader2 => 'Risks';
+  String get keyRisksHeader2 => 'जोखिम';
 
   @override
-  String get reportCopiedShort => 'Report copied!';
+  String get reportCopiedShort => 'रिपोर्ट कॉपी हुई!';
 
   @override
-  String get keyScoresLabel => 'KEY SCORES';
+  String get keyScoresLabel => 'मुख्य स्कोर';
 
   @override
   String allScoresCountLabel(int count) {
-    return 'All Scores (${count})';
+    return 'सभी स्कोर (${count})';
   }
 
   @override
-  String get windowsWord => 'Windows';
+  String get windowsWord => 'अवधि';
 
   @override
-  String get genericFailedMsg => 'Failed';
+  String get genericFailedMsg => 'विफल';
 
   @override
-  String get unknownWord => 'Unknown';
+  String get unknownWord => 'अज्ञात';
 
   @override
   String selectKarmaChartsLabel(int max) {
-    return 'Select 2-${max} Charts';
+    return '2-${max} कुंडलियाँ चुनें';
   }
 
   @override
   String selectChartsLabelCount(int max) {
-    return 'Select ${max} Charts';
+    return '${max} कुंडलियाँ चुनें';
   }
 
   @override
   String runningAnalysisLabel(String label) {
-    return 'Running ${label} analysis...';
+    return '${label} विश्लेषण चल रहा है...';
   }
 
   @override
   String pickKarmicChartsHint(int max) {
-    return 'Pick 2 to ${max} charts to analyze karmic links';
+    return 'कार्मिक संबंध विश्लेषण हेतु 2 से ${max} कुंडलियाँ चुनें';
   }
 
   @override
-  String get pickMaleFemaleHint => 'Pick a Male and Female chart';
+  String get pickMaleFemaleHint => 'एक पुरुष और एक स्त्री कुंडली चुनें';
 
   @override
-  String get personOneLabel => 'Person 1';
+  String get personOneLabel => 'व्यक्ति 1';
 
   @override
-  String get personTwoLabel => 'Person 2';
+  String get personTwoLabel => 'व्यक्ति 2';
 
   @override
-  String get analysisFailedMsg => 'Analysis failed';
+  String get analysisFailedMsg => 'विश्लेषण विफल';
 
   @override
   String analyzeChartsCountLabel(int count) {
-    return 'Analyze ${count} Charts';
+    return '${count} कुंडलियों का विश्लेषण करें';
   }
 
   @override
-  String get contextGeneralLabel => 'General';
+  String get contextGeneralLabel => 'सामान्य';
 
   @override
-  String get contextLoveLabel => 'Love';
+  String get contextLoveLabel => 'प्रेम';
 
   @override
-  String get contextBusinessLabel => 'Business';
+  String get contextBusinessLabel => 'व्यवसाय';
 
   @override
-  String get contextFamilyLabel => 'Family';
+  String get contextFamilyLabel => 'परिवार';
 
   @override
-  String get contextTeamLabel => 'Team';
+  String get contextTeamLabel => 'टीम';
 
   @override
-  String get contextFriendshipLabel => 'Friendship';
+  String get contextFriendshipLabel => 'मित्रता';
 
   @override
-  String get relationshipIntelTitle => 'Relationship Intelligence';
+  String get relationshipIntelTitle => 'संबंध बुद्धिमत्ता';
 
   @override
   String analyzingChartsCountLabel(int count) {
-    return 'Analyzing ${count} charts...';
+    return '${count} कुंडलियों का विश्लेषण हो रहा है...';
   }
 
   @override
-  String get relationshipContextLabel => 'Relationship Context';
+  String get relationshipContextLabel => 'संबंध संदर्भ';
 
   @override
-  String get kundliMilanReportTitle => 'Kundli Milan Report';
+  String get kundliMilanReportTitle => 'कुंडली मिलान रिपोर्ट';
 
   @override
-  String get runningMilanAnalysisLabel => 'Running Milan analysis...';
+  String get runningMilanAnalysisLabel => 'मिलान विश्लेषण चल रहा है...';
 
   @override
   String selectedCountOfTwoLabel(int count) {
-    return '${count}/2 selected';
+    return '${count}/2 चयनित';
   }
 
   @override
-  String get runMilanAnalysisBtn => 'Run Milan Analysis';
+  String get runMilanAnalysisBtn => 'मिलान विश्लेषण चलाएँ';
 
   @override
-  String get noChartsCreateFirst => 'No charts. Create a birth chart first.';
+  String get noChartsCreateFirst => 'कोई कुंडली नहीं। पहले जन्म कुंडली बनाएँ।';
 
   @override
-  String get selectBirthChartAnalyze => 'Select a birth chart to analyze';
+  String get selectBirthChartAnalyze => 'विश्लेषण हेतु एक जन्म कुंडली चुनें';
 
   @override
-  String get doshAnalysis => 'Dosha Analysis';
+  String get doshAnalysis => 'दोष विश्लेषण';
 
   @override
   String doshActiveCount(Object active, Object total) {
-    return '${active} active / ${total} checked';
+    return '${active} सक्रिय / ${total} जाँचे गए';
   }
 
   @override
   String yogaActiveCount(Object active, Object total) {
-    return '${active} active / ${total} yogas checked';
+    return '${active} सक्रिय / ${total} योग जाँचे गए';
   }
 
   @override
   String yogaActiveHeader(Object count) {
-    return 'ACTIVE YOGAS (${count})';
+    return 'सक्रिय योग (${count})';
   }
 
   @override
   String yogaHideInactiveCount(Object count) {
-    return 'Hide inactive yogas (${count})';
+    return 'निष्क्रिय योग छिपाएँ (${count})';
   }
 
   @override
   String yogaShowInactiveCount(Object count) {
-    return 'Show inactive yogas (${count})';
+    return 'निष्क्रिय योग दिखाएँ (${count})';
   }
 
   @override
-  String get loadFailed => 'Failed';
+  String get loadFailed => 'विफल';
 
   @override
   String dashaDrillMd(Object planet) {
-    return '${planet} MD → Antardashas';
+    return '${planet} MD → अंतर्दशाएँ';
   }
 
   @override
   String dashaDrillAd(Object planet) {
-    return '${planet} AD → Pratyantardashas';
+    return '${planet} AD → प्रत्यंतर्दशाएँ';
   }
 
   @override
   String dashaDrillPd(Object planet) {
-    return '${planet} PD → Sookshmadashas';
+    return '${planet} PD → सूक्ष्मदशाएँ';
   }
 
   @override
   String dashaDrillSub(Object planet) {
-    return '${planet} Sub-periods';
+    return '${planet} उप-अवधियाँ';
   }
 
   @override
   String dashaBirthLordBalance(Object lord, Object balance) {
-    return 'Birth Lord: ${lord} • Balance: ${balance} yrs';
+    return 'जन्म स्वामी: ${lord} • शेष: ${balance} वर्ष';
   }
 
   @override
   String dashaLagnaBalance(Object lagna, Object balance) {
-    return 'Lagna: ${lagna} • Balance: ${balance} yrs';
+    return 'लग्न: ${lagna} • शेष: ${balance} वर्ष';
   }
 
   @override
   String dashaYearsValue(Object years) {
-    return '${years} years';
+    return '${years} वर्ष';
   }
 
   @override
-  String get dashaCurrentPeriod => 'Current Dasha Period';
+  String get dashaCurrentPeriod => 'वर्तमान दशा अवधि';
 
   @override
   String dashaAsOf(Object date) {
-    return 'As of: ${date}';
+    return 'तिथि अनुसार: ${date}';
   }
 
   @override
   String dashaActiveYogasCount(Object count) {
-    return 'Active Yogas in Current Period (${count})';
+    return 'वर्तमान अवधि में सक्रिय योग (${count})';
   }
 
   @override
   String dashaActiveDoshasCount(Object count) {
-    return 'Active Doshas in Current Period (${count})';
+    return 'वर्तमान अवधि में सक्रिय दोष (${count})';
   }
 
   @override
-  String get dashaNoYogasTriggered => 'No yogas triggered';
+  String get dashaNoYogasTriggered => 'कोई योग सक्रिय नहीं';
 
   @override
-  String get dashaNoDoshasTriggered => 'No doshas triggered';
+  String get dashaNoDoshasTriggered => 'कोई दोष सक्रिय नहीं';
 
   @override
-  String get divD1Name => 'Rasi (D-1)';
+  String get divD1Name => 'राशि (D-1)';
 
   @override
-  String get divD1Desc => 'Physical existence, all matters';
+  String get divD1Desc => 'भौतिक अस्तित्व, सभी विषय';
 
   @override
-  String get divD2Name => 'Hora (D-2)';
+  String get divD2Name => 'होरा (D-2)';
 
   @override
-  String get divD2Desc => 'Wealth, money';
+  String get divD2Desc => 'धन, संपत्ति';
 
   @override
-  String get divD3Name => 'Drekkana (D-3)';
+  String get divD3Name => 'द्रेक्काण (D-3)';
 
   @override
-  String get divD3Desc => 'Siblings, courage';
+  String get divD3Desc => 'भाई-बहन, साहस';
 
   @override
-  String get divD4Name => 'Chaturthamsa (D-4)';
+  String get divD4Name => 'चतुर्थांश (D-4)';
 
   @override
-  String get divD4Desc => 'Property, residence, fortune';
+  String get divD4Desc => 'संपत्ति, निवास, भाग्य';
 
   @override
-  String get divD5Name => 'Panchamsa (D-5)';
+  String get divD5Name => 'पंचमांश (D-5)';
 
   @override
-  String get divD5Desc => 'Fame, authority, power';
+  String get divD5Desc => 'यश, अधिकार, शक्ति';
 
   @override
-  String get divD6Name => 'Shashthamsa (D-6)';
+  String get divD6Name => 'षष्ठांश (D-6)';
 
   @override
-  String get divD6Desc => 'Health troubles';
+  String get divD6Desc => 'स्वास्थ्य समस्याएँ';
 
   @override
-  String get divD7Name => 'Saptamsa (D-7)';
+  String get divD7Name => 'सप्तांश (D-7)';
 
   @override
-  String get divD7Desc => 'Children, grandchildren';
+  String get divD7Desc => 'संतान, पौत्र-पौत्री';
 
   @override
-  String get divD8Name => 'Ashtamsa (D-8)';
+  String get divD8Name => 'अष्टांश (D-8)';
 
   @override
-  String get divD8Desc => 'Sudden troubles, litigation';
+  String get divD8Desc => 'आकस्मिक संकट, मुकदमा';
 
   @override
-  String get divD9Name => 'Navamsha (D-9)';
+  String get divD9Name => 'नवांश (D-9)';
 
   @override
-  String get divD9Desc => 'Marriage, spouse, dharma';
+  String get divD9Desc => 'विवाह, जीवनसाथी, धर्म';
 
   @override
-  String get divD10Name => 'Dasamsha (D-10)';
+  String get divD10Name => 'दशांश (D-10)';
 
   @override
-  String get divD10Desc => 'Career, profession';
+  String get divD10Desc => 'करियर, पेशा';
 
   @override
-  String get divD11Name => 'Rudramsha (D-11)';
+  String get divD11Name => 'रुद्रांश (D-11)';
 
   @override
-  String get divD11Desc => 'Death, destruction';
+  String get divD11Desc => 'मृत्यु, विनाश';
 
   @override
-  String get divD12Name => 'Dwadasamsha (D-12)';
+  String get divD12Name => 'द्वादशांश (D-12)';
 
   @override
-  String get divD12Desc => 'Parents, blood-relatives';
+  String get divD12Desc => 'माता-पिता, रक्त-संबंधी';
 
   @override
-  String get divD16Name => 'Shodasamsha (D-16)';
+  String get divD16Name => 'षोडशांश (D-16)';
 
   @override
-  String get divD16Desc => 'Vehicles, comforts, pleasures';
+  String get divD16Desc => 'वाहन, सुख-सुविधाएँ, भोग';
 
   @override
-  String get divD20Name => 'Vimsamsha (D-20)';
+  String get divD20Name => 'विंशांश (D-20)';
 
   @override
-  String get divD20Desc => 'Spiritual matters, religious';
+  String get divD20Desc => 'आध्यात्मिक विषय, धार्मिक';
 
   @override
-  String get divD24Name => 'Chaturvimsamsha (D-24)';
+  String get divD24Name => 'चतुर्विंशांश (D-24)';
 
   @override
-  String get divD24Desc => 'Learning, knowledge, education';
+  String get divD24Desc => 'अध्ययन, ज्ञान, शिक्षा';
 
   @override
-  String get divD27Name => 'Nakshatramsha (D-27)';
+  String get divD27Name => 'नक्षत्रांश (D-27)';
 
   @override
-  String get divD27Desc => 'Strengths, weaknesses, nature';
+  String get divD27Desc => 'शक्तियाँ, कमज़ोरियाँ, स्वभाव';
 
   @override
-  String get divD30Name => 'Trimsamsha (D-30)';
+  String get divD30Name => 'त्रिंशांश (D-30)';
 
   @override
-  String get divD30Desc => 'Evils, sub-conscious, punishment';
+  String get divD30Desc => 'दोष, अवचेतन, दंड';
 
   @override
-  String get divD40Name => 'Khavedamsha (D-40)';
+  String get divD40Name => 'खवेदांश (D-40)';
 
   @override
-  String get divD40Desc => 'Auspicious/inauspicious (maternal)';
+  String get divD40Desc => 'शुभ/अशुभ (मातृ पक्ष)';
 
   @override
-  String get divD45Name => 'Akshavedamsha (D-45)';
+  String get divD45Name => 'अक्षवेदांश (D-45)';
 
   @override
-  String get divD45Desc => 'All matters (paternal)';
+  String get divD45Desc => 'सभी विषय (पितृ पक्ष)';
 
   @override
-  String get divD60Name => 'Shashtyamsha (D-60)';
+  String get divD60Name => 'षष्ट्यांश (D-60)';
 
   @override
-  String get divD60Desc => 'Past-life karma — MOST IMPORTANT';
+  String get divD60Desc => 'पूर्वजन्म कर्म — सर्वाधिक महत्वपूर्ण';
 
   @override
-  String get lifeAreaCareer => 'Career';
+  String get lifeAreaCareer => 'करियर';
 
   @override
-  String get lifeAreaWealth => 'Wealth';
+  String get lifeAreaWealth => 'धन';
 
   @override
-  String get lifeAreaMarriage => 'Marriage';
+  String get lifeAreaMarriage => 'विवाह';
 
   @override
-  String get lifeAreaHealth => 'Health';
+  String get lifeAreaHealth => 'स्वास्थ्य';
 
   @override
-  String get lifeAreaSpirituality => 'Spirituality';
+  String get lifeAreaSpirituality => 'आध्यात्म';
 
   @override
   String lifeAreaGrade(Object grade) {
-    return 'Grade: ${grade}';
+    return 'ग्रेड: ${grade}';
   }
 
   @override
-  String get lifeAreaFactorsLabel => 'Factors:';
+  String get lifeAreaFactorsLabel => 'कारक:';
 
   @override
   String planetNakPada(Object nakshatra, Object pada) {
-    return 'Nak: ${nakshatra} (${pada})';
+    return 'नक्षत्र: ${nakshatra} (${pada})';
   }
 
   @override
   String planetNakLord(Object lord) {
-    return 'NL: ${lord}';
+    return 'नक्षत्र स्वामी: ${lord}';
   }
 
   @override
   String planetLongitude(Object value) {
-    return 'Lon: ${value}°';
+    return 'देशांतर: ${value}°';
   }
 
   @override
-  String get chakraOverallHealth => 'Overall Health';
+  String get chakraOverallHealth => 'समग्र स्वास्थ्य';
 
   @override
-  String get careerWord => 'Career';
+  String get careerWord => 'करियर';
 
   @override
-  String get failedToLoad => 'Failed to load';
+  String get failedToLoad => 'लोड करने में विफल';
 
   @override
-  String get kundliAscendantLagna => 'Ascendant (Lagna)';
+  String get kundliAscendantLagna => 'लग्न (Ascendant)';
 
   @override
-  String get kundliMoonSignRashi => 'Moon Sign (Rashi)';
+  String get kundliMoonSignRashi => 'चंद्र राशि (Rashi)';
 
   @override
-  String get kundliSunSign => 'Sun Sign';
+  String get kundliSunSign => 'सूर्य राशि';
 
   @override
   String kundliEngineLabel(Object engine) {
-    return 'Engine: ${engine}';
+    return 'इंजन: ${engine}';
   }
 
   @override
   String kundliDegreeNakshatra(Object degree, Object nakshatra, Object pada) {
-    return 'Degree: ${degree}°  •  Nakshatra: ${nakshatra} (${pada})';
+    return 'अंश: ${degree}°  •  नक्षत्र: ${nakshatra} (${pada})';
   }
 
   @override
   String kundliNakLordDignity(Object lord, Object dignity) {
-    return 'Nakshatra Lord: ${lord}  •  Dignity: ${dignity}';
+    return 'नक्षत्र स्वामी: ${lord}  •  बल: ${dignity}';
   }
 
   @override
   String kundliChartHeader(Object base, Object sign) {
-    return '${base} Chart — ${sign}';
+    return '${base} कुंडली — ${sign}';
   }
 
   @override
   String kundliBaseChart(Object base) {
-    return '${base} Chart';
+    return '${base} कुंडली';
   }
 
   @override
@@ -2405,7 +2405,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get grahaDrishti => 'ग्रह दृष्टि (ग्रहों की दृष्टि)';
 
   @override
-  String get grahaDrishtiSubtitle => 'Who aspects whom (%)';
+  String get grahaDrishtiSubtitle => 'कौन किस पर दृष्टि डालता है (%)';
 
   @override
   String get lagnaAspectsReceived => 'लग्न पर प्राप्त दृष्टि';
@@ -2467,7 +2467,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String savSubtitle(Object total, Object avg) {
-    return 'Total: ${total} rekhas (average sign = ${avg})';
+    return 'कुल: ${total} रेखाएँ (औसत राशि = ${avg})';
   }
 
   @override
@@ -2477,7 +2477,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String bavSubtitle(Object total, Object score) {
-    return 'Total: ${total} rekhas • At natal sign: ${score}';
+    return 'कुल: ${total} रेखाएँ • जन्म राशि पर: ${score}';
   }
 
   @override
@@ -2501,26 +2501,26 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String copiedOpening(Object ai) {
-    return 'Copied! Opening ${ai}...';
+    return 'कॉपी हुआ! ${ai} खुल रहा है...';
   }
 
   @override
-  String get openLink => 'OPEN ↗';
+  String get openLink => 'खोलें ↗';
 
   @override
-  String get discussReportWithAI => 'DISCUSS THIS REPORT WITH AI';
+  String get discussReportWithAI => 'इस रिपोर्ट पर AI से चर्चा करें';
 
   @override
-  String get reliabilityHigh => 'High reliability';
+  String get reliabilityHigh => 'उच्च विश्वसनीयता';
 
   @override
-  String get reliabilityModerate => 'Moderate reliability';
+  String get reliabilityModerate => 'मध्यम विश्वसनीयता';
 
   @override
-  String get reliabilityLow => 'Lower — guidance only';
+  String get reliabilityLow => 'कम — केवल मार्गदर्शन';
 
   @override
-  String get reliabilityGoodEdu => 'Good reliability · D-24 verified';
+  String get reliabilityGoodEdu => 'अच्छी विश्वसनीयता · D-24 सत्यापित';
 
   @override
   String get relationshipWord => 'रिश्ता';
@@ -2529,7 +2529,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get intelligenceWord => 'इंटेलिजेंस';
 
   @override
-  String get relationshipIntelligence => 'RELATIONSHIP INTELLIGENCE';
+  String get relationshipIntelligence => 'संबंध बुद्धिमत्ता';
 
   @override
   String get typeLabel => 'प्रकार';
@@ -2571,40 +2571,40 @@ class AppLocalizationsHi extends AppLocalizations {
   String get enmityRisk => 'शत्रुता जोखिम';
 
   @override
-  String get hdrChartProfiles => 'Chart Profiles';
+  String get hdrChartProfiles => 'कुंडली प्रोफ़ाइल';
 
   @override
-  String get hdrPairwiseAnalysis => 'Pairwise Analysis';
+  String get hdrPairwiseAnalysis => 'युग्मवार विश्लेषण';
 
   @override
-  String get hdrCriticalPatterns => 'Critical Patterns';
+  String get hdrCriticalPatterns => 'महत्वपूर्ण पैटर्न';
 
   @override
-  String get hdrGroupRecommendations => 'Group Recommendations';
+  String get hdrGroupRecommendations => 'समूह अनुशंसाएँ';
 
   @override
-  String get sharedPractices => 'SHARED PRACTICES';
+  String get sharedPractices => 'साझा अभ्यास';
 
   @override
-  String get hdrIndividualGuidance => 'Individual Guidance';
+  String get hdrIndividualGuidance => 'व्यक्तिगत मार्गदर्शन';
 
   @override
-  String get growthAreas => 'GROWTH AREAS';
+  String get growthAreas => 'विकास क्षेत्र';
 
   @override
-  String get hdrCoreTheme => 'Core Theme';
+  String get hdrCoreTheme => 'मुख्य विषय';
 
   @override
-  String get growthOriented => 'GROWTH-ORIENTED';
+  String get growthOriented => 'विकास-उन्मुख';
 
   @override
-  String get groupTheme => 'GROUP THEME';
+  String get groupTheme => 'समूह विषय';
 
   @override
-  String get compatibility => 'COMPATIBILITY';
+  String get compatibility => 'अनुकूलता';
 
   @override
-  String get unifiedScoreLabel => 'UNIFIED SCORE';
+  String get unifiedScoreLabel => 'एकीकृत स्कोर';
 
   @override
   String get ashtakoot => 'अष्टकूट';
@@ -2613,22 +2613,22 @@ class AppLocalizationsHi extends AppLocalizations {
   String get probability => 'संभावना';
 
   @override
-  String get hdrAshtakootSummary => 'Ashtakoot Summary';
+  String get hdrAshtakootSummary => 'अष्टकूट सारांश';
 
   @override
-  String get hdrGunBreakdown => '8 Gun Breakdown';
+  String get hdrGunBreakdown => '8 गुण विवरण';
 
   @override
-  String get hdrMangalDosh => 'Mangal Dosh';
+  String get hdrMangalDosh => 'मंगल दोष';
 
   @override
-  String get hdrD9CrossChart => 'D-9 Cross-Chart';
+  String get hdrD9CrossChart => 'D-9 क्रॉस-कुंडली';
 
   @override
-  String get d9Compatibility => 'D-9 COMPATIBILITY';
+  String get d9Compatibility => 'D-9 अनुकूलता';
 
   @override
-  String get hdrDomainCompatibility => 'Domain Compatibility';
+  String get hdrDomainCompatibility => 'क्षेत्र अनुकूलता';
 
   @override
   String get emotional => 'भावनात्मक';
@@ -2649,46 +2649,46 @@ class AppLocalizationsHi extends AppLocalizations {
   String get communicationWord => 'संचार';
 
   @override
-  String get sharedDharma => 'Shared Dharma';
+  String get sharedDharma => 'साझा धर्म';
 
   @override
-  String get familyCreation => 'Family Creation';
+  String get familyCreation => 'परिवार निर्माण';
 
   @override
-  String get hdrMarriageTiming => 'Marriage Timing';
+  String get hdrMarriageTiming => 'विवाह समय';
 
   @override
-  String get jointMarriageWindows => 'Joint Marriage Windows';
+  String get jointMarriageWindows => 'संयुक्त विवाह अवधि';
 
   @override
-  String get engagementWindows => 'Engagement Windows';
+  String get engagementWindows => 'सगाई अवधि';
 
   @override
   String get recommendedLabel => 'अनुशंसित';
 
   @override
-  String get hdrKeyRisks => 'Key Risks';
+  String get hdrKeyRisks => 'मुख्य जोखिम';
 
   @override
-  String get hdrFinalVerdict => 'Final Verdict';
+  String get hdrFinalVerdict => 'अंतिम निर्णय';
 
   @override
-  String get marriageVerdict => 'MARRIAGE VERDICT';
+  String get marriageVerdict => 'विवाह निर्णय';
 
   @override
   String get educationWord => 'शिक्षा';
 
   @override
-  String get learningSuffix => '& Learning';
+  String get learningSuffix => 'व अधिगम';
 
   @override
-  String get coreEducationScores => 'CORE EDUCATION SCORES';
+  String get coreEducationScores => 'मुख्य शिक्षा स्कोर';
 
   @override
-  String get academicSuccess => 'ACADEMIC SUCCESS';
+  String get academicSuccess => 'शैक्षणिक सफलता';
 
   @override
-  String get learningCapacity => 'LEARNING CAPACITY';
+  String get learningCapacity => 'अधिगम क्षमता';
 
   @override
   String get memory => 'स्मृति';
@@ -2700,85 +2700,85 @@ class AppLocalizationsHi extends AppLocalizations {
   String get research => 'अनुसंधान';
 
   @override
-  String get hdrIntellectualProfile => 'Intellectual Profile';
+  String get hdrIntellectualProfile => 'बौद्धिक प्रोफ़ाइल';
 
   @override
-  String get learningSignature => 'LEARNING SIGNATURE';
+  String get learningSignature => 'अधिगम विशिष्टता';
 
   @override
-  String get hdrSubjectKaraka => 'Subject Karaka';
+  String get hdrSubjectKaraka => 'विषय कारक';
 
   @override
-  String get hdrHouseFoundations => 'House Foundations';
+  String get hdrHouseFoundations => 'भाव आधार';
 
   @override
-  String get hdrMercuryJupiter => 'Mercury & Jupiter';
+  String get hdrMercuryJupiter => 'बुध व गुरु';
 
   @override
-  String get hdrEducationYogas => 'Education Yogas';
+  String get hdrEducationYogas => 'शिक्षा योग';
 
   @override
-  String get hdrDivisionalValidation => 'Divisional Validation';
+  String get hdrDivisionalValidation => 'विभागीय सत्यापन';
 
   @override
-  String get standing => 'STANDING';
+  String get standing => 'स्थिति';
 
   @override
-  String get hdrSubjectRanking => 'Subject Ranking';
+  String get hdrSubjectRanking => 'विषय वरीयता';
 
   @override
-  String get hdrDegreeLikelihood => 'Degree Likelihood';
+  String get hdrDegreeLikelihood => 'डिग्री संभावना';
 
   @override
-  String get hdrStudyPeriods => 'Study Periods';
+  String get hdrStudyPeriods => 'अध्ययन अवधि';
 
   @override
-  String get earlySchooling => 'Early Schooling';
+  String get earlySchooling => 'प्रारंभिक शिक्षा';
 
   @override
-  String get higherEducation => 'Higher Education';
+  String get higherEducation => 'उच्च शिक्षा';
 
   @override
-  String get postgradResearch => 'Postgrad · Research';
+  String get postgradResearch => 'स्नातकोत्तर · शोध';
 
   @override
-  String get hdrLearningPreferences => 'Learning Preferences';
+  String get hdrLearningPreferences => 'अधिगम प्राथमिकताएँ';
 
   @override
-  String get hdrChallengesGifts => 'Challenges & Gifts';
+  String get hdrChallengesGifts => 'चुनौतियाँ व उपहार';
 
   @override
   String get challenges => 'चुनौतियाँ';
 
   @override
-  String get cognitiveGifts => 'COGNITIVE GIFTS';
+  String get cognitiveGifts => 'संज्ञानात्मक उपहार';
 
   @override
-  String get naturalAbilities => 'NATURAL ABILITIES';
+  String get naturalAbilities => 'स्वाभाविक क्षमताएँ';
 
   @override
-  String get hdrSaraswatiRemedies => 'Saraswati Remedies';
+  String get hdrSaraswatiRemedies => 'सरस्वती उपाय';
 
   @override
-  String get studentVerdict => 'STUDENT VERDICT';
+  String get studentVerdict => 'विद्यार्थी निर्णय';
 
   @override
-  String get educationCareerLinkage => 'EDUCATION → CAREER LINKAGE';
+  String get educationCareerLinkage => 'शिक्षा → करियर जुड़ाव';
 
   @override
-  String get startupSuffix => '& Startup';
+  String get startupSuffix => 'व स्टार्टअप';
 
   @override
-  String get coreBusinessScores => 'CORE BUSINESS SCORES';
+  String get coreBusinessScores => 'मुख्य व्यवसाय स्कोर';
 
   @override
-  String get overallBusiness => 'OVERALL BUSINESS';
+  String get overallBusiness => 'समग्र व्यवसाय';
 
   @override
-  String get ventureSuccess => 'VENTURE SUCCESS';
+  String get ventureSuccess => 'उद्यम सफलता';
 
   @override
-  String get eleventhHouse => '11TH HOUSE';
+  String get eleventhHouse => 'एकादश भाव';
 
   @override
   String get gains => 'लाभ';
@@ -2787,52 +2787,52 @@ class AppLocalizationsHi extends AppLocalizations {
   String get investor => 'निवेशक';
 
   @override
-  String get hdrFounderArchetype => 'Founder Archetype';
+  String get hdrFounderArchetype => 'संस्थापक मूल स्वरूप';
 
   @override
-  String get hdrTenthEleventhHouses => '10th & 11th Houses';
+  String get hdrTenthEleventhHouses => 'दशम व एकादश भाव';
 
   @override
-  String get hdrBusinessYogas => 'Business Yogas';
+  String get hdrBusinessYogas => 'व्यवसाय योग';
 
   @override
-  String get hdrRecommendedDomains => 'Recommended Domains';
+  String get hdrRecommendedDomains => 'अनुशंसित क्षेत्र';
 
   @override
-  String get hdrBusinessStyle => 'Business Style';
+  String get hdrBusinessStyle => 'व्यवसाय शैली';
 
   @override
-  String get hdrFounderSkills => 'Founder Skills';
+  String get hdrFounderSkills => 'संस्थापक कौशल';
 
   @override
-  String get hdrFundingProfile => 'Funding Profile';
+  String get hdrFundingProfile => 'फंडिंग प्रोफ़ाइल';
 
   @override
-  String get recommendedPath => 'RECOMMENDED PATH';
+  String get recommendedPath => 'अनुशंसित मार्ग';
 
   @override
-  String get investorAttract => 'INVESTOR ATTRACT';
+  String get investorAttract => 'निवेशक आकर्षण';
 
   @override
-  String get familyBacking => 'FAMILY BACKING';
+  String get familyBacking => 'पारिवारिक सहयोग';
 
   @override
-  String get hybridViability => 'HYBRID VIABILITY';
+  String get hybridViability => 'हाइब्रिड व्यवहार्यता';
 
   @override
-  String get launchWindow => 'Launch Window';
+  String get launchWindow => 'लॉन्च अवधि';
 
   @override
-  String get scaleWindow => 'Scale Window';
+  String get scaleWindow => 'विस्तार अवधि';
 
   @override
-  String get hdrBusinessRisks => 'Business Risks';
+  String get hdrBusinessRisks => 'व्यवसाय जोखिम';
 
   @override
-  String get recoveryCapacity => 'RECOVERY CAPACITY';
+  String get recoveryCapacity => 'उबरने की क्षमता';
 
   @override
-  String get hdrRemediesSolutions => 'Remedies & Solutions';
+  String get hdrRemediesSolutions => 'उपाय व समाधान';
 
   @override
   String get aiConnectionLost => 'कनेक्शन टूट गया। कृपया पुनः प्रयास करें।';
@@ -2851,12 +2851,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String aiAutoArrow(String lang) {
-    return 'Auto → ${lang}';
+    return 'स्वतः → ${lang}';
   }
 
   @override
   String aiLanguageLabel(String lang) {
-    return 'Language: ${lang}';
+    return 'भाषा: ${lang}';
   }
 
   @override
@@ -2870,7 +2870,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String aiAnalyzingName(String name) {
-    return 'Analyzing: ${name}';
+    return 'विश्लेषण: ${name}';
   }
 
   @override
@@ -2911,7 +2911,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String astroErrorDetail(String error) {
-    return 'Error: ${error}';
+    return 'त्रुटि: ${error}';
   }
 
   @override
@@ -2937,7 +2937,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String astroReviews(int count) {
-    return 'Reviews (${count})';
+    return 'समीक्षाएँ (${count})';
   }
 
   @override
@@ -3430,7 +3430,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get language => 'भाषा';
 
   @override
-  String get english => 'English';
+  String get english => 'अंग्रेज़ी';
 
   @override
   String get myDetails => 'मेरा विवरण';
