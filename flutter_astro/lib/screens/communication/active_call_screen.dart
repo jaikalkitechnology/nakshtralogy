@@ -4,6 +4,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 /// Shared active call screen used by astrologer after accepting a call.
 /// Also usable by user app if needed.
@@ -73,7 +74,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
           debugPrint('Astro joined channel: ${connection.channelId}');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Joined channel ${connection.channelId}'),
+              content: Text(AppLocalizations.of(context)!.callJoinedChannel(connection.channelId ?? '')),
               backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
             ));
           }
@@ -86,7 +87,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
           });
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: const Text('User connected! Call active'),
+              content: Text(AppLocalizations.of(context)!.callUserConnected),
               backgroundColor: AppColors.success, duration: const Duration(seconds: 2),
             ));
           }
@@ -100,7 +101,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
           debugPrint('Agora connection: state=$state reason=$reason');
           if (mounted && state == ConnectionStateType.connectionStateFailed) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Connection failed: $reason. Check Agora credentials.'),
+              content: Text(AppLocalizations.of(context)!.callConnectionFailed(reason.toString())),
               backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
             ));
           }
@@ -109,7 +110,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
           debugPrint('Agora error: $err $msg');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Agora error: $err${msg.isNotEmpty ? " — $msg" : ""}'),
+              content: Text(AppLocalizations.of(context)!.callAgoraError('$err${msg.isNotEmpty ? " — $msg" : ""}')),
               backgroundColor: AppColors.error, duration: const Duration(seconds: 4),
             ));
           }
@@ -141,7 +142,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
       debugPrint('Agora init error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Agora init failed: $e'),
+          content: Text(AppLocalizations.of(context)!.callAgoraInitFailed(e.toString())),
           backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
         ));
       }
@@ -222,6 +223,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final isVideo = widget.callType == 'video';
 
     return Scaffold(
@@ -242,8 +244,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                   ),
                 )
               else
-                const Positioned.fill(
-                  child: Center(child: Text('Waiting for video...', style: TextStyle(color: AppColors.textSecondary))),
+                Positioned.fill(
+                  child: Center(child: Text(l.callWaitingForVideo, style: const TextStyle(color: AppColors.textSecondary))),
                 ),
               Positioned(
                 top: 16, right: 16,
@@ -288,7 +290,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                   const SizedBox(height: 20),
                   Text(widget.peerName, style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 4),
-                  Text(isVideo ? 'Video Call' : 'Voice Call', style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                  Text(isVideo ? l.callVideoCall : l.callVoiceCall, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                   const SizedBox(height: 16),
                 ] else ...[
                   const Spacer(),
@@ -300,7 +302,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                   decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.3))),
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Text(_formattedTime, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-                    Text('\u20b9${widget.ratePerMin.toInt()}/min • Earning: \u20b9${_earning.toStringAsFixed(0)}',
+                    Text(l.callRateEarning('\u20b9${widget.ratePerMin.toInt()}', '\u20b9${_earning.toStringAsFixed(0)}'),
                         style: const TextStyle(color: AppColors.success, fontSize: 13)),
                   ]),
                 ),

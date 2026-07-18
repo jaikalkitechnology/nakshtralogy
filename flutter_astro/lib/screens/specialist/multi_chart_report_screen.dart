@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'report_components.dart';
 
 class MultiChartReportScreen extends StatelessWidget {
@@ -45,29 +46,29 @@ class MultiChartReportScreen extends StatelessWidget {
     }
   }
 
-  String get _titlePrefix {
+  String _titlePrefix(AppLocalizations l) {
     switch (specialistKey) {
       case 'child_probability':
-        return 'Child';
+        return l.multiChartTitleChild;
       case 'love_compatibility':
-        return 'Love';
+        return l.multiChartTitleLove;
       case 'karma_linkage':
-        return 'Karma';
+        return l.multiChartTitleKarma;
       default:
-        return 'Multi-Chart';
+        return l.multiChartTitleDefault;
     }
   }
 
-  String get _titleSuffix {
+  String _titleSuffix(AppLocalizations l) {
     switch (specialistKey) {
       case 'child_probability':
-        return 'Probability';
+        return l.multiChartSuffixProbability;
       case 'love_compatibility':
-        return 'Compatibility';
+        return l.multiChartSuffixCompatibility;
       case 'karma_linkage':
-        return 'Linkage';
+        return l.multiChartSuffixLinkage;
       default:
-        return 'Report';
+        return l.multiChartSuffixReport;
     }
   }
 
@@ -78,6 +79,7 @@ class MultiChartReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A24),
       body: CustomScrollView(slivers: [
@@ -100,8 +102,8 @@ class MultiChartReportScreen extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               Text.rich(TextSpan(children: [
-                TextSpan(text: '$_titlePrefix ', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-                TextSpan(text: _titleSuffix, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+                TextSpan(text: '${_titlePrefix(l)} ', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+                TextSpan(text: _titleSuffix(l), style: const TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
               ])),
             ],
           ),
@@ -109,10 +111,10 @@ class MultiChartReportScreen extends StatelessWidget {
         ),
         // ── Body ──
         SliverList(delegate: SliverChildListDelegate([
-          _heroScoreSection(),
-          _participantsBar(),
-          ..._buildSections(),
-          _aiBar(context),
+          _heroScoreSection(l),
+          _participantsBar(l),
+          ..._buildSections(l),
+          _aiBar(context, l),
           const SizedBox(height: 40),
         ])),
       ]),
@@ -122,7 +124,7 @@ class MultiChartReportScreen extends StatelessWidget {
   // ═══════════════════════════════════════════════════════════════════
   //  HERO SCORE
   // ═══════════════════════════════════════════════════════════════════
-  Widget _heroScoreSection() {
+  Widget _heroScoreSection(AppLocalizations l) {
     // Extract top-level numeric scores
     final scores = <String, double>{};
     for (final e in data.entries) {
@@ -178,7 +180,7 @@ class MultiChartReportScreen extends StatelessWidget {
   // ═══════════════════════════════════════════════════════════════════
   //  PARTICIPANTS BAR
   // ═══════════════════════════════════════════════════════════════════
-  Widget _participantsBar() {
+  Widget _participantsBar(AppLocalizations l) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -188,7 +190,7 @@ class MultiChartReportScreen extends StatelessWidget {
         border: Border.all(color: _accent.withOpacity(0.2)),
       ),
       child: Row(children: [
-        Text('PARTICIPANTS', style: TextStyle(color: _accent, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text(l.participantsLabel, style: TextStyle(color: _accent, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
         const Spacer(),
         ...participants.asMap().entries.map((e) => Padding(
           padding: EdgeInsets.only(left: e.key > 0 ? 8 : 0),
@@ -205,7 +207,7 @@ class MultiChartReportScreen extends StatelessWidget {
   // ═══════════════════════════════════════════════════════════════════
   //  BUILD ALL SECTIONS
   // ═══════════════════════════════════════════════════════════════════
-  List<Widget> _buildSections() {
+  List<Widget> _buildSections(AppLocalizations l) {
     final widgets = <Widget>[];
     final summaryTexts = <String, String>{};
     final confScore = data['confidence_score'];
@@ -241,7 +243,7 @@ class MultiChartReportScreen extends StatelessWidget {
 
     // Add confidence at the end
     if (confScore != null && confScore is num) {
-      widgets.add(ReportHeader('Analysis', 'Confidence', 'QUALITY'));
+      widgets.add(ReportHeader(l.analysisPrefix, l.analysisConfidenceSuffix, 'QUALITY'));
       widgets.add(ConfidenceBlock(
         score: confScore.toDouble(),
         statement: confStatement?.toString(),
@@ -421,7 +423,7 @@ class MultiChartReportScreen extends StatelessWidget {
   // ═══════════════════════════════════════════════════════════════════
   //  AI COPY BAR
   // ═══════════════════════════════════════════════════════════════════
-  Widget _aiBar(BuildContext ctx) {
+  Widget _aiBar(BuildContext ctx, AppLocalizations l) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       padding: const EdgeInsets.all(14),
@@ -431,18 +433,18 @@ class MultiChartReportScreen extends StatelessWidget {
         border: Border.all(color: AppColors.gold.withOpacity(0.25)),
       ),
       child: Column(children: [
-        _label('DISCUSS THIS REPORT WITH AI'),
+        _label(l.discussReportWithAI),
         const SizedBox(height: 12),
         Row(children: [
-          Expanded(child: _aiCopyBtn(ctx, 'G', 'ChatGPT',
+          Expanded(child: _aiCopyBtn(ctx, l, 'G', 'ChatGPT',
             const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]),
             'chatgpt')),
           const SizedBox(width: 8),
-          Expanded(child: _aiCopyBtn(ctx, 'C', 'Claude',
+          Expanded(child: _aiCopyBtn(ctx, l, 'C', 'Claude',
             const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]),
             'claude')),
           const SizedBox(width: 8),
-          Expanded(child: _aiCopyBtn(ctx, '\u{2726}', 'Gemini',
+          Expanded(child: _aiCopyBtn(ctx, l, '\u{2726}', 'Gemini',
             const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]),
             'gemini')),
         ]),
@@ -450,16 +452,16 @@ class MultiChartReportScreen extends StatelessWidget {
         GestureDetector(
           onTap: () {
             Clipboard.setData(ClipboardData(text: _formatDataAsText(data)));
-            ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Report data copied!')));
+            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.reportDataCopied)));
           },
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke),
-              SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke),
+              const SizedBox(width: 6),
+              Text(l.copyFullReportData, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
             ]),
           ),
         ),
@@ -467,9 +469,9 @@ class MultiChartReportScreen extends StatelessWidget {
     );
   }
 
-  Widget _aiCopyBtn(BuildContext ctx, String icon, String name, Gradient g, String ai) {
+  Widget _aiCopyBtn(BuildContext ctx, AppLocalizations l, String icon, String name, Gradient g, String ai) {
     return GestureDetector(
-      onTap: () => _copyForAi(ctx, ai),
+      onTap: () => _copyForAi(ctx, ai, l),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
@@ -485,13 +487,13 @@ class MultiChartReportScreen extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-          const Text('COPY', style: TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
+          Text(l.copy, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
         ]),
       ),
     );
   }
 
-  void _copyForAi(BuildContext ctx, String ai) {
+  void _copyForAi(BuildContext ctx, String ai, AppLocalizations l) {
     final formatted = _formatDataAsText(data);
     String prompt;
     String label;
@@ -513,7 +515,7 @@ class MultiChartReportScreen extends StatelessWidget {
         label = 'AI';
     }
     Clipboard.setData(ClipboardData(text: prompt));
-    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Copied for $label!')));
+    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.copiedForAi(label))));
 
     // Try to launch the AI app
     final urls = {'chatgpt': 'https://chat.openai.com/', 'claude': 'https://claude.ai/new', 'gemini': 'https://gemini.google.com/app'};

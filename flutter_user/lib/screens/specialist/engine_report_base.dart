@@ -123,18 +123,21 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
   }
 
   // ═══ SHARED: Yoga ledger (creating + clearing) ═══
-  Widget yogaLedger(String title, List creating, List clearing, {String creatingLabel = 'PRESSURE', String clearingLabel = 'PROTECTION'}) {
+  Widget yogaLedger(String title, List creating, List clearing, {String? creatingLabel, String? clearingLabel}) {
     if (creating.isEmpty && clearing.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
+    final cLabel = creatingLabel ?? l.pressureWord;
+    final clLabel = clearingLabel ?? l.protectionWord;
     return Column(children: [
       ReportHeader(title.split(' ').first, title.split(' ').skip(1).join(' '), '${creating.length + clearing.length} YOGAS'),
       if (creating.isNotEmpty) ...[
         Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-          child: Text(creatingLabel, style: TextStyle(color: AppColors.error.withOpacity(0.8), fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+          child: Text(cLabel, style: TextStyle(color: AppColors.error.withOpacity(0.8), fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
         ...creating.take(5).map((y) => _yogaRow(y, false)),
       ],
       if (clearing.isNotEmpty) ...[
         Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-          child: Text(clearingLabel, style: TextStyle(color: AppColors.success.withOpacity(0.8), fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+          child: Text(clLabel, style: TextStyle(color: AppColors.success.withOpacity(0.8), fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
         ...clearing.take(5).map((y) => _yogaRow(y, true)),
       ],
     ]);
@@ -230,8 +233,9 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
   // ═══ SHARED: Remedies ═══
   Widget remedies(List list) {
     if (list.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      ReportHeader('Astrological', 'Remedies', '${list.length} KEYS'),
+      ReportHeader(l.astrologicalWord, l.childVedicHeader2, '${list.length} KEYS'),
       ...list.take(5).map((r) {
         if (r is Map) {
           final m = r.cast<String, dynamic>();
@@ -245,8 +249,9 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
   // ═══ SHARED: Risks ═══
   Widget risks(List list) {
     if (list.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      ReportHeader('Key', 'Risks', '${list.length} ITEMS'),
+      ReportHeader(l.keyRisksHeader1, l.keyRisksHeader2, '${list.length} ITEMS'),
       ...list.take(5).map((r) {
         if (r is Map) {
           final m = r.cast<String, dynamic>();
@@ -261,12 +266,13 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
   // ═══ SHARED: Summary/verdict card ═══
   Widget verdictCard(String verdict, String? explanation, {String? subtitle}) {
     if (verdict.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.1)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.3))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _labelRow('★ VERDICT ★'),
+        _labelRow('★ ${l.verdict} ★'),
         const SizedBox(height: 8),
         Text(titleCase(verdict), style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
         if (subtitle != null) ...[const SizedBox(height: 4), Text(subtitle, style: const TextStyle(color: AppColors.lavender, fontSize: 10, fontStyle: FontStyle.italic))],
@@ -292,8 +298,9 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
     final confBreakdown = data['confidence_breakdown'];
     final confStatement = data['plain_statement'] ?? data['confidence_explanation'];
     if (confScore == null) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+      ReportHeader(l.analysisWord, l.confidenceLabel, l.qualityTag),
       ConfidenceBlock(score: (confScore as num).toDouble(),
         statement: confStatement?.toString(),
         breakdown: (confBreakdown is Map) ? confBreakdown.cast<String, dynamic>() : {}),
@@ -302,11 +309,12 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
 
   // ═══ AI BAR ═══
   Widget _aiBar(Map<String, dynamic> data) {
+    final l = AppLocalizations.of(context)!;
     return Container(margin: const EdgeInsets.fromLTRB(16, 16, 16, 8), padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _labelRow('★ DISCUSS WITH AI ★'), const SizedBox(height: 12),
+        _labelRow('★ ${l.discussWithAI} ★'), const SizedBox(height: 12),
         Row(children: [
           Expanded(child: _aiBtn('G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(data, 'chatgpt'))),
           const SizedBox(width: 8),
@@ -316,16 +324,18 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
         ]),
         const SizedBox(height: 10),
         GestureDetector(onTap: () { Clipboard.setData(ClipboardData(text: _prompt(data)));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report copied!'))); },
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.reportCopiedShort))); },
           child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke), SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10))]))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke), const SizedBox(width: 6),
+              Text(l.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10))]))),
       ]));
   }
 
-  Widget _aiBtn(String icon, String name, Gradient g, VoidCallback onTap) => GestureDetector(onTap: onTap,
+  Widget _aiBtn(String icon, String name, Gradient g, VoidCallback onTap) {
+    final l = AppLocalizations.of(context)!;
+    return GestureDetector(onTap: onTap,
     child: Container(padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.gold.withOpacity(0.2))),
@@ -333,8 +343,9 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
         Container(width: 26, height: 26, decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(8)),
           child: Center(child: Text(icon, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
         const SizedBox(height: 5), Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
+        Text(l.openLink, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
       ])));
+  }
 
   String _prompt(Map data) {
     final j = const JsonEncoder.withIndent('  ').convert(data);
@@ -344,7 +355,8 @@ abstract class EngineReportBaseState<T extends EngineReportBase> extends State<T
   Future<void> _launchAi(Map data, String ai) async {
     await Clipboard.setData(ClipboardData(text: _prompt(data)));
     final urls = {'chatgpt': 'https://chat.openai.com/', 'claude': 'https://claude.ai/new', 'gemini': 'https://gemini.google.com/app'};
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Copied! Opening $ai...'), duration: const Duration(seconds: 3)));
+    final l = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.copiedOpening(ai)), duration: const Duration(seconds: 3)));
     final uri = Uri.parse(urls[ai]!); if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 

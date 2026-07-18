@@ -14,6 +14,7 @@ class PlanetPositionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final items = <Map<String, dynamic>>[];
     for (final name in _order) {
       final p = planetsMap[name];
@@ -21,7 +22,7 @@ class PlanetPositionsWidget extends StatelessWidget {
     }
 
     if (items.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.textSecondary)));
+      return Center(child: Text(l.noData, style: TextStyle(color: AppColors.textSecondary)));
     }
 
     return ListView.builder(
@@ -62,9 +63,9 @@ class PlanetPositionsWidget extends StatelessWidget {
             ]),
             const SizedBox(height: 10),
             Wrap(spacing: 6, runSpacing: 6, children: [
-              _chip('Nak: ${p['nakshatra']} (${p['pada']})'),
-              _chip('NL: ${p['nak_lord']}'),
-              _chip('Lon: ${(p['longitude'] as num?)?.toStringAsFixed(2)}°'),
+              _chip(l.planetNakPada('${p['nakshatra']}', '${p['pada']}')),
+              _chip(l.planetNakLord('${p['nak_lord']}')),
+              _chip(l.planetLongitude((p['longitude'] as num?)?.toStringAsFixed(2) ?? '')),
             ]),
           ]),
         );

@@ -60,18 +60,18 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const Text.rich(TextSpan(children: [
+              Text.rich(TextSpan(children: [
                 TextSpan(
-                  text: 'Karma ',
-                  style: TextStyle(
+                  text: '${l.karmaLinkTitle1} ',
+                  style: const TextStyle(
                     color: AppColors.ivory,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 TextSpan(
-                  text: 'Linkage',
-                  style: TextStyle(
+                  text: l.karmaLinkTitle2,
+                  style: const TextStyle(
                     color: _accent,
                     fontSize: 18,
                     fontStyle: FontStyle.italic,
@@ -87,62 +87,62 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         SliverList(
           delegate: SliverChildListDelegate([
             // 1. HERO
-            _buildHero(overall),
+            _buildHero(l, overall),
 
             // 2. PER-CHART KARMIC FOUNDATION
             if (perChart.isNotEmpty) ...[
-              _header('Karmic', 'Foundation'),
-              ...perChart.map((c) => _buildFoundationCard(_asMap(c))),
+              _header(l.karmaFoundationHeader1, l.karmaFoundationHeader2),
+              ...perChart.map((c) => _buildFoundationCard(l, _asMap(c))),
             ],
 
             // 3. PAIRWISE KARMIC LINKAGES
             if (pairwise.isNotEmpty) ...[
-              _header('Pairwise', 'Linkages'),
-              ...pairwise.map((p) => _buildPairwiseCard(_asMap(p))),
+              _header(l.karmaPairwiseHeader1, l.karmaPairwiseHeader2),
+              ...pairwise.map((p) => _buildPairwiseCard(l, _asMap(p))),
             ],
 
             // 4. GROUP KARMIC PATTERN
             if (groupPattern.isNotEmpty) ...[
-              _header('Group', 'Pattern'),
-              _buildGroupPattern(groupPattern),
+              _header(l.karmaGroupHeader1, l.karmaGroupHeader2),
+              _buildGroupPattern(l, groupPattern),
             ],
 
             // 5. PAST LIFE GOALS
             if (pastGoals.isNotEmpty) ...[
-              _header('Past Life', 'Goals'),
-              _buildPastLifeGoals(pastGoals),
+              _header(l.karmaPastLifeHeader1, l.karmaPastLifeHeader2),
+              _buildPastLifeGoals(l, pastGoals),
             ],
 
             // 6. CURRENT LIFE LEARNING
             if (learning.isNotEmpty) ...[
-              _header('Current Life', 'Learning'),
-              _buildCurrentLifeLearning(learning),
+              _header(l.karmaCurrentLifeHeader1, l.karmaCurrentLifeHeader2),
+              _buildCurrentLifeLearning(l, learning),
             ],
 
             // 7. KARMIC DEBTS
             if (debts.isNotEmpty) ...[
-              _header('Karmic', 'Debts'),
-              _buildKarmicDebts(debts),
+              _header(l.karmaFoundationHeader1, l.karmaDebtsHeader2),
+              _buildKarmicDebts(l, debts),
             ],
 
             // 8. MOOLA DASHA TIMING
             if (moolaTiming.isNotEmpty) ...[
-              _header('Moola Dasha', 'Timing'),
-              _buildMoolaDashaTiming(moolaTiming),
+              _header(l.karmaMoolaDashaHeader1, l.karmaMoolaDashaHeader2),
+              _buildMoolaDashaTiming(l, moolaTiming),
             ],
 
             // 9. DEEP AUDIT TABLE
             if (audit.isNotEmpty) ...[
-              _header('Deep Audit', 'Table'),
-              _buildAuditTable(audit),
+              _header(l.karmaDeepAuditHeader1, l.karmaDeepAuditHeader2),
+              _buildAuditTable(l, audit),
             ],
 
             // 10. SUMMARY
-            if (summary.isNotEmpty) _buildSummary(summary),
+            if (summary.isNotEmpty) _buildSummary(l, summary),
 
             // 11. CONFIDENCE
             if (conf != null) ...[
-              ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+              ReportHeader(l.analysisWord, l.confidenceLabel, l.qualityTag),
               ConfidenceBlock(
                 score: conf,
                 statement: confExp,
@@ -163,7 +163,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 1. HERO — Score ring + grade + verdict + probability + chips
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildHero(Map<String, dynamic> overall) {
+  Widget _buildHero(AppLocalizations l, Map<String, dynamic> overall) {
     final score = _num(overall, 'overall_linkage_score');
     final grade = overall['linkage_grade']?.toString() ?? '';
     final verdict = overall['linkage_verdict']?.toString() ?? '';
@@ -183,7 +183,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         border: Border.all(color: _accent.withOpacity(0.3)),
       ),
       child: Column(children: [
-        _label('PAST LIFE KARMA LINKAGE'),
+        _label(l.karmaHeroLabel),
         const SizedBox(height: 14),
 
         // Main score ring
@@ -316,7 +316,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 2. PER-CHART KARMIC FOUNDATION
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildFoundationCard(Map<String, dynamic> chart) {
+  Widget _buildFoundationCard(AppLocalizations l, Map<String, dynamic> chart) {
     final name = chart['chart_name']?.toString() ?? '—';
     final ketu = _asMap(chart['ketu_mastery']);
     final rahu = _asMap(chart['rahu_growth']);
@@ -357,13 +357,13 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Ketu Mastery
         if (ketu.isNotEmpty) ...[
-          _subHeader('KETU MASTERY', AppColors.lavender),
-          _kvRow('House', 'H${ketu['house'] ?? "?"}', AppColors.gold),
-          _kvRow('Sign', ketu['sign']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Nakshatra', ketu['nakshatra']?.toString() ?? '—', AppColors.gold),
+          _subHeader(l.karmaKetuMastery, AppColors.lavender),
+          _kvRow(l.house, 'H${ketu['house'] ?? "?"}', AppColors.gold),
+          _kvRow(l.sign, ketu['sign']?.toString() ?? '—', AppColors.gold),
+          _kvRow(l.nakshatraLabel, ketu['nakshatra']?.toString() ?? '—', AppColors.gold),
           if (ketu['nakshatra_deity'] != null)
-            _kvRow('Deity', ketu['nakshatra_deity'].toString(), AppColors.aurora),
-          _progressBar('Mastery Score', _num(ketu, 'mastery_score')),
+            _kvRow(l.deityLabel, ketu['nakshatra_deity'].toString(), AppColors.aurora),
+          _progressBar(l.masteryScoreLabel, _num(ketu, 'mastery_score')),
           if (ketu['interpretation'] != null) ...[
             const SizedBox(height: 4),
             _interpretationText(ketu['interpretation'].toString()),
@@ -373,11 +373,11 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Rahu Growth
         if (rahu.isNotEmpty) ...[
-          _subHeader('RAHU GROWTH', AppColors.cosmicPink),
-          _kvRow('House', 'H${rahu['house'] ?? "?"}', AppColors.gold),
-          _kvRow('Sign', rahu['sign']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Nakshatra', rahu['nakshatra']?.toString() ?? '—', AppColors.gold),
-          _progressBar('Growth Score', _num(rahu, 'growth_score')),
+          _subHeader(l.karmaRahuGrowth, AppColors.cosmicPink),
+          _kvRow(l.house, 'H${rahu['house'] ?? "?"}', AppColors.gold),
+          _kvRow(l.sign, rahu['sign']?.toString() ?? '—', AppColors.gold),
+          _kvRow(l.nakshatraLabel, rahu['nakshatra']?.toString() ?? '—', AppColors.gold),
+          _progressBar(l.growthScoreLabel, _num(rahu, 'growth_score')),
           if (rahu['interpretation'] != null) ...[
             const SizedBox(height: 4),
             _interpretationText(rahu['interpretation'].toString()),
@@ -387,10 +387,10 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Atmakaraka
         if (atma.isNotEmpty) ...[
-          _subHeader('ATMAKARAKA', AppColors.gold),
-          _kvRow('Planet', atma['planet']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Degree', '${_num(atma, 'degree').toStringAsFixed(2)}°', AppColors.aurora),
-          _kvRow('House', 'H${atma['house'] ?? "?"}', AppColors.gold),
+          _subHeader(l.karmaAtmakaraka, AppColors.gold),
+          _kvRow(l.planet, atma['planet']?.toString() ?? '—', AppColors.gold),
+          _kvRow(l.degreeLabel, '${_num(atma, 'degree').toStringAsFixed(2)}°', AppColors.aurora),
+          _kvRow(l.house, 'H${atma['house'] ?? "?"}', AppColors.gold),
           if (atma['soul_agenda'] != null) ...[
             const SizedBox(height: 4),
             _interpretationText(atma['soul_agenda'].toString()),
@@ -400,11 +400,11 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Saturn Karma
         if (saturn.isNotEmpty) ...[
-          _subHeader('SATURN KARMA', AppColors.smoke),
-          _kvRow('House', 'H${saturn['house'] ?? "?"}', AppColors.gold),
-          _kvRow('Sign', saturn['sign']?.toString() ?? '—', AppColors.gold),
+          _subHeader(l.karmaSaturnKarma, AppColors.smoke),
+          _kvRow(l.house, 'H${saturn['house'] ?? "?"}', AppColors.gold),
+          _kvRow(l.sign, saturn['sign']?.toString() ?? '—', AppColors.gold),
           if (saturn['dignity'] != null)
-            _kvRow('Dignity', saturn['dignity'].toString(), _dignityColor(saturn['dignity'].toString())),
+            _kvRow(l.dignityLabel, saturn['dignity'].toString(), _dignityColor(saturn['dignity'].toString())),
           if (saturn['karmic_duty'] != null) ...[
             const SizedBox(height: 4),
             _interpretationText(saturn['karmic_duty'].toString()),
@@ -414,8 +414,8 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // 12th House
         if (twelfth.isNotEmpty) ...[
-          _subHeader('12TH HOUSE', AppColors.indigo),
-          _kvRow('Sign', twelfth['sign']?.toString() ?? '—', AppColors.gold),
+          _subHeader(l.karma12thHouse, AppColors.indigo),
+          _kvRow(l.sign, twelfth['sign']?.toString() ?? '—', AppColors.gold),
           if (_asList(twelfth['occupants']).isNotEmpty) ...[
             const SizedBox(height: 4),
             Wrap(
@@ -435,12 +435,12 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // 9th House Punya
         if (ninth.isNotEmpty) ...[
-          _subHeader('9TH HOUSE PUNYA', AppColors.success),
-          _kvRow('Sign', ninth['sign']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Lord', ninth['lord']?.toString() ?? '—', AppColors.gold),
-          _progressBar('Lord Strength', _num(ninth, 'lord_strength')),
+          _subHeader(l.karma9thHousePunya, AppColors.success),
+          _kvRow(l.sign, ninth['sign']?.toString() ?? '—', AppColors.gold),
+          _kvRow(l.lordLabel, ninth['lord']?.toString() ?? '—', AppColors.gold),
+          _progressBar(l.lordStrengthLabel, _num(ninth, 'lord_strength')),
           const SizedBox(height: 4),
-          _progressBar('Bhava Score', _num(ninth, 'bhava_score')),
+          _progressBar(l.bhavaScoreLabel, _num(ninth, 'bhava_score')),
           if (ninth['accumulated_merit'] != null) ...[
             const SizedBox(height: 4),
             _interpretationText(ninth['accumulated_merit'].toString()),
@@ -450,10 +450,10 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // D60 Signature
         if (d60.isNotEmpty) ...[
-          _subHeader('D60 SIGNATURE', AppColors.saffron),
-          _kvRow('Lagna', d60['d60_lagna']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Lagna Lord', d60['d60_lagna_lord']?.toString() ?? '—', AppColors.gold),
-          _progressBar('Depth Score', _num(d60, 'karmic_depth_score')),
+          _subHeader(l.karmaD60Signature, AppColors.saffron),
+          _kvRow(l.lagna, d60['d60_lagna']?.toString() ?? '—', AppColors.gold),
+          _kvRow(l.lagnaLord, d60['d60_lagna_lord']?.toString() ?? '—', AppColors.gold),
+          _progressBar(l.depthScoreLabel, _num(d60, 'karmic_depth_score')),
           if (d60['interpretation'] != null) ...[
             const SizedBox(height: 4),
             _interpretationText(d60['interpretation'].toString()),
@@ -493,7 +493,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 3. PAIRWISE KARMIC LINKAGES
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildPairwiseCard(Map<String, dynamic> p) {
+  Widget _buildPairwiseCard(AppLocalizations l, Map<String, dynamic> p) {
     final pair = p['pair']?.toString() ?? '—';
     final linkScore = _num(p, 'linkage_strength_score');
     final prob = p['linkage_probability']?.toString() ?? '';
@@ -551,7 +551,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         const SizedBox(height: 8),
 
         // Linkage score bar
-        _progressBar('Linkage Strength', linkScore),
+        _progressBar(l.linkageStrengthLabel, linkScore),
         const SizedBox(height: 10),
 
         // Karmic relationship type
@@ -604,7 +604,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Linkage factors table
         if (factors.isNotEmpty) ...[
-          _subHeader('LINKAGE FACTORS ($activeCount active)', AppColors.aurora),
+          _subHeader(l.karmaLinkageFactorsHeader(activeCount), AppColors.aurora),
           const SizedBox(height: 4),
           // Table header
           Container(
@@ -613,11 +613,11 @@ class KarmaLinkageReportScreen extends StatelessWidget {
               color: Colors.white.withOpacity(0.04),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             ),
-            child: const Row(children: [
-              Expanded(flex: 3, child: Text('Factor', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              Expanded(flex: 1, child: Text('Weight', textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              Expanded(flex: 3, child: Text('Meaning', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              SizedBox(width: 50, child: Text('Status', textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+            child: Row(children: [
+              Expanded(flex: 3, child: Text(l.factorColumnLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+              Expanded(flex: 1, child: Text(l.weightColumnLabel, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+              Expanded(flex: 3, child: Text(l.meaningColumnLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+              SizedBox(width: 50, child: Text(l.statusColumnLabel, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
             ]),
           ),
           ...factors.map((f) {
@@ -661,7 +661,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                   width: 50,
                   child: Center(
                     child: _badge(
-                      present ? 'YES' : 'NO',
+                      present ? l.yesWord : l.noWord,
                       present ? AppColors.success : AppColors.error,
                     ),
                   ),
@@ -674,7 +674,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Past life connection
         if (pastConn.isNotEmpty) ...[
-          _subHeader('PAST LIFE CONNECTION', AppColors.lavender),
+          _subHeader(l.karmaPastLifeConnection, AppColors.lavender),
           const SizedBox(height: 4),
           _interpretationText(pastConn),
           const SizedBox(height: 8),
@@ -682,7 +682,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Current life dynamic
         if (currentDyn.isNotEmpty) ...[
-          _subHeader('CURRENT LIFE DYNAMIC', AppColors.aurora),
+          _subHeader(l.karmaCurrentLifeDynamic, AppColors.aurora),
           const SizedBox(height: 4),
           _interpretationText(currentDyn),
           const SizedBox(height: 8),
@@ -690,7 +690,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // What they teach each other
         if (teach.isNotEmpty) ...[
-          _subHeader('WHAT THEY TEACH EACH OTHER', AppColors.gold),
+          _subHeader(l.karmaWhatTheyTeach, AppColors.gold),
           const SizedBox(height: 4),
           _interpretationText(teach),
           const SizedBox(height: 8),
@@ -727,7 +727,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 4. GROUP KARMIC PATTERN
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildGroupPattern(Map<String, dynamic> gp) {
+  Widget _buildGroupPattern(AppLocalizations l, Map<String, dynamic> gp) {
     final theme = gp['group_karmic_theme']?.toString() ?? '';
     final setting = gp['shared_past_life_setting']?.toString() ?? '';
     final ketuPattern = _asMap(gp['collective_ketu_pattern']);
@@ -750,7 +750,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Theme
         if (theme.isNotEmpty) ...[
-          _subHeader('GROUP KARMIC THEME', _accent),
+          _subHeader(l.karmaGroupThemeHeader, _accent),
           const SizedBox(height: 4),
           Text(
             theme,
@@ -767,7 +767,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Shared setting
         if (setting.isNotEmpty) ...[
-          _subHeader('SHARED PAST LIFE SETTING', AppColors.saffron),
+          _subHeader(l.karmaSharedSettingHeader, AppColors.saffron),
           const SizedBox(height: 4),
           _interpretationText(setting),
           const SizedBox(height: 10),
@@ -775,7 +775,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Collective Ketu pattern
         if (ketuPattern.isNotEmpty) ...[
-          _subHeader('COLLECTIVE KETU PATTERN', AppColors.lavender),
+          _subHeader(l.karmaCollectiveKetuHeader, AppColors.lavender),
           const SizedBox(height: 4),
           if (_asList(ketuPattern['dominant_houses']).isNotEmpty)
             Padding(
@@ -784,7 +784,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                 spacing: 6,
                 runSpacing: 4,
                 children: [
-                  const Text('Houses: ', style: TextStyle(color: AppColors.smoke, fontSize: 9)),
+                  Text(l.housesPrefixLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 9)),
                   ..._asList(ketuPattern['dominant_houses'])
                       .map((h) => _badge('H$h', AppColors.lavender)),
                 ],
@@ -797,7 +797,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                 spacing: 6,
                 runSpacing: 4,
                 children: [
-                  const Text('Signs: ', style: TextStyle(color: AppColors.smoke, fontSize: 9)),
+                  Text(l.signsPrefixLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 9)),
                   ..._asList(ketuPattern['dominant_signs'])
                       .map((s) => _badge(s.toString(), AppColors.lavender)),
                 ],
@@ -812,7 +812,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
         // Collective Rahu pattern
         if (rahuPattern.isNotEmpty) ...[
-          _subHeader('COLLECTIVE RAHU PATTERN', AppColors.cosmicPink),
+          _subHeader(l.karmaCollectiveRahuHeader, AppColors.cosmicPink),
           const SizedBox(height: 4),
           if (_asList(rahuPattern['dominant_houses']).isNotEmpty)
             Padding(
@@ -821,7 +821,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                 spacing: 6,
                 runSpacing: 4,
                 children: [
-                  const Text('Houses: ', style: TextStyle(color: AppColors.smoke, fontSize: 9)),
+                  Text(l.housesPrefixLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 9)),
                   ..._asList(rahuPattern['dominant_houses'])
                       .map((h) => _badge('H$h', AppColors.cosmicPink)),
                 ],
@@ -835,7 +835,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         ],
 
         // Cohesion score bar
-        _progressBar('Karmic Cohesion', cohesion),
+        _progressBar(l.karmicCohesionLabel, cohesion),
         if (cohesionInterp.isNotEmpty) ...[
           const SizedBox(height: 4),
           _interpretationText(cohesionInterp),
@@ -856,9 +856,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
               border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
             ),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text(
-                'GROUP SOUL CONTRACT',
-                style: TextStyle(
+              Text(
+                l.karmaGroupSoulContractHeader,
+                style: const TextStyle(
                   color: AppColors.gold,
                   fontSize: 8,
                   letterSpacing: 1.5,
@@ -887,7 +887,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 5. PAST LIFE GOALS
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildPastLifeGoals(Map<String, dynamic> goals) {
+  Widget _buildPastLifeGoals(AppLocalizations l, Map<String, dynamic> goals) {
     final individual = _asList(goals['individual_past_goals']);
     final shared = goals['shared_past_life_goal']?.toString() ?? '';
     final assessment = goals['goal_completion_assessment']?.toString() ?? '';
@@ -927,7 +927,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             ]),
             if (goal.isNotEmpty) ...[
               const SizedBox(height: 6),
-              _kvRow('Goal', goal, AppColors.ivory),
+              _kvRow(l.goalLabel, goal, AppColors.ivory),
             ],
             if (carry.isNotEmpty) ...[
               const SizedBox(height: 4),
@@ -948,9 +948,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             border: Border.all(color: AppColors.gold.withOpacity(0.2)),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'SHARED PAST LIFE GOAL',
-              style: TextStyle(
+            Text(
+              l.karmaSharedGoalHeader,
+              style: const TextStyle(
                 color: AppColors.gold,
                 fontSize: 8,
                 letterSpacing: 1.5,
@@ -998,7 +998,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 6. CURRENT LIFE LEARNING
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildCurrentLifeLearning(Map<String, dynamic> learning) {
+  Widget _buildCurrentLifeLearning(AppLocalizations l, Map<String, dynamic> learning) {
     final lessons = _asList(learning['individual_lessons']);
     final sharedLesson = learning['shared_group_lesson']?.toString() ?? '';
     final teachMap = _asList(learning['mutual_teaching_map']);
@@ -1006,8 +1006,8 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Per-person lessons
-      ...lessons.map((l) {
-        final lm = _asMap(l);
+      ...lessons.map((lesson) {
+        final lm = _asMap(lesson);
         final name = lm['chart_name']?.toString() ?? '—';
         final lesson = lm['new_lesson']?.toString() ?? '';
         final house = lm['lesson_house'];
@@ -1059,9 +1059,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                   border: Border.all(color: AppColors.success.withOpacity(0.15)),
                 ),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text(
-                    'HOW TO GROW',
-                    style: TextStyle(
+                  Text(
+                    l.howToGrowHeader,
+                    style: const TextStyle(
                       color: AppColors.success,
                       fontSize: 7,
                       letterSpacing: 1.5,
@@ -1084,7 +1084,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             if (moolaDasha.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(
-                'Moola Dasha: $moolaDasha',
+                l.moolaDashaPrefix(moolaDasha),
                 style: const TextStyle(
                   color: AppColors.smoke,
                   fontSize: 9,
@@ -1107,9 +1107,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             border: Border.all(color: AppColors.gold.withOpacity(0.2)),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'SHARED GROUP LESSON',
-              style: TextStyle(
+            Text(
+              l.karmaSharedLessonHeader,
+              style: const TextStyle(
                 color: AppColors.gold,
                 fontSize: 8,
                 letterSpacing: 1.5,
@@ -1142,7 +1142,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             border: Border.all(color: _accent.withOpacity(0.2)),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _subHeader('MUTUAL TEACHING MAP', _accent),
+            _subHeader(l.karmaMutualTeachingHeader, _accent),
             const SizedBox(height: 8),
             ...teachMap.map((t) {
               final tm = _asMap(t);
@@ -1192,9 +1192,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _subHeader('MUTUAL TEACHING MAP', _accent),
+            _subHeader(l.karmaMutualTeachingHeader, _accent),
             const SizedBox(height: 6),
-            const Text('Teaching dynamics will emerge as karmic connections deepen.', style: TextStyle(color: AppColors.smoke, fontSize: 10, fontStyle: FontStyle.italic)),
+            Text(l.karmaTeachingDynamicsPlaceholder, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontStyle: FontStyle.italic)),
           ]),
         ),
       ],
@@ -1230,7 +1230,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 7. KARMIC DEBTS & RESOLUTIONS
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildKarmicDebts(Map<String, dynamic> debts) {
+  Widget _buildKarmicDebts(AppLocalizations l, Map<String, dynamic> debts) {
     final detected = _asList(debts['debts_detected']);
     final mutual = _asList(debts['mutual_debts']);
     final resSummary = debts['resolution_summary']?.toString() ?? '';
@@ -1284,10 +1284,10 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             if (debtType.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: _kvRow('Type', debtType, AppColors.gold),
+                child: _kvRow(l.typeFieldLabel, debtType, AppColors.gold),
               ),
             if (basis.isNotEmpty)
-              _kvRow('Basis', basis, AppColors.ivory),
+              _kvRow(l.basisFieldLabel, basis, AppColors.ivory),
             if (resolution.isNotEmpty) ...[
               const SizedBox(height: 6),
               Container(
@@ -1298,9 +1298,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                   border: Border.all(color: AppColors.success.withOpacity(0.15)),
                 ),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text(
-                    'RESOLUTION PATH',
-                    style: TextStyle(
+                  Text(
+                    l.resolutionPathHeader,
+                    style: const TextStyle(
                       color: AppColors.success,
                       fontSize: 7,
                       letterSpacing: 1.5,
@@ -1319,7 +1319,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             if (timing.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(
-                'Dasha Timing: $timing',
+                l.dashaTimingPrefix(timing),
                 style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontStyle: FontStyle.italic),
               ),
             ],
@@ -1338,9 +1338,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             border: Border.all(color: AppColors.warning.withOpacity(0.2)),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'MUTUAL DEBTS',
-              style: TextStyle(
+            Text(
+              l.mutualDebtsHeader,
+              style: const TextStyle(
                 color: AppColors.warning,
                 fontSize: 8,
                 letterSpacing: 1.5,
@@ -1389,7 +1389,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 8. MOOLA DASHA KARMIC TIMING
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildMoolaDashaTiming(Map<String, dynamic> timing) {
+  Widget _buildMoolaDashaTiming(AppLocalizations l, Map<String, dynamic> timing) {
     final perChart = _asList(timing['per_chart_timing']);
     final groupWindow = timing['group_karmic_window']?.toString() ?? '';
     final synthesis = timing['timing_synthesis']?.toString() ?? '';
@@ -1433,13 +1433,13 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             // Moola dasha periods
             if (moola.isNotEmpty) ...[
               if (moola['md'] != null)
-                _kvRow('MD', moola['md'].toString(), AppColors.gold),
+                _kvRow(l.mdLabel, moola['md'].toString(), AppColors.gold),
               if (moola['ad'] != null)
-                _kvRow('AD', moola['ad'].toString(), AppColors.gold),
+                _kvRow(l.adLabel, moola['ad'].toString(), AppColors.gold),
               if (moola['pd'] != null)
-                _kvRow('PD', moola['pd'].toString(), AppColors.gold),
+                _kvRow(l.pdLabel, moola['pd'].toString(), AppColors.gold),
               if (moola['dates'] != null)
-                _kvRow('Dates', moola['dates'].toString(), AppColors.smoke),
+                _kvRow(l.datesLabel, moola['dates'].toString(), AppColors.smoke),
             ],
 
             // Karmic activation
@@ -1483,9 +1483,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
             border: Border.all(color: AppColors.gold.withOpacity(0.2)),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'GROUP KARMIC WINDOW',
-              style: TextStyle(
+            Text(
+              l.groupKarmicWindowHeader,
+              style: const TextStyle(
                 color: AppColors.gold,
                 fontSize: 8,
                 letterSpacing: 1.5,
@@ -1537,7 +1537,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 9. DEEP AUDIT TABLE
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildAuditTable(Map<String, dynamic> audit) {
+  Widget _buildAuditTable(AppLocalizations l, Map<String, dynamic> audit) {
     final params = _asList(audit['audited_parameters']);
     final totalRaw = audit['total_parameters_audited'];
     final total = totalRaw is num ? totalRaw.toInt() : (totalRaw is String ? int.tryParse(totalRaw) ?? params.length : params.length);
@@ -1556,7 +1556,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              '$total PARAMETERS AUDITED',
+              l.parametersAuditedHeading(total),
               style: const TextStyle(
                 color: AppColors.gold,
                 fontSize: 10,
@@ -1612,9 +1612,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                     ]),
                     const SizedBox(height: 4),
                     Row(children: [
-                      Text('Value: ', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+                      Text(l.valuePrefixLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
                       Expanded(child: Text(raw, style: const TextStyle(color: AppColors.gold, fontSize: 9), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      Text('W: ${weight.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+                      Text(l.weightPrefix(weight.toStringAsFixed(2)), style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
                     ]),
                     if (basis.isNotEmpty) ...[
                       const SizedBox(height: 3),
@@ -1633,7 +1633,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // 10. SUMMARY
   // ════════════════════════════════════════════════════════════════════
 
-  Widget _buildSummary(Map<String, dynamic> summary) {
+  Widget _buildSummary(AppLocalizations l, Map<String, dynamic> summary) {
     final insights = _asList(summary['key_insights']);
     final humanSummary = summary['human_summary']?.toString() ?? '';
 
@@ -1649,7 +1649,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         border: Border.all(color: _accent.withOpacity(0.25)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _subHeader('KEY INSIGHTS', AppColors.gold),
+        _subHeader(l.keyInsights, AppColors.gold),
         const SizedBox(height: 8),
 
         // Numbered insights
@@ -1723,6 +1723,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   // ════════════════════════════════════════════════════════════════════
 
   Widget _buildAiCopyBar(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx)!;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       padding: const EdgeInsets.all(14),
@@ -1735,7 +1736,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
         border: Border.all(color: AppColors.gold.withOpacity(0.25)),
       ),
       child: Column(children: [
-        _label('DISCUSS WITH AI'),
+        _label(l.discussWithAI),
         const SizedBox(height: 12),
         Row(children: [
           _aiBtn(
@@ -1767,7 +1768,7 @@ class KarmaLinkageReportScreen extends StatelessWidget {
           onTap: () {
             Clipboard.setData(ClipboardData(text: _fmt(data)));
             ScaffoldMessenger.of(ctx).showSnackBar(
-              const SnackBar(content: Text('Report data copied!')),
+              SnackBar(content: Text(l.reportCopied)),
             );
           },
           child: Container(
@@ -1777,12 +1778,12 @@ class KarmaLinkageReportScreen extends StatelessWidget {
               color: Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.copy, size: 14, color: AppColors.smoke),
-                SizedBox(width: 6),
-                Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+                const Icon(Icons.copy, size: 14, color: AppColors.smoke),
+                const SizedBox(width: 6),
+                Text(l.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
               ],
             ),
           ),
@@ -1792,12 +1793,13 @@ class KarmaLinkageReportScreen extends StatelessWidget {
   }
 
   Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g, String prefix) {
+    final l = AppLocalizations.of(ctx)!;
     return Expanded(
       child: GestureDetector(
         onTap: () {
           Clipboard.setData(ClipboardData(text: prefix + _fmt(data)));
           ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text('Copied for $name!')),
+            SnackBar(content: Text(l.copiedForName(name))),
           );
           final urls = {
             'ChatGPT': 'https://chat.openai.com/',
@@ -1844,9 +1846,9 @@ class KarmaLinkageReportScreen extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const Text(
-              'COPY',
-              style: TextStyle(
+            Text(
+              l.copy,
+              style: const TextStyle(
                 color: AppColors.smoke,
                 fontSize: 7,
                 fontFamily: 'monospace',

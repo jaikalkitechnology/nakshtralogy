@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'report_components.dart';
 
@@ -12,6 +13,7 @@ class RelationshipReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final d = data;
     return Scaffold(backgroundColor: const Color(0xFF0A0A24),
       body: CustomScrollView(slivers: [
@@ -19,23 +21,23 @@ class RelationshipReportScreen extends StatelessWidget {
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
           title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
             Text(names.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace')),
-            const Text.rich(TextSpan(children: [
-              TextSpan(text: 'Relationship ', style: TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w600)),
-              TextSpan(text: 'Intelligence', style: TextStyle(color: AppColors.gold, fontSize: 17, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+            Text.rich(TextSpan(children: [
+              TextSpan(text: '${l.relationshipWord} ', style: const TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w600)),
+              TextSpan(text: l.intelligenceWord, style: const TextStyle(color: AppColors.gold, fontSize: 17, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
             ])),
           ]),
           centerTitle: true),
         SliverList(delegate: SliverChildListDelegate([
-          _summaryBanner(d), _chartProfiles(d), _pairwiseCards(d),
-          _criticalPatterns(d), _groupRecs(d), _individualRecs(d),
-          _coreTheme(d), _confidence(d), _aiBar(d, context),
+          _summaryBanner(d, l), _chartProfiles(d, l), _pairwiseCards(d, l),
+          _criticalPatterns(d, l), _groupRecs(d, l), _individualRecs(d, l),
+          _coreTheme(d, l), _confidence(d, l), _aiBar(d, context, l),
           const SizedBox(height: 30),
         ])),
       ]));
   }
 
   // ═══ SUMMARY BANNER ═══
-  Widget _summaryBanner(Map d) {
+  Widget _summaryBanner(Map d, AppLocalizations l) {
     final summary = d['human_summary']?.toString() ?? '';
     final advice = d['actionable_advice']?.toString() ?? '';
     final conf = (d['confidence_score'] as num?)?.toDouble() ?? 0;
@@ -52,7 +54,7 @@ class RelationshipReportScreen extends StatelessWidget {
         gradient: LinearGradient(colors: [AppColors.cosmicPink.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.15)]),
         borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
       child: Column(children: [
-        _label('🔗 RELATIONSHIP INTELLIGENCE'),
+        _label('🔗 ${l.relationshipIntelligence}'),
         const SizedBox(height: 10),
         if (summary.isNotEmpty) Text(summary, textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'serif', height: 1.4)),
@@ -61,14 +63,14 @@ class RelationshipReportScreen extends StatelessWidget {
             style: const TextStyle(color: AppColors.lavender, fontSize: 10, fontStyle: FontStyle.italic))],
         const SizedBox(height: 12),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _quickStat(type, 'TYPE', AppColors.cosmicPink),
-          _quickStat(trust, 'TRUST', trust.toLowerCase() == 'high' ? AppColors.success : AppColors.gold),
-          _quickStat(dhoka, 'DHOKA RISK', dhoka.toLowerCase() == 'low' ? AppColors.success : AppColors.error),
+          _quickStat(type, l.typeLabel, AppColors.cosmicPink),
+          _quickStat(trust, l.trustLabel, trust.toLowerCase() == 'high' ? AppColors.success : AppColors.gold),
+          _quickStat(dhoka, l.dhokaRisk, dhoka.toLowerCase() == 'low' ? AppColors.success : AppColors.error),
         ]),
         if (power.isNotEmpty) ...[const SizedBox(height: 8),
           Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.06), borderRadius: BorderRadius.circular(8)),
-            child: Text('⚡ Power: $power', style: const TextStyle(color: AppColors.smoke, fontSize: 9)))],
+            child: Text('⚡ ${l.powerLabel}: $power', style: const TextStyle(color: AppColors.smoke, fontSize: 9)))],
       ]));
   }
 
@@ -78,11 +80,11 @@ class RelationshipReportScreen extends StatelessWidget {
   ]);
 
   // ═══ CHART PROFILES ═══
-  Widget _chartProfiles(Map d) {
+  Widget _chartProfiles(Map d, AppLocalizations l) {
     final charts = (d['charts_summary'] as List?) ?? [];
     if (charts.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Chart', 'Profiles', '${charts.length} PERSONS'),
+      ReportHeader(l.hdrChartProfiles, '', '${charts.length} PERSONS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: charts.take(2).toList().asMap().entries.map((e) {
           final c = e.value is Map ? (e.value as Map).cast<String, dynamic>() : <String, dynamic>{};
@@ -97,10 +99,10 @@ class RelationshipReportScreen extends StatelessWidget {
               Text(c['name']?.toString() ?? '?', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700, fontFamily: 'serif')),
               Text('${c['lagna_sign_name'] ?? ""} Lagna', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
               const SizedBox(height: 6),
-              _miniBar('Integrity', (c['integrity_score'] as num?)?.toDouble() ?? 0, color),
-              _miniBar('Warmth', (c['emotional_warmth_score'] as num?)?.toDouble() ?? 0, color),
-              _miniBar('Trust', (c['trustworthiness_baseline_score'] as num?)?.toDouble() ?? 0, color),
-              _miniBar('Assert', (c['assertiveness_score'] as num?)?.toDouble() ?? 0, color),
+              _miniBar(l.integrity, (c['integrity_score'] as num?)?.toDouble() ?? 0, color),
+              _miniBar(l.warmth, (c['emotional_warmth_score'] as num?)?.toDouble() ?? 0, color),
+              _miniBar(l.trustWord, (c['trustworthiness_baseline_score'] as num?)?.toDouble() ?? 0, color),
+              _miniBar(l.assertLabel, (c['assertiveness_score'] as num?)?.toDouble() ?? 0, color),
               const SizedBox(height: 4),
               Text('AK: ${c['atmakaraka_planet'] ?? "?"}', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
               Text(c['character_archetype']?.toString() ?? '', style: TextStyle(color: color, fontSize: 8, fontStyle: FontStyle.italic)),
@@ -131,20 +133,20 @@ class RelationshipReportScreen extends StatelessWidget {
   ]));
 
   // ═══ PAIRWISE CARDS ═══
-  Widget _pairwiseCards(Map d) {
+  Widget _pairwiseCards(Map d, AppLocalizations l) {
     final pairs = (d['pairwise_matrix'] as List?) ?? [];
     if (pairs.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Pairwise', 'Analysis', '${pairs.length} PAIRS'),
+      ReportHeader(l.hdrPairwiseAnalysis, '', '${pairs.length} PAIRS'),
       ...pairs.map((p) {
         if (p is! Map) return const SizedBox.shrink();
         final pair = p.cast<String, dynamic>();
-        return _pairCard(pair);
+        return _pairCard(pair, l);
       }),
     ]);
   }
 
-  Widget _pairCard(Map<String, dynamic> p) {
+  Widget _pairCard(Map<String, dynamic> p, AppLocalizations l) {
     final n1 = p['partner1_name']?.toString() ?? '?';
     final n2 = p['partner2_name']?.toString() ?? '?';
     final unified = (p['unified_pair_score'] as num?)?.toDouble() ?? 0;
@@ -155,12 +157,12 @@ class RelationshipReportScreen extends StatelessWidget {
     final c = unified >= 70 ? AppColors.success : unified >= 50 ? AppColors.gold : AppColors.warning;
 
     final scores = [
-      ['Character', (p['character_compat_score'] as num?)?.toDouble() ?? 0],
-      ['Love', (p['love_compat_score'] as num?)?.toDouble() ?? 0],
-      ['Business', (p['business_compat_score'] as num?)?.toDouble() ?? 0],
-      ['Karmic', (p['karmic_intensity_score'] as num?)?.toDouble() ?? 0],
-      ['Trust', (p['trust_compatibility_score'] as num?)?.toDouble() ?? 0],
-      ['Enmity Risk', (p['enmity_risk_score'] as num?)?.toDouble() ?? 0],
+      [l.character, (p['character_compat_score'] as num?)?.toDouble() ?? 0, false],
+      [l.love, (p['love_compat_score'] as num?)?.toDouble() ?? 0, false],
+      [l.businessWord, (p['business_compat_score'] as num?)?.toDouble() ?? 0, false],
+      [l.karmic, (p['karmic_intensity_score'] as num?)?.toDouble() ?? 0, false],
+      [l.trustWord, (p['trust_compatibility_score'] as num?)?.toDouble() ?? 0, false],
+      [l.enmityRisk, (p['enmity_risk_score'] as num?)?.toDouble() ?? 0, true],
     ];
 
     return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 10), padding: const EdgeInsets.all(14),
@@ -191,7 +193,7 @@ class RelationshipReportScreen extends StatelessWidget {
         // Score bars
         ...scores.map((s) {
           final v = s[1] as double;
-          final isRisk = (s[0] as String).contains('Risk');
+          final isRisk = s[2] as bool;
           final barC = isRisk ? (v >= 40 ? AppColors.error : AppColors.success)
               : (v >= 65 ? AppColors.success : v >= 50 ? AppColors.gold : AppColors.warning);
           return Padding(padding: const EdgeInsets.only(bottom: 4), child: Row(children: [
@@ -214,7 +216,7 @@ class RelationshipReportScreen extends StatelessWidget {
   }
 
   // ═══ CRITICAL PATTERNS ═══
-  Widget _criticalPatterns(Map d) {
+  Widget _criticalPatterns(Map d, AppLocalizations l) {
     final cp = (d['critical_patterns'] as Map?)?.cast<String, dynamic>() ?? {};
     final all = <String>[];
     for (final e in cp.entries) {
@@ -222,7 +224,7 @@ class RelationshipReportScreen extends StatelessWidget {
     }
     if (all.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Critical', 'Patterns', '${all.length} ALERTS'),
+      ReportHeader(l.hdrCriticalPatterns, '', '${all.length} ALERTS'),
       ...all.take(5).map((a) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: AppColors.error.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.error.withOpacity(0.2))),
@@ -231,19 +233,19 @@ class RelationshipReportScreen extends StatelessWidget {
   }
 
   // ═══ GROUP RECOMMENDATIONS ═══
-  Widget _groupRecs(Map d) {
+  Widget _groupRecs(Map d, AppLocalizations l) {
     final gr = (d['group_recommendations'] as Map?)?.cast<String, dynamic>() ?? {};
     final practices = (gr['recommended_couple_practices'] as List?) ?? [];
     final comm = gr['recommended_communication_style']?.toString() ?? '';
     final focus = gr['recommended_growth_focus']?.toString() ?? '';
     if (practices.isEmpty && comm.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Group', 'Recommendations', '${practices.length + 2} ITEMS'),
+      ReportHeader(l.hdrGroupRecommendations, '', '${practices.length + 2} ITEMS'),
       if (practices.isNotEmpty) Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: AppColors.aurora.withOpacity(0.06), borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.aurora.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('SHARED PRACTICES', style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          Text(l.sharedPractices, style: const TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...practices.take(5).map((p) => Padding(padding: const EdgeInsets.only(bottom: 3),
             child: Text('• $p', style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)))),
@@ -256,12 +258,12 @@ class RelationshipReportScreen extends StatelessWidget {
   }
 
   // ═══ INDIVIDUAL RECOMMENDATIONS ═══
-  Widget _individualRecs(Map d) {
+  Widget _individualRecs(Map d, AppLocalizations l) {
     final recs = (d['individual_recommendations'] as List?) ?? [];
     if (recs.isEmpty) return const SizedBox.shrink();
     final colors = [AppColors.aurora, AppColors.cosmicPink, AppColors.gold, AppColors.lavender, AppColors.saffron];
     return Column(children: [
-      ReportHeader('Individual', 'Guidance', '${recs.length} PERSONS'),
+      ReportHeader(l.hdrIndividualGuidance, '', '${recs.length} PERSONS'),
       ...recs.take(5).toList().asMap().entries.map((e) {
         final r = e.value is Map ? (e.value as Map).cast<String, dynamic>() : <String, dynamic>{};
         final c = colors[e.key % colors.length];
@@ -275,10 +277,10 @@ class RelationshipReportScreen extends StatelessWidget {
             if (r['karmic_lesson_in_this_group'] != null) ...[const SizedBox(height: 4),
               Text('Karmic lesson: ${r['karmic_lesson_in_this_group']}', style: const TextStyle(color: AppColors.lavender, fontSize: 9, fontStyle: FontStyle.italic))],
             if (strengths.isNotEmpty) ...[const SizedBox(height: 6),
-              const Text('STRENGTHS', style: TextStyle(color: AppColors.success, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
+              Text(l.strengths.toUpperCase(), style: const TextStyle(color: AppColors.success, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
               ...strengths.take(3).map((s) => Text('★ $s', style: const TextStyle(color: AppColors.ivory, fontSize: 9)))],
             if (growth.isNotEmpty) ...[const SizedBox(height: 4),
-              const Text('GROWTH AREAS', style: TextStyle(color: AppColors.warning, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
+              Text(l.growthAreas, style: const TextStyle(color: AppColors.warning, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
               ...growth.take(2).map((g) => Text('→ $g', style: const TextStyle(color: AppColors.smoke, fontSize: 9)))],
           ]));
       }),
@@ -286,19 +288,19 @@ class RelationshipReportScreen extends StatelessWidget {
   }
 
   // ═══ CORE THEME ═══
-  Widget _coreTheme(Map d) {
+  Widget _coreTheme(Map d, AppLocalizations l) {
     final theme = (d['core_group_theme'] as Map?)?.cast<String, dynamic>() ?? {};
     if (theme.isEmpty) return const SizedBox.shrink();
     final isGrowth = theme['is_growth_oriented'] == true;
     final c = isGrowth ? AppColors.success : AppColors.gold;
     return Column(children: [
-      ReportHeader('Core', 'Theme', 'GROUP'),
+      ReportHeader(l.hdrCoreTheme, '', 'GROUP'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [c.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(isGrowth ? '✦ GROWTH-ORIENTED' : '● GROUP THEME',
+          Text(isGrowth ? '✦ ${l.growthOriented}' : '● ${l.groupTheme}',
             style: TextStyle(color: c, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           Text(theme['primary_theme']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'serif')),
@@ -311,42 +313,42 @@ class RelationshipReportScreen extends StatelessWidget {
   }
 
   // ═══ CONFIDENCE ═══
-  Widget _confidence(Map d) {
+  Widget _confidence(Map d, AppLocalizations l) {
     final raw = (d['confidence_score'] as num?)?.toDouble() ?? 0;
     final stmt = d['confidence_explanation']?.toString() ?? '';
     final bd = (d['confidence_breakdown'] as Map?)?.cast<String, dynamic>() ?? {};
     return Column(children: [
-      ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+      ReportHeader(l.analysisConfidence, '', 'QUALITY'),
       ConfidenceBlock(score: raw, statement: stmt, breakdown: bd),
     ]);
   }
 
   // ═══ AI BAR ═══
-  Widget _aiBar(Map d, BuildContext ctx) {
+  Widget _aiBar(Map d, BuildContext ctx, AppLocalizations l) {
     return Container(margin: const EdgeInsets.fromLTRB(16, 16, 16, 8), padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _label('★ DISCUSS WITH AI ★'), const SizedBox(height: 12),
+        _label('★ ${l.discussWithAI} ★'), const SizedBox(height: 12),
         Row(children: [
-          Expanded(child: _aiBtn(ctx, 'G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(ctx, d, 'chatgpt'))),
+          Expanded(child: _aiBtn(ctx, 'G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(ctx, d, 'chatgpt'), l)),
           const SizedBox(width: 8),
-          Expanded(child: _aiBtn(ctx, 'C', 'Claude', const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]), () => _launchAi(ctx, d, 'claude'))),
+          Expanded(child: _aiBtn(ctx, 'C', 'Claude', const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]), () => _launchAi(ctx, d, 'claude'), l)),
           const SizedBox(width: 8),
-          Expanded(child: _aiBtn(ctx, '✦', 'Gemini', const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]), () => _launchAi(ctx, d, 'gemini'))),
+          Expanded(child: _aiBtn(ctx, '✦', 'Gemini', const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]), () => _launchAi(ctx, d, 'gemini'), l)),
         ]),
         const SizedBox(height: 10),
         GestureDetector(onTap: () { Clipboard.setData(ClipboardData(text: _prompt(d)));
-          ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Report copied!'))); },
+          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.reportCopied))); },
           child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke), SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10))]))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke), const SizedBox(width: 6),
+              Text(l.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10))]))),
       ]));
   }
 
-  Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g, VoidCallback onTap) => GestureDetector(onTap: onTap,
+  Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g, VoidCallback onTap, AppLocalizations l) => GestureDetector(onTap: onTap,
     child: Container(padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.gold.withOpacity(0.2))),
@@ -354,7 +356,7 @@ class RelationshipReportScreen extends StatelessWidget {
         Container(width: 26, height: 26, decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(8)),
           child: Center(child: Text(icon, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
         const SizedBox(height: 5), Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
+        Text(l.openLink, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
       ])));
 
   String _prompt(Map d) {
@@ -366,7 +368,7 @@ class RelationshipReportScreen extends StatelessWidget {
   Future<void> _launchAi(BuildContext ctx, Map d, String ai) async {
     await Clipboard.setData(ClipboardData(text: _prompt(d)));
     final urls = {'chatgpt': 'https://chat.openai.com/', 'claude': 'https://claude.ai/new', 'gemini': 'https://gemini.google.com/app'};
-    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Copied! Opening $ai...'), duration: const Duration(seconds: 3)));
+    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(AppLocalizations.of(ctx)!.copiedOpening(ai)), duration: const Duration(seconds: 3)));
     final uri = Uri.parse(urls[ai]!); if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 

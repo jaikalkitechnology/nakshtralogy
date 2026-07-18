@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -18,12 +19,13 @@ class AshtakavargaWidget extends StatelessWidget {
         final savTotal = (data['sav_total'] as num?)?.toInt() ?? 337;
         final planetsBav = (data['planets_bav'] as Map? ?? {}).cast<String, dynamic>();
         final signs = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
+        final l = AppLocalizations.of(ctx)!;
 
         return ListView(padding: const EdgeInsets.all(16), children: [
           KundliSectionCard(
-            title: 'Sarva Ashtakavarga (SAV)',
+            title: l.sarvaAshtakavarga,
             icon: Icons.table_chart, color: AppColors.primary,
-            subtitle: 'Total: $savTotal rekhas (average sign = ${(savTotal/12).toStringAsFixed(1)})',
+            subtitle: l.savSubtitle(savTotal.toString(), (savTotal/12).toStringAsFixed(1)),
             child: Wrap(spacing: 8, runSpacing: 8, children: signs.map((s) {
               final v = (sav[s] as num?)?.toInt() ?? 0;
               return Container(
@@ -43,8 +45,8 @@ class AshtakavargaWidget extends StatelessWidget {
             final total = (d['total_rekha'] as num?)?.toInt() ?? 0;
             final natalScore = (d['natal_sign_score'] as num?)?.toInt() ?? 0;
             return KundliSectionCard(
-              title: '$p — BAV',
-              subtitle: 'Total: $total rekhas • At natal sign: $natalScore',
+              title: l.ashtakavargaBav(p),
+              subtitle: l.bavSubtitle(total.toString(), natalScore.toString()),
               child: Wrap(spacing: 6, runSpacing: 6, children: signs.map((s) {
                 final v = (bav[s] as num?)?.toInt() ?? 0;
                 return Container(

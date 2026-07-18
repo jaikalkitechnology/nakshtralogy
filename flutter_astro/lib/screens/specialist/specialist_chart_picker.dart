@@ -3,6 +3,7 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
 import 'career_report_screen.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 class SpecialistChartPicker extends StatefulWidget {
   final String specialistKey, specialistLabel, specialistEmoji;
@@ -32,6 +33,7 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -44,12 +46,12 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _charts.isEmpty
-              ? const Center(child: Text('No charts. Create a birth chart first.', style: TextStyle(color: AppColors.textSecondary)))
+              ? Center(child: Text(l.noChartsCreateFirst, style: const TextStyle(color: AppColors.textSecondary)))
               : Column(children: [
                   Container(
                     width: double.infinity, padding: const EdgeInsets.all(14),
                     color: AppColors.primary.withOpacity(0.06),
-                    child: const Text('Select a birth chart to analyze', style: TextStyle(color: AppColors.primary, fontSize: 13)),
+                    child: Text(l.selectBirthChartToAnalyze, style: const TextStyle(color: AppColors.primary, fontSize: 13)),
                   ),
                   Expanded(child: ListView.builder(
                     padding: const EdgeInsets.all(12),
@@ -57,7 +59,7 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                     itemBuilder: (ctx, i) {
                       final c = _charts[i];
                       final id = c['id']?.toString() ?? '';
-                      final name = c['name']?.toString() ?? 'Unknown';
+                      final name = c['name']?.toString() ?? l.unknownName;
                       final dob = c['dob']?.toString() ?? '';
                       final place = c['place']?.toString() ?? '';
                       return GestureDetector(

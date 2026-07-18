@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -37,15 +38,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final unread = _items.where((n) => n['is_read'] != true).length;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Notifications', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
+        title: Text(l.notifications, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [
           if (unread > 0) TextButton(
             onPressed: _markAllRead,
-            child: const Text('Mark all read', style: TextStyle(fontSize: 11)),
+            child: Text(l.markAllRead, style: const TextStyle(fontSize: 11)),
           ),
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh, size: 20)),
         ],
@@ -53,20 +55,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _items.isEmpty
-              ? _emptyView()
+              ? _emptyView(l)
               : RefreshIndicator(
                   onRefresh: _load,
                   child: ListView.separated(
                     padding: const EdgeInsets.all(12),
                     itemCount: _items.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 6),
-                    itemBuilder: (_, i) => _notifCard(_items[i]),
+                    itemBuilder: (_, i) => _notifCard(_items[i], l),
                   ),
                 ),
     );
   }
 
-  Widget _emptyView() => RefreshIndicator(
+  Widget _emptyView(AppLocalizations l) => RefreshIndicator(
     onRefresh: _load,
     child: ListView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -78,14 +80,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
           child: const Icon(Icons.notifications_none, color: AppColors.primary, size: 40),
         )),
         const SizedBox(height: 16),
-        const Center(child: Text('No notifications yet', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600))),
+        Center(child: Text(l.noNotificationsYet, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600))),
         const SizedBox(height: 6),
-        const Center(child: Text('Pull down to refresh', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+        Center(child: Text(l.pullToRefresh, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
       ],
     ),
   );
 
-  Widget _notifCard(Map<String, dynamic> n) {
+  Widget _notifCard(Map<String, dynamic> n, AppLocalizations l) {
     final isRead = n['is_read'] == true;
     final type = n['type']?.toString() ?? '';
     final title = n['title']?.toString() ?? '';
@@ -137,22 +139,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
             if (body.isNotEmpty) ...[const SizedBox(height: 2),
               Text(body, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis)],
             const SizedBox(height: 4),
-            Text(_formatDate(date), style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+            Text(_formatDate(date, l), style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
           ])),
         ]),
       ),
     );
   }
 
-  String _formatDate(String iso) {
+  String _formatDate(String iso, AppLocalizations l) {
     try {
       final dt = DateTime.parse(iso).toLocal();
       final now = DateTime.now();
       final diff = now.difference(dt);
-      if (diff.inMinutes < 1) return 'Just now';
-      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-      if (diff.inHours < 24) return '${diff.inHours}h ago';
-      if (diff.inDays < 7) return '${diff.inDays}d ago';
+      if (diff.inMinutes < 1) return l.justNow;
+      if (diff.inMinutes < 60) return l.minutesAgo(diff.inMinutes);
+      if (diff.inHours < 24) return l.hoursAgo(diff.inHours);
+      if (diff.inDays < 7) return l.daysAgo(diff.inDays);
       final months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
     } catch (_) { return iso; }

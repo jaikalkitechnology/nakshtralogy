@@ -13,28 +13,32 @@ class DivisionalChartsWidget extends StatelessWidget {
   const DivisionalChartsWidget({super.key, required this.chartId, required this.divisionalsMap});
 
   static const _charts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60];
-  static const _meta = {
-    1: ['Rasi (D-1)', 'Physical existence, all matters'],
-    2: ['Hora (D-2)', 'Wealth, money'],
-    3: ['Drekkana (D-3)', 'Siblings, courage'],
-    4: ['Chaturthamsa (D-4)', 'Property, residence, fortune'],
-    5: ['Panchamsa (D-5)', 'Fame, authority, power'],
-    6: ['Shashthamsa (D-6)', 'Health troubles'],
-    7: ['Saptamsa (D-7)', 'Children, grandchildren'],
-    8: ['Ashtamsa (D-8)', 'Sudden troubles, litigation'],
-    9: ['Navamsha (D-9)', 'Marriage, spouse, dharma'],
-    10: ['Dasamsha (D-10)', 'Career, profession'],
-    11: ['Rudramsha (D-11)', 'Death, destruction'],
-    12: ['Dwadasamsha (D-12)', 'Parents, blood-relatives'],
-    16: ['Shodasamsha (D-16)', 'Vehicles, comforts, pleasures'],
-    20: ['Vimsamsha (D-20)', 'Spiritual matters, religious'],
-    24: ['Chaturvimsamsha (D-24)', 'Learning, knowledge, education'],
-    27: ['Nakshatramsha (D-27)', 'Strengths, weaknesses, nature'],
-    30: ['Trimsamsha (D-30)', 'Evils, sub-conscious, punishment'],
-    40: ['Khavedamsha (D-40)', 'Auspicious/inauspicious (maternal)'],
-    45: ['Akshavedamsha (D-45)', 'All matters (paternal)'],
-    60: ['Shashtyamsha (D-60)', 'Past-life karma — MOST IMPORTANT'],
-  };
+
+  static List<String> _metaFor(AppLocalizations l, int d) {
+    switch (d) {
+      case 1: return [l.divD1Name, l.divD1Desc];
+      case 2: return [l.divD2Name, l.divD2Desc];
+      case 3: return [l.divD3Name, l.divD3Desc];
+      case 4: return [l.divD4Name, l.divD4Desc];
+      case 5: return [l.divD5Name, l.divD5Desc];
+      case 6: return [l.divD6Name, l.divD6Desc];
+      case 7: return [l.divD7Name, l.divD7Desc];
+      case 8: return [l.divD8Name, l.divD8Desc];
+      case 9: return [l.divD9Name, l.divD9Desc];
+      case 10: return [l.divD10Name, l.divD10Desc];
+      case 11: return [l.divD11Name, l.divD11Desc];
+      case 12: return [l.divD12Name, l.divD12Desc];
+      case 16: return [l.divD16Name, l.divD16Desc];
+      case 20: return [l.divD20Name, l.divD20Desc];
+      case 24: return [l.divD24Name, l.divD24Desc];
+      case 27: return [l.divD27Name, l.divD27Desc];
+      case 30: return [l.divD30Name, l.divD30Desc];
+      case 40: return [l.divD40Name, l.divD40Desc];
+      case 45: return [l.divD45Name, l.divD45Desc];
+      case 60: return [l.divD60Name, l.divD60Desc];
+      default: return ['D-$d', ''];
+    }
+  }
 
   static const _planetOrder = ['Lagna','Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
   static const _signShortList = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
@@ -43,15 +47,16 @@ class DivisionalChartsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     if (divisionalsMap.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)?.noData ?? 'No data', style: TextStyle(color: AppColors.textSecondary)));
+      return Center(child: Text(l.noData, style: TextStyle(color: AppColors.textSecondary)));
     }
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _charts.length,
       itemBuilder: (_, i) {
         final d = _charts[i];
-        final meta = _meta[d] ?? ['D-$d', ''];
+        final meta = _metaFor(l, d);
         final dKey = 'D$d';
         final signsByPlanet = <String, String>{};
         for (final p in _planetOrder) {
@@ -148,7 +153,7 @@ class DivisionalChartsWidget extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(AppLocalizations.of(context)?.planetPositions ?? 'Planet Placements', style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700)),
+              Text(AppLocalizations.of(context)!.planetPositions, style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               ...signsByPlanet.entries.map((e) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),

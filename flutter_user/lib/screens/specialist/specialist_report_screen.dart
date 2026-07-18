@@ -44,7 +44,7 @@ class _State extends State<SpecialistReportScreen> {
       if (!mounted) return;
       if (resp['statusCode'] == 200 && resp['status'] == 'success') {
         setState(() { _data = (resp['data'] as Map).cast<String, dynamic>(); _loading = false; });
-      } else { setState(() { _error = resp['detail']?.toString() ?? 'Failed'; _loading = false; }); }
+      } else { setState(() { _error = resp['detail']?.toString() ?? AppLocalizations.of(context)?.genericFailedMsg ?? 'Failed'; _loading = false; }); }
     } catch (e) { if (!mounted) return; setState(() { _error = e.toString(); _loading = false; }); }
   }
 
@@ -64,6 +64,7 @@ class _State extends State<SpecialistReportScreen> {
   ]));
 
   Widget _report() {
+    final l = AppLocalizations.of(context)!;
     final d = _data!;
     // ── Classify data ──
     final scores = <String, double>{}; final summaries = <String, String>{};
@@ -123,7 +124,7 @@ class _State extends State<SpecialistReportScreen> {
         ...lists.entries.map((e) => _listSection(e.key, e.value)),
         // ── Confidence ──
         if (confScore != null) ...[
-          ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+          ReportHeader(l.analysisWord, l.confidenceLabel, l.qualityTag),
           ConfidenceBlock(score: (confScore as num).toDouble(),
             statement: confStatement?.toString(),
             breakdown: (confBreakdown is Map) ? confBreakdown.cast<String, dynamic>() : {}),
@@ -134,6 +135,7 @@ class _State extends State<SpecialistReportScreen> {
   }
 
   Widget _heroSection(List<MapEntry<String, double>> top) {
+    final l = AppLocalizations.of(context)!;
     final mainRings = top.take(3).toList();
     final miniScores = top.skip(3).toList();
     final colors = [AppColors.gold, AppColors.aurora, AppColors.cosmicPink, AppColors.lavender, AppColors.saffron, AppColors.success];
@@ -145,7 +147,7 @@ class _State extends State<SpecialistReportScreen> {
       child: Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(width: 1, height: 8, color: AppColors.gold.withOpacity(0.4)), const SizedBox(width: 6),
-          const Text('KEY SCORES', style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          Text(l.keyScoresLabel, style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(width: 6), Container(width: 1, height: 8, color: AppColors.gold.withOpacity(0.4)),
         ]),
         const SizedBox(height: 14),
@@ -193,7 +195,8 @@ class _State extends State<SpecialistReportScreen> {
   }
 
   Widget _otherScoresSection(List<MapEntry<String, double>> scores) {
-    return _ExpandSection(title: 'All Scores (${scores.length})',
+    final l = AppLocalizations.of(context)!;
+    return _ExpandSection(title: l.allScoresCountLabel(scores.length),
       child: Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(12)),
         child: Column(children: scores.map((e) {
@@ -261,6 +264,7 @@ class _State extends State<SpecialistReportScreen> {
   }
 
   Widget _listSection(String key, List items) {
+    final l = AppLocalizations.of(context)!;
     // Auto-detect risk/remedy/timing lists
     if (items.isNotEmpty && items.first is Map) {
       final first = (items.first as Map).cast<String, dynamic>();
@@ -278,7 +282,7 @@ class _State extends State<SpecialistReportScreen> {
       }
       if (first.containsKey('deity') || first.containsKey('remedy')) {
         return Column(children: [
-          ReportHeader('Astrological', 'Remedies', '${items.length}'),
+          ReportHeader(l.astrologicalWord, l.childVedicHeader2, '${items.length}'),
           ...items.take(6).map((r) {
             final rem = (r as Map).cast<String, dynamic>();
             return RemedyCard(deity: rem['deity']?.toString() ?? '', text: rem['remedy']?.toString() ?? rem['text']?.toString() ?? '');
@@ -287,7 +291,7 @@ class _State extends State<SpecialistReportScreen> {
       }
       if (first.containsKey('window') || first.containsKey('dasha') || first.containsKey('start')) {
         return Column(children: [
-          ReportHeader(titleCase(key.split('_').first), 'Windows', '${items.length}'),
+          ReportHeader(titleCase(key.split('_').first), l.windowsWord, '${items.length}'),
           TimingWindowCard(title: titleCase(key), icon: '→', color: AppColors.aurora, items: items),
         ]);
       }

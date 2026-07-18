@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // Shared visual components matching nakshtralogy-career-detail.html
@@ -127,7 +128,7 @@ class RiskCard extends StatelessWidget {
         decoration: BoxDecoration(color: AppColors.success.withOpacity(0.08), borderRadius: BorderRadius.circular(6),
           border: Border.all(color: AppColors.success.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('✓ MITIGATION', style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w700)),
+          Text('✓ ${AppLocalizations.of(context)!.mitigationLabel}', style: const TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(mitigation!, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
         ])),
@@ -167,6 +168,7 @@ class ConfidenceBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final pct = score <= 1.0 ? score * 100 : score;
     final layers = breakdown.entries.where((e) => e.value is num && e.key != 'final' && e.key != 'ceiling').toList();
 
@@ -183,9 +185,9 @@ class ConfidenceBlock extends StatelessWidget {
           ])),
           const SizedBox(width: 14),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('CONFIDENCE', style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+            Text(l.confidence, style: const TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
-            Text(pct >= 80 ? 'Very High reliability' : pct >= 65 ? 'High reliability' : pct >= 50 ? 'Moderate reliability' : 'Guidance-level reading',
+            Text(pct >= 80 ? l.reliabilityVeryHigh : pct >= 65 ? l.reliabilityHigh : pct >= 50 ? l.reliabilityModerate : l.reliabilityGuidance,
               style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif')),
           ])),
         ]),
@@ -193,11 +195,11 @@ class ConfidenceBlock extends StatelessWidget {
           child: Text(statement!, style: const TextStyle(color: AppColors.lavender, fontSize: 10, height: 1.5))),
         if (layers.isNotEmpty) ...[
           const SizedBox(height: 12),
-          ...layers.take(8).map((l) {
-            final v = ((l.value as num).toDouble() * (l.value is double && (l.value as double) <= 1.0 ? 100 : 1)).clamp(0, 100).toDouble();
+          ...layers.take(8).map((layer) {
+            final v = ((layer.value as num).toDouble() * (layer.value is double && (layer.value as double) <= 1.0 ? 100 : 1)).clamp(0, 100).toDouble();
             return Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(_fmt(l.key), style: const TextStyle(color: AppColors.lavender, fontSize: 9)),
+                Text(_fmt(layer.key), style: const TextStyle(color: AppColors.lavender, fontSize: 9)),
                 Text('${v.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
               ]),
               const SizedBox(height: 3),

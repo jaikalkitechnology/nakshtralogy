@@ -55,15 +55,16 @@ class _EduState extends State<EducationReportScreen> {
   ]));
 
   Widget _report() {
+    final l = AppLocalizations.of(context)!;
     final d = _d!;
     return CustomScrollView(slivers: [
       SliverAppBar(backgroundColor: const Color(0xFF0A0A24), pinned: true,
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
         title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
           Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
-          const Text.rich(TextSpan(children: [
-            TextSpan(text: 'Education ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-            TextSpan(text: '& Learning', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+          Text.rich(TextSpan(children: [
+            TextSpan(text: '${l.educationWord} ', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+            TextSpan(text: l.learningSuffix, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
           ])),
         ]),
         centerTitle: true,
@@ -80,25 +81,26 @@ class _EduState extends State<EducationReportScreen> {
 
   // ═══ HERO SCORES ═══
   Widget _heroScores(Map d) {
+    final l = AppLocalizations.of(context)!;
     return Container(margin: const EdgeInsets.fromLTRB(16, 12, 16, 12), padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.10), AppColors.saffron.withOpacity(0.04)]),
         borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _label('📚 CORE EDUCATION SCORES'),
+        _label('📚 ${l.coreEducationScores}'),
         const SizedBox(height: 14),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _ring(_n(d, 'overall_education_strength_score'), 'OVERALL\nSTRENGTH', AppColors.gold),
-          _ring(_n(d, 'academic_success_potential_score'), 'ACADEMIC\nSUCCESS', AppColors.aurora),
-          _ring(_n(d, 'learning_capacity_score'), 'LEARNING\nCAPACITY', AppColors.cosmicPink),
+          _ring(_n(d, 'overall_education_strength_score'), l.overallStrength, AppColors.gold),
+          _ring(_n(d, 'academic_success_potential_score'), l.academicSuccess, AppColors.aurora),
+          _ring(_n(d, 'learning_capacity_score'), l.learningCapacity, AppColors.cosmicPink),
         ]),
         const SizedBox(height: 14),
         Container(padding: const EdgeInsets.only(top: 10),
           decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.2), width: 0.5))),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _mini(_n(d, 'memory_retention_score'), 'MEMORY'),
-            _mini(_n(d, 'intellectual_strength_score'), 'INTELLIGENCE'),
-            _mini(_n(d, 'research_capacity_score'), 'RESEARCH'),
+            _mini(_n(d, 'memory_retention_score'), l.memory),
+            _mini(_n(d, 'intellectual_strength_score'), l.intelligence),
+            _mini(_n(d, 'research_capacity_score'), l.research),
           ])),
       ]));
   }
@@ -109,14 +111,15 @@ class _EduState extends State<EducationReportScreen> {
     final archetype = d['intellectual_archetype']?.toString() ?? '';
     final modality = d['visual_vs_auditory_vs_kinesthetic']?.toString() ?? '';
     if (style.isEmpty && archetype.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Intellectual', 'Profile', '3 KEYS'),
+      _secH(l.hdrIntellectualProfile, '', '3 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.cosmicPink.withOpacity(0.15), const Color(0xFF4A3B8C).withOpacity(0.15)]),
           borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('LEARNING SIGNATURE', style: TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          Text(l.learningSignature, style: const TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           Text(_tc(style), style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
           if (archetype.isNotEmpty) ...[const SizedBox(height: 4),
@@ -137,9 +140,10 @@ class _EduState extends State<EducationReportScreen> {
     final planet = d['amatyakaraka_planet']?.toString() ?? '';
     final direction = d['amatyakaraka_subject_direction']?.toString() ?? '';
     if (planet.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     final symbols = {'Sun': '☉', 'Moon': '☽', 'Mars': '♂', 'Mercury': '☿', 'Jupiter': '♃', 'Venus': '♀', 'Saturn': '♄'};
     return Column(children: [
-      _secH('Subject', 'Karaka', '4 KEYS'),
+      _secH(l.hdrSubjectKaraka, '', '4 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.12), AppColors.gold.withOpacity(0.02)]),
@@ -161,8 +165,9 @@ class _EduState extends State<EducationReportScreen> {
 
   // ═══ 4TH + 5TH + 9TH HOUSE FOUNDATION ═══
   Widget _houseFoundation(Map d) {
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('House', 'Foundations', '3 HOUSES'),
+      _secH(l.hdrHouseFoundations, '', '3 HOUSES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
           Expanded(child: _houseCard('4TH', 'Primary', d['fourth_house_sign_name']?.toString() ?? '—',
@@ -201,8 +206,9 @@ class _EduState extends State<EducationReportScreen> {
     final mc = (d['mercury_condition'] as Map?)?.cast<String, dynamic>() ?? {};
     final jc = (d['jupiter_condition'] as Map?)?.cast<String, dynamic>() ?? {};
     if (mc.isEmpty && jc.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Mercury &', 'Jupiter', '14 KEYS'),
+      _secH(l.hdrMercuryJupiter, '', '14 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
           Expanded(child: _pillarCard('☿ Mercury', mc, _n(d, 'mercury_strength_score'), AppColors.aurora)),
@@ -236,8 +242,9 @@ class _EduState extends State<EducationReportScreen> {
       ['Gaja Kesari', d['gaja_kesari_yoga_present'] == true],
       ['Saraswati', d['saraswati_yoga_present'] == true],
     ];
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Education', 'Yogas', '3 KEYS'),
+      _secH(l.hdrEducationYogas, '', '3 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: yogas.map((y) {
           final present = y[1] as bool;
@@ -265,8 +272,9 @@ class _EduState extends State<EducationReportScreen> {
     final d4 = (d['d4_validation'] as Map?)?.cast<String, dynamic>() ?? {};
     final d9 = (d['d9_validation'] as Map?)?.cast<String, dynamic>() ?? {};
     if (d24.isEmpty && d4.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Divisional', 'Validation', 'D24·D4·D9·D60'),
+      _secH(l.hdrDivisionalValidation, '', 'D24·D4·D9·D60'),
       if (d24.isNotEmpty) _divCard('D-24 SIDDHAMSA ★ · LEARNING', [
         ['Mercury', d24['d24_mercury_dignity']], ['Jupiter', d24['d24_jupiter_dignity']],
         ['4L', d24['d24_4_lord_dignity']], ['5L', d24['d24_5_lord_dignity']],
@@ -295,7 +303,7 @@ class _EduState extends State<EducationReportScreen> {
         if (verdict != null) ...[const SizedBox(height: 6),
           Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.08), borderRadius: BorderRadius.circular(6)),
-            child: Row(children: [const Text('STANDING', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+            child: Row(children: [Text(AppLocalizations.of(context)!.standing, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
               const Spacer(), Text(verdict.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700))]))],
         if (notes != null) ...[const SizedBox(height: 4),
           Text(notes, style: const TextStyle(color: AppColors.lavender, fontSize: 9, fontStyle: FontStyle.italic), maxLines: 3)],
@@ -306,8 +314,9 @@ class _EduState extends State<EducationReportScreen> {
   Widget _subjectRanking(Map d) {
     final list = (d['subject_affinity_ranking'] as List?) ?? [];
     if (list.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Subject', 'Ranking', '${list.length} SUBJECTS'),
+      _secH(l.hdrSubjectRanking, '', '${list.length} SUBJECTS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: list.asMap().entries.map((e) {
@@ -341,8 +350,9 @@ class _EduState extends State<EducationReportScreen> {
       ['DOCTORATE', _n(d, 'doctorate_likelihood_score')],
       ['FOREIGN ED', _n(d, 'foreign_education_likelihood_score')],
     ];
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Degree', 'Likelihood', '4 LEVELS'),
+      _secH(l.hdrDegreeLikelihood, '', '4 LEVELS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Wrap(spacing: 8, runSpacing: 8, children: items.map((item) {
           final score = item[1] as double;
@@ -367,11 +377,12 @@ class _EduState extends State<EducationReportScreen> {
     final higher = (d['higher_education_windows'] as List?) ?? [];
     final postgrad = (d['postgrad_research_windows'] as List?) ?? [];
     if (early.isEmpty && higher.isEmpty && postgrad.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Study', 'Periods', '${early.length + higher.length + postgrad.length} ENTRIES'),
-      ...early.take(2).map((w) => _windowCard(w, 'Early Schooling', 'A', AppColors.aurora, false)),
-      ...higher.take(2).map((w) => _windowCard(w, 'Higher Education ★', '★', AppColors.gold, true)),
-      ...postgrad.take(2).map((w) => _windowCard(w, 'Postgrad · Research', '▲', AppColors.cosmicPink, false)),
+      _secH(l.hdrStudyPeriods, '', '${early.length + higher.length + postgrad.length} ENTRIES'),
+      ...early.take(2).map((w) => _windowCard(w, l.earlySchooling, 'A', AppColors.aurora, false)),
+      ...higher.take(2).map((w) => _windowCard(w, '${l.higherEducation} ★', '★', AppColors.gold, true)),
+      ...postgrad.take(2).map((w) => _windowCard(w, l.postgradResearch, '▲', AppColors.cosmicPink, false)),
     ]);
   }
 
@@ -401,8 +412,9 @@ class _EduState extends State<EducationReportScreen> {
       ['IDEAL ENVIRONMENT', d['ideal_study_environment']],
     ].where((r) => r[1] != null).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Learning', 'Preferences', '${rows.length} KEYS'),
+      _secH(l.hdrLearningPreferences, '', '${rows.length} KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: rows.map((r) => Container(padding: const EdgeInsets.symmetric(vertical: 6),
@@ -421,8 +433,9 @@ class _EduState extends State<EducationReportScreen> {
     final breakRisk = _n(d, 'education_break_risk_score');
     final gifts = (d['cognitive_gifts'] as List?) ?? [];
     final abilities = (d['natural_learning_abilities'] as List?) ?? [];
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Challenges &', 'Gifts', '8 KEYS'),
+      _secH(l.hdrChallengesGifts, '', '8 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Challenges
@@ -430,7 +443,7 @@ class _EduState extends State<EducationReportScreen> {
             decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.08), borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.warning.withOpacity(0.2))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('⚠ CHALLENGES', style: TextStyle(color: AppColors.warning, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w700, letterSpacing: 1)),
+              Text('⚠ ${l.challenges}', style: const TextStyle(color: AppColors.warning, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w700, letterSpacing: 1)),
               const SizedBox(height: 6),
               _challengeBar('Concentration', conc), _challengeBar('Break Risk', breakRisk),
               const SizedBox(height: 4),
@@ -443,14 +456,14 @@ class _EduState extends State<EducationReportScreen> {
             decoration: BoxDecoration(color: AppColors.success.withOpacity(0.08), borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.success.withOpacity(0.2))),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('✦ COGNITIVE GIFTS', style: TextStyle(color: AppColors.success, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w700, letterSpacing: 1)),
+              Text('✦ ${l.cognitiveGifts}', style: const TextStyle(color: AppColors.success, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w700, letterSpacing: 1)),
               const SizedBox(height: 6),
               ...gifts.take(3).map((g) => Container(margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(color: AppColors.success.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
                 child: Text('★ ${g.toString().toUpperCase()}', style: const TextStyle(color: AppColors.success, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w700)))),
               if (abilities.isNotEmpty) ...[const SizedBox(height: 4),
-                const Text('NATURAL ABILITIES', style: TextStyle(color: AppColors.success, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
+                Text(l.naturalAbilities, style: const TextStyle(color: AppColors.success, fontSize: 7, fontFamily: 'monospace', letterSpacing: 1)),
                 ...abilities.take(3).map((a) => Container(margin: const EdgeInsets.only(top: 3),
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(4)),
@@ -474,8 +487,9 @@ class _EduState extends State<EducationReportScreen> {
     final list = (d['astrological_remedies'] as List?)?.where((r) => r is Map).toList() ?? [];
     if (list.isEmpty) return const SizedBox.shrink();
     final symbols = {'Saraswati': 'श्री', 'Mercury': '☿', 'Jupiter': '♃', 'Sun': '☉', 'Moon': '☽'};
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Saraswati', 'Remedies', '${list.length} KEYS'),
+      _secH(l.hdrSaraswatiRemedies, '', '${list.length} KEYS'),
       ...list.take(5).map((r) {
         final rem = (r as Map).cast<String, dynamic>();
         final deity = rem['deity']?.toString() ?? '';
@@ -505,14 +519,15 @@ class _EduState extends State<EducationReportScreen> {
     final linkage = d['education_to_career_linkage_signature']?.toString() ?? '';
     final direction = d['primary_education_direction_recommendation']?.toString() ?? '';
     if (verdict.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Final', 'Verdict', '2 KEYS'),
+      _secH(l.hdrFinalVerdict, '', '2 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _label('★ STUDENT VERDICT ★'),
+          _label('★ ${l.studentVerdict} ★'),
           const SizedBox(height: 8),
           Text(_tc(verdict), style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
           if (direction.isNotEmpty) ...[const SizedBox(height: 6),
@@ -522,7 +537,7 @@ class _EduState extends State<EducationReportScreen> {
               color: AppColors.aurora.withOpacity(0.08), borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColors.aurora.withOpacity(0.2))),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('EDUCATION → CAREER LINKAGE', style: TextStyle(color: AppColors.aurora, fontSize: 8, fontFamily: 'monospace', letterSpacing: 1, fontWeight: FontWeight.w600)),
+                Text(l.educationCareerLinkage, style: const TextStyle(color: AppColors.aurora, fontSize: 8, fontFamily: 'monospace', letterSpacing: 1, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text(_tc(linkage), style: const TextStyle(color: AppColors.ivory, fontSize: 12, fontWeight: FontWeight.w600)),
               ]))],
@@ -537,8 +552,9 @@ class _EduState extends State<EducationReportScreen> {
     final stmt = d['plain_statement']?.toString() ?? '';
     final bd = (d['confidence_breakdown'] as Map?)?.cast<String, dynamic>() ?? {};
     final layers = bd.entries.where((e) => e.value is num).take(8).toList();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Analysis', 'Confidence', 'QUALITY'),
+      _secH(l.analysisConfidence, '', 'QUALITY'),
       Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 12), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.aurora.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.15)]),
@@ -552,8 +568,8 @@ class _EduState extends State<EducationReportScreen> {
             ])),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('CONFIDENCE', style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace')),
-              Text(pct >= 70 ? 'Good reliability · D-24 verified' : pct >= 50 ? 'Moderate reliability' : 'Lower — guidance only',
+              Text(l.confidence, style: const TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace')),
+              Text(pct >= 70 ? l.reliabilityGoodEdu : pct >= 50 ? l.reliabilityModerate : l.reliabilityLow,
                 style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif')),
             ])),
           ]),
@@ -574,11 +590,12 @@ class _EduState extends State<EducationReportScreen> {
 
   // ═══ AI BAR ═══
   Widget _aiBar(Map d) {
+    final l = AppLocalizations.of(context)!;
     return Container(margin: const EdgeInsets.fromLTRB(16, 16, 16, 8), padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _label('★ DISCUSS THIS REPORT WITH AI ★'), const SizedBox(height: 12),
+        _label('★ ${l.discussReportWithAI} ★'), const SizedBox(height: 12),
         Row(children: [
           Expanded(child: _aiBtn('G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(d, 'chatgpt'))),
           const SizedBox(width: 8),
@@ -588,12 +605,12 @@ class _EduState extends State<EducationReportScreen> {
         ]),
         const SizedBox(height: 10),
         GestureDetector(onTap: () { Clipboard.setData(ClipboardData(text: _prompt(d)));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report copied!'))); },
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.reportCopied))); },
           child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke), SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10))]))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke), const SizedBox(width: 6),
+              Text(l.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10))]))),
       ]));
   }
 
@@ -605,7 +622,7 @@ class _EduState extends State<EducationReportScreen> {
         Container(width: 26, height: 26, decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(8)),
           child: Center(child: Text(icon, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
         const SizedBox(height: 5), Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
+        Text(AppLocalizations.of(context)!.openLink, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
       ])));
 
   String _prompt(Map d) {
@@ -619,7 +636,7 @@ class _EduState extends State<EducationReportScreen> {
   Future<void> _launchAi(Map d, String ai) async {
     await Clipboard.setData(ClipboardData(text: _prompt(d)));
     final urls = {'chatgpt': 'https://chat.openai.com/', 'claude': 'https://claude.ai/new', 'gemini': 'https://gemini.google.com/app'};
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Copied! Opening $ai...'), duration: const Duration(seconds: 3)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.copiedOpening(ai)), duration: const Duration(seconds: 3)));
     final uri = Uri.parse(urls[ai]!); if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'report_components.dart';
 
@@ -12,6 +13,7 @@ class MilanReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final d = data;
     return Scaffold(backgroundColor: const Color(0xFF0A0A24),
       body: CustomScrollView(slivers: [
@@ -19,23 +21,23 @@ class MilanReportScreen extends StatelessWidget {
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
           title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
             Text('$name1 & $name2'.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
-            const Text.rich(TextSpan(children: [
-              TextSpan(text: 'Kundli ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-              TextSpan(text: 'Milan', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+            Text.rich(TextSpan(children: [
+              TextSpan(text: '${l.kundli} ', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+              TextSpan(text: l.milan, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
             ])),
           ]),
           centerTitle: true),
         SliverList(delegate: SliverChildListDelegate([
-          _unifiedScore(d), _ashtakoot(d), _gunBreakdown(d), _mangalSection(d),
-          _d9Cross(d), _domains(d), _timingWindows(d), _risks(d),
-          _verdict(d), _confidence(d, context), _aiBar(d, context),
+          _unifiedScore(d, l), _ashtakoot(d, l), _gunBreakdown(d, l), _mangalSection(d, l),
+          _d9Cross(d, l), _domains(d, l), _timingWindows(d, l), _risks(d, l),
+          _verdict(d, l), _confidence(d, context, l), _aiBar(d, context, l),
           const SizedBox(height: 30),
         ])),
       ]));
   }
 
   // ═══ UNIFIED SCORE ═══
-  Widget _unifiedScore(Map d) {
+  Widget _unifiedScore(Map d, AppLocalizations l) {
     final score = (d['unified_compatibility_score'] as num?)?.toDouble() ?? 0;
     final grade = d['unified_grade']?.toString() ?? '';
     final ashtakoot = (d['ashtakoot_total_score'] as num?)?.toDouble() ?? 0;
@@ -46,13 +48,13 @@ class MilanReportScreen extends StatelessWidget {
         gradient: LinearGradient(colors: [AppColors.cosmicPink.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.15)]),
         borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
       child: Column(children: [
-        _label('⚭ COMPATIBILITY'),
+        _label('⚭ ${l.compatibility}'),
         const SizedBox(height: 14),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          _bigRing(score, 'UNIFIED\nSCORE', c),
+          _bigRing(score, l.unifiedScoreLabel, c),
           Column(children: [
             Text('${ashtakoot.toStringAsFixed(1)}/36', style: const TextStyle(color: AppColors.gold, fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-            const Text('ASHTAKOOT', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 1)),
+            Text(l.ashtakoot, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 1)),
             const SizedBox(height: 6),
             Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(color: c.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
@@ -78,19 +80,19 @@ class MilanReportScreen extends StatelessWidget {
   ]);
 
   // ═══ ASHTAKOOT SUMMARY ═══
-  Widget _ashtakoot(Map d) {
+  Widget _ashtakoot(Map d, AppLocalizations l) {
     final prob = (d['ashtakoot_total_probability'] as num?)?.toDouble() ?? 0;
     final nadi = d['nadi_dosh_present'] == true;
     final bhakoot = d['bhakoot_dosh_present'] == true;
     final gana = d['gana_dosh_signature']?.toString() ?? '';
     return Column(children: [
-      ReportHeader('Ashtakoot', 'Summary', '36 MAX'),
+      ReportHeader(l.hdrAshtakootSummary, '', '36 MAX'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.gold.withOpacity(0.15))),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('PROBABILITY', style: TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace')),
+            Text(l.probability, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace')),
             Text('${prob.toStringAsFixed(1)}%', style: const TextStyle(color: AppColors.gold, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
           ]),
           const SizedBox(height: 8),
@@ -113,11 +115,11 @@ class MilanReportScreen extends StatelessWidget {
       color: present ? AppColors.error : AppColors.success, fontSize: 9, fontWeight: FontWeight.w700)));
 
   // ═══ 8 GUN BREAKDOWN ═══
-  Widget _gunBreakdown(Map d) {
+  Widget _gunBreakdown(Map d, AppLocalizations l) {
     final guns = (d['ashtakoot_breakdown'] as List?) ?? [];
     if (guns.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('8 Gun', 'Breakdown', '${guns.length} GUNS'),
+      ReportHeader(l.hdrGunBreakdown, '', '${guns.length} GUNS'),
       ...guns.map((g) {
         if (g is! Map) return const SizedBox.shrink();
         final gun = g.cast<String, dynamic>();
@@ -158,13 +160,13 @@ class MilanReportScreen extends StatelessWidget {
     child: Text(text, style: TextStyle(color: c, fontSize: 8, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis));
 
   // ═══ MANGAL SECTION ═══
-  Widget _mangalSection(Map d) {
+  Widget _mangalSection(Map d, AppLocalizations l) {
     final m1 = d['partner1_net_mangal_status']?.toString() ?? '';
     final m2 = d['partner2_net_mangal_status']?.toString() ?? '';
     final cross = d['mangal_cross_chart_signature']?.toString() ?? '';
     final compat = (d['mangal_compatibility_score'] as num?)?.toDouble() ?? 0;
     return Column(children: [
-      ReportHeader('Mangal', 'Dosh', '8 KEYS'),
+      ReportHeader(l.hdrMangalDosh, '', '8 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
           Expanded(child: _mangalCard(name1, m1, (d['partner1_mangal_severity_score'] as num?)?.toDouble() ?? 0)),
@@ -198,17 +200,17 @@ class MilanReportScreen extends StatelessWidget {
   }
 
   // ═══ D9 CROSS ═══
-  Widget _d9Cross(Map d) {
+  Widget _d9Cross(Map d, AppLocalizations l) {
     final d9score = (d['d9_compatibility_score'] as num?)?.toDouble() ?? 0;
     final sig = d['d9_classical_signature']?.toString() ?? '';
     return Column(children: [
-      ReportHeader('D-9', 'Cross-Chart', 'NAVAMSA'),
+      ReportHeader(l.hdrD9CrossChart, '', 'NAVAMSA'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.lavender.withOpacity(0.2))),
         child: Column(children: [
           Row(children: [
-            const Text('D-9 COMPATIBILITY', style: TextStyle(color: AppColors.lavender, fontSize: 9, fontFamily: 'monospace')),
+            Text(l.d9Compatibility, style: const TextStyle(color: AppColors.lavender, fontSize: 9, fontFamily: 'monospace')),
             const Spacer(),
             Text('${d9score.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.lavender, fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'serif')),
           ]),
@@ -237,16 +239,16 @@ class MilanReportScreen extends StatelessWidget {
   }
 
   // ═══ DOMAIN COMPATIBILITY ═══
-  Widget _domains(Map d) {
+  Widget _domains(Map d, AppLocalizations l) {
     final items = [
-      ['Emotional', d['emotional_compatibility_score']], ['Intellectual', d['intellectual_compatibility_score']],
-      ['Spiritual', d['spiritual_alignment_score']], ['Financial', d['financial_alignment_score']],
-      ['Domestic', d['domestic_living_compatibility_score']], ['Communication', d['communication_alignment_score']],
-      ['Shared Dharma', d['shared_dharma_alignment_score']], ['Family Creation', d['family_creation_alignment_score']],
+      [l.emotional, d['emotional_compatibility_score']], [l.intellectual, d['intellectual_compatibility_score']],
+      [l.spiritual, d['spiritual_alignment_score']], [l.financial, d['financial_alignment_score']],
+      [l.domestic, d['domestic_living_compatibility_score']], [l.communicationWord, d['communication_alignment_score']],
+      [l.sharedDharma, d['shared_dharma_alignment_score']], [l.familyCreation, d['family_creation_alignment_score']],
     ].where((i) => i[1] is num).toList();
     if (items.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Domain', 'Compatibility', '${items.length} AXES'),
+      ReportHeader(l.hdrDomainCompatibility, '', '${items.length} AXES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: items.map((i) {
@@ -265,29 +267,29 @@ class MilanReportScreen extends StatelessWidget {
   }
 
   // ═══ TIMING ═══
-  Widget _timingWindows(Map d) {
+  Widget _timingWindows(Map d, AppLocalizations l) {
     final windows = (d['joint_marriage_windows'] as List?) ?? [];
     final engagement = (d['joint_engagement_windows'] as List?) ?? [];
     if (windows.isEmpty && engagement.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Marriage', 'Timing', '${windows.length + engagement.length} WINDOWS'),
-      if (windows.isNotEmpty) TimingWindowCard(title: 'Joint Marriage Windows', icon: '★', color: AppColors.gold, items: windows, isPeak: true),
-      if (engagement.isNotEmpty) TimingWindowCard(title: 'Engagement Windows', icon: '◉', color: AppColors.aurora, items: engagement),
+      ReportHeader(l.hdrMarriageTiming, '', '${windows.length + engagement.length} WINDOWS'),
+      if (windows.isNotEmpty) TimingWindowCard(title: l.jointMarriageWindows, icon: '★', color: AppColors.gold, items: windows, isPeak: true),
+      if (engagement.isNotEmpty) TimingWindowCard(title: l.engagementWindows, icon: '◉', color: AppColors.aurora, items: engagement),
       if (d['recommended_marriage_year_range'] != null) Container(
         margin: const EdgeInsets.fromLTRB(16, 4, 16, 8), padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.06), borderRadius: BorderRadius.circular(8),
           border: const Border(left: BorderSide(color: AppColors.gold, width: 3))),
-        child: Text('Recommended: ${d['recommended_marriage_year_range']}',
+        child: Text('${l.recommendedLabel}: ${d['recommended_marriage_year_range']}',
           style: const TextStyle(color: AppColors.ivory, fontSize: 10, fontStyle: FontStyle.italic))),
     ]);
   }
 
   // ═══ RISKS ═══
-  Widget _risks(Map d) {
+  Widget _risks(Map d, AppLocalizations l) {
     final top3 = (d['top_3_risks_to_address'] as List?) ?? [];
     if (top3.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Key', 'Risks', '${top3.length} ITEMS'),
+      ReportHeader(l.hdrKeyRisks, '', '${top3.length} ITEMS'),
       ...top3.map((r) {
         if (r is! Map) return const SizedBox.shrink();
         final risk = r.cast<String, dynamic>();
@@ -299,20 +301,20 @@ class MilanReportScreen extends StatelessWidget {
   }
 
   // ═══ VERDICT ═══
-  Widget _verdict(Map d) {
+  Widget _verdict(Map d, AppLocalizations l) {
     final verdict = d['compatibility_verdict']?.toString() ?? '';
     final proceed = d['proceed_with_marriage_recommendation']?.toString() ?? '';
     final explanation = d['verdict_explanation']?.toString() ?? '';
     if (verdict.isEmpty) return const SizedBox.shrink();
     final c = proceed.toLowerCase().contains('recommended') ? AppColors.success : AppColors.gold;
     return Column(children: [
-      ReportHeader('Final', 'Verdict', 'DECISION'),
+      ReportHeader(l.hdrFinalVerdict, '', 'DECISION'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [c.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _label('★ MARRIAGE VERDICT ★'),
+          _label('★ ${l.marriageVerdict} ★'),
           const SizedBox(height: 8),
           Text(titleCase(verdict), style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w600, fontFamily: 'serif')),
           const SizedBox(height: 4),
@@ -326,43 +328,43 @@ class MilanReportScreen extends StatelessWidget {
   }
 
   // ═══ CONFIDENCE ═══
-  Widget _confidence(Map d, BuildContext context) {
+  Widget _confidence(Map d, BuildContext context, AppLocalizations l) {
     final raw = (d['confidence_score'] as num?)?.toDouble() ?? 0;
     final pct = raw <= 1.0 ? raw * 100 : raw;
     final stmt = d['plain_statement']?.toString() ?? '';
     final bd = (d['confidence_breakdown'] as Map?)?.cast<String, dynamic>() ?? {};
     return Column(children: [
-      ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+      ReportHeader(l.analysisConfidence, '', 'QUALITY'),
       ConfidenceBlock(score: raw, statement: stmt, breakdown: bd),
     ]);
   }
 
   // ═══ AI BAR ═══
-  Widget _aiBar(Map d, BuildContext ctx) {
+  Widget _aiBar(Map d, BuildContext ctx, AppLocalizations l) {
     return Container(margin: const EdgeInsets.fromLTRB(16, 16, 16, 8), padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _label('★ DISCUSS THIS REPORT WITH AI ★'), const SizedBox(height: 12),
+        _label('★ ${l.discussReportWithAI} ★'), const SizedBox(height: 12),
         Row(children: [
-          Expanded(child: _aiBtn(ctx, 'G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(ctx, d, 'chatgpt'))),
+          Expanded(child: _aiBtn(ctx, 'G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(ctx, d, 'chatgpt'), l)),
           const SizedBox(width: 8),
-          Expanded(child: _aiBtn(ctx, 'C', 'Claude', const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]), () => _launchAi(ctx, d, 'claude'))),
+          Expanded(child: _aiBtn(ctx, 'C', 'Claude', const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]), () => _launchAi(ctx, d, 'claude'), l)),
           const SizedBox(width: 8),
-          Expanded(child: _aiBtn(ctx, '✦', 'Gemini', const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]), () => _launchAi(ctx, d, 'gemini'))),
+          Expanded(child: _aiBtn(ctx, '✦', 'Gemini', const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]), () => _launchAi(ctx, d, 'gemini'), l)),
         ]),
         const SizedBox(height: 10),
         GestureDetector(onTap: () { Clipboard.setData(ClipboardData(text: _prompt(d)));
-          ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Report copied!'))); },
+          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.reportCopied))); },
           child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke), SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10))]))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke), const SizedBox(width: 6),
+              Text(l.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10))]))),
       ]));
   }
 
-  Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g, VoidCallback onTap) => GestureDetector(onTap: onTap,
+  Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g, VoidCallback onTap, AppLocalizations l) => GestureDetector(onTap: onTap,
     child: Container(padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.gold.withOpacity(0.2))),
@@ -370,7 +372,7 @@ class MilanReportScreen extends StatelessWidget {
         Container(width: 26, height: 26, decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(8)),
           child: Center(child: Text(icon, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
         const SizedBox(height: 5), Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
+        Text(l.openLink, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
       ])));
 
   String _prompt(Map d) {
@@ -384,7 +386,7 @@ class MilanReportScreen extends StatelessWidget {
   Future<void> _launchAi(BuildContext ctx, Map d, String ai) async {
     await Clipboard.setData(ClipboardData(text: _prompt(d)));
     final urls = {'chatgpt': 'https://chat.openai.com/', 'claude': 'https://claude.ai/new', 'gemini': 'https://gemini.google.com/app'};
-    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Copied! Opening $ai...'), duration: const Duration(seconds: 3)));
+    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(AppLocalizations.of(ctx)!.copiedOpening(ai)), duration: const Duration(seconds: 3)));
     final uri = Uri.parse(urls[ai]!); if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 

@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
+import '../../../l10n/gen/app_localizations.dart';
 
 class BhavaWidget extends StatelessWidget {
   final String chartId;
   final dynamic initial;
   const BhavaWidget({super.key, required this.chartId, this.initial});
 
-  static const _houseNames = [
-    'Self / Body', 'Wealth / Family', 'Siblings / Courage', 'Home / Mother',
-    'Children / Intellect', 'Enemies / Health', 'Marriage / Partner', 'Longevity',
-    'Fortune / Guru', 'Career / Father', 'Gains / Friends', 'Loss / Moksha',
+  List<String> _houseNames(AppLocalizations l) => [
+    l.bhavaHouse1, l.bhavaHouse2, l.bhavaHouse3, l.bhavaHouse4,
+    l.bhavaHouse5, l.bhavaHouse6, l.bhavaHouse7, l.bhavaHouse8,
+    l.bhavaHouse9, l.bhavaHouse10, l.bhavaHouse11, l.bhavaHouse12,
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final houseNames = _houseNames(l);
     return SectionLoader(
       initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliBhava(chartId),
@@ -43,12 +46,12 @@ class BhavaWidget extends StatelessWidget {
                     child: Center(child: Text('H$h', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 11)))),
                 const SizedBox(width: 10),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(_houseNames[h - 1], style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text('${hd['sign'] ?? '-'} • Lord: ${hd['lord'] ?? '-'}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text(houseNames[h - 1], style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(l.bhavaSignLord((hd['sign'] ?? '-').toString(), (hd['lord'] ?? '-').toString()), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 ])),
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   Text(score.toStringAsFixed(0), style: TextStyle(color: _sc(score), fontSize: 20, fontWeight: FontWeight.w700)),
-                  if (sav != null) Text('SAV: $sav', style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
+                  if (sav != null) Text(l.bhavaSavValue(sav.toString()), style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
                 ]),
               ]),
               const SizedBox(height: 6),
