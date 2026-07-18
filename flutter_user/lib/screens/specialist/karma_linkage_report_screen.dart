@@ -1006,8 +1006,8 @@ class KarmaLinkageReportScreen extends StatelessWidget {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       // Per-person lessons
-      ...lessons.map((lesson) {
-        final lm = _asMap(lesson);
+      ...lessons.map((lessonItem) {
+        final lm = _asMap(lessonItem);
         final name = lm['chart_name']?.toString() ?? '—';
         final lesson = lm['new_lesson']?.toString() ?? '';
         final house = lm['lesson_house'];
