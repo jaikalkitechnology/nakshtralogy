@@ -15,6 +15,7 @@ class DoshWidget extends StatelessWidget {
       initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliDosh(chartId),
       builder: (ctx, data) {
+        final l = AppLocalizations.of(ctx)!;
         final total = data['total'] ?? 0;
         final active = data['active'] ?? 0;
         final doshas = (data['doshas'] as List? ?? []);
@@ -32,19 +33,19 @@ class DoshWidget extends StatelessWidget {
               const Icon(Icons.warning, color: AppColors.error, size: 32),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(AppLocalizations.of(context)?.dosh ?? 'Dosha Analysis', style: TextStyle(color: AppColors.error, fontSize: 16, fontWeight: FontWeight.w700)),
-                Text('$active active / $total checked', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text(l.doshAnalysis, style: TextStyle(color: AppColors.error, fontSize: 16, fontWeight: FontWeight.w700)),
+                Text(l.doshActiveCount(active, total), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               ])),
             ]),
           ),
           const SizedBox(height: 12),
           if (top.isNotEmpty) ...[
-            Text(AppLocalizations.of(context)?.topActiveDoshas ?? 'TOP ACTIVE DOSHAS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+            Text(l.topActiveDoshas, style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             ...top.map<Widget>((d) => _doshCard(d as Map, active: true)),
             const SizedBox(height: 12),
           ],
-          Text(AppLocalizations.of(context)?.allDoshas ?? 'ALL DOSHAS', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+          Text(l.allDoshas, style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...doshas.where((d) => (d as Map)['present'] != true).map<Widget>((d) => _doshCard(d as Map, active: false)),
         ]);

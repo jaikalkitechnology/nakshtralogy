@@ -5,6 +5,7 @@ import 'multi_chart_report_screen.dart';
 import 'child_probability_report_screen.dart';
 import 'love_compatibility_report_screen.dart';
 import 'karma_linkage_report_screen.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 class MultiChartPicker extends StatefulWidget {
   final String specialistKey;
@@ -100,6 +101,7 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
       if (!mounted) return;
       setState(() => _analyzing = false);
 
+      final l = AppLocalizations.of(context)!;
       if (resp['statusCode'] == 200 && resp['status'] == 'success') {
         final reportData = (resp['data'] as Map).cast<String, dynamic>();
         final Widget screen;
@@ -117,21 +119,22 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
         Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(resp['detail']?.toString() ?? 'Analysis failed')),
+          SnackBar(content: Text(resp['detail']?.toString() ?? l.analysisFailed)),
         );
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _analyzing = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorWithDetails(e.toString()))));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final color = _accentColor;
     final isKarma = widget.specialistKey == 'karma_linkage';
-    final selectionLabel = isKarma ? 'Select 2-${widget.maxCharts} Charts' : 'Select ${widget.maxCharts} Charts';
+    final selectionLabel = isKarma ? l.selectRangeCharts(widget.maxCharts) : l.selectExactCharts(widget.maxCharts);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -156,7 +159,7 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                     CircularProgressIndicator(color: color),
                     const SizedBox(height: 16),
                     Text(
-                      'Running ${widget.specialistLabel} analysis...',
+                      l.runningAnalysis(widget.specialistLabel),
                       style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ]),
@@ -179,8 +182,8 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                           const SizedBox(height: 2),
                           Text(
                             isKarma
-                                ? 'Pick 2 to ${widget.maxCharts} charts to analyze karmic links'
-                                : 'Pick a Male and Female chart',
+                                ? l.pickKarmicCharts(widget.maxCharts)
+                                : l.pickMaleFemaleChart,
                             style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                           ),
                         ]),
@@ -212,7 +215,7 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                       itemBuilder: (ctx, i) {
                         final c = _charts[i];
                         final id = c['id']?.toString() ?? '';
-                        final name = c['name']?.toString() ?? 'Unknown';
+                        final name = c['name']?.toString() ?? l.unknownName;
                         final dob = c['dob']?.toString() ?? '';
                         final place = c['place']?.toString() ?? '';
                         final gender = c['gender']?.toString() ?? '';
@@ -271,7 +274,7 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    selIdx == 0 ? 'Person 1' : 'Person 2',
+                                    l.personNumber(selIdx + 1),
                                     style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w600),
                                   ),
                                 ),
@@ -307,7 +310,7 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
-                    'Analyze ${_selected.length} Charts',
+                    l.analyzeNCharts(_selected.length),
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                 ),

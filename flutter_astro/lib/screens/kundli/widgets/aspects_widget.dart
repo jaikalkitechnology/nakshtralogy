@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
+import '../../../l10n/gen/app_localizations.dart';
 
 class AspectsWidget extends StatelessWidget {
   final String chartId;
@@ -14,15 +15,16 @@ class AspectsWidget extends StatelessWidget {
       initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliAspects(chartId),
       builder: (ctx, data) {
+        final l = AppLocalizations.of(ctx)!;
         final graha = (data['graha_drishti'] as Map? ?? {}).cast<String, dynamic>();
         final rashi = (data['rashi_drishti'] as Map? ?? {}).cast<String, dynamic>();
         final lagnaAsp = (data['lagna_aspects_received'] as Map? ?? {}).cast<String, dynamic>();
 
         return ListView(padding: const EdgeInsets.all(16), children: [
           KundliSectionCard(
-            title: 'Graha Drishti (Planet Aspects)',
+            title: l.aspectsGrahaDrishtiTitle,
             icon: Icons.hub, color: AppColors.primary,
-            subtitle: 'Who aspects whom (%)',
+            subtitle: l.aspectsGrahaDrishtiSubtitle,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: graha.entries.map<Widget>((e) {
               final targets = (e.value as Map).cast<String, dynamic>();
               if (targets.isEmpty) return const SizedBox.shrink();
@@ -42,7 +44,7 @@ class AspectsWidget extends StatelessWidget {
           ),
           if (lagnaAsp.isNotEmpty)
             KundliSectionCard(
-              title: 'Lagna Aspects Received',
+              title: l.aspectsLagnaReceivedTitle,
               icon: Icons.wb_twilight, color: AppColors.accent,
               child: Wrap(spacing: 6, runSpacing: 4, children: lagnaAsp.entries.map<Widget>((e) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -51,7 +53,7 @@ class AspectsWidget extends StatelessWidget {
               )).toList()),
             ),
           KundliSectionCard(
-            title: 'Rashi Drishti (Sign Aspects)',
+            title: l.aspectsRashiDrishtiTitle,
             icon: Icons.circle, color: AppColors.success,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: rashi.entries.map<Widget>((e) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),

@@ -15,11 +15,12 @@ class DashaActivationWidget extends StatelessWidget {
       initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliDashaActivation(chartId),
       builder: (ctx, data) {
+        final l = AppLocalizations.of(ctx)!;
         final md = data['current_md']?.toString() ?? data['md']?.toString() ?? '-';
         final ad = data['current_ad']?.toString() ?? data['ad']?.toString() ?? '-';
         final activeYogas = (data['active_yogas'] as List? ?? data['triggered_yogas'] as List? ?? []);
         final activeDoshas = (data['active_doshas'] as List? ?? data['triggered_doshas'] as List? ?? []);
-        final queryDate = data['query_date']?.toString() ?? data['date']?.toString() ?? 'Today';
+        final queryDate = data['query_date']?.toString() ?? data['date']?.toString() ?? l.today;
 
         return ListView(padding: const EdgeInsets.all(16), children: [
           // Current dasha header
@@ -34,7 +35,7 @@ class DashaActivationWidget extends StatelessWidget {
               Row(children: [
                 const Icon(Icons.flash_on, color: AppColors.primary, size: 22),
                 const SizedBox(width: 10),
-                Text('Current Dasha Period', style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
+                Text(l.dashaCurrentPeriod, style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700)),
               ]),
               const SizedBox(height: 8),
               Row(children: [
@@ -43,24 +44,24 @@ class DashaActivationWidget extends StatelessWidget {
                 _chip('AD', ad, AppColors.accent),
               ]),
               const SizedBox(height: 6),
-              Text('As of: $queryDate', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+              Text(l.dashaAsOf(queryDate), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
             ]),
           ),
           const SizedBox(height: 12),
           KundliSectionCard(
-            title: 'Active Yogas in Current Period (${activeYogas.length})',
+            title: l.dashaActiveYogasCount(activeYogas.length),
             icon: Icons.auto_awesome, color: AppColors.success,
             child: activeYogas.isEmpty
-                ? Text(AppLocalizations.of(context)?.noYogasActive ?? 'No yogas triggered', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
+                ? Text(l.dashaNoYogasTriggered, style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
                 : Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: activeYogas.map<Widget>((y) => Padding(padding: const EdgeInsets.only(bottom: 4),
                       child: Text('• ${y is Map ? (y['name'] ?? y.toString()) : y}', style: const TextStyle(color: AppColors.success, fontSize: 12)))).toList()),
           ),
           KundliSectionCard(
-            title: 'Active Doshas in Current Period (${activeDoshas.length})',
+            title: l.dashaActiveDoshasCount(activeDoshas.length),
             icon: Icons.warning, color: AppColors.error,
             child: activeDoshas.isEmpty
-                ? Text(AppLocalizations.of(context)?.noData ?? 'No doshas triggered', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
+                ? Text(l.dashaNoDoshasTriggered, style: TextStyle(color: AppColors.textSecondary, fontSize: 12))
                 : Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: activeDoshas.map<Widget>((d) => Padding(padding: const EdgeInsets.only(bottom: 4),
                       child: Text('• ${d is Map ? (d['name'] ?? d.toString()) : d}', style: const TextStyle(color: AppColors.error, fontSize: 12)))).toList()),

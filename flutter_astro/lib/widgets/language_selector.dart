@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../main.dart';
+import '../l10n/gen/app_localizations.dart';
 
 class LanguageSelector {
   static const languages = [
@@ -18,6 +19,7 @@ class LanguageSelector {
   ];
 
   static void show(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context);
     final currentLocale = locale.scriptCode != null
         ? '${locale.languageCode}_${locale.scriptCode}'
@@ -31,7 +33,7 @@ class LanguageSelector {
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.smoke, borderRadius: BorderRadius.circular(2))),
           const SizedBox(height: 16),
-          const Text('Select Language', style: TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
+          Text(l.selectLanguage, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
           const Text('भाषा चुनें', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
           const SizedBox(height: 16),
           Flexible(

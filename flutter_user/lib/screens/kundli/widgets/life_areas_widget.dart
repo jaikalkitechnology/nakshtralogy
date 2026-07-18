@@ -17,8 +17,20 @@ class LifeAreasWidget extends StatelessWidget {
     ['Spirituality', Icons.self_improvement, Colors.purple],
   ];
 
+  String _areaLabel(AppLocalizations l, String enName) {
+    switch (enName) {
+      case 'Career': return l.lifeAreaCareer;
+      case 'Wealth': return l.lifeAreaWealth;
+      case 'Marriage': return l.lifeAreaMarriage;
+      case 'Health': return l.lifeAreaHealth;
+      case 'Spirituality': return l.lifeAreaSpirituality;
+      default: return enName;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return SectionLoader(
       initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliLifeAreas(chartId),
@@ -41,7 +53,7 @@ class LifeAreasWidget extends StatelessWidget {
               Row(children: [
                 Icon(a[1] as IconData, color: color, size: 22),
                 const SizedBox(width: 10),
-                Expanded(child: Text(a[0] as String, style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700))),
+                Expanded(child: Text(_areaLabel(l, a[0] as String), style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700))),
                 Text('${score.toStringAsFixed(0)}', style: TextStyle(color: color, fontSize: 24, fontWeight: FontWeight.w700)),
                 Text('/100', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
               ]),
@@ -49,10 +61,10 @@ class LifeAreasWidget extends StatelessWidget {
               ClipRRect(borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(value: score / 100, minHeight: 6, backgroundColor: Colors.white12, valueColor: AlwaysStoppedAnimation(color))),
               if (info['grade'] != null) Padding(padding: const EdgeInsets.only(top: 4),
-                  child: Text('Grade: ${info['grade']}', style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600))),
+                  child: Text(l.lifeAreaGrade(info['grade'].toString()), style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600))),
               if (factors.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Text('${AppLocalizations.of(context)?.factors ?? "Factors"}:', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
+                Text(l.lifeAreaFactorsLabel, style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 ...factors.map<Widget>((f) => Padding(padding: const EdgeInsets.only(bottom: 2),
                   child: Text('• ${f.toString()}', style: const TextStyle(color: AppColors.textPrimary, fontSize: 11)))),

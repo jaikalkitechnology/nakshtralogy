@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'engine_report_base.dart';
 import 'report_components.dart';
@@ -13,50 +14,51 @@ class PropertyReportScreen extends EngineReportBase {
 class _S extends EngineReportBaseState<PropertyReportScreen> {
   @override
   List<Widget> buildSections(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     return [
-      heroScores('🏠 PROPERTY SCORES', [
-        [n(d, 'property_acquisition_capacity_score'), 'ACQUISITION\nCAPACITY'],
-        [n(d, 'home_ownership_probability_pct'), 'HOME\nOWNERSHIP %'],
-        [n(d, 'real_estate_wealth_potential_score'), 'RE WEALTH\nPOTENTIAL'],
+      heroScores('🏠 ${l.propertyScoresLabel}', [
+        [n(d, 'property_acquisition_capacity_score'), l.acquisitionCapacityLabel],
+        [n(d, 'home_ownership_probability_pct'), l.homeOwnershipPctLabel],
+        [n(d, 'real_estate_wealth_potential_score'), l.reWealthPotentialLabel],
       ], [
-        [n(d, 'rental_income_potential_score'), 'RENTAL'], [n(d, 'vehicle_ownership_quality_score'), 'VEHICLES'],
-        [n(d, 'land_ownership_probability_pct'), 'LAND %'],
+        [n(d, 'rental_income_potential_score'), l.rentalWord], [n(d, 'vehicle_ownership_quality_score'), l.vehiclesWord],
+        [n(d, 'land_ownership_probability_pct'), l.landPctLabel],
       ]),
-      styleRows('Property Profile', [
-        ['KARMA TYPE', d['property_karma_type']], ['ENVIRONMENT', d['preferred_property_environment']],
-        ['STYLE', d['property_style_preference']], ['SIZE', d['property_size_tendency']],
-        ['LOCATION', d['location_style']], ['ACTION NEXT 12M', d['recommended_property_action_next_12_months']],
+      styleRows(l.propertyProfileTitle, [
+        [l.karmaTypeLabel, d['property_karma_type']], [l.environmentLabel, d['preferred_property_environment']],
+        [l.styleLabel, d['property_style_preference']], [l.sizeLabel, d['property_size_tendency']],
+        [l.locationLabel, d['location_style']], [l.actionNext12mLabel, d['recommended_property_action_next_12_months']],
       ]),
       if (d['karaka_property_table'] is Map) ...[
-        ReportHeader('Property', 'Karakas', '9 PLANETS'),
+        ReportHeader(l.propertyWord, l.karakasWord, '9 PLANETS'),
         karakaTable(Map.fromEntries((d['karaka_property_table'] as Map).entries.map((e) =>
           MapEntry(e.key.toString(), (e.value is Map ? (e.value as Map)['strength'] : e.value) ?? 0)))),
       ],
-      yogaLedger('Property Yogas', (d['active_property_doshas'] as List?) ?? [],
+      yogaLedger(l.propertyYogasTitle, (d['active_property_doshas'] as List?) ?? [],
         (d['active_property_yogas'] as List?) ?? [],
-        creatingLabel: 'DRAINS', clearingLabel: 'BOOSTERS'),
-      yearlyTrend('Property Trend', (d['yearly_property_trend'] as List?) ?? [], scoreKey: 'favorability'),
+        creatingLabel: l.drainsLabel, clearingLabel: l.boostersLabel),
+      yearlyTrend(l.propertyTrendTitle, (d['yearly_property_trend'] as List?) ?? [], scoreKey: 'favorability'),
       if ((d['buying_windows'] as List?)?.isNotEmpty == true)
-        TimingWindowCard(title: 'Buying Windows ★', icon: '★', color: AppColors.gold, items: d['buying_windows'] as List, isPeak: true),
+        TimingWindowCard(title: '${l.buyingWindowsTitle} ★', icon: '★', color: AppColors.gold, items: d['buying_windows'] as List, isPeak: true),
       if ((d['construction_or_renovation_windows'] as List?)?.isNotEmpty == true)
-        TimingWindowCard(title: 'Construction Windows', icon: '▲', color: AppColors.aurora, items: d['construction_or_renovation_windows'] as List),
+        TimingWindowCard(title: l.constructionWindowsTitle, icon: '▲', color: AppColors.aurora, items: d['construction_or_renovation_windows'] as List),
       // Inheritance
       statTiles([
-        [n(d, 'maternal_inheritance_probability_pct'), 'MATERNAL INHER %'],
-        [n(d, 'paternal_inheritance_probability_pct'), 'PATERNAL INHER %'],
-        [n(d, 'multiple_homes_probability_pct'), 'MULTI-HOME %'],
-        [n(d, 'investment_property_probability_pct'), 'INVESTMENT %'],
+        [n(d, 'maternal_inheritance_probability_pct'), l.maternalInherPctLabel],
+        [n(d, 'paternal_inheritance_probability_pct'), l.paternalInherPctLabel],
+        [n(d, 'multiple_homes_probability_pct'), l.multiHomePctLabel],
+        [n(d, 'investment_property_probability_pct'), l.investmentPctLabel],
       ]),
       const SizedBox(height: 10),
       // Vehicles
-      styleRows('Vehicle Profile', [
-        ['COUNT', d['number_of_vehicles_tendency']], ['FIRST AGE', d['first_vehicle_age_band']],
-        ['CATEGORY', d['preferred_vehicle_category']], ['LUXURY', '${n(d, 'luxury_vehicle_affinity_score').toStringAsFixed(0)}/100'],
+      styleRows(l.vehicleProfileTitle, [
+        [l.countLabel, d['number_of_vehicles_tendency']], [l.firstAgeLabel, d['first_vehicle_age_band']],
+        [l.categoryLabel, d['preferred_vehicle_category']], [l.luxuryLabel, '${n(d, 'luxury_vehicle_affinity_score').toStringAsFixed(0)}/100'],
       ]),
       risks((d['major_property_risks'] as List?) ?? []),
       remedies((d['astrological_remedies'] as List?) ?? []),
       verdictCard(d['property_life_verdict']?.toString() ?? '', d['recommended_property_strategy']?.toString(),
-        subtitle: 'Lifetime count: ${d['lifetime_property_count_estimate'] ?? "?"} · Fulfillment: ${n(d, 'property_fulfillment_probability_pct').toStringAsFixed(0)}%'),
+        subtitle: l.lifetimeCountFulfillmentLabel(d['lifetime_property_count_estimate']?.toString() ?? "?", n(d, 'property_fulfillment_probability_pct').toStringAsFixed(0))),
     ];
   }
 }

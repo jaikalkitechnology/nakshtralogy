@@ -54,15 +54,15 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                         fontFamily: 'monospace'),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
-                const Text.rich(TextSpan(children: [
+                Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: 'Child ',
-                      style: TextStyle(
+                      text: '${l.childProbTitle1} ',
+                      style: const TextStyle(
                           color: AppColors.ivory,
                           fontSize: 18,
                           fontWeight: FontWeight.w600)),
                   TextSpan(
-                      text: 'Probability',
+                      text: l.childProbTitle2,
                       style: TextStyle(
                           color: _accent,
                           fontSize: 18,
@@ -82,49 +82,49 @@ class ChildProbabilityReportScreen extends StatelessWidget {
 
           // 3. NUMBER OF CHILDREN
           if (number.isNotEmpty) ...[
-            _header('Number of', 'Children'),
+            _header(l.childNumberOfChildrenHeader1, l.childNumberOfChildrenHeader2),
             _buildNumberOfChildren(l, number),
           ],
 
           // 4. TIMING (MOOLA DASHA)
           if (timing.isNotEmpty) ...[
-            _header('Timing', 'Moola Dasha'),
+            _header(l.childTimingHeader1, l.childTimingHeader2),
             _buildTiming(l, timing),
           ],
 
           // 5. 5TH HOUSE ANALYSIS
           if (fifth.isNotEmpty) ...[
-            _header('5th House', 'Analysis'),
+            _header(l.child5thHouseHeader1, l.analysisWord),
             ...fifth.entries.map((e) => _buildFifthHouseCard(l, e.key, _asMap(e.value))),
           ],
 
           // 6. JUPITER ANALYSIS
           if (jupiter.isNotEmpty) ...[
-            _header('Jupiter', 'Analysis'),
+            _header(l.jupiterWord, l.analysisWord),
             ...jupiter.entries.map((e) => _buildJupiterCard(l, e.key, _asMap(e.value))),
           ],
 
           // 7. D7 SAPTAMSA
           if (d7.isNotEmpty) ...[
-            _header('D7 Saptamsa', 'Analysis'),
+            _header(l.childD7Header1, l.analysisWord),
             ...d7.entries.map((e) => _buildD7Card(l, e.key, _asMap(e.value))),
           ],
 
           // 8. BEEJA & KSHETRA
           if (beeja.isNotEmpty) ...[
-            _header('Beeja & Kshetra', 'Sphuta'),
+            _header(l.childBeejaHeader1, l.childBeejaHeader2),
             _buildBeejaKshetra(l, beeja),
           ],
 
           // 9. DOSHA ANALYSIS
           if (dosha.isNotEmpty) ...[
-            _header('Dosha', 'Analysis'),
+            _header(l.childDoshaHeader1, l.analysisWord),
             _buildDoshaAnalysis(l, dosha),
           ],
 
           // 10. REMEDIES
           if (remedies.isNotEmpty) ...[
-            _header('Vedic', 'Remedies'),
+            _header(l.childVedicHeader1, l.childVedicHeader2),
             _buildRemedies(l, remedies),
           ],
 
@@ -133,7 +133,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
 
           // 12. CONFIDENCE
           if (conf != null) ...[
-            ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+            ReportHeader(l.analysisWord, l.confidenceLabel, l.qualityTag),
             ConfidenceBlock(
                 score: conf,
                 statement: data['confidence_explanation']?.toString(),
@@ -172,7 +172,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: _accent.withOpacity(0.3))),
       child: Column(children: [
-        _label('PROGENY PROBABILITY'),
+        _label(l.progenyProbabilityLabel),
         const SizedBox(height: 14),
 
         // Main score ring
@@ -296,13 +296,13 @@ class ChildProbabilityReportScreen extends StatelessWidget {
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (p1.isNotEmpty) Expanded(child: _partnerCard(p1)),
+              if (p1.isNotEmpty) Expanded(child: _partnerCard(l, p1)),
               if (p1.isNotEmpty && p2.isNotEmpty) const SizedBox(width: 8),
-              if (p2.isNotEmpty) Expanded(child: _partnerCard(p2)),
+              if (p2.isNotEmpty) Expanded(child: _partnerCard(l, p2)),
             ]));
   }
 
-  Widget _partnerCard(Map<String, dynamic> p) {
+  Widget _partnerCard(AppLocalizations l, Map<String, dynamic> p) {
     final role = p['role']?.toString() ?? '';
     final borderC = role.toLowerCase().contains('male') && !role.toLowerCase().contains('female')
         ? AppColors.aurora
@@ -336,14 +336,14 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   fontFamily: 'serif')),
           const SizedBox(height: 6),
-          _kvRow('Gender', p['gender']?.toString() ?? '—', AppColors.smoke),
-          _kvRow('DOB', p['dob']?.toString() ?? '—', AppColors.smoke),
-          _kvRow('TOB', p['tob']?.toString() ?? '—', AppColors.smoke),
-          _kvRow('Place', p['place']?.toString() ?? '—', AppColors.smoke),
+          _kvRow(l.gender, p['gender']?.toString() ?? '—', AppColors.smoke),
+          _kvRow(l.dob, p['dob']?.toString() ?? '—', AppColors.smoke),
+          _kvRow(l.tob, p['tob']?.toString() ?? '—', AppColors.smoke),
+          _kvRow(l.place, p['place']?.toString() ?? '—', AppColors.smoke),
           const SizedBox(height: 4),
-          _kvRow('Lagna', p['lagna']?.toString() ?? '—', AppColors.gold),
+          _kvRow(l.lagna, p['lagna']?.toString() ?? '—', AppColors.gold),
           _kvRow(
-              'Moon Sign', p['moon_sign']?.toString() ?? '—', AppColors.gold),
+              l.moonSignLabel, p['moon_sign']?.toString() ?? '—', AppColors.gold),
         ]));
   }
 
@@ -561,16 +561,16 @@ class ChildProbabilityReportScreen extends StatelessWidget {
           const SizedBox(height: 14),
 
           // Partner 1 current dasha
-          if (p1Dasha.isNotEmpty) _buildDashaPartnerBlock('Partner 1', p1Dasha),
+          if (p1Dasha.isNotEmpty) _buildDashaPartnerBlock(l, l.partnerOneLabel, p1Dasha),
           if (p1Dasha.isNotEmpty && p2Dasha.isNotEmpty)
             const SizedBox(height: 10),
           // Partner 2 current dasha
-          if (p2Dasha.isNotEmpty) _buildDashaPartnerBlock('Partner 2', p2Dasha),
+          if (p2Dasha.isNotEmpty) _buildDashaPartnerBlock(l, l.partnerTwoLabel, p2Dasha),
 
           // Favorable windows
           if (windows.isNotEmpty) ...[
             const SizedBox(height: 14),
-            _label('FAVORABLE WINDOWS'),
+            _label(l.favorableWindowsLabel),
             const SizedBox(height: 8),
             ...windows.map((w) {
               final wm = _asMap(w);
@@ -615,14 +615,14 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                         ],
                         if (factor.isNotEmpty) ...[
                           const SizedBox(height: 3),
-                          Text('Factor: $factor',
+                          Text(l.factorPrefix(factor),
                               style: const TextStyle(
                                   color: AppColors.lavender,
                                   fontSize: 9,
                                   height: 1.3)),
                         ],
                         if (appliesTo.isNotEmpty)
-                          Text('Applies to: $appliesTo',
+                          Text(l.appliesToLabel(appliesTo),
                               style: const TextStyle(
                                   color: AppColors.smoke,
                                   fontSize: 9)),
@@ -667,7 +667,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
         ]));
   }
 
-  Widget _buildDashaPartnerBlock(String label, Map<String, dynamic> pd) {
+  Widget _buildDashaPartnerBlock(AppLocalizations l, String label, Map<String, dynamic> pd) {
     final moola = _asMap(pd['moola']);
     final favorability = pd['progeny_favorability']?.toString() ?? '';
     final favScore = (pd['favorability_score'] as num?)?.toDouble() ?? 0;
@@ -701,18 +701,18 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             if (favorability.isNotEmpty) _badge(favorability, sc),
           ]),
           const SizedBox(height: 6),
-          if (md.isNotEmpty) _kvRow('Mahadasha', md, AppColors.gold),
+          if (md.isNotEmpty) _kvRow(l.mahadashaLabel, md, AppColors.gold),
           if (mdStart.isNotEmpty)
-            _kvRow('MD Period', '$mdStart — $mdEnd', AppColors.smoke),
-          if (ad.isNotEmpty) _kvRow('Antardasha', ad, AppColors.gold),
+            _kvRow(l.mdPeriodLabel, '$mdStart — $mdEnd', AppColors.smoke),
+          if (ad.isNotEmpty) _kvRow(l.antardashaLabel, ad, AppColors.gold),
           if (adStart.isNotEmpty)
-            _kvRow('AD Period', '$adStart — $adEnd', AppColors.smoke),
-          if (pdStr.isNotEmpty) _kvRow('Pratyantardasha', pdStr, AppColors.gold),
+            _kvRow(l.adPeriodLabel, '$adStart — $adEnd', AppColors.smoke),
+          if (pdStr.isNotEmpty) _kvRow(l.pratyantardashaLabel, pdStr, AppColors.gold),
 
           // Favorability score bar
           if (favScore > 0) ...[
             const SizedBox(height: 6),
-            _progressBar('Favorability', favScore),
+            _progressBar(l.favorabilityLabel, favScore),
           ],
 
           if (reasoning.isNotEmpty)
@@ -757,19 +757,19 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                 fontFamily: 'serif')),
       ]),
       const SizedBox(height: 8),
-      _kvRow('Lord', lord, AppColors.gold),
-      _kvRow('Lord Placement', '${lordHouse}H', AppColors.gold),
-      if (lordDignity.isNotEmpty) _kvRow('Lord Dignity', lordDignity, _dignityColor(lordDignity)),
+      _kvRow(l.lordLabel, lord, AppColors.gold),
+      _kvRow(l.lordPlacementLabel, '${lordHouse}H', AppColors.gold),
+      if (lordDignity.isNotEmpty) _kvRow(l.lordDignityLabel, lordDignity, _dignityColor(lordDignity)),
       if (lordDust == true)
-        _badge('LORD IN DUSTHANA', AppColors.error),
+        _badge(l.lordInDusthana, AppColors.error),
       if (lordStrength != null) ...[
         const SizedBox(height: 4),
-        _progressBar('Lord Strength', lordStrength),
+        _progressBar(l.lordStrengthLabel, lordStrength),
       ],
 
       // House strength
       const SizedBox(height: 4),
-      _progressBar('House Strength', houseScore),
+      _progressBar(l.houseStrengthLabel, houseScore),
 
       // Occupants
       if (occupants.isNotEmpty) ...[
@@ -856,7 +856,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
 
     return _personCard(name, AppColors.gold, [
       Row(children: [
-        Text('Jupiter in $sign',
+        Text(l.jupiterInSignHeading(sign),
             style: const TextStyle(
                 color: AppColors.ivory,
                 fontSize: 16,
@@ -864,27 +864,27 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                 fontFamily: 'serif')),
       ]),
       const SizedBox(height: 8),
-      _kvRow('House', house, AppColors.gold),
-      if (dignity.isNotEmpty) _kvRow('Dignity', dignity, _dignityColor(dignity)),
+      _kvRow(l.house, house, AppColors.gold),
+      if (dignity.isNotEmpty) _kvRow(l.dignityLabel, dignity, _dignityColor(dignity)),
 
       // Strength bar
       const SizedBox(height: 4),
-      _progressBar('Strength', strength),
+      _progressBar(l.strength, strength),
       const SizedBox(height: 8),
 
       // Status badges row
       Wrap(spacing: 6, runSpacing: 4, children: [
         if (retrograde)
-          _badge('RETROGRADE', AppColors.error)
+          _badge(l.retrograde, AppColors.error)
         else
-          _badge('DIRECT', AppColors.success),
+          _badge(l.directBadge, AppColors.success),
         if (combust)
-          _badge('COMBUST', AppColors.error)
+          _badge(l.combust, AppColors.error)
         else
-          _badge('NOT COMBUST', AppColors.success),
-        if (in5th) _badge('IN 5TH HOUSE', AppColors.success),
-        if (aspects5th) _badge('ASPECTS 5TH', AppColors.success),
-        if (!in5th && !aspects5th) _badge('NO 5TH CONNECTION', AppColors.smoke),
+          _badge(l.notCombustBadge, AppColors.success),
+        if (in5th) _badge(l.in5thHouseBadge, AppColors.success),
+        if (aspects5th) _badge(l.aspects5thBadge, AppColors.success),
+        if (!in5th && !aspects5th) _badge(l.no5thConnectionBadge, AppColors.smoke),
       ]),
 
       // Interpretation
@@ -924,16 +924,16 @@ class ChildProbabilityReportScreen extends StatelessWidget {
               fontFamily: 'monospace',
               fontWeight: FontWeight.w600)),
       const SizedBox(height: 8),
-      _kvRow('D7 Lagna', d7Lagna, AppColors.gold),
-      _kvRow('D7 5th Sign', d7Fifth, AppColors.gold),
-      _kvRow('D7 5th Lord', d7FifthLord, AppColors.gold),
-      _kvRow('Jupiter in D7', d7JupSign, AppColors.gold),
+      _kvRow(l.d7LagnaLabel, d7Lagna, AppColors.gold),
+      _kvRow(l.d7FifthSignLabel, d7Fifth, AppColors.gold),
+      _kvRow(l.d7FifthLordLabel, d7FifthLord, AppColors.gold),
+      _kvRow(l.jupiterInD7Label, d7JupSign, AppColors.gold),
       if (d7JupDig.isNotEmpty)
-        _kvRow('Jupiter Dignity', d7JupDig, _dignityColor(d7JupDig)),
+        _kvRow(l.jupiterDignityLabel, d7JupDig, _dignityColor(d7JupDig)),
 
       // Strength bar
       const SizedBox(height: 4),
-      _progressBar('D7 Strength', d7Strength),
+      _progressBar(l.d7StrengthLabel, d7Strength),
 
       // Planet table
       if (d7Planets.isNotEmpty) ...[
@@ -955,28 +955,28 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             child: Row(children: [
               Expanded(
                   flex: 3,
-                  child: Text('Planet',
+                  child: Text(l.planet,
                       style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text('Sign',
+                  child: Text(l.sign,
                       style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text('House',
+                  child: Text(l.house,
                       style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
                           fontFamily: 'monospace'))),
               Expanded(
                   flex: 2,
-                  child: Text('In 5th?',
+                  child: Text(l.inFifth,
                       style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 8,
@@ -1013,7 +1013,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                             color: AppColors.smoke, fontSize: 10))),
                 Expanded(
                     flex: 2,
-                    child: Text(inFifth ? 'Yes' : '—',
+                    child: Text(inFifth ? l.yesWord : '—',
                         style: TextStyle(
                             color: inFifth
                                 ? AppColors.success
@@ -1056,11 +1056,11 @@ class ChildProbabilityReportScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (beeja.isNotEmpty)
-                  Expanded(child: _sphutaCard('BEEJA SPHUTA', AppColors.aurora, beeja)),
+                  Expanded(child: _sphutaCard(l.beejaSphutaTitle, AppColors.aurora, beeja, l)),
                 if (beeja.isNotEmpty && kshetra.isNotEmpty)
                   const SizedBox(width: 8),
                 if (kshetra.isNotEmpty)
-                  Expanded(child: _sphutaCard('KSHETRA SPHUTA', _accent, kshetra)),
+                  Expanded(child: _sphutaCard(l.kshetraSphutaTitle, _accent, kshetra, l)),
               ])),
 
       // Combined fertility indication
@@ -1093,7 +1093,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   }
 
   Widget _sphutaCard(
-      String title, Color color, Map<String, dynamic> sp) {
+      String title, Color color, Map<String, dynamic> sp, AppLocalizations l) {
     final degree = sp['degree']?.toString() ?? '';
     final sign = sp['sign']?.toString() ?? '';
     final signLord = sp['sign_lord']?.toString() ?? '';
@@ -1145,10 +1145,10 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation(sc))),
           const SizedBox(height: 8),
 
-          if (degree.isNotEmpty) _kvRow('Degree', degree, AppColors.gold),
-          if (sign.isNotEmpty) _kvRow('Sign', sign, AppColors.gold),
+          if (degree.isNotEmpty) _kvRow(l.degreeLabel, degree, AppColors.gold),
+          if (sign.isNotEmpty) _kvRow(l.sign, sign, AppColors.gold),
           if (signLord.isNotEmpty)
-            _kvRow('Sign Lord', signLord, AppColors.gold),
+            _kvRow(l.signLordLabel, signLord, AppColors.gold),
 
           // Factors as chips
           if (factors.isNotEmpty) ...[
@@ -1271,10 +1271,10 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                   ]),
                   if (presentIn.isNotEmpty) ...[
                     const SizedBox(height: 4),
-                    _kvRow('Present In', presentIn, AppColors.smoke),
+                    _kvRow(l.presentInLabel, presentIn, AppColors.smoke),
                   ],
                   if (penalty != 0) ...[
-                    _kvRow('Net Penalty',
+                    _kvRow(l.netPenaltyLabel,
                         '-${penalty.toStringAsFixed(1)}', AppColors.error),
                   ],
                   if (desc.isNotEmpty) ...[
@@ -1351,6 +1351,13 @@ class ChildProbabilityReportScreen extends StatelessWidget {
       'LIFESTYLE REMEDIES': AppColors.success,
       'CHARITABLE REMEDIES': _accent,
     };
+    final labels = {
+      'GEMSTONE REMEDIES': l.remedyGemstone.toUpperCase(),
+      'MANTRA REMEDIES': l.remedyMantra.toUpperCase(),
+      'RITUAL REMEDIES': l.remedyRitual.toUpperCase(),
+      'LIFESTYLE REMEDIES': l.remedyLifestyle.toUpperCase(),
+      'CHARITABLE REMEDIES': l.remedyCharitable.toUpperCase(),
+    };
 
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -1371,7 +1378,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                       Row(children: [
                         Icon(catIcon, color: catColor, size: 14),
                         const SizedBox(width: 6),
-                        Text(cat.key,
+                        Text(labels[cat.key] ?? cat.key,
                             style: TextStyle(
                                 color: catColor,
                                 fontSize: 9,
@@ -1454,7 +1461,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _label('SUMMARY'),
+          _label(l.summary.toUpperCase()),
           const SizedBox(height: 10),
 
           if (oneLiner.isNotEmpty) ...[
@@ -1538,6 +1545,7 @@ class ChildProbabilityReportScreen extends StatelessWidget {
   // ════════════════════════════════════════════════════════════════════
 
   Widget _buildAiCopyBar(BuildContext ctx) {
+    final l = AppLocalizations.of(ctx)!;
     return Container(
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         padding: const EdgeInsets.all(14),
@@ -1549,8 +1557,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(children: [
-          Text('DISCUSS WITH AI',
-              style: TextStyle(
+          Text(l.discussWithAI,
+              style: const TextStyle(
                   color: AppColors.gold,
                   fontSize: 9,
                   letterSpacing: 2,
@@ -1587,12 +1595,13 @@ class ChildProbabilityReportScreen extends StatelessWidget {
 
   Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g,
       String prefix) {
+    final l = AppLocalizations.of(ctx)!;
     return Expanded(
         child: GestureDetector(
             onTap: () {
               Clipboard.setData(ClipboardData(text: prefix + _fmt(data)));
               ScaffoldMessenger.of(ctx)
-                  .showSnackBar(SnackBar(content: Text('Copied for $name!')));
+                  .showSnackBar(SnackBar(content: Text(l.copiedForName(name))));
               final urls = {
                 'ChatGPT': 'https://chat.openai.com/',
                 'Claude': 'https://claude.ai/new',
@@ -1628,8 +1637,8 @@ class ChildProbabilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  Text('COPY',
-                      style: TextStyle(
+                  Text(l.copy,
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,
                           fontFamily: 'monospace')),
