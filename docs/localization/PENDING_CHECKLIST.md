@@ -61,8 +61,10 @@ Per-router adoption (localize `detail` + `message` + labels, add `lang`):
 
 ## 2. Flutter — User app  → `flutter_user_language_support.md`
 
-Infra ✅ (383 keys × 11 locales). Remaining: ~490 `Text()` + ~97 SnackBar +
-~20 label/hint literals across ~28 un-localized files.
+✅ **COMPLETE.** 1313 keys externalized across all screens/widgets and translated
+into all 11 locales (~99% on the 9 Indic scripts; Hinglish keeps English UI words
+by design). All delegates regenerated; every reference resolves. See
+`LANGUAGE_COMPLETION_STATUS.md`. (Original scope below, now done.)
 
 Titles / labels / names to externalize (highest-impact files):
 
@@ -92,7 +94,10 @@ Titles / labels / names to externalize (highest-impact files):
 
 ## 3. Flutter — Astrologer app  → `flutter_astro_language_support.md`
 
-Infra ✅ but non-EN ARBs **~90 keys behind**; ~500–700 literals remain.
+✅ **COMPLETE.** 824 keys externalized and translated into all 11 locales (~99%
+on the 9 Indic scripts); non-English ARBs brought from a ~105-key deficit to full
+parity. All delegates regenerated; every reference resolves. See
+`LANGUAGE_COMPLETION_STATUS.md`. (Original scope below, now done.)
 
 - [ ] Back-fill the ~90-key gap in all 10 non-English ARBs to match `app_en.arb`
 - [ ] `screens/kundli/widgets/*` (17 widgets — gochar, kundli_grid, yoga, dosh,
@@ -106,7 +111,8 @@ Infra ✅ but non-EN ARBs **~90 keys behind**; ~500–700 literals remain.
 
 ## 4. React Admin panel  → `react_admin_language_support.md`
 
-Greenfield (~250–300 strings). Titles / table headers / labels / options / toasts:
+⏸️ **DEFERRED** (per request — focus kept on the Flutter apps). Greenfield
+(~250–300 strings). Titles / table headers / labels / options / toasts:
 
 - [ ] Install + configure `react-i18next`; add language switcher + persistence
 - [ ] Sidebar menu labels (`AdminPanel.tsx:229-238`: Overview/Users/Astrologers/

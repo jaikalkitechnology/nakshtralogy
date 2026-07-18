@@ -41,6 +41,11 @@ pa` (Odia not yet shipped in-app).
 
 **Master cross-sector pending list:** [`PENDING_CHECKLIST.md`](./PENDING_CHECKLIST.md)
 
+**Live completion status (coverage per sector & locale):** [`LANGUAGE_COMPLETION_STATUS.md`](./LANGUAGE_COMPLETION_STATUS.md)
+— both Flutter apps are now fully externalized and translated across all 11
+locales (~99% on the 9 Indic scripts); backend has the foundation + `user_router`
+done; React admin deferred.
+
 ## Architecture at a glance
 
 ```
