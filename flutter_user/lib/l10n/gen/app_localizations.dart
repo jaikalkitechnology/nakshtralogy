@@ -235,6 +235,24 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @forgotPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you\na link to reset your password.'**
+  String get forgotPasswordSubtitle;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'your@email.com'**
+  String get emailHint;
+
+  /// No description provided for @resendLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Link'**
+  String get resendLink;
+
   /// No description provided for @sendResetLink.
   ///
   /// In en, this message translates to:

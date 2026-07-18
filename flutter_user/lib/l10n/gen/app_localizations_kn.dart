@@ -69,6 +69,15 @@ class AppLocalizationsKn extends AppLocalizations {
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿದ್ದೀರಾ?';
 
   @override
+  String get forgotPasswordSubtitle => 'Enter your email and we\'ll send you\na link to reset your password.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'Resend Link';
+
+  @override
   String get sendResetLink => 'ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಿ';
 
   @override

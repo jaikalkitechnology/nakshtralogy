@@ -69,6 +69,15 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get forgotPasswordSubtitle => 'Enter your email and we\'ll send you\na link to reset your password.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'Resend Link';
+
+  @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
 
   @override

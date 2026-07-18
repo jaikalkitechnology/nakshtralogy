@@ -1,5 +1,8 @@
 {
   "@@locale": "mr",
+  "forgotPasswordSubtitle": "Enter your email and we'll send you\na link to reset your password.",
+  "emailHint": "your@email.com",
+  "resendLink": "Resend Link",
   "appName": "नक्षत्रलॉजी",
   "cosmicJourneyAwaits": "तुमचा वैश्विक प्रवास वाट पाहतोय",
 

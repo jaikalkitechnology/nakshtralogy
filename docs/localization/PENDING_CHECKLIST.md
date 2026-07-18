@@ -11,13 +11,15 @@ Odia optional in-app).
 
 ## 0. Foundation (do first — unblocks everything)
 
-- [ ] **Backend:** add `app/core/i18n.py` — `normalize_lang()` alias map +
+- [x] **Backend:** add `app/core/i18n.py` — `normalize_lang()` alias map +
       `get_lang()` FastAPI dependency (query `?lang=` → `Accept-Language` header →
-      user `preferred_language` → `english`).
-- [ ] **Backend:** reconcile language codes — `report_translator.py` short codes
-      (`hi/mr/gu/…`) → canonical full words (`hindi/marathi/gujarati/…`).
+      `english`) + `t()` catalog translator. *(PoC done; user-pref layer pending.)*
+- [~] **Backend:** reconcile language codes — `normalize_lang()` alias map
+      built (`hi→hindi`, …). Still to do: rewire `report_translator.py` lookups
+      through it.
 - [ ] **Backend:** add `preferred_language` column to `User` +
-      `AstrologerProfile` (migration) so language persists server-side.
+      `AstrologerProfile` (migration) so language persists server-side, and add a
+      `get_lang` variant that uses it.
 - [ ] **Backend:** choose the free-text (engine prose) strategy — engine codes +
       catalog templates **or** cached LLM translation. Document the decision.
 - [ ] **Flutter (both apps):** pin `intl` to the SDK-constrained version.
@@ -45,7 +47,9 @@ Every user-facing string category that must return in the selected language:
 
 Per-router adoption (localize `detail` + `message` + labels, add `lang`):
 
-- [ ] `user_router.py`  · [ ] `astrologer_router.py`  · [ ] `service_router.py`
+- [x] `user_router.py` — *PoC: auth errors + wallet/saved messages localized via
+  `get_lang`+`t`; en/hi/hinglish populated, other 9 fall back to en (pending)*
+- [ ] `astrologer_router.py`  · [ ] `service_router.py`
 - [ ] `communication_router.py`  · [ ] `admin_router.py`  · [ ] `google_auth_router.py`
 - [ ] `kundli_router.py`  · [ ] `rashi_router.py`  · [ ] `agent_router.py`
 - [ ] `career_router.py`  · [ ] `character_router.py`  · [ ] `milan_router.py`
@@ -62,6 +66,8 @@ Infra ✅ (383 keys × 11 locales). Remaining: ~490 `Text()` + ~97 SnackBar +
 
 Titles / labels / names to externalize (highest-impact files):
 
+- [x] `screens/auth/forgot_password_screen.dart` — *PoC: 3 new ARB keys added to
+  all 11 locales + delegates regenerated; screen fully on `AppLocalizations`*
 - [ ] `screens/ai/ai_specialist_chat_screen.dart` (+ hardcoded language menu)
 - [ ] `screens/specialist/*` reports (relationship, milan, education, business,
       child_probability, karma_linkage, lifepath, debt, marriage, legal, health,

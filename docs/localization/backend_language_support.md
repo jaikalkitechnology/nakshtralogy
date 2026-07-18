@@ -25,14 +25,19 @@ languages, selected per-request, without changing response keys or machine enums
 
 ## 2. Foundation to build (blocks router migration)
 
-- [ ] `app/core/i18n.py`
-  - `normalize_lang(raw) -> canonical` with alias map
-    (`hi→hindi, en→english, mr→marathi, gu→gujarati, ta→tamil, te→telugu,
-    kn→kannada, bn→bengali, pa→punjabi, ml→malayalam, or→odia`), fallback `english`.
-  - `get_lang(request, lang=Query(None), user=Depends(...)) -> str` resolution:
-    `?lang=` → `Accept-Language` → `user.preferred_language` → `english`.
-  - `t(key, lang, **fmt) -> str` — catalog lookup with `.format(**fmt)`.
-- [ ] Central static catalog — extend `report_translator.TRANSLATIONS`
+- [x] `app/core/i18n.py` — **DONE (PoC).**
+  - `normalize_lang(raw) -> canonical` with the full alias map
+    (`hi→hindi, en→english, mr→marathi, …, hi_Latn→hinglish`), fallback `english`.
+  - `get_lang(lang=Query(None), accept_language=Header(None)) -> str`:
+    `?lang=` → `Accept-Language` → `english`. *(Auth-free so it works on public
+    endpoints; a user-pref variant is still pending — see below.)*
+  - `t(key, lang, **fmt) -> str` — catalog lookup with `.format(**fmt)` and
+    english fallback; `wallet_label(txn_type, lang)` helper.
+  - Verified: unit tests + FastAPI `TestClient` (`?lang=hindi` → Devanagari,
+    `?lang=hi` alias, `Accept-Language` header, `?lang=bengali` → english fallback).
+- [~] Central static catalog — `CATALOG` in `app/core/i18n.py` seeded with
+  `user_router` strings (en/hi/hinglish). Still to do: extend across all routers
+  and merge with `report_translator.TRANSLATIONS`
   (re-keyed to canonical codes) **or** new `app/services/i18n_catalog.py`
   (`{key: {lang: text}}`). ONE catalog only.
 - [ ] `preferred_language` column on `User` + `AstrologerProfile` (+ migration).
@@ -46,11 +51,12 @@ Each router: add `lang: str = Depends(get_lang)`, replace `detail=`/`message`
 literals with `t(...)`, localize any labels/metadata, run the response localizer
 on analysis payloads. **Do not translate `status`/enum/ID values.**
 
-- [ ] **`user_router.py`** — auth/profile/wallet. Errors `:85` "Email already
-  registered", `:118` "Invalid email or password", `:120` "Account is
-  deactivated", `:200` "Invalid or expired reset token", `:263` "Incorrect
-  current password". Messages `:429` "₹{amount} added to wallet", `:540/:550/:567`
-  save/update confirmations.
+- [x] **`user_router.py`** — **DONE (PoC).** All auth `detail=` errors, the
+  `MessageResponse` messages (forgot/reset/change/deactivate), wallet recharge
+  message, wallet txn labels (`wallet_label`), and saved-astrologer messages now
+  route through `get_lang`+`t`/`wallet_label`. en/hi/hinglish populated in
+  `CATALOG`; other 9 languages fall back to english (translator backfill pending).
+  *(Also renamed the wallet loop var `t`→`txn` to free the `t()` translator name.)*
 - [ ] **`astrologer_router.py`** — 67 return/raise sites; auth-error family +
   profile field messages.
 - [ ] **`service_router.py`** — pricing names/descriptions, service labels,

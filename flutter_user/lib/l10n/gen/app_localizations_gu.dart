@@ -69,6 +69,15 @@ class AppLocalizationsGu extends AppLocalizations {
   String get forgotPassword => 'પાસવર્ડ ભૂલી ગયા?';
 
   @override
+  String get forgotPasswordSubtitle => 'Enter your email and we\'ll send you\na link to reset your password.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'Resend Link';
+
+  @override
   String get sendResetLink => 'રીસેટ લિંક મોકલો';
 
   @override

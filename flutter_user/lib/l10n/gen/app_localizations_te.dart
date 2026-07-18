@@ -69,6 +69,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get forgotPassword => 'పాస్‌వర్డ్ మర్చిపోయారా?';
 
   @override
+  String get forgotPasswordSubtitle => 'Enter your email and we\'ll send you\na link to reset your password.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'Resend Link';
+
+  @override
   String get sendResetLink => 'రీసెట్ లింక్ పంపు';
 
   @override

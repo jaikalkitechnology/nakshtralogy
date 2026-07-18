@@ -1,5 +1,8 @@
 {
   "@@locale": "ta",
+  "forgotPasswordSubtitle": "Enter your email and we'll send you\na link to reset your password.",
+  "emailHint": "your@email.com",
+  "resendLink": "Resend Link",
   "appName": "நக்ஷத்ரலாஜி",
   "cosmicJourneyAwaits": "உங்கள் அண்டப் பயணம் காத்திருக்கிறது",
 

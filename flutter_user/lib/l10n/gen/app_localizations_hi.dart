@@ -69,6 +69,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get forgotPasswordSubtitle => 'अपना ईमेल दर्ज करें और हम आपको पासवर्ड\nरीसेट करने के लिए एक लिंक भेजेंगे।';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'लिंक दोबारा भेजें';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override

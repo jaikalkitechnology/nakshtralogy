@@ -69,6 +69,15 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get forgotPasswordSubtitle => 'Apna email daalein — hum aapko password\nreset karne ke liye link bhejenge.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'Link dobara bhejein';
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override

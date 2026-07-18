@@ -70,6 +70,15 @@ class AppLocalizationsMl extends AppLocalizations {
   String get forgotPassword => 'പാസ്‌വേഡ് മറന്നോ?';
 
   @override
+  String get forgotPasswordSubtitle => 'Enter your email and we\'ll send you\na link to reset your password.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'Resend Link';
+
+  @override
   String get sendResetLink => 'റീസെറ്റ് ലിങ്ക് അയയ്ക്കുക';
 
   @override

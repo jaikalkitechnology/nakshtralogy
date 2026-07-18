@@ -36,6 +36,13 @@ kn=kannada, ml=malayalam, gu=gujarati, mr=marathi, pa=punjabi`.
 ## 3. Pending — titles / labels / names to externalize
 
 ### Priority A — fully un-localized files (~28)
+- [x] `screens/auth/forgot_password_screen.dart` — **DONE (PoC).** Reused existing
+      keys (`forgotPassword`, `email`, `backToSignIn`, `sendResetLink`,
+      `validEmailRequired`); added 3 new keys (`forgotPasswordSubtitle`,
+      `emailHint`, `resendLink`) to all 11 ARBs + regenerated delegates.
+      **TODO(l10n) backfill:** `forgotPasswordSubtitle` + `resendLink` are English
+      interim in bn/ta/te/kn/ml/gu/mr/pa (2 keys × 8 langs = 16 strings) awaiting
+      a translator. (`emailHint` is a universal example address — no translation.)
 - [ ] `screens/ai/ai_specialist_chat_screen.dart` — ~25 literals; **also hardcoded
       language menu at `:364-372`** ("English", "हिंदी Hindi", "বাংলা Bengali"…) →
       drive from the picker's native-name list, not literals; hint `:549`

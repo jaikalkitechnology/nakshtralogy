@@ -1,5 +1,8 @@
 {
   "@@locale": "hi_Latn",
+  "forgotPasswordSubtitle": "Apna email daalein — hum aapko password\nreset karne ke liye link bhejenge.",
+  "emailHint": "your@email.com",
+  "resendLink": "Link dobara bhejein",
   "appName": "Nakshatralogy",
   "cosmicJourneyAwaits": "Aapki Cosmic Journey Shuru Hoti Hai",
 
