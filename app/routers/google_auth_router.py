@@ -30,6 +30,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token
+from app.core.i18n import get_lang, t
 from app.models.model import User, Wallet, RefreshToken, PlatformSetting
 
 router = APIRouter()
@@ -39,18 +40,17 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 
-def _get_google_settings(db: Session, role: str) -> dict:
+def _get_google_settings(db: Session, role: str, lang: str = "english") -> dict:
     """Load Google OAuth credentials for a role from platform_settings."""
     if role not in ("user", "astrologer"):
-        raise HTTPException(status_code=400, detail="role must be 'user' or 'astrologer'")
+        raise HTTPException(status_code=400, detail=t("err.invalid_role", lang))
     category = f"google_auth_{'astro' if role == 'astrologer' else 'user'}"
     rows = db.query(PlatformSetting).filter(PlatformSetting.category == category).all()
     config = {r.key: r.value for r in rows}
     if not config.get("client_id") or not config.get("client_secret"):
         raise HTTPException(
             status_code=500,
-            detail=f"Google OAuth not configured for {role}. "
-                   f"Set client_id and client_secret in admin settings → {category}.",
+            detail=t("err.google_oauth_not_configured", lang, role=role, category=category),
         )
     return config
 
@@ -59,9 +59,10 @@ def _get_google_settings(db: Session, role: str) -> dict:
 def get_google_login_url(
     role: str = Query("user", description="user | astrologer"),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Build the Google OAuth consent URL for the given role."""
-    cfg = _get_google_settings(db, role)
+    cfg = _get_google_settings(db, role, lang)
     redirect_uri = cfg.get("redirect_uri") or "https://api.nakshatralogy.com/api/v1/google/callback"
     state = f"{role}:{pysecrets.token_urlsafe(16)}"
 
@@ -92,6 +93,7 @@ async def google_callback(
     state: Optional[str] = None,
     error: Optional[str] = None,
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """
     Handle the OAuth redirect from Google, exchange code for tokens,
@@ -103,7 +105,7 @@ async def google_callback(
             status_code=302,
         )
     if not code:
-        raise HTTPException(status_code=400, detail="Missing authorization code")
+        raise HTTPException(status_code=400, detail=t("err.missing_auth_code", lang))
 
     # state format "role:random"
     role = "user"
@@ -112,7 +114,7 @@ async def google_callback(
         if role_part in ("user", "astrologer"):
             role = role_part
 
-    cfg = _get_google_settings(db, role)
+    cfg = _get_google_settings(db, role, lang)
     redirect_uri = cfg.get("redirect_uri") or "https://api.nakshatralogy.com/api/v1/google/callback"
 
     # Exchange code for access_token
@@ -130,12 +132,12 @@ async def google_callback(
         if token_resp.status_code != 200:
             raise HTTPException(
                 status_code=400,
-                detail=f"Google token exchange failed: {token_resp.text}",
+                detail=t("err.google_token_exchange_failed", lang, detail=token_resp.text),
             )
         token_data = token_resp.json()
         access_token = token_data.get("access_token")
         if not access_token:
-            raise HTTPException(status_code=400, detail="No access_token in Google response")
+            raise HTTPException(status_code=400, detail=t("err.no_google_access_token", lang))
 
         # Get user profile
         profile_resp = await client.get(
@@ -145,14 +147,14 @@ async def google_callback(
         if profile_resp.status_code != 200:
             raise HTTPException(
                 status_code=400,
-                detail=f"Failed to fetch Google user info: {profile_resp.text}",
+                detail=t("err.google_userinfo_failed", lang, detail=profile_resp.text),
             )
         profile = profile_resp.json()
 
     google_id = profile.get("sub")
     email = profile.get("email")
     if not email or not google_id:
-        raise HTTPException(status_code=400, detail="Google profile missing email or sub")
+        raise HTTPException(status_code=400, detail=t("err.google_profile_incomplete", lang))
 
     # Find or create user
     user = db.query(User).filter(User.google_id == google_id).first()

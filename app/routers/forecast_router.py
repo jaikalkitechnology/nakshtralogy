@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.i18n import get_lang, t
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 
@@ -43,13 +44,14 @@ def daily_forecast(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """Today's probability forecast for a birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang))
 
     try:
         t0 = time.time()
@@ -63,11 +65,11 @@ def daily_forecast(
                 "meta": {"engine": "daily_forecast_v1", "chart_name": chart.name, "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
         logger.error("Daily forecast error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Forecast failed: {e}")
+        raise HTTPException(500, t("err.forecast_failed", lang, error=str(e)))
 
 
 @router.get("/rashi")
-def rashi_standalone():
+def rashi_standalone(lang: str = Depends(get_lang)):
     """12 Rashi analysis — standalone (no chart needed)."""
     try:
         t0 = time.time()
@@ -78,7 +80,7 @@ def rashi_standalone():
                 "meta": {"engine": "twelve_rashi_v1", "mode": "standalone", "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
         logger.error("Rashi standalone error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Rashi analysis failed: {e}")
+        raise HTTPException(500, t("err.rashi_analysis_failed", lang, error=str(e)))
 
 
 @router.get("/rashi/{chart_id}")
@@ -86,13 +88,14 @@ def rashi_personalized(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """12 Rashi analysis — personalized to birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang))
 
     try:
         t0 = time.time()
@@ -108,4 +111,4 @@ def rashi_personalized(
                          "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
         logger.error("Rashi personalized error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Rashi analysis failed: {e}")
+        raise HTTPException(500, t("err.rashi_analysis_failed", lang, error=str(e)))

@@ -12,6 +12,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.dependencies import get_current_user
+from app.core.i18n import get_lang, t
 from app.models.model import User
 from app.ai_config import ai_cache
 
@@ -78,10 +79,13 @@ def get_all_questions(lang: str = "english"):
 
 
 @router.post("/reload")
-def reload_cache(current_user: User = Depends(get_current_user)):
+def reload_cache(
+    current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang),
+):
     """Hot-reload AI config from DB. Admin only."""
     if current_user.role not in ("admin",):
-        raise HTTPException(403, "Admin only")
+        raise HTTPException(403, t("err.admin_only", lang))
     ai_cache.reload()
     from app.ai_config.question_matcher import load_questions
     from app.ai_config.template_resolver import load_templates
@@ -96,10 +100,13 @@ def reload_cache(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/seed")
-def run_seed(current_user: User = Depends(get_current_user)):
+def run_seed(
+    current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang),
+):
     """Run AI config seed and reload cache. Admin only."""
     if current_user.role not in ("admin",):
-        raise HTTPException(403, "Admin only")
+        raise HTTPException(403, t("err.admin_only", lang))
     from app.seeds.seed_ai_config import run
     run()
     ai_cache.reload()
