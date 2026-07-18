@@ -55,15 +55,16 @@ class _BizState extends State<BusinessReportScreen> {
   ]));
 
   Widget _report() {
+    final l = AppLocalizations.of(context)!;
     final d = _d!;
     return CustomScrollView(slivers: [
       SliverAppBar(backgroundColor: const Color(0xFF0A0A24), pinned: true,
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
         title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
           Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
-          const Text.rich(TextSpan(children: [
-            TextSpan(text: 'Business ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-            TextSpan(text: '& Startup', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+          Text.rich(TextSpan(children: [
+            TextSpan(text: '${l.businessWord} ', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
+            TextSpan(text: l.startupSuffix, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
           ])),
         ]),
         centerTitle: true,
@@ -86,23 +87,24 @@ class _BizState extends State<BusinessReportScreen> {
     final h11 = _n(d, 'eleventh_house_strength_score');
     final gains = _n(d, 'gains_potential_score');
     final investor = _n(d, 'investor_attraction_score');
+    final l = AppLocalizations.of(context)!;
     return Container(margin: const EdgeInsets.fromLTRB(16, 12, 16, 12), padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.10), AppColors.saffron.withOpacity(0.04)]),
         borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _label('⚡ CORE BUSINESS SCORES'),
+        _label('⚡ ${l.coreBusinessScores}'),
         const SizedBox(height: 14),
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _ring(overall, 'OVERALL\nBUSINESS', AppColors.gold),
-          _ring(entre, 'ENTREPRE-\nNEURSHIP', AppColors.aurora),
-          _ring(venture, 'VENTURE\nSUCCESS', AppColors.cosmicPink),
+          _ring(overall, l.overallBusiness, AppColors.gold),
+          _ring(entre, l.entrepreneurship.toUpperCase(), AppColors.aurora),
+          _ring(venture, l.ventureSuccess, AppColors.cosmicPink),
         ]),
         const SizedBox(height: 14),
         Container(padding: const EdgeInsets.only(top: 10),
           decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.2), width: 0.5))),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _mini(h11, '11TH HOUSE'), _mini(gains, 'GAINS'), _mini(investor, 'INVESTOR'),
+            _mini(h11, l.eleventhHouse), _mini(gains, l.gains), _mini(investor, l.investor),
           ])),
       ]));
   }
@@ -111,14 +113,15 @@ class _BizState extends State<BusinessReportScreen> {
   Widget _founderArchetype(Map d) {
     final arch = d['founder_archetype']?.toString() ?? '';
     if (arch.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Founder', 'Archetype', '1 KEY'),
+      _secH(l.hdrFounderArchetype, '', '1 KEY'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.cosmicPink.withOpacity(0.15), const Color(0xFF4A3B8C).withOpacity(0.15)]),
           borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('PRIMARY ARCHETYPE', style: TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          Text(l.primaryArchetype, style: const TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           Text(_tc(arch), style: const TextStyle(color: AppColors.ivory, fontSize: 22, fontWeight: FontWeight.w600, fontFamily: 'serif')),
           const SizedBox(height: 8),
@@ -130,8 +133,9 @@ class _BizState extends State<BusinessReportScreen> {
 
   // ═══ KARAKAS ═══
   Widget _karakas(Map d) {
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Jaimini', 'Karakas', '8 KEYS'),
+      _secH(l.jaiminiKarakas, '', '8 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
           Expanded(child: _karakaCard('AMATYAKARAKA', d['amatyakaraka_planet']?.toString() ?? '—',
@@ -168,8 +172,9 @@ class _BizState extends State<BusinessReportScreen> {
 
   // ═══ 10TH + 11TH HOUSES ═══
   Widget _houses(Map d) {
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('10th & 11th', 'Houses', '22 KEYS'),
+      _secH(l.hdrTenthEleventhHouses, '', '22 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
           Expanded(child: _houseCard('10TH · KARMA',
@@ -215,8 +220,9 @@ class _BizState extends State<BusinessReportScreen> {
     final d9 = (d['d9_validation'] as Map?)?.cast<String, dynamic>() ?? {};
     final d60 = (d['d60_validation'] as Map?)?.cast<String, dynamic>() ?? {};
     if (d10.isEmpty && d11.isEmpty && d9.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Divisional', 'Validation', 'D10·D11·D9·D60'),
+      _secH(l.hdrDivisionalValidation, '', 'D10·D11·D9·D60'),
       if (d10.isNotEmpty) _divCard('D-10 KARMA', [
         ['10L', d10['d10_10_lord_dignity']], ['AK', d10['d10_amatyakaraka_dignity']],
         ['DK', d10['d10_darakaraka_dignity']], ['Sun', d10['d10_sun_dignity']],
@@ -245,7 +251,7 @@ class _BizState extends State<BusinessReportScreen> {
         if (verdict != null) ...[const SizedBox(height: 6),
           Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.08), borderRadius: BorderRadius.circular(6)),
-            child: Row(children: [const Text('VERDICT', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
+            child: Row(children: [Text(AppLocalizations.of(context)!.verdict, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
               const Spacer(), Text(verdict.toString().toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700))]))],
         if (notes != null) ...[const SizedBox(height: 4),
           Text(notes, style: const TextStyle(color: AppColors.lavender, fontSize: 9, fontStyle: FontStyle.italic), maxLines: 3)],
@@ -282,8 +288,9 @@ class _BizState extends State<BusinessReportScreen> {
       {'name': 'Raja Yoga', 'present': raja}, {'name': 'Budha Aditya', 'present': ba},
       {'name': 'Chandra Mangal', 'present': cm},
     ];
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Business', 'Yogas', '${gift.length + test.length + 5} KEYS'),
+      _secH(l.hdrBusinessYogas, '', '${gift.length + test.length + 5} KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Wrap(spacing: 6, runSpacing: 6, children: all.map((y) {
           final present = y['present'] as bool;
@@ -304,8 +311,9 @@ class _BizState extends State<BusinessReportScreen> {
   Widget _domains(Map d) {
     final list = (d['recommended_business_types'] as List?) ?? [];
     if (list.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Recommended', 'Domains', 'TOP ${list.length}'),
+      _secH(l.hdrRecommendedDomains, '', 'TOP ${list.length}'),
       ...list.take(5).toList().asMap().entries.map((e) {
         final i = e.key; final item = (e.value as Map).cast<String, dynamic>();
         final domain = _tc(item['domain']?.toString() ?? '');
@@ -346,8 +354,9 @@ class _BizState extends State<BusinessReportScreen> {
       ['PARTNERSHIP MODE', d['solo_vs_partnership_signature']],
     ].where((r) => r[1] != null).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Business', 'Style', '${rows.length} KEYS'),
+      _secH(l.hdrBusinessStyle, '', '${rows.length} KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.gold.withOpacity(0.15))),
@@ -372,8 +381,9 @@ class _BizState extends State<BusinessReportScreen> {
       ['Operational Discipline', _n(d, 'operational_discipline_score')],
     ].where((s) => (s[1] as double) > 0).toList();
     if (skills.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Founder', 'Skills', '${skills.length} KEYS'),
+      _secH(l.hdrFounderSkills, '', '${skills.length} KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: skills.map((s) {
@@ -397,19 +407,20 @@ class _BizState extends State<BusinessReportScreen> {
     final family = _n(d, 'family_wealth_backing_score');
     final hybrid = _n(d, 'hybrid_career_business_viability_score');
     if (sig.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Funding', 'Profile', '5 KEYS'),
+      _secH(l.hdrFundingProfile, '', '5 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.aurora.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.1)]),
           borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.aurora.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('RECOMMENDED PATH', style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          Text(l.recommendedPath, style: const TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Text(_tc(sig), style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600, fontFamily: 'serif')),
           const SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _mini(inv, 'INVESTOR\nATTRACT'), _mini(family, 'FAMILY\nBACKING'), _mini(hybrid, 'HYBRID\nVIABILITY'),
+            _mini(inv, l.investorAttract), _mini(family, l.familyBacking), _mini(hybrid, l.hybridViability),
           ]),
         ])),
     ]);
@@ -420,10 +431,11 @@ class _BizState extends State<BusinessReportScreen> {
     final launch = (d['entrepreneurship_launch_windows'] as List?) ?? [];
     final scale = (d['scale_growth_windows'] as List?) ?? [];
     if (launch.isEmpty && scale.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Timing', 'Windows', '${launch.length + scale.length} ENTRIES'),
-      ...launch.take(3).map((w) => _windowCard(w, 'Launch Window', '→', AppColors.aurora)),
-      ...scale.take(3).map((w) => _windowCard(w, 'Scale Window', '★', AppColors.gold)),
+      _secH(l.timingWindows, '', '${launch.length + scale.length} ENTRIES'),
+      ...launch.take(3).map((w) => _windowCard(w, l.launchWindow, '→', AppColors.aurora)),
+      ...scale.take(3).map((w) => _windowCard(w, l.scaleWindow, '★', AppColors.gold)),
     ]);
   }
 
@@ -448,8 +460,9 @@ class _BizState extends State<BusinessReportScreen> {
     final burnout = _n(d, 'burnout_risk_score'); final financial = _n(d, 'financial_loss_risk_score');
     final team = _n(d, 'team_conflict_risk_score'); final legal = _n(d, 'legal_regulatory_risk_score');
     final recovery = _n(d, 'failure_recovery_capacity_score');
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Business', 'Risks', '5 KEYS'),
+      _secH(l.hdrBusinessRisks, '', '5 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.warning.withOpacity(0.2))),
@@ -459,7 +472,7 @@ class _BizState extends State<BusinessReportScreen> {
           const SizedBox(height: 6),
           Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(
             color: AppColors.success.withOpacity(0.08), borderRadius: BorderRadius.circular(6)),
-            child: Row(children: [const Text('RECOVERY CAPACITY', style: TextStyle(color: AppColors.success, fontSize: 8, fontFamily: 'monospace')),
+            child: Row(children: [Text(l.recoveryCapacity, style: const TextStyle(color: AppColors.success, fontSize: 8, fontFamily: 'monospace')),
               const Spacer(), Text('${recovery.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.success, fontSize: 13, fontWeight: FontWeight.w700))])),
         ])),
     ]);
@@ -481,8 +494,9 @@ class _BizState extends State<BusinessReportScreen> {
     final astro = (d['astrological_remedies'] as List?) ?? [];
     final practical = (d['practical_solutions'] as List?) ?? [];
     if (astro.isEmpty && practical.isEmpty) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Remedies &', 'Solutions', '${astro.length + practical.length} KEYS'),
+      _secH(l.hdrRemediesSolutions, '', '${astro.length + practical.length} KEYS'),
       ...astro.take(4).map((r) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.gold.withOpacity(0.2))),
@@ -495,7 +509,7 @@ class _BizState extends State<BusinessReportScreen> {
         ]))),
       if (practical.isNotEmpty) ...[
         Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
-          child: Text('PRACTICAL SOLUTIONS', style: TextStyle(color: AppColors.aurora, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+          child: Text(l.practicalSolutions.toUpperCase(), style: const TextStyle(color: AppColors.aurora, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
         ...practical.take(4).map((p) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: AppColors.aurora.withOpacity(0.08), borderRadius: BorderRadius.circular(10)),
           child: Text(p.toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)))),
@@ -509,8 +523,9 @@ class _BizState extends State<BusinessReportScreen> {
     final pct = raw <= 1.0 ? raw * 100 : raw;
     final stmt = d['plain_statement']?.toString() ?? '';
     final bd = (d['confidence_breakdown'] as Map?)?.cast<String, dynamic>() ?? {};
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
-      _secH('Analysis', 'Confidence', 'QUALITY'),
+      _secH(l.analysisConfidence, '', 'QUALITY'),
       Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 12), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [AppColors.aurora.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.15)]),
@@ -524,8 +539,8 @@ class _BizState extends State<BusinessReportScreen> {
             ])),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text('CONFIDENCE', style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace')),
-              Text(pct >= 70 ? 'High reliability' : pct >= 50 ? 'Moderate reliability' : 'Lower — guidance only',
+              Text(l.confidence, style: const TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace')),
+              Text(pct >= 70 ? l.reliabilityHigh : pct >= 50 ? l.reliabilityModerate : l.reliabilityLow,
                 style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif')),
             ])),
           ]),
@@ -546,11 +561,12 @@ class _BizState extends State<BusinessReportScreen> {
 
   // ═══ AI BAR ═══
   Widget _aiBar(Map d) {
+    final l = AppLocalizations.of(context)!;
     return Container(margin: const EdgeInsets.fromLTRB(16, 16, 16, 8), padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
       child: Column(children: [
-        _label('★ DISCUSS THIS REPORT WITH AI ★'), const SizedBox(height: 12),
+        _label('★ ${l.discussReportWithAI} ★'), const SizedBox(height: 12),
         Row(children: [
           Expanded(child: _aiBtn('G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]), () => _launchAi(d, 'chatgpt'))),
           const SizedBox(width: 8),
@@ -560,12 +576,12 @@ class _BizState extends State<BusinessReportScreen> {
         ]),
         const SizedBox(height: 10),
         GestureDetector(onTap: () { Clipboard.setData(ClipboardData(text: _prompt(d)));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report copied!'))); },
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.reportCopied))); },
           child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(Icons.copy, size: 14, color: AppColors.smoke), SizedBox(width: 6),
-              Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10))]))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.copy, size: 14, color: AppColors.smoke), const SizedBox(width: 6),
+              Text(l.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10))]))),
       ]));
   }
 
@@ -577,7 +593,7 @@ class _BizState extends State<BusinessReportScreen> {
         Container(width: 26, height: 26, decoration: BoxDecoration(gradient: g, borderRadius: BorderRadius.circular(8)),
           child: Center(child: Text(icon, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
         const SizedBox(height: 5), Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
+        Text(AppLocalizations.of(context)!.openLink, style: const TextStyle(color: AppColors.smoke, fontSize: 7, fontFamily: 'monospace')),
       ])));
 
   String _prompt(Map d) {
@@ -590,7 +606,7 @@ class _BizState extends State<BusinessReportScreen> {
   Future<void> _launchAi(Map d, String ai) async {
     await Clipboard.setData(ClipboardData(text: _prompt(d)));
     final urls = {'chatgpt': 'https://chat.openai.com/', 'claude': 'https://claude.ai/new', 'gemini': 'https://gemini.google.com/app'};
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Copied! Opening $ai...'), duration: const Duration(seconds: 3)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.copiedOpening(ai)), duration: const Duration(seconds: 3)));
     final uri = Uri.parse(urls[ai]!); if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 

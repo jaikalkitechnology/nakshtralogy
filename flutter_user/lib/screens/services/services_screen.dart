@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../theme/app_theme.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../bloc/service/service_bloc.dart';
 import '../../bloc/service/service_event.dart';
 import '../../bloc/service/service_state.dart';
@@ -27,6 +28,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
       // Category filter
       SingleChildScrollView(
@@ -35,7 +37,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
         child: Row(children: _categories.map((cat) {
           final selected = _selectedCategory == cat;
           return Padding(padding: const EdgeInsets.only(right: 8), child: FilterChip(
-            label: Text(cat == 'all' ? 'All' : cat[0].toUpperCase() + cat.substring(1), style: TextStyle(color: selected ? Colors.black : AppColors.textSecondary, fontWeight: selected ? FontWeight.w600 : FontWeight.normal)),
+            label: Text(cat == 'all' ? l.svcAll : cat[0].toUpperCase() + cat.substring(1), style: TextStyle(color: selected ? Colors.black : AppColors.textSecondary, fontWeight: selected ? FontWeight.w600 : FontWeight.normal)),
             selected: selected, selectedColor: AppColors.primary, backgroundColor: AppColors.surface,
             side: BorderSide(color: selected ? AppColors.primary : AppColors.border),
             onSelected: (_) {
@@ -57,7 +59,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
               return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                 const Text('\U0001f4dc', style: TextStyle(fontSize: 48)),
                 const SizedBox(height: 12),
-                Text('No services available', style: TextStyle(color: AppColors.textSecondary)),
+                Text(l.svcNoServices, style: const TextStyle(color: AppColors.textSecondary)),
               ]));
             }
 
@@ -88,7 +90,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(color: AppColors.success.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                                child: const Text('FREE', style: TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w600)),
+                                child: Text(l.svcFree, style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w600)),
                               )
                             else ...[
                               Text('\u20b9${price.toInt()}', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16)),

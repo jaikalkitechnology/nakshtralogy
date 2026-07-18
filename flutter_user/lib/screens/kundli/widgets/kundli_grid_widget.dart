@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// North-Indian style kundli grid — 4x4 with diamond houses.
@@ -34,6 +35,7 @@ class KundliGridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final side = size ?? MediaQuery.of(context).size.width - 32;
     final cellSize = side / 4;
 
@@ -88,7 +90,7 @@ class KundliGridWidget extends StatelessWidget {
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Icon(Icons.star, color: AppColors.primary.withOpacity(0.6), size: 28),
                 const SizedBox(height: 6),
-                Text('Lagna\n${_house(1)?['rashi_short'] ?? ''}',
+                Text('${l.lagna}\n${_house(1)?['rashi_short'] ?? ''}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w700)),
               ]),

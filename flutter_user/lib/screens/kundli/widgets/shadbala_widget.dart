@@ -20,6 +20,7 @@ class ShadbalaWidget extends StatelessWidget {
         // Sort by score
         final entries = order.where((p) => planets.containsKey(p)).map((p) => MapEntry(p, (planets[p] as Map).cast<String, dynamic>())).toList();
         entries.sort((a, b) => ((b.value['score_100'] as num?) ?? 0).compareTo((a.value['score_100'] as num?) ?? 0));
+        final l = AppLocalizations.of(ctx)!;
 
         return ListView(padding: const EdgeInsets.all(16), children: [
           Container(
@@ -28,7 +29,7 @@ class ShadbalaWidget extends StatelessWidget {
             child: Row(children: [
               const Icon(Icons.bar_chart, color: AppColors.primary, size: 22),
               const SizedBox(width: 10),
-              Expanded(child: Text('Shadbala', style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700))),
+              Expanded(child: Text(l.shadbala, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700))),
             ]),
           ),
           const SizedBox(height: 12),
@@ -49,7 +50,7 @@ class ShadbalaWidget extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(p, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14)),
-                    Text('${rupas.toStringAsFixed(2)} rupas', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                    Text('${rupas.toStringAsFixed(2)} ${l.shadbalaRupas}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                   ])),
                   Text('${score.toStringAsFixed(0)}', style: TextStyle(color: _scoreColor(score), fontSize: 20, fontWeight: FontWeight.w700)),
                   Text('/100', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),

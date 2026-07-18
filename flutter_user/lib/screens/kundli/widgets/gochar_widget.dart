@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
 import '_section_loader.dart';
@@ -24,10 +25,11 @@ class _GocharBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final rashis = (data['rashis'] as List? ?? []);
     final best = data['best']?.toString() ?? '';
     final worst = data['worst']?.toString() ?? '';
-    final date = data['date']?.toString() ?? 'Today';
+    final date = data['date']?.toString() ?? l.today;
     final moonSign = data['moon_sign']?.toString();
 
     return ListView(padding: const EdgeInsets.all(16), children: [
@@ -42,16 +44,16 @@ class _GocharBody extends StatelessWidget {
           Row(children: [
             const Icon(Icons.wb_sunny, color: AppColors.primary, size: 22),
             const SizedBox(width: 10),
-            Expanded(child: Text('Gochar (Transit Scores) \u2014 $date',
+            Expanded(child: Text(l.gocharTransitScores(date),
                 style: const TextStyle(color: AppColors.primary, fontSize: 15, fontWeight: FontWeight.w700))),
           ]),
           if (moonSign != null && moonSign.isNotEmpty)
-            Padding(padding: const EdgeInsets.only(top: 4), child: Text('Native Moon: $moonSign', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11))),
+            Padding(padding: const EdgeInsets.only(top: 4), child: Text(l.gocharNativeMoon(moonSign), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11))),
           const SizedBox(height: 10),
           Row(children: [
-            Expanded(child: _summaryChip('BEST', best, AppColors.success, Icons.arrow_upward)),
+            Expanded(child: _summaryChip(l.gocharBest, best, AppColors.success, Icons.arrow_upward)),
             const SizedBox(width: 8),
-            Expanded(child: _summaryChip('WORST', worst, AppColors.error, Icons.arrow_downward)),
+            Expanded(child: _summaryChip(l.gocharWorst, worst, AppColors.error, Icons.arrow_downward)),
           ]),
         ]),
       ),

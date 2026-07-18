@@ -235,6 +235,1266 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @careerSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Summary'**
+  String get careerSummary;
+
+  /// No description provided for @phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase'**
+  String get phase;
+
+  /// No description provided for @confidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get confidenceLabel;
+
+  /// No description provided for @careerScores.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Scores'**
+  String get careerScores;
+
+  /// No description provided for @stabilityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stability'**
+  String get stabilityLabel;
+
+  /// No description provided for @growthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth'**
+  String get growthLabel;
+
+  /// No description provided for @gradeExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get gradeExcellent;
+
+  /// No description provided for @gradeGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get gradeGood;
+
+  /// No description provided for @gradeAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get gradeAverage;
+
+  /// No description provided for @gradeBelowAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Below Avg'**
+  String get gradeBelowAvg;
+
+  /// No description provided for @gradeWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get gradeWeak;
+
+  /// No description provided for @careerTypeDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Domain'**
+  String get careerTypeDomain;
+
+  /// No description provided for @careerTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Timeline'**
+  String get careerTimeline;
+
+  /// No description provided for @dashaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha: {dasha}'**
+  String dashaLabel(Object dasha);
+
+  /// No description provided for @improvementSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Suggestions'**
+  String get improvementSuggestions;
+
+  /// No description provided for @chartDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Details'**
+  String get chartDetails;
+
+  /// No description provided for @keyHousesCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Houses (Career)'**
+  String get keyHousesCareer;
+
+  /// No description provided for @keyCareerPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Career Planets'**
+  String get keyCareerPlanets;
+
+  /// No description provided for @empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get empty;
+
+  /// No description provided for @guna.
+  ///
+  /// In en, this message translates to:
+  /// **'Guna'**
+  String get guna;
+
+  /// No description provided for @dasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha'**
+  String get dasha;
+
+  /// No description provided for @satwik.
+  ///
+  /// In en, this message translates to:
+  /// **'Satwik'**
+  String get satwik;
+
+  /// No description provided for @rajasik.
+  ///
+  /// In en, this message translates to:
+  /// **'Rajasik'**
+  String get rajasik;
+
+  /// No description provided for @tamasik.
+  ///
+  /// In en, this message translates to:
+  /// **'Tamasik'**
+  String get tamasik;
+
+  /// No description provided for @charGroupCorePersonality.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Personality'**
+  String get charGroupCorePersonality;
+
+  /// No description provided for @charGroupTrustHonesty.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust & Honesty'**
+  String get charGroupTrustHonesty;
+
+  /// No description provided for @charGroupLoyaltyCommitment.
+  ///
+  /// In en, this message translates to:
+  /// **'Loyalty & Commitment'**
+  String get charGroupLoyaltyCommitment;
+
+  /// No description provided for @charGroupStrategicPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Strategic & Privacy'**
+  String get charGroupStrategicPrivacy;
+
+  /// No description provided for @charGroupFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial'**
+  String get charGroupFinancial;
+
+  /// No description provided for @charGroupAngerConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Anger & Conflict'**
+  String get charGroupAngerConflict;
+
+  /// No description provided for @charGroupMoralDharmic.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral & Dharmic'**
+  String get charGroupMoralDharmic;
+
+  /// No description provided for @charGroupIntellectCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Intellect & Communication'**
+  String get charGroupIntellectCommunication;
+
+  /// No description provided for @charGroupEmotionalProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Profile'**
+  String get charGroupEmotionalProfile;
+
+  /// No description provided for @charGroupMentalHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Health'**
+  String get charGroupMentalHealth;
+
+  /// No description provided for @charGroupRomantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Romantic'**
+  String get charGroupRomantic;
+
+  /// No description provided for @charGroupMarriageFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage & Family'**
+  String get charGroupMarriageFamily;
+
+  /// No description provided for @charGroupOverallLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Life'**
+  String get charGroupOverallLife;
+
+  /// No description provided for @grahaDrishti.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha Drishti (Planet Aspects)'**
+  String get grahaDrishti;
+
+  /// No description provided for @grahaDrishtiSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who aspects whom (%)'**
+  String get grahaDrishtiSubtitle;
+
+  /// No description provided for @lagnaAspectsReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna Aspects Received'**
+  String get lagnaAspectsReceived;
+
+  /// No description provided for @rashiDrishti.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi Drishti (Sign Aspects)'**
+  String get rashiDrishti;
+
+  /// No description provided for @shadbalaRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'rupas'**
+  String get shadbalaRupas;
+
+  /// No description provided for @bhavaHouse1.
+  ///
+  /// In en, this message translates to:
+  /// **'Self / Body'**
+  String get bhavaHouse1;
+
+  /// No description provided for @bhavaHouse2.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth / Family'**
+  String get bhavaHouse2;
+
+  /// No description provided for @bhavaHouse3.
+  ///
+  /// In en, this message translates to:
+  /// **'Siblings / Courage'**
+  String get bhavaHouse3;
+
+  /// No description provided for @bhavaHouse4.
+  ///
+  /// In en, this message translates to:
+  /// **'Home / Mother'**
+  String get bhavaHouse4;
+
+  /// No description provided for @bhavaHouse5.
+  ///
+  /// In en, this message translates to:
+  /// **'Children / Intellect'**
+  String get bhavaHouse5;
+
+  /// No description provided for @bhavaHouse6.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemies / Health'**
+  String get bhavaHouse6;
+
+  /// No description provided for @bhavaHouse7.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage / Partner'**
+  String get bhavaHouse7;
+
+  /// No description provided for @bhavaHouse8.
+  ///
+  /// In en, this message translates to:
+  /// **'Longevity'**
+  String get bhavaHouse8;
+
+  /// No description provided for @bhavaHouse9.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortune / Guru'**
+  String get bhavaHouse9;
+
+  /// No description provided for @bhavaHouse10.
+  ///
+  /// In en, this message translates to:
+  /// **'Career / Father'**
+  String get bhavaHouse10;
+
+  /// No description provided for @bhavaHouse11.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains / Friends'**
+  String get bhavaHouse11;
+
+  /// No description provided for @bhavaHouse12.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss / Moksha'**
+  String get bhavaHouse12;
+
+  /// No description provided for @bhavaSignLord.
+  ///
+  /// In en, this message translates to:
+  /// **'{sign} • Lord: {lord}'**
+  String bhavaSignLord(Object sign, Object lord);
+
+  /// No description provided for @bhavaSav.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV: {value}'**
+  String bhavaSav(Object value);
+
+  /// No description provided for @sarvaAshtakavarga.
+  ///
+  /// In en, this message translates to:
+  /// **'Sarva Ashtakavarga (SAV)'**
+  String get sarvaAshtakavarga;
+
+  /// No description provided for @savSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {total} rekhas (average sign = {avg})'**
+  String savSubtitle(Object total, Object avg);
+
+  /// No description provided for @ashtakavargaBav.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} — BAV'**
+  String ashtakavargaBav(Object planet);
+
+  /// No description provided for @bavSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {total} rekhas • At natal sign: {score}'**
+  String bavSubtitle(Object total, Object score);
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @gocharTransitScores.
+  ///
+  /// In en, this message translates to:
+  /// **'Gochar (Transit Scores) — {date}'**
+  String gocharTransitScores(Object date);
+
+  /// No description provided for @gocharNativeMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Native Moon: {sign}'**
+  String gocharNativeMoon(Object sign);
+
+  /// No description provided for @gocharBest.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST'**
+  String get gocharBest;
+
+  /// No description provided for @gocharWorst.
+  ///
+  /// In en, this message translates to:
+  /// **'WORST'**
+  String get gocharWorst;
+
+  /// No description provided for @copiedOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied! Opening {ai}...'**
+  String copiedOpening(Object ai);
+
+  /// No description provided for @openLink.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN ↗'**
+  String get openLink;
+
+  /// No description provided for @discussReportWithAI.
+  ///
+  /// In en, this message translates to:
+  /// **'DISCUSS THIS REPORT WITH AI'**
+  String get discussReportWithAI;
+
+  /// No description provided for @reliabilityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High reliability'**
+  String get reliabilityHigh;
+
+  /// No description provided for @reliabilityModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate reliability'**
+  String get reliabilityModerate;
+
+  /// No description provided for @reliabilityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower — guidance only'**
+  String get reliabilityLow;
+
+  /// No description provided for @reliabilityGoodEdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Good reliability · D-24 verified'**
+  String get reliabilityGoodEdu;
+
+  /// No description provided for @relationshipWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship'**
+  String get relationshipWord;
+
+  /// No description provided for @intelligenceWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Intelligence'**
+  String get intelligenceWord;
+
+  /// No description provided for @relationshipIntelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'RELATIONSHIP INTELLIGENCE'**
+  String get relationshipIntelligence;
+
+  /// No description provided for @typeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TYPE'**
+  String get typeLabel;
+
+  /// No description provided for @trustLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TRUST'**
+  String get trustLabel;
+
+  /// No description provided for @dhokaRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'DHOKA RISK'**
+  String get dhokaRisk;
+
+  /// No description provided for @powerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Power'**
+  String get powerLabel;
+
+  /// No description provided for @integrity.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity'**
+  String get integrity;
+
+  /// No description provided for @warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Warmth'**
+  String get warmth;
+
+  /// No description provided for @trustWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust'**
+  String get trustWord;
+
+  /// No description provided for @assertLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assert'**
+  String get assertLabel;
+
+  /// No description provided for @character.
+  ///
+  /// In en, this message translates to:
+  /// **'Character'**
+  String get character;
+
+  /// No description provided for @love.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get love;
+
+  /// No description provided for @businessWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get businessWord;
+
+  /// No description provided for @karmic.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic'**
+  String get karmic;
+
+  /// No description provided for @enmityRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Enmity Risk'**
+  String get enmityRisk;
+
+  /// No description provided for @hdrChartProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Profiles'**
+  String get hdrChartProfiles;
+
+  /// No description provided for @hdrPairwiseAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairwise Analysis'**
+  String get hdrPairwiseAnalysis;
+
+  /// No description provided for @hdrCriticalPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Patterns'**
+  String get hdrCriticalPatterns;
+
+  /// No description provided for @hdrGroupRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Recommendations'**
+  String get hdrGroupRecommendations;
+
+  /// No description provided for @sharedPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'SHARED PRACTICES'**
+  String get sharedPractices;
+
+  /// No description provided for @hdrIndividualGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual Guidance'**
+  String get hdrIndividualGuidance;
+
+  /// No description provided for @growthAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'GROWTH AREAS'**
+  String get growthAreas;
+
+  /// No description provided for @hdrCoreTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Theme'**
+  String get hdrCoreTheme;
+
+  /// No description provided for @growthOriented.
+  ///
+  /// In en, this message translates to:
+  /// **'GROWTH-ORIENTED'**
+  String get growthOriented;
+
+  /// No description provided for @groupTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'GROUP THEME'**
+  String get groupTheme;
+
+  /// No description provided for @compatibility.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPATIBILITY'**
+  String get compatibility;
+
+  /// No description provided for @unifiedScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'UNIFIED SCORE'**
+  String get unifiedScoreLabel;
+
+  /// No description provided for @ashtakoot.
+  ///
+  /// In en, this message translates to:
+  /// **'ASHTAKOOT'**
+  String get ashtakoot;
+
+  /// No description provided for @probability.
+  ///
+  /// In en, this message translates to:
+  /// **'PROBABILITY'**
+  String get probability;
+
+  /// No description provided for @hdrAshtakootSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakoot Summary'**
+  String get hdrAshtakootSummary;
+
+  /// No description provided for @hdrGunBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'8 Gun Breakdown'**
+  String get hdrGunBreakdown;
+
+  /// No description provided for @hdrMangalDosh.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal Dosh'**
+  String get hdrMangalDosh;
+
+  /// No description provided for @hdrD9CrossChart.
+  ///
+  /// In en, this message translates to:
+  /// **'D-9 Cross-Chart'**
+  String get hdrD9CrossChart;
+
+  /// No description provided for @d9Compatibility.
+  ///
+  /// In en, this message translates to:
+  /// **'D-9 COMPATIBILITY'**
+  String get d9Compatibility;
+
+  /// No description provided for @hdrDomainCompatibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain Compatibility'**
+  String get hdrDomainCompatibility;
+
+  /// No description provided for @emotional.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional'**
+  String get emotional;
+
+  /// No description provided for @intellectual.
+  ///
+  /// In en, this message translates to:
+  /// **'Intellectual'**
+  String get intellectual;
+
+  /// No description provided for @spiritual.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual'**
+  String get spiritual;
+
+  /// No description provided for @financial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial'**
+  String get financial;
+
+  /// No description provided for @domestic.
+  ///
+  /// In en, this message translates to:
+  /// **'Domestic'**
+  String get domestic;
+
+  /// No description provided for @communicationWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get communicationWord;
+
+  /// No description provided for @sharedDharma.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Dharma'**
+  String get sharedDharma;
+
+  /// No description provided for @familyCreation.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Creation'**
+  String get familyCreation;
+
+  /// No description provided for @hdrMarriageTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Timing'**
+  String get hdrMarriageTiming;
+
+  /// No description provided for @jointMarriageWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Joint Marriage Windows'**
+  String get jointMarriageWindows;
+
+  /// No description provided for @engagementWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Engagement Windows'**
+  String get engagementWindows;
+
+  /// No description provided for @recommendedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recommendedLabel;
+
+  /// No description provided for @hdrKeyRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Risks'**
+  String get hdrKeyRisks;
+
+  /// No description provided for @hdrFinalVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Verdict'**
+  String get hdrFinalVerdict;
+
+  /// No description provided for @marriageVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'MARRIAGE VERDICT'**
+  String get marriageVerdict;
+
+  /// No description provided for @educationWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get educationWord;
+
+  /// No description provided for @learningSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'& Learning'**
+  String get learningSuffix;
+
+  /// No description provided for @coreEducationScores.
+  ///
+  /// In en, this message translates to:
+  /// **'CORE EDUCATION SCORES'**
+  String get coreEducationScores;
+
+  /// No description provided for @academicSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'ACADEMIC SUCCESS'**
+  String get academicSuccess;
+
+  /// No description provided for @learningCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'LEARNING CAPACITY'**
+  String get learningCapacity;
+
+  /// No description provided for @memory.
+  ///
+  /// In en, this message translates to:
+  /// **'MEMORY'**
+  String get memory;
+
+  /// No description provided for @intelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'INTELLIGENCE'**
+  String get intelligence;
+
+  /// No description provided for @research.
+  ///
+  /// In en, this message translates to:
+  /// **'RESEARCH'**
+  String get research;
+
+  /// No description provided for @hdrIntellectualProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Intellectual Profile'**
+  String get hdrIntellectualProfile;
+
+  /// No description provided for @learningSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'LEARNING SIGNATURE'**
+  String get learningSignature;
+
+  /// No description provided for @hdrSubjectKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject Karaka'**
+  String get hdrSubjectKaraka;
+
+  /// No description provided for @hdrHouseFoundations.
+  ///
+  /// In en, this message translates to:
+  /// **'House Foundations'**
+  String get hdrHouseFoundations;
+
+  /// No description provided for @hdrMercuryJupiter.
+  ///
+  /// In en, this message translates to:
+  /// **'Mercury & Jupiter'**
+  String get hdrMercuryJupiter;
+
+  /// No description provided for @hdrEducationYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Yogas'**
+  String get hdrEducationYogas;
+
+  /// No description provided for @hdrDivisionalValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisional Validation'**
+  String get hdrDivisionalValidation;
+
+  /// No description provided for @standing.
+  ///
+  /// In en, this message translates to:
+  /// **'STANDING'**
+  String get standing;
+
+  /// No description provided for @hdrSubjectRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject Ranking'**
+  String get hdrSubjectRanking;
+
+  /// No description provided for @hdrDegreeLikelihood.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree Likelihood'**
+  String get hdrDegreeLikelihood;
+
+  /// No description provided for @hdrStudyPeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Periods'**
+  String get hdrStudyPeriods;
+
+  /// No description provided for @earlySchooling.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Schooling'**
+  String get earlySchooling;
+
+  /// No description provided for @higherEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher Education'**
+  String get higherEducation;
+
+  /// No description provided for @postgradResearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Postgrad · Research'**
+  String get postgradResearch;
+
+  /// No description provided for @hdrLearningPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Preferences'**
+  String get hdrLearningPreferences;
+
+  /// No description provided for @hdrChallengesGifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges & Gifts'**
+  String get hdrChallengesGifts;
+
+  /// No description provided for @challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'CHALLENGES'**
+  String get challenges;
+
+  /// No description provided for @cognitiveGifts.
+  ///
+  /// In en, this message translates to:
+  /// **'COGNITIVE GIFTS'**
+  String get cognitiveGifts;
+
+  /// No description provided for @naturalAbilities.
+  ///
+  /// In en, this message translates to:
+  /// **'NATURAL ABILITIES'**
+  String get naturalAbilities;
+
+  /// No description provided for @hdrSaraswatiRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Saraswati Remedies'**
+  String get hdrSaraswatiRemedies;
+
+  /// No description provided for @studentVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'STUDENT VERDICT'**
+  String get studentVerdict;
+
+  /// No description provided for @educationCareerLinkage.
+  ///
+  /// In en, this message translates to:
+  /// **'EDUCATION → CAREER LINKAGE'**
+  String get educationCareerLinkage;
+
+  /// No description provided for @startupSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'& Startup'**
+  String get startupSuffix;
+
+  /// No description provided for @coreBusinessScores.
+  ///
+  /// In en, this message translates to:
+  /// **'CORE BUSINESS SCORES'**
+  String get coreBusinessScores;
+
+  /// No description provided for @overallBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERALL BUSINESS'**
+  String get overallBusiness;
+
+  /// No description provided for @ventureSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'VENTURE SUCCESS'**
+  String get ventureSuccess;
+
+  /// No description provided for @eleventhHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'11TH HOUSE'**
+  String get eleventhHouse;
+
+  /// No description provided for @gains.
+  ///
+  /// In en, this message translates to:
+  /// **'GAINS'**
+  String get gains;
+
+  /// No description provided for @investor.
+  ///
+  /// In en, this message translates to:
+  /// **'INVESTOR'**
+  String get investor;
+
+  /// No description provided for @hdrFounderArchetype.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder Archetype'**
+  String get hdrFounderArchetype;
+
+  /// No description provided for @hdrTenthEleventhHouses.
+  ///
+  /// In en, this message translates to:
+  /// **'10th & 11th Houses'**
+  String get hdrTenthEleventhHouses;
+
+  /// No description provided for @hdrBusinessYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Yogas'**
+  String get hdrBusinessYogas;
+
+  /// No description provided for @hdrRecommendedDomains.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Domains'**
+  String get hdrRecommendedDomains;
+
+  /// No description provided for @hdrBusinessStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Style'**
+  String get hdrBusinessStyle;
+
+  /// No description provided for @hdrFounderSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder Skills'**
+  String get hdrFounderSkills;
+
+  /// No description provided for @hdrFundingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding Profile'**
+  String get hdrFundingProfile;
+
+  /// No description provided for @recommendedPath.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOMMENDED PATH'**
+  String get recommendedPath;
+
+  /// No description provided for @investorAttract.
+  ///
+  /// In en, this message translates to:
+  /// **'INVESTOR ATTRACT'**
+  String get investorAttract;
+
+  /// No description provided for @familyBacking.
+  ///
+  /// In en, this message translates to:
+  /// **'FAMILY BACKING'**
+  String get familyBacking;
+
+  /// No description provided for @hybridViability.
+  ///
+  /// In en, this message translates to:
+  /// **'HYBRID VIABILITY'**
+  String get hybridViability;
+
+  /// No description provided for @launchWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch Window'**
+  String get launchWindow;
+
+  /// No description provided for @scaleWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Scale Window'**
+  String get scaleWindow;
+
+  /// No description provided for @hdrBusinessRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Risks'**
+  String get hdrBusinessRisks;
+
+  /// No description provided for @recoveryCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'RECOVERY CAPACITY'**
+  String get recoveryCapacity;
+
+  /// No description provided for @hdrRemediesSolutions.
+  ///
+  /// In en, this message translates to:
+  /// **'Remedies & Solutions'**
+  String get hdrRemediesSolutions;
+
+  /// No description provided for @aiConnectionLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost. Please try again.'**
+  String get aiConnectionLost;
+
+  /// No description provided for @aiSomethingWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get aiSomethingWrong;
+
+  /// No description provided for @aiNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'No response'**
+  String get aiNoResponse;
+
+  /// No description provided for @aiConnectionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection error. Please try again.'**
+  String get aiConnectionError;
+
+  /// No description provided for @aiAutoDetect.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-detect'**
+  String get aiAutoDetect;
+
+  /// No description provided for @aiAutoArrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto → {lang}'**
+  String aiAutoArrow(String lang);
+
+  /// No description provided for @aiLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language: {lang}'**
+  String aiLanguageLabel(String lang);
+
+  /// No description provided for @aiNoBirthCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'No birth charts found'**
+  String get aiNoBirthCharts;
+
+  /// No description provided for @aiCreateChartFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a birth chart first to chat with AI'**
+  String get aiCreateChartFirst;
+
+  /// No description provided for @aiSelectChartBegin.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a birth chart to begin analysis'**
+  String get aiSelectChartBegin;
+
+  /// No description provided for @aiAnalyzingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing: {name}'**
+  String aiAnalyzingName(String name);
+
+  /// No description provided for @aiChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get aiChange;
+
+  /// No description provided for @aiAnalyzingChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing your chart...'**
+  String get aiAnalyzingChart;
+
+  /// No description provided for @aiAskStarsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the stars anything...'**
+  String get aiAskStarsHint;
+
+  /// No description provided for @aiSuggestedFollowups.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested follow-ups'**
+  String get aiSuggestedFollowups;
+
+  /// No description provided for @aiThinking.
+  ///
+  /// In en, this message translates to:
+  /// **'Thinking...'**
+  String get aiThinking;
+
+  /// No description provided for @aiThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks!'**
+  String get aiThanks;
+
+  /// No description provided for @aiFeedbackNoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback noted'**
+  String get aiFeedbackNoted;
+
+  /// No description provided for @svcAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get svcAll;
+
+  /// No description provided for @svcNoServices.
+  ///
+  /// In en, this message translates to:
+  /// **'No services available'**
+  String get svcNoServices;
+
+  /// No description provided for @svcFree.
+  ///
+  /// In en, this message translates to:
+  /// **'FREE'**
+  String get svcFree;
+
+  /// No description provided for @astroFailedStartCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to start call'**
+  String get astroFailedStartCall;
+
+  /// No description provided for @astroFailedStartChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to start chat'**
+  String get astroFailedStartChat;
+
+  /// No description provided for @astroErrorDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String astroErrorDetail(String error);
+
+  /// No description provided for @astroExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get astroExperience;
+
+  /// No description provided for @astroSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get astroSessions;
+
+  /// No description provided for @astroMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get astroMinutes;
+
+  /// No description provided for @astroAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get astroAbout;
+
+  /// No description provided for @astroLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get astroLanguages;
+
+  /// No description provided for @astroRateCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Card'**
+  String get astroRateCard;
+
+  /// No description provided for @astroVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get astroVoice;
+
+  /// No description provided for @astroReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews ({count})'**
+  String astroReviews(int count);
+
+  /// No description provided for @astroNoReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get astroNoReviews;
+
+  /// No description provided for @astroAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get astroAnonymous;
+
   /// No description provided for @forgotPasswordSubtitle.
   ///
   /// In en, this message translates to:

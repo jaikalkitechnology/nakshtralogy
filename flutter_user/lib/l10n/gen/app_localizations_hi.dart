@@ -69,6 +69,664 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get careerSummary => 'करियर सारांश';
+
+  @override
+  String get phase => 'चरण';
+
+  @override
+  String get confidenceLabel => 'विश्वास';
+
+  @override
+  String get careerScores => 'करियर स्कोर';
+
+  @override
+  String get stabilityLabel => 'स्थिरता';
+
+  @override
+  String get growthLabel => 'वृद्धि';
+
+  @override
+  String get gradeExcellent => 'उत्कृष्ट';
+
+  @override
+  String get gradeGood => 'अच्छा';
+
+  @override
+  String get gradeAverage => 'औसत';
+
+  @override
+  String get gradeBelowAvg => 'औसत से नीचे';
+
+  @override
+  String get gradeWeak => 'कमज़ोर';
+
+  @override
+  String get careerTypeDomain => 'करियर प्रकार और क्षेत्र';
+
+  @override
+  String get careerTimeline => 'करियर समयरेखा';
+
+  @override
+  String dashaLabel(Object dasha) {
+    return 'दशा: ${dasha}';
+  }
+
+  @override
+  String get improvementSuggestions => 'सुधार सुझाव';
+
+  @override
+  String get chartDetails => 'कुंडली विवरण';
+
+  @override
+  String get keyHousesCareer => 'मुख्य भाव (करियर)';
+
+  @override
+  String get keyCareerPlanets => 'मुख्य करियर ग्रह';
+
+  @override
+  String get empty => 'खाली';
+
+  @override
+  String get guna => 'गुण';
+
+  @override
+  String get dasha => 'दशा';
+
+  @override
+  String get satwik => 'सात्विक';
+
+  @override
+  String get rajasik => 'राजसिक';
+
+  @override
+  String get tamasik => 'तामसिक';
+
+  @override
+  String get charGroupCorePersonality => 'मूल व्यक्तित्व';
+
+  @override
+  String get charGroupTrustHonesty => 'विश्वास और ईमानदारी';
+
+  @override
+  String get charGroupLoyaltyCommitment => 'वफ़ादारी और प्रतिबद्धता';
+
+  @override
+  String get charGroupStrategicPrivacy => 'रणनीतिक और निजता';
+
+  @override
+  String get charGroupFinancial => 'वित्तीय';
+
+  @override
+  String get charGroupAngerConflict => 'क्रोध और संघर्ष';
+
+  @override
+  String get charGroupMoralDharmic => 'नैतिक और धार्मिक';
+
+  @override
+  String get charGroupIntellectCommunication => 'बुद्धि और संचार';
+
+  @override
+  String get charGroupEmotionalProfile => 'भावनात्मक प्रोफ़ाइल';
+
+  @override
+  String get charGroupMentalHealth => 'मानसिक स्वास्थ्य';
+
+  @override
+  String get charGroupRomantic => 'रोमांटिक';
+
+  @override
+  String get charGroupMarriageFamily => 'विवाह और परिवार';
+
+  @override
+  String get charGroupOverallLife => 'समग्र जीवन';
+
+  @override
+  String get grahaDrishti => 'ग्रह दृष्टि (ग्रहों की दृष्टि)';
+
+  @override
+  String get grahaDrishtiSubtitle => 'Who aspects whom (%)';
+
+  @override
+  String get lagnaAspectsReceived => 'लग्न पर प्राप्त दृष्टि';
+
+  @override
+  String get rashiDrishti => 'राशि दृष्टि (राशियों की दृष्टि)';
+
+  @override
+  String get shadbalaRupas => 'रूप';
+
+  @override
+  String get bhavaHouse1 => 'स्वयं / शरीर';
+
+  @override
+  String get bhavaHouse2 => 'धन / परिवार';
+
+  @override
+  String get bhavaHouse3 => 'भाई-बहन / साहस';
+
+  @override
+  String get bhavaHouse4 => 'घर / माता';
+
+  @override
+  String get bhavaHouse5 => 'संतान / बुद्धि';
+
+  @override
+  String get bhavaHouse6 => 'शत्रु / स्वास्थ्य';
+
+  @override
+  String get bhavaHouse7 => 'विवाह / जीवनसाथी';
+
+  @override
+  String get bhavaHouse8 => 'आयु';
+
+  @override
+  String get bhavaHouse9 => 'भाग्य / गुरु';
+
+  @override
+  String get bhavaHouse10 => 'करियर / पिता';
+
+  @override
+  String get bhavaHouse11 => 'लाभ / मित्र';
+
+  @override
+  String get bhavaHouse12 => 'हानि / मोक्ष';
+
+  @override
+  String bhavaSignLord(Object sign, Object lord) {
+    return '${sign} • स्वामी: ${lord}';
+  }
+
+  @override
+  String bhavaSav(Object value) {
+    return 'SAV: ${value}';
+  }
+
+  @override
+  String get sarvaAshtakavarga => 'सर्व अष्टकवर्ग (SAV)';
+
+  @override
+  String savSubtitle(Object total, Object avg) {
+    return 'Total: ${total} rekhas (average sign = ${avg})';
+  }
+
+  @override
+  String ashtakavargaBav(Object planet) {
+    return '${planet} — BAV';
+  }
+
+  @override
+  String bavSubtitle(Object total, Object score) {
+    return 'Total: ${total} rekhas • At natal sign: ${score}';
+  }
+
+  @override
+  String get today => 'आज';
+
+  @override
+  String gocharTransitScores(Object date) {
+    return 'गोचर (गोचर स्कोर) — ${date}';
+  }
+
+  @override
+  String gocharNativeMoon(Object sign) {
+    return 'जातक का चंद्र: ${sign}';
+  }
+
+  @override
+  String get gocharBest => 'सर्वश्रेष्ठ';
+
+  @override
+  String get gocharWorst => 'सबसे खराब';
+
+  @override
+  String copiedOpening(Object ai) {
+    return 'Copied! Opening ${ai}...';
+  }
+
+  @override
+  String get openLink => 'OPEN ↗';
+
+  @override
+  String get discussReportWithAI => 'DISCUSS THIS REPORT WITH AI';
+
+  @override
+  String get reliabilityHigh => 'High reliability';
+
+  @override
+  String get reliabilityModerate => 'Moderate reliability';
+
+  @override
+  String get reliabilityLow => 'Lower — guidance only';
+
+  @override
+  String get reliabilityGoodEdu => 'Good reliability · D-24 verified';
+
+  @override
+  String get relationshipWord => 'रिश्ता';
+
+  @override
+  String get intelligenceWord => 'इंटेलिजेंस';
+
+  @override
+  String get relationshipIntelligence => 'RELATIONSHIP INTELLIGENCE';
+
+  @override
+  String get typeLabel => 'प्रकार';
+
+  @override
+  String get trustLabel => 'भरोसा';
+
+  @override
+  String get dhokaRisk => 'धोखा जोखिम';
+
+  @override
+  String get powerLabel => 'शक्ति';
+
+  @override
+  String get integrity => 'ईमानदारी';
+
+  @override
+  String get warmth => 'गर्मजोशी';
+
+  @override
+  String get trustWord => 'भरोसा';
+
+  @override
+  String get assertLabel => 'दृढ़ता';
+
+  @override
+  String get character => 'चरित्र';
+
+  @override
+  String get love => 'प्रेम';
+
+  @override
+  String get businessWord => 'व्यापार';
+
+  @override
+  String get karmic => 'कार्मिक';
+
+  @override
+  String get enmityRisk => 'शत्रुता जोखिम';
+
+  @override
+  String get hdrChartProfiles => 'Chart Profiles';
+
+  @override
+  String get hdrPairwiseAnalysis => 'Pairwise Analysis';
+
+  @override
+  String get hdrCriticalPatterns => 'Critical Patterns';
+
+  @override
+  String get hdrGroupRecommendations => 'Group Recommendations';
+
+  @override
+  String get sharedPractices => 'SHARED PRACTICES';
+
+  @override
+  String get hdrIndividualGuidance => 'Individual Guidance';
+
+  @override
+  String get growthAreas => 'GROWTH AREAS';
+
+  @override
+  String get hdrCoreTheme => 'Core Theme';
+
+  @override
+  String get growthOriented => 'GROWTH-ORIENTED';
+
+  @override
+  String get groupTheme => 'GROUP THEME';
+
+  @override
+  String get compatibility => 'COMPATIBILITY';
+
+  @override
+  String get unifiedScoreLabel => 'UNIFIED SCORE';
+
+  @override
+  String get ashtakoot => 'अष्टकूट';
+
+  @override
+  String get probability => 'संभावना';
+
+  @override
+  String get hdrAshtakootSummary => 'Ashtakoot Summary';
+
+  @override
+  String get hdrGunBreakdown => '8 Gun Breakdown';
+
+  @override
+  String get hdrMangalDosh => 'Mangal Dosh';
+
+  @override
+  String get hdrD9CrossChart => 'D-9 Cross-Chart';
+
+  @override
+  String get d9Compatibility => 'D-9 COMPATIBILITY';
+
+  @override
+  String get hdrDomainCompatibility => 'Domain Compatibility';
+
+  @override
+  String get emotional => 'भावनात्मक';
+
+  @override
+  String get intellectual => 'बौद्धिक';
+
+  @override
+  String get spiritual => 'आध्यात्मिक';
+
+  @override
+  String get financial => 'वित्तीय';
+
+  @override
+  String get domestic => 'घरेलू';
+
+  @override
+  String get communicationWord => 'संचार';
+
+  @override
+  String get sharedDharma => 'Shared Dharma';
+
+  @override
+  String get familyCreation => 'Family Creation';
+
+  @override
+  String get hdrMarriageTiming => 'Marriage Timing';
+
+  @override
+  String get jointMarriageWindows => 'Joint Marriage Windows';
+
+  @override
+  String get engagementWindows => 'Engagement Windows';
+
+  @override
+  String get recommendedLabel => 'अनुशंसित';
+
+  @override
+  String get hdrKeyRisks => 'Key Risks';
+
+  @override
+  String get hdrFinalVerdict => 'Final Verdict';
+
+  @override
+  String get marriageVerdict => 'MARRIAGE VERDICT';
+
+  @override
+  String get educationWord => 'शिक्षा';
+
+  @override
+  String get learningSuffix => '& Learning';
+
+  @override
+  String get coreEducationScores => 'CORE EDUCATION SCORES';
+
+  @override
+  String get academicSuccess => 'ACADEMIC SUCCESS';
+
+  @override
+  String get learningCapacity => 'LEARNING CAPACITY';
+
+  @override
+  String get memory => 'स्मृति';
+
+  @override
+  String get intelligence => 'बुद्धि';
+
+  @override
+  String get research => 'अनुसंधान';
+
+  @override
+  String get hdrIntellectualProfile => 'Intellectual Profile';
+
+  @override
+  String get learningSignature => 'LEARNING SIGNATURE';
+
+  @override
+  String get hdrSubjectKaraka => 'Subject Karaka';
+
+  @override
+  String get hdrHouseFoundations => 'House Foundations';
+
+  @override
+  String get hdrMercuryJupiter => 'Mercury & Jupiter';
+
+  @override
+  String get hdrEducationYogas => 'Education Yogas';
+
+  @override
+  String get hdrDivisionalValidation => 'Divisional Validation';
+
+  @override
+  String get standing => 'STANDING';
+
+  @override
+  String get hdrSubjectRanking => 'Subject Ranking';
+
+  @override
+  String get hdrDegreeLikelihood => 'Degree Likelihood';
+
+  @override
+  String get hdrStudyPeriods => 'Study Periods';
+
+  @override
+  String get earlySchooling => 'Early Schooling';
+
+  @override
+  String get higherEducation => 'Higher Education';
+
+  @override
+  String get postgradResearch => 'Postgrad · Research';
+
+  @override
+  String get hdrLearningPreferences => 'Learning Preferences';
+
+  @override
+  String get hdrChallengesGifts => 'Challenges & Gifts';
+
+  @override
+  String get challenges => 'चुनौतियाँ';
+
+  @override
+  String get cognitiveGifts => 'COGNITIVE GIFTS';
+
+  @override
+  String get naturalAbilities => 'NATURAL ABILITIES';
+
+  @override
+  String get hdrSaraswatiRemedies => 'Saraswati Remedies';
+
+  @override
+  String get studentVerdict => 'STUDENT VERDICT';
+
+  @override
+  String get educationCareerLinkage => 'EDUCATION → CAREER LINKAGE';
+
+  @override
+  String get startupSuffix => '& Startup';
+
+  @override
+  String get coreBusinessScores => 'CORE BUSINESS SCORES';
+
+  @override
+  String get overallBusiness => 'OVERALL BUSINESS';
+
+  @override
+  String get ventureSuccess => 'VENTURE SUCCESS';
+
+  @override
+  String get eleventhHouse => '11TH HOUSE';
+
+  @override
+  String get gains => 'लाभ';
+
+  @override
+  String get investor => 'निवेशक';
+
+  @override
+  String get hdrFounderArchetype => 'Founder Archetype';
+
+  @override
+  String get hdrTenthEleventhHouses => '10th & 11th Houses';
+
+  @override
+  String get hdrBusinessYogas => 'Business Yogas';
+
+  @override
+  String get hdrRecommendedDomains => 'Recommended Domains';
+
+  @override
+  String get hdrBusinessStyle => 'Business Style';
+
+  @override
+  String get hdrFounderSkills => 'Founder Skills';
+
+  @override
+  String get hdrFundingProfile => 'Funding Profile';
+
+  @override
+  String get recommendedPath => 'RECOMMENDED PATH';
+
+  @override
+  String get investorAttract => 'INVESTOR ATTRACT';
+
+  @override
+  String get familyBacking => 'FAMILY BACKING';
+
+  @override
+  String get hybridViability => 'HYBRID VIABILITY';
+
+  @override
+  String get launchWindow => 'Launch Window';
+
+  @override
+  String get scaleWindow => 'Scale Window';
+
+  @override
+  String get hdrBusinessRisks => 'Business Risks';
+
+  @override
+  String get recoveryCapacity => 'RECOVERY CAPACITY';
+
+  @override
+  String get hdrRemediesSolutions => 'Remedies & Solutions';
+
+  @override
+  String get aiConnectionLost => 'कनेक्शन टूट गया। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aiSomethingWrong => 'कुछ गलत हो गया';
+
+  @override
+  String get aiNoResponse => 'कोई प्रतिक्रिया नहीं';
+
+  @override
+  String get aiConnectionError => 'कनेक्शन त्रुटि। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get aiAutoDetect => 'स्वतः पहचान';
+
+  @override
+  String aiAutoArrow(String lang) {
+    return 'Auto → ${lang}';
+  }
+
+  @override
+  String aiLanguageLabel(String lang) {
+    return 'Language: ${lang}';
+  }
+
+  @override
+  String get aiNoBirthCharts => 'कोई जन्म कुंडली नहीं मिली';
+
+  @override
+  String get aiCreateChartFirst => 'AI से चैट करने के लिए पहले एक जन्म कुंडली बनाएं';
+
+  @override
+  String get aiSelectChartBegin => 'विश्लेषण शुरू करने के लिए एक जन्म कुंडली चुनें';
+
+  @override
+  String aiAnalyzingName(String name) {
+    return 'Analyzing: ${name}';
+  }
+
+  @override
+  String get aiChange => 'बदलें';
+
+  @override
+  String get aiAnalyzingChart => 'आपकी कुंडली का विश्लेषण हो रहा है...';
+
+  @override
+  String get aiAskStarsHint => 'सितारों से कुछ भी पूछें...';
+
+  @override
+  String get aiSuggestedFollowups => 'सुझाए गए प्रश्न';
+
+  @override
+  String get aiThinking => 'सोच रहा है...';
+
+  @override
+  String get aiThanks => 'धन्यवाद!';
+
+  @override
+  String get aiFeedbackNoted => 'प्रतिक्रिया दर्ज की गई';
+
+  @override
+  String get svcAll => 'सभी';
+
+  @override
+  String get svcNoServices => 'कोई सेवा उपलब्ध नहीं';
+
+  @override
+  String get svcFree => 'मुफ़्त';
+
+  @override
+  String get astroFailedStartCall => 'कॉल शुरू करने में विफल';
+
+  @override
+  String get astroFailedStartChat => 'चैट शुरू करने में विफल';
+
+  @override
+  String astroErrorDetail(String error) {
+    return 'Error: ${error}';
+  }
+
+  @override
+  String get astroExperience => 'अनुभव';
+
+  @override
+  String get astroSessions => 'सत्र';
+
+  @override
+  String get astroMinutes => 'मिनट';
+
+  @override
+  String get astroAbout => 'परिचय';
+
+  @override
+  String get astroLanguages => 'भाषाएँ';
+
+  @override
+  String get astroRateCard => 'दर सूची';
+
+  @override
+  String get astroVoice => 'वॉइस';
+
+  @override
+  String astroReviews(int count) {
+    return 'Reviews (${count})';
+  }
+
+  @override
+  String get astroNoReviews => 'अभी तक कोई समीक्षा नहीं';
+
+  @override
+  String get astroAnonymous => 'अनाम';
+
+  @override
   String get forgotPasswordSubtitle => 'अपना ईमेल दर्ज करें और हम आपको पासवर्ड\nरीसेट करने के लिए एक लिंक भेजेंगे।';
 
   @override

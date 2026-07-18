@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../theme/app_theme.dart';
+import '../l10n/gen/app_localizations.dart';
 import '../bloc/astrologer/astrologer_bloc.dart';
 import '../bloc/astrologer/astrologer_event.dart';
 import '../bloc/astrologer/astrologer_state.dart';
@@ -31,11 +32,12 @@ class _AstrologerProfileSheet extends StatelessWidget {
   const _AstrologerProfileSheet();
 
   Future<void> _startCall(BuildContext context, Map<String, dynamic> astrologer, String callType) async {
+    final l = AppLocalizations.of(context)!;
     Navigator.pop(context);
     final scaffold = ScaffoldMessenger.of(context);
     final nav = Navigator.of(context);
 
-    scaffold.showSnackBar(SnackBar(content: Text('Starting ${callType} call...'), duration: const Duration(seconds: 2)));
+    scaffold.showSnackBar(SnackBar(content: Text(l.startingCall), duration: const Duration(seconds: 2)));
 
     try {
       final result = await ApiService().initiateCall(astrologer['id'] as String, callType);
@@ -46,25 +48,26 @@ class _AstrologerProfileSheet extends StatelessWidget {
           agoraToken: result['agora_token'] as String? ?? '',
           agoraAppId: result['agora_app_id'] as String? ?? '',
           callType: callType,
-          astrologerName: astrologer['display_name'] ?? 'Astrologer',
+          astrologerName: astrologer['display_name'] ?? l.astrologer,
           ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
           eligibleMinutes: result['eligible_minutes'] as int? ?? 0,
           maxCallSeconds: result['max_call_seconds'] as int? ?? 0,
         )));
       } else {
-        scaffold.showSnackBar(SnackBar(content: Text(result['detail'] ?? 'Failed to start call'), backgroundColor: AppColors.error));
+        scaffold.showSnackBar(SnackBar(content: Text(result['detail'] ?? l.astroFailedStartCall), backgroundColor: AppColors.error));
       }
     } catch (e) {
-      scaffold.showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+      scaffold.showSnackBar(SnackBar(content: Text(l.astroErrorDetail(e.toString())), backgroundColor: AppColors.error));
     }
   }
 
   Future<void> _startChat(BuildContext context, Map<String, dynamic> astrologer) async {
+    final l = AppLocalizations.of(context)!;
     Navigator.pop(context); // close the sheet
     final scaffold = ScaffoldMessenger.of(context);
     final nav = Navigator.of(context);
 
-    scaffold.showSnackBar(const SnackBar(content: Text('Initiating chat...'), duration: Duration(seconds: 2)));
+    scaffold.showSnackBar(SnackBar(content: Text(l.initiatingChat), duration: const Duration(seconds: 2)));
 
     try {
       final result = await ApiService().initiateChat(astrologer['id'] as String);
@@ -77,7 +80,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
 
         nav.push(MaterialPageRoute(builder: (_) => ChatScreen(
           sessionId: sessionId,
-          astrologerName: astrologer['display_name'] ?? 'Astrologer',
+          astrologerName: astrologer['display_name'] ?? l.astrologer,
           ratePerMin: ratePerMin,
           ratePerSession: ratePerSession,
           billingMode: billingMode,
@@ -85,12 +88,12 @@ class _AstrologerProfileSheet extends StatelessWidget {
         )));
       } else {
         scaffold.showSnackBar(SnackBar(
-          content: Text(result['detail'] ?? 'Failed to start chat'),
+          content: Text(result['detail'] ?? l.astroFailedStartChat),
           backgroundColor: AppColors.error,
         ));
       }
     } catch (e) {
-      scaffold.showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+      scaffold.showSnackBar(SnackBar(content: Text(l.astroErrorDetail(e.toString())), backgroundColor: AppColors.error));
     }
   }
 
@@ -103,6 +106,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
       expand: false,
       builder: (context, scrollCtrl) => BlocBuilder<AstrologerBloc, AstrologerState>(
         builder: (context, state) {
+          final l = AppLocalizations.of(context)!;
           if (state.detailLoading || state.detail == null) {
             return const Center(
               child: Padding(
@@ -179,7 +183,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                (a['specializations'] as List?)?.join(', ') ?? 'Astrologer',
+                                (a['specializations'] as List?)?.join(', ') ?? l.astrologer,
                                 style: const TextStyle(color: AppColors.primary, fontSize: 12),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -220,18 +224,18 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     // Stats grid
                     Row(
                       children: [
-                        _statBox('Experience', '${a['experience_years'] ?? 0} yrs'),
+                        _statBox(l.astroExperience, '${a['experience_years'] ?? 0} ${l.yrs}'),
                         const SizedBox(width: 8),
-                        _statBox('Sessions', '${a['total_consultations'] ?? 0}'),
+                        _statBox(l.astroSessions, '${a['total_consultations'] ?? 0}'),
                         const SizedBox(width: 8),
-                        _statBox('Minutes', '${a['total_minutes'] ?? 0}'),
+                        _statBox(l.astroMinutes, '${a['total_minutes'] ?? 0}'),
                       ],
                     ),
                     const SizedBox(height: 16),
 
                     // Bio
                     if (a['bio'] != null && (a['bio'] as String).isNotEmpty) ...[
-                      const Text('About', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                      Text(l.astroAbout, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                       const SizedBox(height: 4),
                       Container(
                         width: double.infinity,
@@ -251,19 +255,19 @@ class _AstrologerProfileSheet extends StatelessWidget {
 
                     // Languages
                     if (((a['languages'] as List?) ?? []).isNotEmpty) ...[
-                      const Text('Languages', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                      Text(l.astroLanguages, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                       const SizedBox(height: 6),
                       Wrap(
                         spacing: 6,
                         runSpacing: 6,
-                        children: (a['languages'] as List).map((l) => Container(
+                        children: (a['languages'] as List).map((lang) => Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.card,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: AppColors.border),
                           ),
-                          child: Text(l.toString(),
+                          child: Text(lang.toString(),
                             style: const TextStyle(color: AppColors.textPrimary, fontSize: 11)),
                         )).toList(),
                       ),
@@ -271,22 +275,22 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     ],
 
                     // Rate card
-                    const Text('Rate Card', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                    Text(l.astroRateCard, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        _rateBox(Icons.chat_bubble_outline, 'Chat', (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0),
+                        _rateBox(Icons.chat_bubble_outline, l.chat, (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0, l),
                         const SizedBox(width: 8),
-                        _rateBox(Icons.call, 'Voice', (a['rate_per_min_call'] as num?)?.toDouble() ?? 0),
+                        _rateBox(Icons.call, l.astroVoice, (a['rate_per_min_call'] as num?)?.toDouble() ?? 0, l),
                         const SizedBox(width: 8),
-                        _rateBox(Icons.videocam, 'Video', (a['rate_per_min_video'] as num?)?.toDouble() ?? 0),
+                        _rateBox(Icons.videocam, l.video, (a['rate_per_min_video'] as num?)?.toDouble() ?? 0, l),
                       ],
                     ),
                     const SizedBox(height: 20),
 
                     // Reviews
                     Text(
-                      'Reviews (${reviews.length})',
+                      l.astroReviews(reviews.length),
                       style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                     ),
                     const SizedBox(height: 6),
@@ -299,10 +303,10 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColors.border),
                         ),
-                        child: const Text(
-                          'No reviews yet',
+                        child: Text(
+                          l.astroNoReviews,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                         ),
                       )
                     else
@@ -320,7 +324,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  r['user_name'] ?? 'Anonymous',
+                                  r['user_name'] ?? l.astroAnonymous,
                                   style: const TextStyle(
                                     color: AppColors.textPrimary,
                                     fontSize: 12,
@@ -361,7 +365,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           child: ElevatedButton.icon(
                             onPressed: isOnline ? () => _startChat(context, a) : null,
                             icon: const Icon(Icons.chat_bubble_outline, size: 16),
-                            label: const Text('Chat'),
+                            label: Text(l.chat),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -369,7 +373,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: isOnline ? () => _startCall(context, a, 'voice') : null,
                             icon: const Icon(Icons.call, size: 16),
-                            label: const Text('Call'),
+                            label: Text(l.call),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -377,7 +381,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           child: OutlinedButton.icon(
                             onPressed: isOnline ? () => _startCall(context, a, 'video') : null,
                             icon: const Icon(Icons.videocam, size: 16),
-                            label: const Text('Video'),
+                            label: Text(l.video),
                           ),
                         ),
                       ],
@@ -413,7 +417,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
     );
   }
 
-  Widget _rateBox(IconData icon, String label, double rate) {
+  Widget _rateBox(IconData icon, String label, double rate, AppLocalizations l) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -429,7 +433,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
             Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
             const SizedBox(height: 2),
             Text(
-              '₹${rate.toInt()}/min',
+              '₹${rate.toInt()}${l.perMin}',
               style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ],

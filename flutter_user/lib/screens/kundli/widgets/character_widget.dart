@@ -57,12 +57,13 @@ class CharacterWidget extends StatelessWidget {
         final doshas = (data['doshas_active'] as List?) ?? [];
         final scores = (data['scores'] as Map?)?.cast<String, dynamic>() ?? {};
         final groups = (data['group_summaries'] as Map?)?.cast<String, dynamic>() ?? {};
+        final l = AppLocalizations.of(ctx)!;
 
         return ListView(padding: const EdgeInsets.all(16), children: [
-          _overviewCard(overall, lagna, moon, guna, gunaCounts, dasha),
+          _overviewCard(overall, lagna, moon, guna, gunaCounts, dasha, l),
           const SizedBox(height: 14),
           if (yogas.isNotEmpty || doshas.isNotEmpty) ...[
-            _yogaDoshaCard(yogas, doshas),
+            _yogaDoshaCard(yogas, doshas, l),
             const SizedBox(height: 14),
           ],
           ..._groupMeta.entries.map((entry) {
@@ -73,7 +74,7 @@ class CharacterWidget extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 14),
               child: _groupCard(
-                meta[0] as String,
+                _groupTitle(entry.key, l),
                 meta[1] as IconData,
                 meta[2] as Color,
                 groupData,
@@ -89,7 +90,7 @@ class CharacterWidget extends StatelessWidget {
   }
 
   Widget _overviewCard(double overall, String lagna, String moon,
-      String guna, Map<String, dynamic> gunaCounts, String dasha) {
+      String guna, Map<String, dynamic> gunaCounts, String dasha, AppLocalizations l) {
     final overallColor = overall >= 65 ? Colors.green : overall >= 45 ? Colors.orange : Colors.red;
     return Container(
       padding: const EdgeInsets.all(14),
@@ -102,7 +103,7 @@ class CharacterWidget extends StatelessWidget {
         Row(children: [
           const Icon(Icons.person_pin, color: Colors.indigo, size: 22),
           const SizedBox(width: 8),
-          Expanded(child: Text('Character Overview',
+          Expanded(child: Text(l.characterOverview,
               style: TextStyle(color: Colors.indigo, fontSize: 15, fontWeight: FontWeight.w700))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -117,19 +118,19 @@ class CharacterWidget extends StatelessWidget {
         ]),
         const SizedBox(height: 10),
         Wrap(spacing: 8, runSpacing: 6, children: [
-          _chip('Lagna', lagna, Colors.blue),
-          _chip('Moon', moon, Colors.teal),
-          _chip('Guna', guna, Colors.purple),
-          if (dasha.isNotEmpty) _chip('Dasha', dasha, Colors.orange),
+          _chip(l.lagna, lagna, Colors.blue),
+          _chip(l.moon, moon, Colors.teal),
+          _chip(l.guna, guna, Colors.purple),
+          if (dasha.isNotEmpty) _chip(l.dasha, dasha, Colors.orange),
         ]),
         if (gunaCounts.isNotEmpty) ...[
           const SizedBox(height: 8),
           Row(children: [
-            _gunaBar('Satwik', gunaCounts['satwik'] ?? 0, Colors.green),
+            _gunaBar(l.satwik, gunaCounts['satwik'] ?? 0, Colors.green),
             const SizedBox(width: 8),
-            _gunaBar('Rajasik', gunaCounts['rajasik'] ?? 0, Colors.orange),
+            _gunaBar(l.rajasik, gunaCounts['rajasik'] ?? 0, Colors.orange),
             const SizedBox(width: 8),
-            _gunaBar('Tamasik', gunaCounts['tamasik'] ?? 0, Colors.red),
+            _gunaBar(l.tamasik, gunaCounts['tamasik'] ?? 0, Colors.red),
           ]),
         ],
       ]),
@@ -143,7 +144,7 @@ class CharacterWidget extends StatelessWidget {
     ]));
   }
 
-  Widget _yogaDoshaCard(List yogas, List doshas) {
+  Widget _yogaDoshaCard(List yogas, List doshas, AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -153,14 +154,14 @@ class CharacterWidget extends StatelessWidget {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (yogas.isNotEmpty) ...[
-          Text('Active Yogas', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(l.activeYogas, style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Wrap(spacing: 6, runSpacing: 4, children: yogas.take(6).map<Widget>((y) =>
               _chip('', y.toString(), Colors.green)).toList()),
         ],
         if (yogas.isNotEmpty && doshas.isNotEmpty) const SizedBox(height: 10),
         if (doshas.isNotEmpty) ...[
-          Text('Active Doshas', style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(l.activeDoshas, style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           Wrap(spacing: 6, runSpacing: 4, children: doshas.take(6).map<Widget>((d) =>
               _chip('', d.toString(), Colors.redAccent)).toList()),
@@ -182,6 +183,25 @@ class CharacterWidget extends StatelessWidget {
       scoreKeys: scoreKeys,
       allScores: allScores,
     );
+  }
+
+  String _groupTitle(String key, AppLocalizations l) {
+    switch (key) {
+      case 'Core Personality': return l.charGroupCorePersonality;
+      case 'Trust & Honesty': return l.charGroupTrustHonesty;
+      case 'Loyalty & Commitment': return l.charGroupLoyaltyCommitment;
+      case 'Strategic & Privacy': return l.charGroupStrategicPrivacy;
+      case 'Financial': return l.charGroupFinancial;
+      case 'Anger & Conflict': return l.charGroupAngerConflict;
+      case 'Moral & Dharmic': return l.charGroupMoralDharmic;
+      case 'Intellect & Communication': return l.charGroupIntellectCommunication;
+      case 'Emotional Profile': return l.charGroupEmotionalProfile;
+      case 'Mental Health Indicators': return l.charGroupMentalHealth;
+      case 'Romantic': return l.charGroupRomantic;
+      case 'Marriage & Family': return l.charGroupMarriageFamily;
+      case 'Overall Life': return l.charGroupOverallLife;
+      default: return key;
+    }
   }
 
   Widget _chip(String label, String value, Color color) {

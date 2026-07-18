@@ -24,35 +24,36 @@ class CareerWidget extends StatelessWidget {
         final risks = (api['risks'] as List?) ?? [];
         final suggestions = (api['suggestions'] as List?) ?? [];
         final details = (api['details'] as Map?)?.cast<String, dynamic>() ?? {};
+        final l = AppLocalizations.of(ctx)!;
 
         return ListView(padding: const EdgeInsets.all(16), children: [
-          _summaryCard(summary),
+          _summaryCard(summary, l),
           const SizedBox(height: 14),
-          _scoresCard(scores),
+          _scoresCard(scores, l),
           const SizedBox(height: 14),
-          _careerTypeCard(careerType, careerDomain),
+          _careerTypeCard(careerType, careerDomain, l),
           const SizedBox(height: 14),
-          _timelineCard(timeline),
+          _timelineCard(timeline, l),
           if (risks.isNotEmpty) ...[
             const SizedBox(height: 14),
-            _risksCard(risks),
+            _risksCard(risks, l),
           ],
           if (suggestions.isNotEmpty) ...[
             const SizedBox(height: 14),
-            _suggestionsCard(suggestions),
+            _suggestionsCard(suggestions, l),
           ],
           const SizedBox(height: 14),
-          _detailsCard(details),
+          _detailsCard(details, l),
           const SizedBox(height: 24),
         ]);
       },
     );
   }
 
-  Widget _summaryCard(Map<String, dynamic> s) {
+  Widget _summaryCard(Map<String, dynamic> s, AppLocalizations l) {
     final confidence = (s['confidence'] as num?)?.toDouble() ?? 0;
     return _Card(
-      title: 'Career Summary',
+      title: l.careerSummary,
       icon: Icons.summarize,
       color: Colors.blue,
       children: [
@@ -79,47 +80,47 @@ class CareerWidget extends StatelessWidget {
         const SizedBox(height: 10),
         Row(children: [
           if (s['current_phase'] != null)
-            Expanded(child: _miniChip('Phase', s['current_phase'].toString(), Colors.teal)),
+            Expanded(child: _miniChip(l.phase, s['current_phase'].toString(), Colors.teal)),
           const SizedBox(width: 8),
-          _miniChip('Confidence', '${confidence.toStringAsFixed(0)}%',
+          _miniChip(l.confidenceLabel, '${confidence.toStringAsFixed(0)}%',
               confidence >= 70 ? Colors.green : confidence >= 40 ? Colors.orange : Colors.red),
         ]),
       ],
     );
   }
 
-  Widget _scoresCard(Map<String, dynamic> scores) {
+  Widget _scoresCard(Map<String, dynamic> scores, AppLocalizations l) {
     final strength = (scores['strength'] as num?)?.toDouble() ?? 0;
     final stability = (scores['stability'] as num?)?.toDouble() ?? 0;
     final growth = (scores['growth'] as num?)?.toDouble() ?? 0;
     final reasoning = (scores['reasoning'] as Map?)?.cast<String, dynamic>() ?? {};
 
     return _Card(
-      title: 'Career Scores',
+      title: l.careerScores,
       icon: Icons.analytics,
       color: Colors.indigo,
       children: [
-        _scoreBar('Strength', strength, Colors.blue, reasoning['strength_factors'] as List?),
+        _scoreBar(l.strength, strength, Colors.blue, reasoning['strength_factors'] as List?, l),
         const SizedBox(height: 12),
-        _scoreBar('Stability', stability, Colors.teal, reasoning['stability_factors'] as List?),
+        _scoreBar(l.stabilityLabel, stability, Colors.teal, reasoning['stability_factors'] as List?, l),
         const SizedBox(height: 12),
-        _scoreBar('Growth', growth, Colors.green, reasoning['growth_factors'] as List?),
+        _scoreBar(l.growthLabel, growth, Colors.green, reasoning['growth_factors'] as List?, l),
       ],
     );
   }
 
-  Widget _scoreBar(String label, double value, Color color, List? factors) {
+  Widget _scoreBar(String label, double value, Color color, List? factors, AppLocalizations l) {
     String grade;
     if (value >= 75) {
-      grade = 'Excellent';
+      grade = l.gradeExcellent;
     } else if (value >= 60) {
-      grade = 'Good';
+      grade = l.gradeGood;
     } else if (value >= 45) {
-      grade = 'Average';
+      grade = l.gradeAverage;
     } else if (value >= 30) {
-      grade = 'Below Avg';
+      grade = l.gradeBelowAvg;
     } else {
-      grade = 'Weak';
+      grade = l.gradeWeak;
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
@@ -151,10 +152,10 @@ class CareerWidget extends StatelessWidget {
     ]);
   }
 
-  Widget _careerTypeCard(Map<String, dynamic> ct, Map<String, dynamic> cd) {
+  Widget _careerTypeCard(Map<String, dynamic> ct, Map<String, dynamic> cd, AppLocalizations l) {
     final scoresPct = (ct['scores_pct'] as Map?)?.cast<String, dynamic>() ?? {};
     return _Card(
-      title: 'Career Type & Domain',
+      title: l.careerTypeDomain,
       icon: Icons.category,
       color: Colors.deepPurple,
       children: [
@@ -192,7 +193,7 @@ class CareerWidget extends StatelessWidget {
             Row(children: [
               const Icon(Icons.stars, color: AppColors.primary, size: 16),
               const SizedBox(width: 6),
-              Text('Dominant Planet: ', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+              Text('${l.dominantPlanet}: ', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
               Text(cd['dominant_planet'].toString(),
                   style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
             ]),
@@ -210,38 +211,38 @@ class CareerWidget extends StatelessWidget {
     );
   }
 
-  Widget _timelineCard(Map<String, dynamic> tl) {
+  Widget _timelineCard(Map<String, dynamic> tl, AppLocalizations l) {
     final current = (tl['current'] as Map?)?.cast<String, dynamic>() ?? {};
     final good = (tl['good_periods'] as List?) ?? [];
     final bad = (tl['bad_periods'] as List?) ?? [];
 
     return _Card(
-      title: 'Career Timeline',
+      title: l.careerTimeline,
       icon: Icons.timeline,
       color: Colors.teal,
       children: [
         if (current.isNotEmpty) ...[
-          _periodTile(current, isCurrent: true),
+          _periodTile(current, l, isCurrent: true),
           const Divider(color: Colors.white12, height: 20),
         ],
         if (good.isNotEmpty) ...[
-          Text('Favorable Periods',
+          Text(l.favorablePeriods,
               style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
-          ...good.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), isGood: true)),
+          ...good.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), l, isGood: true)),
         ],
         if (bad.isNotEmpty) ...[
           const SizedBox(height: 10),
-          Text('Challenging Periods',
+          Text(l.challengingPeriods,
               style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
-          ...bad.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), isGood: false)),
+          ...bad.take(3).map<Widget>((p) => _periodTile((p as Map).cast<String, dynamic>(), l, isGood: false)),
         ],
       ],
     );
   }
 
-  Widget _periodTile(Map<String, dynamic> p, {bool isCurrent = false, bool isGood = true}) {
+  Widget _periodTile(Map<String, dynamic> p, AppLocalizations l, {bool isCurrent = false, bool isGood = true}) {
     final score = (p['career_score'] as num?)?.toDouble() ?? 0;
     final color = isCurrent ? Colors.amber : isGood ? Colors.green : Colors.redAccent;
     final reasons = (p['reasons'] as List?) ?? [];
@@ -261,7 +262,7 @@ class CareerWidget extends StatelessWidget {
           Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w700)),
         ]),
         if (p['dasha'] != null)
-          Text('Dasha: ${p['dasha']}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+          Text(l.dashaLabel(p['dasha'].toString()), style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
         if (p['description'] != null)
           Text(p['description'].toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 11)),
         if (reasons.isNotEmpty) ...[
@@ -273,9 +274,9 @@ class CareerWidget extends StatelessWidget {
     );
   }
 
-  Widget _risksCard(List risks) {
+  Widget _risksCard(List risks, AppLocalizations l) {
     return _Card(
-      title: 'Career Risks',
+      title: l.careerRisks,
       icon: Icons.warning_amber,
       color: Colors.orange,
       children: risks.take(5).map<Widget>((r) {
@@ -307,9 +308,9 @@ class CareerWidget extends StatelessWidget {
     );
   }
 
-  Widget _suggestionsCard(List suggestions) {
+  Widget _suggestionsCard(List suggestions, AppLocalizations l) {
     return _Card(
-      title: 'Improvement Suggestions',
+      title: l.improvementSuggestions,
       icon: Icons.tips_and_updates,
       color: Colors.green,
       children: suggestions.take(5).map<Widget>((s) {
@@ -349,22 +350,22 @@ class CareerWidget extends StatelessWidget {
     );
   }
 
-  Widget _detailsCard(Map<String, dynamic> det) {
+  Widget _detailsCard(Map<String, dynamic> det, AppLocalizations l) {
     final houses = (det['houses'] as Map?)?.cast<String, dynamic>() ?? {};
     final keyPlanets = (det['key_planets'] as Map?)?.cast<String, dynamic>() ?? {};
     if (houses.isEmpty && keyPlanets.isEmpty) return const SizedBox.shrink();
     return _Card(
-      title: 'Chart Details',
+      title: l.chartDetails,
       icon: Icons.info_outline,
       color: Colors.blueGrey,
       children: [
         if (houses.isNotEmpty) ...[
-          Text('Key Houses (Career)',
+          Text(l.keyHousesCareer,
               style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...houses.entries.take(6).map<Widget>((e) {
             final h = (e.value as Map).cast<String, dynamic>();
-            final occ = (h['occupants'] as List?)?.join(', ') ?? 'Empty';
+            final occ = (h['occupants'] as List?)?.join(', ') ?? l.empty;
             return Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
@@ -376,7 +377,7 @@ class CareerWidget extends StatelessWidget {
         ],
         if (keyPlanets.isNotEmpty) ...[
           const SizedBox(height: 10),
-          Text('Key Career Planets',
+          Text(l.keyCareerPlanets,
               style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           ...keyPlanets.entries.take(6).map<Widget>((e) {

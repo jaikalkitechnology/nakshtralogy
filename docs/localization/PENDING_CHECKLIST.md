@@ -66,16 +66,24 @@ Infra ✅ (383 keys × 11 locales). Remaining: ~490 `Text()` + ~97 SnackBar +
 
 Titles / labels / names to externalize (highest-impact files):
 
-- [x] `screens/auth/forgot_password_screen.dart` — *PoC: 3 new ARB keys added to
-  all 11 locales + delegates regenerated; screen fully on `AppLocalizations`*
-- [ ] `screens/ai/ai_specialist_chat_screen.dart` (+ hardcoded language menu)
-- [ ] `screens/specialist/*` reports (relationship, milan, education, business,
-      child_probability, karma_linkage, lifepath, debt, marriage, legal, health,
-      pastlife, wealth, mental, character, multi_chart, `report_components.dart`)
-- [ ] `screens/kundli/widgets/*` (career, character, aspects, shadbala, bhava,
-      ashtakavarga, gochar, kundli_grid, north_indian_chart)
-- [ ] `widgets/astrologer_profile_sheet.dart`, `auth/forgot_password_screen.dart`,
-      `services/services_screen.dart`
+- [x] `screens/auth/forgot_password_screen.dart` — *PoC done*
+- [x] `screens/ai/ai_specialist_chat_screen.dart` — *done (agent); native-name
+      language menu intentionally left in-script*
+- [x] `screens/specialist/{relationship,milan,education,business}_report_screen.dart`
+      — *done (agent)*
+- [ ] `screens/specialist/*` remaining (child_probability, karma_linkage, lifepath,
+      debt, marriage, legal, health, pastlife, wealth, mental, character,
+      multi_chart, love, property, `report_components.dart`, `engine_report_base.dart`)
+- [x] `screens/kundli/widgets/{career,character,aspects,shadbala,bhava,
+      ashtakavarga,gochar,kundli_grid,north_indian_chart}.dart` — *done (agent)*
+- [ ] `screens/kundli/widgets/*` remaining (dosh, yoga, dasha_tree,
+      dasha_activation, divisional_charts, life_areas, planet_positions,
+      chakra_health, `_section_loader`)
+- [x] `widgets/astrologer_profile_sheet.dart`, `services/services_screen.dart`
+      — *done (agent)*
+- [~] **210 new keys** added to all 11 ARBs + delegates regenerated. en/hi/hinglish
+      translated for most; some keys English-interim in the 8 other locales
+      (translator backfill pending). All 11 ARBs at 595 keys (parity held).
 - [ ] `main.dart` biometric screen · `widgets/language_selector.dart` headers
 - [ ] Dedupe repeated copy → shared keys (`reportCopied`, `copiedOpening`, …)
 - [ ] Sweep partially-localized files for stray labels/hints/snackbars/dialog titles
