@@ -19,7 +19,7 @@ value differs from English (the residual ~1% are intentionally-English tokens �
 |--------|-------|----------------------|-----------------------|---------|
 | **Flutter — User app** (`flutter_user`) | ✅ | ✅ 1313 keys | ✅ ~99% (9 Indic) | ✅ |
 | **Flutter — Astrologer app** (`flutter_astro`) | ✅ | ✅ 824 keys | ✅ ~99% (9 Indic) | ✅ |
-| **Backend** (FastAPI) | ✅ foundation | 🟡 `user_router` (PoC) | 🟡 en/hi/hinglish | 🟡 |
+| **Backend** (FastAPI) | ✅ | ✅ 15 routers, 392 catalog keys | ✅ 100% × 12 langs | ✅ router strings; 🟡 engine free-text |
 | **React Admin** (`react_admin`) | ⏸️ | ⏸️ | ⏸️ | ⏸️ deferred |
 
 ---
@@ -62,16 +62,25 @@ percentage is expected and correct.
 Per-locale coverage: same shape as the user app — **~99%** on all 9 Indic scripts,
 Hinglish by-design.
 
-## Backend (FastAPI) 🟡
+## Backend (FastAPI) ✅ (router strings) / 🟡 (engine free-text)
 
 - ✅ **Foundation** (`app/core/i18n.py`): `normalize_lang()` (reconciles the
   `hi`↔`hindi` code split), `get_lang()` dependency (`?lang=` → `Accept-Language`
-  → english), `t()` catalog translator + `wallet_label()`.
-- ✅ **`user_router.py`** fully localized (auth errors, messages, wallet labels)
-  as a proven pattern; catalog populated for **english / hindi / hinglish**.
-- 🟡 **Pending:** roll `get_lang`+`t` across the other ~18 routers; extend the
-  catalog to the remaining 9 languages; localize engine free-text, rashi
-  metadata, grades/verdicts, character group names, LLM disclaimers. Tracked in
+  → english), `t()` translator, catalog externalized to
+  `app/core/i18n_catalog.json` with `reload_catalog()`.
+- ✅ **15 routers localized** — user, astrologer, service, google_auth,
+  communication, admin, notification, rashi, kundli, forecast, specialist,
+  career, character, milan, ai_config. Every user-facing `detail=`/`message`/
+  label routes through `t("key", lang)`.
+- ✅ **Catalog: 392 keys × 12 languages at 100%** (incl. Odia). Covers errors,
+  messages, call/chat/stream/wallet/txn labels, FCM notification titles/bodies,
+  15 specialist labels, and full rashi metadata + grade/band enums.
+- 🟡 **Still pending:** engine free-text (`summary`/`verdict`/`description`/
+  `advice` — 277 sites in `all_engine/**`), character `SCORE_GROUPS` if surfaced,
+  LLM disclaimers in `llm_service.py`, and a `preferred_language` column on
+  `User`/`AstrologerProfile` so notifications localize to the *recipient's*
+  language. WebSocket routers (ws_chat/ws_astrologer/ws_agent) and agent_router
+  stream LLM output (language handled by the model). Tracked in
   [`backend_language_support.md`](./backend_language_support.md).
 
 ## React Admin (`react_admin`) ⏸️
