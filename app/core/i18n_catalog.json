@@ -1,0 +1,132 @@
+{
+  "err.email_registered": {
+    "english": "Email already registered",
+    "hindi": "यह ईमेल पहले से पंजीकृत है",
+    "hinglish": "Yeh email pehle se registered hai"
+  },
+  "err.phone_registered": {
+    "english": "Phone already registered",
+    "hindi": "यह फ़ोन नंबर पहले से पंजीकृत है",
+    "hinglish": "Yeh phone number pehle se registered hai"
+  },
+  "err.invalid_credentials": {
+    "english": "Invalid email or password",
+    "hindi": "ईमेल या पासवर्ड ग़लत है",
+    "hinglish": "Email ya password galat hai"
+  },
+  "err.account_deactivated": {
+    "english": "Account is deactivated",
+    "hindi": "यह खाता निष्क्रिय कर दिया गया है",
+    "hinglish": "Yeh account deactivate kar diya gaya hai"
+  },
+  "err.invalid_google_token": {
+    "english": "Invalid Google token",
+    "hindi": "अमान्य Google टोकन",
+    "hinglish": "Google token invalid hai"
+  },
+  "err.invalid_reset_token": {
+    "english": "Invalid or expired reset token",
+    "hindi": "रीसेट टोकन अमान्य या समाप्त हो चुका है",
+    "hinglish": "Reset token invalid ya expire ho chuka hai"
+  },
+  "err.invalid_refresh_token": {
+    "english": "Invalid or expired refresh token",
+    "hindi": "रिफ़्रेश टोकन अमान्य या समाप्त हो चुका है",
+    "hinglish": "Refresh token invalid ya expire ho chuka hai"
+  },
+  "err.user_not_found": {
+    "english": "User not found",
+    "hindi": "उपयोगकर्ता नहीं मिला",
+    "hinglish": "User nahi mila"
+  },
+  "err.incorrect_password": {
+    "english": "Incorrect current password",
+    "hindi": "वर्तमान पासवर्ड ग़लत है",
+    "hinglish": "Current password galat hai"
+  },
+  "err.astrologer_not_found": {
+    "english": "Astrologer not found",
+    "hindi": "ज्योतिषी नहीं मिला",
+    "hinglish": "Astrologer nahi mila"
+  },
+  "err.not_in_saved": {
+    "english": "Not in saved list",
+    "hindi": "सहेजी गई सूची में नहीं है",
+    "hinglish": "Saved list mein nahi hai"
+  },
+  "msg.reset_link_sent": {
+    "english": "If this email is registered, a reset link has been sent",
+    "hindi": "यदि यह ईमेल पंजीकृत है, तो रीसेट लिंक भेज दिया गया है",
+    "hinglish": "Agar yeh email registered hai, to reset link bhej diya gaya hai"
+  },
+  "msg.password_reset": {
+    "english": "Password reset successfully",
+    "hindi": "पासवर्ड सफलतापूर्वक रीसेट हो गया",
+    "hinglish": "Password successfully reset ho gaya"
+  },
+  "msg.password_changed": {
+    "english": "Password changed successfully",
+    "hindi": "पासवर्ड सफलतापूर्वक बदल दिया गया",
+    "hinglish": "Password successfully change ho gaya"
+  },
+  "msg.account_deactivated": {
+    "english": "Account deactivated",
+    "hindi": "खाता निष्क्रिय कर दिया गया",
+    "hinglish": "Account deactivate kar diya gaya"
+  },
+  "msg.wallet_added": {
+    "english": "₹{amount} added to wallet",
+    "hindi": "₹{amount} वॉलेट में जोड़े गए",
+    "hinglish": "₹{amount} wallet mein add ho gaye"
+  },
+  "msg.already_saved": {
+    "english": "Already saved",
+    "hindi": "पहले से सहेजा गया है",
+    "hinglish": "Pehle se saved hai"
+  },
+  "msg.astrologer_saved": {
+    "english": "Astrologer saved",
+    "hindi": "ज्योतिषी सहेजा गया",
+    "hinglish": "Astrologer save ho gaya"
+  },
+  "msg.removed_saved": {
+    "english": "Removed from saved list",
+    "hindi": "सहेजी गई सूची से हटा दिया गया",
+    "hinglish": "Saved list se hata diya gaya"
+  },
+  "label.wallet.recharge": {
+    "english": "Wallet Recharge",
+    "hindi": "वॉलेट रिचार्ज",
+    "hinglish": "Wallet Recharge"
+  },
+  "label.wallet.bonus": {
+    "english": "Bonus Credit",
+    "hindi": "बोनस क्रेडिट",
+    "hinglish": "Bonus Credit"
+  },
+  "label.wallet.consultation_debit": {
+    "english": "Service / Consultation",
+    "hindi": "सेवा / परामर्श",
+    "hinglish": "Service / Consultation"
+  },
+  "label.wallet.consultation_credit": {
+    "english": "Refund / Credit",
+    "hindi": "रिफ़ंड / क्रेडिट",
+    "hinglish": "Refund / Credit"
+  },
+  "label.wallet.refund": {
+    "english": "Refund",
+    "hindi": "रिफ़ंड",
+    "hinglish": "Refund"
+  },
+  "label.wallet.withdrawal": {
+    "english": "Withdrawal",
+    "hindi": "निकासी",
+    "hinglish": "Withdrawal"
+  },
+  "label.wallet.ai_debit": {
+    "english": "AI Service",
+    "hindi": "AI सेवा",
+    "hinglish": "AI Service"
+  }
+}
