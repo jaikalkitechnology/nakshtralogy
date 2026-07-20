@@ -48,7 +48,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.config import settings
-from app.core.dependencies import get_current_user, require_role
+from app.core.dependencies import get_current_user, require_role, resolve_user_lang, get_lang_user
 from app.core.i18n import get_lang, t, CATALOG
 from app.models.model import (
     User, AstrologerProfile, Wallet, WalletTransaction,
@@ -189,7 +189,7 @@ def update_agora_config(
     req: AgoraConfigUpdate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     cfg = db.query(AgoraConfig).filter(AgoraConfig.id == config_id).first()
     if not cfg:
@@ -209,7 +209,7 @@ def delete_agora_config(
     config_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     cfg = db.query(AgoraConfig).filter(AgoraConfig.id == config_id).first()
     if not cfg:
@@ -269,7 +269,7 @@ def update_gift(
     req: GiftPricingCreate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
     if not g:
@@ -287,7 +287,7 @@ def toggle_gift(
     gift_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
     if not g:
@@ -303,7 +303,7 @@ def delete_gift(
     gift_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     g = db.query(GiftPricing).filter(GiftPricing.id == gift_id).first()
     if not g:
@@ -317,7 +317,7 @@ def delete_gift(
 def seed_gifts(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     defaults = [
         {"name": "Rose", "icon": "🌹", "price": 10, "sort_order": 1},
@@ -348,7 +348,7 @@ def initiate_call(
     req: InitiateCallRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     User initiates a voice/video call to an astrologer.
@@ -432,10 +432,11 @@ def initiate_call(
                 agora_token=token_receiver,
                 agora_app_id=app_id,
             )
+        rlang = resolve_user_lang(astro_user, lang)
         save_notification(
             db, astro_user.id,
-            t("label.notif.incoming_call_title", lang, call_type=t(f"label.call_type.{req.call_type}", lang)),
-            t("label.notif.incoming_call_body", lang, name=caller_display_name),
+            t("label.notif.incoming_call_title", rlang, call_type=t(f"label.call_type.{req.call_type}", rlang)),
+            t("label.notif.incoming_call_body", rlang, name=caller_display_name),
             "incoming_call",
             {"call_id": call.id, "call_type": req.call_type},
         )
@@ -457,7 +458,7 @@ def call_action(
     req: CallActionRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     call = db.query(CallSession).filter(CallSession.id == call_id).first()
     if not call:
@@ -502,10 +503,11 @@ def call_action(
                 channel_name=call.channel_name,
             )
         if caller:
+            rlang = resolve_user_lang(caller, lang)
             save_notification(
                 db, caller.id,
-                t("label.notif.call_connected_title", lang),
-                t("label.notif.call_connected_body", lang, name=astrologer_display_name, call_type=call.call_type),
+                t("label.notif.call_connected_title", rlang),
+                t("label.notif.call_connected_body", rlang, name=astrologer_display_name, call_type=call.call_type),
                 "call_accepted",
                 {"call_id": call.id},
             )
@@ -585,7 +587,7 @@ def get_call(
     call_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     call = db.query(CallSession).filter(CallSession.id == call_id).first()
     if not call or current_user.id not in (call.caller_id, call.receiver_id):
@@ -641,7 +643,7 @@ def create_live_stream(
     req: CreateLiveStreamRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Astrologer creates a live stream session."""
     if current_user.role != "astrologer":
@@ -682,7 +684,7 @@ def start_live_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.host_id == current_user.id
@@ -708,7 +710,7 @@ def end_live_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.host_id == current_user.id
@@ -760,7 +762,7 @@ def join_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
@@ -797,7 +799,7 @@ def leave_stream(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     viewer = db.query(LiveStreamViewer).filter(
         LiveStreamViewer.stream_id == stream_id,
@@ -819,7 +821,7 @@ def send_question(
     req: StreamQuestionRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
@@ -864,7 +866,7 @@ def get_viewers(
     stream_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     stream = db.query(LiveStream).filter(LiveStream.id == stream_id).first()
     if not stream:
@@ -889,7 +891,7 @@ def send_gift(
     req: SendGiftRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     stream = db.query(LiveStream).filter(
         LiveStream.id == stream_id, LiveStream.status == "live"
@@ -943,7 +945,7 @@ def send_super_chat(
     req: SuperChatRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Send a paid pinned message in a live stream. Deducted from wallet, credited to astrologer."""
     stream = db.query(LiveStream).filter(
@@ -1014,7 +1016,7 @@ def initiate_chat(
     req: InitiateChatRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     User requests a paid chat. Astrologer has 60s to accept.
@@ -1112,10 +1114,11 @@ def initiate_chat(
                 billing_mode=session.billing_mode or "per_session",
                 session_message_limit=session.session_message_limit or 45,
             )
+        rlang = resolve_user_lang(astro_user, lang)
         save_notification(
             db, astro_user.id,
-            t("label.notif.chat_request_title", lang),
-            t("label.notif.chat_request_body", lang, name=user_display_name),
+            t("label.notif.chat_request_title", rlang),
+            t("label.notif.chat_request_body", rlang, name=user_display_name),
             "chat_request",
             {"session_id": session.id},
         )
@@ -1129,7 +1132,7 @@ def chat_action(
     req: CallActionRequest,   # reuse: accept | end | cancel
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
@@ -1175,10 +1178,11 @@ def chat_action(
                 session_message_limit=session.session_message_limit or 45,
             )
         if chat_user:
+            rlang = resolve_user_lang(chat_user, lang)
             save_notification(
                 db, chat_user.id,
-                t("label.notif.chat_started_title", lang),
-                t("label.notif.chat_started_body", lang, name=astrologer_display_name),
+                t("label.notif.chat_started_title", rlang),
+                t("label.notif.chat_started_body", rlang, name=astrologer_display_name),
                 "chat_accepted",
                 {"session_id": session.id},
             )
@@ -1286,7 +1290,7 @@ def get_chat_session(
     session_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
@@ -1337,7 +1341,7 @@ def send_chat_message_rest(
     req: ChatMessageRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Send a chat message via REST API (used for inline notification replies).
@@ -1379,11 +1383,12 @@ def send_chat_message_rest(
     if is_user and profile:
         astro_u = db.query(User).filter(User.id == profile.user_id).first()
         sender_display_name = current_user.name or t("label.default_user_name", lang)
+        rlang = resolve_user_lang(astro_u, lang)
         if astro_u and astro_u.fcm_token:
             send_push(
                 fcm_token=astro_u.fcm_token,
-                title=t("label.notif.message_from", lang, name=sender_display_name),
-                body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", lang),
+                title=t("label.notif.message_from", rlang, name=sender_display_name),
+                body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", rlang),
                 role="astrologer",
                 data={
                     "type": "chat_message",
@@ -1399,11 +1404,12 @@ def send_chat_message_rest(
     elif not is_user:
         chat_user = db.query(User).filter(User.id == session.user_id).first()
         sender_display_name = current_user.name or t("label.default_astrologer_name", lang)
+        rlang = resolve_user_lang(chat_user, lang)
         if chat_user and chat_user.fcm_token:
             send_push(
                 fcm_token=chat_user.fcm_token,
-                title=t("label.notif.message_from", lang, name=sender_display_name),
-                body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", lang),
+                title=t("label.notif.message_from", rlang, name=sender_display_name),
+                body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", rlang),
                 role="user",
                 data={
                     "type": "chat_message",
@@ -1438,7 +1444,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 async def upload_chat_file(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Upload a photo or PDF for chat. Returns the file URL.
@@ -1481,7 +1487,7 @@ async def upload_chat_file(
 def download_chat_file(
     year: str, month: str, day: str, filename: str,
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Download a chat file. Requires authentication (only chat participants can access)."""
     file_path = os.path.join(UPLOAD_DIR, year, month, day, filename)

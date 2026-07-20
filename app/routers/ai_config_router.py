@@ -11,7 +11,7 @@ POST /ai-config/seed         — admin: run seed script
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
 from app.models.model import User
 from app.ai_config import ai_cache
@@ -81,7 +81,7 @@ def get_all_questions(lang: str = "english"):
 @router.post("/reload")
 def reload_cache(
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Hot-reload AI config from DB. Admin only."""
     if current_user.role not in ("admin",):
@@ -102,7 +102,7 @@ def reload_cache(
 @router.post("/seed")
 def run_seed(
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Run AI config seed and reload cache. Admin only."""
     if current_user.role not in ("admin",):

@@ -33,7 +33,7 @@ from app.core.security import (
     hash_token, generate_reset_token, verify_google_token,
 )
 from app.core.config import settings
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
 from app.models.model import User, RefreshToken, Wallet, AstrologerProfile
 from app.schemas.user_schema import (
@@ -282,7 +282,7 @@ def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db), lang: str =
 def get_me(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     if current_user.role != "astrologer":
         raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
@@ -296,7 +296,7 @@ def update_me(
     req: UserUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     if current_user.role != "astrologer":
         raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
@@ -315,7 +315,7 @@ def update_profile(
     req: AstrologerProfileUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     if current_user.role != "astrologer":
         raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
@@ -338,7 +338,7 @@ def update_status(
     req: AstrologerStatusUpdate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     if current_user.role != "astrologer":
         raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
@@ -362,7 +362,7 @@ def change_password(
     req: ChangePasswordRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     if not current_user.password_hash or not verify_password(req.old_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail=t("err.incorrect_password", lang))
@@ -377,7 +377,7 @@ def change_password(
 def deactivate_me(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     current_user.is_active = False
     if current_user.astrologer_profile:
@@ -515,7 +515,7 @@ class KycSubmitRequest(_BaseModel):
 def get_my_kyc_status(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Return current user's KYC status — used by the astrologer dashboard
@@ -561,7 +561,7 @@ def submit_my_kyc(
     req: KycSubmitRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Submit or re-submit KYC documents. Creates a new KycDocument row."""
     if current_user.role != "astrologer":
@@ -597,7 +597,7 @@ KYC_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 async def upload_kyc_document(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Upload a KYC document image or PDF. Returns the file URL."""
     if current_user.role != "astrologer":
@@ -636,7 +636,7 @@ async def upload_kyc_document(
 def download_kyc_file(
     user_id: str, filename: str,
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Download a KYC file. Only the owner or admin can access."""
     if current_user.id != user_id and current_user.role != "admin":
@@ -651,7 +651,7 @@ def download_kyc_file(
 def get_my_stats(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Dashboard stats for logged-in astrologer."""
     if current_user.role != "astrologer":
@@ -740,7 +740,7 @@ def get_my_recent_requests(
     limit: int = 10,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Recent call + chat session requests for this astrologer (newest first)."""
     if current_user.role != "astrologer":
@@ -837,7 +837,7 @@ def _get_withdrawal_config(db: Session) -> dict:
 def get_astro_wallet(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Astrologer wallet summary with earnings + withdrawals breakdown."""
     if current_user.role != "astrologer":
@@ -885,7 +885,7 @@ def list_astro_wallet_transactions(
     kind: Optional[str] = None,  # all | earning | withdrawal
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Astrologer wallet statement — earnings + withdrawals."""
     if current_user.role != "astrologer":
@@ -942,7 +942,7 @@ def request_withdrawal(
     req: WithdrawalRequestPayload,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Request a withdrawal — validates min amount, debits wallet, creates
     pending WithdrawalRequest row."""
@@ -1036,7 +1036,7 @@ def list_my_withdrawals(
     limit: int = 20,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """List astrologer's withdrawal request history."""
     if current_user.role != "astrologer":

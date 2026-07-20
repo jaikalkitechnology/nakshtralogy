@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
 from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
@@ -48,7 +48,7 @@ def get_career_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Full career specialist analysis (v5) for a birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
@@ -81,7 +81,7 @@ def get_career_summary(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Lightweight career summary for cards and list views."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()

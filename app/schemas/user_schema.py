@@ -70,6 +70,7 @@ class UserResponse(BaseModel):
     birth_place: Optional[str] = None
     moon_sign: Optional[int] = None
     role: str
+    preferred_language: Optional[str] = None
     is_active: bool
     is_verified: bool
     wallet_balance: Optional[float] = 0.0
@@ -88,6 +89,7 @@ class UserUpdateRequest(BaseModel):
     birth_place: Optional[str] = None
     avatar_url: Optional[str] = None
     fcm_token: Optional[str] = None
+    preferred_language: Optional[str] = None  # canonical i18n code (e.g. hindi, tamil)
 
 
 class ChangePasswordRequest(BaseModel):

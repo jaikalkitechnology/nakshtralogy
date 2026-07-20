@@ -61,6 +61,7 @@ class User(Base):
     birth_tz = Column(String(50), nullable=True)
     moon_sign = Column(Integer, nullable=True)       # 0-11 cached for gochar
     role = Column(String(20), nullable=False, default="user")  # user | astrologer | admin
+    preferred_language = Column(String(20), nullable=True)  # canonical i18n code (hindi, tamil, …)
     google_id = Column(String(255), unique=True, nullable=True)
     fcm_token = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)

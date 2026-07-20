@@ -45,7 +45,7 @@ from sqlalchemy import func as sqlfunc
 from pydantic import BaseModel, EmailStr, Field
 
 from app.core.database import get_db
-from app.core.dependencies import require_role
+from app.core.dependencies import require_role, resolve_user_lang, get_lang_user
 from app.core.security import (
     verify_password, create_access_token, create_refresh_token,
 )
@@ -252,7 +252,7 @@ def get_user_detail(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -322,7 +322,7 @@ def edit_user(
     req: EditUserRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -339,7 +339,7 @@ def toggle_user(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -354,7 +354,7 @@ def approve_user_profile(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -369,7 +369,7 @@ def verify_user(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -437,7 +437,7 @@ def edit_astrologer(
     req: EditAstrologerRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
@@ -461,7 +461,7 @@ def approve_astrologer(
     profile_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
@@ -477,8 +477,8 @@ def approve_astrologer(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title=t("label.notif.profile_approved_title", lang),
-            body=t("label.notif.profile_approved_body", lang),
+            title=t("label.notif.profile_approved_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.profile_approved_body", resolve_user_lang(user, lang)),
             role="astrologer",
             data={"type": "profile_approved", "profile_id": profile.id},
         )
@@ -491,7 +491,7 @@ def reject_astrologer(
     req: AstrologerRejectRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Reject astrologer application with reason + FCM notification."""
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
@@ -507,8 +507,8 @@ def reject_astrologer(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title=t("label.notif.profile_rejected_title", lang),
-            body=t("label.notif.profile_rejected_body", lang, reason=req.reason),
+            title=t("label.notif.profile_rejected_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.profile_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
             role="astrologer",
             data={"type": "profile_rejected", "profile_id": profile.id, "reason": req.reason},
         )
@@ -520,7 +520,7 @@ def block_astrologer(
     profile_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
@@ -535,16 +535,16 @@ def block_astrologer(
         if user.is_active:
             notify_generic(
                 fcm_token=user.fcm_token,
-                title=t("label.notif.account_unblocked_title", lang),
-                body=t("label.notif.account_unblocked_body", lang),
+                title=t("label.notif.account_unblocked_title", resolve_user_lang(user, lang)),
+                body=t("label.notif.account_unblocked_body", resolve_user_lang(user, lang)),
                 role="astrologer",
                 data={"type": "account_unblocked", "profile_id": profile.id},
             )
         else:
             notify_generic(
                 fcm_token=user.fcm_token,
-                title=t("label.notif.account_blocked_title", lang),
-                body=t("label.notif.account_blocked_body", lang),
+                title=t("label.notif.account_blocked_title", resolve_user_lang(user, lang)),
+                body=t("label.notif.account_blocked_body", resolve_user_lang(user, lang)),
                 role="astrologer",
                 data={"type": "account_blocked", "profile_id": profile.id},
             )
@@ -557,7 +557,7 @@ def update_commission(
     commission_pct: float = Query(..., ge=0, le=100),
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
@@ -616,7 +616,7 @@ def list_transactions(
     date_to: Optional[str] = None,    # YYYY-MM-DD
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Wallet transaction statement with full filters:
@@ -720,7 +720,7 @@ def adjust_wallet(
     req: WalletAdjustRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Admin wallet adjustment with action type + reason (creates statement entry).
@@ -823,7 +823,7 @@ def get_kyc_detail(
     kyc_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     kyc = db.query(KycDocument).filter(KycDocument.id == kyc_id).first()
     if not kyc:
@@ -848,7 +848,7 @@ def approve_kyc(
     kyc_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     kyc = db.query(KycDocument).filter(KycDocument.id == kyc_id).first()
     if not kyc:
@@ -866,8 +866,8 @@ def approve_kyc(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title=t("label.notif.kyc_approved_title", lang),
-            body=t("label.notif.kyc_approved_body", lang, doc_type=kyc.doc_type),
+            title=t("label.notif.kyc_approved_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.kyc_approved_body", resolve_user_lang(user, lang), doc_type=kyc.doc_type),
             role=user.role if user.role in ("user", "astrologer") else "user",
             data={"type": "kyc_approved", "kyc_id": kyc.id},
         )
@@ -880,7 +880,7 @@ def reject_kyc(
     req: KycRejectRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     kyc = db.query(KycDocument).filter(KycDocument.id == kyc_id).first()
     if not kyc:
@@ -895,8 +895,8 @@ def reject_kyc(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title=t("label.notif.kyc_rejected_title", lang),
-            body=t("label.notif.kyc_rejected_body", lang, reason=req.reason),
+            title=t("label.notif.kyc_rejected_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.kyc_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
             role=user.role if user.role in ("user", "astrologer") else "user",
             data={"type": "kyc_rejected", "kyc_id": kyc.id, "reason": req.reason},
         )
@@ -920,7 +920,7 @@ def list_reviews(
     date_to: Optional[str] = None,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     List reviews with admin filters. Joins user (reviewer) and
@@ -1003,7 +1003,7 @@ def get_review(
     review_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     row = db.query(Review, User, AstrologerProfile).join(
         User, Review.user_id == User.id
@@ -1052,7 +1052,7 @@ def edit_review(
     req: ReviewEditRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
@@ -1075,7 +1075,7 @@ def toggle_review_visibility(
     review_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
@@ -1092,7 +1092,7 @@ def delete_review(
     review_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
@@ -1248,7 +1248,7 @@ def get_category_settings(
     unmasked: bool = False,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Get all settings for a single category. Pass unmasked=true to reveal secrets."""
     if category not in SETTINGS_SCHEMA:
@@ -1282,7 +1282,7 @@ def upsert_category_settings(
     req: SettingUpsertRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Upsert all settings in a category. Values must match allowed keys."""
     if category not in SETTINGS_SCHEMA:
@@ -1323,7 +1323,7 @@ def delete_setting(
     key: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     row = db.query(PlatformSetting).filter(
         PlatformSetting.category == category,
@@ -1351,7 +1351,7 @@ async def upload_fcm_credentials(
     file: UploadFile = File(...),
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Upload Firebase service account JSON file.

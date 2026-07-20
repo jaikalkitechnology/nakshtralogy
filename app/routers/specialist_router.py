@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t, normalize_lang
 from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
@@ -84,7 +84,7 @@ def run_milan_specialist(
     req: MilanAnalyzeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Run Kundli Milan specialist (requires 2 charts)."""
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
@@ -131,7 +131,7 @@ def run_relationship_specialist(
     req: RelationshipAnalyzeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Run Relationship Intelligence specialist (2-5 charts)."""
     if len(req.chart_ids) < 2 or len(req.chart_ids) > 5:
@@ -194,7 +194,7 @@ def run_child_probability(
     req: TwoChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
@@ -224,7 +224,7 @@ def run_love_compatibility(
     req: TwoChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
@@ -254,7 +254,7 @@ def run_karma_linkage(
     req: MultiChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     charts_db = []
     for cid in req.chart_ids:

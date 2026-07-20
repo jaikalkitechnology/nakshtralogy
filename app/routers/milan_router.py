@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
 from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
@@ -64,7 +64,7 @@ def full_match(
     req: MilanRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Full 3-phase Kundli Milan: Ashtakoot + Advanced + Timing + Unified score."""
     chart1 = _load_chart(req.chart_id_1, current_user, db, lang)
@@ -113,7 +113,7 @@ def phase1_only(
     req: MilanRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Quick Ashtakoot (8 gun) match only — faster for preview cards."""
     chart1 = _load_chart(req.chart_id_1, current_user, db, lang)
