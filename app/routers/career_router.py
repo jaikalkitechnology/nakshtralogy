@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.career import career_engine
@@ -67,7 +68,7 @@ def get_career_analysis(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_content(result, lang),
             "meta": {"engine": "career_specialist_v5", "latency_ms": int((time.time() - t0) * 1000)},
         }
     except Exception as e:

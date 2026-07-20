@@ -30,6 +30,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_content
 from app.kundli import engine as nk_engine
 from app.models.model import Chart, User
 
@@ -332,7 +333,7 @@ def dosh_analysis(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = nk_engine.get_dosh_analysis(data["_pdata"])
+    result = localize_content(nk_engine.get_dosh_analysis(data["_pdata"]), lang)
     return _ok(result, meta={"active_doshas": result["active"]})
 
 
@@ -349,7 +350,7 @@ def yoga_analysis(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = nk_engine.get_yoga_analysis(data["_pdata"])
+    result = localize_content(nk_engine.get_yoga_analysis(data["_pdata"]), lang)
     return _ok(result, meta={"active_yogas": result["active"]})
 
 
@@ -414,7 +415,7 @@ def life_areas(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_life_areas(data["_pdata"]))
+    return _ok(localize_content(nk_engine.get_life_areas(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -430,7 +431,7 @@ def bhava_strength(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_bhava_strength(data["_pdata"]))
+    return _ok(localize_content(nk_engine.get_bhava_strength(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -463,7 +464,7 @@ def chakra_health(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = _localize_chakra_health(nk_engine.get_chakra_health(data["_pdata"]), lang)
+    result = localize_content(_localize_chakra_health(nk_engine.get_chakra_health(data["_pdata"]), lang), lang)
     return _ok(result, meta={
         "overall_score": result["overall_score"],
         "overall_status": result["overall_status"],
@@ -498,7 +499,7 @@ def dashboard(
         "life_areas": nk_engine.get_life_areas(pdata),
         "dasha_activation": nk_engine.get_dasha_activation(pdata, bj),
     }
-    return _ok(result)
+    return _ok(localize_content(result, lang))
 
 
 @router.get("/{chart_id}/analysis/complete")
@@ -520,4 +521,4 @@ def analysis_complete(
         "life_areas": nk_engine.get_life_areas(pdata),
         "bhava_strength": nk_engine.get_bhava_strength(pdata),
     }
-    return _ok(result)
+    return _ok(localize_content(result, lang))

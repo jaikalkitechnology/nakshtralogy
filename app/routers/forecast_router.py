@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 
@@ -61,7 +62,7 @@ def daily_forecast(
             data["_pdata"], data["birth_jd"],
             chart_metadata={"name": chart.name, "dob": chart.dob, "tob": chart.tob, "place": chart.place},
         )
-        return {"status": "success", "data": result,
+        return {"status": "success", "data": localize_content(result, lang),
                 "meta": {"engine": "daily_forecast_v1", "chart_name": chart.name, "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
         logger.error("Daily forecast error: %s", e, exc_info=True)
@@ -76,7 +77,7 @@ def rashi_standalone(lang: str = Depends(get_lang)):
         from all_engine.all_specialist_engine.twelve_rashi_specialist import TwelveRashiSpecialistEngine
         engine = TwelveRashiSpecialistEngine()
         result = engine.analyze()
-        return {"status": "success", "data": result,
+        return {"status": "success", "data": localize_content(result, lang),
                 "meta": {"engine": "twelve_rashi_v1", "mode": "standalone", "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
         logger.error("Rashi standalone error: %s", e, exc_info=True)
@@ -106,7 +107,7 @@ def rashi_personalized(
             pdata=data["_pdata"], birth_jd=data["birth_jd"],
             chart_metadata={"name": chart.name, "dob": chart.dob, "tob": chart.tob, "place": chart.place},
         )
-        return {"status": "success", "data": result,
+        return {"status": "success", "data": localize_content(result, lang),
                 "meta": {"engine": "twelve_rashi_v1", "mode": "personalized", "chart_name": chart.name,
                          "latency_ms": int((time.time() - t0) * 1000)}}
     except Exception as e:
