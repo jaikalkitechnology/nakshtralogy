@@ -86,11 +86,15 @@ Hinglish by-design.
   bhava, chakra, full, dashboard). Preserves numbers, codes, and proper nouns;
   english/failure → English (never breaks a response). **Live translation runs
   where the LLM providers are reachable; results are cached.**
-- 🟡 **Still pending:** a `preferred_language` column on `User`/`AstrologerProfile`
-  so push notifications localize to the *recipient's* language (currently uses
-  the request's language); LLM chat disclaimers in `llm_service.py` (chat output
-  is already model-generated in-language). WebSocket routers stream LLM output
-  (language handled by the model). Tracked in
+- ✅ **Per-user language preference** — `User.preferred_language` (+ dev
+  migration) settable via `PUT /me`, returned by `GET /me`. `get_lang_user`
+  (`?lang=` → saved preference → `Accept-Language` → english) is used on 114
+  authenticated endpoints, so a logged-in user's chosen language applies without
+  repeating `?lang=`. Notifications render in the **recipient's** language via
+  `resolve_user_lang` (calls, chat, KYC, profile/account admin actions).
+- 🟡 **Still pending (minor):** LLM chat disclaimers in `llm_service.py` (chat
+  output is already model-generated in-language); WebSocket routers stream LLM
+  output (language handled by the model). Tracked in
   [`backend_language_support.md`](./backend_language_support.md).
 
 ## React Admin (`react_admin`) ⏸️
