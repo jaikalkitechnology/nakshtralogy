@@ -32,7 +32,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user, require_role
+from app.core.dependencies import get_current_user, require_role, get_lang_user
 from app.core.i18n import get_lang, t
 from app.models.model import (
     User, Chart, DashaCache, ServicePricing, ServiceOrder,
@@ -160,7 +160,7 @@ def create_pricing(
     req: ServicePricingCreate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Admin-only: create a new service pricing."""
     if db.query(ServicePricing).filter(ServicePricing.service_key == req.service_key).first():
@@ -178,7 +178,7 @@ def update_pricing(
     req: ServicePricingUpdate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not sp:
@@ -195,7 +195,7 @@ def delete_pricing(
     pricing_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Admin-only: delete a service pricing entry."""
     sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
@@ -210,7 +210,7 @@ def delete_pricing(
 def seed_pricing(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Admin-only: seed default Nakshtralogy service catalog."""
     defaults = [
@@ -394,7 +394,7 @@ def create_chart(
     req: BirthChartCreateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Create a new birth chart. Runs nakshralogyV2.calculate_chart
@@ -495,7 +495,7 @@ def get_chart(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = db.query(Chart).filter(
         Chart.id == chart_id, Chart.user_id == current_user.id
@@ -511,7 +511,7 @@ def update_chart(
     req: BirthChartUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Update chart metadata. If dob/tob/place changed, re-compute kundli."""
     chart = db.query(Chart).filter(
@@ -556,7 +556,7 @@ def delete_chart(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = db.query(Chart).filter(
         Chart.id == chart_id, Chart.user_id == current_user.id
@@ -577,7 +577,7 @@ def compute_vimshottari(
     req: ComputeServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Compute Vimshottari Dasha for an existing chart."""
     chart = db.query(Chart).filter(
@@ -634,7 +634,7 @@ def compute_moola(
     req: ComputeServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Compute Moola Dasha (paid service) for an existing chart."""
     chart = db.query(Chart).filter(
@@ -721,7 +721,7 @@ def compute_divisional(
     req: ComputeServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Return divisional chart positions from stored chart_json."""
     chart = db.query(Chart).filter(
@@ -779,7 +779,7 @@ def purchase_service(
     req: PurchaseServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Purchase a paid service for a specific chart. Debits wallet."""
     sp = db.query(ServicePricing).filter(ServicePricing.id == req.service_pricing_id).first()

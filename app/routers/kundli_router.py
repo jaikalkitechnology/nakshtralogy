@@ -28,8 +28,9 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_content
 from app.kundli import engine as nk_engine
 from app.models.model import Chart, User
 
@@ -191,7 +192,7 @@ def health():
 def compute_from_raw(
     req: BirthDataRequest,
     current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Compute full kundli from raw birth data (no DB save)."""
     try:
@@ -208,7 +209,7 @@ def get_full_kundli(
     dasha_levels: int = Query(2, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Complete natal chart with all sections + dashas + gochar + analyses."""
     chart = _load_chart(chart_id, current_user, db, lang)
@@ -236,7 +237,7 @@ def get_chart_only(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Just chart (planets + divisionals + lagna) without analyses."""
     chart = _load_chart(chart_id, current_user, db, lang)
@@ -254,7 +255,7 @@ def vimshottari(
     levels: int = Query(2, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
@@ -272,7 +273,7 @@ def moola(
     levels: int = Query(2, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
@@ -328,11 +329,11 @@ def dosh_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = nk_engine.get_dosh_analysis(data["_pdata"])
+    result = localize_content(nk_engine.get_dosh_analysis(data["_pdata"]), lang)
     return _ok(result, meta={"active_doshas": result["active"]})
 
 
@@ -345,11 +346,11 @@ def yoga_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = nk_engine.get_yoga_analysis(data["_pdata"])
+    result = localize_content(nk_engine.get_yoga_analysis(data["_pdata"]), lang)
     return _ok(result, meta={"active_yogas": result["active"]})
 
 
@@ -362,7 +363,7 @@ def shadbala(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
@@ -378,7 +379,7 @@ def ashtakavarga(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
@@ -394,7 +395,7 @@ def aspects(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
@@ -410,11 +411,11 @@ def life_areas(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_life_areas(data["_pdata"]))
+    return _ok(localize_content(nk_engine.get_life_areas(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -426,11 +427,11 @@ def bhava_strength(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok(nk_engine.get_bhava_strength(data["_pdata"]))
+    return _ok(localize_content(nk_engine.get_bhava_strength(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -443,7 +444,7 @@ def dasha_activation(
     query_date: Optional[str] = Query(None, description="DD/MM/YYYY — default today"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
@@ -459,11 +460,11 @@ def chakra_health(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = _localize_chakra_health(nk_engine.get_chakra_health(data["_pdata"]), lang)
+    result = localize_content(_localize_chakra_health(nk_engine.get_chakra_health(data["_pdata"]), lang), lang)
     return _ok(result, meta={
         "overall_score": result["overall_score"],
         "overall_status": result["overall_status"],
@@ -479,7 +480,7 @@ def dashboard(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Lightweight bundle: chart + today's gochar + dashas + life areas.
@@ -498,7 +499,7 @@ def dashboard(
         "life_areas": nk_engine.get_life_areas(pdata),
         "dasha_activation": nk_engine.get_dasha_activation(pdata, bj),
     }
-    return _ok(result)
+    return _ok(localize_content(result, lang))
 
 
 @router.get("/{chart_id}/analysis/complete")
@@ -506,7 +507,7 @@ def analysis_complete(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """All analysis modules in one call: dosh + yoga + chakra + shadbala + life-areas + bhava."""
     chart = _load_chart(chart_id, current_user, db, lang)
@@ -520,4 +521,4 @@ def analysis_complete(
         "life_areas": nk_engine.get_life_areas(pdata),
         "bhava_strength": nk_engine.get_bhava_strength(pdata),
     }
-    return _ok(result)
+    return _ok(localize_content(result, lang))

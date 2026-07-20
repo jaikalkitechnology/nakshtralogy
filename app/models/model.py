@@ -61,6 +61,7 @@ class User(Base):
     birth_tz = Column(String(50), nullable=True)
     moon_sign = Column(Integer, nullable=True)       # 0-11 cached for gochar
     role = Column(String(20), nullable=False, default="user")  # user | astrologer | admin
+    preferred_language = Column(String(20), nullable=True)  # canonical i18n code (hindi, tamil, …)
     google_id = Column(String(255), unique=True, nullable=True)
     fcm_token = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
@@ -1076,3 +1077,20 @@ class AiTemplateTranslation(Base):
     __table_args__ = (
         UniqueConstraint("template_id", "lang_code", name="uq_template_lang"),
     )
+
+
+class FreeTextTranslation(Base):
+    """Cache of LLM-translated free-text (engine report bodies).
+
+    Keyed by sha1("<lang> <source_text>") so each unique (text, language) pair
+    is translated by the LLM exactly once. Populated on demand by
+    app/services/freetext_translator.py.
+    """
+    __tablename__ = "free_text_translations"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    text_hash = Column(String(40), nullable=False, unique=True, index=True)
+    lang = Column(String(20), nullable=False, index=True)
+    source_text = Column(Text, nullable=True)
+    translated = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

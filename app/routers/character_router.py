@@ -14,8 +14,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.character import character_engine
@@ -47,7 +48,7 @@ def get_character_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Full 51-score character analysis for a birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
@@ -63,7 +64,7 @@ def get_character_analysis(
         logger.info("Character analysis for %s in %.2fs", chart.name, time.time() - t0)
         return {
             "status": "success",
-            "data": result,
+            "data": localize_content(result, lang),
             "meta": {"engine": "character_analysis_v4", "latency_ms": int((time.time() - t0) * 1000)},
         }
     except Exception as e:
@@ -76,7 +77,7 @@ def get_character_summary(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Lightweight character summary — group averages + key scores."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()

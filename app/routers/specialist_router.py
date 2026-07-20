@@ -20,8 +20,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t, normalize_lang
+from app.services.freetext_translator import localize_content
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.specialists import SPECIALISTS, get_engine
@@ -83,7 +84,7 @@ def run_milan_specialist(
     req: MilanAnalyzeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Run Kundli Milan specialist (requires 2 charts)."""
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
@@ -111,7 +112,7 @@ def run_milan_specialist(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_content(result, lang),
             "meta": {
                 "specialist": "kundli_milan",
                 "label": t(_LABEL_KEYS["kundli_milan"], lang),
@@ -130,7 +131,7 @@ def run_relationship_specialist(
     req: RelationshipAnalyzeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Run Relationship Intelligence specialist (2-5 charts)."""
     if len(req.chart_ids) < 2 or len(req.chart_ids) > 5:
@@ -162,7 +163,7 @@ def run_relationship_specialist(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_content(result, lang),
             "meta": {
                 "specialist": "relationship",
                 "label": t("label.specialist.relationship_full", lang),
@@ -193,7 +194,7 @@ def run_child_probability(
     req: TwoChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
@@ -210,7 +211,7 @@ def run_child_probability(
             chart2.name, chart2.gender or "F", chart2.dob, chart2.tob, chart2.place,
         )
         latency = int((time.time() - t0) * 1000)
-        return {"status": "success", "data": result, "meta": {
+        return {"status": "success", "data": localize_content(result, lang), "meta": {
             "specialist": "child_probability", "label": t("label.specialist.child_probability", lang),
             "participants": [chart1.name, chart2.name], "latency_ms": latency}}
     except Exception as e:
@@ -223,7 +224,7 @@ def run_love_compatibility(
     req: TwoChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
@@ -240,7 +241,7 @@ def run_love_compatibility(
             chart2.name, chart2.gender or "F", chart2.dob, chart2.tob, chart2.place,
         )
         latency = int((time.time() - t0) * 1000)
-        return {"status": "success", "data": result, "meta": {
+        return {"status": "success", "data": localize_content(result, lang), "meta": {
             "specialist": "love_compatibility", "label": t("label.specialist.love_compatibility", lang),
             "participants": [chart1.name, chart2.name], "latency_ms": latency}}
     except Exception as e:
@@ -253,7 +254,7 @@ def run_karma_linkage(
     req: MultiChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     charts_db = []
     for cid in req.chart_ids:
@@ -268,7 +269,7 @@ def run_karma_linkage(
         charts_input = [{"name": c.name, "gender": c.gender or "M", "dob": c.dob, "tob": c.tob, "place": c.place} for c in charts_db]
         result = generate_karma_linkage(charts_input, focus_question=req.focus_question or None)
         latency = int((time.time() - t0) * 1000)
-        return {"status": "success", "data": result, "meta": {
+        return {"status": "success", "data": localize_content(result, lang), "meta": {
             "specialist": "karma_linkage", "label": t("label.specialist.karma_linkage", lang),
             "participants": [c.name for c in charts_db], "latency_ms": latency}}
     except Exception as e:
@@ -325,7 +326,7 @@ def run_specialist(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_content(result, lang),
             "meta": {
                 "specialist": key,
                 "label": t(_LABEL_KEYS[key], lang_norm),

@@ -32,6 +32,7 @@ _DEV_COLUMN_MIGRATIONS = [
     ("agent_logs", "match_score", "FLOAT"),
     ("agent_logs", "routing", "VARCHAR(20)"),
     ("agent_logs", "response_text", "TEXT"),
+    ("users", "preferred_language", "VARCHAR(20)"),
 ]
 
 

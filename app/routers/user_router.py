@@ -29,7 +29,7 @@ from app.core.security import (
     generate_reset_token, verify_google_token,
 )
 from app.core.config import settings
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t, wallet_label
 from app.models.model import User, RefreshToken, Wallet
 from app.schemas.user_schema import (
@@ -58,6 +58,7 @@ def _build_user_response(user: User, db: Session) -> UserResponse:
         birth_place=user.birth_place,
         moon_sign=user.moon_sign,
         role=user.role,
+        preferred_language=user.preferred_language,
         is_active=user.is_active,
         is_verified=user.is_verified,
         wallet_balance=float(wallet.balance) if wallet else 0.0,
@@ -245,6 +246,9 @@ def update_me(
     db: Session = Depends(get_db),
 ):
     update_data = req.model_dump(exclude_unset=True)
+    if update_data.get("preferred_language"):
+        from app.core.i18n import normalize_lang
+        update_data["preferred_language"] = normalize_lang(update_data["preferred_language"])
     for field, value in update_data.items():
         setattr(current_user, field, value)
     db.commit()
@@ -259,7 +263,7 @@ def change_password(
     req: ChangePasswordRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     if not current_user.password_hash or not verify_password(req.old_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail=t("err.incorrect_password", lang))
@@ -274,7 +278,7 @@ def change_password(
 def deactivate_me(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     current_user.is_active = False
     db.commit()
@@ -345,7 +349,7 @@ def list_my_wallet_transactions(
     txn_type: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Paginated wallet statement for the current user with type labels."""
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
@@ -385,7 +389,7 @@ def recharge_my_wallet(
     req: WalletRechargeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Add balance to current user's wallet.
@@ -518,7 +522,7 @@ def save_astrologer(
     req: SaveAstrologerRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     """Add an astrologer to the current user's saved list."""
     profile = db.query(_AstroProfile).filter(_AstroProfile.id == req.astrologer_profile_id).first()
@@ -552,7 +556,7 @@ def unsave_astrologer(
     astrologer_profile_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-    lang: str = Depends(get_lang),
+    lang: str = Depends(get_lang_user),
 ):
     row = db.query(_SavedAstro).filter(
         _SavedAstro.user_id == current_user.id,
