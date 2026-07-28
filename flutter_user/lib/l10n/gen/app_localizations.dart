@@ -235,6 +235,246 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @fcKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Key'**
+  String get fcKey;
+
+  /// No description provided for @fcActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get fcActions;
+
+  /// No description provided for @fcCautions.
+  ///
+  /// In en, this message translates to:
+  /// **'Cautions'**
+  String get fcCautions;
+
+  /// No description provided for @fc12House.
+  ///
+  /// In en, this message translates to:
+  /// **'12 House'**
+  String get fc12House;
+
+  /// No description provided for @fcProbabilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Probabilities'**
+  String get fcProbabilities;
+
+  /// No description provided for @fcHousesCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'HOUSES'**
+  String get fcHousesCaps;
+
+  /// No description provided for @fcCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get fcCritical;
+
+  /// No description provided for @fcFlags.
+  ///
+  /// In en, this message translates to:
+  /// **'Flags'**
+  String get fcFlags;
+
+  /// No description provided for @fcAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis'**
+  String get fcAnalysis;
+
+  /// No description provided for @fcConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get fcConfidence;
+
+  /// No description provided for @fcQualityCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'QUALITY'**
+  String get fcQualityCaps;
+
+  /// No description provided for @fcIncomeVs.
+  ///
+  /// In en, this message translates to:
+  /// **'Income vs'**
+  String get fcIncomeVs;
+
+  /// No description provided for @fcExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get fcExpense;
+
+  /// No description provided for @fcFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'FINANCE'**
+  String get fcFinance;
+
+  /// No description provided for @fcNetBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Balance'**
+  String get fcNetBalance;
+
+  /// No description provided for @fcSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature'**
+  String get fcSignature;
+
+  /// No description provided for @fcBestTimeForIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time for Income'**
+  String get fcBestTimeForIncome;
+
+  /// No description provided for @fcExpenseCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Caution'**
+  String get fcExpenseCaution;
+
+  /// No description provided for @fcIncomeCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'INCOME'**
+  String get fcIncomeCaps;
+
+  /// No description provided for @fcExpenseCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPENSE'**
+  String get fcExpenseCaps;
+
+  /// No description provided for @fcRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationships'**
+  String get fcRelationships;
+
+  /// No description provided for @fcAreasCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'AREAS'**
+  String get fcAreasCaps;
+
+  /// No description provided for @fcBestForMeetings.
+  ///
+  /// In en, this message translates to:
+  /// **'Best For Meetings'**
+  String get fcBestForMeetings;
+
+  /// No description provided for @fcOpportunitiesVs.
+  ///
+  /// In en, this message translates to:
+  /// **'Opportunities vs'**
+  String get fcOpportunitiesVs;
+
+  /// No description provided for @fcRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks'**
+  String get fcRisks;
+
+  /// No description provided for @fcOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'OUTLOOK'**
+  String get fcOutlook;
+
+  /// No description provided for @fcAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get fcAction;
+
+  /// No description provided for @fcProtect.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect'**
+  String get fcProtect;
+
+  /// No description provided for @fcOpportunityCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'OPPORTUNITY'**
+  String get fcOpportunityCaps;
+
+  /// No description provided for @fcRiskCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'RISK'**
+  String get fcRiskCaps;
+
+  /// No description provided for @fcTopOpportunities.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP OPPORTUNITIES'**
+  String get fcTopOpportunities;
+
+  /// No description provided for @fcTopRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'TOP RISKS'**
+  String get fcTopRisks;
+
+  /// No description provided for @fcTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Timing'**
+  String get fcTiming;
+
+  /// No description provided for @fcWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows'**
+  String get fcWindows;
+
+  /// No description provided for @fcSlotsCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'SLOTS'**
+  String get fcSlotsCaps;
+
+  /// No description provided for @fcBestWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST WINDOWS'**
+  String get fcBestWindows;
+
+  /// No description provided for @fcWorstWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'WORST WINDOWS'**
+  String get fcWorstWindows;
+
+  /// No description provided for @fcAvoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid'**
+  String get fcAvoid;
+
+  /// No description provided for @fcHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get fcHouse;
+
+  /// No description provided for @fcFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get fcFailed;
+
   /// No description provided for @lifeCareer.
   ///
   /// In en, this message translates to:
