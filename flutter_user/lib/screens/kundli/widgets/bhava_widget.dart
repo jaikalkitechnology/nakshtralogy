@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 import '_section_loader.dart';
 
 class BhavaWidget extends StatelessWidget {
@@ -40,6 +41,7 @@ class BhavaWidget extends StatelessWidget {
         });
         final sorted = List.generate(12, (i) => i + 1);
         final l = AppLocalizations.of(ctx)!;
+        final loc = Localizations.localeOf(ctx);
 
         return ListView(padding: const EdgeInsets.all(16), children: sorted.map((h) {
           final hd = houses[h] ?? {};
@@ -57,7 +59,10 @@ class BhavaWidget extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(_houseName(h, l), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text(l.bhavaSignLord(hd['sign']?.toString() ?? '-', hd['lord']?.toString() ?? '-'), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text(l.bhavaSignLord(
+                      hd['sign'] != null ? KundliNames.rashiAny(hd['sign'].toString(), loc) : '-',
+                      hd['lord'] != null ? KundliNames.planet(hd['lord'].toString(), loc) : '-'),
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 ])),
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   Text(score.toStringAsFixed(0), style: TextStyle(color: _sc(score), fontSize: 20, fontWeight: FontWeight.w700)),
@@ -71,7 +76,7 @@ class BhavaWidget extends StatelessWidget {
                   child: Wrap(spacing: 4, children: occupants.map<Widget>((o) => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
-                    child: Text(o.toString(), style: const TextStyle(color: AppColors.primary, fontSize: 10)),
+                    child: Text(KundliNames.planet(o.toString(), loc), style: const TextStyle(color: AppColors.primary, fontSize: 10)),
                   )).toList())),
             ]),
           );

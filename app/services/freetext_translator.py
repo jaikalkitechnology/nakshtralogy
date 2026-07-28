@@ -231,6 +231,61 @@ def translate_texts(texts: list, lang: str) -> dict:
     return mapping
 
 
+def localize_keys(data: Any, keys, lang: str) -> Any:
+    """Translate ONLY the string values stored under the given keys, regardless
+    of the free-text heuristics / SKIP_KEYS.
+
+    Use this for short domain terms that `localize_content` deliberately skips —
+    e.g. dosh / yoga `name` and `category` ("Mangal Dosha", "Gaj Kesari Yoga").
+    Translations are cached like any other free-text. No-op for english/unknown;
+    never raises — returns `data` unchanged on error.
+    """
+    try:
+        lang = normalize_lang(lang)
+        if lang == DEFAULT_LANGUAGE:
+            return data
+        keyset = {str(k).lower() for k in keys}
+
+        texts = set()
+
+        def _gather(obj):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    if isinstance(v, str) and str(k).lower() in keyset and v.strip():
+                        texts.add(v)
+                    else:
+                        _gather(v)
+            elif isinstance(obj, list):
+                for item in obj:
+                    _gather(item)
+
+        _gather(data)
+        if not texts:
+            return data
+        mapping = translate_texts(list(texts), lang)
+        changed = {k: v for k, v in mapping.items() if v != k}
+        if not changed:
+            return data
+
+        def _sub(obj):
+            if isinstance(obj, dict):
+                out = {}
+                for k, v in obj.items():
+                    if isinstance(v, str) and str(k).lower() in keyset:
+                        out[k] = changed.get(v, v)
+                    else:
+                        out[k] = _sub(v)
+                return out
+            if isinstance(obj, list):
+                return [_sub(item) for item in obj]
+            return obj
+
+        return _sub(data)
+    except Exception as e:  # pragma: no cover
+        logger.warning("localize_keys failed (%s) — returning original", e)
+        return data
+
+
 def localize_content(data: Any, lang: str) -> Any:
     """Translate the free-text body of an analysis response into `lang`.
     No-op for english/unknown. Never raises — returns `data` unchanged on error."""

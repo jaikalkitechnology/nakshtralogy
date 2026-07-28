@@ -135,7 +135,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap()),
                         DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari'),
                         DashaTreeWidget(chartId: widget.chartId, type: 'moola'),
-                        GocharWidget(chartId: widget.chartId),
+                        GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx()),
                         DoshWidget(chartId: widget.chartId, initial: _complete?['dosh_analysis']),
                         YogaWidget(chartId: widget.chartId, initial: _complete?['yoga_analysis']),
                         ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala']),
@@ -149,6 +149,12 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 
   Map<String, dynamic> _planetsMap() =>
       ((_chart?['planets'] as Map?) ?? {}).cast<String, dynamic>();
+
+  // Native's Moon rashi index (0=Aries…11=Pisces) — drives the Gochar tab.
+  int _moonRashiIdx() {
+    final moon = ((_chart?['planets'] as Map?)?['Moon'] as Map?)?.cast<String, dynamic>();
+    return (moon?['sign_idx'] as num?)?.toInt() ?? 0;
+  }
 
   Map<String, dynamic> _divisionalsMap() =>
       ((_chart?['divisionals'] as Map?) ?? {}).cast<String, dynamic>();

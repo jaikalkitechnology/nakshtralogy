@@ -30,7 +30,10 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
-from app.services.freetext_translator import localize_content
+from app.services.freetext_translator import localize_content, localize_keys
+
+# dosh / yoga term fields translated on top of the free-text body
+_DY_NAME_KEYS = ("name", "category")
 from app.services.chart_localizer import localize_chart
 from app.kundli import engine as nk_engine
 from app.models.model import Chart, User
@@ -334,7 +337,7 @@ def dosh_analysis(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = localize_content(nk_engine.get_dosh_analysis(data["_pdata"]), lang)
+    result = localize_keys(localize_content(nk_engine.get_dosh_analysis(data["_pdata"]), lang), _DY_NAME_KEYS, lang)
     return _ok(result, meta={"active_doshas": result["active"]})
 
 
@@ -351,7 +354,7 @@ def yoga_analysis(
 ):
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    result = localize_content(nk_engine.get_yoga_analysis(data["_pdata"]), lang)
+    result = localize_keys(localize_content(nk_engine.get_yoga_analysis(data["_pdata"]), lang), _DY_NAME_KEYS, lang)
     return _ok(result, meta={"active_yogas": result["active"]})
 
 
@@ -522,4 +525,4 @@ def analysis_complete(
         "life_areas": nk_engine.get_life_areas(pdata),
         "bhava_strength": nk_engine.get_bhava_strength(pdata),
     }
-    return _ok(localize_content(result, lang))
+    return _ok(localize_keys(localize_content(result, lang), _DY_NAME_KEYS, lang))

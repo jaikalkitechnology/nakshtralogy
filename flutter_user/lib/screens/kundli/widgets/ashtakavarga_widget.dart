@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 import '_section_loader.dart';
 
 class AshtakavargaWidget extends StatelessWidget {
@@ -45,7 +46,7 @@ class AshtakavargaWidget extends StatelessWidget {
             final total = (d['total_rekha'] as num?)?.toInt() ?? 0;
             final natalScore = (d['natal_sign_score'] as num?)?.toInt() ?? 0;
             return KundliSectionCard(
-              title: l.ashtakavargaBav(p),
+              title: l.ashtakavargaBav(KundliNames.planet(p, Localizations.localeOf(ctx))),
               subtitle: l.bavSubtitle(total.toString(), natalScore.toString()),
               child: Wrap(spacing: 6, runSpacing: 6, children: signs.map((s) {
                 final v = (bav[s] as num?)?.toInt() ?? 0;
