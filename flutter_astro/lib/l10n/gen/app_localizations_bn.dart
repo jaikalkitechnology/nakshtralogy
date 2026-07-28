@@ -9,6 +9,75 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get lifeCareer => 'কর্মজীবন';
+
+  @override
+  String get lifeHealth => 'স্বাস্থ্য';
+
+  @override
+  String get lifeWealth => 'সম্পদ';
+
+  @override
+  String get lifeFamily => 'পরিবার';
+
+  @override
+  String get lifeMind => 'মন';
+
+  @override
+  String get lifeEgo => 'অহংকার';
+
+  @override
+  String get lifeAggression => 'আক্রমণাত্মকতা';
+
+  @override
+  String get lifeConflict => 'দ্বন্দ্ব';
+
+  @override
+  String get rashiElement => 'উপাদান';
+
+  @override
+  String get rashiQuality => 'গুণ';
+
+  @override
+  String get rashiLuckyColor => 'শুভ রঙ';
+
+  @override
+  String get rashiLuckyDay => 'শুভ দিন';
+
+  @override
+  String get rashiLuckyNumber => 'শুভ সংখ্যা';
+
+  @override
+  String get rashiGemstone => 'রত্ন';
+
+  @override
+  String get rashiBody => 'শরীর';
+
+  @override
+  String get gocharTodaysTransitChart => 'আজকের গোচর চার্ট';
+
+  @override
+  String get gocharTransit => 'গোচর';
+
+  @override
+  String get thisWeek => 'এই সপ্তাহে';
+
+  @override
+  String get best => 'সেরা';
+
+  @override
+  String get worst => 'সবচেয়ে খারাপ';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get love => 'প্রেম';
+
+  @override
+  String get spiritual => 'আধ্যাত্মিক';
+
+  @override
   String get analysisConfidence => 'বিশ্লেষণের নির্ভরযোগ্যতা';
 
   @override
@@ -1926,7 +1995,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get sun => 'সূর্য';
 
   @override
-  String get thisMonth => 'এই মাস';
+  String get thisMonth => 'এই মাসে';
 
   @override
   String get statement => 'বিবৃতি';

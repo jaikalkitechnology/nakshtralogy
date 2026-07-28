@@ -9,6 +9,75 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
+  String get lifeCareer => 'தொழில்';
+
+  @override
+  String get lifeHealth => 'ஆரோக்கியம்';
+
+  @override
+  String get lifeWealth => 'செல்வம்';
+
+  @override
+  String get lifeFamily => 'குடும்பம்';
+
+  @override
+  String get lifeMind => 'மனம்';
+
+  @override
+  String get lifeEgo => 'அகங்காரம்';
+
+  @override
+  String get lifeAggression => 'ஆக்கிரமிப்பு';
+
+  @override
+  String get lifeConflict => 'மோதல்';
+
+  @override
+  String get rashiElement => 'தத்துவம்';
+
+  @override
+  String get rashiQuality => 'குணம்';
+
+  @override
+  String get rashiLuckyColor => 'அதிர்ஷ்ட நிறம்';
+
+  @override
+  String get rashiLuckyDay => 'அதிர்ஷ்ட நாள்';
+
+  @override
+  String get rashiLuckyNumber => 'அதிர்ஷ்ட எண்';
+
+  @override
+  String get rashiGemstone => 'ரத்தினம்';
+
+  @override
+  String get rashiBody => 'உடல்';
+
+  @override
+  String get gocharTodaysTransitChart => 'இன்றைய கோச்சார விளக்கப்படம்';
+
+  @override
+  String get gocharTransit => 'கோச்சாரம்';
+
+  @override
+  String get thisWeek => 'இந்த வாரம்';
+
+  @override
+  String get best => 'சிறந்த';
+
+  @override
+  String get worst => 'மோசமான';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get love => 'காதல்';
+
+  @override
+  String get spiritual => 'ஆன்மீக';
+
+  @override
   String get analysisConfidence => 'பகுப்பாய்வு நம்பகத்தன்மை';
 
   @override

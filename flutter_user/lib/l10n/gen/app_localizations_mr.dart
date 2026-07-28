@@ -9,6 +9,72 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
+  String get lifeCareer => 'करिअर';
+
+  @override
+  String get lifeHealth => 'आरोग्य';
+
+  @override
+  String get lifeWealth => 'संपत्ती';
+
+  @override
+  String get lifeFamily => 'कुटुंब';
+
+  @override
+  String get lifeMind => 'मन';
+
+  @override
+  String get lifeEgo => 'अहंकार';
+
+  @override
+  String get lifeAggression => 'आक्रमकता';
+
+  @override
+  String get lifeConflict => 'संघर्ष';
+
+  @override
+  String get rashiElement => 'तत्व';
+
+  @override
+  String get rashiQuality => 'गुण';
+
+  @override
+  String get rashiLuckyColor => 'शुभ रंग';
+
+  @override
+  String get rashiLuckyDay => 'शुभ दिवस';
+
+  @override
+  String get rashiLuckyNumber => 'शुभ अंक';
+
+  @override
+  String get rashiGemstone => 'रत्न';
+
+  @override
+  String get rashiBody => 'शरीर';
+
+  @override
+  String get gocharTodaysTransitChart => 'आजचा गोचर तक्ता';
+
+  @override
+  String get gocharTransit => 'गोचर';
+
+  @override
+  String get thisWeek => 'या आठवड्यात';
+
+  @override
+  String get thisMonth => 'या महिन्यात';
+
+  @override
+  String get best => 'सर्वोत्तम';
+
+  @override
+  String get worst => 'सर्वात वाईट';
+
+  @override
+  String get avg => 'avg';
+
+  @override
   String get favorableLoveWindowsLabel => 'अनुकूल प्रेम कालावधी';
 
   @override

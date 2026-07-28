@@ -9,6 +9,75 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
+  String get lifeCareer => 'Career';
+
+  @override
+  String get lifeHealth => 'Health';
+
+  @override
+  String get lifeWealth => 'Dhan';
+
+  @override
+  String get lifeFamily => 'Parivar';
+
+  @override
+  String get lifeMind => 'Man';
+
+  @override
+  String get lifeEgo => 'Ahankar';
+
+  @override
+  String get lifeAggression => 'Aggression';
+
+  @override
+  String get lifeConflict => 'Conflict';
+
+  @override
+  String get rashiElement => 'Tatva';
+
+  @override
+  String get rashiQuality => 'Gun';
+
+  @override
+  String get rashiLuckyColor => 'Lucky Color';
+
+  @override
+  String get rashiLuckyDay => 'Lucky Din';
+
+  @override
+  String get rashiLuckyNumber => 'Lucky Number';
+
+  @override
+  String get rashiGemstone => 'Ratna';
+
+  @override
+  String get rashiBody => 'Body';
+
+  @override
+  String get gocharTodaysTransitChart => 'Aaj ka Transit Chart';
+
+  @override
+  String get gocharTransit => 'Transit';
+
+  @override
+  String get thisWeek => 'Is Hafte';
+
+  @override
+  String get best => 'Best';
+
+  @override
+  String get worst => 'Worst';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get love => 'Love';
+
+  @override
+  String get spiritual => 'Spiritual';
+
+  @override
   String get analysisConfidence => 'Analysis Confidence';
 
   @override
@@ -1926,7 +1995,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get sun => 'Surya';
 
   @override
-  String get thisMonth => 'IS MAHINE';
+  String get thisMonth => 'Is Mahine';
 
   @override
   String get statement => 'Statement';

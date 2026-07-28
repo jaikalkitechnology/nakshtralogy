@@ -9,6 +9,75 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get lifeCareer => 'करियर';
+
+  @override
+  String get lifeHealth => 'स्वास्थ्य';
+
+  @override
+  String get lifeWealth => 'धन';
+
+  @override
+  String get lifeFamily => 'परिवार';
+
+  @override
+  String get lifeMind => 'मन';
+
+  @override
+  String get lifeEgo => 'अहंकार';
+
+  @override
+  String get lifeAggression => 'आक्रामकता';
+
+  @override
+  String get lifeConflict => 'संघर्ष';
+
+  @override
+  String get rashiElement => 'तत्व';
+
+  @override
+  String get rashiQuality => 'गुण';
+
+  @override
+  String get rashiLuckyColor => 'शुभ रंग';
+
+  @override
+  String get rashiLuckyDay => 'शुभ दिन';
+
+  @override
+  String get rashiLuckyNumber => 'शुभ अंक';
+
+  @override
+  String get rashiGemstone => 'रत्न';
+
+  @override
+  String get rashiBody => 'शरीर';
+
+  @override
+  String get gocharTodaysTransitChart => 'आज का गोचर चार्ट';
+
+  @override
+  String get gocharTransit => 'गोचर';
+
+  @override
+  String get thisWeek => 'इस सप्ताह';
+
+  @override
+  String get best => 'सर्वश्रेष्ठ';
+
+  @override
+  String get worst => 'सबसे खराब';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get love => 'प्रेम';
+
+  @override
+  String get spiritual => 'आध्यात्मिक';
+
+  @override
   String get analysisConfidence => 'विश्लेषण विश्वसनीयता';
 
   @override

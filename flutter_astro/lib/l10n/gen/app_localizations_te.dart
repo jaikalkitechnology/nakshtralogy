@@ -9,6 +9,75 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
+  String get lifeCareer => 'వృత్తి';
+
+  @override
+  String get lifeHealth => 'ఆరోగ్యం';
+
+  @override
+  String get lifeWealth => 'సంపద';
+
+  @override
+  String get lifeFamily => 'కుటుంబం';
+
+  @override
+  String get lifeMind => 'మనస్సు';
+
+  @override
+  String get lifeEgo => 'అహంకారం';
+
+  @override
+  String get lifeAggression => 'దూకుడు';
+
+  @override
+  String get lifeConflict => 'సంఘర్షణ';
+
+  @override
+  String get rashiElement => 'తత్వం';
+
+  @override
+  String get rashiQuality => 'గుణం';
+
+  @override
+  String get rashiLuckyColor => 'అదృష్ట రంగు';
+
+  @override
+  String get rashiLuckyDay => 'అదృష్ట దినం';
+
+  @override
+  String get rashiLuckyNumber => 'అదృష్ట సంఖ్య';
+
+  @override
+  String get rashiGemstone => 'రత్నం';
+
+  @override
+  String get rashiBody => 'శరీరం';
+
+  @override
+  String get gocharTodaysTransitChart => 'నేటి గోచార చార్ట్';
+
+  @override
+  String get gocharTransit => 'గోచారం';
+
+  @override
+  String get thisWeek => 'ఈ వారం';
+
+  @override
+  String get best => 'ఉత్తమం';
+
+  @override
+  String get worst => 'చెత్త';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get love => 'ప్రేమ';
+
+  @override
+  String get spiritual => 'ఆధ్యాత్మిక';
+
+  @override
   String get analysisConfidence => 'విశ్లేషణ విశ్వసనీయత';
 
   @override

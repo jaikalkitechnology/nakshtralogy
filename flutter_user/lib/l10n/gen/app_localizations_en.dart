@@ -69,6 +69,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get lifeCareer => 'Career';
+
+  @override
+  String get lifeHealth => 'Health';
+
+  @override
+  String get lifeWealth => 'Wealth';
+
+  @override
+  String get lifeFamily => 'Family';
+
+  @override
+  String get lifeMind => 'Mind';
+
+  @override
+  String get lifeEgo => 'Ego';
+
+  @override
+  String get lifeAggression => 'Aggression';
+
+  @override
+  String get lifeConflict => 'Conflict';
+
+  @override
+  String get rashiElement => 'Element';
+
+  @override
+  String get rashiQuality => 'Quality';
+
+  @override
+  String get rashiLuckyColor => 'Lucky Color';
+
+  @override
+  String get rashiLuckyDay => 'Lucky Day';
+
+  @override
+  String get rashiLuckyNumber => 'Lucky Number';
+
+  @override
+  String get rashiGemstone => 'Gemstone';
+
+  @override
+  String get rashiBody => 'Body';
+
+  @override
+  String get gocharTodaysTransitChart => 'Today\'s Transit Chart';
+
+  @override
+  String get gocharTransit => 'Transit';
+
+  @override
+  String get thisWeek => 'This Week';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get best => 'Best';
+
+  @override
+  String get worst => 'Worst';
+
+  @override
+  String get avg => 'avg';
+
+  @override
   String get favorableLoveWindowsLabel => 'Favorable Love Windows';
 
   @override

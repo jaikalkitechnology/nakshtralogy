@@ -9,6 +9,72 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
+  String get lifeCareer => 'ਕਰੀਅਰ';
+
+  @override
+  String get lifeHealth => 'ਸਿਹਤ';
+
+  @override
+  String get lifeWealth => 'ਧਨ';
+
+  @override
+  String get lifeFamily => 'ਪਰਿਵਾਰ';
+
+  @override
+  String get lifeMind => 'ਮਨ';
+
+  @override
+  String get lifeEgo => 'ਹੰਕਾਰ';
+
+  @override
+  String get lifeAggression => 'ਹਮਲਾਵਰਤਾ';
+
+  @override
+  String get lifeConflict => 'ਟਕਰਾਅ';
+
+  @override
+  String get rashiElement => 'ਤੱਤ';
+
+  @override
+  String get rashiQuality => 'ਗੁਣ';
+
+  @override
+  String get rashiLuckyColor => 'ਸ਼ੁਭ ਰੰਗ';
+
+  @override
+  String get rashiLuckyDay => 'ਸ਼ੁਭ ਦਿਨ';
+
+  @override
+  String get rashiLuckyNumber => 'ਸ਼ੁਭ ਅੰਕ';
+
+  @override
+  String get rashiGemstone => 'ਰਤਨ';
+
+  @override
+  String get rashiBody => 'ਸਰੀਰ';
+
+  @override
+  String get gocharTodaysTransitChart => 'ਅੱਜ ਦਾ ਗੋਚਰ ਚਾਰਟ';
+
+  @override
+  String get gocharTransit => 'ਗੋਚਰ';
+
+  @override
+  String get thisWeek => 'ਇਸ ਹਫ਼ਤੇ';
+
+  @override
+  String get thisMonth => 'ਇਸ ਮਹੀਨੇ';
+
+  @override
+  String get best => 'ਸਭ ਤੋਂ ਵਧੀਆ';
+
+  @override
+  String get worst => 'ਸਭ ਤੋਂ ਮਾੜਾ';
+
+  @override
+  String get avg => 'avg';
+
+  @override
   String get favorableLoveWindowsLabel => 'ਅਨੁਕੂਲ ਪ੍ਰੇਮ ਸਮੇਂ';
 
   @override
