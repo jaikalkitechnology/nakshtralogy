@@ -46,6 +46,7 @@ class _S extends State<DailyForecastScreen> {
   ]));
 
   Widget _report() {
+    final l = AppLocalizations.of(context)!;
     final d = _d!;
     final dayScore = (d['day_quality_score'] as num?)?.toDouble() ?? 0;
     final dayOverall = (d['day_quality_overall'] as Map?)?.cast<String, dynamic>() ?? {};
@@ -76,7 +77,7 @@ class _S extends State<DailyForecastScreen> {
           Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
           Text.rich(TextSpan(children: [
             const TextSpan(text: "Today's ", style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-            TextSpan(text: 'Forecast', style: TextStyle(color: c, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
+            TextSpan(text: l.forecast, style: TextStyle(color: c, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
           ])),
         ]),
         centerTitle: true, actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)]),
@@ -110,7 +111,7 @@ class _S extends State<DailyForecastScreen> {
           ])),
         // Actions
         if (actions.isNotEmpty) ...[
-          ReportHeader('Key', 'Actions', '${actions.length}'),
+          ReportHeader(l.fcKey, l.fcActions, '${actions.length}'),
           ...actions.take(6).map((a) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(color: AppColors.success.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.success.withOpacity(0.2))),
@@ -121,7 +122,7 @@ class _S extends State<DailyForecastScreen> {
         ],
         // Cautions
         if (cautions.isNotEmpty) ...[
-          ReportHeader('Key', 'Cautions', '${cautions.length}'),
+          ReportHeader(l.fcKey, l.fcCautions, '${cautions.length}'),
           ...cautions.take(6).map((a) => Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.06), borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColors.warning.withOpacity(0.2))),
@@ -132,7 +133,7 @@ class _S extends State<DailyForecastScreen> {
         ],
         // 12 House probabilities
         if (houses.isNotEmpty) ...[
-          ReportHeader('12 House', 'Probabilities', '${houses.length} HOUSES'),
+          ReportHeader(l.fc12House, l.fcProbabilities, '${houses.length} ${l.fcHousesCaps}'),
           ...houses.map((h) {
             final hNum = h['house']?.toString() ?? '?';
             final domain = h['domain']?.toString() ?? '';
@@ -170,7 +171,7 @@ class _S extends State<DailyForecastScreen> {
         if (timing.isNotEmpty) _timingCard(timing),
         // Critical flags
         if (flags.isNotEmpty) ...[
-          ReportHeader('Critical', 'Flags', '${flags.length}'),
+          ReportHeader(l.fcCritical, l.fcFlags, '${flags.length}'),
           ...flags.take(5).map((f) {
             final text = f is Map ? (f as Map)['description']?.toString() ?? f.toString() : f.toString();
             return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6), padding: const EdgeInsets.all(10),
@@ -181,7 +182,7 @@ class _S extends State<DailyForecastScreen> {
         ],
         // Confidence
         if (d['confidence_score'] is num) ...[
-          ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+          ReportHeader(l.fcAnalysis, l.fcConfidence, l.fcQualityCaps),
           ConfidenceBlock(score: (d['confidence_score'] as num).toDouble(),
             statement: d['confidence_explanation']?.toString(),
             breakdown: (d['confidence_breakdown'] is Map) ? (d['confidence_breakdown'] as Map).cast<String, dynamic>() : {}),
@@ -192,6 +193,7 @@ class _S extends State<DailyForecastScreen> {
   }
 
   Widget _incomeCard(Map<String, dynamic> data) {
+    final l = AppLocalizations.of(context)!;
     final inc = (data['income_forecast'] as Map?)?.cast<String, dynamic>() ?? {};
     final exp = (data['expense_forecast'] as Map?)?.cast<String, dynamic>() ?? {};
     final bal = (data['net_financial_balance_today'] as Map?)?.cast<String, dynamic>() ?? {};
@@ -203,24 +205,24 @@ class _S extends State<DailyForecastScreen> {
     final ec = expScore >= 60 ? AppColors.error : AppColors.warning;
     final bc = balScore >= 60 ? AppColors.success : balScore >= 40 ? AppColors.gold : AppColors.error;
     return Column(children: [
-      ReportHeader('Income vs', 'Expense', 'FINANCE'),
+      ReportHeader(l.fcIncomeVs, l.fcExpense, l.fcFinance),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            Expanded(child: _miniScore('INCOME', incScore, ic, inc['income_likelihood']?.toString())),
+            Expanded(child: _miniScore(l.fcIncomeCaps, incScore, ic, inc['income_likelihood']?.toString())),
             Container(width: 1, height: 50, color: Colors.white12),
-            Expanded(child: _miniScore('EXPENSE', expScore, ec, exp['expense_likelihood']?.toString())),
+            Expanded(child: _miniScore(l.fcExpenseCaps, expScore, ec, exp['expense_likelihood']?.toString())),
           ]),
           const SizedBox(height: 8),
-          _kvRow('Net Balance', '${balScore.toStringAsFixed(0)}', bc),
-          if (bal['balance_signature'] != null) _kvRow('Signature', bal['balance_signature'].toString(), AppColors.lavender),
+          _kvRow(l.fcNetBalance, '${balScore.toStringAsFixed(0)}', bc),
+          if (bal['balance_signature'] != null) _kvRow(l.fcSignature, bal['balance_signature'].toString(), AppColors.lavender),
           if (bal['financial_advice'] != null) Padding(padding: const EdgeInsets.only(top: 4),
             child: Text(bal['financial_advice'].toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3, fontStyle: FontStyle.italic))),
           if (inc['best_time_window_for_income'] != null) ...[const SizedBox(height: 6),
-            _kvRow('Best Time for Income', inc['best_time_window_for_income'].toString(), AppColors.success)],
+            _kvRow(l.fcBestTimeForIncome, inc['best_time_window_for_income'].toString(), AppColors.success)],
           if (exp['expense_caution_window'] != null)
-            _kvRow('Expense Caution', exp['expense_caution_window'].toString(), AppColors.warning),
+            _kvRow(l.fcExpenseCaution, exp['expense_caution_window'].toString(), AppColors.warning),
           if (inc['income_drivers'] is List) ...[const SizedBox(height: 4),
             Wrap(spacing: 4, runSpacing: 4, children: (inc['income_drivers'] as List).take(3).map((d) => _chip(d.toString(), AppColors.success)).toList())],
           if (exp['expense_drivers'] is List)
@@ -232,13 +234,14 @@ class _S extends State<DailyForecastScreen> {
   }
 
   Widget _relationshipsCard(Map<String, dynamic> data) {
+    final l = AppLocalizations.of(context)!;
     final scores = <MapEntry<String, double>>[];
     data.forEach((k, v) { if (v is num) scores.add(MapEntry(k, v.toDouble())); });
     final bestDomain = data['best_domain_for_meetings']?.toString();
     final avoid = data['domains_to_avoid_for_conversations'];
     final expl = data['explanation']?.toString() ?? '';
     return Column(children: [
-      ReportHeader('Relationships', 'Today', '${scores.length} AREAS'),
+      ReportHeader(l.fcRelationships, l.today, '${scores.length} ${l.fcAreasCaps}'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -254,7 +257,7 @@ class _S extends State<DailyForecastScreen> {
                 child: LinearProgressIndicator(value: (e.value / 100).clamp(0, 1), minHeight: 3, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(sc))),
             ]));
           }),
-          if (bestDomain != null) ...[const SizedBox(height: 4), _kvRow('Best For Meetings', bestDomain, AppColors.success)],
+          if (bestDomain != null) ...[const SizedBox(height: 4), _kvRow(l.fcBestForMeetings, bestDomain, AppColors.success)],
           if (avoid is List && avoid.isNotEmpty && avoid.first != 'none flagged')
             Wrap(spacing: 4, runSpacing: 4, children: [
               Text('${AppLocalizations.of(context)?.weaknesses ?? 'Avoid'}: ', style: const TextStyle(color: AppColors.warning, fontSize: 9)),
@@ -267,6 +270,7 @@ class _S extends State<DailyForecastScreen> {
   }
 
   Widget _opportunitiesCard(Map<String, dynamic> data) {
+    final l = AppLocalizations.of(context)!;
     final opp = (data['opportunities_today'] as Map?)?.cast<String, dynamic>() ?? {};
     final risk = (data['risks_today'] as Map?)?.cast<String, dynamic>() ?? {};
     final expl = data['explanation']?.toString() ?? '';
@@ -277,14 +281,14 @@ class _S extends State<DailyForecastScreen> {
     final topOpp = (opp['top_opportunity_domains'] as List?) ?? [];
     final topRisk = (risk['top_risk_domains'] as List?) ?? [];
     return Column(children: [
-      ReportHeader('Opportunities vs', 'Risks', 'OUTLOOK'),
+      ReportHeader(l.fcOpportunitiesVs, l.fcRisks, l.fcOutlook),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            Expanded(child: _miniScore('OPPORTUNITY', oppScore, oc, opp['opportunity_signature']?.toString())),
+            Expanded(child: _miniScore(l.fcOpportunityCaps, oppScore, oc, opp['opportunity_signature']?.toString())),
             Container(width: 1, height: 50, color: Colors.white12),
-            Expanded(child: _miniScore('RISK', riskScore, rc, risk['risk_signature']?.toString())),
+            Expanded(child: _miniScore(l.fcRiskCaps, riskScore, rc, risk['risk_signature']?.toString())),
           ]),
           if (topOpp.isNotEmpty) ...[const SizedBox(height: 8),
             Text(AppLocalizations.of(context)?.topOpportunities ?? 'TOP OPPORTUNITIES', style: const TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1)),
@@ -313,9 +317,9 @@ class _S extends State<DailyForecastScreen> {
             }),
           ],
           if (opp['recommended_action'] != null) ...[const SizedBox(height: 6),
-            _kvRow('Action', opp['recommended_action'].toString(), AppColors.success)],
+            _kvRow(l.fcAction, opp['recommended_action'].toString(), AppColors.success)],
           if (risk['recommended_protective_action'] != null)
-            _kvRow('Protect', risk['recommended_protective_action'].toString(), AppColors.warning),
+            _kvRow(l.fcProtect, risk['recommended_protective_action'].toString(), AppColors.warning),
           if (expl.isNotEmpty) ...[const SizedBox(height: 6),
             Text(expl, style: const TextStyle(color: AppColors.smoke, fontSize: 9, height: 1.3))],
         ])),
@@ -323,11 +327,12 @@ class _S extends State<DailyForecastScreen> {
   }
 
   Widget _timingCard(Map<String, dynamic> data) {
+    final l = AppLocalizations.of(context)!;
     final best = (data['best_time_windows'] as List?) ?? [];
     final worst = (data['worst_time_windows'] as List?) ?? [];
     final expl = data['explanation']?.toString() ?? '';
     return Column(children: [
-      ReportHeader('Timing', 'Windows', '${best.length + worst.length} SLOTS'),
+      ReportHeader(l.fcTiming, l.fcWindows, '${best.length + worst.length} ${l.fcSlotsCaps}'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
