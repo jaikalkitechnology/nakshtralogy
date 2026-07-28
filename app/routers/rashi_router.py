@@ -14,6 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.core.i18n import get_lang, t
 from app.services.freetext_translator import localize_content
+from app.services.astro_terms_localizer import localize_astro_terms
 from app.kundli import engine as nk_engine
 from app.kundli import engine as _engine_pkg  # same package but used for singleton
 # Import the underlying engine module for low-level functions
@@ -63,7 +64,11 @@ _TRAITS = {
 #  HELPERS
 # ─────────────────────────────────────────────────────────────────────
 
-def _ok(data, meta=None):
+def _ok(data, meta=None, lang=None):
+    # localize planet / rashi / nakshatra names in the payload (gochar flags,
+    # ruling planets, sanskrit sign names). Idempotent on already-localized text.
+    if lang:
+        data = localize_astro_terms(data, lang)
     out = {"status": "success", "data": data}
     if meta:
         out["meta"] = meta
@@ -122,7 +127,8 @@ def _meta_plus_traits(idx: int, lang: str = "english") -> dict:
     traits = _TRAITS[idx]
     m["strengths"] = [_tv("trait", w, lang) for w in traits["strengths"]]
     m["weaknesses"] = [_tv("trait", w, lang) for w in traits["weaknesses"]]
-    return m
+    # localize the ruling planet + Sanskrit rashi name (Mars→मंगल, Mesh→मेष)
+    return localize_astro_terms(m, lang)
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -154,7 +160,7 @@ def today_all(lang: str = Depends(get_lang)):
         "best": _tv("name", res.get("best"), lang),
         "worst": _tv("name", res.get("worst"), lang),
         "rashis": merged,
-    })
+    }, lang=lang)
 
 
 @router.get("/{rashi_idx}")
@@ -179,7 +185,7 @@ def rashi_daily(
         "score": row["score"],
         "grade": _tg(row["grade"], lang),
         "flags": row["flags"],
-    })
+    }, lang=lang)
 
 
 @router.get("/{rashi_idx}/weekly")
@@ -202,7 +208,7 @@ def rashi_weekly(rashi_idx: int, lang: str = Depends(get_lang)):
         "avg": round(sum(scores) / len(scores), 2),
         "best_day": max(series, key=lambda x: x["score"]) if series else None,
         "worst_day": min(series, key=lambda x: x["score"]) if series else None,
-    })
+    }, lang=lang)
 
 
 @router.get("/{rashi_idx}/monthly")
@@ -225,7 +231,7 @@ def rashi_monthly(rashi_idx: int, lang: str = Depends(get_lang)):
         "avg": round(sum(scores) / len(scores), 2),
         "best_day": max(series, key=lambda x: x["score"]) if series else None,
         "worst_day": min(series, key=lambda x: x["score"]) if series else None,
-    })
+    }, lang=lang)
 
 
 @router.get("/{rashi_idx}/full")
@@ -262,7 +268,7 @@ def rashi_full(rashi_idx: int, lang: str = Depends(get_lang)):
             "days": month,
             "avg": round(sum(m_scores) / len(m_scores), 2),
         },
-    })
+    }, lang=lang)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -424,6 +430,6 @@ def rashi_predictions(rashi_idx: int, lang: str = Depends(get_lang)):
         return _ok({
             **_meta_plus_traits(rashi_idx, lang),
             **result,
-        })
+        }, lang=lang)
     except Exception as e:
         raise HTTPException(status_code=500, detail=t("err.prediction_failed", lang, error=str(e)))

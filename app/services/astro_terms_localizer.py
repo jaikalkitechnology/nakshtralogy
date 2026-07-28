@@ -35,7 +35,7 @@ _PLANETS = {
 # english + common Sanskrit forms → rashi slug
 _RASHI = {
     "aries": "aries", "mesha": "aries", "mesh": "aries",
-    "taurus": "taurus", "vrishabha": "taurus", "vrishab": "taurus", "vrsabha": "taurus",
+    "taurus": "taurus", "vrishabha": "taurus", "vrishabh": "taurus", "vrishab": "taurus", "vrsabha": "taurus",
     "gemini": "gemini", "mithuna": "gemini", "mithun": "gemini",
     "cancer": "cancer", "karka": "cancer", "kark": "cancer", "kataka": "cancer",
     "leo": "leo", "simha": "leo", "sinha": "leo",

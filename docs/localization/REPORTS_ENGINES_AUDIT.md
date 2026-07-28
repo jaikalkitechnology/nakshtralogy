@@ -101,7 +101,22 @@ All reached through endpoints that now run `localize_report`.
 | 18 | Love Compatibility | `POST /specialist/love_compatibility/analyze` | ✅ | ✅ |
 | 19 | Past-Life Karma Linkage | `POST /specialist/karma_linkage/analyze` | ✅ | ✅ |
 
-Daily forecast (`/forecast/*`, 3 endpoints) also runs `localize_report`.
+Daily forecast (`/forecast/*`, 3 endpoints) also runs `localize_report`. The
+twelve-rashi significations engine (`/forecast/rashi`) had ~780 English list
+values (`objects_signified`, `people_signified`, …) now curated into
+`REPORT_LABEL_KEYS`. The daily-forecast engine's free-text (`explanation`,
+`gochar_explanation`, `dasha_explanation`) was silently untranslated due to an
+`int` dict-key crash in `_is_freetext` — fixed (keys are `str()`-coerced).
+
+### Rashi endpoints (`/rashi/**`)
+
+Ran by hand in Hindi and audited. The `rashi_router` catalog-localizes name /
+element / quality / traits, and now also applies `localize_astro_terms` (via
+`_ok(..., lang=...)` and `_meta_plus_traits`), so the **ruling planet** (`lord`:
+Mars → मंगल), **Sanskrit sign name** (`sanskrit`: Vrishabh → वृषभ), transit
+**planets** and best/worst signs render localized. Remaining English is limited
+to Sanskrit gochar flag terms (Sade Sati, Kantaka Shani, Guru Balam) and the
+literal `"today"` date label — documented, low-priority Sanskrit terminology.
 
 ## The 12 rashi
 
