@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 import '_section_loader.dart';
 import '../../../l10n/gen/app_localizations.dart';
 
@@ -16,6 +17,7 @@ class AspectsWidget extends StatelessWidget {
       loader: () => ApiService().getKundliAspects(chartId),
       builder: (ctx, data) {
         final l = AppLocalizations.of(ctx)!;
+        final loc = Localizations.localeOf(ctx);
         final graha = (data['graha_drishti'] as Map? ?? {}).cast<String, dynamic>();
         final rashi = (data['rashi_drishti'] as Map? ?? {}).cast<String, dynamic>();
         final lagnaAsp = (data['lagna_aspects_received'] as Map? ?? {}).cast<String, dynamic>();
@@ -31,12 +33,12 @@ class AspectsWidget extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(e.key, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 13)),
+                  Text(KundliNames.planet(e.key, loc), style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 13)),
                   const SizedBox(height: 4),
                   Wrap(spacing: 6, runSpacing: 4, children: targets.entries.map<Widget>((t) => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(4)),
-                    child: Text('${t.key}: ${(t.value as num).toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                    child: Text('${KundliNames.planet(t.key, loc)}: ${(t.value as num).toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                   )).toList()),
                 ]),
               );
@@ -49,7 +51,7 @@ class AspectsWidget extends StatelessWidget {
               child: Wrap(spacing: 6, runSpacing: 4, children: lagnaAsp.entries.map<Widget>((e) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                child: Text('${e.key}: ${(e.value as num).toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.accent, fontSize: 11, fontWeight: FontWeight.w600)),
+                child: Text('${KundliNames.planet(e.key, loc)}: ${(e.value as num).toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.accent, fontSize: 11, fontWeight: FontWeight.w600)),
               )).toList()),
             ),
           KundliSectionCard(
@@ -58,9 +60,9 @@ class AspectsWidget extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: rashi.entries.map<Widget>((e) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Row(children: [
-                SizedBox(width: 28, child: Text(e.key, style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700))),
+                SizedBox(width: 64, child: Text(KundliNames.rashiShort(e.key, loc), style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w700))),
                 const Icon(Icons.arrow_right_alt, color: AppColors.textSecondary, size: 14),
-                Expanded(child: Text((e.value as List).join(', '), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11))),
+                Expanded(child: Text((e.value as List).map((r) => KundliNames.rashiShort(r.toString(), loc)).join(', '), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11))),
               ]),
             )).toList()),
           ),
