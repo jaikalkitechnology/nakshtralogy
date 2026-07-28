@@ -22,6 +22,7 @@ class _YogaWidgetState extends State<YogaWidget> {
       initial: widget.initial is Map ? (widget.initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliYoga(widget.chartId),
       builder: (ctx, data) {
+        final l = AppLocalizations.of(ctx)!;
         final total = (data['total'] as num?)?.toInt() ?? 0;
         final active = (data['active'] as num?)?.toInt() ?? 0;
         final allYogas = (data['yogas'] as List? ?? []).map((e) => (e as Map).cast<String, dynamic>()).toList();
@@ -44,9 +45,9 @@ class _YogaWidgetState extends State<YogaWidget> {
               const Icon(Icons.auto_awesome, color: AppColors.success, size: 32),
               const SizedBox(width: 14),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(AppLocalizations.of(context)?.yogaAnalysis ?? 'Yoga Analysis', style: TextStyle(color: AppColors.success, fontSize: 16, fontWeight: FontWeight.w700)),
+                Text(l.yogaAnalysis, style: TextStyle(color: AppColors.success, fontSize: 16, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 2),
-                Text('$active active / $total yogas checked', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text(l.yogaActiveCount(active, total), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               ])),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -61,14 +62,14 @@ class _YogaWidgetState extends State<YogaWidget> {
           Row(children: [
             const Icon(Icons.check_circle, color: AppColors.success, size: 14),
             const SizedBox(width: 6),
-            Text('ACTIVE YOGAS (${activeList.length})', style: const TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+            Text(l.yogaActiveHeader(activeList.length), style: const TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
           ]),
           const SizedBox(height: 8),
           if (activeList.isEmpty)
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.border)),
-              child: Text(AppLocalizations.of(context)?.noYogasActive ?? 'No yogas currently active.',
+              child: Text(l.noYogasActive,
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             )
           else
@@ -86,7 +87,9 @@ class _YogaWidgetState extends State<YogaWidget> {
               child: Row(children: [
                 Icon(_showInactive ? Icons.expand_less : Icons.expand_more, color: AppColors.textSecondary, size: 18),
                 const SizedBox(width: 6),
-                Text('${_showInactive ? "Hide" : "Show"} inactive yogas (${inactiveList.length})',
+                Text(_showInactive
+                        ? l.yogaHideInactiveCount(inactiveList.length)
+                        : l.yogaShowInactiveCount(inactiveList.length),
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
               ]),
             ),

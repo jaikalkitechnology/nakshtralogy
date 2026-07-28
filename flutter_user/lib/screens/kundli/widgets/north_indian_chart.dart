@@ -34,6 +34,7 @@ class NorthIndianChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final side = size ?? MediaQuery.of(context).size.width - 32;
     return Column(children: [
       Container(
@@ -50,7 +51,7 @@ class NorthIndianChartWidget extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 8),
-      _legend(),
+      _legend(l),
     ]);
   }
 
@@ -173,7 +174,7 @@ class NorthIndianChartWidget extends StatelessWidget {
     ));
   }
 
-  Widget _legend() {
+  Widget _legend(AppLocalizations l) {
     const style = TextStyle(color: AppColors.textSecondary, fontSize: 10);
     const boldStyle = TextStyle(color: AppColors.textPrimary, fontSize: 10, fontWeight: FontWeight.w600);
     return Container(
@@ -183,15 +184,15 @@ class NorthIndianChartWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.border),
       ),
-      child: const Wrap(
+      child: Wrap(
         spacing: 16,
         runSpacing: 4,
         children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('* ', style: boldStyle), Text('Retrograde', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('^ ', style: boldStyle), Text('Combust', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u25A1 ', style: boldStyle), Text('Vargottama', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2191 ', style: boldStyle), Text('Exalted', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2193 ', style: boldStyle), Text('Debilitated', style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [const Text('* ', style: boldStyle), Text(l.retrograde, style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [const Text('^ ', style: boldStyle), Text(l.combust, style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [const Text('\u25A1 ', style: boldStyle), Text(l.vargottama, style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [const Text('\u2191 ', style: boldStyle), Text(l.exalted, style: style)]),
+          Row(mainAxisSize: MainAxisSize.min, children: [const Text('\u2193 ', style: boldStyle), Text(l.debilitated, style: style)]),
         ],
       ),
     );

@@ -4,6 +4,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../../utils/constants.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 class AiSpecialistChatScreen extends StatefulWidget {
   final String domainKey;
@@ -141,7 +142,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         _wsConnected = false;
         if (mounted && _sending) {
           setState(() => _sending = false);
-          _addBotMessage('⚠️ Connection lost. Please try again.');
+          _addBotMessage('⚠️ ${AppLocalizations.of(context)!.aiConnectionLost}');
         }
       },
       onDone: () => _wsConnected = false,
@@ -203,7 +204,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
       }
     } else if (type == 'error') {
       setState(() => _sending = false);
-      _addBotMessage('⚠️ ${msg['text'] ?? 'Something went wrong'}');
+      _addBotMessage('⚠️ ${msg['text'] ?? AppLocalizations.of(context)!.aiSomethingWrong}');
     }
   }
 
@@ -268,14 +269,14 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           domain: widget.domainKey, language: _language,
         );
         if (resp['statusCode'] == 200) {
-          _addBotMessage(resp['message']?.toString() ?? 'No response',
+          _addBotMessage(resp['message']?.toString() ?? AppLocalizations.of(context)!.aiNoResponse,
               probability: (resp['probability'] as num?)?.toDouble(),
               band: resp['band']?.toString());
         } else {
-          _addBotMessage('⚠️ ${resp['detail'] ?? 'Something went wrong.'}');
+          _addBotMessage('⚠️ ${resp['detail'] ?? AppLocalizations.of(context)!.aiSomethingWrong}');
         }
       } catch (e) {
-        _addBotMessage('⚠️ Connection error. Please try again.');
+        _addBotMessage('⚠️ ${AppLocalizations.of(context)!.aiConnectionError}');
       }
       if (mounted) setState(() => _sending = false);
     }
@@ -335,6 +336,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.cosmicVoid,
       appBar: AppBar(
@@ -348,17 +350,17 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             icon: const Icon(Icons.language, size: 20),
             color: AppColors.nebula,
             tooltip: _language == 'auto'
-                ? (_detectedLanguage != null ? 'Auto → ${_displayLang(_detectedLanguage!)}' : 'Auto-detect')
-                : 'Language: ${_displayLang(_language)}',
+                ? (_detectedLanguage != null ? l.aiAutoArrow(_displayLang(_detectedLanguage!)) : l.aiAutoDetect)
+                : l.aiLanguageLabel(_displayLang(_language)),
             onSelected: (v) => setState(() => _language = v),
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'auto', child: Row(children: [Icon(Icons.auto_fix_high, size: 14), SizedBox(width: 8), Text('🌐 Auto-detect')])),
+              PopupMenuItem(value: 'auto', child: Row(children: [const Icon(Icons.auto_fix_high, size: 14), const SizedBox(width: 8), Text('🌐 ${l.aiAutoDetect}')])),
               const PopupMenuDivider(),
               // Dynamic from DB (fallback to hardcoded if DB empty)
               ...(_dbLanguages.isNotEmpty
-                  ? _dbLanguages.map<PopupMenuEntry<String>>((l) => PopupMenuItem(
-                      value: l['code']?.toString() ?? '',
-                      child: Text('${l['native_label'] ?? ''}  ${l['label'] ?? ''}'),
+                  ? _dbLanguages.map<PopupMenuEntry<String>>((lang) => PopupMenuItem(
+                      value: lang['code']?.toString() ?? '',
+                      child: Text('${lang['native_label'] ?? ''}  ${lang['label'] ?? ''}'),
                     ))
                   : <PopupMenuEntry<String>>[
                       const PopupMenuItem(value: 'english',   child: Text('English')),
@@ -384,14 +386,15 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // ── Chart Selector ──────────────────────────────────────────────────
 
   Widget _chartSelector() {
+    final l = AppLocalizations.of(context)!;
     if (_loadingCharts) return const Center(child: CircularProgressIndicator(color: AppColors.gold));
     if (_charts.isEmpty) {
       return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
         const Text('\U0001f4dc', style: TextStyle(fontSize: 48)),
         const SizedBox(height: 12),
-        const Text('No birth charts found', style: TextStyle(color: AppColors.ivory, fontSize: 16)),
+        Text(l.aiNoBirthCharts, style: const TextStyle(color: AppColors.ivory, fontSize: 16)),
         const SizedBox(height: 4),
-        const Text('Create a birth chart first to chat with AI', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+        Text(l.aiCreateChartFirst, style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
       ]));
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -400,7 +403,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('${widget.emoji} ${widget.label}', style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
-          const Text('Select a birth chart to begin analysis', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+          Text(l.aiSelectChartBegin, style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
         ]),
       ),
       Expanded(
@@ -443,6 +446,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // ── Chat View ───────────────────────────────────────────────────────
 
   Widget _chatView() {
+    final l = AppLocalizations.of(context)!;
     return Column(children: [
       // Chart info strip
       Container(
@@ -451,11 +455,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         child: Row(children: [
           const Icon(Icons.auto_awesome, size: 12, color: AppColors.gold),
           const SizedBox(width: 6),
-          Text('Analyzing: $_selectedChartName', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+          Text(l.aiAnalyzingName(_selectedChartName ?? ''), style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
           const Spacer(),
           GestureDetector(
             onTap: () { _ws?.sink.close(); _wsConnected = false; setState(() { _selectedChartId = null; _selectedChartName = null; _messages.clear(); }); },
-            child: const Text('Change', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+            child: Text(l.aiChange, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
           ),
         ]),
       ),
@@ -475,7 +479,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           child: Row(children: [
             const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
             const SizedBox(width: 8),
-            const Text('Analyzing your chart...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+            Text(l.aiAnalyzingChart, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
           ]),
         ),
       // Initial sample suggestions (before any chat)
@@ -490,6 +494,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // ── Provider Selector + Input ───────────────────────────────────────
 
   Widget _inputBar() {
+    final l = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
       decoration: BoxDecoration(
@@ -545,11 +550,11 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                 child: TextField(
                   controller: _msgCtrl,
                   style: const TextStyle(color: AppColors.ivory, fontSize: 13),
-                  decoration: const InputDecoration(
-                    hintText: 'Ask the stars anything...',
-                    hintStyle: TextStyle(color: AppColors.smoke, fontSize: 12),
+                  decoration: InputDecoration(
+                    hintText: l.aiAskStarsHint,
+                    hintStyle: const TextStyle(color: AppColors.smoke, fontSize: 12),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                   onSubmitted: (_) => _sendMessage(),
                 ),
@@ -632,13 +637,14 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
   // ── LLM-generated follow-up question chips ──────────────────────────
 
   Widget _followupChips() {
+    final l = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           const Icon(Icons.lightbulb_outline, size: 12, color: AppColors.gold),
           const SizedBox(width: 4),
-          const Text('Suggested follow-ups', style: TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.4)),
+          Text(l.aiSuggestedFollowups, style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.4)),
         ]),
         const SizedBox(height: 6),
         Wrap(
@@ -709,7 +715,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             Row(mainAxisSize: MainAxisSize.min, children: [
               const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.gold)),
               const SizedBox(width: 6),
-              const Text('Thinking...', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+              Text(AppLocalizations.of(context)!.aiThinking, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
             ]),
           if (streaming && text.isNotEmpty)
             Padding(
@@ -742,7 +748,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
         ),
         if (rating != 0) ...[
           const SizedBox(width: 8),
-          Text(rating == 1 ? 'Thanks!' : 'Feedback noted',
+          Text(rating == 1 ? AppLocalizations.of(context)!.aiThanks : AppLocalizations.of(context)!.aiFeedbackNoted,
               style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
         ],
       ]),

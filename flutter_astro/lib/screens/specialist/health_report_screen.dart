@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'engine_report_base.dart';
 import 'report_components.dart';
 
@@ -13,29 +14,30 @@ class HealthReportScreen extends EngineReportBase {
 class _S extends EngineReportBaseState<HealthReportScreen> {
   @override
   List<Widget> buildSections(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     return [
-      heroScores('🏥 HEALTH SCORES', [
-        [n(d, 'vitality_score'), 'VITALITY'],
-        [n(d, 'immunity_strength_score'), 'IMMUNITY'],
+      heroScores('🏥 ${l.healthScoresLabel}', [
+        [n(d, 'vitality_score'), l.vitalityLabel],
+        [n(d, 'immunity_strength_score'), l.immunityLabel],
       ], [
-        [n(d, 'recovery_capacity_score'), 'RECOVERY'], [n(d, 'mental_wellness_strength_score'), 'MENTAL'],
-        [n(d, 'stress_tolerance_score'), 'STRESS TOL'],
+        [n(d, 'recovery_capacity_score'), l.recoveryLabel], [n(d, 'mental_wellness_strength_score'), l.mentalLabel],
+        [n(d, 'stress_tolerance_score'), l.stressTolLabel],
       ]),
       // Constitution
-      _constitution(d),
-      if (d['karaka_body_map'] is Map) _bodyMap(d),
-      yogaLedger('Health Yogas', (d['active_disease_creating_yogas'] as List?) ?? [],
+      _constitution(d, l),
+      if (d['karaka_body_map'] is Map) _bodyMap(d, l),
+      yogaLedger(l.healthYogasTitle, (d['active_disease_creating_yogas'] as List?) ?? [],
         (d['active_protective_yogas'] as List?) ?? [],
-        creatingLabel: 'DISEASE PRESSURE', clearingLabel: 'PROTECTIVE'),
-      if (d['body_area_vulnerability_scores'] is Map) _bodyZones(d),
-      if (d['disease_category_susceptibility_scores'] is Map) _diseaseHeat(d),
-      yearlyTrend('Health Trend', (d['yearly_health_trend'] as List?) ?? [], scoreKey: 'vitality'),
-      periodCards('Recovery Windows', (d['recovery_windows'] as List?) ?? [],
-        'Caution Periods', (d['acute_event_risk_windows'] as List?) ?? []),
-      _lifestyle(d),
+        creatingLabel: l.diseasePressureLabel, clearingLabel: l.protectiveLabel),
+      if (d['body_area_vulnerability_scores'] is Map) _bodyZones(d, l),
+      if (d['disease_category_susceptibility_scores'] is Map) _diseaseHeat(d, l),
+      yearlyTrend(l.healthTrendTitle, (d['yearly_health_trend'] as List?) ?? [], scoreKey: 'vitality'),
+      periodCards(l.recoveryWindowsTitle, (d['recovery_windows'] as List?) ?? [],
+        l.cautionPeriodsTitle, (d['acute_event_risk_windows'] as List?) ?? []),
+      _lifestyle(d, l),
       statTiles([
-        [n(d, 'fertility_indicator_score'), 'FERTILITY'], [n(d, 'burnout_vulnerability_score'), 'BURNOUT RISK'],
-        [n(d, 'addiction_vulnerability_score'), 'ADDICTION VULN'], [d['work_life_balance_health_score'] ?? 0, 'WORK-LIFE BAL'],
+        [n(d, 'fertility_indicator_score'), l.fertilityLabel], [n(d, 'burnout_vulnerability_score'), l.burnoutRiskLabel],
+        [n(d, 'addiction_vulnerability_score'), l.addictionVulnLabel], [d['work_life_balance_health_score'] ?? 0, l.workLifeBalLabel],
       ]),
       const SizedBox(height: 10),
       risks((d['major_health_risks'] as List?) ?? []),
@@ -44,7 +46,7 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
     ];
   }
 
-  Widget _constitution(Map d) {
+  Widget _constitution(Map d, AppLocalizations l) {
     final type = d['constitutional_type']?.toString() ?? '';
     final dominant = d['dominant_dosha']?.toString() ?? '';
     final secondary = d['secondary_dosha']?.toString() ?? '';
@@ -53,7 +55,7 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
     final colors = {'vata': AppColors.aurora, 'pitta': AppColors.saffron, 'kapha': AppColors.success};
     final c = colors[dominant] ?? AppColors.gold;
     return Column(children: [
-      ReportHeader('Ayurvedic', 'Constitution', '3 KEYS'),
+      ReportHeader(l.ayurvedicLabel, l.constitutionTitleLabel, '3 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [c.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.1)]),
@@ -61,8 +63,8 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(titleCase(type), style: TextStyle(color: c, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: 'serif')),
           Row(children: [
-            Text('Dominant: ${titleCase(dominant)}', style: TextStyle(color: c, fontSize: 11, fontWeight: FontWeight.w600)),
-            if (secondary.isNotEmpty) Text(' · Secondary: ${titleCase(secondary)}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+            Text(l.dominantColonLabel(titleCase(dominant)), style: TextStyle(color: c, fontSize: 11, fontWeight: FontWeight.w600)),
+            if (secondary.isNotEmpty) Text(' · ${l.secondaryColonLabel(titleCase(secondary))}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
           ]),
           if (notes.isNotEmpty) ...[const SizedBox(height: 6),
             Text(notes, style: const TextStyle(color: AppColors.lavender, fontSize: 10, height: 1.4, fontStyle: FontStyle.italic))],
@@ -70,10 +72,10 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
     ]);
   }
 
-  Widget _bodyMap(Map d) {
+  Widget _bodyMap(Map d, AppLocalizations l) {
     final map = (d['karaka_body_map'] as Map).cast<String, dynamic>();
     return Column(children: [
-      ReportHeader('Body', 'System Map', '9 PLANETS'),
+      ReportHeader(l.bodyLabel, l.systemMapLabel, '9 PLANETS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: map.entries.take(9).map((e) {
@@ -94,11 +96,11 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
     ]);
   }
 
-  Widget _bodyZones(Map d) {
+  Widget _bodyZones(Map d, AppLocalizations l) {
     final zones = (d['body_area_vulnerability_scores'] as Map).cast<String, dynamic>();
     final sorted = zones.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
     return Column(children: [
-      ReportHeader('Body Zone', 'Vulnerability', '12 ZONES'),
+      ReportHeader(l.bodyZoneLabel, l.vulnerabilityLabel, '12 ZONES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: sorted.take(12).map((e) {
@@ -115,11 +117,11 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
     ]);
   }
 
-  Widget _diseaseHeat(Map d) {
+  Widget _diseaseHeat(Map d, AppLocalizations l) {
     final cats = (d['disease_category_susceptibility_scores'] as Map).cast<String, dynamic>();
     final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
     return Column(children: [
-      ReportHeader('Disease', 'Susceptibility', '${sorted.length} CATEGORIES'),
+      ReportHeader(l.diseaseLabel, l.susceptibilityLabel, '${sorted.length} CATEGORIES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: sorted.take(13).map((e) {
@@ -137,14 +139,14 @@ class _S extends EngineReportBaseState<HealthReportScreen> {
     ]);
   }
 
-  Widget _lifestyle(Map d) {
-    return styleRows('Lifestyle Factors', [
-      ['SLEEP DISCIPLINE', '${n(d, 'sleep_discipline_impact_score').toStringAsFixed(0)}/100'],
-      ['DIET DISCIPLINE', '${n(d, 'diet_discipline_impact_score').toStringAsFixed(0)}/100'],
-      ['EXERCISE NEED', '${n(d, 'exercise_need_score').toStringAsFixed(0)}/100'],
-      ['SUNLIGHT NEED', '${n(d, 'sunlight_need_score').toStringAsFixed(0)}/100'],
-      ['SOCIAL TYPE', d['social_energy_type']],
-      ['HEALING SPEED', d['healing_speed_tendency']],
+  Widget _lifestyle(Map d, AppLocalizations l) {
+    return styleRows(l.lifestyleFactorsTitle, [
+      [l.sleepDisciplineLabel, '${n(d, 'sleep_discipline_impact_score').toStringAsFixed(0)}/100'],
+      [l.dietDisciplineLabel, '${n(d, 'diet_discipline_impact_score').toStringAsFixed(0)}/100'],
+      [l.exerciseNeedLabel, '${n(d, 'exercise_need_score').toStringAsFixed(0)}/100'],
+      [l.sunlightNeedLabel, '${n(d, 'sunlight_need_score').toStringAsFixed(0)}/100'],
+      [l.socialTypeLabel, d['social_energy_type']],
+      [l.healingSpeedLabel, d['healing_speed_tendency']],
     ]);
   }
 }

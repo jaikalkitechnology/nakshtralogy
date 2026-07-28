@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'engine_report_base.dart';
 import 'report_components.dart';
 
@@ -13,51 +14,52 @@ class DebtReportScreen extends EngineReportBase {
 class _S extends EngineReportBaseState<DebtReportScreen> {
   @override
   List<Widget> buildSections(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     return [
-      heroScores('📉 DEBT SCORES', [
-        [n(d, 'current_debt_load_score'), 'CURRENT\nDEBT LOAD'],
-        [n(d, 'debt_recovery_capacity_score'), 'RECOVERY\nCAPACITY'],
+      heroScores('📉 ${l.debtScoresLabel}', [
+        [n(d, 'current_debt_load_score'), l.currentDebtLoadLabel],
+        [n(d, 'debt_recovery_capacity_score'), l.recoveryCapacityLabel],
       ], [
-        [n(d, 'debt_intensity_now'), 'INTENSITY'], [n(d, 'recent_defaults_risk'), 'DEFAULT RISK'],
+        [n(d, 'debt_intensity_now'), l.intensityLabel], [n(d, 'recent_defaults_risk'), l.defaultRiskLabel],
       ]),
-      styleRows('Debt Profile', [
-        ['KARMA', d['debt_karma_signature']], ['PERSONALITY', d['debt_personality']],
-        ['PHASE', d['active_debt_phase']], ['PRIMARY CATEGORY', d['primary_debt_category']],
+      styleRows(l.debtProfileTitle, [
+        [l.karmaLabel, d['debt_karma_signature']], [l.personalityLabel, d['debt_personality']],
+        [l.phaseLabel, d['active_debt_phase']], [l.primaryCategoryLabel, d['primary_debt_category']],
       ]),
       if (d['karaka_strength_table'] is Map) ...[
-        ReportHeader('Debt', 'Karakas', '9 PLANETS'),
+        ReportHeader(l.debtLabel, l.karakasLabel, '9 PLANETS'),
         karakaTable((d['karaka_strength_table'] as Map).cast<String, dynamic>()),
       ],
-      yogaLedger('Debt Yogas', (d['active_debt_creating_yogas'] as List?) ?? [],
+      yogaLedger(l.debtYogasTitle, (d['active_debt_creating_yogas'] as List?) ?? [],
         (d['active_debt_clearing_yogas'] as List?) ?? [],
-        creatingLabel: 'DEBT-CREATING', clearingLabel: 'DEBT-CLEARING'),
+        creatingLabel: l.debtCreatingLabel, clearingLabel: l.debtClearingLabel),
       // Debt categories heat
-      if (d['debt_category_scores'] is Map) _debtCategories(d),
-      yearlyTrend('Yearly Debt', (d['yearly_debt_trend'] as List?) ?? [], scoreKey: 'debt_pressure'),
-      periodCards('Repayment', (d['good_repayment_periods'] as List?) ?? [],
-        'Danger Periods', (d['dangerous_borrowing_periods'] as List?) ?? []),
+      if (d['debt_category_scores'] is Map) _debtCategories(d, l),
+      yearlyTrend(l.yearlyDebtTitle, (d['yearly_debt_trend'] as List?) ?? [], scoreKey: 'debt_pressure'),
+      periodCards(l.repaymentTitle, (d['good_repayment_periods'] as List?) ?? [],
+        l.dangerPeriodsTitle, (d['dangerous_borrowing_periods'] as List?) ?? []),
       // Debt-free window
-      if (d['debt_free_window'] is Map) _debtFreeWindow(d),
+      if (d['debt_free_window'] is Map) _debtFreeWindow(d, l),
       statTiles([
-        [n(d, 'default_probability_pct'), 'DEFAULT %'], [n(d, 'bankruptcy_risk_pct'), 'BANKRUPTCY %'],
-        [n(d, 'chronic_debt_probability'), 'CHRONIC %'], [n(d, 'psychological_resilience_score'), 'RESILIENCE'],
+        [n(d, 'default_probability_pct'), l.defaultPctLabel], [n(d, 'bankruptcy_risk_pct'), l.bankruptcyPctLabel],
+        [n(d, 'chronic_debt_probability'), l.chronicPctLabel], [n(d, 'psychological_resilience_score'), l.resilienceLabel],
       ]),
       const SizedBox(height: 10),
       // Core blocker
-      if (d['core_debt_blocker'] is Map) _blocker(d),
+      if (d['core_debt_blocker'] is Map) _blocker(d, l),
       risks((d['major_debt_risks'] as List?) ?? []),
       remedies((d['astrological_remedies'] as List?) ?? []),
       verdictCard(d['recovery_verdict']?.toString() ?? '',
         d['recommended_strategy']?.toString(),
-        subtitle: 'Recovery: ${n(d, 'recovery_probability_pct').toStringAsFixed(0)}% · Timeline: ${d['timeline_to_debt_free_years'] ?? "?"}yrs'),
+        subtitle: l.recoveryTimelineLabel(n(d, 'recovery_probability_pct').toStringAsFixed(0), d['timeline_to_debt_free_years']?.toString() ?? '?')),
     ];
   }
 
-  Widget _debtCategories(Map d) {
+  Widget _debtCategories(Map d, AppLocalizations l) {
     final cats = (d['debt_category_scores'] as Map).cast<String, dynamic>();
     final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
     return Column(children: [
-      ReportHeader('Debt', 'Categories', '${sorted.length} TYPES'),
+      ReportHeader(l.debtLabel, l.categoriesLabel, '${sorted.length} TYPES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: sorted.take(11).map((e) {
@@ -74,28 +76,28 @@ class _S extends EngineReportBaseState<DebtReportScreen> {
     ]);
   }
 
-  Widget _debtFreeWindow(Map d) {
+  Widget _debtFreeWindow(Map d, AppLocalizations l) {
     final w = (d['debt_free_window'] as Map).cast<String, dynamic>();
     return Container(margin: const EdgeInsets.fromLTRB(16, 8, 16, 8), padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [AppColors.success.withOpacity(0.12), AppColors.success.withOpacity(0.04)]),
         borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.success.withOpacity(0.3))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('🎯 DEBT-FREE WINDOW', style: TextStyle(color: AppColors.success, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text('🎯 ${l.debtFreeWindowLabel}', style: const TextStyle(color: AppColors.success, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
-        Text('Year ${w['year']}', style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-        Text('Dasha: ${w['dasha'] ?? ""}', style: const TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(l.yearLabel(w['year']?.toString() ?? ''), style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+        Text(l.dashaLabel(w['dasha']?.toString() ?? ''), style: const TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w600)),
         if (w['note'] != null) Text(w['note'].toString(), style: const TextStyle(color: AppColors.lavender, fontSize: 10, fontStyle: FontStyle.italic)),
       ]));
   }
 
-  Widget _blocker(Map d) {
+  Widget _blocker(Map d, AppLocalizations l) {
     final b = (d['core_debt_blocker'] as Map).cast<String, dynamic>();
     return Container(margin: const EdgeInsets.fromLTRB(16, 8, 16, 8), padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.08), borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.warning.withOpacity(0.3))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('CORE BLOCKER', style: TextStyle(color: AppColors.warning, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text(l.coreBlockerLabel, style: const TextStyle(color: AppColors.warning, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
         Text(b['primary_blocker']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700)),
         if (b['explanation'] != null) ...[const SizedBox(height: 4),

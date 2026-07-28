@@ -45,10 +45,11 @@ from sqlalchemy import func as sqlfunc
 from pydantic import BaseModel, EmailStr, Field
 
 from app.core.database import get_db
-from app.core.dependencies import require_role
+from app.core.dependencies import require_role, resolve_user_lang, get_lang_user
 from app.core.security import (
     verify_password, create_access_token, create_refresh_token,
 )
+from app.core.i18n import get_lang, t
 from app.services.fcm_service import notify_generic
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
@@ -132,15 +133,15 @@ class AdminTokenResponse(BaseModel):
 # ══════════════════════════════════════════════════════════════════════
 
 @router.post("/login", response_model=AdminTokenResponse)
-def admin_login(req: AdminLoginRequest, db: Session = Depends(get_db)):
+def admin_login(req: AdminLoginRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     """Admin-only login. Rejects non-admin accounts."""
     user = db.query(User).filter(User.email == req.email).first()
     if not user or not user.password_hash or not verify_password(req.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(status_code=401, detail=t("err.invalid_credentials", lang))
     if user.role != "admin":
-        raise HTTPException(status_code=403, detail="This account is not an admin")
+        raise HTTPException(status_code=403, detail=t("err.not_admin_account", lang))
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account is deactivated")
+        raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
 
     user.last_login_at = datetime.utcnow()
 
@@ -251,10 +252,11 @@ def get_user_detail(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     wallet = db.query(Wallet).filter(Wallet.user_id == user_id).first()
     txns = []
     if wallet:
@@ -320,15 +322,16 @@ def edit_user(
     req: EditUserRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     data = req.model_dump(exclude_unset=True)
     for k, v in data.items():
         setattr(user, k, v)
     db.commit()
-    return {"id": user.id, "message": "User updated", "updated_fields": list(data.keys())}
+    return {"id": user.id, "message": t("msg.user_updated", lang), "updated_fields": list(data.keys())}
 
 
 @router.patch("/users/{user_id}/toggle")
@@ -336,10 +339,11 @@ def toggle_user(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     user.is_active = not user.is_active
     db.commit()
     return {"id": user.id, "is_active": user.is_active}
@@ -350,13 +354,14 @@ def approve_user_profile(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     user.profile_approved = True
     db.commit()
-    return {"id": user.id, "profile_approved": True, "message": "Profile approved"}
+    return {"id": user.id, "profile_approved": True, "message": t("msg.profile_approved", lang)}
 
 
 @router.patch("/users/{user_id}/verify")
@@ -364,10 +369,11 @@ def verify_user(
     user_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     user.is_verified = not user.is_verified
     db.commit()
     return {"id": user.id, "is_verified": user.is_verified}
@@ -431,10 +437,11 @@ def edit_astrologer(
     req: EditAstrologerRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     data = req.model_dump(exclude_unset=True)
     for k, v in data.items():
         if k == "commission_pct" and v is not None:
@@ -446,7 +453,7 @@ def edit_astrologer(
     if data.get("is_approved") and not profile.approved_at:
         profile.approved_at = datetime.utcnow()
     db.commit()
-    return {"id": profile.id, "message": "Astrologer updated", "updated_fields": list(data.keys())}
+    return {"id": profile.id, "message": t("msg.astrologer_updated", lang), "updated_fields": list(data.keys())}
 
 
 @router.patch("/astrologers/{profile_id}/approve")
@@ -454,10 +461,11 @@ def approve_astrologer(
     profile_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     profile.is_approved = True
     profile.approved_at = datetime.utcnow()
     user = db.query(User).filter(User.id == profile.user_id).first()
@@ -469,12 +477,12 @@ def approve_astrologer(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title="Profile Approved ✅",
-            body="Congratulations! Your astrologer profile has been approved. You can now go online and start consultations.",
+            title=t("label.notif.profile_approved_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.profile_approved_body", resolve_user_lang(user, lang)),
             role="astrologer",
             data={"type": "profile_approved", "profile_id": profile.id},
         )
-    return {"id": profile.id, "is_approved": True, "message": "Astrologer approved & notified"}
+    return {"id": profile.id, "is_approved": True, "message": t("msg.astrologer_approved_notified", lang)}
 
 
 @router.patch("/astrologers/{profile_id}/reject")
@@ -483,11 +491,12 @@ def reject_astrologer(
     req: AstrologerRejectRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Reject astrologer application with reason + FCM notification."""
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     profile.is_approved = False
     profile.is_online = False
     user = db.query(User).filter(User.id == profile.user_id).first()
@@ -498,12 +507,12 @@ def reject_astrologer(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title="Profile Rejected ❌",
-            body=f"Your profile was rejected. Reason: {req.reason}",
+            title=t("label.notif.profile_rejected_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.profile_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
             role="astrologer",
             data={"type": "profile_rejected", "profile_id": profile.id, "reason": req.reason},
         )
-    return {"id": profile.id, "is_approved": False, "reason": req.reason, "message": "Astrologer rejected & notified"}
+    return {"id": profile.id, "is_approved": False, "reason": req.reason, "message": t("msg.astrologer_rejected_notified", lang)}
 
 
 @router.patch("/astrologers/{profile_id}/block")
@@ -511,10 +520,11 @@ def block_astrologer(
     profile_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     user = db.query(User).filter(User.id == profile.user_id).first()
     if user:
         user.is_active = not user.is_active
@@ -522,14 +532,22 @@ def block_astrologer(
     db.commit()
 
     if user and user.fcm_token:
-        status_msg = "unblocked" if user.is_active else "blocked"
-        notify_generic(
-            fcm_token=user.fcm_token,
-            title=f"Account {status_msg.title()}",
-            body=f"Your account has been {status_msg} by admin.",
-            role="astrologer",
-            data={"type": f"account_{status_msg}", "profile_id": profile.id},
-        )
+        if user.is_active:
+            notify_generic(
+                fcm_token=user.fcm_token,
+                title=t("label.notif.account_unblocked_title", resolve_user_lang(user, lang)),
+                body=t("label.notif.account_unblocked_body", resolve_user_lang(user, lang)),
+                role="astrologer",
+                data={"type": "account_unblocked", "profile_id": profile.id},
+            )
+        else:
+            notify_generic(
+                fcm_token=user.fcm_token,
+                title=t("label.notif.account_blocked_title", resolve_user_lang(user, lang)),
+                body=t("label.notif.account_blocked_body", resolve_user_lang(user, lang)),
+                role="astrologer",
+                data={"type": "account_blocked", "profile_id": profile.id},
+            )
     return {"id": profile.id, "is_active": user.is_active if user else False}
 
 
@@ -539,10 +557,11 @@ def update_commission(
     commission_pct: float = Query(..., ge=0, le=100),
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     profile.commission_pct = Decimal(str(commission_pct))
     db.commit()
     return {"id": profile.id, "commission_pct": float(profile.commission_pct)}
@@ -597,6 +616,7 @@ def list_transactions(
     date_to: Optional[str] = None,    # YYYY-MM-DD
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Wallet transaction statement with full filters:
@@ -623,7 +643,7 @@ def list_transactions(
             dt_from = datetime.strptime(date_from, "%Y-%m-%d")
             q = q.filter(WalletTransaction.created_at >= dt_from)
         except ValueError:
-            raise HTTPException(status_code=400, detail="date_from must be YYYY-MM-DD")
+            raise HTTPException(status_code=400, detail=t("err.date_from_format", lang))
     if date_to:
         try:
             dt_to = datetime.strptime(date_to, "%Y-%m-%d")
@@ -631,16 +651,16 @@ def list_transactions(
             dt_to = dt_to.replace(hour=23, minute=59, second=59)
             q = q.filter(WalletTransaction.created_at <= dt_to)
         except ValueError:
-            raise HTTPException(status_code=400, detail="date_to must be YYYY-MM-DD")
+            raise HTTPException(status_code=400, detail=t("err.date_to_format", lang))
 
     total = q.count()
 
     # Aggregates for filtered range (totals across ALL matching rows, not just page)
     total_credits = 0.0
     total_debits = 0.0
-    for t, w, u in q.all():
-        amt = float(t.amount)
-        if t.txn_type in ("recharge", "bonus", "consultation_credit", "refund"):
+    for txn, wal, usr in q.all():
+        amt = float(txn.amount)
+        if txn.txn_type in ("recharge", "bonus", "consultation_credit", "refund"):
             total_credits += amt
         else:
             total_debits += amt
@@ -654,15 +674,18 @@ def list_transactions(
     def _label(txn_type: str, user_role: str) -> str:
         """Human readable label — distinguishes user vs astrologer flows."""
         mapping = {
-            "recharge": "User Add Fund",
-            "bonus": "Admin Bonus",
-            "consultation_debit": "Service Deduct" if user_role == "user" else "Fund Removed",
-            "consultation_credit": "Commission Earned" if user_role == "astrologer" else "Service Credit",
-            "refund": "Refund",
-            "withdrawal": "Astro Withdrawal",
-            "ai_debit": "AI Service Deduct",
+            "recharge": "label.txn.recharge",
+            "bonus": "label.txn.bonus",
+            "consultation_debit": "label.txn.consultation_debit_user" if user_role == "user" else "label.txn.fund_removed",
+            "consultation_credit": "label.txn.commission_earned" if user_role == "astrologer" else "label.txn.service_credit",
+            "refund": "label.wallet.refund",
+            "withdrawal": "label.txn.astro_withdrawal",
+            "ai_debit": "label.txn.ai_debit",
         }
-        return mapping.get(txn_type, txn_type.replace("_", " ").title())
+        key = mapping.get(txn_type)
+        if key:
+            return t(key, lang)
+        return txn_type.replace("_", " ").title()
 
     return {
         "total": total,
@@ -671,22 +694,22 @@ def list_transactions(
         "net_flow": round(total_credits - total_debits, 2),
         "transactions": [
             {
-                "id": t.id,
-                "user_id": u.id,
-                "user_name": u.name,
-                "user_email": u.email,
-                "user_role": u.role,
-                "txn_type": t.txn_type,
-                "direction": _direction(t.txn_type),
-                "label": _label(t.txn_type, u.role),
-                "amount": float(t.amount),
-                "balance_after": float(t.balance_after),
-                "description": t.description,
-                "reference_type": t.reference_type,
-                "reference_id": t.reference_id,
-                "created_at": str(t.created_at) if t.created_at else None,
+                "id": txn.id,
+                "user_id": usr.id,
+                "user_name": usr.name,
+                "user_email": usr.email,
+                "user_role": usr.role,
+                "txn_type": txn.txn_type,
+                "direction": _direction(txn.txn_type),
+                "label": _label(txn.txn_type, usr.role),
+                "amount": float(txn.amount),
+                "balance_after": float(txn.balance_after),
+                "description": txn.description,
+                "reference_type": txn.reference_type,
+                "reference_id": txn.reference_id,
+                "created_at": str(txn.created_at) if txn.created_at else None,
             }
-            for t, w, u in rows
+            for txn, wal, usr in rows
         ],
     }
 
@@ -697,17 +720,18 @@ def adjust_wallet(
     req: WalletAdjustRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Admin wallet adjustment with action type + reason (creates statement entry).
     action: add_fund (credit) | remove_fund (debit) | bonus (credit)
     """
     if req.action not in ("add_fund", "remove_fund", "bonus"):
-        raise HTTPException(status_code=400, detail="action must be add_fund, remove_fund, or bonus")
+        raise HTTPException(status_code=400, detail=t("err.invalid_wallet_action", lang))
 
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
     wallet = db.query(Wallet).filter(Wallet.user_id == user_id).first()
     if not wallet:
         wallet = Wallet(user_id=user_id)
@@ -722,7 +746,7 @@ def adjust_wallet(
     if new_balance < 0:
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot debit ₹{amount}. Current balance is ₹{float(wallet.balance)}",
+            detail=t("err.cannot_debit_balance", lang, amount=amount, balance=float(wallet.balance)),
         )
 
     wallet.balance = Decimal(str(new_balance))
@@ -743,6 +767,11 @@ def adjust_wallet(
     )
     db.add(txn)
     db.commit()
+    action_label_key = {
+        "add_fund": "label.wallet_action.add_fund",
+        "remove_fund": "label.wallet_action.remove_fund",
+        "bonus": "label.wallet_action.bonus",
+    }[req.action]
     return {
         "user_id": user_id,
         "user_name": user.name,
@@ -751,7 +780,7 @@ def adjust_wallet(
         "new_balance": float(wallet.balance),
         "txn_id": txn.id,
         "reason": req.reason,
-        "message": f"{req.action.replace('_', ' ').title()} of ₹{amount} applied",
+        "message": t("msg.wallet_adjustment_applied", lang, action=t(action_label_key, lang), amount=amount),
     }
 
 
@@ -794,10 +823,11 @@ def get_kyc_detail(
     kyc_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     kyc = db.query(KycDocument).filter(KycDocument.id == kyc_id).first()
     if not kyc:
-        raise HTTPException(status_code=404, detail="KYC document not found")
+        raise HTTPException(status_code=404, detail=t("err.kyc_not_found", lang))
     user = db.query(User).filter(User.id == kyc.user_id).first()
     return {
         "id": kyc.id, "user_id": kyc.user_id,
@@ -818,10 +848,11 @@ def approve_kyc(
     kyc_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     kyc = db.query(KycDocument).filter(KycDocument.id == kyc_id).first()
     if not kyc:
-        raise HTTPException(status_code=404, detail="KYC not found")
+        raise HTTPException(status_code=404, detail=t("err.kyc_not_found", lang))
     kyc.status = "approved"
     kyc.reviewed_by = current_user.id
     kyc.reviewed_at = datetime.utcnow()
@@ -835,12 +866,12 @@ def approve_kyc(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title="KYC Approved ✅",
-            body=f"Your KYC document ({kyc.doc_type}) has been approved. Your account is now fully verified.",
+            title=t("label.notif.kyc_approved_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.kyc_approved_body", resolve_user_lang(user, lang), doc_type=kyc.doc_type),
             role=user.role if user.role in ("user", "astrologer") else "user",
             data={"type": "kyc_approved", "kyc_id": kyc.id},
         )
-    return {"id": kyc.id, "status": "approved", "message": "KYC approved — user verified & notified"}
+    return {"id": kyc.id, "status": "approved", "message": t("msg.kyc_approved_notified", lang)}
 
 
 @router.patch("/kyc/{kyc_id}/reject")
@@ -849,10 +880,11 @@ def reject_kyc(
     req: KycRejectRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     kyc = db.query(KycDocument).filter(KycDocument.id == kyc_id).first()
     if not kyc:
-        raise HTTPException(status_code=404, detail="KYC not found")
+        raise HTTPException(status_code=404, detail=t("err.kyc_not_found", lang))
     kyc.status = "rejected"
     kyc.rejection_reason = req.reason
     kyc.reviewed_by = current_user.id
@@ -863,12 +895,12 @@ def reject_kyc(
     if user and user.fcm_token:
         notify_generic(
             fcm_token=user.fcm_token,
-            title="KYC Rejected ❌",
-            body=f"Your KYC was rejected. Reason: {req.reason}. Please re-submit with correct documents.",
+            title=t("label.notif.kyc_rejected_title", resolve_user_lang(user, lang)),
+            body=t("label.notif.kyc_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
             role=user.role if user.role in ("user", "astrologer") else "user",
             data={"type": "kyc_rejected", "kyc_id": kyc.id, "reason": req.reason},
         )
-    return {"id": kyc.id, "status": "rejected", "reason": req.reason, "message": "KYC rejected & user notified"}
+    return {"id": kyc.id, "status": "rejected", "reason": req.reason, "message": t("msg.kyc_rejected_notified", lang)}
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -888,6 +920,7 @@ def list_reviews(
     date_to: Optional[str] = None,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     List reviews with admin filters. Joins user (reviewer) and
@@ -920,13 +953,13 @@ def list_reviews(
         try:
             q = q.filter(Review.created_at >= datetime.strptime(date_from, "%Y-%m-%d"))
         except ValueError:
-            raise HTTPException(status_code=400, detail="date_from must be YYYY-MM-DD")
+            raise HTTPException(status_code=400, detail=t("err.date_from_format", lang))
     if date_to:
         try:
             dt_to = datetime.strptime(date_to, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
             q = q.filter(Review.created_at <= dt_to)
         except ValueError:
-            raise HTTPException(status_code=400, detail="date_to must be YYYY-MM-DD")
+            raise HTTPException(status_code=400, detail=t("err.date_to_format", lang))
 
     total = q.count()
 
@@ -970,6 +1003,7 @@ def get_review(
     review_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     row = db.query(Review, User, AstrologerProfile).join(
         User, Review.user_id == User.id
@@ -977,7 +1011,7 @@ def get_review(
         AstrologerProfile, Review.astrologer_id == AstrologerProfile.id
     ).filter(Review.id == review_id).first()
     if not row:
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
     r, u, p = row
     return {
         "id": r.id,
@@ -1018,10 +1052,11 @@ def edit_review(
     req: ReviewEditRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
     data = req.model_dump(exclude_unset=True)
     for k, v in data.items():
         setattr(review, k, v)
@@ -1030,7 +1065,7 @@ def edit_review(
     db.commit()
     return {
         "id": review.id,
-        "message": "Review updated",
+        "message": t("msg.review_updated", lang),
         "updated_fields": list(data.keys()),
     }
 
@@ -1040,10 +1075,11 @@ def toggle_review_visibility(
     review_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
     review.is_visible = not review.is_visible
     db.flush()
     _recompute_astrologer_rating(db, review.astrologer_id)
@@ -1056,16 +1092,17 @@ def delete_review(
     review_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     review = db.query(Review).filter(Review.id == review_id).first()
     if not review:
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise HTTPException(status_code=404, detail=t("err.review_not_found", lang))
     astrologer_id = review.astrologer_id
     db.delete(review)
     db.flush()
     _recompute_astrologer_rating(db, astrologer_id)
     db.commit()
-    return {"message": "Review deleted"}
+    return {"message": t("msg.review_deleted", lang)}
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1211,10 +1248,11 @@ def get_category_settings(
     unmasked: bool = False,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Get all settings for a single category. Pass unmasked=true to reveal secrets."""
     if category not in SETTINGS_SCHEMA:
-        raise HTTPException(status_code=404, detail="Unknown settings category")
+        raise HTTPException(status_code=404, detail=t("err.unknown_settings_category", lang))
 
     meta = SETTINGS_SCHEMA[category]
     rows = db.query(PlatformSetting).filter(PlatformSetting.category == category).all()
@@ -1244,10 +1282,11 @@ def upsert_category_settings(
     req: SettingUpsertRequest,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Upsert all settings in a category. Values must match allowed keys."""
     if category not in SETTINGS_SCHEMA:
-        raise HTTPException(status_code=404, detail="Unknown settings category")
+        raise HTTPException(status_code=404, detail=t("err.unknown_settings_category", lang))
 
     allowed_keys = {k["key"]: k for k in SETTINGS_SCHEMA[category]["keys"]}
     updated = 0
@@ -1275,7 +1314,7 @@ def upsert_category_settings(
             ))
         updated += 1
     db.commit()
-    return {"category": category, "updated_fields": updated, "message": f"{updated} settings saved"}
+    return {"category": category, "updated_fields": updated, "message": t("msg.settings_saved", lang, count=updated)}
 
 
 @router.delete("/settings/{category}/{key}")
@@ -1284,16 +1323,17 @@ def delete_setting(
     key: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     row = db.query(PlatformSetting).filter(
         PlatformSetting.category == category,
         PlatformSetting.key == key,
     ).first()
     if not row:
-        raise HTTPException(status_code=404, detail="Setting not found")
+        raise HTTPException(status_code=404, detail=t("err.setting_not_found", lang))
     db.delete(row)
     db.commit()
-    return {"message": "Setting cleared"}
+    return {"message": t("msg.setting_cleared", lang)}
 
 
 # ── FCM JSON File Upload ─────────────────────────────────────────────
@@ -1311,6 +1351,7 @@ async def upload_fcm_credentials(
     file: UploadFile = File(...),
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Upload Firebase service account JSON file.
@@ -1319,9 +1360,9 @@ async def upload_fcm_credentials(
     platform_settings with project_id, client_email, sa_path.
     """
     if project not in ("user", "astro"):
-        raise HTTPException(status_code=400, detail="project must be 'user' or 'astro'")
+        raise HTTPException(status_code=400, detail=t("err.invalid_fcm_project", lang))
     if not file.filename.endswith(".json"):
-        raise HTTPException(status_code=400, detail="File must be a .json file")
+        raise HTTPException(status_code=400, detail=t("err.file_must_be_json", lang))
 
     # Ensure credentials dir exists
     CREDENTIALS_DIR.mkdir(parents=True, exist_ok=True)
@@ -1331,17 +1372,17 @@ async def upload_fcm_credentials(
     try:
         data = _json.loads(content)
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid JSON file")
+        raise HTTPException(status_code=400, detail=t("err.invalid_json_file", lang))
 
     required = ["type", "project_id", "private_key", "client_email"]
     missing = [k for k in required if k not in data]
     if missing:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid Firebase service account JSON. Missing fields: {', '.join(missing)}",
+            detail=t("err.missing_fcm_fields", lang, fields=", ".join(missing)),
         )
     if data.get("type") != "service_account":
-        raise HTTPException(status_code=400, detail="File is not a Firebase service account JSON")
+        raise HTTPException(status_code=400, detail=t("err.not_firebase_sa", lang))
 
     # Save file
     filename = f"firebase-{project}-sa.json"
@@ -1377,5 +1418,5 @@ async def upload_fcm_credentials(
         "path": str(file_path),
         "project_id": data.get("project_id"),
         "client_email": data.get("client_email"),
-        "message": f"Firebase {project} credentials uploaded successfully",
+        "message": t("msg.fcm_uploaded", lang, project=project),
     }

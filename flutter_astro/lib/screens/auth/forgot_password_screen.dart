@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../l10n/gen/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -25,6 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context))),
       body: BlocListener<AuthBloc, AuthState>(
@@ -39,25 +41,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 40),
               const Icon(Icons.lock_reset, size: 64, color: AppColors.primary),
               const SizedBox(height: 16),
-              Text('Forgot Password?', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 24)),
+              Text(l.forgotPassword, style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 24)),
               const SizedBox(height: 8),
-              Text('Enter your registered email to\nreceive a reset link.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium),
+              Text(l.forgotPasswordInstructions, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 40),
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.border)),
                 child: Form(key: _formKey, child: Column(children: [
-                  TextFormField(controller: _emailCtrl, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined, color: AppColors.textSecondary)), validator: (v) => (v == null || !v.contains('@')) ? 'Valid email required' : null),
+                  TextFormField(controller: _emailCtrl, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email, prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary)), validator: (v) => (v == null || !v.contains('@')) ? l.validEmailRequired : null),
                   const SizedBox(height: 24),
                   BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                     final loading = state is AuthLoading;
                     final sent = state is AuthForgotPasswordSuccess;
-                    return ElevatedButton(onPressed: loading ? null : _submit, child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(sent ? 'Resend Link' : 'Send Reset Link'));
+                    return ElevatedButton(onPressed: loading ? null : _submit, child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(sent ? l.resendLink : l.sendResetLink));
                   }),
                 ])),
               ),
               const SizedBox(height: 20),
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Back to Sign In', style: TextStyle(color: AppColors.primary))),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(l.backToSignIn, style: const TextStyle(color: AppColors.primary))),
             ]),
           ),
         ),

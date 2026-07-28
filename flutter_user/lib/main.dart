@@ -34,8 +34,20 @@ void main() async {
   _showPermissions = await shouldShowPermissionScreen();
   final prefs = await SharedPreferences.getInstance();
   final langCode = prefs.getString('app_language');
-  if (langCode != null) _savedLocale = Locale(langCode);
+  if (langCode != null) {
+    _savedLocale = _parseLocale(langCode);
+    ApiService().setLang(langCode);
+  }
   runApp(const NakshatralogyUserApp());
+}
+
+/// Parse a stored language tag (e.g. 'hi', 'hi_Latn') into a [Locale],
+/// preserving the script subtag when present.
+Locale _parseLocale(String tag) {
+  final parts = tag.split(RegExp(r'[_-]'));
+  return parts.length > 1
+      ? Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1])
+      : Locale(tag);
 }
 
 class NakshatralogyUserApp extends StatefulWidget {
@@ -54,7 +66,13 @@ class _NakshatralogyUserAppState extends State<NakshatralogyUserApp> {
 
   void setLocale(Locale locale) {
     setState(() => _locale = locale);
-    SharedPreferences.getInstance().then((p) => p.setString('app_language', locale.languageCode));
+    // Preserve the script subtag (e.g. Hinglish → hi_Latn) so the saved value
+    // round-trips and the API gets the correct language.
+    final tag = locale.scriptCode != null
+        ? '${locale.languageCode}_${locale.scriptCode}'
+        : locale.languageCode;
+    ApiService().setLang(tag);
+    SharedPreferences.getInstance().then((p) => p.setString('app_language', tag));
   }
 
   @override

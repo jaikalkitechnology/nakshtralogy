@@ -11,13 +11,8 @@ import 'widgets/yoga_widget.dart';
 import 'widgets/shadbala_widget.dart';
 import 'widgets/ashtakavarga_widget.dart';
 import 'widgets/aspects_widget.dart';
-import 'widgets/life_areas_widget.dart';
 import 'widgets/bhava_widget.dart';
-import 'widgets/chakra_health_widget.dart';
-import 'widgets/dasha_activation_widget.dart';
 import 'widgets/gochar_widget.dart';
-import 'widgets/career_widget.dart';
-import 'widgets/character_widget.dart';
 
 /// Main kundli viewer — 17 tabs for all Vedic analysis sections.
 class KundliViewerScreen extends StatefulWidget {
@@ -38,7 +33,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 18;
+  static const _sectionCount = 13;
 
   static List<List<Object>> _sections(AppLocalizations l) => [
     [l.summary, Icons.dashboard],
@@ -53,12 +48,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.shadbala, Icons.bar_chart],
     [l.ashtakavarga, Icons.table_chart],
     [l.aspects, Icons.hub],
-    [l.lifeAreas, Icons.work],
     [l.bhava, Icons.home],
-    [l.chakras, Icons.radio_button_checked],
-    [l.dashaActive, Icons.flash_on],
-    ['Career', Icons.business_center],
-    ['Character', Icons.person_search],
   ];
 
   @override
@@ -145,18 +135,13 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap()),
                         DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari'),
                         DashaTreeWidget(chartId: widget.chartId, type: 'moola'),
-                        GocharWidget(chartId: widget.chartId),
+                        GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx()),
                         DoshWidget(chartId: widget.chartId, initial: _complete?['dosh_analysis']),
                         YogaWidget(chartId: widget.chartId, initial: _complete?['yoga_analysis']),
                         ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala']),
                         AshtakavargaWidget(chartId: widget.chartId),
                         AspectsWidget(chartId: widget.chartId),
-                        LifeAreasWidget(chartId: widget.chartId, initial: _complete?['life_areas']),
                         BhavaWidget(chartId: widget.chartId, initial: _complete?['bhava_strength']),
-                        ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health']),
-                        DashaActivationWidget(chartId: widget.chartId),
-                        CareerWidget(chartId: widget.chartId),
-                        CharacterWidget(chartId: widget.chartId),
                       ],
                     ),
     );
@@ -164,6 +149,12 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 
   Map<String, dynamic> _planetsMap() =>
       ((_chart?['planets'] as Map?) ?? {}).cast<String, dynamic>();
+
+  // Native's Moon rashi index (0=Aries…11=Pisces) — drives the Gochar tab.
+  int _moonRashiIdx() {
+    final moon = ((_chart?['planets'] as Map?)?['Moon'] as Map?)?.cast<String, dynamic>();
+    return (moon?['sign_idx'] as num?)?.toInt() ?? 0;
+  }
 
   Map<String, dynamic> _divisionalsMap() =>
       ((_chart?['divisionals'] as Map?) ?? {}).cast<String, dynamic>();
@@ -242,12 +233,12 @@ class _SummaryTab extends StatelessWidget {
         Row(children: [Icon(icon, color: color, size: 20), const SizedBox(width: 8),
           Text(title, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700))]),
         const SizedBox(height: 10),
-        Text('${m['sign_full']} (${m['sign']})',
+        Text('${m['sign_full_local'] ?? m['sign_full']} (${m['sign']})',
             style: const TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        Text('Degree: ${m['degree']}°  •  Nakshatra: ${m['nakshatra']} (${m['pada']})',
+        Text('Degree: ${m['degree']}°  •  Nakshatra: ${m['nakshatra_local'] ?? m['nakshatra']} (${m['pada']})',
             style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-        Text('Nakshatra Lord: ${m['nak_lord']}  •  Dignity: ${m['dignity']}',
+        Text('Nakshatra Lord: ${m['nak_lord_local'] ?? m['nak_lord']}  •  Dignity: ${m['dignity_local'] ?? m['dignity']}',
             style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
       ]),
     );
@@ -291,7 +282,7 @@ class _KundliTabState extends State<_KundliTab> {
       final p = (planetData as Map).cast<String, dynamic>();
       final si = (p['sign_idx'] as num?)?.toInt() ?? 0;
       byRashi.putIfAbsent(si, () => []).add({
-        'planet': name,
+        'planet': (p['planet_local'] ?? name),
         'sign': p['sign'],
         'degree': p['degree'],
         'dignity': p['dignity'],
@@ -328,7 +319,7 @@ class _KundliTabState extends State<_KundliTab> {
         onSelectionChanged: (s) => setState(() => _base = s.first),
       ),
       const SizedBox(height: 12),
-      Text('$_base Chart — ${basePlanet?['sign_full'] ?? ''}',
+      Text('$_base Chart — ${basePlanet?['sign_full_local'] ?? basePlanet?['sign_full'] ?? ''}',
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
       const SizedBox(height: 12),

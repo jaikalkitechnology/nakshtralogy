@@ -14,7 +14,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
+from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.career import career_engine
@@ -46,13 +48,14 @@ def get_career_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Full career specialist analysis (v5) for a birth chart."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang))
 
     try:
         t0 = time.time()
@@ -65,12 +68,12 @@ def get_career_analysis(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_report(result, lang),
             "meta": {"engine": "career_specialist_v5", "latency_ms": int((time.time() - t0) * 1000)},
         }
     except Exception as e:
         logger.error("Career analysis error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Career analysis failed: {e}")
+        raise HTTPException(500, t("err.career_analysis_failed", lang, error=str(e)))
 
 
 @router.get("/{chart_id}/summary")
@@ -78,13 +81,14 @@ def get_career_summary(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Lightweight career summary for cards and list views."""
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang))
 
     try:
         t0 = time.time()
@@ -126,4 +130,4 @@ def get_career_summary(
         }
     except Exception as e:
         logger.error("Career summary error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Career summary failed: {e}")
+        raise HTTPException(500, t("err.career_summary_failed", lang, error=str(e)))

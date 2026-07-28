@@ -52,15 +52,15 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     fontFamily: 'monospace'),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
-            const Text.rich(TextSpan(children: [
+            Text.rich(TextSpan(children: [
               TextSpan(
-                  text: 'Love ',
-                  style: TextStyle(
+                  text: '${l.loveCompatTitle1} ',
+                  style: const TextStyle(
                       color: AppColors.ivory,
                       fontSize: 18,
                       fontWeight: FontWeight.w600)),
               TextSpan(
-                  text: 'Compatibility',
+                  text: l.loveCompatTitle2,
                   style: TextStyle(
                       color: _accent,
                       fontSize: 18,
@@ -80,61 +80,61 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // 3. ATTRACTION & CHEMISTRY
           if (attraction.isNotEmpty) ...[
-            _header('Attraction &', 'Chemistry'),
+            _header(l.loveAttractionHeader1, l.loveAttractionHeader2),
             _buildAttractionChemistry(l, attraction),
           ],
 
           // 4. EMOTIONAL HARMONY
           if (emotional.isNotEmpty) ...[
-            _header('Emotional', 'Harmony'),
+            _header(l.loveEmotionalHeader1, l.loveEmotionalHeader2),
             _buildEmotionalHarmony(l, emotional),
           ],
 
           // 5. MENTAL RAPPORT
           if (mental.isNotEmpty) ...[
-            _header('Mental', 'Rapport'),
+            _header(l.loveMentalHeader1, l.loveMentalHeader2),
             _buildMentalRapport(l, mental),
           ],
 
           // 6. PASSION & PHYSICAL
           if (passion.isNotEmpty) ...[
-            _header('Passion &', 'Physical'),
+            _header(l.lovePassionHeader1, l.lovePassionHeader2),
             _buildPassionPhysical(l, passion),
           ],
 
           // 7. LONG-TERM HARMONY
           if (longterm.isNotEmpty) ...[
-            _header('Long-term', 'Harmony'),
+            _header(l.loveLongtermHeader1, l.loveEmotionalHeader2),
             _buildLongtermHarmony(l, longterm),
           ],
 
           // 8. KARMIC LOVE BOND
           if (karmic.isNotEmpty) ...[
-            _header('Karmic Love', 'Bond'),
+            _header(l.loveKarmicHeader1, l.loveKarmicHeader2),
             _buildKarmicBond(l, karmic),
           ],
 
           // 9. CHALLENGES & FRICTION
           if (challenges.isNotEmpty) ...[
-            _header('Challenges &', 'Friction'),
+            _header(l.loveChallengesHeader1, l.loveChallengesHeader2),
             _buildChallenges(l, challenges),
           ],
 
           // 10. TIMING (MOOLA DASHA)
           if (timing.isNotEmpty) ...[
-            _header('Love Timing', 'Moola Dasha'),
+            _header(l.loveTimingHeader1, l.childTimingHeader2),
             _buildTiming(l, timing),
           ],
 
           // 11. RELATIONSHIP DYNAMICS
           if (dynamics.isNotEmpty) ...[
-            _header('Relationship', 'Dynamics'),
+            _header(l.loveRelationshipHeader1, l.loveRelationshipHeader2),
             _buildDynamics(l, dynamics),
           ],
 
           // 12. REMEDIES
           if (remedies.isNotEmpty) ...[
-            _header('Remedies &', 'Guidance'),
+            _header(l.loveRemediesHeader1, l.loveRemediesHeader2),
             _buildRemedies(l, remedies),
           ],
 
@@ -143,7 +143,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // 14. CONFIDENCE
           if (conf != null) ...[
-            ReportHeader('Analysis', 'Confidence', 'QUALITY'),
+            ReportHeader(l.analysisWord, l.confidenceLabel, l.qualityTag),
             ConfidenceBlock(
                 score: conf,
                 statement: data['confidence_explanation']?.toString(),
@@ -182,7 +182,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: _accent.withOpacity(0.3))),
       child: Column(children: [
-        _label('LOVE COMPATIBILITY'),
+        _label(l.loveCompatHeroLabel),
         const SizedBox(height: 14),
 
         // Main score ring
@@ -254,25 +254,25 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     runSpacing: 6,
                     alignment: WrapAlignment.center,
                     children: [
-                      _scoreChip('Attraction',
+                      _scoreChip(l.loveChipAttraction,
                           _num(components, 'attraction_chemistry'),
                           chipColor: _accent),
-                      _scoreChip('Emotional',
+                      _scoreChip(l.loveEmotionalHeader1,
                           _num(components, 'emotional_harmony'),
                           chipColor: AppColors.aurora),
-                      _scoreChip('Mental',
+                      _scoreChip(l.loveMentalHeader1,
                           _num(components, 'mental_rapport'),
                           chipColor: AppColors.lavender),
-                      _scoreChip('Passion',
+                      _scoreChip(l.loveChipPassion,
                           _num(components, 'passion_physical'),
                           chipColor: AppColors.saffron),
-                      _scoreChip('Long-term',
+                      _scoreChip(l.loveLongtermHeader1,
                           _num(components, 'longterm_harmony'),
                           chipColor: AppColors.success),
-                      _scoreChip('Karmic',
+                      _scoreChip(l.karmic,
                           _num(components, 'karmic_bond'),
                           chipColor: AppColors.indigo),
-                      _scoreChip('Challenge',
+                      _scoreChip(l.loveChipChallenge,
                           _num(components, 'challenge_penalty'),
                           isPenalty: true),
                     ]),
@@ -306,13 +306,13 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
         child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (p1.isNotEmpty) Expanded(child: _partnerCard(p1)),
+              if (p1.isNotEmpty) Expanded(child: _partnerCard(l, p1)),
               if (p1.isNotEmpty && p2.isNotEmpty) const SizedBox(width: 8),
-              if (p2.isNotEmpty) Expanded(child: _partnerCard(p2)),
+              if (p2.isNotEmpty) Expanded(child: _partnerCard(l, p2)),
             ]));
   }
 
-  Widget _partnerCard(Map<String, dynamic> p) {
+  Widget _partnerCard(AppLocalizations l, Map<String, dynamic> p) {
     final role = p['role']?.toString() ?? '';
     final borderC =
         role.toLowerCase().contains('male') && !role.toLowerCase().contains('female')
@@ -347,12 +347,12 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   fontFamily: 'serif')),
           const SizedBox(height: 6),
-          _kvRow('DOB', p['dob']?.toString() ?? '', AppColors.smoke),
-          _kvRow('Place', p['place']?.toString() ?? '', AppColors.smoke),
+          _kvRow(l.dob, p['dob']?.toString() ?? '', AppColors.smoke),
+          _kvRow(l.place, p['place']?.toString() ?? '', AppColors.smoke),
           const SizedBox(height: 4),
-          _kvRow('Lagna', p['lagna']?.toString() ?? '', AppColors.gold),
-          _kvRow('Moon Sign', p['moon_sign']?.toString() ?? '', AppColors.gold),
-          _kvRow('Venus Sign', p['venus_sign']?.toString() ?? '', _accent),
+          _kvRow(l.lagna, p['lagna']?.toString() ?? '', AppColors.gold),
+          _kvRow(l.moonSignLabel, p['moon_sign']?.toString() ?? '', AppColors.gold),
+          _kvRow(l.venusSignLabel, p['venus_sign']?.toString() ?? '', _accent),
         ]));
   }
 
@@ -377,7 +377,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             border: Border.all(color: _accent.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Score bar
-          _progressBar('Attraction Score', score, barColor: _accent),
+          _progressBar(l.attractionScoreLabel, score, barColor: _accent),
           const SizedBox(height: 14),
 
           // Venus cross contacts table
@@ -402,21 +402,21 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                 child: Row(children: [
                   Expanded(
                       flex: 3,
-                      child: Text('Contact',
+                      child: Text(l.contact,
                           style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 3,
-                      child: Text('Effect',
+                      child: Text(l.effect,
                           style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
                               fontFamily: 'monospace'))),
                   Expanded(
                       flex: 2,
-                      child: Text('Strength',
+                      child: Text(l.strength,
                           style: const TextStyle(
                               color: AppColors.smoke,
                               fontSize: 8,
@@ -490,14 +490,14 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                   ]));
             }),
             const SizedBox(height: 10),
-            _kvRow('Active Contacts', '$activeCount', _accent),
+            _kvRow(l.activeContactsLabel, '$activeCount', _accent),
           ],
 
           // Magnetic pull & attraction type
           if (magneticPull.isNotEmpty)
-            _kvRow('Magnetic Pull', magneticPull, AppColors.gold),
+            _kvRow(l.magneticPullLabel, magneticPull, AppColors.gold),
           if (attractionType.isNotEmpty)
-            _kvRow('Initial Attraction', attractionType, AppColors.gold),
+            _kvRow(l.initialAttractionLabel, attractionType, AppColors.gold),
 
           // Interpretation
           if (interp.isNotEmpty) ...[
@@ -532,7 +532,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             border: Border.all(color: AppColors.aurora.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Score bar
-          _progressBar('Emotional Score', score, barColor: AppColors.aurora),
+          _progressBar(l.emotionalScoreLabel, score, barColor: AppColors.aurora),
           const SizedBox(height: 14),
 
           // Moon sign compatibility card
@@ -600,11 +600,11 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                       ]),
                       const SizedBox(height: 8),
                       if (moonCompat['element_match'] != null)
-                        _kvRow('Element Match',
+                        _kvRow(l.elementMatchLabel,
                             moonCompat['element_match'].toString(),
                             AppColors.gold),
                       if (moonCompat['harmony'] != null)
-                        _kvRow('Harmony',
+                        _kvRow(l.harmonyLabel,
                             moonCompat['harmony'].toString(),
                             _harmonyColor(moonCompat['harmony'].toString())),
                       if (moonCompat['interpretation'] != null) ...[
@@ -643,17 +643,17 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                       Row(children: [
                         Expanded(
                             child: _kootaChip(
-                                'YONI',
+                                l.kootaYoni,
                                 nakCompat['yoni_koota']?.toString() ?? '')),
                         const SizedBox(width: 6),
                         Expanded(
                             child: _kootaChip(
-                                'GANA',
+                                l.kootaGana,
                                 nakCompat['gana_koota']?.toString() ?? '')),
                         const SizedBox(width: 6),
                         Expanded(
                             child: _kootaChip(
-                                'TARA',
+                                l.kootaTara,
                                 nakCompat['tara_koota']?.toString() ?? '')),
                       ]),
                       if (nakCompat['interpretation'] != null) ...[
@@ -689,7 +689,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                     children: [
                       Row(children: [
                         Expanded(
-                            child: Text('BHAKOOT AXIS',
+                            child: Text(l.bhakootAxis,
                                 style: const TextStyle(
                                     color: AppColors.smoke,
                                     fontSize: 8,
@@ -697,13 +697,13 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                                     fontFamily: 'monospace',
                                     fontWeight: FontWeight.w600))),
                         if (bhakoot['dosha_present'] == true)
-                          _badge('DOSHA PRESENT', AppColors.error)
+                          _badge(l.doshaPresentBadge, AppColors.error)
                         else
-                          _badge('NO DOSHA', AppColors.success),
+                          _badge(l.noDoshaBadge, AppColors.success),
                       ]),
                       const SizedBox(height: 6),
                       if (bhakoot['axis'] != null)
-                        _kvRow('Axis', bhakoot['axis'].toString(),
+                        _kvRow(l.axisLabel, bhakoot['axis'].toString(),
                             AppColors.gold),
                       if (bhakoot['interpretation'] != null) ...[
                         const SizedBox(height: 4),
@@ -774,21 +774,21 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.lavender.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _progressBar('Mental Score', score, barColor: AppColors.lavender),
+          _progressBar(l.mentalScoreLabel, score, barColor: AppColors.lavender),
           const SizedBox(height: 14),
 
           if (mercury.isNotEmpty) ...[
-            _infoBlock('MERCURY DYNAMICS', mercury, AppColors.lavender),
+            _infoBlock(l.mercuryDynamicsLabel, mercury, AppColors.lavender),
             const SizedBox(height: 8),
           ],
           if (commStyle.isNotEmpty) ...[
             _infoBlock(
-                'COMMUNICATION STYLE MATCH', commStyle, AppColors.aurora),
+                l.communicationStyleLabel, commStyle, AppColors.aurora),
             const SizedBox(height: 8),
           ],
           if (intellectual.isNotEmpty) ...[
             _infoBlock(
-                'INTELLECTUAL CONNECTION', intellectual, AppColors.gold),
+                l.intellectualConnectionLabel, intellectual, AppColors.gold),
             const SizedBox(height: 8),
           ],
 
@@ -821,19 +821,19 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.saffron.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _progressBar('Passion Score', score, barColor: AppColors.saffron),
+          _progressBar(l.passionScoreLabel, score, barColor: AppColors.saffron),
           const SizedBox(height: 14),
 
           if (marsVenus.isNotEmpty) ...[
-            _infoBlock('MARS-VENUS INTERPLAY', marsVenus, AppColors.saffron),
+            _infoBlock(l.marsVenusLabel, marsVenus, AppColors.saffron),
             const SizedBox(height: 8),
           ],
           if (physChem.isNotEmpty) ...[
-            _infoBlock('PHYSICAL CHEMISTRY', physChem, _accent),
+            _infoBlock(l.physicalChemistryLabel, physChem, _accent),
             const SizedBox(height: 8),
           ],
           if (yoni.isNotEmpty) ...[
-            _infoBlock('YONI COMPATIBILITY', yoni, AppColors.gold),
+            _infoBlock(l.yoniCompatLabel, yoni, AppColors.gold),
             const SizedBox(height: 8),
           ],
 
@@ -868,27 +868,27 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.success.withOpacity(0.2))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _progressBar('Long-term Score', score, barColor: AppColors.success),
+          _progressBar(l.longtermScoreLabel, score, barColor: AppColors.success),
           const SizedBox(height: 14),
 
           if (seventh.isNotEmpty) ...[
-            _infoBlock('7TH HOUSE SYNASTRY', seventh, AppColors.gold),
+            _infoBlock(l.seventhHouseSynastryLabel, seventh, AppColors.gold),
             const SizedBox(height: 8),
           ],
           if (commitment.isNotEmpty) ...[
-            _infoBlock('COMMITMENT POTENTIAL', commitment, AppColors.success),
+            _infoBlock(l.commitmentPotentialLabel, commitment, AppColors.success),
             const SizedBox(height: 8),
           ],
           if (jupiter.isNotEmpty) ...[
-            _infoBlock('JUPITER BLESSING', jupiter, AppColors.gold),
+            _infoBlock(l.jupiterBlessingLabel, jupiter, AppColors.gold),
             const SizedBox(height: 8),
           ],
           if (d9.isNotEmpty) ...[
-            _infoBlock('D9 NAVAMSA RESONANCE', d9, AppColors.lavender),
+            _infoBlock(l.d9NavamsaResonanceLabel, d9, AppColors.lavender),
             const SizedBox(height: 8),
           ],
           if (saturn.isNotEmpty) ...[
-            _infoBlock('SATURN LONGEVITY', saturn, AppColors.aurora),
+            _infoBlock(l.saturnLongevityLabel, saturn, AppColors.aurora),
             const SizedBox(height: 8),
           ],
 
@@ -922,7 +922,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.indigo.withOpacity(0.3))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _progressBar('Karmic Score', score, barColor: AppColors.indigo),
+          _progressBar(l.karmicScoreLabel, score, barColor: AppColors.indigo),
           const SizedBox(height: 14),
 
           // Ketu contacts chips
@@ -967,7 +967,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Darakaraka link
           if (darakaraka.isNotEmpty) ...[
-            _infoBlock('DARAKARAKA LINK', darakaraka, AppColors.gold),
+            _infoBlock(l.darakarakaLinkLabel, darakaraka, AppColors.gold),
             const SizedBox(height: 8),
           ],
 
@@ -1033,7 +1033,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Expanded(
-                  child: Text('TOTAL CHALLENGE PENALTY',
+                  child: Text(l.totalChallengePenalty,
                       style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 9,
@@ -1100,7 +1100,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                   // Source
                   if (source.isNotEmpty) ...[
                     const SizedBox(height: 6),
-                    _kvRow('Source', source, AppColors.smoke),
+                    _kvRow(l.sourceLabel, source, AppColors.smoke),
                   ],
 
                   // Manifestation
@@ -1224,17 +1224,17 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
           // Partner 1 current dasha
           if (p1Dasha.isNotEmpty)
-            _buildDashaPartnerBlock('Partner 1', p1Dasha),
+            _buildDashaPartnerBlock(l, l.partnerOneLabel, p1Dasha),
           if (p1Dasha.isNotEmpty && p2Dasha.isNotEmpty)
             const SizedBox(height: 10),
           // Partner 2 current dasha
           if (p2Dasha.isNotEmpty)
-            _buildDashaPartnerBlock('Partner 2', p2Dasha),
+            _buildDashaPartnerBlock(l, l.partnerTwoLabel, p2Dasha),
 
           // Favorable love windows
           if (windows.isNotEmpty) ...[
             const SizedBox(height: 14),
-            _label('FAVORABLE LOVE WINDOWS'),
+            _label(l.favorableLoveWindowsLabel),
             const SizedBox(height: 8),
             ...windows.map((w) {
               final wm = _asMap(w);
@@ -1281,14 +1281,14 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                         ],
                         if (factor.isNotEmpty) ...[
                           const SizedBox(height: 3),
-                          Text('Factor: $factor',
+                          Text(l.factorPrefix(factor),
                               style: const TextStyle(
                                   color: AppColors.lavender,
                                   fontSize: 9,
                                   height: 1.3)),
                         ],
                         if (appliesTo.isNotEmpty)
-                          Text('Applies to: $appliesTo',
+                          Text(l.appliesToLabel(appliesTo),
                               style: const TextStyle(
                                   color: AppColors.smoke, fontSize: 9)),
                       ]));
@@ -1332,7 +1332,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
         ]));
   }
 
-  Widget _buildDashaPartnerBlock(String label, Map<String, dynamic> pd) {
+  Widget _buildDashaPartnerBlock(AppLocalizations l, String label, Map<String, dynamic> pd) {
     final moola = _asMap(pd['moola']);
     final favorability = pd['love_favorability']?.toString() ?? '';
     final favScore = (pd['favorability_score'] as num?)?.toDouble() ?? 0;
@@ -1363,15 +1363,15 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             if (favorability.isNotEmpty) _badge(favorability, sc),
           ]),
           const SizedBox(height: 6),
-          if (md.isNotEmpty) _kvRow('Mahadasha', md, AppColors.gold),
-          if (ad.isNotEmpty) _kvRow('Antardasha', ad, AppColors.gold),
-          if (pdStr.isNotEmpty) _kvRow('Pratyantardasha', pdStr, AppColors.gold),
-          if (dates.isNotEmpty) _kvRow('Dates', dates, AppColors.smoke),
+          if (md.isNotEmpty) _kvRow(l.mahadashaLabel, md, AppColors.gold),
+          if (ad.isNotEmpty) _kvRow(l.antardashaLabel, ad, AppColors.gold),
+          if (pdStr.isNotEmpty) _kvRow(l.pratyantardashaLabel, pdStr, AppColors.gold),
+          if (dates.isNotEmpty) _kvRow(l.datesLabel, dates, AppColors.smoke),
 
           // Favorability score bar
           if (favScore > 0) ...[
             const SizedBox(height: 6),
-            _progressBar('Favorability', favScore),
+            _progressBar(l.favorabilityLabel, favScore),
           ],
 
           if (reasoning.isNotEmpty)
@@ -1409,19 +1409,19 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
           // Giver/Receiver
           if (emotionalGiver.isNotEmpty) ...[
             _infoBlock(
-                'EMOTIONAL GIVER / RECEIVER', emotionalGiver, _accent),
+                l.emotionalGiverReceiverLabel, emotionalGiver, _accent),
             const SizedBox(height: 10),
           ],
 
           // Power balance
           if (powerBalance.isNotEmpty) ...[
-            _infoBlock('POWER BALANCE', powerBalance, AppColors.aurora),
+            _infoBlock(l.powerBalanceLabel, powerBalance, AppColors.aurora),
             const SizedBox(height: 10),
           ],
 
           // Growth dynamic
           if (growthDynamic.isNotEmpty) ...[
-            _infoBlock('GROWTH DYNAMIC', growthDynamic, AppColors.gold),
+            _infoBlock(l.growthDynamicLabel, growthDynamic, AppColors.gold),
             const SizedBox(height: 10),
           ],
 
@@ -1547,7 +1547,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                               height: 1.4)),
                       if (addresses.isNotEmpty) ...[
                         const SizedBox(height: 6),
-                        _kvRow('Addresses', addresses, AppColors.lavender),
+                        _kvRow(l.addressesLabel, addresses, AppColors.lavender),
                       ],
                       if (classical.isNotEmpty) ...[
                         const SizedBox(height: 4),
@@ -1649,7 +1649,7 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.gold.withOpacity(0.25))),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _label('SUMMARY'),
+          _label(l.summary.toUpperCase()),
           const SizedBox(height: 10),
 
           // Key insights as numbered list
@@ -1768,12 +1768,13 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
 
   Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g,
       String prefix) {
+    final l = AppLocalizations.of(ctx)!;
     return Expanded(
         child: GestureDetector(
             onTap: () {
               Clipboard.setData(ClipboardData(text: prefix + _fmt(data)));
               ScaffoldMessenger.of(ctx)
-                  .showSnackBar(SnackBar(content: Text('Copied for $name!')));
+                  .showSnackBar(SnackBar(content: Text(l.copiedForName(name))));
               final urls = {
                 'ChatGPT': 'https://chat.openai.com/',
                 'Claude': 'https://claude.ai/new',
@@ -1809,8 +1810,8 @@ class LoveCompatibilityReportScreen extends StatelessWidget {
                           color: AppColors.ivory,
                           fontSize: 9,
                           fontWeight: FontWeight.w700)),
-                  Text('COPY',
-                      style: TextStyle(
+                  Text(l.copy,
+                      style: const TextStyle(
                           color: AppColors.smoke,
                           fontSize: 7,
                           fontFamily: 'monospace')),

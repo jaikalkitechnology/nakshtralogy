@@ -32,7 +32,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user, require_role
+from app.core.dependencies import get_current_user, require_role, get_lang_user
+from app.core.i18n import get_lang, t
 from app.models.model import (
     User, Chart, DashaCache, ServicePricing, ServiceOrder,
     Wallet, WalletTransaction,
@@ -147,10 +148,10 @@ def list_pricing(
 
 
 @router.get("/pricing/{pricing_id}", response_model=ServicePricingResponse)
-def get_pricing(pricing_id: str, db: Session = Depends(get_db)):
+def get_pricing(pricing_id: str, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     p = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not p:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
     return p
 
 
@@ -159,10 +160,11 @@ def create_pricing(
     req: ServicePricingCreate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Admin-only: create a new service pricing."""
     if db.query(ServicePricing).filter(ServicePricing.service_key == req.service_key).first():
-        raise HTTPException(status_code=409, detail="service_key already exists")
+        raise HTTPException(status_code=409, detail=t("err.service_key_exists", lang))
     sp = ServicePricing(**req.model_dump())
     db.add(sp)
     db.commit()
@@ -176,10 +178,11 @@ def update_pricing(
     req: ServicePricingUpdate,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not sp:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
     for field, value in req.model_dump(exclude_unset=True).items():
         setattr(sp, field, value)
     db.commit()
@@ -192,20 +195,22 @@ def delete_pricing(
     pricing_id: str,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Admin-only: delete a service pricing entry."""
     sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not sp:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
     db.delete(sp)
     db.commit()
-    return MessageResponse(message=f"Service '{sp.service_name}' deleted")
+    return MessageResponse(message=t("msg.service_deleted", lang, name=sp.service_name))
 
 
 @router.post("/pricing/seed", response_model=MessageResponse)
 def seed_pricing(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Admin-only: seed default Nakshtralogy service catalog."""
     defaults = [
@@ -375,7 +380,9 @@ def seed_pricing(
             db.add(ServicePricing(**d))
             created += 1
     db.commit()
-    return MessageResponse(message=f"Seeded {created} services ({len(defaults) - created} already existed)")
+    return MessageResponse(
+        message=t("msg.services_seeded", lang, created=created, existing=len(defaults) - created)
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -387,6 +394,7 @@ def create_chart(
     req: BirthChartCreateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Create a new birth chart. Runs nakshralogyV2.calculate_chart
@@ -398,10 +406,10 @@ def create_chart(
     try:
         pdata, divs = _silent_chart(nk, req.name, req.gender or "M", req.dob, req.tob, req.place)
     except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Chart computation failed: {str(e)}")
+        raise HTTPException(status_code=422, detail=t("err.chart_computation_failed", lang, error=str(e)))
 
     if pdata is None:
-        raise HTTPException(status_code=422, detail="Could not compute chart — check birth data")
+        raise HTTPException(status_code=422, detail=t("err.chart_compute_no_data", lang))
 
     chart_json = _build_chart_json(nk, pdata, divs)
 
@@ -487,12 +495,13 @@ def get_chart(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     chart = db.query(Chart).filter(
         Chart.id == chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
     return chart
 
 
@@ -502,13 +511,14 @@ def update_chart(
     req: BirthChartUpdateRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Update chart metadata. If dob/tob/place changed, re-compute kundli."""
     chart = db.query(Chart).filter(
         Chart.id == chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
     update_data = req.model_dump(exclude_unset=True)
     needs_recompute = any(k in update_data for k in ("dob", "tob", "place"))
@@ -546,15 +556,16 @@ def delete_chart(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     chart = db.query(Chart).filter(
         Chart.id == chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
     db.delete(chart)
     db.commit()
-    return MessageResponse(message="Chart deleted")
+    return MessageResponse(message=t("msg.chart_deleted", lang))
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -566,13 +577,14 @@ def compute_vimshottari(
     req: ComputeServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Compute Vimshottari Dasha for an existing chart."""
     chart = db.query(Chart).filter(
         Chart.id == req.chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
     # check cache
     if chart.dasha_cache and chart.dasha_cache.vimshottari:
@@ -622,13 +634,14 @@ def compute_moola(
     req: ComputeServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Compute Moola Dasha (paid service) for an existing chart."""
     chart = db.query(Chart).filter(
         Chart.id == req.chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
     # check pricing & payment
     sp = db.query(ServicePricing).filter(ServicePricing.service_key == "moola_dasha").first()
@@ -642,7 +655,7 @@ def compute_moola(
         if not order:
             raise HTTPException(
                 status_code=402,
-                detail=f"This is a paid service (₹{sp.price}). Purchase it first via /purchase"
+                detail=t("err.paid_service_required", lang, price=sp.price),
             )
 
     # check cache
@@ -708,13 +721,14 @@ def compute_divisional(
     req: ComputeServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Return divisional chart positions from stored chart_json."""
     chart = db.query(Chart).filter(
         Chart.id == req.chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
     cj = chart.chart_json
     return {
@@ -765,19 +779,20 @@ def purchase_service(
     req: PurchaseServiceRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Purchase a paid service for a specific chart. Debits wallet."""
     sp = db.query(ServicePricing).filter(ServicePricing.id == req.service_pricing_id).first()
     if not sp:
-        raise HTTPException(status_code=404, detail="Service not found")
+        raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
     if not sp.is_active:
-        raise HTTPException(status_code=400, detail="Service is not available")
+        raise HTTPException(status_code=400, detail=t("err.service_unavailable", lang))
 
     chart = db.query(Chart).filter(
         Chart.id == req.chart_id, Chart.user_id == current_user.id
     ).first()
     if not chart:
-        raise HTTPException(status_code=404, detail="Chart not found")
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
     # check if already purchased for this chart
     existing = db.query(ServiceOrder).filter(
@@ -787,7 +802,7 @@ def purchase_service(
         ServiceOrder.status == "completed",
     ).first()
     if existing:
-        raise HTTPException(status_code=409, detail="Already purchased for this chart")
+        raise HTTPException(status_code=409, detail=t("err.already_purchased", lang))
 
     price = float(sp.price)
 
@@ -802,7 +817,7 @@ def purchase_service(
             if count >= sp.max_free_per_user:
                 raise HTTPException(
                     status_code=402,
-                    detail=f"Free limit reached ({sp.max_free_per_user}). Upgrade to continue."
+                    detail=t("err.free_limit_reached", lang, limit=sp.max_free_per_user),
                 )
 
         order = ServiceOrder(
@@ -830,11 +845,11 @@ def purchase_service(
     # paid service: debit wallet
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
-        raise HTTPException(status_code=400, detail="Wallet not found")
+        raise HTTPException(status_code=400, detail=t("err.wallet_not_found", lang))
     if float(wallet.balance) < price:
         raise HTTPException(
             status_code=402,
-            detail=f"Insufficient balance. Need ₹{price}, have ₹{wallet.balance}"
+            detail=t("err.insufficient_balance", lang, price=price, balance=wallet.balance),
         )
 
     # debit

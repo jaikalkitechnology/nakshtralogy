@@ -12,6 +12,23 @@ class ApiService {
   String? _accessToken;
   String? _refreshToken;
 
+  // BCP-47-ish language tag sent as `Accept-Language` on every request so the
+  // backend localizes responses (planet/rashi names, report bodies, labels).
+  // Kept in sync with the app locale via [setLang] / [loadLang].
+  String _langCode = 'en';
+
+  /// Set the active response language (e.g. 'hi', 'ta', 'hi_Latn').
+  void setLang(String code) {
+    final c = code.trim();
+    if (c.isNotEmpty) _langCode = c;
+  }
+
+  /// Load the saved app language into the request header cache.
+  Future<void> loadLang() async {
+    final prefs = await SharedPreferences.getInstance();
+    _langCode = prefs.getString('app_language') ?? 'en';
+  }
+
   Future<void> loadTokens() async {
     final prefs = await SharedPreferences.getInstance();
     _accessToken = prefs.getString('access_token');
@@ -39,6 +56,7 @@ class ApiService {
 
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
+    'Accept-Language': _langCode,
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
@@ -535,7 +553,8 @@ class ApiService {
   // ═══════════════════════════════════════════════════════════════════
 
   Future<Map<String, dynamic>> _rashiGet(String path) async {
-    final resp = await http.get(Uri.parse('${ApiConstants.rashiBase}$path'));
+    final resp = await http.get(Uri.parse('${ApiConstants.rashiBase}$path'),
+        headers: {'Accept-Language': _langCode});
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 import '_section_loader.dart';
+import '../../../l10n/gen/app_localizations.dart';
 
 class AshtakavargaWidget extends StatelessWidget {
   final String chartId;
@@ -14,6 +16,7 @@ class AshtakavargaWidget extends StatelessWidget {
       initial: initial is Map ? (initial as Map).cast<String, dynamic>() : null,
       loader: () => ApiService().getKundliAshtakavarga(chartId),
       builder: (ctx, data) {
+        final l = AppLocalizations.of(ctx)!;
         final sav = (data['sav'] as Map? ?? {}).cast<String, dynamic>();
         final savTotal = (data['sav_total'] as num?)?.toInt() ?? 337;
         final planetsBav = (data['planets_bav'] as Map? ?? {}).cast<String, dynamic>();
@@ -21,9 +24,9 @@ class AshtakavargaWidget extends StatelessWidget {
 
         return ListView(padding: const EdgeInsets.all(16), children: [
           KundliSectionCard(
-            title: 'Sarva Ashtakavarga (SAV)',
+            title: l.ashtakavargaSavTitle,
             icon: Icons.table_chart, color: AppColors.primary,
-            subtitle: 'Total: $savTotal rekhas (average sign = ${(savTotal/12).toStringAsFixed(1)})',
+            subtitle: l.ashtakavargaSavSubtitle(savTotal.toString(), (savTotal / 12).toStringAsFixed(1)),
             child: Wrap(spacing: 8, runSpacing: 8, children: signs.map((s) {
               final v = (sav[s] as num?)?.toInt() ?? 0;
               return Container(
@@ -43,8 +46,8 @@ class AshtakavargaWidget extends StatelessWidget {
             final total = (d['total_rekha'] as num?)?.toInt() ?? 0;
             final natalScore = (d['natal_sign_score'] as num?)?.toInt() ?? 0;
             return KundliSectionCard(
-              title: '$p — BAV',
-              subtitle: 'Total: $total rekhas • At natal sign: $natalScore',
+              title: l.ashtakavargaPlanetBavTitle(KundliNames.planet(p, Localizations.localeOf(ctx))),
+              subtitle: l.ashtakavargaPlanetBavSubtitle(total.toString(), natalScore.toString()),
               child: Wrap(spacing: 6, runSpacing: 6, children: signs.map((s) {
                 final v = (bav[s] as num?)?.toInt() ?? 0;
                 return Container(

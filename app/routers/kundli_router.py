@@ -18,6 +18,7 @@ Sections:
   - Composite: dashboard + full analysis
 """
 
+import re
 from typing import Optional
 import logging
 import traceback
@@ -27,7 +28,10 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
+from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_report
+from app.services.chart_localizer import localize_chart
 from app.kundli import engine as nk_engine
 from app.models.model import Chart, User
 
@@ -80,23 +84,81 @@ def _ok(data, meta=None):
     return out
 
 
-def _err(code: int, msg: str, detail: str = None):
-    raise HTTPException(status_code=code, detail={"error": msg, "detail": detail})
+def _err(code: int, key: str, lang: str = "english", detail: str = None):
+    """Raise an HTTPException whose `error` summary is localized via the
+    i18n catalog (`key`); `detail` (raw exception text) is left as-is since
+    it's debug info, not a user-facing display string."""
+    raise HTTPException(status_code=code, detail={"error": t(key, lang), "detail": detail})
 
 
-def _load_chart(chart_id: str, current_user: User, db: Session) -> Chart:
+def _slug(s) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", str(s).lower()).strip("_")
+
+
+def _tg(grade, lang: str):
+    """Translate a gochar grade band ('Excellent'/'Very Good'/.../'Critical')
+    via catalog key f"grade.{slug(grade)}"."""
+    if not grade:
+        return grade
+    return t(f"grade.{_slug(grade)}", lang)
+
+
+def _tb(band, lang: str):
+    """Translate a chakra-health band/status enum via catalog key f"band.{slug(band)}"."""
+    if not band:
+        return band
+    return t(f"band.{_slug(band)}", lang)
+
+
+def _localize_gochar(result, lang: str):
+    """In-place translate the 'grade' field (+ best/worst rashi name) of a
+    gochar result. Handles both the single-date shape
+    ({..., 'rashis': [...], 'best', 'worst'}) and the range shape
+    (list of {'date', 'score', 'grade'})."""
+    if isinstance(result, dict) and "rashis" in result:
+        for r in result.get("rashis", []):
+            if "grade" in r:
+                r["grade"] = _tg(r["grade"], lang)
+        if result.get("best"):
+            result["best"] = t(f"rashi.name.{_slug(result['best'])}", lang)
+        if result.get("worst"):
+            result["worst"] = t(f"rashi.name.{_slug(result['worst'])}", lang)
+    elif isinstance(result, list):
+        for item in result:
+            if isinstance(item, dict) and "grade" in item:
+                item["grade"] = _tg(item["grade"], lang)
+    return result
+
+
+def _localize_chakra_health(result, lang: str):
+    """In-place translate chakra_health band enums: overall_status,
+    per-chakra chakra_status, per-planet status (STRONG/MIXED/WEAK)."""
+    if not isinstance(result, dict):
+        return result
+    if result.get("overall_status"):
+        result["overall_status"] = _tb(result["overall_status"], lang)
+    for ch in result.get("chakras", []):
+        if ch.get("chakra_status"):
+            ch["chakra_status"] = _tb(ch["chakra_status"], lang)
+        for p in ch.get("planets", []):
+            if p.get("status"):
+                p["status"] = _tb(p["status"], lang)
+    return result
+
+
+def _load_chart(chart_id: str, current_user: User, db: Session, lang: str = "english") -> Chart:
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        _err(404, "Chart not found")
+        _err(404, "err.chart_not_found", lang)
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        _err(403, "Not authorized")
+        _err(403, "err.not_authorized", lang)
     return chart
 
 
 _chart_cache: dict = {}
 _CACHE_MAX = 50
 
-def _chart_from_row(chart: Chart) -> dict:
+def _chart_from_row(chart: Chart, lang: str = "english") -> dict:
     """Compute chart data from a saved Chart row, with in-memory caching."""
     cid = chart.id
     if cid in _chart_cache:
@@ -111,7 +173,7 @@ def _chart_from_row(chart: Chart) -> dict:
         return result
     except Exception as e:
         logger.error("get_chart failed: %s\n%s", e, traceback.format_exc())
-        _err(500, "Chart compute failed", str(e))
+        _err(500, "err.chart_compute_failed", lang, str(e))
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -128,14 +190,18 @@ def health():
 # ═══════════════════════════════════════════════════════════════════
 
 @router.post("/compute")
-def compute_from_raw(req: BirthDataRequest, current_user: User = Depends(get_current_user)):
+def compute_from_raw(
+    req: BirthDataRequest,
+    current_user: User = Depends(get_current_user),
+    lang: str = Depends(get_lang_user),
+):
     """Compute full kundli from raw birth data (no DB save)."""
     try:
         chart = nk_engine.get_chart(req.name, req.gender, req.dob, req.tob, req.place)
         chart.pop("_pdata", None)
-        return _ok(chart, meta={"engine": chart.get("engine")})
+        return _ok(localize_chart(chart, lang), meta={"engine": chart.get("engine")})
     except Exception as e:
-        _err(500, "Chart compute failed", str(e))
+        _err(500, "err.chart_compute_failed", lang, str(e))
 
 
 @router.get("/{chart_id}")
@@ -144,9 +210,10 @@ def get_full_kundli(
     dasha_levels: int = Query(2, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Complete natal chart with all sections + dashas + gochar + analyses."""
-    chart = _load_chart(chart_id, current_user, db)
+    chart = _load_chart(chart_id, current_user, db, lang)
     try:
         result = nk_engine.get_full_analysis(
             chart.name, chart.gender or "M", chart.dob, chart.tob, chart.place,
@@ -160,10 +227,10 @@ def get_full_kundli(
             db.commit()
         except Exception:
             db.rollback()
-        return _ok(result)
+        return _ok(localize_chart(result, lang))
     except Exception as e:
         logger.error("full_kundli error: %s\n%s", e, traceback.format_exc())
-        _err(500, "Full analysis failed", str(e))
+        _err(500, "err.full_analysis_failed", lang, str(e))
 
 
 @router.get("/{chart_id}/chart")
@@ -171,11 +238,12 @@ def get_chart_only(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Just chart (planets + divisionals + lagna) without analyses."""
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
-    return _ok({k: v for k, v in data.items() if k != "_pdata"})
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
+    return _ok(localize_chart({k: v for k, v in data.items() if k != "_pdata"}, lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -185,12 +253,13 @@ def get_chart_only(
 @router.get("/{chart_id}/dasha/vimshottari")
 def vimshottari(
     chart_id: str,
-    levels: int = Query(2, ge=1, le=6),
+    levels: int = Query(5, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     result = nk_engine.get_vimshottari(data["_pdata"], data["birth_jd"], levels)
     return _ok(result)
 
@@ -202,12 +271,13 @@ def vimshottari(
 @router.get("/{chart_id}/dasha/moola")
 def moola(
     chart_id: str,
-    levels: int = Query(2, ge=1, le=6),
+    levels: int = Query(5, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     result = nk_engine.get_moola_dasha(data["_pdata"], data["birth_jd"], levels)
     return _ok(result)
 
@@ -217,33 +287,38 @@ def moola(
 # ═══════════════════════════════════════════════════════════════════
 
 @router.get("/gochar/today")
-def gochar_today(moon_sign: Optional[int] = Query(None, ge=0, le=11)):
+def gochar_today(moon_sign: Optional[int] = Query(None, ge=0, le=11), lang: str = Depends(get_lang)):
     """Today's transit scores for all 12 rashis. No auth required (public)."""
     try:
-        return _ok(nk_engine.get_gochar("today", moon_sign))
+        return _ok(_localize_gochar(nk_engine.get_gochar("today", moon_sign), lang))
     except Exception as e:
-        _err(500, "Gochar failed", str(e))
+        _err(500, "err.gochar_failed", lang, str(e))
 
 
 @router.get("/gochar/date/{date_str}")
-def gochar_date(date_str: str, moon_sign: Optional[int] = Query(None, ge=0, le=11)):
+def gochar_date(
+    date_str: str,
+    moon_sign: Optional[int] = Query(None, ge=0, le=11),
+    lang: str = Depends(get_lang),
+):
     """Transit scores for YYYY-MM-DD."""
     try:
         parts = date_str.split("-")
         formatted = f"{parts[2]}/{parts[1]}/{parts[0]}"
-        return _ok(nk_engine.get_gochar(formatted, moon_sign))
+        return _ok(_localize_gochar(nk_engine.get_gochar(formatted, moon_sign), lang))
     except Exception as e:
-        _err(422, "Invalid date", str(e))
+        _err(422, "err.invalid_date", lang, str(e))
 
 
 @router.post("/gochar/range")
-def gochar_range(req: GocharRangeRequest):
+def gochar_range(req: GocharRangeRequest, lang: str = Depends(get_lang)):
     """Daily transit scores over a date range."""
     try:
         result = nk_engine.get_gochar_range(req.start, req.end, req.moon_sign)
+        result = _localize_gochar(result, lang)
         return _ok(result, meta={"days": len(result)})
     except Exception as e:
-        _err(500, "Gochar range failed", str(e))
+        _err(500, "err.gochar_range_failed", lang, str(e))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -255,10 +330,11 @@ def dosh_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
-    result = nk_engine.get_dosh_analysis(data["_pdata"])
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
+    result = localize_report(nk_engine.get_dosh_analysis(data["_pdata"]), lang)
     return _ok(result, meta={"active_doshas": result["active"]})
 
 
@@ -271,10 +347,11 @@ def yoga_analysis(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
-    result = nk_engine.get_yoga_analysis(data["_pdata"])
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
+    result = localize_report(nk_engine.get_yoga_analysis(data["_pdata"]), lang)
     return _ok(result, meta={"active_yogas": result["active"]})
 
 
@@ -287,9 +364,10 @@ def shadbala(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     return _ok(nk_engine.get_shadbala(data["_pdata"], data["birth_jd"]))
 
 
@@ -302,9 +380,10 @@ def ashtakavarga(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     return _ok(nk_engine.get_ashtakavarga(data["_pdata"]))
 
 
@@ -317,9 +396,10 @@ def aspects(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     return _ok(nk_engine.get_aspect_matrix(data["_pdata"]))
 
 
@@ -332,10 +412,11 @@ def life_areas(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
-    return _ok(nk_engine.get_life_areas(data["_pdata"]))
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
+    return _ok(localize_report(nk_engine.get_life_areas(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -347,10 +428,11 @@ def bhava_strength(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
-    return _ok(nk_engine.get_bhava_strength(data["_pdata"]))
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
+    return _ok(localize_report(nk_engine.get_bhava_strength(data["_pdata"]), lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -363,9 +445,10 @@ def dasha_activation(
     query_date: Optional[str] = Query(None, description="DD/MM/YYYY — default today"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     return _ok(nk_engine.get_dasha_activation(data["_pdata"], data["birth_jd"], query_date))
 
 
@@ -378,10 +461,11 @@ def chakra_health(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
-    result = nk_engine.get_chakra_health(data["_pdata"])
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
+    result = localize_report(_localize_chakra_health(nk_engine.get_chakra_health(data["_pdata"]), lang), lang)
     return _ok(result, meta={
         "overall_score": result["overall_score"],
         "overall_status": result["overall_status"],
@@ -397,25 +481,26 @@ def dashboard(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Lightweight bundle: chart + today's gochar + dashas + life areas.
     Ideal for home/overview screens.
     """
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     pdata = data["_pdata"]
     bj = data["birth_jd"]
     moon_sign = pdata.get("Moon", {}).get("rashi_idx")
     result = {
         "chart": {k: v for k, v in data.items() if k != "_pdata"},
-        "gochar_today": nk_engine.get_gochar("today", moon_sign),
+        "gochar_today": _localize_gochar(nk_engine.get_gochar("today", moon_sign), lang),
         "vimshottari": nk_engine.get_vimshottari(pdata, bj, levels=2),
         "moola_dasha": nk_engine.get_moola_dasha(pdata, bj, levels=1),
         "life_areas": nk_engine.get_life_areas(pdata),
         "dasha_activation": nk_engine.get_dasha_activation(pdata, bj),
     }
-    return _ok(result)
+    return _ok(localize_report(localize_chart(result, lang), lang))
 
 
 @router.get("/{chart_id}/analysis/complete")
@@ -423,17 +508,18 @@ def analysis_complete(
     chart_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """All analysis modules in one call: dosh + yoga + chakra + shadbala + life-areas + bhava."""
-    chart = _load_chart(chart_id, current_user, db)
-    data = _chart_from_row(chart)
+    chart = _load_chart(chart_id, current_user, db, lang)
+    data = _chart_from_row(chart, lang)
     pdata = data["_pdata"]
     result = {
         "dosh_analysis": nk_engine.get_dosh_analysis(pdata),
         "yoga_analysis": nk_engine.get_yoga_analysis(pdata),
-        "chakra_health": nk_engine.get_chakra_health(pdata),
+        "chakra_health": _localize_chakra_health(nk_engine.get_chakra_health(pdata), lang),
         "shadbala": nk_engine.get_shadbala(pdata),
         "life_areas": nk_engine.get_life_areas(pdata),
         "bhava_strength": nk_engine.get_bhava_strength(pdata),
     }
-    return _ok(result)
+    return _ok(localize_report(result, lang))

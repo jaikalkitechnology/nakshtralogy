@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../l10n/gen/app_localizations.dart';
 import 'engine_report_base.dart';
 import 'report_components.dart';
 
@@ -13,60 +14,61 @@ class WealthReportScreen extends EngineReportBase {
 class _S extends EngineReportBaseState<WealthReportScreen> {
   @override
   List<Widget> buildSections(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     return [
-      heroScores('💰 WEALTH SCORES', [
-        [n(d, 'wealth_strength_score'), 'WEALTH\nSTRENGTH'],
-        [n(d, 'accumulation_capacity_score'), 'ACCUMU-\nLATION'],
-        [n(d, 'income_flow_score'), 'INCOME\nFLOW'],
+      heroScores('💰 ${l.wealthScoresLabel}', [
+        [n(d, 'wealth_strength_score'), l.wealthStrengthLabel],
+        [n(d, 'accumulation_capacity_score'), l.accumulationLabel],
+        [n(d, 'income_flow_score'), l.incomeFlowLabel],
       ], [
-        [n(d, 'long_term_sustainability_score'), 'SUSTAIN'],
-        [d['multiple_income_streams_likelihood'] ?? 0, 'MULTI-STREAM'],
-        [n(d, 'wealth_retention_score'), 'RETENTION'],
+        [n(d, 'long_term_sustainability_score'), l.sustainLabel],
+        [d['multiple_income_streams_likelihood'] ?? 0, l.multiStreamLabel],
+        [n(d, 'wealth_retention_score'), l.retentionLabel],
       ]),
       // Wealth class
-      if (d['wealth_class'] != null) _wealthClass(d),
+      if (d['wealth_class'] != null) _wealthClass(d, l),
       // Karakas
       if (d['karaka_strength_table'] is Map) ...[
-        ReportHeader('Wealth', 'Karakas', '7 PLANETS'),
+        ReportHeader(l.wealthLabel, l.karakasLabel, '7 PLANETS'),
         karakaTable((d['karaka_strength_table'] as Map).cast<String, dynamic>()),
       ],
       // Yogas
-      yogaLedger('Wealth Yogas', (d['active_wealth_doshas'] as List?) ?? [], (d['active_wealth_yogas'] as List?) ?? [],
-        creatingLabel: 'DRAINS', clearingLabel: 'BOOSTERS'),
+      yogaLedger(l.wealthYogasTitle, (d['active_wealth_doshas'] as List?) ?? [], (d['active_wealth_yogas'] as List?) ?? [],
+        creatingLabel: l.drainsLabel, clearingLabel: l.boostersLabel),
       // Income sources
-      if (d['income_source_scores'] is Map) _incomeSources(d),
+      if (d['income_source_scores'] is Map) _incomeSources(d, l),
       // Investment mix
-      if (d['recommended_investment_mix'] is List) _investmentMix(d),
+      if (d['recommended_investment_mix'] is List) _investmentMix(d, l),
       // 15-year trend
-      yearlyTrend('Yearly Trend', (d['yearly_wealth_trend'] as List?) ?? []),
+      yearlyTrend(l.yearlyTrendTitle, (d['yearly_wealth_trend'] as List?) ?? []),
       // Good/bad periods
-      periodCards('Wealth Growth', (d['good_wealth_periods'] as List?) ?? [],
-        'Cash Pressure', (d['bad_wealth_periods'] as List?) ?? []),
+      periodCards(l.wealthGrowthTitle, (d['good_wealth_periods'] as List?) ?? [],
+        l.cashPressureTitle, (d['bad_wealth_periods'] as List?) ?? []),
       // Money personality
-      styleRows('Money Personality', [
-        ['WEALTH TYPE', d['wealth_type']], ['RISK APPETITE', d['risk_appetite']],
-        ['INVESTMENT STYLE', d['investment_style']], ['MONEY PERSONALITY', d['money_personality']],
-        ['SPENDING', d['spending_tendency']],
+      styleRows(l.moneyPersonalityTitle, [
+        [l.wealthTypeLabel, d['wealth_type']], [l.riskAppetiteLabel, d['risk_appetite']],
+        [l.investmentStyleLabel, d['investment_style']], [l.moneyPersonalityLabel, d['money_personality']],
+        [l.spendingLabel, d['spending_tendency']],
       ]),
       // Stat tiles
       statTiles([
-        [n(d, 'debt_probability_pct'), 'DEBT PROB %'], [n(d, 'inheritance_probability_pct'), 'INHERITANCE %'],
-        [n(d, 'sudden_gains_probability_pct'), 'SUDDEN GAINS %'], [n(d, 'spouse_wealth_boost_pct'), 'SPOUSE BOOST %'],
+        [n(d, 'debt_probability_pct'), l.debtProbLabel], [n(d, 'inheritance_probability_pct'), l.inheritanceProbLabel],
+        [n(d, 'sudden_gains_probability_pct'), l.suddenGainsProbLabel], [n(d, 'spouse_wealth_boost_pct'), l.spouseBoostLabel],
       ]),
       const SizedBox(height: 10),
       // Risks
       risks((d['major_wealth_risks'] as List?) ?? []),
       // Core blocker
-      if (d['core_wealth_blocker'] is Map) _blocker(d),
+      if (d['core_wealth_blocker'] is Map) _blocker(d, l),
       // Remedies
       remedies((d['astrological_remedies'] as List?) ?? []),
       // Verdict
       verdictCard(d['final_verdict']?.toString() ?? '', d['recommendation']?.toString(),
-        subtitle: 'Success probability: ${n(d, 'success_probability').toStringAsFixed(0)}%'),
+        subtitle: l.successProbabilityLabel(n(d, 'success_probability').toStringAsFixed(0))),
     ];
   }
 
-  Widget _wealthClass(Map d) {
+  Widget _wealthClass(Map d, AppLocalizations l) {
     final cls = d['wealth_class']?.toString() ?? '';
     final range = (d['lifetime_wealth_range_inr'] as Map?)?.cast<String, dynamic>() ?? {};
     final display = range['display']?.toString() ?? '';
@@ -77,23 +79,23 @@ class _S extends EngineReportBaseState<WealthReportScreen> {
         gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.saffron.withOpacity(0.08)]),
         borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.gold.withOpacity(0.4))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('LIFETIME WEALTH CLASS', style: TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text(l.lifetimeWealthClassLabel, style: const TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
         Text(titleCase(cls), style: const TextStyle(color: AppColors.ivory, fontSize: 22, fontWeight: FontWeight.w700, fontFamily: 'serif')),
         if (display.isNotEmpty) Text(display, style: const TextStyle(color: AppColors.gold, fontSize: 12, fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
         Row(children: [
-          if (primary.isNotEmpty) Expanded(child: Text('Primary: $primary', style: const TextStyle(color: AppColors.lavender, fontSize: 10))),
-          if (peak.isNotEmpty) Text('Peak: $peak', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+          if (primary.isNotEmpty) Expanded(child: Text(l.primaryLabel(primary), style: const TextStyle(color: AppColors.lavender, fontSize: 10))),
+          if (peak.isNotEmpty) Text(l.peakAgeLabel(peak), style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
         ]),
       ]));
   }
 
-  Widget _incomeSources(Map d) {
+  Widget _incomeSources(Map d, AppLocalizations l) {
     final sources = (d['income_source_scores'] as Map).cast<String, dynamic>();
     final sorted = sources.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
     return Column(children: [
-      ReportHeader('Income', 'Sources', '${sorted.length} TYPES'),
+      ReportHeader(l.incomeLabel, l.sourcesLabel, '${sorted.length} TYPES'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16), padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(color: const Color(0xFF1A1642).withOpacity(0.5), borderRadius: BorderRadius.circular(14)),
         child: Column(children: sorted.take(8).toList().asMap().entries.map((e) {
@@ -111,10 +113,10 @@ class _S extends EngineReportBaseState<WealthReportScreen> {
     ]);
   }
 
-  Widget _investmentMix(Map d) {
+  Widget _investmentMix(Map d, AppLocalizations l) {
     final mix = (d['recommended_investment_mix'] as List);
     return Column(children: [
-      ReportHeader('Investment', 'Mix', '${mix.length} BUCKETS'),
+      ReportHeader(l.investmentLabel, l.mixLabel, '${mix.length} BUCKETS'),
       ...mix.take(4).map((item) {
         if (item is! Map) return const SizedBox.shrink();
         final m = item.cast<String, dynamic>();
@@ -129,20 +131,20 @@ class _S extends EngineReportBaseState<WealthReportScreen> {
             const SizedBox(width: 10),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(asset, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600)),
-              Text('Driven by $planet', style: const TextStyle(color: AppColors.smoke, fontSize: 9)),
+              Text(l.drivenByLabel(planet), style: const TextStyle(color: AppColors.smoke, fontSize: 9)),
             ])),
           ]));
       }),
     ]);
   }
 
-  Widget _blocker(Map d) {
+  Widget _blocker(Map d, AppLocalizations l) {
     final b = (d['core_wealth_blocker'] as Map).cast<String, dynamic>();
     return Container(margin: const EdgeInsets.fromLTRB(16, 8, 16, 8), padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: AppColors.warning.withOpacity(0.08), borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.warning.withOpacity(0.3))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('CORE BLOCKER', style: TextStyle(color: AppColors.warning, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+        Text(l.coreBlockerLabel, style: const TextStyle(color: AppColors.warning, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
         Text(b['primary_blocker']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700)),
         if (b['explanation'] != null) ...[const SizedBox(height: 4),

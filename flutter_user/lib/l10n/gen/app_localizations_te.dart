@@ -9,6 +9,3019 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
+  String get lifeCareer => 'వృత్తి';
+
+  @override
+  String get lifeHealth => 'ఆరోగ్యం';
+
+  @override
+  String get lifeWealth => 'సంపద';
+
+  @override
+  String get lifeFamily => 'కుటుంబం';
+
+  @override
+  String get lifeMind => 'మనస్సు';
+
+  @override
+  String get lifeEgo => 'అహంకారం';
+
+  @override
+  String get lifeAggression => 'దూకుడు';
+
+  @override
+  String get lifeConflict => 'సంఘర్షణ';
+
+  @override
+  String get rashiElement => 'తత్వం';
+
+  @override
+  String get rashiQuality => 'గుణం';
+
+  @override
+  String get rashiLuckyColor => 'అదృష్ట రంగు';
+
+  @override
+  String get rashiLuckyDay => 'అదృష్ట దినం';
+
+  @override
+  String get rashiLuckyNumber => 'అదృష్ట సంఖ్య';
+
+  @override
+  String get rashiGemstone => 'రత్నం';
+
+  @override
+  String get rashiBody => 'శరీరం';
+
+  @override
+  String get gocharTodaysTransitChart => 'నేటి గోచార చార్ట్';
+
+  @override
+  String get gocharTransit => 'గోచారం';
+
+  @override
+  String get thisWeek => 'ఈ వారం';
+
+  @override
+  String get thisMonth => 'ఈ నెల';
+
+  @override
+  String get best => 'ఉత్తమం';
+
+  @override
+  String get worst => 'చెత్త';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get favorableLoveWindowsLabel => 'అనుకూల ప్రేమ కాలాలు';
+
+  @override
+  String get lordLabel => 'అధిపతి';
+
+  @override
+  String get lordPlacementLabel => 'అధిపతి స్థానం';
+
+  @override
+  String get lordDignityLabel => 'అధిపతి బలం';
+
+  @override
+  String get categoriesSuffix => 'వర్గాలు';
+
+  @override
+  String get coreBlockerLabel => 'ప్రధాన అడ్డంకి';
+
+  @override
+  String get coreGiftLabel => '✦ ప్రధాన వరం';
+
+  @override
+  String get coreThemeLabel => '● ప్రధాన అంశం';
+
+  @override
+  String dominantLabel(Object value) {
+    return 'ప్రధానం: ${value}';
+  }
+
+  @override
+  String get karakasSuffix => 'కారకులు';
+
+  @override
+  String get protectiveLabel => 'రక్షణాత్మక';
+
+  @override
+  String secondaryLabel(Object value) {
+    return ' · ద్వితీయం: ${value}';
+  }
+
+  @override
+  String get tagCore => 'ప్రధానం';
+
+  @override
+  String get debtScoresHeader => '📉 రుణ స్కోర్లు';
+
+  @override
+  String get debtCurrentLoadStat => 'ప్రస్తుత\nరుణ భారం';
+
+  @override
+  String get debtRecoveryCapacityStat => 'కోలుకునే\nసామర్థ్యం';
+
+  @override
+  String get debtIntensityStat => 'తీవ్రత';
+
+  @override
+  String get debtDefaultRiskStat => 'డిఫాల్ట్ ప్రమాదం';
+
+  @override
+  String get debtProfileTitle => 'రుణ ప్రొఫైల్';
+
+  @override
+  String get debtKarmaLabel => 'కర్మ';
+
+  @override
+  String get debtPersonalityLabel => 'వ్యక్తిత్వం';
+
+  @override
+  String get debtPhaseLabel => 'దశ';
+
+  @override
+  String get debtPrimaryCategoryLabel => 'ప్రధాన వర్గం';
+
+  @override
+  String get debtWord => 'రుణం';
+
+  @override
+  String get debtYogasTitle => 'రుణ యోగాలు';
+
+  @override
+  String get debtCreatingLabel => 'రుణాన్ని సృష్టించే';
+
+  @override
+  String get debtClearingLabel => 'రుణాన్ని తీర్చే';
+
+  @override
+  String get yearlyDebtTitle => 'వార్షిక రుణం';
+
+  @override
+  String get debtRepaymentTitle => 'తిరిగి చెల్లింపు';
+
+  @override
+  String get debtDangerPeriodsTitle => 'ప్రమాద కాలాలు';
+
+  @override
+  String get debtDefaultPctStat => 'డిఫాల్ట్ %';
+
+  @override
+  String get debtBankruptcyPctStat => 'దివాలా %';
+
+  @override
+  String get debtChronicPctStat => 'దీర్ఘకాలిక %';
+
+  @override
+  String get debtResilienceStat => 'స్థితిస్థాపకత';
+
+  @override
+  String debtRecoveryTimelineSubtitle(Object pct, Object years) {
+    return 'కోలుకోవడం: ${pct}% · కాలరేఖ: ${years}సం.';
+  }
+
+  @override
+  String get debtFreeWindowLabel => '🎯 రుణ రహిత కాలం';
+
+  @override
+  String debtFreeYear(Object year) {
+    return 'సంవత్సరం ${year}';
+  }
+
+  @override
+  String get legalScoresHeader => '⚖️ న్యాయ స్కోర్లు';
+
+  @override
+  String get legalVulnerabilityStat => 'న్యాయపరమైన\nదుర్బలత్వం';
+
+  @override
+  String get legalVictoryPotentialStat => 'విజయ\nసామర్థ్యం';
+
+  @override
+  String get legalConflictStat => 'వివాదం';
+
+  @override
+  String get legalResolutionStat => 'పరిష్కారం';
+
+  @override
+  String get legalProfileTitle => 'న్యాయ ప్రొఫైల్';
+
+  @override
+  String get legalKarmaTypeLabel => 'కర్మ రకం';
+
+  @override
+  String get legalConflictStyleLabel => 'వివాద శైలి';
+
+  @override
+  String get legalStrategyLabel => 'వ్యూహం';
+
+  @override
+  String get legalCaseDurationLabel => 'కేసు వ్యవధి';
+
+  @override
+  String get legalCurrentStatusLabel => 'ప్రస్తుత స్థితి';
+
+  @override
+  String get legalWord => 'న్యాయపరమైన';
+
+  @override
+  String get legalYogasTitle => 'న్యాయ యోగాలు';
+
+  @override
+  String get legalDisputePressureLabel => 'వివాద ఒత్తిడి';
+
+  @override
+  String get legalProtectionLabel => 'న్యాయ రక్షణ';
+
+  @override
+  String get legalStressTrendTitle => 'న్యాయ ఒత్తిడి';
+
+  @override
+  String get legalVisibleEnemiesStat => 'కనిపించే శత్రువులు';
+
+  @override
+  String get legalHiddenEnemiesStat => 'దాగిన శత్రువులు';
+
+  @override
+  String get legalCriminalRiskStat => 'నేర ప్రమాదం';
+
+  @override
+  String get legalFalseAccusationStat => 'తప్పుడు ఆరోపణ';
+
+  @override
+  String get legalContractKarmaTitle => 'ఒప్పంద కర్మ';
+
+  @override
+  String get legalDocumentationLabel => 'పత్రాలు';
+
+  @override
+  String get legalFinePrintAwareLabel => 'సూక్ష్మ వివరాల అవగాహన';
+
+  @override
+  String get legalNegotiationSkillLabel => 'చర్చల నైపుణ్యం';
+
+  @override
+  String get legalSignatureCautionLabel => 'సంతకం జాగ్రత్త';
+
+  @override
+  String legalResilienceSubtitle(Object pct) {
+    return 'స్థితిస్థాపకత: ${pct}/100';
+  }
+
+  @override
+  String get legalVictoryWord => 'విజయం';
+
+  @override
+  String get legalAnalysisSuffix => 'విశ్లేషణ';
+
+  @override
+  String get legalAsPlaintiff => 'వాదిగా';
+
+  @override
+  String get legalAsDefendant => 'ప్రతివాదిగా';
+
+  @override
+  String get legalWinProbability => 'గెలుపు సంభావ్యత';
+
+  @override
+  String get legalDisputeWord => 'వివాదం';
+
+  @override
+  String get lifepathScoresHeader => '🌟 జీవన మార్గ స్కోర్లు';
+
+  @override
+  String get lifepathDharmaClarityStat => 'ధర్మ\nస్పష్టత';
+
+  @override
+  String get lifepathFortuneBaselineStat => 'అదృష్ట\nప్రాతిపదిక';
+
+  @override
+  String get lifepathCoherenceStat => 'జీవన మార్గ\nసమన్వయం';
+
+  @override
+  String get lifepathKarmaStat => 'కర్మ';
+
+  @override
+  String get lifepathSpiritualStat => 'ఆధ్యాత్మిక';
+
+  @override
+  String get lifepathFameStat => 'ప్రసిద్ధి';
+
+  @override
+  String get lifepathSoulContractTitle => 'ఆత్మ ఒప్పందం';
+
+  @override
+  String get lifepathAtmakarakaLabel => 'ఆత్మకారక';
+
+  @override
+  String get lifepathAkFocusLabel => 'AK దృష్టి';
+
+  @override
+  String get lifepathSoulPurposeLabel => 'ఆత్మ ప్రయోజనం';
+
+  @override
+  String get lifepathLifeChapterLabel => 'జీవన అధ్యాయం';
+
+  @override
+  String get lifepathPrimaryDomainLabel => 'ప్రధాన రంగం';
+
+  @override
+  String get lifepathLeadershipStat => 'నాయకత్వం';
+
+  @override
+  String get lifepathWisdomTeachStat => 'జ్ఞానం/బోధన';
+
+  @override
+  String get lifepathServiceStat => 'సేవ';
+
+  @override
+  String get lifepathHealingStat => 'వైద్యం';
+
+  @override
+  String get lifepathFortuneYogasTitle => 'అదృష్ట యోగాలు';
+
+  @override
+  String get lifepathLuckBlocksLabel => 'అదృష్ట అడ్డంకులు';
+
+  @override
+  String get lifepathFortuneBoostersLabel => 'అదృష్ట పెంపుదారులు';
+
+  @override
+  String get lifepathFortuneTrendTitle => 'అదృష్ట ధోరణి';
+
+  @override
+  String get lifepathGoldenWindowsTitle => 'స్వర్ణ కాలాలు ★';
+
+  @override
+  String get lifepathTransformationTitle => 'పరివర్తన';
+
+  @override
+  String get lifepathMilestonesTitle => 'జీవన మైలురాళ్లు';
+
+  @override
+  String get lifepathKarmicLessonsTitle => 'కర్మ పాఠాలు';
+
+  @override
+  String get lifepathRahuGrowthLabel => 'రాహు వృద్ధి';
+
+  @override
+  String get lifepathKetuSurrenderLabel => 'కేతు శరణాగతి';
+
+  @override
+  String get lifepathSaturnLessonLabel => 'శని పాఠం';
+
+  @override
+  String get lifepathLifeDifficultyLabel => 'జీవన కష్టం';
+
+  @override
+  String get lifepathSoulExperienceTitle => '★ ఆత్మ అనుభవించడానికి వచ్చింది';
+
+  @override
+  String get lifepathBlessingsTitle => '● ఆశీర్వాదాలు';
+
+  @override
+  String get lifepathLifeWord => 'జీవితం';
+
+  @override
+  String get lifepathArchetypeSuffix => 'మూలరూపం';
+
+  @override
+  String lifepathFulfillmentSubtitle(Object pct) {
+    return 'నెరవేర్పు: ${pct}%';
+  }
+
+  @override
+  String get lifepathDestinyVsWord => 'విధి vs';
+
+  @override
+  String get lifepathFreeWillSuffix => 'స్వేచ్ఛా సంకల్పం';
+
+  @override
+  String get lifepathDestinyStat => 'విధి';
+
+  @override
+  String get lifepathFreeWillStat => 'స్వేచ్ఛా సంకల్పం';
+
+  @override
+  String get pastlifeScoresHeader => '🔮 పూర్వ జన్మ స్కోర్లు';
+
+  @override
+  String get pastlifeSignatureStrengthStat => 'సంతక\nబలం';
+
+  @override
+  String get pastlifeCarryForwardStat => 'ముందుకు\nతెచ్చినది';
+
+  @override
+  String get pastlifeMasteryPreservedStat => 'నైపుణ్యం\nభద్రపరచబడింది';
+
+  @override
+  String get pastlifeUnfinishedStat => 'అసంపూర్ణం';
+
+  @override
+  String get pastlifeKarmicDebtStat => 'కర్మ రుణం';
+
+  @override
+  String get pastlifeProfileTitle => 'పూర్వ జన్మ ప్రొఫైల్';
+
+  @override
+  String get pastlifeThemeLabel => 'అంశం';
+
+  @override
+  String get pastlifeProfessionLabel => 'వృత్తి';
+
+  @override
+  String get pastlifeSocialStandingLabel => 'సామాజిక స్థాయి';
+
+  @override
+  String get pastlifeRegionLabel => 'ప్రాంతం';
+
+  @override
+  String get pastlifeSpiritualLevelLabel => 'ఆధ్యాత్మిక స్థాయి';
+
+  @override
+  String get pastlifeGenderLabel => 'లింగం';
+
+  @override
+  String get pastlifeWealthLevelLabel => 'సంపద స్థాయి';
+
+  @override
+  String get pastlifeFamilyRoleLabel => 'కుటుంబ పాత్ర';
+
+  @override
+  String get pastlifeSkillsCarriedTitle => '★ ముందుకు తెచ్చిన నైపుణ్యాలు';
+
+  @override
+  String get pastlifeNaturalAttractionsTitle => '● సహజ ఆకర్షణలు';
+
+  @override
+  String get pastlifeUnexplainedFearsTitle => '⚠ వివరించలేని భయాలు';
+
+  @override
+  String get pastlifeMagneticPullsTitle => '→ అయస్కాంత ఆకర్షణలు';
+
+  @override
+  String get pastlifeRelationshipStat => 'సంబంధం';
+
+  @override
+  String get pastlifeFinancialStat => 'ఆర్థిక';
+
+  @override
+  String get pastlifeServiceStat => 'సేవ';
+
+  @override
+  String get pastlifeDharmicStat => 'ధార్మిక';
+
+  @override
+  String get pastlifeOnRelationsStat => 'సంబంధాలపై';
+
+  @override
+  String get pastlifeOnCareerStat => 'కెరీర్‌పై';
+
+  @override
+  String get pastlifeOnHealthStat => 'ఆరోగ్యంపై';
+
+  @override
+  String get pastlifeOnSpiritualStat => 'ఆధ్యాత్మికంపై';
+
+  @override
+  String get pastlifeKarmicResolutionTitle => 'కర్మ పరిష్కారం';
+
+  @override
+  String get pastlifePrimaryPathLabel => 'ప్రధాన మార్గం';
+
+  @override
+  String get pastlifeSecondaryPathLabel => 'ద్వితీయ మార్గం';
+
+  @override
+  String get pastlifeClearingProgressLabel => 'పరిష్కార పురోగతి';
+
+  @override
+  String get pastlifeRemainingWorkLabel => 'మిగిలిన పని';
+
+  @override
+  String get pastlifeDebtTimelineLabel => 'రుణ కాలరేఖ';
+
+  @override
+  String get pastlifeMemoryAccessStat => 'జ్ఞాపక ప్రవేశం';
+
+  @override
+  String get pastlifeDreamVisitsStat => 'కల సందర్శనలు';
+
+  @override
+  String get pastlifeDejaVuStat => 'డెజా వు';
+
+  @override
+  String get pastlifeRegressionFitStat => 'రిగ్రెషన్ అనుకూలత';
+
+  @override
+  String get pastlifeActivationTitle => 'పూర్వ జన్మ క్రియాశీలత';
+
+  @override
+  String pastlifeMaturityStatusSubtitle(Object maturity, Object status) {
+    return 'పరిపక్వత: ${maturity} · స్థితి: ${status}';
+  }
+
+  @override
+  String get pastlifeKetuWord => 'కేతు';
+
+  @override
+  String get pastlifePastMasterySuffix => 'పూర్వ నైపుణ్యం';
+
+  @override
+  String get pastlifeKetuMasteredLabel => 'కేతు · మీరు నేర్చుకున్నది';
+
+  @override
+  String get pastlifeRahuWord => 'రాహు';
+
+  @override
+  String get pastlifeFutureGrowthSuffix => 'భవిష్యత్ వృద్ధి';
+
+  @override
+  String get pastlifeRahuPullsLabel => 'రాహు · మిమ్మల్ని ముందుకు నడిపేది';
+
+  @override
+  String pastlifeShadowPrefix(Object shadow) {
+    return '⚠ ఛాయ: ${shadow}';
+  }
+
+  @override
+  String get mentalScoresHeader => '🧠 మానసిక స్కోర్లు';
+
+  @override
+  String get mentalStabilityStat => 'మానసిక\nస్థిరత్వం';
+
+  @override
+  String get mentalEmotionalBaselineStat => 'భావోద్వేగ\nప్రాతిపదిక';
+
+  @override
+  String get mentalResilienceStat => 'స్థితిస్థాపకత';
+
+  @override
+  String get mentalAnxietyStat => 'ఆందోళన';
+
+  @override
+  String get mentalDepressionStat => 'కుంగుబాటు';
+
+  @override
+  String get mentalRegulationStat => 'నియంత్రణ';
+
+  @override
+  String get mentalProfileTitle => 'మానసిక ప్రొఫైల్';
+
+  @override
+  String get mentalConstitutionLabel => 'శారీరక ప్రకృతి';
+
+  @override
+  String get mentalStressDriverLabel => 'ఒత్తిడి కారణం';
+
+  @override
+  String get mentalStabilityAnchorLabel => 'స్థిరత్వ ఆధారం';
+
+  @override
+  String get mentalStressResponseLabel => 'ఒత్తిడి ప్రతిస్పందన';
+
+  @override
+  String get mentalAttachmentStyleLabel => 'అనుబంధ శైలి';
+
+  @override
+  String get mentalBurnoutStageLabel => 'అలసట దశ';
+
+  @override
+  String get mentalWord => 'మానసిక';
+
+  @override
+  String get mentalYogasTitle => 'మానసిక యోగాలు';
+
+  @override
+  String get mentalStressPressureLabel => 'ఒత్తిడి భారం';
+
+  @override
+  String get mentalWellnessTrendTitle => 'క్షేమ ధోరణి';
+
+  @override
+  String get mentalHealthyCopingTitle => '✓ ఆరోగ్యకర ఎదుర్కొనే మార్గాలు';
+
+  @override
+  String get mentalUnhealthyRisksTitle => '⚠ అనారోగ్యకర ప్రమాదాలు';
+
+  @override
+  String get mentalRecommendedAlternativesTitle => '✦ సిఫార్సు చేసిన ప్రత్యామ్నాయాలు';
+
+  @override
+  String get mentalSleepQualityStat => 'నిద్ర నాణ్యత';
+
+  @override
+  String get mentalSocialSupportStat => 'సామాజిక మద్దతు';
+
+  @override
+  String get mentalBurnoutVulnStat => 'అలసట దుర్బలత్వం';
+
+  @override
+  String get mentalSelfAwarenessStat => 'స్వీయ అవగాహన';
+
+  @override
+  String get mentalAnxietyWord => 'ఆందోళన';
+
+  @override
+  String get mentalTypesSuffix => 'రకాలు';
+
+  @override
+  String get mentalTherapyWord => 'చికిత్స';
+
+  @override
+  String get mentalModalityFitSuffix => 'పద్ధతి అనుకూలత';
+
+  @override
+  String get characterScoresHeader => '🔍 స్వభావ స్కోర్లు';
+
+  @override
+  String get characterStrengthStat => 'స్వభావ\nబలం';
+
+  @override
+  String get characterIntegrityStat => 'నిజాయితీ';
+
+  @override
+  String get characterResilienceStat => 'స్థితిస్థాపకత';
+
+  @override
+  String get characterAwarenessStat => 'అవగాహన';
+
+  @override
+  String get characterStabilityStat => 'స్థిరత్వం';
+
+  @override
+  String get characterEthicsStat => 'నైతికత';
+
+  @override
+  String get characterSurfacePersonalityTitle => 'బాహ్య వ్యక్తిత్వం';
+
+  @override
+  String get characterLagnaLabel => 'లగ్నం';
+
+  @override
+  String get characterConstitutionLabel => 'శారీరక ప్రకృతి';
+
+  @override
+  String get characterNakshatraLabel => 'నక్షత్రం';
+
+  @override
+  String get characterDeityLabel => 'దేవత';
+
+  @override
+  String get characterMoonManasTitle => 'చంద్ర మనస్సు';
+
+  @override
+  String get characterSignLabel => 'రాశి';
+
+  @override
+  String get characterHouseLabel => 'భావం';
+
+  @override
+  String get characterWarmthStat => 'ఆప్యాయత';
+
+  @override
+  String get characterEmpathyStat => 'సానుభూతి';
+
+  @override
+  String get characterLoyaltyStat => 'విధేయత';
+
+  @override
+  String get characterBoundariesStat => 'హద్దులు';
+
+  @override
+  String get characterDharmaStat => 'ధర్మం';
+
+  @override
+  String get characterTruthStat => 'సత్యం';
+
+  @override
+  String get characterCompassionStat => 'కరుణ';
+
+  @override
+  String get characterGenerosityStat => 'దాతృత్వం';
+
+  @override
+  String get characterSignatureVirtuesTitle => '★ ప్రత్యేక సద్గుణాలు';
+
+  @override
+  String get characterNaturalTalentsTitle => '● సహజ ప్రతిభలు';
+
+  @override
+  String get characterShadowPatternsTitle => '⚠ ఛాయా నమూనాలు';
+
+  @override
+  String get characterYogasTitle => 'స్వభావ యోగాలు';
+
+  @override
+  String get characterTestsLabel => 'పరీక్షలు';
+
+  @override
+  String get characterGiftsLabel => 'వరాలు';
+
+  @override
+  String get characterSelfAwareEiStat => 'స్వీయ అవగాహన EI';
+
+  @override
+  String get characterSelfRegulateStat => 'స్వీయ నియంత్రణ';
+
+  @override
+  String get characterEmpathyEiStat => 'సానుభూతి EI';
+
+  @override
+  String get characterSocialSkillsStat => 'సామాజిక నైపుణ్యాలు';
+
+  @override
+  String characterRealizationSubtitle(Object pct) {
+    return 'సాక్షాత్కారం: ${pct}%';
+  }
+
+  @override
+  String get characterAtmakarakaWord => 'ఆత్మకారక';
+
+  @override
+  String get characterSoulSignatureSuffix => 'ఆత్మ సంతకం';
+
+  @override
+  String get characterAtmakarakaLabel => 'ఆత్మకారక';
+
+  @override
+  String get characterGunaWord => 'గుణం';
+
+  @override
+  String get characterProfileSuffix => 'ప్రొఫైల్';
+
+  @override
+  String get characterSattvaLabel => 'సత్త్వ';
+
+  @override
+  String get characterRajasLabel => 'రజస్';
+
+  @override
+  String get characterTamasLabel => 'తమస్';
+
+  @override
+  String get healthScoresHeader => '🏥 ఆరోగ్య స్కోర్లు';
+
+  @override
+  String get healthVitalityStat => 'శక్తి';
+
+  @override
+  String get healthImmunityStat => 'రోగనిరోధకత';
+
+  @override
+  String get healthRecoveryStat => 'కోలుకోవడం';
+
+  @override
+  String get healthMentalStat => 'మానసిక';
+
+  @override
+  String get healthStressTolStat => 'ఒత్తిడి సహనం';
+
+  @override
+  String get healthYogasTitle => 'ఆరోగ్య యోగాలు';
+
+  @override
+  String get healthDiseasePressureLabel => 'వ్యాధి ఒత్తిడి';
+
+  @override
+  String get healthTrendTitle => 'ఆరోగ్య ధోరణి';
+
+  @override
+  String get healthRecoveryWindowsTitle => 'కోలుకునే కాలాలు';
+
+  @override
+  String get healthCautionPeriodsTitle => 'జాగ్రత్త కాలాలు';
+
+  @override
+  String get healthFertilityStat => 'సంతానోత్పత్తి';
+
+  @override
+  String get healthBurnoutRiskStat => 'అలసట ప్రమాదం';
+
+  @override
+  String get healthAddictionVulnStat => 'వ్యసన దుర్బలత్వం';
+
+  @override
+  String get healthWorkLifeBalStat => 'పని-జీవన సమతుల్యం';
+
+  @override
+  String get healthAyurvedicWord => 'ఆయుర్వేద';
+
+  @override
+  String get healthConstitutionSuffix => 'ప్రకృతి';
+
+  @override
+  String get healthBodyWord => 'శరీరం';
+
+  @override
+  String get healthSystemMapSuffix => 'వ్యవస్థ పటం';
+
+  @override
+  String get healthBodyZoneWord => 'శరీర భాగం';
+
+  @override
+  String get healthVulnerabilitySuffix => 'దుర్బలత్వం';
+
+  @override
+  String get healthDiseaseWord => 'వ్యాధి';
+
+  @override
+  String get healthSusceptibilitySuffix => 'ప్రవణత';
+
+  @override
+  String get healthLifestyleFactorsTitle => 'జీవనశైలి కారకాలు';
+
+  @override
+  String get healthSleepDisciplineLabel => 'నిద్ర క్రమశిక్షణ';
+
+  @override
+  String get healthDietDisciplineLabel => 'ఆహార క్రమశిక్షణ';
+
+  @override
+  String get healthExerciseNeedLabel => 'వ్యాయామ అవసరం';
+
+  @override
+  String get healthSunlightNeedLabel => 'సూర్యకాంతి అవసరం';
+
+  @override
+  String get healthSocialTypeLabel => 'సామాజిక రకం';
+
+  @override
+  String get healthHealingSpeedLabel => 'నయమయ్యే వేగం';
+
+  @override
+  String get wealthScoresHeader => '💰 సంపద స్కోర్లు';
+
+  @override
+  String get wealthStrengthStat => 'సంపద\nబలం';
+
+  @override
+  String get wealthAccumulationStat => 'సంచయనం';
+
+  @override
+  String get wealthIncomeFlowStat => 'ఆదాయ\nప్రవాహం';
+
+  @override
+  String get wealthSustainStat => 'నిలకడ';
+
+  @override
+  String get wealthMultiStreamStat => 'బహుళ మార్గాలు';
+
+  @override
+  String get wealthRetentionStat => 'నిలుపుదల';
+
+  @override
+  String get wealthWord => 'సంపద';
+
+  @override
+  String get wealthYogasTitle => 'సంపద యోగాలు';
+
+  @override
+  String get wealthDrainsLabel => 'నష్టాలు';
+
+  @override
+  String get wealthBoostersLabel => 'పెంపుదారులు';
+
+  @override
+  String get wealthYearlyTrendTitle => 'వార్షిక ధోరణి';
+
+  @override
+  String get wealthGrowthTitle => 'సంపద వృద్ధి';
+
+  @override
+  String get wealthCashPressureTitle => 'నగదు ఒత్తిడి';
+
+  @override
+  String get wealthMoneyPersonalityTitle => 'ధన వ్యక్తిత్వం';
+
+  @override
+  String get wealthTypeLabel => 'సంపద రకం';
+
+  @override
+  String get wealthRiskAppetiteLabel => 'రిస్క్ సామర్థ్యం';
+
+  @override
+  String get wealthInvestmentStyleLabel => 'పెట్టుబడి శైలి';
+
+  @override
+  String get wealthMoneyPersonalityLabel => 'ధన వ్యక్తిత్వం';
+
+  @override
+  String get wealthSpendingLabel => 'ఖర్చు';
+
+  @override
+  String get wealthDebtProbStat => 'రుణ సంభావ్యత %';
+
+  @override
+  String get wealthInheritanceStat => 'వారసత్వం %';
+
+  @override
+  String get wealthSuddenGainsStat => 'ఆకస్మిక లాభాలు %';
+
+  @override
+  String get wealthSpouseBoostStat => 'జీవిత భాగస్వామి లాభం %';
+
+  @override
+  String wealthSuccessProbabilitySubtitle(Object pct) {
+    return 'విజయ సంభావ్యత: ${pct}%';
+  }
+
+  @override
+  String get wealthLifetimeClassLabel => 'జీవితకాల సంపద తరగతి';
+
+  @override
+  String wealthPrimaryLabel(Object value) {
+    return 'ప్రధానం: ${value}';
+  }
+
+  @override
+  String wealthPeakLabel(Object value) {
+    return 'గరిష్ఠం: ${value}';
+  }
+
+  @override
+  String get wealthIncomeWord => 'ఆదాయం';
+
+  @override
+  String get wealthSourcesSuffix => 'మార్గాలు';
+
+  @override
+  String get wealthInvestmentWord => 'పెట్టుబడి';
+
+  @override
+  String get wealthMixSuffix => 'కలయిక';
+
+  @override
+  String wealthDrivenByLabel(Object planet) {
+    return '${planet} చే నడపబడుతుంది';
+  }
+
+  @override
+  String get marriageScoresHeader => '💒 వివాహ స్కోర్లు';
+
+  @override
+  String get marriageOverallStat => 'మొత్తం\nవివాహం';
+
+  @override
+  String get marriageHarmonyStat => 'వైవాహిక\nసామరస్యం';
+
+  @override
+  String get marriageDomesticStabilityStat => 'గృహ\nస్థిరత్వం';
+
+  @override
+  String get marriageLongevityStat => 'దీర్ఘకాలం';
+
+  @override
+  String get marriageSatisfactionStat => 'సంతృప్తి';
+
+  @override
+  String get marriageClarityStat => 'స్పష్టత';
+
+  @override
+  String get marriageWindowsTitle => 'వివాహ కాలాలు';
+
+  @override
+  String get marriagePhasesTitle => 'వివాహ దశలు';
+
+  @override
+  String get marriageInLawRelationsStat => 'అత్తమామల సంబంధాలు';
+
+  @override
+  String get marriageFamilyHarmonyStat => 'కుటుంబ సామరస్యం';
+
+  @override
+  String get marriageFertilityStat => 'సంతానోత్పత్తి';
+
+  @override
+  String get marriageHomeOwnershipStat => 'గృహ యాజమాన్యం';
+
+  @override
+  String get marriageDivorceRiskStat => 'విడాకుల ప్రమాదం';
+
+  @override
+  String get marriageInfidelityStat => 'అపనమ్మకం';
+
+  @override
+  String get marriageConflictStat => 'వివాదం';
+
+  @override
+  String get marriageDistanceStat => 'దూరం';
+
+  @override
+  String get marriageSeekInPartnerTitle => '★ భాగస్వామిలో కోరుకోవాల్సినవి';
+
+  @override
+  String get marriageAvoidInPartnerTitle => '⚠ భాగస్వామిలో నివారించాల్సినవి';
+
+  @override
+  String marriageRealizationSubtitle(Object pct) {
+    return 'సాక్షాత్కారం: ${pct}%';
+  }
+
+  @override
+  String get marriageDarakarakaWord => 'దారాకారక';
+
+  @override
+  String get marriageSpouseKarakaSuffix => 'జీవిత భాగస్వామి కారక';
+
+  @override
+  String get marriageDarakarakaDkLabel => 'దారాకారక (DK)';
+
+  @override
+  String get marriage7thWord => '7వ';
+
+  @override
+  String get marriageSignLabel => 'రాశి';
+
+  @override
+  String get marriageLordInLabel => 'అధిపతి స్థానం';
+
+  @override
+  String get marriageStrengthLabel => 'బలం';
+
+  @override
+  String get marriageSpouseWord => 'జీవిత భాగస్వామి';
+
+  @override
+  String get marriageProfileSuffix => 'ప్రొఫైల్';
+
+  @override
+  String get marriageSpouseTraitsTitle => '★ జీవిత భాగస్వామి లక్షణాలు';
+
+  @override
+  String get marriageLikelyProfessionsTitle => '● సంభావ్య వృత్తులు';
+
+  @override
+  String get marriageHarmonyWord => 'సామరస్యం';
+
+  @override
+  String get marriageRadarSuffix => 'రాడార్';
+
+  @override
+  String get marriagePhysicalLabel => 'శారీరక';
+
+  @override
+  String get marriageSharedValuesLabel => 'ఉమ్మడి విలువలు';
+
+  @override
+  String get marriageConflictResolutionLabel => 'వివాద పరిష్కారం';
+
+  @override
+  String get marriageMangalDoshLabel => '⚠ మంగళ దోషం';
+
+  @override
+  String marriageSeveritySubtitle(Object value) {
+    return 'తీవ్రత: ${value}';
+  }
+
+  @override
+  String marriageCancellationSubtitle(Object value) {
+    return 'రద్దు: ${value}';
+  }
+
+  @override
+  String get marriageD9Word => 'D-9';
+
+  @override
+  String get marriageNavamsaSuffix => 'నవాంశ';
+
+  @override
+  String get multiChartTitleChild => 'సంతానం';
+
+  @override
+  String get multiChartTitleLove => 'ప్రేమ';
+
+  @override
+  String get multiChartTitleKarma => 'కర్మ';
+
+  @override
+  String get multiChartTitleDefault => 'మల్టీ-చార్ట్';
+
+  @override
+  String get multiChartSuffixProbability => 'సంభావ్యత';
+
+  @override
+  String get multiChartSuffixCompatibility => 'అనుకూలత';
+
+  @override
+  String get multiChartSuffixLinkage => 'అనుసంధానం';
+
+  @override
+  String get multiChartSuffixReport => 'నివేదిక';
+
+  @override
+  String get multiChartParticipantsLabel => 'పాల్గొనేవారు';
+
+  @override
+  String get multiChartAnalysisWord => 'విశ్లేషణ';
+
+  @override
+  String get multiChartConfidenceSuffix => 'విశ్వసనీయత';
+
+  @override
+  String get multiChartQualityBadge => 'నాణ్యత';
+
+  @override
+  String multiChartPromptChatgpt(Object formatted) {
+    return 'ఈ వేద జ్యోతిష్య నివేదికను విశ్లేషించి వివరణాత్మక అంతర్దృష్టులను ఇవ్వండి:\n\n${formatted}';
+  }
+
+  @override
+  String multiChartPromptClaude(Object formatted) {
+    return 'ఇది వేద జ్యోతిష్య నిపుణుల నివేదిక. దయచేసి దీన్ని క్షుణ్ణంగా విశ్లేషించి ఆచరణాత్మక అంతర్దృష్టులను అందించండి:\n\n${formatted}';
+  }
+
+  @override
+  String multiChartPromptGemini(Object formatted) {
+    return 'ఈ వేద జ్యోతిష్య విశ్లేషణను సమీక్షించి కీలక అంశాలను సరళమైన భాషలో వివరించండి:\n\n${formatted}';
+  }
+
+  @override
+  String multiChartCopiedForLabel(Object label) {
+    return '${label} కోసం కాపీ చేయబడింది!';
+  }
+
+  @override
+  String get childProbTitle1 => 'సంతానం';
+
+  @override
+  String get childProbTitle2 => 'సంభావ్యత';
+
+  @override
+  String get childNumberOfChildrenHeader1 => 'సంతానం';
+
+  @override
+  String get childNumberOfChildrenHeader2 => 'సంఖ్య';
+
+  @override
+  String get childTimingHeader1 => 'సమయం';
+
+  @override
+  String get childTimingHeader2 => 'మూల దశ';
+
+  @override
+  String get child5thHouseHeader1 => '5వ భావం';
+
+  @override
+  String get analysisWord => 'విశ్లేషణ';
+
+  @override
+  String get jupiterWord => 'గురు';
+
+  @override
+  String get childD7Header1 => 'D7 సప్తాంశ';
+
+  @override
+  String get childBeejaHeader1 => 'బీజ & క్షేత్ర';
+
+  @override
+  String get childBeejaHeader2 => 'స్ఫుట';
+
+  @override
+  String get childDoshaHeader1 => 'దోషం';
+
+  @override
+  String get childVedicHeader1 => 'వేద';
+
+  @override
+  String get childVedicHeader2 => 'పరిహారాలు';
+
+  @override
+  String get progenyProbabilityLabel => 'సంతాన సంభావ్యత';
+
+  @override
+  String get favorableWindowsLabel => 'అనుకూల కాలాలు';
+
+  @override
+  String get partnerOneLabel => 'భాగస్వామి 1';
+
+  @override
+  String get partnerTwoLabel => 'భాగస్వామి 2';
+
+  @override
+  String get moonSignLabel => 'చంద్ర రాశి';
+
+  @override
+  String get lordInDusthana => 'దుస్థానంలో అధిపతి';
+
+  @override
+  String get lordStrengthLabel => 'అధిపతి బలం';
+
+  @override
+  String get houseStrengthLabel => 'భావ బలం';
+
+  @override
+  String get dignityLabel => 'బలం';
+
+  @override
+  String get directBadge => 'మార్గి';
+
+  @override
+  String get notCombustBadge => 'అస్తంగతం కాదు';
+
+  @override
+  String get in5thHouseBadge => '5వ భావంలో';
+
+  @override
+  String get aspects5thBadge => '5వ భావంపై దృష్టి';
+
+  @override
+  String get no5thConnectionBadge => '5వ భావంతో సంబంధం లేదు';
+
+  @override
+  String jupiterInSignHeading(String sign) {
+    return '${sign}లో గురు';
+  }
+
+  @override
+  String get d7LagnaLabel => 'D7 లగ్నం';
+
+  @override
+  String get d7FifthSignLabel => 'D7 5వ రాశి';
+
+  @override
+  String get d7FifthLordLabel => 'D7 5వ అధిపతి';
+
+  @override
+  String get jupiterInD7Label => 'D7లో గురు';
+
+  @override
+  String get jupiterDignityLabel => 'గురు బలం';
+
+  @override
+  String get d7StrengthLabel => 'D7 బలం';
+
+  @override
+  String get yesWord => 'అవును';
+
+  @override
+  String get noWord => 'కాదు';
+
+  @override
+  String get beejaSphutaTitle => 'బీజ స్ఫుట';
+
+  @override
+  String get kshetraSphutaTitle => 'క్షేత్ర స్ఫుట';
+
+  @override
+  String get degreeLabel => 'డిగ్రీ';
+
+  @override
+  String get signLordLabel => 'రాశి అధిపతి';
+
+  @override
+  String get presentInLabel => 'స్థానం';
+
+  @override
+  String get netPenaltyLabel => 'నికర పెనాల్టీ';
+
+  @override
+  String get remedyGemstone => 'రత్న పరిహారాలు';
+
+  @override
+  String get remedyMantra => 'మంత్ర పరిహారాలు';
+
+  @override
+  String get remedyRitual => 'పూజా పరిహారాలు';
+
+  @override
+  String get remedyLifestyle => 'జీవనశైలి పరిహారాలు';
+
+  @override
+  String get remedyCharitable => 'దాన పరిహారాలు';
+
+  @override
+  String copiedForName(String name) {
+    return '${name} కోసం కాపీ చేయబడింది!';
+  }
+
+  @override
+  String get mahadashaLabel => 'మహాదశ';
+
+  @override
+  String get mdPeriodLabel => 'MD కాలం';
+
+  @override
+  String get antardashaLabel => 'అంతర్దశ';
+
+  @override
+  String get adPeriodLabel => 'AD కాలం';
+
+  @override
+  String get pratyantardashaLabel => 'ప్రత్యంతర్దశ';
+
+  @override
+  String get favorabilityLabel => 'అనుకూలత';
+
+  @override
+  String factorPrefix(String factor) {
+    return 'కారకం: ${factor}';
+  }
+
+  @override
+  String appliesToLabel(String value) {
+    return 'వర్తిస్తుంది: ${value}';
+  }
+
+  @override
+  String get qualityTag => 'నాణ్యత';
+
+  @override
+  String get reliabilityVeryHigh => 'చాలా ఎక్కువ విశ్వసనీయత';
+
+  @override
+  String get reliabilityGuidanceLevel => 'మార్గదర్శక స్థాయి పఠనం';
+
+  @override
+  String get karmaLinkTitle1 => 'కర్మ';
+
+  @override
+  String get karmaLinkTitle2 => 'అనుసంధానం';
+
+  @override
+  String get karmaFoundationHeader1 => 'కర్మ';
+
+  @override
+  String get karmaFoundationHeader2 => 'పునాది';
+
+  @override
+  String get karmaPairwiseHeader1 => 'జంటల';
+
+  @override
+  String get karmaPairwiseHeader2 => 'అనుసంధానాలు';
+
+  @override
+  String get karmaGroupHeader1 => 'సమూహ';
+
+  @override
+  String get karmaGroupHeader2 => 'నమూనా';
+
+  @override
+  String get karmaPastLifeHeader1 => 'పూర్వ జన్మ';
+
+  @override
+  String get karmaPastLifeHeader2 => 'లక్ష్యాలు';
+
+  @override
+  String get karmaCurrentLifeHeader1 => 'ప్రస్తుత జన్మ';
+
+  @override
+  String get karmaCurrentLifeHeader2 => 'నేర్చుకోవడం';
+
+  @override
+  String get karmaDebtsHeader2 => 'రుణాలు';
+
+  @override
+  String get karmaMoolaDashaHeader1 => 'మూల దశ';
+
+  @override
+  String get karmaMoolaDashaHeader2 => 'సమయం';
+
+  @override
+  String get karmaDeepAuditHeader1 => 'లోతైన ఆడిట్';
+
+  @override
+  String get karmaDeepAuditHeader2 => 'పట్టిక';
+
+  @override
+  String get karmaHeroLabel => 'పూర్వ జన్మ కర్మ అనుసంధానం';
+
+  @override
+  String get karmaKetuMastery => 'కేతు నైపుణ్యం';
+
+  @override
+  String get nakshatraLabel => 'నక్షత్రం';
+
+  @override
+  String get deityLabel => 'దేవత';
+
+  @override
+  String get masteryScoreLabel => 'నైపుణ్య స్కోరు';
+
+  @override
+  String get karmaRahuGrowth => 'రాహు వృద్ధి';
+
+  @override
+  String get growthScoreLabel => 'వృద్ధి స్కోరు';
+
+  @override
+  String get karmaAtmakaraka => 'ఆత్మకారక';
+
+  @override
+  String get karmaSaturnKarma => 'శని కర్మ';
+
+  @override
+  String get karma12thHouse => '12వ భావం';
+
+  @override
+  String get karma9thHousePunya => '9వ భావం పుణ్యం';
+
+  @override
+  String get bhavaScoreLabel => 'భావ స్కోరు';
+
+  @override
+  String get karmaD60Signature => 'D60 సంతకం';
+
+  @override
+  String get depthScoreLabel => 'లోతు స్కోరు';
+
+  @override
+  String get linkageStrengthLabel => 'అనుసంధాన బలం';
+
+  @override
+  String karmaLinkageFactorsHeader(int count) {
+    return 'అనుసంధాన కారకాలు (${count} క్రియాశీలం)';
+  }
+
+  @override
+  String get factorColumnLabel => 'కారకం';
+
+  @override
+  String get weightColumnLabel => 'బరువు';
+
+  @override
+  String get meaningColumnLabel => 'అర్థం';
+
+  @override
+  String get statusColumnLabel => 'స్థితి';
+
+  @override
+  String get karmaPastLifeConnection => 'పూర్వ జన్మ సంబంధం';
+
+  @override
+  String get karmaCurrentLifeDynamic => 'ప్రస్తుత జన్మ డైనమిక్';
+
+  @override
+  String get karmaWhatTheyTeach => 'వారు ఒకరికొకరు నేర్పేది';
+
+  @override
+  String get karmaGroupThemeHeader => 'సమూహ కర్మ అంశం';
+
+  @override
+  String get karmaSharedSettingHeader => 'ఉమ్మడి పూర్వ జన్మ నేపథ్యం';
+
+  @override
+  String get karmaCollectiveKetuHeader => 'సామూహిక కేతు నమూనా';
+
+  @override
+  String get karmaCollectiveRahuHeader => 'సామూహిక రాహు నమూనా';
+
+  @override
+  String get housesPrefixLabel => 'భావాలు: ';
+
+  @override
+  String get signsPrefixLabel => 'రాశులు: ';
+
+  @override
+  String get karmicCohesionLabel => 'కర్మ సమన్వయం';
+
+  @override
+  String get karmaGroupSoulContractHeader => 'సమూహ ఆత్మ ఒప్పందం';
+
+  @override
+  String get goalLabel => 'లక్ష్యం';
+
+  @override
+  String get karmaSharedGoalHeader => 'ఉమ్మడి పూర్వ జన్మ లక్ష్యం';
+
+  @override
+  String get howToGrowHeader => 'ఎలా ఎదగాలి';
+
+  @override
+  String moolaDashaPrefix(String value) {
+    return 'మూల దశ: ${value}';
+  }
+
+  @override
+  String get karmaSharedLessonHeader => 'ఉమ్మడి సమూహ పాఠం';
+
+  @override
+  String get karmaMutualTeachingHeader => 'పరస్పర బోధన పటం';
+
+  @override
+  String get karmaTeachingDynamicsPlaceholder => 'కర్మ సంబంధాలు లోతైనప్పుడు బోధన డైనమిక్స్ ఆవిర్భవిస్తాయి.';
+
+  @override
+  String get typeFieldLabel => 'రకం';
+
+  @override
+  String get basisFieldLabel => 'ఆధారం';
+
+  @override
+  String get resolutionPathHeader => 'పరిష్కార మార్గం';
+
+  @override
+  String dashaTimingPrefix(String value) {
+    return 'దశ సమయం: ${value}';
+  }
+
+  @override
+  String get mutualDebtsHeader => 'పరస్పర రుణాలు';
+
+  @override
+  String get mdLabel => 'MD';
+
+  @override
+  String get adLabel => 'AD';
+
+  @override
+  String get pdLabel => 'PD';
+
+  @override
+  String get datesLabel => 'తేదీలు';
+
+  @override
+  String get groupKarmicWindowHeader => 'సమూహ కర్మ కాలం';
+
+  @override
+  String parametersAuditedHeading(int count) {
+    return '${count} పరామితులు ఆడిట్ చేయబడ్డాయి';
+  }
+
+  @override
+  String get valuePrefixLabel => 'విలువ: ';
+
+  @override
+  String weightPrefix(String value) {
+    return 'బ: ${value}';
+  }
+
+  @override
+  String get loveCompatTitle1 => 'ప్రేమ';
+
+  @override
+  String get loveCompatTitle2 => 'అనుకూలత';
+
+  @override
+  String get loveAttractionHeader1 => 'ఆకర్షణ &';
+
+  @override
+  String get loveAttractionHeader2 => 'కెమిస్ట్రీ';
+
+  @override
+  String get loveEmotionalHeader1 => 'భావోద్వేగ';
+
+  @override
+  String get loveEmotionalHeader2 => 'సామరస్యం';
+
+  @override
+  String get loveMentalHeader1 => 'మానసిక';
+
+  @override
+  String get loveMentalHeader2 => 'అనుబంధం';
+
+  @override
+  String get lovePassionHeader1 => 'మోహం &';
+
+  @override
+  String get lovePassionHeader2 => 'శారీరక';
+
+  @override
+  String get loveLongtermHeader1 => 'దీర్ఘకాలిక';
+
+  @override
+  String get loveKarmicHeader1 => 'కర్మ ప్రేమ';
+
+  @override
+  String get loveKarmicHeader2 => 'బంధం';
+
+  @override
+  String get loveChallengesHeader1 => 'సవాళ్లు &';
+
+  @override
+  String get loveChallengesHeader2 => 'ఘర్షణ';
+
+  @override
+  String get loveTimingHeader1 => 'ప్రేమ సమయం';
+
+  @override
+  String get loveRelationshipHeader1 => 'సంబంధ';
+
+  @override
+  String get loveRelationshipHeader2 => 'డైనమిక్స్';
+
+  @override
+  String get loveRemediesHeader1 => 'పరిహారాలు &';
+
+  @override
+  String get loveRemediesHeader2 => 'మార్గదర్శకం';
+
+  @override
+  String get loveCompatHeroLabel => 'ప్రేమ అనుకూలత';
+
+  @override
+  String get loveChipAttraction => 'ఆకర్షణ';
+
+  @override
+  String get loveChipPassion => 'మోహం';
+
+  @override
+  String get loveChipChallenge => 'సవాలు';
+
+  @override
+  String get venusSignLabel => 'శుక్ర రాశి';
+
+  @override
+  String get attractionScoreLabel => 'ఆకర్షణ స్కోరు';
+
+  @override
+  String get activeContactsLabel => 'క్రియాశీల సంబంధాలు';
+
+  @override
+  String get magneticPullLabel => 'అయస్కాంత ఆకర్షణ';
+
+  @override
+  String get initialAttractionLabel => 'తొలి ఆకర్షణ';
+
+  @override
+  String get emotionalScoreLabel => 'భావోద్వేగ స్కోరు';
+
+  @override
+  String get elementMatchLabel => 'తత్త్వ సరిపోలిక';
+
+  @override
+  String get harmonyLabel => 'సామరస్యం';
+
+  @override
+  String get kootaYoni => 'యోని';
+
+  @override
+  String get kootaGana => 'గణ';
+
+  @override
+  String get kootaTara => 'తార';
+
+  @override
+  String get doshaPresentBadge => 'దోషం ఉంది';
+
+  @override
+  String get noDoshaBadge => 'దోషం లేదు';
+
+  @override
+  String get axisLabel => 'అక్షం';
+
+  @override
+  String get mentalScoreLabel => 'మానసిక స్కోరు';
+
+  @override
+  String get mercuryDynamicsLabel => 'బుధ డైనమిక్స్';
+
+  @override
+  String get communicationStyleLabel => 'సంభాషణ శైలి సరిపోలిక';
+
+  @override
+  String get intellectualConnectionLabel => 'మేధో సంబంధం';
+
+  @override
+  String get passionScoreLabel => 'మోహ స్కోరు';
+
+  @override
+  String get marsVenusLabel => 'కుజ-శుక్ర పరస్పరం';
+
+  @override
+  String get physicalChemistryLabel => 'శారీరక కెమిస్ట్రీ';
+
+  @override
+  String get yoniCompatLabel => 'యోని అనుకూలత';
+
+  @override
+  String get longtermScoreLabel => 'దీర్ఘకాలిక స్కోరు';
+
+  @override
+  String get seventhHouseSynastryLabel => '7వ భావ సినాస్ట్రీ';
+
+  @override
+  String get commitmentPotentialLabel => 'నిబద్ధత సామర్థ్యం';
+
+  @override
+  String get jupiterBlessingLabel => 'గురు ఆశీర్వాదం';
+
+  @override
+  String get d9NavamsaResonanceLabel => 'D9 నవాంశ అనురణన';
+
+  @override
+  String get saturnLongevityLabel => 'శని దీర్ఘకాలం';
+
+  @override
+  String get karmicScoreLabel => 'కర్మ స్కోరు';
+
+  @override
+  String get darakarakaLinkLabel => 'దారాకారక అనుసంధానం';
+
+  @override
+  String get sourceLabel => 'మూలం';
+
+  @override
+  String get emotionalGiverReceiverLabel => 'భావోద్వేగ ఇచ్చేవారు / స్వీకరించేవారు';
+
+  @override
+  String get powerBalanceLabel => 'అధికార సమతుల్యం';
+
+  @override
+  String get growthDynamicLabel => 'వృద్ధి డైనమిక్';
+
+  @override
+  String get addressesLabel => 'పరిష్కరిస్తుంది';
+
+  @override
+  String get loveScoresLabel => 'ప్రేమ స్కోర్లు';
+
+  @override
+  String get loveCapacityLabel => 'ప్రేమ\nసామర్థ్యం';
+
+  @override
+  String get emotionalAvailabilityLabel => 'భావోద్వేగ\nలభ్యత';
+
+  @override
+  String get romanticAttractionLabel => 'శృంగార\nఆకర్షణ';
+
+  @override
+  String get commitmentWord => 'నిబద్ధత';
+
+  @override
+  String get intimacyWord => 'సాన్నిహిత్యం';
+
+  @override
+  String get fidelityWord => 'విశ్వాసం';
+
+  @override
+  String get loveProfileTitle => 'ప్రేమ ప్రొఫైల్';
+
+  @override
+  String get loveStyleLabel => 'ప్రేమ శైలి';
+
+  @override
+  String get attractionStyleLabel => 'ఆకర్షణ శైలి';
+
+  @override
+  String get lovePathLabel => 'ప్రేమ మార్గం';
+
+  @override
+  String get currentPhaseLabel => 'ప్రస్తుత దశ';
+
+  @override
+  String get commitmentStyleLabel => 'నిబద్ధత శైలి';
+
+  @override
+  String get loveWord => 'ప్రేమ';
+
+  @override
+  String get karakasWord => 'కారకులు';
+
+  @override
+  String get attractedToLabel => 'ఆకర్షితులయ్యేది';
+
+  @override
+  String get whatPartnerSeesLabel => 'భాగస్వామి చూసేది';
+
+  @override
+  String get romancePatternTitle => 'శృంగార నమూనా';
+
+  @override
+  String get firstLoveAgeLabel => 'మొదటి ప్రేమ వయస్సు';
+
+  @override
+  String get relationshipCountLabel => 'సంబంధాల సంఖ్య';
+
+  @override
+  String get avgDurationLabel => 'సగటు వ్యవధి';
+
+  @override
+  String get breakupTriggerLabel => 'విడిపోవడానికి కారణం';
+
+  @override
+  String get heartbreakRecoveryLabel => 'హృదయ గాయం నుండి కోలుకోవడం';
+
+  @override
+  String get loveTrendTitle => 'ప్రేమ ధోరణి';
+
+  @override
+  String get newLoveWindowsTitle => 'కొత్త ప్రేమ కాలాలు';
+
+  @override
+  String get loveBlocksTitle => 'ప్రేమ అడ్డంకులు';
+
+  @override
+  String get activeBlocksLabel => 'క్రియాశీల అడ్డంకులు';
+
+  @override
+  String get loveMarriagePctLabel => 'ప్రేమ వివాహం %';
+
+  @override
+  String get heartbreakVulnLabel => 'హృదయ గాయ దుర్బలత్వం';
+
+  @override
+  String get selfSabotageLabel => 'స్వీయ నష్టం';
+
+  @override
+  String get emotionalIqLabel => 'భావోద్వేగ IQ';
+
+  @override
+  String fulfillmentPctLabel(String pct) {
+    return 'నెరవేర్పు: ${pct}%';
+  }
+
+  @override
+  String get languagesWord => 'భాషలు';
+
+  @override
+  String get givesLabel => 'ఇస్తుంది';
+
+  @override
+  String get receivesLabel => 'స్వీకరిస్తుంది';
+
+  @override
+  String get idealWord => 'ఆదర్శ';
+
+  @override
+  String get partnerWord => 'భాగస్వామి';
+
+  @override
+  String get seekTheseTraitsLabel => 'ఈ లక్షణాలను కోరుకోండి';
+
+  @override
+  String get dealbreakersLabel => 'వదులుకోవాల్సినవి';
+
+  @override
+  String get propertyScoresLabel => 'ఆస్తి స్కోర్లు';
+
+  @override
+  String get acquisitionCapacityLabel => 'సముపార్జన\nసామర్థ్యం';
+
+  @override
+  String get homeOwnershipPctLabel => 'గృహ\nయాజమాన్యం %';
+
+  @override
+  String get reWealthPotentialLabel => 'రియల్ ఎస్టేట్ సంపద\nసామర్థ్యం';
+
+  @override
+  String get rentalWord => 'అద్దె';
+
+  @override
+  String get vehiclesWord => 'వాహనాలు';
+
+  @override
+  String get landPctLabel => 'భూమి %';
+
+  @override
+  String get propertyProfileTitle => 'ఆస్తి ప్రొఫైల్';
+
+  @override
+  String get karmaTypeLabel => 'కర్మ రకం';
+
+  @override
+  String get environmentLabel => 'పరిసరాలు';
+
+  @override
+  String get styleLabel => 'శైలి';
+
+  @override
+  String get sizeLabel => 'పరిమాణం';
+
+  @override
+  String get locationLabel => 'ప్రదేశం';
+
+  @override
+  String get actionNext12mLabel => 'తదుపరి 12 నెలల చర్య';
+
+  @override
+  String get propertyWord => 'ఆస్తి';
+
+  @override
+  String get propertyYogasTitle => 'ఆస్తి యోగాలు';
+
+  @override
+  String get drainsLabel => 'నష్టాలు';
+
+  @override
+  String get boostersLabel => 'పెంపుదారులు';
+
+  @override
+  String get propertyTrendTitle => 'ఆస్తి ధోరణి';
+
+  @override
+  String get buyingWindowsTitle => 'కొనుగోలు కాలాలు';
+
+  @override
+  String get constructionWindowsTitle => 'నిర్మాణ కాలాలు';
+
+  @override
+  String get maternalInherPctLabel => 'మాతృ వారసత్వం %';
+
+  @override
+  String get paternalInherPctLabel => 'పితృ వారసత్వం %';
+
+  @override
+  String get multiHomePctLabel => 'బహుళ గృహాలు %';
+
+  @override
+  String get investmentPctLabel => 'పెట్టుబడి %';
+
+  @override
+  String get vehicleProfileTitle => 'వాహన ప్రొఫైల్';
+
+  @override
+  String get countLabel => 'సంఖ్య';
+
+  @override
+  String get firstAgeLabel => 'మొదటి వయస్సు';
+
+  @override
+  String get categoryLabel => 'వర్గం';
+
+  @override
+  String get luxuryLabel => 'విలాసం';
+
+  @override
+  String lifetimeCountFulfillmentLabel(String count, String pct) {
+    return 'జీవితకాల సంఖ్య: ${count} · నెరవేర్పు: ${pct}%';
+  }
+
+  @override
+  String get pressureWord => 'ఒత్తిడి';
+
+  @override
+  String get protectionWord => 'రక్షణ';
+
+  @override
+  String get astrologicalWord => 'జ్యోతిష్య';
+
+  @override
+  String get keyRisksHeader1 => 'కీలక';
+
+  @override
+  String get keyRisksHeader2 => 'ప్రమాదాలు';
+
+  @override
+  String get reportCopiedShort => 'నివేదిక కాపీ చేయబడింది!';
+
+  @override
+  String get keyScoresLabel => 'కీలక స్కోర్లు';
+
+  @override
+  String allScoresCountLabel(int count) {
+    return 'అన్ని స్కోర్లు (${count})';
+  }
+
+  @override
+  String get windowsWord => 'కాలాలు';
+
+  @override
+  String get genericFailedMsg => 'విఫలమైంది';
+
+  @override
+  String get unknownWord => 'తెలియదు';
+
+  @override
+  String selectKarmaChartsLabel(int max) {
+    return '2-${max} చార్ట్‌లను ఎంచుకోండి';
+  }
+
+  @override
+  String selectChartsLabelCount(int max) {
+    return '${max} చార్ట్‌లను ఎంచుకోండి';
+  }
+
+  @override
+  String runningAnalysisLabel(String label) {
+    return '${label} విశ్లేషణ జరుగుతోంది...';
+  }
+
+  @override
+  String pickKarmicChartsHint(int max) {
+    return 'కర్మ అనుసంధానాలను విశ్లేషించడానికి 2 నుండి ${max} చార్ట్‌లను ఎంచుకోండి';
+  }
+
+  @override
+  String get pickMaleFemaleHint => 'ఒక పురుష మరియు ఒక స్త్రీ చార్ట్‌ను ఎంచుకోండి';
+
+  @override
+  String get personOneLabel => 'వ్యక్తి 1';
+
+  @override
+  String get personTwoLabel => 'వ్యక్తి 2';
+
+  @override
+  String get analysisFailedMsg => 'విశ్లేషణ విఫలమైంది';
+
+  @override
+  String analyzeChartsCountLabel(int count) {
+    return '${count} చార్ట్‌లను విశ్లేషించండి';
+  }
+
+  @override
+  String get contextGeneralLabel => 'సాధారణ';
+
+  @override
+  String get contextLoveLabel => 'ప్రేమ';
+
+  @override
+  String get contextBusinessLabel => 'వ్యాపారం';
+
+  @override
+  String get contextFamilyLabel => 'కుటుంబం';
+
+  @override
+  String get contextTeamLabel => 'బృందం';
+
+  @override
+  String get contextFriendshipLabel => 'స్నేహం';
+
+  @override
+  String get relationshipIntelTitle => 'సంబంధ విశ్లేషణ';
+
+  @override
+  String analyzingChartsCountLabel(int count) {
+    return '${count} చార్ట్‌లను విశ్లేషిస్తోంది...';
+  }
+
+  @override
+  String get relationshipContextLabel => 'సంబంధ సందర్భం';
+
+  @override
+  String get kundliMilanReportTitle => 'కుండలి మిలన్ నివేదిక';
+
+  @override
+  String get runningMilanAnalysisLabel => 'మిలన్ విశ్లేషణ జరుగుతోంది...';
+
+  @override
+  String selectedCountOfTwoLabel(int count) {
+    return '${count}/2 ఎంచుకోబడ్డాయి';
+  }
+
+  @override
+  String get runMilanAnalysisBtn => 'మిలన్ విశ్లేషణ చేయండి';
+
+  @override
+  String get noChartsCreateFirst => 'చార్ట్‌లు లేవు. ముందుగా జన్మ కుండలిని సృష్టించండి.';
+
+  @override
+  String get selectBirthChartAnalyze => 'విశ్లేషించడానికి జన్మ కుండలిని ఎంచుకోండి';
+
+  @override
+  String get doshAnalysis => 'దోష విశ్లేషణ';
+
+  @override
+  String doshActiveCount(Object active, Object total) {
+    return '${active} క్రియాశీలం / ${total} తనిఖీ చేయబడ్డాయి';
+  }
+
+  @override
+  String yogaActiveCount(Object active, Object total) {
+    return '${active} క్రియాశీలం / ${total} యోగాలు తనిఖీ చేయబడ్డాయి';
+  }
+
+  @override
+  String yogaActiveHeader(Object count) {
+    return 'క్రియాశీల యోగాలు (${count})';
+  }
+
+  @override
+  String yogaHideInactiveCount(Object count) {
+    return 'నిష్క్రియ యోగాలను దాచండి (${count})';
+  }
+
+  @override
+  String yogaShowInactiveCount(Object count) {
+    return 'నిష్క్రియ యోగాలను చూపండి (${count})';
+  }
+
+  @override
+  String get loadFailed => 'విఫలమైంది';
+
+  @override
+  String dashaDrillMd(Object planet) {
+    return '${planet} MD → అంతర్దశలు';
+  }
+
+  @override
+  String dashaDrillAd(Object planet) {
+    return '${planet} AD → ప్రత్యంతర్దశలు';
+  }
+
+  @override
+  String dashaDrillPd(Object planet) {
+    return '${planet} PD → సూక్ష్మదశలు';
+  }
+
+  @override
+  String dashaDrillSub(Object planet) {
+    return '${planet} ఉప-కాలాలు';
+  }
+
+  @override
+  String dashaBirthLordBalance(Object lord, Object balance) {
+    return 'జన్మ అధిపతి: ${lord} • శేషం: ${balance} సం.';
+  }
+
+  @override
+  String dashaLagnaBalance(Object lagna, Object balance) {
+    return 'లగ్నం: ${lagna} • శేషం: ${balance} సం.';
+  }
+
+  @override
+  String dashaYearsValue(Object years) {
+    return '${years} సంవత్సరాలు';
+  }
+
+  @override
+  String get dashaCurrentPeriod => 'ప్రస్తుత దశ కాలం';
+
+  @override
+  String dashaAsOf(Object date) {
+    return 'నాటికి: ${date}';
+  }
+
+  @override
+  String dashaActiveYogasCount(Object count) {
+    return 'ప్రస్తుత కాలంలో క్రియాశీల యోగాలు (${count})';
+  }
+
+  @override
+  String dashaActiveDoshasCount(Object count) {
+    return 'ప్రస్తుత కాలంలో క్రియాశీల దోషాలు (${count})';
+  }
+
+  @override
+  String get dashaNoYogasTriggered => 'ఏ యోగాలు క్రియాశీలం కాలేదు';
+
+  @override
+  String get dashaNoDoshasTriggered => 'ఏ దోషాలు క్రియాశీలం కాలేదు';
+
+  @override
+  String get divD1Name => 'రాశి (D-1)';
+
+  @override
+  String get divD1Desc => 'శారీరక ఉనికి, అన్ని విషయాలు';
+
+  @override
+  String get divD2Name => 'హోర (D-2)';
+
+  @override
+  String get divD2Desc => 'సంపద, ధనం';
+
+  @override
+  String get divD3Name => 'ద్రేక్కాణ (D-3)';
+
+  @override
+  String get divD3Desc => 'తోబుట్టువులు, ధైర్యం';
+
+  @override
+  String get divD4Name => 'చతుర్థాంశ (D-4)';
+
+  @override
+  String get divD4Desc => 'ఆస్తి, నివాసం, అదృష్టం';
+
+  @override
+  String get divD5Name => 'పంచమాంశ (D-5)';
+
+  @override
+  String get divD5Desc => 'ప్రసిద్ధి, అధికారం, శక్తి';
+
+  @override
+  String get divD6Name => 'షష్ఠాంశ (D-6)';
+
+  @override
+  String get divD6Desc => 'ఆరోగ్య సమస్యలు';
+
+  @override
+  String get divD7Name => 'సప్తాంశ (D-7)';
+
+  @override
+  String get divD7Desc => 'సంతానం, మనవళ్లు';
+
+  @override
+  String get divD8Name => 'అష్టాంశ (D-8)';
+
+  @override
+  String get divD8Desc => 'ఆకస్మిక ఇబ్బందులు, వ్యాజ్యం';
+
+  @override
+  String get divD9Name => 'నవాంశ (D-9)';
+
+  @override
+  String get divD9Desc => 'వివాహం, జీవిత భాగస్వామి, ధర్మం';
+
+  @override
+  String get divD10Name => 'దశాంశ (D-10)';
+
+  @override
+  String get divD10Desc => 'కెరీర్, వృత్తి';
+
+  @override
+  String get divD11Name => 'రుద్రాంశ (D-11)';
+
+  @override
+  String get divD11Desc => 'మరణం, వినాశనం';
+
+  @override
+  String get divD12Name => 'ద్వాదశాంశ (D-12)';
+
+  @override
+  String get divD12Desc => 'తల్లిదండ్రులు, రక్త సంబంధీకులు';
+
+  @override
+  String get divD16Name => 'షోడశాంశ (D-16)';
+
+  @override
+  String get divD16Desc => 'వాహనాలు, సౌకర్యాలు, సుఖాలు';
+
+  @override
+  String get divD20Name => 'వింశాంశ (D-20)';
+
+  @override
+  String get divD20Desc => 'ఆధ్యాత్మిక విషయాలు, మతపరమైన';
+
+  @override
+  String get divD24Name => 'చతుర్వింశాంశ (D-24)';
+
+  @override
+  String get divD24Desc => 'అభ్యాసం, జ్ఞానం, విద్య';
+
+  @override
+  String get divD27Name => 'నక్షత్రాంశ (D-27)';
+
+  @override
+  String get divD27Desc => 'బలాలు, బలహీనతలు, స్వభావం';
+
+  @override
+  String get divD30Name => 'త్రింశాంశ (D-30)';
+
+  @override
+  String get divD30Desc => 'దుర్గుణాలు, అంతర్మనస్సు, శిక్ష';
+
+  @override
+  String get divD40Name => 'ఖవేదాంశ (D-40)';
+
+  @override
+  String get divD40Desc => 'శుభ/అశుభ (మాతృ)';
+
+  @override
+  String get divD45Name => 'అక్షవేదాంశ (D-45)';
+
+  @override
+  String get divD45Desc => 'అన్ని విషయాలు (పితృ)';
+
+  @override
+  String get divD60Name => 'షష్ట్యంశ (D-60)';
+
+  @override
+  String get divD60Desc => 'పూర్వ జన్మ కర్మ — అత్యంత ముఖ్యమైనది';
+
+  @override
+  String get lifeAreaCareer => 'కెరీర్';
+
+  @override
+  String get lifeAreaWealth => 'సంపద';
+
+  @override
+  String get lifeAreaMarriage => 'వివాహం';
+
+  @override
+  String get lifeAreaHealth => 'ఆరోగ్యం';
+
+  @override
+  String get lifeAreaSpirituality => 'ఆధ్యాత్మికత';
+
+  @override
+  String lifeAreaGrade(Object grade) {
+    return 'గ్రేడ్: ${grade}';
+  }
+
+  @override
+  String get lifeAreaFactorsLabel => 'కారకాలు:';
+
+  @override
+  String planetNakPada(Object nakshatra, Object pada) {
+    return 'నక్ష: ${nakshatra} (${pada})';
+  }
+
+  @override
+  String planetNakLord(Object lord) {
+    return 'నక్ష అధిపతి: ${lord}';
+  }
+
+  @override
+  String planetLongitude(Object value) {
+    return 'రేఖాంశం: ${value}°';
+  }
+
+  @override
+  String get chakraOverallHealth => 'మొత్తం ఆరోగ్యం';
+
+  @override
+  String get careerWord => 'కెరీర్';
+
+  @override
+  String get failedToLoad => 'లోడ్ చేయడం విఫలమైంది';
+
+  @override
+  String get kundliAscendantLagna => 'లగ్నం (అసెండెంట్)';
+
+  @override
+  String get kundliMoonSignRashi => 'చంద్ర రాశి';
+
+  @override
+  String get kundliSunSign => 'సూర్య రాశి';
+
+  @override
+  String kundliEngineLabel(Object engine) {
+    return 'ఇంజిన్: ${engine}';
+  }
+
+  @override
+  String kundliDegreeNakshatra(Object degree, Object nakshatra, Object pada) {
+    return 'డిగ్రీ: ${degree}°  •  నక్షత్రం: ${nakshatra} (${pada})';
+  }
+
+  @override
+  String kundliNakLordDignity(Object lord, Object dignity) {
+    return 'నక్షత్ర అధిపతి: ${lord}  •  బలం: ${dignity}';
+  }
+
+  @override
+  String kundliChartHeader(Object base, Object sign) {
+    return '${base} చార్ట్ — ${sign}';
+  }
+
+  @override
+  String kundliBaseChart(Object base) {
+    return '${base} చార్ట్';
+  }
+
+  @override
+  String get careerSummary => 'కెరీర్ సారాంశం';
+
+  @override
+  String get phase => 'దశ';
+
+  @override
+  String get confidenceLabel => 'విశ్వసనీయత';
+
+  @override
+  String get careerScores => 'కెరీర్ స్కోర్లు';
+
+  @override
+  String get stabilityLabel => 'స్థిరత్వం';
+
+  @override
+  String get growthLabel => 'వృద్ధి';
+
+  @override
+  String get gradeExcellent => 'అద్భుతం';
+
+  @override
+  String get gradeGood => 'మంచిది';
+
+  @override
+  String get gradeAverage => 'సగటు';
+
+  @override
+  String get gradeBelowAvg => 'సగటు కంటే తక్కువ';
+
+  @override
+  String get gradeWeak => 'బలహీనం';
+
+  @override
+  String get careerTypeDomain => 'కెరీర్ & రంగం';
+
+  @override
+  String get careerTimeline => 'కెరీర్ కాలరేఖ';
+
+  @override
+  String dashaLabel(Object dasha) {
+    return 'దశ: ${dasha}';
+  }
+
+  @override
+  String get improvementSuggestions => 'మెరుగుదల సూచనలు';
+
+  @override
+  String get chartDetails => 'చార్ట్ వివరాలు';
+
+  @override
+  String get keyHousesCareer => 'కీలక భావాలు (కెరీర్)';
+
+  @override
+  String get keyCareerPlanets => 'కీలక కెరీర్ గ్రహాలు';
+
+  @override
+  String get empty => 'ఖాళీ';
+
+  @override
+  String get guna => 'గుణం';
+
+  @override
+  String get dasha => 'దశ';
+
+  @override
+  String get satwik => 'సాత్విక';
+
+  @override
+  String get rajasik => 'రాజసిక';
+
+  @override
+  String get tamasik => 'తామసిక';
+
+  @override
+  String get charGroupCorePersonality => 'ప్రధాన వ్యక్తిత్వం';
+
+  @override
+  String get charGroupTrustHonesty => 'నమ్మకం & నిజాయితీ';
+
+  @override
+  String get charGroupLoyaltyCommitment => 'విధేయత & నిబద్ధత';
+
+  @override
+  String get charGroupStrategicPrivacy => 'వ్యూహాత్మక & గోప్యత';
+
+  @override
+  String get charGroupFinancial => 'ఆర్థిక';
+
+  @override
+  String get charGroupAngerConflict => 'కోపం & వివాదం';
+
+  @override
+  String get charGroupMoralDharmic => 'నైతిక & ధార్మిక';
+
+  @override
+  String get charGroupIntellectCommunication => 'మేధ & సంభాషణ';
+
+  @override
+  String get charGroupEmotionalProfile => 'భావోద్వేగ ప్రొఫైల్';
+
+  @override
+  String get charGroupMentalHealth => 'మానసిక ఆరోగ్యం';
+
+  @override
+  String get charGroupRomantic => 'శృంగార';
+
+  @override
+  String get charGroupMarriageFamily => 'వివాహం & కుటుంబం';
+
+  @override
+  String get charGroupOverallLife => 'మొత్తం జీవితం';
+
+  @override
+  String get grahaDrishti => 'గ్రహ దృష్టి (గ్రహ వీక్షణలు)';
+
+  @override
+  String get grahaDrishtiSubtitle => 'ఎవరు ఎవరిని వీక్షిస్తారు (%)';
+
+  @override
+  String get lagnaAspectsReceived => 'లగ్నం పొందిన దృష్టులు';
+
+  @override
+  String get rashiDrishti => 'రాశి దృష్టి (రాశి వీక్షణలు)';
+
+  @override
+  String get shadbalaRupas => 'రూపాలు';
+
+  @override
+  String get bhavaHouse1 => 'స్వయం / శరీరం';
+
+  @override
+  String get bhavaHouse2 => 'సంపద / కుటుంబం';
+
+  @override
+  String get bhavaHouse3 => 'తోబుట్టువులు / ధైర్యం';
+
+  @override
+  String get bhavaHouse4 => 'గృహం / తల్లి';
+
+  @override
+  String get bhavaHouse5 => 'సంతానం / బుద్ధి';
+
+  @override
+  String get bhavaHouse6 => 'శత్రువులు / ఆరోగ్యం';
+
+  @override
+  String get bhavaHouse7 => 'వివాహం / భాగస్వామి';
+
+  @override
+  String get bhavaHouse8 => 'ఆయుష్షు';
+
+  @override
+  String get bhavaHouse9 => 'అదృష్టం / గురు';
+
+  @override
+  String get bhavaHouse10 => 'కెరీర్ / తండ్రి';
+
+  @override
+  String get bhavaHouse11 => 'లాభాలు / స్నేహితులు';
+
+  @override
+  String get bhavaHouse12 => 'నష్టం / మోక్షం';
+
+  @override
+  String bhavaSignLord(Object sign, Object lord) {
+    return '${sign} • అధిపతి: ${lord}';
+  }
+
+  @override
+  String bhavaSav(Object value) {
+    return 'SAV: ${value}';
+  }
+
+  @override
+  String get sarvaAshtakavarga => 'సర్వ అష్టకవర్గ (SAV)';
+
+  @override
+  String savSubtitle(Object total, Object avg) {
+    return 'మొత్తం: ${total} రేఖలు (సగటు రాశి = ${avg})';
+  }
+
+  @override
+  String ashtakavargaBav(Object planet) {
+    return '${planet} — BAV';
+  }
+
+  @override
+  String bavSubtitle(Object total, Object score) {
+    return 'మొత్తం: ${total} రేఖలు • జన్మ రాశిలో: ${score}';
+  }
+
+  @override
+  String get today => 'ఈరోజు';
+
+  @override
+  String gocharTransitScores(Object date) {
+    return 'గోచార (గమన స్కోర్లు) — ${date}';
+  }
+
+  @override
+  String gocharNativeMoon(Object sign) {
+    return 'జాతక చంద్రుడు: ${sign}';
+  }
+
+  @override
+  String get gocharBest => 'అత్యుత్తమం';
+
+  @override
+  String get gocharWorst => 'అత్యధమం';
+
+  @override
+  String copiedOpening(Object ai) {
+    return 'కాపీ చేయబడింది! ${ai} తెరుస్తోంది...';
+  }
+
+  @override
+  String get openLink => 'తెరవండి ↗';
+
+  @override
+  String get discussReportWithAI => 'ఈ నివేదికను AIతో చర్చించండి';
+
+  @override
+  String get reliabilityHigh => 'అధిక విశ్వసనీయత';
+
+  @override
+  String get reliabilityModerate => 'మధ్యస్థ విశ్వసనీయత';
+
+  @override
+  String get reliabilityLow => 'తక్కువ — మార్గదర్శకం మాత్రమే';
+
+  @override
+  String get reliabilityGoodEdu => 'మంచి విశ్వసనీయత · D-24 ధృవీకరించబడింది';
+
+  @override
+  String get relationshipWord => 'సంబంధం';
+
+  @override
+  String get intelligenceWord => 'విశ్లేషణ';
+
+  @override
+  String get relationshipIntelligence => 'సంబంధ విశ్లేషణ';
+
+  @override
+  String get typeLabel => 'రకం';
+
+  @override
+  String get trustLabel => 'నమ్మకం';
+
+  @override
+  String get dhokaRisk => 'మోసం ప్రమాదం';
+
+  @override
+  String get powerLabel => 'శక్తి';
+
+  @override
+  String get integrity => 'నిజాయితీ';
+
+  @override
+  String get warmth => 'ఆప్యాయత';
+
+  @override
+  String get trustWord => 'నమ్మకం';
+
+  @override
+  String get assertLabel => 'నిశ్చయత';
+
+  @override
+  String get character => 'స్వభావం';
+
+  @override
+  String get love => 'ప్రేమ';
+
+  @override
+  String get businessWord => 'వ్యాపారం';
+
+  @override
+  String get karmic => 'కర్మ';
+
+  @override
+  String get enmityRisk => 'శత్రుత్వ ప్రమాదం';
+
+  @override
+  String get hdrChartProfiles => 'చార్ట్ ప్రొఫైల్‌లు';
+
+  @override
+  String get hdrPairwiseAnalysis => 'జంటల విశ్లేషణ';
+
+  @override
+  String get hdrCriticalPatterns => 'కీలక నమూనాలు';
+
+  @override
+  String get hdrGroupRecommendations => 'సమూహ సిఫార్సులు';
+
+  @override
+  String get sharedPractices => 'ఉమ్మడి అభ్యాసాలు';
+
+  @override
+  String get hdrIndividualGuidance => 'వ్యక్తిగత మార్గదర్శకం';
+
+  @override
+  String get growthAreas => 'వృద్ధి రంగాలు';
+
+  @override
+  String get hdrCoreTheme => 'ప్రధాన అంశం';
+
+  @override
+  String get growthOriented => 'వృద్ధి కేంద్రిత';
+
+  @override
+  String get groupTheme => 'సమూహ అంశం';
+
+  @override
+  String get compatibility => 'అనుకూలత';
+
+  @override
+  String get unifiedScoreLabel => 'సమగ్ర స్కోరు';
+
+  @override
+  String get ashtakoot => 'అష్టకూట';
+
+  @override
+  String get probability => 'సంభావ్యత';
+
+  @override
+  String get hdrAshtakootSummary => 'అష్టకూట సారాంశం';
+
+  @override
+  String get hdrGunBreakdown => '8 గుణాల విభజన';
+
+  @override
+  String get hdrMangalDosh => 'మంగళ దోషం';
+
+  @override
+  String get hdrD9CrossChart => 'D-9 క్రాస్-చార్ట్';
+
+  @override
+  String get d9Compatibility => 'D-9 అనుకూలత';
+
+  @override
+  String get hdrDomainCompatibility => 'రంగ అనుకూలత';
+
+  @override
+  String get emotional => 'భావోద్వేగ';
+
+  @override
+  String get intellectual => 'మేధో';
+
+  @override
+  String get spiritual => 'ఆధ్యాత్మిక';
+
+  @override
+  String get financial => 'ఆర్థిక';
+
+  @override
+  String get domestic => 'గృహ';
+
+  @override
+  String get communicationWord => 'సంభాషణ';
+
+  @override
+  String get sharedDharma => 'ఉమ్మడి ధర్మం';
+
+  @override
+  String get familyCreation => 'కుటుంబ నిర్మాణం';
+
+  @override
+  String get hdrMarriageTiming => 'వివాహ సమయం';
+
+  @override
+  String get jointMarriageWindows => 'ఉమ్మడి వివాహ కాలాలు';
+
+  @override
+  String get engagementWindows => 'నిశ్చితార్థ కాలాలు';
+
+  @override
+  String get recommendedLabel => 'సిఫార్సు చేయబడింది';
+
+  @override
+  String get hdrKeyRisks => 'కీలక ప్రమాదాలు';
+
+  @override
+  String get hdrFinalVerdict => 'తుది నిర్ణయం';
+
+  @override
+  String get marriageVerdict => 'వివాహ నిర్ణయం';
+
+  @override
+  String get educationWord => 'విద్య';
+
+  @override
+  String get learningSuffix => '& అభ్యాసం';
+
+  @override
+  String get coreEducationScores => 'ప్రధాన విద్యా స్కోర్లు';
+
+  @override
+  String get academicSuccess => 'విద్యా విజయం';
+
+  @override
+  String get learningCapacity => 'అభ్యాస సామర్థ్యం';
+
+  @override
+  String get memory => 'జ్ఞాపకశక్తి';
+
+  @override
+  String get intelligence => 'మేధస్సు';
+
+  @override
+  String get research => 'పరిశోధన';
+
+  @override
+  String get hdrIntellectualProfile => 'మేధో ప్రొఫైల్';
+
+  @override
+  String get learningSignature => 'అభ్యాస సంతకం';
+
+  @override
+  String get hdrSubjectKaraka => 'విషయ కారక';
+
+  @override
+  String get hdrHouseFoundations => 'భావ పునాదులు';
+
+  @override
+  String get hdrMercuryJupiter => 'బుధ & గురు';
+
+  @override
+  String get hdrEducationYogas => 'విద్యా యోగాలు';
+
+  @override
+  String get hdrDivisionalValidation => 'వర్గ చార్ట్ ధృవీకరణ';
+
+  @override
+  String get standing => 'స్థాయి';
+
+  @override
+  String get hdrSubjectRanking => 'విషయ ర్యాంకింగ్';
+
+  @override
+  String get hdrDegreeLikelihood => 'డిగ్రీ సంభావ్యత';
+
+  @override
+  String get hdrStudyPeriods => 'అధ్యయన కాలాలు';
+
+  @override
+  String get earlySchooling => 'ప్రాథమిక విద్య';
+
+  @override
+  String get higherEducation => 'ఉన్నత విద్య';
+
+  @override
+  String get postgradResearch => 'పోస్ట్‌గ్రాడ్ · పరిశోధన';
+
+  @override
+  String get hdrLearningPreferences => 'అభ్యాస ప్రాధాన్యతలు';
+
+  @override
+  String get hdrChallengesGifts => 'సవాళ్లు & వరాలు';
+
+  @override
+  String get challenges => 'సవాళ్లు';
+
+  @override
+  String get cognitiveGifts => 'జ్ఞాన వరాలు';
+
+  @override
+  String get naturalAbilities => 'సహజ సామర్థ్యాలు';
+
+  @override
+  String get hdrSaraswatiRemedies => 'సరస్వతి పరిహారాలు';
+
+  @override
+  String get studentVerdict => 'విద్యార్థి నిర్ణయం';
+
+  @override
+  String get educationCareerLinkage => 'విద్య → కెరీర్ అనుసంధానం';
+
+  @override
+  String get startupSuffix => '& స్టార్టప్';
+
+  @override
+  String get coreBusinessScores => 'ప్రధాన వ్యాపార స్కోర్లు';
+
+  @override
+  String get overallBusiness => 'మొత్తం వ్యాపారం';
+
+  @override
+  String get ventureSuccess => 'వెంచర్ విజయం';
+
+  @override
+  String get eleventhHouse => '11వ భావం';
+
+  @override
+  String get gains => 'లాభాలు';
+
+  @override
+  String get investor => 'పెట్టుబడిదారు';
+
+  @override
+  String get hdrFounderArchetype => 'వ్యవస్థాపక మూలరూపం';
+
+  @override
+  String get hdrTenthEleventhHouses => '10వ & 11వ భావాలు';
+
+  @override
+  String get hdrBusinessYogas => 'వ్యాపార యోగాలు';
+
+  @override
+  String get hdrRecommendedDomains => 'సిఫార్సు చేసిన రంగాలు';
+
+  @override
+  String get hdrBusinessStyle => 'వ్యాపార శైలి';
+
+  @override
+  String get hdrFounderSkills => 'వ్యవస్థాపక నైపుణ్యాలు';
+
+  @override
+  String get hdrFundingProfile => 'నిధుల ప్రొఫైల్';
+
+  @override
+  String get recommendedPath => 'సిఫార్సు చేసిన మార్గం';
+
+  @override
+  String get investorAttract => 'పెట్టుబడిదారుల ఆకర్షణ';
+
+  @override
+  String get familyBacking => 'కుటుంబ మద్దతు';
+
+  @override
+  String get hybridViability => 'హైబ్రిడ్ సాధ్యత';
+
+  @override
+  String get launchWindow => 'ప్రారంభ కాలం';
+
+  @override
+  String get scaleWindow => 'విస్తరణ కాలం';
+
+  @override
+  String get hdrBusinessRisks => 'వ్యాపార ప్రమాదాలు';
+
+  @override
+  String get recoveryCapacity => 'కోలుకునే సామర్థ్యం';
+
+  @override
+  String get hdrRemediesSolutions => 'పరిహారాలు & పరిష్కారాలు';
+
+  @override
+  String get aiConnectionLost => 'కనెక్షన్ కోల్పోయింది. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get aiSomethingWrong => 'ఏదో తప్పు జరిగింది';
+
+  @override
+  String get aiNoResponse => 'స్పందన లేదు';
+
+  @override
+  String get aiConnectionError => 'కనెక్షన్ లోపం. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get aiAutoDetect => 'స్వయంచాలక గుర్తింపు';
+
+  @override
+  String aiAutoArrow(String lang) {
+    return 'స్వయంచాలకం → ${lang}';
+  }
+
+  @override
+  String aiLanguageLabel(String lang) {
+    return 'భాష: ${lang}';
+  }
+
+  @override
+  String get aiNoBirthCharts => 'జన్మ కుండలీలు కనుగొనబడలేదు';
+
+  @override
+  String get aiCreateChartFirst => 'AIతో చాట్ చేయడానికి ముందుగా జన్మ కుండలిని సృష్టించండి';
+
+  @override
+  String get aiSelectChartBegin => 'విశ్లేషణ ప్రారంభించడానికి జన్మ కుండలిని ఎంచుకోండి';
+
+  @override
+  String aiAnalyzingName(String name) {
+    return 'విశ్లేషిస్తోంది: ${name}';
+  }
+
+  @override
+  String get aiChange => 'మార్చు';
+
+  @override
+  String get aiAnalyzingChart => 'మీ చార్ట్‌ను విశ్లేషిస్తోంది...';
+
+  @override
+  String get aiAskStarsHint => 'నక్షత్రాలను ఏదైనా అడగండి...';
+
+  @override
+  String get aiSuggestedFollowups => 'సూచించిన తదుపరి ప్రశ్నలు';
+
+  @override
+  String get aiThinking => 'ఆలోచిస్తోంది...';
+
+  @override
+  String get aiThanks => 'ధన్యవాదాలు!';
+
+  @override
+  String get aiFeedbackNoted => 'అభిప్రాయం నమోదైంది';
+
+  @override
+  String get svcAll => 'అన్నీ';
+
+  @override
+  String get svcNoServices => 'సేవలు అందుబాటులో లేవు';
+
+  @override
+  String get svcFree => 'ఉచితం';
+
+  @override
+  String get astroFailedStartCall => 'కాల్ ప్రారంభించడం విఫలమైంది';
+
+  @override
+  String get astroFailedStartChat => 'చాట్ ప్రారంభించడం విఫలమైంది';
+
+  @override
+  String astroErrorDetail(String error) {
+    return 'లోపం: ${error}';
+  }
+
+  @override
+  String get astroExperience => 'అనుభవం';
+
+  @override
+  String get astroSessions => 'సెషన్‌లు';
+
+  @override
+  String get astroMinutes => 'నిమిషాలు';
+
+  @override
+  String get astroAbout => 'గురించి';
+
+  @override
+  String get astroLanguages => 'భాషలు';
+
+  @override
+  String get astroRateCard => 'రేట్ కార్డ్';
+
+  @override
+  String get astroVoice => 'వాయిస్';
+
+  @override
+  String astroReviews(int count) {
+    return 'సమీక్షలు (${count})';
+  }
+
+  @override
+  String get astroNoReviews => 'ఇంకా సమీక్షలు లేవు';
+
+  @override
+  String get astroAnonymous => 'అనామకం';
+
+  @override
+  String get forgotPasswordSubtitle => 'మీ ఇమెయిల్‌ను నమోదు చేయండి, మేము మీకు పాస్‌వర్డ్‌ను\nరీసెట్ చేయడానికి లింక్ పంపుతాము.';
+
+  @override
+  String get emailHint => 'your@email.com';
+
+  @override
+  String get resendLink => 'లింక్ మళ్లీ పంపండి';
+
+  @override
   String get appName => 'నక్షత్రలాజీ';
 
   @override
@@ -408,8 +3421,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get noLiveStreams => 'ప్రస్తుతం లైవ్ స్ట్రీమ్‌లు లేవు';
 
   @override
-  String get astrologerUnavailable =>
-      'జ్యోతిష్కుడు అందుబాటులో లేరు. స్ట్రీమ్ ముగుస్తోంది.';
+  String get astrologerUnavailable => 'జ్యోతిష్కుడు అందుబాటులో లేరు. స్ట్రీమ్ ముగుస్తోంది.';
 
   @override
   String get streamEnded => 'స్ట్రీమ్ ముగిసింది';

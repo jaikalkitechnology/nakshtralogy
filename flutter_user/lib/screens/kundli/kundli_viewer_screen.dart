@@ -12,13 +12,8 @@ import 'widgets/yoga_widget.dart';
 import 'widgets/shadbala_widget.dart';
 import 'widgets/ashtakavarga_widget.dart';
 import 'widgets/aspects_widget.dart';
-import 'widgets/life_areas_widget.dart';
 import 'widgets/bhava_widget.dart';
-import 'widgets/chakra_health_widget.dart';
-import 'widgets/dasha_activation_widget.dart';
 import 'widgets/gochar_widget.dart';
-import 'widgets/career_widget.dart';
-import 'widgets/character_widget.dart';
 
 /// User-side kundli viewer with per-tab paywall.
 /// Fetches only the lightweight chart on open; each tab paywall-gates its
@@ -42,7 +37,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 18;
+  static const _sectionCount = 13;
 
   // [label, icon, section-key used by paywall]
   static List<List<Object>> _sections(AppLocalizations l) => <List<Object>>[
@@ -58,12 +53,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.shadbala, Icons.bar_chart, 'shadbala'],
     [l.ashtakavarga, Icons.table_chart, 'ashtakavarga'],
     [l.aspects, Icons.hub, 'aspects'],
-    [l.lifeAreas, Icons.work, 'life_areas'],
     [l.bhava, Icons.home, 'bhava'],
-    [l.chakras, Icons.radio_button_checked, 'chakra'],
-    [l.dashaActive, Icons.flash_on, 'dasha_activation'],
-    ['Career', Icons.business_center, 'career'],
-    ['Character', Icons.person_search, 'character'],
   ];
 
   @override
@@ -91,7 +81,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
         _prefetchComplete();
       } else {
         setState(() {
-          _error = (resp['detail'] is Map ? (resp['detail'] as Map)['error'] : resp['detail'])?.toString() ?? 'Failed to load';
+          _error = (resp['detail'] is Map ? (resp['detail'] as Map)['error'] : resp['detail'])?.toString() ?? AppLocalizations.of(context)!.failedToLoad;
           _loading = false;
         });
       }
@@ -158,7 +148,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         _PaidTab(chartId: widget.chartId, section: 'moola',
                             builder: (_) => DashaTreeWidget(chartId: widget.chartId, type: 'moola')),
                         _PaidTab(chartId: widget.chartId, section: 'gochar',
-                            builder: (_) => GocharWidget(chartId: widget.chartId)),
+                            builder: (_) => GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx())),
                         _PaidTab(chartId: widget.chartId, section: 'dosh',
                             builder: (_) => DoshWidget(chartId: widget.chartId, initial: _complete?['dosh_analysis'])),
                         _PaidTab(chartId: widget.chartId, section: 'yoga',
@@ -169,18 +159,8 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                             builder: (_) => AshtakavargaWidget(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'aspects',
                             builder: (_) => AspectsWidget(chartId: widget.chartId)),
-                        _PaidTab(chartId: widget.chartId, section: 'life_areas',
-                            builder: (_) => LifeAreasWidget(chartId: widget.chartId, initial: _complete?['life_areas'])),
                         _PaidTab(chartId: widget.chartId, section: 'bhava',
                             builder: (_) => BhavaWidget(chartId: widget.chartId, initial: _complete?['bhava_strength'])),
-                        _PaidTab(chartId: widget.chartId, section: 'chakra',
-                            builder: (_) => ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health'])),
-                        _PaidTab(chartId: widget.chartId, section: 'dasha_activation',
-                            builder: (_) => DashaActivationWidget(chartId: widget.chartId)),
-                        _PaidTab(chartId: widget.chartId, section: 'career',
-                            builder: (_) => CareerWidget(chartId: widget.chartId)),
-                        _PaidTab(chartId: widget.chartId, section: 'character',
-                            builder: (_) => CharacterWidget(chartId: widget.chartId)),
                       ],
                     ),
     );
@@ -188,6 +168,12 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 
   Map<String, dynamic> _planetsMap() =>
       ((_chart?['planets'] as Map?) ?? {}).cast<String, dynamic>();
+
+  // Native's Moon rashi index (0=Aries…11=Pisces) — drives the Gochar tab.
+  int _moonRashiIdx() {
+    final moon = ((_chart?['planets'] as Map?)?['Moon'] as Map?)?.cast<String, dynamic>();
+    return (moon?['sign_idx'] as num?)?.toInt() ?? 0;
+  }
 
   Map<String, dynamic> _divisionalsMap() =>
       ((_chart?['divisionals'] as Map?) ?? {}).cast<String, dynamic>();
@@ -305,11 +291,11 @@ class _SummaryTab extends StatelessWidget {
     return ListView(padding: const EdgeInsets.all(16), children: [
       _birthCard(chart, l),
       const SizedBox(height: 12),
-      if (lagna != null) _planetSummaryCard('Ascendant (Lagna)', lagna, AppColors.primary, Icons.wb_twilight),
-      if (moon != null) _planetSummaryCard('Moon Sign (Rashi)', moon, AppColors.accent, Icons.nightlight_round),
-      if (sun != null) _planetSummaryCard('Sun Sign', sun, Colors.orange, Icons.brightness_7),
+      if (lagna != null) _planetSummaryCard(l.kundliAscendantLagna, lagna, AppColors.primary, Icons.wb_twilight, l),
+      if (moon != null) _planetSummaryCard(l.kundliMoonSignRashi, moon, AppColors.accent, Icons.nightlight_round, l),
+      if (sun != null) _planetSummaryCard(l.kundliSunSign, sun, Colors.orange, Icons.brightness_7, l),
       const SizedBox(height: 16),
-      Text('Engine: ${chart['engine'] ?? '-'}',
+      Text(l.kundliEngineLabel(chart['engine']?.toString() ?? '-'),
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
     ]);
@@ -326,15 +312,15 @@ class _SummaryTab extends StatelessWidget {
           Text(l.birthDetails, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 10),
-        _row('Name', chart['name']?.toString() ?? ''),
-        _row('DOB', chart['dob']?.toString() ?? ''),
-        _row('TOB', chart['tob']?.toString() ?? ''),
-        _row('Place', chart['place']?.toString() ?? ''),
+        _row(l.name, chart['name']?.toString() ?? ''),
+        _row(l.dob, chart['dob']?.toString() ?? ''),
+        _row(l.tob, chart['tob']?.toString() ?? ''),
+        _row(l.place, chart['place']?.toString() ?? ''),
       ]),
     );
   }
 
-  Widget _planetSummaryCard(String title, Map<String, dynamic> m, Color color, IconData icon) {
+  Widget _planetSummaryCard(String title, Map<String, dynamic> m, Color color, IconData icon, AppLocalizations l) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
@@ -347,21 +333,21 @@ class _SummaryTab extends StatelessWidget {
         Row(children: [Icon(icon, color: color, size: 20), const SizedBox(width: 8),
           Text(title, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700))]),
         const SizedBox(height: 10),
-        Text('${m['sign_full']} (${m['sign']})',
+        Text('${m['sign_full_local'] ?? m['sign_full']} (${m['sign']})',
             style: const TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        Text('Degree: ${m['degree']}°  •  Nakshatra: ${m['nakshatra']} (${m['pada']})',
+        Text(l.kundliDegreeNakshatra('${m['degree']}', '${m['nakshatra_local'] ?? m['nakshatra']}', '${m['pada']}'),
             style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-        Text('Nakshatra Lord: ${m['nak_lord']}  •  Dignity: ${m['dignity']}',
+        Text(l.kundliNakLordDignity('${m['nak_lord_local'] ?? m['nak_lord']}', '${m['dignity_local'] ?? m['dignity']}'),
             style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
       ]),
     );
   }
 
-  Widget _row(String l, String v) => Padding(
+  Widget _row(String label, String v) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(children: [
-      SizedBox(width: 80, child: Text(l, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+      SizedBox(width: 80, child: Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
       Expanded(child: Text(v, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500))),
     ]),
   );
@@ -383,8 +369,17 @@ class _KundliTab extends StatefulWidget {
 class _KundliTabState extends State<_KundliTab> {
   String _base = 'Lagna';
 
+  String _baseLabel(AppLocalizations l, String base) {
+    switch (base) {
+      case 'Moon': return l.moon;
+      case 'Sun': return l.sun;
+      default: return l.lagna;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final planets = (widget.chart['planets'] as Map? ?? {}).cast<String, dynamic>();
     final basePlanet = (planets[_base] as Map?)?.cast<String, dynamic>();
     final baseSignIdx = (basePlanet?['sign_idx'] as num?)?.toInt() ?? 0;
@@ -395,7 +390,7 @@ class _KundliTabState extends State<_KundliTab> {
       final p = (planetData as Map).cast<String, dynamic>();
       final si = (p['sign_idx'] as num?)?.toInt() ?? 0;
       byRashi.putIfAbsent(si, () => []).add({
-        'planet': name,
+        'planet': (p['planet_local'] ?? name),
         'sign': p['sign'],
         'degree': p['degree'],
         'dignity': p['dignity'],
@@ -424,19 +419,19 @@ class _KundliTabState extends State<_KundliTab> {
     return ListView(padding: const EdgeInsets.all(16), children: [
       SegmentedButton<String>(
         segments: [
-          ButtonSegment(value: 'Lagna', label: Text('Lagna')),
-          ButtonSegment(value: 'Moon', label: Text('Moon')),
-          ButtonSegment(value: 'Sun', label: Text('Sun')),
+          ButtonSegment(value: 'Lagna', label: Text(l.lagna)),
+          ButtonSegment(value: 'Moon', label: Text(l.moon)),
+          ButtonSegment(value: 'Sun', label: Text(l.sun)),
         ],
         selected: {_base},
         onSelectionChanged: (s) => setState(() => _base = s.first),
       ),
       const SizedBox(height: 12),
-      Text('$_base Chart — ${basePlanet?['sign_full'] ?? ''}',
+      Text(l.kundliChartHeader(_baseLabel(l, _base), '${basePlanet?['sign_full_local'] ?? basePlanet?['sign_full'] ?? ''}'),
           textAlign: TextAlign.center,
           style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
       const SizedBox(height: 12),
-      NorthIndianChartWidget(houses: houses, chartTitle: '$_base Chart'),
+      NorthIndianChartWidget(houses: houses, chartTitle: l.kundliBaseChart(_baseLabel(l, _base))),
     ]);
   }
 

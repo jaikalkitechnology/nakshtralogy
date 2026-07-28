@@ -16,7 +16,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
+from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.milan import milan_engine, match_phase2, match_phase3, compute_unified_score
@@ -48,12 +50,12 @@ def _get_chart_data(chart: Chart) -> dict:
     return result
 
 
-def _load_chart(chart_id: str, current_user: User, db: Session):
+def _load_chart(chart_id: str, current_user: User, db: Session, lang: str):
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
-        raise HTTPException(404, f"Chart {chart_id} not found")
+        raise HTTPException(404, t("err.chart_id_not_found", lang, chart_id=chart_id))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized for this chart")
+        raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=chart_id))
     return chart
 
 
@@ -62,10 +64,11 @@ def full_match(
     req: MilanRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Full 3-phase Kundli Milan: Ashtakoot + Advanced + Timing + Unified score."""
-    chart1 = _load_chart(req.chart_id_1, current_user, db)
-    chart2 = _load_chart(req.chart_id_2, current_user, db)
+    chart1 = _load_chart(req.chart_id_1, current_user, db, lang)
+    chart2 = _load_chart(req.chart_id_2, current_user, db, lang)
 
     try:
         t0 = time.time()
@@ -102,7 +105,7 @@ def full_match(
         }
     except Exception as e:
         logger.error("Milan match error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Milan match failed: {e}")
+        raise HTTPException(500, t("err.milan_match_failed", lang, error=str(e)))
 
 
 @router.post("/match/phase1")
@@ -110,10 +113,11 @@ def phase1_only(
     req: MilanRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Quick Ashtakoot (8 gun) match only — faster for preview cards."""
-    chart1 = _load_chart(req.chart_id_1, current_user, db)
-    chart2 = _load_chart(req.chart_id_2, current_user, db)
+    chart1 = _load_chart(req.chart_id_1, current_user, db, lang)
+    chart2 = _load_chart(req.chart_id_2, current_user, db, lang)
 
     try:
         t0 = time.time()
@@ -128,7 +132,7 @@ def phase1_only(
         )
         return {
             "status": "success",
-            "data": result,
+            "data": localize_report(result, lang),
             "meta": {
                 "engine": "kundli_milan_v1",
                 "latency_ms": int((time.time() - t0) * 1000),
@@ -136,4 +140,4 @@ def phase1_only(
         }
     except Exception as e:
         logger.error("Milan phase1 error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Milan phase1 failed: {e}")
+        raise HTTPException(500, t("err.milan_phase1_failed", lang, error=str(e)))

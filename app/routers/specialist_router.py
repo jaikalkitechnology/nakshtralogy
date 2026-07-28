@@ -20,10 +20,16 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
+from app.core.i18n import get_lang, t, normalize_lang
+from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.specialists import SPECIALISTS, get_engine
+
+# specialist key -> catalog label key (registry label wrapped for i18n at the
+# point it's surfaced in a response; registry file itself is left untouched)
+_LABEL_KEYS = {k: f"label.specialist.{k}" for k in SPECIALISTS}
 
 logger = logging.getLogger("specialist_router")
 router = APIRouter()
@@ -65,10 +71,10 @@ def _get_chart_data(chart: Chart) -> dict:
 
 
 @router.get("/list")
-def list_specialists():
+def list_specialists(lang: str = Depends(get_lang)):
     """List all 15 specialist dept reports."""
     return [
-        {"key": k, "label": v["label"], "emoji": v["emoji"], "icon": v["icon"]}
+        {"key": k, "label": t(_LABEL_KEYS[k], lang), "emoji": v["emoji"], "icon": v["icon"]}
         for k, v in SPECIALISTS.items()
     ]
 
@@ -78,17 +84,18 @@ def run_milan_specialist(
     req: MilanAnalyzeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Run Kundli Milan specialist (requires 2 charts)."""
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
     if not chart1:
-        raise HTTPException(404, "Chart 1 not found")
+        raise HTTPException(404, t("err.chart_n_not_found", lang, n=1))
     if not chart2:
-        raise HTTPException(404, "Chart 2 not found")
+        raise HTTPException(404, t("err.chart_n_not_found", lang, n=2))
     for c in [chart1, chart2]:
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-            raise HTTPException(403, f"Not authorized for chart {c.id}")
+            raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
 
     try:
         t0 = time.time()
@@ -105,10 +112,10 @@ def run_milan_specialist(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_report(result, lang),
             "meta": {
                 "specialist": "kundli_milan",
-                "label": "Kundli Milan",
+                "label": t(_LABEL_KEYS["kundli_milan"], lang),
                 "person1": chart1.name,
                 "person2": chart2.name,
                 "latency_ms": latency,
@@ -116,7 +123,7 @@ def run_milan_specialist(
         }
     except Exception as e:
         logger.error("Milan specialist error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Milan specialist failed: {e}")
+        raise HTTPException(500, t("err.milan_specialist_failed", lang, error=str(e)))
 
 
 @router.post("/relationship/analyze")
@@ -124,19 +131,20 @@ def run_relationship_specialist(
     req: RelationshipAnalyzeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Run Relationship Intelligence specialist (2-5 charts)."""
     if len(req.chart_ids) < 2 or len(req.chart_ids) > 5:
-        raise HTTPException(400, "Requires 2-5 chart IDs")
+        raise HTTPException(400, t("err.requires_2_5_charts", lang))
 
     charts_input = []
     names = []
     for cid in req.chart_ids:
         chart = db.query(Chart).filter(Chart.id == cid).first()
         if not chart:
-            raise HTTPException(404, f"Chart {cid} not found")
+            raise HTTPException(404, t("err.chart_id_not_found", lang, chart_id=cid))
         if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-            raise HTTPException(403, f"Not authorized for chart {cid}")
+            raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=cid))
         data = _get_chart_data(chart)
         charts_input.append({
             "pdata": data["_pdata"],
@@ -155,10 +163,10 @@ def run_relationship_specialist(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_report(result, lang),
             "meta": {
                 "specialist": "relationship",
-                "label": "Relationship Intelligence",
+                "label": t("label.specialist.relationship_full", lang),
                 "participants": names,
                 "chart_count": len(names),
                 "context": req.context,
@@ -167,7 +175,7 @@ def run_relationship_specialist(
         }
     except Exception as e:
         logger.error("Relationship specialist error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Relationship analysis failed: {e}")
+        raise HTTPException(500, t("err.relationship_analysis_failed", lang, error=str(e)))
 
 
 class MultiChartRequest(BaseModel):
@@ -186,14 +194,15 @@ def run_child_probability(
     req: TwoChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
-    if not chart1: raise HTTPException(404, "Chart 1 not found")
-    if not chart2: raise HTTPException(404, "Chart 2 not found")
+    if not chart1: raise HTTPException(404, t("err.chart_n_not_found", lang, n=1))
+    if not chart2: raise HTTPException(404, t("err.chart_n_not_found", lang, n=2))
     for c in [chart1, chart2]:
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-            raise HTTPException(403, f"Not authorized for chart {c.id}")
+            raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
     try:
         t0 = time.time()
         from all_engine.multi_charts_engines.child_probability_specialist import generate_child_probability
@@ -202,12 +211,12 @@ def run_child_probability(
             chart2.name, chart2.gender or "F", chart2.dob, chart2.tob, chart2.place,
         )
         latency = int((time.time() - t0) * 1000)
-        return {"status": "success", "data": result, "meta": {
-            "specialist": "child_probability", "label": "Child Probability",
+        return {"status": "success", "data": localize_report(result, lang), "meta": {
+            "specialist": "child_probability", "label": t("label.specialist.child_probability", lang),
             "participants": [chart1.name, chart2.name], "latency_ms": latency}}
     except Exception as e:
         logger.error("Child probability error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Child probability analysis failed: {e}")
+        raise HTTPException(500, t("err.child_probability_failed", lang, error=str(e)))
 
 
 @router.post("/love_compatibility/analyze")
@@ -215,14 +224,15 @@ def run_love_compatibility(
     req: TwoChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     chart1 = db.query(Chart).filter(Chart.id == req.chart_id_1).first()
     chart2 = db.query(Chart).filter(Chart.id == req.chart_id_2).first()
-    if not chart1: raise HTTPException(404, "Chart 1 not found")
-    if not chart2: raise HTTPException(404, "Chart 2 not found")
+    if not chart1: raise HTTPException(404, t("err.chart_n_not_found", lang, n=1))
+    if not chart2: raise HTTPException(404, t("err.chart_n_not_found", lang, n=2))
     for c in [chart1, chart2]:
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-            raise HTTPException(403, f"Not authorized for chart {c.id}")
+            raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
     try:
         t0 = time.time()
         from all_engine.multi_charts_engines.love_compatibility_specialist import generate_love_compatibility
@@ -231,12 +241,12 @@ def run_love_compatibility(
             chart2.name, chart2.gender or "F", chart2.dob, chart2.tob, chart2.place,
         )
         latency = int((time.time() - t0) * 1000)
-        return {"status": "success", "data": result, "meta": {
-            "specialist": "love_compatibility", "label": "Love Compatibility",
+        return {"status": "success", "data": localize_report(result, lang), "meta": {
+            "specialist": "love_compatibility", "label": t("label.specialist.love_compatibility", lang),
             "participants": [chart1.name, chart2.name], "latency_ms": latency}}
     except Exception as e:
         logger.error("Love compatibility error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Love compatibility analysis failed: {e}")
+        raise HTTPException(500, t("err.love_compatibility_failed", lang, error=str(e)))
 
 
 @router.post("/karma_linkage/analyze")
@@ -244,13 +254,14 @@ def run_karma_linkage(
     req: MultiChartRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     charts_db = []
     for cid in req.chart_ids:
         c = db.query(Chart).filter(Chart.id == cid).first()
-        if not c: raise HTTPException(404, f"Chart {cid} not found")
+        if not c: raise HTTPException(404, t("err.chart_id_not_found", lang, chart_id=cid))
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-            raise HTTPException(403, f"Not authorized for chart {c.id}")
+            raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
         charts_db.append(c)
     try:
         t0 = time.time()
@@ -258,12 +269,12 @@ def run_karma_linkage(
         charts_input = [{"name": c.name, "gender": c.gender or "M", "dob": c.dob, "tob": c.tob, "place": c.place} for c in charts_db]
         result = generate_karma_linkage(charts_input, focus_question=req.focus_question or None)
         latency = int((time.time() - t0) * 1000)
-        return {"status": "success", "data": result, "meta": {
-            "specialist": "karma_linkage", "label": "Past Life Karma Linkage",
+        return {"status": "success", "data": localize_report(result, lang), "meta": {
+            "specialist": "karma_linkage", "label": t("label.specialist.karma_linkage", lang),
             "participants": [c.name for c in charts_db], "latency_ms": latency}}
     except Exception as e:
         logger.error("Karma linkage error: %s", e, exc_info=True)
-        raise HTTPException(500, f"Karma linkage analysis failed: {e}")
+        raise HTTPException(500, t("err.karma_linkage_failed", lang, error=str(e)))
 
 
 @router.post("/{key}/analyze")
@@ -275,20 +286,25 @@ def run_specialist(
     db: Session = Depends(get_db),
 ):
     """Run any single-chart specialist analysis by key."""
+    # normalize the short/legacy code (en, hi, mr, ...) to the canonical
+    # full-word code used by the i18n catalog, while still accepting the
+    # short codes this endpoint has always documented for translate_report.
+    lang_norm = normalize_lang(lang)
+
     if key not in SPECIALISTS:
-        raise HTTPException(404, f"Unknown specialist: {key}")
+        raise HTTPException(404, t("err.unknown_specialist", lang_norm, key=key))
     if key == "kundli_milan":
-        raise HTTPException(400, "Use POST /specialist/kundli_milan/analyze with two chart IDs")
+        raise HTTPException(400, t("err.use_milan_endpoint", lang_norm))
     if key == "relationship":
-        raise HTTPException(400, "Use POST /specialist/relationship/analyze with 2-5 chart IDs")
+        raise HTTPException(400, t("err.use_relationship_endpoint", lang_norm))
     if key in ("child_probability", "love_compatibility", "karma_linkage"):
-        raise HTTPException(400, f"Use POST /specialist/{key}/analyze with chart IDs")
+        raise HTTPException(400, t("err.use_specialist_endpoint", lang_norm, key=key))
 
     chart = db.query(Chart).filter(Chart.id == req.chart_id).first()
     if not chart:
-        raise HTTPException(404, "Chart not found")
+        raise HTTPException(404, t("err.chart_not_found", lang_norm))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
-        raise HTTPException(403, "Not authorized")
+        raise HTTPException(403, t("err.not_authorized", lang_norm))
 
     try:
         t0 = time.time()
@@ -310,10 +326,10 @@ def run_specialist(
 
         return {
             "status": "success",
-            "data": result,
+            "data": localize_report(result, lang),
             "meta": {
                 "specialist": key,
-                "label": SPECIALISTS[key]["label"],
+                "label": t(_LABEL_KEYS[key], lang_norm),
                 "chart_name": chart.name,
                 "latency_ms": latency,
                 "lang": lang,
@@ -321,4 +337,4 @@ def run_specialist(
         }
     except Exception as e:
         logger.error("Specialist %s error: %s", key, e, exc_info=True)
-        raise HTTPException(500, f"Specialist analysis failed: {e}")
+        raise HTTPException(500, t("err.specialist_analysis_failed", lang_norm, error=str(e)))

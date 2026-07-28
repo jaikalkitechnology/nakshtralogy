@@ -29,7 +29,8 @@ from app.core.security import (
     generate_reset_token, verify_google_token,
 )
 from app.core.config import settings
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_lang_user
+from app.core.i18n import get_lang, t, wallet_label
 from app.models.model import User, RefreshToken, Wallet
 from app.schemas.user_schema import (
     UserSignupRequest, UserLoginRequest, GoogleLoginRequest,
@@ -57,6 +58,7 @@ def _build_user_response(user: User, db: Session) -> UserResponse:
         birth_place=user.birth_place,
         moon_sign=user.moon_sign,
         role=user.role,
+        preferred_language=user.preferred_language,
         is_active=user.is_active,
         is_verified=user.is_verified,
         wallet_balance=float(wallet.balance) if wallet else 0.0,
@@ -80,11 +82,11 @@ def _issue_tokens(user: User, db: Session) -> TokenResponse:
 # ── Signup ────────────────────────────────────────────────────────────
 
 @router.post("/signup", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-def signup(req: UserSignupRequest, db: Session = Depends(get_db)):
+def signup(req: UserSignupRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     if db.query(User).filter(User.email == req.email).first():
-        raise HTTPException(status_code=409, detail="Email already registered")
+        raise HTTPException(status_code=409, detail=t("err.email_registered", lang))
     if req.phone and db.query(User).filter(User.phone == req.phone).first():
-        raise HTTPException(status_code=409, detail="Phone already registered")
+        raise HTTPException(status_code=409, detail=t("err.phone_registered", lang))
 
     user = User(
         email=req.email,
@@ -112,12 +114,12 @@ def signup(req: UserSignupRequest, db: Session = Depends(get_db)):
 # ── Login ─────────────────────────────────────────────────────────────
 
 @router.post("/login", response_model=TokenResponse)
-def login(req: UserLoginRequest, db: Session = Depends(get_db)):
+def login(req: UserLoginRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     user = db.query(User).filter(User.email == req.email, User.role.in_(["user", "admin"])).first()
     if not user or not user.password_hash or not verify_password(req.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(status_code=401, detail=t("err.invalid_credentials", lang))
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account is deactivated")
+        raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     if req.fcm_token:
         user.fcm_token = req.fcm_token
         db.commit()
@@ -127,10 +129,10 @@ def login(req: UserLoginRequest, db: Session = Depends(get_db)):
 # ── Google Login ──────────────────────────────────────────────────────
 
 @router.post("/google-login", response_model=TokenResponse)
-def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
+def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     info = verify_google_token(req.id_token)
     if not info or not info.get("email"):
-        raise HTTPException(status_code=401, detail="Invalid Google token")
+        raise HTTPException(status_code=401, detail=t("err.invalid_google_token", lang))
 
     user = db.query(User).filter(User.google_id == info["google_id"]).first()
     if not user:
@@ -163,18 +165,18 @@ def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db)):
         db.refresh(user)
 
     if not user.is_active:
-        raise HTTPException(status_code=403, detail="Account is deactivated")
+        raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     return _issue_tokens(user, db)
 
 
 # ── Forgot Password ──────────────────────────────────────────────────
 
 @router.post("/forgot-password", response_model=MessageResponse)
-def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
+def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     user = db.query(User).filter(User.email == req.email, User.role == "user").first()
     if not user:
         # don't reveal whether email exists
-        return MessageResponse(message="If this email is registered, a reset link has been sent")
+        return MessageResponse(message=t("msg.reset_link_sent", lang))
 
     token = generate_reset_token()
     user.reset_token = hash_token(token)
@@ -184,43 +186,43 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
     # TODO: send email with reset link containing `token`
     # send_email(user.email, subject="Reset Password", body=f"Token: {token}")
 
-    return MessageResponse(message="If this email is registered, a reset link has been sent")
+    return MessageResponse(message=t("msg.reset_link_sent", lang))
 
 
 # ── Reset Password ───────────────────────────────────────────────────
 
 @router.post("/reset-password", response_model=MessageResponse)
-def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
+def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     hashed = hash_token(req.token)
     user = db.query(User).filter(
         User.reset_token == hashed,
         User.reset_token_expires > datetime.utcnow(),
     ).first()
     if not user:
-        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        raise HTTPException(status_code=400, detail=t("err.invalid_reset_token", lang))
 
     user.password_hash = hash_password(req.new_password)
     user.reset_token = None
     user.reset_token_expires = None
     db.commit()
-    return MessageResponse(message="Password reset successfully")
+    return MessageResponse(message=t("msg.password_reset", lang))
 
 
 # ── Refresh Token ─────────────────────────────────────────────────────
 
 @router.post("/refresh", response_model=TokenResponse)
-def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db)):
+def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
     hashed = hash_token(req.refresh_token)
     token_row = db.query(RefreshToken).filter(
         RefreshToken.token_hash == hashed,
         RefreshToken.expires_at > datetime.utcnow(),
     ).first()
     if not token_row:
-        raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
+        raise HTTPException(status_code=401, detail=t("err.invalid_refresh_token", lang))
 
     user = db.query(User).filter(User.id == token_row.user_id).first()
     if not user or not user.is_active:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail=t("err.user_not_found", lang))
 
     # rotate: delete old, issue new
     db.delete(token_row)
@@ -244,6 +246,9 @@ def update_me(
     db: Session = Depends(get_db),
 ):
     update_data = req.model_dump(exclude_unset=True)
+    if update_data.get("preferred_language"):
+        from app.core.i18n import normalize_lang
+        update_data["preferred_language"] = normalize_lang(update_data["preferred_language"])
     for field, value in update_data.items():
         setattr(current_user, field, value)
     db.commit()
@@ -258,12 +263,13 @@ def change_password(
     req: ChangePasswordRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     if not current_user.password_hash or not verify_password(req.old_password, current_user.password_hash):
-        raise HTTPException(status_code=400, detail="Incorrect current password")
+        raise HTTPException(status_code=400, detail=t("err.incorrect_password", lang))
     current_user.password_hash = hash_password(req.new_password)
     db.commit()
-    return MessageResponse(message="Password changed successfully")
+    return MessageResponse(message=t("msg.password_changed", lang))
 
 
 # ── Deactivate ────────────────────────────────────────────────────────
@@ -272,10 +278,11 @@ def change_password(
 def deactivate_me(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     current_user.is_active = False
     db.commit()
-    return MessageResponse(message="Account deactivated")
+    return MessageResponse(message=t("msg.account_deactivated", lang))
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -342,6 +349,7 @@ def list_my_wallet_transactions(
     txn_type: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Paginated wallet statement for the current user with type labels."""
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
@@ -356,31 +364,22 @@ def list_my_wallet_transactions(
     rows = q.order_by(_WalletTxn.created_at.desc()).offset(skip).limit(limit).all()
 
     credit_types = {"recharge", "bonus", "consultation_credit", "refund"}
-    label_map = {
-        "recharge": "Wallet Recharge",
-        "bonus": "Bonus Credit",
-        "consultation_debit": "Service / Consultation",
-        "consultation_credit": "Refund / Credit",
-        "refund": "Refund",
-        "withdrawal": "Withdrawal",
-        "ai_debit": "AI Service",
-    }
 
     return {
         "total": total,
         "transactions": [
             {
-                "id": t.id,
-                "txn_type": t.txn_type,
-                "direction": "credit" if t.txn_type in credit_types else "debit",
-                "label": label_map.get(t.txn_type, t.txn_type.replace("_", " ").title()),
-                "amount": float(t.amount),
-                "balance_after": float(t.balance_after),
-                "description": t.description,
-                "reference_type": t.reference_type,
-                "created_at": str(t.created_at) if t.created_at else None,
+                "id": txn.id,
+                "txn_type": txn.txn_type,
+                "direction": "credit" if txn.txn_type in credit_types else "debit",
+                "label": wallet_label(txn.txn_type, lang),
+                "amount": float(txn.amount),
+                "balance_after": float(txn.balance_after),
+                "description": txn.description,
+                "reference_type": txn.reference_type,
+                "created_at": str(txn.created_at) if txn.created_at else None,
             }
-            for t in rows
+            for txn in rows
         ],
     }
 
@@ -390,6 +389,7 @@ def recharge_my_wallet(
     req: WalletRechargeRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """
     Add balance to current user's wallet.
@@ -426,7 +426,7 @@ def recharge_my_wallet(
         "balance": float(new_balance),
         "amount": float(amount),
         "txn_id": txn.id,
-        "message": f"₹{float(amount)} added to wallet",
+        "message": t("msg.wallet_added", lang, amount=float(amount)),
     }
 
 
@@ -522,11 +522,12 @@ def save_astrologer(
     req: SaveAstrologerRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     """Add an astrologer to the current user's saved list."""
     profile = db.query(_AstroProfile).filter(_AstroProfile.id == req.astrologer_profile_id).first()
     if not profile:
-        raise HTTPException(status_code=404, detail="Astrologer not found")
+        raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
 
     existing = db.query(_SavedAstro).filter(
         _SavedAstro.user_id == current_user.id,
@@ -537,7 +538,7 @@ def save_astrologer(
         if req.note is not None:
             existing.note = req.note
             db.commit()
-        return {"id": existing.id, "message": "Already saved", "already_saved": True}
+        return {"id": existing.id, "message": t("msg.already_saved", lang), "already_saved": True}
 
     saved = _SavedAstro(
         user_id=current_user.id,
@@ -547,7 +548,7 @@ def save_astrologer(
     db.add(saved)
     db.commit()
     db.refresh(saved)
-    return {"id": saved.id, "message": "Astrologer saved", "already_saved": False}
+    return {"id": saved.id, "message": t("msg.astrologer_saved", lang), "already_saved": False}
 
 
 @router.delete("/me/saved-astrologers/{astrologer_profile_id}")
@@ -555,13 +556,14 @@ def unsave_astrologer(
     astrologer_profile_id: str,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
 ):
     row = db.query(_SavedAstro).filter(
         _SavedAstro.user_id == current_user.id,
         _SavedAstro.astrologer_profile_id == astrologer_profile_id,
     ).first()
     if not row:
-        raise HTTPException(status_code=404, detail="Not in saved list")
+        raise HTTPException(status_code=404, detail=t("err.not_in_saved", lang))
     db.delete(row)
     db.commit()
-    return {"message": "Removed from saved list"}
+    return {"message": t("msg.removed_saved", lang)}

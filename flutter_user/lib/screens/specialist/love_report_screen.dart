@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import 'engine_report_base.dart';
 import 'report_components.dart';
@@ -13,69 +14,70 @@ class LoveReportScreen extends EngineReportBase {
 class _S extends EngineReportBaseState<LoveReportScreen> {
   @override
   List<Widget> buildSections(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     return [
-      heroScores('❤️ LOVE SCORES', [
-        [n(d, 'love_capacity_score'), 'LOVE\nCAPACITY'],
-        [n(d, 'emotional_availability_score'), 'EMOTIONAL\nAVAILABILITY'],
-        [n(d, 'romantic_attraction_score'), 'ROMANTIC\nATTRACTION'],
+      heroScores('❤️ ${l.loveScoresLabel}', [
+        [n(d, 'love_capacity_score'), l.loveCapacityLabel],
+        [n(d, 'emotional_availability_score'), l.emotionalAvailabilityLabel],
+        [n(d, 'romantic_attraction_score'), l.romanticAttractionLabel],
       ], [
-        [n(d, 'commitment_readiness_score'), 'COMMITMENT'],
-        [n(d, 'physical_intimacy_drive_score'), 'INTIMACY'],
-        [n(d, 'fidelity_capacity_score'), 'FIDELITY'],
+        [n(d, 'commitment_readiness_score'), l.commitmentWord],
+        [n(d, 'physical_intimacy_drive_score'), l.intimacyWord],
+        [n(d, 'fidelity_capacity_score'), l.fidelityWord],
       ]),
-      styleRows('Love Profile', [
-        ['LOVE STYLE', d['love_style']], ['ATTRACTION STYLE', d['attraction_style']],
-        ['LOVE PATH', d['likely_love_path']], ['CURRENT PHASE', d['current_relationship_phase']],
-        ['COMMITMENT STYLE', d['commitment_style']],
+      styleRows(l.loveProfileTitle, [
+        [l.loveStyleLabel, d['love_style']], [l.attractionStyleLabel, d['attraction_style']],
+        [l.lovePathLabel, d['likely_love_path']], [l.currentPhaseLabel, d['current_relationship_phase']],
+        [l.commitmentStyleLabel, d['commitment_style']],
       ]),
       if (d['karaka_strength_table'] is Map) ...[
-        ReportHeader('Love', 'Karakas', '9 PLANETS'),
+        ReportHeader(l.loveWord, l.karakasWord, '9 PLANETS'),
         karakaTable((d['karaka_strength_table'] as Map).cast<String, dynamic>()),
       ],
       // Love languages
-      _loveLanguages(d),
+      _loveLanguages(l, d),
       // Ideal partner
-      _idealPartner(d),
+      _idealPartner(l, d),
       // Attraction archetypes
-      chipsList('★ ATTRACTED TO', (d['attraction_to_archetypes'] as List?) ?? [], AppColors.cosmicPink),
-      chipsList('● WHAT PARTNER SEES', (d['what_partner_will_find_attractive_in_self'] as List?) ?? [], AppColors.aurora),
+      chipsList('★ ${l.attractedToLabel}', (d['attraction_to_archetypes'] as List?) ?? [], AppColors.cosmicPink),
+      chipsList('● ${l.whatPartnerSeesLabel}', (d['what_partner_will_find_attractive_in_self'] as List?) ?? [], AppColors.aurora),
       // Romance history
-      styleRows('Romance Pattern', [
-        ['FIRST LOVE AGE', d['first_love_age_band']], ['RELATIONSHIP COUNT', d['estimated_significant_relationships_count']],
-        ['AVG DURATION', d['average_relationship_duration_tendency']], ['BREAKUP TRIGGER', d['most_likely_breakup_trigger']],
-        ['HEARTBREAK RECOVERY', d['heartbreak_recovery_time_tendency']],
+      styleRows(l.romancePatternTitle, [
+        [l.firstLoveAgeLabel, d['first_love_age_band']], [l.relationshipCountLabel, d['estimated_significant_relationships_count']],
+        [l.avgDurationLabel, d['average_relationship_duration_tendency']], [l.breakupTriggerLabel, d['most_likely_breakup_trigger']],
+        [l.heartbreakRecoveryLabel, d['heartbreak_recovery_time_tendency']],
       ]),
-      yearlyTrend('Love Trend', (d['yearly_love_trend'] as List?) ?? [], scoreKey: 'love_intensity'),
+      yearlyTrend(l.loveTrendTitle, (d['yearly_love_trend'] as List?) ?? [], scoreKey: 'love_intensity'),
       // New relationship windows
       if ((d['new_relationship_windows'] as List?)?.isNotEmpty == true)
-        TimingWindowCard(title: 'New Love Windows', icon: '♡', color: AppColors.cosmicPink,
+        TimingWindowCard(title: l.newLoveWindowsTitle, icon: '♡', color: AppColors.cosmicPink,
           items: (d['new_relationship_windows'] as List)),
       // Love blocks
-      yogaLedger('Love Blocks', (d['active_love_blocks'] as List?) ?? [], [],
-        creatingLabel: 'ACTIVE BLOCKS'),
+      yogaLedger(l.loveBlocksTitle, (d['active_love_blocks'] as List?) ?? [], [],
+        creatingLabel: l.activeBlocksLabel),
       statTiles([
-        [n(d, 'love_marriage_probability_pct'), 'LOVE MARRIAGE %'], [n(d, 'heartbreak_vulnerability_score'), 'HEARTBREAK VULN'],
-        [n(d, 'self_sabotage_in_love_score'), 'SELF-SABOTAGE'], [n(d, 'emotional_intelligence_score'), 'EMOTIONAL IQ'],
+        [n(d, 'love_marriage_probability_pct'), l.loveMarriagePctLabel], [n(d, 'heartbreak_vulnerability_score'), l.heartbreakVulnLabel],
+        [n(d, 'self_sabotage_in_love_score'), l.selfSabotageLabel], [n(d, 'emotional_intelligence_score'), l.emotionalIqLabel],
       ]),
       const SizedBox(height: 10),
       risks((d['major_love_risks'] as List?) ?? []),
       remedies((d['astrological_remedies'] as List?) ?? []),
       verdictCard(d['love_life_verdict']?.toString() ?? '', d['next_best_action']?.toString(),
-        subtitle: 'Fulfillment: ${n(d, 'love_fulfillment_probability_pct').toStringAsFixed(0)}%'),
+        subtitle: l.fulfillmentPctLabel(n(d, 'love_fulfillment_probability_pct').toStringAsFixed(0))),
     ];
   }
 
-  Widget _loveLanguages(Map d) {
+  Widget _loveLanguages(AppLocalizations l, Map d) {
     final given = d['primary_love_language_given']?.toString() ?? '';
     final received = d['primary_love_language_received']?.toString() ?? '';
     if (given.isEmpty && received.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Love', 'Languages', '2 KEYS'),
+      ReportHeader(l.loveWord, l.languagesWord, '2 KEYS'),
       Container(margin: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(children: [
-          Expanded(child: _langCard('GIVES', given, AppColors.cosmicPink)),
+          Expanded(child: _langCard(l.givesLabel, given, AppColors.cosmicPink)),
           const SizedBox(width: 8),
-          Expanded(child: _langCard('RECEIVES', received, AppColors.aurora)),
+          Expanded(child: _langCard(l.receivesLabel, received, AppColors.aurora)),
         ])),
       if (d['love_language_compatibility_notes'] != null) Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 4), padding: const EdgeInsets.all(10),
@@ -96,14 +98,14 @@ class _S extends EngineReportBaseState<LoveReportScreen> {
       Text(lang, style: TextStyle(color: c, fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'serif')),
     ]));
 
-  Widget _idealPartner(Map d) {
+  Widget _idealPartner(AppLocalizations l, Map d) {
     final traits = (d['astrological_ideal_partner_traits'] as List?) ?? [];
     final dealbreakers = (d['partner_dealbreakers_in_chart'] as List?) ?? [];
     if (traits.isEmpty) return const SizedBox.shrink();
     return Column(children: [
-      ReportHeader('Ideal', 'Partner', '${traits.length + dealbreakers.length} KEYS'),
-      chipsList('★ SEEK THESE TRAITS', traits, AppColors.success),
-      if (dealbreakers.isNotEmpty) chipsList('⚠ DEALBREAKERS', dealbreakers, AppColors.error),
+      ReportHeader(l.idealWord, l.partnerWord, '${traits.length + dealbreakers.length} KEYS'),
+      chipsList('★ ${l.seekTheseTraitsLabel}', traits, AppColors.success),
+      if (dealbreakers.isNotEmpty) chipsList('⚠ ${l.dealbreakersLabel}', dealbreakers, AppColors.error),
     ]);
   }
 }

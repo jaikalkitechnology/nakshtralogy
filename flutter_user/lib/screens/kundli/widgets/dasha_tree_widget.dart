@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 
 /// Hierarchical dasha viewer. Click MD → shows its AD `sub` list.
 /// Click AD → shows its PD list. Breadcrumb at top for back navigation.
@@ -53,7 +54,7 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
         _pushRoot();
         setState(() => _loading = false);
       } else {
-        setState(() { _error = resp['detail']?.toString() ?? 'Failed'; _loading = false; });
+        setState(() { _error = resp['detail']?.toString() ?? AppLocalizations.of(context)!.loadFailed; _loading = false; });
       }
     } catch (e) {
       setState(() { _error = e.toString(); _loading = false; });
@@ -63,7 +64,7 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
   void _pushRoot() {
     _stack.clear();
     _stack.add(_Level(
-      title: _root?['system']?.toString() ?? 'Dasha',
+      title: _root?['system']?.toString() ?? AppLocalizations.of(context)!.dasha,
       level: 1,
       items: ((_root?['dashas'] as List?) ?? []).cast<Map<String, dynamic>>(),
     ));
@@ -73,12 +74,14 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
     final subs = ((node['sub'] as List?) ?? []).cast<Map<String, dynamic>>();
     if (subs.isEmpty) return;
     final lvl = _stack.length;
+    final l = AppLocalizations.of(context)!;
+    final planet = KundliNames.planet(node['planet']?.toString() ?? '', Localizations.localeOf(context));
     String title;
     switch (lvl) {
-      case 1: title = '${node['planet']} MD → Antardashas'; break;
-      case 2: title = '${node['planet']} AD → Pratyantardashas'; break;
-      case 3: title = '${node['planet']} PD → Sookshmadashas'; break;
-      default: title = '${node['planet']} Sub-periods';
+      case 1: title = l.dashaDrillMd(planet); break;
+      case 2: title = l.dashaDrillAd(planet); break;
+      case 3: title = l.dashaDrillPd(planet); break;
+      default: title = l.dashaDrillSub(planet);
     }
     setState(() => _stack.add(_Level(title: title, level: lvl + 1, items: subs)));
   }
@@ -92,6 +95,7 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
     if (_error != null) return _errView();
     if (_stack.isEmpty) return const SizedBox.shrink();
     final current = _stack.last;
+    final l = AppLocalizations.of(context)!;
 
     return Column(children: [
       // Breadcrumb
@@ -118,8 +122,8 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
             const SizedBox(width: 8),
             Expanded(child: Text(
               widget.type == 'vimshottari'
-                  ? 'Birth Lord: ${_root?['moon_lord']} • Balance: ${_root?['balance_yrs']} yrs'
-                  : 'Lagna: ${_root?['lagna_sign'] ?? ''} • Balance: ${_root?['balance_yrs']} yrs',
+                  ? l.dashaBirthLordBalance(KundliNames.planet('${_root?['moon_lord']}', Localizations.localeOf(context)), '${_root?['balance_yrs']}')
+                  : l.dashaLagnaBalance(KundliNames.rashiAny('${_root?['lagna_sign'] ?? ''}', Localizations.localeOf(context)), '${_root?['balance_yrs']}'),
               style: const TextStyle(color: AppColors.accent, fontSize: 11),
             )),
           ]),
@@ -128,13 +132,14 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
       Expanded(child: ListView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: current.items.length,
-        itemBuilder: (_, i) => _dashaCard(current.items[i]),
+        itemBuilder: (_, i) => _dashaCard(current.items[i], l),
       )),
     ]);
   }
 
-  Widget _dashaCard(Map<String, dynamic> item) {
+  Widget _dashaCard(Map<String, dynamic> item, AppLocalizations l) {
     final planet = item['planet']?.toString() ?? '';
+    final planetName = KundliNames.planet(planet, Localizations.localeOf(context));
     final years = item['years'] ?? item['eff_yrs'];
     final start = item['start']?.toString() ?? '';
     final end = item['end']?.toString() ?? '';
@@ -158,19 +163,19 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
             Container(
               width: 44, height: 44,
               decoration: BoxDecoration(color: _pColor(planet).withOpacity(0.2), shape: BoxShape.circle, border: Border.all(color: _pColor(planet).withOpacity(0.5))),
-              child: Center(child: Text(planet.isNotEmpty ? planet[0] : '?', style: TextStyle(color: _pColor(planet), fontWeight: FontWeight.w700, fontSize: 16))),
+              child: Center(child: Text(planetName.isNotEmpty ? planetName.characters.first : '?', style: TextStyle(color: _pColor(planet), fontWeight: FontWeight.w700, fontSize: 16))),
             ),
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Flexible(child: Text(planet, style: TextStyle(color: past ? AppColors.textSecondary : AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis)),
+                Flexible(child: Text(planetName, style: TextStyle(color: past ? AppColors.textSecondary : AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14), overflow: TextOverflow.ellipsis)),
                 const SizedBox(width: 8),
-                if (running) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(4)), child: Text(AppLocalizations.of(context)?.running ?? 'RUNNING', style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold))),
-                if (past) Text('  (${AppLocalizations.of(context)?.past ?? "past"})', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                if (running) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(4)), child: Text(l.running, style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold))),
+                if (past) Text('  (${l.past})', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
               ]),
               const SizedBox(height: 4),
               Text('$start → $end', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontFamily: 'monospace')),
-              if (years != null) Text('${(years as num).toStringAsFixed(3)} years', style: const TextStyle(color: AppColors.primary, fontSize: 10)),
+              if (years != null) Text(l.dashaYearsValue((years as num).toStringAsFixed(3)), style: const TextStyle(color: AppColors.primary, fontSize: 10)),
             ])),
             if (subs.isNotEmpty) const Icon(Icons.chevron_right, color: AppColors.primary),
           ]),
@@ -186,7 +191,7 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
       const SizedBox(height: 12),
       Text(_error!, style: const TextStyle(color: AppColors.textSecondary), textAlign: TextAlign.center),
       const SizedBox(height: 12),
-      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
+      ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)!.retry)),
     ]),
   ));
 

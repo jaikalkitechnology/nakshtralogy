@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 import '_section_loader.dart';
 
 class BhavaWidget extends StatelessWidget {
@@ -8,11 +10,22 @@ class BhavaWidget extends StatelessWidget {
   final dynamic initial;
   const BhavaWidget({super.key, required this.chartId, this.initial});
 
-  static const _houseNames = [
-    'Self / Body', 'Wealth / Family', 'Siblings / Courage', 'Home / Mother',
-    'Children / Intellect', 'Enemies / Health', 'Marriage / Partner', 'Longevity',
-    'Fortune / Guru', 'Career / Father', 'Gains / Friends', 'Loss / Moksha',
-  ];
+  String _houseName(int h, AppLocalizations l) {
+    switch (h) {
+      case 1: return l.bhavaHouse1;
+      case 2: return l.bhavaHouse2;
+      case 3: return l.bhavaHouse3;
+      case 4: return l.bhavaHouse4;
+      case 5: return l.bhavaHouse5;
+      case 6: return l.bhavaHouse6;
+      case 7: return l.bhavaHouse7;
+      case 8: return l.bhavaHouse8;
+      case 9: return l.bhavaHouse9;
+      case 10: return l.bhavaHouse10;
+      case 11: return l.bhavaHouse11;
+      default: return l.bhavaHouse12;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +40,8 @@ class BhavaWidget extends StatelessWidget {
           }
         });
         final sorted = List.generate(12, (i) => i + 1);
+        final l = AppLocalizations.of(ctx)!;
+        final loc = Localizations.localeOf(ctx);
 
         return ListView(padding: const EdgeInsets.all(16), children: sorted.map((h) {
           final hd = houses[h] ?? {};
@@ -43,12 +58,15 @@ class BhavaWidget extends StatelessWidget {
                     child: Center(child: Text('H$h', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 11)))),
                 const SizedBox(width: 10),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(_houseNames[h - 1], style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text('${hd['sign'] ?? '-'} • Lord: ${hd['lord'] ?? '-'}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text(_houseName(h, l), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(l.bhavaSignLord(
+                      hd['sign'] != null ? KundliNames.rashiAny(hd['sign'].toString(), loc) : '-',
+                      hd['lord'] != null ? KundliNames.planet(hd['lord'].toString(), loc) : '-'),
+                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 ])),
                 Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   Text(score.toStringAsFixed(0), style: TextStyle(color: _sc(score), fontSize: 20, fontWeight: FontWeight.w700)),
-                  if (sav != null) Text('SAV: $sav', style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
+                  if (sav != null) Text(l.bhavaSav(sav.toString()), style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
                 ]),
               ]),
               const SizedBox(height: 6),
@@ -58,7 +76,7 @@ class BhavaWidget extends StatelessWidget {
                   child: Wrap(spacing: 4, children: occupants.map<Widget>((o) => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.15), borderRadius: BorderRadius.circular(4)),
-                    child: Text(o.toString(), style: const TextStyle(color: AppColors.primary, fontSize: 10)),
+                    child: Text(KundliNames.planet(o.toString(), loc), style: const TextStyle(color: AppColors.primary, fontSize: 10)),
                   )).toList())),
             ]),
           );
