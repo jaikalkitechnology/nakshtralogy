@@ -13,6 +13,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.core.i18n import get_lang, t
+from app.services.freetext_translator import localize_content
 from app.kundli import engine as nk_engine
 from app.kundli import engine as _engine_pkg  # same package but used for singleton
 # Import the underlying engine module for low-level functions
@@ -417,6 +418,9 @@ def rashi_predictions(rashi_idx: int, lang: str = Depends(get_lang)):
         result = _compute_predictions(rashi_idx)
         for area_data in result["predictions"].values():
             area_data["grade"] = _tg(area_data.get("grade"), lang)
+        # translate the free-text prediction bodies (description + factors);
+        # transit_chart planet names stay English (localized client-side).
+        result["predictions"] = localize_content(result["predictions"], lang)
         return _ok({
             **_meta_plus_traits(rashi_idx, lang),
             **result,

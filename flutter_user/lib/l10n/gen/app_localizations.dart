@@ -235,6 +235,138 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @lifeCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career'**
+  String get lifeCareer;
+
+  /// No description provided for @lifeHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get lifeHealth;
+
+  /// No description provided for @lifeWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth'**
+  String get lifeWealth;
+
+  /// No description provided for @lifeFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get lifeFamily;
+
+  /// No description provided for @lifeMind.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind'**
+  String get lifeMind;
+
+  /// No description provided for @lifeEgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Ego'**
+  String get lifeEgo;
+
+  /// No description provided for @lifeAggression.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggression'**
+  String get lifeAggression;
+
+  /// No description provided for @lifeConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict'**
+  String get lifeConflict;
+
+  /// No description provided for @rashiElement.
+  ///
+  /// In en, this message translates to:
+  /// **'Element'**
+  String get rashiElement;
+
+  /// No description provided for @rashiQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality'**
+  String get rashiQuality;
+
+  /// No description provided for @rashiLuckyColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky Color'**
+  String get rashiLuckyColor;
+
+  /// No description provided for @rashiLuckyDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky Day'**
+  String get rashiLuckyDay;
+
+  /// No description provided for @rashiLuckyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky Number'**
+  String get rashiLuckyNumber;
+
+  /// No description provided for @rashiGemstone.
+  ///
+  /// In en, this message translates to:
+  /// **'Gemstone'**
+  String get rashiGemstone;
+
+  /// No description provided for @rashiBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Body'**
+  String get rashiBody;
+
+  /// No description provided for @gocharTodaysTransitChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Transit Chart'**
+  String get gocharTodaysTransitChart;
+
+  /// No description provided for @gocharTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit'**
+  String get gocharTransit;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get thisWeek;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @best.
+  ///
+  /// In en, this message translates to:
+  /// **'Best'**
+  String get best;
+
+  /// No description provided for @worst.
+  ///
+  /// In en, this message translates to:
+  /// **'Worst'**
+  String get worst;
+
+  /// No description provided for @avg.
+  ///
+  /// In en, this message translates to:
+  /// **'avg'**
+  String get avg;
+
   /// No description provided for @favorableLoveWindowsLabel.
   ///
   /// In en, this message translates to:

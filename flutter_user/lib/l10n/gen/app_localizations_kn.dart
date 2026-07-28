@@ -9,6 +9,72 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
+  String get lifeCareer => 'ವೃತ್ತಿ';
+
+  @override
+  String get lifeHealth => 'ಆರೋಗ್ಯ';
+
+  @override
+  String get lifeWealth => 'ಸಂಪತ್ತು';
+
+  @override
+  String get lifeFamily => 'ಕುಟುಂಬ';
+
+  @override
+  String get lifeMind => 'ಮನಸ್ಸು';
+
+  @override
+  String get lifeEgo => 'ಅಹಂಕಾರ';
+
+  @override
+  String get lifeAggression => 'ಆಕ್ರಮಣಶೀಲತೆ';
+
+  @override
+  String get lifeConflict => 'ಸಂಘರ್ಷ';
+
+  @override
+  String get rashiElement => 'ತತ್ವ';
+
+  @override
+  String get rashiQuality => 'ಗುಣ';
+
+  @override
+  String get rashiLuckyColor => 'ಅದೃಷ್ಟ ಬಣ್ಣ';
+
+  @override
+  String get rashiLuckyDay => 'ಅದೃಷ್ಟ ದಿನ';
+
+  @override
+  String get rashiLuckyNumber => 'ಅದೃಷ್ಟ ಸಂಖ್ಯೆ';
+
+  @override
+  String get rashiGemstone => 'ರತ್ನ';
+
+  @override
+  String get rashiBody => 'ದೇಹ';
+
+  @override
+  String get gocharTodaysTransitChart => 'ಇಂದಿನ ಗೋಚಾರ ಚಾರ್ಟ್';
+
+  @override
+  String get gocharTransit => 'ಗೋಚಾರ';
+
+  @override
+  String get thisWeek => 'ಈ ವಾರ';
+
+  @override
+  String get thisMonth => 'ಈ ತಿಂಗಳು';
+
+  @override
+  String get best => 'ಅತ್ಯುತ್ತಮ';
+
+  @override
+  String get worst => 'ಕೆಟ್ಟ';
+
+  @override
+  String get avg => 'avg';
+
+  @override
   String get favorableLoveWindowsLabel => 'ಅನುಕೂಲ ಪ್ರೀತಿ ಅವಧಿಗಳು';
 
   @override

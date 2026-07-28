@@ -9,6 +9,75 @@ class AppLocalizationsMl extends AppLocalizations {
   AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
+  String get lifeCareer => 'ജോലി';
+
+  @override
+  String get lifeHealth => 'ആരോഗ്യം';
+
+  @override
+  String get lifeWealth => 'സമ്പത്ത്';
+
+  @override
+  String get lifeFamily => 'കുടുംബം';
+
+  @override
+  String get lifeMind => 'മനസ്സ്';
+
+  @override
+  String get lifeEgo => 'അഹംഭാവം';
+
+  @override
+  String get lifeAggression => 'ആക്രമണോത്സുകത';
+
+  @override
+  String get lifeConflict => 'സംഘർഷം';
+
+  @override
+  String get rashiElement => 'തത്വം';
+
+  @override
+  String get rashiQuality => 'ഗുണം';
+
+  @override
+  String get rashiLuckyColor => 'ഭാഗ്യ നിറം';
+
+  @override
+  String get rashiLuckyDay => 'ഭാഗ്യ ദിവസം';
+
+  @override
+  String get rashiLuckyNumber => 'ഭാഗ്യ സംഖ്യ';
+
+  @override
+  String get rashiGemstone => 'രത്നം';
+
+  @override
+  String get rashiBody => 'ശരീരം';
+
+  @override
+  String get gocharTodaysTransitChart => 'ഇന്നത്തെ ഗോചാര ചാർട്ട്';
+
+  @override
+  String get gocharTransit => 'ഗോചാരം';
+
+  @override
+  String get thisWeek => 'ഈ ആഴ്ച';
+
+  @override
+  String get best => 'മികച്ചത്';
+
+  @override
+  String get worst => 'മോശം';
+
+  @override
+  String get avg => 'avg';
+
+  @override
+  String get love => 'പ്രണയം';
+
+  @override
+  String get spiritual => 'ആധ്യാത്മികം';
+
+  @override
   String get analysisConfidence => 'വിശകലന വിശ്വാസ്യത';
 
   @override

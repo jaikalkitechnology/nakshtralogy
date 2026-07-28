@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/kundli_names.dart';
 import 'north_indian_chart.dart';
 
 /// Gochar (transit) tab for the kundli viewer.
@@ -28,19 +29,35 @@ class _GocharWidgetState extends State<GocharWidget> {
 
   static const _signShortList = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
 
-  // Life area metadata (order, icon, color)
+  // Life area metadata (order, emoji). Display label is localized at runtime.
   static const _areaMeta = [
-    {'key': 'career',     'label': 'Career',     'emoji': '\u{1F4BC}'},
-    {'key': 'health',     'label': 'Health',     'emoji': '⚕'},
-    {'key': 'love',       'label': 'Love',       'emoji': '\u{1F495}'},
-    {'key': 'wealth',     'label': 'Wealth',     'emoji': '\u{1F4B0}'},
-    {'key': 'family',     'label': 'Family',     'emoji': '\u{1F46A}'},
-    {'key': 'mind',       'label': 'Mind',       'emoji': '\u{1F9E0}'},
-    {'key': 'ego',        'label': 'Ego',        'emoji': '\u{1F451}'},
-    {'key': 'aggression', 'label': 'Aggression', 'emoji': '\u{1F525}'},
-    {'key': 'conflict',   'label': 'Conflict',   'emoji': '⚔'},
-    {'key': 'spiritual',  'label': 'Spiritual',  'emoji': '\u{1F54A}'},
+    {'key': 'career',     'emoji': '\u{1F4BC}'},
+    {'key': 'health',     'emoji': '⚕'},
+    {'key': 'love',       'emoji': '\u{1F495}'},
+    {'key': 'wealth',     'emoji': '\u{1F4B0}'},
+    {'key': 'family',     'emoji': '\u{1F46A}'},
+    {'key': 'mind',       'emoji': '\u{1F9E0}'},
+    {'key': 'ego',        'emoji': '\u{1F451}'},
+    {'key': 'aggression', 'emoji': '\u{1F525}'},
+    {'key': 'conflict',   'emoji': '⚔'},
+    {'key': 'spiritual',  'emoji': '\u{1F54A}'},
   ];
+
+  String _areaLabel(AppLocalizations l, String key) {
+    switch (key) {
+      case 'career': return l.lifeCareer;
+      case 'health': return l.lifeHealth;
+      case 'love': return l.love;
+      case 'wealth': return l.lifeWealth;
+      case 'family': return l.lifeFamily;
+      case 'mind': return l.lifeMind;
+      case 'ego': return l.lifeEgo;
+      case 'aggression': return l.lifeAggression;
+      case 'conflict': return l.lifeConflict;
+      case 'spiritual': return l.spiritual;
+      default: return key;
+    }
+  }
 
   @override
   void initState() {
@@ -95,9 +112,9 @@ class _GocharWidgetState extends State<GocharWidget> {
         const SizedBox(height: 14),
         _traitsCard(d),
         const SizedBox(height: 14),
-        _trendCard('This Week', d['weekly'] as Map? ?? {}),
+        _trendCard(AppLocalizations.of(context)!.thisWeek, d['weekly'] as Map? ?? {}),
         const SizedBox(height: 14),
-        _trendCard('This Month', d['monthly'] as Map? ?? {}),
+        _trendCard(AppLocalizations.of(context)!.thisMonth, d['monthly'] as Map? ?? {}),
         const SizedBox(height: 24),
       ]),
     );
@@ -123,7 +140,7 @@ class _GocharWidgetState extends State<GocharWidget> {
           Text('${d['sanskrit']} • ${d['symbol']}',
               style: const TextStyle(color: AppColors.gold, fontSize: 12)),
           const SizedBox(height: 2),
-          Text('${AppLocalizations.of(context)?.ruledBy ?? "Ruled by"} ${d["lord"]}',
+          Text('${AppLocalizations.of(context)?.ruledBy ?? "Ruled by"} ${KundliNames.planet(d["lord"]?.toString() ?? "", Localizations.localeOf(context))}',
               style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
         ])),
       ]),
@@ -131,6 +148,7 @@ class _GocharWidgetState extends State<GocharWidget> {
   }
 
   Widget _todayCard(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     final today = (d['today'] as Map? ?? {}).cast<String, dynamic>();
     final score = (today['score'] as num?)?.toDouble() ?? 0;
     final grade = today['grade']?.toString() ?? 'Normal';
@@ -143,7 +161,7 @@ class _GocharWidgetState extends State<GocharWidget> {
         Row(children: [
           const Icon(Icons.today, color: AppColors.gold, size: 18),
           const SizedBox(width: 8),
-          Text("Today's Gochar", style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(l.todaysGochar, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 12),
         Row(children: [
@@ -180,6 +198,8 @@ class _GocharWidgetState extends State<GocharWidget> {
   // relative to native Moon sign
   // ─────────────────────────────────────────────────────────────
   Widget _transitChart() {
+    final l = AppLocalizations.of(context)!;
+    final loc = Localizations.localeOf(context);
     final chart = (_predictions!['transit_chart'] as Map?)?.cast<String, dynamic>() ?? {};
     final housesData = (chart['houses'] as List?) ?? [];
     if (housesData.isEmpty) return const SizedBox.shrink();
@@ -192,7 +212,7 @@ class _GocharWidgetState extends State<GocharWidget> {
         'rashi_idx': m['sign_idx'],
         'rashi_short': _signShortList[(m['sign_idx'] as num).toInt() % 12],
         'planets': planets.map((p) => {
-          'planet': p,
+          'planet': KundliNames.planet(p.toString(), loc),
           'flags': const [],
           'degree': 0,
         }).toList(),
@@ -207,13 +227,13 @@ class _GocharWidgetState extends State<GocharWidget> {
         Row(children: [
           const Icon(Icons.grid_view, color: AppColors.gold, size: 18),
           const SizedBox(width: 8),
-          Text("Today's Transit Chart", style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(l.gocharTodaysTransitChart, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
         Text(AppLocalizations.of(context)?.currentPlanetPositions ?? 'Current planet positions',
             style: TextStyle(color: AppColors.smoke, fontSize: 11)),
         const SizedBox(height: 12),
-        NorthIndianChartWidget(houses: houses, chartTitle: 'Transit'),
+        NorthIndianChartWidget(houses: houses, chartTitle: l.gocharTransit),
       ]),
     );
   }
@@ -222,6 +242,7 @@ class _GocharWidgetState extends State<GocharWidget> {
   // LIFE-AREA PREDICTIONS
   // ─────────────────────────────────────────────────────────────
   Widget _predictionsSection() {
+    final l = AppLocalizations.of(context)!;
     final preds = (_predictions!['predictions'] as Map?)?.cast<String, dynamic>() ?? {};
     return Container(
       padding: const EdgeInsets.all(14),
@@ -230,7 +251,7 @@ class _GocharWidgetState extends State<GocharWidget> {
         Row(children: [
           const Icon(Icons.auto_awesome, color: AppColors.gold, size: 18),
           const SizedBox(width: 8),
-          Text('Life Area Predictions', style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(l.lifeAreaPredictions, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 4),
         Text(AppLocalizations.of(context)?.basedOnTransits ?? 'Based on current transits',
@@ -239,13 +260,13 @@ class _GocharWidgetState extends State<GocharWidget> {
         ..._areaMeta.map((meta) {
           final data = (preds[meta['key']] as Map?)?.cast<String, dynamic>();
           if (data == null) return const SizedBox.shrink();
-          return _predictionRow(meta, data);
+          return _predictionRow(_areaLabel(l, meta['key']!), meta['emoji']!, data);
         }),
       ]),
     );
   }
 
-  Widget _predictionRow(Map<String, dynamic> meta, Map<String, dynamic> data) {
+  Widget _predictionRow(String label, String emoji, Map<String, dynamic> data) {
     final score = (data['score'] as num?)?.toDouble() ?? 0;
     final grade = data['grade']?.toString() ?? '';
     final desc = data['description']?.toString() ?? '';
@@ -262,9 +283,9 @@ class _GocharWidgetState extends State<GocharWidget> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Text(meta['emoji'] as String, style: const TextStyle(fontSize: 20)),
+          Text(emoji, style: const TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
-          Expanded(child: Text(meta['label'] as String,
+          Expanded(child: Text(label,
               style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -305,14 +326,15 @@ class _GocharWidgetState extends State<GocharWidget> {
   }
 
   Widget _metaGrid(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     final rows = [
-      ['Element', d['element']],
-      ['Quality', d['quality']],
-      ['Lucky Color', d['lucky_color']],
-      ['Lucky Day', d['lucky_day']],
-      ['Lucky Number', '${d['lucky_number']}'],
-      ['Gemstone', d['gem']],
-      ['Body', d['body_part']],
+      [l.rashiElement, d['element']],
+      [l.rashiQuality, d['quality']],
+      [l.rashiLuckyColor, d['lucky_color']],
+      [l.rashiLuckyDay, d['lucky_day']],
+      [l.rashiLuckyNumber, '${d['lucky_number']}'],
+      [l.rashiGemstone, d['gem']],
+      [l.rashiBody, d['body_part']],
     ];
     return Container(
       padding: const EdgeInsets.all(14),
@@ -330,6 +352,7 @@ class _GocharWidgetState extends State<GocharWidget> {
   }
 
   Widget _traitsCard(Map<String, dynamic> d) {
+    final l = AppLocalizations.of(context)!;
     final s = (d['strengths'] as List?)?.cast<String>() ?? const [];
     final w = (d['weaknesses'] as List?)?.cast<String>() ?? const [];
     return Container(
@@ -339,7 +362,7 @@ class _GocharWidgetState extends State<GocharWidget> {
         Row(children: [
           const Icon(Icons.thumb_up_alt_outlined, color: AppColors.success, size: 16),
           const SizedBox(width: 6),
-          Text('Strengths', style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(l.strengths, style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 6),
         Wrap(spacing: 6, runSpacing: 4, children: s.map((x) => _chip(x, AppColors.success)).toList()),
@@ -347,7 +370,7 @@ class _GocharWidgetState extends State<GocharWidget> {
         Row(children: [
           const Icon(Icons.thumb_down_alt_outlined, color: AppColors.error, size: 16),
           const SizedBox(width: 6),
-          Text('Weaknesses', style: const TextStyle(color: AppColors.error, fontSize: 12, fontWeight: FontWeight.w700)),
+          Text(l.weaknesses, style: const TextStyle(color: AppColors.error, fontSize: 12, fontWeight: FontWeight.w700)),
         ]),
         const SizedBox(height: 6),
         Wrap(spacing: 6, runSpacing: 4, children: w.map((x) => _chip(x, AppColors.error)).toList()),
@@ -356,6 +379,7 @@ class _GocharWidgetState extends State<GocharWidget> {
   }
 
   Widget _trendCard(String title, Map trendMap) {
+    final l = AppLocalizations.of(context)!;
     final days = ((trendMap['days'] as List?) ?? []).cast<Map>();
     final avg = (trendMap['avg'] as num?)?.toDouble() ?? 0;
     if (days.isEmpty) return const SizedBox.shrink();
@@ -370,7 +394,7 @@ class _GocharWidgetState extends State<GocharWidget> {
           const SizedBox(width: 6),
           Text(title, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w700)),
           const Spacer(),
-          Text('avg ${avg.toStringAsFixed(2)}',
+          Text('${l.avg} ${avg.toStringAsFixed(2)}',
               style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
         ]),
         const SizedBox(height: 10),
@@ -395,9 +419,9 @@ class _GocharWidgetState extends State<GocharWidget> {
         ),
         const SizedBox(height: 6),
         Row(children: [
-          Text('Best ${maxS.toStringAsFixed(1)}', style: const TextStyle(color: AppColors.success, fontSize: 10)),
+          Text('${l.best} ${maxS.toStringAsFixed(1)}', style: const TextStyle(color: AppColors.success, fontSize: 10)),
           const Spacer(),
-          Text('Worst ${minS.toStringAsFixed(1)}', style: const TextStyle(color: AppColors.error, fontSize: 10)),
+          Text('${l.worst} ${minS.toStringAsFixed(1)}', style: const TextStyle(color: AppColors.error, fontSize: 10)),
         ]),
       ]),
     );

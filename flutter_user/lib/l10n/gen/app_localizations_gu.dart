@@ -9,6 +9,72 @@ class AppLocalizationsGu extends AppLocalizations {
   AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
+  String get lifeCareer => 'કારકિર્દી';
+
+  @override
+  String get lifeHealth => 'આરોગ્ય';
+
+  @override
+  String get lifeWealth => 'સંપત્તિ';
+
+  @override
+  String get lifeFamily => 'પરિવાર';
+
+  @override
+  String get lifeMind => 'મન';
+
+  @override
+  String get lifeEgo => 'અહંકાર';
+
+  @override
+  String get lifeAggression => 'આક્રમકતા';
+
+  @override
+  String get lifeConflict => 'સંઘર્ષ';
+
+  @override
+  String get rashiElement => 'તત્વ';
+
+  @override
+  String get rashiQuality => 'ગુણ';
+
+  @override
+  String get rashiLuckyColor => 'શુભ રંગ';
+
+  @override
+  String get rashiLuckyDay => 'શુભ દિવસ';
+
+  @override
+  String get rashiLuckyNumber => 'શુભ અંક';
+
+  @override
+  String get rashiGemstone => 'રત્ન';
+
+  @override
+  String get rashiBody => 'શરીર';
+
+  @override
+  String get gocharTodaysTransitChart => 'આજનો ગોચર ચાર્ટ';
+
+  @override
+  String get gocharTransit => 'ગોચર';
+
+  @override
+  String get thisWeek => 'આ અઠવાડિયે';
+
+  @override
+  String get thisMonth => 'આ મહિને';
+
+  @override
+  String get best => 'શ્રેષ્ઠ';
+
+  @override
+  String get worst => 'સૌથી ખરાબ';
+
+  @override
+  String get avg => 'avg';
+
+  @override
   String get favorableLoveWindowsLabel => 'અનુકૂળ પ્રેમ સમયગાળા';
 
   @override
