@@ -12,13 +12,8 @@ import 'widgets/yoga_widget.dart';
 import 'widgets/shadbala_widget.dart';
 import 'widgets/ashtakavarga_widget.dart';
 import 'widgets/aspects_widget.dart';
-import 'widgets/life_areas_widget.dart';
 import 'widgets/bhava_widget.dart';
-import 'widgets/chakra_health_widget.dart';
-import 'widgets/dasha_activation_widget.dart';
 import 'widgets/gochar_widget.dart';
-import 'widgets/career_widget.dart';
-import 'widgets/character_widget.dart';
 
 /// User-side kundli viewer with per-tab paywall.
 /// Fetches only the lightweight chart on open; each tab paywall-gates its
@@ -42,7 +37,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 18;
+  static const _sectionCount = 13;
 
   // [label, icon, section-key used by paywall]
   static List<List<Object>> _sections(AppLocalizations l) => <List<Object>>[
@@ -58,12 +53,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.shadbala, Icons.bar_chart, 'shadbala'],
     [l.ashtakavarga, Icons.table_chart, 'ashtakavarga'],
     [l.aspects, Icons.hub, 'aspects'],
-    [l.lifeAreas, Icons.work, 'life_areas'],
     [l.bhava, Icons.home, 'bhava'],
-    [l.chakras, Icons.radio_button_checked, 'chakra'],
-    [l.dashaActive, Icons.flash_on, 'dasha_activation'],
-    [l.careerWord, Icons.business_center, 'career'],
-    [l.character, Icons.person_search, 'character'],
   ];
 
   @override
@@ -169,18 +159,8 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                             builder: (_) => AshtakavargaWidget(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'aspects',
                             builder: (_) => AspectsWidget(chartId: widget.chartId)),
-                        _PaidTab(chartId: widget.chartId, section: 'life_areas',
-                            builder: (_) => LifeAreasWidget(chartId: widget.chartId, initial: _complete?['life_areas'])),
                         _PaidTab(chartId: widget.chartId, section: 'bhava',
                             builder: (_) => BhavaWidget(chartId: widget.chartId, initial: _complete?['bhava_strength'])),
-                        _PaidTab(chartId: widget.chartId, section: 'chakra',
-                            builder: (_) => ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health'])),
-                        _PaidTab(chartId: widget.chartId, section: 'dasha_activation',
-                            builder: (_) => DashaActivationWidget(chartId: widget.chartId)),
-                        _PaidTab(chartId: widget.chartId, section: 'career',
-                            builder: (_) => CareerWidget(chartId: widget.chartId)),
-                        _PaidTab(chartId: widget.chartId, section: 'character',
-                            builder: (_) => CharacterWidget(chartId: widget.chartId)),
                       ],
                     ),
     );
@@ -404,7 +384,7 @@ class _KundliTabState extends State<_KundliTab> {
       final p = (planetData as Map).cast<String, dynamic>();
       final si = (p['sign_idx'] as num?)?.toInt() ?? 0;
       byRashi.putIfAbsent(si, () => []).add({
-        'planet': name,
+        'planet': (p['planet_local'] ?? name),
         'sign': p['sign'],
         'degree': p['degree'],
         'dignity': p['dignity'],

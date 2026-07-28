@@ -5486,5 +5486,146 @@
     "marathi": "अपुरी शिल्लक. ₹{amount} आवश्यक",
     "punjabi": "ਲੋੜੀਂਦਾ ਬੈਲੇਂਸ ਨਹੀਂ। ₹{amount} ਦੀ ਲੋੜ",
     "odia": "ପର୍ଯ୍ୟାପ୍ତ ବାଲାନ୍ସ ନାହିଁ। ₹{amount} ଆବଶ୍ୟକ"
+  },
+  "planet.sun": {
+    "english": "Sun"
+  },
+  "planet.moon": {
+    "english": "Moon"
+  },
+  "planet.mars": {
+    "english": "Mars"
+  },
+  "planet.mercury": {
+    "english": "Mercury"
+  },
+  "planet.jupiter": {
+    "english": "Jupiter"
+  },
+  "planet.venus": {
+    "english": "Venus"
+  },
+  "planet.saturn": {
+    "english": "Saturn"
+  },
+  "planet.rahu": {
+    "english": "Rahu"
+  },
+  "planet.ketu": {
+    "english": "Ketu"
+  },
+  "planet.lagna": {
+    "english": "Lagna"
+  },
+  "planet.ascendant": {
+    "english": "Ascendant"
+  },
+  "nakshatra.ashwini": {
+    "english": "Ashwini"
+  },
+  "nakshatra.bharani": {
+    "english": "Bharani"
+  },
+  "nakshatra.krittika": {
+    "english": "Krittika"
+  },
+  "nakshatra.rohini": {
+    "english": "Rohini"
+  },
+  "nakshatra.mrigashira": {
+    "english": "Mrigashira"
+  },
+  "nakshatra.ardra": {
+    "english": "Ardra"
+  },
+  "nakshatra.punarvasu": {
+    "english": "Punarvasu"
+  },
+  "nakshatra.pushya": {
+    "english": "Pushya"
+  },
+  "nakshatra.ashlesha": {
+    "english": "Ashlesha"
+  },
+  "nakshatra.magha": {
+    "english": "Magha"
+  },
+  "nakshatra.purva_phalguni": {
+    "english": "Purva Phalguni"
+  },
+  "nakshatra.uttara_phalguni": {
+    "english": "Uttara Phalguni"
+  },
+  "nakshatra.hasta": {
+    "english": "Hasta"
+  },
+  "nakshatra.chitra": {
+    "english": "Chitra"
+  },
+  "nakshatra.swati": {
+    "english": "Swati"
+  },
+  "nakshatra.vishakha": {
+    "english": "Vishakha"
+  },
+  "nakshatra.anuradha": {
+    "english": "Anuradha"
+  },
+  "nakshatra.jyeshtha": {
+    "english": "Jyeshtha"
+  },
+  "nakshatra.mula": {
+    "english": "Mula"
+  },
+  "nakshatra.purva_ashadha": {
+    "english": "Purva Ashadha"
+  },
+  "nakshatra.uttara_ashadha": {
+    "english": "Uttara Ashadha"
+  },
+  "nakshatra.shravana": {
+    "english": "Shravana"
+  },
+  "nakshatra.dhanishtha": {
+    "english": "Dhanishtha"
+  },
+  "nakshatra.shatabhisha": {
+    "english": "Shatabhisha"
+  },
+  "nakshatra.purva_bhadrapada": {
+    "english": "Purva Bhadrapada"
+  },
+  "nakshatra.uttara_bhadrapada": {
+    "english": "Uttara Bhadrapada"
+  },
+  "nakshatra.revati": {
+    "english": "Revati"
+  },
+  "dignity.exalted": {
+    "english": "Exalted"
+  },
+  "dignity.debilitated": {
+    "english": "Debilitated"
+  },
+  "dignity.moolatrikona": {
+    "english": "Moolatrikona"
+  },
+  "dignity.own": {
+    "english": "Own"
+  },
+  "dignity.neutral": {
+    "english": "Neutral"
+  },
+  "dignity.great_friend": {
+    "english": "Great Friend"
+  },
+  "dignity.friend": {
+    "english": "Friend"
+  },
+  "dignity.enemy": {
+    "english": "Enemy"
+  },
+  "dignity.great_enemy": {
+    "english": "Great Enemy"
   }
 }

@@ -11,13 +11,8 @@ import 'widgets/yoga_widget.dart';
 import 'widgets/shadbala_widget.dart';
 import 'widgets/ashtakavarga_widget.dart';
 import 'widgets/aspects_widget.dart';
-import 'widgets/life_areas_widget.dart';
 import 'widgets/bhava_widget.dart';
-import 'widgets/chakra_health_widget.dart';
-import 'widgets/dasha_activation_widget.dart';
 import 'widgets/gochar_widget.dart';
-import 'widgets/career_widget.dart';
-import 'widgets/character_widget.dart';
 
 /// Main kundli viewer — 17 tabs for all Vedic analysis sections.
 class KundliViewerScreen extends StatefulWidget {
@@ -38,7 +33,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 18;
+  static const _sectionCount = 13;
 
   static List<List<Object>> _sections(AppLocalizations l) => [
     [l.summary, Icons.dashboard],
@@ -53,12 +48,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.shadbala, Icons.bar_chart],
     [l.ashtakavarga, Icons.table_chart],
     [l.aspects, Icons.hub],
-    [l.lifeAreas, Icons.work],
     [l.bhava, Icons.home],
-    [l.chakras, Icons.radio_button_checked],
-    [l.dashaActive, Icons.flash_on],
-    ['Career', Icons.business_center],
-    ['Character', Icons.person_search],
   ];
 
   @override
@@ -151,12 +141,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala']),
                         AshtakavargaWidget(chartId: widget.chartId),
                         AspectsWidget(chartId: widget.chartId),
-                        LifeAreasWidget(chartId: widget.chartId, initial: _complete?['life_areas']),
                         BhavaWidget(chartId: widget.chartId, initial: _complete?['bhava_strength']),
-                        ChakraHealthWidget(chartId: widget.chartId, initial: _complete?['chakra_health']),
-                        DashaActivationWidget(chartId: widget.chartId),
-                        CareerWidget(chartId: widget.chartId),
-                        CharacterWidget(chartId: widget.chartId),
                       ],
                     ),
     );
@@ -291,7 +276,7 @@ class _KundliTabState extends State<_KundliTab> {
       final p = (planetData as Map).cast<String, dynamic>();
       final si = (p['sign_idx'] as num?)?.toInt() ?? 0;
       byRashi.putIfAbsent(si, () => []).add({
-        'planet': name,
+        'planet': (p['planet_local'] ?? name),
         'sign': p['sign'],
         'degree': p['degree'],
         'dignity': p['dignity'],

@@ -31,6 +31,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
 from app.services.freetext_translator import localize_content
+from app.services.chart_localizer import localize_chart
 from app.kundli import engine as nk_engine
 from app.models.model import Chart, User
 
@@ -198,7 +199,7 @@ def compute_from_raw(
     try:
         chart = nk_engine.get_chart(req.name, req.gender, req.dob, req.tob, req.place)
         chart.pop("_pdata", None)
-        return _ok(chart, meta={"engine": chart.get("engine")})
+        return _ok(localize_chart(chart, lang), meta={"engine": chart.get("engine")})
     except Exception as e:
         _err(500, "err.chart_compute_failed", lang, str(e))
 
@@ -226,7 +227,7 @@ def get_full_kundli(
             db.commit()
         except Exception:
             db.rollback()
-        return _ok(result)
+        return _ok(localize_chart(result, lang))
     except Exception as e:
         logger.error("full_kundli error: %s\n%s", e, traceback.format_exc())
         _err(500, "err.full_analysis_failed", lang, str(e))
@@ -242,7 +243,7 @@ def get_chart_only(
     """Just chart (planets + divisionals + lagna) without analyses."""
     chart = _load_chart(chart_id, current_user, db, lang)
     data = _chart_from_row(chart, lang)
-    return _ok({k: v for k, v in data.items() if k != "_pdata"})
+    return _ok(localize_chart({k: v for k, v in data.items() if k != "_pdata"}, lang))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -499,7 +500,7 @@ def dashboard(
         "life_areas": nk_engine.get_life_areas(pdata),
         "dasha_activation": nk_engine.get_dasha_activation(pdata, bj),
     }
-    return _ok(localize_content(result, lang))
+    return _ok(localize_content(localize_chart(result, lang), lang))
 
 
 @router.get("/{chart_id}/analysis/complete")

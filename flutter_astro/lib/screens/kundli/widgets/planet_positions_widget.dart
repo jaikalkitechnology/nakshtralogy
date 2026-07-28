@@ -43,27 +43,27 @@ class PlanetPositionsWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
-                  Text(p['_name']?.toString() ?? '', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 15)),
+                  Text((p['planet_local'] ?? p['_name'])?.toString() ?? '', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 15)),
                   const SizedBox(width: 8),
                   if (p['vakri'] == true) _flag('R', AppColors.error),
                   if (p['combust'] == true) _flag('C', Colors.orange),
                   if (p['vargottam'] == true) _flag('V', AppColors.success),
                 ]),
                 const SizedBox(height: 2),
-                Text('${p['sign_full']} • ${(p['degree'] as num?)?.toStringAsFixed(2)}°',
+                Text('${p['sign_full_local'] ?? p['sign_full']} • ${(p['degree'] as num?)?.toStringAsFixed(2)}°',
                     style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w500)),
               ])),
               if (p['dignity'] != null && p['dignity'].toString().isNotEmpty && p['dignity'].toString() != 'Normal')
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(color: _dignityColor(p['dignity']).withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
-                  child: Text(p['dignity'].toString(), style: TextStyle(color: _dignityColor(p['dignity']), fontSize: 10, fontWeight: FontWeight.w600)),
+                  child: Text((p['dignity_local'] ?? p['dignity']).toString(), style: TextStyle(color: _dignityColor(p['dignity']), fontSize: 10, fontWeight: FontWeight.w600)),
                 ),
             ]),
             const SizedBox(height: 10),
             Wrap(spacing: 6, runSpacing: 6, children: [
-              _chip('Nak: ${p['nakshatra']} (${p['pada']})'),
-              _chip('NL: ${p['nak_lord']}'),
+              _chip('Nak: ${p['nakshatra_local'] ?? p['nakshatra']} (${p['pada']})'),
+              _chip('NL: ${p['nak_lord_local'] ?? p['nak_lord']}'),
               _chip('Lon: ${(p['longitude'] as num?)?.toStringAsFixed(2)}°'),
             ]),
           ]),
