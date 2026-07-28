@@ -141,22 +141,49 @@ def _cache_get_many(pairs: list) -> dict:
 
 
 def _cache_put_many(items: list):
-    """items: [(text, lang, translated)]"""
+    """items: [(text, lang, translated)] — idempotent, race-safe.
+
+    Dedups within the batch and skips hashes already present, then commits.
+    If a concurrent request inserted the same hash between the check and the
+    commit, the duplicate-key error is swallowed per-row (someone else already
+    cached it) instead of failing the whole batch.
+    """
     if not items:
         return
+    from sqlalchemy.exc import IntegrityError
     try:
         from app.core.database import SessionLocal
         from app.models.model import FreeTextTranslation
+        # dedup within the batch by hash (same text under multiple keys)
+        rows = {}
+        for text, lang, translated in items:
+            rows[_sha(text, lang)] = (text, lang, translated)
         db = SessionLocal()
         try:
-            for text, lang, translated in items:
-                h = _sha(text, lang)
-                if not db.query(FreeTextTranslation).filter(
-                        FreeTextTranslation.text_hash == h).first():
-                    db.add(FreeTextTranslation(
-                        text_hash=h, lang=lang,
-                        source_text=text[:2000], translated=translated))
-            db.commit()
+            existing = set(
+                h for (h,) in db.query(FreeTextTranslation.text_hash).filter(
+                    FreeTextTranslation.text_hash.in_(list(rows.keys()))
+                ).all()
+            )
+            fresh = {h: v for h, v in rows.items() if h not in existing}
+            for h, (text, lang, translated) in fresh.items():
+                db.add(FreeTextTranslation(
+                    text_hash=h, lang=lang,
+                    source_text=text[:2000], translated=translated))
+            try:
+                db.commit()
+            except IntegrityError:
+                # concurrent insert of one of these hashes — retry per-row,
+                # ignoring rows another request already cached.
+                db.rollback()
+                for h, (text, lang, translated) in fresh.items():
+                    try:
+                        db.add(FreeTextTranslation(
+                            text_hash=h, lang=lang,
+                            source_text=text[:2000], translated=translated))
+                        db.commit()
+                    except IntegrityError:
+                        db.rollback()
         finally:
             db.close()
     except Exception as e:  # pragma: no cover
