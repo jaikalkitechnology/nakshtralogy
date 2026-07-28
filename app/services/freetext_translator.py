@@ -108,7 +108,7 @@ REPORT_LABEL_KEYS = {
     "favoured_actions", "recommended_action", "event", "favoured_domains",
     "cautioned_domains", "domain_emphasis",
     "domains_to_avoid_for_conversations", "target_weekday",
-    "h1_event_signature", "stacked_lord_relationship_quality",
+    "h1_event_signature", "h2_event_signature", "h3_event_signature", "h4_event_signature", "h5_event_signature", "h6_event_signature", "h7_event_signature", "h8_event_signature", "h9_event_signature", "h10_event_signature", "h11_event_signature", "h12_event_signature", "stacked_lord_relationship_quality",
 }
 
 # A string qualifies as free-text (under a non-listed key) if it reads like a

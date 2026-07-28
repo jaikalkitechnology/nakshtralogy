@@ -12,124 +12,124 @@ class AppLocalizationsMl extends AppLocalizations {
   String get forecast => 'പ്രവചനം';
 
   @override
-  String get fcKey => 'Key';
+  String get fcKey => 'കീ';
 
   @override
-  String get fcActions => 'Actions';
+  String get fcActions => 'പ്രവർത്തനങ്ങൾ';
 
   @override
-  String get fcCautions => 'Cautions';
+  String get fcCautions => 'മുൻകരുതലുകൾ';
 
   @override
-  String get fc12House => '12 House';
+  String get fc12House => '12 ഭാവങ്ങൾ';
 
   @override
-  String get fcProbabilities => 'Probabilities';
+  String get fcProbabilities => 'സാധ്യതകൾ';
 
   @override
-  String get fcHousesCaps => 'HOUSES';
+  String get fcHousesCaps => 'ഭാവങ്ങൾ';
 
   @override
-  String get fcCritical => 'Critical';
+  String get fcCritical => 'നിർണായകം';
 
   @override
-  String get fcFlags => 'Flags';
+  String get fcFlags => 'അടയാളങ്ങൾ';
 
   @override
-  String get fcAnalysis => 'Analysis';
+  String get fcAnalysis => 'വിശകലനം';
 
   @override
-  String get fcConfidence => 'Confidence';
+  String get fcConfidence => 'ആത്മവിശ്വാസം';
 
   @override
-  String get fcQualityCaps => 'QUALITY';
+  String get fcQualityCaps => 'ഗുണനിലവാരം';
 
   @override
-  String get fcIncomeVs => 'Income vs';
+  String get fcIncomeVs => 'വരുമാനം vs';
 
   @override
-  String get fcExpense => 'Expense';
+  String get fcExpense => 'ചെലവ്';
 
   @override
-  String get fcFinance => 'FINANCE';
+  String get fcFinance => 'ധനകാര്യം';
 
   @override
-  String get fcNetBalance => 'Net Balance';
+  String get fcNetBalance => 'നെറ്റ് ബാലൻസ്';
 
   @override
-  String get fcSignature => 'Signature';
+  String get fcSignature => 'ഒപ്പ്';
 
   @override
-  String get fcBestTimeForIncome => 'Best Time for Income';
+  String get fcBestTimeForIncome => 'വരുമാനത്തിനുള്ള മികച്ച സമയം';
 
   @override
-  String get fcExpenseCaution => 'Expense Caution';
+  String get fcExpenseCaution => 'ചെലവ് മുൻകരുതൽ';
 
   @override
-  String get fcIncomeCaps => 'INCOME';
+  String get fcIncomeCaps => 'വരുമാനം';
 
   @override
-  String get fcExpenseCaps => 'EXPENSE';
+  String get fcExpenseCaps => 'ചെലവ്';
 
   @override
-  String get fcRelationships => 'Relationships';
+  String get fcRelationships => 'ബന്ധങ്ങൾ';
 
   @override
-  String get fcAreasCaps => 'AREAS';
+  String get fcAreasCaps => 'മേഖലകൾ';
 
   @override
-  String get fcBestForMeetings => 'Best For Meetings';
+  String get fcBestForMeetings => 'മീറ്റിംഗുകൾക്ക് മികച്ചത്';
 
   @override
-  String get fcOpportunitiesVs => 'Opportunities vs';
+  String get fcOpportunitiesVs => 'അവസരങ്ങൾ vs';
 
   @override
-  String get fcRisks => 'Risks';
+  String get fcRisks => 'അപകടസാധ്യതകൾ';
 
   @override
-  String get fcOutlook => 'OUTLOOK';
+  String get fcOutlook => 'കാഴ്ചപ്പാട്';
 
   @override
-  String get fcAction => 'Action';
+  String get fcAction => 'പ്രവർത്തനം';
 
   @override
-  String get fcProtect => 'Protect';
+  String get fcProtect => 'സംരക്ഷിക്കുക';
 
   @override
-  String get fcOpportunityCaps => 'OPPORTUNITY';
+  String get fcOpportunityCaps => 'അവസരം';
 
   @override
-  String get fcRiskCaps => 'RISK';
+  String get fcRiskCaps => 'അപകടസാധ്യത';
 
   @override
-  String get fcTopOpportunities => 'TOP OPPORTUNITIES';
+  String get fcTopOpportunities => 'മികച്ച അവസരങ്ങൾ';
 
   @override
-  String get fcTopRisks => 'TOP RISKS';
+  String get fcTopRisks => 'പ്രധാന അപകടസാധ്യതകൾ';
 
   @override
-  String get fcTiming => 'Timing';
+  String get fcTiming => 'സമയം';
 
   @override
-  String get fcWindows => 'Windows';
+  String get fcWindows => 'വിൻഡോകൾ';
 
   @override
-  String get fcSlotsCaps => 'SLOTS';
+  String get fcSlotsCaps => 'സ്ലോട്ടുകൾ';
 
   @override
-  String get fcBestWindows => 'BEST WINDOWS';
+  String get fcBestWindows => 'മികച്ച വിൻഡോകൾ';
 
   @override
-  String get fcWorstWindows => 'WORST WINDOWS';
+  String get fcWorstWindows => 'ഏറ്റവും മോശം വിൻഡോകൾ';
 
   @override
-  String get fcAvoid => 'Avoid';
+  String get fcAvoid => 'ഒഴിവാക്കുക';
 
   @override
-  String get fcHouse => 'House';
+  String get fcHouse => 'ഭാവം';
 
   @override
-  String get fcFailed => 'Failed';
+  String get fcFailed => 'പരാജയപ്പെട്ടു';
 
   @override
   String get lifeCareer => 'ജോലി';
