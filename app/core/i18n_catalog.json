@@ -5488,144 +5488,661 @@
     "odia": "ପର୍ଯ୍ୟାପ୍ତ ବାଲାନ୍ସ ନାହିଁ। ₹{amount} ଆବଶ୍ୟକ"
   },
   "planet.sun": {
-    "english": "Sun"
+    "english": "Sun",
+    "hindi": "सूर्य",
+    "hinglish": "Surya",
+    "bengali": "সূর্য",
+    "tamil": "சூரியன்",
+    "telugu": "సూర్యుడు",
+    "kannada": "ಸೂರ್ಯ",
+    "malayalam": "സൂര്യൻ",
+    "gujarati": "સૂર્ય",
+    "marathi": "सूर्य",
+    "punjabi": "ਸੂਰਜ",
+    "odia": "ସୂର୍ଯ୍ୟ"
   },
   "planet.moon": {
-    "english": "Moon"
+    "english": "Moon",
+    "hindi": "चंद्र",
+    "hinglish": "Chandra",
+    "bengali": "চন্দ্র",
+    "tamil": "சந்திரன்",
+    "telugu": "చంద్రుడు",
+    "kannada": "ಚಂದ್ರ",
+    "malayalam": "ചന്ദ്രൻ",
+    "gujarati": "ચંદ્ર",
+    "marathi": "चंद्र",
+    "punjabi": "ਚੰਦ",
+    "odia": "ଚନ୍ଦ୍ର"
   },
   "planet.mars": {
-    "english": "Mars"
+    "english": "Mars",
+    "hindi": "मंगल",
+    "hinglish": "Mangal",
+    "bengali": "মঙ্গল",
+    "tamil": "செவ்வாய்",
+    "telugu": "కుజుడు",
+    "kannada": "ಮಂಗಳ",
+    "malayalam": "ചൊവ്വ",
+    "gujarati": "મંગળ",
+    "marathi": "मंगळ",
+    "punjabi": "ਮੰਗਲ",
+    "odia": "ମଙ୍ଗଳ"
   },
   "planet.mercury": {
-    "english": "Mercury"
+    "english": "Mercury",
+    "hindi": "बुध",
+    "hinglish": "Budh",
+    "bengali": "বুধ",
+    "tamil": "புதன்",
+    "telugu": "బుధుడు",
+    "kannada": "ಬುಧ",
+    "malayalam": "ബുധൻ",
+    "gujarati": "બુધ",
+    "marathi": "बुध",
+    "punjabi": "ਬੁੱਧ",
+    "odia": "ବୁଧ"
   },
   "planet.jupiter": {
-    "english": "Jupiter"
+    "english": "Jupiter",
+    "hindi": "गुरु",
+    "hinglish": "Guru",
+    "bengali": "বৃহস্পতি",
+    "tamil": "குரு",
+    "telugu": "గురుడు",
+    "kannada": "ಗುರು",
+    "malayalam": "വ്യാഴം",
+    "gujarati": "ગુરુ",
+    "marathi": "गुरु",
+    "punjabi": "ਗੁਰੂ",
+    "odia": "ବୃହସ୍ପତି"
   },
   "planet.venus": {
-    "english": "Venus"
+    "english": "Venus",
+    "hindi": "शुक्र",
+    "hinglish": "Shukra",
+    "bengali": "শুক্র",
+    "tamil": "சுக்கிரன்",
+    "telugu": "శుక్రుడు",
+    "kannada": "ಶುಕ್ರ",
+    "malayalam": "ശുക്രൻ",
+    "gujarati": "શુક્ર",
+    "marathi": "शुक्र",
+    "punjabi": "ਸ਼ੁੱਕਰ",
+    "odia": "ଶୁକ୍ର"
   },
   "planet.saturn": {
-    "english": "Saturn"
+    "english": "Saturn",
+    "hindi": "शनि",
+    "hinglish": "Shani",
+    "bengali": "শনি",
+    "tamil": "சனி",
+    "telugu": "శని",
+    "kannada": "ಶನಿ",
+    "malayalam": "ശനി",
+    "gujarati": "શનિ",
+    "marathi": "शनि",
+    "punjabi": "ਸ਼ਨੀ",
+    "odia": "ଶନି"
   },
   "planet.rahu": {
-    "english": "Rahu"
+    "english": "Rahu",
+    "hindi": "राहु",
+    "hinglish": "Rahu",
+    "bengali": "রাহু",
+    "tamil": "ராகு",
+    "telugu": "రాహువు",
+    "kannada": "ರಾಹು",
+    "malayalam": "രാഹു",
+    "gujarati": "રાહુ",
+    "marathi": "राहू",
+    "punjabi": "ਰਾਹੂ",
+    "odia": "ରାହୁ"
   },
   "planet.ketu": {
-    "english": "Ketu"
+    "english": "Ketu",
+    "hindi": "केतु",
+    "hinglish": "Ketu",
+    "bengali": "কেতু",
+    "tamil": "கேது",
+    "telugu": "కేతువు",
+    "kannada": "ಕೇತು",
+    "malayalam": "കേതു",
+    "gujarati": "કેતુ",
+    "marathi": "केतू",
+    "punjabi": "ਕੇਤੂ",
+    "odia": "କେତୁ"
   },
   "planet.lagna": {
-    "english": "Lagna"
+    "english": "Lagna",
+    "hindi": "लग्न",
+    "hinglish": "Lagna",
+    "bengali": "লগ্ন",
+    "tamil": "லக்னம்",
+    "telugu": "లగ్నం",
+    "kannada": "ಲಗ್ನ",
+    "malayalam": "ലഗ്നം",
+    "gujarati": "લગ્ન",
+    "marathi": "लग्न",
+    "punjabi": "ਲਗਨ",
+    "odia": "ଲଗ୍ନ"
   },
   "planet.ascendant": {
-    "english": "Ascendant"
+    "english": "Ascendant",
+    "hindi": "लग्न",
+    "hinglish": "Ascendant",
+    "bengali": "লগ্ন",
+    "tamil": "உதயலக்னம்",
+    "telugu": "లగ్నం",
+    "kannada": "ಲಗ್ನ",
+    "malayalam": "ലഗ്നം",
+    "gujarati": "લગ્ન",
+    "marathi": "लग्न",
+    "punjabi": "ਲਗਨ",
+    "odia": "ଲଗ୍ନ"
   },
   "nakshatra.ashwini": {
-    "english": "Ashwini"
+    "english": "Ashwini",
+    "hindi": "अश्विनी",
+    "hinglish": "Ashwini",
+    "bengali": "অশ্বিনী",
+    "tamil": "அசுவினி",
+    "telugu": "అశ్విని",
+    "kannada": "ಅಶ್ವಿನಿ",
+    "malayalam": "അശ്വതി",
+    "gujarati": "અશ્વિની",
+    "marathi": "अश्विनी",
+    "punjabi": "ਅਸ਼ਵਿਨੀ",
+    "odia": "ଅଶ୍ୱିନୀ"
   },
   "nakshatra.bharani": {
-    "english": "Bharani"
+    "english": "Bharani",
+    "hindi": "भरणी",
+    "hinglish": "Bharani",
+    "bengali": "ভরণী",
+    "tamil": "பரணி",
+    "telugu": "భరణి",
+    "kannada": "ಭರಣಿ",
+    "malayalam": "ഭരണി",
+    "gujarati": "ભરણી",
+    "marathi": "भरणी",
+    "punjabi": "ਭਰਣੀ",
+    "odia": "ଭରଣୀ"
   },
   "nakshatra.krittika": {
-    "english": "Krittika"
+    "english": "Krittika",
+    "hindi": "कृत्तिका",
+    "hinglish": "Krittika",
+    "bengali": "কৃত্তিকা",
+    "tamil": "கார்த்திகை",
+    "telugu": "కృత్తిక",
+    "kannada": "ಕೃತ್ತಿಕಾ",
+    "malayalam": "കാർത്തിക",
+    "gujarati": "કૃત્તિકા",
+    "marathi": "कृत्तिका",
+    "punjabi": "ਕ੍ਰਿੱਤਿਕਾ",
+    "odia": "କୃତ୍ତିକା"
   },
   "nakshatra.rohini": {
-    "english": "Rohini"
+    "english": "Rohini",
+    "hindi": "रोहिणी",
+    "hinglish": "Rohini",
+    "bengali": "রোহিণী",
+    "tamil": "ரோகிணி",
+    "telugu": "రోహిణి",
+    "kannada": "ರೋಹಿಣಿ",
+    "malayalam": "രോഹിണി",
+    "gujarati": "રોહિણી",
+    "marathi": "रोहिणी",
+    "punjabi": "ਰੋਹਿਣੀ",
+    "odia": "ରୋହିଣୀ"
   },
   "nakshatra.mrigashira": {
-    "english": "Mrigashira"
+    "english": "Mrigashira",
+    "hindi": "मृगशिरा",
+    "hinglish": "Mrigashira",
+    "bengali": "মৃগশিরা",
+    "tamil": "மிருகசீரிடம்",
+    "telugu": "మృగశిర",
+    "kannada": "ಮೃಗಶಿರ",
+    "malayalam": "മകയിരം",
+    "gujarati": "મૃગશીર્ષ",
+    "marathi": "मृगशिरा",
+    "punjabi": "ਮ੍ਰਿਗਸ਼ਿਰਾ",
+    "odia": "ମୃଗଶିରା"
   },
   "nakshatra.ardra": {
-    "english": "Ardra"
+    "english": "Ardra",
+    "hindi": "आर्द्रा",
+    "hinglish": "Ardra",
+    "bengali": "আর্দ্রা",
+    "tamil": "திருவாதிரை",
+    "telugu": "ఆరుద్ర",
+    "kannada": "ಆರ್ದ್ರಾ",
+    "malayalam": "തിരുവാതിര",
+    "gujarati": "આર્દ્રા",
+    "marathi": "आर्द्रा",
+    "punjabi": "ਆਰਦਰਾ",
+    "odia": "ଆର୍ଦ୍ରା"
   },
   "nakshatra.punarvasu": {
-    "english": "Punarvasu"
+    "english": "Punarvasu",
+    "hindi": "पुनर्वसु",
+    "hinglish": "Punarvasu",
+    "bengali": "পুনর্বসু",
+    "tamil": "புனர்பூசம்",
+    "telugu": "పునర్వసు",
+    "kannada": "ಪುನರ್ವಸು",
+    "malayalam": "പുണർതം",
+    "gujarati": "પુનર્વસુ",
+    "marathi": "पुनर्वसु",
+    "punjabi": "ਪੁਨਰਵਸੁ",
+    "odia": "ପୁନର୍ବସୁ"
   },
   "nakshatra.pushya": {
-    "english": "Pushya"
+    "english": "Pushya",
+    "hindi": "पुष्य",
+    "hinglish": "Pushya",
+    "bengali": "পুষ্যা",
+    "tamil": "பூசம்",
+    "telugu": "పుష్యమి",
+    "kannada": "ಪುಷ್ಯ",
+    "malayalam": "പൂയം",
+    "gujarati": "પુષ્ય",
+    "marathi": "पुष्य",
+    "punjabi": "ਪੁਸ਼ਯ",
+    "odia": "ପୁଷ୍ୟା"
   },
   "nakshatra.ashlesha": {
-    "english": "Ashlesha"
+    "english": "Ashlesha",
+    "hindi": "आश्लेषा",
+    "hinglish": "Ashlesha",
+    "bengali": "অশ্লেষা",
+    "tamil": "ஆயில்யம்",
+    "telugu": "ఆశ్లేష",
+    "kannada": "ಆಶ್ಲೇಷಾ",
+    "malayalam": "ആയില്യം",
+    "gujarati": "આશ્લેષા",
+    "marathi": "आश्लेषा",
+    "punjabi": "ਅਸ਼ਲੇਸ਼ਾ",
+    "odia": "ଅଶ୍ଳେଷା"
   },
   "nakshatra.magha": {
-    "english": "Magha"
+    "english": "Magha",
+    "hindi": "मघा",
+    "hinglish": "Magha",
+    "bengali": "মঘা",
+    "tamil": "மகம்",
+    "telugu": "మఖ",
+    "kannada": "ಮಘಾ",
+    "malayalam": "മകം",
+    "gujarati": "મઘા",
+    "marathi": "मघा",
+    "punjabi": "ਮਘਾ",
+    "odia": "ମଘା"
   },
   "nakshatra.purva_phalguni": {
-    "english": "Purva Phalguni"
+    "english": "Purva Phalguni",
+    "hindi": "पूर्व फाल्गुनी",
+    "hinglish": "Purva Phalguni",
+    "bengali": "পূর্ব ফাল্গুনী",
+    "tamil": "பூரம்",
+    "telugu": "పుబ్బ",
+    "kannada": "ಪೂರ್ವ ಫಲ್ಗುಣಿ",
+    "malayalam": "പൂരം",
+    "gujarati": "પૂર્વ ફાલ્ગુની",
+    "marathi": "पूर्वा फाल्गुनी",
+    "punjabi": "ਪੂਰਵ ਫਲਗੁਨੀ",
+    "odia": "ପୂର୍ବ ଫାଲ୍ଗୁନୀ"
   },
   "nakshatra.uttara_phalguni": {
-    "english": "Uttara Phalguni"
+    "english": "Uttara Phalguni",
+    "hindi": "उत्तर फाल्गुनी",
+    "hinglish": "Uttara Phalguni",
+    "bengali": "উত্তর ফাল্গুনী",
+    "tamil": "உத்திரம்",
+    "telugu": "ఉత్తర",
+    "kannada": "ಉತ್ತರ ಫಲ್ಗುಣಿ",
+    "malayalam": "ഉത്രം",
+    "gujarati": "ઉત્તર ફાલ્ગુની",
+    "marathi": "उत्तरा फाल्गुनी",
+    "punjabi": "ਉੱਤਰ ਫਲਗੁਨੀ",
+    "odia": "ଉତ୍ତର ଫାଲ୍ଗୁନୀ"
   },
   "nakshatra.hasta": {
-    "english": "Hasta"
+    "english": "Hasta",
+    "hindi": "हस्त",
+    "hinglish": "Hasta",
+    "bengali": "হস্তা",
+    "tamil": "அஸ்தம்",
+    "telugu": "హస్త",
+    "kannada": "ಹಸ್ತ",
+    "malayalam": "അത്തം",
+    "gujarati": "હસ્ત",
+    "marathi": "हस्त",
+    "punjabi": "ਹਸਤ",
+    "odia": "ହସ୍ତା"
   },
   "nakshatra.chitra": {
-    "english": "Chitra"
+    "english": "Chitra",
+    "hindi": "चित्रा",
+    "hinglish": "Chitra",
+    "bengali": "চিত্রা",
+    "tamil": "சித்திரை",
+    "telugu": "చిత్త",
+    "kannada": "ಚಿತ್ರಾ",
+    "malayalam": "ചിത്തിര",
+    "gujarati": "ચિત્રા",
+    "marathi": "चित्रा",
+    "punjabi": "ਚਿੱਤਰਾ",
+    "odia": "ଚିତ୍ରା"
   },
   "nakshatra.swati": {
-    "english": "Swati"
+    "english": "Swati",
+    "hindi": "स्वाति",
+    "hinglish": "Swati",
+    "bengali": "স্বাতী",
+    "tamil": "சுவாதி",
+    "telugu": "స్వాతి",
+    "kannada": "ಸ್ವಾತಿ",
+    "malayalam": "ചോതി",
+    "gujarati": "સ્વાતિ",
+    "marathi": "स्वाती",
+    "punjabi": "ਸਵਾਤੀ",
+    "odia": "ସ୍ୱାତୀ"
   },
   "nakshatra.vishakha": {
-    "english": "Vishakha"
+    "english": "Vishakha",
+    "hindi": "विशाखा",
+    "hinglish": "Vishakha",
+    "bengali": "বিশাখা",
+    "tamil": "விசாகம்",
+    "telugu": "విశాఖ",
+    "kannada": "ವಿಶಾಖಾ",
+    "malayalam": "വിശാഖം",
+    "gujarati": "વિશાખા",
+    "marathi": "विशाखा",
+    "punjabi": "ਵਿਸ਼ਾਖਾ",
+    "odia": "ବିଶାଖା"
   },
   "nakshatra.anuradha": {
-    "english": "Anuradha"
+    "english": "Anuradha",
+    "hindi": "अनुराधा",
+    "hinglish": "Anuradha",
+    "bengali": "অনুরাধা",
+    "tamil": "அனுஷம்",
+    "telugu": "అనూరాధ",
+    "kannada": "ಅನುರಾಧಾ",
+    "malayalam": "അനിഴം",
+    "gujarati": "અનુરાધા",
+    "marathi": "अनुराधा",
+    "punjabi": "ਅਨੁਰਾਧਾ",
+    "odia": "ଅନୁରାଧା"
   },
   "nakshatra.jyeshtha": {
-    "english": "Jyeshtha"
+    "english": "Jyeshtha",
+    "hindi": "ज्येष्ठा",
+    "hinglish": "Jyeshtha",
+    "bengali": "জ্যেষ্ঠা",
+    "tamil": "கேட்டை",
+    "telugu": "జ్యేష్ఠ",
+    "kannada": "ಜ್ಯೇಷ್ಠಾ",
+    "malayalam": "തൃക്കേട്ട",
+    "gujarati": "જ્યેષ્ઠા",
+    "marathi": "ज्येष्ठा",
+    "punjabi": "ਜੇਸ਼ਠਾ",
+    "odia": "ଜ୍ୟେଷ୍ଠା"
   },
   "nakshatra.mula": {
-    "english": "Mula"
+    "english": "Mula",
+    "hindi": "मूल",
+    "hinglish": "Mula",
+    "bengali": "মূলা",
+    "tamil": "மூலம்",
+    "telugu": "మూల",
+    "kannada": "ಮೂಲಾ",
+    "malayalam": "മൂലം",
+    "gujarati": "મૂળ",
+    "marathi": "मूळ",
+    "punjabi": "ਮੂਲ",
+    "odia": "ମୂଳା"
   },
   "nakshatra.purva_ashadha": {
-    "english": "Purva Ashadha"
+    "english": "Purva Ashadha",
+    "hindi": "पूर्वाषाढ़ा",
+    "hinglish": "Purva Ashadha",
+    "bengali": "পূর্বাষাঢ়া",
+    "tamil": "பூராடம்",
+    "telugu": "పూర్వాషాఢ",
+    "kannada": "ಪೂರ್ವಾಷಾಢಾ",
+    "malayalam": "പൂരാടം",
+    "gujarati": "પૂર્વાષાઢા",
+    "marathi": "पूर्वाषाढा",
+    "punjabi": "ਪੂਰਵਾਸ਼ਾਢਾ",
+    "odia": "ପୂର୍ବାଷାଢ଼ା"
   },
   "nakshatra.uttara_ashadha": {
-    "english": "Uttara Ashadha"
+    "english": "Uttara Ashadha",
+    "hindi": "उत्तराषाढ़ा",
+    "hinglish": "Uttara Ashadha",
+    "bengali": "উত্তরাষাঢ়া",
+    "tamil": "உத்திராடம்",
+    "telugu": "ఉత్తరాషాఢ",
+    "kannada": "ಉತ್ತರಾಷಾಢಾ",
+    "malayalam": "ഉത്രാടം",
+    "gujarati": "ઉત્તરાષાઢા",
+    "marathi": "उत्तराषाढा",
+    "punjabi": "ਉੱਤਰਾਸ਼ਾਢਾ",
+    "odia": "ଉତ୍ତରାଷାଢ଼ା"
   },
   "nakshatra.shravana": {
-    "english": "Shravana"
+    "english": "Shravana",
+    "hindi": "श्रवण",
+    "hinglish": "Shravana",
+    "bengali": "শ্রবণা",
+    "tamil": "திருவோணம்",
+    "telugu": "శ్రవణం",
+    "kannada": "ಶ್ರವಣ",
+    "malayalam": "തിരുവോണം",
+    "gujarati": "શ્રવણ",
+    "marathi": "श्रवण",
+    "punjabi": "ਸ਼੍ਰਵਣ",
+    "odia": "ଶ୍ରବଣା"
   },
   "nakshatra.dhanishtha": {
-    "english": "Dhanishtha"
+    "english": "Dhanishtha",
+    "hindi": "धनिष्ठा",
+    "hinglish": "Dhanishtha",
+    "bengali": "ধনিষ্ঠা",
+    "tamil": "அவிட்டம்",
+    "telugu": "ధనిష్ఠ",
+    "kannada": "ಧನಿಷ್ಠಾ",
+    "malayalam": "അവിട്ടം",
+    "gujarati": "ધનિષ્ઠા",
+    "marathi": "धनिष्ठा",
+    "punjabi": "ਧਨਿਸ਼ਠਾ",
+    "odia": "ଧନିଷ୍ଠା"
   },
   "nakshatra.shatabhisha": {
-    "english": "Shatabhisha"
+    "english": "Shatabhisha",
+    "hindi": "शतभिषा",
+    "hinglish": "Shatabhisha",
+    "bengali": "শতভিষা",
+    "tamil": "சதயம்",
+    "telugu": "శతభిషం",
+    "kannada": "ಶತಭಿಷಾ",
+    "malayalam": "ചതയം",
+    "gujarati": "શતભિષા",
+    "marathi": "शतभिषा",
+    "punjabi": "ਸ਼ਤਭਿਸ਼ਾ",
+    "odia": "ଶତଭିଷା"
   },
   "nakshatra.purva_bhadrapada": {
-    "english": "Purva Bhadrapada"
+    "english": "Purva Bhadrapada",
+    "hindi": "पूर्व भाद्रपद",
+    "hinglish": "Purva Bhadrapada",
+    "bengali": "পূর্ব ভাদ্রপদ",
+    "tamil": "பூரட்டாதி",
+    "telugu": "పూర్వాభాద్ర",
+    "kannada": "ಪೂರ್ವ ಭಾದ್ರಪದ",
+    "malayalam": "പൂരുരുട്ടാതി",
+    "gujarati": "પૂર્વ ભાદ્રપદ",
+    "marathi": "पूर्वा भाद्रपदा",
+    "punjabi": "ਪੂਰਵ ਭਾਦਰਪਦ",
+    "odia": "ପୂର୍ବ ଭାଦ୍ରପଦ"
   },
   "nakshatra.uttara_bhadrapada": {
-    "english": "Uttara Bhadrapada"
+    "english": "Uttara Bhadrapada",
+    "hindi": "उत्तर भाद्रपद",
+    "hinglish": "Uttara Bhadrapada",
+    "bengali": "উত্তর ভাদ্রপদ",
+    "tamil": "உத்திரட்டாதி",
+    "telugu": "ఉత్తరాభాద్ర",
+    "kannada": "ಉತ್ತರ ಭಾದ್ರಪದ",
+    "malayalam": "ഉത്രട്ടാതി",
+    "gujarati": "ઉત્તર ભાદ્રપદ",
+    "marathi": "उत्तरा भाद्रपदा",
+    "punjabi": "ਉੱਤਰ ਭਾਦਰਪਦ",
+    "odia": "ଉତ୍ତର ଭାଦ୍ରପଦ"
   },
   "nakshatra.revati": {
-    "english": "Revati"
+    "english": "Revati",
+    "hindi": "रेवती",
+    "hinglish": "Revati",
+    "bengali": "রেবতী",
+    "tamil": "ரேவதி",
+    "telugu": "రేవతి",
+    "kannada": "ರೇವತಿ",
+    "malayalam": "രേവതി",
+    "gujarati": "રેવતી",
+    "marathi": "रेवती",
+    "punjabi": "ਰੇਵਤੀ",
+    "odia": "ରେବତୀ"
   },
   "dignity.exalted": {
-    "english": "Exalted"
+    "english": "Exalted",
+    "hindi": "उच्च",
+    "hinglish": "Uccha",
+    "bengali": "উচ্চ",
+    "tamil": "உச்சம்",
+    "telugu": "ఉచ్చ",
+    "kannada": "ಉಚ್ಚ",
+    "malayalam": "ഉച്ചം",
+    "gujarati": "ઉચ્ચ",
+    "marathi": "उच्च",
+    "punjabi": "ਉੱਚ",
+    "odia": "ଉଚ୍ଚ"
   },
   "dignity.debilitated": {
-    "english": "Debilitated"
+    "english": "Debilitated",
+    "hindi": "नीच",
+    "hinglish": "Neecha",
+    "bengali": "নীচ",
+    "tamil": "நீசம்",
+    "telugu": "నీచ",
+    "kannada": "ನೀಚ",
+    "malayalam": "നീചം",
+    "gujarati": "નીચ",
+    "marathi": "नीच",
+    "punjabi": "ਨੀਚ",
+    "odia": "ନୀଚ"
   },
   "dignity.moolatrikona": {
-    "english": "Moolatrikona"
+    "english": "Moolatrikona",
+    "hindi": "मूलत्रिकोण",
+    "hinglish": "Moolatrikona",
+    "bengali": "মূলত্রিকোণ",
+    "tamil": "மூலத்திரிகோணம்",
+    "telugu": "మూలత్రికోణం",
+    "kannada": "ಮೂಲತ್ರಿಕೋಣ",
+    "malayalam": "മൂലത്രികോണം",
+    "gujarati": "મૂળત્રિકોણ",
+    "marathi": "मूलत्रिकोण",
+    "punjabi": "ਮੂਲਤ੍ਰਿਕੋਣ",
+    "odia": "ମୂଳତ୍ରିକୋଣ"
   },
   "dignity.own": {
-    "english": "Own"
+    "english": "Own",
+    "hindi": "स्व",
+    "hinglish": "Swakshetra",
+    "bengali": "স্বক্ষেত্র",
+    "tamil": "சொந்த வீடு",
+    "telugu": "స్వక్షేత్రం",
+    "kannada": "ಸ್ವಕ್ಷೇತ್ರ",
+    "malayalam": "സ്വക്ഷേത്രം",
+    "gujarati": "સ્વગૃહ",
+    "marathi": "स्वगृह",
+    "punjabi": "ਸਵਗ੍ਰਿਹ",
+    "odia": "ସ୍ୱକ୍ଷେତ୍ର"
   },
   "dignity.neutral": {
-    "english": "Neutral"
+    "english": "Neutral",
+    "hindi": "सम",
+    "hinglish": "Sama",
+    "bengali": "সম",
+    "tamil": "சமன்",
+    "telugu": "సమ",
+    "kannada": "ಸಮ",
+    "malayalam": "സമം",
+    "gujarati": "સમ",
+    "marathi": "सम",
+    "punjabi": "ਸਮ",
+    "odia": "ସମ"
   },
   "dignity.great_friend": {
-    "english": "Great Friend"
+    "english": "Great Friend",
+    "hindi": "अधिमित्र",
+    "hinglish": "Adhimitra",
+    "bengali": "অধিমিত্র",
+    "tamil": "அதிமித்திரன்",
+    "telugu": "అధిమిత్ర",
+    "kannada": "ಅಧಿಮಿತ್ರ",
+    "malayalam": "അധിമിത്രം",
+    "gujarati": "અધિમિત્ર",
+    "marathi": "अधिमित्र",
+    "punjabi": "ਅਧਿਮਿੱਤਰ",
+    "odia": "ଅଧିମିତ୍ର"
   },
   "dignity.friend": {
-    "english": "Friend"
+    "english": "Friend",
+    "hindi": "मित्र",
+    "hinglish": "Mitra",
+    "bengali": "মিত্র",
+    "tamil": "மித்திரன்",
+    "telugu": "మిత్ర",
+    "kannada": "ಮಿತ್ರ",
+    "malayalam": "മിത്രം",
+    "gujarati": "મિત્ર",
+    "marathi": "मित्र",
+    "punjabi": "ਮਿੱਤਰ",
+    "odia": "ମିତ୍ର"
   },
   "dignity.enemy": {
-    "english": "Enemy"
+    "english": "Enemy",
+    "hindi": "शत्रु",
+    "hinglish": "Shatru",
+    "bengali": "শত্রু",
+    "tamil": "பகைவன்",
+    "telugu": "శత్రు",
+    "kannada": "ಶತ್ರು",
+    "malayalam": "ശത്രു",
+    "gujarati": "શત્રુ",
+    "marathi": "शत्रू",
+    "punjabi": "ਸ਼ਤਰੂ",
+    "odia": "ଶତ୍ରୁ"
   },
   "dignity.great_enemy": {
-    "english": "Great Enemy"
+    "english": "Great Enemy",
+    "hindi": "अधिशत्रु",
+    "hinglish": "Adhishatru",
+    "bengali": "অধিশত্রু",
+    "tamil": "அதிசத்துரு",
+    "telugu": "అధిశత్రు",
+    "kannada": "ಅಧಿಶತ್ರು",
+    "malayalam": "അധിശത്രു",
+    "gujarati": "અધિશત્રુ",
+    "marathi": "अधिशत्रू",
+    "punjabi": "ਅਧਿਸ਼ਤਰੂ",
+    "odia": "ଅଧିଶତ୍ରୁ"
   }
 }
