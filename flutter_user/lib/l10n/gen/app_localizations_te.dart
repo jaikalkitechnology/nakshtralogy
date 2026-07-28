@@ -9,6 +9,126 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
+  String get fcKey => 'కీ';
+
+  @override
+  String get fcActions => 'చర్యలు';
+
+  @override
+  String get fcCautions => 'జాగ్రత్తలు';
+
+  @override
+  String get fc12House => '12 భావాలు';
+
+  @override
+  String get fcProbabilities => 'సంభావ్యతలు';
+
+  @override
+  String get fcHousesCaps => 'భావాలు';
+
+  @override
+  String get fcCritical => 'కీలకమైన';
+
+  @override
+  String get fcFlags => 'గుర్తులు';
+
+  @override
+  String get fcAnalysis => 'విశ్లేషణ';
+
+  @override
+  String get fcConfidence => 'విశ్వాసం';
+
+  @override
+  String get fcQualityCaps => 'నాణ్యత';
+
+  @override
+  String get fcIncomeVs => 'ఆదాయం వర్సెస్';
+
+  @override
+  String get fcExpense => 'ఖర్చు';
+
+  @override
+  String get fcFinance => 'ఆర్థిక';
+
+  @override
+  String get fcNetBalance => 'నికర నిల్వ';
+
+  @override
+  String get fcSignature => 'సంతకం';
+
+  @override
+  String get fcBestTimeForIncome => 'ఆదాయానికి ఉత్తమ సమయం';
+
+  @override
+  String get fcExpenseCaution => 'ఖర్చు జాగ్రత్త';
+
+  @override
+  String get fcIncomeCaps => 'ఆదాయం';
+
+  @override
+  String get fcExpenseCaps => 'ఖర్చు';
+
+  @override
+  String get fcRelationships => 'సంబంధాలు';
+
+  @override
+  String get fcAreasCaps => 'రంగాలు';
+
+  @override
+  String get fcBestForMeetings => 'సమావేశాలకు ఉత్తమం';
+
+  @override
+  String get fcOpportunitiesVs => 'అవకాశాలు వర్సెస్';
+
+  @override
+  String get fcRisks => 'ప్రమాదాలు';
+
+  @override
+  String get fcOutlook => 'దృక్పథం';
+
+  @override
+  String get fcAction => 'చర్య';
+
+  @override
+  String get fcProtect => 'రక్షణ';
+
+  @override
+  String get fcOpportunityCaps => 'అవకాశం';
+
+  @override
+  String get fcRiskCaps => 'ప్రమాదం';
+
+  @override
+  String get fcTopOpportunities => 'అగ్ర అవకాశాలు';
+
+  @override
+  String get fcTopRisks => 'అగ్ర ప్రమాదాలు';
+
+  @override
+  String get fcTiming => 'సమయం';
+
+  @override
+  String get fcWindows => 'విండోలు';
+
+  @override
+  String get fcSlotsCaps => 'స్లాట్‌లు';
+
+  @override
+  String get fcBestWindows => 'ఉత్తమ విండోలు';
+
+  @override
+  String get fcWorstWindows => 'చెత్త విండోలు';
+
+  @override
+  String get fcAvoid => 'నివారించండి';
+
+  @override
+  String get fcHouse => 'భావం';
+
+  @override
+  String get fcFailed => 'విఫలమైంది';
+
+  @override
   String get lifeCareer => 'వృత్తి';
 
   @override
@@ -3080,126 +3200,6 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get forgotPassword => 'పాస్‌వర్డ్ మర్చిపోయారా?';
-
-  @override
-  String get fcKey => 'Key';
-
-  @override
-  String get fcActions => 'Actions';
-
-  @override
-  String get fcCautions => 'Cautions';
-
-  @override
-  String get fc12House => '12 House';
-
-  @override
-  String get fcProbabilities => 'Probabilities';
-
-  @override
-  String get fcHousesCaps => 'HOUSES';
-
-  @override
-  String get fcCritical => 'Critical';
-
-  @override
-  String get fcFlags => 'Flags';
-
-  @override
-  String get fcAnalysis => 'Analysis';
-
-  @override
-  String get fcConfidence => 'Confidence';
-
-  @override
-  String get fcQualityCaps => 'QUALITY';
-
-  @override
-  String get fcIncomeVs => 'Income vs';
-
-  @override
-  String get fcExpense => 'Expense';
-
-  @override
-  String get fcFinance => 'FINANCE';
-
-  @override
-  String get fcNetBalance => 'Net Balance';
-
-  @override
-  String get fcSignature => 'Signature';
-
-  @override
-  String get fcBestTimeForIncome => 'Best Time for Income';
-
-  @override
-  String get fcExpenseCaution => 'Expense Caution';
-
-  @override
-  String get fcIncomeCaps => 'INCOME';
-
-  @override
-  String get fcExpenseCaps => 'EXPENSE';
-
-  @override
-  String get fcRelationships => 'Relationships';
-
-  @override
-  String get fcAreasCaps => 'AREAS';
-
-  @override
-  String get fcBestForMeetings => 'Best For Meetings';
-
-  @override
-  String get fcOpportunitiesVs => 'Opportunities vs';
-
-  @override
-  String get fcRisks => 'Risks';
-
-  @override
-  String get fcOutlook => 'OUTLOOK';
-
-  @override
-  String get fcAction => 'Action';
-
-  @override
-  String get fcProtect => 'Protect';
-
-  @override
-  String get fcOpportunityCaps => 'OPPORTUNITY';
-
-  @override
-  String get fcRiskCaps => 'RISK';
-
-  @override
-  String get fcTopOpportunities => 'TOP OPPORTUNITIES';
-
-  @override
-  String get fcTopRisks => 'TOP RISKS';
-
-  @override
-  String get fcTiming => 'Timing';
-
-  @override
-  String get fcWindows => 'Windows';
-
-  @override
-  String get fcSlotsCaps => 'SLOTS';
-
-  @override
-  String get fcBestWindows => 'BEST WINDOWS';
-
-  @override
-  String get fcWorstWindows => 'WORST WINDOWS';
-
-  @override
-  String get fcAvoid => 'Avoid';
-
-  @override
-  String get fcHouse => 'House';
-
-  @override
-  String get fcFailed => 'Failed';
 
   @override
   String get sendResetLink => 'రీసెట్ లింక్ పంపు';

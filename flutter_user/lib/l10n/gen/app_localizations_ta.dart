@@ -9,6 +9,126 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
+  String get fcKey => 'குறியீடு';
+
+  @override
+  String get fcActions => 'செயல்கள்';
+
+  @override
+  String get fcCautions => 'எச்சரிக்கைகள்';
+
+  @override
+  String get fc12House => '12 வீடுகள்';
+
+  @override
+  String get fcProbabilities => 'சாத்தியக்கூறுகள்';
+
+  @override
+  String get fcHousesCaps => 'வீடுகள்';
+
+  @override
+  String get fcCritical => 'மிக முக்கியமான';
+
+  @override
+  String get fcFlags => 'குறிகள்';
+
+  @override
+  String get fcAnalysis => 'பகுப்பாய்வு';
+
+  @override
+  String get fcConfidence => 'நம்பிக்கை';
+
+  @override
+  String get fcQualityCaps => 'தரம்';
+
+  @override
+  String get fcIncomeVs => 'வருமானம் எதிராக';
+
+  @override
+  String get fcExpense => 'செலவு';
+
+  @override
+  String get fcFinance => 'நிதி';
+
+  @override
+  String get fcNetBalance => 'நிகர இருப்பு';
+
+  @override
+  String get fcSignature => 'கையொப்பம்';
+
+  @override
+  String get fcBestTimeForIncome => 'வருமானத்திற்கான சிறந்த நேரம்';
+
+  @override
+  String get fcExpenseCaution => 'செலவு எச்சரிக்கை';
+
+  @override
+  String get fcIncomeCaps => 'வருமானம்';
+
+  @override
+  String get fcExpenseCaps => 'செலவு';
+
+  @override
+  String get fcRelationships => 'உறவுகள்';
+
+  @override
+  String get fcAreasCaps => 'பகுதிகள்';
+
+  @override
+  String get fcBestForMeetings => 'கூட்டங்களுக்கு சிறந்தது';
+
+  @override
+  String get fcOpportunitiesVs => 'வாய்ப்புகள் எதிராக';
+
+  @override
+  String get fcRisks => 'அபாயங்கள்';
+
+  @override
+  String get fcOutlook => 'கண்ணோட்டம்';
+
+  @override
+  String get fcAction => 'செயல்';
+
+  @override
+  String get fcProtect => 'பாதுகா';
+
+  @override
+  String get fcOpportunityCaps => 'வாய்ப்பு';
+
+  @override
+  String get fcRiskCaps => 'அபாயம்';
+
+  @override
+  String get fcTopOpportunities => 'முதன்மை வாய்ப்புகள்';
+
+  @override
+  String get fcTopRisks => 'முதன்மை அபாயங்கள்';
+
+  @override
+  String get fcTiming => 'நேரம்';
+
+  @override
+  String get fcWindows => 'நேர இடைவெளிகள்';
+
+  @override
+  String get fcSlotsCaps => 'நேரங்கள்';
+
+  @override
+  String get fcBestWindows => 'சிறந்த நேரங்கள்';
+
+  @override
+  String get fcWorstWindows => 'மோசமான நேரங்கள்';
+
+  @override
+  String get fcAvoid => 'தவிர்க்கவும்';
+
+  @override
+  String get fcHouse => 'வீடு';
+
+  @override
+  String get fcFailed => 'தோல்வி';
+
+  @override
   String get lifeCareer => 'தொழில்';
 
   @override
@@ -3080,126 +3200,6 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
-
-  @override
-  String get fcKey => 'Key';
-
-  @override
-  String get fcActions => 'Actions';
-
-  @override
-  String get fcCautions => 'Cautions';
-
-  @override
-  String get fc12House => '12 House';
-
-  @override
-  String get fcProbabilities => 'Probabilities';
-
-  @override
-  String get fcHousesCaps => 'HOUSES';
-
-  @override
-  String get fcCritical => 'Critical';
-
-  @override
-  String get fcFlags => 'Flags';
-
-  @override
-  String get fcAnalysis => 'Analysis';
-
-  @override
-  String get fcConfidence => 'Confidence';
-
-  @override
-  String get fcQualityCaps => 'QUALITY';
-
-  @override
-  String get fcIncomeVs => 'Income vs';
-
-  @override
-  String get fcExpense => 'Expense';
-
-  @override
-  String get fcFinance => 'FINANCE';
-
-  @override
-  String get fcNetBalance => 'Net Balance';
-
-  @override
-  String get fcSignature => 'Signature';
-
-  @override
-  String get fcBestTimeForIncome => 'Best Time for Income';
-
-  @override
-  String get fcExpenseCaution => 'Expense Caution';
-
-  @override
-  String get fcIncomeCaps => 'INCOME';
-
-  @override
-  String get fcExpenseCaps => 'EXPENSE';
-
-  @override
-  String get fcRelationships => 'Relationships';
-
-  @override
-  String get fcAreasCaps => 'AREAS';
-
-  @override
-  String get fcBestForMeetings => 'Best For Meetings';
-
-  @override
-  String get fcOpportunitiesVs => 'Opportunities vs';
-
-  @override
-  String get fcRisks => 'Risks';
-
-  @override
-  String get fcOutlook => 'OUTLOOK';
-
-  @override
-  String get fcAction => 'Action';
-
-  @override
-  String get fcProtect => 'Protect';
-
-  @override
-  String get fcOpportunityCaps => 'OPPORTUNITY';
-
-  @override
-  String get fcRiskCaps => 'RISK';
-
-  @override
-  String get fcTopOpportunities => 'TOP OPPORTUNITIES';
-
-  @override
-  String get fcTopRisks => 'TOP RISKS';
-
-  @override
-  String get fcTiming => 'Timing';
-
-  @override
-  String get fcWindows => 'Windows';
-
-  @override
-  String get fcSlotsCaps => 'SLOTS';
-
-  @override
-  String get fcBestWindows => 'BEST WINDOWS';
-
-  @override
-  String get fcWorstWindows => 'WORST WINDOWS';
-
-  @override
-  String get fcAvoid => 'Avoid';
-
-  @override
-  String get fcHouse => 'House';
-
-  @override
-  String get fcFailed => 'Failed';
 
   @override
   String get sendResetLink => 'மீட்டமைப்பு இணைப்பை அனுப்பு';

@@ -12,124 +12,124 @@ class AppLocalizationsKn extends AppLocalizations {
   String get forecast => 'ಮುನ್ಸೂಚನೆ';
 
   @override
-  String get fcKey => 'Key';
+  String get fcKey => 'ಕೀ';
 
   @override
-  String get fcActions => 'Actions';
+  String get fcActions => 'ಕ್ರಿಯೆಗಳು';
 
   @override
-  String get fcCautions => 'Cautions';
+  String get fcCautions => 'ಎಚ್ಚರಿಕೆಗಳು';
 
   @override
-  String get fc12House => '12 House';
+  String get fc12House => '12 ಭಾವಗಳು';
 
   @override
-  String get fcProbabilities => 'Probabilities';
+  String get fcProbabilities => 'ಸಂಭವನೀಯತೆಗಳು';
 
   @override
-  String get fcHousesCaps => 'HOUSES';
+  String get fcHousesCaps => 'ಭಾವಗಳು';
 
   @override
-  String get fcCritical => 'Critical';
+  String get fcCritical => 'ನಿರ್ಣಾಯಕ';
 
   @override
-  String get fcFlags => 'Flags';
+  String get fcFlags => 'ಗುರುತುಗಳು';
 
   @override
-  String get fcAnalysis => 'Analysis';
+  String get fcAnalysis => 'ವಿಶ್ಲೇಷಣೆ';
 
   @override
-  String get fcConfidence => 'Confidence';
+  String get fcConfidence => 'ವಿಶ್ವಾಸ';
 
   @override
-  String get fcQualityCaps => 'QUALITY';
+  String get fcQualityCaps => 'ಗುಣಮಟ್ಟ';
 
   @override
-  String get fcIncomeVs => 'Income vs';
+  String get fcIncomeVs => 'ಆದಾಯ ವರ್ಸಸ್';
 
   @override
-  String get fcExpense => 'Expense';
+  String get fcExpense => 'ಖರ್ಚು';
 
   @override
-  String get fcFinance => 'FINANCE';
+  String get fcFinance => 'ಹಣಕಾಸು';
 
   @override
-  String get fcNetBalance => 'Net Balance';
+  String get fcNetBalance => 'ನಿವ್ವಳ ಬಾಕಿ';
 
   @override
-  String get fcSignature => 'Signature';
+  String get fcSignature => 'ಸಹಿ';
 
   @override
-  String get fcBestTimeForIncome => 'Best Time for Income';
+  String get fcBestTimeForIncome => 'ಆದಾಯಕ್ಕೆ ಉತ್ತಮ ಸಮಯ';
 
   @override
-  String get fcExpenseCaution => 'Expense Caution';
+  String get fcExpenseCaution => 'ಖರ್ಚು ಎಚ್ಚರಿಕೆ';
 
   @override
-  String get fcIncomeCaps => 'INCOME';
+  String get fcIncomeCaps => 'ಆದಾಯ';
 
   @override
-  String get fcExpenseCaps => 'EXPENSE';
+  String get fcExpenseCaps => 'ಖರ್ಚು';
 
   @override
-  String get fcRelationships => 'Relationships';
+  String get fcRelationships => 'ಸಂಬಂಧಗಳು';
 
   @override
-  String get fcAreasCaps => 'AREAS';
+  String get fcAreasCaps => 'ಕ್ಷೇತ್ರಗಳು';
 
   @override
-  String get fcBestForMeetings => 'Best For Meetings';
+  String get fcBestForMeetings => 'ಸಭೆಗಳಿಗೆ ಉತ್ತಮ';
 
   @override
-  String get fcOpportunitiesVs => 'Opportunities vs';
+  String get fcOpportunitiesVs => 'ಅವಕಾಶಗಳು ವರ್ಸಸ್';
 
   @override
-  String get fcRisks => 'Risks';
+  String get fcRisks => 'ಅಪಾಯಗಳು';
 
   @override
-  String get fcOutlook => 'OUTLOOK';
+  String get fcOutlook => 'ದೃಷ್ಟಿಕೋನ';
 
   @override
-  String get fcAction => 'Action';
+  String get fcAction => 'ಕ್ರಿಯೆ';
 
   @override
-  String get fcProtect => 'Protect';
+  String get fcProtect => 'ರಕ್ಷಿಸಿ';
 
   @override
-  String get fcOpportunityCaps => 'OPPORTUNITY';
+  String get fcOpportunityCaps => 'ಅವಕಾಶ';
 
   @override
-  String get fcRiskCaps => 'RISK';
+  String get fcRiskCaps => 'ಅಪಾಯ';
 
   @override
-  String get fcTopOpportunities => 'TOP OPPORTUNITIES';
+  String get fcTopOpportunities => 'ಪ್ರಮುಖ ಅವಕಾಶಗಳು';
 
   @override
-  String get fcTopRisks => 'TOP RISKS';
+  String get fcTopRisks => 'ಪ್ರಮುಖ ಅಪಾಯಗಳು';
 
   @override
-  String get fcTiming => 'Timing';
+  String get fcTiming => 'ಸಮಯ';
 
   @override
-  String get fcWindows => 'Windows';
+  String get fcWindows => 'ವಿಂಡೋಗಳು';
 
   @override
-  String get fcSlotsCaps => 'SLOTS';
+  String get fcSlotsCaps => 'ಸ್ಲಾಟ್‌ಗಳು';
 
   @override
-  String get fcBestWindows => 'BEST WINDOWS';
+  String get fcBestWindows => 'ಉತ್ತಮ ವಿಂಡೋಗಳು';
 
   @override
-  String get fcWorstWindows => 'WORST WINDOWS';
+  String get fcWorstWindows => 'ಕೆಟ್ಟ ವಿಂಡೋಗಳು';
 
   @override
-  String get fcAvoid => 'Avoid';
+  String get fcAvoid => 'ತಪ್ಪಿಸಿ';
 
   @override
-  String get fcHouse => 'House';
+  String get fcHouse => 'ಭಾವ';
 
   @override
-  String get fcFailed => 'Failed';
+  String get fcFailed => 'ವಿಫಲ';
 
   @override
   String get lifeCareer => 'ವೃತ್ತಿ';

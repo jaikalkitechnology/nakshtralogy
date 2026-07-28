@@ -12,124 +12,124 @@ class AppLocalizationsTe extends AppLocalizations {
   String get forecast => 'అంచనా';
 
   @override
-  String get fcKey => 'Key';
+  String get fcKey => 'కీ';
 
   @override
-  String get fcActions => 'Actions';
+  String get fcActions => 'చర్యలు';
 
   @override
-  String get fcCautions => 'Cautions';
+  String get fcCautions => 'జాగ్రత్తలు';
 
   @override
-  String get fc12House => '12 House';
+  String get fc12House => '12 భావాలు';
 
   @override
-  String get fcProbabilities => 'Probabilities';
+  String get fcProbabilities => 'సంభావ్యతలు';
 
   @override
-  String get fcHousesCaps => 'HOUSES';
+  String get fcHousesCaps => 'భావాలు';
 
   @override
-  String get fcCritical => 'Critical';
+  String get fcCritical => 'కీలకమైన';
 
   @override
-  String get fcFlags => 'Flags';
+  String get fcFlags => 'గుర్తులు';
 
   @override
-  String get fcAnalysis => 'Analysis';
+  String get fcAnalysis => 'విశ్లేషణ';
 
   @override
-  String get fcConfidence => 'Confidence';
+  String get fcConfidence => 'విశ్వాసం';
 
   @override
-  String get fcQualityCaps => 'QUALITY';
+  String get fcQualityCaps => 'నాణ్యత';
 
   @override
-  String get fcIncomeVs => 'Income vs';
+  String get fcIncomeVs => 'ఆదాయం వర్సెస్';
 
   @override
-  String get fcExpense => 'Expense';
+  String get fcExpense => 'ఖర్చు';
 
   @override
-  String get fcFinance => 'FINANCE';
+  String get fcFinance => 'ఆర్థిక';
 
   @override
-  String get fcNetBalance => 'Net Balance';
+  String get fcNetBalance => 'నికర నిల్వ';
 
   @override
-  String get fcSignature => 'Signature';
+  String get fcSignature => 'సంతకం';
 
   @override
-  String get fcBestTimeForIncome => 'Best Time for Income';
+  String get fcBestTimeForIncome => 'ఆదాయానికి ఉత్తమ సమయం';
 
   @override
-  String get fcExpenseCaution => 'Expense Caution';
+  String get fcExpenseCaution => 'ఖర్చు జాగ్రత్త';
 
   @override
-  String get fcIncomeCaps => 'INCOME';
+  String get fcIncomeCaps => 'ఆదాయం';
 
   @override
-  String get fcExpenseCaps => 'EXPENSE';
+  String get fcExpenseCaps => 'ఖర్చు';
 
   @override
-  String get fcRelationships => 'Relationships';
+  String get fcRelationships => 'సంబంధాలు';
 
   @override
-  String get fcAreasCaps => 'AREAS';
+  String get fcAreasCaps => 'రంగాలు';
 
   @override
-  String get fcBestForMeetings => 'Best For Meetings';
+  String get fcBestForMeetings => 'సమావేశాలకు ఉత్తమం';
 
   @override
-  String get fcOpportunitiesVs => 'Opportunities vs';
+  String get fcOpportunitiesVs => 'అవకాశాలు వర్సెస్';
 
   @override
-  String get fcRisks => 'Risks';
+  String get fcRisks => 'ప్రమాదాలు';
 
   @override
-  String get fcOutlook => 'OUTLOOK';
+  String get fcOutlook => 'దృక్పథం';
 
   @override
-  String get fcAction => 'Action';
+  String get fcAction => 'చర్య';
 
   @override
-  String get fcProtect => 'Protect';
+  String get fcProtect => 'రక్షణ';
 
   @override
-  String get fcOpportunityCaps => 'OPPORTUNITY';
+  String get fcOpportunityCaps => 'అవకాశం';
 
   @override
-  String get fcRiskCaps => 'RISK';
+  String get fcRiskCaps => 'ప్రమాదం';
 
   @override
-  String get fcTopOpportunities => 'TOP OPPORTUNITIES';
+  String get fcTopOpportunities => 'అగ్ర అవకాశాలు';
 
   @override
-  String get fcTopRisks => 'TOP RISKS';
+  String get fcTopRisks => 'అగ్ర ప్రమాదాలు';
 
   @override
-  String get fcTiming => 'Timing';
+  String get fcTiming => 'సమయం';
 
   @override
-  String get fcWindows => 'Windows';
+  String get fcWindows => 'విండోలు';
 
   @override
-  String get fcSlotsCaps => 'SLOTS';
+  String get fcSlotsCaps => 'స్లాట్‌లు';
 
   @override
-  String get fcBestWindows => 'BEST WINDOWS';
+  String get fcBestWindows => 'ఉత్తమ విండోలు';
 
   @override
-  String get fcWorstWindows => 'WORST WINDOWS';
+  String get fcWorstWindows => 'చెత్త విండోలు';
 
   @override
-  String get fcAvoid => 'Avoid';
+  String get fcAvoid => 'నివారించండి';
 
   @override
-  String get fcHouse => 'House';
+  String get fcHouse => 'భావం';
 
   @override
-  String get fcFailed => 'Failed';
+  String get fcFailed => 'విఫలమైంది';
 
   @override
   String get lifeCareer => 'వృత్తి';

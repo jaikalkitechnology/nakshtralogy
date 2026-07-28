@@ -12,124 +12,124 @@ class AppLocalizationsMr extends AppLocalizations {
   String get forecast => 'भविष्यवाणी';
 
   @override
-  String get fcKey => 'Key';
+  String get fcKey => 'की';
 
   @override
-  String get fcActions => 'Actions';
+  String get fcActions => 'क्रिया';
 
   @override
-  String get fcCautions => 'Cautions';
+  String get fcCautions => 'सावधानता';
 
   @override
-  String get fc12House => '12 House';
+  String get fc12House => '12 भाव';
 
   @override
-  String get fcProbabilities => 'Probabilities';
+  String get fcProbabilities => 'शक्यता';
 
   @override
-  String get fcHousesCaps => 'HOUSES';
+  String get fcHousesCaps => 'भाव';
 
   @override
-  String get fcCritical => 'Critical';
+  String get fcCritical => 'गंभीर';
 
   @override
-  String get fcFlags => 'Flags';
+  String get fcFlags => 'चिन्हे';
 
   @override
-  String get fcAnalysis => 'Analysis';
+  String get fcAnalysis => 'विश्लेषण';
 
   @override
-  String get fcConfidence => 'Confidence';
+  String get fcConfidence => 'आत्मविश्वास';
 
   @override
-  String get fcQualityCaps => 'QUALITY';
+  String get fcQualityCaps => 'गुणवत्ता';
 
   @override
-  String get fcIncomeVs => 'Income vs';
+  String get fcIncomeVs => 'उत्पन्न विरुद्ध';
 
   @override
-  String get fcExpense => 'Expense';
+  String get fcExpense => 'खर्च';
 
   @override
-  String get fcFinance => 'FINANCE';
+  String get fcFinance => 'वित्त';
 
   @override
-  String get fcNetBalance => 'Net Balance';
+  String get fcNetBalance => 'निव्वळ शिल्लक';
 
   @override
-  String get fcSignature => 'Signature';
+  String get fcSignature => 'स्वाक्षरी';
 
   @override
-  String get fcBestTimeForIncome => 'Best Time for Income';
+  String get fcBestTimeForIncome => 'उत्पन्नासाठी सर्वोत्तम वेळ';
 
   @override
-  String get fcExpenseCaution => 'Expense Caution';
+  String get fcExpenseCaution => 'खर्च सावधानता';
 
   @override
-  String get fcIncomeCaps => 'INCOME';
+  String get fcIncomeCaps => 'उत्पन्न';
 
   @override
-  String get fcExpenseCaps => 'EXPENSE';
+  String get fcExpenseCaps => 'खर्च';
 
   @override
-  String get fcRelationships => 'Relationships';
+  String get fcRelationships => 'नाती';
 
   @override
-  String get fcAreasCaps => 'AREAS';
+  String get fcAreasCaps => 'क्षेत्रे';
 
   @override
-  String get fcBestForMeetings => 'Best For Meetings';
+  String get fcBestForMeetings => 'बैठकांसाठी सर्वोत्तम';
 
   @override
-  String get fcOpportunitiesVs => 'Opportunities vs';
+  String get fcOpportunitiesVs => 'संधी विरुद्ध';
 
   @override
-  String get fcRisks => 'Risks';
+  String get fcRisks => 'धोके';
 
   @override
-  String get fcOutlook => 'OUTLOOK';
+  String get fcOutlook => 'दृष्टीकोन';
 
   @override
-  String get fcAction => 'Action';
+  String get fcAction => 'कृती';
 
   @override
-  String get fcProtect => 'Protect';
+  String get fcProtect => 'संरक्षण';
 
   @override
-  String get fcOpportunityCaps => 'OPPORTUNITY';
+  String get fcOpportunityCaps => 'संधी';
 
   @override
-  String get fcRiskCaps => 'RISK';
+  String get fcRiskCaps => 'धोका';
 
   @override
-  String get fcTopOpportunities => 'TOP OPPORTUNITIES';
+  String get fcTopOpportunities => 'शीर्ष संधी';
 
   @override
-  String get fcTopRisks => 'TOP RISKS';
+  String get fcTopRisks => 'शीर्ष धोके';
 
   @override
-  String get fcTiming => 'Timing';
+  String get fcTiming => 'वेळ';
 
   @override
-  String get fcWindows => 'Windows';
+  String get fcWindows => 'विंडो';
 
   @override
-  String get fcSlotsCaps => 'SLOTS';
+  String get fcSlotsCaps => 'स्लॉट्स';
 
   @override
-  String get fcBestWindows => 'BEST WINDOWS';
+  String get fcBestWindows => 'सर्वोत्तम विंडो';
 
   @override
-  String get fcWorstWindows => 'WORST WINDOWS';
+  String get fcWorstWindows => 'सर्वात वाईट विंडो';
 
   @override
-  String get fcAvoid => 'Avoid';
+  String get fcAvoid => 'टाळा';
 
   @override
-  String get fcHouse => 'House';
+  String get fcHouse => 'भाव';
 
   @override
-  String get fcFailed => 'Failed';
+  String get fcFailed => 'अयशस्वी';
 
   @override
   String get lifeCareer => 'करिअर';
