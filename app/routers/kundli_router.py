@@ -253,7 +253,7 @@ def get_chart_only(
 @router.get("/{chart_id}/dasha/vimshottari")
 def vimshottari(
     chart_id: str,
-    levels: int = Query(2, ge=1, le=6),
+    levels: int = Query(5, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
@@ -271,7 +271,7 @@ def vimshottari(
 @router.get("/{chart_id}/dasha/moola")
 def moola(
     chart_id: str,
-    levels: int = Query(2, ge=1, le=6),
+    levels: int = Query(5, ge=1, le=6),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     lang: str = Depends(get_lang_user),
