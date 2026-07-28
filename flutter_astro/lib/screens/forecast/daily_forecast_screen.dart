@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/forecast_labels.dart';
 import '../../services/api_service.dart';
 import '../specialist/report_components.dart';
 
@@ -152,7 +153,7 @@ class _S extends State<DailyForecastScreen> {
                     child: Center(child: Text('H$hNum', style: TextStyle(color: hc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')))),
                   const SizedBox(width: 10),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(domain, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600)),
+                    Text(ForecastLabels.label(domain, Localizations.localeOf(context), domain), style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600)),
                     if (sig.isNotEmpty) Text(sig, style: TextStyle(color: hc, fontSize: 9, fontStyle: FontStyle.italic)),
                   ])),
                   Text('${topScore.toStringAsFixed(0)}%', style: TextStyle(color: hc, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
@@ -249,7 +250,7 @@ class _S extends State<DailyForecastScreen> {
             final sc = e.value >= 70 ? AppColors.success : e.value >= 50 ? AppColors.gold : e.value >= 30 ? AppColors.warning : AppColors.error;
             return Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(children: [
               Row(children: [
-                Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 10))),
+                Expanded(child: Text(ForecastLabels.label(e.key, Localizations.localeOf(context), _tc(e.key)), style: const TextStyle(color: AppColors.ivory, fontSize: 10))),
                 Text(e.value.toStringAsFixed(0), style: TextStyle(color: sc, fontSize: 11, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
               ]),
               const SizedBox(height: 2),
@@ -298,7 +299,7 @@ class _S extends State<DailyForecastScreen> {
               final m = (o as Map).cast<String, dynamic>();
               return Padding(padding: const EdgeInsets.only(bottom: 3), child: Row(children: [
                 const Text('+ ', style: TextStyle(color: AppColors.success, fontSize: 10)),
-                Expanded(child: Text('${m['domain'] ?? ''}: ${m['event'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 10), overflow: TextOverflow.ellipsis, maxLines: 2)),
+                Expanded(child: Text('${ForecastLabels.label((m['domain'] ?? '').toString(), Localizations.localeOf(context), (m['domain'] ?? '').toString())}: ${m['event'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 10), overflow: TextOverflow.ellipsis, maxLines: 2)),
                 if (m['score'] is num) Text('${(m['score'] as num).toStringAsFixed(0)}', style: TextStyle(color: oc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
               ]));
             }),
@@ -311,7 +312,7 @@ class _S extends State<DailyForecastScreen> {
               final m = (o as Map).cast<String, dynamic>();
               return Padding(padding: const EdgeInsets.only(bottom: 3), child: Row(children: [
                 const Text('- ', style: TextStyle(color: AppColors.error, fontSize: 10)),
-                Expanded(child: Text('${m['domain'] ?? ''}: ${m['event'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 10), overflow: TextOverflow.ellipsis, maxLines: 2)),
+                Expanded(child: Text('${ForecastLabels.label((m['domain'] ?? '').toString(), Localizations.localeOf(context), (m['domain'] ?? '').toString())}: ${m['event'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 10), overflow: TextOverflow.ellipsis, maxLines: 2)),
                 if (m['score'] is num) Text('${(m['score'] as num).toStringAsFixed(0)}', style: TextStyle(color: rc, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
               ]));
             }),
@@ -415,7 +416,7 @@ class _S extends State<DailyForecastScreen> {
         builder: (_, sc) => ListView(controller: sc, padding: const EdgeInsets.all(16), children: [
           Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
-          Text('House $hNum · $domain', style: TextStyle(color: c, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+          Text('${AppLocalizations.of(context)!.fcHouse} $hNum · ${ForecastLabels.label(domain, Localizations.localeOf(context), domain)}', style: TextStyle(color: c, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
           const SizedBox(height: 12),
           ...h.entries.where((e) => e.key != 'house' && e.key != 'domain').map((e) {
             if (e.value is num) {
@@ -423,7 +424,7 @@ class _S extends State<DailyForecastScreen> {
               final bc = v >= 70 ? AppColors.success : v >= 50 ? AppColors.gold : v >= 30 ? AppColors.warning : AppColors.error;
               return Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(children: [
                 Row(children: [
-                  Expanded(child: Text(_tc(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 10))),
+                  Expanded(child: Text(ForecastLabels.label(e.key, Localizations.localeOf(context), _tc(e.key)), style: const TextStyle(color: AppColors.ivory, fontSize: 10))),
                   Text(v.toStringAsFixed(1), style: TextStyle(color: bc, fontSize: 11, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
                 ]),
                 ClipRRect(borderRadius: BorderRadius.circular(2),
@@ -432,7 +433,7 @@ class _S extends State<DailyForecastScreen> {
             }
             if (e.value is String && (e.value as String).isNotEmpty) {
               return Padding(padding: const EdgeInsets.only(bottom: 6), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                SizedBox(width: 90, child: Text(_tc(e.key), style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
+                SizedBox(width: 90, child: Text(ForecastLabels.label(e.key, Localizations.localeOf(context), _tc(e.key)), style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontFamily: 'monospace'))),
                 Expanded(child: Text(e.value.toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.3))),
               ]));
             }
