@@ -3295,10 +3295,13 @@ def get_current_dasha_lords(pdata: dict, birth_jd: float, query_jd: float = None
         today = date.today()
         query_jd = to_julian_day(today.year, today.month, today.day, 0)
 
+    # Only the current MD/AD/PD path is needed here, so build a shallow tree
+    # (2 sub-levels) instead of the full ~9^5 expansion — a large speed-up
+    # since this is called several times per report.
     moon_lon = pdata.get("Moon",{}).get("lon",0)
-    v_dashas, v_balance, v_lord = vimshottari_dasha(moon_lon, birth_jd)
+    v_dashas, v_balance, v_lord = vimshottari_dasha(moon_lon, birth_jd, max_depth=2)
     try:
-        ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, birth_jd)
+        ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, birth_jd, max_depth=2)
     except Exception:
         ml_dashas = []
 
@@ -4261,7 +4264,11 @@ def gochar_chart(date_str=None, native_moon_sign=None, show_detail=False):
 #  VIMSHOTTARI DASHA
 # ═══════════════════════════════════════════════════════════════════
 
-def vimshottari_dasha(moon_sid_lon, birth_jd):
+def vimshottari_dasha(moon_sid_lon, birth_jd, max_depth=5):
+    """max_depth = number of sub-levels built below each MD (AD, PD, SD, …).
+    Default 5 (MD..Deha, unchanged). Callers that only need the current
+    MD/AD/PD path (e.g. get_current_dasha_lords) pass a small depth to avoid
+    the ~9^5 full-tree expansion."""
     nak_idx = int(moon_sid_lon / (360.0/27.0))
     lord    = NAK_LORD_SEQ[nak_idx]
     deg_in  = moon_sid_lon % (360.0/27.0)
@@ -4292,20 +4299,15 @@ def vimshottari_dasha(moon_sid_lon, birth_jd):
         md_end = md_start + md_yrs * YR
 
         # AD level: always proportional to FULL MD years, not balance
-        # (balance only affects when the MD starts, not the AD durations)
-        ads = _sub(md_planet, md_start, VIMSH_YEARS[md_planet])
-        for ad in ads:
-            pds = _sub(ad["planet"], ad["start_jd"], ad["years"])
-            for pd_d in pds:
-                sds = _sub(pd_d["planet"], pd_d["start_jd"], pd_d["years"])
-                for sd_d in sds:
-                    pads = _sub(sd_d["planet"], sd_d["start_jd"], sd_d["years"])
-                    for pad_d in pads:
-                        dehas = _sub(pad_d["planet"], pad_d["start_jd"], pad_d["years"])
-                        pad_d["sub"] = dehas
-                    sd_d["sub"] = pads
-                pd_d["sub"] = sds
-            ad["sub"] = pds
+        # (balance only affects when the MD starts, not the AD durations).
+        # Build sub-periods recursively up to max_depth levels below the MD.
+        def _build(planet, start, yrs, depth):
+            subs = _sub(planet, start, yrs)
+            if depth > 1:
+                for s in subs:
+                    s["sub"] = _build(s["planet"], s["start_jd"], s["years"], depth - 1)
+            return subs
+        ads = _build(md_planet, md_start, VIMSH_YEARS[md_planet], max_depth) if max_depth > 0 else []
         dashas.append({
             "planet": md_planet, "years": VIMSH_YEARS[md_planet],
             "start_jd": md_start, "end_jd": md_start + VIMSH_YEARS[md_planet]*YR,
@@ -4790,7 +4792,7 @@ def moola_dasha(pdata, birth_jd,
 
 
 
-def moola_dasha_lagna(pdata, birth_jd, mt_correction_yrs=0):
+def moola_dasha_lagna(pdata, birth_jd, mt_correction_yrs=0, max_depth=5):
     """
     LAGNA KENDRADI GRAHA DASHA — Fully verified against JHora (both Achal + Shyamveer).
 
@@ -5329,29 +5331,16 @@ def moola_dasha_lagna(pdata, birth_jd, mt_correction_yrs=0):
                 md_start = dashas[-1]["end_jd"]
             md_end = md_start + eff * YR
 
-            # Build 5 levels of sub-periods (AD, PD, SD, PAD, Deha)
-            # Level 1 = AD
-            ads = build_sub_periods(planet, md_start, eff, total_eff, md_planets, period_lookup, cycle_id)
-
-            for ad in ads:
-                ad_total = total_eff  # same total for PD level
-                # PD: total = total_eff (proportional to AD eff)
-                ad_eff_for_pd = total_eff  # PD sub-divides AD in same ratio
-                pds = build_sub_periods(ad["planet"], ad["start_jd"],
-                                        ad["years"], total_eff, md_planets, period_lookup, cycle_id)
-                for pd_d in pds:
-                    sds = build_sub_periods(pd_d["planet"], pd_d["start_jd"],
-                                            pd_d["years"], total_eff, md_planets, period_lookup, cycle_id)
-                    for sd_d in sds:
-                        pads = build_sub_periods(sd_d["planet"], sd_d["start_jd"],
-                                                  sd_d["years"], total_eff, md_planets, period_lookup, cycle_id)
-                        for pad_d in pads:
-                            dehas = build_sub_periods(pad_d["planet"], pad_d["start_jd"],
-                                                       pad_d["years"], total_eff, md_planets, period_lookup, cycle_id)
-                            pad_d["sub"] = dehas
-                        sd_d["sub"] = pads
-                    pd_d["sub"] = sds
-                ad["sub"] = pds
+            # Build sub-periods (AD, PD, SD, PAD, Deha) recursively up to
+            # max_depth levels below the MD. Default 5 == full JHora tree.
+            def _build(pl, start, eff_yrs, depth):
+                subs = build_sub_periods(pl, start, eff_yrs, total_eff,
+                                          md_planets, period_lookup, cycle_id)
+                if depth > 1:
+                    for s in subs:
+                        s["sub"] = _build(s["planet"], s["start_jd"], s["years"], depth - 1)
+                return subs
+            ads = _build(planet, md_start, eff, max_depth) if max_depth > 0 else []
 
             dashas.append({
                 "planet": planet, "years": eff, "cycle": cycle_id,
@@ -5600,7 +5589,9 @@ def calculate_chart(name, gender, dob, tob, place):
     # ═══ VIMSHOTTARI DASHA ═════════════════════════════════════════
     moon_lon  = pdata["Moon"]["lon"]
     lagna_lon = pdata["Lagna"]["lon"]
-    v_dashas, v_balance, v_lord = vimshottari_dasha(moon_lon, jd)
+    # Shallow tree: these dashas are only for the (suppressed) console print;
+    # structured dasha endpoints build their own full trees via get_vimshottari.
+    v_dashas, v_balance, v_lord = vimshottari_dasha(moon_lon, jd, max_depth=2)
 
     def _dur_label(days):
         """Format a duration in the most readable unit."""
@@ -5694,7 +5685,7 @@ def calculate_chart(name, gender, dob, tob, place):
         print(f"  ╚{'═'*76}╝")
 
     # ═══ LAGNA MOOLA DASHA — Confirmed Algorithm ══════════════════
-    ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, jd, mt_correction_yrs=0)
+    ml_dashas, ml_balance, ml_info = moola_dasha_lagna(pdata, jd, mt_correction_yrs=0, max_depth=2)
 
     if ml_info:
         lg_s  = ml_info["lagna_sign"]
