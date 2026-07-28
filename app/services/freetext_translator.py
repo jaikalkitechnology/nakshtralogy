@@ -55,6 +55,22 @@ SKIP_KEYS = {
     "created_at", "date", "start", "end", "type", "txn_type", "direction",
 }
 
+# Short *display-label* keys (report headings, section/area names, dosha/yoga
+# names, category groupings, rashi names). These are translated verbatim by
+# `localize_keys` — NOT by the free-text heuristics — so `localize_content`
+# skips them (see `_is_freetext`) to avoid translating an already-translated
+# value twice. Deliberately EXCLUDES:
+#   * magnitude enums the UI colours by (severity, priority, *_level, strength,
+#     probability, intensity, confidence, impact, grade, band, status)
+#   * machine identifiers the client branches on (type, domain, phase, key, id,
+#     code, slug, icon, emoji, color, sign, planet, nakshatra, lord, dignity)
+REPORT_LABEL_KEYS = {
+    "label", "name", "category", "heading", "section", "section_title",
+    "area", "aspect", "dimension", "trait", "dosha", "yoga", "house_name",
+    "sign_name", "focus", "focus_area", "group", "group_label",
+    "title_label", "area_name", "life_area", "subheading",
+}
+
 # A string qualifies as free-text (under a non-listed key) if it reads like a
 # sentence: enough words, has lowercase letters, and isn't a code/number/date.
 _DATE_RE = re.compile(r"^\d{1,4}[-/]\d{1,2}([-/]\d{1,4})?")
@@ -77,6 +93,9 @@ def _is_freetext(key: str, value: str) -> bool:
     if not isinstance(value, str) or not value.strip():
         return False
     k = (key or "").lower()
+    # display-label keys are handled verbatim by localize_keys, not here
+    if k in REPORT_LABEL_KEYS:
+        return False
     if k in SKIP_KEYS or k.endswith("_id") or k.endswith("_key") or k.endswith("_code"):
         return False
     if k in FREETEXT_KEYS or k.endswith("_summary") or k.endswith("_verdict") \
@@ -284,6 +303,18 @@ def localize_keys(data: Any, keys, lang: str) -> Any:
     except Exception as e:  # pragma: no cover
         logger.warning("localize_keys failed (%s) — returning original", e)
         return data
+
+
+def localize_report(data: Any, lang: str) -> Any:
+    """Full localization pass for an engine/report response.
+
+    Runs the free-text body translation (`localize_content`) and then the
+    display-label pass (`localize_keys` over `REPORT_LABEL_KEYS`). The two
+    operate on disjoint keys — `localize_content` skips `REPORT_LABEL_KEYS` —
+    so no value is translated twice. Machine identifiers and magnitude enums the
+    UI branches/colours on are left untouched. No-op for english; never raises.
+    """
+    return localize_keys(localize_content(data, lang), REPORT_LABEL_KEYS, lang)
 
 
 def localize_content(data: Any, lang: str) -> Any:
