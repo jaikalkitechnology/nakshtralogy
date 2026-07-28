@@ -69,6 +69,29 @@ REPORT_LABEL_KEYS = {
     "area", "aspect", "dimension", "trait", "dosha", "yoga", "house_name",
     "sign_name", "focus", "focus_area", "group", "group_label",
     "title_label", "area_name", "life_area", "subheading",
+    # engine report display lists / role-fit / trait fields (per-engine audit)
+    "specific_job_role_fits", "specific_legal_role_fit", "best_industries",
+    "spouse_personality_traits", "partner_qualities_to_seek",
+    "partner_qualities_to_avoid", "astrological_ideal_partner_traits",
+    "spouse_likely_profession_categories", "signature_virtues",
+    "soft_skill_strengths", "natural_learning_abilities", "cognitive_gifts",
+    "natural_talents", "skills_carried_forward", "fulfillment_priority_areas",
+    "natural_aversions_list", "unexplained_fears_list", "primary_life_challenges",
+    "stress_triggers", "drain_sources", "healthy_coping_mechanisms",
+    "healthy_alternatives_chart_suggests", "opportunities", "recommended",
+    "secondary_income_sources", "signature_caution_level", "primary_theme",
+    "primary_pattern", "secondary_pattern", "compatibility_priority_order",
+    "top_3_business_domains", "top_3_subject_categories", "best_allies_in_group",
+    "regret_vulnerability_areas", "substance_vulnerability_areas",
+    "childhood_disease_tendency_areas", "past_life_unmet_desires",
+    "signature_caution", "partner_dealbreakers_in_chart",
+    "low_risk_legal_categories", "low_risk_categories",
+    "secondary_debt_categories", "marriage_challenge_phases",
+    "attraction_to_archetypes", "what_partner_will_find_attractive_in_self",
+    "strong_layers", "weak_layers", "ideal_partner_sun_sign_families",
+    "ideal_partner_moon_sign_families", "natural_elements_preference",
+    "primary_life_purpose_domain", "recognition_domain",
+    "primary_love_language_given", "primary_love_language_received",
 }
 
 # A string qualifies as free-text (under a non-listed key) if it reads like a
@@ -267,16 +290,16 @@ def localize_keys(data: Any, keys, lang: str) -> Any:
 
         texts = set()
 
-        def _gather(obj):
+        def _gather(obj, key=None):
             if isinstance(obj, dict):
                 for k, v in obj.items():
-                    if isinstance(v, str) and str(k).lower() in keyset and v.strip():
-                        texts.add(v)
-                    else:
-                        _gather(v)
+                    _gather(v, k)
             elif isinstance(obj, list):
                 for item in obj:
-                    _gather(item)
+                    _gather(item, key)   # list inherits its parent key
+            elif isinstance(obj, str):
+                if key is not None and str(key).lower() in keyset and obj.strip():
+                    texts.add(obj)
 
         _gather(data)
         if not texts:
@@ -286,17 +309,13 @@ def localize_keys(data: Any, keys, lang: str) -> Any:
         if not changed:
             return data
 
-        def _sub(obj):
+        def _sub(obj, key=None):
             if isinstance(obj, dict):
-                out = {}
-                for k, v in obj.items():
-                    if isinstance(v, str) and str(k).lower() in keyset:
-                        out[k] = changed.get(v, v)
-                    else:
-                        out[k] = _sub(v)
-                return out
+                return {k: _sub(v, k) for k, v in obj.items()}
             if isinstance(obj, list):
-                return [_sub(item) for item in obj]
+                return [_sub(item, key) for item in obj]
+            if isinstance(obj, str) and key is not None and str(key).lower() in keyset:
+                return changed.get(obj, obj)
             return obj
 
         return _sub(data)
@@ -312,9 +331,16 @@ def localize_report(data: Any, lang: str) -> Any:
     display-label pass (`localize_keys` over `REPORT_LABEL_KEYS`). The two
     operate on disjoint keys — `localize_content` skips `REPORT_LABEL_KEYS` —
     so no value is translated twice. Machine identifiers and magnitude enums the
-    UI branches/colours on are left untouched. No-op for english; never raises.
+    UI branches/colours on are left untouched.
+
+    A third deterministic pass (`localize_astro_terms`) then replaces planet /
+    rashi / nakshatra / dignity proper nouns (e.g. "Jupiter", "Vrishabha",
+    "Magha", "Enemy Sign") from the i18n catalog — no LLM, so consistent + free.
+    No-op for english; never raises.
     """
-    return localize_keys(localize_content(data, lang), REPORT_LABEL_KEYS, lang)
+    from app.services.astro_terms_localizer import localize_astro_terms
+    out = localize_keys(localize_content(data, lang), REPORT_LABEL_KEYS, lang)
+    return localize_astro_terms(out, lang)
 
 
 def localize_content(data: Any, lang: str) -> Any:
