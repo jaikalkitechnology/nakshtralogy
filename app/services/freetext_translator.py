@@ -92,6 +92,23 @@ REPORT_LABEL_KEYS = {
     "ideal_partner_moon_sign_families", "natural_elements_preference",
     "primary_life_purpose_domain", "recognition_domain",
     "primary_love_language_given", "primary_love_language_received",
+    # twelve-rashi significations / daily-forecast display lists
+    "objects_signified", "people_signified", "places_signified",
+    "events_signified", "diseases_signified", "directions_signified",
+    "geographies_signified", "timing_signified", "typical_skill_areas",
+    "mental_traits", "shadow_traits", "health_strengths",
+    "health_vulnerabilities", "financial_strengths", "financial_vulnerabilities",
+    "classical_occupations", "modern_career_translations", "charitable_acts",
+    "body_parts_ruled", "domains_to_avoid_without_training", "presiding_deity",
+    "color_emphasis", "direction_to_face", "investment_style",
+    "alternative_gemstones", "urban_vs_rural_orientation",
+    "ayurvedic_dosha_emphasis", "range_classification",
+    "disha", "rashi_symbol", "varna", "guna", "tattva", "yantra",
+    "swaroopa", "linga", "modern_career_translations",
+    "favoured_actions", "recommended_action", "event", "favoured_domains",
+    "cautioned_domains", "domain_emphasis",
+    "domains_to_avoid_for_conversations", "target_weekday",
+    "h1_event_signature", "stacked_lord_relationship_quality",
 }
 
 # A string qualifies as free-text (under a non-listed key) if it reads like a
@@ -115,7 +132,7 @@ def _looks_translatable(s: str) -> bool:
 def _is_freetext(key: str, value: str) -> bool:
     if not isinstance(value, str) or not value.strip():
         return False
-    k = (key or "").lower()
+    k = str(key or "").lower()   # dicts can have non-string (int) keys
     # display-label keys are handled verbatim by localize_keys, not here
     if k in REPORT_LABEL_KEYS:
         return False
