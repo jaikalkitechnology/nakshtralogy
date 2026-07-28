@@ -156,7 +156,9 @@ class NakshtraEngine:
         levels=3 → MD + AD + PD
         """
         moon_lon = pdata.get("Moon", {}).get("lon", 0)
-        dashas, balance, lord = _silent(_nk.vimshottari_dasha, moon_lon, birth_jd)
+        # build exactly the requested depth (levels-1 sub-levels below MD)
+        dashas, balance, lord = _silent(
+            _nk.vimshottari_dasha, moon_lon, birth_jd, max(levels - 1, 0))
 
         def _sub(node: dict, depth: int):
             if depth <= 0 or "sub" not in node:
@@ -195,7 +197,8 @@ class NakshtraEngine:
 
     def get_moola_dasha(self, pdata: dict, birth_jd: float,
                         levels: int = 2) -> dict:
-        dashas, balance, info = _silent(_nk.moola_dasha_lagna, pdata, birth_jd)
+        dashas, balance, info = _silent(
+            _nk.moola_dasha_lagna, pdata, birth_jd, 0, max(levels - 1, 0))
         if not info:
             return {"error": "Could not compute Moola Dasha"}
 
