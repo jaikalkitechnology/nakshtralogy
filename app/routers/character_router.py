@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
-from app.services.freetext_translator import localize_content
+from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.character import character_engine
@@ -64,7 +64,7 @@ def get_character_analysis(
         logger.info("Character analysis for %s in %.2fs", chart.name, time.time() - t0)
         return {
             "status": "success",
-            "data": localize_content(result, lang),
+            "data": localize_report(result, lang),
             "meta": {"engine": "character_analysis_v4", "latency_ms": int((time.time() - t0) * 1000)},
         }
     except Exception as e:

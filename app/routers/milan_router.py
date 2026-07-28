@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t
-from app.services.freetext_translator import localize_content
+from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.milan import milan_engine, match_phase2, match_phase3, compute_unified_score
@@ -132,7 +132,7 @@ def phase1_only(
         )
         return {
             "status": "success",
-            "data": localize_content(result, lang),
+            "data": localize_report(result, lang),
             "meta": {
                 "engine": "kundli_milan_v1",
                 "latency_ms": int((time.time() - t0) * 1000),
