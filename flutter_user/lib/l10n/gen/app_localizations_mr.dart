@@ -9,6 +9,127 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
+  String get gochToday => 'आज';
+
+  @override
+  String get gochOverallScore => 'एकूण गोचर गुण';
+
+  @override
+  String get gochNeutral => 'तटस्थ';
+
+  @override
+  String get gochChallenging => 'आव्हानात्मक';
+
+  @override
+  String get gochTopPositive => 'शीर्ष सकारात्मक';
+
+  @override
+  String get gochTopChallenges => 'शीर्ष आव्हाने';
+
+  @override
+  String get gochFilterAll => 'सर्व';
+
+  @override
+  String get gochFavorability => 'अनुकूलता';
+
+  @override
+  String get gochAlerts => 'गोचर सूचना';
+
+  @override
+  String get gochAlertCritical => 'गंभीर';
+
+  @override
+  String get gochAlertWarning => 'सावधानता';
+
+  @override
+  String get gochAlertOpportunity => 'संधी';
+
+  @override
+  String get gochAiFocus => 'आजचे AI फोकस';
+
+  @override
+  String get gochLifeScores => 'जीवन क्षेत्र गुण';
+
+  @override
+  String get gochWhy => 'का?';
+
+  @override
+  String get gochCurrentTransits => 'सक्रिय गोचर';
+
+  @override
+  String get gochDailyPlan => 'तुमची दैनंदिन योजना';
+
+  @override
+  String get gochMorning => 'सकाळ';
+
+  @override
+  String get gochAfternoon => 'दुपार';
+
+  @override
+  String get gochEvening => 'संध्याकाळ';
+
+  @override
+  String get gochNight => 'रात्र';
+
+  @override
+  String get gochSmartReco => 'स्मार्ट शिफारसी';
+
+  @override
+  String get gochExplain => 'आजच्या गोचरचे स्पष्टीकरण द्या';
+
+  @override
+  String get gochDo => 'करा';
+
+  @override
+  String get gochDont => 'टाळा';
+
+  @override
+  String get gochDoWork => 'महत्त्वाचे काम पूर्ण करा';
+
+  @override
+  String get gochDoMeditate => 'ध्यान करा आणि विचार करा';
+
+  @override
+  String get gochDoStart => 'नवीन योजना सुरू करा';
+
+  @override
+  String get gochDoFinish => 'प्रलंबित कामे पूर्ण करा';
+
+  @override
+  String get gochDontArgue => 'वाद टाळा';
+
+  @override
+  String get gochDontImpulsive => 'घाईघाईत निर्णय घेणे टाळा';
+
+  @override
+  String get gochDontOverspend => 'जास्त खर्च करणे टाळा';
+
+  @override
+  String gochThemeGrowth(Object area) {
+    return 'आज ${area}मध्ये वाढीचा दिवस आहे — याचा पुरेपूर फायदा घ्या.';
+  }
+
+  @override
+  String gochThemeChallenge(Object area) {
+    return 'आज ${area}बाबत धीर धरा — स्थिर रहा.';
+  }
+
+  @override
+  String gochPosLine(Object area) {
+    return '${area}ला सध्या चांगला पाठिंबा मिळत आहे.';
+  }
+
+  @override
+  String gochChalLine(Object area) {
+    return 'आज ${area}ला अतिरिक्त काळजीची गरज आहे.';
+  }
+
+  @override
+  String gochAiFocusLine(Object a1, Object a2) {
+    return 'आज तुमची ऊर्जा ${a1}मध्ये लावा, आणि ${a2}बाबत सौम्य रहा.';
+  }
+
+  @override
   String get divBeginner => 'सोपे';
 
   @override
@@ -4405,127 +4526,6 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get forgotPassword => 'पासवर्ड विसरलात?';
-
-  @override
-  String get gochToday => 'Today';
-
-  @override
-  String get gochOverallScore => 'Overall Transit Score';
-
-  @override
-  String get gochNeutral => 'Neutral';
-
-  @override
-  String get gochChallenging => 'Challenging';
-
-  @override
-  String get gochTopPositive => 'Top Positive';
-
-  @override
-  String get gochTopChallenges => 'Top Challenges';
-
-  @override
-  String get gochFilterAll => 'All';
-
-  @override
-  String get gochFavorability => 'Favorability';
-
-  @override
-  String get gochAlerts => 'Transit Alerts';
-
-  @override
-  String get gochAlertCritical => 'Critical';
-
-  @override
-  String get gochAlertWarning => 'Caution';
-
-  @override
-  String get gochAlertOpportunity => 'Opportunity';
-
-  @override
-  String get gochAiFocus => 'AI Focus Today';
-
-  @override
-  String get gochLifeScores => 'Life Area Scores';
-
-  @override
-  String get gochWhy => 'Why?';
-
-  @override
-  String get gochCurrentTransits => 'Active Transits';
-
-  @override
-  String get gochDailyPlan => 'Your Daily Plan';
-
-  @override
-  String get gochMorning => 'Morning';
-
-  @override
-  String get gochAfternoon => 'Afternoon';
-
-  @override
-  String get gochEvening => 'Evening';
-
-  @override
-  String get gochNight => 'Night';
-
-  @override
-  String get gochSmartReco => 'Smart Recommendations';
-
-  @override
-  String get gochExplain => 'Explain Today\'s Transit';
-
-  @override
-  String get gochDo => 'Do';
-
-  @override
-  String get gochDont => 'Avoid';
-
-  @override
-  String get gochDoWork => 'Tackle important work';
-
-  @override
-  String get gochDoMeditate => 'Meditate and reflect';
-
-  @override
-  String get gochDoStart => 'Start new plans';
-
-  @override
-  String get gochDoFinish => 'Finish pending tasks';
-
-  @override
-  String get gochDontArgue => 'Avoid arguments';
-
-  @override
-  String get gochDontImpulsive => 'Avoid impulsive decisions';
-
-  @override
-  String get gochDontOverspend => 'Avoid overspending';
-
-  @override
-  String gochThemeGrowth(Object area) {
-    return 'A day of growth in ${area} — lean into it.';
-  }
-
-  @override
-  String gochThemeChallenge(Object area) {
-    return 'Stay patient with ${area} today — go steady.';
-  }
-
-  @override
-  String gochPosLine(Object area) {
-    return '${area} is well supported right now.';
-  }
-
-  @override
-  String gochChalLine(Object area) {
-    return '${area} needs extra care today.';
-  }
-
-  @override
-  String gochAiFocusLine(Object a1, Object a2) {
-    return 'Put your energy into ${a1} today, and be gentle with ${a2}.';
-  }
 
   @override
   String get sendResetLink => 'रीसेट लिंक पाठवा';
