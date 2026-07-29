@@ -4407,6 +4407,127 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get gochToday => 'आज';
+
+  @override
+  String get gochOverallScore => 'समग्र गोचर स्कोर';
+
+  @override
+  String get gochNeutral => 'तटस्थ';
+
+  @override
+  String get gochChallenging => 'चुनौतीपूर्ण';
+
+  @override
+  String get gochTopPositive => 'शीर्ष सकारात्मक';
+
+  @override
+  String get gochTopChallenges => 'शीर्ष चुनौतियाँ';
+
+  @override
+  String get gochFilterAll => 'सभी';
+
+  @override
+  String get gochFavorability => 'अनुकूलता';
+
+  @override
+  String get gochAlerts => 'गोचर चेतावनी';
+
+  @override
+  String get gochAlertCritical => 'गंभीर';
+
+  @override
+  String get gochAlertWarning => 'सावधान';
+
+  @override
+  String get gochAlertOpportunity => 'अवसर';
+
+  @override
+  String get gochAiFocus => 'आज का एआई फोकस';
+
+  @override
+  String get gochLifeScores => 'जीवन क्षेत्र स्कोर';
+
+  @override
+  String get gochWhy => 'क्यों?';
+
+  @override
+  String get gochCurrentTransits => 'सक्रिय गोचर';
+
+  @override
+  String get gochDailyPlan => 'आपकी दैनिक योजना';
+
+  @override
+  String get gochMorning => 'सुबह';
+
+  @override
+  String get gochAfternoon => 'दोपहर';
+
+  @override
+  String get gochEvening => 'शाम';
+
+  @override
+  String get gochNight => 'रात';
+
+  @override
+  String get gochSmartReco => 'स्मार्ट सुझाव';
+
+  @override
+  String get gochExplain => 'आज का गोचर समझाएं';
+
+  @override
+  String get gochDo => 'करें';
+
+  @override
+  String get gochDont => 'बचें';
+
+  @override
+  String get gochDoWork => 'महत्वपूर्ण कार्य करें';
+
+  @override
+  String get gochDoMeditate => 'ध्यान और चिंतन करें';
+
+  @override
+  String get gochDoStart => 'नई योजनाएं शुरू करें';
+
+  @override
+  String get gochDoFinish => 'अधूरे कार्य पूरे करें';
+
+  @override
+  String get gochDontArgue => 'बहस से बचें';
+
+  @override
+  String get gochDontImpulsive => 'जल्दबाजी के निर्णय से बचें';
+
+  @override
+  String get gochDontOverspend => 'अधिक खर्च से बचें';
+
+  @override
+  String gochThemeGrowth(Object area) {
+    return 'A day of growth in ${area} — lean into it.';
+  }
+
+  @override
+  String gochThemeChallenge(Object area) {
+    return 'Stay patient with ${area} today — go steady.';
+  }
+
+  @override
+  String gochPosLine(Object area) {
+    return '${area} is well supported right now.';
+  }
+
+  @override
+  String gochChalLine(Object area) {
+    return '${area} needs extra care today.';
+  }
+
+  @override
+  String gochAiFocusLine(Object a1, Object a2) {
+    return 'Put your energy into ${a1} today, and be gentle with ${a2}.';
+  }
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override

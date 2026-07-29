@@ -235,6 +235,228 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @gochToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get gochToday;
+
+  /// No description provided for @gochOverallScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Transit Score'**
+  String get gochOverallScore;
+
+  /// No description provided for @gochNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get gochNeutral;
+
+  /// No description provided for @gochChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging'**
+  String get gochChallenging;
+
+  /// No description provided for @gochTopPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Positive'**
+  String get gochTopPositive;
+
+  /// No description provided for @gochTopChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Challenges'**
+  String get gochTopChallenges;
+
+  /// No description provided for @gochFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get gochFilterAll;
+
+  /// No description provided for @gochFavorability.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorability'**
+  String get gochFavorability;
+
+  /// No description provided for @gochAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Alerts'**
+  String get gochAlerts;
+
+  /// No description provided for @gochAlertCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get gochAlertCritical;
+
+  /// No description provided for @gochAlertWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get gochAlertWarning;
+
+  /// No description provided for @gochAlertOpportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Opportunity'**
+  String get gochAlertOpportunity;
+
+  /// No description provided for @gochAiFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Focus Today'**
+  String get gochAiFocus;
+
+  /// No description provided for @gochLifeScores.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Area Scores'**
+  String get gochLifeScores;
+
+  /// No description provided for @gochWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Why?'**
+  String get gochWhy;
+
+  /// No description provided for @gochCurrentTransits.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Transits'**
+  String get gochCurrentTransits;
+
+  /// No description provided for @gochDailyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Daily Plan'**
+  String get gochDailyPlan;
+
+  /// No description provided for @gochMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get gochMorning;
+
+  /// No description provided for @gochAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get gochAfternoon;
+
+  /// No description provided for @gochEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get gochEvening;
+
+  /// No description provided for @gochNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get gochNight;
+
+  /// No description provided for @gochSmartReco.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Recommendations'**
+  String get gochSmartReco;
+
+  /// No description provided for @gochExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Today\'s Transit'**
+  String get gochExplain;
+
+  /// No description provided for @gochDo.
+  ///
+  /// In en, this message translates to:
+  /// **'Do'**
+  String get gochDo;
+
+  /// No description provided for @gochDont.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid'**
+  String get gochDont;
+
+  /// No description provided for @gochDoWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Tackle important work'**
+  String get gochDoWork;
+
+  /// No description provided for @gochDoMeditate.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditate and reflect'**
+  String get gochDoMeditate;
+
+  /// No description provided for @gochDoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start new plans'**
+  String get gochDoStart;
+
+  /// No description provided for @gochDoFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish pending tasks'**
+  String get gochDoFinish;
+
+  /// No description provided for @gochDontArgue.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid arguments'**
+  String get gochDontArgue;
+
+  /// No description provided for @gochDontImpulsive.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid impulsive decisions'**
+  String get gochDontImpulsive;
+
+  /// No description provided for @gochDontOverspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid overspending'**
+  String get gochDontOverspend;
+
+  /// No description provided for @gochThemeGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'A day of growth in {area} — lean into it.'**
+  String gochThemeGrowth(Object area);
+
+  /// No description provided for @gochThemeChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay patient with {area} today — go steady.'**
+  String gochThemeChallenge(Object area);
+
+  /// No description provided for @gochPosLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{area} is well supported right now.'**
+  String gochPosLine(Object area);
+
+  /// No description provided for @gochChalLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{area} needs extra care today.'**
+  String gochChalLine(Object area);
+
+  /// No description provided for @gochAiFocusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Put your energy into {a1} today, and be gentle with {a2}.'**
+  String gochAiFocusLine(Object a1, Object a2);
+
   /// No description provided for @divBeginner.
   ///
   /// In en, this message translates to:

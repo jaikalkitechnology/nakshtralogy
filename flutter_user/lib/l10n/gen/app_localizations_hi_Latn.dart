@@ -4407,6 +4407,127 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get gochToday => 'Aaj';
+
+  @override
+  String get gochOverallScore => 'Samagra Gochar Score';
+
+  @override
+  String get gochNeutral => 'Tatasth';
+
+  @override
+  String get gochChallenging => 'Chunautipurna';
+
+  @override
+  String get gochTopPositive => 'Top Sakaratmak';
+
+  @override
+  String get gochTopChallenges => 'Top Chunautiyan';
+
+  @override
+  String get gochFilterAll => 'Sabhi';
+
+  @override
+  String get gochFavorability => 'Anukulta';
+
+  @override
+  String get gochAlerts => 'Gochar Chetavani';
+
+  @override
+  String get gochAlertCritical => 'Gambhir';
+
+  @override
+  String get gochAlertWarning => 'Savdhan';
+
+  @override
+  String get gochAlertOpportunity => 'Avsar';
+
+  @override
+  String get gochAiFocus => 'Aaj ka AI Focus';
+
+  @override
+  String get gochLifeScores => 'Jeevan Kshetra Score';
+
+  @override
+  String get gochWhy => 'Kyon?';
+
+  @override
+  String get gochCurrentTransits => 'Sakriya Gochar';
+
+  @override
+  String get gochDailyPlan => 'Aapki Dainik Yojana';
+
+  @override
+  String get gochMorning => 'Subah';
+
+  @override
+  String get gochAfternoon => 'Dopahar';
+
+  @override
+  String get gochEvening => 'Shaam';
+
+  @override
+  String get gochNight => 'Raat';
+
+  @override
+  String get gochSmartReco => 'Smart Sujhav';
+
+  @override
+  String get gochExplain => 'Aaj ka Gochar Samjhaein';
+
+  @override
+  String get gochDo => 'Karein';
+
+  @override
+  String get gochDont => 'Bachein';
+
+  @override
+  String get gochDoWork => 'Mahatvapurna kaam karein';
+
+  @override
+  String get gochDoMeditate => 'Dhyan aur chintan karein';
+
+  @override
+  String get gochDoStart => 'Nayi yojanaein shuru karein';
+
+  @override
+  String get gochDoFinish => 'Adhure kaam poore karein';
+
+  @override
+  String get gochDontArgue => 'Bahas se bachein';
+
+  @override
+  String get gochDontImpulsive => 'Jaldbaazi ke nirnay se bachein';
+
+  @override
+  String get gochDontOverspend => 'Adhik kharch se bachein';
+
+  @override
+  String gochThemeGrowth(Object area) {
+    return 'A day of growth in ${area} — lean into it.';
+  }
+
+  @override
+  String gochThemeChallenge(Object area) {
+    return 'Stay patient with ${area} today — go steady.';
+  }
+
+  @override
+  String gochPosLine(Object area) {
+    return '${area} is well supported right now.';
+  }
+
+  @override
+  String gochChalLine(Object area) {
+    return '${area} needs extra care today.';
+  }
+
+  @override
+  String gochAiFocusLine(Object a1, Object a2) {
+    return 'Put your energy into ${a1} today, and be gentle with ${a2}.';
+  }
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override
