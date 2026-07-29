@@ -2306,6 +2306,43 @@ def graha_drishti(from_planet: str, from_sign: int, to_sign: int) -> float:
     return special.get(h, _ASPECT_STRENGTH.get(h, 0))
 
 
+# ── Standard Parashari Graha Drishti (planet-to-planet aspect PRESENCE) ──
+# Distinct from `graha_drishti` above (a graded 0-1 strength used by Drik Bala
+# in Shadbala, where every planet casts partial aspects). For prediction /
+# display, a planet only truly aspects specific houses from itself:
+#   • every planet → the 7th (opposition, full)
+#   • Mars    → additionally the 4th & 8th
+#   • Jupiter → additionally the 5th & 9th
+#   • Saturn  → additionally the 3rd & 10th
+#   • Rahu/Ketu → additionally the 5th & 9th (school-dependent)
+_DRISHTI_HOUSES = {
+    "Mars":    [4, 7, 8],
+    "Jupiter": [5, 7, 9],
+    "Saturn":  [3, 7, 10],
+    "Rahu":    [5, 7, 9],
+    "Ketu":    [5, 7, 9],
+}
+_DEFAULT_DRISHTI_HOUSES = [7]  # Sun, Moon, Mercury, Venus
+
+
+def graha_drishti_houses(planet: str) -> list:
+    """The houses (from itself) that `planet` casts a full Graha Drishti on."""
+    return _DRISHTI_HOUSES.get(planet, _DEFAULT_DRISHTI_HOUSES)
+
+
+def graha_drishti_std(from_planet: str, from_sign: int, to_sign: int) -> int:
+    """
+    Standard Parashari Graha Drishti (aspect PRESENCE, not graded strength).
+    Returns the aspect house (7, or the planet's special house 3/4/5/8/9/10)
+    when `from_planet` aspects `to_sign`, else 0. A planet never aspects its
+    own sign (conjunction is not an aspect).
+    """
+    if from_sign == to_sign:
+        return 0
+    h = (to_sign - from_sign) % 12 + 1
+    return h if h in graha_drishti_houses(from_planet) else 0
+
+
 def rashi_drishti(from_sign: int, to_sign: int) -> bool:
     """
     Jaimini Rashi Drishti:
