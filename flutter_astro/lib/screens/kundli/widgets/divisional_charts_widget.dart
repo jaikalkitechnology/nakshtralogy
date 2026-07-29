@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../../../utils/kundli_names.dart';
 import 'north_indian_chart.dart';
 
 /// Displays all 20 divisional charts from the new response shape:
 ///   divisionalsMap = { Sun: {D1:'Ar', D2:'Ta', ... D60:'Pi'}, Moon: {...}, ... }
 /// Each row is tappable — opens the diamond chart for that division.
+///
+/// [planetsMap] is the D1 planet data ({Sun:{longitude,vakri,combust,...}}) used
+/// to derive each planet's degree-in-varga and intrinsic position flags
+/// (retrograde / combust / vargottam) so the opened chart is not blank.
 class DivisionalChartsWidget extends StatelessWidget {
   final String chartId;
   final Map<String, dynamic> divisionalsMap;
+  final Map<String, dynamic> planetsMap;
 
-  const DivisionalChartsWidget({super.key, required this.chartId, required this.divisionalsMap});
+  const DivisionalChartsWidget({
+    super.key,
+    required this.chartId,
+    required this.divisionalsMap,
+    this.planetsMap = const {},
+  });
 
   static const _charts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60];
   static const _meta = {
@@ -105,17 +116,31 @@ class DivisionalChartsWidget extends StatelessWidget {
     final lagnaSignIdx = _signIdx(signsByPlanet['Lagna'] ?? 'Ar');
     final base = lagnaSignIdx < 0 ? 0 : lagnaSignIdx;
 
-    // Group planets by sign
+    final loc = Localizations.localeOf(context);
+    // Group planets by sign. Degree-in-varga is derived from the D1 sidereal
+    // longitude: each 30° sign splits into `d` equal parts, so the position
+    // within the varga sign = ((lonInSign) * d) % 30. Retrograde / combust /
+    // vargottam are intrinsic planet states carried over from D1.
     final byRashi = <int, List<Map<String, dynamic>>>{};
     signsByPlanet.forEach((planet, sign) {
       if (planet == 'Lagna') return;
       final si = _signIdx(sign);
       if (si < 0) return;
+      final p = (planetsMap[planet] as Map?)?.cast<String, dynamic>();
+      num? vargaDeg;
+      final flags = <String>[];
+      if (p != null) {
+        final lon = (p['longitude'] as num?)?.toDouble();
+        if (lon != null) vargaDeg = ((lon % 30) * d) % 30;
+        if (p['vakri'] == true) flags.add('R');
+        if (p['combust'] == true) flags.add('C');
+        if (p['vargottam'] == true) flags.add('V');
+      }
       byRashi.putIfAbsent(si, () => []).add({
-        'planet': planet,
+        'planet': KundliNames.planet(planet, loc),
         'sign': sign,
-        'degree': 0,
-        'flags': const [],
+        if (vargaDeg != null) 'degree': vargaDeg,
+        'flags': flags,
       });
     });
 

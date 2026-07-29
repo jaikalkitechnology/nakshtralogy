@@ -140,7 +140,7 @@ class NorthIndianChartWidget extends StatelessWidget {
           ...planets.map<Widget>((p) {
             final planet = p as Map;
             final name = (planet['planet'] ?? '').toString();
-            final degree = (planet['degree'] as num?)?.toInt() ?? 0;
+            final degreeVal = planet['degree'] as num?;
             final flags = (planet['flags'] as List?) ?? [];
             final dignity = (planet['dignity'] ?? '').toString().toLowerCase();
             var flagStr = '';
@@ -168,10 +168,11 @@ class NorthIndianChartWidget extends StatelessWidget {
                       text: ' $flagStr',
                       style: TextStyle(color: const Color(0xFFFFB020), fontSize: base - 1, fontWeight: FontWeight.w800),
                     ),
-                  TextSpan(
-                    text: ' $degree\u00B0',
-                    style: TextStyle(color: const Color(0xFF7FD1FF), fontSize: base - 2, fontWeight: FontWeight.w600),
-                  ),
+                  if (degreeVal != null)
+                    TextSpan(
+                      text: ' ${degreeVal.toInt()}\u00B0',
+                      style: TextStyle(color: const Color(0xFF7FD1FF), fontSize: base - 2, fontWeight: FontWeight.w600),
+                    ),
                 ]),
               ),
             );

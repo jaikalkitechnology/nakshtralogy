@@ -323,10 +323,39 @@ def _compute_predictions(rashi_idx: int) -> dict:
         pos = _nk_raw.get_all_positions(jd)
 
     transit_signs = {}
+    transit_lon = {}
+    transit_speed = {}
     for p in ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"]:
         if p in pos:
-            lon = pos[p].get("lon", 0) if isinstance(pos[p], dict) else pos[p]
+            if isinstance(pos[p], dict):
+                lon = pos[p].get("lon", 0)
+                transit_speed[p] = pos[p].get("speed", 0.0)
+            else:
+                lon = pos[p]
+                transit_speed[p] = 0.0
+            transit_lon[p] = lon
             transit_signs[p] = int(lon / 30)
+
+    # Combustion: a planet within an orb of the Sun (Rahu/Ketu never combust).
+    _COMBUST_ORB = {"Moon": 12.0, "Mars": 17.0, "Mercury": 14.0,
+                    "Jupiter": 11.0, "Venus": 10.0, "Saturn": 15.0}
+
+    def _is_combust(planet: str) -> bool:
+        if planet not in _COMBUST_ORB or "Sun" not in transit_lon or planet not in transit_lon:
+            return False
+        diff = abs(transit_lon[planet] - transit_lon["Sun"]) % 360
+        if diff > 180:
+            diff = 360 - diff
+        return diff <= _COMBUST_ORB[planet]
+
+    def _planet_flags(planet: str) -> list:
+        flags = []
+        # Rahu/Ketu are always retrograde; others retrograde when speed < 0.
+        if planet in ("Rahu", "Ketu") or transit_speed.get(planet, 0.0) < 0:
+            flags.append("R")
+        if _is_combust(planet):
+            flags.append("C")
+        return flags
 
     BENEFIC = {"Jupiter", "Venus", "Moon", "Mercury"}
     MALEFIC = {"Saturn", "Mars", "Sun", "Rahu", "Ketu"}
@@ -393,11 +422,17 @@ def _compute_predictions(rashi_idx: int) -> dict:
             "factors": factors[:3],  # top 3 factors
         }
 
-    # Build current transit chart (houses from native Moon sign)
+    # Build current transit chart (houses from native Moon sign).
+    # Each planet carries its degree-in-sign and position flags (retrograde /
+    # combust) so the chart can render them like the natal chart.
     planets_by_house = {h: [] for h in range(1, 13)}
     for planet, sign in transit_signs.items():
         h = (sign - rashi_idx) % 12 + 1
-        planets_by_house[h].append(planet)
+        planets_by_house[h].append({
+            "planet": planet,
+            "degree": round(transit_lon.get(planet, 0.0) % 30, 2),
+            "flags": _planet_flags(planet),
+        })
 
     return {
         "predictions": predictions,
