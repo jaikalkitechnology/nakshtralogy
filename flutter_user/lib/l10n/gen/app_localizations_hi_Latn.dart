@@ -9,6 +9,262 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
+  String get doshSevere => 'Gambhir';
+
+  @override
+  String get doshVeryMild => 'Bahut Halka';
+
+  @override
+  String get doshLow => 'Nimn';
+
+  @override
+  String get doshHigh => 'Uchch';
+
+  @override
+  String get doshCritical => 'Ati Gambhir';
+
+  @override
+  String get doshSummaryTitle => 'Dosh Saaraansh';
+
+  @override
+  String get doshActiveDoshas => 'Sakriya Dosh';
+
+  @override
+  String get doshTotalChecked => 'Kul Jaanche Gaye';
+
+  @override
+  String get doshOverallSeverity => 'Samagra Gambhirta';
+
+  @override
+  String get doshNoneActive => 'Koi sakriya dosh nahi — shuddh kundli!';
+
+  @override
+  String get doshCategory => 'Shreni';
+
+  @override
+  String get doshConfidence => 'Confidence';
+
+  @override
+  String get doshWhyFormed => 'Yeh Kyon Bana';
+
+  @override
+  String get doshAffectedAreas => 'Prabhaavit Kshetra';
+
+  @override
+  String get doshTimeline => 'Timeline';
+
+  @override
+  String get doshDefinition => 'Paribhasha';
+
+  @override
+  String get doshFormationRule => 'Nirmaan Niyam';
+
+  @override
+  String get doshSupportingPlanets => 'Sambandhit Grah';
+
+  @override
+  String get doshCancellation => 'Nivaran Yog';
+
+  @override
+  String get doshNoCancellation => 'Koi Nahi';
+
+  @override
+  String get doshAreaChildren => 'Santaan';
+
+  @override
+  String get doshAreaMind => 'Man';
+
+  @override
+  String get remMantra => 'Mantra';
+
+  @override
+  String get remGemstone => 'Ratna';
+
+  @override
+  String get remDonation => 'Daan';
+
+  @override
+  String get remTemple => 'Mandir';
+
+  @override
+  String get remFasting => 'Vrat';
+
+  @override
+  String get remLifestyle => 'Jeevanshaili';
+
+  @override
+  String get remLifestyleGeneric => 'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.';
+
+  @override
+  String get doshExplain => 'Mere Dosh Samjhaein';
+
+  @override
+  String get doshExplainSubtitle => 'Aapke doshon par ek shaant, vyavaharik nazar';
+
+  @override
+  String get doshExplainReassure => 'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.';
+
+  @override
+  String get doshAiGeneric => 'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.';
+
+  @override
+  String doshHeroSummary(Object active, Object total) {
+    return 'Your chart shows ${active} active doshas out of ${total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.';
+  }
+
+  @override
+  String doshAiLine(Object areas, Object planet) {
+    return 'This dosha mainly influences ${areas}. During ${planet} periods its effect can feel stronger, and remedies help balance it.';
+  }
+
+  @override
+  String doshTimelineLine(Object planet) {
+    return 'Its effect is felt most during the Mahadasha and Antardasha of ${planet}, and when ${planet} is active in transit.';
+  }
+
+  @override
+  String get sbLegendary => 'Legendary';
+
+  @override
+  String get sbSthana => 'Sthana Bala';
+
+  @override
+  String get sbDig => 'Dig Bala';
+
+  @override
+  String get sbKala => 'Kala Bala';
+
+  @override
+  String get sbChesta => 'Chesta Bala';
+
+  @override
+  String get sbNaisargika => 'Naisargika Bala';
+
+  @override
+  String get sbDrik => 'Drik Bala';
+
+  @override
+  String get sbSummary => 'Grah Bal Saaraansh';
+
+  @override
+  String get sbAverageStrength => 'Ausat Bal';
+
+  @override
+  String get sbHighestRupa => 'Sarvadhik Rupa';
+
+  @override
+  String get sbRupa => 'Rupa';
+
+  @override
+  String get sbRanking => 'Grah Ranking';
+
+  @override
+  String get sbRequired => 'Aavashyak';
+
+  @override
+  String get sbExcess => 'Adhishesh';
+
+  @override
+  String get sbDeficit => 'Kami';
+
+  @override
+  String get sbTotalShadbala => 'Kul Shadbala';
+
+  @override
+  String get sbExplain => 'Mera Grah Bal Samjhaein';
+
+  @override
+  String get sbExplainSubtitle => 'Aapke grahon ke bal ka saral saaraansh';
+
+  @override
+  String get sbInfoTitle => 'Shadbala Ko Samjhein';
+
+  @override
+  String get sbQWhatIs => 'Shadbala kya hai?';
+
+  @override
+  String get sbQRupas => 'Rupa kya hain?';
+
+  @override
+  String get sbQHowCalc => 'Bal ki ganana kaise hoti hai?';
+
+  @override
+  String get sbQHowUse => 'Iska upyog kaise karein';
+
+  @override
+  String get sbWhyStrong => 'Kyon Mazboot';
+
+  @override
+  String get sbWhyWeak => 'Kyon Kamzor';
+
+  @override
+  String get sbDuringMahadasha => 'Mahadasha ke dauraan';
+
+  @override
+  String get sbEffects => 'Prabhaav';
+
+  @override
+  String get sbLifeAreas => 'Jeevan Kshetra';
+
+  @override
+  String get sbPlanetDetails => 'Grah Vivaran';
+
+  @override
+  String get sbBodyWhatIs => 'Shadbala (\'chhah guna bal\') mapta hai ki har grah mein apne parinam dene ki kitni shakti hai, chhah swatantra bal sroton ko jodkar.';
+
+  @override
+  String get sbBodyRupas => 'Bal Rupa mein mapa jata hai (1 Rupa = 60 Virupa). Majboot mane jaane ke liye har grah ko nyuntam Rupa bal chahiye; adhik Rupa ka matlab hai ki wah apne parinam adhik purnata se deta hai.';
+
+  @override
+  String get sbBodyHowCalc => 'Chhah bal jode jaate hain: Sthana (sthiti se sambandhit), Dig (disha se sambandhit), Kala (samay se sambandhit), Chesta (gati se sambandhit), Naisargika (prakritik) aur Drik (drishti se sambandhit). Kul ki tulna grah ki avashyak nyuntam seema se karke pratishat prapt kiya jata hai.';
+
+  @override
+  String get sbBodyHowUse => '100% se upar wala grah apne karakatva sahajta se deta hai; 100% se neeche hone par sahayata ki zaroorat hoti hai. Mahatvapurn maamlon ke liye apne sabse majboot grahon ko prathamikta dein, aur sabse kamzor grahon ko upay aur dhairya dein.';
+
+  @override
+  String get sbRemedyStrong => 'Achhi tarah se samarthit — kisi khaas upay ki zaroorat nahi; aap is grah ki avadhiyon ka aatmavishwas se upyog kar sakte hain.';
+
+  @override
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
+    return '${strongP} aapka sabse majboot grah hai, jo ${strongTrait} ke liye utkrisht sahyog deta hai. ${weakP} sabse kamzor hai aur upayon se sabse zyada labhaanvit hota hai.';
+  }
+
+  @override
+  String sbCardAi(Object planet, Object category, Object karakatva) {
+    return '${planet} ka Shadbala ${category} hai, isliye iske ${karakatva} tadanusaar samarthit hain.';
+  }
+
+  @override
+  String sbWhyLine(Object bala, Object rupa) {
+    return '${bala} ke madhyam se sabse majboot (${rupa} Rupa).';
+  }
+
+  @override
+  String sbWeakLine(Object bala) {
+    return '${bala} mein sabse kamzor, jo kul ko kam karta hai.';
+  }
+
+  @override
+  String sbMahadashaLine(Object planet, Object karak) {
+    return '${planet} ki Mahadasha ke dauraan, iske ${karak} saamne aate hain.';
+  }
+
+  @override
+  String sbEffectStrong(Object karak) {
+    return 'Majboot Shadbala ke saath, ${karak} swabhavik roop se samarthit hote hain.';
+  }
+
+  @override
+  String sbEffectWeak(Object karak) {
+    return 'Saadharan Shadbala ke saath, ${karak} ko sachet prayaas ki zaroorat ho sakti hai.';
+  }
+
+  @override
+  String sbRemedyWeak(Object planet) {
+    return '${planet} ko iske mantra, ratna ya daan ke madhyam se majboot karein, aur iski avadhiyon ke dauraan dhairyapoorvak kaary karein.';
+  }
+
+  @override
   String get bhOverview => 'Avlokan';
 
   @override
@@ -3990,262 +4246,6 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Password Bhool Gaye?';
-
-  @override
-  String get doshSevere => 'Gambhir';
-
-  @override
-  String get doshVeryMild => 'Bahut Halka';
-
-  @override
-  String get doshLow => 'Nimn';
-
-  @override
-  String get doshHigh => 'Uchch';
-
-  @override
-  String get doshCritical => 'Ati Gambhir';
-
-  @override
-  String get doshSummaryTitle => 'Dosh Saaraansh';
-
-  @override
-  String get doshActiveDoshas => 'Sakriya Dosh';
-
-  @override
-  String get doshTotalChecked => 'Kul Jaanche Gaye';
-
-  @override
-  String get doshOverallSeverity => 'Samagra Gambhirta';
-
-  @override
-  String get doshNoneActive => 'Koi sakriya dosh nahi — shuddh kundli!';
-
-  @override
-  String get doshCategory => 'Shreni';
-
-  @override
-  String get doshConfidence => 'Confidence';
-
-  @override
-  String get doshWhyFormed => 'Yeh Kyon Bana';
-
-  @override
-  String get doshAffectedAreas => 'Prabhaavit Kshetra';
-
-  @override
-  String get doshTimeline => 'Timeline';
-
-  @override
-  String get doshDefinition => 'Paribhasha';
-
-  @override
-  String get doshFormationRule => 'Nirmaan Niyam';
-
-  @override
-  String get doshSupportingPlanets => 'Sambandhit Grah';
-
-  @override
-  String get doshCancellation => 'Nivaran Yog';
-
-  @override
-  String get doshNoCancellation => 'Koi Nahi';
-
-  @override
-  String get doshAreaChildren => 'Santaan';
-
-  @override
-  String get doshAreaMind => 'Man';
-
-  @override
-  String get remMantra => 'Mantra';
-
-  @override
-  String get remGemstone => 'Ratna';
-
-  @override
-  String get remDonation => 'Daan';
-
-  @override
-  String get remTemple => 'Mandir';
-
-  @override
-  String get remFasting => 'Vrat';
-
-  @override
-  String get remLifestyle => 'Jeevanshaili';
-
-  @override
-  String get remLifestyleGeneric => 'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.';
-
-  @override
-  String get doshExplain => 'Mere Dosh Samjhaein';
-
-  @override
-  String get doshExplainSubtitle => 'Aapke doshon par ek shaant, vyavaharik nazar';
-
-  @override
-  String get doshExplainReassure => 'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.';
-
-  @override
-  String get doshAiGeneric => 'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.';
-
-  @override
-  String doshHeroSummary(Object active, Object total) {
-    return 'Your chart shows ${active} active doshas out of ${total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.';
-  }
-
-  @override
-  String doshAiLine(Object areas, Object planet) {
-    return 'This dosha mainly influences ${areas}. During ${planet} periods its effect can feel stronger, and remedies help balance it.';
-  }
-
-  @override
-  String doshTimelineLine(Object planet) {
-    return 'Its effect is felt most during the Mahadasha and Antardasha of ${planet}, and when ${planet} is active in transit.';
-  }
-
-  @override
-  String get sbLegendary => 'Legendary';
-
-  @override
-  String get sbSthana => 'Sthana Bala';
-
-  @override
-  String get sbDig => 'Dig Bala';
-
-  @override
-  String get sbKala => 'Kala Bala';
-
-  @override
-  String get sbChesta => 'Chesta Bala';
-
-  @override
-  String get sbNaisargika => 'Naisargika Bala';
-
-  @override
-  String get sbDrik => 'Drik Bala';
-
-  @override
-  String get sbSummary => 'Grah Bal Saaraansh';
-
-  @override
-  String get sbAverageStrength => 'Ausat Bal';
-
-  @override
-  String get sbHighestRupa => 'Sarvadhik Rupa';
-
-  @override
-  String get sbRupa => 'Rupa';
-
-  @override
-  String get sbRanking => 'Grah Ranking';
-
-  @override
-  String get sbRequired => 'Aavashyak';
-
-  @override
-  String get sbExcess => 'Adhishesh';
-
-  @override
-  String get sbDeficit => 'Kami';
-
-  @override
-  String get sbTotalShadbala => 'Kul Shadbala';
-
-  @override
-  String get sbExplain => 'Mera Grah Bal Samjhaein';
-
-  @override
-  String get sbExplainSubtitle => 'Aapke grahon ke bal ka saral saaraansh';
-
-  @override
-  String get sbInfoTitle => 'Shadbala Ko Samjhein';
-
-  @override
-  String get sbQWhatIs => 'Shadbala kya hai?';
-
-  @override
-  String get sbQRupas => 'Rupa kya hain?';
-
-  @override
-  String get sbQHowCalc => 'Bal ki ganana kaise hoti hai?';
-
-  @override
-  String get sbQHowUse => 'Iska upyog kaise karein';
-
-  @override
-  String get sbWhyStrong => 'Kyon Mazboot';
-
-  @override
-  String get sbWhyWeak => 'Kyon Kamzor';
-
-  @override
-  String get sbDuringMahadasha => 'Mahadasha ke dauraan';
-
-  @override
-  String get sbEffects => 'Prabhaav';
-
-  @override
-  String get sbLifeAreas => 'Jeevan Kshetra';
-
-  @override
-  String get sbPlanetDetails => 'Grah Vivaran';
-
-  @override
-  String get sbBodyWhatIs => 'Shadbala (\'six-fold strength\') measures how much power each planet has to deliver its results, by adding six independent sources of strength.';
-
-  @override
-  String get sbBodyRupas => 'Strength is measured in Rupas (1 Rupa = 60 Virupas). Each planet needs a minimum Rupa strength to count as strong; more Rupas means it delivers its results more fully.';
-
-  @override
-  String get sbBodyHowCalc => 'Six balas are added: Sthana (positional), Dig (directional), Kala (temporal), Chesta (motional), Naisargika (natural) and Drik (aspectual). The total is compared with the planet\'s required minimum to get a percentage.';
-
-  @override
-  String get sbBodyHowUse => 'A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.';
-
-  @override
-  String get sbRemedyStrong => 'Well-supported — no special remedy needed; you can use this planet\'s periods confidently.';
-
-  @override
-  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
-    return '${strongP} is your strongest planet, giving excellent support for ${strongTrait}. ${weakP} is the weakest and benefits most from remedies.';
-  }
-
-  @override
-  String sbCardAi(Object planet, Object category, Object karakatva) {
-    return '${planet} has ${category} Shadbala, so its ${karakatva} are supported accordingly.';
-  }
-
-  @override
-  String sbWhyLine(Object bala, Object rupa) {
-    return 'Strongest through ${bala} (${rupa} rupas).';
-  }
-
-  @override
-  String sbWeakLine(Object bala) {
-    return 'Weakest in ${bala}, which lowers the total.';
-  }
-
-  @override
-  String sbMahadashaLine(Object planet, Object karak) {
-    return 'During ${planet}\'s Mahadasha, its ${karak} come to the fore.';
-  }
-
-  @override
-  String sbEffectStrong(Object karak) {
-    return 'With strong Shadbala, ${karak} are naturally supported.';
-  }
-
-  @override
-  String sbEffectWeak(Object karak) {
-    return 'With modest Shadbala, ${karak} may need conscious effort.';
-  }
-
-  @override
-  String sbRemedyWeak(Object planet) {
-    return 'Strengthen ${planet} through its mantra, gemstone or charity, and act patiently during its periods.';
-  }
 
   @override
   String get sendResetLink => 'Reset Link Bhejein';
