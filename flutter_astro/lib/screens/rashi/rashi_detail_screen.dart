@@ -220,10 +220,15 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
         'house': m['house'],
         'rashi_idx': m['sign_idx'],
         'rashi_short': _signShortList[(m['sign_idx'] as num).toInt() % 12],
-        'planets': planets.map((p) => {
-          'planet': KundliNames.planet(p.toString(), loc),
-          'flags': const [],
-          'degree': 0,
+        'planets': planets.map((p) {
+          if (p is Map) {
+            return {
+              'planet': KundliNames.planet((p['planet'] ?? '').toString(), loc),
+              if (p['degree'] != null) 'degree': p['degree'],
+              'flags': (p['flags'] as List?) ?? const [],
+            };
+          }
+          return {'planet': KundliNames.planet(p.toString(), loc), 'flags': const []};
         }).toList(),
         'is_lagna': m['house'] == 1,
       };
