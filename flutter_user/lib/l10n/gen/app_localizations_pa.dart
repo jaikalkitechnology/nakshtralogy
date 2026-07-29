@@ -9,68 +9,163 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
-  String get yogaHelpful => 'Helpful';
+  String get divBeginner => 'Beginner';
 
   @override
-  String get yogaInactive => 'Inactive';
+  String get divSearchHint => 'Search: career, marriage, education…';
 
   @override
-  String get yogaTabMoney => 'Money';
+  String get divSummaryTitle => 'Divisional Chart Summary';
 
   @override
-  String get yogaTabRare => 'Rare';
+  String get divTotalCharts => 'Total Charts';
 
   @override
-  String get yogaSummaryTitle => 'Yoga Summary';
+  String get divMostImportant => 'Most Important';
 
   @override
-  String get yogaActiveYogas => 'Active Yogas';
+  String get divRecommendedForYou => 'Recommended For You';
 
   @override
-  String get yogaTotalYogas => 'Total Yogas';
+  String get divCatEssential => 'Essential Charts';
 
   @override
-  String get yogaMostPowerful => 'Most Powerful';
+  String get divCatPersonal => 'Personal Life';
 
   @override
-  String get yogaFortuneRating => 'Overall Fortune';
+  String get divCatKnowledge => 'Knowledge Charts';
 
   @override
-  String get yogaBenefits => 'Benefits';
+  String get divCatAdvanced => 'Advanced Charts';
 
   @override
-  String get yogaSupportingPlanets => 'Supporting Planets';
+  String get divGoalProperty => 'Property';
 
   @override
-  String get yogaRanking => 'Top 5 Strongest Yogas';
+  String get divGoalKarma => 'Karma';
 
   @override
-  String get yogaExplain => 'Explain My Yogas';
+  String get divBadgeHighlyRec => 'Highly Recommended';
 
   @override
-  String get yogaExplainSubtitle => 'How your yogas support you';
+  String get divBadgeRec => 'Recommended';
 
   @override
-  String get yogaNoneActive => 'No active yogas yet';
+  String get divBadgeUseful => 'Useful';
 
   @override
-  String get yogaNoneInCategory => 'No yogas in this category';
+  String get divBadgeOptional => 'Optional';
+
+  @override
+  String get divBadgeAdvOnly => 'Advanced Only';
+
+  @override
+  String get divRecommendBest => 'Recommend Best Charts';
+
+  @override
+  String get divNoMatch => 'No charts match your search';
+
+  @override
+  String get divLifeAreas => 'Life Areas';
+
+  @override
+  String divAiUse(Object purpose) {
+    return 'Use this chart to analyse ${purpose}.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'Open this chart when you want to study ${purpose}.';
+  }
+
+  @override
+  String get yogaHelpful => 'ਸਹਾਇਕ';
+
+  @override
+  String get yogaInactive => 'ਨਿਸ਼ਕਿਰਿਆ';
+
+  @override
+  String get yogaTabMoney => 'ਧਨ';
+
+  @override
+  String get yogaTabRare => 'ਦੁਰਲੱਭ';
+
+  @override
+  String get yogaSummaryTitle => 'ਯੋਗ ਸੰਖੇਪ';
+
+  @override
+  String get yogaActiveYogas => 'ਸਰਗਰਮ ਯੋਗ';
+
+  @override
+  String get yogaTotalYogas => 'ਕੁੱਲ ਯੋਗ';
+
+  @override
+  String get yogaMostPowerful => 'ਸਭ ਤੋਂ ਸ਼ਕਤੀਸ਼ਾਲੀ';
+
+  @override
+  String get yogaFortuneRating => 'ਸਮੁੱਚੀ ਕਿਸਮਤ';
+
+  @override
+  String get yogaBenefits => 'ਲਾਭ';
+
+  @override
+  String get yogaSupportingPlanets => 'ਸਹਾਇਕ ਗ੍ਰਹਿ';
+
+  @override
+  String get yogaRanking => 'ਚੋਟੀ ਦੇ 5 ਪ੍ਰਬਲ ਯੋਗ';
+
+  @override
+  String get yogaExplain => 'ਮੇਰੇ ਯੋਗ ਸਮਝਾਓ';
+
+  @override
+  String get yogaExplainSubtitle => 'ਤੁਹਾਡੇ ਯੋਗ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰਦੇ ਹਨ';
+
+  @override
+  String get yogaNoneActive => 'ਅਜੇ ਤੱਕ ਕੋਈ ਸਰਗਰਮ ਯੋਗ ਨਹੀਂ';
+
+  @override
+  String get yogaNoneInCategory => 'ਇਸ ਸ਼੍ਰੇਣੀ ਵਿੱਚ ਕੋਈ ਯੋਗ ਨਹੀਂ';
 
   @override
   String yogaHeroSummary(Object count, Object planets) {
-    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+    return 'ਤੁਹਾਡੀ ਕੁੰਡਲੀ ਵਿੱਚ ${count} ਸਰਗਰਮ ਯੋਗ ਹਨ — ਸਹਾਇਕ ਗ੍ਰਹਿ ਸੰਯੋਜਨ। ${planets} ਨਾਲ ਸਬੰਧਤ ਸੰਯੋਜਨ ਵਿਕਾਸ ਅਤੇ ਸਫਲਤਾ ਲਈ ਖਾਸ ਤੌਰ \'ਤੇ ਮਦਦਗਾਰ ਪ੍ਰਭਾਵ ਬਣਾਉਂਦੇ ਹਨ।';
   }
 
   @override
   String yogaAiLine(Object name, Object areas) {
-    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+    return '${name} ${areas} ਦਾ ਸਮਰਥਨ ਕਰਦਾ ਹੈ, ਅਤੇ ਜਦੋਂ ਇਸ ਦੇ ਗ੍ਰਹਿ ਦਸ਼ਾ ਜਾਂ ਗੋਚਰ ਵਿੱਚ ਸਰਗਰਮ ਹੁੰਦੇ ਹਨ ਤਾਂ ਇਸ ਦੇ ਲਾਭ ਹੋਰ ਵਧ ਜਾਂਦੇ ਹਨ।';
   }
 
   @override
-  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+  String get yogaAiGeneric => 'ਇਹ ਯੋਗ ਤੁਹਾਡੀ ਕੁੰਡਲੀ ਵਿੱਚ ਇੱਕ ਸਹਾਇਕ ਸੰਯੋਜਨ ਹੈ ਜੋ ਜੀਵਨ ਦੇ ਸਬੰਧਤ ਖੇਤਰਾਂ ਨੂੰ ਮਜ਼ਬੂਤ ਕਰਦਾ ਹੈ।';
 
   @override
-  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+  String get yogaExplainReassure => 'ਯੋਗ ਤੁਹਾਡੀ ਕੁੰਡਲੀ ਦੇ ਚਮਕਦਾਰ ਪਹਿਲੂ ਹਨ — ਸਹਾਇਕ ਗ੍ਰਹਿ ਸੰਯੋਜਨ ਜੋ ਤੁਹਾਡੇ ਪੱਖ ਵਿੱਚ ਕੰਮ ਕਰਦੇ ਹਨ। ਮਜ਼ਬੂਤ ਵਾਲੇ ਸਥਾਈ ਲਾਭ ਦਿੰਦੇ ਹਨ, ਖਾਸ ਕਰਕੇ ਉਹਨਾਂ ਨੂੰ ਬਣਾਉਣ ਵਾਲੇ ਗ੍ਰਹਿਆਂ ਦੀ ਦਸ਼ਾ ਦੌਰਾਨ।';
 
   @override
   String get doshSevere => 'ਗੰਭੀਰ';

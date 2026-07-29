@@ -230,6 +230,408 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @divBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get divBeginner;
+
+  /// No description provided for @divSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search: career, marriage, education…'**
+  String get divSearchHint;
+
+  /// No description provided for @divSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisional Chart Summary'**
+  String get divSummaryTitle;
+
+  /// No description provided for @divTotalCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charts'**
+  String get divTotalCharts;
+
+  /// No description provided for @divMostImportant.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Important'**
+  String get divMostImportant;
+
+  /// No description provided for @divRecommendedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended For You'**
+  String get divRecommendedForYou;
+
+  /// No description provided for @divCatEssential.
+  ///
+  /// In en, this message translates to:
+  /// **'Essential Charts'**
+  String get divCatEssential;
+
+  /// No description provided for @divCatPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Life'**
+  String get divCatPersonal;
+
+  /// No description provided for @divCatKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge Charts'**
+  String get divCatKnowledge;
+
+  /// No description provided for @divCatAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Charts'**
+  String get divCatAdvanced;
+
+  /// No description provided for @divGoalProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get divGoalProperty;
+
+  /// No description provided for @divGoalKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma'**
+  String get divGoalKarma;
+
+  /// No description provided for @divBadgeHighlyRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Highly Recommended'**
+  String get divBadgeHighlyRec;
+
+  /// No description provided for @divBadgeRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get divBadgeRec;
+
+  /// No description provided for @divBadgeUseful.
+  ///
+  /// In en, this message translates to:
+  /// **'Useful'**
+  String get divBadgeUseful;
+
+  /// No description provided for @divBadgeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get divBadgeOptional;
+
+  /// No description provided for @divBadgeAdvOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Only'**
+  String get divBadgeAdvOnly;
+
+  /// No description provided for @divRecommendBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommend Best Charts'**
+  String get divRecommendBest;
+
+  /// No description provided for @divNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No charts match your search'**
+  String get divNoMatch;
+
+  /// No description provided for @divLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get divLifeAreas;
+
+  /// No description provided for @divAiUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this chart to analyse {purpose}.'**
+  String divAiUse(Object purpose);
+
+  /// No description provided for @divHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {c1} and {c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.'**
+  String divHeroSummary(Object c1, Object c2);
+
+  /// No description provided for @divRecReasonHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {house} house needs a closer look — this chart shows it in depth.'**
+  String divRecReasonHouse(Object house);
+
+  /// No description provided for @divRecReasonPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is a key but tested planet — this chart reveals its deeper condition.'**
+  String divRecReasonPlanet(Object planet);
+
+  /// No description provided for @divRecReasonDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'You are in {planet}\'s Mahadasha, so this chart is especially timely now.'**
+  String divRecReasonDasha(Object planet);
+
+  /// No description provided for @divRecSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your chart, {c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.'**
+  String divRecSummary(Object c1);
+
+  /// No description provided for @divWhenToUseLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this chart when you want to study {purpose}.'**
+  String divWhenToUseLine(Object purpose);
+
+  /// No description provided for @divD1Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Rasi (D-1)'**
+  String get divD1Name;
+
+  /// No description provided for @divD1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical existence, all matters'**
+  String get divD1Desc;
+
+  /// No description provided for @divD2Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Hora (D-2)'**
+  String get divD2Name;
+
+  /// No description provided for @divD2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth, money'**
+  String get divD2Desc;
+
+  /// No description provided for @divD3Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Drekkana (D-3)'**
+  String get divD3Name;
+
+  /// No description provided for @divD3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Siblings, courage'**
+  String get divD3Desc;
+
+  /// No description provided for @divD4Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Chaturthamsa (D-4)'**
+  String get divD4Name;
+
+  /// No description provided for @divD4Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Property, residence, fortune'**
+  String get divD4Desc;
+
+  /// No description provided for @divD5Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Panchamsa (D-5)'**
+  String get divD5Name;
+
+  /// No description provided for @divD5Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fame, authority, power'**
+  String get divD5Desc;
+
+  /// No description provided for @divD6Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Shashthamsa (D-6)'**
+  String get divD6Name;
+
+  /// No description provided for @divD6Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Health troubles'**
+  String get divD6Desc;
+
+  /// No description provided for @divD7Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Saptamsa (D-7)'**
+  String get divD7Name;
+
+  /// No description provided for @divD7Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Children, grandchildren'**
+  String get divD7Desc;
+
+  /// No description provided for @divD8Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtamsa (D-8)'**
+  String get divD8Name;
+
+  /// No description provided for @divD8Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudden troubles, litigation'**
+  String get divD8Desc;
+
+  /// No description provided for @divD9Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsha (D-9)'**
+  String get divD9Name;
+
+  /// No description provided for @divD9Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage, spouse, dharma'**
+  String get divD9Desc;
+
+  /// No description provided for @divD10Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasamsha (D-10)'**
+  String get divD10Name;
+
+  /// No description provided for @divD10Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Career, profession'**
+  String get divD10Desc;
+
+  /// No description provided for @divD11Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Rudramsha (D-11)'**
+  String get divD11Name;
+
+  /// No description provided for @divD11Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Death, destruction'**
+  String get divD11Desc;
+
+  /// No description provided for @divD12Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Dwadasamsha (D-12)'**
+  String get divD12Name;
+
+  /// No description provided for @divD12Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Parents, blood-relatives'**
+  String get divD12Desc;
+
+  /// No description provided for @divD16Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Shodasamsha (D-16)'**
+  String get divD16Name;
+
+  /// No description provided for @divD16Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles, comforts, pleasures'**
+  String get divD16Desc;
+
+  /// No description provided for @divD20Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Vimsamsha (D-20)'**
+  String get divD20Name;
+
+  /// No description provided for @divD20Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual matters, religious'**
+  String get divD20Desc;
+
+  /// No description provided for @divD24Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Chaturvimsamsha (D-24)'**
+  String get divD24Name;
+
+  /// No description provided for @divD24Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning, knowledge, education'**
+  String get divD24Desc;
+
+  /// No description provided for @divD27Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatramsha (D-27)'**
+  String get divD27Name;
+
+  /// No description provided for @divD27Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths, weaknesses, nature'**
+  String get divD27Desc;
+
+  /// No description provided for @divD30Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Trimsamsha (D-30)'**
+  String get divD30Name;
+
+  /// No description provided for @divD30Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Evils, sub-conscious, punishment'**
+  String get divD30Desc;
+
+  /// No description provided for @divD40Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Khavedamsha (D-40)'**
+  String get divD40Name;
+
+  /// No description provided for @divD40Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Auspicious/inauspicious (maternal)'**
+  String get divD40Desc;
+
+  /// No description provided for @divD45Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Akshavedamsha (D-45)'**
+  String get divD45Name;
+
+  /// No description provided for @divD45Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'All matters (paternal)'**
+  String get divD45Desc;
+
+  /// No description provided for @divD60Name.
+  ///
+  /// In en, this message translates to:
+  /// **'Shashtyamsha (D-60)'**
+  String get divD60Name;
+
+  /// No description provided for @divD60Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-life karma — MOST IMPORTANT'**
+  String get divD60Desc;
+
   /// No description provided for @yogaHelpful.
   ///
   /// In en, this message translates to:

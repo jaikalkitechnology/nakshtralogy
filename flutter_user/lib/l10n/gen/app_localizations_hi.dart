@@ -9,6 +9,101 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get divBeginner => 'सरल';
+
+  @override
+  String get divSearchHint => 'खोजें: करियर, विवाह, शिक्षा…';
+
+  @override
+  String get divSummaryTitle => 'वर्ग कुंडली सारांश';
+
+  @override
+  String get divTotalCharts => 'कुल कुंडलियाँ';
+
+  @override
+  String get divMostImportant => 'सर्वाधिक महत्वपूर्ण';
+
+  @override
+  String get divRecommendedForYou => 'आपके लिए अनुशंसित';
+
+  @override
+  String get divCatEssential => 'आवश्यक कुंडलियाँ';
+
+  @override
+  String get divCatPersonal => 'व्यक्तिगत जीवन';
+
+  @override
+  String get divCatKnowledge => 'ज्ञान कुंडलियाँ';
+
+  @override
+  String get divCatAdvanced => 'उन्नत कुंडलियाँ';
+
+  @override
+  String get divGoalProperty => 'संपत्ति';
+
+  @override
+  String get divGoalKarma => 'कर्म';
+
+  @override
+  String get divBadgeHighlyRec => 'अत्यधिक अनुशंसित';
+
+  @override
+  String get divBadgeRec => 'अनुशंसित';
+
+  @override
+  String get divBadgeUseful => 'उपयोगी';
+
+  @override
+  String get divBadgeOptional => 'वैकल्पिक';
+
+  @override
+  String get divBadgeAdvOnly => 'केवल उन्नत';
+
+  @override
+  String get divRecommendBest => 'सर्वश्रेष्ठ कुंडलियाँ सुझाएं';
+
+  @override
+  String get divNoMatch => 'आपकी खोज से कोई कुंडली मेल नहीं खाती';
+
+  @override
+  String get divLifeAreas => 'जीवन क्षेत्र';
+
+  @override
+  String divAiUse(Object purpose) {
+    return 'Use this chart to analyse ${purpose}.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'Open this chart when you want to study ${purpose}.';
+  }
+
+  @override
   String get yogaHelpful => 'सहायक';
 
   @override
@@ -58,19 +153,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String yogaHeroSummary(Object count, Object planets) {
-    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+    return 'आपकी कुंडली में ${count} सक्रिय योग हैं — सहायक ग्रह संयोजन। ${planets} से जुड़े संयोजन विकास और सफलता के लिए विशेष रूप से लाभकारी प्रभाव बनाते हैं।';
   }
 
   @override
   String yogaAiLine(Object name, Object areas) {
-    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+    return '${name} ${areas} को सहयोग देता है, और जब इसके ग्रह दशा या गोचर में सक्रिय होते हैं तो इसके लाभ और बढ़ जाते हैं।';
   }
 
   @override
-  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+  String get yogaAiGeneric => 'यह योग आपकी कुंडली में एक सहायक संयोजन है जो जीवन के संबंधित क्षेत्रों को मजबूत करता है।';
 
   @override
-  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+  String get yogaExplainReassure => 'योग आपकी कुंडली के उज्ज्वल पक्ष हैं — सहायक ग्रह संयोजन जो आपके पक्ष में काम करते हैं। जो अधिक प्रबल होते हैं वे स्थायी लाभ देते हैं, विशेष रूप से उन्हें बनाने वाले ग्रहों की अवधि के दौरान।';
 
   @override
   String get doshSevere => 'गंभीर';

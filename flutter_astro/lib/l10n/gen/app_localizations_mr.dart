@@ -9,68 +9,283 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
-  String get yogaHelpful => 'Helpful';
+  String get divBeginner => 'Beginner';
 
   @override
-  String get yogaInactive => 'Inactive';
+  String get divSearchHint => 'Search: career, marriage, education…';
 
   @override
-  String get yogaTabMoney => 'Money';
+  String get divSummaryTitle => 'Divisional Chart Summary';
 
   @override
-  String get yogaTabRare => 'Rare';
+  String get divTotalCharts => 'Total Charts';
 
   @override
-  String get yogaSummaryTitle => 'Yoga Summary';
+  String get divMostImportant => 'Most Important';
 
   @override
-  String get yogaActiveYogas => 'Active Yogas';
+  String get divRecommendedForYou => 'Recommended For You';
 
   @override
-  String get yogaTotalYogas => 'Total Yogas';
+  String get divCatEssential => 'Essential Charts';
 
   @override
-  String get yogaMostPowerful => 'Most Powerful';
+  String get divCatPersonal => 'Personal Life';
 
   @override
-  String get yogaFortuneRating => 'Overall Fortune';
+  String get divCatKnowledge => 'Knowledge Charts';
 
   @override
-  String get yogaBenefits => 'Benefits';
+  String get divCatAdvanced => 'Advanced Charts';
 
   @override
-  String get yogaSupportingPlanets => 'Supporting Planets';
+  String get divGoalProperty => 'Property';
 
   @override
-  String get yogaRanking => 'Top 5 Strongest Yogas';
+  String get divGoalKarma => 'Karma';
 
   @override
-  String get yogaExplain => 'Explain My Yogas';
+  String get divBadgeHighlyRec => 'Highly Recommended';
 
   @override
-  String get yogaExplainSubtitle => 'How your yogas support you';
+  String get divBadgeRec => 'Recommended';
 
   @override
-  String get yogaNoneActive => 'No active yogas yet';
+  String get divBadgeUseful => 'Useful';
 
   @override
-  String get yogaNoneInCategory => 'No yogas in this category';
+  String get divBadgeOptional => 'Optional';
+
+  @override
+  String get divBadgeAdvOnly => 'Advanced Only';
+
+  @override
+  String get divRecommendBest => 'Recommend Best Charts';
+
+  @override
+  String get divNoMatch => 'No charts match your search';
+
+  @override
+  String get divLifeAreas => 'Life Areas';
+
+  @override
+  String divAiUse(Object purpose) {
+    return 'Use this chart to analyse ${purpose}.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'Open this chart when you want to study ${purpose}.';
+  }
+
+  @override
+  String get divD1Name => 'राशी (D-1)';
+
+  @override
+  String get divD1Desc => 'भौतिक अस्तित्व, सर्व बाबी';
+
+  @override
+  String get divD2Name => 'होरा (D-2)';
+
+  @override
+  String get divD2Desc => 'संपत्ती, पैसा';
+
+  @override
+  String get divD3Name => 'द्रेक्काण (D-3)';
+
+  @override
+  String get divD3Desc => 'भावंडे, धैर्य';
+
+  @override
+  String get divD4Name => 'चतुर्थांश (D-4)';
+
+  @override
+  String get divD4Desc => 'मालमत्ता, निवास, भाग्य';
+
+  @override
+  String get divD5Name => 'पंचमांश (D-5)';
+
+  @override
+  String get divD5Desc => 'कीर्ती, अधिकार, सत्ता';
+
+  @override
+  String get divD6Name => 'षष्ठांश (D-6)';
+
+  @override
+  String get divD6Desc => 'आरोग्य समस्या';
+
+  @override
+  String get divD7Name => 'सप्तमांश (D-7)';
+
+  @override
+  String get divD7Desc => 'अपत्ये, नातवंडे';
+
+  @override
+  String get divD8Name => 'अष्टमांश (D-8)';
+
+  @override
+  String get divD8Desc => 'अचानक संकटे, खटले';
+
+  @override
+  String get divD9Name => 'नवमांश (D-9)';
+
+  @override
+  String get divD9Desc => 'विवाह, जोडीदार, धर्म';
+
+  @override
+  String get divD10Name => 'दशमांश (D-10)';
+
+  @override
+  String get divD10Desc => 'करिअर, व्यवसाय';
+
+  @override
+  String get divD11Name => 'रुद्रांश (D-11)';
+
+  @override
+  String get divD11Desc => 'मृत्यू, विनाश';
+
+  @override
+  String get divD12Name => 'द्वादशांश (D-12)';
+
+  @override
+  String get divD12Desc => 'आई-वडील, रक्तनातेवाईक';
+
+  @override
+  String get divD16Name => 'षोडशांश (D-16)';
+
+  @override
+  String get divD16Desc => 'वाहने, सुखसोयी, आनंद';
+
+  @override
+  String get divD20Name => 'विंशांश (D-20)';
+
+  @override
+  String get divD20Desc => 'आध्यात्मिक बाबी, धार्मिक';
+
+  @override
+  String get divD24Name => 'चतुर्विंशांश (D-24)';
+
+  @override
+  String get divD24Desc => 'शिक्षण, ज्ञान, विद्या';
+
+  @override
+  String get divD27Name => 'नक्षत्रांश (D-27)';
+
+  @override
+  String get divD27Desc => 'बलस्थाने, कमकुवत बाजू, स्वभाव';
+
+  @override
+  String get divD30Name => 'त्रिंशांश (D-30)';
+
+  @override
+  String get divD30Desc => 'अनिष्ट, अवचेतन, शिक्षा';
+
+  @override
+  String get divD40Name => 'खवेदांश (D-40)';
+
+  @override
+  String get divD40Desc => 'शुभ/अशुभ (मातृ)';
+
+  @override
+  String get divD45Name => 'अक्षवेदांश (D-45)';
+
+  @override
+  String get divD45Desc => 'सर्व बाबी (पितृ)';
+
+  @override
+  String get divD60Name => 'षष्ट्यंश (D-60)';
+
+  @override
+  String get divD60Desc => 'पूर्वजन्म कर्म — सर्वात महत्त्वाचे';
+
+  @override
+  String get yogaHelpful => 'सहाय्यक';
+
+  @override
+  String get yogaInactive => 'निष्क्रिय';
+
+  @override
+  String get yogaTabMoney => 'धन';
+
+  @override
+  String get yogaTabRare => 'दुर्मिळ';
+
+  @override
+  String get yogaSummaryTitle => 'योग सारांश';
+
+  @override
+  String get yogaActiveYogas => 'सक्रिय योग';
+
+  @override
+  String get yogaTotalYogas => 'एकूण योग';
+
+  @override
+  String get yogaMostPowerful => 'सर्वात शक्तिशाली';
+
+  @override
+  String get yogaFortuneRating => 'एकूण भाग्य';
+
+  @override
+  String get yogaBenefits => 'फायदे';
+
+  @override
+  String get yogaSupportingPlanets => 'सहाय्यक ग्रह';
+
+  @override
+  String get yogaRanking => 'सर्वोत्तम 5 प्रबळ योग';
+
+  @override
+  String get yogaExplain => 'माझे योग समजावून सांगा';
+
+  @override
+  String get yogaExplainSubtitle => 'तुमचे योग तुम्हाला कसे मदत करतात';
+
+  @override
+  String get yogaNoneActive => 'अद्याप कोणतेही सक्रिय योग नाहीत';
+
+  @override
+  String get yogaNoneInCategory => 'या श्रेणीत कोणतेही योग नाहीत';
 
   @override
   String yogaHeroSummary(Object count, Object planets) {
-    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+    return 'तुमच्या कुंडलीत ${count} सक्रिय योग आहेत — सहाय्यक ग्रह संयोजन. ${planets} शी संबंधित संयोजने वाढ आणि यशासाठी विशेषतः फायदेशीर प्रभाव निर्माण करतात.';
   }
 
   @override
   String yogaAiLine(Object name, Object areas) {
-    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+    return '${name} ${areas} ला आधार देतो, आणि जेव्हा त्याचे ग्रह दशेत किंवा गोचरात सक्रिय असतात तेव्हा त्याचे फायदे आणखी वाढतात.';
   }
 
   @override
-  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+  String get yogaAiGeneric => 'हा योग तुमच्या कुंडलीतील एक सहाय्यक संयोजन आहे जो जीवनाच्या संबंधित क्षेत्रांना बळकट करतो.';
 
   @override
-  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+  String get yogaExplainReassure => 'योग हे तुमच्या कुंडलीतील उजळ बाजू आहेत — तुमच्या बाजूने काम करणारे सहाय्यक ग्रह संयोजन. जे अधिक प्रबळ असतात ते दीर्घकाळ टिकणारे फायदे देतात, विशेषतः त्यांना घडवणाऱ्या ग्रहांच्या दशेच्या काळात.';
 
   @override
   String get doshSevere => 'गंभीर';

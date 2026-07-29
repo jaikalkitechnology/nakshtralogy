@@ -9,6 +9,221 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
+  String get divBeginner => 'Saral';
+
+  @override
+  String get divSearchHint => 'Khojein: career, vivah, shiksha…';
+
+  @override
+  String get divSummaryTitle => 'Varg Kundli Saaraansh';
+
+  @override
+  String get divTotalCharts => 'Kul Kundliyan';
+
+  @override
+  String get divMostImportant => 'Sabse Mahatvapurna';
+
+  @override
+  String get divRecommendedForYou => 'Aapke Liye Anushansit';
+
+  @override
+  String get divCatEssential => 'Aavashyak Kundliyan';
+
+  @override
+  String get divCatPersonal => 'Vyaktigat Jeevan';
+
+  @override
+  String get divCatKnowledge => 'Gyaan Kundliyan';
+
+  @override
+  String get divCatAdvanced => 'Unnat Kundliyan';
+
+  @override
+  String get divGoalProperty => 'Sampatti';
+
+  @override
+  String get divGoalKarma => 'Karm';
+
+  @override
+  String get divBadgeHighlyRec => 'Atyadhik Anushansit';
+
+  @override
+  String get divBadgeRec => 'Anushansit';
+
+  @override
+  String get divBadgeUseful => 'Upyogi';
+
+  @override
+  String get divBadgeOptional => 'Vaikalpik';
+
+  @override
+  String get divBadgeAdvOnly => 'Keval Unnat';
+
+  @override
+  String get divRecommendBest => 'Best Kundliyan Sujhaein';
+
+  @override
+  String get divNoMatch => 'Aapki khoj se koi kundli match nahi hui';
+
+  @override
+  String get divLifeAreas => 'Jeevan Kshetra';
+
+  @override
+  String divAiUse(Object purpose) {
+    return 'Use this chart to analyse ${purpose}.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'Open this chart when you want to study ${purpose}.';
+  }
+
+  @override
+  String get divD1Name => 'Rasi (D-1)';
+
+  @override
+  String get divD1Desc => 'Sharirik astitva, sabhi vishay';
+
+  @override
+  String get divD2Name => 'Hora (D-2)';
+
+  @override
+  String get divD2Desc => 'Dhan, paisa';
+
+  @override
+  String get divD3Name => 'Drekkana (D-3)';
+
+  @override
+  String get divD3Desc => 'Bhai-behen, saahas';
+
+  @override
+  String get divD4Name => 'Chaturthamsa (D-4)';
+
+  @override
+  String get divD4Desc => 'Sampatti, nivaas, bhagya';
+
+  @override
+  String get divD5Name => 'Panchamsa (D-5)';
+
+  @override
+  String get divD5Desc => 'Yash, satta, shakti';
+
+  @override
+  String get divD6Name => 'Shashthamsa (D-6)';
+
+  @override
+  String get divD6Desc => 'Swasthya samasyaayein';
+
+  @override
+  String get divD7Name => 'Saptamsa (D-7)';
+
+  @override
+  String get divD7Desc => 'Santaan, potey-potiyaan';
+
+  @override
+  String get divD8Name => 'Ashtamsa (D-8)';
+
+  @override
+  String get divD8Desc => 'Achanak pareshaani, mukadma';
+
+  @override
+  String get divD9Name => 'Navamsha (D-9)';
+
+  @override
+  String get divD9Desc => 'Vivah, jeevansaathi, dharma';
+
+  @override
+  String get divD10Name => 'Dasamsha (D-10)';
+
+  @override
+  String get divD10Desc => 'Career, profession';
+
+  @override
+  String get divD11Name => 'Rudramsha (D-11)';
+
+  @override
+  String get divD11Desc => 'Mrityu, vinaash';
+
+  @override
+  String get divD12Name => 'Dwadasamsha (D-12)';
+
+  @override
+  String get divD12Desc => 'Maata-pita, rakt-sambandhi';
+
+  @override
+  String get divD16Name => 'Shodasamsha (D-16)';
+
+  @override
+  String get divD16Desc => 'Vaahan, sukh-suvidha, aanand';
+
+  @override
+  String get divD20Name => 'Vimsamsha (D-20)';
+
+  @override
+  String get divD20Desc => 'Aadhyaatmik vishay, dharmik';
+
+  @override
+  String get divD24Name => 'Chaturvimsamsha (D-24)';
+
+  @override
+  String get divD24Desc => 'Vidya, gyaan, shiksha';
+
+  @override
+  String get divD27Name => 'Nakshatramsha (D-27)';
+
+  @override
+  String get divD27Desc => 'Taakat, kamzoriyaan, swabhav';
+
+  @override
+  String get divD30Name => 'Trimsamsha (D-30)';
+
+  @override
+  String get divD30Desc => 'Buraiyaan, avchetan, dand';
+
+  @override
+  String get divD40Name => 'Khavedamsha (D-40)';
+
+  @override
+  String get divD40Desc => 'Shubh/ashubh (maatri paksh)';
+
+  @override
+  String get divD45Name => 'Akshavedamsha (D-45)';
+
+  @override
+  String get divD45Desc => 'Sabhi vishay (pitri paksh)';
+
+  @override
+  String get divD60Name => 'Shashtyamsha (D-60)';
+
+  @override
+  String get divD60Desc => 'Poorv-janm karma — SABSE MEHATVAPURN';
+
+  @override
   String get yogaHelpful => 'Sahayak';
 
   @override
@@ -58,19 +273,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String yogaHeroSummary(Object count, Object planets) {
-    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+    return 'Aapki kundli mein ${count} sakriya yog hain — sahayak grah sanyojan. ${planets} se jude sanyojan growth aur success ke liye khaas taur par madadgar prabhav banate hain.';
   }
 
   @override
   String yogaAiLine(Object name, Object areas) {
-    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+    return '${name} ${areas} ko support karta hai, aur jab iske grah dasha ya transit mein sakriya hote hain to iske fayde aur badh jaate hain.';
   }
 
   @override
-  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+  String get yogaAiGeneric => 'Yeh yog aapki kundli mein ek sahayak sanyojan hai jo jeevan ke sambandhit kshetron ko majboot karta hai.';
 
   @override
-  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+  String get yogaExplainReassure => 'Yog aapki kundli ke ujjwal pehlu hain — sahayak grah sanyojan jo aapke favour mein kaam karte hain. Jo zyada prabal hote hain wo lasting fayda dete hain, khaaskar unhe banane wale grahon ki period ke dauran.';
 
   @override
   String get doshSevere => 'Gambhir';

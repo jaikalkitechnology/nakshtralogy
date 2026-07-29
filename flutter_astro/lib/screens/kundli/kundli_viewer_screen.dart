@@ -143,7 +143,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         SummaryTabWidget(chart: _chart!, complete: _complete),
                         PlanetPositionsWidget(planetsMap: _planetsMap(), complete: _complete),
                         KundliTabWidget(chart: _chart!, complete: _complete),
-                        DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap()),
+                        DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap(), complete: _complete),
                         DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari'),
                         DashaTreeWidget(chartId: widget.chartId, type: 'moola'),
                         GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx()),

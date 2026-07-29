@@ -66,6 +66,221 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get divBeginner => 'Beginner';
+
+  @override
+  String get divSearchHint => 'Search: career, marriage, education…';
+
+  @override
+  String get divSummaryTitle => 'Divisional Chart Summary';
+
+  @override
+  String get divTotalCharts => 'Total Charts';
+
+  @override
+  String get divMostImportant => 'Most Important';
+
+  @override
+  String get divRecommendedForYou => 'Recommended For You';
+
+  @override
+  String get divCatEssential => 'Essential Charts';
+
+  @override
+  String get divCatPersonal => 'Personal Life';
+
+  @override
+  String get divCatKnowledge => 'Knowledge Charts';
+
+  @override
+  String get divCatAdvanced => 'Advanced Charts';
+
+  @override
+  String get divGoalProperty => 'Property';
+
+  @override
+  String get divGoalKarma => 'Karma';
+
+  @override
+  String get divBadgeHighlyRec => 'Highly Recommended';
+
+  @override
+  String get divBadgeRec => 'Recommended';
+
+  @override
+  String get divBadgeUseful => 'Useful';
+
+  @override
+  String get divBadgeOptional => 'Optional';
+
+  @override
+  String get divBadgeAdvOnly => 'Advanced Only';
+
+  @override
+  String get divRecommendBest => 'Recommend Best Charts';
+
+  @override
+  String get divNoMatch => 'No charts match your search';
+
+  @override
+  String get divLifeAreas => 'Life Areas';
+
+  @override
+  String divAiUse(Object purpose) {
+    return 'Use this chart to analyse ${purpose}.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'Open this chart when you want to study ${purpose}.';
+  }
+
+  @override
+  String get divD1Name => 'Rasi (D-1)';
+
+  @override
+  String get divD1Desc => 'Physical existence, all matters';
+
+  @override
+  String get divD2Name => 'Hora (D-2)';
+
+  @override
+  String get divD2Desc => 'Wealth, money';
+
+  @override
+  String get divD3Name => 'Drekkana (D-3)';
+
+  @override
+  String get divD3Desc => 'Siblings, courage';
+
+  @override
+  String get divD4Name => 'Chaturthamsa (D-4)';
+
+  @override
+  String get divD4Desc => 'Property, residence, fortune';
+
+  @override
+  String get divD5Name => 'Panchamsa (D-5)';
+
+  @override
+  String get divD5Desc => 'Fame, authority, power';
+
+  @override
+  String get divD6Name => 'Shashthamsa (D-6)';
+
+  @override
+  String get divD6Desc => 'Health troubles';
+
+  @override
+  String get divD7Name => 'Saptamsa (D-7)';
+
+  @override
+  String get divD7Desc => 'Children, grandchildren';
+
+  @override
+  String get divD8Name => 'Ashtamsa (D-8)';
+
+  @override
+  String get divD8Desc => 'Sudden troubles, litigation';
+
+  @override
+  String get divD9Name => 'Navamsha (D-9)';
+
+  @override
+  String get divD9Desc => 'Marriage, spouse, dharma';
+
+  @override
+  String get divD10Name => 'Dasamsha (D-10)';
+
+  @override
+  String get divD10Desc => 'Career, profession';
+
+  @override
+  String get divD11Name => 'Rudramsha (D-11)';
+
+  @override
+  String get divD11Desc => 'Death, destruction';
+
+  @override
+  String get divD12Name => 'Dwadasamsha (D-12)';
+
+  @override
+  String get divD12Desc => 'Parents, blood-relatives';
+
+  @override
+  String get divD16Name => 'Shodasamsha (D-16)';
+
+  @override
+  String get divD16Desc => 'Vehicles, comforts, pleasures';
+
+  @override
+  String get divD20Name => 'Vimsamsha (D-20)';
+
+  @override
+  String get divD20Desc => 'Spiritual matters, religious';
+
+  @override
+  String get divD24Name => 'Chaturvimsamsha (D-24)';
+
+  @override
+  String get divD24Desc => 'Learning, knowledge, education';
+
+  @override
+  String get divD27Name => 'Nakshatramsha (D-27)';
+
+  @override
+  String get divD27Desc => 'Strengths, weaknesses, nature';
+
+  @override
+  String get divD30Name => 'Trimsamsha (D-30)';
+
+  @override
+  String get divD30Desc => 'Evils, sub-conscious, punishment';
+
+  @override
+  String get divD40Name => 'Khavedamsha (D-40)';
+
+  @override
+  String get divD40Desc => 'Auspicious/inauspicious (maternal)';
+
+  @override
+  String get divD45Name => 'Akshavedamsha (D-45)';
+
+  @override
+  String get divD45Desc => 'All matters (paternal)';
+
+  @override
+  String get divD60Name => 'Shashtyamsha (D-60)';
+
+  @override
+  String get divD60Desc => 'Past-life karma — MOST IMPORTANT';
+
+  @override
   String get yogaHelpful => 'Helpful';
 
   @override

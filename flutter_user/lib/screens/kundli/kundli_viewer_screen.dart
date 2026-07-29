@@ -153,7 +153,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         _PaidTab(chartId: widget.chartId, section: 'kundli',
                             builder: (_) => KundliTabWidget(chart: _chart!, complete: _complete)),
                         _PaidTab(chartId: widget.chartId, section: 'divisions',
-                            builder: (_) => DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap())),
+                            builder: (_) => DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap(), complete: _complete)),
                         _PaidTab(chartId: widget.chartId, section: 'vimshottari',
                             builder: (_) => DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari')),
                         _PaidTab(chartId: widget.chartId, section: 'moola',

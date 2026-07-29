@@ -235,6 +235,168 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @divBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get divBeginner;
+
+  /// No description provided for @divSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search: career, marriage, education…'**
+  String get divSearchHint;
+
+  /// No description provided for @divSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisional Chart Summary'**
+  String get divSummaryTitle;
+
+  /// No description provided for @divTotalCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charts'**
+  String get divTotalCharts;
+
+  /// No description provided for @divMostImportant.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Important'**
+  String get divMostImportant;
+
+  /// No description provided for @divRecommendedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended For You'**
+  String get divRecommendedForYou;
+
+  /// No description provided for @divCatEssential.
+  ///
+  /// In en, this message translates to:
+  /// **'Essential Charts'**
+  String get divCatEssential;
+
+  /// No description provided for @divCatPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Life'**
+  String get divCatPersonal;
+
+  /// No description provided for @divCatKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge Charts'**
+  String get divCatKnowledge;
+
+  /// No description provided for @divCatAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Charts'**
+  String get divCatAdvanced;
+
+  /// No description provided for @divGoalProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get divGoalProperty;
+
+  /// No description provided for @divGoalKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma'**
+  String get divGoalKarma;
+
+  /// No description provided for @divBadgeHighlyRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Highly Recommended'**
+  String get divBadgeHighlyRec;
+
+  /// No description provided for @divBadgeRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get divBadgeRec;
+
+  /// No description provided for @divBadgeUseful.
+  ///
+  /// In en, this message translates to:
+  /// **'Useful'**
+  String get divBadgeUseful;
+
+  /// No description provided for @divBadgeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get divBadgeOptional;
+
+  /// No description provided for @divBadgeAdvOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Only'**
+  String get divBadgeAdvOnly;
+
+  /// No description provided for @divRecommendBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommend Best Charts'**
+  String get divRecommendBest;
+
+  /// No description provided for @divNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No charts match your search'**
+  String get divNoMatch;
+
+  /// No description provided for @divLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get divLifeAreas;
+
+  /// No description provided for @divAiUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this chart to analyse {purpose}.'**
+  String divAiUse(Object purpose);
+
+  /// No description provided for @divHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {c1} and {c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.'**
+  String divHeroSummary(Object c1, Object c2);
+
+  /// No description provided for @divRecReasonHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {house} house needs a closer look — this chart shows it in depth.'**
+  String divRecReasonHouse(Object house);
+
+  /// No description provided for @divRecReasonPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is a key but tested planet — this chart reveals its deeper condition.'**
+  String divRecReasonPlanet(Object planet);
+
+  /// No description provided for @divRecReasonDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'You are in {planet}\'s Mahadasha, so this chart is especially timely now.'**
+  String divRecReasonDasha(Object planet);
+
+  /// No description provided for @divRecSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your chart, {c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.'**
+  String divRecSummary(Object c1);
+
+  /// No description provided for @divWhenToUseLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this chart when you want to study {purpose}.'**
+  String divWhenToUseLine(Object purpose);
+
   /// No description provided for @yogaHelpful.
   ///
   /// In en, this message translates to:
