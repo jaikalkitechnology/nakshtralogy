@@ -367,15 +367,52 @@ class NakshtraEngine:
     # ── 9. ASPECT MATRIX ──────────────────────────────────────────────────────
 
     def get_aspect_matrix(self, pdata: dict) -> dict:
-        """Full Graha Drishti matrix + Rashi Drishti."""
-        matrix = _silent(_nk.build_aspect_matrix, pdata)
-        # Convert to JSON-friendly format
-        graha = {}
-        for asp, targets in matrix.items():
-            if asp == "Lagna_received":
-                continue
-            graha[asp] = {t: v for t, v in targets.items() if v > 0}
+        """
+        Standard Parashari Graha Drishti (planet→planet aspect presence) +
+        Jaimini Rashi Drishti (sign→sign).
 
+        Uses `graha_drishti_std` — a planet aspects only the 7th (all) plus its
+        special houses (Mars 4/8, Jupiter 5/9, Saturn 3/10, Rahu/Ketu 5/9).
+        The graded `graha_drishti` used by Shadbala's Drik Bala is intentionally
+        NOT used here (it would report spurious partial aspects everywhere).
+
+        Each aspect is an object: {house, type: full|special, strength: strong|medium}.
+        """
+        PLANETS = ["Sun", "Moon", "Mars", "Mercury",
+                   "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
+        present = [p for p in PLANETS if p in pdata]
+        signs = {p: pdata.get(p, {}).get("rashi_idx", 0) for p in present}
+        lagna_sign = pdata.get("Lagna", {}).get("rashi_idx", 0)
+
+        def _aspect(h: int) -> dict:
+            return {
+                "house": h,
+                "type": "full" if h == 7 else "special",
+                # 7th opposition is the strongest; special aspects are secondary
+                "strength": "strong" if h == 7 else "medium",
+            }
+
+        graha = {}          # aspector -> {target: aspect_info}
+        received = {p: {} for p in present}   # target -> {aspector: aspect_info}
+        for a in present:
+            graha[a] = {}
+            for t in present:
+                if t == a:
+                    continue
+                h = _nk.graha_drishti_std(a, signs[a], signs[t])
+                if h:
+                    info = _aspect(h)
+                    graha[a][t] = info
+                    received[t][a] = info
+
+        # Lagna (ascendant) received aspects
+        lagna_recv = {}
+        for a in present:
+            h = _nk.graha_drishti_std(a, signs[a], lagna_sign)
+            if h:
+                lagna_recv[a] = _aspect(h)
+
+        # Jaimini Rashi Drishti (sign -> signs)
         rashi = {}
         for s1 in range(12):
             aspected = [SIGNS_SHORT[s2] for s2 in range(12)
@@ -383,10 +420,19 @@ class NakshtraEngine:
             if aspected:
                 rashi[SIGNS_SHORT[s1]] = aspected
 
+        # reference: which houses each planet's drishti falls on, and sign map
+        special_aspects = {p: _nk.graha_drishti_houses(p) for p in present}
+        planet_signs = dict(signs)
+        planet_signs["Lagna"] = lagna_sign
+
         return {
+            "planets": present,
             "graha_drishti": graha,
+            "graha_drishti_received": received,
+            "lagna_aspects_received": lagna_recv,
             "rashi_drishti": rashi,
-            "lagna_aspects_received": matrix.get("Lagna_received", {}),
+            "special_aspects": special_aspects,
+            "planet_signs": planet_signs,
         }
 
     # ── 10. LIFE AREAS ────────────────────────────────────────────────────────

@@ -230,6 +230,306 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @aspGivesAspectTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Gives Aspect To'**
+  String get aspGivesAspectTo;
+
+  /// No description provided for @aspReceivesAspectFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Receives Aspect From'**
+  String get aspReceivesAspectFrom;
+
+  /// No description provided for @aspInfluences.
+  ///
+  /// In en, this message translates to:
+  /// **'Influences'**
+  String get aspInfluences;
+
+  /// No description provided for @aspNoInfluence.
+  ///
+  /// In en, this message translates to:
+  /// **'No Influence'**
+  String get aspNoInfluence;
+
+  /// No description provided for @aspNoAspect.
+  ///
+  /// In en, this message translates to:
+  /// **'No Aspect'**
+  String get aspNoAspect;
+
+  /// No description provided for @aspPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get aspPresent;
+
+  /// No description provided for @aspAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get aspAbsent;
+
+  /// No description provided for @aspNotPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Present'**
+  String get aspNotPresent;
+
+  /// No description provided for @aspSpecialAspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Aspect'**
+  String get aspSpecialAspect;
+
+  /// No description provided for @aspAspectWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspect'**
+  String get aspAspectWord;
+
+  /// No description provided for @aspTotalGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspects Given'**
+  String get aspTotalGiven;
+
+  /// No description provided for @aspTotalReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspects Received'**
+  String get aspTotalReceived;
+
+  /// No description provided for @aspStrongestInfluence.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest Influence'**
+  String get aspStrongestInfluence;
+
+  /// No description provided for @aspMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get aspMedium;
+
+  /// No description provided for @aspAspectPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspect Present'**
+  String get aspAspectPresent;
+
+  /// No description provided for @aspReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get aspReason;
+
+  /// No description provided for @aspBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get aspBoth;
+
+  /// No description provided for @aspTargetHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Target House'**
+  String get aspTargetHouse;
+
+  /// No description provided for @aspTargetSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Sign'**
+  String get aspTargetSign;
+
+  /// No description provided for @aspLagnaReceives.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna Receives Aspect From'**
+  String get aspLagnaReceives;
+
+  /// No description provided for @aspNoAspectFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'No Aspect From'**
+  String get aspNoAspectFrom;
+
+  /// No description provided for @aspPlanetToPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet to Planet'**
+  String get aspPlanetToPlanet;
+
+  /// No description provided for @aspSignToSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign to Sign'**
+  String get aspSignToSign;
+
+  /// No description provided for @aspCombinedAspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined Aspect'**
+  String get aspCombinedAspect;
+
+  /// No description provided for @aspGrahaAspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha Aspect'**
+  String get aspGrahaAspect;
+
+  /// No description provided for @aspRashiAspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi Aspect'**
+  String get aspRashiAspect;
+
+  /// No description provided for @aspInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Aspects (Drishti)'**
+  String get aspInfoTitle;
+
+  /// No description provided for @aspQGraha.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Graha Drishti?'**
+  String get aspQGraha;
+
+  /// No description provided for @aspQRashi.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Rashi Drishti?'**
+  String get aspQRashi;
+
+  /// No description provided for @aspQDiff.
+  ///
+  /// In en, this message translates to:
+  /// **'Difference between the two'**
+  String get aspQDiff;
+
+  /// No description provided for @aspQPredict.
+  ///
+  /// In en, this message translates to:
+  /// **'How aspects affect prediction'**
+  String get aspQPredict;
+
+  /// No description provided for @aspGrahaBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha Drishti is the aspect a planet casts from its position. Every planet fully aspects the 7th house/planet from itself (a direct, face-to-face influence). In addition, Mars aspects the 4th and 8th, Jupiter the 5th and 9th, and Saturn the 3rd and 10th. Rahu and Ketu are usually given the 5th, 7th and 9th. A planet\'s aspect colours the planet or house it falls on with its own nature.'**
+  String get aspGrahaBody;
+
+  /// No description provided for @aspRashiBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi Drishti is a sign-to-sign aspect from Jaimini astrology, independent of which planets sit there. Movable signs aspect fixed signs (except the adjacent one), fixed signs aspect movable signs (except the adjacent one), and dual signs aspect the other dual signs. It is used mainly in Jaimini prediction and for judging relationships between houses.'**
+  String get aspRashiBody;
+
+  /// No description provided for @aspDiffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha Drishti is cast by a planet and depends on where that planet sits. Rashi Drishti belongs to the sign itself and applies to whatever is placed in it. Graha Drishti is directional (planet A sees planet B), while Rashi Drishti is usually mutual between the signs. When both point to the same target, the influence is especially strong.'**
+  String get aspDiffBody;
+
+  /// No description provided for @aspPredictBody.
+  ///
+  /// In en, this message translates to:
+  /// **'An aspect shows where a planet extends its influence beyond its own house. A benefic aspect (Jupiter, Venus, well-placed Moon/Mercury) supports and protects the target; a malefic aspect (Saturn, Mars, Sun, Rahu, Ketu) can pressure, delay or challenge it. Reading which planets aspect a house or planet explains why results appear the way they do.'**
+  String get aspPredictBody;
+
+  /// No description provided for @aspTraitSun.
+  ///
+  /// In en, this message translates to:
+  /// **'authority, leadership and vitality'**
+  String get aspTraitSun;
+
+  /// No description provided for @aspTraitMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'emotional depth, comfort and intuition'**
+  String get aspTraitMoon;
+
+  /// No description provided for @aspTraitMars.
+  ///
+  /// In en, this message translates to:
+  /// **'energy, courage and drive'**
+  String get aspTraitMars;
+
+  /// No description provided for @aspTraitMercury.
+  ///
+  /// In en, this message translates to:
+  /// **'communication, intellect and adaptability'**
+  String get aspTraitMercury;
+
+  /// No description provided for @aspTraitJupiter.
+  ///
+  /// In en, this message translates to:
+  /// **'wisdom, growth and good fortune'**
+  String get aspTraitJupiter;
+
+  /// No description provided for @aspTraitVenus.
+  ///
+  /// In en, this message translates to:
+  /// **'love, harmony and comforts'**
+  String get aspTraitVenus;
+
+  /// No description provided for @aspTraitSaturn.
+  ///
+  /// In en, this message translates to:
+  /// **'discipline, responsibility and patient, sometimes delayed, success'**
+  String get aspTraitSaturn;
+
+  /// No description provided for @aspTraitRahu.
+  ///
+  /// In en, this message translates to:
+  /// **'ambition, intensity and unconventional turns'**
+  String get aspTraitRahu;
+
+  /// No description provided for @aspTraitKetu.
+  ///
+  /// In en, this message translates to:
+  /// **'detachment, spirituality and sudden change'**
+  String get aspTraitKetu;
+
+  /// No description provided for @aspAiInfluence.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is influencing {targets}. This may bring {trait} to the areas represented by these planets.'**
+  String aspAiInfluence(Object planet, Object targets, Object trait);
+
+  /// No description provided for @aspAiNone.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} does not cast a special aspect on any other planet here; its influence works mainly through its own sign and house.'**
+  String aspAiNone(Object planet);
+
+  /// No description provided for @grahaDrishti.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha Drishti (Planet Aspects)'**
+  String get grahaDrishti;
+
+  /// No description provided for @rashiDrishti.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi Drishti (Sign Aspects)'**
+  String get rashiDrishti;
+
+  /// No description provided for @grahaDrishtiSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who aspects whom (%)'**
+  String get grahaDrishtiSubtitle;
+
+  /// No description provided for @lagnaAspectsReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna Aspects Received'**
+  String get lagnaAspectsReceived;
+
   /// No description provided for @avSummaryTitle.
   ///
   /// In en, this message translates to:
