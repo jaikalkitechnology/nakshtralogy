@@ -11,6 +11,7 @@ import '../../bloc/service/service_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../rashi/rashi_list_screen.dart';
 import '../ai/ai_specialist_chat_screen.dart';
+import '../../utils/home_labels.dart';
 import '../specialist/specialist_list_screen.dart';
 import '../specialist/specialist_chart_picker.dart';
 import '../specialist/specialist_milan_picker.dart';
@@ -214,7 +215,7 @@ class _HomeTabState extends State<HomeTab> {
             onTap: () => Navigator.push(context, MaterialPageRoute(
               builder: (_) => AiSpecialistChatScreen(
                 domainKey: s['key'] as String,
-                label: s['label'] as String,
+                label: HomeLabels.label(s['key'] as String, Localizations.localeOf(context), s['label'] as String),
                 emoji: s['emoji'] as String,
               ),
             )),
@@ -229,7 +230,7 @@ class _HomeTabState extends State<HomeTab> {
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Text(s['emoji'] as String, style: const TextStyle(fontSize: 26)),
                 const SizedBox(height: 4),
-                Text(s['label'] as String, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w700),
+                Text(HomeLabels.label(s['key'] as String, Localizations.localeOf(context), s['label'] as String), style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w700),
                     maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
               ]),
             ),
@@ -270,7 +271,7 @@ class _HomeTabState extends State<HomeTab> {
             } else {
               Navigator.push(context, MaterialPageRoute(
                 builder: (_) => SpecialistChartPicker(
-                  specialistKey: r['key']!, specialistLabel: r['label']!, specialistEmoji: r['emoji']!)));
+                  specialistKey: r['key']!, specialistLabel: HomeLabels.label(r['key']!, Localizations.localeOf(context), r['label']!), specialistEmoji: r['emoji']!)));
             }
           },
           child: Container(
@@ -285,7 +286,7 @@ class _HomeTabState extends State<HomeTab> {
                 decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
                 child: Center(child: Text(r['emoji']!, style: const TextStyle(fontSize: 18)))),
               const SizedBox(width: 10),
-              Expanded(child: Text(r['label']!, maxLines: 2, overflow: TextOverflow.ellipsis,
+              Expanded(child: Text(HomeLabels.label(r['key']!, Localizations.localeOf(context), r['label']!), maxLines: 2, overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w700))),
             ]),
           ),
