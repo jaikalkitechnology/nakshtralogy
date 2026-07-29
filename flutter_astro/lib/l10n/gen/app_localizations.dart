@@ -230,6 +230,174 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @bhOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get bhOverview;
+
+  /// No description provided for @bhDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed'**
+  String get bhDetailed;
+
+  /// No description provided for @bhavaHouses.
+  ///
+  /// In en, this message translates to:
+  /// **'Houses'**
+  String get bhavaHouses;
+
+  /// No description provided for @bhStrengthOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'House Strength Overview'**
+  String get bhStrengthOverview;
+
+  /// No description provided for @bhOverallAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall House Average'**
+  String get bhOverallAverage;
+
+  /// No description provided for @bhStrongestHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest House'**
+  String get bhStrongestHouse;
+
+  /// No description provided for @bhWeakestHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest House'**
+  String get bhWeakestHouse;
+
+  /// No description provided for @bhBestArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Life Area'**
+  String get bhBestArea;
+
+  /// No description provided for @bhNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Attention'**
+  String get bhNeedsAttention;
+
+  /// No description provided for @bhSavContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV Contribution'**
+  String get bhSavContribution;
+
+  /// No description provided for @bhLordCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'House Lord Condition'**
+  String get bhLordCondition;
+
+  /// No description provided for @bhBenefic.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefic Influence'**
+  String get bhBenefic;
+
+  /// No description provided for @bhMalefic.
+  ///
+  /// In en, this message translates to:
+  /// **'Malefic Influence'**
+  String get bhMalefic;
+
+  /// No description provided for @bhStrengthReasons.
+  ///
+  /// In en, this message translates to:
+  /// **'Why This Score'**
+  String get bhStrengthReasons;
+
+  /// No description provided for @bhGoodEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Effects'**
+  String get bhGoodEffects;
+
+  /// No description provided for @bhChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get bhChallenges;
+
+  /// No description provided for @bhRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Remedies'**
+  String get bhRemedies;
+
+  /// No description provided for @bhRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'House Ranking'**
+  String get bhRanking;
+
+  /// No description provided for @bhSav.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV'**
+  String get bhSav;
+
+  /// No description provided for @bhExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Houses'**
+  String get bhExplain;
+
+  /// No description provided for @bhExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A simple summary of your 12 houses'**
+  String get bhExplainSubtitle;
+
+  /// No description provided for @bhHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your strongest houses are {s1} and {s2}. {strongArea} is naturally strong, while {weakArea} needs more effort.'**
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea);
+
+  /// No description provided for @bhLordLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Its lord {lord} is placed as {relation}.'**
+  String bhLordLine(Object lord, Object relation);
+
+  /// No description provided for @bhWhyLine.
+  ///
+  /// In en, this message translates to:
+  /// **'This house carries {sav} benefic points (SAV); its occupants and aspects shape the rest of the score.'**
+  String bhWhyLine(Object sav);
+
+  /// No description provided for @bhGoodLine.
+  ///
+  /// In en, this message translates to:
+  /// **'When strong, it supports {meaning}.'**
+  String bhGoodLine(Object meaning);
+
+  /// No description provided for @bhChallengeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'When weak, {meaning} may need extra effort and care.'**
+  String bhChallengeLine(Object meaning);
+
+  /// No description provided for @bhRemedyLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthen its lord {lord} and honour this house\'s matters to lift it.'**
+  String bhRemedyLine(Object lord);
+
+  /// No description provided for @bhCardAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {house} is {strengthWord}. It governs {meaning}.'**
+  String bhCardAi(Object house, Object strengthWord, Object meaning);
+
   /// No description provided for @kunNavamsa.
   ///
   /// In en, this message translates to:

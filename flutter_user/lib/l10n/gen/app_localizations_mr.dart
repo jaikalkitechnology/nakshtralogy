@@ -3894,6 +3894,104 @@ class AppLocalizationsMr extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड विसरलात?';
 
   @override
+  String get bhOverview => 'Overview';
+
+  @override
+  String get bhDetailed => 'Detailed';
+
+  @override
+  String get bhavaHouses => 'Houses';
+
+  @override
+  String get bhStrengthOverview => 'House Strength Overview';
+
+  @override
+  String get bhOverallAverage => 'Overall House Average';
+
+  @override
+  String get bhStrongestHouse => 'Strongest House';
+
+  @override
+  String get bhWeakestHouse => 'Weakest House';
+
+  @override
+  String get bhBestArea => 'Best Life Area';
+
+  @override
+  String get bhNeedsAttention => 'Needs Attention';
+
+  @override
+  String get bhSavContribution => 'SAV Contribution';
+
+  @override
+  String get bhLordCondition => 'House Lord Condition';
+
+  @override
+  String get bhBenefic => 'Benefic Influence';
+
+  @override
+  String get bhMalefic => 'Malefic Influence';
+
+  @override
+  String get bhStrengthReasons => 'Why This Score';
+
+  @override
+  String get bhGoodEffects => 'Good Effects';
+
+  @override
+  String get bhChallenges => 'Challenges';
+
+  @override
+  String get bhRemedies => 'Remedies';
+
+  @override
+  String get bhRanking => 'House Ranking';
+
+  @override
+  String get bhSav => 'SAV';
+
+  @override
+  String get bhExplain => 'Explain My Houses';
+
+  @override
+  String get bhExplainSubtitle => 'A simple summary of your 12 houses';
+
+  @override
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
+    return 'Your strongest houses are ${s1} and ${s2}. ${strongArea} is naturally strong, while ${weakArea} needs more effort.';
+  }
+
+  @override
+  String bhLordLine(Object lord, Object relation) {
+    return 'Its lord ${lord} is placed as ${relation}.';
+  }
+
+  @override
+  String bhWhyLine(Object sav) {
+    return 'This house carries ${sav} benefic points (SAV); its occupants and aspects shape the rest of the score.';
+  }
+
+  @override
+  String bhGoodLine(Object meaning) {
+    return 'When strong, it supports ${meaning}.';
+  }
+
+  @override
+  String bhChallengeLine(Object meaning) {
+    return 'When weak, ${meaning} may need extra effort and care.';
+  }
+
+  @override
+  String bhRemedyLine(Object lord) {
+    return 'Strengthen its lord ${lord} and honour this house\'s matters to lift it.';
+  }
+
+  @override
+  String bhCardAi(Object house, Object strengthWord, Object meaning) {
+    return 'Your ${house} is ${strengthWord}. It governs ${meaning}.';
+  }
+
+  @override
   String get sendResetLink => 'रीसेट लिंक पाठवा';
 
   @override
