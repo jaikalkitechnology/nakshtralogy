@@ -70,37 +70,37 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String divAiUse(Object purpose) {
-    return 'Use this chart to analyse ${purpose}.';
+    return '${purpose} ka vishleshan karne ke liye is kundli ka upyog karein.';
   }
 
   @override
   String divHeroSummary(Object c1, Object c2) {
-    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+    return 'Aapki ${c1} aur ${c2} kundliyan khaas taur par mahatvapurna hain — inse judi cheezon ke liye yahin se shuruat karein, phir zarurat ke anusar baaki kundliyan bhi dekhein.';
   }
 
   @override
   String divRecReasonHouse(Object house) {
-    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+    return 'Aapke ${house} bhaav par gehrai se nazar daalna zaroori hai — yeh kundli ise vistaar se dikhati hai.';
   }
 
   @override
   String divRecReasonPlanet(Object planet) {
-    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+    return '${planet} ek mahatvapurna lekin chunauti-purna grah hai — yeh kundli iski gehri sthiti ko ujagar karti hai.';
   }
 
   @override
   String divRecReasonDasha(Object planet) {
-    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+    return 'Aap abhi ${planet} ki Mahadasha mein hain, isliye yeh kundli abhi khaas taur par upyukt hai.';
   }
 
   @override
   String divRecSummary(Object c1) {
-    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+    return 'Aapki kundli ke anusar, ${c1} aapki sabse badi priority honi chahiye. Neeche di gayi kundliyan aapke liye unki prasangikta ke hisaab se kramabaddh hain.';
   }
 
   @override
   String divWhenToUseLine(Object purpose) {
-    return 'Open this chart when you want to study ${purpose}.';
+    return 'Jab aap ${purpose} ka adhyayan karna chahein, tab yeh kundli kholein.';
   }
 
   @override

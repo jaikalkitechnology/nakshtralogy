@@ -70,37 +70,37 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String divAiUse(Object purpose) {
-    return 'Use this chart to analyse ${purpose}.';
+    return '${purpose} का विश्लेषण करने के लिए इस कुंडली का उपयोग करें।';
   }
 
   @override
   String divHeroSummary(Object c1, Object c2) {
-    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+    return 'आपकी ${c1} और ${c2} कुंडलियाँ विशेष रूप से महत्वपूर्ण हैं — इनसे जुड़े क्षेत्रों के लिए यहीं से शुरुआत करें, फिर आवश्यकतानुसार बाकी कुंडलियाँ भी देखें।';
   }
 
   @override
   String divRecReasonHouse(Object house) {
-    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+    return 'आपके ${house} भाव पर गहराई से नज़र डालने की ज़रूरत है — यह कुंडली इसे विस्तार से दिखाती है।';
   }
 
   @override
   String divRecReasonPlanet(Object planet) {
-    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+    return '${planet} एक महत्वपूर्ण लेकिन चुनौतीपूर्ण ग्रह है — यह कुंडली इसकी गहन स्थिति को उजागर करती है।';
   }
 
   @override
   String divRecReasonDasha(Object planet) {
-    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+    return 'आप वर्तमान में ${planet} की महादशा में हैं, इसलिए यह कुंडली अभी विशेष रूप से उपयुक्त है।';
   }
 
   @override
   String divRecSummary(Object c1) {
-    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+    return 'आपकी कुंडली के अनुसार, ${c1} को आपकी सर्वोच्च प्राथमिकता होनी चाहिए। नीचे दी गई कुंडलियाँ आपके लिए उनकी प्रासंगिकता के अनुसार क्रमबद्ध हैं।';
   }
 
   @override
   String divWhenToUseLine(Object purpose) {
-    return 'Open this chart when you want to study ${purpose}.';
+    return 'जब आप ${purpose} का अध्ययन करना चाहें, तब यह कुंडली खोलें।';
   }
 
   @override

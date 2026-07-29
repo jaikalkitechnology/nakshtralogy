@@ -9,98 +9,98 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
-  String get divBeginner => 'Beginner';
+  String get divBeginner => 'எளிமையானது';
 
   @override
-  String get divSearchHint => 'Search: career, marriage, education…';
+  String get divSearchHint => 'தேடு: தொழில், திருமணம், கல்வி…';
 
   @override
-  String get divSummaryTitle => 'Divisional Chart Summary';
+  String get divSummaryTitle => 'வர்க்க குண்டலி சுருக்கம்';
 
   @override
-  String get divTotalCharts => 'Total Charts';
+  String get divTotalCharts => 'மொத்த குண்டலிகள்';
 
   @override
-  String get divMostImportant => 'Most Important';
+  String get divMostImportant => 'மிக முக்கியமானவை';
 
   @override
-  String get divRecommendedForYou => 'Recommended For You';
+  String get divRecommendedForYou => 'உங்களுக்காக பரிந்துரைக்கப்பட்டவை';
 
   @override
-  String get divCatEssential => 'Essential Charts';
+  String get divCatEssential => 'அத்தியாவசிய குண்டலிகள்';
 
   @override
-  String get divCatPersonal => 'Personal Life';
+  String get divCatPersonal => 'தனிப்பட்ட வாழ்க்கை';
 
   @override
-  String get divCatKnowledge => 'Knowledge Charts';
+  String get divCatKnowledge => 'அறிவு குண்டலிகள்';
 
   @override
-  String get divCatAdvanced => 'Advanced Charts';
+  String get divCatAdvanced => 'மேம்பட்ட குண்டலிகள்';
 
   @override
-  String get divGoalProperty => 'Property';
+  String get divGoalProperty => 'சொத்து';
 
   @override
-  String get divGoalKarma => 'Karma';
+  String get divGoalKarma => 'கர்மா';
 
   @override
-  String get divBadgeHighlyRec => 'Highly Recommended';
+  String get divBadgeHighlyRec => 'மிகவும் பரிந்துரைக்கப்பட்டது';
 
   @override
-  String get divBadgeRec => 'Recommended';
+  String get divBadgeRec => 'பரிந்துரை';
 
   @override
-  String get divBadgeUseful => 'Useful';
+  String get divBadgeUseful => 'பயனுள்ளது';
 
   @override
-  String get divBadgeOptional => 'Optional';
+  String get divBadgeOptional => 'விருப்பத்திற்குரியது';
 
   @override
-  String get divBadgeAdvOnly => 'Advanced Only';
+  String get divBadgeAdvOnly => 'மேம்பட்டவர்களுக்கு மட்டும்';
 
   @override
-  String get divRecommendBest => 'Recommend Best Charts';
+  String get divRecommendBest => 'சிறந்த குண்டலிகளை பரிந்துரைக்கவும்';
 
   @override
-  String get divNoMatch => 'No charts match your search';
+  String get divNoMatch => 'உங்கள் தேடலுக்கு பொருந்தும் குண்டலிகள் இல்லை';
 
   @override
-  String get divLifeAreas => 'Life Areas';
+  String get divLifeAreas => 'வாழ்க்கை பகுதிகள்';
 
   @override
   String divAiUse(Object purpose) {
-    return 'Use this chart to analyse ${purpose}.';
+    return '${purpose} பகுப்பாய்வு செய்ய இந்த குண்டலியைப் பயன்படுத்தவும்.';
   }
 
   @override
   String divHeroSummary(Object c1, Object c2) {
-    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+    return 'உங்கள் ${c1} மற்றும் ${c2} குண்டலிகள் மிகவும் முக்கியமானவை — அவை உள்ளடக்கும் விஷயங்களுக்கு அங்கிருந்தே தொடங்கி, தேவைப்படும்போது மற்றவற்றையும் ஆராயுங்கள்.';
   }
 
   @override
   String divRecReasonHouse(Object house) {
-    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+    return 'உங்கள் ${house} வீட்டை இன்னும் ஆழமாக பார்க்க வேண்டும் — இந்த குண்டலி அதை விரிவாகக் காட்டுகிறது.';
   }
 
   @override
   String divRecReasonPlanet(Object planet) {
-    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+    return '${planet} ஒரு முக்கியமான ஆனால் சவாலான கிரகம் — இந்த குண்டலி அதன் ஆழ்ந்த நிலையை வெளிப்படுத்துகிறது.';
   }
 
   @override
   String divRecReasonDasha(Object planet) {
-    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+    return 'நீங்கள் தற்போது ${planet} மகாதசையில் இருக்கிறீர்கள், எனவே இந்த குண்டலி இப்போது மிகவும் பொருத்தமானது.';
   }
 
   @override
   String divRecSummary(Object c1) {
-    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+    return 'உங்கள் குண்டலியின்படி, ${c1} உங்களுக்கு மிக முக்கியமான முன்னுரிமையாக இருக்க வேண்டும். கீழே உள்ள குண்டலிகள் உங்களுக்கான பொருத்தத்தின் அடிப்படையில் வரிசைப்படுத்தப்பட்டுள்ளன.';
   }
 
   @override
   String divWhenToUseLine(Object purpose) {
-    return 'Open this chart when you want to study ${purpose}.';
+    return 'நீங்கள் ${purpose} படிக்க விரும்பும்போது இந்த குண்டலியைத் திறக்கவும்.';
   }
 
   @override
