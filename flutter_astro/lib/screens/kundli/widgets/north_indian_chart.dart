@@ -114,7 +114,9 @@ class NorthIndianChartWidget extends StatelessWidget {
     final rashiIdx = (house['rashi_idx'] as num?)?.toInt() ?? 0;
     final planets = (house['planets'] as List?) ?? [];
     final isLagna = house['is_lagna'] == true;
-    final fontSize = w < 340 ? 9.0 : 10.0;
+    // Medium base font (was 9/10). FittedBox scales the whole cell down when a
+    // house is crowded, so ALL planets stay visible (no 3-planet cap).
+    final base = w < 340 ? 11.5 : 13.0;
 
     return FittedBox(
       fit: BoxFit.scaleDown,
@@ -127,46 +129,51 @@ class NorthIndianChartWidget extends StatelessWidget {
         Text(
           '${rashiIdx + 1}',
           style: TextStyle(
-            color: isLagna ? const Color(0xFFE0A526) : const Color(0xFFE0A526).withOpacity(0.7),
-            fontSize: isLagna ? fontSize + 2 : fontSize,
+            color: isLagna ? const Color(0xFFFFD24A) : const Color(0xFFE7B94E),
+            fontSize: isLagna ? base : base - 1.5,
             fontWeight: FontWeight.w700,
+            height: 1.1,
           ),
         ),
-        // Planets
+        // Planets \u2014 show every planet in the house (up to 9)
         if (planets.isNotEmpty)
-          ...planets.take(3).map<Widget>((p) {
+          ...planets.map<Widget>((p) {
             final planet = p as Map;
             final name = (planet['planet'] ?? '').toString();
             final degree = (planet['degree'] as num?)?.toInt() ?? 0;
             final flags = (planet['flags'] as List?) ?? [];
             final dignity = (planet['dignity'] ?? '').toString().toLowerCase();
             var flagStr = '';
-            if (flags.contains('R')) flagStr += '*';
-            if (flags.contains('C')) flagStr += '^';
-            if (flags.contains('V')) flagStr += '\u25A1';
+            if (flags.contains('R')) flagStr += 'R';
+            if (flags.contains('C')) flagStr += 'C';
+            if (flags.contains('V')) flagStr += 'V';
             if (dignity == 'exalted') flagStr += '\u2191';
             if (dignity == 'debilitated') flagStr += '\u2193';
             final abbr = name.length > 2 ? name.substring(0, 2) : name;
-            return Text.rich(
-              TextSpan(children: [
-                TextSpan(
-                  text: abbr,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                if (flagStr.isNotEmpty)
+            return Padding(
+              padding: const EdgeInsets.only(top: 1.5),
+              child: Text.rich(
+                TextSpan(children: [
                   TextSpan(
-                    text: flagStr,
-                    style: TextStyle(color: const Color(0xFFE0A526), fontSize: fontSize - 2, fontWeight: FontWeight.bold),
+                    text: abbr,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: base,
+                      fontWeight: FontWeight.w800,
+                      height: 1.1,
+                    ),
                   ),
-                TextSpan(
-                  text: '$degree',
-                  style: TextStyle(color: Colors.white70, fontSize: fontSize - 3),
-                ),
-              ]),
+                  if (flagStr.isNotEmpty)
+                    TextSpan(
+                      text: ' $flagStr',
+                      style: TextStyle(color: const Color(0xFFFFB020), fontSize: base - 1, fontWeight: FontWeight.w800),
+                    ),
+                  TextSpan(
+                    text: ' $degree\u00B0',
+                    style: TextStyle(color: const Color(0xFF7FD1FF), fontSize: base - 2, fontWeight: FontWeight.w600),
+                  ),
+                ]),
+              ),
             );
           }),
       ],
@@ -174,10 +181,13 @@ class NorthIndianChartWidget extends StatelessWidget {
   }
 
   Widget _legend() {
-    const style = TextStyle(color: AppColors.textSecondary, fontSize: 10);
-    const boldStyle = TextStyle(color: AppColors.textPrimary, fontSize: 10, fontWeight: FontWeight.w600);
+    const style = TextStyle(color: AppColors.textPrimary, fontSize: 11.5, fontWeight: FontWeight.w500);
+    const symStyle = TextStyle(color: Color(0xFFFFB020), fontSize: 12.5, fontWeight: FontWeight.w800);
+    Widget item(String sym, String label) => Row(mainAxisSize: MainAxisSize.min,
+        children: [Text('$sym ', style: symStyle), Text(label, style: style)]);
+    final l = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(8),
@@ -185,13 +195,13 @@ class NorthIndianChartWidget extends StatelessWidget {
       ),
       child: Wrap(
         spacing: 16,
-        runSpacing: 4,
+        runSpacing: 6,
         children: [
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('* ', style: boldStyle), Text(AppLocalizations.of(context)?.retrograde ?? 'Retrograde', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('^ ', style: boldStyle), Text(AppLocalizations.of(context)?.combust ?? 'Combust', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u25A1 ', style: boldStyle), Text(AppLocalizations.of(context)?.vargottama ?? 'Vargottama', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2191 ', style: boldStyle), Text(AppLocalizations.of(context)?.exalted ?? 'Exalted', style: style)]),
-          Row(mainAxisSize: MainAxisSize.min, children: [Text('\u2193 ', style: boldStyle), Text(AppLocalizations.of(context)?.debilitated ?? 'Debilitated', style: style)]),
+          item('R', l?.retrograde ?? 'Retrograde'),
+          item('C', l?.combust ?? 'Combust'),
+          item('V', l?.vargottama ?? 'Vargottama'),
+          item('\u2191', l?.exalted ?? 'Exalted'),
+          item('\u2193', l?.debilitated ?? 'Debilitated'),
         ],
       ),
     );
