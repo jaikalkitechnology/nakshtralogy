@@ -11,7 +11,6 @@ import '../../bloc/service/service_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../rashi/rashi_list_screen.dart';
 import '../ai/ai_specialist_chat_screen.dart';
-import '../milan/milan_chart_selector.dart';
 import '../specialist/specialist_list_screen.dart';
 import '../specialist/specialist_chart_picker.dart';
 import '../specialist/specialist_milan_picker.dart';
@@ -138,7 +137,7 @@ class _HomeTabState extends State<HomeTab> {
       {'icon': Icons.assessment, 'label': l.reports, 'color': Colors.purple, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistListScreen()))},
       {'icon': Icons.favorite, 'label': l.milan, 'color': AppColors.cosmicPink, 'onTap': () =>
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector()))},
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker()))},
       {'icon': Icons.wb_sunny, 'label': l.forecast, 'color': Colors.orange, 'onTap': () =>
           Navigator.push(context, MaterialPageRoute(builder: (_) => const ForecastChartPicker()))},
       {'icon': Icons.auto_awesome_mosaic, 'label': l.rashi, 'color': AppColors.aurora, 'onTap': () =>
