@@ -142,89 +142,89 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String plLordOfHouses(Object houses) {
-    return 'Lord of house(s) ${houses}';
+    return 'भाव ${houses} के स्वामी';
   }
 
   @override
   String plNakMeaning(Object nakLord, Object trait) {
-    return 'Ruled by ${nakLord}, bringing ${trait}.';
+    return '${nakLord} द्वारा शासित, जो ${trait} लाता है।';
   }
 
   @override
   String plAiPlace(Object planet, Object sign, Object house) {
-    return '${planet} sits in ${sign}, in the ${house} house.';
+    return '${planet}, ${sign} राशि में, ${house} भाव में स्थित है।';
   }
 
   @override
   String plAiKarakStrong(Object karak) {
-    return 'Its core significations — ${karak} — are well supported here.';
+    return 'इसके मुख्य कारकत्व — ${karak} — यहाँ अच्छी तरह समर्थित हैं।';
   }
 
   @override
   String plAiKarakWeak(Object karak) {
-    return 'Its core significations — ${karak} — may need conscious effort here.';
+    return 'इसके मुख्य कारकत्व — ${karak} — को यहाँ सचेत प्रयास की आवश्यकता हो सकती है।';
   }
 
   @override
   String plAiExalted(Object planet) {
-    return '${planet} is exalted, giving its very best results.';
+    return '${planet} उच्च का है, जो अपने सर्वश्रेष्ठ परिणाम देता है।';
   }
 
   @override
   String plAiDebilitated(Object planet) {
-    return '${planet} is debilitated and needs support to deliver its results.';
+    return '${planet} नीच का है और अपने परिणाम देने के लिए सहारे की आवश्यकता है।';
   }
 
   @override
   String plAiCombust(Object planet) {
-    return '${planet} is combust, so it works less openly under the Sun\'s glare.';
+    return '${planet} अस्त है, इसलिए यह सूर्य की तीव्रता में कम खुलकर कार्य करता है।';
   }
 
   @override
   String plAiVargottama(Object planet) {
-    return '${planet} is vargottama — a strong placement repeated in the navamsa.';
+    return '${planet} वर्गोत्तम है — यह मजबूत स्थिति नवमांश में भी दोहराई जाती है।';
   }
 
   @override
   String plAiRetrograde(Object planet) {
-    return '${planet} is retrograde, turning its energy inward and intensifying it.';
+    return '${planet} वक्री है, जो अपनी ऊर्जा को भीतर की ओर मोड़कर उसे तीव्र करता है।';
   }
 
   @override
-  String get plHouse1 => 'self, body, personality and vitality';
+  String get plHouse1 => 'स्व, शरीर, व्यक्तित्व और जीवनशक्ति';
 
   @override
-  String get plHouse2 => 'wealth, family, speech and food';
+  String get plHouse2 => 'धन, परिवार, वाणी और भोजन';
 
   @override
-  String get plHouse3 => 'courage, siblings, communication and short travels';
+  String get plHouse3 => 'साहस, भाई-बहन, संचार और छोटी यात्राएँ';
 
   @override
-  String get plHouse4 => 'home, mother, comfort, property and inner peace';
+  String get plHouse4 => 'घर, माता, सुख-सुविधा, संपत्ति और आंतरिक शांति';
 
   @override
-  String get plHouse5 => 'children, creativity, intelligence, romance and past merits';
+  String get plHouse5 => 'संतान, रचनात्मकता, बुद्धि, प्रेम और पूर्व पुण्य';
 
   @override
-  String get plHouse6 => 'health, enemies, debts, service and daily work';
+  String get plHouse6 => 'स्वास्थ्य, शत्रु, ऋण, सेवा और दैनिक कार्य';
 
   @override
-  String get plHouse7 => 'marriage, partnerships and business relationships';
+  String get plHouse7 => 'विवाह, साझेदारी और व्यावसायिक संबंध';
 
   @override
-  String get plHouse8 => 'longevity, transformation, secrets and inheritance';
+  String get plHouse8 => 'आयु, परिवर्तन, रहस्य और विरासत';
 
   @override
-  String get plHouse9 => 'fortune, dharma, higher learning, guru and father';
+  String get plHouse9 => 'भाग्य, धर्म, उच्च शिक्षा, गुरु और पिता';
 
   @override
-  String get plHouse10 => 'career, status, authority and public karma';
+  String get plHouse10 => 'करियर, प्रतिष्ठा, अधिकार और सार्वजनिक कर्म';
 
   @override
-  String get plHouse11 => 'gains, income, friends, network and fulfilled desires';
+  String get plHouse11 => 'लाभ, आय, मित्र, नेटवर्क और पूर्ण इच्छाएँ';
 
   @override
-  String get plHouse12 => 'loss, expenses, foreign lands, spirituality and liberation';
+  String get plHouse12 => 'हानि, व्यय, विदेश, आध्यात्मिकता और मोक्ष';
 
   @override
   String get sumVeryStrong => 'बहुत मजबूत';

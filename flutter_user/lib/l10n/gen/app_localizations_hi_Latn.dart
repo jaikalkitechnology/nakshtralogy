@@ -142,89 +142,89 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String plLordOfHouses(Object houses) {
-    return 'Lord of house(s) ${houses}';
+    return 'Bhav ${houses} ke Swami';
   }
 
   @override
   String plNakMeaning(Object nakLord, Object trait) {
-    return 'Ruled by ${nakLord}, bringing ${trait}.';
+    return '${nakLord} dwara shasit, jo ${trait} laata hai.';
   }
 
   @override
   String plAiPlace(Object planet, Object sign, Object house) {
-    return '${planet} sits in ${sign}, in the ${house} house.';
+    return '${planet}, ${sign} rashi mein, ${house} bhav mein sthit hai.';
   }
 
   @override
   String plAiKarakStrong(Object karak) {
-    return 'Its core significations — ${karak} — are well supported here.';
+    return 'Iske mukhya karakatva — ${karak} — yahaan achhi tarah samarthit hain.';
   }
 
   @override
   String plAiKarakWeak(Object karak) {
-    return 'Its core significations — ${karak} — may need conscious effort here.';
+    return 'Iske mukhya karakatva — ${karak} — ko yahaan sachet prayaas ki zaroorat ho sakti hai.';
   }
 
   @override
   String plAiExalted(Object planet) {
-    return '${planet} is exalted, giving its very best results.';
+    return '${planet} uchcha ka hai, jo apne sarvashreshtha parinaam deta hai.';
   }
 
   @override
   String plAiDebilitated(Object planet) {
-    return '${planet} is debilitated and needs support to deliver its results.';
+    return '${planet} neech ka hai aur apne parinaam dene ke liye sahaare ki zaroorat hai.';
   }
 
   @override
   String plAiCombust(Object planet) {
-    return '${planet} is combust, so it works less openly under the Sun\'s glare.';
+    return '${planet} ast hai, isliye yah Surya ki teevrata mein kam khulkar kaam karta hai.';
   }
 
   @override
   String plAiVargottama(Object planet) {
-    return '${planet} is vargottama — a strong placement repeated in the navamsa.';
+    return '${planet} vargottama hai — yah majboot sthiti navamsa mein bhi doharaayi jaati hai.';
   }
 
   @override
   String plAiRetrograde(Object planet) {
-    return '${planet} is retrograde, turning its energy inward and intensifying it.';
+    return '${planet} vakri hai, jo apni urja ko bheetar ki ore modkar use teevra karta hai.';
   }
 
   @override
-  String get plHouse1 => 'self, body, personality and vitality';
+  String get plHouse1 => 'Swa, sharir, vyaktitva aur jeevanshakti';
 
   @override
-  String get plHouse2 => 'wealth, family, speech and food';
+  String get plHouse2 => 'Dhan, parivaar, vaani aur bhojan';
 
   @override
-  String get plHouse3 => 'courage, siblings, communication and short travels';
+  String get plHouse3 => 'Saahas, bhai-behen, sanchaar aur choti yatraayein';
 
   @override
-  String get plHouse4 => 'home, mother, comfort, property and inner peace';
+  String get plHouse4 => 'Ghar, maata, sukh-suvidha, sampatti aur aantarik shaanti';
 
   @override
-  String get plHouse5 => 'children, creativity, intelligence, romance and past merits';
+  String get plHouse5 => 'Santaan, rachnaatmakta, buddhi, prem aur poorv punya';
 
   @override
-  String get plHouse6 => 'health, enemies, debts, service and daily work';
+  String get plHouse6 => 'Swasthya, shatru, rin, seva aur dainik kaarya';
 
   @override
-  String get plHouse7 => 'marriage, partnerships and business relationships';
+  String get plHouse7 => 'Vivaah, saajhedari aur vyavsayik sambandh';
 
   @override
-  String get plHouse8 => 'longevity, transformation, secrets and inheritance';
+  String get plHouse8 => 'Aayu, parivartan, rahasya aur virasat';
 
   @override
-  String get plHouse9 => 'fortune, dharma, higher learning, guru and father';
+  String get plHouse9 => 'Bhagya, dharma, uchch shiksha, guru aur pita';
 
   @override
-  String get plHouse10 => 'career, status, authority and public karma';
+  String get plHouse10 => 'Career, pratishtha, adhikaar aur saarvajanik karma';
 
   @override
-  String get plHouse11 => 'gains, income, friends, network and fulfilled desires';
+  String get plHouse11 => 'Laabh, aay, mitra, network aur poorn ichchhayein';
 
   @override
-  String get plHouse12 => 'loss, expenses, foreign lands, spirituality and liberation';
+  String get plHouse12 => 'Haani, vyay, videsh, aadhyatmikta aur moksha';
 
   @override
   String get sumVeryStrong => 'Bahut Mazboot';

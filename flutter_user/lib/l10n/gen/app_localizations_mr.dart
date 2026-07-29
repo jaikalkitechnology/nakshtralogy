@@ -69,162 +69,162 @@ class AppLocalizationsMr extends AppLocalizations {
   }
 
   @override
-  String get plNature => 'Nature';
+  String get plNature => 'स्वभाव';
 
   @override
-  String get plElement => 'Element';
+  String get plElement => 'तत्त्व';
 
   @override
-  String get plGender => 'Gender';
+  String get plGender => 'लिंग';
 
   @override
-  String get plKarakatva => 'Karakatva';
+  String get plKarakatva => 'कारकत्व';
 
   @override
-  String get plLordship => 'Lordship';
+  String get plLordship => 'स्वामित्व';
 
   @override
-  String get plStrength => 'Strength';
+  String get plStrength => 'बल';
 
   @override
-  String get plAspectsGiven => 'Aspects Given';
+  String get plAspectsGiven => 'दिलेली दृष्टी';
 
   @override
-  String get plAspectsReceived => 'Aspects Received';
+  String get plAspectsReceived => 'मिळालेली दृष्टी';
 
   @override
-  String get plConjunction => 'Conjunction';
+  String get plConjunction => 'युती';
 
   @override
-  String get plHouseMeaning => 'House Meaning';
+  String get plHouseMeaning => 'भावाचा अर्थ';
 
   @override
-  String get plNakshatraMeaning => 'Nakshatra Meaning';
+  String get plNakshatraMeaning => 'नक्षत्राचा अर्थ';
 
   @override
-  String get plAiInterpretation => 'AI Interpretation';
+  String get plAiInterpretation => 'AI स्पष्टीकरण';
 
   @override
-  String get plSearchHint => 'Search any planet';
+  String get plSearchHint => 'कोणताही ग्रह शोधा';
 
   @override
-  String get plNoResults => 'No planets found';
+  String get plNoResults => 'कोणताही ग्रह सापडला नाही';
 
   @override
-  String get plBenefic => 'Benefic';
+  String get plBenefic => 'शुभ';
 
   @override
-  String get plMalefic => 'Malefic';
+  String get plMalefic => 'पाप';
 
   @override
-  String get plMale => 'Male';
+  String get plMale => 'पुरुष';
 
   @override
-  String get plFemale => 'Female';
+  String get plFemale => 'स्त्री';
 
   @override
-  String get plNeutralGender => 'Neutral';
+  String get plNeutralGender => 'नपुंसक';
 
   @override
-  String get plOwnSign => 'Own Sign';
+  String get plOwnSign => 'स्व राशी';
 
   @override
-  String get plFriend => 'Friend Sign';
+  String get plFriend => 'मित्र राशी';
 
   @override
-  String get plEnemy => 'Enemy Sign';
+  String get plEnemy => 'शत्रू राशी';
 
   @override
-  String get plNeutral => 'Neutral';
+  String get plNeutral => 'सम';
 
   @override
-  String get sumEther => 'Ether';
+  String get sumEther => 'आकाश';
 
   @override
   String plLordOfHouses(Object houses) {
-    return 'Lord of house(s) ${houses}';
+    return 'भाव ${houses}चे स्वामी';
   }
 
   @override
   String plNakMeaning(Object nakLord, Object trait) {
-    return 'Ruled by ${nakLord}, bringing ${trait}.';
+    return '${nakLord} द्वारे शासित, ${trait} आणते.';
   }
 
   @override
   String plAiPlace(Object planet, Object sign, Object house) {
-    return '${planet} sits in ${sign}, in the ${house} house.';
+    return '${planet}, ${sign} राशीत, ${house} भावात स्थित आहे.';
   }
 
   @override
   String plAiKarakStrong(Object karak) {
-    return 'Its core significations — ${karak} — are well supported here.';
+    return 'याचे मुख्य कारकत्व — ${karak} — येथे चांगल्या प्रकारे समर्थित आहेत.';
   }
 
   @override
   String plAiKarakWeak(Object karak) {
-    return 'Its core significations — ${karak} — may need conscious effort here.';
+    return 'याचे मुख्य कारकत्व — ${karak} — यासाठी येथे जाणीवपूर्वक प्रयत्नांची गरज भासू शकते.';
   }
 
   @override
   String plAiExalted(Object planet) {
-    return '${planet} is exalted, giving its very best results.';
+    return '${planet} उच्च राशीत आहे, जो त्याचे सर्वोत्तम परिणाम देतो.';
   }
 
   @override
   String plAiDebilitated(Object planet) {
-    return '${planet} is debilitated and needs support to deliver its results.';
+    return '${planet} नीच राशीत आहे आणि त्याचे परिणाम देण्यासाठी आधाराची गरज आहे.';
   }
 
   @override
   String plAiCombust(Object planet) {
-    return '${planet} is combust, so it works less openly under the Sun\'s glare.';
+    return '${planet} अस्त आहे, त्यामुळे तो सूर्याच्या तीव्रतेत कमी उघडपणे कार्य करतो.';
   }
 
   @override
   String plAiVargottama(Object planet) {
-    return '${planet} is vargottama — a strong placement repeated in the navamsa.';
+    return '${planet} वर्गोत्तम आहे — ही मजबूत स्थिती नवमांशातही पुनरावृत्ती होते.';
   }
 
   @override
   String plAiRetrograde(Object planet) {
-    return '${planet} is retrograde, turning its energy inward and intensifying it.';
+    return '${planet} वक्री आहे, जो त्याची ऊर्जा आतल्या दिशेने वळवून ती तीव्र करतो.';
   }
 
   @override
-  String get plHouse1 => 'self, body, personality and vitality';
+  String get plHouse1 => 'स्व, शरीर, व्यक्तिमत्त्व आणि जीवनशक्ती';
 
   @override
-  String get plHouse2 => 'wealth, family, speech and food';
+  String get plHouse2 => 'धन, कुटुंब, वाणी आणि अन्न';
 
   @override
-  String get plHouse3 => 'courage, siblings, communication and short travels';
+  String get plHouse3 => 'धैर्य, भावंडे, संवाद आणि छोटे प्रवास';
 
   @override
-  String get plHouse4 => 'home, mother, comfort, property and inner peace';
+  String get plHouse4 => 'घर, आई, सुखसोयी, मालमत्ता आणि आंतरिक शांती';
 
   @override
-  String get plHouse5 => 'children, creativity, intelligence, romance and past merits';
+  String get plHouse5 => 'संतती, सर्जनशीलता, बुद्धी, प्रेम आणि पूर्वपुण्य';
 
   @override
-  String get plHouse6 => 'health, enemies, debts, service and daily work';
+  String get plHouse6 => 'आरोग्य, शत्रू, कर्ज, सेवा आणि दैनंदिन काम';
 
   @override
-  String get plHouse7 => 'marriage, partnerships and business relationships';
+  String get plHouse7 => 'विवाह, भागीदारी आणि व्यावसायिक संबंध';
 
   @override
-  String get plHouse8 => 'longevity, transformation, secrets and inheritance';
+  String get plHouse8 => 'आयुष्य, परिवर्तन, रहस्ये आणि वारसा';
 
   @override
-  String get plHouse9 => 'fortune, dharma, higher learning, guru and father';
+  String get plHouse9 => 'भाग्य, धर्म, उच्च शिक्षण, गुरू आणि वडील';
 
   @override
-  String get plHouse10 => 'career, status, authority and public karma';
+  String get plHouse10 => 'करिअर, प्रतिष्ठा, अधिकार आणि सार्वजनिक कर्म';
 
   @override
-  String get plHouse11 => 'gains, income, friends, network and fulfilled desires';
+  String get plHouse11 => 'लाभ, उत्पन्न, मित्र, नेटवर्क आणि पूर्ण झालेल्या इच्छा';
 
   @override
-  String get plHouse12 => 'loss, expenses, foreign lands, spirituality and liberation';
+  String get plHouse12 => 'हानी, खर्च, परदेश, आध्यात्मिकता आणि मोक्ष';
 
   @override
   String get sumVeryStrong => 'अत्यंत मजबूत';
