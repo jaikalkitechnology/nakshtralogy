@@ -2747,6 +2747,120 @@ class AppLocalizationsKn extends AppLocalizations {
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
 
   @override
+  String get doshSevere => 'Severe';
+
+  @override
+  String get doshVeryMild => 'Very Mild';
+
+  @override
+  String get doshLow => 'Low';
+
+  @override
+  String get doshHigh => 'High';
+
+  @override
+  String get doshCritical => 'Critical';
+
+  @override
+  String get doshSummaryTitle => 'Dosha Summary';
+
+  @override
+  String get doshActiveDoshas => 'Active Doshas';
+
+  @override
+  String get doshTotalChecked => 'Total Checked';
+
+  @override
+  String get doshOverallSeverity => 'Overall Severity';
+
+  @override
+  String get doshNoneActive => 'No active doshas — a clean chart!';
+
+  @override
+  String get doshCategory => 'Category';
+
+  @override
+  String get doshConfidence => 'Confidence';
+
+  @override
+  String get doshWhyFormed => 'Why This Formed';
+
+  @override
+  String get doshAffectedAreas => 'Affected Areas';
+
+  @override
+  String get doshTimeline => 'Timeline';
+
+  @override
+  String get doshDefinition => 'Definition';
+
+  @override
+  String get doshFormationRule => 'Formation Rule';
+
+  @override
+  String get doshSupportingPlanets => 'Related Planet';
+
+  @override
+  String get doshCancellation => 'Cancellation Yogas';
+
+  @override
+  String get doshNoCancellation => 'None found';
+
+  @override
+  String get doshAreaChildren => 'Children';
+
+  @override
+  String get doshAreaMind => 'Mind';
+
+  @override
+  String get remMantra => 'Mantra';
+
+  @override
+  String get remGemstone => 'Gemstone';
+
+  @override
+  String get remDonation => 'Donation';
+
+  @override
+  String get remTemple => 'Temple';
+
+  @override
+  String get remFasting => 'Fasting';
+
+  @override
+  String get remLifestyle => 'Lifestyle';
+
+  @override
+  String get remLifestyleGeneric => 'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.';
+
+  @override
+  String get doshExplain => 'Explain My Doshas';
+
+  @override
+  String get doshExplainSubtitle => 'A calm, practical look at your doshas';
+
+  @override
+  String get doshExplainReassure => 'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.';
+
+  @override
+  String get doshAiGeneric => 'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.';
+
+  @override
+  String doshHeroSummary(Object active, Object total) {
+    return 'Your chart shows ${active} active doshas out of ${total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.';
+  }
+
+  @override
+  String doshAiLine(Object areas, Object planet) {
+    return 'This dosha mainly influences ${areas}. During ${planet} periods its effect can feel stronger, and remedies help balance it.';
+  }
+
+  @override
+  String doshTimelineLine(Object planet) {
+    return 'Its effect is felt most during the Mahadasha and Antardasha of ${planet}, and when ${planet} is active in transit.';
+  }
+
+  @override
   String get sbLegendary => 'Legendary';
 
   @override

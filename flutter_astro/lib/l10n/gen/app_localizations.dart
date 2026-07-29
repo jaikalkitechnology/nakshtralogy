@@ -230,6 +230,222 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @doshSevere.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe'**
+  String get doshSevere;
+
+  /// No description provided for @doshVeryMild.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Mild'**
+  String get doshVeryMild;
+
+  /// No description provided for @doshLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get doshLow;
+
+  /// No description provided for @doshHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get doshHigh;
+
+  /// No description provided for @doshCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get doshCritical;
+
+  /// No description provided for @doshSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosha Summary'**
+  String get doshSummaryTitle;
+
+  /// No description provided for @doshActiveDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Doshas'**
+  String get doshActiveDoshas;
+
+  /// No description provided for @doshTotalChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Checked'**
+  String get doshTotalChecked;
+
+  /// No description provided for @doshOverallSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Severity'**
+  String get doshOverallSeverity;
+
+  /// No description provided for @doshNoneActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active doshas — a clean chart!'**
+  String get doshNoneActive;
+
+  /// No description provided for @doshCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get doshCategory;
+
+  /// No description provided for @doshConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get doshConfidence;
+
+  /// No description provided for @doshWhyFormed.
+  ///
+  /// In en, this message translates to:
+  /// **'Why This Formed'**
+  String get doshWhyFormed;
+
+  /// No description provided for @doshAffectedAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Affected Areas'**
+  String get doshAffectedAreas;
+
+  /// No description provided for @doshTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get doshTimeline;
+
+  /// No description provided for @doshDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get doshDefinition;
+
+  /// No description provided for @doshFormationRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Formation Rule'**
+  String get doshFormationRule;
+
+  /// No description provided for @doshSupportingPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Related Planet'**
+  String get doshSupportingPlanets;
+
+  /// No description provided for @doshCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation Yogas'**
+  String get doshCancellation;
+
+  /// No description provided for @doshNoCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'None found'**
+  String get doshNoCancellation;
+
+  /// No description provided for @doshAreaChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get doshAreaChildren;
+
+  /// No description provided for @doshAreaMind.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind'**
+  String get doshAreaMind;
+
+  /// No description provided for @remMantra.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra'**
+  String get remMantra;
+
+  /// No description provided for @remGemstone.
+  ///
+  /// In en, this message translates to:
+  /// **'Gemstone'**
+  String get remGemstone;
+
+  /// No description provided for @remDonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation'**
+  String get remDonation;
+
+  /// No description provided for @remTemple.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple'**
+  String get remTemple;
+
+  /// No description provided for @remFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting'**
+  String get remFasting;
+
+  /// No description provided for @remLifestyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifestyle'**
+  String get remLifestyle;
+
+  /// No description provided for @remLifestyleGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.'**
+  String get remLifestyleGeneric;
+
+  /// No description provided for @doshExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Doshas'**
+  String get doshExplain;
+
+  /// No description provided for @doshExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A calm, practical look at your doshas'**
+  String get doshExplainSubtitle;
+
+  /// No description provided for @doshExplainReassure.
+  ///
+  /// In en, this message translates to:
+  /// **'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.'**
+  String get doshExplainReassure;
+
+  /// No description provided for @doshAiGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.'**
+  String get doshAiGeneric;
+
+  /// No description provided for @doshHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart shows {active} active doshas out of {total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.'**
+  String doshHeroSummary(Object active, Object total);
+
+  /// No description provided for @doshAiLine.
+  ///
+  /// In en, this message translates to:
+  /// **'This dosha mainly influences {areas}. During {planet} periods its effect can feel stronger, and remedies help balance it.'**
+  String doshAiLine(Object areas, Object planet);
+
+  /// No description provided for @doshTimelineLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Its effect is felt most during the Mahadasha and Antardasha of {planet}, and when {planet} is active in transit.'**
+  String doshTimelineLine(Object planet);
+
   /// No description provided for @sbLegendary.
   ///
   /// In en, this message translates to:
