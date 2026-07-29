@@ -9,6 +9,204 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get sumVeryStrong => 'অত্যন্ত শক্তিশালী';
+
+  @override
+  String get sumStrong => 'শক্তিশালী';
+
+  @override
+  String get sumAverage => 'গড়';
+
+  @override
+  String get sumWeak => 'দুর্বল';
+
+  @override
+  String get sumNeedsAttention => 'মনোযোগ প্রয়োজন';
+
+  @override
+  String get sumFire => 'অগ্নি';
+
+  @override
+  String get sumEarth => 'পৃথিবী';
+
+  @override
+  String get sumAir => 'বায়ু';
+
+  @override
+  String get sumWater => 'জল';
+
+  @override
+  String get sumMovable => 'চর';
+
+  @override
+  String get sumFixed => 'স্থির';
+
+  @override
+  String get sumDual => 'দ্বিস্বভাব';
+
+  @override
+  String get sumDirEast => 'পূর্ব';
+
+  @override
+  String get sumDirWest => 'পশ্চিম';
+
+  @override
+  String get sumDirNorth => 'উত্তর';
+
+  @override
+  String get sumDirSouth => 'দক্ষিণ';
+
+  @override
+  String get sumDirNE => 'উত্তর-পূর্ব';
+
+  @override
+  String get sumDirNW => 'উত্তর-পশ্চিম';
+
+  @override
+  String get sumDirSE => 'দক্ষিণ-পূর্ব';
+
+  @override
+  String get sumDirSW => 'দক্ষিণ-পশ্চিম';
+
+  @override
+  String get sumSnapshotTitle => 'আপনার জ্যোতিষ ঝলক';
+
+  @override
+  String get sumMahadasha => 'মহাদশা';
+
+  @override
+  String get sumAntardasha => 'অন্তর্দশা';
+
+  @override
+  String get sumNakshatra => 'জন্ম নক্ষত্র';
+
+  @override
+  String get sumElement => 'তত্ত্ব';
+
+  @override
+  String get sumModality => 'স্বভাব';
+
+  @override
+  String get sumLuckyDirection => 'শুভ দিক';
+
+  @override
+  String get sumHighlights => 'গুরুত্বপূর্ণ বিষয়';
+
+  @override
+  String get sumStrongPlanet => 'সবচেয়ে শক্তিশালী গ্রহ';
+
+  @override
+  String get sumWeakPlanet => 'সবচেয়ে দুর্বল গ্রহ';
+
+  @override
+  String get sumYogas => 'যোগ';
+
+  @override
+  String get sumDoshas => 'দোষ';
+
+  @override
+  String get sumRetrograde => 'বক্রী';
+
+  @override
+  String get sumCombust => 'অস্ত';
+
+  @override
+  String get sumExalted => 'উচ্চ';
+
+  @override
+  String get sumDebilitated => 'নীচ';
+
+  @override
+  String get sumVargottama => 'বর্গোত্তম';
+
+  @override
+  String get sumQuickInsights => 'দ্রুত তথ্য';
+
+  @override
+  String get sumSpirituality => 'আধ্যাত্মিকতা';
+
+  @override
+  String get sumTimezone => 'সময় অঞ্চল';
+
+  @override
+  String get sumAyanamsa => 'অয়নাংশ';
+
+  @override
+  String get sumCalendarType => 'পঞ্জিকা';
+
+  @override
+  String get sumCopied => 'ক্লিপবোর্ডে কপি হয়েছে';
+
+  @override
+  String get sumNatureFire => 'আপনার একটি সাহসী, উদ্যমী এবং অগ্রণী স্বভাব রয়েছে যা সামনে থেকে নেতৃত্ব দেয়।';
+
+  @override
+  String get sumNatureEarth => 'আপনার একটি বাস্তববাদী, স্থিতিশীল এবং শৃঙ্খলাপূর্ণ স্বভাব রয়েছে যা দীর্ঘস্থায়ী ফল গড়ে তোলে।';
+
+  @override
+  String get sumNatureAir => 'আপনার একটি কৌতূহলী, যোগাযোগমুখী এবং বুদ্ধিদীপ্ত স্বভাব রয়েছে যা নতুন ধারণায় সমৃদ্ধ হয়।';
+
+  @override
+  String get sumNatureWater => 'আপনার একটি স্বজ্ঞাত, আবেগপ্রবণ এবং সহানুভূতিশীল স্বভাব রয়েছে যার গভীর অন্তর্দৃষ্টি আছে।';
+
+  @override
+  String get sumGradePhraseExcellent => 'দৃঢ়ভাবে সমর্থিত — ধারাবাহিক প্রচেষ্টায় অনুকূল ফল পাওয়ার সম্ভাবনা রয়েছে।';
+
+  @override
+  String get sumGradePhraseGood => 'ভালোভাবে সমর্থিত — সামান্য যত্নে সাধারণত ইতিবাচক ফল।';
+
+  @override
+  String get sumGradePhraseAverage => 'মিশ্র সমর্থন — ফলাফল প্রচেষ্টা এবং সময়ের উপর নির্ভর করে।';
+
+  @override
+  String get sumGradePhraseWeak => 'মনোযোগ প্রয়োজন — ধৈর্য ও প্রতিকার এখানে সহায়ক।';
+
+  @override
+  String get kDefCombust => 'সূর্যের অত্যন্ত কাছাকাছি থাকা একটি গ্রহ, যার ফলে তার শক্তি \'দগ্ধ\' ও দুর্বল হয়ে যায়।';
+
+  @override
+  String get kDefRetrograde => 'একটি গ্রহ যা পিছনের দিকে চলমান বলে মনে হয়; এর প্রভাব ভেতরের দিকে ফিরে তীব্র হয়।';
+
+  @override
+  String get kDefNakshatra => '২৭টি নাক্ষত্রিক মন্ডলের একটি, যার মধ্য দিয়ে চন্দ্র ও গ্রহরা ভ্রমণ করে।';
+
+  @override
+  String get kDefVargottama => 'একটি গ্রহ যা জন্মছক (D1) এবং নবমাংশ (D9) উভয়েই একই রাশিতে অবস্থান করে — শক্তির একটি চিহ্ন।';
+
+  @override
+  String get kDefOwnSign => 'একটি গ্রহ যা তার নিজস্ব রাশিতে অবস্থান করে, যেখানে সে ঘরের মতো অনুভব করে এবং স্থিতিশীল ফল দেয়।';
+
+  @override
+  String get kDefExalted => 'একটি গ্রহ তার সর্বোচ্চ শক্তির রাশিতে, যা তার সেরা ফল প্রদান করে।';
+
+  @override
+  String get kDefDebilitated => 'একটি গ্রহ তার দুর্বলতম রাশিতে, যেখানে সে ফল দিতে সংগ্রাম করে।';
+
+  @override
+  String get kDefMooltrikona => 'একটি গ্রহের নিজস্ব রাশির একটি বিশেষ অংশ যেখানে সে বিশেষভাবে শক্তিশালী।';
+
+  @override
+  String get kDefAscendant => 'জন্মের সময় পূর্ব দিগন্তে উদিত রাশি — লগ্ন, ছকের ভিত্তি।';
+
+  @override
+  String get kDefMahadasha => 'প্রধান গ্রহ-সময়কাল যা জীবনের দীর্ঘ সময়কে রঙিন করে তোলে।';
+
+  @override
+  String get kDefAntardasha => 'মহাদশার মধ্যে একটি উপ-সময়কাল যা তার ফলাফলকে সূক্ষ্মভাবে সমন্বয় করে।';
+
+  @override
+  String get kDefPada => 'একটি নক্ষত্রের চারটি ভাগের একটি, যেখানে একটি গ্রহ অবস্থান করে।';
+
+  @override
+  String get kundliAscendantLagna => 'লগ্ন (লগ্ন)';
+
+  @override
+  String get kundliMoonSignRashi => 'চন্দ্র রাশি (রাশি)';
+
+  @override
+  String get kundliSunSign => 'সূর্য রাশি';
+
+  @override
   String get aspGivesAspectTo => 'দৃষ্টি প্রদান করে';
 
   @override
@@ -2218,202 +2416,177 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
-  String get sumVeryStrong => 'Very Strong';
+  String get plNature => 'Nature';
 
   @override
-  String get sumStrong => 'Strong';
+  String get plElement => 'Element';
 
   @override
-  String get sumAverage => 'Average';
+  String get plGender => 'Gender';
 
   @override
-  String get sumWeak => 'Weak';
+  String get plKarakatva => 'Karakatva';
 
   @override
-  String get sumNeedsAttention => 'Needs Attention';
+  String get plLordship => 'Lordship';
 
   @override
-  String get sumFire => 'Fire';
+  String get plStrength => 'Strength';
 
   @override
-  String get sumEarth => 'Earth';
+  String get plAspectsGiven => 'Aspects Given';
 
   @override
-  String get sumAir => 'Air';
+  String get plAspectsReceived => 'Aspects Received';
 
   @override
-  String get sumWater => 'Water';
+  String get plConjunction => 'Conjunction';
 
   @override
-  String get sumMovable => 'Movable';
+  String get plHouseMeaning => 'House Meaning';
 
   @override
-  String get sumFixed => 'Fixed';
+  String get plNakshatraMeaning => 'Nakshatra Meaning';
 
   @override
-  String get sumDual => 'Dual';
+  String get plAiInterpretation => 'AI Interpretation';
 
   @override
-  String get sumDirEast => 'East';
+  String get plSearchHint => 'Search any planet';
 
   @override
-  String get sumDirWest => 'West';
+  String get plNoResults => 'No planets found';
 
   @override
-  String get sumDirNorth => 'North';
+  String get plBenefic => 'Benefic';
 
   @override
-  String get sumDirSouth => 'South';
+  String get plMalefic => 'Malefic';
 
   @override
-  String get sumDirNE => 'North-East';
+  String get plMale => 'Male';
 
   @override
-  String get sumDirNW => 'North-West';
+  String get plFemale => 'Female';
 
   @override
-  String get sumDirSE => 'South-East';
+  String get plNeutralGender => 'Neutral';
 
   @override
-  String get sumDirSW => 'South-West';
+  String get plOwnSign => 'Own Sign';
 
   @override
-  String get sumSnapshotTitle => 'Your Astrology Snapshot';
+  String get plFriend => 'Friend Sign';
 
   @override
-  String get sumMahadasha => 'Mahadasha';
+  String get plEnemy => 'Enemy Sign';
 
   @override
-  String get sumAntardasha => 'Antardasha';
+  String get plNeutral => 'Neutral';
 
   @override
-  String get sumNakshatra => 'Janma Nakshatra';
+  String get sumEther => 'Ether';
 
   @override
-  String get sumElement => 'Element';
+  String plLordOfHouses(Object houses) {
+    return 'Lord of house(s) ${houses}';
+  }
 
   @override
-  String get sumModality => 'Modality';
+  String plNakMeaning(Object nakLord, Object trait) {
+    return 'Ruled by ${nakLord}, bringing ${trait}.';
+  }
 
   @override
-  String get sumLuckyDirection => 'Lucky Direction';
+  String plAiPlace(Object planet, Object sign, Object house) {
+    return '${planet} sits in ${sign}, in the ${house} house.';
+  }
 
   @override
-  String get sumHighlights => 'Important Highlights';
+  String plAiKarakStrong(Object karak) {
+    return 'Its core significations — ${karak} — are well supported here.';
+  }
 
   @override
-  String get sumStrongPlanet => 'Strongest Planet';
+  String plAiKarakWeak(Object karak) {
+    return 'Its core significations — ${karak} — may need conscious effort here.';
+  }
 
   @override
-  String get sumWeakPlanet => 'Weakest Planet';
+  String plAiExalted(Object planet) {
+    return '${planet} is exalted, giving its very best results.';
+  }
 
   @override
-  String get sumYogas => 'Yogas';
+  String plAiDebilitated(Object planet) {
+    return '${planet} is debilitated and needs support to deliver its results.';
+  }
 
   @override
-  String get sumDoshas => 'Doshas';
+  String plAiCombust(Object planet) {
+    return '${planet} is combust, so it works less openly under the Sun\'s glare.';
+  }
 
   @override
-  String get sumRetrograde => 'Retrograde';
+  String plAiVargottama(Object planet) {
+    return '${planet} is vargottama — a strong placement repeated in the navamsa.';
+  }
 
   @override
-  String get sumCombust => 'Combust';
+  String plAiRetrograde(Object planet) {
+    return '${planet} is retrograde, turning its energy inward and intensifying it.';
+  }
 
   @override
-  String get sumExalted => 'Exalted';
+  String get plHouse1 => 'self, body, personality and vitality';
 
   @override
-  String get sumDebilitated => 'Debilitated';
+  String get plHouse2 => 'wealth, family, speech and food';
 
   @override
-  String get sumVargottama => 'Vargottama';
+  String get plHouse3 => 'courage, siblings, communication and short travels';
 
   @override
-  String get sumQuickInsights => 'Quick Insights';
+  String get plHouse4 => 'home, mother, comfort, property and inner peace';
 
   @override
-  String get sumSpirituality => 'Spirituality';
+  String get plHouse5 => 'children, creativity, intelligence, romance and past merits';
 
   @override
-  String get sumTimezone => 'Timezone';
+  String get plHouse6 => 'health, enemies, debts, service and daily work';
 
   @override
-  String get sumAyanamsa => 'Ayanamsa';
+  String get plHouse7 => 'marriage, partnerships and business relationships';
 
   @override
-  String get sumCalendarType => 'Calendar';
+  String get plHouse8 => 'longevity, transformation, secrets and inheritance';
 
   @override
-  String get sumCopied => 'Copied to clipboard';
+  String get plHouse9 => 'fortune, dharma, higher learning, guru and father';
 
   @override
-  String get sumNatureFire => 'You have a bold, energetic and pioneering nature that leads from the front.';
+  String get plHouse10 => 'career, status, authority and public karma';
 
   @override
-  String get sumNatureEarth => 'You have a practical, grounded and disciplined nature that builds lasting results.';
+  String get plHouse11 => 'gains, income, friends, network and fulfilled desires';
 
   @override
-  String get sumNatureAir => 'You have a curious, communicative and intellectual nature that thrives on new ideas.';
+  String get plHouse12 => 'loss, expenses, foreign lands, spirituality and liberation';
 
   @override
-  String get sumNatureWater => 'You have an intuitive, emotional and empathetic nature with deep inner sensitivity.';
+  String planetNakPada(Object nakshatra, Object pada) {
+    return 'নক্ষত্র: ${nakshatra} (${pada})';
+  }
 
   @override
-  String get sumGradePhraseExcellent => 'Strongly supported — favourable results are likely with steady effort.';
+  String planetNakLord(Object lord) {
+    return 'NL: ${lord}';
+  }
 
   @override
-  String get sumGradePhraseGood => 'Well supported — generally positive with a little care.';
-
-  @override
-  String get sumGradePhraseAverage => 'Mixed support — results depend on effort and timing.';
-
-  @override
-  String get sumGradePhraseWeak => 'Needs attention — patience and remedies help here.';
-
-  @override
-  String get kDefCombust => 'A planet too close to the Sun, so its energy is \'burnt\' and weakened.';
-
-  @override
-  String get kDefRetrograde => 'A planet that appears to move backwards; its effects turn inward and intensify.';
-
-  @override
-  String get kDefNakshatra => 'One of the 27 lunar mansions that the Moon and planets travel through.';
-
-  @override
-  String get kDefVargottama => 'A planet in the same sign in both the birth chart (D1) and the navamsa (D9) — a mark of strength.';
-
-  @override
-  String get kDefOwnSign => 'A planet sitting in a sign it rules, where it feels at home and gives steady results.';
-
-  @override
-  String get kDefExalted => 'A planet in its sign of highest strength, giving its very best results.';
-
-  @override
-  String get kDefDebilitated => 'A planet in its weakest sign, where it struggles to give results.';
-
-  @override
-  String get kDefMooltrikona => 'A special portion of a planet\'s own sign where it is especially powerful.';
-
-  @override
-  String get kDefAscendant => 'The sign rising on the eastern horizon at birth — the Lagna, the foundation of the chart.';
-
-  @override
-  String get kDefMahadasha => 'The major planetary period that colours a long span of life.';
-
-  @override
-  String get kDefAntardasha => 'A sub-period within a Mahadasha that fine-tunes its results.';
-
-  @override
-  String get kDefPada => 'One of the four quarters of a nakshatra that a planet occupies.';
-
-  @override
-  String get kundliAscendantLagna => 'লগ্ন (লগ্ন)';
-
-  @override
-  String get kundliMoonSignRashi => 'চন্দ্র রাশি (রাশি)';
-
-  @override
-  String get kundliSunSign => 'সূর্য রাশি';
+  String planetLongitude(Object value) {
+    return 'দ্রাঘিমা: ${value}°';
+  }
 
   @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';

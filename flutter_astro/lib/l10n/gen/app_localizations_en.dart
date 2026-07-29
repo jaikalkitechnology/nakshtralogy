@@ -66,6 +66,179 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get plNature => 'Nature';
+
+  @override
+  String get plElement => 'Element';
+
+  @override
+  String get plGender => 'Gender';
+
+  @override
+  String get plKarakatva => 'Karakatva';
+
+  @override
+  String get plLordship => 'Lordship';
+
+  @override
+  String get plStrength => 'Strength';
+
+  @override
+  String get plAspectsGiven => 'Aspects Given';
+
+  @override
+  String get plAspectsReceived => 'Aspects Received';
+
+  @override
+  String get plConjunction => 'Conjunction';
+
+  @override
+  String get plHouseMeaning => 'House Meaning';
+
+  @override
+  String get plNakshatraMeaning => 'Nakshatra Meaning';
+
+  @override
+  String get plAiInterpretation => 'AI Interpretation';
+
+  @override
+  String get plSearchHint => 'Search any planet';
+
+  @override
+  String get plNoResults => 'No planets found';
+
+  @override
+  String get plBenefic => 'Benefic';
+
+  @override
+  String get plMalefic => 'Malefic';
+
+  @override
+  String get plMale => 'Male';
+
+  @override
+  String get plFemale => 'Female';
+
+  @override
+  String get plNeutralGender => 'Neutral';
+
+  @override
+  String get plOwnSign => 'Own Sign';
+
+  @override
+  String get plFriend => 'Friend Sign';
+
+  @override
+  String get plEnemy => 'Enemy Sign';
+
+  @override
+  String get plNeutral => 'Neutral';
+
+  @override
+  String get sumEther => 'Ether';
+
+  @override
+  String plLordOfHouses(Object houses) {
+    return 'Lord of house(s) ${houses}';
+  }
+
+  @override
+  String plNakMeaning(Object nakLord, Object trait) {
+    return 'Ruled by ${nakLord}, bringing ${trait}.';
+  }
+
+  @override
+  String plAiPlace(Object planet, Object sign, Object house) {
+    return '${planet} sits in ${sign}, in the ${house} house.';
+  }
+
+  @override
+  String plAiKarakStrong(Object karak) {
+    return 'Its core significations — ${karak} — are well supported here.';
+  }
+
+  @override
+  String plAiKarakWeak(Object karak) {
+    return 'Its core significations — ${karak} — may need conscious effort here.';
+  }
+
+  @override
+  String plAiExalted(Object planet) {
+    return '${planet} is exalted, giving its very best results.';
+  }
+
+  @override
+  String plAiDebilitated(Object planet) {
+    return '${planet} is debilitated and needs support to deliver its results.';
+  }
+
+  @override
+  String plAiCombust(Object planet) {
+    return '${planet} is combust, so it works less openly under the Sun\'s glare.';
+  }
+
+  @override
+  String plAiVargottama(Object planet) {
+    return '${planet} is vargottama — a strong placement repeated in the navamsa.';
+  }
+
+  @override
+  String plAiRetrograde(Object planet) {
+    return '${planet} is retrograde, turning its energy inward and intensifying it.';
+  }
+
+  @override
+  String get plHouse1 => 'self, body, personality and vitality';
+
+  @override
+  String get plHouse2 => 'wealth, family, speech and food';
+
+  @override
+  String get plHouse3 => 'courage, siblings, communication and short travels';
+
+  @override
+  String get plHouse4 => 'home, mother, comfort, property and inner peace';
+
+  @override
+  String get plHouse5 => 'children, creativity, intelligence, romance and past merits';
+
+  @override
+  String get plHouse6 => 'health, enemies, debts, service and daily work';
+
+  @override
+  String get plHouse7 => 'marriage, partnerships and business relationships';
+
+  @override
+  String get plHouse8 => 'longevity, transformation, secrets and inheritance';
+
+  @override
+  String get plHouse9 => 'fortune, dharma, higher learning, guru and father';
+
+  @override
+  String get plHouse10 => 'career, status, authority and public karma';
+
+  @override
+  String get plHouse11 => 'gains, income, friends, network and fulfilled desires';
+
+  @override
+  String get plHouse12 => 'loss, expenses, foreign lands, spirituality and liberation';
+
+  @override
+  String planetNakPada(Object nakshatra, Object pada) {
+    return 'Nak: ${nakshatra} (${pada})';
+  }
+
+  @override
+  String planetNakLord(Object lord) {
+    return 'NL: ${lord}';
+  }
+
+  @override
+  String planetLongitude(Object value) {
+    return 'Lon: ${value}°';
+  }
+
+  @override
   String get sumVeryStrong => 'Very Strong';
 
   @override
