@@ -235,6 +235,2124 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @rzTodayOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Zodiac Outlook'**
+  String get rzTodayOutlook;
+
+  /// No description provided for @rzPlanetaryEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Planetary Energy'**
+  String get rzPlanetaryEnergy;
+
+  /// No description provided for @rzBestSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Sign'**
+  String get rzBestSign;
+
+  /// No description provided for @rzChallengingSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Challenging'**
+  String get rzChallengingSign;
+
+  /// No description provided for @rzDominantPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant Planet'**
+  String get rzDominantPlanet;
+
+  /// No description provided for @rzOverallMood.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Mood'**
+  String get rzOverallMood;
+
+  /// No description provided for @rzMoodBright.
+  ///
+  /// In en, this message translates to:
+  /// **'Bright & Active'**
+  String get rzMoodBright;
+
+  /// No description provided for @rzMoodCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm & Steady'**
+  String get rzMoodCalm;
+
+  /// No description provided for @rzMoodMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed Energy'**
+  String get rzMoodMixed;
+
+  /// No description provided for @rzMoodTense.
+  ///
+  /// In en, this message translates to:
+  /// **'Tense & Careful'**
+  String get rzMoodTense;
+
+  /// No description provided for @rzTodayEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Energy'**
+  String get rzTodayEnergy;
+
+  /// No description provided for @rzCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get rzCaution;
+
+  /// No description provided for @rzWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get rzWeak;
+
+  /// No description provided for @rzAllSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'All Zodiac Signs'**
+  String get rzAllSigns;
+
+  /// No description provided for @rzAiSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Summary'**
+  String get rzAiSummary;
+
+  /// No description provided for @rzPlanetaryInfluence.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Planetary Influence'**
+  String get rzPlanetaryInfluence;
+
+  /// No description provided for @rzStrongInfluences.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Influences'**
+  String get rzStrongInfluences;
+
+  /// No description provided for @rzShowTechnical.
+  ///
+  /// In en, this message translates to:
+  /// **'Show technical details'**
+  String get rzShowTechnical;
+
+  /// No description provided for @rzOpportunities.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Opportunities'**
+  String get rzOpportunities;
+
+  /// No description provided for @rzAvoidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Things To Avoid Today'**
+  String get rzAvoidTitle;
+
+  /// No description provided for @rzTechnicalReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical reason'**
+  String get rzTechnicalReason;
+
+  /// No description provided for @rzAvoidDecisions.
+  ///
+  /// In en, this message translates to:
+  /// **'Rushing important decisions'**
+  String get rzAvoidDecisions;
+
+  /// No description provided for @rzAvoidArguments.
+  ///
+  /// In en, this message translates to:
+  /// **'Heated arguments'**
+  String get rzAvoidArguments;
+
+  /// No description provided for @rzAvoidInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Large investments'**
+  String get rzAvoidInvestments;
+
+  /// No description provided for @rzAvoidOverthink.
+  ///
+  /// In en, this message translates to:
+  /// **'Overthinking small issues'**
+  String get rzAvoidOverthink;
+
+  /// No description provided for @rzAvoidOverspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Unnecessary spending'**
+  String get rzAvoidOverspend;
+
+  /// No description provided for @rzAvoidStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress and overworking'**
+  String get rzAvoidStress;
+
+  /// No description provided for @rzPlanetaryChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Planetary Chart'**
+  String get rzPlanetaryChart;
+
+  /// No description provided for @rzWhatChartMeans.
+  ///
+  /// In en, this message translates to:
+  /// **'What this chart means'**
+  String get rzWhatChartMeans;
+
+  /// No description provided for @rzChartExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'This diamond shows where each planet is sitting in the sky today, mapped to your sign. Planets in supportive houses lift the day; those in tough houses ask for care.'**
+  String get rzChartExplain;
+
+  /// No description provided for @rzDoNetworking.
+  ///
+  /// In en, this message translates to:
+  /// **'Networking & connecting'**
+  String get rzDoNetworking;
+
+  /// No description provided for @rzDoLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning something new'**
+  String get rzDoLearning;
+
+  /// No description provided for @rzDoMeditation.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditation & calm'**
+  String get rzDoMeditation;
+
+  /// No description provided for @rzDoFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family time'**
+  String get rzDoFamily;
+
+  /// No description provided for @rzDoCreative.
+  ///
+  /// In en, this message translates to:
+  /// **'Creative work'**
+  String get rzDoCreative;
+
+  /// No description provided for @rzDoRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest & self-care'**
+  String get rzDoRest;
+
+  /// No description provided for @rzAiRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s AI Recommendations'**
+  String get rzAiRecommendations;
+
+  /// No description provided for @rzTechnical.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Astrology'**
+  String get rzTechnical;
+
+  /// No description provided for @rzTransitScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Score'**
+  String get rzTransitScore;
+
+  /// No description provided for @rzVedha.
+  ///
+  /// In en, this message translates to:
+  /// **'Vedha (Obstructions)'**
+  String get rzVedha;
+
+  /// No description provided for @rzGocharDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Gochar Details'**
+  String get rzGocharDetails;
+
+  /// No description provided for @rzAdvancedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'For advanced users'**
+  String get rzAdvancedOnly;
+
+  /// No description provided for @rzTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow Preview'**
+  String get rzTomorrow;
+
+  /// No description provided for @rzTomorrowEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow\'s Energy'**
+  String get rzTomorrowEnergy;
+
+  /// No description provided for @rzImproving.
+  ///
+  /// In en, this message translates to:
+  /// **'Improving'**
+  String get rzImproving;
+
+  /// No description provided for @rzWeaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Slightly Weaker'**
+  String get rzWeaker;
+
+  /// No description provided for @rzSteady.
+  ///
+  /// In en, this message translates to:
+  /// **'Steady'**
+  String get rzSteady;
+
+  /// No description provided for @rzTomorrowUpLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy is expected to rise tomorrow — plan ahead for important tasks.'**
+  String get rzTomorrowUpLine;
+
+  /// No description provided for @rzTomorrowDownLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy may dip a little tomorrow — keep the day light and steady.'**
+  String get rzTomorrowDownLine;
+
+  /// No description provided for @rzTomorrowFlatLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy stays steady tomorrow — a calm, balanced day ahead.'**
+  String get rzTomorrowFlatLine;
+
+  /// No description provided for @rzWeeklyTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Trend'**
+  String get rzWeeklyTrend;
+
+  /// No description provided for @rzMonthlyTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Trend'**
+  String get rzMonthlyTrend;
+
+  /// No description provided for @rzBestDayWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Day'**
+  String get rzBestDayWeek;
+
+  /// No description provided for @rzHardestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Toughest Day'**
+  String get rzHardestDay;
+
+  /// No description provided for @rzLuckyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky Today'**
+  String get rzLuckyToday;
+
+  /// No description provided for @rzKarakaSun.
+  ///
+  /// In en, this message translates to:
+  /// **'confidence & vitality'**
+  String get rzKarakaSun;
+
+  /// No description provided for @rzKarakaMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'emotions & peace of mind'**
+  String get rzKarakaMoon;
+
+  /// No description provided for @rzKarakaMars.
+  ///
+  /// In en, this message translates to:
+  /// **'energy & drive'**
+  String get rzKarakaMars;
+
+  /// No description provided for @rzKarakaMercury.
+  ///
+  /// In en, this message translates to:
+  /// **'communication & learning'**
+  String get rzKarakaMercury;
+
+  /// No description provided for @rzKarakaJupiter.
+  ///
+  /// In en, this message translates to:
+  /// **'wisdom & growth'**
+  String get rzKarakaJupiter;
+
+  /// No description provided for @rzKarakaVenus.
+  ///
+  /// In en, this message translates to:
+  /// **'relationships & comfort'**
+  String get rzKarakaVenus;
+
+  /// No description provided for @rzKarakaSaturn.
+  ///
+  /// In en, this message translates to:
+  /// **'discipline & patience'**
+  String get rzKarakaSaturn;
+
+  /// No description provided for @rzKarakaRahu.
+  ///
+  /// In en, this message translates to:
+  /// **'ambition & change'**
+  String get rzKarakaRahu;
+
+  /// No description provided for @rzKarakaKetu.
+  ///
+  /// In en, this message translates to:
+  /// **'spirituality & letting go'**
+  String get rzKarakaKetu;
+
+  /// No description provided for @rzHomeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{dom} sets the tone of the day, while {chal} asks for patience and care.'**
+  String rzHomeSummary(Object dom, Object chal);
+
+  /// No description provided for @rzInsightGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good day for {karaka}.'**
+  String rzInsightGood(Object karaka);
+
+  /// No description provided for @rzInsightHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Take it slow with {karaka} today.'**
+  String rzInsightHard(Object karaka);
+
+  /// No description provided for @rzInfluenceGood.
+  ///
+  /// In en, this message translates to:
+  /// **'{karaka} is well supported today.'**
+  String rzInfluenceGood(Object karaka);
+
+  /// No description provided for @rzInfluenceHard.
+  ///
+  /// In en, this message translates to:
+  /// **'{karaka} may face delays today.'**
+  String rzInfluenceHard(Object karaka);
+
+  /// No description provided for @rzDetailSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Today supports {strong}, while {weak} needs patience and care.'**
+  String rzDetailSummary(Object strong, Object weak);
+
+  /// No description provided for @fdEnergyScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Energy Score'**
+  String get fdEnergyScore;
+
+  /// No description provided for @fdStatusAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get fdStatusAverage;
+
+  /// No description provided for @fdStatusMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed'**
+  String get fdStatusMixed;
+
+  /// No description provided for @fdStatusChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging'**
+  String get fdStatusChallenging;
+
+  /// No description provided for @fdTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Theme'**
+  String get fdTheme;
+
+  /// No description provided for @fdExplainToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Today'**
+  String get fdExplainToday;
+
+  /// No description provided for @fdTodaysFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Focus'**
+  String get fdTodaysFocus;
+
+  /// No description provided for @fdTopRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Recommendation'**
+  String get fdTopRecommendation;
+
+  /// No description provided for @fdTopCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Caution'**
+  String get fdTopCaution;
+
+  /// No description provided for @fdReadingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading time'**
+  String get fdReadingTime;
+
+  /// No description provided for @fdSeconds30.
+  ///
+  /// In en, this message translates to:
+  /// **'30 sec'**
+  String get fdSeconds30;
+
+  /// No description provided for @fdCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career'**
+  String get fdCareer;
+
+  /// No description provided for @fdMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get fdMoney;
+
+  /// No description provided for @fdLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get fdLove;
+
+  /// No description provided for @fdHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get fdHealth;
+
+  /// No description provided for @fdTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get fdTravel;
+
+  /// No description provided for @fdFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get fdFamily;
+
+  /// No description provided for @fdBestToDo.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Things To Do Today'**
+  String get fdBestToDo;
+
+  /// No description provided for @fdAvoidToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid Today'**
+  String get fdAvoidToday;
+
+  /// No description provided for @fdConfidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get fdConfidenceLabel;
+
+  /// No description provided for @fdBestTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time'**
+  String get fdBestTime;
+
+  /// No description provided for @fdRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get fdRecommended;
+
+  /// No description provided for @fdReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get fdReason;
+
+  /// No description provided for @fdRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk'**
+  String get fdRisk;
+
+  /// No description provided for @fdRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get fdRecommendation;
+
+  /// No description provided for @fdNoActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing major to push today — keep a steady, calm routine.'**
+  String get fdNoActions;
+
+  /// No description provided for @fdNoCautions.
+  ///
+  /// In en, this message translates to:
+  /// **'No major cautions today — proceed with normal awareness.'**
+  String get fdNoCautions;
+
+  /// No description provided for @fdHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Highlights'**
+  String get fdHighlights;
+
+  /// No description provided for @fdProbVeryHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Very High'**
+  String get fdProbVeryHigh;
+
+  /// No description provided for @fdProbHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get fdProbHigh;
+
+  /// No description provided for @fdProbElevated.
+  ///
+  /// In en, this message translates to:
+  /// **'Elevated'**
+  String get fdProbElevated;
+
+  /// No description provided for @fdProbCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get fdProbCaution;
+
+  /// No description provided for @fdWhatToDo.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do'**
+  String get fdWhatToDo;
+
+  /// No description provided for @fdLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get fdLifeAreas;
+
+  /// No description provided for @fdTapDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap for details'**
+  String get fdTapDetails;
+
+  /// No description provided for @fdArea1.
+  ///
+  /// In en, this message translates to:
+  /// **'Self & Health'**
+  String get fdArea1;
+
+  /// No description provided for @fdArea2.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth & Family'**
+  String get fdArea2;
+
+  /// No description provided for @fdArea3.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get fdArea3;
+
+  /// No description provided for @fdArea4.
+  ///
+  /// In en, this message translates to:
+  /// **'Home & Comfort'**
+  String get fdArea4;
+
+  /// No description provided for @fdArea5.
+  ///
+  /// In en, this message translates to:
+  /// **'Creativity & Romance'**
+  String get fdArea5;
+
+  /// No description provided for @fdArea6.
+  ///
+  /// In en, this message translates to:
+  /// **'Work & Duties'**
+  String get fdArea6;
+
+  /// No description provided for @fdArea7.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationships'**
+  String get fdArea7;
+
+  /// No description provided for @fdArea8.
+  ///
+  /// In en, this message translates to:
+  /// **'Change & Depth'**
+  String get fdArea8;
+
+  /// No description provided for @fdArea9.
+  ///
+  /// In en, this message translates to:
+  /// **'Luck & Travel'**
+  String get fdArea9;
+
+  /// No description provided for @fdArea10.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Status'**
+  String get fdArea10;
+
+  /// No description provided for @fdArea11.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains & Network'**
+  String get fdArea11;
+
+  /// No description provided for @fdArea12.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest & Spirituality'**
+  String get fdArea12;
+
+  /// No description provided for @fdTodaysMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Meaning'**
+  String get fdTodaysMeaning;
+
+  /// No description provided for @fdGoodFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Good For'**
+  String get fdGoodFor;
+
+  /// No description provided for @fdAvoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid'**
+  String get fdAvoid;
+
+  /// No description provided for @fdPlanetSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Support'**
+  String get fdPlanetSupport;
+
+  /// No description provided for @fdWhyPrediction.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this prediction?'**
+  String get fdWhyPrediction;
+
+  /// No description provided for @fdAdvancedDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Details'**
+  String get fdAdvancedDetails;
+
+  /// No description provided for @fdAiRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommendation'**
+  String get fdAiRecommendation;
+
+  /// No description provided for @fdOverallStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Status'**
+  String get fdOverallStatus;
+
+  /// No description provided for @fdNoPlanetTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'No major planet is transiting this area today.'**
+  String get fdNoPlanetTransit;
+
+  /// No description provided for @fdFinancialOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Outlook'**
+  String get fdFinancialOutlook;
+
+  /// No description provided for @fdIncomeProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Probability'**
+  String get fdIncomeProbability;
+
+  /// No description provided for @fdExpenseProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Probability'**
+  String get fdExpenseProbability;
+
+  /// No description provided for @fdNetBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Financial Balance'**
+  String get fdNetBalance;
+
+  /// No description provided for @fdAvoidSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid Spending'**
+  String get fdAvoidSpending;
+
+  /// No description provided for @fdRelationshipOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Outlook'**
+  String get fdRelationshipOutlook;
+
+  /// No description provided for @fdOverallScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Score'**
+  String get fdOverallScore;
+
+  /// No description provided for @fdPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner'**
+  String get fdPartner;
+
+  /// No description provided for @fdRomance.
+  ///
+  /// In en, this message translates to:
+  /// **'Romance'**
+  String get fdRomance;
+
+  /// No description provided for @fdWorkplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace'**
+  String get fdWorkplace;
+
+  /// No description provided for @fdPublicImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Image'**
+  String get fdPublicImage;
+
+  /// No description provided for @fdBestActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Activity'**
+  String get fdBestActivity;
+
+  /// No description provided for @fdWeakArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak Area'**
+  String get fdWeakArea;
+
+  /// No description provided for @fdBiggestOpportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest Opportunity'**
+  String get fdBiggestOpportunity;
+
+  /// No description provided for @fdBiggestRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest Risk'**
+  String get fdBiggestRisk;
+
+  /// No description provided for @fdProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Probability'**
+  String get fdProbability;
+
+  /// No description provided for @fdProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection Advice'**
+  String get fdProtection;
+
+  /// No description provided for @fdDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get fdDescription;
+
+  /// No description provided for @fdBestTimeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time Today'**
+  String get fdBestTimeToday;
+
+  /// No description provided for @fdAvoidDuring.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid During'**
+  String get fdAvoidDuring;
+
+  /// No description provided for @fdPredictionConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Confidence'**
+  String get fdPredictionConfidence;
+
+  /// No description provided for @fdConfBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s prediction combines'**
+  String get fdConfBasis;
+
+  /// No description provided for @fdConfNatal.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart'**
+  String get fdConfNatal;
+
+  /// No description provided for @fdConfTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transit'**
+  String get fdConfTransit;
+
+  /// No description provided for @fdConfDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary Periods'**
+  String get fdConfDasha;
+
+  /// No description provided for @fdConfStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Strength'**
+  String get fdConfStrength;
+
+  /// No description provided for @fdConfHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House Activation'**
+  String get fdConfHouse;
+
+  /// No description provided for @fdAskAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get fdAskAi;
+
+  /// No description provided for @fdAskAiSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a question to get today\'s answer'**
+  String get fdAskAiSub;
+
+  /// No description provided for @fdQ1.
+  ///
+  /// In en, this message translates to:
+  /// **'Why is career slow today?'**
+  String get fdQ1;
+
+  /// No description provided for @fdQ2.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the best time today?'**
+  String get fdQ2;
+
+  /// No description provided for @fdQ3.
+  ///
+  /// In en, this message translates to:
+  /// **'Is today good for money matters?'**
+  String get fdQ3;
+
+  /// No description provided for @fdQ4.
+  ///
+  /// In en, this message translates to:
+  /// **'Is today good for travel?'**
+  String get fdQ4;
+
+  /// No description provided for @fdQ5.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I avoid today?'**
+  String get fdQ5;
+
+  /// No description provided for @fdMoreSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'More Suggestions'**
+  String get fdMoreSuggestions;
+
+  /// No description provided for @fdAiSummaryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Today is best suited for {top}. {weak} may feel slow, so avoid major decisions there. Financially the day looks {fin}.'**
+  String fdAiSummaryLine(Object top, Object weak, Object fin);
+
+  /// No description provided for @fdThemeFocusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Your energy today gathers around {top} — lean into it and go gently elsewhere.'**
+  String fdThemeFocusLine(Object top);
+
+  /// No description provided for @gochToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get gochToday;
+
+  /// No description provided for @gochOverallScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Transit Score'**
+  String get gochOverallScore;
+
+  /// No description provided for @gochNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get gochNeutral;
+
+  /// No description provided for @gochChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging'**
+  String get gochChallenging;
+
+  /// No description provided for @gochTopPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Positive'**
+  String get gochTopPositive;
+
+  /// No description provided for @gochTopChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Challenges'**
+  String get gochTopChallenges;
+
+  /// No description provided for @gochFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get gochFilterAll;
+
+  /// No description provided for @gochFavorability.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorability'**
+  String get gochFavorability;
+
+  /// No description provided for @gochAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Alerts'**
+  String get gochAlerts;
+
+  /// No description provided for @gochAlertCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get gochAlertCritical;
+
+  /// No description provided for @gochAlertWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get gochAlertWarning;
+
+  /// No description provided for @gochAlertOpportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Opportunity'**
+  String get gochAlertOpportunity;
+
+  /// No description provided for @gochAiFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Focus Today'**
+  String get gochAiFocus;
+
+  /// No description provided for @gochLifeScores.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Area Scores'**
+  String get gochLifeScores;
+
+  /// No description provided for @gochWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Why?'**
+  String get gochWhy;
+
+  /// No description provided for @gochCurrentTransits.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Transits'**
+  String get gochCurrentTransits;
+
+  /// No description provided for @gochDailyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Daily Plan'**
+  String get gochDailyPlan;
+
+  /// No description provided for @gochMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get gochMorning;
+
+  /// No description provided for @gochAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get gochAfternoon;
+
+  /// No description provided for @gochEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get gochEvening;
+
+  /// No description provided for @gochNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get gochNight;
+
+  /// No description provided for @gochSmartReco.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Recommendations'**
+  String get gochSmartReco;
+
+  /// No description provided for @gochExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Today\'s Transit'**
+  String get gochExplain;
+
+  /// No description provided for @gochDo.
+  ///
+  /// In en, this message translates to:
+  /// **'Do'**
+  String get gochDo;
+
+  /// No description provided for @gochDont.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid'**
+  String get gochDont;
+
+  /// No description provided for @gochDoWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Tackle important work'**
+  String get gochDoWork;
+
+  /// No description provided for @gochDoMeditate.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditate and reflect'**
+  String get gochDoMeditate;
+
+  /// No description provided for @gochDoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start new plans'**
+  String get gochDoStart;
+
+  /// No description provided for @gochDoFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish pending tasks'**
+  String get gochDoFinish;
+
+  /// No description provided for @gochDontArgue.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid arguments'**
+  String get gochDontArgue;
+
+  /// No description provided for @gochDontImpulsive.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid impulsive decisions'**
+  String get gochDontImpulsive;
+
+  /// No description provided for @gochDontOverspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid overspending'**
+  String get gochDontOverspend;
+
+  /// No description provided for @gochThemeGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'A day of growth in {area} — lean into it.'**
+  String gochThemeGrowth(Object area);
+
+  /// No description provided for @gochThemeChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay patient with {area} today — go steady.'**
+  String gochThemeChallenge(Object area);
+
+  /// No description provided for @gochPosLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{area} is well supported right now.'**
+  String gochPosLine(Object area);
+
+  /// No description provided for @gochChalLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{area} needs extra care today.'**
+  String gochChalLine(Object area);
+
+  /// No description provided for @gochAiFocusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Put your energy into {a1} today, and be gentle with {a2}.'**
+  String gochAiFocusLine(Object a1, Object a2);
+
+  /// No description provided for @divBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get divBeginner;
+
+  /// No description provided for @divSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search: career, marriage, education…'**
+  String get divSearchHint;
+
+  /// No description provided for @divSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisional Chart Summary'**
+  String get divSummaryTitle;
+
+  /// No description provided for @divTotalCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Charts'**
+  String get divTotalCharts;
+
+  /// No description provided for @divMostImportant.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Important'**
+  String get divMostImportant;
+
+  /// No description provided for @divRecommendedForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended For You'**
+  String get divRecommendedForYou;
+
+  /// No description provided for @divCatEssential.
+  ///
+  /// In en, this message translates to:
+  /// **'Essential Charts'**
+  String get divCatEssential;
+
+  /// No description provided for @divCatPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Life'**
+  String get divCatPersonal;
+
+  /// No description provided for @divCatKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge Charts'**
+  String get divCatKnowledge;
+
+  /// No description provided for @divCatAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Charts'**
+  String get divCatAdvanced;
+
+  /// No description provided for @divGoalProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get divGoalProperty;
+
+  /// No description provided for @divGoalKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma'**
+  String get divGoalKarma;
+
+  /// No description provided for @divBadgeHighlyRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Highly Recommended'**
+  String get divBadgeHighlyRec;
+
+  /// No description provided for @divBadgeRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get divBadgeRec;
+
+  /// No description provided for @divBadgeUseful.
+  ///
+  /// In en, this message translates to:
+  /// **'Useful'**
+  String get divBadgeUseful;
+
+  /// No description provided for @divBadgeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get divBadgeOptional;
+
+  /// No description provided for @divBadgeAdvOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Only'**
+  String get divBadgeAdvOnly;
+
+  /// No description provided for @divRecommendBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommend Best Charts'**
+  String get divRecommendBest;
+
+  /// No description provided for @divNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No charts match your search'**
+  String get divNoMatch;
+
+  /// No description provided for @divLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get divLifeAreas;
+
+  /// No description provided for @divAiUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this chart to analyse {purpose}.'**
+  String divAiUse(Object purpose);
+
+  /// No description provided for @divHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {c1} and {c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.'**
+  String divHeroSummary(Object c1, Object c2);
+
+  /// No description provided for @divRecReasonHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {house} house needs a closer look — this chart shows it in depth.'**
+  String divRecReasonHouse(Object house);
+
+  /// No description provided for @divRecReasonPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is a key but tested planet — this chart reveals its deeper condition.'**
+  String divRecReasonPlanet(Object planet);
+
+  /// No description provided for @divRecReasonDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'You are in {planet}\'s Mahadasha, so this chart is especially timely now.'**
+  String divRecReasonDasha(Object planet);
+
+  /// No description provided for @divRecSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your chart, {c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.'**
+  String divRecSummary(Object c1);
+
+  /// No description provided for @divWhenToUseLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this chart when you want to study {purpose}.'**
+  String divWhenToUseLine(Object purpose);
+
+  /// No description provided for @yogaHelpful.
+  ///
+  /// In en, this message translates to:
+  /// **'Helpful'**
+  String get yogaHelpful;
+
+  /// No description provided for @yogaInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get yogaInactive;
+
+  /// No description provided for @yogaTabMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get yogaTabMoney;
+
+  /// No description provided for @yogaTabRare.
+  ///
+  /// In en, this message translates to:
+  /// **'Rare'**
+  String get yogaTabRare;
+
+  /// No description provided for @yogaSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga Summary'**
+  String get yogaSummaryTitle;
+
+  /// No description provided for @yogaActiveYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Yogas'**
+  String get yogaActiveYogas;
+
+  /// No description provided for @yogaTotalYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Yogas'**
+  String get yogaTotalYogas;
+
+  /// No description provided for @yogaMostPowerful.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Powerful'**
+  String get yogaMostPowerful;
+
+  /// No description provided for @yogaFortuneRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Fortune'**
+  String get yogaFortuneRating;
+
+  /// No description provided for @yogaBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits'**
+  String get yogaBenefits;
+
+  /// No description provided for @yogaSupportingPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Supporting Planets'**
+  String get yogaSupportingPlanets;
+
+  /// No description provided for @yogaRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 5 Strongest Yogas'**
+  String get yogaRanking;
+
+  /// No description provided for @yogaExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Yogas'**
+  String get yogaExplain;
+
+  /// No description provided for @yogaExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How your yogas support you'**
+  String get yogaExplainSubtitle;
+
+  /// No description provided for @yogaNoneActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active yogas yet'**
+  String get yogaNoneActive;
+
+  /// No description provided for @yogaNoneInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No yogas in this category'**
+  String get yogaNoneInCategory;
+
+  /// No description provided for @yogaHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart carries {count} active yogas — supportive planetary combinations. Combinations involving {planets} create especially helpful influences for growth and success.'**
+  String yogaHeroSummary(Object count, Object planets);
+
+  /// No description provided for @yogaAiLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} supports {areas}, and its benefits grow when its planets are active in dasha or transit.'**
+  String yogaAiLine(Object name, Object areas);
+
+  /// No description provided for @yogaAiGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'This yoga is a supportive combination in your chart that strengthens its related areas of life.'**
+  String get yogaAiGeneric;
+
+  /// No description provided for @yogaExplainReassure.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.'**
+  String get yogaExplainReassure;
+
+  /// No description provided for @doshSevere.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe'**
+  String get doshSevere;
+
+  /// No description provided for @doshVeryMild.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Mild'**
+  String get doshVeryMild;
+
+  /// No description provided for @doshLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get doshLow;
+
+  /// No description provided for @doshHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get doshHigh;
+
+  /// No description provided for @doshCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get doshCritical;
+
+  /// No description provided for @doshSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosha Summary'**
+  String get doshSummaryTitle;
+
+  /// No description provided for @doshActiveDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Doshas'**
+  String get doshActiveDoshas;
+
+  /// No description provided for @doshTotalChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Checked'**
+  String get doshTotalChecked;
+
+  /// No description provided for @doshOverallSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Severity'**
+  String get doshOverallSeverity;
+
+  /// No description provided for @doshNoneActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active doshas — a clean chart!'**
+  String get doshNoneActive;
+
+  /// No description provided for @doshCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get doshCategory;
+
+  /// No description provided for @doshConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get doshConfidence;
+
+  /// No description provided for @doshWhyFormed.
+  ///
+  /// In en, this message translates to:
+  /// **'Why This Formed'**
+  String get doshWhyFormed;
+
+  /// No description provided for @doshAffectedAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Affected Areas'**
+  String get doshAffectedAreas;
+
+  /// No description provided for @doshTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get doshTimeline;
+
+  /// No description provided for @doshDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get doshDefinition;
+
+  /// No description provided for @doshFormationRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Formation Rule'**
+  String get doshFormationRule;
+
+  /// No description provided for @doshSupportingPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Related Planet'**
+  String get doshSupportingPlanets;
+
+  /// No description provided for @doshCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation Yogas'**
+  String get doshCancellation;
+
+  /// No description provided for @doshNoCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'None found'**
+  String get doshNoCancellation;
+
+  /// No description provided for @doshAreaChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get doshAreaChildren;
+
+  /// No description provided for @doshAreaMind.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind'**
+  String get doshAreaMind;
+
+  /// No description provided for @remMantra.
+  ///
+  /// In en, this message translates to:
+  /// **'Mantra'**
+  String get remMantra;
+
+  /// No description provided for @remGemstone.
+  ///
+  /// In en, this message translates to:
+  /// **'Gemstone'**
+  String get remGemstone;
+
+  /// No description provided for @remDonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation'**
+  String get remDonation;
+
+  /// No description provided for @remTemple.
+  ///
+  /// In en, this message translates to:
+  /// **'Temple'**
+  String get remTemple;
+
+  /// No description provided for @remFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting'**
+  String get remFasting;
+
+  /// No description provided for @remLifestyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifestyle'**
+  String get remLifestyle;
+
+  /// No description provided for @remLifestyleGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.'**
+  String get remLifestyleGeneric;
+
+  /// No description provided for @doshExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Doshas'**
+  String get doshExplain;
+
+  /// No description provided for @doshExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A calm, practical look at your doshas'**
+  String get doshExplainSubtitle;
+
+  /// No description provided for @doshExplainReassure.
+  ///
+  /// In en, this message translates to:
+  /// **'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.'**
+  String get doshExplainReassure;
+
+  /// No description provided for @doshAiGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.'**
+  String get doshAiGeneric;
+
+  /// No description provided for @doshHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart shows {active} active doshas out of {total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.'**
+  String doshHeroSummary(Object active, Object total);
+
+  /// No description provided for @doshAiLine.
+  ///
+  /// In en, this message translates to:
+  /// **'This dosha mainly influences {areas}. During {planet} periods its effect can feel stronger, and remedies help balance it.'**
+  String doshAiLine(Object areas, Object planet);
+
+  /// No description provided for @doshTimelineLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Its effect is felt most during the Mahadasha and Antardasha of {planet}, and when {planet} is active in transit.'**
+  String doshTimelineLine(Object planet);
+
+  /// No description provided for @sbLegendary.
+  ///
+  /// In en, this message translates to:
+  /// **'Legendary'**
+  String get sbLegendary;
+
+  /// No description provided for @sbSthana.
+  ///
+  /// In en, this message translates to:
+  /// **'Sthana Bala'**
+  String get sbSthana;
+
+  /// No description provided for @sbDig.
+  ///
+  /// In en, this message translates to:
+  /// **'Dig Bala'**
+  String get sbDig;
+
+  /// No description provided for @sbKala.
+  ///
+  /// In en, this message translates to:
+  /// **'Kala Bala'**
+  String get sbKala;
+
+  /// No description provided for @sbChesta.
+  ///
+  /// In en, this message translates to:
+  /// **'Chesta Bala'**
+  String get sbChesta;
+
+  /// No description provided for @sbNaisargika.
+  ///
+  /// In en, this message translates to:
+  /// **'Naisargika Bala'**
+  String get sbNaisargika;
+
+  /// No description provided for @sbDrik.
+  ///
+  /// In en, this message translates to:
+  /// **'Drik Bala'**
+  String get sbDrik;
+
+  /// No description provided for @sbSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary Strength Summary'**
+  String get sbSummary;
+
+  /// No description provided for @sbAverageStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Strength'**
+  String get sbAverageStrength;
+
+  /// No description provided for @sbHighestRupa.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Rupa'**
+  String get sbHighestRupa;
+
+  /// No description provided for @sbRupa.
+  ///
+  /// In en, this message translates to:
+  /// **'Rupa'**
+  String get sbRupa;
+
+  /// No description provided for @sbRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Ranking'**
+  String get sbRanking;
+
+  /// No description provided for @sbRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get sbRequired;
+
+  /// No description provided for @sbExcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Excess'**
+  String get sbExcess;
+
+  /// No description provided for @sbDeficit.
+  ///
+  /// In en, this message translates to:
+  /// **'Deficit'**
+  String get sbDeficit;
+
+  /// No description provided for @sbTotalShadbala.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Shadbala'**
+  String get sbTotalShadbala;
+
+  /// No description provided for @sbExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Planetary Strength'**
+  String get sbExplain;
+
+  /// No description provided for @sbExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A simple summary of your planets\' strength'**
+  String get sbExplainSubtitle;
+
+  /// No description provided for @sbInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Shadbala'**
+  String get sbInfoTitle;
+
+  /// No description provided for @sbQWhatIs.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Shadbala?'**
+  String get sbQWhatIs;
+
+  /// No description provided for @sbQRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'What are Rupas?'**
+  String get sbQRupas;
+
+  /// No description provided for @sbQHowCalc.
+  ///
+  /// In en, this message translates to:
+  /// **'How is strength calculated?'**
+  String get sbQHowCalc;
+
+  /// No description provided for @sbQHowUse.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use this'**
+  String get sbQHowUse;
+
+  /// No description provided for @sbWhyStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Strong'**
+  String get sbWhyStrong;
+
+  /// No description provided for @sbWhyWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Weak'**
+  String get sbWhyWeak;
+
+  /// No description provided for @sbDuringMahadasha.
+  ///
+  /// In en, this message translates to:
+  /// **'During Mahadasha'**
+  String get sbDuringMahadasha;
+
+  /// No description provided for @sbEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects'**
+  String get sbEffects;
+
+  /// No description provided for @sbLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get sbLifeAreas;
+
+  /// No description provided for @sbPlanetDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Details'**
+  String get sbPlanetDetails;
+
+  /// No description provided for @sbBodyWhatIs.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadbala (\'six-fold strength\') measures how much power each planet has to deliver its results, by adding six independent sources of strength.'**
+  String get sbBodyWhatIs;
+
+  /// No description provided for @sbBodyRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength is measured in Rupas (1 Rupa = 60 Virupas). Each planet needs a minimum Rupa strength to count as strong; more Rupas means it delivers its results more fully.'**
+  String get sbBodyRupas;
+
+  /// No description provided for @sbBodyHowCalc.
+  ///
+  /// In en, this message translates to:
+  /// **'Six balas are added: Sthana (positional), Dig (directional), Kala (temporal), Chesta (motional), Naisargika (natural) and Drik (aspectual). The total is compared with the planet\'s required minimum to get a percentage.'**
+  String get sbBodyHowCalc;
+
+  /// No description provided for @sbBodyHowUse.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.'**
+  String get sbBodyHowUse;
+
+  /// No description provided for @sbRemedyStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Well-supported — no special remedy needed; you can use this planet\'s periods confidently.'**
+  String get sbRemedyStrong;
+
+  /// No description provided for @sbHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{strongP} is your strongest planet, giving excellent support for {strongTrait}. {weakP} is the weakest and benefits most from remedies.'**
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP);
+
+  /// No description provided for @sbCardAi.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} has {category} Shadbala, so its {karakatva} are supported accordingly.'**
+  String sbCardAi(Object planet, Object category, Object karakatva);
+
+  /// No description provided for @sbWhyLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest through {bala} ({rupa} rupas).'**
+  String sbWhyLine(Object bala, Object rupa);
+
+  /// No description provided for @sbWeakLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest in {bala}, which lowers the total.'**
+  String sbWeakLine(Object bala);
+
+  /// No description provided for @sbMahadashaLine.
+  ///
+  /// In en, this message translates to:
+  /// **'During {planet}\'s Mahadasha, its {karak} come to the fore.'**
+  String sbMahadashaLine(Object planet, Object karak);
+
+  /// No description provided for @sbEffectStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'With strong Shadbala, {karak} are naturally supported.'**
+  String sbEffectStrong(Object karak);
+
+  /// No description provided for @sbEffectWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'With modest Shadbala, {karak} may need conscious effort.'**
+  String sbEffectWeak(Object karak);
+
+  /// No description provided for @sbRemedyWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthen {planet} through its mantra, gemstone or charity, and act patiently during its periods.'**
+  String sbRemedyWeak(Object planet);
+
+  /// No description provided for @bhOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get bhOverview;
+
+  /// No description provided for @bhDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed'**
+  String get bhDetailed;
+
+  /// No description provided for @bhavaHouses.
+  ///
+  /// In en, this message translates to:
+  /// **'Houses'**
+  String get bhavaHouses;
+
+  /// No description provided for @bhStrengthOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'House Strength Overview'**
+  String get bhStrengthOverview;
+
+  /// No description provided for @bhOverallAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall House Average'**
+  String get bhOverallAverage;
+
+  /// No description provided for @bhStrongestHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest House'**
+  String get bhStrongestHouse;
+
+  /// No description provided for @bhWeakestHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest House'**
+  String get bhWeakestHouse;
+
+  /// No description provided for @bhBestArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Life Area'**
+  String get bhBestArea;
+
+  /// No description provided for @bhNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Attention'**
+  String get bhNeedsAttention;
+
+  /// No description provided for @bhSavContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV Contribution'**
+  String get bhSavContribution;
+
+  /// No description provided for @bhLordCondition.
+  ///
+  /// In en, this message translates to:
+  /// **'House Lord Condition'**
+  String get bhLordCondition;
+
+  /// No description provided for @bhBenefic.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefic Influence'**
+  String get bhBenefic;
+
+  /// No description provided for @bhMalefic.
+  ///
+  /// In en, this message translates to:
+  /// **'Malefic Influence'**
+  String get bhMalefic;
+
+  /// No description provided for @bhStrengthReasons.
+  ///
+  /// In en, this message translates to:
+  /// **'Why This Score'**
+  String get bhStrengthReasons;
+
+  /// No description provided for @bhGoodEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Effects'**
+  String get bhGoodEffects;
+
+  /// No description provided for @bhChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get bhChallenges;
+
+  /// No description provided for @bhRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Remedies'**
+  String get bhRemedies;
+
+  /// No description provided for @bhRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'House Ranking'**
+  String get bhRanking;
+
+  /// No description provided for @bhSav.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV'**
+  String get bhSav;
+
+  /// No description provided for @bhExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Houses'**
+  String get bhExplain;
+
+  /// No description provided for @bhExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A simple summary of your 12 houses'**
+  String get bhExplainSubtitle;
+
+  /// No description provided for @bhHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your strongest houses are {s1} and {s2}. {strongArea} is naturally strong, while {weakArea} needs more effort.'**
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea);
+
+  /// No description provided for @bhLordLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Its lord {lord} is placed as {relation}.'**
+  String bhLordLine(Object lord, Object relation);
+
+  /// No description provided for @bhWhyLine.
+  ///
+  /// In en, this message translates to:
+  /// **'This house carries {sav} benefic points (SAV); its occupants and aspects shape the rest of the score.'**
+  String bhWhyLine(Object sav);
+
+  /// No description provided for @bhGoodLine.
+  ///
+  /// In en, this message translates to:
+  /// **'When strong, it supports {meaning}.'**
+  String bhGoodLine(Object meaning);
+
+  /// No description provided for @bhChallengeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'When weak, {meaning} may need extra effort and care.'**
+  String bhChallengeLine(Object meaning);
+
+  /// No description provided for @bhRemedyLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthen its lord {lord} and honour this house\'s matters to lift it.'**
+  String bhRemedyLine(Object lord);
+
+  /// No description provided for @bhCardAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {house} is {strengthWord}. It governs {meaning}.'**
+  String bhCardAi(Object house, Object strengthWord, Object meaning);
+
   /// No description provided for @kunNavamsa.
   ///
   /// In en, this message translates to:

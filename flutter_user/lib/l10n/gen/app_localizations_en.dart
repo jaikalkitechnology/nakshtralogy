@@ -69,6 +69,1145 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get rzTodayOutlook => 'Today\'s Zodiac Outlook';
+
+  @override
+  String get rzPlanetaryEnergy => 'Today\'s Planetary Energy';
+
+  @override
+  String get rzBestSign => 'Best Sign';
+
+  @override
+  String get rzChallengingSign => 'Most Challenging';
+
+  @override
+  String get rzDominantPlanet => 'Dominant Planet';
+
+  @override
+  String get rzOverallMood => 'Overall Mood';
+
+  @override
+  String get rzMoodBright => 'Bright & Active';
+
+  @override
+  String get rzMoodCalm => 'Calm & Steady';
+
+  @override
+  String get rzMoodMixed => 'Mixed Energy';
+
+  @override
+  String get rzMoodTense => 'Tense & Careful';
+
+  @override
+  String get rzTodayEnergy => 'Today\'s Energy';
+
+  @override
+  String get rzCaution => 'Caution';
+
+  @override
+  String get rzWeak => 'Weak';
+
+  @override
+  String get rzAllSigns => 'All Zodiac Signs';
+
+  @override
+  String get rzAiSummary => 'AI Summary';
+
+  @override
+  String get rzPlanetaryInfluence => 'Today\'s Planetary Influence';
+
+  @override
+  String get rzStrongInfluences => 'Strong Influences';
+
+  @override
+  String get rzShowTechnical => 'Show technical details';
+
+  @override
+  String get rzOpportunities => 'Today\'s Opportunities';
+
+  @override
+  String get rzAvoidTitle => 'Things To Avoid Today';
+
+  @override
+  String get rzTechnicalReason => 'Technical reason';
+
+  @override
+  String get rzAvoidDecisions => 'Rushing important decisions';
+
+  @override
+  String get rzAvoidArguments => 'Heated arguments';
+
+  @override
+  String get rzAvoidInvestments => 'Large investments';
+
+  @override
+  String get rzAvoidOverthink => 'Overthinking small issues';
+
+  @override
+  String get rzAvoidOverspend => 'Unnecessary spending';
+
+  @override
+  String get rzAvoidStress => 'Stress and overworking';
+
+  @override
+  String get rzPlanetaryChart => 'Today\'s Planetary Chart';
+
+  @override
+  String get rzWhatChartMeans => 'What this chart means';
+
+  @override
+  String get rzChartExplain => 'This diamond shows where each planet is sitting in the sky today, mapped to your sign. Planets in supportive houses lift the day; those in tough houses ask for care.';
+
+  @override
+  String get rzDoNetworking => 'Networking & connecting';
+
+  @override
+  String get rzDoLearning => 'Learning something new';
+
+  @override
+  String get rzDoMeditation => 'Meditation & calm';
+
+  @override
+  String get rzDoFamily => 'Family time';
+
+  @override
+  String get rzDoCreative => 'Creative work';
+
+  @override
+  String get rzDoRest => 'Rest & self-care';
+
+  @override
+  String get rzAiRecommendations => 'Today\'s AI Recommendations';
+
+  @override
+  String get rzTechnical => 'Technical Astrology';
+
+  @override
+  String get rzTransitScore => 'Transit Score';
+
+  @override
+  String get rzVedha => 'Vedha (Obstructions)';
+
+  @override
+  String get rzGocharDetails => 'Gochar Details';
+
+  @override
+  String get rzAdvancedOnly => 'For advanced users';
+
+  @override
+  String get rzTomorrow => 'Tomorrow Preview';
+
+  @override
+  String get rzTomorrowEnergy => 'Tomorrow\'s Energy';
+
+  @override
+  String get rzImproving => 'Improving';
+
+  @override
+  String get rzWeaker => 'Slightly Weaker';
+
+  @override
+  String get rzSteady => 'Steady';
+
+  @override
+  String get rzTomorrowUpLine => 'Energy is expected to rise tomorrow — plan ahead for important tasks.';
+
+  @override
+  String get rzTomorrowDownLine => 'Energy may dip a little tomorrow — keep the day light and steady.';
+
+  @override
+  String get rzTomorrowFlatLine => 'Energy stays steady tomorrow — a calm, balanced day ahead.';
+
+  @override
+  String get rzWeeklyTrend => 'Weekly Trend';
+
+  @override
+  String get rzMonthlyTrend => 'Monthly Trend';
+
+  @override
+  String get rzBestDayWeek => 'Best Day';
+
+  @override
+  String get rzHardestDay => 'Toughest Day';
+
+  @override
+  String get rzLuckyToday => 'Lucky Today';
+
+  @override
+  String get rzKarakaSun => 'confidence & vitality';
+
+  @override
+  String get rzKarakaMoon => 'emotions & peace of mind';
+
+  @override
+  String get rzKarakaMars => 'energy & drive';
+
+  @override
+  String get rzKarakaMercury => 'communication & learning';
+
+  @override
+  String get rzKarakaJupiter => 'wisdom & growth';
+
+  @override
+  String get rzKarakaVenus => 'relationships & comfort';
+
+  @override
+  String get rzKarakaSaturn => 'discipline & patience';
+
+  @override
+  String get rzKarakaRahu => 'ambition & change';
+
+  @override
+  String get rzKarakaKetu => 'spirituality & letting go';
+
+  @override
+  String rzHomeSummary(Object dom, Object chal) {
+    return '${dom} sets the tone of the day, while ${chal} asks for patience and care.';
+  }
+
+  @override
+  String rzInsightGood(Object karaka) {
+    return 'Good day for ${karaka}.';
+  }
+
+  @override
+  String rzInsightHard(Object karaka) {
+    return 'Take it slow with ${karaka} today.';
+  }
+
+  @override
+  String rzInfluenceGood(Object karaka) {
+    return '${karaka} is well supported today.';
+  }
+
+  @override
+  String rzInfluenceHard(Object karaka) {
+    return '${karaka} may face delays today.';
+  }
+
+  @override
+  String rzDetailSummary(Object strong, Object weak) {
+    return 'Today supports ${strong}, while ${weak} needs patience and care.';
+  }
+
+  @override
+  String get fdEnergyScore => 'Today\'s Energy Score';
+
+  @override
+  String get fdStatusAverage => 'Average';
+
+  @override
+  String get fdStatusMixed => 'Mixed';
+
+  @override
+  String get fdStatusChallenging => 'Challenging';
+
+  @override
+  String get fdTheme => 'Today\'s Theme';
+
+  @override
+  String get fdExplainToday => 'Explain Today';
+
+  @override
+  String get fdTodaysFocus => 'Today\'s Focus';
+
+  @override
+  String get fdTopRecommendation => 'Top Recommendation';
+
+  @override
+  String get fdTopCaution => 'Top Caution';
+
+  @override
+  String get fdReadingTime => 'Reading time';
+
+  @override
+  String get fdSeconds30 => '30 sec';
+
+  @override
+  String get fdCareer => 'Career';
+
+  @override
+  String get fdMoney => 'Money';
+
+  @override
+  String get fdLove => 'Love';
+
+  @override
+  String get fdHealth => 'Health';
+
+  @override
+  String get fdTravel => 'Travel';
+
+  @override
+  String get fdFamily => 'Family';
+
+  @override
+  String get fdBestToDo => 'Best Things To Do Today';
+
+  @override
+  String get fdAvoidToday => 'Avoid Today';
+
+  @override
+  String get fdConfidenceLabel => 'Confidence';
+
+  @override
+  String get fdBestTime => 'Best Time';
+
+  @override
+  String get fdRecommended => 'Recommended';
+
+  @override
+  String get fdReason => 'Reason';
+
+  @override
+  String get fdRisk => 'Risk';
+
+  @override
+  String get fdRecommendation => 'Recommendation';
+
+  @override
+  String get fdNoActions => 'Nothing major to push today — keep a steady, calm routine.';
+
+  @override
+  String get fdNoCautions => 'No major cautions today — proceed with normal awareness.';
+
+  @override
+  String get fdHighlights => 'Today\'s Highlights';
+
+  @override
+  String get fdProbVeryHigh => 'Very High';
+
+  @override
+  String get fdProbHigh => 'High';
+
+  @override
+  String get fdProbElevated => 'Elevated';
+
+  @override
+  String get fdProbCaution => 'Caution';
+
+  @override
+  String get fdWhatToDo => 'What to do';
+
+  @override
+  String get fdLifeAreas => 'Life Areas';
+
+  @override
+  String get fdTapDetails => 'Tap for details';
+
+  @override
+  String get fdArea1 => 'Self & Health';
+
+  @override
+  String get fdArea2 => 'Wealth & Family';
+
+  @override
+  String get fdArea3 => 'Communication';
+
+  @override
+  String get fdArea4 => 'Home & Comfort';
+
+  @override
+  String get fdArea5 => 'Creativity & Romance';
+
+  @override
+  String get fdArea6 => 'Work & Duties';
+
+  @override
+  String get fdArea7 => 'Relationships';
+
+  @override
+  String get fdArea8 => 'Change & Depth';
+
+  @override
+  String get fdArea9 => 'Luck & Travel';
+
+  @override
+  String get fdArea10 => 'Career & Status';
+
+  @override
+  String get fdArea11 => 'Gains & Network';
+
+  @override
+  String get fdArea12 => 'Rest & Spirituality';
+
+  @override
+  String get fdTodaysMeaning => 'Today\'s Meaning';
+
+  @override
+  String get fdGoodFor => 'Good For';
+
+  @override
+  String get fdAvoid => 'Avoid';
+
+  @override
+  String get fdPlanetSupport => 'Planet Support';
+
+  @override
+  String get fdWhyPrediction => 'Why this prediction?';
+
+  @override
+  String get fdAdvancedDetails => 'Advanced Details';
+
+  @override
+  String get fdAiRecommendation => 'AI Recommendation';
+
+  @override
+  String get fdOverallStatus => 'Overall Status';
+
+  @override
+  String get fdNoPlanetTransit => 'No major planet is transiting this area today.';
+
+  @override
+  String get fdFinancialOutlook => 'Financial Outlook';
+
+  @override
+  String get fdIncomeProbability => 'Income Probability';
+
+  @override
+  String get fdExpenseProbability => 'Expense Probability';
+
+  @override
+  String get fdNetBalance => 'Net Financial Balance';
+
+  @override
+  String get fdAvoidSpending => 'Avoid Spending';
+
+  @override
+  String get fdRelationshipOutlook => 'Relationship Outlook';
+
+  @override
+  String get fdOverallScore => 'Overall Score';
+
+  @override
+  String get fdPartner => 'Partner';
+
+  @override
+  String get fdRomance => 'Romance';
+
+  @override
+  String get fdWorkplace => 'Workplace';
+
+  @override
+  String get fdPublicImage => 'Public Image';
+
+  @override
+  String get fdBestActivity => 'Best Activity';
+
+  @override
+  String get fdWeakArea => 'Weak Area';
+
+  @override
+  String get fdBiggestOpportunity => 'Biggest Opportunity';
+
+  @override
+  String get fdBiggestRisk => 'Biggest Risk';
+
+  @override
+  String get fdProbability => 'Probability';
+
+  @override
+  String get fdProtection => 'Protection Advice';
+
+  @override
+  String get fdDescription => 'Description';
+
+  @override
+  String get fdBestTimeToday => 'Best Time Today';
+
+  @override
+  String get fdAvoidDuring => 'Avoid During';
+
+  @override
+  String get fdPredictionConfidence => 'Prediction Confidence';
+
+  @override
+  String get fdConfBasis => 'Today\'s prediction combines';
+
+  @override
+  String get fdConfNatal => 'Birth Chart';
+
+  @override
+  String get fdConfTransit => 'Current Transit';
+
+  @override
+  String get fdConfDasha => 'Planetary Periods';
+
+  @override
+  String get fdConfStrength => 'Planet Strength';
+
+  @override
+  String get fdConfHouse => 'House Activation';
+
+  @override
+  String get fdAskAi => 'Ask AI';
+
+  @override
+  String get fdAskAiSub => 'Tap a question to get today\'s answer';
+
+  @override
+  String get fdQ1 => 'Why is career slow today?';
+
+  @override
+  String get fdQ2 => 'What is the best time today?';
+
+  @override
+  String get fdQ3 => 'Is today good for money matters?';
+
+  @override
+  String get fdQ4 => 'Is today good for travel?';
+
+  @override
+  String get fdQ5 => 'What should I avoid today?';
+
+  @override
+  String get fdMoreSuggestions => 'More Suggestions';
+
+  @override
+  String fdAiSummaryLine(Object top, Object weak, Object fin) {
+    return 'Today is best suited for ${top}. ${weak} may feel slow, so avoid major decisions there. Financially the day looks ${fin}.';
+  }
+
+  @override
+  String fdThemeFocusLine(Object top) {
+    return 'Your energy today gathers around ${top} — lean into it and go gently elsewhere.';
+  }
+
+  @override
+  String get gochToday => 'Today';
+
+  @override
+  String get gochOverallScore => 'Overall Transit Score';
+
+  @override
+  String get gochNeutral => 'Neutral';
+
+  @override
+  String get gochChallenging => 'Challenging';
+
+  @override
+  String get gochTopPositive => 'Top Positive';
+
+  @override
+  String get gochTopChallenges => 'Top Challenges';
+
+  @override
+  String get gochFilterAll => 'All';
+
+  @override
+  String get gochFavorability => 'Favorability';
+
+  @override
+  String get gochAlerts => 'Transit Alerts';
+
+  @override
+  String get gochAlertCritical => 'Critical';
+
+  @override
+  String get gochAlertWarning => 'Caution';
+
+  @override
+  String get gochAlertOpportunity => 'Opportunity';
+
+  @override
+  String get gochAiFocus => 'AI Focus Today';
+
+  @override
+  String get gochLifeScores => 'Life Area Scores';
+
+  @override
+  String get gochWhy => 'Why?';
+
+  @override
+  String get gochCurrentTransits => 'Active Transits';
+
+  @override
+  String get gochDailyPlan => 'Your Daily Plan';
+
+  @override
+  String get gochMorning => 'Morning';
+
+  @override
+  String get gochAfternoon => 'Afternoon';
+
+  @override
+  String get gochEvening => 'Evening';
+
+  @override
+  String get gochNight => 'Night';
+
+  @override
+  String get gochSmartReco => 'Smart Recommendations';
+
+  @override
+  String get gochExplain => 'Explain Today\'s Transit';
+
+  @override
+  String get gochDo => 'Do';
+
+  @override
+  String get gochDont => 'Avoid';
+
+  @override
+  String get gochDoWork => 'Tackle important work';
+
+  @override
+  String get gochDoMeditate => 'Meditate and reflect';
+
+  @override
+  String get gochDoStart => 'Start new plans';
+
+  @override
+  String get gochDoFinish => 'Finish pending tasks';
+
+  @override
+  String get gochDontArgue => 'Avoid arguments';
+
+  @override
+  String get gochDontImpulsive => 'Avoid impulsive decisions';
+
+  @override
+  String get gochDontOverspend => 'Avoid overspending';
+
+  @override
+  String gochThemeGrowth(Object area) {
+    return 'A day of growth in ${area} — lean into it.';
+  }
+
+  @override
+  String gochThemeChallenge(Object area) {
+    return 'Stay patient with ${area} today — go steady.';
+  }
+
+  @override
+  String gochPosLine(Object area) {
+    return '${area} is well supported right now.';
+  }
+
+  @override
+  String gochChalLine(Object area) {
+    return '${area} needs extra care today.';
+  }
+
+  @override
+  String gochAiFocusLine(Object a1, Object a2) {
+    return 'Put your energy into ${a1} today, and be gentle with ${a2}.';
+  }
+
+  @override
+  String get divBeginner => 'Beginner';
+
+  @override
+  String get divSearchHint => 'Search: career, marriage, education…';
+
+  @override
+  String get divSummaryTitle => 'Divisional Chart Summary';
+
+  @override
+  String get divTotalCharts => 'Total Charts';
+
+  @override
+  String get divMostImportant => 'Most Important';
+
+  @override
+  String get divRecommendedForYou => 'Recommended For You';
+
+  @override
+  String get divCatEssential => 'Essential Charts';
+
+  @override
+  String get divCatPersonal => 'Personal Life';
+
+  @override
+  String get divCatKnowledge => 'Knowledge Charts';
+
+  @override
+  String get divCatAdvanced => 'Advanced Charts';
+
+  @override
+  String get divGoalProperty => 'Property';
+
+  @override
+  String get divGoalKarma => 'Karma';
+
+  @override
+  String get divBadgeHighlyRec => 'Highly Recommended';
+
+  @override
+  String get divBadgeRec => 'Recommended';
+
+  @override
+  String get divBadgeUseful => 'Useful';
+
+  @override
+  String get divBadgeOptional => 'Optional';
+
+  @override
+  String get divBadgeAdvOnly => 'Advanced Only';
+
+  @override
+  String get divRecommendBest => 'Recommend Best Charts';
+
+  @override
+  String get divNoMatch => 'No charts match your search';
+
+  @override
+  String get divLifeAreas => 'Life Areas';
+
+  @override
+  String divAiUse(Object purpose) {
+    return 'Use this chart to analyse ${purpose}.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'Your ${c1} and ${c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'Your ${house} house needs a closer look — this chart shows it in depth.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} is a key but tested planet — this chart reveals its deeper condition.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'You are in ${planet}\'s Mahadasha, so this chart is especially timely now.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'Based on your chart, ${c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'Open this chart when you want to study ${purpose}.';
+  }
+
+  @override
+  String get yogaHelpful => 'Helpful';
+
+  @override
+  String get yogaInactive => 'Inactive';
+
+  @override
+  String get yogaTabMoney => 'Money';
+
+  @override
+  String get yogaTabRare => 'Rare';
+
+  @override
+  String get yogaSummaryTitle => 'Yoga Summary';
+
+  @override
+  String get yogaActiveYogas => 'Active Yogas';
+
+  @override
+  String get yogaTotalYogas => 'Total Yogas';
+
+  @override
+  String get yogaMostPowerful => 'Most Powerful';
+
+  @override
+  String get yogaFortuneRating => 'Overall Fortune';
+
+  @override
+  String get yogaBenefits => 'Benefits';
+
+  @override
+  String get yogaSupportingPlanets => 'Supporting Planets';
+
+  @override
+  String get yogaRanking => 'Top 5 Strongest Yogas';
+
+  @override
+  String get yogaExplain => 'Explain My Yogas';
+
+  @override
+  String get yogaExplainSubtitle => 'How your yogas support you';
+
+  @override
+  String get yogaNoneActive => 'No active yogas yet';
+
+  @override
+  String get yogaNoneInCategory => 'No yogas in this category';
+
+  @override
+  String yogaHeroSummary(Object count, Object planets) {
+    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+  }
+
+  @override
+  String yogaAiLine(Object name, Object areas) {
+    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+  }
+
+  @override
+  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+
+  @override
+  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+
+  @override
+  String get doshSevere => 'Severe';
+
+  @override
+  String get doshVeryMild => 'Very Mild';
+
+  @override
+  String get doshLow => 'Low';
+
+  @override
+  String get doshHigh => 'High';
+
+  @override
+  String get doshCritical => 'Critical';
+
+  @override
+  String get doshSummaryTitle => 'Dosha Summary';
+
+  @override
+  String get doshActiveDoshas => 'Active Doshas';
+
+  @override
+  String get doshTotalChecked => 'Total Checked';
+
+  @override
+  String get doshOverallSeverity => 'Overall Severity';
+
+  @override
+  String get doshNoneActive => 'No active doshas — a clean chart!';
+
+  @override
+  String get doshCategory => 'Category';
+
+  @override
+  String get doshConfidence => 'Confidence';
+
+  @override
+  String get doshWhyFormed => 'Why This Formed';
+
+  @override
+  String get doshAffectedAreas => 'Affected Areas';
+
+  @override
+  String get doshTimeline => 'Timeline';
+
+  @override
+  String get doshDefinition => 'Definition';
+
+  @override
+  String get doshFormationRule => 'Formation Rule';
+
+  @override
+  String get doshSupportingPlanets => 'Related Planet';
+
+  @override
+  String get doshCancellation => 'Cancellation Yogas';
+
+  @override
+  String get doshNoCancellation => 'None found';
+
+  @override
+  String get doshAreaChildren => 'Children';
+
+  @override
+  String get doshAreaMind => 'Mind';
+
+  @override
+  String get remMantra => 'Mantra';
+
+  @override
+  String get remGemstone => 'Gemstone';
+
+  @override
+  String get remDonation => 'Donation';
+
+  @override
+  String get remTemple => 'Temple';
+
+  @override
+  String get remFasting => 'Fasting';
+
+  @override
+  String get remLifestyle => 'Lifestyle';
+
+  @override
+  String get remLifestyleGeneric => 'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.';
+
+  @override
+  String get doshExplain => 'Explain My Doshas';
+
+  @override
+  String get doshExplainSubtitle => 'A calm, practical look at your doshas';
+
+  @override
+  String get doshExplainReassure => 'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.';
+
+  @override
+  String get doshAiGeneric => 'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.';
+
+  @override
+  String doshHeroSummary(Object active, Object total) {
+    return 'Your chart shows ${active} active doshas out of ${total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.';
+  }
+
+  @override
+  String doshAiLine(Object areas, Object planet) {
+    return 'This dosha mainly influences ${areas}. During ${planet} periods its effect can feel stronger, and remedies help balance it.';
+  }
+
+  @override
+  String doshTimelineLine(Object planet) {
+    return 'Its effect is felt most during the Mahadasha and Antardasha of ${planet}, and when ${planet} is active in transit.';
+  }
+
+  @override
+  String get sbLegendary => 'Legendary';
+
+  @override
+  String get sbSthana => 'Sthana Bala';
+
+  @override
+  String get sbDig => 'Dig Bala';
+
+  @override
+  String get sbKala => 'Kala Bala';
+
+  @override
+  String get sbChesta => 'Chesta Bala';
+
+  @override
+  String get sbNaisargika => 'Naisargika Bala';
+
+  @override
+  String get sbDrik => 'Drik Bala';
+
+  @override
+  String get sbSummary => 'Planetary Strength Summary';
+
+  @override
+  String get sbAverageStrength => 'Average Strength';
+
+  @override
+  String get sbHighestRupa => 'Highest Rupa';
+
+  @override
+  String get sbRupa => 'Rupa';
+
+  @override
+  String get sbRanking => 'Planet Ranking';
+
+  @override
+  String get sbRequired => 'Required';
+
+  @override
+  String get sbExcess => 'Excess';
+
+  @override
+  String get sbDeficit => 'Deficit';
+
+  @override
+  String get sbTotalShadbala => 'Total Shadbala';
+
+  @override
+  String get sbExplain => 'Explain My Planetary Strength';
+
+  @override
+  String get sbExplainSubtitle => 'A simple summary of your planets\' strength';
+
+  @override
+  String get sbInfoTitle => 'Understanding Shadbala';
+
+  @override
+  String get sbQWhatIs => 'What is Shadbala?';
+
+  @override
+  String get sbQRupas => 'What are Rupas?';
+
+  @override
+  String get sbQHowCalc => 'How is strength calculated?';
+
+  @override
+  String get sbQHowUse => 'How to use this';
+
+  @override
+  String get sbWhyStrong => 'Why Strong';
+
+  @override
+  String get sbWhyWeak => 'Why Weak';
+
+  @override
+  String get sbDuringMahadasha => 'During Mahadasha';
+
+  @override
+  String get sbEffects => 'Effects';
+
+  @override
+  String get sbLifeAreas => 'Life Areas';
+
+  @override
+  String get sbPlanetDetails => 'Planet Details';
+
+  @override
+  String get sbBodyWhatIs => 'Shadbala (\'six-fold strength\') measures how much power each planet has to deliver its results, by adding six independent sources of strength.';
+
+  @override
+  String get sbBodyRupas => 'Strength is measured in Rupas (1 Rupa = 60 Virupas). Each planet needs a minimum Rupa strength to count as strong; more Rupas means it delivers its results more fully.';
+
+  @override
+  String get sbBodyHowCalc => 'Six balas are added: Sthana (positional), Dig (directional), Kala (temporal), Chesta (motional), Naisargika (natural) and Drik (aspectual). The total is compared with the planet\'s required minimum to get a percentage.';
+
+  @override
+  String get sbBodyHowUse => 'A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.';
+
+  @override
+  String get sbRemedyStrong => 'Well-supported — no special remedy needed; you can use this planet\'s periods confidently.';
+
+  @override
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
+    return '${strongP} is your strongest planet, giving excellent support for ${strongTrait}. ${weakP} is the weakest and benefits most from remedies.';
+  }
+
+  @override
+  String sbCardAi(Object planet, Object category, Object karakatva) {
+    return '${planet} has ${category} Shadbala, so its ${karakatva} are supported accordingly.';
+  }
+
+  @override
+  String sbWhyLine(Object bala, Object rupa) {
+    return 'Strongest through ${bala} (${rupa} rupas).';
+  }
+
+  @override
+  String sbWeakLine(Object bala) {
+    return 'Weakest in ${bala}, which lowers the total.';
+  }
+
+  @override
+  String sbMahadashaLine(Object planet, Object karak) {
+    return 'During ${planet}\'s Mahadasha, its ${karak} come to the fore.';
+  }
+
+  @override
+  String sbEffectStrong(Object karak) {
+    return 'With strong Shadbala, ${karak} are naturally supported.';
+  }
+
+  @override
+  String sbEffectWeak(Object karak) {
+    return 'With modest Shadbala, ${karak} may need conscious effort.';
+  }
+
+  @override
+  String sbRemedyWeak(Object planet) {
+    return 'Strengthen ${planet} through its mantra, gemstone or charity, and act patiently during its periods.';
+  }
+
+  @override
+  String get bhOverview => 'Overview';
+
+  @override
+  String get bhDetailed => 'Detailed';
+
+  @override
+  String get bhavaHouses => 'Houses';
+
+  @override
+  String get bhStrengthOverview => 'House Strength Overview';
+
+  @override
+  String get bhOverallAverage => 'Overall House Average';
+
+  @override
+  String get bhStrongestHouse => 'Strongest House';
+
+  @override
+  String get bhWeakestHouse => 'Weakest House';
+
+  @override
+  String get bhBestArea => 'Best Life Area';
+
+  @override
+  String get bhNeedsAttention => 'Needs Attention';
+
+  @override
+  String get bhSavContribution => 'SAV Contribution';
+
+  @override
+  String get bhLordCondition => 'House Lord Condition';
+
+  @override
+  String get bhBenefic => 'Benefic Influence';
+
+  @override
+  String get bhMalefic => 'Malefic Influence';
+
+  @override
+  String get bhStrengthReasons => 'Why This Score';
+
+  @override
+  String get bhGoodEffects => 'Good Effects';
+
+  @override
+  String get bhChallenges => 'Challenges';
+
+  @override
+  String get bhRemedies => 'Remedies';
+
+  @override
+  String get bhRanking => 'House Ranking';
+
+  @override
+  String get bhSav => 'SAV';
+
+  @override
+  String get bhExplain => 'Explain My Houses';
+
+  @override
+  String get bhExplainSubtitle => 'A simple summary of your 12 houses';
+
+  @override
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
+    return 'Your strongest houses are ${s1} and ${s2}. ${strongArea} is naturally strong, while ${weakArea} needs more effort.';
+  }
+
+  @override
+  String bhLordLine(Object lord, Object relation) {
+    return 'Its lord ${lord} is placed as ${relation}.';
+  }
+
+  @override
+  String bhWhyLine(Object sav) {
+    return 'This house carries ${sav} benefic points (SAV); its occupants and aspects shape the rest of the score.';
+  }
+
+  @override
+  String bhGoodLine(Object meaning) {
+    return 'When strong, it supports ${meaning}.';
+  }
+
+  @override
+  String bhChallengeLine(Object meaning) {
+    return 'When weak, ${meaning} may need extra effort and care.';
+  }
+
+  @override
+  String bhRemedyLine(Object lord) {
+    return 'Strengthen its lord ${lord} and honour this house\'s matters to lift it.';
+  }
+
+  @override
+  String bhCardAi(Object house, Object strengthWord, Object meaning) {
+    return 'Your ${house} is ${strengthWord}. It governs ${meaning}.';
+  }
+
+  @override
   String get kunNavamsa => 'Navamsa (D9)';
 
   @override

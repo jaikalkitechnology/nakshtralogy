@@ -9,6 +9,1043 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
+  String get fdEnergyScore => 'ಇಂದಿನ ಎನರ್ಜಿ ಸ್ಕೋರ್';
+
+  @override
+  String get fdStatusAverage => 'ಸರಾಸರಿ';
+
+  @override
+  String get fdStatusMixed => 'ಮಿಶ್ರ';
+
+  @override
+  String get fdStatusChallenging => 'ಸವಾಲಿನ';
+
+  @override
+  String get fdTheme => 'ಇಂದಿನ ಥೀಮ್';
+
+  @override
+  String get fdExplainToday => 'ಇಂದನ್ನು ವಿವರಿಸಿ';
+
+  @override
+  String get fdTodaysFocus => 'ಇಂದಿನ ಗಮನ';
+
+  @override
+  String get fdTopRecommendation => 'ಪ್ರಮುಖ ಶಿಫಾರಸು';
+
+  @override
+  String get fdTopCaution => 'ಪ್ರಮುಖ ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get fdReadingTime => 'ಓದುವ ಸಮಯ';
+
+  @override
+  String get fdSeconds30 => '30 ಸೆಕೆಂಡುಗಳು';
+
+  @override
+  String get fdCareer => 'ವೃತ್ತಿ';
+
+  @override
+  String get fdMoney => 'ಹಣ';
+
+  @override
+  String get fdLove => 'ಪ್ರೀತಿ';
+
+  @override
+  String get fdHealth => 'ಆರೋಗ್ಯ';
+
+  @override
+  String get fdTravel => 'ಪ್ರಯಾಣ';
+
+  @override
+  String get fdFamily => 'ಕುಟುಂಬ';
+
+  @override
+  String get fdBestToDo => 'ಇಂದು ಮಾಡಲು ಉತ್ತಮ ಕೆಲಸಗಳು';
+
+  @override
+  String get fdAvoidToday => 'ಇಂದು ಇವುಗಳನ್ನು ತಪ್ಪಿಸಿ';
+
+  @override
+  String get fdConfidenceLabel => 'ವಿಶ್ವಾಸ';
+
+  @override
+  String get fdBestTime => 'ಉತ್ತಮ ಸಮಯ';
+
+  @override
+  String get fdRecommended => 'ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get fdReason => 'ಕಾರಣ';
+
+  @override
+  String get fdRisk => 'ಅಪಾಯ';
+
+  @override
+  String get fdRecommendation => 'ಶಿಫಾರಸು';
+
+  @override
+  String get fdNoActions => 'ಇಂದು ವಿಶೇಷವಾಗಿ ಮಾಡುವಂತದ್ದೇನೂ ಇಲ್ಲ — ಸ್ಥಿರ, ಶಾಂತ ದಿನಚರಿಯನ್ನು ಕಾಪಾಡಿಕೊಳ್ಳಿ.';
+
+  @override
+  String get fdNoCautions => 'ಇಂದು ಯಾವುದೇ ದೊಡ್ಡ ಎಚ್ಚರಿಕೆಗಳಿಲ್ಲ — ಸಾಮಾನ್ಯ ಎಚ್ಚರಿಕೆಯೊಂದಿಗೆ ಮುಂದುವರಿಯಿರಿ.';
+
+  @override
+  String get fdHighlights => 'ಇಂದಿನ ಮುಖ್ಯಾಂಶಗಳು';
+
+  @override
+  String get fdProbVeryHigh => 'ಅತಿ ಹೆಚ್ಚು';
+
+  @override
+  String get fdProbHigh => 'ಹೆಚ್ಚು';
+
+  @override
+  String get fdProbElevated => 'ಏರಿದ';
+
+  @override
+  String get fdProbCaution => 'ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get fdWhatToDo => 'ಏನು ಮಾಡಬೇಕು';
+
+  @override
+  String get fdLifeAreas => 'ಜೀವನದ ಕ್ಷೇತ್ರಗಳು';
+
+  @override
+  String get fdTapDetails => 'ವಿವರಗಳಿಗಾಗಿ ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get fdArea1 => 'ಸ್ವಂತ ಮತ್ತು ಆರೋಗ್ಯ';
+
+  @override
+  String get fdArea2 => 'ಸಂಪತ್ತು ಮತ್ತು ಕುಟುಂಬ';
+
+  @override
+  String get fdArea3 => 'ಸಂವಹನ';
+
+  @override
+  String get fdArea4 => 'ಮನೆ ಮತ್ತು ಸೌಕರ್ಯ';
+
+  @override
+  String get fdArea5 => 'ಸೃಜನಶೀಲತೆ ಮತ್ತು ಪ್ರಣಯ';
+
+  @override
+  String get fdArea6 => 'ಕೆಲಸ ಮತ್ತು ಜವಾಬ್ದಾರಿಗಳು';
+
+  @override
+  String get fdArea7 => 'ಸಂಬಂಧಗಳು';
+
+  @override
+  String get fdArea8 => 'ಬದಲಾವಣೆ ಮತ್ತು ಆಳ';
+
+  @override
+  String get fdArea9 => 'ಅದೃಷ್ಟ ಮತ್ತು ಪ್ರಯಾಣ';
+
+  @override
+  String get fdArea10 => 'ವೃತ್ತಿ ಮತ್ತು ಸ್ಥಾನಮಾನ';
+
+  @override
+  String get fdArea11 => 'ಲಾಭಗಳು ಮತ್ತು ನೆಟ್‌ವರ್ಕ್';
+
+  @override
+  String get fdArea12 => 'ವಿಶ್ರಾಂತಿ ಮತ್ತು ಆಧ್ಯಾತ್ಮಿಕತೆ';
+
+  @override
+  String get fdTodaysMeaning => 'ಇಂದಿನ ಅರ್ಥ';
+
+  @override
+  String get fdGoodFor => 'ಇದಕ್ಕೆ ಒಳ್ಳೆಯದು';
+
+  @override
+  String get fdAvoid => 'ತಪ್ಪಿಸಿ';
+
+  @override
+  String get fdPlanetSupport => 'ಗ್ರಹ ಬೆಂಬಲ';
+
+  @override
+  String get fdWhyPrediction => 'ಈ ಭವಿಷ್ಯವಾಣಿ ಏಕೆ?';
+
+  @override
+  String get fdAdvancedDetails => 'ಸುಧಾರಿತ ವಿವರಗಳು';
+
+  @override
+  String get fdAiRecommendation => 'AI ಶಿಫಾರಸು';
+
+  @override
+  String get fdOverallStatus => 'ಒಟ್ಟಾರೆ ಸ್ಥಿತಿ';
+
+  @override
+  String get fdNoPlanetTransit => 'ಇಂದು ಈ ಕ್ಷೇತ್ರದಲ್ಲಿ ಯಾವುದೇ ಪ್ರಮುಖ ಗ್ರಹ ಸಂಚಾರ ಮಾಡುತ್ತಿಲ್ಲ.';
+
+  @override
+  String get fdFinancialOutlook => 'ಆರ್ಥಿಕ ದೃಷ್ಟಿಕೋನ';
+
+  @override
+  String get fdIncomeProbability => 'ಆದಾಯದ ಸಾಧ್ಯತೆ';
+
+  @override
+  String get fdExpenseProbability => 'ವೆಚ್ಚದ ಸಾಧ್ಯತೆ';
+
+  @override
+  String get fdNetBalance => 'ನಿವ್ವಳ ಹಣಕಾಸು ಸಮತೋಲನ';
+
+  @override
+  String get fdAvoidSpending => 'ವೆಚ್ಚವನ್ನು ತಪ್ಪಿಸಿ';
+
+  @override
+  String get fdRelationshipOutlook => 'ಸಂಬಂಧಗಳ ದೃಷ್ಟಿಕೋನ';
+
+  @override
+  String get fdOverallScore => 'ಒಟ್ಟಾರೆ ಸ್ಕೋರ್';
+
+  @override
+  String get fdPartner => 'ಸಂಗಾತಿ';
+
+  @override
+  String get fdRomance => 'ಪ್ರಣಯ';
+
+  @override
+  String get fdWorkplace => 'ಕೆಲಸದ ಸ್ಥಳ';
+
+  @override
+  String get fdPublicImage => 'ಸಾರ್ವಜನಿಕ ಇಮೇಜ್';
+
+  @override
+  String get fdBestActivity => 'ಉತ್ತಮ ಚಟುವಟಿಕೆ';
+
+  @override
+  String get fdWeakArea => 'ದುರ್ಬಲ ಕ್ಷೇತ್ರ';
+
+  @override
+  String get fdBiggestOpportunity => 'ಅತಿದೊಡ್ಡ ಅವಕಾಶ';
+
+  @override
+  String get fdBiggestRisk => 'ಅತಿದೊಡ್ಡ ಅಪಾಯ';
+
+  @override
+  String get fdProbability => 'ಸಾಧ್ಯತೆ';
+
+  @override
+  String get fdProtection => 'ರಕ್ಷಣಾ ಸಲಹೆ';
+
+  @override
+  String get fdDescription => 'ವಿವರಣೆ';
+
+  @override
+  String get fdBestTimeToday => 'ಇಂದಿನ ಉತ್ತಮ ಸಮಯ';
+
+  @override
+  String get fdAvoidDuring => 'ಈ ಸಮಯದಲ್ಲಿ ತಪ್ಪಿಸಿ';
+
+  @override
+  String get fdPredictionConfidence => 'ಭವಿಷ್ಯವಾಣಿಯ ವಿಶ್ವಾಸ';
+
+  @override
+  String get fdConfBasis => 'ಇಂದಿನ ಭವಿಷ್ಯವಾಣಿ ಇವುಗಳನ್ನು ಸಂಯೋಜಿಸುತ್ತದೆ';
+
+  @override
+  String get fdConfNatal => 'ಜನ್ಮ ಕುಂಡಲಿ';
+
+  @override
+  String get fdConfTransit => 'ಪ್ರಸ್ತುತ ಸಂಚಾರ';
+
+  @override
+  String get fdConfDasha => 'ಗ್ರಹ ದಶೆಗಳು';
+
+  @override
+  String get fdConfStrength => 'ಗ್ರಹ ಬಲ';
+
+  @override
+  String get fdConfHouse => 'ಭಾವ ಸಕ್ರಿಯತೆ';
+
+  @override
+  String get fdAskAi => 'AI ಕೇಳಿ';
+
+  @override
+  String get fdAskAiSub => 'ಇಂದಿನ ಉತ್ತರ ಪಡೆಯಲು ಪ್ರಶ್ನೆಯ ಮೇಲೆ ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get fdQ1 => 'ಇಂದು ವೃತ್ತಿ ಏಕೆ ನಿಧಾನವಾಗಿದೆ?';
+
+  @override
+  String get fdQ2 => 'ಇಂದಿನ ಉತ್ತಮ ಸಮಯ ಯಾವುದು?';
+
+  @override
+  String get fdQ3 => 'ಇಂದು ಹಣಕಾಸಿನ ವಿಷಯಗಳಿಗೆ ಒಳ್ಳೆಯದೇ?';
+
+  @override
+  String get fdQ4 => 'ಇಂದು ಪ್ರಯಾಣಕ್ಕೆ ಒಳ್ಳೆಯದೇ?';
+
+  @override
+  String get fdQ5 => 'ಇಂದು ನಾನು ಏನನ್ನು ತಪ್ಪಿಸಬೇಕು?';
+
+  @override
+  String get fdMoreSuggestions => 'ಇನ್ನಷ್ಟು ಸಲಹೆಗಳು';
+
+  @override
+  String fdAiSummaryLine(Object top, Object weak, Object fin) {
+    return 'ಇಂದು ${top} ಗೆ ಹೆಚ್ಚು ಸೂಕ್ತವಾಗಿದೆ. ${weak} ನಿಧಾನವಾಗಿ ಅನಿಸಬಹುದು, ಆದ್ದರಿಂದ ಅಲ್ಲಿ ದೊಡ್ಡ ನಿರ್ಧಾರಗಳನ್ನು ತಪ್ಪಿಸಿ. ಆರ್ಥಿಕವಾಗಿ ದಿನ ${fin} ಎಂದು ಕಾಣುತ್ತದೆ.';
+  }
+
+  @override
+  String fdThemeFocusLine(Object top) {
+    return 'ಇಂದು ನಿಮ್ಮ ಶಕ್ತಿ ${top} ಸುತ್ತ ಕೇಂದ್ರೀಕೃತವಾಗಿದೆ — ಅದರಲ್ಲಿ ಪೂರ್ಣ ಗಮನ ಹರಿಸಿ ಉಳಿದ ಕಡೆ ನಿಧಾನವಾಗಿ ಸಾಗಿ.';
+  }
+
+  @override
+  String get gochToday => 'ಇಂದು';
+
+  @override
+  String get gochOverallScore => 'ಒಟ್ಟಾರೆ ಗೋಚರ ಸ್ಕೋರ್';
+
+  @override
+  String get gochNeutral => 'ತಟಸ್ಥ';
+
+  @override
+  String get gochChallenging => 'ಸವಾಲಿನದ್ದು';
+
+  @override
+  String get gochTopPositive => 'ಪ್ರಮುಖ ಸಕಾರಾತ್ಮಕ';
+
+  @override
+  String get gochTopChallenges => 'ಪ್ರಮುಖ ಸವಾಲುಗಳು';
+
+  @override
+  String get gochFilterAll => 'ಎಲ್ಲಾ';
+
+  @override
+  String get gochFavorability => 'ಅನುಕೂಲತೆ';
+
+  @override
+  String get gochAlerts => 'ಗೋಚರ ಎಚ್ಚರಿಕೆಗಳು';
+
+  @override
+  String get gochAlertCritical => 'ಗಂಭೀರ';
+
+  @override
+  String get gochAlertWarning => 'ಎಚ್ಚರಿಕೆ';
+
+  @override
+  String get gochAlertOpportunity => 'ಅವಕಾಶ';
+
+  @override
+  String get gochAiFocus => 'ಇಂದಿನ AI ಗಮನ';
+
+  @override
+  String get gochLifeScores => 'ಜೀವನ ಕ್ಷೇತ್ರ ಸ್ಕೋರ್‌ಗಳು';
+
+  @override
+  String get gochWhy => 'ಏಕೆ?';
+
+  @override
+  String get gochCurrentTransits => 'ಸಕ್ರಿಯ ಗೋಚರಗಳು';
+
+  @override
+  String get gochDailyPlan => 'ನಿಮ್ಮ ದೈನಂದಿನ ಯೋಜನೆ';
+
+  @override
+  String get gochMorning => 'ಬೆಳಿಗ್ಗೆ';
+
+  @override
+  String get gochAfternoon => 'ಮಧ್ಯಾಹ್ನ';
+
+  @override
+  String get gochEvening => 'ಸಂಜೆ';
+
+  @override
+  String get gochNight => 'ರಾತ್ರಿ';
+
+  @override
+  String get gochSmartReco => 'ಸ್ಮಾರ್ಟ್ ಶಿಫಾರಸುಗಳು';
+
+  @override
+  String get gochExplain => 'ಇಂದಿನ ಗೋಚರವನ್ನು ವಿವರಿಸಿ';
+
+  @override
+  String get gochDo => 'ಮಾಡಿ';
+
+  @override
+  String get gochDont => 'ತಪ್ಪಿಸಿ';
+
+  @override
+  String get gochDoWork => 'ಮುಖ್ಯವಾದ ಕೆಲಸಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ';
+
+  @override
+  String get gochDoMeditate => 'ಧ್ಯಾನ ಮಾಡಿ ಮತ್ತು ಆಲೋಚಿಸಿ';
+
+  @override
+  String get gochDoStart => 'ಹೊಸ ಯೋಜನೆಗಳನ್ನು ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
+  String get gochDoFinish => 'ಬಾಕಿ ಇರುವ ಕೆಲಸಗಳನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ';
+
+  @override
+  String get gochDontArgue => 'ವಾದಗಳನ್ನು ತಪ್ಪಿಸಿ';
+
+  @override
+  String get gochDontImpulsive => 'ಆತುರದ ನಿರ್ಧಾರಗಳನ್ನು ತಪ್ಪಿಸಿ';
+
+  @override
+  String get gochDontOverspend => 'ಅತಿಯಾದ ಖರ್ಚನ್ನು ತಪ್ಪಿಸಿ';
+
+  @override
+  String gochThemeGrowth(Object area) {
+    return 'ಇಂದು ${area}ನಲ್ಲಿ ಬೆಳವಣಿಗೆಯ ದಿನ — ಇದರ ಪ್ರಯೋಜನ ಪಡೆಯಿರಿ.';
+  }
+
+  @override
+  String gochThemeChallenge(Object area) {
+    return 'ಇಂದು ${area} ವಿಷಯದಲ್ಲಿ ತಾಳ್ಮೆಯಿಂದಿರಿ — ಸ್ಥಿರವಾಗಿ ಮುಂದುವರಿಯಿರಿ.';
+  }
+
+  @override
+  String gochPosLine(Object area) {
+    return '${area}ಗೆ ಈಗ ಉತ್ತಮ ಬೆಂಬಲ ಸಿಗುತ್ತಿದೆ.';
+  }
+
+  @override
+  String gochChalLine(Object area) {
+    return 'ಇಂದು ${area}ಗೆ ಹೆಚ್ಚಿನ ಕಾಳಜಿ ಅಗತ್ಯವಿದೆ.';
+  }
+
+  @override
+  String gochAiFocusLine(Object a1, Object a2) {
+    return 'ಇಂದು ನಿಮ್ಮ ಶಕ್ತಿಯನ್ನು ${a1}ಗೆ ಹಾಕಿ, ಮತ್ತು ${a2} ವಿಷಯದಲ್ಲಿ ಮೃದುವಾಗಿರಿ.';
+  }
+
+  @override
+  String get divBeginner => 'ಸರಳ';
+
+  @override
+  String get divSearchHint => 'ಹುಡುಕಿ: ವೃತ್ತಿ, ವಿವಾಹ, ಶಿಕ್ಷಣ…';
+
+  @override
+  String get divSummaryTitle => 'ವರ್ಗ ಕುಂಡಲಿ ಸಾರಾಂಶ';
+
+  @override
+  String get divTotalCharts => 'ಒಟ್ಟು ಕುಂಡಲಿಗಳು';
+
+  @override
+  String get divMostImportant => 'ಅತ್ಯಂತ ಮುಖ್ಯವಾದವು';
+
+  @override
+  String get divRecommendedForYou => 'ನಿಮಗಾಗಿ ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get divCatEssential => 'ಅಗತ್ಯ ಕುಂಡಲಿಗಳು';
+
+  @override
+  String get divCatPersonal => 'ವೈಯಕ್ತಿಕ ಜೀವನ';
+
+  @override
+  String get divCatKnowledge => 'ಜ್ಞಾನ ಕುಂಡಲಿಗಳು';
+
+  @override
+  String get divCatAdvanced => 'ಸುಧಾರಿತ ಕುಂಡಲಿಗಳು';
+
+  @override
+  String get divGoalProperty => 'ಆಸ್ತಿ';
+
+  @override
+  String get divGoalKarma => 'ಕರ್ಮ';
+
+  @override
+  String get divBadgeHighlyRec => 'ಹೆಚ್ಚು ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ';
+
+  @override
+  String get divBadgeRec => 'ಶಿಫಾರಸು';
+
+  @override
+  String get divBadgeUseful => 'ಉಪಯುಕ್ತ';
+
+  @override
+  String get divBadgeOptional => 'ಐಚ್ಛಿಕ';
+
+  @override
+  String get divBadgeAdvOnly => 'ಕೇವಲ ಸುಧಾರಿತ';
+
+  @override
+  String get divRecommendBest => 'ಅತ್ಯುತ್ತಮ ಕುಂಡಲಿಗಳನ್ನು ಶಿಫಾರಸು ಮಾಡಿ';
+
+  @override
+  String get divNoMatch => 'ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದಿಕೆಯಾಗುವ ಕುಂಡಲಿಗಳಿಲ್ಲ';
+
+  @override
+  String get divLifeAreas => 'ಜೀವನ ಕ್ಷೇತ್ರಗಳು';
+
+  @override
+  String divAiUse(Object purpose) {
+    return '${purpose} ವಿಶ್ಲೇಷಿಸಲು ಈ ಕುಂಡಲಿಯನ್ನು ಬಳಸಿ.';
+  }
+
+  @override
+  String divHeroSummary(Object c1, Object c2) {
+    return 'ನಿಮ್ಮ ${c1} ಮತ್ತು ${c2} ಕುಂಡಲಿಗಳು ವಿಶೇಷವಾಗಿ ಮುಖ್ಯವಾಗಿವೆ — ಅವು ಒಳಗೊಂಡಿರುವ ವಿಷಯಗಳಿಗಾಗಿ ಅಲ್ಲಿಂದಲೇ ಪ್ರಾರಂಭಿಸಿ, ನಂತರ ಅಗತ್ಯವಿದ್ದಂತೆ ಉಳಿದವುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.';
+  }
+
+  @override
+  String divRecReasonHouse(Object house) {
+    return 'ನಿಮ್ಮ ${house} ಭಾವವನ್ನು ಇನ್ನಷ್ಟು ಆಳವಾಗಿ ನೋಡಬೇಕಾಗಿದೆ — ಈ ಕುಂಡಲಿ ಅದನ್ನು ವಿವರವಾಗಿ ತೋರಿಸುತ್ತದೆ.';
+  }
+
+  @override
+  String divRecReasonPlanet(Object planet) {
+    return '${planet} ಒಂದು ಪ್ರಮುಖ ಆದರೆ ಸವಾಲಿನ ಗ್ರಹ — ಈ ಕುಂಡಲಿ ಅದರ ಆಳವಾದ ಸ್ಥಿತಿಯನ್ನು ಬಹಿರಂಗಪಡಿಸುತ್ತದೆ.';
+  }
+
+  @override
+  String divRecReasonDasha(Object planet) {
+    return 'ನೀವು ಈಗ ${planet} ಮಹಾದಶೆಯಲ್ಲಿದ್ದೀರಿ, ಆದ್ದರಿಂದ ಈ ಕುಂಡಲಿ ಈಗ ವಿಶೇಷವಾಗಿ ಸಕಾಲಿಕವಾಗಿದೆ.';
+  }
+
+  @override
+  String divRecSummary(Object c1) {
+    return 'ನಿಮ್ಮ ಕುಂಡಲಿಯ ಪ್ರಕಾರ, ${c1} ನಿಮ್ಮ ಅತ್ಯುನ್ನತ ಆದ್ಯತೆಯಾಗಿರಬೇಕು. ಕೆಳಗಿನ ಕುಂಡಲಿಗಳು ನಿಮಗೆ ಎಷ್ಟು ಪ್ರಸ್ತುತವಾಗಿವೆ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ ಕ್ರಮಗೊಳಿಸಲಾಗಿದೆ.';
+  }
+
+  @override
+  String divWhenToUseLine(Object purpose) {
+    return 'ನೀವು ${purpose} ಅಧ್ಯಯನ ಮಾಡಲು ಬಯಸಿದಾಗ ಈ ಕುಂಡಲಿಯನ್ನು ತೆರೆಯಿರಿ.';
+  }
+
+  @override
+  String get divD1Name => 'ರಾಶಿ (D-1)';
+
+  @override
+  String get divD1Desc => 'ದೈಹಿಕ ಅಸ್ತಿತ್ವ, ಎಲ್ಲಾ ವಿಷಯಗಳು';
+
+  @override
+  String get divD2Name => 'ಹೋರಾ (D-2)';
+
+  @override
+  String get divD2Desc => 'ಸಂಪತ್ತು, ಹಣ';
+
+  @override
+  String get divD3Name => 'ದ್ರೇಕ್ಕಾಣ (D-3)';
+
+  @override
+  String get divD3Desc => 'ಒಡಹುಟ್ಟಿದವರು, ಧೈರ್ಯ';
+
+  @override
+  String get divD4Name => 'ಚತುರ್ಥಾಂಶ (D-4)';
+
+  @override
+  String get divD4Desc => 'ಆಸ್ತಿ, ವಾಸಸ್ಥಾನ, ಅದೃಷ್ಟ';
+
+  @override
+  String get divD5Name => 'ಪಂಚಾಂಶ (D-5)';
+
+  @override
+  String get divD5Desc => 'ಕೀರ್ತಿ, ಅಧಿಕಾರ, ಶಕ್ತಿ';
+
+  @override
+  String get divD6Name => 'ಷಷ್ಠಾಂಶ (D-6)';
+
+  @override
+  String get divD6Desc => 'ಆರೋಗ್ಯ ತೊಂದರೆಗಳು';
+
+  @override
+  String get divD7Name => 'ಸಪ್ತಾಂಶ (D-7)';
+
+  @override
+  String get divD7Desc => 'ಮಕ್ಕಳು, ಮೊಮ್ಮಕ್ಕಳು';
+
+  @override
+  String get divD8Name => 'ಅಷ್ಟಾಂಶ (D-8)';
+
+  @override
+  String get divD8Desc => 'ಆಕಸ್ಮಿಕ ತೊಂದರೆಗಳು, ಮೊಕದ್ದಮೆ';
+
+  @override
+  String get divD9Name => 'ನವಾಂಶ (D-9)';
+
+  @override
+  String get divD9Desc => 'ವಿವಾಹ, ಸಂಗಾತಿ, ಧರ್ಮ';
+
+  @override
+  String get divD10Name => 'ದಶಾಂಶ (D-10)';
+
+  @override
+  String get divD10Desc => 'ವೃತ್ತಿ, ಉದ್ಯೋಗ';
+
+  @override
+  String get divD11Name => 'ರುದ್ರಾಂಶ (D-11)';
+
+  @override
+  String get divD11Desc => 'ಮರಣ, ವಿನಾಶ';
+
+  @override
+  String get divD12Name => 'ದ್ವಾದಶಾಂಶ (D-12)';
+
+  @override
+  String get divD12Desc => 'ಪೋಷಕರು, ರಕ್ತ ಸಂಬಂಧಿಗಳು';
+
+  @override
+  String get divD16Name => 'ಷೋಡಶಾಂಶ (D-16)';
+
+  @override
+  String get divD16Desc => 'ವಾಹನಗಳು, ಸೌಕರ್ಯಗಳು, ಸುಖಗಳು';
+
+  @override
+  String get divD20Name => 'ವಿಂಶಾಂಶ (D-20)';
+
+  @override
+  String get divD20Desc => 'ಆಧ್ಯಾತ್ಮಿಕ ವಿಷಯಗಳು, ಧಾರ್ಮಿಕ';
+
+  @override
+  String get divD24Name => 'ಚತುರ್ವಿಂಶಾಂಶ (D-24)';
+
+  @override
+  String get divD24Desc => 'ಕಲಿಕೆ, ಜ್ಞಾನ, ಶಿಕ್ಷಣ';
+
+  @override
+  String get divD27Name => 'ನಕ್ಷತ್ರಾಂಶ (D-27)';
+
+  @override
+  String get divD27Desc => 'ಸಾಮರ್ಥ್ಯ, ದೌರ್ಬಲ್ಯ, ಸ್ವಭಾವ';
+
+  @override
+  String get divD30Name => 'ತ್ರಿಂಶಾಂಶ (D-30)';
+
+  @override
+  String get divD30Desc => 'ಕೆಡುಕುಗಳು, ಅವಚೇತನ, ಶಿಕ್ಷೆ';
+
+  @override
+  String get divD40Name => 'ಖವೇದಾಂಶ (D-40)';
+
+  @override
+  String get divD40Desc => 'ಶುಭ/ಅಶುಭ (ಮಾತೃ)';
+
+  @override
+  String get divD45Name => 'ಅಕ್ಷವೇದಾಂಶ (D-45)';
+
+  @override
+  String get divD45Desc => 'ಎಲ್ಲಾ ವಿಷಯಗಳು (ಪಿತೃ)';
+
+  @override
+  String get divD60Name => 'ಷಷ್ಠ್ಯಾಂಶ (D-60)';
+
+  @override
+  String get divD60Desc => 'ಪೂರ್ವಜನ್ಮ ಕರ್ಮ — ಅತ್ಯಂತ ಮುಖ್ಯ';
+
+  @override
+  String get yogaHelpful => 'ಸಹಾಯಕ';
+
+  @override
+  String get yogaInactive => 'ನಿಷ್ಕ್ರಿಯ';
+
+  @override
+  String get yogaTabMoney => 'ಧನ';
+
+  @override
+  String get yogaTabRare => 'ಅಪರೂಪದ';
+
+  @override
+  String get yogaSummaryTitle => 'ಯೋಗ ಸಾರಾಂಶ';
+
+  @override
+  String get yogaActiveYogas => 'ಸಕ್ರಿಯ ಯೋಗಗಳು';
+
+  @override
+  String get yogaTotalYogas => 'ಒಟ್ಟು ಯೋಗಗಳು';
+
+  @override
+  String get yogaMostPowerful => 'ಅತ್ಯಂತ ಶಕ್ತಿಶಾಲಿ';
+
+  @override
+  String get yogaFortuneRating => 'ಒಟ್ಟಾರೆ ಅದೃಷ್ಟ';
+
+  @override
+  String get yogaBenefits => 'ಪ್ರಯೋಜನಗಳು';
+
+  @override
+  String get yogaSupportingPlanets => 'ಬೆಂಬಲ ಗ್ರಹಗಳು';
+
+  @override
+  String get yogaRanking => 'ಟಾಪ್ 5 ಪ್ರಬಲ ಯೋಗಗಳು';
+
+  @override
+  String get yogaExplain => 'ನನ್ನ ಯೋಗಗಳನ್ನು ವಿವರಿಸಿ';
+
+  @override
+  String get yogaExplainSubtitle => 'ನಿಮ್ಮ ಯೋಗಗಳು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡುತ್ತವೆ';
+
+  @override
+  String get yogaNoneActive => 'ಇನ್ನೂ ಯಾವುದೇ ಸಕ್ರಿಯ ಯೋಗಗಳಿಲ್ಲ';
+
+  @override
+  String get yogaNoneInCategory => 'ಈ ವಿಭಾಗದಲ್ಲಿ ಯೋಗಗಳಿಲ್ಲ';
+
+  @override
+  String yogaHeroSummary(Object count, Object planets) {
+    return 'ನಿಮ್ಮ ಜಾತಕದಲ್ಲಿ ${count} ಸಕ್ರಿಯ ಯೋಗಗಳಿವೆ — ಸಹಾಯಕ ಗ್ರಹ ಸಂಯೋಜನೆಗಳು. ${planets} ಒಳಗೊಂಡ ಸಂಯೋಜನೆಗಳು ಬೆಳವಣಿಗೆ ಮತ್ತು ಯಶಸ್ಸಿಗೆ ವಿಶೇಷವಾಗಿ ಸಹಾಯಕ ಪ್ರಭಾವಗಳನ್ನು ಸೃಷ್ಟಿಸುತ್ತವೆ.';
+  }
+
+  @override
+  String yogaAiLine(Object name, Object areas) {
+    return '${name} ${areas} ಅನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ, ಮತ್ತು ಅದರ ಗ್ರಹಗಳು ದಶಾ ಅಥವಾ ಗೋಚಾರದಲ್ಲಿ ಸಕ್ರಿಯವಾದಾಗ ಅದರ ಪ್ರಯೋಜನಗಳು ಇನ್ನಷ್ಟು ಹೆಚ್ಚಾಗುತ್ತವೆ.';
+  }
+
+  @override
+  String get yogaAiGeneric => 'ಈ ಯೋಗವು ನಿಮ್ಮ ಜಾತಕದಲ್ಲಿ ಒಂದು ಸಹಾಯಕ ಸಂಯೋಜನೆಯಾಗಿದ್ದು, ಇದು ಜೀವನದ ಸಂಬಂಧಿತ ಕ್ಷೇತ್ರಗಳನ್ನು ಬಲಪಡಿಸುತ್ತದೆ.';
+
+  @override
+  String get yogaExplainReassure => 'ಯೋಗಗಳು ನಿಮ್ಮ ಜಾತಕದ ಪ್ರಕಾಶಮಾನ ಅಂಶಗಳು — ನಿಮ್ಮ ಪರವಾಗಿ ಕೆಲಸ ಮಾಡುವ ಸಹಾಯಕ ಗ್ರಹ ಸಂಯೋಜನೆಗಳು. ಬಲಿಷ್ಠವಾದವು ಶಾಶ್ವತ ಪ್ರಯೋಜನಗಳನ್ನು ನೀಡುತ್ತವೆ, ವಿಶೇಷವಾಗಿ ಅವುಗಳನ್ನು ರೂಪಿಸುವ ಗ್ರಹಗಳ ದಶಾ ಅವಧಿಯಲ್ಲಿ.';
+
+  @override
+  String get doshSevere => 'ತೀವ್ರ';
+
+  @override
+  String get doshVeryMild => 'ಅತಿ ಸೌಮ್ಯ';
+
+  @override
+  String get doshLow => 'ಕಡಿಮೆ';
+
+  @override
+  String get doshHigh => 'ಹೆಚ್ಚು';
+
+  @override
+  String get doshCritical => 'ಅತಿ ತೀವ್ರ';
+
+  @override
+  String get doshSummaryTitle => 'ದೋಷ ಸಾರಾಂಶ';
+
+  @override
+  String get doshActiveDoshas => 'ಸಕ್ರಿಯ ದೋಷಗಳು';
+
+  @override
+  String get doshTotalChecked => 'ಒಟ್ಟು ಪರಿಶೀಲಿಸಲಾಗಿದೆ';
+
+  @override
+  String get doshOverallSeverity => 'ಒಟ್ಟಾರೆ ತೀವ್ರತೆ';
+
+  @override
+  String get doshNoneActive => 'ಯಾವುದೇ ಸಕ್ರಿಯ ದೋಷಗಳಿಲ್ಲ — ಸ್ವಚ್ಛ ಜಾತಕ!';
+
+  @override
+  String get doshCategory => 'ವರ್ಗ';
+
+  @override
+  String get doshConfidence => 'ವಿಶ್ವಾಸಾರ್ಹತೆ';
+
+  @override
+  String get doshWhyFormed => 'ಇದು ಏಕೆ ರೂಪುಗೊಂಡಿತು';
+
+  @override
+  String get doshAffectedAreas => 'ಪ್ರಭಾವಿತ ಕ್ಷೇತ್ರಗಳು';
+
+  @override
+  String get doshTimeline => 'ಕಾಲರೇಖೆ';
+
+  @override
+  String get doshDefinition => 'ವ್ಯಾಖ್ಯಾನ';
+
+  @override
+  String get doshFormationRule => 'ರಚನೆಯ ನಿಯಮ';
+
+  @override
+  String get doshSupportingPlanets => 'ಸಂಬಂಧಿತ ಗ್ರಹ';
+
+  @override
+  String get doshCancellation => 'ನಿವಾರಣ ಯೋಗಗಳು';
+
+  @override
+  String get doshNoCancellation => 'ಯಾವುದೂ ಕಂಡುಬಂದಿಲ್ಲ';
+
+  @override
+  String get doshAreaChildren => 'ಸಂತಾನ';
+
+  @override
+  String get doshAreaMind => 'ಮನಸ್ಸು';
+
+  @override
+  String get remMantra => 'ಮಂತ್ರ';
+
+  @override
+  String get remGemstone => 'ರತ್ನ';
+
+  @override
+  String get remDonation => 'ದಾನ';
+
+  @override
+  String get remTemple => 'ದೇವಾಲಯ';
+
+  @override
+  String get remFasting => 'ಉಪವಾಸ';
+
+  @override
+  String get remLifestyle => 'ಜೀವನಶೈಲಿ';
+
+  @override
+  String get remLifestyleGeneric => 'ಈ ಗ್ರಹಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಕೃತಜ್ಞತೆ, ಶಿಸ್ತು ಮತ್ತು ದಾನವನ್ನು ಅಭ್ಯಾಸ ಮಾಡಿ, ಮತ್ತು ಉತ್ತಮ ನಡವಳಿಕೆಯನ್ನು ಕಾಪಾಡಿಕೊಳ್ಳಿ.';
+
+  @override
+  String get doshExplain => 'ನನ್ನ ದೋಷಗಳನ್ನು ವಿವರಿಸಿ';
+
+  @override
+  String get doshExplainSubtitle => 'ನಿಮ್ಮ ದೋಷಗಳ ಬಗ್ಗೆ ಶಾಂತ, ಪ್ರಾಯೋಗಿಕ ನೋಟ';
+
+  @override
+  String get doshExplainReassure => 'ದೋಷಗಳು ಸಾಮಾನ್ಯ — ಬಹುತೇಕ ಪ್ರತಿ ಜಾತಕದಲ್ಲಿಯೂ ಕೆಲವು ಇರುತ್ತವೆ. ಇವು ಪ್ರವೃತ್ತಿಗಳನ್ನು ವಿವರಿಸುತ್ತವೆ, ನಿಶ್ಚಿತ ಹಣೆಬರಹವನ್ನಲ್ಲ. ಅರಿವು, ಉತ್ತಮ ನಡವಳಿಕೆ ಮತ್ತು ಸರಳ ಪರಿಹಾರಗಳು ಅವುಗಳ ಪ್ರಾಯೋಗಿಕ ಪರಿಣಾಮವನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತವೆ, ಆದ್ದರಿಂದ ಚಿಂತೆ ಪಡುವ ಅಗತ್ಯವಿಲ್ಲ.';
+
+  @override
+  String get doshAiGeneric => 'ಈ ದೋಷವು ನಿಮ್ಮ ಜಾತಕದಲ್ಲಿ ಒಂದು ಪ್ರವೃತ್ತಿಯನ್ನು ವಿವರಿಸುತ್ತದೆ. ಇದರ ಪ್ರಾಯೋಗಿಕ ಪರಿಣಾಮ ಸಾಮಾನ್ಯವಾಗಿ ಸೌಮ್ಯವಾಗಿರುತ್ತದೆ ಮತ್ತು ಅರಿವು ಹಾಗೂ ಸರಳ ಪರಿಹಾರಗಳಿಂದ ಸಮತೋಲನಗೊಳಿಸಬಹುದು.';
+
+  @override
+  String doshHeroSummary(Object active, Object total) {
+    return 'ನಿಮ್ಮ ಜಾತಕದಲ್ಲಿ ಪರಿಶೀಲಿಸಿದ ${total}ರಲ್ಲಿ ${active} ಸಕ್ರಿಯ ದೋಷಗಳು ಕಂಡುಬಂದಿವೆ. ಹೆಚ್ಚಿನವು ಸೌಮ್ಯವಾಗಿದ್ದು, ಕೆಲವು ಮಾತ್ರ ಗಮನ ಬಯಸುತ್ತವೆ. ತಿಳುವಳಿಕೆ ಮತ್ತು ಸರಳ ಪರಿಹಾರಗಳಿಂದ ಇವುಗಳ ಪ್ರಾಯೋಗಿಕ ಪರಿಣಾಮವನ್ನು ಕಡಿಮೆ ಮಾಡಬಹುದು.';
+  }
+
+  @override
+  String doshAiLine(Object areas, Object planet) {
+    return 'ಈ ದೋಷವು ಮುಖ್ಯವಾಗಿ ${areas} ಅನ್ನು ಪ್ರಭಾವಿಸುತ್ತದೆ. ${planet} ದಶಾ ಅವಧಿಯಲ್ಲಿ ಇದರ ಪರಿಣಾಮ ಹೆಚ್ಚು ಅನುಭವಕ್ಕೆ ಬರಬಹುದು, ಮತ್ತು ಪರಿಹಾರಗಳು ಅದನ್ನು ಸಮತೋಲನಗೊಳಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತವೆ.';
+  }
+
+  @override
+  String doshTimelineLine(Object planet) {
+    return 'ಇದರ ಪರಿಣಾಮ ${planet}ನ ಮಹಾದಶಾ ಮತ್ತು ಅಂತರ್ದಶಾ ಸಮಯದಲ್ಲಿ, ಮತ್ತು ಗೋಚಾರದಲ್ಲಿ ${planet} ಸಕ್ರಿಯವಾದಾಗ ಹೆಚ್ಚು ಅನುಭವಕ್ಕೆ ಬರುತ್ತದೆ.';
+  }
+
+  @override
+  String get sbLegendary => 'ಅಸಾಧಾರಣ';
+
+  @override
+  String get sbSthana => 'ಸ್ಥಾನ ಬಲ';
+
+  @override
+  String get sbDig => 'ದಿಕ್ ಬಲ';
+
+  @override
+  String get sbKala => 'ಕಾಲ ಬಲ';
+
+  @override
+  String get sbChesta => 'ಚೇಷ್ಟಾ ಬಲ';
+
+  @override
+  String get sbNaisargika => 'ನೈಸರ್ಗಿಕ ಬಲ';
+
+  @override
+  String get sbDrik => 'ದೃಕ್ ಬಲ';
+
+  @override
+  String get sbSummary => 'ಗ್ರಹ ಬಲ ಸಾರಾಂಶ';
+
+  @override
+  String get sbAverageStrength => 'ಸರಾಸರಿ ಬಲ';
+
+  @override
+  String get sbHighestRupa => 'ಅತ್ಯಧಿಕ ರೂಪ';
+
+  @override
+  String get sbRupa => 'ರೂಪ';
+
+  @override
+  String get sbRanking => 'ಗ್ರಹ ಶ್ರೇಣಿ';
+
+  @override
+  String get sbRequired => 'ಅಗತ್ಯ';
+
+  @override
+  String get sbExcess => 'ಹೆಚ್ಚುವರಿ';
+
+  @override
+  String get sbDeficit => 'ಕೊರತೆ';
+
+  @override
+  String get sbTotalShadbala => 'ಒಟ್ಟು ಷಡ್ಬಲ';
+
+  @override
+  String get sbExplain => 'ನನ್ನ ಗ್ರಹ ಬಲವನ್ನು ವಿವರಿಸಿ';
+
+  @override
+  String get sbExplainSubtitle => 'ನಿಮ್ಮ ಗ್ರಹಗಳ ಬಲದ ಸರಳ ಸಾರಾಂಶ';
+
+  @override
+  String get sbInfoTitle => 'ಷಡ್ಬಲವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು';
+
+  @override
+  String get sbQWhatIs => 'ಷಡ್ಬಲ ಎಂದರೇನು?';
+
+  @override
+  String get sbQRupas => 'ರೂಪಗಳು ಎಂದರೇನು?';
+
+  @override
+  String get sbQHowCalc => 'ಬಲವನ್ನು ಹೇಗೆ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ?';
+
+  @override
+  String get sbQHowUse => 'ಇದನ್ನು ಹೇಗೆ ಬಳಸುವುದು';
+
+  @override
+  String get sbWhyStrong => 'ಏಕೆ ಬಲಶಾಲಿ';
+
+  @override
+  String get sbWhyWeak => 'ಏಕೆ ದುರ್ಬಲ';
+
+  @override
+  String get sbDuringMahadasha => 'ಮಹಾದಶಾ ಸಮಯದಲ್ಲಿ';
+
+  @override
+  String get sbEffects => 'ಪರಿಣಾಮಗಳು';
+
+  @override
+  String get sbLifeAreas => 'ಜೀವನ ಕ್ಷೇತ್ರಗಳು';
+
+  @override
+  String get sbPlanetDetails => 'ಗ್ರಹ ವಿವರಗಳು';
+
+  @override
+  String get sbBodyWhatIs => 'ಷಡ್ಬಲ (\'ಆರು ಪಟ್ಟು ಬಲ\') ಪ್ರತಿ ಗ್ರಹ ತನ್ನ ಫಲಿತಾಂಶಗಳನ್ನು ನೀಡಲು ಎಷ್ಟು ಶಕ್ತಿಯನ್ನು ಹೊಂದಿದೆ ಎಂಬುದನ್ನು, ಆರು ಸ್ವತಂತ್ರ ಬಲ ಮೂಲಗಳನ್ನು ಸೇರಿಸುವ ಮೂಲಕ ಅಳೆಯುತ್ತದೆ.';
+
+  @override
+  String get sbBodyRupas => 'ಬಲವನ್ನು ರೂಪಗಳಲ್ಲಿ ಅಳೆಯಲಾಗುತ್ತದೆ (1 ರೂಪ = 60 ವಿರೂಪ). ಪ್ರತಿ ಗ್ರಹಕ್ಕೆ ಬಲಶಾಲಿ ಎಂದು ಪರಿಗಣಿಸಲು ಕನಿಷ್ಠ ರೂಪ ಬಲ ಬೇಕಾಗುತ್ತದೆ; ಹೆಚ್ಚು ರೂಪಗಳು ಎಂದರೆ ಅದು ತನ್ನ ಫಲಿತಾಂಶಗಳನ್ನು ಇನ್ನಷ್ಟು ಪೂರ್ಣವಾಗಿ ನೀಡುತ್ತದೆ ಎಂದರ್ಥ.';
+
+  @override
+  String get sbBodyHowCalc => 'ಆರು ಬಲಗಳನ್ನು ಸೇರಿಸಲಾಗುತ್ತದೆ: ಸ್ಥಾನ (ಸ್ಥಾನಿಕ), ದಿಕ್ (ದಿಕ್ಕಿನ), ಕಾಲ (ಕಾಲಿಕ), ಚೇಷ್ಟಾ (ಚಲನೆಯ), ನೈಸರ್ಗಿಕ (ಸಹಜ) ಮತ್ತು ದೃಕ್ (ದೃಷ್ಟಿಯ). ಒಟ್ಟು ಮೊತ್ತವನ್ನು ಗ್ರಹದ ಅಗತ್ಯ ಕನಿಷ್ಠದೊಂದಿಗೆ ಹೋಲಿಸಿ ಶೇಕಡಾವಾರು ಪಡೆಯಲಾಗುತ್ತದೆ.';
+
+  @override
+  String get sbBodyHowUse => '100%ಕ್ಕಿಂತ ಹೆಚ್ಚಿನ ಗ್ರಹ ತನ್ನ ಫಲಗಳನ್ನು ಆರಾಮವಾಗಿ ನೀಡುತ್ತದೆ; 100%ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದ್ದರೆ ಬೆಂಬಲ ಬೇಕಾಗುತ್ತದೆ. ಪ್ರಮುಖ ವಿಷಯಗಳಿಗೆ ನಿಮ್ಮ ಪ್ರಬಲ ಗ್ರಹಗಳಿಗೆ ಆದ್ಯತೆ ನೀಡಿ, ದುರ್ಬಲವಾದವುಗಳಿಗೆ ಪರಿಹಾರಗಳು ಮತ್ತು ತಾಳ್ಮೆ ನೀಡಿ.';
+
+  @override
+  String get sbRemedyStrong => 'ಚೆನ್ನಾಗಿ ಬೆಂಬಲಿತವಾಗಿದೆ — ವಿಶೇಷ ಪರಿಹಾರ ಅಗತ್ಯವಿಲ್ಲ; ಈ ಗ್ರಹದ ಅವಧಿಗಳನ್ನು ನೀವು ವಿಶ್ವಾಸದಿಂದ ಬಳಸಬಹುದು.';
+
+  @override
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
+    return '${strongP} ನಿಮ್ಮ ಪ್ರಬಲ ಗ್ರಹ, ${strongTrait}ಗೆ ಅತ್ಯುತ್ತಮ ಬೆಂಬಲ ನೀಡುತ್ತದೆ. ${weakP} ಅತ್ಯಂತ ದುರ್ಬಲವಾಗಿದೆ ಮತ್ತು ಪರಿಹಾರಗಳಿಂದ ಹೆಚ್ಚು ಪ್ರಯೋಜನ ಪಡೆಯುತ್ತದೆ.';
+  }
+
+  @override
+  String sbCardAi(Object planet, Object category, Object karakatva) {
+    return '${planet} ಗೆ ${category} ಷಡ್ಬಲ ಇದೆ, ಆದ್ದರಿಂದ ಅದರ ${karakatva} ಅದಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಬೆಂಬಲಿತವಾಗಿವೆ.';
+  }
+
+  @override
+  String sbWhyLine(Object bala, Object rupa) {
+    return '${bala} ಮೂಲಕ ಅತ್ಯಂತ ಬಲಶಾಲಿ (${rupa} ರೂಪಗಳು).';
+  }
+
+  @override
+  String sbWeakLine(Object bala) {
+    return '${bala}ದಲ್ಲಿ ಅತ್ಯಂತ ದುರ್ಬಲ, ಇದು ಒಟ್ಟು ಮೊತ್ತವನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತದೆ.';
+  }
+
+  @override
+  String sbMahadashaLine(Object planet, Object karak) {
+    return '${planet} ಯ ಮಹಾದಶಾ ಸಮಯದಲ್ಲಿ, ಅದರ ${karak} ಮುನ್ನೆಲೆಗೆ ಬರುತ್ತವೆ.';
+  }
+
+  @override
+  String sbEffectStrong(Object karak) {
+    return 'ಬಲಶಾಲಿ ಷಡ್ಬಲದೊಂದಿಗೆ, ${karak} ಸಹಜವಾಗಿ ಬೆಂಬಲಿತವಾಗಿವೆ.';
+  }
+
+  @override
+  String sbEffectWeak(Object karak) {
+    return 'ಸಾಧಾರಣ ಷಡ್ಬಲದೊಂದಿಗೆ, ${karak}ಗೆ ಪ್ರಜ್ಞಾಪೂರ್ವಕ ಪ್ರಯತ್ನ ಬೇಕಾಗಬಹುದು.';
+  }
+
+  @override
+  String sbRemedyWeak(Object planet) {
+    return '${planet} ಅನ್ನು ಅದರ ಮಂತ್ರ, ರತ್ನ ಅಥವಾ ದಾನದ ಮೂಲಕ ಬಲಪಡಿಸಿ, ಮತ್ತು ಅದರ ಅವಧಿಗಳಲ್ಲಿ ತಾಳ್ಮೆಯಿಂದ ವರ್ತಿಸಿ.';
+  }
+
+  @override
+  String get bhOverview => 'ಅವಲೋಕನ';
+
+  @override
+  String get bhDetailed => 'ವಿವರವಾದ';
+
+  @override
+  String get bhavaHouses => 'ಭಾವಗಳು';
+
+  @override
+  String get bhStrengthOverview => 'ಭಾವ ಶಕ್ತಿ ಅವಲೋಕನ';
+
+  @override
+  String get bhOverallAverage => 'ಒಟ್ಟಾರೆ ಭಾವ ಸರಾಸರಿ';
+
+  @override
+  String get bhStrongestHouse => 'ಅತ್ಯಂತ ಪ್ರಬಲ ಭಾವ';
+
+  @override
+  String get bhWeakestHouse => 'ಅತ್ಯಂತ ದುರ್ಬಲ ಭಾವ';
+
+  @override
+  String get bhBestArea => 'ಅತ್ಯುತ್ತಮ ಜೀವನ ಕ್ಷೇತ್ರ';
+
+  @override
+  String get bhNeedsAttention => 'ಗಮನ ಅಗತ್ಯ';
+
+  @override
+  String get bhSavContribution => 'SAV ಕೊಡುಗೆ';
+
+  @override
+  String get bhLordCondition => 'ಭಾವಾಧಿಪತಿಯ ಸ್ಥಿತಿ';
+
+  @override
+  String get bhBenefic => 'ಶುಭ ಪ್ರಭಾವ';
+
+  @override
+  String get bhMalefic => 'ಪಾಪ ಪ್ರಭಾವ';
+
+  @override
+  String get bhStrengthReasons => 'ಈ ಸ್ಕೋರ್ ಏಕೆ';
+
+  @override
+  String get bhGoodEffects => 'ಒಳ್ಳೆಯ ಪರಿಣಾಮಗಳು';
+
+  @override
+  String get bhChallenges => 'ಸವಾಲುಗಳು';
+
+  @override
+  String get bhRemedies => 'ಪರಿಹಾರಗಳು';
+
+  @override
+  String get bhRanking => 'ಭಾವ ಶ್ರೇಣಿ';
+
+  @override
+  String get bhSav => 'SAV';
+
+  @override
+  String get bhExplain => 'ನನ್ನ ಭಾವಗಳನ್ನು ವಿವರಿಸಿ';
+
+  @override
+  String get bhExplainSubtitle => 'ನಿಮ್ಮ 12 ಭಾವಗಳ ಸರಳ ಸಾರಾಂಶ';
+
+  @override
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
+    return 'ನಿಮ್ಮ ಅತ್ಯಂತ ಪ್ರಬಲ ಭಾವಗಳು ${s1} ಮತ್ತು ${s2}. ${strongArea} ಸಹಜವಾಗಿ ಬಲಶಾಲಿಯಾಗಿದೆ, ಆದರೆ ${weakArea}ಗೆ ಹೆಚ್ಚಿನ ಪ್ರಯತ್ನ ಬೇಕಾಗುತ್ತದೆ.';
+  }
+
+  @override
+  String bhLordLine(Object lord, Object relation) {
+    return 'ಇದರ ಅಧಿಪತಿ ${lord} ${relation} ಆಗಿ ಇರಿಸಲ್ಪಟ್ಟಿದ್ದಾರೆ.';
+  }
+
+  @override
+  String bhWhyLine(Object sav) {
+    return 'ಈ ಭಾವದಲ್ಲಿ ${sav} ಶುಭ ಅಂಕಗಳು (SAV) ಇವೆ; ಇದರಲ್ಲಿರುವ ಗ್ರಹಗಳು ಮತ್ತು ದೃಷ್ಟಿಗಳು ಉಳಿದ ಸ್ಕೋರ್ ಅನ್ನು ನಿರ್ಧರಿಸುತ್ತವೆ.';
+  }
+
+  @override
+  String bhGoodLine(Object meaning) {
+    return 'ಬಲಶಾಲಿಯಾಗಿದ್ದಾಗ, ಇದು ${meaning} ಅನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.';
+  }
+
+  @override
+  String bhChallengeLine(Object meaning) {
+    return 'ದುರ್ಬಲವಾಗಿದ್ದಾಗ, ${meaning}ಗೆ ಹೆಚ್ಚುವರಿ ಪ್ರಯತ್ನ ಮತ್ತು ಕಾಳಜಿ ಬೇಕಾಗಬಹುದು.';
+  }
+
+  @override
+  String bhRemedyLine(Object lord) {
+    return 'ಇದನ್ನು ಬಲಪಡಿಸಲು ಇದರ ಅಧಿಪತಿ ${lord} ಅನ್ನು ಬಲಪಡಿಸಿ ಮತ್ತು ಈ ಭಾವದ ವಿಷಯಗಳನ್ನು ಗೌರವಿಸಿ.';
+  }
+
+  @override
+  String bhCardAi(Object house, Object strengthWord, Object meaning) {
+    return 'ನಿಮ್ಮ ${house} ${strengthWord} ಆಗಿದೆ. ಇದು ${meaning} ಅನ್ನು ನಿಯಂತ್ರಿಸುತ್ತದೆ.';
+  }
+
+  @override
   String get kunNavamsa => 'ನವಾಂಶ (D9)';
 
   @override
@@ -69,162 +1106,162 @@ class AppLocalizationsKn extends AppLocalizations {
   }
 
   @override
-  String get plNature => 'Nature';
+  String get plNature => 'ಸ್ವಭಾವ';
 
   @override
-  String get plElement => 'Element';
+  String get plElement => 'ತತ್ವ';
 
   @override
-  String get plGender => 'Gender';
+  String get plGender => 'ಲಿಂಗ';
 
   @override
-  String get plKarakatva => 'Karakatva';
+  String get plKarakatva => 'ಕಾರಕತ್ವ';
 
   @override
-  String get plLordship => 'Lordship';
+  String get plLordship => 'ಅಧಿಪತ್ಯ';
 
   @override
-  String get plStrength => 'Strength';
+  String get plStrength => 'ಬಲ';
 
   @override
-  String get plAspectsGiven => 'Aspects Given';
+  String get plAspectsGiven => 'ನೀಡಿದ ದೃಷ್ಟಿ';
 
   @override
-  String get plAspectsReceived => 'Aspects Received';
+  String get plAspectsReceived => 'ಪಡೆದ ದೃಷ್ಟಿ';
 
   @override
-  String get plConjunction => 'Conjunction';
+  String get plConjunction => 'ಯುತಿ';
 
   @override
-  String get plHouseMeaning => 'House Meaning';
+  String get plHouseMeaning => 'ಭಾವದ ಅರ್ಥ';
 
   @override
-  String get plNakshatraMeaning => 'Nakshatra Meaning';
+  String get plNakshatraMeaning => 'ನಕ್ಷತ್ರದ ಅರ್ಥ';
 
   @override
-  String get plAiInterpretation => 'AI Interpretation';
+  String get plAiInterpretation => 'AI ವಿವರಣೆ';
 
   @override
-  String get plSearchHint => 'Search any planet';
+  String get plSearchHint => 'ಯಾವುದೇ ಗ್ರಹವನ್ನು ಹುಡುಕಿ';
 
   @override
-  String get plNoResults => 'No planets found';
+  String get plNoResults => 'ಯಾವುದೇ ಗ್ರಹಗಳು ಕಂಡುಬಂದಿಲ್ಲ';
 
   @override
-  String get plBenefic => 'Benefic';
+  String get plBenefic => 'ಶುಭ';
 
   @override
-  String get plMalefic => 'Malefic';
+  String get plMalefic => 'ಪಾಪ';
 
   @override
-  String get plMale => 'Male';
+  String get plMale => 'ಪುರುಷ';
 
   @override
-  String get plFemale => 'Female';
+  String get plFemale => 'ಸ್ತ್ರೀ';
 
   @override
-  String get plNeutralGender => 'Neutral';
+  String get plNeutralGender => 'ನಪುಂಸಕ';
 
   @override
-  String get plOwnSign => 'Own Sign';
+  String get plOwnSign => 'ಸ್ವ ರಾಶಿ';
 
   @override
-  String get plFriend => 'Friend Sign';
+  String get plFriend => 'ಮಿತ್ರ ರಾಶಿ';
 
   @override
-  String get plEnemy => 'Enemy Sign';
+  String get plEnemy => 'ಶತ್ರು ರಾಶಿ';
 
   @override
-  String get plNeutral => 'Neutral';
+  String get plNeutral => 'ಸಮ';
 
   @override
-  String get sumEther => 'Ether';
+  String get sumEther => 'ಆಕಾಶ';
 
   @override
   String plLordOfHouses(Object houses) {
-    return 'Lord of house(s) ${houses}';
+    return 'ಭಾವ ${houses}ಕ್ಕೆ ಅಧಿಪತಿ';
   }
 
   @override
   String plNakMeaning(Object nakLord, Object trait) {
-    return 'Ruled by ${nakLord}, bringing ${trait}.';
+    return '${nakLord} ಆಳ್ವಿಕೆ ನಡೆಸುತ್ತದೆ, ${trait} ತರುತ್ತದೆ.';
   }
 
   @override
   String plAiPlace(Object planet, Object sign, Object house) {
-    return '${planet} sits in ${sign}, in the ${house} house.';
+    return '${planet} ${sign} ರಾಶಿಯಲ್ಲಿ, ${house} ಭಾವದಲ್ಲಿ ಇದೆ.';
   }
 
   @override
   String plAiKarakStrong(Object karak) {
-    return 'Its core significations — ${karak} — are well supported here.';
+    return 'ಇದರ ಪ್ರಮುಖ ಕಾರಕತ್ವಗಳು — ${karak} — ಇಲ್ಲಿ ಚೆನ್ನಾಗಿ ಬೆಂಬಲಿತವಾಗಿವೆ.';
   }
 
   @override
   String plAiKarakWeak(Object karak) {
-    return 'Its core significations — ${karak} — may need conscious effort here.';
+    return 'ಇದರ ಪ್ರಮುಖ ಕಾರಕತ್ವಗಳು — ${karak} — ಇಲ್ಲಿ ಪ್ರಜ್ಞಾಪೂರ್ವಕ ಪ್ರಯತ್ನದ ಅಗತ್ಯವಿರಬಹುದು.';
   }
 
   @override
   String plAiExalted(Object planet) {
-    return '${planet} is exalted, giving its very best results.';
+    return '${planet} ಉಚ್ಚ ಸ್ಥಿತಿಯಲ್ಲಿದೆ, ತನ್ನ ಅತ್ಯುತ್ತಮ ಫಲಿತಾಂಶಗಳನ್ನು ನೀಡುತ್ತದೆ.';
   }
 
   @override
   String plAiDebilitated(Object planet) {
-    return '${planet} is debilitated and needs support to deliver its results.';
+    return '${planet} ನೀಚ ಸ್ಥಿತಿಯಲ್ಲಿದೆ ಮತ್ತು ತನ್ನ ಫಲಿತಾಂಶಗಳನ್ನು ನೀಡಲು ಬೆಂಬಲ ಬೇಕಾಗುತ್ತದೆ.';
   }
 
   @override
   String plAiCombust(Object planet) {
-    return '${planet} is combust, so it works less openly under the Sun\'s glare.';
+    return '${planet} ಅಸ್ತವಾಗಿದೆ, ಆದ್ದರಿಂದ ಇದು ಸೂರ್ಯನ ತೀಕ್ಷ್ಣತೆಯಲ್ಲಿ ಕಡಿಮೆ ಬಹಿರಂಗವಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.';
   }
 
   @override
   String plAiVargottama(Object planet) {
-    return '${planet} is vargottama — a strong placement repeated in the navamsa.';
+    return '${planet} ವರ್ಗೋತ್ತಮ — ಈ ಬಲವಾದ ಸ್ಥಾನವು ನವಾಂಶದಲ್ಲಿಯೂ ಪುನರಾವರ್ತನೆಯಾಗುತ್ತದೆ.';
   }
 
   @override
   String plAiRetrograde(Object planet) {
-    return '${planet} is retrograde, turning its energy inward and intensifying it.';
+    return '${planet} ವಕ್ರವಾಗಿದೆ, ತನ್ನ ಶಕ್ತಿಯನ್ನು ಒಳಮುಖವಾಗಿ ತಿರುಗಿಸಿ ಅದನ್ನು ತೀವ್ರಗೊಳಿಸುತ್ತದೆ.';
   }
 
   @override
-  String get plHouse1 => 'self, body, personality and vitality';
+  String get plHouse1 => 'ಸ್ವಂತ, ದೇಹ, ವ್ಯಕ್ತಿತ್ವ ಮತ್ತು ಜೀವಶಕ್ತಿ';
 
   @override
-  String get plHouse2 => 'wealth, family, speech and food';
+  String get plHouse2 => 'ಧನ, ಕುಟುಂಬ, ಮಾತು ಮತ್ತು ಆಹಾರ';
 
   @override
-  String get plHouse3 => 'courage, siblings, communication and short travels';
+  String get plHouse3 => 'ಧೈರ್ಯ, ಒಡಹುಟ್ಟಿದವರು, ಸಂವಹನ ಮತ್ತು ಚಿಕ್ಕ ಪ್ರಯಾಣಗಳು';
 
   @override
-  String get plHouse4 => 'home, mother, comfort, property and inner peace';
+  String get plHouse4 => 'ಮನೆ, ತಾಯಿ, ಸೌಕರ್ಯ, ಆಸ್ತಿ ಮತ್ತು ಆಂತರಿಕ ಶಾಂತಿ';
 
   @override
-  String get plHouse5 => 'children, creativity, intelligence, romance and past merits';
+  String get plHouse5 => 'ಮಕ್ಕಳು, ಸೃಜನಶೀಲತೆ, ಬುದ್ಧಿ, ಪ್ರೀತಿ ಮತ್ತು ಪೂರ್ವ ಪುಣ್ಯ';
 
   @override
-  String get plHouse6 => 'health, enemies, debts, service and daily work';
+  String get plHouse6 => 'ಆರೋಗ್ಯ, ಶತ್ರುಗಳು, ಸಾಲಗಳು, ಸೇವೆ ಮತ್ತು ದೈನಂದಿನ ಕೆಲಸ';
 
   @override
-  String get plHouse7 => 'marriage, partnerships and business relationships';
+  String get plHouse7 => 'ವಿವಾಹ, ಪಾಲುದಾರಿಕೆ ಮತ್ತು ವ್ಯಾಪಾರ ಸಂಬಂಧಗಳು';
 
   @override
-  String get plHouse8 => 'longevity, transformation, secrets and inheritance';
+  String get plHouse8 => 'ಆಯುಷ್ಯ, ಪರಿವರ್ತನೆ, ರಹಸ್ಯಗಳು ಮತ್ತು ಪಿತ್ರಾರ್ಜಿತ ಆಸ್ತಿ';
 
   @override
-  String get plHouse9 => 'fortune, dharma, higher learning, guru and father';
+  String get plHouse9 => 'ಅದೃಷ್ಟ, ಧರ್ಮ, ಉನ್ನತ ವಿದ್ಯೆ, ಗುರು ಮತ್ತು ತಂದೆ';
 
   @override
-  String get plHouse10 => 'career, status, authority and public karma';
+  String get plHouse10 => 'ವೃತ್ತಿ, ಸ್ಥಾನಮಾನ, ಅಧಿಕಾರ ಮತ್ತು ಸಾರ್ವಜನಿಕ ಕರ್ಮ';
 
   @override
-  String get plHouse11 => 'gains, income, friends, network and fulfilled desires';
+  String get plHouse11 => 'ಲಾಭಗಳು, ಆದಾಯ, ಸ್ನೇಹಿತರು, ಸಂಪರ್ಕಜಾಲ ಮತ್ತು ಈಡೇರಿದ ಆಸೆಗಳು';
 
   @override
-  String get plHouse12 => 'loss, expenses, foreign lands, spirituality and liberation';
+  String get plHouse12 => 'ನಷ್ಟ, ಖರ್ಚು, ವಿದೇಶ, ಆಧ್ಯಾತ್ಮಿಕತೆ ಮತ್ತು ಮೋಕ್ಷ';
 
   @override
   String planetNakPada(Object nakshatra, Object pada) {
@@ -2647,6 +3684,228 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
+
+  @override
+  String get rzTodayOutlook => 'Today\'s Zodiac Outlook';
+
+  @override
+  String get rzPlanetaryEnergy => 'Today\'s Planetary Energy';
+
+  @override
+  String get rzBestSign => 'Best Sign';
+
+  @override
+  String get rzChallengingSign => 'Most Challenging';
+
+  @override
+  String get rzDominantPlanet => 'Dominant Planet';
+
+  @override
+  String get rzOverallMood => 'Overall Mood';
+
+  @override
+  String get rzMoodBright => 'Bright & Active';
+
+  @override
+  String get rzMoodCalm => 'Calm & Steady';
+
+  @override
+  String get rzMoodMixed => 'Mixed Energy';
+
+  @override
+  String get rzMoodTense => 'Tense & Careful';
+
+  @override
+  String get rzTodayEnergy => 'Today\'s Energy';
+
+  @override
+  String get rzCaution => 'Caution';
+
+  @override
+  String get rzWeak => 'Weak';
+
+  @override
+  String get rzAllSigns => 'All Zodiac Signs';
+
+  @override
+  String get rzAiSummary => 'AI Summary';
+
+  @override
+  String get rzPlanetaryInfluence => 'Today\'s Planetary Influence';
+
+  @override
+  String get rzStrongInfluences => 'Strong Influences';
+
+  @override
+  String get rzShowTechnical => 'Show technical details';
+
+  @override
+  String get rzOpportunities => 'Today\'s Opportunities';
+
+  @override
+  String get rzAvoidTitle => 'Things To Avoid Today';
+
+  @override
+  String get rzTechnicalReason => 'Technical reason';
+
+  @override
+  String get rzAvoidDecisions => 'Rushing important decisions';
+
+  @override
+  String get rzAvoidArguments => 'Heated arguments';
+
+  @override
+  String get rzAvoidInvestments => 'Large investments';
+
+  @override
+  String get rzAvoidOverthink => 'Overthinking small issues';
+
+  @override
+  String get rzAvoidOverspend => 'Unnecessary spending';
+
+  @override
+  String get rzAvoidStress => 'Stress and overworking';
+
+  @override
+  String get rzPlanetaryChart => 'Today\'s Planetary Chart';
+
+  @override
+  String get rzWhatChartMeans => 'What this chart means';
+
+  @override
+  String get rzChartExplain => 'This diamond shows where each planet is sitting in the sky today, mapped to your sign. Planets in supportive houses lift the day; those in tough houses ask for care.';
+
+  @override
+  String get rzDoNetworking => 'Networking & connecting';
+
+  @override
+  String get rzDoLearning => 'Learning something new';
+
+  @override
+  String get rzDoMeditation => 'Meditation & calm';
+
+  @override
+  String get rzDoFamily => 'Family time';
+
+  @override
+  String get rzDoCreative => 'Creative work';
+
+  @override
+  String get rzDoRest => 'Rest & self-care';
+
+  @override
+  String get rzAiRecommendations => 'Today\'s AI Recommendations';
+
+  @override
+  String get rzTechnical => 'Technical Astrology';
+
+  @override
+  String get rzTransitScore => 'Transit Score';
+
+  @override
+  String get rzVedha => 'Vedha (Obstructions)';
+
+  @override
+  String get rzGocharDetails => 'Gochar Details';
+
+  @override
+  String get rzAdvancedOnly => 'For advanced users';
+
+  @override
+  String get rzTomorrow => 'Tomorrow Preview';
+
+  @override
+  String get rzTomorrowEnergy => 'Tomorrow\'s Energy';
+
+  @override
+  String get rzImproving => 'Improving';
+
+  @override
+  String get rzWeaker => 'Slightly Weaker';
+
+  @override
+  String get rzSteady => 'Steady';
+
+  @override
+  String get rzTomorrowUpLine => 'Energy is expected to rise tomorrow — plan ahead for important tasks.';
+
+  @override
+  String get rzTomorrowDownLine => 'Energy may dip a little tomorrow — keep the day light and steady.';
+
+  @override
+  String get rzTomorrowFlatLine => 'Energy stays steady tomorrow — a calm, balanced day ahead.';
+
+  @override
+  String get rzWeeklyTrend => 'Weekly Trend';
+
+  @override
+  String get rzMonthlyTrend => 'Monthly Trend';
+
+  @override
+  String get rzBestDayWeek => 'Best Day';
+
+  @override
+  String get rzHardestDay => 'Toughest Day';
+
+  @override
+  String get rzLuckyToday => 'Lucky Today';
+
+  @override
+  String get rzKarakaSun => 'confidence & vitality';
+
+  @override
+  String get rzKarakaMoon => 'emotions & peace of mind';
+
+  @override
+  String get rzKarakaMars => 'energy & drive';
+
+  @override
+  String get rzKarakaMercury => 'communication & learning';
+
+  @override
+  String get rzKarakaJupiter => 'wisdom & growth';
+
+  @override
+  String get rzKarakaVenus => 'relationships & comfort';
+
+  @override
+  String get rzKarakaSaturn => 'discipline & patience';
+
+  @override
+  String get rzKarakaRahu => 'ambition & change';
+
+  @override
+  String get rzKarakaKetu => 'spirituality & letting go';
+
+  @override
+  String rzHomeSummary(Object dom, Object chal) {
+    return '${dom} sets the tone of the day, while ${chal} asks for patience and care.';
+  }
+
+  @override
+  String rzInsightGood(Object karaka) {
+    return 'Good day for ${karaka}.';
+  }
+
+  @override
+  String rzInsightHard(Object karaka) {
+    return 'Take it slow with ${karaka} today.';
+  }
+
+  @override
+  String rzInfluenceGood(Object karaka) {
+    return '${karaka} is well supported today.';
+  }
+
+  @override
+  String rzInfluenceHard(Object karaka) {
+    return '${karaka} may face delays today.';
+  }
+
+  @override
+  String rzDetailSummary(Object strong, Object weak) {
+    return 'Today supports ${strong}, while ${weak} needs patience and care.';
+  }
 
   @override
   String get sendResetLink => 'ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿ';
