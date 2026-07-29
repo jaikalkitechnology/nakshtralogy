@@ -9,6 +9,104 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
+  String get bhOverview => 'అవలోకనం';
+
+  @override
+  String get bhDetailed => 'వివరణాత్మక';
+
+  @override
+  String get bhavaHouses => 'భావాలు';
+
+  @override
+  String get bhStrengthOverview => 'భావ బలం అవలోకనం';
+
+  @override
+  String get bhOverallAverage => 'మొత్తం భావ సగటు';
+
+  @override
+  String get bhStrongestHouse => 'అత్యంత బలమైన భావం';
+
+  @override
+  String get bhWeakestHouse => 'అత్యంత బలహీనమైన భావం';
+
+  @override
+  String get bhBestArea => 'ఉత్తమ జీవన రంగం';
+
+  @override
+  String get bhNeedsAttention => 'శ్రద్ధ అవసరం';
+
+  @override
+  String get bhSavContribution => 'SAV తోడ్పాటు';
+
+  @override
+  String get bhLordCondition => 'భావాధిపతి స్థితి';
+
+  @override
+  String get bhBenefic => 'శుభ ప్రభావం';
+
+  @override
+  String get bhMalefic => 'పాప ప్రభావం';
+
+  @override
+  String get bhStrengthReasons => 'ఈ స్కోరు ఎందుకు';
+
+  @override
+  String get bhGoodEffects => 'మంచి ప్రభావాలు';
+
+  @override
+  String get bhChallenges => 'సవాళ్లు';
+
+  @override
+  String get bhRemedies => 'పరిహారాలు';
+
+  @override
+  String get bhRanking => 'భావ ర్యాంకింగ్';
+
+  @override
+  String get bhSav => 'SAV';
+
+  @override
+  String get bhExplain => 'నా భావాలను వివరించండి';
+
+  @override
+  String get bhExplainSubtitle => 'మీ 12 భావాల సరళమైన సారాంశం';
+
+  @override
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
+    return 'మీ అత్యంత బలమైన భావాలు ${s1} మరియు ${s2}. ${strongArea} సహజంగా బలంగా ఉంది, అయితే ${weakArea}కు మరింత కృషి అవసరం.';
+  }
+
+  @override
+  String bhLordLine(Object lord, Object relation) {
+    return 'దీని అధిపతి ${lord} ${relation}గా ఉన్నారు.';
+  }
+
+  @override
+  String bhWhyLine(Object sav) {
+    return 'ఈ భావంలో ${sav} శుభ పాయింట్లు (SAV) ఉన్నాయి; ఇందులో ఉన్న గ్రహాలు మరియు దృష్టులు మిగిలిన స్కోరును నిర్ణయిస్తాయి.';
+  }
+
+  @override
+  String bhGoodLine(Object meaning) {
+    return 'బలంగా ఉన్నప్పుడు, ఇది ${meaning}కు మద్దతునిస్తుంది.';
+  }
+
+  @override
+  String bhChallengeLine(Object meaning) {
+    return 'బలహీనంగా ఉన్నప్పుడు, ${meaning}కు అదనపు కృషి మరియు శ్రద్ధ అవసరం కావచ్చు.';
+  }
+
+  @override
+  String bhRemedyLine(Object lord) {
+    return 'దీన్ని బలపరచడానికి దీని అధిపతి ${lord}ని బలపరచండి మరియు ఈ భావ విషయాలను గౌరవించండి.';
+  }
+
+  @override
+  String bhCardAi(Object house, Object strengthWord, Object meaning) {
+    return 'మీ ${house} ${strengthWord}గా ఉంది. ఇది ${meaning}ను నియంత్రిస్తుంది.';
+  }
+
+  @override
   String get kunNavamsa => 'నవాంశ (D9)';
 
   @override
@@ -3892,104 +3990,6 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get forgotPassword => 'పాస్‌వర్డ్ మర్చిపోయారా?';
-
-  @override
-  String get bhOverview => 'Overview';
-
-  @override
-  String get bhDetailed => 'Detailed';
-
-  @override
-  String get bhavaHouses => 'Houses';
-
-  @override
-  String get bhStrengthOverview => 'House Strength Overview';
-
-  @override
-  String get bhOverallAverage => 'Overall House Average';
-
-  @override
-  String get bhStrongestHouse => 'Strongest House';
-
-  @override
-  String get bhWeakestHouse => 'Weakest House';
-
-  @override
-  String get bhBestArea => 'Best Life Area';
-
-  @override
-  String get bhNeedsAttention => 'Needs Attention';
-
-  @override
-  String get bhSavContribution => 'SAV Contribution';
-
-  @override
-  String get bhLordCondition => 'House Lord Condition';
-
-  @override
-  String get bhBenefic => 'Benefic Influence';
-
-  @override
-  String get bhMalefic => 'Malefic Influence';
-
-  @override
-  String get bhStrengthReasons => 'Why This Score';
-
-  @override
-  String get bhGoodEffects => 'Good Effects';
-
-  @override
-  String get bhChallenges => 'Challenges';
-
-  @override
-  String get bhRemedies => 'Remedies';
-
-  @override
-  String get bhRanking => 'House Ranking';
-
-  @override
-  String get bhSav => 'SAV';
-
-  @override
-  String get bhExplain => 'Explain My Houses';
-
-  @override
-  String get bhExplainSubtitle => 'A simple summary of your 12 houses';
-
-  @override
-  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
-    return 'Your strongest houses are ${s1} and ${s2}. ${strongArea} is naturally strong, while ${weakArea} needs more effort.';
-  }
-
-  @override
-  String bhLordLine(Object lord, Object relation) {
-    return 'Its lord ${lord} is placed as ${relation}.';
-  }
-
-  @override
-  String bhWhyLine(Object sav) {
-    return 'This house carries ${sav} benefic points (SAV); its occupants and aspects shape the rest of the score.';
-  }
-
-  @override
-  String bhGoodLine(Object meaning) {
-    return 'When strong, it supports ${meaning}.';
-  }
-
-  @override
-  String bhChallengeLine(Object meaning) {
-    return 'When weak, ${meaning} may need extra effort and care.';
-  }
-
-  @override
-  String bhRemedyLine(Object lord) {
-    return 'Strengthen its lord ${lord} and honour this house\'s matters to lift it.';
-  }
-
-  @override
-  String bhCardAi(Object house, Object strengthWord, Object meaning) {
-    return 'Your ${house} is ${strengthWord}. It governs ${meaning}.';
-  }
 
   @override
   String get sendResetLink => 'రీసెట్ లింక్ పంపు';

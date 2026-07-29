@@ -9,6 +9,104 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
+  String get bhOverview => 'Avlokan';
+
+  @override
+  String get bhDetailed => 'Vistrit';
+
+  @override
+  String get bhavaHouses => 'Bhaav';
+
+  @override
+  String get bhStrengthOverview => 'Bhaav Shakti Avlokan';
+
+  @override
+  String get bhOverallAverage => 'Samagra Bhaav Ausat';
+
+  @override
+  String get bhStrongestHouse => 'Sabse Mazboot Bhaav';
+
+  @override
+  String get bhWeakestHouse => 'Sabse Kamzor Bhaav';
+
+  @override
+  String get bhBestArea => 'Best Jeevan Kshetra';
+
+  @override
+  String get bhNeedsAttention => 'Dhyan Dene Yogya';
+
+  @override
+  String get bhSavContribution => 'SAV Yogdaan';
+
+  @override
+  String get bhLordCondition => 'Bhaavesh ki Sthiti';
+
+  @override
+  String get bhBenefic => 'Shubh Prabhaav';
+
+  @override
+  String get bhMalefic => 'Ashubh Prabhaav';
+
+  @override
+  String get bhStrengthReasons => 'Yeh Score Kyon';
+
+  @override
+  String get bhGoodEffects => 'Acche Prabhaav';
+
+  @override
+  String get bhChallenges => 'Chunautiyan';
+
+  @override
+  String get bhRemedies => 'Upay';
+
+  @override
+  String get bhRanking => 'Bhaav Ranking';
+
+  @override
+  String get bhSav => 'SAV';
+
+  @override
+  String get bhExplain => 'Mere Bhaav Samjhaein';
+
+  @override
+  String get bhExplainSubtitle => 'Aapke 12 bhaavon ka saral saaraansh';
+
+  @override
+  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
+    return 'Aapke sabse mazboot bhaav ${s1} aur ${s2} hain. ${strongArea} swaabhaavik roop se mazboot hai, jabki ${weakArea} ko zyada mehnat ki zaroorat hai.';
+  }
+
+  @override
+  String bhLordLine(Object lord, Object relation) {
+    return 'Iska swami ${lord} ${relation} ke roop mein sthit hai.';
+  }
+
+  @override
+  String bhWhyLine(Object sav) {
+    return 'Is bhaav mein ${sav} shubh points (SAV) hain; isme baithe grah aur unki drishtiyan baaki score tay karti hain.';
+  }
+
+  @override
+  String bhGoodLine(Object meaning) {
+    return 'Jab yeh mazboot hota hai, toh yeh ${meaning} ko support karta hai.';
+  }
+
+  @override
+  String bhChallengeLine(Object meaning) {
+    return 'Jab yeh kamzor hota hai, toh ${meaning} ke liye extra mehnat aur dhyan ki zaroorat ho sakti hai.';
+  }
+
+  @override
+  String bhRemedyLine(Object lord) {
+    return 'Ise mazboot banane ke liye iske swami ${lord} ko bal dein aur is bhaav ke vishayon ka samman karein.';
+  }
+
+  @override
+  String bhCardAi(Object house, Object strengthWord, Object meaning) {
+    return 'Aapka ${house} ${strengthWord} hai. Yeh ${meaning} ko govern karta hai.';
+  }
+
+  @override
   String get kunNavamsa => 'Navamsa (D9)';
 
   @override
@@ -3892,104 +3990,6 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Password Bhool Gaye?';
-
-  @override
-  String get bhOverview => 'Avlokan';
-
-  @override
-  String get bhDetailed => 'Vistrit';
-
-  @override
-  String get bhavaHouses => 'Bhaav';
-
-  @override
-  String get bhStrengthOverview => 'Bhaav Shakti Avlokan';
-
-  @override
-  String get bhOverallAverage => 'Samagra Bhaav Ausat';
-
-  @override
-  String get bhStrongestHouse => 'Sabse Mazboot Bhaav';
-
-  @override
-  String get bhWeakestHouse => 'Sabse Kamzor Bhaav';
-
-  @override
-  String get bhBestArea => 'Best Jeevan Kshetra';
-
-  @override
-  String get bhNeedsAttention => 'Dhyan Dene Yogya';
-
-  @override
-  String get bhSavContribution => 'SAV Yogdaan';
-
-  @override
-  String get bhLordCondition => 'Bhaavesh ki Sthiti';
-
-  @override
-  String get bhBenefic => 'Shubh Prabhaav';
-
-  @override
-  String get bhMalefic => 'Ashubh Prabhaav';
-
-  @override
-  String get bhStrengthReasons => 'Yeh Score Kyon';
-
-  @override
-  String get bhGoodEffects => 'Acche Prabhaav';
-
-  @override
-  String get bhChallenges => 'Chunautiyan';
-
-  @override
-  String get bhRemedies => 'Upay';
-
-  @override
-  String get bhRanking => 'Bhaav Ranking';
-
-  @override
-  String get bhSav => 'SAV';
-
-  @override
-  String get bhExplain => 'Mere Bhaav Samjhaein';
-
-  @override
-  String get bhExplainSubtitle => 'Aapke 12 bhaavon ka saral saaraansh';
-
-  @override
-  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
-    return 'Your strongest houses are ${s1} and ${s2}. ${strongArea} is naturally strong, while ${weakArea} needs more effort.';
-  }
-
-  @override
-  String bhLordLine(Object lord, Object relation) {
-    return 'Its lord ${lord} is placed as ${relation}.';
-  }
-
-  @override
-  String bhWhyLine(Object sav) {
-    return 'This house carries ${sav} benefic points (SAV); its occupants and aspects shape the rest of the score.';
-  }
-
-  @override
-  String bhGoodLine(Object meaning) {
-    return 'When strong, it supports ${meaning}.';
-  }
-
-  @override
-  String bhChallengeLine(Object meaning) {
-    return 'When weak, ${meaning} may need extra effort and care.';
-  }
-
-  @override
-  String bhRemedyLine(Object lord) {
-    return 'Strengthen its lord ${lord} and honour this house\'s matters to lift it.';
-  }
-
-  @override
-  String bhCardAi(Object house, Object strengthWord, Object meaning) {
-    return 'Your ${house} is ${strengthWord}. It governs ${meaning}.';
-  }
 
   @override
   String get sendResetLink => 'Reset Link Bhejein';
