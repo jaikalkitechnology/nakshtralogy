@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'widgets/planet_positions_widget.dart';
 import 'widgets/summary_tab_widget.dart';
+import 'widgets/kundli_tab_widget.dart';
 import 'widgets/north_indian_chart.dart';
 import 'widgets/divisional_charts_widget.dart';
 import 'widgets/dasha_tree_widget.dart';
@@ -103,6 +104,15 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
+      floatingActionButton: (_chart == null)
+          ? null
+          : FloatingActionButton.extended(
+              backgroundColor: AppColors.gold,
+              foregroundColor: AppColors.midnight,
+              icon: const Text('✨', style: TextStyle(fontSize: 16)),
+              label: Text(l.kunExplain, style: const TextStyle(fontWeight: FontWeight.w800)),
+              onPressed: () => showExplainMyChart(context, _chart!, _complete),
+            ),
       appBar: AppBar(
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           Text(widget.clientName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
@@ -132,7 +142,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                       children: [
                         SummaryTabWidget(chart: _chart!, complete: _complete),
                         PlanetPositionsWidget(planetsMap: _planetsMap(), complete: _complete),
-                        _KundliTab(chart: _chart!),
+                        KundliTabWidget(chart: _chart!, complete: _complete),
                         DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap()),
                         DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari'),
                         DashaTreeWidget(chartId: widget.chartId, type: 'moola'),
@@ -175,81 +185,3 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 
 
 
-// ═══════════════════════════════════════════════════════════════════
-//  KUNDLI TAB (Lagna / Moon / Sun switcher)
-// ═══════════════════════════════════════════════════════════════════
-
-class _KundliTab extends StatefulWidget {
-  final Map<String, dynamic> chart;
-  const _KundliTab({required this.chart});
-
-  @override
-  State<_KundliTab> createState() => _KundliTabState();
-}
-
-class _KundliTabState extends State<_KundliTab> {
-  String _base = 'Lagna';
-
-  @override
-  Widget build(BuildContext context) {
-    final planets = (widget.chart['planets'] as Map? ?? {}).cast<String, dynamic>();
-    // Build houses relative to base planet
-    final basePlanet = (planets[_base] as Map?)?.cast<String, dynamic>();
-    final baseSignIdx = (basePlanet?['sign_idx'] as num?)?.toInt() ?? 0;
-
-    final byRashi = <int, List<Map<String, dynamic>>>{};
-    planets.forEach((name, planetData) {
-      if (name == 'Lagna') return;
-      final p = (planetData as Map).cast<String, dynamic>();
-      final si = (p['sign_idx'] as num?)?.toInt() ?? 0;
-      byRashi.putIfAbsent(si, () => []).add({
-        'planet': (p['planet_local'] ?? name),
-        'sign': p['sign'],
-        'degree': p['degree'],
-        'dignity': p['dignity'],
-        'flags': [
-          if (p['vakri'] == true) 'R',
-          if (p['combust'] == true) 'C',
-          if (p['vargottam'] == true) 'V',
-        ],
-      });
-    });
-
-    final lagnaSignIdx = ((planets['Lagna'] as Map?)?.cast<String, dynamic>()?['sign_idx'] as num?)?.toInt() ?? 0;
-
-    final houses = List.generate(12, (h) {
-      final ri = (baseSignIdx + h) % 12;
-      return {
-        'house': h + 1,
-        'rashi_idx': ri,
-        'rashi_short': _signShort(ri),
-        'rashi': _signFull(ri),
-        'planets': byRashi[ri] ?? [],
-        'is_lagna': ri == lagnaSignIdx,
-      };
-    });
-
-    return ListView(padding: const EdgeInsets.all(16), children: [
-      SegmentedButton<String>(
-        segments: [
-          ButtonSegment(value: 'Lagna', label: Text(l.lagna)),
-          ButtonSegment(value: 'Moon', label: Text(l.moon)),
-          ButtonSegment(value: 'Sun', label: Text(l.sun)),
-        ],
-        selected: {_base},
-        onSelectionChanged: (s) => setState(() => _base = s.first),
-      ),
-      const SizedBox(height: 12),
-      Text('$_base Chart — ${basePlanet?['sign_full_local'] ?? basePlanet?['sign_full'] ?? ''}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
-      const SizedBox(height: 12),
-      NorthIndianChartWidget(houses: houses, chartTitle: '$_base Chart'),
-    ]);
-  }
-
-  static const _signsShort = ['Ar','Ta','Ge','Cn','Le','Vi','Li','Sc','Sg','Cp','Aq','Pi'];
-  static const _signsFull = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-  String _signShort(int i) => _signsShort[i % 12];
-  String _signFull(int i) => _signsFull[i % 12];
-}

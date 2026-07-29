@@ -2416,6 +2416,66 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get kunNavamsa => 'Navamsa (D9)';
+
+  @override
+  String get kunD10 => 'Dasamsa (D10)';
+
+  @override
+  String get kunPlacement => 'Grah Sthiti';
+
+  @override
+  String get kunHousesTitle => 'Bhaav Vivaran';
+
+  @override
+  String get kunPlanet => 'Grah';
+
+  @override
+  String get kunNakshatra => 'Nakshatra';
+
+  @override
+  String get kunPada => 'Pad';
+
+  @override
+  String get kunLord => 'Swami';
+
+  @override
+  String get kunExplain => 'Meri Kundli Samjhaein';
+
+  @override
+  String get kunExplainSubtitle => 'Aapki kundli ka saral saaraansh';
+
+  @override
+  String kunHouseLine(Object ordinal, Object meaning) {
+    return 'The ${ordinal} house governs ${meaning}.';
+  }
+
+  @override
+  String kunHouseOccupied(Object planets) {
+    return '${planets} placed here shape its results.';
+  }
+
+  @override
+  String kunExplainAsc(Object asc) {
+    return 'Your ascendant is ${asc}, shaping your outlook and how others first see you.';
+  }
+
+  @override
+  String kunExplainMoon(Object moon) {
+    return 'Your mind and emotions follow the Moon in ${moon}.';
+  }
+
+  @override
+  String kunExplainStrong(Object planet) {
+    return '${planet} is your strongest planet — a natural area of ease and support.';
+  }
+
+  @override
+  String kunExplainWeak(Object planet) {
+    return '${planet} is your most tested planet — patience and effort pay off here.';
+  }
+
+  @override
   String get plNature => 'Prakriti';
 
   @override

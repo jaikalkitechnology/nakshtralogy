@@ -2416,6 +2416,66 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get kunNavamsa => 'नवांश (D9)';
+
+  @override
+  String get kunD10 => 'दशांश (D10)';
+
+  @override
+  String get kunPlacement => 'ग्रह स्थिति';
+
+  @override
+  String get kunHousesTitle => 'भाव विवरण';
+
+  @override
+  String get kunPlanet => 'ग्रह';
+
+  @override
+  String get kunNakshatra => 'नक्षत्र';
+
+  @override
+  String get kunPada => 'पद';
+
+  @override
+  String get kunLord => 'स्वामी';
+
+  @override
+  String get kunExplain => 'मेरी कुंडली समझाएं';
+
+  @override
+  String get kunExplainSubtitle => 'आपकी कुंडली का सरल सारांश';
+
+  @override
+  String kunHouseLine(Object ordinal, Object meaning) {
+    return 'The ${ordinal} house governs ${meaning}.';
+  }
+
+  @override
+  String kunHouseOccupied(Object planets) {
+    return '${planets} placed here shape its results.';
+  }
+
+  @override
+  String kunExplainAsc(Object asc) {
+    return 'Your ascendant is ${asc}, shaping your outlook and how others first see you.';
+  }
+
+  @override
+  String kunExplainMoon(Object moon) {
+    return 'Your mind and emotions follow the Moon in ${moon}.';
+  }
+
+  @override
+  String kunExplainStrong(Object planet) {
+    return '${planet} is your strongest planet — a natural area of ease and support.';
+  }
+
+  @override
+  String kunExplainWeak(Object planet) {
+    return '${planet} is your most tested planet — patience and effort pay off here.';
+  }
+
+  @override
   String get plNature => 'प्रकृति';
 
   @override
