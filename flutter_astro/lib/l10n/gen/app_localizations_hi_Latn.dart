@@ -2747,6 +2747,148 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get sbLegendary => 'Legendary';
+
+  @override
+  String get sbSthana => 'Sthana Bala';
+
+  @override
+  String get sbDig => 'Dig Bala';
+
+  @override
+  String get sbKala => 'Kala Bala';
+
+  @override
+  String get sbChesta => 'Chesta Bala';
+
+  @override
+  String get sbNaisargika => 'Naisargika Bala';
+
+  @override
+  String get sbDrik => 'Drik Bala';
+
+  @override
+  String get sbSummary => 'Grah Bal Saaraansh';
+
+  @override
+  String get sbAverageStrength => 'Ausat Bal';
+
+  @override
+  String get sbHighestRupa => 'Sarvadhik Rupa';
+
+  @override
+  String get sbRupa => 'Rupa';
+
+  @override
+  String get sbRanking => 'Grah Ranking';
+
+  @override
+  String get sbRequired => 'Aavashyak';
+
+  @override
+  String get sbExcess => 'Adhishesh';
+
+  @override
+  String get sbDeficit => 'Kami';
+
+  @override
+  String get sbTotalShadbala => 'Kul Shadbala';
+
+  @override
+  String get sbExplain => 'Mera Grah Bal Samjhaein';
+
+  @override
+  String get sbExplainSubtitle => 'Aapke grahon ke bal ka saral saaraansh';
+
+  @override
+  String get sbInfoTitle => 'Shadbala Ko Samjhein';
+
+  @override
+  String get sbQWhatIs => 'Shadbala kya hai?';
+
+  @override
+  String get sbQRupas => 'Rupa kya hain?';
+
+  @override
+  String get sbQHowCalc => 'Bal ki ganana kaise hoti hai?';
+
+  @override
+  String get sbQHowUse => 'Iska upyog kaise karein';
+
+  @override
+  String get sbWhyStrong => 'Kyon Mazboot';
+
+  @override
+  String get sbWhyWeak => 'Kyon Kamzor';
+
+  @override
+  String get sbDuringMahadasha => 'Mahadasha ke dauraan';
+
+  @override
+  String get sbEffects => 'Prabhaav';
+
+  @override
+  String get sbLifeAreas => 'Jeevan Kshetra';
+
+  @override
+  String get sbPlanetDetails => 'Grah Vivaran';
+
+  @override
+  String get sbBodyWhatIs => 'Shadbala (\'six-fold strength\') measures how much power each planet has to deliver its results, by adding six independent sources of strength.';
+
+  @override
+  String get sbBodyRupas => 'Strength is measured in Rupas (1 Rupa = 60 Virupas). Each planet needs a minimum Rupa strength to count as strong; more Rupas means it delivers its results more fully.';
+
+  @override
+  String get sbBodyHowCalc => 'Six balas are added: Sthana (positional), Dig (directional), Kala (temporal), Chesta (motional), Naisargika (natural) and Drik (aspectual). The total is compared with the planet\'s required minimum to get a percentage.';
+
+  @override
+  String get sbBodyHowUse => 'A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.';
+
+  @override
+  String get sbRemedyStrong => 'Well-supported — no special remedy needed; you can use this planet\'s periods confidently.';
+
+  @override
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
+    return '${strongP} is your strongest planet, giving excellent support for ${strongTrait}. ${weakP} is the weakest and benefits most from remedies.';
+  }
+
+  @override
+  String sbCardAi(Object planet, Object category, Object karakatva) {
+    return '${planet} has ${category} Shadbala, so its ${karakatva} are supported accordingly.';
+  }
+
+  @override
+  String sbWhyLine(Object bala, Object rupa) {
+    return 'Strongest through ${bala} (${rupa} rupas).';
+  }
+
+  @override
+  String sbWeakLine(Object bala) {
+    return 'Weakest in ${bala}, which lowers the total.';
+  }
+
+  @override
+  String sbMahadashaLine(Object planet, Object karak) {
+    return 'During ${planet}\'s Mahadasha, its ${karak} come to the fore.';
+  }
+
+  @override
+  String sbEffectStrong(Object karak) {
+    return 'With strong Shadbala, ${karak} are naturally supported.';
+  }
+
+  @override
+  String sbEffectWeak(Object karak) {
+    return 'With modest Shadbala, ${karak} may need conscious effort.';
+  }
+
+  @override
+  String sbRemedyWeak(Object planet) {
+    return 'Strengthen ${planet} through its mantra, gemstone or charity, and act patiently during its periods.';
+  }
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override

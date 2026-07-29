@@ -2747,6 +2747,148 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get sbLegendary => 'असाधारण';
+
+  @override
+  String get sbSthana => 'स्थान बल';
+
+  @override
+  String get sbDig => 'दिक् बल';
+
+  @override
+  String get sbKala => 'काल बल';
+
+  @override
+  String get sbChesta => 'चेष्टा बल';
+
+  @override
+  String get sbNaisargika => 'नैसर्गिक बल';
+
+  @override
+  String get sbDrik => 'दृक् बल';
+
+  @override
+  String get sbSummary => 'ग्रह बल सारांश';
+
+  @override
+  String get sbAverageStrength => 'औसत बल';
+
+  @override
+  String get sbHighestRupa => 'सर्वाधिक रूपा';
+
+  @override
+  String get sbRupa => 'रूपा';
+
+  @override
+  String get sbRanking => 'ग्रह रैंकिंग';
+
+  @override
+  String get sbRequired => 'आवश्यक';
+
+  @override
+  String get sbExcess => 'अधिशेष';
+
+  @override
+  String get sbDeficit => 'कमी';
+
+  @override
+  String get sbTotalShadbala => 'कुल षड्बल';
+
+  @override
+  String get sbExplain => 'मेरा ग्रह बल समझाएं';
+
+  @override
+  String get sbExplainSubtitle => 'आपके ग्रहों के बल का सरल सारांश';
+
+  @override
+  String get sbInfoTitle => 'षड्बल को समझें';
+
+  @override
+  String get sbQWhatIs => 'षड्बल क्या है?';
+
+  @override
+  String get sbQRupas => 'रूपा क्या हैं?';
+
+  @override
+  String get sbQHowCalc => 'बल की गणना कैसे होती है?';
+
+  @override
+  String get sbQHowUse => 'इसका उपयोग कैसे करें';
+
+  @override
+  String get sbWhyStrong => 'क्यों मजबूत';
+
+  @override
+  String get sbWhyWeak => 'क्यों कमजोर';
+
+  @override
+  String get sbDuringMahadasha => 'महादशा के दौरान';
+
+  @override
+  String get sbEffects => 'प्रभाव';
+
+  @override
+  String get sbLifeAreas => 'जीवन क्षेत्र';
+
+  @override
+  String get sbPlanetDetails => 'ग्रह विवरण';
+
+  @override
+  String get sbBodyWhatIs => 'Shadbala (\'six-fold strength\') measures how much power each planet has to deliver its results, by adding six independent sources of strength.';
+
+  @override
+  String get sbBodyRupas => 'Strength is measured in Rupas (1 Rupa = 60 Virupas). Each planet needs a minimum Rupa strength to count as strong; more Rupas means it delivers its results more fully.';
+
+  @override
+  String get sbBodyHowCalc => 'Six balas are added: Sthana (positional), Dig (directional), Kala (temporal), Chesta (motional), Naisargika (natural) and Drik (aspectual). The total is compared with the planet\'s required minimum to get a percentage.';
+
+  @override
+  String get sbBodyHowUse => 'A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.';
+
+  @override
+  String get sbRemedyStrong => 'Well-supported — no special remedy needed; you can use this planet\'s periods confidently.';
+
+  @override
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
+    return '${strongP} is your strongest planet, giving excellent support for ${strongTrait}. ${weakP} is the weakest and benefits most from remedies.';
+  }
+
+  @override
+  String sbCardAi(Object planet, Object category, Object karakatva) {
+    return '${planet} has ${category} Shadbala, so its ${karakatva} are supported accordingly.';
+  }
+
+  @override
+  String sbWhyLine(Object bala, Object rupa) {
+    return 'Strongest through ${bala} (${rupa} rupas).';
+  }
+
+  @override
+  String sbWeakLine(Object bala) {
+    return 'Weakest in ${bala}, which lowers the total.';
+  }
+
+  @override
+  String sbMahadashaLine(Object planet, Object karak) {
+    return 'During ${planet}\'s Mahadasha, its ${karak} come to the fore.';
+  }
+
+  @override
+  String sbEffectStrong(Object karak) {
+    return 'With strong Shadbala, ${karak} are naturally supported.';
+  }
+
+  @override
+  String sbEffectWeak(Object karak) {
+    return 'With modest Shadbala, ${karak} may need conscious effort.';
+  }
+
+  @override
+  String sbRemedyWeak(Object planet) {
+    return 'Strengthen ${planet} through its mantra, gemstone or charity, and act patiently during its periods.';
+  }
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override

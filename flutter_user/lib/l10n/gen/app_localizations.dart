@@ -235,6 +235,258 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @sbLegendary.
+  ///
+  /// In en, this message translates to:
+  /// **'Legendary'**
+  String get sbLegendary;
+
+  /// No description provided for @sbSthana.
+  ///
+  /// In en, this message translates to:
+  /// **'Sthana Bala'**
+  String get sbSthana;
+
+  /// No description provided for @sbDig.
+  ///
+  /// In en, this message translates to:
+  /// **'Dig Bala'**
+  String get sbDig;
+
+  /// No description provided for @sbKala.
+  ///
+  /// In en, this message translates to:
+  /// **'Kala Bala'**
+  String get sbKala;
+
+  /// No description provided for @sbChesta.
+  ///
+  /// In en, this message translates to:
+  /// **'Chesta Bala'**
+  String get sbChesta;
+
+  /// No description provided for @sbNaisargika.
+  ///
+  /// In en, this message translates to:
+  /// **'Naisargika Bala'**
+  String get sbNaisargika;
+
+  /// No description provided for @sbDrik.
+  ///
+  /// In en, this message translates to:
+  /// **'Drik Bala'**
+  String get sbDrik;
+
+  /// No description provided for @sbSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary Strength Summary'**
+  String get sbSummary;
+
+  /// No description provided for @sbAverageStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Strength'**
+  String get sbAverageStrength;
+
+  /// No description provided for @sbHighestRupa.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Rupa'**
+  String get sbHighestRupa;
+
+  /// No description provided for @sbRupa.
+  ///
+  /// In en, this message translates to:
+  /// **'Rupa'**
+  String get sbRupa;
+
+  /// No description provided for @sbRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Ranking'**
+  String get sbRanking;
+
+  /// No description provided for @sbRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get sbRequired;
+
+  /// No description provided for @sbExcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Excess'**
+  String get sbExcess;
+
+  /// No description provided for @sbDeficit.
+  ///
+  /// In en, this message translates to:
+  /// **'Deficit'**
+  String get sbDeficit;
+
+  /// No description provided for @sbTotalShadbala.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Shadbala'**
+  String get sbTotalShadbala;
+
+  /// No description provided for @sbExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Planetary Strength'**
+  String get sbExplain;
+
+  /// No description provided for @sbExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A simple summary of your planets\' strength'**
+  String get sbExplainSubtitle;
+
+  /// No description provided for @sbInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Shadbala'**
+  String get sbInfoTitle;
+
+  /// No description provided for @sbQWhatIs.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Shadbala?'**
+  String get sbQWhatIs;
+
+  /// No description provided for @sbQRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'What are Rupas?'**
+  String get sbQRupas;
+
+  /// No description provided for @sbQHowCalc.
+  ///
+  /// In en, this message translates to:
+  /// **'How is strength calculated?'**
+  String get sbQHowCalc;
+
+  /// No description provided for @sbQHowUse.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use this'**
+  String get sbQHowUse;
+
+  /// No description provided for @sbWhyStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Strong'**
+  String get sbWhyStrong;
+
+  /// No description provided for @sbWhyWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Why Weak'**
+  String get sbWhyWeak;
+
+  /// No description provided for @sbDuringMahadasha.
+  ///
+  /// In en, this message translates to:
+  /// **'During Mahadasha'**
+  String get sbDuringMahadasha;
+
+  /// No description provided for @sbEffects.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects'**
+  String get sbEffects;
+
+  /// No description provided for @sbLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get sbLifeAreas;
+
+  /// No description provided for @sbPlanetDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Details'**
+  String get sbPlanetDetails;
+
+  /// No description provided for @sbBodyWhatIs.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadbala (\'six-fold strength\') measures how much power each planet has to deliver its results, by adding six independent sources of strength.'**
+  String get sbBodyWhatIs;
+
+  /// No description provided for @sbBodyRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength is measured in Rupas (1 Rupa = 60 Virupas). Each planet needs a minimum Rupa strength to count as strong; more Rupas means it delivers its results more fully.'**
+  String get sbBodyRupas;
+
+  /// No description provided for @sbBodyHowCalc.
+  ///
+  /// In en, this message translates to:
+  /// **'Six balas are added: Sthana (positional), Dig (directional), Kala (temporal), Chesta (motional), Naisargika (natural) and Drik (aspectual). The total is compared with the planet\'s required minimum to get a percentage.'**
+  String get sbBodyHowCalc;
+
+  /// No description provided for @sbBodyHowUse.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.'**
+  String get sbBodyHowUse;
+
+  /// No description provided for @sbRemedyStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Well-supported — no special remedy needed; you can use this planet\'s periods confidently.'**
+  String get sbRemedyStrong;
+
+  /// No description provided for @sbHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{strongP} is your strongest planet, giving excellent support for {strongTrait}. {weakP} is the weakest and benefits most from remedies.'**
+  String sbHeroSummary(Object strongP, Object strongTrait, Object weakP);
+
+  /// No description provided for @sbCardAi.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} has {category} Shadbala, so its {karakatva} are supported accordingly.'**
+  String sbCardAi(Object planet, Object category, Object karakatva);
+
+  /// No description provided for @sbWhyLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest through {bala} ({rupa} rupas).'**
+  String sbWhyLine(Object bala, Object rupa);
+
+  /// No description provided for @sbWeakLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest in {bala}, which lowers the total.'**
+  String sbWeakLine(Object bala);
+
+  /// No description provided for @sbMahadashaLine.
+  ///
+  /// In en, this message translates to:
+  /// **'During {planet}\'s Mahadasha, its {karak} come to the fore.'**
+  String sbMahadashaLine(Object planet, Object karak);
+
+  /// No description provided for @sbEffectStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'With strong Shadbala, {karak} are naturally supported.'**
+  String sbEffectStrong(Object karak);
+
+  /// No description provided for @sbEffectWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'With modest Shadbala, {karak} may need conscious effort.'**
+  String sbEffectWeak(Object karak);
+
+  /// No description provided for @sbRemedyWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthen {planet} through its mantra, gemstone or charity, and act patiently during its periods.'**
+  String sbRemedyWeak(Object planet);
+
   /// No description provided for @bhOverview.
   ///
   /// In en, this message translates to:

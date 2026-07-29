@@ -165,7 +165,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         _PaidTab(chartId: widget.chartId, section: 'yoga',
                             builder: (_) => YogaWidget(chartId: widget.chartId, initial: _complete?['yoga_analysis'])),
                         _PaidTab(chartId: widget.chartId, section: 'shadbala',
-                            builder: (_) => ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala'])),
+                            builder: (_) => ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala'], planets: _planetsMap())),
                         _PaidTab(chartId: widget.chartId, section: 'ashtakavarga',
                             builder: (_) => AshtakavargaWidget(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'aspects',

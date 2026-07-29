@@ -149,7 +149,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx()),
                         DoshWidget(chartId: widget.chartId, initial: _complete?['dosh_analysis']),
                         YogaWidget(chartId: widget.chartId, initial: _complete?['yoga_analysis']),
-                        ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala']),
+                        ShadbalaWidget(chartId: widget.chartId, initial: _complete?['shadbala'], planets: _planetsMap()),
                         AshtakavargaWidget(chartId: widget.chartId),
                         AspectsWidget(chartId: widget.chartId),
                         BhavaWidget(
