@@ -106,6 +106,96 @@ String kElementNatureLine(String t, AppLocalizations l) {
   }
 }
 
+// ── planet static attributes (fixed Vedic constants — presentation only) ─
+const Map<String, List<String>> _kOwnSigns = {
+  'Sun': ['Le'], 'Moon': ['Cn'], 'Mars': ['Ar', 'Sc'], 'Mercury': ['Ge', 'Vi'],
+  'Jupiter': ['Sg', 'Pi'], 'Venus': ['Ta', 'Li'], 'Saturn': ['Cp', 'Aq'],
+};
+const Set<String> _kBenefics = {'Jupiter', 'Venus', 'Mercury', 'Moon'};
+const Map<String, String> _kPlanetElement = {
+  'Sun': 'fire', 'Moon': 'water', 'Mars': 'fire', 'Mercury': 'earth',
+  'Jupiter': 'ether', 'Venus': 'water', 'Saturn': 'air', 'Rahu': 'air', 'Ketu': 'fire',
+};
+const Map<String, String> _kPlanetGender = {
+  'Sun': 'male', 'Moon': 'female', 'Mars': 'male', 'Mercury': 'neutral',
+  'Jupiter': 'male', 'Venus': 'female', 'Saturn': 'neutral', 'Rahu': 'neutral', 'Ketu': 'neutral',
+};
+// naisargika (permanent) friendships
+const Map<String, Set<String>> _kFriends = {
+  'Sun': {'Moon', 'Mars', 'Jupiter'}, 'Moon': {'Sun', 'Mercury'},
+  'Mars': {'Sun', 'Moon', 'Jupiter'}, 'Mercury': {'Sun', 'Venus'},
+  'Jupiter': {'Sun', 'Moon', 'Mars'}, 'Venus': {'Mercury', 'Saturn'},
+  'Saturn': {'Mercury', 'Venus'},
+};
+const Map<String, Set<String>> _kEnemies = {
+  'Sun': {'Venus', 'Saturn'}, 'Moon': {}, 'Mars': {'Mercury'},
+  'Mercury': {'Moon'}, 'Jupiter': {'Mercury', 'Venus'},
+  'Venus': {'Sun', 'Moon'}, 'Saturn': {'Sun', 'Moon', 'Mars'},
+};
+
+String kOrdinal(int n) {
+  if (n >= 11 && n <= 13) return '${n}th';
+  switch (n % 10) {
+    case 1: return '${n}st';
+    case 2: return '${n}nd';
+    case 3: return '${n}rd';
+    default: return '${n}th';
+  }
+}
+
+bool kIsBenefic(String planet) => _kBenefics.contains(planet);
+List<String> kOwnSigns(String planet) => _kOwnSigns[planet] ?? const [];
+String kNatureLabel(String planet, AppLocalizations l) => kIsBenefic(planet) ? l.plBenefic : l.plMalefic;
+String kPlanetElementLabel(String planet, AppLocalizations l) =>
+    kElementLabel2(_kPlanetElement[planet] ?? 'fire', l);
+String kGenderLabel(String planet, AppLocalizations l) {
+  switch (_kPlanetGender[planet]) {
+    case 'male': return l.plMale;
+    case 'female': return l.plFemale;
+    default: return l.plNeutralGender;
+  }
+}
+
+String kElementLabel2(String t, AppLocalizations l) => t == 'ether' ? l.sumEther : kElementLabel(t, l);
+
+/// Sign relationship of a planet in its occupied sign.
+/// Prefers the backend dignity (own/exalted/debilitated); otherwise derives
+/// friend/enemy/neutral from the sign-lord's natural relationship.
+/// Returns: exalted | debilitated | own | friend | enemy | neutral
+String kSignRelation(String planet, int signIdx, String dignity) {
+  final d = dignity.toLowerCase();
+  if (d.contains('uch') || d.contains('exalt')) return 'exalted';
+  if (d.contains('neech') || d.contains('debil')) return 'debilitated';
+  if (d.contains('swa') || d.contains('own')) return 'own';
+  final lord = _kSignLords[signIdx];
+  if (lord == planet) return 'own';
+  if ((_kFriends[planet] ?? const {}).contains(lord)) return 'friend';
+  if ((_kEnemies[planet] ?? const {}).contains(lord)) return 'enemy';
+  return 'neutral';
+}
+
+Color kRelationColor(String rel) {
+  switch (rel) {
+    case 'exalted': return KColors.gold;
+    case 'own': return KColors.green;
+    case 'friend': return KColors.blue;
+    case 'enemy': return KColors.orange;
+    case 'debilitated': return KColors.red;
+    default: return AppColors.smoke;
+  }
+}
+
+String kRelationLabel(String rel, AppLocalizations l) {
+  switch (rel) {
+    case 'exalted': return l.sumExalted;
+    case 'debilitated': return l.sumDebilitated;
+    case 'own': return l.plOwnSign;
+    case 'friend': return l.plFriend;
+    case 'enemy': return l.plEnemy;
+    default: return l.plNeutral;
+  }
+}
+
 // ── glossary (Common UX: tooltip on every technical word) ────────────────
 String kGlossary(String term, AppLocalizations l) {
   switch (term) {

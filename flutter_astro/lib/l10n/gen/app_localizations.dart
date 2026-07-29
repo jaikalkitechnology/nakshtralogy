@@ -230,6 +230,300 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @plNature.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature'**
+  String get plNature;
+
+  /// No description provided for @plElement.
+  ///
+  /// In en, this message translates to:
+  /// **'Element'**
+  String get plElement;
+
+  /// No description provided for @plGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get plGender;
+
+  /// No description provided for @plKarakatva.
+  ///
+  /// In en, this message translates to:
+  /// **'Karakatva'**
+  String get plKarakatva;
+
+  /// No description provided for @plLordship.
+  ///
+  /// In en, this message translates to:
+  /// **'Lordship'**
+  String get plLordship;
+
+  /// No description provided for @plStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get plStrength;
+
+  /// No description provided for @plAspectsGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspects Given'**
+  String get plAspectsGiven;
+
+  /// No description provided for @plAspectsReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspects Received'**
+  String get plAspectsReceived;
+
+  /// No description provided for @plConjunction.
+  ///
+  /// In en, this message translates to:
+  /// **'Conjunction'**
+  String get plConjunction;
+
+  /// No description provided for @plHouseMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'House Meaning'**
+  String get plHouseMeaning;
+
+  /// No description provided for @plNakshatraMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatra Meaning'**
+  String get plNakshatraMeaning;
+
+  /// No description provided for @plAiInterpretation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Interpretation'**
+  String get plAiInterpretation;
+
+  /// No description provided for @plSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search any planet'**
+  String get plSearchHint;
+
+  /// No description provided for @plNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No planets found'**
+  String get plNoResults;
+
+  /// No description provided for @plBenefic.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefic'**
+  String get plBenefic;
+
+  /// No description provided for @plMalefic.
+  ///
+  /// In en, this message translates to:
+  /// **'Malefic'**
+  String get plMalefic;
+
+  /// No description provided for @plMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get plMale;
+
+  /// No description provided for @plFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get plFemale;
+
+  /// No description provided for @plNeutralGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get plNeutralGender;
+
+  /// No description provided for @plOwnSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Own Sign'**
+  String get plOwnSign;
+
+  /// No description provided for @plFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend Sign'**
+  String get plFriend;
+
+  /// No description provided for @plEnemy.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemy Sign'**
+  String get plEnemy;
+
+  /// No description provided for @plNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get plNeutral;
+
+  /// No description provided for @sumEther.
+  ///
+  /// In en, this message translates to:
+  /// **'Ether'**
+  String get sumEther;
+
+  /// No description provided for @plLordOfHouses.
+  ///
+  /// In en, this message translates to:
+  /// **'Lord of house(s) {houses}'**
+  String plLordOfHouses(Object houses);
+
+  /// No description provided for @plNakMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruled by {nakLord}, bringing {trait}.'**
+  String plNakMeaning(Object nakLord, Object trait);
+
+  /// No description provided for @plAiPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} sits in {sign}, in the {house} house.'**
+  String plAiPlace(Object planet, Object sign, Object house);
+
+  /// No description provided for @plAiKarakStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Its core significations — {karak} — are well supported here.'**
+  String plAiKarakStrong(Object karak);
+
+  /// No description provided for @plAiKarakWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Its core significations — {karak} — may need conscious effort here.'**
+  String plAiKarakWeak(Object karak);
+
+  /// No description provided for @plAiExalted.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is exalted, giving its very best results.'**
+  String plAiExalted(Object planet);
+
+  /// No description provided for @plAiDebilitated.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is debilitated and needs support to deliver its results.'**
+  String plAiDebilitated(Object planet);
+
+  /// No description provided for @plAiCombust.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is combust, so it works less openly under the Sun\'s glare.'**
+  String plAiCombust(Object planet);
+
+  /// No description provided for @plAiVargottama.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is vargottama — a strong placement repeated in the navamsa.'**
+  String plAiVargottama(Object planet);
+
+  /// No description provided for @plAiRetrograde.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is retrograde, turning its energy inward and intensifying it.'**
+  String plAiRetrograde(Object planet);
+
+  /// No description provided for @plHouse1.
+  ///
+  /// In en, this message translates to:
+  /// **'self, body, personality and vitality'**
+  String get plHouse1;
+
+  /// No description provided for @plHouse2.
+  ///
+  /// In en, this message translates to:
+  /// **'wealth, family, speech and food'**
+  String get plHouse2;
+
+  /// No description provided for @plHouse3.
+  ///
+  /// In en, this message translates to:
+  /// **'courage, siblings, communication and short travels'**
+  String get plHouse3;
+
+  /// No description provided for @plHouse4.
+  ///
+  /// In en, this message translates to:
+  /// **'home, mother, comfort, property and inner peace'**
+  String get plHouse4;
+
+  /// No description provided for @plHouse5.
+  ///
+  /// In en, this message translates to:
+  /// **'children, creativity, intelligence, romance and past merits'**
+  String get plHouse5;
+
+  /// No description provided for @plHouse6.
+  ///
+  /// In en, this message translates to:
+  /// **'health, enemies, debts, service and daily work'**
+  String get plHouse6;
+
+  /// No description provided for @plHouse7.
+  ///
+  /// In en, this message translates to:
+  /// **'marriage, partnerships and business relationships'**
+  String get plHouse7;
+
+  /// No description provided for @plHouse8.
+  ///
+  /// In en, this message translates to:
+  /// **'longevity, transformation, secrets and inheritance'**
+  String get plHouse8;
+
+  /// No description provided for @plHouse9.
+  ///
+  /// In en, this message translates to:
+  /// **'fortune, dharma, higher learning, guru and father'**
+  String get plHouse9;
+
+  /// No description provided for @plHouse10.
+  ///
+  /// In en, this message translates to:
+  /// **'career, status, authority and public karma'**
+  String get plHouse10;
+
+  /// No description provided for @plHouse11.
+  ///
+  /// In en, this message translates to:
+  /// **'gains, income, friends, network and fulfilled desires'**
+  String get plHouse11;
+
+  /// No description provided for @plHouse12.
+  ///
+  /// In en, this message translates to:
+  /// **'loss, expenses, foreign lands, spirituality and liberation'**
+  String get plHouse12;
+
+  /// No description provided for @planetNakPada.
+  ///
+  /// In en, this message translates to:
+  /// **'Nak: {nakshatra} ({pada})'**
+  String planetNakPada(Object nakshatra, Object pada);
+
+  /// No description provided for @planetNakLord.
+  ///
+  /// In en, this message translates to:
+  /// **'NL: {lord}'**
+  String planetNakLord(Object lord);
+
+  /// No description provided for @planetLongitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Lon: {value}°'**
+  String planetLongitude(Object value);
+
   /// No description provided for @sumVeryStrong.
   ///
   /// In en, this message translates to:
