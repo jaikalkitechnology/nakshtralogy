@@ -9,6 +9,183 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
+  String get avSummaryTitle => 'Ashtakavarga Saaraansh';
+
+  @override
+  String get avOverallScore => 'Overall SAV Score';
+
+  @override
+  String get avOverallRating => 'Samagra Rating';
+
+  @override
+  String get avStrongestSigns => 'Sabse Mazboot Rashiyan';
+
+  @override
+  String get avWeakestSigns => 'Sabse Kamzor Rashiyan';
+
+  @override
+  String get avScore => 'Score';
+
+  @override
+  String get avMeaning => 'Matlab';
+
+  @override
+  String get avGrid => 'Grid';
+
+  @override
+  String get avList => 'List';
+
+  @override
+  String get avOverallScoreShort => 'Overall Score';
+
+  @override
+  String get avNatalSignScore => 'Janma Rashi Score';
+
+  @override
+  String get avBestSigns => 'Best Rashiyan';
+
+  @override
+  String get avWeakSigns => 'Kamzor Rashiyan';
+
+  @override
+  String get avAiInterpretation => 'AI Vyakhya';
+
+  @override
+  String get avVeryGood => 'Bahut Accha';
+
+  @override
+  String get avVeryWeak => 'Bahut Kamzor';
+
+  @override
+  String get avTotalSav => 'Total SAV';
+
+  @override
+  String get avPlanetContributions => 'Grah Yogdaan';
+
+  @override
+  String get avFinance => 'Vitt';
+
+  @override
+  String get avOverallStrength => 'Samagra Shakti';
+
+  @override
+  String get avWhatDoesThisMean => 'Iska kya matlab hai?';
+
+  @override
+  String get avSimple => 'Simple';
+
+  @override
+  String get avAdvanced => 'Advanced';
+
+  @override
+  String get avInfoTitle => 'Ashtakavarga Ko Samjhein';
+
+  @override
+  String get avStrong => 'Mazboot';
+
+  @override
+  String get avModerate => 'Madhyam';
+
+  @override
+  String get avQWhatIsAv => 'Ashtakavarga kya hai?';
+
+  @override
+  String get avQWhatIsSav => 'SAV kya hai?';
+
+  @override
+  String get avQWhatIsBav => 'BAV kya hai?';
+
+  @override
+  String get avQHowToRead => 'In scores ko kaise padhein';
+
+  @override
+  String get avQSavVsBav => 'SAV vs BAV';
+
+  @override
+  String get avABody => 'Ashtakavarga Vedic astrology mein points par based ek strength system hai. Har planet apni position ke hisaab se barah rashiyon ko benefic points (bindus, jinhe rekha bhi kehte hain) deta hai. Kisi rashi mein jitne zyada points honge, related planetary dasha aur transit ke dauraan life ka wo area utna hi smooth support paayega.';
+
+  @override
+  String get avSavBody => 'SAV (Sarva Ashtakavarga) saaton planets ke points ko har rashi ke liye jod deta hai. Ye har rashi ke liye ek hi strength score deta hai, jisse aap jaldi dekh sakte hain ki aapki chart mein kaunsi rashiyan — aur unke houses — sabse zyada supported hain.';
+
+  @override
+  String get avBavBody => 'BAV (Bhinna Ashtakavarga) ek single planet ke points ko barah rashiyon mein dikhata hai. Ye batata hai ki koi specific planet kaunsi rashiyon ko sabse zyada support karta hai, jo tab important hota hai jab us planet ki dasha ya transit active ho.';
+
+  @override
+  String get avHowToReadBody => 'Zyada number better hote hain. SAV ke liye, average rashi lagbhag 28 points score karti hai — 30 se upar strong hai aur 25 se neeche care ki zaroorat hai. BAV ke liye, har rashi 0 se 8 ke beech hoti hai, jisme 4 average maana jaata hai. Important kaamon ke liye apni strongest rashiyon ko favour karein, aur weakest rashiyon ke matters mein patience aur discipline rakhein.';
+
+  @override
+  String get avSavVsBavBody => 'SAV saare planets ka combined total hai aur ek rashi ki overall strength dikhata hai. BAV ek single planet ka contribution hai aur batata hai ki kaunsa planet us rashi ko support karta hai. Big picture samajhne ke liye SAV use karein, aur ye jaanne ke liye ki kaunsa planet rashi ki strength drive karta hai, BAV dekhein.';
+
+  @override
+  String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
+    return 'Aapki chart ${s1}, ${s2} aur ${s3} mein sabse strong hai. Ye rashiyan planetary periods aur transits ke dauraan better support deti hain. ${weak} mein abhi sabse kam support hai, isliye isse jude matters mein patience aur discipline madad karega.';
+  }
+
+  @override
+  String avBavInsight(Object planet, Object s1, Object s2) {
+    return '${planet} ${s1} aur ${s2} ke through sabse strong perform karta hai. Jab ye rashiyan activate hoti hain, tab ${planet} se related matters improve hote hain.';
+  }
+
+  @override
+  String avInsightStrong(Object s1, Object s2) {
+    return 'Aapki strongest rashiyan ${s1} aur ${s2} hain — jab planets inhe transit karein tab important beginnings ke liye inhe favour karein.';
+  }
+
+  @override
+  String avInsightWeak(Object s1) {
+    return '${s1} mein sabse kam support hai — iske matters mein carefully aage badhein aur zyada commitment se bachein.';
+  }
+
+  @override
+  String avInsightBestPlanet(Object planet) {
+    return '${planet} ke paas sabse zyada points hain, isliye iske significations aapki life mein achhi tarah supported hain.';
+  }
+
+  @override
+  String avInsightWeakPlanet(Object planet) {
+    return '${planet} ke paas sabse kam points hain aur remedies aur conscious effort se sabse zyada benefit paata hai.';
+  }
+
+  @override
+  String avInsightAverage(Object avg) {
+    return 'Jo rashiyan aapke average ${avg} points se upar score karti hain, wo aam taur par smoother aur zyada reliable results deti hain.';
+  }
+
+  @override
+  String get gradeExcellent => 'Behtareen';
+
+  @override
+  String get gradeGood => 'Achha';
+
+  @override
+  String get gradeAverage => 'Average';
+
+  @override
+  String get gradeWeak => 'Kamzor';
+
+  @override
+  String get careerWord => 'Career';
+
+  @override
+  String get educationWord => 'Shiksha';
+
+  @override
+  String get lifeAreaMarriage => 'Vivah';
+
+  @override
+  String get sarvaAshtakavarga => 'Sarva Ashtakavarga (SAV)';
+
+  @override
+  String savSubtitle(Object total, Object avg) {
+    return 'Total: ${total} rekhas (average rashi = ${avg})';
+  }
+
+  @override
+  String ashtakavargaBav(Object planet) {
+    return '${planet} — BAV';
+  }
+
+  @override
   String get forecast => 'Forecast';
 
   @override
@@ -1885,183 +2062,6 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Password Bhool Gaye?';
-
-  @override
-  String get avSummaryTitle => 'Ashtakavarga Saaraansh';
-
-  @override
-  String get avOverallScore => 'Overall SAV Score';
-
-  @override
-  String get avOverallRating => 'Samagra Rating';
-
-  @override
-  String get avStrongestSigns => 'Sabse Mazboot Rashiyan';
-
-  @override
-  String get avWeakestSigns => 'Sabse Kamzor Rashiyan';
-
-  @override
-  String get avScore => 'Score';
-
-  @override
-  String get avMeaning => 'Matlab';
-
-  @override
-  String get avGrid => 'Grid';
-
-  @override
-  String get avList => 'List';
-
-  @override
-  String get avOverallScoreShort => 'Overall Score';
-
-  @override
-  String get avNatalSignScore => 'Janma Rashi Score';
-
-  @override
-  String get avBestSigns => 'Best Rashiyan';
-
-  @override
-  String get avWeakSigns => 'Kamzor Rashiyan';
-
-  @override
-  String get avAiInterpretation => 'AI Vyakhya';
-
-  @override
-  String get avVeryGood => 'Bahut Accha';
-
-  @override
-  String get avVeryWeak => 'Bahut Kamzor';
-
-  @override
-  String get avTotalSav => 'Total SAV';
-
-  @override
-  String get avPlanetContributions => 'Grah Yogdaan';
-
-  @override
-  String get avFinance => 'Vitt';
-
-  @override
-  String get avOverallStrength => 'Samagra Shakti';
-
-  @override
-  String get avWhatDoesThisMean => 'Iska kya matlab hai?';
-
-  @override
-  String get avSimple => 'Simple';
-
-  @override
-  String get avAdvanced => 'Advanced';
-
-  @override
-  String get avInfoTitle => 'Ashtakavarga Ko Samjhein';
-
-  @override
-  String get avStrong => 'Mazboot';
-
-  @override
-  String get avModerate => 'Madhyam';
-
-  @override
-  String get avQWhatIsAv => 'Ashtakavarga kya hai?';
-
-  @override
-  String get avQWhatIsSav => 'SAV kya hai?';
-
-  @override
-  String get avQWhatIsBav => 'BAV kya hai?';
-
-  @override
-  String get avQHowToRead => 'In scores ko kaise padhein';
-
-  @override
-  String get avQSavVsBav => 'SAV vs BAV';
-
-  @override
-  String get avABody => 'Ashtakavarga is a points-based strength system in Vedic astrology. Each planet awards benefic points (bindus, also called rekhas) to the twelve signs based on its position. More points in a sign means that area of life gets smoother support during related planetary periods and transits.';
-
-  @override
-  String get avSavBody => 'SAV (Sarva Ashtakavarga) adds together the points from all seven planets for each sign. It gives a single strength score per sign, so you can quickly see which signs — and the houses they fall in — are best supported in your chart.';
-
-  @override
-  String get avBavBody => 'BAV (Bhinna Ashtakavarga) shows the points from a single planet across the twelve signs. It tells you which signs a specific planet supports most, which matters when that planet\'s dasha or transit is active.';
-
-  @override
-  String get avHowToReadBody => 'Higher numbers are better. For SAV, an average sign scores about 28 points — above 30 is strong and below 25 needs care. For BAV, each sign ranges from 0 to 8, with 4 being average. Favour your strongest signs for important actions, and stay patient and disciplined with your weakest ones.';
-
-  @override
-  String get avSavVsBavBody => 'SAV is the combined total of all planets and shows a sign\'s overall strength. BAV is a single planet\'s contribution and shows which planet supports that sign. Use SAV for the big picture, and BAV to understand which planet drives a sign\'s strength.';
-
-  @override
-  String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
-    return 'Your chart is strongest in ${s1}, ${s2} and ${s3}. These signs give better support during planetary periods and transits. ${weak} currently has the least support, so patience and discipline help in matters connected with it.';
-  }
-
-  @override
-  String avBavInsight(Object planet, Object s1, Object s2) {
-    return '${planet} performs strongest through ${s1} and ${s2}. Matters governed by ${planet} tend to improve when these signs are activated.';
-  }
-
-  @override
-  String avInsightStrong(Object s1, Object s2) {
-    return 'Your strongest signs are ${s1} and ${s2} — favour important beginnings when planets transit them.';
-  }
-
-  @override
-  String avInsightWeak(Object s1) {
-    return '${s1} has the least support — move carefully and avoid over-commitment in its matters.';
-  }
-
-  @override
-  String avInsightBestPlanet(Object planet) {
-    return '${planet} carries the most points, so its significations are well supported in your life.';
-  }
-
-  @override
-  String avInsightWeakPlanet(Object planet) {
-    return '${planet} carries the fewest points and benefits most from remedies and conscious effort.';
-  }
-
-  @override
-  String avInsightAverage(Object avg) {
-    return 'Signs scoring above your average of ${avg} points tend to give smoother, more reliable results.';
-  }
-
-  @override
-  String get gradeExcellent => 'Behtareen';
-
-  @override
-  String get gradeGood => 'Achha';
-
-  @override
-  String get gradeAverage => 'Average';
-
-  @override
-  String get gradeWeak => 'Kamzor';
-
-  @override
-  String get careerWord => 'Career';
-
-  @override
-  String get educationWord => 'Shiksha';
-
-  @override
-  String get lifeAreaMarriage => 'Vivah';
-
-  @override
-  String get sarvaAshtakavarga => 'Sarva Ashtakavarga (SAV)';
-
-  @override
-  String savSubtitle(Object total, Object avg) {
-    return 'Total: ${total} rekhas (average rashi = ${avg})';
-  }
-
-  @override
-  String ashtakavargaBav(Object planet) {
-    return '${planet} — BAV';
-  }
 
   @override
   String get sendResetLink => 'Reset Link Bhejein';

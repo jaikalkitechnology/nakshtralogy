@@ -9,6 +9,149 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get avSummaryTitle => 'অষ্টকবর্গ সারাংশ';
+
+  @override
+  String get avOverallScore => 'সামগ্রিক SAV স্কোর';
+
+  @override
+  String get avOverallRating => 'সামগ্রিক রেটিং';
+
+  @override
+  String get avStrongestSigns => 'সবচেয়ে শক্তিশালী রাশি';
+
+  @override
+  String get avWeakestSigns => 'সবচেয়ে দুর্বল রাশি';
+
+  @override
+  String get avScore => 'স্কোর';
+
+  @override
+  String get avMeaning => 'অর্থ';
+
+  @override
+  String get avGrid => 'গ্রিড';
+
+  @override
+  String get avList => 'তালিকা';
+
+  @override
+  String get avOverallScoreShort => 'সামগ্রিক স্কোর';
+
+  @override
+  String get avNatalSignScore => 'জন্ম রাশি স্কোর';
+
+  @override
+  String get avBestSigns => 'সেরা রাশি';
+
+  @override
+  String get avWeakSigns => 'দুর্বল রাশি';
+
+  @override
+  String get avAiInterpretation => 'AI ব্যাখ্যা';
+
+  @override
+  String get avVeryGood => 'খুব ভালো';
+
+  @override
+  String get avVeryWeak => 'খুব দুর্বল';
+
+  @override
+  String get avTotalSav => 'মোট SAV';
+
+  @override
+  String get avPlanetContributions => 'গ্রহের অবদান';
+
+  @override
+  String get avFinance => 'আর্থিক';
+
+  @override
+  String get avOverallStrength => 'সামগ্রিক শক্তি';
+
+  @override
+  String get avWhatDoesThisMean => 'এর অর্থ কী?';
+
+  @override
+  String get avSimple => 'সহজ';
+
+  @override
+  String get avAdvanced => 'বিস্তারিত';
+
+  @override
+  String get avInfoTitle => 'অষ্টকবর্গ বোঝা';
+
+  @override
+  String get avStrong => 'শক্তিশালী';
+
+  @override
+  String get avModerate => 'মাঝারি';
+
+  @override
+  String get avQWhatIsAv => 'অষ্টকবর্গ কী?';
+
+  @override
+  String get avQWhatIsSav => 'SAV কী?';
+
+  @override
+  String get avQWhatIsBav => 'BAV কী?';
+
+  @override
+  String get avQHowToRead => 'এই স্কোরগুলো কীভাবে পড়বেন';
+
+  @override
+  String get avQSavVsBav => 'SAV বনাম BAV';
+
+  @override
+  String get avABody => 'অষ্টকবর্গ হলো বৈদিক জ্যোতিষে পয়েন্ট-ভিত্তিক শক্তির একটি পদ্ধতি। প্রতিটি গ্রহ তার অবস্থান অনুযায়ী বারোটি রাশিকে শুভ পয়েন্ট (বিন্দু, যাকে রেখাও বলা হয়) প্রদান করে। কোনো রাশিতে বেশি পয়েন্ট থাকলে সংশ্লিষ্ট গ্রহদশা ও গোচরের সময় জীবনের সেই ক্ষেত্র আরও মসৃণ সহায়তা পায়।';
+
+  @override
+  String get avSavBody => 'SAV (সর্ব অষ্টকবর্গ) প্রতিটি রাশির জন্য সাতটি গ্রহের পয়েন্ট যোগ করে। এটি প্রতিটি রাশির জন্য একটি একক শক্তি স্কোর দেয়, যাতে আপনি সহজেই দেখতে পারেন আপনার কুণ্ডলীতে কোন রাশি — এবং তার ভাব — সবচেয়ে বেশি সহায়তা পাচ্ছে।';
+
+  @override
+  String get avBavBody => 'BAV (ভিন্ন অষ্টকবর্গ) একটি একক গ্রহের পয়েন্ট বারোটি রাশি জুড়ে দেখায়। এটি বলে দেয় কোনো নির্দিষ্ট গ্রহ কোন রাশিগুলোকে সবচেয়ে বেশি সমর্থন করে, যা সেই গ্রহের দশা বা গোচর সক্রিয় থাকলে গুরুত্বপূর্ণ হয়ে ওঠে।';
+
+  @override
+  String get avHowToReadBody => 'বেশি সংখ্যা ভালো। SAV-এর ক্ষেত্রে, গড়ে একটি রাশি প্রায় ২৮ পয়েন্ট পায় — ৩০-এর বেশি শক্তিশালী এবং ২৫-এর কম হলে সতর্কতা প্রয়োজন। BAV-এর ক্ষেত্রে, প্রতিটি রাশি ০ থেকে ৮-এর মধ্যে থাকে, যেখানে ৪ গড় ধরা হয়। গুরুত্বপূর্ণ কাজের জন্য আপনার সবচেয়ে শক্তিশালী রাশিগুলোকে প্রাধান্য দিন, এবং দুর্বল রাশিগুলোর ক্ষেত্রে ধৈর্য ও শৃঙ্খলা বজায় রাখুন।';
+
+  @override
+  String get avSavVsBavBody => 'SAV হলো সব গ্রহের মিলিত মোট, যা একটি রাশির সামগ্রিক শক্তি দেখায়। BAV হলো একটি একক গ্রহের অবদান, যা দেখায় কোন গ্রহ সেই রাশিকে সমর্থন করছে। বড় চিত্র বোঝার জন্য SAV ব্যবহার করুন, আর কোন গ্রহ রাশির শক্তি চালাচ্ছে তা বুঝতে BAV দেখুন।';
+
+  @override
+  String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
+    return 'আপনার কুণ্ডলী ${s1}, ${s2} এবং ${s3}-এ সবচেয়ে শক্তিশালী। এই রাশিগুলো গ্রহদশা ও গোচরের সময় ভালো সহায়তা দেয়। ${weak}-এ বর্তমানে সবচেয়ে কম সহায়তা রয়েছে, তাই এর সাথে সম্পর্কিত বিষয়ে ধৈর্য ও শৃঙ্খলা সহায়ক হবে।';
+  }
+
+  @override
+  String avBavInsight(Object planet, Object s1, Object s2) {
+    return '${planet} ${s1} এবং ${s2}-এর মাধ্যমে সবচেয়ে শক্তিশালীভাবে কাজ করে। এই রাশিগুলো সক্রিয় হলে ${planet}-এর সাথে সম্পর্কিত বিষয়ে উন্নতি হতে থাকে।';
+  }
+
+  @override
+  String avInsightStrong(Object s1, Object s2) {
+    return 'আপনার সবচেয়ে শক্তিশালী রাশি হলো ${s1} এবং ${s2} — গ্রহ এগুলোতে গোচর করলে গুরুত্বপূর্ণ শুরুর জন্য এগুলোকে প্রাধান্য দিন।';
+  }
+
+  @override
+  String avInsightWeak(Object s1) {
+    return '${s1}-এ সবচেয়ে কম সহায়তা রয়েছে — এর সংশ্লিষ্ট বিষয়ে সাবধানে এগোন এবং অতিরিক্ত প্রতিশ্রুতি এড়িয়ে চলুন।';
+  }
+
+  @override
+  String avInsightBestPlanet(Object planet) {
+    return '${planet}-এর সবচেয়ে বেশি পয়েন্ট রয়েছে, তাই এর তাৎপর্যপূর্ণ বিষয়গুলো আপনার জীবনে ভালোভাবে সমর্থিত।';
+  }
+
+  @override
+  String avInsightWeakPlanet(Object planet) {
+    return '${planet}-এর সবচেয়ে কম পয়েন্ট রয়েছে এবং এটি প্রতিকার ও সচেতন প্রচেষ্টা থেকে সবচেয়ে বেশি উপকৃত হয়।';
+  }
+
+  @override
+  String avInsightAverage(Object avg) {
+    return 'যেসব রাশি আপনার গড় ${avg} পয়েন্টের বেশি স্কোর করে, সেগুলো সাধারণত আরও মসৃণ ও নির্ভরযোগ্য ফলাফল দেয়।';
+  }
+
+  @override
   String get fcKey => 'কী';
 
   @override
@@ -3200,149 +3343,6 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
-
-  @override
-  String get avSummaryTitle => 'Ashtakavarga Summary';
-
-  @override
-  String get avOverallScore => 'Overall SAV Score';
-
-  @override
-  String get avOverallRating => 'Overall Rating';
-
-  @override
-  String get avStrongestSigns => 'Strongest Signs';
-
-  @override
-  String get avWeakestSigns => 'Weakest Signs';
-
-  @override
-  String get avScore => 'Score';
-
-  @override
-  String get avMeaning => 'Meaning';
-
-  @override
-  String get avGrid => 'Grid';
-
-  @override
-  String get avList => 'List';
-
-  @override
-  String get avOverallScoreShort => 'Overall Score';
-
-  @override
-  String get avNatalSignScore => 'Natal Sign Score';
-
-  @override
-  String get avBestSigns => 'Best Signs';
-
-  @override
-  String get avWeakSigns => 'Weak Signs';
-
-  @override
-  String get avAiInterpretation => 'AI Interpretation';
-
-  @override
-  String get avVeryGood => 'Very Good';
-
-  @override
-  String get avVeryWeak => 'Very Weak';
-
-  @override
-  String get avTotalSav => 'Total SAV';
-
-  @override
-  String get avPlanetContributions => 'Planet Contributions';
-
-  @override
-  String get avFinance => 'Finance';
-
-  @override
-  String get avOverallStrength => 'Overall Strength';
-
-  @override
-  String get avWhatDoesThisMean => 'What does this mean?';
-
-  @override
-  String get avSimple => 'Simple';
-
-  @override
-  String get avAdvanced => 'Advanced';
-
-  @override
-  String get avInfoTitle => 'Understanding Ashtakavarga';
-
-  @override
-  String get avStrong => 'Strong';
-
-  @override
-  String get avModerate => 'Moderate';
-
-  @override
-  String get avQWhatIsAv => 'What is Ashtakavarga?';
-
-  @override
-  String get avQWhatIsSav => 'What is SAV?';
-
-  @override
-  String get avQWhatIsBav => 'What is BAV?';
-
-  @override
-  String get avQHowToRead => 'How to read these scores';
-
-  @override
-  String get avQSavVsBav => 'SAV vs BAV';
-
-  @override
-  String get avABody => 'Ashtakavarga is a points-based strength system in Vedic astrology. Each planet awards benefic points (bindus, also called rekhas) to the twelve signs based on its position. More points in a sign means that area of life gets smoother support during related planetary periods and transits.';
-
-  @override
-  String get avSavBody => 'SAV (Sarva Ashtakavarga) adds together the points from all seven planets for each sign. It gives a single strength score per sign, so you can quickly see which signs — and the houses they fall in — are best supported in your chart.';
-
-  @override
-  String get avBavBody => 'BAV (Bhinna Ashtakavarga) shows the points from a single planet across the twelve signs. It tells you which signs a specific planet supports most, which matters when that planet\'s dasha or transit is active.';
-
-  @override
-  String get avHowToReadBody => 'Higher numbers are better. For SAV, an average sign scores about 28 points — above 30 is strong and below 25 needs care. For BAV, each sign ranges from 0 to 8, with 4 being average. Favour your strongest signs for important actions, and stay patient and disciplined with your weakest ones.';
-
-  @override
-  String get avSavVsBavBody => 'SAV is the combined total of all planets and shows a sign\'s overall strength. BAV is a single planet\'s contribution and shows which planet supports that sign. Use SAV for the big picture, and BAV to understand which planet drives a sign\'s strength.';
-
-  @override
-  String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
-    return 'Your chart is strongest in ${s1}, ${s2} and ${s3}. These signs give better support during planetary periods and transits. ${weak} currently has the least support, so patience and discipline help in matters connected with it.';
-  }
-
-  @override
-  String avBavInsight(Object planet, Object s1, Object s2) {
-    return '${planet} performs strongest through ${s1} and ${s2}. Matters governed by ${planet} tend to improve when these signs are activated.';
-  }
-
-  @override
-  String avInsightStrong(Object s1, Object s2) {
-    return 'Your strongest signs are ${s1} and ${s2} — favour important beginnings when planets transit them.';
-  }
-
-  @override
-  String avInsightWeak(Object s1) {
-    return '${s1} has the least support — move carefully and avoid over-commitment in its matters.';
-  }
-
-  @override
-  String avInsightBestPlanet(Object planet) {
-    return '${planet} carries the most points, so its significations are well supported in your life.';
-  }
-
-  @override
-  String avInsightWeakPlanet(Object planet) {
-    return '${planet} carries the fewest points and benefits most from remedies and conscious effort.';
-  }
-
-  @override
-  String avInsightAverage(Object avg) {
-    return 'Signs scoring above your average of ${avg} points tend to give smoother, more reliable results.';
-  }
 
   @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
