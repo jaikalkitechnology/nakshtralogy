@@ -9,6 +9,289 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
+  String get fdEnergyScore => 'ਅੱਜ ਦਾ ਊਰਜਾ ਸਕੋਰ';
+
+  @override
+  String get fdStatusAverage => 'ਔਸਤ';
+
+  @override
+  String get fdStatusMixed => 'ਮਿਸ਼ਰਿਤ';
+
+  @override
+  String get fdStatusChallenging => 'ਚੁਣੌਤੀਪੂਰਨ';
+
+  @override
+  String get fdTheme => 'ਅੱਜ ਦਾ ਥੀਮ';
+
+  @override
+  String get fdExplainToday => 'ਅੱਜ ਬਾਰੇ ਸਮਝਾਓ';
+
+  @override
+  String get fdTodaysFocus => 'ਅੱਜ ਦਾ ਫੋਕਸ';
+
+  @override
+  String get fdTopRecommendation => 'ਮੁੱਖ ਸਿਫਾਰਸ਼';
+
+  @override
+  String get fdTopCaution => 'ਮੁੱਖ ਸਾਵਧਾਨੀ';
+
+  @override
+  String get fdReadingTime => 'ਪੜ੍ਹਨ ਦਾ ਸਮਾਂ';
+
+  @override
+  String get fdSeconds30 => '30 ਸਕਿੰਟ';
+
+  @override
+  String get fdCareer => 'ਕਰੀਅਰ';
+
+  @override
+  String get fdMoney => 'ਪੈਸਾ';
+
+  @override
+  String get fdLove => 'ਪਿਆਰ';
+
+  @override
+  String get fdHealth => 'ਸਿਹਤ';
+
+  @override
+  String get fdTravel => 'ਯਾਤਰਾ';
+
+  @override
+  String get fdFamily => 'ਪਰਿਵਾਰ';
+
+  @override
+  String get fdBestToDo => 'ਅੱਜ ਕਰਨ ਵਾਲੀਆਂ ਸਭ ਤੋਂ ਵਧੀਆ ਗੱਲਾਂ';
+
+  @override
+  String get fdAvoidToday => 'ਅੱਜ ਇਨ੍ਹਾਂ ਤੋਂ ਬਚੋ';
+
+  @override
+  String get fdConfidenceLabel => 'ਭਰੋਸਾ';
+
+  @override
+  String get fdBestTime => 'ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ';
+
+  @override
+  String get fdRecommended => 'ਸਿਫਾਰਸ਼ ਕੀਤਾ';
+
+  @override
+  String get fdReason => 'ਕਾਰਨ';
+
+  @override
+  String get fdRisk => 'ਖ਼ਤਰਾ';
+
+  @override
+  String get fdRecommendation => 'ਸਿਫਾਰਸ਼';
+
+  @override
+  String get fdNoActions => 'ਅੱਜ ਖਾਸ ਕੁਝ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ — ਸਥਿਰ, ਸ਼ਾਂਤ ਰੁਟੀਨ ਬਣਾਈ ਰੱਖੋ।';
+
+  @override
+  String get fdNoCautions => 'ਅੱਜ ਕੋਈ ਵੱਡੀ ਸਾਵਧਾਨੀ ਨਹੀਂ — ਆਮ ਜਾਗਰੂਕਤਾ ਨਾਲ ਅੱਗੇ ਵਧੋ।';
+
+  @override
+  String get fdHighlights => 'ਅੱਜ ਦੀਆਂ ਖਾਸ ਗੱਲਾਂ';
+
+  @override
+  String get fdProbVeryHigh => 'ਬਹੁਤ ਜ਼ਿਆਦਾ';
+
+  @override
+  String get fdProbHigh => 'ਜ਼ਿਆਦਾ';
+
+  @override
+  String get fdProbElevated => 'ਵਧਿਆ ਹੋਇਆ';
+
+  @override
+  String get fdProbCaution => 'ਸਾਵਧਾਨੀ';
+
+  @override
+  String get fdWhatToDo => 'ਕੀ ਕਰਨਾ ਹੈ';
+
+  @override
+  String get fdLifeAreas => 'ਜੀਵਨ ਦੇ ਖੇਤਰ';
+
+  @override
+  String get fdTapDetails => 'ਵੇਰਵਿਆਂ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get fdArea1 => 'ਆਪਾ ਅਤੇ ਸਿਹਤ';
+
+  @override
+  String get fdArea2 => 'ਧਨ ਅਤੇ ਪਰਿਵਾਰ';
+
+  @override
+  String get fdArea3 => 'ਸੰਚਾਰ';
+
+  @override
+  String get fdArea4 => 'ਘਰ ਅਤੇ ਆਰਾਮ';
+
+  @override
+  String get fdArea5 => 'ਰਚਨਾਤਮਕਤਾ ਅਤੇ ਰੋਮਾਂਸ';
+
+  @override
+  String get fdArea6 => 'ਕੰਮ ਅਤੇ ਜ਼ਿੰਮੇਵਾਰੀਆਂ';
+
+  @override
+  String get fdArea7 => 'ਰਿਸ਼ਤੇ';
+
+  @override
+  String get fdArea8 => 'ਬਦਲਾਅ ਅਤੇ ਡੂੰਘਾਈ';
+
+  @override
+  String get fdArea9 => 'ਕਿਸਮਤ ਅਤੇ ਯਾਤਰਾ';
+
+  @override
+  String get fdArea10 => 'ਕਰੀਅਰ ਅਤੇ ਰੁਤਬਾ';
+
+  @override
+  String get fdArea11 => 'ਲਾਭ ਅਤੇ ਨੈੱਟਵਰਕ';
+
+  @override
+  String get fdArea12 => 'ਆਰਾਮ ਅਤੇ ਅਧਿਆਤਮਿਕਤਾ';
+
+  @override
+  String get fdTodaysMeaning => 'ਅੱਜ ਦਾ ਅਰਥ';
+
+  @override
+  String get fdGoodFor => 'ਇਸ ਲਈ ਚੰਗਾ';
+
+  @override
+  String get fdAvoid => 'ਬਚੋ';
+
+  @override
+  String get fdPlanetSupport => 'ਗ੍ਰਹਿ ਸਹਿਯੋਗ';
+
+  @override
+  String get fdWhyPrediction => 'ਇਹ ਭਵਿੱਖਬਾਣੀ ਕਿਉਂ?';
+
+  @override
+  String get fdAdvancedDetails => 'ਵਿਸਤ੍ਰਿਤ ਜਾਣਕਾਰੀ';
+
+  @override
+  String get fdAiRecommendation => 'AI ਸਿਫਾਰਸ਼';
+
+  @override
+  String get fdOverallStatus => 'ਸਮੁੱਚੀ ਸਥਿਤੀ';
+
+  @override
+  String get fdNoPlanetTransit => 'ਅੱਜ ਇਸ ਖੇਤਰ ਵਿੱਚ ਕੋਈ ਵੱਡਾ ਗ੍ਰਹਿ ਗੋਚਰ ਨਹੀਂ ਕਰ ਰਿਹਾ।';
+
+  @override
+  String get fdFinancialOutlook => 'ਵਿੱਤੀ ਦ੍ਰਿਸ਼ਟੀਕੋਣ';
+
+  @override
+  String get fdIncomeProbability => 'ਆਮਦਨ ਦੀ ਸੰਭਾਵਨਾ';
+
+  @override
+  String get fdExpenseProbability => 'ਖਰਚੇ ਦੀ ਸੰਭਾਵਨਾ';
+
+  @override
+  String get fdNetBalance => 'ਕੁੱਲ ਵਿੱਤੀ ਸੰਤੁਲਨ';
+
+  @override
+  String get fdAvoidSpending => 'ਖਰਚ ਤੋਂ ਬਚੋ';
+
+  @override
+  String get fdRelationshipOutlook => 'ਰਿਸ਼ਤਿਆਂ ਦਾ ਦ੍ਰਿਸ਼ਟੀਕੋਣ';
+
+  @override
+  String get fdOverallScore => 'ਸਮੁੱਚਾ ਸਕੋਰ';
+
+  @override
+  String get fdPartner => 'ਸਾਥੀ';
+
+  @override
+  String get fdRomance => 'ਰੋਮਾਂਸ';
+
+  @override
+  String get fdWorkplace => 'ਕੰਮ ਵਾਲੀ ਥਾਂ';
+
+  @override
+  String get fdPublicImage => 'ਜਨਤਕ ਅਕਸ';
+
+  @override
+  String get fdBestActivity => 'ਸਭ ਤੋਂ ਵਧੀਆ ਗਤੀਵਿਧੀ';
+
+  @override
+  String get fdWeakArea => 'ਕਮਜ਼ੋਰ ਖੇਤਰ';
+
+  @override
+  String get fdBiggestOpportunity => 'ਸਭ ਤੋਂ ਵੱਡਾ ਮੌਕਾ';
+
+  @override
+  String get fdBiggestRisk => 'ਸਭ ਤੋਂ ਵੱਡਾ ਖ਼ਤਰਾ';
+
+  @override
+  String get fdProbability => 'ਸੰਭਾਵਨਾ';
+
+  @override
+  String get fdProtection => 'ਸੁਰੱਖਿਆ ਸਲਾਹ';
+
+  @override
+  String get fdDescription => 'ਵੇਰਵਾ';
+
+  @override
+  String get fdBestTimeToday => 'ਅੱਜ ਦਾ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ';
+
+  @override
+  String get fdAvoidDuring => 'ਇਸ ਦੌਰਾਨ ਬਚੋ';
+
+  @override
+  String get fdPredictionConfidence => 'ਭਵਿੱਖਬਾਣੀ ਭਰੋਸਾ';
+
+  @override
+  String get fdConfBasis => 'ਅੱਜ ਦੀ ਭਵਿੱਖਬਾਣੀ ਇਨ੍ਹਾਂ ਨੂੰ ਜੋੜਦੀ ਹੈ';
+
+  @override
+  String get fdConfNatal => 'ਜਨਮ ਕੁੰਡਲੀ';
+
+  @override
+  String get fdConfTransit => 'ਮੌਜੂਦਾ ਗੋਚਰ';
+
+  @override
+  String get fdConfDasha => 'ਗ੍ਰਹਿ ਦਸ਼ਾਵਾਂ';
+
+  @override
+  String get fdConfStrength => 'ਗ੍ਰਹਿ ਸ਼ਕਤੀ';
+
+  @override
+  String get fdConfHouse => 'ਭਾਵ ਸਰਗਰਮੀ';
+
+  @override
+  String get fdAskAi => 'AI ਨੂੰ ਪੁੱਛੋ';
+
+  @override
+  String get fdAskAiSub => 'ਅੱਜ ਦਾ ਜਵਾਬ ਪਾਉਣ ਲਈ ਸਵਾਲ \'ਤੇ ਟੈਪ ਕਰੋ';
+
+  @override
+  String get fdQ1 => 'ਅੱਜ ਕਰੀਅਰ ਹੌਲੀ ਕਿਉਂ ਹੈ?';
+
+  @override
+  String get fdQ2 => 'ਅੱਜ ਦਾ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ ਕੀ ਹੈ?';
+
+  @override
+  String get fdQ3 => 'ਕੀ ਅੱਜ ਪੈਸਿਆਂ ਦੇ ਮਾਮਲਿਆਂ ਲਈ ਚੰਗਾ ਹੈ?';
+
+  @override
+  String get fdQ4 => 'ਕੀ ਅੱਜ ਯਾਤਰਾ ਲਈ ਚੰਗਾ ਹੈ?';
+
+  @override
+  String get fdQ5 => 'ਅੱਜ ਮੈਨੂੰ ਕਿਸ ਤੋਂ ਬਚਣਾ ਚਾਹੀਦਾ ਹੈ?';
+
+  @override
+  String get fdMoreSuggestions => 'ਹੋਰ ਸੁਝਾਅ';
+
+  @override
+  String fdAiSummaryLine(Object top, Object weak, Object fin) {
+    return 'ਅੱਜ ${top} ਲਈ ਸਭ ਤੋਂ ਢੁਕਵਾਂ ਹੈ। ${weak} ਹੌਲੀ ਮਹਿਸੂਸ ਹੋ ਸਕਦਾ ਹੈ, ਇਸ ਲਈ ਉੱਥੇ ਵੱਡੇ ਫੈਸਲੇ ਲੈਣ ਤੋਂ ਬਚੋ। ਵਿੱਤੀ ਤੌਰ \'ਤੇ ਦਿਨ ${fin} ਲੱਗ ਰਿਹਾ ਹੈ।';
+  }
+
+  @override
+  String fdThemeFocusLine(Object top) {
+    return 'ਅੱਜ ਤੁਹਾਡੀ ਊਰਜਾ ${top} ਦੇ ਆਲੇ-ਦੁਆਲੇ ਕੇਂਦਰਿਤ ਹੈ — ਇਸ ਵਿੱਚ ਪੂਰਾ ਧਿਆਨ ਲਗਾਓ ਅਤੇ ਬਾਕੀ ਥਾਵਾਂ \'ਤੇ ਹੌਲੀ-ਹੌਲੀ ਅੱਗੇ ਵਧੋ।';
+  }
+
+  @override
   String get gochToday => 'ਅੱਜ';
 
   @override
@@ -4526,289 +4809,6 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get forgotPassword => 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?';
-
-  @override
-  String get fdEnergyScore => 'Today\'s Energy Score';
-
-  @override
-  String get fdStatusAverage => 'Average';
-
-  @override
-  String get fdStatusMixed => 'Mixed';
-
-  @override
-  String get fdStatusChallenging => 'Challenging';
-
-  @override
-  String get fdTheme => 'Today\'s Theme';
-
-  @override
-  String get fdExplainToday => 'Explain Today';
-
-  @override
-  String get fdTodaysFocus => 'Today\'s Focus';
-
-  @override
-  String get fdTopRecommendation => 'Top Recommendation';
-
-  @override
-  String get fdTopCaution => 'Top Caution';
-
-  @override
-  String get fdReadingTime => 'Reading time';
-
-  @override
-  String get fdSeconds30 => '30 sec';
-
-  @override
-  String get fdCareer => 'Career';
-
-  @override
-  String get fdMoney => 'Money';
-
-  @override
-  String get fdLove => 'Love';
-
-  @override
-  String get fdHealth => 'Health';
-
-  @override
-  String get fdTravel => 'Travel';
-
-  @override
-  String get fdFamily => 'Family';
-
-  @override
-  String get fdBestToDo => 'Best Things To Do Today';
-
-  @override
-  String get fdAvoidToday => 'Avoid Today';
-
-  @override
-  String get fdConfidenceLabel => 'Confidence';
-
-  @override
-  String get fdBestTime => 'Best Time';
-
-  @override
-  String get fdRecommended => 'Recommended';
-
-  @override
-  String get fdReason => 'Reason';
-
-  @override
-  String get fdRisk => 'Risk';
-
-  @override
-  String get fdRecommendation => 'Recommendation';
-
-  @override
-  String get fdNoActions => 'Nothing major to push today — keep a steady, calm routine.';
-
-  @override
-  String get fdNoCautions => 'No major cautions today — proceed with normal awareness.';
-
-  @override
-  String get fdHighlights => 'Today\'s Highlights';
-
-  @override
-  String get fdProbVeryHigh => 'Very High';
-
-  @override
-  String get fdProbHigh => 'High';
-
-  @override
-  String get fdProbElevated => 'Elevated';
-
-  @override
-  String get fdProbCaution => 'Caution';
-
-  @override
-  String get fdWhatToDo => 'What to do';
-
-  @override
-  String get fdLifeAreas => 'Life Areas';
-
-  @override
-  String get fdTapDetails => 'Tap for details';
-
-  @override
-  String get fdArea1 => 'Self & Health';
-
-  @override
-  String get fdArea2 => 'Wealth & Family';
-
-  @override
-  String get fdArea3 => 'Communication';
-
-  @override
-  String get fdArea4 => 'Home & Comfort';
-
-  @override
-  String get fdArea5 => 'Creativity & Romance';
-
-  @override
-  String get fdArea6 => 'Work & Duties';
-
-  @override
-  String get fdArea7 => 'Relationships';
-
-  @override
-  String get fdArea8 => 'Change & Depth';
-
-  @override
-  String get fdArea9 => 'Luck & Travel';
-
-  @override
-  String get fdArea10 => 'Career & Status';
-
-  @override
-  String get fdArea11 => 'Gains & Network';
-
-  @override
-  String get fdArea12 => 'Rest & Spirituality';
-
-  @override
-  String get fdTodaysMeaning => 'Today\'s Meaning';
-
-  @override
-  String get fdGoodFor => 'Good For';
-
-  @override
-  String get fdAvoid => 'Avoid';
-
-  @override
-  String get fdPlanetSupport => 'Planet Support';
-
-  @override
-  String get fdWhyPrediction => 'Why this prediction?';
-
-  @override
-  String get fdAdvancedDetails => 'Advanced Details';
-
-  @override
-  String get fdAiRecommendation => 'AI Recommendation';
-
-  @override
-  String get fdOverallStatus => 'Overall Status';
-
-  @override
-  String get fdNoPlanetTransit => 'No major planet is transiting this area today.';
-
-  @override
-  String get fdFinancialOutlook => 'Financial Outlook';
-
-  @override
-  String get fdIncomeProbability => 'Income Probability';
-
-  @override
-  String get fdExpenseProbability => 'Expense Probability';
-
-  @override
-  String get fdNetBalance => 'Net Financial Balance';
-
-  @override
-  String get fdAvoidSpending => 'Avoid Spending';
-
-  @override
-  String get fdRelationshipOutlook => 'Relationship Outlook';
-
-  @override
-  String get fdOverallScore => 'Overall Score';
-
-  @override
-  String get fdPartner => 'Partner';
-
-  @override
-  String get fdRomance => 'Romance';
-
-  @override
-  String get fdWorkplace => 'Workplace';
-
-  @override
-  String get fdPublicImage => 'Public Image';
-
-  @override
-  String get fdBestActivity => 'Best Activity';
-
-  @override
-  String get fdWeakArea => 'Weak Area';
-
-  @override
-  String get fdBiggestOpportunity => 'Biggest Opportunity';
-
-  @override
-  String get fdBiggestRisk => 'Biggest Risk';
-
-  @override
-  String get fdProbability => 'Probability';
-
-  @override
-  String get fdProtection => 'Protection Advice';
-
-  @override
-  String get fdDescription => 'Description';
-
-  @override
-  String get fdBestTimeToday => 'Best Time Today';
-
-  @override
-  String get fdAvoidDuring => 'Avoid During';
-
-  @override
-  String get fdPredictionConfidence => 'Prediction Confidence';
-
-  @override
-  String get fdConfBasis => 'Today\'s prediction combines';
-
-  @override
-  String get fdConfNatal => 'Birth Chart';
-
-  @override
-  String get fdConfTransit => 'Current Transit';
-
-  @override
-  String get fdConfDasha => 'Planetary Periods';
-
-  @override
-  String get fdConfStrength => 'Planet Strength';
-
-  @override
-  String get fdConfHouse => 'House Activation';
-
-  @override
-  String get fdAskAi => 'Ask AI';
-
-  @override
-  String get fdAskAiSub => 'Tap a question to get today\'s answer';
-
-  @override
-  String get fdQ1 => 'Why is career slow today?';
-
-  @override
-  String get fdQ2 => 'What is the best time today?';
-
-  @override
-  String get fdQ3 => 'Is today good for money matters?';
-
-  @override
-  String get fdQ4 => 'Is today good for travel?';
-
-  @override
-  String get fdQ5 => 'What should I avoid today?';
-
-  @override
-  String get fdMoreSuggestions => 'More Suggestions';
-
-  @override
-  String fdAiSummaryLine(Object top, Object weak, Object fin) {
-    return 'Today is best suited for ${top}. ${weak} may feel slow, so avoid major decisions there. Financially the day looks ${fin}.';
-  }
-
-  @override
-  String fdThemeFocusLine(Object top) {
-    return 'Your energy today gathers around ${top} — lean into it and go gently elsewhere.';
-  }
 
   @override
   String get sendResetLink => 'ਰੀਸੈਟ ਲਿੰਕ ਭੇਜੋ';

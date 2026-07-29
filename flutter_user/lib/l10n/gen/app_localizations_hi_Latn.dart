@@ -9,6 +9,289 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   AppLocalizationsHiLatn([String locale = 'hi_Latn']) : super(locale);
 
   @override
+  String get fdEnergyScore => 'Aaj ka Energy Score';
+
+  @override
+  String get fdStatusAverage => 'Average';
+
+  @override
+  String get fdStatusMixed => 'Mixed';
+
+  @override
+  String get fdStatusChallenging => 'Challenging';
+
+  @override
+  String get fdTheme => 'Aaj ka Theme';
+
+  @override
+  String get fdExplainToday => 'Aaj ko Samjhein';
+
+  @override
+  String get fdTodaysFocus => 'Aaj ka Focus';
+
+  @override
+  String get fdTopRecommendation => 'Sabse Bada Sujhaav';
+
+  @override
+  String get fdTopCaution => 'Sabse Badi Savdhani';
+
+  @override
+  String get fdReadingTime => 'Padhne ka Samay';
+
+  @override
+  String get fdSeconds30 => '30 sec';
+
+  @override
+  String get fdCareer => 'Career';
+
+  @override
+  String get fdMoney => 'Paisa';
+
+  @override
+  String get fdLove => 'Pyaar';
+
+  @override
+  String get fdHealth => 'Sehat';
+
+  @override
+  String get fdTravel => 'Safar';
+
+  @override
+  String get fdFamily => 'Parivaar';
+
+  @override
+  String get fdBestToDo => 'Aaj Karne Layak Best Cheezein';
+
+  @override
+  String get fdAvoidToday => 'Aaj In Se Bachein';
+
+  @override
+  String get fdConfidenceLabel => 'Confidence';
+
+  @override
+  String get fdBestTime => 'Best Time';
+
+  @override
+  String get fdRecommended => 'Recommended';
+
+  @override
+  String get fdReason => 'Reason';
+
+  @override
+  String get fdRisk => 'Risk';
+
+  @override
+  String get fdRecommendation => 'Sujhaav';
+
+  @override
+  String get fdNoActions => 'Aaj kuch khaas push karne ki zaroorat nahi — ek steady, shaant routine banaye rakhein.';
+
+  @override
+  String get fdNoCautions => 'Aaj koi badi savdhani nahi — normal awareness ke saath aage badhein.';
+
+  @override
+  String get fdHighlights => 'Aaj ki Khaas Baatein';
+
+  @override
+  String get fdProbVeryHigh => 'Bahut Zyada';
+
+  @override
+  String get fdProbHigh => 'Zyada';
+
+  @override
+  String get fdProbElevated => 'Badha Hua';
+
+  @override
+  String get fdProbCaution => 'Savdhani';
+
+  @override
+  String get fdWhatToDo => 'Kya Karein';
+
+  @override
+  String get fdLifeAreas => 'Life Ke Areas';
+
+  @override
+  String get fdTapDetails => 'Details ke liye tap karein';
+
+  @override
+  String get fdArea1 => 'Khud & Sehat';
+
+  @override
+  String get fdArea2 => 'Dhan & Parivaar';
+
+  @override
+  String get fdArea3 => 'Communication';
+
+  @override
+  String get fdArea4 => 'Ghar & Aaram';
+
+  @override
+  String get fdArea5 => 'Creativity & Romance';
+
+  @override
+  String get fdArea6 => 'Kaam & Zimmedariyan';
+
+  @override
+  String get fdArea7 => 'Rishtey';
+
+  @override
+  String get fdArea8 => 'Badlaav & Gehrai';
+
+  @override
+  String get fdArea9 => 'Kismat & Safar';
+
+  @override
+  String get fdArea10 => 'Career & Status';
+
+  @override
+  String get fdArea11 => 'Fayda & Network';
+
+  @override
+  String get fdArea12 => 'Aaram & Adhyaatm';
+
+  @override
+  String get fdTodaysMeaning => 'Aaj ka Matlab';
+
+  @override
+  String get fdGoodFor => 'Iske Liye Accha';
+
+  @override
+  String get fdAvoid => 'Bachein';
+
+  @override
+  String get fdPlanetSupport => 'Grahon ka Saath';
+
+  @override
+  String get fdWhyPrediction => 'Yeh prediction kyun?';
+
+  @override
+  String get fdAdvancedDetails => 'Advanced Details';
+
+  @override
+  String get fdAiRecommendation => 'AI Sujhaav';
+
+  @override
+  String get fdOverallStatus => 'Overall Status';
+
+  @override
+  String get fdNoPlanetTransit => 'Aaj koi bada graha is area mein transit nahi kar raha.';
+
+  @override
+  String get fdFinancialOutlook => 'Financial Outlook';
+
+  @override
+  String get fdIncomeProbability => 'Income ki Sambhavna';
+
+  @override
+  String get fdExpenseProbability => 'Kharch ki Sambhavna';
+
+  @override
+  String get fdNetBalance => 'Net Financial Balance';
+
+  @override
+  String get fdAvoidSpending => 'Kharch se Bachein';
+
+  @override
+  String get fdRelationshipOutlook => 'Rishton ka Outlook';
+
+  @override
+  String get fdOverallScore => 'Overall Score';
+
+  @override
+  String get fdPartner => 'Partner';
+
+  @override
+  String get fdRomance => 'Romance';
+
+  @override
+  String get fdWorkplace => 'Workplace';
+
+  @override
+  String get fdPublicImage => 'Public Image';
+
+  @override
+  String get fdBestActivity => 'Best Activity';
+
+  @override
+  String get fdWeakArea => 'Kamzor Area';
+
+  @override
+  String get fdBiggestOpportunity => 'Sabse Bada Mauka';
+
+  @override
+  String get fdBiggestRisk => 'Sabse Bada Risk';
+
+  @override
+  String get fdProbability => 'Sambhavna';
+
+  @override
+  String get fdProtection => 'Suraksha ki Salah';
+
+  @override
+  String get fdDescription => 'Description';
+
+  @override
+  String get fdBestTimeToday => 'Aaj ka Best Time';
+
+  @override
+  String get fdAvoidDuring => 'Is Dauran Bachein';
+
+  @override
+  String get fdPredictionConfidence => 'Prediction ka Confidence';
+
+  @override
+  String get fdConfBasis => 'Aaj ki prediction inka mel hai';
+
+  @override
+  String get fdConfNatal => 'Janam Kundli';
+
+  @override
+  String get fdConfTransit => 'Current Transit';
+
+  @override
+  String get fdConfDasha => 'Grahon ki Dasha';
+
+  @override
+  String get fdConfStrength => 'Grah ki Takat';
+
+  @override
+  String get fdConfHouse => 'Bhav Activation';
+
+  @override
+  String get fdAskAi => 'AI Se Poochein';
+
+  @override
+  String get fdAskAiSub => 'Aaj ka jawab paane ke liye sawal par tap karein';
+
+  @override
+  String get fdQ1 => 'Aaj career slow kyun hai?';
+
+  @override
+  String get fdQ2 => 'Aaj best time kya hai?';
+
+  @override
+  String get fdQ3 => 'Kya aaj paise ke maamlon ke liye accha hai?';
+
+  @override
+  String get fdQ4 => 'Kya aaj safar ke liye accha hai?';
+
+  @override
+  String get fdQ5 => 'Aaj mujhe kis se bachna chahiye?';
+
+  @override
+  String get fdMoreSuggestions => 'Aur Sujhaav';
+
+  @override
+  String fdAiSummaryLine(Object top, Object weak, Object fin) {
+    return 'Aaj ${top} ke liye sabse best hai. ${weak} mein sustee lag sakti hai, isliye wahan bade faisle lene se bachein. Financially din ${fin} lag raha hai.';
+  }
+
+  @override
+  String fdThemeFocusLine(Object top) {
+    return 'Aaj aapki energy ${top} ke aas-paas center hai — isme poora dhyan lagayein aur baaki jagah halke se aage badhein.';
+  }
+
+  @override
   String get gochToday => 'Aaj';
 
   @override
@@ -4526,289 +4809,6 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'Password Bhool Gaye?';
-
-  @override
-  String get fdEnergyScore => 'Aaj ka Energy Score';
-
-  @override
-  String get fdStatusAverage => 'Ausat';
-
-  @override
-  String get fdStatusMixed => 'Mishrit';
-
-  @override
-  String get fdStatusChallenging => 'Chunautipurna';
-
-  @override
-  String get fdTheme => 'Aaj ka Theme';
-
-  @override
-  String get fdExplainToday => 'Aaj Samjhaein';
-
-  @override
-  String get fdTodaysFocus => 'Aaj ka Focus';
-
-  @override
-  String get fdTopRecommendation => 'Mukhya Sujhav';
-
-  @override
-  String get fdTopCaution => 'Mukhya Savdhani';
-
-  @override
-  String get fdReadingTime => 'Padhne ka samay';
-
-  @override
-  String get fdSeconds30 => '30 sec';
-
-  @override
-  String get fdCareer => 'Career';
-
-  @override
-  String get fdMoney => 'Dhan';
-
-  @override
-  String get fdLove => 'Prem';
-
-  @override
-  String get fdHealth => 'Swasthya';
-
-  @override
-  String get fdTravel => 'Yatra';
-
-  @override
-  String get fdFamily => 'Parivar';
-
-  @override
-  String get fdBestToDo => 'Aaj karne yogya best kaam';
-
-  @override
-  String get fdAvoidToday => 'Aaj Bachein';
-
-  @override
-  String get fdConfidenceLabel => 'Vishwas';
-
-  @override
-  String get fdBestTime => 'Best Samay';
-
-  @override
-  String get fdRecommended => 'Anushansit';
-
-  @override
-  String get fdReason => 'Kaaran';
-
-  @override
-  String get fdRisk => 'Jokhim';
-
-  @override
-  String get fdRecommendation => 'Sujhav';
-
-  @override
-  String get fdNoActions => 'Aaj kuch bada karne ki zarurat nahi — shant dincharya rakhein.';
-
-  @override
-  String get fdNoCautions => 'Aaj koi badi savdhani nahi — samanya sajagta rakhein.';
-
-  @override
-  String get fdHighlights => 'Aaj ki Mukhya Baatein';
-
-  @override
-  String get fdProbVeryHigh => 'Bahut Adhik';
-
-  @override
-  String get fdProbHigh => 'Adhik';
-
-  @override
-  String get fdProbElevated => 'Badha Hua';
-
-  @override
-  String get fdProbCaution => 'Savdhani';
-
-  @override
-  String get fdWhatToDo => 'Kya karein';
-
-  @override
-  String get fdLifeAreas => 'Jeevan Kshetra';
-
-  @override
-  String get fdTapDetails => 'Detail ke liye tap karein';
-
-  @override
-  String get fdArea1 => 'Swayam aur Swasthya';
-
-  @override
-  String get fdArea2 => 'Dhan aur Parivar';
-
-  @override
-  String get fdArea3 => 'Sanchar';
-
-  @override
-  String get fdArea4 => 'Ghar aur Aaram';
-
-  @override
-  String get fdArea5 => 'Rachnatmakta aur Prem';
-
-  @override
-  String get fdArea6 => 'Kaam aur Kartavya';
-
-  @override
-  String get fdArea7 => 'Rishtey';
-
-  @override
-  String get fdArea8 => 'Parivartan aur Gehrai';
-
-  @override
-  String get fdArea9 => 'Bhagya aur Yatra';
-
-  @override
-  String get fdArea10 => 'Career aur Pratishtha';
-
-  @override
-  String get fdArea11 => 'Laabh aur Sampark';
-
-  @override
-  String get fdArea12 => 'Vishram aur Aadhyatma';
-
-  @override
-  String get fdTodaysMeaning => 'Aaj ka Arth';
-
-  @override
-  String get fdGoodFor => 'Iske liye achha';
-
-  @override
-  String get fdAvoid => 'Bachein';
-
-  @override
-  String get fdPlanetSupport => 'Grah Samarthan';
-
-  @override
-  String get fdWhyPrediction => 'Yeh bhavishyavani kyon?';
-
-  @override
-  String get fdAdvancedDetails => 'Unnat Vivaran';
-
-  @override
-  String get fdAiRecommendation => 'AI Sujhav';
-
-  @override
-  String get fdOverallStatus => 'Samagra Sthiti';
-
-  @override
-  String get fdNoPlanetTransit => 'Aaj is kshetra mein koi mukhya grah gochar nahi kar raha.';
-
-  @override
-  String get fdFinancialOutlook => 'Vittiya Drishtikon';
-
-  @override
-  String get fdIncomeProbability => 'Aay Sambhavna';
-
-  @override
-  String get fdExpenseProbability => 'Vyay Sambhavna';
-
-  @override
-  String get fdNetBalance => 'Shuddh Vittiya Santulan';
-
-  @override
-  String get fdAvoidSpending => 'Kharch se bachein';
-
-  @override
-  String get fdRelationshipOutlook => 'Rishton ka Drishtikon';
-
-  @override
-  String get fdOverallScore => 'Samagra Score';
-
-  @override
-  String get fdPartner => 'Jeevansathi';
-
-  @override
-  String get fdRomance => 'Romance';
-
-  @override
-  String get fdWorkplace => 'Karyasthal';
-
-  @override
-  String get fdPublicImage => 'Public Image';
-
-  @override
-  String get fdBestActivity => 'Best Activity';
-
-  @override
-  String get fdWeakArea => 'Kamzor Kshetra';
-
-  @override
-  String get fdBiggestOpportunity => 'Sabse Bada Avsar';
-
-  @override
-  String get fdBiggestRisk => 'Sabse Bada Jokhim';
-
-  @override
-  String get fdProbability => 'Sambhavna';
-
-  @override
-  String get fdProtection => 'Suraksha Salah';
-
-  @override
-  String get fdDescription => 'Vivaran';
-
-  @override
-  String get fdBestTimeToday => 'Aaj ka Best Samay';
-
-  @override
-  String get fdAvoidDuring => 'Is dauran bachein';
-
-  @override
-  String get fdPredictionConfidence => 'Bhavishyavani Vishwas';
-
-  @override
-  String get fdConfBasis => 'Aaj ki bhavishyavani in par aadharit hai';
-
-  @override
-  String get fdConfNatal => 'Janm Kundli';
-
-  @override
-  String get fdConfTransit => 'Vartaman Gochar';
-
-  @override
-  String get fdConfDasha => 'Grah Dasha';
-
-  @override
-  String get fdConfStrength => 'Grah Bal';
-
-  @override
-  String get fdConfHouse => 'Bhav Sakriyata';
-
-  @override
-  String get fdAskAi => 'AI se poochein';
-
-  @override
-  String get fdAskAiSub => 'Aaj ka jawab paane ke liye prashn chunein';
-
-  @override
-  String get fdQ1 => 'Aaj career dheema kyon hai?';
-
-  @override
-  String get fdQ2 => 'Aaj sabse achha samay kaunsa hai?';
-
-  @override
-  String get fdQ3 => 'Kya aaj dhan sambandhi kaam shubh hain?';
-
-  @override
-  String get fdQ4 => 'Kya aaj yatra shubh hai?';
-
-  @override
-  String get fdQ5 => 'Aaj mujhe kis se bachna chahiye?';
-
-  @override
-  String get fdMoreSuggestions => 'Aur Sujhav';
-
-  @override
-  String fdAiSummaryLine(Object top, Object weak, Object fin) {
-    return 'Today is best suited for ${top}. ${weak} may feel slow, so avoid major decisions there. Financially the day looks ${fin}.';
-  }
-
-  @override
-  String fdThemeFocusLine(Object top) {
-    return 'Your energy today gathers around ${top} — lean into it and go gently elsewhere.';
-  }
 
   @override
   String get sendResetLink => 'Reset Link Bhejein';
