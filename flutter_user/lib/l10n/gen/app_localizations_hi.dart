@@ -9,6 +9,148 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get aspGivesAspectTo => 'दृष्टि डालता है';
+
+  @override
+  String get aspReceivesAspectFrom => 'दृष्टि प्राप्त करता है';
+
+  @override
+  String get aspInfluences => 'प्रभावित करता है';
+
+  @override
+  String get aspNoInfluence => 'कोई प्रभाव नहीं';
+
+  @override
+  String get aspNoAspect => 'कोई दृष्टि नहीं';
+
+  @override
+  String get aspPresent => 'उपस्थित';
+
+  @override
+  String get aspAbsent => 'अनुपस्थित';
+
+  @override
+  String get aspNotPresent => 'उपस्थित नहीं';
+
+  @override
+  String get aspSpecialAspect => 'विशेष दृष्टि';
+
+  @override
+  String get aspAspectWord => 'दृष्टि';
+
+  @override
+  String get aspTotalGiven => 'दी गई दृष्टि';
+
+  @override
+  String get aspTotalReceived => 'प्राप्त दृष्टि';
+
+  @override
+  String get aspStrongestInfluence => 'सबसे प्रबल प्रभाव';
+
+  @override
+  String get aspMedium => 'मध्यम';
+
+  @override
+  String get aspAspectPresent => 'दृष्टि उपस्थित';
+
+  @override
+  String get aspReason => 'कारण';
+
+  @override
+  String get aspBoth => 'दोनों';
+
+  @override
+  String get aspTargetHouse => 'लक्ष्य भाव';
+
+  @override
+  String get aspTargetSign => 'लक्ष्य राशि';
+
+  @override
+  String get aspLagnaReceives => 'लग्न को दृष्टि प्राप्त होती है';
+
+  @override
+  String get aspNoAspectFrom => 'इनसे कोई दृष्टि नहीं';
+
+  @override
+  String get aspPlanetToPlanet => 'ग्रह से ग्रह';
+
+  @override
+  String get aspSignToSign => 'राशि से राशि';
+
+  @override
+  String get aspCombinedAspect => 'संयुक्त दृष्टि';
+
+  @override
+  String get aspGrahaAspect => 'ग्रह दृष्टि';
+
+  @override
+  String get aspRashiAspect => 'राशि दृष्टि';
+
+  @override
+  String get aspInfoTitle => 'दृष्टि को समझें';
+
+  @override
+  String get aspQGraha => 'ग्रह दृष्टि क्या है?';
+
+  @override
+  String get aspQRashi => 'राशि दृष्टि क्या है?';
+
+  @override
+  String get aspQDiff => 'दोनों में अंतर';
+
+  @override
+  String get aspQPredict => 'दृष्टि भविष्यवाणी को कैसे प्रभावित करती है';
+
+  @override
+  String get aspGrahaBody => 'ग्रह दृष्टि वह प्रभाव है जो एक ग्रह अपनी स्थिति से डालता है। हर ग्रह अपने स्थान से 7वें भाव/ग्रह पर पूर्ण दृष्टि डालता है (एक सीधा, आमने-सामने का प्रभाव)। इसके अतिरिक्त, मंगल 4थे और 8वें पर, गुरु 5वें और 9वें पर, तथा शनि 3रे और 10वें पर दृष्टि डालता है। राहु और केतु को आमतौर पर 5वीं, 7वीं और 9वीं दृष्टि दी जाती है। किसी ग्रह की दृष्टि उस ग्रह या भाव को अपने स्वभाव के रंग में रंग देती है।';
+
+  @override
+  String get aspRashiBody => 'राशि दृष्टि जैमिनी ज्योतिष की एक राशि-से-राशि दृष्टि है, जो इस पर निर्भर नहीं करती कि वहाँ कौन से ग्रह बैठे हैं। चर राशियाँ स्थिर राशियों पर दृष्टि डालती हैं (निकटवर्ती को छोड़कर), स्थिर राशियाँ चर राशियों पर दृष्टि डालती हैं (निकटवर्ती को छोड़कर), और द्विस्वभाव राशियाँ अन्य द्विस्वभाव राशियों पर दृष्टि डालती हैं। इसका उपयोग मुख्य रूप से जैमिनी भविष्यवाणी और भावों के बीच संबंध आँकने में किया जाता है।';
+
+  @override
+  String get aspDiffBody => 'ग्रह दृष्टि किसी ग्रह द्वारा डाली जाती है और इस पर निर्भर करती है कि वह ग्रह कहाँ स्थित है। राशि दृष्टि राशि की अपनी होती है और उसमें जो कुछ भी स्थित हो, उस पर लागू होती है। ग्रह दृष्टि दिशात्मक होती है (ग्रह A ग्रह B को देखता है), जबकि राशि दृष्टि आमतौर पर राशियों के बीच परस्पर होती है। जब दोनों एक ही लक्ष्य की ओर इशारा करते हैं, तो प्रभाव विशेष रूप से प्रबल होता है।';
+
+  @override
+  String get aspPredictBody => 'दृष्टि यह दर्शाती है कि एक ग्रह अपने भाव से परे अपना प्रभाव कहाँ तक फैलाता है। एक शुभ दृष्टि (गुरु, शुक्र, अच्छी स्थिति में चंद्र/बुध) लक्ष्य का समर्थन और रक्षा करती है; एक अशुभ दृष्टि (शनि, मंगल, सूर्य, राहु, केतु) उस पर दबाव डाल सकती है, विलंब कर सकती है या चुनौती दे सकती है। यह पढ़ना कि कौन से ग्रह किसी भाव या ग्रह पर दृष्टि डालते हैं, यह समझाता है कि परिणाम जिस तरह से सामने आते हैं, वैसे क्यों आते हैं।';
+
+  @override
+  String get aspTraitSun => 'अधिकार, नेतृत्व और जीवन-शक्ति';
+
+  @override
+  String get aspTraitMoon => 'भावनात्मक गहराई, सुख और अंतर्ज्ञान';
+
+  @override
+  String get aspTraitMars => 'ऊर्जा, साहस और जोश';
+
+  @override
+  String get aspTraitMercury => 'संचार, बुद्धि और अनुकूलनशीलता';
+
+  @override
+  String get aspTraitJupiter => 'ज्ञान, विकास और सौभाग्य';
+
+  @override
+  String get aspTraitVenus => 'प्रेम, सामंजस्य और सुख-सुविधाएँ';
+
+  @override
+  String get aspTraitSaturn => 'अनुशासन, जिम्मेदारी और धैर्यपूर्ण, कभी-कभी विलंबित, सफलता';
+
+  @override
+  String get aspTraitRahu => 'महत्वाकांक्षा, तीव्रता और अपरंपरागत मोड़';
+
+  @override
+  String get aspTraitKetu => 'विरक्ति, आध्यात्मिकता और अचानक परिवर्तन';
+
+  @override
+  String aspAiInfluence(Object planet, Object targets, Object trait) {
+    return '${planet} ${targets} को प्रभावित कर रहा है। इससे इन ग्रहों द्वारा दर्शाए गए क्षेत्रों में ${trait} आ सकता है।';
+  }
+
+  @override
+  String aspAiNone(Object planet) {
+    return '${planet} यहाँ किसी अन्य ग्रह पर विशेष दृष्टि नहीं डालता; इसका प्रभाव मुख्यतः अपनी ही राशि और भाव के माध्यम से कार्य करता है।';
+  }
+
+  @override
   String get avSummaryTitle => 'अष्टकवर्ग सारांश';
 
   @override
@@ -3343,148 +3485,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get forgotPassword => 'पासवर्ड भूल गए?';
-
-  @override
-  String get aspGivesAspectTo => 'दृष्टि डालता है';
-
-  @override
-  String get aspReceivesAspectFrom => 'दृष्टि प्राप्त करता है';
-
-  @override
-  String get aspInfluences => 'प्रभावित करता है';
-
-  @override
-  String get aspNoInfluence => 'कोई प्रभाव नहीं';
-
-  @override
-  String get aspNoAspect => 'कोई दृष्टि नहीं';
-
-  @override
-  String get aspPresent => 'उपस्थित';
-
-  @override
-  String get aspAbsent => 'अनुपस्थित';
-
-  @override
-  String get aspNotPresent => 'उपस्थित नहीं';
-
-  @override
-  String get aspSpecialAspect => 'विशेष दृष्टि';
-
-  @override
-  String get aspAspectWord => 'दृष्टि';
-
-  @override
-  String get aspTotalGiven => 'दी गई दृष्टि';
-
-  @override
-  String get aspTotalReceived => 'प्राप्त दृष्टि';
-
-  @override
-  String get aspStrongestInfluence => 'सबसे प्रबल प्रभाव';
-
-  @override
-  String get aspMedium => 'मध्यम';
-
-  @override
-  String get aspAspectPresent => 'दृष्टि उपस्थित';
-
-  @override
-  String get aspReason => 'कारण';
-
-  @override
-  String get aspBoth => 'दोनों';
-
-  @override
-  String get aspTargetHouse => 'लक्ष्य भाव';
-
-  @override
-  String get aspTargetSign => 'लक्ष्य राशि';
-
-  @override
-  String get aspLagnaReceives => 'लग्न को दृष्टि प्राप्त होती है';
-
-  @override
-  String get aspNoAspectFrom => 'इनसे कोई दृष्टि नहीं';
-
-  @override
-  String get aspPlanetToPlanet => 'ग्रह से ग्रह';
-
-  @override
-  String get aspSignToSign => 'राशि से राशि';
-
-  @override
-  String get aspCombinedAspect => 'संयुक्त दृष्टि';
-
-  @override
-  String get aspGrahaAspect => 'ग्रह दृष्टि';
-
-  @override
-  String get aspRashiAspect => 'राशि दृष्टि';
-
-  @override
-  String get aspInfoTitle => 'दृष्टि को समझें';
-
-  @override
-  String get aspQGraha => 'ग्रह दृष्टि क्या है?';
-
-  @override
-  String get aspQRashi => 'राशि दृष्टि क्या है?';
-
-  @override
-  String get aspQDiff => 'दोनों में अंतर';
-
-  @override
-  String get aspQPredict => 'दृष्टि भविष्यवाणी को कैसे प्रभावित करती है';
-
-  @override
-  String get aspGrahaBody => 'Graha Drishti is the aspect a planet casts from its position. Every planet fully aspects the 7th house/planet from itself (a direct, face-to-face influence). In addition, Mars aspects the 4th and 8th, Jupiter the 5th and 9th, and Saturn the 3rd and 10th. Rahu and Ketu are usually given the 5th, 7th and 9th. A planet\'s aspect colours the planet or house it falls on with its own nature.';
-
-  @override
-  String get aspRashiBody => 'Rashi Drishti is a sign-to-sign aspect from Jaimini astrology, independent of which planets sit there. Movable signs aspect fixed signs (except the adjacent one), fixed signs aspect movable signs (except the adjacent one), and dual signs aspect the other dual signs. It is used mainly in Jaimini prediction and for judging relationships between houses.';
-
-  @override
-  String get aspDiffBody => 'Graha Drishti is cast by a planet and depends on where that planet sits. Rashi Drishti belongs to the sign itself and applies to whatever is placed in it. Graha Drishti is directional (planet A sees planet B), while Rashi Drishti is usually mutual between the signs. When both point to the same target, the influence is especially strong.';
-
-  @override
-  String get aspPredictBody => 'An aspect shows where a planet extends its influence beyond its own house. A benefic aspect (Jupiter, Venus, well-placed Moon/Mercury) supports and protects the target; a malefic aspect (Saturn, Mars, Sun, Rahu, Ketu) can pressure, delay or challenge it. Reading which planets aspect a house or planet explains why results appear the way they do.';
-
-  @override
-  String get aspTraitSun => 'authority, leadership and vitality';
-
-  @override
-  String get aspTraitMoon => 'emotional depth, comfort and intuition';
-
-  @override
-  String get aspTraitMars => 'energy, courage and drive';
-
-  @override
-  String get aspTraitMercury => 'communication, intellect and adaptability';
-
-  @override
-  String get aspTraitJupiter => 'wisdom, growth and good fortune';
-
-  @override
-  String get aspTraitVenus => 'love, harmony and comforts';
-
-  @override
-  String get aspTraitSaturn => 'discipline, responsibility and patient, sometimes delayed, success';
-
-  @override
-  String get aspTraitRahu => 'ambition, intensity and unconventional turns';
-
-  @override
-  String get aspTraitKetu => 'detachment, spirituality and sudden change';
-
-  @override
-  String aspAiInfluence(Object planet, Object targets, Object trait) {
-    return '${planet} is influencing ${targets}. This may bring ${trait} to the areas represented by these planets.';
-  }
-
-  @override
-  String aspAiNone(Object planet) {
-    return '${planet} does not cast a special aspect on any other planet here; its influence works mainly through its own sign and house.';
-  }
 
   @override
   String get sendResetLink => 'रीसेट लिंक भेजें';

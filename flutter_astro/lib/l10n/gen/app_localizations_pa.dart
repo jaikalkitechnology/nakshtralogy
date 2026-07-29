@@ -9,6 +9,160 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
+  String get aspGivesAspectTo => 'ਦ੍ਰਿਸ਼ਟੀ ਦਿੰਦਾ ਹੈ';
+
+  @override
+  String get aspReceivesAspectFrom => 'ਦ੍ਰਿਸ਼ਟੀ ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ';
+
+  @override
+  String get aspInfluences => 'ਪ੍ਰਭਾਵਿਤ ਕਰਦਾ ਹੈ';
+
+  @override
+  String get aspNoInfluence => 'ਕੋਈ ਪ੍ਰਭਾਵ ਨਹੀਂ';
+
+  @override
+  String get aspNoAspect => 'ਕੋਈ ਦ੍ਰਿਸ਼ਟੀ ਨਹੀਂ';
+
+  @override
+  String get aspPresent => 'ਮੌਜੂਦ';
+
+  @override
+  String get aspAbsent => 'ਗੈਰ-ਮੌਜੂਦ';
+
+  @override
+  String get aspNotPresent => 'ਮੌਜੂਦ ਨਹੀਂ';
+
+  @override
+  String get aspSpecialAspect => 'ਵਿਸ਼ੇਸ਼ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspAspectWord => 'ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspTotalGiven => 'ਦਿੱਤੀ ਗਈ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspTotalReceived => 'ਪ੍ਰਾਪਤ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspStrongestInfluence => 'ਸਭ ਤੋਂ ਪ੍ਰਬਲ ਪ੍ਰਭਾਵ';
+
+  @override
+  String get aspMedium => 'ਮੱਧਮ';
+
+  @override
+  String get aspAspectPresent => 'ਦ੍ਰਿਸ਼ਟੀ ਮੌਜੂਦ';
+
+  @override
+  String get aspReason => 'ਕਾਰਨ';
+
+  @override
+  String get aspBoth => 'ਦੋਵੇਂ';
+
+  @override
+  String get aspTargetHouse => 'ਟੀਚਾ ਭਾਵ';
+
+  @override
+  String get aspTargetSign => 'ਟੀਚਾ ਰਾਸ਼ੀ';
+
+  @override
+  String get aspLagnaReceives => 'ਲਗਨ ਨੂੰ ਦ੍ਰਿਸ਼ਟੀ ਪ੍ਰਾਪਤ ਹੁੰਦੀ ਹੈ';
+
+  @override
+  String get aspNoAspectFrom => 'ਇਨ੍ਹਾਂ ਤੋਂ ਕੋਈ ਦ੍ਰਿਸ਼ਟੀ ਨਹੀਂ';
+
+  @override
+  String get aspPlanetToPlanet => 'ਗ੍ਰਹਿ ਤੋਂ ਗ੍ਰਹਿ';
+
+  @override
+  String get aspSignToSign => 'ਰਾਸ਼ੀ ਤੋਂ ਰਾਸ਼ੀ';
+
+  @override
+  String get aspCombinedAspect => 'ਸੰਯੁਕਤ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspGrahaAspect => 'ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspRashiAspect => 'ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
+  String get aspInfoTitle => 'ਦ੍ਰਿਸ਼ਟੀ (Drishti) ਨੂੰ ਸਮਝਣਾ';
+
+  @override
+  String get aspQGraha => 'ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ ਕੀ ਹੈ?';
+
+  @override
+  String get aspQRashi => 'ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ ਕੀ ਹੈ?';
+
+  @override
+  String get aspQDiff => 'ਦੋਵਾਂ ਵਿਚਕਾਰ ਅੰਤਰ';
+
+  @override
+  String get aspQPredict => 'ਦ੍ਰਿਸ਼ਟੀ ਭਵਿੱਖਬਾਣੀ ਨੂੰ ਕਿਵੇਂ ਪ੍ਰਭਾਵਿਤ ਕਰਦੀ ਹੈ';
+
+  @override
+  String get aspGrahaBody => 'ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ ਉਹ ਦ੍ਰਿਸ਼ਟੀ ਹੈ ਜੋ ਇੱਕ ਗ੍ਰਹਿ ਆਪਣੀ ਸਥਿਤੀ ਤੋਂ ਪਾਉਂਦਾ ਹੈ। ਹਰ ਗ੍ਰਹਿ ਆਪਣੇ ਸਥਾਨ ਤੋਂ 7ਵੇਂ ਭਾਵ/ਗ੍ਰਹਿ ਉੱਤੇ ਪੂਰੀ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦਾ ਹੈ (ਸਿੱਧਾ, ਆਹਮੋ-ਸਾਹਮਣੇ ਪ੍ਰਭਾਵ)। ਇਸ ਤੋਂ ਇਲਾਵਾ, ਮੰਗਲ 4ਵੇਂ ਅਤੇ 8ਵੇਂ ਉੱਤੇ, ਗੁਰੂ 5ਵੇਂ ਅਤੇ 9ਵੇਂ ਉੱਤੇ, ਅਤੇ ਸ਼ਨੀ 3ਰੇ ਅਤੇ 10ਵੇਂ ਉੱਤੇ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦਾ ਹੈ। ਰਾਹੂ ਅਤੇ ਕੇਤੂ ਨੂੰ ਆਮ ਤੌਰ \'ਤੇ 5ਵੀਂ, 7ਵੀਂ ਅਤੇ 9ਵੀਂ ਦ੍ਰਿਸ਼ਟੀ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ। ਕਿਸੇ ਗ੍ਰਹਿ ਦੀ ਦ੍ਰਿਸ਼ਟੀ ਉਸ ਗ੍ਰਹਿ ਜਾਂ ਭਾਵ ਨੂੰ ਆਪਣੇ ਸੁਭਾਅ ਦੇ ਰੰਗ ਵਿੱਚ ਰੰਗ ਦਿੰਦੀ ਹੈ।';
+
+  @override
+  String get aspRashiBody => 'ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ ਜੈਮਿਨੀ ਜੋਤਿਸ਼ ਦੀ ਇੱਕ ਰਾਸ਼ੀ-ਤੋਂ-ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ ਹੈ, ਜੋ ਇਸ ਗੱਲ \'ਤੇ ਨਿਰਭਰ ਨਹੀਂ ਕਰਦੀ ਕਿ ਉੱਥੇ ਕਿਹੜੇ ਗ੍ਰਹਿ ਬੈਠੇ ਹਨ। ਚਰ ਰਾਸ਼ੀਆਂ ਸਥਿਰ ਰਾਸ਼ੀਆਂ ਨੂੰ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦੀਆਂ ਹਨ (ਨਾਲ ਲੱਗਦੀ ਨੂੰ ਛੱਡ ਕੇ), ਸਥਿਰ ਰਾਸ਼ੀਆਂ ਚਰ ਰਾਸ਼ੀਆਂ ਨੂੰ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦੀਆਂ ਹਨ (ਨਾਲ ਲੱਗਦੀ ਨੂੰ ਛੱਡ ਕੇ), ਅਤੇ ਦੋ-ਸੁਭਾਅ ਰਾਸ਼ੀਆਂ ਹੋਰ ਦੋ-ਸੁਭਾਅ ਰਾਸ਼ੀਆਂ ਨੂੰ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦੀਆਂ ਹਨ। ਇਹ ਮੁੱਖ ਤੌਰ \'ਤੇ ਜੈਮਿਨੀ ਭਵਿੱਖਬਾਣੀ ਅਤੇ ਭਾਵਾਂ ਵਿਚਕਾਰ ਸਬੰਧਾਂ ਦਾ ਨਿਰਣਾ ਕਰਨ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਹੈ।';
+
+  @override
+  String get aspDiffBody => 'ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ ਇੱਕ ਗ੍ਰਹਿ ਦੁਆਰਾ ਪਾਈ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਹ ਇਸ ਗੱਲ \'ਤੇ ਨਿਰਭਰ ਕਰਦੀ ਹੈ ਕਿ ਉਹ ਗ੍ਰਹਿ ਕਿੱਥੇ ਸਥਿਤ ਹੈ। ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ ਰਾਸ਼ੀ ਦੀ ਆਪਣੀ ਹੁੰਦੀ ਹੈ ਅਤੇ ਇਹ ਉਸ ਵਿੱਚ ਜੋ ਵੀ ਸਥਿਤ ਹੋਵੇ ਉਸ \'ਤੇ ਲਾਗੂ ਹੁੰਦੀ ਹੈ। ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ ਦਿਸ਼ਾਤਮਕ ਹੈ (ਗ੍ਰਹਿ A ਗ੍ਰਹਿ B ਨੂੰ ਵੇਖਦਾ ਹੈ), ਜਦਕਿ ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ ਆਮ ਤੌਰ \'ਤੇ ਰਾਸ਼ੀਆਂ ਵਿਚਕਾਰ ਆਪਸੀ ਹੁੰਦੀ ਹੈ। ਜਦੋਂ ਦੋਵੇਂ ਇੱਕੋ ਟੀਚੇ ਵੱਲ ਇਸ਼ਾਰਾ ਕਰਦੇ ਹਨ, ਤਾਂ ਪ੍ਰਭਾਵ ਖਾਸ ਤੌਰ \'ਤੇ ਪ੍ਰਬਲ ਹੁੰਦਾ ਹੈ।';
+
+  @override
+  String get aspPredictBody => 'ਇੱਕ ਦ੍ਰਿਸ਼ਟੀ ਦਿਖਾਉਂਦੀ ਹੈ ਕਿ ਇੱਕ ਗ੍ਰਹਿ ਆਪਣੇ ਭਾਵ ਤੋਂ ਪਰੇ ਆਪਣਾ ਪ੍ਰਭਾਵ ਕਿੱਥੇ ਫੈਲਾਉਂਦਾ ਹੈ। ਇੱਕ ਸ਼ੁਭ ਦ੍ਰਿਸ਼ਟੀ (ਗੁਰੂ, ਸ਼ੁੱਕਰ, ਚੰਗੀ ਸਥਿਤੀ ਵਿੱਚ ਚੰਦਰ/ਬੁੱਧ) ਟੀਚੇ ਦਾ ਸਮਰਥਨ ਅਤੇ ਸੁਰੱਖਿਆ ਕਰਦੀ ਹੈ; ਇੱਕ ਅਸ਼ੁਭ ਦ੍ਰਿਸ਼ਟੀ (ਸ਼ਨੀ, ਮੰਗਲ, ਸੂਰਜ, ਰਾਹੂ, ਕੇਤੂ) ਇਸ \'ਤੇ ਦਬਾਅ ਪਾ ਸਕਦੀ ਹੈ, ਦੇਰੀ ਕਰ ਸਕਦੀ ਹੈ ਜਾਂ ਚੁਣੌਤੀ ਦੇ ਸਕਦੀ ਹੈ। ਇਹ ਪੜ੍ਹਨਾ ਕਿ ਕਿਹੜੇ ਗ੍ਰਹਿ ਕਿਸੇ ਭਾਵ ਜਾਂ ਗ੍ਰਹਿ \'ਤੇ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦੇ ਹਨ, ਇਹ ਦੱਸਦਾ ਹੈ ਕਿ ਨਤੀਜੇ ਇਸ ਤਰ੍ਹਾਂ ਕਿਉਂ ਸਾਹਮਣੇ ਆਉਂਦੇ ਹਨ।';
+
+  @override
+  String get aspTraitSun => 'ਅਧਿਕਾਰ, ਲੀਡਰਸ਼ਿਪ ਅਤੇ ਜੀਵਨ-ਸ਼ਕਤੀ';
+
+  @override
+  String get aspTraitMoon => 'ਭਾਵਨਾਤਮਕ ਡੂੰਘਾਈ, ਆਰਾਮ ਅਤੇ ਅੰਤਰਗਿਆਨ';
+
+  @override
+  String get aspTraitMars => 'ਊਰਜਾ, ਹਿੰਮਤ ਅਤੇ ਜੋਸ਼';
+
+  @override
+  String get aspTraitMercury => 'ਸੰਚਾਰ, ਬੁੱਧੀ ਅਤੇ ਅਨੁਕੂਲਤਾ';
+
+  @override
+  String get aspTraitJupiter => 'ਗਿਆਨ, ਵਾਧਾ ਅਤੇ ਸ਼ੁਭ ਕਿਸਮਤ';
+
+  @override
+  String get aspTraitVenus => 'ਪਿਆਰ, ਸਦਭਾਵਨਾ ਅਤੇ ਸੁੱਖ-ਸਹੂਲਤਾਂ';
+
+  @override
+  String get aspTraitSaturn => 'ਅਨੁਸ਼ਾਸਨ, ਜ਼ਿੰਮੇਵਾਰੀ ਅਤੇ ਧੀਰਜ ਵਾਲੀ, ਕਦੇ-ਕਦੇ ਦੇਰੀ ਵਾਲੀ, ਸਫਲਤਾ';
+
+  @override
+  String get aspTraitRahu => 'ਇੱਛਾ, ਤੀਬਰਤਾ ਅਤੇ ਗੈਰ-ਰਵਾਇਤੀ ਮੋੜ';
+
+  @override
+  String get aspTraitKetu => 'ਵਿਰਕਤੀ, ਅਧਿਆਤਮਿਕਤਾ ਅਤੇ ਅਚਾਨਕ ਤਬਦੀਲੀ';
+
+  @override
+  String aspAiInfluence(Object planet, Object targets, Object trait) {
+    return '${planet} ${targets} ਨੂੰ ਪ੍ਰਭਾਵਿਤ ਕਰ ਰਿਹਾ ਹੈ। ਇਸ ਨਾਲ ਇਨ੍ਹਾਂ ਗ੍ਰਹਿਆਂ ਦੁਆਰਾ ਦਰਸਾਏ ਗਏ ਖੇਤਰਾਂ ਵਿੱਚ ${trait} ਆ ਸਕਦਾ ਹੈ।';
+  }
+
+  @override
+  String aspAiNone(Object planet) {
+    return '${planet} ਇੱਥੇ ਕਿਸੇ ਹੋਰ ਗ੍ਰਹਿ \'ਤੇ ਵਿਸ਼ੇਸ਼ ਦ੍ਰਿਸ਼ਟੀ ਨਹੀਂ ਪਾਉਂਦਾ; ਇਸਦਾ ਪ੍ਰਭਾਵ ਮੁੱਖ ਤੌਰ \'ਤੇ ਆਪਣੀ ਰਾਸ਼ੀ ਅਤੇ ਭਾਵ ਰਾਹੀਂ ਹੀ ਕੰਮ ਕਰਦਾ ਹੈ।';
+  }
+
+  @override
+  String get grahaDrishti => 'ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ (ਗ੍ਰਹਿ ਅਸਪੈਕਟ)';
+
+  @override
+  String get rashiDrishti => 'ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ (ਰਾਸ਼ੀ ਅਸਪੈਕਟ)';
+
+  @override
+  String get grahaDrishtiSubtitle => 'ਕੌਣ ਕਿਸ \'ਤੇ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦਾ ਹੈ (%)';
+
+  @override
+  String get lagnaAspectsReceived => 'ਲਗਨ \'ਤੇ ਪ੍ਰਾਪਤ ਦ੍ਰਿਸ਼ਟੀ';
+
+  @override
   String get avSummaryTitle => 'ਅਸ਼ਟਕਵਰਗ ਸਾਰ';
 
   @override
@@ -2062,160 +2216,6 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get forgotPassword => 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?';
-
-  @override
-  String get aspGivesAspectTo => 'Gives Aspect To';
-
-  @override
-  String get aspReceivesAspectFrom => 'Receives Aspect From';
-
-  @override
-  String get aspInfluences => 'Influences';
-
-  @override
-  String get aspNoInfluence => 'No Influence';
-
-  @override
-  String get aspNoAspect => 'No Aspect';
-
-  @override
-  String get aspPresent => 'Present';
-
-  @override
-  String get aspAbsent => 'Absent';
-
-  @override
-  String get aspNotPresent => 'Not Present';
-
-  @override
-  String get aspSpecialAspect => 'Special Aspect';
-
-  @override
-  String get aspAspectWord => 'Aspect';
-
-  @override
-  String get aspTotalGiven => 'Aspects Given';
-
-  @override
-  String get aspTotalReceived => 'Aspects Received';
-
-  @override
-  String get aspStrongestInfluence => 'Strongest Influence';
-
-  @override
-  String get aspMedium => 'Medium';
-
-  @override
-  String get aspAspectPresent => 'Aspect Present';
-
-  @override
-  String get aspReason => 'Reason';
-
-  @override
-  String get aspBoth => 'Both';
-
-  @override
-  String get aspTargetHouse => 'Target House';
-
-  @override
-  String get aspTargetSign => 'Target Sign';
-
-  @override
-  String get aspLagnaReceives => 'Lagna Receives Aspect From';
-
-  @override
-  String get aspNoAspectFrom => 'No Aspect From';
-
-  @override
-  String get aspPlanetToPlanet => 'Planet to Planet';
-
-  @override
-  String get aspSignToSign => 'Sign to Sign';
-
-  @override
-  String get aspCombinedAspect => 'Combined Aspect';
-
-  @override
-  String get aspGrahaAspect => 'Graha Aspect';
-
-  @override
-  String get aspRashiAspect => 'Rashi Aspect';
-
-  @override
-  String get aspInfoTitle => 'Understanding Aspects (Drishti)';
-
-  @override
-  String get aspQGraha => 'What is Graha Drishti?';
-
-  @override
-  String get aspQRashi => 'What is Rashi Drishti?';
-
-  @override
-  String get aspQDiff => 'Difference between the two';
-
-  @override
-  String get aspQPredict => 'How aspects affect prediction';
-
-  @override
-  String get aspGrahaBody => 'Graha Drishti is the aspect a planet casts from its position. Every planet fully aspects the 7th house/planet from itself (a direct, face-to-face influence). In addition, Mars aspects the 4th and 8th, Jupiter the 5th and 9th, and Saturn the 3rd and 10th. Rahu and Ketu are usually given the 5th, 7th and 9th. A planet\'s aspect colours the planet or house it falls on with its own nature.';
-
-  @override
-  String get aspRashiBody => 'Rashi Drishti is a sign-to-sign aspect from Jaimini astrology, independent of which planets sit there. Movable signs aspect fixed signs (except the adjacent one), fixed signs aspect movable signs (except the adjacent one), and dual signs aspect the other dual signs. It is used mainly in Jaimini prediction and for judging relationships between houses.';
-
-  @override
-  String get aspDiffBody => 'Graha Drishti is cast by a planet and depends on where that planet sits. Rashi Drishti belongs to the sign itself and applies to whatever is placed in it. Graha Drishti is directional (planet A sees planet B), while Rashi Drishti is usually mutual between the signs. When both point to the same target, the influence is especially strong.';
-
-  @override
-  String get aspPredictBody => 'An aspect shows where a planet extends its influence beyond its own house. A benefic aspect (Jupiter, Venus, well-placed Moon/Mercury) supports and protects the target; a malefic aspect (Saturn, Mars, Sun, Rahu, Ketu) can pressure, delay or challenge it. Reading which planets aspect a house or planet explains why results appear the way they do.';
-
-  @override
-  String get aspTraitSun => 'authority, leadership and vitality';
-
-  @override
-  String get aspTraitMoon => 'emotional depth, comfort and intuition';
-
-  @override
-  String get aspTraitMars => 'energy, courage and drive';
-
-  @override
-  String get aspTraitMercury => 'communication, intellect and adaptability';
-
-  @override
-  String get aspTraitJupiter => 'wisdom, growth and good fortune';
-
-  @override
-  String get aspTraitVenus => 'love, harmony and comforts';
-
-  @override
-  String get aspTraitSaturn => 'discipline, responsibility and patient, sometimes delayed, success';
-
-  @override
-  String get aspTraitRahu => 'ambition, intensity and unconventional turns';
-
-  @override
-  String get aspTraitKetu => 'detachment, spirituality and sudden change';
-
-  @override
-  String aspAiInfluence(Object planet, Object targets, Object trait) {
-    return '${planet} is influencing ${targets}. This may bring ${trait} to the areas represented by these planets.';
-  }
-
-  @override
-  String aspAiNone(Object planet) {
-    return '${planet} does not cast a special aspect on any other planet here; its influence works mainly through its own sign and house.';
-  }
-
-  @override
-  String get grahaDrishti => 'ਗ੍ਰਹਿ ਦ੍ਰਿਸ਼ਟੀ (ਗ੍ਰਹਿ ਅਸਪੈਕਟ)';
-
-  @override
-  String get rashiDrishti => 'ਰਾਸ਼ੀ ਦ੍ਰਿਸ਼ਟੀ (ਰਾਸ਼ੀ ਅਸਪੈਕਟ)';
-
-  @override
-  String get grahaDrishtiSubtitle => 'ਕੌਣ ਕਿਸ \'ਤੇ ਦ੍ਰਿਸ਼ਟੀ ਪਾਉਂਦਾ ਹੈ (%)';
-
-  @override
-  String get lagnaAspectsReceived => 'ਲਗਨ \'ਤੇ ਪ੍ਰਾਪਤ ਦ੍ਰਿਸ਼ਟੀ';
 
   @override
   String get sendResetLink => 'ਰੀਸੈਟ ਲਿੰਕ ਭੇਜੋ';
