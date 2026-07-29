@@ -230,6 +230,324 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @avSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakavarga Summary'**
+  String get avSummaryTitle;
+
+  /// No description provided for @avOverallScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall SAV Score'**
+  String get avOverallScore;
+
+  /// No description provided for @avOverallRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Rating'**
+  String get avOverallRating;
+
+  /// No description provided for @avStrongestSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest Signs'**
+  String get avStrongestSigns;
+
+  /// No description provided for @avWeakestSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest Signs'**
+  String get avWeakestSigns;
+
+  /// No description provided for @avScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get avScore;
+
+  /// No description provided for @avMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Meaning'**
+  String get avMeaning;
+
+  /// No description provided for @avGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid'**
+  String get avGrid;
+
+  /// No description provided for @avList.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get avList;
+
+  /// No description provided for @avOverallScoreShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Score'**
+  String get avOverallScoreShort;
+
+  /// No description provided for @avNatalSignScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Natal Sign Score'**
+  String get avNatalSignScore;
+
+  /// No description provided for @avBestSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Signs'**
+  String get avBestSigns;
+
+  /// No description provided for @avWeakSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak Signs'**
+  String get avWeakSigns;
+
+  /// No description provided for @avAiInterpretation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Interpretation'**
+  String get avAiInterpretation;
+
+  /// No description provided for @avVeryGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Good'**
+  String get avVeryGood;
+
+  /// No description provided for @avVeryWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Weak'**
+  String get avVeryWeak;
+
+  /// No description provided for @avTotalSav.
+  ///
+  /// In en, this message translates to:
+  /// **'Total SAV'**
+  String get avTotalSav;
+
+  /// No description provided for @avPlanetContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Contributions'**
+  String get avPlanetContributions;
+
+  /// No description provided for @avFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get avFinance;
+
+  /// No description provided for @avOverallStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Strength'**
+  String get avOverallStrength;
+
+  /// No description provided for @avWhatDoesThisMean.
+  ///
+  /// In en, this message translates to:
+  /// **'What does this mean?'**
+  String get avWhatDoesThisMean;
+
+  /// No description provided for @avSimple.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple'**
+  String get avSimple;
+
+  /// No description provided for @avAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get avAdvanced;
+
+  /// No description provided for @avInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Ashtakavarga'**
+  String get avInfoTitle;
+
+  /// No description provided for @avStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get avStrong;
+
+  /// No description provided for @avModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get avModerate;
+
+  /// No description provided for @avQWhatIsAv.
+  ///
+  /// In en, this message translates to:
+  /// **'What is Ashtakavarga?'**
+  String get avQWhatIsAv;
+
+  /// No description provided for @avQWhatIsSav.
+  ///
+  /// In en, this message translates to:
+  /// **'What is SAV?'**
+  String get avQWhatIsSav;
+
+  /// No description provided for @avQWhatIsBav.
+  ///
+  /// In en, this message translates to:
+  /// **'What is BAV?'**
+  String get avQWhatIsBav;
+
+  /// No description provided for @avQHowToRead.
+  ///
+  /// In en, this message translates to:
+  /// **'How to read these scores'**
+  String get avQHowToRead;
+
+  /// No description provided for @avQSavVsBav.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV vs BAV'**
+  String get avQSavVsBav;
+
+  /// No description provided for @avABody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakavarga is a points-based strength system in Vedic astrology. Each planet awards benefic points (bindus, also called rekhas) to the twelve signs based on its position. More points in a sign means that area of life gets smoother support during related planetary periods and transits.'**
+  String get avABody;
+
+  /// No description provided for @avSavBody.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV (Sarva Ashtakavarga) adds together the points from all seven planets for each sign. It gives a single strength score per sign, so you can quickly see which signs — and the houses they fall in — are best supported in your chart.'**
+  String get avSavBody;
+
+  /// No description provided for @avBavBody.
+  ///
+  /// In en, this message translates to:
+  /// **'BAV (Bhinna Ashtakavarga) shows the points from a single planet across the twelve signs. It tells you which signs a specific planet supports most, which matters when that planet\'s dasha or transit is active.'**
+  String get avBavBody;
+
+  /// No description provided for @avHowToReadBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher numbers are better. For SAV, an average sign scores about 28 points — above 30 is strong and below 25 needs care. For BAV, each sign ranges from 0 to 8, with 4 being average. Favour your strongest signs for important actions, and stay patient and disciplined with your weakest ones.'**
+  String get avHowToReadBody;
+
+  /// No description provided for @avSavVsBavBody.
+  ///
+  /// In en, this message translates to:
+  /// **'SAV is the combined total of all planets and shows a sign\'s overall strength. BAV is a single planet\'s contribution and shows which planet supports that sign. Use SAV for the big picture, and BAV to understand which planet drives a sign\'s strength.'**
+  String get avSavVsBavBody;
+
+  /// No description provided for @avSummaryInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart is strongest in {s1}, {s2} and {s3}. These signs give better support during planetary periods and transits. {weak} currently has the least support, so patience and discipline help in matters connected with it.'**
+  String avSummaryInsight(Object s1, Object s2, Object s3, Object weak);
+
+  /// No description provided for @avBavInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} performs strongest through {s1} and {s2}. Matters governed by {planet} tend to improve when these signs are activated.'**
+  String avBavInsight(Object planet, Object s1, Object s2);
+
+  /// No description provided for @avInsightStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Your strongest signs are {s1} and {s2} — favour important beginnings when planets transit them.'**
+  String avInsightStrong(Object s1, Object s2);
+
+  /// No description provided for @avInsightWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'{s1} has the least support — move carefully and avoid over-commitment in its matters.'**
+  String avInsightWeak(Object s1);
+
+  /// No description provided for @avInsightBestPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} carries the most points, so its significations are well supported in your life.'**
+  String avInsightBestPlanet(Object planet);
+
+  /// No description provided for @avInsightWeakPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} carries the fewest points and benefits most from remedies and conscious effort.'**
+  String avInsightWeakPlanet(Object planet);
+
+  /// No description provided for @avInsightAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Signs scoring above your average of {avg} points tend to give smoother, more reliable results.'**
+  String avInsightAverage(Object avg);
+
+  /// No description provided for @gradeExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get gradeExcellent;
+
+  /// No description provided for @gradeGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get gradeGood;
+
+  /// No description provided for @gradeAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get gradeAverage;
+
+  /// No description provided for @gradeWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get gradeWeak;
+
+  /// No description provided for @careerWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Career'**
+  String get careerWord;
+
+  /// No description provided for @educationWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get educationWord;
+
+  /// No description provided for @lifeAreaMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage'**
+  String get lifeAreaMarriage;
+
+  /// No description provided for @sarvaAshtakavarga.
+  ///
+  /// In en, this message translates to:
+  /// **'Sarva Ashtakavarga (SAV)'**
+  String get sarvaAshtakavarga;
+
+  /// No description provided for @savSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {total} rekhas (average sign = {avg})'**
+  String savSubtitle(Object total, Object avg);
+
+  /// No description provided for @ashtakavargaBav.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} — BAV'**
+  String ashtakavargaBav(Object planet);
+
   /// No description provided for @forecast.
   ///
   /// In en, this message translates to:

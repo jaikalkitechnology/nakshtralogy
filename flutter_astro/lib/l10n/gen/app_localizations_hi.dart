@@ -1887,6 +1887,183 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get avSummaryTitle => 'अष्टकवर्ग सारांश';
+
+  @override
+  String get avOverallScore => 'कुल SAV स्कोर';
+
+  @override
+  String get avOverallRating => 'समग्र रेटिंग';
+
+  @override
+  String get avStrongestSigns => 'सबसे मजबूत राशियाँ';
+
+  @override
+  String get avWeakestSigns => 'सबसे कमजोर राशियाँ';
+
+  @override
+  String get avScore => 'स्कोर';
+
+  @override
+  String get avMeaning => 'अर्थ';
+
+  @override
+  String get avGrid => 'ग्रिड';
+
+  @override
+  String get avList => 'सूची';
+
+  @override
+  String get avOverallScoreShort => 'कुल स्कोर';
+
+  @override
+  String get avNatalSignScore => 'जन्म राशि स्कोर';
+
+  @override
+  String get avBestSigns => 'श्रेष्ठ राशियाँ';
+
+  @override
+  String get avWeakSigns => 'कमजोर राशियाँ';
+
+  @override
+  String get avAiInterpretation => 'AI व्याख्या';
+
+  @override
+  String get avVeryGood => 'बहुत अच्छा';
+
+  @override
+  String get avVeryWeak => 'बहुत कमजोर';
+
+  @override
+  String get avTotalSav => 'कुल SAV';
+
+  @override
+  String get avPlanetContributions => 'ग्रह योगदान';
+
+  @override
+  String get avFinance => 'वित्त';
+
+  @override
+  String get avOverallStrength => 'समग्र शक्ति';
+
+  @override
+  String get avWhatDoesThisMean => 'इसका क्या अर्थ है?';
+
+  @override
+  String get avSimple => 'सरल';
+
+  @override
+  String get avAdvanced => 'विस्तृत';
+
+  @override
+  String get avInfoTitle => 'अष्टकवर्ग को समझें';
+
+  @override
+  String get avStrong => 'मजबूत';
+
+  @override
+  String get avModerate => 'मध्यम';
+
+  @override
+  String get avQWhatIsAv => 'अष्टकवर्ग क्या है?';
+
+  @override
+  String get avQWhatIsSav => 'SAV क्या है?';
+
+  @override
+  String get avQWhatIsBav => 'BAV क्या है?';
+
+  @override
+  String get avQHowToRead => 'इन स्कोर को कैसे पढ़ें';
+
+  @override
+  String get avQSavVsBav => 'SAV बनाम BAV';
+
+  @override
+  String get avABody => 'Ashtakavarga is a points-based strength system in Vedic astrology. Each planet awards benefic points (bindus, also called rekhas) to the twelve signs based on its position. More points in a sign means that area of life gets smoother support during related planetary periods and transits.';
+
+  @override
+  String get avSavBody => 'SAV (Sarva Ashtakavarga) adds together the points from all seven planets for each sign. It gives a single strength score per sign, so you can quickly see which signs — and the houses they fall in — are best supported in your chart.';
+
+  @override
+  String get avBavBody => 'BAV (Bhinna Ashtakavarga) shows the points from a single planet across the twelve signs. It tells you which signs a specific planet supports most, which matters when that planet\'s dasha or transit is active.';
+
+  @override
+  String get avHowToReadBody => 'Higher numbers are better. For SAV, an average sign scores about 28 points — above 30 is strong and below 25 needs care. For BAV, each sign ranges from 0 to 8, with 4 being average. Favour your strongest signs for important actions, and stay patient and disciplined with your weakest ones.';
+
+  @override
+  String get avSavVsBavBody => 'SAV is the combined total of all planets and shows a sign\'s overall strength. BAV is a single planet\'s contribution and shows which planet supports that sign. Use SAV for the big picture, and BAV to understand which planet drives a sign\'s strength.';
+
+  @override
+  String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
+    return 'Your chart is strongest in ${s1}, ${s2} and ${s3}. These signs give better support during planetary periods and transits. ${weak} currently has the least support, so patience and discipline help in matters connected with it.';
+  }
+
+  @override
+  String avBavInsight(Object planet, Object s1, Object s2) {
+    return '${planet} performs strongest through ${s1} and ${s2}. Matters governed by ${planet} tend to improve when these signs are activated.';
+  }
+
+  @override
+  String avInsightStrong(Object s1, Object s2) {
+    return 'Your strongest signs are ${s1} and ${s2} — favour important beginnings when planets transit them.';
+  }
+
+  @override
+  String avInsightWeak(Object s1) {
+    return '${s1} has the least support — move carefully and avoid over-commitment in its matters.';
+  }
+
+  @override
+  String avInsightBestPlanet(Object planet) {
+    return '${planet} carries the most points, so its significations are well supported in your life.';
+  }
+
+  @override
+  String avInsightWeakPlanet(Object planet) {
+    return '${planet} carries the fewest points and benefits most from remedies and conscious effort.';
+  }
+
+  @override
+  String avInsightAverage(Object avg) {
+    return 'Signs scoring above your average of ${avg} points tend to give smoother, more reliable results.';
+  }
+
+  @override
+  String get gradeExcellent => 'उत्कृष्ट';
+
+  @override
+  String get gradeGood => 'अच्छा';
+
+  @override
+  String get gradeAverage => 'औसत';
+
+  @override
+  String get gradeWeak => 'कमज़ोर';
+
+  @override
+  String get careerWord => 'करियर';
+
+  @override
+  String get educationWord => 'शिक्षा';
+
+  @override
+  String get lifeAreaMarriage => 'विवाह';
+
+  @override
+  String get sarvaAshtakavarga => 'सर्व अष्टकवर्ग (SAV)';
+
+  @override
+  String savSubtitle(Object total, Object avg) {
+    return 'कुल: ${total} रेखाएँ (औसत राशि = ${avg})';
+  }
+
+  @override
+  String ashtakavargaBav(Object planet) {
+    return '${planet} — BAV';
+  }
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override
