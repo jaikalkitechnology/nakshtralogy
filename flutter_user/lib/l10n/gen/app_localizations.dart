@@ -235,6 +235,426 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @rzTodayOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Zodiac Outlook'**
+  String get rzTodayOutlook;
+
+  /// No description provided for @rzPlanetaryEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Planetary Energy'**
+  String get rzPlanetaryEnergy;
+
+  /// No description provided for @rzBestSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Sign'**
+  String get rzBestSign;
+
+  /// No description provided for @rzChallengingSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Challenging'**
+  String get rzChallengingSign;
+
+  /// No description provided for @rzDominantPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant Planet'**
+  String get rzDominantPlanet;
+
+  /// No description provided for @rzOverallMood.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Mood'**
+  String get rzOverallMood;
+
+  /// No description provided for @rzMoodBright.
+  ///
+  /// In en, this message translates to:
+  /// **'Bright & Active'**
+  String get rzMoodBright;
+
+  /// No description provided for @rzMoodCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm & Steady'**
+  String get rzMoodCalm;
+
+  /// No description provided for @rzMoodMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed Energy'**
+  String get rzMoodMixed;
+
+  /// No description provided for @rzMoodTense.
+  ///
+  /// In en, this message translates to:
+  /// **'Tense & Careful'**
+  String get rzMoodTense;
+
+  /// No description provided for @rzTodayEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Energy'**
+  String get rzTodayEnergy;
+
+  /// No description provided for @rzCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get rzCaution;
+
+  /// No description provided for @rzWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get rzWeak;
+
+  /// No description provided for @rzAllSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'All Zodiac Signs'**
+  String get rzAllSigns;
+
+  /// No description provided for @rzAiSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Summary'**
+  String get rzAiSummary;
+
+  /// No description provided for @rzPlanetaryInfluence.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Planetary Influence'**
+  String get rzPlanetaryInfluence;
+
+  /// No description provided for @rzStrongInfluences.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Influences'**
+  String get rzStrongInfluences;
+
+  /// No description provided for @rzShowTechnical.
+  ///
+  /// In en, this message translates to:
+  /// **'Show technical details'**
+  String get rzShowTechnical;
+
+  /// No description provided for @rzOpportunities.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Opportunities'**
+  String get rzOpportunities;
+
+  /// No description provided for @rzAvoidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Things To Avoid Today'**
+  String get rzAvoidTitle;
+
+  /// No description provided for @rzTechnicalReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical reason'**
+  String get rzTechnicalReason;
+
+  /// No description provided for @rzAvoidDecisions.
+  ///
+  /// In en, this message translates to:
+  /// **'Rushing important decisions'**
+  String get rzAvoidDecisions;
+
+  /// No description provided for @rzAvoidArguments.
+  ///
+  /// In en, this message translates to:
+  /// **'Heated arguments'**
+  String get rzAvoidArguments;
+
+  /// No description provided for @rzAvoidInvestments.
+  ///
+  /// In en, this message translates to:
+  /// **'Large investments'**
+  String get rzAvoidInvestments;
+
+  /// No description provided for @rzAvoidOverthink.
+  ///
+  /// In en, this message translates to:
+  /// **'Overthinking small issues'**
+  String get rzAvoidOverthink;
+
+  /// No description provided for @rzAvoidOverspend.
+  ///
+  /// In en, this message translates to:
+  /// **'Unnecessary spending'**
+  String get rzAvoidOverspend;
+
+  /// No description provided for @rzAvoidStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress and overworking'**
+  String get rzAvoidStress;
+
+  /// No description provided for @rzPlanetaryChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Planetary Chart'**
+  String get rzPlanetaryChart;
+
+  /// No description provided for @rzWhatChartMeans.
+  ///
+  /// In en, this message translates to:
+  /// **'What this chart means'**
+  String get rzWhatChartMeans;
+
+  /// No description provided for @rzChartExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'This diamond shows where each planet is sitting in the sky today, mapped to your sign. Planets in supportive houses lift the day; those in tough houses ask for care.'**
+  String get rzChartExplain;
+
+  /// No description provided for @rzDoNetworking.
+  ///
+  /// In en, this message translates to:
+  /// **'Networking & connecting'**
+  String get rzDoNetworking;
+
+  /// No description provided for @rzDoLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning something new'**
+  String get rzDoLearning;
+
+  /// No description provided for @rzDoMeditation.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditation & calm'**
+  String get rzDoMeditation;
+
+  /// No description provided for @rzDoFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family time'**
+  String get rzDoFamily;
+
+  /// No description provided for @rzDoCreative.
+  ///
+  /// In en, this message translates to:
+  /// **'Creative work'**
+  String get rzDoCreative;
+
+  /// No description provided for @rzDoRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest & self-care'**
+  String get rzDoRest;
+
+  /// No description provided for @rzAiRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s AI Recommendations'**
+  String get rzAiRecommendations;
+
+  /// No description provided for @rzTechnical.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Astrology'**
+  String get rzTechnical;
+
+  /// No description provided for @rzTransitScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Score'**
+  String get rzTransitScore;
+
+  /// No description provided for @rzVedha.
+  ///
+  /// In en, this message translates to:
+  /// **'Vedha (Obstructions)'**
+  String get rzVedha;
+
+  /// No description provided for @rzGocharDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Gochar Details'**
+  String get rzGocharDetails;
+
+  /// No description provided for @rzAdvancedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'For advanced users'**
+  String get rzAdvancedOnly;
+
+  /// No description provided for @rzTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow Preview'**
+  String get rzTomorrow;
+
+  /// No description provided for @rzTomorrowEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow\'s Energy'**
+  String get rzTomorrowEnergy;
+
+  /// No description provided for @rzImproving.
+  ///
+  /// In en, this message translates to:
+  /// **'Improving'**
+  String get rzImproving;
+
+  /// No description provided for @rzWeaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Slightly Weaker'**
+  String get rzWeaker;
+
+  /// No description provided for @rzSteady.
+  ///
+  /// In en, this message translates to:
+  /// **'Steady'**
+  String get rzSteady;
+
+  /// No description provided for @rzTomorrowUpLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy is expected to rise tomorrow — plan ahead for important tasks.'**
+  String get rzTomorrowUpLine;
+
+  /// No description provided for @rzTomorrowDownLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy may dip a little tomorrow — keep the day light and steady.'**
+  String get rzTomorrowDownLine;
+
+  /// No description provided for @rzTomorrowFlatLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy stays steady tomorrow — a calm, balanced day ahead.'**
+  String get rzTomorrowFlatLine;
+
+  /// No description provided for @rzWeeklyTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Trend'**
+  String get rzWeeklyTrend;
+
+  /// No description provided for @rzMonthlyTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Trend'**
+  String get rzMonthlyTrend;
+
+  /// No description provided for @rzBestDayWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Day'**
+  String get rzBestDayWeek;
+
+  /// No description provided for @rzHardestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Toughest Day'**
+  String get rzHardestDay;
+
+  /// No description provided for @rzLuckyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky Today'**
+  String get rzLuckyToday;
+
+  /// No description provided for @rzKarakaSun.
+  ///
+  /// In en, this message translates to:
+  /// **'confidence & vitality'**
+  String get rzKarakaSun;
+
+  /// No description provided for @rzKarakaMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'emotions & peace of mind'**
+  String get rzKarakaMoon;
+
+  /// No description provided for @rzKarakaMars.
+  ///
+  /// In en, this message translates to:
+  /// **'energy & drive'**
+  String get rzKarakaMars;
+
+  /// No description provided for @rzKarakaMercury.
+  ///
+  /// In en, this message translates to:
+  /// **'communication & learning'**
+  String get rzKarakaMercury;
+
+  /// No description provided for @rzKarakaJupiter.
+  ///
+  /// In en, this message translates to:
+  /// **'wisdom & growth'**
+  String get rzKarakaJupiter;
+
+  /// No description provided for @rzKarakaVenus.
+  ///
+  /// In en, this message translates to:
+  /// **'relationships & comfort'**
+  String get rzKarakaVenus;
+
+  /// No description provided for @rzKarakaSaturn.
+  ///
+  /// In en, this message translates to:
+  /// **'discipline & patience'**
+  String get rzKarakaSaturn;
+
+  /// No description provided for @rzKarakaRahu.
+  ///
+  /// In en, this message translates to:
+  /// **'ambition & change'**
+  String get rzKarakaRahu;
+
+  /// No description provided for @rzKarakaKetu.
+  ///
+  /// In en, this message translates to:
+  /// **'spirituality & letting go'**
+  String get rzKarakaKetu;
+
+  /// No description provided for @rzHomeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{dom} sets the tone of the day, while {chal} asks for patience and care.'**
+  String rzHomeSummary(Object dom, Object chal);
+
+  /// No description provided for @rzInsightGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good day for {karaka}.'**
+  String rzInsightGood(Object karaka);
+
+  /// No description provided for @rzInsightHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Take it slow with {karaka} today.'**
+  String rzInsightHard(Object karaka);
+
+  /// No description provided for @rzInfluenceGood.
+  ///
+  /// In en, this message translates to:
+  /// **'{karaka} is well supported today.'**
+  String rzInfluenceGood(Object karaka);
+
+  /// No description provided for @rzInfluenceHard.
+  ///
+  /// In en, this message translates to:
+  /// **'{karaka} may face delays today.'**
+  String rzInfluenceHard(Object karaka);
+
+  /// No description provided for @rzDetailSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Today supports {strong}, while {weak} needs patience and care.'**
+  String rzDetailSummary(Object strong, Object weak);
+
   /// No description provided for @fdEnergyScore.
   ///
   /// In en, this message translates to:

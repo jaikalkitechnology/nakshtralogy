@@ -3686,6 +3686,228 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get rzTodayOutlook => 'आज का राशिफल दृष्टिकोण';
+
+  @override
+  String get rzPlanetaryEnergy => 'आज की ग्रह ऊर्जा';
+
+  @override
+  String get rzBestSign => 'श्रेष्ठ राशि';
+
+  @override
+  String get rzChallengingSign => 'सबसे चुनौतीपूर्ण';
+
+  @override
+  String get rzDominantPlanet => 'प्रमुख ग्रह';
+
+  @override
+  String get rzOverallMood => 'समग्र मनोदशा';
+
+  @override
+  String get rzMoodBright => 'उज्ज्वल और सक्रिय';
+
+  @override
+  String get rzMoodCalm => 'शांत और स्थिर';
+
+  @override
+  String get rzMoodMixed => 'मिश्रित ऊर्जा';
+
+  @override
+  String get rzMoodTense => 'तनावपूर्ण और सतर्क';
+
+  @override
+  String get rzTodayEnergy => 'आज की ऊर्जा';
+
+  @override
+  String get rzCaution => 'सावधानी';
+
+  @override
+  String get rzWeak => 'कमजोर';
+
+  @override
+  String get rzAllSigns => 'सभी राशियाँ';
+
+  @override
+  String get rzAiSummary => 'एआई सारांश';
+
+  @override
+  String get rzPlanetaryInfluence => 'आज का ग्रह प्रभाव';
+
+  @override
+  String get rzStrongInfluences => 'प्रबल प्रभाव';
+
+  @override
+  String get rzShowTechnical => 'तकनीकी विवरण दिखाएं';
+
+  @override
+  String get rzOpportunities => 'आज के अवसर';
+
+  @override
+  String get rzAvoidTitle => 'आज बचने योग्य बातें';
+
+  @override
+  String get rzTechnicalReason => 'तकनीकी कारण';
+
+  @override
+  String get rzAvoidDecisions => 'जल्दबाजी में महत्वपूर्ण निर्णय';
+
+  @override
+  String get rzAvoidArguments => 'तीखी बहस';
+
+  @override
+  String get rzAvoidInvestments => 'बड़े निवेश';
+
+  @override
+  String get rzAvoidOverthink => 'छोटी बातों पर अधिक सोचना';
+
+  @override
+  String get rzAvoidOverspend => 'अनावश्यक खर्च';
+
+  @override
+  String get rzAvoidStress => 'तनाव और अधिक काम';
+
+  @override
+  String get rzPlanetaryChart => 'आज की ग्रह कुंडली';
+
+  @override
+  String get rzWhatChartMeans => 'इस कुंडली का अर्थ';
+
+  @override
+  String get rzChartExplain => 'यह हीरा दिखाता है कि आज आकाश में प्रत्येक ग्रह आपकी राशि के अनुसार कहाँ बैठा है। अनुकूल भावों के ग्रह दिन को उठाते हैं; कठिन भावों के ग्रह सावधानी माँगते हैं।';
+
+  @override
+  String get rzDoNetworking => 'नेटवर्किंग और जुड़ाव';
+
+  @override
+  String get rzDoLearning => 'कुछ नया सीखना';
+
+  @override
+  String get rzDoMeditation => 'ध्यान और शांति';
+
+  @override
+  String get rzDoFamily => 'परिवार के साथ समय';
+
+  @override
+  String get rzDoCreative => 'रचनात्मक कार्य';
+
+  @override
+  String get rzDoRest => 'आराम और आत्म-देखभाल';
+
+  @override
+  String get rzAiRecommendations => 'आज के एआई सुझाव';
+
+  @override
+  String get rzTechnical => 'तकनीकी ज्योतिष';
+
+  @override
+  String get rzTransitScore => 'गोचर स्कोर';
+
+  @override
+  String get rzVedha => 'वेध (बाधाएं)';
+
+  @override
+  String get rzGocharDetails => 'गोचर विवरण';
+
+  @override
+  String get rzAdvancedOnly => 'उन्नत उपयोगकर्ताओं हेतु';
+
+  @override
+  String get rzTomorrow => 'कल की झलक';
+
+  @override
+  String get rzTomorrowEnergy => 'कल की ऊर्जा';
+
+  @override
+  String get rzImproving => 'बेहतर हो रहा';
+
+  @override
+  String get rzWeaker => 'थोड़ा कमजोर';
+
+  @override
+  String get rzSteady => 'स्थिर';
+
+  @override
+  String get rzTomorrowUpLine => 'कल ऊर्जा बढ़ने की संभावना है — महत्वपूर्ण कार्यों की योजना बनाएं।';
+
+  @override
+  String get rzTomorrowDownLine => 'कल ऊर्जा थोड़ी कम हो सकती है — दिन को हल्का और स्थिर रखें।';
+
+  @override
+  String get rzTomorrowFlatLine => 'कल ऊर्जा स्थिर रहेगी — एक शांत, संतुलित दिन।';
+
+  @override
+  String get rzWeeklyTrend => 'साप्ताहिक रुझान';
+
+  @override
+  String get rzMonthlyTrend => 'मासिक रुझान';
+
+  @override
+  String get rzBestDayWeek => 'श्रेष्ठ दिन';
+
+  @override
+  String get rzHardestDay => 'कठिन दिन';
+
+  @override
+  String get rzLuckyToday => 'आज के शुभ संकेत';
+
+  @override
+  String get rzKarakaSun => 'आत्मविश्वास और जीवनशक्ति';
+
+  @override
+  String get rzKarakaMoon => 'भावनाएं और मन की शांति';
+
+  @override
+  String get rzKarakaMars => 'ऊर्जा और उत्साह';
+
+  @override
+  String get rzKarakaMercury => 'संचार और सीखना';
+
+  @override
+  String get rzKarakaJupiter => 'ज्ञान और विकास';
+
+  @override
+  String get rzKarakaVenus => 'रिश्ते और आराम';
+
+  @override
+  String get rzKarakaSaturn => 'अनुशासन और धैर्य';
+
+  @override
+  String get rzKarakaRahu => 'महत्वाकांक्षा और बदलाव';
+
+  @override
+  String get rzKarakaKetu => 'आध्यात्म और त्याग';
+
+  @override
+  String rzHomeSummary(Object dom, Object chal) {
+    return '${dom} sets the tone of the day, while ${chal} asks for patience and care.';
+  }
+
+  @override
+  String rzInsightGood(Object karaka) {
+    return 'Good day for ${karaka}.';
+  }
+
+  @override
+  String rzInsightHard(Object karaka) {
+    return 'Take it slow with ${karaka} today.';
+  }
+
+  @override
+  String rzInfluenceGood(Object karaka) {
+    return '${karaka} is well supported today.';
+  }
+
+  @override
+  String rzInfluenceHard(Object karaka) {
+    return '${karaka} may face delays today.';
+  }
+
+  @override
+  String rzDetailSummary(Object strong, Object weak) {
+    return 'Today supports ${strong}, while ${weak} needs patience and care.';
+  }
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override
