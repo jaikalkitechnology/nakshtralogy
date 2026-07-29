@@ -8,7 +8,7 @@ import '../../bloc/dashboard/dashboard_state.dart';
 import '../../services/api_service.dart';
 import '../communication/live_host_screen.dart';
 import '../rashi/rashi_list_screen.dart';
-import '../milan/milan_chart_selector.dart';
+import '../specialist/specialist_milan_picker.dart';
 import '../specialist/specialist_list_screen.dart';
 import '../forecast/forecast_chart_picker.dart';
 
@@ -178,7 +178,7 @@ class _HomeTabState extends State<HomeTab> {
             // ── Kundli Milan quick access ──
             InkWell(
               borderRadius: BorderRadius.circular(14),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MilanChartSelector())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SpecialistMilanPicker())),
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
