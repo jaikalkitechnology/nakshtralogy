@@ -3,6 +3,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'widgets/planet_positions_widget.dart';
+import 'widgets/summary_tab_widget.dart';
 import 'widgets/north_indian_chart.dart';
 import 'widgets/divisional_charts_widget.dart';
 import 'widgets/dasha_tree_widget.dart';
@@ -129,7 +130,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                   : TabBarView(
                       controller: _tabs,
                       children: [
-                        _SummaryTab(chart: _chart!),
+                        SummaryTabWidget(chart: _chart!, complete: _complete),
                         PlanetPositionsWidget(planetsMap: _planetsMap()),
                         _KundliTab(chart: _chart!),
                         DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap()),
@@ -172,86 +173,6 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
 }
 
 
-// ═══════════════════════════════════════════════════════════════════
-//  SUMMARY TAB
-// ═══════════════════════════════════════════════════════════════════
-
-class _SummaryTab extends StatelessWidget {
-  final Map<String, dynamic> chart;
-  const _SummaryTab({required this.chart});
-
-  @override
-  Widget build(BuildContext context) {
-    final planets = (chart['planets'] as Map? ?? {}).cast<String, dynamic>();
-    final lagna = (planets['Lagna'] as Map?)?.cast<String, dynamic>();
-    final moon = (planets['Moon'] as Map?)?.cast<String, dynamic>();
-    final sun = (planets['Sun'] as Map?)?.cast<String, dynamic>();
-
-    final l = AppLocalizations.of(context)!;
-    return ListView(padding: const EdgeInsets.all(16), children: [
-      _birthCard(chart, l),
-      const SizedBox(height: 12),
-      if (lagna != null) _planetSummaryCard('Ascendant (Lagna)', lagna, AppColors.primary, Icons.wb_twilight),
-      if (moon != null) _planetSummaryCard('Moon Sign (Rashi)', moon, AppColors.accent, Icons.nightlight_round),
-      if (sun != null) _planetSummaryCard('Sun Sign', sun, Colors.orange, Icons.brightness_7),
-      const SizedBox(height: 16),
-      Text('Engine: ${chart['engine'] ?? '-'}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
-    ]);
-  }
-
-  Widget _birthCard(Map<String, dynamic> chart, AppLocalizations l) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          const Icon(Icons.info_outline, color: AppColors.primary, size: 18),
-          const SizedBox(width: 8),
-          Text(l.birthDetails, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
-        ]),
-        const SizedBox(height: 10),
-        _row('Name', chart['name']?.toString() ?? ''),
-        _row('DOB', chart['dob']?.toString() ?? ''),
-        _row('TOB', chart['tob']?.toString() ?? ''),
-        _row('Place', chart['place']?.toString() ?? ''),
-      ]),
-    );
-  }
-
-  Widget _planetSummaryCard(String title, Map<String, dynamic> m, Color color, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [color.withOpacity(0.15), color.withOpacity(0.05)]),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withOpacity(0.4)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [Icon(icon, color: color, size: 20), const SizedBox(width: 8),
-          Text(title, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700))]),
-        const SizedBox(height: 10),
-        Text('${m['sign_full_local'] ?? m['sign_full']} (${m['sign']})',
-            style: const TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 4),
-        Text('Degree: ${m['degree']}°  •  Nakshatra: ${m['nakshatra_local'] ?? m['nakshatra']} (${m['pada']})',
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-        Text('Nakshatra Lord: ${m['nak_lord_local'] ?? m['nak_lord']}  •  Dignity: ${m['dignity_local'] ?? m['dignity']}',
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-      ]),
-    );
-  }
-
-  Widget _row(String l, String v) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(children: [
-      SizedBox(width: 80, child: Text(l, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
-      Expanded(child: Text(v, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500))),
-    ]),
-  );
-}
 
 
 // ═══════════════════════════════════════════════════════════════════

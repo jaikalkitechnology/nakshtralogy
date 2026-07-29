@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/gen/app_localizations.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// Displays planet positions using the new V2/helper response shape where
