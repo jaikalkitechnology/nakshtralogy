@@ -230,6 +230,126 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @yogaHelpful.
+  ///
+  /// In en, this message translates to:
+  /// **'Helpful'**
+  String get yogaHelpful;
+
+  /// No description provided for @yogaInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get yogaInactive;
+
+  /// No description provided for @yogaTabMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get yogaTabMoney;
+
+  /// No description provided for @yogaTabRare.
+  ///
+  /// In en, this message translates to:
+  /// **'Rare'**
+  String get yogaTabRare;
+
+  /// No description provided for @yogaSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga Summary'**
+  String get yogaSummaryTitle;
+
+  /// No description provided for @yogaActiveYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Yogas'**
+  String get yogaActiveYogas;
+
+  /// No description provided for @yogaTotalYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Yogas'**
+  String get yogaTotalYogas;
+
+  /// No description provided for @yogaMostPowerful.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Powerful'**
+  String get yogaMostPowerful;
+
+  /// No description provided for @yogaFortuneRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Fortune'**
+  String get yogaFortuneRating;
+
+  /// No description provided for @yogaBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits'**
+  String get yogaBenefits;
+
+  /// No description provided for @yogaSupportingPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Supporting Planets'**
+  String get yogaSupportingPlanets;
+
+  /// No description provided for @yogaRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 5 Strongest Yogas'**
+  String get yogaRanking;
+
+  /// No description provided for @yogaExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Yogas'**
+  String get yogaExplain;
+
+  /// No description provided for @yogaExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How your yogas support you'**
+  String get yogaExplainSubtitle;
+
+  /// No description provided for @yogaNoneActive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active yogas yet'**
+  String get yogaNoneActive;
+
+  /// No description provided for @yogaNoneInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No yogas in this category'**
+  String get yogaNoneInCategory;
+
+  /// No description provided for @yogaHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart carries {count} active yogas — supportive planetary combinations. Combinations involving {planets} create especially helpful influences for growth and success.'**
+  String yogaHeroSummary(Object count, Object planets);
+
+  /// No description provided for @yogaAiLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} supports {areas}, and its benefits grow when its planets are active in dasha or transit.'**
+  String yogaAiLine(Object name, Object areas);
+
+  /// No description provided for @yogaAiGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'This yoga is a supportive combination in your chart that strengthens its related areas of life.'**
+  String get yogaAiGeneric;
+
+  /// No description provided for @yogaExplainReassure.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.'**
+  String get yogaExplainReassure;
+
   /// No description provided for @doshSevere.
   ///
   /// In en, this message translates to:

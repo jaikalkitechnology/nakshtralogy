@@ -4248,6 +4248,70 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get yogaHelpful => 'सहायक';
+
+  @override
+  String get yogaInactive => 'निष्क्रिय';
+
+  @override
+  String get yogaTabMoney => 'धन';
+
+  @override
+  String get yogaTabRare => 'दुर्लभ';
+
+  @override
+  String get yogaSummaryTitle => 'योग सारांश';
+
+  @override
+  String get yogaActiveYogas => 'सक्रिय योग';
+
+  @override
+  String get yogaTotalYogas => 'कुल योग';
+
+  @override
+  String get yogaMostPowerful => 'सर्वाधिक शक्तिशाली';
+
+  @override
+  String get yogaFortuneRating => 'समग्र भाग्य';
+
+  @override
+  String get yogaBenefits => 'लाभ';
+
+  @override
+  String get yogaSupportingPlanets => 'सहायक ग्रह';
+
+  @override
+  String get yogaRanking => 'शीर्ष 5 प्रबल योग';
+
+  @override
+  String get yogaExplain => 'मेरे योग समझाएं';
+
+  @override
+  String get yogaExplainSubtitle => 'आपके योग आपकी कैसे मदद करते हैं';
+
+  @override
+  String get yogaNoneActive => 'अभी कोई सक्रिय योग नहीं';
+
+  @override
+  String get yogaNoneInCategory => 'इस श्रेणी में कोई योग नहीं';
+
+  @override
+  String yogaHeroSummary(Object count, Object planets) {
+    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+  }
+
+  @override
+  String yogaAiLine(Object name, Object areas) {
+    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+  }
+
+  @override
+  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+
+  @override
+  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override

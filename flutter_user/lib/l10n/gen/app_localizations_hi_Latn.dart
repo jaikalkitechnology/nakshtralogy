@@ -4248,6 +4248,70 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get yogaHelpful => 'Sahayak';
+
+  @override
+  String get yogaInactive => 'Nishkriya';
+
+  @override
+  String get yogaTabMoney => 'Dhan';
+
+  @override
+  String get yogaTabRare => 'Durlabh';
+
+  @override
+  String get yogaSummaryTitle => 'Yog Saaraansh';
+
+  @override
+  String get yogaActiveYogas => 'Sakriya Yog';
+
+  @override
+  String get yogaTotalYogas => 'Kul Yog';
+
+  @override
+  String get yogaMostPowerful => 'Sabse Shaktishali';
+
+  @override
+  String get yogaFortuneRating => 'Samagra Bhagya';
+
+  @override
+  String get yogaBenefits => 'Laabh';
+
+  @override
+  String get yogaSupportingPlanets => 'Sahayak Grah';
+
+  @override
+  String get yogaRanking => 'Top 5 Prabal Yog';
+
+  @override
+  String get yogaExplain => 'Mere Yog Samjhaein';
+
+  @override
+  String get yogaExplainSubtitle => 'Aapke yog aapki kaise madad karte hain';
+
+  @override
+  String get yogaNoneActive => 'Abhi koi sakriya yog nahi';
+
+  @override
+  String get yogaNoneInCategory => 'Is shreni mein koi yog nahi';
+
+  @override
+  String yogaHeroSummary(Object count, Object planets) {
+    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+  }
+
+  @override
+  String yogaAiLine(Object name, Object areas) {
+    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+  }
+
+  @override
+  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+
+  @override
+  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override

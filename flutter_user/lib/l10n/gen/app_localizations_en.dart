@@ -69,6 +69,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get yogaHelpful => 'Helpful';
+
+  @override
+  String get yogaInactive => 'Inactive';
+
+  @override
+  String get yogaTabMoney => 'Money';
+
+  @override
+  String get yogaTabRare => 'Rare';
+
+  @override
+  String get yogaSummaryTitle => 'Yoga Summary';
+
+  @override
+  String get yogaActiveYogas => 'Active Yogas';
+
+  @override
+  String get yogaTotalYogas => 'Total Yogas';
+
+  @override
+  String get yogaMostPowerful => 'Most Powerful';
+
+  @override
+  String get yogaFortuneRating => 'Overall Fortune';
+
+  @override
+  String get yogaBenefits => 'Benefits';
+
+  @override
+  String get yogaSupportingPlanets => 'Supporting Planets';
+
+  @override
+  String get yogaRanking => 'Top 5 Strongest Yogas';
+
+  @override
+  String get yogaExplain => 'Explain My Yogas';
+
+  @override
+  String get yogaExplainSubtitle => 'How your yogas support you';
+
+  @override
+  String get yogaNoneActive => 'No active yogas yet';
+
+  @override
+  String get yogaNoneInCategory => 'No yogas in this category';
+
+  @override
+  String yogaHeroSummary(Object count, Object planets) {
+    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+  }
+
+  @override
+  String yogaAiLine(Object name, Object areas) {
+    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+  }
+
+  @override
+  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
+
+  @override
+  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
+
+  @override
   String get doshSevere => 'Severe';
 
   @override
