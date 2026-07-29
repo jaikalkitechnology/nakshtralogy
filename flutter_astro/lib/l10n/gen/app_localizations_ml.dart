@@ -9,117 +9,181 @@ class AppLocalizationsMl extends AppLocalizations {
   AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
-  String get doshSevere => 'Severe';
+  String get yogaHelpful => 'Helpful';
 
   @override
-  String get doshVeryMild => 'Very Mild';
+  String get yogaInactive => 'Inactive';
 
   @override
-  String get doshLow => 'Low';
+  String get yogaTabMoney => 'Money';
 
   @override
-  String get doshHigh => 'High';
+  String get yogaTabRare => 'Rare';
 
   @override
-  String get doshCritical => 'Critical';
+  String get yogaSummaryTitle => 'Yoga Summary';
 
   @override
-  String get doshSummaryTitle => 'Dosha Summary';
+  String get yogaActiveYogas => 'Active Yogas';
 
   @override
-  String get doshActiveDoshas => 'Active Doshas';
+  String get yogaTotalYogas => 'Total Yogas';
 
   @override
-  String get doshTotalChecked => 'Total Checked';
+  String get yogaMostPowerful => 'Most Powerful';
 
   @override
-  String get doshOverallSeverity => 'Overall Severity';
+  String get yogaFortuneRating => 'Overall Fortune';
 
   @override
-  String get doshNoneActive => 'No active doshas — a clean chart!';
+  String get yogaBenefits => 'Benefits';
 
   @override
-  String get doshCategory => 'Category';
+  String get yogaSupportingPlanets => 'Supporting Planets';
 
   @override
-  String get doshConfidence => 'Confidence';
+  String get yogaRanking => 'Top 5 Strongest Yogas';
 
   @override
-  String get doshWhyFormed => 'Why This Formed';
+  String get yogaExplain => 'Explain My Yogas';
 
   @override
-  String get doshAffectedAreas => 'Affected Areas';
+  String get yogaExplainSubtitle => 'How your yogas support you';
 
   @override
-  String get doshTimeline => 'Timeline';
+  String get yogaNoneActive => 'No active yogas yet';
 
   @override
-  String get doshDefinition => 'Definition';
+  String get yogaNoneInCategory => 'No yogas in this category';
 
   @override
-  String get doshFormationRule => 'Formation Rule';
+  String yogaHeroSummary(Object count, Object planets) {
+    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
+  }
 
   @override
-  String get doshSupportingPlanets => 'Related Planet';
+  String yogaAiLine(Object name, Object areas) {
+    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
+  }
 
   @override
-  String get doshCancellation => 'Cancellation Yogas';
+  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
 
   @override
-  String get doshNoCancellation => 'None found';
+  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
 
   @override
-  String get doshAreaChildren => 'Children';
+  String get doshSevere => 'ഗുരുതരം';
 
   @override
-  String get doshAreaMind => 'Mind';
+  String get doshVeryMild => 'വളരെ നേരിയത്';
 
   @override
-  String get remMantra => 'Mantra';
+  String get doshLow => 'കുറവ്';
 
   @override
-  String get remGemstone => 'Gemstone';
+  String get doshHigh => 'ഉയർന്നത്';
 
   @override
-  String get remDonation => 'Donation';
+  String get doshCritical => 'അതീവ ഗുരുതരം';
 
   @override
-  String get remTemple => 'Temple';
+  String get doshSummaryTitle => 'ദോഷ സംഗ്രഹം';
 
   @override
-  String get remFasting => 'Fasting';
+  String get doshActiveDoshas => 'സജീവ ദോഷങ്ങൾ';
 
   @override
-  String get remLifestyle => 'Lifestyle';
+  String get doshTotalChecked => 'ആകെ പരിശോധിച്ചവ';
 
   @override
-  String get remLifestyleGeneric => 'Practise gratitude, discipline and charity connected to this planet, and keep good conduct.';
+  String get doshOverallSeverity => 'മൊത്തത്തിലുള്ള തീവ്രത';
 
   @override
-  String get doshExplain => 'Explain My Doshas';
+  String get doshNoneActive => 'സജീവ ദോഷങ്ങളില്ല — ശുദ്ധമായ ജാതകം!';
 
   @override
-  String get doshExplainSubtitle => 'A calm, practical look at your doshas';
+  String get doshCategory => 'വിഭാഗം';
 
   @override
-  String get doshExplainReassure => 'Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.';
+  String get doshConfidence => 'വിശ്വാസ്യത';
 
   @override
-  String get doshAiGeneric => 'This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.';
+  String get doshWhyFormed => 'ഇത് എന്തുകൊണ്ട് രൂപപ്പെട്ടു';
+
+  @override
+  String get doshAffectedAreas => 'ബാധിക്കപ്പെട്ട മേഖലകൾ';
+
+  @override
+  String get doshTimeline => 'കാലരേഖ';
+
+  @override
+  String get doshDefinition => 'നിർവചനം';
+
+  @override
+  String get doshFormationRule => 'രൂപീകരണ നിയമം';
+
+  @override
+  String get doshSupportingPlanets => 'ബന്ധപ്പെട്ട ഗ്രഹം';
+
+  @override
+  String get doshCancellation => 'നിവാരണ യോഗങ്ങൾ';
+
+  @override
+  String get doshNoCancellation => 'ഒന്നും കണ്ടെത്തിയില്ല';
+
+  @override
+  String get doshAreaChildren => 'സന്താനം';
+
+  @override
+  String get doshAreaMind => 'മനസ്സ്';
+
+  @override
+  String get remMantra => 'മന്ത്രം';
+
+  @override
+  String get remGemstone => 'രത്നം';
+
+  @override
+  String get remDonation => 'ദാനം';
+
+  @override
+  String get remTemple => 'ക്ഷേത്രം';
+
+  @override
+  String get remFasting => 'വ്രതം';
+
+  @override
+  String get remLifestyle => 'ജീവിതശൈലി';
+
+  @override
+  String get remLifestyleGeneric => 'ഈ ഗ്രഹവുമായി ബന്ധപ്പെട്ട നന്ദി, അച്ചടക്കം, ദാനം എന്നിവ ശീലിക്കുകയും നല്ല പെരുമാറ്റം നിലനിർത്തുകയും ചെയ്യുക.';
+
+  @override
+  String get doshExplain => 'എന്റെ ദോഷങ്ങൾ വിശദീകരിക്കുക';
+
+  @override
+  String get doshExplainSubtitle => 'നിങ്ങളുടെ ദോഷങ്ങളെക്കുറിച്ചുള്ള ശാന്തവും പ്രായോഗികവുമായ കാഴ്ചപ്പാട്';
+
+  @override
+  String get doshExplainReassure => 'ദോഷങ്ങൾ സാധാരണമാണ് — മിക്കവാറും എല്ലാ ജാതകത്തിലും ചിലത് ഉണ്ടാകും. ഇവ പ്രവണതകളെ വിവരിക്കുന്നു, നിശ്ചിത വിധിയെയല്ല. അവബോധം, നല്ല പെരുമാറ്റം, ലളിതമായ പരിഹാരങ്ങൾ എന്നിവ അവയുടെ പ്രായോഗിക ഫലം കുറയ്ക്കുന്നു, അതിനാൽ ആശങ്കപ്പെടേണ്ടതില്ല.';
+
+  @override
+  String get doshAiGeneric => 'ഈ ദോഷം നിങ്ങളുടെ ജാതകത്തിലെ ഒരു പ്രവണതയെ വിവരിക്കുന്നു. ഇതിന്റെ പ്രായോഗിക ഫലം സാധാരണയായി നേരിയതാണ്, അവബോധവും ലളിതമായ പരിഹാരങ്ങളും കൊണ്ട് സന്തുലിതമാക്കാം.';
 
   @override
   String doshHeroSummary(Object active, Object total) {
-    return 'Your chart shows ${active} active doshas out of ${total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.';
+    return 'നിങ്ങളുടെ ജാതകത്തിൽ പരിശോധിച്ച ${total}-ൽ ${active} സജീവ ദോഷങ്ങൾ കാണിക്കുന്നു. മിക്കതും നേരിയതാണ്, ചിലതിന് മാത്രമേ ശ്രദ്ധ ആവശ്യമുള്ളൂ. ധാരണയും ലളിതമായ പരിഹാരങ്ങളും കൊണ്ട് ഇവയുടെ പ്രായോഗിക ഫലം കുറയ്ക്കാം.';
   }
 
   @override
   String doshAiLine(Object areas, Object planet) {
-    return 'This dosha mainly influences ${areas}. During ${planet} periods its effect can feel stronger, and remedies help balance it.';
+    return 'ഈ ദോഷം പ്രധാനമായും ${areas}-നെ സ്വാധീനിക്കുന്നു. ${planet} ദശാ കാലയളവിൽ ഇതിന്റെ പ്രഭാവം കൂടുതൽ അനുഭവപ്പെടാം, പരിഹാരങ്ങൾ ഇത് സന്തുലിതമാക്കാൻ സഹായിക്കും.';
   }
 
   @override
   String doshTimelineLine(Object planet) {
-    return 'Its effect is felt most during the Mahadasha and Antardasha of ${planet}, and when ${planet} is active in transit.';
+    return '${planet}-ന്റെ മഹാദശ, അന്തർദശ കാലയളവിലും, ഗോചാരത്തിൽ ${planet} സജീവമാകുമ്പോഴും ഇതിന്റെ പ്രഭാവം ഏറ്റവും കൂടുതൽ അനുഭവപ്പെടുന്നു.';
   }
 
   @override
@@ -3001,70 +3065,6 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get forgotPassword => 'പാസ്‌വേഡ് മറന്നോ?';
-
-  @override
-  String get yogaHelpful => 'Helpful';
-
-  @override
-  String get yogaInactive => 'Inactive';
-
-  @override
-  String get yogaTabMoney => 'Money';
-
-  @override
-  String get yogaTabRare => 'Rare';
-
-  @override
-  String get yogaSummaryTitle => 'Yoga Summary';
-
-  @override
-  String get yogaActiveYogas => 'Active Yogas';
-
-  @override
-  String get yogaTotalYogas => 'Total Yogas';
-
-  @override
-  String get yogaMostPowerful => 'Most Powerful';
-
-  @override
-  String get yogaFortuneRating => 'Overall Fortune';
-
-  @override
-  String get yogaBenefits => 'Benefits';
-
-  @override
-  String get yogaSupportingPlanets => 'Supporting Planets';
-
-  @override
-  String get yogaRanking => 'Top 5 Strongest Yogas';
-
-  @override
-  String get yogaExplain => 'Explain My Yogas';
-
-  @override
-  String get yogaExplainSubtitle => 'How your yogas support you';
-
-  @override
-  String get yogaNoneActive => 'No active yogas yet';
-
-  @override
-  String get yogaNoneInCategory => 'No yogas in this category';
-
-  @override
-  String yogaHeroSummary(Object count, Object planets) {
-    return 'Your chart carries ${count} active yogas — supportive planetary combinations. Combinations involving ${planets} create especially helpful influences for growth and success.';
-  }
-
-  @override
-  String yogaAiLine(Object name, Object areas) {
-    return '${name} supports ${areas}, and its benefits grow when its planets are active in dasha or transit.';
-  }
-
-  @override
-  String get yogaAiGeneric => 'This yoga is a supportive combination in your chart that strengthens its related areas of life.';
-
-  @override
-  String get yogaExplainReassure => 'Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.';
 
   @override
   String get sendResetLink => 'റീസെറ്റ് ലിങ്ക് അയയ്ക്കുക';
