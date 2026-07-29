@@ -2218,6 +2218,204 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get sumVeryStrong => 'Bahut Mazboot';
+
+  @override
+  String get sumStrong => 'Mazboot';
+
+  @override
+  String get sumAverage => 'Ausat';
+
+  @override
+  String get sumWeak => 'Kamzor';
+
+  @override
+  String get sumNeedsAttention => 'Dhyan Dene Yogya';
+
+  @override
+  String get sumFire => 'Agni';
+
+  @override
+  String get sumEarth => 'Prithvi';
+
+  @override
+  String get sumAir => 'Vayu';
+
+  @override
+  String get sumWater => 'Jal';
+
+  @override
+  String get sumMovable => 'Char';
+
+  @override
+  String get sumFixed => 'Sthir';
+
+  @override
+  String get sumDual => 'Dwiswabhav';
+
+  @override
+  String get sumDirEast => 'Purva';
+
+  @override
+  String get sumDirWest => 'Paschim';
+
+  @override
+  String get sumDirNorth => 'Uttar';
+
+  @override
+  String get sumDirSouth => 'Dakshin';
+
+  @override
+  String get sumDirNE => 'Uttar-Purva';
+
+  @override
+  String get sumDirNW => 'Uttar-Paschim';
+
+  @override
+  String get sumDirSE => 'Dakshin-Purva';
+
+  @override
+  String get sumDirSW => 'Dakshin-Paschim';
+
+  @override
+  String get sumSnapshotTitle => 'Aapki Jyotish Jhalak';
+
+  @override
+  String get sumMahadasha => 'Mahadasha';
+
+  @override
+  String get sumAntardasha => 'Antardasha';
+
+  @override
+  String get sumNakshatra => 'Janma Nakshatra';
+
+  @override
+  String get sumElement => 'Tatva';
+
+  @override
+  String get sumModality => 'Swabhav';
+
+  @override
+  String get sumLuckyDirection => 'Shubh Disha';
+
+  @override
+  String get sumHighlights => 'Mukhya Bindu';
+
+  @override
+  String get sumStrongPlanet => 'Sabse Mazboot Grah';
+
+  @override
+  String get sumWeakPlanet => 'Sabse Kamzor Grah';
+
+  @override
+  String get sumYogas => 'Yog';
+
+  @override
+  String get sumDoshas => 'Dosh';
+
+  @override
+  String get sumRetrograde => 'Vakri';
+
+  @override
+  String get sumCombust => 'Ast';
+
+  @override
+  String get sumExalted => 'Uchcha';
+
+  @override
+  String get sumDebilitated => 'Neech';
+
+  @override
+  String get sumVargottama => 'Vargottam';
+
+  @override
+  String get sumQuickInsights => 'Twarit Jankari';
+
+  @override
+  String get sumSpirituality => 'Aadhyatm';
+
+  @override
+  String get sumTimezone => 'Time Zone';
+
+  @override
+  String get sumAyanamsa => 'Ayanamsha';
+
+  @override
+  String get sumCalendarType => 'Panchang';
+
+  @override
+  String get sumCopied => 'Clipboard par copy ho gaya';
+
+  @override
+  String get sumNatureFire => 'You have a bold, energetic and pioneering nature that leads from the front.';
+
+  @override
+  String get sumNatureEarth => 'You have a practical, grounded and disciplined nature that builds lasting results.';
+
+  @override
+  String get sumNatureAir => 'You have a curious, communicative and intellectual nature that thrives on new ideas.';
+
+  @override
+  String get sumNatureWater => 'You have an intuitive, emotional and empathetic nature with deep inner sensitivity.';
+
+  @override
+  String get sumGradePhraseExcellent => 'Strongly supported — favourable results are likely with steady effort.';
+
+  @override
+  String get sumGradePhraseGood => 'Well supported — generally positive with a little care.';
+
+  @override
+  String get sumGradePhraseAverage => 'Mixed support — results depend on effort and timing.';
+
+  @override
+  String get sumGradePhraseWeak => 'Needs attention — patience and remedies help here.';
+
+  @override
+  String get kDefCombust => 'A planet too close to the Sun, so its energy is \'burnt\' and weakened.';
+
+  @override
+  String get kDefRetrograde => 'A planet that appears to move backwards; its effects turn inward and intensify.';
+
+  @override
+  String get kDefNakshatra => 'One of the 27 lunar mansions that the Moon and planets travel through.';
+
+  @override
+  String get kDefVargottama => 'A planet in the same sign in both the birth chart (D1) and the navamsa (D9) — a mark of strength.';
+
+  @override
+  String get kDefOwnSign => 'A planet sitting in a sign it rules, where it feels at home and gives steady results.';
+
+  @override
+  String get kDefExalted => 'A planet in its sign of highest strength, giving its very best results.';
+
+  @override
+  String get kDefDebilitated => 'A planet in its weakest sign, where it struggles to give results.';
+
+  @override
+  String get kDefMooltrikona => 'A special portion of a planet\'s own sign where it is especially powerful.';
+
+  @override
+  String get kDefAscendant => 'The sign rising on the eastern horizon at birth — the Lagna, the foundation of the chart.';
+
+  @override
+  String get kDefMahadasha => 'The major planetary period that colours a long span of life.';
+
+  @override
+  String get kDefAntardasha => 'A sub-period within a Mahadasha that fine-tunes its results.';
+
+  @override
+  String get kDefPada => 'One of the four quarters of a nakshatra that a planet occupies.';
+
+  @override
+  String get kundliAscendantLagna => 'Ascendant (Lagna)';
+
+  @override
+  String get kundliMoonSignRashi => 'Chandra Rashi';
+
+  @override
+  String get kundliSunSign => 'Surya Rashi';
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override

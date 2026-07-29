@@ -230,6 +230,402 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @sumVeryStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Strong'**
+  String get sumVeryStrong;
+
+  /// No description provided for @sumStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get sumStrong;
+
+  /// No description provided for @sumAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get sumAverage;
+
+  /// No description provided for @sumWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get sumWeak;
+
+  /// No description provided for @sumNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Attention'**
+  String get sumNeedsAttention;
+
+  /// No description provided for @sumFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire'**
+  String get sumFire;
+
+  /// No description provided for @sumEarth.
+  ///
+  /// In en, this message translates to:
+  /// **'Earth'**
+  String get sumEarth;
+
+  /// No description provided for @sumAir.
+  ///
+  /// In en, this message translates to:
+  /// **'Air'**
+  String get sumAir;
+
+  /// No description provided for @sumWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get sumWater;
+
+  /// No description provided for @sumMovable.
+  ///
+  /// In en, this message translates to:
+  /// **'Movable'**
+  String get sumMovable;
+
+  /// No description provided for @sumFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed'**
+  String get sumFixed;
+
+  /// No description provided for @sumDual.
+  ///
+  /// In en, this message translates to:
+  /// **'Dual'**
+  String get sumDual;
+
+  /// No description provided for @sumDirEast.
+  ///
+  /// In en, this message translates to:
+  /// **'East'**
+  String get sumDirEast;
+
+  /// No description provided for @sumDirWest.
+  ///
+  /// In en, this message translates to:
+  /// **'West'**
+  String get sumDirWest;
+
+  /// No description provided for @sumDirNorth.
+  ///
+  /// In en, this message translates to:
+  /// **'North'**
+  String get sumDirNorth;
+
+  /// No description provided for @sumDirSouth.
+  ///
+  /// In en, this message translates to:
+  /// **'South'**
+  String get sumDirSouth;
+
+  /// No description provided for @sumDirNE.
+  ///
+  /// In en, this message translates to:
+  /// **'North-East'**
+  String get sumDirNE;
+
+  /// No description provided for @sumDirNW.
+  ///
+  /// In en, this message translates to:
+  /// **'North-West'**
+  String get sumDirNW;
+
+  /// No description provided for @sumDirSE.
+  ///
+  /// In en, this message translates to:
+  /// **'South-East'**
+  String get sumDirSE;
+
+  /// No description provided for @sumDirSW.
+  ///
+  /// In en, this message translates to:
+  /// **'South-West'**
+  String get sumDirSW;
+
+  /// No description provided for @sumSnapshotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Astrology Snapshot'**
+  String get sumSnapshotTitle;
+
+  /// No description provided for @sumMahadasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Mahadasha'**
+  String get sumMahadasha;
+
+  /// No description provided for @sumAntardasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Antardasha'**
+  String get sumAntardasha;
+
+  /// No description provided for @sumNakshatra.
+  ///
+  /// In en, this message translates to:
+  /// **'Janma Nakshatra'**
+  String get sumNakshatra;
+
+  /// No description provided for @sumElement.
+  ///
+  /// In en, this message translates to:
+  /// **'Element'**
+  String get sumElement;
+
+  /// No description provided for @sumModality.
+  ///
+  /// In en, this message translates to:
+  /// **'Modality'**
+  String get sumModality;
+
+  /// No description provided for @sumLuckyDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky Direction'**
+  String get sumLuckyDirection;
+
+  /// No description provided for @sumHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Highlights'**
+  String get sumHighlights;
+
+  /// No description provided for @sumStrongPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest Planet'**
+  String get sumStrongPlanet;
+
+  /// No description provided for @sumWeakPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest Planet'**
+  String get sumWeakPlanet;
+
+  /// No description provided for @sumYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogas'**
+  String get sumYogas;
+
+  /// No description provided for @sumDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Doshas'**
+  String get sumDoshas;
+
+  /// No description provided for @sumRetrograde.
+  ///
+  /// In en, this message translates to:
+  /// **'Retrograde'**
+  String get sumRetrograde;
+
+  /// No description provided for @sumCombust.
+  ///
+  /// In en, this message translates to:
+  /// **'Combust'**
+  String get sumCombust;
+
+  /// No description provided for @sumExalted.
+  ///
+  /// In en, this message translates to:
+  /// **'Exalted'**
+  String get sumExalted;
+
+  /// No description provided for @sumDebilitated.
+  ///
+  /// In en, this message translates to:
+  /// **'Debilitated'**
+  String get sumDebilitated;
+
+  /// No description provided for @sumVargottama.
+  ///
+  /// In en, this message translates to:
+  /// **'Vargottama'**
+  String get sumVargottama;
+
+  /// No description provided for @sumQuickInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Insights'**
+  String get sumQuickInsights;
+
+  /// No description provided for @sumSpirituality.
+  ///
+  /// In en, this message translates to:
+  /// **'Spirituality'**
+  String get sumSpirituality;
+
+  /// No description provided for @sumTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Timezone'**
+  String get sumTimezone;
+
+  /// No description provided for @sumAyanamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayanamsa'**
+  String get sumAyanamsa;
+
+  /// No description provided for @sumCalendarType.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get sumCalendarType;
+
+  /// No description provided for @sumCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get sumCopied;
+
+  /// No description provided for @sumNatureFire.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a bold, energetic and pioneering nature that leads from the front.'**
+  String get sumNatureFire;
+
+  /// No description provided for @sumNatureEarth.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a practical, grounded and disciplined nature that builds lasting results.'**
+  String get sumNatureEarth;
+
+  /// No description provided for @sumNatureAir.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a curious, communicative and intellectual nature that thrives on new ideas.'**
+  String get sumNatureAir;
+
+  /// No description provided for @sumNatureWater.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an intuitive, emotional and empathetic nature with deep inner sensitivity.'**
+  String get sumNatureWater;
+
+  /// No description provided for @sumGradePhraseExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongly supported — favourable results are likely with steady effort.'**
+  String get sumGradePhraseExcellent;
+
+  /// No description provided for @sumGradePhraseGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Well supported — generally positive with a little care.'**
+  String get sumGradePhraseGood;
+
+  /// No description provided for @sumGradePhraseAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed support — results depend on effort and timing.'**
+  String get sumGradePhraseAverage;
+
+  /// No description provided for @sumGradePhraseWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention — patience and remedies help here.'**
+  String get sumGradePhraseWeak;
+
+  /// No description provided for @kDefCombust.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet too close to the Sun, so its energy is \'burnt\' and weakened.'**
+  String get kDefCombust;
+
+  /// No description provided for @kDefRetrograde.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet that appears to move backwards; its effects turn inward and intensify.'**
+  String get kDefRetrograde;
+
+  /// No description provided for @kDefNakshatra.
+  ///
+  /// In en, this message translates to:
+  /// **'One of the 27 lunar mansions that the Moon and planets travel through.'**
+  String get kDefNakshatra;
+
+  /// No description provided for @kDefVargottama.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet in the same sign in both the birth chart (D1) and the navamsa (D9) — a mark of strength.'**
+  String get kDefVargottama;
+
+  /// No description provided for @kDefOwnSign.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet sitting in a sign it rules, where it feels at home and gives steady results.'**
+  String get kDefOwnSign;
+
+  /// No description provided for @kDefExalted.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet in its sign of highest strength, giving its very best results.'**
+  String get kDefExalted;
+
+  /// No description provided for @kDefDebilitated.
+  ///
+  /// In en, this message translates to:
+  /// **'A planet in its weakest sign, where it struggles to give results.'**
+  String get kDefDebilitated;
+
+  /// No description provided for @kDefMooltrikona.
+  ///
+  /// In en, this message translates to:
+  /// **'A special portion of a planet\'s own sign where it is especially powerful.'**
+  String get kDefMooltrikona;
+
+  /// No description provided for @kDefAscendant.
+  ///
+  /// In en, this message translates to:
+  /// **'The sign rising on the eastern horizon at birth — the Lagna, the foundation of the chart.'**
+  String get kDefAscendant;
+
+  /// No description provided for @kDefMahadasha.
+  ///
+  /// In en, this message translates to:
+  /// **'The major planetary period that colours a long span of life.'**
+  String get kDefMahadasha;
+
+  /// No description provided for @kDefAntardasha.
+  ///
+  /// In en, this message translates to:
+  /// **'A sub-period within a Mahadasha that fine-tunes its results.'**
+  String get kDefAntardasha;
+
+  /// No description provided for @kDefPada.
+  ///
+  /// In en, this message translates to:
+  /// **'One of the four quarters of a nakshatra that a planet occupies.'**
+  String get kDefPada;
+
+  /// No description provided for @kundliAscendantLagna.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascendant (Lagna)'**
+  String get kundliAscendantLagna;
+
+  /// No description provided for @kundliMoonSignRashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon Sign (Rashi)'**
+  String get kundliMoonSignRashi;
+
+  /// No description provided for @kundliSunSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun Sign'**
+  String get kundliSunSign;
+
   /// No description provided for @aspGivesAspectTo.
   ///
   /// In en, this message translates to:

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/gen/app_localizations.dart';
+import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 
 /// North Indian diamond-style kundli chart drawn with CustomPainter.
@@ -50,7 +50,7 @@ class NorthIndianChartWidget extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 8),
-      _legend(),
+      _legend(context),
     ]);
   }
 
@@ -181,7 +181,7 @@ class NorthIndianChartWidget extends StatelessWidget {
     ));
   }
 
-  Widget _legend() {
+  Widget _legend(BuildContext context) {
     const style = TextStyle(color: AppColors.textPrimary, fontSize: 11.5, fontWeight: FontWeight.w500);
     const symStyle = TextStyle(color: Color(0xFFFFB020), fontSize: 12.5, fontWeight: FontWeight.w800);
     Widget item(String sym, String label) => Row(mainAxisSize: MainAxisSize.min,
