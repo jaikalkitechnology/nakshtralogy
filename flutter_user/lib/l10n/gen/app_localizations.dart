@@ -235,6 +235,564 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @fdEnergyScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Energy Score'**
+  String get fdEnergyScore;
+
+  /// No description provided for @fdStatusAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get fdStatusAverage;
+
+  /// No description provided for @fdStatusMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed'**
+  String get fdStatusMixed;
+
+  /// No description provided for @fdStatusChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging'**
+  String get fdStatusChallenging;
+
+  /// No description provided for @fdTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Theme'**
+  String get fdTheme;
+
+  /// No description provided for @fdExplainToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Today'**
+  String get fdExplainToday;
+
+  /// No description provided for @fdTodaysFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Focus'**
+  String get fdTodaysFocus;
+
+  /// No description provided for @fdTopRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Recommendation'**
+  String get fdTopRecommendation;
+
+  /// No description provided for @fdTopCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Caution'**
+  String get fdTopCaution;
+
+  /// No description provided for @fdReadingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading time'**
+  String get fdReadingTime;
+
+  /// No description provided for @fdSeconds30.
+  ///
+  /// In en, this message translates to:
+  /// **'30 sec'**
+  String get fdSeconds30;
+
+  /// No description provided for @fdCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career'**
+  String get fdCareer;
+
+  /// No description provided for @fdMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get fdMoney;
+
+  /// No description provided for @fdLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get fdLove;
+
+  /// No description provided for @fdHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get fdHealth;
+
+  /// No description provided for @fdTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get fdTravel;
+
+  /// No description provided for @fdFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get fdFamily;
+
+  /// No description provided for @fdBestToDo.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Things To Do Today'**
+  String get fdBestToDo;
+
+  /// No description provided for @fdAvoidToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid Today'**
+  String get fdAvoidToday;
+
+  /// No description provided for @fdConfidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get fdConfidenceLabel;
+
+  /// No description provided for @fdBestTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time'**
+  String get fdBestTime;
+
+  /// No description provided for @fdRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get fdRecommended;
+
+  /// No description provided for @fdReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get fdReason;
+
+  /// No description provided for @fdRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk'**
+  String get fdRisk;
+
+  /// No description provided for @fdRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get fdRecommendation;
+
+  /// No description provided for @fdNoActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing major to push today — keep a steady, calm routine.'**
+  String get fdNoActions;
+
+  /// No description provided for @fdNoCautions.
+  ///
+  /// In en, this message translates to:
+  /// **'No major cautions today — proceed with normal awareness.'**
+  String get fdNoCautions;
+
+  /// No description provided for @fdHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Highlights'**
+  String get fdHighlights;
+
+  /// No description provided for @fdProbVeryHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Very High'**
+  String get fdProbVeryHigh;
+
+  /// No description provided for @fdProbHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get fdProbHigh;
+
+  /// No description provided for @fdProbElevated.
+  ///
+  /// In en, this message translates to:
+  /// **'Elevated'**
+  String get fdProbElevated;
+
+  /// No description provided for @fdProbCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution'**
+  String get fdProbCaution;
+
+  /// No description provided for @fdWhatToDo.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do'**
+  String get fdWhatToDo;
+
+  /// No description provided for @fdLifeAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Areas'**
+  String get fdLifeAreas;
+
+  /// No description provided for @fdTapDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap for details'**
+  String get fdTapDetails;
+
+  /// No description provided for @fdArea1.
+  ///
+  /// In en, this message translates to:
+  /// **'Self & Health'**
+  String get fdArea1;
+
+  /// No description provided for @fdArea2.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth & Family'**
+  String get fdArea2;
+
+  /// No description provided for @fdArea3.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get fdArea3;
+
+  /// No description provided for @fdArea4.
+  ///
+  /// In en, this message translates to:
+  /// **'Home & Comfort'**
+  String get fdArea4;
+
+  /// No description provided for @fdArea5.
+  ///
+  /// In en, this message translates to:
+  /// **'Creativity & Romance'**
+  String get fdArea5;
+
+  /// No description provided for @fdArea6.
+  ///
+  /// In en, this message translates to:
+  /// **'Work & Duties'**
+  String get fdArea6;
+
+  /// No description provided for @fdArea7.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationships'**
+  String get fdArea7;
+
+  /// No description provided for @fdArea8.
+  ///
+  /// In en, this message translates to:
+  /// **'Change & Depth'**
+  String get fdArea8;
+
+  /// No description provided for @fdArea9.
+  ///
+  /// In en, this message translates to:
+  /// **'Luck & Travel'**
+  String get fdArea9;
+
+  /// No description provided for @fdArea10.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Status'**
+  String get fdArea10;
+
+  /// No description provided for @fdArea11.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains & Network'**
+  String get fdArea11;
+
+  /// No description provided for @fdArea12.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest & Spirituality'**
+  String get fdArea12;
+
+  /// No description provided for @fdTodaysMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Meaning'**
+  String get fdTodaysMeaning;
+
+  /// No description provided for @fdGoodFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Good For'**
+  String get fdGoodFor;
+
+  /// No description provided for @fdAvoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid'**
+  String get fdAvoid;
+
+  /// No description provided for @fdPlanetSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Support'**
+  String get fdPlanetSupport;
+
+  /// No description provided for @fdWhyPrediction.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this prediction?'**
+  String get fdWhyPrediction;
+
+  /// No description provided for @fdAdvancedDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Details'**
+  String get fdAdvancedDetails;
+
+  /// No description provided for @fdAiRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommendation'**
+  String get fdAiRecommendation;
+
+  /// No description provided for @fdOverallStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Status'**
+  String get fdOverallStatus;
+
+  /// No description provided for @fdNoPlanetTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'No major planet is transiting this area today.'**
+  String get fdNoPlanetTransit;
+
+  /// No description provided for @fdFinancialOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Outlook'**
+  String get fdFinancialOutlook;
+
+  /// No description provided for @fdIncomeProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Probability'**
+  String get fdIncomeProbability;
+
+  /// No description provided for @fdExpenseProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Probability'**
+  String get fdExpenseProbability;
+
+  /// No description provided for @fdNetBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Financial Balance'**
+  String get fdNetBalance;
+
+  /// No description provided for @fdAvoidSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid Spending'**
+  String get fdAvoidSpending;
+
+  /// No description provided for @fdRelationshipOutlook.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Outlook'**
+  String get fdRelationshipOutlook;
+
+  /// No description provided for @fdOverallScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Score'**
+  String get fdOverallScore;
+
+  /// No description provided for @fdPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner'**
+  String get fdPartner;
+
+  /// No description provided for @fdRomance.
+  ///
+  /// In en, this message translates to:
+  /// **'Romance'**
+  String get fdRomance;
+
+  /// No description provided for @fdWorkplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace'**
+  String get fdWorkplace;
+
+  /// No description provided for @fdPublicImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Image'**
+  String get fdPublicImage;
+
+  /// No description provided for @fdBestActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Activity'**
+  String get fdBestActivity;
+
+  /// No description provided for @fdWeakArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak Area'**
+  String get fdWeakArea;
+
+  /// No description provided for @fdBiggestOpportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest Opportunity'**
+  String get fdBiggestOpportunity;
+
+  /// No description provided for @fdBiggestRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest Risk'**
+  String get fdBiggestRisk;
+
+  /// No description provided for @fdProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Probability'**
+  String get fdProbability;
+
+  /// No description provided for @fdProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection Advice'**
+  String get fdProtection;
+
+  /// No description provided for @fdDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get fdDescription;
+
+  /// No description provided for @fdBestTimeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time Today'**
+  String get fdBestTimeToday;
+
+  /// No description provided for @fdAvoidDuring.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid During'**
+  String get fdAvoidDuring;
+
+  /// No description provided for @fdPredictionConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Confidence'**
+  String get fdPredictionConfidence;
+
+  /// No description provided for @fdConfBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s prediction combines'**
+  String get fdConfBasis;
+
+  /// No description provided for @fdConfNatal.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart'**
+  String get fdConfNatal;
+
+  /// No description provided for @fdConfTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transit'**
+  String get fdConfTransit;
+
+  /// No description provided for @fdConfDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary Periods'**
+  String get fdConfDasha;
+
+  /// No description provided for @fdConfStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Strength'**
+  String get fdConfStrength;
+
+  /// No description provided for @fdConfHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House Activation'**
+  String get fdConfHouse;
+
+  /// No description provided for @fdAskAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get fdAskAi;
+
+  /// No description provided for @fdAskAiSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a question to get today\'s answer'**
+  String get fdAskAiSub;
+
+  /// No description provided for @fdQ1.
+  ///
+  /// In en, this message translates to:
+  /// **'Why is career slow today?'**
+  String get fdQ1;
+
+  /// No description provided for @fdQ2.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the best time today?'**
+  String get fdQ2;
+
+  /// No description provided for @fdQ3.
+  ///
+  /// In en, this message translates to:
+  /// **'Is today good for money matters?'**
+  String get fdQ3;
+
+  /// No description provided for @fdQ4.
+  ///
+  /// In en, this message translates to:
+  /// **'Is today good for travel?'**
+  String get fdQ4;
+
+  /// No description provided for @fdQ5.
+  ///
+  /// In en, this message translates to:
+  /// **'What should I avoid today?'**
+  String get fdQ5;
+
+  /// No description provided for @fdMoreSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'More Suggestions'**
+  String get fdMoreSuggestions;
+
+  /// No description provided for @fdAiSummaryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Today is best suited for {top}. {weak} may feel slow, so avoid major decisions there. Financially the day looks {fin}.'**
+  String fdAiSummaryLine(Object top, Object weak, Object fin);
+
+  /// No description provided for @fdThemeFocusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Your energy today gathers around {top} — lean into it and go gently elsewhere.'**
+  String fdThemeFocusLine(Object top);
+
   /// No description provided for @gochToday.
   ///
   /// In en, this message translates to:
