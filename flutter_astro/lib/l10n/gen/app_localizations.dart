@@ -230,6 +230,102 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @kunNavamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get kunNavamsa;
+
+  /// No description provided for @kunD10.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasamsa (D10)'**
+  String get kunD10;
+
+  /// No description provided for @kunPlacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet Placement'**
+  String get kunPlacement;
+
+  /// No description provided for @kunHousesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'House Details'**
+  String get kunHousesTitle;
+
+  /// No description provided for @kunPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet'**
+  String get kunPlanet;
+
+  /// No description provided for @kunNakshatra.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatra'**
+  String get kunNakshatra;
+
+  /// No description provided for @kunPada.
+  ///
+  /// In en, this message translates to:
+  /// **'Pada'**
+  String get kunPada;
+
+  /// No description provided for @kunLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Lord'**
+  String get kunLord;
+
+  /// No description provided for @kunExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain My Chart'**
+  String get kunExplain;
+
+  /// No description provided for @kunExplainSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A simple summary of your chart'**
+  String get kunExplainSubtitle;
+
+  /// No description provided for @kunHouseLine.
+  ///
+  /// In en, this message translates to:
+  /// **'The {ordinal} house governs {meaning}.'**
+  String kunHouseLine(Object ordinal, Object meaning);
+
+  /// No description provided for @kunHouseOccupied.
+  ///
+  /// In en, this message translates to:
+  /// **'{planets} placed here shape its results.'**
+  String kunHouseOccupied(Object planets);
+
+  /// No description provided for @kunExplainAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ascendant is {asc}, shaping your outlook and how others first see you.'**
+  String kunExplainAsc(Object asc);
+
+  /// No description provided for @kunExplainMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mind and emotions follow the Moon in {moon}.'**
+  String kunExplainMoon(Object moon);
+
+  /// No description provided for @kunExplainStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is your strongest planet — a natural area of ease and support.'**
+  String kunExplainStrong(Object planet);
+
+  /// No description provided for @kunExplainWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} is your most tested planet — patience and effort pay off here.'**
+  String kunExplainWeak(Object planet);
+
   /// No description provided for @plNature.
   ///
   /// In en, this message translates to:
