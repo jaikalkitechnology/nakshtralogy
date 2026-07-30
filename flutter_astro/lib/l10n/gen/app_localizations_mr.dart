@@ -6040,6 +6040,330 @@ class AppLocalizationsMr extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड विसरलात?';
 
   @override
+  String get lgSubtitle => 'AI-powered Vedic Legal Report';
+
+  @override
+  String get lgTitle => 'Legal & Disputes';
+
+  @override
+  String get lgSnapshotHeader => 'Legal Snapshot';
+
+  @override
+  String get lgResilience => 'Legal Resilience';
+
+  @override
+  String get lgResolutionCapacity => 'Resolution Capacity';
+
+  @override
+  String get lgVictoryPotential => 'Victory Potential';
+
+  @override
+  String get lgLegalSafety => 'Legal Safety';
+
+  @override
+  String get lgNegotiationSkill => 'Negotiation Skill';
+
+  @override
+  String get lgStatusExcellent => 'Excellent';
+
+  @override
+  String get lgStatusStrong => 'Strong';
+
+  @override
+  String get lgStatusModerate => 'Moderate';
+
+  @override
+  String get lgStatusDeveloping => 'Developing';
+
+  @override
+  String get lgStatusChallenging => 'Challenging';
+
+  @override
+  String get lgChipResolver => 'Skilled Resolver';
+
+  @override
+  String get lgChipWinner => 'Strong Case Wins';
+
+  @override
+  String get lgChipNegotiator => 'Natural Negotiator';
+
+  @override
+  String get lgChipDocumented => 'Well Documented';
+
+  @override
+  String get lgChipLowRisk => 'Low Legal Risk';
+
+  @override
+  String get lgChipMoralAuthority => 'Moral Authority';
+
+  @override
+  String get lgChipLegalAptitude => 'Legal Aptitude';
+
+  @override
+  String get lgProfileTitle => 'Your Legal Profile & Karma';
+
+  @override
+  String get lgPrimaryDriver => 'Primary Driver';
+
+  @override
+  String get lgDharmaAnchor => 'Dharma Anchor';
+
+  @override
+  String get lgAggressionMarker => 'Aggression Marker';
+
+  @override
+  String get lgDocumentationKaraka => 'Documentation Quality';
+
+  @override
+  String get lgKarakaTitle => 'Your Legal Planets';
+
+  @override
+  String get lgKarakaSubtitle => 'Which planets shape your legal fortune';
+
+  @override
+  String get lgYogasTitle => 'Legal Yogas & Protections';
+
+  @override
+  String get lgCurrentPhase => 'Current Phase';
+
+  @override
+  String get lgProtections => 'Protections';
+
+  @override
+  String get lgDisputePressures => 'Dispute Pressures';
+
+  @override
+  String get lgVerificationTitle => 'Verified Across Charts';
+
+  @override
+  String get lgD6Litigation => 'D6 Litigation Chart';
+
+  @override
+  String get lgD9Dharma => 'D9 Dharma Chart';
+
+  @override
+  String get lgMoralAuthority => 'Moral Authority';
+
+  @override
+  String get lgVictoryTitle => 'Victory Analysis';
+
+  @override
+  String get lgAsPlaintiff => 'As Plaintiff';
+
+  @override
+  String get lgAsDefendant => 'As Defendant';
+
+  @override
+  String get lgSettlementPreference => 'Settlement Preference';
+
+  @override
+  String get lgDisputeCategoriesTitle => 'Dispute Categories Watch';
+
+  @override
+  String get lgLowRiskCategories => 'Low-Risk Categories';
+
+  @override
+  String get lgConflictStyleTitle => 'Conflict Style & Enemies';
+
+  @override
+  String get lgConfrontationComfort => 'Confrontation Comfort';
+
+  @override
+  String get lgArgumentPersuasiveness => 'Argument Persuasiveness';
+
+  @override
+  String get lgEmotionalRegulation => 'Emotional Regulation';
+
+  @override
+  String get lgGrudgeHolding => 'Grudge-Holding Tendency';
+
+  @override
+  String get lgEnemyAnalysisLabel => 'Enemy Analysis';
+
+  @override
+  String get lgVisibleEnemies => 'Visible Enemies';
+
+  @override
+  String get lgHiddenEnemies => 'Hidden Enemies';
+
+  @override
+  String get lgWorkplaceEnemies => 'Workplace Enemies';
+
+  @override
+  String get lgFamilyEnemies => 'Family Enemies';
+
+  @override
+  String get lgLegalEnemies => 'Legal Enemies';
+
+  @override
+  String get lgEnemyDefeatCapacity => 'Enemy Defeat Capacity';
+
+  @override
+  String get lgCriminalFinancialTitle => 'Criminal & Financial Risk Watch';
+
+  @override
+  String get lgCriminalRisk => 'Criminal Involvement Risk';
+
+  @override
+  String get lgVictimOfCrime => 'Victim of Crime Chance';
+
+  @override
+  String get lgFalseAccusation => 'False Accusation Risk';
+
+  @override
+  String get lgImprisonmentRisk => 'Imprisonment Risk';
+
+  @override
+  String get lgTaxDisputeRisk => 'Tax Dispute Risk';
+
+  @override
+  String get lgFinancialFraudRisk => 'Financial Fraud Risk';
+
+  @override
+  String get lgBusinessLitigationRisk => 'Business Litigation Risk';
+
+  @override
+  String get lgBankruptcyRisk => 'Bankruptcy Risk';
+
+  @override
+  String get lgAuditVulnerability => 'Audit Vulnerability';
+
+  @override
+  String get lgProtectionPriority => 'Protection Priority';
+
+  @override
+  String get lgContractsTitle => 'Contracts & Negotiation';
+
+  @override
+  String get lgContractClarity => 'Contract Clarity';
+
+  @override
+  String get lgDocumentationDiscipline => 'Documentation Discipline';
+
+  @override
+  String get lgFinePrintAwareness => 'Fine-Print Awareness';
+
+  @override
+  String get lgSignatureCaution => 'Signature Caution';
+
+  @override
+  String get lgMediationReceptivity => 'Mediation Receptivity';
+
+  @override
+  String get lgNegotiationSkillFull => 'Negotiation Skill';
+
+  @override
+  String get lgCompromiseWillingness => 'Compromise Willingness';
+
+  @override
+  String get lgFaceSavingNeeds => 'Face-Saving Needs';
+
+  @override
+  String get lgMediatorHireRecommendation => 'Mediator Hire Recommendation';
+
+  @override
+  String get lgTypicalContractIssues => 'Typical Contract Issues';
+
+  @override
+  String get lgCareerFitTitle => 'Legal Career Fit';
+
+  @override
+  String get lgProfessionAffinity => 'Profession Affinity';
+
+  @override
+  String get lgRoleFit => 'Best Role Fit';
+
+  @override
+  String get lgLawStudentSuccess => 'Law Student Success';
+
+  @override
+  String get lgBarExamSuccess => 'Bar Exam Success';
+
+  @override
+  String get lgTimelineTitle => 'Legal Timeline';
+
+  @override
+  String get lgNewMatterChance => 'New Matter Chance (Next 12M)';
+
+  @override
+  String get lgOngoingCaseOutcome => 'Ongoing Case Outcome';
+
+  @override
+  String get lgRecommendedAction => 'Recommended Action';
+
+  @override
+  String get lgPeakDisputeYears => 'Peak Dispute Years';
+
+  @override
+  String get lgClarityYears => 'Legal Clarity Years';
+
+  @override
+  String get lgAvoidancePeriods => 'Critical Avoidance Periods';
+
+  @override
+  String get lgFavorableWindows => 'Favorable Resolution Windows';
+
+  @override
+  String get lgRisksTitle => 'Risks & Vulnerabilities';
+
+  @override
+  String get lgChronicVulnerabilities => 'Chronic Vulnerabilities';
+
+  @override
+  String get lgAvoidDashaPeriods => 'Dasha Periods to Watch';
+
+  @override
+  String get lgPreventivePriorities => 'Preventive Priorities';
+
+  @override
+  String get lgRedFlags => 'Red-Flag Situations';
+
+  @override
+  String get lgImprovementTitle => 'Improvement Plan';
+
+  @override
+  String get lgReliabilityTitle => 'Reliability';
+
+  @override
+  String get lgLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get lgLayerD6 => 'Litigation Chart (D6)';
+
+  @override
+  String get lgLayerD9 => 'Dharma Chart (D9)';
+
+  @override
+  String get lgLayerDasha => 'Dasha Timing';
+
+  @override
+  String get lgLayerTransit => 'Transits';
+
+  @override
+  String get lgTopicWinChance => 'What are my winning chances?';
+
+  @override
+  String get lgTopicStrategy => 'Best legal strategy for me?';
+
+  @override
+  String get lgTopicContract => 'Contract risks to watch?';
+
+  @override
+  String get lgTopicTiming => 'Best timing to resolve disputes?';
+
+  @override
+  String get lgTopicSettlement => 'Should I settle or fight?';
+
+  @override
+  String get lgTopicEnemies => 'Who are my hidden enemies?';
+
+  @override
+  String get lgTopicProtection => 'How to protect myself legally?';
+
+  @override
+  String get lgTopicCareer => 'Am I suited for a legal career?';
+
+  @override
   String get prSubtitle => 'AI-powered Vedic Property Report';
 
   @override

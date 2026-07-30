@@ -6040,6 +6040,330 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get lgSubtitle => 'AI-संचालित वैदिक कानूनी रिपोर्ट';
+
+  @override
+  String get lgTitle => 'कानूनी मामले और विवाद';
+
+  @override
+  String get lgSnapshotHeader => 'कानूनी स्नैपशॉट';
+
+  @override
+  String get lgResilience => 'कानूनी दृढ़ता';
+
+  @override
+  String get lgResolutionCapacity => 'समाधान क्षमता';
+
+  @override
+  String get lgVictoryPotential => 'जीत की संभावना';
+
+  @override
+  String get lgLegalSafety => 'कानूनी सुरक्षा';
+
+  @override
+  String get lgNegotiationSkill => 'बातचीत कौशल';
+
+  @override
+  String get lgStatusExcellent => 'उत्कृष्ट';
+
+  @override
+  String get lgStatusStrong => 'मजबूत';
+
+  @override
+  String get lgStatusModerate => 'मध्यम';
+
+  @override
+  String get lgStatusDeveloping => 'विकासशील';
+
+  @override
+  String get lgStatusChallenging => 'चुनौतीपूर्ण';
+
+  @override
+  String get lgChipResolver => 'कुशल समाधानकर्ता';
+
+  @override
+  String get lgChipWinner => 'मजबूत केस जीत';
+
+  @override
+  String get lgChipNegotiator => 'स्वाभाविक वार्ताकार';
+
+  @override
+  String get lgChipDocumented => 'अच्छी तरह दस्तावेज़ीकृत';
+
+  @override
+  String get lgChipLowRisk => 'कम कानूनी जोखिम';
+
+  @override
+  String get lgChipMoralAuthority => 'नैतिक अधिकार';
+
+  @override
+  String get lgChipLegalAptitude => 'कानूनी योग्यता';
+
+  @override
+  String get lgProfileTitle => 'आपकी कानूनी प्रोफ़ाइल और कर्म';
+
+  @override
+  String get lgPrimaryDriver => 'मुख्य चालक';
+
+  @override
+  String get lgDharmaAnchor => 'धर्म आधार';
+
+  @override
+  String get lgAggressionMarker => 'आक्रामकता संकेतक';
+
+  @override
+  String get lgDocumentationKaraka => 'दस्तावेज़ीकरण गुणवत्ता';
+
+  @override
+  String get lgKarakaTitle => 'आपके कानूनी ग्रह';
+
+  @override
+  String get lgKarakaSubtitle => 'कौन से ग्रह आपके कानूनी भाग्य को आकार देते हैं';
+
+  @override
+  String get lgYogasTitle => 'कानूनी योग और सुरक्षा';
+
+  @override
+  String get lgCurrentPhase => 'वर्तमान चरण';
+
+  @override
+  String get lgProtections => 'सुरक्षा कारक';
+
+  @override
+  String get lgDisputePressures => 'विवाद दबाव';
+
+  @override
+  String get lgVerificationTitle => 'अन्य कुंडलियों से सत्यापित';
+
+  @override
+  String get lgD6Litigation => 'D6 मुकदमा कुंडली';
+
+  @override
+  String get lgD9Dharma => 'D9 धर्म कुंडली';
+
+  @override
+  String get lgMoralAuthority => 'नैतिक अधिकार';
+
+  @override
+  String get lgVictoryTitle => 'जीत का विश्लेषण';
+
+  @override
+  String get lgAsPlaintiff => 'वादी के रूप में';
+
+  @override
+  String get lgAsDefendant => 'प्रतिवादी के रूप में';
+
+  @override
+  String get lgSettlementPreference => 'समझौते की प्राथमिकता';
+
+  @override
+  String get lgDisputeCategoriesTitle => 'विवाद श्रेणी निगरानी';
+
+  @override
+  String get lgLowRiskCategories => 'कम जोखिम वाली श्रेणियां';
+
+  @override
+  String get lgConflictStyleTitle => 'संघर्ष शैली और शत्रु';
+
+  @override
+  String get lgConfrontationComfort => 'टकराव में सहजता';
+
+  @override
+  String get lgArgumentPersuasiveness => 'तर्क की प्रभावशीलता';
+
+  @override
+  String get lgEmotionalRegulation => 'भावनात्मक नियंत्रण';
+
+  @override
+  String get lgGrudgeHolding => 'बदला लेने की प्रवृत्ति';
+
+  @override
+  String get lgEnemyAnalysisLabel => 'शत्रु विश्लेषण';
+
+  @override
+  String get lgVisibleEnemies => 'प्रत्यक्ष शत्रु';
+
+  @override
+  String get lgHiddenEnemies => 'छिपे शत्रु';
+
+  @override
+  String get lgWorkplaceEnemies => 'कार्यस्थल शत्रु';
+
+  @override
+  String get lgFamilyEnemies => 'पारिवारिक शत्रु';
+
+  @override
+  String get lgLegalEnemies => 'कानूनी शत्रु';
+
+  @override
+  String get lgEnemyDefeatCapacity => 'शत्रु पराजय क्षमता';
+
+  @override
+  String get lgCriminalFinancialTitle => 'आपराधिक और वित्तीय जोखिम निगरानी';
+
+  @override
+  String get lgCriminalRisk => 'आपराधिक मामले में शामिल होने का जोखिम';
+
+  @override
+  String get lgVictimOfCrime => 'अपराध का शिकार होने की संभावना';
+
+  @override
+  String get lgFalseAccusation => 'झूठे आरोप का जोखिम';
+
+  @override
+  String get lgImprisonmentRisk => 'कारावास का जोखिम';
+
+  @override
+  String get lgTaxDisputeRisk => 'कर विवाद जोखिम';
+
+  @override
+  String get lgFinancialFraudRisk => 'वित्तीय धोखाधड़ी जोखिम';
+
+  @override
+  String get lgBusinessLitigationRisk => 'व्यावसायिक मुकदमेबाज़ी जोखिम';
+
+  @override
+  String get lgBankruptcyRisk => 'दिवालियापन जोखिम';
+
+  @override
+  String get lgAuditVulnerability => 'ऑडिट भेद्यता';
+
+  @override
+  String get lgProtectionPriority => 'सुरक्षा प्राथमिकता';
+
+  @override
+  String get lgContractsTitle => 'अनुबंध और वार्ता';
+
+  @override
+  String get lgContractClarity => 'अनुबंध स्पष्टता';
+
+  @override
+  String get lgDocumentationDiscipline => 'दस्तावेज़ीकरण अनुशासन';
+
+  @override
+  String get lgFinePrintAwareness => 'बारीकियों की जानकारी';
+
+  @override
+  String get lgSignatureCaution => 'हस्ताक्षर सावधानी';
+
+  @override
+  String get lgMediationReceptivity => 'मध्यस्थता की स्वीकार्यता';
+
+  @override
+  String get lgNegotiationSkillFull => 'बातचीत कौशल';
+
+  @override
+  String get lgCompromiseWillingness => 'समझौते की इच्छा';
+
+  @override
+  String get lgFaceSavingNeeds => 'प्रतिष्ठा बचाने की आवश्यकता';
+
+  @override
+  String get lgMediatorHireRecommendation => 'मध्यस्थ नियुक्त करने की सलाह';
+
+  @override
+  String get lgTypicalContractIssues => 'सामान्य अनुबंध समस्याएं';
+
+  @override
+  String get lgCareerFitTitle => 'कानूनी करियर उपयुक्तता';
+
+  @override
+  String get lgProfessionAffinity => 'पेशे की रुचि';
+
+  @override
+  String get lgRoleFit => 'सर्वश्रेष्ठ भूमिका';
+
+  @override
+  String get lgLawStudentSuccess => 'कानून छात्र सफलता';
+
+  @override
+  String get lgBarExamSuccess => 'बार परीक्षा सफलता';
+
+  @override
+  String get lgTimelineTitle => 'कानूनी समयरेखा';
+
+  @override
+  String get lgNewMatterChance => 'नया मामला होने की संभावना (अगले 12 माह)';
+
+  @override
+  String get lgOngoingCaseOutcome => 'चल रहे मामले का परिणाम';
+
+  @override
+  String get lgRecommendedAction => 'सुझाई गई कार्रवाई';
+
+  @override
+  String get lgPeakDisputeYears => 'विवाद के चरम वर्ष';
+
+  @override
+  String get lgClarityYears => 'स्पष्टता के वर्ष';
+
+  @override
+  String get lgAvoidancePeriods => 'बचने योग्य महत्वपूर्ण समय';
+
+  @override
+  String get lgFavorableWindows => 'अनुकूल समाधान समय';
+
+  @override
+  String get lgRisksTitle => 'जोखिम और कमजोरियां';
+
+  @override
+  String get lgChronicVulnerabilities => 'दीर्घकालिक कमजोरियां';
+
+  @override
+  String get lgAvoidDashaPeriods => 'ध्यान देने योग्य दशा काल';
+
+  @override
+  String get lgPreventivePriorities => 'निवारक प्राथमिकताएं';
+
+  @override
+  String get lgRedFlags => 'चेतावनी संकेत वाली स्थितियां';
+
+  @override
+  String get lgImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get lgReliabilityTitle => 'विश्वसनीयता';
+
+  @override
+  String get lgLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get lgLayerD6 => 'मुकदमा कुंडली (D6)';
+
+  @override
+  String get lgLayerD9 => 'धर्म कुंडली (D9)';
+
+  @override
+  String get lgLayerDasha => 'दशा समय';
+
+  @override
+  String get lgLayerTransit => 'गोचर';
+
+  @override
+  String get lgTopicWinChance => 'मेरे जीतने की संभावना क्या है?';
+
+  @override
+  String get lgTopicStrategy => 'मेरे लिए सबसे अच्छी कानूनी रणनीति?';
+
+  @override
+  String get lgTopicContract => 'किन अनुबंध जोखिमों पर ध्यान दूं?';
+
+  @override
+  String get lgTopicTiming => 'विवाद सुलझाने का सबसे अच्छा समय?';
+
+  @override
+  String get lgTopicSettlement => 'क्या मुझे समझौता करना चाहिए या लड़ना चाहिए?';
+
+  @override
+  String get lgTopicEnemies => 'मेरे छिपे शत्रु कौन हैं?';
+
+  @override
+  String get lgTopicProtection => 'कानूनी रूप से खुद को कैसे सुरक्षित रखूं?';
+
+  @override
+  String get lgTopicCareer => 'क्या मैं कानूनी करियर के लिए उपयुक्त हूं?';
+
+  @override
   String get prSubtitle => 'AI-संचालित वैदिक संपत्ति रिपोर्ट';
 
   @override

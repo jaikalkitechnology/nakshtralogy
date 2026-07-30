@@ -230,6 +230,654 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @lgSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Legal Report'**
+  String get lgSubtitle;
+
+  /// No description provided for @lgTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal & Disputes'**
+  String get lgTitle;
+
+  /// No description provided for @lgSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Snapshot'**
+  String get lgSnapshotHeader;
+
+  /// No description provided for @lgResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Resilience'**
+  String get lgResilience;
+
+  /// No description provided for @lgResolutionCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolution Capacity'**
+  String get lgResolutionCapacity;
+
+  /// No description provided for @lgVictoryPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Victory Potential'**
+  String get lgVictoryPotential;
+
+  /// No description provided for @lgLegalSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Safety'**
+  String get lgLegalSafety;
+
+  /// No description provided for @lgNegotiationSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Negotiation Skill'**
+  String get lgNegotiationSkill;
+
+  /// No description provided for @lgStatusExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get lgStatusExcellent;
+
+  /// No description provided for @lgStatusStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get lgStatusStrong;
+
+  /// No description provided for @lgStatusModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get lgStatusModerate;
+
+  /// No description provided for @lgStatusDeveloping.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing'**
+  String get lgStatusDeveloping;
+
+  /// No description provided for @lgStatusChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging'**
+  String get lgStatusChallenging;
+
+  /// No description provided for @lgChipResolver.
+  ///
+  /// In en, this message translates to:
+  /// **'Skilled Resolver'**
+  String get lgChipResolver;
+
+  /// No description provided for @lgChipWinner.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Case Wins'**
+  String get lgChipWinner;
+
+  /// No description provided for @lgChipNegotiator.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Negotiator'**
+  String get lgChipNegotiator;
+
+  /// No description provided for @lgChipDocumented.
+  ///
+  /// In en, this message translates to:
+  /// **'Well Documented'**
+  String get lgChipDocumented;
+
+  /// No description provided for @lgChipLowRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Legal Risk'**
+  String get lgChipLowRisk;
+
+  /// No description provided for @lgChipMoralAuthority.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral Authority'**
+  String get lgChipMoralAuthority;
+
+  /// No description provided for @lgChipLegalAptitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Aptitude'**
+  String get lgChipLegalAptitude;
+
+  /// No description provided for @lgProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Legal Profile & Karma'**
+  String get lgProfileTitle;
+
+  /// No description provided for @lgPrimaryDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Driver'**
+  String get lgPrimaryDriver;
+
+  /// No description provided for @lgDharmaAnchor.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma Anchor'**
+  String get lgDharmaAnchor;
+
+  /// No description provided for @lgAggressionMarker.
+  ///
+  /// In en, this message translates to:
+  /// **'Aggression Marker'**
+  String get lgAggressionMarker;
+
+  /// No description provided for @lgDocumentationKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Documentation Quality'**
+  String get lgDocumentationKaraka;
+
+  /// No description provided for @lgKarakaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Legal Planets'**
+  String get lgKarakaTitle;
+
+  /// No description provided for @lgKarakaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which planets shape your legal fortune'**
+  String get lgKarakaSubtitle;
+
+  /// No description provided for @lgYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Yogas & Protections'**
+  String get lgYogasTitle;
+
+  /// No description provided for @lgCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Phase'**
+  String get lgCurrentPhase;
+
+  /// No description provided for @lgProtections.
+  ///
+  /// In en, this message translates to:
+  /// **'Protections'**
+  String get lgProtections;
+
+  /// No description provided for @lgDisputePressures.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute Pressures'**
+  String get lgDisputePressures;
+
+  /// No description provided for @lgVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts'**
+  String get lgVerificationTitle;
+
+  /// No description provided for @lgD6Litigation.
+  ///
+  /// In en, this message translates to:
+  /// **'D6 Litigation Chart'**
+  String get lgD6Litigation;
+
+  /// No description provided for @lgD9Dharma.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Dharma Chart'**
+  String get lgD9Dharma;
+
+  /// No description provided for @lgMoralAuthority.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral Authority'**
+  String get lgMoralAuthority;
+
+  /// No description provided for @lgVictoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Victory Analysis'**
+  String get lgVictoryTitle;
+
+  /// No description provided for @lgAsPlaintiff.
+  ///
+  /// In en, this message translates to:
+  /// **'As Plaintiff'**
+  String get lgAsPlaintiff;
+
+  /// No description provided for @lgAsDefendant.
+  ///
+  /// In en, this message translates to:
+  /// **'As Defendant'**
+  String get lgAsDefendant;
+
+  /// No description provided for @lgSettlementPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Settlement Preference'**
+  String get lgSettlementPreference;
+
+  /// No description provided for @lgDisputeCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute Categories Watch'**
+  String get lgDisputeCategoriesTitle;
+
+  /// No description provided for @lgLowRiskCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-Risk Categories'**
+  String get lgLowRiskCategories;
+
+  /// No description provided for @lgConflictStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict Style & Enemies'**
+  String get lgConflictStyleTitle;
+
+  /// No description provided for @lgConfrontationComfort.
+  ///
+  /// In en, this message translates to:
+  /// **'Confrontation Comfort'**
+  String get lgConfrontationComfort;
+
+  /// No description provided for @lgArgumentPersuasiveness.
+  ///
+  /// In en, this message translates to:
+  /// **'Argument Persuasiveness'**
+  String get lgArgumentPersuasiveness;
+
+  /// No description provided for @lgEmotionalRegulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Regulation'**
+  String get lgEmotionalRegulation;
+
+  /// No description provided for @lgGrudgeHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'Grudge-Holding Tendency'**
+  String get lgGrudgeHolding;
+
+  /// No description provided for @lgEnemyAnalysisLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemy Analysis'**
+  String get lgEnemyAnalysisLabel;
+
+  /// No description provided for @lgVisibleEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible Enemies'**
+  String get lgVisibleEnemies;
+
+  /// No description provided for @lgHiddenEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden Enemies'**
+  String get lgHiddenEnemies;
+
+  /// No description provided for @lgWorkplaceEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace Enemies'**
+  String get lgWorkplaceEnemies;
+
+  /// No description provided for @lgFamilyEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Enemies'**
+  String get lgFamilyEnemies;
+
+  /// No description provided for @lgLegalEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Enemies'**
+  String get lgLegalEnemies;
+
+  /// No description provided for @lgEnemyDefeatCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enemy Defeat Capacity'**
+  String get lgEnemyDefeatCapacity;
+
+  /// No description provided for @lgCriminalFinancialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Criminal & Financial Risk Watch'**
+  String get lgCriminalFinancialTitle;
+
+  /// No description provided for @lgCriminalRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Criminal Involvement Risk'**
+  String get lgCriminalRisk;
+
+  /// No description provided for @lgVictimOfCrime.
+  ///
+  /// In en, this message translates to:
+  /// **'Victim of Crime Chance'**
+  String get lgVictimOfCrime;
+
+  /// No description provided for @lgFalseAccusation.
+  ///
+  /// In en, this message translates to:
+  /// **'False Accusation Risk'**
+  String get lgFalseAccusation;
+
+  /// No description provided for @lgImprisonmentRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Imprisonment Risk'**
+  String get lgImprisonmentRisk;
+
+  /// No description provided for @lgTaxDisputeRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax Dispute Risk'**
+  String get lgTaxDisputeRisk;
+
+  /// No description provided for @lgFinancialFraudRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Fraud Risk'**
+  String get lgFinancialFraudRisk;
+
+  /// No description provided for @lgBusinessLitigationRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Litigation Risk'**
+  String get lgBusinessLitigationRisk;
+
+  /// No description provided for @lgBankruptcyRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Bankruptcy Risk'**
+  String get lgBankruptcyRisk;
+
+  /// No description provided for @lgAuditVulnerability.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Vulnerability'**
+  String get lgAuditVulnerability;
+
+  /// No description provided for @lgProtectionPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection Priority'**
+  String get lgProtectionPriority;
+
+  /// No description provided for @lgContractsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contracts & Negotiation'**
+  String get lgContractsTitle;
+
+  /// No description provided for @lgContractClarity.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract Clarity'**
+  String get lgContractClarity;
+
+  /// No description provided for @lgDocumentationDiscipline.
+  ///
+  /// In en, this message translates to:
+  /// **'Documentation Discipline'**
+  String get lgDocumentationDiscipline;
+
+  /// No description provided for @lgFinePrintAwareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine-Print Awareness'**
+  String get lgFinePrintAwareness;
+
+  /// No description provided for @lgSignatureCaution.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature Caution'**
+  String get lgSignatureCaution;
+
+  /// No description provided for @lgMediationReceptivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Mediation Receptivity'**
+  String get lgMediationReceptivity;
+
+  /// No description provided for @lgNegotiationSkillFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Negotiation Skill'**
+  String get lgNegotiationSkillFull;
+
+  /// No description provided for @lgCompromiseWillingness.
+  ///
+  /// In en, this message translates to:
+  /// **'Compromise Willingness'**
+  String get lgCompromiseWillingness;
+
+  /// No description provided for @lgFaceSavingNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Face-Saving Needs'**
+  String get lgFaceSavingNeeds;
+
+  /// No description provided for @lgMediatorHireRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Mediator Hire Recommendation'**
+  String get lgMediatorHireRecommendation;
+
+  /// No description provided for @lgTypicalContractIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Typical Contract Issues'**
+  String get lgTypicalContractIssues;
+
+  /// No description provided for @lgCareerFitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Career Fit'**
+  String get lgCareerFitTitle;
+
+  /// No description provided for @lgProfessionAffinity.
+  ///
+  /// In en, this message translates to:
+  /// **'Profession Affinity'**
+  String get lgProfessionAffinity;
+
+  /// No description provided for @lgRoleFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Role Fit'**
+  String get lgRoleFit;
+
+  /// No description provided for @lgLawStudentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Law Student Success'**
+  String get lgLawStudentSuccess;
+
+  /// No description provided for @lgBarExamSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Bar Exam Success'**
+  String get lgBarExamSuccess;
+
+  /// No description provided for @lgTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Timeline'**
+  String get lgTimelineTitle;
+
+  /// No description provided for @lgNewMatterChance.
+  ///
+  /// In en, this message translates to:
+  /// **'New Matter Chance (Next 12M)'**
+  String get lgNewMatterChance;
+
+  /// No description provided for @lgOngoingCaseOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Ongoing Case Outcome'**
+  String get lgOngoingCaseOutcome;
+
+  /// No description provided for @lgRecommendedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Action'**
+  String get lgRecommendedAction;
+
+  /// No description provided for @lgPeakDisputeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Dispute Years'**
+  String get lgPeakDisputeYears;
+
+  /// No description provided for @lgClarityYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Clarity Years'**
+  String get lgClarityYears;
+
+  /// No description provided for @lgAvoidancePeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Avoidance Periods'**
+  String get lgAvoidancePeriods;
+
+  /// No description provided for @lgFavorableWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorable Resolution Windows'**
+  String get lgFavorableWindows;
+
+  /// No description provided for @lgRisksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks & Vulnerabilities'**
+  String get lgRisksTitle;
+
+  /// No description provided for @lgChronicVulnerabilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Vulnerabilities'**
+  String get lgChronicVulnerabilities;
+
+  /// No description provided for @lgAvoidDashaPeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Periods to Watch'**
+  String get lgAvoidDashaPeriods;
+
+  /// No description provided for @lgPreventivePriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Preventive Priorities'**
+  String get lgPreventivePriorities;
+
+  /// No description provided for @lgRedFlags.
+  ///
+  /// In en, this message translates to:
+  /// **'Red-Flag Situations'**
+  String get lgRedFlags;
+
+  /// No description provided for @lgImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get lgImprovementTitle;
+
+  /// No description provided for @lgReliabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get lgReliabilityTitle;
+
+  /// No description provided for @lgLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get lgLayerD1;
+
+  /// No description provided for @lgLayerD6.
+  ///
+  /// In en, this message translates to:
+  /// **'Litigation Chart (D6)'**
+  String get lgLayerD6;
+
+  /// No description provided for @lgLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma Chart (D9)'**
+  String get lgLayerD9;
+
+  /// No description provided for @lgLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get lgLayerDasha;
+
+  /// No description provided for @lgLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Transits'**
+  String get lgLayerTransit;
+
+  /// No description provided for @lgTopicWinChance.
+  ///
+  /// In en, this message translates to:
+  /// **'What are my winning chances?'**
+  String get lgTopicWinChance;
+
+  /// No description provided for @lgTopicStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Best legal strategy for me?'**
+  String get lgTopicStrategy;
+
+  /// No description provided for @lgTopicContract.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract risks to watch?'**
+  String get lgTopicContract;
+
+  /// No description provided for @lgTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing to resolve disputes?'**
+  String get lgTopicTiming;
+
+  /// No description provided for @lgTopicSettlement.
+  ///
+  /// In en, this message translates to:
+  /// **'Should I settle or fight?'**
+  String get lgTopicSettlement;
+
+  /// No description provided for @lgTopicEnemies.
+  ///
+  /// In en, this message translates to:
+  /// **'Who are my hidden enemies?'**
+  String get lgTopicEnemies;
+
+  /// No description provided for @lgTopicProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'How to protect myself legally?'**
+  String get lgTopicProtection;
+
+  /// No description provided for @lgTopicCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Am I suited for a legal career?'**
+  String get lgTopicCareer;
+
   /// No description provided for @prSubtitle.
   ///
   /// In en, this message translates to:
