@@ -48,16 +48,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get klProfilesTitle => 'Chart Profiles';
 
   @override
-  String get klKetuAt => 'Ketu at';
+  String get klKetuAt => 'Ketu hai';
 
   @override
-  String get klRahuAt => 'Rahu at';
+  String get klRahuAt => 'Rahu hai';
 
   @override
   String get klFoundationTitle => 'Per-Chart Karmic Foundation';
 
   @override
-  String get klFoundationSubtitle => 'Each soul\'s past-life mastery and current-life direction';
+  String get klFoundationSubtitle => 'Har soul ki past-life mastery aur current-life direction';
 
   @override
   String get klKetuMastery => 'Ketu Mastery';
@@ -72,10 +72,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get klD60Depth => 'D60 Karmic Depth';
 
   @override
-  String get klAtmakarakaAgenda => 'Soul agenda';
+  String get klAtmakarakaAgenda => 'Soul ka agenda';
 
   @override
-  String get klSaturnKarma => 'Saturn karma';
+  String get klSaturnKarma => 'Shani ka karma';
 
   @override
   String get klPairwiseTitle => 'Pairwise Karmic Linkages';
@@ -115,38 +115,38 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String klAuditSubtitle(Object count) {
-    return '${count} karmic parameters examined';
+    return '${count} karmic parameters check kiye gaye';
   }
 
   @override
-  String get klTopicLinkage => 'Hamara overall karmic linkage';
+  String get klTopicLinkage => 'Humara overall karmic linkage';
 
   @override
-  String get klTopicPairwise => 'Kisi specific pair ka karmic bond';
+  String get klTopicPairwise => 'Kisi ek pair ka karmic bond';
 
   @override
-  String get klTopicDebts => 'Resolve karne wale karmic debts';
+  String get klTopicDebts => 'Suljhane wale karmic debts';
 
   @override
   String get klTopicLessons => 'Hum yahan kya seekhne aaye hain';
 
   @override
-  String get klTopicTiming => 'Hamare group ke liye best timing';
+  String get klTopicTiming => 'Humare group ke liye best timing';
 
   @override
-  String get klTopicGroup => 'Hamari shared past-life story';
+  String get klTopicGroup => 'Humari shared past-life story';
 
   @override
-  String get lcSubtitle => 'AI-powered Vedic Love Compatibility Report';
+  String get lcSubtitle => 'AI se taiyaar Vedic Love Compatibility Report';
 
   @override
   String get lcTitle => 'Love Compatibility';
 
   @override
-  String get lcSnapshotHeader => 'Love Compatibility Snapshot';
+  String get lcSnapshotHeader => 'Love Compatibility ka Snapshot';
 
   @override
-  String get lcGaugeAttraction => 'Attraction';
+  String get lcGaugeAttraction => 'Aakarshan';
 
   @override
   String get lcGaugeEmotional => 'Emotional Harmony';
@@ -170,13 +170,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lcChipStrongPassion => 'Strong physical chemistry';
 
   @override
-  String get lcChipLowFriction => 'Overall low friction';
+  String get lcChipLowFriction => 'Overall kam friction';
 
   @override
-  String get lcChipKarmicPull => 'Strong karmic pull';
+  String get lcChipKarmicPull => 'Strong karmic khinchaav';
 
   @override
-  String get lcPartnersTitle => 'Partner Snapshot';
+  String get lcPartnersTitle => 'Partner ka Snapshot';
 
   @override
   String get lcVenusSuffix => 'Venus sign';
@@ -236,13 +236,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lc7thHouseSynastry => '7th House Synastry';
 
   @override
-  String get lcJupiterBlessing => 'Jupiter Blessing';
+  String get lcJupiterBlessing => 'Jupiter ka Aashirwad';
 
   @override
   String get lcD9Resonance => 'D9 Navamsa Resonance';
 
   @override
-  String get lcSaturnLongevity => 'Saturn Longevity';
+  String get lcSaturnLongevity => 'Shani Longevity';
 
   @override
   String get lcKarmicTitle => 'Karmic Love Bond';
@@ -260,13 +260,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lcChallengesTitle => 'Challenges & Friction';
 
   @override
-  String get lcNoChallenges => 'Kisi bhi kundli mein koi significant friction points nahi mile';
+  String get lcNoChallenges => 'Dono charts mein koi bada friction-point nahi mila';
 
   @override
   String get lcTotalPenalty => 'Total Challenge Penalty';
 
   @override
-  String get lcTimingTitle => 'Love Timing — Moola Dasha';
+  String get lcTimingTitle => 'Love ka Timing — Moola Dasha';
 
   @override
   String get lcDynamicsTitle => 'Relationship Dynamics';
@@ -281,13 +281,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lcGrowthDynamic => 'Growth Dynamic';
 
   @override
-  String get lcAreasToNurture => 'Areas To Nurture';
+  String get lcAreasToNurture => 'Nurture karne wale Areas';
 
   @override
-  String get lcTopicTiming => 'Hamare relationship ke liye best timing';
+  String get lcTopicTiming => 'Hamare rishte ke liye best timing';
 
   @override
-  String get lcTopicChallenges => 'Navigate karne wali challenges';
+  String get lcTopicChallenges => 'Navigate karne wali Challenges';
 
   @override
   String get lcTopicKarmic => 'Hamara karmic connection';
@@ -302,19 +302,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lcTopicDynamics => 'Hamari relationship dynamics';
 
   @override
-  String get cpSubtitle => 'AI-powered Vedic Child Probability Report';
+  String get cpSubtitle => 'AI-powered Vedic Santan Sambhavna Report';
 
   @override
-  String get cpTitle => 'Child Probability';
+  String get cpTitle => 'Santan Sambhavna';
 
   @override
-  String get cpSnapshotHeader => 'Progeny Probability Snapshot';
+  String get cpSnapshotHeader => 'Santan Sambhavna Snapshot';
 
   @override
-  String get cpGauge5thHouse => '5th House';
+  String get cpGauge5thHouse => '5th House (Pancham Bhava)';
 
   @override
-  String get cpGaugeJupiter => 'Jupiter/Putrakaraka';
+  String get cpGaugeJupiter => 'Guru/Putrakaraka';
 
   @override
   String get cpGaugeD7 => 'D7 Saptamsa';
@@ -326,16 +326,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get cpGaugeTiming => 'Dasha Timing';
 
   @override
-  String get cpChipStrongPutrakaraka => 'Strong Putrakaraka (Jupiter)';
+  String get cpChipStrongPutrakaraka => 'Strong Putrakaraka (Guru)';
 
   @override
-  String get cpChipLowDoshaPenalty => 'Low dosha penalty';
+  String get cpChipLowDoshaPenalty => 'Kam dosha penalty';
 
   @override
-  String get cpChipFavorableTiming => 'Favorable dasha timing';
+  String get cpChipFavorableTiming => 'Anukool dasha timing';
 
   @override
-  String get cpChipNoDoshas => 'Koi progeny-dosha nahi mila';
+  String get cpChipNoDoshas => 'Koi santan-dosha nahi mila';
 
   @override
   String get cpPartnersTitle => 'Partner Snapshot';
@@ -344,16 +344,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get cpLagnaSuffix => 'Lagna';
 
   @override
-  String get cpMoonSuffix => 'Moon sign';
+  String get cpMoonSuffix => 'Chandra rashi';
 
   @override
-  String get cpNumberTitle => 'Number of Children & Gender Tendency';
+  String get cpNumberTitle => 'Bachchon ki Sankhya aur Gender Tendency';
 
   @override
-  String get cpProbableNumber => 'Probable Number';
+  String get cpProbableNumber => 'Sambhavit Sankhya';
 
   @override
-  String get cpFirstChildTendency => 'First Child Tendency';
+  String get cpFirstChildTendency => 'Pehli Santan ki Tendency';
 
   @override
   String get cpSpacing => 'Spacing Note';
@@ -365,31 +365,31 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get cpCombinedTiming => 'Combined Timing';
 
   @override
-  String get cpNextWindow => 'Next Favorable Window';
+  String get cpNextWindow => 'Agla Anukool Window';
 
   @override
-  String get cp5thHouseTitle => '5th House Analysis';
+  String get cp5thHouseTitle => '5th House (Pancham Bhava) Analysis';
 
   @override
-  String get cp5thHouseSubtitle => 'The house of children (Putra Bhava), per person';
+  String get cp5thHouseSubtitle => 'Santan ka bhava (Putra Bhava), har vyakti ke liye';
 
   @override
-  String get cpJupiterTitle => 'Jupiter — Putrakaraka Analysis';
+  String get cpJupiterTitle => 'Guru — Putrakaraka Analysis';
 
   @override
-  String get cpJupiterSubtitle => 'The natural significator of children, per person';
+  String get cpJupiterSubtitle => 'Santan ka natural karak, har vyakti ke liye';
 
   @override
   String get cpD7Title => 'D7 Saptamsa Analysis';
 
   @override
-  String get cpD7Subtitle => 'The divisional chart specifically for children';
+  String get cpD7Subtitle => 'Bachchon ke liye khaas divisional chart';
 
   @override
   String get cpD7Strength => 'D7 Strength';
 
   @override
-  String get cpSphutaTitle => 'Beeja & Kshetra Sphuta';
+  String get cpSphutaTitle => 'Beeja aur Kshetra Sphuta';
 
   @override
   String get cpBeejaSphuta => 'Beeja Sphuta (Seed)';
@@ -401,31 +401,31 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get cpDoshaTitle => 'Dosha Analysis';
 
   @override
-  String get cpNoDoshasDetected => 'Kisi bhi kundli mein koi progeny-related dosha nahi mila';
+  String get cpNoDoshasDetected => 'Dono kundli mein koi santan-sambandhit dosha nahi mila';
 
   @override
-  String get cpRemediesTitle => 'Recommended Remedies';
+  String get cpRemediesTitle => 'Recommended Upay';
 
   @override
-  String get cpAddresses => 'Addresses';
+  String get cpAddresses => 'Solutions';
 
   @override
   String get cpTopicTiming => 'Conception ke liye best timing';
 
   @override
-  String get cpTopicNumber => 'Hamari kitni santaan ho sakti hai';
+  String get cpTopicNumber => 'Hamare kitne bachche ho sakte hain';
 
   @override
-  String get cpTopicDosha => 'Address karne wale doshas';
+  String get cpTopicDosha => 'Address karne wale koi dosha';
 
   @override
-  String get cpTopicRemedies => 'Recommended remedies';
+  String get cpTopicRemedies => 'Recommended upay';
 
   @override
   String get cpTopicFifthHouse => 'Hamare 5th house ki strength';
 
   @override
-  String get cpTopicJupiter => 'Isme Jupiter ka role';
+  String get cpTopicJupiter => 'Isme Guru ka role';
 
   @override
   String get mahadashaLabel => 'Mahadasha';
@@ -488,7 +488,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get riGaugeCohesion => 'Group Cohesion';
 
   @override
-  String get riGaugeTrust => 'Trust Climate';
+  String get riGaugeTrust => 'Trust ka Mahaul';
 
   @override
   String get riGaugeProductivity => 'Productivity';
@@ -497,16 +497,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get riGaugeCreativity => 'Creativity';
 
   @override
-  String get riChipNoAlerts => 'No critical alerts';
+  String get riChipNoAlerts => 'Koi critical alert nahi';
 
   @override
   String get riChipStrongCohesion => 'Strong group cohesion';
 
   @override
-  String get riChipHighTrust => 'High trust climate';
+  String get riChipHighTrust => 'High trust ka mahaul';
 
   @override
-  String get riChipNoHiddenEnemy => 'No hidden-enemy signal';
+  String get riChipNoHiddenEnemy => 'Koi hidden-enemy signal nahi';
 
   @override
   String get riChipHealthyGroup => 'Overall healthy group';
@@ -516,7 +516,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String riProfilesSubtitle(Object count) {
-    return '${count} people in this group';
+    return 'Is group mein ${count} log';
   }
 
   @override
@@ -544,7 +544,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get riMostChallenged => 'Most Challenged';
 
   @override
-  String get riHiddenEnemyAlert => 'Hidden-Enemy Signal Detected';
+  String get riHiddenEnemyAlert => 'Hidden-Enemy Signal Mila';
 
   @override
   String get riBestWorstTitle => 'Best & Most Challenging Pairs';
@@ -566,7 +566,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String riPairwiseSubtitle(Object count) {
-    return '${count} pairs analyzed';
+    return '${count} pairs analyze kiye gaye';
   }
 
   @override
@@ -579,7 +579,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get riMutualTrust => 'Mutual trust';
 
   @override
-  String get riBetrayalRisk => 'Betrayal risk';
+  String get riBetrayalRisk => 'Betrayal ka risk';
 
   @override
   String get riPowerDistribution => 'Power distribution';
@@ -728,13 +728,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kmGaugeAk => 'Soul Resonance';
 
   @override
-  String get kmChipNoNadi => 'No Nadi Dosh';
+  String get kmChipNoNadi => 'Nadi Dosh nahi hai';
 
   @override
-  String get kmChipNoBhakoot => 'No Bhakoot Dosh';
+  String get kmChipNoBhakoot => 'Bhakoot Dosh nahi hai';
 
   @override
-  String get kmChipMangalCancelled => 'Mangal Dosh cancelled';
+  String get kmChipMangalCancelled => 'Mangal Dosh cancel ho gaya';
 
   @override
   String get kmChipPapaBalanced => 'Balanced karmic load';
@@ -752,7 +752,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kmAshtakootTitle => 'Ashtakoot Guna Milan';
 
   @override
-  String get kmAshtakootSubtitle => 'The classical 8-point matching system, out of 36';
+  String get kmAshtakootSubtitle => '36 mein se classical 8-point matching system';
 
   @override
   String get kmNadiSeverity => 'Nadi severity';
@@ -770,7 +770,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kmD9Title => 'D9 Navamsa — Marriage Karma';
 
   @override
-  String get kmD9Subtitle => 'The soul-level marriage chart, considered most important classically';
+  String get kmD9Subtitle => 'Soul-level marriage chart, classically sabse important mani jaati hai';
 
   @override
   String get kmD9Score => 'D9 Compatibility';
@@ -857,7 +857,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kmMuhurtaNotes => 'Muhurta Notes';
 
   @override
-  String get kmRisksTitle => 'Risks To Address';
+  String get kmRisksTitle => 'Risks Jo Address Karne Hain';
 
   @override
   String get kmConflictRisk => 'Conflict Risk';
@@ -959,7 +959,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get kmTopicTiming => 'Best marriage timing';
 
   @override
-  String get kmTopicRisks => 'Risks ke liye taiyar rehna';
+  String get kmTopicRisks => 'Risks jinke liye prepare karna hai';
 
   @override
   String get kmTopicGrowth => 'Hum saath mein kaise grow kar sakte hain';
@@ -977,18 +977,18 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkTitle => 'Past Life & Karma';
 
   @override
-  String get pkSnapshotHeader => 'Past-Life Snapshot';
+  String get pkSnapshotHeader => 'Past-Life ki Jhalak';
 
   @override
   String pkHeroSummary(Object theme, Object relation, Object strategy) {
-    return 'Your chart shows a \'${theme}\' past-life signature, currently ${relation} into this life. Recommended path: ${strategy}.';
+    return 'Aapki kundli mein ek \'${theme}\' past-life signature dikhta hai, jo abhi is life mein ${relation} ho raha hai. Recommended path: ${strategy}.';
   }
 
   @override
   String get pkGaugeSignature => 'Signature Strength';
 
   @override
-  String get pkGaugeMasteryPreserved => 'Mastery Preserved';
+  String get pkGaugeMasteryPreserved => 'Preserved Mastery';
 
   @override
   String get pkGaugeClearingProgress => 'Karma Clearing';
@@ -1000,49 +1000,49 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkGaugeMemoryAccess => 'Memory Access';
 
   @override
-  String get pkChipGoodProgress => 'Good karma-clearing progress';
+  String get pkChipGoodProgress => 'Karma-clearing mein achhi progress';
 
   @override
-  String get pkChipLowDebt => 'Low karmic debt';
+  String get pkChipLowDebt => 'Kam karmic debt';
 
   @override
   String get pkChipMatureSoul => 'Mature soul signature';
 
   @override
-  String get pkChipGiftedPast => 'Kundli mein past-life gift';
+  String get pkChipGiftedPast => 'Kundli mein past-life ka gift hai';
 
   @override
   String get pkChipAccomplished => 'Accomplished past life';
 
   @override
-  String get pkChipMasteryPreserved => 'Strong mastery carried forward';
+  String get pkChipMasteryPreserved => 'Strong mastery aage carry hui hai';
 
   @override
   String get pkKetuTitle => 'Ketu — Aapki Past Mastery';
 
   @override
-  String get pkKetuSubtitle => 'Skills your soul already mastered';
+  String get pkKetuSubtitle => 'Wo skills jo aapki soul already master kar chuki hai';
 
   @override
   String get pkMasteryStrength => 'Mastery Strength';
 
   @override
-  String get pkSkillsCarried => 'Aage badhe kaushal';
+  String get pkSkillsCarried => 'Aage Carry Hue Skills';
 
   @override
   String get pkInstincts => 'Instinctual Capacities';
 
   @override
-  String get pkKetuDignity => 'Ketu dignity';
+  String get pkKetuDignity => 'Ketu ki dignity';
 
   @override
   String get pkRahuTitle => 'Rahu — Aapki Soul ka Growth Edge';
 
   @override
-  String get pkRahuSubtitle => 'What your soul is here to finish';
+  String get pkRahuSubtitle => 'Aapki soul yahan kya complete karne aayi hai';
 
   @override
-  String get pkUnmetDesires => 'Unmet Desires';
+  String get pkUnmetDesires => 'Adhoori Desires';
 
   @override
   String get pkProfileTitle => 'Aapki Past-Life Profile';
@@ -1078,7 +1078,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkForeignResidence => 'Foreign-residence karma';
 
   @override
-  String get pkRelationshipsTitle => 'Aage badhe Past Relationships';
+  String get pkRelationshipsTitle => 'Aage Carry Hue Past Relationships';
 
   @override
   String get pkSpouseConnection => 'Spouse Reconnection';
@@ -1102,7 +1102,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkSiblingKarma => 'Sibling karma pattern';
 
   @override
-  String get pkSpiritualTitle => 'Tab aapka Spiritual Life';
+  String get pkSpiritualTitle => 'Tab Aapki Spiritual Life';
 
   @override
   String get pkSpiritualLevel => 'Spiritual Level';
@@ -1123,7 +1123,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkMokshaProximity => 'Moksha Proximity';
 
   @override
-  String get pkKarmicDebtsTitle => 'Karmic Debts & Wealth Then';
+  String get pkKarmicDebtsTitle => 'Karmic Debts & Tab ki Wealth';
 
   @override
   String get pkTotalKarmicDebt => 'Total Karmic Debt';
@@ -1150,10 +1150,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkMatruKarma => 'Matru karma';
 
   @override
-  String get pkWealthLevel => 'Tab Wealth Level';
+  String get pkWealthLevel => 'Tab ka Wealth Level';
 
   @override
-  String get pkWealthKarmaCarried => 'Wealth Karma Carried';
+  String get pkWealthKarmaCarried => 'Aage Carry Hua Wealth Karma';
 
   @override
   String get pkResourcePattern => 'Resource management';
@@ -1162,22 +1162,22 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkGainSource => 'Gain source';
 
   @override
-  String get pkEchoesTitle => 'Is Life mein Echoes';
+  String get pkEchoesTitle => 'Is Life Mein Echoes';
 
   @override
-  String get pkOnRelationships => 'Relationships par';
+  String get pkOnRelationships => 'Relationships Par';
 
   @override
-  String get pkOnCareer => 'Career par';
+  String get pkOnCareer => 'Career Par';
 
   @override
-  String get pkOnHealth => 'Health par';
+  String get pkOnHealth => 'Health Par';
 
   @override
-  String get pkOnSpirituality => 'Spirituality par';
+  String get pkOnSpirituality => 'Spirituality Par';
 
   @override
-  String get pkDominantArea => 'Strongest Carryforward';
+  String get pkDominantArea => 'Sabse Strong Carryforward';
 
   @override
   String get pkAttractions => 'Natural Attractions';
@@ -1204,19 +1204,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkClearingProgress => 'Clearing Progress';
 
   @override
-  String get pkRemainingWork => 'Remaining Work';
+  String get pkRemainingWork => 'Bacha Hua Kaam';
 
   @override
   String get pkSettlementTimeline => 'Settlement Timeline';
 
   @override
-  String get pkAccelerationPractices => 'Resolution ko speed karne wale practices';
+  String get pkAccelerationPractices => 'Resolution Speed Karne Wali Practices';
 
   @override
   String get pkPriorityAreas => 'Priority Areas';
 
   @override
-  String get pkVerificationTitle => 'Charts mein Verified (D60)';
+  String get pkVerificationTitle => 'Charts Mein Verified (D60)';
 
   @override
   String get pkD60Label => 'D60 Past-Life Era';
@@ -1252,7 +1252,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkTimelineTitle => 'Activation Timeline';
 
   @override
-  String get pkGiftsActivation => 'Past-Life Gifts Activation';
+  String get pkGiftsActivation => 'Past-Life Gifts ka Activation';
 
   @override
   String get pkSurfaceWindow => 'Surfacing Window';
@@ -1303,7 +1303,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get pkTopicMastery => 'Meri past-life mastery';
 
   @override
-  String get pkTopicUnfinished => 'Mera unfinished karma';
+  String get pkTopicUnfinished => 'Mera adhoora karma';
 
   @override
   String get pkTopicRelationships => 'Mere past-life relationships';
@@ -1348,7 +1348,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chGaugeMoralFabric => 'Moral Fabric';
 
   @override
-  String get chChipRajaYoga => 'Raja Yoga present';
+  String get chChipRajaYoga => 'Raja Yoga maujood';
 
   @override
   String get chChipHighIntegrity => 'High integrity';
@@ -1366,10 +1366,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chChipLoyal => 'Deeply loyal';
 
   @override
-  String get chChipGiftedCharacter => 'Kundli mein character gift';
+  String get chChipGiftedCharacter => 'Chart mein character ka gift hai';
 
   @override
-  String get chSoulTitle => 'Aapka Soul Signature';
+  String get chSoulTitle => 'Aapki Soul Signature';
 
   @override
   String get chSoulIntegration => 'Soul-Character Integration';
@@ -1378,7 +1378,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chAmatyakarakaTheme => 'Supporting Character Voice';
 
   @override
-  String get chAtmakarakaDignity => 'Soul-planet dignity';
+  String get chAtmakarakaDignity => 'Soul-planet ki dignity';
 
   @override
   String get chAtmakarakaHouse => 'House placement';
@@ -1387,13 +1387,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chSurfaceTitle => 'Surface Personality & Constitution';
 
   @override
-  String get chLagnaSign => 'Lagna Sign';
+  String get chLagnaSign => 'Ascendant (Lagna) Sign';
 
   @override
   String get chConstitution => 'Constitution';
 
   @override
-  String get chSurfaceSignature => 'Aap kaise dikhte hain';
+  String get chSurfaceSignature => 'Aap dusron ko kaise lagte hain';
 
   @override
   String get chPhysicalConstitution => 'Physical Constitution';
@@ -1402,7 +1402,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chLagnaLord => 'Lagna Lord';
 
   @override
-  String get chLagnaOccupants => 'Lagna mein Planets';
+  String get chLagnaOccupants => 'Lagna mein planets';
 
   @override
   String get chMindEmotionsTitle => 'Mind, Emotions & Ego';
@@ -1429,10 +1429,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chMoodPatterns => 'Mood Patterns';
 
   @override
-  String get chKemadrumaPresent => 'Kemadruma Yoga present — extra emotional self-care is beneficial.';
+  String get chKemadrumaPresent => 'Kemadruma Yoga present hai — extra emotional self-care faydemand hai.';
 
   @override
-  String get chFatherImprint => 'Father imprint quality';
+  String get chFatherImprint => 'Father imprint ki quality';
 
   @override
   String get chCommunicationTitle => 'Communication & Intellect Style';
@@ -1459,7 +1459,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chGunaTitle => 'Guna & Dosha Profile';
 
   @override
-  String get chGunaSubtitle => 'Your inner nature and constitution, classical Vedic style';
+  String get chGunaSubtitle => 'Aapki inner nature aur constitution, classical Vedic style mein';
 
   @override
   String get chSattva => 'Sattva';
@@ -1486,10 +1486,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chDominantDosha => 'Dominant Dosha';
 
   @override
-  String get chRahuRestlessness => 'Rahu restlessness';
+  String get chRahuRestlessness => 'Rahu ki restlessness';
 
   @override
-  String get chKetuDetachment => 'Ketu detachment';
+  String get chKetuDetachment => 'Ketu ki detachment';
 
   @override
   String get chYogasTitle => 'Character Yogas';
@@ -1516,13 +1516,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chSoftSkills => 'Soft Skills';
 
   @override
-  String get chHiddenStrengths => 'Develop karne wali hidden strengths';
+  String get chHiddenStrengths => 'Develop karne wali Hidden Strengths';
 
   @override
   String get chShadowTitle => 'Shadow & Growth Areas';
 
   @override
-  String get chShadowSubtitle => 'Gentle awareness of patterns worth working on';
+  String get chShadowSubtitle => 'Kaam karne layak patterns ki gentle awareness';
 
   @override
   String get chShadowPatterns => 'Shadow Patterns';
@@ -1558,7 +1558,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chSocialConfidence => 'Social Confidence';
 
   @override
-  String get chTrustGiving => 'Trust-Giving Baseline';
+  String get chTrustGiving => 'Trust dene ka baseline';
 
   @override
   String get chConflictStyle => 'Conflict style';
@@ -1582,7 +1582,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chEthicalConsistency => 'Ethical Consistency';
 
   @override
-  String get chIntegrityPressure => 'Integrity Under Pressure';
+  String get chIntegrityPressure => 'Pressure mein Integrity';
 
   @override
   String get chJusticeFairness => 'Justice & Fairness';
@@ -1612,7 +1612,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chVulnerabilityComfort => 'Vulnerability ke saath comfort';
 
   @override
-  String get chEmotionalExpression => 'Emotional expression comfort';
+  String get chEmotionalExpression => 'Emotional expression ka comfort';
 
   @override
   String get chEmotionalReceptivity => 'Emotional receptivity';
@@ -1639,7 +1639,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chMaternalInheritance => 'Maternal inheritance';
 
   @override
-  String get chAncestralKarmaWeight => 'Ancestral karma weight';
+  String get chAncestralKarmaWeight => 'Ancestral karma ka weight';
 
   @override
   String get chTimelineTitle => 'Character Timeline';
@@ -1686,7 +1686,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chLayerD30 => 'Trimshamsa (D30)';
 
   @override
-  String get chLayerLagnaMoon => 'Lagna & Moon';
+  String get chLayerLagnaMoon => 'Ascendant & Moon';
 
   @override
   String get chLayerArudha => 'Arudha Lagna';
@@ -1698,10 +1698,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chTopicShadow => 'Mere shadow patterns';
 
   @override
-  String get chTopicSoul => 'Mera soul signature';
+  String get chTopicSoul => 'Meri soul signature';
 
   @override
-  String get chTopicRelationships => 'Meri relationship style';
+  String get chTopicRelationships => 'Mera relationship style';
 
   @override
   String get chTopicEthics => 'Meri ethics & values';
@@ -1710,23 +1710,23 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get chTopicGuna => 'Mera guna & dosha profile';
 
   @override
-  String get chTopicGrowth => 'Apna character kaise develop karein';
+  String get chTopicGrowth => 'Apna character kaise grow karein';
 
   @override
   String get chTopicTiming => 'Character work ke liye best timing';
 
   @override
-  String get lpSubtitle => 'AI-powered Vedic Life Path & Luck Report';
+  String get lpSubtitle => 'AI-powered Vedic Life Path aur Luck Report';
 
   @override
-  String get lpTitle => 'Life Path & Luck';
+  String get lpTitle => 'Life Path aur Luck';
 
   @override
-  String get lpSnapshotHeader => 'Life Path Snapshot';
+  String get lpSnapshotHeader => 'Life Path ki Jhalak';
 
   @override
   String lpHeroSummary(Object archetype, Object domain, Object probability) {
-    return 'You\'re a ${archetype} with a primary purpose in ${domain}. Our analysis shows a ${probability}% overall life-fulfillment potential.';
+    return 'Aap ek ${archetype} hain jinka main purpose ${domain} mein hai. Hamare analysis ke hisab se aapki overall life-fulfillment potential ${probability}% hai.';
   }
 
   @override
@@ -1751,19 +1751,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpChipFreeWillStrong => 'Strong free will';
 
   @override
-  String get lpChipGraceSupported => 'Grace-supported';
+  String get lpChipGraceSupported => 'Grace se supported';
 
   @override
-  String get lpChipLightKarma => 'Light karmic load';
+  String get lpChipLightKarma => 'Halka karmic load';
 
   @override
-  String get lpChipRecognitionPotential => 'Recognition potential';
+  String get lpChipRecognitionPotential => 'Recognition ki possibility';
 
   @override
   String get lpChipSpiritualPath => 'Strong spiritual pull';
 
   @override
-  String get lpChipBlessed => 'Kundli mein blessings';
+  String get lpChipBlessed => 'Kundli mein blessings hai';
 
   @override
   String get lpSoulPathTitle => 'Aapka Soul Path';
@@ -1787,7 +1787,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpKarakaTitle => 'Aapke Dharma Planets';
 
   @override
-  String get lpKarakaSubtitle => 'How strongly each planet supports your life purpose';
+  String get lpKarakaSubtitle => 'Har planet aapke life purpose ko kitna support karta hai';
 
   @override
   String get lpVerificationTitle => 'Charts mein Verified (D9 / D60)';
@@ -1797,11 +1797,11 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String lpD9Explain(Object stage) {
-    return 'Your soul-evolution stage is \'${stage}\' in the Navamsa chart.';
+    return 'Navamsa chart mein aapki soul-evolution stage \'${stage}\' hai.';
   }
 
   @override
-  String get lpD9JupiterDignity => 'Jupiter dignity';
+  String get lpD9JupiterDignity => 'Jupiter (Guru) ki dignity';
 
   @override
   String get lpD9DharmaMultiplier => 'Dharma multiplier';
@@ -1813,13 +1813,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpKarmaType => 'Past-life karma type';
 
   @override
-  String get lpKetuMastery => 'Ketu past-life mastery';
+  String get lpKetuMastery => 'Ketu ki past-life mastery';
 
   @override
-  String get lpRahuGrowthDir => 'Rahu growth direction';
+  String get lpRahuGrowthDir => 'Rahu ki growth direction';
 
   @override
-  String get lpYogasTitle => 'Fortune Yogas & Luck Blocks';
+  String get lpYogasTitle => 'Fortune Yogas aur Luck Blocks';
 
   @override
   String get lpFortuneBoost => 'Fortune Boost';
@@ -1834,13 +1834,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpLuckBlocks => 'Luck Blocks';
 
   @override
-  String get lpPurposeTitle => 'Purpose Domains & Fame';
+  String get lpPurposeTitle => 'Purpose Domains aur Fame';
 
   @override
   String get lpDomainLeadership => 'Leadership';
 
   @override
-  String get lpDomainWisdom => 'Wisdom & Teaching';
+  String get lpDomainWisdom => 'Wisdom aur Teaching';
 
   @override
   String get lpDomainService => 'Service';
@@ -1855,7 +1855,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpPrimaryDomainBadge => 'Primary';
 
   @override
-  String get lpFameRecognition => 'Fame & Recognition';
+  String get lpFameRecognition => 'Fame aur Recognition';
 
   @override
   String get lpSocialInfluence => 'Social Influence';
@@ -1870,7 +1870,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpHistoricalImpact => 'Historical impact potential';
 
   @override
-  String get lpTimelineTitle => 'Fortune & Life Timeline';
+  String get lpTimelineTitle => 'Fortune aur Life Timeline';
 
   @override
   String get lpCurrentPhase => 'Current Fortune Phase';
@@ -1897,10 +1897,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpChallengingYears => 'Challenging Years';
 
   @override
-  String get lpMilestonesTitle => 'Major Milestones & Turning Points';
+  String get lpMilestonesTitle => 'Major Milestones aur Turning Points';
 
   @override
-  String get lpFirstTurningPoint => 'First Major Turning Point';
+  String get lpFirstTurningPoint => 'Pehla Bada Turning Point';
 
   @override
   String get lpMidlifeTransform => 'Midlife Transformation';
@@ -1958,10 +1958,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpSoulContract => 'Soul Contract Areas';
 
   @override
-  String get lpSoulExperience => 'Aapki soul kya experience karne aayi';
+  String get lpSoulExperience => 'Aapki Soul Kya Experience Karne Aayi Hai';
 
   @override
-  String get lpSoulMastery => 'Aapki soul kya master karne aayi';
+  String get lpSoulMastery => 'Aapki Soul Kya Master Karne Aayi Hai';
 
   @override
   String get lpSpiritualTitle => 'Spiritual Path';
@@ -1973,10 +1973,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpMeditationReceptivity => 'Meditation Receptivity';
 
   @override
-  String get lpTeacherKarma => 'Guru Karma';
+  String get lpTeacherKarma => 'Teacher/Guru Karma';
 
   @override
-  String get lpPilgrimageBenefit => 'Pilgrimage Benefit';
+  String get lpPilgrimageBenefit => 'Pilgrimage (Teerth Yatra) Benefit';
 
   @override
   String get lpSelfRealization => 'Self-Realization Potential';
@@ -1994,13 +1994,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpMantraEfficacy => 'Prayer/mantra efficacy';
 
   @override
-  String get lpInnerGuidance => 'Inner-guidance trust';
+  String get lpInnerGuidance => 'Inner-guidance par trust';
 
   @override
   String get lpPropheticDreams => 'Prophetic-dream sensitivity';
 
   @override
-  String get lpDifficultyTitle => 'Life Difficulty & Challenges';
+  String get lpDifficultyTitle => 'Life Difficulty aur Challenges';
 
   @override
   String get lpEarlyLife => 'Early Life';
@@ -2030,13 +2030,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpRedFlags => 'Direction Red Flags';
 
   @override
-  String get lpBlessingsTitle => 'Blessings & Core Life Theme';
+  String get lpBlessingsTitle => 'Blessings aur Core Life Theme';
 
   @override
   String get lpKarmicRoot => 'Karmic root';
 
   @override
-  String get lpBlessingsList => 'Aapke Blessings';
+  String get lpBlessingsList => 'Aapki Blessings';
 
   @override
   String get lpFulfillmentPriorities => 'Fulfillment Priorities';
@@ -2057,7 +2057,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpFulfillmentPotential => 'Fulfillment Potential';
 
   @override
-  String get lpNext12Focus => 'Next 12-Month Focus';
+  String get lpNext12Focus => 'Agle 12-Month ka Focus';
 
   @override
   String get lpLayerD1 => 'Birth Chart (D1)';
@@ -2084,7 +2084,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get lpTopicKarma => 'Mere karmic lessons';
 
   @override
-  String get lpTopicMilestones => 'Aane wale milestones';
+  String get lpTopicMilestones => 'Upcoming milestones';
 
   @override
   String get lpTopicDestiny => 'Destiny vs free will';
@@ -2109,7 +2109,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
 
   @override
   String dbHeroSummary(Object phase, Object personality, Object probability, Object years) {
-    return 'You\'re currently in a \'${phase}\' phase with a ${personality} approach to money. Our analysis shows a ${probability}% chance of becoming debt-free within about ${years} years.';
+    return 'Aap abhi \'${phase}\' phase mein hain aur paise ko lekar aapka approach ${personality} hai. Hamare analysis ke hisaab se lagbhag ${years} saal mein debt-free hone ka ${probability}% chance hai.';
   }
 
   @override
@@ -2119,7 +2119,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbGaugeProbability => 'Recovery Chance';
 
   @override
-  String get dbGaugeFreedomNow => 'Debt Freedom Now';
+  String get dbGaugeFreedomNow => 'Abhi Debt Freedom';
 
   @override
   String get dbGaugeDti => 'Income Health';
@@ -2128,7 +2128,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbGaugeResilience => 'Resilience';
 
   @override
-  String get dbChipCleanKarma => 'Clean debt karma';
+  String get dbChipCleanKarma => 'Saaf debt karma';
 
   @override
   String get dbChipStrongRecovery => 'Strong recovery capacity';
@@ -2137,16 +2137,16 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbChipHealthyDti => 'Healthy debt-to-income';
 
   @override
-  String get dbChipResilient => 'High psychological resilience';
+  String get dbChipResilient => 'High mental resilience';
 
   @override
-  String get dbChipCycleBreakable => 'Debt cycle break ho sakta hai';
+  String get dbChipCycleBreakable => 'Debt cycle todna possible hai';
 
   @override
-  String get dbChipLowReindebt => 'Low re-indebtedness risk';
+  String get dbChipLowReindebt => 'Dobara karzdaar hone ka kam risk';
 
   @override
-  String get dbChipGoodNegotiator => 'Good negotiation odds';
+  String get dbChipGoodNegotiator => 'Achhi negotiation chances';
 
   @override
   String get dbProfileTitle => 'Aapki Debt Profile';
@@ -2164,7 +2164,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbProtectorLabel => 'Creditor Protection';
 
   @override
-  String get dbSecondaryCategories => 'Other categories';
+  String get dbSecondaryCategories => 'Secondary categories';
 
   @override
   String get dbUnsecuredRatio => 'Unsecured-debt ratio';
@@ -2173,19 +2173,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbKarakaTitle => 'Aapke Debt Planets';
 
   @override
-  String get dbKarakaSubtitle => 'How strongly each planet supports your debt recovery';
+  String get dbKarakaSubtitle => 'Har planet aapki debt recovery ko kitni strongly support karta hai';
 
   @override
-  String get dbVerificationTitle => 'Charts mein Verified (D6)';
+  String get dbVerificationTitle => 'Sabhi charts mein verified (D6)';
 
   @override
   String get dbD6Label => 'D6 Debt & Enemies Chart';
 
   @override
-  String get dbD6LordDignity => '6th lord strength';
+  String get dbD6LordDignity => '6th lord ki strength';
 
   @override
-  String get dbD6Severity => 'Debt karma severity';
+  String get dbD6Severity => 'Debt karma ki severity';
 
   @override
   String get dbD6Multiplier => 'D6 debt multiplier';
@@ -2194,7 +2194,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbYogasTitle => 'Debt Yogas & Protections';
 
   @override
-  String get dbPressureNow => 'Current Debt Pressure';
+  String get dbPressureNow => 'Abhi Debt Pressure';
 
   @override
   String get dbRecoveryBoost => 'Recovery Boost';
@@ -2209,19 +2209,19 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbCategoriesTitle => 'Debt Categories Watch';
 
   @override
-  String get dbCategoriesSubtitle => 'Which types of debt need the most attention';
+  String get dbCategoriesSubtitle => 'Kis type ke debt par sabse zyada dhyan dena hai';
 
   @override
   String get dbTimelineTitle => 'Debt-Free Timeline';
 
   @override
-  String get dbFreeWindowLabel => 'Debt-Free Window';
+  String get dbFreeWindowLabel => 'DEBT-FREE WINDOW';
 
   @override
-  String get dbClearanceEstimate => 'Full clearance estimate';
+  String get dbClearanceEstimate => 'Full clearance ka estimate';
 
   @override
-  String get dbPeakYears => 'High debt-pressure years';
+  String get dbPeakYears => 'Debt-Peak Years';
 
   @override
   String get dbClearanceYears => 'Clearance Years';
@@ -2251,7 +2251,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbNegotiationApproach => 'Recommended approach';
 
   @override
-  String get dbAvoidLoanTypes => 'Avoid karne wale loan types';
+  String get dbAvoidLoanTypes => 'In Loan Types se bachein';
 
   @override
   String get dbRiskTitle => 'Risk & Vulnerability Watch';
@@ -2260,37 +2260,37 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbRiskDefault => 'Default Risk';
 
   @override
-  String get dbRiskDefaultExp => 'The chance of missing a scheduled repayment badly enough to trigger default status with a lender.';
+  String get dbRiskDefaultExp => 'Scheduled repayment itni badly miss hone ka chance ki lender ke saath default status trigger ho jaaye.';
 
   @override
-  String get dbRiskDefaultFix => 'Automate minimum payments and keep a 1-month buffer so a single missed income cycle doesn\'t cascade.';
+  String get dbRiskDefaultFix => 'Minimum payments automate karein aur 1-month ka buffer rakhein taaki ek miss hua income cycle aage cascade na ho.';
 
   @override
   String get dbRiskBankruptcy => 'Bankruptcy Risk';
 
   @override
-  String get dbRiskBankruptcyExp => 'The probability that debt load grows beyond what income and assets can realistically cover.';
+  String get dbRiskBankruptcyExp => 'Debt load ke itna badhne ka chance ki income aur assets realistically cover na kar paayein.';
 
   @override
-  String get dbRiskBankruptcyFix => 'Get a professional debt review before taking any new loan or credit line.';
+  String get dbRiskBankruptcyFix => 'Koi bhi naya loan ya credit line lene se pehle professional debt review karwayein.';
 
   @override
   String get dbRiskAssetSeizure => 'Asset-Seizure Risk';
 
   @override
-  String get dbRiskAssetSeizureExp => 'The chance a secured loan default could lead to a lender repossessing collateral or property.';
+  String get dbRiskAssetSeizureExp => 'Secured loan default hone par lender ke collateral ya property repossess karne ka chance.';
 
   @override
-  String get dbRiskAssetSeizureFix => 'Prioritize secured-loan payments first, and refinance early if a payment gap looks likely.';
+  String get dbRiskAssetSeizureFix => 'Secured-loan payments ko pehle prioritize karein, aur payment gap dikhne par jaldi refinance karein.';
 
   @override
   String get dbRiskChronic => 'Chronic Re-Debt Risk';
 
   @override
-  String get dbRiskChronicExp => 'The tendency to fall back into debt again even after clearing the current load.';
+  String get dbRiskChronicExp => 'Current load clear karne ke baad bhi dobara debt mein fasne ki tendency.';
 
   @override
-  String get dbRiskChronicFix => 'Build a dedicated emergency fund before increasing lifestyle spending after clearance.';
+  String get dbRiskChronicFix => 'Clearance ke baad lifestyle spending badhane se pehle ek dedicated emergency fund banayein.';
 
   @override
   String get dbReindebtTrigger => 'Re-Debt Trigger';
@@ -2308,13 +2308,13 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbCrisisTitle => 'Crisis Preparedness';
 
   @override
-  String get dbCrisisSubtitle => 'How to spot trouble early and respond calmly';
+  String get dbCrisisSubtitle => 'Trouble ko jaldi kaise pehchanein aur shaant reh kar respond karein';
 
   @override
   String get dbWarningSigns => 'Early Warning Signs';
 
   @override
-  String get dbMitigationActions => 'Kya Karein';
+  String get dbMitigationActions => 'Iske baare mein kya karein';
 
   @override
   String get dbFamilyTitle => 'Family & Ancestral Debt';
@@ -2329,7 +2329,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbInheritedSource => 'Likely source';
 
   @override
-  String get dbCoreBlockerLabel => 'Core Blocker';
+  String get dbCoreBlockerLabel => 'CORE BLOCKER';
 
   @override
   String get dbPsychologyTitle => 'Aapki Money Psychology';
@@ -2338,7 +2338,7 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbResilience => 'Resilience';
 
   @override
-  String get dbDiscipline => 'Discipline Under Pressure';
+  String get dbDiscipline => 'Pressure Mein Discipline';
 
   @override
   String get dbSocialSupport => 'Social Support';
@@ -2374,10 +2374,10 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbDtiCategory => 'DTI Category';
 
   @override
-  String get dbBreakEvenMonths => 'Months to break-even';
+  String get dbBreakEvenMonths => 'Break-even tak months';
 
   @override
-  String get dbIncomeAcceleration => 'Income growth needed';
+  String get dbIncomeAcceleration => 'Zaroori income growth';
 
   @override
   String get dbLayerD1 => 'Birth Chart (D1)';
@@ -2395,28 +2395,28 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get dbLayerTransit => 'Current Transits';
 
   @override
-  String get dbTopicRecovery => 'Mera recovery timeline';
+  String get dbTopicRecovery => 'Meri recovery timeline';
 
   @override
-  String get dbTopicNegotiate => 'Creditors se negotiate karna';
+  String get dbTopicNegotiate => 'Creditors ke saath negotiation';
 
   @override
-  String get dbTopicBorrowing => 'Kya abhi loan lena safe hai';
+  String get dbTopicBorrowing => 'Kya abhi borrow karna safe hai';
 
   @override
-  String get dbTopicCrisis => 'Crisis ki tayaari';
+  String get dbTopicCrisis => 'Crisis ke liye taiyari';
 
   @override
   String get dbTopicAncestral => 'Ancestral debt karma';
 
   @override
-  String get dbTopicTimeline => 'Debt clear karne ke best saal';
+  String get dbTopicTimeline => 'Debt clear karne ke best years';
 
   @override
-  String get dbTopicPsychology => 'Mera money psychology';
+  String get dbTopicPsychology => 'Meri money psychology';
 
   @override
-  String get dbTopicCategories => 'Kaunsa debt pehle chukayein';
+  String get dbTopicCategories => 'Kaunse debts ko prioritize karein';
 
   @override
   String get mnSubtitle => 'AI-powered Vedic Wellness Report';
