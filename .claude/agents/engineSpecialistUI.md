@@ -158,14 +158,19 @@ python3 /home/user/nakshtralogy/.claude/tools/merge_l10n.py --app flutter_user k
 python3 -c "import json;print('\n'.join(o['key'] for o in json.load(open('keys.json'))))" > keylist.txt
 python3 /home/user/nakshtralogy/.claude/tools/copy_keys_to_astro.py keylist.txt
 ```
-Then dispatch the **flutter-language-agent** (Task subagent) to translate the
-new keys into the 10 non-English locales (source = a flat `{key:{en, placeholders?}}`
-JSON), telling it to write `<prefix>_tr_<locale>.json` files. When it returns,
-apply each with:
-```bash
-for loc in bn gu hi hi_Latn kn ml mr pa ta te; do for app in flutter_user flutter_astro; do
-  python3 /home/user/nakshtralogy/.claude/tools/translate_apply.py --app $app --locale $loc <prefix>_tr_$loc.json; done; done
-```
+You **cannot** spawn other agents (no Task tool), so you do NOT translate the 8
+remaining locales yourself. Instead give immediate 3-locale coverage and hand
+off the rest:
+- Put `en` + `hi` + `hinglish` on every short label in `keys.json` (long
+  sentences/templates may stay en-only).
+- After merging, write the translation source for the orchestrator to
+  `/.claude/tasks/pending_translations/<prefix>_source.json` as a flat
+  `{ "<key>": {"en": "...", "placeholders": [...]?}, ... }` covering ALL new
+  keys, and append the file name to the tracker's "Translations pending" list.
+- Mark the engine `DONE (l10n: en+hi+hinglish; 10-locale backfill pending)`.
+- The orchestrator/main session dispatches the flutter-language-agent for the
+  accumulated `*_source.json` files and applies them with
+  `translate_apply.py`, then flips the note to `11/11`.
 Preserve placeholder tokens (`{x}`) exactly; keep divisional codes
 (`D1/D9/D10/D60`) and product terms (`AI`) intact.
 
@@ -186,10 +191,10 @@ api method, url_launcher if used).
   descriptive message + the required trailers (via `git commit -F`).
 - `git push -u origin claude/multi-language-support-agents-g6p93h` (retry with
   backoff on network errors).
-- When the translation agent finishes, apply + commit "Backfill <Label>
-  translations for 10 locales (both apps)" + push.
+- Write the `<prefix>_source.json` for the orchestrator to backfill the other
+  8 locales (see step 5) — do not wait on it.
 - Update `/.claude/tasks/engineSpecialistUI-STATUS.md` (status → DONE, sha,
-  date, locales), commit+push the tracker.
+  date, `en+hi+hinglish; backfill pending`), commit+push the tracker.
 - **Immediately start the next PENDING engine.**
 
 ## Optional: visual preview
