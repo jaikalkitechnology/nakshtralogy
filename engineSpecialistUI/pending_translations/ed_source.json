@@ -1,0 +1,308 @@
+{
+ "edTitle": {
+  "en": "Education & Learning Analysis"
+ },
+ "edSubtitle": {
+  "en": "AI-powered Vedic Education Report"
+ },
+ "edSnapshotHeader": {
+  "en": "Your Education Snapshot"
+ },
+ "edOverallStrength": {
+  "en": "Overall Strength"
+ },
+ "edAcademicSuccess": {
+  "en": "Academic Success"
+ },
+ "edLearningCapacity": {
+  "en": "Learning Capacity"
+ },
+ "edIntellect": {
+  "en": "Intellect"
+ },
+ "edMemory": {
+  "en": "Memory"
+ },
+ "edStatusExcellent": {
+  "en": "Excellent Potential"
+ },
+ "edStatusStrong": {
+  "en": "Strong Potential"
+ },
+ "edStatusModerate": {
+  "en": "Moderate Potential"
+ },
+ "edStatusDeveloping": {
+  "en": "Developing Potential"
+ },
+ "edStatusChallenging": {
+  "en": "Challenging Phase"
+ },
+ "edChipSaraswati": {
+  "en": "Saraswati Yoga"
+ },
+ "edChipGajaKesari": {
+  "en": "Gaja Kesari Yoga"
+ },
+ "edChipBudhaAditya": {
+  "en": "Budha Aditya Yoga"
+ },
+ "edChipResearch": {
+  "en": "Strong Research Ability"
+ },
+ "edChipScholarship": {
+  "en": "Scholarship Potential"
+ },
+ "edChipDoctorate": {
+  "en": "Doctorate Potential"
+ },
+ "edChipForeign": {
+  "en": "Foreign Education Support"
+ },
+ "edChipLifelong": {
+  "en": "Lifelong Learner"
+ },
+ "edLearningStyleTitle": {
+  "en": "Your Learning Style"
+ },
+ "edSoulPlanet": {
+  "en": "Soul Planet"
+ },
+ "edSoulHint": {
+  "en": "Your deepest inner drive and life purpose"
+ },
+ "edSubjectPlanet": {
+  "en": "Subject Planet"
+ },
+ "edTechAtmakaraka": {
+  "en": "Atmakaraka (technical)"
+ },
+ "edTechAmatyakaraka": {
+  "en": "Amatyakaraka (technical)"
+ },
+ "edSubjectKarakaStrength": {
+  "en": "Subject Karaka Strength"
+ },
+ "edFoundationTitle": {
+  "en": "Education Foundation"
+ },
+ "edHouse4": {
+  "en": "Early Schooling"
+ },
+ "edHouse5": {
+  "en": "Intelligence"
+ },
+ "edHouse9": {
+  "en": "Higher Learning"
+ },
+ "edPurvaPunya": {
+  "en": "Past-Life Merit"
+ },
+ "edStudyPlanetsTitle": {
+  "en": "Your Study Planets"
+ },
+ "edYogasTitle": {
+  "en": "Education Yogas in Your Chart"
+ },
+ "edYogaBudhaAditya": {
+  "en": "Budha Aditya"
+ },
+ "edYogaGajaKesari": {
+  "en": "Gaja Kesari"
+ },
+ "edYogaSaraswati": {
+  "en": "Saraswati"
+ },
+ "edYogaPresent": {
+  "en": "Present"
+ },
+ "edYogaAbsent": {
+  "en": "Absent"
+ },
+ "edYogaNoneNote": {
+  "en": "No classical education yogas — success comes from consistent effort and discipline."
+ },
+ "edVerificationTitle": {
+  "en": "Verification Across Charts"
+ },
+ "edD24Learning": {
+  "en": "D24 — Deep Learning Chart"
+ },
+ "edD4Formal": {
+  "en": "D4 — Formal Education Chart"
+ },
+ "edD9Dharma": {
+  "en": "D9 — Learning Dharma Chart"
+ },
+ "edD60Karma": {
+  "en": "D60 — Past-Life Learning Karma"
+ },
+ "edSubjectsTitle": {
+  "en": "Best Subjects For You"
+ },
+ "edSubjectsSubtitle": {
+  "en": "Ranked by chart affinity"
+ },
+ "edLowAffinity": {
+  "en": "Lower-Affinity Subjects"
+ },
+ "edDegreesTitle": {
+  "en": "Degree & Level Likelihood"
+ },
+ "edExpectedLevel": {
+  "en": "Expected Level"
+ },
+ "edDegreeFormal": {
+  "en": "Formal Degree"
+ },
+ "edDegreePostgrad": {
+  "en": "Postgraduate"
+ },
+ "edDegreeDoctorate": {
+  "en": "Doctorate"
+ },
+ "edDegreeForeign": {
+  "en": "Foreign Education"
+ },
+ "edTimelineTitle": {
+  "en": "Study Timeline"
+ },
+ "edEarlySchooling": {
+  "en": "Early Schooling Window"
+ },
+ "edHigherEducation": {
+  "en": "Higher Education Window"
+ },
+ "edPostgradResearch": {
+  "en": "Postgrad / Research Window"
+ },
+ "edPeakLearningAge": {
+  "en": "Peak Learning Age"
+ },
+ "edPreferencesTitle": {
+  "en": "Learning Preferences & Support"
+ },
+ "edPrefStudyMode": {
+  "en": "Study Mode"
+ },
+ "edPrefTiming": {
+  "en": "Best Time"
+ },
+ "edPrefEnvironment": {
+  "en": "Environment"
+ },
+ "edPrefLocation": {
+  "en": "Location"
+ },
+ "edPrefForeign": {
+  "en": "Foreign Study"
+ },
+ "edGuruRelationship": {
+  "en": "Teacher/Guru Bond"
+ },
+ "edMentorAvailability": {
+  "en": "Mentor Availability"
+ },
+ "edPeerLearning": {
+  "en": "Peer Learning"
+ },
+ "edAuthorityDeference": {
+  "en": "Respect for Authority"
+ },
+ "edStrengthsTitle": {
+  "en": "Strengths & Challenges"
+ },
+ "edCognitiveGifts": {
+  "en": "Cognitive Gifts"
+ },
+ "edNaturalAbilities": {
+  "en": "Natural Learning Abilities"
+ },
+ "edHiddenCapacities": {
+  "en": "Hidden Capacities"
+ },
+ "edConcentration": {
+  "en": "Concentration Difficulty"
+ },
+ "edBreakRisk": {
+  "en": "Education Break Risk"
+ },
+ "edDisciplineConsistency": {
+  "en": "Discipline Consistency"
+ },
+ "edScholarshipLikelihood": {
+  "en": "Scholarship Likelihood"
+ },
+ "edCareerLinkTitle": {
+  "en": "Education → Career Path"
+ },
+ "edDirectionRec": {
+  "en": "Recommended Direction"
+ },
+ "edIntegrationStrategy": {
+  "en": "Integration Strategy"
+ },
+ "edCareerLinkage": {
+  "en": "Career Linkage"
+ },
+ "edAlignedSubjects": {
+  "en": "Career-Aligned Subjects"
+ },
+ "edDegreeUtility": {
+  "en": "Degree Utility for Career"
+ },
+ "edImprovementTitle": {
+  "en": "Your Improvement Plan"
+ },
+ "edReliabilityTitle": {
+  "en": "Prediction Reliability"
+ },
+ "edLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "edLayerD4": {
+  "en": "Formal Education (D4)"
+ },
+ "edLayerD9": {
+  "en": "Navamsa (D9)"
+ },
+ "edLayerD24": {
+  "en": "Deep Learning (D24)"
+ },
+ "edLayerD60": {
+  "en": "Past-Life Learning (D60)"
+ },
+ "edLayerAmk": {
+  "en": "Subject Karaka"
+ },
+ "edLayerMj": {
+  "en": "Mercury-Jupiter"
+ },
+ "edLayerDasha": {
+  "en": "Planetary Timing"
+ },
+ "edTopicSubjects": {
+  "en": "Best Subjects for Me"
+ },
+ "edTopicDegree": {
+  "en": "Degree Chances"
+ },
+ "edTopicAbroad": {
+  "en": "Studying Abroad"
+ },
+ "edTopicExam": {
+  "en": "Exam Performance"
+ },
+ "edTopicHabits": {
+  "en": "Study Habits"
+ },
+ "edTopicCareerLink": {
+  "en": "Education-to-Career Link"
+ },
+ "edTopicTiming": {
+  "en": "Education Timing Windows"
+ },
+ "edTopicScholarship": {
+  "en": "Scholarship Chances"
+ }
+}

@@ -1,0 +1,395 @@
+{
+ "chSubtitle": {
+  "en": "AI-powered Vedic Character Analysis Report"
+ },
+ "chTitle": {
+  "en": "Character Analysis"
+ },
+ "chSnapshotHeader": {
+  "en": "Character Snapshot"
+ },
+ "chGaugeIntegrity": {
+  "en": "Integrity"
+ },
+ "chGaugeResilience": {
+  "en": "Resilience"
+ },
+ "chGaugeSelfAwareness": {
+  "en": "Self-Awareness"
+ },
+ "chGaugeStability": {
+  "en": "Emotional Stability"
+ },
+ "chGaugeMoralFabric": {
+  "en": "Moral Fabric"
+ },
+ "chChipRajaYoga": {
+  "en": "Raja Yoga present"
+ },
+ "chChipHighIntegrity": {
+  "en": "High integrity"
+ },
+ "chChipResilient": {
+  "en": "Resilient nature"
+ },
+ "chChipDharmic": {
+  "en": "Strong dharma orientation"
+ },
+ "chChipEmpathetic": {
+  "en": "Naturally empathetic"
+ },
+ "chChipLoyal": {
+  "en": "Deeply loyal"
+ },
+ "chChipGiftedCharacter": {
+  "en": "Chart carries a character gift"
+ },
+ "chSoulTitle": {
+  "en": "Your Soul Signature"
+ },
+ "chSoulIntegration": {
+  "en": "Soul-Character Integration"
+ },
+ "chAmatyakarakaTheme": {
+  "en": "Supporting Character Voice"
+ },
+ "chAtmakarakaDignity": {
+  "en": "Soul-planet dignity"
+ },
+ "chAtmakarakaHouse": {
+  "en": "House placement"
+ },
+ "chSurfaceTitle": {
+  "en": "Surface Personality & Constitution"
+ },
+ "chLagnaSign": {
+  "en": "Ascendant Sign"
+ },
+ "chConstitution": {
+  "en": "Constitution"
+ },
+ "chSurfaceSignature": {
+  "en": "How you come across"
+ },
+ "chPhysicalConstitution": {
+  "en": "Physical Constitution"
+ },
+ "chLagnaLord": {
+  "en": "Ascendant Lord"
+ },
+ "chLagnaOccupants": {
+  "en": "Planets in Ascendant"
+ },
+ "chMindEmotionsTitle": {
+  "en": "Mind, Emotions & Ego"
+ },
+ "chEmotionalNature": {
+  "en": "Your Emotional Nature"
+ },
+ "chMentalStability": {
+  "en": "Mental Stability"
+ },
+ "chSelfConfidence": {
+  "en": "Healthy Self-Confidence"
+ },
+ "chEgoNature": {
+  "en": "Your Ego & Self-Concept"
+ },
+ "chAuthorityRelationship": {
+  "en": "Relationship with Authority"
+ },
+ "chPrideTendency": {
+  "en": "Pride Tendency"
+ },
+ "chMoodPatterns": {
+  "en": "Mood Patterns"
+ },
+ "chKemadrumaPresent": {
+  "en": "Kemadruma Yoga present — extra emotional self-care is beneficial."
+ },
+ "chFatherImprint": {
+  "en": "Father imprint quality"
+ },
+ "chCommunicationTitle": {
+  "en": "Communication & Intellect Style"
+ },
+ "chIntellectStyle": {
+  "en": "Intellect Style"
+ },
+ "chCommStyle": {
+  "en": "Communication Style"
+ },
+ "chDecisionStyle": {
+  "en": "Decision-Making Style"
+ },
+ "chDiscrimination": {
+  "en": "Discrimination Capacity"
+ },
+ "chPersonaTitle": {
+  "en": "Public Persona vs True Self"
+ },
+ "chAuthenticityGap": {
+  "en": "Authenticity Gap"
+ },
+ "chGunaTitle": {
+  "en": "Guna & Dosha Profile"
+ },
+ "chGunaSubtitle": {
+  "en": "Your inner nature and constitution, classical Vedic style"
+ },
+ "chSattva": {
+  "en": "Sattva"
+ },
+ "chRajas": {
+  "en": "Rajas"
+ },
+ "chTamas": {
+  "en": "Tamas"
+ },
+ "chDominantGuna": {
+  "en": "Dominant Guna"
+ },
+ "chPitta": {
+  "en": "Pitta"
+ },
+ "chKapha": {
+  "en": "Kapha"
+ },
+ "chVata": {
+  "en": "Vata"
+ },
+ "chDominantDosha": {
+  "en": "Dominant Dosha"
+ },
+ "chRahuRestlessness": {
+  "en": "Rahu restlessness"
+ },
+ "chKetuDetachment": {
+  "en": "Ketu detachment"
+ },
+ "chYogasTitle": {
+  "en": "Character Yogas"
+ },
+ "chRajaYogaStrength": {
+  "en": "Raja Yoga Strength"
+ },
+ "chGiftYogas": {
+  "en": "Gift Yogas"
+ },
+ "chTestYogas": {
+  "en": "Test Yogas"
+ },
+ "chStrengthsTitle": {
+  "en": "Strengths & Talents"
+ },
+ "chSignatureVirtues": {
+  "en": "Signature Virtues"
+ },
+ "chNaturalTalents": {
+  "en": "Natural Talents"
+ },
+ "chSoftSkills": {
+  "en": "Soft Skills"
+ },
+ "chHiddenStrengths": {
+  "en": "Hidden Strengths To Develop"
+ },
+ "chShadowTitle": {
+  "en": "Shadow & Growth Areas"
+ },
+ "chShadowSubtitle": {
+  "en": "Gentle awareness of patterns worth working on"
+ },
+ "chShadowPatterns": {
+  "en": "Shadow Patterns"
+ },
+ "chBlindSpots": {
+  "en": "Blind Spots"
+ },
+ "chEmotionalWounds": {
+  "en": "Emotional Wounds"
+ },
+ "chShadowWorkPriorities": {
+  "en": "Shadow-Work Priorities"
+ },
+ "chMoralTests": {
+  "en": "Moral Tests"
+ },
+ "chRelationshipsTitle": {
+  "en": "Relationships & Social Style"
+ },
+ "chWarmth": {
+  "en": "Interpersonal Warmth"
+ },
+ "chEmpathy": {
+  "en": "Empathy Capacity"
+ },
+ "chLoyalty": {
+  "en": "Loyalty Capacity"
+ },
+ "chBoundaries": {
+  "en": "Boundary Setting"
+ },
+ "chSocialConfidence": {
+  "en": "Social Confidence"
+ },
+ "chTrustGiving": {
+  "en": "Trust-Giving Baseline"
+ },
+ "chConflictStyle": {
+  "en": "Conflict style"
+ },
+ "chEthicsTitle": {
+  "en": "Ethics & Moral Compass"
+ },
+ "chDharmaOrientation": {
+  "en": "Dharma Orientation"
+ },
+ "chTruthfulness": {
+  "en": "Truthfulness"
+ },
+ "chCompassion": {
+  "en": "Compassion"
+ },
+ "chGenerosity": {
+  "en": "Generosity"
+ },
+ "chEthicalConsistency": {
+  "en": "Ethical Consistency"
+ },
+ "chIntegrityPressure": {
+  "en": "Integrity Under Pressure"
+ },
+ "chJusticeFairness": {
+  "en": "Justice & Fairness"
+ },
+ "chMoralTrajectory": {
+  "en": "Moral development"
+ },
+ "chEiTitle": {
+  "en": "Emotional Intelligence"
+ },
+ "chEiSelfAwareness": {
+  "en": "Self-Awareness"
+ },
+ "chEiSelfRegulation": {
+  "en": "Self-Regulation"
+ },
+ "chEiEmpathy": {
+  "en": "Empathy"
+ },
+ "chEiSocialSkills": {
+  "en": "Social Skills"
+ },
+ "chMotivation": {
+  "en": "Internal Motivation"
+ },
+ "chVulnerabilityComfort": {
+  "en": "Comfort With Vulnerability"
+ },
+ "chEmotionalExpression": {
+  "en": "Emotional expression comfort"
+ },
+ "chEmotionalReceptivity": {
+  "en": "Emotional receptivity"
+ },
+ "chVerificationTitle": {
+  "en": "Verified Across Charts (D9/D12/D30/D60)"
+ },
+ "chD9Label": {
+  "en": "D9 Dharma-Character"
+ },
+ "chD12Label": {
+  "en": "D12 Ancestral Inheritance"
+ },
+ "chD30Label": {
+  "en": "D30 Shadow Profile"
+ },
+ "chD60Label": {
+  "en": "D60 Past-Life Character"
+ },
+ "chD30Standing": {
+  "en": "Shadow standing"
+ },
+ "chMaternalInheritance": {
+  "en": "Maternal inheritance"
+ },
+ "chAncestralKarmaWeight": {
+  "en": "Ancestral karma weight"
+ },
+ "chTimelineTitle": {
+  "en": "Character Timeline"
+ },
+ "chFormationWindow": {
+  "en": "Formation Window"
+ },
+ "chMaturationWindow": {
+  "en": "Maturation Window"
+ },
+ "chLegacyWindow": {
+  "en": "Legacy Window"
+ },
+ "chPeakMaturationAge": {
+  "en": "Peak maturation age"
+ },
+ "chAgeRangeLabel": {
+  "en": "Age {ageRange}",
+  "placeholders": [
+   "ageRange"
+  ]
+ },
+ "chImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "chRoadmapTitle": {
+  "en": "Your Character Roadmap"
+ },
+ "chAuthenticExpression": {
+  "en": "Authentic Self-Expression"
+ },
+ "chRealizationPotential": {
+  "en": "Character Realization Potential"
+ },
+ "chLayerAtmakaraka": {
+  "en": "Soul Planet (Atmakaraka)"
+ },
+ "chLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "chLayerD9": {
+  "en": "Navamsa (D9)"
+ },
+ "chLayerD30": {
+  "en": "Trimshamsa (D30)"
+ },
+ "chLayerLagnaMoon": {
+  "en": "Ascendant & Moon"
+ },
+ "chLayerArudha": {
+  "en": "Arudha Lagna"
+ },
+ "chTopicStrengths": {
+  "en": "My character strengths"
+ },
+ "chTopicShadow": {
+  "en": "My shadow patterns"
+ },
+ "chTopicSoul": {
+  "en": "My soul signature"
+ },
+ "chTopicRelationships": {
+  "en": "My relationship style"
+ },
+ "chTopicEthics": {
+  "en": "My ethics & values"
+ },
+ "chTopicGuna": {
+  "en": "My guna & dosha profile"
+ },
+ "chTopicGrowth": {
+  "en": "How to grow my character"
+ },
+ "chTopicTiming": {
+  "en": "Best timing for character work"
+ }
+}

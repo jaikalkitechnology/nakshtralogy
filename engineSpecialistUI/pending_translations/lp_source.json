@@ -1,0 +1,391 @@
+{
+ "lpSubtitle": {
+  "en": "AI-powered Vedic Life Path & Luck Report"
+ },
+ "lpTitle": {
+  "en": "Life Path & Luck"
+ },
+ "lpSnapshotHeader": {
+  "en": "Life Path Snapshot"
+ },
+ "lpHeroSummary": {
+  "en": "You're a {archetype} with a primary purpose in {domain}. Our analysis shows a {probability}% overall life-fulfillment potential.",
+  "placeholders": [
+   "archetype",
+   "domain",
+   "probability"
+  ]
+ },
+ "lpGaugeDharma": {
+  "en": "Dharma Clarity"
+ },
+ "lpGaugeFortune": {
+  "en": "Fortune Baseline"
+ },
+ "lpGaugeCoherence": {
+  "en": "Path Coherence"
+ },
+ "lpGaugeFulfillment": {
+  "en": "Fulfillment"
+ },
+ "lpGaugeMomentum": {
+  "en": "Karmic Momentum"
+ },
+ "lpChipRareGift": {
+  "en": "Rare destiny gift"
+ },
+ "lpChipFreeWillStrong": {
+  "en": "Strong free will"
+ },
+ "lpChipGraceSupported": {
+  "en": "Grace-supported"
+ },
+ "lpChipLightKarma": {
+  "en": "Light karmic load"
+ },
+ "lpChipRecognitionPotential": {
+  "en": "Recognition potential"
+ },
+ "lpChipSpiritualPath": {
+  "en": "Strong spiritual pull"
+ },
+ "lpChipBlessed": {
+  "en": "Chart carries blessings"
+ },
+ "lpSoulPathTitle": {
+  "en": "Your Soul Path"
+ },
+ "lpSoulPlanet": {
+  "en": "Soul Planet"
+ },
+ "lpCareerPlanet": {
+  "en": "Purpose Planet"
+ },
+ "lpSoulClarity": {
+  "en": "Purpose Clarity"
+ },
+ "lpLifeChapter": {
+  "en": "Current Life Chapter"
+ },
+ "lpPrimaryDomain": {
+  "en": "Primary Purpose Domain"
+ },
+ "lpKarakaTitle": {
+  "en": "Your Dharma Planets"
+ },
+ "lpKarakaSubtitle": {
+  "en": "How strongly each planet supports your life purpose"
+ },
+ "lpVerificationTitle": {
+  "en": "Verified Across Charts (D9 / D60)"
+ },
+ "lpD9Label": {
+  "en": "D9 Soul Alignment"
+ },
+ "lpD9Explain": {
+  "en": "Your soul-evolution stage is '{stage}' in the Navamsa chart.",
+  "placeholders": [
+   "stage"
+  ]
+ },
+ "lpD9JupiterDignity": {
+  "en": "Jupiter dignity"
+ },
+ "lpD9DharmaMultiplier": {
+  "en": "Dharma multiplier"
+ },
+ "lpD60Label": {
+  "en": "D60 Past-Life Signature"
+ },
+ "lpKarmaType": {
+  "en": "Past-life karma type"
+ },
+ "lpKetuMastery": {
+  "en": "Ketu past-life mastery"
+ },
+ "lpRahuGrowthDir": {
+  "en": "Rahu growth direction"
+ },
+ "lpYogasTitle": {
+  "en": "Fortune Yogas & Luck Blocks"
+ },
+ "lpFortuneBoost": {
+  "en": "Fortune Boost"
+ },
+ "lpLuckDrain": {
+  "en": "Luck Drain"
+ },
+ "lpFortuneBoosters": {
+  "en": "Fortune Boosters"
+ },
+ "lpLuckBlocks": {
+  "en": "Luck Blocks"
+ },
+ "lpPurposeTitle": {
+  "en": "Purpose Domains & Fame"
+ },
+ "lpDomainLeadership": {
+  "en": "Leadership"
+ },
+ "lpDomainWisdom": {
+  "en": "Wisdom & Teaching"
+ },
+ "lpDomainService": {
+  "en": "Service"
+ },
+ "lpDomainHealing": {
+  "en": "Healing"
+ },
+ "lpDomainCreative": {
+  "en": "Creative Expression"
+ },
+ "lpPrimaryDomainBadge": {
+  "en": "Primary"
+ },
+ "lpFameRecognition": {
+  "en": "Fame & Recognition"
+ },
+ "lpSocialInfluence": {
+  "en": "Social Influence"
+ },
+ "lpRecognitionDomain": {
+  "en": "Recognition Field"
+ },
+ "lpPublicImage": {
+  "en": "Public Image"
+ },
+ "lpHistoricalImpact": {
+  "en": "Historical impact potential"
+ },
+ "lpTimelineTitle": {
+  "en": "Fortune & Life Timeline"
+ },
+ "lpCurrentPhase": {
+  "en": "Current Fortune Phase"
+ },
+ "lpJupiterReturn": {
+  "en": "Jupiter Return"
+ },
+ "lpSaturnReturn": {
+  "en": "Saturn Return"
+ },
+ "lpSadeSati": {
+  "en": "Sade Sati"
+ },
+ "lpGoldenWindow": {
+  "en": "Golden Window"
+ },
+ "lpTransformationWindow": {
+  "en": "Transformation Window"
+ },
+ "lpPeakYears": {
+  "en": "Peak Fortune Years"
+ },
+ "lpChallengingYears": {
+  "en": "Challenging Years"
+ },
+ "lpMilestonesTitle": {
+  "en": "Major Milestones & Turning Points"
+ },
+ "lpFirstTurningPoint": {
+  "en": "First Major Turning Point"
+ },
+ "lpMidlifeTransform": {
+  "en": "Midlife Transformation"
+ },
+ "lpLateLifeFulfillment": {
+  "en": "Late-Life Fulfillment"
+ },
+ "lpDharmicMilestone": {
+  "en": "Dharmic Milestone (Age {age})",
+  "placeholders": [
+   "age"
+  ]
+ },
+ "lpAgeLabel": {
+  "en": "Age {age}",
+  "placeholders": [
+   "age"
+  ]
+ },
+ "lpDestinyTitle": {
+  "en": "Destiny vs Free Will"
+ },
+ "lpDestinyStat": {
+  "en": "Destiny Weight"
+ },
+ "lpFreeWillStat": {
+  "en": "Free Will Leverage"
+ },
+ "lpFateStrength": {
+  "en": "Fate Signature Strength"
+ },
+ "lpSelfCreation": {
+  "en": "Self-Creation Capacity"
+ },
+ "lpEffortGrace": {
+  "en": "Effort vs grace"
+ },
+ "lpKarmicTitle": {
+  "en": "Karmic Lessons"
+ },
+ "lpRahuGrowthLabel": {
+  "en": "Rahu — Growth Challenge"
+ },
+ "lpKetuSurrenderLabel": {
+  "en": "Ketu — Surrender Theme"
+ },
+ "lpSaturnLessonLabel": {
+  "en": "Saturn — Discipline Lesson"
+ },
+ "lpTestDifficulty": {
+  "en": "Life Test Difficulty"
+ },
+ "lpLessonsInProgress": {
+  "en": "Lessons In Progress"
+ },
+ "lpSoulContract": {
+  "en": "Soul Contract Areas"
+ },
+ "lpSoulExperience": {
+  "en": "What Your Soul Came To Experience"
+ },
+ "lpSoulMastery": {
+  "en": "What Your Soul Came To Master"
+ },
+ "lpSpiritualTitle": {
+  "en": "Spiritual Path"
+ },
+ "lpSpiritualInclination": {
+  "en": "Spiritual Inclination"
+ },
+ "lpMeditationReceptivity": {
+  "en": "Meditation Receptivity"
+ },
+ "lpTeacherKarma": {
+  "en": "Teacher/Guru Karma"
+ },
+ "lpPilgrimageBenefit": {
+  "en": "Pilgrimage Benefit"
+ },
+ "lpSelfRealization": {
+  "en": "Self-Realization Potential"
+ },
+ "lpDivineConnection": {
+  "en": "Divine Connection"
+ },
+ "lpTraditionAffinity": {
+  "en": "Tradition affinity"
+ },
+ "lpIntuitionStrength": {
+  "en": "Intuition strength"
+ },
+ "lpMantraEfficacy": {
+  "en": "Prayer/mantra efficacy"
+ },
+ "lpInnerGuidance": {
+  "en": "Inner-guidance trust"
+ },
+ "lpPropheticDreams": {
+  "en": "Prophetic-dream sensitivity"
+ },
+ "lpDifficultyTitle": {
+  "en": "Life Difficulty & Challenges"
+ },
+ "lpEarlyLife": {
+  "en": "Early Life"
+ },
+ "lpMidlife": {
+  "en": "Midlife"
+ },
+ "lpLateLife": {
+  "en": "Late Life"
+ },
+ "lpStruggleToSuccess": {
+  "en": "Struggle-to-Success Karma"
+ },
+ "lpUnlivedLifeRisk": {
+  "en": "Unlived-Life Risk"
+ },
+ "lpChallenges": {
+  "en": "Life Challenges"
+ },
+ "lpFortuneDrains": {
+  "en": "Chronic Fortune Drains"
+ },
+ "lpRegretAreas": {
+  "en": "Regret-Vulnerability Areas"
+ },
+ "lpRedFlags": {
+  "en": "Direction Red Flags"
+ },
+ "lpBlessingsTitle": {
+  "en": "Blessings & Core Life Theme"
+ },
+ "lpKarmicRoot": {
+  "en": "Karmic root"
+ },
+ "lpBlessingsList": {
+  "en": "Your Blessings"
+ },
+ "lpFulfillmentPriorities": {
+  "en": "Fulfillment Priorities"
+ },
+ "lpImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "lpDharmaPriorities": {
+  "en": "Dharma Priorities"
+ },
+ "lpRoadmapTitle": {
+  "en": "Your Destiny Roadmap"
+ },
+ "lpStrategy": {
+  "en": "Strategy"
+ },
+ "lpFulfillmentPotential": {
+  "en": "Fulfillment Potential"
+ },
+ "lpNext12Focus": {
+  "en": "Next 12-Month Focus"
+ },
+ "lpLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "lpLayerD9": {
+  "en": "Navamsa (D9)"
+ },
+ "lpLayerD60": {
+  "en": "Shashtiamsa (D60)"
+ },
+ "lpLayerDasha": {
+  "en": "Dasha Timing"
+ },
+ "lpLayerTransit": {
+  "en": "Current Transits"
+ },
+ "lpTopicPurpose": {
+  "en": "My life purpose"
+ },
+ "lpTopicFortune": {
+  "en": "My fortune yogas"
+ },
+ "lpTopicKarma": {
+  "en": "My karmic lessons"
+ },
+ "lpTopicMilestones": {
+  "en": "Upcoming milestones"
+ },
+ "lpTopicDestiny": {
+  "en": "Destiny vs free will"
+ },
+ "lpTopicSpiritual": {
+  "en": "My spiritual path"
+ },
+ "lpTopicChallenges": {
+  "en": "My life challenges"
+ },
+ "lpTopicTiming": {
+  "en": "Best timing windows"
+ }
+}

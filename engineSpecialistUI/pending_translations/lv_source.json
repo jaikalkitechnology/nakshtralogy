@@ -1,0 +1,257 @@
+{
+ "lvSubtitle": {
+  "en": "AI-powered Vedic Love Report"
+ },
+ "lvTitle": {
+  "en": "Love & Relationships"
+ },
+ "lvLovePotential": {
+  "en": "Love Potential"
+ },
+ "lvEmotionalAvail": {
+  "en": "Emotionally Open"
+ },
+ "lvAttraction": {
+  "en": "Attraction"
+ },
+ "lvCommitment": {
+  "en": "Commitment"
+ },
+ "lvCommunication": {
+  "en": "Communication"
+ },
+ "lvFidelity": {
+  "en": "Loyalty"
+ },
+ "lvChipLoyal": {
+  "en": "Loyal heart"
+ },
+ "lvChipOpenHeart": {
+  "en": "Open-hearted"
+ },
+ "lvChipCommunicator": {
+  "en": "Great communicator"
+ },
+ "lvChipMature": {
+  "en": "Handles conflict well"
+ },
+ "lvChipEmotionallyWise": {
+  "en": "Emotionally wise"
+ },
+ "lvLoveStyle": {
+  "en": "Your Love Style"
+ },
+ "lvAttractionStyle": {
+  "en": "Attraction style"
+ },
+ "lvLangGiven": {
+  "en": "You Express Love By"
+ },
+ "lvLangReceived": {
+  "en": "You Feel Loved By"
+ },
+ "lvLovePlanets": {
+  "en": "Your Love Planets"
+ },
+ "lvLoveKaraka": {
+  "en": "Love"
+ },
+ "lvEmotionKaraka": {
+  "en": "Emotion"
+ },
+ "lvPassionKaraka": {
+  "en": "Passion"
+ },
+ "lvPathToLove": {
+  "en": "Your Path to Love"
+ },
+ "lvPathSub": {
+  "en": "Love vs arranged"
+ },
+ "lvLoveMarriage": {
+  "en": "Love Marriage"
+ },
+ "lvArrangedMarriage": {
+  "en": "Arranged Marriage"
+ },
+ "lvParentalAccept": {
+  "en": "Parental Acceptance"
+ },
+ "lvInterCaste": {
+  "en": "Inter-caste / Religion"
+ },
+ "lvIdealPartner": {
+  "en": "Your Ideal Partner"
+ },
+ "lvPersonality": {
+  "en": "Personality"
+ },
+ "lvAppearance": {
+  "en": "Appearance"
+ },
+ "lvIdealTraits": {
+  "en": "Ideal Traits"
+ },
+ "lvWhatMatters": {
+  "en": "What Matters Most"
+ },
+ "lvDrawnTo": {
+  "en": "Drawn to"
+ },
+ "lvDealbreakers": {
+  "en": "Dealbreakers"
+ },
+ "lvYourAppeal": {
+  "en": "Your appeal"
+ },
+ "lvLoveStory": {
+  "en": "Your Love Story"
+ },
+ "lvLoveStorySub": {
+  "en": "Relationship patterns"
+ },
+ "lvFirstLove": {
+  "en": "First Love"
+ },
+ "lvRelationCount": {
+  "en": "Significant Bonds"
+ },
+ "lvDuration": {
+  "en": "Typical Duration"
+ },
+ "lvDepth": {
+  "en": "Emotional Depth"
+ },
+ "lvDatingPattern": {
+  "en": "Dating Pattern"
+ },
+ "lvCommitIntimacy": {
+  "en": "Commitment & Intimacy"
+ },
+ "lvCommitReady": {
+  "en": "Commitment Readiness"
+ },
+ "lvIntimacyDrive": {
+  "en": "Intimacy Drive"
+ },
+ "lvSensuality": {
+  "en": "Sensuality"
+ },
+ "lvEmpathy": {
+  "en": "Empathy"
+ },
+ "lvCommitStyle": {
+  "en": "Commitment Style"
+ },
+ "lvChemistry": {
+  "en": "Chemistry Style"
+ },
+ "lvMakesCommit": {
+  "en": "What Makes You Commit"
+ },
+ "lvMakesFlee": {
+  "en": "What Pushes You Away"
+ },
+ "lvEmotional": {
+  "en": "Emotional Intelligence"
+ },
+ "lvEmotionalIQ": {
+  "en": "Emotional IQ"
+ },
+ "lvConflictStyle": {
+  "en": "Conflict Style"
+ },
+ "lvTiming": {
+  "en": "Love Timing"
+ },
+ "lvNewLove12": {
+  "en": "New love in 12 months"
+ },
+ "lvEnergyNow": {
+  "en": "Energy now"
+ },
+ "lvPhaseNow": {
+  "en": "Phase now"
+ },
+ "lvPeakRomance": {
+  "en": "Peak Romance Years"
+ },
+ "lvNewLoveWindow": {
+  "en": "New Love Window"
+ },
+ "lvChallenges": {
+  "en": "Challenges to Watch"
+ },
+ "lvRiskHeartbreak": {
+  "en": "Heartbreak Vulnerability"
+ },
+ "lvRiskSabotage": {
+  "en": "Self-sabotage"
+ },
+ "lvRiskCommitFear": {
+  "en": "Fear of Commitment"
+ },
+ "lvRiskRepeat": {
+  "en": "Repeat Patterns"
+ },
+ "lvRiskWorkaholic": {
+  "en": "Work Over Love"
+ },
+ "lvRedFlags": {
+  "en": "Red flags to watch"
+ },
+ "lvHealing": {
+  "en": "What to Heal"
+ },
+ "lvFocusArea": {
+  "en": "Focus Area"
+ },
+ "lvHealDir": {
+  "en": "Healing direction"
+ },
+ "lvImprovementPlan": {
+  "en": "Improvement Plan"
+ },
+ "lvReliability": {
+  "en": "Prediction Reliability"
+ },
+ "lvLayerBirth": {
+  "en": "Birth Chart (D1)"
+ },
+ "lvLayerNavamsa": {
+  "en": "Navamsa (D9)"
+ },
+ "lvLayerSaptamsa": {
+  "en": "Saptamsa (D7)"
+ },
+ "lvLayerDasha": {
+  "en": "Dasha Timing"
+ },
+ "lvLayerTransit": {
+  "en": "Current Transits"
+ },
+ "lvTopicWhen": {
+  "en": "When will I find love?"
+ },
+ "lvTopicSoulmate": {
+  "en": "About my soulmate"
+ },
+ "lvTopicCurrent": {
+  "en": "My current relationship"
+ },
+ "lvTopicHeal": {
+  "en": "Healing from the past"
+ },
+ "lvTopicCommit": {
+  "en": "Commitment help"
+ },
+ "lvTopicLoveVsArranged": {
+  "en": "Love vs arranged"
+ },
+ "lvTopicHeartbreak": {
+  "en": "Avoiding heartbreak"
+ },
+ "lvTopicConfidence": {
+  "en": "Confidence in love"
+ }
+}

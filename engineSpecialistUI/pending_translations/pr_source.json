@@ -1,0 +1,308 @@
+{
+ "prSubtitle": {
+  "en": "AI-powered Vedic Property Report"
+ },
+ "prTitle": {
+  "en": "Property & Assets"
+ },
+ "prSnapshotHeader": {
+  "en": "Property Snapshot"
+ },
+ "prAcquisitionCapacity": {
+  "en": "Acquisition Capacity"
+ },
+ "prHomeOwnership": {
+  "en": "Home Ownership"
+ },
+ "prWealthPotential": {
+  "en": "Wealth Potential"
+ },
+ "prRentalIncome": {
+  "en": "Rental Income"
+ },
+ "prLandOwnership": {
+  "en": "Land Ownership"
+ },
+ "prStatusExcellent": {
+  "en": "Excellent"
+ },
+ "prStatusStrong": {
+  "en": "Strong"
+ },
+ "prStatusModerate": {
+  "en": "Moderate"
+ },
+ "prStatusDeveloping": {
+  "en": "Developing"
+ },
+ "prStatusChallenging": {
+  "en": "Challenging"
+ },
+ "prChipHomeOwner": {
+  "en": "Home Owner"
+ },
+ "prChipWealthBuilder": {
+  "en": "Wealth Builder"
+ },
+ "prChipLandOwner": {
+  "en": "Land Owner"
+ },
+ "prChipInvestor": {
+  "en": "Property Investor"
+ },
+ "prChipInheritance": {
+  "en": "Inheritance Likely"
+ },
+ "prChipVehicle": {
+  "en": "Vehicle Owner"
+ },
+ "prChipGlobalAsset": {
+  "en": "Global Asset Affinity"
+ },
+ "prProfileTitle": {
+  "en": "Your Property Style"
+ },
+ "prHomeAesthetics": {
+  "en": "Home Aesthetics"
+ },
+ "prHomeSanctuary": {
+  "en": "Home as Sanctuary"
+ },
+ "prComfortInvestment": {
+  "en": "Comfort Investment"
+ },
+ "prVastuPriority": {
+  "en": "Vastu Priority"
+ },
+ "prNaturalElements": {
+  "en": "Natural Elements"
+ },
+ "prNextActionLabel": {
+  "en": "Next Action"
+ },
+ "prKarakaTitle": {
+  "en": "Your Property Planets"
+ },
+ "prKarakaSubtitle": {
+  "en": "Which planets shape your property luck"
+ },
+ "prPrimaryKaraka": {
+  "en": "Primary Karaka"
+ },
+ "prDurableAsset": {
+  "en": "Durable Asset Karaka"
+ },
+ "prYogasTitle": {
+  "en": "Property Yogas & Doshas"
+ },
+ "prCurrentPhase": {
+  "en": "Current Phase"
+ },
+ "prBoosters": {
+  "en": "Boosters"
+ },
+ "prDrains": {
+  "en": "Drains"
+ },
+ "prVerificationTitle": {
+  "en": "Verified Across Charts"
+ },
+ "prD4Property": {
+  "en": "D4 Property Chart"
+ },
+ "prD16Vehicle": {
+  "en": "D16 Vehicle Chart"
+ },
+ "prVehicleFit": {
+  "en": "Vehicle Fit"
+ },
+ "prJourneyTitle": {
+  "en": "Ownership Journey & Timeline"
+ },
+ "prFirstHomeAge": {
+  "en": "First Home Age"
+ },
+ "prFirstHomeType": {
+  "en": "First Home Type"
+ },
+ "prMultipleHomes": {
+  "en": "Multiple Homes"
+ },
+ "prNewPropertySoon": {
+  "en": "New Property Soon"
+ },
+ "prFirstMajorWindow": {
+  "en": "First Major Window"
+ },
+ "prBuyingWindow": {
+  "en": "Buying Window"
+ },
+ "prConstructionWindow": {
+  "en": "Construction Window"
+ },
+ "prNextOpportunity": {
+  "en": "Next Opportunity"
+ },
+ "prLifetimePropertyCount": {
+  "en": "Lifetime Property Count"
+ },
+ "prInheritanceTitle": {
+  "en": "Inheritance & Family Property"
+ },
+ "prMaternalInheritance": {
+  "en": "Maternal Inheritance"
+ },
+ "prPaternalInheritance": {
+  "en": "Paternal Inheritance"
+ },
+ "prAncestralProperty": {
+  "en": "Ancestral Property"
+ },
+ "prFamilyDisputeRisk": {
+  "en": "Family Dispute Risk"
+ },
+ "prInheritanceTiming": {
+  "en": "Inheritance Timing"
+ },
+ "prInheritanceType": {
+  "en": "Inheritance Type"
+ },
+ "prLandInvestTitle": {
+  "en": "Land, Investment & Global Property"
+ },
+ "prPropertyInvestor": {
+  "en": "Property Investor Score"
+ },
+ "prAppreciationLuck": {
+  "en": "Appreciation Luck"
+ },
+ "prInvestorMindset": {
+  "en": "Investor Mindset"
+ },
+ "prLandType": {
+  "en": "Land Type"
+ },
+ "prRentalCount": {
+  "en": "Rental Property Count"
+ },
+ "prMultipleLand": {
+  "en": "Multiple Land Parcels"
+ },
+ "prFarmEstate": {
+  "en": "Farm / Estate Chance"
+ },
+ "prGlobalPropertyLabel": {
+  "en": "Global Property"
+ },
+ "prForeignProperty": {
+  "en": "Foreign Property"
+ },
+ "prNriAffinity": {
+  "en": "NRI Asset Affinity"
+ },
+ "prVehiclesTitle": {
+  "en": "Vehicles"
+ },
+ "prVehicleCount": {
+  "en": "Vehicle Count"
+ },
+ "prVehicleFirstAge": {
+  "en": "First Vehicle Age"
+ },
+ "prVehicleCategory": {
+  "en": "Vehicle Category"
+ },
+ "prVehicleQuality": {
+  "en": "Vehicle Quality"
+ },
+ "prLuxuryAffinity": {
+  "en": "Luxury Affinity"
+ },
+ "prVehicleLossRisk": {
+  "en": "Vehicle Loss / Damage Risk"
+ },
+ "prLegalRiskTitle": {
+  "en": "Legal & Risk Watch"
+ },
+ "prBoundaryDisputes": {
+  "en": "Boundary Disputes"
+ },
+ "prPartitionDisputes": {
+  "en": "Partition Disputes"
+ },
+ "prTitleIssues": {
+  "en": "Title / Documentation Issues"
+ },
+ "prTenantConflict": {
+  "en": "Tenant-Landlord Conflict"
+ },
+ "prForcedSale": {
+  "en": "Forced Sale Risk"
+ },
+ "prPropertyDamage": {
+  "en": "Property Damage Risk"
+ },
+ "prInsurancePriority": {
+  "en": "Insurance Priority"
+ },
+ "prProtectionUrgency": {
+  "en": "Protection Urgency"
+ },
+ "prProtectiveFactors": {
+  "en": "Protective Factors"
+ },
+ "prChronicVulnerabilities": {
+  "en": "Chronic Vulnerabilities"
+ },
+ "prDueDiligenceTitle": {
+  "en": "Due Diligence Checklist"
+ },
+ "prPreventiveMeasures": {
+  "en": "Preventive Measures"
+ },
+ "prImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "prReliabilityTitle": {
+  "en": "Reliability"
+ },
+ "prLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "prLayerD4": {
+  "en": "Property Chart (D4)"
+ },
+ "prLayerD16": {
+  "en": "Vehicle Chart (D16)"
+ },
+ "prLayerDasha": {
+  "en": "Dasha Timing"
+ },
+ "prLayerTransit": {
+  "en": "Transits"
+ },
+ "prTopicBuying": {
+  "en": "Best time to buy?"
+ },
+ "prTopicInherit": {
+  "en": "Will I inherit property?"
+ },
+ "prTopicVehicle": {
+  "en": "When will I get a vehicle?"
+ },
+ "prTopicRental": {
+  "en": "Rental income potential?"
+ },
+ "prTopicLand": {
+  "en": "Land ownership chances?"
+ },
+ "prTopicLegal": {
+  "en": "Legal risks to watch?"
+ },
+ "prTopicForeign": {
+  "en": "Foreign property chances?"
+ },
+ "prTopicTiming": {
+  "en": "Best property timing windows?"
+ }
+}

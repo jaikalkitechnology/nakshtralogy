@@ -9,6 +9,5125 @@ class AppLocalizationsGu extends AppLocalizations {
   AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
+  String get klSubtitle => 'AI-સંચાલિત વૈદિક પૂર્વજન્મ કર્મ-જોડાણ અહેવાલ';
+
+  @override
+  String get klTitle => 'પૂર્વજન્મ કર્મ-જોડાણ';
+
+  @override
+  String get klSnapshotHeader => 'કર્મ-જોડાણ સ્નેપશોટ';
+
+  @override
+  String get klGaugePairwise => 'સરેરાશ જોડ જોડાણ';
+
+  @override
+  String get klGaugeCohesion => 'જૂથ એકતા';
+
+  @override
+  String get klGaugeRahuKetu => 'રાહુ-કેતુ પડઘો';
+
+  @override
+  String get klGaugeAtmakaraka => 'આત્મા પડઘો';
+
+  @override
+  String get klGaugeD60 => 'D60 પડઘો';
+
+  @override
+  String get klChipSoulResonance => 'મજબૂત આત્મ-હસ્તાક્ષર પડઘો';
+
+  @override
+  String get klChipD60Resonance => 'મજબૂત D60 પૂર્વજન્મ પડઘો';
+
+  @override
+  String get klChipCohesiveGroup => 'એકતાવાળું જૂથ';
+
+  @override
+  String get klChipNoDebts => 'કોઈ કર્મ-ઋણ મળ્યું નથી';
+
+  @override
+  String get klProfilesTitle => 'કુંડળી પ્રોફાઇલ';
+
+  @override
+  String get klKetuAt => 'કેતુ સ્થિત છે';
+
+  @override
+  String get klRahuAt => 'રાહુ સ્થિત છે';
+
+  @override
+  String get klFoundationTitle => 'દરેક કુંડળી માટે કર્મ-આધાર';
+
+  @override
+  String get klFoundationSubtitle => 'દરેક આત્માની પૂર્વજન્મ નિપુણતા અને વર્તમાન જીવન દિશા';
+
+  @override
+  String get klKetuMastery => 'કેતુ નિપુણતા';
+
+  @override
+  String get klRahuGrowth => 'રાહુ વૃદ્ધિ';
+
+  @override
+  String get klNinthHousePunya => '9મા ભાવનું પુણ્ય';
+
+  @override
+  String get klD60Depth => 'D60 કર્મ ઊંડાણ';
+
+  @override
+  String get klAtmakarakaAgenda => 'આત્માનો ઉદ્દેશ';
+
+  @override
+  String get klSaturnKarma => 'શનિ કર્મ';
+
+  @override
+  String get klPairwiseTitle => 'જોડ કર્મ-જોડાણો';
+
+  @override
+  String get klActiveFactors => 'સક્રિય જોડાણ પરિબળો';
+
+  @override
+  String get klGroupPatternTitle => 'જૂથ કર્મ પેટર્ન';
+
+  @override
+  String get klSharedSetting => 'સહિયારું પૂર્વજન્મ પરિવેશ';
+
+  @override
+  String get klCohesionScore => 'કર્મ એકતા';
+
+  @override
+  String get klPastGoalsTitle => 'પૂર્વજન્મના લક્ષ્યો';
+
+  @override
+  String get klLearningTitle => 'વર્તમાન જીવનનું શિક્ષણ';
+
+  @override
+  String get klTeachingMap => 'પરસ્પર શિક્ષણ નકશો';
+
+  @override
+  String get klDebtsTitle => 'કર્મ-ઋણ અને ઉકેલો';
+
+  @override
+  String get klNoDebtsDetected => 'આ જૂથમાં કોઈ કર્મ-ઋણ મળ્યું નથી';
+
+  @override
+  String get klTimingTitle => 'મૂળ દશા કર્મ સમય';
+
+  @override
+  String get klAuditTitle => 'ઊંડું ઓડિટ કોષ્ટક';
+
+  @override
+  String klAuditSubtitle(Object count) {
+    return '${count} કર્મ પરિમાણોની તપાસ કરવામાં આવી';
+  }
+
+  @override
+  String get klTopicLinkage => 'અમારું એકંદર કર્મ-જોડાણ';
+
+  @override
+  String get klTopicPairwise => 'કોઈ ચોક્કસ જોડનું કર્મ-બંધન';
+
+  @override
+  String get klTopicDebts => 'ઉકેલવા યોગ્ય કર્મ-ઋણ';
+
+  @override
+  String get klTopicLessons => 'અમે અહીં શું શીખવા આવ્યા છીએ';
+
+  @override
+  String get klTopicTiming => 'અમારા જૂથ માટે શ્રેષ્ઠ સમય';
+
+  @override
+  String get klTopicGroup => 'અમારી સહિયારી પૂર્વજન્મ કથા';
+
+  @override
+  String get lcSubtitle => 'AI-સંચાલિત વૈદિક પ્રેમ અનુકૂળતા અહેવાલ';
+
+  @override
+  String get lcTitle => 'પ્રેમ અનુકૂળતા';
+
+  @override
+  String get lcSnapshotHeader => 'પ્રેમ અનુકૂળતા સ્નેપશોટ';
+
+  @override
+  String get lcGaugeAttraction => 'આકર્ષણ';
+
+  @override
+  String get lcGaugeEmotional => 'ભાવનાત્મક સંવાદિતા';
+
+  @override
+  String get lcGaugeMental => 'માનસિક તાલમેલ';
+
+  @override
+  String get lcGaugePassion => 'જુસ્સો';
+
+  @override
+  String get lcGaugeLongterm => 'લાંબા ગાળાની સંવાદિતા';
+
+  @override
+  String get lcChipStrongMental => 'મજબૂત માનસિક જોડાણ';
+
+  @override
+  String get lcChipStrongLongterm => 'મજબૂત લાંબા ગાળાની સંભાવના';
+
+  @override
+  String get lcChipStrongPassion => 'મજબૂત શારીરિક આકર્ષણ';
+
+  @override
+  String get lcChipLowFriction => 'એકંદરે ઓછો ઘર્ષણ';
+
+  @override
+  String get lcChipKarmicPull => 'મજબૂત કર્મિક ખેંચાણ';
+
+  @override
+  String get lcPartnersTitle => 'ભાગીદારનો સ્નેપશોટ';
+
+  @override
+  String get lcVenusSuffix => 'શુક્ર રાશિ';
+
+  @override
+  String get lcAttractionTitle => 'આકર્ષણ અને કેમિસ્ટ્રી';
+
+  @override
+  String get lcAttractionScore => 'આકર્ષણ સ્કોર';
+
+  @override
+  String get lcActiveContacts => 'સક્રિય શુક્ર સંપર્કો';
+
+  @override
+  String get lcEmotionalTitle => 'ભાવનાત્મક સંવાદિતા';
+
+  @override
+  String get lcEmotionalScore => 'ભાવનાત્મક સંવાદિતા સ્કોર';
+
+  @override
+  String get lcNakshatraCompat => 'નક્ષત્ર અનુકૂળતા';
+
+  @override
+  String get lcYoniKoota => 'યોનિ કૂટ';
+
+  @override
+  String get lcGanaKoota => 'ગણ કૂટ';
+
+  @override
+  String get lcTaraKoota => 'તારા કૂટ';
+
+  @override
+  String get lcBhakootAxis => 'ભકૂટ અક્ષ';
+
+  @override
+  String get lcMentalTitle => 'માનસિક તાલમેલ';
+
+  @override
+  String get lcMentalScore => 'માનસિક તાલમેલ સ્કોર';
+
+  @override
+  String get lcPassionTitle => 'જુસ્સો અને શારીરિક';
+
+  @override
+  String get lcPassionScore => 'જુસ્સા સ્કોર';
+
+  @override
+  String get lcLongtermTitle => 'લાંબા ગાળાની સંવાદિતા';
+
+  @override
+  String get lcLongtermScore => 'લાંબા ગાળાની સંવાદિતા સ્કોર';
+
+  @override
+  String get lcCommitmentPotential => 'પ્રતિબદ્ધતાની સંભાવના';
+
+  @override
+  String get lc7thHouseSynastry => '7મું ભાવ સિનેસ્ટ્રી';
+
+  @override
+  String get lcJupiterBlessing => 'ગુરુનો આશીર્વાદ';
+
+  @override
+  String get lcD9Resonance => 'D9 નવાંશ પડઘો';
+
+  @override
+  String get lcSaturnLongevity => 'શનિ દીર્ઘાયુ';
+
+  @override
+  String get lcKarmicTitle => 'કર્મિક પ્રેમ બંધન';
+
+  @override
+  String get lcKarmicScore => 'કર્મિક બંધન સ્કોર';
+
+  @override
+  String get lcKetuContacts => 'કેતુ સંપર્કો';
+
+  @override
+  String get lcRahuContacts => 'રાહુ સંપર્કો';
+
+  @override
+  String get lcChallengesTitle => 'પડકારો અને ઘર્ષણ';
+
+  @override
+  String get lcNoChallenges => 'બંને કુંડળીમાં કોઈ નોંધપાત્ર ઘર્ષણ-બિંદુ મળ્યા નથી';
+
+  @override
+  String get lcTotalPenalty => 'કુલ પડકાર દંડ';
+
+  @override
+  String get lcTimingTitle => 'પ્રેમનો સમય — મૂળ દશા';
+
+  @override
+  String get lcDynamicsTitle => 'સંબંધની ગતિશીલતા';
+
+  @override
+  String get lcPowerBalance => 'શક્તિ સંતુલન';
+
+  @override
+  String get lcGiverReceiver => 'ભાવનાત્મક આપનાર/મેળવનાર';
+
+  @override
+  String get lcGrowthDynamic => 'વિકાસની ગતિશીલતા';
+
+  @override
+  String get lcAreasToNurture => 'પોષણ કરવાના ક્ષેત્રો';
+
+  @override
+  String get lcTopicTiming => 'અમારા સંબંધ માટે શ્રેષ્ઠ સમય';
+
+  @override
+  String get lcTopicChallenges => 'સામનો કરવાના પડકારો';
+
+  @override
+  String get lcTopicKarmic => 'અમારું કર્મિક જોડાણ';
+
+  @override
+  String get lcTopicRemedies => 'ભલામણ કરેલા ઉપાયો';
+
+  @override
+  String get lcTopicLongterm => 'અમારી લાંબા ગાળાની સંભાવના';
+
+  @override
+  String get lcTopicDynamics => 'અમારા સંબંધની ગતિશીલતા';
+
+  @override
+  String get cpSubtitle => 'AI-સંચાલિત વૈદિક સંતાન સંભાવના અહેવાલ';
+
+  @override
+  String get cpTitle => 'સંતાન સંભાવના';
+
+  @override
+  String get cpSnapshotHeader => 'સંતાન સંભાવના સ્નેપશોટ';
+
+  @override
+  String get cpGauge5thHouse => 'પંચમ ભાવ';
+
+  @override
+  String get cpGaugeJupiter => 'ગુરુ/પુત્રકારક';
+
+  @override
+  String get cpGaugeD7 => 'D7 સપ્તાંશ';
+
+  @override
+  String get cpGaugeSphuta => 'બીજ-ક્ષેત્ર';
+
+  @override
+  String get cpGaugeTiming => 'દશા સમય';
+
+  @override
+  String get cpChipStrongPutrakaraka => 'મજબૂત પુત્રકારક (ગુરુ)';
+
+  @override
+  String get cpChipLowDoshaPenalty => 'ઓછો દોષ પ્રભાવ';
+
+  @override
+  String get cpChipFavorableTiming => 'અનુકૂળ દશા સમય';
+
+  @override
+  String get cpChipNoDoshas => 'કોઈ સંતાન-દોષ મળ્યો નથી';
+
+  @override
+  String get cpPartnersTitle => 'પાર્ટનર સ્નેપશોટ';
+
+  @override
+  String get cpLagnaSuffix => 'લગ્ન';
+
+  @override
+  String get cpMoonSuffix => 'ચંદ્ર રાશિ';
+
+  @override
+  String get cpNumberTitle => 'સંતાનની સંખ્યા અને લિંગ વલણ';
+
+  @override
+  String get cpProbableNumber => 'સંભવિત સંખ્યા';
+
+  @override
+  String get cpFirstChildTendency => 'પ્રથમ સંતાનનું વલણ';
+
+  @override
+  String get cpSpacing => 'અંતરાલ નોંધ';
+
+  @override
+  String get cpTimingTitle => 'સમય — મૂળ દશા';
+
+  @override
+  String get cpCombinedTiming => 'સંયુક્ત સમય';
+
+  @override
+  String get cpNextWindow => 'આગામી અનુકૂળ સમયગાળો';
+
+  @override
+  String get cp5thHouseTitle => 'પંચમ ભાવ વિશ્લેષણ';
+
+  @override
+  String get cp5thHouseSubtitle => 'સંતાનનો ભાવ (પુત્ર ભાવ), દરેક વ્યક્તિ માટે';
+
+  @override
+  String get cpJupiterTitle => 'ગુરુ — પુત્રકારક વિશ્લેષણ';
+
+  @override
+  String get cpJupiterSubtitle => 'સંતાનનો સ્વાભાવિક કારક, દરેક વ્યક્તિ માટે';
+
+  @override
+  String get cpD7Title => 'D7 સપ્તાંશ વિશ્લેષણ';
+
+  @override
+  String get cpD7Subtitle => 'સંતાન માટે ખાસ વર્ગ કુંડળી';
+
+  @override
+  String get cpD7Strength => 'D7 શક્તિ';
+
+  @override
+  String get cpSphutaTitle => 'બીજ અને ક્ષેત્ર સ્ફુટ';
+
+  @override
+  String get cpBeejaSphuta => 'બીજ સ્ફુટ (બીજ)';
+
+  @override
+  String get cpKshetraSphuta => 'ક્ષેત્ર સ્ફુટ (ક્ષેત્ર)';
+
+  @override
+  String get cpDoshaTitle => 'દોષ વિશ્લેષણ';
+
+  @override
+  String get cpNoDoshasDetected => 'બંને કુંડળીમાં સંતાન-સંબંધિત કોઈ દોષ મળ્યો નથી';
+
+  @override
+  String get cpRemediesTitle => 'ભલામણ કરેલા ઉપાયો';
+
+  @override
+  String get cpAddresses => 'ઉકેલે છે';
+
+  @override
+  String get cpTopicTiming => 'ગર્ભધારણ માટે શ્રેષ્ઠ સમય';
+
+  @override
+  String get cpTopicNumber => 'અમને કેટલા સંતાન થઈ શકે';
+
+  @override
+  String get cpTopicDosha => 'ઉકેલવા જેવો કોઈ દોષ';
+
+  @override
+  String get cpTopicRemedies => 'ભલામણ કરેલા ઉપાયો';
+
+  @override
+  String get cpTopicFifthHouse => 'અમારા પંચમ ભાવની શક્તિ';
+
+  @override
+  String get cpTopicJupiter => 'આમાં ગુરુની ભૂમિકા';
+
+  @override
+  String get mahadashaLabel => 'મહાદશા';
+
+  @override
+  String get antardashaLabel => 'અંતરદશા';
+
+  @override
+  String get pratyantardashaLabel => 'પ્રત્યંતરદશા';
+
+  @override
+  String get partnerOneLabel => 'ભાગીદાર 1';
+
+  @override
+  String get partnerTwoLabel => 'ભાગીદાર 2';
+
+  @override
+  String get houseStrengthLabel => 'ભાવ બળ';
+
+  @override
+  String get lordInDusthana => 'દુસ્થાનમાં સ્વામી';
+
+  @override
+  String get lordPlacementLabel => 'સ્વામીનું સ્થાન';
+
+  @override
+  String get dignityLabel => 'ગરિમા';
+
+  @override
+  String get directBadge => 'માર્ગી';
+
+  @override
+  String get notCombustBadge => 'અસ્ત નથી';
+
+  @override
+  String get in5thHouseBadge => '5મા ભાવમાં';
+
+  @override
+  String get aspects5thBadge => '5મા પર દૃષ્ટિ';
+
+  @override
+  String get no5thConnectionBadge => '5મા સાથે જોડાણ નથી';
+
+  @override
+  String get jupiterInD7Label => 'D7માં ગુરુ';
+
+  @override
+  String get presentInLabel => 'અહીં હાજર';
+
+  @override
+  String get riSubtitle => 'AI-સંચાલિત વૈદિક રિલેશનશિપ ઇન્ટેલિજન્સ રિપોર્ટ';
+
+  @override
+  String get riTitle => 'રિલેશનશિપ ઇન્ટેલ';
+
+  @override
+  String get riSnapshotHeader => 'ગ્રુપ સ્નેપશોટ';
+
+  @override
+  String get riGaugeCohesion => 'ગ્રુપ સંકલન';
+
+  @override
+  String get riGaugeTrust => 'વિશ્વાસનું વાતાવરણ';
+
+  @override
+  String get riGaugeProductivity => 'ઉત્પાદકતા';
+
+  @override
+  String get riGaugeCreativity => 'સર્જનાત્મકતા';
+
+  @override
+  String get riChipNoAlerts => 'કોઈ ગંભીર ચેતવણી નથી';
+
+  @override
+  String get riChipStrongCohesion => 'મજબૂત ગ્રુપ સંકલન';
+
+  @override
+  String get riChipHighTrust => 'ઉચ્ચ વિશ્વાસનું વાતાવરણ';
+
+  @override
+  String get riChipNoHiddenEnemy => 'કોઈ છુપા-શત્રુ સંકેત નથી';
+
+  @override
+  String get riChipHealthyGroup => 'એકંદરે તંદુરસ્ત ગ્રુપ';
+
+  @override
+  String get riProfilesTitle => 'ચાર્ટ પ્રોફાઇલ્સ';
+
+  @override
+  String riProfilesSubtitle(Object count) {
+    return 'આ ગ્રુપમાં ${count} લોકો';
+  }
+
+  @override
+  String get riLagnaSuffix => 'લગ્ન';
+
+  @override
+  String get riIntegrity => 'પ્રામાણિકતા';
+
+  @override
+  String get riWarmth => 'ઉષ્મા';
+
+  @override
+  String get riTrustworthiness => 'વિશ્વસનીયતા';
+
+  @override
+  String get riAssertiveness => 'દૃઢતા';
+
+  @override
+  String get riGroupDynamicsTitle => 'ગ્રુપ ડાયનેમિક્સ ઝાંખી';
+
+  @override
+  String get riMostSupportive => 'સૌથી વધુ સહાયક';
+
+  @override
+  String get riMostChallenged => 'સૌથી વધુ પડકારજનક';
+
+  @override
+  String get riHiddenEnemyAlert => 'છુપા-શત્રુ સંકેત મળ્યો';
+
+  @override
+  String get riBestWorstTitle => 'શ્રેષ્ઠ અને સૌથી પડકારજનક જોડી';
+
+  @override
+  String get riBestPair => 'સૌથી મજબૂત બંધન';
+
+  @override
+  String get riWorstPair => 'ધ્યાન આપવાની જરૂર';
+
+  @override
+  String get riAlliances => 'સંભવિત જોડાણો';
+
+  @override
+  String get riConflicts => 'સંભવિત ઘર્ષણ બિંદુઓ';
+
+  @override
+  String get riPairwiseTitle => 'જોડી પ્રમાણે વિશ્લેષણ';
+
+  @override
+  String riPairwiseSubtitle(Object count) {
+    return '${count} જોડીઓનું વિશ્લેષણ કરવામાં આવ્યું';
+  }
+
+  @override
+  String get riDynamic => 'ડાયનેમિક';
+
+  @override
+  String get riKarmicLink => 'કર્મિક જોડાણ';
+
+  @override
+  String get riMutualTrust => 'પરસ્પર વિશ્વાસ';
+
+  @override
+  String get riBetrayalRisk => 'દગાનું જોખમ';
+
+  @override
+  String get riPowerDistribution => 'શક્તિ વિતરણ';
+
+  @override
+  String get riPowerHealth => 'શક્તિ-સંતુલન સ્વાસ્થ્ય';
+
+  @override
+  String get riCriticalPatternsTitle => 'મહત્વપૂર્ણ પેટર્ન';
+
+  @override
+  String get riGroupRecsTitle => 'ગ્રુપ ભલામણો';
+
+  @override
+  String get riSharedPractices => 'સહિયારી પ્રથાઓ';
+
+  @override
+  String get riCommStyle => 'ભલામણ કરેલ સંચાર શૈલી';
+
+  @override
+  String get riGrowthFocus => 'ભલામણ કરેલ વૃદ્ધિ કેન્દ્ર';
+
+  @override
+  String get riIndividualTitle => 'વ્યક્તિગત માર્ગદર્શન';
+
+  @override
+  String get riBestAllies => 'શ્રેષ્ઠ સાથીઓ';
+
+  @override
+  String get riHandleWithCare => 'કાળજીપૂર્વક સંભાળો';
+
+  @override
+  String get riCoreThemeTitle => 'મુખ્ય ગ્રુપ થીમ';
+
+  @override
+  String get riLayerPairwise => 'જોડી પ્રમાણે સંપૂર્ણતા';
+
+  @override
+  String get riLayerD1 => 'જન્મ ચાર્ટ (D1)';
+
+  @override
+  String get riLayerD9 => 'નવાંશ (D9)';
+
+  @override
+  String get riLayerD10 => 'દશાંશ (D10)';
+
+  @override
+  String get riLayerD30 => 'ત્રિંશાંશ (D30)';
+
+  @override
+  String get riLayerJaimini => 'જૈમિની સંકેત';
+
+  @override
+  String get riLayerBehavior => 'વર્તન સ્પષ્ટતા';
+
+  @override
+  String get riLayerCoherence => 'ગ્રુપ સુસંગતતા';
+
+  @override
+  String get riTopicDynamics => 'અમારી ગ્રુપ ડાયનેમિક્સ';
+
+  @override
+  String get riTopicPairwise => 'કોઈ ચોક્કસ જોડીની અનુકૂળતા';
+
+  @override
+  String get riTopicAlerts => 'કોઈ ગંભીર ચેતવણીઓ';
+
+  @override
+  String get riTopicGrowth => 'અમે સાથે મળીને કેવી રીતે વિકાસ કરી શકીએ';
+
+  @override
+  String get riTopicRecs => 'ભલામણ કરેલ પ્રથાઓ';
+
+  @override
+  String get riTopicTheme => 'અમારી મુખ્ય ગ્રુપ થીમ';
+
+  @override
+  String get character => 'ચરિત્ર';
+
+  @override
+  String get businessWord => 'વ્યાપાર';
+
+  @override
+  String get karmic => 'કર્મ';
+
+  @override
+  String get trustWord => 'વિશ્વાસ';
+
+  @override
+  String get enmityRisk => 'શત્રુતા જોખમ';
+
+  @override
+  String get dhokaRisk => 'દગા જોખમ';
+
+  @override
+  String get growthAreas => 'વૃદ્ધિ ક્ષેત્રો';
+
+  @override
+  String get emotional => 'ભાવનાત્મક';
+
+  @override
+  String get intellectual => 'બૌદ્ધિક';
+
+  @override
+  String get financial => 'આર્થિક';
+
+  @override
+  String get domestic => 'ઘરેલું';
+
+  @override
+  String get communicationWord => 'સંવાદ';
+
+  @override
+  String get sharedDharma => 'સહિયારો ધર્મ';
+
+  @override
+  String get familyCreation => 'કુટુંબ સર્જન';
+
+  @override
+  String get kmSubtitle => 'AI-સંચાલિત વૈદિક કુંડળી મિલન રિપોર્ટ';
+
+  @override
+  String get kmTitle => 'કુંડળી મિલન';
+
+  @override
+  String get kmSnapshotHeader => 'અનુકૂળતાનો સ્નેપશોટ';
+
+  @override
+  String kmAshtakootScore(Object score) {
+    return 'અષ્ટકૂટ: ${score}/36';
+  }
+
+  @override
+  String get kmGaugeAshtakoot => 'અષ્ટકૂટ %';
+
+  @override
+  String get kmGaugeD9 => 'D9 લગ્ન કર્મ';
+
+  @override
+  String get kmGaugeMangal => 'મંગળ સંતુલન';
+
+  @override
+  String get kmGaugePapa => 'કર્મિક સંતુલન';
+
+  @override
+  String get kmGaugeAk => 'આત્મા પડઘો';
+
+  @override
+  String get kmChipNoNadi => 'નાડી દોષ નથી';
+
+  @override
+  String get kmChipNoBhakoot => 'ભકૂટ દોષ નથી';
+
+  @override
+  String get kmChipMangalCancelled => 'મંગળ દોષ રદ';
+
+  @override
+  String get kmChipPapaBalanced => 'સંતુલિત કર્મિક ભાર';
+
+  @override
+  String get kmChipStrongChemistry => 'મજબૂત શારીરિક કેમિસ્ટ્રી';
+
+  @override
+  String get kmChipStrongD9 => 'મજબૂત D9 લગ્ન કર્મ';
+
+  @override
+  String get kmChipLongevity => 'મજબૂત દીર્ઘાયુ સંરેખણ';
+
+  @override
+  String get kmAshtakootTitle => 'અષ્ટકૂટ ગુણ મિલન';
+
+  @override
+  String get kmAshtakootSubtitle => '36માંથી ક્લાસિકલ 8-પોઈન્ટ મેચિંગ પદ્ધતિ';
+
+  @override
+  String get kmNadiSeverity => 'નાડી ગંભીરતા';
+
+  @override
+  String get kmBhakootSeverity => 'ભકૂટ ગંભીરતા';
+
+  @override
+  String get kmGanaSignature => 'ગણ સહી';
+
+  @override
+  String get kmMangalTitle => 'મંગળ દોષ તપાસ';
+
+  @override
+  String get kmD9Title => 'D9 નવાંશ — લગ્ન કર્મ';
+
+  @override
+  String get kmD9Subtitle => 'આત્મા-સ્તરની લગ્ન કુંડળી, ક્લાસિકલી સૌથી મહત્વપૂર્ણ ગણાય છે';
+
+  @override
+  String get kmD9Score => 'D9 અનુકૂળતા';
+
+  @override
+  String get kmLagnaRelation => 'લગ્ન સંબંધ';
+
+  @override
+  String get km7thLordRelation => '7મા ભાવના સ્વામીનો સંબંધ';
+
+  @override
+  String get kmKarakasTitle => 'આત્મા અને જીવનસાથી કારક';
+
+  @override
+  String get kmAtmakaraka => 'આત્મા ગ્રહ';
+
+  @override
+  String get kmAkCompatibility => 'આત્મા-સહી પડઘો';
+
+  @override
+  String get kmUlCompatibility => 'જીવનસાથી-કારક સંરેખણ';
+
+  @override
+  String get kmUlSigns => 'ઉપપદ સ્વામીઓ';
+
+  @override
+  String get kmChemistryTitle => 'શુક્ર-મંગળ કેમિસ્ટ્રી';
+
+  @override
+  String get kmPhysicalChemistry => 'શારીરિક કેમિસ્ટ્રી';
+
+  @override
+  String get kmEmotionalWarmth => 'ભાવનાત્મક ઉષ્મા';
+
+  @override
+  String get kmAestheticAlignment => 'સૌંદર્ય સંરેખણ';
+
+  @override
+  String get kmElementalSynthesis => 'તાત્વિક સંશ્લેષણ';
+
+  @override
+  String get kmHouseCrossTitle => '7મા અને 8મા ભાવનું ક્રોસ-વિશ્લેષણ';
+
+  @override
+  String get km78Compatibility => '7-8મા ભાવની અનુકૂળતા';
+
+  @override
+  String get km8thHouseSignature => 'સંયુક્ત દીર્ઘાયુ સહી';
+
+  @override
+  String get kmLongevityAlignment => 'દીર્ઘાયુ સંરેખણ';
+
+  @override
+  String get km7thLordFriendship => '7મા સ્વામીની મૈત્રી';
+
+  @override
+  String get kmDomainsTitle => 'ક્ષેત્ર-દર-ક્ષેત્ર અનુકૂળતા';
+
+  @override
+  String get kmConflictEngagement => 'સંઘર્ષ શૈલી';
+
+  @override
+  String get kmDashaTitle => 'દશા અને ગોચર સિંક';
+
+  @override
+  String get kmDashaSync => 'દશા સિંક';
+
+  @override
+  String get kmTransitAlignment => 'ગોચર સંરેખણ';
+
+  @override
+  String get kmTimingTitle => 'લગ્નનો સમય';
+
+  @override
+  String get kmMarriageWindow => 'લગ્ન વિન્ડો';
+
+  @override
+  String get kmEngagementWindow => 'સગાઈ વિન્ડો';
+
+  @override
+  String get kmRecommendedRange => 'ભલામણ કરેલ સમયગાળો';
+
+  @override
+  String get kmMuhurtaNotes => 'મુહૂર્ત નોંધો';
+
+  @override
+  String get kmRisksTitle => 'ધ્યાન આપવા જેવા જોખમો';
+
+  @override
+  String get kmConflictRisk => 'સંઘર્ષ જોખમ';
+
+  @override
+  String get kmCommunicationRisk => 'સંવાદ જોખમ';
+
+  @override
+  String get kmFinanceRisk => 'નાણાકીય સંઘર્ષ જોખમ';
+
+  @override
+  String get kmFamilyDynamicsRisk => 'કૌટુંબિક ગતિશીલતા જોખમ';
+
+  @override
+  String get kmMentalHealthRisk => 'માનસિક-સ્વાસ્થ્ય સંરેખણ જોખમ';
+
+  @override
+  String get kmStrengthsTitle => 'ટોચની અનુકૂળતા શક્તિઓ';
+
+  @override
+  String get kmSharedGrowth => 'સહિયારી વૃદ્ધિ ક્ષમતા';
+
+  @override
+  String get kmSharedCreative => 'સહિયારી સર્જનાત્મક ક્ષમતા';
+
+  @override
+  String get kmJourneyTitle => 'સંબંધની સફર અને વૃદ્ધિ';
+
+  @override
+  String get kmCurrentPhase => 'વર્તમાન તબક્કો';
+
+  @override
+  String get kmEarlyArc => 'શરૂઆતનું લગ્ન';
+
+  @override
+  String get kmMiddleArc => 'મધ્યમ લગ્ન';
+
+  @override
+  String get kmMatureArc => 'પરિપક્વ લગ્ન';
+
+  @override
+  String get kmElderArc => 'વરિષ્ઠ વર્ષો';
+
+  @override
+  String get kmPeakPhase => 'ટોચનો સાથ તબક્કો';
+
+  @override
+  String get kmGrowthAreas => 'વૃદ્ધિ ક્ષેત્રો';
+
+  @override
+  String get kmCommProtocols => 'સંવાદ પ્રોટોકોલ';
+
+  @override
+  String get kmSharedPractices => 'સહિયારી પ્રથાઓ';
+
+  @override
+  String get kmImprovementTitle => 'મુખ્ય વિષય અને સુધારણા યોજના';
+
+  @override
+  String get kmVerdictTitle => 'અંતિમ ચુકાદો';
+
+  @override
+  String get kmRealizationPotential => 'સંબંધ સાકાર થવાની ક્ષમતા';
+
+  @override
+  String get kmLayerAshtakoot => 'અષ્ટકૂટ';
+
+  @override
+  String get kmLayerD9 => 'D9 નવાંશ';
+
+  @override
+  String get kmLayerMangalPapa => 'મંગળ અને પાપસામ્ય';
+
+  @override
+  String get kmLayerVenusMars => 'શુક્ર-મંગળ';
+
+  @override
+  String get kmLayerDashaSync => 'દશા સિંક';
+
+  @override
+  String get kmLayerH7H8 => '7-8મા ભાવ ક્રોસ';
+
+  @override
+  String get kmLayerAkResonance => 'આત્મકારક પડઘો';
+
+  @override
+  String get kmLayerDomains => 'ક્ષેત્ર પરિમાણો';
+
+  @override
+  String get kmTopicAshtakoot => 'અમારો અષ્ટકૂટ સ્કોર';
+
+  @override
+  String get kmTopicMangal => 'મંગળ દોષની ચિંતાઓ';
+
+  @override
+  String get kmTopicD9 => 'અમારું લગ્ન કર્મ (D9)';
+
+  @override
+  String get kmTopicTiming => 'શ્રેષ્ઠ લગ્ન સમય';
+
+  @override
+  String get kmTopicRisks => 'તૈયાર રહેવા જેવા જોખમો';
+
+  @override
+  String get kmTopicGrowth => 'અમે સાથે કેવી રીતે વિકસી શકીએ';
+
+  @override
+  String get kmTopicRemedies => 'ભલામણ કરેલ ઉપાયો';
+
+  @override
+  String get kmTopicVerdict => 'શું અમારે લગ્ન તરફ આગળ વધવું જોઈએ';
+
+  @override
+  String get pkSubtitle => 'AI-સંચાલિત વૈદિક પૂર્વજન્મ અને કર્મ અહેવાલ';
+
+  @override
+  String get pkTitle => 'પૂર્વજન્મ અને કર્મ';
+
+  @override
+  String get pkSnapshotHeader => 'પૂર્વજન્મ ઝલક';
+
+  @override
+  String pkHeroSummary(Object theme, Object relation, Object strategy) {
+    return 'તમારી કુંડળીમાં \'${theme}\' પૂર્વજન્મ હસ્તાક્ષર દેખાય છે, જે હાલમાં આ જીવનમાં ${relation} થઈ રહ્યું છે. ભલામણ કરેલ માર્ગ: ${strategy}.';
+  }
+
+  @override
+  String get pkGaugeSignature => 'હસ્તાક્ષર શક્તિ';
+
+  @override
+  String get pkGaugeMasteryPreserved => 'સચવાયેલી નિપુણતા';
+
+  @override
+  String get pkGaugeClearingProgress => 'કર્મ સફાઈ';
+
+  @override
+  String get pkGaugeMaturity => 'પૂર્વજન્મ પરિપક્વતા';
+
+  @override
+  String get pkGaugeMemoryAccess => 'સ્મૃતિ પ્રવેશ';
+
+  @override
+  String get pkChipGoodProgress => 'કર્મ-સફાઈમાં સારી પ્રગતિ';
+
+  @override
+  String get pkChipLowDebt => 'ઓછું કર્મ-ઋણ';
+
+  @override
+  String get pkChipMatureSoul => 'પરિપક્વ આત્મા હસ્તાક્ષર';
+
+  @override
+  String get pkChipGiftedPast => 'કુંડળીમાં પૂર્વજન્મની ભેટ છે';
+
+  @override
+  String get pkChipAccomplished => 'સફળ પૂર્વજન્મ';
+
+  @override
+  String get pkChipMasteryPreserved => 'મજબૂત નિપુણતા આગળ વહન થઈ છે';
+
+  @override
+  String get pkKetuTitle => 'કેતુ — તમારી પૂર્વજન્મ નિપુણતા';
+
+  @override
+  String get pkKetuSubtitle => 'તમારા આત્માએ પહેલેથી જ પ્રાવીણ્ય મેળવેલા કૌશલ્યો';
+
+  @override
+  String get pkMasteryStrength => 'નિપુણતા શક્તિ';
+
+  @override
+  String get pkSkillsCarried => 'આગળ વહન થયેલા કૌશલ્યો';
+
+  @override
+  String get pkInstincts => 'સહજ ક્ષમતાઓ';
+
+  @override
+  String get pkKetuDignity => 'કેતુની સ્થિતિ';
+
+  @override
+  String get pkRahuTitle => 'રાહુ — તમારા આત્માની વૃદ્ધિ દિશા';
+
+  @override
+  String get pkRahuSubtitle => 'તમારો આત્મા અહીં શું પૂર્ણ કરવા આવ્યો છે';
+
+  @override
+  String get pkUnmetDesires => 'અધૂરી ઇચ્છાઓ';
+
+  @override
+  String get pkProfileTitle => 'તમારી પૂર્વજન્મ પ્રોફાઇલ';
+
+  @override
+  String get pkProfession => 'સંભવિત વ્યવસાય';
+
+  @override
+  String get pkSocialStanding => 'સામાજિક દરજ્જો';
+
+  @override
+  String get pkRegion => 'સંભવિત પ્રદેશ';
+
+  @override
+  String get pkCulturalArchetype => 'સાંસ્કૃતિક સ્વરૂપ';
+
+  @override
+  String get pkAccomplishment => 'સિદ્ધિ સ્તર';
+
+  @override
+  String get pkAuthority => 'અધિકાર સ્તર';
+
+  @override
+  String get pkFamilyRole => 'કૌટુંબિક ભૂમિકા';
+
+  @override
+  String get pkSecondaryProfession => 'ગૌણ વ્યવસાય';
+
+  @override
+  String get pkClimateAffinity => 'આબોહવા લગાવ';
+
+  @override
+  String get pkForeignResidence => 'વિદેશ-નિવાસ કર્મ';
+
+  @override
+  String get pkRelationshipsTitle => 'આગળ વહન થયેલા ભૂતકાળના સંબંધો';
+
+  @override
+  String get pkSpouseConnection => 'જીવનસાથી પુનર્મિલન';
+
+  @override
+  String get pkChildrenConnection => 'સંતાન પુનર્મિલન';
+
+  @override
+  String get pkCarriedRelationTypes => 'સંબંધ પેટર્ન';
+
+  @override
+  String get pkPartnerArchetype => 'પૂર્વજન્મ સાથી સ્વરૂપ';
+
+  @override
+  String get pkDarakaraka => 'જીવનસાથી કારક';
+
+  @override
+  String get pkParentsKarma => 'માતાપિતાની કર્મ પેટર્ન';
+
+  @override
+  String get pkSiblingKarma => 'ભાઈ-બહેનની કર્મ પેટર્ન';
+
+  @override
+  String get pkSpiritualTitle => 'ત્યારે તમારું આધ્યાત્મિક જીવન';
+
+  @override
+  String get pkSpiritualLevel => 'આધ્યાત્મિક સ્તર';
+
+  @override
+  String get pkPracticeSignature => 'સાધના શૈલી';
+
+  @override
+  String get pkMeditativeCapacity => 'ધ્યાન ક્ષમતા';
+
+  @override
+  String get pkDevotionalPractice => 'ભક્તિ સાધના';
+
+  @override
+  String get pkYogicAttainment => 'યોગિક સિદ્ધિ';
+
+  @override
+  String get pkMokshaProximity => 'મોક્ષ નિકટતા';
+
+  @override
+  String get pkKarmicDebtsTitle => 'કર્મ-ઋણ અને ત્યારની સંપત્તિ';
+
+  @override
+  String get pkTotalKarmicDebt => 'કુલ કર્મ-ઋણ';
+
+  @override
+  String get pkPrimaryDebtType => 'પ્રાથમિક ઋણ પ્રકાર';
+
+  @override
+  String get pkRelationshipDebt => 'સંબંધ ઋણ';
+
+  @override
+  String get pkFinancialDebt => 'આર્થિક ઋણ';
+
+  @override
+  String get pkServiceDebt => 'સેવા ઋણ';
+
+  @override
+  String get pkDharmicDebt => 'ધાર્મિક ઋણ';
+
+  @override
+  String get pkPitruKarma => 'પિતૃ કર્મ';
+
+  @override
+  String get pkMatruKarma => 'માતૃ કર્મ';
+
+  @override
+  String get pkWealthLevel => 'ત્યારનું સંપત્તિ સ્તર';
+
+  @override
+  String get pkWealthKarmaCarried => 'આગળ વહન થયેલું સંપત્તિ-કર્મ';
+
+  @override
+  String get pkResourcePattern => 'સંસાધન વ્યવસ્થાપન';
+
+  @override
+  String get pkGainSource => 'લાભનો સ્ત્રોત';
+
+  @override
+  String get pkEchoesTitle => 'આ જીવનમાં પડઘા';
+
+  @override
+  String get pkOnRelationships => 'સંબંધો પર';
+
+  @override
+  String get pkOnCareer => 'કારકિર્દી પર';
+
+  @override
+  String get pkOnHealth => 'આરોગ્ય પર';
+
+  @override
+  String get pkOnSpirituality => 'આધ્યાત્મિકતા પર';
+
+  @override
+  String get pkDominantArea => 'સૌથી પ્રબળ વહન';
+
+  @override
+  String get pkAttractions => 'કુદરતી આકર્ષણો';
+
+  @override
+  String get pkAversions => 'કુદરતી અણગમા';
+
+  @override
+  String get pkUnexplainedFears => 'અસ્પષ્ટ ડર';
+
+  @override
+  String get pkMagneticPulls => 'ચુંબકીય ખેંચાણ';
+
+  @override
+  String get pkResolutionTitle => 'કર્મ નિરાકરણ અને પૂર્ણતા';
+
+  @override
+  String get pkPrimaryPathway => 'પ્રાથમિક માર્ગ';
+
+  @override
+  String get pkSecondaryPathway => 'ગૌણ માર્ગ';
+
+  @override
+  String get pkClearingProgress => 'સફાઈ પ્રગતિ';
+
+  @override
+  String get pkRemainingWork => 'બાકી કામ';
+
+  @override
+  String get pkSettlementTimeline => 'સમાધાન સમયરેખા';
+
+  @override
+  String get pkAccelerationPractices => 'નિરાકરણ ઝડપી કરતી સાધનાઓ';
+
+  @override
+  String get pkPriorityAreas => 'પ્રાધાન્ય ક્ષેત્રો';
+
+  @override
+  String get pkVerificationTitle => 'કુંડળીઓમાં ચકાસાયેલ (D60)';
+
+  @override
+  String get pkD60Label => 'D60 પૂર્વજન્મ યુગ';
+
+  @override
+  String get pkD60Ketu => 'D60 કેતુ સ્થિતિ';
+
+  @override
+  String get pkD60Standing => 'એકંદર સ્થિતિ';
+
+  @override
+  String get pkMemoryTitle => 'સ્મૃતિ અને અંતઃપ્રજ્ઞા';
+
+  @override
+  String get pkMemoryAccess => 'સ્મૃતિ પ્રવેશ';
+
+  @override
+  String get pkRegressionFit => 'રિગ્રેશન-થેરાપી યોગ્યતા';
+
+  @override
+  String get pkDreamVisits => 'સ્વપ્ન મુલાકાતો';
+
+  @override
+  String get pkDejaVuFrequency => 'દેજા વૂ આવૃત્તિ';
+
+  @override
+  String get pkSpontaneousRemembrance => 'સ્વયંસ્ફુરિત સ્મરણ';
+
+  @override
+  String get pkRemembrancePractices => 'સ્મરણ સાધનાઓ';
+
+  @override
+  String get pkTimelineTitle => 'સક્રિયકરણ સમયરેખા';
+
+  @override
+  String get pkGiftsActivation => 'પૂર્વજન્મ ભેટોનું સક્રિયકરણ';
+
+  @override
+  String get pkSurfaceWindow => 'ઉભરવાનો સમયગાળો';
+
+  @override
+  String get pkRisksTitle => 'જોખમો અને દીર્ઘકાલીન પેટર્ન';
+
+  @override
+  String get pkTraumaResidue => 'આઘાત અવશેષ';
+
+  @override
+  String get pkSpiritualBypass => 'આધ્યાત્મિક ટાળવાનું જોખમ';
+
+  @override
+  String get pkMajorRisks => 'મુખ્ય જોખમો';
+
+  @override
+  String get pkChronicImprints => 'દીર્ઘકાલીન છાપ';
+
+  @override
+  String get pkKarmicLoops => 'કર્મ ચક્ર';
+
+  @override
+  String get pkImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get pkRoadmapTitle => 'તમારો પૂર્વજન્મ રોડમેપ';
+
+  @override
+  String get pkMaturity => 'પૂર્વજન્મ પરિપક્વતા';
+
+  @override
+  String get pkLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get pkLayerD9 => 'નવાંશ (D9)';
+
+  @override
+  String get pkLayerD60 => 'ષષ્ટ્યાંશ (D60)';
+
+  @override
+  String get pkLayerKetuDepth => 'કેતુ ઊંડાણ';
+
+  @override
+  String get pkLayerAtmakaraka => 'આત્મા ગ્રહ (આત્મકારક)';
+
+  @override
+  String get pkTopicMastery => 'મારી પૂર્વજન્મ નિપુણતા';
+
+  @override
+  String get pkTopicUnfinished => 'મારું અધૂરું કર્મ';
+
+  @override
+  String get pkTopicRelationships => 'મારા પૂર્વજન્મ સંબંધો';
+
+  @override
+  String get pkTopicDebts => 'મારા કર્મ-ઋણ';
+
+  @override
+  String get pkTopicResolution => 'મારા કર્મનું નિરાકરણ કેવી રીતે કરવું';
+
+  @override
+  String get pkTopicMemory => 'પૂર્વજન્મ સ્મૃતિ પ્રવેશ';
+
+  @override
+  String get pkTopicTiming => 'શ્રેષ્ઠ સમય વિન્ડો';
+
+  @override
+  String get pkTopicProfile => 'પૂર્વજન્મમાં હું કોણ હતો';
+
+  @override
+  String get chSubtitle => 'AI-સંચાલિત વૈદિક ચરિત્ર વિશ્લેષણ અહેવાલ';
+
+  @override
+  String get chTitle => 'ચરિત્ર વિશ્લેષણ';
+
+  @override
+  String get chSnapshotHeader => 'ચરિત્ર સ્નેપશોટ';
+
+  @override
+  String get chGaugeIntegrity => 'સચ્ચાઈ';
+
+  @override
+  String get chGaugeResilience => 'સ્થિતિસ્થાપકતા';
+
+  @override
+  String get chGaugeSelfAwareness => 'સ્વ-જાગૃતિ';
+
+  @override
+  String get chGaugeStability => 'ભાવનાત્મક સ્થિરતા';
+
+  @override
+  String get chGaugeMoralFabric => 'નૈતિક બંધારણ';
+
+  @override
+  String get chChipRajaYoga => 'રાજયોગ હાજર';
+
+  @override
+  String get chChipHighIntegrity => 'ઉચ્ચ સચ્ચાઈ';
+
+  @override
+  String get chChipResilient => 'સ્થિતિસ્થાપક સ્વભાવ';
+
+  @override
+  String get chChipDharmic => 'મજબૂત ધર્મ-વલણ';
+
+  @override
+  String get chChipEmpathetic => 'સ્વાભાવિક રીતે સહાનુભૂતિશીલ';
+
+  @override
+  String get chChipLoyal => 'ઊંડી વફાદારી';
+
+  @override
+  String get chChipGiftedCharacter => 'કુંડળીમાં ચરિત્રની ભેટ છે';
+
+  @override
+  String get chSoulTitle => 'તમારી આત્મા ઓળખ';
+
+  @override
+  String get chSoulIntegration => 'આત્મા-ચરિત્ર એકીકરણ';
+
+  @override
+  String get chAmatyakarakaTheme => 'સહાયક ચરિત્ર અવાજ';
+
+  @override
+  String get chAtmakarakaDignity => 'આત્મકારક ગ્રહની ગરિમા';
+
+  @override
+  String get chAtmakarakaHouse => 'ભાવ સ્થાન';
+
+  @override
+  String get chSurfaceTitle => 'બાહ્ય વ્યક્તિત્વ અને બંધારણ';
+
+  @override
+  String get chLagnaSign => 'લગ્ન રાશિ';
+
+  @override
+  String get chConstitution => 'બંધારણ';
+
+  @override
+  String get chSurfaceSignature => 'તમે અન્ય લોકોને કેવા લાગો છો';
+
+  @override
+  String get chPhysicalConstitution => 'શારીરિક બંધારણ';
+
+  @override
+  String get chLagnaLord => 'લગ્નેશ';
+
+  @override
+  String get chLagnaOccupants => 'લગ્નમાં ગ્રહો';
+
+  @override
+  String get chMindEmotionsTitle => 'મન, લાગણીઓ અને અહંકાર';
+
+  @override
+  String get chEmotionalNature => 'તમારો ભાવનાત્મક સ્વભાવ';
+
+  @override
+  String get chMentalStability => 'માનસિક સ્થિરતા';
+
+  @override
+  String get chSelfConfidence => 'સ્વસ્થ આત્મવિશ્વાસ';
+
+  @override
+  String get chEgoNature => 'તમારો અહંકાર અને સ્વ-કલ્પના';
+
+  @override
+  String get chAuthorityRelationship => 'સત્તા સાથેનો સંબંધ';
+
+  @override
+  String get chPrideTendency => 'અભિમાનની વૃત્તિ';
+
+  @override
+  String get chMoodPatterns => 'મૂડની પેટર્ન';
+
+  @override
+  String get chKemadrumaPresent => 'કેમદ્રુમ યોગ હાજર છે — વધારાની ભાવનાત્મક સંભાળ ફાયદાકારક છે.';
+
+  @override
+  String get chFatherImprint => 'પિતાની છાપની ગુણવત્તા';
+
+  @override
+  String get chCommunicationTitle => 'સંચાર અને બુદ્ધિ શૈલી';
+
+  @override
+  String get chIntellectStyle => 'બુદ્ધિ શૈલી';
+
+  @override
+  String get chCommStyle => 'સંચાર શૈલી';
+
+  @override
+  String get chDecisionStyle => 'નિર્ણય લેવાની શૈલી';
+
+  @override
+  String get chDiscrimination => 'વિવેક ક્ષમતા';
+
+  @override
+  String get chPersonaTitle => 'જાહેર વ્યક્તિત્વ વિરુદ્ધ સાચું સ્વરૂપ';
+
+  @override
+  String get chAuthenticityGap => 'પ્રામાણિકતાનું અંતર';
+
+  @override
+  String get chGunaTitle => 'ગુણ અને દોષ પ્રોફાઇલ';
+
+  @override
+  String get chGunaSubtitle => 'તમારો આંતરિક સ્વભાવ અને બંધારણ, શાસ્ત્રીય વૈદિક શૈલીમાં';
+
+  @override
+  String get chSattva => 'સત્વ';
+
+  @override
+  String get chRajas => 'રજસ';
+
+  @override
+  String get chTamas => 'તમસ';
+
+  @override
+  String get chDominantGuna => 'પ્રમુખ ગુણ';
+
+  @override
+  String get chPitta => 'પિત્ત';
+
+  @override
+  String get chKapha => 'કફ';
+
+  @override
+  String get chVata => 'વાત';
+
+  @override
+  String get chDominantDosha => 'પ્રમુખ દોષ';
+
+  @override
+  String get chRahuRestlessness => 'રાહુની બેચેની';
+
+  @override
+  String get chKetuDetachment => 'કેતુની વિરક્તિ';
+
+  @override
+  String get chYogasTitle => 'ચરિત્ર યોગ';
+
+  @override
+  String get chRajaYogaStrength => 'રાજયોગ શક્તિ';
+
+  @override
+  String get chGiftYogas => 'વરદાન યોગ';
+
+  @override
+  String get chTestYogas => 'પરીક્ષા યોગ';
+
+  @override
+  String get chStrengthsTitle => 'શક્તિઓ અને પ્રતિભાઓ';
+
+  @override
+  String get chSignatureVirtues => 'વિશિષ્ટ ગુણો';
+
+  @override
+  String get chNaturalTalents => 'કુદરતી પ્રતિભાઓ';
+
+  @override
+  String get chSoftSkills => 'સોફ્ટ સ્કિલ્સ';
+
+  @override
+  String get chHiddenStrengths => 'વિકસાવવા યોગ્ય છુપી શક્તિઓ';
+
+  @override
+  String get chShadowTitle => 'છાયા અને વિકાસ ક્ષેત્રો';
+
+  @override
+  String get chShadowSubtitle => 'કામ કરવા યોગ્ય પેટર્ન વિશે સૌમ્ય જાગૃતિ';
+
+  @override
+  String get chShadowPatterns => 'છાયા પેટર્ન';
+
+  @override
+  String get chBlindSpots => 'અંધ સ્થળો';
+
+  @override
+  String get chEmotionalWounds => 'ભાવનાત્મક ઘા';
+
+  @override
+  String get chShadowWorkPriorities => 'છાયા-કાર્ય પ્રાથમિકતાઓ';
+
+  @override
+  String get chMoralTests => 'નૈતિક પરીક્ષાઓ';
+
+  @override
+  String get chRelationshipsTitle => 'સંબંધો અને સામાજિક શૈલી';
+
+  @override
+  String get chWarmth => 'પરસ્પર ઉષ્મા';
+
+  @override
+  String get chEmpathy => 'સહાનુભૂતિ ક્ષમતા';
+
+  @override
+  String get chLoyalty => 'વફાદારી ક્ષમતા';
+
+  @override
+  String get chBoundaries => 'સીમાઓ નક્કી કરવી';
+
+  @override
+  String get chSocialConfidence => 'સામાજિક આત્મવિશ્વાસ';
+
+  @override
+  String get chTrustGiving => 'વિશ્વાસ આપવાનું આધારભૂત સ્તર';
+
+  @override
+  String get chConflictStyle => 'સંઘર્ષ શૈલી';
+
+  @override
+  String get chEthicsTitle => 'નૈતિકતા અને નૈતિક હોકાયંત્ર';
+
+  @override
+  String get chDharmaOrientation => 'ધર્મ-વલણ';
+
+  @override
+  String get chTruthfulness => 'સત્યવાદિતા';
+
+  @override
+  String get chCompassion => 'કરુણા';
+
+  @override
+  String get chGenerosity => 'ઉદારતા';
+
+  @override
+  String get chEthicalConsistency => 'નૈતિક સુસંગતતા';
+
+  @override
+  String get chIntegrityPressure => 'દબાણ હેઠળ સચ્ચાઈ';
+
+  @override
+  String get chJusticeFairness => 'ન્યાય અને નિષ્પક્ષતા';
+
+  @override
+  String get chMoralTrajectory => 'નૈતિક વિકાસ';
+
+  @override
+  String get chEiTitle => 'ભાવનાત્મક બુદ્ધિ';
+
+  @override
+  String get chEiSelfAwareness => 'સ્વ-જાગૃતિ';
+
+  @override
+  String get chEiSelfRegulation => 'સ્વ-નિયમન';
+
+  @override
+  String get chEiEmpathy => 'સહાનુભૂતિ';
+
+  @override
+  String get chEiSocialSkills => 'સામાજિક કૌશલ્યો';
+
+  @override
+  String get chMotivation => 'આંતરિક પ્રેરણા';
+
+  @override
+  String get chVulnerabilityComfort => 'નબળાઈ સાથે સહજતા';
+
+  @override
+  String get chEmotionalExpression => 'ભાવનાત્મક અભિવ્યક્તિમાં સહજતા';
+
+  @override
+  String get chEmotionalReceptivity => 'ભાવનાત્મક ગ્રહણશીલતા';
+
+  @override
+  String get chVerificationTitle => 'તમામ ચાર્ટમાં ચકાસાયેલ (D9/D12/D30/D60)';
+
+  @override
+  String get chD9Label => 'D9 ધર્મ-ચરિત્ર';
+
+  @override
+  String get chD12Label => 'D12 પૂર્વજ વારસો';
+
+  @override
+  String get chD30Label => 'D30 છાયા પ્રોફાઇલ';
+
+  @override
+  String get chD60Label => 'D60 પૂર્વજન્મ ચરિત્ર';
+
+  @override
+  String get chD30Standing => 'છાયા સ્થિતિ';
+
+  @override
+  String get chMaternalInheritance => 'માતૃ વારસો';
+
+  @override
+  String get chAncestralKarmaWeight => 'પૂર્વજ કર્મ ભાર';
+
+  @override
+  String get chTimelineTitle => 'ચરિત્ર સમયરેખા';
+
+  @override
+  String get chFormationWindow => 'રચના સમયગાળો';
+
+  @override
+  String get chMaturationWindow => 'પરિપક્વતા સમયગાળો';
+
+  @override
+  String get chLegacyWindow => 'વારસો સમયગાળો';
+
+  @override
+  String get chPeakMaturationAge => 'શિખર પરિપક્વતા વય';
+
+  @override
+  String chAgeRangeLabel(Object ageRange) {
+    return 'ઉંમર ${ageRange}';
+  }
+
+  @override
+  String get chImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get chRoadmapTitle => 'તમારો ચરિત્ર રોડમેપ';
+
+  @override
+  String get chAuthenticExpression => 'પ્રામાણિક સ્વ-અભિવ્યક્તિ';
+
+  @override
+  String get chRealizationPotential => 'ચરિત્ર સાકારીકરણ ક્ષમતા';
+
+  @override
+  String get chLayerAtmakaraka => 'આત્મા ગ્રહ (આત્મકારક)';
+
+  @override
+  String get chLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get chLayerD9 => 'નવમાંશ (D9)';
+
+  @override
+  String get chLayerD30 => 'ત્રિંશાંશ (D30)';
+
+  @override
+  String get chLayerLagnaMoon => 'લગ્ન અને ચંદ્ર';
+
+  @override
+  String get chLayerArudha => 'આરૂઢ લગ્ન';
+
+  @override
+  String get chTopicStrengths => 'મારી ચરિત્ર શક્તિઓ';
+
+  @override
+  String get chTopicShadow => 'મારી છાયા પેટર્ન';
+
+  @override
+  String get chTopicSoul => 'મારી આત્મા ઓળખ';
+
+  @override
+  String get chTopicRelationships => 'મારી સંબંધ શૈલી';
+
+  @override
+  String get chTopicEthics => 'મારી નૈતિકતા અને મૂલ્યો';
+
+  @override
+  String get chTopicGuna => 'મારો ગુણ અને દોષ પ્રોફાઇલ';
+
+  @override
+  String get chTopicGrowth => 'મારા ચરિત્રનો વિકાસ કેવી રીતે કરવો';
+
+  @override
+  String get chTopicTiming => 'ચરિત્ર-કાર્ય માટે શ્રેષ્ઠ સમય';
+
+  @override
+  String get lpSubtitle => 'AI-સંચાલિત વૈદિક જીવન પથ અને ભાગ્ય રિપોર્ટ';
+
+  @override
+  String get lpTitle => 'જીવન પથ અને ભાગ્ય';
+
+  @override
+  String get lpSnapshotHeader => 'જીવન પથની ઝલક';
+
+  @override
+  String lpHeroSummary(Object archetype, Object domain, Object probability) {
+    return 'તમે એક ${archetype} છો, જેનો મુખ્ય હેતુ ${domain}માં છે. અમારા વિશ્લેષણ મુજબ તમારી કુલ જીવન-પરિપૂર્ણતાની સંભાવના ${probability}% છે.';
+  }
+
+  @override
+  String get lpGaugeDharma => 'ધર્મ સ્પષ્ટતા';
+
+  @override
+  String get lpGaugeFortune => 'ભાગ્ય આધાર';
+
+  @override
+  String get lpGaugeCoherence => 'પથ સંવાદિતા';
+
+  @override
+  String get lpGaugeFulfillment => 'પરિપૂર્ણતા';
+
+  @override
+  String get lpGaugeMomentum => 'કર્મ ગતિ';
+
+  @override
+  String get lpChipRareGift => 'દુર્લભ નિયતિ ભેટ';
+
+  @override
+  String get lpChipFreeWillStrong => 'મજબૂત સ્વતંત્ર ઇચ્છાશક્તિ';
+
+  @override
+  String get lpChipGraceSupported => 'કૃપા-સમર્થિત';
+
+  @override
+  String get lpChipLightKarma => 'હલકો કર્મ ભાર';
+
+  @override
+  String get lpChipRecognitionPotential => 'ઓળખની સંભાવના';
+
+  @override
+  String get lpChipSpiritualPath => 'મજબૂત આધ્યાત્મિક ઝુકાવ';
+
+  @override
+  String get lpChipBlessed => 'કુંડળીમાં આશીર્વાદ છે';
+
+  @override
+  String get lpSoulPathTitle => 'તમારો આત્મા પથ';
+
+  @override
+  String get lpSoulPlanet => 'આત્મા ગ્રહ';
+
+  @override
+  String get lpCareerPlanet => 'હેતુ ગ્રહ';
+
+  @override
+  String get lpSoulClarity => 'હેતુ સ્પષ્ટતા';
+
+  @override
+  String get lpLifeChapter => 'વર્તમાન જીવન અધ્યાય';
+
+  @override
+  String get lpPrimaryDomain => 'મુખ્ય હેતુ ક્ષેત્ર';
+
+  @override
+  String get lpKarakaTitle => 'તમારા ધર્મ ગ્રહો';
+
+  @override
+  String get lpKarakaSubtitle => 'દરેક ગ્રહ તમારા જીવન હેતુને કેટલો ટેકો આપે છે';
+
+  @override
+  String get lpVerificationTitle => 'કુંડળીઓમાં ચકાસાયેલ (D9 / D60)';
+
+  @override
+  String get lpD9Label => 'D9 આત્મા સંરેખણ';
+
+  @override
+  String lpD9Explain(Object stage) {
+    return 'નવાંશ કુંડળીમાં તમારો આત્મા-વિકાસ તબક્કો \'${stage}\' છે.';
+  }
+
+  @override
+  String get lpD9JupiterDignity => 'ગુરુની ગરિમા';
+
+  @override
+  String get lpD9DharmaMultiplier => 'ધર્મ ગુણક';
+
+  @override
+  String get lpD60Label => 'D60 પૂર્વજન્મ હસ્તાક્ષર';
+
+  @override
+  String get lpKarmaType => 'પૂર્વજન્મ કર્મ પ્રકાર';
+
+  @override
+  String get lpKetuMastery => 'કેતુ પૂર્વજન્મ નિપુણતા';
+
+  @override
+  String get lpRahuGrowthDir => 'રાહુ વૃદ્ધિ દિશા';
+
+  @override
+  String get lpYogasTitle => 'ભાગ્ય યોગો અને ભાગ્ય અવરોધો';
+
+  @override
+  String get lpFortuneBoost => 'ભાગ્ય વૃદ્ધિ';
+
+  @override
+  String get lpLuckDrain => 'ભાગ્ય ઘટાડો';
+
+  @override
+  String get lpFortuneBoosters => 'ભાગ્ય વર્ધકો';
+
+  @override
+  String get lpLuckBlocks => 'ભાગ્ય અવરોધો';
+
+  @override
+  String get lpPurposeTitle => 'હેતુ ક્ષેત્રો અને ખ્યાતિ';
+
+  @override
+  String get lpDomainLeadership => 'નેતૃત્વ';
+
+  @override
+  String get lpDomainWisdom => 'જ્ઞાન અને શિક્ષણ';
+
+  @override
+  String get lpDomainService => 'સેવા';
+
+  @override
+  String get lpDomainHealing => 'ઉપચાર';
+
+  @override
+  String get lpDomainCreative => 'સર્જનાત્મક અભિવ્યક્તિ';
+
+  @override
+  String get lpPrimaryDomainBadge => 'મુખ્ય';
+
+  @override
+  String get lpFameRecognition => 'ખ્યાતિ અને ઓળખ';
+
+  @override
+  String get lpSocialInfluence => 'સામાજિક પ્રભાવ';
+
+  @override
+  String get lpRecognitionDomain => 'ઓળખ ક્ષેત્ર';
+
+  @override
+  String get lpPublicImage => 'જાહેર છબી';
+
+  @override
+  String get lpHistoricalImpact => 'ઐતિહાસિક પ્રભાવ સંભાવના';
+
+  @override
+  String get lpTimelineTitle => 'ભાગ્ય અને જીવન સમયરેખા';
+
+  @override
+  String get lpCurrentPhase => 'વર્તમાન ભાગ્ય તબક્કો';
+
+  @override
+  String get lpJupiterReturn => 'ગુરુ પુનરાગમન';
+
+  @override
+  String get lpSaturnReturn => 'શનિ પુનરાગમન';
+
+  @override
+  String get lpSadeSati => 'સાડા સાતી';
+
+  @override
+  String get lpGoldenWindow => 'સુવર્ણ તક કાળ';
+
+  @override
+  String get lpTransformationWindow => 'પરિવર્તન કાળ';
+
+  @override
+  String get lpPeakYears => 'શિખર ભાગ્ય વર્ષો';
+
+  @override
+  String get lpChallengingYears => 'પડકારજનક વર્ષો';
+
+  @override
+  String get lpMilestonesTitle => 'મુખ્ય સીમાચિહ્નો અને વળાંકો';
+
+  @override
+  String get lpFirstTurningPoint => 'પ્રથમ મોટો વળાંક';
+
+  @override
+  String get lpMidlifeTransform => 'મધ્ય-જીવન પરિવર્તન';
+
+  @override
+  String get lpLateLifeFulfillment => 'ઉત્તર-જીવન પરિપૂર્ણતા';
+
+  @override
+  String lpDharmicMilestone(Object age) {
+    return 'ધાર્મિક સીમાચિહ્ન (ઉંમર ${age})';
+  }
+
+  @override
+  String lpAgeLabel(Object age) {
+    return 'ઉંમર ${age}';
+  }
+
+  @override
+  String get lpDestinyTitle => 'નિયતિ વિરુદ્ધ સ્વતંત્ર ઇચ્છા';
+
+  @override
+  String get lpDestinyStat => 'નિયતિ ભાર';
+
+  @override
+  String get lpFreeWillStat => 'સ્વતંત્ર ઇચ્છા પ્રભાવ';
+
+  @override
+  String get lpFateStrength => 'ભાગ્ય હસ્તાક્ષર શક્તિ';
+
+  @override
+  String get lpSelfCreation => 'સ્વ-સર્જન ક્ષમતા';
+
+  @override
+  String get lpEffortGrace => 'પ્રયાસ વિરુદ્ધ કૃપા';
+
+  @override
+  String get lpKarmicTitle => 'કર્મ પાઠ';
+
+  @override
+  String get lpRahuGrowthLabel => 'રાહુ — વૃદ્ધિ પડકાર';
+
+  @override
+  String get lpKetuSurrenderLabel => 'કેતુ — સમર્પણ વિષય';
+
+  @override
+  String get lpSaturnLessonLabel => 'શનિ — શિસ્ત પાઠ';
+
+  @override
+  String get lpTestDifficulty => 'જીવન કસોટી કઠિનતા';
+
+  @override
+  String get lpLessonsInProgress => 'પ્રગતિમાં પાઠ';
+
+  @override
+  String get lpSoulContract => 'આત્મા કરાર ક્ષેત્રો';
+
+  @override
+  String get lpSoulExperience => 'તમારો આત્મા શું અનુભવવા આવ્યો';
+
+  @override
+  String get lpSoulMastery => 'તમારો આત્મા શું નિપુણતા મેળવવા આવ્યો';
+
+  @override
+  String get lpSpiritualTitle => 'આધ્યાત્મિક પથ';
+
+  @override
+  String get lpSpiritualInclination => 'આધ્યાત્મિક ઝુકાવ';
+
+  @override
+  String get lpMeditationReceptivity => 'ધ્યાન ગ્રહણશીલતા';
+
+  @override
+  String get lpTeacherKarma => 'ગુરુ/શિક્ષક કર્મ';
+
+  @override
+  String get lpPilgrimageBenefit => 'તીર્થયાત્રા લાભ';
+
+  @override
+  String get lpSelfRealization => 'આત્મ-સાક્ષાત્કાર સંભાવના';
+
+  @override
+  String get lpDivineConnection => 'દિવ્ય જોડાણ';
+
+  @override
+  String get lpTraditionAffinity => 'પરંપરા પ્રત્યે ઝુકાવ';
+
+  @override
+  String get lpIntuitionStrength => 'અંતર્જ્ઞાન શક્તિ';
+
+  @override
+  String get lpMantraEfficacy => 'પ્રાર્થના/મંત્ર અસરકારકતા';
+
+  @override
+  String get lpInnerGuidance => 'આંતરિક માર્ગદર્શન વિશ્વાસ';
+
+  @override
+  String get lpPropheticDreams => 'ભવિષ્યસૂચક સ્વપ્ન સંવેદનશીલતા';
+
+  @override
+  String get lpDifficultyTitle => 'જીવન મુશ્કેલી અને પડકારો';
+
+  @override
+  String get lpEarlyLife => 'શરૂઆતનું જીવન';
+
+  @override
+  String get lpMidlife => 'મધ્ય જીવન';
+
+  @override
+  String get lpLateLife => 'ઉત્તર જીવન';
+
+  @override
+  String get lpStruggleToSuccess => 'સંઘર્ષ-થી-સફળતા કર્મ';
+
+  @override
+  String get lpUnlivedLifeRisk => 'અધૂરા-જીવન જોખમ';
+
+  @override
+  String get lpChallenges => 'જીવન પડકારો';
+
+  @override
+  String get lpFortuneDrains => 'લાંબાગાળાના ભાગ્ય ઘટાડા';
+
+  @override
+  String get lpRegretAreas => 'પસ્તાવો-સંવેદનશીલ ક્ષેત્રો';
+
+  @override
+  String get lpRedFlags => 'દિશા ચેતવણી સંકેતો';
+
+  @override
+  String get lpBlessingsTitle => 'આશીર્વાદ અને મુખ્ય જીવન વિષય';
+
+  @override
+  String get lpKarmicRoot => 'કર્મ મૂળ';
+
+  @override
+  String get lpBlessingsList => 'તમારા આશીર્વાદ';
+
+  @override
+  String get lpFulfillmentPriorities => 'પરિપૂર્ણતા પ્રાથમિકતાઓ';
+
+  @override
+  String get lpImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get lpDharmaPriorities => 'ધર્મ પ્રાથમિકતાઓ';
+
+  @override
+  String get lpRoadmapTitle => 'તમારો નિયતિ રોડમેપ';
+
+  @override
+  String get lpStrategy => 'વ્યૂહરચના';
+
+  @override
+  String get lpFulfillmentPotential => 'પરિપૂર્ણતા સંભાવના';
+
+  @override
+  String get lpNext12Focus => 'આગામી 12-મહિનાનું ફોકસ';
+
+  @override
+  String get lpLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get lpLayerD9 => 'નવાંશ (D9)';
+
+  @override
+  String get lpLayerD60 => 'ષષ્ટ્યાંશ (D60)';
+
+  @override
+  String get lpLayerDasha => 'દશા સમય';
+
+  @override
+  String get lpLayerTransit => 'વર્તમાન ગોચર';
+
+  @override
+  String get lpTopicPurpose => 'મારો જીવન હેતુ';
+
+  @override
+  String get lpTopicFortune => 'મારા ભાગ્ય યોગો';
+
+  @override
+  String get lpTopicKarma => 'મારા કર્મ પાઠ';
+
+  @override
+  String get lpTopicMilestones => 'આગામી સીમાચિહ્નો';
+
+  @override
+  String get lpTopicDestiny => 'નિયતિ વિરુદ્ધ સ્વતંત્ર ઇચ્છા';
+
+  @override
+  String get lpTopicSpiritual => 'મારો આધ્યાત્મિક પથ';
+
+  @override
+  String get lpTopicChallenges => 'મારા જીવન પડકારો';
+
+  @override
+  String get lpTopicTiming => 'શ્રેષ્ઠ સમય વિન્ડો';
+
+  @override
+  String get dbSubtitle => 'AI-સંચાલિત વૈદિક દેવું અને રિકવરી રિપોર્ટ';
+
+  @override
+  String get dbTitle => 'દેવું અને રિકવરી';
+
+  @override
+  String get dbSnapshotHeader => 'દેવું રિકવરી સ્નેપશોટ';
+
+  @override
+  String dbHeroSummary(Object phase, Object personality, Object probability, Object years) {
+    return 'તમે હાલમાં \'${phase}\' તબક્કામાં છો અને પૈસા પ્રત્યેનો તમારો અભિગમ ${personality} છે. અમારા વિશ્લેષણ મુજબ લગભગ ${years} વર્ષોમાં દેવુંમુક્ત થવાની ${probability}% શક્યતા છે.';
+  }
+
+  @override
+  String get dbGaugeCapacity => 'રિકવરી ક્ષમતા';
+
+  @override
+  String get dbGaugeProbability => 'રિકવરીની શક્યતા';
+
+  @override
+  String get dbGaugeFreedomNow => 'હમણાં દેવુંમુક્તિ';
+
+  @override
+  String get dbGaugeDti => 'આવક આરોગ્ય';
+
+  @override
+  String get dbGaugeResilience => 'સ્થિતિસ્થાપકતા';
+
+  @override
+  String get dbChipCleanKarma => 'સ્વચ્છ દેવું કર્મ';
+
+  @override
+  String get dbChipStrongRecovery => 'મજબૂત રિકવરી ક્ષમતા';
+
+  @override
+  String get dbChipHealthyDti => 'તંદુરસ્ત દેવું-આવક ગુણોત્તર';
+
+  @override
+  String get dbChipResilient => 'ઉચ્ચ માનસિક સ્થિતિસ્થાપકતા';
+
+  @override
+  String get dbChipCycleBreakable => 'દેવું ચક્ર તોડી શકાય તેવું છે';
+
+  @override
+  String get dbChipLowReindebt => 'ફરીથી દેવાદાર થવાનું ઓછું જોખમ';
+
+  @override
+  String get dbChipGoodNegotiator => 'સારી વાટાઘાટોની શક્યતાઓ';
+
+  @override
+  String get dbProfileTitle => 'તમારી દેવું પ્રોફાઇલ';
+
+  @override
+  String get dbPhaseLabel => 'વર્તમાન તબક્કો';
+
+  @override
+  String get dbPrimaryCategoryLabel => 'મુખ્ય શ્રેણી';
+
+  @override
+  String get dbKarakaLabel => 'દેવું કારક';
+
+  @override
+  String get dbProtectorLabel => 'ધિરાણકર્તા સંરક્ષણ';
+
+  @override
+  String get dbSecondaryCategories => 'ગૌણ શ્રેણીઓ';
+
+  @override
+  String get dbUnsecuredRatio => 'અસુરક્ષિત-દેવું ગુણોત્તર';
+
+  @override
+  String get dbKarakaTitle => 'તમારા દેવું ગ્રહો';
+
+  @override
+  String get dbKarakaSubtitle => 'દરેક ગ્રહ તમારી દેવું રિકવરીને કેટલી મજબૂત રીતે ટેકો આપે છે';
+
+  @override
+  String get dbVerificationTitle => 'તમામ ચાર્ટમાં ચકાસાયેલ (D6)';
+
+  @override
+  String get dbD6Label => 'D6 દેવું અને શત્રુ ચાર્ટ';
+
+  @override
+  String get dbD6LordDignity => '6ઠ્ઠા ભાવના સ્વામીની શક્તિ';
+
+  @override
+  String get dbD6Severity => 'દેવું કર્મની ગંભીરતા';
+
+  @override
+  String get dbD6Multiplier => 'D6 દેવું ગુણક';
+
+  @override
+  String get dbYogasTitle => 'દેવું યોગો અને સંરક્ષણો';
+
+  @override
+  String get dbPressureNow => 'વર્તમાન દેવું દબાણ';
+
+  @override
+  String get dbRecoveryBoost => 'રિકવરી બૂસ્ટ';
+
+  @override
+  String get dbClearingLabel => 'દેવું-નિકાલ યોગો';
+
+  @override
+  String get dbCreatingLabel => 'દેવું-સર્જન યોગો';
+
+  @override
+  String get dbCategoriesTitle => 'દેવું શ્રેણી નિરીક્ષણ';
+
+  @override
+  String get dbCategoriesSubtitle => 'કયા પ્રકારના દેવાં પર સૌથી વધુ ધ્યાન આપવાની જરૂર છે';
+
+  @override
+  String get dbTimelineTitle => 'દેવું-મુક્ત સમયરેખા';
+
+  @override
+  String get dbFreeWindowLabel => 'દેવું-મુક્તિ સમયગાળો';
+
+  @override
+  String get dbClearanceEstimate => 'સંપૂર્ણ ચુકવણીનો અંદાજ';
+
+  @override
+  String get dbPeakYears => 'દેવું-શિખર વર્ષો';
+
+  @override
+  String get dbClearanceYears => 'ચુકવણી વર્ષો';
+
+  @override
+  String get dbBorrowTitle => 'સ્માર્ટ ઉધાર માર્ગદર્શિકા';
+
+  @override
+  String get dbLoanSuitability => 'લોન યોગ્યતા';
+
+  @override
+  String get dbBestLoanType => 'શ્રેષ્ઠ લોન પ્રકાર';
+
+  @override
+  String get dbLeverageCeiling => 'લિવરેજ મર્યાદા';
+
+  @override
+  String get dbNegotiationSuccess => 'વાટાઘાટોની સફળતા';
+
+  @override
+  String get dbCreditorAggression => 'ધિરાણકર્તા દબાણ જોખમ';
+
+  @override
+  String get dbLegalEscalation => 'કાનૂની ઉગ્રતા જોખમ';
+
+  @override
+  String get dbNegotiationApproach => 'ભલામણ કરેલ અભિગમ';
+
+  @override
+  String get dbAvoidLoanTypes => 'ટાળવા જેવા લોન પ્રકારો';
+
+  @override
+  String get dbRiskTitle => 'જોખમ અને નબળાઈ નિરીક્ષણ';
+
+  @override
+  String get dbRiskDefault => 'ડિફોલ્ટ જોખમ';
+
+  @override
+  String get dbRiskDefaultExp => 'નિર્ધારિત ચુકવણી એટલી ખરાબ રીતે ચૂકી જવાની શક્યતા કે ધિરાણકર્તા સાથે ડિફોલ્ટ સ્થિતિ શરૂ થઈ જાય.';
+
+  @override
+  String get dbRiskDefaultFix => 'ન્યૂનતમ ચુકવણીઓ ઓટોમેટ કરો અને 1-મહિનાનો બફર રાખો જેથી એક ચૂકી ગયેલ આવક ચક્ર આગળ ન વધે.';
+
+  @override
+  String get dbRiskBankruptcy => 'નાદારીનું જોખમ';
+
+  @override
+  String get dbRiskBankruptcyExp => 'આવક અને સંપત્તિ વાસ્તવિક રીતે આવરી ન શકે તેટલું દેવું વધવાની શક્યતા.';
+
+  @override
+  String get dbRiskBankruptcyFix => 'કોઈપણ નવી લોન અથવા ક્રેડિટ લાઇન લેતા પહેલા વ્યાવસાયિક દેવું સમીક્ષા મેળવો.';
+
+  @override
+  String get dbRiskAssetSeizure => 'સંપત્તિ-જપ્તીનું જોખમ';
+
+  @override
+  String get dbRiskAssetSeizureExp => 'સુરક્ષિત લોન ડિફોલ્ટ થાય તો ધિરાણકર્તા ગીરવે મુકેલી સંપત્તિ અથવા મિલકત જપ્ત કરી શકે તેવી શક્યતા.';
+
+  @override
+  String get dbRiskAssetSeizureFix => 'સુરક્ષિત-લોન ચુકવણીઓને પ્રથમ પ્રાથમિકતા આપો, અને ચુકવણીમાં અંતર દેખાય તો વહેલા રિફાઇનાન્સ કરો.';
+
+  @override
+  String get dbRiskChronic => 'લાંબાગાળાનું પુનઃ-દેવું જોખમ';
+
+  @override
+  String get dbRiskChronicExp => 'વર્તમાન દેવું ચૂકવ્યા પછી પણ ફરીથી દેવામાં ફસાવાની વૃત્તિ.';
+
+  @override
+  String get dbRiskChronicFix => 'ચુકવણી પછી જીવનશૈલી ખર્ચ વધારતા પહેલા સમર્પિત ઇમરજન્સી ફંડ બનાવો.';
+
+  @override
+  String get dbReindebtTrigger => 'પુનઃ-દેવું ટ્રિગર';
+
+  @override
+  String get dbCycleBreakFeasibility => 'ચક્ર-ભંગની શક્યતા';
+
+  @override
+  String get dbMajorRisks => 'મુખ્ય જોખમો';
+
+  @override
+  String get dbHiddenSignals => 'છુપાયેલા દેવું સંકેતો';
+
+  @override
+  String get dbCrisisTitle => 'કટોકટી તૈયારી';
+
+  @override
+  String get dbCrisisSubtitle => 'મુશ્કેલી વહેલી કેવી રીતે ઓળખવી અને શાંતિથી કેવી રીતે પ્રતિભાવ આપવો';
+
+  @override
+  String get dbWarningSigns => 'પ્રારંભિક ચેતવણી ચિહ્નો';
+
+  @override
+  String get dbMitigationActions => 'આ વિશે શું કરવું';
+
+  @override
+  String get dbFamilyTitle => 'કૌટુંબિક અને પૈતૃક દેવું';
+
+  @override
+  String get dbInheritedDebtProb => 'વારસાગત-દેવું શક્યતા';
+
+  @override
+  String get dbFamilyDrag => 'કૌટુંબિક દેવું ખેંચાણ';
+
+  @override
+  String get dbInheritedSource => 'સંભવિત સ્રોત';
+
+  @override
+  String get dbCoreBlockerLabel => 'મુખ્ય અવરોધ';
+
+  @override
+  String get dbPsychologyTitle => 'તમારું નાણાં મનોવિજ્ઞાન';
+
+  @override
+  String get dbResilience => 'સ્થિતિસ્થાપકતા';
+
+  @override
+  String get dbDiscipline => 'દબાણ હેઠળ શિસ્ત';
+
+  @override
+  String get dbSocialSupport => 'સામાજિક ટેકો';
+
+  @override
+  String get dbDepressionRisk => 'નાણાકીય-તણાવ સંવેદનશીલતા';
+
+  @override
+  String get dbStressTolerance => 'તણાવ સહનશક્તિ';
+
+  @override
+  String get dbRootCause => 'વર્તન મૂળ કારણ';
+
+  @override
+  String get dbImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get dbRoadmapTitle => 'તમારો દેવું-મુક્ત રોડમેપ';
+
+  @override
+  String get dbRecoveryProbability => 'રિકવરીની સંભાવના';
+
+  @override
+  String get dbClearanceTimeline => 'ચુકવણી સમયરેખા';
+
+  @override
+  String get dbYears => 'વર્ષો';
+
+  @override
+  String get dbDtiHealth => 'દેવું-આવક આરોગ્ય';
+
+  @override
+  String get dbDtiCategory => 'DTI શ્રેણી';
+
+  @override
+  String get dbBreakEvenMonths => 'બ્રેક-ઇવન સુધીના મહિનાઓ';
+
+  @override
+  String get dbIncomeAcceleration => 'જરૂરી આવક વૃદ્ધિ';
+
+  @override
+  String get dbLayerD1 => 'જન્મ ચાર્ટ (D1)';
+
+  @override
+  String get dbLayerD6 => 'દેવું અને શત્રુ (D6)';
+
+  @override
+  String get dbLayerD9 => 'નવમાંશ (D9)';
+
+  @override
+  String get dbLayerDasha => 'દશા સમય';
+
+  @override
+  String get dbLayerTransit => 'વર્તમાન ગોચર';
+
+  @override
+  String get dbTopicRecovery => 'મારી રિકવરી સમયરેખા';
+
+  @override
+  String get dbTopicNegotiate => 'ધિરાણકર્તાઓ સાથે વાટાઘાટો';
+
+  @override
+  String get dbTopicBorrowing => 'શું અત્યારે ઉધાર લેવું સલામત છે';
+
+  @override
+  String get dbTopicCrisis => 'કટોકટી માટે તૈયારી';
+
+  @override
+  String get dbTopicAncestral => 'પૈતૃક દેવું કર્મ';
+
+  @override
+  String get dbTopicTimeline => 'દેવું ચૂકવવા માટે શ્રેષ્ઠ વર્ષો';
+
+  @override
+  String get dbTopicPsychology => 'મારું નાણાં મનોવિજ્ઞાન';
+
+  @override
+  String get dbTopicCategories => 'કયા દેવાંને પ્રાથમિકતા આપવી';
+
+  @override
+  String get mnSubtitle => 'AI-સંચાલિત વૈદિક વેલનેસ રિપોર્ટ';
+
+  @override
+  String get mnTitle => 'માનસિક સ્વાસ્થ્ય અને તણાવ';
+
+  @override
+  String get mnSnapshotHeader => 'વેલનેસ સ્નેપશોટ';
+
+  @override
+  String get mnResilience => 'સ્થિતિસ્થાપકતા';
+
+  @override
+  String get mnStability => 'સ્થિરતા';
+
+  @override
+  String get mnEmotionalBalance => 'ભાવનાત્મક સંતુલન';
+
+  @override
+  String get mnInnerCalm => 'આંતરિક શાંતિ';
+
+  @override
+  String get mnSelfAwareness => 'સ્વ-જાગૃતિ';
+
+  @override
+  String get mnStatusThriving => 'સારી રીતે ખીલી રહ્યા છો';
+
+  @override
+  String get mnStatusSteady => 'સ્થિર અને સંતુલિત';
+
+  @override
+  String get mnStatusBuildingStrength => 'શક્તિ બનાવી રહ્યા છો';
+
+  @override
+  String get mnStatusNeedsGentleCare => 'થોડી હળવી કાળજીની જરૂર છે';
+
+  @override
+  String get mnStatusReachOut => 'સહારો લેવાનો સમય';
+
+  @override
+  String get mnChipStable => 'ભાવનાત્મક રીતે સ્થિર';
+
+  @override
+  String get mnChipSupported => 'સારો સહારો મળી રહ્યો છે';
+
+  @override
+  String get mnChipSelfAware => 'અત્યંત સ્વ-જાગૃત';
+
+  @override
+  String get mnChipResilient => 'ઝડપથી સંભળાઈ જાય છે';
+
+  @override
+  String get mnChipSecureAttachment => 'સુરક્ષિત જોડાણ';
+
+  @override
+  String get mnChipHealingReady => 'સાજા થવા માટે તૈયાર';
+
+  @override
+  String get mnChipMindBodyBalance => 'મન-શરીર સંતુલન';
+
+  @override
+  String get mnSupportBannerTitle => 'એક હળવો સંકેત';
+
+  @override
+  String get mnSupportBannerBody => 'તમારી કુંડળી સૂચવે છે કે અત્યારે થોડો વધારાનો સહારો લેવો સારો રહેશે — વિશ્વાસુ મિત્ર, પરિવારજન, અથવા નિષ્ણાત. મદદ માંગવી એ નબળાઈ નથી, એ હિંમતની નિશાની છે.';
+
+  @override
+  String get mnProfileTitle => 'તમારો ભાવનાત્મક નકશો';
+
+  @override
+  String get mnStressDriver => 'તણાવનું કારણ';
+
+  @override
+  String get mnStabilityAnchor => 'સ્થિરતાનો આધાર';
+
+  @override
+  String get mnSoulLevelKarma => 'આત્મા-સ્તરની પેટર્ન';
+
+  @override
+  String get mnSubtleSignature => 'સૂક્ષ્મ ભાવનાત્મક છાપ';
+
+  @override
+  String get mnKarakaTitle => 'તમારું મન અને ગ્રહો';
+
+  @override
+  String get mnKarakaSubtitle => 'કયા ગ્રહો તમારી અંદરની દુનિયાને આકાર આપે છે';
+
+  @override
+  String get mnYogasTitle => 'શક્તિઓ અને વિકાસ ક્ષેત્રો';
+
+  @override
+  String get mnCurrentPhase => 'વર્તમાન તબક્કો';
+
+  @override
+  String get mnCurrentStressLevel => 'વર્તમાન તણાવ સ્તર';
+
+  @override
+  String get mnRecentStrain => 'તાજેતરનો ભાવનાત્મક થાક';
+
+  @override
+  String get mnStrengths => 'શક્તિઓ';
+
+  @override
+  String get mnGrowthAreas => 'વિકાસ ક્ષેત્રો';
+
+  @override
+  String get mnSadeSatiStatus => 'સાડે સાતીની સ્થિતિ';
+
+  @override
+  String get mnVerificationTitle => 'તમામ કુંડળીઓમાં ચકાસાયેલ';
+
+  @override
+  String get mnD9Confirmation => 'D9 પુષ્ટિ';
+
+  @override
+  String get mnD30Confirmation => 'D30 પુષ્ટિ';
+
+  @override
+  String get mnMoodPatternsTitle => 'મૂડ અને ચિંતાની પેટર્ન';
+
+  @override
+  String get mnMoodPatternsSubtitle => 'હળવી જાગૃતિ, નિદાન નહીં';
+
+  @override
+  String get mnAnxietyPatterns => 'ચિંતાની પેટર્ન';
+
+  @override
+  String get mnMoodPatterns => 'ઉદાસીની પેટર્ન';
+
+  @override
+  String get mnPrimaryPattern => 'મુખ્ય પેટર્ન';
+
+  @override
+  String get mnRumination => 'વધુ પડતું વિચારવાની વૃત્તિ';
+
+  @override
+  String get mnHypervigilance => 'અતિ-સતર્કતા';
+
+  @override
+  String get mnHopelessnessVuln => 'ઉદાસી પ્રત્યે સંવેદનશીલતા';
+
+  @override
+  String get mnEnergyDepletion => 'ઊર્જા ઘટવાની વૃત્તિ';
+
+  @override
+  String get mnMotivationBaseline => 'પ્રેરણાનું પાયાનું સ્તર';
+
+  @override
+  String get mnRegulationTitle => 'ભાવનાત્મક નિયમન અને સામનો';
+
+  @override
+  String get mnEmotionalRegulation => 'ભાવનાત્મક નિયમન';
+
+  @override
+  String get mnSelfSoothing => 'પોતાને શાંત કરવાની ક્ષમતા';
+
+  @override
+  String get mnExpressionStyle => 'અભિવ્યક્તિની શૈલી';
+
+  @override
+  String get mnRecoveryTime => 'પુનઃપ્રાપ્તિનો સમય';
+
+  @override
+  String get mnTriggerIntensity => 'ટ્રિગરની તીવ્રતા';
+
+  @override
+  String get mnHealthyCoping => 'સ્વસ્થ સામનો કરવાની ટેવો';
+
+  @override
+  String get mnWatchFor => 'હળવેથી ધ્યાન રાખો';
+
+  @override
+  String get mnSleepTitle => 'ઊંઘ અને આરામ';
+
+  @override
+  String get mnSleepQuality => 'ઊંઘની ગુણવત્તા';
+
+  @override
+  String get mnSleepAsRegulator => 'ભાવનાત્મક નિયામક તરીકે ઊંઘ';
+
+  @override
+  String get mnInsomniaTendency => 'બેચેન રાતોની વૃત્તિ';
+
+  @override
+  String get mnNightmareTendency => 'સ્પષ્ટ સપનાની વૃત્તિ';
+
+  @override
+  String get mnSleepHygienePriority => 'ઊંઘની સ્વચ્છતાની પ્રાથમિકતા';
+
+  @override
+  String get mnBurnoutTitle => 'બર્નઆઉટ અને ઊર્જા';
+
+  @override
+  String get mnBurnoutVulnerability => 'બર્નઆઉટ સંવેદનશીલતા';
+
+  @override
+  String get mnBurnoutRecovery => 'બર્નઆઉટમાંથી પુનઃપ્રાપ્તિની ક્ષમતા';
+
+  @override
+  String get mnBurnoutStage => 'વર્તમાન બર્નઆઉટ તબક્કો';
+
+  @override
+  String get mnSelfDrivingTendency => 'પોતાને આગળ ધપાવવાની વૃત્તિ';
+
+  @override
+  String get mnBurnoutTriggers => 'બર્નઆઉટના કારણો';
+
+  @override
+  String get mnConnectionTitle => 'જોડાણ અને સહારો';
+
+  @override
+  String get mnSocialSupport => 'સામાજિક સહારાની ગુણવત્તા';
+
+  @override
+  String get mnLonelinessVuln => 'એકલતા પ્રત્યે સંવેદનશીલતા';
+
+  @override
+  String get mnSolitudeNeed => 'એકાંતની જરૂરિયાત';
+
+  @override
+  String get mnSocialComfort => 'સામાજિક સહજતા';
+
+  @override
+  String get mnTraumaSensitivity => 'આઘાત પ્રત્યે સંવેદનશીલતા';
+
+  @override
+  String get mnHealingReadiness => 'સાજા થવાની તૈયારી';
+
+  @override
+  String get mnProcessingStyle => 'સમજવાની શૈલી';
+
+  @override
+  String get mnMindBodyIntegration => 'મન-શરીર એકીકરણ';
+
+  @override
+  String get mnPtsdVuln => 'આઘાત-પ્રતિક્રિયા સંવેદનશીલતા';
+
+  @override
+  String get mnSelfAwarenessTitle => 'સ્વ-જાગૃતિ અને વિકાસ';
+
+  @override
+  String get mnSelfAwarenessScore => 'સ્વ-જાગૃતિ';
+
+  @override
+  String get mnEmotionalVocabulary => 'ભાવનાત્મક શબ્દભંડોળ';
+
+  @override
+  String get mnTherapyReadiness => 'થેરાપી માટે તૈયારી';
+
+  @override
+  String get mnJournalingBenefit => 'જર્નલિંગનો ફાયદો';
+
+  @override
+  String get mnInnerDialogue => 'આંતરિક સંવાદની ગુણવત્તા';
+
+  @override
+  String get mnAwarenessOfPatterns => 'પેટર્નની જાગૃતિ';
+
+  @override
+  String get mnEscapePatternVuln => 'પલાયન-વૃત્તિ સંવેદનશીલતા';
+
+  @override
+  String get mnEscapeChannels => 'હળવેથી ધ્યાન રાખો';
+
+  @override
+  String get mnHealthyAlternatives => 'સ્વસ્થ વિકલ્પો';
+
+  @override
+  String get mnTherapyFitTitle => 'થેરાપી અને સહારાની યોગ્યતા';
+
+  @override
+  String get mnCrisisSupportRec => 'સહારાની ભલામણ';
+
+  @override
+  String get mnSupportNetwork => 'તમારું સહાય નેટવર્ક સક્રિય કરો';
+
+  @override
+  String get mnSelfAdvocacy => 'પોતાના માટે અવાજ ઉઠાવવાની તૈયારી';
+
+  @override
+  String get mnMedicationReceptivity => 'દવા પ્રત્યે ખુલ્લાપણું';
+
+  @override
+  String get mnTimelineTitle => 'વેલનેસ ટાઇમલાઇન';
+
+  @override
+  String get mnPeakWellnessYears => 'શ્રેષ્ઠ વેલનેસ વર્ષો';
+
+  @override
+  String get mnExtraCareYears => 'વધારાની સ્વ-સંભાળના વર્ષો';
+
+  @override
+  String get mnTransformationWindows => 'સકારાત્મક પરિવર્તનનો સમય';
+
+  @override
+  String get mnTherapyWindow => 'ભલામણ કરેલ થેરાપી સમય';
+
+  @override
+  String get mnPracticesTitle => 'દૈનિક વેલનેસ પ્રેક્ટિસ';
+
+  @override
+  String get mnMorningPractices => 'સવારની પ્રેક્ટિસ';
+
+  @override
+  String get mnEveningPractices => 'સાંજની પ્રેક્ટિસ';
+
+  @override
+  String get mnBreathwork => 'શ્વાસ પ્રેક્ટિસ';
+
+  @override
+  String get mnMovement => 'હલનચલન';
+
+  @override
+  String get mnNutrition => 'પોષણ';
+
+  @override
+  String get mnNatureExposure => 'પ્રકૃતિ સાથે જોડાણની જરૂરિયાત';
+
+  @override
+  String get mnDigitalDetox => 'ડિજિટલ ડિટોક્સની જરૂરિયાત';
+
+  @override
+  String get mnImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get mnReliabilityTitle => 'વિશ્વસનીયતા';
+
+  @override
+  String get mnLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get mnLayerD9 => 'આત્મા કુંડળી (D9)';
+
+  @override
+  String get mnLayerD30 => 'D30 કુંડળી';
+
+  @override
+  String get mnLayerDasha => 'દશા સમય';
+
+  @override
+  String get mnLayerTransit => 'ગોચર';
+
+  @override
+  String get mnTopicResilience => 'હું ભાવનાત્મક રીતે કેટલો સ્થિતિસ્થાપક છું?';
+
+  @override
+  String get mnTopicCoping => 'મારા માટે શ્રેષ્ઠ સામનો કરવાની વ્યૂહરચનાઓ કઈ છે?';
+
+  @override
+  String get mnTopicSleep => 'હું મારી ઊંઘ કેવી રીતે સુધારી શકું?';
+
+  @override
+  String get mnTopicBurnout => 'શું મને બર્નઆઉટનું જોખમ છે?';
+
+  @override
+  String get mnTopicTherapy => 'મારા માટે કઈ થેરાપી શૈલી યોગ્ય છે?';
+
+  @override
+  String get mnTopicPractices => 'કઈ દૈનિક પ્રેક્ટિસ મને સૌથી વધુ મદદ કરશે?';
+
+  @override
+  String get mnTopicTiming => 'મારા શ્રેષ્ઠ વેલનેસ વર્ષો ક્યારે છે?';
+
+  @override
+  String get mnTopicSupport => 'હું મજબૂત સહાય નેટવર્ક કેવી રીતે બનાવું?';
+
+  @override
+  String get lgSubtitle => 'AI-સંચાલિત વૈદિક કાનૂની અહેવાલ';
+
+  @override
+  String get lgTitle => 'કાયદો અને વિવાદો';
+
+  @override
+  String get lgSnapshotHeader => 'કાનૂની ઝલક';
+
+  @override
+  String get lgResilience => 'કાનૂની સ્થિતિસ્થાપકતા';
+
+  @override
+  String get lgResolutionCapacity => 'ઉકેલ ક્ષમતા';
+
+  @override
+  String get lgVictoryPotential => 'વિજય ક્ષમતા';
+
+  @override
+  String get lgLegalSafety => 'કાનૂની સલામતી';
+
+  @override
+  String get lgNegotiationSkill => 'વાટાઘાટ કૌશલ્ય';
+
+  @override
+  String get lgStatusExcellent => 'ઉત્કૃષ્ટ';
+
+  @override
+  String get lgStatusStrong => 'મજબૂત';
+
+  @override
+  String get lgStatusModerate => 'મધ્યમ';
+
+  @override
+  String get lgStatusDeveloping => 'વિકસી રહ્યું છે';
+
+  @override
+  String get lgStatusChallenging => 'પડકારજનક';
+
+  @override
+  String get lgChipResolver => 'કુશળ ઉકેલકર્તા';
+
+  @override
+  String get lgChipWinner => 'મજબૂત કેસ વિજય';
+
+  @override
+  String get lgChipNegotiator => 'કુદરતી વાટાઘાટકાર';
+
+  @override
+  String get lgChipDocumented => 'સારી રીતે દસ્તાવેજીકૃત';
+
+  @override
+  String get lgChipLowRisk => 'ઓછું કાનૂની જોખમ';
+
+  @override
+  String get lgChipMoralAuthority => 'નૈતિક સત્તા';
+
+  @override
+  String get lgChipLegalAptitude => 'કાનૂની યોગ્યતા';
+
+  @override
+  String get lgProfileTitle => 'તમારી કાનૂની પ્રોફાઇલ અને કર્મ';
+
+  @override
+  String get lgPrimaryDriver => 'મુખ્ય પ્રેરક';
+
+  @override
+  String get lgDharmaAnchor => 'ધર્મ આધાર';
+
+  @override
+  String get lgAggressionMarker => 'આક્રમકતા સૂચક';
+
+  @override
+  String get lgDocumentationKaraka => 'દસ્તાવેજીકરણ ગુણવત્તા';
+
+  @override
+  String get lgKarakaTitle => 'તમારા કાનૂની ગ્રહો';
+
+  @override
+  String get lgKarakaSubtitle => 'કયા ગ્રહો તમારા કાનૂની ભાગ્યને આકાર આપે છે';
+
+  @override
+  String get lgYogasTitle => 'કાનૂની યોગ અને રક્ષણો';
+
+  @override
+  String get lgCurrentPhase => 'વર્તમાન તબક્કો';
+
+  @override
+  String get lgProtections => 'રક્ષણો';
+
+  @override
+  String get lgDisputePressures => 'વિવાદ દબાણ';
+
+  @override
+  String get lgVerificationTitle => 'તમામ કુંડળીઓમાં ચકાસાયેલ';
+
+  @override
+  String get lgD6Litigation => 'D6 મુકદ્દમા કુંડળી';
+
+  @override
+  String get lgD9Dharma => 'D9 ધર્મ કુંડળી';
+
+  @override
+  String get lgMoralAuthority => 'નૈતિક સત્તા';
+
+  @override
+  String get lgVictoryTitle => 'વિજય વિશ્લેષણ';
+
+  @override
+  String get lgAsPlaintiff => 'વાદી તરીકે';
+
+  @override
+  String get lgAsDefendant => 'પ્રતિવાદી તરીકે';
+
+  @override
+  String get lgSettlementPreference => 'સમાધાન પસંદગી';
+
+  @override
+  String get lgDisputeCategoriesTitle => 'વિવાદ શ્રેણી નિરીક્ષણ';
+
+  @override
+  String get lgLowRiskCategories => 'ઓછા જોખમની શ્રેણીઓ';
+
+  @override
+  String get lgConflictStyleTitle => 'સંઘર્ષ શૈલી અને શત્રુઓ';
+
+  @override
+  String get lgConfrontationComfort => 'સામનો કરવામાં આરામ';
+
+  @override
+  String get lgArgumentPersuasiveness => 'દલીલની અસરકારકતા';
+
+  @override
+  String get lgEmotionalRegulation => 'ભાવનાત્મક નિયંત્રણ';
+
+  @override
+  String get lgGrudgeHolding => 'દ્વેષ રાખવાની વૃત્તિ';
+
+  @override
+  String get lgEnemyAnalysisLabel => 'શત્રુ વિશ્લેષણ';
+
+  @override
+  String get lgVisibleEnemies => 'દેખીતા શત્રુઓ';
+
+  @override
+  String get lgHiddenEnemies => 'છુપાયેલા શત્રુઓ';
+
+  @override
+  String get lgWorkplaceEnemies => 'કાર્યસ્થળના શત્રુઓ';
+
+  @override
+  String get lgFamilyEnemies => 'કૌટુંબિક શત્રુઓ';
+
+  @override
+  String get lgLegalEnemies => 'કાનૂની શત્રુઓ';
+
+  @override
+  String get lgEnemyDefeatCapacity => 'શત્રુને હરાવવાની ક્ષમતા';
+
+  @override
+  String get lgCriminalFinancialTitle => 'ગુનાહિત અને નાણાકીય જોખમ નિરીક્ષણ';
+
+  @override
+  String get lgCriminalRisk => 'ગુનાહિત સંડોવણી જોખમ';
+
+  @override
+  String get lgVictimOfCrime => 'ગુનાનો ભોગ બનવાની શક્યતા';
+
+  @override
+  String get lgFalseAccusation => 'ખોટા આરોપનું જોખમ';
+
+  @override
+  String get lgImprisonmentRisk => 'કેદનું જોખમ';
+
+  @override
+  String get lgTaxDisputeRisk => 'કર વિવાદ જોખમ';
+
+  @override
+  String get lgFinancialFraudRisk => 'નાણાકીય છેતરપિંડી જોખમ';
+
+  @override
+  String get lgBusinessLitigationRisk => 'વ્યવસાયિક મુકદ્દમા જોખમ';
+
+  @override
+  String get lgBankruptcyRisk => 'નાદારીનું જોખમ';
+
+  @override
+  String get lgAuditVulnerability => 'ઓડિટ સંવેદનશીલતા';
+
+  @override
+  String get lgProtectionPriority => 'રક્ષણ પ્રાથમિકતા';
+
+  @override
+  String get lgContractsTitle => 'કરાર અને વાટાઘાટ';
+
+  @override
+  String get lgContractClarity => 'કરાર સ્પષ્ટતા';
+
+  @override
+  String get lgDocumentationDiscipline => 'દસ્તાવેજીકરણ શિસ્ત';
+
+  @override
+  String get lgFinePrintAwareness => 'બારીક શરતોની જાગૃતિ';
+
+  @override
+  String get lgSignatureCaution => 'હસ્તાક્ષરમાં સાવચેતી';
+
+  @override
+  String get lgMediationReceptivity => 'મધ્યસ્થી પ્રત્યે ગ્રહણશીલતા';
+
+  @override
+  String get lgNegotiationSkillFull => 'વાટાઘાટ કૌશલ્ય';
+
+  @override
+  String get lgCompromiseWillingness => 'સમાધાન કરવાની તૈયારી';
+
+  @override
+  String get lgFaceSavingNeeds => 'પ્રતિષ્ઠા બચાવવાની જરૂરિયાત';
+
+  @override
+  String get lgMediatorHireRecommendation => 'મધ્યસ્થી નિયુક્ત કરવાની ભલામણ';
+
+  @override
+  String get lgTypicalContractIssues => 'સામાન્ય કરાર સમસ્યાઓ';
+
+  @override
+  String get lgCareerFitTitle => 'કાનૂની કારકિર્દી યોગ્યતા';
+
+  @override
+  String get lgProfessionAffinity => 'વ્યવસાય પ્રત્યે રુચિ';
+
+  @override
+  String get lgRoleFit => 'શ્રેષ્ઠ ભૂમિકા યોગ્યતા';
+
+  @override
+  String get lgLawStudentSuccess => 'કાયદાના વિદ્યાર્થીની સફળતા';
+
+  @override
+  String get lgBarExamSuccess => 'બાર પરીક્ષા સફળતા';
+
+  @override
+  String get lgTimelineTitle => 'કાનૂની સમયરેખા';
+
+  @override
+  String get lgNewMatterChance => 'નવા કેસની શક્યતા (આગામી 12 મહિના)';
+
+  @override
+  String get lgOngoingCaseOutcome => 'ચાલુ કેસનું પરિણામ';
+
+  @override
+  String get lgRecommendedAction => 'ભલામણ કરેલ પગલું';
+
+  @override
+  String get lgPeakDisputeYears => 'ટોચના વિવાદ વર્ષો';
+
+  @override
+  String get lgClarityYears => 'કાનૂની સ્પષ્ટતાના વર્ષો';
+
+  @override
+  String get lgAvoidancePeriods => 'મહત્વપૂર્ણ ટાળવાના સમયગાળા';
+
+  @override
+  String get lgFavorableWindows => 'અનુકૂળ ઉકેલ સમયગાળા';
+
+  @override
+  String get lgRisksTitle => 'જોખમો અને નબળાઈઓ';
+
+  @override
+  String get lgChronicVulnerabilities => 'લાંબા ગાળાની નબળાઈઓ';
+
+  @override
+  String get lgAvoidDashaPeriods => 'ધ્યાન રાખવા જેવા દશા સમયગાળા';
+
+  @override
+  String get lgPreventivePriorities => 'નિવારક પ્રાથમિકતાઓ';
+
+  @override
+  String get lgRedFlags => 'ચેતવણી ચિહ્ન સ્થિતિઓ';
+
+  @override
+  String get lgImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get lgReliabilityTitle => 'વિશ્વસનીયતા';
+
+  @override
+  String get lgLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get lgLayerD6 => 'મુકદ્દમા કુંડળી (D6)';
+
+  @override
+  String get lgLayerD9 => 'ધર્મ કુંડળી (D9)';
+
+  @override
+  String get lgLayerDasha => 'દશા સમય';
+
+  @override
+  String get lgLayerTransit => 'ગોચર';
+
+  @override
+  String get lgTopicWinChance => 'મારી જીતવાની શક્યતાઓ શું છે?';
+
+  @override
+  String get lgTopicStrategy => 'મારા માટે શ્રેષ્ઠ કાનૂની વ્યૂહરચના શું છે?';
+
+  @override
+  String get lgTopicContract => 'કયા કરાર જોખમો પર ધ્યાન આપવું?';
+
+  @override
+  String get lgTopicTiming => 'વિવાદો ઉકેલવાનો શ્રેષ્ઠ સમય ક્યારે છે?';
+
+  @override
+  String get lgTopicSettlement => 'મારે સમાધાન કરવું જોઈએ કે લડવું જોઈએ?';
+
+  @override
+  String get lgTopicEnemies => 'મારા છુપાયેલા શત્રુઓ કોણ છે?';
+
+  @override
+  String get lgTopicProtection => 'હું કાયદેસર રીતે મારી જાતને કેવી રીતે સુરક્ષિત કરી શકું?';
+
+  @override
+  String get lgTopicCareer => 'શું હું કાનૂની કારકિર્દી માટે યોગ્ય છું?';
+
+  @override
+  String get prSubtitle => 'AI-સંચાલિત વૈદિક પ્રોપર્ટી રિપોર્ટ';
+
+  @override
+  String get prTitle => 'મિલકત અને સંપત્તિ';
+
+  @override
+  String get prSnapshotHeader => 'મિલકત સ્નેપશોટ';
+
+  @override
+  String get prAcquisitionCapacity => 'સંપાદન ક્ષમતા';
+
+  @override
+  String get prHomeOwnership => 'ઘરની માલિકી';
+
+  @override
+  String get prWealthPotential => 'સંપત્તિની સંભાવના';
+
+  @override
+  String get prRentalIncome => 'ભાડાની આવક';
+
+  @override
+  String get prLandOwnership => 'જમીનની માલિકી';
+
+  @override
+  String get prStatusExcellent => 'ઉત્કૃષ્ટ';
+
+  @override
+  String get prStatusStrong => 'મજબૂત';
+
+  @override
+  String get prStatusModerate => 'મધ્યમ';
+
+  @override
+  String get prStatusDeveloping => 'વિકસતું';
+
+  @override
+  String get prStatusChallenging => 'પડકારજનક';
+
+  @override
+  String get prChipHomeOwner => 'ઘરમાલિક';
+
+  @override
+  String get prChipWealthBuilder => 'સંપત્તિ નિર્માતા';
+
+  @override
+  String get prChipLandOwner => 'જમીન માલિક';
+
+  @override
+  String get prChipInvestor => 'મિલકત રોકાણકાર';
+
+  @override
+  String get prChipInheritance => 'વારસાની શક્યતા';
+
+  @override
+  String get prChipVehicle => 'વાહન માલિક';
+
+  @override
+  String get prChipGlobalAsset => 'વૈશ્વિક સંપત્તિ તરફ ઝુકાવ';
+
+  @override
+  String get prProfileTitle => 'તમારી મિલકત શૈલી';
+
+  @override
+  String get prHomeAesthetics => 'ઘરની સૌંદર્યલક્ષિતા';
+
+  @override
+  String get prHomeSanctuary => 'ઘર એક આશ્રયસ્થાન તરીકે';
+
+  @override
+  String get prComfortInvestment => 'આરામમાં રોકાણ';
+
+  @override
+  String get prVastuPriority => 'વાસ્તુ પ્રાથમિકતા';
+
+  @override
+  String get prNaturalElements => 'કુદરતી તત્વો';
+
+  @override
+  String get prNextActionLabel => 'આગળનું પગલું';
+
+  @override
+  String get prKarakaTitle => 'તમારા મિલકત ગ્રહો';
+
+  @override
+  String get prKarakaSubtitle => 'કયા ગ્રહો તમારા મિલકતના નસીબને આકાર આપે છે';
+
+  @override
+  String get prPrimaryKaraka => 'મુખ્ય કારક';
+
+  @override
+  String get prDurableAsset => 'ટકાઉ સંપત્તિ કારક';
+
+  @override
+  String get prYogasTitle => 'મિલકત યોગ અને દોષ';
+
+  @override
+  String get prCurrentPhase => 'વર્તમાન તબક્કો';
+
+  @override
+  String get prBoosters => 'પ્રોત્સાહક પરિબળો';
+
+  @override
+  String get prDrains => 'ઘટાડનારા પરિબળો';
+
+  @override
+  String get prVerificationTitle => 'ચાર્ટ્સમાં ચકાસાયેલ';
+
+  @override
+  String get prD4Property => 'D4 મિલકત ચાર્ટ';
+
+  @override
+  String get prD16Vehicle => 'D16 વાહન ચાર્ટ';
+
+  @override
+  String get prVehicleFit => 'વાહન યોગ્યતા';
+
+  @override
+  String get prJourneyTitle => 'માલિકીની સફર અને સમયરેખા';
+
+  @override
+  String get prFirstHomeAge => 'પ્રથમ ઘરની ઉંમર';
+
+  @override
+  String get prFirstHomeType => 'પ્રથમ ઘરનો પ્રકાર';
+
+  @override
+  String get prMultipleHomes => 'એકથી વધુ ઘર';
+
+  @override
+  String get prNewPropertySoon => 'ટૂંક સમયમાં નવી મિલકત';
+
+  @override
+  String get prFirstMajorWindow => 'પ્રથમ મોટો સમયગાળો';
+
+  @override
+  String get prBuyingWindow => 'ખરીદીનો સમયગાળો';
+
+  @override
+  String get prConstructionWindow => 'બાંધકામનો સમયગાળો';
+
+  @override
+  String get prNextOpportunity => 'આગળની તક';
+
+  @override
+  String get prLifetimePropertyCount => 'જીવનભરની મિલકત સંખ્યા';
+
+  @override
+  String get prInheritanceTitle => 'વારસો અને પારિવારિક મિલકત';
+
+  @override
+  String get prMaternalInheritance => 'માતૃપક્ષનો વારસો';
+
+  @override
+  String get prPaternalInheritance => 'પિતૃપક્ષનો વારસો';
+
+  @override
+  String get prAncestralProperty => 'પૂર્વજોની મિલકત';
+
+  @override
+  String get prFamilyDisputeRisk => 'પારિવારિક વિવાદનું જોખમ';
+
+  @override
+  String get prInheritanceTiming => 'વારસાનો સમય';
+
+  @override
+  String get prInheritanceType => 'વારસાનો પ્રકાર';
+
+  @override
+  String get prLandInvestTitle => 'જમીન, રોકાણ અને વૈશ્વિક મિલકત';
+
+  @override
+  String get prPropertyInvestor => 'મિલકત રોકાણકાર સ્કોર';
+
+  @override
+  String get prAppreciationLuck => 'મૂલ્યવૃદ્ધિનું નસીબ';
+
+  @override
+  String get prInvestorMindset => 'રોકાણકારની માનસિકતા';
+
+  @override
+  String get prLandType => 'જમીનનો પ્રકાર';
+
+  @override
+  String get prRentalCount => 'ભાડાની મિલકત સંખ્યા';
+
+  @override
+  String get prMultipleLand => 'એકથી વધુ જમીનના ટુકડા';
+
+  @override
+  String get prFarmEstate => 'ફાર્મ / એસ્ટેટની શક્યતા';
+
+  @override
+  String get prGlobalPropertyLabel => 'વૈશ્વિક મિલકત';
+
+  @override
+  String get prForeignProperty => 'વિદેશી મિલકત';
+
+  @override
+  String get prNriAffinity => 'એનઆરઆઈ સંપત્તિ તરફ ઝુકાવ';
+
+  @override
+  String get prVehiclesTitle => 'વાહનો';
+
+  @override
+  String get prVehicleCount => 'વાહનોની સંખ્યા';
+
+  @override
+  String get prVehicleFirstAge => 'પ્રથમ વાહનની ઉંમર';
+
+  @override
+  String get prVehicleCategory => 'વાહન શ્રેણી';
+
+  @override
+  String get prVehicleQuality => 'વાહન ગુણવત્તા';
+
+  @override
+  String get prLuxuryAffinity => 'લક્ઝરી તરફ ઝુકાવ';
+
+  @override
+  String get prVehicleLossRisk => 'વાહન નુકસાન / ડેમેજનું જોખમ';
+
+  @override
+  String get prLegalRiskTitle => 'કાનૂની અને જોખમ નિરીક્ષણ';
+
+  @override
+  String get prBoundaryDisputes => 'સીમા વિવાદો';
+
+  @override
+  String get prPartitionDisputes => 'ભાગલા વિવાદો';
+
+  @override
+  String get prTitleIssues => 'માલિકી / દસ્તાવેજીકરણ સમસ્યાઓ';
+
+  @override
+  String get prTenantConflict => 'ભાડૂત-મકાનમાલિક વિવાદ';
+
+  @override
+  String get prForcedSale => 'ફરજિયાત વેચાણનું જોખમ';
+
+  @override
+  String get prPropertyDamage => 'મિલકત નુકસાનનું જોખમ';
+
+  @override
+  String get prInsurancePriority => 'વીમા પ્રાથમિકતા';
+
+  @override
+  String get prProtectionUrgency => 'સુરક્ષાની તાકીદ';
+
+  @override
+  String get prProtectiveFactors => 'રક્ષણાત્મક પરિબળો';
+
+  @override
+  String get prChronicVulnerabilities => 'લાંબા ગાળાની નબળાઈઓ';
+
+  @override
+  String get prDueDiligenceTitle => 'યોગ્ય ચકાસણી ચેકલિસ્ટ';
+
+  @override
+  String get prPreventiveMeasures => 'નિવારક પગલાં';
+
+  @override
+  String get prImprovementTitle => 'સુધારણા યોજના';
+
+  @override
+  String get prReliabilityTitle => 'વિશ્વસનીયતા';
+
+  @override
+  String get prLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get prLayerD4 => 'મિલકત ચાર્ટ (D4)';
+
+  @override
+  String get prLayerD16 => 'વાહન ચાર્ટ (D16)';
+
+  @override
+  String get prLayerDasha => 'દશાનો સમય';
+
+  @override
+  String get prLayerTransit => 'ગોચર';
+
+  @override
+  String get prTopicBuying => 'ખરીદવાનો શ્રેષ્ઠ સમય ક્યારે છે?';
+
+  @override
+  String get prTopicInherit => 'શું મને મિલકત વારસામાં મળશે?';
+
+  @override
+  String get prTopicVehicle => 'મને વાહન ક્યારે મળશે?';
+
+  @override
+  String get prTopicRental => 'ભાડાની આવકની સંભાવના કેવી છે?';
+
+  @override
+  String get prTopicLand => 'જમીનની માલિકીની શક્યતાઓ કેવી છે?';
+
+  @override
+  String get prTopicLegal => 'કયા કાનૂની જોખમો પર ધ્યાન આપવું?';
+
+  @override
+  String get prTopicForeign => 'વિદેશી મિલકતની શક્યતાઓ કેવી છે?';
+
+  @override
+  String get prTopicTiming => 'મિલકત માટે શ્રેષ્ઠ સમય ક્યારે છે?';
+
+  @override
+  String get edTitle => 'શિક્ષણ અને અધ્યયન વિશ્લેષણ';
+
+  @override
+  String get edSubtitle => 'AI-સંચાલિત વૈદિક શિક્ષણ અહેવાલ';
+
+  @override
+  String get edSnapshotHeader => 'તમારો શિક્ષણ સ્નેપશોટ';
+
+  @override
+  String get edOverallStrength => 'એકંદર શક્તિ';
+
+  @override
+  String get edAcademicSuccess => 'શૈક્ષણિક સફળતા';
+
+  @override
+  String get edLearningCapacity => 'શીખવાની ક્ષમતા';
+
+  @override
+  String get edIntellect => 'બુદ્ધિ';
+
+  @override
+  String get edMemory => 'સ્મરણશક્તિ';
+
+  @override
+  String get edStatusExcellent => 'ઉત્તમ સંભાવના';
+
+  @override
+  String get edStatusStrong => 'મજબૂત સંભાવના';
+
+  @override
+  String get edStatusModerate => 'મધ્યમ સંભાવના';
+
+  @override
+  String get edStatusDeveloping => 'વિકસતી સંભાવના';
+
+  @override
+  String get edStatusChallenging => 'પડકારજનક તબક્કો';
+
+  @override
+  String get edChipSaraswati => 'સરસ્વતી યોગ';
+
+  @override
+  String get edChipGajaKesari => 'ગજકેસરી યોગ';
+
+  @override
+  String get edChipBudhaAditya => 'બુધ આદિત્ય યોગ';
+
+  @override
+  String get edChipResearch => 'મજબૂત સંશોધન ક્ષમતા';
+
+  @override
+  String get edChipScholarship => 'શિષ્યવૃત્તિ સંભાવના';
+
+  @override
+  String get edChipDoctorate => 'ડોક્ટરેટ સંભાવના';
+
+  @override
+  String get edChipForeign => 'વિદેશ શિક્ષણ સહાય';
+
+  @override
+  String get edChipLifelong => 'આજીવન શીખનાર';
+
+  @override
+  String get edLearningStyleTitle => 'તમારી શીખવાની શૈલી';
+
+  @override
+  String get edSoulPlanet => 'આત્મા ગ્રહ';
+
+  @override
+  String get edSoulHint => 'તમારી ઊંડી આંતરિક પ્રેરણા અને જીવન ઉદ્દેશ';
+
+  @override
+  String get edSubjectPlanet => 'વિષય ગ્રહ';
+
+  @override
+  String get edTechAtmakaraka => 'આત્મકારક (તકનીકી)';
+
+  @override
+  String get edTechAmatyakaraka => 'અમાત્યકારક (તકનીકી)';
+
+  @override
+  String get edSubjectKarakaStrength => 'વિષય કારક શક્તિ';
+
+  @override
+  String get edFoundationTitle => 'શિક્ષણ પાયો';
+
+  @override
+  String get edHouse4 => 'પ્રારંભિક શિક્ષણ';
+
+  @override
+  String get edHouse5 => 'બુદ્ધિમત્તા';
+
+  @override
+  String get edHouse9 => 'ઉચ્ચ શિક્ષણ';
+
+  @override
+  String get edPurvaPunya => 'પૂર્વજન્મ પુણ્ય';
+
+  @override
+  String get edStudyPlanetsTitle => 'તમારા અભ્યાસ ગ્રહો';
+
+  @override
+  String get edYogasTitle => 'તમારી કુંડળીમાં શિક્ષણ યોગો';
+
+  @override
+  String get edYogaBudhaAditya => 'બુધ આદિત્ય';
+
+  @override
+  String get edYogaGajaKesari => 'ગજકેસરી';
+
+  @override
+  String get edYogaSaraswati => 'સરસ્વતી';
+
+  @override
+  String get edYogaPresent => 'હાજર';
+
+  @override
+  String get edYogaAbsent => 'ગેરહાજર';
+
+  @override
+  String get edYogaNoneNote => 'કોઈ પરંપરાગત શિક્ષણ યોગો નથી — સફળતા સતત પ્રયાસ અને શિસ્તથી આવે છે.';
+
+  @override
+  String get edVerificationTitle => 'વિવિધ કુંડળીઓમાં ચકાસણી';
+
+  @override
+  String get edD24Learning => 'D24 — ઊંડા અધ્યયન કુંડળી';
+
+  @override
+  String get edD4Formal => 'D4 — ઔપચારિક શિક્ષણ કુંડળી';
+
+  @override
+  String get edD9Dharma => 'D9 — અધ્યયન ધર્મ કુંડળી';
+
+  @override
+  String get edD60Karma => 'D60 — પૂર્વજન્મ અધ્યયન કર્મ';
+
+  @override
+  String get edSubjectsTitle => 'તમારા માટે શ્રેષ્ઠ વિષયો';
+
+  @override
+  String get edSubjectsSubtitle => 'કુંડળી અનુકૂળતા મુજબ ક્રમાંકિત';
+
+  @override
+  String get edLowAffinity => 'ઓછી અનુકૂળતાવાળા વિષયો';
+
+  @override
+  String get edDegreesTitle => 'ડિગ્રી અને સ્તર સંભાવના';
+
+  @override
+  String get edExpectedLevel => 'અપેક્ષિત સ્તર';
+
+  @override
+  String get edDegreeFormal => 'ઔપચારિક ડિગ્રી';
+
+  @override
+  String get edDegreePostgrad => 'અનુસ્નાતક';
+
+  @override
+  String get edDegreeDoctorate => 'ડોક્ટરેટ';
+
+  @override
+  String get edDegreeForeign => 'વિદેશ શિક્ષણ';
+
+  @override
+  String get edTimelineTitle => 'અભ્યાસ સમયરેખા';
+
+  @override
+  String get edEarlySchooling => 'પ્રારંભિક શિક્ષણ ગાળો';
+
+  @override
+  String get edHigherEducation => 'ઉચ્ચ શિક્ષણ ગાળો';
+
+  @override
+  String get edPostgradResearch => 'અનુસ્નાતક / સંશોધન ગાળો';
+
+  @override
+  String get edPeakLearningAge => 'શ્રેષ્ઠ શીખવાની ઉંમર';
+
+  @override
+  String get edPreferencesTitle => 'શીખવાની પસંદગીઓ અને સહાય';
+
+  @override
+  String get edPrefStudyMode => 'અભ્યાસ પદ્ધતિ';
+
+  @override
+  String get edPrefTiming => 'શ્રેષ્ઠ સમય';
+
+  @override
+  String get edPrefEnvironment => 'વાતાવરણ';
+
+  @override
+  String get edPrefLocation => 'સ્થળ';
+
+  @override
+  String get edPrefForeign => 'વિદેશ અભ્યાસ';
+
+  @override
+  String get edGuruRelationship => 'શિક્ષક/ગુરુ સંબંધ';
+
+  @override
+  String get edMentorAvailability => 'માર્ગદર્શકની ઉપલબ્ધતા';
+
+  @override
+  String get edPeerLearning => 'સાથી શિક્ષણ';
+
+  @override
+  String get edAuthorityDeference => 'અધિકાર પ્રત્યે આદર';
+
+  @override
+  String get edStrengthsTitle => 'શક્તિઓ અને પડકારો';
+
+  @override
+  String get edCognitiveGifts => 'જ્ઞાનાત્મક ભેટ';
+
+  @override
+  String get edNaturalAbilities => 'સ્વાભાવિક શીખવાની ક્ષમતાઓ';
+
+  @override
+  String get edHiddenCapacities => 'છુપાયેલી ક્ષમતાઓ';
+
+  @override
+  String get edConcentration => 'એકાગ્રતામાં મુશ્કેલી';
+
+  @override
+  String get edBreakRisk => 'શિક્ષણમાં વિક્ષેપનું જોખમ';
+
+  @override
+  String get edDisciplineConsistency => 'શિસ્ત સાતત્ય';
+
+  @override
+  String get edScholarshipLikelihood => 'શિષ્યવૃત્તિની સંભાવના';
+
+  @override
+  String get edCareerLinkTitle => 'શિક્ષણ → કારકિર્દી માર્ગ';
+
+  @override
+  String get edDirectionRec => 'ભલામણ કરેલ દિશા';
+
+  @override
+  String get edIntegrationStrategy => 'સંકલન વ્યૂહરચના';
+
+  @override
+  String get edCareerLinkage => 'કારકિર્દી જોડાણ';
+
+  @override
+  String get edAlignedSubjects => 'કારકિર્દી-અનુરૂપ વિષયો';
+
+  @override
+  String get edDegreeUtility => 'કારકિર્દી માટે ડિગ્રીની ઉપયોગિતા';
+
+  @override
+  String get edImprovementTitle => 'તમારી સુધારણા યોજના';
+
+  @override
+  String get edReliabilityTitle => 'આગાહી વિશ્વસનીયતા';
+
+  @override
+  String get edLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get edLayerD4 => 'ઔપચારિક શિક્ષણ (D4)';
+
+  @override
+  String get edLayerD9 => 'નવમાંશ (D9)';
+
+  @override
+  String get edLayerD24 => 'ઊંડું અધ્યયન (D24)';
+
+  @override
+  String get edLayerD60 => 'પૂર્વજન્મ અધ્યયન (D60)';
+
+  @override
+  String get edLayerAmk => 'વિષય કારક';
+
+  @override
+  String get edLayerMj => 'બુધ-ગુરુ';
+
+  @override
+  String get edLayerDasha => 'ગ્રહ સમય';
+
+  @override
+  String get edTopicSubjects => 'મારા માટે શ્રેષ્ઠ વિષયો';
+
+  @override
+  String get edTopicDegree => 'ડિગ્રી શક્યતાઓ';
+
+  @override
+  String get edTopicAbroad => 'વિદેશમાં અભ્યાસ';
+
+  @override
+  String get edTopicExam => 'પરીક્ષા પ્રદર્શન';
+
+  @override
+  String get edTopicHabits => 'અભ્યાસ ટેવો';
+
+  @override
+  String get edTopicCareerLink => 'શિક્ષણ-થી-કારકિર્દી જોડાણ';
+
+  @override
+  String get edTopicTiming => 'શિક્ષણ સમય ગાળા';
+
+  @override
+  String get edTopicScholarship => 'શિષ્યવૃત્તિ શક્યતાઓ';
+
+  @override
+  String get hwTitle => 'આરોગ્ય અને સુખાકારી વિશ્લેષણ';
+
+  @override
+  String get hwSubtitle => 'AI-સંચાલિત વૈદિક આરોગ્ય અને સુખાકારી અહેવાલ';
+
+  @override
+  String get hwSnapshotHeader => 'તમારી આરોગ્ય ઝલક';
+
+  @override
+  String get hwOverallVitality => 'જીવનશક્તિ';
+
+  @override
+  String get hwImmunity => 'રોગપ્રતિકારક શક્તિ';
+
+  @override
+  String get hwRecovery => 'રિકવરી';
+
+  @override
+  String get hwMentalWellness => 'માનસિક સુખાકારી';
+
+  @override
+  String get hwStressTolerance => 'તણાવ સહનશક્તિ';
+
+  @override
+  String get hwStatusThriving => 'ઉત્કૃષ્ટ';
+
+  @override
+  String get hwStatusGood => 'સારી જીવનશક્તિ';
+
+  @override
+  String get hwStatusBalanced => 'સંતુલિત';
+
+  @override
+  String get hwStatusNeedsCare => 'કાળજી જરૂરી';
+
+  @override
+  String get hwStatusNeedsAttention => 'ધ્યાન જરૂરી';
+
+  @override
+  String get hwChipImmunity => 'મજબૂત રોગપ્રતિકારક શક્તિ';
+
+  @override
+  String get hwChipRecovery => 'ઝડપી રિકવરી';
+
+  @override
+  String get hwChipMentalBalance => 'સંતુલિત મન';
+
+  @override
+  String get hwChipStressResilience => 'તણાવ સામે ટકી રહેવાની ક્ષમતા';
+
+  @override
+  String get hwChipFertility => 'પ્રજનન સપોર્ટ';
+
+  @override
+  String get hwChipWorkLife => 'સારું કાર્ય-જીવન સંતુલન';
+
+  @override
+  String get hwChipLowAddiction => 'ઓછું વ્યસન જોખમ';
+
+  @override
+  String get hwConstitutionTitle => 'તમારો શરીર પ્રકાર';
+
+  @override
+  String get hwConstitutionSubtitle => 'તમારી કુંડળીમાંથી આયુર્વેદિક પ્રકૃતિ';
+
+  @override
+  String get hwDominantDosha => 'મુખ્ય';
+
+  @override
+  String get hwSecondaryDosha => 'ગૌણ';
+
+  @override
+  String get hwPrimaryKaraka => 'મુખ્ય આરોગ્ય સૂચક';
+
+  @override
+  String get hwStrongestSystem => 'સૌથી મજબૂત તંત્ર';
+
+  @override
+  String get hwWeakestSystem => 'ટેકાની જરૂર હોય તેવું તંત્ર';
+
+  @override
+  String get hwBodyMapTitle => 'તમારા શરીરનો ગ્રહ નકશો';
+
+  @override
+  String get hwBodyMapSubtitle => '9 ગ્રહો, 9 શરીર તંત્રો';
+
+  @override
+  String get hwYogaTitle => 'તમારી કુંડળીમાં આરોગ્ય પેટર્ન';
+
+  @override
+  String get hwYogaSubtitle => 'રક્ષણાત્મક વિરુદ્ધ રોગ-દબાણ યોગ';
+
+  @override
+  String get hwDiseasePressureLabel => 'રોગ દબાણ';
+
+  @override
+  String get hwAreasTitle => 'ધ્યાન રાખવા જેવા શરીર વિસ્તારો';
+
+  @override
+  String get hwAreasSubtitle => 'શરીર ઝોન પ્રમાણે સંવેદનશીલતા';
+
+  @override
+  String get hwProtectedAreas => 'સારી રીતે સુરક્ષિત વિસ્તારો';
+
+  @override
+  String get hwCategoriesTitle => 'રોગ-શ્રેણી નજર';
+
+  @override
+  String get hwCategoriesSubtitle => 'મુખ્ય આરોગ્ય શ્રેણીઓમાં સંવેદનશીલતા';
+
+  @override
+  String get hwLowRiskCategories => 'ઓછા જોખમની શ્રેણીઓ';
+
+  @override
+  String get hwMentalTitle => 'માનસિક અને ભાવનાત્મક સુખાકારી';
+
+  @override
+  String get hwMentalSubtitle => 'ભાવનાત્મક સ્થિતિસ્થાપકતા અને ટેકાની જરૂરિયાતો';
+
+  @override
+  String get hwMentalVulnerability => 'ભાવનાત્મક સંવેદનશીલતા';
+
+  @override
+  String get hwEmotionalRegulation => 'ભાવનાત્મક નિયંત્રણ';
+
+  @override
+  String get hwSupportRec => 'ટેકા ભલામણ';
+
+  @override
+  String get hwTendencies => 'માનસિક વલણો';
+
+  @override
+  String get hwTimelineTitle => 'આરોગ્ય સમયરેખા';
+
+  @override
+  String get hwTimelineSubtitle => 'શ્રેષ્ઠ વર્ષો, સાવચેતીના વર્ષો અને રિકવરી ગાળા';
+
+  @override
+  String get hwPeakYears => 'શ્રેષ્ઠ સુખાકારી વર્ષો';
+
+  @override
+  String get hwCautionYears => 'સાવચેતીના વર્ષો';
+
+  @override
+  String get hwRecoveryWindow => 'રિકવરી ગાળો';
+
+  @override
+  String get hwCheckupYears => 'ભલામણ કરેલ ચેકઅપ વર્ષો';
+
+  @override
+  String get hwCurrentPhase => 'વર્તમાન તબક્કો';
+
+  @override
+  String get hwLifestyleTitle => 'તમારી જીવનશૈલી માર્ગદર્શિકા';
+
+  @override
+  String get hwLifestyleSubtitle => 'તમારી કુંડળી રોજિંદી ટેવો વિશે શું કહે છે';
+
+  @override
+  String get hwSleepDiscipline => 'ઊંઘ શિસ્તની અસર';
+
+  @override
+  String get hwDietDiscipline => 'આહાર શિસ્તની અસર';
+
+  @override
+  String get hwExerciseNeed => 'કસરતની જરૂરિયાત';
+
+  @override
+  String get hwSunlightNeed => 'તડકાની જરૂરિયાત';
+
+  @override
+  String get hwStressSusceptibility => 'તણાવ સંવેદનશીલતા';
+
+  @override
+  String get hwHydrationSensitivity => 'હાઇડ્રેશન સંવેદનશીલતા';
+
+  @override
+  String get hwSocialType => 'સામાજિક ઊર્જા પ્રકાર';
+
+  @override
+  String get hwHealingSpeed => 'સાજા થવાની ઝડપ';
+
+  @override
+  String get hwTreatmentResponse => 'સારવાર પ્રતિભાવ';
+
+  @override
+  String get hwAltHealing => 'વૈકલ્પિક ઉપચાર તરફ ઝુકાવ';
+
+  @override
+  String get hwSpecialTitle => 'જીવન-તબક્કો અને વિશેષ વિષયો';
+
+  @override
+  String get hwSpecialSubtitle => 'પ્રજનન ક્ષમતા, બાળપણનું આરોગ્ય, ટેવો અને થાક';
+
+  @override
+  String get hwFertility => 'પ્રજનન ક્ષમતા સૂચક';
+
+  @override
+  String get hwHormonalBalance => 'હોર્મોનલ સંતુલન';
+
+  @override
+  String get hwReproductiveStrength => 'પ્રજનન તંત્રની મજબૂતાઈ';
+
+  @override
+  String get hwChildhoodVuln => 'બાળપણ આરોગ્ય સંવેદનશીલતા';
+
+  @override
+  String get hwChildhoodStatus => 'બાળપણનું આરોગ્ય';
+
+  @override
+  String get hwAddictionVuln => 'વ્યસન સંવેદનશીલતા';
+
+  @override
+  String get hwAddictionRecovery => 'રિકવરી ક્ષમતા';
+
+  @override
+  String get hwBurnoutVuln => 'થાક સંવેદનશીલતા';
+
+  @override
+  String get hwWorkLifeBalance => 'કાર્ય-જીવન સંતુલન';
+
+  @override
+  String get hwStressTriggers => 'તણાવના કારણો';
+
+  @override
+  String get hwProtectiveFactors => 'રક્ષણાત્મક પરિબળો';
+
+  @override
+  String get hwChallengesTitle => 'ધ્યાન રાખવા જેવા પડકારો';
+
+  @override
+  String get hwChallengesSubtitle => 'નિવારક સંભાળ ક્યાં કેન્દ્રિત કરવી';
+
+  @override
+  String get hwMitigation => 'કેવી રીતે સંભાળવું';
+
+  @override
+  String get hwChronicAreas => 'લાંબા ગાળાના સંવેદનશીલ વિસ્તારો';
+
+  @override
+  String get hwPreventivePriorities => 'નિવારક પ્રાથમિકતાઓ';
+
+  @override
+  String get hwImprovementTitle => 'તમારી સુખાકારી યોજના';
+
+  @override
+  String get hwImprovementSubtitle => 'વ્યવહારુ પગલાં + પરંપરાગત ઉપાયો';
+
+  @override
+  String get hwReliabilityTitle => 'વિશ્વસનીયતા સ્તર';
+
+  @override
+  String get hwLayerD1 => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get hwLayerD6 => 'આરોગ્ય કુંડળી (D6)';
+
+  @override
+  String get hwLayerD30 => 'સૂક્ષ્મ-આરોગ્ય કુંડળી (D30)';
+
+  @override
+  String get hwLayerDasha => 'ગ્રહ સમય ચક્ર';
+
+  @override
+  String get hwLayerTransit => 'વર્તમાન ગોચર';
+
+  @override
+  String get hwDisclaimerLabel => 'તબીબી અસ્વીકરણ';
+
+  @override
+  String get hwTopicImmunity => 'રોગપ્રતિકારક શક્તિ વધારો';
+
+  @override
+  String get hwTopicSleep => 'ઊંઘ અને આરામ';
+
+  @override
+  String get hwTopicStress => 'તણાવ સંભાળો';
+
+  @override
+  String get hwTopicFertility => 'પ્રજનન સમય';
+
+  @override
+  String get hwTopicDiet => 'આહાર અને પોષણ';
+
+  @override
+  String get hwTopicTiming => 'આરોગ્ય સમય વિન્ડો';
+
+  @override
+  String get hwTopicMental => 'માનસિક સુખાકારી';
+
+  @override
+  String get hwTopicPrevention => 'નિવારક સંભાળ યોજના';
+
+  @override
+  String get lvSubtitle => 'AI-સંચાલિત વૈદિક પ્રેમ અહેવાલ';
+
+  @override
+  String get lvTitle => 'પ્રેમ અને સંબંધો';
+
+  @override
+  String get lvLovePotential => 'પ્રેમ ક્ષમતા';
+
+  @override
+  String get lvEmotionalAvail => 'ભાવનાત્મક રીતે ખુલ્લા';
+
+  @override
+  String get lvAttraction => 'આકર્ષણ';
+
+  @override
+  String get lvCommitment => 'પ્રતિબદ્ધતા';
+
+  @override
+  String get lvCommunication => 'સંવાદ';
+
+  @override
+  String get lvFidelity => 'વફાદારી';
+
+  @override
+  String get lvChipLoyal => 'વફાદાર હૃદય';
+
+  @override
+  String get lvChipOpenHeart => 'ખુલ્લા દિલવાળા';
+
+  @override
+  String get lvChipCommunicator => 'શ્રેષ્ઠ સંવાદક';
+
+  @override
+  String get lvChipMature => 'તકરાર સારી રીતે સંભાળે છે';
+
+  @override
+  String get lvChipEmotionallyWise => 'ભાવનાત્મક રીતે સમજદાર';
+
+  @override
+  String get lvLoveStyle => 'તમારી પ્રેમ શૈલી';
+
+  @override
+  String get lvAttractionStyle => 'આકર્ષણ શૈલી';
+
+  @override
+  String get lvLangGiven => 'તમે પ્રેમ કેવી રીતે વ્યક્ત કરો છો';
+
+  @override
+  String get lvLangReceived => 'તમને પ્રેમ કેવી રીતે અનુભવાય છે';
+
+  @override
+  String get lvLovePlanets => 'તમારા પ્રેમ ગ્રહો';
+
+  @override
+  String get lvLoveKaraka => 'પ્રેમ';
+
+  @override
+  String get lvEmotionKaraka => 'લાગણી';
+
+  @override
+  String get lvPassionKaraka => 'જુસ્સો';
+
+  @override
+  String get lvPathToLove => 'પ્રેમ તરફનો તમારો માર્ગ';
+
+  @override
+  String get lvPathSub => 'પ્રેમ વિરુદ્ધ ગોઠવેલા લગ્ન';
+
+  @override
+  String get lvLoveMarriage => 'પ્રેમ લગ્ન';
+
+  @override
+  String get lvArrangedMarriage => 'ગોઠવેલા લગ્ન';
+
+  @override
+  String get lvParentalAccept => 'માતાપિતાની સ્વીકૃતિ';
+
+  @override
+  String get lvInterCaste => 'આંતર-જ્ઞાતિ / ધર્મ';
+
+  @override
+  String get lvIdealPartner => 'તમારો આદર્શ સાથી';
+
+  @override
+  String get lvPersonality => 'વ્યક્તિત્વ';
+
+  @override
+  String get lvAppearance => 'દેખાવ';
+
+  @override
+  String get lvIdealTraits => 'આદર્શ ગુણો';
+
+  @override
+  String get lvWhatMatters => 'સૌથી વધુ શું મહત્વ ધરાવે છે';
+
+  @override
+  String get lvDrawnTo => 'તરફ આકર્ષાય છે';
+
+  @override
+  String get lvDealbreakers => 'સંબંધ તોડનારી બાબતો';
+
+  @override
+  String get lvYourAppeal => 'તમારું આકર્ષણ';
+
+  @override
+  String get lvLoveStory => 'તમારી પ્રેમ કહાની';
+
+  @override
+  String get lvLoveStorySub => 'સંબંધોની પેટર્ન';
+
+  @override
+  String get lvFirstLove => 'પ્રથમ પ્રેમ';
+
+  @override
+  String get lvRelationCount => 'મહત્વપૂર્ણ સંબંધો';
+
+  @override
+  String get lvDuration => 'સામાન્ય સમયગાળો';
+
+  @override
+  String get lvDepth => 'ભાવનાત્મક ઊંડાણ';
+
+  @override
+  String get lvDatingPattern => 'ડેટિંગ પેટર્ન';
+
+  @override
+  String get lvCommitIntimacy => 'પ્રતિબદ્ધતા અને આત્મીયતા';
+
+  @override
+  String get lvCommitReady => 'પ્રતિબદ્ધતા માટે તૈયારી';
+
+  @override
+  String get lvIntimacyDrive => 'આત્મીયતાની ઈચ્છા';
+
+  @override
+  String get lvSensuality => 'કામુકતા';
+
+  @override
+  String get lvEmpathy => 'સહાનુભૂતિ';
+
+  @override
+  String get lvCommitStyle => 'પ્રતિબદ્ધતા શૈલી';
+
+  @override
+  String get lvChemistry => 'કેમિસ્ટ્રી શૈલી';
+
+  @override
+  String get lvMakesCommit => 'તમને પ્રતિબદ્ધ શું બનાવે છે';
+
+  @override
+  String get lvMakesFlee => 'તમને દૂર શું ધકેલે છે';
+
+  @override
+  String get lvEmotional => 'ભાવનાત્મક બુદ્ધિ';
+
+  @override
+  String get lvEmotionalIQ => 'ભાવનાત્મક IQ';
+
+  @override
+  String get lvConflictStyle => 'તકરાર શૈલી';
+
+  @override
+  String get lvTiming => 'પ્રેમનો સમય';
+
+  @override
+  String get lvNewLove12 => '12 મહિનામાં નવો પ્રેમ';
+
+  @override
+  String get lvEnergyNow => 'અત્યારની ઊર્જા';
+
+  @override
+  String get lvPhaseNow => 'અત્યારનો તબક્કો';
+
+  @override
+  String get lvPeakRomance => 'રોમાન્સના ટોચના વર્ષો';
+
+  @override
+  String get lvNewLoveWindow => 'નવા પ્રેમની વિન્ડો';
+
+  @override
+  String get lvChallenges => 'ધ્યાનમાં રાખવાના પડકારો';
+
+  @override
+  String get lvRiskHeartbreak => 'દિલ તૂટવાની શક્યતા';
+
+  @override
+  String get lvRiskSabotage => 'સ્વ-નુકસાન';
+
+  @override
+  String get lvRiskCommitFear => 'પ્રતિબદ્ધતાનો ડર';
+
+  @override
+  String get lvRiskRepeat => 'પુનરાવર્તિત પેટર્ન';
+
+  @override
+  String get lvRiskWorkaholic => 'પ્રેમ કરતાં કામ';
+
+  @override
+  String get lvRedFlags => 'ધ્યાનમાં રાખવાના ચેતવણી સંકેતો';
+
+  @override
+  String get lvHealing => 'શું સાજું કરવું';
+
+  @override
+  String get lvFocusArea => 'ધ્યાન કેન્દ્રિત કરવાનું ક્ષેત્ર';
+
+  @override
+  String get lvHealDir => 'ઉપચારની દિશા';
+
+  @override
+  String get lvImprovementPlan => 'સુધારણા યોજના';
+
+  @override
+  String get lvReliability => 'આગાહીની વિશ્વસનીયતા';
+
+  @override
+  String get lvLayerBirth => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get lvLayerNavamsa => 'નવાંશ (D9)';
+
+  @override
+  String get lvLayerSaptamsa => 'સપ્તાંશ (D7)';
+
+  @override
+  String get lvLayerDasha => 'દશા સમય';
+
+  @override
+  String get lvLayerTransit => 'વર્તમાન ગોચર';
+
+  @override
+  String get lvTopicWhen => 'મને પ્રેમ ક્યારે મળશે?';
+
+  @override
+  String get lvTopicSoulmate => 'મારા સોલમેટ વિશે';
+
+  @override
+  String get lvTopicCurrent => 'મારો વર્તમાન સંબંધ';
+
+  @override
+  String get lvTopicHeal => 'ભૂતકાળમાંથી સાજા થવું';
+
+  @override
+  String get lvTopicCommit => 'પ્રતિબદ્ધતામાં મદદ';
+
+  @override
+  String get lvTopicLoveVsArranged => 'પ્રેમ વિરુદ્ધ ગોઠવેલા લગ્ન';
+
+  @override
+  String get lvTopicHeartbreak => 'દિલ તૂટવાનું ટાળવું';
+
+  @override
+  String get lvTopicConfidence => 'પ્રેમમાં આત્મવિશ્વાસ';
+
+  @override
+  String get mrSubtitle => 'AI-સંચાલિત વૈદિક લગ્ન અહેવાલ';
+
+  @override
+  String get mrTitle => 'લગ્ન અને પરિવાર';
+
+  @override
+  String get mrMarriagePotential => 'લગ્નની શક્યતા';
+
+  @override
+  String get mrHarmony => 'સંવાદિતા';
+
+  @override
+  String get mrLongevity => 'દીર્ઘાયુષ્ય';
+
+  @override
+  String get mrSatisfaction => 'સંતોષ';
+
+  @override
+  String get mrStability => 'ઘરની સ્થિરતા';
+
+  @override
+  String get mrClarity => 'સ્પષ્ટતા';
+
+  @override
+  String get mrChipHarmony => 'સુમેળભર્યો બંધ';
+
+  @override
+  String get mrChipNoMangal => 'કોઈ મંગળ દોષ નથી';
+
+  @override
+  String get mrChipLongLasting => 'લાંબા સમય સુધી ટકનારું';
+
+  @override
+  String get mrChipHome => 'પોતાનું ઘર થવાની શક્યતા';
+
+  @override
+  String get mrChipInLaws => 'સારા સાસરિયાં';
+
+  @override
+  String get mrChipChildren => 'સંતાન સુખ';
+
+  @override
+  String get mrSpouse => 'તમારા ભાવિ જીવનસાથી';
+
+  @override
+  String get mrSpouseSub => 'કુંડળી શું સૂચવે છે';
+
+  @override
+  String get mrSpouseTraits => 'શક્ય સ્વભાવ';
+
+  @override
+  String get mrSpouseWork => 'શક્ય વ્યવસાય';
+
+  @override
+  String get mrAgeDiff => 'ઉંમરનો તફાવત';
+
+  @override
+  String get mrCulture => 'સાંસ્કૃતિક મેળ';
+
+  @override
+  String get mrEducation => 'શિક્ષણ';
+
+  @override
+  String get mrFamilyBg => 'કૌટુંબિક પૃષ્ઠભૂમિ';
+
+  @override
+  String get mrSoulPartnership => 'આત્મા અને ભાગીદારી';
+
+  @override
+  String get mrSelfPlanet => 'બંધનમાં તમે';
+
+  @override
+  String get mrSpousePlanet => 'તમારો જીવનસાથી ગ્રહ';
+
+  @override
+  String get mrSoulAlignment => 'આત્મિક તાલમેલ';
+
+  @override
+  String get mrAlignStrong => 'તમારો આત્મા અને તમારો આદર્શ સાથી વચ્ચે મજબૂત તાલમેલ છે — સંતોષકારક બંધનને સારો ટેકો મળે છે.';
+
+  @override
+  String get mrAlignModerate => 'તમારો આત્મા અને તમારો આદર્શ સાથી વચ્ચે મધ્યમ તાલમેલ છે — સભાન પ્રયત્નથી સંતોષકારક બંધન વિકસશે.';
+
+  @override
+  String get mrAlignLow => 'તમારા આત્મા અને ભાગીદારીને સભાન તાલમેલની જરૂર છે — એવો સાથી પસંદ કરો જે ખરેખર તમારા આંતરિક મૂલ્યો સાથે મેળ ખાય.';
+
+  @override
+  String get mrTechDarakaraka => 'જીવનસાથી ગ્રહ (દારાકારક)';
+
+  @override
+  String get mrUpapada => 'લગ્ન બિંદુ (ઉપપદ)';
+
+  @override
+  String get mrUpapadaLord => 'ઉપપદ સ્વામી';
+
+  @override
+  String get mrFoundation => 'લગ્નનો પાયો';
+
+  @override
+  String get mrMarriageSign => 'લગ્ન રાશિ';
+
+  @override
+  String get mrMarriageLord => 'લગ્ન સ્વામી';
+
+  @override
+  String get mrHouseStrength => 'ભાવ શક્તિ';
+
+  @override
+  String get mrPartnerHint => 'તમારી કુંડળીમાંથી સાથીનો સંકેત';
+
+  @override
+  String get mrHarmonyHdr => 'અનુકૂળતા સંવાદિતા';
+
+  @override
+  String get mrHarmonySub => 'તમે કેવી રીતે જોડાશો';
+
+  @override
+  String get mrEmotional => 'ભાવનાત્મક';
+
+  @override
+  String get mrIntellectual => 'બૌદ્ધિક';
+
+  @override
+  String get mrPhysical => 'શારીરિક નિકટતા';
+
+  @override
+  String get mrFinancial => 'આર્થિક';
+
+  @override
+  String get mrCommunication => 'સંવાદ';
+
+  @override
+  String get mrSharedValues => 'સહિયારા મૂલ્યો';
+
+  @override
+  String get mrSpiritual => 'આધ્યાત્મિક';
+
+  @override
+  String get mrConflictRes => 'મતભેદ ઉકેલ';
+
+  @override
+  String get mrTiming => 'લગ્નનો સમય';
+
+  @override
+  String get mrFirstMarriageAge => 'શક્ય લગ્ન ઉંમર';
+
+  @override
+  String get mrDelayChance => 'વિલંબની શક્યતા';
+
+  @override
+  String get mrMarriageWindow => 'લગ્ન ગાળો';
+
+  @override
+  String get mrSecondaryWindow => 'વૈકલ્પિક ગાળો';
+
+  @override
+  String get mrCurrentReadiness => 'અત્યારની સ્થિતિ';
+
+  @override
+  String get mrJourney => 'લગ્ન યાત્રા';
+
+  @override
+  String get mrJourneySub => 'બંધન કેવી રીતે વિકસે છે';
+
+  @override
+  String get mrPhaseEarly => 'શરૂઆતના વર્ષો';
+
+  @override
+  String get mrPhaseMid => 'મધ્યના વર્ષો';
+
+  @override
+  String get mrPhaseMature => 'પરિપક્વ વર્ષો';
+
+  @override
+  String get mrPhaseLate => 'પછીના વર્ષો';
+
+  @override
+  String get mrTip => 'સૂચન';
+
+  @override
+  String get mrFamilyHome => 'પરિવાર અને ઘર';
+
+  @override
+  String get mrInLaws => 'સાસરિયાં સંબંધો';
+
+  @override
+  String get mrFamilyHarmony => 'કૌટુંબિક સંવાદિતા';
+
+  @override
+  String get mrHomeOwnership => 'ઘરની માલિકી';
+
+  @override
+  String get mrDomesticPeace => 'ઘરેલુ શાંતિ';
+
+  @override
+  String get mrFertility => 'પ્રજનન ક્ષમતા';
+
+  @override
+  String get mrParenting => 'ઉછેરમાં સંવાદિતા';
+
+  @override
+  String get mrChildren => 'સંતાનો';
+
+  @override
+  String get mrLikelyCount => 'શક્ય સંખ્યા';
+
+  @override
+  String get mrVerification => 'ક્રોસ-ચાર્ટ ચકાસણી';
+
+  @override
+  String get mrD9 => 'લગ્ન કુંડળી (D9)';
+
+  @override
+  String get mrD10 => 'કારકિર્દી-જીવનસાથી કુંડળી (D10)';
+
+  @override
+  String get mrD60 => 'કર્મ કુંડળી (D60)';
+
+  @override
+  String get mrChallenges => 'ધ્યાનમાં રાખવા જેવા પડકારો';
+
+  @override
+  String get mrMangalPresent => 'કુંડળીમાં મંગળ દોષ હાજર છે — ઉપાયો અને મેળાપને કાળજીપૂર્વક તપાસો.';
+
+  @override
+  String get mrMangalAbsent => 'કોઈ મંગળ દોષ મળ્યો નથી — આ લગ્ન માટે એક શુભ સંકેત છે.';
+
+  @override
+  String get mrRiskConflict => 'મતભેદ';
+
+  @override
+  String get mrRiskSeparation => 'છૂટાછેડા/અલગાવ';
+
+  @override
+  String get mrRiskDistance => 'ભાવનાત્મક અંતર';
+
+  @override
+  String get mrRiskInfidelity => 'બેવફાઈ';
+
+  @override
+  String get mrRiskFinance => 'પૈસાની બાબતે મતભેદ';
+
+  @override
+  String get mrPartnerGuide => 'સાથી માર્ગદર્શિકા';
+
+  @override
+  String get mrPartnerGuideSub => 'શું ધ્યાનમાં રાખવું';
+
+  @override
+  String get mrSeek => 'આ જુઓ';
+
+  @override
+  String get mrMatchingPriorities => 'મેળાપ પ્રાથમિકતાઓ';
+
+  @override
+  String get mrImprovementPlan => 'સુધારણા યોજના';
+
+  @override
+  String get mrReliability => 'આગાહીની વિશ્વસનીયતા';
+
+  @override
+  String get mrLayerBirth => 'જન્મ કુંડળી (D1)';
+
+  @override
+  String get mrLayerNavamsa => 'નવમાંશ (D9)';
+
+  @override
+  String get mrLayerDashamsa => 'દશમાંશ (D10)';
+
+  @override
+  String get mrLayerShashtiamsa => 'કર્મ (D60)';
+
+  @override
+  String get mrLayerDarakaraka => 'જીવનસાથી ગ્રહ';
+
+  @override
+  String get mrTopicWhen => 'મારા લગ્ન ક્યારે થશે?';
+
+  @override
+  String get mrTopicSpouse => 'મારા જીવનસાથી વિશે';
+
+  @override
+  String get mrTopicCompat => 'અનુકૂળતા સૂચનો';
+
+  @override
+  String get mrTopicDelay => 'લગ્નમાં વિલંબ';
+
+  @override
+  String get mrTopicMangal => 'મંગળ દોષ';
+
+  @override
+  String get mrTopicChildren => 'સંતાનનો સમય';
+
+  @override
+  String get mrTopicInLaws => 'સાસરિયાં સંબંધો';
+
+  @override
+  String get mrTopicHarmony => 'સંવાદિતા બનાવવી';
+
+  @override
+  String get wlSubtitle => 'AI-સંચાલિત વૈદિક ધન અહેવાલ';
+
+  @override
+  String get wlTitle => 'ધન અને નાણાં';
+
+  @override
+  String get wlWealthPotential => 'ધન સંભાવના';
+
+  @override
+  String get wlAccumulation => 'સંચય';
+
+  @override
+  String get wlIncomeFlow => 'આવક પ્રવાહ';
+
+  @override
+  String get wlRetention => 'જાળવણી';
+
+  @override
+  String get wlSustainability => 'ટકાઉપણું';
+
+  @override
+  String get wlSavings => 'બચત શિસ્ત';
+
+  @override
+  String get wlChipSaver => 'કુદરતી બચતકાર';
+
+  @override
+  String get wlChipMultiIncome => 'બહુવિધ આવક સ્ત્રોત';
+
+  @override
+  String get wlChipStrongYogas => 'ધન યોગ';
+
+  @override
+  String get wlChipLowDebt => 'ઓછું દેવું';
+
+  @override
+  String get wlChipInheritance => 'વારસાની શક્યતા';
+
+  @override
+  String get wlChipInvestor => 'સ્માર્ટ રોકાણકાર';
+
+  @override
+  String get wlWealthClass => 'ધન વર્ગ';
+
+  @override
+  String get wlWealthType => 'મુખ્ય ધન પ્રકાર';
+
+  @override
+  String get wlPrimarySource => 'મુખ્ય આવક';
+
+  @override
+  String get wlPeakAge => 'શિખર ધન વય';
+
+  @override
+  String get wlBoosters => 'તમારા ધનને શું વધારી રહ્યું છે';
+
+  @override
+  String get wlBoostersSub => 'શક્તિશાળી પૈસાના સંયોજનો';
+
+  @override
+  String get wlWealthImpact => 'વૃદ્ધિ';
+
+  @override
+  String get wlDrains => 'ધન ખોટ';
+
+  @override
+  String get wlIncomeSources => 'આવક સ્ત્રોતો';
+
+  @override
+  String get wlIncomeSourcesSub => 'તમારા પૈસા ક્યાંથી આવે છે';
+
+  @override
+  String get wlPrimary => 'મુખ્ય';
+
+  @override
+  String get wlInvestment => 'રોકાણ યોજના';
+
+  @override
+  String get wlInvestmentSub => 'આદર્શ સંપત્તિ મિશ્રણ';
+
+  @override
+  String get wlRiskAppetite => 'જોખમ સ્વીકારવાની ક્ષમતા';
+
+  @override
+  String get wlInvestStyle => 'રોકાણ શૈલી';
+
+  @override
+  String get wlDrivenBy => 'આનાથી પ્રેરિત';
+
+  @override
+  String get wlMoneyPersonality => 'પૈસાનું વ્યક્તિત્વ';
+
+  @override
+  String get wlMoneyType => 'પૈસાનો પ્રકાર';
+
+  @override
+  String get wlSpending => 'ખર્ચ';
+
+  @override
+  String get wlSavingsDiscipline => 'બચત શિસ્ત';
+
+  @override
+  String get wlCharity => 'દાનનું વલણ';
+
+  @override
+  String get wlLuxury => 'વૈભવી ખર્ચ';
+
+  @override
+  String get wlWindfalls => 'અચાનક લાભ અને તકો';
+
+  @override
+  String get wlWindfallsSub => 'નસીબ આધારિત પૈસા';
+
+  @override
+  String get wlInheritanceChance => 'વારસો';
+
+  @override
+  String get wlSuddenGains => 'અચાનક લાભ';
+
+  @override
+  String get wlLottery => 'લોટરી / સટ્ટો';
+
+  @override
+  String get wlInsurance => 'વીમા દાવા';
+
+  @override
+  String get wlWindfallSource => 'સંભવિત અચાનક લાભનો સ્ત્રોત';
+
+  @override
+  String get wlMoneyPlanets => 'તમારા ધન ગ્રહો';
+
+  @override
+  String get wlPrimaryKaraka => 'મુખ્ય ધન ગ્રહ';
+
+  @override
+  String get wlSecondaryKaraka => 'ગૌણ ધન ગ્રહ';
+
+  @override
+  String get wlTimeline => 'ધન સમયરેખા';
+
+  @override
+  String get wlPeakYears => 'શિખર વર્ષો';
+
+  @override
+  String get wlGoodPeriod => 'સમૃદ્ધ સમયગાળો';
+
+  @override
+  String get wlSuddenGainWindow => 'અચાનક લાભનો સમય';
+
+  @override
+  String get wlToughPeriod => 'સાવધાનીનો સમયગાળો';
+
+  @override
+  String get wlDebtRisks => 'દેવું અને પૈસાના જોખમો';
+
+  @override
+  String get wlDebtChance => 'દેવાની શક્યતા';
+
+  @override
+  String get wlLoanBurden => 'લોનનો બોજ';
+
+  @override
+  String get wlDrainSources => 'આનાથી સાવધ રહો';
+
+  @override
+  String get wlStrengthen => 'શું મજબૂત કરવું';
+
+  @override
+  String get wlWeakestDriver => 'સૌથી નબળું પૈસાનું પરિબળ';
+
+  @override
+  String get wlHowToFix => 'કેવી રીતે મજબૂત કરવું';
+
+  @override
+  String get wlImprovementPlan => 'સુધારણા યોજના';
+
+  @override
+  String get wlReliability => 'આગાહીની વિશ્વસનીયતા';
+
+  @override
+  String get wlLayerBirth => 'ધન ભાવો (D1)';
+
+  @override
+  String get wlLayerHora => 'હોરા ચાર્ટ (D2)';
+
+  @override
+  String get wlLayerNavamsa => 'નવાંશ (D9)';
+
+  @override
+  String get wlLayerDasha => 'દશા સમય';
+
+  @override
+  String get wlLayerTransit => 'વર્તમાન ગોચર';
+
+  @override
+  String get wlTopicGrow => 'ધન કેવી રીતે વધારવું';
+
+  @override
+  String get wlTopicInvest => 'ક્યાં રોકાણ કરવું';
+
+  @override
+  String get wlTopicDebt => 'દેવાનું સંચાલન';
+
+  @override
+  String get wlTopicProperty => 'મિલકત ખરીદવી';
+
+  @override
+  String get wlTopicRetire => 'નિવૃત્તિ આયોજન';
+
+  @override
+  String get wlTopicPassive => 'નિષ્ક્રિય આવક';
+
+  @override
+  String get wlTopicWindfall => 'અચાનક લાભ';
+
+  @override
+  String get wlTopicTiming => 'શ્રેષ્ઠ પૈસાનો સમય';
+
+  @override
+  String get bzSubtitle => 'AI-સંચાલિત વૈદિક બિઝનેસ રિપોર્ટ';
+
+  @override
+  String get bzTitle => 'બિઝનેસ અને સ્ટાર્ટઅપ';
+
+  @override
+  String get bzBusinessPotential => 'બિઝનેસ ક્ષમતા';
+
+  @override
+  String get bzEntrepreneurship => 'ઉદ્યોગસાહસિક';
+
+  @override
+  String get bzVenture => 'વેન્ચર સફળતા';
+
+  @override
+  String get bzWealth => 'બિઝનેસ દ્વારા સંપત્તિ';
+
+  @override
+  String get bzRiskAppetite => 'જોખમ લેવાની ક્ષમતા';
+
+  @override
+  String get bzLongevity => 'દીર્ઘાયુષ્ય';
+
+  @override
+  String get bzChipWealthMagnet => 'સંપત્તિ આકર્ષણ';
+
+  @override
+  String get bzChipMoneyYoga => 'ધન યોગ';
+
+  @override
+  String get bzChipLeadership => 'નેતૃત્વ';
+
+  @override
+  String get bzChipPartnerFit => 'ઉત્તમ ભાગીદાર બંધબેસતાપણું';
+
+  @override
+  String get bzChipGains => 'મજબૂત લાભ';
+
+  @override
+  String get bzChipInvestor => 'રોકાણકારોનું આકર્ષણ';
+
+  @override
+  String get bzChipFounder => 'સ્થાપક માનસિકતા';
+
+  @override
+  String get bzWhatsWorking => 'તમારા માટે શું કામ કરી રહ્યું છે';
+
+  @override
+  String get bzWhatsWorkingSub => 'તમારી બિઝનેસ ભેટો';
+
+  @override
+  String get bzClassicYogas => 'પરંપરાગત ધન સંયોજનો';
+
+  @override
+  String get bzFounderType => 'તમારો સ્થાપક પ્રકાર';
+
+  @override
+  String get bzSoulBusiness => 'આત્મા અને બિઝનેસ હેતુ';
+
+  @override
+  String get bzSoulPlanet => 'તમારો આત્મા ગ્રહ';
+
+  @override
+  String get bzBusinessPlanet => 'તમારું બિઝનેસ મન';
+
+  @override
+  String get bzDirectionStrength => 'દિશા સ્પષ્ટતા';
+
+  @override
+  String get bzAlignStrong => 'તમારો આત્મ-હેતુ અને બિઝનેસ દિશા મજબૂત રીતે સંરેખિત છે — વેન્ચર બનાવવું સ્વાભાવિક અને સંતોષકારક લાગે છે.';
+
+  @override
+  String get bzAlignModerate => 'તમારો આત્મ-હેતુ અને બિઝનેસ દિશા મધ્યમ રીતે સંરેખિત છે — જ્યારે તે તમારા ઊંડા મૂલ્યોને પ્રતિબિંબિત કરે ત્યારે વેન્ચર શ્રેષ્ઠ કામ કરે છે.';
+
+  @override
+  String get bzAlignLow => 'તમારા આત્મ-હેતુ અને બિઝનેસ દિશાને સભાન સંરેખણની જરૂર છે — એવું વેન્ચર પસંદ કરો જે ખરેખર તમે કોણ છો તેની સાથે મેળ ખાય.';
+
+  @override
+  String get bzTechAtmakaraka => 'આત્મા ગ્રહ (આત્મકારક)';
+
+  @override
+  String get bzTechAmatyakaraka => 'બિઝનેસ ગ્રહ (અમાત્યકારક)';
+
+  @override
+  String get bzTechDarakaraka => 'ભાગીદાર ગ્રહ (દારકારક)';
+
+  @override
+  String get bzFoundation => 'બિઝનેસ પાયો';
+
+  @override
+  String get bzCareerHouse => 'કારકિર્દી ભાવ';
+
+  @override
+  String get bzGainsHouse => 'લાભ ભાવ';
+
+  @override
+  String get bzLord => 'સ્વામી';
+
+  @override
+  String get bzGainsPotential => 'લાભ ક્ષમતા';
+
+  @override
+  String get bzNetwork => 'નેટવર્ક શક્તિ';
+
+  @override
+  String get bzRecovery => 'પુનઃપ્રાપ્તિ શક્તિ';
+
+  @override
+  String get bzVerification => 'ક્રોસ-ચાર્ટ ચકાસણી';
+
+  @override
+  String get bzD10 => 'કારકિર્દી ચાર્ટ (D10)';
+
+  @override
+  String get bzD11 => 'લાભ ચાર્ટ (D11)';
+
+  @override
+  String get bzD9 => 'હેતુ ચાર્ટ (D9)';
+
+  @override
+  String get bzD60 => 'કર્મ ચાર્ટ (D60)';
+
+  @override
+  String get bzFounderSkills => 'સ્થાપક કૌશલ્યો';
+
+  @override
+  String get bzSkillStrategy => 'વ્યૂહાત્મક વિચારસરણી';
+
+  @override
+  String get bzSkillExecution => 'અમલીકરણ';
+
+  @override
+  String get bzSkillPeople => 'લોકોનું સંચાલન';
+
+  @override
+  String get bzSkillSales => 'વેચાણ અને સમજાવટ';
+
+  @override
+  String get bzSkillFinance => 'નાણાકીય કુશળતા';
+
+  @override
+  String get bzSkillOps => 'કાર્યકારી શિસ્ત';
+
+  @override
+  String get bzTopSkill => 'ટોચનું કૌશલ્ય';
+
+  @override
+  String get bzDomains => 'શ્રેષ્ઠ બિઝનેસ ક્ષેત્રો';
+
+  @override
+  String get bzDomainsSub => 'કુદરતી બંધબેસતાપણા મુજબ ક્રમાંકિત';
+
+  @override
+  String get bzFit => 'બંધબેસતાપણું';
+
+  @override
+  String get bzBusinessStyleHdr => 'બિઝનેસ શૈલી';
+
+  @override
+  String get bzStyleService => 'ઉત્પાદન vs સેવા';
+
+  @override
+  String get bzStyleMarket => 'બજાર કેન્દ્રિતતા';
+
+  @override
+  String get bzStyleTech => 'ટેક અભિગમ';
+
+  @override
+  String get bzStyleLeadership => 'નેતૃત્વ શૈલી';
+
+  @override
+  String get bzStylePartnership => 'એકલા અથવા ભાગીદારીમાં';
+
+  @override
+  String get bzWhereBuild => 'પહોંચ';
+
+  @override
+  String get bzExpansion => 'વિસ્તરણ';
+
+  @override
+  String get bzSetup => 'સેટઅપ';
+
+  @override
+  String get bzPartnership => 'ભાગીદારી અને ટીમ';
+
+  @override
+  String get bzIdealCofounder => 'આદર્શ સહ-સ્થાપક';
+
+  @override
+  String get bzPartnerViability => 'ભાગીદારી બંધબેસતાપણું';
+
+  @override
+  String get bzTeamBuilding => 'ટીમ નિર્માણ';
+
+  @override
+  String get bzCofounderFit => 'સહ-સ્થાપક બંધબેસતાપણું';
+
+  @override
+  String get bzAdvisorNetwork => 'સલાહકાર નેટવર્ક';
+
+  @override
+  String get bzFunding => 'ફંડિંગ અને નાણાં';
+
+  @override
+  String get bzRecommendedPath => 'ભલામણ કરેલ ફંડિંગ માર્ગ';
+
+  @override
+  String get bzInvestorAttract => 'રોકાણકારોનું આકર્ષણ';
+
+  @override
+  String get bzFamilyBacking => 'કૌટુંબિક સહયોગ';
+
+  @override
+  String get bzHybridViability => 'નોકરી + બિઝનેસ મિશ્રણ';
+
+  @override
+  String get bzFallback => 'બેકઅપ તરીકે નોકરી';
+
+  @override
+  String get bzDebtStyle => 'દેવાની શૈલી';
+
+  @override
+  String get bzTimeline => 'બિઝનેસ સમયરેખા';
+
+  @override
+  String get bzCurrentPhase => 'અત્યારે';
+
+  @override
+  String get bzLaunchWindow => 'લોન્ચ સમય';
+
+  @override
+  String get bzScaleWindow => 'વૃદ્ધિ સમય';
+
+  @override
+  String get bzPeakAge => 'ટોચનાં વર્ષો';
+
+  @override
+  String get bzChallenges => 'ધ્યાનમાં રાખવાના પડકારો';
+
+  @override
+  String get bzRiskFinancial => 'નાણાકીય નુકસાન';
+
+  @override
+  String get bzRiskBurnout => 'થાક';
+
+  @override
+  String get bzRiskTeam => 'ટીમ સંઘર્ષ';
+
+  @override
+  String get bzRiskLegal => 'કાનૂની / નિયમનકારી';
+
+  @override
+  String get bzFinancialExp => 'વધુ પડતા રોકાણ અથવા નબળા કેશ-ફ્લો સમયના કારણે વેન્ચરમાં નાણાં ગુમાવવાનું જોખમ.';
+
+  @override
+  String get bzFinancialFix => 'રોકડ અનામત રાખો, નાના પાયે શરૂઆત કરો, અને ખર્ચ વધારતા પહેલા માંગની ચકાસણી કરો.';
+
+  @override
+  String get bzBurnoutExp => 'લાંબા સમય સુધી વધુ પડતી મહેનત કરવાથી તમારી ઊર્જા અને ધ્યાન ઘટી શકે છે.';
+
+  @override
+  String get bzBurnoutFix => 'આરામને પ્રાથમિકતા આપો, વહેલા જવાબદારી સોંપો, અને મોટા પ્રયત્નોને અનુકૂળ સમયગાળાની આસપાસ ગોઠવો.';
+
+  @override
+  String get bzTeamExp => 'સહ-સ્થાપકો અથવા સ્ટાફ સાથે ઘર્ષણ બિઝનેસને ધીમો કરી શકે છે.';
+
+  @override
+  String get bzTeamFix => 'ભૂમિકાઓ અને અપેક્ષાઓ લેખિતમાં સ્પષ્ટ કરો, અને વારંવાર વાતચીત કરો.';
+
+  @override
+  String get bzLegalExp => 'પાલન, કરારો અથવા નિયમનકારી મુદ્દાઓ અવરોધો ઊભા કરી શકે છે.';
+
+  @override
+  String get bzLegalFix => 'કરારોની સમીક્ષા કરાવો, કાગળિયાં સ્વચ્છ રાખો, અને શરૂઆતમાં જ વ્યાવસાયિકોની સલાહ લો.';
+
+  @override
+  String get bzImprovementPlan => 'સુધારણા યોજના';
+
+  @override
+  String get bzBestDirection => 'શ્રેષ્ઠ દિશા';
+
+  @override
+  String get bzStrategy => 'નિર્માણ વ્યૂહરચના';
+
+  @override
+  String get bzTopFields => 'ટોચનાં ક્ષેત્રો';
+
+  @override
+  String get bzEmploymentPath => 'નોકરી vs બિઝનેસ';
+
+  @override
+  String get bzRoadmap => 'વૃદ્ધિ રોડમેપ';
+
+  @override
+  String get bzRoadmapSub => 'તમારી વેન્ચર યોજના';
+
+  @override
+  String get bzReliability => 'આગાહી વિશ્વસનીયતા';
+
+  @override
+  String get bzLayerBirth => 'જન્મ ચાર્ટ (D1)';
+
+  @override
+  String get bzLayerNavamsa => 'નવમાંશ (D9)';
+
+  @override
+  String get bzLayerDashamsa => 'કારકિર્દી (D10)';
+
+  @override
+  String get bzLayerLabhamsa => 'લાભ (D11)';
+
+  @override
+  String get bzLayerShashtiamsa => 'કર્મ (D60)';
+
+  @override
+  String get bzTopicStart => 'શું મારે અત્યારે શરૂ કરવું જોઈએ?';
+
+  @override
+  String get bzTopicIdea => 'શ્રેષ્ઠ બિઝનેસ વિચાર';
+
+  @override
+  String get bzTopicPartner => 'સહ-સ્થાપક શોધવો';
+
+  @override
+  String get bzTopicFunding => 'તેને કેવી રીતે ફંડ કરવું';
+
+  @override
+  String get bzTopicScale => 'ક્યારે વિસ્તાર કરવો';
+
+  @override
+  String get bzTopicRisk => 'જોખમોનું સંચાલન';
+
+  @override
+  String get bzTopicJob => 'નોકરી vs બિઝનેસ';
+
+  @override
+  String get bzTopicTiming => 'શ્રેષ્ઠ સમય';
+
+  @override
   String get crTitle => 'કારકિર્દી અને નોકરી વિશ્લેષણ';
 
   @override

@@ -1,0 +1,326 @@
+{
+ "dbSubtitle": {
+  "en": "AI-powered Vedic Debt & Recovery Report"
+ },
+ "dbTitle": {
+  "en": "Debt & Recovery"
+ },
+ "dbSnapshotHeader": {
+  "en": "Debt Recovery Snapshot"
+ },
+ "dbHeroSummary": {
+  "en": "You're currently in a '{phase}' phase with a {personality} approach to money. Our analysis shows a {probability}% chance of becoming debt-free within about {years} years.",
+  "placeholders": [
+   "phase",
+   "personality",
+   "probability",
+   "years"
+  ]
+ },
+ "dbGaugeCapacity": {
+  "en": "Recovery Capacity"
+ },
+ "dbGaugeProbability": {
+  "en": "Recovery Chance"
+ },
+ "dbGaugeFreedomNow": {
+  "en": "Debt Freedom Now"
+ },
+ "dbGaugeDti": {
+  "en": "Income Health"
+ },
+ "dbGaugeResilience": {
+  "en": "Resilience"
+ },
+ "dbChipCleanKarma": {
+  "en": "Clean debt karma"
+ },
+ "dbChipStrongRecovery": {
+  "en": "Strong recovery capacity"
+ },
+ "dbChipHealthyDti": {
+  "en": "Healthy debt-to-income"
+ },
+ "dbChipResilient": {
+  "en": "High psychological resilience"
+ },
+ "dbChipCycleBreakable": {
+  "en": "Debt cycle is breakable"
+ },
+ "dbChipLowReindebt": {
+  "en": "Low re-indebtedness risk"
+ },
+ "dbChipGoodNegotiator": {
+  "en": "Good negotiation odds"
+ },
+ "dbProfileTitle": {
+  "en": "Your Debt Profile"
+ },
+ "dbPhaseLabel": {
+  "en": "Current phase"
+ },
+ "dbPrimaryCategoryLabel": {
+  "en": "Main category"
+ },
+ "dbKarakaLabel": {
+  "en": "Debt Karaka"
+ },
+ "dbProtectorLabel": {
+  "en": "Creditor Protection"
+ },
+ "dbSecondaryCategories": {
+  "en": "Secondary categories"
+ },
+ "dbUnsecuredRatio": {
+  "en": "Unsecured-debt ratio"
+ },
+ "dbKarakaTitle": {
+  "en": "Your Debt Planets"
+ },
+ "dbKarakaSubtitle": {
+  "en": "How strongly each planet supports your debt recovery"
+ },
+ "dbVerificationTitle": {
+  "en": "Verified Across Charts (D6)"
+ },
+ "dbD6Label": {
+  "en": "D6 Debt & Enemies Chart"
+ },
+ "dbD6LordDignity": {
+  "en": "6th lord strength"
+ },
+ "dbD6Severity": {
+  "en": "Debt karma severity"
+ },
+ "dbD6Multiplier": {
+  "en": "D6 debt multiplier"
+ },
+ "dbYogasTitle": {
+  "en": "Debt Yogas & Protections"
+ },
+ "dbPressureNow": {
+  "en": "Debt Pressure Now"
+ },
+ "dbRecoveryBoost": {
+  "en": "Recovery Boost"
+ },
+ "dbClearingLabel": {
+  "en": "Debt-Clearing Yogas"
+ },
+ "dbCreatingLabel": {
+  "en": "Debt-Creating Yogas"
+ },
+ "dbCategoriesTitle": {
+  "en": "Debt Categories Watch"
+ },
+ "dbCategoriesSubtitle": {
+  "en": "Which types of debt need the most attention"
+ },
+ "dbTimelineTitle": {
+  "en": "Debt-Free Timeline"
+ },
+ "dbFreeWindowLabel": {
+  "en": "DEBT-FREE WINDOW"
+ },
+ "dbClearanceEstimate": {
+  "en": "Full clearance estimate"
+ },
+ "dbPeakYears": {
+  "en": "Debt-Peak Years"
+ },
+ "dbClearanceYears": {
+  "en": "Clearance Years"
+ },
+ "dbBorrowTitle": {
+  "en": "Smart Borrowing Guide"
+ },
+ "dbLoanSuitability": {
+  "en": "Loan Suitability"
+ },
+ "dbBestLoanType": {
+  "en": "Best Loan Type"
+ },
+ "dbLeverageCeiling": {
+  "en": "Leverage Ceiling"
+ },
+ "dbNegotiationSuccess": {
+  "en": "Negotiation Success"
+ },
+ "dbCreditorAggression": {
+  "en": "Creditor Pressure Risk"
+ },
+ "dbLegalEscalation": {
+  "en": "Legal Escalation Risk"
+ },
+ "dbNegotiationApproach": {
+  "en": "Recommended approach"
+ },
+ "dbAvoidLoanTypes": {
+  "en": "Loan Types to Avoid"
+ },
+ "dbRiskTitle": {
+  "en": "Risk & Vulnerability Watch"
+ },
+ "dbRiskDefault": {
+  "en": "Default Risk"
+ },
+ "dbRiskDefaultExp": {
+  "en": "The chance of missing a scheduled repayment badly enough to trigger default status with a lender."
+ },
+ "dbRiskDefaultFix": {
+  "en": "Automate minimum payments and keep a 1-month buffer so a single missed income cycle doesn't cascade."
+ },
+ "dbRiskBankruptcy": {
+  "en": "Bankruptcy Risk"
+ },
+ "dbRiskBankruptcyExp": {
+  "en": "The probability that debt load grows beyond what income and assets can realistically cover."
+ },
+ "dbRiskBankruptcyFix": {
+  "en": "Get a professional debt review before taking any new loan or credit line."
+ },
+ "dbRiskAssetSeizure": {
+  "en": "Asset-Seizure Risk"
+ },
+ "dbRiskAssetSeizureExp": {
+  "en": "The chance a secured loan default could lead to a lender repossessing collateral or property."
+ },
+ "dbRiskAssetSeizureFix": {
+  "en": "Prioritize secured-loan payments first, and refinance early if a payment gap looks likely."
+ },
+ "dbRiskChronic": {
+  "en": "Chronic Re-Debt Risk"
+ },
+ "dbRiskChronicExp": {
+  "en": "The tendency to fall back into debt again even after clearing the current load."
+ },
+ "dbRiskChronicFix": {
+  "en": "Build a dedicated emergency fund before increasing lifestyle spending after clearance."
+ },
+ "dbReindebtTrigger": {
+  "en": "Re-Debt Trigger"
+ },
+ "dbCycleBreakFeasibility": {
+  "en": "Cycle-Break Feasibility"
+ },
+ "dbMajorRisks": {
+  "en": "Major Risks"
+ },
+ "dbHiddenSignals": {
+  "en": "Hidden Debt Signals"
+ },
+ "dbCrisisTitle": {
+  "en": "Crisis Preparedness"
+ },
+ "dbCrisisSubtitle": {
+  "en": "How to spot trouble early and respond calmly"
+ },
+ "dbWarningSigns": {
+  "en": "Early Warning Signs"
+ },
+ "dbMitigationActions": {
+  "en": "What To Do About It"
+ },
+ "dbFamilyTitle": {
+  "en": "Family & Ancestral Debt"
+ },
+ "dbInheritedDebtProb": {
+  "en": "Inherited-Debt Chance"
+ },
+ "dbFamilyDrag": {
+  "en": "Family Debt Drag"
+ },
+ "dbInheritedSource": {
+  "en": "Likely source"
+ },
+ "dbCoreBlockerLabel": {
+  "en": "CORE BLOCKER"
+ },
+ "dbPsychologyTitle": {
+  "en": "Your Money Psychology"
+ },
+ "dbResilience": {
+  "en": "Resilience"
+ },
+ "dbDiscipline": {
+  "en": "Discipline Under Pressure"
+ },
+ "dbSocialSupport": {
+  "en": "Social Support"
+ },
+ "dbDepressionRisk": {
+  "en": "Financial-Stress Vulnerability"
+ },
+ "dbStressTolerance": {
+  "en": "Stress tolerance"
+ },
+ "dbRootCause": {
+  "en": "Behavioral Root Cause"
+ },
+ "dbImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "dbRoadmapTitle": {
+  "en": "Your Debt-Free Roadmap"
+ },
+ "dbRecoveryProbability": {
+  "en": "Recovery Probability"
+ },
+ "dbClearanceTimeline": {
+  "en": "Clearance Timeline"
+ },
+ "dbYears": {
+  "en": "years"
+ },
+ "dbDtiHealth": {
+  "en": "Debt-to-Income Health"
+ },
+ "dbDtiCategory": {
+  "en": "DTI Category"
+ },
+ "dbBreakEvenMonths": {
+  "en": "Months to break-even"
+ },
+ "dbIncomeAcceleration": {
+  "en": "Income growth needed"
+ },
+ "dbLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "dbLayerD6": {
+  "en": "Debt & Enemies (D6)"
+ },
+ "dbLayerD9": {
+  "en": "Navamsa (D9)"
+ },
+ "dbLayerDasha": {
+  "en": "Dasha Timing"
+ },
+ "dbLayerTransit": {
+  "en": "Current Transits"
+ },
+ "dbTopicRecovery": {
+  "en": "My recovery timeline"
+ },
+ "dbTopicNegotiate": {
+  "en": "Negotiating with creditors"
+ },
+ "dbTopicBorrowing": {
+  "en": "Is it safe to borrow now"
+ },
+ "dbTopicCrisis": {
+  "en": "Preparing for a crisis"
+ },
+ "dbTopicAncestral": {
+  "en": "Ancestral debt karma"
+ },
+ "dbTopicTimeline": {
+  "en": "Best years to clear debt"
+ },
+ "dbTopicPsychology": {
+  "en": "My money psychology"
+ },
+ "dbTopicCategories": {
+  "en": "Which debts to prioritize"
+ }
+}

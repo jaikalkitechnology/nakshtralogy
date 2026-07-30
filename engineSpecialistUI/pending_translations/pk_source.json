@@ -1,0 +1,358 @@
+{
+ "pkSubtitle": {
+  "en": "AI-powered Vedic Past Life & Karma Report"
+ },
+ "pkTitle": {
+  "en": "Past Life & Karma"
+ },
+ "pkSnapshotHeader": {
+  "en": "Past-Life Snapshot"
+ },
+ "pkHeroSummary": {
+  "en": "Your chart shows a '{theme}' past-life signature, currently {relation} into this life. Recommended path: {strategy}.",
+  "placeholders": [
+   "theme",
+   "relation",
+   "strategy"
+  ]
+ },
+ "pkGaugeSignature": {
+  "en": "Signature Strength"
+ },
+ "pkGaugeMasteryPreserved": {
+  "en": "Mastery Preserved"
+ },
+ "pkGaugeClearingProgress": {
+  "en": "Karma Clearing"
+ },
+ "pkGaugeMaturity": {
+  "en": "Past-Life Maturity"
+ },
+ "pkGaugeMemoryAccess": {
+  "en": "Memory Access"
+ },
+ "pkChipGoodProgress": {
+  "en": "Good karma-clearing progress"
+ },
+ "pkChipLowDebt": {
+  "en": "Low karmic debt"
+ },
+ "pkChipMatureSoul": {
+  "en": "Mature soul signature"
+ },
+ "pkChipGiftedPast": {
+  "en": "Chart carries a past-life gift"
+ },
+ "pkChipAccomplished": {
+  "en": "Accomplished past life"
+ },
+ "pkChipMasteryPreserved": {
+  "en": "Strong mastery carried forward"
+ },
+ "pkKetuTitle": {
+  "en": "Ketu — Your Past Mastery"
+ },
+ "pkKetuSubtitle": {
+  "en": "Skills your soul already mastered"
+ },
+ "pkMasteryStrength": {
+  "en": "Mastery Strength"
+ },
+ "pkSkillsCarried": {
+  "en": "Skills Carried Forward"
+ },
+ "pkInstincts": {
+  "en": "Instinctual Capacities"
+ },
+ "pkKetuDignity": {
+  "en": "Ketu dignity"
+ },
+ "pkRahuTitle": {
+  "en": "Rahu — Your Soul's Growth Edge"
+ },
+ "pkRahuSubtitle": {
+  "en": "What your soul is here to finish"
+ },
+ "pkUnmetDesires": {
+  "en": "Unmet Desires"
+ },
+ "pkProfileTitle": {
+  "en": "Your Past-Life Profile"
+ },
+ "pkProfession": {
+  "en": "Likely Profession"
+ },
+ "pkSocialStanding": {
+  "en": "Social Standing"
+ },
+ "pkRegion": {
+  "en": "Likely Region"
+ },
+ "pkCulturalArchetype": {
+  "en": "Cultural Archetype"
+ },
+ "pkAccomplishment": {
+  "en": "Accomplishment Level"
+ },
+ "pkAuthority": {
+  "en": "Authority Level"
+ },
+ "pkFamilyRole": {
+  "en": "Family role"
+ },
+ "pkSecondaryProfession": {
+  "en": "Secondary profession"
+ },
+ "pkClimateAffinity": {
+  "en": "Climate affinity"
+ },
+ "pkForeignResidence": {
+  "en": "Foreign-residence karma"
+ },
+ "pkRelationshipsTitle": {
+  "en": "Past Relationships Carried Forward"
+ },
+ "pkSpouseConnection": {
+  "en": "Spouse Reconnection"
+ },
+ "pkChildrenConnection": {
+  "en": "Children Reconnection"
+ },
+ "pkCarriedRelationTypes": {
+  "en": "Relationship Patterns"
+ },
+ "pkPartnerArchetype": {
+  "en": "Past-Life Partner Archetype"
+ },
+ "pkDarakaraka": {
+  "en": "Spouse karaka"
+ },
+ "pkParentsKarma": {
+  "en": "Parents karma pattern"
+ },
+ "pkSiblingKarma": {
+  "en": "Sibling karma pattern"
+ },
+ "pkSpiritualTitle": {
+  "en": "Your Spiritual Life Then"
+ },
+ "pkSpiritualLevel": {
+  "en": "Spiritual Level"
+ },
+ "pkPracticeSignature": {
+  "en": "Practice Style"
+ },
+ "pkMeditativeCapacity": {
+  "en": "Meditative Capacity"
+ },
+ "pkDevotionalPractice": {
+  "en": "Devotional Practice"
+ },
+ "pkYogicAttainment": {
+  "en": "Yogic Attainment"
+ },
+ "pkMokshaProximity": {
+  "en": "Moksha Proximity"
+ },
+ "pkKarmicDebtsTitle": {
+  "en": "Karmic Debts & Wealth Then"
+ },
+ "pkTotalKarmicDebt": {
+  "en": "Total Karmic Debt"
+ },
+ "pkPrimaryDebtType": {
+  "en": "Primary Debt Type"
+ },
+ "pkRelationshipDebt": {
+  "en": "Relationship Debt"
+ },
+ "pkFinancialDebt": {
+  "en": "Financial Debt"
+ },
+ "pkServiceDebt": {
+  "en": "Service Debt"
+ },
+ "pkDharmicDebt": {
+  "en": "Dharmic Debt"
+ },
+ "pkPitruKarma": {
+  "en": "Pitru karma"
+ },
+ "pkMatruKarma": {
+  "en": "Matru karma"
+ },
+ "pkWealthLevel": {
+  "en": "Wealth Level Then"
+ },
+ "pkWealthKarmaCarried": {
+  "en": "Wealth Karma Carried"
+ },
+ "pkResourcePattern": {
+  "en": "Resource management"
+ },
+ "pkGainSource": {
+  "en": "Gain source"
+ },
+ "pkEchoesTitle": {
+  "en": "Echoes In This Life"
+ },
+ "pkOnRelationships": {
+  "en": "On Relationships"
+ },
+ "pkOnCareer": {
+  "en": "On Career"
+ },
+ "pkOnHealth": {
+  "en": "On Health"
+ },
+ "pkOnSpirituality": {
+  "en": "On Spirituality"
+ },
+ "pkDominantArea": {
+  "en": "Strongest Carryforward"
+ },
+ "pkAttractions": {
+  "en": "Natural Attractions"
+ },
+ "pkAversions": {
+  "en": "Natural Aversions"
+ },
+ "pkUnexplainedFears": {
+  "en": "Unexplained Fears"
+ },
+ "pkMagneticPulls": {
+  "en": "Magnetic Pulls"
+ },
+ "pkResolutionTitle": {
+  "en": "Karmic Resolution & Completion"
+ },
+ "pkPrimaryPathway": {
+  "en": "Primary Path"
+ },
+ "pkSecondaryPathway": {
+  "en": "Secondary Path"
+ },
+ "pkClearingProgress": {
+  "en": "Clearing Progress"
+ },
+ "pkRemainingWork": {
+  "en": "Remaining Work"
+ },
+ "pkSettlementTimeline": {
+  "en": "Settlement Timeline"
+ },
+ "pkAccelerationPractices": {
+  "en": "Practices That Speed Resolution"
+ },
+ "pkPriorityAreas": {
+  "en": "Priority Areas"
+ },
+ "pkVerificationTitle": {
+  "en": "Verified Across Charts (D60)"
+ },
+ "pkD60Label": {
+  "en": "D60 Past-Life Era"
+ },
+ "pkD60Ketu": {
+  "en": "D60 Ketu placement"
+ },
+ "pkD60Standing": {
+  "en": "Overall standing"
+ },
+ "pkMemoryTitle": {
+  "en": "Memory & Intuition"
+ },
+ "pkMemoryAccess": {
+  "en": "Memory Access"
+ },
+ "pkRegressionFit": {
+  "en": "Regression-Therapy Fit"
+ },
+ "pkDreamVisits": {
+  "en": "Dream Visitations"
+ },
+ "pkDejaVuFrequency": {
+  "en": "Deja Vu Frequency"
+ },
+ "pkSpontaneousRemembrance": {
+  "en": "Spontaneous remembrance"
+ },
+ "pkRemembrancePractices": {
+  "en": "Remembrance Practices"
+ },
+ "pkTimelineTitle": {
+  "en": "Activation Timeline"
+ },
+ "pkGiftsActivation": {
+  "en": "Past-Life Gifts Activation"
+ },
+ "pkSurfaceWindow": {
+  "en": "Surfacing Window"
+ },
+ "pkRisksTitle": {
+  "en": "Risks & Chronic Patterns"
+ },
+ "pkTraumaResidue": {
+  "en": "Trauma Residue"
+ },
+ "pkSpiritualBypass": {
+  "en": "Spiritual Bypass Risk"
+ },
+ "pkMajorRisks": {
+  "en": "Major Risks"
+ },
+ "pkChronicImprints": {
+  "en": "Chronic Imprints"
+ },
+ "pkKarmicLoops": {
+  "en": "Karmic Loops"
+ },
+ "pkImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "pkRoadmapTitle": {
+  "en": "Your Past-Life Roadmap"
+ },
+ "pkMaturity": {
+  "en": "Past-Life Maturity"
+ },
+ "pkLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "pkLayerD9": {
+  "en": "Navamsa (D9)"
+ },
+ "pkLayerD60": {
+  "en": "Shashtiamsa (D60)"
+ },
+ "pkLayerKetuDepth": {
+  "en": "Ketu Depth"
+ },
+ "pkLayerAtmakaraka": {
+  "en": "Soul Planet (Atmakaraka)"
+ },
+ "pkTopicMastery": {
+  "en": "My past-life mastery"
+ },
+ "pkTopicUnfinished": {
+  "en": "My unfinished karma"
+ },
+ "pkTopicRelationships": {
+  "en": "My past-life relationships"
+ },
+ "pkTopicDebts": {
+  "en": "My karmic debts"
+ },
+ "pkTopicResolution": {
+  "en": "How to resolve my karma"
+ },
+ "pkTopicMemory": {
+  "en": "Past-life memory access"
+ },
+ "pkTopicTiming": {
+  "en": "Best timing windows"
+ },
+ "pkTopicProfile": {
+  "en": "Who I was in my past life"
+ }
+}

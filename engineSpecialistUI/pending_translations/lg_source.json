@@ -1,0 +1,326 @@
+{
+ "lgSubtitle": {
+  "en": "AI-powered Vedic Legal Report"
+ },
+ "lgTitle": {
+  "en": "Legal & Disputes"
+ },
+ "lgSnapshotHeader": {
+  "en": "Legal Snapshot"
+ },
+ "lgResilience": {
+  "en": "Legal Resilience"
+ },
+ "lgResolutionCapacity": {
+  "en": "Resolution Capacity"
+ },
+ "lgVictoryPotential": {
+  "en": "Victory Potential"
+ },
+ "lgLegalSafety": {
+  "en": "Legal Safety"
+ },
+ "lgNegotiationSkill": {
+  "en": "Negotiation Skill"
+ },
+ "lgStatusExcellent": {
+  "en": "Excellent"
+ },
+ "lgStatusStrong": {
+  "en": "Strong"
+ },
+ "lgStatusModerate": {
+  "en": "Moderate"
+ },
+ "lgStatusDeveloping": {
+  "en": "Developing"
+ },
+ "lgStatusChallenging": {
+  "en": "Challenging"
+ },
+ "lgChipResolver": {
+  "en": "Skilled Resolver"
+ },
+ "lgChipWinner": {
+  "en": "Strong Case Wins"
+ },
+ "lgChipNegotiator": {
+  "en": "Natural Negotiator"
+ },
+ "lgChipDocumented": {
+  "en": "Well Documented"
+ },
+ "lgChipLowRisk": {
+  "en": "Low Legal Risk"
+ },
+ "lgChipMoralAuthority": {
+  "en": "Moral Authority"
+ },
+ "lgChipLegalAptitude": {
+  "en": "Legal Aptitude"
+ },
+ "lgProfileTitle": {
+  "en": "Your Legal Profile & Karma"
+ },
+ "lgPrimaryDriver": {
+  "en": "Primary Driver"
+ },
+ "lgDharmaAnchor": {
+  "en": "Dharma Anchor"
+ },
+ "lgAggressionMarker": {
+  "en": "Aggression Marker"
+ },
+ "lgDocumentationKaraka": {
+  "en": "Documentation Quality"
+ },
+ "lgKarakaTitle": {
+  "en": "Your Legal Planets"
+ },
+ "lgKarakaSubtitle": {
+  "en": "Which planets shape your legal fortune"
+ },
+ "lgYogasTitle": {
+  "en": "Legal Yogas & Protections"
+ },
+ "lgCurrentPhase": {
+  "en": "Current Phase"
+ },
+ "lgProtections": {
+  "en": "Protections"
+ },
+ "lgDisputePressures": {
+  "en": "Dispute Pressures"
+ },
+ "lgVerificationTitle": {
+  "en": "Verified Across Charts"
+ },
+ "lgD6Litigation": {
+  "en": "D6 Litigation Chart"
+ },
+ "lgD9Dharma": {
+  "en": "D9 Dharma Chart"
+ },
+ "lgMoralAuthority": {
+  "en": "Moral Authority"
+ },
+ "lgVictoryTitle": {
+  "en": "Victory Analysis"
+ },
+ "lgAsPlaintiff": {
+  "en": "As Plaintiff"
+ },
+ "lgAsDefendant": {
+  "en": "As Defendant"
+ },
+ "lgSettlementPreference": {
+  "en": "Settlement Preference"
+ },
+ "lgDisputeCategoriesTitle": {
+  "en": "Dispute Categories Watch"
+ },
+ "lgLowRiskCategories": {
+  "en": "Low-Risk Categories"
+ },
+ "lgConflictStyleTitle": {
+  "en": "Conflict Style & Enemies"
+ },
+ "lgConfrontationComfort": {
+  "en": "Confrontation Comfort"
+ },
+ "lgArgumentPersuasiveness": {
+  "en": "Argument Persuasiveness"
+ },
+ "lgEmotionalRegulation": {
+  "en": "Emotional Regulation"
+ },
+ "lgGrudgeHolding": {
+  "en": "Grudge-Holding Tendency"
+ },
+ "lgEnemyAnalysisLabel": {
+  "en": "Enemy Analysis"
+ },
+ "lgVisibleEnemies": {
+  "en": "Visible Enemies"
+ },
+ "lgHiddenEnemies": {
+  "en": "Hidden Enemies"
+ },
+ "lgWorkplaceEnemies": {
+  "en": "Workplace Enemies"
+ },
+ "lgFamilyEnemies": {
+  "en": "Family Enemies"
+ },
+ "lgLegalEnemies": {
+  "en": "Legal Enemies"
+ },
+ "lgEnemyDefeatCapacity": {
+  "en": "Enemy Defeat Capacity"
+ },
+ "lgCriminalFinancialTitle": {
+  "en": "Criminal & Financial Risk Watch"
+ },
+ "lgCriminalRisk": {
+  "en": "Criminal Involvement Risk"
+ },
+ "lgVictimOfCrime": {
+  "en": "Victim of Crime Chance"
+ },
+ "lgFalseAccusation": {
+  "en": "False Accusation Risk"
+ },
+ "lgImprisonmentRisk": {
+  "en": "Imprisonment Risk"
+ },
+ "lgTaxDisputeRisk": {
+  "en": "Tax Dispute Risk"
+ },
+ "lgFinancialFraudRisk": {
+  "en": "Financial Fraud Risk"
+ },
+ "lgBusinessLitigationRisk": {
+  "en": "Business Litigation Risk"
+ },
+ "lgBankruptcyRisk": {
+  "en": "Bankruptcy Risk"
+ },
+ "lgAuditVulnerability": {
+  "en": "Audit Vulnerability"
+ },
+ "lgProtectionPriority": {
+  "en": "Protection Priority"
+ },
+ "lgContractsTitle": {
+  "en": "Contracts & Negotiation"
+ },
+ "lgContractClarity": {
+  "en": "Contract Clarity"
+ },
+ "lgDocumentationDiscipline": {
+  "en": "Documentation Discipline"
+ },
+ "lgFinePrintAwareness": {
+  "en": "Fine-Print Awareness"
+ },
+ "lgSignatureCaution": {
+  "en": "Signature Caution"
+ },
+ "lgMediationReceptivity": {
+  "en": "Mediation Receptivity"
+ },
+ "lgNegotiationSkillFull": {
+  "en": "Negotiation Skill"
+ },
+ "lgCompromiseWillingness": {
+  "en": "Compromise Willingness"
+ },
+ "lgFaceSavingNeeds": {
+  "en": "Face-Saving Needs"
+ },
+ "lgMediatorHireRecommendation": {
+  "en": "Mediator Hire Recommendation"
+ },
+ "lgTypicalContractIssues": {
+  "en": "Typical Contract Issues"
+ },
+ "lgCareerFitTitle": {
+  "en": "Legal Career Fit"
+ },
+ "lgProfessionAffinity": {
+  "en": "Profession Affinity"
+ },
+ "lgRoleFit": {
+  "en": "Best Role Fit"
+ },
+ "lgLawStudentSuccess": {
+  "en": "Law Student Success"
+ },
+ "lgBarExamSuccess": {
+  "en": "Bar Exam Success"
+ },
+ "lgTimelineTitle": {
+  "en": "Legal Timeline"
+ },
+ "lgNewMatterChance": {
+  "en": "New Matter Chance (Next 12M)"
+ },
+ "lgOngoingCaseOutcome": {
+  "en": "Ongoing Case Outcome"
+ },
+ "lgRecommendedAction": {
+  "en": "Recommended Action"
+ },
+ "lgPeakDisputeYears": {
+  "en": "Peak Dispute Years"
+ },
+ "lgClarityYears": {
+  "en": "Legal Clarity Years"
+ },
+ "lgAvoidancePeriods": {
+  "en": "Critical Avoidance Periods"
+ },
+ "lgFavorableWindows": {
+  "en": "Favorable Resolution Windows"
+ },
+ "lgRisksTitle": {
+  "en": "Risks & Vulnerabilities"
+ },
+ "lgChronicVulnerabilities": {
+  "en": "Chronic Vulnerabilities"
+ },
+ "lgAvoidDashaPeriods": {
+  "en": "Dasha Periods to Watch"
+ },
+ "lgPreventivePriorities": {
+  "en": "Preventive Priorities"
+ },
+ "lgRedFlags": {
+  "en": "Red-Flag Situations"
+ },
+ "lgImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "lgReliabilityTitle": {
+  "en": "Reliability"
+ },
+ "lgLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "lgLayerD6": {
+  "en": "Litigation Chart (D6)"
+ },
+ "lgLayerD9": {
+  "en": "Dharma Chart (D9)"
+ },
+ "lgLayerDasha": {
+  "en": "Dasha Timing"
+ },
+ "lgLayerTransit": {
+  "en": "Transits"
+ },
+ "lgTopicWinChance": {
+  "en": "What are my winning chances?"
+ },
+ "lgTopicStrategy": {
+  "en": "Best legal strategy for me?"
+ },
+ "lgTopicContract": {
+  "en": "Contract risks to watch?"
+ },
+ "lgTopicTiming": {
+  "en": "Best timing to resolve disputes?"
+ },
+ "lgTopicSettlement": {
+  "en": "Should I settle or fight?"
+ },
+ "lgTopicEnemies": {
+  "en": "Who are my hidden enemies?"
+ },
+ "lgTopicProtection": {
+  "en": "How to protect myself legally?"
+ },
+ "lgTopicCareer": {
+  "en": "Am I suited for a legal career?"
+ }
+}
