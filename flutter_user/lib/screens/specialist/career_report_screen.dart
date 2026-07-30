@@ -83,8 +83,11 @@ class _CareerReportState extends State<CareerReportScreen> {
   }
 
   List<Widget> _sections(AppLocalizations l) {
-    var i = 0;
-    Widget f(Widget w) => KFadeIn(delayMs: (i++ * 45).clamp(0, 700), child: w);
+    // NOTE: sections are rendered directly (no staggered fade wrapper). The
+    // hero is tall enough that every section below it is lazy-built well past
+    // the viewport; a per-section entrance animation there can stay at opacity
+    // 0 and leave the lower report blank, so we keep them plainly visible.
+    Widget f(Widget w) => w;
     const gap = SizedBox(height: 18);
     return [
       f(_breadcrumb(l)),
@@ -232,7 +235,7 @@ class _CareerReportState extends State<CareerReportScreen> {
     final alignText = align >= 60 ? l.crAlignStrong : align >= 40 ? l.crAlignModerate : l.crAlignLow;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.self_improvement_rounded, title: l.crSoulCareer, color: KColors.purple),
-      Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Expanded(child: _planetCard('🕉️', l.crSoulPlanet, KundliNames.planet(soul, loc), _str('atmakaraka_soul_career_contract'), KColors.purple)),
         const SizedBox(width: 10),
         Expanded(child: _planetCard('💼', l.crCareerPlanet, KundliNames.planet(career, loc), _str('amatyakaraka_career_theme'), KColors.blue)),
