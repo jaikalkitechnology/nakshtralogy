@@ -1,0 +1,275 @@
+{
+ "kmSubtitle": {
+  "en": "AI-powered Vedic Kundli Milan Report"
+ },
+ "kmTitle": {
+  "en": "Kundli Milan"
+ },
+ "kmSnapshotHeader": {
+  "en": "Compatibility Snapshot"
+ },
+ "kmAshtakootScore": {
+  "en": "Ashtakoot: {score}/36",
+  "placeholders": [
+   "score"
+  ]
+ },
+ "kmGaugeAshtakoot": {
+  "en": "Ashtakoot %"
+ },
+ "kmGaugeD9": {
+  "en": "D9 Marriage Karma"
+ },
+ "kmGaugeMangal": {
+  "en": "Mangal Balance"
+ },
+ "kmGaugePapa": {
+  "en": "Karmic Balance"
+ },
+ "kmGaugeAk": {
+  "en": "Soul Resonance"
+ },
+ "kmChipNoNadi": {
+  "en": "No Nadi Dosh"
+ },
+ "kmChipNoBhakoot": {
+  "en": "No Bhakoot Dosh"
+ },
+ "kmChipMangalCancelled": {
+  "en": "Mangal Dosh cancelled"
+ },
+ "kmChipPapaBalanced": {
+  "en": "Balanced karmic load"
+ },
+ "kmChipStrongChemistry": {
+  "en": "Strong physical chemistry"
+ },
+ "kmChipStrongD9": {
+  "en": "Strong D9 marriage karma"
+ },
+ "kmChipLongevity": {
+  "en": "Strong longevity alignment"
+ },
+ "kmAshtakootTitle": {
+  "en": "Ashtakoot Guna Milan"
+ },
+ "kmAshtakootSubtitle": {
+  "en": "The classical 8-point matching system, out of 36"
+ },
+ "kmNadiSeverity": {
+  "en": "Nadi severity"
+ },
+ "kmBhakootSeverity": {
+  "en": "Bhakoot severity"
+ },
+ "kmGanaSignature": {
+  "en": "Gana signature"
+ },
+ "kmMangalTitle": {
+  "en": "Mangal Dosha Check"
+ },
+ "kmD9Title": {
+  "en": "D9 Navamsa — Marriage Karma"
+ },
+ "kmD9Subtitle": {
+  "en": "The soul-level marriage chart, considered most important classically"
+ },
+ "kmD9Score": {
+  "en": "D9 Compatibility"
+ },
+ "kmLagnaRelation": {
+  "en": "Lagna relationship"
+ },
+ "km7thLordRelation": {
+  "en": "7th lord relationship"
+ },
+ "kmKarakasTitle": {
+  "en": "Soul & Spouse Karakas"
+ },
+ "kmAtmakaraka": {
+  "en": "Soul Planet"
+ },
+ "kmAkCompatibility": {
+  "en": "Soul-Signature Resonance"
+ },
+ "kmUlCompatibility": {
+  "en": "Spouse-Karaka Alignment"
+ },
+ "kmUlSigns": {
+  "en": "Upapada lords"
+ },
+ "kmChemistryTitle": {
+  "en": "Venus-Mars Chemistry"
+ },
+ "kmPhysicalChemistry": {
+  "en": "Physical Chemistry"
+ },
+ "kmEmotionalWarmth": {
+  "en": "Emotional Warmth"
+ },
+ "kmAestheticAlignment": {
+  "en": "Aesthetic Alignment"
+ },
+ "kmElementalSynthesis": {
+  "en": "Elemental Synthesis"
+ },
+ "kmHouseCrossTitle": {
+  "en": "7th & 8th House Cross-Analysis"
+ },
+ "km78Compatibility": {
+  "en": "7th-8th House Compatibility"
+ },
+ "km8thHouseSignature": {
+  "en": "Joint Longevity Signature"
+ },
+ "kmLongevityAlignment": {
+  "en": "Longevity Alignment"
+ },
+ "km7thLordFriendship": {
+  "en": "7th-lord friendship"
+ },
+ "kmDomainsTitle": {
+  "en": "Domain-by-Domain Compatibility"
+ },
+ "kmConflictEngagement": {
+  "en": "Conflict Style"
+ },
+ "kmDashaTitle": {
+  "en": "Dasha & Transit Sync"
+ },
+ "kmDashaSync": {
+  "en": "Dasha Sync"
+ },
+ "kmTransitAlignment": {
+  "en": "Transit Alignment"
+ },
+ "kmTimingTitle": {
+  "en": "Marriage Timing"
+ },
+ "kmMarriageWindow": {
+  "en": "Marriage Window"
+ },
+ "kmEngagementWindow": {
+  "en": "Engagement Window"
+ },
+ "kmRecommendedRange": {
+  "en": "Recommended Timeframe"
+ },
+ "kmMuhurtaNotes": {
+  "en": "Muhurta Notes"
+ },
+ "kmRisksTitle": {
+  "en": "Risks To Address"
+ },
+ "kmConflictRisk": {
+  "en": "Conflict Risk"
+ },
+ "kmCommunicationRisk": {
+  "en": "Communication Risk"
+ },
+ "kmFinanceRisk": {
+  "en": "Finance Conflict Risk"
+ },
+ "kmFamilyDynamicsRisk": {
+  "en": "Family Dynamics Risk"
+ },
+ "kmMentalHealthRisk": {
+  "en": "Mental-Health Alignment Risk"
+ },
+ "kmStrengthsTitle": {
+  "en": "Top Compatibility Strengths"
+ },
+ "kmSharedGrowth": {
+  "en": "Shared Growth Potential"
+ },
+ "kmSharedCreative": {
+  "en": "Shared Creative Potential"
+ },
+ "kmJourneyTitle": {
+  "en": "Relationship Journey & Growth"
+ },
+ "kmCurrentPhase": {
+  "en": "Current phase"
+ },
+ "kmEarlyArc": {
+  "en": "Early Marriage"
+ },
+ "kmMiddleArc": {
+  "en": "Middle Marriage"
+ },
+ "kmMatureArc": {
+  "en": "Mature Marriage"
+ },
+ "kmElderArc": {
+  "en": "Elder Years"
+ },
+ "kmPeakPhase": {
+  "en": "Peak Companionship Phase"
+ },
+ "kmGrowthAreas": {
+  "en": "Growth Areas"
+ },
+ "kmCommProtocols": {
+  "en": "Communication Protocols"
+ },
+ "kmSharedPractices": {
+  "en": "Shared Practices"
+ },
+ "kmImprovementTitle": {
+  "en": "Core Theme & Improvement Plan"
+ },
+ "kmVerdictTitle": {
+  "en": "Final Verdict"
+ },
+ "kmRealizationPotential": {
+  "en": "Relationship Realization Potential"
+ },
+ "kmLayerAshtakoot": {
+  "en": "Ashtakoot"
+ },
+ "kmLayerD9": {
+  "en": "D9 Navamsa"
+ },
+ "kmLayerMangalPapa": {
+  "en": "Mangal & Papasamya"
+ },
+ "kmLayerVenusMars": {
+  "en": "Venus-Mars"
+ },
+ "kmLayerDashaSync": {
+  "en": "Dasha Sync"
+ },
+ "kmLayerH7H8": {
+  "en": "7th-8th House Cross"
+ },
+ "kmLayerAkResonance": {
+  "en": "Atmakaraka Resonance"
+ },
+ "kmLayerDomains": {
+  "en": "Domain Dimensions"
+ },
+ "kmTopicAshtakoot": {
+  "en": "Our Ashtakoot score"
+ },
+ "kmTopicMangal": {
+  "en": "Mangal Dosha concerns"
+ },
+ "kmTopicD9": {
+  "en": "Our marriage karma (D9)"
+ },
+ "kmTopicTiming": {
+  "en": "Best marriage timing"
+ },
+ "kmTopicRisks": {
+  "en": "Risks to prepare for"
+ },
+ "kmTopicGrowth": {
+  "en": "How we can grow together"
+ },
+ "kmTopicRemedies": {
+  "en": "Recommended remedies"
+ },
+ "kmTopicVerdict": {
+  "en": "Should we proceed with marriage"
+ }
+}

@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 14 done · 5 pending · 0 blocked  (19 total)**
+**Progress: 15 done · 4 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -35,7 +35,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ✅ DONE | b73ceef | en+hi+hinglish | 17-section AI destiny coach; converted from EngineReportBase shell to Career template. Backfill pending (lp_source.json). 2026-07-30. |
 | 12 | character | Character Analysis | `character_report_screen.dart` | ✅ DONE | d6f48a5 | en+hi+hinglish | 19-section AI character coach; converted from EngineReportBase shell to Career template. Backfill pending (ch_source.json). 2026-07-30. |
 | 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ✅ DONE | efab680 | en+hi+hinglish | 17-section AI karma coach; converted from EngineReportBase shell to Career template. Backfill pending (pk_source.json). 2026-07-30. |
-| 14 | kundli_milan | Kundli Milan | `milan_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/kundli_milan/analyze`. |
+| 14 | kundli_milan | Kundli Milan | `milan_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 17-section AI marriage-compatibility coach, 2-chart (`runSpecialistMilan`); constructor (name1/name2/data) unchanged. Astro's picker was pointed at the generic fallback shell — repointed to the new screen. Backfill pending (km_source.json). 2026-07-30. |
 | 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/relationship/analyze`. |
 | 16 | child_probability | Child Probability | `child_probability_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
 | 17 | love_compatibility | Love Compatibility | `love_compatibility_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
@@ -172,6 +172,26 @@ touch only if a redesigned screen requires it.
   engine field names cross-checked against a live `past_life_specialist_v1.
   analyze()` dump. Both apps; 117 new `pk` keys (en+hi+hinglish). Backfill:
   `pk_source.json`.
+
+- **kundli_milan** ✅ — 17-section AI marriage-compatibility coach for the
+  2-chart Kundli Milan endpoint (snapshot hero blending ashtakoot%/D9/mangal/
+  papasamya/atmakaraka resonance, Ashtakoot Guna Milan 8-guna breakdown,
+  Mangal Dosha Check, D9 Navamsa Marriage Karma, Soul & Spouse Karakas
+  atmakaraka/darakaraka/upapada, Venus-Mars Chemistry, 7th & 8th House
+  Cross-Analysis, Domain-by-Domain Compatibility, Dasha & Transit Sync,
+  Marriage Timing, Risks To Address, Top Compatibility Strengths,
+  Relationship Journey & Growth, Core Theme & Improvement Plan, Final
+  Verdict, Reliability, Discuss-with-AI). Converted from the bespoke
+  `CustomScrollView`/`SliverList` shell to the standalone Career template;
+  constructor (`name1`, `name2`, `data` — already-loaded, no async load call)
+  kept unchanged so `SpecialistMilanPicker` doesn't need to change its call
+  shape. flutter_astro's picker was still routing to the generic
+  `SpecialistReportScreen.fromData` fallback instead of a dedicated Milan
+  screen — repointed it to `MilanReportScreen` so astro gets the same premium
+  redesign. All engine field names cross-checked against a live
+  `kundli_milan_specialist_v4.analyze()` two-chart dump. Both apps; 90 new
+  `km` keys + 7 shared domain-label keys backfilled to astro (en+hi+hinglish).
+  Backfill: `km_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first

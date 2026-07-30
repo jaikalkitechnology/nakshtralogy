@@ -235,6 +235,546 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @kmSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Kundli Milan Report'**
+  String get kmSubtitle;
+
+  /// No description provided for @kmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan'**
+  String get kmTitle;
+
+  /// No description provided for @kmSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatibility Snapshot'**
+  String get kmSnapshotHeader;
+
+  /// No description provided for @kmAshtakootScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakoot: {score}/36'**
+  String kmAshtakootScore(Object score);
+
+  /// No description provided for @kmGaugeAshtakoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakoot %'**
+  String get kmGaugeAshtakoot;
+
+  /// No description provided for @kmGaugeD9.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Marriage Karma'**
+  String get kmGaugeD9;
+
+  /// No description provided for @kmGaugeMangal.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal Balance'**
+  String get kmGaugeMangal;
+
+  /// No description provided for @kmGaugePapa.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Balance'**
+  String get kmGaugePapa;
+
+  /// No description provided for @kmGaugeAk.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Resonance'**
+  String get kmGaugeAk;
+
+  /// No description provided for @kmChipNoNadi.
+  ///
+  /// In en, this message translates to:
+  /// **'No Nadi Dosh'**
+  String get kmChipNoNadi;
+
+  /// No description provided for @kmChipNoBhakoot.
+  ///
+  /// In en, this message translates to:
+  /// **'No Bhakoot Dosh'**
+  String get kmChipNoBhakoot;
+
+  /// No description provided for @kmChipMangalCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal Dosh cancelled'**
+  String get kmChipMangalCancelled;
+
+  /// No description provided for @kmChipPapaBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced karmic load'**
+  String get kmChipPapaBalanced;
+
+  /// No description provided for @kmChipStrongChemistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong physical chemistry'**
+  String get kmChipStrongChemistry;
+
+  /// No description provided for @kmChipStrongD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong D9 marriage karma'**
+  String get kmChipStrongD9;
+
+  /// No description provided for @kmChipLongevity.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong longevity alignment'**
+  String get kmChipLongevity;
+
+  /// No description provided for @kmAshtakootTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakoot Guna Milan'**
+  String get kmAshtakootTitle;
+
+  /// No description provided for @kmAshtakootSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The classical 8-point matching system, out of 36'**
+  String get kmAshtakootSubtitle;
+
+  /// No description provided for @kmNadiSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Nadi severity'**
+  String get kmNadiSeverity;
+
+  /// No description provided for @kmBhakootSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhakoot severity'**
+  String get kmBhakootSeverity;
+
+  /// No description provided for @kmGanaSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Gana signature'**
+  String get kmGanaSignature;
+
+  /// No description provided for @kmMangalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal Dosha Check'**
+  String get kmMangalTitle;
+
+  /// No description provided for @kmD9Title.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Navamsa — Marriage Karma'**
+  String get kmD9Title;
+
+  /// No description provided for @kmD9Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The soul-level marriage chart, considered most important classically'**
+  String get kmD9Subtitle;
+
+  /// No description provided for @kmD9Score.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Compatibility'**
+  String get kmD9Score;
+
+  /// No description provided for @kmLagnaRelation.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna relationship'**
+  String get kmLagnaRelation;
+
+  /// No description provided for @km7thLordRelation.
+  ///
+  /// In en, this message translates to:
+  /// **'7th lord relationship'**
+  String get km7thLordRelation;
+
+  /// No description provided for @kmKarakasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul & Spouse Karakas'**
+  String get kmKarakasTitle;
+
+  /// No description provided for @kmAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Planet'**
+  String get kmAtmakaraka;
+
+  /// No description provided for @kmAkCompatibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul-Signature Resonance'**
+  String get kmAkCompatibility;
+
+  /// No description provided for @kmUlCompatibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse-Karaka Alignment'**
+  String get kmUlCompatibility;
+
+  /// No description provided for @kmUlSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Upapada lords'**
+  String get kmUlSigns;
+
+  /// No description provided for @kmChemistryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Venus-Mars Chemistry'**
+  String get kmChemistryTitle;
+
+  /// No description provided for @kmPhysicalChemistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Chemistry'**
+  String get kmPhysicalChemistry;
+
+  /// No description provided for @kmEmotionalWarmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Warmth'**
+  String get kmEmotionalWarmth;
+
+  /// No description provided for @kmAestheticAlignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Aesthetic Alignment'**
+  String get kmAestheticAlignment;
+
+  /// No description provided for @kmElementalSynthesis.
+  ///
+  /// In en, this message translates to:
+  /// **'Elemental Synthesis'**
+  String get kmElementalSynthesis;
+
+  /// No description provided for @kmHouseCrossTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'7th & 8th House Cross-Analysis'**
+  String get kmHouseCrossTitle;
+
+  /// No description provided for @km78Compatibility.
+  ///
+  /// In en, this message translates to:
+  /// **'7th-8th House Compatibility'**
+  String get km78Compatibility;
+
+  /// No description provided for @km8thHouseSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Joint Longevity Signature'**
+  String get km8thHouseSignature;
+
+  /// No description provided for @kmLongevityAlignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Longevity Alignment'**
+  String get kmLongevityAlignment;
+
+  /// No description provided for @km7thLordFriendship.
+  ///
+  /// In en, this message translates to:
+  /// **'7th-lord friendship'**
+  String get km7thLordFriendship;
+
+  /// No description provided for @kmDomainsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain-by-Domain Compatibility'**
+  String get kmDomainsTitle;
+
+  /// No description provided for @kmConflictEngagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict Style'**
+  String get kmConflictEngagement;
+
+  /// No description provided for @kmDashaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha & Transit Sync'**
+  String get kmDashaTitle;
+
+  /// No description provided for @kmDashaSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Sync'**
+  String get kmDashaSync;
+
+  /// No description provided for @kmTransitAlignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Alignment'**
+  String get kmTransitAlignment;
+
+  /// No description provided for @kmTimingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Timing'**
+  String get kmTimingTitle;
+
+  /// No description provided for @kmMarriageWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Window'**
+  String get kmMarriageWindow;
+
+  /// No description provided for @kmEngagementWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Engagement Window'**
+  String get kmEngagementWindow;
+
+  /// No description provided for @kmRecommendedRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Timeframe'**
+  String get kmRecommendedRange;
+
+  /// No description provided for @kmMuhurtaNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Muhurta Notes'**
+  String get kmMuhurtaNotes;
+
+  /// No description provided for @kmRisksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks To Address'**
+  String get kmRisksTitle;
+
+  /// No description provided for @kmConflictRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict Risk'**
+  String get kmConflictRisk;
+
+  /// No description provided for @kmCommunicationRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication Risk'**
+  String get kmCommunicationRisk;
+
+  /// No description provided for @kmFinanceRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance Conflict Risk'**
+  String get kmFinanceRisk;
+
+  /// No description provided for @kmFamilyDynamicsRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Dynamics Risk'**
+  String get kmFamilyDynamicsRisk;
+
+  /// No description provided for @kmMentalHealthRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental-Health Alignment Risk'**
+  String get kmMentalHealthRisk;
+
+  /// No description provided for @kmStrengthsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Compatibility Strengths'**
+  String get kmStrengthsTitle;
+
+  /// No description provided for @kmSharedGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Growth Potential'**
+  String get kmSharedGrowth;
+
+  /// No description provided for @kmSharedCreative.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Creative Potential'**
+  String get kmSharedCreative;
+
+  /// No description provided for @kmJourneyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Journey & Growth'**
+  String get kmJourneyTitle;
+
+  /// No description provided for @kmCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current phase'**
+  String get kmCurrentPhase;
+
+  /// No description provided for @kmEarlyArc.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Marriage'**
+  String get kmEarlyArc;
+
+  /// No description provided for @kmMiddleArc.
+  ///
+  /// In en, this message translates to:
+  /// **'Middle Marriage'**
+  String get kmMiddleArc;
+
+  /// No description provided for @kmMatureArc.
+  ///
+  /// In en, this message translates to:
+  /// **'Mature Marriage'**
+  String get kmMatureArc;
+
+  /// No description provided for @kmElderArc.
+  ///
+  /// In en, this message translates to:
+  /// **'Elder Years'**
+  String get kmElderArc;
+
+  /// No description provided for @kmPeakPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Companionship Phase'**
+  String get kmPeakPhase;
+
+  /// No description provided for @kmGrowthAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Areas'**
+  String get kmGrowthAreas;
+
+  /// No description provided for @kmCommProtocols.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication Protocols'**
+  String get kmCommProtocols;
+
+  /// No description provided for @kmSharedPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Practices'**
+  String get kmSharedPractices;
+
+  /// No description provided for @kmImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Theme & Improvement Plan'**
+  String get kmImprovementTitle;
+
+  /// No description provided for @kmVerdictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Verdict'**
+  String get kmVerdictTitle;
+
+  /// No description provided for @kmRealizationPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Realization Potential'**
+  String get kmRealizationPotential;
+
+  /// No description provided for @kmLayerAshtakoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakoot'**
+  String get kmLayerAshtakoot;
+
+  /// No description provided for @kmLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Navamsa'**
+  String get kmLayerD9;
+
+  /// No description provided for @kmLayerMangalPapa.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal & Papasamya'**
+  String get kmLayerMangalPapa;
+
+  /// No description provided for @kmLayerVenusMars.
+  ///
+  /// In en, this message translates to:
+  /// **'Venus-Mars'**
+  String get kmLayerVenusMars;
+
+  /// No description provided for @kmLayerDashaSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Sync'**
+  String get kmLayerDashaSync;
+
+  /// No description provided for @kmLayerH7H8.
+  ///
+  /// In en, this message translates to:
+  /// **'7th-8th House Cross'**
+  String get kmLayerH7H8;
+
+  /// No description provided for @kmLayerAkResonance.
+  ///
+  /// In en, this message translates to:
+  /// **'Atmakaraka Resonance'**
+  String get kmLayerAkResonance;
+
+  /// No description provided for @kmLayerDomains.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain Dimensions'**
+  String get kmLayerDomains;
+
+  /// No description provided for @kmTopicAshtakoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Ashtakoot score'**
+  String get kmTopicAshtakoot;
+
+  /// No description provided for @kmTopicMangal.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal Dosha concerns'**
+  String get kmTopicMangal;
+
+  /// No description provided for @kmTopicD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Our marriage karma (D9)'**
+  String get kmTopicD9;
+
+  /// No description provided for @kmTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best marriage timing'**
+  String get kmTopicTiming;
+
+  /// No description provided for @kmTopicRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks to prepare for'**
+  String get kmTopicRisks;
+
+  /// No description provided for @kmTopicGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'How we can grow together'**
+  String get kmTopicGrowth;
+
+  /// No description provided for @kmTopicRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended remedies'**
+  String get kmTopicRemedies;
+
+  /// No description provided for @kmTopicVerdict.
+  ///
+  /// In en, this message translates to:
+  /// **'Should we proceed with marriage'**
+  String get kmTopicVerdict;
+
   /// No description provided for @pkSubtitle.
   ///
   /// In en, this message translates to:

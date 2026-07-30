@@ -8161,6 +8161,278 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get kmSubtitle => 'AI-संचालित वैदिक कुंडली मिलान रिपोर्ट';
+
+  @override
+  String get kmTitle => 'कुंडली मिलान';
+
+  @override
+  String get kmSnapshotHeader => 'अनुकूलता स्नैपशॉट';
+
+  @override
+  String kmAshtakootScore(Object score) {
+    return 'Ashtakoot: ${score}/36';
+  }
+
+  @override
+  String get kmGaugeAshtakoot => 'अष्टकूट %';
+
+  @override
+  String get kmGaugeD9 => 'D9 विवाह कर्म';
+
+  @override
+  String get kmGaugeMangal => 'मंगल संतुलन';
+
+  @override
+  String get kmGaugePapa => 'कर्म संतुलन';
+
+  @override
+  String get kmGaugeAk => 'आत्मा प्रतिध्वनि';
+
+  @override
+  String get kmChipNoNadi => 'कोई नाड़ी दोष नहीं';
+
+  @override
+  String get kmChipNoBhakoot => 'कोई भकूट दोष नहीं';
+
+  @override
+  String get kmChipMangalCancelled => 'मंगल दोष निरस्त';
+
+  @override
+  String get kmChipPapaBalanced => 'संतुलित कर्म भार';
+
+  @override
+  String get kmChipStrongChemistry => 'मजबूत शारीरिक रसायन';
+
+  @override
+  String get kmChipStrongD9 => 'मजबूत D9 विवाह कर्म';
+
+  @override
+  String get kmChipLongevity => 'मजबूत दीर्घायु संरेखण';
+
+  @override
+  String get kmAshtakootTitle => 'अष्टकूट गुण मिलान';
+
+  @override
+  String get kmAshtakootSubtitle => 'शास्त्रीय 8-बिंदु मिलान प्रणाली, 36 में से';
+
+  @override
+  String get kmNadiSeverity => 'नाड़ी तीव्रता';
+
+  @override
+  String get kmBhakootSeverity => 'भकूट तीव्रता';
+
+  @override
+  String get kmGanaSignature => 'गण हस्ताक्षर';
+
+  @override
+  String get kmMangalTitle => 'मंगल दोष जांच';
+
+  @override
+  String get kmD9Title => 'D9 नवांश — विवाह कर्म';
+
+  @override
+  String get kmD9Subtitle => 'आत्मा-स्तरीय विवाह कुंडली, शास्त्रीय रूप से सबसे महत्वपूर्ण मानी जाती है';
+
+  @override
+  String get kmD9Score => 'D9 अनुकूलता';
+
+  @override
+  String get kmLagnaRelation => 'लग्न संबंध';
+
+  @override
+  String get km7thLordRelation => 'सप्तम स्वामी संबंध';
+
+  @override
+  String get kmKarakasTitle => 'आत्मा एवं जीवनसाथी कारक';
+
+  @override
+  String get kmAtmakaraka => 'आत्मा ग्रह';
+
+  @override
+  String get kmAkCompatibility => 'आत्मा-हस्ताक्षर प्रतिध्वनि';
+
+  @override
+  String get kmUlCompatibility => 'जीवनसाथी-कारक संरेखण';
+
+  @override
+  String get kmUlSigns => 'उपपद स्वामी';
+
+  @override
+  String get kmChemistryTitle => 'शुक्र-मंगल रसायन';
+
+  @override
+  String get kmPhysicalChemistry => 'शारीरिक रसायन';
+
+  @override
+  String get kmEmotionalWarmth => 'भावनात्मक गर्मजोशी';
+
+  @override
+  String get kmAestheticAlignment => 'सौंदर्य संरेखण';
+
+  @override
+  String get kmElementalSynthesis => 'तात्विक संश्लेषण';
+
+  @override
+  String get kmHouseCrossTitle => '7वां एवं 8वां भाव क्रॉस-विश्लेषण';
+
+  @override
+  String get km78Compatibility => '7वां-8वां भाव अनुकूलता';
+
+  @override
+  String get km8thHouseSignature => 'संयुक्त दीर्घायु हस्ताक्षर';
+
+  @override
+  String get kmLongevityAlignment => 'दीर्घायु संरेखण';
+
+  @override
+  String get km7thLordFriendship => 'सप्तम-स्वामी मित्रता';
+
+  @override
+  String get kmDomainsTitle => 'क्षेत्र-दर-क्षेत्र अनुकूलता';
+
+  @override
+  String get kmConflictEngagement => 'संघर्ष शैली';
+
+  @override
+  String get kmDashaTitle => 'दशा एवं गोचर तालमेल';
+
+  @override
+  String get kmDashaSync => 'दशा तालमेल';
+
+  @override
+  String get kmTransitAlignment => 'गोचर संरेखण';
+
+  @override
+  String get kmTimingTitle => 'विवाह समय';
+
+  @override
+  String get kmMarriageWindow => 'विवाह अवधि';
+
+  @override
+  String get kmEngagementWindow => 'सगाई अवधि';
+
+  @override
+  String get kmRecommendedRange => 'अनुशंसित समयसीमा';
+
+  @override
+  String get kmMuhurtaNotes => 'मुहूर्त नोट्स';
+
+  @override
+  String get kmRisksTitle => 'संबोधित करने योग्य जोखिम';
+
+  @override
+  String get kmConflictRisk => 'संघर्ष जोखिम';
+
+  @override
+  String get kmCommunicationRisk => 'संचार जोखिम';
+
+  @override
+  String get kmFinanceRisk => 'वित्तीय संघर्ष जोखिम';
+
+  @override
+  String get kmFamilyDynamicsRisk => 'पारिवारिक गतिशीलता जोखिम';
+
+  @override
+  String get kmMentalHealthRisk => 'मानसिक-स्वास्थ्य संरेखण जोखिम';
+
+  @override
+  String get kmStrengthsTitle => 'शीर्ष अनुकूलता शक्तियां';
+
+  @override
+  String get kmSharedGrowth => 'साझा विकास क्षमता';
+
+  @override
+  String get kmSharedCreative => 'साझा रचनात्मक क्षमता';
+
+  @override
+  String get kmJourneyTitle => 'रिश्ते की यात्रा एवं विकास';
+
+  @override
+  String get kmCurrentPhase => 'वर्तमान चरण';
+
+  @override
+  String get kmEarlyArc => 'प्रारंभिक विवाह';
+
+  @override
+  String get kmMiddleArc => 'मध्य विवाह';
+
+  @override
+  String get kmMatureArc => 'परिपक्व विवाह';
+
+  @override
+  String get kmElderArc => 'वरिष्ठ वर्ष';
+
+  @override
+  String get kmPeakPhase => 'शिखर साहचर्य चरण';
+
+  @override
+  String get kmGrowthAreas => 'विकास क्षेत्र';
+
+  @override
+  String get kmCommProtocols => 'संचार प्रोटोकॉल';
+
+  @override
+  String get kmSharedPractices => 'साझा अभ्यास';
+
+  @override
+  String get kmImprovementTitle => 'मुख्य विषय एवं सुधार योजना';
+
+  @override
+  String get kmVerdictTitle => 'अंतिम निर्णय';
+
+  @override
+  String get kmRealizationPotential => 'रिश्ता साक्षात्कार क्षमता';
+
+  @override
+  String get kmLayerAshtakoot => 'अष्टकूट';
+
+  @override
+  String get kmLayerD9 => 'D9 नवांश';
+
+  @override
+  String get kmLayerMangalPapa => 'मंगल एवं पापसाम्य';
+
+  @override
+  String get kmLayerVenusMars => 'शुक्र-मंगल';
+
+  @override
+  String get kmLayerDashaSync => 'दशा तालमेल';
+
+  @override
+  String get kmLayerH7H8 => '7वां-8वां भाव क्रॉस';
+
+  @override
+  String get kmLayerAkResonance => 'आत्मकारक प्रतिध्वनि';
+
+  @override
+  String get kmLayerDomains => 'क्षेत्र आयाम';
+
+  @override
+  String get kmTopicAshtakoot => 'हमारा अष्टकूट स्कोर';
+
+  @override
+  String get kmTopicMangal => 'मंगल दोष चिंताएं';
+
+  @override
+  String get kmTopicD9 => 'हमारा विवाह कर्म (D9)';
+
+  @override
+  String get kmTopicTiming => 'सर्वोत्तम विवाह समय';
+
+  @override
+  String get kmTopicRisks => 'तैयार रहने योग्य जोखिम';
+
+  @override
+  String get kmTopicGrowth => 'हम एक साथ कैसे बढ़ सकते हैं';
+
+  @override
+  String get kmTopicRemedies => 'अनुशंसित उपाय';
+
+  @override
+  String get kmTopicVerdict => 'क्या हमें विवाह के लिए आगे बढ़ना चाहिए';
+
+  @override
   String get pkSubtitle => 'AI-संचालित वैदिक पूर्वजन्म एवं कर्म रिपोर्ट';
 
   @override

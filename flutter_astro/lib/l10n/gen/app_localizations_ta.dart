@@ -7036,6 +7036,299 @@ class AppLocalizationsTa extends AppLocalizations {
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
 
   @override
+  String get emotional => 'உணர்ச்சி';
+
+  @override
+  String get intellectual => 'அறிவுசார்';
+
+  @override
+  String get financial => 'நிதி';
+
+  @override
+  String get domestic => 'இல்லற';
+
+  @override
+  String get communicationWord => 'தொடர்பு';
+
+  @override
+  String get sharedDharma => 'பகிர்ந்த தர்மம்';
+
+  @override
+  String get familyCreation => 'குடும்ப உருவாக்கம்';
+
+  @override
+  String get kmSubtitle => 'AI-powered Vedic Kundli Milan Report';
+
+  @override
+  String get kmTitle => 'Kundli Milan';
+
+  @override
+  String get kmSnapshotHeader => 'Compatibility Snapshot';
+
+  @override
+  String kmAshtakootScore(Object score) {
+    return 'Ashtakoot: ${score}/36';
+  }
+
+  @override
+  String get kmGaugeAshtakoot => 'Ashtakoot %';
+
+  @override
+  String get kmGaugeD9 => 'D9 Marriage Karma';
+
+  @override
+  String get kmGaugeMangal => 'Mangal Balance';
+
+  @override
+  String get kmGaugePapa => 'Karmic Balance';
+
+  @override
+  String get kmGaugeAk => 'Soul Resonance';
+
+  @override
+  String get kmChipNoNadi => 'No Nadi Dosh';
+
+  @override
+  String get kmChipNoBhakoot => 'No Bhakoot Dosh';
+
+  @override
+  String get kmChipMangalCancelled => 'Mangal Dosh cancelled';
+
+  @override
+  String get kmChipPapaBalanced => 'Balanced karmic load';
+
+  @override
+  String get kmChipStrongChemistry => 'Strong physical chemistry';
+
+  @override
+  String get kmChipStrongD9 => 'Strong D9 marriage karma';
+
+  @override
+  String get kmChipLongevity => 'Strong longevity alignment';
+
+  @override
+  String get kmAshtakootTitle => 'Ashtakoot Guna Milan';
+
+  @override
+  String get kmAshtakootSubtitle => 'The classical 8-point matching system, out of 36';
+
+  @override
+  String get kmNadiSeverity => 'Nadi severity';
+
+  @override
+  String get kmBhakootSeverity => 'Bhakoot severity';
+
+  @override
+  String get kmGanaSignature => 'Gana signature';
+
+  @override
+  String get kmMangalTitle => 'Mangal Dosha Check';
+
+  @override
+  String get kmD9Title => 'D9 Navamsa — Marriage Karma';
+
+  @override
+  String get kmD9Subtitle => 'The soul-level marriage chart, considered most important classically';
+
+  @override
+  String get kmD9Score => 'D9 Compatibility';
+
+  @override
+  String get kmLagnaRelation => 'Lagna relationship';
+
+  @override
+  String get km7thLordRelation => '7th lord relationship';
+
+  @override
+  String get kmKarakasTitle => 'Soul & Spouse Karakas';
+
+  @override
+  String get kmAtmakaraka => 'Soul Planet';
+
+  @override
+  String get kmAkCompatibility => 'Soul-Signature Resonance';
+
+  @override
+  String get kmUlCompatibility => 'Spouse-Karaka Alignment';
+
+  @override
+  String get kmUlSigns => 'Upapada lords';
+
+  @override
+  String get kmChemistryTitle => 'Venus-Mars Chemistry';
+
+  @override
+  String get kmPhysicalChemistry => 'Physical Chemistry';
+
+  @override
+  String get kmEmotionalWarmth => 'Emotional Warmth';
+
+  @override
+  String get kmAestheticAlignment => 'Aesthetic Alignment';
+
+  @override
+  String get kmElementalSynthesis => 'Elemental Synthesis';
+
+  @override
+  String get kmHouseCrossTitle => '7th & 8th House Cross-Analysis';
+
+  @override
+  String get km78Compatibility => '7th-8th House Compatibility';
+
+  @override
+  String get km8thHouseSignature => 'Joint Longevity Signature';
+
+  @override
+  String get kmLongevityAlignment => 'Longevity Alignment';
+
+  @override
+  String get km7thLordFriendship => '7th-lord friendship';
+
+  @override
+  String get kmDomainsTitle => 'Domain-by-Domain Compatibility';
+
+  @override
+  String get kmConflictEngagement => 'Conflict Style';
+
+  @override
+  String get kmDashaTitle => 'Dasha & Transit Sync';
+
+  @override
+  String get kmDashaSync => 'Dasha Sync';
+
+  @override
+  String get kmTransitAlignment => 'Transit Alignment';
+
+  @override
+  String get kmTimingTitle => 'Marriage Timing';
+
+  @override
+  String get kmMarriageWindow => 'Marriage Window';
+
+  @override
+  String get kmEngagementWindow => 'Engagement Window';
+
+  @override
+  String get kmRecommendedRange => 'Recommended Timeframe';
+
+  @override
+  String get kmMuhurtaNotes => 'Muhurta Notes';
+
+  @override
+  String get kmRisksTitle => 'Risks To Address';
+
+  @override
+  String get kmConflictRisk => 'Conflict Risk';
+
+  @override
+  String get kmCommunicationRisk => 'Communication Risk';
+
+  @override
+  String get kmFinanceRisk => 'Finance Conflict Risk';
+
+  @override
+  String get kmFamilyDynamicsRisk => 'Family Dynamics Risk';
+
+  @override
+  String get kmMentalHealthRisk => 'Mental-Health Alignment Risk';
+
+  @override
+  String get kmStrengthsTitle => 'Top Compatibility Strengths';
+
+  @override
+  String get kmSharedGrowth => 'Shared Growth Potential';
+
+  @override
+  String get kmSharedCreative => 'Shared Creative Potential';
+
+  @override
+  String get kmJourneyTitle => 'Relationship Journey & Growth';
+
+  @override
+  String get kmCurrentPhase => 'Current phase';
+
+  @override
+  String get kmEarlyArc => 'Early Marriage';
+
+  @override
+  String get kmMiddleArc => 'Middle Marriage';
+
+  @override
+  String get kmMatureArc => 'Mature Marriage';
+
+  @override
+  String get kmElderArc => 'Elder Years';
+
+  @override
+  String get kmPeakPhase => 'Peak Companionship Phase';
+
+  @override
+  String get kmGrowthAreas => 'Growth Areas';
+
+  @override
+  String get kmCommProtocols => 'Communication Protocols';
+
+  @override
+  String get kmSharedPractices => 'Shared Practices';
+
+  @override
+  String get kmImprovementTitle => 'Core Theme & Improvement Plan';
+
+  @override
+  String get kmVerdictTitle => 'Final Verdict';
+
+  @override
+  String get kmRealizationPotential => 'Relationship Realization Potential';
+
+  @override
+  String get kmLayerAshtakoot => 'Ashtakoot';
+
+  @override
+  String get kmLayerD9 => 'D9 Navamsa';
+
+  @override
+  String get kmLayerMangalPapa => 'Mangal & Papasamya';
+
+  @override
+  String get kmLayerVenusMars => 'Venus-Mars';
+
+  @override
+  String get kmLayerDashaSync => 'Dasha Sync';
+
+  @override
+  String get kmLayerH7H8 => '7th-8th House Cross';
+
+  @override
+  String get kmLayerAkResonance => 'Atmakaraka Resonance';
+
+  @override
+  String get kmLayerDomains => 'Domain Dimensions';
+
+  @override
+  String get kmTopicAshtakoot => 'Our Ashtakoot score';
+
+  @override
+  String get kmTopicMangal => 'Mangal Dosha concerns';
+
+  @override
+  String get kmTopicD9 => 'Our marriage karma (D9)';
+
+  @override
+  String get kmTopicTiming => 'Best marriage timing';
+
+  @override
+  String get kmTopicRisks => 'Risks to prepare for';
+
+  @override
+  String get kmTopicGrowth => 'How we can grow together';
+
+  @override
+  String get kmTopicRemedies => 'Recommended remedies';
+
+  @override
+  String get kmTopicVerdict => 'Should we proceed with marriage';
+
+  @override
   String get pkSubtitle => 'AI-powered Vedic Past Life & Karma Report';
 
   @override
