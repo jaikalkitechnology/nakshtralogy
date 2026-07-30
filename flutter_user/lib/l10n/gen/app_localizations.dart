@@ -235,6 +235,684 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @bzSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Business Report'**
+  String get bzSubtitle;
+
+  /// No description provided for @bzTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business & Startup'**
+  String get bzTitle;
+
+  /// No description provided for @bzBusinessPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Potential'**
+  String get bzBusinessPotential;
+
+  /// No description provided for @bzEntrepreneurship.
+  ///
+  /// In en, this message translates to:
+  /// **'Entrepreneur'**
+  String get bzEntrepreneurship;
+
+  /// No description provided for @bzVenture.
+  ///
+  /// In en, this message translates to:
+  /// **'Venture Success'**
+  String get bzVenture;
+
+  /// No description provided for @bzWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth via Business'**
+  String get bzWealth;
+
+  /// No description provided for @bzRiskAppetite.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Appetite'**
+  String get bzRiskAppetite;
+
+  /// No description provided for @bzLongevity.
+  ///
+  /// In en, this message translates to:
+  /// **'Longevity'**
+  String get bzLongevity;
+
+  /// No description provided for @bzChipWealthMagnet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth magnet'**
+  String get bzChipWealthMagnet;
+
+  /// No description provided for @bzChipMoneyYoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Money yoga'**
+  String get bzChipMoneyYoga;
+
+  /// No description provided for @bzChipLeadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Leadership'**
+  String get bzChipLeadership;
+
+  /// No description provided for @bzChipPartnerFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Great partner fit'**
+  String get bzChipPartnerFit;
+
+  /// No description provided for @bzChipGains.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong gains'**
+  String get bzChipGains;
+
+  /// No description provided for @bzChipInvestor.
+  ///
+  /// In en, this message translates to:
+  /// **'Investor appeal'**
+  String get bzChipInvestor;
+
+  /// No description provided for @bzChipFounder.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder mindset'**
+  String get bzChipFounder;
+
+  /// No description provided for @bzWhatsWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s Working For You'**
+  String get bzWhatsWorking;
+
+  /// No description provided for @bzWhatsWorkingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Your business gifts'**
+  String get bzWhatsWorkingSub;
+
+  /// No description provided for @bzClassicYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic wealth combinations'**
+  String get bzClassicYogas;
+
+  /// No description provided for @bzFounderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Founder Type'**
+  String get bzFounderType;
+
+  /// No description provided for @bzSoulBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul & Business Purpose'**
+  String get bzSoulBusiness;
+
+  /// No description provided for @bzSoulPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Soul Driver'**
+  String get bzSoulPlanet;
+
+  /// No description provided for @bzBusinessPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Business Mind'**
+  String get bzBusinessPlanet;
+
+  /// No description provided for @bzDirectionStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction Clarity'**
+  String get bzDirectionStrength;
+
+  /// No description provided for @bzAlignStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul purpose and business direction are strongly aligned — building a venture feels natural and fulfilling.'**
+  String get bzAlignStrong;
+
+  /// No description provided for @bzAlignModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul purpose and business direction are moderately aligned — a venture works best when it reflects your deeper values.'**
+  String get bzAlignModerate;
+
+  /// No description provided for @bzAlignLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul purpose and business direction need conscious alignment — choose a venture that genuinely matches who you are.'**
+  String get bzAlignLow;
+
+  /// No description provided for @bzTechAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul planet (Atmakaraka)'**
+  String get bzTechAtmakaraka;
+
+  /// No description provided for @bzTechAmatyakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Business planet (Amatyakaraka)'**
+  String get bzTechAmatyakaraka;
+
+  /// No description provided for @bzTechDarakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner planet (Darakaraka)'**
+  String get bzTechDarakaraka;
+
+  /// No description provided for @bzFoundation.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Foundation'**
+  String get bzFoundation;
+
+  /// No description provided for @bzCareerHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Career House'**
+  String get bzCareerHouse;
+
+  /// No description provided for @bzGainsHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains House'**
+  String get bzGainsHouse;
+
+  /// No description provided for @bzLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Ruler'**
+  String get bzLord;
+
+  /// No description provided for @bzGainsPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains Potential'**
+  String get bzGainsPotential;
+
+  /// No description provided for @bzNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Power'**
+  String get bzNetwork;
+
+  /// No description provided for @bzRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Strength'**
+  String get bzRecovery;
+
+  /// No description provided for @bzVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Cross-Chart Verification'**
+  String get bzVerification;
+
+  /// No description provided for @bzD10.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Chart (D10)'**
+  String get bzD10;
+
+  /// No description provided for @bzD11.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains Chart (D11)'**
+  String get bzD11;
+
+  /// No description provided for @bzD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose Chart (D9)'**
+  String get bzD9;
+
+  /// No description provided for @bzD60.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma Chart (D60)'**
+  String get bzD60;
+
+  /// No description provided for @bzFounderSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder Skills'**
+  String get bzFounderSkills;
+
+  /// No description provided for @bzSkillStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Strategic Thinking'**
+  String get bzSkillStrategy;
+
+  /// No description provided for @bzSkillExecution.
+  ///
+  /// In en, this message translates to:
+  /// **'Execution'**
+  String get bzSkillExecution;
+
+  /// No description provided for @bzSkillPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'People Management'**
+  String get bzSkillPeople;
+
+  /// No description provided for @bzSkillSales.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales & Persuasion'**
+  String get bzSkillSales;
+
+  /// No description provided for @bzSkillFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Acumen'**
+  String get bzSkillFinance;
+
+  /// No description provided for @bzSkillOps.
+  ///
+  /// In en, this message translates to:
+  /// **'Operational Discipline'**
+  String get bzSkillOps;
+
+  /// No description provided for @bzTopSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Skill'**
+  String get bzTopSkill;
+
+  /// No description provided for @bzDomains.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Business Fields'**
+  String get bzDomains;
+
+  /// No description provided for @bzDomainsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked by natural fit'**
+  String get bzDomainsSub;
+
+  /// No description provided for @bzFit.
+  ///
+  /// In en, this message translates to:
+  /// **'FIT'**
+  String get bzFit;
+
+  /// No description provided for @bzBusinessStyleHdr.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Style'**
+  String get bzBusinessStyleHdr;
+
+  /// No description provided for @bzStyleService.
+  ///
+  /// In en, this message translates to:
+  /// **'Product vs Service'**
+  String get bzStyleService;
+
+  /// No description provided for @bzStyleMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Market Focus'**
+  String get bzStyleMarket;
+
+  /// No description provided for @bzStyleTech.
+  ///
+  /// In en, this message translates to:
+  /// **'Tech Approach'**
+  String get bzStyleTech;
+
+  /// No description provided for @bzStyleLeadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Leadership Style'**
+  String get bzStyleLeadership;
+
+  /// No description provided for @bzStylePartnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Solo or Partnership'**
+  String get bzStylePartnership;
+
+  /// No description provided for @bzWhereBuild.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach'**
+  String get bzWhereBuild;
+
+  /// No description provided for @bzExpansion.
+  ///
+  /// In en, this message translates to:
+  /// **'Expansion'**
+  String get bzExpansion;
+
+  /// No description provided for @bzSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup'**
+  String get bzSetup;
+
+  /// No description provided for @bzPartnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Partnership & Team'**
+  String get bzPartnership;
+
+  /// No description provided for @bzIdealCofounder.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal Co-founder'**
+  String get bzIdealCofounder;
+
+  /// No description provided for @bzPartnerViability.
+  ///
+  /// In en, this message translates to:
+  /// **'Partnership Fit'**
+  String get bzPartnerViability;
+
+  /// No description provided for @bzTeamBuilding.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Building'**
+  String get bzTeamBuilding;
+
+  /// No description provided for @bzCofounderFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Co-founder Fit'**
+  String get bzCofounderFit;
+
+  /// No description provided for @bzAdvisorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Advisor Network'**
+  String get bzAdvisorNetwork;
+
+  /// No description provided for @bzFunding.
+  ///
+  /// In en, this message translates to:
+  /// **'Funding & Money'**
+  String get bzFunding;
+
+  /// No description provided for @bzRecommendedPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Funding Path'**
+  String get bzRecommendedPath;
+
+  /// No description provided for @bzInvestorAttract.
+  ///
+  /// In en, this message translates to:
+  /// **'Investor Appeal'**
+  String get bzInvestorAttract;
+
+  /// No description provided for @bzFamilyBacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Support'**
+  String get bzFamilyBacking;
+
+  /// No description provided for @bzHybridViability.
+  ///
+  /// In en, this message translates to:
+  /// **'Job + Business Mix'**
+  String get bzHybridViability;
+
+  /// No description provided for @bzFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Job as Backup'**
+  String get bzFallback;
+
+  /// No description provided for @bzDebtStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Style'**
+  String get bzDebtStyle;
+
+  /// No description provided for @bzTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Timeline'**
+  String get bzTimeline;
+
+  /// No description provided for @bzCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Right Now'**
+  String get bzCurrentPhase;
+
+  /// No description provided for @bzLaunchWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch Window'**
+  String get bzLaunchWindow;
+
+  /// No description provided for @bzScaleWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Window'**
+  String get bzScaleWindow;
+
+  /// No description provided for @bzPeakAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Years'**
+  String get bzPeakAge;
+
+  /// No description provided for @bzChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges to Watch'**
+  String get bzChallenges;
+
+  /// No description provided for @bzRiskFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Loss'**
+  String get bzRiskFinancial;
+
+  /// No description provided for @bzRiskBurnout.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout'**
+  String get bzRiskBurnout;
+
+  /// No description provided for @bzRiskTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Conflict'**
+  String get bzRiskTeam;
+
+  /// No description provided for @bzRiskLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal / Regulatory'**
+  String get bzRiskLegal;
+
+  /// No description provided for @bzFinancialExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk of money loss from over-investment or poor cash-flow timing during a venture.'**
+  String get bzFinancialExp;
+
+  /// No description provided for @bzFinancialFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a cash reserve, start lean, and validate demand before scaling spend.'**
+  String get bzFinancialFix;
+
+  /// No description provided for @bzBurnoutExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Pushing too hard for too long can drain your energy and focus.'**
+  String get bzBurnoutExp;
+
+  /// No description provided for @bzBurnoutFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect rest, delegate early, and pace big pushes around supportive periods.'**
+  String get bzBurnoutFix;
+
+  /// No description provided for @bzTeamExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Friction with co-founders or staff can slow the business down.'**
+  String get bzTeamExp;
+
+  /// No description provided for @bzTeamFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Set clear roles and expectations in writing, and communicate often.'**
+  String get bzTeamFix;
+
+  /// No description provided for @bzLegalExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliance, contracts or regulatory issues could create obstacles.'**
+  String get bzLegalExp;
+
+  /// No description provided for @bzLegalFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Get contracts reviewed, keep paperwork clean, and consult professionals early.'**
+  String get bzLegalFix;
+
+  /// No description provided for @bzImprovementPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get bzImprovementPlan;
+
+  /// No description provided for @bzBestDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Direction'**
+  String get bzBestDirection;
+
+  /// No description provided for @bzStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Build Strategy'**
+  String get bzStrategy;
+
+  /// No description provided for @bzTopFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Fields'**
+  String get bzTopFields;
+
+  /// No description provided for @bzEmploymentPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Job vs Business'**
+  String get bzEmploymentPath;
+
+  /// No description provided for @bzRoadmap.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Roadmap'**
+  String get bzRoadmap;
+
+  /// No description provided for @bzRoadmapSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Your venture plan'**
+  String get bzRoadmapSub;
+
+  /// No description provided for @bzReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Reliability'**
+  String get bzReliability;
+
+  /// No description provided for @bzLayerBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get bzLayerBirth;
+
+  /// No description provided for @bzLayerNavamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get bzLayerNavamsa;
+
+  /// No description provided for @bzLayerDashamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Career (D10)'**
+  String get bzLayerDashamsa;
+
+  /// No description provided for @bzLayerLabhamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Gains (D11)'**
+  String get bzLayerLabhamsa;
+
+  /// No description provided for @bzLayerShashtiamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma (D60)'**
+  String get bzLayerShashtiamsa;
+
+  /// No description provided for @bzTopicStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Should I start now?'**
+  String get bzTopicStart;
+
+  /// No description provided for @bzTopicIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Best business idea'**
+  String get bzTopicIdea;
+
+  /// No description provided for @bzTopicPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding a co-founder'**
+  String get bzTopicPartner;
+
+  /// No description provided for @bzTopicFunding.
+  ///
+  /// In en, this message translates to:
+  /// **'How to fund it'**
+  String get bzTopicFunding;
+
+  /// No description provided for @bzTopicScale.
+  ///
+  /// In en, this message translates to:
+  /// **'When to scale'**
+  String get bzTopicScale;
+
+  /// No description provided for @bzTopicRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Managing risks'**
+  String get bzTopicRisk;
+
+  /// No description provided for @bzTopicJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Job vs business'**
+  String get bzTopicJob;
+
+  /// No description provided for @bzTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing'**
+  String get bzTopicTiming;
+
   /// No description provided for @crTitle.
   ///
   /// In en, this message translates to:

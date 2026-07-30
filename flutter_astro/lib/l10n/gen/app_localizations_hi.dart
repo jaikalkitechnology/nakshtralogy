@@ -4327,6 +4327,345 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get bzSubtitle => 'AI-संचालित वैदिक व्यापार रिपोर्ट';
+
+  @override
+  String get bzTitle => 'व्यापार और स्टार्टअप';
+
+  @override
+  String get bzBusinessPotential => 'व्यापार क्षमता';
+
+  @override
+  String get bzEntrepreneurship => 'उद्यमी';
+
+  @override
+  String get bzVenture => 'उद्यम सफलता';
+
+  @override
+  String get bzWealth => 'व्यापार से धन';
+
+  @override
+  String get bzRiskAppetite => 'जोखिम क्षमता';
+
+  @override
+  String get bzLongevity => 'दीर्घायु';
+
+  @override
+  String get bzChipWealthMagnet => 'धन चुंबक';
+
+  @override
+  String get bzChipMoneyYoga => 'धन योग';
+
+  @override
+  String get bzChipLeadership => 'नेतृत्व';
+
+  @override
+  String get bzChipPartnerFit => 'बेहतरीन साझेदार';
+
+  @override
+  String get bzChipGains => 'मजबूत लाभ';
+
+  @override
+  String get bzChipInvestor => 'निवेशक आकर्षण';
+
+  @override
+  String get bzChipFounder => 'संस्थापक सोच';
+
+  @override
+  String get bzWhatsWorking => 'आपके पक्ष में क्या है';
+
+  @override
+  String get bzWhatsWorkingSub => 'आपके व्यापारिक वरदान';
+
+  @override
+  String get bzClassicYogas => 'क्लासिक धन योग';
+
+  @override
+  String get bzFounderType => 'आपका संस्थापक प्रकार';
+
+  @override
+  String get bzSoulBusiness => 'आत्मा और व्यापार उद्देश्य';
+
+  @override
+  String get bzSoulPlanet => 'आपका आत्मा चालक';
+
+  @override
+  String get bzBusinessPlanet => 'आपका व्यापारिक मन';
+
+  @override
+  String get bzDirectionStrength => 'दिशा स्पष्टता';
+
+  @override
+  String get bzAlignStrong => 'Your soul purpose and business direction are strongly aligned — building a venture feels natural and fulfilling.';
+
+  @override
+  String get bzAlignModerate => 'Your soul purpose and business direction are moderately aligned — a venture works best when it reflects your deeper values.';
+
+  @override
+  String get bzAlignLow => 'Your soul purpose and business direction need conscious alignment — choose a venture that genuinely matches who you are.';
+
+  @override
+  String get bzTechAtmakaraka => 'आत्मा ग्रह (आत्मकारक)';
+
+  @override
+  String get bzTechAmatyakaraka => 'व्यापार ग्रह (अमात्यकारक)';
+
+  @override
+  String get bzTechDarakaraka => 'साझेदार ग्रह (दाराकारक)';
+
+  @override
+  String get bzFoundation => 'व्यापार आधार';
+
+  @override
+  String get bzCareerHouse => 'कर्म भाव';
+
+  @override
+  String get bzGainsHouse => 'लाभ भाव';
+
+  @override
+  String get bzLord => 'स्वामी';
+
+  @override
+  String get bzGainsPotential => 'लाभ क्षमता';
+
+  @override
+  String get bzNetwork => 'नेटवर्क शक्ति';
+
+  @override
+  String get bzRecovery => 'पुनर्प्राप्ति शक्ति';
+
+  @override
+  String get bzVerification => 'चार्ट सत्यापन';
+
+  @override
+  String get bzD10 => 'कर्म चार्ट (D10)';
+
+  @override
+  String get bzD11 => 'लाभ चार्ट (D11)';
+
+  @override
+  String get bzD9 => 'उद्देश्य चार्ट (D9)';
+
+  @override
+  String get bzD60 => 'कर्म चार्ट (D60)';
+
+  @override
+  String get bzFounderSkills => 'संस्थापक कौशल';
+
+  @override
+  String get bzSkillStrategy => 'रणनीतिक सोच';
+
+  @override
+  String get bzSkillExecution => 'क्रियान्वयन';
+
+  @override
+  String get bzSkillPeople => 'लोग प्रबंधन';
+
+  @override
+  String get bzSkillSales => 'बिक्री और प्रेरणा';
+
+  @override
+  String get bzSkillFinance => 'वित्तीय समझ';
+
+  @override
+  String get bzSkillOps => 'संचालन अनुशासन';
+
+  @override
+  String get bzTopSkill => 'शीर्ष कौशल';
+
+  @override
+  String get bzDomains => 'सर्वश्रेष्ठ व्यापार क्षेत्र';
+
+  @override
+  String get bzDomainsSub => 'स्वाभाविक अनुकूलता अनुसार';
+
+  @override
+  String get bzFit => 'अनुकूल';
+
+  @override
+  String get bzBusinessStyleHdr => 'व्यापार शैली';
+
+  @override
+  String get bzStyleService => 'उत्पाद बनाम सेवा';
+
+  @override
+  String get bzStyleMarket => 'बाज़ार फोकस';
+
+  @override
+  String get bzStyleTech => 'तकनीक दृष्टिकोण';
+
+  @override
+  String get bzStyleLeadership => 'नेतृत्व शैली';
+
+  @override
+  String get bzStylePartnership => 'अकेले या साझेदारी';
+
+  @override
+  String get bzWhereBuild => 'पहुंच';
+
+  @override
+  String get bzExpansion => 'विस्तार';
+
+  @override
+  String get bzSetup => 'स्थापना';
+
+  @override
+  String get bzPartnership => 'साझेदारी और टीम';
+
+  @override
+  String get bzIdealCofounder => 'आदर्श सह-संस्थापक';
+
+  @override
+  String get bzPartnerViability => 'साझेदारी अनुकूलता';
+
+  @override
+  String get bzTeamBuilding => 'टीम निर्माण';
+
+  @override
+  String get bzCofounderFit => 'सह-संस्थापक अनुकूलता';
+
+  @override
+  String get bzAdvisorNetwork => 'सलाहकार नेटवर्क';
+
+  @override
+  String get bzFunding => 'वित्तपोषण और धन';
+
+  @override
+  String get bzRecommendedPath => 'अनुशंसित वित्तपोषण मार्ग';
+
+  @override
+  String get bzInvestorAttract => 'निवेशक आकर्षण';
+
+  @override
+  String get bzFamilyBacking => 'पारिवारिक समर्थन';
+
+  @override
+  String get bzHybridViability => 'नौकरी + व्यापार मिश्रण';
+
+  @override
+  String get bzFallback => 'बैकअप के रूप में नौकरी';
+
+  @override
+  String get bzDebtStyle => 'ऋण शैली';
+
+  @override
+  String get bzTimeline => 'व्यापार समयरेखा';
+
+  @override
+  String get bzCurrentPhase => 'अभी';
+
+  @override
+  String get bzLaunchWindow => 'शुरुआत अवधि';
+
+  @override
+  String get bzScaleWindow => 'विकास अवधि';
+
+  @override
+  String get bzPeakAge => 'शिखर वर्ष';
+
+  @override
+  String get bzChallenges => 'ध्यान देने योग्य चुनौतियाँ';
+
+  @override
+  String get bzRiskFinancial => 'वित्तीय हानि';
+
+  @override
+  String get bzRiskBurnout => 'थकान';
+
+  @override
+  String get bzRiskTeam => 'टीम विवाद';
+
+  @override
+  String get bzRiskLegal => 'कानूनी / नियामक';
+
+  @override
+  String get bzFinancialExp => 'Risk of money loss from over-investment or poor cash-flow timing during a venture.';
+
+  @override
+  String get bzFinancialFix => 'Keep a cash reserve, start lean, and validate demand before scaling spend.';
+
+  @override
+  String get bzBurnoutExp => 'Pushing too hard for too long can drain your energy and focus.';
+
+  @override
+  String get bzBurnoutFix => 'Protect rest, delegate early, and pace big pushes around supportive periods.';
+
+  @override
+  String get bzTeamExp => 'Friction with co-founders or staff can slow the business down.';
+
+  @override
+  String get bzTeamFix => 'Set clear roles and expectations in writing, and communicate often.';
+
+  @override
+  String get bzLegalExp => 'Compliance, contracts or regulatory issues could create obstacles.';
+
+  @override
+  String get bzLegalFix => 'Get contracts reviewed, keep paperwork clean, and consult professionals early.';
+
+  @override
+  String get bzImprovementPlan => 'सुधार योजना';
+
+  @override
+  String get bzBestDirection => 'सर्वोत्तम दिशा';
+
+  @override
+  String get bzStrategy => 'निर्माण रणनीति';
+
+  @override
+  String get bzTopFields => 'शीर्ष क्षेत्र';
+
+  @override
+  String get bzEmploymentPath => 'नौकरी बनाम व्यापार';
+
+  @override
+  String get bzRoadmap => 'विकास रोडमैप';
+
+  @override
+  String get bzRoadmapSub => 'आपकी उद्यम योजना';
+
+  @override
+  String get bzReliability => 'भविष्यवाणी विश्वसनीयता';
+
+  @override
+  String get bzLayerBirth => 'जन्म चार्ट (D1)';
+
+  @override
+  String get bzLayerNavamsa => 'नवांश (D9)';
+
+  @override
+  String get bzLayerDashamsa => 'दशांश (D10)';
+
+  @override
+  String get bzLayerLabhamsa => 'लाभांश (D11)';
+
+  @override
+  String get bzLayerShashtiamsa => 'षष्ट्यांश (D60)';
+
+  @override
+  String get bzTopicStart => 'क्या मुझे अभी शुरू करना चाहिए?';
+
+  @override
+  String get bzTopicIdea => 'सर्वश्रेष्ठ व्यापार विचार';
+
+  @override
+  String get bzTopicPartner => 'सह-संस्थापक खोजना';
+
+  @override
+  String get bzTopicFunding => 'वित्तपोषण कैसे करें';
+
+  @override
+  String get bzTopicScale => 'कब विस्तार करें';
+
+  @override
+  String get bzTopicRisk => 'जोखिम प्रबंधन';
+
+  @override
+  String get bzTopicJob => 'नौकरी बनाम व्यापार';
+
+  @override
+  String get bzTopicTiming => 'सर्वोत्तम समय';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override
