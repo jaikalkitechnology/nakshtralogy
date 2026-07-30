@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 4 done · 15 pending · 0 blocked  (19 total)**
+**Progress: 5 done · 14 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`, `mr_source.json`
+**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`, `mr_source.json`, `lv_source.json`
 
 | # | Engine key | Label | Screen file (`…/screens/specialist/`) | Status | Commit | Locales | Notes |
 |---|------------|-------|----------------------------------------|--------|--------|---------|-------|
@@ -20,7 +20,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 1 | business | Business & Startup | `business_report_screen.dart` | ✅ DONE | 825e436 | en+hi+hinglish | 17-section AI business coach; backfill pending (bz_source.json). 2026-07-30. |
 | 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ✅ DONE | 99efd19 | en+hi+hinglish | 14-section AI wealth coach; converted from EngineReportBase shell to Career template; backfill pending (wl_source.json). 2026-07-30. |
 | 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ✅ DONE | 1a05f0b | en+hi+hinglish | 14-section AI relationship coach; converted from EngineReportBase shell to Career template (gender resolved server-side); backfill pending (mr_source.json). 2026-07-30. |
-| 4 | love | Love & Relationships | `love_report_screen.dart` | ⬜ PENDING | — | — | |
+| 4 | love | Love & Relationships | `love_report_screen.dart` | ✅ DONE | 1b061a5 | en+hi+hinglish | 14-section AI love coach; converted from EngineReportBase shell to Career template; backfill pending (lv_source.json). 2026-07-30. |
 | 5 | health | Health & Wellness | `health_report_screen.dart` | ⬜ PENDING | — | — | |
 | 6 | education | Education & Learning | `education_report_screen.dart` | ⬜ PENDING | — | — | |
 | 7 | property | Property & Assets | `property_report_screen.dart` | ⬜ PENDING | — | — | |
@@ -64,6 +64,13 @@ touch only if a redesigned screen requires it.
   to the standalone Career template (public constructor params unchanged; gender
   resolved server-side by the API). Both apps; 100 new `mr` keys
   (en+hi+hinglish). Commit `1a05f0b`, 2026-07-30. Backfill: `mr_source.json`.
+- **love** ✅ — 14-section AI love coach (snapshot hero, Your Love Style, Your
+  Love Planets, Path to Love love-vs-arranged, Ideal Partner, Your Love Story,
+  Commitment & Intimacy, Emotional Intelligence, Love Timing, Challenges, What
+  to Heal, Improvement Plan, Reliability, Discuss-with-AI). Converted from the
+  shared EngineReportBase shell to the standalone Career template (public
+  constructor params unchanged). Both apps; 85 new `lv` keys (en+hi+hinglish).
+  Commit `1b061a5`, 2026-07-30. Backfill: `lv_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
