@@ -12,13 +12,18 @@ continue to the next PENDING engine without asking. See the agent spec at
 
 **Progress: 7 done · 12 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`, `mr_source.json`, `lv_source.json`, `hw_source.json`, `ed_source.json`
+**Translations pending (10-locale backfill):** `bz_source.json`, `mr_source.json`, `lv_source.json`, `hw_source.json`, `ed_source.json`  (wl ✅ applied 11/11)
+
+> Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
+> which subagents treat as sensitive → permission prompts). Translation
+> intermediates (`*_tr_<locale>.json`) are written to the session scratchpad,
+> NOT the repo, and applied to the ARBs via `translate_apply.py`.
 
 | # | Engine key | Label | Screen file (`…/screens/specialist/`) | Status | Commit | Locales | Notes |
 |---|------------|-------|----------------------------------------|--------|--------|---------|-------|
 | 0 | career | Career & Job | `career_report_screen.dart` | ✅ DONE | 09a46bb / af31e93 | 11/11 | Template. Blank-below-hero fixed (dropped KFadeIn). |
 | 1 | business | Business & Startup | `business_report_screen.dart` | ✅ DONE | 825e436 | en+hi+hinglish | 17-section AI business coach; backfill pending (bz_source.json). 2026-07-30. |
-| 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ✅ DONE | 99efd19 | en+hi+hinglish | 14-section AI wealth coach; converted from EngineReportBase shell to Career template; backfill pending (wl_source.json). 2026-07-30. |
+| 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ✅ DONE | 99efd19 | 11/11 | 14-section AI wealth coach; converted from EngineReportBase shell to Career template. Translations applied. 2026-07-30. |
 | 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ✅ DONE | 1a05f0b | en+hi+hinglish | 14-section AI relationship coach; converted from EngineReportBase shell to Career template (gender resolved server-side); backfill pending (mr_source.json). 2026-07-30. |
 | 4 | love | Love & Relationships | `love_report_screen.dart` | ✅ DONE | 1b061a5 | en+hi+hinglish | 14-section AI love coach; converted from EngineReportBase shell to Career template; backfill pending (lv_source.json). 2026-07-30. |
 | 5 | health | Health & Wellness | `health_report_screen.dart` | ✅ DONE | 0a74df6 | en+hi+hinglish | 14-section AI health coach; converted from EngineReportBase shell to Career template; medical disclaimer surfaced verbatim; backfill pending (hw_source.json). 2026-07-30. |

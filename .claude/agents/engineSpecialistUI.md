@@ -57,7 +57,7 @@ engine).
 
 ## The status tracker
 
-`/.claude/tasks/engineSpecialistUI-STATUS.md` is your source of truth and
+`/engineSpecialistUI/STATUS.md` is your source of truth and
 worklog. On every run:
 - Read it first. Pick the first engine whose status is `PENDING`.
 - Set it to `IN-PROGRESS` (commit the tracker change with the screen, or right
@@ -164,7 +164,7 @@ off the rest:
 - Put `en` + `hi` + `hinglish` on every short label in `keys.json` (long
   sentences/templates may stay en-only).
 - After merging, write the translation source for the orchestrator to
-  `/.claude/tasks/pending_translations/<prefix>_source.json` as a flat
+  `/engineSpecialistUI/pending_translations/<prefix>_source.json` as a flat
   `{ "<key>": {"en": "...", "placeholders": [...]?}, ... }` covering ALL new
   keys, and append the file name to the tracker's "Translations pending" list.
 - Mark the engine `DONE (l10n: en+hi+hinglish; 10-locale backfill pending)`.
@@ -193,7 +193,7 @@ api method, url_launcher if used).
   backoff on network errors).
 - Write the `<prefix>_source.json` for the orchestrator to backfill the other
   8 locales (see step 5) — do not wait on it.
-- Update `/.claude/tasks/engineSpecialistUI-STATUS.md` (status → DONE, sha,
+- Update `/engineSpecialistUI/STATUS.md` (status → DONE, sha,
   date, `en+hi+hinglish; backfill pending`), commit+push the tracker.
 - **Immediately start the next PENDING engine.**
 
