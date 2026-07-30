@@ -31,7 +31,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 7 | property | Property & Assets | `property_report_screen.dart` | ✅ DONE | 2c6427b | en+hi+hinglish | Career-template redesign had already landed in flutter_user (14-section AI property coach) but was missing l10n + astro port; both closed now. Backfill pending (pr_source.json). 2026-07-30. |
 | 8 | legal | Legal & Disputes | `legal_report_screen.dart` | ✅ DONE | cbdb03a | en+hi+hinglish | 16-section AI legal coach; converted from EngineReportBase shell to Career template. Backfill pending (lg_source.json). 2026-07-30. |
 | 9 | mental_stress | Mental & Stress | `mental_report_screen.dart` | ✅ DONE | e8745a3 | en+hi+hinglish | 14-section reassuring AI wellness coach; converted to Career template; finished after agent stalled on a stale lock. Backfill pending (mn_source.json). 2026-07-30. |
-| 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 16-section AI debt coach; converted from EngineReportBase shell to Career template. Backfill pending (db_source.json). 2026-07-30. |
+| 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ✅ DONE | 440d648 | en+hi+hinglish | 16-section AI debt coach; converted from EngineReportBase shell to Career template. Backfill pending (db_source.json). 2026-07-30. |
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ⬜ PENDING | — | — | |
 | 12 | character | Character Analysis | `character_report_screen.dart` | ⬜ PENDING | — | — | |
 | 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ⬜ PENDING | — | — | |
