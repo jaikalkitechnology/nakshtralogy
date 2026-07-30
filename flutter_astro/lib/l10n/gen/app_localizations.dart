@@ -230,6 +230,642 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @dbSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Debt & Recovery Report'**
+  String get dbSubtitle;
+
+  /// No description provided for @dbTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt & Recovery'**
+  String get dbTitle;
+
+  /// No description provided for @dbSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Recovery Snapshot'**
+  String get dbSnapshotHeader;
+
+  /// No description provided for @dbHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re currently in a \'{phase}\' phase with a {personality} approach to money. Our analysis shows a {probability}% chance of becoming debt-free within about {years} years.'**
+  String dbHeroSummary(Object phase, Object personality, Object probability, Object years);
+
+  /// No description provided for @dbGaugeCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Capacity'**
+  String get dbGaugeCapacity;
+
+  /// No description provided for @dbGaugeProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Chance'**
+  String get dbGaugeProbability;
+
+  /// No description provided for @dbGaugeFreedomNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Freedom Now'**
+  String get dbGaugeFreedomNow;
+
+  /// No description provided for @dbGaugeDti.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Health'**
+  String get dbGaugeDti;
+
+  /// No description provided for @dbGaugeResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'Resilience'**
+  String get dbGaugeResilience;
+
+  /// No description provided for @dbChipCleanKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean debt karma'**
+  String get dbChipCleanKarma;
+
+  /// No description provided for @dbChipStrongRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong recovery capacity'**
+  String get dbChipStrongRecovery;
+
+  /// No description provided for @dbChipHealthyDti.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy debt-to-income'**
+  String get dbChipHealthyDti;
+
+  /// No description provided for @dbChipResilient.
+  ///
+  /// In en, this message translates to:
+  /// **'High psychological resilience'**
+  String get dbChipResilient;
+
+  /// No description provided for @dbChipCycleBreakable.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt cycle is breakable'**
+  String get dbChipCycleBreakable;
+
+  /// No description provided for @dbChipLowReindebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Low re-indebtedness risk'**
+  String get dbChipLowReindebt;
+
+  /// No description provided for @dbChipGoodNegotiator.
+  ///
+  /// In en, this message translates to:
+  /// **'Good negotiation odds'**
+  String get dbChipGoodNegotiator;
+
+  /// No description provided for @dbProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Debt Profile'**
+  String get dbProfileTitle;
+
+  /// No description provided for @dbPhaseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current phase'**
+  String get dbPhaseLabel;
+
+  /// No description provided for @dbPrimaryCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Main category'**
+  String get dbPrimaryCategoryLabel;
+
+  /// No description provided for @dbKarakaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Karaka'**
+  String get dbKarakaLabel;
+
+  /// No description provided for @dbProtectorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Creditor Protection'**
+  String get dbProtectorLabel;
+
+  /// No description provided for @dbSecondaryCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary categories'**
+  String get dbSecondaryCategories;
+
+  /// No description provided for @dbUnsecuredRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsecured-debt ratio'**
+  String get dbUnsecuredRatio;
+
+  /// No description provided for @dbKarakaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Debt Planets'**
+  String get dbKarakaTitle;
+
+  /// No description provided for @dbKarakaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How strongly each planet supports your debt recovery'**
+  String get dbKarakaSubtitle;
+
+  /// No description provided for @dbVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts (D6)'**
+  String get dbVerificationTitle;
+
+  /// No description provided for @dbD6Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D6 Debt & Enemies Chart'**
+  String get dbD6Label;
+
+  /// No description provided for @dbD6LordDignity.
+  ///
+  /// In en, this message translates to:
+  /// **'6th lord strength'**
+  String get dbD6LordDignity;
+
+  /// No description provided for @dbD6Severity.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt karma severity'**
+  String get dbD6Severity;
+
+  /// No description provided for @dbD6Multiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'D6 debt multiplier'**
+  String get dbD6Multiplier;
+
+  /// No description provided for @dbYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Yogas & Protections'**
+  String get dbYogasTitle;
+
+  /// No description provided for @dbPressureNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Pressure Now'**
+  String get dbPressureNow;
+
+  /// No description provided for @dbRecoveryBoost.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Boost'**
+  String get dbRecoveryBoost;
+
+  /// No description provided for @dbClearingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt-Clearing Yogas'**
+  String get dbClearingLabel;
+
+  /// No description provided for @dbCreatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt-Creating Yogas'**
+  String get dbCreatingLabel;
+
+  /// No description provided for @dbCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Categories Watch'**
+  String get dbCategoriesTitle;
+
+  /// No description provided for @dbCategoriesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which types of debt need the most attention'**
+  String get dbCategoriesSubtitle;
+
+  /// No description provided for @dbTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt-Free Timeline'**
+  String get dbTimelineTitle;
+
+  /// No description provided for @dbFreeWindowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DEBT-FREE WINDOW'**
+  String get dbFreeWindowLabel;
+
+  /// No description provided for @dbClearanceEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Full clearance estimate'**
+  String get dbClearanceEstimate;
+
+  /// No description provided for @dbPeakYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt-Peak Years'**
+  String get dbPeakYears;
+
+  /// No description provided for @dbClearanceYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearance Years'**
+  String get dbClearanceYears;
+
+  /// No description provided for @dbBorrowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Borrowing Guide'**
+  String get dbBorrowTitle;
+
+  /// No description provided for @dbLoanSuitability.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan Suitability'**
+  String get dbLoanSuitability;
+
+  /// No description provided for @dbBestLoanType.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Loan Type'**
+  String get dbBestLoanType;
+
+  /// No description provided for @dbLeverageCeiling.
+  ///
+  /// In en, this message translates to:
+  /// **'Leverage Ceiling'**
+  String get dbLeverageCeiling;
+
+  /// No description provided for @dbNegotiationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Negotiation Success'**
+  String get dbNegotiationSuccess;
+
+  /// No description provided for @dbCreditorAggression.
+  ///
+  /// In en, this message translates to:
+  /// **'Creditor Pressure Risk'**
+  String get dbCreditorAggression;
+
+  /// No description provided for @dbLegalEscalation.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Escalation Risk'**
+  String get dbLegalEscalation;
+
+  /// No description provided for @dbNegotiationApproach.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended approach'**
+  String get dbNegotiationApproach;
+
+  /// No description provided for @dbAvoidLoanTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan Types to Avoid'**
+  String get dbAvoidLoanTypes;
+
+  /// No description provided for @dbRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk & Vulnerability Watch'**
+  String get dbRiskTitle;
+
+  /// No description provided for @dbRiskDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Risk'**
+  String get dbRiskDefault;
+
+  /// No description provided for @dbRiskDefaultExp.
+  ///
+  /// In en, this message translates to:
+  /// **'The chance of missing a scheduled repayment badly enough to trigger default status with a lender.'**
+  String get dbRiskDefaultExp;
+
+  /// No description provided for @dbRiskDefaultFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Automate minimum payments and keep a 1-month buffer so a single missed income cycle doesn\'t cascade.'**
+  String get dbRiskDefaultFix;
+
+  /// No description provided for @dbRiskBankruptcy.
+  ///
+  /// In en, this message translates to:
+  /// **'Bankruptcy Risk'**
+  String get dbRiskBankruptcy;
+
+  /// No description provided for @dbRiskBankruptcyExp.
+  ///
+  /// In en, this message translates to:
+  /// **'The probability that debt load grows beyond what income and assets can realistically cover.'**
+  String get dbRiskBankruptcyExp;
+
+  /// No description provided for @dbRiskBankruptcyFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a professional debt review before taking any new loan or credit line.'**
+  String get dbRiskBankruptcyFix;
+
+  /// No description provided for @dbRiskAssetSeizure.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset-Seizure Risk'**
+  String get dbRiskAssetSeizure;
+
+  /// No description provided for @dbRiskAssetSeizureExp.
+  ///
+  /// In en, this message translates to:
+  /// **'The chance a secured loan default could lead to a lender repossessing collateral or property.'**
+  String get dbRiskAssetSeizureExp;
+
+  /// No description provided for @dbRiskAssetSeizureFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Prioritize secured-loan payments first, and refinance early if a payment gap looks likely.'**
+  String get dbRiskAssetSeizureFix;
+
+  /// No description provided for @dbRiskChronic.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Re-Debt Risk'**
+  String get dbRiskChronic;
+
+  /// No description provided for @dbRiskChronicExp.
+  ///
+  /// In en, this message translates to:
+  /// **'The tendency to fall back into debt again even after clearing the current load.'**
+  String get dbRiskChronicExp;
+
+  /// No description provided for @dbRiskChronicFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Build a dedicated emergency fund before increasing lifestyle spending after clearance.'**
+  String get dbRiskChronicFix;
+
+  /// No description provided for @dbReindebtTrigger.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-Debt Trigger'**
+  String get dbReindebtTrigger;
+
+  /// No description provided for @dbCycleBreakFeasibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle-Break Feasibility'**
+  String get dbCycleBreakFeasibility;
+
+  /// No description provided for @dbMajorRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Major Risks'**
+  String get dbMajorRisks;
+
+  /// No description provided for @dbHiddenSignals.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden Debt Signals'**
+  String get dbHiddenSignals;
+
+  /// No description provided for @dbCrisisTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crisis Preparedness'**
+  String get dbCrisisTitle;
+
+  /// No description provided for @dbCrisisSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to spot trouble early and respond calmly'**
+  String get dbCrisisSubtitle;
+
+  /// No description provided for @dbWarningSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Warning Signs'**
+  String get dbWarningSigns;
+
+  /// No description provided for @dbMitigationActions.
+  ///
+  /// In en, this message translates to:
+  /// **'What To Do About It'**
+  String get dbMitigationActions;
+
+  /// No description provided for @dbFamilyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family & Ancestral Debt'**
+  String get dbFamilyTitle;
+
+  /// No description provided for @dbInheritedDebtProb.
+  ///
+  /// In en, this message translates to:
+  /// **'Inherited-Debt Chance'**
+  String get dbInheritedDebtProb;
+
+  /// No description provided for @dbFamilyDrag.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Debt Drag'**
+  String get dbFamilyDrag;
+
+  /// No description provided for @dbInheritedSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely source'**
+  String get dbInheritedSource;
+
+  /// No description provided for @dbCoreBlockerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CORE BLOCKER'**
+  String get dbCoreBlockerLabel;
+
+  /// No description provided for @dbPsychologyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Money Psychology'**
+  String get dbPsychologyTitle;
+
+  /// No description provided for @dbResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'Resilience'**
+  String get dbResilience;
+
+  /// No description provided for @dbDiscipline.
+  ///
+  /// In en, this message translates to:
+  /// **'Discipline Under Pressure'**
+  String get dbDiscipline;
+
+  /// No description provided for @dbSocialSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Support'**
+  String get dbSocialSupport;
+
+  /// No description provided for @dbDepressionRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial-Stress Vulnerability'**
+  String get dbDepressionRisk;
+
+  /// No description provided for @dbStressTolerance.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress tolerance'**
+  String get dbStressTolerance;
+
+  /// No description provided for @dbRootCause.
+  ///
+  /// In en, this message translates to:
+  /// **'Behavioral Root Cause'**
+  String get dbRootCause;
+
+  /// No description provided for @dbImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get dbImprovementTitle;
+
+  /// No description provided for @dbRoadmapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Debt-Free Roadmap'**
+  String get dbRoadmapTitle;
+
+  /// No description provided for @dbRecoveryProbability.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Probability'**
+  String get dbRecoveryProbability;
+
+  /// No description provided for @dbClearanceTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearance Timeline'**
+  String get dbClearanceTimeline;
+
+  /// No description provided for @dbYears.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get dbYears;
+
+  /// No description provided for @dbDtiHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt-to-Income Health'**
+  String get dbDtiHealth;
+
+  /// No description provided for @dbDtiCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'DTI Category'**
+  String get dbDtiCategory;
+
+  /// No description provided for @dbBreakEvenMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Months to break-even'**
+  String get dbBreakEvenMonths;
+
+  /// No description provided for @dbIncomeAcceleration.
+  ///
+  /// In en, this message translates to:
+  /// **'Income growth needed'**
+  String get dbIncomeAcceleration;
+
+  /// No description provided for @dbLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get dbLayerD1;
+
+  /// No description provided for @dbLayerD6.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt & Enemies (D6)'**
+  String get dbLayerD6;
+
+  /// No description provided for @dbLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get dbLayerD9;
+
+  /// No description provided for @dbLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get dbLayerDasha;
+
+  /// No description provided for @dbLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transits'**
+  String get dbLayerTransit;
+
+  /// No description provided for @dbTopicRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'My recovery timeline'**
+  String get dbTopicRecovery;
+
+  /// No description provided for @dbTopicNegotiate.
+  ///
+  /// In en, this message translates to:
+  /// **'Negotiating with creditors'**
+  String get dbTopicNegotiate;
+
+  /// No description provided for @dbTopicBorrowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Is it safe to borrow now'**
+  String get dbTopicBorrowing;
+
+  /// No description provided for @dbTopicCrisis.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing for a crisis'**
+  String get dbTopicCrisis;
+
+  /// No description provided for @dbTopicAncestral.
+  ///
+  /// In en, this message translates to:
+  /// **'Ancestral debt karma'**
+  String get dbTopicAncestral;
+
+  /// No description provided for @dbTopicTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Best years to clear debt'**
+  String get dbTopicTimeline;
+
+  /// No description provided for @dbTopicPsychology.
+  ///
+  /// In en, this message translates to:
+  /// **'My money psychology'**
+  String get dbTopicPsychology;
+
+  /// No description provided for @dbTopicCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Which debts to prioritize'**
+  String get dbTopicCategories;
+
   /// No description provided for @mnSubtitle.
   ///
   /// In en, this message translates to:

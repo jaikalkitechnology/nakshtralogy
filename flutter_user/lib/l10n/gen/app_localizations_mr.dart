@@ -8161,6 +8161,326 @@ class AppLocalizationsMr extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड विसरलात?';
 
   @override
+  String get dbSubtitle => 'AI-powered Vedic Debt & Recovery Report';
+
+  @override
+  String get dbTitle => 'Debt & Recovery';
+
+  @override
+  String get dbSnapshotHeader => 'Debt Recovery Snapshot';
+
+  @override
+  String dbHeroSummary(Object phase, Object personality, Object probability, Object years) {
+    return 'You\'re currently in a \'${phase}\' phase with a ${personality} approach to money. Our analysis shows a ${probability}% chance of becoming debt-free within about ${years} years.';
+  }
+
+  @override
+  String get dbGaugeCapacity => 'Recovery Capacity';
+
+  @override
+  String get dbGaugeProbability => 'Recovery Chance';
+
+  @override
+  String get dbGaugeFreedomNow => 'Debt Freedom Now';
+
+  @override
+  String get dbGaugeDti => 'Income Health';
+
+  @override
+  String get dbGaugeResilience => 'Resilience';
+
+  @override
+  String get dbChipCleanKarma => 'Clean debt karma';
+
+  @override
+  String get dbChipStrongRecovery => 'Strong recovery capacity';
+
+  @override
+  String get dbChipHealthyDti => 'Healthy debt-to-income';
+
+  @override
+  String get dbChipResilient => 'High psychological resilience';
+
+  @override
+  String get dbChipCycleBreakable => 'Debt cycle is breakable';
+
+  @override
+  String get dbChipLowReindebt => 'Low re-indebtedness risk';
+
+  @override
+  String get dbChipGoodNegotiator => 'Good negotiation odds';
+
+  @override
+  String get dbProfileTitle => 'Your Debt Profile';
+
+  @override
+  String get dbPhaseLabel => 'Current phase';
+
+  @override
+  String get dbPrimaryCategoryLabel => 'Main category';
+
+  @override
+  String get dbKarakaLabel => 'Debt Karaka';
+
+  @override
+  String get dbProtectorLabel => 'Creditor Protection';
+
+  @override
+  String get dbSecondaryCategories => 'Secondary categories';
+
+  @override
+  String get dbUnsecuredRatio => 'Unsecured-debt ratio';
+
+  @override
+  String get dbKarakaTitle => 'Your Debt Planets';
+
+  @override
+  String get dbKarakaSubtitle => 'How strongly each planet supports your debt recovery';
+
+  @override
+  String get dbVerificationTitle => 'Verified Across Charts (D6)';
+
+  @override
+  String get dbD6Label => 'D6 Debt & Enemies Chart';
+
+  @override
+  String get dbD6LordDignity => '6th lord strength';
+
+  @override
+  String get dbD6Severity => 'Debt karma severity';
+
+  @override
+  String get dbD6Multiplier => 'D6 debt multiplier';
+
+  @override
+  String get dbYogasTitle => 'Debt Yogas & Protections';
+
+  @override
+  String get dbPressureNow => 'Debt Pressure Now';
+
+  @override
+  String get dbRecoveryBoost => 'Recovery Boost';
+
+  @override
+  String get dbClearingLabel => 'Debt-Clearing Yogas';
+
+  @override
+  String get dbCreatingLabel => 'Debt-Creating Yogas';
+
+  @override
+  String get dbCategoriesTitle => 'Debt Categories Watch';
+
+  @override
+  String get dbCategoriesSubtitle => 'Which types of debt need the most attention';
+
+  @override
+  String get dbTimelineTitle => 'Debt-Free Timeline';
+
+  @override
+  String get dbFreeWindowLabel => 'DEBT-FREE WINDOW';
+
+  @override
+  String get dbClearanceEstimate => 'Full clearance estimate';
+
+  @override
+  String get dbPeakYears => 'Debt-Peak Years';
+
+  @override
+  String get dbClearanceYears => 'Clearance Years';
+
+  @override
+  String get dbBorrowTitle => 'Smart Borrowing Guide';
+
+  @override
+  String get dbLoanSuitability => 'Loan Suitability';
+
+  @override
+  String get dbBestLoanType => 'Best Loan Type';
+
+  @override
+  String get dbLeverageCeiling => 'Leverage Ceiling';
+
+  @override
+  String get dbNegotiationSuccess => 'Negotiation Success';
+
+  @override
+  String get dbCreditorAggression => 'Creditor Pressure Risk';
+
+  @override
+  String get dbLegalEscalation => 'Legal Escalation Risk';
+
+  @override
+  String get dbNegotiationApproach => 'Recommended approach';
+
+  @override
+  String get dbAvoidLoanTypes => 'Loan Types to Avoid';
+
+  @override
+  String get dbRiskTitle => 'Risk & Vulnerability Watch';
+
+  @override
+  String get dbRiskDefault => 'Default Risk';
+
+  @override
+  String get dbRiskDefaultExp => 'The chance of missing a scheduled repayment badly enough to trigger default status with a lender.';
+
+  @override
+  String get dbRiskDefaultFix => 'Automate minimum payments and keep a 1-month buffer so a single missed income cycle doesn\'t cascade.';
+
+  @override
+  String get dbRiskBankruptcy => 'Bankruptcy Risk';
+
+  @override
+  String get dbRiskBankruptcyExp => 'The probability that debt load grows beyond what income and assets can realistically cover.';
+
+  @override
+  String get dbRiskBankruptcyFix => 'Get a professional debt review before taking any new loan or credit line.';
+
+  @override
+  String get dbRiskAssetSeizure => 'Asset-Seizure Risk';
+
+  @override
+  String get dbRiskAssetSeizureExp => 'The chance a secured loan default could lead to a lender repossessing collateral or property.';
+
+  @override
+  String get dbRiskAssetSeizureFix => 'Prioritize secured-loan payments first, and refinance early if a payment gap looks likely.';
+
+  @override
+  String get dbRiskChronic => 'Chronic Re-Debt Risk';
+
+  @override
+  String get dbRiskChronicExp => 'The tendency to fall back into debt again even after clearing the current load.';
+
+  @override
+  String get dbRiskChronicFix => 'Build a dedicated emergency fund before increasing lifestyle spending after clearance.';
+
+  @override
+  String get dbReindebtTrigger => 'Re-Debt Trigger';
+
+  @override
+  String get dbCycleBreakFeasibility => 'Cycle-Break Feasibility';
+
+  @override
+  String get dbMajorRisks => 'Major Risks';
+
+  @override
+  String get dbHiddenSignals => 'Hidden Debt Signals';
+
+  @override
+  String get dbCrisisTitle => 'Crisis Preparedness';
+
+  @override
+  String get dbCrisisSubtitle => 'How to spot trouble early and respond calmly';
+
+  @override
+  String get dbWarningSigns => 'Early Warning Signs';
+
+  @override
+  String get dbMitigationActions => 'What To Do About It';
+
+  @override
+  String get dbFamilyTitle => 'Family & Ancestral Debt';
+
+  @override
+  String get dbInheritedDebtProb => 'Inherited-Debt Chance';
+
+  @override
+  String get dbFamilyDrag => 'Family Debt Drag';
+
+  @override
+  String get dbInheritedSource => 'Likely source';
+
+  @override
+  String get dbCoreBlockerLabel => 'CORE BLOCKER';
+
+  @override
+  String get dbPsychologyTitle => 'Your Money Psychology';
+
+  @override
+  String get dbResilience => 'Resilience';
+
+  @override
+  String get dbDiscipline => 'Discipline Under Pressure';
+
+  @override
+  String get dbSocialSupport => 'Social Support';
+
+  @override
+  String get dbDepressionRisk => 'Financial-Stress Vulnerability';
+
+  @override
+  String get dbStressTolerance => 'Stress tolerance';
+
+  @override
+  String get dbRootCause => 'Behavioral Root Cause';
+
+  @override
+  String get dbImprovementTitle => 'Improvement Plan';
+
+  @override
+  String get dbRoadmapTitle => 'Your Debt-Free Roadmap';
+
+  @override
+  String get dbRecoveryProbability => 'Recovery Probability';
+
+  @override
+  String get dbClearanceTimeline => 'Clearance Timeline';
+
+  @override
+  String get dbYears => 'years';
+
+  @override
+  String get dbDtiHealth => 'Debt-to-Income Health';
+
+  @override
+  String get dbDtiCategory => 'DTI Category';
+
+  @override
+  String get dbBreakEvenMonths => 'Months to break-even';
+
+  @override
+  String get dbIncomeAcceleration => 'Income growth needed';
+
+  @override
+  String get dbLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get dbLayerD6 => 'Debt & Enemies (D6)';
+
+  @override
+  String get dbLayerD9 => 'Navamsa (D9)';
+
+  @override
+  String get dbLayerDasha => 'Dasha Timing';
+
+  @override
+  String get dbLayerTransit => 'Current Transits';
+
+  @override
+  String get dbTopicRecovery => 'My recovery timeline';
+
+  @override
+  String get dbTopicNegotiate => 'Negotiating with creditors';
+
+  @override
+  String get dbTopicBorrowing => 'Is it safe to borrow now';
+
+  @override
+  String get dbTopicCrisis => 'Preparing for a crisis';
+
+  @override
+  String get dbTopicAncestral => 'Ancestral debt karma';
+
+  @override
+  String get dbTopicTimeline => 'Best years to clear debt';
+
+  @override
+  String get dbTopicPsychology => 'My money psychology';
+
+  @override
+  String get dbTopicCategories => 'Which debts to prioritize';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक पाठवा';
 
   @override

@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 10 done · 9 pending · 0 blocked  (19 total)**
+**Progress: 11 done · 8 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -31,7 +31,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 7 | property | Property & Assets | `property_report_screen.dart` | ✅ DONE | 2c6427b | en+hi+hinglish | Career-template redesign had already landed in flutter_user (14-section AI property coach) but was missing l10n + astro port; both closed now. Backfill pending (pr_source.json). 2026-07-30. |
 | 8 | legal | Legal & Disputes | `legal_report_screen.dart` | ✅ DONE | cbdb03a | en+hi+hinglish | 16-section AI legal coach; converted from EngineReportBase shell to Career template. Backfill pending (lg_source.json). 2026-07-30. |
 | 9 | mental_stress | Mental & Stress | `mental_report_screen.dart` | ✅ DONE | e8745a3 | en+hi+hinglish | 14-section reassuring AI wellness coach; converted to Career template; finished after agent stalled on a stale lock. Backfill pending (mn_source.json). 2026-07-30. |
-| 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ⬜ PENDING | — | — | |
+| 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 16-section AI debt coach; converted from EngineReportBase shell to Career template. Backfill pending (db_source.json). 2026-07-30. |
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ⬜ PENDING | — | — | |
 | 12 | character | Character Analysis | `character_report_screen.dart` | ⬜ PENDING | — | — | |
 | 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ⬜ PENDING | — | — | |
@@ -117,6 +117,20 @@ touch only if a redesigned screen requires it.
   cross-checked against a live `legal_dispute_specialist_engine.analyze()`
   dump. Both apps; 108 new `lg` keys (en+hi+hinglish). Commit `cbdb03a`,
   2026-07-30. Backfill: `lg_source.json`.
+
+- **debt_recovery** ✅ — 16-section AI debt coach (snapshot hero blending recovery
+  capacity/probability/debt-freedom-now/DTI-health/resilience into one overall
+  ring, Debt Profile karma/personality/phase, Your Debt Planets karaka table,
+  D6 Verification, Debt Yogas & Protections creating-vs-clearing, Debt
+  Categories Watch, Debt-Free Timeline yearly trend + free window + peak/
+  clearance years, Smart Borrowing Guide, Risk & Vulnerability Watch, Crisis
+  Preparedness warning signs + mitigation actions, Family & Ancestral Debt +
+  core blocker, Money Psychology, Improvement Plan, Debt-Free Roadmap verdict,
+  Reliability, Discuss-with-AI). Converted from the shared EngineReportBase
+  shell to the standalone Career template (public constructor params
+  unchanged). All engine field names cross-checked against a live
+  `debt_recovery_specialist_engine.analyze()` dump. Both apps; 106 new `db`
+  keys (en+hi+hinglish). Backfill: `db_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first

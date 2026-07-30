@@ -7036,6 +7036,326 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get dbSubtitle => 'AI-संचालित वैदिक ऋण एवं वसूली रिपोर्ट';
+
+  @override
+  String get dbTitle => 'ऋण एवं वसूली';
+
+  @override
+  String get dbSnapshotHeader => 'ऋण वसूली स्नैपशॉट';
+
+  @override
+  String dbHeroSummary(Object phase, Object personality, Object probability, Object years) {
+    return 'You\'re currently in a \'${phase}\' phase with a ${personality} approach to money. Our analysis shows a ${probability}% chance of becoming debt-free within about ${years} years.';
+  }
+
+  @override
+  String get dbGaugeCapacity => 'वसूली क्षमता';
+
+  @override
+  String get dbGaugeProbability => 'वसूली संभावना';
+
+  @override
+  String get dbGaugeFreedomNow => 'वर्तमान ऋण-मुक्ति';
+
+  @override
+  String get dbGaugeDti => 'आय स्वास्थ्य';
+
+  @override
+  String get dbGaugeResilience => 'लचीलापन';
+
+  @override
+  String get dbChipCleanKarma => 'स्वच्छ ऋण कर्म';
+
+  @override
+  String get dbChipStrongRecovery => 'मजबूत वसूली क्षमता';
+
+  @override
+  String get dbChipHealthyDti => 'स्वस्थ ऋण-आय अनुपात';
+
+  @override
+  String get dbChipResilient => 'उच्च मानसिक लचीलापन';
+
+  @override
+  String get dbChipCycleBreakable => 'ऋण-चक्र तोड़ा जा सकता है';
+
+  @override
+  String get dbChipLowReindebt => 'पुनः-ऋणग्रस्तता का कम जोखिम';
+
+  @override
+  String get dbChipGoodNegotiator => 'अच्छी बातचीत संभावना';
+
+  @override
+  String get dbProfileTitle => 'आपकी ऋण प्रोफ़ाइल';
+
+  @override
+  String get dbPhaseLabel => 'वर्तमान चरण';
+
+  @override
+  String get dbPrimaryCategoryLabel => 'मुख्य श्रेणी';
+
+  @override
+  String get dbKarakaLabel => 'ऋण कारक';
+
+  @override
+  String get dbProtectorLabel => 'ऋणदाता सुरक्षा';
+
+  @override
+  String get dbSecondaryCategories => 'अन्य श्रेणियाँ';
+
+  @override
+  String get dbUnsecuredRatio => 'असुरक्षित-ऋण अनुपात';
+
+  @override
+  String get dbKarakaTitle => 'आपके ऋण ग्रह';
+
+  @override
+  String get dbKarakaSubtitle => 'प्रत्येक ग्रह आपकी ऋण वसूली में कितना सहयोग करता है';
+
+  @override
+  String get dbVerificationTitle => 'चार्ट में सत्यापित (D6)';
+
+  @override
+  String get dbD6Label => 'D6 ऋण एवं शत्रु चार्ट';
+
+  @override
+  String get dbD6LordDignity => 'छठे भाव स्वामी की स्थिति';
+
+  @override
+  String get dbD6Severity => 'ऋण कर्म तीव्रता';
+
+  @override
+  String get dbD6Multiplier => 'D6 ऋण गुणक';
+
+  @override
+  String get dbYogasTitle => 'ऋण योग एवं सुरक्षा';
+
+  @override
+  String get dbPressureNow => 'वर्तमान ऋण दबाव';
+
+  @override
+  String get dbRecoveryBoost => 'वसूली बढ़ावा';
+
+  @override
+  String get dbClearingLabel => 'ऋण-मुक्ति योग';
+
+  @override
+  String get dbCreatingLabel => 'ऋण-निर्माण योग';
+
+  @override
+  String get dbCategoriesTitle => 'ऋण श्रेणी निगरानी';
+
+  @override
+  String get dbCategoriesSubtitle => 'किस प्रकार के ऋण पर सबसे अधिक ध्यान चाहिए';
+
+  @override
+  String get dbTimelineTitle => 'ऋण-मुक्ति समयरेखा';
+
+  @override
+  String get dbFreeWindowLabel => 'ऋण-मुक्ति अवधि';
+
+  @override
+  String get dbClearanceEstimate => 'पूर्ण निपटान अनुमान';
+
+  @override
+  String get dbPeakYears => 'अधिक ऋण-दबाव वर्ष';
+
+  @override
+  String get dbClearanceYears => 'निपटान वर्ष';
+
+  @override
+  String get dbBorrowTitle => 'समझदार उधार मार्गदर्शिका';
+
+  @override
+  String get dbLoanSuitability => 'ऋण उपयुक्तता';
+
+  @override
+  String get dbBestLoanType => 'सर्वोत्तम ऋण प्रकार';
+
+  @override
+  String get dbLeverageCeiling => 'अधिकतम उधार सीमा';
+
+  @override
+  String get dbNegotiationSuccess => 'बातचीत सफलता';
+
+  @override
+  String get dbCreditorAggression => 'ऋणदाता दबाव जोखिम';
+
+  @override
+  String get dbLegalEscalation => 'कानूनी वृद्धि जोखिम';
+
+  @override
+  String get dbNegotiationApproach => 'अनुशंसित तरीका';
+
+  @override
+  String get dbAvoidLoanTypes => 'बचने योग्य ऋण प्रकार';
+
+  @override
+  String get dbRiskTitle => 'जोखिम एवं संवेदनशीलता निगरानी';
+
+  @override
+  String get dbRiskDefault => 'डिफ़ॉल्ट जोखिम';
+
+  @override
+  String get dbRiskDefaultExp => 'किसी ऋणदाता के प्रति भुगतान चूकने और डिफ़ॉल्ट स्थिति में जाने की संभावना।';
+
+  @override
+  String get dbRiskDefaultFix => 'न्यूनतम भुगतान स्वतः करें और एक महीने का बफर रखें ताकि आय में देरी होने पर भी चूक न हो।';
+
+  @override
+  String get dbRiskBankruptcy => 'दिवालियापन जोखिम';
+
+  @override
+  String get dbRiskBankruptcyExp => 'ऋण का बोझ आय और संपत्ति से अधिक बढ़ने की संभावना।';
+
+  @override
+  String get dbRiskBankruptcyFix => 'कोई नया ऋण लेने से पहले पेशेवर ऋण समीक्षा अवश्य कराएं।';
+
+  @override
+  String get dbRiskAssetSeizure => 'संपत्ति जब्ती जोखिम';
+
+  @override
+  String get dbRiskAssetSeizureExp => 'सुरक्षित ऋण में चूक से संपत्ति जब्त होने की संभावना।';
+
+  @override
+  String get dbRiskAssetSeizureFix => 'सुरक्षित ऋण के भुगतान को प्राथमिकता दें और भुगतान में अंतर दिखने पर जल्द पुनर्वित्त कराएं।';
+
+  @override
+  String get dbRiskChronic => 'बार-बार ऋणग्रस्तता का जोखिम';
+
+  @override
+  String get dbRiskChronicExp => 'वर्तमान ऋण चुकाने के बाद भी दोबारा ऋणग्रस्त होने की प्रवृत्ति।';
+
+  @override
+  String get dbRiskChronicFix => 'ऋण चुकाने के बाद खर्च बढ़ाने से पहले एक आपातकालीन कोष अवश्य बनाएं।';
+
+  @override
+  String get dbReindebtTrigger => 'पुनः-ऋण ट्रिगर';
+
+  @override
+  String get dbCycleBreakFeasibility => 'चक्र-भंग व्यवहार्यता';
+
+  @override
+  String get dbMajorRisks => 'प्रमुख जोखिम';
+
+  @override
+  String get dbHiddenSignals => 'छिपे हुए ऋण संकेत';
+
+  @override
+  String get dbCrisisTitle => 'संकट तैयारी';
+
+  @override
+  String get dbCrisisSubtitle => 'समस्या को समय रहते पहचानें और शांति से प्रतिक्रिया दें';
+
+  @override
+  String get dbWarningSigns => 'प्रारंभिक चेतावनी संकेत';
+
+  @override
+  String get dbMitigationActions => 'क्या करें';
+
+  @override
+  String get dbFamilyTitle => 'पारिवारिक एवं पैतृक ऋण';
+
+  @override
+  String get dbInheritedDebtProb => 'विरासत में ऋण की संभावना';
+
+  @override
+  String get dbFamilyDrag => 'पारिवारिक ऋण खिंचाव';
+
+  @override
+  String get dbInheritedSource => 'संभावित स्रोत';
+
+  @override
+  String get dbCoreBlockerLabel => 'मुख्य बाधा';
+
+  @override
+  String get dbPsychologyTitle => 'आपकी धन मनोविज्ञान';
+
+  @override
+  String get dbResilience => 'लचीलापन';
+
+  @override
+  String get dbDiscipline => 'दबाव में अनुशासन';
+
+  @override
+  String get dbSocialSupport => 'सामाजिक सहयोग';
+
+  @override
+  String get dbDepressionRisk => 'वित्तीय तनाव संवेदनशीलता';
+
+  @override
+  String get dbStressTolerance => 'तनाव सहनशीलता';
+
+  @override
+  String get dbRootCause => 'व्यवहारिक मूल कारण';
+
+  @override
+  String get dbImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get dbRoadmapTitle => 'आपकी ऋण-मुक्ति योजना';
+
+  @override
+  String get dbRecoveryProbability => 'वसूली संभावना';
+
+  @override
+  String get dbClearanceTimeline => 'निपटान समयरेखा';
+
+  @override
+  String get dbYears => 'वर्ष';
+
+  @override
+  String get dbDtiHealth => 'ऋण-आय स्वास्थ्य';
+
+  @override
+  String get dbDtiCategory => 'DTI श्रेणी';
+
+  @override
+  String get dbBreakEvenMonths => 'संतुलन तक महीने';
+
+  @override
+  String get dbIncomeAcceleration => 'आवश्यक आय वृद्धि';
+
+  @override
+  String get dbLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get dbLayerD6 => 'ऋण एवं शत्रु (D6)';
+
+  @override
+  String get dbLayerD9 => 'नवांश (D9)';
+
+  @override
+  String get dbLayerDasha => 'दशा समय';
+
+  @override
+  String get dbLayerTransit => 'वर्तमान गोचर';
+
+  @override
+  String get dbTopicRecovery => 'मेरी वसूली समयरेखा';
+
+  @override
+  String get dbTopicNegotiate => 'ऋणदाताओं से बातचीत';
+
+  @override
+  String get dbTopicBorrowing => 'क्या अभी उधार लेना सुरक्षित है';
+
+  @override
+  String get dbTopicCrisis => 'संकट की तैयारी';
+
+  @override
+  String get dbTopicAncestral => 'पैतृक ऋण कर्म';
+
+  @override
+  String get dbTopicTimeline => 'ऋण चुकाने के लिए सर्वोत्तम वर्ष';
+
+  @override
+  String get dbTopicPsychology => 'मेरा धन मनोविज्ञान';
+
+  @override
+  String get dbTopicCategories => 'किस ऋण को प्राथमिकता दें';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override
