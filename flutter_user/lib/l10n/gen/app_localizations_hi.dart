@@ -8161,6 +8161,359 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get pkSubtitle => 'AI-संचालित वैदिक पूर्वजन्म एवं कर्म रिपोर्ट';
+
+  @override
+  String get pkTitle => 'पूर्वजन्म एवं कर्म';
+
+  @override
+  String get pkSnapshotHeader => 'पूर्वजन्म स्नैपशॉट';
+
+  @override
+  String pkHeroSummary(Object theme, Object relation, Object strategy) {
+    return 'Your chart shows a \'${theme}\' past-life signature, currently ${relation} into this life. Recommended path: ${strategy}.';
+  }
+
+  @override
+  String get pkGaugeSignature => 'हस्ताक्षर शक्ति';
+
+  @override
+  String get pkGaugeMasteryPreserved => 'निपुणता संरक्षित';
+
+  @override
+  String get pkGaugeClearingProgress => 'कर्म निपटान';
+
+  @override
+  String get pkGaugeMaturity => 'पूर्वजन्म परिपक्वता';
+
+  @override
+  String get pkGaugeMemoryAccess => 'स्मृति पहुंच';
+
+  @override
+  String get pkChipGoodProgress => 'अच्छी कर्म-निपटान प्रगति';
+
+  @override
+  String get pkChipLowDebt => 'कम कर्म ऋण';
+
+  @override
+  String get pkChipMatureSoul => 'परिपक्व आत्मा हस्ताक्षर';
+
+  @override
+  String get pkChipGiftedPast => 'कुंडली में पूर्वजन्म उपहार';
+
+  @override
+  String get pkChipAccomplished => 'सिद्ध पूर्वजन्म';
+
+  @override
+  String get pkChipMasteryPreserved => 'मजबूत निपुणता आगे बढ़ी';
+
+  @override
+  String get pkKetuTitle => 'केतु — आपकी पूर्व निपुणता';
+
+  @override
+  String get pkKetuSubtitle => 'वे कौशल जो आपकी आत्मा पहले से निपुण है';
+
+  @override
+  String get pkMasteryStrength => 'निपुणता शक्ति';
+
+  @override
+  String get pkSkillsCarried => 'आगे बढ़े कौशल';
+
+  @override
+  String get pkInstincts => 'सहज क्षमताएं';
+
+  @override
+  String get pkKetuDignity => 'केतु स्थिति';
+
+  @override
+  String get pkRahuTitle => 'राहु — आपकी आत्मा की वृद्धि सीमा';
+
+  @override
+  String get pkRahuSubtitle => 'आपकी आत्मा यहां क्या पूरा करने आई है';
+
+  @override
+  String get pkUnmetDesires => 'अधूरी इच्छाएं';
+
+  @override
+  String get pkProfileTitle => 'आपकी पूर्वजन्म प्रोफ़ाइल';
+
+  @override
+  String get pkProfession => 'संभावित पेशा';
+
+  @override
+  String get pkSocialStanding => 'सामाजिक स्थिति';
+
+  @override
+  String get pkRegion => 'संभावित क्षेत्र';
+
+  @override
+  String get pkCulturalArchetype => 'सांस्कृतिक आदर्श';
+
+  @override
+  String get pkAccomplishment => 'उपलब्धि स्तर';
+
+  @override
+  String get pkAuthority => 'अधिकार स्तर';
+
+  @override
+  String get pkFamilyRole => 'पारिवारिक भूमिका';
+
+  @override
+  String get pkSecondaryProfession => 'द्वितीयक पेशा';
+
+  @override
+  String get pkClimateAffinity => 'जलवायु झुकाव';
+
+  @override
+  String get pkForeignResidence => 'विदेश-निवास कर्म';
+
+  @override
+  String get pkRelationshipsTitle => 'आगे बढ़े पूर्व रिश्ते';
+
+  @override
+  String get pkSpouseConnection => 'जीवनसाथी पुनर्मिलन';
+
+  @override
+  String get pkChildrenConnection => 'संतान पुनर्मिलन';
+
+  @override
+  String get pkCarriedRelationTypes => 'रिश्ते पैटर्न';
+
+  @override
+  String get pkPartnerArchetype => 'पूर्वजन्म साथी आदर्श';
+
+  @override
+  String get pkDarakaraka => 'जीवनसाथी कारक';
+
+  @override
+  String get pkParentsKarma => 'माता-पिता कर्म पैटर्न';
+
+  @override
+  String get pkSiblingKarma => 'भाई-बहन कर्म पैटर्न';
+
+  @override
+  String get pkSpiritualTitle => 'तब आपका आध्यात्मिक जीवन';
+
+  @override
+  String get pkSpiritualLevel => 'आध्यात्मिक स्तर';
+
+  @override
+  String get pkPracticeSignature => 'अभ्यास शैली';
+
+  @override
+  String get pkMeditativeCapacity => 'ध्यान क्षमता';
+
+  @override
+  String get pkDevotionalPractice => 'भक्ति अभ्यास';
+
+  @override
+  String get pkYogicAttainment => 'योग सिद्धि';
+
+  @override
+  String get pkMokshaProximity => 'मोक्ष निकटता';
+
+  @override
+  String get pkKarmicDebtsTitle => 'कर्म ऋण एवं तब की संपत्ति';
+
+  @override
+  String get pkTotalKarmicDebt => 'कुल कर्म ऋण';
+
+  @override
+  String get pkPrimaryDebtType => 'मुख्य ऋण प्रकार';
+
+  @override
+  String get pkRelationshipDebt => 'रिश्ते ऋण';
+
+  @override
+  String get pkFinancialDebt => 'वित्तीय ऋण';
+
+  @override
+  String get pkServiceDebt => 'सेवा ऋण';
+
+  @override
+  String get pkDharmicDebt => 'धार्मिक ऋण';
+
+  @override
+  String get pkPitruKarma => 'पितृ कर्म';
+
+  @override
+  String get pkMatruKarma => 'मातृ कर्म';
+
+  @override
+  String get pkWealthLevel => 'तब संपत्ति स्तर';
+
+  @override
+  String get pkWealthKarmaCarried => 'संपत्ति कर्म आगे बढ़ा';
+
+  @override
+  String get pkResourcePattern => 'संसाधन प्रबंधन';
+
+  @override
+  String get pkGainSource => 'प्राप्ति स्रोत';
+
+  @override
+  String get pkEchoesTitle => 'इस जीवन में गूंज';
+
+  @override
+  String get pkOnRelationships => 'रिश्तों पर';
+
+  @override
+  String get pkOnCareer => 'करियर पर';
+
+  @override
+  String get pkOnHealth => 'स्वास्थ्य पर';
+
+  @override
+  String get pkOnSpirituality => 'आध्यात्मिकता पर';
+
+  @override
+  String get pkDominantArea => 'सबसे मजबूत प्रभाव';
+
+  @override
+  String get pkAttractions => 'स्वाभाविक आकर्षण';
+
+  @override
+  String get pkAversions => 'स्वाभाविक विकर्षण';
+
+  @override
+  String get pkUnexplainedFears => 'अस्पष्टीकृत भय';
+
+  @override
+  String get pkMagneticPulls => 'चुंबकीय आकर्षण';
+
+  @override
+  String get pkResolutionTitle => 'कर्म समाधान एवं पूर्णता';
+
+  @override
+  String get pkPrimaryPathway => 'मुख्य मार्ग';
+
+  @override
+  String get pkSecondaryPathway => 'द्वितीयक मार्ग';
+
+  @override
+  String get pkClearingProgress => 'निपटान प्रगति';
+
+  @override
+  String get pkRemainingWork => 'शेष कार्य';
+
+  @override
+  String get pkSettlementTimeline => 'निपटान समयरेखा';
+
+  @override
+  String get pkAccelerationPractices => 'समाधान तेज करने वाले अभ्यास';
+
+  @override
+  String get pkPriorityAreas => 'प्राथमिकता क्षेत्र';
+
+  @override
+  String get pkVerificationTitle => 'चार्ट में सत्यापित (D60)';
+
+  @override
+  String get pkD60Label => 'D60 पूर्वजन्म युग';
+
+  @override
+  String get pkD60Ketu => 'D60 केतु स्थिति';
+
+  @override
+  String get pkD60Standing => 'समग्र स्थिति';
+
+  @override
+  String get pkMemoryTitle => 'स्मृति एवं अंतर्ज्ञान';
+
+  @override
+  String get pkMemoryAccess => 'स्मृति पहुंच';
+
+  @override
+  String get pkRegressionFit => 'प्रतिगमन-थेरेपी उपयुक्तता';
+
+  @override
+  String get pkDreamVisits => 'स्वप्न दर्शन';
+
+  @override
+  String get pkDejaVuFrequency => 'देजा वू आवृत्ति';
+
+  @override
+  String get pkSpontaneousRemembrance => 'स्वतःस्फूर्त स्मरण';
+
+  @override
+  String get pkRemembrancePractices => 'स्मरण अभ्यास';
+
+  @override
+  String get pkTimelineTitle => 'सक्रियण समयरेखा';
+
+  @override
+  String get pkGiftsActivation => 'पूर्वजन्म उपहार सक्रियण';
+
+  @override
+  String get pkSurfaceWindow => 'उभरने की अवधि';
+
+  @override
+  String get pkRisksTitle => 'जोखिम एवं स्थायी पैटर्न';
+
+  @override
+  String get pkTraumaResidue => 'आघात अवशेष';
+
+  @override
+  String get pkSpiritualBypass => 'आध्यात्मिक बाईपास जोखिम';
+
+  @override
+  String get pkMajorRisks => 'प्रमुख जोखिम';
+
+  @override
+  String get pkChronicImprints => 'स्थायी छाप';
+
+  @override
+  String get pkKarmicLoops => 'कर्म चक्र';
+
+  @override
+  String get pkImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get pkRoadmapTitle => 'आपका पूर्वजन्म रोडमैप';
+
+  @override
+  String get pkMaturity => 'पूर्वजन्म परिपक्वता';
+
+  @override
+  String get pkLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get pkLayerD9 => 'नवांश (D9)';
+
+  @override
+  String get pkLayerD60 => 'षष्ट्यंश (D60)';
+
+  @override
+  String get pkLayerKetuDepth => 'केतु गहराई';
+
+  @override
+  String get pkLayerAtmakaraka => 'आत्मा ग्रह (आत्मकारक)';
+
+  @override
+  String get pkTopicMastery => 'मेरी पूर्वजन्म निपुणता';
+
+  @override
+  String get pkTopicUnfinished => 'मेरा अधूरा कर्म';
+
+  @override
+  String get pkTopicRelationships => 'मेरे पूर्वजन्म रिश्ते';
+
+  @override
+  String get pkTopicDebts => 'मेरे कर्म ऋण';
+
+  @override
+  String get pkTopicResolution => 'अपना कर्म कैसे सुलझाएं';
+
+  @override
+  String get pkTopicMemory => 'पूर्वजन्म स्मृति पहुंच';
+
+  @override
+  String get pkTopicTiming => 'सर्वोत्तम समय अवधि';
+
+  @override
+  String get pkTopicProfile => 'पूर्वजन्म में मैं कौन था';
+
+  @override
   String get chSubtitle => 'AI-संचालित वैदिक चरित्र विश्लेषण रिपोर्ट';
 
   @override

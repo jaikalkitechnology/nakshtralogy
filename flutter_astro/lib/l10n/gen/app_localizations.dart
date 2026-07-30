@@ -230,6 +230,708 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @pkSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Past Life & Karma Report'**
+  String get pkSubtitle;
+
+  /// No description provided for @pkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Life & Karma'**
+  String get pkTitle;
+
+  /// No description provided for @pkSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Snapshot'**
+  String get pkSnapshotHeader;
+
+  /// No description provided for @pkHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart shows a \'{theme}\' past-life signature, currently {relation} into this life. Recommended path: {strategy}.'**
+  String pkHeroSummary(Object theme, Object relation, Object strategy);
+
+  /// No description provided for @pkGaugeSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature Strength'**
+  String get pkGaugeSignature;
+
+  /// No description provided for @pkGaugeMasteryPreserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery Preserved'**
+  String get pkGaugeMasteryPreserved;
+
+  /// No description provided for @pkGaugeClearingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma Clearing'**
+  String get pkGaugeClearingProgress;
+
+  /// No description provided for @pkGaugeMaturity.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Maturity'**
+  String get pkGaugeMaturity;
+
+  /// No description provided for @pkGaugeMemoryAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Access'**
+  String get pkGaugeMemoryAccess;
+
+  /// No description provided for @pkChipGoodProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Good karma-clearing progress'**
+  String get pkChipGoodProgress;
+
+  /// No description provided for @pkChipLowDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Low karmic debt'**
+  String get pkChipLowDebt;
+
+  /// No description provided for @pkChipMatureSoul.
+  ///
+  /// In en, this message translates to:
+  /// **'Mature soul signature'**
+  String get pkChipMatureSoul;
+
+  /// No description provided for @pkChipGiftedPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart carries a past-life gift'**
+  String get pkChipGiftedPast;
+
+  /// No description provided for @pkChipAccomplished.
+  ///
+  /// In en, this message translates to:
+  /// **'Accomplished past life'**
+  String get pkChipAccomplished;
+
+  /// No description provided for @pkChipMasteryPreserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong mastery carried forward'**
+  String get pkChipMasteryPreserved;
+
+  /// No description provided for @pkKetuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu — Your Past Mastery'**
+  String get pkKetuTitle;
+
+  /// No description provided for @pkKetuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills your soul already mastered'**
+  String get pkKetuSubtitle;
+
+  /// No description provided for @pkMasteryStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery Strength'**
+  String get pkMasteryStrength;
+
+  /// No description provided for @pkSkillsCarried.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills Carried Forward'**
+  String get pkSkillsCarried;
+
+  /// No description provided for @pkInstincts.
+  ///
+  /// In en, this message translates to:
+  /// **'Instinctual Capacities'**
+  String get pkInstincts;
+
+  /// No description provided for @pkKetuDignity.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu dignity'**
+  String get pkKetuDignity;
+
+  /// No description provided for @pkRahuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu — Your Soul\'s Growth Edge'**
+  String get pkRahuTitle;
+
+  /// No description provided for @pkRahuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What your soul is here to finish'**
+  String get pkRahuSubtitle;
+
+  /// No description provided for @pkUnmetDesires.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmet Desires'**
+  String get pkUnmetDesires;
+
+  /// No description provided for @pkProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Past-Life Profile'**
+  String get pkProfileTitle;
+
+  /// No description provided for @pkProfession.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Profession'**
+  String get pkProfession;
+
+  /// No description provided for @pkSocialStanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Standing'**
+  String get pkSocialStanding;
+
+  /// No description provided for @pkRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Region'**
+  String get pkRegion;
+
+  /// No description provided for @pkCulturalArchetype.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural Archetype'**
+  String get pkCulturalArchetype;
+
+  /// No description provided for @pkAccomplishment.
+  ///
+  /// In en, this message translates to:
+  /// **'Accomplishment Level'**
+  String get pkAccomplishment;
+
+  /// No description provided for @pkAuthority.
+  ///
+  /// In en, this message translates to:
+  /// **'Authority Level'**
+  String get pkAuthority;
+
+  /// No description provided for @pkFamilyRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Family role'**
+  String get pkFamilyRole;
+
+  /// No description provided for @pkSecondaryProfession.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary profession'**
+  String get pkSecondaryProfession;
+
+  /// No description provided for @pkClimateAffinity.
+  ///
+  /// In en, this message translates to:
+  /// **'Climate affinity'**
+  String get pkClimateAffinity;
+
+  /// No description provided for @pkForeignResidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign-residence karma'**
+  String get pkForeignResidence;
+
+  /// No description provided for @pkRelationshipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Relationships Carried Forward'**
+  String get pkRelationshipsTitle;
+
+  /// No description provided for @pkSpouseConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse Reconnection'**
+  String get pkSpouseConnection;
+
+  /// No description provided for @pkChildrenConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Children Reconnection'**
+  String get pkChildrenConnection;
+
+  /// No description provided for @pkCarriedRelationTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Patterns'**
+  String get pkCarriedRelationTypes;
+
+  /// No description provided for @pkPartnerArchetype.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Partner Archetype'**
+  String get pkPartnerArchetype;
+
+  /// No description provided for @pkDarakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse karaka'**
+  String get pkDarakaraka;
+
+  /// No description provided for @pkParentsKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Parents karma pattern'**
+  String get pkParentsKarma;
+
+  /// No description provided for @pkSiblingKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Sibling karma pattern'**
+  String get pkSiblingKarma;
+
+  /// No description provided for @pkSpiritualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Spiritual Life Then'**
+  String get pkSpiritualTitle;
+
+  /// No description provided for @pkSpiritualLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual Level'**
+  String get pkSpiritualLevel;
+
+  /// No description provided for @pkPracticeSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice Style'**
+  String get pkPracticeSignature;
+
+  /// No description provided for @pkMeditativeCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditative Capacity'**
+  String get pkMeditativeCapacity;
+
+  /// No description provided for @pkDevotionalPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Devotional Practice'**
+  String get pkDevotionalPractice;
+
+  /// No description provided for @pkYogicAttainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Yogic Attainment'**
+  String get pkYogicAttainment;
+
+  /// No description provided for @pkMokshaProximity.
+  ///
+  /// In en, this message translates to:
+  /// **'Moksha Proximity'**
+  String get pkMokshaProximity;
+
+  /// No description provided for @pkKarmicDebtsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Debts & Wealth Then'**
+  String get pkKarmicDebtsTitle;
+
+  /// No description provided for @pkTotalKarmicDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Karmic Debt'**
+  String get pkTotalKarmicDebt;
+
+  /// No description provided for @pkPrimaryDebtType.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Debt Type'**
+  String get pkPrimaryDebtType;
+
+  /// No description provided for @pkRelationshipDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Debt'**
+  String get pkRelationshipDebt;
+
+  /// No description provided for @pkFinancialDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Debt'**
+  String get pkFinancialDebt;
+
+  /// No description provided for @pkServiceDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Debt'**
+  String get pkServiceDebt;
+
+  /// No description provided for @pkDharmicDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharmic Debt'**
+  String get pkDharmicDebt;
+
+  /// No description provided for @pkPitruKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Pitru karma'**
+  String get pkPitruKarma;
+
+  /// No description provided for @pkMatruKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Matru karma'**
+  String get pkMatruKarma;
+
+  /// No description provided for @pkWealthLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Level Then'**
+  String get pkWealthLevel;
+
+  /// No description provided for @pkWealthKarmaCarried.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Karma Carried'**
+  String get pkWealthKarmaCarried;
+
+  /// No description provided for @pkResourcePattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Resource management'**
+  String get pkResourcePattern;
+
+  /// No description provided for @pkGainSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain source'**
+  String get pkGainSource;
+
+  /// No description provided for @pkEchoesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Echoes In This Life'**
+  String get pkEchoesTitle;
+
+  /// No description provided for @pkOnRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'On Relationships'**
+  String get pkOnRelationships;
+
+  /// No description provided for @pkOnCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'On Career'**
+  String get pkOnCareer;
+
+  /// No description provided for @pkOnHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'On Health'**
+  String get pkOnHealth;
+
+  /// No description provided for @pkOnSpirituality.
+  ///
+  /// In en, this message translates to:
+  /// **'On Spirituality'**
+  String get pkOnSpirituality;
+
+  /// No description provided for @pkDominantArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest Carryforward'**
+  String get pkDominantArea;
+
+  /// No description provided for @pkAttractions.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Attractions'**
+  String get pkAttractions;
+
+  /// No description provided for @pkAversions.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Aversions'**
+  String get pkAversions;
+
+  /// No description provided for @pkUnexplainedFears.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexplained Fears'**
+  String get pkUnexplainedFears;
+
+  /// No description provided for @pkMagneticPulls.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnetic Pulls'**
+  String get pkMagneticPulls;
+
+  /// No description provided for @pkResolutionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Resolution & Completion'**
+  String get pkResolutionTitle;
+
+  /// No description provided for @pkPrimaryPathway.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Path'**
+  String get pkPrimaryPathway;
+
+  /// No description provided for @pkSecondaryPathway.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary Path'**
+  String get pkSecondaryPathway;
+
+  /// No description provided for @pkClearingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing Progress'**
+  String get pkClearingProgress;
+
+  /// No description provided for @pkRemainingWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Work'**
+  String get pkRemainingWork;
+
+  /// No description provided for @pkSettlementTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Settlement Timeline'**
+  String get pkSettlementTimeline;
+
+  /// No description provided for @pkAccelerationPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Practices That Speed Resolution'**
+  String get pkAccelerationPractices;
+
+  /// No description provided for @pkPriorityAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority Areas'**
+  String get pkPriorityAreas;
+
+  /// No description provided for @pkVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts (D60)'**
+  String get pkVerificationTitle;
+
+  /// No description provided for @pkD60Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 Past-Life Era'**
+  String get pkD60Label;
+
+  /// No description provided for @pkD60Ketu.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 Ketu placement'**
+  String get pkD60Ketu;
+
+  /// No description provided for @pkD60Standing.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall standing'**
+  String get pkD60Standing;
+
+  /// No description provided for @pkMemoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory & Intuition'**
+  String get pkMemoryTitle;
+
+  /// No description provided for @pkMemoryAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Access'**
+  String get pkMemoryAccess;
+
+  /// No description provided for @pkRegressionFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Regression-Therapy Fit'**
+  String get pkRegressionFit;
+
+  /// No description provided for @pkDreamVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Dream Visitations'**
+  String get pkDreamVisits;
+
+  /// No description provided for @pkDejaVuFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Deja Vu Frequency'**
+  String get pkDejaVuFrequency;
+
+  /// No description provided for @pkSpontaneousRemembrance.
+  ///
+  /// In en, this message translates to:
+  /// **'Spontaneous remembrance'**
+  String get pkSpontaneousRemembrance;
+
+  /// No description provided for @pkRemembrancePractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembrance Practices'**
+  String get pkRemembrancePractices;
+
+  /// No description provided for @pkTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activation Timeline'**
+  String get pkTimelineTitle;
+
+  /// No description provided for @pkGiftsActivation.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Gifts Activation'**
+  String get pkGiftsActivation;
+
+  /// No description provided for @pkSurfaceWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Surfacing Window'**
+  String get pkSurfaceWindow;
+
+  /// No description provided for @pkRisksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Risks & Chronic Patterns'**
+  String get pkRisksTitle;
+
+  /// No description provided for @pkTraumaResidue.
+  ///
+  /// In en, this message translates to:
+  /// **'Trauma Residue'**
+  String get pkTraumaResidue;
+
+  /// No description provided for @pkSpiritualBypass.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual Bypass Risk'**
+  String get pkSpiritualBypass;
+
+  /// No description provided for @pkMajorRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Major Risks'**
+  String get pkMajorRisks;
+
+  /// No description provided for @pkChronicImprints.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Imprints'**
+  String get pkChronicImprints;
+
+  /// No description provided for @pkKarmicLoops.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Loops'**
+  String get pkKarmicLoops;
+
+  /// No description provided for @pkImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get pkImprovementTitle;
+
+  /// No description provided for @pkRoadmapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Past-Life Roadmap'**
+  String get pkRoadmapTitle;
+
+  /// No description provided for @pkMaturity.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Maturity'**
+  String get pkMaturity;
+
+  /// No description provided for @pkLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get pkLayerD1;
+
+  /// No description provided for @pkLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get pkLayerD9;
+
+  /// No description provided for @pkLayerD60.
+  ///
+  /// In en, this message translates to:
+  /// **'Shashtiamsa (D60)'**
+  String get pkLayerD60;
+
+  /// No description provided for @pkLayerKetuDepth.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu Depth'**
+  String get pkLayerKetuDepth;
+
+  /// No description provided for @pkLayerAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Planet (Atmakaraka)'**
+  String get pkLayerAtmakaraka;
+
+  /// No description provided for @pkTopicMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'My past-life mastery'**
+  String get pkTopicMastery;
+
+  /// No description provided for @pkTopicUnfinished.
+  ///
+  /// In en, this message translates to:
+  /// **'My unfinished karma'**
+  String get pkTopicUnfinished;
+
+  /// No description provided for @pkTopicRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'My past-life relationships'**
+  String get pkTopicRelationships;
+
+  /// No description provided for @pkTopicDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'My karmic debts'**
+  String get pkTopicDebts;
+
+  /// No description provided for @pkTopicResolution.
+  ///
+  /// In en, this message translates to:
+  /// **'How to resolve my karma'**
+  String get pkTopicResolution;
+
+  /// No description provided for @pkTopicMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-life memory access'**
+  String get pkTopicMemory;
+
+  /// No description provided for @pkTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing windows'**
+  String get pkTopicTiming;
+
+  /// No description provided for @pkTopicProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Who I was in my past life'**
+  String get pkTopicProfile;
+
   /// No description provided for @chSubtitle.
   ///
   /// In en, this message translates to:
