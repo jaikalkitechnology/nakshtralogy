@@ -222,7 +222,7 @@ class _DivisionalChartsWidgetState extends State<DivisionalChartsWidget> {
         KFadeIn(delayMs: 60, child: _hero(l)),
         if (recs.isNotEmpty) ...[
           const SizedBox(height: 18),
-          KFadeIn(delayMs: 100, child: KSectionHeader(icon: Icons.target_outlined, title: l.divRecommendedForYou, color: KColors.gold)),
+          KFadeIn(delayMs: 100, child: KSectionHeader(icon: Icons.track_changes, title: l.divRecommendedForYou, color: KColors.gold)),
           ...recs.map((r) => KFadeIn(delayMs: 120, child: _recCard(l, loc, r))),
         ],
         const SizedBox(height: 18),
