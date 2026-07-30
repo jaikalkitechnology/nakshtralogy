@@ -1,0 +1,341 @@
+{
+ "bzSubtitle": {
+  "en": "AI-powered Vedic Business Report"
+ },
+ "bzTitle": {
+  "en": "Business & Startup"
+ },
+ "bzBusinessPotential": {
+  "en": "Business Potential"
+ },
+ "bzEntrepreneurship": {
+  "en": "Entrepreneur"
+ },
+ "bzVenture": {
+  "en": "Venture Success"
+ },
+ "bzWealth": {
+  "en": "Wealth via Business"
+ },
+ "bzRiskAppetite": {
+  "en": "Risk Appetite"
+ },
+ "bzLongevity": {
+  "en": "Longevity"
+ },
+ "bzChipWealthMagnet": {
+  "en": "Wealth magnet"
+ },
+ "bzChipMoneyYoga": {
+  "en": "Money yoga"
+ },
+ "bzChipLeadership": {
+  "en": "Leadership"
+ },
+ "bzChipPartnerFit": {
+  "en": "Great partner fit"
+ },
+ "bzChipGains": {
+  "en": "Strong gains"
+ },
+ "bzChipInvestor": {
+  "en": "Investor appeal"
+ },
+ "bzChipFounder": {
+  "en": "Founder mindset"
+ },
+ "bzWhatsWorking": {
+  "en": "What's Working For You"
+ },
+ "bzWhatsWorkingSub": {
+  "en": "Your business gifts"
+ },
+ "bzClassicYogas": {
+  "en": "Classic wealth combinations"
+ },
+ "bzFounderType": {
+  "en": "Your Founder Type"
+ },
+ "bzSoulBusiness": {
+  "en": "Soul & Business Purpose"
+ },
+ "bzSoulPlanet": {
+  "en": "Your Soul Driver"
+ },
+ "bzBusinessPlanet": {
+  "en": "Your Business Mind"
+ },
+ "bzDirectionStrength": {
+  "en": "Direction Clarity"
+ },
+ "bzAlignStrong": {
+  "en": "Your soul purpose and business direction are strongly aligned — building a venture feels natural and fulfilling."
+ },
+ "bzAlignModerate": {
+  "en": "Your soul purpose and business direction are moderately aligned — a venture works best when it reflects your deeper values."
+ },
+ "bzAlignLow": {
+  "en": "Your soul purpose and business direction need conscious alignment — choose a venture that genuinely matches who you are."
+ },
+ "bzTechAtmakaraka": {
+  "en": "Soul planet (Atmakaraka)"
+ },
+ "bzTechAmatyakaraka": {
+  "en": "Business planet (Amatyakaraka)"
+ },
+ "bzTechDarakaraka": {
+  "en": "Partner planet (Darakaraka)"
+ },
+ "bzFoundation": {
+  "en": "Business Foundation"
+ },
+ "bzCareerHouse": {
+  "en": "Career House"
+ },
+ "bzGainsHouse": {
+  "en": "Gains House"
+ },
+ "bzLord": {
+  "en": "Ruler"
+ },
+ "bzGainsPotential": {
+  "en": "Gains Potential"
+ },
+ "bzNetwork": {
+  "en": "Network Power"
+ },
+ "bzRecovery": {
+  "en": "Recovery Strength"
+ },
+ "bzVerification": {
+  "en": "Cross-Chart Verification"
+ },
+ "bzD10": {
+  "en": "Career Chart (D10)"
+ },
+ "bzD11": {
+  "en": "Gains Chart (D11)"
+ },
+ "bzD9": {
+  "en": "Purpose Chart (D9)"
+ },
+ "bzD60": {
+  "en": "Karma Chart (D60)"
+ },
+ "bzFounderSkills": {
+  "en": "Founder Skills"
+ },
+ "bzSkillStrategy": {
+  "en": "Strategic Thinking"
+ },
+ "bzSkillExecution": {
+  "en": "Execution"
+ },
+ "bzSkillPeople": {
+  "en": "People Management"
+ },
+ "bzSkillSales": {
+  "en": "Sales & Persuasion"
+ },
+ "bzSkillFinance": {
+  "en": "Financial Acumen"
+ },
+ "bzSkillOps": {
+  "en": "Operational Discipline"
+ },
+ "bzTopSkill": {
+  "en": "Top Skill"
+ },
+ "bzDomains": {
+  "en": "Best Business Fields"
+ },
+ "bzDomainsSub": {
+  "en": "Ranked by natural fit"
+ },
+ "bzFit": {
+  "en": "FIT"
+ },
+ "bzBusinessStyleHdr": {
+  "en": "Business Style"
+ },
+ "bzStyleService": {
+  "en": "Product vs Service"
+ },
+ "bzStyleMarket": {
+  "en": "Market Focus"
+ },
+ "bzStyleTech": {
+  "en": "Tech Approach"
+ },
+ "bzStyleLeadership": {
+  "en": "Leadership Style"
+ },
+ "bzStylePartnership": {
+  "en": "Solo or Partnership"
+ },
+ "bzWhereBuild": {
+  "en": "Reach"
+ },
+ "bzExpansion": {
+  "en": "Expansion"
+ },
+ "bzSetup": {
+  "en": "Setup"
+ },
+ "bzPartnership": {
+  "en": "Partnership & Team"
+ },
+ "bzIdealCofounder": {
+  "en": "Ideal Co-founder"
+ },
+ "bzPartnerViability": {
+  "en": "Partnership Fit"
+ },
+ "bzTeamBuilding": {
+  "en": "Team Building"
+ },
+ "bzCofounderFit": {
+  "en": "Co-founder Fit"
+ },
+ "bzAdvisorNetwork": {
+  "en": "Advisor Network"
+ },
+ "bzFunding": {
+  "en": "Funding & Money"
+ },
+ "bzRecommendedPath": {
+  "en": "Recommended Funding Path"
+ },
+ "bzInvestorAttract": {
+  "en": "Investor Appeal"
+ },
+ "bzFamilyBacking": {
+  "en": "Family Support"
+ },
+ "bzHybridViability": {
+  "en": "Job + Business Mix"
+ },
+ "bzFallback": {
+  "en": "Job as Backup"
+ },
+ "bzDebtStyle": {
+  "en": "Debt Style"
+ },
+ "bzTimeline": {
+  "en": "Business Timeline"
+ },
+ "bzCurrentPhase": {
+  "en": "Right Now"
+ },
+ "bzLaunchWindow": {
+  "en": "Launch Window"
+ },
+ "bzScaleWindow": {
+  "en": "Growth Window"
+ },
+ "bzPeakAge": {
+  "en": "Peak Years"
+ },
+ "bzChallenges": {
+  "en": "Challenges to Watch"
+ },
+ "bzRiskFinancial": {
+  "en": "Financial Loss"
+ },
+ "bzRiskBurnout": {
+  "en": "Burnout"
+ },
+ "bzRiskTeam": {
+  "en": "Team Conflict"
+ },
+ "bzRiskLegal": {
+  "en": "Legal / Regulatory"
+ },
+ "bzFinancialExp": {
+  "en": "Risk of money loss from over-investment or poor cash-flow timing during a venture."
+ },
+ "bzFinancialFix": {
+  "en": "Keep a cash reserve, start lean, and validate demand before scaling spend."
+ },
+ "bzBurnoutExp": {
+  "en": "Pushing too hard for too long can drain your energy and focus."
+ },
+ "bzBurnoutFix": {
+  "en": "Protect rest, delegate early, and pace big pushes around supportive periods."
+ },
+ "bzTeamExp": {
+  "en": "Friction with co-founders or staff can slow the business down."
+ },
+ "bzTeamFix": {
+  "en": "Set clear roles and expectations in writing, and communicate often."
+ },
+ "bzLegalExp": {
+  "en": "Compliance, contracts or regulatory issues could create obstacles."
+ },
+ "bzLegalFix": {
+  "en": "Get contracts reviewed, keep paperwork clean, and consult professionals early."
+ },
+ "bzImprovementPlan": {
+  "en": "Improvement Plan"
+ },
+ "bzBestDirection": {
+  "en": "Best Direction"
+ },
+ "bzStrategy": {
+  "en": "Build Strategy"
+ },
+ "bzTopFields": {
+  "en": "Top Fields"
+ },
+ "bzEmploymentPath": {
+  "en": "Job vs Business"
+ },
+ "bzRoadmap": {
+  "en": "Growth Roadmap"
+ },
+ "bzRoadmapSub": {
+  "en": "Your venture plan"
+ },
+ "bzReliability": {
+  "en": "Prediction Reliability"
+ },
+ "bzLayerBirth": {
+  "en": "Birth Chart (D1)"
+ },
+ "bzLayerNavamsa": {
+  "en": "Navamsa (D9)"
+ },
+ "bzLayerDashamsa": {
+  "en": "Career (D10)"
+ },
+ "bzLayerLabhamsa": {
+  "en": "Gains (D11)"
+ },
+ "bzLayerShashtiamsa": {
+  "en": "Karma (D60)"
+ },
+ "bzTopicStart": {
+  "en": "Should I start now?"
+ },
+ "bzTopicIdea": {
+  "en": "Best business idea"
+ },
+ "bzTopicPartner": {
+  "en": "Finding a co-founder"
+ },
+ "bzTopicFunding": {
+  "en": "How to fund it"
+ },
+ "bzTopicScale": {
+  "en": "When to scale"
+ },
+ "bzTopicRisk": {
+  "en": "Managing risks"
+ },
+ "bzTopicJob": {
+  "en": "Job vs business"
+ },
+ "bzTopicTiming": {
+  "en": "Best timing"
+ }
+}

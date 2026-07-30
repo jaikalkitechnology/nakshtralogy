@@ -10,12 +10,14 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 1 done · 18 pending · 0 blocked  (19 total)**
+**Progress: 2 done · 17 pending · 0 blocked  (19 total)**
+
+**Translations pending (10-locale backfill):** `bz_source.json`
 
 | # | Engine key | Label | Screen file (`…/screens/specialist/`) | Status | Commit | Locales | Notes |
 |---|------------|-------|----------------------------------------|--------|--------|---------|-------|
 | 0 | career | Career & Job | `career_report_screen.dart` | ✅ DONE | 09a46bb / af31e93 | 11/11 | Template. Blank-below-hero fixed (dropped KFadeIn). |
-| 1 | business | Business & Startup | `business_report_screen.dart` | ⬜ PENDING | — | — | |
+| 1 | business | Business & Startup | `business_report_screen.dart` | ✅ DONE | 825e436 | en+hi+hinglish | 17-section AI business coach; backfill pending (bz_source.json). 2026-07-30. |
 | 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ⬜ PENDING | — | — | |
 | 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ⬜ PENDING | — | — | analyze() takes gender. |
 | 4 | love | Love & Relationships | `love_report_screen.dart` | ⬜ PENDING | — | — | |
@@ -41,6 +43,12 @@ touch only if a redesigned screen requires it.
 ## Worklog
 - **career** ✅ — 14-section AI career coach; committed `09a46bb`, translations
   `af31e93`, blank-fix `(latest)`. Screenshots in `.claude/previews/career/`.
+- **business** ✅ — 17-section AI business coach (snapshot hero, What's Working,
+  Founder Type, Soul & Business, Foundation, Cross-Chart Verification, Founder
+  Skills, Best Fields, Style, Partnership, Funding, Timeline, Challenges,
+  Improvement Plan, Roadmap, Reliability, Discuss-with-AI). Both apps; 113 new
+  `bz` keys (en+hi+hinglish). Commit `825e436`, 2026-07-30. Backfill:
+  `bz_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
