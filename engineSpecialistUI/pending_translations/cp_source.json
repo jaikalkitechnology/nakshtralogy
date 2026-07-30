@@ -1,0 +1,128 @@
+{
+ "cpSubtitle": {
+  "en": "AI-powered Vedic Child Probability Report"
+ },
+ "cpTitle": {
+  "en": "Child Probability"
+ },
+ "cpSnapshotHeader": {
+  "en": "Progeny Probability Snapshot"
+ },
+ "cpGauge5thHouse": {
+  "en": "5th House"
+ },
+ "cpGaugeJupiter": {
+  "en": "Jupiter/Putrakaraka"
+ },
+ "cpGaugeD7": {
+  "en": "D7 Saptamsa"
+ },
+ "cpGaugeSphuta": {
+  "en": "Beeja-Kshetra"
+ },
+ "cpGaugeTiming": {
+  "en": "Dasha Timing"
+ },
+ "cpChipStrongPutrakaraka": {
+  "en": "Strong Putrakaraka (Jupiter)"
+ },
+ "cpChipLowDoshaPenalty": {
+  "en": "Low dosha penalty"
+ },
+ "cpChipFavorableTiming": {
+  "en": "Favorable dasha timing"
+ },
+ "cpChipNoDoshas": {
+  "en": "No progeny-doshas detected"
+ },
+ "cpPartnersTitle": {
+  "en": "Partner Snapshot"
+ },
+ "cpLagnaSuffix": {
+  "en": "Lagna"
+ },
+ "cpMoonSuffix": {
+  "en": "Moon sign"
+ },
+ "cpNumberTitle": {
+  "en": "Number of Children & Gender Tendency"
+ },
+ "cpProbableNumber": {
+  "en": "Probable Number"
+ },
+ "cpFirstChildTendency": {
+  "en": "First Child Tendency"
+ },
+ "cpSpacing": {
+  "en": "Spacing Note"
+ },
+ "cpTimingTitle": {
+  "en": "Timing — Moola Dasha"
+ },
+ "cpCombinedTiming": {
+  "en": "Combined Timing"
+ },
+ "cpNextWindow": {
+  "en": "Next Favorable Window"
+ },
+ "cp5thHouseTitle": {
+  "en": "5th House Analysis"
+ },
+ "cp5thHouseSubtitle": {
+  "en": "The house of children (Putra Bhava), per person"
+ },
+ "cpJupiterTitle": {
+  "en": "Jupiter — Putrakaraka Analysis"
+ },
+ "cpJupiterSubtitle": {
+  "en": "The natural significator of children, per person"
+ },
+ "cpD7Title": {
+  "en": "D7 Saptamsa Analysis"
+ },
+ "cpD7Subtitle": {
+  "en": "The divisional chart specifically for children"
+ },
+ "cpD7Strength": {
+  "en": "D7 Strength"
+ },
+ "cpSphutaTitle": {
+  "en": "Beeja & Kshetra Sphuta"
+ },
+ "cpBeejaSphuta": {
+  "en": "Beeja Sphuta (Seed)"
+ },
+ "cpKshetraSphuta": {
+  "en": "Kshetra Sphuta (Field)"
+ },
+ "cpDoshaTitle": {
+  "en": "Dosha Analysis"
+ },
+ "cpNoDoshasDetected": {
+  "en": "No progeny-relevant doshas detected in either chart"
+ },
+ "cpRemediesTitle": {
+  "en": "Recommended Remedies"
+ },
+ "cpAddresses": {
+  "en": "Addresses"
+ },
+ "cpTopicTiming": {
+  "en": "Best timing for conception"
+ },
+ "cpTopicNumber": {
+  "en": "How many children we may have"
+ },
+ "cpTopicDosha": {
+  "en": "Any doshas to address"
+ },
+ "cpTopicRemedies": {
+  "en": "Recommended remedies"
+ },
+ "cpTopicFifthHouse": {
+  "en": "Our 5th house strength"
+ },
+ "cpTopicJupiter": {
+  "en": "Jupiter's role in this"
+ }
+}

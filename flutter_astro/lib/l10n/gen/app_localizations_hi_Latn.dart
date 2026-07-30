@@ -7036,6 +7036,180 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get cpSubtitle => 'AI-powered Vedic Child Probability Report';
+
+  @override
+  String get cpTitle => 'Child Probability';
+
+  @override
+  String get cpSnapshotHeader => 'Progeny Probability Snapshot';
+
+  @override
+  String get cpGauge5thHouse => '5th House';
+
+  @override
+  String get cpGaugeJupiter => 'Jupiter/Putrakaraka';
+
+  @override
+  String get cpGaugeD7 => 'D7 Saptamsa';
+
+  @override
+  String get cpGaugeSphuta => 'Beeja-Kshetra';
+
+  @override
+  String get cpGaugeTiming => 'Dasha Timing';
+
+  @override
+  String get cpChipStrongPutrakaraka => 'Strong Putrakaraka (Jupiter)';
+
+  @override
+  String get cpChipLowDoshaPenalty => 'Low dosha penalty';
+
+  @override
+  String get cpChipFavorableTiming => 'Favorable dasha timing';
+
+  @override
+  String get cpChipNoDoshas => 'Koi progeny-dosha nahi mila';
+
+  @override
+  String get cpPartnersTitle => 'Partner Snapshot';
+
+  @override
+  String get cpLagnaSuffix => 'Lagna';
+
+  @override
+  String get cpMoonSuffix => 'Moon sign';
+
+  @override
+  String get cpNumberTitle => 'Number of Children & Gender Tendency';
+
+  @override
+  String get cpProbableNumber => 'Probable Number';
+
+  @override
+  String get cpFirstChildTendency => 'First Child Tendency';
+
+  @override
+  String get cpSpacing => 'Spacing Note';
+
+  @override
+  String get cpTimingTitle => 'Timing — Moola Dasha';
+
+  @override
+  String get cpCombinedTiming => 'Combined Timing';
+
+  @override
+  String get cpNextWindow => 'Next Favorable Window';
+
+  @override
+  String get cp5thHouseTitle => '5th House Analysis';
+
+  @override
+  String get cp5thHouseSubtitle => 'The house of children (Putra Bhava), per person';
+
+  @override
+  String get cpJupiterTitle => 'Jupiter — Putrakaraka Analysis';
+
+  @override
+  String get cpJupiterSubtitle => 'The natural significator of children, per person';
+
+  @override
+  String get cpD7Title => 'D7 Saptamsa Analysis';
+
+  @override
+  String get cpD7Subtitle => 'The divisional chart specifically for children';
+
+  @override
+  String get cpD7Strength => 'D7 Strength';
+
+  @override
+  String get cpSphutaTitle => 'Beeja & Kshetra Sphuta';
+
+  @override
+  String get cpBeejaSphuta => 'Beeja Sphuta (Seed)';
+
+  @override
+  String get cpKshetraSphuta => 'Kshetra Sphuta (Field)';
+
+  @override
+  String get cpDoshaTitle => 'Dosha Analysis';
+
+  @override
+  String get cpNoDoshasDetected => 'Kisi bhi kundli mein koi progeny-related dosha nahi mila';
+
+  @override
+  String get cpRemediesTitle => 'Recommended Remedies';
+
+  @override
+  String get cpAddresses => 'Addresses';
+
+  @override
+  String get cpTopicTiming => 'Conception ke liye best timing';
+
+  @override
+  String get cpTopicNumber => 'Hamari kitni santaan ho sakti hai';
+
+  @override
+  String get cpTopicDosha => 'Address karne wale doshas';
+
+  @override
+  String get cpTopicRemedies => 'Recommended remedies';
+
+  @override
+  String get cpTopicFifthHouse => 'Hamare 5th house ki strength';
+
+  @override
+  String get cpTopicJupiter => 'Isme Jupiter ka role';
+
+  @override
+  String get mahadashaLabel => 'Mahadasha';
+
+  @override
+  String get antardashaLabel => 'Antardasha';
+
+  @override
+  String get pratyantardashaLabel => 'Pratyantardasha';
+
+  @override
+  String get partnerOneLabel => 'Partner 1';
+
+  @override
+  String get partnerTwoLabel => 'Partner 2';
+
+  @override
+  String get houseStrengthLabel => 'House Strength';
+
+  @override
+  String get lordInDusthana => 'Swami Dusthana Mein';
+
+  @override
+  String get lordPlacementLabel => 'Swami ki Sthiti';
+
+  @override
+  String get dignityLabel => 'Dignity';
+
+  @override
+  String get directBadge => 'Direct';
+
+  @override
+  String get notCombustBadge => 'Not Combust';
+
+  @override
+  String get in5thHouseBadge => '5th House Mein';
+
+  @override
+  String get aspects5thBadge => '5th Par Drishti';
+
+  @override
+  String get no5thConnectionBadge => 'No 5th Connection';
+
+  @override
+  String get jupiterInD7Label => 'Guru D7 mein';
+
+  @override
+  String get presentInLabel => 'Yahan Sthit';
+
+  @override
   String get riSubtitle => 'AI-powered Vedic Relationship Intelligence Report';
 
   @override

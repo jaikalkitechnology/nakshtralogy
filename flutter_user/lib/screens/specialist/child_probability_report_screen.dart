@@ -4,1889 +4,775 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
-import 'report_components.dart';
+import '../kundli/widgets/kundli_ui.dart';
 
-class ChildProbabilityReportScreen extends StatelessWidget {
+/// Child Probability report — premium AI progeny-timing coach redesign.
+///
+/// Presentation only. Receives the already-loaded `child_probability`
+/// specialist result (`runChildProbability`, a 2-chart Moola-Dasha analysis)
+/// and re-presents it; every score, house/karaka analysis, dasha window,
+/// dosha, remedy and confidence value comes straight from the engine.
+/// Constructor unchanged so the multi-chart picker does not need to change.
+class ChildProbabilityReportScreen extends StatefulWidget {
   final Map<String, dynamic> data;
   final List<String> participants;
-  const ChildProbabilityReportScreen(
-      {super.key, required this.data, required this.participants});
+  const ChildProbabilityReportScreen({super.key, required this.data, required this.participants});
+  @override
+  State<ChildProbabilityReportScreen> createState() => _ChildProbabilityReportState();
+}
 
-  static const _accent = Color(0xFFE8689C);
-  static const _bg = Color(0xFF0A0A24);
-  static const _cardBg = Color(0xFF1A1642);
+class _ChildProbabilityReportState extends State<ChildProbabilityReportScreen> {
+  Map<String, dynamic> get _data => widget.data;
+
+  // ── typed accessors (type-checked, never throw on unexpected shapes) ──
+  double _sc(String k) { final v = _data[k]; return v is num ? v.toDouble() : 0; }
+  double _scOf(Map m, String k) { final v = m[k]; return v is num ? v.toDouble() : 0; }
+  String _str(String k) { final v = _data[k]; return (v == null || v is List || v is Map) ? '' : v.toString(); }
+  String _strOf(Map m, String k) { final v = m[k]; return (v == null || v is List || v is Map) ? '' : v.toString(); }
+  Map<String, dynamic> _map(String k) { final v = _data[k]; return v is Map ? v.cast<String, dynamic>() : {}; }
+  Map<String, dynamic> _mapOf(Map m, String k) { final v = m[k]; return v is Map ? v.cast<String, dynamic>() : {}; }
+  List _listOf(Map m, String k) { final v = m[k]; return v is List ? v : const []; }
 
   @override
   Widget build(BuildContext context) {
-    final overall = _asMap(data['overall_probability']);
-    final number = _asMap(data['number_of_children']);
-    final timing = _asMap(data['timing_moola_dasha']);
-    final fifth = _asMap(data['fifth_house_analysis']);
-    final jupiter = _asMap(data['jupiter_analysis']);
-    final d7 = _asMap(data['d7_saptamsa_analysis']);
-    final beeja = _asMap(data['beeja_kshetra_sphuta']);
-    final dosha = _asMap(data['dosha_analysis']);
-    final remedies = _asMap(data['remedies']);
-    final summary = _asMap(data['summary']);
-    final header = _asMap(data['analysis_header']);
-    final conf = (data['confidence_score'] as num?)?.toDouble();
     final l = AppLocalizations.of(context)!;
-
     return Scaffold(
-      backgroundColor: _bg,
-      body: CustomScrollView(slivers: [
-        // ═══ APP BAR ═══
-        SliverAppBar(
-          backgroundColor: _bg,
-          pinned: true,
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.ivory),
-              onPressed: () => Navigator.pop(context)),
-          title: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                    participants.join(' & ').toUpperCase(),
-                    style: const TextStyle(
-                        color: AppColors.gold,
-                        fontSize: 9,
-                        letterSpacing: 1.5,
-                        fontFamily: 'monospace'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                      text: '${l.childProbTitle1} ',
-                      style: const TextStyle(
-                          color: AppColors.ivory,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600)),
-                  TextSpan(
-                      text: l.childProbTitle2,
-                      style: TextStyle(
-                          color: _accent,
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic)),
-                ])),
-              ]),
-          centerTitle: true,
-        ),
-
-        SliverList(
-            delegate: SliverChildListDelegate([
-          // 1. HERO
-          _buildHero(l, overall),
-
-          // 2. PARTNER CARDS
-          if (header.isNotEmpty) _buildPartnerCards(l, header),
-
-          // 3. NUMBER OF CHILDREN
-          if (number.isNotEmpty) ...[
-            _header(l.childNumberOfChildrenHeader1, l.childNumberOfChildrenHeader2),
-            _buildNumberOfChildren(l, number),
-          ],
-
-          // 4. TIMING (MOOLA DASHA)
-          if (timing.isNotEmpty) ...[
-            _header(l.childTimingHeader1, l.childTimingHeader2),
-            _buildTiming(l, timing),
-          ],
-
-          // 5. 5TH HOUSE ANALYSIS
-          if (fifth.isNotEmpty) ...[
-            _header(l.child5thHouseHeader1, l.analysisWord),
-            ...fifth.entries.map((e) => _buildFifthHouseCard(l, e.key, _asMap(e.value))),
-          ],
-
-          // 6. JUPITER ANALYSIS
-          if (jupiter.isNotEmpty) ...[
-            _header(l.jupiterWord, l.analysisWord),
-            ...jupiter.entries.map((e) => _buildJupiterCard(l, e.key, _asMap(e.value))),
-          ],
-
-          // 7. D7 SAPTAMSA
-          if (d7.isNotEmpty) ...[
-            _header(l.childD7Header1, l.analysisWord),
-            ...d7.entries.map((e) => _buildD7Card(l, e.key, _asMap(e.value))),
-          ],
-
-          // 8. BEEJA & KSHETRA
-          if (beeja.isNotEmpty) ...[
-            _header(l.childBeejaHeader1, l.childBeejaHeader2),
-            _buildBeejaKshetra(l, beeja),
-          ],
-
-          // 9. DOSHA ANALYSIS
-          if (dosha.isNotEmpty) ...[
-            _header(l.childDoshaHeader1, l.analysisWord),
-            _buildDoshaAnalysis(l, dosha),
-          ],
-
-          // 10. REMEDIES
-          if (remedies.isNotEmpty) ...[
-            _header(l.childVedicHeader1, l.childVedicHeader2),
-            _buildRemedies(l, remedies),
-          ],
-
-          // 11. SUMMARY
-          if (summary.isNotEmpty) _buildSummary(l, summary),
-
-          // 12. CONFIDENCE
-          if (conf != null) ...[
-            ReportHeader(l.analysisWord, l.confidenceLabel, l.qualityTag),
-            ConfidenceBlock(
-                score: conf,
-                statement: data['confidence_explanation']?.toString(),
-                breakdown: _asMap(data['confidence_breakdown'])),
-          ],
-
-          // 13. AI COPY BAR
-          _buildAiCopyBar(context),
-          const SizedBox(height: 40),
-        ])),
-      ]),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
+        title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Text(widget.participants.join(' & '), style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700), maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(l.cpSubtitle, style: const TextStyle(color: AppColors.gold, fontSize: 10)),
+        ]),
+      ),
+      body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l)),
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 1. HERO — Big score ring + grade + verdict + score component chips
-  // ════════════════════════════════════════════════════════════════════
+  List<Widget> _sections(AppLocalizations l) {
+    const gap = SizedBox(height: 18);
+    return [
+      _breadcrumb(l),
+      const SizedBox(height: 10),
+      _snapshot(l),          // 1
+      gap, _partners(l),        // 2
+      gap, _numberOfChildren(l), // 3
+      gap, _timing(l),          // 4
+      gap, _fifthHouse(l),      // 5
+      gap, _jupiter(l),         // 6
+      gap, _d7(l),              // 7
+      gap, _beejaKshetra(l),    // 8
+      gap, _dosha(l),           // 9
+      gap, _remedies(l),        // 10
+      gap, _summary(l),         // 11
+      gap, _reliability(l),     // 12
+      gap, _discussAi(l),       // 13
+    ];
+  }
 
-  Widget _buildHero(AppLocalizations l, Map<String, dynamic> overall) {
-    final mainScore =
-        (overall['overall_probability_score'] as num?)?.toDouble() ?? 0;
-    final grade = overall['probability_grade']?.toString() ?? '';
-    final band = overall['probability_band']?.toString() ?? '';
-    final verdict = overall['combined_verdict']?.toString() ?? '';
-    final sc = _scoreColor(mainScore);
-    final components = _asMap(overall['score_components']);
+  Widget _breadcrumb(AppLocalizations l) => Row(children: [
+    Text(l.crCrumbHome, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    const Text('  ›  ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+    Text(l.crCrumbReports, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    const Text('  ›  ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+    Flexible(child: Text(l.cpTitle, style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+  ]);
 
+  // ══════════════════════════════════════════════════════════════════
+  //  1 — PROGENY PROBABILITY SNAPSHOT
+  // ══════════════════════════════════════════════════════════════════
+  Widget _snapshot(AppLocalizations l) {
+    final overall = _mapOf(_data, 'overall_probability');
+    final score = _scOf(overall, 'overall_probability_score');
+    final col = _col(score);
+    final grade = _strOf(overall, 'probability_grade');
+    final band = _strOf(overall, 'probability_band');
+    final comps = _mapOf(overall, 'score_components');
+    final summary = _strOf(overall, 'combined_verdict').isNotEmpty ? _strOf(overall, 'combined_verdict') : _str('confidence_explanation');
+    final fifthAvg = ((_scOf(comps, 'partner1_5th_house_strength') + _scOf(comps, 'partner2_5th_house_strength')) / 2);
+    final jupiterAvg = ((_scOf(comps, 'partner1_jupiter_strength') + _scOf(comps, 'partner2_jupiter_strength')) / 2);
+    final d7Avg = ((_scOf(comps, 'partner1_d7_strength') + _scOf(comps, 'partner2_d7_strength')) / 2);
+    final sphutaAvg = ((_scOf(comps, 'beeja_sphuta_score') + _scOf(comps, 'kshetra_sphuta_score')) / 2);
+    final gauges = <List<Object>>[
+      [l.cpGauge5thHouse, fifthAvg],
+      [l.cpGaugeJupiter, jupiterAvg],
+      [l.cpGaugeD7, d7Avg],
+      [l.cpGaugeSphuta, sphutaAvg],
+      [l.cpGaugeTiming, _scOf(comps, 'dasha_timing_favorability')],
+    ];
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-            _accent.withOpacity(0.12),
-            const Color(0xFF4A3B8C).withOpacity(0.1)
-          ]),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: _accent.withOpacity(0.3))),
+        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [col.withOpacity(0.18), AppColors.card.withOpacity(0.4)]),
+        borderRadius: BorderRadius.circular(22), border: Border.all(color: col.withOpacity(0.3)),
+      ),
       child: Column(children: [
-        _label(l.progenyProbabilityLabel),
+        Text(l.cpSnapshotHeader.toUpperCase(), style: const TextStyle(color: AppColors.smoke, fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700)),
         const SizedBox(height: 14),
-
-        // Main score ring
-        SizedBox(
-            width: 120,
-            height: 120,
-            child: Stack(alignment: Alignment.center, children: [
-              SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: CircularProgressIndicator(
-                      value: (mainScore / 100).clamp(0, 1),
-                      strokeWidth: 8,
-                      backgroundColor: Colors.white.withOpacity(0.08),
-                      valueColor: AlwaysStoppedAnimation(sc))),
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(mainScore.toStringAsFixed(0),
-                    style: TextStyle(
-                        color: sc,
-                        fontSize: 36,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'serif')),
-                Text(grade,
-                    style: TextStyle(
-                        color: sc,
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                        fontWeight: FontWeight.w600)),
-              ]),
-            ])),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: score / 100), duration: const Duration(milliseconds: 900), curve: Curves.easeOutCubic,
+          builder: (_, v, __) => SizedBox(width: 140, height: 140, child: Stack(alignment: Alignment.center, children: [
+            SizedBox(width: 140, height: 140, child: CircularProgressIndicator(value: v, strokeWidth: 12, strokeCap: StrokeCap.round,
+              backgroundColor: Colors.white.withOpacity(0.07), valueColor: AlwaysStoppedAnimation(col))),
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Text((v * 100).toStringAsFixed(0), style: TextStyle(color: col, fontSize: 44, fontWeight: FontWeight.w800, height: 1)),
+              Text('/100', style: TextStyle(color: col.withOpacity(0.6), fontSize: 12, fontWeight: FontWeight.w600)),
+            ]),
+          ])),
+        ),
         const SizedBox(height: 10),
-
-        // Grade badge
-        if (band.isNotEmpty)
-          Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                  color: sc.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Text(band,
-                  style: TextStyle(
-                      color: sc, fontSize: 11, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center)),
-        const SizedBox(height: 8),
-
-        // Verdict text
-        if (verdict.isNotEmpty)
-          Text(verdict,
-              style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 11,
-                  height: 1.4,
-                  fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center),
-
-        // Score component chips — row 1
-        if (components.isNotEmpty) ...[
-          const SizedBox(height: 14),
-          Container(
-              padding: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(
-                          color: _accent.withOpacity(0.2), width: 0.5))),
-              child: Column(children: [
-                Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      _scoreChip('P1 5th House',
-                          _num(components, 'partner1_5th_house_strength')),
-                      _scoreChip('P2 5th House',
-                          _num(components, 'partner2_5th_house_strength')),
-                      _scoreChip('P1 Jupiter',
-                          _num(components, 'partner1_jupiter_strength')),
-                      _scoreChip('P2 Jupiter',
-                          _num(components, 'partner2_jupiter_strength')),
-                      _scoreChip(
-                          'P1 D7', _num(components, 'partner1_d7_strength')),
-                      _scoreChip(
-                          'P2 D7', _num(components, 'partner2_d7_strength')),
-                      _scoreChip(
-                          'Beeja', _num(components, 'beeja_sphuta_score')),
-                      _scoreChip('Kshetra',
-                          _num(components, 'kshetra_sphuta_score')),
-                      _scoreChip('Timing',
-                          _num(components, 'dasha_timing_favorability')),
-                      _scoreChip('Dosha Pen.',
-                          _num(components, 'combined_dosha_penalty'),
-                          isPenalty: true),
-                    ]),
-                if (components['explanation'] != null) ...[
-                  const SizedBox(height: 8),
-                  Text(components['explanation'].toString(),
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 9,
-                          height: 1.3,
-                          fontStyle: FontStyle.italic),
-                      textAlign: TextAlign.center),
-                ],
-              ])),
+        if (grade.isNotEmpty) Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(color: col.withOpacity(0.16), borderRadius: BorderRadius.circular(20)),
+          child: Text(grade, style: TextStyle(color: col, fontSize: 14, fontWeight: FontWeight.w800))),
+        if (band.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Text(band, style: const TextStyle(color: AppColors.parchment, fontSize: 11.5), textAlign: TextAlign.center)),
+        if (summary.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Container(padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.35), borderRadius: BorderRadius.circular(14)),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('🤖', style: TextStyle(fontSize: 14)), const SizedBox(width: 9),
+              Expanded(child: Text(_cap(summary), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+            ])),
         ],
+        const SizedBox(height: 18),
+        Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+        const SizedBox(height: 16),
+        Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l, comps).map((t) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          decoration: BoxDecoration(color: KColors.green.withOpacity(0.10), borderRadius: BorderRadius.circular(20), border: Border.all(color: KColors.green.withOpacity(0.28))),
+          child: Text('✓ $t', style: const TextStyle(color: KColors.green, fontSize: 11.5, fontWeight: FontWeight.w700)),
+        )).toList()),
       ]),
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 2. PARTNER CARDS — side-by-side info cards
-  // ════════════════════════════════════════════════════════════════════
+  List<String> _snapshotChips(AppLocalizations l, Map comps) {
+    final out = <String>[];
+    if (_scOf(comps, 'partner1_jupiter_strength') >= 70 && _scOf(comps, 'partner2_jupiter_strength') >= 70) out.add(l.cpChipStrongPutrakaraka);
+    if (_scOf(comps, 'combined_dosha_penalty') < 15) out.add(l.cpChipLowDoshaPenalty);
+    if (_scOf(comps, 'dasha_timing_favorability') >= 60) out.add(l.cpChipFavorableTiming);
+    final doshas = _listOf(_map('dosha_analysis'), 'doshas_detected');
+    if (doshas.isEmpty) out.add(l.cpChipNoDoshas);
+    return out.toSet().take(6).toList();
+  }
 
-  Widget _buildPartnerCards(AppLocalizations l, Map<String, dynamic> header) {
-    final p1 = _asMap(header['partner1']);
-    final p2 = _asMap(header['partner2']);
+  Widget _miniGauge(String label, double score) {
+    final col = _col(score);
+    return SizedBox(width: 92, child: Column(children: [
+      SizedBox(width: 62, height: 62, child: Stack(alignment: Alignment.center, children: [
+        SizedBox(width: 62, height: 62, child: CircularProgressIndicator(value: (score / 100).clamp(0, 1), strokeWidth: 6, strokeCap: StrokeCap.round,
+          backgroundColor: Colors.white.withOpacity(0.07), valueColor: AlwaysStoppedAnimation(col))),
+        Text(score.toStringAsFixed(0), style: TextStyle(color: col, fontSize: 15, fontWeight: FontWeight.w800)),
+      ])),
+      const SizedBox(height: 6),
+      Text(label, style: const TextStyle(color: AppColors.parchment, fontSize: 10, fontWeight: FontWeight.w600), textAlign: TextAlign.center, maxLines: 2),
+    ]));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  2 — PARTNER SNAPSHOT
+  // ══════════════════════════════════════════════════════════════════
+  Widget _partners(AppLocalizations l) {
+    final header = _map('analysis_header');
+    final p1 = _mapOf(header, 'partner1');
+    final p2 = _mapOf(header, 'partner2');
     if (p1.isEmpty && p2.isEmpty) return const SizedBox.shrink();
-
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (p1.isNotEmpty) Expanded(child: _partnerCard(l, p1)),
-              if (p1.isNotEmpty && p2.isNotEmpty) const SizedBox(width: 8),
-              if (p2.isNotEmpty) Expanded(child: _partnerCard(l, p2)),
-            ]));
-  }
-
-  Widget _partnerCard(AppLocalizations l, Map<String, dynamic> p) {
-    final role = p['role']?.toString() ?? '';
-    final borderC = role.toLowerCase().contains('male') && !role.toLowerCase().contains('female')
-        ? AppColors.aurora
-        : _accent;
-    return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderC.withOpacity(0.3))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          if (role.isNotEmpty)
-            Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                margin: const EdgeInsets.only(bottom: 6),
-                decoration: BoxDecoration(
-                    color: borderC.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6)),
-                child: Text(role.toUpperCase(),
-                    style: TextStyle(
-                        color: borderC,
-                        fontSize: 8,
-                        letterSpacing: 1,
-                        fontFamily: 'monospace',
-                        fontWeight: FontWeight.w700))),
-          Text(p['name']?.toString() ?? '—',
-              style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'serif')),
-          const SizedBox(height: 6),
-          _kvRow(l.gender, p['gender']?.toString() ?? '—', AppColors.smoke),
-          _kvRow(l.dob, p['dob']?.toString() ?? '—', AppColors.smoke),
-          _kvRow(l.tob, p['tob']?.toString() ?? '—', AppColors.smoke),
-          _kvRow(l.place, p['place']?.toString() ?? '—', AppColors.smoke),
-          const SizedBox(height: 4),
-          _kvRow(l.lagna, p['lagna']?.toString() ?? '—', AppColors.gold),
-          _kvRow(
-              l.moonSignLabel, p['moon_sign']?.toString() ?? '—', AppColors.gold),
-        ]));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 3. NUMBER OF CHILDREN
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildNumberOfChildren(AppLocalizations l, Map<String, dynamic> number) {
-    final probable = number['probable_number']?.toString() ?? '—';
-    final genderTendency = number['gender_tendency']?.toString() ?? '';
-    final genderScore = _asMap(number['gender_tendency_score']);
-    final sonScore = (genderScore['son_score'] as num?)?.toInt() ?? 0;
-    final daughterScore = (genderScore['daughter_score'] as num?)?.toInt() ?? 0;
-    final numExp = number['number_explanation']?.toString() ?? '';
-    final genderExp = number['gender_explanation']?.toString() ?? '';
-    final note = number['important_note']?.toString() ?? '';
-
-    return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: _accent.withOpacity(0.2))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Big number
-          Center(
-              child: Column(children: [
-            Text(l.probableNumber,
-                style: const TextStyle(
-                    color: _accent,
-                    fontSize: 8,
-                    letterSpacing: 2,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const SizedBox(height: 4),
-            Text(probable,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif')),
-          ])),
-          const SizedBox(height: 12),
-
-          // Gender tendency
-          if (genderTendency.isNotEmpty) ...[
-            Row(children: [
-              Expanded(
-                  child: Text(l.genderTendency,
-                      style: TextStyle(
-                          color: AppColors.smoke.withOpacity(0.8),
-                          fontSize: 9,
-                          fontFamily: 'monospace'))),
-              _badge(genderTendency,
-                  genderTendency.contains('Son') ? AppColors.aurora : genderTendency.contains('Daughter') ? _accent : AppColors.gold),
-            ]),
-            const SizedBox(height: 8),
-          ],
-
-          // Son/Daughter score visual
-          if (sonScore > 0 || daughterScore > 0) ...[
-            Row(children: [
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    Text(l.son,
-                        style: const TextStyle(
-                            color: AppColors.aurora,
-                            fontSize: 8,
-                            fontFamily: 'monospace',
-                            fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 3),
-                    Row(children: [
-                      Expanded(
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(3),
-                              child: LinearProgressIndicator(
-                                  value: (sonScore / (sonScore + daughterScore == 0 ? 1 : sonScore + daughterScore)).clamp(0.0, 1.0),
-                                  minHeight: 6,
-                                  backgroundColor: Colors.white.withOpacity(0.06),
-                                  valueColor: const AlwaysStoppedAnimation(AppColors.aurora)))),
-                      const SizedBox(width: 8),
-                      Text('$sonScore',
-                          style: const TextStyle(
-                              color: AppColors.aurora,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'serif')),
-                    ]),
-                  ])),
-              const SizedBox(width: 16),
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    Text(l.daughter,
-                        style: const TextStyle(
-                            color: _accent,
-                            fontSize: 8,
-                            fontFamily: 'monospace',
-                            fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 3),
-                    Row(children: [
-                      Expanded(
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(3),
-                              child: LinearProgressIndicator(
-                                  value: (daughterScore / (sonScore + daughterScore == 0 ? 1 : sonScore + daughterScore)).clamp(0.0, 1.0),
-                                  minHeight: 6,
-                                  backgroundColor: Colors.white.withOpacity(0.06),
-                                  valueColor: const AlwaysStoppedAnimation(_accent)))),
-                      const SizedBox(width: 8),
-                      Text('$daughterScore',
-                          style: const TextStyle(
-                              color: _accent,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'serif')),
-                    ]),
-                  ])),
-            ]),
-            const SizedBox(height: 12),
-          ],
-
-          // Explanations
-          if (numExp.isNotEmpty) ...[
-            Text(l.numberExplanation,
-                style: TextStyle(
-                    color: AppColors.smoke,
-                    fontSize: 8,
-                    fontFamily: 'monospace',
-                    letterSpacing: 1)),
-            const SizedBox(height: 3),
-            Text(numExp,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 10,
-                    height: 1.4)),
-            const SizedBox(height: 8),
-          ],
-          if (genderExp.isNotEmpty) ...[
-            Text(l.genderExplanation,
-                style: TextStyle(
-                    color: AppColors.smoke,
-                    fontSize: 8,
-                    fontFamily: 'monospace',
-                    letterSpacing: 1)),
-            const SizedBox(height: 3),
-            Text(genderExp,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 10,
-                    height: 1.4)),
-            const SizedBox(height: 8),
-          ],
-          if (note.isNotEmpty)
-            Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: AppColors.gold.withOpacity(0.08),
-                    borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(8),
-                        bottomRight: Radius.circular(8)),
-                    border: const Border(
-                        left: BorderSide(color: AppColors.gold, width: 3))),
-                child: Text(note,
-                    style: const TextStyle(
-                        color: AppColors.ivory,
-                        fontSize: 10,
-                        height: 1.4,
-                        fontStyle: FontStyle.italic))),
-        ]));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 4. TIMING (MOOLA DASHA)
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildTiming(AppLocalizations l, Map<String, dynamic> timing) {
-    final combinedScore =
-        (timing['combined_timing_score'] as num?)?.toDouble() ?? 0;
-    final timingVerdict = timing['timing_verdict']?.toString() ?? '';
-    final nextWindow = timing['next_favorable_window']?.toString() ?? '';
-    final p1Dasha = _asMap(timing['current_dasha_partner1']);
-    final p2Dasha = _asMap(timing['current_dasha_partner2']);
-    final windows = (timing['favorable_windows'] as List?) ?? [];
-
-    final sc = _scoreColor(combinedScore);
-
-    return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.aurora.withOpacity(0.2))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Combined timing score ring
-          Center(
-              child: Column(children: [
-            _ring(combinedScore, 'COMBINED\nTIMING', sc),
-            if (timingVerdict.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(timingVerdict,
-                  style: const TextStyle(
-                      color: AppColors.ivory,
-                      fontSize: 11,
-                      height: 1.4,
-                      fontStyle: FontStyle.italic),
-                  textAlign: TextAlign.center),
-            ],
-          ])),
-          const SizedBox(height: 14),
-
-          // Partner 1 current dasha
-          if (p1Dasha.isNotEmpty) _buildDashaPartnerBlock(l, l.partnerOneLabel, p1Dasha),
-          if (p1Dasha.isNotEmpty && p2Dasha.isNotEmpty)
-            const SizedBox(height: 10),
-          // Partner 2 current dasha
-          if (p2Dasha.isNotEmpty) _buildDashaPartnerBlock(l, l.partnerTwoLabel, p2Dasha),
-
-          // Favorable windows
-          if (windows.isNotEmpty) ...[
-            const SizedBox(height: 14),
-            _label(l.favorableWindowsLabel),
-            const SizedBox(height: 8),
-            ...windows.map((w) {
-              final wm = _asMap(w);
-              final period = wm['period']?.toString() ?? '';
-              final start = wm['start_date']?.toString() ?? '';
-              final end = wm['end_date']?.toString() ?? '';
-              final factor = wm['activating_factor']?.toString() ?? '';
-              final appliesTo = wm['applies_to']?.toString() ?? '';
-              final strength = wm['strength']?.toString() ?? '';
-              final sC = strength.toLowerCase().contains('strong')
-                  ? AppColors.success
-                  : strength.toLowerCase().contains('moderate')
-                      ? AppColors.gold
-                      : AppColors.aurora;
-              return Container(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: sC.withOpacity(0.06),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: sC.withOpacity(0.2))),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          Expanded(
-                              child: Text(period,
-                                  style: TextStyle(
-                                      color: sC,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'serif'))),
-                          if (strength.isNotEmpty) _badge(strength, sC),
-                        ]),
-                        if (start.isNotEmpty || end.isNotEmpty) ...[
-                          const SizedBox(height: 3),
-                          Text('$start  —  $end',
-                              style: const TextStyle(
-                                  color: AppColors.smoke,
-                                  fontSize: 9,
-                                  fontFamily: 'monospace')),
-                        ],
-                        if (factor.isNotEmpty) ...[
-                          const SizedBox(height: 3),
-                          Text(l.factorPrefix(factor),
-                              style: const TextStyle(
-                                  color: AppColors.lavender,
-                                  fontSize: 9,
-                                  height: 1.3)),
-                        ],
-                        if (appliesTo.isNotEmpty)
-                          Text(l.appliesToLabel(appliesTo),
-                              style: const TextStyle(
-                                  color: AppColors.smoke,
-                                  fontSize: 9)),
-                      ]));
-            }),
-          ],
-
-          // Next favorable window
-          if (nextWindow.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
-                    border:
-                        Border.all(color: AppColors.success.withOpacity(0.2))),
-                child: Row(children: [
-                  const Icon(Icons.schedule,
-                      color: AppColors.success, size: 16),
-                  const SizedBox(width: 8),
-                  Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        Text(l.nextFavorableWindow,
-                            style: const TextStyle(
-                                color: AppColors.success,
-                                fontSize: 8,
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1)),
-                        const SizedBox(height: 2),
-                        Text(nextWindow,
-                            style: const TextStyle(
-                                color: AppColors.ivory,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600)),
-                      ])),
-                ])),
-          ],
-        ]));
-  }
-
-  Widget _buildDashaPartnerBlock(AppLocalizations l, String label, Map<String, dynamic> pd) {
-    final moola = _asMap(pd['moola']);
-    final favorability = pd['progeny_favorability']?.toString() ?? '';
-    final favScore = (pd['favorability_score'] as num?)?.toDouble() ?? 0;
-    final reasoning = pd['reasoning']?.toString() ?? '';
-
-    final md = moola['md']?.toString() ?? '';
-    final ad = moola['ad']?.toString() ?? '';
-    final pdStr = moola['pd']?.toString() ?? '';
-    final mdStart = moola['md_start']?.toString() ?? '';
-    final mdEnd = moola['md_end']?.toString() ?? '';
-    final adStart = moola['ad_start']?.toString() ?? '';
-    final adEnd = moola['ad_end']?.toString() ?? '';
-
-    final sc = _scoreColor(favScore);
-
-    return Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(10)),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Text(label.toUpperCase(),
-                style: const TextStyle(
-                    color: _accent,
-                    fontSize: 9,
-                    letterSpacing: 1.5,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const Spacer(),
-            if (favorability.isNotEmpty) _badge(favorability, sc),
-          ]),
-          const SizedBox(height: 6),
-          if (md.isNotEmpty) _kvRow(l.mahadashaLabel, md, AppColors.gold),
-          if (mdStart.isNotEmpty)
-            _kvRow(l.mdPeriodLabel, '$mdStart — $mdEnd', AppColors.smoke),
-          if (ad.isNotEmpty) _kvRow(l.antardashaLabel, ad, AppColors.gold),
-          if (adStart.isNotEmpty)
-            _kvRow(l.adPeriodLabel, '$adStart — $adEnd', AppColors.smoke),
-          if (pdStr.isNotEmpty) _kvRow(l.pratyantardashaLabel, pdStr, AppColors.gold),
-
-          // Favorability score bar
-          if (favScore > 0) ...[
-            const SizedBox(height: 6),
-            _progressBar(l.favorabilityLabel, favScore),
-          ],
-
-          if (reasoning.isNotEmpty)
-            Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text(reasoning,
-                    style: const TextStyle(
-                        color: AppColors.lavender,
-                        fontSize: 9,
-                        height: 1.3,
-                        fontStyle: FontStyle.italic))),
-        ]));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 5. 5TH HOUSE ANALYSIS — per person
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildFifthHouseCard(AppLocalizations l, String key, Map<String, dynamic> m) {
-    final name = _personLabel(key);
-    final sign = m['sign']?.toString() ?? '';
-    final signEn = m['sign_english']?.toString() ?? '';
-    final lord = m['lord']?.toString() ?? '';
-    final lordHouse = m['lord_placement_house']?.toString() ?? '';
-    final lordDignity = m['lord_dignity']?.toString() ?? '';
-    final lordStrength = (m['lord_strength'] as num?)?.toDouble();
-    final lordDust = m['lord_in_dusthana'];
-    final occupants = (m['occupants'] as List?) ?? [];
-    final benefics = (m['benefic_aspects'] as List?) ?? [];
-    final malefics = (m['malefic_aspects'] as List?) ?? [];
-    final houseScore = (m['house_strength_score'] as num?)?.toDouble() ?? 0;
-    final interp = m['interpretation']?.toString() ?? '';
-
-    return _personCard(name, _accent, [
-      // Sign
-      Row(children: [
-        Text('$sign ${signEn.isNotEmpty ? "($signEn)" : ""}',
-            style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'serif')),
-      ]),
-      const SizedBox(height: 8),
-      _kvRow(l.lordLabel, lord, AppColors.gold),
-      _kvRow(l.lordPlacementLabel, '${lordHouse}H', AppColors.gold),
-      if (lordDignity.isNotEmpty) _kvRow(l.lordDignityLabel, lordDignity, _dignityColor(lordDignity)),
-      if (lordDust == true)
-        _badge(l.lordInDusthana, AppColors.error),
-      if (lordStrength != null) ...[
-        const SizedBox(height: 4),
-        _progressBar(l.lordStrengthLabel, lordStrength),
-      ],
-
-      // House strength
-      const SizedBox(height: 4),
-      _progressBar(l.houseStrengthLabel, houseScore),
-
-      // Occupants
-      if (occupants.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Text(l.occupants,
-            style: const TextStyle(
-                color: AppColors.smoke,
-                fontSize: 8,
-                fontFamily: 'monospace',
-                letterSpacing: 1)),
-        const SizedBox(height: 4),
-        Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: occupants
-                .map((o) => _badge(o.toString(), AppColors.aurora))
-                .toList()),
-      ],
-
-      // Benefic aspects
-      if (benefics.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Text(l.beneficAspects,
-            style: const TextStyle(
-                color: AppColors.success,
-                fontSize: 8,
-                fontFamily: 'monospace',
-                letterSpacing: 1)),
-        const SizedBox(height: 4),
-        Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: benefics
-                .map((b) => _badge(b.toString(), AppColors.success))
-                .toList()),
-      ],
-
-      // Malefic aspects
-      if (malefics.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Text(l.maleficAspects,
-            style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 8,
-                fontFamily: 'monospace',
-                letterSpacing: 1)),
-        const SizedBox(height: 4),
-        Wrap(
-            spacing: 6,
-            runSpacing: 4,
-            children: malefics
-                .map((ml) => _badge(ml.toString(), AppColors.error))
-                .toList()),
-      ],
-
-      // Interpretation
-      if (interp.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Text(interp,
-            style: const TextStyle(
-                color: AppColors.lavender,
-                fontSize: 10,
-                height: 1.4,
-                fontStyle: FontStyle.italic)),
-      ],
-    ]);
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 6. JUPITER ANALYSIS — per person
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildJupiterCard(AppLocalizations l, String key, Map<String, dynamic> m) {
-    final name = _personLabel(key);
-    final sign = m['sign']?.toString() ?? '';
-    final house = m['house']?.toString() ?? '';
-    final dignity = m['dignity']?.toString() ?? '';
-    final strength = (m['strength'] as num?)?.toDouble() ?? 0;
-    final retrograde = m['retrograde'] == true;
-    final combust = m['combust'] == true;
-    final aspects5th = m['aspects_5th_house'] == true;
-    final in5th = m['in_5th_house'] == true;
-    final interp = m['interpretation']?.toString() ?? '';
-
-    return _personCard(name, AppColors.gold, [
-      Row(children: [
-        Text(l.jupiterInSignHeading(sign),
-            style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'serif')),
-      ]),
-      const SizedBox(height: 8),
-      _kvRow(l.house, house, AppColors.gold),
-      if (dignity.isNotEmpty) _kvRow(l.dignityLabel, dignity, _dignityColor(dignity)),
-
-      // Strength bar
-      const SizedBox(height: 4),
-      _progressBar(l.strength, strength),
-      const SizedBox(height: 8),
-
-      // Status badges row
-      Wrap(spacing: 6, runSpacing: 4, children: [
-        if (retrograde)
-          _badge(l.retrograde, AppColors.error)
-        else
-          _badge(l.directBadge, AppColors.success),
-        if (combust)
-          _badge(l.combust, AppColors.error)
-        else
-          _badge(l.notCombustBadge, AppColors.success),
-        if (in5th) _badge(l.in5thHouseBadge, AppColors.success),
-        if (aspects5th) _badge(l.aspects5thBadge, AppColors.success),
-        if (!in5th && !aspects5th) _badge(l.no5thConnectionBadge, AppColors.smoke),
-      ]),
-
-      // Interpretation
-      if (interp.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Text(interp,
-            style: const TextStyle(
-                color: AppColors.lavender,
-                fontSize: 10,
-                height: 1.4,
-                fontStyle: FontStyle.italic)),
-      ],
-    ]);
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 7. D7 SAPTAMSA ANALYSIS — per person
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildD7Card(AppLocalizations l, String key, Map<String, dynamic> m) {
-    final name = _personLabel(key);
-    final d7Lagna = m['d7_lagna']?.toString() ?? '';
-    final d7Fifth = m['d7_fifth_sign']?.toString() ?? '';
-    final d7FifthLord = m['d7_fifth_lord']?.toString() ?? '';
-    final d7JupSign = m['d7_jupiter_sign']?.toString() ?? '';
-    final d7JupDig = m['d7_jupiter_dignity']?.toString() ?? '';
-    final d7Strength = (m['d7_strength'] as num?)?.toDouble() ?? 0;
-    final d7Interp = m['d7_interpretation']?.toString() ?? '';
-    final d7Planets = (m['d7_planets'] as List?) ?? [];
-
-    return _personCard(name, AppColors.indigo, [
-      Text(l.d7Saptamsa,
-          style: TextStyle(
-              color: AppColors.lavender,
-              fontSize: 8,
-              letterSpacing: 2,
-              fontFamily: 'monospace',
-              fontWeight: FontWeight.w600)),
-      const SizedBox(height: 8),
-      _kvRow(l.d7LagnaLabel, d7Lagna, AppColors.gold),
-      _kvRow(l.d7FifthSignLabel, d7Fifth, AppColors.gold),
-      _kvRow(l.d7FifthLordLabel, d7FifthLord, AppColors.gold),
-      _kvRow(l.jupiterInD7Label, d7JupSign, AppColors.gold),
-      if (d7JupDig.isNotEmpty)
-        _kvRow(l.jupiterDignityLabel, d7JupDig, _dignityColor(d7JupDig)),
-
-      // Strength bar
-      const SizedBox(height: 4),
-      _progressBar(l.d7StrengthLabel, d7Strength),
-
-      // Planet table
-      if (d7Planets.isNotEmpty) ...[
-        const SizedBox(height: 10),
-        Text(l.planetPositions,
-            style: const TextStyle(
-                color: AppColors.smoke,
-                fontSize: 8,
-                fontFamily: 'monospace',
-                letterSpacing: 1)),
-        const SizedBox(height: 4),
-        // Table header
-        Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.04),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(6))),
-            child: Row(children: [
-              Expanded(
-                  flex: 3,
-                  child: Text(l.planet,
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 8,
-                          fontFamily: 'monospace'))),
-              Expanded(
-                  flex: 2,
-                  child: Text(l.sign,
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 8,
-                          fontFamily: 'monospace'))),
-              Expanded(
-                  flex: 2,
-                  child: Text(l.house,
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 8,
-                          fontFamily: 'monospace'))),
-              Expanded(
-                  flex: 2,
-                  child: Text(l.inFifth,
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 8,
-                          fontFamily: 'monospace'),
-                      textAlign: TextAlign.right)),
-            ])),
-        ...d7Planets.map((p) {
-          final pm = _asMap(p);
-          final inFifth = pm['is_in_d7_5th'] == true;
-          return Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          color: Colors.white.withOpacity(0.04)))),
-              child: Row(children: [
-                Expanded(
-                    flex: 3,
-                    child: Text(pm['planet']?.toString() ?? '',
-                        style: const TextStyle(
-                            color: AppColors.ivory,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600))),
-                Expanded(
-                    flex: 2,
-                    child: Text(pm['d7_sign']?.toString() ?? '',
-                        style: const TextStyle(
-                            color: AppColors.gold, fontSize: 10))),
-                Expanded(
-                    flex: 2,
-                    child: Text(pm['d7_house']?.toString() ?? '',
-                        style: const TextStyle(
-                            color: AppColors.smoke, fontSize: 10))),
-                Expanded(
-                    flex: 2,
-                    child: Text(inFifth ? l.yesWord : '—',
-                        style: TextStyle(
-                            color: inFifth
-                                ? AppColors.success
-                                : AppColors.smoke,
-                            fontSize: 10,
-                            fontWeight: inFifth
-                                ? FontWeight.w700
-                                : FontWeight.normal),
-                        textAlign: TextAlign.right)),
-              ]));
-        }),
-      ],
-
-      // Interpretation
-      if (d7Interp.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Text(d7Interp,
-            style: const TextStyle(
-                color: AppColors.lavender,
-                fontSize: 10,
-                height: 1.4,
-                fontStyle: FontStyle.italic)),
-      ],
-    ]);
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 8. BEEJA & KSHETRA SPHUTA
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildBeejaKshetra(AppLocalizations l, Map<String, dynamic> bk) {
-    final beeja = _asMap(bk['beeja_sphuta']);
-    final kshetra = _asMap(bk['kshetra_sphuta']);
-    final combined = bk['combined_fertility_indication']?.toString() ?? '';
-
-    return Column(children: [
-      Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (beeja.isNotEmpty)
-                  Expanded(child: _sphutaCard(l.beejaSphutaTitle, AppColors.aurora, beeja, l)),
-                if (beeja.isNotEmpty && kshetra.isNotEmpty)
-                  const SizedBox(width: 8),
-                if (kshetra.isNotEmpty)
-                  Expanded(child: _sphutaCard(l.kshetraSphutaTitle, _accent, kshetra, l)),
-              ])),
-
-      // Combined fertility indication
-      if (combined.isNotEmpty)
-        Container(
-            margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                color: AppColors.gold.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.gold.withOpacity(0.2))),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l.combinedFertility,
-                      style: const TextStyle(
-                          color: AppColors.gold,
-                          fontSize: 8,
-                          letterSpacing: 1,
-                          fontFamily: 'monospace',
-                          fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
-                  Text(combined,
-                      style: const TextStyle(
-                          color: AppColors.ivory,
-                          fontSize: 11,
-                          height: 1.4)),
-                ])),
-    ]);
-  }
-
-  Widget _sphutaCard(
-      String title, Color color, Map<String, dynamic> sp, AppLocalizations l) {
-    final degree = sp['degree']?.toString() ?? '';
-    final sign = sp['sign']?.toString() ?? '';
-    final signLord = sp['sign_lord']?.toString() ?? '';
-    final score = (sp['strength_score'] as num?)?.toDouble() ?? 0;
-    final rating = sp['strength_rating']?.toString() ?? '';
-    final factors = (sp['factors'] as List?) ?? [];
-    final interp = sp['interpretation']?.toString() ?? '';
-    final sc = _scoreColor(score);
-
-    return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: color.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.25))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title,
-              style: TextStyle(
-                  color: color,
-                  fontSize: 8,
-                  letterSpacing: 1.5,
-                  fontFamily: 'monospace',
-                  fontWeight: FontWeight.w600)),
-          const SizedBox(height: 6),
-
-          // Score
-          Row(children: [
-            Text(score.toStringAsFixed(0),
-                style: TextStyle(
-                    color: sc,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif')),
-            const Text('/100',
-                style: TextStyle(
-                    color: AppColors.smoke, fontSize: 10)),
-            const Spacer(),
-            if (rating.isNotEmpty) _badge(rating, sc),
-          ]),
-          const SizedBox(height: 6),
-
-          // Strength bar
-          ClipRRect(
-              borderRadius: BorderRadius.circular(2),
-              child: LinearProgressIndicator(
-                  value: (score / 100).clamp(0, 1),
-                  minHeight: 4,
-                  backgroundColor: Colors.white.withOpacity(0.06),
-                  valueColor: AlwaysStoppedAnimation(sc))),
-          const SizedBox(height: 8),
-
-          if (degree.isNotEmpty) _kvRow(l.degreeLabel, degree, AppColors.gold),
-          if (sign.isNotEmpty) _kvRow(l.sign, sign, AppColors.gold),
-          if (signLord.isNotEmpty)
-            _kvRow(l.signLordLabel, signLord, AppColors.gold),
-
-          // Factors as chips
-          if (factors.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Wrap(
-                spacing: 4,
-                runSpacing: 3,
-                children: factors
-                    .map((f) => Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                            color: color.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(4)),
-                        child: Text(f.toString(),
-                            style: TextStyle(
-                                color: color,
-                                fontSize: 8,
-                                height: 1.2))))
-                    .toList()),
-          ],
-
-          // Interpretation
-          if (interp.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(interp,
-                style: const TextStyle(
-                    color: AppColors.lavender,
-                    fontSize: 9,
-                    height: 1.3,
-                    fontStyle: FontStyle.italic)),
-          ],
-        ]));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 9. DOSHA ANALYSIS
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildDoshaAnalysis(AppLocalizations l, Map<String, dynamic> dosha) {
-    final doshas = (dosha['doshas_detected'] as List?) ?? [];
-    final totalPenalty =
-        (dosha['total_dosha_penalty'] as num?)?.toDouble() ?? 0;
-    final summary = dosha['dosha_summary']?.toString() ?? '';
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // Summary + total penalty
-      Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-              color: _cardBg.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.error.withOpacity(0.2))),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Expanded(
-                  child: Text(l.totalDoshaPenalty,
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 9,
-                          fontFamily: 'monospace',
-                          letterSpacing: 1))),
-              Text('-${totalPenalty.toStringAsFixed(1)}',
-                  style: const TextStyle(
-                      color: AppColors.error,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'serif')),
-            ]),
-            if (summary.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(summary,
-                  style: const TextStyle(
-                      color: AppColors.ivory,
-                      fontSize: 10,
-                      height: 1.4)),
-            ],
-          ])),
+      KSectionHeader(icon: Icons.people_alt_rounded, title: l.cpPartnersTitle, color: KColors.blue),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (p1.isNotEmpty) Expanded(child: _partnerCard(l, p1, KColors.purple)),
+        if (p1.isNotEmpty && p2.isNotEmpty) const SizedBox(width: 10),
+        if (p2.isNotEmpty) Expanded(child: _partnerCard(l, p2, KColors.blue)),
+      ]),
+    ]);
+  }
 
-      // Individual doshas
-      ...doshas.map((d) {
-        final dm = _asMap(d);
-        final doshaName = dm['dosha_name']?.toString() ?? '';
-        final presentIn = dm['present_in']?.toString() ?? '';
-        final severity = dm['severity']?.toString() ?? '';
-        final desc = dm['description']?.toString() ?? '';
-        final cancel = dm['cancellation_factors']?.toString() ?? '';
-        final penalty = (dm['net_penalty'] as num?)?.toDouble() ?? 0;
-        final sevC = severity.toLowerCase().contains('high') ||
-                severity.toLowerCase().contains('severe')
-            ? AppColors.error
-            : severity.toLowerCase().contains('moderate')
-                ? const Color(0xFFE5A93A)
-                : AppColors.aurora;
+  Widget _partnerCard(AppLocalizations l, Map p, Color c) => Container(
+    padding: const EdgeInsets.all(13),
+    decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (p['role'] != null) Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(color: c.withOpacity(0.16), borderRadius: BorderRadius.circular(8)),
+        child: Text(_titleCase(p['role'].toString()), style: TextStyle(color: c, fontSize: 9, fontWeight: FontWeight.w700))),
+      const SizedBox(height: 6),
+      Text(p['name']?.toString() ?? '?', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 4),
+      Text('${p['lagna'] ?? ''} ${l.cpLagnaSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+      if (p['moon_sign'] != null) Text('${p['moon_sign']} ${l.cpMoonSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+    ]));
 
+  // ══════════════════════════════════════════════════════════════════
+  //  3 — NUMBER OF CHILDREN & GENDER TENDENCY
+  // ══════════════════════════════════════════════════════════════════
+  Widget _numberOfChildren(AppLocalizations l) {
+    final n = _map('number_of_children');
+    if (n.isEmpty) return const SizedBox.shrink();
+    final first = _mapOf(n, 'first_child_indications');
+    final tendency = _strOf(first, 'likely_gender_tendency');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.child_care_rounded, title: l.cpNumberTitle, color: AppColors.gold),
+      Container(padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.14), AppColors.card.withOpacity(0.4)]),
+          borderRadius: BorderRadius.circular(18), border: Border.all(color: AppColors.gold.withOpacity(0.28))),
+        child: Column(children: [
+          Text(l.cpProbableNumber, style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          Text(_strOf(n, 'probable_number'), style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w800), textAlign: TextAlign.center),
+          if (_strOf(n, 'number_reasoning').isNotEmpty) ...[const SizedBox(height: 8),
+            Text(_cap(_strOf(n, 'number_reasoning')), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.5), textAlign: TextAlign.center)],
+        ])),
+      const SizedBox(height: 10),
+      if (tendency.isNotEmpty) _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(l.cpFirstChildTendency, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, fontWeight: FontWeight.w800))),
+          _pill(_titleCase(tendency), tendency.toLowerCase().contains('son') ? KColors.blue : KColors.purple),
+        ]),
+        if (_strOf(first, 'gender_reasoning').isNotEmpty) ...[const SizedBox(height: 8),
+          Text(_cap(_strOf(first, 'gender_reasoning')), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))],
+        if (_strOf(first, 'd7_first_child_signature').isNotEmpty) ...[const SizedBox(height: 8),
+          Text(_strOf(first, 'd7_first_child_signature'), style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, height: 1.35, fontStyle: FontStyle.italic))],
+      ])),
+      if (_strOf(n, 'spacing_note').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 10),
+        child: _iconTile('📏', l.cpSpacing, _strOf(n, 'spacing_note'))),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  4 — TIMING (MOOLA DASHA)
+  // ══════════════════════════════════════════════════════════════════
+  Widget _timing(AppLocalizations l) {
+    final t = _map('timing_moola_dasha');
+    if (t.isEmpty) return const SizedBox.shrink();
+    final combinedScore = _scOf(t, 'combined_timing_score');
+    final windows = _listOf(t, 'favorable_windows').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.hourglass_bottom_rounded, title: l.cpTimingTitle, color: KColors.green),
+      _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(l.cpCombinedTiming, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w800))),
+          Text('${combinedScore.toStringAsFixed(0)}%', style: TextStyle(color: _col(combinedScore), fontSize: 18, fontWeight: FontWeight.w800)),
+        ]),
+        const SizedBox(height: 8),
+        ClipRRect(borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(value: (combinedScore / 100).clamp(0, 1), minHeight: 7, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(_col(combinedScore)))),
+        if (_strOf(t, 'timing_verdict').isNotEmpty) ...[const SizedBox(height: 10),
+          Text(_cap(_strOf(t, 'timing_verdict')), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.4))],
+      ])),
+      const SizedBox(height: 10),
+      _dashaPartnerBlock(l, widget.participants.isNotEmpty ? widget.participants[0] : l.partnerOneLabel, _mapOf(t, 'current_dasha_partner1')),
+      const SizedBox(height: 8),
+      _dashaPartnerBlock(l, widget.participants.length > 1 ? widget.participants[1] : l.partnerTwoLabel, _mapOf(t, 'current_dasha_partner2')),
+      if (windows.isNotEmpty) ...[const SizedBox(height: 10),
+        ...windows.map((w) => _windowCard(l, w))],
+      if (_strOf(t, 'next_favorable_window').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4),
+        child: Container(padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: KColors.green.withOpacity(0.08), borderRadius: BorderRadius.circular(12), border: Border.all(color: KColors.green.withOpacity(0.25))),
+          child: Row(children: [
+            const Icon(Icons.event_available_rounded, size: 16, color: KColors.green), const SizedBox(width: 8),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(l.cpNextWindow, style: const TextStyle(color: KColors.green, fontSize: 9.5, fontWeight: FontWeight.w700)),
+              Text(_strOf(t, 'next_favorable_window'), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, fontWeight: FontWeight.w600)),
+            ])),
+          ]))),
+    ]);
+  }
+
+  Widget _dashaPartnerBlock(AppLocalizations l, String name, Map pd) {
+    if (pd.isEmpty) return const SizedBox.shrink();
+    final moola = _mapOf(pd, 'moola');
+    final favScore = _scOf(pd, 'favorability_score');
+    final col = _col(favScore);
+    final activating = _listOf(pd, 'progeny_activating_planets').map((e) => e.toString()).toList();
+    return Container(padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white.withOpacity(0.06))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(name, style: const TextStyle(color: AppColors.gold, fontSize: 12, fontWeight: FontWeight.w800))),
+          if (_strOf(pd, 'progeny_favorability').isNotEmpty) _pill(_titleCase(_strOf(pd, 'progeny_favorability')), col),
+        ]),
+        const SizedBox(height: 6),
+        if (moola['md'] != null) Text('${l.mahadashaLabel}: ${moola['md']} (${moola['md_start']} — ${moola['md_end']})', style: const TextStyle(color: AppColors.ivory, fontSize: 10.5)),
+        if (moola['ad'] != null) Text('${l.antardashaLabel}: ${moola['ad']} (${moola['ad_start']} — ${moola['ad_end']})', style: const TextStyle(color: AppColors.smoke, fontSize: 10.5)),
+        if (moola['pd'] != null) Text('${l.pratyantardashaLabel}: ${moola['pd']}', style: const TextStyle(color: AppColors.smoke, fontSize: 10.5)),
+        const SizedBox(height: 6),
+        ClipRRect(borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(value: (favScore / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(col))),
+        if (_strOf(pd, 'reasoning').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Text(_strOf(pd, 'reasoning'), style: const TextStyle(color: AppColors.parchment, fontSize: 10.5, height: 1.35, fontStyle: FontStyle.italic))),
+        if (activating.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Wrap(spacing: 5, runSpacing: 4, children: activating.map((p) => _pill(p, AppColors.gold)).toList())),
+      ]));
+  }
+
+  Widget _windowCard(AppLocalizations l, Map<String, dynamic> w) {
+    final strength = _strOf(w, 'strength');
+    final col = strength.toLowerCase().contains('strong') ? KColors.green : strength.toLowerCase().contains('moderate') ? KColors.blue : KColors.purple;
+    return Container(margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: col.withOpacity(0.22))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(w['period']?.toString() ?? '', style: TextStyle(color: col, fontSize: 12, fontWeight: FontWeight.w800))),
+          if (strength.isNotEmpty) _pill(_titleCase(strength), col),
+        ]),
+        if (w['start_date'] != null || w['end_date'] != null) Padding(padding: const EdgeInsets.only(top: 3),
+          child: Text('${w['start_date'] ?? ''} — ${w['end_date'] ?? ''}', style: const TextStyle(color: AppColors.smoke, fontSize: 10))),
+        if (w['activating_factor'] != null) Padding(padding: const EdgeInsets.only(top: 4),
+          child: Text(w['activating_factor'].toString(), style: const TextStyle(color: AppColors.parchment, fontSize: 10.5, height: 1.3))),
+        if (w['applies_to'] != null) Padding(padding: const EdgeInsets.only(top: 2),
+          child: Text('→ ${w['applies_to']}', style: const TextStyle(color: AppColors.smoke, fontSize: 10))),
+      ]));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  5 — 5TH HOUSE ANALYSIS (per person)
+  // ══════════════════════════════════════════════════════════════════
+  Widget _fifthHouse(AppLocalizations l) {
+    final fifth = _map('fifth_house_analysis');
+    if (fifth.isEmpty) return const SizedBox.shrink();
+    final colors = [KColors.purple, KColors.blue];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.home_rounded, title: l.cp5thHouseTitle, subtitle: l.cp5thHouseSubtitle, color: KColors.purple),
+      ...fifth.entries.toList().asMap().entries.map((e) {
+        final key = e.value.key;
+        final m = e.value.value is Map ? (e.value.value as Map).cast<String, dynamic>() : <String, dynamic>{};
+        final c = colors[e.key % colors.length];
+        final score = _scOf(m, 'house_strength_score');
+        final occupants = _listOf(m, 'occupants').map((o) => o.toString()).toList();
+        final benefics = _listOf(m, 'benefic_aspects').map((o) => o.toString()).toList();
+        final malefics = _listOf(m, 'malefic_aspects').map((o) => o.toString()).toList();
         return Container(
-            margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  sevC.withOpacity(0.08),
-                  sevC.withOpacity(0.02)
-                ]),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: sevC.withOpacity(0.25))),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Expanded(
-                        child: Text(doshaName,
-                            style: TextStyle(
-                                color: sevC,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'serif'))),
-                    _badge(severity.toUpperCase(), sevC),
-                  ]),
-                  if (presentIn.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    _kvRow(l.presentInLabel, presentIn, AppColors.smoke),
-                  ],
-                  if (penalty != 0) ...[
-                    _kvRow(l.netPenaltyLabel,
-                        '-${penalty.toStringAsFixed(1)}', AppColors.error),
-                  ],
-                  if (desc.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(desc,
-                        style: const TextStyle(
-                            color: AppColors.ivory,
-                            fontSize: 10,
-                            height: 1.4)),
-                  ],
-                  if (cancel.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: AppColors.success.withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                                color: AppColors.success.withOpacity(0.2))),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(l.cancellationFactors,
-                                  style: const TextStyle(
-                                      color: AppColors.success,
-                                      fontSize: 8,
-                                      letterSpacing: 1,
-                                      fontFamily: 'monospace',
-                                      fontWeight: FontWeight.w700)),
-                              const SizedBox(height: 3),
-                              Text(cancel,
-                                  style: const TextStyle(
-                                      color: AppColors.ivory,
-                                      fontSize: 10,
-                                      height: 1.4)),
-                            ])),
-                  ],
-                ]));
+          margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(_personLabel(key), style: TextStyle(color: c, fontSize: 13.5, fontWeight: FontWeight.w800))),
+              Text('${m['sign_english'] ?? m['sign'] ?? ''}', style: const TextStyle(color: AppColors.ivory, fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
+              Expanded(child: _statTile(l.lordLabel, score, valueOverride: m['lord']?.toString())),
+              const SizedBox(width: 10),
+              Expanded(child: _statTile(l.houseStrengthLabel, score)),
+            ]),
+            if (m['lord_in_dusthana'] == true) Padding(padding: const EdgeInsets.only(top: 8), child: _pill(l.lordInDusthana, KColors.red)),
+            if (occupants.isNotEmpty) ...[const SizedBox(height: 8), _chipBlock('🪐', l.occupants, occupants, KColors.blue)],
+            if (benefics.isNotEmpty) ...[const SizedBox(height: 4), _chipBlock('✓', l.beneficAspects, benefics, KColors.green)],
+            if (malefics.isNotEmpty) ...[const SizedBox(height: 4), _chipBlock('⚠️', l.maleficAspects, malefics, KColors.red)],
+            if (_strOf(m, 'interpretation').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Text(_strOf(m, 'interpretation'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))),
+            _advanced(l, [
+              '${l.lordPlacementLabel}: ${m['lord_placement_house']}H · ${l.lordDignityLabel}: ${m['lord_dignity']}',
+            ]),
+          ]),
+        );
       }),
     ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 10. REMEDIES — five categorized lists
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildRemedies(AppLocalizations l, Map<String, dynamic> remedies) {
-    final gemstone = (remedies['gemstone_remedies'] as List?) ?? [];
-    final mantra = (remedies['mantra_remedies'] as List?) ?? [];
-    final ritual = (remedies['ritual_remedies'] as List?) ?? [];
-    final lifestyle = (remedies['lifestyle_remedies'] as List?) ?? [];
-    final charitable = (remedies['charitable_remedies'] as List?) ?? [];
-    final combinedAdvice = remedies['combined_advice']?.toString() ?? '';
-
-    final categories = <MapEntry<String, List>>[
-      if (gemstone.isNotEmpty) MapEntry('GEMSTONE REMEDIES', gemstone),
-      if (mantra.isNotEmpty) MapEntry('MANTRA REMEDIES', mantra),
-      if (ritual.isNotEmpty) MapEntry('RITUAL REMEDIES', ritual),
-      if (lifestyle.isNotEmpty) MapEntry('LIFESTYLE REMEDIES', lifestyle),
-      if (charitable.isNotEmpty) MapEntry('CHARITABLE REMEDIES', charitable),
-    ];
-
-    final icons = {
-      'GEMSTONE REMEDIES': Icons.diamond_outlined,
-      'MANTRA REMEDIES': Icons.self_improvement,
-      'RITUAL REMEDIES': Icons.local_fire_department_outlined,
-      'LIFESTYLE REMEDIES': Icons.favorite_outline,
-      'CHARITABLE REMEDIES': Icons.volunteer_activism_outlined,
-    };
-    final colors = {
-      'GEMSTONE REMEDIES': AppColors.aurora,
-      'MANTRA REMEDIES': AppColors.gold,
-      'RITUAL REMEDIES': AppColors.saffron,
-      'LIFESTYLE REMEDIES': AppColors.success,
-      'CHARITABLE REMEDIES': _accent,
-    };
-    final labels = {
-      'GEMSTONE REMEDIES': l.remedyGemstone.toUpperCase(),
-      'MANTRA REMEDIES': l.remedyMantra.toUpperCase(),
-      'RITUAL REMEDIES': l.remedyRitual.toUpperCase(),
-      'LIFESTYLE REMEDIES': l.remedyLifestyle.toUpperCase(),
-      'CHARITABLE REMEDIES': l.remedyCharitable.toUpperCase(),
-    };
-
-    return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gold.withOpacity(0.2))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          ...categories.map((cat) {
-            final catColor = colors[cat.key] ?? AppColors.gold;
-            final catIcon = icons[cat.key] ?? Icons.star_outline;
-            return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        Icon(catIcon, color: catColor, size: 14),
-                        const SizedBox(width: 6),
-                        Text(labels[cat.key] ?? cat.key,
-                            style: TextStyle(
-                                color: catColor,
-                                fontSize: 9,
-                                letterSpacing: 1,
-                                fontFamily: 'monospace',
-                                fontWeight: FontWeight.w600)),
-                      ]),
-                      const SizedBox(height: 6),
-                      ...cat.value.map((r) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('  ✦ ',
-                                    style: TextStyle(
-                                        color: catColor, fontSize: 10)),
-                                Expanded(
-                                    child: Text(
-                                        r is Map
-                                            ? (r['text'] ??
-                                                    r['description'] ??
-                                                    r.toString())
-                                                .toString()
-                                            : r.toString(),
-                                        style: const TextStyle(
-                                            color: AppColors.ivory,
-                                            fontSize: 10,
-                                            height: 1.4))),
-                              ]))),
-                    ]));
-          }),
-          if (combinedAdvice.isNotEmpty) ...[
-            Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: AppColors.gold.withOpacity(0.08),
-                    borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(8),
-                        bottomRight: Radius.circular(8)),
-                    border: const Border(
-                        left: BorderSide(color: AppColors.gold, width: 3))),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l.remedies,
-                          style: const TextStyle(
-                              color: AppColors.gold,
-                              fontSize: 8,
-                              letterSpacing: 1,
-                              fontFamily: 'monospace',
-                              fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 4),
-                      Text(combinedAdvice,
-                          style: const TextStyle(
-                              color: AppColors.ivory,
-                              fontSize: 10,
-                              height: 1.4,
-                              fontStyle: FontStyle.italic)),
-                    ])),
-          ],
-        ]));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 11. SUMMARY — gold card
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildSummary(AppLocalizations l, Map<String, dynamic> s) {
-    final oneLiner = s['one_liner']?.toString() ?? '';
-    final humanSummary = s['human_summary']?.toString() ?? '';
-    final actionable = s['actionable_advice']?.toString() ?? '';
-    final timingSummary = s['timing_summary']?.toString() ?? '';
-    final outlook = s['overall_outlook']?.toString() ?? '';
-
-    return Container(
-        margin: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            color: AppColors.gold.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.gold.withOpacity(0.25))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _label(l.summary.toUpperCase()),
-          const SizedBox(height: 10),
-
-          if (oneLiner.isNotEmpty) ...[
-            Text(oneLiner,
-                style: const TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif',
-                    height: 1.3)),
-            const SizedBox(height: 10),
-          ],
-          if (humanSummary.isNotEmpty) ...[
-            Text(l.detailedSummary,
-                style: TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 8,
-                    letterSpacing: 1,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
-            Text(humanSummary,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 11,
-                    height: 1.4)),
-            const SizedBox(height: 10),
-          ],
-          if (actionable.isNotEmpty) ...[
-            Text(l.overallVerdict,
-                style: TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 8,
-                    letterSpacing: 1,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
-            Text(actionable,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 11,
-                    height: 1.4)),
-            const SizedBox(height: 10),
-          ],
-          if (timingSummary.isNotEmpty) ...[
-            Text(l.bestWindows,
-                style: TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 8,
-                    letterSpacing: 1,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
-            Text(timingSummary,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 11,
-                    height: 1.4)),
-            const SizedBox(height: 10),
-          ],
-          if (outlook.isNotEmpty) ...[
-            Text(l.overallVerdict,
-                style: const TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 8,
-                    letterSpacing: 1,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
-            Text(outlook,
-                style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 11,
-                    height: 1.4)),
-          ],
-        ]));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 13. AI COPY BAR
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildAiCopyBar(BuildContext ctx) {
-    final l = AppLocalizations.of(ctx)!;
-    return Container(
-        margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              _cardBg.withOpacity(0.8),
-              _bg,
+  // ══════════════════════════════════════════════════════════════════
+  //  6 — JUPITER / PUTRAKARAKA ANALYSIS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _jupiter(AppLocalizations l) {
+    final jup = _map('jupiter_analysis');
+    if (jup.isEmpty) return const SizedBox.shrink();
+    final colors = [KColors.purple, KColors.blue];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.stars_rounded, title: l.cpJupiterTitle, subtitle: l.cpJupiterSubtitle, color: AppColors.gold),
+      ...jup.entries.toList().asMap().entries.map((e) {
+        final key = e.value.key;
+        final m = e.value.value is Map ? (e.value.value as Map).cast<String, dynamic>() : <String, dynamic>{};
+        final c = colors[e.key % colors.length];
+        final strength = _scOf(m, 'strength');
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(_personLabel(key), style: TextStyle(color: c, fontSize: 13.5, fontWeight: FontWeight.w800))),
+              Text('${m['sign'] ?? ''} · ${m['house'] ?? ''}H', style: const TextStyle(color: AppColors.ivory, fontSize: 12, fontWeight: FontWeight.w700)),
             ]),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.gold.withOpacity(0.25))),
-        child: Column(children: [
-          Text(l.discussWithAI,
-              style: const TextStyle(
-                  color: AppColors.gold,
-                  fontSize: 9,
-                  letterSpacing: 2,
-                  fontFamily: 'monospace',
-                  fontWeight: FontWeight.w600)),
-          const SizedBox(height: 12),
-          Row(children: [
-            _aiBtn(
-                ctx,
-                'G',
-                'ChatGPT',
-                const LinearGradient(
-                    colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]),
-                'Analyze this Vedic astrology Child Probability report and give detailed insights:\n\n'),
-            const SizedBox(width: 8),
-            _aiBtn(
-                ctx,
-                'C',
-                'Claude',
-                const LinearGradient(
-                    colors: [Color(0xFFD97757), Color(0xFFB85B3F)]),
-                'Here is a Vedic astrology Child Probability report. Analyze it thoroughly and provide actionable insights:\n\n'),
-            const SizedBox(width: 8),
-            _aiBtn(
-                ctx,
-                '✦',
-                'Gemini',
-                const LinearGradient(
-                    colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]),
-                'Review this Child Probability astrology analysis and explain key findings simply:\n\n'),
+            const SizedBox(height: 8),
+            _statTile(l.dignityLabel, strength, valueOverride: m['dignity']?.toString()),
+            const SizedBox(height: 8),
+            Wrap(spacing: 6, runSpacing: 6, children: [
+              _pill(m['retrograde'] == true ? l.retrograde : l.directBadge, m['retrograde'] == true ? KColors.orange : KColors.green),
+              _pill(m['combust'] == true ? l.combust : l.notCombustBadge, m['combust'] == true ? KColors.orange : KColors.green),
+              if (m['in_5th_house'] == true) _pill(l.in5thHouseBadge, KColors.green),
+              if (m['aspects_5th_house'] == true) _pill(l.aspects5thBadge, KColors.green),
+              if (m['in_5th_house'] != true && m['aspects_5th_house'] != true) _pill(l.no5thConnectionBadge, AppColors.smoke),
+            ]),
+            if (_strOf(m, 'interpretation').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Text(_strOf(m, 'interpretation'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))),
           ]),
-        ]));
-  }
-
-  Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g,
-      String prefix) {
-    final l = AppLocalizations.of(ctx)!;
-    return Expanded(
-        child: GestureDetector(
-            onTap: () {
-              Clipboard.setData(ClipboardData(text: prefix + _fmt(data)));
-              ScaffoldMessenger.of(ctx)
-                  .showSnackBar(SnackBar(content: Text(l.copiedForName(name))));
-              final urls = {
-                'ChatGPT': 'https://chat.openai.com/',
-                'Claude': 'https://claude.ai/new',
-                'Gemini': 'https://gemini.google.com/app'
-              };
-              launchUrl(Uri.parse(urls[name]!),
-                      mode: LaunchMode.externalApplication)
-                  .catchError((_) => false);
-            },
-            child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.04),
-                    borderRadius: BorderRadius.circular(14),
-                    border:
-                        Border.all(color: AppColors.gold.withOpacity(0.2))),
-                child: Column(children: [
-                  Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                          gradient: g,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Center(
-                          child: Text(icon,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700)))),
-                  const SizedBox(height: 5),
-                  Text(name,
-                      style: const TextStyle(
-                          color: AppColors.ivory,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700)),
-                  Text(l.copy,
-                      style: const TextStyle(
-                          color: AppColors.smoke,
-                          fontSize: 7,
-                          fontFamily: 'monospace')),
-                ]))));
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // SHARED HELPER WIDGETS
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _header(String p1, String p2) => ReportHeader(p1, p2, '');
-
-  Widget _label(String text) => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-                width: 16,
-                height: 1,
-                color: AppColors.gold.withOpacity(0.4)),
-            const SizedBox(width: 6),
-            Text(text,
-                style: const TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 9,
-                    letterSpacing: 2,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600)),
-            const SizedBox(width: 6),
-            Container(
-                width: 16,
-                height: 1,
-                color: AppColors.gold.withOpacity(0.4)),
-          ]);
-
-  Widget _ring(double v, String lbl, Color c) => Column(children: [
-        SizedBox(
-            width: 76,
-            height: 76,
-            child: Stack(alignment: Alignment.center, children: [
-              SizedBox(
-                  width: 76,
-                  height: 76,
-                  child: CircularProgressIndicator(
-                      value: (v / 100).clamp(0, 1),
-                      strokeWidth: 6,
-                      backgroundColor: Colors.white.withOpacity(0.08),
-                      valueColor: AlwaysStoppedAnimation(c))),
-              Text(v.toStringAsFixed(0),
-                  style: TextStyle(
-                      color: c,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'serif')),
-            ])),
-        const SizedBox(height: 6),
-        Text(lbl,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                color: AppColors.smoke,
-                fontSize: 8,
-                letterSpacing: 1,
-                fontFamily: 'monospace',
-                height: 1.2)),
-      ]);
-
-  Widget _scoreChip(String label, double value, {bool isPenalty = false}) {
-    final c = isPenalty
-        ? (value > 0 ? AppColors.error : AppColors.success)
-        : _scoreColor(value);
-    return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-            color: c.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: c.withOpacity(0.3))),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(
-              isPenalty
-                  ? '-${value.toStringAsFixed(0)}'
-                  : value.toStringAsFixed(0),
-              style: TextStyle(
-                  color: c,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'serif')),
-          Text(label,
-              style: TextStyle(
-                  color: c.withOpacity(0.7),
-                  fontSize: 7,
-                  fontFamily: 'monospace'),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis),
-        ]));
-  }
-
-  Widget _badge(String text, Color c) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-          color: c.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: c.withOpacity(0.4))),
-      child: Text(text.toUpperCase(),
-          style: TextStyle(
-              color: c,
-              fontSize: 8,
-              letterSpacing: 0.8,
-              fontFamily: 'monospace',
-              fontWeight: FontWeight.w700)));
-
-  Widget _kvRow(String k, String v, Color vc) => Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
-            width: 100,
-            child: Text(k,
-                style: const TextStyle(
-                    color: AppColors.smoke,
-                    fontSize: 9,
-                    fontFamily: 'monospace'))),
-        Expanded(
-            child: Text(v,
-                style: TextStyle(
-                    color: vc,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600))),
-      ]));
-
-  Widget _progressBar(String label, double value) {
-    final c = _scoreColor(value);
-    return Column(children: [
-      Row(children: [
-        Expanded(
-            child: Text(label,
-                style: const TextStyle(
-                    color: AppColors.ivory, fontSize: 10))),
-        Text(value.toStringAsFixed(1),
-            style: TextStyle(
-                color: c,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'monospace')),
-      ]),
-      const SizedBox(height: 3),
-      ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-              value: (value / 100).clamp(0, 1),
-              minHeight: 4,
-              backgroundColor: Colors.white.withOpacity(0.06),
-              valueColor: AlwaysStoppedAnimation(c))),
+        );
+      }),
     ]);
   }
 
-  Widget _personCard(String name, Color borderColor, List<Widget> children) =>
-      Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-              color: _cardBg.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: borderColor.withOpacity(0.25))),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(name,
-                style: TextStyle(
-                    color: borderColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif')),
+  // ══════════════════════════════════════════════════════════════════
+  //  7 — D7 SAPTAMSA ANALYSIS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _d7(AppLocalizations l) {
+    final d7 = _map('d7_saptamsa_analysis');
+    if (d7.isEmpty) return const SizedBox.shrink();
+    final colors = [KColors.purple, KColors.blue];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.grid_view_rounded, title: l.cpD7Title, subtitle: l.cpD7Subtitle, color: KColors.blue),
+      ...d7.entries.toList().asMap().entries.map((e) {
+        final key = e.value.key;
+        final m = e.value.value is Map ? (e.value.value as Map).cast<String, dynamic>() : <String, dynamic>{};
+        final c = colors[e.key % colors.length];
+        final strength = _scOf(m, 'd7_strength');
+        final signs = _mapOf(m, 'd7_planet_signs');
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(_personLabel(key), style: TextStyle(color: c, fontSize: 13.5, fontWeight: FontWeight.w800))),
+              Text('${m['d7_lagna_sign_english'] ?? m['d7_lagna_sign'] ?? ''} ${l.cpLagnaSuffix}', style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, fontWeight: FontWeight.w700)),
+            ]),
             const SizedBox(height: 8),
-            ...children,
-          ]));
-
-  // ════════════════════════════════════════════════════════════════════
-  // UTILITY METHODS
-  // ════════════════════════════════════════════════════════════════════
-
-  static Map<String, dynamic> _asMap(dynamic v) =>
-      v is Map ? v.cast<String, dynamic>() : <String, dynamic>{};
-
-  static double _num(Map<String, dynamic> m, String k) {
-    final v = m[k];
-    if (v is num) return v.toDouble();
-    if (v is String) return double.tryParse(v) ?? 0;
-    return 0;
+            _statTile(l.cpD7Strength, strength),
+            const SizedBox(height: 8),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              if (m['d7_fifth_sign'] != null) _pill('5H: ${m['d7_fifth_sign']}', KColors.blue),
+              if (m['jupiter_d7_house'] != null) _pill('${l.jupiterInD7Label}: ${m['jupiter_d7_house']}H', AppColors.gold),
+            ]),
+            if (signs.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Wrap(spacing: 6, runSpacing: 6, children: signs.entries.map((pe) => _pill('${pe.key}: ${pe.value}', c)).toList())),
+            if (_strOf(m, 'interpretation').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Text(_strOf(m, 'interpretation'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))),
+          ]),
+        );
+      }),
+    ]);
   }
 
-  static String _titleCase(String s) => s
-      .replaceAll('_', ' ')
-      .split(' ')
-      .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}')
-      .join(' ');
-
-  static String _personLabel(String key) {
-    // Convert keys like "john_male" or "jane_female" to "John (Male)" / "Jane (Female)"
-    if (key.endsWith('_male')) {
-      return '${_titleCase(key.replaceAll('_male', ''))} (Male)';
-    } else if (key.endsWith('_female')) {
-      return '${_titleCase(key.replaceAll('_female', ''))} (Female)';
-    }
-    return _titleCase(key);
+  // ══════════════════════════════════════════════════════════════════
+  //  8 — BEEJA & KSHETRA SPHUTA
+  // ══════════════════════════════════════════════════════════════════
+  Widget _beejaKshetra(AppLocalizations l) {
+    final bk = _map('beeja_kshetra_sphuta');
+    if (bk.isEmpty) return const SizedBox.shrink();
+    final beeja = _mapOf(bk, 'beeja_sphuta');
+    final kshetra = _mapOf(bk, 'kshetra_sphuta');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.spa_rounded, title: l.cpSphutaTitle, color: KColors.purple),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (beeja.isNotEmpty) Expanded(child: _sphutaCard(l.cpBeejaSphuta, KColors.blue, beeja)),
+        if (beeja.isNotEmpty && kshetra.isNotEmpty) const SizedBox(width: 10),
+        if (kshetra.isNotEmpty) Expanded(child: _sphutaCard(l.cpKshetraSphuta, KColors.purple, kshetra)),
+      ]),
+      if (_strOf(bk, 'combined_fertility_indication').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 10),
+        child: _card(child: Text(_strOf(bk, 'combined_fertility_indication'), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4)))),
+    ]);
   }
 
-  static Color _scoreColor(double v) => v >= 70
-      ? AppColors.success
-      : v >= 50
-          ? AppColors.gold
-          : v >= 30
-              ? const Color(0xFFE5A93A)
-              : AppColors.error;
-
-  static Color _dignityColor(String dignity) {
-    final d = dignity.toLowerCase();
-    if (d.contains('exalt') || d.contains('moolatrikona')) {
-      return AppColors.success;
-    }
-    if (d.contains('own') || d.contains('swakshetra')) return AppColors.gold;
-    if (d.contains('friend')) return AppColors.aurora;
-    if (d.contains('neech') || d.contains('debilitat') || d.contains('enemy')) {
-      return AppColors.error;
-    }
-    return AppColors.smoke;
+  Widget _sphutaCard(String title, Color c, Map sp) {
+    final score = _scOf(sp, 'strength_score');
+    final col = _col(score);
+    final factors = _listOf(sp, 'factors').map((f) => f.toString()).toList();
+    return Container(padding: const EdgeInsets.all(13),
+      decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: c.withOpacity(0.22))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(title, style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 6),
+        Row(children: [
+          Text(score.toStringAsFixed(0), style: TextStyle(color: col, fontSize: 22, fontWeight: FontWeight.w800)),
+          Text('/100', style: TextStyle(color: col.withOpacity(0.6), fontSize: 10)),
+        ]),
+        ClipRRect(borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(value: (score / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(col))),
+        if (sp['sign'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Text('${sp['sign']} ${sp['degree'] ?? ''}', style: const TextStyle(color: AppColors.smoke, fontSize: 10))),
+        if (factors.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Wrap(spacing: 4, runSpacing: 4, children: factors.map((f) => _pill(f, c)).toList())),
+        if (sp['interpretation'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Text(sp['interpretation'].toString(), style: const TextStyle(color: AppColors.parchment, fontSize: 10, height: 1.35))),
+      ]));
   }
 
-  static String _fmt(Map<String, dynamic> d, {int indent = 0}) {
-    final buf = StringBuffer();
-    final pad = '  ' * indent;
-    for (final e in d.entries) {
-      if (e.value is Map) {
-        buf.writeln('$pad${_titleCase(e.key)}:');
-        buf.write(
-            _fmt((e.value as Map).cast<String, dynamic>(), indent: indent + 1));
-      } else if (e.value is List) {
-        buf.writeln('$pad${_titleCase(e.key)}:');
-        for (var i = 0; i < (e.value as List).length; i++) {
-          final item = (e.value as List)[i];
-          if (item is Map) {
-            buf.writeln('$pad  ${i + 1}.');
-            buf.write(
-                _fmt(item.cast<String, dynamic>(), indent: indent + 2));
-          } else {
-            buf.writeln('$pad  ${i + 1}. $item');
-          }
-        }
-      } else {
-        buf.writeln('$pad${_titleCase(e.key)}: ${e.value}');
-      }
+  // ══════════════════════════════════════════════════════════════════
+  //  9 — DOSHA ANALYSIS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _dosha(AppLocalizations l) {
+    final d = _map('dosha_analysis');
+    if (d.isEmpty) return const SizedBox.shrink();
+    final doshas = _listOf(d, 'doshas_detected').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    final penalty = _scOf(d, 'total_dosha_penalty');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.warning_amber_rounded, title: l.cpDoshaTitle, color: KColors.orange),
+      if (doshas.isEmpty)
+        Container(padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(color: KColors.green.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.green.withOpacity(0.2))),
+          child: Row(children: [const Icon(Icons.check_circle_rounded, size: 17, color: KColors.green), const SizedBox(width: 10),
+            Expanded(child: Text(l.cpNoDoshasDetected, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5)))]))
+      else ...[
+        Container(padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: KColors.orange.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.orange.withOpacity(0.2))),
+          child: Row(children: [
+            Expanded(child: Text(l.totalDoshaPenalty, style: const TextStyle(color: AppColors.ivory, fontSize: 12, fontWeight: FontWeight.w700))),
+            Text('-${penalty.toStringAsFixed(1)}', style: const TextStyle(color: KColors.orange, fontSize: 16, fontWeight: FontWeight.w800)),
+          ])),
+        if (_strOf(d, 'dosha_summary').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+          child: Text(_strOf(d, 'dosha_summary'), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.4))),
+        const SizedBox(height: 8),
+        ...doshas.map((dm) {
+          final severity = _strOf(dm, 'severity');
+          final col = severity.toLowerCase().contains('high') || severity.toLowerCase().contains('severe') ? KColors.red
+              : severity.toLowerCase().contains('moderate') ? KColors.orange : KColors.yellow;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: col.withOpacity(0.24))),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Expanded(child: Text(dm['dosha_name']?.toString() ?? '', style: TextStyle(color: col, fontSize: 13, fontWeight: FontWeight.w800))),
+                if (severity.isNotEmpty) _pill(severity, col),
+              ]),
+              if (dm['present_in'] != null) Padding(padding: const EdgeInsets.only(top: 4),
+                child: Text('${l.presentInLabel}: ${dm['present_in']}', style: const TextStyle(color: AppColors.smoke, fontSize: 10.5))),
+              if (dm['description'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+                child: Text(dm['description'].toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+              if (dm['cancellation_factors'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+                child: Container(padding: const EdgeInsets.all(9),
+                  decoration: BoxDecoration(color: KColors.green.withOpacity(0.08), borderRadius: BorderRadius.circular(10)),
+                  child: Text(dm['cancellation_factors'].toString(), style: const TextStyle(color: KColors.green, fontSize: 10.5, height: 1.35)))),
+            ]),
+          );
+        }),
+      ],
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  10 — REMEDIES
+  // ══════════════════════════════════════════════════════════════════
+  Widget _remedies(AppLocalizations l) {
+    final r = _map('remedies');
+    final list = _listOf(r, 'recommended_remedies').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    if (list.isEmpty && _strOf(r, 'general_guidance').isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.healing_rounded, title: l.cpRemediesTitle, color: KColors.green),
+      ...list.map((m) => Container(
+        margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(color: KColors.purple.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.purple.withOpacity(0.2))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            if (m['remedy_type'] != null) _pill(_titleCase(m['remedy_type'].toString()), KColors.purple),
+            const Spacer(),
+            if (m['for_whom'] != null) Text(_titleCase(m['for_whom'].toString()), style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+          ]),
+          const SizedBox(height: 6),
+          Text(_cap(m['remedy']?.toString() ?? ''), style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.45)),
+          if (m['addresses'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+            child: Text('${l.cpAddresses}: ${m['addresses']}', style: const TextStyle(color: AppColors.parchment, fontSize: 10.5, height: 1.3))),
+          _advanced(l, [if (m['classical_basis'] != null) m['classical_basis'].toString()]),
+        ]),
+      )),
+      if (_strOf(r, 'general_guidance').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4),
+        child: Text(_strOf(r, 'general_guidance'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4, fontStyle: FontStyle.italic))),
+      if (_strOf(r, 'medical_note').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+        child: Text(_strOf(r, 'medical_note'), style: const TextStyle(color: AppColors.smoke, fontSize: 10, height: 1.4, fontStyle: FontStyle.italic))),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  11 — SUMMARY & KEY INSIGHTS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _summary(AppLocalizations l) {
+    final s = _map('summary');
+    final insights = _listOf(s, 'key_insights').map((e) => e.toString()).toList();
+    final human = _strOf(s, 'human_summary');
+    if (insights.isEmpty && human.isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.summarize_rounded, title: l.summary, color: AppColors.gold),
+      if (human.isNotEmpty) _card(child: Text(_cap(human), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+      if (insights.isNotEmpty) ...[const SizedBox(height: 10),
+        ...insights.map((s2) => Container(
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.gold.withOpacity(0.2))),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Icon(Icons.check_circle_rounded, size: 15, color: AppColors.gold), const SizedBox(width: 9),
+            Expanded(child: Text(_cap(s2), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+          ]))),
+      ],
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  12 — PREDICTION RELIABILITY
+  // ══════════════════════════════════════════════════════════════════
+  Widget _reliability(AppLocalizations l) {
+    final raw = _sc('confidence_score');
+    final pct = raw <= 1 ? raw * 100 : raw;
+    final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
+    final explain = _str('confidence_explanation');
+    final disclaimer = _str('engine_disclaimer');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.verified_user_rounded, title: l.crReliability, color: KColors.blue),
+      _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          KStars(filled: kStars(pct), size: 20, color: AppColors.gold), const Spacer(),
+          Text('${pct.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.gold, fontSize: 22, fontWeight: FontWeight.w800)),
+        ]),
+        const SizedBox(height: 4),
+        Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
+        if (explain.isNotEmpty) ...[const SizedBox(height: 10),
+          Text(_cap(explain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
+      ])),
+      if (disclaimer.isNotEmpty) ...[const SizedBox(height: 10),
+        Text(disclaimer, style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, height: 1.4, fontStyle: FontStyle.italic))],
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  13 — DISCUSS WITH AI
+  // ══════════════════════════════════════════════════════════════════
+  Widget _discussAi(AppLocalizations l) {
+    final topics = <String>[l.cpTopicTiming, l.cpTopicNumber, l.cpTopicDosha, l.cpTopicRemedies, l.cpTopicFifthHouse, l.cpTopicJupiter];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      Row(children: [
+        _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
+        _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),
+        _aiBtn('Gemini', '💎', () => _launchAi(_data, 'gemini')),
+      ]),
+      const SizedBox(height: 14),
+      Text(l.crAskAbout, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5, fontWeight: FontWeight.w700)),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 8, children: topics.map((t) => GestureDetector(
+        onTap: () => _copyTopic(t),
+        child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
+          child: Text(t, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, fontWeight: FontWeight.w600))),
+      )).toList()),
+    ]);
+  }
+
+  Widget _aiBtn(String name, String emoji, VoidCallback onTap) => Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: GestureDetector(onTap: onTap, child: Container(padding: const EdgeInsets.symmetric(vertical: 14),
+      decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.gold.withOpacity(0.2))),
+      child: Column(children: [Text(emoji, style: const TextStyle(fontSize: 20)), const SizedBox(height: 5),
+        Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w700)),
+        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1)),
+      ])))));
+
+  void _copyTopic(String topic) {
+    final q = '$topic — based on the child-probability report for ${widget.participants.join(' & ')}.\n\n${_buildPrompt(_data)}';
+    Clipboard.setData(ClipboardData(text: q));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.crTopicCopied), duration: const Duration(seconds: 2)));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  shared widgets / helpers
+  // ══════════════════════════════════════════════════════════════════
+  Widget _card({required Widget child}) => Container(padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.white.withOpacity(0.06))), child: child);
+
+  Widget _pill(String t, Color c) => Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+    decoration: BoxDecoration(color: c.withOpacity(0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: c.withOpacity(0.25))),
+    child: Text(t, style: TextStyle(color: c, fontSize: 10.5, fontWeight: FontWeight.w600)));
+
+  Widget _chipBlock(String emoji, String title, List<String> items, Color c) {
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Padding(padding: const EdgeInsets.only(bottom: 4), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [Text(emoji, style: const TextStyle(fontSize: 13)), const SizedBox(width: 6),
+        Text(title, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w800))]),
+      const SizedBox(height: 7),
+      Wrap(spacing: 6, runSpacing: 6, children: items.take(8).map((e) => _pill(_cap(e), c)).toList()),
+    ]));
+  }
+
+  Widget _iconTile(String emoji, String label, String value, {Color? color}) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white.withOpacity(0.06))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(emoji, style: const TextStyle(fontSize: 17)), const SizedBox(height: 6),
+      Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+      Text(value, style: TextStyle(color: color ?? AppColors.ivory, fontSize: 12.5, fontWeight: FontWeight.w800), maxLines: 2, overflow: TextOverflow.ellipsis),
+    ]),
+  );
+
+  Widget _statTile(String label, double score, {String? valueOverride}) {
+    final c = _col(score);
+    return Container(padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: c.withOpacity(0.2))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 6),
+        Text(valueOverride ?? '${score.toStringAsFixed(0)}%', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800), maxLines: 1, overflow: TextOverflow.ellipsis),
+        const SizedBox(height: 4),
+        ClipRRect(borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(value: (score / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(c))),
+      ]));
+  }
+
+  Widget _advanced(AppLocalizations l, List<String>? lines, {String? customTitle, Widget? customChild}) {
+    final valid = lines?.where((s) => s.trim().isNotEmpty).toList() ?? const [];
+    if (customChild == null && valid.isEmpty) return const SizedBox.shrink();
+    return Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero, childrenPadding: const EdgeInsets.only(bottom: 8),
+        iconColor: AppColors.smoke, collapsedIconColor: AppColors.smoke,
+        title: Text(customTitle ?? l.fdAdvancedDetails, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5, fontWeight: FontWeight.w700)),
+        children: customChild != null ? [customChild] : valid.map((s) => Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('• ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+            Expanded(child: Text(s, style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.35))),
+          ]),
+        )).toList(),
+      ),
+    );
+  }
+
+  String _personLabel(String key) => _titleCase(key.split('_').first);
+
+  Color _col(double s) {
+    if (s >= 75) return KColors.green;
+    if (s >= 60) return KColors.blue;
+    if (s >= 45) return KColors.yellow;
+    if (s >= 30) return KColors.orange;
+    return KColors.red;
+  }
+  String _cap(String s) => s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+  String _titleCase(String s) => s.replaceAll('_', ' ').replaceAll('-', ' ').split(' ')
+    .where((w) => w.isNotEmpty).map((w) => '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
+
+  // ── AI prompt / launch (unchanged behaviour) ──
+  String _buildPrompt(Map<String, dynamic> d) {
+    final overall = _mapOf(d, 'overall_probability');
+    final score = overall['overall_probability_score'] ?? '?';
+    final grade = overall['probability_grade'] ?? '';
+    final jsonStr = const JsonEncoder.withIndent('  ').convert(d);
+    return '''You are a Vedic child-probability and progeny-timing advisor. Analyze this report for ${widget.participants.join(' & ')} and provide actionable insights.
+
+Key highlights:
+- Overall progeny probability: $score/100 ($grade)
+
+Full report data (JSON):
+$jsonStr
+
+Please explain the key findings in simple language, highlight the most favorable timing windows, and suggest practical next steps.''';
+  }
+
+  Future<void> _launchAi(Map<String, dynamic> d, String ai) async {
+    final prompt = _buildPrompt(d);
+    await Clipboard.setData(ClipboardData(text: prompt));
+    String url;
+    switch (ai) {
+      case 'chatgpt': url = 'https://chat.openai.com/'; break;
+      case 'claude': url = 'https://claude.ai/new'; break;
+      case 'gemini': url = 'https://gemini.google.com/app'; break;
+      default: return;
     }
-    return buf.toString();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report copied! Opening $ai — paste to discuss.'), duration: const Duration(seconds: 3)));
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }

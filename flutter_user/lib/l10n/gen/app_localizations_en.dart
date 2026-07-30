@@ -69,6 +69,132 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get cpSubtitle => 'AI-powered Vedic Child Probability Report';
+
+  @override
+  String get cpTitle => 'Child Probability';
+
+  @override
+  String get cpSnapshotHeader => 'Progeny Probability Snapshot';
+
+  @override
+  String get cpGauge5thHouse => '5th House';
+
+  @override
+  String get cpGaugeJupiter => 'Jupiter/Putrakaraka';
+
+  @override
+  String get cpGaugeD7 => 'D7 Saptamsa';
+
+  @override
+  String get cpGaugeSphuta => 'Beeja-Kshetra';
+
+  @override
+  String get cpGaugeTiming => 'Dasha Timing';
+
+  @override
+  String get cpChipStrongPutrakaraka => 'Strong Putrakaraka (Jupiter)';
+
+  @override
+  String get cpChipLowDoshaPenalty => 'Low dosha penalty';
+
+  @override
+  String get cpChipFavorableTiming => 'Favorable dasha timing';
+
+  @override
+  String get cpChipNoDoshas => 'No progeny-doshas detected';
+
+  @override
+  String get cpPartnersTitle => 'Partner Snapshot';
+
+  @override
+  String get cpLagnaSuffix => 'Lagna';
+
+  @override
+  String get cpMoonSuffix => 'Moon sign';
+
+  @override
+  String get cpNumberTitle => 'Number of Children & Gender Tendency';
+
+  @override
+  String get cpProbableNumber => 'Probable Number';
+
+  @override
+  String get cpFirstChildTendency => 'First Child Tendency';
+
+  @override
+  String get cpSpacing => 'Spacing Note';
+
+  @override
+  String get cpTimingTitle => 'Timing — Moola Dasha';
+
+  @override
+  String get cpCombinedTiming => 'Combined Timing';
+
+  @override
+  String get cpNextWindow => 'Next Favorable Window';
+
+  @override
+  String get cp5thHouseTitle => '5th House Analysis';
+
+  @override
+  String get cp5thHouseSubtitle => 'The house of children (Putra Bhava), per person';
+
+  @override
+  String get cpJupiterTitle => 'Jupiter — Putrakaraka Analysis';
+
+  @override
+  String get cpJupiterSubtitle => 'The natural significator of children, per person';
+
+  @override
+  String get cpD7Title => 'D7 Saptamsa Analysis';
+
+  @override
+  String get cpD7Subtitle => 'The divisional chart specifically for children';
+
+  @override
+  String get cpD7Strength => 'D7 Strength';
+
+  @override
+  String get cpSphutaTitle => 'Beeja & Kshetra Sphuta';
+
+  @override
+  String get cpBeejaSphuta => 'Beeja Sphuta (Seed)';
+
+  @override
+  String get cpKshetraSphuta => 'Kshetra Sphuta (Field)';
+
+  @override
+  String get cpDoshaTitle => 'Dosha Analysis';
+
+  @override
+  String get cpNoDoshasDetected => 'No progeny-relevant doshas detected in either chart';
+
+  @override
+  String get cpRemediesTitle => 'Recommended Remedies';
+
+  @override
+  String get cpAddresses => 'Addresses';
+
+  @override
+  String get cpTopicTiming => 'Best timing for conception';
+
+  @override
+  String get cpTopicNumber => 'How many children we may have';
+
+  @override
+  String get cpTopicDosha => 'Any doshas to address';
+
+  @override
+  String get cpTopicRemedies => 'Recommended remedies';
+
+  @override
+  String get cpTopicFifthHouse => 'Our 5th house strength';
+
+  @override
+  String get cpTopicJupiter => 'Jupiter\'s role in this';
+
+  @override
   String get riSubtitle => 'AI-powered Vedic Relationship Intelligence Report';
 
   @override

@@ -8161,6 +8161,132 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get cpSubtitle => 'AI-संचालित वैदिक संतान संभावना रिपोर्ट';
+
+  @override
+  String get cpTitle => 'संतान संभावना';
+
+  @override
+  String get cpSnapshotHeader => 'संतान संभावना स्नैपशॉट';
+
+  @override
+  String get cpGauge5thHouse => '5वां भाव';
+
+  @override
+  String get cpGaugeJupiter => 'बृहस्पति/पुत्रकारक';
+
+  @override
+  String get cpGaugeD7 => 'D7 सप्तांश';
+
+  @override
+  String get cpGaugeSphuta => 'बीज-क्षेत्र';
+
+  @override
+  String get cpGaugeTiming => 'दशा समय';
+
+  @override
+  String get cpChipStrongPutrakaraka => 'मजबूत पुत्रकारक (बृहस्पति)';
+
+  @override
+  String get cpChipLowDoshaPenalty => 'कम दोष दंड';
+
+  @override
+  String get cpChipFavorableTiming => 'अनुकूल दशा समय';
+
+  @override
+  String get cpChipNoDoshas => 'कोई संतान-दोष नहीं मिला';
+
+  @override
+  String get cpPartnersTitle => 'साथी स्नैपशॉट';
+
+  @override
+  String get cpLagnaSuffix => 'लग्न';
+
+  @override
+  String get cpMoonSuffix => 'चंद्र राशि';
+
+  @override
+  String get cpNumberTitle => 'संतान संख्या एवं लिंग झुकाव';
+
+  @override
+  String get cpProbableNumber => 'संभावित संख्या';
+
+  @override
+  String get cpFirstChildTendency => 'प्रथम संतान झुकाव';
+
+  @override
+  String get cpSpacing => 'अंतराल नोट';
+
+  @override
+  String get cpTimingTitle => 'समय — मूल दशा';
+
+  @override
+  String get cpCombinedTiming => 'संयुक्त समय';
+
+  @override
+  String get cpNextWindow => 'अगली अनुकूल अवधि';
+
+  @override
+  String get cp5thHouseTitle => '5वां भाव विश्लेषण';
+
+  @override
+  String get cp5thHouseSubtitle => 'संतान भाव (पुत्र भाव), प्रत्येक व्यक्ति के लिए';
+
+  @override
+  String get cpJupiterTitle => 'बृहस्पति — पुत्रकारक विश्लेषण';
+
+  @override
+  String get cpJupiterSubtitle => 'संतान का स्वाभाविक कारक, प्रत्येक व्यक्ति के लिए';
+
+  @override
+  String get cpD7Title => 'D7 सप्तांश विश्लेषण';
+
+  @override
+  String get cpD7Subtitle => 'विशेष रूप से संतान के लिए विभागीय कुंडली';
+
+  @override
+  String get cpD7Strength => 'D7 शक्ति';
+
+  @override
+  String get cpSphutaTitle => 'बीज एवं क्षेत्र स्फुट';
+
+  @override
+  String get cpBeejaSphuta => 'बीज स्फुट';
+
+  @override
+  String get cpKshetraSphuta => 'क्षेत्र स्फुट';
+
+  @override
+  String get cpDoshaTitle => 'दोष विश्लेषण';
+
+  @override
+  String get cpNoDoshasDetected => 'किसी भी कुंडली में कोई संतान-संबंधी दोष नहीं मिला';
+
+  @override
+  String get cpRemediesTitle => 'अनुशंसित उपाय';
+
+  @override
+  String get cpAddresses => 'संबोधित करता है';
+
+  @override
+  String get cpTopicTiming => 'गर्भधारण के लिए सर्वोत्तम समय';
+
+  @override
+  String get cpTopicNumber => 'हमारी कितनी संतान हो सकती है';
+
+  @override
+  String get cpTopicDosha => 'संबोधित करने योग्य कोई दोष';
+
+  @override
+  String get cpTopicRemedies => 'अनुशंसित उपाय';
+
+  @override
+  String get cpTopicFifthHouse => 'हमारे 5वें भाव की शक्ति';
+
+  @override
+  String get cpTopicJupiter => 'इसमें बृहस्पति की भूमिका';
+
+  @override
   String get riSubtitle => 'AI-संचालित वैदिक रिश्ता बुद्धिमत्ता रिपोर्ट';
 
   @override

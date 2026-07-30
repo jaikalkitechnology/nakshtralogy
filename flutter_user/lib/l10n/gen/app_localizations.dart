@@ -235,6 +235,258 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @cpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Child Probability Report'**
+  String get cpSubtitle;
+
+  /// No description provided for @cpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Probability'**
+  String get cpTitle;
+
+  /// No description provided for @cpSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Progeny Probability Snapshot'**
+  String get cpSnapshotHeader;
+
+  /// No description provided for @cpGauge5thHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'5th House'**
+  String get cpGauge5thHouse;
+
+  /// No description provided for @cpGaugeJupiter.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter/Putrakaraka'**
+  String get cpGaugeJupiter;
+
+  /// No description provided for @cpGaugeD7.
+  ///
+  /// In en, this message translates to:
+  /// **'D7 Saptamsa'**
+  String get cpGaugeD7;
+
+  /// No description provided for @cpGaugeSphuta.
+  ///
+  /// In en, this message translates to:
+  /// **'Beeja-Kshetra'**
+  String get cpGaugeSphuta;
+
+  /// No description provided for @cpGaugeTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get cpGaugeTiming;
+
+  /// No description provided for @cpChipStrongPutrakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Putrakaraka (Jupiter)'**
+  String get cpChipStrongPutrakaraka;
+
+  /// No description provided for @cpChipLowDoshaPenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Low dosha penalty'**
+  String get cpChipLowDoshaPenalty;
+
+  /// No description provided for @cpChipFavorableTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorable dasha timing'**
+  String get cpChipFavorableTiming;
+
+  /// No description provided for @cpChipNoDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'No progeny-doshas detected'**
+  String get cpChipNoDoshas;
+
+  /// No description provided for @cpPartnersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner Snapshot'**
+  String get cpPartnersTitle;
+
+  /// No description provided for @cpLagnaSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna'**
+  String get cpLagnaSuffix;
+
+  /// No description provided for @cpMoonSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon sign'**
+  String get cpMoonSuffix;
+
+  /// No description provided for @cpNumberTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Children & Gender Tendency'**
+  String get cpNumberTitle;
+
+  /// No description provided for @cpProbableNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Probable Number'**
+  String get cpProbableNumber;
+
+  /// No description provided for @cpFirstChildTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'First Child Tendency'**
+  String get cpFirstChildTendency;
+
+  /// No description provided for @cpSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Spacing Note'**
+  String get cpSpacing;
+
+  /// No description provided for @cpTimingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Timing — Moola Dasha'**
+  String get cpTimingTitle;
+
+  /// No description provided for @cpCombinedTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Combined Timing'**
+  String get cpCombinedTiming;
+
+  /// No description provided for @cpNextWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Favorable Window'**
+  String get cpNextWindow;
+
+  /// No description provided for @cp5thHouseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'5th House Analysis'**
+  String get cp5thHouseTitle;
+
+  /// No description provided for @cp5thHouseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The house of children (Putra Bhava), per person'**
+  String get cp5thHouseSubtitle;
+
+  /// No description provided for @cpJupiterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter — Putrakaraka Analysis'**
+  String get cpJupiterTitle;
+
+  /// No description provided for @cpJupiterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The natural significator of children, per person'**
+  String get cpJupiterSubtitle;
+
+  /// No description provided for @cpD7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'D7 Saptamsa Analysis'**
+  String get cpD7Title;
+
+  /// No description provided for @cpD7Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The divisional chart specifically for children'**
+  String get cpD7Subtitle;
+
+  /// No description provided for @cpD7Strength.
+  ///
+  /// In en, this message translates to:
+  /// **'D7 Strength'**
+  String get cpD7Strength;
+
+  /// No description provided for @cpSphutaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Beeja & Kshetra Sphuta'**
+  String get cpSphutaTitle;
+
+  /// No description provided for @cpBeejaSphuta.
+  ///
+  /// In en, this message translates to:
+  /// **'Beeja Sphuta (Seed)'**
+  String get cpBeejaSphuta;
+
+  /// No description provided for @cpKshetraSphuta.
+  ///
+  /// In en, this message translates to:
+  /// **'Kshetra Sphuta (Field)'**
+  String get cpKshetraSphuta;
+
+  /// No description provided for @cpDoshaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosha Analysis'**
+  String get cpDoshaTitle;
+
+  /// No description provided for @cpNoDoshasDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No progeny-relevant doshas detected in either chart'**
+  String get cpNoDoshasDetected;
+
+  /// No description provided for @cpRemediesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Remedies'**
+  String get cpRemediesTitle;
+
+  /// No description provided for @cpAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses'**
+  String get cpAddresses;
+
+  /// No description provided for @cpTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing for conception'**
+  String get cpTopicTiming;
+
+  /// No description provided for @cpTopicNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'How many children we may have'**
+  String get cpTopicNumber;
+
+  /// No description provided for @cpTopicDosha.
+  ///
+  /// In en, this message translates to:
+  /// **'Any doshas to address'**
+  String get cpTopicDosha;
+
+  /// No description provided for @cpTopicRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended remedies'**
+  String get cpTopicRemedies;
+
+  /// No description provided for @cpTopicFifthHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Our 5th house strength'**
+  String get cpTopicFifthHouse;
+
+  /// No description provided for @cpTopicJupiter.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter\'s role in this'**
+  String get cpTopicJupiter;
+
   /// No description provided for @riSubtitle.
   ///
   /// In en, this message translates to:

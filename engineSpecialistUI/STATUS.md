@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 16 done · 3 pending · 0 blocked  (19 total)**
+**Progress: 17 done · 2 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`, `ri_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`, `ri_source.json`, `cp_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -37,7 +37,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ✅ DONE | efab680 | en+hi+hinglish | 17-section AI karma coach; converted from EngineReportBase shell to Career template. Backfill pending (pk_source.json). 2026-07-30. |
 | 14 | kundli_milan | Kundli Milan | `milan_report_screen.dart` | ✅ DONE | 8d683bd | en+hi+hinglish | 17-section AI marriage-compatibility coach, 2-chart (`runSpecialistMilan`); constructor (name1/name2/data) unchanged. Astro's picker was pointed at the generic fallback shell — repointed to the new screen. Backfill pending (km_source.json). 2026-07-30. |
 | 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ✅ DONE | 7cc9d3b | en+hi+hinglish | 11-section AI group-dynamics coach, N-way 2-5 chart (`runRelationshipAnalysis`); constructor (names/data) unchanged. Astro's picker was pointed at the generic fallback shell — repointed to the new screen. Backfill pending (ri_source.json). 2026-07-30. |
-| 16 | child_probability | Child Probability | `child_probability_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
+| 16 | child_probability | Child Probability | `child_probability_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 13-section AI progeny-timing coach, 2-chart Moola-Dasha engine (`runChildProbability`); constructor (data/participants) unchanged. Real engine shape differed from the old screen's stale field assumptions (e.g. remedies/number_of_children reshaped) — rebuilt against a live dump. Backfill pending (cp_source.json). 2026-07-30. |
 | 17 | love_compatibility | Love Compatibility | `love_compatibility_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
 | 18 | karma_linkage | Past-Life Karma Linkage | `karma_linkage_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
 
@@ -209,6 +209,25 @@ touch only if a redesigned screen requires it.
   `relationship_intelligence_specialist_v1.2.analyze()` 3-chart dump. Both
   apps; 59 new `ri` keys + 7 shared compat-label keys backfilled to astro
   (en+hi+hinglish). Backfill: `ri_source.json`.
+
+- **child_probability** ✅ — 13-section AI progeny-timing coach for the
+  2-chart Moola-Dasha Child Probability endpoint (snapshot hero blending
+  5th-house/Jupiter-Putrakaraka/D7/Beeja-Kshetra/dasha-timing, Partner
+  Snapshot, Number of Children & Gender Tendency, Timing via Moola Dasha
+  per-partner MD/AD/PD + favorable windows, 5th House Analysis per person,
+  Jupiter/Putrakaraka Analysis per person, D7 Saptamsa Analysis per person,
+  Beeja & Kshetra Sphuta, Dosha Analysis, Remedies, Summary & Key Insights,
+  Reliability, Discuss-with-AI). Converted from the bespoke
+  `CustomScrollView`/`SliverList` shell; constructor (`data`, `participants`
+  — already-loaded, no async load call) kept unchanged. The previous screen's
+  field assumptions (categorized gemstone/mantra/ritual/lifestyle/charitable
+  remedy lists, `gender_tendency_score` son/daughter split, `d7_planets`
+  list) no longer matched the live `child_probability_specialist_v1`
+  engine — rebuilt entirely from a real 2-chart dump
+  (`recommended_remedies` list, `first_child_indications`,
+  `d7_planet_signs` map, no `confidence_breakdown`). Both apps; 42 new `cp`
+  keys + 16 shared dasha/dignity-label keys backfilled to astro
+  (en+hi+hinglish). Backfill: `cp_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
