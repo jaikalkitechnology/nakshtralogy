@@ -1,0 +1,302 @@
+{
+ "mrSubtitle": {
+  "en": "AI-powered Vedic Marriage Report"
+ },
+ "mrTitle": {
+  "en": "Marriage & Family"
+ },
+ "mrMarriagePotential": {
+  "en": "Marriage Potential"
+ },
+ "mrHarmony": {
+  "en": "Harmony"
+ },
+ "mrLongevity": {
+  "en": "Longevity"
+ },
+ "mrSatisfaction": {
+  "en": "Satisfaction"
+ },
+ "mrStability": {
+  "en": "Home Stability"
+ },
+ "mrClarity": {
+  "en": "Clarity"
+ },
+ "mrChipHarmony": {
+  "en": "Harmonious bond"
+ },
+ "mrChipNoMangal": {
+  "en": "No Mangal dosh"
+ },
+ "mrChipLongLasting": {
+  "en": "Long-lasting"
+ },
+ "mrChipHome": {
+  "en": "Own home likely"
+ },
+ "mrChipInLaws": {
+  "en": "Good in-laws"
+ },
+ "mrChipChildren": {
+  "en": "Children blessed"
+ },
+ "mrSpouse": {
+  "en": "Your Future Spouse"
+ },
+ "mrSpouseSub": {
+  "en": "What the chart suggests"
+ },
+ "mrSpouseTraits": {
+  "en": "Likely Personality"
+ },
+ "mrSpouseWork": {
+  "en": "Likely Profession"
+ },
+ "mrAgeDiff": {
+  "en": "Age Difference"
+ },
+ "mrCulture": {
+  "en": "Cultural Match"
+ },
+ "mrEducation": {
+  "en": "Education"
+ },
+ "mrFamilyBg": {
+  "en": "Family Background"
+ },
+ "mrSoulPartnership": {
+  "en": "Soul & Partnership"
+ },
+ "mrSelfPlanet": {
+  "en": "You in a Bond"
+ },
+ "mrSpousePlanet": {
+  "en": "Your Spouse Planet"
+ },
+ "mrSoulAlignment": {
+  "en": "Soul Alignment"
+ },
+ "mrAlignStrong": {
+  "en": "Your soul and your ideal partner are strongly aligned — a deeply fulfilling bond is well supported."
+ },
+ "mrAlignModerate": {
+  "en": "Your soul and your ideal partner are moderately aligned — a fulfilling bond grows with conscious effort."
+ },
+ "mrAlignLow": {
+  "en": "Your soul and partnership need conscious integration — choose a partner who truly matches your inner values."
+ },
+ "mrTechDarakaraka": {
+  "en": "Spouse planet (Darakaraka)"
+ },
+ "mrUpapada": {
+  "en": "Marriage point (Upapada)"
+ },
+ "mrUpapadaLord": {
+  "en": "Upapada ruler"
+ },
+ "mrFoundation": {
+  "en": "Marriage Foundation"
+ },
+ "mrMarriageSign": {
+  "en": "Marriage Sign"
+ },
+ "mrMarriageLord": {
+  "en": "Marriage Ruler"
+ },
+ "mrHouseStrength": {
+  "en": "House Strength"
+ },
+ "mrPartnerHint": {
+  "en": "Partner hint from your chart"
+ },
+ "mrHarmonyHdr": {
+  "en": "Compatibility Harmony"
+ },
+ "mrHarmonySub": {
+  "en": "How you'll connect"
+ },
+ "mrEmotional": {
+  "en": "Emotional"
+ },
+ "mrIntellectual": {
+  "en": "Intellectual"
+ },
+ "mrPhysical": {
+  "en": "Physical Intimacy"
+ },
+ "mrFinancial": {
+  "en": "Financial"
+ },
+ "mrCommunication": {
+  "en": "Communication"
+ },
+ "mrSharedValues": {
+  "en": "Shared Values"
+ },
+ "mrSpiritual": {
+  "en": "Spiritual"
+ },
+ "mrConflictRes": {
+  "en": "Conflict Resolution"
+ },
+ "mrTiming": {
+  "en": "Marriage Timing"
+ },
+ "mrFirstMarriageAge": {
+  "en": "Likely Marriage Age"
+ },
+ "mrDelayChance": {
+  "en": "Delay chance"
+ },
+ "mrMarriageWindow": {
+  "en": "Marriage Window"
+ },
+ "mrSecondaryWindow": {
+  "en": "Alternate Window"
+ },
+ "mrCurrentReadiness": {
+  "en": "Right Now"
+ },
+ "mrJourney": {
+  "en": "Marriage Journey"
+ },
+ "mrJourneySub": {
+  "en": "How the bond evolves"
+ },
+ "mrPhaseEarly": {
+  "en": "Early Years"
+ },
+ "mrPhaseMid": {
+  "en": "Middle Years"
+ },
+ "mrPhaseMature": {
+  "en": "Mature Years"
+ },
+ "mrPhaseLate": {
+  "en": "Later Years"
+ },
+ "mrTip": {
+  "en": "Tip"
+ },
+ "mrFamilyHome": {
+  "en": "Family & Home"
+ },
+ "mrInLaws": {
+  "en": "In-law Relations"
+ },
+ "mrFamilyHarmony": {
+  "en": "Family Harmony"
+ },
+ "mrHomeOwnership": {
+  "en": "Home Ownership"
+ },
+ "mrDomesticPeace": {
+  "en": "Domestic Peace"
+ },
+ "mrFertility": {
+  "en": "Fertility"
+ },
+ "mrParenting": {
+  "en": "Parenting Harmony"
+ },
+ "mrChildren": {
+  "en": "Children"
+ },
+ "mrLikelyCount": {
+  "en": "Likely count"
+ },
+ "mrVerification": {
+  "en": "Cross-Chart Verification"
+ },
+ "mrD9": {
+  "en": "Marriage Chart (D9)"
+ },
+ "mrD10": {
+  "en": "Career-Spouse Chart (D10)"
+ },
+ "mrD60": {
+  "en": "Karma Chart (D60)"
+ },
+ "mrChallenges": {
+  "en": "Challenges to Watch"
+ },
+ "mrMangalPresent": {
+  "en": "Mangal Dosh is present in the chart — review remedies and matching carefully."
+ },
+ "mrMangalAbsent": {
+  "en": "No Mangal Dosh detected — a supportive marriage indicator."
+ },
+ "mrRiskConflict": {
+  "en": "Conflict"
+ },
+ "mrRiskSeparation": {
+  "en": "Separation"
+ },
+ "mrRiskDistance": {
+  "en": "Emotional Distance"
+ },
+ "mrRiskInfidelity": {
+  "en": "Infidelity"
+ },
+ "mrRiskFinance": {
+  "en": "Money Disagreements"
+ },
+ "mrPartnerGuide": {
+  "en": "Partner Guide"
+ },
+ "mrPartnerGuideSub": {
+  "en": "What to look for"
+ },
+ "mrSeek": {
+  "en": "Look for"
+ },
+ "mrMatchingPriorities": {
+  "en": "Matching Priorities"
+ },
+ "mrImprovementPlan": {
+  "en": "Improvement Plan"
+ },
+ "mrReliability": {
+  "en": "Prediction Reliability"
+ },
+ "mrLayerBirth": {
+  "en": "Birth Chart (D1)"
+ },
+ "mrLayerNavamsa": {
+  "en": "Navamsa (D9)"
+ },
+ "mrLayerDashamsa": {
+  "en": "Dashamsa (D10)"
+ },
+ "mrLayerShashtiamsa": {
+  "en": "Karma (D60)"
+ },
+ "mrLayerDarakaraka": {
+  "en": "Spouse Planet"
+ },
+ "mrTopicWhen": {
+  "en": "When will I marry?"
+ },
+ "mrTopicSpouse": {
+  "en": "About my spouse"
+ },
+ "mrTopicCompat": {
+  "en": "Compatibility tips"
+ },
+ "mrTopicDelay": {
+  "en": "Marriage delay"
+ },
+ "mrTopicMangal": {
+  "en": "Mangal dosh"
+ },
+ "mrTopicChildren": {
+  "en": "Children timing"
+ },
+ "mrTopicInLaws": {
+  "en": "In-law relations"
+ },
+ "mrTopicHarmony": {
+  "en": "Building harmony"
+ }
+}

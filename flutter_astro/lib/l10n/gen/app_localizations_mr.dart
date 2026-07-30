@@ -4327,6 +4327,306 @@ class AppLocalizationsMr extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड विसरलात?';
 
   @override
+  String get mrSubtitle => 'AI-powered Vedic Marriage Report';
+
+  @override
+  String get mrTitle => 'Marriage & Family';
+
+  @override
+  String get mrMarriagePotential => 'Marriage Potential';
+
+  @override
+  String get mrHarmony => 'Harmony';
+
+  @override
+  String get mrLongevity => 'Longevity';
+
+  @override
+  String get mrSatisfaction => 'Satisfaction';
+
+  @override
+  String get mrStability => 'Home Stability';
+
+  @override
+  String get mrClarity => 'Clarity';
+
+  @override
+  String get mrChipHarmony => 'Harmonious bond';
+
+  @override
+  String get mrChipNoMangal => 'No Mangal dosh';
+
+  @override
+  String get mrChipLongLasting => 'Long-lasting';
+
+  @override
+  String get mrChipHome => 'Own home likely';
+
+  @override
+  String get mrChipInLaws => 'Good in-laws';
+
+  @override
+  String get mrChipChildren => 'Children blessed';
+
+  @override
+  String get mrSpouse => 'Your Future Spouse';
+
+  @override
+  String get mrSpouseSub => 'What the chart suggests';
+
+  @override
+  String get mrSpouseTraits => 'Likely Personality';
+
+  @override
+  String get mrSpouseWork => 'Likely Profession';
+
+  @override
+  String get mrAgeDiff => 'Age Difference';
+
+  @override
+  String get mrCulture => 'Cultural Match';
+
+  @override
+  String get mrEducation => 'Education';
+
+  @override
+  String get mrFamilyBg => 'Family Background';
+
+  @override
+  String get mrSoulPartnership => 'Soul & Partnership';
+
+  @override
+  String get mrSelfPlanet => 'You in a Bond';
+
+  @override
+  String get mrSpousePlanet => 'Your Spouse Planet';
+
+  @override
+  String get mrSoulAlignment => 'Soul Alignment';
+
+  @override
+  String get mrAlignStrong => 'Your soul and your ideal partner are strongly aligned — a deeply fulfilling bond is well supported.';
+
+  @override
+  String get mrAlignModerate => 'Your soul and your ideal partner are moderately aligned — a fulfilling bond grows with conscious effort.';
+
+  @override
+  String get mrAlignLow => 'Your soul and partnership need conscious integration — choose a partner who truly matches your inner values.';
+
+  @override
+  String get mrTechDarakaraka => 'Spouse planet (Darakaraka)';
+
+  @override
+  String get mrUpapada => 'Marriage point (Upapada)';
+
+  @override
+  String get mrUpapadaLord => 'Upapada ruler';
+
+  @override
+  String get mrFoundation => 'Marriage Foundation';
+
+  @override
+  String get mrMarriageSign => 'Marriage Sign';
+
+  @override
+  String get mrMarriageLord => 'Marriage Ruler';
+
+  @override
+  String get mrHouseStrength => 'House Strength';
+
+  @override
+  String get mrPartnerHint => 'Partner hint from your chart';
+
+  @override
+  String get mrHarmonyHdr => 'Compatibility Harmony';
+
+  @override
+  String get mrHarmonySub => 'How you\'ll connect';
+
+  @override
+  String get mrEmotional => 'Emotional';
+
+  @override
+  String get mrIntellectual => 'Intellectual';
+
+  @override
+  String get mrPhysical => 'Physical Intimacy';
+
+  @override
+  String get mrFinancial => 'Financial';
+
+  @override
+  String get mrCommunication => 'Communication';
+
+  @override
+  String get mrSharedValues => 'Shared Values';
+
+  @override
+  String get mrSpiritual => 'Spiritual';
+
+  @override
+  String get mrConflictRes => 'Conflict Resolution';
+
+  @override
+  String get mrTiming => 'Marriage Timing';
+
+  @override
+  String get mrFirstMarriageAge => 'Likely Marriage Age';
+
+  @override
+  String get mrDelayChance => 'Delay chance';
+
+  @override
+  String get mrMarriageWindow => 'Marriage Window';
+
+  @override
+  String get mrSecondaryWindow => 'Alternate Window';
+
+  @override
+  String get mrCurrentReadiness => 'Right Now';
+
+  @override
+  String get mrJourney => 'Marriage Journey';
+
+  @override
+  String get mrJourneySub => 'How the bond evolves';
+
+  @override
+  String get mrPhaseEarly => 'Early Years';
+
+  @override
+  String get mrPhaseMid => 'Middle Years';
+
+  @override
+  String get mrPhaseMature => 'Mature Years';
+
+  @override
+  String get mrPhaseLate => 'Later Years';
+
+  @override
+  String get mrTip => 'Tip';
+
+  @override
+  String get mrFamilyHome => 'Family & Home';
+
+  @override
+  String get mrInLaws => 'In-law Relations';
+
+  @override
+  String get mrFamilyHarmony => 'Family Harmony';
+
+  @override
+  String get mrHomeOwnership => 'Home Ownership';
+
+  @override
+  String get mrDomesticPeace => 'Domestic Peace';
+
+  @override
+  String get mrFertility => 'Fertility';
+
+  @override
+  String get mrParenting => 'Parenting Harmony';
+
+  @override
+  String get mrChildren => 'Children';
+
+  @override
+  String get mrLikelyCount => 'Likely count';
+
+  @override
+  String get mrVerification => 'Cross-Chart Verification';
+
+  @override
+  String get mrD9 => 'Marriage Chart (D9)';
+
+  @override
+  String get mrD10 => 'Career-Spouse Chart (D10)';
+
+  @override
+  String get mrD60 => 'Karma Chart (D60)';
+
+  @override
+  String get mrChallenges => 'Challenges to Watch';
+
+  @override
+  String get mrMangalPresent => 'Mangal Dosh is present in the chart — review remedies and matching carefully.';
+
+  @override
+  String get mrMangalAbsent => 'No Mangal Dosh detected — a supportive marriage indicator.';
+
+  @override
+  String get mrRiskConflict => 'Conflict';
+
+  @override
+  String get mrRiskSeparation => 'Separation';
+
+  @override
+  String get mrRiskDistance => 'Emotional Distance';
+
+  @override
+  String get mrRiskInfidelity => 'Infidelity';
+
+  @override
+  String get mrRiskFinance => 'Money Disagreements';
+
+  @override
+  String get mrPartnerGuide => 'Partner Guide';
+
+  @override
+  String get mrPartnerGuideSub => 'What to look for';
+
+  @override
+  String get mrSeek => 'Look for';
+
+  @override
+  String get mrMatchingPriorities => 'Matching Priorities';
+
+  @override
+  String get mrImprovementPlan => 'Improvement Plan';
+
+  @override
+  String get mrReliability => 'Prediction Reliability';
+
+  @override
+  String get mrLayerBirth => 'Birth Chart (D1)';
+
+  @override
+  String get mrLayerNavamsa => 'Navamsa (D9)';
+
+  @override
+  String get mrLayerDashamsa => 'Dashamsa (D10)';
+
+  @override
+  String get mrLayerShashtiamsa => 'Karma (D60)';
+
+  @override
+  String get mrLayerDarakaraka => 'Spouse Planet';
+
+  @override
+  String get mrTopicWhen => 'When will I marry?';
+
+  @override
+  String get mrTopicSpouse => 'About my spouse';
+
+  @override
+  String get mrTopicCompat => 'Compatibility tips';
+
+  @override
+  String get mrTopicDelay => 'Marriage delay';
+
+  @override
+  String get mrTopicMangal => 'Mangal dosh';
+
+  @override
+  String get mrTopicChildren => 'Children timing';
+
+  @override
+  String get mrTopicInLaws => 'In-law relations';
+
+  @override
+  String get mrTopicHarmony => 'Building harmony';
+
+  @override
   String get wlSubtitle => 'AI-powered Vedic Wealth Report';
 
   @override

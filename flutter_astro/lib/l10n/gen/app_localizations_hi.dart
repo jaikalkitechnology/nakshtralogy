@@ -4327,6 +4327,306 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get mrSubtitle => 'AI-संचालित वैदिक विवाह रिपोर्ट';
+
+  @override
+  String get mrTitle => 'विवाह और परिवार';
+
+  @override
+  String get mrMarriagePotential => 'विवाह क्षमता';
+
+  @override
+  String get mrHarmony => 'सामंजस्य';
+
+  @override
+  String get mrLongevity => 'दीर्घता';
+
+  @override
+  String get mrSatisfaction => 'संतुष्टि';
+
+  @override
+  String get mrStability => 'घरेलू स्थिरता';
+
+  @override
+  String get mrClarity => 'स्पष्टता';
+
+  @override
+  String get mrChipHarmony => 'सामंजस्यपूर्ण बंधन';
+
+  @override
+  String get mrChipNoMangal => 'मंगल दोष नहीं';
+
+  @override
+  String get mrChipLongLasting => 'दीर्घकालिक';
+
+  @override
+  String get mrChipHome => 'अपना घर संभावित';
+
+  @override
+  String get mrChipInLaws => 'अच्छे ससुराल';
+
+  @override
+  String get mrChipChildren => 'संतान सुख';
+
+  @override
+  String get mrSpouse => 'आपका भावी जीवनसाथी';
+
+  @override
+  String get mrSpouseSub => 'चार्ट क्या दर्शाता है';
+
+  @override
+  String get mrSpouseTraits => 'संभावित व्यक्तित्व';
+
+  @override
+  String get mrSpouseWork => 'संभावित पेशा';
+
+  @override
+  String get mrAgeDiff => 'आयु अंतर';
+
+  @override
+  String get mrCulture => 'सांस्कृतिक मेल';
+
+  @override
+  String get mrEducation => 'शिक्षा';
+
+  @override
+  String get mrFamilyBg => 'पारिवारिक पृष्ठभूमि';
+
+  @override
+  String get mrSoulPartnership => 'आत्मा और साझेदारी';
+
+  @override
+  String get mrSelfPlanet => 'रिश्ते में आप';
+
+  @override
+  String get mrSpousePlanet => 'आपका जीवनसाथी ग्रह';
+
+  @override
+  String get mrSoulAlignment => 'आत्मिक तालमेल';
+
+  @override
+  String get mrAlignStrong => 'Your soul and your ideal partner are strongly aligned — a deeply fulfilling bond is well supported.';
+
+  @override
+  String get mrAlignModerate => 'Your soul and your ideal partner are moderately aligned — a fulfilling bond grows with conscious effort.';
+
+  @override
+  String get mrAlignLow => 'Your soul and partnership need conscious integration — choose a partner who truly matches your inner values.';
+
+  @override
+  String get mrTechDarakaraka => 'जीवनसाथी ग्रह (दाराकारक)';
+
+  @override
+  String get mrUpapada => 'विवाह बिंदु (उपपद)';
+
+  @override
+  String get mrUpapadaLord => 'उपपद स्वामी';
+
+  @override
+  String get mrFoundation => 'विवाह आधार';
+
+  @override
+  String get mrMarriageSign => 'विवाह राशि';
+
+  @override
+  String get mrMarriageLord => 'विवाह स्वामी';
+
+  @override
+  String get mrHouseStrength => 'भाव शक्ति';
+
+  @override
+  String get mrPartnerHint => 'आपके चार्ट से साथी संकेत';
+
+  @override
+  String get mrHarmonyHdr => 'अनुकूलता सामंजस्य';
+
+  @override
+  String get mrHarmonySub => 'आप कैसे जुड़ेंगे';
+
+  @override
+  String get mrEmotional => 'भावनात्मक';
+
+  @override
+  String get mrIntellectual => 'बौद्धिक';
+
+  @override
+  String get mrPhysical => 'शारीरिक निकटता';
+
+  @override
+  String get mrFinancial => 'वित्तीय';
+
+  @override
+  String get mrCommunication => 'संवाद';
+
+  @override
+  String get mrSharedValues => 'साझा मूल्य';
+
+  @override
+  String get mrSpiritual => 'आध्यात्मिक';
+
+  @override
+  String get mrConflictRes => 'विवाद समाधान';
+
+  @override
+  String get mrTiming => 'विवाह समय';
+
+  @override
+  String get mrFirstMarriageAge => 'संभावित विवाह आयु';
+
+  @override
+  String get mrDelayChance => 'विलंब संभावना';
+
+  @override
+  String get mrMarriageWindow => 'विवाह अवधि';
+
+  @override
+  String get mrSecondaryWindow => 'वैकल्पिक अवधि';
+
+  @override
+  String get mrCurrentReadiness => 'अभी';
+
+  @override
+  String get mrJourney => 'विवाह यात्रा';
+
+  @override
+  String get mrJourneySub => 'बंधन कैसे विकसित होता है';
+
+  @override
+  String get mrPhaseEarly => 'प्रारंभिक वर्ष';
+
+  @override
+  String get mrPhaseMid => 'मध्य वर्ष';
+
+  @override
+  String get mrPhaseMature => 'परिपक्व वर्ष';
+
+  @override
+  String get mrPhaseLate => 'बाद के वर्ष';
+
+  @override
+  String get mrTip => 'सुझाव';
+
+  @override
+  String get mrFamilyHome => 'परिवार और घर';
+
+  @override
+  String get mrInLaws => 'ससुराल संबंध';
+
+  @override
+  String get mrFamilyHarmony => 'पारिवारिक सामंजस्य';
+
+  @override
+  String get mrHomeOwnership => 'गृह स्वामित्व';
+
+  @override
+  String get mrDomesticPeace => 'घरेलू शांति';
+
+  @override
+  String get mrFertility => 'प्रजनन';
+
+  @override
+  String get mrParenting => 'पालन-पोषण सामंजस्य';
+
+  @override
+  String get mrChildren => 'संतान';
+
+  @override
+  String get mrLikelyCount => 'संभावित संख्या';
+
+  @override
+  String get mrVerification => 'चार्ट सत्यापन';
+
+  @override
+  String get mrD9 => 'विवाह चार्ट (D9)';
+
+  @override
+  String get mrD10 => 'करियर-जीवनसाथी चार्ट (D10)';
+
+  @override
+  String get mrD60 => 'कर्म चार्ट (D60)';
+
+  @override
+  String get mrChallenges => 'ध्यान देने योग्य चुनौतियाँ';
+
+  @override
+  String get mrMangalPresent => 'चार्ट में मंगल दोष है — उपाय और मिलान सावधानी से देखें।';
+
+  @override
+  String get mrMangalAbsent => 'मंगल दोष नहीं मिला — विवाह के लिए शुभ संकेत।';
+
+  @override
+  String get mrRiskConflict => 'विवाद';
+
+  @override
+  String get mrRiskSeparation => 'अलगाव';
+
+  @override
+  String get mrRiskDistance => 'भावनात्मक दूरी';
+
+  @override
+  String get mrRiskInfidelity => 'बेवफाई';
+
+  @override
+  String get mrRiskFinance => 'धन मतभेद';
+
+  @override
+  String get mrPartnerGuide => 'साथी मार्गदर्शिका';
+
+  @override
+  String get mrPartnerGuideSub => 'क्या देखें';
+
+  @override
+  String get mrSeek => 'इन्हें खोजें';
+
+  @override
+  String get mrMatchingPriorities => 'मिलान प्राथमिकताएँ';
+
+  @override
+  String get mrImprovementPlan => 'सुधार योजना';
+
+  @override
+  String get mrReliability => 'भविष्यवाणी विश्वसनीयता';
+
+  @override
+  String get mrLayerBirth => 'जन्म चार्ट (D1)';
+
+  @override
+  String get mrLayerNavamsa => 'नवांश (D9)';
+
+  @override
+  String get mrLayerDashamsa => 'दशांश (D10)';
+
+  @override
+  String get mrLayerShashtiamsa => 'षष्ट्यांश (D60)';
+
+  @override
+  String get mrLayerDarakaraka => 'जीवनसाथी ग्रह';
+
+  @override
+  String get mrTopicWhen => 'मेरा विवाह कब होगा?';
+
+  @override
+  String get mrTopicSpouse => 'मेरे जीवनसाथी के बारे में';
+
+  @override
+  String get mrTopicCompat => 'अनुकूलता सुझाव';
+
+  @override
+  String get mrTopicDelay => 'विवाह में विलंब';
+
+  @override
+  String get mrTopicMangal => 'मंगल दोष';
+
+  @override
+  String get mrTopicChildren => 'संतान का समय';
+
+  @override
+  String get mrTopicInLaws => 'ससुराल संबंध';
+
+  @override
+  String get mrTopicHarmony => 'सामंजस्य बनाना';
+
+  @override
   String get wlSubtitle => 'AI-संचालित वैदिक धन रिपोर्ट';
 
   @override

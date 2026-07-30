@@ -235,6 +235,606 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @mrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Marriage Report'**
+  String get mrSubtitle;
+
+  /// No description provided for @mrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage & Family'**
+  String get mrTitle;
+
+  /// No description provided for @mrMarriagePotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Potential'**
+  String get mrMarriagePotential;
+
+  /// No description provided for @mrHarmony.
+  ///
+  /// In en, this message translates to:
+  /// **'Harmony'**
+  String get mrHarmony;
+
+  /// No description provided for @mrLongevity.
+  ///
+  /// In en, this message translates to:
+  /// **'Longevity'**
+  String get mrLongevity;
+
+  /// No description provided for @mrSatisfaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Satisfaction'**
+  String get mrSatisfaction;
+
+  /// No description provided for @mrStability.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Stability'**
+  String get mrStability;
+
+  /// No description provided for @mrClarity.
+  ///
+  /// In en, this message translates to:
+  /// **'Clarity'**
+  String get mrClarity;
+
+  /// No description provided for @mrChipHarmony.
+  ///
+  /// In en, this message translates to:
+  /// **'Harmonious bond'**
+  String get mrChipHarmony;
+
+  /// No description provided for @mrChipNoMangal.
+  ///
+  /// In en, this message translates to:
+  /// **'No Mangal dosh'**
+  String get mrChipNoMangal;
+
+  /// No description provided for @mrChipLongLasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-lasting'**
+  String get mrChipLongLasting;
+
+  /// No description provided for @mrChipHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Own home likely'**
+  String get mrChipHome;
+
+  /// No description provided for @mrChipInLaws.
+  ///
+  /// In en, this message translates to:
+  /// **'Good in-laws'**
+  String get mrChipInLaws;
+
+  /// No description provided for @mrChipChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children blessed'**
+  String get mrChipChildren;
+
+  /// No description provided for @mrSpouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Future Spouse'**
+  String get mrSpouse;
+
+  /// No description provided for @mrSpouseSub.
+  ///
+  /// In en, this message translates to:
+  /// **'What the chart suggests'**
+  String get mrSpouseSub;
+
+  /// No description provided for @mrSpouseTraits.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Personality'**
+  String get mrSpouseTraits;
+
+  /// No description provided for @mrSpouseWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Profession'**
+  String get mrSpouseWork;
+
+  /// No description provided for @mrAgeDiff.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Difference'**
+  String get mrAgeDiff;
+
+  /// No description provided for @mrCulture.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural Match'**
+  String get mrCulture;
+
+  /// No description provided for @mrEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get mrEducation;
+
+  /// No description provided for @mrFamilyBg.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Background'**
+  String get mrFamilyBg;
+
+  /// No description provided for @mrSoulPartnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul & Partnership'**
+  String get mrSoulPartnership;
+
+  /// No description provided for @mrSelfPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'You in a Bond'**
+  String get mrSelfPlanet;
+
+  /// No description provided for @mrSpousePlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Spouse Planet'**
+  String get mrSpousePlanet;
+
+  /// No description provided for @mrSoulAlignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Alignment'**
+  String get mrSoulAlignment;
+
+  /// No description provided for @mrAlignStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul and your ideal partner are strongly aligned — a deeply fulfilling bond is well supported.'**
+  String get mrAlignStrong;
+
+  /// No description provided for @mrAlignModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul and your ideal partner are moderately aligned — a fulfilling bond grows with conscious effort.'**
+  String get mrAlignModerate;
+
+  /// No description provided for @mrAlignLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul and partnership need conscious integration — choose a partner who truly matches your inner values.'**
+  String get mrAlignLow;
+
+  /// No description provided for @mrTechDarakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse planet (Darakaraka)'**
+  String get mrTechDarakaraka;
+
+  /// No description provided for @mrUpapada.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage point (Upapada)'**
+  String get mrUpapada;
+
+  /// No description provided for @mrUpapadaLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Upapada ruler'**
+  String get mrUpapadaLord;
+
+  /// No description provided for @mrFoundation.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Foundation'**
+  String get mrFoundation;
+
+  /// No description provided for @mrMarriageSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Sign'**
+  String get mrMarriageSign;
+
+  /// No description provided for @mrMarriageLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Ruler'**
+  String get mrMarriageLord;
+
+  /// No description provided for @mrHouseStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'House Strength'**
+  String get mrHouseStrength;
+
+  /// No description provided for @mrPartnerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner hint from your chart'**
+  String get mrPartnerHint;
+
+  /// No description provided for @mrHarmonyHdr.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatibility Harmony'**
+  String get mrHarmonyHdr;
+
+  /// No description provided for @mrHarmonySub.
+  ///
+  /// In en, this message translates to:
+  /// **'How you\'ll connect'**
+  String get mrHarmonySub;
+
+  /// No description provided for @mrEmotional.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional'**
+  String get mrEmotional;
+
+  /// No description provided for @mrIntellectual.
+  ///
+  /// In en, this message translates to:
+  /// **'Intellectual'**
+  String get mrIntellectual;
+
+  /// No description provided for @mrPhysical.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Intimacy'**
+  String get mrPhysical;
+
+  /// No description provided for @mrFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial'**
+  String get mrFinancial;
+
+  /// No description provided for @mrCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get mrCommunication;
+
+  /// No description provided for @mrSharedValues.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Values'**
+  String get mrSharedValues;
+
+  /// No description provided for @mrSpiritual.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual'**
+  String get mrSpiritual;
+
+  /// No description provided for @mrConflictRes.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict Resolution'**
+  String get mrConflictRes;
+
+  /// No description provided for @mrTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Timing'**
+  String get mrTiming;
+
+  /// No description provided for @mrFirstMarriageAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Marriage Age'**
+  String get mrFirstMarriageAge;
+
+  /// No description provided for @mrDelayChance.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay chance'**
+  String get mrDelayChance;
+
+  /// No description provided for @mrMarriageWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Window'**
+  String get mrMarriageWindow;
+
+  /// No description provided for @mrSecondaryWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternate Window'**
+  String get mrSecondaryWindow;
+
+  /// No description provided for @mrCurrentReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Right Now'**
+  String get mrCurrentReadiness;
+
+  /// No description provided for @mrJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Journey'**
+  String get mrJourney;
+
+  /// No description provided for @mrJourneySub.
+  ///
+  /// In en, this message translates to:
+  /// **'How the bond evolves'**
+  String get mrJourneySub;
+
+  /// No description provided for @mrPhaseEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Years'**
+  String get mrPhaseEarly;
+
+  /// No description provided for @mrPhaseMid.
+  ///
+  /// In en, this message translates to:
+  /// **'Middle Years'**
+  String get mrPhaseMid;
+
+  /// No description provided for @mrPhaseMature.
+  ///
+  /// In en, this message translates to:
+  /// **'Mature Years'**
+  String get mrPhaseMature;
+
+  /// No description provided for @mrPhaseLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Later Years'**
+  String get mrPhaseLate;
+
+  /// No description provided for @mrTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip'**
+  String get mrTip;
+
+  /// No description provided for @mrFamilyHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Family & Home'**
+  String get mrFamilyHome;
+
+  /// No description provided for @mrInLaws.
+  ///
+  /// In en, this message translates to:
+  /// **'In-law Relations'**
+  String get mrInLaws;
+
+  /// No description provided for @mrFamilyHarmony.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Harmony'**
+  String get mrFamilyHarmony;
+
+  /// No description provided for @mrHomeOwnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Ownership'**
+  String get mrHomeOwnership;
+
+  /// No description provided for @mrDomesticPeace.
+  ///
+  /// In en, this message translates to:
+  /// **'Domestic Peace'**
+  String get mrDomesticPeace;
+
+  /// No description provided for @mrFertility.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility'**
+  String get mrFertility;
+
+  /// No description provided for @mrParenting.
+  ///
+  /// In en, this message translates to:
+  /// **'Parenting Harmony'**
+  String get mrParenting;
+
+  /// No description provided for @mrChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get mrChildren;
+
+  /// No description provided for @mrLikelyCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely count'**
+  String get mrLikelyCount;
+
+  /// No description provided for @mrVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Cross-Chart Verification'**
+  String get mrVerification;
+
+  /// No description provided for @mrD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Chart (D9)'**
+  String get mrD9;
+
+  /// No description provided for @mrD10.
+  ///
+  /// In en, this message translates to:
+  /// **'Career-Spouse Chart (D10)'**
+  String get mrD10;
+
+  /// No description provided for @mrD60.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma Chart (D60)'**
+  String get mrD60;
+
+  /// No description provided for @mrChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges to Watch'**
+  String get mrChallenges;
+
+  /// No description provided for @mrMangalPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal Dosh is present in the chart — review remedies and matching carefully.'**
+  String get mrMangalPresent;
+
+  /// No description provided for @mrMangalAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'No Mangal Dosh detected — a supportive marriage indicator.'**
+  String get mrMangalAbsent;
+
+  /// No description provided for @mrRiskConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict'**
+  String get mrRiskConflict;
+
+  /// No description provided for @mrRiskSeparation.
+  ///
+  /// In en, this message translates to:
+  /// **'Separation'**
+  String get mrRiskSeparation;
+
+  /// No description provided for @mrRiskDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Distance'**
+  String get mrRiskDistance;
+
+  /// No description provided for @mrRiskInfidelity.
+  ///
+  /// In en, this message translates to:
+  /// **'Infidelity'**
+  String get mrRiskInfidelity;
+
+  /// No description provided for @mrRiskFinance.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Disagreements'**
+  String get mrRiskFinance;
+
+  /// No description provided for @mrPartnerGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner Guide'**
+  String get mrPartnerGuide;
+
+  /// No description provided for @mrPartnerGuideSub.
+  ///
+  /// In en, this message translates to:
+  /// **'What to look for'**
+  String get mrPartnerGuideSub;
+
+  /// No description provided for @mrSeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Look for'**
+  String get mrSeek;
+
+  /// No description provided for @mrMatchingPriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Matching Priorities'**
+  String get mrMatchingPriorities;
+
+  /// No description provided for @mrImprovementPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get mrImprovementPlan;
+
+  /// No description provided for @mrReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Reliability'**
+  String get mrReliability;
+
+  /// No description provided for @mrLayerBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get mrLayerBirth;
+
+  /// No description provided for @mrLayerNavamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get mrLayerNavamsa;
+
+  /// No description provided for @mrLayerDashamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashamsa (D10)'**
+  String get mrLayerDashamsa;
+
+  /// No description provided for @mrLayerShashtiamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Karma (D60)'**
+  String get mrLayerShashtiamsa;
+
+  /// No description provided for @mrLayerDarakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Spouse Planet'**
+  String get mrLayerDarakaraka;
+
+  /// No description provided for @mrTopicWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When will I marry?'**
+  String get mrTopicWhen;
+
+  /// No description provided for @mrTopicSpouse.
+  ///
+  /// In en, this message translates to:
+  /// **'About my spouse'**
+  String get mrTopicSpouse;
+
+  /// No description provided for @mrTopicCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatibility tips'**
+  String get mrTopicCompat;
+
+  /// No description provided for @mrTopicDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage delay'**
+  String get mrTopicDelay;
+
+  /// No description provided for @mrTopicMangal.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangal dosh'**
+  String get mrTopicMangal;
+
+  /// No description provided for @mrTopicChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children timing'**
+  String get mrTopicChildren;
+
+  /// No description provided for @mrTopicInLaws.
+  ///
+  /// In en, this message translates to:
+  /// **'In-law relations'**
+  String get mrTopicInLaws;
+
+  /// No description provided for @mrTopicHarmony.
+  ///
+  /// In en, this message translates to:
+  /// **'Building harmony'**
+  String get mrTopicHarmony;
+
   /// No description provided for @wlSubtitle.
   ///
   /// In en, this message translates to:
