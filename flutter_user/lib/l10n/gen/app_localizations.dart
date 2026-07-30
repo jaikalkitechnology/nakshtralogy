@@ -235,6 +235,786 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @chSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Character Analysis Report'**
+  String get chSubtitle;
+
+  /// No description provided for @chTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Analysis'**
+  String get chTitle;
+
+  /// No description provided for @chSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Snapshot'**
+  String get chSnapshotHeader;
+
+  /// No description provided for @chGaugeIntegrity.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity'**
+  String get chGaugeIntegrity;
+
+  /// No description provided for @chGaugeResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'Resilience'**
+  String get chGaugeResilience;
+
+  /// No description provided for @chGaugeSelfAwareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Awareness'**
+  String get chGaugeSelfAwareness;
+
+  /// No description provided for @chGaugeStability.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Stability'**
+  String get chGaugeStability;
+
+  /// No description provided for @chGaugeMoralFabric.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral Fabric'**
+  String get chGaugeMoralFabric;
+
+  /// No description provided for @chChipRajaYoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Raja Yoga present'**
+  String get chChipRajaYoga;
+
+  /// No description provided for @chChipHighIntegrity.
+  ///
+  /// In en, this message translates to:
+  /// **'High integrity'**
+  String get chChipHighIntegrity;
+
+  /// No description provided for @chChipResilient.
+  ///
+  /// In en, this message translates to:
+  /// **'Resilient nature'**
+  String get chChipResilient;
+
+  /// No description provided for @chChipDharmic.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong dharma orientation'**
+  String get chChipDharmic;
+
+  /// No description provided for @chChipEmpathetic.
+  ///
+  /// In en, this message translates to:
+  /// **'Naturally empathetic'**
+  String get chChipEmpathetic;
+
+  /// No description provided for @chChipLoyal.
+  ///
+  /// In en, this message translates to:
+  /// **'Deeply loyal'**
+  String get chChipLoyal;
+
+  /// No description provided for @chChipGiftedCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart carries a character gift'**
+  String get chChipGiftedCharacter;
+
+  /// No description provided for @chSoulTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Soul Signature'**
+  String get chSoulTitle;
+
+  /// No description provided for @chSoulIntegration.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul-Character Integration'**
+  String get chSoulIntegration;
+
+  /// No description provided for @chAmatyakarakaTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Supporting Character Voice'**
+  String get chAmatyakarakaTheme;
+
+  /// No description provided for @chAtmakarakaDignity.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul-planet dignity'**
+  String get chAtmakarakaDignity;
+
+  /// No description provided for @chAtmakarakaHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House placement'**
+  String get chAtmakarakaHouse;
+
+  /// No description provided for @chSurfaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surface Personality & Constitution'**
+  String get chSurfaceTitle;
+
+  /// No description provided for @chLagnaSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascendant Sign'**
+  String get chLagnaSign;
+
+  /// No description provided for @chConstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Constitution'**
+  String get chConstitution;
+
+  /// No description provided for @chSurfaceSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'How you come across'**
+  String get chSurfaceSignature;
+
+  /// No description provided for @chPhysicalConstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Constitution'**
+  String get chPhysicalConstitution;
+
+  /// No description provided for @chLagnaLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascendant Lord'**
+  String get chLagnaLord;
+
+  /// No description provided for @chLagnaOccupants.
+  ///
+  /// In en, this message translates to:
+  /// **'Planets in Ascendant'**
+  String get chLagnaOccupants;
+
+  /// No description provided for @chMindEmotionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind, Emotions & Ego'**
+  String get chMindEmotionsTitle;
+
+  /// No description provided for @chEmotionalNature.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Emotional Nature'**
+  String get chEmotionalNature;
+
+  /// No description provided for @chMentalStability.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Stability'**
+  String get chMentalStability;
+
+  /// No description provided for @chSelfConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy Self-Confidence'**
+  String get chSelfConfidence;
+
+  /// No description provided for @chEgoNature.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Ego & Self-Concept'**
+  String get chEgoNature;
+
+  /// No description provided for @chAuthorityRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship with Authority'**
+  String get chAuthorityRelationship;
+
+  /// No description provided for @chPrideTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'Pride Tendency'**
+  String get chPrideTendency;
+
+  /// No description provided for @chMoodPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood Patterns'**
+  String get chMoodPatterns;
+
+  /// No description provided for @chKemadrumaPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Kemadruma Yoga present — extra emotional self-care is beneficial.'**
+  String get chKemadrumaPresent;
+
+  /// No description provided for @chFatherImprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Father imprint quality'**
+  String get chFatherImprint;
+
+  /// No description provided for @chCommunicationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication & Intellect Style'**
+  String get chCommunicationTitle;
+
+  /// No description provided for @chIntellectStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Intellect Style'**
+  String get chIntellectStyle;
+
+  /// No description provided for @chCommStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication Style'**
+  String get chCommStyle;
+
+  /// No description provided for @chDecisionStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision-Making Style'**
+  String get chDecisionStyle;
+
+  /// No description provided for @chDiscrimination.
+  ///
+  /// In en, this message translates to:
+  /// **'Discrimination Capacity'**
+  String get chDiscrimination;
+
+  /// No description provided for @chPersonaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Persona vs True Self'**
+  String get chPersonaTitle;
+
+  /// No description provided for @chAuthenticityGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticity Gap'**
+  String get chAuthenticityGap;
+
+  /// No description provided for @chGunaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guna & Dosha Profile'**
+  String get chGunaTitle;
+
+  /// No description provided for @chGunaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inner nature and constitution, classical Vedic style'**
+  String get chGunaSubtitle;
+
+  /// No description provided for @chSattva.
+  ///
+  /// In en, this message translates to:
+  /// **'Sattva'**
+  String get chSattva;
+
+  /// No description provided for @chRajas.
+  ///
+  /// In en, this message translates to:
+  /// **'Rajas'**
+  String get chRajas;
+
+  /// No description provided for @chTamas.
+  ///
+  /// In en, this message translates to:
+  /// **'Tamas'**
+  String get chTamas;
+
+  /// No description provided for @chDominantGuna.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant Guna'**
+  String get chDominantGuna;
+
+  /// No description provided for @chPitta.
+  ///
+  /// In en, this message translates to:
+  /// **'Pitta'**
+  String get chPitta;
+
+  /// No description provided for @chKapha.
+  ///
+  /// In en, this message translates to:
+  /// **'Kapha'**
+  String get chKapha;
+
+  /// No description provided for @chVata.
+  ///
+  /// In en, this message translates to:
+  /// **'Vata'**
+  String get chVata;
+
+  /// No description provided for @chDominantDosha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant Dosha'**
+  String get chDominantDosha;
+
+  /// No description provided for @chRahuRestlessness.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu restlessness'**
+  String get chRahuRestlessness;
+
+  /// No description provided for @chKetuDetachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu detachment'**
+  String get chKetuDetachment;
+
+  /// No description provided for @chYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Yogas'**
+  String get chYogasTitle;
+
+  /// No description provided for @chRajaYogaStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Raja Yoga Strength'**
+  String get chRajaYogaStrength;
+
+  /// No description provided for @chGiftYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift Yogas'**
+  String get chGiftYogas;
+
+  /// No description provided for @chTestYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Yogas'**
+  String get chTestYogas;
+
+  /// No description provided for @chStrengthsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths & Talents'**
+  String get chStrengthsTitle;
+
+  /// No description provided for @chSignatureVirtues.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature Virtues'**
+  String get chSignatureVirtues;
+
+  /// No description provided for @chNaturalTalents.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Talents'**
+  String get chNaturalTalents;
+
+  /// No description provided for @chSoftSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft Skills'**
+  String get chSoftSkills;
+
+  /// No description provided for @chHiddenStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden Strengths To Develop'**
+  String get chHiddenStrengths;
+
+  /// No description provided for @chShadowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadow & Growth Areas'**
+  String get chShadowTitle;
+
+  /// No description provided for @chShadowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle awareness of patterns worth working on'**
+  String get chShadowSubtitle;
+
+  /// No description provided for @chShadowPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadow Patterns'**
+  String get chShadowPatterns;
+
+  /// No description provided for @chBlindSpots.
+  ///
+  /// In en, this message translates to:
+  /// **'Blind Spots'**
+  String get chBlindSpots;
+
+  /// No description provided for @chEmotionalWounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Wounds'**
+  String get chEmotionalWounds;
+
+  /// No description provided for @chShadowWorkPriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadow-Work Priorities'**
+  String get chShadowWorkPriorities;
+
+  /// No description provided for @chMoralTests.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral Tests'**
+  String get chMoralTests;
+
+  /// No description provided for @chRelationshipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationships & Social Style'**
+  String get chRelationshipsTitle;
+
+  /// No description provided for @chWarmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Interpersonal Warmth'**
+  String get chWarmth;
+
+  /// No description provided for @chEmpathy.
+  ///
+  /// In en, this message translates to:
+  /// **'Empathy Capacity'**
+  String get chEmpathy;
+
+  /// No description provided for @chLoyalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Loyalty Capacity'**
+  String get chLoyalty;
+
+  /// No description provided for @chBoundaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Boundary Setting'**
+  String get chBoundaries;
+
+  /// No description provided for @chSocialConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Confidence'**
+  String get chSocialConfidence;
+
+  /// No description provided for @chTrustGiving.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust-Giving Baseline'**
+  String get chTrustGiving;
+
+  /// No description provided for @chConflictStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict style'**
+  String get chConflictStyle;
+
+  /// No description provided for @chEthicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethics & Moral Compass'**
+  String get chEthicsTitle;
+
+  /// No description provided for @chDharmaOrientation.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma Orientation'**
+  String get chDharmaOrientation;
+
+  /// No description provided for @chTruthfulness.
+  ///
+  /// In en, this message translates to:
+  /// **'Truthfulness'**
+  String get chTruthfulness;
+
+  /// No description provided for @chCompassion.
+  ///
+  /// In en, this message translates to:
+  /// **'Compassion'**
+  String get chCompassion;
+
+  /// No description provided for @chGenerosity.
+  ///
+  /// In en, this message translates to:
+  /// **'Generosity'**
+  String get chGenerosity;
+
+  /// No description provided for @chEthicalConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethical Consistency'**
+  String get chEthicalConsistency;
+
+  /// No description provided for @chIntegrityPressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity Under Pressure'**
+  String get chIntegrityPressure;
+
+  /// No description provided for @chJusticeFairness.
+  ///
+  /// In en, this message translates to:
+  /// **'Justice & Fairness'**
+  String get chJusticeFairness;
+
+  /// No description provided for @chMoralTrajectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Moral development'**
+  String get chMoralTrajectory;
+
+  /// No description provided for @chEiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Intelligence'**
+  String get chEiTitle;
+
+  /// No description provided for @chEiSelfAwareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Awareness'**
+  String get chEiSelfAwareness;
+
+  /// No description provided for @chEiSelfRegulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Regulation'**
+  String get chEiSelfRegulation;
+
+  /// No description provided for @chEiEmpathy.
+  ///
+  /// In en, this message translates to:
+  /// **'Empathy'**
+  String get chEiEmpathy;
+
+  /// No description provided for @chEiSocialSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Skills'**
+  String get chEiSocialSkills;
+
+  /// No description provided for @chMotivation.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal Motivation'**
+  String get chMotivation;
+
+  /// No description provided for @chVulnerabilityComfort.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfort With Vulnerability'**
+  String get chVulnerabilityComfort;
+
+  /// No description provided for @chEmotionalExpression.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional expression comfort'**
+  String get chEmotionalExpression;
+
+  /// No description provided for @chEmotionalReceptivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional receptivity'**
+  String get chEmotionalReceptivity;
+
+  /// No description provided for @chVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts (D9/D12/D30/D60)'**
+  String get chVerificationTitle;
+
+  /// No description provided for @chD9Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Dharma-Character'**
+  String get chD9Label;
+
+  /// No description provided for @chD12Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D12 Ancestral Inheritance'**
+  String get chD12Label;
+
+  /// No description provided for @chD30Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D30 Shadow Profile'**
+  String get chD30Label;
+
+  /// No description provided for @chD60Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 Past-Life Character'**
+  String get chD60Label;
+
+  /// No description provided for @chD30Standing.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadow standing'**
+  String get chD30Standing;
+
+  /// No description provided for @chMaternalInheritance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maternal inheritance'**
+  String get chMaternalInheritance;
+
+  /// No description provided for @chAncestralKarmaWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Ancestral karma weight'**
+  String get chAncestralKarmaWeight;
+
+  /// No description provided for @chTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Timeline'**
+  String get chTimelineTitle;
+
+  /// No description provided for @chFormationWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Formation Window'**
+  String get chFormationWindow;
+
+  /// No description provided for @chMaturationWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Maturation Window'**
+  String get chMaturationWindow;
+
+  /// No description provided for @chLegacyWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Legacy Window'**
+  String get chLegacyWindow;
+
+  /// No description provided for @chPeakMaturationAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak maturation age'**
+  String get chPeakMaturationAge;
+
+  /// No description provided for @chAgeRangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age {ageRange}'**
+  String chAgeRangeLabel(Object ageRange);
+
+  /// No description provided for @chImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get chImprovementTitle;
+
+  /// No description provided for @chRoadmapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Character Roadmap'**
+  String get chRoadmapTitle;
+
+  /// No description provided for @chAuthenticExpression.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentic Self-Expression'**
+  String get chAuthenticExpression;
+
+  /// No description provided for @chRealizationPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Realization Potential'**
+  String get chRealizationPotential;
+
+  /// No description provided for @chLayerAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Planet (Atmakaraka)'**
+  String get chLayerAtmakaraka;
+
+  /// No description provided for @chLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get chLayerD1;
+
+  /// No description provided for @chLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get chLayerD9;
+
+  /// No description provided for @chLayerD30.
+  ///
+  /// In en, this message translates to:
+  /// **'Trimshamsa (D30)'**
+  String get chLayerD30;
+
+  /// No description provided for @chLayerLagnaMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascendant & Moon'**
+  String get chLayerLagnaMoon;
+
+  /// No description provided for @chLayerArudha.
+  ///
+  /// In en, this message translates to:
+  /// **'Arudha Lagna'**
+  String get chLayerArudha;
+
+  /// No description provided for @chTopicStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'My character strengths'**
+  String get chTopicStrengths;
+
+  /// No description provided for @chTopicShadow.
+  ///
+  /// In en, this message translates to:
+  /// **'My shadow patterns'**
+  String get chTopicShadow;
+
+  /// No description provided for @chTopicSoul.
+  ///
+  /// In en, this message translates to:
+  /// **'My soul signature'**
+  String get chTopicSoul;
+
+  /// No description provided for @chTopicRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'My relationship style'**
+  String get chTopicRelationships;
+
+  /// No description provided for @chTopicEthics.
+  ///
+  /// In en, this message translates to:
+  /// **'My ethics & values'**
+  String get chTopicEthics;
+
+  /// No description provided for @chTopicGuna.
+  ///
+  /// In en, this message translates to:
+  /// **'My guna & dosha profile'**
+  String get chTopicGuna;
+
+  /// No description provided for @chTopicGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'How to grow my character'**
+  String get chTopicGrowth;
+
+  /// No description provided for @chTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing for character work'**
+  String get chTopicTiming;
+
   /// No description provided for @lpSubtitle.
   ///
   /// In en, this message translates to:

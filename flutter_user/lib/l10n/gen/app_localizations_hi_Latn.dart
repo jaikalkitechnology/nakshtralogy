@@ -8161,6 +8161,398 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get chSubtitle => 'AI-powered Vedic Character Analysis Report';
+
+  @override
+  String get chTitle => 'Character Analysis';
+
+  @override
+  String get chSnapshotHeader => 'Character Snapshot';
+
+  @override
+  String get chGaugeIntegrity => 'Integrity';
+
+  @override
+  String get chGaugeResilience => 'Resilience';
+
+  @override
+  String get chGaugeSelfAwareness => 'Self-Awareness';
+
+  @override
+  String get chGaugeStability => 'Emotional Stability';
+
+  @override
+  String get chGaugeMoralFabric => 'Moral Fabric';
+
+  @override
+  String get chChipRajaYoga => 'Raja Yoga present';
+
+  @override
+  String get chChipHighIntegrity => 'High integrity';
+
+  @override
+  String get chChipResilient => 'Resilient nature';
+
+  @override
+  String get chChipDharmic => 'Strong dharma orientation';
+
+  @override
+  String get chChipEmpathetic => 'Naturally empathetic';
+
+  @override
+  String get chChipLoyal => 'Deeply loyal';
+
+  @override
+  String get chChipGiftedCharacter => 'Kundli mein character gift';
+
+  @override
+  String get chSoulTitle => 'Aapka Soul Signature';
+
+  @override
+  String get chSoulIntegration => 'Soul-Character Integration';
+
+  @override
+  String get chAmatyakarakaTheme => 'Supporting Character Voice';
+
+  @override
+  String get chAtmakarakaDignity => 'Soul-planet dignity';
+
+  @override
+  String get chAtmakarakaHouse => 'House placement';
+
+  @override
+  String get chSurfaceTitle => 'Surface Personality & Constitution';
+
+  @override
+  String get chLagnaSign => 'Lagna Sign';
+
+  @override
+  String get chConstitution => 'Constitution';
+
+  @override
+  String get chSurfaceSignature => 'Aap kaise dikhte hain';
+
+  @override
+  String get chPhysicalConstitution => 'Physical Constitution';
+
+  @override
+  String get chLagnaLord => 'Lagna Lord';
+
+  @override
+  String get chLagnaOccupants => 'Lagna mein Planets';
+
+  @override
+  String get chMindEmotionsTitle => 'Mind, Emotions & Ego';
+
+  @override
+  String get chEmotionalNature => 'Aapki Emotional Nature';
+
+  @override
+  String get chMentalStability => 'Mental Stability';
+
+  @override
+  String get chSelfConfidence => 'Healthy Self-Confidence';
+
+  @override
+  String get chEgoNature => 'Aapka Ego & Self-Concept';
+
+  @override
+  String get chAuthorityRelationship => 'Authority ke saath relationship';
+
+  @override
+  String get chPrideTendency => 'Pride Tendency';
+
+  @override
+  String get chMoodPatterns => 'Mood Patterns';
+
+  @override
+  String get chKemadrumaPresent => 'Kemadruma Yoga present — extra emotional self-care is beneficial.';
+
+  @override
+  String get chFatherImprint => 'Father imprint quality';
+
+  @override
+  String get chCommunicationTitle => 'Communication & Intellect Style';
+
+  @override
+  String get chIntellectStyle => 'Intellect Style';
+
+  @override
+  String get chCommStyle => 'Communication Style';
+
+  @override
+  String get chDecisionStyle => 'Decision-Making Style';
+
+  @override
+  String get chDiscrimination => 'Discrimination Capacity';
+
+  @override
+  String get chPersonaTitle => 'Public Persona vs True Self';
+
+  @override
+  String get chAuthenticityGap => 'Authenticity Gap';
+
+  @override
+  String get chGunaTitle => 'Guna & Dosha Profile';
+
+  @override
+  String get chGunaSubtitle => 'Your inner nature and constitution, classical Vedic style';
+
+  @override
+  String get chSattva => 'Sattva';
+
+  @override
+  String get chRajas => 'Rajas';
+
+  @override
+  String get chTamas => 'Tamas';
+
+  @override
+  String get chDominantGuna => 'Dominant Guna';
+
+  @override
+  String get chPitta => 'Pitta';
+
+  @override
+  String get chKapha => 'Kapha';
+
+  @override
+  String get chVata => 'Vata';
+
+  @override
+  String get chDominantDosha => 'Dominant Dosha';
+
+  @override
+  String get chRahuRestlessness => 'Rahu restlessness';
+
+  @override
+  String get chKetuDetachment => 'Ketu detachment';
+
+  @override
+  String get chYogasTitle => 'Character Yogas';
+
+  @override
+  String get chRajaYogaStrength => 'Raja Yoga Strength';
+
+  @override
+  String get chGiftYogas => 'Gift Yogas';
+
+  @override
+  String get chTestYogas => 'Test Yogas';
+
+  @override
+  String get chStrengthsTitle => 'Strengths & Talents';
+
+  @override
+  String get chSignatureVirtues => 'Signature Virtues';
+
+  @override
+  String get chNaturalTalents => 'Natural Talents';
+
+  @override
+  String get chSoftSkills => 'Soft Skills';
+
+  @override
+  String get chHiddenStrengths => 'Develop karne wali hidden strengths';
+
+  @override
+  String get chShadowTitle => 'Shadow & Growth Areas';
+
+  @override
+  String get chShadowSubtitle => 'Gentle awareness of patterns worth working on';
+
+  @override
+  String get chShadowPatterns => 'Shadow Patterns';
+
+  @override
+  String get chBlindSpots => 'Blind Spots';
+
+  @override
+  String get chEmotionalWounds => 'Emotional Wounds';
+
+  @override
+  String get chShadowWorkPriorities => 'Shadow-Work Priorities';
+
+  @override
+  String get chMoralTests => 'Moral Tests';
+
+  @override
+  String get chRelationshipsTitle => 'Relationships & Social Style';
+
+  @override
+  String get chWarmth => 'Interpersonal Warmth';
+
+  @override
+  String get chEmpathy => 'Empathy Capacity';
+
+  @override
+  String get chLoyalty => 'Loyalty Capacity';
+
+  @override
+  String get chBoundaries => 'Boundary Setting';
+
+  @override
+  String get chSocialConfidence => 'Social Confidence';
+
+  @override
+  String get chTrustGiving => 'Trust-Giving Baseline';
+
+  @override
+  String get chConflictStyle => 'Conflict style';
+
+  @override
+  String get chEthicsTitle => 'Ethics & Moral Compass';
+
+  @override
+  String get chDharmaOrientation => 'Dharma Orientation';
+
+  @override
+  String get chTruthfulness => 'Truthfulness';
+
+  @override
+  String get chCompassion => 'Compassion';
+
+  @override
+  String get chGenerosity => 'Generosity';
+
+  @override
+  String get chEthicalConsistency => 'Ethical Consistency';
+
+  @override
+  String get chIntegrityPressure => 'Integrity Under Pressure';
+
+  @override
+  String get chJusticeFairness => 'Justice & Fairness';
+
+  @override
+  String get chMoralTrajectory => 'Moral development';
+
+  @override
+  String get chEiTitle => 'Emotional Intelligence';
+
+  @override
+  String get chEiSelfAwareness => 'Self-Awareness';
+
+  @override
+  String get chEiSelfRegulation => 'Self-Regulation';
+
+  @override
+  String get chEiEmpathy => 'Empathy';
+
+  @override
+  String get chEiSocialSkills => 'Social Skills';
+
+  @override
+  String get chMotivation => 'Internal Motivation';
+
+  @override
+  String get chVulnerabilityComfort => 'Vulnerability ke saath comfort';
+
+  @override
+  String get chEmotionalExpression => 'Emotional expression comfort';
+
+  @override
+  String get chEmotionalReceptivity => 'Emotional receptivity';
+
+  @override
+  String get chVerificationTitle => 'Charts mein Verified (D9/D12/D30/D60)';
+
+  @override
+  String get chD9Label => 'D9 Dharma-Character';
+
+  @override
+  String get chD12Label => 'D12 Ancestral Inheritance';
+
+  @override
+  String get chD30Label => 'D30 Shadow Profile';
+
+  @override
+  String get chD60Label => 'D60 Past-Life Character';
+
+  @override
+  String get chD30Standing => 'Shadow standing';
+
+  @override
+  String get chMaternalInheritance => 'Maternal inheritance';
+
+  @override
+  String get chAncestralKarmaWeight => 'Ancestral karma weight';
+
+  @override
+  String get chTimelineTitle => 'Character Timeline';
+
+  @override
+  String get chFormationWindow => 'Formation Window';
+
+  @override
+  String get chMaturationWindow => 'Maturation Window';
+
+  @override
+  String get chLegacyWindow => 'Legacy Window';
+
+  @override
+  String get chPeakMaturationAge => 'Peak maturation age';
+
+  @override
+  String chAgeRangeLabel(Object ageRange) {
+    return 'Age ${ageRange}';
+  }
+
+  @override
+  String get chImprovementTitle => 'Improvement Plan';
+
+  @override
+  String get chRoadmapTitle => 'Aapka Character Roadmap';
+
+  @override
+  String get chAuthenticExpression => 'Authentic Self-Expression';
+
+  @override
+  String get chRealizationPotential => 'Character Realization Potential';
+
+  @override
+  String get chLayerAtmakaraka => 'Soul Planet (Atmakaraka)';
+
+  @override
+  String get chLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get chLayerD9 => 'Navamsa (D9)';
+
+  @override
+  String get chLayerD30 => 'Trimshamsa (D30)';
+
+  @override
+  String get chLayerLagnaMoon => 'Lagna & Moon';
+
+  @override
+  String get chLayerArudha => 'Arudha Lagna';
+
+  @override
+  String get chTopicStrengths => 'Meri character strengths';
+
+  @override
+  String get chTopicShadow => 'Mere shadow patterns';
+
+  @override
+  String get chTopicSoul => 'Mera soul signature';
+
+  @override
+  String get chTopicRelationships => 'Meri relationship style';
+
+  @override
+  String get chTopicEthics => 'Meri ethics & values';
+
+  @override
+  String get chTopicGuna => 'Mera guna & dosha profile';
+
+  @override
+  String get chTopicGrowth => 'Apna character kaise develop karein';
+
+  @override
+  String get chTopicTiming => 'Character work ke liye best timing';
+
+  @override
   String get lpSubtitle => 'AI-powered Vedic Life Path & Luck Report';
 
   @override

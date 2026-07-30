@@ -7036,6 +7036,398 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get chSubtitle => 'AI-संचालित वैदिक चरित्र विश्लेषण रिपोर्ट';
+
+  @override
+  String get chTitle => 'चरित्र विश्लेषण';
+
+  @override
+  String get chSnapshotHeader => 'चरित्र स्नैपशॉट';
+
+  @override
+  String get chGaugeIntegrity => 'सत्यनिष्ठा';
+
+  @override
+  String get chGaugeResilience => 'लचीलापन';
+
+  @override
+  String get chGaugeSelfAwareness => 'आत्म-जागरूकता';
+
+  @override
+  String get chGaugeStability => 'भावनात्मक स्थिरता';
+
+  @override
+  String get chGaugeMoralFabric => 'नैतिक बुनावट';
+
+  @override
+  String get chChipRajaYoga => 'राज योग उपस्थित';
+
+  @override
+  String get chChipHighIntegrity => 'उच्च सत्यनिष्ठा';
+
+  @override
+  String get chChipResilient => 'लचीला स्वभाव';
+
+  @override
+  String get chChipDharmic => 'मजबूत धर्म झुकाव';
+
+  @override
+  String get chChipEmpathetic => 'स्वाभाविक रूप से सहानुभूतिपूर्ण';
+
+  @override
+  String get chChipLoyal => 'गहरी वफादारी';
+
+  @override
+  String get chChipGiftedCharacter => 'कुंडली में चरित्र उपहार';
+
+  @override
+  String get chSoulTitle => 'आपका आत्मा हस्ताक्षर';
+
+  @override
+  String get chSoulIntegration => 'आत्मा-चरित्र एकीकरण';
+
+  @override
+  String get chAmatyakarakaTheme => 'सहायक चरित्र स्वर';
+
+  @override
+  String get chAtmakarakaDignity => 'आत्मा-ग्रह स्थिति';
+
+  @override
+  String get chAtmakarakaHouse => 'भाव स्थिति';
+
+  @override
+  String get chSurfaceTitle => 'सतही व्यक्तित्व एवं संरचना';
+
+  @override
+  String get chLagnaSign => 'लग्न राशि';
+
+  @override
+  String get chConstitution => 'संरचना';
+
+  @override
+  String get chSurfaceSignature => 'आप कैसे दिखते हैं';
+
+  @override
+  String get chPhysicalConstitution => 'शारीरिक संरचना';
+
+  @override
+  String get chLagnaLord => 'लग्न स्वामी';
+
+  @override
+  String get chLagnaOccupants => 'लग्न में ग्रह';
+
+  @override
+  String get chMindEmotionsTitle => 'मन, भावनाएं एवं अहंकार';
+
+  @override
+  String get chEmotionalNature => 'आपकी भावनात्मक प्रकृति';
+
+  @override
+  String get chMentalStability => 'मानसिक स्थिरता';
+
+  @override
+  String get chSelfConfidence => 'स्वस्थ आत्मविश्वास';
+
+  @override
+  String get chEgoNature => 'आपका अहंकार एवं आत्म-अवधारणा';
+
+  @override
+  String get chAuthorityRelationship => 'अधिकार के साथ संबंध';
+
+  @override
+  String get chPrideTendency => 'अहंकार प्रवृत्ति';
+
+  @override
+  String get chMoodPatterns => 'मनोदशा पैटर्न';
+
+  @override
+  String get chKemadrumaPresent => 'केमद्रुम योग उपस्थित — अतिरिक्त भावनात्मक देखभाल लाभदायक है।';
+
+  @override
+  String get chFatherImprint => 'पिता की छाप गुणवत्ता';
+
+  @override
+  String get chCommunicationTitle => 'संचार एवं बौद्धिक शैली';
+
+  @override
+  String get chIntellectStyle => 'बौद्धिक शैली';
+
+  @override
+  String get chCommStyle => 'संचार शैली';
+
+  @override
+  String get chDecisionStyle => 'निर्णय लेने की शैली';
+
+  @override
+  String get chDiscrimination => 'विवेक क्षमता';
+
+  @override
+  String get chPersonaTitle => 'सार्वजनिक छवि बनाम वास्तविक स्व';
+
+  @override
+  String get chAuthenticityGap => 'प्रामाणिकता अंतर';
+
+  @override
+  String get chGunaTitle => 'गुण एवं दोष प्रोफ़ाइल';
+
+  @override
+  String get chGunaSubtitle => 'आपकी आंतरिक प्रकृति एवं संरचना, शास्त्रीय वैदिक शैली में';
+
+  @override
+  String get chSattva => 'सत्व';
+
+  @override
+  String get chRajas => 'रजस';
+
+  @override
+  String get chTamas => 'तमस';
+
+  @override
+  String get chDominantGuna => 'प्रमुख गुण';
+
+  @override
+  String get chPitta => 'पित्त';
+
+  @override
+  String get chKapha => 'कफ';
+
+  @override
+  String get chVata => 'वात';
+
+  @override
+  String get chDominantDosha => 'प्रमुख दोष';
+
+  @override
+  String get chRahuRestlessness => 'राहु बेचैनी';
+
+  @override
+  String get chKetuDetachment => 'केतु वैराग्य';
+
+  @override
+  String get chYogasTitle => 'चरित्र योग';
+
+  @override
+  String get chRajaYogaStrength => 'राज योग शक्ति';
+
+  @override
+  String get chGiftYogas => 'वरदान योग';
+
+  @override
+  String get chTestYogas => 'परीक्षा योग';
+
+  @override
+  String get chStrengthsTitle => 'शक्तियां एवं प्रतिभाएं';
+
+  @override
+  String get chSignatureVirtues => 'विशिष्ट सद्गुण';
+
+  @override
+  String get chNaturalTalents => 'स्वाभाविक प्रतिभाएं';
+
+  @override
+  String get chSoftSkills => 'सॉफ्ट स्किल्स';
+
+  @override
+  String get chHiddenStrengths => 'विकसित करने योग्य छिपी शक्तियां';
+
+  @override
+  String get chShadowTitle => 'छाया एवं विकास क्षेत्र';
+
+  @override
+  String get chShadowSubtitle => 'काम करने योग्य पैटर्न के प्रति सौम्य जागरूकता';
+
+  @override
+  String get chShadowPatterns => 'छाया पैटर्न';
+
+  @override
+  String get chBlindSpots => 'अंध बिंदु';
+
+  @override
+  String get chEmotionalWounds => 'भावनात्मक घाव';
+
+  @override
+  String get chShadowWorkPriorities => 'छाया-कार्य प्राथमिकताएं';
+
+  @override
+  String get chMoralTests => 'नैतिक परीक्षाएं';
+
+  @override
+  String get chRelationshipsTitle => 'रिश्ते एवं सामाजिक शैली';
+
+  @override
+  String get chWarmth => 'पारस्परिक गर्मजोशी';
+
+  @override
+  String get chEmpathy => 'सहानुभूति क्षमता';
+
+  @override
+  String get chLoyalty => 'वफादारी क्षमता';
+
+  @override
+  String get chBoundaries => 'सीमा निर्धारण';
+
+  @override
+  String get chSocialConfidence => 'सामाजिक आत्मविश्वास';
+
+  @override
+  String get chTrustGiving => 'विश्वास प्रदान करने का आधार';
+
+  @override
+  String get chConflictStyle => 'संघर्ष शैली';
+
+  @override
+  String get chEthicsTitle => 'नैतिकता एवं नैतिक दिशासूचक';
+
+  @override
+  String get chDharmaOrientation => 'धर्म झुकाव';
+
+  @override
+  String get chTruthfulness => 'सत्यनिष्ठा';
+
+  @override
+  String get chCompassion => 'करुणा';
+
+  @override
+  String get chGenerosity => 'उदारता';
+
+  @override
+  String get chEthicalConsistency => 'नैतिक निरंतरता';
+
+  @override
+  String get chIntegrityPressure => 'दबाव में सत्यनिष्ठा';
+
+  @override
+  String get chJusticeFairness => 'न्याय एवं निष्पक्षता';
+
+  @override
+  String get chMoralTrajectory => 'नैतिक विकास';
+
+  @override
+  String get chEiTitle => 'भावनात्मक बुद्धिमत्ता';
+
+  @override
+  String get chEiSelfAwareness => 'आत्म-जागरूकता';
+
+  @override
+  String get chEiSelfRegulation => 'आत्म-नियमन';
+
+  @override
+  String get chEiEmpathy => 'सहानुभूति';
+
+  @override
+  String get chEiSocialSkills => 'सामाजिक कौशल';
+
+  @override
+  String get chMotivation => 'आंतरिक प्रेरणा';
+
+  @override
+  String get chVulnerabilityComfort => 'असुरक्षा के साथ सहजता';
+
+  @override
+  String get chEmotionalExpression => 'भावनात्मक अभिव्यक्ति सहजता';
+
+  @override
+  String get chEmotionalReceptivity => 'भावनात्मक ग्रहणशीलता';
+
+  @override
+  String get chVerificationTitle => 'चार्ट में सत्यापित (D9/D12/D30/D60)';
+
+  @override
+  String get chD9Label => 'D9 धर्म-चरित्र';
+
+  @override
+  String get chD12Label => 'D12 पैतृक विरासत';
+
+  @override
+  String get chD30Label => 'D30 छाया प्रोफ़ाइल';
+
+  @override
+  String get chD60Label => 'D60 पूर्वजन्म चरित्र';
+
+  @override
+  String get chD30Standing => 'छाया स्थिति';
+
+  @override
+  String get chMaternalInheritance => 'मातृ विरासत';
+
+  @override
+  String get chAncestralKarmaWeight => 'पैतृक कर्म भार';
+
+  @override
+  String get chTimelineTitle => 'चरित्र समयरेखा';
+
+  @override
+  String get chFormationWindow => 'निर्माण अवधि';
+
+  @override
+  String get chMaturationWindow => 'परिपक्वता अवधि';
+
+  @override
+  String get chLegacyWindow => 'विरासत अवधि';
+
+  @override
+  String get chPeakMaturationAge => 'शिखर परिपक्वता आयु';
+
+  @override
+  String chAgeRangeLabel(Object ageRange) {
+    return 'Age ${ageRange}';
+  }
+
+  @override
+  String get chImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get chRoadmapTitle => 'आपका चरित्र रोडमैप';
+
+  @override
+  String get chAuthenticExpression => 'प्रामाणिक आत्म-अभिव्यक्ति';
+
+  @override
+  String get chRealizationPotential => 'चरित्र साक्षात्कार क्षमता';
+
+  @override
+  String get chLayerAtmakaraka => 'आत्मा ग्रह (आत्मकारक)';
+
+  @override
+  String get chLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get chLayerD9 => 'नवांश (D9)';
+
+  @override
+  String get chLayerD30 => 'त्रिंशांश (D30)';
+
+  @override
+  String get chLayerLagnaMoon => 'लग्न एवं चंद्रमा';
+
+  @override
+  String get chLayerArudha => 'आरूढ़ लग्न';
+
+  @override
+  String get chTopicStrengths => 'मेरी चरित्र शक्तियां';
+
+  @override
+  String get chTopicShadow => 'मेरे छाया पैटर्न';
+
+  @override
+  String get chTopicSoul => 'मेरा आत्मा हस्ताक्षर';
+
+  @override
+  String get chTopicRelationships => 'मेरी रिश्ते की शैली';
+
+  @override
+  String get chTopicEthics => 'मेरी नैतिकता एवं मूल्य';
+
+  @override
+  String get chTopicGuna => 'मेरा गुण एवं दोष प्रोफ़ाइल';
+
+  @override
+  String get chTopicGrowth => 'अपना चरित्र कैसे विकसित करें';
+
+  @override
+  String get chTopicTiming => 'चरित्र-कार्य के लिए सर्वोत्तम समय';
+
+  @override
   String get lpSubtitle => 'AI-संचालित वैदिक जीवन पथ एवं भाग्य रिपोर्ट';
 
   @override

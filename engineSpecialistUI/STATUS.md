@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 12 done · 7 pending · 0 blocked  (19 total)**
+**Progress: 13 done · 6 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -33,7 +33,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 9 | mental_stress | Mental & Stress | `mental_report_screen.dart` | ✅ DONE | e8745a3 | en+hi+hinglish | 14-section reassuring AI wellness coach; converted to Career template; finished after agent stalled on a stale lock. Backfill pending (mn_source.json). 2026-07-30. |
 | 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ✅ DONE | 440d648 | en+hi+hinglish | 16-section AI debt coach; converted from EngineReportBase shell to Career template. Backfill pending (db_source.json). 2026-07-30. |
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ✅ DONE | b73ceef | en+hi+hinglish | 17-section AI destiny coach; converted from EngineReportBase shell to Career template. Backfill pending (lp_source.json). 2026-07-30. |
-| 12 | character | Character Analysis | `character_report_screen.dart` | ⬜ PENDING | — | — | |
+| 12 | character | Character Analysis | `character_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 19-section AI character coach; converted from EngineReportBase shell to Career template. Backfill pending (ch_source.json). 2026-07-30. |
 | 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ⬜ PENDING | — | — | |
 | 14 | kundli_milan | Kundli Milan | `milan_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/kundli_milan/analyze`. |
 | 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/relationship/analyze`. |
@@ -145,6 +145,20 @@ touch only if a redesigned screen requires it.
   field names cross-checked against a live `life_path_luck_specialist_engine.
   analyze()` dump. Both apps; 125 new `lp` keys (en+hi+hinglish). Backfill:
   `lp_source.json`.
+
+- **character** ✅ — 19-section AI character coach (snapshot hero, Soul
+  Signature atmakaraka, Surface Personality & Constitution, Mind/Emotions/Ego
+  Moon+Sun, Communication & Intellect Style Mercury, Public Persona vs True
+  Self Arudha Lagna, Guna & Dosha Profile, Character Yogas, Strengths &
+  Talents, Shadow & Growth Areas, Relationships & Social Style, Ethics &
+  Moral Compass, Emotional Intelligence, Verified Across Charts D9/D12/D30/
+  D60, Character Timeline, Improvement Plan, Character Roadmap, Reliability,
+  Discuss-with-AI). Converted from the shared EngineReportBase shell to the
+  standalone Career template (public constructor params unchanged); handles
+  both string-list and map-list shapes for practical_solutions/
+  astrological_remedies. All engine field names cross-checked against a live
+  `character_specialist_v5.analyze()` dump. Both apps; 130 new `ch` keys
+  (en+hi+hinglish). Backfill: `ch_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
