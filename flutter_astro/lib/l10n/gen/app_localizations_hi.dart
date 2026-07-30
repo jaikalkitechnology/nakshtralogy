@@ -4327,6 +4327,225 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get wlSubtitle => 'AI-संचालित वैदिक धन रिपोर्ट';
+
+  @override
+  String get wlTitle => 'धन और वित्त';
+
+  @override
+  String get wlWealthPotential => 'धन क्षमता';
+
+  @override
+  String get wlAccumulation => 'संचय';
+
+  @override
+  String get wlIncomeFlow => 'आय प्रवाह';
+
+  @override
+  String get wlRetention => 'धारण';
+
+  @override
+  String get wlSustainability => 'स्थायित्व';
+
+  @override
+  String get wlSavings => 'बचत अनुशासन';
+
+  @override
+  String get wlChipSaver => 'स्वाभाविक बचतकर्ता';
+
+  @override
+  String get wlChipMultiIncome => 'कई आय स्रोत';
+
+  @override
+  String get wlChipStrongYogas => 'धन योग';
+
+  @override
+  String get wlChipLowDebt => 'कम ऋण';
+
+  @override
+  String get wlChipInheritance => 'विरासत संभावित';
+
+  @override
+  String get wlChipInvestor => 'समझदार निवेशक';
+
+  @override
+  String get wlWealthClass => 'धन श्रेणी';
+
+  @override
+  String get wlWealthType => 'मुख्य धन प्रकार';
+
+  @override
+  String get wlPrimarySource => 'मुख्य आय';
+
+  @override
+  String get wlPeakAge => 'शिखर धन आयु';
+
+  @override
+  String get wlBoosters => 'आपका धन क्या बढ़ा रहा है';
+
+  @override
+  String get wlBoostersSub => 'शक्तिशाली धन योग';
+
+  @override
+  String get wlWealthImpact => 'वृद्धि';
+
+  @override
+  String get wlDrains => 'धन क्षय';
+
+  @override
+  String get wlIncomeSources => 'आय स्रोत';
+
+  @override
+  String get wlIncomeSourcesSub => 'आपका पैसा कहाँ से आता है';
+
+  @override
+  String get wlPrimary => 'मुख्य';
+
+  @override
+  String get wlInvestment => 'निवेश योजना';
+
+  @override
+  String get wlInvestmentSub => 'आदर्श संपत्ति मिश्रण';
+
+  @override
+  String get wlRiskAppetite => 'जोखिम क्षमता';
+
+  @override
+  String get wlInvestStyle => 'निवेश शैली';
+
+  @override
+  String get wlDrivenBy => 'संचालक';
+
+  @override
+  String get wlMoneyPersonality => 'धन व्यक्तित्व';
+
+  @override
+  String get wlMoneyType => 'धन प्रकार';
+
+  @override
+  String get wlSpending => 'खर्च';
+
+  @override
+  String get wlSavingsDiscipline => 'बचत अनुशासन';
+
+  @override
+  String get wlCharity => 'दान प्रवृत्ति';
+
+  @override
+  String get wlLuxury => 'विलासिता खर्च';
+
+  @override
+  String get wlWindfalls => 'अप्रत्याशित लाभ';
+
+  @override
+  String get wlWindfallsSub => 'भाग्य आधारित धन';
+
+  @override
+  String get wlInheritanceChance => 'विरासत';
+
+  @override
+  String get wlSuddenGains => 'अचानक लाभ';
+
+  @override
+  String get wlLottery => 'लॉटरी / सट्टा';
+
+  @override
+  String get wlInsurance => 'बीमा दावे';
+
+  @override
+  String get wlWindfallSource => 'संभावित अप्रत्याशित लाभ स्रोत';
+
+  @override
+  String get wlMoneyPlanets => 'आपके धन ग्रह';
+
+  @override
+  String get wlPrimaryKaraka => 'मुख्य धन ग्रह';
+
+  @override
+  String get wlSecondaryKaraka => 'द्वितीयक धन ग्रह';
+
+  @override
+  String get wlTimeline => 'धन समयरेखा';
+
+  @override
+  String get wlPeakYears => 'शिखर वर्ष';
+
+  @override
+  String get wlGoodPeriod => 'समृद्ध अवधि';
+
+  @override
+  String get wlSuddenGainWindow => 'अचानक लाभ अवधि';
+
+  @override
+  String get wlToughPeriod => 'सतर्क अवधि';
+
+  @override
+  String get wlDebtRisks => 'ऋण और धन जोखिम';
+
+  @override
+  String get wlDebtChance => 'ऋण संभावना';
+
+  @override
+  String get wlLoanBurden => 'ऋण बोझ';
+
+  @override
+  String get wlDrainSources => 'इनसे सावधान रहें';
+
+  @override
+  String get wlStrengthen => 'क्या मजबूत करें';
+
+  @override
+  String get wlWeakestDriver => 'सबसे कमजोर धन चालक';
+
+  @override
+  String get wlHowToFix => 'कैसे मजबूत करें';
+
+  @override
+  String get wlImprovementPlan => 'सुधार योजना';
+
+  @override
+  String get wlReliability => 'भविष्यवाणी विश्वसनीयता';
+
+  @override
+  String get wlLayerBirth => 'धन भाव (D1)';
+
+  @override
+  String get wlLayerHora => 'होरा चार्ट (D2)';
+
+  @override
+  String get wlLayerNavamsa => 'नवांश (D9)';
+
+  @override
+  String get wlLayerDasha => 'दशा समय';
+
+  @override
+  String get wlLayerTransit => 'वर्तमान गोचर';
+
+  @override
+  String get wlTopicGrow => 'धन कैसे बढ़ाएं';
+
+  @override
+  String get wlTopicInvest => 'कहाँ निवेश करें';
+
+  @override
+  String get wlTopicDebt => 'ऋण प्रबंधन';
+
+  @override
+  String get wlTopicProperty => 'संपत्ति खरीदना';
+
+  @override
+  String get wlTopicRetire => 'सेवानिवृत्ति योजना';
+
+  @override
+  String get wlTopicPassive => 'निष्क्रिय आय';
+
+  @override
+  String get wlTopicWindfall => 'अचानक लाभ';
+
+  @override
+  String get wlTopicTiming => 'सर्वोत्तम धन समय';
+
+  @override
   String get bzSubtitle => 'AI-संचालित वैदिक व्यापार रिपोर्ट';
 
   @override

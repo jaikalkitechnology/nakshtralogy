@@ -230,6 +230,444 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @wlSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Wealth Report'**
+  String get wlSubtitle;
+
+  /// No description provided for @wlTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth & Finance'**
+  String get wlTitle;
+
+  /// No description provided for @wlWealthPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Potential'**
+  String get wlWealthPotential;
+
+  /// No description provided for @wlAccumulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Accumulation'**
+  String get wlAccumulation;
+
+  /// No description provided for @wlIncomeFlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Flow'**
+  String get wlIncomeFlow;
+
+  /// No description provided for @wlRetention.
+  ///
+  /// In en, this message translates to:
+  /// **'Retention'**
+  String get wlRetention;
+
+  /// No description provided for @wlSustainability.
+  ///
+  /// In en, this message translates to:
+  /// **'Sustainability'**
+  String get wlSustainability;
+
+  /// No description provided for @wlSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Discipline'**
+  String get wlSavings;
+
+  /// No description provided for @wlChipSaver.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural saver'**
+  String get wlChipSaver;
+
+  /// No description provided for @wlChipMultiIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple incomes'**
+  String get wlChipMultiIncome;
+
+  /// No description provided for @wlChipStrongYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth yogas'**
+  String get wlChipStrongYogas;
+
+  /// No description provided for @wlChipLowDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Low debt'**
+  String get wlChipLowDebt;
+
+  /// No description provided for @wlChipInheritance.
+  ///
+  /// In en, this message translates to:
+  /// **'Inheritance likely'**
+  String get wlChipInheritance;
+
+  /// No description provided for @wlChipInvestor.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart investor'**
+  String get wlChipInvestor;
+
+  /// No description provided for @wlWealthClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Class'**
+  String get wlWealthClass;
+
+  /// No description provided for @wlWealthType.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Wealth Type'**
+  String get wlWealthType;
+
+  /// No description provided for @wlPrimarySource.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Income'**
+  String get wlPrimarySource;
+
+  /// No description provided for @wlPeakAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Wealth Age'**
+  String get wlPeakAge;
+
+  /// No description provided for @wlBoosters.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s Boosting Your Wealth'**
+  String get wlBoosters;
+
+  /// No description provided for @wlBoostersSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Powerful money combinations'**
+  String get wlBoostersSub;
+
+  /// No description provided for @wlWealthImpact.
+  ///
+  /// In en, this message translates to:
+  /// **'boost'**
+  String get wlWealthImpact;
+
+  /// No description provided for @wlDrains.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Drains'**
+  String get wlDrains;
+
+  /// No description provided for @wlIncomeSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Income Sources'**
+  String get wlIncomeSources;
+
+  /// No description provided for @wlIncomeSourcesSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Where your money comes from'**
+  String get wlIncomeSourcesSub;
+
+  /// No description provided for @wlPrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get wlPrimary;
+
+  /// No description provided for @wlInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Investment Plan'**
+  String get wlInvestment;
+
+  /// No description provided for @wlInvestmentSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal asset mix'**
+  String get wlInvestmentSub;
+
+  /// No description provided for @wlRiskAppetite.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Appetite'**
+  String get wlRiskAppetite;
+
+  /// No description provided for @wlInvestStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investing Style'**
+  String get wlInvestStyle;
+
+  /// No description provided for @wlDrivenBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Driven by'**
+  String get wlDrivenBy;
+
+  /// No description provided for @wlMoneyPersonality.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Personality'**
+  String get wlMoneyPersonality;
+
+  /// No description provided for @wlMoneyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Type'**
+  String get wlMoneyType;
+
+  /// No description provided for @wlSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending'**
+  String get wlSpending;
+
+  /// No description provided for @wlSavingsDiscipline.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings Discipline'**
+  String get wlSavingsDiscipline;
+
+  /// No description provided for @wlCharity.
+  ///
+  /// In en, this message translates to:
+  /// **'Charity Inclination'**
+  String get wlCharity;
+
+  /// No description provided for @wlLuxury.
+  ///
+  /// In en, this message translates to:
+  /// **'Luxury Spending'**
+  String get wlLuxury;
+
+  /// No description provided for @wlWindfalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Windfalls & Chances'**
+  String get wlWindfalls;
+
+  /// No description provided for @wlWindfallsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Luck-based money'**
+  String get wlWindfallsSub;
+
+  /// No description provided for @wlInheritanceChance.
+  ///
+  /// In en, this message translates to:
+  /// **'Inheritance'**
+  String get wlInheritanceChance;
+
+  /// No description provided for @wlSuddenGains.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudden Gains'**
+  String get wlSuddenGains;
+
+  /// No description provided for @wlLottery.
+  ///
+  /// In en, this message translates to:
+  /// **'Lottery / Speculation'**
+  String get wlLottery;
+
+  /// No description provided for @wlInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance Claims'**
+  String get wlInsurance;
+
+  /// No description provided for @wlWindfallSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely windfall source'**
+  String get wlWindfallSource;
+
+  /// No description provided for @wlMoneyPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Money Planets'**
+  String get wlMoneyPlanets;
+
+  /// No description provided for @wlPrimaryKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Money Planet'**
+  String get wlPrimaryKaraka;
+
+  /// No description provided for @wlSecondaryKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary Money Planet'**
+  String get wlSecondaryKaraka;
+
+  /// No description provided for @wlTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Timeline'**
+  String get wlTimeline;
+
+  /// No description provided for @wlPeakYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Years'**
+  String get wlPeakYears;
+
+  /// No description provided for @wlGoodPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Prosperous Period'**
+  String get wlGoodPeriod;
+
+  /// No description provided for @wlSuddenGainWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudden Gain Window'**
+  String get wlSuddenGainWindow;
+
+  /// No description provided for @wlToughPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Cautious Period'**
+  String get wlToughPeriod;
+
+  /// No description provided for @wlDebtRisks.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt & Money Risks'**
+  String get wlDebtRisks;
+
+  /// No description provided for @wlDebtChance.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Likelihood'**
+  String get wlDebtChance;
+
+  /// No description provided for @wlLoanBurden.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan Burden'**
+  String get wlLoanBurden;
+
+  /// No description provided for @wlDrainSources.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch out for'**
+  String get wlDrainSources;
+
+  /// No description provided for @wlStrengthen.
+  ///
+  /// In en, this message translates to:
+  /// **'What to Strengthen'**
+  String get wlStrengthen;
+
+  /// No description provided for @wlWeakestDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest Money Driver'**
+  String get wlWeakestDriver;
+
+  /// No description provided for @wlHowToFix.
+  ///
+  /// In en, this message translates to:
+  /// **'How to strengthen'**
+  String get wlHowToFix;
+
+  /// No description provided for @wlImprovementPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get wlImprovementPlan;
+
+  /// No description provided for @wlReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Reliability'**
+  String get wlReliability;
+
+  /// No description provided for @wlLayerBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Houses (D1)'**
+  String get wlLayerBirth;
+
+  /// No description provided for @wlLayerHora.
+  ///
+  /// In en, this message translates to:
+  /// **'Hora Chart (D2)'**
+  String get wlLayerHora;
+
+  /// No description provided for @wlLayerNavamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get wlLayerNavamsa;
+
+  /// No description provided for @wlLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get wlLayerDasha;
+
+  /// No description provided for @wlLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transits'**
+  String get wlLayerTransit;
+
+  /// No description provided for @wlTopicGrow.
+  ///
+  /// In en, this message translates to:
+  /// **'How to grow wealth'**
+  String get wlTopicGrow;
+
+  /// No description provided for @wlTopicInvest.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to invest'**
+  String get wlTopicInvest;
+
+  /// No description provided for @wlTopicDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Managing debt'**
+  String get wlTopicDebt;
+
+  /// No description provided for @wlTopicProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying property'**
+  String get wlTopicProperty;
+
+  /// No description provided for @wlTopicRetire.
+  ///
+  /// In en, this message translates to:
+  /// **'Retirement planning'**
+  String get wlTopicRetire;
+
+  /// No description provided for @wlTopicPassive.
+  ///
+  /// In en, this message translates to:
+  /// **'Passive income'**
+  String get wlTopicPassive;
+
+  /// No description provided for @wlTopicWindfall.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudden gains'**
+  String get wlTopicWindfall;
+
+  /// No description provided for @wlTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best money timing'**
+  String get wlTopicTiming;
+
   /// No description provided for @bzSubtitle.
   ///
   /// In en, this message translates to:

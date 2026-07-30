@@ -66,6 +66,225 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get wlSubtitle => 'AI-powered Vedic Wealth Report';
+
+  @override
+  String get wlTitle => 'Wealth & Finance';
+
+  @override
+  String get wlWealthPotential => 'Wealth Potential';
+
+  @override
+  String get wlAccumulation => 'Accumulation';
+
+  @override
+  String get wlIncomeFlow => 'Income Flow';
+
+  @override
+  String get wlRetention => 'Retention';
+
+  @override
+  String get wlSustainability => 'Sustainability';
+
+  @override
+  String get wlSavings => 'Savings Discipline';
+
+  @override
+  String get wlChipSaver => 'Natural saver';
+
+  @override
+  String get wlChipMultiIncome => 'Multiple incomes';
+
+  @override
+  String get wlChipStrongYogas => 'Wealth yogas';
+
+  @override
+  String get wlChipLowDebt => 'Low debt';
+
+  @override
+  String get wlChipInheritance => 'Inheritance likely';
+
+  @override
+  String get wlChipInvestor => 'Smart investor';
+
+  @override
+  String get wlWealthClass => 'Wealth Class';
+
+  @override
+  String get wlWealthType => 'Main Wealth Type';
+
+  @override
+  String get wlPrimarySource => 'Primary Income';
+
+  @override
+  String get wlPeakAge => 'Peak Wealth Age';
+
+  @override
+  String get wlBoosters => 'What\'s Boosting Your Wealth';
+
+  @override
+  String get wlBoostersSub => 'Powerful money combinations';
+
+  @override
+  String get wlWealthImpact => 'boost';
+
+  @override
+  String get wlDrains => 'Wealth Drains';
+
+  @override
+  String get wlIncomeSources => 'Income Sources';
+
+  @override
+  String get wlIncomeSourcesSub => 'Where your money comes from';
+
+  @override
+  String get wlPrimary => 'Primary';
+
+  @override
+  String get wlInvestment => 'Investment Plan';
+
+  @override
+  String get wlInvestmentSub => 'Ideal asset mix';
+
+  @override
+  String get wlRiskAppetite => 'Risk Appetite';
+
+  @override
+  String get wlInvestStyle => 'Investing Style';
+
+  @override
+  String get wlDrivenBy => 'Driven by';
+
+  @override
+  String get wlMoneyPersonality => 'Money Personality';
+
+  @override
+  String get wlMoneyType => 'Money Type';
+
+  @override
+  String get wlSpending => 'Spending';
+
+  @override
+  String get wlSavingsDiscipline => 'Savings Discipline';
+
+  @override
+  String get wlCharity => 'Charity Inclination';
+
+  @override
+  String get wlLuxury => 'Luxury Spending';
+
+  @override
+  String get wlWindfalls => 'Windfalls & Chances';
+
+  @override
+  String get wlWindfallsSub => 'Luck-based money';
+
+  @override
+  String get wlInheritanceChance => 'Inheritance';
+
+  @override
+  String get wlSuddenGains => 'Sudden Gains';
+
+  @override
+  String get wlLottery => 'Lottery / Speculation';
+
+  @override
+  String get wlInsurance => 'Insurance Claims';
+
+  @override
+  String get wlWindfallSource => 'Likely windfall source';
+
+  @override
+  String get wlMoneyPlanets => 'Your Money Planets';
+
+  @override
+  String get wlPrimaryKaraka => 'Primary Money Planet';
+
+  @override
+  String get wlSecondaryKaraka => 'Secondary Money Planet';
+
+  @override
+  String get wlTimeline => 'Wealth Timeline';
+
+  @override
+  String get wlPeakYears => 'Peak Years';
+
+  @override
+  String get wlGoodPeriod => 'Prosperous Period';
+
+  @override
+  String get wlSuddenGainWindow => 'Sudden Gain Window';
+
+  @override
+  String get wlToughPeriod => 'Cautious Period';
+
+  @override
+  String get wlDebtRisks => 'Debt & Money Risks';
+
+  @override
+  String get wlDebtChance => 'Debt Likelihood';
+
+  @override
+  String get wlLoanBurden => 'Loan Burden';
+
+  @override
+  String get wlDrainSources => 'Watch out for';
+
+  @override
+  String get wlStrengthen => 'What to Strengthen';
+
+  @override
+  String get wlWeakestDriver => 'Weakest Money Driver';
+
+  @override
+  String get wlHowToFix => 'How to strengthen';
+
+  @override
+  String get wlImprovementPlan => 'Improvement Plan';
+
+  @override
+  String get wlReliability => 'Prediction Reliability';
+
+  @override
+  String get wlLayerBirth => 'Wealth Houses (D1)';
+
+  @override
+  String get wlLayerHora => 'Hora Chart (D2)';
+
+  @override
+  String get wlLayerNavamsa => 'Navamsa (D9)';
+
+  @override
+  String get wlLayerDasha => 'Dasha Timing';
+
+  @override
+  String get wlLayerTransit => 'Current Transits';
+
+  @override
+  String get wlTopicGrow => 'How to grow wealth';
+
+  @override
+  String get wlTopicInvest => 'Where to invest';
+
+  @override
+  String get wlTopicDebt => 'Managing debt';
+
+  @override
+  String get wlTopicProperty => 'Buying property';
+
+  @override
+  String get wlTopicRetire => 'Retirement planning';
+
+  @override
+  String get wlTopicPassive => 'Passive income';
+
+  @override
+  String get wlTopicWindfall => 'Sudden gains';
+
+  @override
+  String get wlTopicTiming => 'Best money timing';
+
+  @override
   String get bzSubtitle => 'AI-powered Vedic Business Report';
 
   @override
