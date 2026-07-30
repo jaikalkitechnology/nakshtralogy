@@ -235,6 +235,618 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @edTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education & Learning Analysis'**
+  String get edTitle;
+
+  /// No description provided for @edSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Education Report'**
+  String get edSubtitle;
+
+  /// No description provided for @edSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Education Snapshot'**
+  String get edSnapshotHeader;
+
+  /// No description provided for @edOverallStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Strength'**
+  String get edOverallStrength;
+
+  /// No description provided for @edAcademicSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Success'**
+  String get edAcademicSuccess;
+
+  /// No description provided for @edLearningCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Capacity'**
+  String get edLearningCapacity;
+
+  /// No description provided for @edIntellect.
+  ///
+  /// In en, this message translates to:
+  /// **'Intellect'**
+  String get edIntellect;
+
+  /// No description provided for @edMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory'**
+  String get edMemory;
+
+  /// No description provided for @edStatusExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent Potential'**
+  String get edStatusExcellent;
+
+  /// No description provided for @edStatusStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Potential'**
+  String get edStatusStrong;
+
+  /// No description provided for @edStatusModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Potential'**
+  String get edStatusModerate;
+
+  /// No description provided for @edStatusDeveloping.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing Potential'**
+  String get edStatusDeveloping;
+
+  /// No description provided for @edStatusChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging Phase'**
+  String get edStatusChallenging;
+
+  /// No description provided for @edChipSaraswati.
+  ///
+  /// In en, this message translates to:
+  /// **'Saraswati Yoga'**
+  String get edChipSaraswati;
+
+  /// No description provided for @edChipGajaKesari.
+  ///
+  /// In en, this message translates to:
+  /// **'Gaja Kesari Yoga'**
+  String get edChipGajaKesari;
+
+  /// No description provided for @edChipBudhaAditya.
+  ///
+  /// In en, this message translates to:
+  /// **'Budha Aditya Yoga'**
+  String get edChipBudhaAditya;
+
+  /// No description provided for @edChipResearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Research Ability'**
+  String get edChipResearch;
+
+  /// No description provided for @edChipScholarship.
+  ///
+  /// In en, this message translates to:
+  /// **'Scholarship Potential'**
+  String get edChipScholarship;
+
+  /// No description provided for @edChipDoctorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctorate Potential'**
+  String get edChipDoctorate;
+
+  /// No description provided for @edChipForeign.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign Education Support'**
+  String get edChipForeign;
+
+  /// No description provided for @edChipLifelong.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifelong Learner'**
+  String get edChipLifelong;
+
+  /// No description provided for @edLearningStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Learning Style'**
+  String get edLearningStyleTitle;
+
+  /// No description provided for @edSoulPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Planet'**
+  String get edSoulPlanet;
+
+  /// No description provided for @edSoulHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your deepest inner drive and life purpose'**
+  String get edSoulHint;
+
+  /// No description provided for @edSubjectPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject Planet'**
+  String get edSubjectPlanet;
+
+  /// No description provided for @edTechAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Atmakaraka (technical)'**
+  String get edTechAtmakaraka;
+
+  /// No description provided for @edTechAmatyakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Amatyakaraka (technical)'**
+  String get edTechAmatyakaraka;
+
+  /// No description provided for @edSubjectKarakaStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject Karaka Strength'**
+  String get edSubjectKarakaStrength;
+
+  /// No description provided for @edFoundationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Foundation'**
+  String get edFoundationTitle;
+
+  /// No description provided for @edHouse4.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Schooling'**
+  String get edHouse4;
+
+  /// No description provided for @edHouse5.
+  ///
+  /// In en, this message translates to:
+  /// **'Intelligence'**
+  String get edHouse5;
+
+  /// No description provided for @edHouse9.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher Learning'**
+  String get edHouse9;
+
+  /// No description provided for @edPurvaPunya.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Merit'**
+  String get edPurvaPunya;
+
+  /// No description provided for @edStudyPlanetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Study Planets'**
+  String get edStudyPlanetsTitle;
+
+  /// No description provided for @edYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Yogas in Your Chart'**
+  String get edYogasTitle;
+
+  /// No description provided for @edYogaBudhaAditya.
+  ///
+  /// In en, this message translates to:
+  /// **'Budha Aditya'**
+  String get edYogaBudhaAditya;
+
+  /// No description provided for @edYogaGajaKesari.
+  ///
+  /// In en, this message translates to:
+  /// **'Gaja Kesari'**
+  String get edYogaGajaKesari;
+
+  /// No description provided for @edYogaSaraswati.
+  ///
+  /// In en, this message translates to:
+  /// **'Saraswati'**
+  String get edYogaSaraswati;
+
+  /// No description provided for @edYogaPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get edYogaPresent;
+
+  /// No description provided for @edYogaAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get edYogaAbsent;
+
+  /// No description provided for @edYogaNoneNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No classical education yogas — success comes from consistent effort and discipline.'**
+  String get edYogaNoneNote;
+
+  /// No description provided for @edVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Across Charts'**
+  String get edVerificationTitle;
+
+  /// No description provided for @edD24Learning.
+  ///
+  /// In en, this message translates to:
+  /// **'D24 — Deep Learning Chart'**
+  String get edD24Learning;
+
+  /// No description provided for @edD4Formal.
+  ///
+  /// In en, this message translates to:
+  /// **'D4 — Formal Education Chart'**
+  String get edD4Formal;
+
+  /// No description provided for @edD9Dharma.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 — Learning Dharma Chart'**
+  String get edD9Dharma;
+
+  /// No description provided for @edD60Karma.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 — Past-Life Learning Karma'**
+  String get edD60Karma;
+
+  /// No description provided for @edSubjectsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Subjects For You'**
+  String get edSubjectsTitle;
+
+  /// No description provided for @edSubjectsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked by chart affinity'**
+  String get edSubjectsSubtitle;
+
+  /// No description provided for @edLowAffinity.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower-Affinity Subjects'**
+  String get edLowAffinity;
+
+  /// No description provided for @edDegreesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree & Level Likelihood'**
+  String get edDegreesTitle;
+
+  /// No description provided for @edExpectedLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Level'**
+  String get edExpectedLevel;
+
+  /// No description provided for @edDegreeFormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Formal Degree'**
+  String get edDegreeFormal;
+
+  /// No description provided for @edDegreePostgrad.
+  ///
+  /// In en, this message translates to:
+  /// **'Postgraduate'**
+  String get edDegreePostgrad;
+
+  /// No description provided for @edDegreeDoctorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctorate'**
+  String get edDegreeDoctorate;
+
+  /// No description provided for @edDegreeForeign.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign Education'**
+  String get edDegreeForeign;
+
+  /// No description provided for @edTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Timeline'**
+  String get edTimelineTitle;
+
+  /// No description provided for @edEarlySchooling.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Schooling Window'**
+  String get edEarlySchooling;
+
+  /// No description provided for @edHigherEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher Education Window'**
+  String get edHigherEducation;
+
+  /// No description provided for @edPostgradResearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Postgrad / Research Window'**
+  String get edPostgradResearch;
+
+  /// No description provided for @edPeakLearningAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Learning Age'**
+  String get edPeakLearningAge;
+
+  /// No description provided for @edPreferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Preferences & Support'**
+  String get edPreferencesTitle;
+
+  /// No description provided for @edPrefStudyMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Mode'**
+  String get edPrefStudyMode;
+
+  /// No description provided for @edPrefTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Time'**
+  String get edPrefTiming;
+
+  /// No description provided for @edPrefEnvironment.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment'**
+  String get edPrefEnvironment;
+
+  /// No description provided for @edPrefLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get edPrefLocation;
+
+  /// No description provided for @edPrefForeign.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign Study'**
+  String get edPrefForeign;
+
+  /// No description provided for @edGuruRelationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher/Guru Bond'**
+  String get edGuruRelationship;
+
+  /// No description provided for @edMentorAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Mentor Availability'**
+  String get edMentorAvailability;
+
+  /// No description provided for @edPeerLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer Learning'**
+  String get edPeerLearning;
+
+  /// No description provided for @edAuthorityDeference.
+  ///
+  /// In en, this message translates to:
+  /// **'Respect for Authority'**
+  String get edAuthorityDeference;
+
+  /// No description provided for @edStrengthsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths & Challenges'**
+  String get edStrengthsTitle;
+
+  /// No description provided for @edCognitiveGifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Cognitive Gifts'**
+  String get edCognitiveGifts;
+
+  /// No description provided for @edNaturalAbilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Learning Abilities'**
+  String get edNaturalAbilities;
+
+  /// No description provided for @edHiddenCapacities.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden Capacities'**
+  String get edHiddenCapacities;
+
+  /// No description provided for @edConcentration.
+  ///
+  /// In en, this message translates to:
+  /// **'Concentration Difficulty'**
+  String get edConcentration;
+
+  /// No description provided for @edBreakRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Break Risk'**
+  String get edBreakRisk;
+
+  /// No description provided for @edDisciplineConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Discipline Consistency'**
+  String get edDisciplineConsistency;
+
+  /// No description provided for @edScholarshipLikelihood.
+  ///
+  /// In en, this message translates to:
+  /// **'Scholarship Likelihood'**
+  String get edScholarshipLikelihood;
+
+  /// No description provided for @edCareerLinkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education → Career Path'**
+  String get edCareerLinkTitle;
+
+  /// No description provided for @edDirectionRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Direction'**
+  String get edDirectionRec;
+
+  /// No description provided for @edIntegrationStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Integration Strategy'**
+  String get edIntegrationStrategy;
+
+  /// No description provided for @edCareerLinkage.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Linkage'**
+  String get edCareerLinkage;
+
+  /// No description provided for @edAlignedSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Career-Aligned Subjects'**
+  String get edAlignedSubjects;
+
+  /// No description provided for @edDegreeUtility.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree Utility for Career'**
+  String get edDegreeUtility;
+
+  /// No description provided for @edImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Improvement Plan'**
+  String get edImprovementTitle;
+
+  /// No description provided for @edReliabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Reliability'**
+  String get edReliabilityTitle;
+
+  /// No description provided for @edLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get edLayerD1;
+
+  /// No description provided for @edLayerD4.
+  ///
+  /// In en, this message translates to:
+  /// **'Formal Education (D4)'**
+  String get edLayerD4;
+
+  /// No description provided for @edLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get edLayerD9;
+
+  /// No description provided for @edLayerD24.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep Learning (D24)'**
+  String get edLayerD24;
+
+  /// No description provided for @edLayerD60.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Learning (D60)'**
+  String get edLayerD60;
+
+  /// No description provided for @edLayerAmk.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject Karaka'**
+  String get edLayerAmk;
+
+  /// No description provided for @edLayerMj.
+  ///
+  /// In en, this message translates to:
+  /// **'Mercury-Jupiter'**
+  String get edLayerMj;
+
+  /// No description provided for @edLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary Timing'**
+  String get edLayerDasha;
+
+  /// No description provided for @edTopicSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Subjects for Me'**
+  String get edTopicSubjects;
+
+  /// No description provided for @edTopicDegree.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree Chances'**
+  String get edTopicDegree;
+
+  /// No description provided for @edTopicAbroad.
+  ///
+  /// In en, this message translates to:
+  /// **'Studying Abroad'**
+  String get edTopicAbroad;
+
+  /// No description provided for @edTopicExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Performance'**
+  String get edTopicExam;
+
+  /// No description provided for @edTopicHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Habits'**
+  String get edTopicHabits;
+
+  /// No description provided for @edTopicCareerLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Education-to-Career Link'**
+  String get edTopicCareerLink;
+
+  /// No description provided for @edTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Timing Windows'**
+  String get edTopicTiming;
+
+  /// No description provided for @edTopicScholarship.
+  ///
+  /// In en, this message translates to:
+  /// **'Scholarship Chances'**
+  String get edTopicScholarship;
+
   /// No description provided for @hwTitle.
   ///
   /// In en, this message translates to:

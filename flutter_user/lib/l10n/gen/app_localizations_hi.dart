@@ -5452,6 +5452,312 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get edTitle => 'शिक्षा और अध्ययन विश्लेषण';
+
+  @override
+  String get edSubtitle => 'AI-संचालित वैदिक शिक्षा रिपोर्ट';
+
+  @override
+  String get edSnapshotHeader => 'आपकी शिक्षा झलक';
+
+  @override
+  String get edOverallStrength => 'कुल शक्ति';
+
+  @override
+  String get edAcademicSuccess => 'शैक्षणिक सफलता';
+
+  @override
+  String get edLearningCapacity => 'सीखने की क्षमता';
+
+  @override
+  String get edIntellect => 'बुद्धि';
+
+  @override
+  String get edMemory => 'स्मरण शक्ति';
+
+  @override
+  String get edStatusExcellent => 'उत्कृष्ट क्षमता';
+
+  @override
+  String get edStatusStrong => 'मजबूत क्षमता';
+
+  @override
+  String get edStatusModerate => 'मध्यम क्षमता';
+
+  @override
+  String get edStatusDeveloping => 'विकासशील क्षमता';
+
+  @override
+  String get edStatusChallenging => 'चुनौतीपूर्ण चरण';
+
+  @override
+  String get edChipSaraswati => 'सरस्वती योग';
+
+  @override
+  String get edChipGajaKesari => 'गज केसरी योग';
+
+  @override
+  String get edChipBudhaAditya => 'बुध आदित्य योग';
+
+  @override
+  String get edChipResearch => 'मजबूत शोध क्षमता';
+
+  @override
+  String get edChipScholarship => 'छात्रवृत्ति क्षमता';
+
+  @override
+  String get edChipDoctorate => 'डॉक्टरेट क्षमता';
+
+  @override
+  String get edChipForeign => 'विदेश शिक्षा सहयोग';
+
+  @override
+  String get edChipLifelong => 'आजीवन शिक्षार्थी';
+
+  @override
+  String get edLearningStyleTitle => 'आपकी सीखने की शैली';
+
+  @override
+  String get edSoulPlanet => 'आत्मा ग्रह';
+
+  @override
+  String get edSoulHint => 'आपकी गहरी आंतरिक प्रेरणा और जीवन उद्देश्य';
+
+  @override
+  String get edSubjectPlanet => 'विषय ग्रह';
+
+  @override
+  String get edTechAtmakaraka => 'आत्मकारक (तकनीकी)';
+
+  @override
+  String get edTechAmatyakaraka => 'अमात्यकारक (तकनीकी)';
+
+  @override
+  String get edSubjectKarakaStrength => 'विषय कारक शक्ति';
+
+  @override
+  String get edFoundationTitle => 'शिक्षा की नींव';
+
+  @override
+  String get edHouse4 => 'प्रारंभिक शिक्षा';
+
+  @override
+  String get edHouse5 => 'बुद्धिमत्ता';
+
+  @override
+  String get edHouse9 => 'उच्च शिक्षा';
+
+  @override
+  String get edPurvaPunya => 'पूर्व-जन्म पुण्य';
+
+  @override
+  String get edStudyPlanetsTitle => 'आपके अध्ययन ग्रह';
+
+  @override
+  String get edYogasTitle => 'आपकी कुंडली में शिक्षा योग';
+
+  @override
+  String get edYogaBudhaAditya => 'बुध आदित्य';
+
+  @override
+  String get edYogaGajaKesari => 'गज केसरी';
+
+  @override
+  String get edYogaSaraswati => 'सरस्वती';
+
+  @override
+  String get edYogaPresent => 'मौजूद';
+
+  @override
+  String get edYogaAbsent => 'अनुपस्थित';
+
+  @override
+  String get edYogaNoneNote => 'कोई शास्त्रीय शिक्षा योग नहीं — सफलता निरंतर प्रयास और अनुशासन से आती है।';
+
+  @override
+  String get edVerificationTitle => 'कुंडलियों में सत्यापन';
+
+  @override
+  String get edD24Learning => 'D24 — गहन अध्ययन कुंडली';
+
+  @override
+  String get edD4Formal => 'D4 — औपचारिक शिक्षा कुंडली';
+
+  @override
+  String get edD9Dharma => 'D9 — अध्ययन धर्म कुंडली';
+
+  @override
+  String get edD60Karma => 'D60 — पूर्व-जन्म अध्ययन कर्म';
+
+  @override
+  String get edSubjectsTitle => 'आपके लिए सर्वश्रेष्ठ विषय';
+
+  @override
+  String get edSubjectsSubtitle => 'कुंडली रुझान के अनुसार क्रमबद्ध';
+
+  @override
+  String get edLowAffinity => 'कम रुझान वाले विषय';
+
+  @override
+  String get edDegreesTitle => 'डिग्री और स्तर की संभावना';
+
+  @override
+  String get edExpectedLevel => 'अपेक्षित स्तर';
+
+  @override
+  String get edDegreeFormal => 'औपचारिक डिग्री';
+
+  @override
+  String get edDegreePostgrad => 'स्नातकोत्तर';
+
+  @override
+  String get edDegreeDoctorate => 'डॉक्टरेट';
+
+  @override
+  String get edDegreeForeign => 'विदेश शिक्षा';
+
+  @override
+  String get edTimelineTitle => 'अध्ययन समयरेखा';
+
+  @override
+  String get edEarlySchooling => 'प्रारंभिक शिक्षा अवधि';
+
+  @override
+  String get edHigherEducation => 'उच्च शिक्षा अवधि';
+
+  @override
+  String get edPostgradResearch => 'स्नातकोत्तर/शोध अवधि';
+
+  @override
+  String get edPeakLearningAge => 'सर्वोत्तम अध्ययन आयु';
+
+  @override
+  String get edPreferencesTitle => 'अध्ययन प्राथमिकताएं और सहयोग';
+
+  @override
+  String get edPrefStudyMode => 'अध्ययन तरीका';
+
+  @override
+  String get edPrefTiming => 'सर्वोत्तम समय';
+
+  @override
+  String get edPrefEnvironment => 'वातावरण';
+
+  @override
+  String get edPrefLocation => 'स्थान';
+
+  @override
+  String get edPrefForeign => 'विदेश अध्ययन';
+
+  @override
+  String get edGuruRelationship => 'शिक्षक/गुरु संबंध';
+
+  @override
+  String get edMentorAvailability => 'गुरु उपलब्धता';
+
+  @override
+  String get edPeerLearning => 'सहपाठी शिक्षण';
+
+  @override
+  String get edAuthorityDeference => 'अधिकार का सम्मान';
+
+  @override
+  String get edStrengthsTitle => 'शक्तियां और चुनौतियां';
+
+  @override
+  String get edCognitiveGifts => 'संज्ञानात्मक उपहार';
+
+  @override
+  String get edNaturalAbilities => 'प्राकृतिक सीखने की क्षमताएं';
+
+  @override
+  String get edHiddenCapacities => 'छिपी हुई क्षमताएं';
+
+  @override
+  String get edConcentration => 'एकाग्रता कठिनाई';
+
+  @override
+  String get edBreakRisk => 'शिक्षा में रुकावट जोखिम';
+
+  @override
+  String get edDisciplineConsistency => 'अनुशासन निरंतरता';
+
+  @override
+  String get edScholarshipLikelihood => 'छात्रवृत्ति संभावना';
+
+  @override
+  String get edCareerLinkTitle => 'शिक्षा → करियर पथ';
+
+  @override
+  String get edDirectionRec => 'अनुशंसित दिशा';
+
+  @override
+  String get edIntegrationStrategy => 'एकीकरण रणनीति';
+
+  @override
+  String get edCareerLinkage => 'करियर संबंध';
+
+  @override
+  String get edAlignedSubjects => 'करियर-संगत विषय';
+
+  @override
+  String get edDegreeUtility => 'करियर के लिए डिग्री उपयोगिता';
+
+  @override
+  String get edImprovementTitle => 'आपकी सुधार योजना';
+
+  @override
+  String get edReliabilityTitle => 'पूर्वानुमान विश्वसनीयता';
+
+  @override
+  String get edLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get edLayerD4 => 'औपचारिक शिक्षा (D4)';
+
+  @override
+  String get edLayerD9 => 'नवमांश (D9)';
+
+  @override
+  String get edLayerD24 => 'गहन अध्ययन (D24)';
+
+  @override
+  String get edLayerD60 => 'पूर्व-जन्म अध्ययन (D60)';
+
+  @override
+  String get edLayerAmk => 'विषय कारक';
+
+  @override
+  String get edLayerMj => 'बुध-गुरु';
+
+  @override
+  String get edLayerDasha => 'ग्रह समय';
+
+  @override
+  String get edTopicSubjects => 'मेरे लिए सर्वश्रेष्ठ विषय';
+
+  @override
+  String get edTopicDegree => 'डिग्री की संभावना';
+
+  @override
+  String get edTopicAbroad => 'विदेश में अध्ययन';
+
+  @override
+  String get edTopicExam => 'परीक्षा प्रदर्शन';
+
+  @override
+  String get edTopicHabits => 'अध्ययन आदतें';
+
+  @override
+  String get edTopicCareerLink => 'शिक्षा-से-करियर संबंध';
+
+  @override
+  String get edTopicTiming => 'शिक्षा समय अवधि';
+
+  @override
+  String get edTopicScholarship => 'छात्रवृत्ति की संभावना';
+
+  @override
   String get hwTitle => 'स्वास्थ्य और कल्याण विश्लेषण';
 
   @override
