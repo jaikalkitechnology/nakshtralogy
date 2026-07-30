@@ -34,7 +34,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ✅ DONE | 440d648 | en+hi+hinglish | 16-section AI debt coach; converted from EngineReportBase shell to Career template. Backfill pending (db_source.json). 2026-07-30. |
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ✅ DONE | b73ceef | en+hi+hinglish | 17-section AI destiny coach; converted from EngineReportBase shell to Career template. Backfill pending (lp_source.json). 2026-07-30. |
 | 12 | character | Character Analysis | `character_report_screen.dart` | ✅ DONE | d6f48a5 | en+hi+hinglish | 19-section AI character coach; converted from EngineReportBase shell to Career template. Backfill pending (ch_source.json). 2026-07-30. |
-| 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 17-section AI karma coach; converted from EngineReportBase shell to Career template. Backfill pending (pk_source.json). 2026-07-30. |
+| 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ✅ DONE | efab680 | en+hi+hinglish | 17-section AI karma coach; converted from EngineReportBase shell to Career template. Backfill pending (pk_source.json). 2026-07-30. |
 | 14 | kundli_milan | Kundli Milan | `milan_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/kundli_milan/analyze`. |
 | 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/relationship/analyze`. |
 | 16 | child_probability | Child Probability | `child_probability_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
