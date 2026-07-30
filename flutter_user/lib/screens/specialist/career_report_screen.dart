@@ -47,11 +47,11 @@ class _CareerReportState extends State<CareerReportScreen> {
     } catch (e) { if (!mounted) return; setState(() { _error = e.toString(); _loading = false; }); }
   }
 
-  // ── typed accessors ────────────────────────────────────────────────
-  double _sc(String k) => (_data?[k] as num?)?.toDouble() ?? 0;
-  String _str(String k) => _data?[k]?.toString() ?? '';
-  List _list(String k) => (_data?[k] as List?) ?? const [];
-  Map<String, dynamic> _map(String k) => (_data?[k] as Map?)?.cast<String, dynamic>() ?? {};
+  // ── typed accessors (type-checked, never throw on unexpected shapes) ──
+  double _sc(String k) { final v = _data?[k]; return v is num ? v.toDouble() : 0; }
+  String _str(String k) { final v = _data?[k]; return (v == null || v is List || v is Map) ? '' : v.toString(); }
+  List _list(String k) { final v = _data?[k]; return v is List ? v : const []; }
+  Map<String, dynamic> _map(String k) { final v = _data?[k]; return v is Map ? v.cast<String, dynamic>() : {}; }
   // A field that may be either a non-empty string or a list of strings.
   String _flex(String k) {
     final v = _data?[k];
@@ -443,48 +443,50 @@ class _CareerReportState extends State<CareerReportScreen> {
   Widget _timeline(AppLocalizations l) {
     final launch = _list('career_launch_windows').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     final risk = _list('career_risk_windows').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
-    final nodes = <Map<String, String>>[];
+    final cards = <Widget>[];
     void add(String title, Map<String, dynamic> m, Color c) {
-      nodes.add({'title': title, 'window': m['window']?.toString() ?? '', 'dasha': m['dasha']?.toString() ?? '', 'note': m['note']?.toString() ?? '', 'color': c.value.toString()});
+      cards.add(_timelineCard(l, title, m['window']?.toString() ?? '', m['dasha']?.toString() ?? '', m['note']?.toString() ?? '', c));
     }
     if (launch.isNotEmpty) add(l.crPresentPhase, launch[0], KColors.green);
     if (launch.length > 1) add(l.crFutureExpansion, launch[1], KColors.blue);
     final trans = _flex('career_transition_windows');
-    if (trans.isNotEmpty && nodes.length < 3) nodes.add({'title': l.crUpcoming, 'window': '', 'dasha': '', 'note': trans, 'color': KColors.purple.value.toString()});
+    if (trans.isNotEmpty && cards.length < 3) cards.add(_timelineCard(l, l.crUpcoming, '', '', trans, KColors.purple));
     if (risk.isNotEmpty) add(l.crRiskPeriod, risk[0], KColors.orange);
-    if (nodes.isEmpty) return const SizedBox.shrink();
+    if (cards.isEmpty) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.timeline_rounded, title: l.crTimeline, color: AppColors.gold),
-      ...List.generate(nodes.length, (idx) => _timelineNode(l, nodes[idx], idx == nodes.length - 1)),
+      ...cards,
     ]);
   }
 
-  Widget _timelineNode(AppLocalizations l, Map<String, String> n, bool last) {
-    final col = Color(int.parse(n['color']!));
+  // A robust "rail" timeline card (colored left accent). No IntrinsicHeight /
+  // Expanded-in-Column, so it can never throw a layout assertion inside the
+  // scrolling list.
+  Widget _timelineCard(AppLocalizations l, String title, String window, String dasha, String note, Color col) {
     final loc = Localizations.localeOf(context);
-    final dasha = n['dasha'] ?? '';
     final planet = dasha.isNotEmpty ? KundliNames.planet(dasha.split(' ').first, loc) : '';
-    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Column(children: [
-        Container(width: 14, height: 14, margin: const EdgeInsets.only(top: 3),
-          decoration: BoxDecoration(color: col, shape: BoxShape.circle, border: Border.all(color: col.withOpacity(0.3), width: 3))),
-        if (!last) Expanded(child: Container(width: 2, color: col.withOpacity(0.3))),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.fromLTRB(14, 13, 13, 13),
+      decoration: BoxDecoration(
+        color: col.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: col.withOpacity(0.28)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(width: 12, height: 12, decoration: BoxDecoration(color: col, shape: BoxShape.circle, border: Border.all(color: col.withOpacity(0.35), width: 3))),
+          const SizedBox(width: 8),
+          Expanded(child: Text(title, style: TextStyle(color: col, fontSize: 12.5, fontWeight: FontWeight.w800))),
+          if (window.isNotEmpty) Text(window, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w600)),
+        ]),
+        if (planet.isNotEmpty) ...[const SizedBox(height: 4),
+          Text('🪐 $planet', style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700))],
+        if (note.isNotEmpty) ...[const SizedBox(height: 6),
+          Text(_cap(note), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))],
+        if (dasha.isNotEmpty) _advanced(l, ['${l.crViewDasha}: $dasha']),
       ]),
-      const SizedBox(width: 12),
-      Expanded(child: Container(margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(13),
-        decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: col.withOpacity(0.2))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(child: Text(n['title'] ?? '', style: TextStyle(color: col, fontSize: 12.5, fontWeight: FontWeight.w800))),
-            if ((n['window'] ?? '').isNotEmpty) Text(n['window']!, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w600)),
-          ]),
-          if (planet.isNotEmpty) ...[const SizedBox(height: 3),
-            Text('🪐 $planet', style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700))],
-          if ((n['note'] ?? '').isNotEmpty) ...[const SizedBox(height: 6),
-            Text(_cap(n['note']!), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))],
-          if (dasha.isNotEmpty) _advanced(l, ['${l.crViewDasha}: $dasha']),
-        ]))),
-    ]));
+    );
   }
 
   // ══════════════════════════════════════════════════════════════════
