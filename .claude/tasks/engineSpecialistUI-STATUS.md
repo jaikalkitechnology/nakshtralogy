@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 5 done · 14 pending · 0 blocked  (19 total)**
+**Progress: 6 done · 13 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`, `mr_source.json`, `lv_source.json`
+**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`, `mr_source.json`, `lv_source.json`, `hw_source.json`
 
 | # | Engine key | Label | Screen file (`…/screens/specialist/`) | Status | Commit | Locales | Notes |
 |---|------------|-------|----------------------------------------|--------|--------|---------|-------|
@@ -21,7 +21,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ✅ DONE | 99efd19 | en+hi+hinglish | 14-section AI wealth coach; converted from EngineReportBase shell to Career template; backfill pending (wl_source.json). 2026-07-30. |
 | 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ✅ DONE | 1a05f0b | en+hi+hinglish | 14-section AI relationship coach; converted from EngineReportBase shell to Career template (gender resolved server-side); backfill pending (mr_source.json). 2026-07-30. |
 | 4 | love | Love & Relationships | `love_report_screen.dart` | ✅ DONE | 1b061a5 | en+hi+hinglish | 14-section AI love coach; converted from EngineReportBase shell to Career template; backfill pending (lv_source.json). 2026-07-30. |
-| 5 | health | Health & Wellness | `health_report_screen.dart` | ⬜ PENDING | — | — | |
+| 5 | health | Health & Wellness | `health_report_screen.dart` | ✅ DONE | 0a74df6 | en+hi+hinglish | 14-section AI health coach; converted from EngineReportBase shell to Career template; medical disclaimer surfaced verbatim; backfill pending (hw_source.json). 2026-07-30. |
 | 6 | education | Education & Learning | `education_report_screen.dart` | ⬜ PENDING | — | — | |
 | 7 | property | Property & Assets | `property_report_screen.dart` | ⬜ PENDING | — | — | |
 | 8 | legal | Legal & Disputes | `legal_report_screen.dart` | ⬜ PENDING | — | — | |
@@ -71,6 +71,14 @@ touch only if a redesigned screen requires it.
   shared EngineReportBase shell to the standalone Career template (public
   constructor params unchanged). Both apps; 85 new `lv` keys (en+hi+hinglish).
   Commit `1b061a5`, 2026-07-30. Backfill: `lv_source.json`.
+- **health** ✅ — 14-section AI health coach (snapshot hero with vitality ring,
+  Ayurvedic Body Type, Planetary Body Map, Health Patterns yoga ledger, Body
+  Areas to Watch, Disease-Category Watch, Mental & Emotional Wellness, Health
+  Timeline, Lifestyle Guide, Life-Stage & Special Topics, Challenges to Watch,
+  Wellness Plan, Reliability + verbatim medical disclaimer, Discuss-with-AI).
+  Converted from the shared EngineReportBase shell to the standalone Career
+  template (public constructor params unchanged). Both apps; 98 new `hw` keys
+  (en+hi+hinglish). Commit `0a74df6`, 2026-07-30. Backfill: `hw_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
