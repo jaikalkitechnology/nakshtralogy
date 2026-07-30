@@ -230,6 +230,402 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @riSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Relationship Intelligence Report'**
+  String get riSubtitle;
+
+  /// No description provided for @riTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Intel'**
+  String get riTitle;
+
+  /// No description provided for @riSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Snapshot'**
+  String get riSnapshotHeader;
+
+  /// No description provided for @riGaugeCohesion.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Cohesion'**
+  String get riGaugeCohesion;
+
+  /// No description provided for @riGaugeTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust Climate'**
+  String get riGaugeTrust;
+
+  /// No description provided for @riGaugeProductivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Productivity'**
+  String get riGaugeProductivity;
+
+  /// No description provided for @riGaugeCreativity.
+  ///
+  /// In en, this message translates to:
+  /// **'Creativity'**
+  String get riGaugeCreativity;
+
+  /// No description provided for @riChipNoAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No critical alerts'**
+  String get riChipNoAlerts;
+
+  /// No description provided for @riChipStrongCohesion.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong group cohesion'**
+  String get riChipStrongCohesion;
+
+  /// No description provided for @riChipHighTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'High trust climate'**
+  String get riChipHighTrust;
+
+  /// No description provided for @riChipNoHiddenEnemy.
+  ///
+  /// In en, this message translates to:
+  /// **'No hidden-enemy signal'**
+  String get riChipNoHiddenEnemy;
+
+  /// No description provided for @riChipHealthyGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy group overall'**
+  String get riChipHealthyGroup;
+
+  /// No description provided for @riProfilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Profiles'**
+  String get riProfilesTitle;
+
+  /// No description provided for @riProfilesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} people in this group'**
+  String riProfilesSubtitle(Object count);
+
+  /// No description provided for @riLagnaSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna'**
+  String get riLagnaSuffix;
+
+  /// No description provided for @riIntegrity.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity'**
+  String get riIntegrity;
+
+  /// No description provided for @riWarmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Warmth'**
+  String get riWarmth;
+
+  /// No description provided for @riTrustworthiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Trustworthiness'**
+  String get riTrustworthiness;
+
+  /// No description provided for @riAssertiveness.
+  ///
+  /// In en, this message translates to:
+  /// **'Assertiveness'**
+  String get riAssertiveness;
+
+  /// No description provided for @riGroupDynamicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Dynamics Overview'**
+  String get riGroupDynamicsTitle;
+
+  /// No description provided for @riMostSupportive.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Supportive'**
+  String get riMostSupportive;
+
+  /// No description provided for @riMostChallenged.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Challenged'**
+  String get riMostChallenged;
+
+  /// No description provided for @riHiddenEnemyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden-Enemy Signal Detected'**
+  String get riHiddenEnemyAlert;
+
+  /// No description provided for @riBestWorstTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Best & Most Challenging Pairs'**
+  String get riBestWorstTitle;
+
+  /// No description provided for @riBestPair.
+  ///
+  /// In en, this message translates to:
+  /// **'STRONGEST BOND'**
+  String get riBestPair;
+
+  /// No description provided for @riWorstPair.
+  ///
+  /// In en, this message translates to:
+  /// **'NEEDS ATTENTION'**
+  String get riWorstPair;
+
+  /// No description provided for @riAlliances.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Alliances'**
+  String get riAlliances;
+
+  /// No description provided for @riConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely Friction Points'**
+  String get riConflicts;
+
+  /// No description provided for @riPairwiseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairwise Analysis'**
+  String get riPairwiseTitle;
+
+  /// No description provided for @riPairwiseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pairs analyzed'**
+  String riPairwiseSubtitle(Object count);
+
+  /// No description provided for @riDynamic.
+  ///
+  /// In en, this message translates to:
+  /// **'Dynamic'**
+  String get riDynamic;
+
+  /// No description provided for @riKarmicLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic link'**
+  String get riKarmicLink;
+
+  /// No description provided for @riMutualTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'Mutual trust'**
+  String get riMutualTrust;
+
+  /// No description provided for @riBetrayalRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Betrayal risk'**
+  String get riBetrayalRisk;
+
+  /// No description provided for @riPowerDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Power distribution'**
+  String get riPowerDistribution;
+
+  /// No description provided for @riPowerHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Power-balance health'**
+  String get riPowerHealth;
+
+  /// No description provided for @riCriticalPatternsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Patterns'**
+  String get riCriticalPatternsTitle;
+
+  /// No description provided for @riGroupRecsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Recommendations'**
+  String get riGroupRecsTitle;
+
+  /// No description provided for @riSharedPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Practices'**
+  String get riSharedPractices;
+
+  /// No description provided for @riCommStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Communication Style'**
+  String get riCommStyle;
+
+  /// No description provided for @riGrowthFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Growth Focus'**
+  String get riGrowthFocus;
+
+  /// No description provided for @riIndividualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual Guidance'**
+  String get riIndividualTitle;
+
+  /// No description provided for @riBestAllies.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Allies'**
+  String get riBestAllies;
+
+  /// No description provided for @riHandleWithCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Handle With Care'**
+  String get riHandleWithCare;
+
+  /// No description provided for @riCoreThemeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Group Theme'**
+  String get riCoreThemeTitle;
+
+  /// No description provided for @riLayerPairwise.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairwise Completeness'**
+  String get riLayerPairwise;
+
+  /// No description provided for @riLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get riLayerD1;
+
+  /// No description provided for @riLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get riLayerD9;
+
+  /// No description provided for @riLayerD10.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashamsa (D10)'**
+  String get riLayerD10;
+
+  /// No description provided for @riLayerD30.
+  ///
+  /// In en, this message translates to:
+  /// **'Trimshamsa (D30)'**
+  String get riLayerD30;
+
+  /// No description provided for @riLayerJaimini.
+  ///
+  /// In en, this message translates to:
+  /// **'Jaimini Signal'**
+  String get riLayerJaimini;
+
+  /// No description provided for @riLayerBehavior.
+  ///
+  /// In en, this message translates to:
+  /// **'Behavior Clarity'**
+  String get riLayerBehavior;
+
+  /// No description provided for @riLayerCoherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Coherence'**
+  String get riLayerCoherence;
+
+  /// No description provided for @riTopicDynamics.
+  ///
+  /// In en, this message translates to:
+  /// **'Our group dynamics'**
+  String get riTopicDynamics;
+
+  /// No description provided for @riTopicPairwise.
+  ///
+  /// In en, this message translates to:
+  /// **'A specific pair\'s compatibility'**
+  String get riTopicPairwise;
+
+  /// No description provided for @riTopicAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Any critical alerts'**
+  String get riTopicAlerts;
+
+  /// No description provided for @riTopicGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'How we can grow together'**
+  String get riTopicGrowth;
+
+  /// No description provided for @riTopicRecs.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended practices'**
+  String get riTopicRecs;
+
+  /// No description provided for @riTopicTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Our core group theme'**
+  String get riTopicTheme;
+
+  /// No description provided for @character.
+  ///
+  /// In en, this message translates to:
+  /// **'Character'**
+  String get character;
+
+  /// No description provided for @businessWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get businessWord;
+
+  /// No description provided for @karmic.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic'**
+  String get karmic;
+
+  /// No description provided for @trustWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust'**
+  String get trustWord;
+
+  /// No description provided for @enmityRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Enmity Risk'**
+  String get enmityRisk;
+
+  /// No description provided for @dhokaRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'DHOKA RISK'**
+  String get dhokaRisk;
+
+  /// No description provided for @growthAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'GROWTH AREAS'**
+  String get growthAreas;
+
   /// No description provided for @emotional.
   ///
   /// In en, this message translates to:

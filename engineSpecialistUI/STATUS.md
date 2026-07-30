@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 15 done · 4 pending · 0 blocked  (19 total)**
+**Progress: 16 done · 3 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`, `ri_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -36,7 +36,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 12 | character | Character Analysis | `character_report_screen.dart` | ✅ DONE | d6f48a5 | en+hi+hinglish | 19-section AI character coach; converted from EngineReportBase shell to Career template. Backfill pending (ch_source.json). 2026-07-30. |
 | 13 | past_life | Past Life & Karma | `pastlife_report_screen.dart` | ✅ DONE | efab680 | en+hi+hinglish | 17-section AI karma coach; converted from EngineReportBase shell to Career template. Backfill pending (pk_source.json). 2026-07-30. |
 | 14 | kundli_milan | Kundli Milan | `milan_report_screen.dart` | ✅ DONE | 8d683bd | en+hi+hinglish | 17-section AI marriage-compatibility coach, 2-chart (`runSpecialistMilan`); constructor (name1/name2/data) unchanged. Astro's picker was pointed at the generic fallback shell — repointed to the new screen. Backfill pending (km_source.json). 2026-07-30. |
-| 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ⬜ PENDING | — | — | 2-chart; `/specialist/relationship/analyze`. |
+| 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 11-section AI group-dynamics coach, N-way 2-5 chart (`runRelationshipAnalysis`); constructor (names/data) unchanged. Astro's picker was pointed at the generic fallback shell — repointed to the new screen. Backfill pending (ri_source.json). 2026-07-30. |
 | 16 | child_probability | Child Probability | `child_probability_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
 | 17 | love_compatibility | Love Compatibility | `love_compatibility_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
 | 18 | karma_linkage | Past-Life Karma Linkage | `karma_linkage_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
@@ -192,6 +192,23 @@ touch only if a redesigned screen requires it.
   `kundli_milan_specialist_v4.analyze()` two-chart dump. Both apps; 90 new
   `km` keys + 7 shared domain-label keys backfilled to astro (en+hi+hinglish).
   Backfill: `km_source.json`.
+
+- **relationship** ✅ — 11-section AI group-dynamics coach for the N-way
+  (2-5 chart) Relationship Intelligence endpoint (snapshot hero blending
+  group cohesion/trust-climate/productivity/creativity, Chart Profiles per
+  person, Group Dynamics Overview, Best & Most Challenging Pairs, Pairwise
+  Analysis card-per-pair with 6 compatibility dimensions + behavior/power/
+  karmic Advanced Details, Critical Patterns, Group Recommendations,
+  Individual Guidance per person, Core Group Theme, Reliability,
+  Discuss-with-AI). Converted from the bespoke `CustomScrollView`/
+  `SliverList` shell; constructor (`names`, `data` — already-loaded, no
+  async load call) kept unchanged. flutter_astro's picker was still routing
+  to the generic `SpecialistReportScreen.fromData` fallback — repointed it
+  to `RelationshipReportScreen` so astro gets the same redesign. All engine
+  field names cross-checked against a live
+  `relationship_intelligence_specialist_v1.2.analyze()` 3-chart dump. Both
+  apps; 59 new `ri` keys + 7 shared compat-label keys backfilled to astro
+  (en+hi+hinglish). Backfill: `ri_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first

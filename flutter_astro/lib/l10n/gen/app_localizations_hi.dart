@@ -7036,6 +7036,208 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get riSubtitle => 'AI-संचालित वैदिक रिश्ता बुद्धिमत्ता रिपोर्ट';
+
+  @override
+  String get riTitle => 'रिश्ता बुद्धिमत्ता';
+
+  @override
+  String get riSnapshotHeader => 'समूह स्नैपशॉट';
+
+  @override
+  String get riGaugeCohesion => 'समूह एकजुटता';
+
+  @override
+  String get riGaugeTrust => 'विश्वास माहौल';
+
+  @override
+  String get riGaugeProductivity => 'उत्पादकता';
+
+  @override
+  String get riGaugeCreativity => 'रचनात्मकता';
+
+  @override
+  String get riChipNoAlerts => 'कोई गंभीर चेतावनी नहीं';
+
+  @override
+  String get riChipStrongCohesion => 'मजबूत समूह एकजुटता';
+
+  @override
+  String get riChipHighTrust => 'उच्च विश्वास माहौल';
+
+  @override
+  String get riChipNoHiddenEnemy => 'कोई छिपा शत्रु संकेत नहीं';
+
+  @override
+  String get riChipHealthyGroup => 'समग्र रूप से स्वस्थ समूह';
+
+  @override
+  String get riProfilesTitle => 'कुंडली प्रोफ़ाइल';
+
+  @override
+  String riProfilesSubtitle(Object count) {
+    return '${count} people in this group';
+  }
+
+  @override
+  String get riLagnaSuffix => 'लग्न';
+
+  @override
+  String get riIntegrity => 'सत्यनिष्ठा';
+
+  @override
+  String get riWarmth => 'गर्मजोशी';
+
+  @override
+  String get riTrustworthiness => 'विश्वसनीयता';
+
+  @override
+  String get riAssertiveness => 'दृढ़ता';
+
+  @override
+  String get riGroupDynamicsTitle => 'समूह गतिशीलता अवलोकन';
+
+  @override
+  String get riMostSupportive => 'सबसे सहायक';
+
+  @override
+  String get riMostChallenged => 'सबसे चुनौतीपूर्ण';
+
+  @override
+  String get riHiddenEnemyAlert => 'छिपे शत्रु का संकेत मिला';
+
+  @override
+  String get riBestWorstTitle => 'सर्वोत्तम एवं सबसे चुनौतीपूर्ण जोड़े';
+
+  @override
+  String get riBestPair => 'सबसे मजबूत बंधन';
+
+  @override
+  String get riWorstPair => 'ध्यान चाहिए';
+
+  @override
+  String get riAlliances => 'संभावित गठबंधन';
+
+  @override
+  String get riConflicts => 'संभावित घर्षण बिंदु';
+
+  @override
+  String get riPairwiseTitle => 'जोड़ी-वार विश्लेषण';
+
+  @override
+  String riPairwiseSubtitle(Object count) {
+    return '${count} pairs analyzed';
+  }
+
+  @override
+  String get riDynamic => 'गतिशीलता';
+
+  @override
+  String get riKarmicLink => 'कर्म संबंध';
+
+  @override
+  String get riMutualTrust => 'पारस्परिक विश्वास';
+
+  @override
+  String get riBetrayalRisk => 'विश्वासघात जोखिम';
+
+  @override
+  String get riPowerDistribution => 'शक्ति वितरण';
+
+  @override
+  String get riPowerHealth => 'शक्ति-संतुलन स्वास्थ्य';
+
+  @override
+  String get riCriticalPatternsTitle => 'गंभीर पैटर्न';
+
+  @override
+  String get riGroupRecsTitle => 'समूह सिफारिशें';
+
+  @override
+  String get riSharedPractices => 'साझा अभ्यास';
+
+  @override
+  String get riCommStyle => 'अनुशंसित संचार शैली';
+
+  @override
+  String get riGrowthFocus => 'अनुशंसित विकास फोकस';
+
+  @override
+  String get riIndividualTitle => 'व्यक्तिगत मार्गदर्शन';
+
+  @override
+  String get riBestAllies => 'सर्वोत्तम सहयोगी';
+
+  @override
+  String get riHandleWithCare => 'सावधानी से व्यवहार करें';
+
+  @override
+  String get riCoreThemeTitle => 'मुख्य समूह विषय';
+
+  @override
+  String get riLayerPairwise => 'जोड़ी-वार पूर्णता';
+
+  @override
+  String get riLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get riLayerD9 => 'नवांश (D9)';
+
+  @override
+  String get riLayerD10 => 'दशमांश (D10)';
+
+  @override
+  String get riLayerD30 => 'त्रिंशांश (D30)';
+
+  @override
+  String get riLayerJaimini => 'जैमिनी संकेत';
+
+  @override
+  String get riLayerBehavior => 'व्यवहार स्पष्टता';
+
+  @override
+  String get riLayerCoherence => 'समूह सुसंगति';
+
+  @override
+  String get riTopicDynamics => 'हमारी समूह गतिशीलता';
+
+  @override
+  String get riTopicPairwise => 'किसी विशेष जोड़ी की अनुकूलता';
+
+  @override
+  String get riTopicAlerts => 'कोई गंभीर चेतावनी';
+
+  @override
+  String get riTopicGrowth => 'हम एक साथ कैसे बढ़ सकते हैं';
+
+  @override
+  String get riTopicRecs => 'अनुशंसित अभ्यास';
+
+  @override
+  String get riTopicTheme => 'हमारा मुख्य समूह विषय';
+
+  @override
+  String get character => 'चरित्र';
+
+  @override
+  String get businessWord => 'व्यापार';
+
+  @override
+  String get karmic => 'कार्मिक';
+
+  @override
+  String get trustWord => 'भरोसा';
+
+  @override
+  String get enmityRisk => 'शत्रुता जोखिम';
+
+  @override
+  String get dhokaRisk => 'धोखा जोखिम';
+
+  @override
+  String get growthAreas => 'विकास क्षेत्र';
+
+  @override
   String get emotional => 'भावनात्मक';
 
   @override

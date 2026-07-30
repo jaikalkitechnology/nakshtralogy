@@ -1,0 +1,185 @@
+{
+ "riSubtitle": {
+  "en": "AI-powered Vedic Relationship Intelligence Report"
+ },
+ "riTitle": {
+  "en": "Relationship Intel"
+ },
+ "riSnapshotHeader": {
+  "en": "Group Snapshot"
+ },
+ "riGaugeCohesion": {
+  "en": "Group Cohesion"
+ },
+ "riGaugeTrust": {
+  "en": "Trust Climate"
+ },
+ "riGaugeProductivity": {
+  "en": "Productivity"
+ },
+ "riGaugeCreativity": {
+  "en": "Creativity"
+ },
+ "riChipNoAlerts": {
+  "en": "No critical alerts"
+ },
+ "riChipStrongCohesion": {
+  "en": "Strong group cohesion"
+ },
+ "riChipHighTrust": {
+  "en": "High trust climate"
+ },
+ "riChipNoHiddenEnemy": {
+  "en": "No hidden-enemy signal"
+ },
+ "riChipHealthyGroup": {
+  "en": "Healthy group overall"
+ },
+ "riProfilesTitle": {
+  "en": "Chart Profiles"
+ },
+ "riProfilesSubtitle": {
+  "en": "{count} people in this group",
+  "placeholders": [
+   "count"
+  ]
+ },
+ "riLagnaSuffix": {
+  "en": "Lagna"
+ },
+ "riIntegrity": {
+  "en": "Integrity"
+ },
+ "riWarmth": {
+  "en": "Warmth"
+ },
+ "riTrustworthiness": {
+  "en": "Trustworthiness"
+ },
+ "riAssertiveness": {
+  "en": "Assertiveness"
+ },
+ "riGroupDynamicsTitle": {
+  "en": "Group Dynamics Overview"
+ },
+ "riMostSupportive": {
+  "en": "Most Supportive"
+ },
+ "riMostChallenged": {
+  "en": "Most Challenged"
+ },
+ "riHiddenEnemyAlert": {
+  "en": "Hidden-Enemy Signal Detected"
+ },
+ "riBestWorstTitle": {
+  "en": "Best & Most Challenging Pairs"
+ },
+ "riBestPair": {
+  "en": "STRONGEST BOND"
+ },
+ "riWorstPair": {
+  "en": "NEEDS ATTENTION"
+ },
+ "riAlliances": {
+  "en": "Likely Alliances"
+ },
+ "riConflicts": {
+  "en": "Likely Friction Points"
+ },
+ "riPairwiseTitle": {
+  "en": "Pairwise Analysis"
+ },
+ "riPairwiseSubtitle": {
+  "en": "{count} pairs analyzed",
+  "placeholders": [
+   "count"
+  ]
+ },
+ "riDynamic": {
+  "en": "Dynamic"
+ },
+ "riKarmicLink": {
+  "en": "Karmic link"
+ },
+ "riMutualTrust": {
+  "en": "Mutual trust"
+ },
+ "riBetrayalRisk": {
+  "en": "Betrayal risk"
+ },
+ "riPowerDistribution": {
+  "en": "Power distribution"
+ },
+ "riPowerHealth": {
+  "en": "Power-balance health"
+ },
+ "riCriticalPatternsTitle": {
+  "en": "Critical Patterns"
+ },
+ "riGroupRecsTitle": {
+  "en": "Group Recommendations"
+ },
+ "riSharedPractices": {
+  "en": "Shared Practices"
+ },
+ "riCommStyle": {
+  "en": "Recommended Communication Style"
+ },
+ "riGrowthFocus": {
+  "en": "Recommended Growth Focus"
+ },
+ "riIndividualTitle": {
+  "en": "Individual Guidance"
+ },
+ "riBestAllies": {
+  "en": "Best Allies"
+ },
+ "riHandleWithCare": {
+  "en": "Handle With Care"
+ },
+ "riCoreThemeTitle": {
+  "en": "Core Group Theme"
+ },
+ "riLayerPairwise": {
+  "en": "Pairwise Completeness"
+ },
+ "riLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "riLayerD9": {
+  "en": "Navamsa (D9)"
+ },
+ "riLayerD10": {
+  "en": "Dashamsa (D10)"
+ },
+ "riLayerD30": {
+  "en": "Trimshamsa (D30)"
+ },
+ "riLayerJaimini": {
+  "en": "Jaimini Signal"
+ },
+ "riLayerBehavior": {
+  "en": "Behavior Clarity"
+ },
+ "riLayerCoherence": {
+  "en": "Group Coherence"
+ },
+ "riTopicDynamics": {
+  "en": "Our group dynamics"
+ },
+ "riTopicPairwise": {
+  "en": "A specific pair's compatibility"
+ },
+ "riTopicAlerts": {
+  "en": "Any critical alerts"
+ },
+ "riTopicGrowth": {
+  "en": "How we can grow together"
+ },
+ "riTopicRecs": {
+  "en": "Recommended practices"
+ },
+ "riTopicTheme": {
+  "en": "Our core group theme"
+ }
+}

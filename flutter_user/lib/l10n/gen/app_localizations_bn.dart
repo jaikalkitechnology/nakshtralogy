@@ -8161,6 +8161,187 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get riSubtitle => 'AI-powered Vedic Relationship Intelligence Report';
+
+  @override
+  String get riTitle => 'Relationship Intel';
+
+  @override
+  String get riSnapshotHeader => 'Group Snapshot';
+
+  @override
+  String get riGaugeCohesion => 'Group Cohesion';
+
+  @override
+  String get riGaugeTrust => 'Trust Climate';
+
+  @override
+  String get riGaugeProductivity => 'Productivity';
+
+  @override
+  String get riGaugeCreativity => 'Creativity';
+
+  @override
+  String get riChipNoAlerts => 'No critical alerts';
+
+  @override
+  String get riChipStrongCohesion => 'Strong group cohesion';
+
+  @override
+  String get riChipHighTrust => 'High trust climate';
+
+  @override
+  String get riChipNoHiddenEnemy => 'No hidden-enemy signal';
+
+  @override
+  String get riChipHealthyGroup => 'Healthy group overall';
+
+  @override
+  String get riProfilesTitle => 'Chart Profiles';
+
+  @override
+  String riProfilesSubtitle(Object count) {
+    return '${count} people in this group';
+  }
+
+  @override
+  String get riLagnaSuffix => 'Lagna';
+
+  @override
+  String get riIntegrity => 'Integrity';
+
+  @override
+  String get riWarmth => 'Warmth';
+
+  @override
+  String get riTrustworthiness => 'Trustworthiness';
+
+  @override
+  String get riAssertiveness => 'Assertiveness';
+
+  @override
+  String get riGroupDynamicsTitle => 'Group Dynamics Overview';
+
+  @override
+  String get riMostSupportive => 'Most Supportive';
+
+  @override
+  String get riMostChallenged => 'Most Challenged';
+
+  @override
+  String get riHiddenEnemyAlert => 'Hidden-Enemy Signal Detected';
+
+  @override
+  String get riBestWorstTitle => 'Best & Most Challenging Pairs';
+
+  @override
+  String get riBestPair => 'STRONGEST BOND';
+
+  @override
+  String get riWorstPair => 'NEEDS ATTENTION';
+
+  @override
+  String get riAlliances => 'Likely Alliances';
+
+  @override
+  String get riConflicts => 'Likely Friction Points';
+
+  @override
+  String get riPairwiseTitle => 'Pairwise Analysis';
+
+  @override
+  String riPairwiseSubtitle(Object count) {
+    return '${count} pairs analyzed';
+  }
+
+  @override
+  String get riDynamic => 'Dynamic';
+
+  @override
+  String get riKarmicLink => 'Karmic link';
+
+  @override
+  String get riMutualTrust => 'Mutual trust';
+
+  @override
+  String get riBetrayalRisk => 'Betrayal risk';
+
+  @override
+  String get riPowerDistribution => 'Power distribution';
+
+  @override
+  String get riPowerHealth => 'Power-balance health';
+
+  @override
+  String get riCriticalPatternsTitle => 'Critical Patterns';
+
+  @override
+  String get riGroupRecsTitle => 'Group Recommendations';
+
+  @override
+  String get riSharedPractices => 'Shared Practices';
+
+  @override
+  String get riCommStyle => 'Recommended Communication Style';
+
+  @override
+  String get riGrowthFocus => 'Recommended Growth Focus';
+
+  @override
+  String get riIndividualTitle => 'Individual Guidance';
+
+  @override
+  String get riBestAllies => 'Best Allies';
+
+  @override
+  String get riHandleWithCare => 'Handle With Care';
+
+  @override
+  String get riCoreThemeTitle => 'Core Group Theme';
+
+  @override
+  String get riLayerPairwise => 'Pairwise Completeness';
+
+  @override
+  String get riLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get riLayerD9 => 'Navamsa (D9)';
+
+  @override
+  String get riLayerD10 => 'Dashamsa (D10)';
+
+  @override
+  String get riLayerD30 => 'Trimshamsa (D30)';
+
+  @override
+  String get riLayerJaimini => 'Jaimini Signal';
+
+  @override
+  String get riLayerBehavior => 'Behavior Clarity';
+
+  @override
+  String get riLayerCoherence => 'Group Coherence';
+
+  @override
+  String get riTopicDynamics => 'Our group dynamics';
+
+  @override
+  String get riTopicPairwise => 'A specific pair\'s compatibility';
+
+  @override
+  String get riTopicAlerts => 'Any critical alerts';
+
+  @override
+  String get riTopicGrowth => 'How we can grow together';
+
+  @override
+  String get riTopicRecs => 'Recommended practices';
+
+  @override
+  String get riTopicTheme => 'Our core group theme';
+
+  @override
   String get kmSubtitle => 'AI-powered Vedic Kundli Milan Report';
 
   @override
