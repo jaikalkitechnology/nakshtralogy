@@ -230,6 +230,336 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @lcSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Love Compatibility Report'**
+  String get lcSubtitle;
+
+  /// No description provided for @lcTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Compatibility'**
+  String get lcTitle;
+
+  /// No description provided for @lcSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Compatibility Snapshot'**
+  String get lcSnapshotHeader;
+
+  /// No description provided for @lcGaugeAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction'**
+  String get lcGaugeAttraction;
+
+  /// No description provided for @lcGaugeEmotional.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Harmony'**
+  String get lcGaugeEmotional;
+
+  /// No description provided for @lcGaugeMental.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Rapport'**
+  String get lcGaugeMental;
+
+  /// No description provided for @lcGaugePassion.
+  ///
+  /// In en, this message translates to:
+  /// **'Passion'**
+  String get lcGaugePassion;
+
+  /// No description provided for @lcGaugeLongterm.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-Term Harmony'**
+  String get lcGaugeLongterm;
+
+  /// No description provided for @lcChipStrongMental.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong mental connection'**
+  String get lcChipStrongMental;
+
+  /// No description provided for @lcChipStrongLongterm.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong long-term potential'**
+  String get lcChipStrongLongterm;
+
+  /// No description provided for @lcChipStrongPassion.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong physical chemistry'**
+  String get lcChipStrongPassion;
+
+  /// No description provided for @lcChipLowFriction.
+  ///
+  /// In en, this message translates to:
+  /// **'Low friction overall'**
+  String get lcChipLowFriction;
+
+  /// No description provided for @lcChipKarmicPull.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong karmic pull'**
+  String get lcChipKarmicPull;
+
+  /// No description provided for @lcPartnersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner Snapshot'**
+  String get lcPartnersTitle;
+
+  /// No description provided for @lcVenusSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Venus sign'**
+  String get lcVenusSuffix;
+
+  /// No description provided for @lcAttractionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction & Chemistry'**
+  String get lcAttractionTitle;
+
+  /// No description provided for @lcAttractionScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction Score'**
+  String get lcAttractionScore;
+
+  /// No description provided for @lcActiveContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Venus Contacts'**
+  String get lcActiveContacts;
+
+  /// No description provided for @lcEmotionalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Harmony'**
+  String get lcEmotionalTitle;
+
+  /// No description provided for @lcEmotionalScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Harmony Score'**
+  String get lcEmotionalScore;
+
+  /// No description provided for @lcNakshatraCompat.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatra Compatibility'**
+  String get lcNakshatraCompat;
+
+  /// No description provided for @lcYoniKoota.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoni Koota'**
+  String get lcYoniKoota;
+
+  /// No description provided for @lcGanaKoota.
+  ///
+  /// In en, this message translates to:
+  /// **'Gana Koota'**
+  String get lcGanaKoota;
+
+  /// No description provided for @lcTaraKoota.
+  ///
+  /// In en, this message translates to:
+  /// **'Tara Koota'**
+  String get lcTaraKoota;
+
+  /// No description provided for @lcBhakootAxis.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhakoot Axis'**
+  String get lcBhakootAxis;
+
+  /// No description provided for @lcMentalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Rapport'**
+  String get lcMentalTitle;
+
+  /// No description provided for @lcMentalScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Rapport Score'**
+  String get lcMentalScore;
+
+  /// No description provided for @lcPassionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Passion & Physical'**
+  String get lcPassionTitle;
+
+  /// No description provided for @lcPassionScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Passion Score'**
+  String get lcPassionScore;
+
+  /// No description provided for @lcLongtermTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-Term Harmony'**
+  String get lcLongtermTitle;
+
+  /// No description provided for @lcLongtermScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-Term Harmony Score'**
+  String get lcLongtermScore;
+
+  /// No description provided for @lcCommitmentPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment Potential'**
+  String get lcCommitmentPotential;
+
+  /// No description provided for @lc7thHouseSynastry.
+  ///
+  /// In en, this message translates to:
+  /// **'7th House Synastry'**
+  String get lc7thHouseSynastry;
+
+  /// No description provided for @lcJupiterBlessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter Blessing'**
+  String get lcJupiterBlessing;
+
+  /// No description provided for @lcD9Resonance.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Navamsa Resonance'**
+  String get lcD9Resonance;
+
+  /// No description provided for @lcSaturnLongevity.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturn Longevity'**
+  String get lcSaturnLongevity;
+
+  /// No description provided for @lcKarmicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Love Bond'**
+  String get lcKarmicTitle;
+
+  /// No description provided for @lcKarmicScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Bond Score'**
+  String get lcKarmicScore;
+
+  /// No description provided for @lcKetuContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu Contacts'**
+  String get lcKetuContacts;
+
+  /// No description provided for @lcRahuContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu Contacts'**
+  String get lcRahuContacts;
+
+  /// No description provided for @lcChallengesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges & Friction'**
+  String get lcChallengesTitle;
+
+  /// No description provided for @lcNoChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'No significant friction-points detected in either chart'**
+  String get lcNoChallenges;
+
+  /// No description provided for @lcTotalPenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Challenge Penalty'**
+  String get lcTotalPenalty;
+
+  /// No description provided for @lcTimingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Timing — Moola Dasha'**
+  String get lcTimingTitle;
+
+  /// No description provided for @lcDynamicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Dynamics'**
+  String get lcDynamicsTitle;
+
+  /// No description provided for @lcPowerBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Balance'**
+  String get lcPowerBalance;
+
+  /// No description provided for @lcGiverReceiver.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Giver/Receiver'**
+  String get lcGiverReceiver;
+
+  /// No description provided for @lcGrowthDynamic.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Dynamic'**
+  String get lcGrowthDynamic;
+
+  /// No description provided for @lcAreasToNurture.
+  ///
+  /// In en, this message translates to:
+  /// **'Areas To Nurture'**
+  String get lcAreasToNurture;
+
+  /// No description provided for @lcTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing for our relationship'**
+  String get lcTopicTiming;
+
+  /// No description provided for @lcTopicChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges to navigate'**
+  String get lcTopicChallenges;
+
+  /// No description provided for @lcTopicKarmic.
+  ///
+  /// In en, this message translates to:
+  /// **'Our karmic connection'**
+  String get lcTopicKarmic;
+
+  /// No description provided for @lcTopicRemedies.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended remedies'**
+  String get lcTopicRemedies;
+
+  /// No description provided for @lcTopicLongterm.
+  ///
+  /// In en, this message translates to:
+  /// **'Our long-term potential'**
+  String get lcTopicLongterm;
+
+  /// No description provided for @lcTopicDynamics.
+  ///
+  /// In en, this message translates to:
+  /// **'Our relationship dynamics'**
+  String get lcTopicDynamics;
+
   /// No description provided for @cpSubtitle.
   ///
   /// In en, this message translates to:

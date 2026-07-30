@@ -8161,6 +8161,171 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get lcSubtitle => 'AI-संचालित वैदिक प्रेम अनुकूलता रिपोर्ट';
+
+  @override
+  String get lcTitle => 'प्रेम अनुकूलता';
+
+  @override
+  String get lcSnapshotHeader => 'प्रेम अनुकूलता स्नैपशॉट';
+
+  @override
+  String get lcGaugeAttraction => 'आकर्षण';
+
+  @override
+  String get lcGaugeEmotional => 'भावनात्मक सामंजस्य';
+
+  @override
+  String get lcGaugeMental => 'मानसिक तालमेल';
+
+  @override
+  String get lcGaugePassion => 'जुनून';
+
+  @override
+  String get lcGaugeLongterm => 'दीर्घकालिक सामंजस्य';
+
+  @override
+  String get lcChipStrongMental => 'मजबूत मानसिक जुड़ाव';
+
+  @override
+  String get lcChipStrongLongterm => 'मजबूत दीर्घकालिक संभावना';
+
+  @override
+  String get lcChipStrongPassion => 'मजबूत शारीरिक रसायन';
+
+  @override
+  String get lcChipLowFriction => 'समग्र रूप से कम घर्षण';
+
+  @override
+  String get lcChipKarmicPull => 'मजबूत कर्म आकर्षण';
+
+  @override
+  String get lcPartnersTitle => 'साथी स्नैपशॉट';
+
+  @override
+  String get lcVenusSuffix => 'शुक्र राशि';
+
+  @override
+  String get lcAttractionTitle => 'आकर्षण एवं रसायन';
+
+  @override
+  String get lcAttractionScore => 'आकर्षण स्कोर';
+
+  @override
+  String get lcActiveContacts => 'सक्रिय शुक्र संपर्क';
+
+  @override
+  String get lcEmotionalTitle => 'भावनात्मक सामंजस्य';
+
+  @override
+  String get lcEmotionalScore => 'भावनात्मक सामंजस्य स्कोर';
+
+  @override
+  String get lcNakshatraCompat => 'नक्षत्र अनुकूलता';
+
+  @override
+  String get lcYoniKoota => 'योनि कूट';
+
+  @override
+  String get lcGanaKoota => 'गण कूट';
+
+  @override
+  String get lcTaraKoota => 'तारा कूट';
+
+  @override
+  String get lcBhakootAxis => 'भकूट अक्ष';
+
+  @override
+  String get lcMentalTitle => 'मानसिक तालमेल';
+
+  @override
+  String get lcMentalScore => 'मानसिक तालमेल स्कोर';
+
+  @override
+  String get lcPassionTitle => 'जुनून एवं शारीरिक';
+
+  @override
+  String get lcPassionScore => 'जुनून स्कोर';
+
+  @override
+  String get lcLongtermTitle => 'दीर्घकालिक सामंजस्य';
+
+  @override
+  String get lcLongtermScore => 'दीर्घकालिक सामंजस्य स्कोर';
+
+  @override
+  String get lcCommitmentPotential => 'प्रतिबद्धता क्षमता';
+
+  @override
+  String get lc7thHouseSynastry => '7वां भाव सिनास्ट्री';
+
+  @override
+  String get lcJupiterBlessing => 'बृहस्पति आशीर्वाद';
+
+  @override
+  String get lcD9Resonance => 'D9 नवांश प्रतिध्वनि';
+
+  @override
+  String get lcSaturnLongevity => 'शनि दीर्घायु';
+
+  @override
+  String get lcKarmicTitle => 'कर्म प्रेम बंधन';
+
+  @override
+  String get lcKarmicScore => 'कर्म बंधन स्कोर';
+
+  @override
+  String get lcKetuContacts => 'केतु संपर्क';
+
+  @override
+  String get lcRahuContacts => 'राहु संपर्क';
+
+  @override
+  String get lcChallengesTitle => 'चुनौतियां एवं घर्षण';
+
+  @override
+  String get lcNoChallenges => 'किसी भी कुंडली में कोई महत्वपूर्ण घर्षण बिंदु नहीं मिला';
+
+  @override
+  String get lcTotalPenalty => 'कुल चुनौती दंड';
+
+  @override
+  String get lcTimingTitle => 'प्रेम समय — मूल दशा';
+
+  @override
+  String get lcDynamicsTitle => 'रिश्ते की गतिशीलता';
+
+  @override
+  String get lcPowerBalance => 'शक्ति संतुलन';
+
+  @override
+  String get lcGiverReceiver => 'भावनात्मक देने वाला/लेने वाला';
+
+  @override
+  String get lcGrowthDynamic => 'विकास गतिशीलता';
+
+  @override
+  String get lcAreasToNurture => 'पोषण करने योग्य क्षेत्र';
+
+  @override
+  String get lcTopicTiming => 'हमारे रिश्ते के लिए सर्वोत्तम समय';
+
+  @override
+  String get lcTopicChallenges => 'नेविगेट करने योग्य चुनौतियां';
+
+  @override
+  String get lcTopicKarmic => 'हमारा कर्म संबंध';
+
+  @override
+  String get lcTopicRemedies => 'अनुशंसित उपाय';
+
+  @override
+  String get lcTopicLongterm => 'हमारी दीर्घकालिक संभावना';
+
+  @override
+  String get lcTopicDynamics => 'हमारी रिश्ते की गतिशीलता';
+
+  @override
   String get cpSubtitle => 'AI-संचालित वैदिक संतान संभावना रिपोर्ट';
 
   @override

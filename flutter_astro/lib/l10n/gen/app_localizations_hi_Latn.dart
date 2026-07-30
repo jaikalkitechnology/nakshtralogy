@@ -7036,6 +7036,171 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get lcSubtitle => 'AI-powered Vedic Love Compatibility Report';
+
+  @override
+  String get lcTitle => 'Love Compatibility';
+
+  @override
+  String get lcSnapshotHeader => 'Love Compatibility Snapshot';
+
+  @override
+  String get lcGaugeAttraction => 'Attraction';
+
+  @override
+  String get lcGaugeEmotional => 'Emotional Harmony';
+
+  @override
+  String get lcGaugeMental => 'Mental Rapport';
+
+  @override
+  String get lcGaugePassion => 'Passion';
+
+  @override
+  String get lcGaugeLongterm => 'Long-Term Harmony';
+
+  @override
+  String get lcChipStrongMental => 'Strong mental connection';
+
+  @override
+  String get lcChipStrongLongterm => 'Strong long-term potential';
+
+  @override
+  String get lcChipStrongPassion => 'Strong physical chemistry';
+
+  @override
+  String get lcChipLowFriction => 'Overall low friction';
+
+  @override
+  String get lcChipKarmicPull => 'Strong karmic pull';
+
+  @override
+  String get lcPartnersTitle => 'Partner Snapshot';
+
+  @override
+  String get lcVenusSuffix => 'Venus sign';
+
+  @override
+  String get lcAttractionTitle => 'Attraction & Chemistry';
+
+  @override
+  String get lcAttractionScore => 'Attraction Score';
+
+  @override
+  String get lcActiveContacts => 'Active Venus Contacts';
+
+  @override
+  String get lcEmotionalTitle => 'Emotional Harmony';
+
+  @override
+  String get lcEmotionalScore => 'Emotional Harmony Score';
+
+  @override
+  String get lcNakshatraCompat => 'Nakshatra Compatibility';
+
+  @override
+  String get lcYoniKoota => 'Yoni Koota';
+
+  @override
+  String get lcGanaKoota => 'Gana Koota';
+
+  @override
+  String get lcTaraKoota => 'Tara Koota';
+
+  @override
+  String get lcBhakootAxis => 'Bhakoot Axis';
+
+  @override
+  String get lcMentalTitle => 'Mental Rapport';
+
+  @override
+  String get lcMentalScore => 'Mental Rapport Score';
+
+  @override
+  String get lcPassionTitle => 'Passion & Physical';
+
+  @override
+  String get lcPassionScore => 'Passion Score';
+
+  @override
+  String get lcLongtermTitle => 'Long-Term Harmony';
+
+  @override
+  String get lcLongtermScore => 'Long-Term Harmony Score';
+
+  @override
+  String get lcCommitmentPotential => 'Commitment Potential';
+
+  @override
+  String get lc7thHouseSynastry => '7th House Synastry';
+
+  @override
+  String get lcJupiterBlessing => 'Jupiter Blessing';
+
+  @override
+  String get lcD9Resonance => 'D9 Navamsa Resonance';
+
+  @override
+  String get lcSaturnLongevity => 'Saturn Longevity';
+
+  @override
+  String get lcKarmicTitle => 'Karmic Love Bond';
+
+  @override
+  String get lcKarmicScore => 'Karmic Bond Score';
+
+  @override
+  String get lcKetuContacts => 'Ketu Contacts';
+
+  @override
+  String get lcRahuContacts => 'Rahu Contacts';
+
+  @override
+  String get lcChallengesTitle => 'Challenges & Friction';
+
+  @override
+  String get lcNoChallenges => 'Kisi bhi kundli mein koi significant friction points nahi mile';
+
+  @override
+  String get lcTotalPenalty => 'Total Challenge Penalty';
+
+  @override
+  String get lcTimingTitle => 'Love Timing — Moola Dasha';
+
+  @override
+  String get lcDynamicsTitle => 'Relationship Dynamics';
+
+  @override
+  String get lcPowerBalance => 'Power Balance';
+
+  @override
+  String get lcGiverReceiver => 'Emotional Giver/Receiver';
+
+  @override
+  String get lcGrowthDynamic => 'Growth Dynamic';
+
+  @override
+  String get lcAreasToNurture => 'Areas To Nurture';
+
+  @override
+  String get lcTopicTiming => 'Hamare relationship ke liye best timing';
+
+  @override
+  String get lcTopicChallenges => 'Navigate karne wali challenges';
+
+  @override
+  String get lcTopicKarmic => 'Hamara karmic connection';
+
+  @override
+  String get lcTopicRemedies => 'Recommended remedies';
+
+  @override
+  String get lcTopicLongterm => 'Hamari long-term potential';
+
+  @override
+  String get lcTopicDynamics => 'Hamari relationship dynamics';
+
+  @override
   String get cpSubtitle => 'AI-powered Vedic Child Probability Report';
 
   @override
