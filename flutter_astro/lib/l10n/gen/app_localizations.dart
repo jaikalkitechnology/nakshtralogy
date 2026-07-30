@@ -230,6 +230,594 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @hwTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & Wellness Analysis'**
+  String get hwTitle;
+
+  /// No description provided for @hwSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Health & Wellness Report'**
+  String get hwSubtitle;
+
+  /// No description provided for @hwSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Health Snapshot'**
+  String get hwSnapshotHeader;
+
+  /// No description provided for @hwOverallVitality.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitality'**
+  String get hwOverallVitality;
+
+  /// No description provided for @hwImmunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Immunity'**
+  String get hwImmunity;
+
+  /// No description provided for @hwRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get hwRecovery;
+
+  /// No description provided for @hwMentalWellness.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Wellness'**
+  String get hwMentalWellness;
+
+  /// No description provided for @hwStressTolerance.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress Tolerance'**
+  String get hwStressTolerance;
+
+  /// No description provided for @hwStatusThriving.
+  ///
+  /// In en, this message translates to:
+  /// **'Thriving'**
+  String get hwStatusThriving;
+
+  /// No description provided for @hwStatusGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Vitality'**
+  String get hwStatusGood;
+
+  /// No description provided for @hwStatusBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get hwStatusBalanced;
+
+  /// No description provided for @hwStatusNeedsCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Care'**
+  String get hwStatusNeedsCare;
+
+  /// No description provided for @hwStatusNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Attention'**
+  String get hwStatusNeedsAttention;
+
+  /// No description provided for @hwChipImmunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Immunity'**
+  String get hwChipImmunity;
+
+  /// No description provided for @hwChipRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast Recovery'**
+  String get hwChipRecovery;
+
+  /// No description provided for @hwChipMentalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced Mind'**
+  String get hwChipMentalBalance;
+
+  /// No description provided for @hwChipStressResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress Resilient'**
+  String get hwChipStressResilience;
+
+  /// No description provided for @hwChipFertility.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility Support'**
+  String get hwChipFertility;
+
+  /// No description provided for @hwChipWorkLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Work-Life Balance'**
+  String get hwChipWorkLife;
+
+  /// No description provided for @hwChipLowAddiction.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Addiction Risk'**
+  String get hwChipLowAddiction;
+
+  /// No description provided for @hwConstitutionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Body Type'**
+  String get hwConstitutionTitle;
+
+  /// No description provided for @hwConstitutionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayurvedic constitution from your chart'**
+  String get hwConstitutionSubtitle;
+
+  /// No description provided for @hwDominantDosha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dominant'**
+  String get hwDominantDosha;
+
+  /// No description provided for @hwSecondaryDosha.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary'**
+  String get hwSecondaryDosha;
+
+  /// No description provided for @hwPrimaryKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Health Indicator'**
+  String get hwPrimaryKaraka;
+
+  /// No description provided for @hwStrongestSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Strongest System'**
+  String get hwStrongestSystem;
+
+  /// No description provided for @hwWeakestSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System to Support'**
+  String get hwWeakestSystem;
+
+  /// No description provided for @hwBodyMapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Body\'s Planetary Map'**
+  String get hwBodyMapTitle;
+
+  /// No description provided for @hwBodyMapSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'9 planets, 9 body systems'**
+  String get hwBodyMapSubtitle;
+
+  /// No description provided for @hwYogaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Patterns in Your Chart'**
+  String get hwYogaTitle;
+
+  /// No description provided for @hwYogaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Protective vs disease-pressure yogas'**
+  String get hwYogaSubtitle;
+
+  /// No description provided for @hwDiseasePressureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DISEASE PRESSURE'**
+  String get hwDiseasePressureLabel;
+
+  /// No description provided for @hwAreasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Body Areas to Watch'**
+  String get hwAreasTitle;
+
+  /// No description provided for @hwAreasSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vulnerability by body zone'**
+  String get hwAreasSubtitle;
+
+  /// No description provided for @hwProtectedAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Well-Protected Areas'**
+  String get hwProtectedAreas;
+
+  /// No description provided for @hwCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disease-Category Watch'**
+  String get hwCategoriesTitle;
+
+  /// No description provided for @hwCategoriesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Susceptibility across major health categories'**
+  String get hwCategoriesSubtitle;
+
+  /// No description provided for @hwLowRiskCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-Risk Categories'**
+  String get hwLowRiskCategories;
+
+  /// No description provided for @hwMentalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental & Emotional Wellness'**
+  String get hwMentalTitle;
+
+  /// No description provided for @hwMentalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional resilience and support needs'**
+  String get hwMentalSubtitle;
+
+  /// No description provided for @hwMentalVulnerability.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Sensitivity'**
+  String get hwMentalVulnerability;
+
+  /// No description provided for @hwEmotionalRegulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Regulation'**
+  String get hwEmotionalRegulation;
+
+  /// No description provided for @hwSupportRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Recommendation'**
+  String get hwSupportRec;
+
+  /// No description provided for @hwTendencies.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Tendencies'**
+  String get hwTendencies;
+
+  /// No description provided for @hwTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Timeline'**
+  String get hwTimelineTitle;
+
+  /// No description provided for @hwTimelineSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak years, caution years & recovery windows'**
+  String get hwTimelineSubtitle;
+
+  /// No description provided for @hwPeakYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Wellness Years'**
+  String get hwPeakYears;
+
+  /// No description provided for @hwCautionYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Caution Years'**
+  String get hwCautionYears;
+
+  /// No description provided for @hwRecoveryWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Window'**
+  String get hwRecoveryWindow;
+
+  /// No description provided for @hwCheckupYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Check-up Years'**
+  String get hwCheckupYears;
+
+  /// No description provided for @hwCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Phase'**
+  String get hwCurrentPhase;
+
+  /// No description provided for @hwLifestyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Lifestyle Guide'**
+  String get hwLifestyleTitle;
+
+  /// No description provided for @hwLifestyleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What your chart says about daily habits'**
+  String get hwLifestyleSubtitle;
+
+  /// No description provided for @hwSleepDiscipline.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Discipline Impact'**
+  String get hwSleepDiscipline;
+
+  /// No description provided for @hwDietDiscipline.
+  ///
+  /// In en, this message translates to:
+  /// **'Diet Discipline Impact'**
+  String get hwDietDiscipline;
+
+  /// No description provided for @hwExerciseNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise Need'**
+  String get hwExerciseNeed;
+
+  /// No description provided for @hwSunlightNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunlight Need'**
+  String get hwSunlightNeed;
+
+  /// No description provided for @hwStressSusceptibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress Susceptibility'**
+  String get hwStressSusceptibility;
+
+  /// No description provided for @hwHydrationSensitivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Hydration Sensitivity'**
+  String get hwHydrationSensitivity;
+
+  /// No description provided for @hwSocialType.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Energy Type'**
+  String get hwSocialType;
+
+  /// No description provided for @hwHealingSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Healing Speed'**
+  String get hwHealingSpeed;
+
+  /// No description provided for @hwTreatmentResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment Response'**
+  String get hwTreatmentResponse;
+
+  /// No description provided for @hwAltHealing.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative Healing Affinity'**
+  String get hwAltHealing;
+
+  /// No description provided for @hwSpecialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Life-Stage & Special Topics'**
+  String get hwSpecialTitle;
+
+  /// No description provided for @hwSpecialSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility, childhood health, habits & burnout'**
+  String get hwSpecialSubtitle;
+
+  /// No description provided for @hwFertility.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility Indicator'**
+  String get hwFertility;
+
+  /// No description provided for @hwHormonalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Hormonal Balance'**
+  String get hwHormonalBalance;
+
+  /// No description provided for @hwReproductiveStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Reproductive System Strength'**
+  String get hwReproductiveStrength;
+
+  /// No description provided for @hwChildhoodVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Childhood Health Vulnerability'**
+  String get hwChildhoodVuln;
+
+  /// No description provided for @hwChildhoodStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Childhood Health'**
+  String get hwChildhoodStatus;
+
+  /// No description provided for @hwAddictionVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Addiction Vulnerability'**
+  String get hwAddictionVuln;
+
+  /// No description provided for @hwAddictionRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Capacity'**
+  String get hwAddictionRecovery;
+
+  /// No description provided for @hwBurnoutVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout Vulnerability'**
+  String get hwBurnoutVuln;
+
+  /// No description provided for @hwWorkLifeBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Work-Life Balance'**
+  String get hwWorkLifeBalance;
+
+  /// No description provided for @hwStressTriggers.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress Triggers'**
+  String get hwStressTriggers;
+
+  /// No description provided for @hwProtectiveFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Protective Factors'**
+  String get hwProtectiveFactors;
+
+  /// No description provided for @hwChallengesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges to Watch'**
+  String get hwChallengesTitle;
+
+  /// No description provided for @hwChallengesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to focus preventive care'**
+  String get hwChallengesSubtitle;
+
+  /// No description provided for @hwMitigation.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Manage'**
+  String get hwMitigation;
+
+  /// No description provided for @hwChronicAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Vulnerability Areas'**
+  String get hwChronicAreas;
+
+  /// No description provided for @hwPreventivePriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Preventive Priorities'**
+  String get hwPreventivePriorities;
+
+  /// No description provided for @hwImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Wellness Plan'**
+  String get hwImprovementTitle;
+
+  /// No description provided for @hwImprovementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practical steps + traditional remedies'**
+  String get hwImprovementSubtitle;
+
+  /// No description provided for @hwReliabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Reliability'**
+  String get hwReliabilityTitle;
+
+  /// No description provided for @hwLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get hwLayerD1;
+
+  /// No description provided for @hwLayerD6.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Chart (D6)'**
+  String get hwLayerD6;
+
+  /// No description provided for @hwLayerD30.
+  ///
+  /// In en, this message translates to:
+  /// **'Micro-Health Chart (D30)'**
+  String get hwLayerD30;
+
+  /// No description provided for @hwLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary Timing'**
+  String get hwLayerDasha;
+
+  /// No description provided for @hwLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transits'**
+  String get hwLayerTransit;
+
+  /// No description provided for @hwDisclaimerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical Disclaimer'**
+  String get hwDisclaimerLabel;
+
+  /// No description provided for @hwTopicImmunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Boost Immunity'**
+  String get hwTopicImmunity;
+
+  /// No description provided for @hwTopicSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep & Rest'**
+  String get hwTopicSleep;
+
+  /// No description provided for @hwTopicStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Stress'**
+  String get hwTopicStress;
+
+  /// No description provided for @hwTopicFertility.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertility Timing'**
+  String get hwTopicFertility;
+
+  /// No description provided for @hwTopicDiet.
+  ///
+  /// In en, this message translates to:
+  /// **'Diet & Nutrition'**
+  String get hwTopicDiet;
+
+  /// No description provided for @hwTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Timing Windows'**
+  String get hwTopicTiming;
+
+  /// No description provided for @hwTopicMental.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Wellbeing'**
+  String get hwTopicMental;
+
+  /// No description provided for @hwTopicPrevention.
+  ///
+  /// In en, this message translates to:
+  /// **'Preventive Care Plan'**
+  String get hwTopicPrevention;
+
   /// No description provided for @lvSubtitle.
   ///
   /// In en, this message translates to:

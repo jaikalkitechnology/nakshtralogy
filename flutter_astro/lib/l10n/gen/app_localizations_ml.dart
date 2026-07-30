@@ -4327,6 +4327,300 @@ class AppLocalizationsMl extends AppLocalizations {
   String get forgotPassword => 'പാസ്‌വേഡ് മറന്നോ?';
 
   @override
+  String get hwTitle => 'Health & Wellness Analysis';
+
+  @override
+  String get hwSubtitle => 'AI-powered Vedic Health & Wellness Report';
+
+  @override
+  String get hwSnapshotHeader => 'Your Health Snapshot';
+
+  @override
+  String get hwOverallVitality => 'Vitality';
+
+  @override
+  String get hwImmunity => 'Immunity';
+
+  @override
+  String get hwRecovery => 'Recovery';
+
+  @override
+  String get hwMentalWellness => 'Mental Wellness';
+
+  @override
+  String get hwStressTolerance => 'Stress Tolerance';
+
+  @override
+  String get hwStatusThriving => 'Thriving';
+
+  @override
+  String get hwStatusGood => 'Good Vitality';
+
+  @override
+  String get hwStatusBalanced => 'Balanced';
+
+  @override
+  String get hwStatusNeedsCare => 'Needs Care';
+
+  @override
+  String get hwStatusNeedsAttention => 'Needs Attention';
+
+  @override
+  String get hwChipImmunity => 'Strong Immunity';
+
+  @override
+  String get hwChipRecovery => 'Fast Recovery';
+
+  @override
+  String get hwChipMentalBalance => 'Balanced Mind';
+
+  @override
+  String get hwChipStressResilience => 'Stress Resilient';
+
+  @override
+  String get hwChipFertility => 'Fertility Support';
+
+  @override
+  String get hwChipWorkLife => 'Good Work-Life Balance';
+
+  @override
+  String get hwChipLowAddiction => 'Low Addiction Risk';
+
+  @override
+  String get hwConstitutionTitle => 'Your Body Type';
+
+  @override
+  String get hwConstitutionSubtitle => 'Ayurvedic constitution from your chart';
+
+  @override
+  String get hwDominantDosha => 'Dominant';
+
+  @override
+  String get hwSecondaryDosha => 'Secondary';
+
+  @override
+  String get hwPrimaryKaraka => 'Main Health Indicator';
+
+  @override
+  String get hwStrongestSystem => 'Strongest System';
+
+  @override
+  String get hwWeakestSystem => 'System to Support';
+
+  @override
+  String get hwBodyMapTitle => 'Your Body\'s Planetary Map';
+
+  @override
+  String get hwBodyMapSubtitle => '9 planets, 9 body systems';
+
+  @override
+  String get hwYogaTitle => 'Health Patterns in Your Chart';
+
+  @override
+  String get hwYogaSubtitle => 'Protective vs disease-pressure yogas';
+
+  @override
+  String get hwDiseasePressureLabel => 'DISEASE PRESSURE';
+
+  @override
+  String get hwAreasTitle => 'Body Areas to Watch';
+
+  @override
+  String get hwAreasSubtitle => 'Vulnerability by body zone';
+
+  @override
+  String get hwProtectedAreas => 'Well-Protected Areas';
+
+  @override
+  String get hwCategoriesTitle => 'Disease-Category Watch';
+
+  @override
+  String get hwCategoriesSubtitle => 'Susceptibility across major health categories';
+
+  @override
+  String get hwLowRiskCategories => 'Low-Risk Categories';
+
+  @override
+  String get hwMentalTitle => 'Mental & Emotional Wellness';
+
+  @override
+  String get hwMentalSubtitle => 'Emotional resilience and support needs';
+
+  @override
+  String get hwMentalVulnerability => 'Emotional Sensitivity';
+
+  @override
+  String get hwEmotionalRegulation => 'Emotional Regulation';
+
+  @override
+  String get hwSupportRec => 'Support Recommendation';
+
+  @override
+  String get hwTendencies => 'Mental Tendencies';
+
+  @override
+  String get hwTimelineTitle => 'Health Timeline';
+
+  @override
+  String get hwTimelineSubtitle => 'Peak years, caution years & recovery windows';
+
+  @override
+  String get hwPeakYears => 'Peak Wellness Years';
+
+  @override
+  String get hwCautionYears => 'Caution Years';
+
+  @override
+  String get hwRecoveryWindow => 'Recovery Window';
+
+  @override
+  String get hwCheckupYears => 'Recommended Check-up Years';
+
+  @override
+  String get hwCurrentPhase => 'Current Phase';
+
+  @override
+  String get hwLifestyleTitle => 'Your Lifestyle Guide';
+
+  @override
+  String get hwLifestyleSubtitle => 'What your chart says about daily habits';
+
+  @override
+  String get hwSleepDiscipline => 'Sleep Discipline Impact';
+
+  @override
+  String get hwDietDiscipline => 'Diet Discipline Impact';
+
+  @override
+  String get hwExerciseNeed => 'Exercise Need';
+
+  @override
+  String get hwSunlightNeed => 'Sunlight Need';
+
+  @override
+  String get hwStressSusceptibility => 'Stress Susceptibility';
+
+  @override
+  String get hwHydrationSensitivity => 'Hydration Sensitivity';
+
+  @override
+  String get hwSocialType => 'Social Energy Type';
+
+  @override
+  String get hwHealingSpeed => 'Healing Speed';
+
+  @override
+  String get hwTreatmentResponse => 'Treatment Response';
+
+  @override
+  String get hwAltHealing => 'Alternative Healing Affinity';
+
+  @override
+  String get hwSpecialTitle => 'Life-Stage & Special Topics';
+
+  @override
+  String get hwSpecialSubtitle => 'Fertility, childhood health, habits & burnout';
+
+  @override
+  String get hwFertility => 'Fertility Indicator';
+
+  @override
+  String get hwHormonalBalance => 'Hormonal Balance';
+
+  @override
+  String get hwReproductiveStrength => 'Reproductive System Strength';
+
+  @override
+  String get hwChildhoodVuln => 'Childhood Health Vulnerability';
+
+  @override
+  String get hwChildhoodStatus => 'Childhood Health';
+
+  @override
+  String get hwAddictionVuln => 'Addiction Vulnerability';
+
+  @override
+  String get hwAddictionRecovery => 'Recovery Capacity';
+
+  @override
+  String get hwBurnoutVuln => 'Burnout Vulnerability';
+
+  @override
+  String get hwWorkLifeBalance => 'Work-Life Balance';
+
+  @override
+  String get hwStressTriggers => 'Stress Triggers';
+
+  @override
+  String get hwProtectiveFactors => 'Protective Factors';
+
+  @override
+  String get hwChallengesTitle => 'Challenges to Watch';
+
+  @override
+  String get hwChallengesSubtitle => 'Where to focus preventive care';
+
+  @override
+  String get hwMitigation => 'How to Manage';
+
+  @override
+  String get hwChronicAreas => 'Chronic Vulnerability Areas';
+
+  @override
+  String get hwPreventivePriorities => 'Preventive Priorities';
+
+  @override
+  String get hwImprovementTitle => 'Your Wellness Plan';
+
+  @override
+  String get hwImprovementSubtitle => 'Practical steps + traditional remedies';
+
+  @override
+  String get hwReliabilityTitle => 'Reading Reliability';
+
+  @override
+  String get hwLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get hwLayerD6 => 'Health Chart (D6)';
+
+  @override
+  String get hwLayerD30 => 'Micro-Health Chart (D30)';
+
+  @override
+  String get hwLayerDasha => 'Planetary Timing';
+
+  @override
+  String get hwLayerTransit => 'Current Transits';
+
+  @override
+  String get hwDisclaimerLabel => 'Medical Disclaimer';
+
+  @override
+  String get hwTopicImmunity => 'Boost Immunity';
+
+  @override
+  String get hwTopicSleep => 'Sleep & Rest';
+
+  @override
+  String get hwTopicStress => 'Manage Stress';
+
+  @override
+  String get hwTopicFertility => 'Fertility Timing';
+
+  @override
+  String get hwTopicDiet => 'Diet & Nutrition';
+
+  @override
+  String get hwTopicTiming => 'Health Timing Windows';
+
+  @override
+  String get hwTopicMental => 'Mental Wellbeing';
+
+  @override
+  String get hwTopicPrevention => 'Preventive Care Plan';
+
+  @override
   String get lvSubtitle => 'AI-powered Vedic Love Report';
 
   @override

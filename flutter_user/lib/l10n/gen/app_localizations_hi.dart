@@ -5452,6 +5452,300 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get hwTitle => 'स्वास्थ्य और कल्याण विश्लेषण';
+
+  @override
+  String get hwSubtitle => 'AI-संचालित वैदिक स्वास्थ्य और कल्याण रिपोर्ट';
+
+  @override
+  String get hwSnapshotHeader => 'आपकी स्वास्थ्य झलक';
+
+  @override
+  String get hwOverallVitality => 'जीवनशक्ति';
+
+  @override
+  String get hwImmunity => 'रोग प्रतिरोधक क्षमता';
+
+  @override
+  String get hwRecovery => 'स्वास्थ्य लाभ';
+
+  @override
+  String get hwMentalWellness => 'मानसिक स्वास्थ्य';
+
+  @override
+  String get hwStressTolerance => 'तनाव सहनशीलता';
+
+  @override
+  String get hwStatusThriving => 'बहुत अच्छा';
+
+  @override
+  String get hwStatusGood => 'अच्छी जीवनशक्ति';
+
+  @override
+  String get hwStatusBalanced => 'संतुलित';
+
+  @override
+  String get hwStatusNeedsCare => 'देखभाल चाहिए';
+
+  @override
+  String get hwStatusNeedsAttention => 'ध्यान देने की आवश्यकता है';
+
+  @override
+  String get hwChipImmunity => 'मजबूत प्रतिरोधक क्षमता';
+
+  @override
+  String get hwChipRecovery => 'तेज़ रिकवरी';
+
+  @override
+  String get hwChipMentalBalance => 'संतुलित मन';
+
+  @override
+  String get hwChipStressResilience => 'तनाव-सहनशील';
+
+  @override
+  String get hwChipFertility => 'प्रजनन सहयोग';
+
+  @override
+  String get hwChipWorkLife => 'अच्छा वर्क-लाइफ बैलेंस';
+
+  @override
+  String get hwChipLowAddiction => 'कम व्यसन जोखिम';
+
+  @override
+  String get hwConstitutionTitle => 'आपका शरीर प्रकार';
+
+  @override
+  String get hwConstitutionSubtitle => 'आपकी कुंडली से आयुर्वेदिक प्रकृति';
+
+  @override
+  String get hwDominantDosha => 'प्रमुख दोष';
+
+  @override
+  String get hwSecondaryDosha => 'द्वितीयक दोष';
+
+  @override
+  String get hwPrimaryKaraka => 'मुख्य स्वास्थ्य कारक';
+
+  @override
+  String get hwStrongestSystem => 'सबसे मजबूत तंत्र';
+
+  @override
+  String get hwWeakestSystem => 'सहयोग देने वाला तंत्र';
+
+  @override
+  String get hwBodyMapTitle => 'आपके शरीर का ग्रह-मानचित्र';
+
+  @override
+  String get hwBodyMapSubtitle => '9 ग्रह, 9 शरीर तंत्र';
+
+  @override
+  String get hwYogaTitle => 'आपकी कुंडली के स्वास्थ्य पैटर्न';
+
+  @override
+  String get hwYogaSubtitle => 'सुरक्षात्मक बनाम रोग-दबाव योग';
+
+  @override
+  String get hwDiseasePressureLabel => 'रोग दबाव';
+
+  @override
+  String get hwAreasTitle => 'ध्यान देने योग्य शरीर के अंग';
+
+  @override
+  String get hwAreasSubtitle => 'शरीर के हिस्सों के अनुसार संवेदनशीलता';
+
+  @override
+  String get hwProtectedAreas => 'सुरक्षित क्षेत्र';
+
+  @override
+  String get hwCategoriesTitle => 'रोग-श्रेणी निगरानी';
+
+  @override
+  String get hwCategoriesSubtitle => 'प्रमुख स्वास्थ्य श्रेणियों में संवेदनशीलता';
+
+  @override
+  String get hwLowRiskCategories => 'कम जोखिम वाली श्रेणियां';
+
+  @override
+  String get hwMentalTitle => 'मानसिक और भावनात्मक स्वास्थ्य';
+
+  @override
+  String get hwMentalSubtitle => 'भावनात्मक लचीलापन और सहयोग की आवश्यकता';
+
+  @override
+  String get hwMentalVulnerability => 'भावनात्मक संवेदनशीलता';
+
+  @override
+  String get hwEmotionalRegulation => 'भावनात्मक नियंत्रण';
+
+  @override
+  String get hwSupportRec => 'सहयोग सुझाव';
+
+  @override
+  String get hwTendencies => 'मानसिक प्रवृत्तियां';
+
+  @override
+  String get hwTimelineTitle => 'स्वास्थ्य समयरेखा';
+
+  @override
+  String get hwTimelineSubtitle => 'उत्तम वर्ष, सावधानी वर्ष और रिकवरी अवधि';
+
+  @override
+  String get hwPeakYears => 'उत्तम स्वास्थ्य वर्ष';
+
+  @override
+  String get hwCautionYears => 'सावधानी वाले वर्ष';
+
+  @override
+  String get hwRecoveryWindow => 'रिकवरी अवधि';
+
+  @override
+  String get hwCheckupYears => 'सुझाई गई जांच के वर्ष';
+
+  @override
+  String get hwCurrentPhase => 'वर्तमान चरण';
+
+  @override
+  String get hwLifestyleTitle => 'आपकी जीवनशैली गाइड';
+
+  @override
+  String get hwLifestyleSubtitle => 'आपकी कुंडली दैनिक आदतों के बारे में क्या कहती है';
+
+  @override
+  String get hwSleepDiscipline => 'नींद अनुशासन प्रभाव';
+
+  @override
+  String get hwDietDiscipline => 'आहार अनुशासन प्रभाव';
+
+  @override
+  String get hwExerciseNeed => 'व्यायाम की आवश्यकता';
+
+  @override
+  String get hwSunlightNeed => 'धूप की आवश्यकता';
+
+  @override
+  String get hwStressSusceptibility => 'तनाव संवेदनशीलता';
+
+  @override
+  String get hwHydrationSensitivity => 'जलयोजन संवेदनशीलता';
+
+  @override
+  String get hwSocialType => 'सामाजिक ऊर्जा प्रकार';
+
+  @override
+  String get hwHealingSpeed => 'उपचार गति';
+
+  @override
+  String get hwTreatmentResponse => 'उपचार प्रतिक्रिया';
+
+  @override
+  String get hwAltHealing => 'वैकल्पिक चिकित्सा रुझान';
+
+  @override
+  String get hwSpecialTitle => 'जीवन-चरण और विशेष विषय';
+
+  @override
+  String get hwSpecialSubtitle => 'प्रजनन, बचपन का स्वास्थ्य, आदतें और बर्नआउट';
+
+  @override
+  String get hwFertility => 'प्रजनन संकेतक';
+
+  @override
+  String get hwHormonalBalance => 'हार्मोन संतुलन';
+
+  @override
+  String get hwReproductiveStrength => 'प्रजनन तंत्र शक्ति';
+
+  @override
+  String get hwChildhoodVuln => 'बचपन स्वास्थ्य संवेदनशीलता';
+
+  @override
+  String get hwChildhoodStatus => 'बचपन का स्वास्थ्य';
+
+  @override
+  String get hwAddictionVuln => 'व्यसन संवेदनशीलता';
+
+  @override
+  String get hwAddictionRecovery => 'रिकवरी क्षमता';
+
+  @override
+  String get hwBurnoutVuln => 'बर्नआउट संवेदनशीलता';
+
+  @override
+  String get hwWorkLifeBalance => 'वर्क-लाइफ बैलेंस';
+
+  @override
+  String get hwStressTriggers => 'तनाव के कारण';
+
+  @override
+  String get hwProtectiveFactors => 'सुरक्षात्मक कारक';
+
+  @override
+  String get hwChallengesTitle => 'ध्यान देने योग्य चुनौतियां';
+
+  @override
+  String get hwChallengesSubtitle => 'निवारक देखभाल कहां केंद्रित करें';
+
+  @override
+  String get hwMitigation => 'कैसे प्रबंधित करें';
+
+  @override
+  String get hwChronicAreas => 'दीर्घकालिक संवेदनशील क्षेत्र';
+
+  @override
+  String get hwPreventivePriorities => 'निवारक प्राथमिकताएं';
+
+  @override
+  String get hwImprovementTitle => 'आपकी वेलनेस योजना';
+
+  @override
+  String get hwImprovementSubtitle => 'व्यावहारिक कदम + पारंपरिक उपाय';
+
+  @override
+  String get hwReliabilityTitle => 'रीडिंग विश्वसनीयता';
+
+  @override
+  String get hwLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get hwLayerD6 => 'स्वास्थ्य कुंडली (D6)';
+
+  @override
+  String get hwLayerD30 => 'सूक्ष्म-स्वास्थ्य कुंडली (D30)';
+
+  @override
+  String get hwLayerDasha => 'ग्रह समय';
+
+  @override
+  String get hwLayerTransit => 'वर्तमान गोचर';
+
+  @override
+  String get hwDisclaimerLabel => 'चिकित्सा अस्वीकरण';
+
+  @override
+  String get hwTopicImmunity => 'प्रतिरोधक क्षमता बढ़ाएं';
+
+  @override
+  String get hwTopicSleep => 'नींद और आराम';
+
+  @override
+  String get hwTopicStress => 'तनाव प्रबंधन';
+
+  @override
+  String get hwTopicFertility => 'प्रजनन समय';
+
+  @override
+  String get hwTopicDiet => 'आहार और पोषण';
+
+  @override
+  String get hwTopicTiming => 'स्वास्थ्य समय अवधि';
+
+  @override
+  String get hwTopicMental => 'मानसिक स्वास्थ्य';
+
+  @override
+  String get hwTopicPrevention => 'निवारक देखभाल योजना';
+
+  @override
   String get lvSubtitle => 'AI-संचालित वैदिक प्रेम रिपोर्ट';
 
   @override

@@ -1,0 +1,296 @@
+{
+ "hwTitle": {
+  "en": "Health & Wellness Analysis"
+ },
+ "hwSubtitle": {
+  "en": "AI-powered Vedic Health & Wellness Report"
+ },
+ "hwSnapshotHeader": {
+  "en": "Your Health Snapshot"
+ },
+ "hwOverallVitality": {
+  "en": "Vitality"
+ },
+ "hwImmunity": {
+  "en": "Immunity"
+ },
+ "hwRecovery": {
+  "en": "Recovery"
+ },
+ "hwMentalWellness": {
+  "en": "Mental Wellness"
+ },
+ "hwStressTolerance": {
+  "en": "Stress Tolerance"
+ },
+ "hwStatusThriving": {
+  "en": "Thriving"
+ },
+ "hwStatusGood": {
+  "en": "Good Vitality"
+ },
+ "hwStatusBalanced": {
+  "en": "Balanced"
+ },
+ "hwStatusNeedsCare": {
+  "en": "Needs Care"
+ },
+ "hwStatusNeedsAttention": {
+  "en": "Needs Attention"
+ },
+ "hwChipImmunity": {
+  "en": "Strong Immunity"
+ },
+ "hwChipRecovery": {
+  "en": "Fast Recovery"
+ },
+ "hwChipMentalBalance": {
+  "en": "Balanced Mind"
+ },
+ "hwChipStressResilience": {
+  "en": "Stress Resilient"
+ },
+ "hwChipFertility": {
+  "en": "Fertility Support"
+ },
+ "hwChipWorkLife": {
+  "en": "Good Work-Life Balance"
+ },
+ "hwChipLowAddiction": {
+  "en": "Low Addiction Risk"
+ },
+ "hwConstitutionTitle": {
+  "en": "Your Body Type"
+ },
+ "hwConstitutionSubtitle": {
+  "en": "Ayurvedic constitution from your chart"
+ },
+ "hwDominantDosha": {
+  "en": "Dominant"
+ },
+ "hwSecondaryDosha": {
+  "en": "Secondary"
+ },
+ "hwPrimaryKaraka": {
+  "en": "Main Health Indicator"
+ },
+ "hwStrongestSystem": {
+  "en": "Strongest System"
+ },
+ "hwWeakestSystem": {
+  "en": "System to Support"
+ },
+ "hwBodyMapTitle": {
+  "en": "Your Body's Planetary Map"
+ },
+ "hwBodyMapSubtitle": {
+  "en": "9 planets, 9 body systems"
+ },
+ "hwYogaTitle": {
+  "en": "Health Patterns in Your Chart"
+ },
+ "hwYogaSubtitle": {
+  "en": "Protective vs disease-pressure yogas"
+ },
+ "hwDiseasePressureLabel": {
+  "en": "DISEASE PRESSURE"
+ },
+ "hwAreasTitle": {
+  "en": "Body Areas to Watch"
+ },
+ "hwAreasSubtitle": {
+  "en": "Vulnerability by body zone"
+ },
+ "hwProtectedAreas": {
+  "en": "Well-Protected Areas"
+ },
+ "hwCategoriesTitle": {
+  "en": "Disease-Category Watch"
+ },
+ "hwCategoriesSubtitle": {
+  "en": "Susceptibility across major health categories"
+ },
+ "hwLowRiskCategories": {
+  "en": "Low-Risk Categories"
+ },
+ "hwMentalTitle": {
+  "en": "Mental & Emotional Wellness"
+ },
+ "hwMentalSubtitle": {
+  "en": "Emotional resilience and support needs"
+ },
+ "hwMentalVulnerability": {
+  "en": "Emotional Sensitivity"
+ },
+ "hwEmotionalRegulation": {
+  "en": "Emotional Regulation"
+ },
+ "hwSupportRec": {
+  "en": "Support Recommendation"
+ },
+ "hwTendencies": {
+  "en": "Mental Tendencies"
+ },
+ "hwTimelineTitle": {
+  "en": "Health Timeline"
+ },
+ "hwTimelineSubtitle": {
+  "en": "Peak years, caution years & recovery windows"
+ },
+ "hwPeakYears": {
+  "en": "Peak Wellness Years"
+ },
+ "hwCautionYears": {
+  "en": "Caution Years"
+ },
+ "hwRecoveryWindow": {
+  "en": "Recovery Window"
+ },
+ "hwCheckupYears": {
+  "en": "Recommended Check-up Years"
+ },
+ "hwCurrentPhase": {
+  "en": "Current Phase"
+ },
+ "hwLifestyleTitle": {
+  "en": "Your Lifestyle Guide"
+ },
+ "hwLifestyleSubtitle": {
+  "en": "What your chart says about daily habits"
+ },
+ "hwSleepDiscipline": {
+  "en": "Sleep Discipline Impact"
+ },
+ "hwDietDiscipline": {
+  "en": "Diet Discipline Impact"
+ },
+ "hwExerciseNeed": {
+  "en": "Exercise Need"
+ },
+ "hwSunlightNeed": {
+  "en": "Sunlight Need"
+ },
+ "hwStressSusceptibility": {
+  "en": "Stress Susceptibility"
+ },
+ "hwHydrationSensitivity": {
+  "en": "Hydration Sensitivity"
+ },
+ "hwSocialType": {
+  "en": "Social Energy Type"
+ },
+ "hwHealingSpeed": {
+  "en": "Healing Speed"
+ },
+ "hwTreatmentResponse": {
+  "en": "Treatment Response"
+ },
+ "hwAltHealing": {
+  "en": "Alternative Healing Affinity"
+ },
+ "hwSpecialTitle": {
+  "en": "Life-Stage & Special Topics"
+ },
+ "hwSpecialSubtitle": {
+  "en": "Fertility, childhood health, habits & burnout"
+ },
+ "hwFertility": {
+  "en": "Fertility Indicator"
+ },
+ "hwHormonalBalance": {
+  "en": "Hormonal Balance"
+ },
+ "hwReproductiveStrength": {
+  "en": "Reproductive System Strength"
+ },
+ "hwChildhoodVuln": {
+  "en": "Childhood Health Vulnerability"
+ },
+ "hwChildhoodStatus": {
+  "en": "Childhood Health"
+ },
+ "hwAddictionVuln": {
+  "en": "Addiction Vulnerability"
+ },
+ "hwAddictionRecovery": {
+  "en": "Recovery Capacity"
+ },
+ "hwBurnoutVuln": {
+  "en": "Burnout Vulnerability"
+ },
+ "hwWorkLifeBalance": {
+  "en": "Work-Life Balance"
+ },
+ "hwStressTriggers": {
+  "en": "Stress Triggers"
+ },
+ "hwProtectiveFactors": {
+  "en": "Protective Factors"
+ },
+ "hwChallengesTitle": {
+  "en": "Challenges to Watch"
+ },
+ "hwChallengesSubtitle": {
+  "en": "Where to focus preventive care"
+ },
+ "hwMitigation": {
+  "en": "How to Manage"
+ },
+ "hwChronicAreas": {
+  "en": "Chronic Vulnerability Areas"
+ },
+ "hwPreventivePriorities": {
+  "en": "Preventive Priorities"
+ },
+ "hwImprovementTitle": {
+  "en": "Your Wellness Plan"
+ },
+ "hwImprovementSubtitle": {
+  "en": "Practical steps + traditional remedies"
+ },
+ "hwReliabilityTitle": {
+  "en": "Reading Reliability"
+ },
+ "hwLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "hwLayerD6": {
+  "en": "Health Chart (D6)"
+ },
+ "hwLayerD30": {
+  "en": "Micro-Health Chart (D30)"
+ },
+ "hwLayerDasha": {
+  "en": "Planetary Timing"
+ },
+ "hwLayerTransit": {
+  "en": "Current Transits"
+ },
+ "hwDisclaimerLabel": {
+  "en": "Medical Disclaimer"
+ },
+ "hwTopicImmunity": {
+  "en": "Boost Immunity"
+ },
+ "hwTopicSleep": {
+  "en": "Sleep & Rest"
+ },
+ "hwTopicStress": {
+  "en": "Manage Stress"
+ },
+ "hwTopicFertility": {
+  "en": "Fertility Timing"
+ },
+ "hwTopicDiet": {
+  "en": "Diet & Nutrition"
+ },
+ "hwTopicTiming": {
+  "en": "Health Timing Windows"
+ },
+ "hwTopicMental": {
+  "en": "Mental Wellbeing"
+ },
+ "hwTopicPrevention": {
+  "en": "Preventive Care Plan"
+ }
+}
