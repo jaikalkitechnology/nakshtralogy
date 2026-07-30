@@ -230,6 +230,516 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @lvSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Love Report'**
+  String get lvSubtitle;
+
+  /// No description provided for @lvTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Love & Relationships'**
+  String get lvTitle;
+
+  /// No description provided for @lvLovePotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Potential'**
+  String get lvLovePotential;
+
+  /// No description provided for @lvEmotionalAvail.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotionally Open'**
+  String get lvEmotionalAvail;
+
+  /// No description provided for @lvAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction'**
+  String get lvAttraction;
+
+  /// No description provided for @lvCommitment.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment'**
+  String get lvCommitment;
+
+  /// No description provided for @lvCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get lvCommunication;
+
+  /// No description provided for @lvFidelity.
+  ///
+  /// In en, this message translates to:
+  /// **'Loyalty'**
+  String get lvFidelity;
+
+  /// No description provided for @lvChipLoyal.
+  ///
+  /// In en, this message translates to:
+  /// **'Loyal heart'**
+  String get lvChipLoyal;
+
+  /// No description provided for @lvChipOpenHeart.
+  ///
+  /// In en, this message translates to:
+  /// **'Open-hearted'**
+  String get lvChipOpenHeart;
+
+  /// No description provided for @lvChipCommunicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Great communicator'**
+  String get lvChipCommunicator;
+
+  /// No description provided for @lvChipMature.
+  ///
+  /// In en, this message translates to:
+  /// **'Handles conflict well'**
+  String get lvChipMature;
+
+  /// No description provided for @lvChipEmotionallyWise.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotionally wise'**
+  String get lvChipEmotionallyWise;
+
+  /// No description provided for @lvLoveStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Love Style'**
+  String get lvLoveStyle;
+
+  /// No description provided for @lvAttractionStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction style'**
+  String get lvAttractionStyle;
+
+  /// No description provided for @lvLangGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'You Express Love By'**
+  String get lvLangGiven;
+
+  /// No description provided for @lvLangReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'You Feel Loved By'**
+  String get lvLangReceived;
+
+  /// No description provided for @lvLovePlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Love Planets'**
+  String get lvLovePlanets;
+
+  /// No description provided for @lvLoveKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Love'**
+  String get lvLoveKaraka;
+
+  /// No description provided for @lvEmotionKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotion'**
+  String get lvEmotionKaraka;
+
+  /// No description provided for @lvPassionKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Passion'**
+  String get lvPassionKaraka;
+
+  /// No description provided for @lvPathToLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Path to Love'**
+  String get lvPathToLove;
+
+  /// No description provided for @lvPathSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Love vs arranged'**
+  String get lvPathSub;
+
+  /// No description provided for @lvLoveMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Marriage'**
+  String get lvLoveMarriage;
+
+  /// No description provided for @lvArrangedMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Arranged Marriage'**
+  String get lvArrangedMarriage;
+
+  /// No description provided for @lvParentalAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Parental Acceptance'**
+  String get lvParentalAccept;
+
+  /// No description provided for @lvInterCaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Inter-caste / Religion'**
+  String get lvInterCaste;
+
+  /// No description provided for @lvIdealPartner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Ideal Partner'**
+  String get lvIdealPartner;
+
+  /// No description provided for @lvPersonality.
+  ///
+  /// In en, this message translates to:
+  /// **'Personality'**
+  String get lvPersonality;
+
+  /// No description provided for @lvAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get lvAppearance;
+
+  /// No description provided for @lvIdealTraits.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal Traits'**
+  String get lvIdealTraits;
+
+  /// No description provided for @lvWhatMatters.
+  ///
+  /// In en, this message translates to:
+  /// **'What Matters Most'**
+  String get lvWhatMatters;
+
+  /// No description provided for @lvDrawnTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawn to'**
+  String get lvDrawnTo;
+
+  /// No description provided for @lvDealbreakers.
+  ///
+  /// In en, this message translates to:
+  /// **'Dealbreakers'**
+  String get lvDealbreakers;
+
+  /// No description provided for @lvYourAppeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Your appeal'**
+  String get lvYourAppeal;
+
+  /// No description provided for @lvLoveStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Love Story'**
+  String get lvLoveStory;
+
+  /// No description provided for @lvLoveStorySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship patterns'**
+  String get lvLoveStorySub;
+
+  /// No description provided for @lvFirstLove.
+  ///
+  /// In en, this message translates to:
+  /// **'First Love'**
+  String get lvFirstLove;
+
+  /// No description provided for @lvRelationCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Significant Bonds'**
+  String get lvRelationCount;
+
+  /// No description provided for @lvDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Typical Duration'**
+  String get lvDuration;
+
+  /// No description provided for @lvDepth.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Depth'**
+  String get lvDepth;
+
+  /// No description provided for @lvDatingPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Dating Pattern'**
+  String get lvDatingPattern;
+
+  /// No description provided for @lvCommitIntimacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment & Intimacy'**
+  String get lvCommitIntimacy;
+
+  /// No description provided for @lvCommitReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment Readiness'**
+  String get lvCommitReady;
+
+  /// No description provided for @lvIntimacyDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'Intimacy Drive'**
+  String get lvIntimacyDrive;
+
+  /// No description provided for @lvSensuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensuality'**
+  String get lvSensuality;
+
+  /// No description provided for @lvEmpathy.
+  ///
+  /// In en, this message translates to:
+  /// **'Empathy'**
+  String get lvEmpathy;
+
+  /// No description provided for @lvCommitStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment Style'**
+  String get lvCommitStyle;
+
+  /// No description provided for @lvChemistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemistry Style'**
+  String get lvChemistry;
+
+  /// No description provided for @lvMakesCommit.
+  ///
+  /// In en, this message translates to:
+  /// **'What Makes You Commit'**
+  String get lvMakesCommit;
+
+  /// No description provided for @lvMakesFlee.
+  ///
+  /// In en, this message translates to:
+  /// **'What Pushes You Away'**
+  String get lvMakesFlee;
+
+  /// No description provided for @lvEmotional.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Intelligence'**
+  String get lvEmotional;
+
+  /// No description provided for @lvEmotionalIQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional IQ'**
+  String get lvEmotionalIQ;
+
+  /// No description provided for @lvConflictStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict Style'**
+  String get lvConflictStyle;
+
+  /// No description provided for @lvTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Timing'**
+  String get lvTiming;
+
+  /// No description provided for @lvNewLove12.
+  ///
+  /// In en, this message translates to:
+  /// **'New love in 12 months'**
+  String get lvNewLove12;
+
+  /// No description provided for @lvEnergyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy now'**
+  String get lvEnergyNow;
+
+  /// No description provided for @lvPhaseNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase now'**
+  String get lvPhaseNow;
+
+  /// No description provided for @lvPeakRomance.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Romance Years'**
+  String get lvPeakRomance;
+
+  /// No description provided for @lvNewLoveWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'New Love Window'**
+  String get lvNewLoveWindow;
+
+  /// No description provided for @lvChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges to Watch'**
+  String get lvChallenges;
+
+  /// No description provided for @lvRiskHeartbreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Heartbreak Vulnerability'**
+  String get lvRiskHeartbreak;
+
+  /// No description provided for @lvRiskSabotage.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-sabotage'**
+  String get lvRiskSabotage;
+
+  /// No description provided for @lvRiskCommitFear.
+  ///
+  /// In en, this message translates to:
+  /// **'Fear of Commitment'**
+  String get lvRiskCommitFear;
+
+  /// No description provided for @lvRiskRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat Patterns'**
+  String get lvRiskRepeat;
+
+  /// No description provided for @lvRiskWorkaholic.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Over Love'**
+  String get lvRiskWorkaholic;
+
+  /// No description provided for @lvRedFlags.
+  ///
+  /// In en, this message translates to:
+  /// **'Red flags to watch'**
+  String get lvRedFlags;
+
+  /// No description provided for @lvHealing.
+  ///
+  /// In en, this message translates to:
+  /// **'What to Heal'**
+  String get lvHealing;
+
+  /// No description provided for @lvFocusArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Area'**
+  String get lvFocusArea;
+
+  /// No description provided for @lvHealDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Healing direction'**
+  String get lvHealDir;
+
+  /// No description provided for @lvImprovementPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get lvImprovementPlan;
+
+  /// No description provided for @lvReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Reliability'**
+  String get lvReliability;
+
+  /// No description provided for @lvLayerBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get lvLayerBirth;
+
+  /// No description provided for @lvLayerNavamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get lvLayerNavamsa;
+
+  /// No description provided for @lvLayerSaptamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Saptamsa (D7)'**
+  String get lvLayerSaptamsa;
+
+  /// No description provided for @lvLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get lvLayerDasha;
+
+  /// No description provided for @lvLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transits'**
+  String get lvLayerTransit;
+
+  /// No description provided for @lvTopicWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When will I find love?'**
+  String get lvTopicWhen;
+
+  /// No description provided for @lvTopicSoulmate.
+  ///
+  /// In en, this message translates to:
+  /// **'About my soulmate'**
+  String get lvTopicSoulmate;
+
+  /// No description provided for @lvTopicCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'My current relationship'**
+  String get lvTopicCurrent;
+
+  /// No description provided for @lvTopicHeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Healing from the past'**
+  String get lvTopicHeal;
+
+  /// No description provided for @lvTopicCommit.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment help'**
+  String get lvTopicCommit;
+
+  /// No description provided for @lvTopicLoveVsArranged.
+  ///
+  /// In en, this message translates to:
+  /// **'Love vs arranged'**
+  String get lvTopicLoveVsArranged;
+
+  /// No description provided for @lvTopicHeartbreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoiding heartbreak'**
+  String get lvTopicHeartbreak;
+
+  /// No description provided for @lvTopicConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence in love'**
+  String get lvTopicConfidence;
+
   /// No description provided for @mrSubtitle.
   ///
   /// In en, this message translates to:

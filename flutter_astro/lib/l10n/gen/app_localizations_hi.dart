@@ -4327,6 +4327,261 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get lvSubtitle => 'AI-संचालित वैदिक प्रेम रिपोर्ट';
+
+  @override
+  String get lvTitle => 'प्रेम और रिश्ते';
+
+  @override
+  String get lvLovePotential => 'प्रेम क्षमता';
+
+  @override
+  String get lvEmotionalAvail => 'भावनात्मक रूप से खुला';
+
+  @override
+  String get lvAttraction => 'आकर्षण';
+
+  @override
+  String get lvCommitment => 'प्रतिबद्धता';
+
+  @override
+  String get lvCommunication => 'संवाद';
+
+  @override
+  String get lvFidelity => 'वफादारी';
+
+  @override
+  String get lvChipLoyal => 'वफादार दिल';
+
+  @override
+  String get lvChipOpenHeart => 'खुले दिल का';
+
+  @override
+  String get lvChipCommunicator => 'बेहतरीन संवादक';
+
+  @override
+  String get lvChipMature => 'विवाद अच्छे से संभालता है';
+
+  @override
+  String get lvChipEmotionallyWise => 'भावनात्मक रूप से समझदार';
+
+  @override
+  String get lvLoveStyle => 'आपकी प्रेम शैली';
+
+  @override
+  String get lvAttractionStyle => 'आकर्षण शैली';
+
+  @override
+  String get lvLangGiven => 'आप प्रेम ऐसे व्यक्त करते हैं';
+
+  @override
+  String get lvLangReceived => 'आप प्रेम ऐसे महसूस करते हैं';
+
+  @override
+  String get lvLovePlanets => 'आपके प्रेम ग्रह';
+
+  @override
+  String get lvLoveKaraka => 'प्रेम';
+
+  @override
+  String get lvEmotionKaraka => 'भावना';
+
+  @override
+  String get lvPassionKaraka => 'जुनून';
+
+  @override
+  String get lvPathToLove => 'प्रेम की ओर आपका मार्ग';
+
+  @override
+  String get lvPathSub => 'प्रेम बनाम अरेंज्ड';
+
+  @override
+  String get lvLoveMarriage => 'प्रेम विवाह';
+
+  @override
+  String get lvArrangedMarriage => 'अरेंज्ड विवाह';
+
+  @override
+  String get lvParentalAccept => 'माता-पिता की स्वीकृति';
+
+  @override
+  String get lvInterCaste => 'अंतर-जाति / धर्म';
+
+  @override
+  String get lvIdealPartner => 'आपका आदर्श साथी';
+
+  @override
+  String get lvPersonality => 'व्यक्तित्व';
+
+  @override
+  String get lvAppearance => 'रूप';
+
+  @override
+  String get lvIdealTraits => 'आदर्श गुण';
+
+  @override
+  String get lvWhatMatters => 'सबसे महत्वपूर्ण';
+
+  @override
+  String get lvDrawnTo => 'आकर्षित';
+
+  @override
+  String get lvDealbreakers => 'असहनीय बातें';
+
+  @override
+  String get lvYourAppeal => 'आपका आकर्षण';
+
+  @override
+  String get lvLoveStory => 'आपकी प्रेम कहानी';
+
+  @override
+  String get lvLoveStorySub => 'रिश्तों के पैटर्न';
+
+  @override
+  String get lvFirstLove => 'पहला प्यार';
+
+  @override
+  String get lvRelationCount => 'महत्वपूर्ण रिश्ते';
+
+  @override
+  String get lvDuration => 'सामान्य अवधि';
+
+  @override
+  String get lvDepth => 'भावनात्मक गहराई';
+
+  @override
+  String get lvDatingPattern => 'डेटिंग पैटर्न';
+
+  @override
+  String get lvCommitIntimacy => 'प्रतिबद्धता और निकटता';
+
+  @override
+  String get lvCommitReady => 'प्रतिबद्धता तत्परता';
+
+  @override
+  String get lvIntimacyDrive => 'निकटता इच्छा';
+
+  @override
+  String get lvSensuality => 'कामुकता';
+
+  @override
+  String get lvEmpathy => 'सहानुभूति';
+
+  @override
+  String get lvCommitStyle => 'प्रतिबद्धता शैली';
+
+  @override
+  String get lvChemistry => 'केमिस्ट्री शैली';
+
+  @override
+  String get lvMakesCommit => 'क्या आपको प्रतिबद्ध बनाता है';
+
+  @override
+  String get lvMakesFlee => 'क्या आपको दूर करता है';
+
+  @override
+  String get lvEmotional => 'भावनात्मक बुद्धिमत्ता';
+
+  @override
+  String get lvEmotionalIQ => 'भावनात्मक बुद्धि';
+
+  @override
+  String get lvConflictStyle => 'विवाद शैली';
+
+  @override
+  String get lvTiming => 'प्रेम समय';
+
+  @override
+  String get lvNewLove12 => '12 महीनों में नया प्यार';
+
+  @override
+  String get lvEnergyNow => 'अभी ऊर्जा';
+
+  @override
+  String get lvPhaseNow => 'अभी चरण';
+
+  @override
+  String get lvPeakRomance => 'शिखर रोमांस वर्ष';
+
+  @override
+  String get lvNewLoveWindow => 'नया प्रेम अवधि';
+
+  @override
+  String get lvChallenges => 'ध्यान देने योग्य चुनौतियाँ';
+
+  @override
+  String get lvRiskHeartbreak => 'दिल टूटने की संभावना';
+
+  @override
+  String get lvRiskSabotage => 'आत्म-तोड़फोड़';
+
+  @override
+  String get lvRiskCommitFear => 'प्रतिबद्धता का डर';
+
+  @override
+  String get lvRiskRepeat => 'दोहराव पैटर्न';
+
+  @override
+  String get lvRiskWorkaholic => 'प्रेम से ज्यादा काम';
+
+  @override
+  String get lvRedFlags => 'सावधान रहने योग्य संकेत';
+
+  @override
+  String get lvHealing => 'क्या ठीक करें';
+
+  @override
+  String get lvFocusArea => 'ध्यान क्षेत्र';
+
+  @override
+  String get lvHealDir => 'उपचार दिशा';
+
+  @override
+  String get lvImprovementPlan => 'सुधार योजना';
+
+  @override
+  String get lvReliability => 'भविष्यवाणी विश्वसनीयता';
+
+  @override
+  String get lvLayerBirth => 'जन्म चार्ट (D1)';
+
+  @override
+  String get lvLayerNavamsa => 'नवांश (D9)';
+
+  @override
+  String get lvLayerSaptamsa => 'सप्तांश (D7)';
+
+  @override
+  String get lvLayerDasha => 'दशा समय';
+
+  @override
+  String get lvLayerTransit => 'वर्तमान गोचर';
+
+  @override
+  String get lvTopicWhen => 'मुझे प्यार कब मिलेगा?';
+
+  @override
+  String get lvTopicSoulmate => 'मेरे सोलमेट के बारे में';
+
+  @override
+  String get lvTopicCurrent => 'मेरा वर्तमान रिश्ता';
+
+  @override
+  String get lvTopicHeal => 'अतीत से उबरना';
+
+  @override
+  String get lvTopicCommit => 'प्रतिबद्धता में मदद';
+
+  @override
+  String get lvTopicLoveVsArranged => 'प्रेम बनाम अरेंज्ड';
+
+  @override
+  String get lvTopicHeartbreak => 'दिल टूटने से बचना';
+
+  @override
+  String get lvTopicConfidence => 'प्रेम में आत्मविश्वास';
+
+  @override
   String get mrSubtitle => 'AI-संचालित वैदिक विवाह रिपोर्ट';
 
   @override

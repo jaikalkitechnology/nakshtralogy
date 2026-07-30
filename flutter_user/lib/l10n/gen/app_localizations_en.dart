@@ -69,6 +69,261 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get lvSubtitle => 'AI-powered Vedic Love Report';
+
+  @override
+  String get lvTitle => 'Love & Relationships';
+
+  @override
+  String get lvLovePotential => 'Love Potential';
+
+  @override
+  String get lvEmotionalAvail => 'Emotionally Open';
+
+  @override
+  String get lvAttraction => 'Attraction';
+
+  @override
+  String get lvCommitment => 'Commitment';
+
+  @override
+  String get lvCommunication => 'Communication';
+
+  @override
+  String get lvFidelity => 'Loyalty';
+
+  @override
+  String get lvChipLoyal => 'Loyal heart';
+
+  @override
+  String get lvChipOpenHeart => 'Open-hearted';
+
+  @override
+  String get lvChipCommunicator => 'Great communicator';
+
+  @override
+  String get lvChipMature => 'Handles conflict well';
+
+  @override
+  String get lvChipEmotionallyWise => 'Emotionally wise';
+
+  @override
+  String get lvLoveStyle => 'Your Love Style';
+
+  @override
+  String get lvAttractionStyle => 'Attraction style';
+
+  @override
+  String get lvLangGiven => 'You Express Love By';
+
+  @override
+  String get lvLangReceived => 'You Feel Loved By';
+
+  @override
+  String get lvLovePlanets => 'Your Love Planets';
+
+  @override
+  String get lvLoveKaraka => 'Love';
+
+  @override
+  String get lvEmotionKaraka => 'Emotion';
+
+  @override
+  String get lvPassionKaraka => 'Passion';
+
+  @override
+  String get lvPathToLove => 'Your Path to Love';
+
+  @override
+  String get lvPathSub => 'Love vs arranged';
+
+  @override
+  String get lvLoveMarriage => 'Love Marriage';
+
+  @override
+  String get lvArrangedMarriage => 'Arranged Marriage';
+
+  @override
+  String get lvParentalAccept => 'Parental Acceptance';
+
+  @override
+  String get lvInterCaste => 'Inter-caste / Religion';
+
+  @override
+  String get lvIdealPartner => 'Your Ideal Partner';
+
+  @override
+  String get lvPersonality => 'Personality';
+
+  @override
+  String get lvAppearance => 'Appearance';
+
+  @override
+  String get lvIdealTraits => 'Ideal Traits';
+
+  @override
+  String get lvWhatMatters => 'What Matters Most';
+
+  @override
+  String get lvDrawnTo => 'Drawn to';
+
+  @override
+  String get lvDealbreakers => 'Dealbreakers';
+
+  @override
+  String get lvYourAppeal => 'Your appeal';
+
+  @override
+  String get lvLoveStory => 'Your Love Story';
+
+  @override
+  String get lvLoveStorySub => 'Relationship patterns';
+
+  @override
+  String get lvFirstLove => 'First Love';
+
+  @override
+  String get lvRelationCount => 'Significant Bonds';
+
+  @override
+  String get lvDuration => 'Typical Duration';
+
+  @override
+  String get lvDepth => 'Emotional Depth';
+
+  @override
+  String get lvDatingPattern => 'Dating Pattern';
+
+  @override
+  String get lvCommitIntimacy => 'Commitment & Intimacy';
+
+  @override
+  String get lvCommitReady => 'Commitment Readiness';
+
+  @override
+  String get lvIntimacyDrive => 'Intimacy Drive';
+
+  @override
+  String get lvSensuality => 'Sensuality';
+
+  @override
+  String get lvEmpathy => 'Empathy';
+
+  @override
+  String get lvCommitStyle => 'Commitment Style';
+
+  @override
+  String get lvChemistry => 'Chemistry Style';
+
+  @override
+  String get lvMakesCommit => 'What Makes You Commit';
+
+  @override
+  String get lvMakesFlee => 'What Pushes You Away';
+
+  @override
+  String get lvEmotional => 'Emotional Intelligence';
+
+  @override
+  String get lvEmotionalIQ => 'Emotional IQ';
+
+  @override
+  String get lvConflictStyle => 'Conflict Style';
+
+  @override
+  String get lvTiming => 'Love Timing';
+
+  @override
+  String get lvNewLove12 => 'New love in 12 months';
+
+  @override
+  String get lvEnergyNow => 'Energy now';
+
+  @override
+  String get lvPhaseNow => 'Phase now';
+
+  @override
+  String get lvPeakRomance => 'Peak Romance Years';
+
+  @override
+  String get lvNewLoveWindow => 'New Love Window';
+
+  @override
+  String get lvChallenges => 'Challenges to Watch';
+
+  @override
+  String get lvRiskHeartbreak => 'Heartbreak Vulnerability';
+
+  @override
+  String get lvRiskSabotage => 'Self-sabotage';
+
+  @override
+  String get lvRiskCommitFear => 'Fear of Commitment';
+
+  @override
+  String get lvRiskRepeat => 'Repeat Patterns';
+
+  @override
+  String get lvRiskWorkaholic => 'Work Over Love';
+
+  @override
+  String get lvRedFlags => 'Red flags to watch';
+
+  @override
+  String get lvHealing => 'What to Heal';
+
+  @override
+  String get lvFocusArea => 'Focus Area';
+
+  @override
+  String get lvHealDir => 'Healing direction';
+
+  @override
+  String get lvImprovementPlan => 'Improvement Plan';
+
+  @override
+  String get lvReliability => 'Prediction Reliability';
+
+  @override
+  String get lvLayerBirth => 'Birth Chart (D1)';
+
+  @override
+  String get lvLayerNavamsa => 'Navamsa (D9)';
+
+  @override
+  String get lvLayerSaptamsa => 'Saptamsa (D7)';
+
+  @override
+  String get lvLayerDasha => 'Dasha Timing';
+
+  @override
+  String get lvLayerTransit => 'Current Transits';
+
+  @override
+  String get lvTopicWhen => 'When will I find love?';
+
+  @override
+  String get lvTopicSoulmate => 'About my soulmate';
+
+  @override
+  String get lvTopicCurrent => 'My current relationship';
+
+  @override
+  String get lvTopicHeal => 'Healing from the past';
+
+  @override
+  String get lvTopicCommit => 'Commitment help';
+
+  @override
+  String get lvTopicLoveVsArranged => 'Love vs arranged';
+
+  @override
+  String get lvTopicHeartbreak => 'Avoiding heartbreak';
+
+  @override
+  String get lvTopicConfidence => 'Confidence in love';
+
+  @override
   String get mrSubtitle => 'AI-powered Vedic Marriage Report';
 
   @override
