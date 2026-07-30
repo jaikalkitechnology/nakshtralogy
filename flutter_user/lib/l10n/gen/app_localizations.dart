@@ -235,6 +235,756 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @lpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Life Path & Luck Report'**
+  String get lpSubtitle;
+
+  /// No description provided for @lpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path & Luck'**
+  String get lpTitle;
+
+  /// No description provided for @lpSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path Snapshot'**
+  String get lpSnapshotHeader;
+
+  /// No description provided for @lpHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re a {archetype} with a primary purpose in {domain}. Our analysis shows a {probability}% overall life-fulfillment potential.'**
+  String lpHeroSummary(Object archetype, Object domain, Object probability);
+
+  /// No description provided for @lpGaugeDharma.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma Clarity'**
+  String get lpGaugeDharma;
+
+  /// No description provided for @lpGaugeFortune.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortune Baseline'**
+  String get lpGaugeFortune;
+
+  /// No description provided for @lpGaugeCoherence.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Coherence'**
+  String get lpGaugeCoherence;
+
+  /// No description provided for @lpGaugeFulfillment.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfillment'**
+  String get lpGaugeFulfillment;
+
+  /// No description provided for @lpGaugeMomentum.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Momentum'**
+  String get lpGaugeMomentum;
+
+  /// No description provided for @lpChipRareGift.
+  ///
+  /// In en, this message translates to:
+  /// **'Rare destiny gift'**
+  String get lpChipRareGift;
+
+  /// No description provided for @lpChipFreeWillStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong free will'**
+  String get lpChipFreeWillStrong;
+
+  /// No description provided for @lpChipGraceSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Grace-supported'**
+  String get lpChipGraceSupported;
+
+  /// No description provided for @lpChipLightKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Light karmic load'**
+  String get lpChipLightKarma;
+
+  /// No description provided for @lpChipRecognitionPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition potential'**
+  String get lpChipRecognitionPotential;
+
+  /// No description provided for @lpChipSpiritualPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong spiritual pull'**
+  String get lpChipSpiritualPath;
+
+  /// No description provided for @lpChipBlessed.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart carries blessings'**
+  String get lpChipBlessed;
+
+  /// No description provided for @lpSoulPathTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Soul Path'**
+  String get lpSoulPathTitle;
+
+  /// No description provided for @lpSoulPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Planet'**
+  String get lpSoulPlanet;
+
+  /// No description provided for @lpCareerPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose Planet'**
+  String get lpCareerPlanet;
+
+  /// No description provided for @lpSoulClarity.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose Clarity'**
+  String get lpSoulClarity;
+
+  /// No description provided for @lpLifeChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Life Chapter'**
+  String get lpLifeChapter;
+
+  /// No description provided for @lpPrimaryDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Purpose Domain'**
+  String get lpPrimaryDomain;
+
+  /// No description provided for @lpKarakaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Dharma Planets'**
+  String get lpKarakaTitle;
+
+  /// No description provided for @lpKarakaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How strongly each planet supports your life purpose'**
+  String get lpKarakaSubtitle;
+
+  /// No description provided for @lpVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts (D9 / D60)'**
+  String get lpVerificationTitle;
+
+  /// No description provided for @lpD9Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Soul Alignment'**
+  String get lpD9Label;
+
+  /// No description provided for @lpD9Explain.
+  ///
+  /// In en, this message translates to:
+  /// **'Your soul-evolution stage is \'{stage}\' in the Navamsa chart.'**
+  String lpD9Explain(Object stage);
+
+  /// No description provided for @lpD9JupiterDignity.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter dignity'**
+  String get lpD9JupiterDignity;
+
+  /// No description provided for @lpD9DharmaMultiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma multiplier'**
+  String get lpD9DharmaMultiplier;
+
+  /// No description provided for @lpD60Label.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 Past-Life Signature'**
+  String get lpD60Label;
+
+  /// No description provided for @lpKarmaType.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-life karma type'**
+  String get lpKarmaType;
+
+  /// No description provided for @lpKetuMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu past-life mastery'**
+  String get lpKetuMastery;
+
+  /// No description provided for @lpRahuGrowthDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu growth direction'**
+  String get lpRahuGrowthDir;
+
+  /// No description provided for @lpYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortune Yogas & Luck Blocks'**
+  String get lpYogasTitle;
+
+  /// No description provided for @lpFortuneBoost.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortune Boost'**
+  String get lpFortuneBoost;
+
+  /// No description provided for @lpLuckDrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Luck Drain'**
+  String get lpLuckDrain;
+
+  /// No description provided for @lpFortuneBoosters.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortune Boosters'**
+  String get lpFortuneBoosters;
+
+  /// No description provided for @lpLuckBlocks.
+  ///
+  /// In en, this message translates to:
+  /// **'Luck Blocks'**
+  String get lpLuckBlocks;
+
+  /// No description provided for @lpPurposeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose Domains & Fame'**
+  String get lpPurposeTitle;
+
+  /// No description provided for @lpDomainLeadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Leadership'**
+  String get lpDomainLeadership;
+
+  /// No description provided for @lpDomainWisdom.
+  ///
+  /// In en, this message translates to:
+  /// **'Wisdom & Teaching'**
+  String get lpDomainWisdom;
+
+  /// No description provided for @lpDomainService.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get lpDomainService;
+
+  /// No description provided for @lpDomainHealing.
+  ///
+  /// In en, this message translates to:
+  /// **'Healing'**
+  String get lpDomainHealing;
+
+  /// No description provided for @lpDomainCreative.
+  ///
+  /// In en, this message translates to:
+  /// **'Creative Expression'**
+  String get lpDomainCreative;
+
+  /// No description provided for @lpPrimaryDomainBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary'**
+  String get lpPrimaryDomainBadge;
+
+  /// No description provided for @lpFameRecognition.
+  ///
+  /// In en, this message translates to:
+  /// **'Fame & Recognition'**
+  String get lpFameRecognition;
+
+  /// No description provided for @lpSocialInfluence.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Influence'**
+  String get lpSocialInfluence;
+
+  /// No description provided for @lpRecognitionDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition Field'**
+  String get lpRecognitionDomain;
+
+  /// No description provided for @lpPublicImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Image'**
+  String get lpPublicImage;
+
+  /// No description provided for @lpHistoricalImpact.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical impact potential'**
+  String get lpHistoricalImpact;
+
+  /// No description provided for @lpTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fortune & Life Timeline'**
+  String get lpTimelineTitle;
+
+  /// No description provided for @lpCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Fortune Phase'**
+  String get lpCurrentPhase;
+
+  /// No description provided for @lpJupiterReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Jupiter Return'**
+  String get lpJupiterReturn;
+
+  /// No description provided for @lpSaturnReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturn Return'**
+  String get lpSaturnReturn;
+
+  /// No description provided for @lpSadeSati.
+  ///
+  /// In en, this message translates to:
+  /// **'Sade Sati'**
+  String get lpSadeSati;
+
+  /// No description provided for @lpGoldenWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Golden Window'**
+  String get lpGoldenWindow;
+
+  /// No description provided for @lpTransformationWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Transformation Window'**
+  String get lpTransformationWindow;
+
+  /// No description provided for @lpPeakYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Fortune Years'**
+  String get lpPeakYears;
+
+  /// No description provided for @lpChallengingYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging Years'**
+  String get lpChallengingYears;
+
+  /// No description provided for @lpMilestonesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Major Milestones & Turning Points'**
+  String get lpMilestonesTitle;
+
+  /// No description provided for @lpFirstTurningPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'First Major Turning Point'**
+  String get lpFirstTurningPoint;
+
+  /// No description provided for @lpMidlifeTransform.
+  ///
+  /// In en, this message translates to:
+  /// **'Midlife Transformation'**
+  String get lpMidlifeTransform;
+
+  /// No description provided for @lpLateLifeFulfillment.
+  ///
+  /// In en, this message translates to:
+  /// **'Late-Life Fulfillment'**
+  String get lpLateLifeFulfillment;
+
+  /// No description provided for @lpDharmicMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharmic Milestone (Age {age})'**
+  String lpDharmicMilestone(Object age);
+
+  /// No description provided for @lpAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age {age}'**
+  String lpAgeLabel(Object age);
+
+  /// No description provided for @lpDestinyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Destiny vs Free Will'**
+  String get lpDestinyTitle;
+
+  /// No description provided for @lpDestinyStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Destiny Weight'**
+  String get lpDestinyStat;
+
+  /// No description provided for @lpFreeWillStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Will Leverage'**
+  String get lpFreeWillStat;
+
+  /// No description provided for @lpFateStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Fate Signature Strength'**
+  String get lpFateStrength;
+
+  /// No description provided for @lpSelfCreation.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Creation Capacity'**
+  String get lpSelfCreation;
+
+  /// No description provided for @lpEffortGrace.
+  ///
+  /// In en, this message translates to:
+  /// **'Effort vs grace'**
+  String get lpEffortGrace;
+
+  /// No description provided for @lpKarmicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Lessons'**
+  String get lpKarmicTitle;
+
+  /// No description provided for @lpRahuGrowthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu — Growth Challenge'**
+  String get lpRahuGrowthLabel;
+
+  /// No description provided for @lpKetuSurrenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu — Surrender Theme'**
+  String get lpKetuSurrenderLabel;
+
+  /// No description provided for @lpSaturnLessonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturn — Discipline Lesson'**
+  String get lpSaturnLessonLabel;
+
+  /// No description provided for @lpTestDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Test Difficulty'**
+  String get lpTestDifficulty;
+
+  /// No description provided for @lpLessonsInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Lessons In Progress'**
+  String get lpLessonsInProgress;
+
+  /// No description provided for @lpSoulContract.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Contract Areas'**
+  String get lpSoulContract;
+
+  /// No description provided for @lpSoulExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'What Your Soul Came To Experience'**
+  String get lpSoulExperience;
+
+  /// No description provided for @lpSoulMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'What Your Soul Came To Master'**
+  String get lpSoulMastery;
+
+  /// No description provided for @lpSpiritualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual Path'**
+  String get lpSpiritualTitle;
+
+  /// No description provided for @lpSpiritualInclination.
+  ///
+  /// In en, this message translates to:
+  /// **'Spiritual Inclination'**
+  String get lpSpiritualInclination;
+
+  /// No description provided for @lpMeditationReceptivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditation Receptivity'**
+  String get lpMeditationReceptivity;
+
+  /// No description provided for @lpTeacherKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher/Guru Karma'**
+  String get lpTeacherKarma;
+
+  /// No description provided for @lpPilgrimageBenefit.
+  ///
+  /// In en, this message translates to:
+  /// **'Pilgrimage Benefit'**
+  String get lpPilgrimageBenefit;
+
+  /// No description provided for @lpSelfRealization.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Realization Potential'**
+  String get lpSelfRealization;
+
+  /// No description provided for @lpDivineConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Divine Connection'**
+  String get lpDivineConnection;
+
+  /// No description provided for @lpTraditionAffinity.
+  ///
+  /// In en, this message translates to:
+  /// **'Tradition affinity'**
+  String get lpTraditionAffinity;
+
+  /// No description provided for @lpIntuitionStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Intuition strength'**
+  String get lpIntuitionStrength;
+
+  /// No description provided for @lpMantraEfficacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer/mantra efficacy'**
+  String get lpMantraEfficacy;
+
+  /// No description provided for @lpInnerGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'Inner-guidance trust'**
+  String get lpInnerGuidance;
+
+  /// No description provided for @lpPropheticDreams.
+  ///
+  /// In en, this message translates to:
+  /// **'Prophetic-dream sensitivity'**
+  String get lpPropheticDreams;
+
+  /// No description provided for @lpDifficultyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Difficulty & Challenges'**
+  String get lpDifficultyTitle;
+
+  /// No description provided for @lpEarlyLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Early Life'**
+  String get lpEarlyLife;
+
+  /// No description provided for @lpMidlife.
+  ///
+  /// In en, this message translates to:
+  /// **'Midlife'**
+  String get lpMidlife;
+
+  /// No description provided for @lpLateLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Late Life'**
+  String get lpLateLife;
+
+  /// No description provided for @lpStruggleToSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Struggle-to-Success Karma'**
+  String get lpStruggleToSuccess;
+
+  /// No description provided for @lpUnlivedLifeRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlived-Life Risk'**
+  String get lpUnlivedLifeRisk;
+
+  /// No description provided for @lpChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Challenges'**
+  String get lpChallenges;
+
+  /// No description provided for @lpFortuneDrains.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Fortune Drains'**
+  String get lpFortuneDrains;
+
+  /// No description provided for @lpRegretAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Regret-Vulnerability Areas'**
+  String get lpRegretAreas;
+
+  /// No description provided for @lpRedFlags.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction Red Flags'**
+  String get lpRedFlags;
+
+  /// No description provided for @lpBlessingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blessings & Core Life Theme'**
+  String get lpBlessingsTitle;
+
+  /// No description provided for @lpKarmicRoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic root'**
+  String get lpKarmicRoot;
+
+  /// No description provided for @lpBlessingsList.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Blessings'**
+  String get lpBlessingsList;
+
+  /// No description provided for @lpFulfillmentPriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfillment Priorities'**
+  String get lpFulfillmentPriorities;
+
+  /// No description provided for @lpImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get lpImprovementTitle;
+
+  /// No description provided for @lpDharmaPriorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Dharma Priorities'**
+  String get lpDharmaPriorities;
+
+  /// No description provided for @lpRoadmapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Destiny Roadmap'**
+  String get lpRoadmapTitle;
+
+  /// No description provided for @lpStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Strategy'**
+  String get lpStrategy;
+
+  /// No description provided for @lpFulfillmentPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Fulfillment Potential'**
+  String get lpFulfillmentPotential;
+
+  /// No description provided for @lpNext12Focus.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 12-Month Focus'**
+  String get lpNext12Focus;
+
+  /// No description provided for @lpLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get lpLayerD1;
+
+  /// No description provided for @lpLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get lpLayerD9;
+
+  /// No description provided for @lpLayerD60.
+  ///
+  /// In en, this message translates to:
+  /// **'Shashtiamsa (D60)'**
+  String get lpLayerD60;
+
+  /// No description provided for @lpLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get lpLayerDasha;
+
+  /// No description provided for @lpLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Transits'**
+  String get lpLayerTransit;
+
+  /// No description provided for @lpTopicPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'My life purpose'**
+  String get lpTopicPurpose;
+
+  /// No description provided for @lpTopicFortune.
+  ///
+  /// In en, this message translates to:
+  /// **'My fortune yogas'**
+  String get lpTopicFortune;
+
+  /// No description provided for @lpTopicKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'My karmic lessons'**
+  String get lpTopicKarma;
+
+  /// No description provided for @lpTopicMilestones.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming milestones'**
+  String get lpTopicMilestones;
+
+  /// No description provided for @lpTopicDestiny.
+  ///
+  /// In en, this message translates to:
+  /// **'Destiny vs free will'**
+  String get lpTopicDestiny;
+
+  /// No description provided for @lpTopicSpiritual.
+  ///
+  /// In en, this message translates to:
+  /// **'My spiritual path'**
+  String get lpTopicSpiritual;
+
+  /// No description provided for @lpTopicChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'My life challenges'**
+  String get lpTopicChallenges;
+
+  /// No description provided for @lpTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing windows'**
+  String get lpTopicTiming;
+
   /// No description provided for @dbSubtitle.
   ///
   /// In en, this message translates to:

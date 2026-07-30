@@ -7036,6 +7036,389 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get lpSubtitle => 'AI-संचालित वैदिक जीवन पथ एवं भाग्य रिपोर्ट';
+
+  @override
+  String get lpTitle => 'जीवन पथ एवं भाग्य';
+
+  @override
+  String get lpSnapshotHeader => 'जीवन पथ स्नैपशॉट';
+
+  @override
+  String lpHeroSummary(Object archetype, Object domain, Object probability) {
+    return 'You\'re a ${archetype} with a primary purpose in ${domain}. Our analysis shows a ${probability}% overall life-fulfillment potential.';
+  }
+
+  @override
+  String get lpGaugeDharma => 'धर्म स्पष्टता';
+
+  @override
+  String get lpGaugeFortune => 'भाग्य आधार';
+
+  @override
+  String get lpGaugeCoherence => 'पथ सुसंगति';
+
+  @override
+  String get lpGaugeFulfillment => 'पूर्ति';
+
+  @override
+  String get lpGaugeMomentum => 'कर्म गति';
+
+  @override
+  String get lpChipRareGift => 'दुर्लभ भाग्य उपहार';
+
+  @override
+  String get lpChipFreeWillStrong => 'मजबूत स्वतंत्र इच्छा';
+
+  @override
+  String get lpChipGraceSupported => 'कृपा-समर्थित';
+
+  @override
+  String get lpChipLightKarma => 'हल्का कर्म भार';
+
+  @override
+  String get lpChipRecognitionPotential => 'पहचान की संभावना';
+
+  @override
+  String get lpChipSpiritualPath => 'मजबूत आध्यात्मिक झुकाव';
+
+  @override
+  String get lpChipBlessed => 'कुंडली में आशीर्वाद';
+
+  @override
+  String get lpSoulPathTitle => 'आपका आत्मा पथ';
+
+  @override
+  String get lpSoulPlanet => 'आत्मा ग्रह';
+
+  @override
+  String get lpCareerPlanet => 'उद्देश्य ग्रह';
+
+  @override
+  String get lpSoulClarity => 'उद्देश्य स्पष्टता';
+
+  @override
+  String get lpLifeChapter => 'वर्तमान जीवन अध्याय';
+
+  @override
+  String get lpPrimaryDomain => 'मुख्य उद्देश्य क्षेत्र';
+
+  @override
+  String get lpKarakaTitle => 'आपके धर्म ग्रह';
+
+  @override
+  String get lpKarakaSubtitle => 'प्रत्येक ग्रह आपके जीवन उद्देश्य में कितना सहयोग करता है';
+
+  @override
+  String get lpVerificationTitle => 'चार्ट में सत्यापित (D9 / D60)';
+
+  @override
+  String get lpD9Label => 'D9 आत्मा संरेखण';
+
+  @override
+  String lpD9Explain(Object stage) {
+    return 'Your soul-evolution stage is \'${stage}\' in the Navamsa chart.';
+  }
+
+  @override
+  String get lpD9JupiterDignity => 'बृहस्पति की स्थिति';
+
+  @override
+  String get lpD9DharmaMultiplier => 'धर्म गुणक';
+
+  @override
+  String get lpD60Label => 'D60 पूर्वजन्म हस्ताक्षर';
+
+  @override
+  String get lpKarmaType => 'पूर्वजन्म कर्म प्रकार';
+
+  @override
+  String get lpKetuMastery => 'केतु पूर्वजन्म निपुणता';
+
+  @override
+  String get lpRahuGrowthDir => 'राहु वृद्धि दिशा';
+
+  @override
+  String get lpYogasTitle => 'भाग्य योग एवं बाधाएं';
+
+  @override
+  String get lpFortuneBoost => 'भाग्य बढ़ावा';
+
+  @override
+  String get lpLuckDrain => 'भाग्य क्षय';
+
+  @override
+  String get lpFortuneBoosters => 'भाग्य वर्धक';
+
+  @override
+  String get lpLuckBlocks => 'भाग्य बाधाएं';
+
+  @override
+  String get lpPurposeTitle => 'उद्देश्य क्षेत्र एवं प्रसिद्धि';
+
+  @override
+  String get lpDomainLeadership => 'नेतृत्व';
+
+  @override
+  String get lpDomainWisdom => 'ज्ञान एवं शिक्षण';
+
+  @override
+  String get lpDomainService => 'सेवा';
+
+  @override
+  String get lpDomainHealing => 'उपचार';
+
+  @override
+  String get lpDomainCreative => 'रचनात्मक अभिव्यक्ति';
+
+  @override
+  String get lpPrimaryDomainBadge => 'मुख्य';
+
+  @override
+  String get lpFameRecognition => 'प्रसिद्धि एवं पहचान';
+
+  @override
+  String get lpSocialInfluence => 'सामाजिक प्रभाव';
+
+  @override
+  String get lpRecognitionDomain => 'पहचान क्षेत्र';
+
+  @override
+  String get lpPublicImage => 'सार्वजनिक छवि';
+
+  @override
+  String get lpHistoricalImpact => 'ऐतिहासिक प्रभाव क्षमता';
+
+  @override
+  String get lpTimelineTitle => 'भाग्य एवं जीवन समयरेखा';
+
+  @override
+  String get lpCurrentPhase => 'वर्तमान भाग्य चरण';
+
+  @override
+  String get lpJupiterReturn => 'बृहस्पति वापसी';
+
+  @override
+  String get lpSaturnReturn => 'शनि वापसी';
+
+  @override
+  String get lpSadeSati => 'साढ़े साती';
+
+  @override
+  String get lpGoldenWindow => 'स्वर्णिम अवधि';
+
+  @override
+  String get lpTransformationWindow => 'परिवर्तन अवधि';
+
+  @override
+  String get lpPeakYears => 'शिखर भाग्य वर्ष';
+
+  @override
+  String get lpChallengingYears => 'चुनौतीपूर्ण वर्ष';
+
+  @override
+  String get lpMilestonesTitle => 'प्रमुख पड़ाव एवं मोड़';
+
+  @override
+  String get lpFirstTurningPoint => 'पहला प्रमुख मोड़';
+
+  @override
+  String get lpMidlifeTransform => 'मध्यजीवन परिवर्तन';
+
+  @override
+  String get lpLateLifeFulfillment => 'उत्तर-जीवन पूर्ति';
+
+  @override
+  String lpDharmicMilestone(Object age) {
+    return 'Dharmic Milestone (Age ${age})';
+  }
+
+  @override
+  String lpAgeLabel(Object age) {
+    return 'Age ${age}';
+  }
+
+  @override
+  String get lpDestinyTitle => 'भाग्य बनाम स्वतंत्र इच्छा';
+
+  @override
+  String get lpDestinyStat => 'भाग्य भार';
+
+  @override
+  String get lpFreeWillStat => 'स्वतंत्र इच्छा प्रभाव';
+
+  @override
+  String get lpFateStrength => 'भाग्य हस्ताक्षर शक्ति';
+
+  @override
+  String get lpSelfCreation => 'स्व-निर्माण क्षमता';
+
+  @override
+  String get lpEffortGrace => 'प्रयास बनाम कृपा';
+
+  @override
+  String get lpKarmicTitle => 'कर्म सबक';
+
+  @override
+  String get lpRahuGrowthLabel => 'राहु — वृद्धि चुनौती';
+
+  @override
+  String get lpKetuSurrenderLabel => 'केतु — समर्पण विषय';
+
+  @override
+  String get lpSaturnLessonLabel => 'शनि — अनुशासन सबक';
+
+  @override
+  String get lpTestDifficulty => 'जीवन परीक्षा कठिनाई';
+
+  @override
+  String get lpLessonsInProgress => 'चल रहे सबक';
+
+  @override
+  String get lpSoulContract => 'आत्मा अनुबंध क्षेत्र';
+
+  @override
+  String get lpSoulExperience => 'आपकी आत्मा क्या अनुभव करने आई';
+
+  @override
+  String get lpSoulMastery => 'आपकी आत्मा क्या निपुण करने आई';
+
+  @override
+  String get lpSpiritualTitle => 'आध्यात्मिक पथ';
+
+  @override
+  String get lpSpiritualInclination => 'आध्यात्मिक झुकाव';
+
+  @override
+  String get lpMeditationReceptivity => 'ध्यान ग्रहणशीलता';
+
+  @override
+  String get lpTeacherKarma => 'गुरु कर्म';
+
+  @override
+  String get lpPilgrimageBenefit => 'तीर्थयात्रा लाभ';
+
+  @override
+  String get lpSelfRealization => 'आत्म-साक्षात्कार क्षमता';
+
+  @override
+  String get lpDivineConnection => 'दिव्य संबंध';
+
+  @override
+  String get lpTraditionAffinity => 'परंपरा झुकाव';
+
+  @override
+  String get lpIntuitionStrength => 'अंतर्ज्ञान शक्ति';
+
+  @override
+  String get lpMantraEfficacy => 'मंत्र प्रभावशीलता';
+
+  @override
+  String get lpInnerGuidance => 'आंतरिक मार्गदर्शन विश्वास';
+
+  @override
+  String get lpPropheticDreams => 'भविष्यसूचक स्वप्न संवेदनशीलता';
+
+  @override
+  String get lpDifficultyTitle => 'जीवन कठिनाई एवं चुनौतियां';
+
+  @override
+  String get lpEarlyLife => 'प्रारंभिक जीवन';
+
+  @override
+  String get lpMidlife => 'मध्यजीवन';
+
+  @override
+  String get lpLateLife => 'उत्तर जीवन';
+
+  @override
+  String get lpStruggleToSuccess => 'संघर्ष-से-सफलता कर्म';
+
+  @override
+  String get lpUnlivedLifeRisk => 'अधूरे जीवन का जोखिम';
+
+  @override
+  String get lpChallenges => 'जीवन चुनौतियां';
+
+  @override
+  String get lpFortuneDrains => 'स्थायी भाग्य क्षय';
+
+  @override
+  String get lpRegretAreas => 'पछतावा-संवेदनशील क्षेत्र';
+
+  @override
+  String get lpRedFlags => 'दिशा चेतावनी संकेत';
+
+  @override
+  String get lpBlessingsTitle => 'आशीर्वाद एवं मुख्य जीवन विषय';
+
+  @override
+  String get lpKarmicRoot => 'कर्म मूल';
+
+  @override
+  String get lpBlessingsList => 'आपके आशीर्वाद';
+
+  @override
+  String get lpFulfillmentPriorities => 'पूर्ति प्राथमिकताएं';
+
+  @override
+  String get lpImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get lpDharmaPriorities => 'धर्म प्राथमिकताएं';
+
+  @override
+  String get lpRoadmapTitle => 'आपका भाग्य रोडमैप';
+
+  @override
+  String get lpStrategy => 'रणनीति';
+
+  @override
+  String get lpFulfillmentPotential => 'पूर्ति क्षमता';
+
+  @override
+  String get lpNext12Focus => 'अगले 12 महीने का फोकस';
+
+  @override
+  String get lpLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get lpLayerD9 => 'नवांश (D9)';
+
+  @override
+  String get lpLayerD60 => 'षष्ट्यंश (D60)';
+
+  @override
+  String get lpLayerDasha => 'दशा समय';
+
+  @override
+  String get lpLayerTransit => 'वर्तमान गोचर';
+
+  @override
+  String get lpTopicPurpose => 'मेरा जीवन उद्देश्य';
+
+  @override
+  String get lpTopicFortune => 'मेरे भाग्य योग';
+
+  @override
+  String get lpTopicKarma => 'मेरे कर्म सबक';
+
+  @override
+  String get lpTopicMilestones => 'आगामी पड़ाव';
+
+  @override
+  String get lpTopicDestiny => 'भाग्य बनाम स्वतंत्र इच्छा';
+
+  @override
+  String get lpTopicSpiritual => 'मेरा आध्यात्मिक पथ';
+
+  @override
+  String get lpTopicChallenges => 'मेरी जीवन चुनौतियां';
+
+  @override
+  String get lpTopicTiming => 'सर्वोत्तम समय अवधि';
+
+  @override
   String get dbSubtitle => 'AI-संचालित वैदिक ऋण एवं वसूली रिपोर्ट';
 
   @override

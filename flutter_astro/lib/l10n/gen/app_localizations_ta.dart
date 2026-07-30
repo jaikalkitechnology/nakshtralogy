@@ -7036,6 +7036,389 @@ class AppLocalizationsTa extends AppLocalizations {
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
 
   @override
+  String get lpSubtitle => 'AI-powered Vedic Life Path & Luck Report';
+
+  @override
+  String get lpTitle => 'Life Path & Luck';
+
+  @override
+  String get lpSnapshotHeader => 'Life Path Snapshot';
+
+  @override
+  String lpHeroSummary(Object archetype, Object domain, Object probability) {
+    return 'You\'re a ${archetype} with a primary purpose in ${domain}. Our analysis shows a ${probability}% overall life-fulfillment potential.';
+  }
+
+  @override
+  String get lpGaugeDharma => 'Dharma Clarity';
+
+  @override
+  String get lpGaugeFortune => 'Fortune Baseline';
+
+  @override
+  String get lpGaugeCoherence => 'Path Coherence';
+
+  @override
+  String get lpGaugeFulfillment => 'Fulfillment';
+
+  @override
+  String get lpGaugeMomentum => 'Karmic Momentum';
+
+  @override
+  String get lpChipRareGift => 'Rare destiny gift';
+
+  @override
+  String get lpChipFreeWillStrong => 'Strong free will';
+
+  @override
+  String get lpChipGraceSupported => 'Grace-supported';
+
+  @override
+  String get lpChipLightKarma => 'Light karmic load';
+
+  @override
+  String get lpChipRecognitionPotential => 'Recognition potential';
+
+  @override
+  String get lpChipSpiritualPath => 'Strong spiritual pull';
+
+  @override
+  String get lpChipBlessed => 'Chart carries blessings';
+
+  @override
+  String get lpSoulPathTitle => 'Your Soul Path';
+
+  @override
+  String get lpSoulPlanet => 'Soul Planet';
+
+  @override
+  String get lpCareerPlanet => 'Purpose Planet';
+
+  @override
+  String get lpSoulClarity => 'Purpose Clarity';
+
+  @override
+  String get lpLifeChapter => 'Current Life Chapter';
+
+  @override
+  String get lpPrimaryDomain => 'Primary Purpose Domain';
+
+  @override
+  String get lpKarakaTitle => 'Your Dharma Planets';
+
+  @override
+  String get lpKarakaSubtitle => 'How strongly each planet supports your life purpose';
+
+  @override
+  String get lpVerificationTitle => 'Verified Across Charts (D9 / D60)';
+
+  @override
+  String get lpD9Label => 'D9 Soul Alignment';
+
+  @override
+  String lpD9Explain(Object stage) {
+    return 'Your soul-evolution stage is \'${stage}\' in the Navamsa chart.';
+  }
+
+  @override
+  String get lpD9JupiterDignity => 'Jupiter dignity';
+
+  @override
+  String get lpD9DharmaMultiplier => 'Dharma multiplier';
+
+  @override
+  String get lpD60Label => 'D60 Past-Life Signature';
+
+  @override
+  String get lpKarmaType => 'Past-life karma type';
+
+  @override
+  String get lpKetuMastery => 'Ketu past-life mastery';
+
+  @override
+  String get lpRahuGrowthDir => 'Rahu growth direction';
+
+  @override
+  String get lpYogasTitle => 'Fortune Yogas & Luck Blocks';
+
+  @override
+  String get lpFortuneBoost => 'Fortune Boost';
+
+  @override
+  String get lpLuckDrain => 'Luck Drain';
+
+  @override
+  String get lpFortuneBoosters => 'Fortune Boosters';
+
+  @override
+  String get lpLuckBlocks => 'Luck Blocks';
+
+  @override
+  String get lpPurposeTitle => 'Purpose Domains & Fame';
+
+  @override
+  String get lpDomainLeadership => 'Leadership';
+
+  @override
+  String get lpDomainWisdom => 'Wisdom & Teaching';
+
+  @override
+  String get lpDomainService => 'Service';
+
+  @override
+  String get lpDomainHealing => 'Healing';
+
+  @override
+  String get lpDomainCreative => 'Creative Expression';
+
+  @override
+  String get lpPrimaryDomainBadge => 'Primary';
+
+  @override
+  String get lpFameRecognition => 'Fame & Recognition';
+
+  @override
+  String get lpSocialInfluence => 'Social Influence';
+
+  @override
+  String get lpRecognitionDomain => 'Recognition Field';
+
+  @override
+  String get lpPublicImage => 'Public Image';
+
+  @override
+  String get lpHistoricalImpact => 'Historical impact potential';
+
+  @override
+  String get lpTimelineTitle => 'Fortune & Life Timeline';
+
+  @override
+  String get lpCurrentPhase => 'Current Fortune Phase';
+
+  @override
+  String get lpJupiterReturn => 'Jupiter Return';
+
+  @override
+  String get lpSaturnReturn => 'Saturn Return';
+
+  @override
+  String get lpSadeSati => 'Sade Sati';
+
+  @override
+  String get lpGoldenWindow => 'Golden Window';
+
+  @override
+  String get lpTransformationWindow => 'Transformation Window';
+
+  @override
+  String get lpPeakYears => 'Peak Fortune Years';
+
+  @override
+  String get lpChallengingYears => 'Challenging Years';
+
+  @override
+  String get lpMilestonesTitle => 'Major Milestones & Turning Points';
+
+  @override
+  String get lpFirstTurningPoint => 'First Major Turning Point';
+
+  @override
+  String get lpMidlifeTransform => 'Midlife Transformation';
+
+  @override
+  String get lpLateLifeFulfillment => 'Late-Life Fulfillment';
+
+  @override
+  String lpDharmicMilestone(Object age) {
+    return 'Dharmic Milestone (Age ${age})';
+  }
+
+  @override
+  String lpAgeLabel(Object age) {
+    return 'Age ${age}';
+  }
+
+  @override
+  String get lpDestinyTitle => 'Destiny vs Free Will';
+
+  @override
+  String get lpDestinyStat => 'Destiny Weight';
+
+  @override
+  String get lpFreeWillStat => 'Free Will Leverage';
+
+  @override
+  String get lpFateStrength => 'Fate Signature Strength';
+
+  @override
+  String get lpSelfCreation => 'Self-Creation Capacity';
+
+  @override
+  String get lpEffortGrace => 'Effort vs grace';
+
+  @override
+  String get lpKarmicTitle => 'Karmic Lessons';
+
+  @override
+  String get lpRahuGrowthLabel => 'Rahu — Growth Challenge';
+
+  @override
+  String get lpKetuSurrenderLabel => 'Ketu — Surrender Theme';
+
+  @override
+  String get lpSaturnLessonLabel => 'Saturn — Discipline Lesson';
+
+  @override
+  String get lpTestDifficulty => 'Life Test Difficulty';
+
+  @override
+  String get lpLessonsInProgress => 'Lessons In Progress';
+
+  @override
+  String get lpSoulContract => 'Soul Contract Areas';
+
+  @override
+  String get lpSoulExperience => 'What Your Soul Came To Experience';
+
+  @override
+  String get lpSoulMastery => 'What Your Soul Came To Master';
+
+  @override
+  String get lpSpiritualTitle => 'Spiritual Path';
+
+  @override
+  String get lpSpiritualInclination => 'Spiritual Inclination';
+
+  @override
+  String get lpMeditationReceptivity => 'Meditation Receptivity';
+
+  @override
+  String get lpTeacherKarma => 'Teacher/Guru Karma';
+
+  @override
+  String get lpPilgrimageBenefit => 'Pilgrimage Benefit';
+
+  @override
+  String get lpSelfRealization => 'Self-Realization Potential';
+
+  @override
+  String get lpDivineConnection => 'Divine Connection';
+
+  @override
+  String get lpTraditionAffinity => 'Tradition affinity';
+
+  @override
+  String get lpIntuitionStrength => 'Intuition strength';
+
+  @override
+  String get lpMantraEfficacy => 'Prayer/mantra efficacy';
+
+  @override
+  String get lpInnerGuidance => 'Inner-guidance trust';
+
+  @override
+  String get lpPropheticDreams => 'Prophetic-dream sensitivity';
+
+  @override
+  String get lpDifficultyTitle => 'Life Difficulty & Challenges';
+
+  @override
+  String get lpEarlyLife => 'Early Life';
+
+  @override
+  String get lpMidlife => 'Midlife';
+
+  @override
+  String get lpLateLife => 'Late Life';
+
+  @override
+  String get lpStruggleToSuccess => 'Struggle-to-Success Karma';
+
+  @override
+  String get lpUnlivedLifeRisk => 'Unlived-Life Risk';
+
+  @override
+  String get lpChallenges => 'Life Challenges';
+
+  @override
+  String get lpFortuneDrains => 'Chronic Fortune Drains';
+
+  @override
+  String get lpRegretAreas => 'Regret-Vulnerability Areas';
+
+  @override
+  String get lpRedFlags => 'Direction Red Flags';
+
+  @override
+  String get lpBlessingsTitle => 'Blessings & Core Life Theme';
+
+  @override
+  String get lpKarmicRoot => 'Karmic root';
+
+  @override
+  String get lpBlessingsList => 'Your Blessings';
+
+  @override
+  String get lpFulfillmentPriorities => 'Fulfillment Priorities';
+
+  @override
+  String get lpImprovementTitle => 'Improvement Plan';
+
+  @override
+  String get lpDharmaPriorities => 'Dharma Priorities';
+
+  @override
+  String get lpRoadmapTitle => 'Your Destiny Roadmap';
+
+  @override
+  String get lpStrategy => 'Strategy';
+
+  @override
+  String get lpFulfillmentPotential => 'Fulfillment Potential';
+
+  @override
+  String get lpNext12Focus => 'Next 12-Month Focus';
+
+  @override
+  String get lpLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get lpLayerD9 => 'Navamsa (D9)';
+
+  @override
+  String get lpLayerD60 => 'Shashtiamsa (D60)';
+
+  @override
+  String get lpLayerDasha => 'Dasha Timing';
+
+  @override
+  String get lpLayerTransit => 'Current Transits';
+
+  @override
+  String get lpTopicPurpose => 'My life purpose';
+
+  @override
+  String get lpTopicFortune => 'My fortune yogas';
+
+  @override
+  String get lpTopicKarma => 'My karmic lessons';
+
+  @override
+  String get lpTopicMilestones => 'Upcoming milestones';
+
+  @override
+  String get lpTopicDestiny => 'Destiny vs free will';
+
+  @override
+  String get lpTopicSpiritual => 'My spiritual path';
+
+  @override
+  String get lpTopicChallenges => 'My life challenges';
+
+  @override
+  String get lpTopicTiming => 'Best timing windows';
+
+  @override
   String get dbSubtitle => 'AI-powered Vedic Debt & Recovery Report';
 
   @override
