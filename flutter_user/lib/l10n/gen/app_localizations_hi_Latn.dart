@@ -7165,6 +7165,312 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get prSubtitle => 'AI-powered Vedic Property Report';
+
+  @override
+  String get prTitle => 'Property aur Assets';
+
+  @override
+  String get prSnapshotHeader => 'Property Snapshot';
+
+  @override
+  String get prAcquisitionCapacity => 'Acquisition Capacity';
+
+  @override
+  String get prHomeOwnership => 'Home Ownership';
+
+  @override
+  String get prWealthPotential => 'Wealth Potential';
+
+  @override
+  String get prRentalIncome => 'Rental Income';
+
+  @override
+  String get prLandOwnership => 'Zameen ka Swamitva';
+
+  @override
+  String get prStatusExcellent => 'Excellent';
+
+  @override
+  String get prStatusStrong => 'Strong';
+
+  @override
+  String get prStatusModerate => 'Moderate';
+
+  @override
+  String get prStatusDeveloping => 'Developing';
+
+  @override
+  String get prStatusChallenging => 'Challenging';
+
+  @override
+  String get prChipHomeOwner => 'Home Owner';
+
+  @override
+  String get prChipWealthBuilder => 'Wealth Builder';
+
+  @override
+  String get prChipLandOwner => 'Zameen Malik';
+
+  @override
+  String get prChipInvestor => 'Property Investor';
+
+  @override
+  String get prChipInheritance => 'Inheritance ki Sambhavna';
+
+  @override
+  String get prChipVehicle => 'Vehicle Owner';
+
+  @override
+  String get prChipGlobalAsset => 'Global Asset ka Rujhan';
+
+  @override
+  String get prProfileTitle => 'Aapki Property Style';
+
+  @override
+  String get prHomeAesthetics => 'Home Aesthetics';
+
+  @override
+  String get prHomeSanctuary => 'Ghar ek Sanctuary ki tarah';
+
+  @override
+  String get prComfortInvestment => 'Comfort Investment';
+
+  @override
+  String get prVastuPriority => 'Vastu Priority';
+
+  @override
+  String get prNaturalElements => 'Natural Elements';
+
+  @override
+  String get prNextActionLabel => 'Next Action';
+
+  @override
+  String get prKarakaTitle => 'Aapke Property Grah';
+
+  @override
+  String get prKarakaSubtitle => 'Kaunse grah aapki property luck ko shape karte hain';
+
+  @override
+  String get prPrimaryKaraka => 'Primary Karaka';
+
+  @override
+  String get prDurableAsset => 'Durable Asset Karaka';
+
+  @override
+  String get prYogasTitle => 'Property Yogas aur Doshas';
+
+  @override
+  String get prCurrentPhase => 'Current Phase';
+
+  @override
+  String get prBoosters => 'Boosters';
+
+  @override
+  String get prDrains => 'Drains';
+
+  @override
+  String get prVerificationTitle => 'Doosre Charts se Verified';
+
+  @override
+  String get prD4Property => 'D4 Property Chart';
+
+  @override
+  String get prD16Vehicle => 'D16 Vehicle Chart';
+
+  @override
+  String get prVehicleFit => 'Vehicle Fit';
+
+  @override
+  String get prJourneyTitle => 'Ownership Journey aur Timeline';
+
+  @override
+  String get prFirstHomeAge => 'Pehla Ghar - Age';
+
+  @override
+  String get prFirstHomeType => 'Pehle Ghar ka Type';
+
+  @override
+  String get prMultipleHomes => 'Multiple Homes';
+
+  @override
+  String get prNewPropertySoon => 'Jald Nai Property';
+
+  @override
+  String get prFirstMajorWindow => 'Pehla Major Window';
+
+  @override
+  String get prBuyingWindow => 'Buying Window';
+
+  @override
+  String get prConstructionWindow => 'Construction Window';
+
+  @override
+  String get prNextOpportunity => 'Agla Opportunity';
+
+  @override
+  String get prLifetimePropertyCount => 'Lifetime Property Count';
+
+  @override
+  String get prInheritanceTitle => 'Inheritance aur Family Property';
+
+  @override
+  String get prMaternalInheritance => 'Maternal side se Inheritance';
+
+  @override
+  String get prPaternalInheritance => 'Paternal side se Inheritance';
+
+  @override
+  String get prAncestralProperty => 'Ancestral Property';
+
+  @override
+  String get prFamilyDisputeRisk => 'Family Dispute Risk';
+
+  @override
+  String get prInheritanceTiming => 'Inheritance Timing';
+
+  @override
+  String get prInheritanceType => 'Inheritance Type';
+
+  @override
+  String get prLandInvestTitle => 'Zameen, Investment aur Global Property';
+
+  @override
+  String get prPropertyInvestor => 'Property Investor Score';
+
+  @override
+  String get prAppreciationLuck => 'Appreciation Luck';
+
+  @override
+  String get prInvestorMindset => 'Investor Mindset';
+
+  @override
+  String get prLandType => 'Zameen ka Type';
+
+  @override
+  String get prRentalCount => 'Rental Property Count';
+
+  @override
+  String get prMultipleLand => 'Multiple Land Parcels';
+
+  @override
+  String get prFarmEstate => 'Farm/Estate Chance';
+
+  @override
+  String get prGlobalPropertyLabel => 'Global Property';
+
+  @override
+  String get prForeignProperty => 'Foreign Property';
+
+  @override
+  String get prNriAffinity => 'NRI Asset Affinity';
+
+  @override
+  String get prVehiclesTitle => 'Vehicles';
+
+  @override
+  String get prVehicleCount => 'Vehicle Count';
+
+  @override
+  String get prVehicleFirstAge => 'Pehla Vehicle - Age';
+
+  @override
+  String get prVehicleCategory => 'Vehicle Category';
+
+  @override
+  String get prVehicleQuality => 'Vehicle Quality';
+
+  @override
+  String get prLuxuryAffinity => 'Luxury Affinity';
+
+  @override
+  String get prVehicleLossRisk => 'Vehicle Loss/Damage Risk';
+
+  @override
+  String get prLegalRiskTitle => 'Legal aur Risk Watch';
+
+  @override
+  String get prBoundaryDisputes => 'Boundary Disputes';
+
+  @override
+  String get prPartitionDisputes => 'Partition Disputes';
+
+  @override
+  String get prTitleIssues => 'Title/Documentation Issues';
+
+  @override
+  String get prTenantConflict => 'Tenant-Landlord Conflict';
+
+  @override
+  String get prForcedSale => 'Forced Sale Risk';
+
+  @override
+  String get prPropertyDamage => 'Property Damage Risk';
+
+  @override
+  String get prInsurancePriority => 'Insurance Priority';
+
+  @override
+  String get prProtectionUrgency => 'Protection Urgency';
+
+  @override
+  String get prProtectiveFactors => 'Protective Factors';
+
+  @override
+  String get prChronicVulnerabilities => 'Chronic Vulnerabilities';
+
+  @override
+  String get prDueDiligenceTitle => 'Due Diligence Checklist';
+
+  @override
+  String get prPreventiveMeasures => 'Preventive Measures';
+
+  @override
+  String get prImprovementTitle => 'Improvement Plan';
+
+  @override
+  String get prReliabilityTitle => 'Reliability';
+
+  @override
+  String get prLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get prLayerD4 => 'Property Chart (D4)';
+
+  @override
+  String get prLayerD16 => 'Vehicle Chart (D16)';
+
+  @override
+  String get prLayerDasha => 'Dasha Timing';
+
+  @override
+  String get prLayerTransit => 'Transits';
+
+  @override
+  String get prTopicBuying => 'Kharidne ka best time?';
+
+  @override
+  String get prTopicInherit => 'Kya mujhe property inherit hogi?';
+
+  @override
+  String get prTopicVehicle => 'Mujhe vehicle kab milega?';
+
+  @override
+  String get prTopicRental => 'Rental income ki sambhavna?';
+
+  @override
+  String get prTopicLand => 'Zameen ke swamitva ke chances?';
+
+  @override
+  String get prTopicLegal => 'Kaunse legal risks pe dhyan doon?';
+
+  @override
+  String get prTopicForeign => 'Foreign property ke chances?';
+
+  @override
+  String get prTopicTiming => 'Property ke liye best timing?';
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override

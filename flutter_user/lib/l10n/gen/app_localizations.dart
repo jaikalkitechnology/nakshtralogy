@@ -235,6 +235,618 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @prSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Property Report'**
+  String get prSubtitle;
+
+  /// No description provided for @prTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Property & Assets'**
+  String get prTitle;
+
+  /// No description provided for @prSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Snapshot'**
+  String get prSnapshotHeader;
+
+  /// No description provided for @prAcquisitionCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Acquisition Capacity'**
+  String get prAcquisitionCapacity;
+
+  /// No description provided for @prHomeOwnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Ownership'**
+  String get prHomeOwnership;
+
+  /// No description provided for @prWealthPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Potential'**
+  String get prWealthPotential;
+
+  /// No description provided for @prRentalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental Income'**
+  String get prRentalIncome;
+
+  /// No description provided for @prLandOwnership.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Ownership'**
+  String get prLandOwnership;
+
+  /// No description provided for @prStatusExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get prStatusExcellent;
+
+  /// No description provided for @prStatusStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get prStatusStrong;
+
+  /// No description provided for @prStatusModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get prStatusModerate;
+
+  /// No description provided for @prStatusDeveloping.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing'**
+  String get prStatusDeveloping;
+
+  /// No description provided for @prStatusChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging'**
+  String get prStatusChallenging;
+
+  /// No description provided for @prChipHomeOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Owner'**
+  String get prChipHomeOwner;
+
+  /// No description provided for @prChipWealthBuilder.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Builder'**
+  String get prChipWealthBuilder;
+
+  /// No description provided for @prChipLandOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Owner'**
+  String get prChipLandOwner;
+
+  /// No description provided for @prChipInvestor.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Investor'**
+  String get prChipInvestor;
+
+  /// No description provided for @prChipInheritance.
+  ///
+  /// In en, this message translates to:
+  /// **'Inheritance Likely'**
+  String get prChipInheritance;
+
+  /// No description provided for @prChipVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Owner'**
+  String get prChipVehicle;
+
+  /// No description provided for @prChipGlobalAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Asset Affinity'**
+  String get prChipGlobalAsset;
+
+  /// No description provided for @prProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Property Style'**
+  String get prProfileTitle;
+
+  /// No description provided for @prHomeAesthetics.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Aesthetics'**
+  String get prHomeAesthetics;
+
+  /// No description provided for @prHomeSanctuary.
+  ///
+  /// In en, this message translates to:
+  /// **'Home as Sanctuary'**
+  String get prHomeSanctuary;
+
+  /// No description provided for @prComfortInvestment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfort Investment'**
+  String get prComfortInvestment;
+
+  /// No description provided for @prVastuPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Vastu Priority'**
+  String get prVastuPriority;
+
+  /// No description provided for @prNaturalElements.
+  ///
+  /// In en, this message translates to:
+  /// **'Natural Elements'**
+  String get prNaturalElements;
+
+  /// No description provided for @prNextActionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Action'**
+  String get prNextActionLabel;
+
+  /// No description provided for @prKarakaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Property Planets'**
+  String get prKarakaTitle;
+
+  /// No description provided for @prKarakaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which planets shape your property luck'**
+  String get prKarakaSubtitle;
+
+  /// No description provided for @prPrimaryKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Karaka'**
+  String get prPrimaryKaraka;
+
+  /// No description provided for @prDurableAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Durable Asset Karaka'**
+  String get prDurableAsset;
+
+  /// No description provided for @prYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Yogas & Doshas'**
+  String get prYogasTitle;
+
+  /// No description provided for @prCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Phase'**
+  String get prCurrentPhase;
+
+  /// No description provided for @prBoosters.
+  ///
+  /// In en, this message translates to:
+  /// **'Boosters'**
+  String get prBoosters;
+
+  /// No description provided for @prDrains.
+  ///
+  /// In en, this message translates to:
+  /// **'Drains'**
+  String get prDrains;
+
+  /// No description provided for @prVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts'**
+  String get prVerificationTitle;
+
+  /// No description provided for @prD4Property.
+  ///
+  /// In en, this message translates to:
+  /// **'D4 Property Chart'**
+  String get prD4Property;
+
+  /// No description provided for @prD16Vehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'D16 Vehicle Chart'**
+  String get prD16Vehicle;
+
+  /// No description provided for @prVehicleFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Fit'**
+  String get prVehicleFit;
+
+  /// No description provided for @prJourneyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ownership Journey & Timeline'**
+  String get prJourneyTitle;
+
+  /// No description provided for @prFirstHomeAge.
+  ///
+  /// In en, this message translates to:
+  /// **'First Home Age'**
+  String get prFirstHomeAge;
+
+  /// No description provided for @prFirstHomeType.
+  ///
+  /// In en, this message translates to:
+  /// **'First Home Type'**
+  String get prFirstHomeType;
+
+  /// No description provided for @prMultipleHomes.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple Homes'**
+  String get prMultipleHomes;
+
+  /// No description provided for @prNewPropertySoon.
+  ///
+  /// In en, this message translates to:
+  /// **'New Property Soon'**
+  String get prNewPropertySoon;
+
+  /// No description provided for @prFirstMajorWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'First Major Window'**
+  String get prFirstMajorWindow;
+
+  /// No description provided for @prBuyingWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying Window'**
+  String get prBuyingWindow;
+
+  /// No description provided for @prConstructionWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Construction Window'**
+  String get prConstructionWindow;
+
+  /// No description provided for @prNextOpportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Opportunity'**
+  String get prNextOpportunity;
+
+  /// No description provided for @prLifetimePropertyCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime Property Count'**
+  String get prLifetimePropertyCount;
+
+  /// No description provided for @prInheritanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inheritance & Family Property'**
+  String get prInheritanceTitle;
+
+  /// No description provided for @prMaternalInheritance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maternal Inheritance'**
+  String get prMaternalInheritance;
+
+  /// No description provided for @prPaternalInheritance.
+  ///
+  /// In en, this message translates to:
+  /// **'Paternal Inheritance'**
+  String get prPaternalInheritance;
+
+  /// No description provided for @prAncestralProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Ancestral Property'**
+  String get prAncestralProperty;
+
+  /// No description provided for @prFamilyDisputeRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Dispute Risk'**
+  String get prFamilyDisputeRisk;
+
+  /// No description provided for @prInheritanceTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Inheritance Timing'**
+  String get prInheritanceTiming;
+
+  /// No description provided for @prInheritanceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Inheritance Type'**
+  String get prInheritanceType;
+
+  /// No description provided for @prLandInvestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Land, Investment & Global Property'**
+  String get prLandInvestTitle;
+
+  /// No description provided for @prPropertyInvestor.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Investor Score'**
+  String get prPropertyInvestor;
+
+  /// No description provided for @prAppreciationLuck.
+  ///
+  /// In en, this message translates to:
+  /// **'Appreciation Luck'**
+  String get prAppreciationLuck;
+
+  /// No description provided for @prInvestorMindset.
+  ///
+  /// In en, this message translates to:
+  /// **'Investor Mindset'**
+  String get prInvestorMindset;
+
+  /// No description provided for @prLandType.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Type'**
+  String get prLandType;
+
+  /// No description provided for @prRentalCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental Property Count'**
+  String get prRentalCount;
+
+  /// No description provided for @prMultipleLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple Land Parcels'**
+  String get prMultipleLand;
+
+  /// No description provided for @prFarmEstate.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm / Estate Chance'**
+  String get prFarmEstate;
+
+  /// No description provided for @prGlobalPropertyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Property'**
+  String get prGlobalPropertyLabel;
+
+  /// No description provided for @prForeignProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign Property'**
+  String get prForeignProperty;
+
+  /// No description provided for @prNriAffinity.
+  ///
+  /// In en, this message translates to:
+  /// **'NRI Asset Affinity'**
+  String get prNriAffinity;
+
+  /// No description provided for @prVehiclesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicles'**
+  String get prVehiclesTitle;
+
+  /// No description provided for @prVehicleCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Count'**
+  String get prVehicleCount;
+
+  /// No description provided for @prVehicleFirstAge.
+  ///
+  /// In en, this message translates to:
+  /// **'First Vehicle Age'**
+  String get prVehicleFirstAge;
+
+  /// No description provided for @prVehicleCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Category'**
+  String get prVehicleCategory;
+
+  /// No description provided for @prVehicleQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Quality'**
+  String get prVehicleQuality;
+
+  /// No description provided for @prLuxuryAffinity.
+  ///
+  /// In en, this message translates to:
+  /// **'Luxury Affinity'**
+  String get prLuxuryAffinity;
+
+  /// No description provided for @prVehicleLossRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Loss / Damage Risk'**
+  String get prVehicleLossRisk;
+
+  /// No description provided for @prLegalRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal & Risk Watch'**
+  String get prLegalRiskTitle;
+
+  /// No description provided for @prBoundaryDisputes.
+  ///
+  /// In en, this message translates to:
+  /// **'Boundary Disputes'**
+  String get prBoundaryDisputes;
+
+  /// No description provided for @prPartitionDisputes.
+  ///
+  /// In en, this message translates to:
+  /// **'Partition Disputes'**
+  String get prPartitionDisputes;
+
+  /// No description provided for @prTitleIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Title / Documentation Issues'**
+  String get prTitleIssues;
+
+  /// No description provided for @prTenantConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenant-Landlord Conflict'**
+  String get prTenantConflict;
+
+  /// No description provided for @prForcedSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Forced Sale Risk'**
+  String get prForcedSale;
+
+  /// No description provided for @prPropertyDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Damage Risk'**
+  String get prPropertyDamage;
+
+  /// No description provided for @prInsurancePriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance Priority'**
+  String get prInsurancePriority;
+
+  /// No description provided for @prProtectionUrgency.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection Urgency'**
+  String get prProtectionUrgency;
+
+  /// No description provided for @prProtectiveFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Protective Factors'**
+  String get prProtectiveFactors;
+
+  /// No description provided for @prChronicVulnerabilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Vulnerabilities'**
+  String get prChronicVulnerabilities;
+
+  /// No description provided for @prDueDiligenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Diligence Checklist'**
+  String get prDueDiligenceTitle;
+
+  /// No description provided for @prPreventiveMeasures.
+  ///
+  /// In en, this message translates to:
+  /// **'Preventive Measures'**
+  String get prPreventiveMeasures;
+
+  /// No description provided for @prImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get prImprovementTitle;
+
+  /// No description provided for @prReliabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get prReliabilityTitle;
+
+  /// No description provided for @prLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get prLayerD1;
+
+  /// No description provided for @prLayerD4.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Chart (D4)'**
+  String get prLayerD4;
+
+  /// No description provided for @prLayerD16.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Chart (D16)'**
+  String get prLayerD16;
+
+  /// No description provided for @prLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get prLayerDasha;
+
+  /// No description provided for @prLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Transits'**
+  String get prLayerTransit;
+
+  /// No description provided for @prTopicBuying.
+  ///
+  /// In en, this message translates to:
+  /// **'Best time to buy?'**
+  String get prTopicBuying;
+
+  /// No description provided for @prTopicInherit.
+  ///
+  /// In en, this message translates to:
+  /// **'Will I inherit property?'**
+  String get prTopicInherit;
+
+  /// No description provided for @prTopicVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'When will I get a vehicle?'**
+  String get prTopicVehicle;
+
+  /// No description provided for @prTopicRental.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental income potential?'**
+  String get prTopicRental;
+
+  /// No description provided for @prTopicLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Land ownership chances?'**
+  String get prTopicLand;
+
+  /// No description provided for @prTopicLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal risks to watch?'**
+  String get prTopicLegal;
+
+  /// No description provided for @prTopicForeign.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign property chances?'**
+  String get prTopicForeign;
+
+  /// No description provided for @prTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best property timing windows?'**
+  String get prTopicTiming;
+
   /// No description provided for @edTitle.
   ///
   /// In en, this message translates to:

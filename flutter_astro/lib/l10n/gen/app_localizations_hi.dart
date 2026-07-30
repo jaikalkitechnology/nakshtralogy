@@ -6040,6 +6040,312 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get prSubtitle => 'AI-संचालित वैदिक संपत्ति रिपोर्ट';
+
+  @override
+  String get prTitle => 'संपत्ति और परिसंपत्ति';
+
+  @override
+  String get prSnapshotHeader => 'संपत्ति स्नैपशॉट';
+
+  @override
+  String get prAcquisitionCapacity => 'अधिग्रहण क्षमता';
+
+  @override
+  String get prHomeOwnership => 'घर का स्वामित्व';
+
+  @override
+  String get prWealthPotential => 'संपत्ति क्षमता';
+
+  @override
+  String get prRentalIncome => 'किराये की आय';
+
+  @override
+  String get prLandOwnership => 'भूमि स्वामित्व';
+
+  @override
+  String get prStatusExcellent => 'उत्कृष्ट';
+
+  @override
+  String get prStatusStrong => 'मजबूत';
+
+  @override
+  String get prStatusModerate => 'मध्यम';
+
+  @override
+  String get prStatusDeveloping => 'विकासशील';
+
+  @override
+  String get prStatusChallenging => 'चुनौतीपूर्ण';
+
+  @override
+  String get prChipHomeOwner => 'घर का मालिक';
+
+  @override
+  String get prChipWealthBuilder => 'संपत्ति निर्माता';
+
+  @override
+  String get prChipLandOwner => 'भूमि स्वामी';
+
+  @override
+  String get prChipInvestor => 'संपत्ति निवेशक';
+
+  @override
+  String get prChipInheritance => 'विरासत की संभावना';
+
+  @override
+  String get prChipVehicle => 'वाहन स्वामी';
+
+  @override
+  String get prChipGlobalAsset => 'वैश्विक संपत्ति की रुचि';
+
+  @override
+  String get prProfileTitle => 'आपकी संपत्ति शैली';
+
+  @override
+  String get prHomeAesthetics => 'घर का सौंदर्य';
+
+  @override
+  String get prHomeSanctuary => 'घर एक शरणस्थली के रूप में';
+
+  @override
+  String get prComfortInvestment => 'आराम में निवेश';
+
+  @override
+  String get prVastuPriority => 'वास्तु प्राथमिकता';
+
+  @override
+  String get prNaturalElements => 'प्राकृतिक तत्व';
+
+  @override
+  String get prNextActionLabel => 'अगला कदम';
+
+  @override
+  String get prKarakaTitle => 'आपके संपत्ति ग्रह';
+
+  @override
+  String get prKarakaSubtitle => 'कौन से ग्रह आपकी संपत्ति भाग्य को आकार देते हैं';
+
+  @override
+  String get prPrimaryKaraka => 'मुख्य कारक';
+
+  @override
+  String get prDurableAsset => 'स्थायी संपत्ति कारक';
+
+  @override
+  String get prYogasTitle => 'संपत्ति योग और दोष';
+
+  @override
+  String get prCurrentPhase => 'वर्तमान चरण';
+
+  @override
+  String get prBoosters => 'सहायक कारक';
+
+  @override
+  String get prDrains => 'कमज़ोर करने वाले कारक';
+
+  @override
+  String get prVerificationTitle => 'अन्य कुंडलियों से सत्यापित';
+
+  @override
+  String get prD4Property => 'D4 संपत्ति कुंडली';
+
+  @override
+  String get prD16Vehicle => 'D16 वाहन कुंडली';
+
+  @override
+  String get prVehicleFit => 'वाहन उपयुक्तता';
+
+  @override
+  String get prJourneyTitle => 'स्वामित्व यात्रा और समयरेखा';
+
+  @override
+  String get prFirstHomeAge => 'पहला घर - आयु';
+
+  @override
+  String get prFirstHomeType => 'पहले घर का प्रकार';
+
+  @override
+  String get prMultipleHomes => 'एकाधिक घर';
+
+  @override
+  String get prNewPropertySoon => 'जल्द नई संपत्ति';
+
+  @override
+  String get prFirstMajorWindow => 'पहला प्रमुख अवसर';
+
+  @override
+  String get prBuyingWindow => 'खरीद का समय';
+
+  @override
+  String get prConstructionWindow => 'निर्माण का समय';
+
+  @override
+  String get prNextOpportunity => 'अगला अवसर';
+
+  @override
+  String get prLifetimePropertyCount => 'जीवनभर संपत्तियों की संख्या';
+
+  @override
+  String get prInheritanceTitle => 'विरासत और पारिवारिक संपत्ति';
+
+  @override
+  String get prMaternalInheritance => 'मातृ पक्ष से विरासत';
+
+  @override
+  String get prPaternalInheritance => 'पितृ पक्ष से विरासत';
+
+  @override
+  String get prAncestralProperty => 'पैतृक संपत्ति';
+
+  @override
+  String get prFamilyDisputeRisk => 'पारिवारिक विवाद का जोखिम';
+
+  @override
+  String get prInheritanceTiming => 'विरासत का समय';
+
+  @override
+  String get prInheritanceType => 'विरासत का प्रकार';
+
+  @override
+  String get prLandInvestTitle => 'भूमि, निवेश और वैश्विक संपत्ति';
+
+  @override
+  String get prPropertyInvestor => 'संपत्ति निवेशक स्कोर';
+
+  @override
+  String get prAppreciationLuck => 'मूल्यवृद्धि का भाग्य';
+
+  @override
+  String get prInvestorMindset => 'निवेशक मानसिकता';
+
+  @override
+  String get prLandType => 'भूमि प्रकार';
+
+  @override
+  String get prRentalCount => 'किराये की संपत्तियों की संख्या';
+
+  @override
+  String get prMultipleLand => 'एकाधिक भूमि खंड';
+
+  @override
+  String get prFarmEstate => 'फार्म/एस्टेट की संभावना';
+
+  @override
+  String get prGlobalPropertyLabel => 'वैश्विक संपत्ति';
+
+  @override
+  String get prForeignProperty => 'विदेशी संपत्ति';
+
+  @override
+  String get prNriAffinity => 'NRI संपत्ति की रुचि';
+
+  @override
+  String get prVehiclesTitle => 'वाहन';
+
+  @override
+  String get prVehicleCount => 'वाहनों की संख्या';
+
+  @override
+  String get prVehicleFirstAge => 'पहला वाहन - आयु';
+
+  @override
+  String get prVehicleCategory => 'वाहन श्रेणी';
+
+  @override
+  String get prVehicleQuality => 'वाहन की गुणवत्ता';
+
+  @override
+  String get prLuxuryAffinity => 'लक्ज़री की रुचि';
+
+  @override
+  String get prVehicleLossRisk => 'वाहन हानि/क्षति का जोखिम';
+
+  @override
+  String get prLegalRiskTitle => 'कानूनी और जोखिम निगरानी';
+
+  @override
+  String get prBoundaryDisputes => 'सीमा विवाद';
+
+  @override
+  String get prPartitionDisputes => 'बंटवारे के विवाद';
+
+  @override
+  String get prTitleIssues => 'स्वामित्व/दस्तावेज़ संबंधी समस्याएं';
+
+  @override
+  String get prTenantConflict => 'किरायेदार-मकान मालिक विवाद';
+
+  @override
+  String get prForcedSale => 'जबरन बिक्री का जोखिम';
+
+  @override
+  String get prPropertyDamage => 'संपत्ति क्षति का जोखिम';
+
+  @override
+  String get prInsurancePriority => 'बीमा प्राथमिकता';
+
+  @override
+  String get prProtectionUrgency => 'सुरक्षा की तात्कालिकता';
+
+  @override
+  String get prProtectiveFactors => 'सुरक्षात्मक कारक';
+
+  @override
+  String get prChronicVulnerabilities => 'दीर्घकालिक कमजोरियां';
+
+  @override
+  String get prDueDiligenceTitle => 'सावधानी सूची';
+
+  @override
+  String get prPreventiveMeasures => 'निवारक उपाय';
+
+  @override
+  String get prImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get prReliabilityTitle => 'विश्वसनीयता';
+
+  @override
+  String get prLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get prLayerD4 => 'संपत्ति कुंडली (D4)';
+
+  @override
+  String get prLayerD16 => 'वाहन कुंडली (D16)';
+
+  @override
+  String get prLayerDasha => 'दशा समय';
+
+  @override
+  String get prLayerTransit => 'गोचर';
+
+  @override
+  String get prTopicBuying => 'खरीदने का सबसे अच्छा समय?';
+
+  @override
+  String get prTopicInherit => 'क्या मुझे संपत्ति विरासत में मिलेगी?';
+
+  @override
+  String get prTopicVehicle => 'मुझे वाहन कब मिलेगा?';
+
+  @override
+  String get prTopicRental => 'किराये की आय की संभावना?';
+
+  @override
+  String get prTopicLand => 'भूमि स्वामित्व की संभावना?';
+
+  @override
+  String get prTopicLegal => 'किन कानूनी जोखिमों पर ध्यान दूं?';
+
+  @override
+  String get prTopicForeign => 'विदेशी संपत्ति की संभावना?';
+
+  @override
+  String get prTopicTiming => 'संपत्ति के लिए सबसे अच्छा समय?';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override
