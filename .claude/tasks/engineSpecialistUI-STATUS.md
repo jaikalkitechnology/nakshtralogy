@@ -10,16 +10,16 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 3 done · 16 pending · 0 blocked  (19 total)**
+**Progress: 4 done · 15 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`
+**Translations pending (10-locale backfill):** `bz_source.json`, `wl_source.json`, `mr_source.json`
 
 | # | Engine key | Label | Screen file (`…/screens/specialist/`) | Status | Commit | Locales | Notes |
 |---|------------|-------|----------------------------------------|--------|--------|---------|-------|
 | 0 | career | Career & Job | `career_report_screen.dart` | ✅ DONE | 09a46bb / af31e93 | 11/11 | Template. Blank-below-hero fixed (dropped KFadeIn). |
 | 1 | business | Business & Startup | `business_report_screen.dart` | ✅ DONE | 825e436 | en+hi+hinglish | 17-section AI business coach; backfill pending (bz_source.json). 2026-07-30. |
 | 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ✅ DONE | 99efd19 | en+hi+hinglish | 14-section AI wealth coach; converted from EngineReportBase shell to Career template; backfill pending (wl_source.json). 2026-07-30. |
-| 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ⬜ PENDING | — | — | analyze() takes gender. |
+| 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ✅ DONE | 1a05f0b | en+hi+hinglish | 14-section AI relationship coach; converted from EngineReportBase shell to Career template (gender resolved server-side); backfill pending (mr_source.json). 2026-07-30. |
 | 4 | love | Love & Relationships | `love_report_screen.dart` | ⬜ PENDING | — | — | |
 | 5 | health | Health & Wellness | `health_report_screen.dart` | ⬜ PENDING | — | — | |
 | 6 | education | Education & Learning | `education_report_screen.dart` | ⬜ PENDING | — | — | |
@@ -56,6 +56,14 @@ touch only if a redesigned screen requires it.
   Converted from the shared EngineReportBase shell to the standalone Career
   template (public constructor params unchanged). Both apps; 73 new `wl` keys
   (en+hi+hinglish). Commit `99efd19`, 2026-07-30. Backfill: `wl_source.json`.
+- **marriage** ✅ — 14-section AI relationship coach (snapshot hero, Your Future
+  Spouse, Soul & Partnership, Marriage Foundation, Compatibility Harmony,
+  Marriage Timing, Marriage Journey phases, Family & Home, Cross-Chart
+  Verification, Challenges + Mangal-dosh status, Partner Guide, Improvement Plan,
+  Reliability, Discuss-with-AI). Converted from the shared EngineReportBase shell
+  to the standalone Career template (public constructor params unchanged; gender
+  resolved server-side by the API). Both apps; 100 new `mr` keys
+  (en+hi+hinglish). Commit `1a05f0b`, 2026-07-30. Backfill: `mr_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
