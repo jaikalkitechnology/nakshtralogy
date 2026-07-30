@@ -36,7 +36,3 @@ react_admin/dist/
 # ── OS ────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
-
-# engineSpecialistUI: intermediate per-locale translation outputs (applied to
-# ARBs via translate_apply.py, then discarded). The *_source.json queue stays tracked.
-.claude/tasks/pending_translations/*_tr_*.json
