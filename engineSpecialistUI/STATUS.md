@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 9 done · 10 pending · 0 blocked  (19 total)**
+**Progress: 10 done · 9 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `bz_source.json`, `mr_source.json`, `lv_source.json`, `hw_source.json`, `ed_source.json`, `pr_source.json`, `lg_source.json`  (wl ✅ applied 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -22,15 +22,15 @@ continue to the next PENDING engine without asking. See the agent spec at
 | # | Engine key | Label | Screen file (`…/screens/specialist/`) | Status | Commit | Locales | Notes |
 |---|------------|-------|----------------------------------------|--------|--------|---------|-------|
 | 0 | career | Career & Job | `career_report_screen.dart` | ✅ DONE | 09a46bb / af31e93 | 11/11 | Template. Blank-below-hero fixed (dropped KFadeIn). |
-| 1 | business | Business & Startup | `business_report_screen.dart` | ✅ DONE | 825e436 | en+hi+hinglish | 17-section AI business coach; backfill pending (bz_source.json). 2026-07-30. |
+| 1 | business | Business & Startup | `business_report_screen.dart` | ✅ DONE | 825e436 | 11/11 | 17-section AI business coach; backfill pending (bz_source.json). 2026-07-30. |
 | 2 | wealth | Wealth & Finance | `wealth_report_screen.dart` | ✅ DONE | 99efd19 | 11/11 | 14-section AI wealth coach; converted from EngineReportBase shell to Career template. Translations applied. 2026-07-30. |
-| 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ✅ DONE | 1a05f0b | en+hi+hinglish | 14-section AI relationship coach; converted from EngineReportBase shell to Career template (gender resolved server-side); backfill pending (mr_source.json). 2026-07-30. |
-| 4 | love | Love & Relationships | `love_report_screen.dart` | ✅ DONE | 1b061a5 | en+hi+hinglish | 14-section AI love coach; converted from EngineReportBase shell to Career template; backfill pending (lv_source.json). 2026-07-30. |
-| 5 | health | Health & Wellness | `health_report_screen.dart` | ✅ DONE | 0a74df6 | en+hi+hinglish | 14-section AI health coach; converted from EngineReportBase shell to Career template; medical disclaimer surfaced verbatim; backfill pending (hw_source.json). 2026-07-30. |
-| 6 | education | Education & Learning | `education_report_screen.dart` | ✅ DONE | 749c196 | en+hi+hinglish | 15-section AI education coach; replaced bespoke sliver layout with Career template; backfill pending (ed_source.json). 2026-07-30. |
+| 3 | marriage | Marriage & Family | `marriage_report_screen.dart` | ✅ DONE | 1a05f0b | 11/11 | 14-section AI relationship coach; converted from EngineReportBase shell to Career template (gender resolved server-side); backfill pending (mr_source.json). 2026-07-30. |
+| 4 | love | Love & Relationships | `love_report_screen.dart` | ✅ DONE | 1b061a5 | 11/11 | 14-section AI love coach; converted from EngineReportBase shell to Career template; backfill pending (lv_source.json). 2026-07-30. |
+| 5 | health | Health & Wellness | `health_report_screen.dart` | ✅ DONE | 0a74df6 | 11/11 | 14-section AI health coach; converted from EngineReportBase shell to Career template; medical disclaimer surfaced verbatim; backfill pending (hw_source.json). 2026-07-30. |
+| 6 | education | Education & Learning | `education_report_screen.dart` | ✅ DONE | 749c196 | 11/11 | 15-section AI education coach; replaced bespoke sliver layout with Career template; backfill pending (ed_source.json). 2026-07-30. |
 | 7 | property | Property & Assets | `property_report_screen.dart` | ✅ DONE | 2c6427b | en+hi+hinglish | Career-template redesign had already landed in flutter_user (14-section AI property coach) but was missing l10n + astro port; both closed now. Backfill pending (pr_source.json). 2026-07-30. |
 | 8 | legal | Legal & Disputes | `legal_report_screen.dart` | ✅ DONE | cbdb03a | en+hi+hinglish | 16-section AI legal coach; converted from EngineReportBase shell to Career template. Backfill pending (lg_source.json). 2026-07-30. |
-| 9 | mental_stress | Mental & Stress | `mental_report_screen.dart` | ⬜ PENDING | — | — | Reassuring tone; do not scare. |
+| 9 | mental_stress | Mental & Stress | `mental_report_screen.dart` | ✅ DONE | e8745a3 | en+hi+hinglish | 14-section reassuring AI wellness coach; converted to Career template; finished after agent stalled on a stale lock. Backfill pending (mn_source.json). 2026-07-30. |
 | 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ⬜ PENDING | — | — | |
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ⬜ PENDING | — | — | |
 | 12 | character | Character Analysis | `character_report_screen.dart` | ⬜ PENDING | — | — | |

@@ -1,0 +1,368 @@
+{
+ "mnSubtitle": {
+  "en": "AI-powered Vedic Wellness Report"
+ },
+ "mnTitle": {
+  "en": "Mental & Stress"
+ },
+ "mnSnapshotHeader": {
+  "en": "Wellness Snapshot"
+ },
+ "mnResilience": {
+  "en": "Resilience"
+ },
+ "mnStability": {
+  "en": "Stability"
+ },
+ "mnEmotionalBalance": {
+  "en": "Emotional Balance"
+ },
+ "mnInnerCalm": {
+  "en": "Inner Calm"
+ },
+ "mnSelfAwareness": {
+  "en": "Self-Awareness"
+ },
+ "mnStatusThriving": {
+  "en": "Thriving"
+ },
+ "mnStatusSteady": {
+  "en": "Steady & Stable"
+ },
+ "mnStatusBuildingStrength": {
+  "en": "Building Strength"
+ },
+ "mnStatusNeedsGentleCare": {
+  "en": "Needs Gentle Care"
+ },
+ "mnStatusReachOut": {
+  "en": "Time to Reach Out for Support"
+ },
+ "mnChipStable": {
+  "en": "Emotionally Stable"
+ },
+ "mnChipSupported": {
+  "en": "Well Supported"
+ },
+ "mnChipSelfAware": {
+  "en": "Highly Self-Aware"
+ },
+ "mnChipResilient": {
+  "en": "Bounces Back Well"
+ },
+ "mnChipSecureAttachment": {
+  "en": "Secure Attachment"
+ },
+ "mnChipHealingReady": {
+  "en": "Ready to Heal"
+ },
+ "mnChipMindBodyBalance": {
+  "en": "Mind-Body Balance"
+ },
+ "mnSupportBannerTitle": {
+  "en": "A Gentle Note"
+ },
+ "mnSupportBannerBody": {
+  "en": "Your chart suggests this could be a good time to lean on extra support — a trusted friend, family member, or professional. Reaching out is a sign of strength, not weakness."
+ },
+ "mnProfileTitle": {
+  "en": "Your Emotional Blueprint"
+ },
+ "mnStressDriver": {
+  "en": "Stress Driver"
+ },
+ "mnStabilityAnchor": {
+  "en": "Stability Anchor"
+ },
+ "mnSoulLevelKarma": {
+  "en": "Soul-Level Pattern"
+ },
+ "mnSubtleSignature": {
+  "en": "Subtle Emotional Signature"
+ },
+ "mnKarakaTitle": {
+  "en": "Your Mind & Planets"
+ },
+ "mnKarakaSubtitle": {
+  "en": "Which planets shape your inner world"
+ },
+ "mnYogasTitle": {
+  "en": "Strengths & Growth Areas"
+ },
+ "mnCurrentPhase": {
+  "en": "Current Phase"
+ },
+ "mnCurrentStressLevel": {
+  "en": "Current Stress Level"
+ },
+ "mnRecentStrain": {
+  "en": "Recent Emotional Strain"
+ },
+ "mnStrengths": {
+  "en": "Strengths"
+ },
+ "mnGrowthAreas": {
+  "en": "Growth Areas"
+ },
+ "mnSadeSatiStatus": {
+  "en": "Sade Sati Status"
+ },
+ "mnVerificationTitle": {
+  "en": "Verified Across Charts"
+ },
+ "mnD9Confirmation": {
+  "en": "D9 Confirmation"
+ },
+ "mnD30Confirmation": {
+  "en": "D30 Confirmation"
+ },
+ "mnMoodPatternsTitle": {
+  "en": "Mood & Anxiety Patterns"
+ },
+ "mnMoodPatternsSubtitle": {
+  "en": "Gentle awareness, not a diagnosis"
+ },
+ "mnAnxietyPatterns": {
+  "en": "Anxiety Patterns"
+ },
+ "mnMoodPatterns": {
+  "en": "Low-Mood Patterns"
+ },
+ "mnPrimaryPattern": {
+  "en": "Primary Pattern"
+ },
+ "mnRumination": {
+  "en": "Overthinking Tendency"
+ },
+ "mnHypervigilance": {
+  "en": "Hyper-Alertness"
+ },
+ "mnHopelessnessVuln": {
+  "en": "Low-Mood Sensitivity"
+ },
+ "mnEnergyDepletion": {
+  "en": "Energy Depletion Tendency"
+ },
+ "mnMotivationBaseline": {
+  "en": "Motivation Baseline"
+ },
+ "mnRegulationTitle": {
+  "en": "Emotional Regulation & Coping"
+ },
+ "mnEmotionalRegulation": {
+  "en": "Emotional Regulation"
+ },
+ "mnSelfSoothing": {
+  "en": "Self-Soothing Ability"
+ },
+ "mnExpressionStyle": {
+  "en": "Expression Style"
+ },
+ "mnRecoveryTime": {
+  "en": "Recovery Time"
+ },
+ "mnTriggerIntensity": {
+  "en": "Trigger Intensity"
+ },
+ "mnHealthyCoping": {
+  "en": "Healthy Coping Habits"
+ },
+ "mnWatchFor": {
+  "en": "Gently Watch For"
+ },
+ "mnSleepTitle": {
+  "en": "Sleep & Rest"
+ },
+ "mnSleepQuality": {
+  "en": "Sleep Quality"
+ },
+ "mnSleepAsRegulator": {
+  "en": "Sleep as Emotional Regulator"
+ },
+ "mnInsomniaTendency": {
+  "en": "Restless-Night Tendency"
+ },
+ "mnNightmareTendency": {
+  "en": "Vivid-Dream Tendency"
+ },
+ "mnSleepHygienePriority": {
+  "en": "Sleep Hygiene Priority"
+ },
+ "mnBurnoutTitle": {
+  "en": "Burnout & Energy"
+ },
+ "mnBurnoutVulnerability": {
+  "en": "Burnout Sensitivity"
+ },
+ "mnBurnoutRecovery": {
+  "en": "Burnout Recovery Capacity"
+ },
+ "mnBurnoutStage": {
+  "en": "Current Burnout Stage"
+ },
+ "mnSelfDrivingTendency": {
+  "en": "Self-Driving Tendency"
+ },
+ "mnBurnoutTriggers": {
+  "en": "Burnout Triggers"
+ },
+ "mnConnectionTitle": {
+  "en": "Connection & Support"
+ },
+ "mnSocialSupport": {
+  "en": "Social Support Quality"
+ },
+ "mnLonelinessVuln": {
+  "en": "Loneliness Sensitivity"
+ },
+ "mnSolitudeNeed": {
+  "en": "Need for Solitude"
+ },
+ "mnSocialComfort": {
+  "en": "Social Comfort"
+ },
+ "mnTraumaSensitivity": {
+  "en": "Trauma Sensitivity"
+ },
+ "mnHealingReadiness": {
+  "en": "Healing Readiness"
+ },
+ "mnProcessingStyle": {
+  "en": "Processing Style"
+ },
+ "mnMindBodyIntegration": {
+  "en": "Mind-Body Integration"
+ },
+ "mnPtsdVuln": {
+  "en": "Trauma-Response Sensitivity"
+ },
+ "mnSelfAwarenessTitle": {
+  "en": "Self-Awareness & Growth"
+ },
+ "mnSelfAwarenessScore": {
+  "en": "Self-Awareness"
+ },
+ "mnEmotionalVocabulary": {
+  "en": "Emotional Vocabulary"
+ },
+ "mnTherapyReadiness": {
+  "en": "Therapy Readiness"
+ },
+ "mnJournalingBenefit": {
+  "en": "Journaling Benefit"
+ },
+ "mnInnerDialogue": {
+  "en": "Inner Dialogue Quality"
+ },
+ "mnAwarenessOfPatterns": {
+  "en": "Awareness of Patterns"
+ },
+ "mnEscapePatternVuln": {
+  "en": "Escape-Pattern Sensitivity"
+ },
+ "mnEscapeChannels": {
+  "en": "Gently Watch For"
+ },
+ "mnHealthyAlternatives": {
+  "en": "Healthy Alternatives"
+ },
+ "mnTherapyFitTitle": {
+  "en": "Therapy & Support Fit"
+ },
+ "mnCrisisSupportRec": {
+  "en": "Support Recommendation"
+ },
+ "mnSupportNetwork": {
+  "en": "Activate Your Support Network"
+ },
+ "mnSelfAdvocacy": {
+  "en": "Self-Advocacy Readiness"
+ },
+ "mnMedicationReceptivity": {
+  "en": "Medication Receptivity"
+ },
+ "mnTimelineTitle": {
+  "en": "Wellness Timeline"
+ },
+ "mnPeakWellnessYears": {
+  "en": "Peak Wellness Years"
+ },
+ "mnExtraCareYears": {
+  "en": "Years for Extra Self-Care"
+ },
+ "mnTransformationWindows": {
+  "en": "Positive Transformation Windows"
+ },
+ "mnTherapyWindow": {
+  "en": "Recommended Therapy Window"
+ },
+ "mnPracticesTitle": {
+  "en": "Daily Wellness Practices"
+ },
+ "mnMorningPractices": {
+  "en": "Morning Practices"
+ },
+ "mnEveningPractices": {
+  "en": "Evening Practices"
+ },
+ "mnBreathwork": {
+  "en": "Breathwork"
+ },
+ "mnMovement": {
+  "en": "Movement"
+ },
+ "mnNutrition": {
+  "en": "Nutrition"
+ },
+ "mnNatureExposure": {
+  "en": "Nature Exposure Need"
+ },
+ "mnDigitalDetox": {
+  "en": "Digital Detox Need"
+ },
+ "mnImprovementTitle": {
+  "en": "Improvement Plan"
+ },
+ "mnReliabilityTitle": {
+  "en": "Reliability"
+ },
+ "mnLayerD1": {
+  "en": "Birth Chart (D1)"
+ },
+ "mnLayerD9": {
+  "en": "Soul Chart (D9)"
+ },
+ "mnLayerD30": {
+  "en": "D30 Chart"
+ },
+ "mnLayerDasha": {
+  "en": "Dasha Timing"
+ },
+ "mnLayerTransit": {
+  "en": "Transits"
+ },
+ "mnTopicResilience": {
+  "en": "How resilient am I emotionally?"
+ },
+ "mnTopicCoping": {
+  "en": "What are my best coping strategies?"
+ },
+ "mnTopicSleep": {
+  "en": "How can I improve my sleep?"
+ },
+ "mnTopicBurnout": {
+  "en": "Am I at risk of burnout?"
+ },
+ "mnTopicTherapy": {
+  "en": "Which therapy style suits me?"
+ },
+ "mnTopicPractices": {
+  "en": "What daily practices help me most?"
+ },
+ "mnTopicTiming": {
+  "en": "When are my best wellness years?"
+ },
+ "mnTopicSupport": {
+  "en": "How do I build a strong support network?"
+ }
+}
