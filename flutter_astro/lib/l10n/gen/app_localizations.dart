@@ -230,6 +230,738 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @mnSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Wellness Report'**
+  String get mnSubtitle;
+
+  /// No description provided for @mnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental & Stress'**
+  String get mnTitle;
+
+  /// No description provided for @mnSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness Snapshot'**
+  String get mnSnapshotHeader;
+
+  /// No description provided for @mnResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'Resilience'**
+  String get mnResilience;
+
+  /// No description provided for @mnStability.
+  ///
+  /// In en, this message translates to:
+  /// **'Stability'**
+  String get mnStability;
+
+  /// No description provided for @mnEmotionalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Balance'**
+  String get mnEmotionalBalance;
+
+  /// No description provided for @mnInnerCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Inner Calm'**
+  String get mnInnerCalm;
+
+  /// No description provided for @mnSelfAwareness.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Awareness'**
+  String get mnSelfAwareness;
+
+  /// No description provided for @mnStatusThriving.
+  ///
+  /// In en, this message translates to:
+  /// **'Thriving'**
+  String get mnStatusThriving;
+
+  /// No description provided for @mnStatusSteady.
+  ///
+  /// In en, this message translates to:
+  /// **'Steady & Stable'**
+  String get mnStatusSteady;
+
+  /// No description provided for @mnStatusBuildingStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Building Strength'**
+  String get mnStatusBuildingStrength;
+
+  /// No description provided for @mnStatusNeedsGentleCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Gentle Care'**
+  String get mnStatusNeedsGentleCare;
+
+  /// No description provided for @mnStatusReachOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to Reach Out for Support'**
+  String get mnStatusReachOut;
+
+  /// No description provided for @mnChipStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotionally Stable'**
+  String get mnChipStable;
+
+  /// No description provided for @mnChipSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Well Supported'**
+  String get mnChipSupported;
+
+  /// No description provided for @mnChipSelfAware.
+  ///
+  /// In en, this message translates to:
+  /// **'Highly Self-Aware'**
+  String get mnChipSelfAware;
+
+  /// No description provided for @mnChipResilient.
+  ///
+  /// In en, this message translates to:
+  /// **'Bounces Back Well'**
+  String get mnChipResilient;
+
+  /// No description provided for @mnChipSecureAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Attachment'**
+  String get mnChipSecureAttachment;
+
+  /// No description provided for @mnChipHealingReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Heal'**
+  String get mnChipHealingReady;
+
+  /// No description provided for @mnChipMindBodyBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind-Body Balance'**
+  String get mnChipMindBodyBalance;
+
+  /// No description provided for @mnSupportBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A Gentle Note'**
+  String get mnSupportBannerTitle;
+
+  /// No description provided for @mnSupportBannerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your chart suggests this could be a good time to lean on extra support — a trusted friend, family member, or professional. Reaching out is a sign of strength, not weakness.'**
+  String get mnSupportBannerBody;
+
+  /// No description provided for @mnProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Emotional Blueprint'**
+  String get mnProfileTitle;
+
+  /// No description provided for @mnStressDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress Driver'**
+  String get mnStressDriver;
+
+  /// No description provided for @mnStabilityAnchor.
+  ///
+  /// In en, this message translates to:
+  /// **'Stability Anchor'**
+  String get mnStabilityAnchor;
+
+  /// No description provided for @mnSoulLevelKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul-Level Pattern'**
+  String get mnSoulLevelKarma;
+
+  /// No description provided for @mnSubtleSignature.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtle Emotional Signature'**
+  String get mnSubtleSignature;
+
+  /// No description provided for @mnKarakaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Mind & Planets'**
+  String get mnKarakaTitle;
+
+  /// No description provided for @mnKarakaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which planets shape your inner world'**
+  String get mnKarakaSubtitle;
+
+  /// No description provided for @mnYogasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths & Growth Areas'**
+  String get mnYogasTitle;
+
+  /// No description provided for @mnCurrentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Phase'**
+  String get mnCurrentPhase;
+
+  /// No description provided for @mnCurrentStressLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Stress Level'**
+  String get mnCurrentStressLevel;
+
+  /// No description provided for @mnRecentStrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Emotional Strain'**
+  String get mnRecentStrain;
+
+  /// No description provided for @mnStrengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths'**
+  String get mnStrengths;
+
+  /// No description provided for @mnGrowthAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Areas'**
+  String get mnGrowthAreas;
+
+  /// No description provided for @mnSadeSatiStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Sade Sati Status'**
+  String get mnSadeSatiStatus;
+
+  /// No description provided for @mnVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Across Charts'**
+  String get mnVerificationTitle;
+
+  /// No description provided for @mnD9Confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 Confirmation'**
+  String get mnD9Confirmation;
+
+  /// No description provided for @mnD30Confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'D30 Confirmation'**
+  String get mnD30Confirmation;
+
+  /// No description provided for @mnMoodPatternsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood & Anxiety Patterns'**
+  String get mnMoodPatternsTitle;
+
+  /// No description provided for @mnMoodPatternsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle awareness, not a diagnosis'**
+  String get mnMoodPatternsSubtitle;
+
+  /// No description provided for @mnAnxietyPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Anxiety Patterns'**
+  String get mnAnxietyPatterns;
+
+  /// No description provided for @mnMoodPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-Mood Patterns'**
+  String get mnMoodPatterns;
+
+  /// No description provided for @mnPrimaryPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Pattern'**
+  String get mnPrimaryPattern;
+
+  /// No description provided for @mnRumination.
+  ///
+  /// In en, this message translates to:
+  /// **'Overthinking Tendency'**
+  String get mnRumination;
+
+  /// No description provided for @mnHypervigilance.
+  ///
+  /// In en, this message translates to:
+  /// **'Hyper-Alertness'**
+  String get mnHypervigilance;
+
+  /// No description provided for @mnHopelessnessVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-Mood Sensitivity'**
+  String get mnHopelessnessVuln;
+
+  /// No description provided for @mnEnergyDepletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy Depletion Tendency'**
+  String get mnEnergyDepletion;
+
+  /// No description provided for @mnMotivationBaseline.
+  ///
+  /// In en, this message translates to:
+  /// **'Motivation Baseline'**
+  String get mnMotivationBaseline;
+
+  /// No description provided for @mnRegulationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Regulation & Coping'**
+  String get mnRegulationTitle;
+
+  /// No description provided for @mnEmotionalRegulation.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Regulation'**
+  String get mnEmotionalRegulation;
+
+  /// No description provided for @mnSelfSoothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Soothing Ability'**
+  String get mnSelfSoothing;
+
+  /// No description provided for @mnExpressionStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expression Style'**
+  String get mnExpressionStyle;
+
+  /// No description provided for @mnRecoveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Time'**
+  String get mnRecoveryTime;
+
+  /// No description provided for @mnTriggerIntensity.
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger Intensity'**
+  String get mnTriggerIntensity;
+
+  /// No description provided for @mnHealthyCoping.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy Coping Habits'**
+  String get mnHealthyCoping;
+
+  /// No description provided for @mnWatchFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Gently Watch For'**
+  String get mnWatchFor;
+
+  /// No description provided for @mnSleepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep & Rest'**
+  String get mnSleepTitle;
+
+  /// No description provided for @mnSleepQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Quality'**
+  String get mnSleepQuality;
+
+  /// No description provided for @mnSleepAsRegulator.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep as Emotional Regulator'**
+  String get mnSleepAsRegulator;
+
+  /// No description provided for @mnInsomniaTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'Restless-Night Tendency'**
+  String get mnInsomniaTendency;
+
+  /// No description provided for @mnNightmareTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'Vivid-Dream Tendency'**
+  String get mnNightmareTendency;
+
+  /// No description provided for @mnSleepHygienePriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Hygiene Priority'**
+  String get mnSleepHygienePriority;
+
+  /// No description provided for @mnBurnoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout & Energy'**
+  String get mnBurnoutTitle;
+
+  /// No description provided for @mnBurnoutVulnerability.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout Sensitivity'**
+  String get mnBurnoutVulnerability;
+
+  /// No description provided for @mnBurnoutRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout Recovery Capacity'**
+  String get mnBurnoutRecovery;
+
+  /// No description provided for @mnBurnoutStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Burnout Stage'**
+  String get mnBurnoutStage;
+
+  /// No description provided for @mnSelfDrivingTendency.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Driving Tendency'**
+  String get mnSelfDrivingTendency;
+
+  /// No description provided for @mnBurnoutTriggers.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout Triggers'**
+  String get mnBurnoutTriggers;
+
+  /// No description provided for @mnConnectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection & Support'**
+  String get mnConnectionTitle;
+
+  /// No description provided for @mnSocialSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Support Quality'**
+  String get mnSocialSupport;
+
+  /// No description provided for @mnLonelinessVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Loneliness Sensitivity'**
+  String get mnLonelinessVuln;
+
+  /// No description provided for @mnSolitudeNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Need for Solitude'**
+  String get mnSolitudeNeed;
+
+  /// No description provided for @mnSocialComfort.
+  ///
+  /// In en, this message translates to:
+  /// **'Social Comfort'**
+  String get mnSocialComfort;
+
+  /// No description provided for @mnTraumaSensitivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Trauma Sensitivity'**
+  String get mnTraumaSensitivity;
+
+  /// No description provided for @mnHealingReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Healing Readiness'**
+  String get mnHealingReadiness;
+
+  /// No description provided for @mnProcessingStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing Style'**
+  String get mnProcessingStyle;
+
+  /// No description provided for @mnMindBodyIntegration.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind-Body Integration'**
+  String get mnMindBodyIntegration;
+
+  /// No description provided for @mnPtsdVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Trauma-Response Sensitivity'**
+  String get mnPtsdVuln;
+
+  /// No description provided for @mnSelfAwarenessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Awareness & Growth'**
+  String get mnSelfAwarenessTitle;
+
+  /// No description provided for @mnSelfAwarenessScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Awareness'**
+  String get mnSelfAwarenessScore;
+
+  /// No description provided for @mnEmotionalVocabulary.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Vocabulary'**
+  String get mnEmotionalVocabulary;
+
+  /// No description provided for @mnTherapyReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy Readiness'**
+  String get mnTherapyReadiness;
+
+  /// No description provided for @mnJournalingBenefit.
+  ///
+  /// In en, this message translates to:
+  /// **'Journaling Benefit'**
+  String get mnJournalingBenefit;
+
+  /// No description provided for @mnInnerDialogue.
+  ///
+  /// In en, this message translates to:
+  /// **'Inner Dialogue Quality'**
+  String get mnInnerDialogue;
+
+  /// No description provided for @mnAwarenessOfPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Awareness of Patterns'**
+  String get mnAwarenessOfPatterns;
+
+  /// No description provided for @mnEscapePatternVuln.
+  ///
+  /// In en, this message translates to:
+  /// **'Escape-Pattern Sensitivity'**
+  String get mnEscapePatternVuln;
+
+  /// No description provided for @mnEscapeChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'Gently Watch For'**
+  String get mnEscapeChannels;
+
+  /// No description provided for @mnHealthyAlternatives.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy Alternatives'**
+  String get mnHealthyAlternatives;
+
+  /// No description provided for @mnTherapyFitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy & Support Fit'**
+  String get mnTherapyFitTitle;
+
+  /// No description provided for @mnCrisisSupportRec.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Recommendation'**
+  String get mnCrisisSupportRec;
+
+  /// No description provided for @mnSupportNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Your Support Network'**
+  String get mnSupportNetwork;
+
+  /// No description provided for @mnSelfAdvocacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Advocacy Readiness'**
+  String get mnSelfAdvocacy;
+
+  /// No description provided for @mnMedicationReceptivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Medication Receptivity'**
+  String get mnMedicationReceptivity;
+
+  /// No description provided for @mnTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness Timeline'**
+  String get mnTimelineTitle;
+
+  /// No description provided for @mnPeakWellnessYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Wellness Years'**
+  String get mnPeakWellnessYears;
+
+  /// No description provided for @mnExtraCareYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Years for Extra Self-Care'**
+  String get mnExtraCareYears;
+
+  /// No description provided for @mnTransformationWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive Transformation Windows'**
+  String get mnTransformationWindows;
+
+  /// No description provided for @mnTherapyWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Therapy Window'**
+  String get mnTherapyWindow;
+
+  /// No description provided for @mnPracticesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Wellness Practices'**
+  String get mnPracticesTitle;
+
+  /// No description provided for @mnMorningPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Practices'**
+  String get mnMorningPractices;
+
+  /// No description provided for @mnEveningPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Practices'**
+  String get mnEveningPractices;
+
+  /// No description provided for @mnBreathwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathwork'**
+  String get mnBreathwork;
+
+  /// No description provided for @mnMovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get mnMovement;
+
+  /// No description provided for @mnNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get mnNutrition;
+
+  /// No description provided for @mnNatureExposure.
+  ///
+  /// In en, this message translates to:
+  /// **'Nature Exposure Need'**
+  String get mnNatureExposure;
+
+  /// No description provided for @mnDigitalDetox.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital Detox Need'**
+  String get mnDigitalDetox;
+
+  /// No description provided for @mnImprovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvement Plan'**
+  String get mnImprovementTitle;
+
+  /// No description provided for @mnReliabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get mnReliabilityTitle;
+
+  /// No description provided for @mnLayerD1.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get mnLayerD1;
+
+  /// No description provided for @mnLayerD9.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Chart (D9)'**
+  String get mnLayerD9;
+
+  /// No description provided for @mnLayerD30.
+  ///
+  /// In en, this message translates to:
+  /// **'D30 Chart'**
+  String get mnLayerD30;
+
+  /// No description provided for @mnLayerDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Dasha Timing'**
+  String get mnLayerDasha;
+
+  /// No description provided for @mnLayerTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Transits'**
+  String get mnLayerTransit;
+
+  /// No description provided for @mnTopicResilience.
+  ///
+  /// In en, this message translates to:
+  /// **'How resilient am I emotionally?'**
+  String get mnTopicResilience;
+
+  /// No description provided for @mnTopicCoping.
+  ///
+  /// In en, this message translates to:
+  /// **'What are my best coping strategies?'**
+  String get mnTopicCoping;
+
+  /// No description provided for @mnTopicSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'How can I improve my sleep?'**
+  String get mnTopicSleep;
+
+  /// No description provided for @mnTopicBurnout.
+  ///
+  /// In en, this message translates to:
+  /// **'Am I at risk of burnout?'**
+  String get mnTopicBurnout;
+
+  /// No description provided for @mnTopicTherapy.
+  ///
+  /// In en, this message translates to:
+  /// **'Which therapy style suits me?'**
+  String get mnTopicTherapy;
+
+  /// No description provided for @mnTopicPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'What daily practices help me most?'**
+  String get mnTopicPractices;
+
+  /// No description provided for @mnTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'When are my best wellness years?'**
+  String get mnTopicTiming;
+
+  /// No description provided for @mnTopicSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I build a strong support network?'**
+  String get mnTopicSupport;
+
   /// No description provided for @lgSubtitle.
   ///
   /// In en, this message translates to:

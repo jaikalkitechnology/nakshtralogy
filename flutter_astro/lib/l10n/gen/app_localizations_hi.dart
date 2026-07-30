@@ -6040,6 +6040,372 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get mnSubtitle => 'AI-संचालित वैदिक कल्याण रिपोर्ट';
+
+  @override
+  String get mnTitle => 'मानसिक स्वास्थ्य और तनाव';
+
+  @override
+  String get mnSnapshotHeader => 'कल्याण स्नैपशॉट';
+
+  @override
+  String get mnResilience => 'लचीलापन';
+
+  @override
+  String get mnStability => 'स्थिरता';
+
+  @override
+  String get mnEmotionalBalance => 'भावनात्मक संतुलन';
+
+  @override
+  String get mnInnerCalm => 'आंतरिक शांति';
+
+  @override
+  String get mnSelfAwareness => 'आत्म-जागरूकता';
+
+  @override
+  String get mnStatusThriving => 'फल-फूल रहे हैं';
+
+  @override
+  String get mnStatusSteady => 'स्थिर और संतुलित';
+
+  @override
+  String get mnStatusBuildingStrength => 'शक्ति का निर्माण हो रहा है';
+
+  @override
+  String get mnStatusNeedsGentleCare => 'थोड़ी कोमल देखभाल की जरूरत है';
+
+  @override
+  String get mnStatusReachOut => 'सहयोग लेने का समय है';
+
+  @override
+  String get mnChipStable => 'भावनात्मक रूप से स्थिर';
+
+  @override
+  String get mnChipSupported => 'अच्छी तरह समर्थित';
+
+  @override
+  String get mnChipSelfAware => 'अत्यधिक आत्म-जागरूक';
+
+  @override
+  String get mnChipResilient => 'जल्दी संभल जाते हैं';
+
+  @override
+  String get mnChipSecureAttachment => 'सुरक्षित लगाव';
+
+  @override
+  String get mnChipHealingReady => 'उपचार के लिए तैयार';
+
+  @override
+  String get mnChipMindBodyBalance => 'मन-शरीर संतुलन';
+
+  @override
+  String get mnSupportBannerTitle => 'एक कोमल सुझाव';
+
+  @override
+  String get mnSupportBannerBody => 'आपकी कुंडली बताती है कि यह अतिरिक्त सहयोग लेने का अच्छा समय हो सकता है — किसी विश्वसनीय मित्र, परिवार के सदस्य या विशेषज्ञ का। सहयोग लेना कमजोरी नहीं, ताकत की निशानी है।';
+
+  @override
+  String get mnProfileTitle => 'आपका भावनात्मक खाका';
+
+  @override
+  String get mnStressDriver => 'तनाव का कारण';
+
+  @override
+  String get mnStabilityAnchor => 'स्थिरता का आधार';
+
+  @override
+  String get mnSoulLevelKarma => 'आत्मा-स्तर का पैटर्न';
+
+  @override
+  String get mnSubtleSignature => 'सूक्ष्म भावनात्मक हस्ताक्षर';
+
+  @override
+  String get mnKarakaTitle => 'आपका मन और ग्रह';
+
+  @override
+  String get mnKarakaSubtitle => 'कौन से ग्रह आपकी आंतरिक दुनिया को आकार देते हैं';
+
+  @override
+  String get mnYogasTitle => 'शक्तियां और विकास क्षेत्र';
+
+  @override
+  String get mnCurrentPhase => 'वर्तमान चरण';
+
+  @override
+  String get mnCurrentStressLevel => 'वर्तमान तनाव स्तर';
+
+  @override
+  String get mnRecentStrain => 'हाल की भावनात्मक थकान';
+
+  @override
+  String get mnStrengths => 'शक्तियां';
+
+  @override
+  String get mnGrowthAreas => 'विकास क्षेत्र';
+
+  @override
+  String get mnSadeSatiStatus => 'साढ़े साती स्थिति';
+
+  @override
+  String get mnVerificationTitle => 'अन्य कुंडलियों से सत्यापित';
+
+  @override
+  String get mnD9Confirmation => 'D9 पुष्टि';
+
+  @override
+  String get mnD30Confirmation => 'D30 पुष्टि';
+
+  @override
+  String get mnMoodPatternsTitle => 'मनोदशा और चिंता के पैटर्न';
+
+  @override
+  String get mnMoodPatternsSubtitle => 'कोमल जागरूकता, निदान नहीं';
+
+  @override
+  String get mnAnxietyPatterns => 'चिंता के पैटर्न';
+
+  @override
+  String get mnMoodPatterns => 'उदासी के पैटर्न';
+
+  @override
+  String get mnPrimaryPattern => 'मुख्य पैटर्न';
+
+  @override
+  String get mnRumination => 'अधिक सोचने की प्रवृत्ति';
+
+  @override
+  String get mnHypervigilance => 'अति-सतर्कता';
+
+  @override
+  String get mnHopelessnessVuln => 'उदासी के प्रति संवेदनशीलता';
+
+  @override
+  String get mnEnergyDepletion => 'ऊर्जा घटने की प्रवृत्ति';
+
+  @override
+  String get mnMotivationBaseline => 'प्रेरणा आधार स्तर';
+
+  @override
+  String get mnRegulationTitle => 'भावनात्मक नियंत्रण और सामना करना';
+
+  @override
+  String get mnEmotionalRegulation => 'भावनात्मक नियंत्रण';
+
+  @override
+  String get mnSelfSoothing => 'स्वयं को शांत करने की क्षमता';
+
+  @override
+  String get mnExpressionStyle => 'अभिव्यक्ति शैली';
+
+  @override
+  String get mnRecoveryTime => 'स्वस्थ होने का समय';
+
+  @override
+  String get mnTriggerIntensity => 'ट्रिगर की तीव्रता';
+
+  @override
+  String get mnHealthyCoping => 'स्वस्थ मुकाबला करने की आदतें';
+
+  @override
+  String get mnWatchFor => 'इन पर हल्का ध्यान रखें';
+
+  @override
+  String get mnSleepTitle => 'नींद और आराम';
+
+  @override
+  String get mnSleepQuality => 'नींद की गुणवत्ता';
+
+  @override
+  String get mnSleepAsRegulator => 'भावनात्मक संतुलन में नींद की भूमिका';
+
+  @override
+  String get mnInsomniaTendency => 'बेचैन रातों की प्रवृत्ति';
+
+  @override
+  String get mnNightmareTendency => 'गहरे सपनों की प्रवृत्ति';
+
+  @override
+  String get mnSleepHygienePriority => 'नींद स्वच्छता प्राथमिकता';
+
+  @override
+  String get mnBurnoutTitle => 'बर्नआउट और ऊर्जा';
+
+  @override
+  String get mnBurnoutVulnerability => 'बर्नआउट संवेदनशीलता';
+
+  @override
+  String get mnBurnoutRecovery => 'बर्नआउट से उबरने की क्षमता';
+
+  @override
+  String get mnBurnoutStage => 'वर्तमान बर्नआउट चरण';
+
+  @override
+  String get mnSelfDrivingTendency => 'स्वयं को अधिक चलाने की प्रवृत्ति';
+
+  @override
+  String get mnBurnoutTriggers => 'बर्नआउट के कारण';
+
+  @override
+  String get mnConnectionTitle => 'संबंध और सहयोग';
+
+  @override
+  String get mnSocialSupport => 'सामाजिक सहयोग की गुणवत्ता';
+
+  @override
+  String get mnLonelinessVuln => 'अकेलेपन के प्रति संवेदनशीलता';
+
+  @override
+  String get mnSolitudeNeed => 'एकांत की आवश्यकता';
+
+  @override
+  String get mnSocialComfort => 'सामाजिक सहजता';
+
+  @override
+  String get mnTraumaSensitivity => 'आघात के प्रति संवेदनशीलता';
+
+  @override
+  String get mnHealingReadiness => 'उपचार के लिए तत्परता';
+
+  @override
+  String get mnProcessingStyle => 'प्रसंस्करण शैली';
+
+  @override
+  String get mnMindBodyIntegration => 'मन-शरीर एकीकरण';
+
+  @override
+  String get mnPtsdVuln => 'आघात-प्रतिक्रिया संवेदनशीलता';
+
+  @override
+  String get mnSelfAwarenessTitle => 'आत्म-जागरूकता और विकास';
+
+  @override
+  String get mnSelfAwarenessScore => 'आत्म-जागरूकता';
+
+  @override
+  String get mnEmotionalVocabulary => 'भावनात्मक शब्दावली';
+
+  @override
+  String get mnTherapyReadiness => 'थेरेपी के लिए तत्परता';
+
+  @override
+  String get mnJournalingBenefit => 'डायरी लिखने का लाभ';
+
+  @override
+  String get mnInnerDialogue => 'आंतरिक संवाद की गुणवत्ता';
+
+  @override
+  String get mnAwarenessOfPatterns => 'पैटर्न की जागरूकता';
+
+  @override
+  String get mnEscapePatternVuln => 'पलायन-पैटर्न संवेदनशीलता';
+
+  @override
+  String get mnEscapeChannels => 'इन पर हल्का ध्यान रखें';
+
+  @override
+  String get mnHealthyAlternatives => 'स्वस्थ विकल्प';
+
+  @override
+  String get mnTherapyFitTitle => 'थेरेपी और सहयोग का मेल';
+
+  @override
+  String get mnCrisisSupportRec => 'सहयोग की सलाह';
+
+  @override
+  String get mnSupportNetwork => 'अपने सहयोग नेटवर्क को सक्रिय करें';
+
+  @override
+  String get mnSelfAdvocacy => 'स्वयं की वकालत के लिए तत्परता';
+
+  @override
+  String get mnMedicationReceptivity => 'दवा के प्रति ग्रहणशीलता';
+
+  @override
+  String get mnTimelineTitle => 'कल्याण समयरेखा';
+
+  @override
+  String get mnPeakWellnessYears => 'सर्वोत्तम कल्याण वर्ष';
+
+  @override
+  String get mnExtraCareYears => 'अतिरिक्त आत्म-देखभाल के वर्ष';
+
+  @override
+  String get mnTransformationWindows => 'सकारात्मक परिवर्तन का समय';
+
+  @override
+  String get mnTherapyWindow => 'अनुशंसित थेरेपी समय';
+
+  @override
+  String get mnPracticesTitle => 'दैनिक कल्याण अभ्यास';
+
+  @override
+  String get mnMorningPractices => 'सुबह के अभ्यास';
+
+  @override
+  String get mnEveningPractices => 'शाम के अभ्यास';
+
+  @override
+  String get mnBreathwork => 'श्वास अभ्यास';
+
+  @override
+  String get mnMovement => 'शारीरिक गतिविधि';
+
+  @override
+  String get mnNutrition => 'पोषण';
+
+  @override
+  String get mnNatureExposure => 'प्रकृति से जुड़ाव की आवश्यकता';
+
+  @override
+  String get mnDigitalDetox => 'डिजिटल डिटॉक्स की आवश्यकता';
+
+  @override
+  String get mnImprovementTitle => 'सुधार योजना';
+
+  @override
+  String get mnReliabilityTitle => 'विश्वसनीयता';
+
+  @override
+  String get mnLayerD1 => 'जन्म कुंडली (D1)';
+
+  @override
+  String get mnLayerD9 => 'आत्मा कुंडली (D9)';
+
+  @override
+  String get mnLayerD30 => 'D30 कुंडली';
+
+  @override
+  String get mnLayerDasha => 'दशा समय';
+
+  @override
+  String get mnLayerTransit => 'गोचर';
+
+  @override
+  String get mnTopicResilience => 'मैं भावनात्मक रूप से कितना मजबूत हूं?';
+
+  @override
+  String get mnTopicCoping => 'मेरी सबसे अच्छी मुकाबला रणनीतियां क्या हैं?';
+
+  @override
+  String get mnTopicSleep => 'मैं अपनी नींद कैसे सुधार सकता हूं?';
+
+  @override
+  String get mnTopicBurnout => 'क्या मुझे बर्नआउट का खतरा है?';
+
+  @override
+  String get mnTopicTherapy => 'मेरे लिए कौन सी थेरेपी शैली उपयुक्त है?';
+
+  @override
+  String get mnTopicPractices => 'कौन से दैनिक अभ्यास मुझे सबसे ज्यादा मदद करते हैं?';
+
+  @override
+  String get mnTopicTiming => 'मेरे सबसे अच्छे कल्याण वर्ष कब हैं?';
+
+  @override
+  String get mnTopicSupport => 'मैं एक मजबूत सहयोग नेटवर्क कैसे बनाऊं?';
+
+  @override
   String get lgSubtitle => 'AI-संचालित वैदिक कानूनी रिपोर्ट';
 
   @override

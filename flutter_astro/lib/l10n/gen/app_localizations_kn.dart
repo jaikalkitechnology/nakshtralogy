@@ -6040,6 +6040,372 @@ class AppLocalizationsKn extends AppLocalizations {
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
 
   @override
+  String get mnSubtitle => 'AI-powered Vedic Wellness Report';
+
+  @override
+  String get mnTitle => 'Mental & Stress';
+
+  @override
+  String get mnSnapshotHeader => 'Wellness Snapshot';
+
+  @override
+  String get mnResilience => 'Resilience';
+
+  @override
+  String get mnStability => 'Stability';
+
+  @override
+  String get mnEmotionalBalance => 'Emotional Balance';
+
+  @override
+  String get mnInnerCalm => 'Inner Calm';
+
+  @override
+  String get mnSelfAwareness => 'Self-Awareness';
+
+  @override
+  String get mnStatusThriving => 'Thriving';
+
+  @override
+  String get mnStatusSteady => 'Steady & Stable';
+
+  @override
+  String get mnStatusBuildingStrength => 'Building Strength';
+
+  @override
+  String get mnStatusNeedsGentleCare => 'Needs Gentle Care';
+
+  @override
+  String get mnStatusReachOut => 'Time to Reach Out for Support';
+
+  @override
+  String get mnChipStable => 'Emotionally Stable';
+
+  @override
+  String get mnChipSupported => 'Well Supported';
+
+  @override
+  String get mnChipSelfAware => 'Highly Self-Aware';
+
+  @override
+  String get mnChipResilient => 'Bounces Back Well';
+
+  @override
+  String get mnChipSecureAttachment => 'Secure Attachment';
+
+  @override
+  String get mnChipHealingReady => 'Ready to Heal';
+
+  @override
+  String get mnChipMindBodyBalance => 'Mind-Body Balance';
+
+  @override
+  String get mnSupportBannerTitle => 'A Gentle Note';
+
+  @override
+  String get mnSupportBannerBody => 'Your chart suggests this could be a good time to lean on extra support — a trusted friend, family member, or professional. Reaching out is a sign of strength, not weakness.';
+
+  @override
+  String get mnProfileTitle => 'Your Emotional Blueprint';
+
+  @override
+  String get mnStressDriver => 'Stress Driver';
+
+  @override
+  String get mnStabilityAnchor => 'Stability Anchor';
+
+  @override
+  String get mnSoulLevelKarma => 'Soul-Level Pattern';
+
+  @override
+  String get mnSubtleSignature => 'Subtle Emotional Signature';
+
+  @override
+  String get mnKarakaTitle => 'Your Mind & Planets';
+
+  @override
+  String get mnKarakaSubtitle => 'Which planets shape your inner world';
+
+  @override
+  String get mnYogasTitle => 'Strengths & Growth Areas';
+
+  @override
+  String get mnCurrentPhase => 'Current Phase';
+
+  @override
+  String get mnCurrentStressLevel => 'Current Stress Level';
+
+  @override
+  String get mnRecentStrain => 'Recent Emotional Strain';
+
+  @override
+  String get mnStrengths => 'Strengths';
+
+  @override
+  String get mnGrowthAreas => 'Growth Areas';
+
+  @override
+  String get mnSadeSatiStatus => 'Sade Sati Status';
+
+  @override
+  String get mnVerificationTitle => 'Verified Across Charts';
+
+  @override
+  String get mnD9Confirmation => 'D9 Confirmation';
+
+  @override
+  String get mnD30Confirmation => 'D30 Confirmation';
+
+  @override
+  String get mnMoodPatternsTitle => 'Mood & Anxiety Patterns';
+
+  @override
+  String get mnMoodPatternsSubtitle => 'Gentle awareness, not a diagnosis';
+
+  @override
+  String get mnAnxietyPatterns => 'Anxiety Patterns';
+
+  @override
+  String get mnMoodPatterns => 'Low-Mood Patterns';
+
+  @override
+  String get mnPrimaryPattern => 'Primary Pattern';
+
+  @override
+  String get mnRumination => 'Overthinking Tendency';
+
+  @override
+  String get mnHypervigilance => 'Hyper-Alertness';
+
+  @override
+  String get mnHopelessnessVuln => 'Low-Mood Sensitivity';
+
+  @override
+  String get mnEnergyDepletion => 'Energy Depletion Tendency';
+
+  @override
+  String get mnMotivationBaseline => 'Motivation Baseline';
+
+  @override
+  String get mnRegulationTitle => 'Emotional Regulation & Coping';
+
+  @override
+  String get mnEmotionalRegulation => 'Emotional Regulation';
+
+  @override
+  String get mnSelfSoothing => 'Self-Soothing Ability';
+
+  @override
+  String get mnExpressionStyle => 'Expression Style';
+
+  @override
+  String get mnRecoveryTime => 'Recovery Time';
+
+  @override
+  String get mnTriggerIntensity => 'Trigger Intensity';
+
+  @override
+  String get mnHealthyCoping => 'Healthy Coping Habits';
+
+  @override
+  String get mnWatchFor => 'Gently Watch For';
+
+  @override
+  String get mnSleepTitle => 'Sleep & Rest';
+
+  @override
+  String get mnSleepQuality => 'Sleep Quality';
+
+  @override
+  String get mnSleepAsRegulator => 'Sleep as Emotional Regulator';
+
+  @override
+  String get mnInsomniaTendency => 'Restless-Night Tendency';
+
+  @override
+  String get mnNightmareTendency => 'Vivid-Dream Tendency';
+
+  @override
+  String get mnSleepHygienePriority => 'Sleep Hygiene Priority';
+
+  @override
+  String get mnBurnoutTitle => 'Burnout & Energy';
+
+  @override
+  String get mnBurnoutVulnerability => 'Burnout Sensitivity';
+
+  @override
+  String get mnBurnoutRecovery => 'Burnout Recovery Capacity';
+
+  @override
+  String get mnBurnoutStage => 'Current Burnout Stage';
+
+  @override
+  String get mnSelfDrivingTendency => 'Self-Driving Tendency';
+
+  @override
+  String get mnBurnoutTriggers => 'Burnout Triggers';
+
+  @override
+  String get mnConnectionTitle => 'Connection & Support';
+
+  @override
+  String get mnSocialSupport => 'Social Support Quality';
+
+  @override
+  String get mnLonelinessVuln => 'Loneliness Sensitivity';
+
+  @override
+  String get mnSolitudeNeed => 'Need for Solitude';
+
+  @override
+  String get mnSocialComfort => 'Social Comfort';
+
+  @override
+  String get mnTraumaSensitivity => 'Trauma Sensitivity';
+
+  @override
+  String get mnHealingReadiness => 'Healing Readiness';
+
+  @override
+  String get mnProcessingStyle => 'Processing Style';
+
+  @override
+  String get mnMindBodyIntegration => 'Mind-Body Integration';
+
+  @override
+  String get mnPtsdVuln => 'Trauma-Response Sensitivity';
+
+  @override
+  String get mnSelfAwarenessTitle => 'Self-Awareness & Growth';
+
+  @override
+  String get mnSelfAwarenessScore => 'Self-Awareness';
+
+  @override
+  String get mnEmotionalVocabulary => 'Emotional Vocabulary';
+
+  @override
+  String get mnTherapyReadiness => 'Therapy Readiness';
+
+  @override
+  String get mnJournalingBenefit => 'Journaling Benefit';
+
+  @override
+  String get mnInnerDialogue => 'Inner Dialogue Quality';
+
+  @override
+  String get mnAwarenessOfPatterns => 'Awareness of Patterns';
+
+  @override
+  String get mnEscapePatternVuln => 'Escape-Pattern Sensitivity';
+
+  @override
+  String get mnEscapeChannels => 'Gently Watch For';
+
+  @override
+  String get mnHealthyAlternatives => 'Healthy Alternatives';
+
+  @override
+  String get mnTherapyFitTitle => 'Therapy & Support Fit';
+
+  @override
+  String get mnCrisisSupportRec => 'Support Recommendation';
+
+  @override
+  String get mnSupportNetwork => 'Activate Your Support Network';
+
+  @override
+  String get mnSelfAdvocacy => 'Self-Advocacy Readiness';
+
+  @override
+  String get mnMedicationReceptivity => 'Medication Receptivity';
+
+  @override
+  String get mnTimelineTitle => 'Wellness Timeline';
+
+  @override
+  String get mnPeakWellnessYears => 'Peak Wellness Years';
+
+  @override
+  String get mnExtraCareYears => 'Years for Extra Self-Care';
+
+  @override
+  String get mnTransformationWindows => 'Positive Transformation Windows';
+
+  @override
+  String get mnTherapyWindow => 'Recommended Therapy Window';
+
+  @override
+  String get mnPracticesTitle => 'Daily Wellness Practices';
+
+  @override
+  String get mnMorningPractices => 'Morning Practices';
+
+  @override
+  String get mnEveningPractices => 'Evening Practices';
+
+  @override
+  String get mnBreathwork => 'Breathwork';
+
+  @override
+  String get mnMovement => 'Movement';
+
+  @override
+  String get mnNutrition => 'Nutrition';
+
+  @override
+  String get mnNatureExposure => 'Nature Exposure Need';
+
+  @override
+  String get mnDigitalDetox => 'Digital Detox Need';
+
+  @override
+  String get mnImprovementTitle => 'Improvement Plan';
+
+  @override
+  String get mnReliabilityTitle => 'Reliability';
+
+  @override
+  String get mnLayerD1 => 'Birth Chart (D1)';
+
+  @override
+  String get mnLayerD9 => 'Soul Chart (D9)';
+
+  @override
+  String get mnLayerD30 => 'D30 Chart';
+
+  @override
+  String get mnLayerDasha => 'Dasha Timing';
+
+  @override
+  String get mnLayerTransit => 'Transits';
+
+  @override
+  String get mnTopicResilience => 'How resilient am I emotionally?';
+
+  @override
+  String get mnTopicCoping => 'What are my best coping strategies?';
+
+  @override
+  String get mnTopicSleep => 'How can I improve my sleep?';
+
+  @override
+  String get mnTopicBurnout => 'Am I at risk of burnout?';
+
+  @override
+  String get mnTopicTherapy => 'Which therapy style suits me?';
+
+  @override
+  String get mnTopicPractices => 'What daily practices help me most?';
+
+  @override
+  String get mnTopicTiming => 'When are my best wellness years?';
+
+  @override
+  String get mnTopicSupport => 'How do I build a strong support network?';
+
+  @override
   String get lgSubtitle => 'AI-powered Vedic Legal Report';
 
   @override
