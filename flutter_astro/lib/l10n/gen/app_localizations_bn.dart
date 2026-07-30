@@ -3908,6 +3908,425 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get crTitle => 'Career & Job Analysis';
+
+  @override
+  String get crSubtitle => 'AI-powered Vedic Career Report';
+
+  @override
+  String get crCrumbHome => 'Home';
+
+  @override
+  String get crCrumbReports => 'Reports';
+
+  @override
+  String get crCareerPotential => 'Career Potential';
+
+  @override
+  String get crStatusStrong => 'Strong Potential';
+
+  @override
+  String get crStatusGood => 'Good Potential';
+
+  @override
+  String get crStatusModerate => 'Moderate Potential';
+
+  @override
+  String get crStatusDeveloping => 'Developing Potential';
+
+  @override
+  String get crStatusChallenging => 'Challenging Phase';
+
+  @override
+  String get crOverallCareer => 'Overall Career';
+
+  @override
+  String get crStability => 'Career Stability';
+
+  @override
+  String get crGrowth => 'Growth Potential';
+
+  @override
+  String get crRecognition => 'Recognition';
+
+  @override
+  String get crSatisfaction => 'Satisfaction';
+
+  @override
+  String get crChipLeadership => 'Leadership';
+
+  @override
+  String get crChipCreativity => 'Creativity';
+
+  @override
+  String get crChipBusiness => 'Business';
+
+  @override
+  String get crChipStableIncome => 'Stable Income';
+
+  @override
+  String get crChipLearning => 'Learning';
+
+  @override
+  String get crChipGrowth => 'Long-Term Growth';
+
+  @override
+  String get crChipTechnical => 'Technical Skill';
+
+  @override
+  String get crChipRecognition => 'Recognition';
+
+  @override
+  String get crTopInsights => 'Top Insights';
+
+  @override
+  String get crWhatDefines => 'What defines your career?';
+
+  @override
+  String get crSoulCareer => 'Soul & Career Purpose';
+
+  @override
+  String get crSoulPlanet => 'Soul Purpose Planet';
+
+  @override
+  String get crCareerPlanet => 'Career Planet';
+
+  @override
+  String get crMeaning => 'Meaning';
+
+  @override
+  String get crAlignment => 'Soul ↔ Career Alignment';
+
+  @override
+  String get crAlignStrong => 'Your natural interests and career path are strongly aligned.';
+
+  @override
+  String get crAlignModerate => 'Your natural interests and career path are moderately aligned.';
+
+  @override
+  String get crAlignLow => 'Your natural interests and career path need conscious alignment.';
+
+  @override
+  String get crTechAtmakaraka => 'Atmakaraka (Soul indicator)';
+
+  @override
+  String get crTechAmatyakaraka => 'Amatyakaraka (Career indicator)';
+
+  @override
+  String get crDegrees => 'Degrees';
+
+  @override
+  String get crDignity => 'Dignity';
+
+  @override
+  String get crFoundation => 'Career Foundation';
+
+  @override
+  String get crCareerSign => 'Career Sign';
+
+  @override
+  String get crCareerLord => 'Career Lord';
+
+  @override
+  String get crLordPosition => 'Lord Position';
+
+  @override
+  String get crCareerStrength => 'Career Strength';
+
+  @override
+  String get crProfStyle => 'Professional Style';
+
+  @override
+  String get crBestFields => 'Best Fields';
+
+  @override
+  String get crTechnicalDetails => 'Technical Details';
+
+  @override
+  String get crHouseLabel => 'House';
+
+  @override
+  String get crVerification => 'Career Verification Across Charts';
+
+  @override
+  String get crD10Career => 'D10 · Career';
+
+  @override
+  String get crD9Purpose => 'D9 · Purpose';
+
+  @override
+  String get crD60Karma => 'D60 · Karma';
+
+  @override
+  String get crStatusNeedsImprovement => 'Needs Improvement';
+
+  @override
+  String get crStatusWellAligned => 'Well Aligned';
+
+  @override
+  String get crStatusStrongSupport => 'Strong Support';
+
+  @override
+  String get crStatusModerateSupport => 'Moderate Support';
+
+  @override
+  String get crChartDetails => 'Technical chart details';
+
+  @override
+  String get crPersonality => 'Your Career Personality';
+
+  @override
+  String get crGrowthAreas => 'Growth Areas';
+
+  @override
+  String get crBestRoles => 'Best Roles';
+
+  @override
+  String get crBestIndustries => 'Best Industries';
+
+  @override
+  String get crEnvironment => 'Career Environment';
+
+  @override
+  String get crWorkStyle => 'Best Work Style';
+
+  @override
+  String get crEmployment => 'Employment';
+
+  @override
+  String get crBusiness => 'Business';
+
+  @override
+  String get crFreelance => 'Freelance / Consulting';
+
+  @override
+  String get crPortfolio => 'Mixed Portfolio';
+
+  @override
+  String get crLeadership => 'Leadership';
+
+  @override
+  String get crFit => 'Fit';
+
+  @override
+  String get crBestFit => 'Best Fit';
+
+  @override
+  String get crTimeline => 'Career Timeline';
+
+  @override
+  String get crPastPeak => 'Past Peak';
+
+  @override
+  String get crPresentPhase => 'Present Phase';
+
+  @override
+  String get crUpcoming => 'Upcoming Opportunity';
+
+  @override
+  String get crFutureExpansion => 'Future Expansion';
+
+  @override
+  String get crRiskPeriod => 'Risk Period';
+
+  @override
+  String get crViewDasha => 'Planetary period (technical)';
+
+  @override
+  String get crChallenges => 'Challenges to Watch';
+
+  @override
+  String get crRiskBurnout => 'Burnout';
+
+  @override
+  String get crRiskRecognition => 'Recognition Delay';
+
+  @override
+  String get crRiskConflict => 'Workplace Conflict';
+
+  @override
+  String get crRiskFinancial => 'Financial Instability';
+
+  @override
+  String get crRiskOverqual => 'Under-utilization';
+
+  @override
+  String get crPrevention => 'Prevention';
+
+  @override
+  String get crBurnoutExp => 'Long, demanding phases can drain your energy over time.';
+
+  @override
+  String get crBurnoutFix => 'Protect rest, set boundaries, and pace big pushes.';
+
+  @override
+  String get crRecognitionExp => 'Rewards and recognition may arrive slower than your effort.';
+
+  @override
+  String get crRecognitionFix => 'Document wins and make your contributions visible to seniors.';
+
+  @override
+  String get crConflictExp => 'Friction with colleagues or authority can surface at times.';
+
+  @override
+  String get crConflictFix => 'Communicate calmly and pick your battles wisely.';
+
+  @override
+  String get crFinancialExp => 'Income may feel uneven during certain phases.';
+
+  @override
+  String get crFinancialFix => 'Keep a buffer and avoid over-committing financially.';
+
+  @override
+  String get crOverqualExp => 'You may sometimes feel under-used or under-challenged.';
+
+  @override
+  String get crOverqualFix => 'Seek stretch roles and keep learning to stay engaged.';
+
+  @override
+  String get crImprovementPlan => 'Career Improvement Plan';
+
+  @override
+  String get crCatPlanetary => 'Planetary & Spiritual';
+
+  @override
+  String get crCatPractical => 'Practical Steps';
+
+  @override
+  String get crTraditionalExplain => 'Traditional astrology explanation';
+
+  @override
+  String get crActionPlan => '30-Day Career Action Plan';
+
+  @override
+  String get crWeek1 => 'Week 1 · Profile Optimization';
+
+  @override
+  String get crWeek2 => 'Week 2 · Skill Building';
+
+  @override
+  String get crWeek3 => 'Week 3 · Networking';
+
+  @override
+  String get crWeek4 => 'Week 4 · Career Visibility';
+
+  @override
+  String get crWeek1Tip => 'Refresh your resume and LinkedIn around your strongest career theme.';
+
+  @override
+  String get crWeek2Tip => 'Pick one high-value skill in your best field and practise it daily.';
+
+  @override
+  String get crWeek3Tip => 'Reconnect with mentors and reach out to two new industry contacts.';
+
+  @override
+  String get crWeek4Tip => 'Share your work publicly and volunteer for a visible project.';
+
+  @override
+  String get crPriority => 'Priority';
+
+  @override
+  String get crTimeRequired => 'Time';
+
+  @override
+  String get crExpectedBenefit => 'Benefit';
+
+  @override
+  String get crPriorityHigh => 'High';
+
+  @override
+  String get crPriorityMedium => 'Medium';
+
+  @override
+  String get crRoadmap => 'AI Career Roadmap';
+
+  @override
+  String get crNext12 => 'Next 12 Months';
+
+  @override
+  String get crBestFocus => 'Best Focus';
+
+  @override
+  String get crSkillsLearn => 'Skills to Learn';
+
+  @override
+  String get crIndustriesTarget => 'Industries to Target';
+
+  @override
+  String get crExpectedOutcome => 'Expected Outcome';
+
+  @override
+  String get crReliability => 'Prediction Reliability';
+
+  @override
+  String get crReliabilityHigh => 'High Reliability';
+
+  @override
+  String get crReliabilityGood => 'Good Reliability';
+
+  @override
+  String get crReliabilityModerate => 'Moderate Reliability';
+
+  @override
+  String get crReliabilityExplain => 'This report combines your birth chart, divisional charts and Jaimini indicators. The score reflects how strongly these chart layers agree.';
+
+  @override
+  String get crChartLayers => 'Chart layers & weights';
+
+  @override
+  String get crBirthChart => 'Birth Chart (D1)';
+
+  @override
+  String get crNavamsa => 'Navamsa (D9)';
+
+  @override
+  String get crDashamsa => 'Dashamsa (D10)';
+
+  @override
+  String get crShashtiamsa => 'Shashtiamsa (D60)';
+
+  @override
+  String get crDiscussAi => 'Discuss with AI';
+
+  @override
+  String get crAskAbout => 'Ask About';
+
+  @override
+  String get crTopicChange => 'Career Change';
+
+  @override
+  String get crTopicGovt => 'Government Job';
+
+  @override
+  String get crTopicBusiness => 'Business';
+
+  @override
+  String get crTopicPromotion => 'Promotion';
+
+  @override
+  String get crTopicMarriage => 'Marriage vs Career';
+
+  @override
+  String get crTopicAbroad => 'Abroad';
+
+  @override
+  String get crTopicIncome => 'Income';
+
+  @override
+  String get crTopicPurpose => 'Purpose';
+
+  @override
+  String get crTopicResume => 'Resume';
+
+  @override
+  String get crTopicCopied => 'Question copied — paste it into your AI chat.';
+
+  @override
+  String crAlignExplainKaraka(Object soul, Object career) {
+    return '${soul} guides your inner calling, while ${career} shapes your outer profession.';
+  }
+
+  @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
 
   @override
