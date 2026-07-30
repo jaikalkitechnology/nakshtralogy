@@ -1,17 +1,22 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../l10n/gen/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../utils/kundli_names.dart';
+import '../kundli/widgets/kundli_ui.dart';
 
-/// Career & Job specialist report — matches nakshtralogy-career-detail.html design
+/// Career & Job report — premium AI career-coach redesign.
+///
+/// Presentation only. Loads the `career` specialist (`runSpecialist('career')`)
+/// unchanged and re-presents it; every score, Jaimini karaka, house, divisional,
+/// timing, risk, remedy and confidence value comes straight from the engine.
 class CareerReportScreen extends StatefulWidget {
   final String chartId, chartName;
   final Map<String, dynamic>? preloadedData;
   const CareerReportScreen({super.key, required this.chartId, required this.chartName, this.preloadedData});
-
   @override
   State<CareerReportScreen> createState() => _CareerReportState();
 }
@@ -42,868 +47,720 @@ class _CareerReportState extends State<CareerReportScreen> {
     } catch (e) { if (!mounted) return; setState(() { _error = e.toString(); _loading = false; }); }
   }
 
+  // ── typed accessors ────────────────────────────────────────────────
+  double _sc(String k) => (_data?[k] as num?)?.toDouble() ?? 0;
+  String _str(String k) => _data?[k]?.toString() ?? '';
+  List _list(String k) => (_data?[k] as List?) ?? const [];
+  Map<String, dynamic> _map(String k) => (_data?[k] as Map?)?.cast<String, dynamic>() ?? {};
+  // A field that may be either a non-empty string or a list of strings.
+  String _flex(String k) {
+    final v = _data?[k];
+    if (v is String) return v;
+    if (v is List && v.isNotEmpty) return v.map((e) => e.toString()).join(' · ');
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A24),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
+        title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Text(widget.chartName, style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
+          Text(l.crSubtitle, style: const TextStyle(color: AppColors.gold, fontSize: 10)),
+        ]),
+        actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
-          : _error != null
-              ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.error_outline, color: AppColors.error, size: 48),
-                  const SizedBox(height: 12),
-                  Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
-                  ElevatedButton(onPressed: _load, child: Text(AppLocalizations.of(context)?.retry ?? 'Retry')),
-                ])))
-              : _data != null
-                  ? _buildReport()
-                  : const SizedBox.shrink(),
+          : _error != null ? _errView(l)
+          : _data == null ? const SizedBox.shrink()
+          : ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l)),
     );
   }
 
-  Widget _buildReport() {
-    final l = AppLocalizations.of(context)!;
-    final d = _data!;
-    return CustomScrollView(slivers: [
-      _appBar(),
-      SliverList(delegate: SliverChildListDelegate([
-        _heroScores(d),
-        _karakaSection(d),
-        _houseSection(d),
-        _divisionalSection(d),
-        _archetypeSection(d),
-        _workStructureSection(d),
-        _timingSection(d),
-        _risksSection(d),
-        _remediesSection(d),
-        _confidenceSection(d),
-        _aiDiscussBar(d),
-        const SizedBox(height: 30),
-      ])),
-    ]);
+  List<Widget> _sections(AppLocalizations l) {
+    var i = 0;
+    Widget f(Widget w) => KFadeIn(delayMs: (i++ * 45).clamp(0, 700), child: w);
+    const gap = SizedBox(height: 18);
+    return [
+      f(_breadcrumb(l)),
+      const SizedBox(height: 10),
+      f(_snapshot(l)),        // 1
+      gap, f(_topInsights(l)),   // 2
+      gap, f(_soulCareer(l)),    // 3
+      gap, f(_foundation(l)),    // 4
+      gap, f(_verification(l)),  // 5
+      gap, f(_personality(l)),   // 6
+      gap, f(_workStyle(l)),     // 7
+      gap, f(_timeline(l)),      // 8
+      gap, f(_risks(l)),         // 9
+      gap, f(_remedies(l)),      // 10
+      gap, f(_actionPlan(l)),    // 11
+      gap, f(_roadmap(l)),       // 12
+      gap, f(_confidence(l)),    // 13
+      gap, f(_discussAi(l)),     // 14
+    ];
   }
 
-  Widget _appBar() {
-    return SliverAppBar(
-      backgroundColor: const Color(0xFF0A0A24),
-      pinned: true,
-      leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
-      title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-        Text(widget.chartName.toUpperCase(),
-            style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
-        const SizedBox(height: 2),
-        Text.rich(TextSpan(children: [
-          TextSpan(text: '${AppLocalizations.of(context)!.careerAnalysis.split(' ').first} ', style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-          TextSpan(text: AppLocalizations.of(context)!.careerAnalysis.split(' ').last, style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500)),
-        ])),
-      ]),
-      actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],
-      centerTitle: true,
-    );
-  }
+  Widget _breadcrumb(AppLocalizations l) => Row(children: [
+    Text(l.crCrumbHome, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    const Text('  ›  ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+    Text(l.crCrumbReports, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    const Text('  ›  ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+    Flexible(child: Text(l.crTitle, style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+  ]);
 
-  // ── HERO SCORES (3 main rings + 3 mini stats) ──
-  Widget _heroScores(Map<String, dynamic> d) {
-    final overall = (d['overall_career_strength_score'] as num?)?.toDouble() ?? 0;
-    final stability = (d['career_stability_score'] as num?)?.toDouble() ?? 0;
-    final growth = (d['career_growth_potential_score'] as num?)?.toDouble() ?? 0;
-    final clarity = (d['career_clarity_score'] as num?)?.toDouble() ?? 0;
-    final recognition = (d['career_recognition_score'] as num?)?.toDouble() ?? 0;
-    final satisfaction = (d['career_satisfaction_score'] as num?)?.toDouble() ?? 0;
-
+  // ══════════════════════════════════════════════════════════════════
+  //  1 — CAREER SNAPSHOT
+  // ══════════════════════════════════════════════════════════════════
+  Widget _snapshot(AppLocalizations l) {
+    final overall = _sc('overall_career_strength_score');
+    final col = _careerColor(overall);
+    final summary = _str('plain_statement').isNotEmpty ? _str('plain_statement') : _str('career_verdict_explanation');
+    final gauges = <List<Object>>[
+      [l.crOverallCareer, overall],
+      [l.crStability, _sc('career_stability_score')],
+      [l.crGrowth, _sc('career_growth_potential_score')],
+      [l.crRecognition, _sc('career_recognition_score')],
+      [l.crSatisfaction, _sc('career_satisfaction_score')],
+    ];
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-          colors: [const Color(0xFFE8B547).withOpacity(0.10), const Color(0xFFE07A3C).withOpacity(0.04)]),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.gold.withOpacity(0.25)),
+        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [col.withOpacity(0.18), AppColors.card.withOpacity(0.4)]),
+        borderRadius: BorderRadius.circular(22), border: Border.all(color: col.withOpacity(0.3)),
       ),
       child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(width: 1, height: 8, color: AppColors.gold.withOpacity(0.4)),
-          const SizedBox(width: 6),
-          Text(AppLocalizations.of(context)!.scoreComponents, style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-          const SizedBox(width: 6),
-          Container(width: 1, height: 8, color: AppColors.gold.withOpacity(0.4)),
-        ]),
+        Text(l.crCareerPotential.toUpperCase(), style: const TextStyle(color: AppColors.smoke, fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700)),
         const SizedBox(height: 14),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _scoreRing(overall, AppLocalizations.of(context)!.overallStrength, AppColors.gold),
-          _scoreRing(stability, AppLocalizations.of(context)!.stability, AppColors.aurora),
-          _scoreRing(growth, AppLocalizations.of(context)!.growth, AppColors.cosmicPink),
-        ]),
-        const SizedBox(height: 14),
-        Container(padding: const EdgeInsets.only(top: 10),
-          decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.2), width: 0.5))),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            _miniScore(clarity, AppLocalizations.of(context)!.clarity),
-            _miniScore(recognition, AppLocalizations.of(context)!.recognition),
-            _miniScore(satisfaction, AppLocalizations.of(context)!.satisfaction),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: overall / 100), duration: const Duration(milliseconds: 900), curve: Curves.easeOutCubic,
+          builder: (_, v, __) => SizedBox(width: 140, height: 140, child: Stack(alignment: Alignment.center, children: [
+            SizedBox(width: 140, height: 140, child: CircularProgressIndicator(value: v, strokeWidth: 12, strokeCap: StrokeCap.round,
+              backgroundColor: Colors.white.withOpacity(0.07), valueColor: AlwaysStoppedAnimation(col))),
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Text((v * 100).toStringAsFixed(0), style: TextStyle(color: col, fontSize: 44, fontWeight: FontWeight.w800, height: 1)),
+              Text('/100', style: TextStyle(color: col.withOpacity(0.6), fontSize: 12, fontWeight: FontWeight.w600)),
+            ]),
           ])),
+        ),
+        const SizedBox(height: 10),
+        Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(color: col.withOpacity(0.16), borderRadius: BorderRadius.circular(20)),
+          child: Text(_potentialStatus(overall, l), style: TextStyle(color: col, fontSize: 14, fontWeight: FontWeight.w800))),
+        if (summary.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Container(padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.35), borderRadius: BorderRadius.circular(14)),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('🤖', style: TextStyle(fontSize: 14)), const SizedBox(width: 9),
+              Expanded(child: Text(summary, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+            ])),
+        ],
+        const SizedBox(height: 18),
+        Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+        const SizedBox(height: 16),
+        Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          decoration: BoxDecoration(color: KColors.green.withOpacity(0.10), borderRadius: BorderRadius.circular(20), border: Border.all(color: KColors.green.withOpacity(0.28))),
+          child: Text('✓ $t', style: const TextStyle(color: KColors.green, fontSize: 11.5, fontWeight: FontWeight.w700)),
+        )).toList()),
       ]),
     );
   }
 
-  Widget _scoreRing(double value, String label, Color color) {
-    return Column(children: [
-      SizedBox(width: 76, height: 76, child: Stack(alignment: Alignment.center, children: [
-        SizedBox(width: 76, height: 76, child: CircularProgressIndicator(
-          value: value / 100, strokeWidth: 6,
-          backgroundColor: Colors.white.withOpacity(0.08), valueColor: AlwaysStoppedAnimation(color))),
-        Text(value.toStringAsFixed(1),
-          style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
+  List<String> _snapshotChips(AppLocalizations l) {
+    final out = <String>[];
+    if (_sc('leadership_potential_score') >= 55) out.add(l.crChipLeadership);
+    final cat = _str('primary_career_category').toLowerCase();
+    if (cat.contains('creative')) out.add(l.crChipCreativity);
+    if (cat.contains('technical')) out.add(l.crChipTechnical);
+    if (_sc('entrepreneurship_fit_score') >= 55) out.add(l.crChipBusiness);
+    if (_sc('career_stability_score') >= 55) out.add(l.crChipStableIncome);
+    if (_sc('career_recognition_score') >= 55) out.add(l.crChipRecognition);
+    if (_sc('career_growth_potential_score') >= 55) out.add(l.crChipGrowth);
+    out.add(l.crChipLearning);
+    return out.toSet().take(6).toList();
+  }
+
+  Widget _miniGauge(String label, double score) {
+    final col = _careerColor(score);
+    return SizedBox(width: 92, child: Column(children: [
+      SizedBox(width: 62, height: 62, child: Stack(alignment: Alignment.center, children: [
+        SizedBox(width: 62, height: 62, child: CircularProgressIndicator(value: (score / 100).clamp(0, 1), strokeWidth: 6, strokeCap: StrokeCap.round,
+          backgroundColor: Colors.white.withOpacity(0.07), valueColor: AlwaysStoppedAnimation(col))),
+        Text(score.toStringAsFixed(0), style: TextStyle(color: col, fontSize: 15, fontWeight: FontWeight.w800)),
       ])),
       const SizedBox(height: 6),
-      Text(label, textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.smoke, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace', height: 1.2)),
+      Text(label, style: const TextStyle(color: AppColors.parchment, fontSize: 10, fontWeight: FontWeight.w600), textAlign: TextAlign.center, maxLines: 2),
+    ]));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  2 — TOP INSIGHTS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _topInsights(AppLocalizations l) {
+    final items = _list('career_strengths').map((e) => e.toString()).take(6).toList();
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.emoji_objects_rounded, title: l.crTopInsights, subtitle: l.crWhatDefines, color: AppColors.gold),
+      ...items.map((s) => Container(
+        margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(color: KColors.green.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.green.withOpacity(0.2))),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Icon(Icons.check_circle_rounded, size: 17, color: KColors.green), const SizedBox(width: 10),
+          Expanded(child: Text(_cap(s), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.4))),
+        ]),
+      )),
     ]);
   }
 
-  Widget _miniScore(double value, String label) {
-    return Column(children: [
-      Text(value.toStringAsFixed(1),
-        style: const TextStyle(color: AppColors.gold, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-      Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace')),
-    ]);
-  }
-
-  // ── KARAKA SECTION ──
-  Widget _karakaSection(Map<String, dynamic> d) {
-    final atma = d['atmakaraka_planet']?.toString() ?? '—';
-    final amatya = d['amatyakaraka_planet']?.toString() ?? '—';
-    final soulAlign = (d['soul_career_alignment_score'] as num?)?.toDouble() ?? 0;
-    final soulContract = d['atmakaraka_soul_career_contract']?.toString() ?? '';
-    final amatyaTheme = d['amatyakaraka_career_theme']?.toString() ?? '';
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.jaiminiKarakas.split(' ').first, AppLocalizations.of(context)!.jaiminiKarakas.split(' ').last, '8 KEYS'),
-      Container(margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Row(children: [
-          Expanded(child: _karakaCard('ATMAKARAKA', atma, 'Soul significator', soulContract)),
-          const SizedBox(width: 8),
-          Expanded(child: _karakaCard('AMATYAKARAKA', amatya, 'Career significator', amatyaTheme)),
-        ])),
-      // Soul alignment bar
-      Container(margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF4A3B8C).withOpacity(0.3),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.lavender.withOpacity(0.3))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(AppLocalizations.of(context)?.soulCareerAlign ?? 'Soul ↔ Career Alignment',
-              style: TextStyle(color: AppColors.lavender, fontSize: 10, fontWeight: FontWeight.w600)),
-            Text(soulAlign.toStringAsFixed(1),
-              style: const TextStyle(color: AppColors.cosmicPink, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-          ]),
-          const SizedBox(height: 8),
-          ClipRRect(borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(value: soulAlign / 100, minHeight: 6,
-              backgroundColor: Colors.white.withOpacity(0.1),
-              valueColor: const AlwaysStoppedAnimation(AppColors.cosmicPink))),
-        ])),
-    ]);
-  }
-
-  Widget _karakaCard(String tag, String planet, String meaning, String detail) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-          colors: [const Color(0xFFE8B547).withOpacity(0.12), const Color(0xFFE8B547).withOpacity(0.02)]),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.gold.withOpacity(0.25))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(tag, style: const TextStyle(color: AppColors.gold, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-        const SizedBox(height: 4),
-        Text(planet, style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif', height: 1.0)),
-        const SizedBox(height: 2),
-        Text(meaning, style: const TextStyle(color: AppColors.smoke, fontSize: 8, height: 1.3)),
-        if (detail.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Text(detail, maxLines: 2, overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppColors.lavender, fontSize: 8, height: 1.3, fontStyle: FontStyle.italic)),
-        ],
+  // ══════════════════════════════════════════════════════════════════
+  //  3 — SOUL & CAREER PURPOSE
+  // ══════════════════════════════════════════════════════════════════
+  Widget _soulCareer(AppLocalizations l) {
+    final loc = Localizations.localeOf(context);
+    final soul = _str('atmakaraka_planet');
+    final career = _str('amatyakaraka_planet');
+    final align = _sc('soul_career_alignment_score');
+    final col = _careerColor(align);
+    final alignText = align >= 60 ? l.crAlignStrong : align >= 40 ? l.crAlignModerate : l.crAlignLow;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.self_improvement_rounded, title: l.crSoulCareer, color: KColors.purple),
+      Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Expanded(child: _planetCard('🕉️', l.crSoulPlanet, KundliNames.planet(soul, loc), _str('atmakaraka_soul_career_contract'), KColors.purple)),
+        const SizedBox(width: 10),
+        Expanded(child: _planetCard('💼', l.crCareerPlanet, KundliNames.planet(career, loc), _str('amatyakaraka_career_theme'), KColors.blue)),
       ]),
-    );
-  }
-
-  Widget _sectionHeader(String prefix, String suffix, String tag) {
-    return Container(padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text.rich(TextSpan(children: [
-          TextSpan(text: '$prefix ', style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-          TextSpan(text: suffix, style: const TextStyle(color: AppColors.gold, fontSize: 15, fontWeight: FontWeight.w500, fontFamily: 'serif', fontStyle: FontStyle.italic)),
-        ])),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: AppColors.gold.withOpacity(0.15))),
-          child: Text(tag, style: const TextStyle(color: AppColors.smoke, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace'))),
-      ]));
-  }
-
-  // ── 10TH HOUSE BOX ──
-  Widget _houseSection(Map<String, dynamic> d) {
-    final sign = d['tenth_house_sign_name']?.toString() ?? '—';
-    final lord = d['tenth_lord_planet']?.toString() ?? '—';
-    final lordHouse = d['tenth_lord_house']?.toString() ?? '?';
-    final lordDignity = d['tenth_lord_dignity']?.toString() ?? '—';
-    final lordD9 = d['tenth_lord_d9_dignity']?.toString() ?? '—';
-    final occupants = (d['tenth_house_occupants'] as List?)?.cast<dynamic>().join(', ') ?? '';
-    final strength = (d['tenth_house_strength_score'] as num?)?.toDouble() ?? 0;
-    final indication = d['tenth_lord_career_indication']?.toString() ?? '';
-    final strengthColor = strength >= 70 ? AppColors.success : strength >= 50 ? AppColors.gold : AppColors.warning;
-
-    return Column(children: [
-      _sectionHeader('10th', AppLocalizations.of(context)!.houseAnalysis, '14 KEYS'),
-      Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1642).withOpacity(0.6),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.gold.withOpacity(0.2))),
-        child: Column(children: [
-          _houseRow(AppLocalizations.of(context)!.sign, sign),
-          _houseRow(AppLocalizations.of(context)!.lord, lord),
-          _houseRow(AppLocalizations.of(context)!.lordPlacedIn, '${lordHouse}th house'),
-          _houseRow(AppLocalizations.of(context)!.lordDignity, lordDignity),
-          _houseRow(AppLocalizations.of(context)!.d9Dignity, lordD9),
-          _houseRow(AppLocalizations.of(context)!.occupants, occupants.isEmpty ? 'Empty' : occupants),
-          _houseRow(AppLocalizations.of(context)!.strength, '${strength.toStringAsFixed(1)} / 100', valueColor: strengthColor),
-          if (indication.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Container(padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8B547).withOpacity(0.08),
-                borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
-                border: const Border(left: BorderSide(color: AppColors.gold, width: 3))),
-              child: Text(indication,
-                style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.5, fontStyle: FontStyle.italic))),
-          ],
-        ])),
-    ]);
-  }
-
-  Widget _houseRow(String key, String value, {Color? valueColor}) {
-    return Container(padding: const EdgeInsets.symmetric(vertical: 6),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0x14FFFFFF), width: 0.5))),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(key, style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 1, fontFamily: 'monospace')),
-        Flexible(child: Text(value, textAlign: TextAlign.right,
-          style: TextStyle(color: valueColor ?? AppColors.gold, fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'serif'),
-          maxLines: 2, overflow: TextOverflow.ellipsis)),
-      ]));
-  }
-
-  // ── DIVISIONAL VALIDATION (D9/D10/D60 tabs) ──
-  Widget _divisionalSection(Map<String, dynamic> d) {
-    final d9 = (d['d9_validation'] as Map?)?.cast<String, dynamic>() ?? {};
-    final d10 = (d['d10_validation'] as Map?)?.cast<String, dynamic>() ?? {};
-    final d60 = (d['d60_career_validation'] as Map?)?.cast<String, dynamic>() ?? {};
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.divisionalValidation.split(' ').first, AppLocalizations.of(context)!.divisionalValidation.split(' ').last, 'D9 · D10 · D60'),
-      _divCard('D-10 KARMA · DASAMSHA', d10, [
-        [AppLocalizations.of(context)!.lagnaLord, d10['d10_lagna_lord_dignity']?.toString()],
-        ['Sun', d10['d10_sun_dignity']?.toString()],
-        ['Saturn', d10['d10_saturn_dignity']?.toString()],
-        ['Jupiter', d10['d10_jupiter_dignity']?.toString()],
-        [AppLocalizations.of(context)!.tenthLord, d10['d10_tenth_lord_dignity']?.toString()],
-        ['Amatyakaraka', d10['d10_amatyakaraka_dignity']?.toString()],
-      ], summary: d10['d10_overall_career_standing']?.toString(), notes: d10['d10_primary_career_signature']?.toString()),
-      _divCard('D-9 DHARMA · NAVAMSA', d9, [
-        [AppLocalizations.of(context)!.tenthLord, d9['d9_tenth_lord_dignity']?.toString()],
-        ['Amatyakaraka', d9['d9_amatyakaraka_dignity']?.toString()],
-      ], summary: '${(d9['d9_career_dharma_alignment_score'] as num?)?.toStringAsFixed(0) ?? "?"}% alignment', notes: d9['d9_career_notes']?.toString()),
-      _divCard('D-60 KARMIC · SHASHTYAMSA', d60, [
-        [AppLocalizations.of(context)!.tenthLord, d60['d60_tenth_lord_dignity']?.toString()],
-        ['Amatyakaraka', d60['d60_amatyakaraka_dignity']?.toString()],
-      ], summary: '${(d60['d60_past_life_work_capital_score'] as num?)?.toStringAsFixed(0) ?? "?"}% past-life capital', notes: d60['d60_career_past_life_signature']?.toString()),
-    ]);
-  }
-
-  Widget _divCard(String title, Map<String, dynamic> data, List<List<dynamic>> rows, {String? summary, String? notes}) {
-    return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1642).withOpacity(0.5),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.gold.withOpacity(0.15))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
-            borderRadius: BorderRadius.circular(8)),
-          child: Text(title, style: const TextStyle(color: AppColors.midnight, fontSize: 9, letterSpacing: 1, fontFamily: 'monospace', fontWeight: FontWeight.w700))),
-        const SizedBox(height: 10),
-        ...rows.where((r) => r[1] != null).map((r) => _dignityRow(r[0] as String, r[1] as String)),
-        if (summary != null && summary.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(6)),
-            child: Row(children: [
-              Text(AppLocalizations.of(context)!.verdict, style: TextStyle(color: AppColors.smoke, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace')),
-              const Spacer(),
-              Text(summary.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700)),
-            ])),
-        ],
-        if (notes != null && notes.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Text(notes, style: const TextStyle(color: AppColors.lavender, fontSize: 9, height: 1.4, fontStyle: FontStyle.italic), maxLines: 3, overflow: TextOverflow.ellipsis),
-        ],
-      ]));
-  }
-
-  Widget _dignityRow(String planet, String dignity) {
-    Color color;
-    final dl = dignity.toLowerCase();
-    if (dl.contains('exalt') || dl.contains('moolatrikona')) color = AppColors.success;
-    else if (dl.contains('own') || dl.contains('swakshetra')) color = AppColors.gold;
-    else if (dl.contains('friend')) color = AppColors.aurora;
-    else if (dl.contains('neech') || dl.contains('debilitat') || dl.contains('enemy')) color = AppColors.error;
-    else color = AppColors.smoke;
-
-    return Container(padding: const EdgeInsets.symmetric(vertical: 5),
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0x0DFFFFFF), width: 0.5))),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(planet, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: color.withOpacity(0.4))),
-          child: Text(dignity.toUpperCase(),
-            style: TextStyle(color: color, fontSize: 8, letterSpacing: 0.8, fontFamily: 'monospace', fontWeight: FontWeight.w700))),
-      ]));
-  }
-
-  // ── ARCHETYPE SECTION ──
-  Widget _archetypeSection(Map<String, dynamic> d) {
-    final archetype = d['primary_career_archetype']?.toString() ?? '';
-    final category = d['primary_career_category']?.toString() ?? '';
-    final roles = (d['specific_job_role_fits'] as List?)?.cast<dynamic>() ?? [];
-    final strengths = (d['career_strengths'] as List?)?.cast<dynamic>() ?? [];
-    final weaknesses = (d['career_weaknesses'] as List?)?.cast<dynamic>() ?? [];
-    final industries = (d['best_industries'] as List?)?.cast<dynamic>() ?? [];
-
-    if (archetype.isEmpty && roles.isEmpty) return const SizedBox.shrink();
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.careerArchetype.split(' ').first, AppLocalizations.of(context)!.careerArchetype.split(' ').last, '${roles.length + strengths.length + 2} KEYS'),
-      // Archetype card
-      if (archetype.isNotEmpty) Container(margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-            colors: [const Color(0xFFE8689C).withOpacity(0.15), const Color(0xFF4A3B8C).withOpacity(0.15)]),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.cosmicPink.withOpacity(0.3))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(AppLocalizations.of(context)?.primaryArchetype ?? 'PRIMARY ARCHETYPE',
-            style: TextStyle(color: AppColors.cosmicPink, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-          const SizedBox(height: 6),
-          Text(_titleCase(archetype),
-            style: const TextStyle(color: AppColors.ivory, fontSize: 22, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-          if (category.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(_titleCase(category), style: const TextStyle(color: AppColors.lavender, fontSize: 11, fontStyle: FontStyle.italic)),
-          ],
-        ])),
-      // Top role chips
-      if (roles.isNotEmpty) ...[
-        _chipsLabel('★ TOP ROLE FITS'),
-        Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Wrap(spacing: 6, runSpacing: 6, children: roles.take(10).map((r) => _chip(r.toString(), AppColors.gold, isTop: true)).toList())),
-      ],
-      // Strengths
-      if (strengths.isNotEmpty) ...[
-        _chipsLabel('● ${AppLocalizations.of(context)!.strengths}'),
-        Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Wrap(spacing: 6, runSpacing: 6, children: strengths.take(8).map((s) => _chip(s.toString(), AppColors.success)).toList())),
-      ],
-      // Weaknesses
-      if (weaknesses.isNotEmpty) ...[
-        _chipsLabel('⚠ ${AppLocalizations.of(context)!.areasForGrowth}'),
-        Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Wrap(spacing: 6, runSpacing: 6, children: weaknesses.take(6).map((w) => _chip(w.toString(), AppColors.warning)).toList())),
-      ],
-      // Industries
-      if (industries.isNotEmpty) ...[
-        _chipsLabel('☆ ${AppLocalizations.of(context)!.bestIndustries}'),
-        Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Wrap(spacing: 6, runSpacing: 6, children: industries.take(8).map((i) => _chip(i.toString(), AppColors.aurora)).toList())),
-      ],
-    ]);
-  }
-
-  Widget _chipsLabel(String label) => Container(padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-    alignment: Alignment.centerLeft,
-    child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600)));
-
-  Widget _chip(String text, Color color, {bool isTop = false}) {
-    return Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(isTop ? 0.18 : 0.10),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(isTop ? 0.5 : 0.3))),
-      child: Text(text,
-        style: TextStyle(color: color, fontSize: 10, fontWeight: isTop ? FontWeight.w700 : FontWeight.w500)));
-  }
-
-  // ── WORK STRUCTURE SECTION ──
-  Widget _workStructureSection(Map<String, dynamic> d) {
-    final emp = (d['employment_fit_score'] as num?)?.toDouble() ?? 0;
-    final ent = (d['entrepreneurship_fit_score'] as num?)?.toDouble() ?? 0;
-    final freelance = (d['freelance_consulting_fit_score'] as num?)?.toDouble() ?? 0;
-    final mixed = (d['mixed_portfolio_fit_score'] as num?)?.toDouble() ?? 0;
-    final recommended = d['recommended_work_structure']?.toString() ?? '';
-    final teamFit = (d['team_leadership_fit_score'] as num?)?.toDouble() ?? 0;
-    final environment = d['ideal_work_environment']?.toString() ?? '';
-    final orgSize = d['ideal_organization_size']?.toString() ?? '';
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.workStructure.split(' ').first, AppLocalizations.of(context)!.workStructure.split(' ').last, '8 KEYS'),
-      Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(children: [
-          Expanded(child: _structCard('🏢', AppLocalizations.of(context)!.employment, emp, recommended == 'employment')),
-          const SizedBox(width: 8),
-          Expanded(child: _structCard('🚀', AppLocalizations.of(context)!.entrepreneurship, ent, recommended == 'entrepreneurship')),
-        ])),
-      const SizedBox(height: 8),
-      Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(children: [
-          Expanded(child: _structCard('💻', AppLocalizations.of(context)!.freelance, freelance, recommended == 'freelance_consulting')),
-          const SizedBox(width: 8),
-          Expanded(child: _structCard('🎯', AppLocalizations.of(context)!.portfolio, mixed, recommended == 'mixed_portfolio')),
-        ])),
-      const SizedBox(height: 8),
-      Container(margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1642).withOpacity(0.5),
-          borderRadius: BorderRadius.circular(12)),
-        child: Column(children: [
-          _miniRow(AppLocalizations.of(context)!.teamLeadership, '${teamFit.toStringAsFixed(1)}'),
-          if (environment.isNotEmpty) _miniRow(AppLocalizations.of(context)!.idealEnvironment, _titleCase(environment)),
-          if (orgSize.isNotEmpty) _miniRow(AppLocalizations.of(context)!.idealOrgSize, _titleCase(orgSize)),
-        ])),
-    ]);
-  }
-
-  Widget _structCard(String icon, String name, double score, bool recommended) {
-    return Container(padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        gradient: recommended
-          ? LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.saffron.withOpacity(0.1)])
-          : LinearGradient(colors: [Colors.white.withOpacity(0.04), Colors.white.withOpacity(0.02)]),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: recommended ? AppColors.gold.withOpacity(0.5) : AppColors.gold.withOpacity(0.15))),
-      child: Column(children: [
-        Text(icon, style: const TextStyle(fontSize: 22)),
-        const SizedBox(height: 4),
-        Text(name, textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 2),
-        Text(score.toStringAsFixed(1),
-          style: TextStyle(color: recommended ? AppColors.gold : AppColors.lavender, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-        Text(recommended ? '${AppLocalizations.of(context)!.recommended} ★' : AppLocalizations.of(context)!.fitScore,
-          style: TextStyle(color: recommended ? AppColors.gold : AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-      ]));
-  }
-
-  Widget _miniRow(String label, String value) {
-    return Container(padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
-        Text(value, style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-      ]));
-  }
-
-  // ── TIMING WINDOWS ──
-  Widget _timingSection(Map<String, dynamic> d) {
-    final launch = (d['career_launch_windows'] as List?) ?? [];
-    final peak = (d['career_peak_windows'] as List?) ?? [];
-    final promo = (d['promotion_recognition_windows'] as List?) ?? [];
-    final risk = (d['career_risk_windows'] as List?) ?? [];
-
-    if (launch.isEmpty && peak.isEmpty && promo.isEmpty && risk.isEmpty) return const SizedBox.shrink();
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.timingWindows.split(' ').first, AppLocalizations.of(context)!.timingWindows.split(' ').last, '${launch.length + peak.length + promo.length + risk.length} ENTRIES'),
-      if (launch.isNotEmpty) _timingCard(AppLocalizations.of(context)!.launchWindows, '→', AppColors.aurora, launch),
-      if (peak.isNotEmpty) _timingCard('${AppLocalizations.of(context)!.peakWindows} ★', '★', AppColors.gold, peak, isPeak: true),
-      if (promo.isNotEmpty) _timingCard(AppLocalizations.of(context)!.promotionWindows, '▲', AppColors.cosmicPink, promo),
-      if (risk.isNotEmpty) _timingCard(AppLocalizations.of(context)!.riskWindows, '⚠', AppColors.warning, risk),
-    ]);
-  }
-
-  Widget _timingCard(String title, String icon, Color color, List items, {bool isPeak = false}) {
-    return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        gradient: isPeak
-          ? LinearGradient(colors: [AppColors.gold.withOpacity(0.10), AppColors.gold.withOpacity(0.02)])
-          : null,
-        color: isPeak ? null : const Color(0xFF1A1642).withOpacity(0.5),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withOpacity(isPeak ? 0.4 : 0.2))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text.rich(TextSpan(children: [
-            TextSpan(text: title.split(' ').first + ' ', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-            TextSpan(text: title.split(' ').sublist(1).join(' '), style: TextStyle(color: color, fontSize: 14, fontStyle: FontStyle.italic, fontFamily: 'serif')),
-          ])),
-          Container(width: 26, height: 26,
-            decoration: BoxDecoration(color: color.withOpacity(0.2), shape: BoxShape.circle),
-            child: Center(child: Text(icon, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700)))),
+      const SizedBox(height: 12),
+      _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(l.crAlignment, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w800))),
+          Text('${align.toStringAsFixed(0)}%', style: TextStyle(color: col, fontSize: 18, fontWeight: FontWeight.w800)),
         ]),
         const SizedBox(height: 8),
-        ...items.take(3).map((item) {
-          if (item is! Map) return const SizedBox.shrink();
-          final w = (item).cast<String, dynamic>();
-          return Container(margin: const EdgeInsets.only(bottom: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
-              borderRadius: BorderRadius.circular(8)),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Flexible(child: Text(w['dasha']?.toString() ?? '—',
-                  style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700, fontFamily: 'serif'))),
-                Text(w['window']?.toString() ?? '',
-                  style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 0.5, fontFamily: 'monospace')),
-              ]),
-              if (w['note'] != null && w['note'].toString().isNotEmpty) ...[
-                const SizedBox(height: 3),
-                Text(w['note'].toString(), maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.lavender, fontSize: 9, height: 1.3, fontStyle: FontStyle.italic)),
-              ],
-            ]));
-        }),
-      ]));
-  }
-
-  static String _titleCase(String s) => s.replaceAll('_', ' ').replaceAll('-', ' ').split(' ')
-    .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
-
-  // ── RISKS SECTION ──
-  Widget _risksSection(Map<String, dynamic> d) {
-    final risks = (d['major_career_risks'] as List?)?.where((r) => r is Map).toList() ?? [];
-    final burnout = (d['burnout_risk_score'] as num?)?.toDouble() ?? 0;
-    final stagnation = (d['career_stagnation_risk_score'] as num?)?.toDouble() ?? 0;
-    final conflict = (d['workplace_conflict_risk_score'] as num?)?.toDouble() ?? 0;
-
-    if (risks.isEmpty && burnout == 0 && stagnation == 0) return const SizedBox.shrink();
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.careerRisks.split(' ').first, AppLocalizations.of(context)!.careerRisks.split(' ').last, '${risks.length + 3} KEYS'),
-      ...risks.take(5).map((r) {
-        final risk = (r as Map).cast<String, dynamic>();
-        final severity = risk['severity']?.toString() ?? 'low';
-        return _riskCard(
-          type: _titleCase(risk['type']?.toString() ?? 'Risk'),
-          severity: severity,
-          desc: risk['description']?.toString() ?? '',
-          mitigation: risk['mitigation']?.toString() ?? '',
-        );
-      }),
-      // Risk score bars
-      Container(margin: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1642).withOpacity(0.5),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.warning.withOpacity(0.2))),
-        child: Column(children: [
-          _riskBar(AppLocalizations.of(context)!.burnoutRisk, burnout),
-          _riskBar(AppLocalizations.of(context)!.careerStagnation, stagnation),
-          _riskBar(AppLocalizations.of(context)!.workplaceConflict, conflict),
-        ])),
-    ]);
-  }
-
-  Widget _riskCard({required String type, required String severity, required String desc, required String mitigation}) {
-    Color color;
-    final s = severity.toLowerCase();
-    if (s == 'high' || s == 'notable') color = AppColors.error;
-    else if (s == 'moderate' || s == 'med' || s == 'medium') color = AppColors.warning;
-    else color = AppColors.aurora;
-
-    return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [color.withOpacity(0.10), color.withOpacity(0.02)]),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withOpacity(0.3))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(type,
-            style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700, fontFamily: 'serif'))),
-          Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(6)),
-            child: Text(severity.toUpperCase(),
-              style: TextStyle(color: color, fontSize: 8, letterSpacing: 1, fontFamily: 'monospace', fontWeight: FontWeight.w700))),
-        ]),
-        if (desc.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Text(desc, style: const TextStyle(color: AppColors.ivory, fontSize: 11, height: 1.4)),
-        ],
-        if (mitigation.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Container(padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: AppColors.success.withOpacity(0.2))),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('✓ ${AppLocalizations.of(context)!.mitigation}',
-                style: TextStyle(color: AppColors.success, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w700)),
-              const SizedBox(height: 4),
-              Text(mitigation, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
-            ])),
-        ],
-      ]));
-  }
-
-  Widget _riskBar(String label, double value) {
-    final color = value >= 60 ? AppColors.error : value >= 40 ? AppColors.warning : AppColors.success;
-    return Container(padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(label, style: const TextStyle(color: AppColors.ivory, fontSize: 10)),
-          Text('${value.toStringAsFixed(0)}',
-            style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
-        ]),
-        const SizedBox(height: 3),
-        ClipRRect(borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(value: value / 100, minHeight: 4,
-            backgroundColor: Colors.white.withOpacity(0.06),
-            valueColor: AlwaysStoppedAnimation(color))),
-      ]));
-  }
-
-  // ── REMEDIES SECTION ──
-  Widget _remediesSection(Map<String, dynamic> d) {
-    final remedies = (d['astrological_remedies'] as List?)?.where((r) => r is Map).toList() ?? [];
-    final practical = (d['practical_solutions'] as List?)?.where((p) => p is Map).toList() ?? [];
-
-    if (remedies.isEmpty && practical.isEmpty) return const SizedBox.shrink();
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.astrologicalRemedies.split(' ').first, AppLocalizations.of(context)!.astrologicalRemedies.split(' ').last, '${remedies.length} KEYS'),
-      ...remedies.take(6).map((r) {
-        final rem = (r as Map).cast<String, dynamic>();
-        final deity = rem['deity']?.toString() ?? '';
-        final text = rem['remedy']?.toString() ?? '';
-        return _remedyCard(deity, text);
-      }),
-      if (practical.isNotEmpty) ...[
-        _sectionHeader(AppLocalizations.of(context)!.practicalSolutions.split(' ').first, AppLocalizations.of(context)!.practicalSolutions.split(' ').last, '${practical.length} KEYS'),
-        ...practical.take(5).map((p) {
-          final sol = (p as Map).cast<String, dynamic>();
-          return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.aurora.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.aurora.withOpacity(0.2))),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(_titleCase(sol['category']?.toString() ?? '').toUpperCase(),
-                style: const TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 1.5, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-              const SizedBox(height: 4),
-              Text(sol['advice']?.toString() ?? '',
-                style: const TextStyle(color: AppColors.ivory, fontSize: 11, height: 1.4)),
-            ]));
-        }),
-      ],
-    ]);
-  }
-
-  Widget _remedyCard(String deity, String text) {
-    final firstChar = deity.isNotEmpty ? deity.split(' ').first.substring(0, 1).toUpperCase() : '✦';
-    return Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 6),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1642).withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.gold.withOpacity(0.2))),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(width: 38, height: 38,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
-            borderRadius: BorderRadius.circular(10)),
-          child: Center(child: Text(firstChar,
-            style: const TextStyle(color: AppColors.midnight, fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'serif')))),
-        const SizedBox(width: 10),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(deity, style: const TextStyle(color: AppColors.gold, fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'serif')),
-          const SizedBox(height: 3),
-          Text(text, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
-        ])),
-      ]));
-  }
-
-  // ── CONFIDENCE SECTION ──
-  Widget _confidenceSection(Map<String, dynamic> d) {
-    final score = (d['confidence_score'] as num?)?.toDouble() ?? 0;
-    final pct = score <= 1.0 ? score * 100 : score;
-    final breakdown = (d['confidence_breakdown'] as Map?)?.cast<String, dynamic>() ?? {};
-    final statement = d['plain_statement']?.toString() ?? '';
-
-    final layers = [
-      {'name': 'D-1 (Natal)', 'val': breakdown['d1']},
-      {'name': 'D-9 (Dharma)', 'val': breakdown['d9']},
-      {'name': 'D-10 (Career)', 'val': breakdown['d10']},
-      {'name': 'D-60 (Karmic)', 'val': breakdown['d60']},
-      {'name': 'Amatyakaraka', 'val': breakdown['amatyakaraka']},
-      {'name': 'Atmakaraka', 'val': breakdown['atmakaraka']},
-    ].where((l) => l['val'] != null).toList();
-
-    return Column(children: [
-      _sectionHeader(AppLocalizations.of(context)!.analysisConfidence.split(' ').first, AppLocalizations.of(context)!.analysisConfidence.split(' ').last, 'QUALITY'),
-      Container(margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-            colors: [AppColors.aurora.withOpacity(0.12), const Color(0xFF4A3B8C).withOpacity(0.15)]),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.aurora.withOpacity(0.3))),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            SizedBox(width: 70, height: 70, child: Stack(alignment: Alignment.center, children: [
-              SizedBox(width: 70, height: 70, child: CircularProgressIndicator(
-                value: pct / 100, strokeWidth: 5,
-                backgroundColor: Colors.white.withOpacity(0.08),
-                valueColor: const AlwaysStoppedAnimation(AppColors.aurora))),
-              Text('${pct.toStringAsFixed(0)}%',
-                style: const TextStyle(color: AppColors.aurora, fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'serif')),
-            ])),
-            const SizedBox(width: 14),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(AppLocalizations.of(context)?.confidence ?? 'CONFIDENCE',
-                style: TextStyle(color: AppColors.aurora, fontSize: 8, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-              const SizedBox(height: 4),
-              Text(_confidenceLabel(pct),
-                style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif', height: 1.2)),
-            ])),
-          ]),
-          if (statement.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Text(statement, style: const TextStyle(color: AppColors.lavender, fontSize: 10, height: 1.5)),
-          ],
-          if (layers.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            ...layers.map((l) {
-              final v = ((l['val'] as num).toDouble() * 100).clamp(0, 100).toDouble();
-              return Container(padding: const EdgeInsets.only(bottom: 6),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text(l['name'] as String,
-                      style: const TextStyle(color: AppColors.lavender, fontSize: 9)),
-                    Text('${v.toStringAsFixed(0)}%',
-                      style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
-                  ]),
-                  const SizedBox(height: 3),
-                  ClipRRect(borderRadius: BorderRadius.circular(2),
-                    child: LinearProgressIndicator(value: v / 100, minHeight: 3,
-                      backgroundColor: Colors.white.withOpacity(0.06),
-                      valueColor: const AlwaysStoppedAnimation(AppColors.aurora))),
-                ]));
-            }),
-          ],
-        ])),
-    ]);
-  }
-
-  String _confidenceLabel(double pct) {
-    if (pct >= 80) return 'Very High reliability across all chart layers.';
-    if (pct >= 65) return 'High reliability across all chart layers.';
-    if (pct >= 50) return 'Moderate reliability with mixed support.';
-    return 'Low reliability — interpret as guidance, not certainty.';
-  }
-
-  // ── AI DISCUSS BAR ──
-  Widget _aiDiscussBar(Map<String, dynamic> d) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [const Color(0xFF1A1642).withOpacity(0.8), const Color(0xFF0A0A24)]),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.gold.withOpacity(0.25))),
-      child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
-          const SizedBox(width: 8),
-          Text(AppLocalizations.of(context)!.discussWithAI,
-            style: TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 2, fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-          const SizedBox(width: 8),
-          Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
-        ]),
-        const SizedBox(height: 12),
-        Row(children: [
-          Expanded(child: _aiBtn('G', 'ChatGPT', const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]),
-            () => _launchAi(d, 'chatgpt'))),
-          const SizedBox(width: 8),
-          Expanded(child: _aiBtn('C', 'Claude', const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]),
-            () => _launchAi(d, 'claude'))),
-          const SizedBox(width: 8),
-          Expanded(child: _aiBtn('✦', 'Gemini', const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]),
-            () => _launchAi(d, 'gemini'))),
-        ]),
+        ClipRRect(borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(value: (align / 100).clamp(0, 1), minHeight: 7, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(col))),
         const SizedBox(height: 10),
-        GestureDetector(
-          onTap: () => _copyReportData(d),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white.withOpacity(0.1))),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Icon(Icons.copy, size: 14, color: AppColors.smoke),
-              const SizedBox(width: 6),
-              Text(AppLocalizations.of(context)!.copyFullReport, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
-            ])),
-        ),
+        Text('🤖 $alignText', style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.4)),
+      ])),
+      _advanced(l, [
+        '${l.crTechAtmakaraka}: ${KundliNames.planet(soul, loc)} · ${_sc('atmakaraka_degrees').toStringAsFixed(1)}°',
+        '${l.crTechAmatyakaraka}: ${KundliNames.planet(career, loc)} · ${l.crDignity}: ${_str('amatyakaraka_dignity')}',
+        'D9 ${l.crDignity}: ${_str('amatyakaraka_d9_dignity')} · D10 ${l.crDignity}: ${_str('amatyakaraka_d10_dignity')}',
+      ]),
+    ]);
+  }
+
+  Widget _planetCard(String emoji, String label, String planet, String meaning, Color c) => Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(color: c.withOpacity(0.08), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [Text(emoji, style: const TextStyle(fontSize: 16)), const SizedBox(width: 6),
+        Expanded(child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)))]),
+      const SizedBox(height: 6),
+      Text(planet, style: TextStyle(color: c, fontSize: 18, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 4),
+      Text(_cap(meaning), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.35)),
+    ]),
+  );
+
+  // ══════════════════════════════════════════════════════════════════
+  //  4 — CAREER FOUNDATION
+  // ══════════════════════════════════════════════════════════════════
+  Widget _foundation(AppLocalizations l) {
+    final loc = Localizations.localeOf(context);
+    final strength = _sc('tenth_house_strength_score');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.foundation_rounded, title: l.crFoundation, color: KColors.blue),
+      Row(children: [
+        Expanded(child: _iconTile('🔯', l.crCareerSign, _str('tenth_house_sign_name'))),
+        const SizedBox(width: 10),
+        Expanded(child: _iconTile('🪐', l.crCareerLord, KundliNames.planet(_str('tenth_lord_planet'), loc))),
+        const SizedBox(width: 10),
+        Expanded(child: _iconTile('💪', l.crCareerStrength, '${strength.toStringAsFixed(0)}%', color: _careerColor(strength))),
+      ]),
+      const SizedBox(height: 10),
+      _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(l.crProfStyle, style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 4),
+        Text(_cap(_str('tenth_lord_career_indication')), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.45)),
+        const SizedBox(height: 12),
+        Text(l.crBestFields, style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 6),
+        Wrap(spacing: 6, runSpacing: 6, children: _list('best_industries').map((e) => _pill(e.toString(), KColors.blue)).toList()),
+      ])),
+      _advanced(l, [
+        '${l.crCareerLord} ${l.crHouseLabel}: ${_sc('tenth_lord_house').toStringAsFixed(0)}',
+        '${l.crDignity}: ${_str('tenth_lord_dignity')} · D9: ${_str('tenth_lord_d9_dignity')}',
+        'Nakshatra: ${_str('tenth_lord_nakshatra')} (${_str('tenth_lord_nakshatra_deity')})',
+        if (_list('tenth_house_occupants').isNotEmpty) 'Occupants: ${_list('tenth_house_occupants').map((e) => KundliNames.planet(e.toString(), loc)).join(', ')}',
+      ]),
+    ]);
+  }
+
+  Widget _iconTile(String emoji, String label, String value, {Color? color}) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white.withOpacity(0.06))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(emoji, style: const TextStyle(fontSize: 17)), const SizedBox(height: 6),
+      Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontWeight: FontWeight.w600)),
+      Text(value, style: TextStyle(color: color ?? AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w800), maxLines: 1, overflow: TextOverflow.ellipsis),
+    ]),
+  );
+
+  // ══════════════════════════════════════════════════════════════════
+  //  5 — VERIFICATION ACROSS CHARTS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _verification(AppLocalizations l) {
+    final d10 = _map('d10_validation'), d9 = _map('d9_validation'), d60 = _map('d60_career_validation');
+    final standing = (d10['d10_overall_career_standing']?.toString() ?? '').toLowerCase();
+    final d10Score = standing.contains('strong') ? 75.0 : standing.contains('moderate') ? 50.0 : 30.0;
+    final d9Score = (d9['d9_career_dharma_alignment_score'] as num?)?.toDouble() ?? 0;
+    final d60Score = (d60['d60_past_life_work_capital_score'] as num?)?.toDouble() ?? 0;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.verified_rounded, title: l.crVerification, color: KColors.green),
+      _chartCard(l, l.crD10Career, d10Score, d10['d10_primary_career_signature']?.toString() ?? '',
+        ['D10 10L: ${d10['d10_tenth_lord_dignity']}', 'Sun: ${d10['d10_sun_dignity']} · Saturn: ${d10['d10_saturn_dignity']}', 'AmK: ${d10['d10_amatyakaraka_dignity']}']),
+      _chartCard(l, l.crD9Purpose, d9Score, d9['d9_career_notes']?.toString() ?? '',
+        ['D9 10L: ${d9['d9_tenth_lord_dignity']}', 'D9 AmK: ${d9['d9_amatyakaraka_dignity']}']),
+      _chartCard(l, l.crD60Karma, d60Score, d60['d60_career_past_life_signature']?.toString() ?? '',
+        ['D60 10L: ${d60['d60_tenth_lord_dignity']}', 'D60 AmK: ${d60['d60_amatyakaraka_dignity']}']),
+    ]);
+  }
+
+  Widget _chartCard(AppLocalizations l, String title, double score, String explain, List<String> tech) {
+    final col = _careerColor(score);
+    final status = score >= 60 ? l.crStatusStrongSupport : score >= 40 ? l.crStatusModerateSupport : l.crStatusNeedsImprovement;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: col.withOpacity(0.22))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(child: Text(title, style: const TextStyle(color: AppColors.ivory, fontSize: 13.5, fontWeight: FontWeight.w800))),
+          Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+            decoration: BoxDecoration(color: col.withOpacity(0.16), borderRadius: BorderRadius.circular(8)),
+            child: Text(status, style: TextStyle(color: col, fontSize: 10, fontWeight: FontWeight.w800))),
+        ]),
+        if (explain.isNotEmpty) ...[const SizedBox(height: 8),
+          Text(_cap(explain), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.4))],
+        _advanced(l, tech),
       ]),
     );
   }
 
-  Widget _aiBtn(String icon, String name, Gradient gradient, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.04),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.gold.withOpacity(0.2))),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(width: 26, height: 26,
-            decoration: BoxDecoration(gradient: gradient, borderRadius: BorderRadius.circular(8)),
-            child: Center(child: Text(icon,
-              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
-          const SizedBox(height: 5),
-          Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 9, fontWeight: FontWeight.w700)),
-          const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1, fontFamily: 'monospace')),
+  // ══════════════════════════════════════════════════════════════════
+  //  6 — CAREER PERSONALITY
+  // ══════════════════════════════════════════════════════════════════
+  Widget _personality(AppLocalizations l) {
+    final archetype = _titleCase(_str('primary_career_archetype'));
+    final env = [_titleCase(_str('ideal_work_environment')), _titleCase(_str('ideal_organization_size'))].where((s) => s.isNotEmpty).join(' · ');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.psychology_rounded, title: l.crPersonality, color: KColors.purple),
+      Container(padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(gradient: LinearGradient(colors: [KColors.purple.withOpacity(0.18), AppColors.card.withOpacity(0.4)]),
+          borderRadius: BorderRadius.circular(18), border: Border.all(color: KColors.purple.withOpacity(0.3))),
+        child: Column(children: [
+          const Text('🎭', style: TextStyle(fontSize: 34)),
+          const SizedBox(height: 8),
+          Text(archetype, style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w800), textAlign: TextAlign.center),
+          if (_str('career_verdict_explanation').isNotEmpty) ...[const SizedBox(height: 8),
+            Text('🤖 ${_cap(_str('career_verdict_explanation'))}', style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5), textAlign: TextAlign.center)],
+        ])),
+      const SizedBox(height: 12),
+      _chipBlock('💪', l.strengths, _list('career_strengths'), KColors.green),
+      _chipBlock('🌱', l.crGrowthAreas, _list('career_weaknesses'), KColors.orange),
+      _chipBlock('🎯', l.crBestRoles, _list('specific_job_role_fits'), KColors.blue),
+      _chipBlock('🏭', l.crBestIndustries, _list('best_industries'), KColors.gold),
+      if (env.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
+        child: _card(child: Row(children: [const Text('🏢', style: TextStyle(fontSize: 15)), const SizedBox(width: 10),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(l.crEnvironment, style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontWeight: FontWeight.w700)),
+            Text(env, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, fontWeight: FontWeight.w600)),
+          ]))]))),
+    ]);
+  }
+
+  Widget _chipBlock(String emoji, String title, List items, Color c) {
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Padding(padding: const EdgeInsets.only(bottom: 10), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [Text(emoji, style: const TextStyle(fontSize: 13)), const SizedBox(width: 6),
+        Text(title, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w800))]),
+      const SizedBox(height: 7),
+      Wrap(spacing: 6, runSpacing: 6, children: items.take(8).map((e) => _pill(_cap(e.toString()), c)).toList()),
+    ]));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  7 — WORK STYLE
+  // ══════════════════════════════════════════════════════════════════
+  Widget _workStyle(AppLocalizations l) {
+    final rec = _str('recommended_work_structure').toLowerCase();
+    final rows = <List<Object>>[
+      [l.crEmployment, _sc('employment_fit_score'), 'employ'],
+      [l.crBusiness, _sc('entrepreneurship_fit_score'), 'entrepreneur'],
+      [l.crFreelance, _sc('freelance_consulting_fit_score'), 'freelance'],
+      [l.crPortfolio, _sc('mixed_portfolio_fit_score'), 'portfolio'],
+      [l.crLeadership, _sc('team_leadership_fit_score'), 'leader'],
+    ];
+    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.work_outline_rounded, title: l.crWorkStyle, color: KColors.blue),
+      ...rows.map((r) {
+        final score = r[1] as double;
+        final tag = r[2] as String;
+        final isBest = rec.contains(tag) || (rec.contains('business') && tag == 'entrepreneur') || (rec.contains('job') && tag == 'employ');
+        final col = isBest ? KColors.green : _careerColor(score);
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(color: col.withOpacity(isBest ? 0.10 : 0.05), borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: col.withOpacity(isBest ? 0.4 : 0.18))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(r[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700))),
+              if (isBest) Container(margin: const EdgeInsets.only(right: 8), padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(color: KColors.green.withOpacity(0.18), borderRadius: BorderRadius.circular(6)),
+                child: Text('⭐ ${l.crBestFit}', style: const TextStyle(color: KColors.green, fontSize: 8.5, fontWeight: FontWeight.w800))),
+              Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: col, fontSize: 15, fontWeight: FontWeight.w800)),
+            ]),
+            const SizedBox(height: 7),
+            ClipRRect(borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(value: (score / 100).clamp(0, 1), minHeight: 6, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(col))),
+          ]),
+        );
+      }),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  8 — CAREER TIMELINE
+  // ══════════════════════════════════════════════════════════════════
+  Widget _timeline(AppLocalizations l) {
+    final launch = _list('career_launch_windows').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    final risk = _list('career_risk_windows').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    final nodes = <Map<String, String>>[];
+    void add(String title, Map<String, dynamic> m, Color c) {
+      nodes.add({'title': title, 'window': m['window']?.toString() ?? '', 'dasha': m['dasha']?.toString() ?? '', 'note': m['note']?.toString() ?? '', 'color': c.value.toString()});
+    }
+    if (launch.isNotEmpty) add(l.crPresentPhase, launch[0], KColors.green);
+    if (launch.length > 1) add(l.crFutureExpansion, launch[1], KColors.blue);
+    final trans = _flex('career_transition_windows');
+    if (trans.isNotEmpty && nodes.length < 3) nodes.add({'title': l.crUpcoming, 'window': '', 'dasha': '', 'note': trans, 'color': KColors.purple.value.toString()});
+    if (risk.isNotEmpty) add(l.crRiskPeriod, risk[0], KColors.orange);
+    if (nodes.isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.timeline_rounded, title: l.crTimeline, color: AppColors.gold),
+      ...List.generate(nodes.length, (idx) => _timelineNode(l, nodes[idx], idx == nodes.length - 1)),
+    ]);
+  }
+
+  Widget _timelineNode(AppLocalizations l, Map<String, String> n, bool last) {
+    final col = Color(int.parse(n['color']!));
+    final loc = Localizations.localeOf(context);
+    final dasha = n['dasha'] ?? '';
+    final planet = dasha.isNotEmpty ? KundliNames.planet(dasha.split(' ').first, loc) : '';
+    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(children: [
+        Container(width: 14, height: 14, margin: const EdgeInsets.only(top: 3),
+          decoration: BoxDecoration(color: col, shape: BoxShape.circle, border: Border.all(color: col.withOpacity(0.3), width: 3))),
+        if (!last) Expanded(child: Container(width: 2, color: col.withOpacity(0.3))),
+      ]),
+      const SizedBox(width: 12),
+      Expanded(child: Container(margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: col.withOpacity(0.2))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: Text(n['title'] ?? '', style: TextStyle(color: col, fontSize: 12.5, fontWeight: FontWeight.w800))),
+            if ((n['window'] ?? '').isNotEmpty) Text(n['window']!, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w600)),
+          ]),
+          if (planet.isNotEmpty) ...[const SizedBox(height: 3),
+            Text('🪐 $planet', style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700))],
+          if ((n['note'] ?? '').isNotEmpty) ...[const SizedBox(height: 6),
+            Text(_cap(n['note']!), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))],
+          if (dasha.isNotEmpty) _advanced(l, ['${l.crViewDasha}: $dasha']),
+        ]))),
+    ]));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  9 — CHALLENGES TO WATCH
+  // ══════════════════════════════════════════════════════════════════
+  Widget _risks(AppLocalizations l) {
+    final rows = <List<Object>>[
+      [l.crRiskBurnout, _sc('burnout_risk_score'), l.crBurnoutExp, l.crBurnoutFix],
+      [l.crRiskRecognition, _sc('career_stagnation_risk_score'), l.crRecognitionExp, l.crRecognitionFix],
+      [l.crRiskConflict, _sc('workplace_conflict_risk_score'), l.crConflictExp, l.crConflictFix],
+      [l.crRiskFinancial, _sc('financial_instability_risk_score'), l.crFinancialExp, l.crFinancialFix],
+      [l.crRiskOverqual, _sc('overqualification_underemployment_risk_score'), l.crOverqualExp, l.crOverqualFix],
+    ];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.shield_outlined, title: l.crChallenges, color: KColors.orange),
+      ...rows.map((r) {
+        final score = r[1] as double;
+        final col = _riskColor(score);
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(color: col.withOpacity(0.05), borderRadius: BorderRadius.circular(14), border: Border.all(color: col.withOpacity(0.18))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(r[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700))),
+              Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: col, fontSize: 14, fontWeight: FontWeight.w800)),
+            ]),
+            const SizedBox(height: 6),
+            ClipRRect(borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(value: (score / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(col))),
+            const SizedBox(height: 8),
+            Text(r[2] as String, style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.35)),
+            const SizedBox(height: 6),
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('🛡️ ${l.crPrevention}: ', style: const TextStyle(color: KColors.green, fontSize: 10.5, fontWeight: FontWeight.w800)),
+              Expanded(child: Text(r[3] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11, height: 1.35))),
+            ]),
+          ]),
+        );
+      }),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  10 — IMPROVEMENT PLAN (remedies)
+  // ══════════════════════════════════════════════════════════════════
+  Widget _remedies(AppLocalizations l) {
+    final planetary = _list('astrological_remedies').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    final practical = _list('practical_solutions').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.spa_rounded, title: l.crImprovementPlan, color: KColors.green),
+      if (practical.isNotEmpty) ...[
+        _catLabel('🎯', l.crCatPractical, KColors.blue),
+        ...practical.map((m) => _remedyCard(_titleCase(m['category']?.toString() ?? ''), m['advice']?.toString() ?? '', null, l, KColors.blue)),
+      ],
+      if (planetary.isNotEmpty) ...[
+        const SizedBox(height: 6),
+        _catLabel('🕉️', l.crCatPlanetary, KColors.purple),
+        ...planetary.map((m) => _remedyCard(m['deity']?.toString() ?? '', m['remedy']?.toString() ?? '', m['deity']?.toString(), l, KColors.purple)),
+      ],
+    ]);
+  }
+
+  Widget _catLabel(String emoji, String t, Color c) => Padding(padding: const EdgeInsets.only(bottom: 8, top: 2),
+    child: Row(children: [Text(emoji, style: const TextStyle(fontSize: 13)), const SizedBox(width: 6),
+      Text(t, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w800))]));
+
+  Widget _remedyCard(String title, String body, String? tradition, AppLocalizations l, Color c) => Container(
+    margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+    decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: c.withOpacity(0.2))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (title.isNotEmpty) Text(title, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w800)),
+      if (title.isNotEmpty) const SizedBox(height: 4),
+      Text(_cap(body), style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.45)),
+      if (tradition != null && tradition.isNotEmpty) _advanced(l, ['${l.crTraditionalExplain}: $tradition']),
+    ]),
+  );
+
+  // ══════════════════════════════════════════════════════════════════
+  //  11 — 30-DAY ACTION PLAN
+  // ══════════════════════════════════════════════════════════════════
+  Widget _actionPlan(AppLocalizations l) {
+    final practical = _list('practical_solutions').whereType<Map>().map((e) => e['advice']?.toString() ?? '').toList();
+    final weeks = <List<Object>>[
+      [l.crWeek1, l.crWeek1Tip, l.crPriorityHigh, '2–3 hrs'],
+      [l.crWeek2, l.crWeek2Tip, l.crPriorityHigh, '3–4 hrs'],
+      [l.crWeek3, l.crWeek3Tip, l.crPriorityMedium, '2 hrs'],
+      [l.crWeek4, l.crWeek4Tip, l.crPriorityMedium, '2–3 hrs'],
+    ];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.checklist_rounded, title: l.crActionPlan, color: AppColors.gold),
+      ...List.generate(weeks.length, (idx) {
+        final w = weeks[idx];
+        final extra = idx < practical.length ? practical[idx] : '';
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.white.withOpacity(0.06))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(w[0] as String, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 6),
+            Text(w[1] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.4)),
+            if (extra.isNotEmpty) ...[const SizedBox(height: 5), Text('• ${_cap(extra)}', style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))],
+            const SizedBox(height: 10),
+            Wrap(spacing: 8, runSpacing: 6, children: [
+              _tag('⚡ ${l.crPriority}: ${w[2]}', KColors.orange),
+              _tag('⏱ ${l.crTimeRequired}: ${w[3]}', KColors.blue),
+            ]),
+          ]),
+        );
+      }),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  12 — AI CAREER ROADMAP
+  // ══════════════════════════════════════════════════════════════════
+  Widget _roadmap(AppLocalizations l) {
+    final risks = _list('major_career_risks').whereType<Map>().map((e) => e['description']?.toString() ?? '')
+        .where((s) => s.isNotEmpty && !s.toLowerCase().contains('no structural')).toList();
+    final rows = <List<String>>[
+      ['🎯', l.crBestFocus, _cap(_str('primary_career_direction_recommendation'))],
+      ['📚', l.crSkillsLearn, _list('career_weaknesses').map((e) => _cap(e.toString())).join(' · ')],
+      ['🏭', l.crIndustriesTarget, _list('best_industries').take(4).join(' · ')],
+      ['⚠️', l.fdAvoid, risks.map(_cap).join(' · ')],
+      ['🏆', l.crExpectedOutcome, _cap(_str('career_verdict_explanation'))],
+    ];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.rocket_launch_rounded, title: l.crRoadmap, subtitle: l.crNext12, color: KColors.purple),
+      _card(child: Column(children: rows.where((r) => r[2].isNotEmpty).map((r) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 7),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(r[0], style: const TextStyle(fontSize: 15)), const SizedBox(width: 10),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(r[1], style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 2),
+            Text(r[2], style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.4)),
+          ])),
         ]),
+      )).toList())),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  13 — PREDICTION RELIABILITY
+  // ══════════════════════════════════════════════════════════════════
+  Widget _confidence(AppLocalizations l) {
+    final raw = _sc('confidence_score');
+    final pct = raw <= 1 ? raw * 100 : raw;
+    final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
+    final b = _map('confidence_breakdown');
+    final layers = <List<Object>>[
+      [l.crBirthChart, (b['d1'] as num?)?.toDouble() ?? 0],
+      [l.crNavamsa, (b['d9'] as num?)?.toDouble() ?? 0],
+      [l.crDashamsa, (b['d10'] as num?)?.toDouble() ?? 0],
+      [l.crShashtiamsa, (b['d60'] as num?)?.toDouble() ?? 0],
+    ];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.verified_user_rounded, title: l.crReliability, color: KColors.blue),
+      _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          KStars(filled: kStars(pct), size: 20, color: AppColors.gold), const Spacer(),
+          Text('${pct.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.gold, fontSize: 22, fontWeight: FontWeight.w800)),
+        ]),
+        const SizedBox(height: 4),
+        Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 10),
+        Text(l.crReliabilityExplain, style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5)),
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.map((la) {
+          final v = (la[1] as double) * 100;
+          return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
+            SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),
+            Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(value: (v / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(_careerColor(v))))),
+            const SizedBox(width: 8),
+            Text('${v.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontWeight: FontWeight.w700)),
+          ]));
+        }).toList())),
+      ])),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  14 — DISCUSS WITH AI
+  // ══════════════════════════════════════════════════════════════════
+  Widget _discussAi(AppLocalizations l) {
+    final topics = <String>[l.crTopicChange, l.crTopicGovt, l.crTopicBusiness, l.crTopicPromotion, l.crTopicMarriage, l.crTopicAbroad, l.crTopicIncome, l.crTopicPurpose, l.crTopicResume];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      Row(children: [
+        _aiBtn('ChatGPT', '🤖', () => _launchAi(_data!, 'chatgpt')),
+        _aiBtn('Claude', '✳️', () => _launchAi(_data!, 'claude')),
+        _aiBtn('Gemini', '💎', () => _launchAi(_data!, 'gemini')),
+      ]),
+      const SizedBox(height: 14),
+      Text(l.crAskAbout, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5, fontWeight: FontWeight.w700)),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 8, children: topics.map((t) => GestureDetector(
+        onTap: () => _copyTopic(t),
+        child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
+          child: Text(t, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, fontWeight: FontWeight.w600))),
+      )).toList()),
+    ]);
+  }
+
+  Widget _aiBtn(String name, String emoji, VoidCallback onTap) => Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: GestureDetector(onTap: onTap, child: Container(padding: const EdgeInsets.symmetric(vertical: 14),
+      decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.gold.withOpacity(0.2))),
+      child: Column(children: [Text(emoji, style: const TextStyle(fontSize: 20)), const SizedBox(height: 5),
+        Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w700)),
+        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1)),
+      ])))));
+
+  void _copyTopic(String topic) {
+    final q = '$topic — based on my Vedic career report for ${widget.chartName}.\n\n${_buildPrompt(_data!)}';
+    Clipboard.setData(ClipboardData(text: q));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.crTopicCopied), duration: const Duration(seconds: 2)));
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  shared widgets / helpers
+  // ══════════════════════════════════════════════════════════════════
+  Widget _card({required Widget child}) => Container(padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.white.withOpacity(0.06))), child: child);
+
+  Widget _pill(String t, Color c) => Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+    decoration: BoxDecoration(color: c.withOpacity(0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: c.withOpacity(0.25))),
+    child: Text(t, style: TextStyle(color: c, fontSize: 10.5, fontWeight: FontWeight.w600)));
+
+  Widget _tag(String t, Color c) => Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+    decoration: BoxDecoration(color: c.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+    child: Text(t, style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w700)));
+
+  Widget _advanced(AppLocalizations l, List<String>? lines, {String? customTitle, Widget? customChild}) {
+    final valid = lines?.where((s) => s.trim().isNotEmpty).toList() ?? const [];
+    if (customChild == null && valid.isEmpty) return const SizedBox.shrink();
+    return Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero, childrenPadding: const EdgeInsets.only(bottom: 8),
+        iconColor: AppColors.smoke, collapsedIconColor: AppColors.smoke,
+        title: Text(customTitle ?? l.fdAdvancedDetails, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5, fontWeight: FontWeight.w700)),
+        children: customChild != null ? [customChild] : valid.map((s) => Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('• ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+            Expanded(child: Text(s, style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.35))),
+          ]),
+        )).toList(),
       ),
     );
   }
 
+  Color _careerColor(double s) {
+    if (s >= 75) return KColors.green;
+    if (s >= 60) return KColors.blue;
+    if (s >= 45) return KColors.yellow;
+    if (s >= 30) return KColors.orange;
+    return KColors.red;
+  }
+  Color _riskColor(double s) {
+    if (s >= 65) return KColors.red;
+    if (s >= 45) return KColors.orange;
+    if (s >= 30) return KColors.yellow;
+    return KColors.green;
+  }
+  String _potentialStatus(double s, AppLocalizations l) {
+    if (s >= 75) return l.crStatusStrong;
+    if (s >= 60) return l.crStatusGood;
+    if (s >= 45) return l.crStatusModerate;
+    if (s >= 30) return l.crStatusDeveloping;
+    return l.crStatusChallenging;
+  }
+  String _cap(String s) => s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+  String _titleCase(String s) => s.replaceAll('_', ' ').replaceAll('-', ' ').split(' ')
+    .where((w) => w.isNotEmpty).map((w) => '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
+
+  // ── AI prompt / launch (unchanged behaviour) ──
   String _buildPrompt(Map<String, dynamic> d) {
     final name = widget.chartName;
     final overall = d['overall_career_strength_score'] ?? '?';
@@ -923,42 +780,26 @@ $jsonStr
 Please explain the key findings in simple language, highlight the most important timing windows, and suggest practical next steps.''';
   }
 
-  void _copyReportData(Map<String, dynamic> d) {
-    final prompt = _buildPrompt(d);
-    Clipboard.setData(ClipboardData(text: prompt));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.reportCopied),
-        duration: Duration(seconds: 2)));
-  }
-
   Future<void> _launchAi(Map<String, dynamic> d, String ai) async {
     final prompt = _buildPrompt(d);
     await Clipboard.setData(ClipboardData(text: prompt));
-
     String url;
     switch (ai) {
-      case 'chatgpt':
-        url = 'https://chat.openai.com/';
-        break;
-      case 'claude':
-        url = 'https://claude.ai/new';
-        break;
-      case 'gemini':
-        url = 'https://gemini.google.com/app';
-        break;
-      default:
-        return;
+      case 'chatgpt': url = 'https://chat.openai.com/'; break;
+      case 'claude': url = 'https://claude.ai/new'; break;
+      case 'gemini': url = 'https://gemini.google.com/app'; break;
+      default: return;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Report copied! Opening $ai — paste to discuss.'),
-        duration: const Duration(seconds: 3)));
-
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report copied! Opening $ai — paste to discuss.'), duration: const Duration(seconds: 3)));
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
+
+  Widget _errView(AppLocalizations l) => Center(child: Padding(padding: const EdgeInsets.all(24),
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline, color: AppColors.error, size: 44), const SizedBox(height: 12),
+      Text(_error!, style: const TextStyle(color: AppColors.smoke), textAlign: TextAlign.center),
+      const SizedBox(height: 16), ElevatedButton(onPressed: _load, child: Text(l.retry)),
+    ])));
 }
-
-

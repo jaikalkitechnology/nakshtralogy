@@ -235,6 +235,840 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @crTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Career & Job Analysis'**
+  String get crTitle;
+
+  /// No description provided for @crSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Career Report'**
+  String get crSubtitle;
+
+  /// No description provided for @crCrumbHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get crCrumbHome;
+
+  /// No description provided for @crCrumbReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get crCrumbReports;
+
+  /// No description provided for @crCareerPotential.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Potential'**
+  String get crCareerPotential;
+
+  /// No description provided for @crStatusStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Potential'**
+  String get crStatusStrong;
+
+  /// No description provided for @crStatusGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Potential'**
+  String get crStatusGood;
+
+  /// No description provided for @crStatusModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Potential'**
+  String get crStatusModerate;
+
+  /// No description provided for @crStatusDeveloping.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing Potential'**
+  String get crStatusDeveloping;
+
+  /// No description provided for @crStatusChallenging.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenging Phase'**
+  String get crStatusChallenging;
+
+  /// No description provided for @crOverallCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Career'**
+  String get crOverallCareer;
+
+  /// No description provided for @crStability.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Stability'**
+  String get crStability;
+
+  /// No description provided for @crGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Potential'**
+  String get crGrowth;
+
+  /// No description provided for @crRecognition.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition'**
+  String get crRecognition;
+
+  /// No description provided for @crSatisfaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Satisfaction'**
+  String get crSatisfaction;
+
+  /// No description provided for @crChipLeadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Leadership'**
+  String get crChipLeadership;
+
+  /// No description provided for @crChipCreativity.
+  ///
+  /// In en, this message translates to:
+  /// **'Creativity'**
+  String get crChipCreativity;
+
+  /// No description provided for @crChipBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get crChipBusiness;
+
+  /// No description provided for @crChipStableIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable Income'**
+  String get crChipStableIncome;
+
+  /// No description provided for @crChipLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get crChipLearning;
+
+  /// No description provided for @crChipGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-Term Growth'**
+  String get crChipGrowth;
+
+  /// No description provided for @crChipTechnical.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Skill'**
+  String get crChipTechnical;
+
+  /// No description provided for @crChipRecognition.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition'**
+  String get crChipRecognition;
+
+  /// No description provided for @crTopInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Insights'**
+  String get crTopInsights;
+
+  /// No description provided for @crWhatDefines.
+  ///
+  /// In en, this message translates to:
+  /// **'What defines your career?'**
+  String get crWhatDefines;
+
+  /// No description provided for @crSoulCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul & Career Purpose'**
+  String get crSoulCareer;
+
+  /// No description provided for @crSoulPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Purpose Planet'**
+  String get crSoulPlanet;
+
+  /// No description provided for @crCareerPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Planet'**
+  String get crCareerPlanet;
+
+  /// No description provided for @crMeaning.
+  ///
+  /// In en, this message translates to:
+  /// **'Meaning'**
+  String get crMeaning;
+
+  /// No description provided for @crAlignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul ↔ Career Alignment'**
+  String get crAlignment;
+
+  /// No description provided for @crAlignStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Your natural interests and career path are strongly aligned.'**
+  String get crAlignStrong;
+
+  /// No description provided for @crAlignModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Your natural interests and career path are moderately aligned.'**
+  String get crAlignModerate;
+
+  /// No description provided for @crAlignLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your natural interests and career path need conscious alignment.'**
+  String get crAlignLow;
+
+  /// No description provided for @crTechAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Atmakaraka (Soul indicator)'**
+  String get crTechAtmakaraka;
+
+  /// No description provided for @crTechAmatyakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Amatyakaraka (Career indicator)'**
+  String get crTechAmatyakaraka;
+
+  /// No description provided for @crDegrees.
+  ///
+  /// In en, this message translates to:
+  /// **'Degrees'**
+  String get crDegrees;
+
+  /// No description provided for @crDignity.
+  ///
+  /// In en, this message translates to:
+  /// **'Dignity'**
+  String get crDignity;
+
+  /// No description provided for @crFoundation.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Foundation'**
+  String get crFoundation;
+
+  /// No description provided for @crCareerSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Sign'**
+  String get crCareerSign;
+
+  /// No description provided for @crCareerLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Lord'**
+  String get crCareerLord;
+
+  /// No description provided for @crLordPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Lord Position'**
+  String get crLordPosition;
+
+  /// No description provided for @crCareerStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Strength'**
+  String get crCareerStrength;
+
+  /// No description provided for @crProfStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Style'**
+  String get crProfStyle;
+
+  /// No description provided for @crBestFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Fields'**
+  String get crBestFields;
+
+  /// No description provided for @crTechnicalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Details'**
+  String get crTechnicalDetails;
+
+  /// No description provided for @crHouseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get crHouseLabel;
+
+  /// No description provided for @crVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Verification Across Charts'**
+  String get crVerification;
+
+  /// No description provided for @crD10Career.
+  ///
+  /// In en, this message translates to:
+  /// **'D10 · Career'**
+  String get crD10Career;
+
+  /// No description provided for @crD9Purpose.
+  ///
+  /// In en, this message translates to:
+  /// **'D9 · Purpose'**
+  String get crD9Purpose;
+
+  /// No description provided for @crD60Karma.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 · Karma'**
+  String get crD60Karma;
+
+  /// No description provided for @crStatusNeedsImprovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Improvement'**
+  String get crStatusNeedsImprovement;
+
+  /// No description provided for @crStatusWellAligned.
+  ///
+  /// In en, this message translates to:
+  /// **'Well Aligned'**
+  String get crStatusWellAligned;
+
+  /// No description provided for @crStatusStrongSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong Support'**
+  String get crStatusStrongSupport;
+
+  /// No description provided for @crStatusModerateSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Support'**
+  String get crStatusModerateSupport;
+
+  /// No description provided for @crChartDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical chart details'**
+  String get crChartDetails;
+
+  /// No description provided for @crPersonality.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Career Personality'**
+  String get crPersonality;
+
+  /// No description provided for @crGrowthAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Areas'**
+  String get crGrowthAreas;
+
+  /// No description provided for @crBestRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Roles'**
+  String get crBestRoles;
+
+  /// No description provided for @crBestIndustries.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Industries'**
+  String get crBestIndustries;
+
+  /// No description provided for @crEnvironment.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Environment'**
+  String get crEnvironment;
+
+  /// No description provided for @crWorkStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Work Style'**
+  String get crWorkStyle;
+
+  /// No description provided for @crEmployment.
+  ///
+  /// In en, this message translates to:
+  /// **'Employment'**
+  String get crEmployment;
+
+  /// No description provided for @crBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get crBusiness;
+
+  /// No description provided for @crFreelance.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelance / Consulting'**
+  String get crFreelance;
+
+  /// No description provided for @crPortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed Portfolio'**
+  String get crPortfolio;
+
+  /// No description provided for @crLeadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Leadership'**
+  String get crLeadership;
+
+  /// No description provided for @crFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit'**
+  String get crFit;
+
+  /// No description provided for @crBestFit.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Fit'**
+  String get crBestFit;
+
+  /// No description provided for @crTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Timeline'**
+  String get crTimeline;
+
+  /// No description provided for @crPastPeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Peak'**
+  String get crPastPeak;
+
+  /// No description provided for @crPresentPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'Present Phase'**
+  String get crPresentPhase;
+
+  /// No description provided for @crUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Opportunity'**
+  String get crUpcoming;
+
+  /// No description provided for @crFutureExpansion.
+  ///
+  /// In en, this message translates to:
+  /// **'Future Expansion'**
+  String get crFutureExpansion;
+
+  /// No description provided for @crRiskPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Period'**
+  String get crRiskPeriod;
+
+  /// No description provided for @crViewDasha.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary period (technical)'**
+  String get crViewDasha;
+
+  /// No description provided for @crChallenges.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges to Watch'**
+  String get crChallenges;
+
+  /// No description provided for @crRiskBurnout.
+  ///
+  /// In en, this message translates to:
+  /// **'Burnout'**
+  String get crRiskBurnout;
+
+  /// No description provided for @crRiskRecognition.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition Delay'**
+  String get crRiskRecognition;
+
+  /// No description provided for @crRiskConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace Conflict'**
+  String get crRiskConflict;
+
+  /// No description provided for @crRiskFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Instability'**
+  String get crRiskFinancial;
+
+  /// No description provided for @crRiskOverqual.
+  ///
+  /// In en, this message translates to:
+  /// **'Under-utilization'**
+  String get crRiskOverqual;
+
+  /// No description provided for @crPrevention.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention'**
+  String get crPrevention;
+
+  /// No description provided for @crBurnoutExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Long, demanding phases can drain your energy over time.'**
+  String get crBurnoutExp;
+
+  /// No description provided for @crBurnoutFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect rest, set boundaries, and pace big pushes.'**
+  String get crBurnoutFix;
+
+  /// No description provided for @crRecognitionExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards and recognition may arrive slower than your effort.'**
+  String get crRecognitionExp;
+
+  /// No description provided for @crRecognitionFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Document wins and make your contributions visible to seniors.'**
+  String get crRecognitionFix;
+
+  /// No description provided for @crConflictExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Friction with colleagues or authority can surface at times.'**
+  String get crConflictExp;
+
+  /// No description provided for @crConflictFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Communicate calmly and pick your battles wisely.'**
+  String get crConflictFix;
+
+  /// No description provided for @crFinancialExp.
+  ///
+  /// In en, this message translates to:
+  /// **'Income may feel uneven during certain phases.'**
+  String get crFinancialExp;
+
+  /// No description provided for @crFinancialFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a buffer and avoid over-committing financially.'**
+  String get crFinancialFix;
+
+  /// No description provided for @crOverqualExp.
+  ///
+  /// In en, this message translates to:
+  /// **'You may sometimes feel under-used or under-challenged.'**
+  String get crOverqualExp;
+
+  /// No description provided for @crOverqualFix.
+  ///
+  /// In en, this message translates to:
+  /// **'Seek stretch roles and keep learning to stay engaged.'**
+  String get crOverqualFix;
+
+  /// No description provided for @crImprovementPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Improvement Plan'**
+  String get crImprovementPlan;
+
+  /// No description provided for @crCatPlanetary.
+  ///
+  /// In en, this message translates to:
+  /// **'Planetary & Spiritual'**
+  String get crCatPlanetary;
+
+  /// No description provided for @crCatPractical.
+  ///
+  /// In en, this message translates to:
+  /// **'Practical Steps'**
+  String get crCatPractical;
+
+  /// No description provided for @crTraditionalExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional astrology explanation'**
+  String get crTraditionalExplain;
+
+  /// No description provided for @crActionPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'30-Day Career Action Plan'**
+  String get crActionPlan;
+
+  /// No description provided for @crWeek1.
+  ///
+  /// In en, this message translates to:
+  /// **'Week 1 · Profile Optimization'**
+  String get crWeek1;
+
+  /// No description provided for @crWeek2.
+  ///
+  /// In en, this message translates to:
+  /// **'Week 2 · Skill Building'**
+  String get crWeek2;
+
+  /// No description provided for @crWeek3.
+  ///
+  /// In en, this message translates to:
+  /// **'Week 3 · Networking'**
+  String get crWeek3;
+
+  /// No description provided for @crWeek4.
+  ///
+  /// In en, this message translates to:
+  /// **'Week 4 · Career Visibility'**
+  String get crWeek4;
+
+  /// No description provided for @crWeek1Tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh your resume and LinkedIn around your strongest career theme.'**
+  String get crWeek1Tip;
+
+  /// No description provided for @crWeek2Tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick one high-value skill in your best field and practise it daily.'**
+  String get crWeek2Tip;
+
+  /// No description provided for @crWeek3Tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect with mentors and reach out to two new industry contacts.'**
+  String get crWeek3Tip;
+
+  /// No description provided for @crWeek4Tip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your work publicly and volunteer for a visible project.'**
+  String get crWeek4Tip;
+
+  /// No description provided for @crPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get crPriority;
+
+  /// No description provided for @crTimeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get crTimeRequired;
+
+  /// No description provided for @crExpectedBenefit.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefit'**
+  String get crExpectedBenefit;
+
+  /// No description provided for @crPriorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get crPriorityHigh;
+
+  /// No description provided for @crPriorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get crPriorityMedium;
+
+  /// No description provided for @crRoadmap.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Career Roadmap'**
+  String get crRoadmap;
+
+  /// No description provided for @crNext12.
+  ///
+  /// In en, this message translates to:
+  /// **'Next 12 Months'**
+  String get crNext12;
+
+  /// No description provided for @crBestFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Focus'**
+  String get crBestFocus;
+
+  /// No description provided for @crSkillsLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills to Learn'**
+  String get crSkillsLearn;
+
+  /// No description provided for @crIndustriesTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Industries to Target'**
+  String get crIndustriesTarget;
+
+  /// No description provided for @crExpectedOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Outcome'**
+  String get crExpectedOutcome;
+
+  /// No description provided for @crReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction Reliability'**
+  String get crReliability;
+
+  /// No description provided for @crReliabilityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High Reliability'**
+  String get crReliabilityHigh;
+
+  /// No description provided for @crReliabilityGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Reliability'**
+  String get crReliabilityGood;
+
+  /// No description provided for @crReliabilityModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Reliability'**
+  String get crReliabilityModerate;
+
+  /// No description provided for @crReliabilityExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'This report combines your birth chart, divisional charts and Jaimini indicators. The score reflects how strongly these chart layers agree.'**
+  String get crReliabilityExplain;
+
+  /// No description provided for @crChartLayers.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart layers & weights'**
+  String get crChartLayers;
+
+  /// No description provided for @crBirthChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Chart (D1)'**
+  String get crBirthChart;
+
+  /// No description provided for @crNavamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Navamsa (D9)'**
+  String get crNavamsa;
+
+  /// No description provided for @crDashamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashamsa (D10)'**
+  String get crDashamsa;
+
+  /// No description provided for @crShashtiamsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Shashtiamsa (D60)'**
+  String get crShashtiamsa;
+
+  /// No description provided for @crDiscussAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Discuss with AI'**
+  String get crDiscussAi;
+
+  /// No description provided for @crAskAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask About'**
+  String get crAskAbout;
+
+  /// No description provided for @crTopicChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Change'**
+  String get crTopicChange;
+
+  /// No description provided for @crTopicGovt.
+  ///
+  /// In en, this message translates to:
+  /// **'Government Job'**
+  String get crTopicGovt;
+
+  /// No description provided for @crTopicBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get crTopicBusiness;
+
+  /// No description provided for @crTopicPromotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion'**
+  String get crTopicPromotion;
+
+  /// No description provided for @crTopicMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage vs Career'**
+  String get crTopicMarriage;
+
+  /// No description provided for @crTopicAbroad.
+  ///
+  /// In en, this message translates to:
+  /// **'Abroad'**
+  String get crTopicAbroad;
+
+  /// No description provided for @crTopicIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get crTopicIncome;
+
+  /// No description provided for @crTopicPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose'**
+  String get crTopicPurpose;
+
+  /// No description provided for @crTopicResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get crTopicResume;
+
+  /// No description provided for @crTopicCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Question copied — paste it into your AI chat.'**
+  String get crTopicCopied;
+
+  /// No description provided for @crAlignExplainKaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'{soul} guides your inner calling, while {career} shapes your outer profession.'**
+  String crAlignExplainKaraka(Object soul, Object career);
+
   /// No description provided for @rzTodayOutlook.
   ///
   /// In en, this message translates to:
