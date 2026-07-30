@@ -8161,6 +8161,134 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get klSubtitle => 'AI-संचालित वैदिक पूर्वजन्म कर्म संबंध रिपोर्ट';
+
+  @override
+  String get klTitle => 'पूर्वजन्म कर्म संबंध';
+
+  @override
+  String get klSnapshotHeader => 'कर्म संबंध स्नैपशॉट';
+
+  @override
+  String get klGaugePairwise => 'औसत जोड़ी-वार संबंध';
+
+  @override
+  String get klGaugeCohesion => 'समूह एकजुटता';
+
+  @override
+  String get klGaugeRahuKetu => 'राहु-केतु प्रतिध्वनि';
+
+  @override
+  String get klGaugeAtmakaraka => 'आत्मा प्रतिध्वनि';
+
+  @override
+  String get klGaugeD60 => 'D60 प्रतिध्वनि';
+
+  @override
+  String get klChipSoulResonance => 'मजबूत आत्मा-हस्ताक्षर प्रतिध्वनि';
+
+  @override
+  String get klChipD60Resonance => 'मजबूत D60 पूर्वजन्म प्रतिध्वनि';
+
+  @override
+  String get klChipCohesiveGroup => 'एकजुट समूह';
+
+  @override
+  String get klChipNoDebts => 'कोई कर्म ऋण नहीं मिला';
+
+  @override
+  String get klProfilesTitle => 'कुंडली प्रोफ़ाइल';
+
+  @override
+  String get klKetuAt => 'केतु स्थिति';
+
+  @override
+  String get klRahuAt => 'राहु स्थिति';
+
+  @override
+  String get klFoundationTitle => 'प्रत्येक कुंडली का कर्म आधार';
+
+  @override
+  String get klFoundationSubtitle => 'प्रत्येक आत्मा की पूर्वजन्म निपुणता एवं वर्तमान-जीवन दिशा';
+
+  @override
+  String get klKetuMastery => 'केतु निपुणता';
+
+  @override
+  String get klRahuGrowth => 'राहु वृद्धि';
+
+  @override
+  String get klNinthHousePunya => '9वां भाव पुण्य';
+
+  @override
+  String get klD60Depth => 'D60 कर्म गहराई';
+
+  @override
+  String get klAtmakarakaAgenda => 'आत्मा एजेंडा';
+
+  @override
+  String get klSaturnKarma => 'शनि कर्म';
+
+  @override
+  String get klPairwiseTitle => 'जोड़ी-वार कर्म संबंध';
+
+  @override
+  String get klActiveFactors => 'सक्रिय संबंध कारक';
+
+  @override
+  String get klGroupPatternTitle => 'समूह कर्म पैटर्न';
+
+  @override
+  String get klSharedSetting => 'साझा पूर्वजन्म परिवेश';
+
+  @override
+  String get klCohesionScore => 'कर्म एकजुटता';
+
+  @override
+  String get klPastGoalsTitle => 'पूर्वजन्म लक्ष्य';
+
+  @override
+  String get klLearningTitle => 'वर्तमान-जीवन सीख';
+
+  @override
+  String get klTeachingMap => 'पारस्परिक शिक्षण मानचित्र';
+
+  @override
+  String get klDebtsTitle => 'कर्म ऋण एवं समाधान';
+
+  @override
+  String get klNoDebtsDetected => 'इस समूह में कोई कर्म ऋण नहीं मिला';
+
+  @override
+  String get klTimingTitle => 'मूल दशा कर्म समय';
+
+  @override
+  String get klAuditTitle => 'गहन ऑडिट तालिका';
+
+  @override
+  String klAuditSubtitle(Object count) {
+    return '${count} karmic parameters examined';
+  }
+
+  @override
+  String get klTopicLinkage => 'हमारा समग्र कर्म संबंध';
+
+  @override
+  String get klTopicPairwise => 'किसी विशेष जोड़ी का कर्म बंधन';
+
+  @override
+  String get klTopicDebts => 'सुलझाने योग्य कर्म ऋण';
+
+  @override
+  String get klTopicLessons => 'हम यहां क्या सीखने आए हैं';
+
+  @override
+  String get klTopicTiming => 'हमारे समूह के लिए सर्वोत्तम समय';
+
+  @override
+  String get klTopicGroup => 'हमारी साझा पूर्वजन्म कहानी';
+
+  @override
   String get lcSubtitle => 'AI-संचालित वैदिक प्रेम अनुकूलता रिपोर्ट';
 
   @override

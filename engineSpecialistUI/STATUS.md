@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 18 done · 1 pending · 0 blocked  (19 total)**
+**Progress: 19 done · 0 pending · 0 blocked  (19 total) — ALL ENGINES SHIPPED**
 
-**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`, `ri_source.json`, `cp_source.json`, `lc_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
+**Translations pending (10-locale backfill):** `lg_source.json`, `pr_source.json`, `mn_source.json`, `db_source.json`, `lp_source.json`, `ch_source.json`, `pk_source.json`, `km_source.json`, `ri_source.json`, `cp_source.json`, `lc_source.json`, `kl_source.json`  (career, wealth, business, marriage, love, health, education ✅ 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -39,7 +39,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 15 | relationship | Relationship Intel | `relationship_report_screen.dart` | ✅ DONE | 7cc9d3b | en+hi+hinglish | 11-section AI group-dynamics coach, N-way 2-5 chart (`runRelationshipAnalysis`); constructor (names/data) unchanged. Astro's picker was pointed at the generic fallback shell — repointed to the new screen. Backfill pending (ri_source.json). 2026-07-30. |
 | 16 | child_probability | Child Probability | `child_probability_report_screen.dart` | ✅ DONE | adc156b | en+hi+hinglish | 13-section AI progeny-timing coach, 2-chart Moola-Dasha engine (`runChildProbability`); constructor (data/participants) unchanged. Real engine shape differed from the old screen's stale field assumptions (e.g. remedies/number_of_children reshaped) — rebuilt against a live dump. Backfill pending (cp_source.json). 2026-07-30. |
 | 17 | love_compatibility | Love Compatibility | `love_compatibility_report_screen.dart` | ✅ DONE | 94e3963 | en+hi+hinglish | 15-section AI love coach, 2-chart Moola-Dasha engine (`runLoveCompatibility`); constructor (data/participants) unchanged. Both apps' pickers already wired correctly. Backfill pending (lc_source.json). 2026-07-30. |
-| 18 | karma_linkage | Past-Life Karma Linkage | `karma_linkage_report_screen.dart` | ⬜ PENDING | — | — | multi-chart endpoint. |
+| 18 | karma_linkage | Past-Life Karma Linkage | `karma_linkage_report_screen.dart` | ✅ DONE | (pending sha) | en+hi+hinglish | 13-section AI karmic-linkage coach, N-way 2-5 chart Moola-Dasha engine (`runKarmaLinkage`); constructor (data/participants) unchanged. Both apps' pickers already wired correctly. Backfill pending (kl_source.json). 2026-07-30. |
 
 Infra screens (NOT in scope): `specialist_report_screen.dart` (generic
 fallback), `multi_chart_report_screen.dart` (shared multi-chart shell) —
@@ -245,6 +245,29 @@ touch only if a redesigned screen requires it.
   already wired to this screen. Both apps; 55 new `lc` keys (en+hi+hinglish,
   reusing `cp*`/generic dasha-label keys added for child_probability).
   Backfill: `lc_source.json`.
+
+- **karma_linkage** ✅ — 13-section AI karmic-linkage coach for the N-way
+  (2-5 chart) Moola-Dasha Past-Life Karma Linkage endpoint (snapshot hero
+  blending avg-pairwise-linkage/group-cohesion/Rahu-Ketu/atmakaraka/D60
+  resonance, Chart Profiles, Per-Chart Karmic Foundation Ketu-mastery +
+  Rahu-growth + atmakaraka + Saturn-karma + 9th-house punya + D60 signature,
+  Pairwise Karmic Linkages card-per-pair with active linkage factors, Group
+  Karmic Pattern, Past-Life Goals, Current-Life Learning + mutual teaching
+  map, Karmic Debts & Resolutions, Moola Dasha Karmic Timing per chart, Deep
+  Audit Table 19 parameters, Summary & Key Insights, Reliability,
+  Discuss-with-AI). Converted from the bespoke `CustomScrollView`/
+  `SliverList` shell; constructor (`data`, `participants` — already-loaded,
+  no async load call) kept unchanged. All engine field names cross-checked
+  against a live `past_life_karma_linkage_specialist_v1` 3-chart dump. Both
+  apps' pickers were already wired to this screen. Both apps; 42 new `kl`
+  keys (en+hi+hinglish, reusing `ri*`/`cp*`/generic dasha-label keys added
+  for earlier multi-chart engines). Backfill: `kl_source.json`.
+
+  **This closes out all 19 specialist report screens in the redesign
+  tracker** (career template applied end-to-end). Remaining work is purely
+  the 10-locale translation backfill for the 12 engines still queued
+  (`lg`, `pr`, `mn`, `db`, `lp`, `ch`, `pk`, `km`, `ri`, `cp`, `lc`, `kl`)
+  via the flutter-language-agent + `translate_apply.py`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first

@@ -4,2100 +4,692 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
-import 'report_components.dart';
+import '../kundli/widgets/kundli_ui.dart';
 
-class KarmaLinkageReportScreen extends StatelessWidget {
+/// Past-Life Karma Linkage report — premium AI karmic-linkage coach
+/// redesign, for the N-way (2-5 chart) karma linkage specialist.
+///
+/// Presentation only. Receives the already-loaded `karma_linkage`
+/// specialist result (`runKarmaLinkage`, a Moola-Dasha multi-chart
+/// analysis) and re-presents it; every score, karmic factor, dasha window,
+/// debt and confidence value comes straight from the engine. Constructor
+/// unchanged so the multi-chart picker does not need to change.
+class KarmaLinkageReportScreen extends StatefulWidget {
   final Map<String, dynamic> data;
   final List<String> participants;
-  const KarmaLinkageReportScreen({
-    super.key,
-    required this.data,
-    required this.participants,
-  });
+  const KarmaLinkageReportScreen({super.key, required this.data, required this.participants});
+  @override
+  State<KarmaLinkageReportScreen> createState() => _KarmaLinkageReportState();
+}
 
-  static const _accent = AppColors.lavender;
-  static const _bg = Color(0xFF0A0A24);
-  static const _cardBg = Color(0xFF1A1642);
+class _KarmaLinkageReportState extends State<KarmaLinkageReportScreen> {
+  Map<String, dynamic> get _data => widget.data;
+
+  // ── typed accessors (type-checked, never throw on unexpected shapes) ──
+  double _sc(String k) { final v = _data[k]; return v is num ? v.toDouble() : 0; }
+  double _scOf(Map m, String k) { final v = m[k]; return v is num ? v.toDouble() : 0; }
+  String _str(String k) { final v = _data[k]; return (v == null || v is List || v is Map) ? '' : v.toString(); }
+  String _strOf(Map m, String k) { final v = m[k]; return (v == null || v is List || v is Map) ? '' : v.toString(); }
+  Map<String, dynamic> _map(String k) { final v = _data[k]; return v is Map ? v.cast<String, dynamic>() : {}; }
+  Map<String, dynamic> _mapOf(Map m, String k) { final v = m[k]; return v is Map ? v.cast<String, dynamic>() : {}; }
+  List _list(String k) { final v = _data[k]; return v is List ? v : const []; }
+  List _listOf(Map m, String k) { final v = m[k]; return v is List ? v : const []; }
 
   @override
   Widget build(BuildContext context) {
-    final overall = _asMap(data['overall_linkage_probability']);
-    final perChart = _asList(data['per_chart_karmic_foundation']);
-    final pairwise = _asList(data['pairwise_karmic_linkages']);
-    final groupPattern = _asMap(data['group_karmic_pattern']);
-    final pastGoals = _asMap(data['past_life_goals']);
-    final learning = _asMap(data['current_life_learning']);
-    final debts = _asMap(data['karmic_debts_resolutions']);
-    final moolaTiming = _asMap(data['moola_dasha_karmic_timing']);
-    final audit = _asMap(data['deep_audit_parameter_table']);
-    final summary = _asMap(data['summary']);
-    final conf = data['confidence_score'] is num ? (data['confidence_score'] as num).toDouble() : double.tryParse(data['confidence_score']?.toString() ?? '');
     final l = AppLocalizations.of(context)!;
-    final confExp = data['confidence_explanation']?.toString();
-
     return Scaffold(
-      backgroundColor: _bg,
-      body: CustomScrollView(slivers: [
-        // ═══ APP BAR ═══
-        SliverAppBar(
-          backgroundColor: _bg,
-          pinned: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.ivory),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                participants.join(' & ').toUpperCase(),
-                style: const TextStyle(
-                  color: AppColors.gold,
-                  fontSize: 9,
-                  letterSpacing: 1.5,
-                  fontFamily: 'monospace',
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Text.rich(TextSpan(children: [
-                TextSpan(
-                  text: 'Karma ',
-                  style: TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                TextSpan(
-                  text: 'Linkage',
-                  style: TextStyle(
-                    color: _accent,
-                    fontSize: 18,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ])),
-            ],
-          ),
-          centerTitle: true,
-        ),
-
-        SliverList(
-          delegate: SliverChildListDelegate([
-            // 1. HERO
-            _buildHero(overall),
-
-            // 2. PER-CHART KARMIC FOUNDATION
-            if (perChart.isNotEmpty) ...[
-              _header('Karmic', 'Foundation'),
-              ...perChart.map((c) => _buildFoundationCard(_asMap(c))),
-            ],
-
-            // 3. PAIRWISE KARMIC LINKAGES
-            if (pairwise.isNotEmpty) ...[
-              _header('Pairwise', 'Linkages'),
-              ...pairwise.map((p) => _buildPairwiseCard(_asMap(p))),
-            ],
-
-            // 4. GROUP KARMIC PATTERN
-            if (groupPattern.isNotEmpty) ...[
-              _header('Group', 'Pattern'),
-              _buildGroupPattern(groupPattern),
-            ],
-
-            // 5. PAST LIFE GOALS
-            if (pastGoals.isNotEmpty) ...[
-              _header('Past Life', 'Goals'),
-              _buildPastLifeGoals(pastGoals),
-            ],
-
-            // 6. CURRENT LIFE LEARNING
-            if (learning.isNotEmpty) ...[
-              _header('Current Life', 'Learning'),
-              _buildCurrentLifeLearning(learning),
-            ],
-
-            // 7. KARMIC DEBTS
-            if (debts.isNotEmpty) ...[
-              _header('Karmic', 'Debts'),
-              _buildKarmicDebts(debts),
-            ],
-
-            // 8. MOOLA DASHA TIMING
-            if (moolaTiming.isNotEmpty) ...[
-              _header('Moola Dasha', 'Timing'),
-              _buildMoolaDashaTiming(moolaTiming),
-            ],
-
-            // 9. DEEP AUDIT TABLE
-            if (audit.isNotEmpty) ...[
-              _header('Deep Audit', 'Table'),
-              _buildAuditTable(audit),
-            ],
-
-            // 10. SUMMARY
-            if (summary.isNotEmpty) _buildSummary(summary),
-
-            // 11. CONFIDENCE
-            if (conf != null) ...[
-              ReportHeader('Analysis', 'Confidence', 'QUALITY'),
-              ConfidenceBlock(
-                score: conf,
-                statement: confExp,
-                breakdown: _asMap(data['confidence_breakdown']),
-              ),
-            ],
-
-            // 12. AI COPY BAR
-            _buildAiCopyBar(context),
-            const SizedBox(height: 40),
-          ]),
-        ),
-      ]),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
+        title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          Text(widget.participants.join(' & '), style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700), maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(l.klSubtitle, style: const TextStyle(color: AppColors.gold, fontSize: 10)),
+        ]),
+      ),
+      body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l)),
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 1. HERO — Score ring + grade + verdict + probability + chips
-  // ════════════════════════════════════════════════════════════════════
+  List<Widget> _sections(AppLocalizations l) {
+    const gap = SizedBox(height: 18);
+    return [
+      _breadcrumb(l),
+      const SizedBox(height: 10),
+      _snapshot(l),           // 1
+      gap, _chartProfiles(l),    // 2
+      gap, _perChartFoundation(l), // 3
+      gap, _pairwiseLinkages(l), // 4
+      gap, _groupPattern(l),     // 5
+      gap, _pastLifeGoals(l),    // 6
+      gap, _currentLifeLearning(l), // 7
+      gap, _karmicDebts(l),      // 8
+      gap, _moolaTiming(l),      // 9
+      gap, _auditTable(l),       // 10
+      gap, _summary(l),          // 11
+      gap, _reliability(l),      // 12
+      gap, _discussAi(l),        // 13
+    ];
+  }
 
-  Widget _buildHero(Map<String, dynamic> overall) {
-    final score = _num(overall, 'overall_linkage_score');
-    final grade = overall['linkage_grade']?.toString() ?? '';
-    final verdict = overall['linkage_verdict']?.toString() ?? '';
-    final probability = overall['probability_statement']?.toString() ?? '';
-    final sc = _scoreColor(score);
-    final components = _asMap(overall['score_components']);
+  Widget _breadcrumb(AppLocalizations l) => Row(children: [
+    Text(l.crCrumbHome, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    const Text('  ›  ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+    Text(l.crCrumbReports, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+    const Text('  ›  ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+    Flexible(child: Text(l.klTitle, style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+  ]);
 
+  // ══════════════════════════════════════════════════════════════════
+  //  1 — KARMIC LINKAGE SNAPSHOT
+  // ══════════════════════════════════════════════════════════════════
+  Widget _snapshot(AppLocalizations l) {
+    final overall = _map('overall_linkage_probability');
+    final score = _scOf(overall, 'overall_linkage_score');
+    final col = _col(score);
+    final grade = _strOf(overall, 'linkage_grade');
+    final comps = _mapOf(overall, 'score_components');
+    final summary = _strOf(overall, 'linkage_verdict').isNotEmpty ? _strOf(overall, 'linkage_verdict') : _str('confidence_explanation');
+    final gauges = <List<Object>>[
+      [l.klGaugePairwise, _scOf(comps, 'avg_pairwise_linkage')],
+      [l.klGaugeCohesion, _scOf(comps, 'group_cohesion')],
+      [l.klGaugeRahuKetu, _scOf(comps, 'rahu_ketu_axis_resonance')],
+      [l.klGaugeAtmakaraka, _scOf(comps, 'atmakaraka_resonance')],
+      [l.klGaugeD60, _scOf(comps, 'd60_group_resonance')],
+    ];
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          _accent.withOpacity(0.12),
-          const Color(0xFF4A3B8C).withOpacity(0.1),
-        ]),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _accent.withOpacity(0.3)),
+        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [col.withOpacity(0.18), AppColors.card.withOpacity(0.4)]),
+        borderRadius: BorderRadius.circular(22), border: Border.all(color: col.withOpacity(0.3)),
       ),
       child: Column(children: [
-        _label('PAST LIFE KARMA LINKAGE'),
+        Text(l.klSnapshotHeader.toUpperCase(), style: const TextStyle(color: AppColors.smoke, fontSize: 11, letterSpacing: 1.2, fontWeight: FontWeight.w700)),
         const SizedBox(height: 14),
-
-        // Main score ring
-        SizedBox(
-          width: 120,
-          height: 120,
-          child: Stack(alignment: Alignment.center, children: [
-            SizedBox(
-              width: 120,
-              height: 120,
-              child: CircularProgressIndicator(
-                value: (score / 100).clamp(0, 1),
-                strokeWidth: 8,
-                backgroundColor: Colors.white.withOpacity(0.08),
-                valueColor: AlwaysStoppedAnimation(sc),
-              ),
-            ),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: score / 100), duration: const Duration(milliseconds: 900), curve: Curves.easeOutCubic,
+          builder: (_, v, __) => SizedBox(width: 140, height: 140, child: Stack(alignment: Alignment.center, children: [
+            SizedBox(width: 140, height: 140, child: CircularProgressIndicator(value: v, strokeWidth: 12, strokeCap: StrokeCap.round,
+              backgroundColor: Colors.white.withOpacity(0.07), valueColor: AlwaysStoppedAnimation(col))),
             Column(mainAxisSize: MainAxisSize.min, children: [
-              Text(
-                score.toStringAsFixed(0),
-                style: TextStyle(
-                  color: sc,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'serif',
-                ),
-              ),
-              Text(
-                grade,
-                style: TextStyle(
-                  color: sc,
-                  fontSize: 10,
-                  fontFamily: 'monospace',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text((v * 100).toStringAsFixed(0), style: TextStyle(color: col, fontSize: 44, fontWeight: FontWeight.w800, height: 1)),
+              Text('/100', style: TextStyle(color: col.withOpacity(0.6), fontSize: 12, fontWeight: FontWeight.w600)),
             ]),
-          ]),
+          ])),
         ),
         const SizedBox(height: 10),
-
-        // Grade badge
-        if (grade.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: sc.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              grade,
-              style: TextStyle(color: sc, fontSize: 11, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        const SizedBox(height: 8),
-
-        // Verdict
-        if (verdict.isNotEmpty)
-          Text(
-            verdict,
-            style: const TextStyle(
-              color: AppColors.ivory,
-              fontSize: 12,
-              height: 1.4,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'serif',
-            ),
-            textAlign: TextAlign.center,
-          ),
-        const SizedBox(height: 6),
-
-        // Probability statement
-        if (probability.isNotEmpty)
-          Text(
-            probability,
-            style: const TextStyle(
-              color: AppColors.lavender,
-              fontSize: 10,
-              height: 1.4,
-              fontStyle: FontStyle.italic,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-        // Score component chips
-        if (components.isNotEmpty) ...[
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: _accent.withOpacity(0.2), width: 0.5),
-              ),
-            ),
-            child: Column(children: [
-              Wrap(
-                spacing: 8,
-                runSpacing: 6,
-                alignment: WrapAlignment.center,
-                children: [
-                  _scoreChip('Avg Pairwise', _num(components, 'avg_pairwise_linkage')),
-                  _scoreChip('Group Cohesion', _num(components, 'group_cohesion')),
-                  _scoreChip('Rahu-Ketu Axis', _num(components, 'rahu_ketu_axis_resonance')),
-                  _scoreChip('Atmakaraka', _num(components, 'atmakaraka_resonance')),
-                  _scoreChip('D60 Resonance', _num(components, 'D60_group_resonance') + _num(components, 'd60_group_resonance')),
-                ],
-              ),
-              if (components['explanation'] != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  components['explanation'].toString(),
-                  style: const TextStyle(
-                    color: AppColors.smoke,
-                    fontSize: 9,
-                    height: 1.3,
-                    fontStyle: FontStyle.italic,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ]),
-          ),
+        if (grade.isNotEmpty) Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(color: col.withOpacity(0.16), borderRadius: BorderRadius.circular(20)),
+          child: Text(grade, style: TextStyle(color: col, fontSize: 14, fontWeight: FontWeight.w800))),
+        if (summary.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Container(padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.35), borderRadius: BorderRadius.circular(14)),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('🤖', style: TextStyle(fontSize: 14)), const SizedBox(width: 9),
+              Expanded(child: Text(_cap(summary), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+            ])),
         ],
+        const SizedBox(height: 18),
+        Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+        const SizedBox(height: 16),
+        Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l, comps).map((t) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+          decoration: BoxDecoration(color: KColors.green.withOpacity(0.10), borderRadius: BorderRadius.circular(20), border: Border.all(color: KColors.green.withOpacity(0.28))),
+          child: Text('✓ $t', style: const TextStyle(color: KColors.green, fontSize: 11.5, fontWeight: FontWeight.w700)),
+        )).toList()),
       ]),
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 2. PER-CHART KARMIC FOUNDATION
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildFoundationCard(Map<String, dynamic> chart) {
-    final name = chart['chart_name']?.toString() ?? '—';
-    final ketu = _asMap(chart['ketu_mastery']);
-    final rahu = _asMap(chart['rahu_growth']);
-    final atma = _asMap(chart['atmakaraka']);
-    final saturn = _asMap(chart['saturn_karma']);
-    final twelfth = _asMap(chart['twelfth_house']);
-    final ninth = _asMap(chart['ninth_house_punya']);
-    final d60 = _asMap(chart['d60_signature']);
-    final karSummary = chart['individual_karmic_summary']?.toString() ?? '';
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: _cardBg.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _accent.withOpacity(0.25)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Person name header
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: _accent.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            name,
-            style: const TextStyle(
-              color: _accent,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'serif',
-            ),
-          ),
-        ),
-
-        // Ketu Mastery
-        if (ketu.isNotEmpty) ...[
-          _subHeader('KETU MASTERY', AppColors.lavender),
-          _kvRow('House', 'H${ketu['house'] ?? "?"}', AppColors.gold),
-          _kvRow('Sign', ketu['sign']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Nakshatra', ketu['nakshatra']?.toString() ?? '—', AppColors.gold),
-          if (ketu['nakshatra_deity'] != null)
-            _kvRow('Deity', ketu['nakshatra_deity'].toString(), AppColors.aurora),
-          _progressBar('Mastery Score', _num(ketu, 'mastery_score')),
-          if (ketu['interpretation'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(ketu['interpretation'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // Rahu Growth
-        if (rahu.isNotEmpty) ...[
-          _subHeader('RAHU GROWTH', AppColors.cosmicPink),
-          _kvRow('House', 'H${rahu['house'] ?? "?"}', AppColors.gold),
-          _kvRow('Sign', rahu['sign']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Nakshatra', rahu['nakshatra']?.toString() ?? '—', AppColors.gold),
-          _progressBar('Growth Score', _num(rahu, 'growth_score')),
-          if (rahu['interpretation'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(rahu['interpretation'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // Atmakaraka
-        if (atma.isNotEmpty) ...[
-          _subHeader('ATMAKARAKA', AppColors.gold),
-          _kvRow('Planet', atma['planet']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Degree', '${_num(atma, 'degree').toStringAsFixed(2)}°', AppColors.aurora),
-          _kvRow('House', 'H${atma['house'] ?? "?"}', AppColors.gold),
-          if (atma['soul_agenda'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(atma['soul_agenda'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // Saturn Karma
-        if (saturn.isNotEmpty) ...[
-          _subHeader('SATURN KARMA', AppColors.smoke),
-          _kvRow('House', 'H${saturn['house'] ?? "?"}', AppColors.gold),
-          _kvRow('Sign', saturn['sign']?.toString() ?? '—', AppColors.gold),
-          if (saturn['dignity'] != null)
-            _kvRow('Dignity', saturn['dignity'].toString(), _dignityColor(saturn['dignity'].toString())),
-          if (saturn['karmic_duty'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(saturn['karmic_duty'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // 12th House
-        if (twelfth.isNotEmpty) ...[
-          _subHeader('12TH HOUSE', AppColors.indigo),
-          _kvRow('Sign', twelfth['sign']?.toString() ?? '—', AppColors.gold),
-          if (_asList(twelfth['occupants']).isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
-              children: _asList(twelfth['occupants'])
-                  .map((o) => _badge(o.toString(), AppColors.indigo))
-                  .toList(),
-            ),
-          ],
-          if (twelfth['past_life_carryover'] != null) ...[
-            const SizedBox(height: 6),
-            _interpretationText(twelfth['past_life_carryover'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // 9th House Punya
-        if (ninth.isNotEmpty) ...[
-          _subHeader('9TH HOUSE PUNYA', AppColors.success),
-          _kvRow('Sign', ninth['sign']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Lord', ninth['lord']?.toString() ?? '—', AppColors.gold),
-          _progressBar('Lord Strength', _num(ninth, 'lord_strength')),
-          const SizedBox(height: 4),
-          _progressBar('Bhava Score', _num(ninth, 'bhava_score')),
-          if (ninth['accumulated_merit'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(ninth['accumulated_merit'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // D60 Signature
-        if (d60.isNotEmpty) ...[
-          _subHeader('D60 SIGNATURE', AppColors.saffron),
-          _kvRow('Lagna', d60['d60_lagna']?.toString() ?? '—', AppColors.gold),
-          _kvRow('Lagna Lord', d60['d60_lagna_lord']?.toString() ?? '—', AppColors.gold),
-          _progressBar('Depth Score', _num(d60, 'karmic_depth_score')),
-          if (d60['interpretation'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(d60['interpretation'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // Individual karmic summary
-        if (karSummary.isNotEmpty) ...[
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withOpacity(0.08),
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
-            ),
-            child: Text(
-              karSummary,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 10,
-                height: 1.5,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
-      ]),
-    );
+  List<String> _snapshotChips(AppLocalizations l, Map comps) {
+    final out = <String>[];
+    if (_scOf(comps, 'atmakaraka_resonance') >= 50) out.add(l.klChipSoulResonance);
+    if (_scOf(comps, 'd60_group_resonance') >= 50) out.add(l.klChipD60Resonance);
+    if (_scOf(comps, 'group_cohesion') >= 50) out.add(l.klChipCohesiveGroup);
+    final debts = _listOf(_map('karmic_debts_resolutions'), 'debts_detected');
+    if (debts.isEmpty) out.add(l.klChipNoDebts);
+    return out.toSet().take(6).toList();
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 3. PAIRWISE KARMIC LINKAGES
-  // ════════════════════════════════════════════════════════════════════
+  Widget _miniGauge(String label, double score) {
+    final col = _col(score);
+    return SizedBox(width: 92, child: Column(children: [
+      SizedBox(width: 62, height: 62, child: Stack(alignment: Alignment.center, children: [
+        SizedBox(width: 62, height: 62, child: CircularProgressIndicator(value: (score / 100).clamp(0, 1), strokeWidth: 6, strokeCap: StrokeCap.round,
+          backgroundColor: Colors.white.withOpacity(0.07), valueColor: AlwaysStoppedAnimation(col))),
+        Text(score.toStringAsFixed(0), style: TextStyle(color: col, fontSize: 15, fontWeight: FontWeight.w800)),
+      ])),
+      const SizedBox(height: 6),
+      Text(label, style: const TextStyle(color: AppColors.parchment, fontSize: 10, fontWeight: FontWeight.w600), textAlign: TextAlign.center, maxLines: 2),
+    ]));
+  }
 
-  Widget _buildPairwiseCard(Map<String, dynamic> p) {
-    final pair = p['pair']?.toString() ?? '—';
-    final linkScore = _num(p, 'linkage_strength_score');
-    final prob = p['linkage_probability']?.toString() ?? '';
-    final relType = p['karmic_relationship_type']?.toString() ?? '';
-    final relMeaning = p['relationship_type_meaning']?.toString() ?? '';
-    final relReasoning = p['relationship_type_reasoning']?.toString() ?? '';
-    final factors = _asList(p['linkage_factors']);
-    final acRaw = p['active_factors_count'];
-    final activeCount = acRaw is num ? acRaw.toInt() : (acRaw is String ? int.tryParse(acRaw) ?? 0 : 0);
-    final pastConn = p['past_life_connection']?.toString() ?? '';
-    final currentDyn = p['current_life_dynamic']?.toString() ?? '';
-    final teach = p['what_they_teach_each_other']?.toString() ?? '';
-    final interp = p['pair_interpretation']?.toString() ?? '';
-    final sc = _scoreColor(linkScore);
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          sc.withOpacity(0.08),
-          _cardBg.withOpacity(0.5),
-        ]),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: sc.withOpacity(0.25)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Pair label + score
-        Row(children: [
-          Expanded(
-            child: Text(
-              pair,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'serif',
-              ),
-            ),
-          ),
-          Column(children: [
-            Text(
-              linkScore.toStringAsFixed(0),
-              style: TextStyle(
-                color: sc,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'serif',
-              ),
-            ),
-            if (prob.isNotEmpty)
-              _badge(prob, sc),
+  // ══════════════════════════════════════════════════════════════════
+  //  2 — CHART PROFILES
+  // ══════════════════════════════════════════════════════════════════
+  Widget _chartProfiles(AppLocalizations l) {
+    final header = _map('analysis_header');
+    final charts = _listOf(header, 'charts').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    if (charts.isEmpty) return const SizedBox.shrink();
+    final colors = [KColors.blue, KColors.purple, AppColors.gold, KColors.green, KColors.orange];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.people_alt_rounded, title: l.klProfilesTitle, subtitle: l.riProfilesSubtitle(charts.length.toString()), color: KColors.blue),
+      ...charts.asMap().entries.map((e) {
+        final p = e.value;
+        final c = colors[e.key % colors.length];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(p['name']?.toString() ?? '?', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 4),
+            Wrap(spacing: 8, runSpacing: 6, children: [
+              if (p['lagna'] != null) _pill('${l.cpLagnaSuffix}: ${p['lagna']}', c),
+              if (p['moon_sign'] != null) _pill('${l.cpMoonSuffix}: ${p['moon_sign']}', c),
+              if (p['atmakaraka'] != null) _pill('AK: ${p['atmakaraka']}', c),
+            ]),
+            if (p['ketu_position'] != null || p['rahu_position'] != null) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Text('${l.klKetuAt}: ${p['ketu_position'] ?? ''} · ${l.klRahuAt}: ${p['rahu_position'] ?? ''}', style: const TextStyle(color: AppColors.smoke, fontSize: 10.5))),
           ]),
-        ]),
-        const SizedBox(height: 8),
+        );
+      }),
+    ]);
+  }
 
-        // Linkage score bar
-        _progressBar('Linkage Strength', linkScore),
-        const SizedBox(height: 10),
-
-        // Karmic relationship type
-        if (relType.isNotEmpty) ...[
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: _accent.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: _accent.withOpacity(0.25)),
-            ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                relType,
-                style: const TextStyle(
-                  color: _accent,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'serif',
-                ),
-              ),
-              if (relMeaning.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  relMeaning,
-                  style: const TextStyle(
-                    color: AppColors.ivory,
-                    fontSize: 10,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-              if (relReasoning.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  relReasoning,
-                  style: const TextStyle(
-                    color: AppColors.smoke,
-                    fontSize: 9,
-                    height: 1.3,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
+  // ══════════════════════════════════════════════════════════════════
+  //  3 — PER-CHART KARMIC FOUNDATION
+  // ══════════════════════════════════════════════════════════════════
+  Widget _perChartFoundation(AppLocalizations l) {
+    final foundations = _list('per_chart_karmic_foundation').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    if (foundations.isEmpty) return const SizedBox.shrink();
+    final colors = [KColors.blue, KColors.purple, AppColors.gold, KColors.green, KColors.orange];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.history_edu_rounded, title: l.klFoundationTitle, subtitle: l.klFoundationSubtitle, color: KColors.purple),
+      ...foundations.asMap().entries.map((e) {
+        final f = e.value;
+        final c = colors[e.key % colors.length];
+        final ketu = _mapOf(f, 'ketu_mastery');
+        final rahu = _mapOf(f, 'rahu_growth');
+        final ak = _mapOf(f, 'atmakaraka');
+        final saturn = _mapOf(f, 'saturn_karma');
+        final ninth = _mapOf(f, 'ninth_house_punya');
+        final d60 = _mapOf(f, 'd60_signature');
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(f['chart_name']?.toString() ?? '?', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
+            if (f['individual_karmic_summary'] != null) Padding(padding: const EdgeInsets.only(top: 6, bottom: 8),
+              child: Text(_cap(f['individual_karmic_summary'].toString()), style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.45))),
+            Row(children: [
+              if (ketu.isNotEmpty) Expanded(child: _statTile(l.klKetuMastery, _scOf(ketu, 'mastery_score'))),
+              if (ketu.isNotEmpty && rahu.isNotEmpty) const SizedBox(width: 8),
+              if (rahu.isNotEmpty) Expanded(child: _statTile(l.klRahuGrowth, _scOf(rahu, 'growth_score'))),
             ]),
-          ),
-          const SizedBox(height: 10),
-        ],
-
-        // Linkage factors table
-        if (factors.isNotEmpty) ...[
-          _subHeader('LINKAGE FACTORS ($activeCount active)', AppColors.aurora),
-          const SizedBox(height: 4),
-          // Table header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            ),
-            child: const Row(children: [
-              Expanded(flex: 3, child: Text('Factor', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              Expanded(flex: 1, child: Text('Weight', textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              Expanded(flex: 3, child: Text('Meaning', style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
-              SizedBox(width: 50, child: Text('Status', textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', fontWeight: FontWeight.w600))),
+            const SizedBox(height: 8),
+            Row(children: [
+              if (ninth.isNotEmpty) Expanded(child: _statTile(l.klNinthHousePunya, _scOf(ninth, 'bhava_score'))),
+              if (ninth.isNotEmpty && d60.isNotEmpty) const SizedBox(width: 8),
+              if (d60.isNotEmpty) Expanded(child: _statTile(l.klD60Depth, _scOf(d60, 'karmic_depth_score'))),
             ]),
-          ),
-          ...factors.map((f) {
-            final fm = _asMap(f);
-            final present = fm['present'] == true;
-            final weight = _num(fm, 'weight');
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.04))),
-              ),
-              child: Row(children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    fm['factor']?.toString() ?? '—',
-                    style: const TextStyle(color: AppColors.ivory, fontSize: 9, height: 1.3),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    weight.toStringAsFixed(1),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.gold,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'monospace',
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    fm['meaning']?.toString() ?? '—',
-                    style: const TextStyle(color: AppColors.smoke, fontSize: 8, height: 1.3),
-                  ),
-                ),
-                SizedBox(
-                  width: 50,
-                  child: Center(
-                    child: _badge(
-                      present ? 'YES' : 'NO',
-                      present ? AppColors.success : AppColors.error,
-                    ),
-                  ),
-                ),
+            _advanced(l, [
+              if (ketu.isNotEmpty) '${l.klKetuMastery}: H${ketu['house']} ${ketu['sign']} · ${ketu['interpretation'] ?? ''}',
+              if (rahu.isNotEmpty) '${l.klRahuGrowth}: H${rahu['house']} ${rahu['sign']} · ${rahu['interpretation'] ?? ''}',
+              if (ak.isNotEmpty) '${l.klAtmakarakaAgenda}: ${ak['planet']} · ${ak['soul_agenda'] ?? ''}',
+              if (saturn.isNotEmpty) '${l.klSaturnKarma}: H${saturn['house']} ${saturn['sign']} · ${saturn['karmic_duty'] ?? ''}',
+              if (ninth.isNotEmpty) ninth['accumulated_merit']?.toString() ?? '',
+              if (d60.isNotEmpty) d60['interpretation']?.toString() ?? '',
+            ]),
+          ]),
+        );
+      }),
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  4 — PAIRWISE KARMIC LINKAGES
+  // ══════════════════════════════════════════════════════════════════
+  Widget _pairwiseLinkages(AppLocalizations l) {
+    final pairs = _list('pairwise_karmic_linkages').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    if (pairs.isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.compare_arrows_rounded, title: l.klPairwiseTitle, subtitle: l.riPairwiseSubtitle(pairs.length.toString()), color: KColors.blue),
+      ...pairs.map((p) {
+        final score = _scOf(p, 'linkage_strength_score');
+        final col = _col(score);
+        final factors = _listOf(p, 'linkage_factors').whereType<Map>().map((e) => e.cast<String, dynamic>()).where((m) => m['present'] == true).toList();
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12), padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(18), border: Border.all(color: col.withOpacity(0.24))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(p['pair']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800))),
+              Column(children: [
+                Text(score.toStringAsFixed(0), style: TextStyle(color: col, fontSize: 20, fontWeight: FontWeight.w800)),
+                if (p['linkage_probability'] != null) Text(p['linkage_probability'].toString(), style: TextStyle(color: col, fontSize: 9, fontWeight: FontWeight.w700)),
               ]),
-            );
-          }),
-          const SizedBox(height: 10),
-        ],
-
-        // Past life connection
-        if (pastConn.isNotEmpty) ...[
-          _subHeader('PAST LIFE CONNECTION', AppColors.lavender),
-          const SizedBox(height: 4),
-          _interpretationText(pastConn),
-          const SizedBox(height: 8),
-        ],
-
-        // Current life dynamic
-        if (currentDyn.isNotEmpty) ...[
-          _subHeader('CURRENT LIFE DYNAMIC', AppColors.aurora),
-          const SizedBox(height: 4),
-          _interpretationText(currentDyn),
-          const SizedBox(height: 8),
-        ],
-
-        // What they teach each other
-        if (teach.isNotEmpty) ...[
-          _subHeader('WHAT THEY TEACH EACH OTHER', AppColors.gold),
-          const SizedBox(height: 4),
-          _interpretationText(teach),
-          const SizedBox(height: 8),
-        ],
-
-        // Pair interpretation
-        if (interp.isNotEmpty)
-          Container(
-            margin: const EdgeInsets.only(top: 4),
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withOpacity(0.08),
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
-            ),
-            child: Text(
-              interp,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 10,
-                height: 1.5,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-      ]),
-    );
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 4. GROUP KARMIC PATTERN
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildGroupPattern(Map<String, dynamic> gp) {
-    final theme = gp['group_karmic_theme']?.toString() ?? '';
-    final setting = gp['shared_past_life_setting']?.toString() ?? '';
-    final ketuPattern = _asMap(gp['collective_ketu_pattern']);
-    final rahuPattern = _asMap(gp['collective_rahu_pattern']);
-    final cohesion = _num(gp, 'karmic_cohesion_score');
-    final cohesionInterp = gp['cohesion_interpretation']?.toString() ?? '';
-    final soulContract = gp['group_soul_contract']?.toString() ?? '';
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          _accent.withOpacity(0.1),
-          const Color(0xFF4A3B8C).withOpacity(0.08),
-        ]),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _accent.withOpacity(0.25)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Theme
-        if (theme.isNotEmpty) ...[
-          _subHeader('GROUP KARMIC THEME', _accent),
-          const SizedBox(height: 4),
-          Text(
-            theme,
-            style: const TextStyle(
-              color: AppColors.ivory,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'serif',
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
-
-        // Shared setting
-        if (setting.isNotEmpty) ...[
-          _subHeader('SHARED PAST LIFE SETTING', AppColors.saffron),
-          const SizedBox(height: 4),
-          _interpretationText(setting),
-          const SizedBox(height: 10),
-        ],
-
-        // Collective Ketu pattern
-        if (ketuPattern.isNotEmpty) ...[
-          _subHeader('COLLECTIVE KETU PATTERN', AppColors.lavender),
-          const SizedBox(height: 4),
-          if (_asList(ketuPattern['dominant_houses']).isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: [
-                  const Text('Houses: ', style: TextStyle(color: AppColors.smoke, fontSize: 9)),
-                  ..._asList(ketuPattern['dominant_houses'])
-                      .map((h) => _badge('H$h', AppColors.lavender)),
-                ],
-              ),
-            ),
-          if (_asList(ketuPattern['dominant_signs']).isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: [
-                  const Text('Signs: ', style: TextStyle(color: AppColors.smoke, fontSize: 9)),
-                  ..._asList(ketuPattern['dominant_signs'])
-                      .map((s) => _badge(s.toString(), AppColors.lavender)),
-                ],
-              ),
-            ),
-          if (ketuPattern['interpretation'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(ketuPattern['interpretation'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // Collective Rahu pattern
-        if (rahuPattern.isNotEmpty) ...[
-          _subHeader('COLLECTIVE RAHU PATTERN', AppColors.cosmicPink),
-          const SizedBox(height: 4),
-          if (_asList(rahuPattern['dominant_houses']).isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: [
-                  const Text('Houses: ', style: TextStyle(color: AppColors.smoke, fontSize: 9)),
-                  ..._asList(rahuPattern['dominant_houses'])
-                      .map((h) => _badge('H$h', AppColors.cosmicPink)),
-                ],
-              ),
-            ),
-          if (rahuPattern['interpretation'] != null) ...[
-            const SizedBox(height: 4),
-            _interpretationText(rahuPattern['interpretation'].toString()),
-          ],
-          const SizedBox(height: 10),
-        ],
-
-        // Cohesion score bar
-        _progressBar('Karmic Cohesion', cohesion),
-        if (cohesionInterp.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          _interpretationText(cohesionInterp),
-        ],
-
-        // Soul contract
-        if (soulContract.isNotEmpty) ...[
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withOpacity(0.08),
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
-            ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text(
-                'GROUP SOUL CONTRACT',
-                style: TextStyle(
-                  color: AppColors.gold,
-                  fontSize: 8,
-                  letterSpacing: 1.5,
-                  fontFamily: 'monospace',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                soulContract,
-                style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 11,
-                  height: 1.5,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
             ]),
-          ),
-        ],
-      ]),
-    );
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // 5. PAST LIFE GOALS
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildPastLifeGoals(Map<String, dynamic> goals) {
-    final individual = _asList(goals['individual_past_goals']);
-    final shared = goals['shared_past_life_goal']?.toString() ?? '';
-    final assessment = goals['goal_completion_assessment']?.toString() ?? '';
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // Per-person goal cards
-      ...individual.map((g) {
-        final gm = _asMap(g);
-        final name = gm['chart_name']?.toString() ?? '—';
-        final goal = gm['past_life_goal']?.toString() ?? '';
-        final status = gm['completion_status']?.toString() ?? '';
-        final carry = gm['carryover_to_now']?.toString() ?? '';
-        final statusC = _completionColor(status);
-
-        return Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: _accent.withOpacity(0.2)),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Expanded(
-                child: Text(
-                  name,
-                  style: const TextStyle(
-                    color: _accent,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif',
-                  ),
-                ),
-              ),
-              if (status.isNotEmpty) _badge(status, statusC),
+            const SizedBox(height: 6),
+            if (p['karmic_relationship_type'] != null) Wrap(spacing: 6, runSpacing: 6, children: [
+              _pill(_titleCase(p['karmic_relationship_type'].toString()), KColors.purple),
             ]),
-            if (goal.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              _kvRow('Goal', goal, AppColors.ivory),
-            ],
-            if (carry.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              _interpretationText(carry),
-            ],
+            if (p['relationship_type_meaning'] != null) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Text(_cap(p['relationship_type_meaning'].toString()), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.4))),
+            if (p['what_they_teach_each_other'] != null) Padding(padding: const EdgeInsets.only(top: 8),
+              child: Text('🎓 ${p['what_they_teach_each_other']}', style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+            _advanced(l, [
+              if (p['past_life_connection'] != null) p['past_life_connection'].toString(),
+              if (p['current_life_dynamic'] != null) p['current_life_dynamic'].toString(),
+              '${l.klActiveFactors}: ${factors.length}',
+              ...factors.take(5).map((f) => '${f['factor']}: ${f['meaning'] ?? ''}'),
+            ]),
           ]),
         );
       }),
-
-      // Shared past life goal
-      if (shared.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.gold.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gold.withOpacity(0.2)),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'SHARED PAST LIFE GOAL',
-              style: TextStyle(
-                color: AppColors.gold,
-                fontSize: 8,
-                letterSpacing: 1.5,
-                fontFamily: 'monospace',
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              shared,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 12,
-                height: 1.4,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'serif',
-              ),
-            ),
-          ]),
-        ),
-
-      // Assessment
-      if (assessment.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            assessment,
-            style: const TextStyle(
-              color: AppColors.smoke,
-              fontSize: 10,
-              height: 1.4,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
     ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 6. CURRENT LIFE LEARNING
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildCurrentLifeLearning(Map<String, dynamic> learning) {
-    final lessons = _asList(learning['individual_lessons']);
-    final sharedLesson = learning['shared_group_lesson']?.toString() ?? '';
-    final teachMap = _asList(learning['mutual_teaching_map']);
-    final growthDir = learning['group_growth_direction']?.toString() ?? '';
-
+  // ══════════════════════════════════════════════════════════════════
+  //  5 — GROUP KARMIC PATTERN
+  // ══════════════════════════════════════════════════════════════════
+  Widget _groupPattern(AppLocalizations l) {
+    final g = _map('group_karmic_pattern');
+    if (g.isEmpty) return const SizedBox.shrink();
+    final ketuPattern = _mapOf(g, 'collective_ketu_pattern');
+    final rahuPattern = _mapOf(g, 'collective_rahu_pattern');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // Per-person lessons
-      ...lessons.map((l) {
-        final lm = _asMap(l);
-        final name = lm['chart_name']?.toString() ?? '—';
-        final lesson = lm['new_lesson']?.toString() ?? '';
-        final house = lm['lesson_house'];
-        final howToGrow = lm['how_to_grow']?.toString() ?? '';
-        final moolaDasha = lm['moola_dasha_activation']?.toString() ?? '';
+      KSectionHeader(icon: Icons.diversity_3_rounded, title: l.klGroupPatternTitle, color: AppColors.gold),
+      if (_strOf(g, 'group_karmic_theme').isNotEmpty)
+        Container(padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.14), AppColors.card.withOpacity(0.4)]),
+            borderRadius: BorderRadius.circular(18), border: Border.all(color: AppColors.gold.withOpacity(0.28))),
+          child: Text(_cap(_strOf(g, 'group_karmic_theme')), style: const TextStyle(color: AppColors.ivory, fontSize: 13, height: 1.45, fontWeight: FontWeight.w600))),
+      const SizedBox(height: 10),
+      if (_strOf(g, 'shared_past_life_setting').isNotEmpty)
+        _iconTile('🏛️', l.klSharedSetting, _cap(_strOf(g, 'shared_past_life_setting'))),
+      const SizedBox(height: 10),
+      _statTile(l.klCohesionScore, _scOf(g, 'karmic_cohesion_score')),
+      if (_strOf(g, 'cohesion_interpretation').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+        child: Text(_strOf(g, 'cohesion_interpretation'), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.4))),
+      if (_strOf(g, 'group_soul_contract').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+        child: Text(_cap(_strOf(g, 'group_soul_contract')), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+      _advanced(l, [
+        if (ketuPattern.isNotEmpty) ketuPattern['interpretation']?.toString() ?? '',
+        if (rahuPattern.isNotEmpty) rahuPattern['interpretation']?.toString() ?? '',
+      ]),
+    ]);
+  }
 
-        return Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.aurora.withOpacity(0.2)),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Expanded(
-                child: Text(
-                  name,
-                  style: const TextStyle(
-                    color: AppColors.aurora,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif',
-                  ),
-                ),
-              ),
-              if (house != null)
-                _badge('H$house', AppColors.aurora),
-            ]),
-            if (lesson.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Text(
-                lesson,
-                style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 11,
-                  height: 1.4,
-                ),
-              ),
-            ],
-            if (howToGrow.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.06),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.success.withOpacity(0.15)),
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text(
-                    'HOW TO GROW',
-                    style: TextStyle(
-                      color: AppColors.success,
-                      fontSize: 7,
-                      letterSpacing: 1.5,
-                      fontFamily: 'monospace',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    howToGrow,
-                    style: const TextStyle(
-                      color: AppColors.ivory,
-                      fontSize: 10,
-                      height: 1.4,
-                    ),
-                  ),
-                ]),
-              ),
-            ],
-            if (moolaDasha.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                'Moola Dasha: $moolaDasha',
-                style: const TextStyle(
-                  color: AppColors.smoke,
-                  fontSize: 9,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
+  // ══════════════════════════════════════════════════════════════════
+  //  6 — PAST-LIFE GOALS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _pastLifeGoals(AppLocalizations l) {
+    final p = _map('past_life_goals');
+    if (p.isEmpty) return const SizedBox.shrink();
+    final individual = _listOf(p, 'individual_past_goals').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.flag_circle_rounded, title: l.klPastGoalsTitle, color: KColors.purple),
+      if (_strOf(p, 'shared_past_life_goal').isNotEmpty)
+        _card(child: Text(_cap(_strOf(p, 'shared_past_life_goal')), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+      const SizedBox(height: 10),
+      ...individual.map((m) => Container(
+        margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: KColors.purple.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.purple.withOpacity(0.2))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: Text(m['chart_name']?.toString() ?? '', style: const TextStyle(color: KColors.purple, fontSize: 12.5, fontWeight: FontWeight.w800))),
+            if (m['completion_status'] != null) _pill(_titleCase(m['completion_status'].toString()), KColors.purple),
           ]),
-        );
-      }),
+          if (m['past_life_goal'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+            child: Text(_cap(m['past_life_goal'].toString()), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+          if (m['carryover_to_now'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+            child: Text(m['carryover_to_now'].toString(), style: const TextStyle(color: AppColors.parchment, fontSize: 10.5, height: 1.35, fontStyle: FontStyle.italic))),
+        ]))),
+      if (_strOf(p, 'goal_completion_assessment').isNotEmpty)
+        Text(_strOf(p, 'goal_completion_assessment'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4)),
+    ]);
+  }
 
-      // Shared group lesson
-      if (sharedLesson.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.gold.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gold.withOpacity(0.2)),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'SHARED GROUP LESSON',
-              style: TextStyle(
-                color: AppColors.gold,
-                fontSize: 8,
-                letterSpacing: 1.5,
-                fontFamily: 'monospace',
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              sharedLesson,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 12,
-                height: 1.4,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'serif',
-              ),
-            ),
+  // ══════════════════════════════════════════════════════════════════
+  //  7 — CURRENT-LIFE LEARNING
+  // ══════════════════════════════════════════════════════════════════
+  Widget _currentLifeLearning(AppLocalizations l) {
+    final c = _map('current_life_learning');
+    if (c.isEmpty) return const SizedBox.shrink();
+    final lessons = _listOf(c, 'individual_lessons').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    final teaching = _listOf(c, 'mutual_teaching_map').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.school_rounded, title: l.klLearningTitle, color: KColors.blue),
+      if (_strOf(c, 'shared_group_lesson').isNotEmpty)
+        _card(child: Text(_cap(_strOf(c, 'shared_group_lesson')), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+      const SizedBox(height: 10),
+      ...lessons.map((m) => Container(
+        margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: KColors.blue.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.blue.withOpacity(0.2))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: Text(m['chart_name']?.toString() ?? '', style: const TextStyle(color: KColors.blue, fontSize: 12.5, fontWeight: FontWeight.w800))),
+            if (m['lesson_house'] != null) _pill('H${m['lesson_house']}', KColors.blue),
           ]),
-        ),
-
-      // Mutual teaching map
-      if (teachMap.isNotEmpty) ...[
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: _accent.withOpacity(0.2)),
-          ),
+          if (m['new_lesson'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+            child: Text(_cap(m['new_lesson'].toString()), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+          if (m['how_to_grow'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+            child: Text('✓ ${m['how_to_grow']}', style: const TextStyle(color: KColors.green, fontSize: 10.5, height: 1.35))),
+          if (m['moola_dasha_activation'] != null) Padding(padding: const EdgeInsets.only(top: 4),
+            child: Text(m['moola_dasha_activation'].toString(), style: const TextStyle(color: AppColors.smoke, fontSize: 9.5, fontStyle: FontStyle.italic))),
+        ]))),
+      if (teaching.isNotEmpty) ...[const SizedBox(height: 6),
+        _catLabel('🎓', l.klTeachingMap, KColors.gold),
+        ...teaching.map((t) => Container(
+          margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.06), borderRadius: BorderRadius.circular(10)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _subHeader('MUTUAL TEACHING MAP', _accent),
-            const SizedBox(height: 8),
-            ...teachMap.map((t) {
-              final tm = _asMap(t);
-              final teacher = tm['teacher']?.toString() ?? '';
-              final student = tm['student']?.toString() ?? '';
-              final subject = tm['subject']?.toString() ?? '';
-              return Container(
-                margin: const EdgeInsets.only(bottom: 6),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.03),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _accent.withOpacity(0.1)),
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: AppColors.aurora.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                      child: Text(teacher.isNotEmpty ? teacher : '—', style: const TextStyle(color: AppColors.aurora, fontSize: 10, fontWeight: FontWeight.w700)),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6),
-                      child: Icon(Icons.arrow_forward, size: 12, color: AppColors.smoke),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: AppColors.cosmicPink.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                      child: Text(student.isNotEmpty ? student : '—', style: const TextStyle(color: AppColors.cosmicPink, fontSize: 10, fontWeight: FontWeight.w700)),
-                    ),
-                  ]),
-                  if (subject.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(subject, style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4)),
-                  ],
-                ]),
-              );
-            }),
-          ]),
-        ),
-      ] else ...[
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _subHeader('MUTUAL TEACHING MAP', _accent),
-            const SizedBox(height: 6),
-            const Text('Teaching dynamics will emerge as karmic connections deepen.', style: TextStyle(color: AppColors.smoke, fontSize: 10, fontStyle: FontStyle.italic)),
-          ]),
-        ),
+            Text('${t['teacher']} → ${t['student']}', style: const TextStyle(color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700)),
+            if (t['subject'] != null) Text(t['subject'].toString(), style: const TextStyle(color: AppColors.parchment, fontSize: 10.5, height: 1.3)),
+          ]))),
       ],
-
-      // Growth direction
-      if (growthDir.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: AppColors.success.withOpacity(0.15)),
-          ),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('-> ', style: TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.w700)),
-            Expanded(
-              child: Text(
-                growthDir,
-                style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 10,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ]),
-        ),
+      if (_strOf(c, 'group_growth_direction').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
+        child: Text(_strOf(c, 'group_growth_direction'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))),
     ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 7. KARMIC DEBTS & RESOLUTIONS
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildKarmicDebts(Map<String, dynamic> debts) {
-    final detected = _asList(debts['debts_detected']);
-    final mutual = _asList(debts['mutual_debts']);
-    final resSummary = debts['resolution_summary']?.toString() ?? '';
-
+  // ══════════════════════════════════════════════════════════════════
+  //  8 — KARMIC DEBTS & RESOLUTIONS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _karmicDebts(AppLocalizations l) {
+    final d = _map('karmic_debts_resolutions');
+    if (d.isEmpty) return const SizedBox.shrink();
+    final debts = _listOf(d, 'debts_detected').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // Individual debt cards
-      ...detected.map((d) {
-        final dm = _asMap(d);
-        final debtor = dm['debtor']?.toString() ?? '—';
-        final creditor = dm['creditor']?.toString() ?? '—';
-        final debtType = dm['debt_type']?.toString() ?? '';
-        final basis = dm['debt_basis']?.toString() ?? '';
-        final severity = dm['severity']?.toString() ?? '';
-        final resolution = dm['resolution_path']?.toString() ?? '';
-        final timing = dm['moola_dasha_timing']?.toString() ?? '';
-        final sevC = _severityColor(severity);
-
+      KSectionHeader(icon: Icons.account_balance_rounded, title: l.klDebtsTitle, color: KColors.orange),
+      if (debts.isEmpty)
+        Container(padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(color: KColors.green.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.green.withOpacity(0.2))),
+          child: Row(children: [const Icon(Icons.check_circle_rounded, size: 17, color: KColors.green), const SizedBox(width: 10),
+            Expanded(child: Text(l.klNoDebtsDetected, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5)))]))
+      else ...debts.map((dm) {
+        final severity = _strOf(dm, 'severity');
+        final col = severity.toLowerCase().contains('high') || severity.toLowerCase().contains('severe') ? KColors.red
+            : severity.toLowerCase().contains('moderate') ? KColors.orange : KColors.yellow;
         return Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              sevC.withOpacity(0.08),
-              _cardBg.withOpacity(0.5),
-            ]),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: sevC.withOpacity(0.25)),
-          ),
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(color: col.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: col.withOpacity(0.24))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // Debtor -> Creditor
             Row(children: [
-              Expanded(
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(
-                    text: debtor,
-                    style: const TextStyle(color: AppColors.error, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'serif'),
-                  ),
-                  const TextSpan(
-                    text: ' -> ',
-                    style: TextStyle(color: AppColors.smoke, fontSize: 10),
-                  ),
-                  TextSpan(
-                    text: creditor,
-                    style: const TextStyle(color: AppColors.aurora, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'serif'),
-                  ),
-                ])),
-              ),
-              if (severity.isNotEmpty)
-                _badge(severity, sevC),
+              Expanded(child: Text('${dm['debtor']} → ${dm['creditor']}', style: TextStyle(color: col, fontSize: 13, fontWeight: FontWeight.w800))),
+              if (severity.isNotEmpty) _pill(_titleCase(severity), col),
             ]),
-            if (debtType.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: _kvRow('Type', debtType, AppColors.gold),
-              ),
-            if (basis.isNotEmpty)
-              _kvRow('Basis', basis, AppColors.ivory),
-            if (resolution.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.06),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppColors.success.withOpacity(0.15)),
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text(
-                    'RESOLUTION PATH',
-                    style: TextStyle(
-                      color: AppColors.success,
-                      fontSize: 7,
-                      letterSpacing: 1.5,
-                      fontFamily: 'monospace',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    resolution,
-                    style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4),
-                  ),
-                ]),
-              ),
-            ],
-            if (timing.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                'Dasha Timing: $timing',
-                style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontStyle: FontStyle.italic),
-              ),
-            ],
+            if (dm['debt_type'] != null) Padding(padding: const EdgeInsets.only(top: 4),
+              child: Text(_titleCase(dm['debt_type'].toString()), style: const TextStyle(color: AppColors.smoke, fontSize: 10.5))),
+            if (dm['resolution_path'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('✓ ', style: const TextStyle(color: KColors.green, fontWeight: FontWeight.w800)),
+                Expanded(child: Text(dm['resolution_path'].toString(), style: const TextStyle(color: KColors.green, fontSize: 11, height: 1.35))),
+              ])),
+            _advanced(l, [
+              if (dm['debt_basis'] != null) dm['debt_basis'].toString(),
+              if (dm['moola_dasha_timing'] != null) dm['moola_dasha_timing'].toString(),
+            ]),
           ]),
         );
       }),
-
-      // Mutual debts
-      if (mutual.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.warning.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.warning.withOpacity(0.2)),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'MUTUAL DEBTS',
-              style: TextStyle(
-                color: AppColors.warning,
-                fontSize: 8,
-                letterSpacing: 1.5,
-                fontFamily: 'monospace',
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            ...mutual.map((m) => Padding(
-              padding: const EdgeInsets.only(bottom: 3),
-              child: Text(
-                '* $m',
-                style: const TextStyle(color: AppColors.ivory, fontSize: 10, height: 1.4),
-              ),
-            )),
-          ]),
-        ),
-
-      // Resolution summary
-      if (resSummary.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppColors.gold.withOpacity(0.08),
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(8),
-              bottomRight: Radius.circular(8),
-            ),
-            border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
-          ),
-          child: Text(
-            resSummary,
-            style: const TextStyle(
-              color: AppColors.ivory,
-              fontSize: 10,
-              height: 1.5,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
+      if (_strOf(d, 'resolution_summary').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4),
+        child: Text(_strOf(d, 'resolution_summary'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))),
     ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 8. MOOLA DASHA KARMIC TIMING
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildMoolaDashaTiming(Map<String, dynamic> timing) {
-    final perChart = _asList(timing['per_chart_timing']);
-    final groupWindow = timing['group_karmic_window']?.toString() ?? '';
-    final synthesis = timing['timing_synthesis']?.toString() ?? '';
-
+  // ══════════════════════════════════════════════════════════════════
+  //  9 — MOOLA DASHA KARMIC TIMING
+  // ══════════════════════════════════════════════════════════════════
+  Widget _moolaTiming(AppLocalizations l) {
+    final t = _map('moola_dasha_karmic_timing');
+    if (t.isEmpty) return const SizedBox.shrink();
+    final perChart = _listOf(t, 'per_chart_timing').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // Per-chart timing blocks
-      ...perChart.map((ct) {
-        final ctm = _asMap(ct);
-        final name = ctm['chart_name']?.toString() ?? '—';
-        final moola = _asMap(ctm['current_moola']);
-        final activation = ctm['karmic_activation']?.toString() ?? '';
-        final reasoning = ctm['reasoning']?.toString() ?? '';
-        final phase = ctm['karmic_phase']?.toString() ?? '';
-
+      KSectionHeader(icon: Icons.hourglass_bottom_rounded, title: l.klTimingTitle, color: KColors.green),
+      if (_strOf(t, 'group_karmic_window').isNotEmpty)
+        _card(child: Text(_cap(_strOf(t, 'group_karmic_window')), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+      const SizedBox(height: 10),
+      ...perChart.map((m) {
+        final moola = _mapOf(m, 'current_moola');
+        final activation = _strOf(m, 'karmic_activation');
+        final col = activation.toLowerCase().contains('intense') ? KColors.orange : activation.toLowerCase().contains('active') ? KColors.blue : KColors.green;
         return Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: _cardBg.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.saffron.withOpacity(0.2)),
-          ),
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white.withOpacity(0.06))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Expanded(
-                child: Text(
-                  name,
-                  style: const TextStyle(
-                    color: AppColors.saffron,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'serif',
-                  ),
-                ),
-              ),
-              if (phase.isNotEmpty)
-                _badge(phase, AppColors.saffron),
+              Expanded(child: Text(m['chart_name']?.toString() ?? '', style: const TextStyle(color: AppColors.gold, fontSize: 12, fontWeight: FontWeight.w800))),
+              if (activation.isNotEmpty) _pill(_titleCase(activation), col),
             ]),
-            const SizedBox(height: 8),
-
-            // Moola dasha periods
-            if (moola.isNotEmpty) ...[
-              if (moola['md'] != null)
-                _kvRow('MD', moola['md'].toString(), AppColors.gold),
-              if (moola['ad'] != null)
-                _kvRow('AD', moola['ad'].toString(), AppColors.gold),
-              if (moola['pd'] != null)
-                _kvRow('PD', moola['pd'].toString(), AppColors.gold),
-              if (moola['dates'] != null)
-                _kvRow('Dates', moola['dates'].toString(), AppColors.smoke),
-            ],
-
-            // Karmic activation
-            if (activation.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Text(
-                activation,
-                style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 11,
-                  height: 1.4,
-                ),
-              ),
-            ],
-
-            // Reasoning
-            if (reasoning.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                reasoning,
-                style: const TextStyle(
-                  color: AppColors.smoke,
-                  fontSize: 9,
-                  height: 1.3,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
+            if (moola['md'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+              child: Text('${l.mahadashaLabel}: ${moola['md']} · ${l.antardashaLabel}: ${moola['ad']} · ${l.pratyantardashaLabel}: ${moola['pd']}', style: const TextStyle(color: AppColors.ivory, fontSize: 10.5))),
+            if (m['karmic_phase'] != null) Padding(padding: const EdgeInsets.only(top: 6),
+              child: Text(m['karmic_phase'].toString(), style: const TextStyle(color: AppColors.gold, fontSize: 10.5, fontWeight: FontWeight.w600))),
+            _advanced(l, [if (m['reasoning'] != null) m['reasoning'].toString()]),
           ]),
         );
       }),
-
-      // Group karmic window
-      if (groupWindow.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.gold.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gold.withOpacity(0.2)),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text(
-              'GROUP KARMIC WINDOW',
-              style: TextStyle(
-                color: AppColors.gold,
-                fontSize: 8,
-                letterSpacing: 1.5,
-                fontFamily: 'monospace',
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              groupWindow,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 12,
-                height: 1.4,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'serif',
-              ),
-            ),
-          ]),
-        ),
-
-      // Timing synthesis
-      if (synthesis.isNotEmpty)
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppColors.gold.withOpacity(0.08),
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(8),
-              bottomRight: Radius.circular(8),
-            ),
-            border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
-          ),
-          child: Text(
-            synthesis,
-            style: const TextStyle(
-              color: AppColors.ivory,
-              fontSize: 10,
-              height: 1.5,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
+      if (_strOf(t, 'timing_synthesis').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4),
+        child: Text(_strOf(t, 'timing_synthesis'), style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.4))),
     ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 9. DEEP AUDIT TABLE
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildAuditTable(Map<String, dynamic> audit) {
-    final params = _asList(audit['audited_parameters']);
-    final totalRaw = audit['total_parameters_audited'];
-    final total = totalRaw is num ? totalRaw.toInt() : (totalRaw is String ? int.tryParse(totalRaw) ?? params.length : params.length);
-    final completeness = audit['audit_completeness']?.toString() ?? '';
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      decoration: BoxDecoration(
-        color: _cardBg.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.ash.withOpacity(0.4)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Header info — stacked for mobile responsiveness
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              '$total PARAMETERS AUDITED',
-              style: const TextStyle(
-                color: AppColors.gold,
-                fontSize: 10,
-                letterSpacing: 1.5,
-                fontFamily: 'monospace',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            if (completeness.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                completeness,
-                style: const TextStyle(
-                  color: AppColors.aurora,
-                  fontSize: 9,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-          ]),
-        ),
-
-        // Parameter cards (mobile-friendly)
-        if (params.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            child: Column(
-              children: params.take(50).map((p) {
-                final pm = _asMap(p);
-                final sc = _num(pm, 'score');
-                final scC = _scoreColor(sc);
-                final param = pm['parameter']?.toString() ?? '—';
-                final raw = pm['raw_value']?.toString() ?? '—';
-                final weight = _num(pm, 'weight');
-                final basis = pm['classical_basis']?.toString() ?? '';
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.03),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: scC.withOpacity(0.15)),
-                  ),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(children: [
-                      Expanded(child: Text(param, style: const TextStyle(color: AppColors.ivory, fontSize: 10, fontWeight: FontWeight.w600), maxLines: 2, overflow: TextOverflow.ellipsis)),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(color: scC.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
-                        child: Text(sc.toStringAsFixed(1), style: TextStyle(color: scC, fontSize: 10, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
-                      ),
-                    ]),
-                    const SizedBox(height: 4),
-                    Row(children: [
-                      Text('Value: ', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
-                      Expanded(child: Text(raw, style: const TextStyle(color: AppColors.gold, fontSize: 9), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      Text('W: ${weight.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace')),
-                    ]),
-                    if (basis.isNotEmpty) ...[
-                      const SizedBox(height: 3),
-                      Text(basis, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontStyle: FontStyle.italic, height: 1.3), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    ],
-                  ]),
-                );
-              }).toList(),
-            ),
-          ),
-      ]),
-    );
+  // ══════════════════════════════════════════════════════════════════
+  //  10 — DEEP AUDIT TABLE
+  // ══════════════════════════════════════════════════════════════════
+  Widget _auditTable(AppLocalizations l) {
+    final a = _map('deep_audit_parameter_table');
+    if (a.isEmpty) return const SizedBox.shrink();
+    final params = _listOf(a, 'audited_parameters').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList()
+      ..sort((x, y) => ((y['score'] as num?) ?? 0).compareTo((x['score'] as num?) ?? 0));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.fact_check_rounded, title: l.klAuditTitle, subtitle: l.klAuditSubtitle(_strOf(a, 'total_parameters_audited')), color: KColors.blue),
+      _card(child: Column(children: params.take(10).map((p) {
+        final score = (p['score'] as num?)?.toDouble() ?? 0;
+        final c = _col(score);
+        return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
+          Expanded(flex: 3, child: Text(p['parameter']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 10.5), maxLines: 1, overflow: TextOverflow.ellipsis)),
+          Expanded(flex: 2, child: ClipRRect(borderRadius: BorderRadius.circular(2),
+            child: LinearProgressIndicator(value: (score / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(c)))),
+          const SizedBox(width: 6),
+          SizedBox(width: 30, child: Text(score.toStringAsFixed(0), textAlign: TextAlign.right, style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w700))),
+        ]));
+      }).toList())),
+      if (_strOf(a, 'audit_completeness').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
+        child: Text(_strOf(a, 'audit_completeness'), style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontStyle: FontStyle.italic))),
+      _advanced(l, params.skip(10).map((p) => '${p['parameter']}: ${(p['score'] as num?)?.toStringAsFixed(0) ?? ''} (${p['classical_basis'] ?? ''})').toList()),
+    ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 10. SUMMARY
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildSummary(Map<String, dynamic> summary) {
-    final insights = _asList(summary['key_insights']);
-    final humanSummary = summary['human_summary']?.toString() ?? '';
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          _accent.withOpacity(0.1),
-          const Color(0xFF4A3B8C).withOpacity(0.08),
-        ]),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _accent.withOpacity(0.25)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _subHeader('KEY INSIGHTS', AppColors.gold),
-        const SizedBox(height: 8),
-
-        // Numbered insights
-        ...insights.asMap().entries.map((e) => Padding(
-          padding: const EdgeInsets.only(bottom: 6),
+  // ══════════════════════════════════════════════════════════════════
+  //  11 — SUMMARY & KEY INSIGHTS
+  // ══════════════════════════════════════════════════════════════════
+  Widget _summary(AppLocalizations l) {
+    final s = _map('summary');
+    final insights = _listOf(s, 'key_insights').map((e) => e.toString()).toList();
+    final human = _strOf(s, 'human_summary');
+    if (insights.isEmpty && human.isEmpty) return const SizedBox.shrink();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.summarize_rounded, title: l.summary, color: AppColors.gold),
+      if (human.isNotEmpty) _card(child: Text(_cap(human), style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.5))),
+      if (insights.isNotEmpty) ...[const SizedBox(height: 10),
+        ...insights.map((s2) => Container(
+          margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.06), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.gold.withOpacity(0.2))),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              width: 20,
-              height: 20,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: AppColors.gold.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  '${e.key + 1}',
-                  style: const TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                e.value.toString(),
-                style: const TextStyle(
-                  color: AppColors.ivory,
-                  fontSize: 11,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ]),
-        )),
-
-        // Human summary
-        if (humanSummary.isNotEmpty) ...[
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withOpacity(0.08),
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-              border: const Border(left: BorderSide(color: AppColors.gold, width: 3)),
-            ),
-            child: Text(
-              humanSummary,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 11,
-                height: 1.5,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
-      ]),
-    );
+            const Icon(Icons.check_circle_rounded, size: 15, color: AppColors.gold), const SizedBox(width: 9),
+            Expanded(child: Text(_cap(s2), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+          ]))),
+      ],
+    ]);
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // 12. AI COPY BAR
-  // ════════════════════════════════════════════════════════════════════
-
-  Widget _buildAiCopyBar(BuildContext ctx) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          _cardBg.withOpacity(0.8),
-          _bg,
-        ]),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.gold.withOpacity(0.25)),
-      ),
-      child: Column(children: [
-        _label('DISCUSS WITH AI'),
-        const SizedBox(height: 12),
+  // ══════════════════════════════════════════════════════════════════
+  //  12 — PREDICTION RELIABILITY
+  // ══════════════════════════════════════════════════════════════════
+  Widget _reliability(AppLocalizations l) {
+    final raw = _sc('confidence_score');
+    final pct = raw <= 1 ? raw * 100 : raw;
+    final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
+    final explain = _str('confidence_explanation');
+    final disclaimer = _str('engine_disclaimer');
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.verified_user_rounded, title: l.crReliability, color: KColors.blue),
+      _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          _aiBtn(
-            ctx,
-            'G',
-            'ChatGPT',
-            const LinearGradient(colors: [Color(0xFF10A37F), Color(0xFF1A7F64)]),
-            'Analyze this Vedic astrology Past Life Karma Linkage report and give detailed insights:\n\n',
-          ),
-          const SizedBox(width: 8),
-          _aiBtn(
-            ctx,
-            'C',
-            'Claude',
-            const LinearGradient(colors: [Color(0xFFD97757), Color(0xFFB85B3F)]),
-            'Here is a Vedic astrology Past Life Karma Linkage report. Analyze it thoroughly and provide actionable insights:\n\n',
-          ),
-          const SizedBox(width: 8),
-          _aiBtn(
-            ctx,
-            '\u{2726}',
-            'Gemini',
-            const LinearGradient(colors: [Color(0xFF4285F4), Color(0xFF9B72CB)]),
-            'Review this Past Life Karma Linkage astrology analysis and explain key findings simply:\n\n',
-          ),
+          KStars(filled: kStars(pct), size: 20, color: AppColors.gold), const Spacer(),
+          Text('${pct.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.gold, fontSize: 22, fontWeight: FontWeight.w800)),
         ]),
-        const SizedBox(height: 10),
-        GestureDetector(
-          onTap: () {
-            Clipboard.setData(ClipboardData(text: _fmt(data)));
-            ScaffoldMessenger.of(ctx).showSnackBar(
-              const SnackBar(content: Text('Report data copied!')),
-            );
-          },
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.copy, size: 14, color: AppColors.smoke),
-                SizedBox(width: 6),
-                Text('Copy full report data', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
-              ],
-            ),
-          ),
-        ),
+        const SizedBox(height: 4),
+        Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
+        if (explain.isNotEmpty) ...[const SizedBox(height: 10),
+          Text(_cap(explain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
+      ])),
+      if (disclaimer.isNotEmpty) ...[const SizedBox(height: 10),
+        Text(disclaimer, style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, height: 1.4, fontStyle: FontStyle.italic))],
+    ]);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  13 — DISCUSS WITH AI
+  // ══════════════════════════════════════════════════════════════════
+  Widget _discussAi(AppLocalizations l) {
+    final topics = <String>[l.klTopicLinkage, l.klTopicPairwise, l.klTopicDebts, l.klTopicLessons, l.klTopicTiming, l.klTopicGroup];
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      Row(children: [
+        _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
+        _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),
+        _aiBtn('Gemini', '💎', () => _launchAi(_data, 'gemini')),
       ]),
-    );
+      const SizedBox(height: 14),
+      Text(l.crAskAbout, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5, fontWeight: FontWeight.w700)),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 8, children: topics.map((t) => GestureDetector(
+        onTap: () => _copyTopic(t),
+        child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.gold.withOpacity(0.25))),
+          child: Text(t, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, fontWeight: FontWeight.w600))),
+      )).toList()),
+    ]);
   }
 
-  Widget _aiBtn(BuildContext ctx, String icon, String name, Gradient g, String prefix) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          Clipboard.setData(ClipboardData(text: prefix + _fmt(data)));
-          ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text('Copied for $name!')),
-          );
-          final urls = {
-            'ChatGPT': 'https://chat.openai.com/',
-            'Claude': 'https://claude.ai/new',
-            'Gemini': 'https://gemini.google.com/app',
-          };
-          launchUrl(
-            Uri.parse(urls[name]!),
-            mode: LaunchMode.externalApplication,
-          ).catchError((_) => false);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.04),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.gold.withOpacity(0.2)),
-          ),
-          child: Column(children: [
-            Container(
-              width: 26,
-              height: 26,
-              decoration: BoxDecoration(
-                gradient: g,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  icon,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              name,
-              style: const TextStyle(
-                color: AppColors.ivory,
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const Text(
-              'COPY',
-              style: TextStyle(
-                color: AppColors.smoke,
-                fontSize: 7,
-                fontFamily: 'monospace',
-              ),
-            ),
-          ]),
-        ),
-      ),
-    );
+  Widget _aiBtn(String name, String emoji, VoidCallback onTap) => Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: GestureDetector(onTap: onTap, child: Container(padding: const EdgeInsets.symmetric(vertical: 14),
+      decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.gold.withOpacity(0.2))),
+      child: Column(children: [Text(emoji, style: const TextStyle(fontSize: 20)), const SizedBox(height: 5),
+        Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w700)),
+        const Text('OPEN ↗', style: TextStyle(color: AppColors.smoke, fontSize: 7, letterSpacing: 1)),
+      ])))));
+
+  void _copyTopic(String topic) {
+    final q = '$topic — based on the past-life karma linkage report for ${widget.participants.join(' & ')}.\n\n${_buildPrompt(_data)}';
+    Clipboard.setData(ClipboardData(text: q));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.crTopicCopied), duration: const Duration(seconds: 2)));
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  // SHARED HELPER WIDGETS
-  // ════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════
+  //  shared widgets / helpers
+  // ══════════════════════════════════════════════════════════════════
+  Widget _card({required Widget child}) => Container(padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.white.withOpacity(0.06))), child: child);
 
-  Widget _header(String p1, String p2) => ReportHeader(p1, p2, '');
+  Widget _pill(String t, Color c) => Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+    decoration: BoxDecoration(color: c.withOpacity(0.1), borderRadius: BorderRadius.circular(8), border: Border.all(color: c.withOpacity(0.25))),
+    child: Text(t, style: TextStyle(color: c, fontSize: 10.5, fontWeight: FontWeight.w600)));
 
-  Widget _label(String text) => Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
-      const SizedBox(width: 6),
-      Text(
-        text,
-        style: const TextStyle(
-          color: AppColors.gold,
-          fontSize: 9,
-          letterSpacing: 2,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      const SizedBox(width: 6),
-      Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
-    ],
-  );
+  Widget _catLabel(String emoji, String t, Color c) => Padding(padding: const EdgeInsets.only(bottom: 8, top: 2),
+    child: Row(children: [Text(emoji, style: const TextStyle(fontSize: 13)), const SizedBox(width: 6),
+      Text(t, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w800))]));
 
-  Widget _subHeader(String text, Color c) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
-    child: Text(
-      text,
-      style: TextStyle(
-        color: c,
-        fontSize: 8,
-        letterSpacing: 2,
-        fontFamily: 'monospace',
-        fontWeight: FontWeight.w600,
-      ),
-    ),
-  );
-
-  Widget _kvRow(String k, String v, Color vc) => Padding(
-    padding: const EdgeInsets.only(bottom: 4),
-    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SizedBox(
-        width: 100,
-        child: Text(
-          k,
-          style: const TextStyle(
-            color: AppColors.smoke,
-            fontSize: 9,
-            fontFamily: 'monospace',
-          ),
-        ),
-      ),
-      Expanded(
-        child: Text(
-          v,
-          style: TextStyle(
-            color: vc,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+  Widget _iconTile(String emoji, String label, String value, {Color? color}) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.white.withOpacity(0.06))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(emoji, style: const TextStyle(fontSize: 17)), const SizedBox(height: 6),
+      Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 9, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+      Text(value, style: TextStyle(color: color ?? AppColors.ivory, fontSize: 12.5, fontWeight: FontWeight.w800), maxLines: 3, overflow: TextOverflow.ellipsis),
     ]),
   );
 
-  Widget _progressBar(String label, double value) {
-    final c = _scoreColor(value);
-    return Column(children: [
-      Row(children: [
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(color: AppColors.ivory, fontSize: 10),
-          ),
-        ),
-        Text(
-          value.toStringAsFixed(1),
-          style: TextStyle(
-            color: c,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'monospace',
-          ),
-        ),
-      ]),
-      const SizedBox(height: 3),
-      ClipRRect(
-        borderRadius: BorderRadius.circular(2),
-        child: LinearProgressIndicator(
-          value: (value / 100).clamp(0, 1),
-          minHeight: 4,
-          backgroundColor: Colors.white.withOpacity(0.06),
-          valueColor: AlwaysStoppedAnimation(c),
-        ),
-      ),
-    ]);
+  Widget _statTile(String label, double score) {
+    final c = _col(score);
+    return Container(padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: c.withOpacity(0.2))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 6),
+        Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: c, fontSize: 16, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 4),
+        ClipRRect(borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(value: (score / 100).clamp(0, 1), minHeight: 5, backgroundColor: Colors.white10, valueColor: AlwaysStoppedAnimation(c))),
+      ]));
   }
 
-  Widget _interpretationText(String text) => Text(
-    text,
-    style: const TextStyle(
-      color: AppColors.lavender,
-      fontSize: 10,
-      height: 1.4,
-      fontStyle: FontStyle.italic,
-    ),
-  );
-
-  Widget _scoreChip(String label, double value, {bool isPenalty = false}) {
-    final c = isPenalty
-        ? (value > 0 ? AppColors.error : AppColors.success)
-        : _scoreColor(value);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: c.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: c.withOpacity(0.3)),
+  Widget _advanced(AppLocalizations l, List<String>? lines, {String? customTitle, Widget? customChild}) {
+    final valid = lines?.where((s) => s.trim().isNotEmpty).toList() ?? const [];
+    if (customChild == null && valid.isEmpty) return const SizedBox.shrink();
+    return Theme(data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero, childrenPadding: const EdgeInsets.only(bottom: 8),
+        iconColor: AppColors.smoke, collapsedIconColor: AppColors.smoke,
+        title: Text(customTitle ?? l.fdAdvancedDetails, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5, fontWeight: FontWeight.w700)),
+        children: customChild != null ? [customChild] : valid.map((s) => Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('• ', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+            Expanded(child: Text(s, style: const TextStyle(color: AppColors.parchment, fontSize: 11, height: 1.35))),
+          ]),
+        )).toList(),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(
-          isPenalty ? '-${value.toStringAsFixed(0)}' : value.toStringAsFixed(0),
-          style: TextStyle(
-            color: c,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'serif',
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            color: c.withOpacity(0.7),
-            fontSize: 7,
-            fontFamily: 'monospace',
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ]),
     );
   }
 
-  Widget _badge(String text, Color c) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-    decoration: BoxDecoration(
-      color: c.withOpacity(0.15),
-      borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: c.withOpacity(0.4)),
-    ),
-    child: Text(
-      text.toUpperCase(),
-      style: TextStyle(
-        color: c,
-        fontSize: 8,
-        letterSpacing: 0.8,
-        fontFamily: 'monospace',
-        fontWeight: FontWeight.w700,
-      ),
-    ),
-  );
+  Color _col(double s) {
+    if (s >= 75) return KColors.green;
+    if (s >= 60) return KColors.blue;
+    if (s >= 45) return KColors.yellow;
+    if (s >= 30) return KColors.orange;
+    return KColors.red;
+  }
+  String _cap(String s) => s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+  String _titleCase(String s) => s.replaceAll('_', ' ').replaceAll('-', ' ').split(' ')
+    .where((w) => w.isNotEmpty).map((w) => '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
 
-  // ════════════════════════════════════════════════════════════════════
-  // UTILITY METHODS
-  // ════════════════════════════════════════════════════════════════════
+  // ── AI prompt / launch (unchanged behaviour) ──
+  String _buildPrompt(Map<String, dynamic> d) {
+    final overall = _mapOf(d, 'overall_linkage_probability');
+    final score = overall['overall_linkage_score'] ?? '?';
+    final grade = overall['linkage_grade'] ?? '';
+    final jsonStr = const JsonEncoder.withIndent('  ').convert(d);
+    return '''You are a Vedic past-life karma and multi-chart linkage advisor. Analyze this report for ${widget.participants.join(' & ')} and provide actionable insights.
 
-  static Map<String, dynamic> _asMap(dynamic v) =>
-      v is Map ? v.cast<String, dynamic>() : <String, dynamic>{};
+Key highlights:
+- Overall karmic linkage: $score/100 ($grade)
 
-  static List _asList(dynamic v) => v is List ? v : [];
+Full report data (JSON):
+$jsonStr
 
-  static double _num(Map<String, dynamic> m, String k) {
-    final v = m[k];
-    if (v is num) return v.toDouble();
-    if (v is String) return double.tryParse(v) ?? 0;
-    return 0;
+Please explain the group's past-life connections in simple language, highlight the strongest karmic bonds, and suggest how each person can use this awareness practically.''';
   }
 
-  static String _titleCase(String s) => s
-      .replaceAll('_', ' ')
-      .split(' ')
-      .map((w) => w.isEmpty ? '' : '${w[0].toUpperCase()}${w.substring(1)}')
-      .join(' ');
-
-  static Color _scoreColor(double v) => v >= 70
-      ? AppColors.success
-      : v >= 50
-          ? AppColors.gold
-          : v >= 30
-              ? const Color(0xFFE5A93A)
-              : AppColors.error;
-
-  static Color _dignityColor(String dignity) {
-    final d = dignity.toLowerCase();
-    if (d.contains('exalt') || d.contains('moolatrikona')) return AppColors.success;
-    if (d.contains('own') || d.contains('swakshetra')) return AppColors.gold;
-    if (d.contains('friend')) return AppColors.aurora;
-    if (d.contains('neech') || d.contains('debilitat') || d.contains('enemy')) return AppColors.error;
-    return AppColors.smoke;
-  }
-
-  static Color _severityColor(String severity) {
-    final s = severity.toLowerCase();
-    if (s.contains('high') || s.contains('severe') || s.contains('heavy')) return AppColors.error;
-    if (s.contains('moderate') || s.contains('medium') || s.contains('med')) return const Color(0xFFE5A93A);
-    return AppColors.aurora;
-  }
-
-  static Color _completionColor(String status) {
-    final s = status.toLowerCase();
-    if (s.contains('complete') || s.contains('fulfilled') || s.contains('done')) return AppColors.success;
-    if (s.contains('partial') || s.contains('progress')) return AppColors.gold;
-    if (s.contains('incomplete') || s.contains('pending') || s.contains('unfinished')) return AppColors.error;
-    return AppColors.smoke;
-  }
-
-  static String _fmt(Map<String, dynamic> d, {int indent = 0}) {
-    final buf = StringBuffer();
-    final pad = '  ' * indent;
-    for (final e in d.entries) {
-      if (e.value is Map) {
-        buf.writeln('$pad${_titleCase(e.key)}:');
-        buf.write(_fmt((e.value as Map).cast<String, dynamic>(), indent: indent + 1));
-      } else if (e.value is List) {
-        buf.writeln('$pad${_titleCase(e.key)}:');
-        for (var i = 0; i < (e.value as List).length; i++) {
-          final item = (e.value as List)[i];
-          if (item is Map) {
-            buf.writeln('$pad  ${i + 1}.');
-            buf.write(_fmt(item.cast<String, dynamic>(), indent: indent + 2));
-          } else {
-            buf.writeln('$pad  ${i + 1}. $item');
-          }
-        }
-      } else {
-        buf.writeln('$pad${_titleCase(e.key)}: ${e.value}');
-      }
+  Future<void> _launchAi(Map<String, dynamic> d, String ai) async {
+    final prompt = _buildPrompt(d);
+    await Clipboard.setData(ClipboardData(text: prompt));
+    String url;
+    switch (ai) {
+      case 'chatgpt': url = 'https://chat.openai.com/'; break;
+      case 'claude': url = 'https://claude.ai/new'; break;
+      case 'gemini': url = 'https://gemini.google.com/app'; break;
+      default: return;
     }
-    return buf.toString();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report copied! Opening $ai — paste to discuss.'), duration: const Duration(seconds: 3)));
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }

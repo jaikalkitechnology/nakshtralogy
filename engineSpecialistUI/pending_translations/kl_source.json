@@ -1,0 +1,131 @@
+{
+ "klSubtitle": {
+  "en": "AI-powered Vedic Past-Life Karma Linkage Report"
+ },
+ "klTitle": {
+  "en": "Past-Life Karma Linkage"
+ },
+ "klSnapshotHeader": {
+  "en": "Karmic Linkage Snapshot"
+ },
+ "klGaugePairwise": {
+  "en": "Avg Pairwise Linkage"
+ },
+ "klGaugeCohesion": {
+  "en": "Group Cohesion"
+ },
+ "klGaugeRahuKetu": {
+  "en": "Rahu-Ketu Resonance"
+ },
+ "klGaugeAtmakaraka": {
+  "en": "Soul Resonance"
+ },
+ "klGaugeD60": {
+  "en": "D60 Resonance"
+ },
+ "klChipSoulResonance": {
+  "en": "Strong soul-signature resonance"
+ },
+ "klChipD60Resonance": {
+  "en": "Strong D60 past-life resonance"
+ },
+ "klChipCohesiveGroup": {
+  "en": "Cohesive group"
+ },
+ "klChipNoDebts": {
+  "en": "No karmic debts detected"
+ },
+ "klProfilesTitle": {
+  "en": "Chart Profiles"
+ },
+ "klKetuAt": {
+  "en": "Ketu at"
+ },
+ "klRahuAt": {
+  "en": "Rahu at"
+ },
+ "klFoundationTitle": {
+  "en": "Per-Chart Karmic Foundation"
+ },
+ "klFoundationSubtitle": {
+  "en": "Each soul's past-life mastery and current-life direction"
+ },
+ "klKetuMastery": {
+  "en": "Ketu Mastery"
+ },
+ "klRahuGrowth": {
+  "en": "Rahu Growth"
+ },
+ "klNinthHousePunya": {
+  "en": "9th House Punya"
+ },
+ "klD60Depth": {
+  "en": "D60 Karmic Depth"
+ },
+ "klAtmakarakaAgenda": {
+  "en": "Soul agenda"
+ },
+ "klSaturnKarma": {
+  "en": "Saturn karma"
+ },
+ "klPairwiseTitle": {
+  "en": "Pairwise Karmic Linkages"
+ },
+ "klActiveFactors": {
+  "en": "Active linkage factors"
+ },
+ "klGroupPatternTitle": {
+  "en": "Group Karmic Pattern"
+ },
+ "klSharedSetting": {
+  "en": "Shared Past-Life Setting"
+ },
+ "klCohesionScore": {
+  "en": "Karmic Cohesion"
+ },
+ "klPastGoalsTitle": {
+  "en": "Past-Life Goals"
+ },
+ "klLearningTitle": {
+  "en": "Current-Life Learning"
+ },
+ "klTeachingMap": {
+  "en": "Mutual Teaching Map"
+ },
+ "klDebtsTitle": {
+  "en": "Karmic Debts & Resolutions"
+ },
+ "klNoDebtsDetected": {
+  "en": "No karmic debts detected across this group"
+ },
+ "klTimingTitle": {
+  "en": "Moola Dasha Karmic Timing"
+ },
+ "klAuditTitle": {
+  "en": "Deep Audit Table"
+ },
+ "klAuditSubtitle": {
+  "en": "{count} karmic parameters examined",
+  "placeholders": [
+   "count"
+  ]
+ },
+ "klTopicLinkage": {
+  "en": "Our overall karmic linkage"
+ },
+ "klTopicPairwise": {
+  "en": "A specific pair's karmic bond"
+ },
+ "klTopicDebts": {
+  "en": "Karmic debts to resolve"
+ },
+ "klTopicLessons": {
+  "en": "What we're here to learn"
+ },
+ "klTopicTiming": {
+  "en": "Best timing for our group"
+ },
+ "klTopicGroup": {
+  "en": "Our shared past-life story"
+ }
+}

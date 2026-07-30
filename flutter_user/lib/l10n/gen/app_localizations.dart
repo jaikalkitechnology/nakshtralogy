@@ -235,6 +235,258 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @klSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered Vedic Past-Life Karma Linkage Report'**
+  String get klSubtitle;
+
+  /// No description provided for @klTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Karma Linkage'**
+  String get klTitle;
+
+  /// No description provided for @klSnapshotHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Linkage Snapshot'**
+  String get klSnapshotHeader;
+
+  /// No description provided for @klGaugePairwise.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Pairwise Linkage'**
+  String get klGaugePairwise;
+
+  /// No description provided for @klGaugeCohesion.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Cohesion'**
+  String get klGaugeCohesion;
+
+  /// No description provided for @klGaugeRahuKetu.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu-Ketu Resonance'**
+  String get klGaugeRahuKetu;
+
+  /// No description provided for @klGaugeAtmakaraka.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul Resonance'**
+  String get klGaugeAtmakaraka;
+
+  /// No description provided for @klGaugeD60.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 Resonance'**
+  String get klGaugeD60;
+
+  /// No description provided for @klChipSoulResonance.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong soul-signature resonance'**
+  String get klChipSoulResonance;
+
+  /// No description provided for @klChipD60Resonance.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong D60 past-life resonance'**
+  String get klChipD60Resonance;
+
+  /// No description provided for @klChipCohesiveGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Cohesive group'**
+  String get klChipCohesiveGroup;
+
+  /// No description provided for @klChipNoDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'No karmic debts detected'**
+  String get klChipNoDebts;
+
+  /// No description provided for @klProfilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart Profiles'**
+  String get klProfilesTitle;
+
+  /// No description provided for @klKetuAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu at'**
+  String get klKetuAt;
+
+  /// No description provided for @klRahuAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu at'**
+  String get klRahuAt;
+
+  /// No description provided for @klFoundationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Chart Karmic Foundation'**
+  String get klFoundationTitle;
+
+  /// No description provided for @klFoundationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Each soul\'s past-life mastery and current-life direction'**
+  String get klFoundationSubtitle;
+
+  /// No description provided for @klKetuMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'Ketu Mastery'**
+  String get klKetuMastery;
+
+  /// No description provided for @klRahuGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Rahu Growth'**
+  String get klRahuGrowth;
+
+  /// No description provided for @klNinthHousePunya.
+  ///
+  /// In en, this message translates to:
+  /// **'9th House Punya'**
+  String get klNinthHousePunya;
+
+  /// No description provided for @klD60Depth.
+  ///
+  /// In en, this message translates to:
+  /// **'D60 Karmic Depth'**
+  String get klD60Depth;
+
+  /// No description provided for @klAtmakarakaAgenda.
+  ///
+  /// In en, this message translates to:
+  /// **'Soul agenda'**
+  String get klAtmakarakaAgenda;
+
+  /// No description provided for @klSaturnKarma.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturn karma'**
+  String get klSaturnKarma;
+
+  /// No description provided for @klPairwiseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairwise Karmic Linkages'**
+  String get klPairwiseTitle;
+
+  /// No description provided for @klActiveFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Active linkage factors'**
+  String get klActiveFactors;
+
+  /// No description provided for @klGroupPatternTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Karmic Pattern'**
+  String get klGroupPatternTitle;
+
+  /// No description provided for @klSharedSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Past-Life Setting'**
+  String get klSharedSetting;
+
+  /// No description provided for @klCohesionScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Cohesion'**
+  String get klCohesionScore;
+
+  /// No description provided for @klPastGoalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past-Life Goals'**
+  String get klPastGoalsTitle;
+
+  /// No description provided for @klLearningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Current-Life Learning'**
+  String get klLearningTitle;
+
+  /// No description provided for @klTeachingMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Mutual Teaching Map'**
+  String get klTeachingMap;
+
+  /// No description provided for @klDebtsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic Debts & Resolutions'**
+  String get klDebtsTitle;
+
+  /// No description provided for @klNoDebtsDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No karmic debts detected across this group'**
+  String get klNoDebtsDetected;
+
+  /// No description provided for @klTimingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Moola Dasha Karmic Timing'**
+  String get klTimingTitle;
+
+  /// No description provided for @klAuditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep Audit Table'**
+  String get klAuditTitle;
+
+  /// No description provided for @klAuditSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} karmic parameters examined'**
+  String klAuditSubtitle(Object count);
+
+  /// No description provided for @klTopicLinkage.
+  ///
+  /// In en, this message translates to:
+  /// **'Our overall karmic linkage'**
+  String get klTopicLinkage;
+
+  /// No description provided for @klTopicPairwise.
+  ///
+  /// In en, this message translates to:
+  /// **'A specific pair\'s karmic bond'**
+  String get klTopicPairwise;
+
+  /// No description provided for @klTopicDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Karmic debts to resolve'**
+  String get klTopicDebts;
+
+  /// No description provided for @klTopicLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'What we\'re here to learn'**
+  String get klTopicLessons;
+
+  /// No description provided for @klTopicTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Best timing for our group'**
+  String get klTopicTiming;
+
+  /// No description provided for @klTopicGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Our shared past-life story'**
+  String get klTopicGroup;
+
   /// No description provided for @lcSubtitle.
   ///
   /// In en, this message translates to:

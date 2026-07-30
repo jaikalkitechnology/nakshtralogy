@@ -7036,6 +7036,134 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get klSubtitle => 'AI-powered Vedic Past-Life Karma Linkage Report';
+
+  @override
+  String get klTitle => 'Past-Life Karma Linkage';
+
+  @override
+  String get klSnapshotHeader => 'Karmic Linkage Snapshot';
+
+  @override
+  String get klGaugePairwise => 'Avg Pairwise Linkage';
+
+  @override
+  String get klGaugeCohesion => 'Group Cohesion';
+
+  @override
+  String get klGaugeRahuKetu => 'Rahu-Ketu Resonance';
+
+  @override
+  String get klGaugeAtmakaraka => 'Soul Resonance';
+
+  @override
+  String get klGaugeD60 => 'D60 Resonance';
+
+  @override
+  String get klChipSoulResonance => 'Strong soul-signature resonance';
+
+  @override
+  String get klChipD60Resonance => 'Strong D60 past-life resonance';
+
+  @override
+  String get klChipCohesiveGroup => 'Cohesive group';
+
+  @override
+  String get klChipNoDebts => 'Koi karmic debt nahi mila';
+
+  @override
+  String get klProfilesTitle => 'Chart Profiles';
+
+  @override
+  String get klKetuAt => 'Ketu at';
+
+  @override
+  String get klRahuAt => 'Rahu at';
+
+  @override
+  String get klFoundationTitle => 'Per-Chart Karmic Foundation';
+
+  @override
+  String get klFoundationSubtitle => 'Each soul\'s past-life mastery and current-life direction';
+
+  @override
+  String get klKetuMastery => 'Ketu Mastery';
+
+  @override
+  String get klRahuGrowth => 'Rahu Growth';
+
+  @override
+  String get klNinthHousePunya => '9th House Punya';
+
+  @override
+  String get klD60Depth => 'D60 Karmic Depth';
+
+  @override
+  String get klAtmakarakaAgenda => 'Soul agenda';
+
+  @override
+  String get klSaturnKarma => 'Saturn karma';
+
+  @override
+  String get klPairwiseTitle => 'Pairwise Karmic Linkages';
+
+  @override
+  String get klActiveFactors => 'Active linkage factors';
+
+  @override
+  String get klGroupPatternTitle => 'Group Karmic Pattern';
+
+  @override
+  String get klSharedSetting => 'Shared Past-Life Setting';
+
+  @override
+  String get klCohesionScore => 'Karmic Cohesion';
+
+  @override
+  String get klPastGoalsTitle => 'Past-Life Goals';
+
+  @override
+  String get klLearningTitle => 'Current-Life Learning';
+
+  @override
+  String get klTeachingMap => 'Mutual Teaching Map';
+
+  @override
+  String get klDebtsTitle => 'Karmic Debts & Resolutions';
+
+  @override
+  String get klNoDebtsDetected => 'Is group mein koi karmic debt nahi mila';
+
+  @override
+  String get klTimingTitle => 'Moola Dasha Karmic Timing';
+
+  @override
+  String get klAuditTitle => 'Deep Audit Table';
+
+  @override
+  String klAuditSubtitle(Object count) {
+    return '${count} karmic parameters examined';
+  }
+
+  @override
+  String get klTopicLinkage => 'Hamara overall karmic linkage';
+
+  @override
+  String get klTopicPairwise => 'Kisi specific pair ka karmic bond';
+
+  @override
+  String get klTopicDebts => 'Resolve karne wale karmic debts';
+
+  @override
+  String get klTopicLessons => 'Hum yahan kya seekhne aaye hain';
+
+  @override
+  String get klTopicTiming => 'Hamare group ke liye best timing';
+
+  @override
+  String get klTopicGroup => 'Hamari shared past-life story';
+
+  @override
   String get lcSubtitle => 'AI-powered Vedic Love Compatibility Report';
 
   @override
