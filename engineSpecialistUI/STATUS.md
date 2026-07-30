@@ -10,9 +10,9 @@ branch `claude/multi-language-support-agents-g6p93h`, static verification only,
 continue to the next PENDING engine without asking. See the agent spec at
 `.claude/agents/engineSpecialistUI.md`.
 
-**Progress: 8 done · 11 pending · 0 blocked  (19 total)**
+**Progress: 9 done · 10 pending · 0 blocked  (19 total)**
 
-**Translations pending (10-locale backfill):** `bz_source.json`, `mr_source.json`, `lv_source.json`, `hw_source.json`, `ed_source.json`, `pr_source.json`  (wl ✅ applied 11/11)
+**Translations pending (10-locale backfill):** `bz_source.json`, `mr_source.json`, `lv_source.json`, `hw_source.json`, `ed_source.json`, `pr_source.json`, `lg_source.json`  (wl ✅ applied 11/11)
 
 > Working files live here under `engineSpecialistUI/` (moved out of `.claude/`,
 > which subagents treat as sensitive → permission prompts). Translation
@@ -29,7 +29,7 @@ continue to the next PENDING engine without asking. See the agent spec at
 | 5 | health | Health & Wellness | `health_report_screen.dart` | ✅ DONE | 0a74df6 | en+hi+hinglish | 14-section AI health coach; converted from EngineReportBase shell to Career template; medical disclaimer surfaced verbatim; backfill pending (hw_source.json). 2026-07-30. |
 | 6 | education | Education & Learning | `education_report_screen.dart` | ✅ DONE | 749c196 | en+hi+hinglish | 15-section AI education coach; replaced bespoke sliver layout with Career template; backfill pending (ed_source.json). 2026-07-30. |
 | 7 | property | Property & Assets | `property_report_screen.dart` | ✅ DONE | 2c6427b | en+hi+hinglish | Career-template redesign had already landed in flutter_user (14-section AI property coach) but was missing l10n + astro port; both closed now. Backfill pending (pr_source.json). 2026-07-30. |
-| 8 | legal | Legal & Disputes | `legal_report_screen.dart` | ⬜ PENDING | — | — | |
+| 8 | legal | Legal & Disputes | `legal_report_screen.dart` | ✅ DONE | cbdb03a | en+hi+hinglish | 16-section AI legal coach; converted from EngineReportBase shell to Career template. Backfill pending (lg_source.json). 2026-07-30. |
 | 9 | mental_stress | Mental & Stress | `mental_report_screen.dart` | ⬜ PENDING | — | — | Reassuring tone; do not scare. |
 | 10 | debt_recovery | Debt & Recovery | `debt_report_screen.dart` | ⬜ PENDING | — | — | |
 | 11 | life_path | Life Path & Luck | `lifepath_report_screen.dart` | ⬜ PENDING | — | — | |
@@ -106,6 +106,17 @@ touch only if a redesigned screen requires it.
   `property_assets_specialist_engine.analyze()` dump. Both apps; 102 new `pr`
   keys (en+hi+hinglish). Commit `2c6427b`, 2026-07-30. Backfill:
   `pr_source.json`.
+- **legal** ✅ — 16-section AI legal coach (snapshot hero, Legal Profile &
+  Karma, Your Legal Planets karaka table, Legal Yogas & Protections, D6/D9
+  Verification Across Charts, Victory Analysis plaintiff-vs-defendant,
+  Dispute Categories Watch, Conflict Style & Enemies, Criminal & Financial
+  Risk Watch, Contracts & Negotiation, Legal Career Fit, Legal Timeline,
+  Risks & Vulnerabilities, Improvement Plan, Reliability, Discuss-with-AI).
+  Converted from the shared EngineReportBase shell to the standalone Career
+  template (public constructor params unchanged). All engine field names
+  cross-checked against a live `legal_dispute_specialist_engine.analyze()`
+  dump. Both apps; 108 new `lg` keys (en+hi+hinglish). Commit `cbdb03a`,
+  2026-07-30. Backfill: `lg_source.json`.
 
 ## How to run
 Invoke the `engineSpecialistUI` agent. It reads this file, takes the first
