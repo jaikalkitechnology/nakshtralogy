@@ -166,7 +166,7 @@ class _MentalState extends State<MentalReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -263,7 +263,7 @@ class _MentalState extends State<MentalReportScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.hub_rounded, title: l.mnKarakaTitle, subtitle: l.mnKarakaSubtitle, color: KColors.purple),
       _card(child: Column(children: map.entries.map((e) {
-        final v = e.value is num ? (e.value as num).toDouble() : 0.0;
+        final v = e.value is num ? (e.value is num ? e.value as num : 0).toDouble() : 0.0;
         final c = _col(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
           SizedBox(width: 70, child: Text(e.key.toString(), style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w700))),
@@ -296,12 +296,12 @@ class _MentalState extends State<MentalReportScreen> {
       const SizedBox(height: 10),
       if (protective.isNotEmpty) ...[
         _catLabel('🛡️', l.mnStrengths, KColors.green),
-        ...protective.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...protective.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (pressures.isNotEmpty) ...[
         _catLabel('🌱', l.mnGrowthAreas, KColors.orange),
-        ...pressures.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...pressures.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
       if (_str('saturn_sade_sati_status').isNotEmpty) ...[const SizedBox(height: 6),
         _pill('${l.mnSadeSatiStatus}: ${_titleCase(_str('saturn_sade_sati_status'))}', KColors.purple)],
@@ -375,9 +375,9 @@ class _MentalState extends State<MentalReportScreen> {
   }
 
   Widget _sortedBars(Map<String, dynamic> m, {bool gentle = false}) {
-    final sorted = m.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
+    final sorted = m.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
     return _card(child: Column(children: sorted.take(8).map((e) {
-      final v = (e.value as num).toDouble();
+      final v = (e.value is num ? e.value as num : 0).toDouble();
       final c = gentle ? _gentleColor(v) : _col(v);
       return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
         SizedBox(width: 96, child: Text(_titleCase(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 11))),
@@ -599,7 +599,7 @@ class _MentalState extends State<MentalReportScreen> {
   Widget _trendChart(List<Map<String, dynamic>> trend) {
     return _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: trend.take(10).map((y) {
       final year = y['year']?.toString() ?? '';
-      final wellness = (y['wellness'] as num?)?.toDouble() ?? 0;
+      final wellness = (y['wellness'] is num ? y['wellness'] as num : null)?.toDouble() ?? 0;
       final peak = y['is_peak'] == true;
       final c = peak ? KColors.green : _col(wellness);
       return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
@@ -712,7 +712,7 @@ class _MentalState extends State<MentalReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 140, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

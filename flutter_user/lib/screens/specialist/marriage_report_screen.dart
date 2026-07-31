@@ -156,7 +156,7 @@ class _MarriageState extends State<MarriageReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -347,7 +347,7 @@ class _MarriageState extends State<MarriageReportScreen> {
       [l.mrSharedValues, _sc('shared_values_score')],
       [l.mrSpiritual, _sc('spiritual_alignment_score')],
       [l.mrConflictRes, _sc('conflict_resolution_capacity_score')],
-    ].where((r) => (r[1] as double) > 0).toList();
+    ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.favorite_border_rounded, title: l.mrHarmonyHdr, subtitle: l.mrHarmonySub, color: KColors.green),
@@ -442,7 +442,7 @@ class _MarriageState extends State<MarriageReportScreen> {
       final m = p[1];
       if (m is! Map) continue;
       final mm = m.cast<String, dynamic>();
-      final score = (mm['strength_score'] as num?)?.toDouble() ?? 0;
+      final score = (mm['strength_score'] is num ? mm['strength_score'] as num : null)?.toDouble() ?? 0;
       final col = _mrColor(score);
       cards.add(Container(
         margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
@@ -479,14 +479,14 @@ class _MarriageState extends State<MarriageReportScreen> {
       [l.mrDomesticPeace, _sc('domestic_peace_score')],
       [l.mrFertility, _sc('fertility_within_marriage_score')],
       [l.mrParenting, _sc('parenting_harmony_between_spouses_score')],
-    ].where((r) => (r[1] as double) > 0).toList();
+    ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
     final children = _str('children_number_signature');
     final childTiming = _str('children_timing_within_marriage_signature');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.home_rounded, title: l.mrFamilyHome, color: KColors.blue),
       Wrap(spacing: 10, runSpacing: 10, children: rows.map((r) =>
-        SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] as double))).toList()),
+        SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] is num ? (r[0] as String, r[1] as num).toDouble() : 0.0))).toList()),
       if (childTiming.isNotEmpty || children.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 10),
         child: _card(child: Row(children: [const Text('👶', style: TextStyle(fontSize: 15)), const SizedBox(width: 10),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -518,8 +518,8 @@ class _MarriageState extends State<MarriageReportScreen> {
     final d9 = _map('d9_validation'), d10 = _map('d10_marriage_validation'), d60 = _map('d60_marriage_validation');
     final standing = (d9['d9_overall_marriage_standing']?.toString() ?? '').toLowerCase();
     final d9Score = standing.contains('strong') || standing.contains('exceptional') ? 75.0 : standing.contains('moderate') || standing.contains('standard') ? 50.0 : 30.0;
-    final d10Score = (d10['d10_dual_career_marriage_score'] as num?)?.toDouble() ?? 0;
-    final d60Score = (d60['d60_past_life_marriage_capital_score'] as num?)?.toDouble() ?? 0;
+    final d10Score = (d10['d10_dual_career_marriage_score'] is num ? d10['d10_dual_career_marriage_score'] as num : null)?.toDouble() ?? 0;
+    final d60Score = (d60['d60_past_life_marriage_capital_score'] is num ? d60['d60_past_life_marriage_capital_score'] as num : null)?.toDouble() ?? 0;
     final cards = <Widget>[];
     if (d9.isNotEmpty) cards.add(_chartCard(l, l.mrD9, d9Score, d9['d9_primary_marriage_signature']?.toString() ?? '',
       ['D9 7L: ${d9['d9_seventh_lord_dignity']}', 'Venus: ${d9['d9_venus_dignity']} · Jupiter: ${d9['d9_jupiter_dignity']}', 'DK: ${d9['d9_darakaraka_dignity']}']));
@@ -564,7 +564,7 @@ class _MarriageState extends State<MarriageReportScreen> {
       [l.mrRiskDistance, _sc('emotional_distance_risk_score')],
       [l.mrRiskInfidelity, _sc('infidelity_risk_score')],
       [l.mrRiskFinance, _sc('financial_disagreement_risk_score')],
-    ].where((r) => (r[1] as double) > 0).toList();
+    ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     final mangal = _data?['mangal_dosh_present'] == true;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.shield_outlined, title: l.mrChallenges, color: KColors.orange),
@@ -688,7 +688,7 @@ class _MarriageState extends State<MarriageReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
         Text(l.crReliabilityExplain, style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5)),
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 140, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

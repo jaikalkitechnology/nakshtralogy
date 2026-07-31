@@ -151,7 +151,7 @@ class _MilanReportState extends State<MilanReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -196,8 +196,8 @@ class _MilanReportState extends State<MilanReportScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.grid_view_rounded, title: l.kmAshtakootTitle, subtitle: l.kmAshtakootSubtitle, color: AppColors.gold),
       ...gunas.map((g) {
-        final score = (g['score'] as num?)?.toDouble() ?? 0;
-        final max = (g['max'] as num?)?.toDouble() ?? 1;
+        final score = (g['score'] is num ? g['score'] as num : null)?.toDouble() ?? 0;
+        final max = (g['max'] is num ? g['max'] as num : null)?.toDouble() ?? 1;
         final pct = max > 0 ? (score / max * 100) : 0.0;
         final hasDosha = g['has_dosha'] == true;
         final c = hasDosha ? KColors.orange : _col(pct);
@@ -507,7 +507,7 @@ class _MilanReportState extends State<MilanReportScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.shield_outlined, title: l.kmRisksTitle, color: KColors.orange),
       ...top3.map((r) {
-        final severity = (r['severity'] as num?)?.toDouble() ?? 0;
+        final severity = (r['severity'] is num ? r['severity'] as num : null)?.toDouble() ?? 0;
         final c = _riskColor(severity);
         return Container(
           margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
@@ -680,7 +680,7 @@ class _MilanReportState extends State<MilanReportScreen> {
     final pct = raw <= 1 ? raw * 100 : raw;
     final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
     final b = _map('confidence_breakdown');
-    double layer(String k) { final v = b[k]; return v is Map ? ((v['strength'] as num?)?.toDouble() ?? 0) : 0; }
+    double layer(String k) { final v = b[k]; return v is Map ? ((v['strength'] is num ? v['strength'] as num : null)?.toDouble() ?? 0) : 0; }
     final layers = <List<Object>>[
       [l.kmLayerAshtakoot, layer('ashtakoot')],
       [l.kmLayerD9, layer('d9_navamsa')],
@@ -704,7 +704,7 @@ class _MilanReportState extends State<MilanReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

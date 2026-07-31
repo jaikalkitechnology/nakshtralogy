@@ -133,7 +133,7 @@ class _KarmaLinkageReportState extends State<KarmaLinkageReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l, comps).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -485,11 +485,11 @@ class _KarmaLinkageReportState extends State<KarmaLinkageReportScreen> {
     final a = _map('deep_audit_parameter_table');
     if (a.isEmpty) return const SizedBox.shrink();
     final params = _listOf(a, 'audited_parameters').whereType<Map>().map((e) => e.cast<String, dynamic>()).toList()
-      ..sort((x, y) => ((y['score'] as num?) ?? 0).compareTo((x['score'] as num?) ?? 0));
+      ..sort((x, y) => ((y['score'] is num ? y['score'] as num : null) ?? 0).compareTo((x['score'] is num ? x['score'] as num : null) ?? 0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.fact_check_rounded, title: l.klAuditTitle, subtitle: l.klAuditSubtitle(_strOf(a, 'total_parameters_audited')), color: KColors.blue),
       _card(child: Column(children: params.take(10).map((p) {
-        final score = (p['score'] as num?)?.toDouble() ?? 0;
+        final score = (p['score'] is num ? p['score'] as num : null)?.toDouble() ?? 0;
         final c = _col(score);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
           Expanded(flex: 3, child: Text(p['parameter']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 10.5), maxLines: 1, overflow: TextOverflow.ellipsis)),
@@ -501,7 +501,7 @@ class _KarmaLinkageReportState extends State<KarmaLinkageReportScreen> {
       }).toList())),
       if (_strOf(a, 'audit_completeness').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8),
         child: Text(_strOf(a, 'audit_completeness'), style: const TextStyle(color: AppColors.smoke, fontSize: 10.5, fontStyle: FontStyle.italic))),
-      _advanced(l, params.skip(10).map((p) => '${p['parameter']}: ${(p['score'] as num?)?.toStringAsFixed(0) ?? ''} (${p['classical_basis'] ?? ''})').toList()),
+      _advanced(l, params.skip(10).map((p) => '${p['parameter']}: ${(p['score'] is num ? p['score'] as num : null)?.toStringAsFixed(0) ?? ''} (${p['classical_basis'] ?? ''})').toList()),
     ]);
   }
 

@@ -130,7 +130,7 @@ class MultiChartReportScreen extends StatelessWidget {
     for (final e in data.entries) {
       if (_skip.contains(e.key)) continue;
       if (e.value is num && _isScore(e.key)) {
-        double v = (e.value as num).toDouble();
+        double v = (e.value is num ? e.value as num : 0).toDouble();
         if (e.key.contains('confidence') && v <= 1.0) v *= 100;
         scores[e.key] = v;
       }
@@ -303,7 +303,7 @@ class MultiChartReportScreen extends StatelessWidget {
     final children = <Widget>[];
     for (final e in map.entries) {
       if (e.value is num) {
-        final v = (e.value as num).toDouble();
+        final v = (e.value is num ? e.value as num : 0).toDouble();
         final clamped = v.clamp(0.0, 100.0);
         final c = v >= 70 ? AppColors.success : v >= 45 ? AppColors.gold : v >= 25 ? const Color(0xFFE5A93A) : AppColors.error;
         children.add(Padding(
@@ -393,7 +393,7 @@ class MultiChartReportScreen extends StatelessWidget {
   Widget _mapTile(int idx, Map<String, dynamic> item) {
     final title = item['name'] ?? item['factor'] ?? item['type'] ?? item['planet'] ?? item['category'] ?? item['title'] ?? '';
     final desc = item['description'] ?? item['advice'] ?? item['text'] ?? item['note'] ?? item['explanation'] ?? '';
-    final score = item.entries.where((e) => e.value is num && _isScore(e.key)).map((e) => (e.value as num).toDouble()).toList();
+    final score = item.entries.where((e) => e.value is num && _isScore(e.key)).map((e) => (e.value is num ? e.value as num : 0).toDouble()).toList();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),

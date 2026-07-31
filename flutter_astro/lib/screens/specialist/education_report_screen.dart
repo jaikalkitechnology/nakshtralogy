@@ -160,7 +160,7 @@ class _EducationState extends State<EducationReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -365,9 +365,9 @@ class _EducationState extends State<EducationReportScreen> {
     final d24 = _map('d24_validation'), d4 = _map('d4_validation'), d9 = _map('d9_validation'), d60 = _map('d60_validation');
     final standing = (d24['d24_overall_education_standing']?.toString() ?? '').toLowerCase();
     final d24Score = standing.contains('strong') ? 75.0 : standing.contains('moderate') ? 50.0 : standing.contains('struggl') ? 30.0 : 45.0;
-    final d4Score = (d4['d4_formal_education_strength_score'] as num?)?.toDouble() ?? 0;
-    final d9Score = (d9['d9_dharmic_learning_score'] as num?)?.toDouble() ?? 0;
-    final d60Score = (d60['d60_past_life_learning_capital_score'] as num?)?.toDouble() ?? 0;
+    final d4Score = (d4['d4_formal_education_strength_score'] is num ? d4['d4_formal_education_strength_score'] as num : null)?.toDouble() ?? 0;
+    final d9Score = (d9['d9_dharmic_learning_score'] is num ? d9['d9_dharmic_learning_score'] as num : null)?.toDouble() ?? 0;
+    final d60Score = (d60['d60_past_life_learning_capital_score'] is num ? d60['d60_past_life_learning_capital_score'] as num : null)?.toDouble() ?? 0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.edVerificationTitle, color: KColors.green),
       _chartCard(l, l.edD24Learning, d24Score, d24['d24_primary_education_signature']?.toString() ?? '',
@@ -414,7 +414,7 @@ class _EducationState extends State<EducationReportScreen> {
         final i = e.key;
         final item = e.value;
         final name = _titleCase(item['subject']?.toString() ?? '');
-        final score = (item['score'] as num?)?.toDouble() ?? 0;
+        final score = (item['score'] is num ? item['score'] as num : null)?.toDouble() ?? 0;
         final isTop = i < 3;
         final c = isTop ? AppColors.gold : _col(score);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
@@ -712,7 +712,7 @@ class _EducationState extends State<EducationReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

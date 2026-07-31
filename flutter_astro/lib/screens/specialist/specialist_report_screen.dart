@@ -72,7 +72,7 @@ class _State extends State<SpecialistReportScreen> {
     for (final e in d.entries) {
       if (_skip.contains(e.key)) continue;
       if (e.value is num && _isScore(e.key)) {
-        double v = (e.value as num).toDouble();
+        double v = (e.value is num ? e.value as num : 0).toDouble();
         if (e.key.contains('confidence') && v <= 1.0) v *= 100;
         scores[e.key] = v;
       } else if (e.value is String && (e.value as String).isNotEmpty) {
@@ -124,7 +124,7 @@ class _State extends State<SpecialistReportScreen> {
         // ── Confidence ──
         if (confScore != null) ...[
           ReportHeader('Analysis', 'Confidence', 'QUALITY'),
-          ConfidenceBlock(score: (confScore as num).toDouble(),
+          ConfidenceBlock(score: (confScore is num ? confScore as num : 0).toDouble(),
             statement: confStatement?.toString(),
             breakdown: (confBreakdown is Map) ? confBreakdown.cast<String, dynamic>() : {}),
         ],
@@ -221,7 +221,7 @@ class _State extends State<SpecialistReportScreen> {
 
     for (final e in map.entries) {
       if (e.value is num && _isScore(e.key)) {
-        double v = (e.value as num).toDouble();
+        double v = (e.value is num ? e.value as num : 0).toDouble();
         if (e.key.contains('confidence') && v <= 1.0) v *= 100;
         innerScores[e.key] = v;
       } else if (e.value is String && (e.value as String).isNotEmpty) {
@@ -307,7 +307,7 @@ class _State extends State<SpecialistReportScreen> {
   Widget _mapTile(Map<String, dynamic> item) {
     final title = item['name'] ?? item['factor'] ?? item['type'] ?? item['planet'] ?? item['category'] ?? '';
     final desc = item['description'] ?? item['advice'] ?? item['text'] ?? item['note'] ?? item['remedy'] ?? '';
-    final score = item.entries.where((e) => e.value is num && _isScore(e.key)).map((e) => (e.value as num).toDouble()).toList();
+    final score = item.entries.where((e) => e.value is num && _isScore(e.key)).map((e) => (e.value is num ? e.value as num : 0).toDouble()).toList();
 
     return Container(margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(color: Colors.white.withOpacity(0.03), borderRadius: BorderRadius.circular(8)),

@@ -161,7 +161,7 @@ class _LegalState extends State<LegalReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -240,7 +240,7 @@ class _LegalState extends State<LegalReportScreen> {
       KSectionHeader(icon: Icons.hub_rounded, title: l.lgKarakaTitle, subtitle: l.lgKarakaSubtitle, color: KColors.purple),
       _card(child: Column(children: map.entries.map((e) {
         final info = e.value is Map ? (e.value as Map).cast<String, dynamic>() : <String, dynamic>{};
-        final v = (info['strength'] as num?)?.toDouble() ?? 0;
+        final v = (info['strength'] is num ? info['strength'] as num : null)?.toDouble() ?? 0;
         final role = info['role']?.toString() ?? '';
         final c = _col(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
@@ -270,12 +270,12 @@ class _LegalState extends State<LegalReportScreen> {
         child: _pill('${l.lgCurrentPhase}: ${_titleCase(phase)}', KColors.blue)),
       if (yogas.isNotEmpty) ...[
         _catLabel('🛡️', l.lgProtections, KColors.green),
-        ...yogas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...yogas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (doshas.isNotEmpty) ...[
         _catLabel('⚠️', l.lgDisputePressures, KColors.orange),
-        ...doshas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...doshas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
     ]);
   }
@@ -296,7 +296,7 @@ class _LegalState extends State<LegalReportScreen> {
     final d6 = _map('d6_validation');
     final d9Score = _sc('d9_dharmic_alignment_score');
     if (d6.isEmpty && d9Score == 0) return const SizedBox.shrink();
-    final d6Score = (d6['d6_score'] as num?)?.toDouble() ?? 0;
+    final d6Score = (d6['d6_score'] is num ? d6['d6_score'] as num : null)?.toDouble() ?? 0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.lgVerificationTitle, color: KColors.green),
       if (d6.isNotEmpty) _chartCard(l, l.lgD6Litigation, d6Score, _titleCase(d6['d6_litigation_karma_type']?.toString() ?? ''),
@@ -360,12 +360,12 @@ class _LegalState extends State<LegalReportScreen> {
     final cats = _map('dispute_category_susceptibility_scores');
     if (cats.isEmpty) return const SizedBox.shrink();
     final sorted = cats.entries.where((e) => e.value is num).toList()
-      ..sort((a, b) => (b.value as num).compareTo(a.value as num));
+      ..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
     final lowRisk = _list('low_risk_legal_categories').map((e) => e.toString()).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.category_rounded, title: l.lgDisputeCategoriesTitle, color: KColors.orange),
       _card(child: Column(children: sorted.take(12).map((e) {
-        final v = (e.value as num).toDouble();
+        final v = (e.value is num ? e.value as num : 0).toDouble();
         final c = _riskColor(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
           SizedBox(width: 96, child: Text(_titleCase(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 11))),
@@ -556,7 +556,7 @@ class _LegalState extends State<LegalReportScreen> {
   Widget _trendChart(List<Map<String, dynamic>> trend) {
     return _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: trend.take(10).map((y) {
       final year = y['year']?.toString() ?? '';
-      final stress = (y['stress'] as num?)?.toDouble() ?? 0;
+      final stress = (y['stress'] is num ? y['stress'] as num : null)?.toDouble() ?? 0;
       final peak = y['is_peak'] == true;
       final clear = y['is_clear'] == true;
       final c = peak ? KColors.red : clear ? KColors.green : _riskColor(stress);
@@ -664,7 +664,7 @@ class _LegalState extends State<LegalReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 140, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),
