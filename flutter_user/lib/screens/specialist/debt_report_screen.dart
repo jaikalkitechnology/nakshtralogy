@@ -117,10 +117,10 @@ class _DebtReportState extends State<DebtReportScreen> {
   Widget _snapshot(AppLocalizations l) {
     final capacity = _sc('debt_recovery_capacity_score');
     final probability = _sc('recovery_probability_pct');
-    final freedomNow = (100 - _sc('current_debt_load_score')).clamp(0, 100);
+    final freedomNow = (100 - _sc('current_debt_load_score')).clamp(0, 100).toDouble();
     final dtiHealth = _sc('debt_to_income_health_score');
     final resilience = _sc('psychological_resilience_score');
-    final overall = ((capacity + probability + freedomNow + dtiHealth + resilience) / 5).clamp(0, 100);
+    final overall = ((capacity + probability + freedomNow + dtiHealth + resilience) / 5).clamp(0, 100).toDouble();
     final col = _debtColor(overall);
     final verdict = _str('recovery_verdict');
     final years = _str('timeline_to_debt_free_years');

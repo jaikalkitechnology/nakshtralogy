@@ -122,7 +122,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
     final coherence = _sc('life_path_coherence_score');
     final fulfillment = _sc('life_fulfillment_potential_pct');
     final momentum = _sc('karmic_momentum_score');
-    final overall = ((dharma + fortune + coherence + fulfillment + momentum) / 5).clamp(0, 100);
+    final overall = ((dharma + fortune + coherence + fulfillment + momentum) / 5).clamp(0, 100).toDouble();
     final col = _col(overall);
     final verdict = _str('overall_life_path_verdict');
     final archetype = _titleCase(_str('life_path_archetype'));
