@@ -118,7 +118,7 @@ class _LegalState extends State<LegalReportScreen> {
     final col = _col(overall);
     final theme = _map('core_legal_theme');
     final summary = theme['explanation']?.toString().isNotEmpty == true ? theme['explanation'].toString() : _str('plain_statement');
-    final safety = (100 - _sc('legal_issue_vulnerability_score')).clamp(0, 100);
+    final safety = (100 - _sc('legal_issue_vulnerability_score')).clamp(0, 100).toDouble();
     final gauges = <List<Object>>[
       [l.lgResilience, overall],
       [l.lgResolutionCapacity, _sc('dispute_resolution_capacity_score')],

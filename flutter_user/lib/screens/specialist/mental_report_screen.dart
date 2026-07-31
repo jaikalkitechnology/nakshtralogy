@@ -123,7 +123,7 @@ class _MentalState extends State<MentalReportScreen> {
     final theme = _map('core_mental_theme');
     final summary = _str('chart_reminds_you_that').isNotEmpty ? _str('chart_reminds_you_that')
       : (theme['explanation']?.toString().isNotEmpty == true ? theme['explanation'].toString() : _str('plain_statement'));
-    final innerCalm = (100 - ((_sc('anxiety_vulnerability_score') + _sc('depression_vulnerability_score')) / 2)).clamp(0, 100);
+    final innerCalm = (100 - ((_sc('anxiety_vulnerability_score') + _sc('depression_vulnerability_score')) / 2)).clamp(0, 100).toDouble();
     final gauges = <List<Object>>[
       [l.mnResilience, overall],
       [l.mnStability, _sc('mental_stability_score')],
@@ -321,8 +321,8 @@ class _MentalState extends State<MentalReportScreen> {
   //  5 — VERIFIED ACROSS CHARTS (D9 / D30)
   // ══════════════════════════════════════════════════════════════════
   Widget _verification(AppLocalizations l) {
-    final d9 = (_sc('d9_mental_multiplier') * 100).clamp(0, 100);
-    final d30 = (_sc('d30_vulnerability_multiplier') * 100).clamp(0, 100);
+    final d9 = (_sc('d9_mental_multiplier') * 100).clamp(0, 100).toDouble();
+    final d30 = (_sc('d30_vulnerability_multiplier') * 100).clamp(0, 100).toDouble();
     if (d9 == 0 && d30 == 0) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.mnVerificationTitle, color: KColors.green),
