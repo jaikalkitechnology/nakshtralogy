@@ -167,7 +167,7 @@ class _BizState extends State<BusinessReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -392,9 +392,9 @@ class _BizState extends State<BusinessReportScreen> {
     final d10 = _map('d10_validation'), d11 = _map('d11_validation'), d9 = _map('d9_validation'), d60 = _map('d60_validation');
     final standing = (d10['d10_overall_business_standing']?.toString() ?? '').toLowerCase();
     final d10Score = standing.contains('strong') ? 75.0 : standing.contains('moderate') ? 50.0 : 30.0;
-    final d11Score = (d11['d11_gains_quality_score'] as num?)?.toDouble() ?? 0;
-    final d9Score = (d9['d9_dharmic_business_score'] as num?)?.toDouble() ?? 0;
-    final d60Score = (d60['d60_past_life_business_capital_score'] as num?)?.toDouble() ?? 0;
+    final d11Score = (d11['d11_gains_quality_score'] is num ? d11['d11_gains_quality_score'] as num : null)?.toDouble() ?? 0;
+    final d9Score = (d9['d9_dharmic_business_score'] is num ? d9['d9_dharmic_business_score'] as num : null)?.toDouble() ?? 0;
+    final d60Score = (d60['d60_past_life_business_capital_score'] is num ? d60['d60_past_life_business_capital_score'] as num : null)?.toDouble() ?? 0;
     final cards = <Widget>[];
     if (d10.isNotEmpty) cards.add(_chartCard(l, l.bzD10, d10Score, d10['d10_primary_venture_signature']?.toString() ?? '',
       ['D10 10L: ${d10['d10_10_lord_dignity']}', 'AmK: ${d10['d10_amatyakaraka_dignity']} · DK: ${d10['d10_darakaraka_dignity']}']));
@@ -442,9 +442,9 @@ class _BizState extends State<BusinessReportScreen> {
       [l.bzSkillSales, _sc('sales_persuasion_score')],
       [l.bzSkillFinance, _sc('financial_acumen_score')],
       [l.bzSkillOps, _sc('operational_discipline_score')],
-    ].where((r) => (r[1] as double) > 0).toList();
+    ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.psychology_rounded, title: l.bzFounderSkills, color: KColors.blue),
       ...List.generate(rows.length, (idx) {
@@ -483,7 +483,7 @@ class _BizState extends State<BusinessReportScreen> {
       ...List.generate(list.length > 6 ? 6 : list.length, (i) {
         final item = list[i];
         final domain = _titleCase(item['domain']?.toString() ?? '');
-        final score = (item['score'] as num?)?.toDouble() ?? 0;
+        final score = (item['score'] is num ? item['score'] as num : null)?.toDouble() ?? 0;
         final isTop = i == 0;
         final col = isTop ? AppColors.gold : _bizColor(score);
         return Container(margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
@@ -546,7 +546,7 @@ class _BizState extends State<BusinessReportScreen> {
       [l.bzPartnerViability, _sc('partnership_viability_score')],
       [l.bzTeamBuilding, _sc('team_building_capacity_score')],
     ];
-    if (partnerSig.isEmpty && cofounder.isEmpty && gauges.every((g) => (g[1] as double) == 0)) return const SizedBox.shrink();
+    if (partnerSig.isEmpty && cofounder.isEmpty && gauges.every((g) => (g[1] is num ? (g[1] as num).toDouble() : 0.0) == 0)) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.groups_rounded, title: l.bzPartnership, color: KColors.blue),
       if (cofounder.isNotEmpty) Container(
@@ -562,7 +562,7 @@ class _BizState extends State<BusinessReportScreen> {
         ])),
       Row(children: gauges.map((g) => Expanded(child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: _meterTile(g[0] as String, g[1] as double)))).toList()),
+        child: _meterTile(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)))).toList()),
       _advanced(l, [
         '${l.bzTechDarakaraka}: ${KundliNames.planet(_str('darakaraka_planet'), Localizations.localeOf(context))} · ${l.crDignity}: ${_str('darakaraka_dignity')}',
         '${l.bzCofounderFit}: ${_str('cofounder_compatibility_signature')}',
@@ -598,7 +598,7 @@ class _BizState extends State<BusinessReportScreen> {
       [l.bzHybridViability, _sc('hybrid_career_business_viability_score')],
       [l.bzFallback, _sc('employment_as_fallback_strength_score')],
     ];
-    if (path.isEmpty && gauges.every((g) => (g[1] as double) == 0)) return const SizedBox.shrink();
+    if (path.isEmpty && gauges.every((g) => (g[1] is num ? (g[1] as num).toDouble() : 0.0) == 0)) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.savings_rounded, title: l.bzFunding, color: KColors.green),
       if (path.isNotEmpty) Container(
@@ -610,8 +610,8 @@ class _BizState extends State<BusinessReportScreen> {
           const SizedBox(height: 4),
           Text(_cap(path), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w700, height: 1.35)),
         ])),
-      Wrap(spacing: 10, runSpacing: 10, children: gauges.where((g) => (g[1] as double) > 0).map((g) =>
-        SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(g[0] as String, g[1] as double))).toList()),
+      Wrap(spacing: 10, runSpacing: 10, children: gauges.where((g) => (g[1] is num ? (g[1] as num).toDouble() : 0.0) > 0).map((g) =>
+        SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0))).toList()),
       _advanced(l, ['${l.bzDebtStyle}: ${_str('debt_risk_tolerance_signature')}']),
     ]);
   }
@@ -773,7 +773,7 @@ class _BizState extends State<BusinessReportScreen> {
     final pct = raw <= 1 ? raw * 100 : raw;
     final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
     final b = _map('confidence_breakdown');
-    double layer(String k) { final v = b[k]; if (v is Map && v['strength'] is num) return (v['strength'] as num).toDouble(); return 0; }
+    double layer(String k) { final v = b[k]; if (v is Map && v['strength'] is num) return (v['strength'] is num ? v['strength'] as num : 0).toDouble(); return 0; }
     final layers = <List<Object>>[
       [l.bzLayerBirth, layer('d1')],
       [l.bzLayerNavamsa, layer('d9')],
@@ -792,7 +792,7 @@ class _BizState extends State<BusinessReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
         Text(l.crReliabilityExplain, style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5)),
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

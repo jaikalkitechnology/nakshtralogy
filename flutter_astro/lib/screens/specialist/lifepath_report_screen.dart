@@ -172,7 +172,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -252,11 +252,11 @@ class _LifePathReportState extends State<LifePathReportScreen> {
     if (map.isEmpty) return const SizedBox.shrink();
     final loc = Localizations.localeOf(context);
     final entries = map.entries.where((e) => e.value is Map).toList()
-      ..sort((a, b) => (((b.value as Map)['strength'] as num?) ?? 0).compareTo(((a.value as Map)['strength'] as num?) ?? 0));
+      ..sort((a, b) => (((b.value as Map)['strength'] is num ? (b.value as Map)['strength'] as num : null) ?? 0).compareTo(((a.value as Map)['strength'] is num ? (a.value as Map)['strength'] as num : null) ?? 0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.insights_rounded, title: l.lpKarakaTitle, subtitle: l.lpKarakaSubtitle, color: KColors.purple),
       _card(child: Column(children: entries.map((e) {
-        final v = ((e.value as Map)['strength'] as num?)?.toDouble() ?? 0;
+        final v = ((e.value as Map)['strength'] is num ? (e.value as Map)['strength'] as num : null)?.toDouble() ?? 0;
         final c = _col(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
           SizedBox(width: 80, child: Text(KundliNames.planet(e.key, loc), style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w700))),
@@ -276,12 +276,12 @@ class _LifePathReportState extends State<LifePathReportScreen> {
     final d9 = _map('d9_validation');
     final d60 = _map('d60_validation');
     if (d9.isEmpty && d60.isEmpty) return const SizedBox.shrink();
-    final d9Score = (d9['d9_soul_alignment_score'] as num?)?.toDouble() ?? 0;
+    final d9Score = (d9['d9_soul_alignment_score'] is num ? d9['d9_soul_alignment_score'] as num : null)?.toDouble() ?? 0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.lpVerificationTitle, color: KColors.green),
       if (d9.isNotEmpty) _chartCard(l, l.lpD9Label, d9Score, l.lpD9Explain(_titleCase(d9['soul_evolution_stage']?.toString() ?? '')), [
         '${l.lpD9JupiterDignity}: ${d9['d9_jupiter_dignity'] ?? ''}',
-        '${l.lpD9DharmaMultiplier}: ${(d9['d9_dharma_multiplier'] as num?)?.toStringAsFixed(2) ?? ''}',
+        '${l.lpD9DharmaMultiplier}: ${(d9['d9_dharma_multiplier'] is num ? d9['d9_dharma_multiplier'] as num : null)?.toStringAsFixed(2) ?? ''}',
       ]),
       if (d60.isNotEmpty) Container(
         margin: const EdgeInsets.only(top: 4), padding: const EdgeInsets.all(14),
@@ -336,12 +336,12 @@ class _LifePathReportState extends State<LifePathReportScreen> {
       const SizedBox(height: 10),
       if (fortune.isNotEmpty) ...[
         _catLabel('🍀', l.lpFortuneBoosters, KColors.green),
-        ...fortune.take(8).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...fortune.take(8).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (blocks.isNotEmpty) ...[
         _catLabel('⛔', l.lpLuckBlocks, KColors.orange),
-        ...blocks.map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...blocks.map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
     ]);
   }
@@ -367,7 +367,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
       [l.lpDomainHealing, _sc('healing_path_indicator_score'), 'healing'],
       [l.lpDomainCreative, _sc('creative_expression_path_score'), 'creative'],
     ];
-    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.explore_rounded, title: l.lpPurposeTitle, color: KColors.blue),
       ...rows.map((r) {
@@ -465,7 +465,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
   Widget _trendChart(List<Map<String, dynamic>> trend) {
     return _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: trend.take(12).map((y) {
       final year = y['year']?.toString() ?? '';
-      final fortune = (y['fortune'] as num?)?.toDouble() ?? 0;
+      final fortune = (y['fortune'] is num ? y['fortune'] as num : null)?.toDouble() ?? 0;
       final peak = y['is_peak'] == true;
       final challenging = y['is_challenging'] == true;
       final c = peak ? KColors.green : challenging ? KColors.red : _col(fortune);
@@ -783,7 +783,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

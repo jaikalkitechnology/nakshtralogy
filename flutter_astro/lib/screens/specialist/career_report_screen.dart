@@ -166,7 +166,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -324,8 +324,8 @@ class _CareerReportState extends State<CareerReportScreen> {
     final d10 = _map('d10_validation'), d9 = _map('d9_validation'), d60 = _map('d60_career_validation');
     final standing = (d10['d10_overall_career_standing']?.toString() ?? '').toLowerCase();
     final d10Score = standing.contains('strong') ? 75.0 : standing.contains('moderate') ? 50.0 : 30.0;
-    final d9Score = (d9['d9_career_dharma_alignment_score'] as num?)?.toDouble() ?? 0;
-    final d60Score = (d60['d60_past_life_work_capital_score'] as num?)?.toDouble() ?? 0;
+    final d9Score = (d9['d9_career_dharma_alignment_score'] is num ? d9['d9_career_dharma_alignment_score'] as num : null)?.toDouble() ?? 0;
+    final d60Score = (d60['d60_past_life_work_capital_score'] is num ? d60['d60_past_life_work_capital_score'] as num : null)?.toDouble() ?? 0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.crVerification, color: KColors.green),
       _chartCard(l, l.crD10Career, d10Score, d10['d10_primary_career_signature']?.toString() ?? '',
@@ -411,7 +411,7 @@ class _CareerReportState extends State<CareerReportScreen> {
       [l.crPortfolio, _sc('mixed_portfolio_fit_score'), 'portfolio'],
       [l.crLeadership, _sc('team_leadership_fit_score'), 'leader'],
     ];
-    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.work_outline_rounded, title: l.crWorkStyle, color: KColors.blue),
       ...rows.map((r) {
@@ -640,10 +640,10 @@ class _CareerReportState extends State<CareerReportScreen> {
     final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
     final b = _map('confidence_breakdown');
     final layers = <List<Object>>[
-      [l.crBirthChart, (b['d1'] as num?)?.toDouble() ?? 0],
-      [l.crNavamsa, (b['d9'] as num?)?.toDouble() ?? 0],
-      [l.crDashamsa, (b['d10'] as num?)?.toDouble() ?? 0],
-      [l.crShashtiamsa, (b['d60'] as num?)?.toDouble() ?? 0],
+      [l.crBirthChart, (b['d1'] is num ? b['d1'] as num : null)?.toDouble() ?? 0],
+      [l.crNavamsa, (b['d9'] is num ? b['d9'] as num : null)?.toDouble() ?? 0],
+      [l.crDashamsa, (b['d10'] is num ? b['d10'] as num : null)?.toDouble() ?? 0],
+      [l.crShashtiamsa, (b['d60'] is num ? b['d60'] as num : null)?.toDouble() ?? 0],
     ];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_user_rounded, title: l.crReliability, color: KColors.blue),
@@ -657,7 +657,7 @@ class _CareerReportState extends State<CareerReportScreen> {
         const SizedBox(height: 10),
         Text(l.crReliabilityExplain, style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5)),
         _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.map((la) {
-          final v = (la[1] as double) * 100;
+          final v = (la[1] is num ? (la[1] as num).toDouble() : 0.0) * 100;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),
             Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(3),

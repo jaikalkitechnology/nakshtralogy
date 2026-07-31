@@ -171,7 +171,7 @@ class _DebtReportState extends State<DebtReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -250,11 +250,11 @@ class _DebtReportState extends State<DebtReportScreen> {
     final map = _map('karaka_strength_table');
     if (map.isEmpty) return const SizedBox.shrink();
     final loc = Localizations.localeOf(context);
-    final sorted = map.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
+    final sorted = map.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.insights_rounded, title: l.dbKarakaTitle, subtitle: l.dbKarakaSubtitle, color: KColors.purple),
       _card(child: Column(children: sorted.map((e) {
-        final v = (e.value as num).toDouble();
+        final v = (e.value is num ? e.value as num : 0).toDouble();
         final c = _debtColor(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
           SizedBox(width: 80, child: Text(KundliNames.planet(e.key, loc), style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w700))),
@@ -273,14 +273,14 @@ class _DebtReportState extends State<DebtReportScreen> {
   Widget _verification(AppLocalizations l) {
     final d6 = _map('d6_validation');
     if (d6.isEmpty) return const SizedBox.shrink();
-    final score = (d6['d6_score'] as num?)?.toDouble() ?? 0;
+    final score = (d6['d6_score'] is num ? d6['d6_score'] as num : null)?.toDouble() ?? 0;
     final reasons = (d6['reasons'] is List) ? (d6['reasons'] as List).map((e) => e.toString()).toList() : <String>[];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.dbVerificationTitle, color: KColors.green),
       _chartCard(l, l.dbD6Label, score, d6['label']?.toString() ?? '', [
         '${l.dbD6LordDignity}: ${d6['d6_6_lord_dignity'] ?? ''}',
         '${l.dbD6Severity}: ${_titleCase(d6['debt_karma_severity']?.toString() ?? '')}',
-        '${l.dbD6Multiplier}: ${(d6['d6_debt_multiplier'] as num?)?.toStringAsFixed(2) ?? ''}',
+        '${l.dbD6Multiplier}: ${(d6['d6_debt_multiplier'] is num ? d6['d6_debt_multiplier'] as num : null)?.toStringAsFixed(2) ?? ''}',
         ...reasons,
       ]),
     ]);
@@ -323,12 +323,12 @@ class _DebtReportState extends State<DebtReportScreen> {
       const SizedBox(height: 10),
       if (clearing.isNotEmpty) ...[
         _catLabel('🛡️', l.dbClearingLabel, KColors.green),
-        ...clearing.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...clearing.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (creating.isNotEmpty) ...[
         _catLabel('⚠️', l.dbCreatingLabel, KColors.orange),
-        ...creating.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...creating.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
     ]);
   }
@@ -348,11 +348,11 @@ class _DebtReportState extends State<DebtReportScreen> {
   Widget _categories(AppLocalizations l) {
     final cats = _map('debt_category_scores');
     if (cats.isEmpty) return const SizedBox.shrink();
-    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
+    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.category_rounded, title: l.dbCategoriesTitle, subtitle: l.dbCategoriesSubtitle, color: KColors.orange),
       _card(child: Column(children: sorted.take(11).map((e) {
-        final v = (e.value as num).toDouble();
+        final v = (e.value is num ? e.value as num : 0).toDouble();
         final c = _riskColor(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
           SizedBox(width: 108, child: Text(_titleCase(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 10.5))),
@@ -401,7 +401,7 @@ class _DebtReportState extends State<DebtReportScreen> {
   Widget _trendChart(List<Map<String, dynamic>> trend) {
     return _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: trend.take(12).map((y) {
       final year = y['year']?.toString() ?? '';
-      final pressure = (y['debt_pressure'] as num?)?.toDouble() ?? 0;
+      final pressure = (y['debt_pressure'] is num ? y['debt_pressure'] as num : null)?.toDouble() ?? 0;
       final peak = y['is_debt_peak_year'] == true;
       final clearance = y['is_clearance_year'] == true;
       final c = clearance ? KColors.green : peak ? KColors.red : _riskColor(pressure);
@@ -685,7 +685,7 @@ class _DebtReportState extends State<DebtReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

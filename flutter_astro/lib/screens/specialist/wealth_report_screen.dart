@@ -158,7 +158,7 @@ class _WealthState extends State<WealthReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -244,7 +244,7 @@ class _WealthState extends State<WealthReportScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.auto_awesome_rounded, title: l.wlBoosters, subtitle: l.wlBoostersSub, color: AppColors.gold),
       ...yogas.take(8).map((m) {
-        final impact = (m['wealth_impact'] as num?)?.toDouble() ?? 0;
+        final impact = (m['wealth_impact'] is num ? m['wealth_impact'] as num : null)?.toDouble() ?? 0;
         return Container(
           margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(13),
           decoration: BoxDecoration(color: KColors.green.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: KColors.green.withOpacity(0.2))),
@@ -277,9 +277,9 @@ class _WealthState extends State<WealthReportScreen> {
   // ══════════════════════════════════════════════════════════════════
   Widget _incomeSources(AppLocalizations l) {
     final scores = _map('income_source_scores');
-    final rows = scores.entries.where((e) => e.value is num).map((e) => [_titleCase(e.key), (e.value as num).toDouble()]).toList();
+    final rows = scores.entries.where((e) => e.value is num).map((e) => [_titleCase(e.key), (e.value is num ? e.value as num : 0).toDouble()]).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
     final primary = _str('primary_income_source').toLowerCase();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.account_balance_wallet_rounded, title: l.wlIncomeSources, subtitle: l.wlIncomeSourcesSub, color: KColors.blue),
@@ -325,8 +325,8 @@ class _WealthState extends State<WealthReportScreen> {
       ]),
       const SizedBox(height: 10),
       ...mix.map((m) {
-        final pct = (m['suggested_allocation_pct'] as num?)?.toDouble() ?? 0;
-        final strength = (m['planet_strength'] as num?)?.toDouble() ?? 0;
+        final pct = (m['suggested_allocation_pct'] is num ? m['suggested_allocation_pct'] as num : null)?.toDouble() ?? 0;
+        final strength = (m['planet_strength'] is num ? m['planet_strength'] as num : null)?.toDouble() ?? 0;
         final driver = KundliNames.planet(m['driven_by']?.toString() ?? '', loc);
         final col = _wlColor(strength);
         return Container(
@@ -391,12 +391,12 @@ class _WealthState extends State<WealthReportScreen> {
       [l.wlLottery, _sc('lottery_speculation_probability_pct')],
       [l.wlInsurance, _sc('insurance_claim_likelihood_pct')],
     ];
-    if (gauges.every((g) => (g[1] as double) == 0)) return const SizedBox.shrink();
+    if (gauges.every((g) => (g[1] is num ? (g[1] as num).toDouble() : 0.0) == 0)) return const SizedBox.shrink();
     final src = _str('windfall_source');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.casino_rounded, title: l.wlWindfalls, subtitle: l.wlWindfallsSub, color: KColors.blue),
       Wrap(alignment: WrapAlignment.spaceBetween, spacing: 10, runSpacing: 12,
-        children: gauges.map((g) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 30) / 4, child: _miniGauge(g[0] as String, g[1] as double))).toList()),
+        children: gauges.map((g) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 30) / 4, child: _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0))).toList()),
       if (src.isNotEmpty) ...[const SizedBox(height: 12),
         _card(child: Row(children: [const Text('🍀', style: TextStyle(fontSize: 15)), const SizedBox(width: 10),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -412,9 +412,9 @@ class _WealthState extends State<WealthReportScreen> {
   Widget _moneyPlanets(AppLocalizations l) {
     final loc = Localizations.localeOf(context);
     final table = _map('karaka_strength_table');
-    final rows = table.entries.where((e) => e.value is num).map((e) => [e.key, (e.value as num).toDouble()]).toList();
+    final rows = table.entries.where((e) => e.value is num).map((e) => [e.key, (e.value is num ? e.value as num : 0).toDouble()]).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
     final primary = _str('primary_wealth_karaka');
     final secondary = _str('secondary_karaka');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -640,7 +640,7 @@ class _WealthState extends State<WealthReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
         Text(l.crReliabilityExplain, style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5)),
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 140, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

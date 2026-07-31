@@ -167,7 +167,7 @@ class _HealthState extends State<HealthReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -261,7 +261,7 @@ class _HealthState extends State<HealthReportScreen> {
       KSectionHeader(icon: Icons.hub_rounded, title: l.hwBodyMapTitle, subtitle: l.hwBodyMapSubtitle, color: KColors.purple),
       _card(child: Column(children: entries.map((e) {
         final info = e.value is Map ? (e.value as Map).cast<String, dynamic>() : <String, dynamic>{};
-        final v = (info['strength'] as num?)?.toDouble() ?? 0;
+        final v = (info['strength'] is num ? info['strength'] as num : null)?.toDouble() ?? 0;
         final system = info['body_system']?.toString() ?? '';
         final c = _col(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
@@ -292,12 +292,12 @@ class _HealthState extends State<HealthReportScreen> {
       KSectionHeader(icon: Icons.auto_awesome_rounded, title: l.hwYogaTitle, subtitle: l.hwYogaSubtitle, color: AppColors.gold),
       if (protective.isNotEmpty) ...[
         _catLabel('🛡️', l.protectiveLabel, KColors.green),
-        ...protective.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...protective.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (creating.isNotEmpty) ...[
         _catLabel('⚠️', l.hwDiseasePressureLabel, KColors.orange),
-        ...creating.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...creating.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
     ]);
   }
@@ -317,12 +317,12 @@ class _HealthState extends State<HealthReportScreen> {
   Widget _bodyAreas(AppLocalizations l) {
     final zones = _map('body_area_vulnerability_scores');
     if (zones.isEmpty) return const SizedBox.shrink();
-    final sorted = zones.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
+    final sorted = zones.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
     final protectedAreas = _list('protected_body_areas').map((e) => e.toString()).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.warning_amber_rounded, title: l.hwAreasTitle, subtitle: l.hwAreasSubtitle, color: KColors.orange),
       _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: sorted.take(12).map((e) {
-        final v = (e.value as num).toDouble();
+        final v = (e.value is num ? e.value as num : 0).toDouble();
         final c = _riskColor(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
           Expanded(flex: 3, child: Text(_cap(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 11), maxLines: 2)),
@@ -343,12 +343,12 @@ class _HealthState extends State<HealthReportScreen> {
   Widget _categories(AppLocalizations l) {
     final cats = _map('disease_category_susceptibility_scores');
     if (cats.isEmpty) return const SizedBox.shrink();
-    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value as num).compareTo(a.value as num));
+    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
     final lowRisk = _list('low_risk_categories').map((e) => _titleCase(e.toString())).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.local_hospital_rounded, title: l.hwCategoriesTitle, subtitle: l.hwCategoriesSubtitle, color: KColors.red),
       _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: sorted.take(13).map((e) {
-        final v = (e.value as num).toDouble();
+        final v = (e.value is num ? e.value as num : 0).toDouble();
         final c = _riskColor(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 5), child: Row(children: [
           Expanded(flex: 3, child: Text(_titleCase(e.key), style: const TextStyle(color: AppColors.ivory, fontSize: 11))),
@@ -656,7 +656,7 @@ class _HealthState extends State<HealthReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 150, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

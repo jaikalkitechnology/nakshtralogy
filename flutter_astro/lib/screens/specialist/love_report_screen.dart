@@ -157,7 +157,7 @@ class _LoveState extends State<LoveReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -244,9 +244,9 @@ class _LoveState extends State<LoveReportScreen> {
   Widget _lovePlanets(AppLocalizations l) {
     final loc = Localizations.localeOf(context);
     final table = _map('karaka_strength_table');
-    final rows = table.entries.where((e) => e.value is num).map((e) => [e.key, (e.value as num).toDouble()]).toList();
+    final rows = table.entries.where((e) => e.value is num).map((e) => [e.key, (e.value is num ? e.value as num : 0).toDouble()]).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] as double).compareTo(a[1] as double));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.brightness_7_rounded, title: l.lvLovePlanets, color: AppColors.gold),
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -302,7 +302,7 @@ class _LoveState extends State<LoveReportScreen> {
       Wrap(spacing: 10, runSpacing: 10, children: [
         [l.lvParentalAccept, _sc('parental_acceptance_probability_pct')],
         [l.lvInterCaste, _sc('inter_caste_inter_religion_likelihood_pct')],
-      ].map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] as double))).toList()),
+      ].map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] is num ? (r[0] as String, r[1] as num).toDouble() : 0.0))).toList()),
     ]);
   }
 
@@ -411,7 +411,7 @@ class _LoveState extends State<LoveReportScreen> {
         [l.lvIntimacyDrive, _sc('physical_intimacy_drive_score')],
         [l.lvSensuality, _sc('sensuality_score')],
         [l.lvEmpathy, _sc('empathy_in_relationships_score')],
-      ].where((r) => (r[1] as double) > 0).map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] as double))).toList()),
+      ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] is num ? (r[0] as String, r[1] as num).toDouble() : 0.0))).toList()),
       const SizedBox(height: 10),
       Row(children: [
         Expanded(child: _iconTile('🔗', l.lvCommitStyle, _titleCase(_str('commitment_style')))),
@@ -432,7 +432,7 @@ class _LoveState extends State<LoveReportScreen> {
       [l.lvEmotionalIQ, _sc('emotional_intelligence_score')],
       [l.lvEmpathy, _sc('empathy_in_relationships_score')],
       [l.lvCommunication, _sc('communication_in_love_score')],
-    ].where((r) => (r[1] as double) > 0).toList();
+    ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.psychology_rounded, title: l.lvEmotional, color: KColors.green),
@@ -529,7 +529,7 @@ class _LoveState extends State<LoveReportScreen> {
       [l.lvRiskCommitFear, _sc('commitment_fear_score')],
       [l.lvRiskRepeat, _sc('repeat_heartbreak_pattern_probability_pct')],
       [l.lvRiskWorkaholic, _sc('workaholic_risk_in_relationships_score')],
-    ].where((r) => (r[1] as double) > 0).toList();
+    ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     final flags = _strs('red_flags_to_watch_in_partners');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.shield_outlined, title: l.lvChallenges, color: KColors.orange),
@@ -655,7 +655,7 @@ class _LoveState extends State<LoveReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         const SizedBox(height: 10),
         Text(l.crReliabilityExplain, style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5)),
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 140, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

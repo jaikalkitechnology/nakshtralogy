@@ -158,7 +158,7 @@ class _PropertyState extends State<PropertyReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -256,7 +256,7 @@ class _PropertyState extends State<PropertyReportScreen> {
       const SizedBox(height: 10),
       _card(child: Column(children: map.entries.map((e) {
         final info = e.value is Map ? (e.value as Map).cast<String, dynamic>() : <String, dynamic>{};
-        final v = (info['strength'] as num?)?.toDouble() ?? 0;
+        final v = (info['strength'] is num ? info['strength'] as num : null)?.toDouble() ?? 0;
         final role = info['role']?.toString() ?? '';
         final c = _col(v);
         return Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Row(children: [
@@ -296,12 +296,12 @@ class _PropertyState extends State<PropertyReportScreen> {
         child: _pill('${l.prCurrentPhase}: ${_titleCase(phase)}', KColors.blue)),
       if (yogas.isNotEmpty) ...[
         _catLabel('🛡️', l.prBoosters, KColors.green),
-        ...yogas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...yogas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (doshas.isNotEmpty) ...[
         _catLabel('⚠️', l.prDrains, KColors.orange),
-        ...doshas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...doshas.take(6).map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
     ]);
   }
@@ -321,8 +321,8 @@ class _PropertyState extends State<PropertyReportScreen> {
   Widget _verification(AppLocalizations l) {
     final d4 = _map('d4_validation'), d16 = _map('d16_validation');
     if (d4.isEmpty && d16.isEmpty) return const SizedBox.shrink();
-    final d4Score = (d4['d4_score'] as num?)?.toDouble() ?? 0;
-    final d16Score = (d16['d16_validation_score'] as num?)?.toDouble() ?? 0;
+    final d4Score = (d4['d4_score'] is num ? d4['d4_score'] as num : null)?.toDouble() ?? 0;
+    final d16Score = (d16['d16_validation_score'] is num ? d16['d16_validation_score'] as num : null)?.toDouble() ?? 0;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.prVerificationTitle, color: KColors.green),
       if (d4.isNotEmpty) _chartCard(l, l.prD4Property, d4Score, _titleCase(d4['d4_property_karma_type']?.toString() ?? ''),
@@ -627,7 +627,7 @@ class _PropertyState extends State<PropertyReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 140, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),

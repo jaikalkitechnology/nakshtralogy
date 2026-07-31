@@ -181,7 +181,7 @@ class _CharacterReportState extends State<CharacterReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -413,12 +413,12 @@ class _CharacterReportState extends State<CharacterReportScreen> {
         child: _statTile(l.chRajaYogaStrength, _sc('raja_yoga_strength_score'))),
       if (gifts.isNotEmpty) ...[
         _catLabel('🎁', l.chGiftYogas, KColors.green),
-        ...gifts.map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.green)),
+        ...gifts.map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.green)),
         const SizedBox(height: 6),
       ],
       if (tests.isNotEmpty) ...[
         _catLabel('⚡', l.chTestYogas, KColors.orange),
-        ...tests.map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] as num?)?.toDouble() ?? 0, KColors.orange)),
+        ...tests.map((m) => _yogaRow(m['name']?.toString() ?? '', (m['score'] is num ? m['score'] as num : null)?.toDouble() ?? 0, KColors.orange)),
       ],
       if (_str('classical_character_signature').isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6),
         child: Text(_cap(_str('classical_character_signature')), style: const TextStyle(color: AppColors.parchment, fontSize: 11.5, height: 1.4))),
@@ -591,19 +591,19 @@ class _CharacterReportState extends State<CharacterReportScreen> {
     if (d9.isEmpty && d12.isEmpty && d30.isEmpty && d60.isEmpty) return const SizedBox.shrink();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.verified_rounded, title: l.chVerificationTitle, color: KColors.green),
-      if (d9.isNotEmpty) _chartCard(l, l.chD9Label, (d9['d9_dharma_character_alignment_score'] as num?)?.toDouble() ?? 0,
+      if (d9.isNotEmpty) _chartCard(l, l.chD9Label, (d9['d9_dharma_character_alignment_score'] is num ? d9['d9_dharma_character_alignment_score'] as num : null)?.toDouble() ?? 0,
         d9['d9_character_notes']?.toString() ?? '', ['${l.chLagnaLord}: ${d9['d9_lagna_lord_dignity']}', '${l.chAtmakarakaDignity}: ${d9['d9_atmakaraka_dignity']}']),
-      if (d12.isNotEmpty) _chartCard(l, l.chD12Label, (d12['paternal_character_inheritance_score'] as num?)?.toDouble() ?? 0,
+      if (d12.isNotEmpty) _chartCard(l, l.chD12Label, (d12['paternal_character_inheritance_score'] is num ? d12['paternal_character_inheritance_score'] as num : null)?.toDouble() ?? 0,
         d12['d12_primary_ancestral_signature']?.toString() ?? '', [
           'Sun: ${d12['d12_sun_dignity']} · Moon: ${d12['d12_moon_dignity']} · AK: ${d12['d12_atmakaraka_dignity']}',
           '${l.chMaternalInheritance}: ${d12['maternal_character_inheritance_score']} · ${l.chAncestralKarmaWeight}: ${d12['ancestral_karma_weight_score']}',
         ]),
-      if (d30.isNotEmpty) _chartCard(l, l.chD30Label, 100 - ((d30['misfortune_pattern_count'] as num?)?.toDouble() ?? 0) * 20,
+      if (d30.isNotEmpty) _chartCard(l, l.chD30Label, 100 - ((d30['misfortune_pattern_count'] is num ? d30['misfortune_pattern_count'] as num : null)?.toDouble() ?? 0) * 20,
         d30['d30_primary_shadow_signature']?.toString() ?? '', [
           '${l.chD30Standing}: ${_titleCase(d30['d30_overall_shadow_standing']?.toString() ?? '')}',
           d30['hidden_adversities_signature']?.toString() ?? '',
         ]),
-      if (d60.isNotEmpty) _chartCard(l, l.chD60Label, (d60['d60_past_life_personality_capital_score'] as num?)?.toDouble() ?? 0,
+      if (d60.isNotEmpty) _chartCard(l, l.chD60Label, (d60['d60_past_life_personality_capital_score'] is num ? d60['d60_past_life_personality_capital_score'] as num : null)?.toDouble() ?? 0,
         d60['d60_past_life_character_signature']?.toString() ?? '', []),
     ]);
   }
@@ -735,7 +735,7 @@ class _CharacterReportState extends State<CharacterReportScreen> {
     final pct = raw <= 1 ? raw * 100 : raw;
     final band = pct >= 75 ? l.crReliabilityHigh : pct >= 60 ? l.crReliabilityGood : l.crReliabilityModerate;
     final b = _map('confidence_breakdown');
-    double layer(String k) { final v = b[k]; return v is Map ? ((v['strength'] as num?)?.toDouble() ?? 0) : 0; }
+    double layer(String k) { final v = b[k]; return v is Map ? ((v['strength'] is num ? v['strength'] as num : null)?.toDouble() ?? 0) : 0; }
     final layers = <List<Object>>[
       [l.chLayerAtmakaraka, layer('atmakaraka')],
       [l.chLayerD1, layer('d1_natal')],
@@ -757,7 +757,7 @@ class _CharacterReportState extends State<CharacterReportScreen> {
         Text(band, style: const TextStyle(color: KColors.green, fontSize: 13, fontWeight: FontWeight.w800)),
         if (plain.isNotEmpty) ...[const SizedBox(height: 10),
           Text(_cap(plain), style: const TextStyle(color: AppColors.parchment, fontSize: 12, height: 1.5))],
-        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] as double) > 0).map((la) {
+        _advanced(l, null, customTitle: l.crChartLayers, customChild: Column(children: layers.where((la) => (la[1] is num ? (la[1] as num).toDouble() : 0.0) > 0).map((la) {
           final v = la[1] as double;
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(children: [
             SizedBox(width: 130, child: Text(la[0] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5))),
