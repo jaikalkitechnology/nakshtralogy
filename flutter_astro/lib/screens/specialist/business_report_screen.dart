@@ -167,7 +167,7 @@ class _BizState extends State<BusinessReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -444,7 +444,7 @@ class _BizState extends State<BusinessReportScreen> {
       [l.bzSkillOps, _sc('operational_discipline_score')],
     ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] as double));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.psychology_rounded, title: l.bzFounderSkills, color: KColors.blue),
       ...List.generate(rows.length, (idx) {
@@ -562,7 +562,7 @@ class _BizState extends State<BusinessReportScreen> {
         ])),
       Row(children: gauges.map((g) => Expanded(child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: _meterTile(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)))).toList()),
+        child: _meterTile(g[0] as String, g[1] as double)))).toList()),
       _advanced(l, [
         '${l.bzTechDarakaraka}: ${KundliNames.planet(_str('darakaraka_planet'), Localizations.localeOf(context))} · ${l.crDignity}: ${_str('darakaraka_dignity')}',
         '${l.bzCofounderFit}: ${_str('cofounder_compatibility_signature')}',
@@ -611,7 +611,7 @@ class _BizState extends State<BusinessReportScreen> {
           Text(_cap(path), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w700, height: 1.35)),
         ])),
       Wrap(spacing: 10, runSpacing: 10, children: gauges.where((g) => (g[1] is num ? (g[1] as num).toDouble() : 0.0) > 0).map((g) =>
-        SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0))).toList()),
+        SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(g[0] as String, g[1] as double))).toList()),
       _advanced(l, ['${l.bzDebtStyle}: ${_str('debt_risk_tolerance_signature')}']),
     ]);
   }

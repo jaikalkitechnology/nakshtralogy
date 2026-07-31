@@ -171,7 +171,7 @@ class _DebtReportState extends State<DebtReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -250,7 +250,7 @@ class _DebtReportState extends State<DebtReportScreen> {
     final map = _map('karaka_strength_table');
     if (map.isEmpty) return const SizedBox.shrink();
     final loc = Localizations.localeOf(context);
-    final sorted = map.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
+    final sorted = map.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value as num));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.insights_rounded, title: l.dbKarakaTitle, subtitle: l.dbKarakaSubtitle, color: KColors.purple),
       _card(child: Column(children: sorted.map((e) {
@@ -348,7 +348,7 @@ class _DebtReportState extends State<DebtReportScreen> {
   Widget _categories(AppLocalizations l) {
     final cats = _map('debt_category_scores');
     if (cats.isEmpty) return const SizedBox.shrink();
-    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
+    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value as num));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.category_rounded, title: l.dbCategoriesTitle, subtitle: l.dbCategoriesSubtitle, color: KColors.orange),
       _card(child: Column(children: sorted.take(11).map((e) {
