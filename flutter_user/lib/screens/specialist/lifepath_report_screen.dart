@@ -172,7 +172,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -367,7 +367,7 @@ class _LifePathReportState extends State<LifePathReportScreen> {
       [l.lpDomainHealing, _sc('healing_path_indicator_score'), 'healing'],
       [l.lpDomainCreative, _sc('creative_expression_path_score'), 'creative'],
     ];
-    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] as double));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.explore_rounded, title: l.lpPurposeTitle, color: KColors.blue),
       ...rows.map((r) {

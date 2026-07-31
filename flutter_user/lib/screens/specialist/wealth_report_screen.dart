@@ -158,7 +158,7 @@ class _WealthState extends State<WealthReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -279,7 +279,7 @@ class _WealthState extends State<WealthReportScreen> {
     final scores = _map('income_source_scores');
     final rows = scores.entries.where((e) => e.value is num).map((e) => [_titleCase(e.key), (e.value is num ? e.value as num : 0).toDouble()]).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] as double));
     final primary = _str('primary_income_source').toLowerCase();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.account_balance_wallet_rounded, title: l.wlIncomeSources, subtitle: l.wlIncomeSourcesSub, color: KColors.blue),
@@ -396,7 +396,7 @@ class _WealthState extends State<WealthReportScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.casino_rounded, title: l.wlWindfalls, subtitle: l.wlWindfallsSub, color: KColors.blue),
       Wrap(alignment: WrapAlignment.spaceBetween, spacing: 10, runSpacing: 12,
-        children: gauges.map((g) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 30) / 4, child: _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0))).toList()),
+        children: gauges.map((g) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 30) / 4, child: _miniGauge(g[0] as String, g[1] as double))).toList()),
       if (src.isNotEmpty) ...[const SizedBox(height: 12),
         _card(child: Row(children: [const Text('🍀', style: TextStyle(fontSize: 15)), const SizedBox(width: 10),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -414,7 +414,7 @@ class _WealthState extends State<WealthReportScreen> {
     final table = _map('karaka_strength_table');
     final rows = table.entries.where((e) => e.value is num).map((e) => [e.key, (e.value is num ? e.value as num : 0).toDouble()]).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] as double));
     final primary = _str('primary_wealth_karaka');
     final secondary = _str('secondary_karaka');
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -166,7 +166,7 @@ class _MentalState extends State<MentalReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -375,7 +375,7 @@ class _MentalState extends State<MentalReportScreen> {
   }
 
   Widget _sortedBars(Map<String, dynamic> m, {bool gentle = false}) {
-    final sorted = m.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
+    final sorted = m.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value as num));
     return _card(child: Column(children: sorted.take(8).map((e) {
       final v = (e.value is num ? e.value as num : 0).toDouble();
       final c = gentle ? _gentleColor(v) : _col(v);

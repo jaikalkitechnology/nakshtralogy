@@ -157,7 +157,7 @@ class _LoveState extends State<LoveReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -246,7 +246,7 @@ class _LoveState extends State<LoveReportScreen> {
     final table = _map('karaka_strength_table');
     final rows = table.entries.where((e) => e.value is num).map((e) => [e.key, (e.value is num ? e.value as num : 0).toDouble()]).toList();
     if (rows.isEmpty) return const SizedBox.shrink();
-    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] is num ? (a[1] as num).toDouble() : 0.0));
+    rows.sort((a, b) => (b[1] is num ? (b[1] as num).toDouble() : 0.0).compareTo(a[1] as double));
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.brightness_7_rounded, title: l.lvLovePlanets, color: AppColors.gold),
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -302,7 +302,7 @@ class _LoveState extends State<LoveReportScreen> {
       Wrap(spacing: 10, runSpacing: 10, children: [
         [l.lvParentalAccept, _sc('parental_acceptance_probability_pct')],
         [l.lvInterCaste, _sc('inter_caste_inter_religion_likelihood_pct')],
-      ].map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] is num ? (r[0] as String, r[1] as num).toDouble() : 0.0))).toList()),
+      ].map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] as double))).toList()),
     ]);
   }
 
@@ -411,7 +411,7 @@ class _LoveState extends State<LoveReportScreen> {
         [l.lvIntimacyDrive, _sc('physical_intimacy_drive_score')],
         [l.lvSensuality, _sc('sensuality_score')],
         [l.lvEmpathy, _sc('empathy_in_relationships_score')],
-      ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] is num ? (r[0] as String, r[1] as num).toDouble() : 0.0))).toList()),
+      ].where((r) => (r[1] is num ? (r[1] as num).toDouble() : 0.0) > 0).map((r) => SizedBox(width: (MediaQuery.of(context).size.width - 32 - 10) / 2, child: _meterTile(r[0] as String, r[1] as double))).toList()),
       const SizedBox(height: 10),
       Row(children: [
         Expanded(child: _iconTile('🔗', l.lvCommitStyle, _titleCase(_str('commitment_style')))),

@@ -167,7 +167,7 @@ class _HealthState extends State<HealthReportScreen> {
         ],
         const SizedBox(height: 18),
         Wrap(alignment: WrapAlignment.center, spacing: 14, runSpacing: 14,
-          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] is num ? (g[0] as String, g[1] as num).toDouble() : 0.0)).toList()),
+          children: gauges.map((g) => _miniGauge(g[0] as String, g[1] as double)).toList()),
         const SizedBox(height: 16),
         Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 8, children: _snapshotChips(l).map((t) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -317,7 +317,7 @@ class _HealthState extends State<HealthReportScreen> {
   Widget _bodyAreas(AppLocalizations l) {
     final zones = _map('body_area_vulnerability_scores');
     if (zones.isEmpty) return const SizedBox.shrink();
-    final sorted = zones.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
+    final sorted = zones.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value as num));
     final protectedAreas = _list('protected_body_areas').map((e) => e.toString()).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.warning_amber_rounded, title: l.hwAreasTitle, subtitle: l.hwAreasSubtitle, color: KColors.orange),
@@ -343,7 +343,7 @@ class _HealthState extends State<HealthReportScreen> {
   Widget _categories(AppLocalizations l) {
     final cats = _map('disease_category_susceptibility_scores');
     if (cats.isEmpty) return const SizedBox.shrink();
-    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value is num ? a.value as num : 0));
+    final sorted = cats.entries.where((e) => e.value is num).toList()..sort((a, b) => (b.value is num ? b.value as num : 0).compareTo(a.value as num));
     final lowRisk = _list('low_risk_categories').map((e) => _titleCase(e.toString())).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.local_hospital_rounded, title: l.hwCategoriesTitle, subtitle: l.hwCategoriesSubtitle, color: KColors.red),
