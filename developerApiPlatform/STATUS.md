@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 4 / 31 tasks DONE (6.1 scaffold + Phase 0) · Phase 1 next.
+**Summary:** 12 / 31 tasks DONE (6.1 scaffold + Phases 0-2) · Phase 3 next.
 
 ---
 
@@ -54,9 +54,9 @@ modified**.
 ## Phase 2 — API keys
 | # | Task | Status |
 |---|------|--------|
-| 2.1 | Create key (return raw secret ONCE), list, rotate, revoke | PENDING |
-| 2.2 | `get_developer_from_api_key` dependency (prefix lookup + hash verify + last_used) | PENDING |
-| 2.3 | live vs test keys + per-product scopes | PENDING |
+| 2.1 | Create key (return raw secret ONCE), list, rotate, revoke | DONE (TBD-sha2, 2026-08-01) |
+| 2.2 | `get_developer_from_api_key` dependency (prefix lookup + hash verify + last_used) | DONE (TBD-sha2, 2026-08-01) |
+| 2.3 | live vs test keys + per-product scopes | DONE (TBD-sha2, 2026-08-01) |
 
 ## Phase 3 — Subscription & wallet
 | # | Task | Status |

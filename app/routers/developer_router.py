@@ -41,6 +41,7 @@ from app.core.database import get_db
 from app.core.security import (
     hash_password, verify_password,
     create_access_token, create_refresh_token, hash_token,
+    generate_api_key,
 )
 from app.core.dependencies import get_current_user
 from app.models.model import (
@@ -258,3 +259,120 @@ def update_profile(
     db.commit()
     db.refresh(profile)
     return _build_profile_response(profile)
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  PHASE 2 — API KEYS
+#  The raw secret is generated + returned exactly once (create/rotate).
+#  Only key_prefix + sha256(secret_hash) are ever persisted.
+# ═══════════════════════════════════════════════════════════════════
+
+def _key_response(key: ApiKey) -> ApiKeyResponse:
+    return ApiKeyResponse(
+        id=key.id,
+        key_prefix=key.key_prefix,
+        mode=key.mode,
+        label=key.label,
+        scopes=key.scopes or [],
+        status=key.status,
+        last_used_at=key.last_used_at,
+        created_at=key.created_at,
+    )
+
+
+@router.post("/keys", response_model=ApiKeyCreatedResponse, status_code=status.HTTP_201_CREATED)
+def create_api_key(
+    req: ApiKeyCreateRequest,
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    scopes = req.scopes if req.scopes else list(ALL_PRODUCT_SCOPES)
+    invalid = [s for s in scopes if s not in ALL_PRODUCT_SCOPES]
+    if invalid:
+        raise HTTPException(status_code=422, detail=f"Unknown product scope(s): {invalid}")
+
+    raw, prefix, secret_hash = generate_api_key(req.mode)
+    key = ApiKey(
+        developer_user_id=current_user.id,
+        key_prefix=prefix,
+        secret_hash=secret_hash,
+        mode=req.mode,
+        label=req.label,
+        scopes=scopes,
+        status="active",
+    )
+    db.add(key)
+    db.commit()
+    db.refresh(key)
+    logger.info("API key created for developer %s (mode=%s, prefix=%s)", current_user.id, req.mode, prefix)
+    return ApiKeyCreatedResponse(
+        id=key.id, key_prefix=key.key_prefix, api_key=raw, mode=key.mode,
+        label=key.label, scopes=key.scopes or [], created_at=key.created_at,
+    )
+
+
+@router.get("/keys", response_model=List[ApiKeyResponse])
+def list_api_keys(
+    status_filter: Optional[str] = Query(None, alias="status", description="active | revoked"),
+    mode: Optional[str] = Query(None, description="live | test"),
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    q = db.query(ApiKey).filter(ApiKey.developer_user_id == current_user.id)
+    if status_filter:
+        q = q.filter(ApiKey.status == status_filter)
+    if mode:
+        q = q.filter(ApiKey.mode == mode)
+    rows = q.order_by(ApiKey.created_at.desc()).all()
+    return [_key_response(k) for k in rows]
+
+
+@router.post("/keys/{key_id}/rotate", response_model=ApiKeyCreatedResponse)
+def rotate_api_key(
+    key_id: str,
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    """Revoke the existing key and issue a brand-new secret with the same
+    mode/label/scopes. The old key stops working immediately."""
+    old = db.query(ApiKey).filter(ApiKey.id == key_id, ApiKey.developer_user_id == current_user.id).first()
+    if not old:
+        raise HTTPException(status_code=404, detail="API key not found")
+
+    old.status = "revoked"
+    old.revoked_at = datetime.utcnow()
+
+    raw, prefix, secret_hash = generate_api_key(old.mode)
+    new_key = ApiKey(
+        developer_user_id=current_user.id,
+        key_prefix=prefix,
+        secret_hash=secret_hash,
+        mode=old.mode,
+        label=old.label,
+        scopes=old.scopes,
+        status="active",
+    )
+    db.add(new_key)
+    db.commit()
+    db.refresh(new_key)
+    logger.info("API key %s rotated -> %s for developer %s", key_id, new_key.id, current_user.id)
+    return ApiKeyCreatedResponse(
+        id=new_key.id, key_prefix=new_key.key_prefix, api_key=raw, mode=new_key.mode,
+        label=new_key.label, scopes=new_key.scopes or [], created_at=new_key.created_at,
+    )
+
+
+@router.delete("/keys/{key_id}", response_model=MessageResponse)
+def revoke_api_key(
+    key_id: str,
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    key = db.query(ApiKey).filter(ApiKey.id == key_id, ApiKey.developer_user_id == current_user.id).first()
+    if not key:
+        raise HTTPException(status_code=404, detail="API key not found")
+    if key.status != "revoked":
+        key.status = "revoked"
+        key.revoked_at = datetime.utcnow()
+        db.commit()
+    return MessageResponse(message="API key revoked")
