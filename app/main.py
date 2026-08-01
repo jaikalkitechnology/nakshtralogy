@@ -19,7 +19,7 @@ from app.routers import (
     rashi_router, agent_router, career_router, character_router,
     milan_router, specialist_router, ai_config_router,
     forecast_router, notification_router,
-    developer_router,
+    developer_router, admin_developer_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -162,6 +162,7 @@ app.include_router(ai_config_router.router, prefix="/api/v1/ai-config", tags=["A
 app.include_router(forecast_router.router, prefix="/api/v1/forecast", tags=["Daily Forecast & Rashi"])
 app.include_router(notification_router.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(developer_router.router, prefix="/api/v1/developer", tags=["Developer API Platform"])
+app.include_router(admin_developer_router.router, prefix="/api/v1/admin", tags=["Admin — Developer Platform"])
 
 # Metered gateway — mounted as its own sub-app so developers get a
 # dedicated OpenAPI schema / Swagger (`/api/v2/docs`) / Redoc (`/api/v2/redoc`)

@@ -12,8 +12,11 @@ import {
   Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle,
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
   FileText, Mail, Filter, Trash2, MessageSquare,
-  Upload, Save, KeyRound, CreditCard,
+  Upload, Save, KeyRound, CreditCard, Code2,
 } from "lucide-react";
+import DevelopersManager from "@/components/developers/DevelopersManager";
+import DeveloperAnalytics from "@/components/developers/DeveloperAnalytics";
+import DeveloperPlans from "@/components/developers/DeveloperPlans";
 import {
   fetchAstrologers, fetchServicePricing, fetchGiftPricing,
   fetchAgoraConfigs, createAgoraConfig, updateAgoraConfig, deleteAgoraConfig,
@@ -48,7 +51,7 @@ function authHeaders() {
   };
 }
 
-type Tab = "overview" | "users" | "astrologers" | "reviews" | "kyc" | "wallet" | "pricing" | "agora" | "gifts" | "settings";
+type Tab = "overview" | "users" | "astrologers" | "reviews" | "kyc" | "wallet" | "pricing" | "agora" | "gifts" | "settings" | "developers";
 
 const AdminPanel = () => {
   const { user, loading: authLoading, logout } = useAuth();
@@ -236,6 +239,7 @@ const AdminPanel = () => {
     { id: "gifts" as Tab, icon: <Gift className="w-5 h-5" />, label: "Gifts" },
     { id: "agora" as Tab, icon: <Video className="w-5 h-5" />, label: "Agora" },
     { id: "settings" as Tab, icon: <Settings className="w-5 h-5" />, label: "Settings" },
+    { id: "developers" as Tab, icon: <Code2 className="w-5 h-5" />, label: "Developers" },
   ];
 
   const fetchData = useCallback(async () => {
@@ -3131,6 +3135,15 @@ const AdminPanel = () => {
                     Loading settings...
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* ══════ DEVELOPER API PLATFORM ══════ */}
+            {activeTab === "developers" && (
+              <div className="space-y-6">
+                <DeveloperAnalytics />
+                <DeveloperPlans />
+                <DevelopersManager />
               </div>
             )}
           </div>
