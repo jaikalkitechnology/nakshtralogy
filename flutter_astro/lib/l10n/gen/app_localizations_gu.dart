@@ -9,6 +9,114 @@ class AppLocalizationsGu extends AppLocalizations {
   AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
+  String get astrologer => 'જ્યોતિષી';
+
+  @override
+  String get comingSoon => 'ટૂંક સમયમાં આવે છે';
+
+  @override
+  String get responseRate => 'રિસ્પોન્સ રેટ';
+
+  @override
+  String get totalEarnings => 'કુલ કમાણી';
+
+  @override
+  String get reviews => 'રિવ્યૂ';
+
+  @override
+  String get todayVsGoal => 'આજ vs લક્ષ્ય';
+
+  @override
+  String get dailyGoal => 'દૈનિક લક્ષ્ય';
+
+  @override
+  String get minutesConsulted => 'કન્સલ્ટ કરેલી મિનિટ';
+
+  @override
+  String get performanceOverview => 'પરફોર્મન્સ ઓવરવ્યૂ';
+
+  @override
+  String get towardsGoal => 'લક્ષ્ય તરફ';
+
+  @override
+  String get liveStatus => 'લાઈવ સ્ટેટસ';
+
+  @override
+  String get goLiveSubtitle => 'શોધનારાઓ સાથે લાઈવ સેશન શરૂ કરો';
+
+  @override
+  String get todaysRequests => 'આજની રિક્વેસ્ટ';
+
+  @override
+  String get voice => 'વોઇસ';
+
+  @override
+  String get video => 'વિડિયો';
+
+  @override
+  String get activeRequests => 'એક્ટિવ રિક્વેસ્ટ';
+
+  @override
+  String get astrologyServices => 'જ્યોતિષ સેવાઓ';
+
+  @override
+  String get rashiServiceDesc => 'બધા 12 રાશિઓ માટે આજનું ગોચર';
+
+  @override
+  String get upcomingConsultations => 'આવનારા કન્સલ્ટેશન';
+
+  @override
+  String get noUpcomingConsultations => 'હજુ સુધી કોઈ આવનારા કન્સલ્ટેશન નથી';
+
+  @override
+  String get recentActivity => 'તાજેતરની પ્રવૃત્તિ';
+
+  @override
+  String get seeAll => 'બધું જુઓ';
+
+  @override
+  String get performanceAnalytics => 'પરફોર્મન્સ એનાલિટિક્સ';
+
+  @override
+  String get aiAssistant => 'AI સહાયક';
+
+  @override
+  String get aiAssistantSubtitle => 'રીડિંગ અને ઉપાયો તૈયાર કરવામાં ત્વરિત મદદ મેળવો';
+
+  @override
+  String get cosmicInsight => 'કોસ્મિક ઈનસાઈટ';
+
+  @override
+  String get cosmicInsightBody => 'આજે ચંદ્ર અર્થપૂર્ણ વાતચીતોની તરફેણ કરે છે. સહાનુભૂતિ અને સ્પષ્ટતા સાથે તમારા સેશન ચલાવો, તમારું માર્ગદર્શન ઊંડે સુધી પહોંચશે.';
+
+  @override
+  String get dailyMotivationQuote => '"તારાઓ વલણ બતાવે છે, ફરજ પાડતા નથી. તમે આપેલું દરેક રીડિંગ કોઈના માર્ગને પ્રકાશિત કરે છે."';
+
+  @override
+  String get yourCosmicDashboard => 'તમારું કોસ્મિક કન્સલ્ટેશન ડેશબોર્ડ';
+
+  @override
+  String get goodMorning => 'શુભ સવાર';
+
+  @override
+  String get goodAfternoon => 'શુભ બપોર';
+
+  @override
+  String get goodEvening => 'શુભ સાંજ';
+
+  @override
+  String get goodNight => 'શુભ રાત્રિ';
+
+  @override
+  String get astrology => 'જ્યોતિષશાસ્ત્ર';
+
+  @override
+  String get wallet => 'વોલેટ';
+
+  @override
+  String get failedToLoad => 'લોડ કરવામાં નિષ્ફળ';
+
+  @override
   String get klSubtitle => 'AI-સંચાલિત વૈદિક પૂર્વજન્મ કર્મ-જોડાણ અહેવાલ';
 
   @override
@@ -9444,114 +9552,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get forgotPassword => 'પાસવર્ડ ભૂલી ગયા?';
-
-  @override
-  String get astrologer => 'Astrologer';
-
-  @override
-  String get comingSoon => 'Coming Soon';
-
-  @override
-  String get responseRate => 'Response Rate';
-
-  @override
-  String get totalEarnings => 'Total Earnings';
-
-  @override
-  String get reviews => 'reviews';
-
-  @override
-  String get todayVsGoal => 'Today vs Goal';
-
-  @override
-  String get dailyGoal => 'Daily goal';
-
-  @override
-  String get minutesConsulted => 'Minutes Consulted';
-
-  @override
-  String get performanceOverview => 'Performance Overview';
-
-  @override
-  String get towardsGoal => 'towards goal';
-
-  @override
-  String get liveStatus => 'Live Status';
-
-  @override
-  String get goLiveSubtitle => 'Start a live session with seekers';
-
-  @override
-  String get todaysRequests => 'Today\'s Requests';
-
-  @override
-  String get voice => 'Voice';
-
-  @override
-  String get video => 'Video';
-
-  @override
-  String get activeRequests => 'Active Requests';
-
-  @override
-  String get astrologyServices => 'Astrology Services';
-
-  @override
-  String get rashiServiceDesc => 'Today\'s gochar for all 12 signs';
-
-  @override
-  String get upcomingConsultations => 'Upcoming Consultations';
-
-  @override
-  String get noUpcomingConsultations => 'No upcoming consultations yet';
-
-  @override
-  String get recentActivity => 'Recent Activity';
-
-  @override
-  String get seeAll => 'See All';
-
-  @override
-  String get performanceAnalytics => 'Performance Analytics';
-
-  @override
-  String get aiAssistant => 'AI Assistant';
-
-  @override
-  String get aiAssistantSubtitle => 'Get instant help drafting readings and remedies';
-
-  @override
-  String get cosmicInsight => 'Cosmic Insight';
-
-  @override
-  String get cosmicInsightBody => 'The Moon favours meaningful conversations today. Lead your sessions with empathy and clarity, and your guidance will land deeply.';
-
-  @override
-  String get dailyMotivationQuote => '"The stars incline, they do not compel. Every reading you give lights someone\'s path."';
-
-  @override
-  String get yourCosmicDashboard => 'Your Cosmic Consultation Dashboard';
-
-  @override
-  String get goodMorning => 'Good Morning';
-
-  @override
-  String get goodAfternoon => 'Good Afternoon';
-
-  @override
-  String get goodEvening => 'Good Evening';
-
-  @override
-  String get goodNight => 'Good Night';
-
-  @override
-  String get astrology => 'Astrology';
-
-  @override
-  String get wallet => 'Wallet';
-
-  @override
-  String get failedToLoad => 'લોડ કરવામાં નિષ્ફળ';
 
   @override
   String get sendResetLink => 'રીસેટ લિંક મોકલો';

@@ -9,6 +9,114 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
+  String get astrologer => 'ஜோதிடர்';
+
+  @override
+  String get comingSoon => 'வரவிருக்கிறது';
+
+  @override
+  String get responseRate => 'பதில் விகிதம்';
+
+  @override
+  String get totalEarnings => 'மொத்த வருமானம்';
+
+  @override
+  String get reviews => 'மதிப்புரைகள்';
+
+  @override
+  String get todayVsGoal => 'இன்று vs இலக்கு';
+
+  @override
+  String get dailyGoal => 'தினசரி இலக்கு';
+
+  @override
+  String get minutesConsulted => 'ஆலோசனை நிமிடங்கள்';
+
+  @override
+  String get performanceOverview => 'செயல்திறன் மேலோட்டம்';
+
+  @override
+  String get towardsGoal => 'இலக்கை நோக்கி';
+
+  @override
+  String get liveStatus => 'லைவ் நிலை';
+
+  @override
+  String get goLiveSubtitle => 'தேடுபவர்களுடன் லைவ் அமர்வைத் தொடங்குங்கள்';
+
+  @override
+  String get todaysRequests => 'இன்றைய கோரிக்கைகள்';
+
+  @override
+  String get voice => 'குரல்';
+
+  @override
+  String get video => 'வீடியோ';
+
+  @override
+  String get activeRequests => 'செயலில் உள்ள கோரிக்கைகள்';
+
+  @override
+  String get astrologyServices => 'ஜோதிட சேவைகள்';
+
+  @override
+  String get rashiServiceDesc => 'அனைத்து 12 ராசிகளுக்கான இன்றைய கோச்சர்';
+
+  @override
+  String get upcomingConsultations => 'வரவிருக்கும் ஆலோசனைகள்';
+
+  @override
+  String get noUpcomingConsultations => 'இதுவரை வரவிருக்கும் ஆலோசனைகள் இல்லை';
+
+  @override
+  String get recentActivity => 'சமீபத்திய செயல்பாடு';
+
+  @override
+  String get seeAll => 'அனைத்தையும் காண்க';
+
+  @override
+  String get performanceAnalytics => 'செயல்திறன் பகுப்பாய்வு';
+
+  @override
+  String get aiAssistant => 'AI உதவியாளர்';
+
+  @override
+  String get aiAssistantSubtitle => 'பலன்கள் மற்றும் பரிகாரங்கள் தயாரிக்க உடனடி உதவி பெறுங்கள்';
+
+  @override
+  String get cosmicInsight => 'காஸ்மிக் நுண்ணறிவு';
+
+  @override
+  String get cosmicInsightBody => 'இன்று சந்திரன் அர்த்தமுள்ள உரையாடல்களுக்கு ஆதரவாக உள்ளது. அனுதாபத்துடனும் தெளிவுடனும் உங்கள் அமர்வுகளை நடத்துங்கள், உங்கள் வழிகாட்டுதல் ஆழமாக சென்றடையும்.';
+
+  @override
+  String get dailyMotivationQuote => '"நட்சத்திரங்கள் நாட்டம் காட்டுகின்றன, கட்டாயப்படுத்துவதில்லை. நீங்கள் தரும் ஒவ்வொரு பலனும் ஒருவரின் பாதையை ஒளிரச் செய்கிறது."';
+
+  @override
+  String get yourCosmicDashboard => 'உங்கள் காஸ்மிக் ஆலோசனை டாஷ்போர்டு';
+
+  @override
+  String get goodMorning => 'காலை வணக்கம்';
+
+  @override
+  String get goodAfternoon => 'மதிய வணக்கம்';
+
+  @override
+  String get goodEvening => 'மாலை வணக்கம்';
+
+  @override
+  String get goodNight => 'இரவு வணக்கம்';
+
+  @override
+  String get astrology => 'ஜோதிடம்';
+
+  @override
+  String get wallet => 'வாலட்';
+
+  @override
+  String get failedToLoad => 'ஏற்ற முடியவில்லை';
+
+  @override
   String get klSubtitle => 'AI-இயக்கும் வேத முன்வினை கர்ம தொடர்பு அறிக்கை';
 
   @override
@@ -9444,114 +9552,6 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
-
-  @override
-  String get astrologer => 'Astrologer';
-
-  @override
-  String get comingSoon => 'Coming Soon';
-
-  @override
-  String get responseRate => 'Response Rate';
-
-  @override
-  String get totalEarnings => 'Total Earnings';
-
-  @override
-  String get reviews => 'reviews';
-
-  @override
-  String get todayVsGoal => 'Today vs Goal';
-
-  @override
-  String get dailyGoal => 'Daily goal';
-
-  @override
-  String get minutesConsulted => 'Minutes Consulted';
-
-  @override
-  String get performanceOverview => 'Performance Overview';
-
-  @override
-  String get towardsGoal => 'towards goal';
-
-  @override
-  String get liveStatus => 'Live Status';
-
-  @override
-  String get goLiveSubtitle => 'Start a live session with seekers';
-
-  @override
-  String get todaysRequests => 'Today\'s Requests';
-
-  @override
-  String get voice => 'Voice';
-
-  @override
-  String get video => 'Video';
-
-  @override
-  String get activeRequests => 'Active Requests';
-
-  @override
-  String get astrologyServices => 'Astrology Services';
-
-  @override
-  String get rashiServiceDesc => 'Today\'s gochar for all 12 signs';
-
-  @override
-  String get upcomingConsultations => 'Upcoming Consultations';
-
-  @override
-  String get noUpcomingConsultations => 'No upcoming consultations yet';
-
-  @override
-  String get recentActivity => 'Recent Activity';
-
-  @override
-  String get seeAll => 'See All';
-
-  @override
-  String get performanceAnalytics => 'Performance Analytics';
-
-  @override
-  String get aiAssistant => 'AI Assistant';
-
-  @override
-  String get aiAssistantSubtitle => 'Get instant help drafting readings and remedies';
-
-  @override
-  String get cosmicInsight => 'Cosmic Insight';
-
-  @override
-  String get cosmicInsightBody => 'The Moon favours meaningful conversations today. Lead your sessions with empathy and clarity, and your guidance will land deeply.';
-
-  @override
-  String get dailyMotivationQuote => '"The stars incline, they do not compel. Every reading you give lights someone\'s path."';
-
-  @override
-  String get yourCosmicDashboard => 'Your Cosmic Consultation Dashboard';
-
-  @override
-  String get goodMorning => 'Good Morning';
-
-  @override
-  String get goodAfternoon => 'Good Afternoon';
-
-  @override
-  String get goodEvening => 'Good Evening';
-
-  @override
-  String get goodNight => 'Good Night';
-
-  @override
-  String get astrology => 'Astrology';
-
-  @override
-  String get wallet => 'Wallet';
-
-  @override
-  String get failedToLoad => 'ஏற்ற முடியவில்லை';
 
   @override
   String get sendResetLink => 'மீட்டமைப்பு இணைப்பை அனுப்பவும்';
