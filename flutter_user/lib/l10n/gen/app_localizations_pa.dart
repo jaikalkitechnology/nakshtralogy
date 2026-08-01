@@ -10481,6 +10481,27 @@ class AppLocalizationsPa extends AppLocalizations {
   String get forgotPassword => 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?';
 
   @override
+  String get updatePhoto => 'Update Photo';
+
+  @override
+  String get takePhoto => 'Camera';
+
+  @override
+  String get chooseFromGallery => 'Gallery';
+
+  @override
+  String get removePhoto => 'Remove Photo';
+
+  @override
+  String get photoUpdated => 'Photo updated';
+
+  @override
+  String get photoUploadFailed => 'Couldn\'t upload photo. Please try again.';
+
+  @override
+  String get tapToChangePhoto => 'Tap to change photo';
+
+  @override
   String get sendResetLink => 'ਰੀਸੈਟ ਲਿੰਕ ਭੇਜੋ';
 
   @override

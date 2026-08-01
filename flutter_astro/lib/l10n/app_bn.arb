@@ -1,5 +1,12 @@
 {
   "@@locale": "bn",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "astrologer": "জ্যোতিষী",
   "comingSoon": "আসছে শীঘ্রই",
   "responseRate": "রেসপন্স রেট",

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../widgets/avatar_picker.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -115,21 +115,6 @@ class _ProfileTabState extends State<ProfileTab> {
             _field(langCtrl, 'Languages (comma separated)', Icons.language),
             _field(specCtrl, 'Specializations (comma separated)', Icons.auto_awesome),
             _field(qualCtrl, 'Qualification', Icons.school),
-            Row(children: [
-              Expanded(child: _field(imgCtrl, 'Profile Image URL', Icons.image)),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.photo_library, color: AppColors.gold),
-                onPressed: () async {
-                  final picked = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80, maxWidth: 800);
-                  if (picked == null) return;
-                  final resp = await ApiService().uploadProfileImage(picked.path, picked.name);
-                  if (resp['statusCode'] == 200 && resp['media_url'] != null) {
-                    imgCtrl.text = resp['media_url'];
-                  }
-                },
-              ),
-            ]),
             const Divider(color: AppColors.border, height: 28),
             const Align(alignment: Alignment.centerLeft, child: Text('Per-Minute Rates', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
             const SizedBox(height: 8),
@@ -260,13 +245,19 @@ class _ProfileTabState extends State<ProfileTab> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
               child: Column(children: [
-                CircleAvatar(
-                  radius: 42,
-                  backgroundColor: AppColors.primary.withOpacity(0.2),
-                  backgroundImage: imgUrl.isNotEmpty ? NetworkImage(imgUrl) : null,
-                  child: imgUrl.isEmpty ? Text(name.isNotEmpty ? name[0].toUpperCase() : 'A', style: const TextStyle(fontSize: 32, color: AppColors.primary, fontWeight: FontWeight.bold)) : null,
+                AvatarPicker(
+                  size: 92,
+                  imageUrl: imgUrl.isNotEmpty ? imgUrl : null,
+                  fallbackInitial: name.isNotEmpty ? name[0].toUpperCase() : 'A',
+                  onUploaded: (url) async => context.read<AstroProfileBloc>()
+                      .add(AstroProfileUpdateRequested(userFields: const {}, profileFields: {'profile_image_url': url})),
+                  onRemoved: () async => context.read<AstroProfileBloc>()
+                      .add(AstroProfileUpdateRequested(userFields: const {}, profileFields: {'profile_image_url': ''})),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 4),
+                Text(AppLocalizations.of(context)?.tapToChangePhoto ?? 'Tap to change photo',
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                const SizedBox(height: 10),
                 Text(displayName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                 if (bio.isNotEmpty) ...[
                   const SizedBox(height: 4),

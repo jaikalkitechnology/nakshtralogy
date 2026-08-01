@@ -235,6 +235,48 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @updatePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Photo'**
+  String get updatePhoto;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get removePhoto;
+
+  /// No description provided for @photoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo updated'**
+  String get photoUpdated;
+
+  /// No description provided for @photoUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t upload photo. Please try again.'**
+  String get photoUploadFailed;
+
+  /// No description provided for @tapToChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change photo'**
+  String get tapToChangePhoto;
+
   /// No description provided for @klSubtitle.
   ///
   /// In en, this message translates to:

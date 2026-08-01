@@ -1,5 +1,12 @@
 {
   "@@locale": "ta",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "astrologer": "ஜோதிடர்",
   "comingSoon": "வரவிருக்கிறது",
   "responseRate": "பதில் விகிதம்",

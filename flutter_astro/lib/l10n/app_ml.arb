@@ -1,5 +1,12 @@
 {
   "@@locale": "ml",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "astrologer": "ജ്യോതിഷി",
   "comingSoon": "ഉടൻ വരുന്നു",
   "responseRate": "റെസ്‌പോൺസ് നിരക്ക്",

@@ -1,5 +1,12 @@
 {
   "@@locale": "pa",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "astrologer": "ਜੋਤਸ਼ੀ",
   "comingSoon": "ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ",
   "responseRate": "ਰਿਸਪਾਂਸ ਰੇਟ",

@@ -60,6 +60,20 @@ class ApiService {
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
+  /// Auth headers for loading protected media (e.g. uploaded avatars) via
+  /// Image.network. Harmless on already-public URLs (Google photos, etc.).
+  Map<String, String> get mediaHeaders => {
+    if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
+  };
+
+  /// Resolve a possibly-relative media path (e.g. "/api/v1/comm/chat/file/..")
+  /// returned by upload endpoints into an absolute URL. Full URLs pass through.
+  static String resolveMediaUrl(String url) {
+    if (url.isEmpty || url.startsWith('http')) return url;
+    final host = ApiConstants.baseUrl.replaceFirst('/api/v1', '');
+    return url.startsWith('/') ? '$host$url' : '$host/$url';
+  }
+
   bool _refreshing = false;
   void Function()? onAuthExpired;
 

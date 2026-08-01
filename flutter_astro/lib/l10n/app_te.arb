@@ -1,5 +1,12 @@
 {
   "@@locale": "te",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "astrologer": "జ్యోతిష్కుడు",
   "comingSoon": "త్వరలో వస్తుంది",
   "responseRate": "రెస్పాన్స్ రేటు",

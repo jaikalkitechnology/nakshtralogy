@@ -9554,6 +9554,27 @@ class AppLocalizationsTa extends AppLocalizations {
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
 
   @override
+  String get updatePhoto => 'Update Photo';
+
+  @override
+  String get takePhoto => 'Camera';
+
+  @override
+  String get chooseFromGallery => 'Gallery';
+
+  @override
+  String get removePhoto => 'Remove Photo';
+
+  @override
+  String get photoUpdated => 'Photo updated';
+
+  @override
+  String get photoUploadFailed => 'Couldn\'t upload photo. Please try again.';
+
+  @override
+  String get tapToChangePhoto => 'Tap to change photo';
+
+  @override
   String get sendResetLink => 'மீட்டமைப்பு இணைப்பை அனுப்பவும்';
 
   @override

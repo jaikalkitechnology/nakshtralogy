@@ -1,5 +1,12 @@
 {
   "@@locale": "gu",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "astrologer": "જ્યોતિષી",
   "comingSoon": "ટૂંક સમયમાં આવે છે",
   "responseRate": "રિસ્પોન્સ રેટ",

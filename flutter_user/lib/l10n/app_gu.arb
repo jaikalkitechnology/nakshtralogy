@@ -1,5 +1,12 @@
 {
   "@@locale": "gu",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "klSubtitle": "AI-સંચાલિત વૈદિક પૂર્વજન્મ કર્મ-જોડાણ અહેવાલ",
   "klTitle": "પૂર્વજન્મ કર્મ-જોડાણ",
   "klSnapshotHeader": "કર્મ-જોડાણ સ્નેપશોટ",

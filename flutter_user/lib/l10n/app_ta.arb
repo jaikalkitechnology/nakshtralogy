@@ -1,5 +1,12 @@
 {
   "@@locale": "ta",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "klSubtitle": "AI-இயக்கும் வேத முன்வினை கர்ம தொடர்பு அறிக்கை",
   "klTitle": "முன்வினை கர்ம தொடர்பு",
   "klSnapshotHeader": "கர்ம தொடர்பு சுருக்கம்",

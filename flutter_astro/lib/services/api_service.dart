@@ -60,6 +60,20 @@ class ApiService {
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
+  /// Auth headers for loading protected media (e.g. uploaded avatars) via
+  /// Image.network. Harmless on already-public URLs (Google photos, etc.).
+  Map<String, String> get mediaHeaders => {
+    if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
+  };
+
+  /// Resolve a possibly-relative media path (e.g. "/api/v1/comm/chat/file/..")
+  /// returned by upload endpoints into an absolute URL. Full URLs pass through.
+  static String resolveMediaUrl(String url) {
+    if (url.isEmpty || url.startsWith('http')) return url;
+    final host = ApiConstants.baseUrl.replaceFirst('/api/v1', '');
+    return url.startsWith('/') ? '$host$url' : '$host/$url';
+  }
+
   bool _refreshing = false;
 
   Future<bool> _tryRefresh() async {
@@ -345,7 +359,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> uploadProfileImage(String filePath, String fileName) async {
-    final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.commBase}/chat/file/upload'));
+    final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.commBase}/chat/upload'));
     request.headers.addAll(_headers);
     request.files.add(await http.MultipartFile.fromPath('file', filePath, filename: fileName));
     final streamedResp = await request.send();

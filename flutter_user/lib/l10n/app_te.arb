@@ -1,5 +1,12 @@
 {
   "@@locale": "te",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "klSubtitle": "AI-ఆధారిత వేద పూర్వజన్మ కర్మ అనుసంధాన నివేదిక",
   "klTitle": "పూర్వజన్మ కర్మ అనుసంధానం",
   "klSnapshotHeader": "కర్మ అనుసంధాన స్నాప్‌షాట్",
