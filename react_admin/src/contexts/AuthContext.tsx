@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginByRole, googleLoginByRole, logoutUser, getStoredUser, signupUser, signupAstrologer, type LoginRole } from "@/services/api";
+import { loginAdmin, logoutUser, getStoredUser } from "@/services/api";
 
-export type UserRole = "user" | "astrologer" | "admin";
+export type UserRole = "admin";
 
 interface AuthUser {
   id: string;
@@ -10,16 +10,12 @@ interface AuthUser {
   role: UserRole;
   avatar?: string;
   walletBalance: number;
-  profile?: any; // astrologer profile data
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string, role: UserRole) => Promise<{ error: string | null; redirectTo: string }>;
-  googleLogin: (idToken: string, role: UserRole) => Promise<{ error: string | null; redirectTo: string }>;
-  signupAsUser: (name: string, email: string, password: string, phone?: string) => Promise<{ error: string | null; redirectTo: string }>;
-  signupAsAstrologer: (fields: any) => Promise<{ error: string | null; redirectTo: string }>;
+  login: (email: string, password: string) => Promise<{ error: string | null; redirectTo: string }>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -32,23 +28,14 @@ export const useAuth = () => {
   return ctx;
 };
 
-function roleRedirect(role: string): string {
-  switch (role) {
-    case "admin": return "/admin";
-    case "astrologer": return "/astrologer";
-    default: return "/dashboard";
-  }
-}
-
 function mapUser(data: any): AuthUser {
   return {
     id: data.id,
     name: data.name || "",
     email: data.email,
-    role: data.role,
+    role: "admin",
     avatar: data.avatar_url,
     walletBalance: data.wallet_balance || 0,
-    profile: data.profile,
   };
 }
 
@@ -58,60 +45,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const stored = getStoredUser();
-    if (stored) {
+    // Only restore admin sessions — this panel is admin-only.
+    if (stored && stored.role === "admin") {
       setUser(mapUser(stored));
+    } else if (stored) {
+      logoutUser();
     }
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, role: UserRole) => {
-    const { ok, data } = await loginByRole(email, password, role as LoginRole);
+  const login = async (email: string, password: string) => {
+    const { ok, data } = await loginAdmin(email, password);
     if (ok && data.user) {
-      const u = data.user;
-      // validate role matches what was requested
-      if (u.role !== role) {
+      if (data.user.role !== "admin") {
         logoutUser();
-        return { error: `This account is registered as "${u.role}", not "${role}"`, redirectTo: "" };
+        return { error: "This account is not an administrator.", redirectTo: "" };
       }
-      setUser(mapUser(u));
-      return { error: null, redirectTo: roleRedirect(u.role) };
+      setUser(mapUser(data.user));
+      return { error: null, redirectTo: "/admin" };
     }
     return { error: data.detail || "Login failed", redirectTo: "" };
-  };
-
-  const googleLogin = async (idToken: string, role: UserRole) => {
-    if (role === "admin") {
-      return { error: "Google login is not available for admin", redirectTo: "" };
-    }
-    const { ok, data } = await googleLoginByRole(idToken, role as LoginRole);
-    if (ok && data.user) {
-      const u = data.user;
-      if (u.role !== role) {
-        logoutUser();
-        return { error: `This account is registered as "${u.role}", not "${role}"`, redirectTo: "" };
-      }
-      setUser(mapUser(u));
-      return { error: null, redirectTo: roleRedirect(u.role) };
-    }
-    return { error: data.detail || "Google login failed", redirectTo: "" };
-  };
-
-  const signupAsUser = async (name: string, email: string, password: string, phone?: string) => {
-    const { ok, data } = await signupUser(name, email, password, phone);
-    if (ok && data.user) {
-      setUser(mapUser(data.user));
-      return { error: null, redirectTo: "/dashboard" };
-    }
-    return { error: data.detail || "Signup failed", redirectTo: "" };
-  };
-
-  const signupAsAstrologer = async (fields: any) => {
-    const { ok, data } = await signupAstrologer(fields);
-    if (ok && data.user) {
-      setUser(mapUser(data.user));
-      return { error: null, redirectTo: "/astrologer" };
-    }
-    return { error: data.detail || "Signup failed", redirectTo: "" };
   };
 
   const logout = () => {
@@ -120,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, googleLogin, signupAsUser, signupAsAstrologer, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

@@ -26,15 +26,9 @@ async function request<T = any>(
 
 // ── Auth ─────────────────────────────────────────────────────────
 
-export type LoginRole = "user" | "astrologer" | "admin";
-
-export async function loginByRole(email: string, password: string, role: LoginRole) {
-  // Each role has its own dedicated login endpoint
-  const endpoint =
-    role === "admin" ? "/admin/login" :
-    role === "astrologer" ? "/astrologer/login" :
-    "/user/login";
-  const res = await fetch(`${BASE}${endpoint}`, {
+// Admin-only login. This panel is exclusively for administrators.
+export async function loginAdmin(email: string, password: string) {
+  const res = await fetch(`${BASE}/admin/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -43,95 +37,10 @@ export async function loginByRole(email: string, password: string, role: LoginRo
   if (res.ok) {
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
-    const userData = role === "astrologer" ? data.user : data.user;
-    localStorage.setItem("app_user", JSON.stringify(userData));
-  }
-  return { ok: res.ok, status: res.status, data };
-}
-
-export async function signupUser(name: string, email: string, password: string, phone?: string) {
-  const res = await fetch(`${BASE}/user/signup`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password, ...(phone ? { phone } : {}) }),
-  });
-  const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem("access_token", data.access_token);
-    localStorage.setItem("refresh_token", data.refresh_token);
     localStorage.setItem("app_user", JSON.stringify(data.user));
   }
   return { ok: res.ok, status: res.status, data };
 }
-
-export async function signupAstrologer(fields: {
-  name: string; email: string; password: string; phone?: string;
-  display_name?: string; experience_years?: number;
-  languages?: string[]; specializations?: string[];
-  qualification?: string; bio?: string;
-}) {
-  const res = await fetch(`${BASE}/astrologer/signup`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(fields),
-  });
-  const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem("access_token", data.access_token);
-    localStorage.setItem("refresh_token", data.refresh_token);
-    localStorage.setItem("app_user", JSON.stringify(data.user));
-  }
-  return { ok: res.ok, status: res.status, data };
-}
-
-// Start Google OAuth flow by redirecting browser to Google consent URL.
-// Backend builds the URL using credentials stored in platform_settings.
-export async function startGoogleOAuth(role: "user" | "astrologer") {
-  const res = await fetch(`${BASE}/google/login-url?role=${role}`);
-  const data = await res.json();
-  if (!res.ok || !data.url) {
-    return { error: data.detail || "Failed to build Google OAuth URL" };
-  }
-  window.location.href = data.url;
-  return { error: null };
-}
-
-// Save tokens + user data returned via Google OAuth callback query params.
-export function saveGoogleOAuthSession(params: URLSearchParams) {
-  const access = params.get("access_token");
-  const refresh = params.get("refresh_token");
-  if (!access || !refresh) return null;
-  localStorage.setItem("access_token", access);
-  localStorage.setItem("refresh_token", refresh);
-  const user = {
-    id: params.get("user_id") || "",
-    name: params.get("name") || "",
-    email: params.get("email") || "",
-    role: params.get("role") || "user",
-    wallet_balance: 0,
-  };
-  localStorage.setItem("app_user", JSON.stringify(user));
-  return user;
-}
-
-export async function googleLoginByRole(idToken: string, role: LoginRole) {
-  const endpoint = role === "astrologer" ? "/astrologer/google-login" : "/user/google-login";
-  const res = await fetch(`${BASE}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id_token: idToken }),
-  });
-  const data = await res.json();
-  if (res.ok) {
-    localStorage.setItem("access_token", data.access_token);
-    localStorage.setItem("refresh_token", data.refresh_token);
-    localStorage.setItem("app_user", JSON.stringify(data.user));
-  }
-  return { ok: res.ok, status: res.status, data };
-}
-
-// keep backward compat alias
-export const loginAdmin = (email: string, password: string) => loginByRole(email, password, "admin");
 
 export function logoutUser() {
   localStorage.removeItem("access_token");
