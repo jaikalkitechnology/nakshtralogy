@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../theme/app_theme.dart';
+import 'astro_avatar.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../bloc/astrologer/astrologer_bloc.dart';
 import '../bloc/astrologer/astrologer_event.dart';
@@ -143,15 +144,10 @@ class _AstrologerProfileSheet extends StatelessWidget {
                       children: [
                         Stack(
                           children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundColor: AppColors.card,
-                              backgroundImage: a['profile_image_url'] != null
-                                  ? NetworkImage(a['profile_image_url'] as String)
-                                  : null,
-                              child: a['profile_image_url'] == null
-                                  ? const Text('🔮', style: TextStyle(fontSize: 32))
-                                  : null,
+                            AstroAvatar(
+                              imageUrl: a['profile_image_url']?.toString(),
+                              name: (a['display_name'] ?? '').toString(),
+                              size: 80,
                             ),
                             if (isOnline)
                               Positioned(

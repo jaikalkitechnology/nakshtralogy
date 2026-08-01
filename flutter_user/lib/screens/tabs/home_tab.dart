@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/astro_avatar.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
@@ -381,7 +382,6 @@ class _AstroCard extends StatelessWidget {
     final rating = (astro['rating'] as num?)?.toDouble() ?? 0.0;
     final isOnline = astro['is_online'] == true && astro['is_busy'] != true;
     final isBusy = astro['is_busy'] == true;
-    final initial = (astro['display_name'] ?? 'A').toString()[0].toUpperCase();
 
     return GestureDetector(
       onTap: () => showAstrologerProfileSheet(context, astro['id'] as String),
@@ -395,17 +395,10 @@ class _AstroCard extends StatelessWidget {
         child: Row(children: [
           // Avatar with online dot
           Stack(children: [
-            Container(
-              width: 48, height: 48,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(colors: [AppColors.saffron, AppColors.cosmicPink]),
-                border: Border.all(color: AppColors.gold, width: 2),
-              ),
-              child: astro['profile_image_url'] != null
-                  ? ClipOval(child: Image.network(astro['profile_image_url'], fit: BoxFit.cover, width: 48, height: 48,
-                      errorBuilder: (_, __, ___) => Center(child: Text(initial, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700)))))
-                  : Center(child: Text(initial, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700))),
+            AstroAvatar(
+              imageUrl: astro['profile_image_url']?.toString(),
+              name: (astro['display_name'] ?? '').toString(),
+              size: 48,
             ),
             if (isOnline) Positioned(bottom: 1, right: 1, child: Container(
               width: 12, height: 12,
