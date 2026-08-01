@@ -38,9 +38,9 @@ modified**.
 ## Phase 0 — Data model & seed
 | # | Task | Status |
 |---|------|--------|
-| 0.1 | Add models: `developer_profile`, `api_key`, `subscription_plan`, `developer_subscription`, `api_product`, `api_usage_log` | DONE (pending-commit, 2026-08-01) |
-| 0.2 | Add `WalletTransaction` txn types (`api_subscription_debit`, `api_recharge`, `api_subscription_refund`) | DONE (pending-commit, 2026-08-01) |
-| 0.3 | Schema bootstrap (create_all / Alembic per project convention) + `POST /admin/seed-api-plans` (idempotent: 1 plan + 4 products) | DONE (pending-commit, 2026-08-01) |
+| 0.1 | Add models: `developer_profile`, `api_key`, `subscription_plan`, `developer_subscription`, `api_product`, `api_usage_log` | DONE (ec1570e, 2026-08-01) |
+| 0.2 | Add `WalletTransaction` txn types (`api_subscription_debit`, `api_recharge`, `api_subscription_refund`) | DONE (ec1570e, 2026-08-01) |
+| 0.3 | Schema bootstrap (create_all / Alembic per project convention) + `POST /admin/seed-api-plans` (idempotent: 1 plan + 4 products) | DONE (ec1570e, 2026-08-01) |
 
 ## Phase 1 — Developer auth & profile
 | # | Task | Status |
