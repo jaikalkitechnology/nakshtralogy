@@ -9,6 +9,114 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get astrologer => 'জ্যোতিষী';
+
+  @override
+  String get comingSoon => 'আসছে শীঘ্রই';
+
+  @override
+  String get responseRate => 'রেসপন্স রেট';
+
+  @override
+  String get totalEarnings => 'মোট আয়';
+
+  @override
+  String get reviews => 'রিভিউ';
+
+  @override
+  String get todayVsGoal => 'আজ বনাম লক্ষ্য';
+
+  @override
+  String get dailyGoal => 'দৈনিক লক্ষ্য';
+
+  @override
+  String get minutesConsulted => 'পরামর্শের মিনিট';
+
+  @override
+  String get performanceOverview => 'পারফরম্যান্স ওভারভিউ';
+
+  @override
+  String get towardsGoal => 'লক্ষ্যের দিকে';
+
+  @override
+  String get liveStatus => 'লাইভ স্ট্যাটাস';
+
+  @override
+  String get goLiveSubtitle => 'সন্ধানীদের সাথে লাইভ সেশন শুরু করুন';
+
+  @override
+  String get todaysRequests => 'আজকের রিকোয়েস্ট';
+
+  @override
+  String get voice => 'ভয়েস';
+
+  @override
+  String get video => 'ভিডিও';
+
+  @override
+  String get activeRequests => 'সক্রিয় রিকোয়েস্ট';
+
+  @override
+  String get astrologyServices => 'জ্যোতিষ সেবা';
+
+  @override
+  String get rashiServiceDesc => 'সব ১২ রাশির আজকের গোচর';
+
+  @override
+  String get upcomingConsultations => 'আসন্ন পরামর্শ';
+
+  @override
+  String get noUpcomingConsultations => 'এখনও কোনো আসন্ন পরামর্শ নেই';
+
+  @override
+  String get recentActivity => 'সাম্প্রতিক কার্যকলাপ';
+
+  @override
+  String get seeAll => 'সব দেখুন';
+
+  @override
+  String get performanceAnalytics => 'পারফরম্যান্স অ্যানালিটিক্স';
+
+  @override
+  String get aiAssistant => 'এআই সহায়ক';
+
+  @override
+  String get aiAssistantSubtitle => 'পাঠ ও উপায় তৈরিতে তাৎক্ষণিক সাহায্য নিন';
+
+  @override
+  String get cosmicInsight => 'কসমিক ইনসাইট';
+
+  @override
+  String get cosmicInsightBody => 'আজ চাঁদ অর্থপূর্ণ কথোপকথনের পক্ষে। সহমর্মিতা ও স্পষ্টতার সাথে আপনার সেশন পরিচালনা করুন, আপনার দিকনির্দেশনা গভীরভাবে পৌঁছাবে।';
+
+  @override
+  String get dailyMotivationQuote => '"তারা প্রবণতা তৈরি করে, বাধ্য করে না। আপনার দেওয়া প্রতিটি পাঠ কারও পথ আলোকিত করে।"';
+
+  @override
+  String get yourCosmicDashboard => 'আপনার কসমিক পরামর্শ ড্যাশবোর্ড';
+
+  @override
+  String get goodMorning => 'শুভ সকাল';
+
+  @override
+  String get goodAfternoon => 'শুভ অপরাহ্ন';
+
+  @override
+  String get goodEvening => 'শুভ সন্ধ্যা';
+
+  @override
+  String get goodNight => 'শুভ রাত্রি';
+
+  @override
+  String get astrology => 'জ্যোতিষশাস্ত্র';
+
+  @override
+  String get wallet => 'ওয়ালেট';
+
+  @override
+  String get failedToLoad => 'লোড করতে ব্যর্থ';
+
+  @override
   String get klSubtitle => 'AI-চালিত বৈদিক পূর্বজন্ম কর্ম-সংযোগ রিপোর্ট';
 
   @override
@@ -9444,9 +9552,6 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
-
-  @override
-  String get failedToLoad => 'লোড করতে ব্যর্থ';
 
   @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';

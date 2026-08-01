@@ -9446,6 +9446,111 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get astrologer => 'Astrologer';
+
+  @override
+  String get comingSoon => 'Coming Soon';
+
+  @override
+  String get responseRate => 'Response Rate';
+
+  @override
+  String get totalEarnings => 'Total Earnings';
+
+  @override
+  String get reviews => 'reviews';
+
+  @override
+  String get todayVsGoal => 'Aaj vs Goal';
+
+  @override
+  String get dailyGoal => 'Daily goal';
+
+  @override
+  String get minutesConsulted => 'Minutes Consulted';
+
+  @override
+  String get performanceOverview => 'Performance Overview';
+
+  @override
+  String get towardsGoal => 'goal ki ओर';
+
+  @override
+  String get liveStatus => 'Live Status';
+
+  @override
+  String get goLiveSubtitle => 'Seekers ke saath live session shuru karein';
+
+  @override
+  String get todaysRequests => 'Aaj ke Requests';
+
+  @override
+  String get voice => 'Voice';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get activeRequests => 'Active Requests';
+
+  @override
+  String get astrologyServices => 'Astrology Services';
+
+  @override
+  String get rashiServiceDesc => 'Sabhi 12 rashiyon ke liye aaj ka gochar';
+
+  @override
+  String get upcomingConsultations => 'Upcoming Consultations';
+
+  @override
+  String get noUpcomingConsultations => 'Abhi koi upcoming consultation nahi';
+
+  @override
+  String get recentActivity => 'Recent Activity';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get performanceAnalytics => 'Performance Analytics';
+
+  @override
+  String get aiAssistant => 'AI Assistant';
+
+  @override
+  String get aiAssistantSubtitle => 'Readings aur remedies draft karne mein instant help paayein';
+
+  @override
+  String get cosmicInsight => 'Cosmic Insight';
+
+  @override
+  String get cosmicInsightBody => 'Aaj Moon meaningful conversations ko favour karta hai. Empathy aur clarity ke saath apne sessions lead karein, aapka guidance deeply land karega.';
+
+  @override
+  String get dailyMotivationQuote => '"Sitare inclination dete hain, majboor nahi karte. Aapki har reading kisi ka path roshan karti hai."';
+
+  @override
+  String get yourCosmicDashboard => 'Aapka Cosmic Consultation Dashboard';
+
+  @override
+  String get goodMorning => 'Good Morning';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon';
+
+  @override
+  String get goodEvening => 'Good Evening';
+
+  @override
+  String get goodNight => 'Good Night';
+
+  @override
+  String get astrology => 'Astrology';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
   String get failedToLoad => 'Load fail ho gaya';
 
   @override

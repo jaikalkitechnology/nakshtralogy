@@ -9,6 +9,114 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
+  String get astrologer => 'ಜ್ಯೋತಿಷಿ';
+
+  @override
+  String get comingSoon => 'ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತಿದೆ';
+
+  @override
+  String get responseRate => 'ಪ್ರತಿಕ್ರಿಯೆ ದರ';
+
+  @override
+  String get totalEarnings => 'ಒಟ್ಟು ಗಳಿಕೆ';
+
+  @override
+  String get reviews => 'ರಿವ್ಯೂಗಳು';
+
+  @override
+  String get todayVsGoal => 'ಇಂದು vs ಗುರಿ';
+
+  @override
+  String get dailyGoal => 'ದೈನಂದಿನ ಗುರಿ';
+
+  @override
+  String get minutesConsulted => 'ಸಲಹಾ ನಿಮಿಷಗಳು';
+
+  @override
+  String get performanceOverview => 'ಕಾರ್ಯಕ್ಷಮತೆ ಅವಲೋಕನ';
+
+  @override
+  String get towardsGoal => 'ಗುರಿಯ ಕಡೆಗೆ';
+
+  @override
+  String get liveStatus => 'ಲೈವ್ ಸ್ಥಿತಿ';
+
+  @override
+  String get goLiveSubtitle => 'ಹುಡುಕುವವರೊಂದಿಗೆ ಲೈವ್ ಸೆಷನ್ ಪ್ರಾರಂಭಿಸಿ';
+
+  @override
+  String get todaysRequests => 'ಇಂದಿನ ವಿನಂತಿಗಳು';
+
+  @override
+  String get voice => 'ವಾಯ್ಸ್';
+
+  @override
+  String get video => 'ವೀಡಿಯೋ';
+
+  @override
+  String get activeRequests => 'ಸಕ್ರಿಯ ವಿನಂತಿಗಳು';
+
+  @override
+  String get astrologyServices => 'ಜ್ಯೋತಿಷ್ಯ ಸೇವೆಗಳು';
+
+  @override
+  String get rashiServiceDesc => 'ಎಲ್ಲಾ 12 ರಾಶಿಗಳಿಗೆ ಇಂದಿನ ಗೋಚರ';
+
+  @override
+  String get upcomingConsultations => 'ಮುಂಬರುವ ಸಲಹೆಗಳು';
+
+  @override
+  String get noUpcomingConsultations => 'ಇನ್ನೂ ಯಾವುದೇ ಮುಂಬರುವ ಸಲಹೆಗಳಿಲ್ಲ';
+
+  @override
+  String get recentActivity => 'ಇತ್ತೀಚಿನ ಚಟುವಟಿಕೆ';
+
+  @override
+  String get seeAll => 'ಎಲ್ಲವನ್ನೂ ನೋಡಿ';
+
+  @override
+  String get performanceAnalytics => 'ಕಾರ್ಯಕ್ಷಮತೆ ವಿಶ್ಲೇಷಣೆ';
+
+  @override
+  String get aiAssistant => 'AI ಸಹಾಯಕ';
+
+  @override
+  String get aiAssistantSubtitle => 'ಫಲಿತಾಂಶಗಳು ಮತ್ತು ಪರಿಹಾರಗಳನ್ನು ರೂಪಿಸಲು ತ್ವರಿತ ಸಹಾಯ ಪಡೆಯಿರಿ';
+
+  @override
+  String get cosmicInsight => 'ಕಾಸ್ಮಿಕ್ ಇನ್‌ಸೈಟ್';
+
+  @override
+  String get cosmicInsightBody => 'ಇಂದು ಚಂದ್ರ ಅರ್ಥಪೂರ್ಣ ಸಂಭಾಷಣೆಗಳಿಗೆ ಅನುಕೂಲಕರವಾಗಿದೆ. ಸಹಾನುಭೂತಿ ಮತ್ತು ಸ್ಪಷ್ಟತೆಯಿಂದ ನಿಮ್ಮ ಸೆಷನ್‌ಗಳನ್ನು ನಡೆಸಿ, ನಿಮ್ಮ ಮಾರ್ಗದರ್ಶನ ಆಳವಾಗಿ ತಲುಪುತ್ತದೆ.';
+
+  @override
+  String get dailyMotivationQuote => '"ನಕ್ಷತ್ರಗಳು ಒಲವು ತೋರುತ್ತವೆ, ಬಲವಂತ ಮಾಡುವುದಿಲ್ಲ. ನೀವು ನೀಡುವ ಪ್ರತಿ ಫಲಿತಾಂಶವೂ ಯಾರೊಬ್ಬರ ಹಾದಿಯನ್ನು ಬೆಳಗಿಸುತ್ತದೆ."';
+
+  @override
+  String get yourCosmicDashboard => 'ನಿಮ್ಮ ಕಾಸ್ಮಿಕ್ ಸಲಹಾ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್';
+
+  @override
+  String get goodMorning => 'ಶುಭೋದಯ';
+
+  @override
+  String get goodAfternoon => 'ಶುಭ ಮಧ್ಯಾಹ್ನ';
+
+  @override
+  String get goodEvening => 'ಶುಭ ಸಂಜೆ';
+
+  @override
+  String get goodNight => 'ಶುಭ ರಾತ್ರಿ';
+
+  @override
+  String get astrology => 'ಜ್ಯೋತಿಷ್ಯ';
+
+  @override
+  String get wallet => 'ವಾಲೆಟ್';
+
+  @override
+  String get failedToLoad => 'ಲೋಡ್ ವಿಫಲವಾಯಿತು';
+
+  @override
   String get klSubtitle => 'AI-ಚಾಲಿತ ವೈದಿಕ ಪೂರ್ವಜನ್ಮ ಕರ್ಮ ಸಂಬಂಧ ವರದಿ';
 
   @override
@@ -9444,9 +9552,6 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
-
-  @override
-  String get failedToLoad => 'ಲೋಡ್ ವಿಫಲವಾಯಿತು';
 
   @override
   String get sendResetLink => 'ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿ';

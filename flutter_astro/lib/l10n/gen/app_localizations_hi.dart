@@ -9446,6 +9446,111 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get astrologer => 'ज्योतिषी';
+
+  @override
+  String get comingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get responseRate => 'प्रतिक्रिया दर';
+
+  @override
+  String get totalEarnings => 'कुल कमाई';
+
+  @override
+  String get reviews => 'समीक्षाएँ';
+
+  @override
+  String get todayVsGoal => 'आज बनाम लक्ष्य';
+
+  @override
+  String get dailyGoal => 'दैनिक लक्ष्य';
+
+  @override
+  String get minutesConsulted => 'परामर्श मिनट';
+
+  @override
+  String get performanceOverview => 'प्रदर्शन अवलोकन';
+
+  @override
+  String get towardsGoal => 'लक्ष्य की ओर';
+
+  @override
+  String get liveStatus => 'लाइव स्थिति';
+
+  @override
+  String get goLiveSubtitle => 'जिज्ञासुओं के साथ लाइव सत्र शुरू करें';
+
+  @override
+  String get todaysRequests => 'आज के अनुरोध';
+
+  @override
+  String get voice => 'वॉइस';
+
+  @override
+  String get video => 'वीडियो';
+
+  @override
+  String get activeRequests => 'सक्रिय अनुरोध';
+
+  @override
+  String get astrologyServices => 'ज्योतिष सेवाएँ';
+
+  @override
+  String get rashiServiceDesc => 'सभी 12 राशियों के लिए आज का गोचर';
+
+  @override
+  String get upcomingConsultations => 'आगामी परामर्श';
+
+  @override
+  String get noUpcomingConsultations => 'अभी कोई आगामी परामर्श नहीं';
+
+  @override
+  String get recentActivity => 'हाल की गतिविधि';
+
+  @override
+  String get seeAll => 'सभी देखें';
+
+  @override
+  String get performanceAnalytics => 'प्रदर्शन विश्लेषण';
+
+  @override
+  String get aiAssistant => 'एआई सहायक';
+
+  @override
+  String get aiAssistantSubtitle => 'रीडिंग और उपाय लिखने में तुरंत मदद पाएँ';
+
+  @override
+  String get cosmicInsight => 'ब्रह्मांडीय अंतर्दृष्टि';
+
+  @override
+  String get cosmicInsightBody => 'आज चंद्रमा सार्थक बातचीत का समर्थन करता है। सहानुभूति और स्पष्टता के साथ अपने सत्र का नेतृत्व करें, और आपका मार्गदर्शन गहराई तक पहुँचेगा।';
+
+  @override
+  String get dailyMotivationQuote => '"तारे झुकाव देते हैं, बाध्य नहीं करते। आपकी हर रीडिंग किसी का मार्ग रोशन करती है।"';
+
+  @override
+  String get yourCosmicDashboard => 'आपका ब्रह्मांडीय परामर्श डैशबोर्ड';
+
+  @override
+  String get goodMorning => 'सुप्रभात';
+
+  @override
+  String get goodAfternoon => 'नमस्कार';
+
+  @override
+  String get goodEvening => 'शुभ संध्या';
+
+  @override
+  String get goodNight => 'शुभ रात्रि';
+
+  @override
+  String get astrology => 'ज्योतिष';
+
+  @override
+  String get wallet => 'वॉलेट';
+
+  @override
   String get failedToLoad => 'लोड करने में विफल';
 
   @override

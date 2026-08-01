@@ -9,6 +9,114 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
+  String get astrologer => 'ज्योतिषी';
+
+  @override
+  String get comingSoon => 'लवकरच येत आहे';
+
+  @override
+  String get responseRate => 'रिस्पॉन्स रेट';
+
+  @override
+  String get totalEarnings => 'एकूण कमाई';
+
+  @override
+  String get reviews => 'रिव्ह्यू';
+
+  @override
+  String get todayVsGoal => 'आज vs लक्ष्य';
+
+  @override
+  String get dailyGoal => 'दैनिक लक्ष्य';
+
+  @override
+  String get minutesConsulted => 'सल्ला दिलेली मिनिटे';
+
+  @override
+  String get performanceOverview => 'परफॉर्मन्स आढावा';
+
+  @override
+  String get towardsGoal => 'लक्ष्याच्या दिशेने';
+
+  @override
+  String get liveStatus => 'लाइव्ह स्टेटस';
+
+  @override
+  String get goLiveSubtitle => 'शोधकांसोबत लाइव्ह सेशन सुरू करा';
+
+  @override
+  String get todaysRequests => 'आजच्या विनंत्या';
+
+  @override
+  String get voice => 'व्हॉइस';
+
+  @override
+  String get video => 'व्हिडिओ';
+
+  @override
+  String get activeRequests => 'सक्रिय विनंत्या';
+
+  @override
+  String get astrologyServices => 'ज्योतिष सेवा';
+
+  @override
+  String get rashiServiceDesc => 'सर्व 12 राशींसाठी आजचे गोचर';
+
+  @override
+  String get upcomingConsultations => 'येणारे सल्लामसलत';
+
+  @override
+  String get noUpcomingConsultations => 'अजून कोणतेही येणारे सल्लामसलत नाही';
+
+  @override
+  String get recentActivity => 'नवीनतम क्रियाकलाप';
+
+  @override
+  String get seeAll => 'सर्व पहा';
+
+  @override
+  String get performanceAnalytics => 'परफॉर्मन्स अॅनालिटिक्स';
+
+  @override
+  String get aiAssistant => 'AI सहाय्यक';
+
+  @override
+  String get aiAssistantSubtitle => 'वाचन आणि उपाय तयार करण्यात त्वरित मदत मिळवा';
+
+  @override
+  String get cosmicInsight => 'कॉस्मिक इनसाइट';
+
+  @override
+  String get cosmicInsightBody => 'आज चंद्र अर्थपूर्ण संभाषणांना अनुकूल आहे. सहानुभूती आणि स्पष्टतेने तुमचे सेशन चालवा, तुमचे मार्गदर्शन खोलवर पोहोचेल.';
+
+  @override
+  String get dailyMotivationQuote => '"तारे कल दाखवतात, बंधन घालत नाहीत. तुम्ही दिलेले प्रत्येक वाचन कोणाच्या तरी मार्गाला प्रकाशित करते."';
+
+  @override
+  String get yourCosmicDashboard => 'तुमचा कॉस्मिक सल्लामसलत डॅशबोर्ड';
+
+  @override
+  String get goodMorning => 'शुभ सकाळ';
+
+  @override
+  String get goodAfternoon => 'शुभ दुपार';
+
+  @override
+  String get goodEvening => 'शुभ संध्याकाळ';
+
+  @override
+  String get goodNight => 'शुभ रात्री';
+
+  @override
+  String get astrology => 'ज्योतिषशास्त्र';
+
+  @override
+  String get wallet => 'वॉलेट';
+
+  @override
+  String get failedToLoad => 'लोड करण्यात अयशस्वी';
+
+  @override
   String get klSubtitle => 'AI-आधारित वैदिक पूर्वजन्म कर्म-बंध अहवाल';
 
   @override
@@ -9444,9 +9552,6 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get forgotPassword => 'पासवर्ड विसरलात?';
-
-  @override
-  String get failedToLoad => 'लोड करण्यात अयशस्वी';
 
   @override
   String get sendResetLink => 'रीसेट लिंक पाठवा';
