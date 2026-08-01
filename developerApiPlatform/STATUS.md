@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 1 / 31 tasks DONE (6.1 scaffold) · Phase 0 next.
+**Summary:** 4 / 31 tasks DONE (6.1 scaffold + Phase 0) · Phase 1 next.
 
 ---
 
@@ -38,9 +38,9 @@ modified**.
 ## Phase 0 — Data model & seed
 | # | Task | Status |
 |---|------|--------|
-| 0.1 | Add models: `developer_profile`, `api_key`, `subscription_plan`, `developer_subscription`, `api_product`, `api_usage_log` | PENDING |
-| 0.2 | Add `WalletTransaction` txn types (`api_subscription_debit`, `api_recharge`, `api_subscription_refund`) | PENDING |
-| 0.3 | Schema bootstrap (create_all / Alembic per project convention) + `POST /admin/seed-api-plans` (idempotent: 1 plan + 4 products) | PENDING |
+| 0.1 | Add models: `developer_profile`, `api_key`, `subscription_plan`, `developer_subscription`, `api_product`, `api_usage_log` | DONE (pending-commit, 2026-08-01) |
+| 0.2 | Add `WalletTransaction` txn types (`api_subscription_debit`, `api_recharge`, `api_subscription_refund`) | DONE (pending-commit, 2026-08-01) |
+| 0.3 | Schema bootstrap (create_all / Alembic per project convention) + `POST /admin/seed-api-plans` (idempotent: 1 plan + 4 products) | DONE (pending-commit, 2026-08-01) |
 
 ## Phase 1 — Developer auth & profile
 | # | Task | Status |
