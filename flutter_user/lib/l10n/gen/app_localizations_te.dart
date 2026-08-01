@@ -9,6 +9,27 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
+  String get updatePhoto => 'ఫోటోను అప్‌డేట్ చేయండి';
+
+  @override
+  String get takePhoto => 'కెమెరా';
+
+  @override
+  String get chooseFromGallery => 'గ్యాలరీ';
+
+  @override
+  String get removePhoto => 'ఫోటోను తీసివేయండి';
+
+  @override
+  String get photoUpdated => 'ఫోటో అప్‌డేట్ అయింది';
+
+  @override
+  String get photoUploadFailed => 'ఫోటోను అప్‌లోడ్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get tapToChangePhoto => 'ఫోటోను మార్చడానికి నొక్కండి';
+
+  @override
   String get klSubtitle => 'AI-ఆధారిత వేద పూర్వజన్మ కర్మ అనుసంధాన నివేదిక';
 
   @override
@@ -10479,27 +10500,6 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get forgotPassword => 'పాస్‌వర్డ్ మర్చిపోయారా?';
-
-  @override
-  String get updatePhoto => 'Update Photo';
-
-  @override
-  String get takePhoto => 'Camera';
-
-  @override
-  String get chooseFromGallery => 'Gallery';
-
-  @override
-  String get removePhoto => 'Remove Photo';
-
-  @override
-  String get photoUpdated => 'Photo updated';
-
-  @override
-  String get photoUploadFailed => 'Couldn\'t upload photo. Please try again.';
-
-  @override
-  String get tapToChangePhoto => 'Tap to change photo';
 
   @override
   String get sendResetLink => 'రీసెట్ లింక్ పంపు';

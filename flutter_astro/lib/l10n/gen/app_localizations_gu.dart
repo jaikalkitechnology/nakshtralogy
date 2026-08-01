@@ -9,6 +9,27 @@ class AppLocalizationsGu extends AppLocalizations {
   AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
+  String get updatePhoto => 'ફોટો અપડેટ કરો';
+
+  @override
+  String get takePhoto => 'કેમેરા';
+
+  @override
+  String get chooseFromGallery => 'ગેલેરી';
+
+  @override
+  String get removePhoto => 'ફોટો દૂર કરો';
+
+  @override
+  String get photoUpdated => 'ફોટો અપડેટ થયો';
+
+  @override
+  String get photoUploadFailed => 'ફોટો અપલોડ કરી શકાયો નથી. કૃપા કરી ફરી પ્રયાસ કરો.';
+
+  @override
+  String get tapToChangePhoto => 'ફોટો બદલવા માટે ટૅપ કરો';
+
+  @override
   String get astrologer => 'જ્યોતિષી';
 
   @override
@@ -9552,27 +9573,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get forgotPassword => 'પાસવર્ડ ભૂલી ગયા?';
-
-  @override
-  String get updatePhoto => 'Update Photo';
-
-  @override
-  String get takePhoto => 'Camera';
-
-  @override
-  String get chooseFromGallery => 'Gallery';
-
-  @override
-  String get removePhoto => 'Remove Photo';
-
-  @override
-  String get photoUpdated => 'Photo updated';
-
-  @override
-  String get photoUploadFailed => 'Couldn\'t upload photo. Please try again.';
-
-  @override
-  String get tapToChangePhoto => 'Tap to change photo';
 
   @override
   String get sendResetLink => 'રીસેટ લિંક મોકલો';

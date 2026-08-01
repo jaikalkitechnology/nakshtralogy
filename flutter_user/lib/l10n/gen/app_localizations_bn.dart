@@ -9,6 +9,27 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get updatePhoto => 'ছবি আপডেট করুন';
+
+  @override
+  String get takePhoto => 'ক্যামেরা';
+
+  @override
+  String get chooseFromGallery => 'গ্যালারি';
+
+  @override
+  String get removePhoto => 'ছবি সরান';
+
+  @override
+  String get photoUpdated => 'ছবি আপডেট হয়েছে';
+
+  @override
+  String get photoUploadFailed => 'ছবি আপলোড করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get tapToChangePhoto => 'ছবি পরিবর্তন করতে ট্যাপ করুন';
+
+  @override
   String get klSubtitle => 'AI-চালিত বৈদিক পূর্বজন্ম কর্ম-সংযোগ রিপোর্ট';
 
   @override
@@ -10479,27 +10500,6 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
-
-  @override
-  String get updatePhoto => 'Update Photo';
-
-  @override
-  String get takePhoto => 'Camera';
-
-  @override
-  String get chooseFromGallery => 'Gallery';
-
-  @override
-  String get removePhoto => 'Remove Photo';
-
-  @override
-  String get photoUpdated => 'Photo updated';
-
-  @override
-  String get photoUploadFailed => 'Couldn\'t upload photo. Please try again.';
-
-  @override
-  String get tapToChangePhoto => 'Tap to change photo';
 
   @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';

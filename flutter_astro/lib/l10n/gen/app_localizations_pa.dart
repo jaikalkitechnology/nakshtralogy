@@ -9,6 +9,27 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
+  String get updatePhoto => 'ਫੋਟੋ ਅੱਪਡੇਟ ਕਰੋ';
+
+  @override
+  String get takePhoto => 'ਕੈਮਰਾ';
+
+  @override
+  String get chooseFromGallery => 'ਗੈਲਰੀ';
+
+  @override
+  String get removePhoto => 'ਫੋਟੋ ਹਟਾਓ';
+
+  @override
+  String get photoUpdated => 'ਫੋਟੋ ਅੱਪਡੇਟ ਹੋ ਗਈ';
+
+  @override
+  String get photoUploadFailed => 'ਫੋਟੋ ਅੱਪਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get tapToChangePhoto => 'ਫੋਟੋ ਬਦਲਣ ਲਈ ਟੈਪ ਕਰੋ';
+
+  @override
   String get astrologer => 'ਜੋਤਸ਼ੀ';
 
   @override
@@ -9552,27 +9573,6 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get forgotPassword => 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?';
-
-  @override
-  String get updatePhoto => 'Update Photo';
-
-  @override
-  String get takePhoto => 'Camera';
-
-  @override
-  String get chooseFromGallery => 'Gallery';
-
-  @override
-  String get removePhoto => 'Remove Photo';
-
-  @override
-  String get photoUpdated => 'Photo updated';
-
-  @override
-  String get photoUploadFailed => 'Couldn\'t upload photo. Please try again.';
-
-  @override
-  String get tapToChangePhoto => 'Tap to change photo';
 
   @override
   String get sendResetLink => 'ਰੀਸੈਟ ਲਿੰਕ ਭੇਜੋ';
