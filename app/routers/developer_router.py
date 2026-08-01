@@ -25,6 +25,10 @@ Phase 3 — Subscription & wallet:
   GET  /wallet/balance         — wallet balance
   POST /wallet/recharge         — stub credit (real gateway later)
   GET  /wallet/transactions      — paginated ledger
+
+Phase 6 — Self-service usage analytics (backs the react_developer_api dashboard):
+  GET  /usage                — paginated api_usage_log rows (filter: product)
+  GET  /usage/summary         — KPIs + calls-by-day + product mix for charts
 """
 
 import hashlib
@@ -46,7 +50,7 @@ from app.core.security import (
 from app.core.dependencies import get_current_user
 from app.models.model import (
     User, RefreshToken, Wallet, WalletTransaction,
-    DeveloperProfile, ApiKey, SubscriptionPlan, DeveloperSubscription,
+    DeveloperProfile, ApiKey, SubscriptionPlan, DeveloperSubscription, ApiUsageLog,
 )
 from sqlalchemy import func as sqlfunc
 from app.schemas.developer_schema import (
@@ -586,4 +590,85 @@ def list_wallet_transactions(
             )
             for t in rows
         ],
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  PHASE 6 — SELF-SERVICE USAGE ANALYTICS (backs react_developer_api)
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/usage")
+def list_my_usage(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    product: Optional[str] = Query(None, description="kundli | specialist | milan | forecast"),
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    q = db.query(ApiUsageLog).filter(ApiUsageLog.developer_user_id == current_user.id)
+    if product:
+        q = q.filter(ApiUsageLog.product == product)
+    total = q.count()
+    rows = (
+        q.order_by(ApiUsageLog.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "logs": [
+            {
+                "id": l.id, "product": l.product, "endpoint": l.endpoint,
+                "http_status": l.http_status, "cache_hit": l.cache_hit,
+                "latency_ms": l.latency_ms, "created_at": l.created_at,
+            }
+            for l in rows
+        ],
+    }
+
+
+@router.get("/usage/summary")
+def my_usage_summary(
+    days: int = Query(30, ge=1, le=365),
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    """KPIs + calls-by-day + product mix — feeds the dashboard's animated
+    KPI cards and Recharts (calls, errors, latency, product mix)."""
+    since = datetime.utcnow() - timedelta(days=days)
+    base = db.query(ApiUsageLog).filter(
+        ApiUsageLog.developer_user_id == current_user.id, ApiUsageLog.created_at >= since,
+    )
+    total_calls = base.count()
+    total_errors = base.filter(ApiUsageLog.http_status >= 400).count()
+    avg_latency = db.query(sqlfunc.avg(ApiUsageLog.latency_ms)).filter(
+        ApiUsageLog.developer_user_id == current_user.id, ApiUsageLog.created_at >= since,
+    ).scalar()
+
+    daily_rows = (
+        db.query(sqlfunc.date(ApiUsageLog.created_at).label("day"), sqlfunc.count(ApiUsageLog.id))
+        .filter(ApiUsageLog.developer_user_id == current_user.id, ApiUsageLog.created_at >= since)
+        .group_by(sqlfunc.date(ApiUsageLog.created_at))
+        .order_by(sqlfunc.date(ApiUsageLog.created_at))
+        .all()
+    )
+    product_rows = (
+        db.query(ApiUsageLog.product, sqlfunc.count(ApiUsageLog.id))
+        .filter(ApiUsageLog.developer_user_id == current_user.id, ApiUsageLog.created_at >= since)
+        .group_by(ApiUsageLog.product)
+        .all()
+    )
+
+    return {
+        "kpis": {
+            "total_calls": total_calls,
+            "total_errors": total_errors,
+            "error_rate_pct": round((total_errors / total_calls) * 100, 2) if total_calls else 0.0,
+            "avg_latency_ms": round(float(avg_latency), 1) if avg_latency else 0.0,
+        },
+        "calls_by_day": [{"date": str(day), "calls": calls} for day, calls in daily_rows],
+        "product_mix": [{"product": p, "calls": c} for p, c in product_rows],
     }

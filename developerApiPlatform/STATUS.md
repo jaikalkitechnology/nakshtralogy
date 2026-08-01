@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 29 / 38 tasks DONE (Phases 0-5, incl. 6.1 scaffold) · Phase 6 next.
+**Summary:** 34 / 38 tasks DONE (Phases 0-6) · Phase 7 next.
 _(Note: earlier summary lines said "/31" — the tracker actually lists 38
 numbered tasks across Phases 0-7; corrected here for accuracy.)_
 
@@ -93,11 +93,11 @@ numbered tasks across Phases 0-7; corrected here for accuracy.)_
 | # | Task | Status |
 |---|------|--------|
 | 6.1 | Scaffold `react_developer_api` (Vite + shadcn, from react_admin stack) | DONE (scaffold committed; `npm install` pending) |
-| 6.2 | Shared UI kit + shell: sidebar/nav, premium theme, reusable **DataTable** (pagination + filters + sortable + row actions + empty/loading/error) + KPI cards | PENDING |
-| 6.3 | Signup (company/GST or individual) + login + profile | PENDING |
-| 6.4 | API keys (list + create/rotate/revoke, one-time reveal) + subscription (subscribe/renew/auto-renew/expiry) | PENDING |
-| 6.5 | Wallet (balance/recharge + paginated ledger) + usage analytics (animated cards + Recharts, filterable logs list) | PENDING |
-| 6.6 | **Interactive API docs page**: embedded reference + live "try-it" playground (developer's own test key), quickstart, SDK snippets | PENDING |
+| 6.2 | Shared UI kit + shell: sidebar/nav, premium theme, reusable **DataTable** (pagination + filters + sortable + row actions + empty/loading/error) + KPI cards | DONE (TBD-sha6, 2026-08-01) — copied the proven shadcn primitives already used by `react_admin` (button/card/input/select/dialog/sheet/tabs/table/...) restricted to the radix packages actually declared in this app's `package.json`; `DataTable.tsx` + `KpiCard.tsx` (framer-motion count-up) + `AppShell.tsx` (sidebar/topbar, low-balance & expiry alerts) |
+| 6.3 | Signup (company/GST or individual) + login + profile | DONE (TBD-sha6, 2026-08-01) — `LoginPage.tsx`, `SignupPage.tsx`, `AuthContext.tsx`; backed by the existing `/api/v1/developer/signup`\|`login`\|`me` endpoints |
+| 6.4 | API keys (list + create/rotate/revoke, one-time reveal) + subscription (subscribe/renew/auto-renew/expiry) | DONE (TBD-sha6, 2026-08-01) — `ApiKeysPage.tsx`, `SubscriptionPage.tsx` |
+| 6.5 | Wallet (balance/recharge + paginated ledger) + usage analytics (animated cards + Recharts, filterable logs list) | DONE (TBD-sha6, 2026-08-01) — `WalletPage.tsx`, `UsagePage.tsx`, `DashboardPage.tsx`; added self-service `GET /developer/usage` + `GET /developer/usage/summary` to `developer_router.py` to back these (not previously tracked as a discrete task) |
+| 6.6 | **Interactive API docs page**: embedded reference + live "try-it" playground (developer's own test key), quickstart, SDK snippets | DONE (TBD-sha6, 2026-08-01) — `DocsPlaygroundPage.tsx`: live call against a pasted key, curl/Python/Node/PHP samples pulled from `/api/v2/code-samples/{product}`, quickstart reference. Static verification only (no `node_modules` in this app either — brace/paren balance + import-resolution checked by hand, never claimed a build) |
 
 ## Phase 7 — Hardening & scale
 | # | Task | Status |

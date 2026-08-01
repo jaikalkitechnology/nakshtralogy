@@ -1,35 +1,55 @@
+import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import AppShell from "@/components/layout/AppShell";
+import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
+import DashboardPage from "@/pages/DashboardPage";
+import ApiKeysPage from "@/pages/ApiKeysPage";
+import SubscriptionPage from "@/pages/SubscriptionPage";
+import WalletPage from "@/pages/WalletPage";
+import UsagePage from "@/pages/UsagePage";
+import DocsPlaygroundPage from "@/pages/DocsPlaygroundPage";
 
 const queryClient = new QueryClient();
 
-/**
- * Placeholder shell for the Nakshtralogy Developer API portal.
- *
- * The developerApiPlatform agent (Phase 6) replaces this with the real routes:
- *   /auth (signup: business+GST or individual / login)
- *   /dashboard (overview)  /keys  /subscription  /wallet  /usage  /docs
- */
-const Placeholder = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center gap-3 p-6 text-center">
-    <div className="text-5xl">✨</div>
-    <h1 className="text-2xl font-bold text-primary">Nakshtralogy Developer API</h1>
-    <p className="text-muted-foreground max-w-md text-sm">
-      Portal scaffold. Sign up, manage API keys, subscribe to the monthly
-      All-Access plan, fund your wallet, track usage, and read the API docs.
-    </p>
-  </div>
+function ProtectedLayout({ children }: { children: ReactNode }) {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-primary">Loading...</p>
+      </div>
+    );
+  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return <AppShell>{children}</AppShell>;
+}
+
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/signup" element={<SignupPage />} />
+    <Route path="/dashboard" element={<ProtectedLayout><DashboardPage /></ProtectedLayout>} />
+    <Route path="/keys" element={<ProtectedLayout><ApiKeysPage /></ProtectedLayout>} />
+    <Route path="/subscription" element={<ProtectedLayout><SubscriptionPage /></ProtectedLayout>} />
+    <Route path="/wallet" element={<ProtectedLayout><WalletPage /></ProtectedLayout>} />
+    <Route path="/usage" element={<ProtectedLayout><UsagePage /></ProtectedLayout>} />
+    <Route path="/docs" element={<ProtectedLayout><DocsPlaygroundPage /></ProtectedLayout>} />
+    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+  </Routes>
 );
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <Toaster position="top-right" richColors />
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Placeholder />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   </QueryClientProvider>
 );
