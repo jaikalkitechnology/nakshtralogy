@@ -3,6 +3,19 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'specialist_report_screen.dart';
 import 'career_report_screen.dart';
+import 'business_report_screen.dart';
+import 'education_report_screen.dart';
+import 'wealth_report_screen.dart';
+import 'debt_report_screen.dart';
+import 'love_report_screen.dart';
+import 'marriage_report_screen.dart';
+import 'health_report_screen.dart';
+import 'mental_report_screen.dart';
+import 'property_report_screen.dart';
+import 'legal_report_screen.dart';
+import 'lifepath_report_screen.dart';
+import 'character_report_screen.dart';
+import 'pastlife_report_screen.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 class SpecialistChartPicker extends StatefulWidget {
@@ -64,15 +77,29 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                       final place = c['place']?.toString() ?? '';
                       return GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => widget.specialistKey == 'career'
-                              ? CareerReportScreen(chartId: id, chartName: name)
-                              : SpecialistReportScreen(
+                          builder: (_) => switch (widget.specialistKey) {
+                            'career' => CareerReportScreen(chartId: id, chartName: name),
+                            'business' => BusinessReportScreen(chartId: id, chartName: name),
+                            'education' => EducationReportScreen(chartId: id, chartName: name),
+                            'wealth' => WealthReportScreen(chartId: id, chartName: name),
+                            'debt_recovery' => DebtReportScreen(chartId: id, chartName: name),
+                            'love' => LoveReportScreen(chartId: id, chartName: name),
+                            'marriage' => MarriageReportScreen(chartId: id, chartName: name),
+                            'health' => HealthReportScreen(chartId: id, chartName: name),
+                            'mental_stress' => MentalReportScreen(chartId: id, chartName: name),
+                            'property' => PropertyReportScreen(chartId: id, chartName: name),
+                            'legal' => LegalReportScreen(chartId: id, chartName: name),
+                            'life_path' => LifePathReportScreen(chartId: id, chartName: name),
+                            'character' => CharacterReportScreen(chartId: id, chartName: name),
+                            'past_life' => PastLifeReportScreen(chartId: id, chartName: name),
+                            _ => SpecialistReportScreen(
                                   specialistKey: widget.specialistKey,
                                   specialistLabel: widget.specialistLabel,
                                   specialistEmoji: widget.specialistEmoji,
                                   chartId: id,
                                   chartName: name,
                                 ),
+                          },
                         )),
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 8),
