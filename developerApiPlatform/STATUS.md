@@ -82,12 +82,12 @@ numbered tasks across Phases 0-7; corrected here for accuracy.)_
 ## Phase 5 — Admin panel (react_admin) — premium; full control over developers
 | # | Task | Status |
 |---|------|--------|
-| 5.0 | Backend admin routes for developer control (list/detail + manage keys/subscription/wallet/status for any `developer_id`); all list endpoints paginated + filterable | DONE (TBD-sha5, 2026-08-01) — `app/routers/admin_developer_router.py`, mounted at `/api/v1/admin` |
-| 5.1 | Developers **list**: pagination + search + filters (status/type/KYC) + sortable + row actions (view/approve/reject/suspend/block) + bulk + empty/loading/error | DONE (TBD-sha5, 2026-08-01) — `react_admin/src/components/developers/DevelopersManager.tsx` |
-| 5.2 | Developer **detail** view: profile + KYC/GST review, with tabs → keys / subscription / wallet / usage (each a paginated, filtered, action-equipped list) | DONE (TBD-sha5, 2026-08-01) — `DeveloperDetail.tsx` (Sheet drawer, 5 tabs) |
-| 5.3 | Admin control: keys (view/revoke/rotate), subscription (grant/extend/cancel/change plan & tps), wallet (credit/debit/refund + ledger), status toggles — behind confirm dialogs | DONE (TBD-sha5, 2026-08-01) |
-| 5.4 | Plan/price/tps management screen | DONE (TBD-sha5, 2026-08-01) — `DeveloperPlans.tsx` |
-| 5.5 | Revenue + usage analytics dashboard (animated KPI cards + Recharts: calls, spend, top devs, product mix, latency/errors) | DONE (TBD-sha5, 2026-08-01) — `DeveloperAnalytics.tsx` (count-up KPI cards + line/pie/bar Recharts); static verification only, no `node_modules` here so a real build was never run |
+| 5.0 | Backend admin routes for developer control (list/detail + manage keys/subscription/wallet/status for any `developer_id`); all list endpoints paginated + filterable | DONE (88a78fb, 2026-08-01) — `app/routers/admin_developer_router.py`, mounted at `/api/v1/admin` |
+| 5.1 | Developers **list**: pagination + search + filters (status/type/KYC) + sortable + row actions (view/approve/reject/suspend/block) + bulk + empty/loading/error | DONE (88a78fb, 2026-08-01) — `react_admin/src/components/developers/DevelopersManager.tsx` |
+| 5.2 | Developer **detail** view: profile + KYC/GST review, with tabs → keys / subscription / wallet / usage (each a paginated, filtered, action-equipped list) | DONE (88a78fb, 2026-08-01) — `DeveloperDetail.tsx` (Sheet drawer, 5 tabs) |
+| 5.3 | Admin control: keys (view/revoke/rotate), subscription (grant/extend/cancel/change plan & tps), wallet (credit/debit/refund + ledger), status toggles — behind confirm dialogs | DONE (88a78fb, 2026-08-01) |
+| 5.4 | Plan/price/tps management screen | DONE (88a78fb, 2026-08-01) — `DeveloperPlans.tsx` |
+| 5.5 | Revenue + usage analytics dashboard (animated KPI cards + Recharts: calls, spend, top devs, product mix, latency/errors) | DONE (88a78fb, 2026-08-01) — `DeveloperAnalytics.tsx` (count-up KPI cards + line/pie/bar Recharts); static verification only, no `node_modules` here so a real build was never run |
 
 ## Phase 6 — Developer dashboard (react_developer_api) — same premium bar
 | # | Task | Status |
