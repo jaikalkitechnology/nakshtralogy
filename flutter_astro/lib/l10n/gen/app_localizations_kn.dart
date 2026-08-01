@@ -9446,6 +9446,111 @@ class AppLocalizationsKn extends AppLocalizations {
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
 
   @override
+  String get astrologer => 'Astrologer';
+
+  @override
+  String get comingSoon => 'Coming Soon';
+
+  @override
+  String get responseRate => 'Response Rate';
+
+  @override
+  String get totalEarnings => 'Total Earnings';
+
+  @override
+  String get reviews => 'reviews';
+
+  @override
+  String get todayVsGoal => 'Today vs Goal';
+
+  @override
+  String get dailyGoal => 'Daily goal';
+
+  @override
+  String get minutesConsulted => 'Minutes Consulted';
+
+  @override
+  String get performanceOverview => 'Performance Overview';
+
+  @override
+  String get towardsGoal => 'towards goal';
+
+  @override
+  String get liveStatus => 'Live Status';
+
+  @override
+  String get goLiveSubtitle => 'Start a live session with seekers';
+
+  @override
+  String get todaysRequests => 'Today\'s Requests';
+
+  @override
+  String get voice => 'Voice';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get activeRequests => 'Active Requests';
+
+  @override
+  String get astrologyServices => 'Astrology Services';
+
+  @override
+  String get rashiServiceDesc => 'Today\'s gochar for all 12 signs';
+
+  @override
+  String get upcomingConsultations => 'Upcoming Consultations';
+
+  @override
+  String get noUpcomingConsultations => 'No upcoming consultations yet';
+
+  @override
+  String get recentActivity => 'Recent Activity';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get performanceAnalytics => 'Performance Analytics';
+
+  @override
+  String get aiAssistant => 'AI Assistant';
+
+  @override
+  String get aiAssistantSubtitle => 'Get instant help drafting readings and remedies';
+
+  @override
+  String get cosmicInsight => 'Cosmic Insight';
+
+  @override
+  String get cosmicInsightBody => 'The Moon favours meaningful conversations today. Lead your sessions with empathy and clarity, and your guidance will land deeply.';
+
+  @override
+  String get dailyMotivationQuote => '"The stars incline, they do not compel. Every reading you give lights someone\'s path."';
+
+  @override
+  String get yourCosmicDashboard => 'Your Cosmic Consultation Dashboard';
+
+  @override
+  String get goodMorning => 'Good Morning';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon';
+
+  @override
+  String get goodEvening => 'Good Evening';
+
+  @override
+  String get goodNight => 'Good Night';
+
+  @override
+  String get astrology => 'Astrology';
+
+  @override
+  String get wallet => 'Wallet';
+
+  @override
   String get failedToLoad => 'ಲೋಡ್ ವಿಫಲವಾಯಿತು';
 
   @override

@@ -230,6 +230,216 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @astrologer.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrologer'**
+  String get astrologer;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoon;
+
+  /// No description provided for @responseRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Response Rate'**
+  String get responseRate;
+
+  /// No description provided for @totalEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earnings'**
+  String get totalEarnings;
+
+  /// No description provided for @reviews.
+  ///
+  /// In en, this message translates to:
+  /// **'reviews'**
+  String get reviews;
+
+  /// No description provided for @todayVsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Today vs Goal'**
+  String get todayVsGoal;
+
+  /// No description provided for @dailyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily goal'**
+  String get dailyGoal;
+
+  /// No description provided for @minutesConsulted.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes Consulted'**
+  String get minutesConsulted;
+
+  /// No description provided for @performanceOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Overview'**
+  String get performanceOverview;
+
+  /// No description provided for @towardsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'towards goal'**
+  String get towardsGoal;
+
+  /// No description provided for @liveStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Status'**
+  String get liveStatus;
+
+  /// No description provided for @goLiveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a live session with seekers'**
+  String get goLiveSubtitle;
+
+  /// No description provided for @todaysRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Requests'**
+  String get todaysRequests;
+
+  /// No description provided for @voice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get voice;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @activeRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Requests'**
+  String get activeRequests;
+
+  /// No description provided for @astrologyServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrology Services'**
+  String get astrologyServices;
+
+  /// No description provided for @rashiServiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s gochar for all 12 signs'**
+  String get rashiServiceDesc;
+
+  /// No description provided for @upcomingConsultations.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Consultations'**
+  String get upcomingConsultations;
+
+  /// No description provided for @noUpcomingConsultations.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming consultations yet'**
+  String get noUpcomingConsultations;
+
+  /// No description provided for @recentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get recentActivity;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// No description provided for @performanceAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Analytics'**
+  String get performanceAnalytics;
+
+  /// No description provided for @aiAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiAssistant;
+
+  /// No description provided for @aiAssistantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get instant help drafting readings and remedies'**
+  String get aiAssistantSubtitle;
+
+  /// No description provided for @cosmicInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Cosmic Insight'**
+  String get cosmicInsight;
+
+  /// No description provided for @cosmicInsightBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Moon favours meaningful conversations today. Lead your sessions with empathy and clarity, and your guidance will land deeply.'**
+  String get cosmicInsightBody;
+
+  /// No description provided for @dailyMotivationQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'"The stars incline, they do not compel. Every reading you give lights someone\'s path."'**
+  String get dailyMotivationQuote;
+
+  /// No description provided for @yourCosmicDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Cosmic Consultation Dashboard'**
+  String get yourCosmicDashboard;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get goodEvening;
+
+  /// No description provided for @goodNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Night'**
+  String get goodNight;
+
+  /// No description provided for @astrology.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrology'**
+  String get astrology;
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
   /// No description provided for @failedToLoad.
   ///
   /// In en, this message translates to:

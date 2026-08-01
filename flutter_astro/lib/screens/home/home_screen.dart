@@ -27,6 +27,7 @@ import '../charts/client_charts_screen.dart';
 import '../communication/chat_screen.dart';
 import '../communication/incoming_call_screen.dart';
 import '../communication/active_call_screen.dart';
+import '../communication/live_host_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -113,15 +114,45 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  List<_NavItem> _navItems(BuildContext context) {
+  Future<void> _startLive(BuildContext context) async {
     final l = AppLocalizations.of(context)!;
-    return [
-      _NavItem(Icons.home, l.dashboard),
-      _NavItem(Icons.auto_awesome, l.charts),
-      _NavItem(Icons.notifications, l.requests),
-      _NavItem(Icons.account_balance_wallet, l.earnings),
-      _NavItem(Icons.person, l.profile),
-    ];
+    final titleCtrl = TextEditingController();
+    final descCtrl = TextEditingController();
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: Text(l.goLive, style: const TextStyle(color: AppColors.primary)),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Stream Title', prefixIcon: Icon(Icons.title))),
+          const SizedBox(height: 10),
+          TextField(controller: descCtrl, maxLines: 2, decoration: const InputDecoration(labelText: 'Description (optional)', prefixIcon: Icon(Icons.description))),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+          ElevatedButton(
+            onPressed: () {
+              if (titleCtrl.text.trim().isEmpty) return;
+              Navigator.pop(ctx, {'title': titleCtrl.text.trim(), 'description': descCtrl.text.trim()});
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white),
+            child: Text(l.start),
+          ),
+        ],
+      ),
+    );
+    if (result == null || !context.mounted) return;
+    final resp = await _api.createLiveStream(result['title']!, description: result['description']!.isEmpty ? null : result['description']);
+    if (!context.mounted) return;
+    if (resp['statusCode'] == 201 || resp['statusCode'] == 200) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => LiveHostScreen(
+        streamId: resp['id'], channelName: resp['channel_name'],
+        agoraToken: resp['agora_token'], agoraAppId: resp['agora_app_id'],
+        title: result['title']!,
+      )));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(resp['detail'] ?? 'Failed'), backgroundColor: AppColors.error));
+    }
   }
 
   @override
@@ -144,13 +175,31 @@ class _HomeScreenState extends State<HomeScreen> {
           if (kycState.status == 'pending') {
             return const KycPendingScreen();
           }
+          final l = AppLocalizations.of(context)!;
+          final tabTitle = _currentIndex == 1
+              ? l.astrology
+              : _currentIndex == 2
+                  ? l.requests
+                  : _currentIndex == 3
+                      ? l.wallet
+                      : _currentIndex == 4
+                          ? l.profile
+                          : null;
           return Scaffold(
             appBar: AppBar(
-              title: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Text('\u{1F52E} ', style: TextStyle(fontSize: 20)),
-                Text('Astrologer Panel', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
-              ]),
+              titleSpacing: 16,
+              title: _currentIndex == 0
+                  ? Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Text('\u{1F52E} ', style: TextStyle(fontSize: 20)),
+                      Text(l.dashboard, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
+                    ])
+                  : Text(tabTitle ?? '', style: const TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold, fontSize: 18)),
               actions: [
+                // Notifications → requests inbox
+                IconButton(
+                  icon: const Icon(Icons.notifications_none_rounded, color: AppColors.ivory),
+                  onPressed: () => setState(() => _currentIndex = 2),
+                ),
                 // Realtime connection indicator
                 StreamBuilder(
                   stream: Stream.periodic(const Duration(seconds: 5)),
@@ -178,17 +227,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       dotColor = Colors.orange;
                       bgColor = Colors.orange.withOpacity(0.2);
                       borderColor = Colors.orange.withOpacity(0.5);
-                      label = 'Busy';
+                      label = l.busy;
                     } else if (isOnline) {
                       dotColor = AppColors.success;
                       bgColor = AppColors.success.withOpacity(0.2);
                       borderColor = AppColors.success.withOpacity(0.5);
-                      label = 'Online';
+                      label = l.online;
                     } else {
                       dotColor = AppColors.textSecondary;
                       bgColor = AppColors.surface;
                       borderColor = AppColors.border;
-                      label = 'Offline';
+                      label = l.offline;
                     }
 
                     return GestureDetector(
@@ -217,50 +266,83 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                IconButton(
-                  icon: const Icon(Icons.logout, color: AppColors.textSecondary),
-                  onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
-                ),
               ],
             ),
             body: IndexedStack(
               index: _currentIndex,
-              children: const [
-                HomeTab(),
-                ClientChartsScreen(),
-                RequestsTab(),
-                EarningsTab(),
-                ProfileTab(),
+              children: [
+                HomeTab(onNavigate: (i) => setState(() => _currentIndex = i)),
+                const ClientChartsScreen(),
+                const RequestsTab(),
+                const EarningsTab(),
+                const ProfileTab(),
               ],
             ),
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.95), border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15)))),
-              child: Row(
-                children: List.generate(_navItems(context).length, (i) {
-                  final selected = _currentIndex == i;
-                  final items = _navItems(context);
-                  return Expanded(child: InkWell(
-                    onTap: () => setState(() => _currentIndex = i),
-                    child: Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(items[i].icon, size: 24, color: selected ? AppColors.gold : AppColors.smoke),
-                      const SizedBox(height: 2),
-                      Text(items[i].label, style: TextStyle(fontSize: 11, color: selected ? AppColors.gold : AppColors.smoke)),
-                    ])),
-                  ));
-                }),
-              ),
-            ),
+            bottomNavigationBar: _buildBottomBar(context, l),
           );
         },
       ),
     );
   }
-}
 
-class _NavItem {
-  final IconData icon;
-  final String label;
-  const _NavItem(this.icon, this.label);
+  Widget _buildBottomBar(BuildContext context, AppLocalizations l) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.midnight.withOpacity(0.97),
+        border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _navSlot(icon: Icons.home_rounded, label: l.home, index: 0),
+              _navSlot(icon: Icons.auto_awesome, label: l.astrology, index: 1),
+              // Elevated center — GO LIVE
+              Expanded(
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => _startLive(context),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Container(
+                        width: 48, height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(colors: [AppColors.error, AppColors.saffron]),
+                          boxShadow: [BoxShadow(color: AppColors.error.withOpacity(0.5), blurRadius: 12, offset: const Offset(0, 4))],
+                        ),
+                        child: const Icon(Icons.podcasts_rounded, color: Colors.white, size: 24),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(l.live, style: const TextStyle(fontSize: 10, color: AppColors.error, fontWeight: FontWeight.w700)),
+                    ]),
+                  ),
+                ),
+              ),
+              _navSlot(icon: Icons.account_balance_wallet_rounded, label: l.wallet, index: 3),
+              _navSlot(icon: Icons.person_rounded, label: l.profile, index: 4),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _navSlot({required IconData icon, required String label, required int index}) {
+    final selected = _currentIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () => setState(() => _currentIndex = index),
+        child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
+          Icon(icon, size: 23, color: selected ? AppColors.gold : AppColors.smoke),
+          const SizedBox(height: 3),
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10.5, color: selected ? AppColors.gold : AppColors.smoke, fontWeight: selected ? FontWeight.w700 : FontWeight.w400)),
+        ]),
+      ),
+    );
+  }
 }
 
 
