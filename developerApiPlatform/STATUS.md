@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 0 / 24 tasks DONE · Phase 0 next.
+**Summary:** 0 / 27 tasks DONE · Phase 0 next.
 
 ---
 
@@ -66,6 +66,8 @@ modified**.
 | 4.3 | `POST /milan`, `POST /forecast` (reuse existing router service layers) | PENDING |
 | 4.4 | Subscription assertion + **1 TPS** token-bucket limiter (429 + Retry-After) | PENDING |
 | 4.5 | `api_usage_log` write per call (product, status, latency, cache_hit) | PENDING |
+| 4.6 | **Public API docs** for `/api/v2`: dedicated OpenAPI schema + Swagger/Redoc, auth (API-key) guide, per-product request/response examples, error codes, rate-limit & subscription notes, versioning | PENDING |
+| 4.7 | Copy-paste **code samples** (curl / Python / Node / PHP) + optional Postman collection per product | PENDING |
 
 ## Phase 5 — Admin panel (react_admin)
 | # | Task | Status |
@@ -81,7 +83,8 @@ modified**.
 | 6.1 | Scaffold `react_developer` (Vite + shadcn, from react_admin stack) | PENDING |
 | 6.2 | Signup (company/GST or individual) + login + profile | PENDING |
 | 6.3 | API keys UI + subscription (subscribe/renew/auto-renew/expiry) | PENDING |
-| 6.4 | Wallet (balance/recharge/ledger) + usage analytics + docs/playground | PENDING |
+| 6.4 | Wallet (balance/recharge/ledger) + usage analytics | PENDING |
+| 6.5 | **Interactive API docs page** in the dashboard: embedded reference + live "try-it" playground (uses the developer's own test key), quickstart, SDK snippets | PENDING |
 
 ## Phase 7 — Hardening & scale
 | # | Task | Status |

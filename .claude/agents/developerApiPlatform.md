@@ -160,6 +160,13 @@ debit** with balance guard (402 on insufficient funds), create/extend
 in-process fallback here — return `429 + Retry-After`) → call the reused engine →
 record `api_usage_log` (product, status, latency). Return a clean JSON envelope
 `{status, data, meta:{product, tps_limit, subscription_expires_at}}`.
+Also publish **public API documentation** for the gateway: a dedicated OpenAPI
+schema mounted at its own docs URL (separate Swagger/Redoc from the internal
+app so developers see ONLY the `/api/v2` products), with an API-key auth guide,
+per-product request/response examples, error codes, rate-limit (1 TPS) and
+subscription notes, and copy-paste code samples (curl / Python / Node / PHP).
+Give every gateway endpoint rich FastAPI `summary`/`description`/`response_model`
++ example bodies so the schema is self-documenting.
 
 **Phase 5 — Admin panel (react_admin).** Add a "Developers" area: list/approve/
 suspend developer accounts + KYC (GST) review; view/revoke API keys & per-key
@@ -191,6 +198,10 @@ engine workers + pgbouncer + read replica) in the tracker's notes.
 - Wallet: balance, recharge, atomic debit, transaction ledger
 - Metered gateway (`/api/v2`) wrapping Kundli / Special Reports / Milan / Forecast
 - Usage metering + analytics (per key/product/time; latency; errors)
+- **API documentation**: public OpenAPI/Swagger + Redoc for `/api/v2`, auth &
+  quickstart guide, per-product examples, error/rate-limit reference, code
+  samples (curl/Python/Node/PHP), and an in-dashboard interactive "try-it"
+  playground bound to the developer's test key
 - Rate limiting (1 TPS) + 429 handling; quotas & abuse controls
 - Admin controls: accounts, KYC/GST review, keys, plan pricing, wallet ops,
   revenue & usage dashboards
