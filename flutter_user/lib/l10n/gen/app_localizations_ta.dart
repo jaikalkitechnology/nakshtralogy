@@ -9,6 +9,27 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
+  String get updatePhoto => 'புகைப்படத்தைப் புதுப்பிக்கவும்';
+
+  @override
+  String get takePhoto => 'கேமரா';
+
+  @override
+  String get chooseFromGallery => 'கேலரி';
+
+  @override
+  String get removePhoto => 'புகைப்படத்தை அகற்று';
+
+  @override
+  String get photoUpdated => 'புகைப்படம் புதுப்பிக்கப்பட்டது';
+
+  @override
+  String get photoUploadFailed => 'புகைப்படத்தை பதிவேற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get tapToChangePhoto => 'புகைப்படத்தை மாற்ற தட்டவும்';
+
+  @override
   String get klSubtitle => 'AI-இயக்கும் வேத முன்வினை கர்ம தொடர்பு அறிக்கை';
 
   @override

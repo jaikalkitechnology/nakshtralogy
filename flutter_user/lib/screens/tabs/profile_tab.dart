@@ -8,6 +8,7 @@ import '../../services/api_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
+import '../../widgets/avatar_picker.dart';
 import '../../bloc/profile/profile_event.dart';
 import '../../bloc/profile/profile_state.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
@@ -335,55 +336,25 @@ class _ProfileTabState extends State<ProfileTab> {
             children: [
               // ============ HEADER ============
               Center(
-                child: GestureDetector(
-                  onTap: me == null ? null : () => _openEditDialog(me),
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: const LinearGradient(
-                        colors: [AppColors.gold, AppColors.saffron],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      border: Border.all(color: AppColors.gold.withOpacity(0.4), width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.gold.withOpacity(0.2),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: (me?['avatar_url'] != null)
-                          ? ClipOval(
-                              child: Image.network(
-                                me!['avatar_url'] as String,
-                                width: 76,
-                                height: 76,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Text(initial,
-                                    style: const TextStyle(
-                                        color: AppColors.midnight,
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w800)),
-                              ),
-                            )
-                          : Text(
-                              initial,
-                              style: const TextStyle(
-                                color: AppColors.midnight,
-                                fontSize: 32,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                    ),
-                  ),
+                child: AvatarPicker(
+                  size: 92,
+                  imageUrl: me?['avatar_url']?.toString(),
+                  fallbackInitial: initial,
+                  enabled: me != null,
+                  onUploaded: (url) async =>
+                      context.read<ProfileBloc>().add(ProfileUpdateRequested({'avatar_url': url})),
+                  onRemoved: () async =>
+                      context.read<ProfileBloc>().add(ProfileUpdateRequested({'avatar_url': null})),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 6),
+              Center(
+                child: Text(
+                  AppLocalizations.of(context)?.tapToChangePhoto ?? 'Tap to change photo',
+                  style: const TextStyle(color: AppColors.smoke, fontSize: 11),
+                ),
+              ),
+              const SizedBox(height: 12),
               Center(
                 child: Text(
                   me?['name']?.toString() ?? '\u2014',

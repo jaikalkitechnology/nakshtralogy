@@ -9,6 +9,27 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
+  String get updatePhoto => 'फोटो अपडेट करा';
+
+  @override
+  String get takePhoto => 'कॅमेरा';
+
+  @override
+  String get chooseFromGallery => 'गॅलरी';
+
+  @override
+  String get removePhoto => 'फोटो काढा';
+
+  @override
+  String get photoUpdated => 'फोटो अपडेट झाला';
+
+  @override
+  String get photoUploadFailed => 'फोटो अपलोड करता आला नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get tapToChangePhoto => 'फोटो बदलण्यासाठी टॅप करा';
+
+  @override
   String get klSubtitle => 'AI-आधारित वैदिक पूर्वजन्म कर्म-बंध अहवाल';
 
   @override

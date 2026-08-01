@@ -9,6 +9,27 @@ class AppLocalizationsGu extends AppLocalizations {
   AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
+  String get updatePhoto => 'ફોટો અપડેટ કરો';
+
+  @override
+  String get takePhoto => 'કેમેરા';
+
+  @override
+  String get chooseFromGallery => 'ગેલેરી';
+
+  @override
+  String get removePhoto => 'ફોટો દૂર કરો';
+
+  @override
+  String get photoUpdated => 'ફોટો અપડેટ થયો';
+
+  @override
+  String get photoUploadFailed => 'ફોટો અપલોડ કરી શકાયો નથી. કૃપા કરી ફરી પ્રયાસ કરો.';
+
+  @override
+  String get tapToChangePhoto => 'ફોટો બદલવા માટે ટૅપ કરો';
+
+  @override
   String get astrologer => 'જ્યોતિષી';
 
   @override

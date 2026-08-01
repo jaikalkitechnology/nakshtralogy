@@ -9446,6 +9446,27 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get updatePhoto => 'Photo Update Karein';
+
+  @override
+  String get takePhoto => 'Camera';
+
+  @override
+  String get chooseFromGallery => 'Gallery';
+
+  @override
+  String get removePhoto => 'Photo Hataayein';
+
+  @override
+  String get photoUpdated => 'Photo update ho gayi';
+
+  @override
+  String get photoUploadFailed => 'Photo upload nahi ho saki. Please dobara try karein.';
+
+  @override
+  String get tapToChangePhoto => 'Photo badalne ke liye tap karein';
+
+  @override
   String get astrologer => 'Astrologer';
 
   @override

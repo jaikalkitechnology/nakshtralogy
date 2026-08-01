@@ -1,5 +1,12 @@
 {
   "@@locale": "hi_Latn",
+  "updatePhoto": "Photo Update Karein",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Photo Hataayein",
+  "photoUpdated": "Photo update ho gayi",
+  "photoUploadFailed": "Photo upload nahi ho saki. Please dobara try karein.",
+  "tapToChangePhoto": "Photo badalne ke liye tap karein",
   "astrologer": "Astrologer",
   "comingSoon": "Coming Soon",
   "responseRate": "Response Rate",

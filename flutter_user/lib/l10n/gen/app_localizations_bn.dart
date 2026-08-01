@@ -9,6 +9,27 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get updatePhoto => 'ছবি আপডেট করুন';
+
+  @override
+  String get takePhoto => 'ক্যামেরা';
+
+  @override
+  String get chooseFromGallery => 'গ্যালারি';
+
+  @override
+  String get removePhoto => 'ছবি সরান';
+
+  @override
+  String get photoUpdated => 'ছবি আপডেট হয়েছে';
+
+  @override
+  String get photoUploadFailed => 'ছবি আপলোড করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get tapToChangePhoto => 'ছবি পরিবর্তন করতে ট্যাপ করুন';
+
+  @override
   String get klSubtitle => 'AI-চালিত বৈদিক পূর্বজন্ম কর্ম-সংযোগ রিপোর্ট';
 
   @override

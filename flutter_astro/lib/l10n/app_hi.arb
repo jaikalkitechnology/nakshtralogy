@@ -1,5 +1,12 @@
 {
   "@@locale": "hi",
+  "updatePhoto": "फ़ोटो अपडेट करें",
+  "takePhoto": "कैमरा",
+  "chooseFromGallery": "गैलरी",
+  "removePhoto": "फ़ोटो हटाएँ",
+  "photoUpdated": "फ़ोटो अपडेट हो गई",
+  "photoUploadFailed": "फ़ोटो अपलोड नहीं हो सकी। कृपया पुनः प्रयास करें।",
+  "tapToChangePhoto": "फ़ोटो बदलने के लिए टैप करें",
   "astrologer": "ज्योतिषी",
   "comingSoon": "जल्द आ रहा है",
   "responseRate": "प्रतिक्रिया दर",

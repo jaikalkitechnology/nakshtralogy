@@ -1,5 +1,12 @@
 {
   "@@locale": "mr",
+  "updatePhoto": "फोटो अपडेट करा",
+  "takePhoto": "कॅमेरा",
+  "chooseFromGallery": "गॅलरी",
+  "removePhoto": "फोटो काढा",
+  "photoUpdated": "फोटो अपडेट झाला",
+  "photoUploadFailed": "फोटो अपलोड करता आला नाही. कृपया पुन्हा प्रयत्न करा.",
+  "tapToChangePhoto": "फोटो बदलण्यासाठी टॅप करा",
   "klSubtitle": "AI-आधारित वैदिक पूर्वजन्म कर्म-बंध अहवाल",
   "klTitle": "पूर्वजन्म कर्म-बंध",
   "klSnapshotHeader": "कर्म-बंध स्नॅपशॉट",

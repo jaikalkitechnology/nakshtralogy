@@ -10481,6 +10481,27 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get updatePhoto => 'फ़ोटो अपडेट करें';
+
+  @override
+  String get takePhoto => 'कैमरा';
+
+  @override
+  String get chooseFromGallery => 'गैलरी';
+
+  @override
+  String get removePhoto => 'फ़ोटो हटाएँ';
+
+  @override
+  String get photoUpdated => 'फ़ोटो अपडेट हो गई';
+
+  @override
+  String get photoUploadFailed => 'फ़ोटो अपलोड नहीं हो सकी। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get tapToChangePhoto => 'फ़ोटो बदलने के लिए टैप करें';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override

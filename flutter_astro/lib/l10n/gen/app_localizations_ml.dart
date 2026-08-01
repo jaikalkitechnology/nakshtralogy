@@ -9,6 +9,27 @@ class AppLocalizationsMl extends AppLocalizations {
   AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
+  String get updatePhoto => 'ഫോട്ടോ അപ്ഡേറ്റ് ചെയ്യുക';
+
+  @override
+  String get takePhoto => 'ക്യാമറ';
+
+  @override
+  String get chooseFromGallery => 'ഗാലറി';
+
+  @override
+  String get removePhoto => 'ഫോട്ടോ നീക്കം ചെയ്യുക';
+
+  @override
+  String get photoUpdated => 'ഫോട്ടോ അപ്ഡേറ്റ് ചെയ്തു';
+
+  @override
+  String get photoUploadFailed => 'ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get tapToChangePhoto => 'ഫോട്ടോ മാറ്റാൻ ടാപ്പ് ചെയ്യുക';
+
+  @override
   String get astrologer => 'ജ്യോതിഷി';
 
   @override

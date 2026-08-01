@@ -1,5 +1,12 @@
 {
   "@@locale": "en",
+  "updatePhoto": "Update Photo",
+  "takePhoto": "Camera",
+  "chooseFromGallery": "Gallery",
+  "removePhoto": "Remove Photo",
+  "photoUpdated": "Photo updated",
+  "photoUploadFailed": "Couldn't upload photo. Please try again.",
+  "tapToChangePhoto": "Tap to change photo",
   "klSubtitle": "AI-powered Vedic Past-Life Karma Linkage Report",
   "klTitle": "Past-Life Karma Linkage",
   "klSnapshotHeader": "Karmic Linkage Snapshot",

@@ -9,6 +9,27 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
+  String get updatePhoto => 'ಫೋಟೋ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ';
+
+  @override
+  String get takePhoto => 'ಕ್ಯಾಮರಾ';
+
+  @override
+  String get chooseFromGallery => 'ಗ್ಯಾಲರಿ';
+
+  @override
+  String get removePhoto => 'ಫೋಟೋ ತೆಗೆದುಹಾಕಿ';
+
+  @override
+  String get photoUpdated => 'ಫೋಟೋ ಅಪ್‌ಡೇಟ್ ಆಗಿದೆ';
+
+  @override
+  String get photoUploadFailed => 'ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get tapToChangePhoto => 'ಫೋಟೋ ಬದಲಾಯಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
   String get klSubtitle => 'AI-ಚಾಲಿತ ವೈದಿಕ ಪೂರ್ವಜನ್ಮ ಕರ್ಮ ಸಂಬಂಧ ವರದಿ';
 
   @override

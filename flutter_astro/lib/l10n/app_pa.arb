@@ -1,5 +1,12 @@
 {
   "@@locale": "pa",
+  "updatePhoto": "ਫੋਟੋ ਅੱਪਡੇਟ ਕਰੋ",
+  "takePhoto": "ਕੈਮਰਾ",
+  "chooseFromGallery": "ਗੈਲਰੀ",
+  "removePhoto": "ਫੋਟੋ ਹਟਾਓ",
+  "photoUpdated": "ਫੋਟੋ ਅੱਪਡੇਟ ਹੋ ਗਈ",
+  "photoUploadFailed": "ਫੋਟੋ ਅੱਪਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "tapToChangePhoto": "ਫੋਟੋ ਬਦਲਣ ਲਈ ਟੈਪ ਕਰੋ",
   "astrologer": "ਜੋਤਸ਼ੀ",
   "comingSoon": "ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ",
   "responseRate": "ਰਿਸਪਾਂਸ ਰੇਟ",
