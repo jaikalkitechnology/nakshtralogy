@@ -163,6 +163,12 @@ app.include_router(forecast_router.router, prefix="/api/v1/forecast", tags=["Dai
 app.include_router(notification_router.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(developer_router.router, prefix="/api/v1/developer", tags=["Developer API Platform"])
 
+# Metered gateway — mounted as its own sub-app so developers get a
+# dedicated OpenAPI schema / Swagger (`/api/v2/docs`) / Redoc (`/api/v2/redoc`)
+# that only ever shows the 4 gateway products (developerApiPlatform/ Phase 4.6).
+from app.gateway_docs import build_gateway_app
+app.mount("/api/v2", build_gateway_app())
+
 
 
 @app.get("/health")
