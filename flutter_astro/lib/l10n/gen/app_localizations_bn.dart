@@ -9446,6 +9446,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get failedToLoad => 'লোড করতে ব্যর্থ';
+
+  @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
 
   @override

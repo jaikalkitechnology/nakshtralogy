@@ -66,6 +66,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get failedToLoad => 'Failed to load';
+
+  @override
   String get klSubtitle => 'AI-powered Vedic Past-Life Karma Linkage Report';
 
   @override

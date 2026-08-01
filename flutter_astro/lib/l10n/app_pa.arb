@@ -1,5 +1,6 @@
 {
   "@@locale": "pa",
+  "failedToLoad": "ਲੋਡ ਨਹੀਂ ਹੋਇਆ",
   "klSubtitle": "AI-ਸੰਚਾਲਿਤ ਵੈਦਿਕ ਪਿਛਲੇ ਜਨਮ ਕਰਮ-ਸੰਬੰਧ ਰਿਪੋਰਟ",
   "klTitle": "ਪਿਛਲੇ ਜਨਮ ਕਰਮ-ਸੰਬੰਧ",
   "klSnapshotHeader": "ਕਰਮ-ਸੰਬੰਧ ਸਨੈਪਸ਼ਾਟ",

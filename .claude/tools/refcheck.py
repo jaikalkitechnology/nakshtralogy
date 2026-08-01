@@ -10,6 +10,8 @@ skip={'dart','toString','withOpacity','clamp','toUpperCase','toStringAsFixed','c
 for fn in sys.argv[2:]:
     src=open(f"{appdir}/{fn}").read()
     refs=re.findall(r'\bl\.(\w+)',src)
+    # also catch AppLocalizations.of(context)?.<key> / AppLocalizations.of(context)!.<key>
+    refs+=re.findall(r'AppLocalizations\.of\(context\)[!?]?\.(\w+)',src)
     miss=sorted(set(r for r in refs if r not in avail and r not in skip))
     cols=set(re.findall(r'AppColors\.(\w+)',src)); badc=sorted(c for c in cols if c not in defcol)
     kcs=set(re.findall(r'KColors\.(\w+)',src)); badk=sorted(c for c in kcs if c not in kcdef)

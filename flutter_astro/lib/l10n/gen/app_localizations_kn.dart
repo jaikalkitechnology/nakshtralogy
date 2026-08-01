@@ -9446,6 +9446,9 @@ class AppLocalizationsKn extends AppLocalizations {
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?';
 
   @override
+  String get failedToLoad => 'ಲೋಡ್ ವಿಫಲವಾಯಿತು';
+
+  @override
   String get sendResetLink => 'ಮರುಹೊಂದಿಸುವ ಲಿಂಕ್ ಕಳುಹಿಸಿ';
 
   @override

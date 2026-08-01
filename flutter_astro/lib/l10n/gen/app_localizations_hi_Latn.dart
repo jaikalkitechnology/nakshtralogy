@@ -9446,6 +9446,9 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get failedToLoad => 'Load fail ho gaya';
+
+  @override
   String get sendResetLink => 'Reset Link Bhejein';
 
   @override

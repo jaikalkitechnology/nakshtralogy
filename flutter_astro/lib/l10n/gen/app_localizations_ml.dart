@@ -9446,6 +9446,9 @@ class AppLocalizationsMl extends AppLocalizations {
   String get forgotPassword => 'പാസ്‌വേഡ് മറന്നോ?';
 
   @override
+  String get failedToLoad => 'ലോഡ് ചെയ്യാൻ പരാജയപ്പെട്ടു';
+
+  @override
   String get sendResetLink => 'റീസെറ്റ് ലിങ്ക് അയയ്ക്കുക';
 
   @override

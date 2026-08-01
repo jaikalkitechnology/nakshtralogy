@@ -9446,6 +9446,9 @@ class AppLocalizationsTe extends AppLocalizations {
   String get forgotPassword => 'పాస్‌వర్డ్ మర్చిపోయారా?';
 
   @override
+  String get failedToLoad => 'లోడ్ చేయడం విఫలమైంది';
+
+  @override
   String get sendResetLink => 'రీసెట్ లింక్ పంపండి';
 
   @override

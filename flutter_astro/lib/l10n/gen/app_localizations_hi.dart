@@ -9446,6 +9446,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get failedToLoad => 'लोड करने में विफल';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक भेजें';
 
   @override
