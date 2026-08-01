@@ -81,7 +81,7 @@ modified**.
 ## Phase 6 — Developer dashboard
 | # | Task | Status |
 |---|------|--------|
-| 6.1 | Scaffold `react_developer` (Vite + shadcn, from react_admin stack) | PENDING |
+| 6.1 | Scaffold `react_developer_api` (Vite + shadcn, from react_admin stack) | DONE (scaffold committed; `npm install` pending) |
 | 6.2 | Signup (company/GST or individual) + login + profile | PENDING |
 | 6.3 | API keys UI + subscription (subscribe/renew/auto-renew/expiry) | PENDING |
 | 6.4 | Wallet (balance/recharge/ledger) + usage analytics | PENDING |

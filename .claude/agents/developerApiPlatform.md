@@ -186,7 +186,7 @@ existing `adminAdjustWallet` pattern); revenue + usage analytics (calls, spend,
 top developers, product mix). Match the existing admin UI conventions/services.
 
 **Phase 6 — Developer dashboard.** A developer-facing self-service UI (new
-`react_developer` app scaffolded from react_admin's Vite + shadcn stack, or a
+`react_developer_api` app scaffolded from react_admin's Vite + shadcn stack, or a
 clearly-separated portal). Features: signup (company/GST or individual), login,
 API-key management (live/test, rotate/revoke), subscription (subscribe/renew,
 status, expiry, auto-renew toggle), wallet (balance, recharge, ledger), usage
