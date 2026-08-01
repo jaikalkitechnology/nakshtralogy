@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 0 / 27 tasks DONE · Phase 0 next.
+**Summary:** 0 / 28 tasks DONE · Phase 0 next.
 
 ---
 
@@ -42,6 +42,7 @@ modified**.
 | 1.2 | `login` → JWT `role="developer"`; `refresh` | PENDING |
 | 1.3 | `GET /developer/me`, `PUT /developer/profile` (company/GST/PAN/address) | PENDING |
 | 1.4 | Register router in `app/main.py`; py_compile + isolated import | PENDING |
+| 1.5 | **Seed a test developer** in `app/seeds/seed_data.py`: `seed_developer(db)` wired into `seed_all` → `User(role="developer", dev@nakshatralogy.com / dev@123)` + `Wallet(balance ₹5000)` + `developer_profile` (business, sample GST) + a **known test API key** (`sk_test_…` deterministic, hash stored) + an **active All-Access subscription** (30d). Add developer creds + the raw test key to the `/seed-open` response. _(subscription part depends on Phase 3 models)_ | PENDING |
 
 ## Phase 2 — API keys
 | # | Task | Status |

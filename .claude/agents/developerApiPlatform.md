@@ -140,6 +140,17 @@ endpoint; py_compile + import-check the models.
 (issues JWT with `role="developer"` via `create_access_token`), `me`,
 `update profile`. Reuse the astrologer router's token/profile response pattern.
 Create the developer's `Wallet` row on signup.
+Also add a **test developer to the seed** (`app/seeds/seed_data.py`): a
+`seed_developer(db)` function wired into `seed_all`, creating
+`User(role="developer", email="dev@nakshatralogy.com", password "dev@123")`
+via `hash_password`, a `Wallet` with a usable balance (e.g. ₹5000), a
+`developer_profile` (business type with a sample GST number), a **deterministic
+test API key** (`sk_test_…` — store its hash, keep the raw known) and (once the
+Phase-3 models exist) an **active All-Access subscription** so gateway calls work
+out of the box. Add the developer credentials + the raw test key to the
+`/api/v1/admin/seed-open` response block (next to admin/user/astrologer). Keep it
+idempotent (skip if the developer already exists), matching the existing
+`seed_*` helpers.
 
 **Phase 2 — API keys.** Endpoints to create (returns raw secret ONCE), list,
 rotate, revoke keys. A FastAPI dependency `get_developer_from_api_key` that
