@@ -54,9 +54,9 @@ modified**.
 ## Phase 2 — API keys
 | # | Task | Status |
 |---|------|--------|
-| 2.1 | Create key (return raw secret ONCE), list, rotate, revoke | DONE (TBD-sha2, 2026-08-01) |
-| 2.2 | `get_developer_from_api_key` dependency (prefix lookup + hash verify + last_used) | DONE (TBD-sha2, 2026-08-01) |
-| 2.3 | live vs test keys + per-product scopes | DONE (TBD-sha2, 2026-08-01) |
+| 2.1 | Create key (return raw secret ONCE), list, rotate, revoke | DONE (1ff9c91, 2026-08-01) |
+| 2.2 | `get_developer_from_api_key` dependency (prefix lookup + hash verify + last_used) | DONE (1ff9c91, 2026-08-01) |
+| 2.3 | live vs test keys + per-product scopes | DONE (1ff9c91, 2026-08-01) |
 
 ## Phase 3 — Subscription & wallet
 | # | Task | Status |
