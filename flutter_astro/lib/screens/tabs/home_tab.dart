@@ -8,6 +8,9 @@ import '../../bloc/auth/auth_state.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../bloc/dashboard/dashboard_event.dart';
 import '../../bloc/dashboard/dashboard_state.dart';
+import '../../bloc/astro_profile/astro_profile_bloc.dart';
+import '../../bloc/astro_profile/astro_profile_event.dart';
+import '../../bloc/astro_profile/astro_profile_state.dart';
 import '../../services/api_service.dart';
 import '../communication/live_host_screen.dart';
 import '../rashi/rashi_list_screen.dart';
@@ -85,6 +88,9 @@ class _HomeTabState extends State<HomeTab> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DashboardBloc>().add(DashboardLoadRequested());
+      if (context.read<AstroProfileBloc>().state.me == null) {
+        context.read<AstroProfileBloc>().add(AstroProfileLoadRequested());
+      }
     });
   }
 
@@ -98,6 +104,16 @@ class _HomeTabState extends State<HomeTab> {
     if (authState is AuthAuthenticated) astroName = (authState.user['name'] ?? '').toString();
     if (astroName.trim().isEmpty) astroName = l.astrologer;
     final firstName = astroName.trim().split(' ').first;
+
+    // astrologer photo for the greeting (profile_image_url, else user avatar)
+    final astroMe = context.watch<AstroProfileBloc>().state.me;
+    String? photoUrl;
+    if (astroMe != null) {
+      final pf = astroMe['profile'] ?? astroMe['astrologer_profile'];
+      if (pf is Map) photoUrl = (pf['profile_image_url'] ?? '').toString();
+      if (photoUrl == null || photoUrl.isEmpty) photoUrl = (astroMe['avatar_url'] ?? '').toString();
+    }
+    if (photoUrl != null && photoUrl.isEmpty) photoUrl = null;
 
     final hour = DateTime.now().hour;
     final greeting = hour < 12
@@ -156,7 +172,7 @@ class _HomeTabState extends State<HomeTab> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: [
               // ══════════════════════ GREETING HERO ══════════════════════
-              _GreetingHero(greeting: greeting, name: firstName, subtitle: l.yourCosmicDashboard),
+              _GreetingHero(greeting: greeting, name: firstName, subtitle: l.yourCosmicDashboard, imageUrl: photoUrl),
               const SizedBox(height: 18),
 
               // ══════════════════════ 1. LIVE STATUS ═════════════════════
@@ -314,7 +330,37 @@ class _HomeTabState extends State<HomeTab> {
 
 class _GreetingHero extends StatelessWidget {
   final String greeting, name, subtitle;
-  const _GreetingHero({required this.greeting, required this.name, required this.subtitle});
+  final String? imageUrl;
+  const _GreetingHero({required this.greeting, required this.name, required this.subtitle, this.imageUrl});
+
+  Widget _avatar() {
+    final initial = Center(
+      child: Text(
+        name.isNotEmpty ? name.substring(0, 1).toUpperCase() : '✨',
+        style: const TextStyle(color: AppColors.midnight, fontSize: 22, fontWeight: FontWeight.w800),
+      ),
+    );
+    Widget inner = initial;
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      inner = ClipOval(
+        child: Image.network(
+          ApiService.resolveMediaUrl(imageUrl!),
+          width: 54, height: 54, fit: BoxFit.cover,
+          headers: ApiService().mediaHeaders,
+          loadingBuilder: (ctx, child, p) => p == null ? child : initial,
+          errorBuilder: (_, __, ___) => initial,
+        ),
+      );
+    }
+    return Container(
+      width: 54, height: 54,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+      ),
+      child: inner,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -341,19 +387,7 @@ class _GreetingHero extends StatelessWidget {
           ]),
         ),
         const SizedBox(width: 12),
-        Container(
-          width: 54, height: 54,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
-          ),
-          child: Center(
-            child: Text(
-              name.isNotEmpty ? name.substring(0, 1).toUpperCase() : '✨',
-              style: const TextStyle(color: AppColors.midnight, fontSize: 22, fontWeight: FontWeight.w800),
-            ),
-          ),
-        ),
+        _avatar(),
       ]),
     );
   }
@@ -500,17 +534,18 @@ class _LiveStatusCardState extends State<_LiveStatusCard> with SingleTickerProvi
         const SizedBox(width: 14),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(l.liveStatus, style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
+            Text(l.liveStatus, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
             const SizedBox(height: 3),
             Row(children: [
               Container(width: 7, height: 7, decoration: BoxDecoration(shape: BoxShape.circle, color: statusColor)),
               const SizedBox(width: 5),
               Text(statusText, style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w600)),
-              Text('  •  ${l.goLiveSubtitle}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
             ]),
+            const SizedBox(height: 2),
+            Text(l.goLiveSubtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
           ]),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 12),
         ElevatedButton(
           onPressed: widget.onGoLive,
           style: ElevatedButton.styleFrom(
