@@ -102,10 +102,10 @@ numbered tasks across Phases 0-7; corrected for accuracy.)_
 ## Phase 7 — Hardening & scale
 | # | Task | Status |
 |---|------|--------|
-| 7.1 | Redis result cache (deterministic Kundli/Forecast by input hash) | DONE (TBD-sha7, 2026-08-01) — `app/core/result_cache.py` (Redis via `REDIS_URL` env, else in-process fallback); wired into `/api/v2/kundli` (30d TTL) and `/api/v2/forecast` (20h TTL, key includes the calendar date) with `meta.cache_hit` surfaced |
-| 7.2 | Daily precompute of Today Forecast + Gochar (all 12 rashis) | DONE (TBD-sha7, 2026-08-01) — `app/services/daily_precompute.py`, run by a background task in `app/main.py`'s lifespan (startup + every 24h) and manually via `POST /api/v1/admin/precompute-daily`; finally wires up the previously-unused `GocharDaily` model |
-| 7.3 | Idempotency-Key support + per-key monthly quota + concurrency cap | DONE (TBD-sha7, 2026-08-01) — `app/core/gateway_guards.py`: `Idempotency-Key` header replay via the `idempotency_keys` table, per-key `monthly_quota` column (default 100k/mo) checked against `api_usage_logs`, and an in-process concurrency cap (max 5 in-flight/key) |
-| 7.4 | Usage-log rollup/partitioning + metrics/alerts + scale-topology notes | DONE (TBD-sha7, 2026-08-01) — `app/services/usage_rollup.py` (new `api_usage_daily_rollups` table, nightly rollup + high-error-rate/high-latency structured-log alerts); partitioning + horizontal-scale topology documented below in Blockers/notes (design notes only — no infra provisioned here) |
+| 7.1 | Redis result cache (deterministic Kundli/Forecast by input hash) | DONE (a0ac711, 2026-08-01) — `app/core/result_cache.py` (Redis via `REDIS_URL` env, else in-process fallback); wired into `/api/v2/kundli` (30d TTL) and `/api/v2/forecast` (20h TTL, key includes the calendar date) with `meta.cache_hit` surfaced |
+| 7.2 | Daily precompute of Today Forecast + Gochar (all 12 rashis) | DONE (a0ac711, 2026-08-01) — `app/services/daily_precompute.py`, run by a background task in `app/main.py`'s lifespan (startup + every 24h) and manually via `POST /api/v1/admin/precompute-daily`; finally wires up the previously-unused `GocharDaily` model |
+| 7.3 | Idempotency-Key support + per-key monthly quota + concurrency cap | DONE (a0ac711, 2026-08-01) — `app/core/gateway_guards.py`: `Idempotency-Key` header replay via the `idempotency_keys` table, per-key `monthly_quota` column (default 100k/mo) checked against `api_usage_logs`, and an in-process concurrency cap (max 5 in-flight/key) |
+| 7.4 | Usage-log rollup/partitioning + metrics/alerts + scale-topology notes | DONE (a0ac711, 2026-08-01) — `app/services/usage_rollup.py` (new `api_usage_daily_rollups` table, nightly rollup + high-error-rate/high-latency structured-log alerts); partitioning + horizontal-scale topology documented below in Blockers/notes (design notes only — no infra provisioned here) |
 
 ---
 
