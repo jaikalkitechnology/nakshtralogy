@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/astro_avatar.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
@@ -254,30 +255,6 @@ class _AstroCard extends StatelessWidget {
   final int index;
   const _AstroCard({required this.astro, required this.saved, required this.index});
 
-  // Avatar gradient variety by initial letter
-  List<Color> _avatarGradient(String initial) {
-    switch (initial.toUpperCase()) {
-      case 'R':
-        return [AppColors.saffron, AppColors.cosmicPink];
-      case 'A':
-        return [AppColors.aurora, AppColors.indigo];
-      case 'K':
-        return [AppColors.cosmicPink, AppColors.saffron];
-      case 'S':
-        return [AppColors.lavender, AppColors.indigo];
-      default:
-        // Cycle through a few combos based on index for variety
-        final combos = <List<Color>>[
-          [AppColors.saffron, AppColors.cosmicPink],
-          [AppColors.aurora, AppColors.indigo],
-          [AppColors.cosmicPink, AppColors.saffron],
-          [AppColors.lavender, AppColors.indigo],
-          [AppColors.gold, AppColors.saffron],
-        ];
-        return combos[initial.codeUnitAt(0) % combos.length];
-    }
-  }
-
   Future<void> _startChat(BuildContext context, Map<String, dynamic> a) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context)?.initiatingChat ?? 'Initiating chat...'), duration: const Duration(seconds: 2)),
@@ -355,7 +332,6 @@ class _AstroCard extends StatelessWidget {
     final isOnline = a['is_online'] == true && a['is_busy'] != true;
     final isBusy = a['is_busy'] == true;
     final name = (a['display_name'] ?? '\u2014').toString();
-    final initial = name.isNotEmpty ? name[0].toUpperCase() : 'A';
 
     final specs = (a['specializations'] as List?)?.cast<dynamic>() ?? const [];
     final specTail = specs.isNotEmpty ? specs.take(2).join(' \u00b7 ') : 'Astrologer';
@@ -386,43 +362,10 @@ class _AstroCard extends StatelessWidget {
             // Avatar with online dot
             Stack(
               children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(colors: _avatarGradient(initial)),
-                    border: Border.all(color: AppColors.gold, width: 2),
-                  ),
-                  child: a['profile_image_url'] != null
-                      ? ClipOval(
-                          child: Image.network(
-                            a['profile_image_url'] as String,
-                            fit: BoxFit.cover,
-                            width: 48,
-                            height: 48,
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(
-                                initial,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Center(
-                          child: Text(
-                            initial,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
+                AstroAvatar(
+                  imageUrl: a['profile_image_url']?.toString(),
+                  name: (a['display_name'] ?? '').toString(),
+                  size: 48,
                 ),
                 if (isOnline)
                   Positioned(

@@ -9,6 +9,7 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
 import '../../widgets/avatar_picker.dart';
+import '../../widgets/astro_avatar.dart';
 import '../../bloc/profile/profile_event.dart';
 import '../../bloc/profile/profile_state.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
@@ -557,15 +558,11 @@ class _ProfileTabState extends State<ProfileTab> {
                               padding: const EdgeInsets.only(bottom: 6),
                               child: Row(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 16,
-                                    backgroundColor: AppColors.card,
-                                    backgroundImage: a['profile_image_url'] != null
-                                        ? NetworkImage(a['profile_image_url'] as String)
-                                        : null,
-                                    child: a['profile_image_url'] == null
-                                        ? const Text('\u{1F52E}', style: TextStyle(fontSize: 12))
-                                        : null,
+                                  AstroAvatar(
+                                    imageUrl: a['profile_image_url']?.toString(),
+                                    name: (a['display_name'] ?? '').toString(),
+                                    size: 32,
+                                    ring: false,
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
