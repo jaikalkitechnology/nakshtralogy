@@ -19,6 +19,7 @@ from app.routers import (
     rashi_router, agent_router, career_router, character_router,
     milan_router, specialist_router, ai_config_router,
     forecast_router, notification_router,
+    developer_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -160,6 +161,7 @@ app.include_router(specialist_router.router, prefix="/api/v1/specialist", tags=[
 app.include_router(ai_config_router.router, prefix="/api/v1/ai-config", tags=["AI Config"])
 app.include_router(forecast_router.router, prefix="/api/v1/forecast", tags=["Daily Forecast & Rashi"])
 app.include_router(notification_router.router, prefix="/api/v1/notifications", tags=["Notifications"])
+app.include_router(developer_router.router, prefix="/api/v1/developer", tags=["Developer API Platform"])
 
 
 
@@ -185,7 +187,7 @@ def seed_database_open(db: Session = Depends(get_db)):
     Open seed endpoint (no auth) — use ONLY for initial setup.
     Remove or disable after first seed.
     """
-    from app.seeds.seed_data import seed_all
+    from app.seeds.seed_data import seed_all, DEVELOPER_EMAIL, DEVELOPER_PASSWORD, TEST_API_KEY_RAW
     result = seed_all(db)
     return {
         "status": "ok",
@@ -194,6 +196,13 @@ def seed_database_open(db: Session = Depends(get_db)):
             "admin": {"email": "admin@nakshatralogy.com", "password": "admin@123"},
             "user": {"email": "rahul@example.com", "password": "user@123"},
             "astrologer": {"email": "rajesh.sharma@example.com", "password": "astro@123"},
+            "developer": {
+                "email": DEVELOPER_EMAIL,
+                "password": DEVELOPER_PASSWORD,
+                "test_api_key": TEST_API_KEY_RAW,
+                "note": "Use 'Authorization: Bearer <test_api_key>' against /api/v2/* — "
+                        "an active All-Access subscription is pre-seeded.",
+            },
         },
     }
 

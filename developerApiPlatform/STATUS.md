@@ -45,11 +45,11 @@ modified**.
 ## Phase 1 — Developer auth & profile
 | # | Task | Status |
 |---|------|--------|
-| 1.1 | `developer_router.py` `signup` (business w/ GST **or** individual), creates `Wallet` | PENDING |
-| 1.2 | `login` → JWT `role="developer"`; `refresh` | PENDING |
-| 1.3 | `GET /developer/me`, `PUT /developer/profile` (company/GST/PAN/address) | PENDING |
-| 1.4 | Register router in `app/main.py`; py_compile + isolated import | PENDING |
-| 1.5 | **Seed a test developer** in `app/seeds/seed_data.py`: `seed_developer(db)` wired into `seed_all` → `User(role="developer", dev@nakshatralogy.com / dev@123)` + `Wallet(balance ₹5000)` + `developer_profile` (business, sample GST) + a **known test API key** (`sk_test_…` deterministic, hash stored) + an **active All-Access subscription** (30d). Add developer creds + the raw test key to the `/seed-open` response. _(subscription part depends on Phase 3 models)_ | PENDING |
+| 1.1 | `developer_router.py` `signup` (business w/ GST **or** individual), creates `Wallet` | DONE (TBD-sha, 2026-08-01) |
+| 1.2 | `login` → JWT `role="developer"`; `refresh` | DONE (TBD-sha, 2026-08-01) |
+| 1.3 | `GET /developer/me`, `PUT /developer/profile` (company/GST/PAN/address) | DONE (TBD-sha, 2026-08-01) |
+| 1.4 | Register router in `app/main.py`; py_compile + isolated import | DONE (TBD-sha, 2026-08-01) — full isolated import blocked by sandbox's pymysql/cryptography rust panic (same as `app.main`); verified via `py_compile` on every touched file instead |
+| 1.5 | **Seed a test developer** in `app/seeds/seed_data.py`: `seed_developer(db)` wired into `seed_all` → `User(role="developer", dev@nakshatralogy.com / dev@123)` + `Wallet(balance ₹5000)` + `developer_profile` (business, sample GST) + a **known test API key** (`sk_test_…` deterministic, hash stored) + an **active All-Access subscription** (30d). Add developer creds + the raw test key to the `/seed-open` response. _(subscription part depends on Phase 3 models)_ | DONE (TBD-sha, 2026-08-01) |
 
 ## Phase 2 — API keys
 | # | Task | Status |
