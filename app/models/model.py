@@ -210,6 +210,8 @@ class WalletTransaction(Base):
     wallet_id = Column(String(36), ForeignKey("wallets.id", ondelete="CASCADE"), nullable=False)
     txn_type = Column(String(30), nullable=False)
     # recharge | consultation_debit | consultation_credit | refund | withdrawal | bonus | ai_debit
+    # Developer API Platform (developerApiPlatform/): api_subscription_debit |
+    # api_recharge | api_subscription_refund
     amount = Column(Numeric(12, 2), nullable=False)
     balance_after = Column(Numeric(12, 2), nullable=False)
     description = Column(Text, nullable=True)
@@ -1094,3 +1096,187 @@ class FreeTextTranslation(Base):
     source_text = Column(Text, nullable=True)
     translated = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  15. DEVELOPER API PLATFORM  (developerApiPlatform/)
+#      A "developer" is a User(role="developer") — reuses Wallet /
+#      WalletTransaction (keyed by user_id). No separate developer wallet.
+# ─────────────────────────────────────────────────────────────────────
+
+class DeveloperProfile(Base):
+    """Company / individual details for a developer account.
+
+    account_type="business" requires company_name + gst_number;
+    account_type="individual" leaves those null.
+    """
+    __tablename__ = "developer_profiles"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
+    account_type = Column(String(20), nullable=False, default="individual")  # business | individual
+    company_name = Column(String(200), nullable=True)
+    gst_number = Column(String(20), nullable=True)
+    pan = Column(String(20), nullable=True)
+    billing_address = Column(Text, nullable=True)
+    website = Column(String(255), nullable=True)
+    contact_name = Column(String(150), nullable=True)
+    contact_phone = Column(String(20), nullable=True)
+    kyc_status = Column(String(20), default="pending", nullable=False)   # pending | approved | rejected
+    kyc_note = Column(Text, nullable=True)
+    status = Column(String(20), default="active", nullable=False)        # active | suspended | blocked
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    user = relationship("User")
+
+    __table_args__ = (
+        Index("ix_devprofile_status", "status"),
+        Index("ix_devprofile_kyc", "kyc_status"),
+    )
+
+
+class ApiKey(Base):
+    """Gateway credential. The raw secret is only ever returned once, at
+    creation time — only `secret_hash` (sha256) + `key_prefix` are stored."""
+    __tablename__ = "api_keys"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    developer_user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    key_prefix = Column(String(24), nullable=False, index=True)   # e.g. sk_live_ab12cd34
+    secret_hash = Column(String(255), nullable=False)             # sha256 of full raw secret
+    mode = Column(String(10), nullable=False, default="live")     # live | test
+    label = Column(String(100), nullable=True)
+    scopes = Column(JSON, default=lambda: ["kundli", "specialist", "milan", "forecast"])
+    status = Column(String(20), default="active", nullable=False)  # active | revoked
+    last_used_at = Column(DateTime, nullable=True)
+    # Phase-7 hardening: per-key monthly call quota (None = platform default,
+    # see app/core/gateway_guards.DEFAULT_MONTHLY_QUOTA).
+    monthly_quota = Column(Integer, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    revoked_at = Column(DateTime, nullable=True)
+
+    __table_args__ = (
+        Index("ix_apikey_dev_status", "developer_user_id", "status"),
+        Index("ix_apikey_prefix", "key_prefix"),
+    )
+
+
+class SubscriptionPlan(Base):
+    """Plan catalog. Product ships exactly ONE plan: code='all_access'
+    (all 4 products, tps_limit=1, duration_days=30)."""
+    __tablename__ = "subscription_plans"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    code = Column(String(40), unique=True, nullable=False)   # all_access
+    name = Column(String(100), nullable=False)
+    price = Column(Numeric(12, 2), nullable=False, default=0)
+    currency = Column(String(3), default="INR", nullable=False)
+    duration_days = Column(Integer, default=30, nullable=False)
+    tps_limit = Column(Integer, default=1, nullable=False)
+    products = Column(JSON, default=lambda: ["kundli", "specialist", "milan", "forecast"])
+    active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class DeveloperSubscription(Base):
+    """A developer's purchased/renewed plan. Wallet-funded; expiry enforced
+    by the gateway on every call."""
+    __tablename__ = "developer_subscriptions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    developer_user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    plan_id = Column(String(36), ForeignKey("subscription_plans.id"), nullable=False)
+    status = Column(String(20), default="active", nullable=False)  # active | expired | cancelled
+    started_at = Column(DateTime, server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    auto_renew = Column(Boolean, default=False, nullable=False)
+    last_renewed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    plan = relationship("SubscriptionPlan")
+
+    __table_args__ = (
+        Index("ix_devsub_dev_status", "developer_user_id", "status"),
+        Index("ix_devsub_expires", "expires_at"),
+    )
+
+
+class ApiProduct(Base):
+    """Product registry for gateway routing / reporting. Seeded with the 4
+    products included in the All-Access plan."""
+    __tablename__ = "api_products"
+
+    code = Column(String(30), primary_key=True)  # kundli | specialist | milan | forecast
+    name = Column(String(100), nullable=False)
+    description = Column(Text, nullable=True)
+    active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+class ApiUsageLog(Base):
+    """Per-call metering row written by the /api/v2 gateway for analytics."""
+    __tablename__ = "api_usage_logs"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    developer_user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    api_key_id = Column(String(36), ForeignKey("api_keys.id", ondelete="SET NULL"), nullable=True, index=True)
+    product = Column(String(30), nullable=False, index=True)      # kundli | specialist | milan | forecast
+    endpoint = Column(String(150), nullable=True)
+    http_status = Column(Integer, nullable=False)
+    cache_hit = Column(Boolean, default=False, nullable=False)
+    latency_ms = Column(Integer, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_usagelog_dev_created", "developer_user_id", "created_at"),
+        Index("ix_usagelog_product_created", "product", "created_at"),
+    )
+
+
+class ApiUsageDailyRollup(Base):
+    """Daily rollup of `api_usage_logs` (developerApiPlatform/ Phase 7.4).
+
+    A nightly job aggregates the previous day's raw log rows here, one row
+    per (date, developer, product). Dashboards/analytics should query this
+    table for anything older than "today" — it's orders of magnitude
+    smaller than the raw log and keeps `api_usage_logs` itself lean enough
+    to eventually range-partition by `created_at` (see the scale-topology
+    note in developerApiPlatform/STATUS.md) without touching hot data.
+    """
+    __tablename__ = "api_usage_daily_rollups"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    rollup_date = Column(Date, nullable=False)
+    developer_user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    product = Column(String(30), nullable=False)
+    call_count = Column(Integer, default=0, nullable=False)
+    error_count = Column(Integer, default=0, nullable=False)
+    cache_hit_count = Column(Integer, default=0, nullable=False)
+    avg_latency_ms = Column(Float, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("rollup_date", "developer_user_id", "product", name="uq_rollup_date_dev_product"),
+        Index("ix_rollup_date_dev", "rollup_date", "developer_user_id"),
+    )
+
+
+class IdempotencyKey(Base):
+    """Phase-7 hardening: safe retries for gateway POST calls. One row per
+    (api_key_id, key) so a retried request with the same Idempotency-Key
+    header replays the cached response instead of re-running the engine."""
+    __tablename__ = "idempotency_keys"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    api_key_id = Column(String(36), ForeignKey("api_keys.id", ondelete="CASCADE"), nullable=False, index=True)
+    key = Column(String(120), nullable=False)
+    response_hash = Column(String(64), nullable=True)
+    response_json = Column(JSON, nullable=True)
+    status_code = Column(Integer, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("api_key_id", "key", name="uq_idem_key_per_apikey"),
+    )

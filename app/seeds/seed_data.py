@@ -19,11 +19,12 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
 
-from app.core.security import hash_password
+from app.core.security import hash_password, hash_api_key_secret
 from app.models.model import (
     User, Wallet, AstrologerProfile, AstrologerAvailability,
     ServicePricing, GiftPricing, AgoraConfig, Notification,
-    PlatformSetting,
+    PlatformSetting, DeveloperProfile, ApiKey, SubscriptionPlan,
+    ApiProduct, DeveloperSubscription,
 )
 
 
@@ -38,6 +39,7 @@ def seed_all(db: Session) -> dict:
     summary["agora_config"] = _seed_agora_config(db)
     summary["platform_settings"] = _seed_platform_settings(db)
     summary["notifications"] = _seed_notifications(db)
+    summary["developer"] = _seed_developer(db)
     db.commit()
     return summary
 
@@ -682,6 +684,108 @@ def _seed_notifications(db: Session) -> int:
         ))
         created += 1
     return created
+
+
+# ─── 9. Developer API Platform — Test Developer ───────────────────────
+# (developerApiPlatform/ Phase 1.5) A ready-to-use developer account with a
+# funded wallet, an approved business profile, a deterministic test API key
+# and an active All-Access subscription so gateway calls (/api/v2) work
+# out of the box against a fresh seed.
+
+DEVELOPER_EMAIL = "dev@nakshatralogy.com"
+DEVELOPER_PASSWORD = "dev@123"
+
+# Deterministic (NOT randomly generated) so re-running seeds always yields
+# the same test credential for local/dev use. Only its sha256 hash is ever
+# persisted to the DB — this raw value is only surfaced via /seed-open.
+TEST_API_KEY_RAW = "sk_test_devseed1a2b3c4d5e6f7890abcdef1234567890"
+TEST_API_KEY_PREFIX = TEST_API_KEY_RAW[:16]
+
+ALL_ACCESS_PLAN_SEED = {
+    "code": "all_access",
+    "name": "All-Access",
+    "price": Decimal("1999.00"),
+    "currency": "INR",
+    "duration_days": 30,
+    "tps_limit": 1,
+    "products": ["kundli", "specialist", "milan", "forecast"],
+    "active": True,
+}
+
+API_PRODUCTS_SEED = [
+    {"code": "kundli", "name": "Kundli", "description": "Birth chart, dashas, gochar, doshas, yogas, shadbala and all 20 divisional charts."},
+    {"code": "specialist", "name": "Special Reports", "description": "15 specialist engines: career, wealth, marriage, health, legal, and more."},
+    {"code": "milan", "name": "Kundli Milan", "description": "3-phase compatibility matching (Ashtakoot + advanced + timing) with a unified score."},
+    {"code": "forecast", "name": "Today Forecast", "description": "Daily probability forecast + 12-rashi transit analysis."},
+]
+
+
+def _ensure_all_access_plan(db: Session) -> SubscriptionPlan:
+    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.code == "all_access").first()
+    if not plan:
+        plan = SubscriptionPlan(**ALL_ACCESS_PLAN_SEED)
+        db.add(plan)
+        db.flush()
+    for p in API_PRODUCTS_SEED:
+        if not db.query(ApiProduct).filter(ApiProduct.code == p["code"]).first():
+            db.add(ApiProduct(**p))
+    return plan
+
+
+def _seed_developer(db: Session) -> str:
+    if db.query(User).filter(User.email == DEVELOPER_EMAIL).first():
+        return "already exists"
+
+    user = User(
+        email=DEVELOPER_EMAIL,
+        phone="+919999000011",
+        password_hash=hash_password(DEVELOPER_PASSWORD),
+        name="Nakshtralogy Test Developer",
+        role="developer",
+        is_active=True,
+        is_verified=True,
+    )
+    db.add(user)
+    db.flush()
+
+    db.add(Wallet(user_id=user.id, balance=Decimal("5000.00")))
+
+    db.add(DeveloperProfile(
+        user_id=user.id,
+        account_type="business",
+        company_name="Nakshtralogy Labs Pvt Ltd",
+        gst_number="27AAAPL1234C1Z5",
+        pan="AAAPL1234C",
+        billing_address="4th Floor, Astro Towers, Bandra Kurla Complex, Mumbai, MH 400051",
+        website="https://developers.nakshatralogy.com",
+        contact_name="Nakshtralogy Test Developer",
+        contact_phone="+919999000011",
+        kyc_status="approved",
+        status="active",
+    ))
+
+    plan = _ensure_all_access_plan(db)
+    db.flush()
+
+    db.add(ApiKey(
+        developer_user_id=user.id,
+        key_prefix=TEST_API_KEY_PREFIX,
+        secret_hash=hash_api_key_secret(TEST_API_KEY_RAW),
+        mode="test",
+        label="Seed Test Key",
+        scopes=["kundli", "specialist", "milan", "forecast"],
+        status="active",
+    ))
+
+    db.add(DeveloperSubscription(
+        developer_user_id=user.id,
+        plan_id=plan.id,
+        status="active",
+        expires_at=datetime.utcnow() + timedelta(days=plan.duration_days),
+        auto_renew=False,
+    ))
+
+    return "created"
 
 
 # ─── CLI runner ────────────────────────────────────────────────────────

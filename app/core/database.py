@@ -33,6 +33,8 @@ _DEV_COLUMN_MIGRATIONS = [
     ("agent_logs", "routing", "VARCHAR(20)"),
     ("agent_logs", "response_text", "TEXT"),
     ("users", "preferred_language", "VARCHAR(20)"),
+    # Developer API Platform (developerApiPlatform/ Phase 7.3)
+    ("api_keys", "monthly_quota", "INT"),
 ]
 
 

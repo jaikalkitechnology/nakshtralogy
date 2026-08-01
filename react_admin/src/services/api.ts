@@ -551,3 +551,100 @@ export function getWsAstrologerUrl() {
   const wsBase = BASE.replace("https://", "wss://").replace("http://", "ws://").replace("/api/v1", "");
   return `${wsBase}/ws/astrologer?token=${token}`;
 }
+
+// ── Developer API Platform (Admin) — developerApiPlatform/ Phase 5 ────
+// Superset control surface: everything a developer can do for themselves,
+// an admin can do for ANY developer_id.
+
+export type DeveloperWalletAction = "credit" | "debit" | "refund";
+
+export async function adminListDevelopers(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/developers?${qs}`);
+}
+
+export async function adminGetDeveloperDetail(developerId: string) {
+  return request(`/admin/developers/${developerId}`);
+}
+
+export async function adminUpdateDeveloperStatus(developerId: string, status: string, note?: string) {
+  return request(`/admin/developers/${developerId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status, note }),
+  });
+}
+
+export async function adminUpdateDeveloperKyc(developerId: string, kycStatus: string, note?: string) {
+  return request(`/admin/developers/${developerId}/kyc`, {
+    method: "PATCH",
+    body: JSON.stringify({ kyc_status: kycStatus, note }),
+  });
+}
+
+export async function adminListDeveloperKeys(developerId: string, params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/developers/${developerId}/keys?${qs}`);
+}
+
+export async function adminRevokeDeveloperKey(developerId: string, keyId: string) {
+  return request(`/admin/developers/${developerId}/keys/${keyId}/revoke`, { method: "PATCH" });
+}
+
+export async function adminRotateDeveloperKey(developerId: string, keyId: string) {
+  return request(`/admin/developers/${developerId}/keys/${keyId}/rotate`, { method: "POST" });
+}
+
+export async function adminGetDeveloperSubscription(developerId: string) {
+  return request(`/admin/developers/${developerId}/subscription`);
+}
+
+export async function adminGrantDeveloperSubscription(
+  developerId: string,
+  days: number,
+  planCode = "all_access",
+  autoRenew = false,
+  reason?: string,
+) {
+  return request(`/admin/developers/${developerId}/subscription/grant`, {
+    method: "POST",
+    body: JSON.stringify({ plan_code: planCode, days, auto_renew: autoRenew, reason }),
+  });
+}
+
+export async function adminCancelDeveloperSubscription(developerId: string) {
+  return request(`/admin/developers/${developerId}/subscription/cancel`, { method: "POST" });
+}
+
+export async function adminGetDeveloperWallet(developerId: string, params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/developers/${developerId}/wallet?${qs}`);
+}
+
+export async function adminAdjustDeveloperWallet(
+  developerId: string,
+  action: DeveloperWalletAction,
+  amount: number,
+  reason: string,
+) {
+  return request(`/admin/developers/${developerId}/wallet/adjust`, {
+    method: "POST",
+    body: JSON.stringify({ action, amount, reason }),
+  });
+}
+
+export async function adminGetDeveloperUsage(developerId: string, params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/developers/${developerId}/usage?${qs}`);
+}
+
+export async function adminListDeveloperPlans() {
+  return request(`/admin/developer-plans`);
+}
+
+export async function adminUpdateDeveloperPlan(planId: string, data: Record<string, any>) {
+  return request(`/admin/developer-plans/${planId}`, { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function adminDeveloperAnalyticsOverview(days = 30) {
+  return request(`/admin/developer-analytics/overview?days=${days}`);
+}

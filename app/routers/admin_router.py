@@ -55,7 +55,7 @@ from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
     KycDocument, RefreshToken, Review, Consultation,
-    PlatformSetting,
+    PlatformSetting, SubscriptionPlan, ApiProduct,
 )
 
 router = APIRouter()
@@ -1419,4 +1419,60 @@ async def upload_fcm_credentials(
         "project_id": data.get("project_id"),
         "client_email": data.get("client_email"),
         "message": t("msg.fcm_uploaded", lang, project=project),
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  DEVELOPER API PLATFORM — Plan/Product seed (developerApiPlatform/)
+# ══════════════════════════════════════════════════════════════════════
+
+ALL_ACCESS_PLAN = {
+    "code": "all_access",
+    "name": "All-Access",
+    "price": Decimal("1999.00"),
+    "currency": "INR",
+    "duration_days": 30,
+    "tps_limit": 1,
+    "products": ["kundli", "specialist", "milan", "forecast"],
+    "active": True,
+}
+
+API_PRODUCTS = [
+    {"code": "kundli", "name": "Kundli", "description": "Birth chart, dashas, gochar, doshas, yogas, shadbala and all 20 divisional charts."},
+    {"code": "specialist", "name": "Special Reports", "description": "15 specialist engines: career, wealth, marriage, health, legal, and more."},
+    {"code": "milan", "name": "Kundli Milan", "description": "3-phase compatibility matching (Ashtakoot + advanced + timing) with a unified score."},
+    {"code": "forecast", "name": "Today Forecast", "description": "Daily probability forecast + 12-rashi transit analysis."},
+]
+
+
+@router.post("/seed-api-plans", tags=["Developer API Platform"])
+def seed_api_plans(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin-only, idempotent: inserts the single All-Access subscription
+    plan + the 4 api_product rows (kundli/specialist/milan/forecast) that
+    back the Developer API Platform gateway (/api/v2)."""
+    plan_created = False
+    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.code == ALL_ACCESS_PLAN["code"]).first()
+    if not plan:
+        plan = SubscriptionPlan(**ALL_ACCESS_PLAN)
+        db.add(plan)
+        plan_created = True
+        db.flush()
+
+    products_created = 0
+    for p in API_PRODUCTS:
+        existing = db.query(ApiProduct).filter(ApiProduct.code == p["code"]).first()
+        if existing:
+            continue
+        db.add(ApiProduct(**p))
+        products_created += 1
+
+    db.commit()
+    return {
+        "status": "ok",
+        "plan": {"created": plan_created, "code": plan.code, "id": plan.id},
+        "products_created": products_created,
+        "products_total": len(API_PRODUCTS),
     }
