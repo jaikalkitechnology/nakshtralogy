@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 12 / 31 tasks DONE (6.1 scaffold + Phases 0-2) · Phase 3 next.
+**Summary:** 16 / 31 tasks DONE (6.1 scaffold + Phases 0-3) · Phase 4 next.
 
 ---
 
@@ -61,10 +61,10 @@ modified**.
 ## Phase 3 — Subscription & wallet
 | # | Task | Status |
 |---|------|--------|
-| 3.1 | `GET /developer/plans`; `POST /developer/subscribe` (buy/renew All-Access) | PENDING |
-| 3.2 | **Atomic guarded wallet debit** + `WalletTransaction`; 402 on low balance | PENDING |
-| 3.3 | Subscription lifecycle: `expires_at`, expiry check, auto-renew flag | PENDING |
-| 3.4 | Wallet `balance` + `recharge` endpoints (stub credit now; gateway later) | PENDING |
+| 3.1 | `GET /developer/plans`; `POST /developer/subscribe` (buy/renew All-Access) | DONE (TBD-sha3, 2026-08-01) |
+| 3.2 | **Atomic guarded wallet debit** + `WalletTransaction`; 402 on low balance | DONE (TBD-sha3, 2026-08-01) — single guarded `UPDATE ... WHERE balance >= price`, zero rows updated ⇒ 402, no read-then-write |
+| 3.3 | Subscription lifecycle: `expires_at`, expiry check, auto-renew flag | DONE (TBD-sha3, 2026-08-01) |
+| 3.4 | Wallet `balance` + `recharge` endpoints (stub credit now; gateway later) | DONE (TBD-sha3, 2026-08-01) |
 
 ## Phase 4 — Metered gateway (`/api/v2`)
 | # | Task | Status |

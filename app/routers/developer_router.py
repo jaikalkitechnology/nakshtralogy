@@ -48,6 +48,7 @@ from app.models.model import (
     User, RefreshToken, Wallet, WalletTransaction,
     DeveloperProfile, ApiKey, SubscriptionPlan, DeveloperSubscription,
 )
+from sqlalchemy import func as sqlfunc
 from app.schemas.developer_schema import (
     DeveloperSignupRequest, DeveloperLoginRequest, DeveloperTokenResponse,
     DeveloperFullResponse, DeveloperProfileResponse, DeveloperProfileUpdateRequest,
@@ -376,3 +377,213 @@ def revoke_api_key(
         key.revoked_at = datetime.utcnow()
         db.commit()
     return MessageResponse(message="API key revoked")
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  PHASE 3 — SUBSCRIPTION & WALLET
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/plans", response_model=List[PlanResponse])
+def list_plans(db: Session = Depends(get_db)):
+    """Public catalog — today just the single All-Access plan."""
+    plans = db.query(SubscriptionPlan).filter(SubscriptionPlan.active == True).all()  # noqa: E712
+    return [PlanResponse.model_validate(p) for p in plans]
+
+
+def _subscription_response(sub: DeveloperSubscription, plan: SubscriptionPlan) -> SubscriptionResponse:
+    return SubscriptionResponse(
+        id=sub.id,
+        plan_code=plan.code,
+        plan_name=plan.name,
+        status=sub.status,
+        started_at=sub.started_at,
+        expires_at=sub.expires_at,
+        auto_renew=sub.auto_renew,
+        last_renewed_at=sub.last_renewed_at,
+        tps_limit=plan.tps_limit,
+    )
+
+
+@router.get("/subscription", response_model=SubscriptionResponse)
+def get_my_subscription(
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    sub = (
+        db.query(DeveloperSubscription)
+        .filter(DeveloperSubscription.developer_user_id == current_user.id)
+        .order_by(DeveloperSubscription.started_at.desc())
+        .first()
+    )
+    if not sub:
+        raise HTTPException(status_code=404, detail="No subscription found. Subscribe via POST /subscribe.")
+    # lazily expire a stale row so the dashboard always reflects reality
+    if sub.status == "active" and sub.expires_at < datetime.utcnow():
+        sub.status = "expired"
+        db.commit()
+    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.id == sub.plan_id).first()
+    return _subscription_response(sub, plan)
+
+
+@router.post("/subscribe", response_model=SubscriptionResponse, status_code=status.HTTP_200_OK)
+def subscribe(
+    req: SubscribeRequest,
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    """Buy or renew the All-Access plan. Wallet-funded via an atomic,
+    single-statement, balance-guarded UPDATE — never a read-then-write."""
+    plan = db.query(SubscriptionPlan).filter(
+        SubscriptionPlan.code == req.plan_code, SubscriptionPlan.active == True,  # noqa: E712
+    ).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail=f"Unknown or inactive plan '{req.plan_code}'")
+
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        wallet = Wallet(user_id=current_user.id)
+        db.add(wallet)
+        db.flush()
+
+    # ── Atomic guarded debit: single UPDATE with a WHERE balance>=price
+    # guard. Zero rows updated == insufficient funds; no read-then-write. ──
+    updated = (
+        db.query(Wallet)
+        .filter(Wallet.id == wallet.id, Wallet.balance >= plan.price)
+        .update({Wallet.balance: Wallet.balance - plan.price}, synchronize_session="fetch")
+    )
+    if updated == 0:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail=f"Insufficient wallet balance. Required ₹{plan.price}, available ₹{wallet.balance}.",
+        )
+    db.refresh(wallet)
+
+    now = datetime.utcnow()
+    existing = (
+        db.query(DeveloperSubscription)
+        .filter(DeveloperSubscription.developer_user_id == current_user.id)
+        .order_by(DeveloperSubscription.started_at.desc())
+        .first()
+    )
+    base = existing.expires_at if (existing and existing.status == "active" and existing.expires_at > now) else now
+    new_expiry = base + timedelta(days=plan.duration_days)
+
+    if existing:
+        action = "renewed" if existing.status == "active" else "purchased"
+        existing.plan_id = plan.id
+        existing.status = "active"
+        existing.expires_at = new_expiry
+        existing.auto_renew = req.auto_renew
+        existing.last_renewed_at = now
+        sub = existing
+    else:
+        action = "purchased"
+        sub = DeveloperSubscription(
+            developer_user_id=current_user.id,
+            plan_id=plan.id,
+            status="active",
+            started_at=now,
+            expires_at=new_expiry,
+            auto_renew=req.auto_renew,
+            last_renewed_at=now,
+        )
+        db.add(sub)
+
+    db.flush()
+    db.add(WalletTransaction(
+        wallet_id=wallet.id,
+        txn_type="api_subscription_debit",
+        amount=plan.price,
+        balance_after=wallet.balance,
+        description=f"All-Access subscription {action} — {plan.duration_days} days",
+        reference_id=sub.id,
+        reference_type="developer_subscription",
+    ))
+    db.commit()
+    db.refresh(sub)
+    logger.info("Developer %s %s All-Access (expires %s)", current_user.id, action, sub.expires_at)
+    return _subscription_response(sub, plan)
+
+
+@router.get("/wallet/balance", response_model=WalletBalanceResponse)
+def get_wallet_balance(
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        wallet = Wallet(user_id=current_user.id)
+        db.add(wallet)
+        db.commit()
+        db.refresh(wallet)
+    return WalletBalanceResponse(balance=float(wallet.balance), currency=wallet.currency)
+
+
+@router.post("/wallet/recharge", response_model=WalletBalanceResponse)
+def recharge_wallet(
+    req: RechargeRequest,
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    """Stub credit for local/dev use — a real payment gateway (Razorpay/
+    Stripe) plugs in here later without changing this contract."""
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        wallet = Wallet(user_id=current_user.id)
+        db.add(wallet)
+        db.flush()
+
+    amount = Decimal(str(req.amount))
+    db.query(Wallet).filter(Wallet.id == wallet.id).update(
+        {Wallet.balance: Wallet.balance + amount}, synchronize_session="fetch"
+    )
+    db.commit()
+    db.refresh(wallet)
+
+    db.add(WalletTransaction(
+        wallet_id=wallet.id,
+        txn_type="api_recharge",
+        amount=amount,
+        balance_after=wallet.balance,
+        description=f"Wallet recharge{f' — {req.reference}' if req.reference else ''} (stub gateway)",
+        reference_type="api_recharge",
+        reference_id=(req.reference[:36] if req.reference else None),
+    ))
+    db.commit()
+    return WalletBalanceResponse(balance=float(wallet.balance), currency=wallet.currency)
+
+
+@router.get("/wallet/transactions")
+def list_wallet_transactions(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(get_current_developer),
+    db: Session = Depends(get_db),
+):
+    wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
+    if not wallet:
+        return {"total": 0, "page": page, "page_size": page_size, "transactions": []}
+
+    q = db.query(WalletTransaction).filter(WalletTransaction.wallet_id == wallet.id)
+    total = q.count()
+    rows = (
+        q.order_by(WalletTransaction.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "transactions": [
+            WalletTxnResponse(
+                id=t.id, txn_type=t.txn_type, amount=float(t.amount),
+                balance_after=float(t.balance_after), description=t.description,
+                created_at=t.created_at,
+            )
+            for t in rows
+        ],
+    }
