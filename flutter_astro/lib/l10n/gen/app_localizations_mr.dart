@@ -9446,6 +9446,9 @@ class AppLocalizationsMr extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड विसरलात?';
 
   @override
+  String get failedToLoad => 'लोड करण्यात अयशस्वी';
+
+  @override
   String get sendResetLink => 'रीसेट लिंक पाठवा';
 
   @override

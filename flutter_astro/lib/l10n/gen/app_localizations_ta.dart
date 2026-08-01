@@ -9446,6 +9446,9 @@ class AppLocalizationsTa extends AppLocalizations {
   String get forgotPassword => 'கடவுச்சொல் மறந்துவிட்டதா?';
 
   @override
+  String get failedToLoad => 'ஏற்ற முடியவில்லை';
+
+  @override
   String get sendResetLink => 'மீட்டமைப்பு இணைப்பை அனுப்பவும்';
 
   @override

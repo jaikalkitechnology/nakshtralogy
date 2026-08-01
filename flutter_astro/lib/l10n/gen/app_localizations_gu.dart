@@ -9446,6 +9446,9 @@ class AppLocalizationsGu extends AppLocalizations {
   String get forgotPassword => 'પાસવર્ડ ભૂલી ગયા?';
 
   @override
+  String get failedToLoad => 'લોડ કરવામાં નિષ્ફળ';
+
+  @override
   String get sendResetLink => 'રીસેટ લિંક મોકલો';
 
   @override

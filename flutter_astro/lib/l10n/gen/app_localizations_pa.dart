@@ -9446,6 +9446,9 @@ class AppLocalizationsPa extends AppLocalizations {
   String get forgotPassword => 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?';
 
   @override
+  String get failedToLoad => 'ਲੋਡ ਨਹੀਂ ਹੋਇਆ';
+
+  @override
   String get sendResetLink => 'ਰੀਸੈਟ ਲਿੰਕ ਭੇਜੋ';
 
   @override
