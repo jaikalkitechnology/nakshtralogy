@@ -69,13 +69,13 @@ modified**.
 ## Phase 4 — Metered gateway (`/api/v2`)
 | # | Task | Status |
 |---|------|--------|
-| 4.1 | `gateway_router.py`: `POST /kundli` (reuse `app.kundli.engine`) | DONE (TBD-sha4, 2026-08-01) — uses `nk_engine.get_full_analysis(...)`, the existing one-call-everything entry point |
-| 4.2 | `POST /reports/{key}` (reuse `app.specialists.get_engine`) | DONE (TBD-sha4, 2026-08-01) |
-| 4.3 | `POST /milan`, `POST /forecast` (reuse existing router service layers) | DONE (TBD-sha4, 2026-08-01) — same `app.milan` functions + `daily_probability_forecast_specialist_engine` the internal routers call |
-| 4.4 | Subscription assertion + **1 TPS** token-bucket limiter (429 + Retry-After) | DONE (TBD-sha4, 2026-08-01) — `app/core/api_key_auth.py` (402 on no/expired sub) + `app/core/rate_limiter.py` in-process bucket (Redis swap documented for Phase 7) |
-| 4.5 | `api_usage_log` write per call (product, status, latency, cache_hit) | DONE (TBD-sha4, 2026-08-01) |
-| 4.6 | **Public API docs** for `/api/v2`: dedicated OpenAPI schema + Swagger/Redoc, auth (API-key) guide, per-product request/response examples, error codes, rate-limit & subscription notes, versioning | DONE (TBD-sha4, 2026-08-01) — `app/gateway_docs.py`, mounted as its own sub-app at `/api/v2` (`/api/v2/docs`, `/api/v2/redoc`), separate from the internal app's docs |
-| 4.7 | Copy-paste **code samples** (curl / Python / Node / PHP) + optional Postman collection per product | DONE (TBD-sha4, 2026-08-01) — `GET /api/v2/code-samples/{product}`; Postman collection not built (nice-to-have, deferred) |
+| 4.1 | `gateway_router.py`: `POST /kundli` (reuse `app.kundli.engine`) | DONE (4457c4b, 2026-08-01) — uses `nk_engine.get_full_analysis(...)`, the existing one-call-everything entry point |
+| 4.2 | `POST /reports/{key}` (reuse `app.specialists.get_engine`) | DONE (4457c4b, 2026-08-01) |
+| 4.3 | `POST /milan`, `POST /forecast` (reuse existing router service layers) | DONE (4457c4b, 2026-08-01) — same `app.milan` functions + `daily_probability_forecast_specialist_engine` the internal routers call |
+| 4.4 | Subscription assertion + **1 TPS** token-bucket limiter (429 + Retry-After) | DONE (4457c4b, 2026-08-01) — `app/core/api_key_auth.py` (402 on no/expired sub) + `app/core/rate_limiter.py` in-process bucket (Redis swap documented for Phase 7) |
+| 4.5 | `api_usage_log` write per call (product, status, latency, cache_hit) | DONE (4457c4b, 2026-08-01) |
+| 4.6 | **Public API docs** for `/api/v2`: dedicated OpenAPI schema + Swagger/Redoc, auth (API-key) guide, per-product request/response examples, error codes, rate-limit & subscription notes, versioning | DONE (4457c4b, 2026-08-01) — `app/gateway_docs.py`, mounted as its own sub-app at `/api/v2` (`/api/v2/docs`, `/api/v2/redoc`), separate from the internal app's docs |
+| 4.7 | Copy-paste **code samples** (curl / Python / Node / PHP) + optional Postman collection per product | DONE (4457c4b, 2026-08-01) — `GET /api/v2/code-samples/{product}`; Postman collection not built (nice-to-have, deferred) |
 
 ## Phase 5 — Admin panel (react_admin) — premium; full control over developers
 | # | Task | Status |
