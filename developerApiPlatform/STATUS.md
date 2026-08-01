@@ -9,7 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 0 / 28 tasks DONE · Phase 0 next.
+**Summary:** 1 / 31 tasks DONE (6.1 scaffold) · Phase 0 next.
 
 ---
 
@@ -25,6 +25,13 @@ modified**.
   per-call.
 - Metered gateway lives at **`/api/v2`** and only wraps existing engine
   interfaces.
+- **UI bar (both apps):** premium quality matching the redesigned Flutter apps.
+  **Every list** must have pagination + search/filters + sortable columns + row
+  action buttons (+ bulk where sensible) + empty/loading/error states; every
+  stat surface uses animated KPI cards / rings / Recharts. No raw tables.
+- **Admin ⇄ developer parity:** the admin panel is a **superset** — admins can
+  do anything a developer can, for ANY developer (keys, subscription, wallet,
+  KYC/GST, status, usage/billing). Shared endpoints where possible.
 
 ---
 
@@ -70,22 +77,25 @@ modified**.
 | 4.6 | **Public API docs** for `/api/v2`: dedicated OpenAPI schema + Swagger/Redoc, auth (API-key) guide, per-product request/response examples, error codes, rate-limit & subscription notes, versioning | PENDING |
 | 4.7 | Copy-paste **code samples** (curl / Python / Node / PHP) + optional Postman collection per product | PENDING |
 
-## Phase 5 — Admin panel (react_admin)
+## Phase 5 — Admin panel (react_admin) — premium; full control over developers
 | # | Task | Status |
 |---|------|--------|
-| 5.1 | Developers: list / approve / suspend / KYC + GST review | PENDING |
-| 5.2 | API keys oversight (view / revoke) + per-key usage | PENDING |
-| 5.3 | Plan management (price, tps) + wallet ops (credit/debit/refund) | PENDING |
-| 5.4 | Revenue + usage analytics (calls, spend, top devs, product mix) | PENDING |
+| 5.0 | Backend admin routes for developer control (list/detail + manage keys/subscription/wallet/status for any `developer_id`); all list endpoints paginated + filterable | PENDING |
+| 5.1 | Developers **list**: pagination + search + filters (status/type/KYC) + sortable + row actions (view/approve/reject/suspend/block) + bulk + empty/loading/error | PENDING |
+| 5.2 | Developer **detail** view: profile + KYC/GST review, with tabs → keys / subscription / wallet / usage (each a paginated, filtered, action-equipped list) | PENDING |
+| 5.3 | Admin control: keys (view/revoke/rotate), subscription (grant/extend/cancel/change plan & tps), wallet (credit/debit/refund + ledger), status toggles — behind confirm dialogs | PENDING |
+| 5.4 | Plan/price/tps management screen | PENDING |
+| 5.5 | Revenue + usage analytics dashboard (animated KPI cards + Recharts: calls, spend, top devs, product mix, latency/errors) | PENDING |
 
-## Phase 6 — Developer dashboard
+## Phase 6 — Developer dashboard (react_developer_api) — same premium bar
 | # | Task | Status |
 |---|------|--------|
 | 6.1 | Scaffold `react_developer_api` (Vite + shadcn, from react_admin stack) | DONE (scaffold committed; `npm install` pending) |
-| 6.2 | Signup (company/GST or individual) + login + profile | PENDING |
-| 6.3 | API keys UI + subscription (subscribe/renew/auto-renew/expiry) | PENDING |
-| 6.4 | Wallet (balance/recharge/ledger) + usage analytics | PENDING |
-| 6.5 | **Interactive API docs page** in the dashboard: embedded reference + live "try-it" playground (uses the developer's own test key), quickstart, SDK snippets | PENDING |
+| 6.2 | Shared UI kit + shell: sidebar/nav, premium theme, reusable **DataTable** (pagination + filters + sortable + row actions + empty/loading/error) + KPI cards | PENDING |
+| 6.3 | Signup (company/GST or individual) + login + profile | PENDING |
+| 6.4 | API keys (list + create/rotate/revoke, one-time reveal) + subscription (subscribe/renew/auto-renew/expiry) | PENDING |
+| 6.5 | Wallet (balance/recharge + paginated ledger) + usage analytics (animated cards + Recharts, filterable logs list) | PENDING |
+| 6.6 | **Interactive API docs page**: embedded reference + live "try-it" playground (developer's own test key), quickstart, SDK snippets | PENDING |
 
 ## Phase 7 — Hardening & scale
 | # | Task | Status |

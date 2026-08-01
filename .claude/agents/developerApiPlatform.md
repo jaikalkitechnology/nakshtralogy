@@ -121,6 +121,49 @@ inserts the single All-Access plan + the four `api_product` rows idempotently.
   `milan_router` / `forecast_router` use — import and reuse them; never fork the
   math. Read those routers first and delegate to their underlying service layer.
 
+## UI/UX standard — BOTH `react_admin` and `react_developer_api`
+
+Both UIs must be **premium and high-caliber**, to the same bar as the redesigned
+Flutter apps (Kundli / Today-Forecast / Career report / Astrologer dashboard):
+polished dark theme, gold accents, rounded cards (16–22px), tasteful gradients,
+animated counters/rings for stats, micro-interactions, and clear hierarchy. No
+raw/unstyled tables or dumped JSON. Reuse a shared design system per app
+(shadcn + the theme tokens already in each app).
+
+**Every list/table in either app MUST have, without exception:**
+- **Pagination** (server-side, page + page-size; show total count and range).
+- **Search** + **filters** (status, type, date range, product — whatever the
+  entity has) and **sortable columns** where it helps.
+- **Row action buttons** for every meaningful operation (view, edit, approve,
+  reject, suspend/activate, revoke, adjust wallet, renew, etc.) — icon buttons
+  with tooltips; destructive actions behind a confirm dialog.
+- **Bulk actions** where sensible (e.g. suspend selected).
+- **Empty state** (friendly illustration + primary CTA), **loading skeletons**,
+  and **error state with retry** — never a blank screen.
+- Detail views open in a drawer/dialog or dedicated page with all fields + the
+  same actions.
+- Every stat surface uses **animated KPI cards / progress rings / charts**
+  (Recharts), not bare numbers.
+
+Keep the two apps visually consistent (shared tokens, spacing, iconography) so
+they read as one product family. Match `react_admin`'s existing service/pattern
+conventions when adding admin screens; build `react_developer_api` on its
+scaffold. React verification is **static only** here (no `node_modules`): imports
+resolve, no dangling refs, JSX balanced — never claim a build passed.
+
+## Admin ⇄ developer control parity
+
+The admin panel is a **superset** of the developer dashboard: anything a
+developer can see/do for their own account, an admin can see/do for ANY
+developer. Admins can list & filter all developers, open any account, and
+manage its keys (view/revoke/rotate), subscription (grant/extend/cancel/change
+plan & tps), wallet (credit/debit/refund with a ledger), KYC/GST approval,
+status (activate/suspend/block), and view its full usage & billing history —
+all with the list conventions above. Developer-facing screens expose the
+self-service subset of the same operations. Keep the underlying API endpoints
+shared where possible (admin routes take a `developer_id`; developer routes act
+on the caller).
+
 ## Build pipeline (phases — follow tracker order)
 
 Each phase = discrete tracked tasks. General per-task loop:
@@ -179,11 +222,17 @@ subscription notes, and copy-paste code samples (curl / Python / Node / PHP).
 Give every gateway endpoint rich FastAPI `summary`/`description`/`response_model`
 + example bodies so the schema is self-documenting.
 
-**Phase 5 — Admin panel (react_admin).** Add a "Developers" area: list/approve/
-suspend developer accounts + KYC (GST) review; view/revoke API keys & per-key
-usage; manage the plan price & tps; manual wallet credit/debit/refund (reuse the
-existing `adminAdjustWallet` pattern); revenue + usage analytics (calls, spend,
-top developers, product mix). Match the existing admin UI conventions/services.
+**Phase 5 — Admin panel (react_admin).** Add a premium "Developers" area giving
+admins **full control over every developer** (see "Admin ⇄ developer control
+parity"): a paginated, searchable, filterable developers list with row actions
+(view / approve / reject / suspend / block); a developer detail view exposing
+that account's keys (view/revoke/rotate), subscription (grant/extend/cancel/
+change plan & tps), wallet (credit/debit/refund + ledger), KYC + GST review, and
+full usage/billing history — each sub-list paginated + filtered with action
+buttons; plan/price/tps management; and a revenue + usage analytics dashboard
+(animated KPI cards + Recharts: calls, spend, top developers, product mix,
+error/latency). Every list obeys the UI/UX standard above. Reuse the existing
+admin services/patterns (e.g. `adminAdjustWallet`).
 
 **Phase 6 — Developer dashboard.** A developer-facing self-service UI (new
 `react_developer_api` app scaffolded from react_admin's Vite + shadcn stack, or a
@@ -191,7 +240,10 @@ clearly-separated portal). Features: signup (company/GST or individual), login,
 API-key management (live/test, rotate/revoke), subscription (subscribe/renew,
 status, expiry, auto-renew toggle), wallet (balance, recharge, ledger), usage
 analytics (calls/latency/errors by product & time), interactive API docs /
-"try-it" playground, code samples, low-balance/expiry alerts.
+"try-it" playground, code samples, low-balance/expiry alerts. Meet the same
+premium UI/UX standard as the admin panel: every list (keys, transactions,
+usage/logs) is paginated + filterable with row action buttons, animated KPI
+cards / rings / Recharts for stats, and proper empty / loading / error states.
 
 **Phase 7 — Hardening & scale.** Redis result cache for deterministic Kundli/
 Forecast (hash of normalized input); daily precompute of Today Forecast + Gochar
