@@ -1150,6 +1150,9 @@ class ApiKey(Base):
     scopes = Column(JSON, default=lambda: ["kundli", "specialist", "milan", "forecast"])
     status = Column(String(20), default="active", nullable=False)  # active | revoked
     last_used_at = Column(DateTime, nullable=True)
+    # Phase-7 hardening: per-key monthly call quota (None = platform default,
+    # see app/core/gateway_guards.DEFAULT_MONTHLY_QUOTA).
+    monthly_quota = Column(Integer, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     revoked_at = Column(DateTime, nullable=True)
 
@@ -1229,6 +1232,34 @@ class ApiUsageLog(Base):
     __table_args__ = (
         Index("ix_usagelog_dev_created", "developer_user_id", "created_at"),
         Index("ix_usagelog_product_created", "product", "created_at"),
+    )
+
+
+class ApiUsageDailyRollup(Base):
+    """Daily rollup of `api_usage_logs` (developerApiPlatform/ Phase 7.4).
+
+    A nightly job aggregates the previous day's raw log rows here, one row
+    per (date, developer, product). Dashboards/analytics should query this
+    table for anything older than "today" — it's orders of magnitude
+    smaller than the raw log and keeps `api_usage_logs` itself lean enough
+    to eventually range-partition by `created_at` (see the scale-topology
+    note in developerApiPlatform/STATUS.md) without touching hot data.
+    """
+    __tablename__ = "api_usage_daily_rollups"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    rollup_date = Column(Date, nullable=False)
+    developer_user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    product = Column(String(30), nullable=False)
+    call_count = Column(Integer, default=0, nullable=False)
+    error_count = Column(Integer, default=0, nullable=False)
+    cache_hit_count = Column(Integer, default=0, nullable=False)
+    avg_latency_ms = Column(Float, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("rollup_date", "developer_user_id", "product", name="uq_rollup_date_dev_product"),
+        Index("ix_rollup_date_dev", "rollup_date", "developer_user_id"),
     )
 
 

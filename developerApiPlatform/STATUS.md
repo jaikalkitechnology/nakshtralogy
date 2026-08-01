@@ -9,9 +9,9 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 34 / 38 tasks DONE (Phases 0-6) · Phase 7 next.
+**Summary:** 38 / 38 tasks DONE (Phases 0-7 complete).
 _(Note: earlier summary lines said "/31" — the tracker actually lists 38
-numbered tasks across Phases 0-7; corrected here for accuracy.)_
+numbered tasks across Phases 0-7; corrected for accuracy.)_
 
 ---
 
@@ -102,12 +102,53 @@ numbered tasks across Phases 0-7; corrected here for accuracy.)_
 ## Phase 7 — Hardening & scale
 | # | Task | Status |
 |---|------|--------|
-| 7.1 | Redis result cache (deterministic Kundli/Forecast by input hash) | PENDING |
-| 7.2 | Daily precompute of Today Forecast + Gochar (all 12 rashis) | PENDING |
-| 7.3 | Idempotency-Key support + per-key monthly quota + concurrency cap | PENDING |
-| 7.4 | Usage-log rollup/partitioning + metrics/alerts + scale-topology notes | PENDING |
+| 7.1 | Redis result cache (deterministic Kundli/Forecast by input hash) | DONE (TBD-sha7, 2026-08-01) — `app/core/result_cache.py` (Redis via `REDIS_URL` env, else in-process fallback); wired into `/api/v2/kundli` (30d TTL) and `/api/v2/forecast` (20h TTL, key includes the calendar date) with `meta.cache_hit` surfaced |
+| 7.2 | Daily precompute of Today Forecast + Gochar (all 12 rashis) | DONE (TBD-sha7, 2026-08-01) — `app/services/daily_precompute.py`, run by a background task in `app/main.py`'s lifespan (startup + every 24h) and manually via `POST /api/v1/admin/precompute-daily`; finally wires up the previously-unused `GocharDaily` model |
+| 7.3 | Idempotency-Key support + per-key monthly quota + concurrency cap | DONE (TBD-sha7, 2026-08-01) — `app/core/gateway_guards.py`: `Idempotency-Key` header replay via the `idempotency_keys` table, per-key `monthly_quota` column (default 100k/mo) checked against `api_usage_logs`, and an in-process concurrency cap (max 5 in-flight/key) |
+| 7.4 | Usage-log rollup/partitioning + metrics/alerts + scale-topology notes | DONE (TBD-sha7, 2026-08-01) — `app/services/usage_rollup.py` (new `api_usage_daily_rollups` table, nightly rollup + high-error-rate/high-latency structured-log alerts); partitioning + horizontal-scale topology documented below in Blockers/notes (design notes only — no infra provisioned here) |
 
 ---
 
 ## Blockers / notes
-_(none yet)_
+
+**Scale topology (Phase 7.4 design note — not provisioned in this sandbox):**
+
+- **Stateless API workers.** `app/main.py` (both the internal app and the
+  `/api/v2` gateway sub-app) hold no in-memory state that matters across
+  requests except the rate limiter / concurrency guard / result-cache
+  fallbacks — all three already have a documented Redis swap-in
+  (`app/core/rate_limiter.py`, `app/core/gateway_guards.py`,
+  `app/core/result_cache.py`). Once `REDIS_URL` points at a shared Redis,
+  any number of API worker processes/pods can run behind a load balancer
+  with the 1 TPS limit, concurrency cap, and result cache holding
+  correctly cluster-wide instead of per-process.
+- **Separate CPU-bound engine workers.** The astrology engines
+  (`app/kundli/engine.py`, `all_engine/...`) are pure-CPU, synchronous,
+  and can block an event loop under load. At scale, move gateway compute
+  (`gateway_router._execute_gateway_call`'s `compute_fn`) behind a task
+  queue (Celery/RQ over the same Redis, or a gRPC engine-worker pool) so
+  API workers stay responsive to auth/rate-limit/quota checks while a
+  separate pool of CPU-heavy engine workers executes `get_full_analysis`,
+  specialist `.analyze()`, milan matching, etc. The response envelope
+  shape (`{status, data, meta}`) does not need to change — only how
+  `compute_fn` is dispatched.
+- **PgBouncer / connection pooling.** `app/core/database.py` currently
+  pools 10+20 connections per process (`pool_size`, `max_overflow`); with
+  N stateless workers that multiplies fast. Put PgBouncer (transaction
+  pooling mode) in front of MySQL/Postgres so worker-side pools can stay
+  small and the DB doesn't see a connection storm as workers scale out.
+- **Read replica.** Analytics-heavy reads (`admin_developer_router`'s
+  `/developer-analytics/overview`, the rollup table, usage-log listings)
+  are read-only and can be pointed at a read replica, leaving the primary
+  free for the write path that matters most for correctness: the atomic
+  guarded wallet debit in `POST /developer/subscribe` and
+  `/admin/developers/{id}/wallet/adjust`.
+- **Usage-log partitioning.** `api_usage_logs` is the highest-write-volume
+  table in this platform. `app/services/usage_rollup.py`'s nightly rollup
+  into `api_usage_daily_rollups` is the first step (dashboards should read
+  the rollup for anything older than "today"); the natural next step in a
+  real deployment is range-partitioning `api_usage_logs` by `created_at`
+  (monthly partitions) so old partitions can be dropped/archived cheaply
+  once rolled up — not done here since it requires DDL beyond what
+  `Base.metadata.create_all()` manages.
+

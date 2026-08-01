@@ -25,6 +25,29 @@ from app.routers import (
 logger = logging.getLogger("session_cleanup")
 
 
+async def _daily_precompute_loop():
+    """Background task (developerApiPlatform/ Phases 7.2 & 7.4): runs the
+    Today Forecast + Gochar (12 rashis) precompute AND the usage-log daily
+    rollup once at startup, then once every 24h. Also triggerable on
+    demand via POST /api/v1/admin/precompute-daily and
+    POST /api/v1/admin/usage-rollup."""
+    from app.services.daily_precompute import run_daily_precompute
+    from app.services.usage_rollup import run_daily_rollup
+    while True:
+        try:
+            db = SessionLocal()
+            try:
+                summary = run_daily_precompute(db)
+                logger.info("Daily precompute: %s", summary)
+                rollup_summary = run_daily_rollup(db)
+                logger.info("Daily usage rollup: %s", rollup_summary)
+            finally:
+                db.close()
+        except Exception as e:
+            logger.warning("Daily precompute loop error: %s", e)
+        await asyncio.sleep(24 * 3600)
+
+
 async def _cleanup_stale_sessions():
     """Background task: every 30s, end stale calls, chats, and streams."""
     from app.models.model import CallSession, ChatSession, LiveStream, AstrologerProfile
@@ -118,11 +141,13 @@ async def lifespan(app: FastAPI):
     load_questions()
     load_templates()
     task = asyncio.create_task(_cleanup_stale_sessions())
+    precompute_task = asyncio.create_task(_daily_precompute_loop())
     # Pre-load Qwen model into RAM so first chat request is fast
     from app.agent.llm_service import warmup_llm
     await warmup_llm()
     yield
     task.cancel()
+    precompute_task.cancel()
 
 
 app = FastAPI(
@@ -186,6 +211,34 @@ def seed_database(
     from app.seeds.seed_data import seed_all
     result = seed_all(db)
     return {"status": "ok", "seeded": result}
+
+
+@app.post("/api/v1/admin/precompute-daily", tags=["Admin", "Developer API Platform"])
+def trigger_daily_precompute(
+    current_user=Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin-only: manually run the Today Forecast + Gochar (12 rashis)
+    daily precompute job on demand (developerApiPlatform/ Phase 7.2) — the
+    same job also runs automatically once every 24h via a background task."""
+    from app.services.daily_precompute import run_daily_precompute
+    return {"status": "ok", "result": run_daily_precompute(db)}
+
+
+@app.post("/api/v1/admin/usage-rollup", tags=["Admin", "Developer API Platform"])
+def trigger_usage_rollup(
+    target_date: str | None = None,
+    current_user=Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin-only: manually roll up `api_usage_logs` into
+    `api_usage_daily_rollups` for a given date (YYYY-MM-DD; defaults to
+    yesterday) — developerApiPlatform/ Phase 7.4. Runs automatically once
+    every 24h via the same background task as the daily precompute."""
+    from datetime import date as _date
+    from app.services.usage_rollup import run_daily_rollup
+    parsed = _date.fromisoformat(target_date) if target_date else None
+    return {"status": "ok", "result": run_daily_rollup(db, parsed)}
 
 
 @app.post("/api/v1/admin/seed-open", tags=["Admin"])
