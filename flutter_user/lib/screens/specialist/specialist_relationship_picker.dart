@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../kundli/report_paywall.dart';
 import 'relationship_report_screen.dart';
 
 class SpecialistRelationshipPicker extends StatefulWidget {
@@ -64,6 +65,14 @@ class _State extends State<SpecialistRelationshipPicker> {
 
   Future<void> _proceed() async {
     if (_selected.length < 2) return;
+    final gateNames = _selected.map((id) {
+      final c = _charts.firstWhere((c) => c['id'] == id, orElse: () => {'name': '?'});
+      return c['name']?.toString() ?? '?';
+    }).join(' & ');
+    // pay-per-report gate before running the engine (mirrors backend 402)
+    final unlocked = await ensureReportUnlocked(context,
+        serviceKey: 'relationship', chartId: _selected.first, reportName: gateNames, emoji: '🔗');
+    if (!unlocked || !mounted) return;
     setState(() => _analyzing = true);
     try {
       final resp = await _api.runRelationshipAnalysis(_selected, context: _context);

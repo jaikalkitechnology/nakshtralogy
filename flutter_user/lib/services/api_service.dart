@@ -315,6 +315,43 @@ class ApiService {
     return [];
   }
 
+  /// Per-service unlock state for a chart (pay-per-report). Returns the raw
+  /// `entitlements` list of {service_key, unlocked, is_free, price,
+  /// original_price, pricing_id, order_id}. Empty on error.
+  Future<List<dynamic>> getEntitlements({String? chartId, String? category}) async {
+    final params = <String, String>{};
+    if (chartId != null) params['chart_id'] = chartId;
+    if (category != null) params['category'] = category;
+    final uri = Uri.parse(ApiConstants.serviceEntitlements)
+        .replace(queryParameters: params.isNotEmpty ? params : null);
+    final resp = await _authGet(uri);
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      if (body is Map && body['entitlements'] is List) return body['entitlements'] as List;
+    }
+    return [];
+  }
+
+  /// Single service's entitlement for a chart, or null if not found.
+  Future<Map<String, dynamic>?> getEntitlement(String serviceKey, {String? chartId}) async {
+    final list = await getEntitlements(chartId: chartId);
+    for (final e in list) {
+      if (e is Map && e['service_key'] == serviceKey) return e.cast<String, dynamic>();
+    }
+    return null;
+  }
+
+  /// Current wallet balance (INR), 0 on error. Reads the user wallet endpoint.
+  Future<double> getWalletBalance() async {
+    try {
+      final w = await fetchMyWallet();
+      final bal = w['balance'] ?? (w['wallet'] is Map ? (w['wallet'] as Map)['balance'] : null);
+      if (bal is num) return bal.toDouble();
+      if (bal is String) return double.tryParse(bal) ?? 0;
+    } catch (_) {}
+    return 0;
+  }
+
   Future<Map<String, dynamic>> computeDasha(String chartId) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.computeDasha),

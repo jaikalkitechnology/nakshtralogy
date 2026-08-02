@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../kundli/report_paywall.dart';
 import 'specialist_report_screen.dart';
 import 'career_report_screen.dart';
 import 'business_report_screen.dart';
@@ -77,7 +78,12 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                       final place = c['place']?.toString() ?? '';
                       return GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(
-                          builder: (_) {
+                          builder: (_) => PaywallGate(
+                            serviceKey: widget.specialistKey,
+                            chartId: id,
+                            reportName: widget.specialistLabel,
+                            emoji: widget.specialistEmoji,
+                            builder: (_) {
                             switch (widget.specialistKey) {
                               case 'career': return CareerReportScreen(chartId: id, chartName: name);
                               case 'business': return BusinessReportScreen(chartId: id, chartName: name);
@@ -98,6 +104,7 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                                   specialistEmoji: widget.specialistEmoji, chartId: id, chartName: name);
                             }
                           },
+                          ),
                         )),
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 8),

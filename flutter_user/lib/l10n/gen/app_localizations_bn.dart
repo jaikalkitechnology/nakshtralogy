@@ -10502,6 +10502,70 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get pwPremiumTitle => 'Premium Report';
+
+  @override
+  String get pwLockedSubtitle => 'Unlock the full analysis for this chart';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'Unlock full ${name}';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'Unlock · ₹${price}';
+  }
+
+  @override
+  String get pwOneTime => 'One-time unlock — yours forever on this chart';
+
+  @override
+  String get pwWhatYouGet => 'What you get';
+
+  @override
+  String get pwYourBalance => 'Your wallet balance';
+
+  @override
+  String get pwInsufficient => 'Insufficient balance';
+
+  @override
+  String get pwRechargeToUnlock => 'Recharge to unlock';
+
+  @override
+  String get pwRechargeAmount => 'Recharge amount (₹)';
+
+  @override
+  String get pwAddMoney => 'Add money';
+
+  @override
+  String get pwRechargeDone => 'Wallet recharged';
+
+  @override
+  String get pwRechargeFailed => 'Recharge failed. Please try again.';
+
+  @override
+  String get pwUnlockFailed => 'Couldn\'t unlock. Please try again.';
+
+  @override
+  String get pwUnlockedNow => 'Unlocked! Loading your report…';
+
+  @override
+  String get pwProcessing => 'Processing…';
+
+  @override
+  String get pwPrimaryNoDelete => 'Your Primary Kundli can\'t be deleted — it\'s free forever.';
+
+  @override
+  String get pwPrimaryNoEdit => 'Your Primary Kundli can\'t be edited.';
+
+  @override
+  String get pwLoadingAccess => 'Checking access…';
+
+  @override
+  String get pwMaybeLater => 'Maybe later';
+
+  @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
 
   @override

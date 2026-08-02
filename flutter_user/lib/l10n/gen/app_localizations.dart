@@ -235,6 +235,126 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @pwPremiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Report'**
+  String get pwPremiumTitle;
+
+  /// No description provided for @pwLockedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the full analysis for this chart'**
+  String get pwLockedSubtitle;
+
+  /// No description provided for @pwUnlockFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock full {name}'**
+  String pwUnlockFull(Object name);
+
+  /// No description provided for @pwUnlockPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock · ₹{price}'**
+  String pwUnlockPrice(Object price);
+
+  /// No description provided for @pwOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time unlock — yours forever on this chart'**
+  String get pwOneTime;
+
+  /// No description provided for @pwWhatYouGet.
+  ///
+  /// In en, this message translates to:
+  /// **'What you get'**
+  String get pwWhatYouGet;
+
+  /// No description provided for @pwYourBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet balance'**
+  String get pwYourBalance;
+
+  /// No description provided for @pwInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient balance'**
+  String get pwInsufficient;
+
+  /// No description provided for @pwRechargeToUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge to unlock'**
+  String get pwRechargeToUnlock;
+
+  /// No description provided for @pwRechargeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge amount (₹)'**
+  String get pwRechargeAmount;
+
+  /// No description provided for @pwAddMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Add money'**
+  String get pwAddMoney;
+
+  /// No description provided for @pwRechargeDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet recharged'**
+  String get pwRechargeDone;
+
+  /// No description provided for @pwRechargeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge failed. Please try again.'**
+  String get pwRechargeFailed;
+
+  /// No description provided for @pwUnlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t unlock. Please try again.'**
+  String get pwUnlockFailed;
+
+  /// No description provided for @pwUnlockedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked! Loading your report…'**
+  String get pwUnlockedNow;
+
+  /// No description provided for @pwProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing…'**
+  String get pwProcessing;
+
+  /// No description provided for @pwPrimaryNoDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Primary Kundli can\'t be deleted — it\'s free forever.'**
+  String get pwPrimaryNoDelete;
+
+  /// No description provided for @pwPrimaryNoEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Primary Kundli can\'t be edited.'**
+  String get pwPrimaryNoEdit;
+
+  /// No description provided for @pwLoadingAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking access…'**
+  String get pwLoadingAccess;
+
+  /// No description provided for @pwMaybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get pwMaybeLater;
+
   /// No description provided for @updatePhoto.
   ///
   /// In en, this message translates to:

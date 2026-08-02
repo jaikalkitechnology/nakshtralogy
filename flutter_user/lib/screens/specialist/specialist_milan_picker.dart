@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../kundli/report_paywall.dart';
 import 'specialist_report_screen.dart';
 import 'milan_report_screen.dart';
 
@@ -46,6 +47,11 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
     final c2 = _charts.firstWhere((c) => c['id'] == ids[1]);
     final name1 = c1['name']?.toString() ?? l.personOneLabel;
     final name2 = c2['name']?.toString() ?? l.personTwoLabel;
+
+    // pay-per-report gate before running the engine (mirrors backend 402)
+    final unlocked = await ensureReportUnlocked(context,
+        serviceKey: 'kundli_milan', chartId: ids[0], reportName: '$name1 & $name2', emoji: '💑');
+    if (!unlocked || !mounted) return;
 
     setState(() => _analyzing = true);
     try {
