@@ -30,3 +30,14 @@ class ChartFailure extends ChartState {
   @override
   List<Object?> get props => [message];
 }
+
+/// Emitted when creating an extra (non-primary) chart requires a one-time
+/// `extra_chart` unlock. Carries the admin-priced fee so the screen can prompt.
+class ChartPaymentRequired extends ChartState {
+  final String serviceKey;
+  final double price;
+  final String? pricingId;
+  const ChartPaymentRequired({required this.serviceKey, required this.price, this.pricingId});
+  @override
+  List<Object?> get props => [serviceKey, price, pricingId];
+}

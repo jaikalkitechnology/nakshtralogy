@@ -40,8 +40,20 @@ class ChartBloc extends Bloc<ChartEvent, ChartState> {
         // reload list
         final charts = await _api.getMyCharts();
         emit(ChartLoaded(charts: charts));
+      } else if (result['statusCode'] == 402) {
+        // Extra-chart paywall: the free Primary is done, this chart needs a
+        // one-time `extra_chart` unlock. Detail carries {service_key, price,
+        // pricing_id} — surface it so the screen can offer the purchase.
+        final d = result['detail'];
+        final m = d is Map ? d : const <String, dynamic>{};
+        emit(ChartPaymentRequired(
+          serviceKey: (m['service_key'] ?? 'extra_chart').toString(),
+          price: (m['price'] is num) ? (m['price'] as num).toDouble() : 0,
+          pricingId: m['pricing_id']?.toString(),
+        ));
       } else {
-        emit(ChartFailure(message: result['detail'] ?? 'Failed to create chart'));
+        final d = result['detail'];
+        emit(ChartFailure(message: d is String ? d : 'Failed to create chart'));
       }
     } catch (e) {
       emit(ChartFailure(message: e.toString()));
