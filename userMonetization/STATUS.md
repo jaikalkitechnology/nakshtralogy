@@ -9,7 +9,7 @@ gate access + presentation.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 6 / 15 tasks DONE · Phase 3 next.
+**Summary:** 7 / 15 tasks DONE · Phase 4 next.
 
 ---
 
@@ -40,7 +40,7 @@ gate access + presentation.
 ## Phase 3 — Admin panel (editable fees)
 | # | Task | Status |
 |---|------|--------|
-| 3.1 | Verify/extend the react_admin Pricing screen: create/edit/delete/toggle every ServicePricing row incl. new categories; price + original_price + is_free + is_active + sort_order editable; add category filter (report/kundli/forecast). Static-verify only | PENDING |
+| 3.1 | Verify/extend the react_admin Pricing screen: create/edit/delete/toggle every ServicePricing row incl. new categories; price + original_price + is_free + is_active + sort_order editable; add category filter (report/kundli/forecast). Static-verify only | DONE (395eafe, 2026-08-02) |
 
 ## Phase 4 — flutter_user paywall UX
 | # | Task | Status |
