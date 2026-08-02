@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
@@ -55,22 +56,37 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
   }
 
   Future<void> _initAgora() async {
-    await [Permission.camera, Permission.microphone].request();
+    // permission_handler is unsupported on web; the browser prompts for
+    // mic/cam access when Agora accesses the devices.
+    if (!kIsWeb) {
+      await [Permission.camera, Permission.microphone].request();
+    }
 
-    _engine = createAgoraRtcEngine();
-    await _engine!.initialize(RtcEngineContext(
-      appId: widget.agoraAppId,
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ));
+    try {
+      _engine = createAgoraRtcEngine();
+      await _engine!.initialize(RtcEngineContext(
+        appId: widget.agoraAppId,
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ));
 
-    _engine!.registerEventHandler(RtcEngineEventHandler(
-      onJoinChannelSuccess: (connection, elapsed) => debugPrint('Host joined channel'),
-      onError: (err, msg) => debugPrint('Agora error: $err $msg'),
-    ));
+      _engine!.registerEventHandler(RtcEngineEventHandler(
+        onJoinChannelSuccess: (connection, elapsed) => debugPrint('Host joined channel'),
+        onError: (err, msg) => debugPrint('Agora error: $err $msg'),
+      ));
 
-    await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-    await _engine!.enableVideo();
-    await _engine!.startPreview();
+      await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+      await _engine!.enableVideo();
+      await _engine!.startPreview();
+    } catch (e) {
+      // Graceful fallback (e.g. unsupported browser) — don't crash the screen.
+      debugPrint('Agora live init error: $e');
+      if (mounted && kIsWeb) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.callBrowserUnsupported),
+          backgroundColor: AppColors.error, duration: const Duration(seconds: 6),
+        ));
+      }
+    }
   }
 
   Future<void> _goLive() async {

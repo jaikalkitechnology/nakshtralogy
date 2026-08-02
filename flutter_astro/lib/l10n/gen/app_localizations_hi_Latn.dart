@@ -9446,6 +9446,66 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get googleAuthCancelled => 'Google sign-in cancel ya fail ho gaya. Dobara try karein.';
+
+  @override
+  String get googleRedirecting => 'Google par redirect ho raha hai…';
+
+  @override
+  String get googleWebLoginFailed => 'Google sign-in start nahi ho paya. Dobara try karein.';
+
+  @override
+  String get registerAsAstrologer => 'Astrologer ke roop mein register karein';
+
+  @override
+  String get personalInfo => 'Personal Info';
+
+  @override
+  String get professionalInfo => 'Professional Info';
+
+  @override
+  String get fullNameLabel => 'Full Name';
+
+  @override
+  String get phoneOptional => 'Phone (optional)';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords match nahi karte';
+
+  @override
+  String get displayNameLabel => 'Display Name';
+
+  @override
+  String get yearsOfExperience => 'Years of Experience';
+
+  @override
+  String get qualificationLabel => 'Qualification';
+
+  @override
+  String get bioLabel => 'Bio';
+
+  @override
+  String get languagesLabel => 'Languages';
+
+  @override
+  String get specializationsLabel => 'Specializations';
+
+  @override
+  String get alreadyRegistered => 'Already registered? ';
+
+  @override
+  String get requiredField => 'Required';
+
+  @override
+  String get callBrowserUnsupported => 'Is browser mein voice/video call support nahi hai. Mobile app ya supported browser (Chrome/Edge) use karein.';
+
+  @override
+  String get callWebPermissionDenied => 'Microphone ya camera permission denied. Call join karne ke liye browser settings mein enable karein.';
+
+  @override
+  String get chatAttachMobileOnly => 'File attachment mobile app par available hai.';
+
+  @override
   String get updatePhoto => 'Photo Update Karein';
 
   @override

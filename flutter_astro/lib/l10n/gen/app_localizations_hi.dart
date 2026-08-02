@@ -9446,6 +9446,66 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get googleAuthCancelled => 'Google साइन-इन रद्द या विफल हो गया। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get googleRedirecting => 'Google पर भेजा जा रहा है…';
+
+  @override
+  String get googleWebLoginFailed => 'Google साइन-इन शुरू नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get registerAsAstrologer => 'ज्योतिषी के रूप में पंजीकरण करें';
+
+  @override
+  String get personalInfo => 'व्यक्तिगत जानकारी';
+
+  @override
+  String get professionalInfo => 'पेशेवर जानकारी';
+
+  @override
+  String get fullNameLabel => 'पूरा नाम';
+
+  @override
+  String get phoneOptional => 'फ़ोन (वैकल्पिक)';
+
+  @override
+  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खाते';
+
+  @override
+  String get displayNameLabel => 'प्रदर्शित नाम';
+
+  @override
+  String get yearsOfExperience => 'अनुभव के वर्ष';
+
+  @override
+  String get qualificationLabel => 'योग्यता';
+
+  @override
+  String get bioLabel => 'परिचय';
+
+  @override
+  String get languagesLabel => 'भाषाएँ';
+
+  @override
+  String get specializationsLabel => 'विशेषज्ञताएँ';
+
+  @override
+  String get alreadyRegistered => 'पहले से पंजीकृत हैं? ';
+
+  @override
+  String get requiredField => 'आवश्यक';
+
+  @override
+  String get callBrowserUnsupported => 'इस ब्राउज़र में वॉइस और वीडियो कॉल समर्थित नहीं हैं। कृपया मोबाइल ऐप या समर्थित ब्राउज़र (Chrome/Edge) का उपयोग करें।';
+
+  @override
+  String get callWebPermissionDenied => 'माइक्रोफ़ोन या कैमरा अनुमति अस्वीकृत। कॉल में शामिल होने के लिए इसे अपनी ब्राउज़र सेटिंग में सक्षम करें।';
+
+  @override
+  String get chatAttachMobileOnly => 'फ़ाइल अटैचमेंट मोबाइल ऐप पर उपलब्ध हैं।';
+
+  @override
   String get updatePhoto => 'फ़ोटो अपडेट करें';
 
   @override

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -65,8 +64,6 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
     final picker = ImagePicker();
     final XFile? picked = await picker.pickImage(source: source, imageQuality: 80, maxWidth: 1200);
     if (picked == null) return;
-
-    final file = File(picked.path);
 
     setState(() => _uploading = true);
     try {

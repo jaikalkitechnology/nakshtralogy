@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,6 +9,8 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../services/api_service.dart';
+import '../../services/google_auth_service.dart';
+import '../../widgets/language_selector.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
 import '../home/home_screen.dart';
@@ -30,6 +33,22 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _checkBiometric();
+    _checkWebGoogleError();
+  }
+
+  /// On web, if the Google server-redirect returned an error
+  /// (`?google_error=...`), show it once after first frame.
+  void _checkWebGoogleError() {
+    if (!kIsWeb) return;
+    final err = Uri.base.queryParameters['google_error'];
+    if (err == null || err.isEmpty) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(AppLocalizations.of(context)!.googleAuthCancelled),
+        backgroundColor: AppColors.error,
+      ));
+    });
   }
 
   Future<void> _checkBiometric() async {
@@ -67,6 +86,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _googleSignIn() async {
+    final l = AppLocalizations.of(context)!;
+    // Web: server-side redirect flow (no native SDK). This redirects the whole
+    // tab; tokens are captured by main() on return to /auth/callback.
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.googleRedirecting), duration: const Duration(seconds: 2)));
+      final ok = await GoogleAuthService().startWebRedirect();
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l.googleWebLoginFailed), backgroundColor: AppColors.error));
+      }
+      return;
+    }
+    // Mobile: native google_sign_in → id_token → /google/verify (via bloc).
     try {
       final googleUser = await GoogleSignIn(
         scopes: ['email', 'profile'],
@@ -101,7 +134,16 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () => LanguageSelector.show(context),
+                  icon: const Icon(Icons.language, size: 18, color: AppColors.primary),
+                  label: Text(l.selectLanguage, style: const TextStyle(color: AppColors.primary, fontSize: 13)),
+                ),
+              ),
+              const SizedBox(height: 24),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.asset('assets/icon/ic_launcher_foreground.png', width: 80, height: 80),

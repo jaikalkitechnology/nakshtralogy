@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../services/google_auth_service.dart';
+import '../../widgets/language_selector.dart';
 import '../home/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -26,6 +30,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _bioCtrl = TextEditingController();
   bool _obscure = true;
 
+  // Backend enum values — not localized.
   final List<String> _allLanguages = ['Hindi', 'English', 'Sanskrit', 'Gujarati', 'Marathi', 'Tamil', 'Telugu', 'Bengali'];
   final List<String> _allSpecs = ['Vedic Astrology', 'Numerology', 'Tarot', 'Palmistry', 'Vastu Shastra', 'Kundli Matching', 'Horoscope'];
   final Set<String> _selectedLangs = {};
@@ -44,6 +49,42 @@ class _SignupScreenState extends State<SignupScreen> {
     ));
   }
 
+  Future<void> _googleSignIn() async {
+    final l = AppLocalizations.of(context)!;
+    // Web: server-side redirect flow (no native SDK). Tokens are captured by
+    // main() on return to /auth/callback. First-time astrologers land on
+    // HomeScreen, whose KYC gate starts onboarding.
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.googleRedirecting), duration: const Duration(seconds: 2)));
+      final ok = await GoogleAuthService().startWebRedirect();
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l.googleWebLoginFailed), backgroundColor: AppColors.error));
+      }
+      return;
+    }
+    // Mobile: native google_sign_in → id_token → /google/verify (via bloc).
+    try {
+      final googleUser = await GoogleSignIn(
+        scopes: const ['email', 'profile'],
+        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: ''),
+      ).signIn();
+      if (googleUser == null) return;
+      final auth = await googleUser.authentication;
+      final idToken = auth.idToken;
+      if (idToken == null) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(l.googleSignInNoToken), backgroundColor: AppColors.error));
+        return;
+      }
+      if (mounted) context.read<AuthBloc>().add(AuthGoogleLoginRequested(idToken: idToken));
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.googleSignInError(e.toString())), backgroundColor: AppColors.error));
+    }
+  }
+
   @override
   void dispose() { _nameCtrl.dispose(); _emailCtrl.dispose(); _phoneCtrl.dispose(); _passCtrl.dispose(); _confirmCtrl.dispose(); _displayNameCtrl.dispose(); _expCtrl.dispose(); _qualCtrl.dispose(); _bioCtrl.dispose(); super.dispose(); }
 
@@ -60,64 +101,78 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
         else if (state is AuthFailure) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: AppColors.error));
       },
       child: Scaffold(
-        appBar: AppBar(leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context))),
+        appBar: AppBar(
+          leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context)),
+          actions: [
+            TextButton.icon(
+              onPressed: () => LanguageSelector.show(context),
+              icon: const Icon(Icons.language, size: 18, color: AppColors.primary),
+              label: Text(l.selectLanguage, style: const TextStyle(color: AppColors.primary, fontSize: 13)),
+            ),
+          ],
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
               const SizedBox(height: 12),
-              const Text('\U0001f52e', style: TextStyle(fontSize: 44)),
+              const Text('\u{1f52e}', style: TextStyle(fontSize: 44)),
               const SizedBox(height: 8),
-              Text('Register as Astrologer', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 22)),
+              Text(l.registerAsAstrologer, style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: AppColors.primary, fontSize: 22)),
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.border)),
                 child: Form(key: _formKey, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('Personal Info', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 16)),
+                  Text(l.personalInfo, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 16)),
                   const SizedBox(height: 16),
-                  TextFormField(controller: _nameCtrl, decoration: const InputDecoration(labelText: 'Full Name', prefixIcon: Icon(Icons.person_outline, color: AppColors.textSecondary)), validator: (v) => (v == null || v.length < 2) ? 'Required' : null),
+                  TextFormField(controller: _nameCtrl, decoration: InputDecoration(labelText: l.fullNameLabel, prefixIcon: const Icon(Icons.person_outline, color: AppColors.textSecondary)), validator: (v) => (v == null || v.length < 2) ? l.requiredField : null),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _emailCtrl, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined, color: AppColors.textSecondary)), validator: (v) => (v == null || !v.contains('@')) ? 'Invalid email' : null),
+                  TextFormField(controller: _emailCtrl, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email, prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary)), validator: (v) => (v == null || !v.contains('@')) ? l.validEmailRequired : null),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _phoneCtrl, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Phone (optional)', prefixIcon: Icon(Icons.phone_outlined, color: AppColors.textSecondary))),
+                  TextFormField(controller: _phoneCtrl, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: l.phoneOptional, prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary))),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _passCtrl, obscureText: _obscure, decoration: InputDecoration(labelText: 'Password', prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary), suffixIcon: IconButton(icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary), onPressed: () => setState(() => _obscure = !_obscure))), validator: (v) => (v == null || v.length < 6) ? 'Min 6 characters' : null),
+                  TextFormField(controller: _passCtrl, obscureText: _obscure, decoration: InputDecoration(labelText: l.password, prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary), suffixIcon: IconButton(icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary), onPressed: () => setState(() => _obscure = !_obscure))), validator: (v) => (v == null || v.length < 6) ? l.minSixChars : null),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _confirmCtrl, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm Password', prefixIcon: Icon(Icons.lock_outline, color: AppColors.textSecondary)), validator: (v) => v != _passCtrl.text ? 'Passwords do not match' : null),
+                  TextFormField(controller: _confirmCtrl, obscureText: true, decoration: InputDecoration(labelText: l.confirmPassword, prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary)), validator: (v) => v != _passCtrl.text ? l.passwordsDoNotMatch : null),
                   const SizedBox(height: 24),
                   const Divider(color: AppColors.border),
                   const SizedBox(height: 16),
-                  Text('Professional Info', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 16)),
+                  Text(l.professionalInfo, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 16)),
                   const SizedBox(height: 16),
-                  TextFormField(controller: _displayNameCtrl, decoration: const InputDecoration(labelText: 'Display Name', prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textSecondary))),
+                  TextFormField(controller: _displayNameCtrl, decoration: InputDecoration(labelText: l.displayNameLabel, prefixIcon: const Icon(Icons.badge_outlined, color: AppColors.textSecondary))),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _expCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Years of Experience', prefixIcon: Icon(Icons.calendar_today, color: AppColors.textSecondary))),
+                  TextFormField(controller: _expCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l.yearsOfExperience, prefixIcon: const Icon(Icons.calendar_today, color: AppColors.textSecondary))),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _qualCtrl, decoration: const InputDecoration(labelText: 'Qualification', prefixIcon: Icon(Icons.school_outlined, color: AppColors.textSecondary))),
+                  TextFormField(controller: _qualCtrl, decoration: InputDecoration(labelText: l.qualificationLabel, prefixIcon: const Icon(Icons.school_outlined, color: AppColors.textSecondary))),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _bioCtrl, maxLines: 3, decoration: const InputDecoration(labelText: 'Bio', alignLabelWithHint: true)),
+                  TextFormField(controller: _bioCtrl, maxLines: 3, decoration: InputDecoration(labelText: l.bioLabel, alignLabelWithHint: true)),
                   const SizedBox(height: 16),
-                  _chipSelector('Languages', _allLanguages, _selectedLangs),
+                  _chipSelector(l.languagesLabel, _allLanguages, _selectedLangs),
                   const SizedBox(height: 16),
-                  _chipSelector('Specializations', _allSpecs, _selectedSpecs),
+                  _chipSelector(l.specializationsLabel, _allSpecs, _selectedSpecs),
                   const SizedBox(height: 24),
                   BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                     final loading = state is AuthLoading;
-                    return ElevatedButton(onPressed: loading ? null : _signup, child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(AppLocalizations.of(context)?.createAccount ?? 'Register'));
+                    return ElevatedButton(onPressed: loading ? null : _signup, child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(l.createAccount));
                   }),
+                  const SizedBox(height: 16),
+                  Row(children: [const Expanded(child: Divider(color: AppColors.border)), Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text(l.orDivider, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))), const Expanded(child: Divider(color: AppColors.border))]),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(onPressed: _googleSignIn, icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primary)), label: Text(l.continueGoogle)),
                 ])),
               ),
               const SizedBox(height: 20),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('Already registered? ', style: TextStyle(color: AppColors.textSecondary)),
-                TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.signIn ?? 'Sign In', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600))),
+                Text(l.alreadyRegistered, style: const TextStyle(color: AppColors.textSecondary)),
+                TextButton(onPressed: () => Navigator.pop(context), child: Text(l.signIn, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600))),
               ]),
               const SizedBox(height: 20),
             ]),

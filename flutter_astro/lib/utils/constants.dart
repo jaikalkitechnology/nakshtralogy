@@ -6,6 +6,22 @@ class ApiConstants {
   static const String astroSignup = '$astrologerBase/signup';
   static const String astroLogin = '$astrologerBase/login';
   static const String astroGoogleLogin = '$astrologerBase/google-login';
+
+  // Google OAuth (shared server-side redirect flow + native verify)
+  static const String googleBase = '$baseUrl/google';
+  static const String googleLoginUrl = '$googleBase/login-url';
+  static const String googleVerify = '$googleBase/verify';
+  // Role used for all Google auth calls from this app.
+  static const String authRole = 'astrologer';
+  // Web frontend callback the backend redirects to with ?token=&refresh=.
+  static const String astroWebCallback = 'https://astro.nakshatralogy.com/auth/callback';
+  // Mobile deep-link the backend redirects to for the server-side flow.
+  static const String astroDeepLinkCallback = 'nakshatralogyastro://auth/callback';
+
+  // Astrologer push-token registration (web + native).
+  static const String astroPushRegister = '$astrologerBase/push/register';
+  // Public web-push (Firebase web + VAPID) config for runtime init.
+  static const String webpushConfig = '$baseUrl/config/webpush';
   static const String astroForgotPassword = '$astrologerBase/forgot-password';
   static const String astroResetPassword = '$astrologerBase/reset-password';
   static const String astroRefresh = '$astrologerBase/refresh';
