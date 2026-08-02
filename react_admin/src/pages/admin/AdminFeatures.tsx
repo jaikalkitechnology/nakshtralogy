@@ -2179,6 +2179,7 @@ const AdminFeatures = () => {
                       <SelectItem value="all">All Categories</SelectItem>
                       <SelectItem value="kundli">Kundli</SelectItem>
                       <SelectItem value="report">Report</SelectItem>
+                      <SelectItem value="forecast">Forecast</SelectItem>
                       <SelectItem value="consultation">Consultation</SelectItem>
                       <SelectItem value="ai">AI</SelectItem>
                     </SelectContent>
@@ -2273,6 +2274,7 @@ const AdminFeatures = () => {
                         <SelectContent>
                           <SelectItem value="kundli">Kundli</SelectItem>
                           <SelectItem value="report">Report</SelectItem>
+                          <SelectItem value="forecast">Forecast</SelectItem>
                           <SelectItem value="consultation">Consultation</SelectItem>
                           <SelectItem value="ai">AI</SelectItem>
                         </SelectContent>
