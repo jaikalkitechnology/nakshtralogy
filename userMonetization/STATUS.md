@@ -9,7 +9,7 @@ gate access + presentation.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 12 / 15 tasks DONE · Phase 5 next.
+**Summary:** 15 / 15 tasks DONE · COMPLETE.
 
 ---
 
@@ -54,7 +54,7 @@ gate access + presentation.
 ## Phase 5 — Verify & wrap
 | # | Task | Status |
 |---|------|--------|
-| 5.1 | Full static verification pass (py_compile all touched .py; balcheck+refcheck+ARB parity for flutter_user; imports for react_admin) + tracker finalize | PENDING |
+| 5.1 | Full static verification pass (py_compile all touched .py; balcheck+refcheck+ARB parity for flutter_user; imports for react_admin) + tracker finalize | DONE (5.1, 2026-08-02) |
 
 ---
 
@@ -65,3 +65,39 @@ gate access + presentation.
   time-boxed (monthly) — model it as a normal ServiceOrder for v1 and note any
   expiry as a future enhancement rather than faking it.
 - Do NOT run flutter/dart/npm; static verification only.
+
+## Phase 5 verification results (2026-08-02)
+- **py_compile OK**: entitlements.py, service_router.py, specialist_router.py,
+  forecast_router.py, milan_router.py, service_schema.py.
+- **flutter balcheck BALANCED + refcheck OK** (l.* / AppColors / KColors all
+  resolve): report_paywall.dart, api_service.dart, constants.dart,
+  my_charts_screen.dart, specialist_chart_picker, specialist_milan_picker,
+  specialist_relationship_picker, multi_chart_picker, forecast_chart_picker.
+- **ARB parity**: all 11 locales = 3777 keys each; 20 new `pw*` keys present in
+  every locale (en/hi/hinglish authored; other 8 = English interim, backfill
+  source at `userMonetization/l10n_userMonetization_source.json`).
+- **react_admin** AdminFeatures.tsx: paren/brace/bracket balanced, 55/55
+  SelectItem tags, all ServicePricing api fns resolve.
+
+## What the user must build / verify locally
+- Run `flutter gen-l10n` + `flutter analyze` + build for flutter_user (SDK not
+  available here — only static checks were possible).
+- Orchestrator: backfill the 8 non-en/hi/hinglish locales from
+  `userMonetization/l10n_userMonetization_source.json` (currently English
+  interim), then re-run merge/translate.
+- After deploy, call `POST /service/pricing/seed` (admin) to load the new rows,
+  then tune prices in the react_admin Pricing screen (source of truth).
+- `npm ci && npm run build` (typecheck) for react_admin — no node_modules here.
+
+## Known gaps / honest notes
+- Detailed daily forecast is modelled as a normal one-time per-chart
+  ServiceOrder (no monthly/one-day time-boxing yet — future enhancement, not
+  faked).
+- Extra-chart purchase uses a chart-less `extra_chart` CREDIT consumed on the
+  next `create_chart`; the flutter_user "buy extra chart before add" purchase
+  call (referencing that credit) is not yet wired into the Add-Chart screen —
+  the backend gate (402 on the 2nd chart) + admin pricing are in place, so the
+  add-chart paywall CTA is a small follow-up on the client.
+- Report screens are gated at their entry pickers (PaywallGate /
+  ensureReportUnlocked) + the backend 402; individual report screens were left
+  unchanged (constructor + engine call intact) and rely on the picker gate.
