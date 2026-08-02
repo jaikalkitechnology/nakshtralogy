@@ -9,6 +9,70 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'ಪ್ರೀಮಿಯಂ ವರದಿ';
+
+  @override
+  String get pwLockedSubtitle => 'ಈ ಚಾರ್ಟ್‌ನ ಸಂಪೂರ್ಣ ವಿಶ್ಲೇಷಣೆಯನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'ಸಂಪೂರ್ಣ ${name} ಅನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'ಅನ್‌ಲಾಕ್ · ₹${price}';
+  }
+
+  @override
+  String get pwOneTime => 'ಒಂದೇ ಬಾರಿ ಅನ್‌ಲಾಕ್ — ಈ ಚಾರ್ಟ್‌ನಲ್ಲಿ ನಿಮಗೆ ಶಾಶ್ವತವಾಗಿ';
+
+  @override
+  String get pwWhatYouGet => 'ನಿಮಗೆ ಸಿಗುವುದು';
+
+  @override
+  String get pwYourBalance => 'ನಿಮ್ಮ ವಾಲೆಟ್ ಬಾಕಿ';
+
+  @override
+  String get pwInsufficient => 'ಸಾಕಷ್ಟು ಬಾಕಿ ಇಲ್ಲ';
+
+  @override
+  String get pwRechargeToUnlock => 'ಅನ್‌ಲಾಕ್ ಮಾಡಲು ರೀಚಾರ್ಜ್ ಮಾಡಿ';
+
+  @override
+  String get pwRechargeAmount => 'ರೀಚಾರ್ಜ್ ಮೊತ್ತ (₹)';
+
+  @override
+  String get pwAddMoney => 'ಹಣ ಸೇರಿಸಿ';
+
+  @override
+  String get pwRechargeDone => 'ವಾಲೆಟ್ ರೀಚಾರ್ಜ್ ಆಗಿದೆ';
+
+  @override
+  String get pwRechargeFailed => 'ರೀಚಾರ್ಜ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get pwUnlockFailed => 'ಅನ್‌ಲಾಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get pwUnlockedNow => 'ಅನ್‌ಲಾಕ್ ಆಗಿದೆ! ನಿಮ್ಮ ವರದಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ…';
+
+  @override
+  String get pwProcessing => 'ಪ್ರಕ್ರಿಯೆಗೊಳ್ಳುತ್ತಿದೆ…';
+
+  @override
+  String get pwPrimaryNoDelete => 'ನಿಮ್ಮ ಪ್ರೈಮರಿ ಕುಂಡಲಿಯನ್ನು ಅಳಿಸಲಾಗುವುದಿಲ್ಲ — ಇದು ಶಾಶ್ವತವಾಗಿ ಉಚಿತ.';
+
+  @override
+  String get pwPrimaryNoEdit => 'ನಿಮ್ಮ ಪ್ರೈಮರಿ ಕುಂಡಲಿಯನ್ನು ಸಂಪಾದಿಸಲಾಗುವುದಿಲ್ಲ.';
+
+  @override
+  String get pwLoadingAccess => 'ಪ್ರವೇಶ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…';
+
+  @override
+  String get pwMaybeLater => 'ನಂತರ ನೋಡೋಣ';
+
+  @override
   String get updatePhoto => 'ಫೋಟೋ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ';
 
   @override
@@ -10500,70 +10564,6 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get forgotPassword => 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿದ್ದೀರಾ?';
-
-  @override
-  String get pwPremiumTitle => 'Premium Report';
-
-  @override
-  String get pwLockedSubtitle => 'Unlock the full analysis for this chart';
-
-  @override
-  String pwUnlockFull(Object name) {
-    return 'Unlock full ${name}';
-  }
-
-  @override
-  String pwUnlockPrice(Object price) {
-    return 'Unlock · ₹${price}';
-  }
-
-  @override
-  String get pwOneTime => 'One-time unlock — yours forever on this chart';
-
-  @override
-  String get pwWhatYouGet => 'What you get';
-
-  @override
-  String get pwYourBalance => 'Your wallet balance';
-
-  @override
-  String get pwInsufficient => 'Insufficient balance';
-
-  @override
-  String get pwRechargeToUnlock => 'Recharge to unlock';
-
-  @override
-  String get pwRechargeAmount => 'Recharge amount (₹)';
-
-  @override
-  String get pwAddMoney => 'Add money';
-
-  @override
-  String get pwRechargeDone => 'Wallet recharged';
-
-  @override
-  String get pwRechargeFailed => 'Recharge failed. Please try again.';
-
-  @override
-  String get pwUnlockFailed => 'Couldn\'t unlock. Please try again.';
-
-  @override
-  String get pwUnlockedNow => 'Unlocked! Loading your report…';
-
-  @override
-  String get pwProcessing => 'Processing…';
-
-  @override
-  String get pwPrimaryNoDelete => 'Your Primary Kundli can\'t be deleted — it\'s free forever.';
-
-  @override
-  String get pwPrimaryNoEdit => 'Your Primary Kundli can\'t be edited.';
-
-  @override
-  String get pwLoadingAccess => 'Checking access…';
-
-  @override
-  String get pwMaybeLater => 'Maybe later';
 
   @override
   String get sendResetLink => 'ರೀಸೆಟ್ ಲಿಂಕ್ ಕಳುಹಿಸಿ';

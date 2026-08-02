@@ -9,6 +9,70 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'प्रीमियम रिपोर्ट';
+
+  @override
+  String get pwLockedSubtitle => 'या पत्रिकेचे संपूर्ण विश्लेषण अनलॉक करा';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'संपूर्ण ${name} अनलॉक करा';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'अनलॉक · ₹${price}';
+  }
+
+  @override
+  String get pwOneTime => 'एकदाच अनलॉक करा — या पत्रिकेवर तुमचे कायमचे';
+
+  @override
+  String get pwWhatYouGet => 'तुम्हाला काय मिळेल';
+
+  @override
+  String get pwYourBalance => 'तुमची वॉलेट शिल्लक';
+
+  @override
+  String get pwInsufficient => 'अपुरी शिल्लक';
+
+  @override
+  String get pwRechargeToUnlock => 'अनलॉक करण्यासाठी रिचार्ज करा';
+
+  @override
+  String get pwRechargeAmount => 'रिचार्ज रक्कम (₹)';
+
+  @override
+  String get pwAddMoney => 'पैसे जोडा';
+
+  @override
+  String get pwRechargeDone => 'वॉलेट रिचार्ज झाले';
+
+  @override
+  String get pwRechargeFailed => 'रिचार्ज अयशस्वी झाले. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get pwUnlockFailed => 'अनलॉक करता आले नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get pwUnlockedNow => 'अनलॉक झाले! तुमचा रिपोर्ट लोड होत आहे…';
+
+  @override
+  String get pwProcessing => 'प्रक्रिया सुरू आहे…';
+
+  @override
+  String get pwPrimaryNoDelete => 'तुमची प्राथमिक कुंडली डिलीट करता येत नाही — ती कायमची मोफत आहे.';
+
+  @override
+  String get pwPrimaryNoEdit => 'तुमची प्राथमिक कुंडली संपादित करता येत नाही.';
+
+  @override
+  String get pwLoadingAccess => 'प्रवेश तपासत आहे…';
+
+  @override
+  String get pwMaybeLater => 'नंतर पाहू';
+
+  @override
   String get updatePhoto => 'फोटो अपडेट करा';
 
   @override
@@ -10500,70 +10564,6 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get forgotPassword => 'पासवर्ड विसरलात?';
-
-  @override
-  String get pwPremiumTitle => 'Premium Report';
-
-  @override
-  String get pwLockedSubtitle => 'Unlock the full analysis for this chart';
-
-  @override
-  String pwUnlockFull(Object name) {
-    return 'Unlock full ${name}';
-  }
-
-  @override
-  String pwUnlockPrice(Object price) {
-    return 'Unlock · ₹${price}';
-  }
-
-  @override
-  String get pwOneTime => 'One-time unlock — yours forever on this chart';
-
-  @override
-  String get pwWhatYouGet => 'What you get';
-
-  @override
-  String get pwYourBalance => 'Your wallet balance';
-
-  @override
-  String get pwInsufficient => 'Insufficient balance';
-
-  @override
-  String get pwRechargeToUnlock => 'Recharge to unlock';
-
-  @override
-  String get pwRechargeAmount => 'Recharge amount (₹)';
-
-  @override
-  String get pwAddMoney => 'Add money';
-
-  @override
-  String get pwRechargeDone => 'Wallet recharged';
-
-  @override
-  String get pwRechargeFailed => 'Recharge failed. Please try again.';
-
-  @override
-  String get pwUnlockFailed => 'Couldn\'t unlock. Please try again.';
-
-  @override
-  String get pwUnlockedNow => 'Unlocked! Loading your report…';
-
-  @override
-  String get pwProcessing => 'Processing…';
-
-  @override
-  String get pwPrimaryNoDelete => 'Your Primary Kundli can\'t be deleted — it\'s free forever.';
-
-  @override
-  String get pwPrimaryNoEdit => 'Your Primary Kundli can\'t be edited.';
-
-  @override
-  String get pwLoadingAccess => 'Checking access…';
-
-  @override
-  String get pwMaybeLater => 'Maybe later';
 
   @override
   String get sendResetLink => 'रीसेट लिंक पाठवा';
