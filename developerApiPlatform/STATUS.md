@@ -9,9 +9,8 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 38 / 38 tasks DONE (Phases 0-7 complete).
-_(Note: earlier summary lines said "/31" — the tracker actually lists 38
-numbered tasks across Phases 0-7; corrected for accuracy.)_
+**Summary:** 38 / 45 tasks DONE · Phases 0-7 complete · **Phase 8 (granular
+category APIs + docs) PENDING** — 7 new tasks.
 
 ---
 
@@ -106,6 +105,29 @@ numbered tasks across Phases 0-7; corrected for accuracy.)_
 | 7.2 | Daily precompute of Today Forecast + Gochar (all 12 rashis) | DONE (a0ac711, 2026-08-01) — `app/services/daily_precompute.py`, run by a background task in `app/main.py`'s lifespan (startup + every 24h) and manually via `POST /api/v1/admin/precompute-daily`; finally wires up the previously-unused `GocharDaily` model |
 | 7.3 | Idempotency-Key support + per-key monthly quota + concurrency cap | DONE (a0ac711, 2026-08-01) — `app/core/gateway_guards.py`: `Idempotency-Key` header replay via the `idempotency_keys` table, per-key `monthly_quota` column (default 100k/mo) checked against `api_usage_logs`, and an in-process concurrency cap (max 5 in-flight/key) |
 | 7.4 | Usage-log rollup/partitioning + metrics/alerts + scale-topology notes | DONE (a0ac711, 2026-08-01) — `app/services/usage_rollup.py` (new `api_usage_daily_rollups` table, nightly rollup + high-error-rate/high-latency structured-log alerts); partitioning + horizontal-scale topology documented below in Blockers/notes (design notes only — no infra provisioned here) |
+
+## Phase 8 — Granular product APIs (4 categories) + full docs
+
+Expand the flat gateway (4 broad endpoints) into a **granular, category-based**
+surface. **Retax the products to exactly 4 categories:** `kundli`, `reports`,
+`rashi`, `forecast` (Reports absorbs specialists + milan + combined; Rashi is
+new). Update `api_products` seed, API-key scopes, and the `product` field on
+`api_usage_logs` accordingly (keep the old broad endpoints working as aliases so
+existing keys don't break). Every endpoint wraps an EXISTING engine method — no
+astrology-logic changes. Each endpoint takes the same birth-data body as today
+(name/gender/dob/tob/place) except Rashi/Forecast where the engine differs.
+**Every endpoint must appear in the `/api/v2` OpenAPI docs (grouped by the 4
+categories, tagged) with a request + response example and code samples.**
+
+| # | Task | Status |
+|---|------|--------|
+| 8.1 | **Retax products** → 4 categories (`kundli`/`reports`/`rashi`/`forecast`): update `api_products` seed, scopes default, usage `product` values; keep `/api/v2/kundli`,`/reports/{key}`,`/milan`,`/forecast` working as back-compat aliases | PENDING |
+| 8.2 | **Kundli category** — one endpoint per feature, all wrapping the existing `NakshtraEngine`/kundli_router methods: `/kundli/summary`, `/kundli/planets`, `/kundli/chart`, `/kundli/divisional`, `/kundli/dasha/vimshottari`, `/kundli/dasha/moola`, plus the rest of "cover all" (`/kundli/dosh`, `/yoga`, `/shadbala`, `/ashtakavarga`, `/aspects`, `/life-areas`, `/bhava`, `/chakra-health`, `/gochar`) and `/kundli/all` (one-call `get_full_analysis`). **Both dashas individual + one-for-all.** | PENDING |
+| 8.3 | **Reports category — 19 endpoints** (one per report, each wrapping its engine): 14 single-chart (`career, business, education, wealth, debt_recovery, love, marriage, health, mental_stress, property, legal, life_path, character, past_life`) + 5 combined/two-chart (`kundli_milan, relationship, child_probability, love_compatibility, karma_linkage`). Keep generic `/reports/{key}` too. Two-chart reports take two birth-data blocks. | PENDING |
+| 8.4 | **Rashi category — 13 endpoints**: `/rashi/all` (all 12 signs) + `/rashi/{sign}` for each of the 12 signs (aries…pisces / idx 1–12), wrapping the existing rashi engine. Document all 13. | PENDING |
+| 8.5 | **Daily Forecast category — 1 endpoint**: `/forecast` (single), under the new `forecast` product. | PENDING |
+| 8.6 | **Docs for ALL endpoints**: regenerate `/api/v2` OpenAPI grouped/tagged by the 4 categories; every endpoint gets summary/description + request & response example; extend `/api/v2/code-samples/{...}` to cover each endpoint (curl/Python/Node/PHP). | PENDING |
+| 8.7 | **Developer dashboard Docs & Playground**: list every endpoint grouped by the 4 categories with try-it; update the products/nav so all four categories are visible. | PENDING |
 
 ---
 
