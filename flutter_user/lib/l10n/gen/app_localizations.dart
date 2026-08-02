@@ -7,6 +7,14 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_bn.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_ar.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_de.dart';
+import 'app_localizations_pt_BR.dart';
+import 'app_localizations_es.dart';
 import 'app_localizations_th.dart';
 import 'app_localizations_zh_Hans.dart';
 import 'app_localizations_fr.dart';
@@ -119,6 +127,14 @@ abstract class AppLocalizations {
     Locale('fr'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale('th'),
+    Locale('es'),
+    Locale('pt', 'BR'),
+    Locale('de'),
+    Locale('it'),
+    Locale('ru'),
+    Locale('ar'),
+    Locale('id'),
+    Locale('ja'),
   ];
 
   /// No description provided for @appName.
@@ -22808,6 +22824,14 @@ class _AppLocalizationsDelegate
     'fr',
     'zh',
     'th',
+    'es',
+    'pt',
+    'de',
+    'it',
+    'ru',
+    'ar',
+    'id',
+    'ja',
   ].contains(locale.languageCode);
 
   @override
@@ -22843,6 +22867,22 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsZhHans();
     case 'th':
       return AppLocalizationsTh();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'pt':
+      return AppLocalizationsPtBr();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'ru':
+      return AppLocalizationsRu();
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'id':
+      return AppLocalizationsId();
+    case 'ja':
+      return AppLocalizationsJa();
     case 'bn':
       return AppLocalizationsBn();
     case 'en':
