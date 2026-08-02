@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'api_service.dart';
 
@@ -120,7 +120,7 @@ class IapService {
 
       if (p.status == PurchaseStatus.purchased || p.status == PurchaseStatus.restored) {
         final ctx = _pending[p.productID];
-        final platform = Platform.isIOS ? 'ios' : 'android';
+        final platform = defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
         final txnId = p.purchaseID ??
             p.verificationData.serverVerificationData.hashCode.toString();
         IapResult result;

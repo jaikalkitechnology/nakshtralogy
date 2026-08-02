@@ -18,21 +18,118 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Nakshatralogy — personalized Vedic astrology: kundli, dashas, daily horoscopes, and live consultations with expert astrologers.">
+  <meta name="theme-color" content="#0A0A24">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="nakshatralogy_user">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nakshatralogy">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>nakshatralogy_user</title>
+  <title>Nakshatralogy — Vedic Astrology</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Branded PWA install banner (desktop Chrome/Edge) + iOS A2HS hint. */
+    #nk-install-banner {
+      position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+      z-index: 2147483000; display: none; align-items: center; gap: 14px;
+      max-width: 92%; padding: 12px 16px; border-radius: 14px;
+      background: #12123a; color: #F6F1E7;
+      border: 1px solid rgba(214,178,94,0.45);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px; line-height: 1.35;
+    }
+    #nk-install-banner img { width: 34px; height: 34px; border-radius: 8px; }
+    #nk-install-banner .nk-text { flex: 1 1 auto; }
+    #nk-install-banner button {
+      cursor: pointer; border: none; border-radius: 10px;
+      padding: 9px 14px; font-weight: 600; font-size: 13px;
+    }
+    #nk-install-btn { background: #D6B25E; color: #0A0A24; }
+    #nk-install-dismiss { background: transparent; color: #9aa0b4; padding: 9px 6px; }
+  </style>
 </head>
 <body>
+  <!-- PWA install banner (hidden until beforeinstallprompt fires, or iOS Safari). -->
+  <div id="nk-install-banner" role="dialog" aria-label="Install Nakshatralogy">
+    <img src="icons/Icon-192.png" alt="Nakshatralogy"/>
+    <div class="nk-text" id="nk-install-text">Install Nakshatralogy for a faster, full-screen experience.</div>
+    <button id="nk-install-btn">Install</button>
+    <button id="nk-install-dismiss" aria-label="Dismiss">&times;</button>
+  </div>
+
+  <script>
+    (function () {
+      var banner = document.getElementById('nk-install-banner');
+      var installBtn = document.getElementById('nk-install-btn');
+      var dismissBtn = document.getElementById('nk-install-dismiss');
+      var textEl = document.getElementById('nk-install-text');
+      var deferredPrompt = null;
+      var DISMISS_KEY = 'nk_install_dismissed';
+
+      function alreadyInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches ||
+               window.navigator.standalone === true;
+      }
+      function dismissed() {
+        try { return localStorage.getItem(DISMISS_KEY) === '1'; } catch (e) { return false; }
+      }
+      function hide() { banner.style.display = 'none'; }
+      function show() { banner.style.display = 'flex'; }
+
+      dismissBtn.addEventListener('click', function () {
+        hide();
+        try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
+      });
+
+      // Desktop Chrome/Edge: capture the event, prevent the mini-infobar, show
+      // our branded banner; on click call prompt().
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (alreadyInstalled() || dismissed()) return;
+        installBtn.textContent = 'Install';
+        installBtn.style.display = '';
+        show();
+      });
+
+      installBtn.addEventListener('click', function () {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(function () {
+          deferredPrompt = null;
+          hide();
+        });
+      });
+
+      window.addEventListener('appinstalled', function () {
+        hide();
+        deferredPrompt = null;
+      });
+
+      // iOS Safari fires no beforeinstallprompt — show a manual A2HS hint.
+      function isIosSafari() {
+        var ua = window.navigator.userAgent;
+        var iOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+        var webkit = /WebKit/.test(ua);
+        var notOtherBrowser = !/(CriOS|FxiOS|OPiOS|EdgiOS)/.test(ua);
+        return iOS && webkit && notOtherBrowser;
+      }
+      if (isIosSafari() && !alreadyInstalled() && !dismissed()) {
+        textEl.textContent = 'Add to Home Screen: tap Share, then "Add to Home Screen".';
+        installBtn.style.display = 'none';
+        show();
+      }
+    })();
+  </script>
+
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

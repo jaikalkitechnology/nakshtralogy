@@ -10566,6 +10566,47 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get awChooseLanguage => 'Choose your language';
+
+  @override
+  String get awGoogleFailed => 'Google sign-in failed. Please try again.';
+
+  @override
+  String get awCompleteProfileTitle => 'Complete your profile';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'Welcome, ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'A couple of details to personalize Nakshatralogy for you.';
+
+  @override
+  String get awRegionLabel => 'Region';
+
+  @override
+  String get awRegionIndia => 'India';
+
+  @override
+  String get awRegionInternational => 'International';
+
+  @override
+  String get awPreferredLanguage => 'Preferred language';
+
+  @override
+  String get awFinishSetup => 'Finish setup';
+
+  @override
+  String get awChatFileWebUnsupported => 'File sharing isn\'t available on web yet. Please use the mobile app.';
+
+  @override
+  String get awVideoUnsupported => 'Video calls aren\'t supported in this browser. Please use our mobile app or a supported desktop browser.';
+
+  @override
+  String get awClose => 'Close';
+
+  @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
 
   @override

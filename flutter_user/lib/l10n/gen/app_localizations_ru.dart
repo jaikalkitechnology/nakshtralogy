@@ -9,6 +9,47 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get awChooseLanguage => 'Выберите язык';
+
+  @override
+  String get awGoogleFailed => 'Не удалось войти через Google. Повторите попытку.';
+
+  @override
+  String get awCompleteProfileTitle => 'Заполните профиль';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'Добро пожаловать, ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'Несколько деталей, чтобы персонализировать Nakshatralogy для вас.';
+
+  @override
+  String get awRegionLabel => 'Регион';
+
+  @override
+  String get awRegionIndia => 'Индия';
+
+  @override
+  String get awRegionInternational => 'Международный';
+
+  @override
+  String get awPreferredLanguage => 'Предпочитаемый язык';
+
+  @override
+  String get awFinishSetup => 'Завершить настройку';
+
+  @override
+  String get awChatFileWebUnsupported => 'Обмен файлами пока недоступен в веб-версии. Используйте мобильное приложение.';
+
+  @override
+  String get awVideoUnsupported => 'Видеозвонки не поддерживаются в этом браузере. Используйте наше мобильное приложение или поддерживаемый настольный браузер.';
+
+  @override
+  String get awClose => 'Закрыть';
+
+  @override
   String get pwPremiumTitle => 'Премиум-отчёт';
 
   @override

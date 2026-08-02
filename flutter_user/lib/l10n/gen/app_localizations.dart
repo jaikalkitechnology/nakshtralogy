@@ -257,6 +257,84 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @awChooseLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your language'**
+  String get awChooseLanguage;
+
+  /// No description provided for @awGoogleFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed. Please try again.'**
+  String get awGoogleFailed;
+
+  /// No description provided for @awCompleteProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get awCompleteProfileTitle;
+
+  /// No description provided for @awWelcomeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name}!'**
+  String awWelcomeName(String name);
+
+  /// No description provided for @awCompleteProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A couple of details to personalize Nakshatralogy for you.'**
+  String get awCompleteProfileSubtitle;
+
+  /// No description provided for @awRegionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get awRegionLabel;
+
+  /// No description provided for @awRegionIndia.
+  ///
+  /// In en, this message translates to:
+  /// **'India'**
+  String get awRegionIndia;
+
+  /// No description provided for @awRegionInternational.
+  ///
+  /// In en, this message translates to:
+  /// **'International'**
+  String get awRegionInternational;
+
+  /// No description provided for @awPreferredLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred language'**
+  String get awPreferredLanguage;
+
+  /// No description provided for @awFinishSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish setup'**
+  String get awFinishSetup;
+
+  /// No description provided for @awChatFileWebUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'File sharing isn\'t available on web yet. Please use the mobile app.'**
+  String get awChatFileWebUnsupported;
+
+  /// No description provided for @awVideoUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Video calls aren\'t supported in this browser. Please use our mobile app or a supported desktop browser.'**
+  String get awVideoUnsupported;
+
+  /// No description provided for @awClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get awClose;
+
   /// No description provided for @pwPremiumTitle.
   ///
   /// In en, this message translates to:

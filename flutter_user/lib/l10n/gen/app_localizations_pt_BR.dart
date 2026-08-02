@@ -9,6 +9,47 @@ class AppLocalizationsPtBr extends AppLocalizations {
   AppLocalizationsPtBr([String locale = 'pt_BR']) : super(locale);
 
   @override
+  String get awChooseLanguage => 'Escolha seu idioma';
+
+  @override
+  String get awGoogleFailed => 'Falha ao entrar com o Google. Tente novamente.';
+
+  @override
+  String get awCompleteProfileTitle => 'Complete seu perfil';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'Bem-vindo, ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'Alguns detalhes para personalizar o Nakshatralogy para você.';
+
+  @override
+  String get awRegionLabel => 'Região';
+
+  @override
+  String get awRegionIndia => 'Índia';
+
+  @override
+  String get awRegionInternational => 'Internacional';
+
+  @override
+  String get awPreferredLanguage => 'Idioma preferido';
+
+  @override
+  String get awFinishSetup => 'Concluir configuração';
+
+  @override
+  String get awChatFileWebUnsupported => 'O compartilhamento de arquivos ainda não está disponível na web. Use o aplicativo móvel.';
+
+  @override
+  String get awVideoUnsupported => 'Chamadas de vídeo não são compatíveis com este navegador. Use nosso aplicativo móvel ou um navegador de desktop compatível.';
+
+  @override
+  String get awClose => 'Fechar';
+
+  @override
   String get pwPremiumTitle => 'Relatório Premium';
 
   @override

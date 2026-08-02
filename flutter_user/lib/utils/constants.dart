@@ -12,6 +12,23 @@ class ApiConstants {
   static const String userRefresh = '$userBase/refresh';
   static const String userMe = '$userBase/me';
 
+  // Google server-side OAuth (shared redirect flow — role=user).
+  // login-url → Google → callback redirects to `frontendReturnUrl` (web) or the
+  // mobile deep link with ?token=&refresh=. verify accepts a native id_token.
+  static const String googleBase = '$baseUrl/google';
+  static const String googleLoginUrl = '$googleBase/login-url';
+  static const String googleVerify = '$googleBase/verify';
+
+  // Web push (public runtime config + token registration).
+  static const String webpushConfig = '$baseUrl/config/webpush';
+  static const String userPushRegister = '$userBase/push/register';
+
+  // Auth callback return targets.
+  // Web: the SPA route the backend redirects to with ?token=&refresh=.
+  // Mobile: the custom-scheme deep link the external browser returns through.
+  static const String webAuthCallbackUrl = 'https://app.nakshatralogy.com/auth/callback';
+  static const String mobileAuthCallback = 'nakshatralogy://auth/callback';
+
   // Astrologer public
   static const String astrologerList = '$astrologerBase/list';
 

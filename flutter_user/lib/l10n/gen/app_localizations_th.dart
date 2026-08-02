@@ -9,6 +9,47 @@ class AppLocalizationsTh extends AppLocalizations {
   AppLocalizationsTh([String locale = 'th']) : super(locale);
 
   @override
+  String get awChooseLanguage => 'เลือกภาษาของคุณ';
+
+  @override
+  String get awGoogleFailed => 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ โปรดลองอีกครั้ง';
+
+  @override
+  String get awCompleteProfileTitle => 'กรอกโปรไฟล์ของคุณให้สมบูรณ์';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'ยินดีต้อนรับ ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'ข้อมูลเล็กน้อยเพื่อปรับแต่ง Nakshatralogy ให้เหมาะกับคุณ';
+
+  @override
+  String get awRegionLabel => 'ภูมิภาค';
+
+  @override
+  String get awRegionIndia => 'อินเดีย';
+
+  @override
+  String get awRegionInternational => 'นานาชาติ';
+
+  @override
+  String get awPreferredLanguage => 'ภาษาที่ต้องการ';
+
+  @override
+  String get awFinishSetup => 'เสร็จสิ้นการตั้งค่า';
+
+  @override
+  String get awChatFileWebUnsupported => 'ยังไม่รองรับการแชร์ไฟล์บนเว็บ โปรดใช้แอปบนมือถือ';
+
+  @override
+  String get awVideoUnsupported => 'เบราว์เซอร์นี้ไม่รองรับการโทรวิดีโอ โปรดใช้แอปบนมือถือของเราหรือเบราว์เซอร์เดสก์ท็อปที่รองรับ';
+
+  @override
+  String get awClose => 'ปิด';
+
+  @override
   String get pwPremiumTitle => 'รายงานพรีเมียม';
 
   @override

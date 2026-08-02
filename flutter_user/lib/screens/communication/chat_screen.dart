@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
+import '../../utils/native_file.dart';
 import '../../services/api_service.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -209,6 +209,17 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _pickAndUploadFile(String type) async {
+    // File upload uses a native file path + multipart, unavailable on web.
+    // Text chat works on web; attachments fall back to the mobile app.
+    if (kIsWeb) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)?.awChatFileWebUnsupported ??
+              'File sharing is not available on web yet.'),
+        ));
+      }
+      return;
+    }
     // For now, use a simple file path input dialog
     // In production, integrate image_picker / file_picker packages
     final ctrl = TextEditingController();
@@ -232,8 +243,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     );
 
     if (result == null || result.isEmpty) return;
-    final file = File(result);
-    if (!await file.exists()) {
+    if (!await nativeFileExists(result)) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.fileNotFound ?? 'File not found')));
       return;
     }
@@ -443,24 +453,25 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             ),
             child: Row(
               children: [
-                // Attach button
-                PopupMenuButton<String>(
-                  onSelected: _pickAndUploadFile,
-                  icon: const Icon(Icons.attach_file, color: AppColors.gold),
-                  color: AppColors.nebula,
-                  itemBuilder: (_) => [
-                    const PopupMenuItem(value: 'image', child: Row(children: [
-                      Icon(Icons.image, color: AppColors.gold, size: 20),
-                      SizedBox(width: 8),
-                      Text('Photo', style: TextStyle(color: AppColors.ivory)),
-                    ])),
-                    const PopupMenuItem(value: 'pdf', child: Row(children: [
-                      Icon(Icons.picture_as_pdf, color: AppColors.saffron, size: 20),
-                      SizedBox(width: 8),
-                      Text('PDF', style: TextStyle(color: AppColors.ivory)),
-                    ])),
-                  ],
-                ),
+                // Attach button — native only (web file upload unsupported).
+                if (!kIsWeb)
+                  PopupMenuButton<String>(
+                    onSelected: _pickAndUploadFile,
+                    icon: const Icon(Icons.attach_file, color: AppColors.gold),
+                    color: AppColors.nebula,
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(value: 'image', child: Row(children: [
+                        Icon(Icons.image, color: AppColors.gold, size: 20),
+                        SizedBox(width: 8),
+                        Text('Photo', style: TextStyle(color: AppColors.ivory)),
+                      ])),
+                      const PopupMenuItem(value: 'pdf', child: Row(children: [
+                        Icon(Icons.picture_as_pdf, color: AppColors.saffron, size: 20),
+                        SizedBox(width: 8),
+                        Text('PDF', style: TextStyle(color: AppColors.ivory)),
+                      ])),
+                    ],
+                  ),
                 Expanded(
                   child: TextField(
                     controller: _msgCtrl,

@@ -9,6 +9,47 @@ class AppLocalizationsZhHans extends AppLocalizations {
   AppLocalizationsZhHans([String locale = 'zh_Hans']) : super(locale);
 
   @override
+  String get awChooseLanguage => '选择您的语言';
+
+  @override
+  String get awGoogleFailed => 'Google 登录失败。请重试。';
+
+  @override
+  String get awCompleteProfileTitle => '完善您的个人资料';
+
+  @override
+  String awWelcomeName(String name) {
+    return '欢迎，${name}！';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => '填写一些信息，为您个性化定制 Nakshatralogy。';
+
+  @override
+  String get awRegionLabel => '地区';
+
+  @override
+  String get awRegionIndia => '印度';
+
+  @override
+  String get awRegionInternational => '国际';
+
+  @override
+  String get awPreferredLanguage => '首选语言';
+
+  @override
+  String get awFinishSetup => '完成设置';
+
+  @override
+  String get awChatFileWebUnsupported => '网页端暂不支持文件分享。请使用移动应用。';
+
+  @override
+  String get awVideoUnsupported => '此浏览器不支持视频通话。请使用我们的移动应用或受支持的桌面浏览器。';
+
+  @override
+  String get awClose => '关闭';
+
+  @override
   String get pwPremiumTitle => '高级报告';
 
   @override
