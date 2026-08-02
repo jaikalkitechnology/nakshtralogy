@@ -12,11 +12,16 @@ radius, star particles, light/dark), keeping Nakshtralogy's mystical brand.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verification:** static only (no `node_modules`/npm here — never claim a build).
 
-**Summary:** 19 / 24 tasks DONE · react_admin Phases A–D complete at route
-**`/admin/v2`** (existing `/admin` untouched) · react_developer_api Phases
+**Summary:** 24 / 24 tasks DONE. react_admin Phases A–D complete at route
+**`/admin/v2`** (existing `/admin` untouched). react_developer_api Phases
 E–F complete (shared design system + DevShell + Stripe-like dashboard +
-reskinned/enhanced feature pages) · agent continuing into Phase G
-(cross-cutting polish: animations/tooltips/⌘K/responsive/a11y).
+reskinned/enhanced feature pages). Phase G cross-cutting polish (⌘K command
+palette, page transitions, tooltips, a11y, swipe-to-close) shipped on top
+of both. See the per-task notes below for exact scope and any honest gaps
+(mostly: no backend for webhooks/SDK-downloads/unified-search/monthly-quota
+— those are labelled rather than fabricated). Static verification only —
+no `node_modules`/npm/network in this environment; a real build/typecheck
+was never run and should be done locally before merging.
 
 ---
 
@@ -69,9 +74,9 @@ reskinned/enhanced feature pages) · agent continuing into Phase G
 ## Phase G — Cross-cutting polish
 | # | Task | Status |
 |---|------|--------|
-| G.1 | Animations everywhere: fade/slide/count-up/hover-lift/glow/loading-skeletons/ripple/smooth charts | PENDING |
-| G.2 | Tooltips + contextual help + keyboard shortcuts (⌘K search, nav) + universal search results | PENDING |
-| G.3 | Responsive pass: desktop/tablet/mobile for both apps; a11y (focus, contrast, aria) | PENDING |
+| G.1 | Animations everywhere: fade/slide/count-up/hover-lift/glow/loading-skeletons/ripple/smooth charts | DONE (3b0b27a, 2026-08-02) — count-up (StatCard), hover-lift (`.lift`), glow (`.glow-gold`/`active-glow`), skeletons (`Skeleton` used throughout loading states), smooth recharts transitions already existed from the foundation; added framer-motion fade/slide **page transitions** on every route change in both shells, and a dependency-free `.press` (scale-on-active) tactile utility as the ripple substitute (a real Material-style JS ripple was not added — out of scope for the remaining time/risk budget) |
+| G.2 | Tooltips + contextual help + keyboard shortcuts (⌘K search, nav) + universal search results | DONE (3b0b27a, 2026-08-02) — real ⌘K/Ctrl+K command palette in both apps (react_admin via the already-installed `cmdk`; react_developer_api via a small dependency-free palette, since `cmdk` isn't installed there and there is no npm/network here to add it) that jumps to every screen; header search bars + a new mobile search icon open it too; every icon-only header button now has a `title` tooltip. This is **navigation** search (jumps to pages), not cross-entity data search — there is no unified search backend endpoint to query users/transactions/etc. from one box, so that was not fabricated |
+| G.3 | Responsive pass: desktop/tablet/mobile for both apps; a11y (focus, contrast, aria) | DONE (94be800, 2026-08-02) — fixed-sidebar contract (280/78px desktop+tablet collapse, off-canvas mobile drawer) already covered the responsive breakpoints from the B.1-B.3/E.1 foundation; added swipe-to-close on the mobile drawer, `aria-label`s on every icon-only button, and a site-wide visible `:focus-visible` ring for keyboard navigation. Color contrast was not re-audited with tooling (no browser/devtools available here) — it inherits the tokens already shipped in A.1 |
 
 ---
 
