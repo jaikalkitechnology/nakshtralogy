@@ -421,9 +421,10 @@ def initiate_call(
             asyncio.get_event_loop().create_task(push_to_astrologer(astro_user.id, call_data))
         except Exception:
             pass
-        if astro_user.fcm_token:
+        if astro_user.fcm_token or astro_user.fcm_token_web:
             notify_call_incoming(
                 fcm_token=astro_user.fcm_token,
+                web_token=astro_user.fcm_token_web,
                 caller_name=caller_display_name,
                 call_type=req.call_type,
                 call_id=call.id,
@@ -494,9 +495,10 @@ def call_action(
         from app.services.fcm_service import notify_call_accepted as _notify_call_accepted
         caller = db.query(User).filter(User.id == call.caller_id).first()
         astrologer_display_name = current_user.name or t("label.default_astrologer_name", lang)
-        if caller and caller.fcm_token:
+        if caller and (caller.fcm_token or caller.fcm_token_web):
             _notify_call_accepted(
                 fcm_token=caller.fcm_token,
+                web_token=caller.fcm_token_web,
                 astrologer_name=astrologer_display_name,
                 call_id=call.id,
                 call_type=call.call_type,
@@ -1104,9 +1106,10 @@ def initiate_chat(
         except Exception:
             pass
         # FCM push (backup for background/terminated)
-        if astro_user.fcm_token:
+        if astro_user.fcm_token or astro_user.fcm_token_web:
             notify_chat_request(
                 fcm_token=astro_user.fcm_token,
+                web_token=astro_user.fcm_token_web,
                 user_name=user_display_name,
                 session_id=session.id,
                 rate_per_min=float(session.rate_per_min or 0),
@@ -1167,9 +1170,10 @@ def chat_action(
         # FCM push to user that chat is accepted
         chat_user = db.query(User).filter(User.id == session.user_id).first()
         astrologer_display_name = current_user.name or t("label.default_astrologer_name", lang)
-        if chat_user and chat_user.fcm_token:
+        if chat_user and (chat_user.fcm_token or chat_user.fcm_token_web):
             notify_chat_accepted(
                 fcm_token=chat_user.fcm_token,
+                web_token=chat_user.fcm_token_web,
                 astrologer_name=astrologer_display_name,
                 session_id=session.id,
                 rate_per_min=float(session.rate_per_min or 0),
@@ -1384,9 +1388,10 @@ def send_chat_message_rest(
         astro_u = db.query(User).filter(User.id == profile.user_id).first()
         sender_display_name = current_user.name or t("label.default_user_name", lang)
         rlang = resolve_user_lang(astro_u, lang)
-        if astro_u and astro_u.fcm_token:
+        if astro_u and (astro_u.fcm_token or astro_u.fcm_token_web):
             send_push(
                 fcm_token=astro_u.fcm_token,
+                web_token=astro_u.fcm_token_web,
                 title=t("label.notif.message_from", rlang, name=sender_display_name),
                 body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", rlang),
                 role="astrologer",
@@ -1405,9 +1410,10 @@ def send_chat_message_rest(
         chat_user = db.query(User).filter(User.id == session.user_id).first()
         sender_display_name = current_user.name or t("label.default_astrologer_name", lang)
         rlang = resolve_user_lang(chat_user, lang)
-        if chat_user and chat_user.fcm_token:
+        if chat_user and (chat_user.fcm_token or chat_user.fcm_token_web):
             send_push(
                 fcm_token=chat_user.fcm_token,
+                web_token=chat_user.fcm_token_web,
                 title=t("label.notif.message_from", rlang, name=sender_display_name),
                 body=req.content[:200] if req.message_type == "text" else t("label.chat.attachment", rlang),
                 role="user",

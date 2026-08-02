@@ -238,6 +238,34 @@ def refresh(req: RefreshTokenRequest, db: Session = Depends(get_db), lang: str =
     return _issue_tokens(user, db)
 
 
+# ── Push Token Registration ───────────────────────────────────────────
+
+class PushTokenRegisterRequest(BaseModel):
+    token: str
+    platform: Optional[str] = "mobile"   # mobile | android | ios | web
+
+
+@router.post("/push/register", response_model=MessageResponse)
+def register_push_token(
+    req: PushTokenRegisterRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
+    """Register/update this user's push token. platform='web' stores the
+    browser FCM token separately from the native token so both can receive
+    notifications."""
+    tok = (req.token or "").strip()
+    if not tok:
+        raise HTTPException(status_code=400, detail=t("err.push_token_required", lang))
+    if (req.platform or "").strip().lower() == "web":
+        current_user.fcm_token_web = tok
+    else:
+        current_user.fcm_token = tok
+    db.commit()
+    return MessageResponse(message=t("msg.push_token_registered", lang))
+
+
 # ── Get Profile ───────────────────────────────────────────────────────
 
 @router.get("/me", response_model=UserResponse)

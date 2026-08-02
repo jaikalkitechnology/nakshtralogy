@@ -50,7 +50,7 @@ from app.core.security import (
     verify_password, create_access_token, create_refresh_token,
 )
 from app.core.i18n import get_lang, t
-from app.services.fcm_service import notify_generic
+from app.services.fcm_service import notify_generic, send_push
 from app.models.model import (
     User, Wallet, WalletTransaction, AstrologerProfile,
     CallSession, ChatSession, LiveStream, ServiceOrder,
@@ -474,9 +474,10 @@ def approve_astrologer(
     db.commit()
 
     # FCM push to astrologer
-    if user and user.fcm_token:
+    if user and (user.fcm_token or user.fcm_token_web):
         notify_generic(
             fcm_token=user.fcm_token,
+            web_token=user.fcm_token_web,
             title=t("label.notif.profile_approved_title", resolve_user_lang(user, lang)),
             body=t("label.notif.profile_approved_body", resolve_user_lang(user, lang)),
             role="astrologer",
@@ -504,9 +505,10 @@ def reject_astrologer(
         user.profile_approved = False
     db.commit()
 
-    if user and user.fcm_token:
+    if user and (user.fcm_token or user.fcm_token_web):
         notify_generic(
             fcm_token=user.fcm_token,
+            web_token=user.fcm_token_web,
             title=t("label.notif.profile_rejected_title", resolve_user_lang(user, lang)),
             body=t("label.notif.profile_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
             role="astrologer",
@@ -531,10 +533,11 @@ def block_astrologer(
     profile.is_online = False
     db.commit()
 
-    if user and user.fcm_token:
+    if user and (user.fcm_token or user.fcm_token_web):
         if user.is_active:
             notify_generic(
                 fcm_token=user.fcm_token,
+                web_token=user.fcm_token_web,
                 title=t("label.notif.account_unblocked_title", resolve_user_lang(user, lang)),
                 body=t("label.notif.account_unblocked_body", resolve_user_lang(user, lang)),
                 role="astrologer",
@@ -543,6 +546,7 @@ def block_astrologer(
         else:
             notify_generic(
                 fcm_token=user.fcm_token,
+                web_token=user.fcm_token_web,
                 title=t("label.notif.account_blocked_title", resolve_user_lang(user, lang)),
                 body=t("label.notif.account_blocked_body", resolve_user_lang(user, lang)),
                 role="astrologer",
@@ -863,9 +867,10 @@ def approve_kyc(
         user.profile_approved = True
     db.commit()
 
-    if user and user.fcm_token:
+    if user and (user.fcm_token or user.fcm_token_web):
         notify_generic(
             fcm_token=user.fcm_token,
+            web_token=user.fcm_token_web,
             title=t("label.notif.kyc_approved_title", resolve_user_lang(user, lang)),
             body=t("label.notif.kyc_approved_body", resolve_user_lang(user, lang), doc_type=kyc.doc_type),
             role=user.role if user.role in ("user", "astrologer") else "user",
@@ -892,9 +897,10 @@ def reject_kyc(
     db.commit()
 
     user = db.query(User).filter(User.id == kyc.user_id).first()
-    if user and user.fcm_token:
+    if user and (user.fcm_token or user.fcm_token_web):
         notify_generic(
             fcm_token=user.fcm_token,
+            web_token=user.fcm_token_web,
             title=t("label.notif.kyc_rejected_title", resolve_user_lang(user, lang)),
             body=t("label.notif.kyc_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
             role=user.role if user.role in ("user", "astrologer") else "user",
@@ -1115,18 +1121,52 @@ SETTINGS_SCHEMA = {
         "label": "Google OAuth — User App",
         "description": "Google Sign-In credentials for the user Flutter app",
         "keys": [
-            {"key": "client_id", "label": "Client ID", "secret": False},
+            {"key": "client_id", "label": "Client ID (web server flow)", "secret": False},
             {"key": "client_secret", "label": "Client Secret", "secret": True},
             {"key": "redirect_uri", "label": "Redirect URI", "secret": False},
+            {"key": "web_client_id", "label": "Web Client ID (native audience)", "secret": False},
+            {"key": "android_client_id", "label": "Android Client ID (native audience)", "secret": False},
+            {"key": "ios_client_id", "label": "iOS Client ID (native audience)", "secret": False},
+            {"key": "frontend_return_url", "label": "Frontend Callback URL", "secret": False},
         ],
     },
     "google_auth_astro": {
         "label": "Google OAuth — Astrologer App",
         "description": "Google Sign-In credentials for the astrologer Flutter app",
         "keys": [
-            {"key": "client_id", "label": "Client ID", "secret": False},
+            {"key": "client_id", "label": "Client ID (web server flow)", "secret": False},
             {"key": "client_secret", "label": "Client Secret", "secret": True},
             {"key": "redirect_uri", "label": "Redirect URI", "secret": False},
+            {"key": "web_client_id", "label": "Web Client ID (native audience)", "secret": False},
+            {"key": "android_client_id", "label": "Android Client ID (native audience)", "secret": False},
+            {"key": "ios_client_id", "label": "iOS Client ID (native audience)", "secret": False},
+            {"key": "frontend_return_url", "label": "Frontend Callback URL", "secret": False},
+        ],
+    },
+    "webpush_user": {
+        "label": "Web Push — User App",
+        "description": "VAPID keys + Firebase web config for user web-push notifications",
+        "keys": [
+            {"key": "vapid_public_key", "label": "VAPID Public Key", "secret": False},
+            {"key": "vapid_private_key", "label": "VAPID Private Key", "secret": True},
+            {"key": "web_api_key", "label": "Firebase Web API Key", "secret": False},
+            {"key": "web_app_id", "label": "Firebase Web App ID", "secret": False},
+            {"key": "web_project_id", "label": "Firebase Project ID", "secret": False},
+            {"key": "web_messaging_sender_id", "label": "Messaging Sender ID", "secret": False},
+            {"key": "web_auth_domain", "label": "Firebase Auth Domain", "secret": False},
+        ],
+    },
+    "webpush_astro": {
+        "label": "Web Push — Astrologer App",
+        "description": "VAPID keys + Firebase web config for astrologer web-push notifications",
+        "keys": [
+            {"key": "vapid_public_key", "label": "VAPID Public Key", "secret": False},
+            {"key": "vapid_private_key", "label": "VAPID Private Key", "secret": True},
+            {"key": "web_api_key", "label": "Firebase Web API Key", "secret": False},
+            {"key": "web_app_id", "label": "Firebase Web App ID", "secret": False},
+            {"key": "web_project_id", "label": "Firebase Project ID", "secret": False},
+            {"key": "web_messaging_sender_id", "label": "Messaging Sender ID", "secret": False},
+            {"key": "web_auth_domain", "label": "Firebase Auth Domain", "secret": False},
         ],
     },
     "fcm_user": {
@@ -1420,6 +1460,104 @@ async def upload_fcm_credentials(
         "client_email": data.get("client_email"),
         "message": t("msg.fcm_uploaded", lang, project=project),
     }
+
+
+# ── Web Push (VAPID + Firebase web config) ────────────────────────────
+
+# Map admin "project" path segment → (platform_settings category, FCM role).
+_WEBPUSH_PROJECTS = {
+    "user": ("webpush_user", "user"),
+    "astro": ("webpush_astro", "astrologer"),
+}
+
+class WebPushConfigRequest(BaseModel):
+    # All optional so a partial update is possible; blank secret is ignored.
+    vapid_public_key: Optional[str] = None
+    vapid_private_key: Optional[str] = None
+    web_api_key: Optional[str] = None
+    web_app_id: Optional[str] = None
+    web_project_id: Optional[str] = None
+    web_messaging_sender_id: Optional[str] = None
+    web_auth_domain: Optional[str] = None
+
+
+class WebPushTestRequest(BaseModel):
+    token: str
+    title: Optional[str] = None
+    body: Optional[str] = None
+
+
+@router.post("/webpush/{project}")
+def set_webpush_config(
+    project: str,  # "user" or "astro"
+    req: WebPushConfigRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Set VAPID keys + Firebase web config for a project's web push.
+
+    Mirrors the FCM upload pattern: writes to platform_settings under
+    category webpush_{user|astro}. A blank secret (vapid_private_key) is
+    skipped so it is never overwritten with an empty value.
+    """
+    if project not in _WEBPUSH_PROJECTS:
+        raise HTTPException(status_code=400, detail=t("err.invalid_webpush_project", lang))
+    category, _ = _WEBPUSH_PROJECTS[project]
+    secret_keys = {"vapid_private_key"}
+
+    updated = 0
+    for key, value in req.dict().items():
+        if value is None:
+            continue
+        is_secret = key in secret_keys
+        if is_secret and str(value).strip() == "":
+            continue
+        existing = db.query(PlatformSetting).filter(
+            PlatformSetting.category == category,
+            PlatformSetting.key == key,
+        ).first()
+        if existing:
+            existing.value = str(value)
+            existing.updated_by = current_user.id
+        else:
+            db.add(PlatformSetting(
+                category=category, key=key, value=str(value),
+                is_secret=is_secret, updated_by=current_user.id,
+            ))
+        updated += 1
+    db.commit()
+    return {"project": project, "category": category, "updated_fields": updated,
+            "message": t("msg.webpush_saved", lang, project=project)}
+
+
+@router.post("/webpush/{project}/test")
+def send_test_webpush(
+    project: str,  # "user" or "astro"
+    req: WebPushTestRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Send a test web-push notification to a single web token, using the
+    Firebase project (user/astro) that owns that token."""
+    if project not in _WEBPUSH_PROJECTS:
+        raise HTTPException(status_code=400, detail=t("err.invalid_webpush_project", lang))
+    if not req.token or not req.token.strip():
+        raise HTTPException(status_code=400, detail=t("err.webpush_token_required", lang))
+    _, role = _WEBPUSH_PROJECTS[project]
+
+    ok = send_push(
+        fcm_token=None,
+        web_token=req.token.strip(),
+        title=req.title or t("label.webpush.test_title", lang),
+        body=req.body or t("label.webpush.test_body", lang),
+        role=role,
+        data={"type": "webpush_test"},
+    )
+    if not ok:
+        raise HTTPException(status_code=502, detail=t("err.webpush_test_failed", lang))
+    return {"project": project, "sent": True, "message": t("msg.webpush_test_sent", lang)}
 
 
 # ══════════════════════════════════════════════════════════════════════
