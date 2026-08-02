@@ -6,7 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { BookOpen, Play, Loader2, ChevronRight, AlertCircle } from "lucide-react";
+import {
+  BookOpen, Play, Loader2, ChevronRight, AlertCircle, Copy, Check,
+  ShieldCheck, CreditCard, Sparkles, FileText, Moon as MoonIcon, Terminal, Package, FileJson,
+} from "lucide-react";
 import {
   fetchGatewayCategorySamples, callGatewayEndpoint, GATEWAY_CATEGORIES,
   type GatewayCategorySamples, type GatewayEndpointSample,
@@ -26,6 +29,20 @@ const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   forecast: "Today's probability forecast for a birth chart.",
 };
 
+// F.4 documentation cards — quick-reference tiles into the live Swagger/
+// Redoc docs and the sections already on this page (Auth, Payments/
+// Subscription, the 4 gateway categories, SDK samples, and this Playground).
+const DOC_CARDS = [
+  { icon: ShieldCheck, label: "Authentication", desc: "Bearer sk_live_/sk_test_ keys", href: "https://api.nakshatralogy.com/api/v2/docs" },
+  { icon: CreditCard, label: "Payments & Subscription", desc: "Wallet-funded All-Access plan", href: "/subscription" },
+  { icon: Sparkles, label: "Kundli", desc: "Birth chart + analysis modules", href: "#kundli" },
+  { icon: FileText, label: "Special Reports", desc: "19 report engines", href: "#reports" },
+  { icon: MoonIcon, label: "Rashi", desc: "12-sign zodiac metadata", href: "#rashi" },
+  { icon: Terminal, label: "Today Forecast", desc: "Daily probability forecast", href: "#forecast" },
+  { icon: Package, label: "SDK Samples", desc: "curl · Python · Node · PHP", href: "#playground" },
+  { icon: FileJson, label: "Postman / OpenAPI", desc: "Swagger + Redoc reference", href: "https://api.nakshatralogy.com/api/v2/redoc" },
+];
+
 export default function DocsPlaygroundPage() {
   const [byCategory, setByCategory] = useState<Record<string, GatewayCategorySamples>>({});
   const [loading, setLoading] = useState(true);
@@ -37,6 +54,13 @@ export default function DocsPlaygroundPage() {
   const [running, setRunning] = useState(false);
   const [response, setResponse] = useState<{ ok: boolean; data: any } | null>(null);
   const [elapsedMs, setElapsedMs] = useState<number | null>(null);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const copyText = (key: string, text: string) => {
+    navigator.clipboard?.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 1500);
+  };
 
   useEffect(() => {
     localStorage.setItem("developer_playground_key", apiKey);
@@ -117,6 +141,35 @@ export default function DocsPlaygroundPage() {
         </Card>
       )}
 
+      {/* Documentation cards */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {DOC_CARDS.map((d) => {
+          const isAnchor = d.href.startsWith("#");
+          const CardInner = (
+            <>
+              <div className="grid h-9 w-9 flex-none place-items-center rounded-xl bg-gold/10 text-gold"><d.icon className="h-[16px] w-[16px]" /></div>
+              <div className="min-w-0">
+                <b className="block truncate text-[13px] text-foreground">{d.label}</b>
+                <span className="truncate text-[11px] text-muted-foreground">{d.desc}</span>
+              </div>
+            </>
+          );
+          return isAnchor ? (
+            <button
+              key={d.label}
+              onClick={() => setActiveCategory(d.href.slice(1) === "playground" ? activeCategory : (d.href.slice(1) || activeCategory))}
+              className="lift flex items-center gap-2.5 rounded-xl border border-border/70 bg-glass/40 p-3 text-left"
+            >
+              {CardInner}
+            </button>
+          ) : (
+            <a key={d.label} href={d.href} target={d.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="lift flex items-center gap-2.5 rounded-xl border border-border/70 bg-glass/40 p-3">
+              {CardInner}
+            </a>
+          );
+        })}
+      </div>
+
       <Tabs value={activeCategory} onValueChange={(v) => { setActiveCategory(v); setActiveEndpoint(null); setResponse(null); }}>
         <TabsList>
           {GATEWAY_CATEGORIES.map((c) => (
@@ -190,11 +243,16 @@ export default function DocsPlaygroundPage() {
 
                       {response && (
                         <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className={response.ok ? "border-emerald-500/30 text-emerald-400" : "border-red-500/30 text-red-400"}>
-                              {response.ok ? "Success" : "Error"}
-                            </Badge>
-                            {elapsedMs !== null && <span className="text-xs text-muted-foreground">{elapsedMs}ms</span>}
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className={response.ok ? "border-emerald-500/30 text-emerald-400" : "border-red-500/30 text-red-400"}>
+                                {response.ok ? "Success" : "Error"}
+                              </Badge>
+                              {elapsedMs !== null && <span className="text-xs text-muted-foreground">{elapsedMs}ms</span>}
+                            </div>
+                            <Button size="sm" variant="ghost" onClick={() => copyText("response", JSON.stringify(response.data, null, 2))}>
+                              {copiedKey === "response" ? <Check className="mr-1 h-3.5 w-3.5 text-emerald-400" /> : <Copy className="mr-1 h-3.5 w-3.5" />} Copy
+                            </Button>
                           </div>
                           <pre className="max-h-72 overflow-auto rounded-lg bg-muted p-3 text-xs">{JSON.stringify(response.data, null, 2)}</pre>
                         </div>
@@ -208,7 +266,10 @@ export default function DocsPlaygroundPage() {
                           <TabsTrigger value="php">PHP</TabsTrigger>
                         </TabsList>
                         {Object.entries(activeEndpoint.samples).map(([lang, code]) => (
-                          <TabsContent key={lang} value={lang}>
+                          <TabsContent key={lang} value={lang} className="relative">
+                            <Button size="sm" variant="ghost" className="absolute right-1 top-1 z-10" onClick={() => copyText(lang, code)}>
+                              {copiedKey === lang ? <Check className="mr-1 h-3.5 w-3.5 text-emerald-400" /> : <Copy className="mr-1 h-3.5 w-3.5" />} Copy
+                            </Button>
                             <pre className="max-h-72 overflow-auto rounded-lg bg-muted p-3 text-xs">{code}</pre>
                           </TabsContent>
                         ))}
