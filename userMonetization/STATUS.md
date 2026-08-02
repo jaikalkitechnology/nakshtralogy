@@ -9,7 +9,7 @@ gate access + presentation.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 3 / 15 tasks DONE · Phase 2 next.
+**Summary:** 6 / 15 tasks DONE · Phase 3 next.
 
 ---
 
@@ -33,9 +33,9 @@ gate access + presentation.
 ## Phase 2 — Free primary chart (non-deletable)
 | # | Task | Status |
 |---|------|--------|
-| 2.1 | `create_chart`: first chart per user → `is_primary = true` (exactly one primary); expose `is_primary` in chart responses | PENDING |
-| 2.2 | Block **edit + delete** of a primary chart (API 403 with clear message) | PENDING |
-| 2.3 | `birth_chart` pricing `max_free_per_user = 1`; extra charts consume the `extra_chart` price | PENDING |
+| 2.1 | `create_chart`: first chart per user → `is_primary = true` (exactly one primary); expose `is_primary` in chart responses | DONE (33560cd, 2026-08-02) |
+| 2.2 | Block **edit + delete** of a primary chart (API 403 with clear message) | DONE (33560cd, 2026-08-02) |
+| 2.3 | `birth_chart` pricing `max_free_per_user = 1`; extra charts consume the `extra_chart` price | DONE (33560cd, 2026-08-02) |
 
 ## Phase 3 — Admin panel (editable fees)
 | # | Task | Status |
