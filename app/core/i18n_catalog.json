@@ -6159,5 +6159,14 @@
     "english": "You've used your free Primary Kundli. Unlock an additional chart to continue.",
     "hindi": "आपने अपनी मुफ़्त प्राथमिक कुंडली उपयोग कर ली है। जारी रखने के लिए एक अतिरिक्त कुंडली अनलॉक करें।",
     "hinglish": "Aapne apni free Primary Kundli use kar li hai. Aage badhne ke liye ek extra chart unlock karein."
+  },
+  "err.invalid_region": {
+    "english": "Invalid region — must be IN or INTL"
+  },
+  "err.iap_verification_failed": {
+    "english": "Purchase verification failed"
+  },
+  "err.iap_product_mismatch": {
+    "english": "Purchase product does not match this service"
   }
 }

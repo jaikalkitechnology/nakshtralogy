@@ -62,6 +62,13 @@ class User(Base):
     moon_sign = Column(Integer, nullable=True)       # 0-11 cached for gochar
     role = Column(String(20), nullable=False, default="user")  # user | astrologer | admin
     preferred_language = Column(String(20), nullable=True)  # canonical i18n code (hindi, tamil, …)
+    # Internationalization — region drives language mode + currency, NOT any
+    # astrology logic. "IN" | "INTL"; country_code is ISO alpha-2 (US, FR, …).
+    # region_manual=True means the user picked the region themselves in Settings
+    # and auto IP-geo detection must not overwrite it.
+    region = Column(String(4), nullable=True)            # IN | INTL
+    country_code = Column(String(2), nullable=True)      # ISO alpha-2
+    region_manual = Column(Boolean, default=False, nullable=False)
     google_id = Column(String(255), unique=True, nullable=True)
     fcm_token = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
