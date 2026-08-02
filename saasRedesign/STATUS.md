@@ -12,23 +12,25 @@ radius, star particles, light/dark), keeping Nakshtralogy's mystical brand.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verification:** static only (no `node_modules`/npm here — never claim a build).
 
-**Summary:** 0 / 24 tasks DONE · Phase A next.
+**Summary:** 5 / 24 tasks DONE · Foundation (A.1–A.2, B.1–B.3) shipped for
+react_admin at route **`/admin/v2`** (existing `/admin` untouched) · agent to
+continue at A.3.
 
 ---
 
 ## Phase A — Shared design system
 | # | Task | Status |
 |---|------|--------|
-| A.1 | Theme tokens (both apps): navy/gold/purple palette, glass surfaces, radius, shadows, Manrope; light + dark via `:root`/`.dark`; Tailwind config extend | PENDING |
-| A.2 | Animated star-particle background component + reusable primitives (GlassCard, StatCard w/ sparkline + count-up, Pill/Badge, Ring, SectionHeader, EmptyState, Skeletons) | PENDING |
+| A.1 | Theme tokens (both apps): navy/gold/purple palette, glass surfaces, radius, shadows, Manrope; light + dark via `:root`/`.dark`; Tailwind config extend | DONE (foundation, 2026-08-02) |
+| A.2 | Animated star-particle background component + reusable primitives (GlassCard, StatCard w/ sparkline + count-up, Pill/Badge, Ring, SectionHeader, EmptyState, Skeletons) | DONE (foundation, 2026-08-02) — StarField reused; GlassPanel/StatCard(sparkline+count-up)/Ring/StatusRow/EmptyState/Sparkline added under components/premium |
 | A.3 | Premium **DataTable** kit: sort, filter, search, pagination, column-resize, CSV + Excel export, bulk actions, sticky header, empty/loading/error | PENDING |
 
 ## Phase B — Admin shell (react_admin)
 | # | Task | Status |
 |---|------|--------|
-| B.1 | **Fixed collapsible sidebar** (280/78px, pinned logo top + profile/logout bottom, invisible-scroll nav, gold-glow active, group headers, 250–300ms) per the fixed-sidebar contract | PENDING |
-| B.2 | **Sticky header**: breadcrumb, global search (⌘K), notifications, messages, theme toggle, refresh, avatar, role badge, Quick-Create | PENDING |
-| B.3 | Shell wiring: content area margin tracks sidebar, single scroller, page transitions, FAB; mobile off-canvas drawer + overlay + swipe + auto-close | PENDING |
+| B.1 | **Fixed collapsible sidebar** (280/78px, pinned logo top + profile/logout bottom, invisible-scroll nav, gold-glow active, group headers, 250–300ms) per the fixed-sidebar contract | DONE (foundation, 2026-08-02) |
+| B.2 | **Sticky header**: breadcrumb, global search (⌘K), notifications, messages, theme toggle, refresh, avatar, role badge, Quick-Create | DONE (foundation, 2026-08-02) |
+| B.3 | Shell wiring: content area margin tracks sidebar, single scroller, page transitions, FAB; mobile off-canvas drawer + overlay + swipe + auto-close | DONE (foundation, 2026-08-02) |
 | B.4 | Convert AdminPanel into a routed multi-page app inside the shell WITHOUT losing any existing feature/handler/endpoint | PENDING |
 
 ## Phase C — Admin dashboard (Overview)
