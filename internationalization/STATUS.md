@@ -47,7 +47,7 @@ is the FINAL phase. Never change astrology logic.
 | # | Task | Status |
 |---|------|--------|
 | C.1 | Add remaining international UI locales: **es, pt-BR, de, it, ru, ar, id, ja** (English interim + emit `*_source.json`); register all in supportedLocales/backend | DONE (5b15d6a, 2026-08-02) |
-| C.2 | **RTL** support + audit for Arabic (Directionality, mirrored paddings/icons/chart widgets) | PENDING |
+| C.2 | **RTL** support + audit for Arabic (Directionality, mirrored paddings/icons/chart widgets) | DONE (cba22e0, 2026-08-02) |
 | C.3 | Smooth-worldwide pass: money/date/number via `intl` + session currency; no hardcoded ₹/+91/IST/Indian-city defaults in user-visible paths; international phone + city/place search | PENDING |
 | C.4 | Backend report-body translation registered + cached for all new language codes | PENDING |
 | C.5 | Full static verification pass (py_compile; balcheck/refcheck/ARB validity+parity for every locale; react_admin imports) + tracker finalize | PENDING |

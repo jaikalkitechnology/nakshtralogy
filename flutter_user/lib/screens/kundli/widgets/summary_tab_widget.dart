@@ -40,6 +40,20 @@ class SummaryTabWidget extends StatelessWidget {
     ]);
   }
 
+  /// Format the chart's stored birth timezone as a UTC offset (e.g. "UTC +5:30",
+  /// "UTC −4:00"). No India-only IST assumption — international charts show their
+  /// own offset. Falls back to a neutral "UTC" when the chart carries no tz.
+  String _formatTimezone(dynamic tz) {
+    if (tz == null) return 'UTC';
+    final off = tz is num ? tz.toDouble() : double.tryParse(tz.toString());
+    if (off == null) return tz.toString();
+    final sign = off < 0 ? '−' : '+';
+    final abs = off.abs();
+    final h = abs.floor();
+    final m = ((abs - h) * 60).round();
+    return 'UTC $sign$h:${m.toString().padLeft(2, '0')}';
+  }
+
   // ── Section 1: Birth Details ─────────────────────────────────────────
   Widget _birthCard(BuildContext context, AppLocalizations l) {
     final rows = <List<String>>[
@@ -47,7 +61,7 @@ class SummaryTabWidget extends StatelessWidget {
       [l.dob, chart['dob']?.toString() ?? '—'],
       [l.tob, chart['tob']?.toString() ?? '—'],
       [l.place, chart['place']?.toString() ?? '—'],
-      [l.sumTimezone, 'IST (UTC +5:30)'],
+      [l.sumTimezone, _formatTimezone(chart['timezone'])],
       [l.sumAyanamsa, 'Lahiri'],
       [l.sumCalendarType, 'Vedic / Sidereal'],
     ];
