@@ -35,6 +35,19 @@ _LANG_DESC = {
     "marathi": "Marathi (Devanagari script)",
     "punjabi": "Punjabi (Gurmukhi script)",
     "odia": "Odia script",
+    # International languages (international AppMode). Phase A pilots:
+    "french": "French",
+    "chinese": "Simplified Chinese (zh-Hans, Mandarin, Simplified Han characters)",
+    "thai": "Thai script",
+    # Phase C languages (registered here so report BODIES translate for them):
+    "spanish": "Spanish",
+    "portuguese": "Brazilian Portuguese (pt-BR)",
+    "german": "German",
+    "italian": "Italian",
+    "russian": "Russian (Cyrillic script)",
+    "arabic": "Modern Standard Arabic (right-to-left script)",
+    "indonesian": "Indonesian (Bahasa Indonesia)",
+    "japanese": "Japanese (mix of Kanji, Hiragana and Katakana as appropriate)",
 }
 
 _SYSTEM = (
