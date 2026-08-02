@@ -79,6 +79,51 @@ class ForecastGatewayRequest(GatewayBirthData):
     pass
 
 
+# ── Phase 8 — granular category endpoints ──────────────────────────────
+# Kundli category: most single-feature endpoints (summary/planets/chart/
+# divisional/dosh/yoga/shadbala/ashtakavarga/aspects/life-areas/bhava/
+# chakra-health) reuse `GatewayBirthData` as-is. Dasha + dasha-activation +
+# gochar need one extra field each.
+
+class KundliDashaRequest(GatewayBirthData):
+    """POST /api/v2/kundli/dasha/vimshottari|moola body."""
+    levels: int = Field(5, ge=1, le=6, description="Dasha drill-down depth (MD→AD→PD…up to Sookshma).")
+
+
+class KundliDashaActivationRequest(GatewayBirthData):
+    """POST /api/v2/kundli/dasha-activation body."""
+    query_date: Optional[str] = Field(None, description="DD/MM/YYYY — defaults to today.")
+
+
+class KundliGocharRequest(GatewayBirthData):
+    """POST /api/v2/kundli/gochar body — today's 12-rashi transit scores,
+    personalized against this chart's Moon sign."""
+    date: Optional[str] = Field(None, description="YYYY-MM-DD — defaults to today.")
+
+
+class TwoChartGatewayRequest(BaseModel):
+    """POST /api/v2/reports/{kundli_milan|relationship|child_probability|
+    love_compatibility|karma_linkage} body — the 5 combined/two-chart
+    reports. `context` is only used by `relationship`; `focus_question` is
+    only used by `karma_linkage` — both are ignored by the others."""
+    person1: GatewayBirthData = Field(..., description="First person's birth details.")
+    person2: GatewayBirthData = Field(..., description="Second person's birth details.")
+    context: Optional[str] = Field(
+        "general", description="Relationship context (relationship report only): "
+                                "general|business|love|family|team|friendship.")
+    focus_question: Optional[str] = Field(
+        None, description="Optional focus question (karma_linkage report only).")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "person1": {"name": "Priya Singh", "gender": "F", "dob": "22/03/1995", "tob": "14:15", "place": "Mumbai, India"},
+                "person2": {"name": "Rahul Kumar", "gender": "M", "dob": "15/08/1992", "tob": "06:30", "place": "Delhi, India"},
+            }
+        }
+    }
+
+
 class GatewayMeta(BaseModel):
     product: str
     endpoint: Optional[str] = None
