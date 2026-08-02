@@ -11,7 +11,7 @@ is the FINAL phase. Never change astrology logic.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 4 / 18 tasks DONE · Phase A complete · Phase B next.
+**Summary:** 9 / 18 tasks DONE · Phases A + B complete · Phase C next.
 
 ---
 
@@ -41,7 +41,7 @@ is the FINAL phase. Never change astrology logic.
 | B.2 | Currency-aware responses: `/service/pricing`, `/service/entitlements`, paywall 402 return `{currency, amount, iap_product_id}` for the session region | DONE (6fa915b, 2026-08-02) |
 | B.3 | react_admin Pricing: show/edit `price_usd` + `iap_product_id`, "regenerate USD from rule" action, FX-rate setting | DONE (283b034, 2026-08-02) |
 | B.4 | flutter_user IAP purchase flow (`in_app_purchase` plugin): buy the tier → `POST /service/iap/verify` (scaffold verify) → grant `ServiceOrder`; paywall shows USD/tier for international, ₹/wallet for India | DONE (69913d6, 2026-08-02) |
-| B.5 | Wallet: show balance in **USD** when international (display conversion via admin FX); ledger unchanged; hide India-only recharge for international (IAP instead) | PENDING |
+| B.5 | Wallet: show balance in **USD** when international (display conversion via admin FX); ledger unchanged; hide India-only recharge for international (IAP instead) | DONE (79b5252, 2026-08-02) |
 
 ## Phase C — Full language set + smooth-worldwide polish
 | # | Task | Status |
