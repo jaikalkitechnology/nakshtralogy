@@ -9,7 +9,7 @@ gate access + presentation.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 0 / 15 tasks DONE · Phase 1 next.
+**Summary:** 3 / 15 tasks DONE · Phase 2 next.
 
 ---
 
@@ -26,9 +26,9 @@ gate access + presentation.
 ## Phase 1 — Backend pricing & entitlements
 | # | Task | Status |
 |---|------|--------|
-| 1.1 | Expand `POST /service/pricing/seed` (idempotent) to ALL 19 reports + `moola_dasha` + `daily_forecast` + `extra_chart`, with category (report/kundli/forecast), price, original_price, is_free, icon, features_json, sort_order, engine_function/service_key mapping to the specialist keys | PENDING |
-| 1.2 | `GET /service/entitlements?chart_id=` → per-service `{service_key, unlocked, is_free, price, original_price, pricing_id, order_id?}` for that chart (free-primary basics + purchased orders = unlocked) | PENDING |
-| 1.3 | Server-side **402 gating** on paid endpoints for end users (specialist `/analyze`, forecast detailed, moola dasha): if not entitled → 402 `{service_key, price, pricing_id}`; free-primary basics + astrologer/admin context stay allowed. Never alter the report payload itself | PENDING |
+| 1.1 | Expand `POST /service/pricing/seed` (idempotent) to ALL 19 reports + `moola_dasha` + `daily_forecast` + `extra_chart`, with category (report/kundli/forecast), price, original_price, is_free, icon, features_json, sort_order, engine_function/service_key mapping to the specialist keys | DONE (1bbf531, 2026-08-02) |
+| 1.2 | `GET /service/entitlements?chart_id=` → per-service `{service_key, unlocked, is_free, price, original_price, pricing_id, order_id?}` for that chart (free-primary basics + purchased orders = unlocked) | DONE (b5e41b3, 2026-08-02) |
+| 1.3 | Server-side **402 gating** on paid endpoints for end users (specialist `/analyze`, forecast detailed, moola dasha): if not entitled → 402 `{service_key, price, pricing_id}`; free-primary basics + astrologer/admin context stay allowed. Never alter the report payload itself | DONE (dceda01, 2026-08-02) |
 
 ## Phase 2 — Free primary chart (non-deletable)
 | # | Task | Status |
