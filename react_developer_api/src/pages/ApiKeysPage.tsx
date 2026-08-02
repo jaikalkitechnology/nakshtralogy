@@ -10,9 +10,10 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from "@/components/ui/dialog";
-import { KeyRound, Plus, RotateCw, XCircle, Copy, Check } from "lucide-react";
+import { KeyRound, Plus, RotateCw, XCircle, Copy, Check, Webhook, Globe, Gauge } from "lucide-react";
 import DataTable, { type DataTableColumn } from "@/components/DataTable";
 import { listApiKeys, createApiKey, rotateApiKey, revokeApiKey } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ApiKeyRow {
   id: string;
@@ -31,6 +32,7 @@ const PAGE_SIZE = 10;
 const ALL_SCOPES = ["kundli", "reports", "rashi", "forecast"];
 
 export default function ApiKeysPage() {
+  const { developer } = useAuth();
   const [rows, setRows] = useState<ApiKeyRow[]>([]);
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -117,6 +119,36 @@ export default function ApiKeysPage() {
           <p className="text-sm text-muted-foreground">Create live/test keys, rotate or revoke them. Secrets are shown once.</p>
         </div>
         <Button onClick={() => setCreateOpen(true)}><Plus className="mr-1 h-4 w-4" /> New key</Button>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
+          <CardContent className="flex items-center gap-3 pt-4">
+            <Gauge className="h-5 w-5 flex-none text-primary" />
+            <div>
+              <p className="text-xs text-muted-foreground">Rate limit</p>
+              <p className="text-sm font-medium">{developer?.subscription?.tps_limit ?? "—"} req/s per key</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
+          <CardContent className="flex items-center gap-3 pt-4">
+            <Globe className="h-5 w-5 flex-none text-primary" />
+            <div>
+              <p className="text-xs text-muted-foreground">Allowed domains</p>
+              <p className="text-sm font-medium text-muted-foreground">Not restricted yet</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
+          <CardContent className="flex items-center gap-3 pt-4">
+            <Webhook className="h-5 w-5 flex-none text-primary" />
+            <div>
+              <p className="text-xs text-muted-foreground">Webhooks</p>
+              <p className="text-sm font-medium text-muted-foreground">Coming soon</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
