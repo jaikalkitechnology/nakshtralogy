@@ -43,8 +43,10 @@ from app.schemas.service_schema import (
     BirthChartCreateRequest, BirthChartResponse, BirthChartListResponse,
     BirthChartUpdateRequest, ComputeServiceRequest, GocharRequest,
     PurchaseServiceRequest, ServiceOrderResponse, ServiceOrderListResponse,
-    MessageResponse,
+    MessageResponse, PricingSettingsUpdate,
 )
+from app.core import pricing as pricing_util
+from app.core import region as region_util
 
 router = APIRouter()
 
@@ -166,6 +168,14 @@ def create_pricing(
     if db.query(ServicePricing).filter(ServicePricing.service_key == req.service_key).first():
         raise HTTPException(status_code=409, detail=t("err.service_key_exists", lang))
     sp = ServicePricing(**req.model_dump())
+    # Seed the USD price from the global rule (free services stay null).
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+    usd = pricing_util.usd_for_pricing(sp, fx, mult)
+    sp.price_usd = usd
+    sp.iap_product_id = (
+        pricing_util.iap_product_id_for(sp.service_key, usd) if usd else None
+    )
     db.add(sp)
     db.commit()
     db.refresh(sp)
@@ -183,11 +193,66 @@ def update_pricing(
     sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not sp:
         raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
-    for field, value in req.model_dump(exclude_unset=True).items():
+    data = req.model_dump(exclude_unset=True)
+    # Editing the USD price or store product id is a manual override → protect it
+    # from the bulk "regenerate USD" rule, unless the admin explicitly toggles
+    # price_usd_manual in the same request.
+    manual_touch = ("price_usd" in data or "iap_product_id" in data) and "price_usd_manual" not in data
+    for field, value in data.items():
         setattr(sp, field, value)
+    if manual_touch:
+        sp.price_usd_manual = True
+    # If the INR price changed and the row isn't a manual override, refresh USD.
+    if "price" in data and not sp.price_usd_manual:
+        fx = pricing_util.get_fx_rate(db)
+        mult = pricing_util.get_multiplier(db)
+        usd = pricing_util.usd_for_pricing(sp, fx, mult)
+        sp.price_usd = usd
+        sp.iap_product_id = (
+            pricing_util.iap_product_id_for(sp.service_key, usd) if usd else None
+        )
     db.commit()
     db.refresh(sp)
     return sp
+
+
+# ── USD pricing settings + bulk regenerate (admin) ───────────────────
+
+@router.get("/pricing-settings/usd")
+def get_usd_pricing_settings(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin: current FX rate + multiplier + IAP tier ladder used by the global
+    USD rule ``usd = round_to_tier(inr × MULT ÷ FX)``."""
+    return pricing_util.get_pricing_settings(db)
+
+
+@router.put("/pricing-settings/usd")
+def update_usd_pricing_settings(
+    req: PricingSettingsUpdate,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin: set the FX rate (INR per USD) and/or multiplier. Does not itself
+    re-price services — call POST /pricing/regenerate-usd for that."""
+    return pricing_util.set_pricing_settings(
+        db,
+        fx_rate=req.fx_rate_usd,
+        multiplier=req.usd_multiplier,
+        updated_by=current_user.id,
+    )
+
+
+@router.post("/pricing/regenerate-usd")
+def regenerate_usd(
+    force: bool = Query(False, description="Also overwrite admin-overridden prices"),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin: recompute price_usd + iap_product_id for every priced service from
+    the current rule. Skips manual overrides unless force=true."""
+    return pricing_util.regenerate_usd_prices(db, force=force)
 
 
 @router.delete("/pricing/{pricing_id}", response_model=MessageResponse)

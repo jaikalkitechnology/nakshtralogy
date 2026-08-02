@@ -324,9 +324,17 @@ class ServicePricing(Base):
     description = Column(Text, nullable=True)
     icon = Column(String(10), nullable=True)           # emoji icon for UI
     category = Column(String(30), default="kundli")    # kundli | report | consultation | ai
-    price = Column(Numeric(10, 2), default=0.00)       # 0 = free
+    price = Column(Numeric(10, 2), default=0.00)       # 0 = free (INR)
     original_price = Column(Numeric(10, 2), nullable=True)  # for showing discount
     currency = Column(String(3), default="INR")
+    # Internationalization — USD price sold via store IAP tiers (App Store /
+    # Google Play). Default computed by rule usd = round_to_tier(inr × MULT ÷ FX)
+    # (see app/core/pricing.py); admin may override, which sets price_usd_manual
+    # so a bulk "regenerate USD" leaves the override untouched. iap_product_id is
+    # the store product id for this service+tier. NOT used by any astrology logic.
+    price_usd = Column(Numeric(10, 2), nullable=True)
+    iap_product_id = Column(String(100), nullable=True)
+    price_usd_manual = Column(Boolean, default=False, nullable=False)
     is_free = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)

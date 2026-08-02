@@ -17,6 +17,10 @@ class ServicePricingResponse(BaseModel):
     price: float = 0
     original_price: Optional[float] = None
     currency: str = "INR"
+    # USD (international / store IAP). price_usd may be null for free services.
+    price_usd: Optional[float] = None
+    iap_product_id: Optional[str] = None
+    price_usd_manual: bool = False
     is_free: bool = False
     is_active: bool = True
     sort_order: int = 0
@@ -54,11 +58,22 @@ class ServicePricingUpdate(BaseModel):
     category: Optional[str] = None
     price: Optional[float] = Field(None, ge=0)
     original_price: Optional[float] = Field(None, ge=0)
+    # USD override — setting price_usd or iap_product_id marks the row manual so
+    # a bulk "regenerate USD" won't overwrite it (see PricingSettingsUpdate).
+    price_usd: Optional[float] = Field(None, ge=0)
+    iap_product_id: Optional[str] = Field(None, max_length=100)
+    price_usd_manual: Optional[bool] = None
     is_free: Optional[bool] = None
     is_active: Optional[bool] = None
     sort_order: Optional[int] = None
     features_json: Optional[List[str]] = None
     max_free_per_user: Optional[int] = None
+
+
+class PricingSettingsUpdate(BaseModel):
+    """Admin: global USD pricing knobs (stored in PlatformSetting)."""
+    fx_rate_usd: Optional[float] = Field(None, gt=0, description="INR per 1 USD")
+    usd_multiplier: Optional[float] = Field(None, gt=0, description="INR→USD multiplier (default 5)")
 
 
 # ─── Birth Chart ─────────────────────────────────────────────────────
