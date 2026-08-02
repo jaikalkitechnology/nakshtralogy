@@ -11,7 +11,7 @@ is the FINAL phase. Never change astrology logic.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 1 / 18 tasks DONE · Phase A in progress.
+**Summary:** 4 / 18 tasks DONE · Phase A complete · Phase B next.
 
 ---
 
@@ -30,7 +30,7 @@ is the FINAL phase. Never change astrology logic.
 | # | Task | Status |
 |---|------|--------|
 | A.1 | Backend: IP-geo region resolve (+ device-country hint header) → `region` (IN\|INTL) + `is_international` on the user (manual override); expose in profile / a `GET /me/region` | DONE (d37113e, 2026-08-02) |
-| A.2 | flutter_user `AppMode` (india\|international) from region; language picker shows ONLY international languages when international (hide Indian), default device→English; India unchanged | PENDING |
+| A.2 | flutter_user `AppMode` (india\|international) from region; language picker shows ONLY international languages when international (hide Indian), default device→English; India unchanged | DONE (6cd771a, 2026-08-02) |
 | A.3 | Add pilot international UI locales — English (have) + **French (fr)** + **Chinese (zh-Hans)** + **Thai (th)**: ARB files (English interim), register in l10n.yaml/supportedLocales/MaterialApp; emit `*_source.json` for translation | DONE (80c685f, 2026-08-02) |
 | A.4 | Register fr/zh/th (+ backend codes) so report bodies translate via the existing `report_translator` / `get_lang`; verify `?lang=`/`Accept-Language` mapping | DONE (83b25e6, 2026-08-02) |
 
