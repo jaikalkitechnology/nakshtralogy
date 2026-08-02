@@ -43,7 +43,7 @@ from app.schemas.service_schema import (
     BirthChartCreateRequest, BirthChartResponse, BirthChartListResponse,
     BirthChartUpdateRequest, ComputeServiceRequest, GocharRequest,
     PurchaseServiceRequest, ServiceOrderResponse, ServiceOrderListResponse,
-    MessageResponse, PricingSettingsUpdate,
+    MessageResponse, PricingSettingsUpdate, IapVerifyRequest,
 )
 from app.core import pricing as pricing_util
 from app.core import region as region_util
@@ -1138,6 +1138,104 @@ def purchase_service(
         service_name=sp.service_name,
         service_key=sp.service_key,
         created_at=order.created_at,
+    )
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  IAP VERIFY (international store purchases → ServiceOrder grant)
+# ══════════════════════════════════════════════════════════════════════
+
+@router.post("/iap/verify", response_model=ServiceOrderResponse)
+def verify_iap_purchase(
+    req: IapVerifyRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """International (INTL) store purchase → grant a ServiceOrder.
+
+    The client buys the service's IAP tier via the in_app_purchase plugin, then
+    POSTs the receipt here. We verify the receipt (SCAFFOLD until the PAPG
+    phase — see app/services/iap_verify.py), then record a completed
+    ServiceOrder, idempotent on the store transaction id so a replayed receipt
+    returns the SAME order (no double grant). India keeps the wallet flow; this
+    path never debits the wallet. No astrology logic is touched.
+    """
+    from app.services.iap_verify import verify_receipt
+
+    sp = db.query(ServicePricing).filter(ServicePricing.id == req.service_pricing_id).first()
+    if not sp:
+        raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
+    if not sp.is_active:
+        raise HTTPException(status_code=400, detail=t("err.service_unavailable", lang))
+
+    is_credit = sp.service_key == "extra_chart"
+    chart = None
+    if req.chart_id:
+        chart = db.query(Chart).filter(
+            Chart.id == req.chart_id, Chart.user_id == current_user.id
+        ).first()
+        if not chart:
+            raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    elif not is_credit:
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    chart_ref_id = chart.id if chart is not None else None
+
+    # Idempotency: same store transaction → return the existing order.
+    existing = db.query(ServiceOrder).filter(
+        ServiceOrder.iap_transaction_id == req.transaction_id,
+        ServiceOrder.user_id == current_user.id,
+    ).first()
+    if existing:
+        return ServiceOrderResponse(
+            id=existing.id, user_id=existing.user_id,
+            service_pricing_id=existing.service_pricing_id,
+            chart_id=existing.chart_id, amount_paid=float(existing.amount_paid),
+            status=existing.status, service_name=sp.service_name,
+            service_key=sp.service_key, created_at=existing.created_at,
+        )
+
+    # Verify the store receipt (scaffold pre-PAPG; real Apple/Google in Phase D).
+    ok, info = verify_receipt(
+        platform=req.platform,
+        product_id=req.product_id,
+        transaction_id=req.transaction_id,
+        receipt=req.receipt,
+        expected_product_id=sp.iap_product_id,
+    )
+    if not ok:
+        raise HTTPException(
+            status_code=402,
+            detail={"code": "iap_verification_failed",
+                    "message": t("err.iap_verification_failed", lang), **info},
+        )
+
+    # Grant. USD amount comes from the rule/override (never trust the client).
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+    usd = pricing_util.usd_for_pricing(sp, fx, mult) or 0.0
+
+    order = ServiceOrder(
+        user_id=current_user.id,
+        service_pricing_id=sp.id,
+        chart_id=chart_ref_id,
+        amount_paid=Decimal(str(usd)),
+        status="completed",
+        payment_method="iap",
+        currency_paid="USD",
+        iap_platform=(req.platform or "").strip().lower(),
+        iap_product_id=req.product_id,
+        iap_transaction_id=req.transaction_id,
+    )
+    db.add(order)
+    db.commit()
+    db.refresh(order)
+    return ServiceOrderResponse(
+        id=order.id, user_id=order.user_id,
+        service_pricing_id=order.service_pricing_id,
+        chart_id=order.chart_id, amount_paid=float(order.amount_paid),
+        status="completed", service_name=sp.service_name,
+        service_key=sp.service_key, created_at=order.created_at,
     )
 
 

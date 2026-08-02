@@ -3,9 +3,21 @@
   "pwPremiumTitle": "Premium Report",
   "pwLockedSubtitle": "Unlock the full analysis for this chart",
   "pwUnlockFull": "Unlock full {name}",
-  "@pwUnlockFull": {"placeholders": {"name": {"type": "Object"}}},
-  "pwUnlockPrice": "Unlock · ₹{price}",
-  "@pwUnlockPrice": {"placeholders": {"price": {"type": "Object"}}},
+  "@pwUnlockFull": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "pwUnlockPrice": "Unlock · {price}",
+  "@pwUnlockPrice": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
   "pwOneTime": "One-time unlock — yours forever on this chart",
   "pwWhatYouGet": "What you get",
   "pwYourBalance": "Your wallet balance",
@@ -65,7 +77,13 @@
   "klTimingTitle": "Moola Dasha Karmic Timing",
   "klAuditTitle": "Deep Audit Table",
   "klAuditSubtitle": "{count} karmic parameters examined",
-  "@klAuditSubtitle": {"placeholders": {"count": {"type": "Object"}}},
+  "@klAuditSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "klTopicLinkage": "Our overall karmic linkage",
   "klTopicPairwise": "A specific pair's karmic bond",
   "klTopicDebts": "Karmic debts to resolve",
@@ -183,7 +201,13 @@
   "riChipHealthyGroup": "Healthy group overall",
   "riProfilesTitle": "Chart Profiles",
   "riProfilesSubtitle": "{count} people in this group",
-  "@riProfilesSubtitle": {"placeholders": {"count": {"type": "Object"}}},
+  "@riProfilesSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "riLagnaSuffix": "Lagna",
   "riIntegrity": "Integrity",
   "riWarmth": "Warmth",
@@ -200,7 +224,13 @@
   "riConflicts": "Likely Friction Points",
   "riPairwiseTitle": "Pairwise Analysis",
   "riPairwiseSubtitle": "{count} pairs analyzed",
-  "@riPairwiseSubtitle": {"placeholders": {"count": {"type": "Object"}}},
+  "@riPairwiseSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "riDynamic": "Dynamic",
   "riKarmicLink": "Karmic link",
   "riMutualTrust": "Mutual trust",
@@ -234,7 +264,13 @@
   "kmTitle": "Kundli Milan",
   "kmSnapshotHeader": "Compatibility Snapshot",
   "kmAshtakootScore": "Ashtakoot: {score}/36",
-  "@kmAshtakootScore": {"placeholders": {"score": {"type": "Object"}}},
+  "@kmAshtakootScore": {
+    "placeholders": {
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
   "kmGaugeAshtakoot": "Ashtakoot %",
   "kmGaugeD9": "D9 Marriage Karma",
   "kmGaugeMangal": "Mangal Balance",
@@ -325,7 +361,19 @@
   "pkTitle": "Past Life & Karma",
   "pkSnapshotHeader": "Past-Life Snapshot",
   "pkHeroSummary": "Your chart shows a '{theme}' past-life signature, currently {relation} into this life. Recommended path: {strategy}.",
-  "@pkHeroSummary": {"placeholders": {"theme": {"type": "Object"}, "relation": {"type": "Object"}, "strategy": {"type": "Object"}}},
+  "@pkHeroSummary": {
+    "placeholders": {
+      "theme": {
+        "type": "Object"
+      },
+      "relation": {
+        "type": "Object"
+      },
+      "strategy": {
+        "type": "Object"
+      }
+    }
+  },
   "pkGaugeSignature": "Signature Strength",
   "pkGaugeMasteryPreserved": "Mastery Preserved",
   "pkGaugeClearingProgress": "Karma Clearing",
@@ -551,7 +599,13 @@
   "chLegacyWindow": "Legacy Window",
   "chPeakMaturationAge": "Peak maturation age",
   "chAgeRangeLabel": "Age {ageRange}",
-  "@chAgeRangeLabel": {"placeholders": {"ageRange": {"type": "Object"}}},
+  "@chAgeRangeLabel": {
+    "placeholders": {
+      "ageRange": {
+        "type": "Object"
+      }
+    }
+  },
   "chImprovementTitle": "Improvement Plan",
   "chRoadmapTitle": "Your Character Roadmap",
   "chAuthenticExpression": "Authentic Self-Expression",
@@ -574,7 +628,19 @@
   "lpTitle": "Life Path & Luck",
   "lpSnapshotHeader": "Life Path Snapshot",
   "lpHeroSummary": "You're a {archetype} with a primary purpose in {domain}. Our analysis shows a {probability}% overall life-fulfillment potential.",
-  "@lpHeroSummary": {"placeholders": {"archetype": {"type": "Object"}, "domain": {"type": "Object"}, "probability": {"type": "Object"}}},
+  "@lpHeroSummary": {
+    "placeholders": {
+      "archetype": {
+        "type": "Object"
+      },
+      "domain": {
+        "type": "Object"
+      },
+      "probability": {
+        "type": "Object"
+      }
+    }
+  },
   "lpGaugeDharma": "Dharma Clarity",
   "lpGaugeFortune": "Fortune Baseline",
   "lpGaugeCoherence": "Path Coherence",
@@ -598,7 +664,13 @@
   "lpVerificationTitle": "Verified Across Charts (D9 / D60)",
   "lpD9Label": "D9 Soul Alignment",
   "lpD9Explain": "Your soul-evolution stage is '{stage}' in the Navamsa chart.",
-  "@lpD9Explain": {"placeholders": {"stage": {"type": "Object"}}},
+  "@lpD9Explain": {
+    "placeholders": {
+      "stage": {
+        "type": "Object"
+      }
+    }
+  },
   "lpD9JupiterDignity": "Jupiter dignity",
   "lpD9DharmaMultiplier": "Dharma multiplier",
   "lpD60Label": "D60 Past-Life Signature",
@@ -636,9 +708,21 @@
   "lpMidlifeTransform": "Midlife Transformation",
   "lpLateLifeFulfillment": "Late-Life Fulfillment",
   "lpDharmicMilestone": "Dharmic Milestone (Age {age})",
-  "@lpDharmicMilestone": {"placeholders": {"age": {"type": "Object"}}},
+  "@lpDharmicMilestone": {
+    "placeholders": {
+      "age": {
+        "type": "Object"
+      }
+    }
+  },
   "lpAgeLabel": "Age {age}",
-  "@lpAgeLabel": {"placeholders": {"age": {"type": "Object"}}},
+  "@lpAgeLabel": {
+    "placeholders": {
+      "age": {
+        "type": "Object"
+      }
+    }
+  },
   "lpDestinyTitle": "Destiny vs Free Will",
   "lpDestinyStat": "Destiny Weight",
   "lpFreeWillStat": "Free Will Leverage",
@@ -703,7 +787,22 @@
   "dbTitle": "Debt & Recovery",
   "dbSnapshotHeader": "Debt Recovery Snapshot",
   "dbHeroSummary": "You're currently in a '{phase}' phase with a {personality} approach to money. Our analysis shows a {probability}% chance of becoming debt-free within about {years} years.",
-  "@dbHeroSummary": {"placeholders": {"phase": {"type": "Object"}, "personality": {"type": "Object"}, "probability": {"type": "Object"}, "years": {"type": "Object"}}},
+  "@dbHeroSummary": {
+    "placeholders": {
+      "phase": {
+        "type": "Object"
+      },
+      "personality": {
+        "type": "Object"
+      },
+      "probability": {
+        "type": "Object"
+      },
+      "years": {
+        "type": "Object"
+      }
+    }
+  },
   "dbGaugeCapacity": "Recovery Capacity",
   "dbGaugeProbability": "Recovery Chance",
   "dbGaugeFreedomNow": "Debt Freedom Now",
@@ -1848,7 +1947,16 @@
   "crTopicResume": "Resume",
   "crTopicCopied": "Question copied — paste it into your AI chat.",
   "crAlignExplainKaraka": "{soul} guides your inner calling, while {career} shapes your outer profession.",
-  "@crAlignExplainKaraka": {"placeholders": {"soul": {"type": "Object"}, "career": {"type": "Object"}}},
+  "@crAlignExplainKaraka": {
+    "placeholders": {
+      "soul": {
+        "type": "Object"
+      },
+      "career": {
+        "type": "Object"
+      }
+    }
+  },
   "rzTodayOutlook": "Today's Zodiac Outlook",
   "rzPlanetaryEnergy": "Today's Planetary Energy",
   "rzBestSign": "Best Sign",
@@ -1914,17 +2022,59 @@
   "rzKarakaRahu": "ambition & change",
   "rzKarakaKetu": "spirituality & letting go",
   "rzHomeSummary": "{dom} sets the tone of the day, while {chal} asks for patience and care.",
-  "@rzHomeSummary": {"placeholders": {"dom": {"type": "Object"}, "chal": {"type": "Object"}}},
+  "@rzHomeSummary": {
+    "placeholders": {
+      "dom": {
+        "type": "Object"
+      },
+      "chal": {
+        "type": "Object"
+      }
+    }
+  },
   "rzInsightGood": "Good day for {karaka}.",
-  "@rzInsightGood": {"placeholders": {"karaka": {"type": "Object"}}},
+  "@rzInsightGood": {
+    "placeholders": {
+      "karaka": {
+        "type": "Object"
+      }
+    }
+  },
   "rzInsightHard": "Take it slow with {karaka} today.",
-  "@rzInsightHard": {"placeholders": {"karaka": {"type": "Object"}}},
+  "@rzInsightHard": {
+    "placeholders": {
+      "karaka": {
+        "type": "Object"
+      }
+    }
+  },
   "rzInfluenceGood": "{karaka} is well supported today.",
-  "@rzInfluenceGood": {"placeholders": {"karaka": {"type": "Object"}}},
+  "@rzInfluenceGood": {
+    "placeholders": {
+      "karaka": {
+        "type": "Object"
+      }
+    }
+  },
   "rzInfluenceHard": "{karaka} may face delays today.",
-  "@rzInfluenceHard": {"placeholders": {"karaka": {"type": "Object"}}},
+  "@rzInfluenceHard": {
+    "placeholders": {
+      "karaka": {
+        "type": "Object"
+      }
+    }
+  },
   "rzDetailSummary": "Today supports {strong}, while {weak} needs patience and care.",
-  "@rzDetailSummary": {"placeholders": {"strong": {"type": "Object"}, "weak": {"type": "Object"}}},
+  "@rzDetailSummary": {
+    "placeholders": {
+      "strong": {
+        "type": "Object"
+      },
+      "weak": {
+        "type": "Object"
+      }
+    }
+  },
   "fdEnergyScore": "Today's Energy Score",
   "fdStatusAverage": "Average",
   "fdStatusMixed": "Mixed",
@@ -2017,9 +2167,27 @@
   "fdQ5": "What should I avoid today?",
   "fdMoreSuggestions": "More Suggestions",
   "fdAiSummaryLine": "Today is best suited for {top}. {weak} may feel slow, so avoid major decisions there. Financially the day looks {fin}.",
-  "@fdAiSummaryLine": {"placeholders": {"top": {"type": "Object"}, "weak": {"type": "Object"}, "fin": {"type": "Object"}}},
+  "@fdAiSummaryLine": {
+    "placeholders": {
+      "top": {
+        "type": "Object"
+      },
+      "weak": {
+        "type": "Object"
+      },
+      "fin": {
+        "type": "Object"
+      }
+    }
+  },
   "fdThemeFocusLine": "Your energy today gathers around {top} — lean into it and go gently elsewhere.",
-  "@fdThemeFocusLine": {"placeholders": {"top": {"type": "Object"}}},
+  "@fdThemeFocusLine": {
+    "placeholders": {
+      "top": {
+        "type": "Object"
+      }
+    }
+  },
   "gochToday": "Today",
   "gochOverallScore": "Overall Transit Score",
   "gochNeutral": "Neutral",
@@ -2053,15 +2221,48 @@
   "gochDontImpulsive": "Avoid impulsive decisions",
   "gochDontOverspend": "Avoid overspending",
   "gochThemeGrowth": "A day of growth in {area} — lean into it.",
-  "@gochThemeGrowth": {"placeholders": {"area": {"type": "Object"}}},
+  "@gochThemeGrowth": {
+    "placeholders": {
+      "area": {
+        "type": "Object"
+      }
+    }
+  },
   "gochThemeChallenge": "Stay patient with {area} today — go steady.",
-  "@gochThemeChallenge": {"placeholders": {"area": {"type": "Object"}}},
+  "@gochThemeChallenge": {
+    "placeholders": {
+      "area": {
+        "type": "Object"
+      }
+    }
+  },
   "gochPosLine": "{area} is well supported right now.",
-  "@gochPosLine": {"placeholders": {"area": {"type": "Object"}}},
+  "@gochPosLine": {
+    "placeholders": {
+      "area": {
+        "type": "Object"
+      }
+    }
+  },
   "gochChalLine": "{area} needs extra care today.",
-  "@gochChalLine": {"placeholders": {"area": {"type": "Object"}}},
+  "@gochChalLine": {
+    "placeholders": {
+      "area": {
+        "type": "Object"
+      }
+    }
+  },
   "gochAiFocusLine": "Put your energy into {a1} today, and be gentle with {a2}.",
-  "@gochAiFocusLine": {"placeholders": {"a1": {"type": "Object"}, "a2": {"type": "Object"}}},
+  "@gochAiFocusLine": {
+    "placeholders": {
+      "a1": {
+        "type": "Object"
+      },
+      "a2": {
+        "type": "Object"
+      }
+    }
+  },
   "divBeginner": "Beginner",
   "divSearchHint": "Search: career, marriage, education…",
   "divSummaryTitle": "Divisional Chart Summary",
@@ -2083,19 +2284,64 @@
   "divNoMatch": "No charts match your search",
   "divLifeAreas": "Life Areas",
   "divAiUse": "Use this chart to analyse {purpose}.",
-  "@divAiUse": {"placeholders": {"purpose": {"type": "Object"}}},
+  "@divAiUse": {
+    "placeholders": {
+      "purpose": {
+        "type": "Object"
+      }
+    }
+  },
   "divHeroSummary": "Your {c1} and {c2} charts are especially important — start there for the areas they cover, then explore the rest as needed.",
-  "@divHeroSummary": {"placeholders": {"c1": {"type": "Object"}, "c2": {"type": "Object"}}},
+  "@divHeroSummary": {
+    "placeholders": {
+      "c1": {
+        "type": "Object"
+      },
+      "c2": {
+        "type": "Object"
+      }
+    }
+  },
   "divRecReasonHouse": "Your {house} house needs a closer look — this chart shows it in depth.",
-  "@divRecReasonHouse": {"placeholders": {"house": {"type": "Object"}}},
+  "@divRecReasonHouse": {
+    "placeholders": {
+      "house": {
+        "type": "Object"
+      }
+    }
+  },
   "divRecReasonPlanet": "{planet} is a key but tested planet — this chart reveals its deeper condition.",
-  "@divRecReasonPlanet": {"placeholders": {"planet": {"type": "Object"}}},
+  "@divRecReasonPlanet": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "divRecReasonDasha": "You are in {planet}'s Mahadasha, so this chart is especially timely now.",
-  "@divRecReasonDasha": {"placeholders": {"planet": {"type": "Object"}}},
+  "@divRecReasonDasha": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "divRecSummary": "Based on your chart, {c1} should be your highest priority. The charts below are ordered by how relevant they are for you right now.",
-  "@divRecSummary": {"placeholders": {"c1": {"type": "Object"}}},
+  "@divRecSummary": {
+    "placeholders": {
+      "c1": {
+        "type": "Object"
+      }
+    }
+  },
   "divWhenToUseLine": "Open this chart when you want to study {purpose}.",
-  "@divWhenToUseLine": {"placeholders": {"purpose": {"type": "Object"}}},
+  "@divWhenToUseLine": {
+    "placeholders": {
+      "purpose": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaHelpful": "Helpful",
   "yogaInactive": "Inactive",
   "yogaTabMoney": "Money",
@@ -2113,9 +2359,27 @@
   "yogaNoneActive": "No active yogas yet",
   "yogaNoneInCategory": "No yogas in this category",
   "yogaHeroSummary": "Your chart carries {count} active yogas — supportive planetary combinations. Combinations involving {planets} create especially helpful influences for growth and success.",
-  "@yogaHeroSummary": {"placeholders": {"count": {"type": "Object"}, "planets": {"type": "Object"}}},
+  "@yogaHeroSummary": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "planets": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaAiLine": "{name} supports {areas}, and its benefits grow when its planets are active in dasha or transit.",
-  "@yogaAiLine": {"placeholders": {"name": {"type": "Object"}, "areas": {"type": "Object"}}},
+  "@yogaAiLine": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "areas": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaAiGeneric": "This yoga is a supportive combination in your chart that strengthens its related areas of life.",
   "yogaExplainReassure": "Yogas are the bright spots of your chart — helpful planetary combinations working in your favour. The stronger ones deliver lasting benefits, especially during the periods of the planets that form them.",
   "doshSevere": "Severe",
@@ -2152,11 +2416,35 @@
   "doshExplainReassure": "Doshas are common — almost every chart has some. They describe tendencies, not fixed fate. Awareness, good conduct and simple remedies reduce their practical effect, so there is no need to worry.",
   "doshAiGeneric": "This dosha describes a tendency in your chart. Its practical effect is usually mild and can be balanced with awareness and simple remedies.",
   "doshHeroSummary": "Your chart shows {active} active doshas out of {total} checked. Most are mild and only a few need attention. With understanding and simple remedies, their practical effect can be eased.",
-  "@doshHeroSummary": {"placeholders": {"active": {"type": "Object"}, "total": {"type": "Object"}}},
+  "@doshHeroSummary": {
+    "placeholders": {
+      "active": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
   "doshAiLine": "This dosha mainly influences {areas}. During {planet} periods its effect can feel stronger, and remedies help balance it.",
-  "@doshAiLine": {"placeholders": {"areas": {"type": "Object"}, "planet": {"type": "Object"}}},
+  "@doshAiLine": {
+    "placeholders": {
+      "areas": {
+        "type": "Object"
+      },
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "doshTimelineLine": "Its effect is felt most during the Mahadasha and Antardasha of {planet}, and when {planet} is active in transit.",
-  "@doshTimelineLine": {"placeholders": {"planet": {"type": "Object"}}},
+  "@doshTimelineLine": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "sbLegendary": "Legendary",
   "sbSthana": "Sthana Bala",
   "sbDig": "Dig Bala",
@@ -2192,21 +2480,87 @@
   "sbBodyHowUse": "A planet above 100% comfortably delivers its significations; below 100% it needs support. Favour your strongest planets for important matters, and give the weakest ones remedies and patience.",
   "sbRemedyStrong": "Well-supported — no special remedy needed; you can use this planet's periods confidently.",
   "sbHeroSummary": "{strongP} is your strongest planet, giving excellent support for {strongTrait}. {weakP} is the weakest and benefits most from remedies.",
-  "@sbHeroSummary": {"placeholders": {"strongP": {"type": "Object"}, "strongTrait": {"type": "Object"}, "weakP": {"type": "Object"}}},
+  "@sbHeroSummary": {
+    "placeholders": {
+      "strongP": {
+        "type": "Object"
+      },
+      "strongTrait": {
+        "type": "Object"
+      },
+      "weakP": {
+        "type": "Object"
+      }
+    }
+  },
   "sbCardAi": "{planet} has {category} Shadbala, so its {karakatva} are supported accordingly.",
-  "@sbCardAi": {"placeholders": {"planet": {"type": "Object"}, "category": {"type": "Object"}, "karakatva": {"type": "Object"}}},
+  "@sbCardAi": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      },
+      "category": {
+        "type": "Object"
+      },
+      "karakatva": {
+        "type": "Object"
+      }
+    }
+  },
   "sbWhyLine": "Strongest through {bala} ({rupa} rupas).",
-  "@sbWhyLine": {"placeholders": {"bala": {"type": "Object"}, "rupa": {"type": "Object"}}},
+  "@sbWhyLine": {
+    "placeholders": {
+      "bala": {
+        "type": "Object"
+      },
+      "rupa": {
+        "type": "Object"
+      }
+    }
+  },
   "sbWeakLine": "Weakest in {bala}, which lowers the total.",
-  "@sbWeakLine": {"placeholders": {"bala": {"type": "Object"}}},
+  "@sbWeakLine": {
+    "placeholders": {
+      "bala": {
+        "type": "Object"
+      }
+    }
+  },
   "sbMahadashaLine": "During {planet}'s Mahadasha, its {karak} come to the fore.",
-  "@sbMahadashaLine": {"placeholders": {"planet": {"type": "Object"}, "karak": {"type": "Object"}}},
+  "@sbMahadashaLine": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      },
+      "karak": {
+        "type": "Object"
+      }
+    }
+  },
   "sbEffectStrong": "With strong Shadbala, {karak} are naturally supported.",
-  "@sbEffectStrong": {"placeholders": {"karak": {"type": "Object"}}},
+  "@sbEffectStrong": {
+    "placeholders": {
+      "karak": {
+        "type": "Object"
+      }
+    }
+  },
   "sbEffectWeak": "With modest Shadbala, {karak} may need conscious effort.",
-  "@sbEffectWeak": {"placeholders": {"karak": {"type": "Object"}}},
+  "@sbEffectWeak": {
+    "placeholders": {
+      "karak": {
+        "type": "Object"
+      }
+    }
+  },
   "sbRemedyWeak": "Strengthen {planet} through its mantra, gemstone or charity, and act patiently during its periods.",
-  "@sbRemedyWeak": {"placeholders": {"planet": {"type": "Object"}}},
+  "@sbRemedyWeak": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "bhOverview": "Overview",
   "bhDetailed": "Detailed",
   "bhavaHouses": "Houses",
@@ -2229,19 +2583,79 @@
   "bhExplain": "Explain My Houses",
   "bhExplainSubtitle": "A simple summary of your 12 houses",
   "bhHeroSummary": "Your strongest houses are {s1} and {s2}. {strongArea} is naturally strong, while {weakArea} needs more effort.",
-  "@bhHeroSummary": {"placeholders": {"s1": {"type": "Object"}, "s2": {"type": "Object"}, "strongArea": {"type": "Object"}, "weakArea": {"type": "Object"}}},
+  "@bhHeroSummary": {
+    "placeholders": {
+      "s1": {
+        "type": "Object"
+      },
+      "s2": {
+        "type": "Object"
+      },
+      "strongArea": {
+        "type": "Object"
+      },
+      "weakArea": {
+        "type": "Object"
+      }
+    }
+  },
   "bhLordLine": "Its lord {lord} is placed as {relation}.",
-  "@bhLordLine": {"placeholders": {"lord": {"type": "Object"}, "relation": {"type": "Object"}}},
+  "@bhLordLine": {
+    "placeholders": {
+      "lord": {
+        "type": "Object"
+      },
+      "relation": {
+        "type": "Object"
+      }
+    }
+  },
   "bhWhyLine": "This house carries {sav} benefic points (SAV); its occupants and aspects shape the rest of the score.",
-  "@bhWhyLine": {"placeholders": {"sav": {"type": "Object"}}},
+  "@bhWhyLine": {
+    "placeholders": {
+      "sav": {
+        "type": "Object"
+      }
+    }
+  },
   "bhGoodLine": "When strong, it supports {meaning}.",
-  "@bhGoodLine": {"placeholders": {"meaning": {"type": "Object"}}},
+  "@bhGoodLine": {
+    "placeholders": {
+      "meaning": {
+        "type": "Object"
+      }
+    }
+  },
   "bhChallengeLine": "When weak, {meaning} may need extra effort and care.",
-  "@bhChallengeLine": {"placeholders": {"meaning": {"type": "Object"}}},
+  "@bhChallengeLine": {
+    "placeholders": {
+      "meaning": {
+        "type": "Object"
+      }
+    }
+  },
   "bhRemedyLine": "Strengthen its lord {lord} and honour this house's matters to lift it.",
-  "@bhRemedyLine": {"placeholders": {"lord": {"type": "Object"}}},
+  "@bhRemedyLine": {
+    "placeholders": {
+      "lord": {
+        "type": "Object"
+      }
+    }
+  },
   "bhCardAi": "Your {house} is {strengthWord}. It governs {meaning}.",
-  "@bhCardAi": {"placeholders": {"house": {"type": "Object"}, "strengthWord": {"type": "Object"}, "meaning": {"type": "Object"}}},
+  "@bhCardAi": {
+    "placeholders": {
+      "house": {
+        "type": "Object"
+      },
+      "strengthWord": {
+        "type": "Object"
+      },
+      "meaning": {
+        "type": "Object"
+      }
+    }
+  },
   "kunNavamsa": "Navamsa (D9)",
   "kunD10": "Dasamsa (D10)",
   "kunPlacement": "Planet Placement",
@@ -2253,17 +2667,56 @@
   "kunExplain": "Explain My Chart",
   "kunExplainSubtitle": "A simple summary of your chart",
   "kunHouseLine": "The {ordinal} house governs {meaning}.",
-  "@kunHouseLine": {"placeholders": {"ordinal": {"type": "Object"}, "meaning": {"type": "Object"}}},
+  "@kunHouseLine": {
+    "placeholders": {
+      "ordinal": {
+        "type": "Object"
+      },
+      "meaning": {
+        "type": "Object"
+      }
+    }
+  },
   "kunHouseOccupied": "{planets} placed here shape its results.",
-  "@kunHouseOccupied": {"placeholders": {"planets": {"type": "Object"}}},
+  "@kunHouseOccupied": {
+    "placeholders": {
+      "planets": {
+        "type": "Object"
+      }
+    }
+  },
   "kunExplainAsc": "Your ascendant is {asc}, shaping your outlook and how others first see you.",
-  "@kunExplainAsc": {"placeholders": {"asc": {"type": "Object"}}},
+  "@kunExplainAsc": {
+    "placeholders": {
+      "asc": {
+        "type": "Object"
+      }
+    }
+  },
   "kunExplainMoon": "Your mind and emotions follow the Moon in {moon}.",
-  "@kunExplainMoon": {"placeholders": {"moon": {"type": "Object"}}},
+  "@kunExplainMoon": {
+    "placeholders": {
+      "moon": {
+        "type": "Object"
+      }
+    }
+  },
   "kunExplainStrong": "{planet} is your strongest planet — a natural area of ease and support.",
-  "@kunExplainStrong": {"placeholders": {"planet": {"type": "Object"}}},
+  "@kunExplainStrong": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "kunExplainWeak": "{planet} is your most tested planet — patience and effort pay off here.",
-  "@kunExplainWeak": {"placeholders": {"planet": {"type": "Object"}}},
+  "@kunExplainWeak": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "plNature": "Nature",
   "plElement": "Element",
   "plGender": "Gender",
@@ -2289,25 +2742,94 @@
   "plNeutral": "Neutral",
   "sumEther": "Ether",
   "plLordOfHouses": "Lord of house(s) {houses}",
-  "@plLordOfHouses": {"placeholders": {"houses": {"type": "Object"}}},
+  "@plLordOfHouses": {
+    "placeholders": {
+      "houses": {
+        "type": "Object"
+      }
+    }
+  },
   "plNakMeaning": "Ruled by {nakLord}, bringing {trait}.",
-  "@plNakMeaning": {"placeholders": {"nakLord": {"type": "Object"}, "trait": {"type": "Object"}}},
+  "@plNakMeaning": {
+    "placeholders": {
+      "nakLord": {
+        "type": "Object"
+      },
+      "trait": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiPlace": "{planet} sits in {sign}, in the {house} house.",
-  "@plAiPlace": {"placeholders": {"planet": {"type": "Object"}, "sign": {"type": "Object"}, "house": {"type": "Object"}}},
+  "@plAiPlace": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      },
+      "sign": {
+        "type": "Object"
+      },
+      "house": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiKarakStrong": "Its core significations — {karak} — are well supported here.",
-  "@plAiKarakStrong": {"placeholders": {"karak": {"type": "Object"}}},
+  "@plAiKarakStrong": {
+    "placeholders": {
+      "karak": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiKarakWeak": "Its core significations — {karak} — may need conscious effort here.",
-  "@plAiKarakWeak": {"placeholders": {"karak": {"type": "Object"}}},
+  "@plAiKarakWeak": {
+    "placeholders": {
+      "karak": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiExalted": "{planet} is exalted, giving its very best results.",
-  "@plAiExalted": {"placeholders": {"planet": {"type": "Object"}}},
+  "@plAiExalted": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiDebilitated": "{planet} is debilitated and needs support to deliver its results.",
-  "@plAiDebilitated": {"placeholders": {"planet": {"type": "Object"}}},
+  "@plAiDebilitated": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiCombust": "{planet} is combust, so it works less openly under the Sun's glare.",
-  "@plAiCombust": {"placeholders": {"planet": {"type": "Object"}}},
+  "@plAiCombust": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiVargottama": "{planet} is vargottama — a strong placement repeated in the navamsa.",
-  "@plAiVargottama": {"placeholders": {"planet": {"type": "Object"}}},
+  "@plAiVargottama": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "plAiRetrograde": "{planet} is retrograde, turning its energy inward and intensifying it.",
-  "@plAiRetrograde": {"placeholders": {"planet": {"type": "Object"}}},
+  "@plAiRetrograde": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "plHouse1": "self, body, personality and vitality",
   "plHouse2": "wealth, family, speech and food",
   "plHouse3": "courage, siblings, communication and short travels",
@@ -2428,9 +2950,27 @@
   "aspTraitRahu": "ambition, intensity and unconventional turns",
   "aspTraitKetu": "detachment, spirituality and sudden change",
   "aspAiInfluence": "{planet} is influencing {targets}. This may bring {trait} to the areas represented by these planets.",
-  "@aspAiInfluence": {"placeholders": {"planet": {"type": "Object"}, "targets": {"type": "Object"}, "trait": {"type": "Object"}}},
+  "@aspAiInfluence": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      },
+      "targets": {
+        "type": "Object"
+      },
+      "trait": {
+        "type": "Object"
+      }
+    }
+  },
   "aspAiNone": "{planet} does not cast a special aspect on any other planet here; its influence works mainly through its own sign and house.",
-  "@aspAiNone": {"placeholders": {"planet": {"type": "Object"}}},
+  "@aspAiNone": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "avSummaryTitle": "Ashtakavarga Summary",
   "avOverallScore": "Overall SAV Score",
   "avOverallRating": "Overall Rating",
@@ -2468,19 +3008,79 @@
   "avHowToReadBody": "Higher numbers are better. For SAV, an average sign scores about 28 points — above 30 is strong and below 25 needs care. For BAV, each sign ranges from 0 to 8, with 4 being average. Favour your strongest signs for important actions, and stay patient and disciplined with your weakest ones.",
   "avSavVsBavBody": "SAV is the combined total of all planets and shows a sign's overall strength. BAV is a single planet's contribution and shows which planet supports that sign. Use SAV for the big picture, and BAV to understand which planet drives a sign's strength.",
   "avSummaryInsight": "Your chart is strongest in {s1}, {s2} and {s3}. These signs give better support during planetary periods and transits. {weak} currently has the least support, so patience and discipline help in matters connected with it.",
-  "@avSummaryInsight": {"placeholders": {"s1": {"type": "Object"}, "s2": {"type": "Object"}, "s3": {"type": "Object"}, "weak": {"type": "Object"}}},
+  "@avSummaryInsight": {
+    "placeholders": {
+      "s1": {
+        "type": "Object"
+      },
+      "s2": {
+        "type": "Object"
+      },
+      "s3": {
+        "type": "Object"
+      },
+      "weak": {
+        "type": "Object"
+      }
+    }
+  },
   "avBavInsight": "{planet} performs strongest through {s1} and {s2}. Matters governed by {planet} tend to improve when these signs are activated.",
-  "@avBavInsight": {"placeholders": {"planet": {"type": "Object"}, "s1": {"type": "Object"}, "s2": {"type": "Object"}}},
+  "@avBavInsight": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      },
+      "s1": {
+        "type": "Object"
+      },
+      "s2": {
+        "type": "Object"
+      }
+    }
+  },
   "avInsightStrong": "Your strongest signs are {s1} and {s2} — favour important beginnings when planets transit them.",
-  "@avInsightStrong": {"placeholders": {"s1": {"type": "Object"}, "s2": {"type": "Object"}}},
+  "@avInsightStrong": {
+    "placeholders": {
+      "s1": {
+        "type": "Object"
+      },
+      "s2": {
+        "type": "Object"
+      }
+    }
+  },
   "avInsightWeak": "{s1} has the least support — move carefully and avoid over-commitment in its matters.",
-  "@avInsightWeak": {"placeholders": {"s1": {"type": "Object"}}},
+  "@avInsightWeak": {
+    "placeholders": {
+      "s1": {
+        "type": "Object"
+      }
+    }
+  },
   "avInsightBestPlanet": "{planet} carries the most points, so its significations are well supported in your life.",
-  "@avInsightBestPlanet": {"placeholders": {"planet": {"type": "Object"}}},
+  "@avInsightBestPlanet": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "avInsightWeakPlanet": "{planet} carries the fewest points and benefits most from remedies and conscious effort.",
-  "@avInsightWeakPlanet": {"placeholders": {"planet": {"type": "Object"}}},
+  "@avInsightWeakPlanet": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "avInsightAverage": "Signs scoring above your average of {avg} points tend to give smoother, more reliable results.",
-  "@avInsightAverage": {"placeholders": {"avg": {"type": "Object"}}},
+  "@avInsightAverage": {
+    "placeholders": {
+      "avg": {
+        "type": "Object"
+      }
+    }
+  },
   "fcKey": "Key",
   "fcActions": "Actions",
   "fcCautions": "Cautions",
@@ -2552,11 +3152,23 @@
   "coreGiftLabel": "✦ CORE GIFT",
   "coreThemeLabel": "● CORE THEME",
   "dominantLabel": "Dominant: {value}",
-  "@dominantLabel": {"placeholders": {"value": {"type": "Object"}}},
+  "@dominantLabel": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "karakasSuffix": "Karakas",
   "protectiveLabel": "PROTECTIVE",
   "secondaryLabel": " · Secondary: {value}",
-  "@secondaryLabel": {"placeholders": {"value": {"type": "Object"}}},
+  "@secondaryLabel": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "tagCore": "CORE",
   "debtScoresHeader": "📉 DEBT SCORES",
   "debtCurrentLoadStat": "CURRENT\nDEBT LOAD",
@@ -2580,10 +3192,25 @@
   "debtChronicPctStat": "CHRONIC %",
   "debtResilienceStat": "RESILIENCE",
   "debtRecoveryTimelineSubtitle": "Recovery: {pct}% · Timeline: {years}yrs",
-  "@debtRecoveryTimelineSubtitle": {"placeholders": {"pct": {"type": "Object"}, "years": {"type": "Object"}}},
+  "@debtRecoveryTimelineSubtitle": {
+    "placeholders": {
+      "pct": {
+        "type": "Object"
+      },
+      "years": {
+        "type": "Object"
+      }
+    }
+  },
   "debtFreeWindowLabel": "🎯 DEBT-FREE WINDOW",
   "debtFreeYear": "Year {year}",
-  "@debtFreeYear": {"placeholders": {"year": {"type": "Object"}}},
+  "@debtFreeYear": {
+    "placeholders": {
+      "year": {
+        "type": "Object"
+      }
+    }
+  },
   "legalScoresHeader": "⚖️ LEGAL SCORES",
   "legalVulnerabilityStat": "LEGAL\nVULNERABILITY",
   "legalVictoryPotentialStat": "VICTORY\nPOTENTIAL",
@@ -2610,7 +3237,13 @@
   "legalNegotiationSkillLabel": "NEGOTIATION SKILL",
   "legalSignatureCautionLabel": "SIGNATURE CAUTION",
   "legalResilienceSubtitle": "Resilience: {pct}/100",
-  "@legalResilienceSubtitle": {"placeholders": {"pct": {"type": "Object"}}},
+  "@legalResilienceSubtitle": {
+    "placeholders": {
+      "pct": {
+        "type": "Object"
+      }
+    }
+  },
   "legalVictoryWord": "Victory",
   "legalAnalysisSuffix": "Analysis",
   "legalAsPlaintiff": "AS PLAINTIFF",
@@ -2651,7 +3284,13 @@
   "lifepathLifeWord": "Life",
   "lifepathArchetypeSuffix": "Archetype",
   "lifepathFulfillmentSubtitle": "Fulfillment: {pct}%",
-  "@lifepathFulfillmentSubtitle": {"placeholders": {"pct": {"type": "Object"}}},
+  "@lifepathFulfillmentSubtitle": {
+    "placeholders": {
+      "pct": {
+        "type": "Object"
+      }
+    }
+  },
   "lifepathDestinyVsWord": "Destiny vs",
   "lifepathFreeWillSuffix": "Free Will",
   "lifepathDestinyStat": "DESTINY",
@@ -2695,7 +3334,16 @@
   "pastlifeRegressionFitStat": "REGRESSION FIT",
   "pastlifeActivationTitle": "Past Life Activation",
   "pastlifeMaturityStatusSubtitle": "Maturity: {maturity} · Status: {status}",
-  "@pastlifeMaturityStatusSubtitle": {"placeholders": {"maturity": {"type": "Object"}, "status": {"type": "Object"}}},
+  "@pastlifeMaturityStatusSubtitle": {
+    "placeholders": {
+      "maturity": {
+        "type": "Object"
+      },
+      "status": {
+        "type": "Object"
+      }
+    }
+  },
   "pastlifeKetuWord": "Ketu",
   "pastlifePastMasterySuffix": "Past Mastery",
   "pastlifeKetuMasteredLabel": "KETU · WHAT YOU MASTERED",
@@ -2703,7 +3351,13 @@
   "pastlifeFutureGrowthSuffix": "Future Growth",
   "pastlifeRahuPullsLabel": "RAHU · WHAT PULLS YOU FORWARD",
   "pastlifeShadowPrefix": "⚠ Shadow: {shadow}",
-  "@pastlifeShadowPrefix": {"placeholders": {"shadow": {"type": "Object"}}},
+  "@pastlifeShadowPrefix": {
+    "placeholders": {
+      "shadow": {
+        "type": "Object"
+      }
+    }
+  },
   "mentalScoresHeader": "🧠 MENTAL SCORES",
   "mentalStabilityStat": "MENTAL\nSTABILITY",
   "mentalEmotionalBaselineStat": "EMOTIONAL\nBASELINE",
@@ -2767,7 +3421,13 @@
   "characterEmpathyEiStat": "EMPATHY EI",
   "characterSocialSkillsStat": "SOCIAL SKILLS",
   "characterRealizationSubtitle": "Realization: {pct}%",
-  "@characterRealizationSubtitle": {"placeholders": {"pct": {"type": "Object"}}},
+  "@characterRealizationSubtitle": {
+    "placeholders": {
+      "pct": {
+        "type": "Object"
+      }
+    }
+  },
   "characterAtmakarakaWord": "Atmakaraka",
   "characterSoulSignatureSuffix": "Soul Signature",
   "characterAtmakarakaLabel": "ATMAKARAKA",
@@ -2831,18 +3491,42 @@
   "wealthSuddenGainsStat": "SUDDEN GAINS %",
   "wealthSpouseBoostStat": "SPOUSE BOOST %",
   "wealthSuccessProbabilitySubtitle": "Success probability: {pct}%",
-  "@wealthSuccessProbabilitySubtitle": {"placeholders": {"pct": {"type": "Object"}}},
+  "@wealthSuccessProbabilitySubtitle": {
+    "placeholders": {
+      "pct": {
+        "type": "Object"
+      }
+    }
+  },
   "wealthLifetimeClassLabel": "LIFETIME WEALTH CLASS",
   "wealthPrimaryLabel": "Primary: {value}",
-  "@wealthPrimaryLabel": {"placeholders": {"value": {"type": "Object"}}},
+  "@wealthPrimaryLabel": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "wealthPeakLabel": "Peak: {value}",
-  "@wealthPeakLabel": {"placeholders": {"value": {"type": "Object"}}},
+  "@wealthPeakLabel": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "wealthIncomeWord": "Income",
   "wealthSourcesSuffix": "Sources",
   "wealthInvestmentWord": "Investment",
   "wealthMixSuffix": "Mix",
   "wealthDrivenByLabel": "Driven by {planet}",
-  "@wealthDrivenByLabel": {"placeholders": {"planet": {"type": "Object"}}},
+  "@wealthDrivenByLabel": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "marriageScoresHeader": "💒 MARRIAGE SCORES",
   "marriageOverallStat": "OVERALL\nMARRIAGE",
   "marriageHarmonyStat": "MARITAL\nHARMONY",
@@ -2863,7 +3547,13 @@
   "marriageSeekInPartnerTitle": "★ SEEK IN PARTNER",
   "marriageAvoidInPartnerTitle": "⚠ AVOID IN PARTNER",
   "marriageRealizationSubtitle": "Realization: {pct}%",
-  "@marriageRealizationSubtitle": {"placeholders": {"pct": {"type": "Object"}}},
+  "@marriageRealizationSubtitle": {
+    "placeholders": {
+      "pct": {
+        "type": "Object"
+      }
+    }
+  },
   "marriageDarakarakaWord": "Darakaraka",
   "marriageSpouseKarakaSuffix": "Spouse Karaka",
   "marriageDarakarakaDkLabel": "DARAKARAKA (DK)",
@@ -2882,9 +3572,21 @@
   "marriageConflictResolutionLabel": "Conflict Resolution",
   "marriageMangalDoshLabel": "⚠ MANGAL DOSH",
   "marriageSeveritySubtitle": "Severity: {value}",
-  "@marriageSeveritySubtitle": {"placeholders": {"value": {"type": "Object"}}},
+  "@marriageSeveritySubtitle": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "marriageCancellationSubtitle": "Cancellation: {value}",
-  "@marriageCancellationSubtitle": {"placeholders": {"value": {"type": "Object"}}},
+  "@marriageCancellationSubtitle": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "marriageD9Word": "D-9",
   "marriageNavamsaSuffix": "Navamsa",
   "multiChartTitleChild": "Child",
@@ -2900,13 +3602,37 @@
   "multiChartConfidenceSuffix": "Confidence",
   "multiChartQualityBadge": "QUALITY",
   "multiChartPromptChatgpt": "Analyze this Vedic astrology report and give detailed insights:\n\n{formatted}",
-  "@multiChartPromptChatgpt": {"placeholders": {"formatted": {"type": "Object"}}},
+  "@multiChartPromptChatgpt": {
+    "placeholders": {
+      "formatted": {
+        "type": "Object"
+      }
+    }
+  },
   "multiChartPromptClaude": "Here is a Vedic astrology specialist report. Please analyze it thoroughly and provide actionable insights:\n\n{formatted}",
-  "@multiChartPromptClaude": {"placeholders": {"formatted": {"type": "Object"}}},
+  "@multiChartPromptClaude": {
+    "placeholders": {
+      "formatted": {
+        "type": "Object"
+      }
+    }
+  },
   "multiChartPromptGemini": "Review this Vedic astrology analysis and explain the key findings in simple language:\n\n{formatted}",
-  "@multiChartPromptGemini": {"placeholders": {"formatted": {"type": "Object"}}},
+  "@multiChartPromptGemini": {
+    "placeholders": {
+      "formatted": {
+        "type": "Object"
+      }
+    }
+  },
   "multiChartCopiedForLabel": "Copied for {label}!",
-  "@multiChartCopiedForLabel": {"placeholders": {"label": {"type": "Object"}}},
+  "@multiChartCopiedForLabel": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
   "childProbTitle1": "Child",
   "childProbTitle2": "Probability",
   "childNumberOfChildrenHeader1": "Number of",
@@ -2937,7 +3663,13 @@
   "aspects5thBadge": "Aspects 5th",
   "no5thConnectionBadge": "No 5th Connection",
   "jupiterInSignHeading": "Jupiter in {sign}",
-  "@jupiterInSignHeading": {"placeholders": {"sign": {"type": "String"}}},
+  "@jupiterInSignHeading": {
+    "placeholders": {
+      "sign": {
+        "type": "String"
+      }
+    }
+  },
   "d7LagnaLabel": "D7 Lagna",
   "d7FifthSignLabel": "D7 5th Sign",
   "d7FifthLordLabel": "D7 5th Lord",
@@ -2958,7 +3690,13 @@
   "remedyLifestyle": "Lifestyle Remedies",
   "remedyCharitable": "Charitable Remedies",
   "copiedForName": "Copied for {name}!",
-  "@copiedForName": {"placeholders": {"name": {"type": "String"}}},
+  "@copiedForName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "mahadashaLabel": "Mahadasha",
   "mdPeriodLabel": "MD Period",
   "antardashaLabel": "Antardasha",
@@ -2966,9 +3704,21 @@
   "pratyantardashaLabel": "Pratyantardasha",
   "favorabilityLabel": "Favorability",
   "factorPrefix": "Factor: {factor}",
-  "@factorPrefix": {"placeholders": {"factor": {"type": "String"}}},
+  "@factorPrefix": {
+    "placeholders": {
+      "factor": {
+        "type": "String"
+      }
+    }
+  },
   "appliesToLabel": "Applies to: {value}",
-  "@appliesToLabel": {"placeholders": {"value": {"type": "String"}}},
+  "@appliesToLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "qualityTag": "QUALITY",
   "reliabilityVeryHigh": "Very High reliability",
   "reliabilityGuidanceLevel": "Guidance-level reading",
@@ -3005,7 +3755,13 @@
   "depthScoreLabel": "Depth Score",
   "linkageStrengthLabel": "Linkage Strength",
   "karmaLinkageFactorsHeader": "LINKAGE FACTORS ({count} active)",
-  "@karmaLinkageFactorsHeader": {"placeholders": {"count": {"type": "int"}}},
+  "@karmaLinkageFactorsHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "factorColumnLabel": "Factor",
   "weightColumnLabel": "Weight",
   "meaningColumnLabel": "Meaning",
@@ -3025,7 +3781,13 @@
   "karmaSharedGoalHeader": "SHARED PAST LIFE GOAL",
   "howToGrowHeader": "HOW TO GROW",
   "moolaDashaPrefix": "Moola Dasha: {value}",
-  "@moolaDashaPrefix": {"placeholders": {"value": {"type": "String"}}},
+  "@moolaDashaPrefix": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "karmaSharedLessonHeader": "SHARED GROUP LESSON",
   "karmaMutualTeachingHeader": "MUTUAL TEACHING MAP",
   "karmaTeachingDynamicsPlaceholder": "Teaching dynamics will emerge as karmic connections deepen.",
@@ -3033,7 +3795,13 @@
   "basisFieldLabel": "Basis",
   "resolutionPathHeader": "RESOLUTION PATH",
   "dashaTimingPrefix": "Dasha Timing: {value}",
-  "@dashaTimingPrefix": {"placeholders": {"value": {"type": "String"}}},
+  "@dashaTimingPrefix": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "mutualDebtsHeader": "MUTUAL DEBTS",
   "mdLabel": "MD",
   "adLabel": "AD",
@@ -3041,10 +3809,22 @@
   "datesLabel": "Dates",
   "groupKarmicWindowHeader": "GROUP KARMIC WINDOW",
   "parametersAuditedHeading": "{count} PARAMETERS AUDITED",
-  "@parametersAuditedHeading": {"placeholders": {"count": {"type": "int"}}},
+  "@parametersAuditedHeading": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "valuePrefixLabel": "Value: ",
   "weightPrefix": "W: {value}",
-  "@weightPrefix": {"placeholders": {"value": {"type": "String"}}},
+  "@weightPrefix": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "loveCompatTitle1": "Love",
   "loveCompatTitle2": "Compatibility",
   "loveAttractionHeader1": "Attraction &",
@@ -3136,7 +3916,13 @@
   "selfSabotageLabel": "SELF-SABOTAGE",
   "emotionalIqLabel": "EMOTIONAL IQ",
   "fulfillmentPctLabel": "Fulfillment: {pct}%",
-  "@fulfillmentPctLabel": {"placeholders": {"pct": {"type": "String"}}},
+  "@fulfillmentPctLabel": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
   "languagesWord": "Languages",
   "givesLabel": "GIVES",
   "receivesLabel": "RECEIVES",
@@ -3175,7 +3961,16 @@
   "categoryLabel": "CATEGORY",
   "luxuryLabel": "LUXURY",
   "lifetimeCountFulfillmentLabel": "Lifetime count: {count} · Fulfillment: {pct}%",
-  "@lifetimeCountFulfillmentLabel": {"placeholders": {"count": {"type": "String"}, "pct": {"type": "String"}}},
+  "@lifetimeCountFulfillmentLabel": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
   "pressureWord": "PRESSURE",
   "protectionWord": "PROTECTION",
   "astrologicalWord": "Astrological",
@@ -3184,24 +3979,60 @@
   "reportCopiedShort": "Report copied!",
   "keyScoresLabel": "KEY SCORES",
   "allScoresCountLabel": "All Scores ({count})",
-  "@allScoresCountLabel": {"placeholders": {"count": {"type": "int"}}},
+  "@allScoresCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "windowsWord": "Windows",
   "genericFailedMsg": "Failed",
   "unknownWord": "Unknown",
   "selectKarmaChartsLabel": "Select 2-{max} Charts",
-  "@selectKarmaChartsLabel": {"placeholders": {"max": {"type": "int"}}},
+  "@selectKarmaChartsLabel": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "selectChartsLabelCount": "Select {max} Charts",
-  "@selectChartsLabelCount": {"placeholders": {"max": {"type": "int"}}},
+  "@selectChartsLabelCount": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "runningAnalysisLabel": "Running {label} analysis...",
-  "@runningAnalysisLabel": {"placeholders": {"label": {"type": "String"}}},
+  "@runningAnalysisLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
   "pickKarmicChartsHint": "Pick 2 to {max} charts to analyze karmic links",
-  "@pickKarmicChartsHint": {"placeholders": {"max": {"type": "int"}}},
+  "@pickKarmicChartsHint": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "pickMaleFemaleHint": "Pick a Male and Female chart",
   "personOneLabel": "Person 1",
   "personTwoLabel": "Person 2",
   "analysisFailedMsg": "Analysis failed",
   "analyzeChartsCountLabel": "Analyze {count} Charts",
-  "@analyzeChartsCountLabel": {"placeholders": {"count": {"type": "int"}}},
+  "@analyzeChartsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "contextGeneralLabel": "General",
   "contextLoveLabel": "Love",
   "contextBusinessLabel": "Business",
@@ -3210,48 +4041,162 @@
   "contextFriendshipLabel": "Friendship",
   "relationshipIntelTitle": "Relationship Intelligence",
   "analyzingChartsCountLabel": "Analyzing {count} charts...",
-  "@analyzingChartsCountLabel": {"placeholders": {"count": {"type": "int"}}},
+  "@analyzingChartsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "relationshipContextLabel": "Relationship Context",
   "kundliMilanReportTitle": "Kundli Milan Report",
   "runningMilanAnalysisLabel": "Running Milan analysis...",
   "selectedCountOfTwoLabel": "{count}/2 selected",
-  "@selectedCountOfTwoLabel": {"placeholders": {"count": {"type": "int"}}},
+  "@selectedCountOfTwoLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "runMilanAnalysisBtn": "Run Milan Analysis",
   "noChartsCreateFirst": "No charts. Create a birth chart first.",
   "selectBirthChartAnalyze": "Select a birth chart to analyze",
   "doshAnalysis": "Dosha Analysis",
   "doshActiveCount": "{active} active / {total} checked",
-  "@doshActiveCount": {"placeholders": {"active": {"type": "Object"}, "total": {"type": "Object"}}},
+  "@doshActiveCount": {
+    "placeholders": {
+      "active": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaActiveCount": "{active} active / {total} yogas checked",
-  "@yogaActiveCount": {"placeholders": {"active": {"type": "Object"}, "total": {"type": "Object"}}},
+  "@yogaActiveCount": {
+    "placeholders": {
+      "active": {
+        "type": "Object"
+      },
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaActiveHeader": "ACTIVE YOGAS ({count})",
-  "@yogaActiveHeader": {"placeholders": {"count": {"type": "Object"}}},
+  "@yogaActiveHeader": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaHideInactiveCount": "Hide inactive yogas ({count})",
-  "@yogaHideInactiveCount": {"placeholders": {"count": {"type": "Object"}}},
+  "@yogaHideInactiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "yogaShowInactiveCount": "Show inactive yogas ({count})",
-  "@yogaShowInactiveCount": {"placeholders": {"count": {"type": "Object"}}},
+  "@yogaShowInactiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "loadFailed": "Failed",
   "dashaDrillMd": "{planet} MD → Antardashas",
-  "@dashaDrillMd": {"placeholders": {"planet": {"type": "Object"}}},
+  "@dashaDrillMd": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaDrillAd": "{planet} AD → Pratyantardashas",
-  "@dashaDrillAd": {"placeholders": {"planet": {"type": "Object"}}},
+  "@dashaDrillAd": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaDrillPd": "{planet} PD → Sookshmadashas",
-  "@dashaDrillPd": {"placeholders": {"planet": {"type": "Object"}}},
+  "@dashaDrillPd": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaDrillSub": "{planet} Sub-periods",
-  "@dashaDrillSub": {"placeholders": {"planet": {"type": "Object"}}},
+  "@dashaDrillSub": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaBirthLordBalance": "Birth Lord: {lord} • Balance: {balance} yrs",
-  "@dashaBirthLordBalance": {"placeholders": {"lord": {"type": "Object"}, "balance": {"type": "Object"}}},
+  "@dashaBirthLordBalance": {
+    "placeholders": {
+      "lord": {
+        "type": "Object"
+      },
+      "balance": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaLagnaBalance": "Lagna: {lagna} • Balance: {balance} yrs",
-  "@dashaLagnaBalance": {"placeholders": {"lagna": {"type": "Object"}, "balance": {"type": "Object"}}},
+  "@dashaLagnaBalance": {
+    "placeholders": {
+      "lagna": {
+        "type": "Object"
+      },
+      "balance": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaYearsValue": "{years} years",
-  "@dashaYearsValue": {"placeholders": {"years": {"type": "Object"}}},
+  "@dashaYearsValue": {
+    "placeholders": {
+      "years": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaCurrentPeriod": "Current Dasha Period",
   "dashaAsOf": "As of: {date}",
-  "@dashaAsOf": {"placeholders": {"date": {"type": "Object"}}},
+  "@dashaAsOf": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaActiveYogasCount": "Active Yogas in Current Period ({count})",
-  "@dashaActiveYogasCount": {"placeholders": {"count": {"type": "Object"}}},
+  "@dashaActiveYogasCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaActiveDoshasCount": "Active Doshas in Current Period ({count})",
-  "@dashaActiveDoshasCount": {"placeholders": {"count": {"type": "Object"}}},
+  "@dashaActiveDoshasCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
   "dashaNoYogasTriggered": "No yogas triggered",
   "dashaNoDoshasTriggered": "No doshas triggered",
   "divD1Name": "Rasi (D-1)",
@@ -3300,14 +4245,41 @@
   "lifeAreaHealth": "Health",
   "lifeAreaSpirituality": "Spirituality",
   "lifeAreaGrade": "Grade: {grade}",
-  "@lifeAreaGrade": {"placeholders": {"grade": {"type": "Object"}}},
+  "@lifeAreaGrade": {
+    "placeholders": {
+      "grade": {
+        "type": "Object"
+      }
+    }
+  },
   "lifeAreaFactorsLabel": "Factors:",
   "planetNakPada": "Nak: {nakshatra} ({pada})",
-  "@planetNakPada": {"placeholders": {"nakshatra": {"type": "Object"}, "pada": {"type": "Object"}}},
+  "@planetNakPada": {
+    "placeholders": {
+      "nakshatra": {
+        "type": "Object"
+      },
+      "pada": {
+        "type": "Object"
+      }
+    }
+  },
   "planetNakLord": "NL: {lord}",
-  "@planetNakLord": {"placeholders": {"lord": {"type": "Object"}}},
+  "@planetNakLord": {
+    "placeholders": {
+      "lord": {
+        "type": "Object"
+      }
+    }
+  },
   "planetLongitude": "Lon: {value}°",
-  "@planetLongitude": {"placeholders": {"value": {"type": "Object"}}},
+  "@planetLongitude": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "chakraOverallHealth": "Overall Health",
   "careerWord": "Career",
   "failedToLoad": "Failed to load",
@@ -3315,15 +4287,57 @@
   "kundliMoonSignRashi": "Moon Sign (Rashi)",
   "kundliSunSign": "Sun Sign",
   "kundliEngineLabel": "Engine: {engine}",
-  "@kundliEngineLabel": {"placeholders": {"engine": {"type": "Object"}}},
+  "@kundliEngineLabel": {
+    "placeholders": {
+      "engine": {
+        "type": "Object"
+      }
+    }
+  },
   "kundliDegreeNakshatra": "Degree: {degree}°  •  Nakshatra: {nakshatra} ({pada})",
-  "@kundliDegreeNakshatra": {"placeholders": {"degree": {"type": "Object"}, "nakshatra": {"type": "Object"}, "pada": {"type": "Object"}}},
+  "@kundliDegreeNakshatra": {
+    "placeholders": {
+      "degree": {
+        "type": "Object"
+      },
+      "nakshatra": {
+        "type": "Object"
+      },
+      "pada": {
+        "type": "Object"
+      }
+    }
+  },
   "kundliNakLordDignity": "Nakshatra Lord: {lord}  •  Dignity: {dignity}",
-  "@kundliNakLordDignity": {"placeholders": {"lord": {"type": "Object"}, "dignity": {"type": "Object"}}},
+  "@kundliNakLordDignity": {
+    "placeholders": {
+      "lord": {
+        "type": "Object"
+      },
+      "dignity": {
+        "type": "Object"
+      }
+    }
+  },
   "kundliChartHeader": "{base} Chart — {sign}",
-  "@kundliChartHeader": {"placeholders": {"base": {"type": "Object"}, "sign": {"type": "Object"}}},
+  "@kundliChartHeader": {
+    "placeholders": {
+      "base": {
+        "type": "Object"
+      },
+      "sign": {
+        "type": "Object"
+      }
+    }
+  },
   "kundliBaseChart": "{base} Chart",
-  "@kundliBaseChart": {"placeholders": {"base": {"type": "Object"}}},
+  "@kundliBaseChart": {
+    "placeholders": {
+      "base": {
+        "type": "Object"
+      }
+    }
+  },
   "careerSummary": "Career Summary",
   "phase": "Phase",
   "confidenceLabel": "Confidence",
@@ -3338,7 +4352,13 @@
   "careerTypeDomain": "Career & Domain",
   "careerTimeline": "Career Timeline",
   "dashaLabel": "Dasha: {dasha}",
-  "@dashaLabel": {"placeholders": {"dasha": {"type": "Object"}}},
+  "@dashaLabel": {
+    "placeholders": {
+      "dasha": {
+        "type": "Object"
+      }
+    }
+  },
   "improvementSuggestions": "Improvement Suggestions",
   "chartDetails": "Chart Details",
   "keyHousesCareer": "Key Houses (Career)",
@@ -3380,25 +4400,82 @@
   "bhavaHouse11": "Gains / Friends",
   "bhavaHouse12": "Loss / Moksha",
   "bhavaSignLord": "{sign} • Lord: {lord}",
-  "@bhavaSignLord": {"placeholders": {"sign": {"type": "Object"}, "lord": {"type": "Object"}}},
+  "@bhavaSignLord": {
+    "placeholders": {
+      "sign": {
+        "type": "Object"
+      },
+      "lord": {
+        "type": "Object"
+      }
+    }
+  },
   "bhavaSav": "SAV: {value}",
-  "@bhavaSav": {"placeholders": {"value": {"type": "Object"}}},
+  "@bhavaSav": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
   "sarvaAshtakavarga": "Sarva Ashtakavarga (SAV)",
   "savSubtitle": "Total: {total} rekhas (average sign = {avg})",
-  "@savSubtitle": {"placeholders": {"total": {"type": "Object"}, "avg": {"type": "Object"}}},
+  "@savSubtitle": {
+    "placeholders": {
+      "total": {
+        "type": "Object"
+      },
+      "avg": {
+        "type": "Object"
+      }
+    }
+  },
   "ashtakavargaBav": "{planet} — BAV",
-  "@ashtakavargaBav": {"placeholders": {"planet": {"type": "Object"}}},
+  "@ashtakavargaBav": {
+    "placeholders": {
+      "planet": {
+        "type": "Object"
+      }
+    }
+  },
   "bavSubtitle": "Total: {total} rekhas • At natal sign: {score}",
-  "@bavSubtitle": {"placeholders": {"total": {"type": "Object"}, "score": {"type": "Object"}}},
+  "@bavSubtitle": {
+    "placeholders": {
+      "total": {
+        "type": "Object"
+      },
+      "score": {
+        "type": "Object"
+      }
+    }
+  },
   "today": "Today",
   "gocharTransitScores": "Gochar (Transit Scores) — {date}",
-  "@gocharTransitScores": {"placeholders": {"date": {"type": "Object"}}},
+  "@gocharTransitScores": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
   "gocharNativeMoon": "Native Moon: {sign}",
-  "@gocharNativeMoon": {"placeholders": {"sign": {"type": "Object"}}},
+  "@gocharNativeMoon": {
+    "placeholders": {
+      "sign": {
+        "type": "Object"
+      }
+    }
+  },
   "gocharBest": "BEST",
   "gocharWorst": "WORST",
   "copiedOpening": "Copied! Opening {ai}...",
-  "@copiedOpening": {"placeholders": {"ai": {"type": "Object"}}},
+  "@copiedOpening": {
+    "placeholders": {
+      "ai": {
+        "type": "Object"
+      }
+    }
+  },
   "openLink": "OPEN ↗",
   "discussReportWithAI": "DISCUSS THIS REPORT WITH AI",
   "reliabilityHigh": "High reliability",
@@ -3515,14 +4592,32 @@
   "aiConnectionError": "Connection error. Please try again.",
   "aiAutoDetect": "Auto-detect",
   "aiAutoArrow": "Auto → {lang}",
-  "@aiAutoArrow": {"placeholders": {"lang": {"type": "String"}}},
+  "@aiAutoArrow": {
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
   "aiLanguageLabel": "Language: {lang}",
-  "@aiLanguageLabel": {"placeholders": {"lang": {"type": "String"}}},
+  "@aiLanguageLabel": {
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
   "aiNoBirthCharts": "No birth charts found",
   "aiCreateChartFirst": "Create a birth chart first to chat with AI",
   "aiSelectChartBegin": "Select a birth chart to begin analysis",
   "aiAnalyzingName": "Analyzing: {name}",
-  "@aiAnalyzingName": {"placeholders": {"name": {"type": "String"}}},
+  "@aiAnalyzingName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiChange": "Change",
   "aiAnalyzingChart": "Analyzing your chart...",
   "aiAskStarsHint": "Ask the stars anything...",
@@ -3536,7 +4631,13 @@
   "astroFailedStartCall": "Failed to start call",
   "astroFailedStartChat": "Failed to start chat",
   "astroErrorDetail": "Error: {error}",
-  "@astroErrorDetail": {"placeholders": {"error": {"type": "String"}}},
+  "@astroErrorDetail": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "astroExperience": "Experience",
   "astroSessions": "Sessions",
   "astroMinutes": "Minutes",
@@ -3545,7 +4646,13 @@
   "astroRateCard": "Rate Card",
   "astroVoice": "Voice",
   "astroReviews": "Reviews ({count})",
-  "@astroReviews": {"placeholders": {"count": {"type": "int"}}},
+  "@astroReviews": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "astroNoReviews": "No reviews yet",
   "astroAnonymous": "Anonymous",
   "forgotPasswordSubtitle": "Enter your email and we'll send you\na link to reset your password.",
@@ -3553,7 +4660,6 @@
   "resendLink": "Resend Link",
   "appName": "Nakshatralogy",
   "cosmicJourneyAwaits": "Your Cosmic Journey Awaits",
-
   "home": "Home",
   "astrologers": "Astrologers",
   "services": "Services",
@@ -3564,7 +4670,6 @@
   "chat": "Chat",
   "call": "Call",
   "video": "Video",
-
   "signIn": "Sign In",
   "createAccount": "Create Account",
   "email": "Email",
@@ -3584,7 +4689,6 @@
   "validEmailRequired": "Valid email required",
   "loginFailed": "Login failed",
   "signupFailed": "Signup failed",
-
   "welcomeBack": "Welcome back",
   "todaysHoroscope": "TODAY'S HOROSCOPE",
   "todaysRashi": "Today's Rashi",
@@ -3599,7 +4703,6 @@
   "offline": "Offline",
   "busy": "Busy",
   "perMin": "/min",
-
   "noCharts": "No birth charts yet",
   "createFirst": "Create your first Janam Kundli",
   "createChart": "Create Chart",
@@ -3619,7 +4722,6 @@
   "cannotUndo": "This cannot be undone.",
   "primary": "PRIMARY",
   "viewKundli": "View Kundli",
-
   "completeBirthChart": "Complete Birth Chart",
   "birthDetails": "Birth Details",
   "name": "Name",
@@ -3652,7 +4754,6 @@
   "vargottama": "Vargottama",
   "exalted": "Exalted",
   "debilitated": "Debilitated",
-
   "addBalance": "Add Balance",
   "amount": "Amount",
   "walletBalance": "Wallet Balance",
@@ -3661,7 +4762,6 @@
   "serviceLabel": "Service",
   "refund": "Refund",
   "noTransactions": "No transactions",
-
   "editProfile": "Edit Profile",
   "savedAstrologers": "Saved Astrologers",
   "noSavedAstrologers": "No saved astrologers yet",
@@ -3670,7 +4770,6 @@
   "chatHistory": "Chat History",
   "callHistory": "Call History",
   "logout": "Logout",
-
   "chatMessages": "Chat Messages",
   "typeMessage": "Type a message...",
   "sessionEnded": "Session Ended",
@@ -3680,7 +4779,6 @@
   "sendPDF": "Send PDF",
   "upload": "Upload",
   "fileNotFound": "File not found",
-
   "voiceCall": "Voice Call",
   "videoCall": "Video Call",
   "ringing": "Ringing...",
@@ -3691,7 +4789,6 @@
   "speaker": "Speaker",
   "camera": "Camera",
   "flip": "Flip",
-
   "liveStreams": "Live Streams",
   "noLiveStreams": "No live streams right now",
   "astrologerUnavailable": "Astrologer not available. Ending stream.",
@@ -3699,14 +4796,12 @@
   "superChat": "Super Chat",
   "sendGift": "Send a Gift",
   "goBack": "Go Back",
-
   "appPermissions": "App Permissions",
   "grantPermissions": "Grant Permissions",
   "skipForNow": "Skip for now",
   "microphone": "Microphone",
   "notifications": "Notifications",
   "storage": "Storage",
-
   "ok": "OK",
   "cancel": "Cancel",
   "save": "Save",
@@ -3719,11 +4814,9 @@
   "noData": "No data available",
   "error": "Error",
   "success": "Success",
-
   "selectLanguage": "Select Language",
   "language": "Language",
   "english": "English",
-
   "myDetails": "My Details",
   "myKundlis": "My Kundlis",
   "walletRecharge": "Wallet & Recharge",
@@ -3925,7 +5018,6 @@
   "lordPlacedIn": "LORD PLACED IN",
   "lordDignity": "LORD DIGNITY",
   "d9Dignity": "D9 DIGNITY",
-
   "careerAnalysis": "Career Analysis",
   "launchWindows": "Launch Windows",
   "peakWindows": "Peak Windows",

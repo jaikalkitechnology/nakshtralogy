@@ -3,7 +3,7 @@
   "pwPremiumTitle": "প্রিমিয়াম রিপোর্ট",
   "pwLockedSubtitle": "এই চার্টের সম্পূর্ণ বিশ্লেষণ আনলক করুন",
   "pwUnlockFull": "সম্পূর্ণ {name} আনলক করুন",
-  "pwUnlockPrice": "আনলক · ₹{price}",
+  "pwUnlockPrice": "আনলক · {price}",
   "pwOneTime": "একবারের আনলক — এই চার্টে চিরকালের জন্য আপনার",
   "pwWhatYouGet": "আপনি যা পাবেন",
   "pwYourBalance": "আপনার ওয়ালেট ব্যালেন্স",

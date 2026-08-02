@@ -21,7 +21,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String pwUnlockPrice(Object price) {
-    return 'અનલૉક · ₹${price}';
+    return 'અનલૉક · ${price}';
   }
 
   @override

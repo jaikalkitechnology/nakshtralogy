@@ -21,7 +21,7 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String pwUnlockPrice(Object price) {
-    return 'ಅನ್‌ಲಾಕ್ · ₹${price}';
+    return 'ಅನ್‌ಲಾಕ್ · ${price}';
   }
 
   @override

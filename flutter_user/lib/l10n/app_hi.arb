@@ -3,7 +3,7 @@
   "pwPremiumTitle": "प्रीमियम रिपोर्ट",
   "pwLockedSubtitle": "इस कुंडली के लिए पूरा विश्लेषण अनलॉक करें",
   "pwUnlockFull": "पूरा {name} अनलॉक करें",
-  "pwUnlockPrice": "अनलॉक · ₹{price}",
+  "pwUnlockPrice": "अनलॉक · {price}",
   "pwOneTime": "एक बार अनलॉक — इस कुंडली पर हमेशा के लिए आपका",
   "pwWhatYouGet": "आपको क्या मिलेगा",
   "pwYourBalance": "आपका वॉलेट बैलेंस",

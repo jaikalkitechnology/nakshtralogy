@@ -341,6 +341,32 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  /// International store IAP: after the store purchase completes, verify the
+  /// receipt with the backend which grants the ServiceOrder (India uses the
+  /// wallet flow instead). Backend verification is scaffolded until the PAPG
+  /// phase. Idempotent on transactionId.
+  Future<Map<String, dynamic>> verifyIap({
+    required String servicePricingId,
+    String? chartId,
+    required String platform,
+    required String productId,
+    required String transactionId,
+    String? receipt,
+  }) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.serviceBase}/iap/verify'),
+      body: jsonEncode({
+        'service_pricing_id': servicePricingId,
+        if (chartId != null) 'chart_id': chartId,
+        'platform': platform,
+        'product_id': productId,
+        'transaction_id': transactionId,
+        if (receipt != null) 'receipt': receipt,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<List<dynamic>> getMyOrders() async {
     final resp = await http.get(Uri.parse(ApiConstants.serviceOrders), headers: _headers);
     if (resp.statusCode == 200) return jsonDecode(resp.body) as List;

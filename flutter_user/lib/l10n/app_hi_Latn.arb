@@ -3,7 +3,7 @@
   "pwPremiumTitle": "Premium Report",
   "pwLockedSubtitle": "Is chart ke liye poora analysis unlock karein",
   "pwUnlockFull": "Poora {name} unlock karein",
-  "pwUnlockPrice": "Unlock · ₹{price}",
+  "pwUnlockPrice": "Unlock · {price}",
   "pwOneTime": "Ek baar unlock — is chart par hamesha ke liye aapka",
   "pwWhatYouGet": "Aapko kya milega",
   "pwYourBalance": "Aapka wallet balance",

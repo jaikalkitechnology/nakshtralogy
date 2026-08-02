@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../services/app_mode.dart';
+import '../../services/iap_service.dart';
+import '../../utils/money.dart';
 
 /// Reusable pay-per-report paywall for flutter_user.
 ///
@@ -161,6 +164,17 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
   List<String> get _features =>
       (widget.pricing['features_json'] as List?)?.map((e) => e.toString()).toList() ?? const [];
 
+  // ── International (store IAP) vs India (wallet) ──────────────────────
+  bool get _intl => AppMode.instance.isInternational;
+  double get _usd =>
+      (widget.pricing['price_usd'] as num?)?.toDouble() ??
+      (widget.pricing['session_amount'] as num?)?.toDouble() ?? 0;
+  String get _iapProductId => widget.pricing['iap_product_id']?.toString() ?? '';
+
+  /// Currency-aware headline price for the current session.
+  String get _displayPrice =>
+      _intl ? Money.format(_usd, currency: 'USD') : Money.format(_price, currency: 'INR');
+
   @override
   void initState() {
     super.initState();
@@ -171,6 +185,35 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
     final b = await _api.getWalletBalance();
     if (!mounted) return;
     setState(() { _balance = b; _loadingBalance = false; });
+  }
+
+  /// International purchase — store IAP tier → backend verify → grant. No
+  /// wallet involved (store policy). India uses [_unlock] instead.
+  Future<void> _buyIap() async {
+    final l = AppLocalizations.of(context)!;
+    if (_iapProductId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.pwUnlockFailed), backgroundColor: AppColors.error));
+      return;
+    }
+    setState(() => _purchasing = true);
+    final res = await IapService.instance.buy(
+      productId: _iapProductId,
+      servicePricingId: _pricingId,
+      chartId: widget.chartId,
+    );
+    if (!mounted) return;
+    if (res.ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.pwUnlockedNow), backgroundColor: AppColors.success));
+      widget.onUnlocked();
+    } else {
+      setState(() => _purchasing = false);
+      if (res.error != 'canceled') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(res.error ?? l.pwUnlockFailed), backgroundColor: AppColors.error));
+      }
+    }
   }
 
   Future<void> _unlock() async {
@@ -262,7 +305,9 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
     final l = AppLocalizations.of(context)!;
     final icon = widget.pricing['icon']?.toString();
     final heroEmoji = (icon != null && icon.isNotEmpty) ? icon : widget.emoji;
-    final enough = _balance >= _price;
+    // International buys via the store (payment handled by the store), so the
+    // CTA is always enabled; India still gates on wallet balance.
+    final enough = _intl ? true : _balance >= _price;
 
     return ListView(padding: const EdgeInsets.fromLTRB(20, 24, 20, 40), children: [
       // ── Locked hero ──
@@ -298,11 +343,12 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
               style: const TextStyle(color: AppColors.smoke, fontSize: 12, height: 1.4)),
           const SizedBox(height: 14),
           Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text('₹${_price.toStringAsFixed(0)}',
+            Text(_displayPrice,
                 style: const TextStyle(color: AppColors.gold, fontSize: 34, fontWeight: FontWeight.w800, height: 1)),
-            if (_orig != null && _orig! > _price) ...[
+            // Strike-through original only in India (INR); store shows tier price.
+            if (!_intl && _orig != null && _orig! > _price) ...[
               const SizedBox(width: 10),
-              Padding(padding: const EdgeInsets.only(bottom: 5), child: Text('₹${_orig!.toStringAsFixed(0)}',
+              Padding(padding: const EdgeInsets.only(bottom: 5), child: Text(Money.format(_orig!, currency: 'INR'),
                   style: const TextStyle(color: AppColors.smoke, fontSize: 15, decoration: TextDecoration.lineThrough))),
             ],
           ]),
@@ -326,30 +372,32 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
           ]))),
       ],
 
-      // ── Wallet balance ──
-      const SizedBox(height: 20),
-      Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.06))),
-        child: Row(children: [
-          const Icon(Icons.account_balance_wallet, color: AppColors.gold, size: 18),
-          const SizedBox(width: 10),
-          Expanded(child: Text(l.pwYourBalance, style: const TextStyle(color: AppColors.smoke, fontSize: 12))),
-          _loadingBalance
-              ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
-              : Text('₹${_balance.toStringAsFixed(0)}',
-                  style: TextStyle(color: enough ? AppColors.ivory : AppColors.error, fontSize: 15, fontWeight: FontWeight.w800)),
-        ]),
-      ),
-      if (!_loadingBalance && !enough) Padding(padding: const EdgeInsets.only(top: 6),
-        child: Text(l.pwInsufficient, style: const TextStyle(color: AppColors.error, fontSize: 11))),
+      // ── Wallet balance (India only — international pays via the store) ──
+      if (!_intl) ...[
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.card.withOpacity(0.5), borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withOpacity(0.06))),
+          child: Row(children: [
+            const Icon(Icons.account_balance_wallet, color: AppColors.gold, size: 18),
+            const SizedBox(width: 10),
+            Expanded(child: Text(l.pwYourBalance, style: const TextStyle(color: AppColors.smoke, fontSize: 12))),
+            _loadingBalance
+                ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
+                : Text(Money.format(_balance, currency: 'INR'),
+                    style: TextStyle(color: enough ? AppColors.ivory : AppColors.error, fontSize: 15, fontWeight: FontWeight.w800)),
+          ]),
+        ),
+        if (!_loadingBalance && !enough) Padding(padding: const EdgeInsets.only(top: 6),
+          child: Text(l.pwInsufficient, style: const TextStyle(color: AppColors.error, fontSize: 11))),
+      ],
 
       // ── CTA ──
       const SizedBox(height: 18),
       SizedBox(width: double.infinity, height: 52, child: ElevatedButton.icon(
-        onPressed: _purchasing ? null : _unlock,
+        onPressed: _purchasing ? null : (_intl ? _buyIap : _unlock),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
@@ -357,7 +405,11 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.midnight))
             : Icon(enough ? Icons.lock_open : Icons.account_balance_wallet, size: 18),
         label: Text(
-          _purchasing ? l.pwProcessing : (enough ? l.pwUnlockPrice(_price.toStringAsFixed(0)) : l.pwRechargeToUnlock),
+          _purchasing
+              ? l.pwProcessing
+              : (_intl
+                  ? l.pwUnlockPrice(Money.format(_usd, currency: 'USD'))
+                  : (enough ? l.pwUnlockPrice(Money.format(_price, currency: 'INR')) : l.pwRechargeToUnlock)),
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
       )),
       const SizedBox(height: 10),

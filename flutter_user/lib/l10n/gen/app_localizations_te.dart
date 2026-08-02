@@ -21,7 +21,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String pwUnlockPrice(Object price) {
-    return 'అన్‌లాక్ · ₹${price}';
+    return 'అన్‌లాక్ · ${price}';
   }
 
   @override

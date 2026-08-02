@@ -3,7 +3,7 @@
   "pwPremiumTitle": "ప్రీమియం రిపోర్ట్",
   "pwLockedSubtitle": "ఈ చార్ట్ యొక్క పూర్తి విశ్లేషణను అన్‌లాక్ చేయండి",
   "pwUnlockFull": "పూర్తి {name} ను అన్‌లాక్ చేయండి",
-  "pwUnlockPrice": "అన్‌లాక్ · ₹{price}",
+  "pwUnlockPrice": "అన్‌లాక్ · {price}",
   "pwOneTime": "ఒకేసారి అన్‌లాక్ — ఈ చార్ట్‌పై మీకు ఎప్పటికీ",
   "pwWhatYouGet": "మీకు లభించేది",
   "pwYourBalance": "మీ వాలెట్ బ్యాలెన్స్",

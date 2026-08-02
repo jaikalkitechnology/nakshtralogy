@@ -3,7 +3,7 @@
   "pwPremiumTitle": "પ્રીમિયમ રિપોર્ટ",
   "pwLockedSubtitle": "આ ચાર્ટનું સંપૂર્ણ વિશ્લેષણ અનલૉક કરો",
   "pwUnlockFull": "સંપૂર્ણ {name} અનલૉક કરો",
-  "pwUnlockPrice": "અનલૉક · ₹{price}",
+  "pwUnlockPrice": "અનલૉક · {price}",
   "pwOneTime": "એક વખતનું અનલૉક — આ ચાર્ટ પર તમારું કાયમ માટે",
   "pwWhatYouGet": "તમને શું મળે છે",
   "pwYourBalance": "તમારું વૉલેટ બેલેન્સ",

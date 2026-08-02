@@ -21,7 +21,7 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String pwUnlockPrice(Object price) {
-    return 'അൺലോക്ക് · ₹${price}';
+    return 'അൺലോക്ക് · ${price}';
   }
 
   @override

@@ -3,7 +3,7 @@
   "pwPremiumTitle": "प्रीमियम रिपोर्ट",
   "pwLockedSubtitle": "या पत्रिकेचे संपूर्ण विश्लेषण अनलॉक करा",
   "pwUnlockFull": "संपूर्ण {name} अनलॉक करा",
-  "pwUnlockPrice": "अनलॉक · ₹{price}",
+  "pwUnlockPrice": "अनलॉक · {price}",
   "pwOneTime": "एकदाच अनलॉक करा — या पत्रिकेवर तुमचे कायमचे",
   "pwWhatYouGet": "तुम्हाला काय मिळेल",
   "pwYourBalance": "तुमची वॉलेट शिल्लक",

@@ -3,7 +3,7 @@
   "pwPremiumTitle": "Premium Report",
   "pwLockedSubtitle": "Unlock the full analysis for this chart",
   "pwUnlockFull": "Unlock full {name}",
-  "pwUnlockPrice": "Unlock · ₹{price}",
+  "pwUnlockPrice": "Unlock · {price}",
   "pwOneTime": "One-time unlock — yours forever on this chart",
   "pwWhatYouGet": "What you get",
   "pwYourBalance": "Your wallet balance",

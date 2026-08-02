@@ -3,7 +3,7 @@
   "pwPremiumTitle": "பிரீமியம் அறிக்கை",
   "pwLockedSubtitle": "இந்த ஜாதகத்தின் முழு பகுப்பாய்வை அன்லாக் செய்யுங்கள்",
   "pwUnlockFull": "முழு {name} ஐ அன்லாக் செய்யுங்கள்",
-  "pwUnlockPrice": "அன்லாக் · ₹{price}",
+  "pwUnlockPrice": "அன்லாக் · {price}",
   "pwOneTime": "ஒருமுறை அன்லாக் — இந்த ஜாதகத்தில் நிரந்தரமாக உங்களுக்கு",
   "pwWhatYouGet": "நீங்கள் பெறுவது",
   "pwYourBalance": "உங்கள் வாலட் இருப்பு",

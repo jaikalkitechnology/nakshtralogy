@@ -3,7 +3,7 @@
   "pwPremiumTitle": "ಪ್ರೀಮಿಯಂ ವರದಿ",
   "pwLockedSubtitle": "ಈ ಚಾರ್ಟ್‌ನ ಸಂಪೂರ್ಣ ವಿಶ್ಲೇಷಣೆಯನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ",
   "pwUnlockFull": "ಸಂಪೂರ್ಣ {name} ಅನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ",
-  "pwUnlockPrice": "ಅನ್‌ಲಾಕ್ · ₹{price}",
+  "pwUnlockPrice": "ಅನ್‌ಲಾಕ್ · {price}",
   "pwOneTime": "ಒಂದೇ ಬಾರಿ ಅನ್‌ಲಾಕ್ — ಈ ಚಾರ್ಟ್‌ನಲ್ಲಿ ನಿಮಗೆ ಶಾಶ್ವತವಾಗಿ",
   "pwWhatYouGet": "ನಿಮಗೆ ಸಿಗುವುದು",
   "pwYourBalance": "ನಿಮ್ಮ ವಾಲೆಟ್ ಬಾಕಿ",

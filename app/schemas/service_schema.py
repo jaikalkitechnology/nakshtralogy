@@ -171,6 +171,22 @@ class ServiceOrderListResponse(BaseModel):
     created_at: Optional[datetime] = None
 
 
+class IapVerifyRequest(BaseModel):
+    """International store IAP verification (App Store / Google Play).
+
+    The client buys the service's IAP tier via the in_app_purchase plugin, then
+    POSTs the receipt here. Real Apple/Google validation lands in the PAPG phase
+    (Phase D); until then a scaffold records the grant. Idempotent on
+    transaction_id so a replayed receipt returns the same order.
+    """
+    service_pricing_id: str
+    chart_id: Optional[str] = None
+    platform: str = Field(..., description="ios | android")
+    product_id: str = Field(..., max_length=100)
+    transaction_id: str = Field(..., max_length=255, description="Store transaction / order id")
+    receipt: Optional[str] = Field(None, description="Apple receipt data / Google purchase token")
+
+
 class PurchaseServiceRequest(BaseModel):
     """User purchases/activates a service for a specific chart.
 
