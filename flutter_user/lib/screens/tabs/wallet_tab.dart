@@ -230,7 +230,7 @@ class _WalletTabState extends State<WalletTab> {
                     scrollDirection: Axis.horizontal,
                     children: [100, 500, 1000, 2000, 5000].map((amt) {
                       return Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsetsDirectional.only(end: 8),
                         child: OutlinedButton(
                           onPressed: () {
                             context.read<WalletBloc>().add(WalletRechargeRequested(amount: amt.toDouble()));
