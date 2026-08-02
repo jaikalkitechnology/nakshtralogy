@@ -23,6 +23,14 @@ class ApiService {
     if (c.isNotEmpty) _langCode = c;
   }
 
+  // ISO alpha-2 country from the device locale, sent as `X-Device-Country` so
+  // the backend can resolve region (IN|INTL) without a network geo lookup.
+  String? _deviceCountry;
+  void setDeviceCountry(String? cc) {
+    final c = (cc ?? '').trim();
+    _deviceCountry = c.isEmpty ? null : c.toUpperCase();
+  }
+
   /// Load the saved app language into the request header cache.
   Future<void> loadLang() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,6 +65,7 @@ class ApiService {
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept-Language': _langCode,
+    if (_deviceCountry != null) 'X-Device-Country': _deviceCountry!,
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
@@ -231,6 +240,29 @@ class ApiService {
       Uri.parse(ApiConstants.userMe),
       headers: _headers,
       body: jsonEncode(fields),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  // ── Region / AppMode (IN|INTL) ────────────────────────────────
+
+  /// Resolve + cache the caller's region on the backend. Sends the device
+  /// country hint (via `X-Device-Country`). Returns
+  /// {region, country_code, is_international, app_mode, currency, manual}.
+  Future<Map<String, dynamic>> getMyRegion() async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.userMe}/region'));
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Manual region override from Settings (region: 'IN'|'INTL').
+  Future<Map<String, dynamic>> setMyRegion({String? region, String? countryCode}) async {
+    final resp = await http.put(
+      Uri.parse('${ApiConstants.userMe}/region'),
+      headers: _headers,
+      body: jsonEncode({
+        if (region != null) 'region': region,
+        if (countryCode != null) 'country_code': countryCode,
+      }),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }

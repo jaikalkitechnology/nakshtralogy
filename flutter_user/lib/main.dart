@@ -6,6 +6,7 @@ import 'l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
+import 'services/app_mode.dart';
 import 'services/fcm_service.dart';
 import 'bloc/auth/auth_bloc.dart';
 import 'bloc/auth/auth_event.dart';
@@ -32,12 +33,29 @@ void main() async {
     debugPrint('FCM init failed (non-fatal): $e');
   }
   _showPermissions = await shouldShowPermissionScreen();
+
+  // AppMode (IN|INTL): load the cached region and send the device-country hint
+  // so the backend can resolve region without a geo lookup. Drives which
+  // language list is offered and the session currency — never any astrology.
+  await AppMode.instance.load();
+  ApiService().setDeviceCountry(AppMode.deviceCountry());
+
   final prefs = await SharedPreferences.getInstance();
   final langCode = prefs.getString('app_language');
   if (langCode != null) {
     _savedLocale = _parseLocale(langCode);
     ApiService().setLang(langCode);
+  } else {
+    // No explicit choice yet — in international mode default to the device
+    // language when supported, else English; India keeps system default.
+    final def = AppMode.instance.defaultLocaleTag();
+    if (def != null) {
+      _savedLocale = _parseLocale(def);
+      ApiService().setLang(def);
+    }
   }
+  // Refresh region from the backend in the background (persists for next boot).
+  AppMode.instance.refreshFromServer();
   runApp(const NakshatralogyUserApp());
 }
 
