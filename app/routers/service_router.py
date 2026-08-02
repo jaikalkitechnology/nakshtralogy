@@ -28,7 +28,7 @@ import contextlib
 from typing import List, Optional
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Header, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -124,16 +124,47 @@ def _get_birth_jd(nk, dob, tob, place):
 #  PRICING CATALOG
 # ══════════════════════════════════════════════════════════════════════
 
+def _apply_session_pricing(sp, region: str, fx: float, mult: float):
+    """Attach transient session_currency / session_amount / pay_via to a
+    ServicePricing ORM row for the caller's region. INTL → USD via store IAP;
+    IN → INR via the wallet. Free services present amount 0 in both. Never
+    touches the stored columns or any astrology logic."""
+    intl = region_util.is_international_region(region)
+    price = float(sp.price or 0)
+    if sp.is_free or price == 0:
+        sp.session_currency = "USD" if intl else "INR"
+        sp.session_amount = 0.0
+        sp.pay_via = "free"
+        return sp
+    if intl:
+        usd = pricing_util.usd_for_pricing(sp, fx, mult)
+        sp.session_currency = "USD"
+        sp.session_amount = float(usd) if usd else 0.0
+        sp.pay_via = "iap"
+    else:
+        sp.session_currency = "INR"
+        sp.session_amount = price
+        sp.pay_via = "wallet"
+    return sp
+
+
 @router.get("/pricing", response_model=List[ServicePricingResponse])
 def list_pricing(
     category: Optional[str] = None,
     include_inactive: bool = False,
     search: Optional[str] = None,
+    region: Optional[str] = Query(None, description="Session region override IN|INTL"),
+    x_device_country: Optional[str] = Header(None),
     db: Session = Depends(get_db),
 ):
     """
     Public: list active service pricing.
     Admin can pass include_inactive=true and search to see all entries.
+
+    Each row carries a session view (`session_currency`, `session_amount`,
+    `pay_via`) for the caller's region — USD/IAP for international, ₹/wallet for
+    India. Region comes from ?region= or the X-Device-Country hint (no user
+    context on this public endpoint).
     """
     q = db.query(ServicePricing)
     if not include_inactive:
@@ -146,14 +177,28 @@ def list_pricing(
             (ServicePricing.service_name.like(like)) |
             (ServicePricing.service_key.like(like))
         )
-    return q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
+    rows = q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
+    sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+    for sp in rows:
+        _apply_session_pricing(sp, sess, fx, mult)
+    return rows
 
 
 @router.get("/pricing/{pricing_id}", response_model=ServicePricingResponse)
-def get_pricing(pricing_id: str, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+def get_pricing(
+    pricing_id: str,
+    region: Optional[str] = Query(None, description="Session region override IN|INTL"),
+    x_device_country: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
     p = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not p:
         raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
+    sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
+    _apply_session_pricing(p, sess, pricing_util.get_fx_rate(db), pricing_util.get_multiplier(db))
     return p
 
 
@@ -1162,6 +1207,12 @@ def get_entitlements(
 
     privileged = getattr(current_user, "role", None) in ("astrologer", "admin")
 
+    # Session region → currency for this user (drives USD/IAP vs ₹/wallet).
+    sess = region_util.session_region(user_region=getattr(current_user, "region", None))
+    intl = region_util.is_international_region(sess)
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+
     q = db.query(ServicePricing).filter(ServicePricing.is_active == True)
     if category:
         q = q.filter(ServicePricing.category == category)
@@ -1175,6 +1226,8 @@ def get_entitlements(
         if not is_free and not privileged and chart_id:
             order = find_order(db, current_user.id, sp.id, chart_id)
         unlocked = is_free or privileged or (order is not None)
+        usd = None if is_free else pricing_util.usd_for_pricing(sp, fx, mult)
+        session_amount = 0.0 if is_free else (float(usd) if (intl and usd) else price)
         out.append({
             "service_key": sp.service_key,
             "service_name": sp.service_name,
@@ -1182,8 +1235,14 @@ def get_entitlements(
             "icon": sp.icon,
             "pricing_id": sp.id,
             "price": price,
+            "price_usd": float(usd) if usd else None,
+            "iap_product_id": sp.iap_product_id if (intl and not is_free) else None,
             "original_price": float(sp.original_price) if sp.original_price is not None else None,
             "currency": sp.currency or "INR",
+            # Session view for the caller's region: what to show + how to pay.
+            "session_currency": "USD" if intl else "INR",
+            "session_amount": session_amount,
+            "pay_via": "free" if is_free else ("iap" if intl else "wallet"),
             "is_free": is_free,
             "unlocked": unlocked,
             "order_id": order.id if order else None,
@@ -1191,6 +1250,9 @@ def get_entitlements(
 
     return {
         "chart_id": chart_id,
+        "region": sess,
+        "is_international": intl,
+        "currency": "USD" if intl else "INR",
         "privileged": privileged,
         "entitlements": out,
     }

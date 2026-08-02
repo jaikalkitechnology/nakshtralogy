@@ -37,7 +37,7 @@ is the FINAL phase. Never change astrology logic.
 ## Phase B — USD pricing + IAP tiers + USD wallet
 | # | Task | Status |
 |---|------|--------|
-| B.1 | `ServicePricing.price_usd` (nullable) + `iap_product_id` columns; global USD rule (multiplier 5, admin FX) → nearest IAP tier; admin-editable override | PENDING |
+| B.1 | `ServicePricing.price_usd` (nullable) + `iap_product_id` columns; global USD rule (multiplier 5, admin FX) → nearest IAP tier; admin-editable override | DONE (ee2583f, 2026-08-02) |
 | B.2 | Currency-aware responses: `/service/pricing`, `/service/entitlements`, paywall 402 return `{currency, amount, iap_product_id}` for the session region | PENDING |
 | B.3 | react_admin Pricing: show/edit `price_usd` + `iap_product_id`, "regenerate USD from rule" action, FX-rate setting | PENDING |
 | B.4 | flutter_user IAP purchase flow (`in_app_purchase` plugin): buy the tier → `POST /service/iap/verify` (scaffold verify) → grant `ServiceOrder`; paywall shows USD/tier for international, ₹/wallet for India | PENDING |

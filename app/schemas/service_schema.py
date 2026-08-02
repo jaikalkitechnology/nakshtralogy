@@ -21,6 +21,12 @@ class ServicePricingResponse(BaseModel):
     price_usd: Optional[float] = None
     iap_product_id: Optional[str] = None
     price_usd_manual: bool = False
+    # Session-resolved view for the caller's region: currency + amount to show.
+    # INTL → USD/price_usd via IAP; IN → INR/price via wallet. Transient
+    # (set per-request), not stored columns.
+    session_currency: str = "INR"
+    session_amount: float = 0
+    pay_via: str = "wallet"          # wallet (IN) | iap (INTL)
     is_free: bool = False
     is_active: bool = True
     sort_order: int = 0

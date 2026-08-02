@@ -80,8 +80,41 @@ def is_entitled(
     return False, sp, None
 
 
-def payment_required_detail(sp: ServicePricing, lang: str = "english") -> dict:
-    """Structured 402 body: message + service_key + price + pricing_id."""
+def payment_required_detail(
+    sp: ServicePricing,
+    lang: str = "english",
+    region: str = "IN",
+    db: Optional[Session] = None,
+) -> dict:
+    """Structured 402 body: message + service_key + price + pricing_id.
+
+    Currency-aware for the session region: international callers get
+    {currency: USD, amount: price_usd, iap_product_id, pay_via: iap}; India
+    keeps {currency: INR, amount: price, pay_via: wallet}. Never touches
+    astrology logic — only how the paywall is presented/paid.
+    """
+    is_intl = str(region or "IN").strip().upper() == "INTL"
+    usd = None
+    iap_product_id = None
+    if is_intl and not (sp.is_free or float(sp.price or 0) == 0):
+        try:
+            from app.core import pricing as pricing_util
+            if db is not None:
+                fx = pricing_util.get_fx_rate(db)
+                mult = pricing_util.get_multiplier(db)
+            else:
+                fx, mult = pricing_util.DEFAULT_FX_RATE, pricing_util.DEFAULT_MULTIPLIER
+            usd = pricing_util.usd_for_pricing(sp, fx, mult)
+            iap_product_id = sp.iap_product_id or (
+                pricing_util.iap_product_id_for(sp.service_key, usd) if usd else None
+            )
+        except Exception:
+            usd = float(sp.price_usd) if sp.price_usd is not None else None
+            iap_product_id = sp.iap_product_id
+
+    session_currency = "USD" if is_intl else "INR"
+    session_amount = float(usd) if (is_intl and usd) else float(sp.price or 0)
+
     return {
         "code": "payment_required",
         "message": t("err.paid_service_required", lang, price=sp.price),
@@ -89,8 +122,15 @@ def payment_required_detail(sp: ServicePricing, lang: str = "english") -> dict:
         "service_name": sp.service_name,
         "pricing_id": sp.id,
         "price": float(sp.price or 0),
+        "price_usd": float(usd) if usd else (float(sp.price_usd) if sp.price_usd is not None else None),
         "original_price": float(sp.original_price) if sp.original_price is not None else None,
         "currency": sp.currency or "INR",
+        # Session view for the caller's region.
+        "session_currency": session_currency,
+        "session_amount": session_amount,
+        "iap_product_id": iap_product_id,
+        "pay_via": "iap" if is_intl else "wallet",
+        "region": "INTL" if is_intl else "IN",
         "icon": sp.icon,
     }
 
@@ -111,4 +151,10 @@ def require_entitlement(
     entitled, sp, _order = is_entitled(db, user, service_key, chart_id)
     if entitled:
         return sp
-    raise HTTPException(status_code=402, detail=payment_required_detail(sp, lang))
+    region = str(getattr(user, "region", None) or "IN").strip().upper()
+    if region not in ("IN", "INTL"):
+        region = "IN"
+    raise HTTPException(
+        status_code=402,
+        detail=payment_required_detail(sp, lang, region=region, db=db),
+    )

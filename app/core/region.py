@@ -126,6 +126,31 @@ def geo_country(ip: Optional[str]) -> Optional[str]:
     return None
 
 
+def session_region(
+    explicit_region: Optional[str] = None,
+    user_region: Optional[str] = None,
+    device_country: Optional[str] = None,
+) -> str:
+    """Resolve the region to price/present a single request in, cheaply (no
+    network). Priority: an explicit ?region= override → the authenticated
+    user's stored region → the device-country hint → India default.
+
+    Used by pricing/entitlements/paywall so a response carries the right
+    currency for the caller without an IP lookup on every call.
+    """
+    if explicit_region:
+        r = str(explicit_region).strip().upper()
+        if r in (IN, INTL):
+            return r
+    if user_region:
+        r = str(user_region).strip().upper()
+        if r in (IN, INTL):
+            return r
+    if device_country:
+        return region_for_country(device_country)
+    return IN
+
+
 def resolve_region(
     device_country: Optional[str] = None,
     client_ip: Optional[str] = None,
