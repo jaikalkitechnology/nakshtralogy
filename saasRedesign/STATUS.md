@@ -12,10 +12,11 @@ radius, star particles, light/dark), keeping Nakshtralogy's mystical brand.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verification:** static only (no `node_modules`/npm here — never claim a build).
 
-**Summary:** 13 / 24 tasks DONE · Foundation (A.1–A.2, B.1–B.3) + A.3 DataTable
-kit + B.4 route-driven migration + C.2/C.4 dashboard gaps + D.1–D.4 shipped for
-react_admin at route **`/admin/v2`** (existing `/admin` untouched) · agent
-continuing into Phase E (Developer Portal).
+**Summary:** 19 / 24 tasks DONE · react_admin Phases A–D complete at route
+**`/admin/v2`** (existing `/admin` untouched) · react_developer_api Phases
+E–F complete (shared design system + DevShell + Stripe-like dashboard +
+reskinned/enhanced feature pages) · agent continuing into Phase G
+(cross-cutting polish: animations/tooltips/⌘K/responsive/a11y).
 
 ---
 
@@ -54,16 +55,16 @@ continuing into Phase E (Developer Portal).
 ## Phase E — Developer Portal shell + dashboard (react_developer_api)
 | # | Task | Status |
 |---|------|--------|
-| E.1 | Apply the shared design system + fixed-sidebar shell + sticky header (logo `⚡ Nakshtralogy Developer Portal`) to react_developer_api | PENDING |
-| E.2 | Stripe-like developer dashboard: API Calls, Success Rate, Latency, Wallet, Subscription, TPS, Webhook status, Errors, SDK downloads, Monthly usage, API version — cards + charts | PENDING |
+| E.1 | Apply the shared design system + fixed-sidebar shell + sticky header (logo `⚡ Nakshtralogy Developer Portal`) to react_developer_api | DONE (ed7ca36, 2026-08-02) — ported tokens/tailwind config/ThemeProvider/StarField/premium primitives; new `src/components/layout/DevShell.tsx` replaces `AppShell.tsx` (left in place, unreferenced) in `App.tsx` |
+| E.2 | Stripe-like developer dashboard: API Calls, Success Rate, Latency, Wallet, Subscription, TPS, Webhook status, Errors, SDK downloads, Monthly usage, API version — cards + charts | DONE (4db6b33, 2026-08-02) — `DashboardPage.tsx` rebuilt on StatCard/GlassPanel; Webhook/SDK/API-version shown as labelled platform info (no backend for those yet) rather than fabricated metrics |
 
 ## Phase F — Developer feature screens
 | # | Task | Status |
 |---|------|--------|
-| F.1 | API Management: generate/rotate/revoke keys, webhook config, allowed domains, rate limits, sandbox/production, copy button, secret visibility toggle, usage stats | PENDING |
-| F.2 | API Analytics (calls/day, success rate, latency, response codes, most-used APIs, SDK usage, webhook deliveries) | PENDING |
-| F.3 | Subscription card (plan/status/renewal/TPS/monthly+remaining calls/upgrade/invoice) + Wallet (balance/credits/debits/pending/withdraw/invoices/txns) | PENDING |
-| F.4 | Documentation cards (Auth/Payments/Forecast/Reports/Kundli/Rashi/SDK/Postman/Playground/Samples) + interactive API Playground (method/url/headers/body/execute/response/latency/copy) | PENDING |
+| F.1 | API Management: generate/rotate/revoke keys, webhook config, allowed domains, rate limits, sandbox/production, copy button, secret visibility toggle, usage stats | DONE (1111b18, 2026-08-02) — generate/rotate/revoke/copy/mode(live=production,test=sandbox)/scopes/last-used were already fully wired (untouched); added real per-key rate-limit card from the active subscription's `tps_limit`; webhook config + allowed-domains have no backend, shown as clearly labelled "coming soon" rather than fake controls; secret is shown once (not re-revealable) which is the existing, more secure UX — no toggle needed since it's never persisted for redisplay |
+| F.2 | API Analytics (calls/day, success rate, latency, response codes, most-used APIs, SDK usage, webhook deliveries) | DONE (1111b18, 2026-08-02) — calls/day chart, response-code badges per row, product filter (most-used APIs) and latency were already wired; added a computed Success Rate stat and moved the KPI row onto the shared premium StatCard. SDK usage / webhook deliveries have no backend yet (noted, not fabricated) |
+| F.3 | Subscription card (plan/status/renewal/TPS/monthly+remaining calls/upgrade/invoice) + Wallet (balance/credits/debits/pending/withdraw/invoices/txns) | DONE (3be33c2, 2026-08-02) — plan/status/renewal/TPS/upgrade were already wired; added real "calls this period" (no monthly cap exists in the backend — it is rate-limited by TPS only, so no fake quota bar was added) and a client-generated receipt download. Wallet gained real credits/debits/net-flow summary cards computed from the existing ledger. "Withdraw" does not apply to a developer prepaid wallet (no backend endpoint) and was intentionally not added |
+| F.4 | Documentation cards (Auth/Payments/Forecast/Reports/Kundli/Rashi/SDK/Postman/Playground/Samples) + interactive API Playground (method/url/headers/body/execute/response/latency/copy) | DONE (46633b6, 2026-08-02) — added the 8 documentation quick-reference cards; the live playground (method/path/editable body/execute/response/latency) was already fully wired — added copy-to-clipboard on the response and every code-sample tab |
 
 ## Phase G — Cross-cutting polish
 | # | Task | Status |
