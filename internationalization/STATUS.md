@@ -40,7 +40,7 @@ is the FINAL phase. Never change astrology logic.
 | B.1 | `ServicePricing.price_usd` (nullable) + `iap_product_id` columns; global USD rule (multiplier 5, admin FX) → nearest IAP tier; admin-editable override | DONE (ee2583f, 2026-08-02) |
 | B.2 | Currency-aware responses: `/service/pricing`, `/service/entitlements`, paywall 402 return `{currency, amount, iap_product_id}` for the session region | DONE (6fa915b, 2026-08-02) |
 | B.3 | react_admin Pricing: show/edit `price_usd` + `iap_product_id`, "regenerate USD from rule" action, FX-rate setting | DONE (283b034, 2026-08-02) |
-| B.4 | flutter_user IAP purchase flow (`in_app_purchase` plugin): buy the tier → `POST /service/iap/verify` (scaffold verify) → grant `ServiceOrder`; paywall shows USD/tier for international, ₹/wallet for India | PENDING |
+| B.4 | flutter_user IAP purchase flow (`in_app_purchase` plugin): buy the tier → `POST /service/iap/verify` (scaffold verify) → grant `ServiceOrder`; paywall shows USD/tier for international, ₹/wallet for India | DONE (69913d6, 2026-08-02) |
 | B.5 | Wallet: show balance in **USD** when international (display conversion via admin FX); ledger unchanged; hide India-only recharge for international (IAP instead) | PENDING |
 
 ## Phase C — Full language set + smooth-worldwide polish

@@ -5,6 +5,8 @@ import '../../theme/app_theme.dart';
 import '../../bloc/wallet/wallet_bloc.dart';
 import '../../bloc/wallet/wallet_event.dart';
 import '../../bloc/wallet/wallet_state.dart';
+import '../../services/app_mode.dart';
+import '../../utils/money.dart';
 
 class WalletTab extends StatefulWidget {
   const WalletTab({super.key});
@@ -135,6 +137,16 @@ class _WalletTabState extends State<WalletTab> {
         final balance = (wallet?['balance'] as num?)?.toDouble() ?? 0.0;
         final totalCredit = (wallet?['total_credit'] as num?)?.toDouble() ?? 0.0;
         final totalDebit = (wallet?['total_debit'] as num?)?.toDouble() ?? 0.0;
+        // International: show the balance in USD (display conversion via the
+        // admin FX rate from the backend); the INR ledger is unchanged. Wallet
+        // recharge is India-only — international tops up via store IAP instead.
+        final displayCurrency = (wallet?['display_currency'] as String?) ??
+            (AppMode.instance.isInternational ? 'USD' : 'INR');
+        final displayBalance = (wallet?['display_balance'] as num?)?.toDouble() ?? balance;
+        final fx = (wallet?['fx_rate_usd'] as num?)?.toDouble();
+        final intl = displayCurrency.toUpperCase() == 'USD';
+        final rechargeEnabled = (wallet?['recharge_enabled'] as bool?) ?? !intl;
+        double conv(double inr) => (intl && fx != null && fx > 0) ? inr / fx : inr;
 
         return RefreshIndicator(
           color: AppColors.primary,
@@ -162,7 +174,7 @@ class _WalletTabState extends State<WalletTab> {
                         style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     const SizedBox(height: 6),
                     Text(
-                      '₹${balance.toStringAsFixed(2)}',
+                      Money.format(displayBalance, currency: displayCurrency, decimals: 2),
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 32,
@@ -170,15 +182,16 @@ class _WalletTabState extends State<WalletTab> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _openRechargeDialog,
-                        icon: const Icon(Icons.add, size: 18),
-                        label: Text(l.addBalance),
+                    if (rechargeEnabled)
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _openRechargeDialog,
+                          icon: const Icon(Icons.add, size: 18),
+                          label: Text(l.addBalance),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
+                    if (rechargeEnabled) const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
@@ -186,7 +199,7 @@ class _WalletTabState extends State<WalletTab> {
                             children: [
                               Text(l.totalCredit,
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
-                              Text('+₹${totalCredit.toStringAsFixed(0)}',
+                              Text('+${Money.format(conv(totalCredit), currency: displayCurrency)}',
                                   style: const TextStyle(color: AppColors.success, fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
                           ),
@@ -197,7 +210,7 @@ class _WalletTabState extends State<WalletTab> {
                             children: [
                               Text(l.totalDebit,
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
-                              Text('−₹${totalDebit.toStringAsFixed(0)}',
+                              Text('−${Money.format(conv(totalDebit), currency: displayCurrency)}',
                                   style: const TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
                           ),
@@ -209,32 +222,34 @@ class _WalletTabState extends State<WalletTab> {
               ),
               const SizedBox(height: 16),
 
-              // Quick recharge chips
-              SizedBox(
-                height: 38,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [100, 500, 1000, 2000, 5000].map((amt) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          context.read<WalletBloc>().add(WalletRechargeRequested(amount: amt.toDouble()));
-                        },
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: Size.zero,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          side: const BorderSide(color: AppColors.border),
+              // Quick recharge chips (India-only — international tops up via IAP)
+              if (rechargeEnabled) ...[
+                SizedBox(
+                  height: 38,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [100, 500, 1000, 2000, 5000].map((amt) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            context.read<WalletBloc>().add(WalletRechargeRequested(amount: amt.toDouble()));
+                          },
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: Size.zero,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            side: const BorderSide(color: AppColors.border),
+                          ),
+                          child: Text('+ ₹$amt',
+                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 11)),
                         ),
-                        child: Text('+ ₹$amt',
-                            style: const TextStyle(color: AppColors.textPrimary, fontSize: 11)),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
+              ],
 
               // Filter + statement
               Row(
@@ -329,7 +344,7 @@ class _WalletTabState extends State<WalletTab> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '${isCredit ? '+' : '−'}₹${(t['amount'] as num?)?.toStringAsFixed(0) ?? '0'}',
+                              '${isCredit ? '+' : '−'}${Money.format(conv((t['amount'] as num?)?.toDouble() ?? 0), currency: displayCurrency)}',
                               style: TextStyle(
                                 color: isCredit ? AppColors.success : AppColors.error,
                                 fontSize: 13,
@@ -337,7 +352,7 @@ class _WalletTabState extends State<WalletTab> {
                               ),
                             ),
                             Text(
-                              'Bal ₹${(t['balance_after'] as num?)?.toStringAsFixed(0) ?? '0'}',
+                              'Bal ${Money.format(conv((t['balance_after'] as num?)?.toDouble() ?? 0), currency: displayCurrency)}',
                               style: const TextStyle(color: AppColors.textSecondary, fontSize: 9),
                             ),
                           ],

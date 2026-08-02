@@ -426,12 +426,30 @@ def get_my_wallet(
         _WalletTxn.txn_type.in_(["consultation_debit", "withdrawal", "ai_debit"]),
     ).scalar() or 0
 
-    return {
+    # International sessions show the balance in USD (display conversion via the
+    # admin FX rate). The underlying ledger stays in INR — only presentation
+    # changes. India is unaffected.
+    resp = {
         "balance": float(wallet.balance),
         "currency": wallet.currency,
         "total_credit": float(total_credit),
         "total_debit": float(total_debit),
+        "display_currency": wallet.currency,
+        "display_balance": float(wallet.balance),
+        "region": current_user.region or region_util.IN,
+        "is_international": region_util.is_international_region(current_user.region),
+        "fx_rate_usd": None,
+        "recharge_enabled": True,   # India-only wallet recharge (IAP for INTL)
     }
+    if region_util.is_international_region(current_user.region):
+        from app.core import pricing as pricing_util
+        fx = pricing_util.get_fx_rate(db)
+        resp["display_currency"] = "USD"
+        resp["display_balance"] = round(float(wallet.balance) / fx, 2) if fx else 0.0
+        resp["fx_rate_usd"] = fx
+        # International top-up happens via store IAP, not the ₹ wallet recharge.
+        resp["recharge_enabled"] = False
+    return resp
 
 
 @router.get("/me/wallet/transactions")
