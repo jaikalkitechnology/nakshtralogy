@@ -521,8 +521,32 @@ def create_chart(
     lon = coords[1] if coords else None
     tz = str(coords[2]) if coords else None
 
-    # if is_primary, unset existing primary
-    if req.is_primary:
+    # ── Free Primary Kundli: the user's FIRST chart is always the primary
+    # (free forever, non-deletable). Exactly one primary per user. ──
+    existing_count = db.query(Chart).filter(Chart.user_id == current_user.id).count()
+    is_first = existing_count == 0
+    is_primary = bool(req.is_primary) or is_first
+
+    # ── Extra-chart gate: every chart beyond the free Primary consumes a paid
+    # `extra_chart` credit (a completed ServiceOrder with no chart linked yet).
+    # Money only ever moves through /service/purchase — here we merely consume
+    # an already-bought credit, or 402 if none exists. ──
+    extra_credit = None
+    if not is_first and getattr(current_user, "role", None) not in ("astrologer", "admin"):
+        from app.core.entitlements import get_pricing, payment_required_detail
+        sp_extra = get_pricing(db, "extra_chart")
+        if sp_extra and not sp_extra.is_free and float(sp_extra.price or 0) > 0:
+            extra_credit = db.query(ServiceOrder).filter(
+                ServiceOrder.user_id == current_user.id,
+                ServiceOrder.service_pricing_id == sp_extra.id,
+                ServiceOrder.chart_id.is_(None),
+                ServiceOrder.status == "completed",
+            ).order_by(ServiceOrder.created_at.asc()).first()
+            if extra_credit is None:
+                raise HTTPException(status_code=402, detail=payment_required_detail(sp_extra, lang))
+
+    # if is_primary, unset existing primary (keep exactly one)
+    if is_primary:
         db.query(Chart).filter(
             Chart.user_id == current_user.id, Chart.is_primary == True
         ).update({"is_primary": False})
@@ -538,11 +562,15 @@ def create_chart(
         longitude=lon,
         timezone=tz,
         chart_json=chart_json,
-        is_primary=req.is_primary,
+        is_primary=is_primary,
         category=req.category,
     )
     db.add(chart)
     db.flush()
+
+    # consume the extra-chart credit by linking it to the new chart
+    if extra_credit is not None:
+        extra_credit.chart_id = chart.id
 
     # auto-compute & cache vimshottari dasha
     try:
@@ -557,7 +585,7 @@ def create_chart(
         pass  # dasha cache is optional
 
     # update user moon_sign if this is their primary chart
-    if req.is_primary:
+    if is_primary:
         current_user.moon_sign = chart_json["planets"]["Moon"]["sign_idx"]
 
     # create free service order if service_key provided
@@ -622,6 +650,11 @@ def update_chart(
     if not chart:
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
+    # Guard: the free Primary Kundli is protected — it can't be edited. To
+    # change primaries, promote another chart (which auto-demotes this one).
+    if chart.is_primary:
+        raise HTTPException(status_code=403, detail=t("err.primary_chart_no_edit", lang))
+
     update_data = req.model_dump(exclude_unset=True)
     needs_recompute = any(k in update_data for k in ("dob", "tob", "place"))
 
@@ -665,6 +698,9 @@ def delete_chart(
     ).first()
     if not chart:
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    # Guard: the free Primary Kundli is non-deletable.
+    if chart.is_primary:
+        raise HTTPException(status_code=403, detail=t("err.primary_chart_no_delete", lang))
     db.delete(chart)
     db.commit()
     return MessageResponse(message=t("msg.chart_deleted", lang))
@@ -880,21 +916,34 @@ def purchase_service(
     if not sp.is_active:
         raise HTTPException(status_code=400, detail=t("err.service_unavailable", lang))
 
-    chart = db.query(Chart).filter(
-        Chart.id == req.chart_id, Chart.user_id == current_user.id
-    ).first()
-    if not chart:
+    # `extra_chart` is a chart-less creation CREDIT: it may be bought without a
+    # target chart (consumed when the next kundli is created) and may be bought
+    # more than once. Every other unlock is a permanent per-chart order.
+    is_credit = sp.service_key == "extra_chart"
+
+    chart = None
+    if req.chart_id:
+        chart = db.query(Chart).filter(
+            Chart.id == req.chart_id, Chart.user_id == current_user.id
+        ).first()
+        if not chart:
+            raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    elif not is_credit:
+        # per-report unlocks must name the chart they unlock
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
-    # check if already purchased for this chart
-    existing = db.query(ServiceOrder).filter(
-        ServiceOrder.user_id == current_user.id,
-        ServiceOrder.service_pricing_id == sp.id,
-        ServiceOrder.chart_id == chart.id,
-        ServiceOrder.status == "completed",
-    ).first()
-    if existing:
-        raise HTTPException(status_code=409, detail=t("err.already_purchased", lang))
+    chart_ref_id = chart.id if chart is not None else None
+
+    # per-chart unlocks are one-time; credits can be re-purchased
+    if not is_credit:
+        existing = db.query(ServiceOrder).filter(
+            ServiceOrder.user_id == current_user.id,
+            ServiceOrder.service_pricing_id == sp.id,
+            ServiceOrder.chart_id == chart_ref_id,
+            ServiceOrder.status == "completed",
+        ).first()
+        if existing:
+            raise HTTPException(status_code=409, detail=t("err.already_purchased", lang))
 
     price = float(sp.price)
 
@@ -915,7 +964,7 @@ def purchase_service(
         order = ServiceOrder(
             user_id=current_user.id,
             service_pricing_id=sp.id,
-            chart_id=chart.id,
+            chart_id=chart_ref_id,
             amount_paid=0,
             status="completed",
         )
@@ -960,7 +1009,7 @@ def purchase_service(
     order = ServiceOrder(
         user_id=current_user.id,
         service_pricing_id=sp.id,
-        chart_id=chart.id,
+        chart_id=chart_ref_id,
         amount_paid=price,
         wallet_txn_id=txn.id,
         status="completed",

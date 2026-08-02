@@ -151,9 +151,14 @@ class ServiceOrderListResponse(BaseModel):
 
 
 class PurchaseServiceRequest(BaseModel):
-    """User purchases/activates a service for a specific chart."""
+    """User purchases/activates a service for a specific chart.
+
+    `chart_id` is optional only for chart-less credits (e.g. `extra_chart`,
+    which is consumed when the next kundli is created). Every per-report unlock
+    still passes the chart it unlocks.
+    """
     service_pricing_id: str
-    chart_id: str
+    chart_id: Optional[str] = None
 
 
 # ─── Kundli Compute Request ─────────────────────────────────────────
