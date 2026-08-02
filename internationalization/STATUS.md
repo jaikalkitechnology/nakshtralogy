@@ -61,7 +61,7 @@ receipts), D.3 reporting/guidance done. (Denominator: 17 listed tasks A.1–D.3.
 |---|------|--------|
 | D.1 | Real IAP receipt validation: Apple App Store Server API + Google Play Developer API verification in `/service/iap/verify`; idempotent grant; refund/void handling | DONE-impl / BLOCKED-live (a912365, 2026-08-02) — real Apple+Google validators + refund handling shipped, credential-gated; go-live BLOCKED on real store credentials + on-device receipts (unavailable here) |
 | D.2 | (If web/non-store needed) Stripe/PayPal USD checkout for the same catalog; unify grant path; admin revenue in INR+USD | BLOCKED (needs real Stripe/PayPal merchant credentials). Grant path already unified (ServiceOrder); admin revenue INR+USD shipped via GET /service/revenue-summary. Design in PAYMENTS_PHASE_D.md |
-| D.3 | Reconciliation + receipts + tax/VAT notes; final verification | DONE (a?, 2026-08-02) — revenue-summary reporting + reconciliation/receipts/tax-VAT guidance in PAYMENTS_PHASE_D.md; final static verification passed |
+| D.3 | Reconciliation + receipts + tax/VAT notes; final verification | DONE (90e7705, 2026-08-02) — revenue-summary reporting + reconciliation/receipts/tax-VAT guidance in PAYMENTS_PHASE_D.md; final static verification passed |
 
 ---
 
