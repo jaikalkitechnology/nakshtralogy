@@ -117,7 +117,7 @@ class ApiKeyCreateRequest(BaseModel):
     label: Optional[str] = Field(None, max_length=100)
     mode: str = Field("live", pattern="^(live|test)$")
     scopes: Optional[List[str]] = Field(
-        None, description="Subset of [kundli, specialist, milan, forecast]; default = all"
+        None, description="Subset of [kundli, reports, rashi, forecast]; default = all"
     )
 
 

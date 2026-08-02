@@ -9,9 +9,7 @@ modified**.
 **Branch:** `claude/multi-language-support-agents-g6p93h`
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 
-**Summary:** 38 / 38 tasks DONE (Phases 0-7 complete).
-_(Note: earlier summary lines said "/31" — the tracker actually lists 38
-numbered tasks across Phases 0-7; corrected for accuracy.)_
+**Summary:** 45 / 45 tasks DONE · Phases 0-8 complete.
 
 ---
 
@@ -106,6 +104,29 @@ numbered tasks across Phases 0-7; corrected for accuracy.)_
 | 7.2 | Daily precompute of Today Forecast + Gochar (all 12 rashis) | DONE (a0ac711, 2026-08-01) — `app/services/daily_precompute.py`, run by a background task in `app/main.py`'s lifespan (startup + every 24h) and manually via `POST /api/v1/admin/precompute-daily`; finally wires up the previously-unused `GocharDaily` model |
 | 7.3 | Idempotency-Key support + per-key monthly quota + concurrency cap | DONE (a0ac711, 2026-08-01) — `app/core/gateway_guards.py`: `Idempotency-Key` header replay via the `idempotency_keys` table, per-key `monthly_quota` column (default 100k/mo) checked against `api_usage_logs`, and an in-process concurrency cap (max 5 in-flight/key) |
 | 7.4 | Usage-log rollup/partitioning + metrics/alerts + scale-topology notes | DONE (a0ac711, 2026-08-01) — `app/services/usage_rollup.py` (new `api_usage_daily_rollups` table, nightly rollup + high-error-rate/high-latency structured-log alerts); partitioning + horizontal-scale topology documented below in Blockers/notes (design notes only — no infra provisioned here) |
+
+## Phase 8 — Granular product APIs (4 categories) + full docs
+
+Expand the flat gateway (4 broad endpoints) into a **granular, category-based**
+surface. **Retax the products to exactly 4 categories:** `kundli`, `reports`,
+`rashi`, `forecast` (Reports absorbs specialists + milan + combined; Rashi is
+new). Update `api_products` seed, API-key scopes, and the `product` field on
+`api_usage_logs` accordingly (keep the old broad endpoints working as aliases so
+existing keys don't break). Every endpoint wraps an EXISTING engine method — no
+astrology-logic changes. Each endpoint takes the same birth-data body as today
+(name/gender/dob/tob/place) except Rashi/Forecast where the engine differs.
+**Every endpoint must appear in the `/api/v2` OpenAPI docs (grouped by the 4
+categories, tagged) with a request + response example and code samples.**
+
+| # | Task | Status |
+|---|------|--------|
+| 8.1 | **Retax products** → 4 categories (`kundli`/`reports`/`rashi`/`forecast`): update `api_products` seed, scopes default, usage `product` values; keep `/api/v2/kundli`,`/reports/{key}`,`/milan`,`/forecast` working as back-compat aliases | DONE (448346d, 2026-08-02) — `ApiKey.scopes`/`SubscriptionPlan.products` defaults now `[kundli,reports,rashi,forecast]`; `app/core/api_key_auth.py` `has_scope()` maps legacy `specialist`/`milan` → `reports` and treats a pre-retax key that had the full old 4-item set as having full access to all 4 new categories (incl. brand-new `rashi`) so old keys never break; `admin_router.seed_api_plans` + `seed_data.py` updated to the 4 new `api_products` rows (legacy `specialist`/`milan` rows deactivated, not deleted, so historical usage logs stay meaningful); `developer_router.ALL_PRODUCT_SCOPES` updated |
+| 8.2 | **Kundli category** — one endpoint per feature, all wrapping the existing `NakshtraEngine`/kundli_router methods: `/kundli/summary`, `/kundli/planets`, `/kundli/chart`, `/kundli/divisional`, `/kundli/dasha/vimshottari`, `/kundli/dasha/moola`, plus the rest of "cover all" (`/kundli/dosh`, `/yoga`, `/shadbala`, `/ashtakavarga`, `/aspects`, `/life-areas`, `/bhava`, `/chakra-health`, `/gochar`) and `/kundli/all` (one-call `get_full_analysis`). **Both dashas individual + one-for-all.** | DONE (dcfb7ca, 2026-08-02) — 18 kundli routes total in `app/routers/gateway_router.py` (9 explicit + 9 loop-registered simple analyses incl. a bonus `/kundli/dasha-activation` + the `/kundli` back-compat alias); all reuse `app.kundli.engine`/`_compute_chart` exactly as `kundli_router.py` does — no math touched |
+| 8.3 | **Reports category — 19 endpoints** (one per report, each wrapping its engine): 14 single-chart (`career, business, education, wealth, debt_recovery, love, marriage, health, mental_stress, property, legal, life_path, character, past_life`) + 5 combined/two-chart (`kundli_milan, relationship, child_probability, love_compatibility, karma_linkage`). Keep generic `/reports/{key}` too. Two-chart reports take two birth-data blocks. | DONE (dcfb7ca, 2026-08-02) — 14 single-chart literal routes loop-registered from `app.specialists.SPECIALISTS`; the 5 combined routes wrap (respectively) `get_engine("kundli_milan")`, `get_engine("relationship")`, and the 3 `all_engine.multi_charts_engines.*` module-level `generate_*` functions that back `specialist_router.py`'s `/child_probability`, `/love_compatibility`, `/karma_linkage` endpoints (found by reading that router first, per instructions); generic `/reports/{key}` + `/milan` alias kept, both retaxed to `product="reports"`; literal routes registered before the `{key}` route (same ordering constraint noted in `specialist_router.py`) |
+| 8.4 | **Rashi category — 13 endpoints**: `/rashi/all` (all 12 signs) + `/rashi/{sign}` for each of the 12 signs (aries…pisces / idx 1–12), wrapping the existing rashi engine. Document all 13. | DONE (dcfb7ca, 2026-08-02) — implemented as 13 literal (non-parameterized) routes so each is individually documented in OpenAPI; every handler calls `rashi_router.rashi_full(idx, lang="english")` / `rashi_router.today_all(lang="english")` directly (the exact functions `app/routers/rashi_router.py` itself exposes) — no gochar/prediction math reimplemented |
+| 8.5 | **Daily Forecast category — 1 endpoint**: `/forecast` (single), under the new `forecast` product. | DONE (dcfb7ca, 2026-08-02) — unchanged endpoint, already `product="forecast"` from Phase 4; confirmed as the sole Forecast-category route in the Phase-8 retax |
+| 8.6 | **Docs for ALL endpoints**: regenerate `/api/v2` OpenAPI grouped/tagged by the 4 categories; every endpoint gets summary/description + request & response example; extend `/api/v2/code-samples/{...}` to cover each endpoint (curl/Python/Node/PHP). | DONE (dcfb7ca, 2026-08-02) — every one of the ~53 gateway routes has its own `summary`/`description`/`tags`/`responses`, auto-rendered into the `/api/v2` OpenAPI schema (Swagger `/api/v2/docs`, Redoc `/api/v2/redoc`); added a `Rashi` OpenAPI tag; `GATEWAY_ENDPOINTS_MANIFEST` in `gateway_router.py` is the single source of truth consumed by the new `GET /api/v2/code-samples/category/{category}` (curl/Python/Node/PHP per endpoint) while the legacy `GET /api/v2/code-samples/{product}` single-sample route is kept for back-compat |
+| 8.7 | **Developer dashboard Docs & Playground**: list every endpoint grouped by the 4 categories with try-it; update the products/nav so all four categories are visible. | DONE (823878a, 2026-08-02) — `react_developer_api/src/pages/DocsPlaygroundPage.tsx` rewritten: tabs for the 4 categories (with live endpoint-count badges), a searchable per-category endpoint list, an editable-JSON "try it" panel bound to the developer's own key via the new generic `callGatewayEndpoint`, and per-endpoint curl/Python/Node/PHP tabs sourced from `GET /code-samples/category/{category}`; `ApiKeysPage.tsx` scope picker + `UsagePage.tsx` product filter updated to the 4 new categories (legacy values kept, labeled "(legacy)"); mirrored the product-filter update in `react_admin`'s `DeveloperDetail.tsx` for admin/developer parity. Static verification only — no `node_modules` in either app, so import resolution + brace/paren balance were checked by hand/script, never a real build |
 
 ---
 

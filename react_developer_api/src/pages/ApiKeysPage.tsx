@@ -26,7 +26,9 @@ interface ApiKeyRow {
 }
 
 const PAGE_SIZE = 10;
-const ALL_SCOPES = ["kundli", "specialist", "milan", "forecast"];
+// Phase 8 retax: 4 gateway categories (`reports` absorbs the old
+// `specialist` + `milan` product codes; `rashi` is new).
+const ALL_SCOPES = ["kundli", "reports", "rashi", "forecast"];
 
 export default function ApiKeysPage() {
   const [rows, setRows] = useState<ApiKeyRow[]>([]);

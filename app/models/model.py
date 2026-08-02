@@ -1147,7 +1147,10 @@ class ApiKey(Base):
     secret_hash = Column(String(255), nullable=False)             # sha256 of full raw secret
     mode = Column(String(10), nullable=False, default="live")     # live | test
     label = Column(String(100), nullable=True)
-    scopes = Column(JSON, default=lambda: ["kundli", "specialist", "milan", "forecast"])
+    # Phase 8 retax: 4 categories are kundli/reports/rashi/forecast (`reports`
+    # absorbs the old `specialist` + `milan` product codes — see
+    # app/core/api_key_auth.py for the legacy-scope back-compat mapping).
+    scopes = Column(JSON, default=lambda: ["kundli", "reports", "rashi", "forecast"])
     status = Column(String(20), default="active", nullable=False)  # active | revoked
     last_used_at = Column(DateTime, nullable=True)
     # Phase-7 hardening: per-key monthly call quota (None = platform default,
@@ -1174,7 +1177,7 @@ class SubscriptionPlan(Base):
     currency = Column(String(3), default="INR", nullable=False)
     duration_days = Column(Integer, default=30, nullable=False)
     tps_limit = Column(Integer, default=1, nullable=False)
-    products = Column(JSON, default=lambda: ["kundli", "specialist", "milan", "forecast"])
+    products = Column(JSON, default=lambda: ["kundli", "reports", "rashi", "forecast"])
     active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

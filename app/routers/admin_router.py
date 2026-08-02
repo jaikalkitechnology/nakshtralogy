@@ -1433,16 +1433,26 @@ ALL_ACCESS_PLAN = {
     "currency": "INR",
     "duration_days": 30,
     "tps_limit": 1,
-    "products": ["kundli", "specialist", "milan", "forecast"],
+    "products": ["kundli", "reports", "rashi", "forecast"],
     "active": True,
 }
 
+# Phase 8 retax: 4 gateway categories. `reports` absorbs the old
+# `specialist` (15 engines) + `milan` product codes — now 19 report
+# endpoints (14 single-chart specialists + 5 combined/two-chart reports,
+# including Kundli Milan). `rashi` is a brand-new category (12-sign
+# zodiac metadata + gochar-based predictions). The legacy `specialist`/
+# `milan` rows are kept (deactivated, not deleted) so historical
+# `api_usage_logs` rows referencing them stay meaningful.
 API_PRODUCTS = [
     {"code": "kundli", "name": "Kundli", "description": "Birth chart, dashas, gochar, doshas, yogas, shadbala and all 20 divisional charts."},
-    {"code": "specialist", "name": "Special Reports", "description": "15 specialist engines: career, wealth, marriage, health, legal, and more."},
-    {"code": "milan", "name": "Kundli Milan", "description": "3-phase compatibility matching (Ashtakoot + advanced + timing) with a unified score."},
+    {"code": "reports", "name": "Special Reports", "description": "19 report engines: 14 single-chart specialists (career, wealth, marriage, health, legal, ...) plus 5 combined two-chart reports (Kundli Milan, Relationship Intelligence, Child Probability, Love Compatibility, Karma Linkage)."},
+    {"code": "rashi", "name": "Rashi", "description": "12-sign zodiac metadata, traits, and gochar-based daily/weekly/monthly predictions."},
     {"code": "forecast", "name": "Today Forecast", "description": "Daily probability forecast + 12-rashi transit analysis."},
 ]
+
+# Retired Phase-4 product codes, folded into `reports` by the Phase-8 retax.
+LEGACY_API_PRODUCTS = ["specialist", "milan"]
 
 
 @router.post("/seed-api-plans", tags=["Developer API Platform"])
@@ -1450,16 +1460,23 @@ def seed_api_plans(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
-    """Admin-only, idempotent: inserts the single All-Access subscription
-    plan + the 4 api_product rows (kundli/specialist/milan/forecast) that
-    back the Developer API Platform gateway (/api/v2)."""
+    """Admin-only, idempotent: inserts/updates the single All-Access
+    subscription plan + the 4 current api_product rows
+    (kundli/reports/rashi/forecast) that back the Developer API Platform
+    gateway (/api/v2). Also deactivates the legacy `specialist`/`milan`
+    product rows (folded into `reports` — Phase 8 retax) without deleting
+    them, so historical usage-log rows stay meaningful."""
     plan_created = False
+    plan_updated = False
     plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.code == ALL_ACCESS_PLAN["code"]).first()
     if not plan:
         plan = SubscriptionPlan(**ALL_ACCESS_PLAN)
         db.add(plan)
         plan_created = True
         db.flush()
+    elif plan.products != ALL_ACCESS_PLAN["products"]:
+        plan.products = ALL_ACCESS_PLAN["products"]
+        plan_updated = True
 
     products_created = 0
     for p in API_PRODUCTS:
@@ -1469,10 +1486,18 @@ def seed_api_plans(
         db.add(ApiProduct(**p))
         products_created += 1
 
+    legacy_deactivated = 0
+    for code in LEGACY_API_PRODUCTS:
+        legacy = db.query(ApiProduct).filter(ApiProduct.code == code).first()
+        if legacy and legacy.active:
+            legacy.active = False
+            legacy_deactivated += 1
+
     db.commit()
     return {
         "status": "ok",
-        "plan": {"created": plan_created, "code": plan.code, "id": plan.id},
+        "plan": {"created": plan_created, "updated": plan_updated, "code": plan.code, "id": plan.id},
         "products_created": products_created,
         "products_total": len(API_PRODUCTS),
+        "legacy_products_deactivated": legacy_deactivated,
     }
