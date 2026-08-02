@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings, LogOut,
   Search, Sun, Moon, RefreshCw, Plus, PanelLeftClose, PanelLeft, Menu, MessagesSquare,
+  FolderKanban, ScrollText, LifeBuoy, Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -34,7 +35,11 @@ const NAV: NavGroup[] = [
     { to: "/admin/v2/api", label: "API Management", icon: Server },
     { to: "/admin/v2/developers", label: "Developers", icon: Code2 },
     { to: "/admin/v2/notifications", label: "Notifications", icon: Bell },
+    { to: "/admin/v2/content", label: "Content Management", icon: FolderKanban },
+    { to: "/admin/v2/audit-logs", label: "Audit Logs", icon: ScrollText },
+    { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy },
     { to: "/admin/v2/analytics", label: "Analytics", icon: BarChart3 },
+    { to: "/admin/v2/role-permissions", label: "Role Permissions", icon: Lock },
     { to: "/admin/v2/settings", label: "Settings", icon: Settings },
   ]},
 ];
