@@ -5,11 +5,13 @@ import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings, LogOut,
   Search, Sun, Moon, RefreshCw, Plus, PanelLeftClose, PanelLeft, Menu, MessagesSquare,
+  FolderKanban, ScrollText, LifeBuoy, Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
 import { useAuth } from "@/contexts/AuthContext";
 import StarField from "@/components/StarField";
+import CommandPalette from "@/components/layout/CommandPalette";
 
 interface NavItem { to: string; label: string; icon: typeof LayoutDashboard; }
 interface NavGroup { heading?: string; items: NavItem[]; }
@@ -34,7 +36,11 @@ const NAV: NavGroup[] = [
     { to: "/admin/v2/api", label: "API Management", icon: Server },
     { to: "/admin/v2/developers", label: "Developers", icon: Code2 },
     { to: "/admin/v2/notifications", label: "Notifications", icon: Bell },
+    { to: "/admin/v2/content", label: "Content Management", icon: FolderKanban },
+    { to: "/admin/v2/audit-logs", label: "Audit Logs", icon: ScrollText },
+    { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy },
     { to: "/admin/v2/analytics", label: "Analytics", icon: BarChart3 },
+    { to: "/admin/v2/role-permissions", label: "Role Permissions", icon: Lock },
     { to: "/admin/v2/settings", label: "Settings", icon: Settings },
   ]},
 ];
@@ -112,6 +118,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <StarField />
+      <CommandPalette />
 
       {/* Desktop fixed sidebar */}
       <motion.aside
@@ -128,8 +135,12 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)} className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden" />
-            <motion.aside initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ duration: 0.28 }}
-              className="fixed left-0 top-0 z-50 h-screen w-[280px] border-r border-border/60 bg-sidebar md:hidden">
+            <motion.aside
+              initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ duration: 0.28 }}
+              drag="x" dragConstraints={{ left: -280, right: 0 }} dragElastic={0.05}
+              onDragEnd={(_, info) => { if (info.offset.x < -70) setMobileOpen(false); }}
+              className="fixed left-0 top-0 z-50 h-screen w-[280px] touch-pan-y border-r border-border/60 bg-sidebar md:hidden"
+            >
               {Sidebar}
             </motion.aside>
           </>
@@ -143,38 +154,57 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       >
         {/* Sticky header */}
         <header className="sticky top-0 z-20 flex h-[66px] flex-none items-center gap-4 border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl md:px-6">
-          <button onClick={() => setMobileOpen(true)} className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground md:hidden"><Menu className="h-5 w-5" /></button>
-          <button onClick={() => setCollapsed((c) => !c)} className="hidden h-9 w-9 place-items-center rounded-lg text-muted-foreground hover:text-foreground md:grid" title="Collapse sidebar">
+          <button onClick={() => setMobileOpen(true)} aria-label="Open navigation menu" className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground md:hidden"><Menu className="h-5 w-5" /></button>
+          <button onClick={() => setCollapsed((c) => !c)} className="hidden h-9 w-9 place-items-center rounded-lg text-muted-foreground hover:text-foreground md:grid" title="Collapse sidebar" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
             {collapsed ? <PanelLeft className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
           </button>
           <div className="hidden text-[13px] font-semibold text-muted-foreground sm:block">Dashboard / <b className="capitalize text-foreground">{crumb(loc.pathname)}</b></div>
 
-          <div className="mx-auto hidden w-full max-w-md items-center gap-2.5 rounded-xl border border-border/70 bg-glass/40 px-3.5 py-2 text-[13px] text-muted-foreground lg:flex">
+          <button
+            onClick={() => window.dispatchEvent(new Event("nakshtralogy:open-search"))}
+            title="Search (⌘K)"
+            className="mx-auto hidden w-full max-w-md items-center gap-2.5 rounded-xl border border-border/70 bg-glass/40 px-3.5 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:text-foreground lg:flex"
+          >
             <Search className="h-[15px] w-[15px]" />
             <span className="truncate">Search users, transactions, astrologers, API keys…</span>
             <kbd className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[10px]">⌘K</kbd>
-          </div>
+          </button>
 
           <div className="ml-auto flex items-center gap-2.5">
-            <HeaderIcon dot><Bell className="h-[17px] w-[17px]" /></HeaderIcon>
-            <HeaderIcon><MessagesSquare className="h-[17px] w-[17px]" /></HeaderIcon>
-            <HeaderIcon onClick={toggle} title="Toggle theme">{theme === "dark" ? <Sun className="h-[17px] w-[17px]" /> : <Moon className="h-[17px] w-[17px]" />}</HeaderIcon>
-            <HeaderIcon title="Refresh"><RefreshCw className="h-[17px] w-[17px]" /></HeaderIcon>
+            <div className="lg:hidden">
+              <HeaderIcon onClick={() => window.dispatchEvent(new Event("nakshtralogy:open-search"))} title="Search (⌘K)">
+                <Search className="h-[17px] w-[17px]" />
+              </HeaderIcon>
+            </div>
+            <HeaderIcon dot title="Notifications"><Bell className="h-[17px] w-[17px]" /></HeaderIcon>
+            <HeaderIcon title="Messages"><MessagesSquare className="h-[17px] w-[17px]" /></HeaderIcon>
+            <HeaderIcon onClick={toggle} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun className="h-[17px] w-[17px]" /> : <Moon className="h-[17px] w-[17px]" />}</HeaderIcon>
+            <HeaderIcon title="Refresh page data" onClick={() => window.location.reload()}><RefreshCw className="h-[17px] w-[17px]" /></HeaderIcon>
             <span className="hidden rounded-full border border-border/70 bg-gold/8 px-3 py-1.5 text-[11px] font-bold text-gold sm:inline">SUPER ADMIN</span>
-            <button className="flex items-center gap-1.5 rounded-xl bg-gradient-to-br from-gold to-gold-light px-3.5 py-2 text-[13px] font-extrabold text-primary-foreground shadow-[0_6px_18px_hsl(var(--gold)/0.3)]">
+            <button title="Quick create" className="lift press flex items-center gap-1.5 rounded-xl bg-gradient-to-br from-gold to-gold-light px-3.5 py-2 text-[13px] font-extrabold text-primary-foreground shadow-[0_6px_18px_hsl(var(--gold)/0.3)]">
               <Plus className="h-[15px] w-[15px]" /><span className="hidden sm:inline">Create</span>
             </button>
           </div>
         </header>
 
-        {/* Scrollable content (only this scrolls) */}
+        {/* Scrollable content (only this scrolls) — animated page transitions */}
         <main className="flex-1 p-4 md:p-6">
-          <div className="animate-float-in">{children}</div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={loc.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 
       {/* FAB */}
-      <button className="fixed bottom-7 right-7 z-40 grid h-14 w-14 place-items-center rounded-[18px] bg-gradient-to-br from-gold to-gold-light text-primary-foreground shadow-[0_10px_30px_hsl(var(--gold)/0.45)] lift">
+      <button title="Quick create" aria-label="Quick create" className="lift press fixed bottom-7 right-7 z-40 grid h-14 w-14 place-items-center rounded-[18px] bg-gradient-to-br from-gold to-gold-light text-primary-foreground shadow-[0_10px_30px_hsl(var(--gold)/0.45)]">
         <Plus className="h-6 w-6" />
       </button>
     </div>
@@ -183,7 +213,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
 
 function HeaderIcon({ children, dot, onClick, title }: { children: ReactNode; dot?: boolean; onClick?: () => void; title?: string }) {
   return (
-    <button onClick={onClick} title={title} className="relative grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-glass/40 text-muted-foreground transition-colors hover:text-foreground">
+    <button onClick={onClick} title={title} aria-label={title} className="press relative grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-glass/40 text-muted-foreground transition-colors hover:text-foreground">
       {children}
       {dot && <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-400 ring-2 ring-background" />}
     </button>

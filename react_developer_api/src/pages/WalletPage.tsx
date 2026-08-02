@@ -69,9 +69,23 @@ export default function WalletPage() {
     await refresh();
   };
 
+  const isDebit = (t: Txn) => t.txn_type?.includes("debit");
+  const totalCredits = txns.filter((t) => !isDebit(t)).reduce((s, t) => s + t.amount, 0);
+  const totalDebits = txns.filter((t) => isDebit(t)).reduce((s, t) => s + t.amount, 0);
+
   const columns: DataTableColumn<Txn>[] = [
-    { key: "txn_type", header: "Type", render: (t) => <span className="text-xs">{t.txn_type}</span> },
-    { key: "amount", header: "Amount", align: "right", render: (t) => `₹${t.amount.toFixed(2)}` },
+    {
+      key: "txn_type", header: "Type",
+      render: (t) => (
+        <span className={`text-xs capitalize ${isDebit(t) ? "text-red-400" : "text-emerald-400"}`}>
+          {t.txn_type?.replace(/_/g, " ")}
+        </span>
+      ),
+    },
+    {
+      key: "amount", header: "Amount", align: "right",
+      render: (t) => <span className={isDebit(t) ? "text-red-400" : "text-emerald-400"}>{isDebit(t) ? "−" : "+"}₹{t.amount.toFixed(2)}</span>,
+    },
     { key: "balance_after", header: "Balance after", align: "right", render: (t) => `₹${t.balance_after.toFixed(2)}` },
     { key: "description", header: "Description", render: (t) => <span className="text-xs text-muted-foreground">{t.description || "—"}</span> },
     { key: "created_at", header: "Date", render: (t) => (t.created_at ? new Date(t.created_at).toLocaleString() : "—") },
@@ -96,6 +110,30 @@ export default function WalletPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Credits / debits / net — computed from this page's transaction list (this page, unfiltered by date range) */}
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="rounded-2xl border-emerald-500/30 bg-card/60 backdrop-blur">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Credits (this page)</p>
+            <p className="mt-1 text-lg font-semibold text-emerald-400">+₹{totalCredits.toFixed(2)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-red-500/30 bg-card/60 backdrop-blur">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Debits (this page)</p>
+            <p className="mt-1 text-lg font-semibold text-red-400">−₹{totalDebits.toFixed(2)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
+          <CardContent className="pt-4">
+            <p className="text-xs text-muted-foreground">Net flow (this page)</p>
+            <p className={`mt-1 text-lg font-semibold ${totalCredits - totalDebits >= 0 ? "text-primary" : "text-amber-400"}`}>
+              {totalCredits - totalDebits >= 0 ? "+" : ""}₹{(totalCredits - totalDebits).toFixed(2)}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
         <CardHeader><CardTitle className="text-base">Transaction history</CardTitle></CardHeader>

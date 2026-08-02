@@ -1,27 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Shared Nakshtralogy SaaS design system (mirrors react_admin) ──
+   Deep Navy #0B0B1F + luxury Gold #D4AF37 + Purple #8A6FD6, light/dark,
+   glassmorphism, one visual family across Admin Panel + Developer Portal;
+   only the logo/nav differ. */
 @layer base {
   :root {
-    --background: 240 30% 6%;
-    --foreground: 40 40% 96%;
-    --card: 246 40% 14%;
-    --card-foreground: 40 40% 96%;
-    --primary: 41 78% 59%;
-    --primary-foreground: 240 40% 8%;
-    --secondary: 252 40% 24%;
-    --secondary-foreground: 40 40% 96%;
-    --muted: 246 30% 18%;
-    --muted-foreground: 255 12% 60%;
-    --accent: 252 40% 30%;
-    --accent-foreground: 40 40% 96%;
-    --destructive: 0 66% 59%;
-    --destructive-foreground: 40 40% 96%;
-    --border: 252 30% 26%;
-    --input: 252 30% 26%;
-    --ring: 41 78% 59%;
-    --radius: 0.85rem;
+    --background: 240 48% 8%;
+    --foreground: 43 33% 92%;
+
+    --card: 246 37% 13%;
+    --card-foreground: 43 33% 92%;
+
+    --popover: 246 37% 13%;
+    --popover-foreground: 43 33% 92%;
+
+    --primary: 46 65% 52%;
+    --primary-foreground: 240 48% 8%;
+
+    --secondary: 252 35% 22%;
+    --secondary-foreground: 43 33% 92%;
+
+    --muted: 246 25% 16%;
+    --muted-foreground: 255 12% 62%;
+
+    --accent: 258 45% 40%;
+    --accent-foreground: 43 33% 95%;
+
+    --destructive: 348 65% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 248 26% 21%;
+    --input: 248 26% 21%;
+    --ring: 46 65% 52%;
+
+    --radius: 0.9rem;
+
+    --gold: 46 65% 52%;
+    --gold-light: 43 86% 69%;
+    --gold-dark: 40 70% 42%;
+    --cosmic: 258 55% 64%;
+    --cosmic-light: 258 55% 74%;
+    --cosmic-dark: 252 39% 47%;
+    --mystic-blue: 220 60% 34%;
+    --star: 46 90% 78%;
+
+    --glass: 246 40% 16%;
+
+    --sidebar-background: 240 45% 7%;
+    --sidebar-foreground: 43 33% 92%;
+    --sidebar-primary: 46 65% 52%;
+    --sidebar-primary-foreground: 240 48% 8%;
+    --sidebar-accent: 252 35% 20%;
+    --sidebar-accent-foreground: 43 33% 92%;
+    --sidebar-border: 248 26% 21%;
+    --sidebar-ring: 46 65% 52%;
+  }
+
+  /* Light mode — toggled by adding class="light" on <html> */
+  .light {
+    --background: 250 40% 97%;
+    --foreground: 246 40% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 246 40% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 246 40% 14%;
+    --primary: 42 72% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 252 30% 92%;
+    --secondary-foreground: 246 40% 18%;
+    --muted: 250 25% 93%;
+    --muted-foreground: 246 12% 42%;
+    --accent: 258 45% 90%;
+    --accent-foreground: 246 40% 18%;
+    --border: 248 22% 88%;
+    --input: 248 22% 88%;
+    --glass: 250 40% 99%;
+    --star: 46 80% 55%;
+    --sidebar-background: 250 40% 98%;
+    --sidebar-foreground: 246 40% 18%;
+    --sidebar-border: 248 22% 88%;
   }
 }
 
@@ -29,8 +91,117 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
-    font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    @apply bg-background text-foreground font-body antialiased;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  /* Accessibility: visible keyboard focus ring everywhere (G.3) */
+  :focus-visible {
+    outline: 2px solid hsl(var(--gold));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(43 80% 55%), hsl(43 70% 70%), hsl(43 90% 35%));
+  }
+
+  .gradient-cosmic {
+    background: linear-gradient(135deg, hsl(270 50% 40%), hsl(220 60% 30%), hsl(240 15% 6%));
+  }
+
+  .gradient-mystic {
+    background: linear-gradient(180deg, hsl(240 15% 6%) 0%, hsl(270 30% 12%) 50%, hsl(240 15% 6%) 100%);
+  }
+
+  .text-gold-gradient {
+    background: linear-gradient(135deg, hsl(43 80% 55%), hsl(43 70% 70%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px hsl(43 80% 55% / 0.3), 0 0 40px hsl(43 80% 55% / 0.1);
+  }
+
+  .glow-cosmic {
+    box-shadow: 0 0 20px hsl(270 50% 40% / 0.3), 0 0 40px hsl(270 50% 40% / 0.1);
+  }
+
+  /* ── Premium SaaS utilities (shared with react_admin) ── */
+  .glass {
+    background: hsl(var(--glass) / 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+  .glass-strong {
+    background: hsl(var(--glass) / 0.8);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid hsl(var(--gold) / 0.14);
+  }
+  .card-gradient-border {
+    position: relative;
+  }
+  .card-gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--gold) / 0.55), transparent 42%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  /* Invisible scrollbar (still scrolls) — for the sidebar nav */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar { width: 0; height: 0; }
+
+  .active-glow {
+    box-shadow: 0 6px 22px hsl(var(--gold) / 0.35);
+  }
+  .lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px hsl(240 60% 3% / 0.4);
+  }
+
+  /* Tactile press feedback (lightweight ripple substitute) for buttons/CTAs */
+  .press {
+    transition: transform 0.12s ease;
+  }
+  .press:active {
+    transform: scale(0.96);
+  }
+}
+
+@layer utilities {
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--gold) / 0.5); }
+    50% { box-shadow: 0 0 0 6px hsl(var(--gold) / 0); }
+  }
+  .animate-pulse-glow { animation: pulse-glow 1.8s ease-in-out infinite; }
+
+  @keyframes float-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-float-in { animation: float-in 0.35s ease both; }
 }

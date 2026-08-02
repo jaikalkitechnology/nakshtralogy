@@ -3,7 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import AppShell from "@/components/layout/AppShell";
+import { ThemeProvider } from "@/theme/ThemeProvider";
+import DevShell from "@/components/layout/DevShell";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
 import DashboardPage from "@/pages/DashboardPage";
@@ -25,7 +26,7 @@ function ProtectedLayout({ children }: { children: ReactNode }) {
     );
   }
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  return <AppShell>{children}</AppShell>;
+  return <DevShell>{children}</DevShell>;
 }
 
 const AppRoutes = () => (
@@ -45,12 +46,14 @@ const AppRoutes = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Toaster position="top-right" richColors />
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <Toaster position="top-right" richColors />
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

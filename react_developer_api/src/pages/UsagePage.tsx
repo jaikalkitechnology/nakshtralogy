@@ -8,9 +8,9 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip, ResponsiveContainer } from "recharts";
 import { Activity, RefreshCw } from "lucide-react";
 import DataTable, { type DataTableColumn } from "@/components/DataTable";
-import KpiCard from "@/components/KpiCard";
+import StatCard from "@/components/premium/StatCard";
 import { listUsage, getUsageSummary } from "@/lib/api";
-import { PhoneCall, AlertTriangle, Gauge } from "lucide-react";
+import { PhoneCall, AlertTriangle, Gauge, TrendingUp } from "lucide-react";
 
 interface LogRow {
   id: string;
@@ -54,6 +54,7 @@ export default function UsagePage() {
   useEffect(() => { load(); }, [load]);
 
   const kpis = summary?.kpis || {};
+  const successRate = kpis.total_calls ? Math.max(0, 100 - (100 * (kpis.total_errors || 0)) / kpis.total_calls) : 100;
 
   const columns: DataTableColumn<LogRow>[] = [
     { key: "product", header: "Product", render: (l) => <span className="capitalize">{l.product}</span> },
@@ -81,10 +82,11 @@ export default function UsagePage() {
         <Button variant="outline" size="icon" onClick={load} title="Refresh"><RefreshCw className="h-4 w-4" /></Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-        <KpiCard label="Calls (30d)" value={kpis.total_calls ?? 0} icon={<PhoneCall className="h-5 w-5" />} />
-        <KpiCard label="Errors (30d)" value={kpis.total_errors ?? 0} icon={<AlertTriangle className="h-5 w-5" />} tone="danger" />
-        <KpiCard label="Avg latency" value={kpis.avg_latency_ms ?? 0} suffix="ms" icon={<Gauge className="h-5 w-5" />} />
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <StatCard label="Calls (30d)" value={kpis.total_calls ?? 0} icon={<PhoneCall className="h-[17px] w-[17px]" />} tone="gold" />
+        <StatCard label="Success Rate" value={successRate} format={(n) => `${n.toFixed(2)}%`} icon={<TrendingUp className="h-[17px] w-[17px]" />} tone="green" />
+        <StatCard label="Errors (30d)" value={kpis.total_errors ?? 0} icon={<AlertTriangle className="h-[17px] w-[17px]" />} tone="red" />
+        <StatCard label="Avg Latency" value={kpis.avg_latency_ms ?? 0} suffix=" ms" icon={<Gauge className="h-[17px] w-[17px]" />} tone="teal" />
       </div>
 
       <Card className="rounded-2xl border-border/60 bg-card/60 backdrop-blur">
