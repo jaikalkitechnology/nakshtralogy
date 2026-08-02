@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CreditCard, ShieldCheck, AlertTriangle, RefreshCw } from "lucide-react";
-import { listPlans, getSubscription, subscribe } from "@/lib/api";
+import { CreditCard, ShieldCheck, AlertTriangle, RefreshCw, Download } from "lucide-react";
+import { listPlans, getSubscription, subscribe, getUsageSummary } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function SubscriptionPage() {
   const { refresh } = useAuth();
   const [plans, setPlans] = useState<any[]>([]);
   const [sub, setSub] = useState<any>(null);
+  const [usage, setUsage] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRenew, setAutoRenew] = useState(false);
@@ -21,7 +22,7 @@ export default function SubscriptionPage() {
     setLoading(true);
     setError(null);
     try {
-      const [plansRes, subRes] = await Promise.all([listPlans(), getSubscription()]);
+      const [plansRes, subRes, usageRes] = await Promise.all([listPlans(), getSubscription(), getUsageSummary(30)]);
       if (!plansRes.ok) throw new Error(plansRes.data?.detail || "Failed to load plans");
       setPlans(plansRes.data || []);
       if (subRes.ok) {
@@ -30,6 +31,7 @@ export default function SubscriptionPage() {
       } else {
         setSub(null);
       }
+      if (usageRes.ok) setUsage(usageRes.data);
     } catch (e: any) {
       setError(e?.message || "Something went wrong.");
     } finally {
@@ -49,6 +51,28 @@ export default function SubscriptionPage() {
   };
 
   const isActive = sub?.status === "active";
+
+  const downloadReceipt = () => {
+    if (!sub) return;
+    const lines = [
+      "Nakshtralogy Developer Portal — Subscription Receipt",
+      `Plan: ${sub.plan_name}`,
+      `Status: ${sub.status}`,
+      `TPS limit: ${sub.tps_limit} req/s`,
+      `Started: ${new Date(sub.started_at).toLocaleString()}`,
+      `Expires: ${new Date(sub.expires_at).toLocaleString()}`,
+      `Auto-renew: ${sub.auto_renew ? "Yes" : "No"}`,
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `nakshtralogy-subscription-receipt-${sub.plan_name || "plan"}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
@@ -84,14 +108,22 @@ export default function SubscriptionPage() {
             </CardHeader>
             <CardContent>
               {sub ? (
-                <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-                  <div><p className="text-muted-foreground">Plan</p><p className="font-medium">{sub.plan_name}</p></div>
-                  <div><p className="text-muted-foreground">TPS limit</p><p className="font-medium">{sub.tps_limit} req/s</p></div>
-                  <div><p className="text-muted-foreground">Started</p><p className="font-medium">{new Date(sub.started_at).toLocaleDateString()}</p></div>
-                  <div><p className="text-muted-foreground">Expires</p><p className="font-medium">{new Date(sub.expires_at).toLocaleDateString()}</p></div>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+                    <div><p className="text-muted-foreground">Plan</p><p className="font-medium">{sub.plan_name}</p></div>
+                    <div><p className="text-muted-foreground">TPS limit</p><p className="font-medium">{sub.tps_limit} req/s</p></div>
+                    <div><p className="text-muted-foreground">Started</p><p className="font-medium">{new Date(sub.started_at).toLocaleDateString()}</p></div>
+                    <div><p className="text-muted-foreground">Expires</p><p className="font-medium">{new Date(sub.expires_at).toLocaleDateString()}</p></div>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/60 bg-glass/30 px-3 py-2.5">
+                    <p className="text-xs text-muted-foreground">
+                      Calls this period (30d): <span className="font-semibold text-foreground">{usage?.kpis?.total_calls ?? 0}</span> — this plan is rate-limited to {sub.tps_limit} req/s with no monthly call cap.
+                    </p>
+                    <Button size="sm" variant="outline" onClick={downloadReceipt}><Download className="mr-1 h-3.5 w-3.5" /> Download receipt</Button>
+                  </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">You don't have a subscription yet. Subscribe below to start calling the gateway.</p>
+                <p className="text-sm text-muted-foreground">You do not have a subscription yet. Subscribe below to start calling the gateway.</p>
               )}
             </CardContent>
           </Card>
