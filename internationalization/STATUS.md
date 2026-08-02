@@ -11,7 +11,9 @@ is the FINAL phase. Never change astrology logic.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 9 / 18 tasks DONE · Phases A + B complete · Phase C next.
+**Summary:** 14 / 17 tasks DONE · Phases A + B + C complete · Phase D (real
+PAPG receipt validation) next — needs real Apple/Google store credentials.
+(Denominator corrected: 17 listed tasks A.1–D.3, not 18.)
 
 ---
 
@@ -50,7 +52,7 @@ is the FINAL phase. Never change astrology logic.
 | C.2 | **RTL** support + audit for Arabic (Directionality, mirrored paddings/icons/chart widgets) | DONE (cba22e0, 2026-08-02) |
 | C.3 | Smooth-worldwide pass: money/date/number via `intl` + session currency; no hardcoded ₹/+91/IST/Indian-city defaults in user-visible paths; international phone + city/place search | DONE (8cec50d, 2026-08-02) — see SMOOTH_WORLDWIDE_C3.md for flagged India-flow gaps |
 | C.4 | Backend report-body translation registered + cached for all new language codes | DONE (verified — codes/_LANG_DESC registered in A.4; LLM path ungated + per-lang DB cache) |
-| C.5 | Full static verification pass (py_compile; balcheck/refcheck/ARB validity+parity for every locale; react_admin imports) + tracker finalize | PENDING |
+| C.5 | Full static verification pass (py_compile; balcheck/refcheck/ARB validity+parity for every locale; react_admin imports) + tracker finalize | DONE (2026-08-02) — py_compile ALL OK; 22 ARB locales @ 3777-key parity; all gen+touched Dart BALANCED; refcheck OK; react_admin USD imports resolve |
 
 ## Phase D — Payment Aggregator (PAPG) — FINAL
 | # | Task | Status |
