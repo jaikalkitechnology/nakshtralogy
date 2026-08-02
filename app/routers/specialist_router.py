@@ -26,6 +26,7 @@ from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.specialists import SPECIALISTS, get_engine
+from app.core.entitlements import require_entitlement
 
 # specialist key -> catalog label key (registry label wrapped for i18n at the
 # point it's surfaced in a response; registry file itself is left untouched)
@@ -97,6 +98,9 @@ def run_milan_specialist(
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
             raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
 
+    # pay-per-report gate (402 if not entitled) — keyed on the first chart
+    require_entitlement(db, current_user, "kundli_milan", chart1.id, lang)
+
     try:
         t0 = time.time()
         data1 = _get_chart_data(chart1)
@@ -154,6 +158,9 @@ def run_relationship_specialist(
         })
         names.append(chart.name)
 
+    # pay-per-report gate — keyed on the first chart in the group
+    require_entitlement(db, current_user, "relationship", req.chart_ids[0], lang)
+
     try:
         t0 = time.time()
         engine = get_engine("relationship")
@@ -203,6 +210,7 @@ def run_child_probability(
     for c in [chart1, chart2]:
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
             raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
+    require_entitlement(db, current_user, "child_probability", chart1.id, lang)
     try:
         t0 = time.time()
         from all_engine.multi_charts_engines.child_probability_specialist import generate_child_probability
@@ -233,6 +241,7 @@ def run_love_compatibility(
     for c in [chart1, chart2]:
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
             raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
+    require_entitlement(db, current_user, "love_compatibility", chart1.id, lang)
     try:
         t0 = time.time()
         from all_engine.multi_charts_engines.love_compatibility_specialist import generate_love_compatibility
@@ -263,6 +272,7 @@ def run_karma_linkage(
         if c.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
             raise HTTPException(403, t("err.not_authorized_for_chart", lang, chart_id=c.id))
         charts_db.append(c)
+    require_entitlement(db, current_user, "karma_linkage", req.chart_ids[0], lang)
     try:
         t0 = time.time()
         from all_engine.multi_charts_engines.past_life_karma_linkage_specialist import generate_karma_linkage
@@ -305,6 +315,10 @@ def run_specialist(
         raise HTTPException(404, t("err.chart_not_found", lang_norm))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
         raise HTTPException(403, t("err.not_authorized", lang_norm))
+
+    # pay-per-report gate (402 with {service_key, price, pricing_id} if unpaid).
+    # service_key == specialist key; free/astrologer/admin pass through.
+    require_entitlement(db, current_user, key, req.chart_id, lang_norm)
 
     try:
         t0 = time.time()

@@ -745,20 +745,10 @@ def compute_moola(
     if not chart:
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
-    # check pricing & payment
-    sp = db.query(ServicePricing).filter(ServicePricing.service_key == "moola_dasha").first()
-    if sp and not sp.is_free:
-        order = db.query(ServiceOrder).filter(
-            ServiceOrder.user_id == current_user.id,
-            ServiceOrder.service_pricing_id == sp.id,
-            ServiceOrder.chart_id == chart.id,
-            ServiceOrder.status == "completed",
-        ).first()
-        if not order:
-            raise HTTPException(
-                status_code=402,
-                detail=t("err.paid_service_required", lang, price=sp.price),
-            )
+    # pay-per-report gate (moola dasha). Astrologer/admin & free rows pass;
+    # otherwise 402 with structured {service_key, price, pricing_id}.
+    from app.core.entitlements import require_entitlement
+    require_entitlement(db, current_user, "moola_dasha", chart.id, lang)
 
     # check cache
     if chart.dasha_cache and chart.dasha_cache.moola:

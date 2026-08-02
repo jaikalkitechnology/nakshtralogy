@@ -19,6 +19,7 @@ from app.core.i18n import get_lang, t
 from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
+from app.core.entitlements import require_entitlement
 
 logger = logging.getLogger("forecast_router")
 router = APIRouter()
@@ -53,6 +54,10 @@ def daily_forecast(
         raise HTTPException(404, t("err.chart_not_found", lang))
     if chart.user_id != current_user.id and current_user.role not in ("astrologer", "admin"):
         raise HTTPException(403, t("err.not_authorized", lang))
+
+    # pay-per-report gate for the detailed daily forecast (free Rashi daily
+    # stays open on the /rashi endpoints). 402 if not entitled.
+    require_entitlement(db, current_user, "daily_forecast", chart_id, lang)
 
     try:
         t0 = time.time()
