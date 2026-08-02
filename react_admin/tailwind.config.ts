@@ -65,6 +65,7 @@ export default {
           blue: "hsl(var(--mystic-blue))",
         },
         star: "hsl(var(--star))",
+        glass: "hsl(var(--glass))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
