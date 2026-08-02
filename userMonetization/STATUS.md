@@ -9,7 +9,7 @@ gate access + presentation.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 7 / 15 tasks DONE · Phase 4 next.
+**Summary:** 12 / 15 tasks DONE · Phase 5 next.
 
 ---
 
@@ -45,11 +45,11 @@ gate access + presentation.
 ## Phase 4 — flutter_user paywall UX
 | # | Task | Status |
 |---|------|--------|
-| 4.1 | Primary chart: gold **"Primary"** badge on the chart card; hide/disable edit + delete for `is_primary` charts (client mirrors the API guard) | PENDING |
-| 4.2 | Reusable **paywall/teaser** widget: show hero score-ring + grade + one-line AI summary + first section, then a premium locked overlay ("Unlock full <X> · ₹price", wallet balance, Unlock → `purchaseService`, Recharge if low). Reveal on success; read state from `/service/entitlements` | PENDING |
-| 4.3 | Wrap the 19 report screens + detailed forecast + moola dasha with the teaser/paywall (constructor + engine call unchanged); on 402 show the paywall | PENDING |
-| 4.4 | Wallet recharge entry point + insufficient-balance flow from the paywall | PENDING |
-| 4.5 | Localize every new string across 11 locales (en+hi+hinglish authored; write `*_source.json` for the 8-locale backfill) | PENDING |
+| 4.1 | Primary chart: gold **"Primary"** badge on the chart card; hide/disable edit + delete for `is_primary` charts (client mirrors the API guard) | DONE (35f0bdb, 2026-08-02) |
+| 4.2 | Reusable **paywall/teaser** widget: show hero score-ring + grade + one-line AI summary + first section, then a premium locked overlay ("Unlock full <X> · ₹price", wallet balance, Unlock → `purchaseService`, Recharge if low). Reveal on success; read state from `/service/entitlements` | DONE (35f0bdb, 2026-08-02) |
+| 4.3 | Wrap the 19 report screens + detailed forecast + moola dasha with the teaser/paywall (constructor + engine call unchanged); on 402 show the paywall | DONE (35f0bdb, 2026-08-02) |
+| 4.4 | Wallet recharge entry point + insufficient-balance flow from the paywall | DONE (35f0bdb, 2026-08-02) |
+| 4.5 | Localize every new string across 11 locales (en+hi+hinglish authored; write `*_source.json` for the 8-locale backfill) | DONE (35f0bdb, 2026-08-02) |
 
 ## Phase 5 — Verify & wrap
 | # | Task | Status |
