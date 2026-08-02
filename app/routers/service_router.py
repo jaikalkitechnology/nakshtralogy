@@ -226,7 +226,9 @@ def seed_pricing(
             "features_json": ["D1 Lagna Kundli", "10 Graha Positions", "Nakshatra & Pada", "Dignity & Vargottam", "D1-D60 Divisional Charts"],
             "engine_function": "calculate_chart",
             "requires_birth_data": True,
-            "max_free_per_user": 3,
+            # First (primary) chart is free forever; extra charts consume the
+            # `extra_chart` price. Admin-editable.
+            "max_free_per_user": 1,
         },
         {
             "service_key": "vimshottari_dasha",
@@ -248,7 +250,8 @@ def seed_pricing(
             "description": "Lagna Kendradi Graha Dasha - advanced dasha system based on D-60 chart, confirmed against JHora software",
             "icon": "🌀",
             "category": "kundli",
-            "price": 199,
+            "price": 99,
+            "original_price": 199,
             "is_free": False,
             "sort_order": 3,
             "features_json": ["D-60 Based Calculation", "Kendradi Graha Order", "PVR Narasimha Method", "6-Level Sub-Periods"],
@@ -373,6 +376,105 @@ def seed_pricing(
             "requires_birth_data": True,
         },
     ]
+
+    # ── End-user monetization v1: pay-per-report catalog ──────────────
+    # These service_keys MATCH the specialist engine keys (career, business,
+    # …) so /service/entitlements and the 402 access-gate can map a report
+    # request 1:1 to its pricing row. Prices below are DEFAULTS only — every
+    # value is admin-editable via /service/pricing (source of truth). Never
+    # hardcode a price in the app or engines.
+    #
+    #   single-chart report  → ₹149 (category "report")
+    #   two-chart / combined → ₹299 (category "report")
+    #   moola_dasha          → ₹99  (seeded above, category "kundli")
+    #   detailed daily forecast → ₹149 (category "forecast")
+    #   extra kundli         → ₹49  (category "kundli")
+    _SINGLE_REPORTS = [
+        ("career",        "Career & Job Report",        "💼", "10th house, D-10 Dasamsha, Jaimini karakas & dasha career windows"),
+        ("business",      "Business & Startup Report",  "🚀", "Entrepreneurial yogas, timing windows & venture-fit analysis"),
+        ("education",     "Education & Learning Report", "🎓", "4th/5th house, Budha & Guru, ideal streams and study periods"),
+        ("wealth",        "Wealth & Finance Report",     "💰", "Dhana yogas, 2nd/11th house, income & savings potential"),
+        ("debt_recovery", "Debt & Recovery Report",      "📉", "6th/8th/12th house debt patterns & recovery timing"),
+        ("love",          "Love & Relationships Report", "❤️", "Venus, 5th/7th house, D-9 Navamsha & relationship patterns"),
+        ("marriage",      "Marriage & Family Report",    "💒", "7th house, marriage timing, spouse indications & family life"),
+        ("health",        "Health & Wellness Report",    "🏥", "6th/8th house, planetary afflictions & sensitive health periods"),
+        ("mental_stress", "Mental & Stress Report",      "🧠", "Moon, Mercury & 12th house — mental resilience and stress map"),
+        ("property",      "Property & Assets Report",    "🏠", "4th house, land/vehicle yogas & acquisition timing"),
+        ("legal",         "Legal & Disputes Report",     "⚖️", "6th house, litigation windows & outcome tendencies"),
+        ("life_path",     "Life Path & Luck Report",     "🌟", "Atmakaraka, purpose, fortune (9th house) & luck cycles"),
+        ("character",     "Character Analysis Report",   "🔍", "Personality, temperament & psychological profile"),
+        ("past_life",     "Past Life & Karma Report",    "🔮", "D-60 Shashtiamsha karma, past-life debts & soul lessons"),
+    ]
+    _COMBO_REPORTS = [
+        ("kundli_milan",      "Kundli Milan (Gun Milan)",   "💑", "36-point Ashtakoot, Manglik & Nadi dosha, unified compatibility"),
+        ("relationship",      "Relationship Intelligence",  "🔗", "2-5 chart relationship dynamics & compatibility intelligence"),
+        ("child_probability", "Child Probability Report",   "👶", "Santaan yoga, 5th house & fertility timing for a couple"),
+        ("love_compatibility","Love Compatibility Report",  "💞", "Romantic compatibility, emotional & karmic bonding score"),
+        ("karma_linkage",     "Past-Life Karma Linkage",    "🧬", "Karmic ties across 2-5 charts & shared soul contracts"),
+    ]
+
+    sort = 20
+    for key, name, icon, desc in _SINGLE_REPORTS:
+        sort += 1
+        defaults.append({
+            "service_key": key,
+            "service_name": name,
+            "description": desc,
+            "icon": icon,
+            "category": "report",
+            "price": 149,
+            "original_price": 249,
+            "is_free": False,
+            "sort_order": sort,
+            "features_json": ["Full multi-chart analysis", "Score-ring + grade", "Timing windows", "Remedies & confidence"],
+            "engine_function": key,
+            "requires_birth_data": True,
+        })
+    for key, name, icon, desc in _COMBO_REPORTS:
+        sort += 1
+        defaults.append({
+            "service_key": key,
+            "service_name": name,
+            "description": desc,
+            "icon": icon,
+            "category": "report",
+            "price": 299,
+            "original_price": 499,
+            "is_free": False,
+            "sort_order": sort,
+            "features_json": ["Two-chart / multi-chart analysis", "Compatibility scoring", "Detailed breakdown", "Remedies & confidence"],
+            "engine_function": key,
+            "requires_birth_data": True,
+        })
+
+    defaults.append({
+        "service_key": "daily_forecast",
+        "service_name": "Detailed Daily Forecast",
+        "description": "Personalized daily probability forecast — planetary weather across every life area for your chart",
+        "icon": "🔆",
+        "category": "forecast",
+        "price": 149,
+        "original_price": 199,
+        "is_free": False,
+        "sort_order": 60,
+        "features_json": ["Daily probability scores", "Per-life-area weather", "Best/worst windows", "Actionable guidance"],
+        "engine_function": "daily_forecast",
+        "requires_birth_data": True,
+    })
+    defaults.append({
+        "service_key": "extra_chart",
+        "service_name": "Additional Kundli",
+        "description": "Create an extra birth chart beyond your free Primary Kundli (family, friend or client)",
+        "icon": "➕",
+        "category": "kundli",
+        "price": 49,
+        "original_price": 99,
+        "is_free": False,
+        "sort_order": 61,
+        "features_json": ["Extra saved chart", "Full kundli compute", "All divisional charts", "Reusable for reports"],
+        "engine_function": "calculate_chart",
+        "requires_birth_data": True,
+    })
 
     created = 0
     for d in defaults:
