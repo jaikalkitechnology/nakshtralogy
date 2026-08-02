@@ -1028,6 +1028,70 @@ def list_orders(
     ]
 
 
+# ══════════════════════════════════════════════════════════════════════
+#  ENTITLEMENTS (what's unlocked for a chart — pay-per-report)
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/entitlements")
+def get_entitlements(
+    chart_id: Optional[str] = Query(None, description="Chart to check paid unlocks against"),
+    category: Optional[str] = Query(None, description="Filter by pricing category"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Per-service unlock state for the current user + a specific chart.
+
+    A service is `unlocked` when it is free (Primary-Kundli basics) OR the user
+    holds a completed ServiceOrder for it on this chart. The app reads this to
+    decide teaser-vs-full and to render the paywall — prices always come from
+    ServicePricing (admin-editable), never hardcoded in the client.
+    """
+    from app.core.entitlements import find_order  # local import avoids cycle
+
+    if chart_id:
+        chart = db.query(Chart).filter(
+            Chart.id == chart_id, Chart.user_id == current_user.id
+        ).first()
+        if not chart:
+            raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+
+    privileged = getattr(current_user, "role", None) in ("astrologer", "admin")
+
+    q = db.query(ServicePricing).filter(ServicePricing.is_active == True)
+    if category:
+        q = q.filter(ServicePricing.category == category)
+    rows = q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
+
+    out = []
+    for sp in rows:
+        price = float(sp.price or 0)
+        is_free = bool(sp.is_free) or price == 0
+        order = None
+        if not is_free and not privileged and chart_id:
+            order = find_order(db, current_user.id, sp.id, chart_id)
+        unlocked = is_free or privileged or (order is not None)
+        out.append({
+            "service_key": sp.service_key,
+            "service_name": sp.service_name,
+            "category": sp.category,
+            "icon": sp.icon,
+            "pricing_id": sp.id,
+            "price": price,
+            "original_price": float(sp.original_price) if sp.original_price is not None else None,
+            "currency": sp.currency or "INR",
+            "is_free": is_free,
+            "unlocked": unlocked,
+            "order_id": order.id if order else None,
+        })
+
+    return {
+        "chart_id": chart_id,
+        "privileged": privileged,
+        "entitlements": out,
+    }
+
+
 # ═══════════════════════════════════════════════════════════════════
 # CITY SEARCH (Nominatim / OpenStreetMap geocoding)
 # ═══════════════════════════════════════════════════════════════════
