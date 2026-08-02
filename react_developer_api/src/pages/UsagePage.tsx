@@ -110,9 +110,11 @@ export default function UsagePage() {
             <SelectContent>
               <SelectItem value="all">All products</SelectItem>
               <SelectItem value="kundli">Kundli</SelectItem>
-              <SelectItem value="specialist">Special Reports</SelectItem>
-              <SelectItem value="milan">Kundli Milan</SelectItem>
+              <SelectItem value="reports">Special Reports</SelectItem>
+              <SelectItem value="rashi">Rashi</SelectItem>
               <SelectItem value="forecast">Today Forecast</SelectItem>
+              <SelectItem value="specialist">Special Reports (legacy)</SelectItem>
+              <SelectItem value="milan">Kundli Milan (legacy)</SelectItem>
             </SelectContent>
           </Select>
         </CardHeader>

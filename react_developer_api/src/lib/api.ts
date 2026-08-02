@@ -171,29 +171,53 @@ export async function getUsageSummary(days = 30) {
 }
 
 // ── Gateway playground (/api/v2, uses the developer's own key) ──────
+// Phase 8: the gateway is a granular, category-based surface (kundli /
+// reports / rashi / forecast — ~53 endpoints). Every endpoint's full
+// path + sample body + code samples come from
+// GET /code-samples/category/{category} (see fetchGatewayCategorySamples).
 
-export async function callGateway(product: string, apiKey: string, body: Record<string, any>) {
-  const path =
-    product === "milan" ? "/milan" :
-    product === "forecast" ? "/forecast" :
-    product === "kundli" ? "/kundli" :
-    `/reports/${product}`;
+export interface GatewayEndpointSample {
+  method: "GET" | "POST";
+  path: string; // full path incl. /api/v2 prefix
+  summary: string;
+  sample_body: Record<string, any> | null;
+  samples: { curl: string; python: string; node: string; php: string };
+}
+
+export interface GatewayCategorySamples {
+  category: string;
+  endpoint_count: number;
+  endpoints: GatewayEndpointSample[];
+}
+
+export const GATEWAY_CATEGORIES = ["kundli", "reports", "rashi", "forecast"] as const;
+
+export async function fetchGatewayCategorySamples(category: string) {
+  const res = await fetch(`${GATEWAY_BASE}/code-samples/category/${category}`);
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data: data as GatewayCategorySamples };
+}
+
+/** Runs a live "try it" call against any gateway endpoint using the
+ * developer's own key. `path` is the full path returned by
+ * fetchGatewayCategorySamples (already includes /api/v2). */
+export async function callGatewayEndpoint(
+  method: "GET" | "POST",
+  path: string,
+  apiKey: string,
+  body?: Record<string, any> | null,
+) {
+  const url = path.startsWith("/api/v2") ? `https://api.nakshatralogy.com${path}` : `${GATEWAY_BASE}${path}`;
   const started = performance.now();
-  const res = await fetch(`${GATEWAY_BASE}${path}`, {
-    method: "POST",
+  const res = await fetch(url, {
+    method,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
-    body: JSON.stringify(body),
+    ...(method === "POST" && body ? { body: JSON.stringify(body) } : {}),
   });
   const data = await res.json().catch(() => ({}));
   const elapsedMs = Math.round(performance.now() - started);
   return { ok: res.ok, status: res.status, data, elapsedMs };
-}
-
-export async function fetchGatewayCodeSamples(product: string) {
-  const res = await fetch(`${GATEWAY_BASE}/code-samples/${product}`);
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
 }
