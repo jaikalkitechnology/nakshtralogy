@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/theme/ThemeProvider";
 import { useAuth } from "@/contexts/AuthContext";
 import StarField from "@/components/StarField";
+import CommandPalette from "@/components/layout/CommandPalette";
 
 interface NavItem { to: string; label: string; icon: typeof LayoutDashboard; }
 interface NavGroup { heading?: string; items: NavItem[]; }
@@ -114,6 +115,7 @@ export default function DevShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <StarField />
+      <CommandPalette />
 
       {/* Desktop fixed sidebar */}
       <motion.aside
@@ -145,17 +147,21 @@ export default function DevShell({ children }: { children: ReactNode }) {
       >
         {/* Sticky header */}
         <header className="sticky top-0 z-20 flex h-[66px] flex-none items-center gap-4 border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl md:px-6">
-          <button onClick={() => setMobileOpen(true)} className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground md:hidden"><Menu className="h-5 w-5" /></button>
-          <button onClick={() => setCollapsed((c) => !c)} className="hidden h-9 w-9 place-items-center rounded-lg text-muted-foreground hover:text-foreground md:grid" title="Collapse sidebar">
+          <button onClick={() => setMobileOpen(true)} aria-label="Open navigation menu" className="grid h-9 w-9 place-items-center rounded-lg text-muted-foreground md:hidden"><Menu className="h-5 w-5" /></button>
+          <button onClick={() => setCollapsed((c) => !c)} className="hidden h-9 w-9 place-items-center rounded-lg text-muted-foreground hover:text-foreground md:grid" title="Collapse sidebar" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
             {collapsed ? <PanelLeft className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
           </button>
           <div className="hidden text-[13px] font-semibold text-muted-foreground sm:block">Developer Portal / <b className="capitalize text-foreground">{crumb(loc.pathname)}</b></div>
 
-          <div className="mx-auto hidden w-full max-w-md items-center gap-2.5 rounded-xl border border-border/70 bg-glass/40 px-3.5 py-2 text-[13px] text-muted-foreground lg:flex">
+          <button
+            onClick={() => window.dispatchEvent(new Event("nakshtralogy:open-search"))}
+            title="Search (⌘K)"
+            className="mx-auto hidden w-full max-w-md items-center gap-2.5 rounded-xl border border-border/70 bg-glass/40 px-3.5 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:text-foreground lg:flex"
+          >
             <Search className="h-[15px] w-[15px]" />
             <span className="truncate">Search endpoints, keys, invoices…</span>
             <kbd className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[10px]">⌘K</kbd>
-          </div>
+          </button>
 
           <div className="ml-auto flex items-center gap-2.5">
             {isLowBalance && (
@@ -166,16 +172,31 @@ export default function DevShell({ children }: { children: ReactNode }) {
                 Plan expires {Math.max(0, daysToExpiry)}d
               </span>
             )}
-            <HeaderIcon dot={isLowBalance}><Bell className="h-[17px] w-[17px]" /></HeaderIcon>
-            <HeaderIcon onClick={toggle} title="Toggle theme">{theme === "dark" ? <Sun className="h-[17px] w-[17px]" /> : <Moon className="h-[17px] w-[17px]" />}</HeaderIcon>
-            <HeaderIcon title="Refresh"><RefreshCw className="h-[17px] w-[17px]" /></HeaderIcon>
-            <span className="rounded-full border border-border/70 bg-gold/8 px-3 py-1.5 text-[11px] font-bold text-gold">₹{(developer?.wallet_balance ?? 0).toFixed(0)}</span>
+            <div className="lg:hidden">
+              <HeaderIcon onClick={() => window.dispatchEvent(new Event("nakshtralogy:open-search"))} title="Search (⌘K)">
+                <Search className="h-[17px] w-[17px]" />
+              </HeaderIcon>
+            </div>
+            <HeaderIcon dot={isLowBalance} title="Notifications"><Bell className="h-[17px] w-[17px]" /></HeaderIcon>
+            <HeaderIcon onClick={toggle} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun className="h-[17px] w-[17px]" /> : <Moon className="h-[17px] w-[17px]" />}</HeaderIcon>
+            <HeaderIcon title="Refresh page data" onClick={() => window.location.reload()}><RefreshCw className="h-[17px] w-[17px]" /></HeaderIcon>
+            <span title="Wallet balance" className="rounded-full border border-border/70 bg-gold/8 px-3 py-1.5 text-[11px] font-bold text-gold">₹{(developer?.wallet_balance ?? 0).toFixed(0)}</span>
           </div>
         </header>
 
-        {/* Scrollable content (only this scrolls) */}
+        {/* Scrollable content (only this scrolls) — animated page transitions */}
         <main className="flex-1 p-4 md:p-6">
-          <div className="animate-float-in">{children}</div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={loc.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>
@@ -184,7 +205,7 @@ export default function DevShell({ children }: { children: ReactNode }) {
 
 function HeaderIcon({ children, dot, onClick, title }: { children: ReactNode; dot?: boolean; onClick?: () => void; title?: string }) {
   return (
-    <button onClick={onClick} title={title} className="relative grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-glass/40 text-muted-foreground transition-colors hover:text-foreground">
+    <button onClick={onClick} title={title} aria-label={title} className="press relative grid h-9 w-9 place-items-center rounded-xl border border-border/70 bg-glass/40 text-muted-foreground transition-colors hover:text-foreground">
       {children}
       {dot && <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-400 ring-2 ring-background" />}
     </button>
