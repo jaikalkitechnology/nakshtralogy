@@ -12,6 +12,8 @@ import DashboardOverview from "./pages/DashboardOverview";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 import AdminFeatures from "./pages/admin/AdminFeatures";
+import GoogleAuthSettings from "./pages/admin/GoogleAuthSettings";
+import WebPushSettings from "./pages/admin/WebPushSettings";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,10 @@ const App = () => (
                   element={<RequireAdmin><AdminShell><AdminFeatures /></AdminShell></RequireAdmin>}
                 />
               ))}
+              {/* Auth + Web Platform admin screens (Task 1.2 + 2.4) — standalone pages
+                  writing to platform_settings via the existing admin settings API. */}
+              <Route path="/admin/v2/google-auth" element={<RequireAdmin><AdminShell><GoogleAuthSettings /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/v2/web-push" element={<RequireAdmin><AdminShell><WebPushSettings /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}
               {["consultations", "notifications", "content", "audit-logs", "support-tickets", "analytics", "role-permissions"].map((seg) => (
                 <Route
