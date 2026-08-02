@@ -66,7 +66,10 @@ from app.schemas.user_schema import RefreshTokenRequest, MessageResponse
 logger = logging.getLogger("developer_router")
 router = APIRouter()
 
-ALL_PRODUCT_SCOPES = ["kundli", "specialist", "milan", "forecast"]
+# Phase 8 retax: 4 gateway product categories. `reports` absorbs the old
+# `specialist` + `milan` product codes (see app/core/api_key_auth.py for the
+# legacy-scope back-compat mapping so pre-retax keys keep working).
+ALL_PRODUCT_SCOPES = ["kundli", "reports", "rashi", "forecast"]
 
 
 # ── require developer role ──────────────────────────────────────────
@@ -601,7 +604,7 @@ def list_wallet_transactions(
 def list_my_usage(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    product: Optional[str] = Query(None, description="kundli | specialist | milan | forecast"),
+    product: Optional[str] = Query(None, description="kundli | reports | rashi | forecast (legacy logs may also show specialist | milan)"),
     current_user: User = Depends(get_current_developer),
     db: Session = Depends(get_db),
 ):

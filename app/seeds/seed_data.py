@@ -708,14 +708,16 @@ ALL_ACCESS_PLAN_SEED = {
     "currency": "INR",
     "duration_days": 30,
     "tps_limit": 1,
-    "products": ["kundli", "specialist", "milan", "forecast"],
+    "products": ["kundli", "reports", "rashi", "forecast"],
     "active": True,
 }
 
+# Phase 8 retax: 4 gateway categories (`reports` absorbs the old
+# `specialist` + `milan` product codes; `rashi` is new).
 API_PRODUCTS_SEED = [
     {"code": "kundli", "name": "Kundli", "description": "Birth chart, dashas, gochar, doshas, yogas, shadbala and all 20 divisional charts."},
-    {"code": "specialist", "name": "Special Reports", "description": "15 specialist engines: career, wealth, marriage, health, legal, and more."},
-    {"code": "milan", "name": "Kundli Milan", "description": "3-phase compatibility matching (Ashtakoot + advanced + timing) with a unified score."},
+    {"code": "reports", "name": "Special Reports", "description": "19 report engines: 14 single-chart specialists (career, wealth, marriage, health, legal, ...) plus 5 combined two-chart reports (Kundli Milan, Relationship Intelligence, Child Probability, Love Compatibility, Karma Linkage)."},
+    {"code": "rashi", "name": "Rashi", "description": "12-sign zodiac metadata, traits, and gochar-based daily/weekly/monthly predictions."},
     {"code": "forecast", "name": "Today Forecast", "description": "Daily probability forecast + 12-rashi transit analysis."},
 ]
 
@@ -773,7 +775,7 @@ def _seed_developer(db: Session) -> str:
         secret_hash=hash_api_key_secret(TEST_API_KEY_RAW),
         mode="test",
         label="Seed Test Key",
-        scopes=["kundli", "specialist", "milan", "forecast"],
+        scopes=["kundli", "reports", "rashi", "forecast"],
         status="active",
     ))
 

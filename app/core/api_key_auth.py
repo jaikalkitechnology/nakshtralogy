@@ -26,6 +26,12 @@ bearer_scheme = HTTPBearer(
     description="Developer API key — `Authorization: Bearer sk_live_...` or `sk_test_...`",
 )
 
+# Phase 8 retax: `specialist` + `milan` both fold into the new `reports`
+# category (Kundli Milan is now one of the 19 reports); `kundli`/`forecast`
+# are unchanged. `rashi` is brand-new (no legacy alias).
+_LEGACY_SCOPE_ALIASES = {"specialist": "reports", "milan": "reports"}
+_LEGACY_FULL_SCOPES = {"kundli", "specialist", "milan", "forecast"}
+
 
 class GatewayAuthContext:
     """Bundles everything a gateway endpoint needs after authentication."""
@@ -42,8 +48,19 @@ class GatewayAuthContext:
         return self.plan.tps_limit if self.plan else 1
 
     def has_scope(self, product: str) -> bool:
+        """`product` is always one of the current 4 categories
+        (`kundli`/`reports`/`rashi`/`forecast` — Phase 8 retax). Keys created
+        before the retax hold the legacy 4-item scope list
+        (`kundli`/`specialist`/`milan`/`forecast`); since there is only ever
+        one All-Access plan covering every product that exists, a key that
+        already had every legacy product is treated as having every current
+        category too — including the brand-new `rashi` category — so old
+        keys never need re-issuing."""
         scopes = self.api_key.scopes or []
-        return product in scopes
+        if _LEGACY_FULL_SCOPES.issubset(set(scopes)):
+            return True
+        normalized = {_LEGACY_SCOPE_ALIASES.get(s, s) for s in scopes}
+        return product in normalized
 
 
 def get_developer_from_api_key(
