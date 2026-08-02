@@ -10481,6 +10481,70 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get pwPremiumTitle => 'प्रीमियम रिपोर्ट';
+
+  @override
+  String get pwLockedSubtitle => 'इस कुंडली के लिए पूरा विश्लेषण अनलॉक करें';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'पूरा ${name} अनलॉक करें';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'अनलॉक · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'एक बार अनलॉक — इस कुंडली पर हमेशा के लिए आपका';
+
+  @override
+  String get pwWhatYouGet => 'आपको क्या मिलेगा';
+
+  @override
+  String get pwYourBalance => 'आपका वॉलेट बैलेंस';
+
+  @override
+  String get pwInsufficient => 'अपर्याप्त बैलेंस';
+
+  @override
+  String get pwRechargeToUnlock => 'अनलॉक करने के लिए रिचार्ज करें';
+
+  @override
+  String get pwRechargeAmount => 'रिचार्ज राशि (₹)';
+
+  @override
+  String get pwAddMoney => 'पैसे जोड़ें';
+
+  @override
+  String get pwRechargeDone => 'वॉलेट रिचार्ज हो गया';
+
+  @override
+  String get pwRechargeFailed => 'रिचार्ज विफल। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get pwUnlockFailed => 'अनलॉक नहीं हो सका। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get pwUnlockedNow => 'अनलॉक हो गया! आपकी रिपोर्ट लोड हो रही है…';
+
+  @override
+  String get pwProcessing => 'प्रोसेस हो रहा है…';
+
+  @override
+  String get pwPrimaryNoDelete => 'आपकी प्राथमिक कुंडली हटाई नहीं जा सकती — यह हमेशा मुफ़्त है।';
+
+  @override
+  String get pwPrimaryNoEdit => 'आपकी प्राथमिक कुंडली संपादित नहीं की जा सकती।';
+
+  @override
+  String get pwLoadingAccess => 'एक्सेस जाँचा जा रहा है…';
+
+  @override
+  String get pwMaybeLater => 'बाद में';
+
+  @override
   String get updatePhoto => 'फ़ोटो अपडेट करें';
 
   @override

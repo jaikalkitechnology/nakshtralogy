@@ -9,6 +9,70 @@ class AppLocalizationsMl extends AppLocalizations {
   AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'പ്രീമിയം റിപ്പോർട്ട്';
+
+  @override
+  String get pwLockedSubtitle => 'ഈ ചാർട്ടിന്റെ പൂർണ്ണ വിശകലനം അൺലോക്ക് ചെയ്യുക';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'പൂർണ്ണ ${name} അൺലോക്ക് ചെയ്യുക';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'അൺലോക്ക് · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'ഒരു തവണ അൺലോക്ക് — ഈ ചാർട്ടിൽ എന്നേക്കും നിങ്ങളുടേത്';
+
+  @override
+  String get pwWhatYouGet => 'നിങ്ങൾക്ക് ലഭിക്കുന്നത്';
+
+  @override
+  String get pwYourBalance => 'നിങ്ങളുടെ വാലറ്റ് ബാലൻസ്';
+
+  @override
+  String get pwInsufficient => 'ബാലൻസ് അപര്യാപ്തം';
+
+  @override
+  String get pwRechargeToUnlock => 'അൺലോക്ക് ചെയ്യാൻ റീചാർജ് ചെയ്യുക';
+
+  @override
+  String get pwRechargeAmount => 'റീചാർജ് തുക (₹)';
+
+  @override
+  String get pwAddMoney => 'പണം ചേർക്കുക';
+
+  @override
+  String get pwRechargeDone => 'വാലറ്റ് റീചാർജ് ചെയ്തു';
+
+  @override
+  String get pwRechargeFailed => 'റീചാർജ് പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get pwUnlockFailed => 'അൺലോക്ക് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get pwUnlockedNow => 'അൺലോക്ക് ചെയ്തു! നിങ്ങളുടെ റിപ്പോർട്ട് ലോഡ് ചെയ്യുന്നു…';
+
+  @override
+  String get pwProcessing => 'പ്രോസസ്സ് ചെയ്യുന്നു…';
+
+  @override
+  String get pwPrimaryNoDelete => 'നിങ്ങളുടെ പ്രൈമറി കുണ്ഡലി ഡിലീറ്റ് ചെയ്യാൻ കഴിയില്ല — ഇത് എന്നേക്കും സൗജന്യമാണ്.';
+
+  @override
+  String get pwPrimaryNoEdit => 'നിങ്ങളുടെ പ്രൈമറി കുണ്ഡലി എഡിറ്റ് ചെയ്യാൻ കഴിയില്ല.';
+
+  @override
+  String get pwLoadingAccess => 'ആക്സസ് പരിശോധിക്കുന്നു…';
+
+  @override
+  String get pwMaybeLater => 'പിന്നീടാകട്ടെ';
+
+  @override
   String get updatePhoto => 'ഫോട്ടോ അപ്ഡേറ്റ് ചെയ്യുക';
 
   @override

@@ -7,6 +7,17 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_bn.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_ar.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_de.dart';
+import 'app_localizations_pt_BR.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_th.dart';
+import 'app_localizations_zh_Hans.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_gu.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_kn.dart';
@@ -113,6 +124,17 @@ abstract class AppLocalizations {
     Locale('pa'),
     Locale('ta'),
     Locale('te'),
+    Locale('fr'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    Locale('th'),
+    Locale('es'),
+    Locale('pt', 'BR'),
+    Locale('de'),
+    Locale('it'),
+    Locale('ru'),
+    Locale('ar'),
+    Locale('id'),
+    Locale('ja'),
   ];
 
   /// No description provided for @appName.
@@ -234,6 +256,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot Password?'**
   String get forgotPassword;
+
+  /// No description provided for @pwPremiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Report'**
+  String get pwPremiumTitle;
+
+  /// No description provided for @pwLockedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the full analysis for this chart'**
+  String get pwLockedSubtitle;
+
+  /// No description provided for @pwUnlockFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock full {name}'**
+  String pwUnlockFull(Object name);
+
+  /// No description provided for @pwUnlockPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock · ₹{price}'**
+  String pwUnlockPrice(Object price);
+
+  /// No description provided for @pwOneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time unlock — yours forever on this chart'**
+  String get pwOneTime;
+
+  /// No description provided for @pwWhatYouGet.
+  ///
+  /// In en, this message translates to:
+  /// **'What you get'**
+  String get pwWhatYouGet;
+
+  /// No description provided for @pwYourBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wallet balance'**
+  String get pwYourBalance;
+
+  /// No description provided for @pwInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient balance'**
+  String get pwInsufficient;
+
+  /// No description provided for @pwRechargeToUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge to unlock'**
+  String get pwRechargeToUnlock;
+
+  /// No description provided for @pwRechargeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge amount (₹)'**
+  String get pwRechargeAmount;
+
+  /// No description provided for @pwAddMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Add money'**
+  String get pwAddMoney;
+
+  /// No description provided for @pwRechargeDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet recharged'**
+  String get pwRechargeDone;
+
+  /// No description provided for @pwRechargeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge failed. Please try again.'**
+  String get pwRechargeFailed;
+
+  /// No description provided for @pwUnlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t unlock. Please try again.'**
+  String get pwUnlockFailed;
+
+  /// No description provided for @pwUnlockedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked! Loading your report…'**
+  String get pwUnlockedNow;
+
+  /// No description provided for @pwProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing…'**
+  String get pwProcessing;
+
+  /// No description provided for @pwPrimaryNoDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Primary Kundli can\'t be deleted — it\'s free forever.'**
+  String get pwPrimaryNoDelete;
+
+  /// No description provided for @pwPrimaryNoEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Primary Kundli can\'t be edited.'**
+  String get pwPrimaryNoEdit;
+
+  /// No description provided for @pwLoadingAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking access…'**
+  String get pwLoadingAccess;
+
+  /// No description provided for @pwMaybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get pwMaybeLater;
 
   /// No description provided for @updatePhoto.
   ///
@@ -22679,6 +22821,17 @@ class _AppLocalizationsDelegate
     'pa',
     'ta',
     'te',
+    'fr',
+    'zh',
+    'th',
+    'es',
+    'pt',
+    'de',
+    'it',
+    'ru',
+    'ar',
+    'id',
+    'ja',
   ].contains(locale.languageCode);
 
   @override
@@ -22688,6 +22841,14 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when language+script codes are specified.
   switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return AppLocalizationsZhHans();
+        }
+        break;
+      }
     case 'hi':
       {
         switch (locale.scriptCode) {
@@ -22700,6 +22861,28 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'zh':
+      return AppLocalizationsZhHans();
+    case 'th':
+      return AppLocalizationsTh();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'pt':
+      return AppLocalizationsPtBr();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'ru':
+      return AppLocalizationsRu();
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'id':
+      return AppLocalizationsId();
+    case 'ja':
+      return AppLocalizationsJa();
     case 'bn':
       return AppLocalizationsBn();
     case 'en':

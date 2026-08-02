@@ -74,10 +74,23 @@ class UserResponse(BaseModel):
     is_active: bool
     is_verified: bool
     wallet_balance: Optional[float] = 0.0
+    # Internationalization — region drives language mode + currency only.
+    region: Optional[str] = None            # IN | INTL (None until detected)
+    country_code: Optional[str] = None
+    is_international: bool = False
+    app_mode: str = "india"                 # india | international
+    currency: str = "INR"                   # session display currency
     created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
+
+class RegionOverrideRequest(BaseModel):
+    """Manual region override from Settings. Either `region` (IN|INTL) or a
+    device-country code may be supplied; region wins when both are present."""
+    region: Optional[str] = Field(None, description="IN | INTL")
+    country_code: Optional[str] = Field(None, max_length=2)
 
 
 class UserUpdateRequest(BaseModel):

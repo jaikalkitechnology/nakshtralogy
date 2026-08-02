@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../kundli/report_paywall.dart';
 import 'daily_forecast_screen.dart';
 
 class ForecastChartPicker extends StatefulWidget {
@@ -44,7 +45,13 @@ class _S extends State<ForecastChartPicker> {
                     final c = _charts[i];
                     return GestureDetector(
                       onTap: () => Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => DailyForecastScreen(chartId: c['id']?.toString() ?? '', chartName: c['name']?.toString() ?? 'Chart'))),
+                        builder: (_) => PaywallGate(
+                          serviceKey: 'daily_forecast',
+                          chartId: c['id']?.toString() ?? '',
+                          reportName: c['name']?.toString() ?? 'Chart',
+                          emoji: '🔆',
+                          builder: (_) => DailyForecastScreen(chartId: c['id']?.toString() ?? '', chartName: c['name']?.toString() ?? 'Chart'),
+                        ))),
                       child: Container(margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.08), Colors.transparent]),

@@ -120,6 +120,112 @@ class _AddChartScreenState extends State<AddChartScreen> {
     ));
   }
 
+  /// Extra-chart paywall: the free Primary is used up, so this new chart needs a
+  /// one-time `extra_chart` unlock (admin-priced). Buy the credit from the
+  /// wallet (recharge if low), then re-submit — the backend consumes the credit.
+  Future<void> _promptBuyExtraChart(BuildContext context, ChartPaymentRequired st) async {
+    final l = AppLocalizations.of(context)!;
+    final api = ApiService();
+    final purchased = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        double balance = 0;
+        bool loading = true;
+        bool busy = false;
+        return StatefulBuilder(builder: (ctx, setSheet) {
+          if (loading) {
+            api.getWalletBalance().then((b) { if (ctx.mounted) setSheet(() { balance = b; loading = false; }); });
+          }
+          final enough = balance >= st.price;
+          return Container(
+            decoration: const BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+            padding: EdgeInsets.fromLTRB(20, 14, 20, 20 + MediaQuery.of(ctx).viewInsets.bottom),
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.smoke.withOpacity(0.4), borderRadius: BorderRadius.circular(2)))),
+              const SizedBox(height: 16),
+              Row(children: [
+                Container(width: 44, height: 44, decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.15), borderRadius: BorderRadius.circular(12)), child: const Icon(Icons.auto_awesome, color: AppColors.gold)),
+                const SizedBox(width: 12),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(l.newBirthChart, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 2),
+                  Text(l.pwOneTime, style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
+                ])),
+              ]),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AppColors.nebula.withOpacity(0.5), borderRadius: BorderRadius.circular(12)),
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text(l.pwYourBalance, style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
+                  Text(loading ? '…' : '₹${balance.toStringAsFixed(0)}', style: TextStyle(color: enough ? AppColors.success : AppColors.error, fontSize: 14, fontWeight: FontWeight.w700)),
+                ]),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(width: double.infinity, child: ElevatedButton(
+                onPressed: (loading || busy) ? null : () async {
+                  if (!enough) {
+                    final amt = await _rechargeDialog(ctx, st.price - balance);
+                    if (amt != null && amt > 0) {
+                      final r = await api.rechargeMyWallet(amount: amt);
+                      if (r['statusCode'] == 200 || r['statusCode'] == 201) {
+                        final nb = await api.getWalletBalance();
+                        if (ctx.mounted) setSheet(() => balance = nb);
+                      } else if (ctx.mounted) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.pwRechargeFailed), backgroundColor: AppColors.error));
+                      }
+                    }
+                    return;
+                  }
+                  setSheet(() => busy = true);
+                  final resp = await api.purchaseService(st.pricingId ?? '', '');
+                  if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
+                    if (ctx.mounted) Navigator.pop(ctx, true);
+                  } else {
+                    setSheet(() => busy = false);
+                    if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.pwUnlockFailed), backgroundColor: AppColors.error));
+                  }
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight, minimumSize: const Size.fromHeight(48)),
+                child: Text(busy ? l.pwProcessing : (enough ? l.pwUnlockPrice(st.price.toStringAsFixed(0)) : l.pwRechargeToUnlock), style: const TextStyle(fontWeight: FontWeight.w700)),
+              )),
+              const SizedBox(height: 6),
+              Center(child: TextButton(onPressed: busy ? null : () => Navigator.pop(ctx, false), child: Text(l.pwMaybeLater, style: const TextStyle(color: AppColors.smoke)))),
+            ]),
+          );
+        });
+      },
+    );
+    if (purchased == true && mounted) _submit(); // retry — the credit now exists
+  }
+
+  Future<double?> _rechargeDialog(BuildContext context, double suggested) async {
+    final l = AppLocalizations.of(context)!;
+    final ctrl = TextEditingController(text: suggested > 0 ? suggested.ceil().toString() : '');
+    return showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: Text(l.pwAddMoney, style: const TextStyle(color: AppColors.ivory, fontSize: 16)),
+        content: TextField(
+          controller: ctrl, keyboardType: TextInputType.number, autofocus: true,
+          style: const TextStyle(color: AppColors.ivory),
+          decoration: InputDecoration(labelText: l.pwRechargeAmount),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.pwMaybeLater, style: const TextStyle(color: AppColors.smoke))),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, double.tryParse(ctrl.text.trim())),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
+            child: Text(l.pwAddMoney),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _debounce?.cancel(); _removeOverlay();
@@ -134,6 +240,7 @@ class _AddChartScreenState extends State<AddChartScreen> {
       listener: (context, state) {
         if (state is ChartCreated) Navigator.pop(context);
         if (state is ChartFailure) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: AppColors.error));
+        if (state is ChartPaymentRequired) _promptBuyExtraChart(context, state);
       },
       child: Scaffold(
         appBar: AppBar(

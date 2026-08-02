@@ -10481,6 +10481,70 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get pwPremiumTitle => 'Premium Report';
+
+  @override
+  String get pwLockedSubtitle => 'Is chart ke liye poora analysis unlock karein';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'Poora ${name} unlock karein';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'Unlock · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'Ek baar unlock — is chart par hamesha ke liye aapka';
+
+  @override
+  String get pwWhatYouGet => 'Aapko kya milega';
+
+  @override
+  String get pwYourBalance => 'Aapka wallet balance';
+
+  @override
+  String get pwInsufficient => 'Balance kam hai';
+
+  @override
+  String get pwRechargeToUnlock => 'Unlock karne ke liye recharge karein';
+
+  @override
+  String get pwRechargeAmount => 'Recharge amount (₹)';
+
+  @override
+  String get pwAddMoney => 'Paise add karein';
+
+  @override
+  String get pwRechargeDone => 'Wallet recharge ho gaya';
+
+  @override
+  String get pwRechargeFailed => 'Recharge fail hua. Dobara try karein.';
+
+  @override
+  String get pwUnlockFailed => 'Unlock nahi hua. Dobara try karein.';
+
+  @override
+  String get pwUnlockedNow => 'Unlock ho gaya! Aapki report load ho rahi hai…';
+
+  @override
+  String get pwProcessing => 'Process ho raha hai…';
+
+  @override
+  String get pwPrimaryNoDelete => 'Aapki Primary Kundli delete nahi ho sakti — yeh hamesha free hai.';
+
+  @override
+  String get pwPrimaryNoEdit => 'Aapki Primary Kundli edit nahi ho sakti.';
+
+  @override
+  String get pwLoadingAccess => 'Access check ho raha hai…';
+
+  @override
+  String get pwMaybeLater => 'Baad mein';
+
+  @override
   String get updatePhoto => 'Photo Update Karein';
 
   @override

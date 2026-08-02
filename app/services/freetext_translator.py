@@ -20,6 +20,15 @@ Design goals:
 Entry point:
     from app.services.freetext_translator import localize_content
     result = localize_content(result, lang)   # lang: canonical full-word code
+
+Language coverage: works for EVERY registered language code — the Indian 11 and
+the international set (french/chinese/thai/spanish/portuguese/german/italian/
+russian/arabic/indonesian/japanese). `normalize_lang` maps request codes
+(fr, zh-Hans, pt-BR, …) to the canonical word and the LLM backend's `_LANG_DESC`
+supplies the target-language prompt; there is NO Indian-only gate. Each unique
+(text, language) pair is cached once in FreeTextTranslation, so international
+report bodies translate at request time and are cached per language just like
+the Indian locales.
 """
 
 import re

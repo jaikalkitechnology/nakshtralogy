@@ -9,6 +9,70 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'প্রিমিয়াম রিপোর্ট';
+
+  @override
+  String get pwLockedSubtitle => 'এই চার্টের সম্পূর্ণ বিশ্লেষণ আনলক করুন';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'সম্পূর্ণ ${name} আনলক করুন';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'আনলক · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'একবারের আনলক — এই চার্টে চিরকালের জন্য আপনার';
+
+  @override
+  String get pwWhatYouGet => 'আপনি যা পাবেন';
+
+  @override
+  String get pwYourBalance => 'আপনার ওয়ালেট ব্যালেন্স';
+
+  @override
+  String get pwInsufficient => 'অপর্যাপ্ত ব্যালেন্স';
+
+  @override
+  String get pwRechargeToUnlock => 'আনলক করতে রিচার্জ করুন';
+
+  @override
+  String get pwRechargeAmount => 'রিচার্জ পরিমাণ (₹)';
+
+  @override
+  String get pwAddMoney => 'টাকা যুক্ত করুন';
+
+  @override
+  String get pwRechargeDone => 'ওয়ালেট রিচার্জ হয়েছে';
+
+  @override
+  String get pwRechargeFailed => 'রিচার্জ ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
+
+  @override
+  String get pwUnlockFailed => 'আনলক করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get pwUnlockedNow => 'আনলক হয়েছে! আপনার রিপোর্ট লোড হচ্ছে…';
+
+  @override
+  String get pwProcessing => 'প্রক্রিয়াকরণ হচ্ছে…';
+
+  @override
+  String get pwPrimaryNoDelete => 'আপনার প্রাইমারি কুণ্ডলী ডিলিট করা যাবে না — এটি চিরকাল বিনামূল্যে।';
+
+  @override
+  String get pwPrimaryNoEdit => 'আপনার প্রাইমারি কুণ্ডলী সম্পাদনা করা যাবে না।';
+
+  @override
+  String get pwLoadingAccess => 'অ্যাক্সেস যাচাই করা হচ্ছে…';
+
+  @override
+  String get pwMaybeLater => 'পরে হবে';
+
+  @override
   String get updatePhoto => 'ছবি আপডেট করুন';
 
   @override

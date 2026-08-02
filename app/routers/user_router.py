@@ -31,13 +31,15 @@ from app.core.security import (
 from app.core.config import settings
 from app.core.dependencies import get_current_user, get_lang_user
 from app.core.i18n import get_lang, t, wallet_label
+from app.core import region as region_util
 from app.models.model import User, RefreshToken, Wallet
 from app.schemas.user_schema import (
     UserSignupRequest, UserLoginRequest, GoogleLoginRequest,
     ForgotPasswordRequest, ResetPasswordRequest, RefreshTokenRequest,
     TokenResponse, UserResponse, UserUpdateRequest,
-    ChangePasswordRequest, MessageResponse,
+    ChangePasswordRequest, MessageResponse, RegionOverrideRequest,
 )
+from fastapi import Request, Header
 
 router = APIRouter()
 
@@ -46,6 +48,7 @@ router = APIRouter()
 
 def _build_user_response(user: User, db: Session) -> UserResponse:
     wallet = db.query(Wallet).filter(Wallet.user_id == user.id).first()
+    region = user.region or region_util.IN
     return UserResponse(
         id=user.id,
         email=user.email,
@@ -62,6 +65,11 @@ def _build_user_response(user: User, db: Session) -> UserResponse:
         is_active=user.is_active,
         is_verified=user.is_verified,
         wallet_balance=float(wallet.balance) if wallet else 0.0,
+        region=region,
+        country_code=user.country_code,
+        is_international=region_util.is_international_region(region),
+        app_mode=region_util.app_mode_for_region(region),
+        currency=region_util.currency_for_region(region),
         created_at=user.created_at,
     )
 
@@ -237,6 +245,90 @@ def get_me(current_user: User = Depends(get_current_user), db: Session = Depends
     return _build_user_response(current_user, db)
 
 
+# ── Region / AppMode ──────────────────────────────────────────────────
+
+def _region_payload(user: User) -> dict:
+    region = user.region or region_util.IN
+    return {
+        "region": region,
+        "country_code": user.country_code,
+        "is_international": region_util.is_international_region(region),
+        "app_mode": region_util.app_mode_for_region(region),
+        "currency": region_util.currency_for_region(region),
+        "manual": bool(user.region_manual),
+    }
+
+
+@router.get("/me/region")
+def get_my_region(
+    request: Request,
+    x_device_country: Optional[str] = Header(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Resolve (and cache) the caller's region → drives language mode + currency.
+
+    Order: a manual override the user set in Settings wins and is never
+    auto-overwritten; otherwise the device-locale country hint header
+    (`X-Device-Country`) then an IP-geo lookup decide IN vs INTL. Never changes
+    astrology logic — only presentation. Persists the resolved region on the
+    user so subsequent requests skip the network.
+    """
+    if current_user.region_manual and current_user.region:
+        return _region_payload(current_user)
+
+    headers = {k.lower(): v for k, v in request.headers.items()}
+    client_ip = region_util.client_ip_from_headers(
+        headers, request.client.host if request.client else None
+    )
+    region, cc = region_util.resolve_region(
+        device_country=x_device_country,
+        client_ip=client_ip,
+        stored_country=current_user.country_code,
+    )
+    changed = False
+    if region != current_user.region:
+        current_user.region = region
+        changed = True
+    if cc and cc != current_user.country_code:
+        current_user.country_code = cc
+        changed = True
+    if changed:
+        db.commit()
+        db.refresh(current_user)
+    return _region_payload(current_user)
+
+
+@router.put("/me/region")
+def set_my_region(
+    req: RegionOverrideRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Manual region override from Settings. Sets `region_manual` so IP-geo
+    detection stops overwriting it. Accepts an explicit IN|INTL region or a
+    country code (which maps to a region)."""
+    region = None
+    if req.region:
+        r = req.region.strip().upper()
+        if r not in (region_util.IN, region_util.INTL):
+            raise HTTPException(status_code=400, detail=t("err.invalid_region", lang))
+        region = r
+    elif req.country_code:
+        cc = req.country_code.strip().upper()
+        current_user.country_code = cc
+        region = region_util.region_for_country(cc)
+    else:
+        raise HTTPException(status_code=400, detail=t("err.invalid_region", lang))
+
+    current_user.region = region
+    current_user.region_manual = True
+    db.commit()
+    db.refresh(current_user)
+    return _region_payload(current_user)
+
+
 # ── Update Profile ────────────────────────────────────────────────────
 
 @router.put("/me", response_model=UserResponse)
@@ -334,12 +426,30 @@ def get_my_wallet(
         _WalletTxn.txn_type.in_(["consultation_debit", "withdrawal", "ai_debit"]),
     ).scalar() or 0
 
-    return {
+    # International sessions show the balance in USD (display conversion via the
+    # admin FX rate). The underlying ledger stays in INR — only presentation
+    # changes. India is unaffected.
+    resp = {
         "balance": float(wallet.balance),
         "currency": wallet.currency,
         "total_credit": float(total_credit),
         "total_debit": float(total_debit),
+        "display_currency": wallet.currency,
+        "display_balance": float(wallet.balance),
+        "region": current_user.region or region_util.IN,
+        "is_international": region_util.is_international_region(current_user.region),
+        "fx_rate_usd": None,
+        "recharge_enabled": True,   # India-only wallet recharge (IAP for INTL)
     }
+    if region_util.is_international_region(current_user.region):
+        from app.core import pricing as pricing_util
+        fx = pricing_util.get_fx_rate(db)
+        resp["display_currency"] = "USD"
+        resp["display_balance"] = round(float(wallet.balance) / fx, 2) if fx else 0.0
+        resp["fx_rate_usd"] = fx
+        # International top-up happens via store IAP, not the ₹ wallet recharge.
+        resp["recharge_enabled"] = False
+    return resp
 
 
 @router.get("/me/wallet/transactions")

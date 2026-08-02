@@ -1,0 +1,22 @@
+[
+  {"key": "pwPremiumTitle", "en": "Premium Report", "hi": "प्रीमियम रिपोर्ट", "hinglish": "Premium Report"},
+  {"key": "pwLockedSubtitle", "en": "Unlock the full analysis for this chart", "hi": "इस कुंडली के लिए पूरा विश्लेषण अनलॉक करें", "hinglish": "Is chart ke liye poora analysis unlock karein"},
+  {"key": "pwUnlockFull", "en": "Unlock full {name}", "hi": "पूरा {name} अनलॉक करें", "hinglish": "Poora {name} unlock karein", "placeholders": ["name"]},
+  {"key": "pwUnlockPrice", "en": "Unlock · ₹{price}", "hi": "अनलॉक · ₹{price}", "hinglish": "Unlock · ₹{price}", "placeholders": ["price"]},
+  {"key": "pwOneTime", "en": "One-time unlock — yours forever on this chart", "hi": "एक बार अनलॉक — इस कुंडली पर हमेशा के लिए आपका", "hinglish": "Ek baar unlock — is chart par hamesha ke liye aapka"},
+  {"key": "pwWhatYouGet", "en": "What you get", "hi": "आपको क्या मिलेगा", "hinglish": "Aapko kya milega"},
+  {"key": "pwYourBalance", "en": "Your wallet balance", "hi": "आपका वॉलेट बैलेंस", "hinglish": "Aapka wallet balance"},
+  {"key": "pwInsufficient", "en": "Insufficient balance", "hi": "अपर्याप्त बैलेंस", "hinglish": "Balance kam hai"},
+  {"key": "pwRechargeToUnlock", "en": "Recharge to unlock", "hi": "अनलॉक करने के लिए रिचार्ज करें", "hinglish": "Unlock karne ke liye recharge karein"},
+  {"key": "pwRechargeAmount", "en": "Recharge amount (₹)", "hi": "रिचार्ज राशि (₹)", "hinglish": "Recharge amount (₹)"},
+  {"key": "pwAddMoney", "en": "Add money", "hi": "पैसे जोड़ें", "hinglish": "Paise add karein"},
+  {"key": "pwRechargeDone", "en": "Wallet recharged", "hi": "वॉलेट रिचार्ज हो गया", "hinglish": "Wallet recharge ho gaya"},
+  {"key": "pwRechargeFailed", "en": "Recharge failed. Please try again.", "hi": "रिचार्ज विफल। कृपया पुनः प्रयास करें।", "hinglish": "Recharge fail hua. Dobara try karein."},
+  {"key": "pwUnlockFailed", "en": "Couldn't unlock. Please try again.", "hi": "अनलॉक नहीं हो सका। कृपया पुनः प्रयास करें।", "hinglish": "Unlock nahi hua. Dobara try karein."},
+  {"key": "pwUnlockedNow", "en": "Unlocked! Loading your report…", "hi": "अनलॉक हो गया! आपकी रिपोर्ट लोड हो रही है…", "hinglish": "Unlock ho gaya! Aapki report load ho rahi hai…"},
+  {"key": "pwProcessing", "en": "Processing…", "hi": "प्रोसेस हो रहा है…", "hinglish": "Process ho raha hai…"},
+  {"key": "pwPrimaryNoDelete", "en": "Your Primary Kundli can't be deleted — it's free forever.", "hi": "आपकी प्राथमिक कुंडली हटाई नहीं जा सकती — यह हमेशा मुफ़्त है।", "hinglish": "Aapki Primary Kundli delete nahi ho sakti — yeh hamesha free hai."},
+  {"key": "pwPrimaryNoEdit", "en": "Your Primary Kundli can't be edited.", "hi": "आपकी प्राथमिक कुंडली संपादित नहीं की जा सकती।", "hinglish": "Aapki Primary Kundli edit nahi ho sakti."},
+  {"key": "pwLoadingAccess", "en": "Checking access…", "hi": "एक्सेस जाँचा जा रहा है…", "hinglish": "Access check ho raha hai…"},
+  {"key": "pwMaybeLater", "en": "Maybe later", "hi": "बाद में", "hinglish": "Baad mein"}
+]

@@ -22,6 +22,7 @@ import {
   fetchAgoraConfigs, createAgoraConfig, updateAgoraConfig, deleteAgoraConfig,
   seedServicePricing, seedGiftPricing, seedOpen, updateServicePricing,
   createServicePricing, deleteServicePricing,
+  fetchUsdPricingSettings, updateUsdPricingSettings, regenerateUsdPricing,
   createGiftPricing, updateGiftPricing, toggleGiftPricing, deleteGiftPricing,
   adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
   adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
@@ -212,9 +213,17 @@ const AdminFeatures = () => {
   const emptyPricingForm = {
     service_key: "", service_name: "", description: "", icon: "",
     category: "kundli", price: 0, original_price: 0,
+    // USD (international / store IAP). Leave blank to auto-compute from the rule.
+    price_usd: null as number | null, iap_product_id: "", price_usd_manual: false,
     is_free: false, sort_order: 0, features_json: [] as string[],
     engine_function: "", requires_birth_data: true, max_free_per_user: null as number | null,
   };
+
+  // ── USD pricing settings (FX rate + multiplier) ──────────────────
+  const [usdSettings, setUsdSettings] = useState<{ fx_rate_usd: number; usd_multiplier: number }>({
+    fx_rate_usd: 83, usd_multiplier: 5,
+  });
+  const [usdRegenerating, setUsdRegenerating] = useState(false);
   const [pricingDialog, setPricingDialog] = useState<{ open: boolean; mode: "create" | "edit" }>({
     open: false, mode: "create",
   });
@@ -408,6 +417,8 @@ const AdminFeatures = () => {
   useEffect(() => { setWalletPage(0); },
     [walletFilterType, walletFilterRole, walletSearchTerm, walletDateFrom, walletDateTo]);
   useEffect(() => { setPricingPage(0); }, [pricingFilterCategory, pricingFilterStatus, pricingSearch]);
+  // Load USD FX rate + multiplier when the pricing tab opens.
+  useEffect(() => { if (activeTab === "pricing") loadUsdSettings(); /* eslint-disable-next-line */ }, [activeTab]);
   useEffect(() => { setGiftsPage(0); }, [giftsFilterStatus, giftsSearch]);
   useEffect(() => { setReviewsPage(0); },
     [reviewsFilterRating, reviewsFilterVisibility, reviewsSearch, reviewsDateFrom, reviewsDateTo]);
@@ -571,6 +582,37 @@ const AdminFeatures = () => {
     fetchData();
   };
 
+  // ── USD pricing settings handlers ────────────────────────────────
+  const loadUsdSettings = async () => {
+    const { ok, data } = await fetchUsdPricingSettings();
+    if (ok && data) {
+      setUsdSettings({
+        fx_rate_usd: Number(data.fx_rate_usd) || 83,
+        usd_multiplier: Number(data.usd_multiplier) || 5,
+      });
+    }
+  };
+
+  const saveUsdSettings = async () => {
+    await updateUsdPricingSettings({
+      fx_rate_usd: Number(usdSettings.fx_rate_usd),
+      usd_multiplier: Number(usdSettings.usd_multiplier),
+    });
+    await loadUsdSettings();
+  };
+
+  const handleRegenerateUsd = async (force = false) => {
+    setUsdRegenerating(true);
+    try {
+      // persist the current FX/multiplier first, then regenerate every price.
+      await saveUsdSettings();
+      await regenerateUsdPricing(force);
+      await fetchData();
+    } finally {
+      setUsdRegenerating(false);
+    }
+  };
+
   const handleSeedAll = async () => {
     await seedOpen();
     fetchData();
@@ -618,6 +660,9 @@ const AdminFeatures = () => {
       original_price: Number(p.original_price) || 0,
       is_free: !!p.is_free,
       is_active: p.is_active !== false,
+      price_usd: p.price_usd != null ? Number(p.price_usd) : null,
+      iap_product_id: p.iap_product_id || "",
+      price_usd_manual: !!p.price_usd_manual,
       sort_order: p.sort_order || 0,
       features_json: p.features_json || [],
       engine_function: p.engine_function || "",
@@ -646,6 +691,10 @@ const AdminFeatures = () => {
       engine_function: pricingForm.engine_function || null,
       requires_birth_data: !!pricingForm.requires_birth_data,
       max_free_per_user: pricingForm.max_free_per_user || null,
+      // USD override — only send when set, so free/auto rows keep rule pricing.
+      ...(pricingForm.price_usd != null ? { price_usd: Number(pricingForm.price_usd) } : {}),
+      ...(pricingForm.iap_product_id ? { iap_product_id: pricingForm.iap_product_id } : {}),
+      ...(pricingForm.price_usd_manual != null ? { price_usd_manual: !!pricingForm.price_usd_manual } : {}),
     };
     const { ok, data } =
       pricingDialog.mode === "create"
@@ -908,7 +957,16 @@ const AdminFeatures = () => {
     ) },
     { key: "service_key", header: "Key", render: (p) => <code className="text-xs text-muted-foreground">{p.service_key}</code> },
     { key: "category", header: "Category", sortable: true, render: (p) => <Badge variant="outline" className="border-border text-xs capitalize">{p.category}</Badge> },
-    { key: "price", header: "Price", align: "right", sortable: true, render: (p) => <span className="font-semibold text-primary">{p.is_free || p.price === 0 ? "FREE" : `₹${p.price}`}</span> },
+    { key: "price", header: "Price (₹)", align: "right", sortable: true, render: (p) => <span className="font-semibold text-primary">{p.is_free || p.price === 0 ? "FREE" : `₹${p.price}`}</span> },
+    { key: "price_usd", header: "USD (IAP)", align: "right", hideBelow: "md", render: (p) => (
+      p.is_free || p.price === 0
+        ? <span className="text-xs text-muted-foreground">—</span>
+        : <div className="flex flex-col items-end">
+            <span className="font-semibold text-emerald-400">{p.price_usd != null ? `$${p.price_usd}` : "—"}</span>
+            {p.iap_product_id && <span className="text-[9px] text-muted-foreground truncate max-w-[130px]" title={p.iap_product_id}>{p.iap_product_id}</span>}
+            {p.price_usd_manual && <Badge className="bg-amber-500/20 text-amber-400 text-[8px] mt-0.5">manual</Badge>}
+          </div>
+    ) },
     { key: "original_price", header: "Original", align: "right", hideBelow: "lg", render: (p) => <span className="text-xs text-muted-foreground line-through">{p.original_price ? `₹${p.original_price}` : "—"}</span> },
     { key: "is_active", header: "Status", align: "center", render: (p) => <Badge className={p.is_active ? "bg-green-500/20 text-green-400" : "bg-muted text-muted-foreground"}>{p.is_active ? "Active" : "Inactive"}</Badge> },
     { key: "actions", header: "Actions", align: "center", render: (p) => (
@@ -2160,6 +2218,40 @@ const AdminFeatures = () => {
                   </div>
                 </div>
 
+                {/* USD pricing rule: FX rate + multiplier + regenerate.
+                    usd = round_to_tier(inr × multiplier ÷ fx_rate) → nearest IAP tier. */}
+                <div className="flex flex-col md:flex-row md:items-end gap-3 p-3 rounded-lg border border-border bg-muted/40">
+                  <div>
+                    <Label className="text-foreground/80 text-xs">FX rate (₹ per $1)</Label>
+                    <Input
+                      type="number" min="1" step="0.01"
+                      value={usdSettings.fx_rate_usd}
+                      onChange={(e) => setUsdSettings({ ...usdSettings, fx_rate_usd: Number(e.target.value) })}
+                      className="bg-muted border-border mt-1 w-32"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-foreground/80 text-xs">Multiplier (×INR)</Label>
+                    <Input
+                      type="number" min="0.1" step="0.1"
+                      value={usdSettings.usd_multiplier}
+                      onChange={(e) => setUsdSettings({ ...usdSettings, usd_multiplier: Number(e.target.value) })}
+                      className="bg-muted border-border mt-1 w-32"
+                    />
+                  </div>
+                  <div className="flex gap-2 md:ml-auto">
+                    <Button size="sm" variant="outline" onClick={saveUsdSettings} className="border-primary text-primary">
+                      Save FX
+                    </Button>
+                    <Button size="sm" onClick={() => handleRegenerateUsd(false)} disabled={usdRegenerating} className="gradient-gold text-primary-foreground">
+                      <RefreshCw className={`w-3 h-3 mr-1 ${usdRegenerating ? "animate-spin" : ""}`} /> Regenerate USD
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleRegenerateUsd(true)} disabled={usdRegenerating} className="border-destructive text-destructive" title="Overwrite manual overrides too">
+                      Force all
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Filters */}
                 <div className="flex flex-col md:flex-row gap-2">
                   <div className="relative flex-1">
@@ -2179,6 +2271,7 @@ const AdminFeatures = () => {
                       <SelectItem value="all">All Categories</SelectItem>
                       <SelectItem value="kundli">Kundli</SelectItem>
                       <SelectItem value="report">Report</SelectItem>
+                      <SelectItem value="forecast">Forecast</SelectItem>
                       <SelectItem value="consultation">Consultation</SelectItem>
                       <SelectItem value="ai">AI</SelectItem>
                     </SelectContent>
@@ -2273,6 +2366,7 @@ const AdminFeatures = () => {
                         <SelectContent>
                           <SelectItem value="kundli">Kundli</SelectItem>
                           <SelectItem value="report">Report</SelectItem>
+                          <SelectItem value="forecast">Forecast</SelectItem>
                           <SelectItem value="consultation">Consultation</SelectItem>
                           <SelectItem value="ai">AI</SelectItem>
                         </SelectContent>
@@ -2297,6 +2391,42 @@ const AdminFeatures = () => {
                       />
                     </div>
                   </div>
+                  {/* USD / store IAP (international). Blank price_usd = auto from rule. */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-foreground/80 text-xs">USD Price ($) — override</Label>
+                      <Input
+                        type="number" min="0" step="0.01"
+                        value={pricingForm.price_usd ?? ""}
+                        placeholder="auto from rule"
+                        onChange={(e) => setPricingForm({
+                          ...pricingForm,
+                          price_usd: e.target.value === "" ? null : Number(e.target.value),
+                          price_usd_manual: e.target.value !== "",
+                        })}
+                        className="bg-muted border-border mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80 text-xs">IAP Product ID</Label>
+                      <Input
+                        value={pricingForm.iap_product_id}
+                        placeholder="com.nakshtralogy.iap..."
+                        onChange={(e) => setPricingForm({ ...pricingForm, iap_product_id: e.target.value })}
+                        className="bg-muted border-border mt-1 text-xs"
+                      />
+                    </div>
+                  </div>
+                  {pricingForm.price_usd_manual && (
+                    <label className="flex items-center gap-2 text-xs text-amber-400">
+                      <input
+                        type="checkbox"
+                        checked={pricingForm.price_usd_manual}
+                        onChange={(e) => setPricingForm({ ...pricingForm, price_usd_manual: e.target.checked })}
+                      />
+                      Manual USD override (kept when regenerating from the rule)
+                    </label>
+                  )}
                   <div>
                     <Label className="text-foreground/80 text-xs">Features (comma separated)</Label>
                     <Input

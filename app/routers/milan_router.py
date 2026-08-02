@@ -22,6 +22,7 @@ from app.services.freetext_translator import localize_report
 from app.models.model import Chart, User
 from app.kundli import engine as nk_engine
 from app.milan import milan_engine, match_phase2, match_phase3, compute_unified_score
+from app.core.entitlements import require_entitlement
 
 logger = logging.getLogger("milan_router")
 router = APIRouter()
@@ -69,6 +70,9 @@ def full_match(
     """Full 3-phase Kundli Milan: Ashtakoot + Advanced + Timing + Unified score."""
     chart1 = _load_chart(req.chart_id_1, current_user, db, lang)
     chart2 = _load_chart(req.chart_id_2, current_user, db, lang)
+
+    # pay-per-report gate — full Milan shares the kundli_milan pricing row
+    require_entitlement(db, current_user, "kundli_milan", chart1.id, lang)
 
     try:
         t0 = time.time()

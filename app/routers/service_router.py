@@ -28,7 +28,7 @@ import contextlib
 from typing import List, Optional
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Header, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -43,8 +43,10 @@ from app.schemas.service_schema import (
     BirthChartCreateRequest, BirthChartResponse, BirthChartListResponse,
     BirthChartUpdateRequest, ComputeServiceRequest, GocharRequest,
     PurchaseServiceRequest, ServiceOrderResponse, ServiceOrderListResponse,
-    MessageResponse,
+    MessageResponse, PricingSettingsUpdate, IapVerifyRequest,
 )
+from app.core import pricing as pricing_util
+from app.core import region as region_util
 
 router = APIRouter()
 
@@ -122,16 +124,47 @@ def _get_birth_jd(nk, dob, tob, place):
 #  PRICING CATALOG
 # ══════════════════════════════════════════════════════════════════════
 
+def _apply_session_pricing(sp, region: str, fx: float, mult: float):
+    """Attach transient session_currency / session_amount / pay_via to a
+    ServicePricing ORM row for the caller's region. INTL → USD via store IAP;
+    IN → INR via the wallet. Free services present amount 0 in both. Never
+    touches the stored columns or any astrology logic."""
+    intl = region_util.is_international_region(region)
+    price = float(sp.price or 0)
+    if sp.is_free or price == 0:
+        sp.session_currency = "USD" if intl else "INR"
+        sp.session_amount = 0.0
+        sp.pay_via = "free"
+        return sp
+    if intl:
+        usd = pricing_util.usd_for_pricing(sp, fx, mult)
+        sp.session_currency = "USD"
+        sp.session_amount = float(usd) if usd else 0.0
+        sp.pay_via = "iap"
+    else:
+        sp.session_currency = "INR"
+        sp.session_amount = price
+        sp.pay_via = "wallet"
+    return sp
+
+
 @router.get("/pricing", response_model=List[ServicePricingResponse])
 def list_pricing(
     category: Optional[str] = None,
     include_inactive: bool = False,
     search: Optional[str] = None,
+    region: Optional[str] = Query(None, description="Session region override IN|INTL"),
+    x_device_country: Optional[str] = Header(None),
     db: Session = Depends(get_db),
 ):
     """
     Public: list active service pricing.
     Admin can pass include_inactive=true and search to see all entries.
+
+    Each row carries a session view (`session_currency`, `session_amount`,
+    `pay_via`) for the caller's region — USD/IAP for international, ₹/wallet for
+    India. Region comes from ?region= or the X-Device-Country hint (no user
+    context on this public endpoint).
     """
     q = db.query(ServicePricing)
     if not include_inactive:
@@ -144,14 +177,28 @@ def list_pricing(
             (ServicePricing.service_name.like(like)) |
             (ServicePricing.service_key.like(like))
         )
-    return q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
+    rows = q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
+    sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+    for sp in rows:
+        _apply_session_pricing(sp, sess, fx, mult)
+    return rows
 
 
 @router.get("/pricing/{pricing_id}", response_model=ServicePricingResponse)
-def get_pricing(pricing_id: str, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+def get_pricing(
+    pricing_id: str,
+    region: Optional[str] = Query(None, description="Session region override IN|INTL"),
+    x_device_country: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
     p = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not p:
         raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
+    sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
+    _apply_session_pricing(p, sess, pricing_util.get_fx_rate(db), pricing_util.get_multiplier(db))
     return p
 
 
@@ -166,6 +213,14 @@ def create_pricing(
     if db.query(ServicePricing).filter(ServicePricing.service_key == req.service_key).first():
         raise HTTPException(status_code=409, detail=t("err.service_key_exists", lang))
     sp = ServicePricing(**req.model_dump())
+    # Seed the USD price from the global rule (free services stay null).
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+    usd = pricing_util.usd_for_pricing(sp, fx, mult)
+    sp.price_usd = usd
+    sp.iap_product_id = (
+        pricing_util.iap_product_id_for(sp.service_key, usd) if usd else None
+    )
     db.add(sp)
     db.commit()
     db.refresh(sp)
@@ -183,11 +238,66 @@ def update_pricing(
     sp = db.query(ServicePricing).filter(ServicePricing.id == pricing_id).first()
     if not sp:
         raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
-    for field, value in req.model_dump(exclude_unset=True).items():
+    data = req.model_dump(exclude_unset=True)
+    # Editing the USD price or store product id is a manual override → protect it
+    # from the bulk "regenerate USD" rule, unless the admin explicitly toggles
+    # price_usd_manual in the same request.
+    manual_touch = ("price_usd" in data or "iap_product_id" in data) and "price_usd_manual" not in data
+    for field, value in data.items():
         setattr(sp, field, value)
+    if manual_touch:
+        sp.price_usd_manual = True
+    # If the INR price changed and the row isn't a manual override, refresh USD.
+    if "price" in data and not sp.price_usd_manual:
+        fx = pricing_util.get_fx_rate(db)
+        mult = pricing_util.get_multiplier(db)
+        usd = pricing_util.usd_for_pricing(sp, fx, mult)
+        sp.price_usd = usd
+        sp.iap_product_id = (
+            pricing_util.iap_product_id_for(sp.service_key, usd) if usd else None
+        )
     db.commit()
     db.refresh(sp)
     return sp
+
+
+# ── USD pricing settings + bulk regenerate (admin) ───────────────────
+
+@router.get("/pricing-settings/usd")
+def get_usd_pricing_settings(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin: current FX rate + multiplier + IAP tier ladder used by the global
+    USD rule ``usd = round_to_tier(inr × MULT ÷ FX)``."""
+    return pricing_util.get_pricing_settings(db)
+
+
+@router.put("/pricing-settings/usd")
+def update_usd_pricing_settings(
+    req: PricingSettingsUpdate,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin: set the FX rate (INR per USD) and/or multiplier. Does not itself
+    re-price services — call POST /pricing/regenerate-usd for that."""
+    return pricing_util.set_pricing_settings(
+        db,
+        fx_rate=req.fx_rate_usd,
+        multiplier=req.usd_multiplier,
+        updated_by=current_user.id,
+    )
+
+
+@router.post("/pricing/regenerate-usd")
+def regenerate_usd(
+    force: bool = Query(False, description="Also overwrite admin-overridden prices"),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin: recompute price_usd + iap_product_id for every priced service from
+    the current rule. Skips manual overrides unless force=true."""
+    return pricing_util.regenerate_usd_prices(db, force=force)
 
 
 @router.delete("/pricing/{pricing_id}", response_model=MessageResponse)
@@ -226,7 +336,9 @@ def seed_pricing(
             "features_json": ["D1 Lagna Kundli", "10 Graha Positions", "Nakshatra & Pada", "Dignity & Vargottam", "D1-D60 Divisional Charts"],
             "engine_function": "calculate_chart",
             "requires_birth_data": True,
-            "max_free_per_user": 3,
+            # First (primary) chart is free forever; extra charts consume the
+            # `extra_chart` price. Admin-editable.
+            "max_free_per_user": 1,
         },
         {
             "service_key": "vimshottari_dasha",
@@ -248,7 +360,8 @@ def seed_pricing(
             "description": "Lagna Kendradi Graha Dasha - advanced dasha system based on D-60 chart, confirmed against JHora software",
             "icon": "🌀",
             "category": "kundli",
-            "price": 199,
+            "price": 99,
+            "original_price": 199,
             "is_free": False,
             "sort_order": 3,
             "features_json": ["D-60 Based Calculation", "Kendradi Graha Order", "PVR Narasimha Method", "6-Level Sub-Periods"],
@@ -374,6 +487,105 @@ def seed_pricing(
         },
     ]
 
+    # ── End-user monetization v1: pay-per-report catalog ──────────────
+    # These service_keys MATCH the specialist engine keys (career, business,
+    # …) so /service/entitlements and the 402 access-gate can map a report
+    # request 1:1 to its pricing row. Prices below are DEFAULTS only — every
+    # value is admin-editable via /service/pricing (source of truth). Never
+    # hardcode a price in the app or engines.
+    #
+    #   single-chart report  → ₹149 (category "report")
+    #   two-chart / combined → ₹299 (category "report")
+    #   moola_dasha          → ₹99  (seeded above, category "kundli")
+    #   detailed daily forecast → ₹149 (category "forecast")
+    #   extra kundli         → ₹49  (category "kundli")
+    _SINGLE_REPORTS = [
+        ("career",        "Career & Job Report",        "💼", "10th house, D-10 Dasamsha, Jaimini karakas & dasha career windows"),
+        ("business",      "Business & Startup Report",  "🚀", "Entrepreneurial yogas, timing windows & venture-fit analysis"),
+        ("education",     "Education & Learning Report", "🎓", "4th/5th house, Budha & Guru, ideal streams and study periods"),
+        ("wealth",        "Wealth & Finance Report",     "💰", "Dhana yogas, 2nd/11th house, income & savings potential"),
+        ("debt_recovery", "Debt & Recovery Report",      "📉", "6th/8th/12th house debt patterns & recovery timing"),
+        ("love",          "Love & Relationships Report", "❤️", "Venus, 5th/7th house, D-9 Navamsha & relationship patterns"),
+        ("marriage",      "Marriage & Family Report",    "💒", "7th house, marriage timing, spouse indications & family life"),
+        ("health",        "Health & Wellness Report",    "🏥", "6th/8th house, planetary afflictions & sensitive health periods"),
+        ("mental_stress", "Mental & Stress Report",      "🧠", "Moon, Mercury & 12th house — mental resilience and stress map"),
+        ("property",      "Property & Assets Report",    "🏠", "4th house, land/vehicle yogas & acquisition timing"),
+        ("legal",         "Legal & Disputes Report",     "⚖️", "6th house, litigation windows & outcome tendencies"),
+        ("life_path",     "Life Path & Luck Report",     "🌟", "Atmakaraka, purpose, fortune (9th house) & luck cycles"),
+        ("character",     "Character Analysis Report",   "🔍", "Personality, temperament & psychological profile"),
+        ("past_life",     "Past Life & Karma Report",    "🔮", "D-60 Shashtiamsha karma, past-life debts & soul lessons"),
+    ]
+    _COMBO_REPORTS = [
+        ("kundli_milan",      "Kundli Milan (Gun Milan)",   "💑", "36-point Ashtakoot, Manglik & Nadi dosha, unified compatibility"),
+        ("relationship",      "Relationship Intelligence",  "🔗", "2-5 chart relationship dynamics & compatibility intelligence"),
+        ("child_probability", "Child Probability Report",   "👶", "Santaan yoga, 5th house & fertility timing for a couple"),
+        ("love_compatibility","Love Compatibility Report",  "💞", "Romantic compatibility, emotional & karmic bonding score"),
+        ("karma_linkage",     "Past-Life Karma Linkage",    "🧬", "Karmic ties across 2-5 charts & shared soul contracts"),
+    ]
+
+    sort = 20
+    for key, name, icon, desc in _SINGLE_REPORTS:
+        sort += 1
+        defaults.append({
+            "service_key": key,
+            "service_name": name,
+            "description": desc,
+            "icon": icon,
+            "category": "report",
+            "price": 149,
+            "original_price": 249,
+            "is_free": False,
+            "sort_order": sort,
+            "features_json": ["Full multi-chart analysis", "Score-ring + grade", "Timing windows", "Remedies & confidence"],
+            "engine_function": key,
+            "requires_birth_data": True,
+        })
+    for key, name, icon, desc in _COMBO_REPORTS:
+        sort += 1
+        defaults.append({
+            "service_key": key,
+            "service_name": name,
+            "description": desc,
+            "icon": icon,
+            "category": "report",
+            "price": 299,
+            "original_price": 499,
+            "is_free": False,
+            "sort_order": sort,
+            "features_json": ["Two-chart / multi-chart analysis", "Compatibility scoring", "Detailed breakdown", "Remedies & confidence"],
+            "engine_function": key,
+            "requires_birth_data": True,
+        })
+
+    defaults.append({
+        "service_key": "daily_forecast",
+        "service_name": "Detailed Daily Forecast",
+        "description": "Personalized daily probability forecast — planetary weather across every life area for your chart",
+        "icon": "🔆",
+        "category": "forecast",
+        "price": 149,
+        "original_price": 199,
+        "is_free": False,
+        "sort_order": 60,
+        "features_json": ["Daily probability scores", "Per-life-area weather", "Best/worst windows", "Actionable guidance"],
+        "engine_function": "daily_forecast",
+        "requires_birth_data": True,
+    })
+    defaults.append({
+        "service_key": "extra_chart",
+        "service_name": "Additional Kundli",
+        "description": "Create an extra birth chart beyond your free Primary Kundli (family, friend or client)",
+        "icon": "➕",
+        "category": "kundli",
+        "price": 49,
+        "original_price": 99,
+        "is_free": False,
+        "sort_order": 61,
+        "features_json": ["Extra saved chart", "Full kundli compute", "All divisional charts", "Reusable for reports"],
+        "engine_function": "calculate_chart",
+        "requires_birth_data": True,
+    })
+
     created = 0
     for d in defaults:
         if not db.query(ServicePricing).filter(ServicePricing.service_key == d["service_key"]).first():
@@ -419,8 +631,32 @@ def create_chart(
     lon = coords[1] if coords else None
     tz = str(coords[2]) if coords else None
 
-    # if is_primary, unset existing primary
-    if req.is_primary:
+    # ── Free Primary Kundli: the user's FIRST chart is always the primary
+    # (free forever, non-deletable). Exactly one primary per user. ──
+    existing_count = db.query(Chart).filter(Chart.user_id == current_user.id).count()
+    is_first = existing_count == 0
+    is_primary = bool(req.is_primary) or is_first
+
+    # ── Extra-chart gate: every chart beyond the free Primary consumes a paid
+    # `extra_chart` credit (a completed ServiceOrder with no chart linked yet).
+    # Money only ever moves through /service/purchase — here we merely consume
+    # an already-bought credit, or 402 if none exists. ──
+    extra_credit = None
+    if not is_first and getattr(current_user, "role", None) not in ("astrologer", "admin"):
+        from app.core.entitlements import get_pricing, payment_required_detail
+        sp_extra = get_pricing(db, "extra_chart")
+        if sp_extra and not sp_extra.is_free and float(sp_extra.price or 0) > 0:
+            extra_credit = db.query(ServiceOrder).filter(
+                ServiceOrder.user_id == current_user.id,
+                ServiceOrder.service_pricing_id == sp_extra.id,
+                ServiceOrder.chart_id.is_(None),
+                ServiceOrder.status == "completed",
+            ).order_by(ServiceOrder.created_at.asc()).first()
+            if extra_credit is None:
+                raise HTTPException(status_code=402, detail=payment_required_detail(sp_extra, lang))
+
+    # if is_primary, unset existing primary (keep exactly one)
+    if is_primary:
         db.query(Chart).filter(
             Chart.user_id == current_user.id, Chart.is_primary == True
         ).update({"is_primary": False})
@@ -436,11 +672,15 @@ def create_chart(
         longitude=lon,
         timezone=tz,
         chart_json=chart_json,
-        is_primary=req.is_primary,
+        is_primary=is_primary,
         category=req.category,
     )
     db.add(chart)
     db.flush()
+
+    # consume the extra-chart credit by linking it to the new chart
+    if extra_credit is not None:
+        extra_credit.chart_id = chart.id
 
     # auto-compute & cache vimshottari dasha
     try:
@@ -455,7 +695,7 @@ def create_chart(
         pass  # dasha cache is optional
 
     # update user moon_sign if this is their primary chart
-    if req.is_primary:
+    if is_primary:
         current_user.moon_sign = chart_json["planets"]["Moon"]["sign_idx"]
 
     # create free service order if service_key provided
@@ -520,6 +760,11 @@ def update_chart(
     if not chart:
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
+    # Guard: the free Primary Kundli is protected — it can't be edited. To
+    # change primaries, promote another chart (which auto-demotes this one).
+    if chart.is_primary:
+        raise HTTPException(status_code=403, detail=t("err.primary_chart_no_edit", lang))
+
     update_data = req.model_dump(exclude_unset=True)
     needs_recompute = any(k in update_data for k in ("dob", "tob", "place"))
 
@@ -563,6 +808,9 @@ def delete_chart(
     ).first()
     if not chart:
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    # Guard: the free Primary Kundli is non-deletable.
+    if chart.is_primary:
+        raise HTTPException(status_code=403, detail=t("err.primary_chart_no_delete", lang))
     db.delete(chart)
     db.commit()
     return MessageResponse(message=t("msg.chart_deleted", lang))
@@ -643,20 +891,10 @@ def compute_moola(
     if not chart:
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
-    # check pricing & payment
-    sp = db.query(ServicePricing).filter(ServicePricing.service_key == "moola_dasha").first()
-    if sp and not sp.is_free:
-        order = db.query(ServiceOrder).filter(
-            ServiceOrder.user_id == current_user.id,
-            ServiceOrder.service_pricing_id == sp.id,
-            ServiceOrder.chart_id == chart.id,
-            ServiceOrder.status == "completed",
-        ).first()
-        if not order:
-            raise HTTPException(
-                status_code=402,
-                detail=t("err.paid_service_required", lang, price=sp.price),
-            )
+    # pay-per-report gate (moola dasha). Astrologer/admin & free rows pass;
+    # otherwise 402 with structured {service_key, price, pricing_id}.
+    from app.core.entitlements import require_entitlement
+    require_entitlement(db, current_user, "moola_dasha", chart.id, lang)
 
     # check cache
     if chart.dasha_cache and chart.dasha_cache.moola:
@@ -788,21 +1026,34 @@ def purchase_service(
     if not sp.is_active:
         raise HTTPException(status_code=400, detail=t("err.service_unavailable", lang))
 
-    chart = db.query(Chart).filter(
-        Chart.id == req.chart_id, Chart.user_id == current_user.id
-    ).first()
-    if not chart:
+    # `extra_chart` is a chart-less creation CREDIT: it may be bought without a
+    # target chart (consumed when the next kundli is created) and may be bought
+    # more than once. Every other unlock is a permanent per-chart order.
+    is_credit = sp.service_key == "extra_chart"
+
+    chart = None
+    if req.chart_id:
+        chart = db.query(Chart).filter(
+            Chart.id == req.chart_id, Chart.user_id == current_user.id
+        ).first()
+        if not chart:
+            raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    elif not is_credit:
+        # per-report unlocks must name the chart they unlock
         raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
 
-    # check if already purchased for this chart
-    existing = db.query(ServiceOrder).filter(
-        ServiceOrder.user_id == current_user.id,
-        ServiceOrder.service_pricing_id == sp.id,
-        ServiceOrder.chart_id == chart.id,
-        ServiceOrder.status == "completed",
-    ).first()
-    if existing:
-        raise HTTPException(status_code=409, detail=t("err.already_purchased", lang))
+    chart_ref_id = chart.id if chart is not None else None
+
+    # per-chart unlocks are one-time; credits can be re-purchased
+    if not is_credit:
+        existing = db.query(ServiceOrder).filter(
+            ServiceOrder.user_id == current_user.id,
+            ServiceOrder.service_pricing_id == sp.id,
+            ServiceOrder.chart_id == chart_ref_id,
+            ServiceOrder.status == "completed",
+        ).first()
+        if existing:
+            raise HTTPException(status_code=409, detail=t("err.already_purchased", lang))
 
     price = float(sp.price)
 
@@ -823,7 +1074,7 @@ def purchase_service(
         order = ServiceOrder(
             user_id=current_user.id,
             service_pricing_id=sp.id,
-            chart_id=chart.id,
+            chart_id=chart_ref_id,
             amount_paid=0,
             status="completed",
         )
@@ -868,7 +1119,7 @@ def purchase_service(
     order = ServiceOrder(
         user_id=current_user.id,
         service_pricing_id=sp.id,
-        chart_id=chart.id,
+        chart_id=chart_ref_id,
         amount_paid=price,
         wallet_txn_id=txn.id,
         status="completed",
@@ -888,6 +1139,193 @@ def purchase_service(
         service_key=sp.service_key,
         created_at=order.created_at,
     )
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  IAP VERIFY (international store purchases → ServiceOrder grant)
+# ══════════════════════════════════════════════════════════════════════
+
+def _load_iap_config(db) -> dict:
+    """Load store credentials from PlatformSetting (category 'iap'). When these
+    are present, iap_verify runs REAL Apple/Google validation; otherwise it
+    falls back to the scaffold. Keys: apple_issuer_id, apple_key_id,
+    apple_private_key, apple_bundle_id, apple_environment, google_package_name,
+    google_service_account_json."""
+    from app.models.model import PlatformSetting
+    rows = db.query(PlatformSetting).filter(PlatformSetting.category == "iap").all()
+    return {r.key: r.value for r in rows}
+
+
+@router.post("/iap/verify", response_model=ServiceOrderResponse)
+def verify_iap_purchase(
+    req: IapVerifyRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """International (INTL) store purchase → grant a ServiceOrder.
+
+    The client buys the service's IAP tier via the in_app_purchase plugin, then
+    POSTs the receipt here. We verify the receipt (SCAFFOLD until the PAPG
+    phase — see app/services/iap_verify.py), then record a completed
+    ServiceOrder, idempotent on the store transaction id so a replayed receipt
+    returns the SAME order (no double grant). India keeps the wallet flow; this
+    path never debits the wallet. No astrology logic is touched.
+    """
+    from app.services.iap_verify import verify_receipt
+
+    sp = db.query(ServicePricing).filter(ServicePricing.id == req.service_pricing_id).first()
+    if not sp:
+        raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
+    if not sp.is_active:
+        raise HTTPException(status_code=400, detail=t("err.service_unavailable", lang))
+
+    is_credit = sp.service_key == "extra_chart"
+    chart = None
+    if req.chart_id:
+        chart = db.query(Chart).filter(
+            Chart.id == req.chart_id, Chart.user_id == current_user.id
+        ).first()
+        if not chart:
+            raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    elif not is_credit:
+        raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+    chart_ref_id = chart.id if chart is not None else None
+
+    # Idempotency: same store transaction → return the existing order.
+    existing = db.query(ServiceOrder).filter(
+        ServiceOrder.iap_transaction_id == req.transaction_id,
+        ServiceOrder.user_id == current_user.id,
+    ).first()
+    if existing:
+        return ServiceOrderResponse(
+            id=existing.id, user_id=existing.user_id,
+            service_pricing_id=existing.service_pricing_id,
+            chart_id=existing.chart_id, amount_paid=float(existing.amount_paid),
+            status=existing.status, service_name=sp.service_name,
+            service_key=sp.service_key, created_at=existing.created_at,
+        )
+
+    # Verify the store receipt. Real Apple/Google validation runs when store
+    # credentials are configured (PlatformSetting category 'iap'); otherwise the
+    # structural scaffold accepts it so the flow still works pre-PAPG.
+    ok, info = verify_receipt(
+        platform=req.platform,
+        product_id=req.product_id,
+        transaction_id=req.transaction_id,
+        receipt=req.receipt,
+        expected_product_id=sp.iap_product_id,
+        config=_load_iap_config(db),
+    )
+    if not ok:
+        raise HTTPException(
+            status_code=402,
+            detail={"code": "iap_verification_failed",
+                    "message": t("err.iap_verification_failed", lang), **info},
+        )
+
+    # Grant. USD amount comes from the rule/override (never trust the client).
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+    usd = pricing_util.usd_for_pricing(sp, fx, mult) or 0.0
+
+    order = ServiceOrder(
+        user_id=current_user.id,
+        service_pricing_id=sp.id,
+        chart_id=chart_ref_id,
+        amount_paid=Decimal(str(usd)),
+        status="completed",
+        payment_method="iap",
+        currency_paid="USD",
+        iap_platform=(req.platform or "").strip().lower(),
+        iap_product_id=req.product_id,
+        iap_transaction_id=req.transaction_id,
+    )
+    db.add(order)
+    db.commit()
+    db.refresh(order)
+    return ServiceOrderResponse(
+        id=order.id, user_id=order.user_id,
+        service_pricing_id=order.service_pricing_id,
+        chart_id=order.chart_id, amount_paid=float(order.amount_paid),
+        status="completed", service_name=sp.service_name,
+        service_key=sp.service_key, created_at=order.created_at,
+    )
+
+
+@router.get("/revenue-summary")
+def revenue_summary(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin revenue split by settlement currency + payment method.
+
+    India settles in INR via the wallet; international settles in USD via store
+    IAP (and, once Phase D.2 lands, Stripe/PayPal). Reconciliation-friendly:
+    counts + gross per (currency_paid, payment_method) over completed orders.
+    Refunded orders are reported separately.
+    """
+    from sqlalchemy import func as _func
+    rows = (
+        db.query(
+            ServiceOrder.currency_paid,
+            ServiceOrder.payment_method,
+            _func.count(ServiceOrder.id),
+            _func.coalesce(_func.sum(ServiceOrder.amount_paid), 0),
+        )
+        .filter(ServiceOrder.status == "completed")
+        .group_by(ServiceOrder.currency_paid, ServiceOrder.payment_method)
+        .all()
+    )
+    refunds = (
+        db.query(
+            ServiceOrder.currency_paid,
+            _func.count(ServiceOrder.id),
+            _func.coalesce(_func.sum(ServiceOrder.amount_paid), 0),
+        )
+        .filter(ServiceOrder.status == "refunded")
+        .group_by(ServiceOrder.currency_paid)
+        .all()
+    )
+    by_currency: dict = {}
+    breakdown = []
+    for currency, method, count, gross in rows:
+        cur = (currency or "INR").upper()
+        breakdown.append({
+            "currency": cur, "payment_method": method or "wallet",
+            "orders": int(count), "gross": float(gross),
+        })
+        by_currency[cur] = by_currency.get(cur, 0.0) + float(gross)
+    return {
+        "by_currency": by_currency,          # {"INR": ..., "USD": ...}
+        "breakdown": breakdown,              # per currency+method
+        "refunds": [
+            {"currency": (c or "INR").upper(), "orders": int(n), "gross": float(g)}
+            for c, n, g in refunds
+        ],
+    }
+
+
+@router.post("/iap/refund")
+def iap_refund_notification(
+    payload: dict,
+    db: Session = Depends(get_db),
+):
+    """Store server-to-server refund/void notification → mark the ServiceOrder
+    refunded (idempotent). Accepts a `transaction_id` (Apple originalTransactionId
+    / transactionId, or Google orderId).
+
+    NOTE (Phase D): the notification SIGNATURE must be verified before trusting
+    it — Apple App Store Server Notifications V2 (signedPayload JWS) / Google
+    Pub/Sub RTDN. That signature check needs real store credentials and is
+    BLOCKED until they are provisioned; until then this endpoint only maps a
+    transaction id to a refund and should be network-restricted.
+    """
+    txn_id = (payload or {}).get("transaction_id") or (payload or {}).get("transactionId")
+    if not txn_id:
+        raise HTTPException(status_code=400, detail="transaction_id required")
+    from app.services.iap_verify import handle_refund
+    return handle_refund(db, str(txn_id))
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -924,6 +1362,87 @@ def list_orders(
         )
         for order, sp, chart in rows
     ]
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  ENTITLEMENTS (what's unlocked for a chart — pay-per-report)
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/entitlements")
+def get_entitlements(
+    chart_id: Optional[str] = Query(None, description="Chart to check paid unlocks against"),
+    category: Optional[str] = Query(None, description="Filter by pricing category"),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Per-service unlock state for the current user + a specific chart.
+
+    A service is `unlocked` when it is free (Primary-Kundli basics) OR the user
+    holds a completed ServiceOrder for it on this chart. The app reads this to
+    decide teaser-vs-full and to render the paywall — prices always come from
+    ServicePricing (admin-editable), never hardcoded in the client.
+    """
+    from app.core.entitlements import find_order  # local import avoids cycle
+
+    if chart_id:
+        chart = db.query(Chart).filter(
+            Chart.id == chart_id, Chart.user_id == current_user.id
+        ).first()
+        if not chart:
+            raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+
+    privileged = getattr(current_user, "role", None) in ("astrologer", "admin")
+
+    # Session region → currency for this user (drives USD/IAP vs ₹/wallet).
+    sess = region_util.session_region(user_region=getattr(current_user, "region", None))
+    intl = region_util.is_international_region(sess)
+    fx = pricing_util.get_fx_rate(db)
+    mult = pricing_util.get_multiplier(db)
+
+    q = db.query(ServicePricing).filter(ServicePricing.is_active == True)
+    if category:
+        q = q.filter(ServicePricing.category == category)
+    rows = q.order_by(ServicePricing.sort_order, ServicePricing.price).all()
+
+    out = []
+    for sp in rows:
+        price = float(sp.price or 0)
+        is_free = bool(sp.is_free) or price == 0
+        order = None
+        if not is_free and not privileged and chart_id:
+            order = find_order(db, current_user.id, sp.id, chart_id)
+        unlocked = is_free or privileged or (order is not None)
+        usd = None if is_free else pricing_util.usd_for_pricing(sp, fx, mult)
+        session_amount = 0.0 if is_free else (float(usd) if (intl and usd) else price)
+        out.append({
+            "service_key": sp.service_key,
+            "service_name": sp.service_name,
+            "category": sp.category,
+            "icon": sp.icon,
+            "pricing_id": sp.id,
+            "price": price,
+            "price_usd": float(usd) if usd else None,
+            "iap_product_id": sp.iap_product_id if (intl and not is_free) else None,
+            "original_price": float(sp.original_price) if sp.original_price is not None else None,
+            "currency": sp.currency or "INR",
+            # Session view for the caller's region: what to show + how to pay.
+            "session_currency": "USD" if intl else "INR",
+            "session_amount": session_amount,
+            "pay_via": "free" if is_free else ("iap" if intl else "wallet"),
+            "is_free": is_free,
+            "unlocked": unlocked,
+            "order_id": order.id if order else None,
+        })
+
+    return {
+        "chart_id": chart_id,
+        "region": sess,
+        "is_international": intl,
+        "currency": "USD" if intl else "INR",
+        "privileged": privileged,
+        "entitlements": out,
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════

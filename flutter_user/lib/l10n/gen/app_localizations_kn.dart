@@ -9,6 +9,70 @@ class AppLocalizationsKn extends AppLocalizations {
   AppLocalizationsKn([String locale = 'kn']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'ಪ್ರೀಮಿಯಂ ವರದಿ';
+
+  @override
+  String get pwLockedSubtitle => 'ಈ ಚಾರ್ಟ್‌ನ ಸಂಪೂರ್ಣ ವಿಶ್ಲೇಷಣೆಯನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'ಸಂಪೂರ್ಣ ${name} ಅನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'ಅನ್‌ಲಾಕ್ · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'ಒಂದೇ ಬಾರಿ ಅನ್‌ಲಾಕ್ — ಈ ಚಾರ್ಟ್‌ನಲ್ಲಿ ನಿಮಗೆ ಶಾಶ್ವತವಾಗಿ';
+
+  @override
+  String get pwWhatYouGet => 'ನಿಮಗೆ ಸಿಗುವುದು';
+
+  @override
+  String get pwYourBalance => 'ನಿಮ್ಮ ವಾಲೆಟ್ ಬಾಕಿ';
+
+  @override
+  String get pwInsufficient => 'ಸಾಕಷ್ಟು ಬಾಕಿ ಇಲ್ಲ';
+
+  @override
+  String get pwRechargeToUnlock => 'ಅನ್‌ಲಾಕ್ ಮಾಡಲು ರೀಚಾರ್ಜ್ ಮಾಡಿ';
+
+  @override
+  String get pwRechargeAmount => 'ರೀಚಾರ್ಜ್ ಮೊತ್ತ (₹)';
+
+  @override
+  String get pwAddMoney => 'ಹಣ ಸೇರಿಸಿ';
+
+  @override
+  String get pwRechargeDone => 'ವಾಲೆಟ್ ರೀಚಾರ್ಜ್ ಆಗಿದೆ';
+
+  @override
+  String get pwRechargeFailed => 'ರೀಚಾರ್ಜ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get pwUnlockFailed => 'ಅನ್‌ಲಾಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.';
+
+  @override
+  String get pwUnlockedNow => 'ಅನ್‌ಲಾಕ್ ಆಗಿದೆ! ನಿಮ್ಮ ವರದಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ…';
+
+  @override
+  String get pwProcessing => 'ಪ್ರಕ್ರಿಯೆಗೊಳ್ಳುತ್ತಿದೆ…';
+
+  @override
+  String get pwPrimaryNoDelete => 'ನಿಮ್ಮ ಪ್ರೈಮರಿ ಕುಂಡಲಿಯನ್ನು ಅಳಿಸಲಾಗುವುದಿಲ್ಲ — ಇದು ಶಾಶ್ವತವಾಗಿ ಉಚಿತ.';
+
+  @override
+  String get pwPrimaryNoEdit => 'ನಿಮ್ಮ ಪ್ರೈಮರಿ ಕುಂಡಲಿಯನ್ನು ಸಂಪಾದಿಸಲಾಗುವುದಿಲ್ಲ.';
+
+  @override
+  String get pwLoadingAccess => 'ಪ್ರವೇಶ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ…';
+
+  @override
+  String get pwMaybeLater => 'ನಂತರ ನೋಡೋಣ';
+
+  @override
   String get updatePhoto => 'ಫೋಟೋ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ';
 
   @override

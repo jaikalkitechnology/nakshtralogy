@@ -142,6 +142,22 @@ export async function seedServicePricing() {
   return request("/service/pricing/seed", { method: "POST" });
 }
 
+// ── USD pricing (international / store IAP tiers) ─────────────────
+
+export async function fetchUsdPricingSettings() {
+  return request("/service/pricing-settings/usd");
+}
+
+export async function updateUsdPricingSettings(data: { fx_rate_usd?: number; usd_multiplier?: number }) {
+  return request("/service/pricing-settings/usd", { method: "PUT", body: JSON.stringify(data) });
+}
+
+/** Recompute price_usd + iap_product_id for every priced service from the rule.
+ *  force=true also overwrites admin-overridden USD prices. */
+export async function regenerateUsdPricing(force = false) {
+  return request(`/service/pricing/regenerate-usd${force ? "?force=true" : ""}`, { method: "POST" });
+}
+
 // ── Gift Pricing ─────────────────────────────────────────────────
 
 export async function fetchGiftPricing(includeInactive = false) {

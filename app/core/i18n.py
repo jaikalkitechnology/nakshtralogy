@@ -37,10 +37,23 @@ except Exception:  # pragma: no cover
 
 # ── Canonical languages ────────────────────────────────────────────────
 
-SUPPORTED_LANGUAGES = [
-    "english", "hindi", "hinglish", "bengali", "tamil", "telugu",
+# Indian locales (India AppMode) — unchanged 11 + odia.
+INDIAN_LANGUAGES = [
+    "hindi", "hinglish", "bengali", "tamil", "telugu",
     "kannada", "malayalam", "gujarati", "marathi", "punjabi", "odia",
 ]
+
+# International locales (international AppMode). English is shared by both modes.
+# Phase A pilots french/chinese/thai; Phase C adds the rest. Report BODIES
+# translate at request time for every code listed here (see _llm_translate_backend
+# _LANG_DESC). Keep this list in sync with that map.
+INTL_LANGUAGES = [
+    "french", "chinese", "thai",           # Phase A pilots
+    "spanish", "portuguese", "german", "italian",
+    "russian", "arabic", "indonesian", "japanese",   # Phase C
+]
+
+SUPPORTED_LANGUAGES = ["english"] + INDIAN_LANGUAGES + INTL_LANGUAGES
 DEFAULT_LANGUAGE = "english"
 
 # Short / locale-style codes → canonical full word. This resolves the
@@ -58,6 +71,20 @@ _ALIASES = {
     "mr": "marathi", "mar": "marathi",
     "pa": "punjabi", "pan": "punjabi", "pa_in": "punjabi",
     "or": "odia", "ori": "odia", "ory": "odia",
+    # International locale codes → canonical full word. Script/country subtags
+    # (zh_hans, pt_br, …) collapse to the base language for report translation.
+    "fr": "french", "fra": "french", "fre": "french", "fr_fr": "french",
+    "zh": "chinese", "zho": "chinese", "chi": "chinese",
+    "zh_hans": "chinese", "zh_cn": "chinese", "zh_sg": "chinese",
+    "th": "thai", "tha": "thai",
+    "es": "spanish", "spa": "spanish", "es_es": "spanish", "es_mx": "spanish", "es_419": "spanish",
+    "pt": "portuguese", "por": "portuguese", "pt_br": "portuguese", "pt_pt": "portuguese",
+    "de": "german", "deu": "german", "ger": "german", "de_de": "german",
+    "it": "italian", "ita": "italian", "it_it": "italian",
+    "ru": "russian", "rus": "russian", "ru_ru": "russian",
+    "ar": "arabic", "ara": "arabic", "ar_sa": "arabic", "ar_ae": "arabic", "ar_eg": "arabic",
+    "id": "indonesian", "ind": "indonesian", "id_id": "indonesian", "in": "indonesian",
+    "ja": "japanese", "jpn": "japanese", "jp": "japanese", "ja_jp": "japanese",
 }
 
 

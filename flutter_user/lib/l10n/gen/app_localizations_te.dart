@@ -9,6 +9,70 @@ class AppLocalizationsTe extends AppLocalizations {
   AppLocalizationsTe([String locale = 'te']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'ప్రీమియం రిపోర్ట్';
+
+  @override
+  String get pwLockedSubtitle => 'ఈ చార్ట్ యొక్క పూర్తి విశ్లేషణను అన్‌లాక్ చేయండి';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'పూర్తి ${name} ను అన్‌లాక్ చేయండి';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'అన్‌లాక్ · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'ఒకేసారి అన్‌లాక్ — ఈ చార్ట్‌పై మీకు ఎప్పటికీ';
+
+  @override
+  String get pwWhatYouGet => 'మీకు లభించేది';
+
+  @override
+  String get pwYourBalance => 'మీ వాలెట్ బ్యాలెన్స్';
+
+  @override
+  String get pwInsufficient => 'తగినంత బ్యాలెన్స్ లేదు';
+
+  @override
+  String get pwRechargeToUnlock => 'అన్‌లాక్ చేయడానికి రీచార్జ్ చేయండి';
+
+  @override
+  String get pwRechargeAmount => 'రీచార్జ్ మొత్తం (₹)';
+
+  @override
+  String get pwAddMoney => 'డబ్బు జోడించండి';
+
+  @override
+  String get pwRechargeDone => 'వాలెట్ రీచార్జ్ చేయబడింది';
+
+  @override
+  String get pwRechargeFailed => 'రీచార్జ్ విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get pwUnlockFailed => 'అన్‌లాక్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get pwUnlockedNow => 'అన్‌లాక్ అయింది! మీ రిపోర్ట్ లోడ్ అవుతోంది…';
+
+  @override
+  String get pwProcessing => 'ప్రాసెస్ చేస్తోంది…';
+
+  @override
+  String get pwPrimaryNoDelete => 'మీ ప్రైమరీ కుండలిని తొలగించలేరు — ఇది ఎప్పటికీ ఉచితం.';
+
+  @override
+  String get pwPrimaryNoEdit => 'మీ ప్రైమరీ కుండలిని ఎడిట్ చేయలేరు.';
+
+  @override
+  String get pwLoadingAccess => 'యాక్సెస్ చెక్ చేస్తోంది…';
+
+  @override
+  String get pwMaybeLater => 'తర్వాత చూద్దాం';
+
+  @override
   String get updatePhoto => 'ఫోటోను అప్‌డేట్ చేయండి';
 
   @override

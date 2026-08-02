@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../kundli/report_paywall.dart';
 import 'multi_chart_report_screen.dart';
 import 'child_probability_report_screen.dart';
 import 'love_compatibility_report_screen.dart';
@@ -86,6 +87,12 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
       final c = _charts.firstWhere((c) => c['id'] == id, orElse: () => {'name': '?'});
       return c['name']?.toString() ?? '?';
     }).toList();
+
+    // pay-per-report gate before running the engine (mirrors backend 402)
+    final unlocked = await ensureReportUnlocked(context,
+        serviceKey: widget.specialistKey, chartId: ids[0],
+        reportName: widget.specialistLabel, emoji: widget.specialistEmoji);
+    if (!unlocked || !mounted) return;
 
     setState(() => _analyzing = true);
     try {

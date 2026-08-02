@@ -9,6 +9,70 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
+  String get pwPremiumTitle => 'ਪ੍ਰੀਮੀਅਮ ਰਿਪੋਰਟ';
+
+  @override
+  String get pwLockedSubtitle => 'ਇਸ ਚਾਰਟ ਦਾ ਪੂਰਾ ਵਿਸ਼ਲੇਸ਼ਣ ਅਨਲੌਕ ਕਰੋ';
+
+  @override
+  String pwUnlockFull(Object name) {
+    return 'ਪੂਰਾ ${name} ਅਨਲੌਕ ਕਰੋ';
+  }
+
+  @override
+  String pwUnlockPrice(Object price) {
+    return 'ਅਨਲੌਕ · ${price}';
+  }
+
+  @override
+  String get pwOneTime => 'ਇੱਕ ਵਾਰ ਦਾ ਅਨਲੌਕ — ਇਸ ਚਾਰਟ \'ਤੇ ਹਮੇਸ਼ਾ ਲਈ ਤੁਹਾਡਾ';
+
+  @override
+  String get pwWhatYouGet => 'ਤੁਹਾਨੂੰ ਕੀ ਮਿਲਦਾ ਹੈ';
+
+  @override
+  String get pwYourBalance => 'ਤੁਹਾਡਾ ਵਾਲੇਟ ਬਕਾਇਆ';
+
+  @override
+  String get pwInsufficient => 'ਨਾਕਾਫ਼ੀ ਬਕਾਇਆ';
+
+  @override
+  String get pwRechargeToUnlock => 'ਅਨਲੌਕ ਕਰਨ ਲਈ ਰੀਚਾਰਜ ਕਰੋ';
+
+  @override
+  String get pwRechargeAmount => 'ਰੀਚਾਰਜ ਰਕਮ (₹)';
+
+  @override
+  String get pwAddMoney => 'ਪੈਸੇ ਜੋੜੋ';
+
+  @override
+  String get pwRechargeDone => 'ਵਾਲੇਟ ਰੀਚਾਰਜ ਹੋ ਗਿਆ';
+
+  @override
+  String get pwRechargeFailed => 'ਰੀਚਾਰਜ ਅਸਫਲ ਹੋਇਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get pwUnlockFailed => 'ਅਨਲੌਕ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।';
+
+  @override
+  String get pwUnlockedNow => 'ਅਨਲੌਕ ਹੋ ਗਿਆ! ਤੁਹਾਡੀ ਰਿਪੋਰਟ ਲੋਡ ਹੋ ਰਹੀ ਹੈ…';
+
+  @override
+  String get pwProcessing => 'ਪ੍ਰੋਸੈਸਿੰਗ ਹੋ ਰਹੀ ਹੈ…';
+
+  @override
+  String get pwPrimaryNoDelete => 'ਤੁਹਾਡੀ ਪ੍ਰਾਇਮਰੀ ਕੁੰਡਲੀ ਮਿਟਾਈ ਨਹੀਂ ਜਾ ਸਕਦੀ — ਇਹ ਹਮੇਸ਼ਾ ਲਈ ਮੁਫ਼ਤ ਹੈ।';
+
+  @override
+  String get pwPrimaryNoEdit => 'ਤੁਹਾਡੀ ਪ੍ਰਾਇਮਰੀ ਕੁੰਡਲੀ ਸੰਪਾਦਿਤ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ।';
+
+  @override
+  String get pwLoadingAccess => 'ਪਹੁੰਚ ਦੀ ਜਾਂਚ ਹੋ ਰਹੀ ਹੈ…';
+
+  @override
+  String get pwMaybeLater => 'ਬਾਅਦ ਵਿੱਚ';
+
+  @override
   String get updatePhoto => 'ਫੋਟੋ ਅੱਪਡੇਟ ਕਰੋ';
 
   @override

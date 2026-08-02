@@ -62,6 +62,13 @@ class User(Base):
     moon_sign = Column(Integer, nullable=True)       # 0-11 cached for gochar
     role = Column(String(20), nullable=False, default="user")  # user | astrologer | admin
     preferred_language = Column(String(20), nullable=True)  # canonical i18n code (hindi, tamil, …)
+    # Internationalization — region drives language mode + currency, NOT any
+    # astrology logic. "IN" | "INTL"; country_code is ISO alpha-2 (US, FR, …).
+    # region_manual=True means the user picked the region themselves in Settings
+    # and auto IP-geo detection must not overwrite it.
+    region = Column(String(4), nullable=True)            # IN | INTL
+    country_code = Column(String(2), nullable=True)      # ISO alpha-2
+    region_manual = Column(Boolean, default=False, nullable=False)
     google_id = Column(String(255), unique=True, nullable=True)
     fcm_token = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
@@ -317,9 +324,17 @@ class ServicePricing(Base):
     description = Column(Text, nullable=True)
     icon = Column(String(10), nullable=True)           # emoji icon for UI
     category = Column(String(30), default="kundli")    # kundli | report | consultation | ai
-    price = Column(Numeric(10, 2), default=0.00)       # 0 = free
+    price = Column(Numeric(10, 2), default=0.00)       # 0 = free (INR)
     original_price = Column(Numeric(10, 2), nullable=True)  # for showing discount
     currency = Column(String(3), default="INR")
+    # Internationalization — USD price sold via store IAP tiers (App Store /
+    # Google Play). Default computed by rule usd = round_to_tier(inr × MULT ÷ FX)
+    # (see app/core/pricing.py); admin may override, which sets price_usd_manual
+    # so a bulk "regenerate USD" leaves the override untouched. iap_product_id is
+    # the store product id for this service+tier. NOT used by any astrology logic.
+    price_usd = Column(Numeric(10, 2), nullable=True)
+    iap_product_id = Column(String(100), nullable=True)
+    price_usd_manual = Column(Boolean, default=False, nullable=False)
     is_free = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
@@ -348,6 +363,15 @@ class ServiceOrder(Base):
     amount_paid = Column(Numeric(10, 2), default=0.00)
     wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     status = Column(String(20), default="completed")   # pending | completed | failed | refunded
+    # Payment method + currency. India = wallet/₹ (unchanged). International =
+    # store IAP (Apple/Google) in USD. iap_transaction_id makes the grant
+    # idempotent per store transaction. Real receipt validation lands in the
+    # PAPG phase; until then a scaffolded verify records the order.
+    payment_method = Column(String(20), default="wallet")  # wallet | iap
+    currency_paid = Column(String(3), default="INR")       # INR | USD
+    iap_platform = Column(String(10), nullable=True)       # ios | android
+    iap_product_id = Column(String(100), nullable=True)
+    iap_transaction_id = Column(String(255), nullable=True, index=True)
     result_json = Column(JSON, nullable=True)           # computed result data
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 

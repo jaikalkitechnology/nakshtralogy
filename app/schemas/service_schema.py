@@ -17,6 +17,16 @@ class ServicePricingResponse(BaseModel):
     price: float = 0
     original_price: Optional[float] = None
     currency: str = "INR"
+    # USD (international / store IAP). price_usd may be null for free services.
+    price_usd: Optional[float] = None
+    iap_product_id: Optional[str] = None
+    price_usd_manual: bool = False
+    # Session-resolved view for the caller's region: currency + amount to show.
+    # INTL → USD/price_usd via IAP; IN → INR/price via wallet. Transient
+    # (set per-request), not stored columns.
+    session_currency: str = "INR"
+    session_amount: float = 0
+    pay_via: str = "wallet"          # wallet (IN) | iap (INTL)
     is_free: bool = False
     is_active: bool = True
     sort_order: int = 0
@@ -54,11 +64,22 @@ class ServicePricingUpdate(BaseModel):
     category: Optional[str] = None
     price: Optional[float] = Field(None, ge=0)
     original_price: Optional[float] = Field(None, ge=0)
+    # USD override — setting price_usd or iap_product_id marks the row manual so
+    # a bulk "regenerate USD" won't overwrite it (see PricingSettingsUpdate).
+    price_usd: Optional[float] = Field(None, ge=0)
+    iap_product_id: Optional[str] = Field(None, max_length=100)
+    price_usd_manual: Optional[bool] = None
     is_free: Optional[bool] = None
     is_active: Optional[bool] = None
     sort_order: Optional[int] = None
     features_json: Optional[List[str]] = None
     max_free_per_user: Optional[int] = None
+
+
+class PricingSettingsUpdate(BaseModel):
+    """Admin: global USD pricing knobs (stored in PlatformSetting)."""
+    fx_rate_usd: Optional[float] = Field(None, gt=0, description="INR per 1 USD")
+    usd_multiplier: Optional[float] = Field(None, gt=0, description="INR→USD multiplier (default 5)")
 
 
 # ─── Birth Chart ─────────────────────────────────────────────────────
@@ -150,10 +171,31 @@ class ServiceOrderListResponse(BaseModel):
     created_at: Optional[datetime] = None
 
 
-class PurchaseServiceRequest(BaseModel):
-    """User purchases/activates a service for a specific chart."""
+class IapVerifyRequest(BaseModel):
+    """International store IAP verification (App Store / Google Play).
+
+    The client buys the service's IAP tier via the in_app_purchase plugin, then
+    POSTs the receipt here. Real Apple/Google validation lands in the PAPG phase
+    (Phase D); until then a scaffold records the grant. Idempotent on
+    transaction_id so a replayed receipt returns the same order.
+    """
     service_pricing_id: str
-    chart_id: str
+    chart_id: Optional[str] = None
+    platform: str = Field(..., description="ios | android")
+    product_id: str = Field(..., max_length=100)
+    transaction_id: str = Field(..., max_length=255, description="Store transaction / order id")
+    receipt: Optional[str] = Field(None, description="Apple receipt data / Google purchase token")
+
+
+class PurchaseServiceRequest(BaseModel):
+    """User purchases/activates a service for a specific chart.
+
+    `chart_id` is optional only for chart-less credits (e.g. `extra_chart`,
+    which is consumed when the next kundli is created). Every per-report unlock
+    still passes the chart it unlocks.
+    """
+    service_pricing_id: str
+    chart_id: Optional[str] = None
 
 
 # ─── Kundli Compute Request ─────────────────────────────────────────

@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../theme/app_theme.dart';
+import '../services/app_mode.dart';
 import '../main.dart';
 
 class LanguageSelector {
-  static const languages = [
-    {'code': 'en', 'name': 'English',   'native': 'English'},
-    {'code': 'hi', 'name': 'Hindi',     'native': 'हिन्दी'},
-    {'code': 'hi_Latn', 'name': 'Hinglish', 'native': 'Hinglish'},
-    {'code': 'mr', 'name': 'Marathi',   'native': 'मराठी'},
-    {'code': 'gu', 'name': 'Gujarati',  'native': 'ગુજરાતી'},
-    {'code': 'ta', 'name': 'Tamil',     'native': 'தமிழ்'},
-    {'code': 'te', 'name': 'Telugu',    'native': 'తెలుగు'},
-    {'code': 'kn', 'name': 'Kannada',   'native': 'ಕನ್ನಡ'},
-    {'code': 'bn', 'name': 'Bengali',   'native': 'বাংলা'},
-    {'code': 'pa', 'name': 'Punjabi',   'native': 'ਪੰਜਾਬੀ'},
-    {'code': 'ml', 'name': 'Malayalam', 'native': 'മലയാളം'},
-  ];
+  /// Languages to offer depend on the AppMode: international mode shows ONLY
+  /// international languages (Indian scripts hidden); India keeps the 11
+  /// locales. Sourced from AppMode so backend + picker stay in sync.
+  static List<LangOption> get languages => AppMode.instance.languages;
 
   static void show(BuildContext context) {
     final locale = Localizations.localeOf(context);
@@ -33,7 +25,10 @@ class LanguageSelector {
           Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.smoke, borderRadius: BorderRadius.circular(2))),
           const SizedBox(height: 16),
           Text(AppLocalizations.of(ctx)!.selectLanguage, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
-          const Text('भाषा चुनें', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+          // Only show the Hindi endonym subtitle in India mode — international
+          // mode must never surface an Indian script.
+          if (!AppMode.instance.isInternational)
+            const Text('भाषा चुनें', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
           const SizedBox(height: 16),
           Flexible(
             child: ListView.builder(
@@ -41,7 +36,8 @@ class LanguageSelector {
               itemCount: languages.length,
               itemBuilder: (_, i) {
                 final lang = languages[i];
-                final isSelected = lang['code'] == currentLocale;
+                final isSelected = lang.code == currentLocale;
+                final badge = lang.code.split('_').first.toUpperCase();
                 return ListTile(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   tileColor: isSelected ? AppColors.gold.withOpacity(0.15) : Colors.transparent,
@@ -52,14 +48,14 @@ class LanguageSelector {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: isSelected ? AppColors.gold : AppColors.ash),
                     ),
-                    child: Center(child: Text(lang['code']!.toUpperCase(),
+                    child: Center(child: Text(badge,
                         style: TextStyle(color: isSelected ? AppColors.gold : AppColors.smoke, fontSize: 11, fontWeight: FontWeight.w700))),
                   ),
-                  title: Text(lang['native']!, style: TextStyle(color: isSelected ? AppColors.gold : AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w600)),
-                  subtitle: Text(lang['name']!, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  title: Text(lang.native, style: TextStyle(color: isSelected ? AppColors.gold : AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w600)),
+                  subtitle: Text(lang.name, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                   trailing: isSelected ? const Icon(Icons.check_circle, color: AppColors.gold, size: 22) : null,
                   onTap: () {
-                    final code = lang['code']!;
+                    final code = lang.code;
                     final parts = code.split('_');
                     final newLocale = parts.length > 1
                         ? Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1])

@@ -424,7 +424,7 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
               ),
             ),
           ),
-          onLongPress: () => _confirmDelete(context, c, l),
+          onLongPress: () => isPrimary ? _primaryLocked(context, l) : _confirmDelete(context, c, l),
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -512,7 +512,9 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
                   ),
                 ),
 
-                // Rashi tag
+                // Rashi tag / delete affordance.
+                // The free Primary Kundli is non-deletable — mirror the API
+                // guard: show a lock instead of a delete button.
                 if (rashi != null)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -531,6 +533,12 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
                       ),
                     ),
                   )
+                else if (isPrimary)
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(Icons.lock_outline, color: AppColors.gold, size: 18),
+                    onPressed: () => _primaryLocked(context, l),
+                  )
                 else
                   IconButton(
                     visualDensity: VisualDensity.compact,
@@ -545,7 +553,16 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
     );
   }
 
+  void _primaryLocked(BuildContext context, AppLocalizations l) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(l.pwPrimaryNoDelete),
+      backgroundColor: AppColors.card,
+    ));
+  }
+
   void _confirmDelete(BuildContext context, Map c, AppLocalizations l) {
+    // Defensive: never open the delete dialog for a primary chart.
+    if (c['is_primary'] == true) { _primaryLocked(context, l); return; }
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(

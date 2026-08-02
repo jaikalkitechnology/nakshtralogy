@@ -23,6 +23,14 @@ class ApiService {
     if (c.isNotEmpty) _langCode = c;
   }
 
+  // ISO alpha-2 country from the device locale, sent as `X-Device-Country` so
+  // the backend can resolve region (IN|INTL) without a network geo lookup.
+  String? _deviceCountry;
+  void setDeviceCountry(String? cc) {
+    final c = (cc ?? '').trim();
+    _deviceCountry = c.isEmpty ? null : c.toUpperCase();
+  }
+
   /// Load the saved app language into the request header cache.
   Future<void> loadLang() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,6 +65,7 @@ class ApiService {
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept-Language': _langCode,
+    if (_deviceCountry != null) 'X-Device-Country': _deviceCountry!,
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
@@ -235,6 +244,29 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── Region / AppMode (IN|INTL) ────────────────────────────────
+
+  /// Resolve + cache the caller's region on the backend. Sends the device
+  /// country hint (via `X-Device-Country`). Returns
+  /// {region, country_code, is_international, app_mode, currency, manual}.
+  Future<Map<String, dynamic>> getMyRegion() async {
+    final resp = await _authGet(Uri.parse('${ApiConstants.userMe}/region'));
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Manual region override from Settings (region: 'IN'|'INTL').
+  Future<Map<String, dynamic>> setMyRegion({String? region, String? countryCode}) async {
+    final resp = await http.put(
+      Uri.parse('${ApiConstants.userMe}/region'),
+      headers: _headers,
+      body: jsonEncode({
+        if (region != null) 'region': region,
+        if (countryCode != null) 'country_code': countryCode,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ── Services & Charts ─────────────────────────────────────
 
   Future<List<dynamic>> getServicePricing({String? category}) async {
@@ -309,10 +341,73 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  /// International store IAP: after the store purchase completes, verify the
+  /// receipt with the backend which grants the ServiceOrder (India uses the
+  /// wallet flow instead). Backend verification is scaffolded until the PAPG
+  /// phase. Idempotent on transactionId.
+  Future<Map<String, dynamic>> verifyIap({
+    required String servicePricingId,
+    String? chartId,
+    required String platform,
+    required String productId,
+    required String transactionId,
+    String? receipt,
+  }) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.serviceBase}/iap/verify'),
+      body: jsonEncode({
+        'service_pricing_id': servicePricingId,
+        if (chartId != null) 'chart_id': chartId,
+        'platform': platform,
+        'product_id': productId,
+        'transaction_id': transactionId,
+        if (receipt != null) 'receipt': receipt,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<List<dynamic>> getMyOrders() async {
     final resp = await http.get(Uri.parse(ApiConstants.serviceOrders), headers: _headers);
     if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
     return [];
+  }
+
+  /// Per-service unlock state for a chart (pay-per-report). Returns the raw
+  /// `entitlements` list of {service_key, unlocked, is_free, price,
+  /// original_price, pricing_id, order_id}. Empty on error.
+  Future<List<dynamic>> getEntitlements({String? chartId, String? category}) async {
+    final params = <String, String>{};
+    if (chartId != null) params['chart_id'] = chartId;
+    if (category != null) params['category'] = category;
+    final uri = Uri.parse(ApiConstants.serviceEntitlements)
+        .replace(queryParameters: params.isNotEmpty ? params : null);
+    final resp = await _authGet(uri);
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      if (body is Map && body['entitlements'] is List) return body['entitlements'] as List;
+    }
+    return [];
+  }
+
+  /// Single service's entitlement for a chart, or null if not found.
+  Future<Map<String, dynamic>?> getEntitlement(String serviceKey, {String? chartId}) async {
+    final list = await getEntitlements(chartId: chartId);
+    for (final e in list) {
+      if (e is Map && e['service_key'] == serviceKey) return e.cast<String, dynamic>();
+    }
+    return null;
+  }
+
+  /// Current wallet balance (INR), 0 on error. Reads the user wallet endpoint.
+  Future<double> getWalletBalance() async {
+    try {
+      final w = await fetchMyWallet();
+      final bal = w['balance'] ?? (w['wallet'] is Map ? (w['wallet'] as Map)['balance'] : null);
+      if (bal is num) return bal.toDouble();
+      if (bal is String) return double.tryParse(bal) ?? 0;
+    } catch (_) {}
+    return 0;
   }
 
   Future<Map<String, dynamic>> computeDasha(String chartId) async {

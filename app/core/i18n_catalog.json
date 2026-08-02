@@ -6144,5 +6144,29 @@
     "marathi": "अधिशत्रू",
     "punjabi": "ਅਧਿਸ਼ਤਰੂ",
     "odia": "ଅଧିଶତ୍ରୁ"
+  },
+  "err.primary_chart_no_delete": {
+    "english": "Your Primary Kundli can't be deleted — it's your free forever chart.",
+    "hindi": "आपकी प्राथमिक कुंडली हटाई नहीं जा सकती — यह आपकी हमेशा-मुफ़्त कुंडली है।",
+    "hinglish": "Aapki Primary Kundli delete nahi ho sakti — yeh aapki hamesha-free chart hai."
+  },
+  "err.primary_chart_no_edit": {
+    "english": "Your Primary Kundli can't be edited. Set another chart as primary first, or create a new chart.",
+    "hindi": "आपकी प्राथमिक कुंडली संपादित नहीं की जा सकती। पहले किसी अन्य कुंडली को प्राथमिक बनाएँ, या नई कुंडली बनाएँ।",
+    "hinglish": "Aapki Primary Kundli edit nahi ho sakti. Pehle kisi aur chart ko primary banao, ya nayi chart banao."
+  },
+  "err.extra_chart_needs_purchase": {
+    "english": "You've used your free Primary Kundli. Unlock an additional chart to continue.",
+    "hindi": "आपने अपनी मुफ़्त प्राथमिक कुंडली उपयोग कर ली है। जारी रखने के लिए एक अतिरिक्त कुंडली अनलॉक करें।",
+    "hinglish": "Aapne apni free Primary Kundli use kar li hai. Aage badhne ke liye ek extra chart unlock karein."
+  },
+  "err.invalid_region": {
+    "english": "Invalid region — must be IN or INTL"
+  },
+  "err.iap_verification_failed": {
+    "english": "Purchase verification failed"
+  },
+  "err.iap_product_mismatch": {
+    "english": "Purchase product does not match this service"
   }
 }
