@@ -1253,6 +1253,59 @@ def verify_iap_purchase(
     )
 
 
+@router.get("/revenue-summary")
+def revenue_summary(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Admin revenue split by settlement currency + payment method.
+
+    India settles in INR via the wallet; international settles in USD via store
+    IAP (and, once Phase D.2 lands, Stripe/PayPal). Reconciliation-friendly:
+    counts + gross per (currency_paid, payment_method) over completed orders.
+    Refunded orders are reported separately.
+    """
+    from sqlalchemy import func as _func
+    rows = (
+        db.query(
+            ServiceOrder.currency_paid,
+            ServiceOrder.payment_method,
+            _func.count(ServiceOrder.id),
+            _func.coalesce(_func.sum(ServiceOrder.amount_paid), 0),
+        )
+        .filter(ServiceOrder.status == "completed")
+        .group_by(ServiceOrder.currency_paid, ServiceOrder.payment_method)
+        .all()
+    )
+    refunds = (
+        db.query(
+            ServiceOrder.currency_paid,
+            _func.count(ServiceOrder.id),
+            _func.coalesce(_func.sum(ServiceOrder.amount_paid), 0),
+        )
+        .filter(ServiceOrder.status == "refunded")
+        .group_by(ServiceOrder.currency_paid)
+        .all()
+    )
+    by_currency: dict = {}
+    breakdown = []
+    for currency, method, count, gross in rows:
+        cur = (currency or "INR").upper()
+        breakdown.append({
+            "currency": cur, "payment_method": method or "wallet",
+            "orders": int(count), "gross": float(gross),
+        })
+        by_currency[cur] = by_currency.get(cur, 0.0) + float(gross)
+    return {
+        "by_currency": by_currency,          # {"INR": ..., "USD": ...}
+        "breakdown": breakdown,              # per currency+method
+        "refunds": [
+            {"currency": (c or "INR").upper(), "orders": int(n), "gross": float(g)}
+            for c, n, g in refunds
+        ],
+    }
+
+
 @router.post("/iap/refund")
 def iap_refund_notification(
     payload: dict,

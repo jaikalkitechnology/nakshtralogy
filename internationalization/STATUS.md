@@ -11,9 +11,11 @@ is the FINAL phase. Never change astrology logic.
 **Legend:** `PENDING` · `IN-PROGRESS` · `DONE (sha, date)` · `BLOCKED (reason)`
 **Verify:** py_compile (backend); static-only for Flutter/React (no SDK/npm here).
 
-**Summary:** 14 / 17 tasks DONE · Phases A + B + C complete · Phase D (real
-PAPG receipt validation) next — needs real Apple/Google store credentials.
-(Denominator corrected: 17 listed tasks A.1–D.3, not 18.)
+**Summary:** 16 / 17 tasks DONE · 1 BLOCKED (D.2, needs Stripe/PayPal merchant
+credentials). Phases A + B + C complete; Phase D shipped as far as possible
+without real store/merchant credentials — D.1 validators are implemented +
+credential-gated (go-live blocked on real Apple/Google keys + on-device
+receipts), D.3 reporting/guidance done. (Denominator: 17 listed tasks A.1–D.3.)
 
 ---
 
@@ -57,9 +59,9 @@ PAPG receipt validation) next — needs real Apple/Google store credentials.
 ## Phase D — Payment Aggregator (PAPG) — FINAL
 | # | Task | Status |
 |---|------|--------|
-| D.1 | Real IAP receipt validation: Apple App Store Server API + Google Play Developer API verification in `/service/iap/verify`; idempotent grant; refund/void handling | PENDING |
-| D.2 | (If web/non-store needed) Stripe/PayPal USD checkout for the same catalog; unify grant path; admin revenue in INR+USD | PENDING |
-| D.3 | Reconciliation + receipts + tax/VAT notes; final verification | PENDING |
+| D.1 | Real IAP receipt validation: Apple App Store Server API + Google Play Developer API verification in `/service/iap/verify`; idempotent grant; refund/void handling | DONE-impl / BLOCKED-live (a912365, 2026-08-02) — real Apple+Google validators + refund handling shipped, credential-gated; go-live BLOCKED on real store credentials + on-device receipts (unavailable here) |
+| D.2 | (If web/non-store needed) Stripe/PayPal USD checkout for the same catalog; unify grant path; admin revenue in INR+USD | BLOCKED (needs real Stripe/PayPal merchant credentials). Grant path already unified (ServiceOrder); admin revenue INR+USD shipped via GET /service/revenue-summary. Design in PAYMENTS_PHASE_D.md |
+| D.3 | Reconciliation + receipts + tax/VAT notes; final verification | DONE (a?, 2026-08-02) — revenue-summary reporting + reconciliation/receipts/tax-VAT guidance in PAYMENTS_PHASE_D.md; final static verification passed |
 
 ---
 
