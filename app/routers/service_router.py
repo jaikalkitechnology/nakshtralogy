@@ -1145,6 +1145,17 @@ def purchase_service(
 #  IAP VERIFY (international store purchases → ServiceOrder grant)
 # ══════════════════════════════════════════════════════════════════════
 
+def _load_iap_config(db) -> dict:
+    """Load store credentials from PlatformSetting (category 'iap'). When these
+    are present, iap_verify runs REAL Apple/Google validation; otherwise it
+    falls back to the scaffold. Keys: apple_issuer_id, apple_key_id,
+    apple_private_key, apple_bundle_id, apple_environment, google_package_name,
+    google_service_account_json."""
+    from app.models.model import PlatformSetting
+    rows = db.query(PlatformSetting).filter(PlatformSetting.category == "iap").all()
+    return {r.key: r.value for r in rows}
+
+
 @router.post("/iap/verify", response_model=ServiceOrderResponse)
 def verify_iap_purchase(
     req: IapVerifyRequest,
@@ -1195,13 +1206,16 @@ def verify_iap_purchase(
             service_key=sp.service_key, created_at=existing.created_at,
         )
 
-    # Verify the store receipt (scaffold pre-PAPG; real Apple/Google in Phase D).
+    # Verify the store receipt. Real Apple/Google validation runs when store
+    # credentials are configured (PlatformSetting category 'iap'); otherwise the
+    # structural scaffold accepts it so the flow still works pre-PAPG.
     ok, info = verify_receipt(
         platform=req.platform,
         product_id=req.product_id,
         transaction_id=req.transaction_id,
         receipt=req.receipt,
         expected_product_id=sp.iap_product_id,
+        config=_load_iap_config(db),
     )
     if not ok:
         raise HTTPException(
@@ -1237,6 +1251,28 @@ def verify_iap_purchase(
         status="completed", service_name=sp.service_name,
         service_key=sp.service_key, created_at=order.created_at,
     )
+
+
+@router.post("/iap/refund")
+def iap_refund_notification(
+    payload: dict,
+    db: Session = Depends(get_db),
+):
+    """Store server-to-server refund/void notification → mark the ServiceOrder
+    refunded (idempotent). Accepts a `transaction_id` (Apple originalTransactionId
+    / transactionId, or Google orderId).
+
+    NOTE (Phase D): the notification SIGNATURE must be verified before trusting
+    it — Apple App Store Server Notifications V2 (signedPayload JWS) / Google
+    Pub/Sub RTDN. That signature check needs real store credentials and is
+    BLOCKED until they are provisioned; until then this endpoint only maps a
+    transaction id to a refund and should be network-restricted.
+    """
+    txn_id = (payload or {}).get("transaction_id") or (payload or {}).get("transactionId")
+    if not txn_id:
+        raise HTTPException(status_code=400, detail="transaction_id required")
+    from app.services.iap_verify import handle_refund
+    return handle_refund(db, str(txn_id))
 
 
 # ══════════════════════════════════════════════════════════════════════
