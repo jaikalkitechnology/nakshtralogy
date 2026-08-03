@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import Optional, List, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # ─── Service Pricing (Platform catalog) ──────────────────────────────
@@ -35,6 +35,14 @@ class ServicePricingResponse(BaseModel):
     requires_birth_data: bool = True
     max_free_per_user: Optional[int] = None
     created_at: Optional[datetime] = None
+
+    # Legacy rows created before the USD columns existed have NULL in the
+    # non-nullable boolean `price_usd_manual`; coerce NULL -> False so the
+    # response never fails validation (also normalizes 0/1 from the DB).
+    @field_validator("price_usd_manual", mode="before")
+    @classmethod
+    def _coerce_price_usd_manual(cls, v):
+        return bool(v) if v is not None else False
 
     class Config:
         from_attributes = True

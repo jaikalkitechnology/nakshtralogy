@@ -335,7 +335,7 @@ class ServicePricing(Base):
     # the store product id for this service+tier. NOT used by any astrology logic.
     price_usd = Column(Numeric(10, 2), nullable=True)
     iap_product_id = Column(String(100), nullable=True)
-    price_usd_manual = Column(Boolean, default=False, nullable=False)
+    price_usd_manual = Column(Boolean, default=False, server_default="0", nullable=False)
     is_free = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
