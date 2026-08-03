@@ -17,39 +17,39 @@ interface NavItem { to: string; label: string; icon: typeof LayoutDashboard; }
 interface NavGroup { heading?: string; items: NavItem[]; }
 
 const NAV: NavGroup[] = [
-  { items: [{ to: "/admin/v2", label: "Dashboard", icon: LayoutDashboard }] },
+  { items: [{ to: "/admin", label: "Dashboard", icon: LayoutDashboard }] },
   { heading: "PEOPLE", items: [
-    { to: "/admin/v2/users", label: "Users", icon: Users },
-    { to: "/admin/v2/astrologers", label: "Astrologers", icon: Star },
-    { to: "/admin/v2/consultations", label: "Consultations", icon: MessageSquare },
-    { to: "/admin/v2/reviews", label: "Reviews", icon: Star },
-    { to: "/admin/v2/kyc", label: "KYC Verification", icon: ShieldCheck },
+    { to: "/admin/users", label: "Users", icon: Users },
+    { to: "/admin/astrologers", label: "Astrologers", icon: Star },
+    { to: "/admin/consultations", label: "Consultations", icon: MessageSquare },
+    { to: "/admin/reviews", label: "Reviews", icon: Star },
+    { to: "/admin/kyc", label: "KYC Verification", icon: ShieldCheck },
   ]},
   { heading: "FINANCE", items: [
-    { to: "/admin/v2/wallet", label: "Wallet", icon: Wallet },
-    { to: "/admin/v2/pricing", label: "Pricing Plans", icon: CreditCard },
-    { to: "/admin/v2/gifts", label: "Gift Management", icon: Gift },
-    { to: "/admin/v2/transactions", label: "Transactions", icon: Receipt },
-    { to: "/admin/v2/revenue", label: "Revenue", icon: TrendingUp },
+    { to: "/admin/wallet", label: "Wallet", icon: Wallet },
+    { to: "/admin/pricing", label: "Pricing Plans", icon: CreditCard },
+    { to: "/admin/gifts", label: "Gift Management", icon: Gift },
+    { to: "/admin/transactions", label: "Transactions", icon: Receipt },
+    { to: "/admin/revenue", label: "Revenue", icon: TrendingUp },
   ]},
   { heading: "PLATFORM", items: [
-    { to: "/admin/v2/api", label: "API Management", icon: Server },
-    { to: "/admin/v2/developers", label: "Developers", icon: Code2 },
-    { to: "/admin/v2/notifications", label: "Notifications", icon: Bell },
-    { to: "/admin/v2/google-auth", label: "Google OAuth", icon: KeyRound },
-    { to: "/admin/v2/web-push", label: "Web Push", icon: Bell },
-    { to: "/admin/v2/content", label: "Content Management", icon: FolderKanban },
-    { to: "/admin/v2/audit-logs", label: "Audit Logs", icon: ScrollText },
-    { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy },
-    { to: "/admin/v2/analytics", label: "Analytics", icon: BarChart3 },
-    { to: "/admin/v2/role-permissions", label: "Role Permissions", icon: Lock },
-    { to: "/admin/v2/system", label: "System & Maintenance", icon: Server },
-    { to: "/admin/v2/settings", label: "Settings", icon: Settings },
+    { to: "/admin/api", label: "API Management", icon: Server },
+    { to: "/admin/developers", label: "Developers", icon: Code2 },
+    { to: "/admin/notifications", label: "Notifications", icon: Bell },
+    { to: "/admin/google-auth", label: "Google OAuth", icon: KeyRound },
+    { to: "/admin/web-push", label: "Web Push", icon: Bell },
+    { to: "/admin/content", label: "Content Management", icon: FolderKanban },
+    { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
+    { to: "/admin/support-tickets", label: "Support Tickets", icon: LifeBuoy },
+    { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+    { to: "/admin/role-permissions", label: "Role Permissions", icon: Lock },
+    { to: "/admin/system", label: "System & Maintenance", icon: Server },
+    { to: "/admin/settings", label: "Settings", icon: Settings },
   ]},
 ];
 
 function crumb(pathname: string) {
-  const seg = pathname.replace("/admin/v2", "").split("/").filter(Boolean);
+  const seg = pathname.replace("/admin", "").split("/").filter(Boolean);
   return seg.length ? seg[seg.length - 1].replace(/-/g, " ") : "Overview";
 }
 
@@ -79,7 +79,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               <NavLink
                 key={it.to}
                 to={it.to}
-                end={it.to === "/admin/v2"}
+                end={it.to === "/admin"}
                 onClick={() => setMobileOpen(false)}
                 title={collapsed ? it.label : undefined}
                 className={({ isActive }) =>
