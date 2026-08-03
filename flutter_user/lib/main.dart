@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app_links/app_links.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:local_auth/local_auth.dart';
 import 'l10n/gen/app_localizations.dart';
@@ -131,6 +133,53 @@ class NakshatralogyUserApp extends StatefulWidget {
 
 class _NakshatralogyUserAppState extends State<NakshatralogyUserApp> {
   Locale? _locale = _savedLocale;
+
+  final AppLinks _appLinks = AppLinks();
+  StreamSubscription<Uri>? _linkSub;
+
+  @override
+  void initState() {
+    super.initState();
+    // Mobile only: the Google server-redirect flow returns to the app via the
+    // `nakshatralogy://auth/callback?token=&refresh=` deep link. Receive it and
+    // adopt the session — same web OAuth client as the web app, no SHA-1 needed.
+    if (!kIsWeb) _initDeepLinks();
+  }
+
+  Future<void> _initDeepLinks() async {
+    try {
+      final initial = await _appLinks.getInitialLink();
+      if (initial != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _handleAuthUri(initial));
+      }
+    } catch (_) {}
+    _linkSub = _appLinks.uriLinkStream.listen(_handleAuthUri, onError: (_) {});
+  }
+
+  void _handleAuthUri(Uri uri) {
+    // Read token/refresh from the query and (defensively) the fragment.
+    final p = <String, String>{}..addAll(uri.queryParameters);
+    var frag = uri.fragment;
+    if (frag.isNotEmpty) {
+      final qi = frag.indexOf('?');
+      if (qi >= 0) frag = frag.substring(qi + 1);
+      try {
+        p.addAll(Uri.splitQueryString(frag));
+      } catch (_) {}
+    }
+    final token = p['token'];
+    final refresh = p['refresh'];
+    if (token == null || token.isEmpty || refresh == null || refresh.isEmpty) return;
+    final ctx = navigatorKey.currentContext;
+    if (ctx == null) return;
+    ctx.read<AuthBloc>().add(AuthGoogleSessionReceived(token: token, refresh: refresh));
+  }
+
+  @override
+  void dispose() {
+    _linkSub?.cancel();
+    super.dispose();
+  }
 
   void setLocale(Locale locale) {
     setState(() => _locale = locale);

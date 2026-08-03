@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
@@ -100,16 +99,17 @@ class _LoginScreenState extends State<LoginScreen> {
   ///   in the platform manifests for when a deep-link plugin is added.
   Future<void> _googleSignIn() async {
     final l = AppLocalizations.of(context)!;
-    if (kIsWeb) {
-      final ok = await GoogleAuthService.instance.startRedirectFlow();
-      if (!ok && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l.awGoogleFailed), backgroundColor: AppColors.error),
-        );
-      }
-      return; // the tab navigates away on success
+    // Both web and mobile use the server-side redirect flow. On web the tab
+    // navigates to Google and returns to the SPA `/auth/callback`; on mobile an
+    // external browser returns via the `nakshatralogy://auth/callback` deep link,
+    // adopted by the app_links listener in main.dart. Uses the same web OAuth
+    // client as the web app — no SHA-1 / native Google config required.
+    final ok = await GoogleAuthService.instance.startRedirectFlow();
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l.awGoogleFailed), backgroundColor: AppColors.error),
+      );
     }
-    context.read<AuthBloc>().add(const AuthGoogleNativeRequested());
   }
 
   @override
