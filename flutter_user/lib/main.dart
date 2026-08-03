@@ -42,7 +42,19 @@ void main() async {
   // Web: consume the OAuth callback query (token/refresh/error) before anything
   // else, then scrub it from the address bar. Harmless no-op off the web.
   if (kIsWeb) {
-    final q = Uri.base.queryParameters;
+    // Read the Google callback params from BOTH the query string and the URL
+    // fragment. Depending on the web-server SPA config and Flutter's URL
+    // strategy, the backend's `?token=&refresh=` can arrive after a `#`
+    // (e.g. `/auth/callback#token=…` or `/#/auth/callback?token=…`).
+    final q = <String, String>{}..addAll(Uri.base.queryParameters);
+    var frag = Uri.base.fragment;
+    if (frag.isNotEmpty) {
+      final qi = frag.indexOf('?');
+      if (qi >= 0) frag = frag.substring(qi + 1);
+      try {
+        q.addAll(Uri.splitQueryString(frag));
+      } catch (_) {}
+    }
     final err = q['google_error'];
     final token = q['token'];
     final refresh = q['refresh'];

@@ -11,13 +11,18 @@ from app.core.security import decode_access_token
 from app.core.i18n import normalize_lang, DEFAULT_LANGUAGE
 from app.models.model import User
 
-bearer_scheme = HTTPBearer()
+# auto_error=False so a MISSING Authorization header yields our explicit 401
+# (FastAPI's default HTTPBearer raises 403 for a missing header, which reads as
+# "forbidden" to clients that special-case 401 for re-auth).
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
+    if credentials is None or not credentials.credentials:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     payload = decode_access_token(credentials.credentials)
     if payload is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
