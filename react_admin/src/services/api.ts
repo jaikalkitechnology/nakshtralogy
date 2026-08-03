@@ -437,6 +437,37 @@ export async function adminSendTestWebPush(project: "user" | "astro", token?: st
   });
 }
 
+// ── System / Maintenance (admin) ─────────────────────────────────
+// Apply developer-side changes to a running deployment: additive schema sync
+// (missing tables/columns from the models), idempotent seeders, and effective
+// config view/reload. Backend: /api/v1/admin/system/*  (admin-only).
+export async function adminSchemaDiff() {
+  return request("/admin/system/schema/diff");
+}
+
+export async function adminSchemaSync(dryRun: boolean) {
+  return request(`/admin/system/schema/sync?dry_run=${dryRun}`, { method: "POST" });
+}
+
+export async function adminSeedCatalog() {
+  return request("/admin/system/seed/catalog");
+}
+
+export async function adminSeedRun(seeders: string[] | null, all: boolean) {
+  return request("/admin/system/seed/run", {
+    method: "POST",
+    body: JSON.stringify({ seeders, all }),
+  });
+}
+
+export async function adminGetSystemConfig() {
+  return request("/admin/system/config");
+}
+
+export async function adminReloadConfig() {
+  return request("/admin/system/config/reload", { method: "POST" });
+}
+
 export async function adminUploadFcmFile(project: "user" | "astro", file: File) {
   const token = localStorage.getItem("access_token");
   const fd = new FormData();
