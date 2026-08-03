@@ -68,7 +68,7 @@ class _SignupScreenState extends State<SignupScreen> {
     try {
       final googleUser = await GoogleSignIn(
         scopes: const ['email', 'profile'],
-        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: ''),
+        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: '410358361509-5h98nfjhdc9bu92rq7o39idkq3r9nieh.apps.googleusercontent.com'),
       ).signIn();
       if (googleUser == null) return;
       final auth = await googleUser.authentication;
