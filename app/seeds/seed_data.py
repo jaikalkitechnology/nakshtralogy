@@ -38,6 +38,7 @@ def seed_all(db: Session) -> dict:
     summary["gift_pricing"] = _seed_gift_pricing(db)
     summary["agora_config"] = _seed_agora_config(db)
     summary["platform_settings"] = _seed_platform_settings(db)
+    summary["google_auth"] = _seed_google_auth_from_file(db)
     summary["notifications"] = _seed_notifications(db)
     summary["developer"] = _seed_developer(db)
     db.commit()
@@ -695,6 +696,61 @@ def _seed_platform_settings(db: Session) -> int:
         ))
         created += 1
     return created
+
+
+def _seed_google_auth_from_file(db: Session) -> str:
+    """Populate google_auth_user/astro from all_credentials/google_login.txt.
+
+    The Web OAuth client (client_id + client_secret + callback) is the credential
+    the server-side redirect flow needs; the same client_id doubles as the mobile
+    serverClientId audience checked by /google/verify. This fills EMPTY keys only,
+    so admin edits made via the Google OAuth screen are never overwritten.
+    """
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[2] / "all_credentials" / "google_login.txt"
+    if not path.exists():
+        return "skipped (all_credentials/google_login.txt not found)"
+
+    parsed: dict[str, str] = {}
+    for line in path.read_text().splitlines():
+        if ":" not in line:
+            continue
+        k, v = line.split(":", 1)
+        parsed[k.strip().lower()] = v.strip()
+
+    client_id = parsed.get("clientid", "")
+    # tolerate the "SectretKey" typo in the source file as well as "secretkey"
+    client_secret = parsed.get("sectretkey") or parsed.get("secretkey") or parsed.get("client_secret") or ""
+    redirect_uri = parsed.get("callback_url") or "https://api.nakshatralogy.com/api/v1/google/callback"
+    if not client_id or not client_secret:
+        return "skipped (client_id/secret missing in file)"
+
+    roles = {
+        "google_auth_user": "https://app.nakshatralogy.com/auth/callback",
+        "google_auth_astro": "https://astro.nakshatralogy.com/auth/callback",
+    }
+    values = {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uri": redirect_uri,
+        "web_client_id": client_id,  # audience for native google_sign_in id_token
+    }
+    filled = 0
+    for category, return_url in roles.items():
+        row_values = dict(values, frontend_return_url=return_url)
+        for key, val in row_values.items():
+            row = db.query(PlatformSetting).filter(
+                PlatformSetting.category == category, PlatformSetting.key == key,
+            ).first()
+            if row is None:
+                db.add(PlatformSetting(category=category, key=key, value=val,
+                                       is_secret=(key == "client_secret")))
+                filled += 1
+            elif not (row.value or "").strip():  # only fill blanks; never clobber
+                row.value = val
+                filled += 1
+    return f"filled {filled} empty key(s) from google_login.txt"
 
 
 # ─── 8. Sample Notifications ──────────────────────────────────────────
