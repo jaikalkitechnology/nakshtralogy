@@ -26,6 +26,7 @@ dependencies:
   firebase_messaging: ^15.2.4
   flutter_local_notifications: ^18.0.1
   url_launcher: ^6.2.5
+  app_links: ^6.3.0
   local_auth: ^2.3.0
   # International paid digital goods → store IAP tiers (App Store / Google Play).
   in_app_purchase: ^3.2.0
