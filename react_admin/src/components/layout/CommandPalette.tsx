@@ -26,6 +26,7 @@ const DESTINATIONS = [
   { to: "/admin/v2/notifications", label: "Notifications", icon: Bell, group: "Platform" },
   { to: "/admin/v2/google-auth", label: "Google OAuth", icon: KeyRound, group: "Platform" },
   { to: "/admin/v2/web-push", label: "Web Push", icon: Bell, group: "Platform" },
+  { to: "/admin/v2/system", label: "System & Maintenance", icon: Server, group: "Platform" },
   { to: "/admin/v2/content", label: "Content Management", icon: FolderKanban, group: "Platform" },
   { to: "/admin/v2/audit-logs", label: "Audit Logs", icon: ScrollText, group: "Platform" },
   { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy, group: "Platform" },

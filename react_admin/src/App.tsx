@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import AdminFeatures from "./pages/admin/AdminFeatures";
 import GoogleAuthSettings from "./pages/admin/GoogleAuthSettings";
 import WebPushSettings from "./pages/admin/WebPushSettings";
+import SystemMaintenance from "./pages/admin/SystemMaintenance";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
                   writing to platform_settings via the existing admin settings API. */}
               <Route path="/admin/v2/google-auth" element={<RequireAdmin><AdminShell><GoogleAuthSettings /></AdminShell></RequireAdmin>} />
               <Route path="/admin/v2/web-push" element={<RequireAdmin><AdminShell><WebPushSettings /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/v2/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}
               {["consultations", "notifications", "content", "audit-logs", "support-tickets", "analytics", "role-permissions"].map((seg) => (
                 <Route

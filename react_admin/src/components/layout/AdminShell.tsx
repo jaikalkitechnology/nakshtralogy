@@ -43,6 +43,7 @@ const NAV: NavGroup[] = [
     { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy },
     { to: "/admin/v2/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/admin/v2/role-permissions", label: "Role Permissions", icon: Lock },
+    { to: "/admin/v2/system", label: "System & Maintenance", icon: Server },
     { to: "/admin/v2/settings", label: "Settings", icon: Settings },
   ]},
 ];

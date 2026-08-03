@@ -35,6 +35,8 @@ _DEV_COLUMN_MIGRATIONS = [
     ("users", "preferred_language", "VARCHAR(20)"),
     # Developer API Platform (developerApiPlatform/ Phase 7.3)
     ("api_keys", "monthly_quota", "INT"),
+    # Web push (auth/web platform)
+    ("users", "fcm_token_web", "TEXT"),
 ]
 
 
