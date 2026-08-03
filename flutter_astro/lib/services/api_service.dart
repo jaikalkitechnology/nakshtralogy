@@ -194,6 +194,100 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...data};
   }
 
+  /// Ask the backend for the Google OAuth authorization URL (server-side
+  /// redirect flow). [returnTo] is where the backend callback should send the
+  /// browser/app back to with `?token=&refresh=` (web callback route or the
+  /// mobile deep link). Returns the Google URL to open, or null on failure.
+  Future<String?> googleLoginUrl({required String returnTo}) async {
+    try {
+      final uri = Uri.parse(ApiConstants.googleLoginUrl).replace(queryParameters: {
+        'role': ApiConstants.authRole,
+        'return_to': returnTo,
+      });
+      final resp = await http.get(uri, headers: {'Accept-Language': _langCode});
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        return data['url'] as String?;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Native-friendly verification: exchange a Google `id_token` for app tokens
+  /// via the shared `/google/verify` endpoint. Returns
+  /// `{statusCode, token?, refresh?, is_new_user?, user?, detail?}`.
+  Future<Map<String, dynamic>> googleVerify(String idToken, {String? fcmToken}) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.googleVerify),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({
+        'id_token': idToken,
+        'role': ApiConstants.authRole,
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
+    );
+    final data = jsonDecode(resp.body);
+    if (resp.statusCode == 200) {
+      // Contract returns {token, refresh}; be tolerant of {access_token,...}.
+      final access = (data['token'] ?? data['access_token']) as String?;
+      final refresh = (data['refresh'] ?? data['refresh_token']) as String?;
+      if (access != null && refresh != null) {
+        await _saveTokens(access, refresh);
+        if (data['user'] != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_data', jsonEncode(data['user']));
+        }
+      }
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
+  /// Persist externally-obtained tokens (web server-redirect callback) and load
+  /// the profile so the auth gate can route the user in. Returns the user map.
+  Future<Map<String, dynamic>> applyExternalTokens(String access, String refresh) async {
+    await _saveTokens(access, refresh);
+    try {
+      final me = await getMe();
+      if (me['statusCode'] == 200) {
+        final user = (me['user'] ?? me) as Map<String, dynamic>;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(user));
+        return user;
+      }
+    } catch (_) {}
+    return <String, dynamic>{};
+  }
+
+  /// Public web-push config (Firebase web keys + VAPID public key) for runtime
+  /// init on Flutter web. No secrets are returned by this endpoint.
+  Future<Map<String, dynamic>?> getWebPushConfig() async {
+    try {
+      final uri = Uri.parse(ApiConstants.webpushConfig)
+          .replace(queryParameters: {'role': ApiConstants.authRole});
+      final resp = await http.get(uri, headers: {'Accept-Language': _langCode});
+      if (resp.statusCode == 200) {
+        return jsonDecode(resp.body) as Map<String, dynamic>;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Register a push token with an explicit [platform] ("web" | "android" |
+  /// "ios"). Used by the web-push flow; native still uses updateMeFields.
+  Future<Map<String, dynamic>> registerPushToken(String token, {required String platform}) async {
+    final resp = await _authPost(
+      Uri.parse(ApiConstants.astroPushRegister),
+      body: jsonEncode({'token': token, 'platform': platform}),
+    );
+    Map<String, dynamic> data;
+    try {
+      data = jsonDecode(resp.body) as Map<String, dynamic>;
+    } catch (_) {
+      data = <String, dynamic>{};
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
   Future<Map<String, dynamic>> forgotPassword(String email) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.astroForgotPassword),

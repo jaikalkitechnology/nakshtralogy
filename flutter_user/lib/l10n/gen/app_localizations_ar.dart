@@ -9,6 +9,47 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get awChooseLanguage => 'اختر لغتك';
+
+  @override
+  String get awGoogleFailed => 'فشل تسجيل الدخول عبر Google. يُرجى المحاولة مرة أخرى.';
+
+  @override
+  String get awCompleteProfileTitle => 'أكمل ملفك الشخصي';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'مرحبًا، ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'بعض التفاصيل لتخصيص Nakshatralogy لك.';
+
+  @override
+  String get awRegionLabel => 'المنطقة';
+
+  @override
+  String get awRegionIndia => 'الهند';
+
+  @override
+  String get awRegionInternational => 'دولي';
+
+  @override
+  String get awPreferredLanguage => 'اللغة المفضلة';
+
+  @override
+  String get awFinishSetup => 'إنهاء الإعداد';
+
+  @override
+  String get awChatFileWebUnsupported => 'مشاركة الملفات غير متاحة على الويب بعد. يُرجى استخدام تطبيق الجوال.';
+
+  @override
+  String get awVideoUnsupported => 'المكالمات المرئية غير مدعومة في هذا المتصفح. يُرجى استخدام تطبيق الجوال أو متصفح سطح مكتب مدعوم.';
+
+  @override
+  String get awClose => 'إغلاق';
+
+  @override
   String get pwPremiumTitle => 'تقرير مميز';
 
   @override

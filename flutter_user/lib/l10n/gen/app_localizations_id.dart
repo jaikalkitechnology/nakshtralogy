@@ -9,6 +9,47 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get awChooseLanguage => 'Pilih bahasa Anda';
+
+  @override
+  String get awGoogleFailed => 'Gagal masuk dengan Google. Silakan coba lagi.';
+
+  @override
+  String get awCompleteProfileTitle => 'Lengkapi profil Anda';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'Selamat datang, ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'Beberapa detail untuk menyesuaikan Nakshatralogy untuk Anda.';
+
+  @override
+  String get awRegionLabel => 'Wilayah';
+
+  @override
+  String get awRegionIndia => 'India';
+
+  @override
+  String get awRegionInternational => 'Internasional';
+
+  @override
+  String get awPreferredLanguage => 'Bahasa pilihan';
+
+  @override
+  String get awFinishSetup => 'Selesaikan pengaturan';
+
+  @override
+  String get awChatFileWebUnsupported => 'Berbagi file belum tersedia di web. Silakan gunakan aplikasi seluler.';
+
+  @override
+  String get awVideoUnsupported => 'Panggilan video tidak didukung di browser ini. Silakan gunakan aplikasi seluler kami atau browser desktop yang didukung.';
+
+  @override
+  String get awClose => 'Tutup';
+
+  @override
   String get pwPremiumTitle => 'Laporan Premium';
 
   @override

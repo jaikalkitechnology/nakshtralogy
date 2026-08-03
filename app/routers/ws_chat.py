@@ -91,7 +91,7 @@ def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_as
     if sender_is_astrologer:
         # Push to user
         recipient = db.query(User).filter(User.id == session.user_id).first()
-        if not recipient or not recipient.fcm_token:
+        if not recipient or not (recipient.fcm_token or recipient.fcm_token_web):
             return
         # Check if user is connected to WS already
         if session_id in _connections and recipient.id in _connections[session_id]:
@@ -100,6 +100,7 @@ def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_as
         body = content if message_type == "text" else ("📷 Photo" if message_type == "image" else "📄 Document")
         send_push(
             fcm_token=recipient.fcm_token,
+            web_token=recipient.fcm_token_web,
             title=f"Message from {sender.name or 'Astrologer'}",
             body=body[:200],
             role="user",
@@ -121,7 +122,7 @@ def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_as
         if not profile:
             return
         astro_user = db.query(User).filter(User.id == profile.user_id).first()
-        if not astro_user or not astro_user.fcm_token:
+        if not astro_user or not (astro_user.fcm_token or astro_user.fcm_token_web):
             return
         # Check if astrologer is connected
         if session_id in _connections and astro_user.id in _connections[session_id]:
@@ -130,6 +131,7 @@ def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_as
         body = content if message_type == "text" else ("📷 Photo" if message_type == "image" else "📄 Document")
         send_push(
             fcm_token=astro_user.fcm_token,
+            web_token=astro_user.fcm_token_web,
             title=f"Message from {sender.name or 'User'}",
             body=body[:200],
             role="astrologer",

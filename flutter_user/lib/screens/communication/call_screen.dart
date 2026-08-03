@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -49,6 +50,9 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   bool _remoteJoined = false;
   int? _remoteUid;
   bool _ending = false;
+  // Set when Agora fails to initialize in a browser (unsupported web A/V).
+  // Chat/auth are never blocked by this — only this call screen degrades.
+  bool _webAvUnavailable = false;
 
   @override
   void initState() {
@@ -90,11 +94,15 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _initAgora() async {
-    // Request permissions
-    if (widget.callType == 'video') {
-      await [Permission.camera, Permission.microphone].request();
-    } else {
-      await Permission.microphone.request();
+    // Request permissions. `permission_handler` is a native plugin and throws
+    // on web — the browser prompts for mic/cam itself when the engine joins,
+    // so we skip explicit requests on web.
+    if (!kIsWeb) {
+      if (widget.callType == 'video') {
+        await [Permission.camera, Permission.microphone].request();
+      } else {
+        await Permission.microphone.request();
+      }
     }
 
     try {
@@ -168,7 +176,10 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     } else {
       await _engine!.disableVideo();
     }
-    await _engine!.setDefaultAudioRouteToSpeakerphone(false);
+    // Audio routing is a mobile concept; the call throws on web — skip it.
+    if (!kIsWeb) {
+      await _engine!.setDefaultAudioRouteToSpeakerphone(false);
+    }
 
     // Join channel as UID=1 (caller)
     await _engine!.joinChannel(
@@ -185,6 +196,12 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     );
     } catch (e) {
       debugPrint('Agora init error: $e');
+      if (kIsWeb) {
+        // Web A/V unavailable in this browser — degrade gracefully rather than
+        // trapping the user on a dead call screen.
+        if (mounted) setState(() => _webAvUnavailable = true);
+        return;
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Agora init failed: $e'),
@@ -300,6 +317,37 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final isVideo = widget.callType == 'video';
+
+    // Graceful web fallback when Agora A/V can't initialize in this browser.
+    if (_webAvUnavailable) {
+      final l = AppLocalizations.of(context);
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.videocam_off, color: AppColors.textSecondary, size: 56),
+                const SizedBox(height: 16),
+                Text(
+                  l?.awVideoUnsupported ??
+                      "Video calls aren't supported in this browser. Please use our mobile app or a supported desktop browser.",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => _endCall(),
+                  child: Text(l?.awClose ?? 'Close'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,

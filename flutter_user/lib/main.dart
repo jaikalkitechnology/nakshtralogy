@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,6 +9,8 @@ import 'theme/app_theme.dart';
 import 'services/api_service.dart';
 import 'services/app_mode.dart';
 import 'services/fcm_service.dart';
+import 'services/web_push_service.dart';
+import 'services/url_cleaner_stub.dart' if (dart.library.html) 'services/url_cleaner_web.dart';
 import 'bloc/auth/auth_bloc.dart';
 import 'bloc/auth/auth_event.dart';
 import 'bloc/auth/auth_state.dart';
@@ -17,6 +20,7 @@ import 'bloc/astrologer/astrologer_bloc.dart';
 import 'bloc/wallet/wallet_bloc.dart';
 import 'bloc/profile/profile_bloc.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/auth/google_profile_completion_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/permission_screen.dart';
 
@@ -24,13 +28,47 @@ import 'screens/permission_screen.dart';
 bool _showPermissions = false;
 Locale? _savedLocale;
 
+/// Session handed back by the Google server-side redirect flow on web
+/// (`/auth/callback?token=&refresh=`), captured at boot before the bloc starts.
+Map<String, String>? _pendingGoogleSession;
+
+/// A `google_error=...` surfaced on the web callback; shown once on the login
+/// screen.
+String? bootGoogleError;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Web: consume the OAuth callback query (token/refresh/error) before anything
+  // else, then scrub it from the address bar. Harmless no-op off the web.
+  if (kIsWeb) {
+    final q = Uri.base.queryParameters;
+    final err = q['google_error'];
+    final token = q['token'];
+    final refresh = q['refresh'];
+    if (err != null && err.isNotEmpty) {
+      bootGoogleError = err;
+      cleanAuthQueryFromUrl();
+    } else if (token != null && token.isNotEmpty && refresh != null && refresh.isNotEmpty) {
+      _pendingGoogleSession = {'token': token, 'refresh': refresh};
+      cleanAuthQueryFromUrl();
+    }
+  }
+
   await ApiService().loadTokens();
   try {
     await FcmService().init();
   } catch (e) {
     debugPrint('FCM init failed (non-fatal): $e');
+  }
+  // Web push (Firebase web + VAPID from public runtime config). Non-fatal;
+  // registration happens after auth. Never blocks boot.
+  if (kIsWeb) {
+    try {
+      await WebPushService().init();
+    } catch (e) {
+      debugPrint('Web push init failed (non-fatal): $e');
+    }
   }
   _showPermissions = await shouldShowPermissionScreen();
 
@@ -97,7 +135,19 @@ class _NakshatralogyUserAppState extends State<NakshatralogyUserApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => AuthBloc()..add(AuthCheckRequested())),
+        BlocProvider(create: (_) {
+          final bloc = AuthBloc();
+          final s = _pendingGoogleSession;
+          if (s != null) {
+            // Web OAuth callback delivered a session — adopt it (routes new
+            // users to profile completion) instead of the normal token check.
+            bloc.add(AuthGoogleSessionReceived(token: s['token']!, refresh: s['refresh']!));
+            _pendingGoogleSession = null;
+          } else {
+            bloc.add(AuthCheckRequested());
+          }
+          return bloc;
+        }),
         BlocProvider(create: (_) => ChartBloc()),
         BlocProvider(create: (_) => ServiceBloc()),
         BlocProvider(create: (_) => AstrologerBloc()),
@@ -139,11 +189,20 @@ class _AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // On web, register the push token once a session is live.
+        if (kIsWeb && state is AuthAuthenticated) {
+          WebPushService().registerAfterLogin();
+        }
+      },
       builder: (context, state) {
         if (state is AuthAuthenticated) return const HomeScreen();
+        if (state is AuthNewGoogleUser) {
+          return GoogleProfileCompletionScreen(user: state.user);
+        }
         if (state is AuthBiometricLocked) return const _BiometricLockScreen();
-        if (state is AuthInitial) {
+        if (state is AuthInitial || state is AuthLoading) {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         return const LoginScreen();

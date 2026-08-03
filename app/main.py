@@ -20,6 +20,7 @@ from app.routers import (
     milan_router, specialist_router, ai_config_router,
     forecast_router, notification_router,
     developer_router, admin_developer_router,
+    config_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -176,6 +177,7 @@ app.include_router(ws_astrologer.router, tags=["WebSocket"])
 app.include_router(ws_agent.router, tags=["WebSocket"])
 app.include_router(admin_router.router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(google_auth_router.router, prefix="/api/v1/google", tags=["Google OAuth"])
+app.include_router(config_router.router, prefix="/api/v1/config", tags=["Public Config"])
 app.include_router(kundli_router.router, prefix="/api/v1/kundli", tags=["Kundli"])
 app.include_router(rashi_router.router, prefix="/api/v1/rashi", tags=["Rashi"])
 app.include_router(agent_router.router, prefix="/api/v1/agent", tags=["AI Agent"])

@@ -70,5 +70,23 @@
 	<string>We need access to your photos so you can set a profile picture.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need camera access so you can take a profile picture.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need microphone access for audio and video consultations.</string>
+	<!-- Google auth deep link: the server-side OAuth callback returns to
+	     nakshatralogy://auth/callback?token=&refresh=. A deep-link plugin
+	     delivers the URI to WebAuthCallback.consumeFromUri. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.nakshatralogy.user.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>nakshatralogy</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

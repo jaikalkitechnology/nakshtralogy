@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/api_service.dart';
 import '../../services/fcm_service.dart';
+import '../../services/google_auth_service.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -15,6 +16,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginRequested>(_onLogin);
     on<AuthSignupRequested>(_onSignup);
     on<AuthGoogleLoginRequested>(_onGoogleLogin);
+    on<AuthGoogleNativeRequested>(_onGoogleNative);
+    on<AuthGoogleSessionReceived>(_onGoogleSession);
+    on<AuthProfileCompleted>(_onProfileCompleted);
     on<AuthForgotPasswordRequested>(_onForgotPassword);
     on<AuthLogoutRequested>(_onLogout);
     on<AuthBiometricVerified>(_onBiometricVerified);
@@ -107,6 +111,60 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
+  }
+
+  /// Native mobile Google sheet → /google/verify. Mobile-only path.
+  Future<void> _onGoogleNative(AuthGoogleNativeRequested event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final fcmToken = await FcmService().getToken();
+      final result = await GoogleAuthService.instance.nativeVerify(fcmToken: fcmToken);
+      if (result == null) {
+        // User cancelled the sheet — return to the login screen.
+        emit(AuthUnauthenticated());
+        return;
+      }
+      if (result['statusCode'] == 200) {
+        final user = (result['user'] ?? {}) as Map<String, dynamic>;
+        if (result['is_new_user'] == true) {
+          emit(AuthNewGoogleUser(user: user));
+        } else {
+          emit(AuthAuthenticated(user: user));
+          _syncFcmTokenInBackground();
+        }
+      } else {
+        emit(AuthFailure(message: result['detail'] ?? 'Google sign-in failed'));
+      }
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
+  }
+
+  /// Adopt a session returned by the server-side redirect flow (web callback /
+  /// mobile deep link). First-time users are routed to profile completion.
+  Future<void> _onGoogleSession(AuthGoogleSessionReceived event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final result = await _api.adoptSessionTokens(token: event.token, refresh: event.refresh);
+      if (result['statusCode'] == 200) {
+        final user = (result['user'] ?? {}) as Map<String, dynamic>;
+        if (result['is_new_user'] == true) {
+          emit(AuthNewGoogleUser(user: user));
+        } else {
+          emit(AuthAuthenticated(user: user));
+          _syncFcmTokenInBackground();
+        }
+      } else {
+        emit(AuthFailure(message: result['detail'] ?? 'Google sign-in failed'));
+      }
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _onProfileCompleted(AuthProfileCompleted event, Emitter<AuthState> emit) async {
+    emit(AuthAuthenticated(user: event.user));
+    _syncFcmTokenInBackground();
   }
 
   Future<void> _onForgotPassword(AuthForgotPasswordRequested event, Emitter<AuthState> emit) async {

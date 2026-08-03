@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
 import 'services/api_service.dart';
 import 'services/fcm_service.dart';
+import 'services/web_push_service.dart';
 import 'bloc/auth/auth_bloc.dart';
 import 'bloc/auth/auth_event.dart';
 import 'bloc/auth/auth_state.dart';
@@ -23,15 +25,46 @@ import 'screens/permission_screen.dart';
 bool _showPermissions = false;
 Locale? _savedLocale;
 
+/// On web, the backend Google callback redirects to
+/// `https://astro.nakshatralogy.com/auth/callback?token=&refresh=`. Capture
+/// those tokens at startup so the auth gate can route the astrologer straight
+/// in. A `google_error` query param (error redirect) is surfaced by the login
+/// screen, which re-reads `Uri.base` on web.
+Future<void> _captureWebAuthCallback() async {
+  if (!kIsWeb) return;
+  final q = Uri.base.queryParameters;
+  final token = q['token'];
+  final refresh = q['refresh'];
+  final err = q['google_error'];
+  if (err != null && err.isNotEmpty) {
+    return; // error path — login screen shows the message
+  }
+  if (token != null && token.isNotEmpty && refresh != null && refresh.isNotEmpty) {
+    try {
+      await ApiService().applyExternalTokens(token, refresh);
+    } catch (e) {
+      debugPrint('Web auth callback token apply failed: $e');
+    }
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiService().loadTokens();
-  try {
-    await FcmService().init();
-  } catch (e) {
-    debugPrint('FCM init failed (non-fatal): $e');
+  // Web Google server-redirect callback (must run before the auth gate reads
+  // the session).
+  await _captureWebAuthCallback();
+  if (kIsWeb) {
+    // Web push uses runtime PUBLIC config (never bundled Firebase options).
+    WebPushService().init();
+  } else {
+    try {
+      await FcmService().init();
+    } catch (e) {
+      debugPrint('FCM init failed (non-fatal): $e');
+    }
   }
-  _showPermissions = await shouldShowPermissionScreen();
+  _showPermissions = kIsWeb ? false : await shouldShowPermissionScreen();
   final prefs = await SharedPreferences.getInstance();
   final langCode = prefs.getString('app_language');
   if (langCode != null) {

@@ -9575,6 +9575,66 @@ class AppLocalizationsBn extends AppLocalizations {
   String get forgotPassword => 'পাসওয়ার্ড ভুলে গেছেন?';
 
   @override
+  String get googleAuthCancelled => 'Google sign-in was cancelled or failed. Please try again.';
+
+  @override
+  String get googleRedirecting => 'Redirecting to Google…';
+
+  @override
+  String get googleWebLoginFailed => 'Couldn\'t start Google sign-in. Please try again.';
+
+  @override
+  String get registerAsAstrologer => 'Register as Astrologer';
+
+  @override
+  String get personalInfo => 'Personal Info';
+
+  @override
+  String get professionalInfo => 'Professional Info';
+
+  @override
+  String get fullNameLabel => 'Full Name';
+
+  @override
+  String get phoneOptional => 'Phone (optional)';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get displayNameLabel => 'Display Name';
+
+  @override
+  String get yearsOfExperience => 'Years of Experience';
+
+  @override
+  String get qualificationLabel => 'Qualification';
+
+  @override
+  String get bioLabel => 'Bio';
+
+  @override
+  String get languagesLabel => 'Languages';
+
+  @override
+  String get specializationsLabel => 'Specializations';
+
+  @override
+  String get alreadyRegistered => 'Already registered? ';
+
+  @override
+  String get requiredField => 'Required';
+
+  @override
+  String get callBrowserUnsupported => 'Voice and video calls aren\'t supported in this browser. Please use the mobile app or a supported browser (Chrome/Edge).';
+
+  @override
+  String get callWebPermissionDenied => 'Microphone or camera permission denied. Enable it in your browser settings to join the call.';
+
+  @override
+  String get chatAttachMobileOnly => 'File attachments are available on the mobile app.';
+
+  @override
   String get sendResetLink => 'রিসেট লিংক পাঠান';
 
   @override

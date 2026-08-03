@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Users, Star, MessageSquare, ShieldCheck, Wallet, CreditCard,
   Gift, Receipt, TrendingUp, Server, Code2, Bell, BarChart3, Settings,
-  FolderKanban, ScrollText, LifeBuoy, Lock,
+  FolderKanban, ScrollText, LifeBuoy, Lock, KeyRound,
 } from "lucide-react";
 import {
   CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandShortcut,
@@ -24,6 +24,8 @@ const DESTINATIONS = [
   { to: "/admin/v2/api", label: "API Management", icon: Server, group: "Platform" },
   { to: "/admin/v2/developers", label: "Developers", icon: Code2, group: "Platform" },
   { to: "/admin/v2/notifications", label: "Notifications", icon: Bell, group: "Platform" },
+  { to: "/admin/v2/google-auth", label: "Google OAuth", icon: KeyRound, group: "Platform" },
+  { to: "/admin/v2/web-push", label: "Web Push", icon: Bell, group: "Platform" },
   { to: "/admin/v2/content", label: "Content Management", icon: FolderKanban, group: "Platform" },
   { to: "/admin/v2/audit-logs", label: "Audit Logs", icon: ScrollText, group: "Platform" },
   { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy, group: "Platform" },

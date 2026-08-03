@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/api_service.dart';
 import '../../services/fcm_service.dart';
+import '../../services/web_push_service.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -95,8 +96,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final fcmToken = await FcmService().getToken();
       debugPrint('Google login FCM token: ${fcmToken != null ? "${fcmToken.substring(0, 20)}..." : "NULL - ${FcmService().getStatusMessage()}"}');
-      final result = await _api.googleLogin(event.idToken, fcmToken: fcmToken);
+      // Contract path: verify the native id_token via /google/verify.
+      var result = await _api.googleVerify(event.idToken, fcmToken: fcmToken);
+      // Fallback to the legacy astrologer google-login if verify isn't
+      // available yet (e.g. 404 while backend rolls out).
+      if (result['statusCode'] == 404 || result['statusCode'] == 405) {
+        result = await _api.googleLogin(event.idToken, fcmToken: fcmToken);
+      }
       if (result['statusCode'] == 200) {
+        // First-time Google astrologers land on HomeScreen, whose KYC gate
+        // routes them into the onboarding/registration (KYC) flow.
         emit(AuthAuthenticated(user: result['user'] ?? {}));
         _syncFcmTokenInBackground();
       } else {
@@ -131,9 +140,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _syncFcmTokenInBackground() {
     Future.delayed(const Duration(seconds: 2), () async {
       try {
-        await FcmService().ensureTokenSynced();
+        if (kIsWeb) {
+          // Web uses firebase_messaging web token via WebPushService.
+          await WebPushService().registerAfterLogin();
+        } else {
+          await FcmService().ensureTokenSynced();
+        }
       } catch (e) {
-        debugPrint('FCM background sync failed: $e');
+        debugPrint('Push token sync failed: $e');
       }
     });
   }

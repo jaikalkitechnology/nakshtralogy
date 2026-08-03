@@ -26,6 +26,15 @@ class AuthBiometricLocked extends AuthState {
   List<Object?> get props => [user];
 }
 
+/// A first-time Google user — route to the profile/region/language completion
+/// step before entering the app. Tokens are already stored.
+class AuthNewGoogleUser extends AuthState {
+  final Map<String, dynamic> user;
+  const AuthNewGoogleUser({required this.user});
+  @override
+  List<Object?> get props => [user];
+}
+
 class AuthFailure extends AuthState {
   final String message;
   const AuthFailure({required this.message});

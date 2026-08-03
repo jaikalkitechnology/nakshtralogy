@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
+import '../../utils/platform_file.dart';
 import '../../services/api_service.dart';
 
 class AstroChatScreen extends StatefulWidget {
@@ -186,8 +187,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
     );
 
     if (result == null || result.isEmpty) return;
-    final file = File(result);
-    if (!await file.exists()) {
+    if (!await localFileExists(result)) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('File not found')));
       return;
     }
@@ -395,6 +395,16 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
             ),
             child: Row(
               children: [
+                // File attachment relies on native filesystem upload; on web,
+                // show a hint instead of the path-based picker.
+                if (kIsWeb)
+                  IconButton(
+                    icon: const Icon(Icons.attach_file, color: AppColors.smoke),
+                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(AppLocalizations.of(context)!.chatAttachMobileOnly)),
+                    ),
+                  )
+                else
                 PopupMenuButton<String>(
                   onSelected: _pickAndUploadFile,
                   icon: const Icon(Icons.attach_file, color: AppColors.gold),

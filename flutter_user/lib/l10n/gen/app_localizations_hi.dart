@@ -10481,6 +10481,47 @@ class AppLocalizationsHi extends AppLocalizations {
   String get forgotPassword => 'पासवर्ड भूल गए?';
 
   @override
+  String get awChooseLanguage => 'अपनी भाषा चुनें';
+
+  @override
+  String get awGoogleFailed => 'Google साइन-इन विफल रहा। कृपया पुनः प्रयास करें।';
+
+  @override
+  String get awCompleteProfileTitle => 'अपनी प्रोफ़ाइल पूरी करें';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'स्वागत है, ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'Nakshatralogy को आपके लिए अनुकूलित करने हेतु कुछ जानकारी।';
+
+  @override
+  String get awRegionLabel => 'क्षेत्र';
+
+  @override
+  String get awRegionIndia => 'भारत';
+
+  @override
+  String get awRegionInternational => 'अंतरराष्ट्रीय';
+
+  @override
+  String get awPreferredLanguage => 'पसंदीदा भाषा';
+
+  @override
+  String get awFinishSetup => 'सेटअप पूरा करें';
+
+  @override
+  String get awChatFileWebUnsupported => 'फ़ाइल साझा करना वेब पर अभी उपलब्ध नहीं है। कृपया मोबाइल ऐप का उपयोग करें।';
+
+  @override
+  String get awVideoUnsupported => 'इस ब्राउज़र में वीडियो कॉल समर्थित नहीं हैं। कृपया हमारे मोबाइल ऐप या समर्थित डेस्कटॉप ब्राउज़र का उपयोग करें।';
+
+  @override
+  String get awClose => 'बंद करें';
+
+  @override
   String get pwPremiumTitle => 'प्रीमियम रिपोर्ट';
 
   @override

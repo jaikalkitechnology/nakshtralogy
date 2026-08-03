@@ -423,6 +423,20 @@ export async function adminDeleteSetting(category: string, key: string) {
   return request(`/admin/settings/${category}/${key}`, { method: "DELETE" });
 }
 
+// ── Web Push (admin) — authWebPlatform/ Task 2.4 ─────────────────
+// The VAPID + Firebase-web config itself is persisted through the generic
+// platform-settings API above (categories `webpush_user` / `webpush_astro`),
+// exactly like every other admin credential screen. This endpoint only fires a
+// one-off "test" web-push against the currently-configured project so an admin
+// can confirm delivery works. `project` is "user" | "astro" (mirrors the FCM
+// upload project naming). Contract: POST /api/v1/admin/webpush/{project}/test.
+export async function adminSendTestWebPush(project: "user" | "astro", token?: string) {
+  return request(`/admin/webpush/${project}/test`, {
+    method: "POST",
+    body: JSON.stringify(token ? { token } : {}),
+  });
+}
+
 export async function adminUploadFcmFile(project: "user" | "astro", file: File) {
   const token = localStorage.getItem("access_token");
   const fd = new FormData();

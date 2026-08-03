@@ -68,26 +68,18 @@ def _get_app_for_role(role: str) -> Optional[firebase_admin.App]:
     return _init_user_app()  # user & admin use user project
 
 
-def send_push(
-    fcm_token: str,
-    title: str,
-    body: str,
-    role: str = "user",
-    data: Optional[dict] = None,
-) -> bool:
-    """
-    Send a push notification to a single device.
-    Uses the correct Firebase project based on user role.
-    """
-    app = _get_app_for_role(role)
-    if not app:
-        logger.warning(f"FCM not available for role={role}, skipping push")
-        return False
+def _send_one(app, token: str, title: str, body: str, data: Optional[dict]) -> bool:
+    """Build and send a single FCM v1 message to one token.
 
+    The same message body works for native (android/apns) AND web tokens —
+    FCM v1 applies the platform-specific block that matches the token type and
+    ignores the rest, and a ``webpush`` block is added so browser tokens get a
+    proper notification payload.
+    """
     try:
         message = messaging.Message(
             notification=messaging.Notification(title=title, body=body),
-            token=fcm_token,
+            token=token,
             data={k: str(v) for k, v in (data or {}).items()},
             android=messaging.AndroidConfig(
                 priority="high",
@@ -101,16 +93,71 @@ def send_push(
                     aps=messaging.Aps(sound="default", badge=1),
                 ),
             ),
+            webpush=messaging.WebpushConfig(
+                notification=messaging.WebpushNotification(title=title, body=body),
+            ),
         )
         response = messaging.send(message, app=app)
         logger.info(f"FCM sent: {response}")
         return True
     except messaging.UnregisteredError:
-        logger.warning(f"FCM token unregistered: {fcm_token[:20]}...")
+        logger.warning(f"FCM token unregistered: {token[:20]}...")
         return False
     except Exception as e:
         logger.error(f"FCM send failed: {e}")
         return False
+
+
+def send_push(
+    fcm_token: Optional[str],
+    title: str,
+    body: str,
+    role: str = "user",
+    data: Optional[dict] = None,
+    web_token: Optional[str] = None,
+) -> bool:
+    """
+    Send a push notification to a device's native token and/or its web token.
+    Uses the correct Firebase project based on user role. Returns True if the
+    message was delivered to at least one token.
+    """
+    app = _get_app_for_role(role)
+    if not app:
+        logger.warning(f"FCM not available for role={role}, skipping push")
+        return False
+
+    tokens = [tok for tok in (fcm_token, web_token) if tok]
+    if not tokens:
+        return False
+
+    sent_any = False
+    for tok in tokens:
+        if _send_one(app, tok, title, body, data):
+            sent_any = True
+    return sent_any
+
+
+def push_to_user(
+    user,
+    title: str,
+    body: str,
+    role: Optional[str] = None,
+    data: Optional[dict] = None,
+) -> bool:
+    """Deliver a notification to every token registered for a User row
+    (native ``fcm_token`` + web ``fcm_token_web``). Convenience wrapper so
+    callers do not have to know how many device tokens a user has."""
+    if not user:
+        return False
+    role = role or getattr(user, "role", "user")
+    return send_push(
+        fcm_token=getattr(user, "fcm_token", None),
+        title=title,
+        body=body,
+        role=role,
+        data=data,
+        web_token=getattr(user, "fcm_token_web", None),
+    )
 
 
 def send_push_multi(
@@ -119,9 +166,12 @@ def send_push_multi(
     body: str,
     role: str = "user",
     data: Optional[dict] = None,
+    web_tokens: Optional[list[str]] = None,
 ) -> int:
-    """Send push to multiple devices. Returns count of successful sends."""
-    if not fcm_tokens:
+    """Send push to multiple devices (native + web tokens). Returns count of
+    successful sends."""
+    all_tokens = [tok for tok in (list(fcm_tokens or []) + list(web_tokens or [])) if tok]
+    if not all_tokens:
         return 0
     app = _get_app_for_role(role)
     if not app:
@@ -130,9 +180,12 @@ def send_push_multi(
     try:
         message = messaging.MulticastMessage(
             notification=messaging.Notification(title=title, body=body),
-            tokens=fcm_tokens,
+            tokens=all_tokens,
             data={k: str(v) for k, v in (data or {}).items()},
             android=messaging.AndroidConfig(priority="high"),
+            webpush=messaging.WebpushConfig(
+                notification=messaging.WebpushNotification(title=title, body=body),
+            ),
         )
         response = messaging.send_each_for_multicast(message, app=app)
         logger.info(f"FCM multicast: {response.success_count} success, {response.failure_count} failed")
@@ -147,10 +200,12 @@ def send_push_multi(
 def notify_call_incoming(
     fcm_token: str, caller_name: str, call_type: str, call_id: str,
     rate_per_min: float = 0, channel_name: str = "", agora_token: str = "", agora_app_id: str = "",
+    web_token: Optional[str] = None,
 ):
     """Push to astrologer when user initiates a call."""
     return send_push(
         fcm_token=fcm_token,
+        web_token=web_token,
         title=f"Incoming {call_type.title()} Call",
         body=f"{caller_name} is calling you",
         role="astrologer",
@@ -171,10 +226,12 @@ def notify_chat_request(
     fcm_token: str, user_name: str, session_id: str,
     rate_per_min: float = 0, rate_per_session: float = 0,
     billing_mode: str = "per_session", session_message_limit: int = 45,
+    web_token: Optional[str] = None,
 ):
     """Push to astrologer when user requests a chat."""
     return send_push(
         fcm_token=fcm_token,
+        web_token=web_token,
         title="New Chat Request",
         body=f"{user_name} wants to chat with you",
         role="astrologer",
@@ -194,10 +251,12 @@ def notify_chat_request(
 def notify_call_accepted(
     fcm_token: str, astrologer_name: str, call_id: str,
     call_type: str = "voice", channel_name: str = "",
+    web_token: Optional[str] = None,
 ):
     """Push to user when astrologer accepts call."""
     return send_push(
         fcm_token=fcm_token,
+        web_token=web_token,
         title="Call Connected",
         body=f"{astrologer_name} accepted your {call_type} call",
         role="user",
@@ -215,10 +274,12 @@ def notify_chat_accepted(
     fcm_token: str, astrologer_name: str, session_id: str,
     rate_per_min: float = 0, rate_per_session: float = 0,
     billing_mode: str = "per_session", session_message_limit: int = 45,
+    web_token: Optional[str] = None,
 ):
     """Push to user when astrologer accepts chat."""
     return send_push(
         fcm_token=fcm_token,
+        web_token=web_token,
         title="Chat Started",
         body=f"{astrologer_name} is ready to chat",
         role="user",
@@ -246,6 +307,8 @@ def notify_live_stream(fcm_tokens: list[str], astrologer_name: str, stream_id: s
     )
 
 
-def notify_generic(fcm_token: str, title: str, body: str, role: str = "user", data: dict = None):
+def notify_generic(fcm_token: str, title: str, body: str, role: str = "user", data: dict = None,
+                   web_token: Optional[str] = None):
     """Generic notification for any purpose."""
-    return send_push(fcm_token=fcm_token, title=title, body=body, role=role, data=data)
+    return send_push(fcm_token=fcm_token, title=title, body=body, role=role, data=data,
+                     web_token=web_token)

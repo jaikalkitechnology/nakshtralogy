@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -56,10 +57,14 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
   }
 
   Future<void> _initAgora() async {
-    if (widget.callType == 'video') {
-      await [Permission.camera, Permission.microphone].request();
-    } else {
-      await Permission.microphone.request();
+    // permission_handler is a no-op / unsupported on web; the browser prompts
+    // for mic/cam when Agora accesses the devices.
+    if (!kIsWeb) {
+      if (widget.callType == 'video') {
+        await [Permission.camera, Permission.microphone].request();
+      } else {
+        await Permission.microphone.request();
+      }
     }
 
     try {
@@ -109,8 +114,13 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
         onError: (err, msg) {
           debugPrint('Agora error: $err $msg');
           if (mounted) {
+            // On web a permission error means the user blocked mic/cam.
+            final isWebPerm = kIsWeb && '$err $msg'.toLowerCase().contains('permission');
+            final text = isWebPerm
+                ? AppLocalizations.of(context)!.callWebPermissionDenied
+                : AppLocalizations.of(context)!.callAgoraError('$err${msg.isNotEmpty ? " — $msg" : ""}');
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(AppLocalizations.of(context)!.callAgoraError('$err${msg.isNotEmpty ? " — $msg" : ""}')),
+              content: Text(text),
               backgroundColor: AppColors.error, duration: const Duration(seconds: 4),
             ));
           }
@@ -141,9 +151,15 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
     } catch (e) {
       debugPrint('Agora init error: $e');
       if (mounted) {
+        // On web, an init failure usually means the browser doesn't support the
+        // Agora Web SDK (or WebRTC is blocked) — show a graceful fallback rather
+        // than a raw error, and never block the rest of the app.
+        final msg = kIsWeb
+            ? AppLocalizations.of(context)!.callBrowserUnsupported
+            : AppLocalizations.of(context)!.callAgoraInitFailed(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppLocalizations.of(context)!.callAgoraInitFailed(e.toString())),
-          backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
+          content: Text(msg),
+          backgroundColor: AppColors.error, duration: const Duration(seconds: 6),
         ));
       }
     }

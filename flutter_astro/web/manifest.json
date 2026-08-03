@@ -1,11 +1,11 @@
 {
-    "name": "nakshatralogy_astro",
-    "short_name": "nakshatralogy_astro",
+    "name": "Nakshatralogy for Astrologers",
+    "short_name": "Nakshatralogy Pro",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0A0A24",
+    "theme_color": "#0A0A24",
+    "description": "Nakshatralogy Pro - the astrologer console for Vedic charts, live consultations, chat, and audio/video calls with your clients.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

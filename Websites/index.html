@@ -2212,26 +2212,27 @@
           </div>
 
           <div class="devapi-endpoints" aria-label="Sample API endpoints">
-            <div class="devapi-endpoint"><b>POST</b> /v1/kundli</div>
-            <div class="devapi-endpoint"><b>POST</b> /v1/milan</div>
-            <div class="devapi-endpoint"><b>GET</b> /v1/dasha/vimshottari</div>
-            <div class="devapi-endpoint"><b>GET</b> /v1/gochar/today</div>
-            <div class="devapi-endpoint"><b>POST</b> /v1/report/career</div>
-            <div class="devapi-endpoint"><b>POST</b> /v1/report/marriage</div>
+            <div class="devapi-endpoint"><b>POST</b> /api/v2/kundli</div>
+            <div class="devapi-endpoint"><b>POST</b> /api/v2/milan</div>
+            <div class="devapi-endpoint"><b>POST</b> /api/v2/kundli/dasha/vimshottari</div>
+            <div class="devapi-endpoint"><b>POST</b> /api/v2/kundli/gochar</div>
+            <div class="devapi-endpoint"><b>POST</b> /api/v2/reports/career</div>
+            <div class="devapi-endpoint"><b>GET</b> /api/v2/products</div>
           </div>
         </div>
 
         <!-- RIGHT: code sample + CTA -->
         <div>
           <pre class="devapi-code" aria-label="Example request"><span class="c-com"># Nakshatralogy Developer API — generate a Kundli</span>
-<span class="c-verb">curl</span> https://api.nakshatralogy.com/v1/kundli \
+<span class="c-verb">curl</span> -X POST https://api.nakshatralogy.com/api/v2/kundli \
   -H <span class="c-str">"Authorization: Bearer sk_live_•••"</span> \
   -H <span class="c-str">"Content-Type: application/json"</span> \
   -d '{
-    <span class="c-key">"name"</span>:  <span class="c-str">"Priya Sharma"</span>,
-    <span class="c-key">"dob"</span>:   <span class="c-str">"15/08/1995"</span>,
-    <span class="c-key">"tob"</span>:   <span class="c-str">"08:30"</span>,
-    <span class="c-key">"place"</span>: <span class="c-str">"Mumbai, India"</span>
+    <span class="c-key">"name"</span>:   <span class="c-str">"Rahul Kumar"</span>,
+    <span class="c-key">"gender"</span>: <span class="c-str">"M"</span>,
+    <span class="c-key">"dob"</span>:    <span class="c-str">"15/08/1992"</span>,
+    <span class="c-key">"tob"</span>:    <span class="c-str">"06:30"</span>,
+    <span class="c-key">"place"</span>:  <span class="c-str">"Delhi, India"</span>
   }'
 
 <span class="c-com"># → { "status": "ok", "data": { "lagna": …,

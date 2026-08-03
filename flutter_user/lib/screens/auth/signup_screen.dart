@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -5,6 +6,9 @@ import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../services/google_auth_service.dart';
+import '../../widgets/language_selector.dart';
+import 'google_profile_completion_screen.dart';
 import '../home/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -40,6 +44,23 @@ class _SignupScreenState extends State<SignupScreen> {
     ));
   }
 
+  /// Continue with Google (sign-up). Same transport as login: web → server
+  /// redirect; mobile → native sheet → /google/verify. First-time users route
+  /// to profile completion.
+  Future<void> _googleSignIn() async {
+    final l = AppLocalizations.of(context)!;
+    if (kIsWeb) {
+      final ok = await GoogleAuthService.instance.startRedirectFlow();
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l.awGoogleFailed), backgroundColor: AppColors.error),
+        );
+      }
+      return;
+    }
+    context.read<AuthBloc>().add(const AuthGoogleNativeRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -47,12 +68,25 @@ class _SignupScreenState extends State<SignupScreen> {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
+        } else if (state is AuthNewGoogleUser) {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+            builder: (_) => GoogleProfileCompletionScreen(user: state.user),
+          ), (route) => false);
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: AppColors.error));
         }
       },
       child: Scaffold(
-        appBar: AppBar(leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context))),
+        appBar: AppBar(
+          leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context)),
+          actions: [
+            TextButton.icon(
+              onPressed: () => LanguageSelector.show(context),
+              icon: const Icon(Icons.language, size: 20, color: AppColors.primary),
+              label: Text(l.awChooseLanguage, style: const TextStyle(color: AppColors.primary)),
+            ),
+          ],
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -89,6 +123,18 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(l.createAccount),
                         );
                       },
+                    ),
+                    const SizedBox(height: 16),
+                    Row(children: [
+                      const Expanded(child: Divider(color: AppColors.border)),
+                      Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text('OR', style: TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+                      const Expanded(child: Divider(color: AppColors.border)),
+                    ]),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: _googleSignIn,
+                      icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                      label: Text(l.continueGoogle),
                     ),
                   ]),
                 ),

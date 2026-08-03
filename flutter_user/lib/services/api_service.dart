@@ -210,6 +210,96 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...data};
   }
 
+  /// Fetch the Google server-side OAuth URL for the shared redirect flow.
+  /// `returnTo` is where the backend callback lands with `?token=&refresh=`
+  /// (the web SPA callback route, or the mobile deep link). Returns
+  /// {url, state}. Credentials stay server-side (admin `platform_settings`).
+  Future<Map<String, dynamic>> googleLoginUrl({required String returnTo}) async {
+    final uri = Uri.parse(ApiConstants.googleLoginUrl).replace(queryParameters: {
+      'role': 'user',
+      'return_to': returnTo,
+    });
+    final resp = await http.get(uri, headers: {'Accept-Language': _langCode});
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Verify a native Google `id_token` (from the `google_sign_in` sheet) with
+  /// the backend, which checks the audience against the stored client IDs and
+  /// find-or-creates the user. Returns {token, refresh, is_new_user, user?}.
+  Future<Map<String, dynamic>> googleVerify(String idToken, {String? fcmToken}) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.googleVerify),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({
+        'id_token': idToken,
+        'role': 'user',
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
+    );
+    final data = jsonDecode(resp.body);
+    if (resp.statusCode == 200) {
+      final access = data['token'] ?? data['access_token'];
+      final refresh = data['refresh'] ?? data['refresh_token'];
+      if (access is String && refresh is String) {
+        await _saveTokens(access, refresh);
+        if (data['user'] != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_data', jsonEncode(data['user']));
+        }
+      }
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
+  /// Adopt a session delivered by the server-side redirect flow (web callback
+  /// route / mobile deep link carrying `?token=&refresh=`). Persists the tokens
+  /// then hydrates `user_data` from GET /me. Returns
+  /// {statusCode, user, is_new_user}.
+  Future<Map<String, dynamic>> adoptSessionTokens({
+    required String token,
+    required String refresh,
+  }) async {
+    await _saveTokens(token, refresh);
+    try {
+      final me = await getMe();
+      if (me['statusCode'] == 200) {
+        final user = (me['user'] ?? me) as Map<String, dynamic>;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(user));
+        final isNew = user['is_new_user'] == true ||
+            user['profile_complete'] == false ||
+            (user['dob'] == null || (user['dob'] as String?)?.isEmpty == true);
+        return {'statusCode': 200, 'user': user, 'is_new_user': isNew};
+      }
+      return {'statusCode': me['statusCode'] ?? 500, ...me};
+    } catch (e) {
+      return {'statusCode': 500, 'detail': 'Session adoption failed: $e'};
+    }
+  }
+
+  /// Public web-push config for runtime Firebase init on web (never secrets).
+  /// GET /config/webpush?role=user → {vapid_public_key, web_api_key,
+  /// web_app_id, web_project_id, web_messaging_sender_id, web_auth_domain}.
+  Future<Map<String, dynamic>> getWebPushConfig() async {
+    final uri = Uri.parse(ApiConstants.webpushConfig)
+        .replace(queryParameters: {'role': 'user'});
+    final resp = await http.get(uri, headers: {'Accept-Language': _langCode});
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Register a push token with the user device-token table. `platform` is
+  /// "web" for web push (FCM web tokens) or android/ios elsewhere.
+  Future<Map<String, dynamic>> registerPushToken({
+    required String token,
+    String platform = 'web',
+  }) async {
+    final resp = await _authPost(
+      Uri.parse(ApiConstants.userPushRegister),
+      body: jsonEncode({'token': token, 'platform': platform}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> forgotPassword(String email) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.userForgotPassword),

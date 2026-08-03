@@ -57,7 +57,7 @@
     { "@type": "Question", "name": "What is the Nakshatralogy Developer API?", "acceptedAnswer": { "@type": "Answer", "text": "A REST API that exposes the Nakshatralogy Vedic astrology engine — generate Kundli birth charts, 16 specialist reports, Kundli Milan compatibility, Vimshottari and other dashas, planetary transits, and today's forecast — returning clean JSON. It uses the same Lahiri Ayanamsa + Swiss Ephemeris calculations as the Nakshatralogy apps." } },
     { "@type": "Question", "name": "How much does the astrology API cost?", "acceptedAnswer": { "@type": "Answer", "text": "There is one monthly All-Access subscription that unlocks every product. Calls are metered and funded from a prepaid wallet, and the API is rate-limited to 1 request per second. Current pricing and tiers are shown when you sign up at developer.nakshatralogy.com." } },
     { "@type": "Question", "name": "How do I get API keys?", "acceptedAnswer": { "@type": "Answer", "text": "Sign up at developer.nakshatralogy.com as a company (with GST) or individual, verify your account, subscribe to the All-Access plan, fund your wallet, and generate API keys from the developer dashboard. You can rotate keys and view usage anytime." } },
-    { "@type": "Question", "name": "Which astrology endpoints are available?", "acceptedAnswer": { "@type": "Answer", "text": "Endpoints include /v1/kundli, /v1/milan (Kundli Milan), /v1/dasha/vimshottari, /v1/gochar/today (transits), and /v1/report/{engine} for the 16 specialist reports such as career, marriage, wealth, and health. See the docs at developer.nakshatralogy.com/docs." } }
+    { "@type": "Question", "name": "Which astrology endpoints are available?", "acceptedAnswer": { "@type": "Answer", "text": "The base URL is https://api.nakshatralogy.com and all endpoints live under the /api/v2 prefix. Examples: POST /api/v2/kundli, POST /api/v2/milan (Kundli Milan), POST /api/v2/kundli/dasha/vimshottari, POST /api/v2/kundli/gochar (transits), and POST /api/v2/reports/{key} for the specialist reports (career, marriage, wealth, health, and more). Call GET /api/v2/products to discover every product and report key. See the docs at developer.nakshatralogy.com/docs." } }
   ]
 }
 </script>
@@ -242,37 +242,37 @@
         <div class="prod-ic">🪐</div>
         <h3>Kundli &amp; <em>Charts</em></h3>
         <p>Full Vedic birth chart: lagna, planets, 20 divisional charts (D-1…D-60), nakshatras, dignities.</p>
-        <code>POST /v1/kundli</code>
+        <code>POST /api/v2/kundli</code>
       </div>
       <div class="prod">
         <div class="prod-ic">💞</div>
         <h3>Kundli <em>Milan</em></h3>
         <p>Ashtakoot (8-Gun) matching, Mangal Dosh, Navamsa cross, and modern compatibility scoring.</p>
-        <code>POST /v1/milan</code>
+        <code>POST /api/v2/milan</code>
       </div>
       <div class="prod">
         <div class="prod-ic">📜</div>
         <h3>16 Specialist <em>Reports</em></h3>
         <p>Career, business, wealth, marriage, love, health, education, property, legal, life-path &amp; more.</p>
-        <code>POST /v1/report/{engine}</code>
+        <code>POST /api/v2/reports/{key}</code>
       </div>
       <div class="prod">
         <div class="prod-ic">⏳</div>
         <h3><em>Dashas</em></h3>
         <p>Vimshottari and other dasha trees, multi-level, with running-period awareness.</p>
-        <code>GET /v1/dasha/vimshottari</code>
+        <code>POST /api/v2/kundli/dasha/vimshottari</code>
       </div>
       <div class="prod">
         <div class="prod-ic">🌗</div>
         <h3>Transits (<em>Gochar</em>)</h3>
         <p>Daily rashi transit scores and ranges for planning and notifications.</p>
-        <code>GET /v1/gochar/today</code>
+        <code>POST /api/v2/kundli/gochar</code>
       </div>
       <div class="prod">
         <div class="prod-ic">🔮</div>
         <h3>Today's <em>Forecast</em></h3>
         <p>Personalised daily forecast derived from chart + transits, ready to render.</p>
-        <code>POST /v1/forecast/today</code>
+        <code>POST /api/v2/forecast</code>
       </div>
     </div>
   </section>
@@ -299,14 +299,15 @@
     </div>
     <div class="two-col">
       <pre class="code" aria-label="Example request and response"><span class="c"># Generate a Kundli</span>
-<span class="v">curl</span> https://api.nakshatralogy.com/v1/kundli \
+<span class="v">curl</span> -X POST https://api.nakshatralogy.com/api/v2/kundli \
   -H <span class="s">"Authorization: Bearer sk_live_•••"</span> \
   -H <span class="s">"Content-Type: application/json"</span> \
   -d '{
-    <span class="k">"name"</span>:  <span class="s">"Priya Sharma"</span>,
-    <span class="k">"dob"</span>:   <span class="s">"15/08/1995"</span>,
-    <span class="k">"tob"</span>:   <span class="s">"08:30"</span>,
-    <span class="k">"place"</span>: <span class="s">"Mumbai, India"</span>
+    <span class="k">"name"</span>:   <span class="s">"Rahul Kumar"</span>,
+    <span class="k">"gender"</span>: <span class="s">"M"</span>,
+    <span class="k">"dob"</span>:    <span class="s">"15/08/1992"</span>,
+    <span class="k">"tob"</span>:    <span class="s">"06:30"</span>,
+    <span class="k">"place"</span>:  <span class="s">"Delhi, India"</span>
   }'
 
 <span class="c"># 200 OK</span>
@@ -321,14 +322,14 @@
 }</pre>
       <div>
         <div class="endpoints">
-          <div class="ep"><span class="verb post">POST</span> /v1/kundli</div>
-          <div class="ep"><span class="verb post">POST</span> /v1/milan</div>
-          <div class="ep"><span class="verb get">GET</span> /v1/dasha/vimshottari</div>
-          <div class="ep"><span class="verb get">GET</span> /v1/gochar/today</div>
-          <div class="ep"><span class="verb post">POST</span> /v1/report/career</div>
-          <div class="ep"><span class="verb post">POST</span> /v1/report/marriage</div>
-          <div class="ep"><span class="verb post">POST</span> /v1/report/wealth</div>
-          <div class="ep"><span class="verb post">POST</span> /v1/forecast/today</div>
+          <div class="ep"><span class="verb get">GET</span> /api/v2/products</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/kundli</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/milan</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/kundli/dasha/vimshottari</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/kundli/gochar</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/reports/career</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/reports/marriage</div>
+          <div class="ep"><span class="verb post">POST</span> /api/v2/forecast</div>
         </div>
         <p style="margin-top:18px;font-size:13px;color:var(--smoke)">All responses use the <code style="font-family:var(--font-mono);color:var(--aurora-mint)">{ status, data, meta }</code> envelope. Errors return standard HTTP codes with a machine-readable body. Full reference in the <a href="https://developer.nakshatralogy.com/docs">docs</a>.</p>
       </div>
@@ -378,7 +379,8 @@
       <details class="faq-item" open><summary>What is the Nakshatralogy Developer API?</summary><div class="a">A REST API that exposes the Nakshatralogy Vedic astrology engine — Kundli birth charts, 16 specialist reports, Kundli Milan compatibility, Vimshottari and other dashas, planetary transits, and today's forecast — returning clean JSON. It uses the same Lahiri Ayanamsa + Swiss Ephemeris calculations as the Nakshatralogy apps.</div></details>
       <details class="faq-item"><summary>How much does the API cost?</summary><div class="a">One monthly All-Access subscription unlocks every product. Calls are metered and funded from a prepaid wallet, and the API is rate-limited to 1 request per second. Current pricing and tiers are shown when you sign up at developer.nakshatralogy.com.</div></details>
       <details class="faq-item"><summary>How do I get API keys?</summary><div class="a">Sign up as a company (with GST) or individual, verify your account, subscribe to the All-Access plan, fund your wallet, and generate keys from the dashboard. You can rotate keys and view usage anytime.</div></details>
-      <details class="faq-item"><summary>Which endpoints are available?</summary><div class="a">Endpoints include <code style="font-family:var(--font-mono);color:var(--aurora-mint)">/v1/kundli</code>, <code style="font-family:var(--font-mono);color:var(--aurora-mint)">/v1/milan</code>, <code style="font-family:var(--font-mono);color:var(--aurora-mint)">/v1/dasha/vimshottari</code>, <code style="font-family:var(--font-mono);color:var(--aurora-mint)">/v1/gochar/today</code>, and <code style="font-family:var(--font-mono);color:var(--aurora-mint)">/v1/report/{engine}</code> for the 16 specialist reports. See the docs for the full list.</div></details>
+      <details class="faq-item"><summary>What is the base URL and how do I authenticate?</summary><div class="a">The base URL is <code style="font-family:var(--font-mono);color:var(--aurora-mint)">https://api.nakshatralogy.com</code> and every endpoint lives under <code style="font-family:var(--font-mono);color:var(--aurora-mint)">/api/v2</code>. Authenticate by sending your key as a bearer token: <code style="font-family:var(--font-mono);color:var(--aurora-mint)">Authorization: Bearer sk_live_…</code> (use an <code style="font-family:var(--font-mono);color:var(--aurora-mint)">sk_test_…</code> key while integrating).</div></details>
+      <details class="faq-item"><summary>Which endpoints are available?</summary><div class="a">Examples: <code style="font-family:var(--font-mono);color:var(--aurora-mint)">POST /api/v2/kundli</code>, <code style="font-family:var(--font-mono);color:var(--aurora-mint)">POST /api/v2/milan</code>, <code style="font-family:var(--font-mono);color:var(--aurora-mint)">POST /api/v2/kundli/dasha/vimshottari</code>, <code style="font-family:var(--font-mono);color:var(--aurora-mint)">POST /api/v2/kundli/gochar</code>, and <code style="font-family:var(--font-mono);color:var(--aurora-mint)">POST /api/v2/reports/{key}</code> for the specialist reports. Call <code style="font-family:var(--font-mono);color:var(--aurora-mint)">GET /api/v2/products</code> to list every product and report key.</div></details>
       <details class="faq-item"><summary>Can I use it internationally?</summary><div class="a">Yes — the engine computes charts for birthplaces worldwide. Billing supports Indian and international developers; see the sign-up flow for the options available in your region.</div></details>
       <details class="faq-item"><summary>What are the usage terms?</summary><div class="a">Use is governed by the <a href="terms.html#part-d">Developer API terms</a>: keep keys confidential, respect the rate limit and fair-use, don't resell the raw API, and surface an equivalent guidance/entertainment disclaimer to your end users.</div></details>
     </div>

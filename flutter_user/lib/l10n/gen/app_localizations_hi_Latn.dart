@@ -10481,6 +10481,47 @@ class AppLocalizationsHiLatn extends AppLocalizations {
   String get forgotPassword => 'Password Bhool Gaye?';
 
   @override
+  String get awChooseLanguage => 'Apni bhasha chunein';
+
+  @override
+  String get awGoogleFailed => 'Google sign-in fail ho gaya. Kripya dobara try karein.';
+
+  @override
+  String get awCompleteProfileTitle => 'Apni profile poori karein';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'Welcome, ${name}!';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'Nakshatralogy ko aapke liye personalize karne ke liye kuch details.';
+
+  @override
+  String get awRegionLabel => 'Region';
+
+  @override
+  String get awRegionIndia => 'India';
+
+  @override
+  String get awRegionInternational => 'International';
+
+  @override
+  String get awPreferredLanguage => 'Pasandeeda bhasha';
+
+  @override
+  String get awFinishSetup => 'Setup poora karein';
+
+  @override
+  String get awChatFileWebUnsupported => 'File sharing web par abhi available nahi hai. Kripya mobile app use karein.';
+
+  @override
+  String get awVideoUnsupported => 'Is browser mein video calls support nahi hain. Kripya hamara mobile app ya supported desktop browser use karein.';
+
+  @override
+  String get awClose => 'Close';
+
+  @override
   String get pwPremiumTitle => 'Premium Report';
 
   @override

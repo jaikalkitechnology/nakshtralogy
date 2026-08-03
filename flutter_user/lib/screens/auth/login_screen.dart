@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -9,8 +9,12 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../services/api_service.dart';
+import '../../services/google_auth_service.dart';
+import '../../widgets/language_selector.dart';
+import '../../main.dart' show bootGoogleError;
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
+import 'google_profile_completion_screen.dart';
 import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -31,6 +35,18 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _checkBiometric();
+    // Surface a Google callback error carried from the web redirect (once).
+    if (bootGoogleError != null) {
+      final msg = bootGoogleError!;
+      bootGoogleError = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(msg), backgroundColor: AppColors.error),
+          );
+        }
+      });
+    }
   }
 
   Future<void> _checkBiometric() async {
@@ -72,28 +88,28 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  /// Continue with Google.
+  ///
+  /// * Web (`kIsWeb`): the locked primary path — server-side redirect. Fetch
+  ///   `login-url` (role=user, return_to = the SPA `/auth/callback`) and
+  ///   navigate the tab to Google. The session returns via the callback route
+  ///   with `?token=&refresh=` (consumed at app boot).
+  /// * Mobile: use the native `google_sign_in` sheet → POST /google/verify
+  ///   (the allowed native path, fully functional without a deep-link plugin);
+  ///   the server-redirect + `nakshatralogy://auth/callback` deep link is wired
+  ///   in the platform manifests for when a deep-link plugin is added.
   Future<void> _googleSignIn() async {
-    try {
-      // serverClientId is your Google OAuth WEB client ID (not Android).
-      // Required for idToken. Set this from your Google Cloud Console.
-      final googleUser = await GoogleSignIn(
-        scopes: ['email', 'profile'],
-        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: ''),
-      ).signIn();
-      if (googleUser == null) return; // user cancelled
-      final auth = await googleUser.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Google Sign-In: No ID token received. Ensure GOOGLE_WEB_CLIENT_ID is set and google-services.json is configured.'),
-          backgroundColor: AppColors.error, duration: Duration(seconds: 5),
-        ));
-        return;
+    final l = AppLocalizations.of(context)!;
+    if (kIsWeb) {
+      final ok = await GoogleAuthService.instance.startRedirectFlow();
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l.awGoogleFailed), backgroundColor: AppColors.error),
+        );
       }
-      if (mounted) context.read<AuthBloc>().add(AuthGoogleLoginRequested(idToken: idToken));
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In error: $e'), backgroundColor: AppColors.error));
+      return; // the tab navigates away on success
     }
+    context.read<AuthBloc>().add(const AuthGoogleNativeRequested());
   }
 
   @override
@@ -103,6 +119,11 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        } else if (state is AuthNewGoogleUser) {
+          // First-time Google user → profile/region/language completion.
+          Navigator.pushReplacement(context, MaterialPageRoute(
+            builder: (_) => GoogleProfileCompletionScreen(user: state.user),
+          ));
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
@@ -115,7 +136,20 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
-                const SizedBox(height: 60),
+                const SizedBox(height: 8),
+                // Auth-screen language chooser — honors AppMode (India shows
+                // Indian languages; International hides them). Persists + applies
+                // immediately via LanguageSelector → NakshatralogyUserApp.setLocale.
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () => LanguageSelector.show(context),
+                    icon: const Icon(Icons.language, size: 20, color: AppColors.primary),
+                    label: Text(l.awChooseLanguage,
+                        style: const TextStyle(color: AppColors.primary)),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset('assets/icon/ic_launcher_foreground.png', width: 80, height: 80),

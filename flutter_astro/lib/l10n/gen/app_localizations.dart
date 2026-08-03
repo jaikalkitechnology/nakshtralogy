@@ -230,6 +230,126 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
+  /// No description provided for @googleAuthCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled or failed. Please try again.'**
+  String get googleAuthCancelled;
+
+  /// No description provided for @googleRedirecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Redirecting to Google…'**
+  String get googleRedirecting;
+
+  /// No description provided for @googleWebLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start Google sign-in. Please try again.'**
+  String get googleWebLoginFailed;
+
+  /// No description provided for @registerAsAstrologer.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as Astrologer'**
+  String get registerAsAstrologer;
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Info'**
+  String get personalInfo;
+
+  /// No description provided for @professionalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Info'**
+  String get professionalInfo;
+
+  /// No description provided for @fullNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullNameLabel;
+
+  /// No description provided for @phoneOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone (optional)'**
+  String get phoneOptional;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @displayNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Name'**
+  String get displayNameLabel;
+
+  /// No description provided for @yearsOfExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Years of Experience'**
+  String get yearsOfExperience;
+
+  /// No description provided for @qualificationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Qualification'**
+  String get qualificationLabel;
+
+  /// No description provided for @bioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get bioLabel;
+
+  /// No description provided for @languagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get languagesLabel;
+
+  /// No description provided for @specializationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Specializations'**
+  String get specializationsLabel;
+
+  /// No description provided for @alreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Already registered? '**
+  String get alreadyRegistered;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get requiredField;
+
+  /// No description provided for @callBrowserUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice and video calls aren\'t supported in this browser. Please use the mobile app or a supported browser (Chrome/Edge).'**
+  String get callBrowserUnsupported;
+
+  /// No description provided for @callWebPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone or camera permission denied. Enable it in your browser settings to join the call.'**
+  String get callWebPermissionDenied;
+
+  /// No description provided for @chatAttachMobileOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'File attachments are available on the mobile app.'**
+  String get chatAttachMobileOnly;
+
   /// No description provided for @updatePhoto.
   ///
   /// In en, this message translates to:

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../theme/app_theme.dart';
@@ -35,10 +35,12 @@ class AvatarPicker extends StatefulWidget {
 }
 
 class _AvatarPickerState extends State<AvatarPicker> {
-  File? _local;
+  // Local preview bytes (web-safe: XFile.readAsBytes works on every platform,
+  // avoiding a dart:io File which breaks the web build).
+  Uint8List? _localBytes;
   bool _busy = false;
 
-  bool get _hasImage => _local != null || (widget.imageUrl != null && widget.imageUrl!.isNotEmpty);
+  bool get _hasImage => _localBytes != null || (widget.imageUrl != null && widget.imageUrl!.isNotEmpty);
 
   Future<void> _pick(ImageSource source) async {
     if (Navigator.canPop(context)) Navigator.pop(context);
@@ -50,8 +52,9 @@ class _AvatarPickerState extends State<AvatarPicker> {
         maxHeight: 1024,
       );
       if (x == null) return;
+      final bytes = await x.readAsBytes();
       setState(() {
-        _local = File(x.path);
+        _localBytes = bytes;
         _busy = true;
       });
       final resp = await ApiService().uploadChatFile(x.path, x.name);
@@ -61,11 +64,11 @@ class _AvatarPickerState extends State<AvatarPicker> {
         await widget.onUploaded(url as String);
         _snack(AppLocalizations.of(context)?.photoUpdated ?? 'Photo updated', AppColors.success);
       } else {
-        setState(() => _local = null);
+        setState(() => _localBytes = null);
         _snack(AppLocalizations.of(context)?.photoUploadFailed ?? 'Couldn\'t upload photo. Please try again.', AppColors.error);
       }
     } catch (_) {
-      if (mounted) setState(() => _local = null);
+      if (mounted) setState(() => _localBytes = null);
       _snack(AppLocalizations.of(context)?.photoUploadFailed ?? 'Couldn\'t upload photo. Please try again.', AppColors.error);
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -74,7 +77,7 @@ class _AvatarPickerState extends State<AvatarPicker> {
 
   Future<void> _remove() async {
     if (Navigator.canPop(context)) Navigator.pop(context);
-    setState(() => _local = null);
+    setState(() => _localBytes = null);
     if (widget.onRemoved != null) await widget.onRemoved!();
   }
 
@@ -173,8 +176,8 @@ class _AvatarPickerState extends State<AvatarPicker> {
   }
 
   Widget _imageLayer(double d) {
-    if (_local != null) {
-      return Image.file(_local!, width: d, height: d, fit: BoxFit.cover);
+    if (_localBytes != null) {
+      return Image.memory(_localBytes!, width: d, height: d, fit: BoxFit.cover);
     }
     final url = widget.imageUrl;
     if (url != null && url.isNotEmpty) {

@@ -5305,6 +5305,61 @@
     "punjabi": "Firebase {project} ਪ੍ਰਮਾਣ ਪੱਤਰ ਸਫ਼ਲਤਾਪੂਰਵਕ ਅੱਪਲੋਡ ਹੋਏ",
     "odia": "Firebase {project} କ୍ରେଡେନଶିଆଲ ସଫଳତାର ସହ ଅପଲୋଡ ହେଲା"
   },
+  "err.google_audience_mismatch": {
+    "english": "Google token audience does not match a configured client ID",
+    "hindi": "Google टोकन का ऑडियंस कॉन्फ़िगर किए गए क्लाइंट आईडी से मेल नहीं खाता",
+    "hinglish": "Google token ka audience configured client ID se match nahi karta"
+  },
+  "err.google_role_mismatch": {
+    "english": "This Google account is registered for a different role",
+    "hindi": "यह Google खाता किसी अन्य भूमिका के लिए पंजीकृत है",
+    "hinglish": "Ye Google account kisi dusre role ke liye registered hai"
+  },
+  "err.push_token_required": {
+    "english": "A push token is required",
+    "hindi": "एक पुश टोकन आवश्यक है",
+    "hinglish": "Push token zaroori hai"
+  },
+  "err.invalid_webpush_project": {
+    "english": "Invalid web push project (must be 'user' or 'astro')",
+    "hindi": "अमान्य वेब पुश प्रोजेक्ट ('user' या 'astro' होना चाहिए)",
+    "hinglish": "Invalid web push project ('user' ya 'astro' hona chahiye)"
+  },
+  "err.webpush_token_required": {
+    "english": "A web push token is required",
+    "hindi": "एक वेब पुश टोकन आवश्यक है",
+    "hinglish": "Web push token zaroori hai"
+  },
+  "err.webpush_test_failed": {
+    "english": "Failed to send test web push notification",
+    "hindi": "परीक्षण वेब पुश सूचना भेजने में विफल",
+    "hinglish": "Test web push notification bhejne me fail ho gaya"
+  },
+  "msg.push_token_registered": {
+    "english": "Push token registered",
+    "hindi": "पुश टोकन पंजीकृत किया गया",
+    "hinglish": "Push token register ho gaya"
+  },
+  "msg.webpush_saved": {
+    "english": "Web push configuration saved for {project}",
+    "hindi": "{project} के लिए वेब पुश कॉन्फ़िगरेशन सहेजा गया",
+    "hinglish": "{project} ke liye web push configuration save ho gaya"
+  },
+  "msg.webpush_test_sent": {
+    "english": "Test web push notification sent",
+    "hindi": "परीक्षण वेब पुश सूचना भेजी गई",
+    "hinglish": "Test web push notification bhej diya gaya"
+  },
+  "label.webpush.test_title": {
+    "english": "Test Notification",
+    "hindi": "परीक्षण सूचना",
+    "hinglish": "Test Notification"
+  },
+  "label.webpush.test_body": {
+    "english": "This is a test web push from Nakshatralogy",
+    "hindi": "यह Nakshatralogy से एक परीक्षण वेब पुश है",
+    "hinglish": "Ye Nakshatralogy se ek test web push hai"
+  },
   "msg.gift_deleted": {
     "english": "Gift deleted",
     "hindi": "उपहार हटाया गया",

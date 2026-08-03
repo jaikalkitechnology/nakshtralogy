@@ -9,6 +9,47 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
+  String get awChooseLanguage => '言語を選択';
+
+  @override
+  String get awGoogleFailed => 'Google サインインに失敗しました。もう一度お試しください。';
+
+  @override
+  String get awCompleteProfileTitle => 'プロフィールを完成させる';
+
+  @override
+  String awWelcomeName(String name) {
+    return 'ようこそ、${name} さん！';
+  }
+
+  @override
+  String get awCompleteProfileSubtitle => 'Nakshatralogy をあなた向けにカスタマイズするためのいくつかの詳細です。';
+
+  @override
+  String get awRegionLabel => '地域';
+
+  @override
+  String get awRegionIndia => 'インド';
+
+  @override
+  String get awRegionInternational => 'インターナショナル';
+
+  @override
+  String get awPreferredLanguage => '希望する言語';
+
+  @override
+  String get awFinishSetup => '設定を完了する';
+
+  @override
+  String get awChatFileWebUnsupported => 'ファイル共有はまだウェブでは利用できません。モバイルアプリをご利用ください。';
+
+  @override
+  String get awVideoUnsupported => 'このブラウザーはビデオ通話に対応していません。モバイルアプリまたは対応するデスクトップブラウザーをご利用ください。';
+
+  @override
+  String get awClose => '閉じる';
+
+  @override
   String get pwPremiumTitle => 'プレミアムレポート';
 
   @override
