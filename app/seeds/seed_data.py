@@ -577,6 +577,12 @@ def _seed_service_pricing(db: Session) -> int:
             continue
         db.add(ServicePricing(**sp))
         created += 1
+    # Backfill legacy rows created before the USD columns existed: the
+    # non-nullable boolean price_usd_manual is NULL on those rows (the column
+    # was ALTER-added), which breaks response serialization. Normalize to False.
+    db.query(ServicePricing).filter(ServicePricing.price_usd_manual.is_(None)).update(
+        {ServicePricing.price_usd_manual: False}, synchronize_session=False
+    )
     return created
 
 
