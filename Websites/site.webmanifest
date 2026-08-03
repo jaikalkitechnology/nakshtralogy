@@ -1,0 +1,15 @@
+{
+  "name": "Nakshatralogy",
+  "short_name": "Nakshatralogy",
+  "description": "Vedic astrology — free Kundli, AI reports, live astrologer consultation, and a developer API. By Jaikalki Technology Pvt Ltd.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A24",
+  "theme_color": "#0A0A24",
+  "icons": [
+    { "src": "/assets/img/favicon-64.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "/assets/img/favicon-128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/assets/img/favicon-256.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "/assets/img/nakshatralogy-app-icon.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
