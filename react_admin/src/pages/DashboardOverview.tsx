@@ -24,10 +24,10 @@ const REVENUE_BY_FILTER: Record<RevenueFilter, { d: string; revenue: number; com
 };
 
 const QUICK = [
-  { icon: CheckCircle2, label: "Approve KYC", to: "/admin/v2/kyc" }, { icon: UserPlus, label: "Add Astrologer", to: "/admin/v2/astrologers" },
-  { icon: Ticket, label: "Create Coupon", to: "/admin/v2/gifts" }, { icon: CreditCard, label: "Create Pricing", to: "/admin/v2/pricing" },
-  { icon: Bell, label: "Send Notification", to: "/admin/v2/notifications" }, { icon: FileText, label: "Generate Report", to: "/admin/v2/analytics" },
-  { icon: RefreshCw, label: "Refresh Cache", to: "/admin/v2/settings" }, { icon: Database, label: "Backup DB", to: "/admin/v2/settings" }, { icon: Play, label: "API Playground", to: "/admin/v2/api" },
+  { icon: CheckCircle2, label: "Approve KYC", to: "/admin/kyc" }, { icon: UserPlus, label: "Add Astrologer", to: "/admin/astrologers" },
+  { icon: Ticket, label: "Create Coupon", to: "/admin/gifts" }, { icon: CreditCard, label: "Create Pricing", to: "/admin/pricing" },
+  { icon: Bell, label: "Send Notification", to: "/admin/notifications" }, { icon: FileText, label: "Generate Report", to: "/admin/analytics" },
+  { icon: RefreshCw, label: "Refresh Cache", to: "/admin/settings" }, { icon: Database, label: "Backup DB", to: "/admin/settings" }, { icon: Play, label: "API Playground", to: "/admin/api" },
 ];
 
 const ACTIVITY = [
@@ -39,11 +39,11 @@ const ACTIVITY = [
 ];
 
 const APPROVALS = [
-  { icon: ShieldAlert, label: "KYC Documents", count: 37, priority: "high", to: "/admin/v2/kyc" },
-  { icon: Wallet, label: "Withdrawal Requests", count: 12, priority: "high", to: "/admin/v2/wallet" },
-  { icon: MessageSquareWarning, label: "Reported Reviews", count: 5, priority: "medium", to: "/admin/v2/reviews" },
-  { icon: UserCog, label: "Astrologer Applications", count: 9, priority: "medium", to: "/admin/v2/astrologers" },
-  { icon: RotateCcw, label: "Refund Requests", count: 3, priority: "low", to: "/admin/v2/wallet" },
+  { icon: ShieldAlert, label: "KYC Documents", count: 37, priority: "high", to: "/admin/kyc" },
+  { icon: Wallet, label: "Withdrawal Requests", count: 12, priority: "high", to: "/admin/wallet" },
+  { icon: MessageSquareWarning, label: "Reported Reviews", count: 5, priority: "medium", to: "/admin/reviews" },
+  { icon: UserCog, label: "Astrologer Applications", count: 9, priority: "medium", to: "/admin/astrologers" },
+  { icon: RotateCcw, label: "Refund Requests", count: 3, priority: "low", to: "/admin/wallet" },
 ];
 
 const PRIORITY_TONE: Record<string, string> = {

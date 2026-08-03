@@ -59,18 +59,18 @@ type Tab = "users" | "astrologers" | "reviews" | "kyc" | "wallet" | "pricing" | 
 // underlying section (e.g. Wallet / Transactions / Revenue all render the
 // existing wallet ledger + stats, since that's the one real data source).
 const ROUTE_TAB: Record<string, Tab> = {
-  "/admin/v2/users": "users",
-  "/admin/v2/astrologers": "astrologers",
-  "/admin/v2/reviews": "reviews",
-  "/admin/v2/kyc": "kyc",
-  "/admin/v2/wallet": "wallet",
-  "/admin/v2/transactions": "wallet",
-  "/admin/v2/revenue": "wallet",
-  "/admin/v2/pricing": "pricing",
-  "/admin/v2/gifts": "gifts",
-  "/admin/v2/api": "agora",
-  "/admin/v2/settings": "settings",
-  "/admin/v2/developers": "developers",
+  "/admin/users": "users",
+  "/admin/astrologers": "astrologers",
+  "/admin/reviews": "reviews",
+  "/admin/kyc": "kyc",
+  "/admin/wallet": "wallet",
+  "/admin/transactions": "wallet",
+  "/admin/revenue": "wallet",
+  "/admin/pricing": "pricing",
+  "/admin/gifts": "gifts",
+  "/admin/api": "agora",
+  "/admin/settings": "settings",
+  "/admin/developers": "developers",
 };
 
 /**

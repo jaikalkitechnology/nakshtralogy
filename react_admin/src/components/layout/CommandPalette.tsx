@@ -10,29 +10,29 @@ import {
 } from "@/components/ui/command";
 
 const DESTINATIONS = [
-  { to: "/admin/v2", label: "Dashboard", icon: LayoutDashboard, group: "Navigate" },
-  { to: "/admin/v2/users", label: "Users", icon: Users, group: "People" },
-  { to: "/admin/v2/astrologers", label: "Astrologers", icon: Star, group: "People" },
-  { to: "/admin/v2/consultations", label: "Consultations", icon: MessageSquare, group: "People" },
-  { to: "/admin/v2/reviews", label: "Reviews", icon: Star, group: "People" },
-  { to: "/admin/v2/kyc", label: "KYC Verification", icon: ShieldCheck, group: "People" },
-  { to: "/admin/v2/wallet", label: "Wallet", icon: Wallet, group: "Finance" },
-  { to: "/admin/v2/pricing", label: "Pricing Plans", icon: CreditCard, group: "Finance" },
-  { to: "/admin/v2/gifts", label: "Gift Management", icon: Gift, group: "Finance" },
-  { to: "/admin/v2/transactions", label: "Transactions", icon: Receipt, group: "Finance" },
-  { to: "/admin/v2/revenue", label: "Revenue", icon: TrendingUp, group: "Finance" },
-  { to: "/admin/v2/api", label: "API Management", icon: Server, group: "Platform" },
-  { to: "/admin/v2/developers", label: "Developers", icon: Code2, group: "Platform" },
-  { to: "/admin/v2/notifications", label: "Notifications", icon: Bell, group: "Platform" },
-  { to: "/admin/v2/google-auth", label: "Google OAuth", icon: KeyRound, group: "Platform" },
-  { to: "/admin/v2/web-push", label: "Web Push", icon: Bell, group: "Platform" },
-  { to: "/admin/v2/system", label: "System & Maintenance", icon: Server, group: "Platform" },
-  { to: "/admin/v2/content", label: "Content Management", icon: FolderKanban, group: "Platform" },
-  { to: "/admin/v2/audit-logs", label: "Audit Logs", icon: ScrollText, group: "Platform" },
-  { to: "/admin/v2/support-tickets", label: "Support Tickets", icon: LifeBuoy, group: "Platform" },
-  { to: "/admin/v2/analytics", label: "Analytics", icon: BarChart3, group: "Platform" },
-  { to: "/admin/v2/role-permissions", label: "Role Permissions", icon: Lock, group: "Platform" },
-  { to: "/admin/v2/settings", label: "Settings", icon: Settings, group: "Platform" },
+  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "Navigate" },
+  { to: "/admin/users", label: "Users", icon: Users, group: "People" },
+  { to: "/admin/astrologers", label: "Astrologers", icon: Star, group: "People" },
+  { to: "/admin/consultations", label: "Consultations", icon: MessageSquare, group: "People" },
+  { to: "/admin/reviews", label: "Reviews", icon: Star, group: "People" },
+  { to: "/admin/kyc", label: "KYC Verification", icon: ShieldCheck, group: "People" },
+  { to: "/admin/wallet", label: "Wallet", icon: Wallet, group: "Finance" },
+  { to: "/admin/pricing", label: "Pricing Plans", icon: CreditCard, group: "Finance" },
+  { to: "/admin/gifts", label: "Gift Management", icon: Gift, group: "Finance" },
+  { to: "/admin/transactions", label: "Transactions", icon: Receipt, group: "Finance" },
+  { to: "/admin/revenue", label: "Revenue", icon: TrendingUp, group: "Finance" },
+  { to: "/admin/api", label: "API Management", icon: Server, group: "Platform" },
+  { to: "/admin/developers", label: "Developers", icon: Code2, group: "Platform" },
+  { to: "/admin/notifications", label: "Notifications", icon: Bell, group: "Platform" },
+  { to: "/admin/google-auth", label: "Google OAuth", icon: KeyRound, group: "Platform" },
+  { to: "/admin/web-push", label: "Web Push", icon: Bell, group: "Platform" },
+  { to: "/admin/system", label: "System & Maintenance", icon: Server, group: "Platform" },
+  { to: "/admin/content", label: "Content Management", icon: FolderKanban, group: "Platform" },
+  { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText, group: "Platform" },
+  { to: "/admin/support-tickets", label: "Support Tickets", icon: LifeBuoy, group: "Platform" },
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3, group: "Platform" },
+  { to: "/admin/role-permissions", label: "Role Permissions", icon: Lock, group: "Platform" },
+  { to: "/admin/settings", label: "Settings", icon: Settings, group: "Platform" },
 ];
 
 const GROUPS = ["Navigate", "People", "Finance", "Platform"];
@@ -74,7 +74,7 @@ export default function CommandPalette() {
               <CommandItem key={d.to} value={d.label} onSelect={() => go(d.to)}>
                 <d.icon className="mr-2 h-4 w-4" />
                 <span>{d.label}</span>
-                {d.to === "/admin/v2" && <CommandShortcut>⌘K</CommandShortcut>}
+                {d.to === "/admin" && <CommandShortcut>⌘K</CommandShortcut>}
               </CommandItem>
             ))}
           </CommandGroup>
