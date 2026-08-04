@@ -474,7 +474,14 @@ def update_profile(
         raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
     profile = current_user.astrologer_profile
     if not profile:
-        raise HTTPException(status_code=404, detail=t("err.astrologer_profile_not_found", lang))
+        # Self-heal: astrologers created via the shared Google flow (or any
+        # legacy path) may lack a profile row. Create it so onboarding's
+        # "Complete your profile" never 404s.
+        profile = AstrologerProfile(user_id=current_user.id, display_name=current_user.name or "")
+        db.add(profile)
+        if not db.query(Wallet).filter(Wallet.user_id == current_user.id).first():
+            db.add(Wallet(user_id=current_user.id))
+        db.flush()
 
     update_data = req.model_dump(exclude_unset=True)
     for field, value in update_data.items():
