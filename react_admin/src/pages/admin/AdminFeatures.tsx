@@ -26,13 +26,14 @@ import {
   createGiftPricing, updateGiftPricing, toggleGiftPricing, deleteGiftPricing,
   adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
   adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
-  adminBlockAstrologer, adminSetCommission,
+  adminBlockAstrologer, adminSetCommission, adminAstrologerDetail,
   adminListKyc, adminApproveKyc, adminRejectKyc,
   adminListTransactions,
   adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
   adminListSettings, adminGetCategorySettings, adminUpsertSettings, adminUploadFcmFile,
   type WalletAction,
 } from "@/services/api";
+import KycFileView from "@/components/admin/KycFileView";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
@@ -479,6 +480,25 @@ const AdminFeatures = () => {
       else setUserDetail(null);
     } finally {
       setUserDetailLoading(false);
+    }
+  };
+
+  // Open the astrologer dossier: show the list row immediately, then enrich it
+  // with full detail (personal/professional info + KYC documents).
+  const openAstroDetail = async (a: any) => {
+    setAstroDetail({ ...a });
+    try {
+      const { ok, data } = await adminAstrologerDetail(a.id);
+      if (ok) {
+        setAstroDetail({
+          ...a,
+          personal: data.personal,
+          professional: data.professional,
+          kyc_documents: data.kyc_documents || [],
+        });
+      }
+    } catch {
+      /* keep the row-only view on failure */
     }
   };
 
@@ -1367,7 +1387,7 @@ const AdminFeatures = () => {
                             <Button
                               size="sm" variant="outline"
                               className="flex-1 border-border text-xs"
-                              onClick={() => setAstroDetail(a)}
+                              onClick={() => openAstroDetail(a)}
                             >
                               <Eye className="w-3 h-3 mr-1" /> View
                             </Button>
@@ -2044,6 +2064,47 @@ const AdminFeatures = () => {
                         </div>
                       </div>
                     )}
+
+                    {/* KYC documents — image / PDF viewers (admin-authorized) */}
+                    <div>
+                      <p className="text-muted-foreground text-xs mb-2 flex items-center gap-1">
+                        <FileText className="w-3.5 h-3.5" /> KYC Documents
+                      </p>
+                      {astroDetail.kyc_documents === undefined ? (
+                        <p className="text-xs text-muted-foreground">Loading documents…</p>
+                      ) : (astroDetail.kyc_documents || []).length === 0 ? (
+                        <p className="text-xs text-muted-foreground">No KYC submitted yet.</p>
+                      ) : (
+                        <div className="space-y-4">
+                          {astroDetail.kyc_documents.map((k: any) => (
+                            <div key={k.id} className="rounded-xl border border-border p-3 bg-muted/20">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="text-xs text-foreground">
+                                  <span className="capitalize font-semibold">{k.doc_type}</span>
+                                  {k.doc_number ? <span className="text-muted-foreground"> · {k.doc_number}</span> : null}
+                                </div>
+                                <Badge className={
+                                  k.status === "approved" ? "bg-green-500/20 text-green-400"
+                                    : k.status === "rejected" ? "bg-destructive/20 text-destructive"
+                                    : "bg-yellow-500/20 text-yellow-400"
+                                }>{k.status}</Badge>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2">
+                                <KycFileView label="Front" path={k.front_url} />
+                                <KycFileView label="Back" path={k.back_url} />
+                                <KycFileView label="Selfie" path={k.selfie_url} />
+                              </div>
+                              {k.rejection_reason ? (
+                                <p className="text-[11px] text-destructive mt-2">Reason: {k.rejection_reason}</p>
+                              ) : null}
+                              {k.created_at ? (
+                                <p className="text-[10px] text-muted-foreground mt-1">Submitted: {String(k.created_at).slice(0, 16)}</p>
+                              ) : null}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
                 <DialogFooter>
