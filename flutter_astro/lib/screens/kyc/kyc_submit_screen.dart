@@ -1,6 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
@@ -36,7 +38,9 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
   }
 
   Future<void> _pickAndUpload(String field) async {
-    final source = await showModalBottomSheet<ImageSource>(
+    // Choose the source. 'file' uses file_picker (images + PDF, returns bytes —
+    // works on web and mobile); camera/gallery use image_picker.
+    final choice = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: AppColors.card,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
@@ -49,25 +53,61 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
           ListTile(
             leading: const Icon(Icons.camera_alt, color: AppColors.gold),
             title: const Text('Camera', style: TextStyle(color: AppColors.ivory)),
-            onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            onTap: () => Navigator.pop(ctx, 'camera'),
           ),
           ListTile(
             leading: const Icon(Icons.photo_library, color: AppColors.gold),
             title: const Text('Gallery', style: TextStyle(color: AppColors.ivory)),
-            onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            onTap: () => Navigator.pop(ctx, 'gallery'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.upload_file, color: AppColors.gold),
+            title: const Text('Choose File (image or PDF)', style: TextStyle(color: AppColors.ivory)),
+            onTap: () => Navigator.pop(ctx, 'file'),
           ),
         ]),
       ),
     );
-    if (source == null) return;
+    if (choice == null) return;
 
-    final picker = ImagePicker();
-    final XFile? picked = await picker.pickImage(source: source, imageQuality: 80, maxWidth: 1200);
-    if (picked == null) return;
+    // Resolve to (bytes, fileName) across both pickers so the upload path is
+    // uniform and web-safe (no filesystem paths).
+    Uint8List? bytes;
+    String? fileName;
+    try {
+      if (choice == 'file') {
+        final result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: const ['jpg', 'jpeg', 'png', 'webp', 'pdf'],
+          withData: true, // force bytes on all platforms
+        );
+        if (result == null || result.files.isEmpty) return;
+        final f = result.files.first;
+        bytes = f.bytes;
+        fileName = f.name;
+      } else {
+        final picker = ImagePicker();
+        final XFile? picked = await picker.pickImage(
+          source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
+          imageQuality: 80,
+          maxWidth: 1600,
+        );
+        if (picked == null) return;
+        bytes = await picked.readAsBytes();
+        fileName = picked.name;
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+      return;
+    }
+    if (bytes == null || fileName == null) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not read the selected file')));
+      return;
+    }
 
     setState(() => _uploading = true);
     try {
-      final resp = await _api.uploadKycFile(picked.path, picked.name);
+      final resp = await _api.uploadKycFile(bytes, fileName);
       if (resp['statusCode'] == 200) {
         setState(() {
           switch (field) {

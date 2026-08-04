@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
@@ -154,6 +155,61 @@ class ApiService {
       await prefs.setString('user_data', jsonEncode(data['user']));
     }
     return {'statusCode': resp.statusCode, ...data};
+  }
+
+  /// Short signup step 1 — request an email OTP. Body: name/email/phone/
+  /// password + terms acceptance. Returns {statusCode, message|detail}.
+  Future<Map<String, dynamic>> signupSendOtp({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required bool termsAccepted,
+    String? fcmToken,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/signup/send-otp'),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'terms_accepted': termsAccepted,
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Short signup step 2 — verify the OTP; on success stores tokens (logged in).
+  Future<Map<String, dynamic>> signupVerifyOtp({
+    required String email,
+    required String otp,
+    String? fcmToken,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/signup/verify-otp'),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email, 'otp': otp, if (fcmToken != null) 'fcm_token': fcmToken}),
+    );
+    final data = jsonDecode(resp.body);
+    if (resp.statusCode == 200) {
+      await _saveTokens(data['access_token'], data['refresh_token']);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_data', jsonEncode(data['user']));
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
+  /// Re-send the signup OTP.
+  Future<Map<String, dynamic>> signupResendOtp(String email) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/signup/resend-otp'),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
   Future<Map<String, dynamic>> login({
@@ -443,10 +499,15 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> uploadKycFile(String filePath, String fileName) async {
+  /// Upload a KYC document (image or PDF) as raw bytes.
+  ///
+  /// Bytes (not a file path) so it works identically on Flutter Web — where
+  /// there is no filesystem path and `MultipartFile.fromPath` fails — and on
+  /// mobile. The multipart field is `file` (single), matching the backend.
+  Future<Map<String, dynamic>> uploadKycFile(Uint8List bytes, String fileName) async {
     final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.astrologerBase}/me/kyc/upload'));
     request.headers.addAll(_headers);
-    request.files.add(await http.MultipartFile.fromPath('file', filePath, filename: fileName));
+    request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
     final streamedResp = await request.send();
     final body = await streamedResp.stream.bytesToString();
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};

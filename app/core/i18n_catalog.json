@@ -1,4 +1,29 @@
 {
+  "err.terms_not_accepted": {
+    "english": "Please accept the Terms & Conditions to continue",
+    "hindi": "जारी रखने के लिए कृपया नियम एवं शर्तें स्वीकार करें",
+    "hinglish": "Aage badhne ke liye Terms & Conditions accept karein"
+  },
+  "err.otp_email_failed": {
+    "english": "Could not send the verification email. Please try again shortly.",
+    "hindi": "सत्यापन ईमेल नहीं भेजा जा सका। कृपया कुछ देर बाद पुनः प्रयास करें।",
+    "hinglish": "Verification email nahi bhej paaye. Thodi der baad try karein."
+  },
+  "err.invalid_otp": {
+    "english": "Invalid verification code",
+    "hindi": "अमान्य सत्यापन कोड",
+    "hinglish": "Galat verification code"
+  },
+  "err.otp_expired": {
+    "english": "Verification code has expired. Please request a new one.",
+    "hindi": "सत्यापन कोड की समय-सीमा समाप्त हो गई है। कृपया नया कोड मांगें।",
+    "hinglish": "Verification code expire ho gaya hai. Naya code maangein."
+  },
+  "msg.otp_sent": {
+    "english": "A verification code has been sent to your email",
+    "hindi": "आपके ईमेल पर एक सत्यापन कोड भेजा गया है",
+    "hinglish": "Aapke email par verification code bhej diya gaya hai"
+  },
   "err.email_registered": {
     "english": "Email already registered",
     "hindi": "यह ईमेल पहले से पंजीकृत है",

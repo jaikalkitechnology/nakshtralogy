@@ -98,6 +98,34 @@ export async function adminEditAstrologer(profileId: string, data: any) {
   return request(`/admin/astrologers/${profileId}/edit`, { method: "PUT", body: JSON.stringify(data) });
 }
 
+// Full astrologer dossier: personal + professional info + KYC documents.
+export async function adminAstrologerDetail(profileId: string) {
+  return request(`/admin/astrologers/${profileId}/detail`);
+}
+
+/// Fetch an auth-protected media URL (e.g. a KYC file) as an object URL so it
+/// can be shown in <img>/<iframe>. `path` may be a relative API path
+/// (e.g. /api/v1/astrologer/me/kyc/file/...) or an absolute URL. Returns null
+/// on failure. Callers should revokeObjectURL when done.
+export async function fetchAuthedObjectUrl(
+  path: string
+): Promise<{ url: string; contentType: string } | null> {
+  try {
+    const token = getToken();
+    const abs = path.startsWith("http")
+      ? path
+      : `https://api.nakshatralogy.com${path.startsWith("/") ? "" : "/"}${path}`;
+    const res = await fetch(abs, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return { url: URL.createObjectURL(blob), contentType: blob.type || "" };
+  } catch {
+    return null;
+  }
+}
+
 export async function adminApproveAstrologer(profileId: string) {
   return request(`/admin/astrologers/${profileId}/approve`, { method: "PATCH" });
 }

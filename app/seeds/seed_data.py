@@ -671,10 +671,14 @@ PLATFORM_SETTINGS = [
     {"category": "fcm_user", "key": "sa_path", "value": "credentials/firebase-user-sa.json", "description": "Service account JSON path"},
     {"category": "fcm_astro", "key": "project_id", "value": "", "description": "Firebase project ID for astro app"},
     {"category": "fcm_astro", "key": "sa_path", "value": "credentials/firebase-astro-sa.json", "description": "Service account JSON path"},
-    # SMTP placeholder
+    # SMTP placeholder (admin-editable transactional email config)
     {"category": "smtp", "key": "host", "value": "", "description": "SMTP server host"},
     {"category": "smtp", "key": "port", "value": "587", "description": "SMTP port"},
-    {"category": "smtp", "key": "from_email", "value": "noreply@nakshatralogy.com", "description": "Sender email"},
+    {"category": "smtp", "key": "username", "value": "", "description": "SMTP username"},
+    {"category": "smtp", "key": "password", "value": "", "is_secret": True, "description": "SMTP password (server-only)"},
+    {"category": "smtp", "key": "from_email", "value": "support@jaikalkitechnology.com", "description": "Sender email"},
+    {"category": "smtp", "key": "from_name", "value": "Nakshatralogy", "description": "Sender display name"},
+    {"category": "smtp", "key": "use_tls", "value": "true", "description": "Use STARTTLS (true/false)"},
 ]
 
 

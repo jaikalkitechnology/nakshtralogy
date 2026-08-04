@@ -31,6 +31,7 @@ from app.core.security import (
     hash_password, verify_password,
     create_access_token, create_refresh_token,
     hash_token, generate_reset_token, verify_google_token,
+    generate_otp,
 )
 from app.core.config import settings
 from app.core.dependencies import get_current_user, get_lang_user
@@ -46,7 +47,10 @@ from app.schemas.astrologer_schema import (
     AstrologerFullResponse, AstrologerProfileResponse,
     AstrologerProfileUpdateRequest, AstrologerStatusUpdate,
     AstrologerListResponse,
+    AstrologerSignupOtpRequest, AstrologerVerifyOtpRequest,
+    AstrologerResendOtpRequest,
 )
+from app.services.email_service import send_otp_email
 
 router = APIRouter()
 
@@ -154,6 +158,124 @@ def signup(req: AstrologerSignupRequest, db: Session = Depends(get_db), lang: st
     db.refresh(user)
 
     return _issue_tokens(user, db)
+
+
+# ── Signup with Email OTP (short signup → verify → onboarding) ────────
+
+@router.post("/signup/send-otp", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
+def signup_send_otp(
+    req: AstrologerSignupOtpRequest,
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
+    """Start short signup: validate, create an UNVERIFIED astrologer, email an OTP.
+
+    The account is created immediately (unverified) so the email/phone are
+    reserved, but no tokens are issued until the OTP is verified. Re-requesting
+    for an existing unverified account refreshes the OTP.
+    """
+    if not req.terms_accepted:
+        raise HTTPException(status_code=400, detail=t("err.terms_not_accepted", lang))
+
+    existing = db.query(User).filter(User.email == req.email).first()
+    if existing and existing.is_verified:
+        raise HTTPException(status_code=409, detail=t("err.email_registered", lang))
+
+    # phone uniqueness (ignore the same unverified account being retried)
+    phone_owner = db.query(User).filter(User.phone == req.phone).first()
+    if phone_owner and (not existing or phone_owner.id != existing.id):
+        raise HTTPException(status_code=409, detail=t("err.phone_registered", lang))
+
+    otp = generate_otp()
+    expires = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRE_MINUTES)
+
+    if existing and not existing.is_verified:
+        # Refresh the pending signup with the latest details + a new OTP.
+        existing.name = req.name
+        existing.phone = req.phone
+        existing.password_hash = hash_password(req.password)
+        existing.otp_code = otp
+        existing.otp_expires_at = expires
+        existing.terms_accepted_at = datetime.utcnow()
+        if req.fcm_token:
+            existing.fcm_token = req.fcm_token
+        user = existing
+    else:
+        user = User(
+            email=req.email,
+            phone=req.phone,
+            password_hash=hash_password(req.password),
+            name=req.name,
+            role="astrologer",
+            is_verified=False,
+            otp_code=otp,
+            otp_expires_at=expires,
+            terms_accepted_at=datetime.utcnow(),
+            fcm_token=req.fcm_token,
+        )
+        db.add(user)
+        db.flush()
+        db.add(AstrologerProfile(user_id=user.id, display_name=req.name))
+        db.add(Wallet(user_id=user.id))
+    db.commit()
+
+    sent = send_otp_email(
+        db, to=user.email, name=user.name or "", otp=otp,
+        minutes=settings.OTP_EXPIRE_MINUTES,
+        purpose="verify your astrologer account",
+    )
+    if not sent:
+        raise HTTPException(status_code=502, detail=t("err.otp_email_failed", lang))
+    return MessageResponse(message=t("msg.otp_sent", lang))
+
+
+@router.post("/signup/verify-otp", response_model=AstrologerTokenResponse)
+def signup_verify_otp(
+    req: AstrologerVerifyOtpRequest,
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
+    """Verify the emailed OTP → mark verified → issue tokens (logged in)."""
+    user = db.query(User).filter(User.email == req.email, User.role == "astrologer").first()
+    if not user or not user.otp_code:
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+    if not user.otp_expires_at or user.otp_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail=t("err.otp_expired", lang))
+    if user.otp_code != req.otp.strip():
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+
+    user.is_verified = True
+    user.otp_code = None
+    user.otp_expires_at = None
+    if req.fcm_token:
+        user.fcm_token = req.fcm_token
+    db.commit()
+    db.refresh(user)
+    return _issue_tokens(user, db)
+
+
+@router.post("/signup/resend-otp", response_model=MessageResponse)
+def signup_resend_otp(
+    req: AstrologerResendOtpRequest,
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
+    """Re-send the signup OTP for a pending (unverified) astrologer."""
+    user = db.query(User).filter(User.email == req.email, User.role == "astrologer").first()
+    # Do not leak account existence / verified state.
+    if not user or user.is_verified:
+        return MessageResponse(message=t("msg.otp_sent", lang))
+
+    otp = generate_otp()
+    user.otp_code = otp
+    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRE_MINUTES)
+    db.commit()
+    send_otp_email(
+        db, to=user.email, name=user.name or "", otp=otp,
+        minutes=settings.OTP_EXPIRE_MINUTES,
+        purpose="verify your astrologer account",
+    )
+    return MessageResponse(message=t("msg.otp_sent", lang))
 
 
 # ── Login ─────────────────────────────────────────────────────────────
