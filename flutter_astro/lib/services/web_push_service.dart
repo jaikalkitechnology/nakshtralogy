@@ -20,6 +20,11 @@ class WebPushService {
   bool _initialized = false;
   String? _token;
   String? _error;
+  // Kept after a successful Firebase init so the token can be re-fetched later
+  // (e.g. once the user grants permission, or after login) without re-running
+  // the whole init — which the _initialized guard would otherwise block.
+  FirebaseMessaging? _messaging;
+  String? _vapid;
 
   String? get token => _token;
   bool get isInitialized => _initialized;
@@ -62,18 +67,21 @@ class WebPushService {
       );
 
       final messaging = FirebaseMessaging.instance;
+      _messaging = messaging;
+      _vapid = vapid;
       final settings = await messaging.requestPermission(
         alert: true, badge: true, sound: true,
       );
       debugPrint('WebPush permission: ${settings.authorizationStatus}');
       if (settings.authorizationStatus == AuthorizationStatus.denied) {
         _error = 'Notification permission denied';
+        // Firebase is initialised; mark done so a later grant can re-fetch the
+        // token via [registerAfterLogin] without re-initialising.
+        _initialized = true;
         return;
       }
 
-      _token = await messaging.getToken(vapidKey: vapid);
-      debugPrint('WebPush token: ${_token != null ? "${_token!.substring(0, 12)}..." : "NULL"}');
-      await _register();
+      await _fetchToken();
 
       // Foreground messages (background handled by the service worker).
       FirebaseMessaging.onMessage.listen((message) {
@@ -92,11 +100,37 @@ class WebPushService {
     }
   }
 
-  /// Register the current web token; safe to call again after login.
+  /// Fetch (or re-fetch) the web token and register it. Safe to call repeatedly.
+  Future<void> _fetchToken() async {
+    final m = _messaging;
+    if (m == null) return;
+    try {
+      final settings = await m.requestPermission(alert: true, badge: true, sound: true);
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        _error = 'Notification permission denied';
+        return;
+      }
+      _token = await m.getToken(vapidKey: _vapid);
+      _error = _token == null ? 'Token not issued (check VAPID / service worker)' : null;
+      debugPrint('WebPush token: ${_token != null ? "${_token!.substring(0, 12)}..." : "NULL"}');
+      await _register();
+    } catch (e) {
+      _error = 'WebPush token fetch error: $e';
+      debugPrint(_error!);
+    }
+  }
+
+  /// Register the current web token; safe to call again after login. Recovers
+  /// when Firebase initialised but the token wasn't issued yet (permission
+  /// granted late, or the user just logged in).
   Future<void> registerAfterLogin() async {
     if (!kIsWeb) return;
-    if (_token == null || _token!.isEmpty) {
+    if (!_initialized || _messaging == null) {
       await init();
+      return;
+    }
+    if (_token == null || _token!.isEmpty) {
+      await _fetchToken();
     } else {
       await _register();
     }
