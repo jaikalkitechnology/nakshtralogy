@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../theme/app_theme.dart';
@@ -85,39 +84,26 @@ class _LoginScreenState extends State<LoginScreen> {
     context.read<AuthBloc>().add(AuthLoginRequested(email: _emailCtrl.text.trim(), password: _passCtrl.text));
   }
 
+  /// Continue with Google — server-side redirect flow on every platform.
+  ///
+  /// * Web: redirects the current tab to Google; the backend returns to the SPA
+  ///   `/auth/callback` with `?token=&refresh=`, captured by main() at boot.
+  /// * Mobile: opens the login URL in an external browser; the backend returns
+  ///   through the `nakshatralogyastro://auth/callback` deep link, adopted by the
+  ///   app_links listener in main.dart.
+  ///
+  /// Both reuse the same web OAuth client — no native Google config / SHA-1
+  /// registration required.
   Future<void> _googleSignIn() async {
     final l = AppLocalizations.of(context)!;
-    // Web: server-side redirect flow (no native SDK). This redirects the whole
-    // tab; tokens are captured by main() on return to /auth/callback.
-    if (kIsWeb) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(l.googleRedirecting), duration: const Duration(seconds: 2)));
+    final ok = kIsWeb
+        ? await GoogleAuthService().startWebRedirect()
+        : await GoogleAuthService().startMobileServerRedirect();
+    if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l.googleRedirecting), duration: const Duration(seconds: 2)));
-      final ok = await GoogleAuthService().startWebRedirect();
-      if (!ok && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(l.googleWebLoginFailed), backgroundColor: AppColors.error));
-      }
-      return;
-    }
-    // Mobile: native google_sign_in → id_token → /google/verify (via bloc).
-    try {
-      final googleUser = await GoogleSignIn(
-        scopes: ['email', 'profile'],
-        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: '410358361509-5h98nfjhdc9bu92rq7o39idkq3r9nieh.apps.googleusercontent.com'),
-      ).signIn();
-      if (googleUser == null) return;
-      final auth = await googleUser.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppLocalizations.of(context)!.googleSignInNoToken),
-          backgroundColor: AppColors.error, duration: const Duration(seconds: 5),
-        ));
-        return;
-      }
-      if (mounted) context.read<AuthBloc>().add(AuthGoogleLoginRequested(idToken: idToken));
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.googleSignInError(e.toString())), backgroundColor: AppColors.error));
+        content: Text(l.googleWebLoginFailed), backgroundColor: AppColors.error));
     }
   }
 

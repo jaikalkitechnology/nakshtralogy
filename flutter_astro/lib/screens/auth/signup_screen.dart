@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
@@ -49,39 +48,21 @@ class _SignupScreenState extends State<SignupScreen> {
     ));
   }
 
+  /// Continue with Google — server-side redirect on every platform (web tab
+  /// redirect / mobile external browser → `nakshatralogyastro://auth/callback`
+  /// deep link, adopted by the app_links listener in main.dart). First-time
+  /// astrologers land on HomeScreen, whose KYC gate starts onboarding. Reuses the
+  /// web OAuth client — no native Google config / SHA-1 required.
   Future<void> _googleSignIn() async {
     final l = AppLocalizations.of(context)!;
-    // Web: server-side redirect flow (no native SDK). Tokens are captured by
-    // main() on return to /auth/callback. First-time astrologers land on
-    // HomeScreen, whose KYC gate starts onboarding.
-    if (kIsWeb) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(l.googleRedirecting), duration: const Duration(seconds: 2)));
+    final ok = kIsWeb
+        ? await GoogleAuthService().startWebRedirect()
+        : await GoogleAuthService().startMobileServerRedirect();
+    if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l.googleRedirecting), duration: const Duration(seconds: 2)));
-      final ok = await GoogleAuthService().startWebRedirect();
-      if (!ok && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(l.googleWebLoginFailed), backgroundColor: AppColors.error));
-      }
-      return;
-    }
-    // Mobile: native google_sign_in → id_token → /google/verify (via bloc).
-    try {
-      final googleUser = await GoogleSignIn(
-        scopes: const ['email', 'profile'],
-        serverClientId: const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID', defaultValue: '410358361509-5h98nfjhdc9bu92rq7o39idkq3r9nieh.apps.googleusercontent.com'),
-      ).signIn();
-      if (googleUser == null) return;
-      final auth = await googleUser.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(l.googleSignInNoToken), backgroundColor: AppColors.error));
-        return;
-      }
-      if (mounted) context.read<AuthBloc>().add(AuthGoogleLoginRequested(idToken: idToken));
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l.googleSignInError(e.toString())), backgroundColor: AppColors.error));
+        content: Text(l.googleWebLoginFailed), backgroundColor: AppColors.error));
     }
   }
 

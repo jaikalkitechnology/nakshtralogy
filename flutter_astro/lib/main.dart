@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,6 +98,74 @@ class NakshatralogyAstroApp extends StatefulWidget {
 
 class _NakshatralogyAstroAppState extends State<NakshatralogyAstroApp> {
   Locale? _locale = _savedLocale;
+
+  // Deep-link listener for the mobile Google server-redirect flow. The backend
+  // `/google/callback` redirects to `nakshatralogyastro://auth/callback?token=&refresh=`;
+  // `app_links` delivers that URI here (cold start via getInitialLink, warm via
+  // the stream) so we can adopt the session and route the astrologer in.
+  final AppLinks _appLinks = AppLinks();
+  StreamSubscription<Uri>? _linkSub;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!kIsWeb) _initDeepLinks();
+  }
+
+  Future<void> _initDeepLinks() async {
+    // Cold start: the app was launched by the deep link.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final initial = await _appLinks.getInitialLink();
+        if (initial != null) _handleAuthUri(initial);
+      } catch (e) {
+        debugPrint('Initial deep link read failed: $e');
+      }
+    });
+    // Warm: the app was already running when the link arrived.
+    _linkSub = _appLinks.uriLinkStream.listen(
+      _handleAuthUri,
+      onError: (e) => debugPrint('Deep link stream error: $e'),
+    );
+  }
+
+  /// Adopt tokens carried by the Google callback deep link, then re-run the auth
+  /// check so the gate routes the astrologer to Home (KYC gate handles first-time
+  /// onboarding). Tokens may arrive as query OR fragment params depending on the
+  /// redirect encoding.
+  Future<void> _handleAuthUri(Uri uri) async {
+    Map<String, String> params = uri.queryParameters;
+    if ((params['token'] == null || params['token']!.isEmpty) && uri.fragment.isNotEmpty) {
+      params = Uri.splitQueryString(uri.fragment);
+    }
+    final token = params['token'];
+    final refresh = params['refresh'];
+    final err = params['google_error'];
+    final ctx = navigatorKey.currentContext;
+    if (err != null && err.isNotEmpty) {
+      if (ctx != null) {
+        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(ctx)!.googleAuthCancelled),
+          backgroundColor: AppColors.error,
+        ));
+      }
+      return;
+    }
+    if (token == null || token.isEmpty || refresh == null || refresh.isEmpty) return;
+    try {
+      await ApiService().applyExternalTokens(token, refresh);
+    } catch (e) {
+      debugPrint('Deep link token apply failed: $e');
+    }
+    final ctx2 = navigatorKey.currentContext;
+    if (ctx2 != null) ctx2.read<AuthBloc>().add(AuthCheckRequested());
+  }
+
+  @override
+  void dispose() {
+    _linkSub?.cancel();
+    super.dispose();
+  }
 
   void setLocale(Locale locale) {
     setState(() => _locale = locale);
