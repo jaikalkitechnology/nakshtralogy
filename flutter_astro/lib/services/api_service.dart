@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
@@ -443,10 +444,15 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> uploadKycFile(String filePath, String fileName) async {
+  /// Upload a KYC document (image or PDF) as raw bytes.
+  ///
+  /// Bytes (not a file path) so it works identically on Flutter Web — where
+  /// there is no filesystem path and `MultipartFile.fromPath` fails — and on
+  /// mobile. The multipart field is `file` (single), matching the backend.
+  Future<Map<String, dynamic>> uploadKycFile(Uint8List bytes, String fileName) async {
     final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.astrologerBase}/me/kyc/upload'));
     request.headers.addAll(_headers);
-    request.files.add(await http.MultipartFile.fromPath('file', filePath, filename: fileName));
+    request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
     final streamedResp = await request.send();
     final body = await streamedResp.stream.bytesToString();
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};
