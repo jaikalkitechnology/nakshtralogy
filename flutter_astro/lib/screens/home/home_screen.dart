@@ -19,6 +19,7 @@ import '../../services/realtime_service.dart';
 import '../auth/login_screen.dart';
 import '../kyc/kyc_submit_screen.dart';
 import '../kyc/kyc_pending_screen.dart';
+import '../onboarding/onboarding_flow_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/requests_tab.dart';
 import '../tabs/earnings_tab.dart';
@@ -40,6 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription? _realtimeSub;
   final _api = ApiService();
 
+  // Onboarding gate — shown before KYC when personal/professional info is
+  // incomplete (new short-signup or Google astrologers). Existing astrologers
+  // with a filled profile skip straight through.
+  bool _onboardingLoading = true;
+  bool _needsOnboarding = false;
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +54,31 @@ class _HomeScreenState extends State<HomeScreen> {
       context.read<KycBloc>().add(KycStatusRequested());
       context.read<StatusBloc>().add(StatusLoadRequested());
       _connectRealtime();
+      _checkOnboarding();
     });
+  }
+
+  /// Decide whether onboarding is required from the server profile: mobile
+  /// number present AND at least one language + specialization set.
+  Future<void> _checkOnboarding() async {
+    bool needs = true;
+    try {
+      final me = await _api.getMe();
+      if (me['statusCode'] == 200) {
+        final user = (me['user'] ?? me) as Map<String, dynamic>;
+        final phone = (user['phone'] ?? '').toString().trim();
+        final p = user['profile'] as Map<String, dynamic>?;
+        final langs = (p?['languages'] as List?) ?? const [];
+        final specs = (p?['specializations'] as List?) ?? const [];
+        needs = phone.isEmpty || langs.isEmpty || specs.isEmpty;
+      }
+    } catch (_) {}
+    if (mounted) {
+      setState(() {
+        _needsOnboarding = needs;
+        _onboardingLoading = false;
+      });
+    }
   }
 
   void _connectRealtime() {
@@ -166,8 +197,17 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: BlocBuilder<KycBloc, KycState>(
         builder: (context, kycState) {
-          if (kycState.status == 'loading') {
+          // Onboarding (personal → professional) precedes the KYC gate.
+          if (_onboardingLoading || kycState.status == 'loading') {
             return const Scaffold(body: Center(child: CircularProgressIndicator(color: AppColors.primary)));
+          }
+          if (_needsOnboarding) {
+            return OnboardingFlowScreen(
+              onComplete: () {
+                setState(() => _needsOnboarding = false);
+                context.read<KycBloc>().add(KycStatusRequested());
+              },
+            );
           }
           if (kycState.status == 'none' || kycState.status == 'rejected') {
             return const KycSubmitScreen();

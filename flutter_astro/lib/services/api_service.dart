@@ -157,6 +157,61 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...data};
   }
 
+  /// Short signup step 1 — request an email OTP. Body: name/email/phone/
+  /// password + terms acceptance. Returns {statusCode, message|detail}.
+  Future<Map<String, dynamic>> signupSendOtp({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required bool termsAccepted,
+    String? fcmToken,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/signup/send-otp'),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'terms_accepted': termsAccepted,
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Short signup step 2 — verify the OTP; on success stores tokens (logged in).
+  Future<Map<String, dynamic>> signupVerifyOtp({
+    required String email,
+    required String otp,
+    String? fcmToken,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/signup/verify-otp'),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email, 'otp': otp, if (fcmToken != null) 'fcm_token': fcmToken}),
+    );
+    final data = jsonDecode(resp.body);
+    if (resp.statusCode == 200) {
+      await _saveTokens(data['access_token'], data['refresh_token']);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_data', jsonEncode(data['user']));
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
+  /// Re-send the signup OTP.
+  Future<Map<String, dynamic>> signupResendOtp(String email) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/signup/resend-otp'),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
