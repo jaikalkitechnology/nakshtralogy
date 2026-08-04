@@ -33,7 +33,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token
 from app.core.i18n import get_lang, t
-from app.models.model import User, Wallet, RefreshToken, PlatformSetting
+from app.models.model import User, Wallet, RefreshToken, PlatformSetting, AstrologerProfile
 
 router = APIRouter()
 
@@ -127,6 +127,28 @@ def get_google_login_url(
         "state": state,
     }
     return {"url": f"{GOOGLE_AUTH_URL}?{urlencode(params)}", "state": state}
+
+
+def _ensure_astrologer_profile(user: User, db: Session) -> None:
+    """Guarantee an astrologer has a profile + wallet.
+
+    The shared Google flow historically created only User + Wallet, so
+    Google-signed-up astrologers had no AstrologerProfile — which made
+    `PUT /astrologer/me/profile` (onboarding "Complete your profile") 404.
+    This backfills the profile for both new and pre-existing Google astrologers.
+    """
+    if user.role != "astrologer":
+        return
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.user_id == user.id).first()
+    changed = False
+    if not profile:
+        db.add(AstrologerProfile(user_id=user.id, display_name=user.name or ""))
+        changed = True
+    if not db.query(Wallet).filter(Wallet.user_id == user.id).first():
+        db.add(Wallet(user_id=user.id))
+        changed = True
+    if changed:
+        db.commit()
 
 
 def _issue_app_tokens(user: User, db: Session):
@@ -251,6 +273,9 @@ async def google_callback(
             status_code=302,
         )
 
+    # Astrologers need a profile + wallet before onboarding can update them.
+    _ensure_astrologer_profile(user, db)
+
     jwt_token, refresh_token = _issue_app_tokens(user, db)
 
     # Redirect to the role's frontend callback with tokens. The frontend reads
@@ -353,6 +378,9 @@ async def google_verify(
 
     if not user.is_active:
         raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
+
+    # Astrologers need a profile + wallet before onboarding can update them.
+    _ensure_astrologer_profile(user, db)
 
     jwt_token, refresh_token = _issue_app_tokens(user, db)
     return {"token": jwt_token, "refresh": refresh_token, "is_new_user": is_new_user}
