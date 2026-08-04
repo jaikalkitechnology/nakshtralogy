@@ -77,6 +77,7 @@ class User(Base):
     profile_approved = Column(Boolean, default=False, nullable=False)  # admin approves user profile
     otp_code = Column(String(6), nullable=True)
     otp_expires_at = Column(DateTime, nullable=True)
+    terms_accepted_at = Column(DateTime, nullable=True)  # T&C acceptance at signup
     reset_token = Column(String(255), nullable=True)
     reset_token_expires = Column(DateTime, nullable=True)
     last_login_at = Column(DateTime, nullable=True)

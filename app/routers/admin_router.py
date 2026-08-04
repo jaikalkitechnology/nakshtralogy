@@ -431,6 +431,81 @@ def list_astrologers_admin(
     }
 
 
+@router.get("/astrologers/{profile_id}/detail")
+def astrologer_detail_admin(
+    profile_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Full astrologer dossier for the admin panel: personal info, professional
+    info, KYC documents (viewable image/PDF URLs), and wallet."""
+    p = db.query(AstrologerProfile).filter(AstrologerProfile.id == profile_id).first()
+    if not p:
+        raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
+    u = db.query(User).filter(User.id == p.user_id).first()
+    if not u:
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
+    wallet = db.query(Wallet).filter(Wallet.user_id == u.id).first()
+    kyc = db.query(KycDocument).filter(
+        KycDocument.user_id == u.id
+    ).order_by(KycDocument.created_at.desc()).all()
+
+    return {
+        "profile_id": p.id,
+        "personal": {
+            "user_id": u.id,
+            "name": u.name,
+            "email": u.email,
+            "phone": u.phone,
+            "gender": u.gender,
+            "avatar_url": u.avatar_url,
+            "is_active": u.is_active,
+            "is_verified": u.is_verified,
+            "profile_approved": u.profile_approved,
+            "terms_accepted_at": str(u.terms_accepted_at) if getattr(u, "terms_accepted_at", None) else None,
+            "created_at": str(u.created_at) if u.created_at else None,
+            "last_login_at": str(u.last_login_at) if u.last_login_at else None,
+        },
+        "professional": {
+            "display_name": p.display_name,
+            "bio": p.bio,
+            "experience_years": p.experience_years,
+            "languages": p.languages or [],
+            "specializations": p.specializations or [],
+            "qualification": p.qualification,
+            "profile_image_url": p.profile_image_url,
+            "rate_per_min_chat": float(p.rate_per_min_chat or 0),
+            "rate_per_min_call": float(p.rate_per_min_call or 0),
+            "rate_per_min_video": float(p.rate_per_min_video or 0),
+            "commission_pct": float(p.commission_pct or 30),
+            "rating": float(p.rating or 0),
+            "total_reviews": p.total_reviews,
+            "total_consultations": p.total_consultations,
+            "total_minutes": p.total_minutes,
+            "is_approved": p.is_approved,
+            "is_online": p.is_online,
+            "is_busy": p.is_busy,
+        },
+        "wallet_balance": float(wallet.balance) if wallet else 0.0,
+        "kyc_documents": [
+            {
+                "id": k.id,
+                "doc_type": k.doc_type,
+                "doc_number": k.doc_number,
+                "front_url": k.front_url,
+                "back_url": k.back_url,
+                "selfie_url": k.selfie_url,
+                "status": k.status,
+                "rejection_reason": k.rejection_reason,
+                "reviewed_at": str(k.reviewed_at) if k.reviewed_at else None,
+                "created_at": str(k.created_at) if k.created_at else None,
+            }
+            for k in kyc
+        ],
+    }
+
+
 @router.put("/astrologers/{profile_id}/edit")
 def edit_astrologer(
     profile_id: str,

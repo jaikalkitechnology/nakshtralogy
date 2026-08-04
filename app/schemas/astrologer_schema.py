@@ -21,6 +21,31 @@ class AstrologerSignupRequest(BaseModel):
     fcm_token: Optional[str] = None
 
 
+class AstrologerSignupOtpRequest(BaseModel):
+    """Short signup — start email-OTP verification.
+
+    Only the essential fields are collected up front; personal /
+    professional / KYC details are gathered after login during onboarding.
+    """
+    name: str = Field(..., min_length=2, max_length=150)
+    email: EmailStr
+    phone: str = Field(..., min_length=6, max_length=20)
+    password: str = Field(..., min_length=6, max_length=128)
+    terms_accepted: bool = Field(..., description="Must be true to proceed")
+    fcm_token: Optional[str] = None
+
+
+class AstrologerVerifyOtpRequest(BaseModel):
+    """Verify the emailed OTP and complete signup (returns tokens)."""
+    email: EmailStr
+    otp: str = Field(..., min_length=4, max_length=6)
+    fcm_token: Optional[str] = None
+
+
+class AstrologerResendOtpRequest(BaseModel):
+    email: EmailStr
+
+
 class AstrologerLoginRequest(BaseModel):
     email: EmailStr
     password: str
