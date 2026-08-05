@@ -11,9 +11,32 @@ import {
   Video, Gift, Radio, RefreshCw, Plus, Pencil, Phone, MessageCircle,
   ChevronLeft, ChevronRight, PlusCircle, MinusCircle, Sparkles, X,
   FileText, Mail, Filter, Trash2, Database,
-  Upload, Save, KeyRound, CreditCard,
+  Upload, Save, KeyRound, CreditCard, Send,
 } from "lucide-react";
 import DevelopersManager from "@/components/developers/DevelopersManager";
+
+/** Compact display of a (possibly long/absent) FCM token with copy. */
+function TokenRow({ label, value }: { label: string; value?: string | null }) {
+  const has = !!(value && value.trim());
+  return (
+    <div className="flex items-center gap-2 text-xs">
+      <span className="text-muted-foreground w-32 shrink-0">{label}:</span>
+      {has ? (
+        <>
+          <code className="text-foreground/80 font-mono truncate flex-1" title={value!}>{value}</code>
+          <Badge className="bg-green-500/20 text-green-400 shrink-0">registered</Badge>
+          <button
+            className="text-primary hover:underline shrink-0"
+            onClick={() => navigator.clipboard?.writeText(value!)}
+            title="Copy token"
+          >copy</button>
+        </>
+      ) : (
+        <Badge variant="outline" className="border-border text-muted-foreground">not registered</Badge>
+      )}
+    </div>
+  );
+}
 import DeveloperAnalytics from "@/components/developers/DeveloperAnalytics";
 import DeveloperPlans from "@/components/developers/DeveloperPlans";
 import DataTable, { type DataTableColumn } from "@/components/premium/DataTable";
@@ -26,7 +49,7 @@ import {
   createGiftPricing, updateGiftPricing, toggleGiftPricing, deleteGiftPricing,
   adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
   adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
-  adminBlockAstrologer, adminSetCommission, adminAstrologerDetail,
+  adminBlockAstrologer, adminSetCommission, adminAstrologerDetail, adminSendNotification,
   adminListKyc, adminApproveKyc, adminRejectKyc,
   adminListTransactions,
   adminListReviews, adminEditReview, adminToggleReviewVisibility, adminDeleteReview,
@@ -155,6 +178,26 @@ const AdminFeatures = () => {
 
   // Astrologer detail dialog
   const [astroDetail, setAstroDetail] = useState<any>(null);
+
+  // Send-notification dialog (works for a user OR an astrologer, by user id)
+  const [notifDialog, setNotifDialog] = useState<{
+    open: boolean; userId: string; name: string; title: string; body: string;
+    sending: boolean; result: any;
+  }>({ open: false, userId: "", name: "", title: "", body: "", sending: false, result: null });
+
+  const openSendNotif = (userId: string, name: string) =>
+    setNotifDialog({ open: true, userId, name, title: "", body: "", sending: false, result: null });
+
+  const sendNotif = async () => {
+    if (!notifDialog.title.trim() || !notifDialog.body.trim()) return;
+    setNotifDialog((d) => ({ ...d, sending: true, result: null }));
+    try {
+      const { ok, data } = await adminSendNotification(notifDialog.userId, notifDialog.title.trim(), notifDialog.body.trim());
+      setNotifDialog((d) => ({ ...d, sending: false, result: ok ? data : { error: "Send failed" } }));
+    } catch (e: any) {
+      setNotifDialog((d) => ({ ...d, sending: false, result: { error: String(e) } }));
+    }
+  };
 
   // ── Wallet Management state ──────────────────────────────────────
   const WALLET_PAGE_SIZE = 20;
@@ -1215,6 +1258,19 @@ const AdminFeatures = () => {
                       <div className="col-span-2"><span className="text-muted-foreground">Created:</span> <span className="text-foreground">{userDetail.created_at?.slice(0, 16) || "—"}</span></div>
                     </div>
 
+                    {/* Push tokens + send notification */}
+                    <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-primary">Push Notifications</h3>
+                        <Button size="sm" onClick={() => openSendNotif(userDetail.id, userDetail.name || userDetail.email)}
+                          className="h-7 text-xs">
+                          <Send className="w-3.5 h-3.5 mr-1" /> Send Notification
+                        </Button>
+                      </div>
+                      <TokenRow label="Native (Android/iOS)" value={userDetail.fcm_token} />
+                      <TokenRow label="Web" value={userDetail.fcm_token_web} />
+                    </div>
+
                     <div>
                       <h3 className="text-sm font-semibold text-primary mb-2">Wallet Statement (last 30)</h3>
                       <div className="bg-muted/30 rounded-lg border border-border max-h-72 overflow-y-auto">
@@ -2065,6 +2121,19 @@ const AdminFeatures = () => {
                       </div>
                     )}
 
+                    {/* Push tokens + send notification (astro) */}
+                    <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-primary">Push Notifications</p>
+                        <Button size="sm" className="h-7 text-xs"
+                          onClick={() => openSendNotif(astroDetail.personal?.user_id || astroDetail.user_id, astroDetail.display_name || astroDetail.personal?.name || "")}>
+                          <Send className="w-3.5 h-3.5 mr-1" /> Send Notification
+                        </Button>
+                      </div>
+                      <TokenRow label="Native (Android/iOS)" value={astroDetail.personal?.fcm_token} />
+                      <TokenRow label="Web" value={astroDetail.personal?.fcm_token_web} />
+                    </div>
+
                     {/* KYC documents — image / PDF viewers (admin-authorized) */}
                     <div>
                       <p className="text-muted-foreground text-xs mb-2 flex items-center gap-1">
@@ -2109,6 +2178,63 @@ const AdminFeatures = () => {
                 )}
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setAstroDetail(null)}>Close</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* ══════ Send Notification Dialog (user or astrologer) ══════ */}
+            <Dialog open={notifDialog.open} onOpenChange={(v) => !v && setNotifDialog((d) => ({ ...d, open: false }))}>
+              <DialogContent className="bg-card border-border max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Send className="w-5 h-5 text-primary" /> Send Notification
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">To: <span className="text-foreground">{notifDialog.name}</span></p>
+                  <div>
+                    <Label className="text-xs">Title</Label>
+                    <Input
+                      value={notifDialog.title}
+                      maxLength={80}
+                      onChange={(e) => setNotifDialog((d) => ({ ...d, title: e.target.value }))}
+                      placeholder="Notification title"
+                      className="bg-muted/30 border-border"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Message</Label>
+                    <Textarea
+                      value={notifDialog.body}
+                      maxLength={300}
+                      rows={3}
+                      onChange={(e) => setNotifDialog((d) => ({ ...d, body: e.target.value }))}
+                      placeholder="Notification message"
+                      className="bg-muted/30 border-border"
+                    />
+                  </div>
+                  {notifDialog.result && (
+                    <div className={`text-xs rounded-lg p-2 border ${notifDialog.result.error ? "border-destructive/40 bg-destructive/10 text-destructive" : notifDialog.result.push_delivered ? "border-green-500/40 bg-green-500/10 text-green-400" : "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"}`}>
+                      {notifDialog.result.error
+                        ? `Error: ${notifDialog.result.error}`
+                        : notifDialog.result.push_delivered
+                          ? "Delivered to device ✓ (and saved in-app)"
+                          : (notifDialog.result.note || "Saved in-app. Push not delivered — check the token / FCM diagnostics.")}
+                      {Array.isArray(notifDialog.result.results) && notifDialog.result.results.some((r: any) => !r.ok) && (
+                        <ul className="mt-1 list-disc list-inside">
+                          {notifDialog.result.results.filter((r: any) => !r.ok).map((r: any, i: number) => (
+                            <li key={i}>{r.target}: {r.error}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setNotifDialog((d) => ({ ...d, open: false }))}>Close</Button>
+                  <Button onClick={sendNotif} disabled={notifDialog.sending || !notifDialog.title.trim() || !notifDialog.body.trim()}>
+                    {notifDialog.sending ? "Sending…" : "Send"}
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

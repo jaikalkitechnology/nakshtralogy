@@ -103,6 +103,14 @@ export async function adminAstrologerDetail(profileId: string) {
   return request(`/admin/astrologers/${profileId}/detail`);
 }
 
+// Send a custom push + in-app notification to one user/astrologer.
+export async function adminSendNotification(userId: string, title: string, body: string) {
+  return request(`/admin/notifications/send`, {
+    method: "POST",
+    body: JSON.stringify({ user_id: userId, title, body }),
+  });
+}
+
 /// Fetch an auth-protected media URL (e.g. a KYC file) as an object URL so it
 /// can be shown in <img>/<iframe>. `path` may be a relative API path
 /// (e.g. /api/v1/astrologer/me/kyc/file/...) or an absolute URL. Returns null
