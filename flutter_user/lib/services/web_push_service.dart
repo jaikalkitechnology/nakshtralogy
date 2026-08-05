@@ -29,6 +29,10 @@ class WebPushService {
   String? _token;
   String? _vapidKey;
   String? _initError;
+  // Retained after a successful Firebase init so the token can be (re)fetched
+  // later — e.g. once the user grants permission or after login — without the
+  // _initialized guard blocking recovery.
+  FirebaseMessaging? _messaging;
 
   String? get token => _token;
   bool get isInitialized => _initialized;
@@ -67,15 +71,7 @@ class WebPushService {
       );
 
       final messaging = FirebaseMessaging.instance;
-      final settings = await messaging.requestPermission(alert: true, badge: true, sound: true);
-      debugPrint('Web push permission: ${settings.authorizationStatus}');
-      if (settings.authorizationStatus == AuthorizationStatus.denied) {
-        _initError = 'notifications blocked in browser';
-        return;
-      }
-
-      _token = await messaging.getToken(vapidKey: _vapidKey);
-      debugPrint('Web push token: ${_token != null ? "${_token!.substring(0, 12)}..." : "null"}');
+      _messaging = messaging;
 
       FirebaseMessaging.onMessage.listen((msg) {
         debugPrint('Web push foreground: ${msg.notification?.title ?? msg.data['title']}');
@@ -85,21 +81,60 @@ class WebPushService {
         registerAfterLogin();
       });
 
+      // Firebase is ready; mark initialised so a later permission grant / login
+      // can (re)fetch the token via [registerAfterLogin] without re-init.
       _initialized = true;
+      await _fetchToken();
     } catch (e) {
       _initError = 'web push init: $e';
       debugPrint(_initError!);
     }
   }
 
-  /// Register the acquired web token with the backend. Call once a session is
-  /// live (the register endpoint is authenticated). Safe to call repeatedly.
+  /// Fetch (or re-fetch) the web token and register it if a session is live.
+  Future<void> _fetchToken() async {
+    final m = _messaging;
+    if (m == null) return;
+    try {
+      final settings = await m.requestPermission(alert: true, badge: true, sound: true);
+      debugPrint('Web push permission: ${settings.authorizationStatus}');
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        _initError = 'notifications blocked in browser';
+        return;
+      }
+      _token = await m.getToken(vapidKey: _vapidKey);
+      _initError = _token == null ? 'token not issued (check VAPID / service worker)' : null;
+      debugPrint('Web push token: ${_token != null ? "${_token!.substring(0, 12)}..." : "null"}');
+      await _register();
+    } catch (e) {
+      _initError = 'web push token fetch: $e';
+      debugPrint(_initError!);
+    }
+  }
+
+  /// Register the current web token with the backend (authenticated endpoint).
+  /// Recovers when Firebase initialised but the token wasn't issued yet
+  /// (permission granted late, or the user just logged in). Safe to call again.
   Future<void> registerAfterLogin() async {
     if (!kIsWeb) return;
+    if (!_initialized || _messaging == null) {
+      await init();
+      return; // init() → _fetchToken() → _register() already ran
+    }
+    if (_token == null || _token!.isEmpty) {
+      await _fetchToken();
+    } else {
+      await _register();
+    }
+  }
+
+  Future<void> _register() async {
     final t = _token;
     if (t == null || t.isEmpty) return;
+    if (!_api.isLoggedIn) return; // register once authenticated
     try {
-      await _api.registerPushToken(token: t, platform: 'web');
+      final res = await _api.registerPushToken(token: t, platform: 'web');
+      debugPrint('Web push register: ${res['statusCode']}');
     } catch (e) {
       debugPrint('Web push register failed: $e');
     }

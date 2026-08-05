@@ -10,6 +10,7 @@ FCM tokens from user app go to user project, astro app to astro project.
 """
 
 import os
+import json
 import logging
 from typing import Optional
 
@@ -23,22 +24,68 @@ logger = logging.getLogger(__name__)
 # Firebase app instances (lazy-initialized)
 _user_app: Optional[firebase_admin.App] = None
 _astro_app: Optional[firebase_admin.App] = None
+# Last init error per project, for diagnostics.
+_init_error: dict = {"user": None, "astro": None}
+
+
+def _sa_dict_from_db(project: str) -> Optional[dict]:
+    """Load the service-account JSON stored in platform_settings (fcm_{project}.
+    sa_json). This is the durable source of truth: the uploaded credentials file
+    lives on the (ephemeral) container disk and is lost on redeploy, but the DB
+    copy survives, so FCM keeps working without re-uploading after a restart."""
+    try:
+        from app.core.database import SessionLocal
+        from app.models.model import PlatformSetting
+        db = SessionLocal()
+        try:
+            row = (
+                db.query(PlatformSetting)
+                .filter(PlatformSetting.category == f"fcm_{project}", PlatformSetting.key == "sa_json")
+                .first()
+            )
+            if row and row.value:
+                return json.loads(row.value)
+        finally:
+            db.close()
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"Failed to load fcm_{project} SA from DB: {e}")
+    return None
+
+
+def _build_credential(project: str, path: str):
+    """Resolve a Firebase credential for a project: prefer the on-disk service
+    account file, fall back to the DB-stored JSON. Returns (cred, source) or
+    (None, reason)."""
+    if path and os.path.exists(path):
+        try:
+            return credentials.Certificate(path), f"file:{path}"
+        except Exception as e:  # noqa: BLE001
+            return None, f"file invalid ({e})"
+    sa = _sa_dict_from_db(project)
+    if sa:
+        try:
+            return credentials.Certificate(sa), "db:platform_settings.sa_json"
+        except Exception as e:  # noqa: BLE001
+            return None, f"db json invalid ({e})"
+    return None, f"no credential (file '{path}' missing and no DB sa_json)"
 
 
 def _init_user_app() -> Optional[firebase_admin.App]:
     global _user_app
     if _user_app is not None:
         return _user_app
-    path = settings.FIREBASE_USER_SA_PATH
-    if not os.path.exists(path):
-        logger.warning(f"Firebase User SA not found at {path} — FCM disabled for user app")
+    cred, source = _build_credential("user", settings.FIREBASE_USER_SA_PATH)
+    if not cred:
+        _init_error["user"] = source
+        logger.warning(f"Firebase User SA unavailable — {source}")
         return None
     try:
-        cred = credentials.Certificate(path)
         _user_app = firebase_admin.initialize_app(cred, name="nakshtralogy-user")
-        logger.info("Firebase User app initialized")
+        _init_error["user"] = None
+        logger.info(f"Firebase User app initialized ({source})")
         return _user_app
     except Exception as e:
+        _init_error["user"] = str(e)
         logger.error(f"Firebase User init failed: {e}")
         return None
 
@@ -47,18 +94,80 @@ def _init_astro_app() -> Optional[firebase_admin.App]:
     global _astro_app
     if _astro_app is not None:
         return _astro_app
-    path = settings.FIREBASE_ASTRO_SA_PATH
-    if not os.path.exists(path):
-        logger.warning(f"Firebase Astro SA not found at {path} — FCM disabled for astro app")
+    cred, source = _build_credential("astro", settings.FIREBASE_ASTRO_SA_PATH)
+    if not cred:
+        _init_error["astro"] = source
+        logger.warning(f"Firebase Astro SA unavailable — {source}")
         return None
     try:
-        cred = credentials.Certificate(path)
         _astro_app = firebase_admin.initialize_app(cred, name="nakshatralogy-astro")
-        logger.info("Firebase Astro app initialized")
+        _init_error["astro"] = None
+        logger.info(f"Firebase Astro app initialized ({source})")
         return _astro_app
     except Exception as e:
+        _init_error["astro"] = str(e)
         logger.error(f"Firebase Astro init failed: {e}")
         return None
+
+
+def reset_apps() -> None:
+    """Drop cached Firebase apps so freshly uploaded credentials take effect
+    without a server restart. Called after an admin credential upload."""
+    global _user_app, _astro_app
+    for app in (_user_app, _astro_app):
+        if app is not None:
+            try:
+                firebase_admin.delete_app(app)
+            except Exception:  # noqa: BLE001
+                pass
+    _user_app = None
+    _astro_app = None
+
+
+def send_push_debug(token: str, role: str, title: str, body: str, data: Optional[dict] = None) -> dict:
+    """Send a single push and return the RAW result/error for diagnostics.
+
+    Unlike send_push (which returns a bool), this surfaces the actual FCM error
+    (e.g. SenderId mismatch, invalid/unregistered token, credential problems) so
+    an operator can tell exactly why delivery fails."""
+    app = _get_app_for_role(role)
+    if not app:
+        return {"ok": False, "error": _init_error.get("astro" if role == "astrologer" else "user") or "Firebase not initialized"}
+    try:
+        message = messaging.Message(
+            notification=messaging.Notification(title=title, body=body),
+            token=token,
+            data={k: str(v) for k, v in (data or {}).items()},
+            android=messaging.AndroidConfig(priority="high",
+                notification=messaging.AndroidNotification(sound="default", click_action="FLUTTER_NOTIFICATION_CLICK")),
+            webpush=messaging.WebpushConfig(notification=messaging.WebpushNotification(title=title, body=body)),
+        )
+        msg_id = messaging.send(message, app=app)
+        return {"ok": True, "message_id": msg_id}
+    except Exception as e:  # noqa: BLE001
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
+def diagnostics() -> dict:
+    """Report FCM readiness for both projects (for the admin panel / API)."""
+    out = {}
+    for project, path in (("user", settings.FIREBASE_USER_SA_PATH), ("astro", settings.FIREBASE_ASTRO_SA_PATH)):
+        app = _init_astro_app() if project == "astro" else _init_user_app()
+        project_id = None
+        try:
+            if app is not None:
+                project_id = app.project_id
+        except Exception:  # noqa: BLE001
+            pass
+        out[project] = {
+            "initialized": app is not None,
+            "file_present": bool(path and os.path.exists(path)),
+            "db_sa_json_present": _sa_dict_from_db(project) is not None,
+            "project_id": project_id,
+            "error": _init_error.get(project),
+            "sa_path": path,
+        }
+    return out
 
 
 def _get_app_for_role(role: str) -> Optional[firebase_admin.App]:

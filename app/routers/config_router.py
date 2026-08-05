@@ -55,4 +55,9 @@ def get_webpush_config(
     # excluded because it is not in _WEBPUSH_PUBLIC_KEYS.
     config = {k: (stored.get(k) or "") for k in _WEBPUSH_PUBLIC_KEYS}
     configured = bool(config.get("vapid_public_key") and config.get("web_project_id"))
-    return {"role": role, "configured": configured, "config": config}
+    # The keys are also spread at the TOP LEVEL because the Flutter WebPushService
+    # and the firebase-messaging-sw.js service worker read cfg['web_api_key'] /
+    # cfg.web_api_key directly (not under `config`). Keeping `config` too for any
+    # nested reader. Without this flattening, web push never initialised because
+    # every key resolved to null.
+    return {"role": role, "configured": configured, "config": config, **config}
