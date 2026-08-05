@@ -5,27 +5,27 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_bn.dart';
-import 'app_localizations_en.dart';
-import 'app_localizations_ja.dart';
-import 'app_localizations_id.dart';
 import 'app_localizations_ar.dart';
-import 'app_localizations_ru.dart';
-import 'app_localizations_it.dart';
+import 'app_localizations_bn.dart';
 import 'app_localizations_de.dart';
-import 'app_localizations_pt_BR.dart';
+import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
-import 'app_localizations_th.dart';
-import 'app_localizations_zh_Hans.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_gu.dart';
 import 'app_localizations_hi.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
 import 'app_localizations_kn.dart';
 import 'app_localizations_ml.dart';
 import 'app_localizations_mr.dart';
 import 'app_localizations_pa.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_ta.dart';
 import 'app_localizations_te.dart';
+import 'app_localizations_th.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -113,149 +113,31 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
     Locale('bn'),
+    Locale('de'),
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
     Locale('gu'),
     Locale('hi'),
     Locale.fromSubtags(languageCode: 'hi', scriptCode: 'Latn'),
+    Locale('id'),
+    Locale('it'),
+    Locale('ja'),
     Locale('kn'),
     Locale('ml'),
     Locale('mr'),
     Locale('pa'),
+    Locale('pt'),
+    Locale('pt', 'BR'),
+    Locale('ru'),
     Locale('ta'),
     Locale('te'),
-    Locale('fr'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale('th'),
-    Locale('es'),
-    Locale('pt', 'BR'),
-    Locale('de'),
-    Locale('it'),
-    Locale('ru'),
-    Locale('ar'),
-    Locale('id'),
-    Locale('ja'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
   ];
-
-  /// No description provided for @appName.
-  ///
-  /// In en, this message translates to:
-  /// **'Nakshatralogy'**
-  String get appName;
-
-  /// No description provided for @cosmicJourneyAwaits.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Cosmic Journey Awaits'**
-  String get cosmicJourneyAwaits;
-
-  /// No description provided for @home.
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get home;
-
-  /// No description provided for @astrologers.
-  ///
-  /// In en, this message translates to:
-  /// **'Astrologers'**
-  String get astrologers;
-
-  /// No description provided for @services.
-  ///
-  /// In en, this message translates to:
-  /// **'Services'**
-  String get services;
-
-  /// No description provided for @wallet.
-  ///
-  /// In en, this message translates to:
-  /// **'Wallet'**
-  String get wallet;
-
-  /// No description provided for @profile.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile'**
-  String get profile;
-
-  /// No description provided for @live.
-  ///
-  /// In en, this message translates to:
-  /// **'Live'**
-  String get live;
-
-  /// No description provided for @kundli.
-  ///
-  /// In en, this message translates to:
-  /// **'Kundli'**
-  String get kundli;
-
-  /// No description provided for @chat.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat'**
-  String get chat;
-
-  /// No description provided for @call.
-  ///
-  /// In en, this message translates to:
-  /// **'Call'**
-  String get call;
-
-  /// No description provided for @video.
-  ///
-  /// In en, this message translates to:
-  /// **'Video'**
-  String get video;
-
-  /// No description provided for @signIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign In'**
-  String get signIn;
-
-  /// No description provided for @createAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Account'**
-  String get createAccount;
-
-  /// No description provided for @email.
-  ///
-  /// In en, this message translates to:
-  /// **'Email'**
-  String get email;
-
-  /// No description provided for @password.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get password;
-
-  /// No description provided for @confirmPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Password'**
-  String get confirmPassword;
-
-  /// No description provided for @fullName.
-  ///
-  /// In en, this message translates to:
-  /// **'Full Name'**
-  String get fullName;
-
-  /// No description provided for @phone.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone (optional)'**
-  String get phone;
-
-  /// No description provided for @forgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot Password?'**
-  String get forgotPassword;
 
   /// No description provided for @awChooseLanguage.
   ///
@@ -356,7 +238,7 @@ abstract class AppLocalizations {
   /// No description provided for @pwUnlockPrice.
   ///
   /// In en, this message translates to:
-  /// **'Unlock · ₹{price}'**
+  /// **'Unlock · {price}'**
   String pwUnlockPrice(Object price);
 
   /// No description provided for @pwOneTime.
@@ -4479,7 +4361,12 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'You\'re currently in a \'{phase}\' phase with a {personality} approach to money. Our analysis shows a {probability}% chance of becoming debt-free within about {years} years.'**
-  String dbHeroSummary(Object phase, Object personality, Object probability, Object years);
+  String dbHeroSummary(
+    Object phase,
+    Object personality,
+    Object probability,
+    Object years,
+  );
 
   /// No description provided for @dbGaugeCapacity.
   ///
@@ -13425,7 +13312,12 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Your strongest houses are {s1} and {s2}. {strongArea} is naturally strong, while {weakArea} needs more effort.'**
-  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea);
+  String bhHeroSummary(
+    Object s1,
+    Object s2,
+    Object strongArea,
+    Object weakArea,
+  );
 
   /// No description provided for @bhLordLine.
   ///
@@ -20705,6 +20597,126 @@ abstract class AppLocalizations {
   /// **'Resend Link'**
   String get resendLink;
 
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'Nakshatralogy'**
+  String get appName;
+
+  /// No description provided for @cosmicJourneyAwaits.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Cosmic Journey Awaits'**
+  String get cosmicJourneyAwaits;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @astrologers.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrologers'**
+  String get astrologers;
+
+  /// No description provided for @services.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get services;
+
+  /// No description provided for @wallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get wallet;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @live.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get live;
+
+  /// No description provided for @kundli.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli'**
+  String get kundli;
+
+  /// No description provided for @chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chat;
+
+  /// No description provided for @call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get call;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signIn;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccount;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullName;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone (optional)'**
+  String get phone;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
   /// No description provided for @sendResetLink.
   ///
   /// In en, this message translates to:
@@ -22889,27 +22901,27 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) => <String>[
+    'ar',
     'bn',
+    'de',
     'en',
+    'es',
+    'fr',
     'gu',
     'hi',
+    'id',
+    'it',
+    'ja',
     'kn',
     'ml',
     'mr',
     'pa',
+    'pt',
+    'ru',
     'ta',
     'te',
-    'fr',
-    'zh',
     'th',
-    'es',
-    'pt',
-    'de',
-    'it',
-    'ru',
-    'ar',
-    'id',
-    'ja',
+    'zh',
   ].contains(locale.languageCode);
 
   @override
@@ -22919,14 +22931,6 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when language+script codes are specified.
   switch (locale.languageCode) {
-    case 'zh':
-      {
-        switch (locale.scriptCode) {
-          case 'Hans':
-            return AppLocalizationsZhHans();
-        }
-        break;
-      }
     case 'hi':
       {
         switch (locale.scriptCode) {
@@ -22935,40 +22939,52 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
         }
         break;
       }
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return AppLocalizationsZhHans();
+        }
+        break;
+      }
+  }
+
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'pt':
+      {
+        switch (locale.countryCode) {
+          case 'BR':
+            return AppLocalizationsPtBr();
+        }
+        break;
+      }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'fr':
-      return AppLocalizationsFr();
-    case 'zh':
-      return AppLocalizationsZhHans();
-    case 'th':
-      return AppLocalizationsTh();
-    case 'es':
-      return AppLocalizationsEs();
-    case 'pt':
-      return AppLocalizationsPtBr();
-    case 'de':
-      return AppLocalizationsDe();
-    case 'it':
-      return AppLocalizationsIt();
-    case 'ru':
-      return AppLocalizationsRu();
     case 'ar':
       return AppLocalizationsAr();
-    case 'id':
-      return AppLocalizationsId();
-    case 'ja':
-      return AppLocalizationsJa();
     case 'bn':
       return AppLocalizationsBn();
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'gu':
       return AppLocalizationsGu();
     case 'hi':
       return AppLocalizationsHi();
+    case 'id':
+      return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
     case 'kn':
       return AppLocalizationsKn();
     case 'ml':
@@ -22977,10 +22993,18 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsMr();
     case 'pa':
       return AppLocalizationsPa();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'ta':
       return AppLocalizationsTa();
     case 'te':
       return AppLocalizationsTe();
+    case 'th':
+      return AppLocalizationsTh();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(
