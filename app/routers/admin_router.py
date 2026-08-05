@@ -1653,12 +1653,60 @@ def send_test_webpush(
 @router.get("/fcm/diagnostics")
 def fcm_diagnostics(
     current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
 ):
-    """Report FCM readiness for both Firebase projects: whether the service
-    account is loaded (from file or the durable DB copy), the resolved
-    project_id, and any init error. First stop when notifications don't arrive."""
+    """One-stop notification health check. Reports, for both apps:
+
+      • fcm      — native Android/iOS readiness: is the service account loaded
+                   (file or durable DB copy), the resolved project_id, errors.
+      • webpush  — web readiness: is the VAPID public key + full Firebase web
+                   config present (all six keys required to issue a web token).
+      • tokens   — how many accounts have a native token / a web token stored.
+
+    Use this first: if fcm.initialized is false → (re)upload the service account
+    (must be Firebase project nakshtralogy-bf371); if webpush.ready is false →
+    fill the missing web keys; if tokens are 0 → the apps aren't registering."""
     from app.services import fcm_service as _fcm
-    return {"status": "ok", "data": _fcm.diagnostics()}
+
+    fcm = _fcm.diagnostics()
+
+    # Web-push config completeness per project.
+    _WEB_REQUIRED = ["vapid_public_key", "web_api_key", "web_app_id", "web_project_id", "web_messaging_sender_id"]
+    webpush = {}
+    for role, category in (("user", "webpush_user"), ("astro", "webpush_astro")):
+        rows = db.query(PlatformSetting).filter(PlatformSetting.category == category).all()
+        vals = {r.key: (r.value or "") for r in rows}
+        missing = [k for k in _WEB_REQUIRED if not vals.get(k)]
+        webpush[role] = {
+            "ready": not missing,
+            "missing_keys": missing,
+            "web_project_id": vals.get("web_project_id") or None,
+            "has_vapid_private": bool(vals.get("vapid_private_key")),
+        }
+
+    # Registered token counts.
+    native_users = db.query(sqlfunc.count(User.id)).filter(
+        User.role.in_(("user", "admin")), User.fcm_token.isnot(None), User.fcm_token != ""
+    ).scalar() or 0
+    web_users = db.query(sqlfunc.count(User.id)).filter(
+        User.role.in_(("user", "admin")), User.fcm_token_web.isnot(None), User.fcm_token_web != ""
+    ).scalar() or 0
+    native_astro = db.query(sqlfunc.count(User.id)).filter(
+        User.role == "astrologer", User.fcm_token.isnot(None), User.fcm_token != ""
+    ).scalar() or 0
+    web_astro = db.query(sqlfunc.count(User.id)).filter(
+        User.role == "astrologer", User.fcm_token_web.isnot(None), User.fcm_token_web != ""
+    ).scalar() or 0
+
+    return {"status": "ok", "data": {
+        "fcm": fcm,
+        "webpush": webpush,
+        "tokens": {
+            "user": {"native": native_users, "web": web_users},
+            "astro": {"native": native_astro, "web": web_astro},
+        },
+        "expected_firebase_project": "nakshtralogy-bf371",
+    }}
 
 
 class FcmTestRequest(BaseModel):
