@@ -290,6 +290,7 @@ def get_user_detail(
         "moon_sign": user.moon_sign, "avatar_url": user.avatar_url,
         "is_active": user.is_active, "is_verified": user.is_verified,
         "profile_approved": user.profile_approved,
+        "fcm_token": user.fcm_token, "fcm_token_web": user.fcm_token_web,
         "wallet_balance": float(wallet.balance) if wallet else 0,
         "created_at": str(user.created_at),
         "last_login_at": str(user.last_login_at) if user.last_login_at else None,
@@ -466,6 +467,7 @@ def astrologer_detail_admin(
             "terms_accepted_at": str(u.terms_accepted_at) if getattr(u, "terms_accepted_at", None) else None,
             "created_at": str(u.created_at) if u.created_at else None,
             "last_login_at": str(u.last_login_at) if u.last_login_at else None,
+            "fcm_token": u.fcm_token, "fcm_token_web": u.fcm_token_web,
         },
         "professional": {
             "display_name": p.display_name,
@@ -1709,6 +1711,18 @@ def fcm_diagnostics(
     }}
 
 
+@router.get("/fcm/recent")
+def fcm_recent_sends(
+    current_user: User = Depends(require_role("admin")),
+):
+    """The last ~30 FCM send attempts (real events AND tests), most recent
+    first, with ok/error per attempt. Trigger a real notification (e.g. start a
+    chat/call) then read this to see exactly what the server got back — the
+    smoking gun when the token is saved but nothing arrives on the device."""
+    from app.services import fcm_service as _fcm
+    return {"status": "ok", "data": _fcm.recent_sends()}
+
+
 class FcmTestRequest(BaseModel):
     user_id: Optional[str] = None          # send to this user's stored token(s)
     token: Optional[str] = None            # or send to a raw token directly
@@ -1863,6 +1877,63 @@ def fcm_test_user(
         out["diagnosis"] = f"NOT delivered. {hint}"
 
     return {"status": "ok", "data": out}
+
+
+class AdminSendNotificationRequest(BaseModel):
+    user_id: str
+    title: str
+    body: str
+
+
+@router.post("/notifications/send")
+def admin_send_notification(
+    req: AdminSendNotificationRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Send a custom push notification to one user or astrologer, and store it in
+    their in-app notification list. Works for both roles — the Firebase project
+    is chosen from the target's role. Returns the per-token delivery result so
+    the admin can see if it actually went through."""
+    from app.services import fcm_service as _fcm
+    from app.routers.notification_router import save_notification
+
+    if not req.title.strip() or not req.body.strip():
+        raise HTTPException(status_code=400, detail="Title and body are required")
+
+    user = db.query(User).filter(User.id == req.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    role = user.role or "user"
+    data = {"type": "admin_message"}
+
+    # Persist in-app notification (visible in the app's notification list).
+    try:
+        save_notification(db, user.id, req.title.strip(), req.body.strip(), "admin_message", data)
+    except Exception:
+        db.rollback()
+
+    # Push to native + web tokens, capturing the real result per token.
+    native = (getattr(user, "fcm_token", None) or "").strip()
+    web = (getattr(user, "fcm_token_web", None) or "").strip()
+    results = []
+    if native:
+        results.append({"target": "native", "token_tail": native[-12:],
+                        **_fcm.send_push_debug(native, role, req.title.strip(), req.body.strip(), data)})
+    if web:
+        results.append({"target": "web", "token_tail": web[-12:],
+                        **_fcm.send_push_debug(web, role, req.title.strip(), req.body.strip(), data)})
+
+    delivered = any(r.get("ok") for r in results)
+    return {"status": "ok", "data": {
+        "user_id": user.id,
+        "role": role,
+        "saved_in_app": True,
+        "push_delivered": delivered,
+        "results": results,
+        "note": None if results else "No device tokens registered — saved in-app only.",
+    }}
 
 
 # ══════════════════════════════════════════════════════════════════════
