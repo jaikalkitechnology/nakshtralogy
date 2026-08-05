@@ -132,7 +132,9 @@ def send_push_debug(token: str, role: str, title: str, body: str, data: Optional
     an operator can tell exactly why delivery fails."""
     app = _get_app_for_role(role)
     if not app:
-        return {"ok": False, "error": _init_error.get("astro" if role == "astrologer" else "user") or "Firebase not initialized"}
+        err = _init_error.get("astro" if role == "astrologer" else "user") or "Firebase not initialized"
+        _record_send(token, False, err, "test")
+        return {"ok": False, "error": err}
     try:
         message = messaging.Message(
             notification=messaging.Notification(title=title, body=body),
@@ -143,8 +145,10 @@ def send_push_debug(token: str, role: str, title: str, body: str, data: Optional
             webpush=messaging.WebpushConfig(notification=messaging.WebpushNotification(title=title, body=body)),
         )
         msg_id = messaging.send(message, app=app)
+        _record_send(token, True, None, "test")
         return {"ok": True, "message_id": msg_id}
     except Exception as e:  # noqa: BLE001
+        _record_send(token, False, f"{type(e).__name__}: {e}", "test")
         return {"ok": False, "error": f"{type(e).__name__}: {e}"}
 
 
@@ -168,6 +172,31 @@ def diagnostics() -> dict:
             "sa_path": path,
         }
     return out
+
+
+# Ring buffer of the last N send attempts so an operator can see, via the admin
+# API, what actually happened on REAL notifications (chat/call/etc.) — not only
+# manual tests. Cleared on restart; purely diagnostic.
+_recent_sends: list = []
+_RECENT_MAX = 30
+
+
+def _record_send(token: Optional[str], ok: bool, error: Optional[str], kind: str = "") -> None:
+    try:
+        _recent_sends.insert(0, {
+            "ok": ok,
+            "token_tail": (token or "")[-12:],
+            "error": error,
+            "kind": kind,
+        })
+        del _recent_sends[_RECENT_MAX:]
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def recent_sends() -> list:
+    """Last send attempts (most recent first) for the admin diagnostics API."""
+    return list(_recent_sends)
 
 
 def _get_app_for_role(role: str) -> Optional[firebase_admin.App]:
@@ -208,12 +237,15 @@ def _send_one(app, token: str, title: str, body: str, data: Optional[dict]) -> b
         )
         response = messaging.send(message, app=app)
         logger.info(f"FCM sent: {response}")
+        _record_send(token, True, None, "send")
         return True
     except messaging.UnregisteredError:
         logger.warning(f"FCM token unregistered: {token[:20]}...")
+        _record_send(token, False, "UnregisteredError (stale token — device must re-register)", "send")
         return False
     except Exception as e:
         logger.error(f"FCM send failed: {e}")
+        _record_send(token, False, f"{type(e).__name__}: {e}", "send")
         return False
 
 
@@ -233,6 +265,9 @@ def send_push(
     app = _get_app_for_role(role)
     if not app:
         logger.warning(f"FCM not available for role={role}, skipping push")
+        _record_send(fcm_token or web_token, False,
+                     f"Firebase not initialized for role={role} — {_init_error.get('astro' if role == 'astrologer' else 'user')}",
+                     "send")
         return False
 
     tokens = [tok for tok in (fcm_token, web_token) if tok]

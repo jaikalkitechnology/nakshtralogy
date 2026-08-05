@@ -1709,6 +1709,18 @@ def fcm_diagnostics(
     }}
 
 
+@router.get("/fcm/recent")
+def fcm_recent_sends(
+    current_user: User = Depends(require_role("admin")),
+):
+    """The last ~30 FCM send attempts (real events AND tests), most recent
+    first, with ok/error per attempt. Trigger a real notification (e.g. start a
+    chat/call) then read this to see exactly what the server got back — the
+    smoking gun when the token is saved but nothing arrives on the device."""
+    from app.services import fcm_service as _fcm
+    return {"status": "ok", "data": _fcm.recent_sends()}
+
+
 class FcmTestRequest(BaseModel):
     user_id: Optional[str] = None          # send to this user's stored token(s)
     token: Optional[str] = None            # or send to a raw token directly
