@@ -4,7 +4,7 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
+/// The translations for Russian (`ru`).
 class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
@@ -12,18 +12,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get awChooseLanguage => 'Выберите язык';
 
   @override
-  String get awGoogleFailed => 'Не удалось войти через Google. Повторите попытку.';
+  String get awGoogleFailed =>
+      'Не удалось войти через Google. Повторите попытку.';
 
   @override
   String get awCompleteProfileTitle => 'Заполните профиль';
 
   @override
   String awWelcomeName(String name) {
-    return 'Добро пожаловать, ${name}!';
+    return 'Добро пожаловать, $name!';
   }
 
   @override
-  String get awCompleteProfileSubtitle => 'Несколько деталей, чтобы персонализировать Nakshatralogy для вас.';
+  String get awCompleteProfileSubtitle =>
+      'Несколько деталей, чтобы персонализировать Nakshatralogy для вас.';
 
   @override
   String get awRegionLabel => 'Регион';
@@ -41,10 +43,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get awFinishSetup => 'Завершить настройку';
 
   @override
-  String get awChatFileWebUnsupported => 'Обмен файлами пока недоступен в веб-версии. Используйте мобильное приложение.';
+  String get awChatFileWebUnsupported =>
+      'Обмен файлами пока недоступен в веб-версии. Используйте мобильное приложение.';
 
   @override
-  String get awVideoUnsupported => 'Видеозвонки не поддерживаются в этом браузере. Используйте наше мобильное приложение или поддерживаемый настольный браузер.';
+  String get awVideoUnsupported =>
+      'Видеозвонки не поддерживаются в этом браузере. Используйте наше мобильное приложение или поддерживаемый настольный браузер.';
 
   @override
   String get awClose => 'Закрыть';
@@ -57,12 +61,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String pwUnlockFull(Object name) {
-    return 'Открыть полностью ${name}';
+    return 'Открыть полностью $name';
   }
 
   @override
   String pwUnlockPrice(Object price) {
-    return 'Открыть · ${price}';
+    return 'Открыть · $price';
   }
 
   @override
@@ -102,7 +106,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pwProcessing => 'Обработка…';
 
   @override
-  String get pwPrimaryNoDelete => 'Ваша основная Кундли не может быть удалена — она бесплатна навсегда.';
+  String get pwPrimaryNoDelete =>
+      'Ваша основная Кундли не может быть удалена — она бесплатна навсегда.';
 
   @override
   String get pwPrimaryNoEdit => 'Вашу основную Кундли нельзя редактировать.';
@@ -129,13 +134,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get photoUpdated => 'Фото обновлено';
 
   @override
-  String get photoUploadFailed => 'Не удалось загрузить фото. Попробуйте ещё раз.';
+  String get photoUploadFailed =>
+      'Не удалось загрузить фото. Попробуйте ещё раз.';
 
   @override
   String get tapToChangePhoto => 'Нажмите, чтобы изменить фото';
 
   @override
-  String get klSubtitle => 'Отчёт о кармической связи прошлых жизней на основе ИИ и ведической астрологии';
+  String get klSubtitle =>
+      'Отчёт о кармической связи прошлых жизней на основе ИИ и ведической астрологии';
 
   @override
   String get klTitle => 'Кармическая связь прошлых жизней';
@@ -183,7 +190,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get klFoundationTitle => 'Кармическая основа каждой карты';
 
   @override
-  String get klFoundationSubtitle => 'Мастерство прошлой жизни и направление текущей жизни каждой души';
+  String get klFoundationSubtitle =>
+      'Мастерство прошлой жизни и направление текущей жизни каждой души';
 
   @override
   String get klKetuMastery => 'Мастерство Кету';
@@ -231,7 +239,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get klDebtsTitle => 'Кармические долги и их разрешение';
 
   @override
-  String get klNoDebtsDetected => 'Кармические долги в этой группе не обнаружены';
+  String get klNoDebtsDetected =>
+      'Кармические долги в этой группе не обнаружены';
 
   @override
   String get klTimingTitle => 'Кармическое время по Мула-даше';
@@ -241,7 +250,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String klAuditSubtitle(Object count) {
-    return 'Изучено параметров: ${count}';
+    return 'Изучено параметров: $count';
   }
 
   @override
@@ -263,7 +272,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get klTopicGroup => 'Наша общая история прошлой жизни';
 
   @override
-  String get lcSubtitle => 'Отчёт о любовной совместимости на основе ИИ и ведической астрологии';
+  String get lcSubtitle =>
+      'Отчёт о любовной совместимости на основе ИИ и ведической астрологии';
 
   @override
   String get lcTitle => 'Любовная совместимость';
@@ -386,7 +396,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lcChallengesTitle => 'Сложности и трения';
 
   @override
-  String get lcNoChallenges => 'Существенных точек трения ни в одной из карт не обнаружено';
+  String get lcNoChallenges =>
+      'Существенных точек трения ни в одной из карт не обнаружено';
 
   @override
   String get lcTotalPenalty => 'Общий штраф за сложности';
@@ -428,7 +439,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lcTopicDynamics => 'Динамика наших отношений';
 
   @override
-  String get cpSubtitle => 'Отчёт о вероятности рождения детей на основе ИИ и ведической астрологии';
+  String get cpSubtitle =>
+      'Отчёт о вероятности рождения детей на основе ИИ и ведической астрологии';
 
   @override
   String get cpTitle => 'Вероятность рождения детей';
@@ -497,13 +509,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cp5thHouseTitle => 'Анализ 5-го дома';
 
   @override
-  String get cp5thHouseSubtitle => 'Дом детей (Путра Бхава) для каждого человека';
+  String get cp5thHouseSubtitle =>
+      'Дом детей (Путра Бхава) для каждого человека';
 
   @override
   String get cpJupiterTitle => 'Анализ Юпитера — Путракараки';
 
   @override
-  String get cpJupiterSubtitle => 'Естественный сигнификатор детей для каждого человека';
+  String get cpJupiterSubtitle =>
+      'Естественный сигнификатор детей для каждого человека';
 
   @override
   String get cpD7Title => 'Анализ Саптамши D7';
@@ -527,7 +541,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cpDoshaTitle => 'Анализ дош';
 
   @override
-  String get cpNoDoshasDetected => 'Дош, влияющих на потомство, ни в одной из карт не обнаружено';
+  String get cpNoDoshasDetected =>
+      'Дош, влияющих на потомство, ни в одной из карт не обнаружено';
 
   @override
   String get cpRemediesTitle => 'Рекомендуемые средства';
@@ -554,7 +569,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cpTopicJupiter => 'Роль Юпитера в этом вопросе';
 
   @override
-  String get riSubtitle => 'Отчёт об интеллекте отношений на основе ИИ и ведической астрологии';
+  String get riSubtitle =>
+      'Отчёт об интеллекте отношений на основе ИИ и ведической астрологии';
 
   @override
   String get riTitle => 'Интеллект отношений';
@@ -594,7 +610,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String riProfilesSubtitle(Object count) {
-    return 'Людей в этой группе: ${count}';
+    return 'Людей в этой группе: $count';
   }
 
   @override
@@ -644,7 +660,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String riPairwiseSubtitle(Object count) {
-    return 'Проанализировано пар: ${count}';
+    return 'Проанализировано пар: $count';
   }
 
   @override
@@ -735,7 +751,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get riTopicTheme => 'Основная тема нашей группы';
 
   @override
-  String get kmSubtitle => 'Отчёт Кундли-Милан на основе ИИ и ведической астрологии';
+  String get kmSubtitle =>
+      'Отчёт Кундли-Милан на основе ИИ и ведической астрологии';
 
   @override
   String get kmTitle => 'Кундли-Милан';
@@ -745,7 +762,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String kmAshtakootScore(Object score) {
-    return 'Аштакута: ${score}/36';
+    return 'Аштакута: $score/36';
   }
 
   @override
@@ -788,7 +805,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get kmAshtakootTitle => 'Аштакута Гуна Милан';
 
   @override
-  String get kmAshtakootSubtitle => 'Классическая система сопоставления по 8 пунктам, из 36';
+  String get kmAshtakootSubtitle =>
+      'Классическая система сопоставления по 8 пунктам, из 36';
 
   @override
   String get kmNadiSeverity => 'Тяжесть Нади-доши';
@@ -806,7 +824,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get kmD9Title => 'Навамша D9 — карма брака';
 
   @override
-  String get kmD9Subtitle => 'Карта брака на уровне души, классически считается наиболее важной';
+  String get kmD9Subtitle =>
+      'Карта брака на уровне души, классически считается наиболее важной';
 
   @override
   String get kmD9Score => 'Совместимость по D9';
@@ -1007,7 +1026,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get kmTopicVerdict => 'Стоит ли нам вступать в брак';
 
   @override
-  String get pkSubtitle => 'Отчёт о прошлых жизнях и карме на основе ИИ и ведической астрологии';
+  String get pkSubtitle =>
+      'Отчёт о прошлых жизнях и карме на основе ИИ и ведической астрологии';
 
   @override
   String get pkTitle => 'Прошлые жизни и карма';
@@ -1017,7 +1037,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String pkHeroSummary(Object theme, Object relation, Object strategy) {
-    return 'Ваша карта показывает сигнатуру прошлой жизни «${theme}», которая сейчас ${relation} в эту жизнь. Рекомендуемый путь: ${strategy}.';
+    return 'Ваша карта показывает сигнатуру прошлой жизни «$theme», которая сейчас $relation в эту жизнь. Рекомендуемый путь: $strategy.';
   }
 
   @override
@@ -1114,7 +1134,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pkForeignResidence => 'Карма проживания за рубежом';
 
   @override
-  String get pkRelationshipsTitle => 'Прошлые отношения, перенесённые в эту жизнь';
+  String get pkRelationshipsTitle =>
+      'Прошлые отношения, перенесённые в эту жизнь';
 
   @override
   String get pkSpouseConnection => 'Воссоединение с супругом';
@@ -1360,7 +1381,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pkTopicProfile => 'Кем я был в прошлой жизни';
 
   @override
-  String get chSubtitle => 'Отчёт об анализе характера на основе ИИ и ведической астрологии';
+  String get chSubtitle =>
+      'Отчёт об анализе характера на основе ИИ и ведической астрологии';
 
   @override
   String get chTitle => 'Анализ характера';
@@ -1465,7 +1487,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chMoodPatterns => 'Модели настроения';
 
   @override
-  String get chKemadrumaPresent => 'Присутствует Кемадрума-йога — полезна дополнительная забота об эмоциональном состоянии.';
+  String get chKemadrumaPresent =>
+      'Присутствует Кемадрума-йога — полезна дополнительная забота об эмоциональном состоянии.';
 
   @override
   String get chFatherImprint => 'Качество отцовского отпечатка';
@@ -1495,7 +1518,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chGunaTitle => 'Профиль Гун и Дош';
 
   @override
-  String get chGunaSubtitle => 'Ваша внутренняя природа и конституция в классическом ведическом стиле';
+  String get chGunaSubtitle =>
+      'Ваша внутренняя природа и конституция в классическом ведическом стиле';
 
   @override
   String get chSattva => 'Саттва';
@@ -1558,7 +1582,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chShadowTitle => 'Теневые стороны и области роста';
 
   @override
-  String get chShadowSubtitle => 'Бережное осознание паттернов, над которыми стоит поработать';
+  String get chShadowSubtitle =>
+      'Бережное осознание паттернов, над которыми стоит поработать';
 
   @override
   String get chShadowPatterns => 'Теневые паттерны';
@@ -1694,7 +1719,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String chAgeRangeLabel(Object ageRange) {
-    return 'Возраст ${ageRange}';
+    return 'Возраст $ageRange';
   }
 
   @override
@@ -1752,7 +1777,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chTopicTiming => 'Лучшее время для работы над характером';
 
   @override
-  String get lpSubtitle => 'Отчёт о жизненном пути и удаче на основе ИИ и ведической астрологии';
+  String get lpSubtitle =>
+      'Отчёт о жизненном пути и удаче на основе ИИ и ведической астрологии';
 
   @override
   String get lpTitle => 'Жизненный путь и удача';
@@ -1762,7 +1788,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String lpHeroSummary(Object archetype, Object domain, Object probability) {
-    return 'Вы — ${archetype} с главной целью в области ${domain}. Наш анализ показывает общий потенциал реализации жизни на уровне ${probability}%.';
+    return 'Вы — $archetype с главной целью в области $domain. Наш анализ показывает общий потенциал реализации жизни на уровне $probability%.';
   }
 
   @override
@@ -1823,7 +1849,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lpKarakaTitle => 'Ваши планеты дхармы';
 
   @override
-  String get lpKarakaSubtitle => 'Насколько сильно каждая планета поддерживает цель вашей жизни';
+  String get lpKarakaSubtitle =>
+      'Насколько сильно каждая планета поддерживает цель вашей жизни';
 
   @override
   String get lpVerificationTitle => 'Подтверждено по картам (D9 / D60)';
@@ -1833,7 +1860,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String lpD9Explain(Object stage) {
-    return 'Стадия эволюции вашей души — «${stage}» в карте Навамши.';
+    return 'Стадия эволюции вашей души — «$stage» в карте Навамши.';
   }
 
   @override
@@ -1946,12 +1973,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String lpDharmicMilestone(Object age) {
-    return 'Дхармическая веха (возраст ${age})';
+    return 'Дхармическая веха (возраст $age)';
   }
 
   @override
   String lpAgeLabel(Object age) {
-    return 'Возраст ${age}';
+    return 'Возраст $age';
   }
 
   @override
@@ -2135,7 +2162,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lpTopicTiming => 'Лучшие временные окна';
 
   @override
-  String get dbSubtitle => 'Отчёт о долгах и восстановлении на основе ИИ и ведической астрологии';
+  String get dbSubtitle =>
+      'Отчёт о долгах и восстановлении на основе ИИ и ведической астрологии';
 
   @override
   String get dbTitle => 'Долги и восстановление';
@@ -2144,8 +2172,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbSnapshotHeader => 'Снимок восстановления после долгов';
 
   @override
-  String dbHeroSummary(Object phase, Object personality, Object probability, Object years) {
-    return 'Сейчас вы находитесь в фазе «${phase}» с подходом к деньгам типа «${personality}». Наш анализ показывает вероятность ${probability}% полностью избавиться от долгов примерно за ${years} лет.';
+  String dbHeroSummary(
+    Object phase,
+    Object personality,
+    Object probability,
+    Object years,
+  ) {
+    return 'Сейчас вы находитесь в фазе «$phase» с подходом к деньгам типа «$personality». Наш анализ показывает вероятность $probability% полностью избавиться от долгов примерно за $years лет.';
   }
 
   @override
@@ -2209,7 +2242,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbKarakaTitle => 'Ваши планеты долга';
 
   @override
-  String get dbKarakaSubtitle => 'Насколько сильно каждая планета поддерживает восстановление после долгов';
+  String get dbKarakaSubtitle =>
+      'Насколько сильно каждая планета поддерживает восстановление после долгов';
 
   @override
   String get dbVerificationTitle => 'Подтверждено по картам (D6)';
@@ -2245,7 +2279,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbCategoriesTitle => 'Категории долгов, требующие внимания';
 
   @override
-  String get dbCategoriesSubtitle => 'Какие виды долгов требуют наибольшего внимания';
+  String get dbCategoriesSubtitle =>
+      'Какие виды долгов требуют наибольшего внимания';
 
   @override
   String get dbTimelineTitle => 'Хронология освобождения от долгов';
@@ -2296,37 +2331,45 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbRiskDefault => 'Риск дефолта';
 
   @override
-  String get dbRiskDefaultExp => 'Вероятность пропустить плановый платёж настолько сильно, чтобы получить статус дефолта у кредитора.';
+  String get dbRiskDefaultExp =>
+      'Вероятность пропустить плановый платёж настолько сильно, чтобы получить статус дефолта у кредитора.';
 
   @override
-  String get dbRiskDefaultFix => 'Настройте автоплатежи по минимальным суммам и держите буфер на 1 месяц, чтобы один пропущенный цикл дохода не привёл к цепной реакции.';
+  String get dbRiskDefaultFix =>
+      'Настройте автоплатежи по минимальным суммам и держите буфер на 1 месяц, чтобы один пропущенный цикл дохода не привёл к цепной реакции.';
 
   @override
   String get dbRiskBankruptcy => 'Риск банкротства';
 
   @override
-  String get dbRiskBankruptcyExp => 'Вероятность того, что долговая нагрузка вырастет больше, чем реально могут покрыть доход и активы.';
+  String get dbRiskBankruptcyExp =>
+      'Вероятность того, что долговая нагрузка вырастет больше, чем реально могут покрыть доход и активы.';
 
   @override
-  String get dbRiskBankruptcyFix => 'Пройдите профессиональную проверку долгов перед оформлением нового кредита или кредитной линии.';
+  String get dbRiskBankruptcyFix =>
+      'Пройдите профессиональную проверку долгов перед оформлением нового кредита или кредитной линии.';
 
   @override
   String get dbRiskAssetSeizure => 'Риск изъятия имущества';
 
   @override
-  String get dbRiskAssetSeizureExp => 'Вероятность того, что дефолт по обеспеченному кредиту приведёт к изъятию залога или имущества кредитором.';
+  String get dbRiskAssetSeizureExp =>
+      'Вероятность того, что дефолт по обеспеченному кредиту приведёт к изъятию залога или имущества кредитором.';
 
   @override
-  String get dbRiskAssetSeizureFix => 'В первую очередь отдавайте приоритет платежам по обеспеченным кредитам и рефинансируйте заранее, если возможен разрыв в платежах.';
+  String get dbRiskAssetSeizureFix =>
+      'В первую очередь отдавайте приоритет платежам по обеспеченным кредитам и рефинансируйте заранее, если возможен разрыв в платежах.';
 
   @override
   String get dbRiskChronic => 'Риск хронического возврата долгов';
 
   @override
-  String get dbRiskChronicExp => 'Склонность снова попадать в долги даже после погашения текущей нагрузки.';
+  String get dbRiskChronicExp =>
+      'Склонность снова попадать в долги даже после погашения текущей нагрузки.';
 
   @override
-  String get dbRiskChronicFix => 'Создайте отдельный резервный фонд, прежде чем увеличивать расходы на образ жизни после погашения долгов.';
+  String get dbRiskChronicFix =>
+      'Создайте отдельный резервный фонд, прежде чем увеличивать расходы на образ жизни после погашения долгов.';
 
   @override
   String get dbReindebtTrigger => 'Триггер повторной задолженности';
@@ -2344,7 +2387,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbCrisisTitle => 'Готовность к кризису';
 
   @override
-  String get dbCrisisSubtitle => 'Как рано заметить проблему и спокойно на неё отреагировать';
+  String get dbCrisisSubtitle =>
+      'Как рано заметить проблему и спокойно на неё отреагировать';
 
   @override
   String get dbWarningSigns => 'Ранние предупреждающие признаки';
@@ -2455,7 +2499,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dbTopicCategories => 'Какие долги приоритетнее';
 
   @override
-  String get mnSubtitle => 'Отчёт о психологическом благополучии на основе ИИ и ведической астрологии';
+  String get mnSubtitle =>
+      'Отчёт о психологическом благополучии на основе ИИ и ведической астрологии';
 
   @override
   String get mnTitle => 'Психика и стресс';
@@ -2518,7 +2563,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mnSupportBannerTitle => 'Бережная заметка';
 
   @override
-  String get mnSupportBannerBody => 'Ваша карта показывает, что сейчас может быть хорошее время опереться на дополнительную поддержку — доверенного друга, члена семьи или специалиста. Обращение за помощью — признак силы, а не слабости.';
+  String get mnSupportBannerBody =>
+      'Ваша карта показывает, что сейчас может быть хорошее время опереться на дополнительную поддержку — доверенного друга, члена семьи или специалиста. Обращение за помощью — признак силы, а не слабости.';
 
   @override
   String get mnProfileTitle => 'Ваш эмоциональный план';
@@ -2650,7 +2696,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mnBurnoutVulnerability => 'Чувствительность к выгоранию';
 
   @override
-  String get mnBurnoutRecovery => 'Способность к восстановлению после выгорания';
+  String get mnBurnoutRecovery =>
+      'Способность к восстановлению после выгорания';
 
   @override
   String get mnBurnoutStage => 'Текущая стадия выгорания';
@@ -2734,7 +2781,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mnSelfAdvocacy => 'Готовность отстаивать себя';
 
   @override
-  String get mnMedicationReceptivity => 'Восприимчивость к медикаментозному лечению';
+  String get mnMedicationReceptivity =>
+      'Восприимчивость к медикаментозному лечению';
 
   @override
   String get mnTimelineTitle => 'Хронология благополучия';
@@ -2800,7 +2848,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mnTopicResilience => 'Насколько я устойчив эмоционально?';
 
   @override
-  String get mnTopicCoping => 'Какие стратегии совладания подходят мне лучше всего?';
+  String get mnTopicCoping =>
+      'Какие стратегии совладания подходят мне лучше всего?';
 
   @override
   String get mnTopicSleep => 'Как улучшить мой сон?';
@@ -2812,7 +2861,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mnTopicTherapy => 'Какой стиль терапии мне подходит?';
 
   @override
-  String get mnTopicPractices => 'Какие ежедневные практики помогают мне больше всего?';
+  String get mnTopicPractices =>
+      'Какие ежедневные практики помогают мне больше всего?';
 
   @override
   String get mnTopicTiming => 'Когда мои лучшие годы для благополучия?';
@@ -2821,7 +2871,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mnTopicSupport => 'Как построить крепкую сеть поддержки?';
 
   @override
-  String get lgSubtitle => 'Отчёт по юридическим вопросам на основе ИИ и ведической астрологии';
+  String get lgSubtitle =>
+      'Отчёт по юридическим вопросам на основе ИИ и ведической астрологии';
 
   @override
   String get lgTitle => 'Право и споры';
@@ -2980,7 +3031,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lgEnemyDefeatCapacity => 'Способность одолеть врагов';
 
   @override
-  String get lgCriminalFinancialTitle => 'Наблюдение за уголовными и финансовыми рисками';
+  String get lgCriminalFinancialTitle =>
+      'Наблюдение за уголовными и финансовыми рисками';
 
   @override
   String get lgCriminalRisk => 'Риск причастности к преступлению';
@@ -3079,7 +3131,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lgClarityYears => 'Годы правовой ясности';
 
   @override
-  String get lgAvoidancePeriods => 'Критические периоды, которых стоит избегать';
+  String get lgAvoidancePeriods =>
+      'Критические периоды, которых стоит избегать';
 
   @override
   String get lgFavorableWindows => 'Благоприятные окна для разрешения';
@@ -3145,7 +3198,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lgTopicCareer => 'Подхожу ли я для юридической карьеры?';
 
   @override
-  String get prSubtitle => 'Отчёт о собственности на основе ИИ и ведической астрологии';
+  String get prSubtitle =>
+      'Отчёт о собственности на основе ИИ и ведической астрологии';
 
   @override
   String get prTitle => 'Собственность и активы';
@@ -3229,7 +3283,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get prKarakaTitle => 'Ваши планеты собственности';
 
   @override
-  String get prKarakaSubtitle => 'Какие планеты формируют вашу удачу в собственности';
+  String get prKarakaSubtitle =>
+      'Какие планеты формируют вашу удачу в собственности';
 
   @override
   String get prPrimaryKaraka => 'Основная Карака';
@@ -3289,7 +3344,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get prNextOpportunity => 'Следующая возможность';
 
   @override
-  String get prLifetimePropertyCount => 'Количество объектов собственности за жизнь';
+  String get prLifetimePropertyCount =>
+      'Количество объектов собственности за жизнь';
 
   @override
   String get prInheritanceTitle => 'Наследство и семейная собственность';
@@ -3313,7 +3369,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get prInheritanceType => 'Тип наследства';
 
   @override
-  String get prLandInvestTitle => 'Земля, инвестиции и зарубежная собственность';
+  String get prLandInvestTitle =>
+      'Земля, инвестиции и зарубежная собственность';
 
   @override
   String get prPropertyInvestor => 'Балл инвестора в недвижимость';
@@ -3364,7 +3421,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get prLuxuryAffinity => 'Склонность к роскоши';
 
   @override
-  String get prVehicleLossRisk => 'Риск потери/повреждения транспортного средства';
+  String get prVehicleLossRisk =>
+      'Риск потери/повреждения транспортного средства';
 
   @override
   String get prLegalRiskTitle => 'Наблюдение за юридическими и прочими рисками';
@@ -3454,7 +3512,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edTitle => 'Анализ образования и обучения';
 
   @override
-  String get edSubtitle => 'Отчёт об образовании на основе ИИ и ведической астрологии';
+  String get edSubtitle =>
+      'Отчёт об образовании на основе ИИ и ведической астрологии';
 
   @override
   String get edSnapshotHeader => 'Снимок вашего образования';
@@ -3520,7 +3579,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edSoulPlanet => 'Планета души';
 
   @override
-  String get edSoulHint => 'Ваше глубочайшее внутреннее стремление и цель жизни';
+  String get edSoulHint =>
+      'Ваше глубочайшее внутреннее стремление и цель жизни';
 
   @override
   String get edSubjectPlanet => 'Планета предмета';
@@ -3571,7 +3631,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edYogaAbsent => 'Отсутствует';
 
   @override
-  String get edYogaNoneNote => 'Классических йог образования нет — успех приходит через постоянные усилия и дисциплину.';
+  String get edYogaNoneNote =>
+      'Классических йог образования нет — успех приходит через постоянные усилия и дисциплину.';
 
   @override
   String get edVerificationTitle => 'Подтверждение по картам';
@@ -3760,7 +3821,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwTitle => 'Анализ здоровья и благополучия';
 
   @override
-  String get hwSubtitle => 'Отчёт о здоровье и благополучии на основе ИИ и ведической астрологии';
+  String get hwSubtitle =>
+      'Отчёт о здоровье и благополучии на основе ИИ и ведической астрологии';
 
   @override
   String get hwSnapshotHeader => 'Снимок вашего здоровья';
@@ -3820,7 +3882,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwConstitutionTitle => 'Ваш тип телосложения';
 
   @override
-  String get hwConstitutionSubtitle => 'Аюрведическая конституция по вашей карте';
+  String get hwConstitutionSubtitle =>
+      'Аюрведическая конституция по вашей карте';
 
   @override
   String get hwDominantDosha => 'Доминирующий';
@@ -3865,7 +3928,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwCategoriesTitle => 'Наблюдение по категориям заболеваний';
 
   @override
-  String get hwCategoriesSubtitle => 'Восприимчивость по основным категориям здоровья';
+  String get hwCategoriesSubtitle =>
+      'Восприимчивость по основным категориям здоровья';
 
   @override
   String get hwLowRiskCategories => 'Категории низкого риска';
@@ -3874,7 +3938,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwMentalTitle => 'Психическое и эмоциональное благополучие';
 
   @override
-  String get hwMentalSubtitle => 'Эмоциональная устойчивость и потребности в поддержке';
+  String get hwMentalSubtitle =>
+      'Эмоциональная устойчивость и потребности в поддержке';
 
   @override
   String get hwMentalVulnerability => 'Эмоциональная чувствительность';
@@ -3892,7 +3957,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwTimelineTitle => 'Хронология здоровья';
 
   @override
-  String get hwTimelineSubtitle => 'Годы пика, годы осторожности и окна восстановления';
+  String get hwTimelineSubtitle =>
+      'Годы пика, годы осторожности и окна восстановления';
 
   @override
   String get hwPeakYears => 'Годы пика благополучия';
@@ -3913,7 +3979,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwLifestyleTitle => 'Ваш гид по образу жизни';
 
   @override
-  String get hwLifestyleSubtitle => 'Что ваша карта говорит о ежедневных привычках';
+  String get hwLifestyleSubtitle =>
+      'Что ваша карта говорит о ежедневных привычках';
 
   @override
   String get hwSleepDiscipline => 'Влияние дисциплины сна';
@@ -3949,7 +4016,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwSpecialTitle => 'Жизненные этапы и особые темы';
 
   @override
-  String get hwSpecialSubtitle => 'Фертильность, здоровье в детстве, привычки и выгорание';
+  String get hwSpecialSubtitle =>
+      'Фертильность, здоровье в детстве, привычки и выгорание';
 
   @override
   String get hwFertility => 'Показатель фертильности';
@@ -3985,7 +4053,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwProtectiveFactors => 'Защитные факторы';
 
   @override
-  String get hwChallengesTitle => 'Трудности, на которые стоит обратить внимание';
+  String get hwChallengesTitle =>
+      'Трудности, на которые стоит обратить внимание';
 
   @override
   String get hwChallengesSubtitle => 'На чём сосредоточить профилактику';
@@ -4003,7 +4072,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hwImprovementTitle => 'Ваш план благополучия';
 
   @override
-  String get hwImprovementSubtitle => 'Практические шаги + традиционные средства';
+  String get hwImprovementSubtitle =>
+      'Практические шаги + традиционные средства';
 
   @override
   String get hwReliabilityTitle => 'Надёжность прогноза';
@@ -4249,7 +4319,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lvRiskWorkaholic => 'Работа вместо любви';
 
   @override
-  String get lvRedFlags => 'Тревожные сигналы, на которые стоит обратить внимание';
+  String get lvRedFlags =>
+      'Тревожные сигналы, на которые стоит обратить внимание';
 
   @override
   String get lvHealing => 'Что нужно исцелить';
@@ -4384,13 +4455,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mrSoulAlignment => 'Согласованность душ';
 
   @override
-  String get mrAlignStrong => 'Ваша душа и идеальный партнёр сильно согласованы — глубоко удовлетворяющая связь хорошо поддержана.';
+  String get mrAlignStrong =>
+      'Ваша душа и идеальный партнёр сильно согласованы — глубоко удовлетворяющая связь хорошо поддержана.';
 
   @override
-  String get mrAlignModerate => 'Ваша душа и идеальный партнёр умеренно согласованы — удовлетворяющая связь растёт при осознанных усилиях.';
+  String get mrAlignModerate =>
+      'Ваша душа и идеальный партнёр умеренно согласованы — удовлетворяющая связь растёт при осознанных усилиях.';
 
   @override
-  String get mrAlignLow => 'Вашей душе и партнёрству нужна осознанная интеграция — выбирайте партнёра, который действительно соответствует вашим внутренним ценностям.';
+  String get mrAlignLow =>
+      'Вашей душе и партнёрству нужна осознанная интеграция — выбирайте партнёра, который действительно соответствует вашим внутренним ценностям.';
 
   @override
   String get mrTechDarakaraka => 'Планета супруга (Даракарака)';
@@ -4528,10 +4602,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mrChallenges => 'Трудности, на которые стоит обратить внимание';
 
   @override
-  String get mrMangalPresent => 'В карте присутствует Мангал-доша — внимательно изучите средства и подбор партнёра.';
+  String get mrMangalPresent =>
+      'В карте присутствует Мангал-доша — внимательно изучите средства и подбор партнёра.';
 
   @override
-  String get mrMangalAbsent => 'Мангал-доша не обнаружена — благоприятный показатель для брака.';
+  String get mrMangalAbsent =>
+      'Мангал-доша не обнаружена — благоприятный показатель для брака.';
 
   @override
   String get mrRiskConflict => 'Конфликт';
@@ -4606,7 +4682,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mrTopicHarmony => 'Построение гармонии';
 
   @override
-  String get wlSubtitle => 'Отчёт о богатстве на основе ИИ и ведической астрологии';
+  String get wlSubtitle =>
+      'Отчёт о богатстве на основе ИИ и ведической астрологии';
 
   @override
   String get wlTitle => 'Богатство и финансы';
@@ -4825,7 +4902,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get wlTopicTiming => 'Лучшее время для денег';
 
   @override
-  String get bzSubtitle => 'Отчёт о бизнесе на основе ИИ и ведической астрологии';
+  String get bzSubtitle =>
+      'Отчёт о бизнесе на основе ИИ и ведической астрологии';
 
   @override
   String get bzTitle => 'Бизнес и стартапы';
@@ -4894,13 +4972,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get bzDirectionStrength => 'Ясность направления';
 
   @override
-  String get bzAlignStrong => 'Цель вашей души и направление бизнеса сильно согласованы — построение предприятия ощущается естественным и полноценным.';
+  String get bzAlignStrong =>
+      'Цель вашей души и направление бизнеса сильно согласованы — построение предприятия ощущается естественным и полноценным.';
 
   @override
-  String get bzAlignModerate => 'Цель вашей души и направление бизнеса умеренно согласованы — предприятие работает лучше всего, когда отражает ваши глубинные ценности.';
+  String get bzAlignModerate =>
+      'Цель вашей души и направление бизнеса умеренно согласованы — предприятие работает лучше всего, когда отражает ваши глубинные ценности.';
 
   @override
-  String get bzAlignLow => 'Цели вашей души и направлению бизнеса требуется осознанное согласование — выбирайте предприятие, которое действительно соответствует вашей сути.';
+  String get bzAlignLow =>
+      'Цели вашей души и направлению бизнеса требуется осознанное согласование — выбирайте предприятие, которое действительно соответствует вашей сути.';
 
   @override
   String get bzTechAtmakaraka => 'Планета души (Атмакарака)';
@@ -5077,28 +5158,36 @@ class AppLocalizationsRu extends AppLocalizations {
   String get bzRiskLegal => 'Юридические/нормативные вопросы';
 
   @override
-  String get bzFinancialExp => 'Риск потери денег из-за чрезмерных инвестиций или неудачного времени денежного потока во время предприятия.';
+  String get bzFinancialExp =>
+      'Риск потери денег из-за чрезмерных инвестиций или неудачного времени денежного потока во время предприятия.';
 
   @override
-  String get bzFinancialFix => 'Держите денежный резерв, начинайте экономно и проверяйте спрос, прежде чем наращивать расходы.';
+  String get bzFinancialFix =>
+      'Держите денежный резерв, начинайте экономно и проверяйте спрос, прежде чем наращивать расходы.';
 
   @override
-  String get bzBurnoutExp => 'Слишком долгое чрезмерное напряжение может истощить вашу энергию и внимание.';
+  String get bzBurnoutExp =>
+      'Слишком долгое чрезмерное напряжение может истощить вашу энергию и внимание.';
 
   @override
-  String get bzBurnoutFix => 'Берегите отдых, делегируйте заранее и распределяйте большие рывки по благоприятным периодам.';
+  String get bzBurnoutFix =>
+      'Берегите отдых, делегируйте заранее и распределяйте большие рывки по благоприятным периодам.';
 
   @override
-  String get bzTeamExp => 'Трения с сооснователями или сотрудниками могут замедлить бизнес.';
+  String get bzTeamExp =>
+      'Трения с сооснователями или сотрудниками могут замедлить бизнес.';
 
   @override
-  String get bzTeamFix => 'Чётко закрепляйте роли и ожидания письменно и общайтесь часто.';
+  String get bzTeamFix =>
+      'Чётко закрепляйте роли и ожидания письменно и общайтесь часто.';
 
   @override
-  String get bzLegalExp => 'Проблемы с соответствием, контрактами или регулированием могут создать препятствия.';
+  String get bzLegalExp =>
+      'Проблемы с соответствием, контрактами или регулированием могут создать препятствия.';
 
   @override
-  String get bzLegalFix => 'Проверяйте контракты, ведите документацию в порядке и заранее консультируйтесь со специалистами.';
+  String get bzLegalFix =>
+      'Проверяйте контракты, ведите документацию в порядке и заранее консультируйтесь со специалистами.';
 
   @override
   String get bzImprovementPlan => 'План улучшений';
@@ -5167,7 +5256,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crTitle => 'Анализ карьеры и работы';
 
   @override
-  String get crSubtitle => 'Отчёт о карьере на основе ИИ и ведической астрологии';
+  String get crSubtitle =>
+      'Отчёт о карьере на основе ИИ и ведической астрологии';
 
   @override
   String get crCrumbHome => 'Главная';
@@ -5254,13 +5344,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crAlignment => 'Согласованность души и карьеры';
 
   @override
-  String get crAlignStrong => 'Ваши природные интересы и карьерный путь сильно согласованы.';
+  String get crAlignStrong =>
+      'Ваши природные интересы и карьерный путь сильно согласованы.';
 
   @override
-  String get crAlignModerate => 'Ваши природные интересы и карьерный путь умеренно согласованы.';
+  String get crAlignModerate =>
+      'Ваши природные интересы и карьерный путь умеренно согласованы.';
 
   @override
-  String get crAlignLow => 'Вашим природным интересам и карьерному пути требуется осознанное согласование.';
+  String get crAlignLow =>
+      'Вашим природным интересам и карьерному пути требуется осознанное согласование.';
 
   @override
   String get crTechAtmakaraka => 'Атмакарака (указатель души)';
@@ -5410,34 +5503,44 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crPrevention => 'Профилактика';
 
   @override
-  String get crBurnoutExp => 'Долгие, требовательные фазы со временем могут истощить вашу энергию.';
+  String get crBurnoutExp =>
+      'Долгие, требовательные фазы со временем могут истощить вашу энергию.';
 
   @override
-  String get crBurnoutFix => 'Берегите отдых, устанавливайте границы и распределяйте большие усилия.';
+  String get crBurnoutFix =>
+      'Берегите отдых, устанавливайте границы и распределяйте большие усилия.';
 
   @override
-  String get crRecognitionExp => 'Награды и признание могут приходить медленнее, чем ваши усилия.';
+  String get crRecognitionExp =>
+      'Награды и признание могут приходить медленнее, чем ваши усилия.';
 
   @override
-  String get crRecognitionFix => 'Документируйте успехи и делайте свой вклад заметным для руководства.';
+  String get crRecognitionFix =>
+      'Документируйте успехи и делайте свой вклад заметным для руководства.';
 
   @override
-  String get crConflictExp => 'Порой могут возникать трения с коллегами или руководством.';
+  String get crConflictExp =>
+      'Порой могут возникать трения с коллегами или руководством.';
 
   @override
-  String get crConflictFix => 'Общайтесь спокойно и разумно выбирайте, за что стоит бороться.';
+  String get crConflictFix =>
+      'Общайтесь спокойно и разумно выбирайте, за что стоит бороться.';
 
   @override
-  String get crFinancialExp => 'Доход может ощущаться неравномерным в определённые периоды.';
+  String get crFinancialExp =>
+      'Доход может ощущаться неравномерным в определённые периоды.';
 
   @override
-  String get crFinancialFix => 'Держите резерв и избегайте чрезмерных финансовых обязательств.';
+  String get crFinancialFix =>
+      'Держите резерв и избегайте чрезмерных финансовых обязательств.';
 
   @override
-  String get crOverqualExp => 'Иногда вы можете чувствовать себя недоиспользованным или недостаточно задействованным.';
+  String get crOverqualExp =>
+      'Иногда вы можете чувствовать себя недоиспользованным или недостаточно задействованным.';
 
   @override
-  String get crOverqualFix => 'Ищите вызовы на вырост и продолжайте учиться, чтобы оставаться вовлечённым.';
+  String get crOverqualFix =>
+      'Ищите вызовы на вырост и продолжайте учиться, чтобы оставаться вовлечённым.';
 
   @override
   String get crImprovementPlan => 'План развития карьеры';
@@ -5449,7 +5552,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crCatPractical => 'Практические шаги';
 
   @override
-  String get crTraditionalExplain => 'Объяснение с точки зрения традиционной астрологии';
+  String get crTraditionalExplain =>
+      'Объяснение с точки зрения традиционной астрологии';
 
   @override
   String get crActionPlan => '30-дневный план карьерных действий';
@@ -5467,16 +5571,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crWeek4 => 'Неделя 4 · Карьерная видимость';
 
   @override
-  String get crWeek1Tip => 'Обновите резюме и LinkedIn вокруг вашей самой сильной карьерной темы.';
+  String get crWeek1Tip =>
+      'Обновите резюме и LinkedIn вокруг вашей самой сильной карьерной темы.';
 
   @override
-  String get crWeek2Tip => 'Выберите один ценный навык в вашей лучшей области и практикуйте его ежедневно.';
+  String get crWeek2Tip =>
+      'Выберите один ценный навык в вашей лучшей области и практикуйте его ежедневно.';
 
   @override
-  String get crWeek3Tip => 'Восстановите связь с наставниками и обратитесь к двум новым контактам в отрасли.';
+  String get crWeek3Tip =>
+      'Восстановите связь с наставниками и обратитесь к двум новым контактам в отрасли.';
 
   @override
-  String get crWeek4Tip => 'Делитесь своей работой публично и вызовитесь на заметный проект.';
+  String get crWeek4Tip =>
+      'Делитесь своей работой публично и вызовитесь на заметный проект.';
 
   @override
   String get crPriority => 'Приоритет';
@@ -5524,7 +5632,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get crReliabilityModerate => 'Умеренная надёжность';
 
   @override
-  String get crReliabilityExplain => 'Этот отчёт объединяет вашу натальную карту, дробные карты и показатели Джаймини. Оценка отражает, насколько сильно эти слои карты согласуются друг с другом.';
+  String get crReliabilityExplain =>
+      'Этот отчёт объединяет вашу натальную карту, дробные карты и показатели Джаймини. Оценка отражает, насколько сильно эти слои карты согласуются друг с другом.';
 
   @override
   String get crChartLayers => 'Слои карты и их вес';
@@ -5579,7 +5688,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String crAlignExplainKaraka(Object soul, Object career) {
-    return '${soul} направляет ваше внутреннее призвание, а ${career} формирует вашу внешнюю профессию.';
+    return '$soul направляет ваше внутреннее призвание, а $career формирует вашу внешнюю профессию.';
   }
 
   @override
@@ -5670,7 +5779,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get rzWhatChartMeans => 'Что означает эта карта';
 
   @override
-  String get rzChartExplain => 'Этот ромб показывает, где сегодня находится каждая планета на небе относительно вашего знака. Планеты в благоприятных домах поднимают день; в сложных домах — требуют осторожности.';
+  String get rzChartExplain =>
+      'Этот ромб показывает, где сегодня находится каждая планета на небе относительно вашего знака. Планеты в благоприятных домах поднимают день; в сложных домах — требуют осторожности.';
 
   @override
   String get rzDoNetworking => 'Нетворкинг и общение';
@@ -5724,13 +5834,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get rzSteady => 'Стабильно';
 
   @override
-  String get rzTomorrowUpLine => 'Ожидается, что завтра энергия возрастёт — планируйте важные дела заранее.';
+  String get rzTomorrowUpLine =>
+      'Ожидается, что завтра энергия возрастёт — планируйте важные дела заранее.';
 
   @override
-  String get rzTomorrowDownLine => 'Завтра энергия может немного снизиться — сделайте день лёгким и размеренным.';
+  String get rzTomorrowDownLine =>
+      'Завтра энергия может немного снизиться — сделайте день лёгким и размеренным.';
 
   @override
-  String get rzTomorrowFlatLine => 'Завтра энергия остаётся стабильной — впереди спокойный, сбалансированный день.';
+  String get rzTomorrowFlatLine =>
+      'Завтра энергия остаётся стабильной — впереди спокойный, сбалансированный день.';
 
   @override
   String get rzWeeklyTrend => 'Недельная тенденция';
@@ -5776,32 +5889,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String rzHomeSummary(Object dom, Object chal) {
-    return '${dom} задаёт тон дня, а ${chal} требует терпения и заботы.';
+    return '$dom задаёт тон дня, а $chal требует терпения и заботы.';
   }
 
   @override
   String rzInsightGood(Object karaka) {
-    return 'Хороший день для ${karaka}.';
+    return 'Хороший день для $karaka.';
   }
 
   @override
   String rzInsightHard(Object karaka) {
-    return 'Сегодня действуйте не спеша в отношении ${karaka}.';
+    return 'Сегодня действуйте не спеша в отношении $karaka.';
   }
 
   @override
   String rzInfluenceGood(Object karaka) {
-    return '${karaka} сегодня хорошо поддерживается.';
+    return '$karaka сегодня хорошо поддерживается.';
   }
 
   @override
   String rzInfluenceHard(Object karaka) {
-    return '${karaka} сегодня может столкнуться с задержками.';
+    return '$karaka сегодня может столкнуться с задержками.';
   }
 
   @override
   String rzDetailSummary(Object strong, Object weak) {
-    return 'Сегодня поддерживается ${strong}, а ${weak} требует терпения и заботы.';
+    return 'Сегодня поддерживается $strong, а $weak требует терпения и заботы.';
   }
 
   @override
@@ -5880,10 +5993,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fdRecommendation => 'Рекомендация';
 
   @override
-  String get fdNoActions => 'Сегодня нет ничего важного, что стоило бы форсировать — придерживайтесь спокойного, стабильного распорядка.';
+  String get fdNoActions =>
+      'Сегодня нет ничего важного, что стоило бы форсировать — придерживайтесь спокойного, стабильного распорядка.';
 
   @override
-  String get fdNoCautions => 'Сегодня нет серьёзных предостережений — действуйте с обычной осторожностью.';
+  String get fdNoCautions =>
+      'Сегодня нет серьёзных предостережений — действуйте с обычной осторожностью.';
 
   @override
   String get fdHighlights => 'Главное сегодня';
@@ -5970,7 +6085,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fdOverallStatus => 'Общий статус';
 
   @override
-  String get fdNoPlanetTransit => 'Ни одна крупная планета сегодня не проходит через эту область.';
+  String get fdNoPlanetTransit =>
+      'Ни одна крупная планета сегодня не проходит через эту область.';
 
   @override
   String get fdFinancialOutlook => 'Финансовый прогноз';
@@ -6057,7 +6173,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fdAskAi => 'Спросить ИИ';
 
   @override
-  String get fdAskAiSub => 'Нажмите на вопрос, чтобы получить сегодняшний ответ';
+  String get fdAskAiSub =>
+      'Нажмите на вопрос, чтобы получить сегодняшний ответ';
 
   @override
   String get fdQ1 => 'Почему карьера сегодня идёт медленно?';
@@ -6079,12 +6196,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String fdAiSummaryLine(Object top, Object weak, Object fin) {
-    return 'Сегодня лучше всего подходит для ${top}. ${weak} может ощущаться медленно, поэтому избегайте там важных решений. В финансовом плане день выглядит ${fin}.';
+    return 'Сегодня лучше всего подходит для $top. $weak может ощущаться медленно, поэтому избегайте там важных решений. В финансовом плане день выглядит $fin.';
   }
 
   @override
   String fdThemeFocusLine(Object top) {
-    return 'Сегодня ваша энергия сосредоточена вокруг ${top} — опирайтесь на неё, а в остальном действуйте мягче.';
+    return 'Сегодня ваша энергия сосредоточена вокруг $top — опирайтесь на неё, а в остальном действуйте мягче.';
   }
 
   @override
@@ -6185,27 +6302,27 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String gochThemeGrowth(Object area) {
-    return 'День роста в области ${area} — используйте его.';
+    return 'День роста в области $area — используйте его.';
   }
 
   @override
   String gochThemeChallenge(Object area) {
-    return 'Сохраняйте терпение в области ${area} сегодня — двигайтесь размеренно.';
+    return 'Сохраняйте терпение в области $area сегодня — двигайтесь размеренно.';
   }
 
   @override
   String gochPosLine(Object area) {
-    return '${area} сейчас хорошо поддерживается.';
+    return '$area сейчас хорошо поддерживается.';
   }
 
   @override
   String gochChalLine(Object area) {
-    return '${area} сегодня требует особой заботы.';
+    return '$area сегодня требует особой заботы.';
   }
 
   @override
   String gochAiFocusLine(Object a1, Object a2) {
-    return 'Направьте свою энергию на ${a1} сегодня и будьте мягче с ${a2}.';
+    return 'Направьте свою энергию на $a1 сегодня и будьте мягче с $a2.';
   }
 
   @override
@@ -6270,37 +6387,37 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String divAiUse(Object purpose) {
-    return 'Используйте эту карту для анализа ${purpose}.';
+    return 'Используйте эту карту для анализа $purpose.';
   }
 
   @override
   String divHeroSummary(Object c1, Object c2) {
-    return 'Ваши карты ${c1} и ${c2} особенно важны — начните с них для соответствующих областей, а затем изучите остальные по мере необходимости.';
+    return 'Ваши карты $c1 и $c2 особенно важны — начните с них для соответствующих областей, а затем изучите остальные по мере необходимости.';
   }
 
   @override
   String divRecReasonHouse(Object house) {
-    return 'Ваш ${house} дом требует более пристального внимания — эта карта показывает его подробно.';
+    return 'Ваш $house дом требует более пристального внимания — эта карта показывает его подробно.';
   }
 
   @override
   String divRecReasonPlanet(Object planet) {
-    return '${planet} — ключевая, но испытываемая планета — эта карта раскрывает её более глубокое состояние.';
+    return '$planet — ключевая, но испытываемая планета — эта карта раскрывает её более глубокое состояние.';
   }
 
   @override
   String divRecReasonDasha(Object planet) {
-    return 'Вы находитесь в Махадаше ${planet}, поэтому эта карта сейчас особенно актуальна.';
+    return 'Вы находитесь в Махадаше $planet, поэтому эта карта сейчас особенно актуальна.';
   }
 
   @override
   String divRecSummary(Object c1) {
-    return 'На основе вашей карты ${c1} должна быть вашим наивысшим приоритетом. Карты ниже упорядочены по актуальности для вас прямо сейчас.';
+    return 'На основе вашей карты $c1 должна быть вашим наивысшим приоритетом. Карты ниже упорядочены по актуальности для вас прямо сейчас.';
   }
 
   @override
   String divWhenToUseLine(Object purpose) {
-    return 'Открывайте эту карту, когда хотите изучить ${purpose}.';
+    return 'Открывайте эту карту, когда хотите изучить $purpose.';
   }
 
   @override
@@ -6353,19 +6470,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String yogaHeroSummary(Object count, Object planets) {
-    return 'Ваша карта содержит ${count} активных йог — благоприятных планетарных сочетаний. Сочетания с участием ${planets} создают особенно полезные влияния для роста и успеха.';
+    return 'Ваша карта содержит $count активных йог — благоприятных планетарных сочетаний. Сочетания с участием $planets создают особенно полезные влияния для роста и успеха.';
   }
 
   @override
   String yogaAiLine(Object name, Object areas) {
-    return '${name} поддерживает ${areas}, и её преимущества растут, когда её планеты активны в даше или транзите.';
+    return '$name поддерживает $areas, и её преимущества растут, когда её планеты активны в даше или транзите.';
   }
 
   @override
-  String get yogaAiGeneric => 'Эта йога — благоприятное сочетание в вашей карте, которое усиливает связанные с ней сферы жизни.';
+  String get yogaAiGeneric =>
+      'Эта йога — благоприятное сочетание в вашей карте, которое усиливает связанные с ней сферы жизни.';
 
   @override
-  String get yogaExplainReassure => 'Йоги — это яркие стороны вашей карты, благоприятные планетарные сочетания, работающие в вашу пользу. Более сильные из них приносят долгосрочные преимущества, особенно в периоды формирующих их планет.';
+  String get yogaExplainReassure =>
+      'Йоги — это яркие стороны вашей карты, благоприятные планетарные сочетания, работающие в вашу пользу. Более сильные из них приносят долгосрочные преимущества, особенно в периоды формирующих их планет.';
 
   @override
   String get doshSevere => 'Тяжёлая';
@@ -6452,7 +6571,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get remLifestyle => 'Образ жизни';
 
   @override
-  String get remLifestyleGeneric => 'Практикуйте благодарность, дисциплину и благотворительность, связанные с этой планетой, и поддерживайте хорошее поведение.';
+  String get remLifestyleGeneric =>
+      'Практикуйте благодарность, дисциплину и благотворительность, связанные с этой планетой, и поддерживайте хорошее поведение.';
 
   @override
   String get doshExplain => 'Объяснить мои доши';
@@ -6461,24 +6581,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get doshExplainSubtitle => 'Спокойный, практичный взгляд на ваши доши';
 
   @override
-  String get doshExplainReassure => 'Доши распространены — почти в каждой карте есть какие-то. Они описывают склонности, а не предопределённую судьбу. Осознанность, хорошее поведение и простые средства снижают их практическое влияние, так что беспокоиться не о чем.';
+  String get doshExplainReassure =>
+      'Доши распространены — почти в каждой карте есть какие-то. Они описывают склонности, а не предопределённую судьбу. Осознанность, хорошее поведение и простые средства снижают их практическое влияние, так что беспокоиться не о чем.';
 
   @override
-  String get doshAiGeneric => 'Эта доша описывает склонность в вашей карте. Её практическое влияние обычно мягкое и может быть сбалансировано осознанностью и простыми средствами.';
+  String get doshAiGeneric =>
+      'Эта доша описывает склонность в вашей карте. Её практическое влияние обычно мягкое и может быть сбалансировано осознанностью и простыми средствами.';
 
   @override
   String doshHeroSummary(Object active, Object total) {
-    return 'Ваша карта показывает ${active} активных дош из ${total} проверенных. Большинство из них мягкие, и лишь немногие требуют внимания. При понимании и простых средствах их практическое влияние можно смягчить.';
+    return 'Ваша карта показывает $active активных дош из $total проверенных. Большинство из них мягкие, и лишь немногие требуют внимания. При понимании и простых средствах их практическое влияние можно смягчить.';
   }
 
   @override
   String doshAiLine(Object areas, Object planet) {
-    return 'Эта доша в основном влияет на ${areas}. В периоды ${planet} её эффект может ощущаться сильнее, а средства помогают его сбалансировать.';
+    return 'Эта доша в основном влияет на $areas. В периоды $planet её эффект может ощущаться сильнее, а средства помогают его сбалансировать.';
   }
 
   @override
   String doshTimelineLine(Object planet) {
-    return 'Её эффект ощущается сильнее всего во время Махадаши и Антардаши ${planet}, а также когда ${planet} активна в транзите.';
+    return 'Её эффект ощущается сильнее всего во время Махадаши и Антардаши $planet, а также когда $planet активна в транзите.';
   }
 
   @override
@@ -6569,58 +6691,63 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sbPlanetDetails => 'Детали планеты';
 
   @override
-  String get sbBodyWhatIs => 'Шадбала («шестикратная сила») измеряет, сколько силы имеет каждая планета для проявления своих результатов, суммируя шесть независимых источников силы.';
+  String get sbBodyWhatIs =>
+      'Шадбала («шестикратная сила») измеряет, сколько силы имеет каждая планета для проявления своих результатов, суммируя шесть независимых источников силы.';
 
   @override
-  String get sbBodyRupas => 'Сила измеряется в Рупах (1 Рупа = 60 Вирупа). Каждой планете нужна минимальная сила в Рупах, чтобы считаться сильной; больше Рупа означает более полное проявление её результатов.';
+  String get sbBodyRupas =>
+      'Сила измеряется в Рупах (1 Рупа = 60 Вирупа). Каждой планете нужна минимальная сила в Рупах, чтобы считаться сильной; больше Рупа означает более полное проявление её результатов.';
 
   @override
-  String get sbBodyHowCalc => 'Складываются шесть бал: Стхана (позиционная), Диг (направленная), Кала (временная), Чешта (движения), Наисаргика (естественная) и Дрик (аспектная). Итог сравнивается с требуемым минимумом планеты для получения процента.';
+  String get sbBodyHowCalc =>
+      'Складываются шесть бал: Стхана (позиционная), Диг (направленная), Кала (временная), Чешта (движения), Наисаргика (естественная) и Дрик (аспектная). Итог сравнивается с требуемым минимумом планеты для получения процента.';
 
   @override
-  String get sbBodyHowUse => 'Планета выше 100% уверенно проявляет свои значения; ниже 100% ей требуется поддержка. Отдавайте предпочтение самым сильным планетам для важных дел, а самым слабым уделяйте внимание через средства и терпение.';
+  String get sbBodyHowUse =>
+      'Планета выше 100% уверенно проявляет свои значения; ниже 100% ей требуется поддержка. Отдавайте предпочтение самым сильным планетам для важных дел, а самым слабым уделяйте внимание через средства и терпение.';
 
   @override
-  String get sbRemedyStrong => 'Хорошо поддержана — особые средства не нужны; вы можете уверенно использовать периоды этой планеты.';
+  String get sbRemedyStrong =>
+      'Хорошо поддержана — особые средства не нужны; вы можете уверенно использовать периоды этой планеты.';
 
   @override
   String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
-    return '${strongP} — ваша самая сильная планета, обеспечивающая отличную поддержку для ${strongTrait}. ${weakP} — самая слабая и больше всего выигрывает от средств.';
+    return '$strongP — ваша самая сильная планета, обеспечивающая отличную поддержку для $strongTrait. $weakP — самая слабая и больше всего выигрывает от средств.';
   }
 
   @override
   String sbCardAi(Object planet, Object category, Object karakatva) {
-    return 'У планеты ${planet} ${category} Шадбала, поэтому её ${karakatva} поддерживаются соответствующим образом.';
+    return 'У планеты $planet $category Шадбала, поэтому её $karakatva поддерживаются соответствующим образом.';
   }
 
   @override
   String sbWhyLine(Object bala, Object rupa) {
-    return 'Сильнее всего через ${bala} (${rupa} рупа).';
+    return 'Сильнее всего через $bala ($rupa рупа).';
   }
 
   @override
   String sbWeakLine(Object bala) {
-    return 'Слабее всего в ${bala}, что снижает общий показатель.';
+    return 'Слабее всего в $bala, что снижает общий показатель.';
   }
 
   @override
   String sbMahadashaLine(Object planet, Object karak) {
-    return 'Во время Махадаши ${planet} на первый план выходят её ${karak}.';
+    return 'Во время Махадаши $planet на первый план выходят её $karak.';
   }
 
   @override
   String sbEffectStrong(Object karak) {
-    return 'При сильной Шадбале ${karak} поддерживаются естественным образом.';
+    return 'При сильной Шадбале $karak поддерживаются естественным образом.';
   }
 
   @override
   String sbEffectWeak(Object karak) {
-    return 'При умеренной Шадбале ${karak} может потребоваться осознанное усилие.';
+    return 'При умеренной Шадбале $karak может потребоваться осознанное усилие.';
   }
 
   @override
   String sbRemedyWeak(Object planet) {
-    return 'Усильте ${planet} через её мантру, драгоценный камень или благотворительность и действуйте терпеливо в её периоды.';
+    return 'Усильте $planet через её мантру, драгоценный камень или благотворительность и действуйте терпеливо в её периоды.';
   }
 
   @override
@@ -6687,38 +6814,43 @@ class AppLocalizationsRu extends AppLocalizations {
   String get bhExplainSubtitle => 'Простая сводка по вашим 12 домам';
 
   @override
-  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
-    return 'Ваши самые сильные дома — ${s1} и ${s2}. ${strongArea} естественно сильна, а ${weakArea} требует больше усилий.';
+  String bhHeroSummary(
+    Object s1,
+    Object s2,
+    Object strongArea,
+    Object weakArea,
+  ) {
+    return 'Ваши самые сильные дома — $s1 и $s2. $strongArea естественно сильна, а $weakArea требует больше усилий.';
   }
 
   @override
   String bhLordLine(Object lord, Object relation) {
-    return 'Её управитель ${lord} расположен как ${relation}.';
+    return 'Её управитель $lord расположен как $relation.';
   }
 
   @override
   String bhWhyLine(Object sav) {
-    return 'Этот дом несёт ${sav} благоприятных баллов (SAV); его обитатели и аспекты формируют остальную часть оценки.';
+    return 'Этот дом несёт $sav благоприятных баллов (SAV); его обитатели и аспекты формируют остальную часть оценки.';
   }
 
   @override
   String bhGoodLine(Object meaning) {
-    return 'Когда он силён, поддерживает ${meaning}.';
+    return 'Когда он силён, поддерживает $meaning.';
   }
 
   @override
   String bhChallengeLine(Object meaning) {
-    return 'Когда он слаб, ${meaning} может потребовать дополнительных усилий и заботы.';
+    return 'Когда он слаб, $meaning может потребовать дополнительных усилий и заботы.';
   }
 
   @override
   String bhRemedyLine(Object lord) {
-    return 'Усильте его управителя ${lord} и уважайте темы этого дома, чтобы поднять его.';
+    return 'Усильте его управителя $lord и уважайте темы этого дома, чтобы поднять его.';
   }
 
   @override
   String bhCardAi(Object house, Object strengthWord, Object meaning) {
-    return 'Ваш ${house} ${strengthWord}. Он управляет ${meaning}.';
+    return 'Ваш $house $strengthWord. Он управляет $meaning.';
   }
 
   @override
@@ -6753,32 +6885,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String kunHouseLine(Object ordinal, Object meaning) {
-    return '${ordinal} дом управляет ${meaning}.';
+    return '$ordinal дом управляет $meaning.';
   }
 
   @override
   String kunHouseOccupied(Object planets) {
-    return '${planets}, расположенные здесь, формируют его результаты.';
+    return '$planets, расположенные здесь, формируют его результаты.';
   }
 
   @override
   String kunExplainAsc(Object asc) {
-    return 'Ваш асцендент — ${asc}, формирующий ваше мировоззрение и то, как вас воспринимают окружающие с первого взгляда.';
+    return 'Ваш асцендент — $asc, формирующий ваше мировоззрение и то, как вас воспринимают окружающие с первого взгляда.';
   }
 
   @override
   String kunExplainMoon(Object moon) {
-    return 'Ваш разум и эмоции следуют за Луной в знаке ${moon}.';
+    return 'Ваш разум и эмоции следуют за Луной в знаке $moon.';
   }
 
   @override
   String kunExplainStrong(Object planet) {
-    return '${planet} — ваша самая сильная планета, естественная область лёгкости и поддержки.';
+    return '$planet — ваша самая сильная планета, естественная область лёгкости и поддержки.';
   }
 
   @override
   String kunExplainWeak(Object planet) {
-    return '${planet} — ваша самая испытываемая планета, здесь окупаются терпение и усилия.';
+    return '$planet — ваша самая испытываемая планета, здесь окупаются терпение и усилия.';
   }
 
   @override
@@ -6855,52 +6987,52 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String plLordOfHouses(Object houses) {
-    return 'Управитель дома(ов) ${houses}';
+    return 'Управитель дома(ов) $houses';
   }
 
   @override
   String plNakMeaning(Object nakLord, Object trait) {
-    return 'Под управлением ${nakLord}, привносит ${trait}.';
+    return 'Под управлением $nakLord, привносит $trait.';
   }
 
   @override
   String plAiPlace(Object planet, Object sign, Object house) {
-    return '${planet} находится в знаке ${sign}, в ${house} доме.';
+    return '$planet находится в знаке $sign, в $house доме.';
   }
 
   @override
   String plAiKarakStrong(Object karak) {
-    return 'Её ключевые значения — ${karak} — здесь хорошо поддерживаются.';
+    return 'Её ключевые значения — $karak — здесь хорошо поддерживаются.';
   }
 
   @override
   String plAiKarakWeak(Object karak) {
-    return 'Её ключевые значения — ${karak} — здесь могут потребовать осознанного усилия.';
+    return 'Её ключевые значения — $karak — здесь могут потребовать осознанного усилия.';
   }
 
   @override
   String plAiExalted(Object planet) {
-    return '${planet} в экзальтации, дающей наилучшие результаты.';
+    return '$planet в экзальтации, дающей наилучшие результаты.';
   }
 
   @override
   String plAiDebilitated(Object planet) {
-    return '${planet} в падении и нуждается в поддержке, чтобы проявить свои результаты.';
+    return '$planet в падении и нуждается в поддержке, чтобы проявить свои результаты.';
   }
 
   @override
   String plAiCombust(Object planet) {
-    return '${planet} в соединении с Солнцем (комбустирована), поэтому действует менее открыто под его сиянием.';
+    return '$planet в соединении с Солнцем (комбустирована), поэтому действует менее открыто под его сиянием.';
   }
 
   @override
   String plAiVargottama(Object planet) {
-    return '${planet} в варготтаме — сильное положение, повторяющееся в навамше.';
+    return '$planet в варготтаме — сильное положение, повторяющееся в навамше.';
   }
 
   @override
   String plAiRetrograde(Object planet) {
-    return '${planet} ретроградна, обращая свою энергию внутрь и усиливая её.';
+    return '$planet ретроградна, обращая свою энергию внутрь и усиливая её.';
   }
 
   @override
@@ -6910,16 +7042,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get plHouse2 => 'богатство, семья, речь и пища';
 
   @override
-  String get plHouse3 => 'смелость, братья и сёстры, общение и короткие поездки';
+  String get plHouse3 =>
+      'смелость, братья и сёстры, общение и короткие поездки';
 
   @override
   String get plHouse4 => 'дом, мать, комфорт, собственность и внутренний покой';
 
   @override
-  String get plHouse5 => 'дети, творчество, интеллект, романтика и заслуги прошлого';
+  String get plHouse5 =>
+      'дети, творчество, интеллект, романтика и заслуги прошлого';
 
   @override
-  String get plHouse6 => 'здоровье, враги, долги, служение и повседневная работа';
+  String get plHouse6 =>
+      'здоровье, враги, долги, служение и повседневная работа';
 
   @override
   String get plHouse7 => 'брак, партнёрство и деловые отношения';
@@ -6934,10 +7069,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get plHouse10 => 'карьера, статус, власть и публичная карма';
 
   @override
-  String get plHouse11 => 'доходы, заработок, друзья, связи и исполненные желания';
+  String get plHouse11 =>
+      'доходы, заработок, друзья, связи и исполненные желания';
 
   @override
-  String get plHouse12 => 'потери, расходы, зарубежные земли, духовность и освобождение';
+  String get plHouse12 =>
+      'потери, расходы, зарубежные земли, духовность и освобождение';
 
   @override
   String get sumVeryStrong => 'Очень сильно';
@@ -7069,64 +7206,84 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sumCopied => 'Скопировано в буфер обмена';
 
   @override
-  String get sumNatureFire => 'У вас смелая, энергичная и первопроходческая натура, которая ведёт за собой.';
+  String get sumNatureFire =>
+      'У вас смелая, энергичная и первопроходческая натура, которая ведёт за собой.';
 
   @override
-  String get sumNatureEarth => 'У вас практичная, приземлённая и дисциплинированная натура, которая создаёт долговечные результаты.';
+  String get sumNatureEarth =>
+      'У вас практичная, приземлённая и дисциплинированная натура, которая создаёт долговечные результаты.';
 
   @override
-  String get sumNatureAir => 'У вас любознательная, общительная и интеллектуальная натура, которая процветает на новых идеях.';
+  String get sumNatureAir =>
+      'У вас любознательная, общительная и интеллектуальная натура, которая процветает на новых идеях.';
 
   @override
-  String get sumNatureWater => 'У вас интуитивная, эмоциональная и чуткая натура с глубокой внутренней чувствительностью.';
+  String get sumNatureWater =>
+      'У вас интуитивная, эмоциональная и чуткая натура с глубокой внутренней чувствительностью.';
 
   @override
-  String get sumGradePhraseExcellent => 'Сильно поддержана — благоприятные результаты вероятны при постоянных усилиях.';
+  String get sumGradePhraseExcellent =>
+      'Сильно поддержана — благоприятные результаты вероятны при постоянных усилиях.';
 
   @override
-  String get sumGradePhraseGood => 'Хорошо поддержана — в целом позитивно при небольшой заботе.';
+  String get sumGradePhraseGood =>
+      'Хорошо поддержана — в целом позитивно при небольшой заботе.';
 
   @override
-  String get sumGradePhraseAverage => 'Смешанная поддержка — результаты зависят от усилий и времени.';
+  String get sumGradePhraseAverage =>
+      'Смешанная поддержка — результаты зависят от усилий и времени.';
 
   @override
-  String get sumGradePhraseWeak => 'Требует внимания — здесь помогают терпение и средства.';
+  String get sumGradePhraseWeak =>
+      'Требует внимания — здесь помогают терпение и средства.';
 
   @override
-  String get kDefCombust => 'Планета, слишком близкая к Солнцу, поэтому её энергия «сгорает» и ослабевает.';
+  String get kDefCombust =>
+      'Планета, слишком близкая к Солнцу, поэтому её энергия «сгорает» и ослабевает.';
 
   @override
-  String get kDefRetrograde => 'Планета, которая кажется движущейся назад; её эффекты обращаются внутрь и усиливаются.';
+  String get kDefRetrograde =>
+      'Планета, которая кажется движущейся назад; её эффекты обращаются внутрь и усиливаются.';
 
   @override
-  String get kDefNakshatra => 'Один из 27 лунных домов, через которые проходят Луна и планеты.';
+  String get kDefNakshatra =>
+      'Один из 27 лунных домов, через которые проходят Луна и планеты.';
 
   @override
-  String get kDefVargottama => 'Планета в одном и том же знаке как в натальной карте (D1), так и в навамше (D9) — признак силы.';
+  String get kDefVargottama =>
+      'Планета в одном и том же знаке как в натальной карте (D1), так и в навамше (D9) — признак силы.';
 
   @override
-  String get kDefOwnSign => 'Планета, находящаяся в знаке, которым она управляет, где она чувствует себя как дома и даёт стабильные результаты.';
+  String get kDefOwnSign =>
+      'Планета, находящаяся в знаке, которым она управляет, где она чувствует себя как дома и даёт стабильные результаты.';
 
   @override
-  String get kDefExalted => 'Планета в знаке своей наивысшей силы, дающая наилучшие результаты.';
+  String get kDefExalted =>
+      'Планета в знаке своей наивысшей силы, дающая наилучшие результаты.';
 
   @override
-  String get kDefDebilitated => 'Планета в знаке своей наименьшей силы, где ей трудно проявить результаты.';
+  String get kDefDebilitated =>
+      'Планета в знаке своей наименьшей силы, где ей трудно проявить результаты.';
 
   @override
-  String get kDefMooltrikona => 'Особая часть собственного знака планеты, где она особенно сильна.';
+  String get kDefMooltrikona =>
+      'Особая часть собственного знака планеты, где она особенно сильна.';
 
   @override
-  String get kDefAscendant => 'Знак, восходящий на восточном горизонте при рождении — Лагна, основа карты.';
+  String get kDefAscendant =>
+      'Знак, восходящий на восточном горизонте при рождении — Лагна, основа карты.';
 
   @override
-  String get kDefMahadasha => 'Главный планетарный период, окрашивающий длительный отрезок жизни.';
+  String get kDefMahadasha =>
+      'Главный планетарный период, окрашивающий длительный отрезок жизни.';
 
   @override
-  String get kDefAntardasha => 'Подпериод внутри Махадаши, который уточняет её результаты.';
+  String get kDefAntardasha =>
+      'Подпериод внутри Махадаши, который уточняет её результаты.';
 
   @override
-  String get kDefPada => 'Одна из четырёх четвертей накшатры, которую занимает планета.';
+  String get kDefPada =>
+      'Одна из четырёх четвертей накшатры, которую занимает планета.';
 
   @override
   String get aspGivesAspectTo => 'Даёт аспект на';
@@ -7222,16 +7379,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aspQPredict => 'Как аспекты влияют на прогноз';
 
   @override
-  String get aspGrahaBody => 'Граха-Дришти — это аспект, который планета отбрасывает из своего положения. Каждая планета полностью аспектирует 7-й дом/планету от себя (прямое влияние «лицом к лицу»). Кроме того, Марс аспектирует 4-й и 8-й дома, Юпитер — 5-й и 9-й, а Сатурн — 3-й и 10-й. Раху и Кету обычно наделяют аспектами 5-й, 7-й и 9-й дома. Аспект планеты окрашивает планету или дом, на который он падает, своей собственной природой.';
+  String get aspGrahaBody =>
+      'Граха-Дришти — это аспект, который планета отбрасывает из своего положения. Каждая планета полностью аспектирует 7-й дом/планету от себя (прямое влияние «лицом к лицу»). Кроме того, Марс аспектирует 4-й и 8-й дома, Юпитер — 5-й и 9-й, а Сатурн — 3-й и 10-й. Раху и Кету обычно наделяют аспектами 5-й, 7-й и 9-й дома. Аспект планеты окрашивает планету или дом, на который он падает, своей собственной природой.';
 
   @override
-  String get aspRashiBody => 'Раши-Дришти — это аспект знака на знак из астрологии Джаймини, независимо от того, какие планеты там находятся. Подвижные знаки аспектируют фиксированные знаки (кроме соседнего), фиксированные знаки аспектируют подвижные знаки (кроме соседнего), а двойственные знаки аспектируют другие двойственные знаки. Используется в основном в прогнозировании по Джаймини и для оценки отношений между домами.';
+  String get aspRashiBody =>
+      'Раши-Дришти — это аспект знака на знак из астрологии Джаймини, независимо от того, какие планеты там находятся. Подвижные знаки аспектируют фиксированные знаки (кроме соседнего), фиксированные знаки аспектируют подвижные знаки (кроме соседнего), а двойственные знаки аспектируют другие двойственные знаки. Используется в основном в прогнозировании по Джаймини и для оценки отношений между домами.';
 
   @override
-  String get aspDiffBody => 'Граха-Дришти отбрасывается планетой и зависит от того, где эта планета находится. Раши-Дришти принадлежит самому знаку и применяется ко всему, что в нём расположено. Граха-Дришти направлена (планета А видит планету Б), а Раши-Дришти обычно взаимна между знаками. Когда обе указывают на одну и ту же цель, влияние особенно сильно.';
+  String get aspDiffBody =>
+      'Граха-Дришти отбрасывается планетой и зависит от того, где эта планета находится. Раши-Дришти принадлежит самому знаку и применяется ко всему, что в нём расположено. Граха-Дришти направлена (планета А видит планету Б), а Раши-Дришти обычно взаимна между знаками. Когда обе указывают на одну и ту же цель, влияние особенно сильно.';
 
   @override
-  String get aspPredictBody => 'Аспект показывает, где планета распространяет своё влияние за пределы своего дома. Благоприятный аспект (Юпитер, Венера, хорошо расположенные Луна/Меркурий) поддерживает и защищает цель; неблагоприятный аспект (Сатурн, Марс, Солнце, Раху, Кету) может создавать давление, задержки или испытания. Чтение того, какие планеты аспектируют дом или планету, объясняет, почему результаты проявляются именно так.';
+  String get aspPredictBody =>
+      'Аспект показывает, где планета распространяет своё влияние за пределы своего дома. Благоприятный аспект (Юпитер, Венера, хорошо расположенные Луна/Меркурий) поддерживает и защищает цель; неблагоприятный аспект (Сатурн, Марс, Солнце, Раху, Кету) может создавать давление, задержки или испытания. Чтение того, какие планеты аспектируют дом или планету, объясняет, почему результаты проявляются именно так.';
 
   @override
   String get aspTraitSun => 'власть, лидерство и жизненную силу';
@@ -7252,7 +7413,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aspTraitVenus => 'любовь, гармонию и комфорт';
 
   @override
-  String get aspTraitSaturn => 'дисциплину, ответственность и терпеливый, порой отсроченный, успех';
+  String get aspTraitSaturn =>
+      'дисциплину, ответственность и терпеливый, порой отсроченный, успех';
 
   @override
   String get aspTraitRahu => 'амбиции, интенсивность и нестандартные повороты';
@@ -7262,12 +7424,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String aspAiInfluence(Object planet, Object targets, Object trait) {
-    return '${planet} влияет на ${targets}. Это может привнести ${trait} в области, представленные этими планетами.';
+    return '$planet влияет на $targets. Это может привнести $trait в области, представленные этими планетами.';
   }
 
   @override
   String aspAiNone(Object planet) {
-    return '${planet} не отбрасывает особый аспект ни на одну другую планету здесь; её влияние работает в основном через собственный знак и дом.';
+    return '$planet не отбрасывает особый аспект ни на одну другую планету здесь; её влияние работает в основном через собственный знак и дом.';
   }
 
   @override
@@ -7364,53 +7526,58 @@ class AppLocalizationsRu extends AppLocalizations {
   String get avQSavVsBav => 'SAV против BAV';
 
   @override
-  String get avABody => 'Аштакаварга — это система оценки силы в ведической астрологии, основанная на баллах. Каждая планета присваивает благоприятные баллы (бинду, также называемые рекха) двенадцати знакам в зависимости от своего положения. Больше баллов в знаке означает, что эта сфера жизни получает более плавную поддержку в соответствующие планетарные периоды и транзиты.';
+  String get avABody =>
+      'Аштакаварга — это система оценки силы в ведической астрологии, основанная на баллах. Каждая планета присваивает благоприятные баллы (бинду, также называемые рекха) двенадцати знакам в зависимости от своего положения. Больше баллов в знаке означает, что эта сфера жизни получает более плавную поддержку в соответствующие планетарные периоды и транзиты.';
 
   @override
-  String get avSavBody => 'SAV (Сарва Аштакаварга) суммирует баллы всех семи планет для каждого знака. Она даёт единый показатель силы на знак, чтобы вы могли быстро увидеть, какие знаки — и попадающие в них дома — лучше всего поддержаны в вашей карте.';
+  String get avSavBody =>
+      'SAV (Сарва Аштакаварга) суммирует баллы всех семи планет для каждого знака. Она даёт единый показатель силы на знак, чтобы вы могли быстро увидеть, какие знаки — и попадающие в них дома — лучше всего поддержаны в вашей карте.';
 
   @override
-  String get avBavBody => 'BAV (Бхинна Аштакаварга) показывает баллы одной планеты по всем двенадцати знакам. Он говорит, какие знаки конкретная планета поддерживает больше всего, что важно, когда активна её даша или транзит.';
+  String get avBavBody =>
+      'BAV (Бхинна Аштакаварга) показывает баллы одной планеты по всем двенадцати знакам. Он говорит, какие знаки конкретная планета поддерживает больше всего, что важно, когда активна её даша или транзит.';
 
   @override
-  String get avHowToReadBody => 'Чем выше число, тем лучше. Для SAV средний знак набирает около 28 баллов — выше 30 считается сильным, ниже 25 требует внимания. Для BAV каждый знак от 0 до 8, где 4 — среднее. Отдавайте предпочтение самым сильным знакам для важных действий и сохраняйте терпение и дисциплину в отношении самых слабых.';
+  String get avHowToReadBody =>
+      'Чем выше число, тем лучше. Для SAV средний знак набирает около 28 баллов — выше 30 считается сильным, ниже 25 требует внимания. Для BAV каждый знак от 0 до 8, где 4 — среднее. Отдавайте предпочтение самым сильным знакам для важных действий и сохраняйте терпение и дисциплину в отношении самых слабых.';
 
   @override
-  String get avSavVsBavBody => 'SAV — это суммарный итог всех планет, показывающий общую силу знака. BAV — вклад одной планеты, показывающий, какая планета поддерживает этот знак. Используйте SAV для общей картины, а BAV — чтобы понять, какая планета обеспечивает силу знака.';
+  String get avSavVsBavBody =>
+      'SAV — это суммарный итог всех планет, показывающий общую силу знака. BAV — вклад одной планеты, показывающий, какая планета поддерживает этот знак. Используйте SAV для общей картины, а BAV — чтобы понять, какая планета обеспечивает силу знака.';
 
   @override
   String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
-    return 'Ваша карта сильнее всего в знаках ${s1}, ${s2} и ${s3}. Эти знаки дают лучшую поддержку во время планетарных периодов и транзитов. ${weak} сейчас имеет наименьшую поддержку, поэтому в связанных с ним делах помогают терпение и дисциплина.';
+    return 'Ваша карта сильнее всего в знаках $s1, $s2 и $s3. Эти знаки дают лучшую поддержку во время планетарных периодов и транзитов. $weak сейчас имеет наименьшую поддержку, поэтому в связанных с ним делах помогают терпение и дисциплина.';
   }
 
   @override
   String avBavInsight(Object planet, Object s1, Object s2) {
-    return '${planet} проявляется сильнее всего через ${s1} и ${s2}. Дела, которыми управляет ${planet}, обычно улучшаются, когда активируются эти знаки.';
+    return '$planet проявляется сильнее всего через $s1 и $s2. Дела, которыми управляет $planet, обычно улучшаются, когда активируются эти знаки.';
   }
 
   @override
   String avInsightStrong(Object s1, Object s2) {
-    return 'Ваши самые сильные знаки — ${s1} и ${s2} — отдавайте предпочтение важным начинаниям, когда планеты проходят через них транзитом.';
+    return 'Ваши самые сильные знаки — $s1 и $s2 — отдавайте предпочтение важным начинаниям, когда планеты проходят через них транзитом.';
   }
 
   @override
   String avInsightWeak(Object s1) {
-    return '${s1} имеет наименьшую поддержку — действуйте осторожно и избегайте чрезмерных обязательств в связанных с ним делах.';
+    return '$s1 имеет наименьшую поддержку — действуйте осторожно и избегайте чрезмерных обязательств в связанных с ним делах.';
   }
 
   @override
   String avInsightBestPlanet(Object planet) {
-    return '${planet} несёт больше всего баллов, поэтому её значения хорошо поддержаны в вашей жизни.';
+    return '$planet несёт больше всего баллов, поэтому её значения хорошо поддержаны в вашей жизни.';
   }
 
   @override
   String avInsightWeakPlanet(Object planet) {
-    return '${planet} несёт меньше всего баллов и больше всего выигрывает от средств и осознанных усилий.';
+    return '$planet несёт меньше всего баллов и больше всего выигрывает от средств и осознанных усилий.';
   }
 
   @override
   String avInsightAverage(Object avg) {
-    return 'Знаки, набравшие выше вашего среднего показателя ${avg} баллов, как правило, дают более плавные и надёжные результаты.';
+    return 'Знаки, набравшие выше вашего среднего показателя $avg баллов, как правило, дают более плавные и надёжные результаты.';
   }
 
   @override
@@ -7625,7 +7792,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dominantLabel(Object value) {
-    return 'Доминирующий: ${value}';
+    return 'Доминирующий: $value';
   }
 
   @override
@@ -7636,7 +7803,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String secondaryLabel(Object value) {
-    return ' · Вторичный: ${value}';
+    return ' · Вторичный: $value';
   }
 
   @override
@@ -7707,7 +7874,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String debtRecoveryTimelineSubtitle(Object pct, Object years) {
-    return 'Восстановление: ${pct}% · Сроки: ${years} лет';
+    return 'Восстановление: $pct% · Сроки: $years лет';
   }
 
   @override
@@ -7715,7 +7882,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String debtFreeYear(Object year) {
-    return 'Год ${year}';
+    return 'Год $year';
   }
 
   @override
@@ -7795,7 +7962,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String legalResilienceSubtitle(Object pct) {
-    return 'Устойчивость: ${pct}/100';
+    return 'Устойчивость: $pct/100';
   }
 
   @override
@@ -7917,7 +8084,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String lifepathFulfillmentSubtitle(Object pct) {
-    return 'Реализация: ${pct}%';
+    return 'Реализация: $pct%';
   }
 
   @override
@@ -8048,7 +8215,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String pastlifeMaturityStatusSubtitle(Object maturity, Object status) {
-    return 'Зрелость: ${maturity} · Статус: ${status}';
+    return 'Зрелость: $maturity · Статус: $status';
   }
 
   @override
@@ -8071,7 +8238,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String pastlifeShadowPrefix(Object shadow) {
-    return '⚠ Тень: ${shadow}';
+    return '⚠ Тень: $shadow';
   }
 
   @override
@@ -8135,7 +8302,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mentalUnhealthyRisksTitle => '⚠ НЕЗДОРОВЫЕ РИСКИ';
 
   @override
-  String get mentalRecommendedAlternativesTitle => '✦ РЕКОМЕНДУЕМЫЕ АЛЬТЕРНАТИВЫ';
+  String get mentalRecommendedAlternativesTitle =>
+      '✦ РЕКОМЕНДУЕМЫЕ АЛЬТЕРНАТИВЫ';
 
   @override
   String get mentalSleepQualityStat => 'КАЧЕСТВО СНА';
@@ -8262,7 +8430,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String characterRealizationSubtitle(Object pct) {
-    return 'Реализация: ${pct}%';
+    return 'Реализация: $pct%';
   }
 
   @override
@@ -8453,7 +8621,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String wealthSuccessProbabilitySubtitle(Object pct) {
-    return 'Вероятность успеха: ${pct}%';
+    return 'Вероятность успеха: $pct%';
   }
 
   @override
@@ -8461,12 +8629,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String wealthPrimaryLabel(Object value) {
-    return 'Основное: ${value}';
+    return 'Основное: $value';
   }
 
   @override
   String wealthPeakLabel(Object value) {
-    return 'Пик: ${value}';
+    return 'Пик: $value';
   }
 
   @override
@@ -8483,7 +8651,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String wealthDrivenByLabel(Object planet) {
-    return 'Движимо планетой ${planet}';
+    return 'Движимо планетой $planet';
   }
 
   @override
@@ -8545,7 +8713,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String marriageRealizationSubtitle(Object pct) {
-    return 'Реализация: ${pct}%';
+    return 'Реализация: $pct%';
   }
 
   @override
@@ -8601,12 +8769,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String marriageSeveritySubtitle(Object value) {
-    return 'Тяжесть: ${value}';
+    return 'Тяжесть: $value';
   }
 
   @override
   String marriageCancellationSubtitle(Object value) {
-    return 'Отмена: ${value}';
+    return 'Отмена: $value';
   }
 
   @override
@@ -8653,22 +8821,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String multiChartPromptChatgpt(Object formatted) {
-    return 'Проанализируйте этот отчёт по ведической астрологии и дайте подробные выводы:\n\n${formatted}';
+    return 'Проанализируйте этот отчёт по ведической астрологии и дайте подробные выводы:\n\n$formatted';
   }
 
   @override
   String multiChartPromptClaude(Object formatted) {
-    return 'Вот специализированный отчёт по ведической астрологии. Пожалуйста, тщательно проанализируйте его и дайте практические рекомендации:\n\n${formatted}';
+    return 'Вот специализированный отчёт по ведической астрологии. Пожалуйста, тщательно проанализируйте его и дайте практические рекомендации:\n\n$formatted';
   }
 
   @override
   String multiChartPromptGemini(Object formatted) {
-    return 'Изучите этот анализ по ведической астрологии и объясните ключевые выводы простым языком:\n\n${formatted}';
+    return 'Изучите этот анализ по ведической астрологии и объясните ключевые выводы простым языком:\n\n$formatted';
   }
 
   @override
   String multiChartCopiedForLabel(Object label) {
-    return 'Скопировано для ${label}!';
+    return 'Скопировано для $label!';
   }
 
   @override
@@ -8760,7 +8928,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String jupiterInSignHeading(String sign) {
-    return 'Юпитер в ${sign}';
+    return 'Юпитер в $sign';
   }
 
   @override
@@ -8822,7 +8990,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String copiedForName(String name) {
-    return 'Скопировано для ${name}!';
+    return 'Скопировано для $name!';
   }
 
   @override
@@ -8845,12 +9013,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String factorPrefix(String factor) {
-    return 'Фактор: ${factor}';
+    return 'Фактор: $factor';
   }
 
   @override
   String appliesToLabel(String value) {
-    return 'Применяется к: ${value}';
+    return 'Применяется к: $value';
   }
 
   @override
@@ -8960,7 +9128,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String karmaLinkageFactorsHeader(int count) {
-    return 'ФАКТОРЫ СВЯЗИ (активно: ${count})';
+    return 'ФАКТОРЫ СВЯЗИ (активно: $count)';
   }
 
   @override
@@ -9019,7 +9187,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String moolaDashaPrefix(String value) {
-    return 'Мула-даша: ${value}';
+    return 'Мула-даша: $value';
   }
 
   @override
@@ -9029,7 +9197,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get karmaMutualTeachingHeader => 'КАРТА ВЗАИМНОГО ОБУЧЕНИЯ';
 
   @override
-  String get karmaTeachingDynamicsPlaceholder => 'Динамика обучения проявится по мере углубления кармических связей.';
+  String get karmaTeachingDynamicsPlaceholder =>
+      'Динамика обучения проявится по мере углубления кармических связей.';
 
   @override
   String get typeFieldLabel => 'Тип';
@@ -9042,7 +9211,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dashaTimingPrefix(String value) {
-    return 'Время по даше: ${value}';
+    return 'Время по даше: $value';
   }
 
   @override
@@ -9065,7 +9234,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String parametersAuditedHeading(int count) {
-    return 'ПРОВЕРЕНО ПАРАМЕТРОВ: ${count}';
+    return 'ПРОВЕРЕНО ПАРАМЕТРОВ: $count';
   }
 
   @override
@@ -9073,7 +9242,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String weightPrefix(String value) {
-    return 'В: ${value}';
+    return 'В: $value';
   }
 
   @override
@@ -9348,7 +9517,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String fulfillmentPctLabel(String pct) {
-    return 'Реализация: ${pct}%';
+    return 'Реализация: $pct%';
   }
 
   @override
@@ -9464,7 +9633,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String lifetimeCountFulfillmentLabel(String count, String pct) {
-    return 'Всего за жизнь: ${count} · Реализация: ${pct}%';
+    return 'Всего за жизнь: $count · Реализация: $pct%';
   }
 
   @override
@@ -9490,7 +9659,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String allScoresCountLabel(int count) {
-    return 'Все баллы (${count})';
+    return 'Все баллы ($count)';
   }
 
   @override
@@ -9504,22 +9673,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String selectKarmaChartsLabel(int max) {
-    return 'Выберите 2-${max} карт(ы)';
+    return 'Выберите 2-$max карт(ы)';
   }
 
   @override
   String selectChartsLabelCount(int max) {
-    return 'Выберите ${max} карт(ы)';
+    return 'Выберите $max карт(ы)';
   }
 
   @override
   String runningAnalysisLabel(String label) {
-    return 'Выполняется анализ ${label}...';
+    return 'Выполняется анализ $label...';
   }
 
   @override
   String pickKarmicChartsHint(int max) {
-    return 'Выберите от 2 до ${max} карт для анализа кармических связей';
+    return 'Выберите от 2 до $max карт для анализа кармических связей';
   }
 
   @override
@@ -9536,7 +9705,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String analyzeChartsCountLabel(int count) {
-    return 'Анализировать ${count} карт(ы)';
+    return 'Анализировать $count карт(ы)';
   }
 
   @override
@@ -9562,7 +9731,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String analyzingChartsCountLabel(int count) {
-    return 'Анализ ${count} карт...';
+    return 'Анализ $count карт...';
   }
 
   @override
@@ -9576,14 +9745,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String selectedCountOfTwoLabel(int count) {
-    return 'Выбрано: ${count}/2';
+    return 'Выбрано: $count/2';
   }
 
   @override
   String get runMilanAnalysisBtn => 'Запустить анализ Милан';
 
   @override
-  String get noChartsCreateFirst => 'Нет карт. Сначала создайте натальную карту.';
+  String get noChartsCreateFirst =>
+      'Нет карт. Сначала создайте натальную карту.';
 
   @override
   String get selectBirthChartAnalyze => 'Выберите натальную карту для анализа';
@@ -9593,27 +9763,27 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String doshActiveCount(Object active, Object total) {
-    return 'Активно ${active} / проверено ${total}';
+    return 'Активно $active / проверено $total';
   }
 
   @override
   String yogaActiveCount(Object active, Object total) {
-    return 'Активно ${active} / проверено йог ${total}';
+    return 'Активно $active / проверено йог $total';
   }
 
   @override
   String yogaActiveHeader(Object count) {
-    return 'АКТИВНЫЕ ЙОГИ (${count})';
+    return 'АКТИВНЫЕ ЙОГИ ($count)';
   }
 
   @override
   String yogaHideInactiveCount(Object count) {
-    return 'Скрыть неактивные йоги (${count})';
+    return 'Скрыть неактивные йоги ($count)';
   }
 
   @override
   String yogaShowInactiveCount(Object count) {
-    return 'Показать неактивные йоги (${count})';
+    return 'Показать неактивные йоги ($count)';
   }
 
   @override
@@ -9621,37 +9791,37 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dashaDrillMd(Object planet) {
-    return '${planet} MD → Антардаши';
+    return '$planet MD → Антардаши';
   }
 
   @override
   String dashaDrillAd(Object planet) {
-    return '${planet} AD → Пратьянтардаши';
+    return '$planet AD → Пратьянтардаши';
   }
 
   @override
   String dashaDrillPd(Object planet) {
-    return '${planet} PD → Сукшмадаши';
+    return '$planet PD → Сукшмадаши';
   }
 
   @override
   String dashaDrillSub(Object planet) {
-    return '${planet} Подпериоды';
+    return '$planet Подпериоды';
   }
 
   @override
   String dashaBirthLordBalance(Object lord, Object balance) {
-    return 'Управитель рождения: ${lord} • Остаток: ${balance} лет';
+    return 'Управитель рождения: $lord • Остаток: $balance лет';
   }
 
   @override
   String dashaLagnaBalance(Object lagna, Object balance) {
-    return 'Лагна: ${lagna} • Остаток: ${balance} лет';
+    return 'Лагна: $lagna • Остаток: $balance лет';
   }
 
   @override
   String dashaYearsValue(Object years) {
-    return '${years} лет';
+    return '$years лет';
   }
 
   @override
@@ -9659,17 +9829,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dashaAsOf(Object date) {
-    return 'На дату: ${date}';
+    return 'На дату: $date';
   }
 
   @override
   String dashaActiveYogasCount(Object count) {
-    return 'Активные йоги в текущем периоде (${count})';
+    return 'Активные йоги в текущем периоде ($count)';
   }
 
   @override
   String dashaActiveDoshasCount(Object count) {
-    return 'Активные доши в текущем периоде (${count})';
+    return 'Активные доши в текущем периоде ($count)';
   }
 
   @override
@@ -9784,7 +9954,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get divD40Name => 'Кхаведамша (D-40)';
 
   @override
-  String get divD40Desc => 'Благоприятность/неблагоприятность (по материнской линии)';
+  String get divD40Desc =>
+      'Благоприятность/неблагоприятность (по материнской линии)';
 
   @override
   String get divD45Name => 'Акшаведамша (D-45)';
@@ -9815,7 +9986,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String lifeAreaGrade(Object grade) {
-    return 'Оценка: ${grade}';
+    return 'Оценка: $grade';
   }
 
   @override
@@ -9823,17 +9994,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String planetNakPada(Object nakshatra, Object pada) {
-    return 'Накш: ${nakshatra} (${pada})';
+    return 'Накш: $nakshatra ($pada)';
   }
 
   @override
   String planetNakLord(Object lord) {
-    return 'УН: ${lord}';
+    return 'УН: $lord';
   }
 
   @override
   String planetLongitude(Object value) {
-    return 'Долг: ${value}°';
+    return 'Долг: $value°';
   }
 
   @override
@@ -9856,27 +10027,27 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String kundliEngineLabel(Object engine) {
-    return 'Движок: ${engine}';
+    return 'Движок: $engine';
   }
 
   @override
   String kundliDegreeNakshatra(Object degree, Object nakshatra, Object pada) {
-    return 'Градус: ${degree}°  •  Накшатра: ${nakshatra} (${pada})';
+    return 'Градус: $degree°  •  Накшатра: $nakshatra ($pada)';
   }
 
   @override
   String kundliNakLordDignity(Object lord, Object dignity) {
-    return 'Управитель накшатры: ${lord}  •  Достоинство: ${dignity}';
+    return 'Управитель накшатры: $lord  •  Достоинство: $dignity';
   }
 
   @override
   String kundliChartHeader(Object base, Object sign) {
-    return 'Карта ${base} — ${sign}';
+    return 'Карта $base — $sign';
   }
 
   @override
   String kundliBaseChart(Object base) {
-    return 'Карта ${base}';
+    return 'Карта $base';
   }
 
   @override
@@ -9920,7 +10091,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String dashaLabel(Object dasha) {
-    return 'Даша: ${dasha}';
+    return 'Даша: $dasha';
   }
 
   @override
@@ -10045,12 +10216,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String bhavaSignLord(Object sign, Object lord) {
-    return '${sign} • Управитель: ${lord}';
+    return '$sign • Управитель: $lord';
   }
 
   @override
   String bhavaSav(Object value) {
-    return 'SAV: ${value}';
+    return 'SAV: $value';
   }
 
   @override
@@ -10058,17 +10229,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String savSubtitle(Object total, Object avg) {
-    return 'Всего: ${total} рекха (среднее по знаку = ${avg})';
+    return 'Всего: $total рекха (среднее по знаку = $avg)';
   }
 
   @override
   String ashtakavargaBav(Object planet) {
-    return '${planet} — BAV';
+    return '$planet — BAV';
   }
 
   @override
   String bavSubtitle(Object total, Object score) {
-    return 'Всего: ${total} рекха • В натальном знаке: ${score}';
+    return 'Всего: $total рекха • В натальном знаке: $score';
   }
 
   @override
@@ -10076,12 +10247,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String gocharTransitScores(Object date) {
-    return 'Гочар (баллы транзита) — ${date}';
+    return 'Гочар (баллы транзита) — $date';
   }
 
   @override
   String gocharNativeMoon(Object sign) {
-    return 'Луна рождения: ${sign}';
+    return 'Луна рождения: $sign';
   }
 
   @override
@@ -10092,7 +10263,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String copiedOpening(Object ai) {
-    return 'Скопировано! Открываем ${ai}...';
+    return 'Скопировано! Открываем $ai...';
   }
 
   @override
@@ -10442,26 +10613,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String aiAutoArrow(String lang) {
-    return 'Авто → ${lang}';
+    return 'Авто → $lang';
   }
 
   @override
   String aiLanguageLabel(String lang) {
-    return 'Язык: ${lang}';
+    return 'Язык: $lang';
   }
 
   @override
   String get aiNoBirthCharts => 'Натальные карты не найдены';
 
   @override
-  String get aiCreateChartFirst => 'Сначала создайте натальную карту, чтобы общаться с ИИ';
+  String get aiCreateChartFirst =>
+      'Сначала создайте натальную карту, чтобы общаться с ИИ';
 
   @override
-  String get aiSelectChartBegin => 'Выберите натальную карту, чтобы начать анализ';
+  String get aiSelectChartBegin =>
+      'Выберите натальную карту, чтобы начать анализ';
 
   @override
   String aiAnalyzingName(String name) {
-    return 'Анализируется: ${name}';
+    return 'Анализируется: $name';
   }
 
   @override
@@ -10502,7 +10675,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String astroErrorDetail(String error) {
-    return 'Ошибка: ${error}';
+    return 'Ошибка: $error';
   }
 
   @override
@@ -10528,7 +10701,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String astroReviews(int count) {
-    return 'Отзывы (${count})';
+    return 'Отзывы ($count)';
   }
 
   @override
@@ -10538,7 +10711,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get astroAnonymous => 'Аноним';
 
   @override
-  String get forgotPasswordSubtitle => 'Введите вашу почту, и мы отправим вам\nссылку для сброса пароля.';
+  String get forgotPasswordSubtitle =>
+      'Введите вашу почту, и мы отправим вам\nссылку для сброса пароля.';
 
   @override
   String get emailHint => 'your@email.com';
@@ -10814,7 +10988,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get premiumSection => 'Премиум-раздел';
 
   @override
-  String get unlockReading => 'Откройте это чтение, чтобы увидеть подробный анализ.';
+  String get unlockReading =>
+      'Откройте это чтение, чтобы увидеть подробный анализ.';
 
   @override
   String get unlock => 'Открыть';
@@ -10895,7 +11070,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get endChat => 'Завершить чат?';
 
   @override
-  String get endChatConfirm => 'Вы уверены, что хотите завершить эту сессию чата?';
+  String get endChatConfirm =>
+      'Вы уверены, что хотите завершить эту сессию чата?';
 
   @override
   String get sendPhoto => 'Отправить фото';
@@ -10946,7 +11122,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noLiveStreams => 'Сейчас нет прямых эфиров';
 
   @override
-  String get astrologerUnavailable => 'Астролог недоступен. Завершаем трансляцию.';
+  String get astrologerUnavailable =>
+      'Астролог недоступен. Завершаем трансляцию.';
 
   @override
   String get streamEnded => 'Трансляция завершена';
@@ -11078,7 +11255,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get expertEngines => 'экспертных движков';
 
   @override
-  String get eachInsightConsultation => 'Каждый вывод — это полноценная консультация';
+  String get eachInsightConsultation =>
+      'Каждый вывод — это полноценная консультация';
 
   @override
   String get engines => 'ДВИЖКИ';
@@ -11147,7 +11325,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get jupiterFavorsBold => 'Юпитер благоприятствует смелым шагам';
 
   @override
-  String get careerIlluminated => 'Ваш сектор карьеры освещён — доверьтесь своей интуиции.';
+  String get careerIlluminated =>
+      'Ваш сектор карьеры освещён — доверьтесь своей интуиции.';
 
   @override
   String get todaysForecast => 'Прогноз на сегодня';
@@ -11213,13 +11392,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noChatSessions => 'Пока нет сессий чата';
 
   @override
-  String get chatAppearHere => 'Ваши беседы с астрологами будут отображаться здесь.';
+  String get chatAppearHere =>
+      'Ваши беседы с астрологами будут отображаться здесь.';
 
   @override
   String get noCallsYet => 'Пока нет звонков';
 
   @override
-  String get callAppearHere => 'История ваших звонков с астрологами будет отображаться здесь.';
+  String get callAppearHere =>
+      'История ваших звонков с астрологами будет отображаться здесь.';
 
   @override
   String get chatWith => 'Чат с';
@@ -11441,19 +11622,23 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noYogasActive => 'В этой карте сейчас нет активных йог.';
 
   @override
-  String get basedOnPlanetStrengths => 'На основе силы планет и положения домов';
+  String get basedOnPlanetStrengths =>
+      'На основе силы планет и положения домов';
 
   @override
   String get basedOnTransits => 'На основе текущих транзитов планет';
 
   @override
-  String get currentPlanetPositions => 'Текущие положения планет с вашим знаком в качестве 1-го дома';
+  String get currentPlanetPositions =>
+      'Текущие положения планет с вашим знаком в качестве 1-го дома';
 
   @override
-  String get favorablePeriodAdvice => 'Благоприятный период — сосредоточьтесь на карьерном росте и отношениях.';
+  String get favorablePeriodAdvice =>
+      'Благоприятный период — сосредоточьтесь на карьерном росте и отношениях.';
 
   @override
-  String get noClassicalYogas => 'Без классических йог обучения успех приходит через постоянные усилия.';
+  String get noClassicalYogas =>
+      'Без классических йог обучения успех приходит через постоянные усилия.';
 
   @override
   String get walletDeduction => 'Сумма будет списана с вашего кошелька';
