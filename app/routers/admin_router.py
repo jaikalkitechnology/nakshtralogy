@@ -1926,13 +1926,44 @@ def admin_send_notification(
                         **_fcm.send_push_debug(web, role, req.title.strip(), req.body.strip(), data)})
 
     delivered = any(r.get("ok") for r in results)
+
+    # Build a plain-English diagnosis when the push didn't go through.
+    diag_proj = _fcm.diagnostics().get("astro" if role == "astrologer" else "user", {})
+    diagnosis = None
+    if not results:
+        diagnosis = "No device tokens registered — saved in-app only."
+    elif not delivered:
+        err = ""
+        for r in results:
+            if not r.get("ok"):
+                err = str(r.get("error", "")).lower()
+                break
+        if not diag_proj.get("initialized"):
+            diagnosis = (f"Firebase is NOT initialized for the "
+                         f"{'astro' if role == 'astrologer' else 'user'} project "
+                         f"({diag_proj.get('error')}). Upload the nakshtralogy-bf371 "
+                         f"service-account JSON in Admin → Firebase FCM.")
+        elif "senderid" in err or "sender id" in err or "mismatch" in err:
+            diagnosis = ("SenderId mismatch — the uploaded service account is a DIFFERENT "
+                         "Firebase project than the app. Upload the nakshtralogy-bf371 service account.")
+        elif "not found" in err or "unregistered" in err or "invalid" in err:
+            diagnosis = "The device token is stale/invalid — the astrologer must re-login to refresh it."
+        elif "credential" in err or "default credentials" in err:
+            diagnosis = "Service-account credential problem — re-upload the JSON."
+        else:
+            diagnosis = "Push not delivered. See the per-token error."
+
     return {"status": "ok", "data": {
         "user_id": user.id,
         "role": role,
         "saved_in_app": True,
         "push_delivered": delivered,
         "results": results,
-        "note": None if results else "No device tokens registered — saved in-app only.",
+        "firebase_initialized": diag_proj.get("initialized", False),
+        "firebase_project_loaded": diag_proj.get("project_id"),
+        "expected_project": "nakshtralogy-bf371",
+        "note": diagnosis,
+        "diagnosis": diagnosis,
     }}
 
 

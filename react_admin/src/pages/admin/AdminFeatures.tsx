@@ -2215,15 +2215,24 @@ const AdminFeatures = () => {
                   </div>
                   {notifDialog.result && (
                     <div className={`text-xs rounded-lg p-2 border ${notifDialog.result.error ? "border-destructive/40 bg-destructive/10 text-destructive" : notifDialog.result.push_delivered ? "border-green-500/40 bg-green-500/10 text-green-400" : "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"}`}>
-                      {notifDialog.result.error
-                        ? `Error: ${notifDialog.result.error}`
-                        : notifDialog.result.push_delivered
-                          ? "Delivered to device ✓ (and saved in-app)"
-                          : (notifDialog.result.note || "Saved in-app. Push not delivered — check the token / FCM diagnostics.")}
+                      <p className="font-semibold">
+                        {notifDialog.result.error
+                          ? `Error: ${notifDialog.result.error}`
+                          : notifDialog.result.push_delivered
+                            ? "Delivered to device ✓ (and saved in-app)"
+                            : (notifDialog.result.diagnosis || "Saved in-app. Push not delivered.")}
+                      </p>
+                      {!notifDialog.result.push_delivered && !notifDialog.result.error && (
+                        <p className="mt-1 text-muted-foreground">
+                          Firebase initialized: <b>{String(notifDialog.result.firebase_initialized)}</b>
+                          {" · "}project loaded: <b>{notifDialog.result.firebase_project_loaded || "—"}</b>
+                          {" · "}expected: <b>{notifDialog.result.expected_project}</b>
+                        </p>
+                      )}
                       {Array.isArray(notifDialog.result.results) && notifDialog.result.results.some((r: any) => !r.ok) && (
                         <ul className="mt-1 list-disc list-inside">
                           {notifDialog.result.results.filter((r: any) => !r.ok).map((r: any, i: number) => (
-                            <li key={i}>{r.target}: {r.error}</li>
+                            <li key={i} className="break-all">{r.target}: {r.error}</li>
                           ))}
                         </ul>
                       )}
