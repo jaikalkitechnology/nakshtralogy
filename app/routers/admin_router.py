@@ -1251,6 +1251,7 @@ SETTINGS_SCHEMA = {
             {"key": "project_id", "label": "Project ID", "secret": False},
             {"key": "sa_path", "label": "Service Account File Path", "secret": False},
             {"key": "client_email", "label": "Client Email", "secret": False},
+            {"key": "sa_json", "label": "Service Account JSON (durable)", "secret": True},
         ],
     },
     "fcm_astro": {
@@ -1260,6 +1261,7 @@ SETTINGS_SCHEMA = {
             {"key": "project_id", "label": "Project ID", "secret": False},
             {"key": "sa_path", "label": "Service Account File Path", "secret": False},
             {"key": "client_email", "label": "Client Email", "secret": False},
+            {"key": "sa_json", "label": "Service Account JSON (durable)", "secret": True},
         ],
     },
     "smtp": {
@@ -1505,12 +1507,16 @@ async def upload_fcm_credentials(
     with open(file_path, "wb") as f:
         f.write(content)
 
-    # Update platform_settings with metadata
+    # Update platform_settings with metadata + the FULL JSON (durable copy).
+    # Storing sa_json in the DB means FCM survives a redeploy that wipes the
+    # ephemeral container disk — the service falls back to this when the file is
+    # gone (see fcm_service._build_credential).
     category = f"fcm_{project}"
     updates = {
         "project_id": data.get("project_id", ""),
         "client_email": data.get("client_email", ""),
         "sa_path": str(file_path),
+        "sa_json": content.decode("utf-8"),
     }
     for key, value in updates.items():
         existing = db.query(PlatformSetting).filter(
@@ -1523,9 +1529,16 @@ async def upload_fcm_credentials(
         else:
             db.add(PlatformSetting(
                 category=category, key=key, value=value,
-                is_secret=False, updated_by=current_user.id,
+                is_secret=(key == "sa_json"), updated_by=current_user.id,
             ))
     db.commit()
+
+    # Drop cached Firebase apps so the new credentials take effect immediately.
+    try:
+        from app.services import fcm_service as _fcm
+        _fcm.reset_apps()
+    except Exception:
+        pass
 
     return {
         "project": project,
@@ -1633,6 +1646,81 @@ def send_test_webpush(
     if not ok:
         raise HTTPException(status_code=502, detail=t("err.webpush_test_failed", lang))
     return {"project": project, "sent": True, "message": t("msg.webpush_test_sent", lang)}
+
+
+# ── FCM diagnostics + test send (native Android/iOS + web) ────────────
+
+@router.get("/fcm/diagnostics")
+def fcm_diagnostics(
+    current_user: User = Depends(require_role("admin")),
+):
+    """Report FCM readiness for both Firebase projects: whether the service
+    account is loaded (from file or the durable DB copy), the resolved
+    project_id, and any init error. First stop when notifications don't arrive."""
+    from app.services import fcm_service as _fcm
+    return {"status": "ok", "data": _fcm.diagnostics()}
+
+
+class FcmTestRequest(BaseModel):
+    user_id: Optional[str] = None          # send to this user's stored token(s)
+    token: Optional[str] = None            # or send to a raw token directly
+    role: Optional[str] = None             # 'user' | 'astrologer' (project select)
+    title: Optional[str] = None
+    body: Optional[str] = None
+
+
+@router.post("/fcm/test")
+def fcm_test_send(
+    req: FcmTestRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Send a REAL test notification and return the raw per-token result/error.
+
+    Two modes:
+      • {"user_id": "..."} — sends to that user's native + web tokens, using the
+        project for their role (user/admin → user project, astrologer → astro).
+      • {"token": "...", "role": "user|astrologer"} — sends to a raw token.
+
+    The response includes the actual FCM error per token (e.g. SenderId
+    mismatch, invalid/unregistered token, credential problems) so you can see
+    exactly why delivery fails."""
+    from app.services import fcm_service as _fcm
+
+    title = req.title or "Nakshatralogy test"
+    body = req.body or "If you can see this, notifications work 🎉"
+    results = []
+
+    if req.token:
+        role = req.role or "user"
+        results.append({
+            "target": "raw_token",
+            "role": role,
+            **_fcm.send_push_debug(req.token.strip(), role, title, body, {"type": "admin_test"}),
+        })
+    elif req.user_id:
+        user = db.query(User).filter(User.id == req.user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        role = req.role or user.role or "user"
+        native = getattr(user, "fcm_token", None)
+        web = getattr(user, "fcm_token_web", None)
+        if not native and not web:
+            return {"status": "ok", "data": {
+                "user_id": user.id, "role": role,
+                "results": [], "note": "User has NO registered tokens (fcm_token / fcm_token_web are empty). "
+                                        "The app must call push/register after login.",
+            }}
+        if native:
+            results.append({"target": "native (android/ios)", "token_tail": native[-12:],
+                            **_fcm.send_push_debug(native, role, title, body, {"type": "admin_test"})})
+        if web:
+            results.append({"target": "web", "token_tail": web[-12:],
+                            **_fcm.send_push_debug(web, role, title, body, {"type": "admin_test"})})
+    else:
+        raise HTTPException(status_code=400, detail="Provide either user_id or token")
+
+    return {"status": "ok", "data": {"results": results}}
 
 
 # ══════════════════════════════════════════════════════════════════════
