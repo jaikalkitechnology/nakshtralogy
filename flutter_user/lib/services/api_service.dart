@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
@@ -729,10 +730,12 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> uploadChatFile(String filePath, String fileName) async {
+  /// Upload a chat attachment (image or PDF) as raw bytes so it works on
+  /// Flutter Web (no filesystem path) as well as mobile. Field name `file`.
+  Future<Map<String, dynamic>> uploadChatFile(Uint8List bytes, String fileName) async {
     final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.commBase}/chat/upload'));
     request.headers.addAll(_headers);
-    request.files.add(await http.MultipartFile.fromPath('file', filePath, filename: fileName));
+    request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
     final streamedResp = await request.send();
     final body = await streamedResp.stream.bytesToString();
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};

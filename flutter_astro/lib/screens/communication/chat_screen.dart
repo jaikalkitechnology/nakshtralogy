@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
-import '../../utils/platform_file.dart';
 import '../../services/api_service.dart';
 
 class AstroChatScreen extends StatefulWidget {
@@ -166,35 +166,32 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
   }
 
   Future<void> _pickAndUploadFile(String type) async {
-    final ctrl = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.card,
-        title: Text('Send ${type == 'image' ? 'Photo' : 'PDF'}', style: const TextStyle(color: AppColors.primary)),
-        content: TextField(
-          controller: ctrl,
-          decoration: InputDecoration(
-            labelText: type == 'image' ? 'Image file path' : 'PDF file path',
-            hintText: type == 'image' ? '/path/to/photo.jpg' : '/path/to/file.pdf',
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: const Text('Upload')),
-        ],
-      ),
-    );
-
-    if (result == null || result.isEmpty) return;
-    if (!await localFileExists(result)) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('File not found')));
+    // Real byte-based picker (file_picker withData) — works on web and mobile.
+    Uint8List? bytes;
+    String? fileName;
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: type == 'image'
+            ? const ['jpg', 'jpeg', 'png', 'webp', 'gif']
+            : const ['pdf'],
+        withData: true,
+      );
+      if (result == null || result.files.isEmpty) return;
+      bytes = result.files.first.bytes;
+      fileName = result.files.first.name;
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Picker error: $e')));
+      return;
+    }
+    if (bytes == null || fileName == null) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not read the selected file')));
       return;
     }
 
     setState(() => _uploading = true);
     try {
-      final resp = await _api.uploadChatFile(result, result.split('/').last);
+      final resp = await _api.uploadChatFile(bytes, fileName);
       if (resp['statusCode'] == 200) {
         _sendFileMessage(resp['media_url'] ?? '', resp['file_name'] ?? 'file', resp['file_size'] ?? 0, resp['file_type'] ?? 'pdf');
       } else {
@@ -395,16 +392,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
             ),
             child: Row(
               children: [
-                // File attachment relies on native filesystem upload; on web,
-                // show a hint instead of the path-based picker.
-                if (kIsWeb)
-                  IconButton(
-                    icon: const Icon(Icons.attach_file, color: AppColors.smoke),
-                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(AppLocalizations.of(context)!.chatAttachMobileOnly)),
-                    ),
-                  )
-                else
+                // File attachment now works on web too (file_picker + bytes).
                 PopupMenuButton<String>(
                   onSelected: _pickAndUploadFile,
                   icon: const Icon(Icons.attach_file, color: AppColors.gold),
