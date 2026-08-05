@@ -133,7 +133,11 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
       } else {
         await _engine!.disableVideo();
       }
-      await _engine!.setDefaultAudioRouteToSpeakerphone(false);
+      // Audio routing is a mobile concept; the call throws on web — skip it so
+      // web calls don't fall into the "unsupported" catch after the SDK loads.
+      if (!kIsWeb) {
+        await _engine!.setDefaultAudioRouteToSpeakerphone(false);
+      }
 
       // Join as UID=2 (astrologer/receiver)
       await _engine!.joinChannel(

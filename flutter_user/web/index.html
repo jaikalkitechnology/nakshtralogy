@@ -131,6 +131,16 @@
   </script>
 
   <!--
+    Agora Web SDK (iris-web) — REQUIRED for agora_rtc_engine on Flutter Web.
+    Without this bridge, createAgoraRtcEngine().initialize() fails in the browser
+    and audio/video calls + live viewing silently fall back to "unsupported".
+    The build number MUST match the resolved agora_rtc_engine version
+    (pubspec.lock = 6.5.3 → iris n450_w4220_0.8.6). Loaded before the Flutter
+    bootstrap so the SDK is present when the engine initialises.
+  -->
+  <script src="https://download.agora.io/sdk/release/iris-web-rtc_n450_w4220_0.8.6.js"></script>
+
+  <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader
     or to give the user feedback during the initialization process.
