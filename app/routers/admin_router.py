@@ -1771,6 +1771,100 @@ def fcm_test_send(
     return {"status": "ok", "data": {"results": results}}
 
 
+@router.post("/fcm/test-user/{user_id}")
+def fcm_test_user(
+    user_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """ONE simple test: send a real Android/web push to a single user's
+    REGISTERED token and return a plain-English diagnosis.
+
+    Usage (no body needed):
+        POST /api/v1/admin/fcm/test-user/<USER_ID>
+        Authorization: Bearer <ADMIN_JWT>
+
+    The `diagnosis` field tells you exactly where the problem is:
+      - user has no registered token  → the app never sent its token
+      - firebase not initialized      → service account not uploaded/durable
+      - SenderId mismatch             → uploaded SA is a different Firebase
+                                        project than the app (nakshtralogy-bf371)
+      - unregistered/invalid token    → stale token, re-login on the device
+      - delivered                     → backend + credentials + token are OK
+                                        (if the phone shows nothing then it's a
+                                        device permission/battery setting)"""
+    from app.services import fcm_service as _fcm
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    role = user.role or "user"
+    project = "astro" if role == "astrologer" else "user"
+    native = (getattr(user, "fcm_token", None) or "").strip()
+    web = (getattr(user, "fcm_token_web", None) or "").strip()
+
+    diag = _fcm.diagnostics().get(project, {})
+    title = "Nakshatralogy test"
+    body = "If you can see this, notifications work 🎉"
+
+    out = {
+        "user_id": user.id,
+        "name": user.name,
+        "role": role,
+        "firebase_project_expected": "nakshtralogy-bf371",
+        "firebase_initialized": diag.get("initialized", False),
+        "firebase_project_loaded": diag.get("project_id"),
+        "has_native_token": bool(native),
+        "has_web_token": bool(web),
+        "native": None,
+        "web": None,
+    }
+
+    # No registered token at all → nothing to send to.
+    if not native and not web:
+        out["diagnosis"] = ("This user has NO registered FCM token (fcm_token and "
+                            "fcm_token_web are both empty). The app must register its "
+                            "token after login (PUT /me with fcm_token, or /push/register). "
+                            "On Android 13+ the user must also allow the notification prompt.")
+        return {"status": "ok", "data": out}
+
+    # Firebase not ready → sends can't work regardless of token.
+    if not diag.get("initialized"):
+        out["diagnosis"] = (f"Firebase is NOT initialized for the {project} project "
+                            f"({diag.get('error')}). Upload the nakshtralogy-bf371 service-account "
+                            f"JSON in Admin → Firebase FCM ({project}).")
+        return {"status": "ok", "data": out}
+
+    # Send to the registered token(s) and interpret the result.
+    if native:
+        out["native"] = _fcm.send_push_debug(native, role, title, body, {"type": "admin_test"})
+    if web:
+        out["web"] = _fcm.send_push_debug(web, role, title, body, {"type": "admin_test"})
+
+    # Build a plain-English diagnosis from the native result (Android focus).
+    r = out["native"] or out["web"] or {}
+    if r.get("ok"):
+        out["diagnosis"] = ("DELIVERED to FCM successfully (message_id present). Backend, "
+                            "credentials and token are all correct. If the phone shows nothing, "
+                            "it is a device-side setting (notifications disabled, battery saver / "
+                            "doze, or the app was force-stopped).")
+    else:
+        err = str(r.get("error", "")).lower()
+        if "senderid" in err or "sender id" in err or "mismatch" in err:
+            hint = ("SenderId mismatch — the uploaded service account is a DIFFERENT Firebase "
+                    "project than the app. Upload the nakshtralogy-bf371 service account.")
+        elif "not found" in err or "unregistered" in err or "invalid" in err:
+            hint = "The token is stale/invalid — re-login on the device to register a fresh token."
+        elif "credential" in err or "default credentials" in err:
+            hint = "Service-account credential problem — re-upload the JSON."
+        else:
+            hint = "See the raw error above."
+        out["diagnosis"] = f"NOT delivered. {hint}"
+
+    return {"status": "ok", "data": out}
+
+
 # ══════════════════════════════════════════════════════════════════════
 #  DEVELOPER API PLATFORM — Plan/Product seed (developerApiPlatform/)
 # ══════════════════════════════════════════════════════════════════════
