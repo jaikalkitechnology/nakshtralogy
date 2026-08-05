@@ -2223,11 +2223,18 @@ const AdminFeatures = () => {
                             : (notifDialog.result.diagnosis || "Saved in-app. Push not delivered.")}
                       </p>
                       {!notifDialog.result.push_delivered && !notifDialog.result.error && (
-                        <p className="mt-1 text-muted-foreground">
-                          Firebase initialized: <b>{String(notifDialog.result.firebase_initialized)}</b>
-                          {" · "}project loaded: <b>{notifDialog.result.firebase_project_loaded || "—"}</b>
-                          {" · "}expected: <b>{notifDialog.result.expected_project}</b>
-                        </p>
+                        notifDialog.result.expected_project === undefined ? (
+                          <p className="mt-1 text-muted-foreground">
+                            Backend is out of date (no diagnostics in response) — redeploy the API to
+                            see the exact reason, or call GET /admin/fcm/diagnostics.
+                          </p>
+                        ) : (
+                          <p className="mt-1 text-muted-foreground">
+                            Firebase initialized: <b>{String(notifDialog.result.firebase_initialized)}</b>
+                            {" · "}project loaded: <b>{notifDialog.result.firebase_project_loaded || "—"}</b>
+                            {" · "}expected: <b>{notifDialog.result.expected_project}</b>
+                          </p>
+                        )
                       )}
                       {Array.isArray(notifDialog.result.results) && notifDialog.result.results.some((r: any) => !r.ok) && (
                         <ul className="mt-1 list-disc list-inside">
