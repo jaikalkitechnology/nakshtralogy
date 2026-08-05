@@ -50,11 +50,12 @@ class _AvatarPickerState extends State<AvatarPicker> {
         maxHeight: 1024,
       );
       if (x == null) return;
+      final bytes = await x.readAsBytes();
       setState(() {
         _localPath = x.path;
         _busy = true;
       });
-      final resp = await ApiService().uploadChatFile(x.path, x.name);
+      final resp = await ApiService().uploadChatFile(bytes, x.name);
       final url = resp['media_url'];
       final ok = (resp['statusCode'] == 200 || resp['statusCode'] == 201) && url is String && url.isNotEmpty;
       if (ok) {
