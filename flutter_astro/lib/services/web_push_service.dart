@@ -41,15 +41,23 @@ class WebPushService {
   String get permissionState => kIsWeb ? webNotificationPermission() : 'unsupported';
 
   /// Request permission + fetch/register the token IN RESPONSE TO A USER TAP.
-  /// This is the only path iOS Safari (installed PWA) accepts. Returns true if a
+  /// This is the ONLY place permission is ever requested — the same on Android
+  /// and iOS — so we never trigger the browser prompt automatically during boot
+  /// or login (which iOS Safari blocks / handles poorly). Returns true if a
   /// token was obtained.
   Future<bool> enableFromGesture() async {
     if (!kIsWeb) return false;
-    if (!_initialized || _messaging == null) {
-      await init();
-    } else {
-      await _fetchToken();
-    }
+    if (!_initialized || _messaging == null) await init();
+    final m = _messaging;
+    if (m == null) return false;
+    try {
+      final settings = await m.requestPermission(alert: true, badge: true, sound: true);
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        _error = 'notifications blocked in browser';
+        return false;
+      }
+    } catch (_) {}
+    await _getAndRegisterToken();
     return _token != null && _token!.isNotEmpty;
   }
 
@@ -92,19 +100,6 @@ class WebPushService {
       final messaging = FirebaseMessaging.instance;
       _messaging = messaging;
       _vapid = vapid;
-      final settings = await messaging.requestPermission(
-        alert: true, badge: true, sound: true,
-      );
-      debugPrint('WebPush permission: ${settings.authorizationStatus}');
-      if (settings.authorizationStatus == AuthorizationStatus.denied) {
-        _error = 'Notification permission denied';
-        // Firebase is initialised; mark done so a later grant can re-fetch the
-        // token via [registerAfterLogin] without re-initialising.
-        _initialized = true;
-        return;
-      }
-
-      await _fetchToken();
 
       // Foreground messages (background handled by the service worker).
       FirebaseMessaging.onMessage.listen((message) {
@@ -121,23 +116,25 @@ class WebPushService {
         await _register();
       });
 
+      // Only fetch the token if permission is ALREADY granted — never
+      // auto-request the browser prompt here (that only happens on the user's
+      // Enable tap). Same behaviour on Android + iOS.
       _initialized = true;
+      if (webNotificationPermission() == 'granted') {
+        await _getAndRegisterToken();
+      }
     } catch (e) {
       _error = 'WebPush init error: $e';
       debugPrint(_error!);
     }
   }
 
-  /// Fetch (or re-fetch) the web token and register it. Safe to call repeatedly.
-  Future<void> _fetchToken() async {
+  /// Get the web token and register it. Assumes permission is already granted —
+  /// does NOT request it (see [enableFromGesture] for the request path).
+  Future<void> _getAndRegisterToken() async {
     final m = _messaging;
     if (m == null) return;
     try {
-      final settings = await m.requestPermission(alert: true, badge: true, sound: true);
-      if (settings.authorizationStatus == AuthorizationStatus.denied) {
-        _error = 'Notification permission denied';
-        return;
-      }
       _token = await m.getToken(vapidKey: _vapid);
       _error = _token == null ? 'Token not issued (check VAPID / service worker)' : null;
       debugPrint('WebPush token: ${_token != null ? "${_token!.substring(0, 12)}..." : "NULL"}');
@@ -157,9 +154,9 @@ class WebPushService {
     if (!kIsWeb) return;
     if (webNotificationPermission() != 'granted') return;
     if (!_initialized || _messaging == null) {
-      await init(); // init() ends with a fresh _fetchToken()
+      await init(); // init() fetches + registers when already granted
     } else {
-      await _fetchToken(); // fresh getToken + register
+      await _getAndRegisterToken(); // fresh getToken + register
     }
   }
 
