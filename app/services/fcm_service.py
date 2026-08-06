@@ -215,10 +215,17 @@ def _send_one(app, token: str, title: str, body: str, data: Optional[dict]) -> b
     proper notification payload.
     """
     try:
+        # Include title/body in DATA too: the web service worker's
+        # onBackgroundMessage reads data.title/body, so a browser (esp. an iOS
+        # Safari PWA, where auto-display of the notification payload is
+        # unreliable) can still render the notification from the data.
+        payload = {k: str(v) for k, v in (data or {}).items()}
+        payload.setdefault("title", title)
+        payload.setdefault("body", body)
         message = messaging.Message(
             notification=messaging.Notification(title=title, body=body),
             token=token,
-            data={k: str(v) for k, v in (data or {}).items()},
+            data=payload,
             android=messaging.AndroidConfig(
                 priority="high",
                 notification=messaging.AndroidNotification(
@@ -232,7 +239,11 @@ def _send_one(app, token: str, title: str, body: str, data: Optional[dict]) -> b
                 ),
             ),
             webpush=messaging.WebpushConfig(
-                notification=messaging.WebpushNotification(title=title, body=body),
+                headers={"Urgency": "high"},
+                notification=messaging.WebpushNotification(
+                    title=title, body=body,
+                    icon="/icons/Icon-192.png", badge="/icons/Icon-192.png",
+                ),
             ),
         )
         response = messaging.send(message, app=app)
