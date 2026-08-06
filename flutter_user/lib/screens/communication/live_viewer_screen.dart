@@ -442,13 +442,31 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                     itemCount: _questions.length,
                     itemBuilder: (_, i) {
                       final q = _questions[i];
+                      final isHost = q['is_host'] == true;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(16)),
+                          decoration: BoxDecoration(
+                            color: isHost ? AppColors.primary.withOpacity(0.30) : Colors.black45,
+                            borderRadius: BorderRadius.circular(16),
+                            border: isHost ? Border.all(color: AppColors.primary.withOpacity(0.6)) : null,
+                          ),
                           child: RichText(text: TextSpan(children: [
-                            TextSpan(text: '${q['display_name'] ?? 'User'} ', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
+                            if (isHost)
+                              const WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 4),
+                                  child: Icon(Icons.verified, color: AppColors.accent, size: 13),
+                                ),
+                              ),
+                            TextSpan(
+                              text: '${q['display_name'] ?? (isHost ? 'Astrologer' : 'User')} ',
+                              style: TextStyle(
+                                color: isHost ? AppColors.accent : AppColors.primary,
+                                fontSize: 12, fontWeight: FontWeight.w700),
+                            ),
                             TextSpan(text: q['question'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 12)),
                           ])),
                         ),

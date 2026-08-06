@@ -64,7 +64,7 @@ from app.schemas.communication_schema import (
     AgoraConfigCreate, AgoraConfigResponse, AgoraConfigUpdate,
     InitiateCallRequest, CallSessionResponse, CallActionRequest,
     CreateLiveStreamRequest, LiveStreamResponse, LiveStreamListResponse,
-    JoinStreamResponse, StreamQuestionRequest, StreamQuestionResponse,
+    JoinStreamResponse, StreamQuestionRequest, StreamQuestionResponse, HostReplyRequest,
     GiftPricingCreate, GiftPricingResponse, SendGiftRequest, GiftSentResponse,
     InitiateChatRequest, ChatSessionResponse, ChatMessageRequest, ChatMessageResponse,
     SuperChatRequest, SuperChatResponse,
@@ -656,6 +656,18 @@ def create_live_stream(
     if not profile or not profile.is_approved:
         raise HTTPException(status_code=403, detail=t("err.profile_not_approved", lang))
 
+    # Auto-end any of this host's dangling streams (scheduled/live) so a new one
+    # starts clean — prevents "ghost" live sessions if a prior one wasn't ended.
+    dangling = db.query(LiveStream).filter(
+        LiveStream.host_id == current_user.id,
+        LiveStream.status.in_(("scheduled", "live")),
+    ).all()
+    for old in dangling:
+        old.status = "ended"
+        old.ended_at = datetime.utcnow()
+    if dangling:
+        db.commit()
+
     channel = _generate_channel_name("live")
     app_id, app_cert = _get_agora_creds(db)
     host_token = _generate_agora_token(app_id, app_cert, channel, uid=0, role=1)
@@ -858,9 +870,65 @@ def get_questions(
         StreamQuestionResponse(
             id=q.id, user_id=q.user_id, display_name=q.display_name,
             question=q.question, is_answered=q.is_answered,
-            is_pinned=q.is_pinned, created_at=q.created_at,
+            is_pinned=q.is_pinned, is_host=bool(getattr(q, "is_host", False)),
+            created_at=q.created_at,
         ) for q in questions
     ]
+
+
+@router.post("/live/{stream_id}/host-reply", response_model=StreamQuestionResponse)
+def host_reply(
+    stream_id: str,
+    req: HostReplyRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """The astrologer (host) posts a reply into the live chat, optionally tagging
+    a viewer (@name). Rendered distinctly in both host + viewer chat overlays."""
+    stream = db.query(LiveStream).filter(
+        LiveStream.id == stream_id, LiveStream.host_id == current_user.id,
+    ).first()
+    if not stream:
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
+    text = req.message.strip()
+    if req.reply_to_name:
+        tag = req.reply_to_name.strip().lstrip("@")
+        if tag:
+            text = f"@{tag} {text}"
+    q = LiveStreamQuestion(
+        stream_id=stream.id,
+        user_id=current_user.id,
+        display_name=current_user.name or "Astrologer",
+        question=text,
+        is_host=True,
+    )
+    db.add(q)
+    db.commit()
+    db.refresh(q)
+    return StreamQuestionResponse(
+        id=q.id, user_id=q.user_id, display_name=q.display_name,
+        question=q.question, is_host=True, created_at=q.created_at,
+    )
+
+
+@router.get("/live/mine/active")
+def my_active_streams(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """This host's own not-yet-ended streams (scheduled/live) — lets the app warn
+    about / clean up a previous session before starting a new one."""
+    rows = db.query(LiveStream).filter(
+        LiveStream.host_id == current_user.id,
+        LiveStream.status.in_(("scheduled", "live")),
+    ).order_by(LiveStream.created_at.desc()).all()
+    return {"count": len(rows), "streams": [
+        {"id": s.id, "title": s.title, "status": s.status,
+         "started_at": str(s.started_at) if s.started_at else None,
+         "created_at": str(s.created_at) if s.created_at else None}
+        for s in rows
+    ]}
 
 
 @router.get("/live/{stream_id}/viewers")
