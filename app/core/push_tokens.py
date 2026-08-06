@@ -33,6 +33,26 @@ def claim_token(db: Session, user: User, token: str, is_web: bool) -> None:
         user.fcm_token = token
 
 
+def clear_stale_token(db: Session, user: User, token: str) -> bool:
+    """Remove a token that FCM reported as unregistered/invalid from whichever
+    column holds it. Called after a failed send so a stale token (e.g. an iOS
+    web token that rotated) is dropped and the app re-registers a fresh one on
+    its next open. Returns True if something was cleared."""
+    token = (token or "").strip()
+    if not token:
+        return False
+    cleared = False
+    if user.fcm_token == token:
+        user.fcm_token = None
+        cleared = True
+    if user.fcm_token_web == token:
+        user.fcm_token_web = None
+        cleared = True
+    if cleared:
+        db.commit()
+    return cleared
+
+
 def release_token(db: Session, user: User, token: str) -> None:
     """On logout: clear this token from the user (both native + web columns) so a
     logged-out account stops receiving pushes on this device."""

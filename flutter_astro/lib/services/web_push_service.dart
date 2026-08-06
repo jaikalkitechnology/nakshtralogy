@@ -58,6 +58,12 @@ class WebPushService {
       }
     } catch (_) {}
     await _getAndRegisterToken();
+    // iOS often ROTATES the web token a few seconds after the first grant,
+    // invalidating the one we just registered. Re-register the rotated token so
+    // the backend ends up with the currently-valid one.
+    Future.delayed(const Duration(seconds: 6), () {
+      if (kIsWeb) _getAndRegisterToken();
+    });
     return _token != null && _token!.isNotEmpty;
   }
 
