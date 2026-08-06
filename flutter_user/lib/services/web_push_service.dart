@@ -38,11 +38,14 @@ class WebPushService {
   String? get token => _token;
   bool get isInitialized => _initialized;
 
-  /// True on web only when the browser notification permission is still
-  /// UNDECIDED ('default') — i.e. the user has never chosen. If already
-  /// 'granted' we never prompt again (the token registers silently on login);
-  /// if 'denied' a prompt can't re-request it, so we stay quiet too.
-  bool get needsWebEnable => kIsWeb && webNotificationPermission() == 'default';
+  /// True on web whenever the browser hasn't GRANTED notification permission —
+  /// so the UI can offer an "Enable" prompt while it's still 'default' or was
+  /// 'denied'. When 'granted' we never prompt (the token registers silently on
+  /// login). See [permissionState] for the exact value.
+  bool get needsWebEnable => kIsWeb && webNotificationPermission() != 'granted';
+
+  /// 'granted' | 'denied' | 'default' | 'unsupported'.
+  String get permissionState => kIsWeb ? webNotificationPermission() : 'unsupported';
 
   /// Request permission + fetch/register the token IN RESPONSE TO A USER TAP.
   /// This is the only path iOS Safari (installed PWA) accepts. Returns true if a
@@ -137,20 +140,26 @@ class WebPushService {
     }
   }
 
-  /// Register the current web token with the backend (authenticated endpoint).
-  /// Recovers when Firebase initialised but the token wasn't issued yet
-  /// (permission granted late, or the user just logged in). Safe to call again.
+  /// Call after every login. When permission is already granted, ALWAYS fetch a
+  /// FRESH token from FCM and register it — never re-use the cached one, which
+  /// can be stale after a logout/login or account switch (the cause of
+  /// "device token is stale/invalid" in the admin panel). When permission is
+  /// still 'default'/'denied', the UI's Enable prompt handles it.
   Future<void> registerAfterLogin() async {
     if (!kIsWeb) return;
+    if (webNotificationPermission() != 'granted') return;
     if (!_initialized || _messaging == null) {
-      await init();
-      return; // init() → _fetchToken() → _register() already ran
-    }
-    if (_token == null || _token!.isEmpty) {
-      await _fetchToken();
+      await init(); // init() ends with a fresh _fetchToken()
     } else {
-      await _register();
+      await _fetchToken(); // fresh getToken + register
     }
+  }
+
+  /// Call on logout: forget the cached token so the next login re-fetches a
+  /// fresh one for the new account. The backend token is cleared separately by
+  /// the logout API call.
+  void clearOnLogout() {
+    _token = null;
   }
 
   Future<void> _register() async {
