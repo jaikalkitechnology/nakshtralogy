@@ -16,6 +16,7 @@ import WebPushSettings from "./pages/admin/WebPushSettings";
 import SystemMaintenance from "./pages/admin/SystemMaintenance";
 import FcmLogs from "./pages/admin/FcmLogs";
 import NotificationsManager from "./pages/admin/NotificationsManager";
+import CommunicationLogs from "./pages/admin/CommunicationLogs";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/admin/google-auth" element={<RequireAdmin><AdminShell><GoogleAuthSettings /></AdminShell></RequireAdmin>} />
               <Route path="/admin/web-push" element={<RequireAdmin><AdminShell><WebPushSettings /></AdminShell></RequireAdmin>} />
               <Route path="/admin/fcm-logs" element={<RequireAdmin><AdminShell><FcmLogs /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/comm-logs" element={<RequireAdmin><AdminShell><CommunicationLogs /></AdminShell></RequireAdmin>} />
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}
