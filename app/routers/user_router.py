@@ -129,7 +129,8 @@ def login(req: UserLoginRequest, db: Session = Depends(get_db), lang: str = Depe
     if not user.is_active:
         raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     if req.fcm_token:
-        user.fcm_token = req.fcm_token
+        from app.core.push_tokens import claim_token
+        claim_token(db, user, req.fcm_token, is_web=False)
         db.commit()
     return _issue_tokens(user, db)
 
@@ -258,10 +259,10 @@ def register_push_token(
     tok = (req.token or "").strip()
     if not tok:
         raise HTTPException(status_code=400, detail=t("err.push_token_required", lang))
-    if (req.platform or "").strip().lower() == "web":
-        current_user.fcm_token_web = tok
-    else:
-        current_user.fcm_token = tok
+    # Claim the token for this account, detaching it from any other account that
+    # used this same device (so an account switch never mis-delivers).
+    from app.core.push_tokens import claim_token
+    claim_token(db, current_user, tok, is_web=(req.platform or "").strip().lower() == "web")
     db.commit()
     return MessageResponse(message=t("msg.push_token_registered", lang))
 
@@ -369,6 +370,15 @@ def update_me(
     if update_data.get("preferred_language"):
         from app.core.i18n import normalize_lang
         update_data["preferred_language"] = normalize_lang(update_data["preferred_language"])
+    # An fcm_token here syncs a device token — claim it (detach from other
+    # accounts). An empty string means "forget my token" (logout).
+    if "fcm_token" in update_data:
+        from app.core.push_tokens import claim_token, release_token
+        tok = update_data.pop("fcm_token")
+        if tok:
+            claim_token(db, current_user, tok, is_web=False)
+        else:
+            release_token(db, current_user, "")
     for field, value in update_data.items():
         setattr(current_user, field, value)
     db.commit()
