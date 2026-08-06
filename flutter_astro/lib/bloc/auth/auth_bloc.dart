@@ -128,9 +128,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
     try {
+      // Empty fcm_token → backend clears BOTH native + web tokens for this account.
       await _api.updateMeFields({'fcm_token': ''});
     } catch (_) {}
     await FcmService().clearToken();
+    if (kIsWeb) WebPushService().clearOnLogout();
     final prefs = await SharedPreferences.getInstance();
     final biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
     await _api.clearTokens(keepForBiometric: biometricEnabled);

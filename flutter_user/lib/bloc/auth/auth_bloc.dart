@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/api_service.dart';
 import '../../services/fcm_service.dart';
 import '../../services/google_auth_service.dart';
+import '../../services/web_push_service.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -179,9 +180,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
     try {
+      // Empty fcm_token → backend clears BOTH native + web tokens for this account.
       await _api.updateMe({'fcm_token': ''});
     } catch (_) {}
     await FcmService().clearToken();
+    if (kIsWeb) WebPushService().clearOnLogout();
     final prefs = await SharedPreferences.getInstance();
     final biometricEnabled = prefs.getBool('biometric_enabled') ?? false;
     await _api.clearTokens(keepForBiometric: biometricEnabled);
