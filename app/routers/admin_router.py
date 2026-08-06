@@ -1786,6 +1786,20 @@ def fcm_test_send(
     return {"status": "ok", "data": {"results": results}}
 
 
+def _clear_if_stale(db, user, token, result) -> None:
+    """If a send result indicates the token is unregistered/invalid, drop it so
+    the app re-registers a fresh one (self-heals iOS web-token rotation)."""
+    if not token or not result or result.get("ok"):
+        return
+    err = str(result.get("error", "")).lower()
+    if any(k in err for k in ("unregistered", "not found", "invalid", "not-registered")):
+        try:
+            from app.core.push_tokens import clear_stale_token
+            clear_stale_token(db, user, token)
+        except Exception:
+            db.rollback()
+
+
 @router.post("/fcm/test-user/{user_id}")
 def fcm_test_user(
     user_id: str,
@@ -1857,6 +1871,11 @@ def fcm_test_user(
     if web:
         out["web"] = _fcm.send_push_debug(web, role, title, body, {"type": "admin_test"})
 
+    # Auto-clear a token FCM reports as unregistered/invalid (e.g. an iOS web
+    # token that rotated) so the app re-registers a fresh one on next open.
+    _clear_if_stale(db, user, native, out.get("native"))
+    _clear_if_stale(db, user, web, out.get("web"))
+
     # Build a plain-English diagnosis from the native result (Android focus).
     r = out["native"] or out["web"] or {}
     if r.get("ok"):
@@ -1920,11 +1939,13 @@ def admin_send_notification(
     web = (getattr(user, "fcm_token_web", None) or "").strip()
     results = []
     if native:
-        results.append({"target": "native", "token_tail": native[-12:],
-                        **_fcm.send_push_debug(native, role, req.title.strip(), req.body.strip(), data)})
+        nres = _fcm.send_push_debug(native, role, req.title.strip(), req.body.strip(), data)
+        results.append({"target": "native", "token_tail": native[-12:], **nres})
+        _clear_if_stale(db, user, native, nres)
     if web:
-        results.append({"target": "web", "token_tail": web[-12:],
-                        **_fcm.send_push_debug(web, role, req.title.strip(), req.body.strip(), data)})
+        wres = _fcm.send_push_debug(web, role, req.title.strip(), req.body.strip(), data)
+        results.append({"target": "web", "token_tail": web[-12:], **wres})
+        _clear_if_stale(db, user, web, wres)
 
     delivered = any(r.get("ok") for r in results)
 
