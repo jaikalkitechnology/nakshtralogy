@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'api_service.dart';
+import '../utils/web_notification.dart';
 
 /// Web push for Flutter Web.
 ///
@@ -74,7 +75,12 @@ class WebPushService {
       _messaging = messaging;
 
       FirebaseMessaging.onMessage.listen((msg) {
-        debugPrint('Web push foreground: ${msg.notification?.title ?? msg.data['title']}');
+        // Flutter web does NOT auto-display foreground messages — show one via
+        // the browser Notification API. Background messages are shown by the SW.
+        final title = msg.notification?.title ?? msg.data['title'] ?? 'Nakshatralogy';
+        final body = msg.notification?.body ?? msg.data['body'] ?? '';
+        debugPrint('Web push foreground: $title');
+        showWebNotification(title, body);
       });
       messaging.onTokenRefresh.listen((t) {
         _token = t;

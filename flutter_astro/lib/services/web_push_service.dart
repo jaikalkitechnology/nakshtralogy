@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'api_service.dart';
+import '../utils/web_notification.dart';
 
 /// Web-only push notifications for the astrologer web app.
 ///
@@ -85,7 +86,12 @@ class WebPushService {
 
       // Foreground messages (background handled by the service worker).
       FirebaseMessaging.onMessage.listen((message) {
-        debugPrint('WebPush foreground: ${message.notification?.title} / ${message.data}');
+        // Flutter web does NOT auto-display foreground messages — show one via
+        // the browser Notification API. Background messages are shown by the SW.
+        final title = message.notification?.title ?? message.data['title'] ?? 'Nakshatralogy';
+        final body = message.notification?.body ?? message.data['body'] ?? '';
+        debugPrint('WebPush foreground: $title');
+        showWebNotification(title, body);
       });
 
       messaging.onTokenRefresh.listen((newToken) async {
