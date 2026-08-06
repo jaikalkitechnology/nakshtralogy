@@ -15,6 +15,7 @@ import GoogleAuthSettings from "./pages/admin/GoogleAuthSettings";
 import WebPushSettings from "./pages/admin/WebPushSettings";
 import SystemMaintenance from "./pages/admin/SystemMaintenance";
 import FcmLogs from "./pages/admin/FcmLogs";
+import NotificationsManager from "./pages/admin/NotificationsManager";
 
 const queryClient = new QueryClient();
 
@@ -56,9 +57,10 @@ const App = () => (
               <Route path="/admin/google-auth" element={<RequireAdmin><AdminShell><GoogleAuthSettings /></AdminShell></RequireAdmin>} />
               <Route path="/admin/web-push" element={<RequireAdmin><AdminShell><WebPushSettings /></AdminShell></RequireAdmin>} />
               <Route path="/admin/fcm-logs" element={<RequireAdmin><AdminShell><FcmLogs /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}
-              {["consultations", "notifications", "content", "audit-logs", "support-tickets", "analytics", "role-permissions"].map((seg) => (
+              {["consultations", "content", "audit-logs", "support-tickets", "analytics", "role-permissions"].map((seg) => (
                 <Route
                   key={seg}
                   path={`/admin/${seg}`}
