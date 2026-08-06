@@ -126,6 +126,19 @@ export async function adminFcmTestUser(userId: string) {
   return request(`/admin/fcm/test-user/${userId}`, { method: "POST" });
 }
 
+// Broadcast a notification to a segment (users | astrologers | all).
+export async function adminBroadcastNotification(audience: string, title: string, body: string, activeOnly: boolean) {
+  return request(`/admin/notifications/broadcast`, {
+    method: "POST",
+    body: JSON.stringify({ audience, title, body, active_only: activeOnly }),
+  });
+}
+
+// Sent-notification campaign history with delivery reports.
+export async function adminListCampaigns(limit = 50) {
+  return request(`/admin/notifications/campaigns?limit=${limit}`);
+}
+
 /// Fetch an auth-protected media URL (e.g. a KYC file) as an object URL so it
 /// can be shown in <img>/<iframe>. `path` may be a relative API path
 /// (e.g. /api/v1/astrologer/me/kyc/file/...) or an absolute URL. Returns null

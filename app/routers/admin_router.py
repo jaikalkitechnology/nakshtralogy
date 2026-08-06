@@ -56,6 +56,7 @@ from app.models.model import (
     CallSession, ChatSession, LiveStream, ServiceOrder,
     KycDocument, RefreshToken, Review, Consultation,
     PlatformSetting, SubscriptionPlan, ApiProduct,
+    Notification, NotificationCampaign,
 )
 
 router = APIRouter()
@@ -1666,7 +1667,7 @@ def fcm_diagnostics(
       • tokens   — how many accounts have a native token / a web token stored.
 
     Use this first: if fcm.initialized is false → (re)upload the service account
-    (must be Firebase project nakshtralogy-bf371); if webpush.ready is false →
+    (must be Firebase project nakshatralogy-bc5a5); if webpush.ready is false →
     fill the missing web keys; if tokens are 0 → the apps aren't registering."""
     from app.services import fcm_service as _fcm
 
@@ -1707,7 +1708,7 @@ def fcm_diagnostics(
             "user": {"native": native_users, "web": web_users},
             "astro": {"native": native_astro, "web": web_astro},
         },
-        "expected_firebase_project": "nakshtralogy-bf371",
+        "expected_firebase_project": "nakshatralogy-bc5a5",
     }}
 
 
@@ -1802,7 +1803,7 @@ def fcm_test_user(
       - user has no registered token  → the app never sent its token
       - firebase not initialized      → service account not uploaded/durable
       - SenderId mismatch             → uploaded SA is a different Firebase
-                                        project than the app (nakshtralogy-bf371)
+                                        project than the app (nakshatralogy-bc5a5)
       - unregistered/invalid token    → stale token, re-login on the device
       - delivered                     → backend + credentials + token are OK
                                         (if the phone shows nothing then it's a
@@ -1826,7 +1827,7 @@ def fcm_test_user(
         "user_id": user.id,
         "name": user.name,
         "role": role,
-        "firebase_project_expected": "nakshtralogy-bf371",
+        "firebase_project_expected": "nakshatralogy-bc5a5",
         "firebase_initialized": diag.get("initialized", False),
         "firebase_project_loaded": diag.get("project_id"),
         "has_native_token": bool(native),
@@ -1846,7 +1847,7 @@ def fcm_test_user(
     # Firebase not ready → sends can't work regardless of token.
     if not diag.get("initialized"):
         out["diagnosis"] = (f"Firebase is NOT initialized for the {project} project "
-                            f"({diag.get('error')}). Upload the nakshtralogy-bf371 service-account "
+                            f"({diag.get('error')}). Upload the nakshatralogy-bc5a5 service-account "
                             f"JSON in Admin → Firebase FCM ({project}).")
         return {"status": "ok", "data": out}
 
@@ -1867,7 +1868,7 @@ def fcm_test_user(
         err = str(r.get("error", "")).lower()
         if "senderid" in err or "sender id" in err or "mismatch" in err:
             hint = ("SenderId mismatch — the uploaded service account is a DIFFERENT Firebase "
-                    "project than the app. Upload the nakshtralogy-bf371 service account.")
+                    "project than the app. Upload the nakshatralogy-bc5a5 service account.")
         elif "not found" in err or "unregistered" in err or "invalid" in err:
             hint = "The token is stale/invalid — re-login on the device to register a fresh token."
         elif "credential" in err or "default credentials" in err:
@@ -1941,17 +1942,29 @@ def admin_send_notification(
         if not diag_proj.get("initialized"):
             diagnosis = (f"Firebase is NOT initialized for the "
                          f"{'astro' if role == 'astrologer' else 'user'} project "
-                         f"({diag_proj.get('error')}). Upload the nakshtralogy-bf371 "
+                         f"({diag_proj.get('error')}). Upload the nakshatralogy-bc5a5 "
                          f"service-account JSON in Admin → Firebase FCM.")
         elif "senderid" in err or "sender id" in err or "mismatch" in err:
             diagnosis = ("SenderId mismatch — the uploaded service account is a DIFFERENT "
-                         "Firebase project than the app. Upload the nakshtralogy-bf371 service account.")
+                         "Firebase project than the app. Upload the nakshatralogy-bc5a5 service account.")
         elif "not found" in err or "unregistered" in err or "invalid" in err:
             diagnosis = "The device token is stale/invalid — the astrologer must re-login to refresh it."
         elif "credential" in err or "default credentials" in err:
             diagnosis = "Service-account credential problem — re-upload the JSON."
         else:
             diagnosis = "Push not delivered. See the per-token error."
+
+    # Record as an individual campaign for the history/report.
+    try:
+        db.add(NotificationCampaign(
+            title=req.title.strip(), body=req.body.strip(), audience="individual",
+            active_only=False, total_targets=1, with_token=(1 if results else 0),
+            delivered=(1 if delivered else 0), failed=(0 if delivered or not results else 1),
+            saved_in_app=1, created_by=current_user.id,
+        ))
+        db.commit()
+    except Exception:
+        db.rollback()
 
     return {"status": "ok", "data": {
         "user_id": user.id,
@@ -1961,10 +1974,115 @@ def admin_send_notification(
         "results": results,
         "firebase_initialized": diag_proj.get("initialized", False),
         "firebase_project_loaded": diag_proj.get("project_id"),
-        "expected_project": "nakshtralogy-bf371",
+        "expected_project": "nakshatralogy-bc5a5",
         "note": diagnosis,
         "diagnosis": diagnosis,
     }}
+
+
+class AdminBroadcastRequest(BaseModel):
+    audience: str          # users | astrologers | all
+    title: str
+    body: str
+    active_only: bool = True
+
+
+BROADCAST_CAP = 5000  # safety cap per broadcast (synchronous send)
+
+
+@router.post("/notifications/broadcast")
+def admin_broadcast(
+    req: AdminBroadcastRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Broadcast a push + in-app notification to a segment: all users, all
+    astrologers, or everyone. Optionally only active accounts. Returns a
+    delivery report and records it in the campaign history."""
+    from app.services import fcm_service as _fcm
+
+    if req.audience not in ("users", "astrologers", "all"):
+        raise HTTPException(status_code=400, detail="audience must be users | astrologers | all")
+    if not req.title.strip() or not req.body.strip():
+        raise HTTPException(status_code=400, detail="Title and body are required")
+
+    q = db.query(User)
+    if req.audience == "users":
+        q = q.filter(User.role.in_(("user", "admin")))
+    elif req.audience == "astrologers":
+        q = q.filter(User.role == "astrologer")
+    if req.active_only:
+        q = q.filter(User.is_active == True)  # noqa: E712
+    users = q.limit(BROADCAST_CAP).all()
+
+    title, body = req.title.strip(), req.body.strip()
+    data = {"type": "admin_broadcast"}
+
+    # Save in-app for every target (one commit) and group tokens by role.
+    user_native, user_web, astro_native, astro_web = [], [], [], []
+    with_token = 0
+    for u in users:
+        db.add(Notification(user_id=u.id, title=title, body=body, notif_type="admin_broadcast", data_json=data))
+        n = (getattr(u, "fcm_token", None) or "").strip()
+        w = (getattr(u, "fcm_token_web", None) or "").strip()
+        if n or w:
+            with_token += 1
+        if u.role == "astrologer":
+            if n: astro_native.append(n)
+            if w: astro_web.append(w)
+        else:
+            if n: user_native.append(n)
+            if w: user_web.append(w)
+    db.commit()
+
+    # Multicast per role (each batches up to 500 internally).
+    delivered = 0
+    delivered += _fcm.send_push_multi(user_native, title, body, role="user", data=data, web_tokens=user_web)
+    delivered += _fcm.send_push_multi(astro_native, title, body, role="astrologer", data=data, web_tokens=astro_web)
+
+    total_tokens = len(user_native) + len(user_web) + len(astro_native) + len(astro_web)
+    failed = max(0, total_tokens - delivered)
+
+    db.add(NotificationCampaign(
+        title=title, body=body, audience=req.audience, active_only=req.active_only,
+        total_targets=len(users), with_token=with_token, delivered=delivered,
+        failed=failed, saved_in_app=len(users), created_by=current_user.id,
+    ))
+    db.commit()
+
+    return {"status": "ok", "data": {
+        "audience": req.audience,
+        "active_only": req.active_only,
+        "total_targets": len(users),
+        "with_token": with_token,
+        "delivered": delivered,
+        "failed": failed,
+        "saved_in_app": len(users),
+        "capped": len(users) >= BROADCAST_CAP,
+        "cap": BROADCAST_CAP,
+    }}
+
+
+@router.get("/notifications/campaigns")
+def admin_list_campaigns(
+    limit: int = Query(50, ge=1, le=200),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """History of sent notification campaigns with their delivery reports."""
+    rows = db.query(NotificationCampaign).order_by(
+        NotificationCampaign.created_at.desc()
+    ).limit(limit).all()
+    return {"status": "ok", "data": [
+        {
+            "id": c.id, "title": c.title, "body": c.body,
+            "audience": c.audience, "active_only": c.active_only,
+            "total_targets": c.total_targets, "with_token": c.with_token,
+            "delivered": c.delivered, "failed": c.failed, "saved_in_app": c.saved_in_app,
+            "created_at": str(c.created_at) if c.created_at else None,
+        }
+        for c in rows
+    ]}
 
 
 # ══════════════════════════════════════════════════════════════════════

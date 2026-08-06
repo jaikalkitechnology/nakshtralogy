@@ -534,6 +534,25 @@ class Notification(Base):
     )
 
 
+class NotificationCampaign(Base):
+    """A sent admin notification campaign (broadcast or individual) with its
+    delivery report — powers the admin Notifications history."""
+    __tablename__ = "notification_campaigns"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    title = Column(String(255), nullable=False)
+    body = Column(Text, nullable=True)
+    audience = Column(String(30), nullable=False)   # users | astrologers | all | individual
+    active_only = Column(Boolean, default=True)
+    total_targets = Column(Integer, default=0)
+    with_token = Column(Integer, default=0)
+    delivered = Column(Integer, default=0)
+    failed = Column(Integer, default=0)
+    saved_in_app = Column(Integer, default=0)
+    created_by = Column(String(36), nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
 # ─────────────────────────────────────────────────────────────────────
 #  10. AI CHAT / AI INSIGHTS
 # ─────────────────────────────────────────────────────────────────────
