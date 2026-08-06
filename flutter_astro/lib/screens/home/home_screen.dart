@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../services/web_push_service.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
@@ -55,6 +57,35 @@ class _HomeScreenState extends State<HomeScreen> {
       context.read<StatusBloc>().add(StatusLoadRequested());
       _connectRealtime();
       _checkOnboarding();
+      _maybePromptWebNotifications();
+    });
+  }
+
+  /// On web, notification permission must be requested from a user tap (iOS
+  /// Safari requires it). If we don't have a token yet, offer a one-tap prompt.
+  void _maybePromptWebNotifications() {
+    if (!kIsWeb) return;
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted || !WebPushService().needsWebEnable) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: const Duration(seconds: 12),
+        backgroundColor: AppColors.card,
+        content: const Text('Enable notifications to get call & chat alerts',
+            style: TextStyle(color: AppColors.ivory)),
+        action: SnackBarAction(
+          label: 'Enable',
+          textColor: AppColors.primary,
+          onPressed: () async {
+            final ok = await WebPushService().enableFromGesture();
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(ok ? 'Notifications enabled' : 'Could not enable — allow notifications in your browser'),
+                backgroundColor: ok ? AppColors.success : AppColors.error,
+              ));
+            }
+          },
+        ),
+      ));
     });
   }
 
