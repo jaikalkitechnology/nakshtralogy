@@ -111,6 +111,21 @@ export async function adminSendNotification(userId: string, title: string, body:
   });
 }
 
+// FCM diagnostics (init state per project, web-push readiness, token counts).
+export async function adminFcmDiagnostics() {
+  return request(`/admin/fcm/diagnostics`);
+}
+
+// Recent FCM send attempts (real events + tests) with ok/error per attempt.
+export async function adminFcmRecent() {
+  return request(`/admin/fcm/recent`);
+}
+
+// Send a test push to a specific user's registered token(s) — returns diagnosis.
+export async function adminFcmTestUser(userId: string) {
+  return request(`/admin/fcm/test-user/${userId}`, { method: "POST" });
+}
+
 /// Fetch an auth-protected media URL (e.g. a KYC file) as an object URL so it
 /// can be shown in <img>/<iframe>. `path` may be a relative API path
 /// (e.g. /api/v1/astrologer/me/kyc/file/...) or an absolute URL. Returns null
