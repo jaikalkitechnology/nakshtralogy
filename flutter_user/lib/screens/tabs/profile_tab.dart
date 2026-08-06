@@ -10,6 +10,7 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../widgets/astro_avatar.dart';
+import '../../widgets/web_notification_tile.dart';
 import '../../bloc/profile/profile_event.dart';
 import '../../bloc/profile/profile_state.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
@@ -397,6 +398,12 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ],
               const SizedBox(height: 20),
+
+              // ============ WEB NOTIFICATIONS (web only) ============
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: WebNotificationTile(),
+              ),
 
               // ============ STATS ROW ============
               BlocBuilder<ChartBloc, ChartState>(

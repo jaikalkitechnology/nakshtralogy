@@ -58,9 +58,44 @@
     }
     #nk-install-yes { background: #E8B547; color: #0A0A24; }
     #nk-install-no  { background: transparent; color: #8A8298; }
+    /* Branded startup splash — replaces the blank white screen while Flutter
+       boots. Removed on the first rendered frame. */
+    #nk-splash {
+      position: fixed; inset: 0; z-index: 2147483646;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 50% 40%, #15152e 0%, #0B0B1F 70%);
+      transition: opacity .5s ease; opacity: 1;
+    }
+    #nk-splash.nk-hide { opacity: 0; pointer-events: none; }
+    .nk-splash-wrap { position: relative; width: 128px; height: 128px; display: flex; align-items: center; justify-content: center; }
+    .nk-splash-ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 3px solid rgba(212,175,55,0.15); border-top-color: #D4AF37;
+      animation: nk-spin 1s linear infinite;
+    }
+    .nk-splash-icon { width: 84px; height: 84px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,.5); animation: nk-pulse 1.6s ease-in-out infinite; }
+    .nk-splash-title { margin-top: 24px; color: #E8B547; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 3px; }
+    .nk-splash-sub { margin-top: 6px; color: #8888a0; font-size: 12px; letter-spacing: .5px; }
+    @keyframes nk-spin { to { transform: rotate(360deg); } }
+    @keyframes nk-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.92); opacity: .85; } }
   </style>
 </head>
 <body>
+  <!-- Branded loading splash (hidden once Flutter renders its first frame) -->
+  <div id="nk-splash">
+    <div class="nk-splash-wrap">
+      <div class="nk-splash-ring"></div>
+      <img class="nk-splash-icon" src="icons/Icon-256.png" alt="Nakshatralogy"/>
+    </div>
+    <div class="nk-splash-title">NAKSHATRALOGY</div>
+    <div class="nk-splash-sub">Astrologer Console · loading…</div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var s = document.getElementById('nk-splash');
+      if (s) { s.classList.add('nk-hide'); setTimeout(function () { s.remove(); }, 600); }
+    });
+  </script>
   <!-- Branded install / Add-to-Home-Screen banner -->
   <div id="nk-install-banner" role="dialog" aria-label="Install Nakshatralogy Pro">
     <img class="nk-ic" src="icons/Icon-192.png" alt="Nakshatralogy Pro"/>

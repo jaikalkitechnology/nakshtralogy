@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar_picker.dart';
+import '../../widgets/web_notification_tile.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -279,6 +280,9 @@ class _ProfileTabState extends State<ProfileTab> {
               ]),
             ),
             const SizedBox(height: 16),
+
+            // ── Web notifications control (web only) ──
+            const WebNotificationTile(),
 
             // ── Details ──
             _DetailSection(items: [
