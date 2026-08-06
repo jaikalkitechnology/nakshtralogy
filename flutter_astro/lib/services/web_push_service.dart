@@ -31,6 +31,24 @@ class WebPushService {
   bool get isInitialized => _initialized;
   String? get error => _error;
 
+  /// True on web when we don't yet have a token (permission not granted / not
+  /// fetched). Used to show an "Enable notifications" prompt — required on iOS,
+  /// where permission must be requested from a user tap.
+  bool get needsWebEnable => kIsWeb && (_token == null || _token!.isEmpty);
+
+  /// Request permission + fetch/register the token IN RESPONSE TO A USER TAP.
+  /// This is the only path iOS Safari (installed PWA) accepts. Returns true if a
+  /// token was obtained.
+  Future<bool> enableFromGesture() async {
+    if (!kIsWeb) return false;
+    if (!_initialized || _messaging == null) {
+      await init();
+    } else {
+      await _fetchToken();
+    }
+    return _token != null && _token!.isNotEmpty;
+  }
+
   /// Initialise Firebase web messaging from the public config, request
   /// permission, fetch the web token and (if logged in) register it.
   Future<void> init() async {
