@@ -70,6 +70,7 @@ class CallActionRequest(BaseModel):
 class CreateLiveStreamRequest(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
+    gift_goal: Optional[float] = Field(None, ge=0)
 
 
 class LiveStreamResponse(BaseModel):
@@ -84,6 +85,7 @@ class LiveStreamResponse(BaseModel):
     viewer_count: int = 0
     peak_viewers: int = 0
     total_gifts_amount: float = 0
+    gift_goal: float = 0
     started_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
@@ -99,8 +101,20 @@ class LiveStreamListResponse(BaseModel):
     status: str
     viewer_count: int = 0
     total_gifts_amount: float = 0
+    gift_goal: float = 0
     super_chat_rate: float = 50
     started_at: Optional[datetime] = None
+
+
+class SetGiftGoalRequest(BaseModel):
+    gift_goal: float = Field(..., ge=0)
+
+
+class TopGifterResponse(BaseModel):
+    user_id: str
+    name: Optional[str] = None
+    total_amount: float = 0
+    gift_count: int = 0
 
 
 class JoinStreamResponse(BaseModel):
@@ -229,6 +243,40 @@ class ChatMessageResponse(BaseModel):
     file_name: Optional[str] = None
     file_size: Optional[int] = None
     created_at: Optional[datetime] = None
+
+
+# ─── Session Reviews (chat / voice / video) ──────────────────────────
+
+class SessionReviewRequest(BaseModel):
+    session_type: str = Field(..., pattern=r'^(chat|voice|video)$')
+    session_id: str
+    rating: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=1000)
+
+
+class SessionReviewResponse(BaseModel):
+    id: str
+    session_type: str
+    session_id: str
+    user_id: str
+    astrologer_id: str
+    rating: int
+    comment: Optional[str] = None
+    reviewer_name: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class PendingReviewResponse(BaseModel):
+    """A completed session the user hasn't reviewed yet — powers the app's
+    post-session review prompt."""
+    session_type: str
+    session_id: str
+    astrologer_id: str
+    astrologer_name: Optional[str] = None
+    ended_at: Optional[datetime] = None
 
 
 # ─── Generic ─────────────────────────────────────────────────────────

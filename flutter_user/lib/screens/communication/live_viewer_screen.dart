@@ -44,6 +44,11 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   Timer? _pollTimer;
   Timer? _hostTimeout;
   String? _error;
+  // Gifting goal + leaderboard + "answering now"
+  double _giftGoal = 0;
+  double _totalGifts = 0;
+  List<dynamic> _topGifters = [];
+  Map<String, dynamic>? _pinnedQuestion;
 
   @override
   void initState() {
@@ -151,11 +156,17 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
     final v = await _api.getLiveViewers(widget.streamId);
     final q = await _api.getLiveQuestions(widget.streamId);
     final sc = await _api.getLiveSuperChats(widget.streamId);
+    final tg = await _api.getLiveTopGifters(widget.streamId);
+    final pinned = await _api.getLivePinnedQuestion(widget.streamId);
     if (!mounted) return;
     setState(() {
       _viewerCount = v['total'] ?? 0;
+      _giftGoal = (v['gift_goal'] as num?)?.toDouble() ?? _giftGoal;
+      _totalGifts = (v['total_gifts_amount'] as num?)?.toDouble() ?? _totalGifts;
       _questions = q;
       _superChats = sc;
+      _topGifters = tg;
+      _pinnedQuestion = pinned;
     });
   }
 
@@ -397,38 +408,110 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
           ),
         ),
 
-        // Pinned super chats
-        if (_superChats.isNotEmpty)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 50, left: 8, right: 8,
-            child: SizedBox(
-              height: 56,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _superChats.length > 5 ? 5 : _superChats.length,
-                itemBuilder: (_, i) {
-                  final sc = _superChats[i];
-                  return Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.all(8),
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [AppColors.primary.withOpacity(0.85), AppColors.accent.withOpacity(0.7)]),
-                      borderRadius: BorderRadius.circular(10),
+        // Info strip: gift-goal bar \u00b7 top-gifters \u00b7 answering-now \u00b7 super-chats
+        Positioned(
+          top: MediaQuery.of(context).padding.top + 50, left: 8, right: 8,
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Gift goal progress
+            if (_giftGoal > 0)
+              Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(12)),
+                child: Row(children: [
+                  const Text('\u{1F381}', style: TextStyle(fontSize: 12)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: (_giftGoal > 0 ? (_totalGifts / _giftGoal) : 0).clamp(0.0, 1.0),
+                        minHeight: 8,
+                        backgroundColor: Colors.white24,
+                        valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+                      ),
                     ),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                      Row(children: [
-                        Text(sc['sender_name'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                        const Spacer(),
-                        Text('\u20b9${(sc['amount'] as num?)?.toStringAsFixed(0) ?? '0'}', style: const TextStyle(color: Colors.white, fontSize: 10)),
-                      ]),
-                      Text(sc['message'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ]),
-                  );
-                },
+                  ),
+                  const SizedBox(width: 6),
+                  Text('\u20b9${_totalGifts.toStringAsFixed(0)}/\u20b9${_giftGoal.toStringAsFixed(0)}',
+                      style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                ]),
               ),
-            ),
-          ),
+
+            // Top-gifters ribbon
+            if (_topGifters.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(12)),
+                child: Row(children: [
+                  const Text('\u{1F3C6}', style: TextStyle(fontSize: 12)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      _topGifters.take(3).map((g) => '${g['name'] ?? 'User'} (\u20b9${(g['total_amount'] as num?)?.toStringAsFixed(0) ?? '0'})').join('   '),
+                      style: const TextStyle(color: AppColors.accent, fontSize: 10, fontWeight: FontWeight.w600),
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ]),
+              ),
+
+            // Answering-now banner
+            if (_pinnedQuestion != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withOpacity(0.30),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.accent.withOpacity(0.7)),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.push_pin, color: AppColors.accent, size: 15),
+                  const SizedBox(width: 6),
+                  Expanded(child: RichText(
+                    maxLines: 2, overflow: TextOverflow.ellipsis,
+                    text: TextSpan(children: [
+                      const TextSpan(text: 'Answering now \u2014 ', style: TextStyle(color: AppColors.accent, fontSize: 11, fontWeight: FontWeight.w700)),
+                      TextSpan(text: '${_pinnedQuestion!['display_name'] ?? 'User'}: ', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                      TextSpan(text: _pinnedQuestion!['question'] ?? '', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                    ]),
+                  )),
+                ]),
+              ),
+
+            // Pinned super chats
+            if (_superChats.isNotEmpty)
+              SizedBox(
+                height: 56,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _superChats.length > 5 ? 5 : _superChats.length,
+                  itemBuilder: (_, i) {
+                    final sc = _superChats[i];
+                    return Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(maxWidth: 200),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [AppColors.primary.withOpacity(0.85), AppColors.accent.withOpacity(0.7)]),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                        Row(children: [
+                          Text(sc['sender_name'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                          const Spacer(),
+                          Text('\u20b9${(sc['amount'] as num?)?.toStringAsFixed(0) ?? '0'}', style: const TextStyle(color: Colors.white, fontSize: 10)),
+                        ]),
+                        Text(sc['message'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ]),
+                    );
+                  },
+                ),
+              ),
+          ]),
+        ),
 
         // Chat messages overlay (bottom-left)
         Positioned(
