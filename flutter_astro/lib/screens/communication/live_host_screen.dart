@@ -41,6 +41,24 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
   int _seconds = 0;
   Timer? _durationTimer;
 
+  // ── Host chat reply ────────────────────────────────────────────────
+  final _replyCtrl = TextEditingController();
+  final _replyFocus = FocusNode();
+  String? _replyToName;   // viewer being @-tagged in the next reply
+  bool _sendingReply = false;
+
+  // ── Auto-end watchdog ──────────────────────────────────────────────
+  // The stream auto-ends if it stays unhealthy (disconnected / app paused /
+  // camera not capturing) for longer than [_unhealthyLimit].
+  Timer? _watchdogTimer;
+  DateTime _lastHealthy = DateTime.now();
+  bool _connected = true;
+  bool _videoOn = true;
+  bool _appPaused = false;
+  bool _autoEnding = false;
+  int _unhealthySeconds = 0;
+  static const int _unhealthyLimit = 60; // seconds
+
   @override
   void initState() {
     super.initState();
@@ -51,8 +69,15 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached && _isLive) {
-      _endStream();
+      // App is being torn down — end the stream cleanly (best-effort).
+      _autoEndStream('app closed');
+      return;
     }
+    // Paused (backgrounded) counts as unhealthy for the watchdog; resuming
+    // clears it. A live broadcast that stays backgrounded > _unhealthyLimit
+    // is auto-ended.
+    _appPaused = state == AppLifecycleState.paused || state == AppLifecycleState.inactive;
+    if (!_appPaused) _markHealthy();
   }
 
   Future<void> _initAgora() async {
@@ -70,8 +95,22 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
       ));
 
       _engine!.registerEventHandler(RtcEngineEventHandler(
-        onJoinChannelSuccess: (connection, elapsed) => debugPrint('Host joined channel'),
+        onJoinChannelSuccess: (connection, elapsed) {
+          debugPrint('Host joined channel');
+          _connected = true;
+          _markHealthy();
+        },
         onError: (err, msg) => debugPrint('Agora error: $err $msg'),
+        onConnectionStateChanged: (connection, state, reason) {
+          _connected = state == ConnectionStateType.connectionStateConnected;
+          if (_connected) _markHealthy();
+        },
+        onLocalVideoStateChanged: (source, state, reason) {
+          // Consider the camera "viewing" only while capturing/encoding.
+          _videoOn = state == LocalVideoStreamState.localVideoStreamStateCapturing ||
+              state == LocalVideoStreamState.localVideoStreamStateEncoding;
+          if (_videoOn) _markHealthy();
+        },
       ));
 
       await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
@@ -104,8 +143,63 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     final resp = await _api.startLiveStream(widget.streamId);
     if (resp['statusCode'] == 200) {
       setState(() => _isLive = true);
+      _markHealthy();
       _startPolling();
+      _startWatchdog();
       _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() => _seconds++));
+    }
+  }
+
+  /// Mark the broadcast as currently healthy (connected, camera capturing, app
+  /// foregrounded). Resets the unhealthy counter used by the watchdog.
+  void _markHealthy() {
+    _lastHealthy = DateTime.now();
+    if (_unhealthySeconds != 0 && mounted) setState(() => _unhealthySeconds = 0);
+  }
+
+  /// Watchdog: every few seconds, if the broadcast has been unhealthy
+  /// (disconnected / app paused / camera off) continuously for longer than
+  /// [_unhealthyLimit], the stream is auto-ended so it never sits "live" with a
+  /// black/frozen feed. A countdown is shown to the host before it fires.
+  void _startWatchdog() {
+    _watchdogTimer?.cancel();
+    _watchdogTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!_isLive || _autoEnding) return;
+      final healthy = _connected && _videoOn && !_appPaused;
+      if (healthy) {
+        _markHealthy();
+        return;
+      }
+      final elapsed = DateTime.now().difference(_lastHealthy).inSeconds;
+      if (mounted) setState(() => _unhealthySeconds = elapsed);
+      if (elapsed >= _unhealthyLimit) {
+        _autoEndStream('connection lost');
+      }
+    });
+  }
+
+  /// Silently end the stream (no confirm dialog) — used by the watchdog and the
+  /// app-closed lifecycle path.
+  Future<void> _autoEndStream(String reason) async {
+    if (_autoEnding) return;
+    _autoEnding = true;
+    _pollTimer?.cancel();
+    _durationTimer?.cancel();
+    _watchdogTimer?.cancel();
+    try {
+      await _engine?.leaveChannel();
+      await _engine?.release();
+    } catch (_) {}
+    _engine = null;
+    try {
+      await _api.endLiveStream(widget.streamId);
+    } catch (_) {}
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Live stream ended automatically ($reason).'),
+        backgroundColor: AppColors.error, duration: const Duration(seconds: 4),
+      ));
+      Navigator.pop(context);
     }
   }
 
@@ -125,6 +219,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     if (confirm != true) return;
     _pollTimer?.cancel();
     _durationTimer?.cancel();
+    _watchdogTimer?.cancel();
     await _engine?.leaveChannel();
     await _engine?.release();
     _engine = null;
@@ -172,6 +267,31 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     }
   }
 
+  /// Send the host's chat reply (optionally @-tagging [_replyToName]). The new
+  /// message is appended to the local list immediately for a snappy feel, then
+  /// reconciled on the next poll.
+  Future<void> _sendReply() async {
+    final text = _replyCtrl.text.trim();
+    if (text.isEmpty || _sendingReply) return;
+    setState(() => _sendingReply = true);
+    final tag = _replyToName;
+    try {
+      final resp = await _api.postLiveHostReply(widget.streamId, text, replyToName: tag);
+      if (resp['statusCode'] == 200 && resp['id'] != null) {
+        setState(() {
+          _questions = [resp, ..._questions];
+        });
+      }
+    } catch (_) {}
+    if (mounted) {
+      setState(() {
+        _replyCtrl.clear();
+        _replyToName = null;
+        _sendingReply = false;
+      });
+    }
+  }
+
   String get _formattedDuration {
     final m = (_seconds % 3600) ~/ 60;
     final s = _seconds % 60;
@@ -183,6 +303,9 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     WidgetsBinding.instance.removeObserver(this);
     _pollTimer?.cancel();
     _durationTimer?.cancel();
+    _watchdogTimer?.cancel();
+    _replyCtrl.dispose();
+    _replyFocus.dispose();
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();
@@ -257,6 +380,28 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
               ),
             ),
 
+          // Connection / camera warning with auto-end countdown
+          if (_isLive && _unhealthySeconds > 0)
+            Positioned(
+              top: 44, left: 0, right: 0,
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(color: AppColors.error.withOpacity(0.9), borderRadius: BorderRadius.circular(20)),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                      _appPaused
+                          ? 'Stream paused — auto-ends in ${(_unhealthyLimit - _unhealthySeconds).clamp(0, _unhealthyLimit)}s'
+                          : 'Reconnecting — auto-ends in ${(_unhealthyLimit - _unhealthySeconds).clamp(0, _unhealthyLimit)}s',
+                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+
           // Pinned super chats
           if (_isLive && _superChats.isNotEmpty)
             Positioned(
@@ -307,31 +452,118 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
               )).toList()),
             ),
 
-          // Questions chat overlay
+          // Transparent chat overlay — tap any viewer message to reply with an
+          // @-tag; the host's own replies render with a distinct gold bubble.
           if (_isLive)
             Positioned(
-              bottom: 80, left: 8, right: 80,
+              bottom: 150, left: 8, right: 80,
               child: SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: _questions.length,
-                  itemBuilder: (_, i) {
-                    final q = _questions[i];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(16)),
-                        child: RichText(text: TextSpan(children: [
-                          TextSpan(text: '${q['display_name'] ?? 'User'} ', style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w600)),
-                          TextSpan(text: q['question'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 12)),
-                        ])),
-                      ),
-                    );
-                  },
+                height: 220,
+                child: ShaderMask(
+                  // Fade the top so older messages dissolve out — keeps the feed
+                  // readable without a solid backdrop (transparent chat box).
+                  shaderCallback: (rect) => const LinearGradient(
+                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.white, Colors.white],
+                    stops: [0.0, 0.15, 1.0],
+                  ).createShader(rect),
+                  blendMode: BlendMode.dstIn,
+                  child: ListView.builder(
+                    reverse: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: _questions.length,
+                    itemBuilder: (_, i) {
+                      final q = _questions[i];
+                      final isHost = q['is_host'] == true;
+                      final name = (q['display_name'] as String?)?.trim();
+                      final body = q['question'] ?? '';
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: GestureDetector(
+                          onTap: isHost
+                              ? null
+                              : () {
+                                  setState(() => _replyToName = (name == null || name.isEmpty) ? 'User' : name);
+                                  _replyFocus.requestFocus();
+                                },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isHost ? AppColors.primary.withOpacity(0.30) : Colors.black26,
+                              borderRadius: BorderRadius.circular(16),
+                              border: isHost ? Border.all(color: AppColors.primary.withOpacity(0.6)) : null,
+                            ),
+                            child: RichText(
+                              text: TextSpan(children: [
+                                TextSpan(
+                                  text: isHost ? 'You ' : '${(name == null || name.isEmpty) ? 'User' : name} ',
+                                  style: TextStyle(
+                                    color: isHost ? AppColors.accent : AppColors.primary,
+                                    fontSize: 12, fontWeight: FontWeight.w700),
+                                ),
+                                TextSpan(text: body, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                              ]),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
+            ),
+
+          // Host reply input (transparent) — sits above the bottom controls.
+          if (_isLive)
+            Positioned(
+              bottom: 92, left: 8, right: 8,
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                if (_replyToName != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 6, left: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.35), borderRadius: BorderRadius.circular(12)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text('Replying to @$_replyToName', style: const TextStyle(color: Colors.white, fontSize: 11)),
+                      const SizedBox(width: 4),
+                      GestureDetector(onTap: () => setState(() => _replyToName = null), child: const Icon(Icons.close, color: Colors.white70, size: 14)),
+                    ]),
+                  ),
+                Row(children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.black38, borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.white24)),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: TextField(
+                        controller: _replyCtrl,
+                        focusNode: _replyFocus,
+                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        cursorColor: AppColors.primary,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: (_) => _sendReply(),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: InputBorder.none,
+                          hintText: _replyToName != null ? 'Reply to @$_replyToName…' : 'Reply to your viewers…',
+                          hintStyle: const TextStyle(color: Colors.white38, fontSize: 13),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  GestureDetector(
+                    onTap: _sendingReply ? null : _sendReply,
+                    child: Container(
+                      width: 40, height: 40,
+                      decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary),
+                      child: _sendingReply
+                          ? const Padding(padding: EdgeInsets.all(11), child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Icon(Icons.send, color: Colors.white, size: 18),
+                    ),
+                  ),
+                ]),
+              ]),
             ),
 
           // Bottom controls

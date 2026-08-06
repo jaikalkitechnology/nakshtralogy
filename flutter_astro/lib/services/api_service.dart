@@ -639,6 +639,25 @@ class ApiService {
     return [];
   }
 
+  /// Host posts a chat reply into the live stream, optionally tagging a viewer
+  /// (@name). The reply is stored as a host message and echoed to all viewers.
+  Future<Map<String, dynamic>> postLiveHostReply(String streamId, String message, {String? replyToName}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/live/$streamId/host-reply'),
+      headers: _headers,
+      body: jsonEncode({'message': message, if (replyToName != null) 'reply_to_name': replyToName}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// The host's own scheduled/live streams that are still open — used to detect
+  /// (and end) a previous stream that was left dangling.
+  Future<List<dynamic>> getMyActiveStreams() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/mine/active'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> callAction(String callId, String action) async {

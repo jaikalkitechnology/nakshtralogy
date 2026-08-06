@@ -718,6 +718,7 @@ class LiveStreamQuestion(Base):
     question = Column(Text, nullable=False)
     is_answered = Column(Boolean, default=False)
     is_pinned = Column(Boolean, default=False)
+    is_host = Column(Boolean, default=False)  # True = message from the astrologer (host reply)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     stream = relationship("LiveStream", back_populates="questions")

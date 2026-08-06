@@ -116,6 +116,11 @@ class StreamQuestionRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=500)
 
 
+class HostReplyRequest(BaseModel):
+    message: str = Field(..., min_length=1, max_length=500)
+    reply_to_name: Optional[str] = None   # tag this viewer (@name) in the reply
+
+
 class StreamQuestionResponse(BaseModel):
     id: str
     user_id: str
@@ -123,6 +128,7 @@ class StreamQuestionResponse(BaseModel):
     question: str
     is_answered: bool = False
     is_pinned: bool = False
+    is_host: bool = False
     created_at: Optional[datetime] = None
 
 
