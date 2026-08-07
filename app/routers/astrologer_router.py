@@ -85,6 +85,8 @@ def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResp
         is_approved=profile.is_approved,
         is_online=profile.is_online,
         is_busy=profile.is_busy,
+        rejection_reason=getattr(profile, "rejection_reason", None),
+        rejected_sections=getattr(profile, "rejected_sections", []) or [],
         created_at=profile.created_at,
     )
 
@@ -496,6 +498,12 @@ def update_profile(
     update_data = req.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(profile, field, value)
+    # Editing the profile after a rejection counts as re-submitting for approval:
+    # clear the rejection so the app banner goes away and the admin sees them back
+    # in the pending queue.
+    if getattr(profile, "rejection_reason", None):
+        profile.rejection_reason = None
+        profile.rejected_sections = []
     db.commit()
     db.refresh(profile)
     return _build_profile_response(profile)

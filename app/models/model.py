@@ -171,6 +171,9 @@ class AstrologerProfile(Base):
     is_online = Column(Boolean, default=False)
     is_busy = Column(Boolean, default=False)
     approved_at = Column(DateTime, nullable=True)
+    rejection_reason = Column(Text, nullable=True)         # admin's reason on reject
+    rejected_sections = Column(JSON, default=[])           # ["kyc","personal","professional"]
+    rejected_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 

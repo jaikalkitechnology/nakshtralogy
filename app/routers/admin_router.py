@@ -102,6 +102,7 @@ class KycRejectRequest(BaseModel):
 
 class AstrologerRejectRequest(BaseModel):
     reason: str = Field(..., min_length=1, max_length=500)
+    sections: Optional[list] = None   # ["kyc","personal","professional"]
 
 
 class ReviewEditRequest(BaseModel):
@@ -588,6 +589,8 @@ def approve_astrologer(
         raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     profile.is_approved = True
     profile.approved_at = datetime.utcnow()
+    profile.rejection_reason = None
+    profile.rejected_sections = []
     user = db.query(User).filter(User.id == profile.user_id).first()
     if user:
         user.profile_approved = True
@@ -625,9 +628,22 @@ def reject_astrologer(
         raise HTTPException(status_code=404, detail=t("err.profile_not_found", lang))
     profile.is_approved = False
     profile.is_online = False
+    profile.rejection_reason = req.reason
+    sections = [s for s in (req.sections or []) if s in ("kyc", "personal", "professional")]
+    profile.rejected_sections = sections
+    profile.rejected_at = datetime.utcnow()
     user = db.query(User).filter(User.id == profile.user_id).first()
     if user:
         user.profile_approved = False
+    # If KYC was flagged, send the latest KYC back to 'rejected' so the app routes
+    # the astrologer to re-upload it.
+    if "kyc" in sections:
+        latest_kyc = db.query(KycDocument).filter(
+            KycDocument.user_id == profile.user_id
+        ).order_by(KycDocument.created_at.desc()).first()
+        if latest_kyc:
+            latest_kyc.status = "rejected"
+            latest_kyc.rejection_reason = req.reason
     db.commit()
 
     notify = {"push": False, "email": False, "in_app": False}

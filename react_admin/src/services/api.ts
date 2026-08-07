@@ -166,10 +166,10 @@ export async function adminApproveAstrologer(profileId: string) {
   return request(`/admin/astrologers/${profileId}/approve`, { method: "PATCH" });
 }
 
-export async function adminRejectAstrologer(profileId: string, reason: string) {
+export async function adminRejectAstrologer(profileId: string, reason: string, sections?: string[]) {
   return request(`/admin/astrologers/${profileId}/reject`, {
     method: "PATCH",
-    body: JSON.stringify({ reason }),
+    body: JSON.stringify({ reason, sections: sections ?? [] }),
   });
 }
 

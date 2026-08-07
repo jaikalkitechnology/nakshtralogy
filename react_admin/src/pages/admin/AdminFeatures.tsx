@@ -185,6 +185,7 @@ const AdminFeatures = () => {
     open: false, astro: null,
   });
   const [rejectReason, setRejectReason] = useState<string>("");
+  const [rejectSections, setRejectSections] = useState<string[]>([]);
 
   // Astrologer detail dialog
   const [astroDetail, setAstroDetail] = useState<any>(null);
@@ -621,11 +622,22 @@ const AdminFeatures = () => {
   };
   const submitReject = async () => {
     if (!rejectReason.trim()) { alert("Reason is required"); return; }
-    const { ok, data } = await adminRejectAstrologer(rejectDialog.astro.id, rejectReason.trim());
+    // Build a human reason from the selected sections + optional note.
+    const labels: Record<string, string> = {
+      kyc: "KYC documents", personal: "Personal details", professional: "Professional details",
+    };
+    const sectionText = rejectSections.map((s) => labels[s]).filter(Boolean).join(", ");
+    const reason = [
+      sectionText ? `${sectionText} incorrect / need correction.` : "",
+      rejectReason.trim(),
+    ].filter(Boolean).join(" ");
+    if (!reason) { alert("Select at least one section or write a reason"); return; }
+    const { ok, data } = await adminRejectAstrologer(rejectDialog.astro.id, reason, rejectSections);
     if (!ok) { alert(data.detail || "Reject failed"); return; }
     notifyToast("Astrologer rejected", data);
     setRejectDialog({ open: false, astro: null });
     setRejectReason("");
+    setRejectSections([]);
     fetchData();
   };
 
@@ -2019,18 +2031,41 @@ const AdminFeatures = () => {
                       <p className="text-xs text-muted-foreground">{rejectDialog.astro.email}</p>
                     </div>
                     <div>
-                      <Label className="text-foreground/80">Rejection Reason (sent via FCM)</Label>
+                      <Label className="text-foreground/80">What needs correction?</Label>
+                      <div className="mt-2 space-y-2">
+                        {[
+                          { key: "kyc", label: "KYC documents incorrect" },
+                          { key: "personal", label: "Personal details incorrect" },
+                          { key: "professional", label: "Professional details incorrect" },
+                        ].map((s) => (
+                          <label key={s.key} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={rejectSections.includes(s.key)}
+                              onChange={(e) =>
+                                setRejectSections((prev) =>
+                                  e.target.checked ? [...prev, s.key] : prev.filter((x) => x !== s.key))
+                              }
+                            />
+                            {s.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Additional note (optional)</Label>
                       <Textarea
                         value={rejectReason}
                         onChange={(e) => setRejectReason(e.target.value)}
-                        placeholder="e.g. Incomplete profile, unclear certificate, invalid documents..."
-                        className="bg-muted border-border mt-1 min-h-[100px]"
+                        placeholder="e.g. certificate is unclear, name mismatch on ID…"
+                        className="bg-muted border-border mt-1 min-h-[80px]"
                       />
+                      <p className="mt-1 text-xs text-muted-foreground">The astrologer is emailed + notified and can re-edit the flagged sections and resubmit.</p>
                     </div>
                   </div>
                 )}
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setRejectDialog({ open: false, astro: null })}>Cancel</Button>
+                  <Button variant="outline" onClick={() => { setRejectDialog({ open: false, astro: null }); setRejectSections([]); }}>Cancel</Button>
                   <Button onClick={submitReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                     Reject & Notify
                   </Button>
@@ -2057,13 +2092,33 @@ const AdminFeatures = () => {
                       </p>
                     </div>
                     <div>
-                      <Label className="text-foreground/80">Rejection Reason (sent via FCM)</Label>
+                      <Label className="text-foreground/80">Common reasons</Label>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {[
+                          "Document is blurry / unclear",
+                          "Name does not match profile",
+                          "Document number unreadable",
+                          "Document expired",
+                          "Wrong document type uploaded",
+                        ].map((r) => (
+                          <button
+                            key={r}
+                            type="button"
+                            onClick={() => setKycRejectReason((prev) => (prev.trim() ? prev.trim() + "; " + r : r))}
+                            className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:border-primary hover:text-primary"
+                          >+ {r}</button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-foreground/80">Rejection Reason (emailed + notified)</Label>
                       <Textarea
                         value={kycRejectReason}
                         onChange={(e) => setKycRejectReason(e.target.value)}
-                        placeholder="e.g. Document is blurry, doesn't match name, expired..."
-                        className="bg-muted border-border mt-1 min-h-[100px]"
+                        placeholder="Tap a common reason above or type here…"
+                        className="bg-muted border-border mt-1 min-h-[90px]"
                       />
+                      <p className="mt-1 text-xs text-muted-foreground">The astrologer can re-upload KYC after this.</p>
                     </div>
                   </div>
                 )}
