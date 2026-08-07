@@ -18,7 +18,7 @@ from app.routers import (
     admin_router, google_auth_router, kundli_router,
     rashi_router, agent_router, career_router, character_router,
     milan_router, specialist_router, ai_config_router,
-    forecast_router, notification_router, faq_router,
+    forecast_router, notification_router, faq_router, support_router,
     developer_router, admin_developer_router,
     config_router, admin_system_router,
 )
@@ -190,6 +190,7 @@ app.include_router(ai_config_router.router, prefix="/api/v1/ai-config", tags=["A
 app.include_router(forecast_router.router, prefix="/api/v1/forecast", tags=["Daily Forecast & Rashi"])
 app.include_router(notification_router.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(faq_router.router, prefix="/api/v1/faq", tags=["FAQ / Support"])
+app.include_router(support_router.router, prefix="/api/v1/support", tags=["Support Tickets"])
 app.include_router(developer_router.router, prefix="/api/v1/developer", tags=["Developer API Platform"])
 app.include_router(admin_developer_router.router, prefix="/api/v1/admin", tags=["Admin — Developer Platform"])
 

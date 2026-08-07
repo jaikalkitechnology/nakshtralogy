@@ -1031,5 +1031,58 @@ class ApiService {
     return [];
   }
 
+  // ═══ Support Tickets ═══
+
+  /// Upload one ticket image (≤2 per ticket). Returns media_url or null.
+  Future<String?> uploadSupportImage(Uint8List bytes, String fileName) async {
+    final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.baseUrl}/support/upload'));
+    request.headers['Authorization'] = _headers['Authorization'] ?? '';
+    request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
+    final streamed = await request.send();
+    final body = await streamed.stream.bytesToString();
+    if (streamed.statusCode == 200) return (jsonDecode(body)['media_url'] as String?);
+    return null;
+  }
+
+  Future<Map<String, dynamic>> createSupportTicket({
+    required String subject,
+    required String description,
+    String? category,
+    String priority = 'normal',
+    List<String> images = const [],
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/support/tickets'),
+      headers: _headers,
+      body: jsonEncode({
+        'subject': subject, 'description': description,
+        if (category != null && category.isNotEmpty) 'category': category,
+        'priority': priority, 'images': images,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<List<dynamic>> getMyTickets() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/support/tickets'), headers: _headers);
+    if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    return [];
+  }
+
+  Future<Map<String, dynamic>?> getTicketDetail(String id) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/support/tickets/$id'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    return null;
+  }
+
+  Future<Map<String, dynamic>> replyToTicket(String id, String message) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/support/tickets/$id/reply'),
+      headers: _headers,
+      body: jsonEncode({'message': message}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }

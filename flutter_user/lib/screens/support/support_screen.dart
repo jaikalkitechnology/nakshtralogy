@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import 'tickets_screen.dart';
 
 /// Customer Support — a searchable FAQ (admin-managed) plus an entry point to
 /// raise a support ticket. The FAQ content is served by the backend so admins
@@ -59,6 +60,37 @@ class _SupportScreenState extends State<SupportScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             if (widget.header != null) ...[widget.header!, const SizedBox(height: 16)],
+            // Contact / tickets
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [AppColors.gold.withOpacity(0.15), AppColors.gold.withOpacity(0.05)]),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.gold.withOpacity(0.2)),
+              ),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Still need help?', style: TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 4),
+                const Text('Raise a ticket and our team will get back to you.', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+                const SizedBox(height: 12),
+                Row(children: [
+                  Expanded(child: ElevatedButton.icon(
+                    onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RaiseTicketScreen())),
+                    icon: const Icon(Icons.add_circle_outline, size: 18),
+                    label: const Text('Raise Ticket'),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
+                  )),
+                  const SizedBox(width: 10),
+                  Expanded(child: OutlinedButton.icon(
+                    onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyTicketsScreen())),
+                    icon: const Icon(Icons.list_alt, size: 18),
+                    label: const Text('My Tickets'),
+                    style: OutlinedButton.styleFrom(foregroundColor: AppColors.gold, side: BorderSide(color: AppColors.gold.withOpacity(0.5))),
+                  )),
+                ]),
+              ]),
+            ),
             const Text('Frequently Asked Questions',
                 style: TextStyle(color: AppColors.gold, fontSize: 15, fontWeight: FontWeight.w700)),
             const SizedBox(height: 10),
