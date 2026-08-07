@@ -346,7 +346,7 @@ class _GreetingHero extends StatelessWidget {
         child: Image.network(
           ApiService.resolveMediaUrl(imageUrl!),
           width: 54, height: 54, fit: BoxFit.cover,
-          headers: ApiService().mediaHeaders,
+          headers: ApiService().mediaHeadersFor(imageUrl!),
           loadingBuilder: (ctx, child, p) => p == null ? child : initial,
           errorBuilder: (_, __, ___) => initial,
         ),

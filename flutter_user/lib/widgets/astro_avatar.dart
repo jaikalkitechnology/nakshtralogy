@@ -57,7 +57,7 @@ class AstroAvatar extends StatelessWidget {
         child: Image.network(
           ApiService.resolveMediaUrl(url),
           width: size, height: size, fit: BoxFit.cover,
-          headers: ApiService().mediaHeaders,
+          headers: ApiService().mediaHeadersFor(url),
           loadingBuilder: (ctx, child, p) => p == null ? child : initial,
           errorBuilder: (_, __, ___) => initial,
         ),

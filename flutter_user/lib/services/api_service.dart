@@ -71,10 +71,21 @@ class ApiService {
   };
 
   /// Auth headers for loading protected media (e.g. uploaded avatars) via
-  /// Image.network. Harmless on already-public URLs (Google photos, etc.).
+  /// Image.network.
   Map<String, String> get mediaHeaders => {
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
+
+  /// Auth headers to use for a SPECIFIC image URL. Only our own backend needs
+  /// the Bearer token; external URLs (e.g. Google profile photos on
+  /// googleusercontent.com) must get NO auth header — on web a custom
+  /// Authorization header triggers a CORS preflight the image CDN rejects, which
+  /// is why Google avatars failed to load. Returns {} for external URLs.
+  Map<String, String> mediaHeadersFor(String url) {
+    final resolved = resolveMediaUrl(url);
+    final host = ApiConstants.baseUrl.replaceFirst('/api/v1', '');
+    return resolved.startsWith(host) ? mediaHeaders : const {};
+  }
 
   /// Resolve a possibly-relative media path (e.g. "/api/v1/comm/chat/file/..")
   /// returned by upload endpoints into an absolute URL. Full URLs pass through.

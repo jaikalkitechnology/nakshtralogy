@@ -182,7 +182,7 @@ class _AvatarPickerState extends State<AvatarPicker> {
       return Image.network(
         ApiService.resolveMediaUrl(url),
         width: d, height: d, fit: BoxFit.cover,
-        headers: ApiService().mediaHeaders,
+        headers: ApiService().mediaHeadersFor(url),
         loadingBuilder: (ctx, child, progress) => progress == null ? child : _fallback(d),
         errorBuilder: (_, __, ___) => _fallback(d),
       );
