@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../widgets/web_notification_tile.dart';
+import '../../widgets/legal_section.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -411,6 +412,10 @@ class _ProfileTabState extends State<ProfileTab> {
                 ]),
               ),
             ),
+
+            // ── About & Legal ──
+            const LegalSection(),
+            const SizedBox(height: 4),
 
             // ── Logout ──
             OutlinedButton.icon(

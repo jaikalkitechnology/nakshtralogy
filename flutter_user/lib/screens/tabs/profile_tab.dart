@@ -8,6 +8,7 @@ import '../../services/api_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
+import '../../widgets/legal_section.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/web_notification_tile.dart';
@@ -614,6 +615,12 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
               const SizedBox(height: 12),
+
+              // ============ ABOUT & LEGAL ============
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: LegalSection(),
+              ),
 
               // ============ LOGOUT ============
               Container(
