@@ -31,6 +31,7 @@ import '../communication/chat_screen.dart';
 import '../communication/incoming_call_screen.dart';
 import '../communication/active_call_screen.dart';
 import '../communication/live_host_screen.dart';
+import '../../widgets/notification_bell.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -266,11 +267,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ])
                   : Text(tabTitle ?? '', style: const TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold, fontSize: 18)),
               actions: [
-                // Notifications → requests inbox
-                IconButton(
-                  icon: const Icon(Icons.notifications_none_rounded, color: AppColors.ivory),
-                  onPressed: () => setState(() => _currentIndex = 2),
-                ),
+                // Notifications → requests inbox (with unread badge)
+                NotificationBell(onOpen: () => setState(() => _currentIndex = 2)),
                 // Realtime connection indicator
                 StreamBuilder(
                   stream: Stream.periodic(const Duration(seconds: 5)),
