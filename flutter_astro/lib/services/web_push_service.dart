@@ -151,12 +151,18 @@ class WebPushService {
     }
   }
 
-  /// Register the PERSISTED grant-time token if we have one, otherwise fetch a
-  /// fresh token. Prefer the persisted token so a reload / PWA-open from the home
-  /// screen never replaces the working iOS token with a newly-fetched one.
+  /// Re-register the RECENT grant-time token if we have one, otherwise fetch a
+  /// fresh token. The persisted token is only re-used for a short window (15 min)
+  /// so a login → dashboard hop / quick PWA reopen keeps the working iOS token;
+  /// after that we fetch a fresh token (getToken returns the current valid one,
+  /// which handles genuine rotation / expiry so we never cling to a dead token).
+  static const Duration _tokenReuseWindow = Duration(minutes: 15);
   Future<void> _registerPersistedOrFetch() async {
     final saved = webLoadToken();
-    if (saved != null && saved.isNotEmpty) {
+    final savedAt = webTokenSavedAtMs();
+    final fresh = saved != null && saved.isNotEmpty && savedAt != null &&
+        (DateTime.now().millisecondsSinceEpoch - savedAt) < _tokenReuseWindow.inMilliseconds;
+    if (fresh) {
       _token = saved;
       _tokenAt = DateTime.now();
       await _register();

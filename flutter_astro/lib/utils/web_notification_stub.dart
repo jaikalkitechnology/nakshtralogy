@@ -7,5 +7,6 @@ String webNotificationPermission() => 'unsupported';
 
 // Token persistence is web-only; no-ops on native.
 String? webLoadToken() => null;
+int? webTokenSavedAtMs() => null;
 void webSaveToken(String token) {}
 void webClearToken() {}

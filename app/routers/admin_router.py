@@ -1957,11 +1957,17 @@ def admin_send_notification(
     if not results:
         diagnosis = "No device tokens registered — saved in-app only."
     elif not delivered:
+        # Per-target errors so we can tell a stale native token apart from a
+        # web token that FCM rejects as "invalid argument" (a web-config/project
+        # mismatch, not a stale token).
         err = ""
+        web_err = ""
         for r in results:
             if not r.get("ok"):
-                err = str(r.get("error", "")).lower()
-                break
+                e = str(r.get("error", "")).lower()
+                err = err or e
+                if r.get("target") == "web":
+                    web_err = e
         if not diag_proj.get("initialized"):
             diagnosis = (f"Firebase is NOT initialized for the "
                          f"{'astro' if role == 'astrologer' else 'user'} project "
@@ -1970,8 +1976,14 @@ def admin_send_notification(
         elif "senderid" in err or "sender id" in err or "mismatch" in err:
             diagnosis = ("SenderId mismatch — the uploaded service account is a DIFFERENT "
                          "Firebase project than the app. Upload the nakshatralogy-bc5a5 service account.")
-        elif "not found" in err or "unregistered" in err or "invalid" in err:
-            diagnosis = "The device token is stale/invalid — the astrologer must re-login to refresh it."
+        elif "invalid" in web_err and "argument" in web_err:
+            diagnosis = ("Web token rejected as 'invalid argument' — the WEB push config "
+                         "(VAPID key + web app / messagingSenderId in Admin → Web Push) belongs "
+                         "to a DIFFERENT Firebase project than the service account. Set the web "
+                         "config to the nakshatralogy-bc5a5 project, then re-enable notifications "
+                         "in the web app to mint a fresh token.")
+        elif "not found" in err or "unregistered" in err or "not registered" in err or "invalid" in err:
+            diagnosis = "The device token is stale/invalid — the user must re-open the app / re-login to refresh it."
         elif "credential" in err or "default credentials" in err:
             diagnosis = "Service-account credential problem — re-upload the JSON."
         else:
