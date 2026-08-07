@@ -136,12 +136,15 @@ class WebPushService {
         await _register();
       });
 
-      // Firebase is ready; mark initialised. Only fetch the token if permission
+      // Firebase is ready; mark initialised. Only touch the token if permission
       // is ALREADY granted — we never auto-request the browser prompt here (that
-      // only happens on the user's Enable tap). Same behaviour on Android + iOS.
+      // only happens on the user's Enable tap). Crucially, on a reload / PWA-open
+      // from the home screen we RE-REGISTER THE PERSISTED grant-time token rather
+      // than fetching a new one — on iOS the freshly fetched token is invalid, so
+      // refetching from the dashboard is what broke delivery.
       _initialized = true;
       if (webNotificationPermission() == 'granted') {
-        await _getAndRegisterToken();
+        await _registerPersistedOrFetch();
       }
     } catch (e) {
       _initError = 'web push init: $e';
@@ -149,8 +152,23 @@ class WebPushService {
     }
   }
 
+  /// Register the PERSISTED grant-time token if we have one, otherwise fetch a
+  /// fresh token. Prefer the persisted token so a reload / PWA-open never
+  /// replaces the working iOS token with a newly-fetched one.
+  Future<void> _registerPersistedOrFetch() async {
+    final saved = webLoadToken();
+    if (saved != null && saved.isNotEmpty) {
+      _token = saved;
+      _tokenAt = DateTime.now();
+      await _register();
+    } else {
+      await _getAndRegisterToken();
+    }
+  }
+
   /// Get the web token and register it. Assumes permission is already granted —
-  /// does NOT request it (see [enableFromGesture] for the request path).
+  /// does NOT request it (see [enableFromGesture] for the request path). The
+  /// obtained token is persisted so later opens re-use it instead of refetching.
   Future<void> _getAndRegisterToken() async {
     final m = _messaging;
     if (m == null) return;
@@ -158,6 +176,7 @@ class WebPushService {
       _token = await m.getToken(vapidKey: _vapidKey);
       _tokenAt = DateTime.now();
       _initError = _token == null ? 'token not issued (check VAPID / service worker)' : null;
+      if (_token != null && _token!.isNotEmpty) webSaveToken(_token!);
       debugPrint('Web push token: ${_token != null ? "${_token!.substring(0, 12)}..." : "null"}');
       await _register();
     } catch (e) {
@@ -166,32 +185,31 @@ class WebPushService {
     }
   }
 
-  /// Call after every login. If we already hold a token obtained THIS session
-  /// (e.g. from the user's Enable tap), just re-register that SAME token for the
-  /// new account — do NOT fetch a new one, because on iOS Safari a freshly
-  /// fetched token right after grant is not yet valid and would replace the
-  /// working one. Only when we have no token yet (returning user whose grant
-  /// happened in a previous session, so rotation already settled) do we fetch.
+  /// Call after every login. If we already hold a token in memory, re-register
+  /// that SAME token. Otherwise re-register the PERSISTED grant-time token — we
+  /// only fetch a brand-new token when none exists, because on iOS Safari a
+  /// freshly fetched token right after grant is not yet valid and would replace
+  /// the working one.
   Future<void> registerAfterLogin() async {
     if (!kIsWeb) return;
     if (webNotificationPermission() != 'granted') return;
     if (_token != null && _token!.isNotEmpty) {
-      await _register();           // re-bind the existing valid token
+      await _register();           // re-bind the in-memory token
       return;
     }
     if (!_initialized || _messaging == null) {
-      await init();                // init() fetches + registers when granted
+      await init();                // init() re-registers the persisted token
     } else {
-      await _getAndRegisterToken();
+      await _registerPersistedOrFetch();
     }
   }
 
-  /// Call on logout: forget the cached token so the next login re-fetches a
-  /// fresh one for the new account. The backend token is cleared separately by
-  /// the logout API call.
+  /// Call on logout: forget the token (memory + persisted) so the next account
+  /// starts clean. The backend token is cleared separately by the logout API.
   void clearOnLogout() {
     _token = null;
     _tokenAt = null;
+    webClearToken();
   }
 
   Future<void> _register() async {
