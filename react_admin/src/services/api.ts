@@ -349,9 +349,12 @@ export async function adminLogsSessionReviews(params: Record<string, any> = {}) 
 
 // ── FAQ management ───────────────────────────────────────────────
 
-export async function adminFaqList(audience?: string) {
-  const qs = audience ? `?audience=${audience}` : "";
-  return request(`/faq/admin${qs}`);
+export async function adminFaqList(audience?: string, lang?: string) {
+  const p = new URLSearchParams();
+  if (audience) p.set("audience", audience);
+  if (lang) p.set("lang", lang);
+  const qs = p.toString();
+  return request(`/faq/admin${qs ? `?${qs}` : ""}`);
 }
 export async function adminFaqCreate(data: any) {
   return request(`/faq/admin`, { method: "POST", body: JSON.stringify(data) });

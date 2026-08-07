@@ -567,6 +567,7 @@ class FaqItem(Base):
 
     id = Column(String(36), primary_key=True, default=new_uuid)
     audience = Column(String(20), default="user", index=True)  # user | astrologer | both
+    lang = Column(String(8), default="en", index=True)         # language code (en, hi, ta, …)
     category = Column(String(80), nullable=True)               # Notifications | Calls | Payments…
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)

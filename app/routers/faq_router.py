@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 
 from app.core.database import get_db
 from app.core.dependencies import require_role
+from app.core.i18n import get_lang
 from app.models.model import FaqItem
 
 router = APIRouter()
@@ -24,6 +25,7 @@ router = APIRouter()
 
 class FaqCreate(BaseModel):
     audience: str = Field("user", pattern=r'^(user|astrologer|both)$')
+    lang: str = Field("en", max_length=8)
     category: Optional[str] = None
     question: str = Field(..., min_length=1)
     answer: str = Field(..., min_length=1)
@@ -33,6 +35,7 @@ class FaqCreate(BaseModel):
 
 class FaqUpdate(BaseModel):
     audience: Optional[str] = Field(None, pattern=r'^(user|astrologer|both)$')
+    lang: Optional[str] = Field(None, max_length=8)
     category: Optional[str] = None
     question: Optional[str] = None
     answer: Optional[str] = None
@@ -42,7 +45,8 @@ class FaqUpdate(BaseModel):
 
 def _serialize(f: FaqItem) -> dict:
     return {
-        "id": f.id, "audience": f.audience, "category": f.category,
+        "id": f.id, "audience": f.audience, "lang": getattr(f, "lang", "en") or "en",
+        "category": f.category,
         "question": f.question, "answer": f.answer,
         "sort_order": f.sort_order, "is_active": f.is_active,
         "created_at": str(f.created_at) if f.created_at else None,
@@ -53,26 +57,42 @@ def _serialize(f: FaqItem) -> dict:
 @router.get("")
 def list_faq(
     audience: str = Query("user", pattern=r'^(user|astrologer)$'),
+    lang: Optional[str] = None,
     db: Session = Depends(get_db),
+    header_lang: str = Depends(get_lang),
 ):
-    """Public: active FAQ for an audience (audience match OR 'both')."""
-    rows = db.query(FaqItem).filter(
-        FaqItem.is_active == True,
-        FaqItem.audience.in_((audience, "both")),
-    ).order_by(FaqItem.sort_order.asc(), FaqItem.created_at.asc()).all()
-    return {"items": [_serialize(f) for f in rows]}
+    """Public: active FAQ for an audience (audience match OR 'both'), in the
+    requested language. `lang` query param wins; otherwise the Accept-Language
+    header is used. Falls back to English when there are no entries in that
+    language."""
+    want = (lang or header_lang or "en").split("-")[0].split("_")[0].lower()
+
+    def _fetch(code: str):
+        return db.query(FaqItem).filter(
+            FaqItem.is_active == True,
+            FaqItem.audience.in_((audience, "both")),
+            FaqItem.lang == code,
+        ).order_by(FaqItem.sort_order.asc(), FaqItem.created_at.asc()).all()
+
+    rows = _fetch(want)
+    if not rows and want != "en":
+        rows = _fetch("en")
+    return {"items": [_serialize(f) for f in rows], "lang": want}
 
 
 @router.get("/admin")
 def admin_list_faq(
     audience: Optional[str] = None,
+    lang: Optional[str] = None,
     current_user=Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
     q = db.query(FaqItem)
     if audience:
         q = q.filter(FaqItem.audience == audience)
-    rows = q.order_by(FaqItem.audience.asc(), FaqItem.sort_order.asc()).all()
+    if lang:
+        q = q.filter(FaqItem.lang == lang)
+    rows = q.order_by(FaqItem.lang.asc(), FaqItem.audience.asc(), FaqItem.sort_order.asc()).all()
     return {"items": [_serialize(f) for f in rows]}
 
 
@@ -83,7 +103,7 @@ def admin_create_faq(
     db: Session = Depends(get_db),
 ):
     f = FaqItem(
-        audience=req.audience, category=req.category,
+        audience=req.audience, lang=(req.lang or "en"), category=req.category,
         question=req.question, answer=req.answer,
         sort_order=req.sort_order, is_active=req.is_active,
     )
