@@ -1020,5 +1020,16 @@ class ApiService {
     await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
   }
 
+  // ═══ FAQ / Customer Support ═══
+
+  /// Active FAQ for this app (astrologer audience).
+  Future<List<dynamic>> getFaq() async {
+    try {
+      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/faq?audience=astrologer'), headers: _headers);
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
   bool get isLoggedIn => _accessToken != null;
 }

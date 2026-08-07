@@ -17,6 +17,7 @@ import SystemMaintenance from "./pages/admin/SystemMaintenance";
 import FcmLogs from "./pages/admin/FcmLogs";
 import NotificationsManager from "./pages/admin/NotificationsManager";
 import CommunicationLogs from "./pages/admin/CommunicationLogs";
+import FaqManager from "./pages/admin/FaqManager";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/admin/web-push" element={<RequireAdmin><AdminShell><WebPushSettings /></AdminShell></RequireAdmin>} />
               <Route path="/admin/fcm-logs" element={<RequireAdmin><AdminShell><FcmLogs /></AdminShell></RequireAdmin>} />
               <Route path="/admin/comm-logs" element={<RequireAdmin><AdminShell><CommunicationLogs /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/faq" element={<RequireAdmin><AdminShell><FaqManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}

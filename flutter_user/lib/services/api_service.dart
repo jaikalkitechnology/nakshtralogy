@@ -1190,6 +1190,15 @@ class ApiService {
     await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
   }
 
+  /// Active FAQ for this app (user audience).
+  Future<List<dynamic>> getFaq() async {
+    try {
+      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/faq?audience=user'), headers: _headers);
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
   Future<Map<String, dynamic>> runChildProbability(String chartId1, String chartId2) async {
     final resp = await _authPost(
       Uri.parse('${ApiConstants.specialistBase}/child_probability/analyze'),

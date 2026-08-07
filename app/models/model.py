@@ -557,6 +557,69 @@ class Notification(Base):
     )
 
 
+class FaqItem(Base):
+    """Admin-managed FAQ shown in the apps' Customer Support screen. Separate
+    per audience so the user app and astrologer app show their own entries."""
+    __tablename__ = "faq_items"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    audience = Column(String(20), default="user", index=True)  # user | astrologer | both
+    category = Column(String(80), nullable=True)               # Notifications | Calls | Payments…
+    question = Column(Text, nullable=False)
+    answer = Column(Text, nullable=False)
+    sort_order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_faq_audience_active", "audience", "is_active", "sort_order"),
+    )
+
+
+class SupportTicket(Base):
+    """A support / complaint ticket raised from the user or astrologer app."""
+    __tablename__ = "support_tickets"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    role = Column(String(20), default="user")                  # user | astrologer
+    subject = Column(String(200), nullable=False)
+    description = Column(Text, nullable=False)
+    category = Column(String(80), nullable=True)               # e.g. notifications, calls, withdrawal
+    priority = Column(String(20), default="normal")            # low | normal | high | urgent
+    status = Column(String(20), default="pending", index=True) # pending | in_progress | completed | closed
+    images = Column(JSON, default=[])                          # up to 2 image URLs
+    last_reply_by = Column(String(20), nullable=True)          # user | admin
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    replies = relationship("SupportTicketReply", back_populates="ticket", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        Index("ix_ticket_user_status", "user_id", "status"),
+    )
+
+
+class SupportTicketReply(Base):
+    """A message in a support ticket thread (from the raiser or an admin)."""
+    __tablename__ = "support_ticket_replies"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    ticket_id = Column(String(36), ForeignKey("support_tickets.id", ondelete="CASCADE"), nullable=False, index=True)
+    author = Column(String(20), default="user")                # user | admin
+    author_id = Column(String(36), nullable=True)
+    message = Column(Text, nullable=False)
+    is_internal = Column(Boolean, default=False)               # admin-only note (not shown to raiser)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    ticket = relationship("SupportTicket", back_populates="replies")
+
+    __table_args__ = (
+        Index("ix_ticket_reply", "ticket_id", "created_at"),
+    )
+
+
 class NotificationCampaign(Base):
     """A sent admin notification campaign (broadcast or individual) with its
     delivery report — powers the admin Notifications history."""
