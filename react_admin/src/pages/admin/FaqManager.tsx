@@ -64,7 +64,13 @@ export default function FaqManager() {
 
   const seed = async () => {
     const r = await adminFaqSeed();
-    if (r.ok) { toast.success(r.data?.seeded ? `Seeded ${r.data.seeded}` : "Already seeded"); load(); }
+    if (r.ok) {
+      const n = r.data?.seeded ?? 0;
+      toast.success(n ? `Added ${n} recommended FAQ${n === 1 ? "" : "s"}` : "All recommended FAQs are already present");
+      load();
+    } else {
+      toast.error(r.data?.detail || "Failed");
+    }
   };
 
   return (
@@ -75,7 +81,7 @@ export default function FaqManager() {
           <p className="text-sm text-muted-foreground">Help content shown in the apps' Customer Support screen — separate per app.</p>
         </div>
         <div className="flex gap-2">
-          {items.length === 0 && <Button variant="outline" size="sm" onClick={seed}>Seed starter FAQ</Button>}
+          <Button variant="outline" size="sm" onClick={seed}>Add recommended FAQ</Button>
           <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
           <Button size="sm" onClick={() => setEditing({ audience: "user", is_active: true, sort_order: items.length })}><Plus className="w-4 h-4 mr-1" /> Add FAQ</Button>
         </div>
