@@ -8,6 +8,10 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../bloc/wallet/wallet_bloc.dart';
 import '../../bloc/wallet/wallet_state.dart';
+import '../../bloc/profile/profile_bloc.dart';
+import '../../bloc/profile/profile_event.dart';
+import '../../bloc/profile/profile_state.dart';
+import '../../widgets/astro_avatar.dart';
 import '../auth/login_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
@@ -30,7 +34,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _maybePromptWebNotifications());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybePromptWebNotifications();
+      // Load the profile so the top-right avatar shows immediately.
+      context.read<ProfileBloc>().add(ProfileLoadRequested());
+    });
   }
 
   /// On web, notification permission must be requested from a user tap (iOS
@@ -136,6 +144,28 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12),
                         ),
                       ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            // Profile picture (top-right) → Profile tab. Shows the uploaded photo
+            // or the Google-login avatar; falls back to initials.
+            BlocBuilder<ProfileBloc, ProfileState>(
+              builder: (context, ps) {
+                final me = ps.me;
+                final avatar = me?['avatar_url']?.toString();
+                final uname = (me?['name'] ?? '').toString();
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12, left: 2),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _currentIndex = 4),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.gold.withOpacity(0.5), width: 1.5),
+                      ),
+                      child: AstroAvatar(imageUrl: avatar, name: uname, size: 32),
                     ),
                   ),
                 );
