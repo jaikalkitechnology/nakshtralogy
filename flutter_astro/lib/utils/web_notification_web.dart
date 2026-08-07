@@ -12,10 +12,12 @@ String webNotificationPermission() {
 }
 
 const _kWebTokenKey = 'nk_web_push_token';
+const _kWebTokenAtKey = 'nk_web_push_token_at';
 
 /// The web push token we last registered, persisted in localStorage. On iOS the
-/// grant-time token is the one that works, so we keep it across PWA reloads and
-/// re-register the SAME token rather than fetching a fresh (invalid) one.
+/// grant-time token is the one that works, so we keep it briefly across a
+/// login → dashboard hop / PWA reload and re-register the SAME token rather than
+/// fetching a fresh (not-yet-valid) one. See [webTokenSavedAtMs] for the age.
 String? webLoadToken() {
   try {
     final t = html.window.localStorage[_kWebTokenKey];
@@ -25,15 +27,32 @@ String? webLoadToken() {
   }
 }
 
+/// Epoch-ms when the persisted token was saved, or null. Used to only re-use the
+/// grant-time token for a short window (after that a fresh getToken returns the
+/// current valid token, which handles genuine token rotation / expiry).
+int? webTokenSavedAtMs() {
+  try {
+    final v = html.window.localStorage[_kWebTokenAtKey];
+    return v == null ? null : int.tryParse(v);
+  } catch (_) {
+    return null;
+  }
+}
+
 void webSaveToken(String token) {
   try {
-    if (token.isNotEmpty) html.window.localStorage[_kWebTokenKey] = token;
+    if (token.isNotEmpty) {
+      html.window.localStorage[_kWebTokenKey] = token;
+      html.window.localStorage[_kWebTokenAtKey] =
+          DateTime.now().millisecondsSinceEpoch.toString();
+    }
   } catch (_) {}
 }
 
 void webClearToken() {
   try {
     html.window.localStorage.remove(_kWebTokenKey);
+    html.window.localStorage.remove(_kWebTokenAtKey);
   } catch (_) {}
 }
 
