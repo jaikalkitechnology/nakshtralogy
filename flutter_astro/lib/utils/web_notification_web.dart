@@ -11,6 +11,32 @@ String webNotificationPermission() {
   }
 }
 
+const _kWebTokenKey = 'nk_web_push_token';
+
+/// The web push token we last registered, persisted in localStorage. On iOS the
+/// grant-time token is the one that works, so we keep it across PWA reloads and
+/// re-register the SAME token rather than fetching a fresh (invalid) one.
+String? webLoadToken() {
+  try {
+    final t = html.window.localStorage[_kWebTokenKey];
+    return (t != null && t.isNotEmpty) ? t : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+void webSaveToken(String token) {
+  try {
+    if (token.isNotEmpty) html.window.localStorage[_kWebTokenKey] = token;
+  } catch (_) {}
+}
+
+void webClearToken() {
+  try {
+    html.window.localStorage.remove(_kWebTokenKey);
+  } catch (_) {}
+}
+
 /// Show a browser notification for a foreground web-push message. Permission is
 /// already granted by the web-push init flow. Safe if the API is unavailable.
 void showWebNotification(String title, String body, {String? icon}) {
