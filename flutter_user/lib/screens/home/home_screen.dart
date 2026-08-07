@@ -12,6 +12,7 @@ import '../../bloc/profile/profile_bloc.dart';
 import '../../bloc/profile/profile_event.dart';
 import '../../bloc/profile/profile_state.dart';
 import '../../widgets/astro_avatar.dart';
+import '../../widgets/phone_capture_sheet.dart';
 import '../auth/login_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
@@ -30,6 +31,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  bool _phonePrompted = false;
+
+  /// Existing accounts without a phone (older Google signups) get a one-time
+  /// mandatory prompt — the country code also seeds their region.
+  Future<void> _maybePromptPhone(Map<String, dynamic>? me) async {
+    if (_phonePrompted || me == null) return;
+    final phone = (me['phone'] ?? '').toString().trim();
+    if (phone.isNotEmpty) return;
+    _phonePrompted = true;
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
+    final updated = await PhoneCaptureSheet.show(context);
+    if (updated != null && mounted) {
+      context.read<ProfileBloc>().add(ProfileLoadRequested());
+    }
+  }
 
   @override
   void initState() {
@@ -82,16 +99,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthUnauthenticated) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-            (route) => false,
-          );
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthUnauthenticated) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
+            }
+          },
+        ),
+        BlocListener<ProfileBloc, ProfileState>(
+          listener: (context, state) => _maybePromptPhone(state.me),
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: Row(

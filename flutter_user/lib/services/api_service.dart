@@ -184,6 +184,65 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...data};
   }
 
+  /// Start email-OTP verified manual signup. Phone (with country code) is
+  /// mandatory and seeds the region. Returns {statusCode, message|detail}.
+  Future<Map<String, dynamic>> signupSendOtp({
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    String? countryCode,
+    String? fcmToken,
+  }) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.userSignupSendOtp),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        if (countryCode != null) 'country_code': countryCode,
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Verify the emailed signup OTP → stores tokens + user on success.
+  Future<Map<String, dynamic>> signupVerifyOtp({
+    required String email,
+    required String otp,
+    String? fcmToken,
+  }) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.userSignupVerifyOtp),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({
+        'email': email,
+        'otp': otp,
+        if (fcmToken != null) 'fcm_token': fcmToken,
+      }),
+    );
+    final data = jsonDecode(resp.body);
+    if (resp.statusCode == 200) {
+      await _saveTokens(data['access_token'], data['refresh_token']);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_data', jsonEncode(data['user']));
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
+  /// Re-send the signup OTP for a pending account.
+  Future<Map<String, dynamic>> signupResendOtp(String email) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.userSignupResendOtp),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,

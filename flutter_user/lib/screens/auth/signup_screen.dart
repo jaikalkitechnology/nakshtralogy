@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
@@ -7,8 +8,12 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../services/google_auth_service.dart';
+import '../../services/api_service.dart';
+import '../../services/fcm_service.dart';
 import '../../widgets/language_selector.dart';
+import '../../widgets/country_code_picker.dart';
 import 'google_profile_completion_screen.dart';
+import 'otp_verify_screen.dart';
 import '../home/home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -25,7 +30,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final _phoneCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
+  final _api = ApiService();
+  Country _country = kDefaultCountry;
   bool _obscure = true;
+  bool _sending = false;
 
   @override
   void dispose() {
@@ -34,14 +42,40 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void _signup() {
+  /// Manual signup now goes through an email OTP. We reserve the account +
+  /// email the code, then move to verification. The phone (with its country
+  /// code) is mandatory — it seeds the region (IN vs INTL) on the backend.
+  Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
-    context.read<AuthBloc>().add(AuthSignupRequested(
-      name: _nameCtrl.text.trim(),
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-      phone: _phoneCtrl.text.trim().isNotEmpty ? _phoneCtrl.text.trim() : null,
-    ));
+    setState(() => _sending = true);
+    final localPhone = _phoneCtrl.text.trim().replaceAll(RegExp(r'^0+'), '');
+    final fullPhone = '+${_country.dial}$localPhone';
+    String? fcmToken;
+    try { fcmToken = await FcmService().getToken(); } catch (_) {}
+    try {
+      final resp = await _api.signupSendOtp(
+        name: _nameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        phone: fullPhone,
+        password: _passCtrl.text,
+        countryCode: _country.iso,
+        fcmToken: fcmToken,
+      );
+      if (!mounted) return;
+      if (resp['statusCode'] == 201) {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (_) => OtpVerifyScreen(email: _emailCtrl.text.trim()),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(resp['detail']?.toString() ?? 'Signup failed'),
+          backgroundColor: AppColors.error));
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('$e'), backgroundColor: AppColors.error));
+    }
+    if (mounted) setState(() => _sending = false);
   }
 
   /// Continue with Google (sign-up). Same transport as login: web → server
@@ -109,20 +143,28 @@ class _SignupScreenState extends State<SignupScreen> {
                     const SizedBox(height: 16),
                     TextFormField(controller: _emailCtrl, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email, prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textSecondary)), validator: (v) => (v == null || !v.contains('@')) ? l.validEmailRequired : null),
                     const SizedBox(height: 16),
-                    TextFormField(controller: _phoneCtrl, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: l.phone, prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary))),
+                    // Phone is mandatory — the country code seeds the region.
+                    TextFormField(
+                      controller: _phoneCtrl,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: l.phone,
+                        prefixIcon: CountryCodePicker(
+                          value: _country,
+                          onSelected: (c) => setState(() => _country = c),
+                        ),
+                      ),
+                      validator: (v) => (v == null || v.trim().length < 6) ? l.required : null,
+                    ),
                     const SizedBox(height: 16),
                     TextFormField(controller: _passCtrl, obscureText: _obscure, decoration: InputDecoration(labelText: l.password, prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary), suffixIcon: IconButton(icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary), onPressed: () => setState(() => _obscure = !_obscure))), validator: (v) => (v == null || v.length < 6) ? l.minSixChars : null),
                     const SizedBox(height: 16),
                     TextFormField(controller: _confirmCtrl, obscureText: true, decoration: InputDecoration(labelText: l.confirmPassword, prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary)), validator: (v) => v != _passCtrl.text ? l.passwordsMismatch : null),
                     const SizedBox(height: 24),
-                    BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        final loading = state is AuthLoading;
-                        return ElevatedButton(
-                          onPressed: loading ? null : _signup,
-                          child: loading ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(l.createAccount),
-                        );
-                      },
+                    ElevatedButton(
+                      onPressed: _sending ? null : _signup,
+                      child: _sending ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)) : Text(l.createAccount),
                     ),
                     const SizedBox(height: 16),
                     Row(children: [

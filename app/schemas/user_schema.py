@@ -19,6 +19,28 @@ class UserSignupRequest(BaseModel):
     fcm_token: Optional[str] = None
 
 
+class UserSignupOtpRequest(BaseModel):
+    """Start email-OTP verified manual signup. Phone (with country code) is
+    mandatory — it also seeds the region (IN vs INTL) deterministically."""
+    name: str = Field(..., min_length=2, max_length=150)
+    email: EmailStr
+    phone: str = Field(..., min_length=6, max_length=20)
+    password: str = Field(..., min_length=6, max_length=128)
+    country_code: Optional[str] = Field(None, max_length=2, description="ISO alpha-2 from the picker")
+    fcm_token: Optional[str] = None
+
+
+class UserVerifyOtpRequest(BaseModel):
+    """Verify the emailed OTP and finish signup (returns tokens)."""
+    email: EmailStr
+    otp: str = Field(..., min_length=4, max_length=6)
+    fcm_token: Optional[str] = None
+
+
+class UserResendOtpRequest(BaseModel):
+    email: EmailStr
+
+
 class UserLoginRequest(BaseModel):
     email: EmailStr
     password: str
@@ -96,6 +118,7 @@ class RegionOverrideRequest(BaseModel):
 class UserUpdateRequest(BaseModel):
     name: Optional[str] = Field(None, max_length=150)
     phone: Optional[str] = Field(None, max_length=20)
+    country_code: Optional[str] = Field(None, max_length=2, description="ISO alpha-2 from the phone picker; seeds region")
     gender: Optional[str] = None
     dob: Optional[str] = None
     tob: Optional[str] = None

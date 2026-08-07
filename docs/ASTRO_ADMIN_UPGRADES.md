@@ -79,3 +79,26 @@ both render.
 - ✅ Reusable **absolute-URL avatar helper** shared across screens
 - ✅ Ensure all of the above work on **web** (bell, support, legal, tickets)
 - ✅ Localize every new string (existing l10n keys / English fallback)
+
+---
+
+## 7. Region detection + mandatory phone + email-OTP manual signup (user app)
+Deterministic region (IN vs INTL → language set + currency) from the phone's
+country code, layered over the existing IP-geo default. Never touches astrology
+logic — presentation/access only.
+
+- ✅ Backend: `region.country_from_phone` / `region_from_phone` — dial-code → ISO
+  → region (India default when unknown; +91 = IN, else INTL)
+- ✅ Backend: user email-OTP signup — `POST /user/signup/send-otp`,
+  `/signup/verify-otp`, `/signup/resend-otp` (reuses `otp_code` + `send_otp_email`,
+  mirrors astrologer flow); phone mandatory, seeds region on the unverified user
+- ✅ Backend: `PUT /user/me` accepts `country_code` (from the picker) and seeds
+  region from it unless the user set a manual override in Settings
+- ✅ User app: self-contained country-code picker (default 🇮🇳 +91, searchable
+  sheet, no extra package)
+- ✅ User app: signup reworked to name/email/phone(+country)/password → send-OTP
+  → OTP verify screen → home
+- ✅ User app: Google profile-completion now captures a **mandatory** phone
+  (+country) instead of the region chip; region derived from the country
+- ✅ User app: one-time **mandatory** phone-capture sheet for legacy accounts
+  without a phone (shown from Home once the profile loads)
