@@ -26,6 +26,10 @@ class WebPushService {
   // the whole init — which the _initialized guard would otherwise block.
   FirebaseMessaging? _messaging;
   String? _vapid;
+  // When the currently-registered token was obtained. Used to ignore the iOS
+  // Safari token rotation that fires shortly after the permission grant — that
+  // rotated token is not yet valid for delivery, so we keep the grant-time one.
+  DateTime? _tokenAt;
 
   String? get token => _token;
   bool get isInitialized => _initialized;
@@ -57,28 +61,13 @@ class WebPushService {
         return false;
       }
     } catch (_) {}
+    // The token obtained right here, from the permission grant, is the one that
+    // actually works on iOS Safari. We register it ONCE and then keep it — we do
+    // NOT re-fetch a new token afterwards, because on iOS the token fetched a
+    // little later (e.g. when the dashboard loads) is a different, not-yet-valid
+    // token that would overwrite this good one and break delivery.
     await _getAndRegisterToken();
-    // iOS Safari ROTATES the web token a few seconds after the first grant,
-    // invalidating the one we just registered (that's why the admin panel showed
-    // the token as stale / "no device tokens" right after login). Re-fetch and
-    // re-register the CURRENT token several times over the ~30s settle window so
-    // the backend always ends up holding the device's currently-valid token.
-    _settleToken();
     return _token != null && _token!.isNotEmpty;
-  }
-
-  /// Re-fetch + re-register the current token at staged delays to survive the
-  /// iOS post-grant token rotation. Each call fetches a FRESH token (getToken
-  /// returns the current valid one after rotation) and registers it, so a token
-  /// the server may have dropped as stale is immediately restored.
-  void _settleToken() {
-    for (final s in const [3, 10, 25]) {
-      Future.delayed(Duration(seconds: s), () {
-        if (kIsWeb && webNotificationPermission() == 'granted') {
-          _getAndRegisterToken();
-        }
-      });
-    }
   }
 
   /// Initialise Firebase web messaging from the public config, request
@@ -132,7 +121,17 @@ class WebPushService {
       });
 
       messaging.onTokenRefresh.listen((newToken) async {
+        // On iOS Safari a rotation fires within seconds of the permission grant,
+        // handing us a token that is NOT yet valid for delivery. Ignore refreshes
+        // that arrive right after we registered the working grant-time token;
+        // honour genuine later rotations.
+        if (_tokenAt != null && DateTime.now().difference(_tokenAt!) < const Duration(seconds: 90)) {
+          debugPrint('WebPush: ignoring post-grant token rotation (iOS)');
+          return;
+        }
+        if (newToken == _token) return;
         _token = newToken;
+        _tokenAt = DateTime.now();
         await _register();
       });
 
@@ -156,6 +155,7 @@ class WebPushService {
     if (m == null) return;
     try {
       _token = await m.getToken(vapidKey: _vapid);
+      _tokenAt = DateTime.now();
       _error = _token == null ? 'Token not issued (check VAPID / service worker)' : null;
       debugPrint('WebPush token: ${_token != null ? "${_token!.substring(0, 12)}..." : "NULL"}');
       await _register();
@@ -165,18 +165,23 @@ class WebPushService {
     }
   }
 
-  /// Call after every login. When permission is already granted, ALWAYS fetch a
-  /// FRESH token from FCM and register it — never re-use the cached one, which
-  /// can be stale after a logout/login or account switch (the cause of
-  /// "device token is stale/invalid" in the admin panel). When permission is
-  /// still 'default'/'denied', the UI's Enable prompt handles it.
+  /// Call after every login. If we already hold a token obtained THIS session
+  /// (e.g. from the user's Enable tap), just re-register that SAME token for the
+  /// new account — do NOT fetch a new one, because on iOS Safari a freshly
+  /// fetched token right after grant is not yet valid and would replace the
+  /// working one. Only when we have no token yet (returning user whose grant
+  /// happened in a previous session, so rotation already settled) do we fetch.
   Future<void> registerAfterLogin() async {
     if (!kIsWeb) return;
     if (webNotificationPermission() != 'granted') return;
+    if (_token != null && _token!.isNotEmpty) {
+      await _register();           // re-bind the existing valid token
+      return;
+    }
     if (!_initialized || _messaging == null) {
-      await init(); // init() fetches + registers when already granted
+      await init();                // init() fetches + registers when granted
     } else {
-      await _getAndRegisterToken(); // fresh getToken + register
+      await _getAndRegisterToken();
     }
   }
 
@@ -185,6 +190,7 @@ class WebPushService {
   /// the logout API call.
   void clearOnLogout() {
     _token = null;
+    _tokenAt = null;
   }
 
   Future<void> _register() async {
