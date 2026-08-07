@@ -108,9 +108,17 @@ class _HomeTabState extends State<HomeTab> {
     // astrologer photo for the greeting (profile_image_url, else user avatar)
     final astroMe = context.watch<AstroProfileBloc>().state.me;
     String? photoUrl;
+    String? rejectionReason;
+    List<String> rejectedSections = const [];
     if (astroMe != null) {
       final pf = astroMe['profile'] ?? astroMe['astrologer_profile'];
-      if (pf is Map) photoUrl = (pf['profile_image_url'] ?? '').toString();
+      if (pf is Map) {
+        photoUrl = (pf['profile_image_url'] ?? '').toString();
+        rejectionReason = (pf['rejection_reason'] ?? '').toString();
+        if (rejectionReason.isEmpty) rejectionReason = null;
+        final rs = pf['rejected_sections'];
+        if (rs is List) rejectedSections = rs.map((e) => e.toString()).toList();
+      }
       if (photoUrl == null || photoUrl.isEmpty) photoUrl = (astroMe['avatar_url'] ?? '').toString();
     }
     if (photoUrl != null && photoUrl.isEmpty) photoUrl = null;
@@ -174,6 +182,16 @@ class _HomeTabState extends State<HomeTab> {
               // ══════════════════════ GREETING HERO ══════════════════════
               _GreetingHero(greeting: greeting, name: firstName, subtitle: l.yourCosmicDashboard, imageUrl: photoUrl),
               const SizedBox(height: 18),
+
+              // ══════════════ APPLICATION REJECTED — RE-EDIT ══════════════
+              if (rejectionReason != null) ...[
+                _RejectionBanner(
+                  reason: rejectionReason,
+                  sections: rejectedSections,
+                  onEdit: () => widget.onNavigate?.call(4), // Profile tab
+                ),
+                const SizedBox(height: 18),
+              ],
 
               // ══════════════════════ 1. LIVE STATUS ═════════════════════
               _LiveStatusCard(
@@ -388,6 +406,63 @@ class _GreetingHero extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         _avatar(),
+      ]),
+    );
+  }
+}
+
+class _RejectionBanner extends StatelessWidget {
+  final String reason;
+  final List<String> sections;
+  final VoidCallback onEdit;
+  const _RejectionBanner({required this.reason, required this.sections, required this.onEdit});
+
+  String _label(String s) => {
+    'kyc': 'KYC documents', 'personal': 'Personal details', 'professional': 'Professional details',
+  }[s] ?? s;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.error.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.error.withOpacity(0.4)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.error_outline, color: AppColors.error, size: 20),
+          const SizedBox(width: 8),
+          const Expanded(child: Text('Application needs correction',
+              style: TextStyle(color: AppColors.error, fontSize: 15, fontWeight: FontWeight.w800))),
+        ]),
+        const SizedBox(height: 8),
+        Text(reason, style: const TextStyle(color: AppColors.ivory, fontSize: 13, height: 1.4)),
+        if (sections.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Wrap(spacing: 8, runSpacing: 6, children: sections.map((s) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(color: AppColors.error.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
+            child: Text(_label(s), style: const TextStyle(color: AppColors.error, fontSize: 11, fontWeight: FontWeight.w600)),
+          )).toList()),
+        ],
+        const SizedBox(height: 14),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit, size: 18),
+            label: const Text('Edit & Resubmit'),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
+          ),
+        ),
+        if (sections.contains('kyc'))
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text('KYC was flagged — you can re-upload it from the KYC screen.',
+                style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+          ),
       ]),
     );
   }

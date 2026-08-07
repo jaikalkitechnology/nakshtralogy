@@ -86,6 +86,8 @@ class AstrologerProfileResponse(BaseModel):
     is_approved: bool = False
     is_online: bool = False
     is_busy: bool = False
+    rejection_reason: Optional[str] = None
+    rejected_sections: Optional[List[str]] = []
     created_at: Optional[datetime] = None
 
     class Config:
