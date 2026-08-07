@@ -196,7 +196,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _syncFcmTokenInBackground() {
     Future.delayed(const Duration(seconds: 2), () async {
       try {
-        await FcmService().ensureTokenSynced();
+        // Web / iOS PWA: the login/signup call already registered the single push
+        // token. Don't re-register from here — the device holds only one push
+        // registration and a second one invalidated the working token on iOS.
+        if (!kIsWeb) {
+          await FcmService().ensureTokenSynced();
+        }
       } catch (e) {
         debugPrint('FCM background sync failed: $e');
       }

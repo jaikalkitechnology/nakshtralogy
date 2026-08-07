@@ -136,16 +136,13 @@ class WebPushService {
         await _register();
       });
 
-      // Firebase is ready; mark initialised. Only touch the token if permission
-      // is ALREADY granted — we never auto-request the browser prompt here (that
-      // only happens on the user's Enable tap). Crucially, on a reload / PWA-open
-      // from the home screen we RE-REGISTER THE PERSISTED grant-time token rather
-      // than fetching a new one — on iOS the freshly fetched token is invalid, so
-      // refetching from the dashboard is what broke delivery.
+      // Firebase web + the foreground handler are ready. We do NOT register a
+      // token here: the push token is registered ONCE by the login/signup call
+      // (FcmService().getToken()). Registering a second token from the dashboard
+      // is exactly what broke iOS delivery (the device holds only one push
+      // registration). This service now only handles Firebase init, permission
+      // (Enable tap), and foreground display.
       _initialized = true;
-      if (webNotificationPermission() == 'granted') {
-        await _registerPersistedOrFetch();
-      }
     } catch (e) {
       _initError = 'web push init: $e';
       debugPrint(_initError!);

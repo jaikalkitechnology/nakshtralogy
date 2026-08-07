@@ -252,10 +252,11 @@ class _AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        // On web, register the push token once a session is live.
-        if (kIsWeb && state is AuthAuthenticated) {
-          WebPushService().registerAfterLogin();
-        }
+        // NOTE: we intentionally do NOT register a web push token here.
+        // The login/signup call already registered the token (via
+        // FcmService().getToken(), which also asks permission). Registering a
+        // SECOND token from the dashboard invalidated the working one on iOS,
+        // where the device holds only a single push registration.
       },
       builder: (context, state) {
         if (state is AuthAuthenticated) return const HomeScreen();
