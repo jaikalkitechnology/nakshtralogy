@@ -58,13 +58,27 @@ class WebPushService {
       }
     } catch (_) {}
     await _getAndRegisterToken();
-    // iOS often ROTATES the web token a few seconds after the first grant,
-    // invalidating the one we just registered. Re-register the rotated token so
-    // the backend ends up with the currently-valid one.
-    Future.delayed(const Duration(seconds: 6), () {
-      if (kIsWeb) _getAndRegisterToken();
-    });
+    // iOS Safari ROTATES the web token a few seconds after the first grant,
+    // invalidating the one we just registered (that's why the admin panel showed
+    // the token as stale / "no device tokens" right after login). Re-fetch and
+    // re-register the CURRENT token several times over the ~30s settle window so
+    // the backend always ends up holding the device's currently-valid token.
+    _settleToken();
     return _token != null && _token!.isNotEmpty;
+  }
+
+  /// Re-fetch + re-register the current token at staged delays to survive the
+  /// iOS post-grant token rotation. Each call fetches a FRESH token (getToken
+  /// returns the current valid one after rotation) and registers it, so a token
+  /// the server may have dropped as stale is immediately restored.
+  void _settleToken() {
+    for (final s in const [3, 10, 25]) {
+      Future.delayed(Duration(seconds: s), () {
+        if (kIsWeb && webNotificationPermission() == 'granted') {
+          _getAndRegisterToken();
+        }
+      });
+    }
   }
 
   /// Initialise Firebase web messaging from the public config, request
