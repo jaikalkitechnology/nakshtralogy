@@ -54,8 +54,9 @@ from app.models.model import (
     User, AstrologerProfile, Wallet, WalletTransaction,
     AgoraConfig, CallSession, LiveStream, LiveStreamViewer,
     LiveStreamQuestion, LiveStreamGift, GiftPricing,
-    ChatSession, LiveChatMessage, LiveStreamSuperChat,
+    ChatSession, LiveChatMessage, LiveStreamSuperChat, SessionReview,
 )
+from sqlalchemy import func as _sql_func
 from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
 from app.routers.notification_router import save_notification
 from app.routers.ws_astrologer import push_to_astrologer
@@ -68,6 +69,8 @@ from app.schemas.communication_schema import (
     GiftPricingCreate, GiftPricingResponse, SendGiftRequest, GiftSentResponse,
     InitiateChatRequest, ChatSessionResponse, ChatMessageRequest, ChatMessageResponse,
     SuperChatRequest, SuperChatResponse,
+    SetGiftGoalRequest, TopGifterResponse,
+    SessionReviewRequest, SessionReviewResponse, PendingReviewResponse,
     MessageResponse,
 )
 
@@ -679,6 +682,7 @@ def create_live_stream(
         title=req.title,
         description=req.description,
         agora_token_host=host_token,
+        gift_goal=Decimal(str(req.gift_goal)) if req.gift_goal else 0,
         status="scheduled",
     )
     db.add(stream)
@@ -689,6 +693,7 @@ def create_live_stream(
         id=stream.id, channel_name=channel, host_id=stream.host_id,
         title=stream.title, description=stream.description,
         agora_token=host_token, agora_app_id=app_id,
+        gift_goal=float(stream.gift_goal or 0),
         status=stream.status, created_at=stream.created_at,
     )
 
@@ -714,6 +719,8 @@ def start_live_stream(
         id=stream.id, channel_name=stream.channel_name, host_id=stream.host_id,
         title=stream.title, description=stream.description,
         agora_token=stream.agora_token_host, agora_app_id=app_id,
+        gift_goal=float(stream.gift_goal or 0),
+        total_gifts_amount=float(stream.total_gifts_amount or 0),
         status=stream.status, viewer_count=stream.viewer_count,
         started_at=stream.started_at, created_at=stream.created_at,
     )
@@ -744,6 +751,7 @@ def end_live_stream(
         title=stream.title, status=stream.status,
         viewer_count=0, peak_viewers=stream.peak_viewers,
         total_gifts_amount=float(stream.total_gifts_amount or 0),
+        gift_goal=float(stream.gift_goal or 0),
         started_at=stream.started_at, ended_at=stream.ended_at,
         created_at=stream.created_at,
     )
@@ -765,6 +773,7 @@ def list_active_streams(db: Session = Depends(get_db)):
             title=s.title, description=s.description,
             status=s.status, viewer_count=s.viewer_count,
             total_gifts_amount=float(s.total_gifts_amount or 0),
+            gift_goal=float(s.gift_goal or 0),
             super_chat_rate=float(p.super_chat_rate or 50) if p else 50,
             started_at=s.started_at,
         ) for s, u, p in streams
@@ -948,11 +957,150 @@ def get_viewers(
     return {
         "total": stream.viewer_count,
         "peak": stream.peak_viewers,
+        "total_gifts_amount": float(stream.total_gifts_amount or 0),
+        "gift_goal": float(stream.gift_goal or 0),
+        "status": stream.status,
         "viewers": [
             {"id": v.id, "user_id": v.user_id, "display_name": v.display_name, "joined_at": str(v.joined_at)}
             for v in viewers
         ],
     }
+
+
+@router.post("/live/{stream_id}/questions/{question_id}/pin", response_model=StreamQuestionResponse)
+def pin_question(
+    stream_id: str,
+    question_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Host pins a viewer question as the one being answered now. Only one
+    question is pinned at a time — pinning a new one unpins the rest."""
+    stream = db.query(LiveStream).filter(
+        LiveStream.id == stream_id, LiveStream.host_id == current_user.id,
+    ).first()
+    if not stream:
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
+    q = db.query(LiveStreamQuestion).filter(
+        LiveStreamQuestion.id == question_id, LiveStreamQuestion.stream_id == stream_id,
+    ).first()
+    if not q:
+        raise HTTPException(status_code=404, detail=t("err.not_found", lang))
+    # unpin any other pinned questions on this stream
+    db.query(LiveStreamQuestion).filter(
+        LiveStreamQuestion.stream_id == stream_id,
+        LiveStreamQuestion.is_pinned == True,
+    ).update({"is_pinned": False})
+    q.is_pinned = True
+    db.commit()
+    db.refresh(q)
+    return StreamQuestionResponse(
+        id=q.id, user_id=q.user_id, display_name=q.display_name,
+        question=q.question, is_answered=q.is_answered, is_pinned=True,
+        is_host=bool(getattr(q, "is_host", False)), created_at=q.created_at,
+    )
+
+
+@router.post("/live/{stream_id}/questions/{question_id}/unpin", response_model=MessageResponse)
+def unpin_question(
+    stream_id: str,
+    question_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Host clears the 'answering now' pin and marks the question answered."""
+    stream = db.query(LiveStream).filter(
+        LiveStream.id == stream_id, LiveStream.host_id == current_user.id,
+    ).first()
+    if not stream:
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
+    q = db.query(LiveStreamQuestion).filter(
+        LiveStreamQuestion.id == question_id, LiveStreamQuestion.stream_id == stream_id,
+    ).first()
+    if q:
+        q.is_pinned = False
+        q.is_answered = True
+        db.commit()
+    return MessageResponse(message="ok")
+
+
+@router.get("/live/{stream_id}/pinned")
+def get_pinned_question(
+    stream_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """The currently-pinned ('answering now') question, if any — polled by
+    viewers so they see what the astrologer is addressing."""
+    q = db.query(LiveStreamQuestion).filter(
+        LiveStreamQuestion.stream_id == stream_id,
+        LiveStreamQuestion.is_pinned == True,
+        LiveStreamQuestion.is_host == False,
+    ).order_by(LiveStreamQuestion.created_at.desc()).first()
+    if not q:
+        return {"pinned": None}
+    return {"pinned": {
+        "id": q.id, "user_id": q.user_id, "display_name": q.display_name,
+        "question": q.question, "created_at": str(q.created_at) if q.created_at else None,
+    }}
+
+
+@router.post("/live/{stream_id}/goal", response_model=LiveStreamResponse)
+def set_gift_goal(
+    stream_id: str,
+    req: SetGiftGoalRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Host sets/updates the gifting goal for the stream."""
+    stream = db.query(LiveStream).filter(
+        LiveStream.id == stream_id, LiveStream.host_id == current_user.id,
+    ).first()
+    if not stream:
+        raise HTTPException(status_code=404, detail=t("err.stream_not_found", lang))
+    stream.gift_goal = Decimal(str(req.gift_goal))
+    db.commit()
+    db.refresh(stream)
+    return LiveStreamResponse(
+        id=stream.id, channel_name=stream.channel_name, host_id=stream.host_id,
+        title=stream.title, status=stream.status,
+        viewer_count=stream.viewer_count, peak_viewers=stream.peak_viewers,
+        total_gifts_amount=float(stream.total_gifts_amount or 0),
+        gift_goal=float(stream.gift_goal or 0),
+        started_at=stream.started_at, created_at=stream.created_at,
+    )
+
+
+@router.get("/live/{stream_id}/top-gifters", response_model=List[TopGifterResponse])
+def top_gifters(
+    stream_id: str,
+    limit: int = 5,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Leaderboard of the biggest gifters (gifts + super-chats) in a stream."""
+    limit = max(1, min(limit, 20))
+    totals = {}   # user_id -> [amount, count, name]
+    gifts = db.query(LiveStreamGift).filter(LiveStreamGift.stream_id == stream_id).all()
+    for g in gifts:
+        e = totals.setdefault(g.sender_id, [0.0, 0, g.sender_name])
+        e[0] += float(g.amount or 0); e[1] += 1
+        if g.sender_name:
+            e[2] = g.sender_name
+    chats = db.query(LiveStreamSuperChat).filter(LiveStreamSuperChat.stream_id == stream_id).all()
+    for c in chats:
+        e = totals.setdefault(c.sender_id, [0.0, 0, c.sender_name])
+        e[0] += float(c.amount or 0); e[1] += 1
+        if c.sender_name:
+            e[2] = c.sender_name
+    ranked = sorted(totals.items(), key=lambda kv: kv[1][0], reverse=True)[:limit]
+    return [
+        TopGifterResponse(user_id=uid, name=v[2], total_amount=round(v[0], 2), gift_count=v[1])
+        for uid, v in ranked
+    ]
 
 
 @router.post("/live/{stream_id}/gift", response_model=GiftSentResponse)
@@ -1568,3 +1716,187 @@ def download_chat_file(
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail=t("err.chat_file_not_found", lang))
     return FileResponse(file_path, filename=filename)
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  SESSION REVIEWS & RATINGS (chat / voice / video)
+# ══════════════════════════════════════════════════════════════════════
+
+_COMPLETED_CHAT_STATUSES = ("completed", "expired")
+_COMPLETED_CALL_STATUSES = ("completed",)
+
+
+def _resolve_review_session(db: Session, session_type: str, session_id: str, user_id: str):
+    """Return (astrologer_profile_id, ended_at, is_completed) for a session the
+    given user actually took part in, or None if it doesn't belong to them."""
+    if session_type == "chat":
+        s = db.query(ChatSession).filter(
+            ChatSession.id == session_id, ChatSession.user_id == user_id
+        ).first()
+        if not s:
+            return None
+        return (s.astrologer_id, s.ended_at, s.status in _COMPLETED_CHAT_STATUSES)
+    # voice / video → CallSession
+    s = db.query(CallSession).filter(
+        CallSession.id == session_id, CallSession.caller_id == user_id,
+        CallSession.call_type == session_type,
+    ).first()
+    if not s:
+        return None
+    return (s.astrologer_profile_id, s.ended_at, s.status in _COMPLETED_CALL_STATUSES)
+
+
+def _recompute_astrologer_rating(db: Session, astrologer_id: str):
+    """Refresh AstrologerProfile.rating + total_reviews from BOTH the
+    consultation-based Review table and the session-based SessionReview table."""
+    from app.models.model import Review as _Review
+    r_sum, r_cnt = db.query(
+        _sql_func.coalesce(_sql_func.sum(_Review.rating), 0),
+        _sql_func.count(_Review.id),
+    ).filter(_Review.astrologer_id == astrologer_id, _Review.is_visible == True).first()
+    s_sum, s_cnt = db.query(
+        _sql_func.coalesce(_sql_func.sum(SessionReview.rating), 0),
+        _sql_func.count(SessionReview.id),
+    ).filter(SessionReview.astrologer_id == astrologer_id, SessionReview.is_visible == True).first()
+    total = int(r_cnt or 0) + int(s_cnt or 0)
+    avg = (float(r_sum or 0) + float(s_sum or 0)) / total if total else 0.0
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == astrologer_id).first()
+    if profile:
+        profile.rating = Decimal(str(round(avg, 2)))
+        profile.total_reviews = total
+
+
+@router.post("/review", response_model=SessionReviewResponse)
+def create_session_review(
+    req: SessionReviewRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """User rates + reviews an astrologer after a chat / voice / video session.
+    One review per session; the astrologer's aggregate rating is refreshed."""
+    resolved = _resolve_review_session(db, req.session_type, req.session_id, current_user.id)
+    if not resolved:
+        raise HTTPException(status_code=404, detail=t("err.not_found", lang))
+    astrologer_id, _ended, _completed = resolved
+
+    existing = db.query(SessionReview).filter(
+        SessionReview.session_type == req.session_type,
+        SessionReview.session_id == req.session_id,
+    ).first()
+    if existing:
+        # allow editing one's own review rather than erroring
+        if existing.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail=t("err.forbidden", lang))
+        existing.rating = req.rating
+        existing.comment = (req.comment or "").strip() or None
+        db.flush()
+        _recompute_astrologer_rating(db, astrologer_id)
+        db.commit()
+        db.refresh(existing)
+        rv = existing
+    else:
+        rv = SessionReview(
+            session_type=req.session_type, session_id=req.session_id,
+            user_id=current_user.id, astrologer_id=astrologer_id,
+            rating=req.rating, comment=(req.comment or "").strip() or None,
+        )
+        db.add(rv)
+        db.flush()
+        _recompute_astrologer_rating(db, astrologer_id)
+        db.commit()
+        db.refresh(rv)
+    return SessionReviewResponse(
+        id=rv.id, session_type=rv.session_type, session_id=rv.session_id,
+        user_id=rv.user_id, astrologer_id=rv.astrologer_id, rating=rv.rating,
+        comment=rv.comment, reviewer_name=current_user.name, created_at=rv.created_at,
+    )
+
+
+@router.get("/review/for-session/{session_type}/{session_id}", response_model=Optional[SessionReviewResponse])
+def get_session_review(
+    session_type: str,
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """The current user's existing review for a session, if any (so the app can
+    pre-fill the edit form)."""
+    rv = db.query(SessionReview).filter(
+        SessionReview.session_type == session_type,
+        SessionReview.session_id == session_id,
+        SessionReview.user_id == current_user.id,
+    ).first()
+    if not rv:
+        return None
+    return SessionReviewResponse(
+        id=rv.id, session_type=rv.session_type, session_id=rv.session_id,
+        user_id=rv.user_id, astrologer_id=rv.astrologer_id, rating=rv.rating,
+        comment=rv.comment, reviewer_name=current_user.name, created_at=rv.created_at,
+    )
+
+
+@router.get("/review/pending", response_model=List[PendingReviewResponse])
+def pending_reviews(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Completed sessions this user hasn't reviewed yet — powers the app's
+    post-session review prompt."""
+    reviewed = {
+        (r.session_type, r.session_id)
+        for r in db.query(SessionReview).filter(SessionReview.user_id == current_user.id).all()
+    }
+    out = []
+    # chats
+    chats = db.query(ChatSession, AstrologerProfile).outerjoin(
+        AstrologerProfile, ChatSession.astrologer_id == AstrologerProfile.id
+    ).filter(
+        ChatSession.user_id == current_user.id,
+        ChatSession.status.in_(_COMPLETED_CHAT_STATUSES),
+    ).order_by(ChatSession.ended_at.desc()).limit(20).all()
+    for s, p in chats:
+        if ("chat", s.id) in reviewed:
+            continue
+        out.append(PendingReviewResponse(
+            session_type="chat", session_id=s.id, astrologer_id=s.astrologer_id,
+            astrologer_name=p.display_name if p else None, ended_at=s.ended_at,
+        ))
+    # calls
+    calls = db.query(CallSession, AstrologerProfile).outerjoin(
+        AstrologerProfile, CallSession.astrologer_profile_id == AstrologerProfile.id
+    ).filter(
+        CallSession.caller_id == current_user.id,
+        CallSession.status.in_(_COMPLETED_CALL_STATUSES),
+    ).order_by(CallSession.ended_at.desc()).limit(20).all()
+    for s, p in calls:
+        if (s.call_type, s.id) in reviewed:
+            continue
+        out.append(PendingReviewResponse(
+            session_type=s.call_type, session_id=s.id, astrologer_id=s.astrologer_profile_id,
+            astrologer_name=p.display_name if p else None, ended_at=s.ended_at,
+        ))
+    return out
+
+
+@router.get("/review/astrologer/{profile_id}", response_model=List[SessionReviewResponse])
+def astrologer_reviews(
+    profile_id: str,
+    limit: int = 30,
+    db: Session = Depends(get_db),
+):
+    """Public: visible reviews for an astrologer (session-based)."""
+    limit = max(1, min(limit, 100))
+    rows = db.query(SessionReview, User).outerjoin(
+        User, SessionReview.user_id == User.id
+    ).filter(
+        SessionReview.astrologer_id == profile_id,
+        SessionReview.is_visible == True,
+    ).order_by(SessionReview.created_at.desc()).limit(limit).all()
+    return [
+        SessionReviewResponse(
+            id=r.id, session_type=r.session_type, session_id=r.session_id,
+            user_id=r.user_id, astrologer_id=r.astrologer_id, rating=r.rating,
+            comment=r.comment, reviewer_name=(u.name if u else None), created_at=r.created_at,
+        ) for r, u in rows
+    ]

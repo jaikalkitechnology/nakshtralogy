@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../widgets/session_review_dialog.dart';
 
 class CallScreen extends StatefulWidget {
   final String callId;
@@ -295,10 +296,23 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       await _engine?.release();
     } catch (_) {}
 
+    bool wasConnected = false;
     try {
-      final action = (_status == 'active' || _remoteJoined) ? 'end' : 'cancel';
+      wasConnected = (_status == 'active' || _remoteJoined);
+      final action = wasConnected ? 'end' : 'cancel';
       await _api.callAction(widget.callId, action);
     } catch (_) {}
+
+    // Prompt for a rating only for calls that actually connected — never for a
+    // cancelled/unanswered call. Skippable; not shown when ended by lifecycle.
+    if (wasConnected && !fromLifecycle && mounted) {
+      await showSessionReviewDialog(
+        context,
+        sessionType: widget.callType,   // voice | video
+        sessionId: widget.callId,
+        astrologerName: widget.astrologerName,
+      );
+    }
 
     if (mounted) Navigator.pop(context);
   }

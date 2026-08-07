@@ -675,6 +675,52 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  /// Top gifters leaderboard for a stream.
+  Future<List<dynamic>> getLiveTopGifters(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/top-gifters'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
+  /// The currently-pinned ("answering now") question, or null.
+  Future<Map<String, dynamic>?> getLivePinnedQuestion(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/pinned'), headers: _headers);
+    if (resp.statusCode == 200) {
+      final data = jsonDecode(resp.body);
+      return data['pinned'] as Map<String, dynamic>?;
+    }
+    return null;
+  }
+
+  // ── Session Reviews & Ratings (chat / voice / video) ────────────────
+
+  /// Submit (or update) a review + rating for a completed session.
+  Future<Map<String, dynamic>> submitSessionReview({
+    required String sessionType,   // chat | voice | video
+    required String sessionId,
+    required int rating,
+    String? comment,
+  }) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/review'),
+      headers: _headers,
+      body: jsonEncode({
+        'session_type': sessionType,
+        'session_id': sessionId,
+        'rating': rating,
+        if (comment != null && comment.isNotEmpty) 'comment': comment,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Completed sessions the user hasn't reviewed yet.
+  Future<List<dynamic>> getPendingReviews() async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/review/pending'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> initiateCall(String astrologerProfileId, String callType) async {

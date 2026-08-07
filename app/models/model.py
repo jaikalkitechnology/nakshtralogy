@@ -511,6 +511,29 @@ class Review(Base):
     astrologer = relationship("AstrologerProfile", back_populates="reviews")
 
 
+class SessionReview(Base):
+    """User's rating + review for a completed communication session
+    (chat / voice call / video call). Separate from the consultation-based
+    `Review` so live paid sessions can be reviewed without a consultation row.
+    One review per session (enforced by the unique (session_type, session_id))."""
+    __tablename__ = "session_reviews"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    session_type = Column(String(10), nullable=False)   # chat | voice | video
+    session_id = Column(String(36), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    astrologer_id = Column(String(36), ForeignKey("astrologer_profiles.id", ondelete="CASCADE"), nullable=False, index=True)
+    rating = Column(Integer, nullable=False)            # 1-5
+    comment = Column(Text, nullable=True)
+    is_visible = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_session_review_unique", "session_type", "session_id", unique=True),
+        Index("ix_session_review_astro", "astrologer_id", "created_at"),
+    )
+
+
 # ─────────────────────────────────────────────────────────────────────
 #  9. NOTIFICATIONS
 # ─────────────────────────────────────────────────────────────────────
@@ -678,6 +701,7 @@ class LiveStream(Base):
     viewer_count = Column(Integer, default=0)
     peak_viewers = Column(Integer, default=0)
     total_gifts_amount = Column(Numeric(12, 2), default=0)
+    gift_goal = Column(Numeric(12, 2), default=0)   # optional gifting target for the session
     started_at = Column(DateTime, nullable=True)
     ended_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)

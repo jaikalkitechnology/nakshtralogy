@@ -658,6 +658,41 @@ class ApiService {
     return [];
   }
 
+  /// Pin a viewer question as "answering now" (unpins the rest).
+  Future<Map<String, dynamic>> pinLiveQuestion(String streamId, String questionId) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/live/$streamId/questions/$questionId/pin'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Clear the "answering now" pin (marks the question answered).
+  Future<Map<String, dynamic>> unpinLiveQuestion(String streamId, String questionId) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/live/$streamId/questions/$questionId/unpin'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Set/update the gifting goal for a stream.
+  Future<Map<String, dynamic>> setLiveGiftGoal(String streamId, double goal) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/live/$streamId/goal'),
+      headers: _headers,
+      body: jsonEncode({'gift_goal': goal}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Top gifters leaderboard for a stream.
+  Future<List<dynamic>> getLiveTopGifters(String streamId) async {
+    final resp = await http.get(Uri.parse('${ApiConstants.commBase}/live/$streamId/top-gifters'), headers: _headers);
+    if (resp.statusCode == 200) return jsonDecode(resp.body) as List;
+    return [];
+  }
+
   // ── Calls ─────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> callAction(String callId, String action) async {

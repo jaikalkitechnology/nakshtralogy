@@ -317,6 +317,36 @@ export async function adminDeleteReview(reviewId: string) {
   return request(`/admin/reviews/${reviewId}`, { method: "DELETE" });
 }
 
+// ── Communication Logs (live · calls · chats · session reviews) ──────
+
+export async function adminLogsLive(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/logs/live${qs ? `?${qs}` : ""}`);
+}
+
+export async function adminLogsLiveDetail(streamId: string) {
+  return request(`/admin/logs/live/${streamId}`);
+}
+
+export async function adminLogsCalls(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/logs/calls${qs ? `?${qs}` : ""}`);
+}
+
+export async function adminLogsChats(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/logs/chats${qs ? `?${qs}` : ""}`);
+}
+
+export async function adminLogsChatTranscript(sessionId: string) {
+  return request(`/admin/logs/chats/${sessionId}`);
+}
+
+export async function adminLogsSessionReviews(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/admin/logs/session-reviews${qs ? `?${qs}` : ""}`);
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {

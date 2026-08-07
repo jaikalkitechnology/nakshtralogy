@@ -9,6 +9,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
 import '../../services/api_service.dart';
+import '../../widgets/session_review_dialog.dart';
 
 class ChatScreen extends StatefulWidget {
   final String sessionId;
@@ -129,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   title: const Text('Session Ended', style: TextStyle(color: AppColors.primary)),
                   content: Text(data['reason'] ?? 'Chat session has ended', style: const TextStyle(color: AppColors.textPrimary)),
                   actions: [
-                    ElevatedButton(onPressed: () { Navigator.pop(ctx); Navigator.pop(context); }, child: Text(AppLocalizations.of(context)?.ok ?? 'OK')),
+                    ElevatedButton(onPressed: () { Navigator.pop(ctx); _reviewThenPop(); }, child: Text(AppLocalizations.of(context)?.ok ?? 'OK')),
                   ],
                 ),
               );
@@ -260,7 +261,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             onPressed: () {
               Navigator.pop(ctx);
               _sendEndSession();
-              Navigator.pop(context);
+              _reviewThenPop();
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             child: Text(AppLocalizations.of(context)?.endChat ?? 'End Chat'),
@@ -268,6 +269,23 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  /// After a chat ends, prompt for a rating + review (skippable) then leave the
+  /// screen. Guards against reviewing twice in one exit.
+  bool _reviewPrompted = false;
+  Future<void> _reviewThenPop() async {
+    if (!mounted) return;
+    if (!_reviewPrompted) {
+      _reviewPrompted = true;
+      await showSessionReviewDialog(
+        context,
+        sessionType: 'chat',
+        sessionId: widget.sessionId,
+        astrologerName: widget.astrologerName,
+      );
+    }
+    if (mounted) Navigator.pop(context);
   }
 
   void _scrollToBottom() {

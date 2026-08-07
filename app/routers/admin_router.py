@@ -57,6 +57,8 @@ from app.models.model import (
     KycDocument, RefreshToken, Review, Consultation,
     PlatformSetting, SubscriptionPlan, ApiProduct,
     Notification, NotificationCampaign,
+    LiveStreamViewer, LiveStreamQuestion, LiveStreamGift,
+    LiveStreamSuperChat, LiveChatMessage, SessionReview,
 )
 
 router = APIRouter()
@@ -2185,3 +2187,275 @@ def seed_api_plans(
         "products_total": len(API_PRODUCTS),
         "legacy_products_deactivated": legacy_deactivated,
     }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  COMMUNICATION LOGS  (live streams · calls · chats · reviews)
+#  Full transcript / activity log for every communication channel, shown in
+#  the admin panel "Communication Logs" tab.
+# ══════════════════════════════════════════════════════════════════════
+
+def _dt(v):
+    return str(v) if v else None
+
+
+@router.get("/logs/live")
+def logs_live_streams(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(30, ge=1, le=100),
+    status: Optional[str] = None,          # scheduled | live | ended
+    search: Optional[str] = None,          # title / host name
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """List live streams with per-stream activity counts."""
+    q = db.query(LiveStream, User, AstrologerProfile).outerjoin(
+        User, LiveStream.host_id == User.id
+    ).outerjoin(
+        AstrologerProfile, LiveStream.astrologer_profile_id == AstrologerProfile.id
+    )
+    if status:
+        q = q.filter(LiveStream.status == status)
+    if search:
+        like = f"%{search}%"
+        q = q.filter((LiveStream.title.like(like)) | (User.name.like(like)) | (AstrologerProfile.display_name.like(like)))
+    total = q.count()
+    rows = q.order_by(LiveStream.created_at.desc()).offset(skip).limit(limit).all()
+    items = []
+    for s, u, p in rows:
+        items.append({
+            "id": s.id,
+            "title": s.title,
+            "host_name": (p.display_name if p else None) or (u.name if u else None),
+            "status": s.status,
+            "viewer_count": s.viewer_count,
+            "peak_viewers": s.peak_viewers,
+            "total_gifts_amount": float(s.total_gifts_amount or 0),
+            "gift_goal": float(getattr(s, "gift_goal", 0) or 0),
+            "questions": db.query(LiveStreamQuestion).filter(LiveStreamQuestion.stream_id == s.id).count(),
+            "gifts": db.query(LiveStreamGift).filter(LiveStreamGift.stream_id == s.id).count(),
+            "super_chats": db.query(LiveStreamSuperChat).filter(LiveStreamSuperChat.stream_id == s.id).count(),
+            "started_at": _dt(s.started_at),
+            "ended_at": _dt(s.ended_at),
+            "created_at": _dt(s.created_at),
+        })
+    return {"total": total, "skip": skip, "limit": limit, "items": items}
+
+
+@router.get("/logs/live/{stream_id}")
+def logs_live_detail(
+    stream_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Full activity log for one live stream: chat (incl. host replies),
+    gifts, super-chats and viewers — a merged, time-ordered timeline."""
+    s = db.query(LiveStream).filter(LiveStream.id == stream_id).first()
+    if not s:
+        raise HTTPException(status_code=404, detail=t("err.not_found", lang))
+    host = db.query(User).filter(User.id == s.host_id).first()
+
+    questions = db.query(LiveStreamQuestion).filter(
+        LiveStreamQuestion.stream_id == stream_id
+    ).order_by(LiveStreamQuestion.created_at.asc()).all()
+    gifts = db.query(LiveStreamGift).filter(
+        LiveStreamGift.stream_id == stream_id
+    ).order_by(LiveStreamGift.created_at.asc()).all()
+    supers = db.query(LiveStreamSuperChat).filter(
+        LiveStreamSuperChat.stream_id == stream_id
+    ).order_by(LiveStreamSuperChat.created_at.asc()).all()
+    viewers = db.query(LiveStreamViewer).filter(
+        LiveStreamViewer.stream_id == stream_id
+    ).order_by(LiveStreamViewer.joined_at.asc()).all()
+
+    timeline = []
+    for qn in questions:
+        timeline.append({
+            "type": "host_reply" if getattr(qn, "is_host", False) else "chat",
+            "actor": qn.display_name, "user_id": qn.user_id,
+            "text": qn.question, "is_pinned": qn.is_pinned,
+            "at": _dt(qn.created_at),
+        })
+    for g in gifts:
+        timeline.append({
+            "type": "gift", "actor": g.sender_name, "user_id": g.sender_id,
+            "amount": float(g.amount or 0), "at": _dt(g.created_at),
+        })
+    for c in supers:
+        timeline.append({
+            "type": "super_chat", "actor": c.sender_name, "user_id": c.sender_id,
+            "text": c.message, "amount": float(c.amount or 0), "at": _dt(c.created_at),
+        })
+    timeline.sort(key=lambda e: e["at"] or "")
+
+    return {
+        "stream": {
+            "id": s.id, "title": s.title, "description": s.description,
+            "host_name": host.name if host else None, "host_id": s.host_id,
+            "status": s.status, "peak_viewers": s.peak_viewers,
+            "total_gifts_amount": float(s.total_gifts_amount or 0),
+            "gift_goal": float(getattr(s, "gift_goal", 0) or 0),
+            "started_at": _dt(s.started_at), "ended_at": _dt(s.ended_at),
+            "created_at": _dt(s.created_at),
+        },
+        "counts": {
+            "chat": sum(1 for e in timeline if e["type"] == "chat"),
+            "host_replies": sum(1 for e in timeline if e["type"] == "host_reply"),
+            "gifts": len(gifts), "super_chats": len(supers), "viewers": len(viewers),
+        },
+        "timeline": timeline,
+        "viewers": [
+            {"user_id": v.user_id, "display_name": v.display_name,
+             "joined_at": _dt(v.joined_at), "left_at": _dt(v.left_at)}
+            for v in viewers
+        ],
+    }
+
+
+@router.get("/logs/calls")
+def logs_calls(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(30, ge=1, le=100),
+    call_type: Optional[str] = None,       # voice | video
+    status: Optional[str] = None,
+    search: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Voice/video call log with caller + astrologer, duration and billing."""
+    Caller = User
+    q = db.query(CallSession, Caller, AstrologerProfile).outerjoin(
+        Caller, CallSession.caller_id == Caller.id
+    ).outerjoin(
+        AstrologerProfile, CallSession.astrologer_profile_id == AstrologerProfile.id
+    )
+    if call_type:
+        q = q.filter(CallSession.call_type == call_type)
+    if status:
+        q = q.filter(CallSession.status == status)
+    if search:
+        like = f"%{search}%"
+        q = q.filter((Caller.name.like(like)) | (AstrologerProfile.display_name.like(like)))
+    total = q.count()
+    rows = q.order_by(CallSession.created_at.desc()).offset(skip).limit(limit).all()
+    items = [{
+        "id": c.id, "call_type": c.call_type, "status": c.status,
+        "caller_name": u.name if u else None, "caller_id": c.caller_id,
+        "astrologer_name": p.display_name if p else None,
+        "astrologer_id": c.astrologer_profile_id,
+        "duration_sec": c.duration_sec or 0,
+        "total_amount": float(c.total_amount or 0),
+        "started_at": _dt(c.started_at), "ended_at": _dt(c.ended_at),
+        "created_at": _dt(c.created_at),
+    } for c, u, p in rows]
+    return {"total": total, "skip": skip, "limit": limit, "items": items}
+
+
+@router.get("/logs/chats")
+def logs_chats(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(30, ge=1, le=100),
+    status: Optional[str] = None,
+    search: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Paid chat-session log with participants, message count and billing."""
+    q = db.query(ChatSession, User, AstrologerProfile).outerjoin(
+        User, ChatSession.user_id == User.id
+    ).outerjoin(
+        AstrologerProfile, ChatSession.astrologer_id == AstrologerProfile.id
+    )
+    if status:
+        q = q.filter(ChatSession.status == status)
+    if search:
+        like = f"%{search}%"
+        q = q.filter((User.name.like(like)) | (AstrologerProfile.display_name.like(like)))
+    total = q.count()
+    rows = q.order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
+    items = [{
+        "id": s.id, "status": s.status,
+        "user_name": u.name if u else None, "user_id": s.user_id,
+        "astrologer_name": p.display_name if p else None,
+        "astrologer_id": s.astrologer_id,
+        "message_count": db.query(LiveChatMessage).filter(LiveChatMessage.session_id == s.id).count(),
+        "duration_sec": s.duration_sec or 0,
+        "total_amount": float(s.total_amount or 0),
+        "started_at": _dt(s.started_at), "ended_at": _dt(s.ended_at),
+        "created_at": _dt(s.created_at),
+    } for s, u, p in rows]
+    return {"total": total, "skip": skip, "limit": limit, "items": items}
+
+
+@router.get("/logs/chats/{session_id}")
+def logs_chat_transcript(
+    session_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Full message transcript of a paid chat session."""
+    s = db.query(ChatSession).filter(ChatSession.id == session_id).first()
+    if not s:
+        raise HTTPException(status_code=404, detail=t("err.not_found", lang))
+    user = db.query(User).filter(User.id == s.user_id).first()
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == s.astrologer_id).first()
+    astro_user_id = profile.user_id if profile else None
+    msgs = db.query(LiveChatMessage).filter(
+        LiveChatMessage.session_id == session_id
+    ).order_by(LiveChatMessage.created_at.asc()).all()
+    return {
+        "session": {
+            "id": s.id, "status": s.status,
+            "user_name": user.name if user else None, "user_id": s.user_id,
+            "astrologer_name": profile.display_name if profile else None,
+            "astrologer_id": s.astrologer_id,
+            "total_amount": float(s.total_amount or 0),
+            "started_at": _dt(s.started_at), "ended_at": _dt(s.ended_at),
+        },
+        "messages": [{
+            "id": m.id,
+            "sender": "astrologer" if (astro_user_id and m.sender_id == astro_user_id) else "user",
+            "sender_id": m.sender_id,
+            "message_type": m.message_type,
+            "content": m.content,
+            "media_url": m.media_url,
+            "file_name": m.file_name,
+            "at": _dt(m.created_at),
+        } for m in msgs],
+    }
+
+
+@router.get("/logs/session-reviews")
+def logs_session_reviews(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(30, ge=1, le=100),
+    session_type: Optional[str] = None,    # chat | voice | video
+    rating: Optional[int] = Query(None, ge=1, le=5),
+    astrologer_id: Optional[str] = None,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Reviews left after chat / voice / video sessions."""
+    q = db.query(SessionReview, User, AstrologerProfile).outerjoin(
+        User, SessionReview.user_id == User.id
+    ).outerjoin(
+        AstrologerProfile, SessionReview.astrologer_id == AstrologerProfile.id
+    )
+    if session_type:
+        q = q.filter(SessionReview.session_type == session_type)
+    if rating:
+        q = q.filter(SessionReview.rating == rating)
+    if astrologer_id:
+        q = q.filter(SessionReview.astrologer_id == astrologer_id)
+    total = q.count()
+    rows = q.order_by(SessionReview.created_at.desc()).offset(skip).limit(limit).all()
+    items = [{
+        "id": r.id, "session_type": r.session_type, "session_id": r.session_id,
+        "rating": r.rating, "comment": r.comment, "is_visible": r.is_visible,
+        "reviewer_name": u.name if u else None, "user_id": r.user_id,
+        "astrologer_name": p.display_name if p else None, "astrologer_id": r.astrologer_id,
+        "created_at": _dt(r.created_at),
+    } for r, u, p in rows]
+    return {"total": total, "skip": skip, "limit": limit, "items": items}

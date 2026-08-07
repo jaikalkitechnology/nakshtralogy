@@ -39,6 +39,7 @@ const NAV: NavGroup[] = [
     { to: "/admin/google-auth", label: "Google OAuth", icon: KeyRound },
     { to: "/admin/web-push", label: "Web Push", icon: Bell },
     { to: "/admin/fcm-logs", label: "FCM Logs", icon: ScrollText },
+    { to: "/admin/comm-logs", label: "Communication Logs", icon: MessagesSquare },
     { to: "/admin/content", label: "Content Management", icon: FolderKanban },
     { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },
     { to: "/admin/support-tickets", label: "Support Tickets", icon: LifeBuoy },

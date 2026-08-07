@@ -58,6 +58,12 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
   bool _autoEnding = false;
   int _unhealthySeconds = 0;
   static const int _unhealthyLimit = 60; // seconds
+  int _reconnectAttempts = 0;   // rejoin tries during the grace window
+
+  // ── Answering-now / gifting ────────────────────────────────────────
+  Map<String, dynamic>? _pinnedQuestion;   // the question being answered now
+  double _giftGoal = 0;
+  List<dynamic> _topGifters = [];
 
   @override
   void initState() {
@@ -160,22 +166,50 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
   /// Watchdog: every few seconds, if the broadcast has been unhealthy
   /// (disconnected / app paused / camera off) continuously for longer than
   /// [_unhealthyLimit], the stream is auto-ended so it never sits "live" with a
-  /// black/frozen feed. A countdown is shown to the host before it fires.
+  /// black/frozen feed. During the grace window we actively try to RECONNECT
+  /// (rejoin the Agora channel) so a brief network blip never kills the stream.
+  /// A countdown is shown to the host before it fires.
   void _startWatchdog() {
     _watchdogTimer?.cancel();
     _watchdogTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       if (!_isLive || _autoEnding) return;
       final healthy = _connected && _videoOn && !_appPaused;
       if (healthy) {
+        _reconnectAttempts = 0;
         _markHealthy();
         return;
       }
       final elapsed = DateTime.now().difference(_lastHealthy).inSeconds;
       if (mounted) setState(() => _unhealthySeconds = elapsed);
+      // Grace: while disconnected (and not merely backgrounded), keep trying to
+      // rejoin the channel — roughly every 9s — before giving up at the limit.
+      if (!_connected && !_appPaused && elapsed >= 6 && elapsed % 9 < 3) {
+        _attemptRejoin();
+      }
       if (elapsed >= _unhealthyLimit) {
         _autoEndStream('connection lost');
       }
     });
+  }
+
+  /// Best-effort rejoin during the reconnect grace window.
+  Future<void> _attemptRejoin() async {
+    _reconnectAttempts++;
+    debugPrint('Live watchdog: reconnect attempt #$_reconnectAttempts');
+    try {
+      await _engine?.joinChannel(
+        token: widget.agoraToken,
+        channelId: widget.channelName,
+        uid: 0,
+        options: const ChannelMediaOptions(
+          publishMicrophoneTrack: true,
+          publishCameraTrack: true,
+          clientRoleType: ClientRoleType.clientRoleBroadcaster,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Live watchdog: rejoin failed: $e');
+    }
   }
 
   /// Silently end the stream (no confirm dialog) — used by the watchdog and the
@@ -240,21 +274,33 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     final v = await _api.getLiveViewers(widget.streamId);
     final q = await _api.getLiveQuestions(widget.streamId);
     final sc = await _api.getLiveSuperChats(widget.streamId);
+    final tg = await _api.getLiveTopGifters(widget.streamId);
     if (!mounted) return;
 
     // Detect new gifts in super chats
     final oldCount = _superChats.length;
+    Map<String, dynamic>? pinned;
+    for (final item in q) {
+      if (item is Map && item['is_pinned'] == true && item['is_host'] != true) {
+        pinned = Map<String, dynamic>.from(item);
+        break;
+      }
+    }
     setState(() {
       _viewerCount = v['total'] ?? 0;
       _peakViewers = v['peak'] ?? _peakViewers;
+      _giftGoal = (v['gift_goal'] as num?)?.toDouble() ?? _giftGoal;
       _questions = q;
       _superChats = sc;
-      // Update total gifts from super chats
+      _topGifters = tg;
+      _pinnedQuestion = pinned;
+      // Total gifts = super chats + gifts (server also tracks it on the stream).
+      final serverTotal = (v['total_gifts_amount'] as num?)?.toDouble();
       double total = 0;
       for (final c in sc) {
         total += (c['amount'] as num?)?.toDouble() ?? 0;
       }
-      _totalGifts = total;
+      _totalGifts = serverTotal ?? total;
     });
 
     // Show animation for new super chats
@@ -290,6 +336,58 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
         _sendingReply = false;
       });
     }
+  }
+
+  /// Pin a viewer question as "Answering now" (server unpins the rest).
+  Future<void> _pinQuestion(Map<String, dynamic> q) async {
+    final id = q['id']?.toString();
+    if (id == null) return;
+    setState(() => _pinnedQuestion = q);
+    try {
+      await _api.pinLiveQuestion(widget.streamId, id);
+    } catch (_) {}
+    _poll();
+  }
+
+  /// Clear the "Answering now" pin (marks it answered).
+  Future<void> _unpinQuestion() async {
+    final id = _pinnedQuestion?['id']?.toString();
+    setState(() => _pinnedQuestion = null);
+    if (id == null) return;
+    try {
+      await _api.unpinLiveQuestion(widget.streamId, id);
+    } catch (_) {}
+    _poll();
+  }
+
+  /// Prompt the host to set/update the gifting goal.
+  Future<void> _editGiftGoal() async {
+    final ctrl = TextEditingController(text: _giftGoal > 0 ? _giftGoal.toStringAsFixed(0) : '');
+    final value = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text('Set gifting goal', style: TextStyle(color: AppColors.primary)),
+        content: TextField(
+          controller: ctrl,
+          keyboardType: TextInputType.number,
+          style: const TextStyle(color: AppColors.textPrimary),
+          decoration: const InputDecoration(prefixText: '₹ ', hintText: 'e.g. 5000'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, double.tryParse(ctrl.text.trim()) ?? 0),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (value == null) return;
+    setState(() => _giftGoal = value);
+    try {
+      await _api.setLiveGiftGoal(widget.streamId, value);
+    } catch (_) {}
   }
 
   String get _formattedDuration {
@@ -367,15 +465,96 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                   const SizedBox(width: 4),
                   Text('$_viewerCount', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
                   const Spacer(),
-                  if (_totalGifts > 0) ...[
-                    Container(
+                  GestureDetector(
+                    onTap: _editGiftGoal,
+                    child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.3), borderRadius: BorderRadius.circular(6)),
-                      child: Text('\u20b9${_totalGifts.toStringAsFixed(0)}', style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Text('\u20b9${_totalGifts.toStringAsFixed(0)}', style: const TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                        const SizedBox(width: 3),
+                        const Icon(Icons.edit, color: AppColors.primary, size: 11),
+                      ]),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text('Peak: $_peakViewers', style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                ]),
+              ),
+            ),
+
+          // Gift goal progress + top-gifter chip (below the top bar)
+          if (_isLive && (_giftGoal > 0 || _topGifters.isNotEmpty))
+            Positioned(
+              top: 40, left: 12, right: 12,
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                if (_giftGoal > 0)
+                  Row(children: [
+                    const Text('\u{1F381}', style: TextStyle(fontSize: 12)),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: (_giftGoal > 0 ? (_totalGifts / _giftGoal) : 0).clamp(0.0, 1.0),
+                          minHeight: 8,
+                          backgroundColor: Colors.white24,
+                          valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 6),
-                  ],
-                  Text('Peak: $_peakViewers', style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                    Text('\u20b9${_totalGifts.toStringAsFixed(0)}/\u20b9${_giftGoal.toStringAsFixed(0)}',
+                        style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                  ]),
+                if (_topGifters.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(children: [
+                    const Text('\u{1F3C6}', style: TextStyle(fontSize: 12)),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        _topGifters.take(3).map((g) => '${g['name'] ?? 'User'} (\u20b9${(g['total_amount'] as num?)?.toStringAsFixed(0) ?? '0'})').join('   '),
+                        style: const TextStyle(color: AppColors.accent, fontSize: 10, fontWeight: FontWeight.w600),
+                        maxLines: 1, overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ]),
+                ],
+              ]),
+            ),
+
+          // Answering-now banner (pinned viewer question)
+          if (_isLive && _pinnedQuestion != null)
+            Positioned(
+              top: 86, left: 8, right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withOpacity(0.28),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.accent.withOpacity(0.7)),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.push_pin, color: AppColors.accent, size: 15),
+                  const SizedBox(width: 6),
+                  Expanded(child: RichText(
+                    maxLines: 2, overflow: TextOverflow.ellipsis,
+                    text: TextSpan(children: [
+                      const TextSpan(text: 'Answering now \u2014 ', style: TextStyle(color: AppColors.accent, fontSize: 11, fontWeight: FontWeight.w700)),
+                      TextSpan(text: '${_pinnedQuestion!['display_name'] ?? 'User'}: ', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                      TextSpan(text: _pinnedQuestion!['question'] ?? '', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                    ]),
+                  )),
+                  const SizedBox(width: 6),
+                  GestureDetector(
+                    onTap: _unpinQuestion,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(color: AppColors.success, borderRadius: BorderRadius.circular(10)),
+                      child: const Text('Done', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
                 ]),
               ),
             ),
@@ -383,7 +562,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
           // Connection / camera warning with auto-end countdown
           if (_isLive && _unhealthySeconds > 0)
             Positioned(
-              top: 44, left: 0, right: 0,
+              top: 132, left: 0, right: 0,
               child: Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -394,7 +573,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                     Text(
                       _appPaused
                           ? 'Stream paused — auto-ends in ${(_unhealthyLimit - _unhealthySeconds).clamp(0, _unhealthyLimit)}s'
-                          : 'Reconnecting — auto-ends in ${(_unhealthyLimit - _unhealthySeconds).clamp(0, _unhealthyLimit)}s',
+                          : 'Reconnecting${_reconnectAttempts > 0 ? " (try $_reconnectAttempts)" : ""} — auto-ends in ${(_unhealthyLimit - _unhealthySeconds).clamp(0, _unhealthyLimit)}s',
                       style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                   ]),
@@ -405,7 +584,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
           // Pinned super chats
           if (_isLive && _superChats.isNotEmpty)
             Positioned(
-              top: 48, left: 8, right: 8,
+              top: 172, left: 8, right: 8,
               child: SizedBox(
                 height: 56,
                 child: ListView.builder(
@@ -486,6 +665,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                                   setState(() => _replyToName = (name == null || name.isEmpty) ? 'User' : name);
                                   _replyFocus.requestFocus();
                                 },
+                          onLongPress: isHost ? null : () => _pinQuestion(q as Map<String, dynamic>),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
