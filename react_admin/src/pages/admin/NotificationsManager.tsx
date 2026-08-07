@@ -169,9 +169,34 @@ export default function NotificationsManager() {
             {report.error ? (
               <>Error: {report.error}</>
             ) : audience === "individual" ? (
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />
-                {report.push_delivered ? "Delivered to device ✓ (and saved in-app)" : (report.diagnosis || "Saved in-app; push not delivered")}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  {report.push_delivered ? "Delivered to device ✓ (and saved in-app)" : (report.diagnosis || "Saved in-app; push not delivered")}
+                </div>
+                {/* Full token string(s) the notification was sent to */}
+                {Array.isArray(report.results) && report.results.length > 0 ? (
+                  <div className="space-y-2">
+                    {report.results.map((r: any, i: number) => (
+                      <div key={i} className="rounded-lg border border-border bg-card/60 p-2 text-foreground">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            {r.target} token {r.ok ? <span className="text-green-400">· delivered</span> : <span className="text-destructive">· failed</span>}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => { navigator.clipboard?.writeText(r.token || ""); }}
+                            className="text-[11px] text-primary hover:underline"
+                          >Copy</button>
+                        </div>
+                        <code className="block break-all font-mono text-[11px] text-foreground/90">{r.token || "—"}</code>
+                        {!r.ok && r.error && <div className="mt-1 text-[11px] text-destructive break-all">{String(r.error)}</div>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-muted-foreground">No device token registered for this account — saved in-app only.</div>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-foreground">

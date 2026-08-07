@@ -1942,11 +1942,11 @@ def admin_send_notification(
     results = []
     if native:
         nres = _fcm.send_push_debug(native, role, req.title.strip(), req.body.strip(), data)
-        results.append({"target": "native", "token_tail": native[-12:], **nres})
+        results.append({"target": "native", "token_tail": native[-12:], "token": native, **nres})
         _clear_if_stale(db, user, native, nres)
     if web:
         wres = _fcm.send_push_debug(web, role, req.title.strip(), req.body.strip(), data)
-        results.append({"target": "web", "token_tail": web[-12:], **wres})
+        results.append({"target": "web", "token_tail": web[-12:], "token": web, **wres})
         _clear_if_stale(db, user, web, wres)
 
     delivered = any(r.get("ok") for r in results)
