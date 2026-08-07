@@ -4,6 +4,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
+import '../../services/api_service.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
@@ -31,6 +32,10 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  // Admin-controlled AI agent metadata keyed by domain key: {status, is_paid,
+  // price, unlocked, free_intro}. Empty until loaded (then we filter the list).
+  Map<String, dynamic> _agentMeta = {};
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +43,59 @@ class _HomeTabState extends State<HomeTab> {
       context.read<AstrologerBloc>().add(const AstrologerLoadRequested(limit: 10));
       context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
       context.read<ServiceBloc>().add(const ServiceLoadRequested());
+      _loadAgents();
     });
+  }
+
+  Future<void> _loadAgents() async {
+    final m = await ApiService().getAiAgents();
+    if (mounted && m.isNotEmpty) setState(() => _agentMeta = m);
+  }
+
+  /// Open an AI specialist, applying the admin paywall for paid agents.
+  Future<void> _openAiSpecialist(Map s) async {
+    final key = s['key'] as String;
+    final meta = _agentMeta[key] as Map<String, dynamic>?;
+    final label = HomeLabels.label(key, Localizations.localeOf(context), s['label'] as String);
+    final emoji = s['emoji'] as String;
+
+    if (meta != null && meta['is_paid'] == true && meta['unlocked'] != true) {
+      final price = (meta['price'] as num?)?.toDouble() ?? 0;
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppColors.card,
+          title: Row(children: [Text(emoji, style: const TextStyle(fontSize: 22)), const SizedBox(width: 8),
+            Expanded(child: Text(label, style: const TextStyle(color: AppColors.primary, fontSize: 16)))]),
+          content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+            if ((meta['free_intro'] ?? '').toString().isNotEmpty)
+              Padding(padding: const EdgeInsets.only(bottom: 12),
+                child: Text(meta['free_intro'].toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13))),
+            Text('Unlock this AI specialist for ₹${price.toStringAsFixed(0)} (one time). The amount is deducted from your wallet.',
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+            ElevatedButton(onPressed: () => Navigator.pop(ctx, true),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
+                child: Text('Unlock ₹${price.toStringAsFixed(0)}')),
+          ],
+        ),
+      );
+      if (ok != true) return;
+      final resp = await ApiService().unlockAiAgent(key);
+      if (resp['statusCode'] != 200) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(resp['detail'] ?? 'Could not unlock (check wallet balance)'),
+          backgroundColor: AppColors.error));
+        return;
+      }
+      _agentMeta = {..._agentMeta, key: {...meta, 'unlocked': true}};
+    }
+    if (!mounted) return;
+    await Navigator.push(context, MaterialPageRoute(
+      builder: (_) => AiSpecialistChatScreen(domainKey: key, label: label, emoji: emoji),
+    ));
   }
 
   @override
@@ -209,25 +266,30 @@ class _HomeTabState extends State<HomeTab> {
   ];
 
   Widget _aiSpecialistCarousel() {
+    // When agent metadata is loaded, show only the agents the admin has made
+    // visible to this user (published, or testing + tester). Before it loads (or
+    // if the backend doesn't support it yet) fall back to the full static list.
+    final visible = _agentMeta.isEmpty
+        ? _aiSpecialists
+        : _aiSpecialists.where((s) => _agentMeta.containsKey(s['key'])).toList();
+    if (visible.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: 100,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _aiSpecialists.length,
+        itemCount: visible.length,
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (_, i) {
-          final s = _aiSpecialists[i];
+          final s = visible[i];
           final color = s['color'] as Color;
+          final meta = _agentMeta[s['key']] as Map<String, dynamic>?;
+          final locked = meta != null && meta['is_paid'] == true && meta['unlocked'] != true;
+          final price = (meta?['price'] as num?)?.toDouble() ?? 0;
           return GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(
-              builder: (_) => AiSpecialistChatScreen(
-                domainKey: s['key'] as String,
-                label: HomeLabels.label(s['key'] as String, Localizations.localeOf(context), s['label'] as String),
-                emoji: s['emoji'] as String,
-              ),
-            )),
-            child: Container(
+            onTap: () => _openAiSpecialist(s),
+            child: Stack(children: [
+            Container(
               width: 90,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -242,7 +304,17 @@ class _HomeTabState extends State<HomeTab> {
                     maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
               ]),
             ),
-          );
+            if (locked)
+              Positioned(top: 4, right: 4, child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.lock, size: 9, color: AppColors.midnight),
+                  const SizedBox(width: 2),
+                  Text('₹${price.toStringAsFixed(0)}', style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.bold)),
+                ]),
+              )),
+          ]));
         },
       ),
     );

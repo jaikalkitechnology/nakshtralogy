@@ -427,6 +427,15 @@ export function bannerImageSrc(url?: string) {
   return `${BASE.replace(/\/api\/v1$/, "")}${url}`;
 }
 
+// ── AI agents (publish + pricing) ───────────────────────────────
+
+export async function adminAiAgents() {
+  return request(`/ai/admin/agents`);
+}
+export async function adminAiAgentUpdate(key: string, data: any) {
+  return request(`/ai/admin/agents/${key}`, { method: "PUT", body: JSON.stringify(data) });
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {
