@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/language_selector.dart';
 import '../../services/api_service.dart';
 import '../notifications/notification_screen.dart';
+import '../notifications/notification_hub_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -237,7 +238,11 @@ class _ProfileTabState extends State<ProfileTab> {
         final qual = profile['qualification'] ?? '';
         final rating = profile['rating'] ?? 0.0;
         final totalReviews = profile['total_reviews'] ?? 0;
-        final imgUrl = profile['profile_image_url'] ?? '';
+        // Prefer the uploaded photo; fall back to the Google-login avatar so
+        // Google users see their photo even before uploading one.
+        final uploadedImg = (profile['profile_image_url'] ?? '').toString();
+        final googleImg = (me['avatar_url'] ?? '').toString();
+        final imgUrl = uploadedImg.isNotEmpty ? uploadedImg : googleImg;
 
         return RefreshIndicator(
           color: AppColors.primary,
@@ -345,7 +350,7 @@ class _ProfileTabState extends State<ProfileTab> {
             InkWell(
               borderRadius: BorderRadius.circular(14),
               onTap: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
+                await Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationHubScreen(initialTab: 1)));
                 _loadUnread();
               },
               child: Container(

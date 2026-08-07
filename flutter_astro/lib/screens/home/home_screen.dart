@@ -32,6 +32,7 @@ import '../communication/incoming_call_screen.dart';
 import '../communication/active_call_screen.dart';
 import '../communication/live_host_screen.dart';
 import '../../widgets/notification_bell.dart';
+import '../notifications/notification_hub_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -267,8 +268,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ])
                   : Text(tabTitle ?? '', style: const TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold, fontSize: 18)),
               actions: [
-                // Notifications → requests inbox (with unread badge)
-                NotificationBell(onOpen: () => setState(() => _currentIndex = 2)),
+                // Notifications hub → Requests + all notifications (unread badge)
+                NotificationBell(onOpen: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const NotificationHubScreen(initialTab: 0)),
+                )),
                 // Realtime connection indicator
                 StreamBuilder(
                   stream: Stream.periodic(const Duration(seconds: 5)),

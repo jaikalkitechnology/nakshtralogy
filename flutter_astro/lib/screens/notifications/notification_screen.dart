@@ -4,7 +4,10 @@ import '../../services/api_service.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+  /// When true, renders just the list body (no Scaffold/AppBar) so it can be
+  /// embedded inside a tab (e.g. the notification hub).
+  final bool embedded;
+  const NotificationScreen({super.key, this.embedded = false});
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
@@ -39,6 +42,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final body = _loading
+        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : _items.isEmpty
+            ? _emptyView(l)
+            : RefreshIndicator(
+                onRefresh: _load,
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: _items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  itemBuilder: (_, i) => _notifCard(_items[i], l),
+                ),
+              );
+    if (widget.embedded) return body;
+
     final unread = _items.where((n) => n['is_read'] != true).length;
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -52,19 +70,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh, size: 20)),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : _items.isEmpty
-              ? _emptyView(l)
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(12),
-                    itemCount: _items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 6),
-                    itemBuilder: (_, i) => _notifCard(_items[i], l),
-                  ),
-                ),
+      body: body,
     );
   }
 

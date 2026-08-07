@@ -145,7 +145,9 @@ class _AstrologerProfileSheet extends StatelessWidget {
                         Stack(
                           children: [
                             AstroAvatar(
-                              imageUrl: a['profile_image_url']?.toString(),
+                              imageUrl: ((a['profile_image_url'] ?? '').toString().isNotEmpty)
+                                  ? a['profile_image_url']?.toString()
+                                  : a['user_avatar']?.toString(),
                               name: (a['display_name'] ?? '').toString(),
                               size: 80,
                             ),
