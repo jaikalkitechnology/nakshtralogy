@@ -115,6 +115,46 @@ class AdminLoginRequest(BaseModel):
     password: str
 
 
+def _approval_email_html(name: str, title: str, body: str) -> str:
+    safe_name = (name or "there").strip() or "there"
+    return f"""<!doctype html><html><body style="margin:0;background:#0B0B1F;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:520px;margin:0 auto;padding:32px 24px;color:#EDE4D0;">
+    <div style="text-align:center;font-size:22px;font-weight:800;color:#D4AF37;letter-spacing:1px;">Nakshatralogy</div>
+    <div style="margin-top:24px;background:#15132e;border:1px solid rgba(212,175,55,.2);border-radius:16px;padding:24px;">
+      <h2 style="margin:0 0 12px;color:#D4AF37;font-size:18px;">{title}</h2>
+      <p style="margin:0 0 10px;color:#EDE4D0;font-size:14px;">Hi {safe_name},</p>
+      <p style="margin:0;color:#C9C4D6;font-size:14px;line-height:1.6;">{body}</p>
+    </div>
+    <p style="margin-top:20px;text-align:center;color:#8A8298;font-size:11px;">This is an automated message from Nakshatralogy.</p>
+  </div></body></html>"""
+
+
+def _email_and_inapp(db, user, title: str, body: str, ntype: str,
+                     data: dict = None, email_subject: str = None) -> dict:
+    """Send an email + persist an in-app notification for an approval / rejection.
+    Best-effort: never breaks the admin action if SMTP is down. Returns a small
+    result the admin UI can show ({in_app, email})."""
+    result = {"in_app": False, "email": False}
+    if not user:
+        return result
+    try:
+        from app.routers.notification_router import save_notification
+        save_notification(db, user.id, title, body, ntype, data or {})
+        result["in_app"] = True
+    except Exception:
+        db.rollback()
+    try:
+        from app.services.email_service import send_email
+        if getattr(user, "email", None):
+            result["email"] = send_email(
+                db, user.email, email_subject or title,
+                _approval_email_html(getattr(user, "name", ""), title, body),
+            )
+    except Exception:
+        pass
+    return result
+
+
 class AdminUserResponse(BaseModel):
     id: str
     email: str
@@ -553,17 +593,22 @@ def approve_astrologer(
         user.profile_approved = True
     db.commit()
 
-    # FCM push to astrologer
-    if user and (user.fcm_token or user.fcm_token_web):
-        notify_generic(
-            fcm_token=user.fcm_token,
-            web_token=user.fcm_token_web,
-            title=t("label.notif.profile_approved_title", resolve_user_lang(user, lang)),
-            body=t("label.notif.profile_approved_body", resolve_user_lang(user, lang)),
-            role="astrologer",
-            data={"type": "profile_approved", "profile_id": profile.id},
-        )
-    return {"id": profile.id, "is_approved": True, "message": t("msg.astrologer_approved_notified", lang)}
+    # Notify astrologer: push + email + in-app.
+    notify = {"push": False, "email": False, "in_app": False}
+    if user:
+        ulang = resolve_user_lang(user, lang)
+        ptitle = t("label.notif.profile_approved_title", ulang)
+        pbody = t("label.notif.profile_approved_body", ulang)
+        data = {"type": "profile_approved", "profile_id": profile.id}
+        if user.fcm_token or user.fcm_token_web:
+            notify_generic(fcm_token=user.fcm_token, web_token=user.fcm_token_web,
+                           title=ptitle, body=pbody, role="astrologer", data=data)
+            notify["push"] = True
+        r = _email_and_inapp(db, user, ptitle, pbody, "profile_approved", data,
+                             email_subject="Your Nakshatralogy application is approved")
+        notify.update(r)
+    return {"id": profile.id, "is_approved": True, "notify": notify,
+            "message": t("msg.astrologer_approved_notified", lang)}
 
 
 @router.patch("/astrologers/{profile_id}/reject")
@@ -585,16 +630,21 @@ def reject_astrologer(
         user.profile_approved = False
     db.commit()
 
-    if user and (user.fcm_token or user.fcm_token_web):
-        notify_generic(
-            fcm_token=user.fcm_token,
-            web_token=user.fcm_token_web,
-            title=t("label.notif.profile_rejected_title", resolve_user_lang(user, lang)),
-            body=t("label.notif.profile_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
-            role="astrologer",
-            data={"type": "profile_rejected", "profile_id": profile.id, "reason": req.reason},
-        )
-    return {"id": profile.id, "is_approved": False, "reason": req.reason, "message": t("msg.astrologer_rejected_notified", lang)}
+    notify = {"push": False, "email": False, "in_app": False}
+    if user:
+        ulang = resolve_user_lang(user, lang)
+        ptitle = t("label.notif.profile_rejected_title", ulang)
+        pbody = t("label.notif.profile_rejected_body", ulang, reason=req.reason)
+        data = {"type": "profile_rejected", "profile_id": profile.id, "reason": req.reason}
+        if user.fcm_token or user.fcm_token_web:
+            notify_generic(fcm_token=user.fcm_token, web_token=user.fcm_token_web,
+                           title=ptitle, body=pbody, role="astrologer", data=data)
+            notify["push"] = True
+        r = _email_and_inapp(db, user, ptitle, pbody, "profile_rejected", data,
+                             email_subject="Update on your Nakshatralogy application")
+        notify.update(r)
+    return {"id": profile.id, "is_approved": False, "reason": req.reason, "notify": notify,
+            "message": t("msg.astrologer_rejected_notified", lang)}
 
 
 @router.patch("/astrologers/{profile_id}/block")
@@ -947,16 +997,22 @@ def approve_kyc(
         user.profile_approved = True
     db.commit()
 
-    if user and (user.fcm_token or user.fcm_token_web):
-        notify_generic(
-            fcm_token=user.fcm_token,
-            web_token=user.fcm_token_web,
-            title=t("label.notif.kyc_approved_title", resolve_user_lang(user, lang)),
-            body=t("label.notif.kyc_approved_body", resolve_user_lang(user, lang), doc_type=kyc.doc_type),
-            role=user.role if user.role in ("user", "astrologer") else "user",
-            data={"type": "kyc_approved", "kyc_id": kyc.id},
-        )
-    return {"id": kyc.id, "status": "approved", "message": t("msg.kyc_approved_notified", lang)}
+    notify = {"push": False, "email": False, "in_app": False}
+    if user:
+        ulang = resolve_user_lang(user, lang)
+        ptitle = t("label.notif.kyc_approved_title", ulang)
+        pbody = t("label.notif.kyc_approved_body", ulang, doc_type=kyc.doc_type)
+        role = user.role if user.role in ("user", "astrologer") else "user"
+        data = {"type": "kyc_approved", "kyc_id": kyc.id}
+        if user.fcm_token or user.fcm_token_web:
+            notify_generic(fcm_token=user.fcm_token, web_token=user.fcm_token_web,
+                           title=ptitle, body=pbody, role=role, data=data)
+            notify["push"] = True
+        r = _email_and_inapp(db, user, ptitle, pbody, "kyc_approved", data,
+                             email_subject="Your Nakshatralogy KYC is verified")
+        notify.update(r)
+    return {"id": kyc.id, "status": "approved", "notify": notify,
+            "message": t("msg.kyc_approved_notified", lang)}
 
 
 @router.patch("/kyc/{kyc_id}/reject")
@@ -977,16 +1033,22 @@ def reject_kyc(
     db.commit()
 
     user = db.query(User).filter(User.id == kyc.user_id).first()
-    if user and (user.fcm_token or user.fcm_token_web):
-        notify_generic(
-            fcm_token=user.fcm_token,
-            web_token=user.fcm_token_web,
-            title=t("label.notif.kyc_rejected_title", resolve_user_lang(user, lang)),
-            body=t("label.notif.kyc_rejected_body", resolve_user_lang(user, lang), reason=req.reason),
-            role=user.role if user.role in ("user", "astrologer") else "user",
-            data={"type": "kyc_rejected", "kyc_id": kyc.id, "reason": req.reason},
-        )
-    return {"id": kyc.id, "status": "rejected", "reason": req.reason, "message": t("msg.kyc_rejected_notified", lang)}
+    notify = {"push": False, "email": False, "in_app": False}
+    if user:
+        ulang = resolve_user_lang(user, lang)
+        ptitle = t("label.notif.kyc_rejected_title", ulang)
+        pbody = t("label.notif.kyc_rejected_body", ulang, reason=req.reason)
+        role = user.role if user.role in ("user", "astrologer") else "user"
+        data = {"type": "kyc_rejected", "kyc_id": kyc.id, "reason": req.reason}
+        if user.fcm_token or user.fcm_token_web:
+            notify_generic(fcm_token=user.fcm_token, web_token=user.fcm_token_web,
+                           title=ptitle, body=pbody, role=role, data=data)
+            notify["push"] = True
+        r = _email_and_inapp(db, user, ptitle, pbody, "kyc_rejected", data,
+                             email_subject="Update on your Nakshatralogy KYC")
+        notify.update(r)
+    return {"id": kyc.id, "status": "rejected", "reason": req.reason, "notify": notify,
+            "message": t("msg.kyc_rejected_notified", lang)}
 
 
 # ══════════════════════════════════════════════════════════════════════

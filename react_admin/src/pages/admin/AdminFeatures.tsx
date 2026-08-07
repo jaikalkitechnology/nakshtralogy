@@ -62,6 +62,16 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+
+/** Summarise the backend's notify result ({push,email,in_app}) as a toast. */
+function notifyToast(action: string, data: any) {
+  const n = data?.notify || {};
+  const sent = [n.push && "push", n.email && "email", n.in_app && "in-app"].filter(Boolean);
+  toast.success(
+    sent.length ? `${action} — notified via ${sent.join(", ")}` : `${action} — no device/email on file`,
+  );
+}
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
@@ -546,7 +556,8 @@ const AdminFeatures = () => {
   };
 
   const approveAstrologer = async (profileId: string) => {
-    await adminApproveAstrologer(profileId);
+    const { ok, data } = await adminApproveAstrologer(profileId);
+    if (ok) notifyToast("Astrologer approved", data);
     fetchData();
   };
 
@@ -612,6 +623,7 @@ const AdminFeatures = () => {
     if (!rejectReason.trim()) { alert("Reason is required"); return; }
     const { ok, data } = await adminRejectAstrologer(rejectDialog.astro.id, rejectReason.trim());
     if (!ok) { alert(data.detail || "Reject failed"); return; }
+    notifyToast("Astrologer rejected", data);
     setRejectDialog({ open: false, astro: null });
     setRejectReason("");
     fetchData();
@@ -619,7 +631,8 @@ const AdminFeatures = () => {
 
   // ── KYC actions ──────────────────────────────────────────────────
   const approveKycDoc = async (kycId: string) => {
-    await adminApproveKyc(kycId);
+    const { ok, data } = await adminApproveKyc(kycId);
+    if (ok) notifyToast("KYC approved", data);
     fetchData();
   };
   const openKycRejectDialog = (kyc: any) => {
@@ -630,6 +643,7 @@ const AdminFeatures = () => {
     if (!kycRejectReason.trim()) { alert("Reason is required"); return; }
     const { ok, data } = await adminRejectKyc(kycRejectDialog.kyc.id, kycRejectReason.trim());
     if (!ok) { alert(data.detail || "Reject failed"); return; }
+    notifyToast("KYC rejected", data);
     setKycRejectDialog({ open: false, kyc: null });
     setKycRejectReason("");
     fetchData();
