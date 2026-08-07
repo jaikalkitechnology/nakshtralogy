@@ -1,11 +1,11 @@
 {
-    "name": "Nakshatralogy for Astrologers",
-    "short_name": "Nakshatralogy Pro",
+    "name": "Nakshatralogy Astro",
+    "short_name": "Nakshatralogy Astro",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0A0A24",
     "theme_color": "#0A0A24",
-    "description": "Nakshatralogy Pro - the astrologer console for Vedic charts, live consultations, chat, and audio/video calls with your clients.",
+    "description": "Nakshatralogy Astro - the astrologer console for Vedic charts, live consultations, chat, and audio/video calls with your clients.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -37,7 +37,7 @@ async function initMessaging() {
     messaging.onBackgroundMessage(function (payload) {
       const n = payload.notification || {};
       const data = payload.data || {};
-      const title = n.title || data.title || 'Nakshatralogy Pro';
+      const title = n.title || data.title || 'Nakshatralogy Astro';
       self.registration.showNotification(title, {
         body: n.body || data.body || '',
         icon: '/icons/Icon-192.png',
