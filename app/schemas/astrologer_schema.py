@@ -149,6 +149,7 @@ class AstrologerListResponse(BaseModel):
     id: str
     display_name: Optional[str] = None
     profile_image_url: Optional[str] = None
+    user_avatar: Optional[str] = None   # Google-login photo fallback
     specializations: Optional[List[str]] = []
     languages: Optional[List[str]] = []
     experience_years: int = 0

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 type Audience = "user" | "astrologer" | "both";
 interface Faq {
-  id: string; audience: Audience; category?: string; question: string;
+  id: string; audience: Audience; lang?: string; category?: string; question: string;
   answer: string; sort_order: number; is_active: boolean;
 }
 
@@ -20,18 +20,43 @@ const AUDIENCES: { key: string; label: string }[] = [
   { key: "both", label: "Both" },
 ];
 
+// Supported languages (match the apps' locales). code → label.
+const LANGS: { code: string; label: string }[] = [
+  { code: "en", label: "English" },
+  { code: "hi", label: "हिन्दी (Hindi)" },
+  { code: "bn", label: "বাংলা (Bengali)" },
+  { code: "ta", label: "தமிழ் (Tamil)" },
+  { code: "te", label: "తెలుగు (Telugu)" },
+  { code: "mr", label: "मराठी (Marathi)" },
+  { code: "gu", label: "ગુજરાતી (Gujarati)" },
+  { code: "kn", label: "ಕನ್ನಡ (Kannada)" },
+  { code: "ml", label: "മലയാളം (Malayalam)" },
+  { code: "pa", label: "ਪੰਜਾਬੀ (Punjabi)" },
+  { code: "fr", label: "Français (French)" },
+  { code: "es", label: "Español (Spanish)" },
+  { code: "pt", label: "Português (Portuguese)" },
+  { code: "de", label: "Deutsch (German)" },
+  { code: "it", label: "Italiano (Italian)" },
+  { code: "ru", label: "Русский (Russian)" },
+  { code: "ar", label: "العربية (Arabic)" },
+  { code: "id", label: "Indonesia (Indonesian)" },
+  { code: "ja", label: "日本語 (Japanese)" },
+];
+const langLabel = (c?: string) => LANGS.find((l) => l.code === c)?.label || (c || "en");
+
 export default function FaqManager() {
   const [items, setItems] = useState<Faq[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<string>("");
+  const [langFilter, setLangFilter] = useState<string>("");
   const [editing, setEditing] = useState<Partial<Faq> | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const r = await adminFaqList(filter || undefined);
+    const r = await adminFaqList(filter || undefined, langFilter || undefined);
     if (r.ok) setItems(r.data?.items ?? []);
     setLoading(false);
-  }, [filter]);
+  }, [filter, langFilter]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -40,6 +65,7 @@ export default function FaqManager() {
     if (!editing.question?.trim() || !editing.answer?.trim()) { toast.error("Question and answer are required"); return; }
     const body = {
       audience: editing.audience || "user",
+      lang: editing.lang || "en",
       category: editing.category || null,
       question: editing.question,
       answer: editing.answer,
@@ -83,17 +109,27 @@ export default function FaqManager() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={seed}>Add recommended FAQ</Button>
           <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
-          <Button size="sm" onClick={() => setEditing({ audience: "user", is_active: true, sort_order: items.length })}><Plus className="w-4 h-4 mr-1" /> Add FAQ</Button>
+          <Button size="sm" onClick={() => setEditing({ audience: "user", lang: langFilter || "en", is_active: true, sort_order: items.length })}><Plus className="w-4 h-4 mr-1" /> Add FAQ</Button>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {AUDIENCES.map((a) => (
           <button key={a.key} onClick={() => setFilter(a.key)}
             className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${filter === a.key ? "bg-gradient-to-br from-gold to-gold-light text-primary-foreground" : "border border-border text-muted-foreground hover:text-foreground"}`}>
             {a.label}
           </button>
         ))}
+        <span className="mx-1 h-4 w-px bg-border" />
+        <select
+          value={langFilter}
+          onChange={(e) => setLangFilter(e.target.value)}
+          className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground"
+          title="Filter by language"
+        >
+          <option value="">All languages</option>
+          {LANGS.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
+        </select>
       </div>
 
       <div className="space-y-2">
@@ -104,6 +140,7 @@ export default function FaqManager() {
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <Badge className="bg-cosmic/15 text-foreground">{f.audience}</Badge>
+                  <Badge className="bg-cosmic/10 text-muted-foreground">{langLabel(f.lang)}</Badge>
                   {f.category && <Badge className="bg-primary/15 text-primary">{f.category}</Badge>}
                   {!f.is_active && <Badge className="bg-muted text-muted-foreground">hidden</Badge>}
                 </div>
@@ -127,11 +164,20 @@ export default function FaqManager() {
               <h3 className="font-display text-lg text-foreground">{editing.id ? "Edit FAQ" : "Add FAQ"}</h3>
               <button onClick={() => setEditing(null)} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {(["user", "astrologer", "both"] as Audience[]).map((a) => (
                 <button key={a} onClick={() => setEditing({ ...editing, audience: a })}
                   className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${editing.audience === a ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground"}`}>{a}</button>
               ))}
+              <span className="mx-1 h-4 w-px bg-border" />
+              <select
+                value={editing.lang || "en"}
+                onChange={(e) => setEditing({ ...editing, lang: e.target.value })}
+                className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+                title="Language"
+              >
+                {LANGS.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
+              </select>
             </div>
             <Input placeholder="Category (e.g. Notifications)" value={editing.category || ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} />
             <Input placeholder="Question" value={editing.question || ""} onChange={(e) => setEditing({ ...editing, question: e.target.value })} />

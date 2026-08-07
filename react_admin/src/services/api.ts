@@ -349,9 +349,12 @@ export async function adminLogsSessionReviews(params: Record<string, any> = {}) 
 
 // ── FAQ management ───────────────────────────────────────────────
 
-export async function adminFaqList(audience?: string) {
-  const qs = audience ? `?audience=${audience}` : "";
-  return request(`/faq/admin${qs}`);
+export async function adminFaqList(audience?: string, lang?: string) {
+  const p = new URLSearchParams();
+  if (audience) p.set("audience", audience);
+  if (lang) p.set("lang", lang);
+  const qs = p.toString();
+  return request(`/faq/admin${qs ? `?${qs}` : ""}`);
 }
 export async function adminFaqCreate(data: any) {
   return request(`/faq/admin`, { method: "POST", body: JSON.stringify(data) });
@@ -384,6 +387,53 @@ export async function adminSupportStatus(id: string, status: string) {
   return request(`/support/admin/tickets/${id}/status`, {
     method: "PATCH", body: JSON.stringify({ status }),
   });
+}
+
+// ── Banners (home slider) ───────────────────────────────────────
+
+export async function adminBannerList(audience?: string) {
+  const qs = audience ? `?audience=${audience}` : "";
+  return request(`/banners/admin${qs}`);
+}
+export async function adminBannerCreate(data: any) {
+  return request(`/banners/admin`, { method: "POST", body: JSON.stringify(data) });
+}
+export async function adminBannerUpdate(id: string, data: any) {
+  return request(`/banners/admin/${id}`, { method: "PUT", body: JSON.stringify(data) });
+}
+export async function adminBannerDelete(id: string) {
+  return request(`/banners/admin/${id}`, { method: "DELETE" });
+}
+export async function adminBannerUpload(file: File): Promise<{ ok: boolean; media_url?: string; error?: string }> {
+  const token = getToken();
+  const fd = new FormData();
+  fd.append("file", file);
+  try {
+    const res = await fetch(`${BASE}/banners/admin/upload`, {
+      method: "POST",
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      body: fd,
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, media_url: data?.media_url, error: data?.detail };
+  } catch (e: any) {
+    return { ok: false, error: String(e) };
+  }
+}
+// Absolute URL for a possibly-relative banner image path.
+export function bannerImageSrc(url?: string) {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `${BASE.replace(/\/api\/v1$/, "")}${url}`;
+}
+
+// ── AI agents (publish + pricing) ───────────────────────────────
+
+export async function adminAiAgents() {
+  return request(`/ai/admin/agents`);
+}
+export async function adminAiAgentUpdate(key: string, data: any) {
+  return request(`/ai/admin/agents/${key}`, { method: "PUT", body: JSON.stringify(data) });
 }
 
 // ── KYC ──────────────────────────────────────────────────────────

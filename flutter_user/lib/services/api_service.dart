@@ -1190,6 +1190,33 @@ class ApiService {
     await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
   }
 
+  /// AI agents visible to me with pricing + unlock state (keyed by domain key).
+  Future<Map<String, dynamic>> getAiAgents() async {
+    try {
+      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/ai/agents'), headers: _headers);
+      if (resp.statusCode == 200) {
+        final items = (jsonDecode(resp.body)['items'] as List?) ?? [];
+        return {for (final a in items) (a['key'] as String): a as Map<String, dynamic>};
+      }
+    } catch (_) {}
+    return {};
+  }
+
+  /// Pay to unlock a paid AI agent. Returns {statusCode, ...}.
+  Future<Map<String, dynamic>> unlockAiAgent(String key) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.baseUrl}/ai/agents/$key/unlock'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Active home-screen banners for this app (user audience).
+  Future<List<dynamic>> getBanners() async {
+    try {
+      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/banners?audience=user'), headers: _headers);
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
   /// Active FAQ for this app (user audience).
   Future<List<dynamic>> getFaq() async {
     try {

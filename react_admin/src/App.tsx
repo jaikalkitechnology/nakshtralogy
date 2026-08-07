@@ -19,6 +19,8 @@ import NotificationsManager from "./pages/admin/NotificationsManager";
 import CommunicationLogs from "./pages/admin/CommunicationLogs";
 import FaqManager from "./pages/admin/FaqManager";
 import SupportTickets from "./pages/admin/SupportTickets";
+import BannerManager from "./pages/admin/BannerManager";
+import AiAgentsManager from "./pages/admin/AiAgentsManager";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +65,8 @@ const App = () => (
               <Route path="/admin/comm-logs" element={<RequireAdmin><AdminShell><CommunicationLogs /></AdminShell></RequireAdmin>} />
               <Route path="/admin/faq" element={<RequireAdmin><AdminShell><FaqManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/support-tickets" element={<RequireAdmin><AdminShell><SupportTickets /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/banners" element={<RequireAdmin><AdminShell><BannerManager /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/ai-agents" element={<RequireAdmin><AdminShell><AiAgentsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}

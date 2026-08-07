@@ -567,6 +567,7 @@ class FaqItem(Base):
 
     id = Column(String(36), primary_key=True, default=new_uuid)
     audience = Column(String(20), default="user", index=True)  # user | astrologer | both
+    lang = Column(String(8), default="en", index=True)         # language code (en, hi, ta, …)
     category = Column(String(80), nullable=True)               # Notifications | Calls | Payments…
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
@@ -577,6 +578,26 @@ class FaqItem(Base):
 
     __table_args__ = (
         Index("ix_faq_audience_active", "audience", "is_active", "sort_order"),
+    )
+
+
+class Banner(Base):
+    """Promotional banner shown in a slider on the apps' home screen.
+    Admin-managed; separate per audience so each app shows its own set."""
+    __tablename__ = "banners"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    audience = Column(String(20), default="user", index=True)  # user | astrologer | both
+    title = Column(String(200), nullable=True)
+    image_url = Column(Text, nullable=False)
+    link_url = Column(Text, nullable=True)                     # optional tap target (URL / deep link)
+    sort_order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_banner_audience_active", "audience", "is_active", "sort_order"),
     )
 
 
@@ -1130,6 +1151,36 @@ class AiDomainConfig(Base):
     sort_order = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AiAgentSetting(Base):
+    """Admin control overlay for an AI specialist agent (keyed by domain key):
+    publish status, test-user allow-list, and pricing. Kept separate from the
+    engine's AiDomainConfig so publishing/pricing never touches astrology logic."""
+    __tablename__ = "ai_agent_settings"
+
+    domain_key = Column(String(40), primary_key=True)
+    status = Column(String(20), default="published", index=True)  # draft | testing | published
+    test_user_ids = Column(JSON, default=[])                       # visible to these users when testing
+    is_paid = Column(Boolean, default=False)
+    price = Column(Numeric(10, 2), default=0)                      # one-time unlock price (INR)
+    free_intro = Column(Text, nullable=True)                       # optional teaser shown before unlock
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AiAgentUnlock(Base):
+    """Records that a user has unlocked (paid for) a paid AI agent."""
+    __tablename__ = "ai_agent_unlocks"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    domain_key = Column(String(40), nullable=False, index=True)
+    amount = Column(Numeric(10, 2), default=0)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_ai_unlock_user_domain", "user_id", "domain_key", unique=True),
+    )
 
 
 class AiEngine(Base):
