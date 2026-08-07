@@ -65,6 +65,15 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
   double _giftGoal = 0;
   List<dynamic> _topGifters = [];
 
+  // ── Camera preview ────────────────────────────────────────────────
+  // iOS Safari blocks getUserMedia unless it starts from a user gesture, so on
+  // web the camera preview is only started when the astrologer taps (Android
+  // Chrome is more permissive but the same tap works there too). Native starts
+  // automatically.
+  bool _engineReady = false;
+  bool _cameraStarted = false;
+  bool _cameraStarting = false;
+
   @override
   void initState() {
     super.initState();
@@ -120,8 +129,16 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
       ));
 
       await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-      await _engine!.enableVideo();
-      await _engine!.startPreview();
+      _engineReady = true;
+      // On native, start the camera right away. On web, WAIT for a user tap —
+      // iOS Safari silently blocks getUserMedia (→ black screen) when it isn't
+      // triggered by a gesture, which is why the preview worked on Android web
+      // but not on iOS. The pre-live overlay shows a "Start Camera" button.
+      if (!kIsWeb) {
+        await _startCamera();
+      } else if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
       // Graceful fallback (e.g. unsupported browser) — don't crash the screen.
       debugPrint('Agora live init error: $e');
@@ -134,7 +151,35 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
     }
   }
 
+  /// Enable video + start the local camera preview. MUST be invoked from a user
+  /// gesture on web (iOS Safari requirement). Safe to call more than once.
+  Future<void> _startCamera() async {
+    if (_engine == null || _cameraStarting || _cameraStarted) return;
+    _cameraStarting = true;
+    if (mounted) setState(() {});
+    try {
+      await _engine!.enableVideo();
+      await _engine!.startPreview();
+      _cameraStarted = true;
+    } catch (e) {
+      debugPrint('startCamera error: $e');
+      if (mounted && kIsWeb) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Could not access the camera. Check browser permissions and try again.'),
+          backgroundColor: AppColors.error, duration: Duration(seconds: 5),
+        ));
+      }
+    } finally {
+      _cameraStarting = false;
+      if (mounted) setState(() {});
+    }
+  }
+
   Future<void> _goLive() async {
+    if (_engine == null) return;
+    // Make sure the camera is running (on web the user tapped Start Camera; this
+    // is a safety net so we never go live with no video track).
+    if (!_cameraStarted) await _startCamera();
     await _engine!.joinChannel(
       token: widget.agoraToken,
       channelId: widget.channelName,
@@ -431,14 +476,32 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                   const SizedBox(height: 16),
                   Text(widget.title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                   const SizedBox(height: 8),
-                  const Text('Preview your camera before going live', style: TextStyle(color: Colors.white60, fontSize: 14)),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: _goLive,
-                    icon: const Icon(Icons.videocam),
-                    label: Text(AppLocalizations.of(context)?.goLive ?? 'Go Live'),
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, minimumSize: const Size(180, 52)),
+                  Text(
+                    (kIsWeb && !_cameraStarted)
+                        ? 'Tap “Start Camera” to preview (your browser will ask for camera access)'
+                        : 'Preview your camera before going live',
+                    style: const TextStyle(color: Colors.white60, fontSize: 14), textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 24),
+                  // On web, the camera must be started by a tap first (iOS Safari
+                  // blocks auto getUserMedia → black screen). After it's running,
+                  // show Go Live.
+                  if (kIsWeb && !_cameraStarted)
+                    ElevatedButton.icon(
+                      onPressed: (_engineReady && !_cameraStarting) ? _startCamera : null,
+                      icon: _cameraStarting
+                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Icon(Icons.videocam),
+                      label: Text(_cameraStarting ? 'Starting…' : 'Start Camera'),
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white, minimumSize: const Size(180, 52)),
+                    )
+                  else
+                    ElevatedButton.icon(
+                      onPressed: _goLive,
+                      icon: const Icon(Icons.videocam),
+                      label: Text(AppLocalizations.of(context)?.goLive ?? 'Go Live'),
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white, minimumSize: const Size(180, 52)),
+                    ),
                 ]),
               ),
             ),
