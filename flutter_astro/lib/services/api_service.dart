@@ -1022,6 +1022,15 @@ class ApiService {
 
   // ═══ FAQ / Customer Support ═══
 
+  /// Active home-screen banners for this app (astrologer audience).
+  Future<List<dynamic>> getBanners() async {
+    try {
+      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/banners?audience=astrologer'), headers: _headers);
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
   /// Active FAQ for this app (astrologer audience).
   Future<List<dynamic>> getFaq() async {
     try {

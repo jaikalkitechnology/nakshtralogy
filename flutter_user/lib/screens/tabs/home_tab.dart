@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
+import '../../widgets/banner_slider.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
@@ -54,6 +55,12 @@ class _HomeTabState extends State<HomeTab> {
         children: [
           // Hero banner
           _heroBanner(l),
+
+          // Admin-managed promotional banners (slider)
+          const Padding(
+            padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: BannerSlider(),
+          ),
 
           // Quick actions
           _quickActions(l),

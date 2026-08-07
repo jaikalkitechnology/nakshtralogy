@@ -1190,6 +1190,15 @@ class ApiService {
     await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
   }
 
+  /// Active home-screen banners for this app (user audience).
+  Future<List<dynamic>> getBanners() async {
+    try {
+      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/banners?audience=user'), headers: _headers);
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
   /// Active FAQ for this app (user audience).
   Future<List<dynamic>> getFaq() async {
     try {

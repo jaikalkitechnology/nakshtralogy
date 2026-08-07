@@ -183,6 +183,9 @@ class _HomeTabState extends State<HomeTab> {
               _GreetingHero(greeting: greeting, name: firstName, subtitle: l.yourCosmicDashboard, imageUrl: photoUrl),
               const SizedBox(height: 18),
 
+              // ══════════════════════ PROMO BANNERS (slider) ══════════════
+              const BannerSlider(),
+
               // ══════════════ APPLICATION REJECTED — RE-EDIT ══════════════
               if (rejectionReason != null) ...[
                 _RejectionBanner(

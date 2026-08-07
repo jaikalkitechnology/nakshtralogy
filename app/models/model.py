@@ -581,6 +581,26 @@ class FaqItem(Base):
     )
 
 
+class Banner(Base):
+    """Promotional banner shown in a slider on the apps' home screen.
+    Admin-managed; separate per audience so each app shows its own set."""
+    __tablename__ = "banners"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    audience = Column(String(20), default="user", index=True)  # user | astrologer | both
+    title = Column(String(200), nullable=True)
+    image_url = Column(Text, nullable=False)
+    link_url = Column(Text, nullable=True)                     # optional tap target (URL / deep link)
+    sort_order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_banner_audience_active", "audience", "is_active", "sort_order"),
+    )
+
+
 class SupportTicket(Base):
     """A support / complaint ticket raised from the user or astrologer app."""
     __tablename__ = "support_tickets"
