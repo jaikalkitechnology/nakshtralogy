@@ -592,11 +592,19 @@ def list_astrologers(
         )
         .offset(skip).limit(limit).all()
     )
+    # Map user_id → avatar_url so the app can fall back to the Google photo when
+    # the astrologer hasn't uploaded a profile image.
+    user_ids = [p.user_id for p in profiles]
+    avatars = {}
+    if user_ids:
+        for u in db.query(User).filter(User.id.in_(user_ids)).all():
+            avatars[u.id] = u.avatar_url
     return [
         AstrologerListResponse(
             id=p.id,
             display_name=p.display_name,
             profile_image_url=p.profile_image_url,
+            user_avatar=avatars.get(p.user_id),
             specializations=p.specializations or [],
             languages=p.languages or [],
             experience_years=p.experience_years,
