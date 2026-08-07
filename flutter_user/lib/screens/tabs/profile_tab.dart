@@ -8,6 +8,8 @@ import '../../services/api_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
+import '../../widgets/legal_section.dart';
+import '../support/support_screen.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/web_notification_tile.dart';
@@ -614,6 +616,41 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               ),
               const SizedBox(height: 12),
+
+              // ============ CUSTOMER SUPPORT ============
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SupportScreen()),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(children: [
+                      const Icon(Icons.support_agent, color: AppColors.gold, size: 22),
+                      const SizedBox(width: 12),
+                      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('Customer Support', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text('FAQ & raise a ticket', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                      ])),
+                      const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                    ]),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // ============ ABOUT & LEGAL ============
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: LegalSection(),
+              ),
 
               // ============ LOGOUT ============
               Container(

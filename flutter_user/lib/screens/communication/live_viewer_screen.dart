@@ -377,8 +377,13 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: AppColors.card,
-                  backgroundImage: widget.hostAvatar != null ? NetworkImage(widget.hostAvatar!) : null,
-                  child: widget.hostAvatar == null ? const Text('\u{1F52E}', style: TextStyle(fontSize: 16)) : null,
+                  backgroundImage: (widget.hostAvatar != null && widget.hostAvatar!.isNotEmpty)
+                      ? NetworkImage(
+                          ApiService.resolveMediaUrl(widget.hostAvatar!),
+                          headers: ApiService().mediaHeadersFor(widget.hostAvatar!),
+                        )
+                      : null,
+                  child: (widget.hostAvatar == null || widget.hostAvatar!.isEmpty) ? const Text('\u{1F52E}', style: TextStyle(fontSize: 16)) : null,
                 ),
                 const SizedBox(width: 8),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [

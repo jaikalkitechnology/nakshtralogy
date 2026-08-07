@@ -347,6 +347,45 @@ export async function adminLogsSessionReviews(params: Record<string, any> = {}) 
   return request(`/admin/logs/session-reviews${qs ? `?${qs}` : ""}`);
 }
 
+// ── FAQ management ───────────────────────────────────────────────
+
+export async function adminFaqList(audience?: string) {
+  const qs = audience ? `?audience=${audience}` : "";
+  return request(`/faq/admin${qs}`);
+}
+export async function adminFaqCreate(data: any) {
+  return request(`/faq/admin`, { method: "POST", body: JSON.stringify(data) });
+}
+export async function adminFaqUpdate(id: string, data: any) {
+  return request(`/faq/admin/${id}`, { method: "PUT", body: JSON.stringify(data) });
+}
+export async function adminFaqDelete(id: string) {
+  return request(`/faq/admin/${id}`, { method: "DELETE" });
+}
+export async function adminFaqSeed() {
+  return request(`/faq/admin/seed`, { method: "POST" });
+}
+
+// ── Support tickets (helpdesk) ──────────────────────────────────
+
+export async function adminSupportTickets(params: Record<string, any> = {}) {
+  const qs = new URLSearchParams(params).toString();
+  return request(`/support/admin/tickets${qs ? `?${qs}` : ""}`);
+}
+export async function adminSupportTicketDetail(id: string) {
+  return request(`/support/admin/tickets/${id}`);
+}
+export async function adminSupportReply(id: string, message: string, isInternal: boolean) {
+  return request(`/support/admin/tickets/${id}/reply`, {
+    method: "POST", body: JSON.stringify({ message, is_internal: isInternal }),
+  });
+}
+export async function adminSupportStatus(id: string, status: string) {
+  return request(`/support/admin/tickets/${id}/status`, {
+    method: "PATCH", body: JSON.stringify({ status }),
+  });
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {
