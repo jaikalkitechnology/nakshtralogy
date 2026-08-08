@@ -26,7 +26,7 @@ from app.core.security import (
     hash_password, verify_password,
     create_access_token, create_refresh_token,
     decode_access_token, hash_token,
-    generate_reset_token, verify_google_token,
+    generate_reset_token, verify_google_token, generate_otp,
 )
 from app.core.config import settings
 from app.core.dependencies import get_current_user, get_lang_user
@@ -38,6 +38,7 @@ from app.schemas.user_schema import (
     ForgotPasswordRequest, ResetPasswordRequest, RefreshTokenRequest,
     TokenResponse, UserResponse, UserUpdateRequest,
     ChangePasswordRequest, MessageResponse, RegionOverrideRequest,
+    UserSignupOtpRequest, UserVerifyOtpRequest, UserResendOtpRequest,
 )
 from fastapi import Request, Header
 
@@ -117,6 +118,126 @@ def signup(req: UserSignupRequest, db: Session = Depends(get_db), lang: str = De
     db.refresh(user)
 
     return _issue_tokens(user, db)
+
+
+# ── Email-OTP verified signup (mandatory phone → seeds region) ─────────
+
+def _seed_region_from_signup(user: User, country_code: Optional[str], phone: Optional[str]) -> None:
+    """Set region/country_code/currency from the phone's country at signup.
+
+    The picker sends an explicit ISO country_code; if absent we derive it from
+    the phone's calling code. This is an automatic (non-manual) seed — the user
+    can still override the region later in Settings, which sets region_manual.
+    """
+    cc = (country_code or "").strip().upper() or None
+    if not cc:
+        cc = region_util.country_from_phone(phone)
+    if cc:
+        user.country_code = cc
+        user.region = region_util.region_for_country(cc)
+
+
+@router.post("/signup/send-otp", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
+def user_signup_send_otp(req: UserSignupOtpRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+    """Start manual signup: create an UNVERIFIED user and email an OTP.
+
+    Phone (with its country code) is mandatory — it reserves the phone and
+    seeds the region deterministically. No tokens are issued until the OTP is
+    verified. Re-requesting for a pending unverified account refreshes the OTP.
+    """
+    existing = db.query(User).filter(User.email == req.email).first()
+    # Email taken by any verified account, or reserved by a pending account of a
+    # different role → cannot start a user signup here.
+    if existing and (existing.is_verified or existing.role != "user"):
+        raise HTTPException(status_code=409, detail=t("err.email_registered", lang))
+
+    phone_owner = db.query(User).filter(User.phone == req.phone).first()
+    if phone_owner and (not existing or phone_owner.id != existing.id):
+        raise HTTPException(status_code=409, detail=t("err.phone_registered", lang))
+
+    otp = generate_otp()
+    expires = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRE_MINUTES)
+
+    if existing and not existing.is_verified:
+        existing.name = req.name
+        existing.phone = req.phone
+        existing.password_hash = hash_password(req.password)
+        existing.otp_code = otp
+        existing.otp_expires_at = expires
+        if req.fcm_token:
+            existing.fcm_token = req.fcm_token
+        _seed_region_from_signup(existing, req.country_code, req.phone)
+        user = existing
+    else:
+        user = User(
+            email=req.email,
+            phone=req.phone,
+            password_hash=hash_password(req.password),
+            name=req.name,
+            role="user",
+            is_verified=False,
+            otp_code=otp,
+            otp_expires_at=expires,
+            fcm_token=req.fcm_token,
+        )
+        _seed_region_from_signup(user, req.country_code, req.phone)
+        db.add(user)
+        db.flush()
+        db.add(Wallet(user_id=user.id))
+    db.commit()
+
+    from app.services.email_service import send_otp_email
+    sent = send_otp_email(
+        db, to=user.email, name=user.name or "", otp=otp,
+        minutes=settings.OTP_EXPIRE_MINUTES,
+        purpose="verify your Nakshatralogy account",
+    )
+    if not sent:
+        raise HTTPException(status_code=502, detail=t("err.otp_email_failed", lang))
+    return MessageResponse(message=t("msg.otp_sent", lang))
+
+
+@router.post("/signup/verify-otp", response_model=TokenResponse)
+def user_signup_verify_otp(req: UserVerifyOtpRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+    """Verify the emailed OTP → mark verified → issue tokens (logged in)."""
+    user = db.query(User).filter(User.email == req.email, User.role == "user").first()
+    if not user or not user.otp_code:
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+    if not user.otp_expires_at or user.otp_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail=t("err.otp_expired", lang))
+    if user.otp_code != req.otp.strip():
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+
+    user.is_verified = True
+    user.otp_code = None
+    user.otp_expires_at = None
+    if req.fcm_token:
+        from app.core.push_tokens import claim_token
+        claim_token(db, user, req.fcm_token, is_web=False)
+    db.commit()
+    db.refresh(user)
+    return _issue_tokens(user, db)
+
+
+@router.post("/signup/resend-otp", response_model=MessageResponse)
+def user_signup_resend_otp(req: UserResendOtpRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+    """Re-send the signup OTP for a pending (unverified) user. Never leaks
+    whether the account exists or is already verified."""
+    user = db.query(User).filter(User.email == req.email, User.role == "user").first()
+    if not user or user.is_verified:
+        return MessageResponse(message=t("msg.otp_sent", lang))
+
+    otp = generate_otp()
+    user.otp_code = otp
+    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRE_MINUTES)
+    db.commit()
+    from app.services.email_service import send_otp_email
+    send_otp_email(
+        db, to=user.email, name=user.name or "", otp=otp,
+        minutes=settings.OTP_EXPIRE_MINUTES,
+        purpose="verify your Nakshatralogy account",
+    )
+    return MessageResponse(message=t("msg.otp_sent", lang))
 
 
 # ── Login ─────────────────────────────────────────────────────────────
@@ -370,6 +491,17 @@ def update_me(
     if update_data.get("preferred_language"):
         from app.core.i18n import normalize_lang
         update_data["preferred_language"] = normalize_lang(update_data["preferred_language"])
+    # A phone with its country (from the picker) seeds the region deterministically
+    # unless the user has already manually chosen a region in Settings. This is
+    # how Google-signup completion and the one-time phone prompt set IN vs INTL.
+    cc = (update_data.pop("country_code", None) or "").strip().upper() or None
+    if not cc and update_data.get("phone"):
+        cc = region_util.country_from_phone(update_data["phone"])
+    if cc:
+        current_user.country_code = cc
+        if not current_user.region_manual:
+            current_user.region = region_util.region_for_country(cc)
+            current_user.currency = region_util.currency_for_region(current_user.region)
     # An fcm_token here syncs a device token — claim it (detach from other
     # accounts). An empty string means "forget my token" (logout).
     if "fcm_token" in update_data:

@@ -5,6 +5,9 @@ class ApiConstants {
 
   // User Auth
   static const String userSignup = '$userBase/signup';
+  static const String userSignupSendOtp = '$userBase/signup/send-otp';
+  static const String userSignupVerifyOtp = '$userBase/signup/verify-otp';
+  static const String userSignupResendOtp = '$userBase/signup/resend-otp';
   static const String userLogin = '$userBase/login';
   static const String userGoogleLogin = '$userBase/google-login';
   static const String userForgotPassword = '$userBase/forgot-password';

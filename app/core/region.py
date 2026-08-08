@@ -43,6 +43,54 @@ _GEO_CACHE: dict = {}
 _GEO_TTL = 60 * 60 * 6  # 6h
 
 
+# Phone calling-code → representative ISO-3166 alpha-2 country. Region only
+# cares IN vs INTL, so the map just has to get India (+91) right and give a
+# reasonable ISO for everyone else. Longest-prefix match handles the shared
+# North-American +1 and the multi-digit codes. Ordered longest-first at lookup.
+_DIAL_TO_ISO = {
+    "91": "IN", "1": "US", "44": "GB", "61": "AU", "64": "NZ", "27": "ZA",
+    "971": "AE", "966": "SA", "974": "QA", "965": "KW", "973": "BH", "968": "OM",
+    "60": "MY", "65": "SG", "62": "ID", "66": "TH", "63": "PH", "84": "VN",
+    "94": "LK", "880": "BD", "977": "NP", "92": "PK", "93": "AF", "95": "MM",
+    "86": "CN", "81": "JP", "82": "KR", "852": "HK", "886": "TW",
+    "33": "FR", "49": "DE", "39": "IT", "34": "ES", "351": "PT", "31": "NL",
+    "32": "BE", "41": "CH", "43": "AT", "46": "SE", "47": "NO", "45": "DK",
+    "358": "FI", "353": "IE", "48": "PL", "30": "GR", "7": "RU", "380": "UA",
+    "90": "TR", "972": "IL", "20": "EG", "234": "NG", "254": "KE", "255": "TZ",
+    "233": "GH", "256": "UG", "212": "MA", "213": "DZ", "216": "TN",
+    "55": "BR", "52": "MX", "54": "AR", "56": "CL", "57": "CO", "51": "PE",
+}
+
+
+def country_from_phone(phone: Optional[str]) -> Optional[str]:
+    """Best-effort ISO alpha-2 from an E.164-ish phone (leading `+<code>`).
+
+    Only used as a fallback when the client does not send an explicit country
+    code. Returns None when no `+` prefix is present so callers keep their own
+    default. Never raises.
+    """
+    if not phone:
+        return None
+    s = str(phone).strip()
+    if not s.startswith("+"):
+        return None
+    digits = "".join(ch for ch in s[1:] if ch.isdigit())
+    if not digits:
+        return None
+    # Longest calling-code prefix wins (codes are 1–3 digits).
+    for length in (3, 2, 1):
+        if len(digits) >= length and digits[:length] in _DIAL_TO_ISO:
+            return _DIAL_TO_ISO[digits[:length]]
+    return None
+
+
+def region_from_phone(phone: Optional[str]) -> Tuple[str, Optional[str]]:
+    """Resolve (region, country_code) from a phone's calling code. India default
+    when the code is unknown/absent so existing behaviour is preserved."""
+    cc = country_from_phone(phone)
+    return region_for_country(cc), cc
+
+
 def region_for_country(country_code: Optional[str]) -> str:
     """Map an ISO-3166 alpha-2 country code to a region. India → IN, else INTL.
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
@@ -6,12 +7,14 @@ import '../../services/app_mode.dart';
 import '../../services/api_service.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
+import '../../widgets/country_code_picker.dart';
 import '../../main.dart';
 
-/// First-time Google users land here after the redirect / native verify: pick
-/// region (drives the AppMode language set + currency) and preferred language,
-/// then enter the app. Tokens are already stored, so this only enriches the
-/// profile — no astrology logic is touched.
+/// First-time Google users land here after the redirect / native verify. We
+/// collect a mandatory phone number (with country code) — this both completes
+/// the profile and deterministically seeds the region (IN vs INTL → language
+/// set + currency). A preferred language picker follows. Tokens are already
+/// stored, so this only enriches the profile — no astrology logic is touched.
 class GoogleProfileCompletionScreen extends StatefulWidget {
   final Map<String, dynamic> user;
   const GoogleProfileCompletionScreen({super.key, required this.user});
@@ -23,17 +26,24 @@ class GoogleProfileCompletionScreen extends StatefulWidget {
 
 class _GoogleProfileCompletionScreenState
     extends State<GoogleProfileCompletionScreen> {
-  late String _region; // IN | INTL
+  final _phoneCtrl = TextEditingController();
+  Country _country = kDefaultCountry;
   late String _langCode;
   bool _saving = false;
+  String? _phoneError;
 
   bool _seededFromContext = false;
 
   @override
   void initState() {
     super.initState();
-    _region = AppMode.instance.region;
     _langCode = AppMode.instance.defaultLocaleTag() ?? 'en';
+  }
+
+  @override
+  void dispose() {
+    _phoneCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,10 +59,11 @@ class _GoogleProfileCompletionScreenState
     if (_languages.any((o) => o.code == tag)) _langCode = tag;
   }
 
+  // Region follows the picked country deterministically.
+  String get _region => _country.iso == 'IN' ? 'IN' : 'INTL';
+
   List<LangOption> get _languages =>
-      _region.toUpperCase() == 'INTL'
-          ? AppMode.internationalLanguages
-          : AppMode.indianLanguages;
+      _region == 'INTL' ? AppMode.internationalLanguages : AppMode.indianLanguages;
 
   void _applyLanguage(String code) {
     setState(() => _langCode = code);
@@ -63,26 +74,33 @@ class _GoogleProfileCompletionScreenState
     NakshatralogyUserApp.setLocale(context, newLocale);
   }
 
-  Future<void> _onRegionChanged(String region) async {
+  Future<void> _onCountryChanged(Country c) async {
     setState(() {
-      _region = region;
+      _country = c;
       // Keep the chosen language valid for the new set; else default to English.
-      final valid = _languages.any((o) => o.code == _langCode);
-      if (!valid) _langCode = 'en';
+      if (!_languages.any((o) => o.code == _langCode)) _langCode = 'en';
     });
-    await AppMode.instance.setRegion(region);
+    await AppMode.instance.setRegion(_region);
     _applyLanguage(_langCode);
   }
 
   Future<void> _finish() async {
-    setState(() => _saving = true);
-    // Persist region + language to the profile (best-effort; session proceeds
-    // regardless so a transient API error never traps a new user).
+    final local = _phoneCtrl.text.trim().replaceAll(RegExp(r'^0+'), '');
+    if (local.length < 6) {
+      setState(() => _phoneError = AppLocalizations.of(context)!.required);
+      return;
+    }
+    setState(() { _saving = true; _phoneError = null; });
+    final fullPhone = '+${_country.dial}$local';
+    // Persist phone + country (seeds region) + language. Best-effort: the
+    // session proceeds regardless so a transient API error never traps a new
+    // user; the region also lives locally in AppMode.
     Map<String, dynamic> user = widget.user;
     try {
       final res = await ApiService().updateMe({
-        'region': _region,
-        'language': _langCode,
+        'phone': fullPhone,
+        'country_code': _country.iso,
+        'preferred_language': _langCode,
       });
       if (res['statusCode'] == 200 && res['user'] is Map) {
         user = (res['user'] as Map).cast<String, dynamic>();
@@ -124,27 +142,29 @@ class _GoogleProfileCompletionScreenState
                   style: const TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 28),
 
-              // Region
-              Text(l.awRegionLabel,
+              // Mandatory phone (its country code decides the region).
+              Text(l.phone,
                   style: const TextStyle(
                       color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
-              Row(children: [
-                _RegionChip(
-                  label: l.awRegionIndia,
-                  selected: _region.toUpperCase() != 'INTL',
-                  onTap: () => _onRegionChanged('IN'),
+              TextField(
+                controller: _phoneCtrl,
+                keyboardType: TextInputType.phone,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: const TextStyle(color: AppColors.textPrimary),
+                onChanged: (_) => _onCountryChanged(_country),
+                decoration: InputDecoration(
+                  hintText: l.phone,
+                  errorText: _phoneError,
+                  prefixIcon: CountryCodePicker(
+                    value: _country,
+                    onSelected: _onCountryChanged,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                _RegionChip(
-                  label: l.awRegionInternational,
-                  selected: _region.toUpperCase() == 'INTL',
-                  onTap: () => _onRegionChanged('INTL'),
-                ),
-              ]),
+              ),
               const SizedBox(height: 24),
 
-              // Preferred language
+              // Preferred language (set follows the region from the country).
               Text(l.awPreferredLanguage,
                   style: const TextStyle(
                       color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
@@ -190,42 +210,6 @@ class _GoogleProfileCompletionScreenState
                     : Text(l.awFinishSetup),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RegionChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  const _RegionChip(
-      {required this.label, required this.selected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: selected
-                ? AppColors.primary.withOpacity(0.15)
-                : AppColors.card,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: selected ? AppColors.primary : AppColors.border),
-          ),
-          child: Center(
-            child: Text(label,
-                style: TextStyle(
-                    color:
-                        selected ? AppColors.primary : AppColors.textPrimary,
-                    fontWeight: FontWeight.w600)),
           ),
         ),
       ),
