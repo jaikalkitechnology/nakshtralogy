@@ -129,7 +129,7 @@ The discount reduces what the **user** pays. The open question is whose share ab
 | Admin/platform coupon | **platform** | Astrologer earning stays on the **full** rate; the platform absorbs the discount (marketing spend). |
 | `all_free` 100% code | **platform** | Platform grants free; if it discounts a consultation, astrologer is still paid full from platform (configurable). |
 
-`funded_by` is a per-coupon field so you can override. **Please confirm the defaults** — this is the one irreversible accounting decision.
+`funded_by` is a per-coupon field so you can override. **CONFIRMED:** astrologer coupons = astrologer-funded, admin coupons = platform-funded (defaults by owner_type).
 
 ---
 
@@ -293,13 +293,13 @@ Each phase is independently shippable and statically verifiable.
 
 ---
 
-## 15. Decisions I need from you before building
+## 15. Locked decisions (confirmed)
 
-1. **Discount funding** (§5): OK to default astrologer coupons = astrologer-funded, admin coupons = platform-funded? (One-time accounting decision.)
-2. **100% code:** single-use per user + admin-set expiry + max redemptions + all products by default — confirm, or restrict to a product subset?
-3. **Stacking:** confirm NO stacking (one coupon per transaction).
-4. **Astrologer coupon moderation:** do astrologer coupons go live instantly, or require admin approval first?
-5. **International consultation billing:** OK to display USD 5× rate now but gate live intl consultation charging on Payments Phase D (since ₹ wallet can't be recharged internationally)?
-6. **Primary "change":** should users be able to change which chart is primary, or is the first primary fixed for the free entitlement?
+1. **Discount funding:** astrologer coupons are **astrologer-funded** (discount reduces the astrologer's earning; platform commission on the discounted net). Admin/platform coupons are **platform-funded**. `funded_by` is stored per coupon/redemption for accounting, defaulted by owner_type.
+2. **Astrologer coupon moderation:** coupons start `pending_review` and require **admin approval** before users can see/redeem them. Admin can also pause/kill anytime.
+3. **100%-free special code:** **single-use per user**, covers **all** Nakshtralogy products, with an **admin-set expiry + max-redemptions budget**, restricted to **email-verified users**. (Not consultations — products only.)
+4. **Primary chart:** the first primary is **fixed** as the free entitlement once set — the "primary" switch is disabled once a primary exists (prevents swapping to game free unlocks). Non-primary charts require unlock; multi-chart comparison is always priced.
+5. **Stacking:** **no stacking** — one coupon per transaction, best-value auto-pick, explicit user code overrides an auto-suggested one. *(Recommended default; adjust if needed.)*
+6. **International consultation billing:** display the USD 5× rate + coupon preview now; **live international consultation charging is gated on Payments Phase D** (₹ wallet can't be recharged internationally). India consultations bill immediately. *(Recommended default; adjust if needed.)*
 
-Once you confirm these, Phase 1 can start.
+**Build order:** Phase 1 (product coupons + engine + admin CRUD) → Phase 2 (consultations) → Phase 3 (invoices) → Phase 4 (intl 5×) → Phase 5 (primary-chart rule) → Phase 6 (multi-language + reports polish).
