@@ -32,7 +32,13 @@
   </url>
   <url>
     <loc>https://nakshatralogy.com/refund-policy.html</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://nakshatralogy.com/shipping-policy.html</loc>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
