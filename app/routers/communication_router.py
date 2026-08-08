@@ -398,6 +398,7 @@ def initiate_call(
         call_type=req.call_type,
         rate_per_min=rate,
         status="ringing",
+        coupon_code=(req.coupon_code.strip() if req.coupon_code and req.coupon_code.strip() else None),
         agora_token_caller=token_caller,
         agora_token_receiver=token_receiver,
         expires_at=datetime.utcnow() + timedelta(seconds=settings.CALL_RING_TIMEOUT_SEC),
@@ -547,7 +548,8 @@ def call_action(
             # ── coupon: call is debited at end, so discount the debit directly ──
             _scope = "video" if call.call_type == "video" else "call"
             discount, disc = _resolve_consult_coupon(
-                db, call.caller_id, _scope, call.astrologer_profile_id, total)
+                db, call.caller_id, _scope, call.astrologer_profile_id, total,
+                code=getattr(call, "coupon_code", None))
             if disc:
                 from app.services import coupon_service
                 call.coupon_id = disc.coupon_id
@@ -1322,6 +1324,7 @@ def initiate_chat(
         billing_mode=billing_mode,
         blocked_amount=Decimal(str(block_amount)),
         block_txn_id=block_txn.id,
+        coupon_code=(req.coupon_code.strip() if req.coupon_code and req.coupon_code.strip() else None),
         status="waiting",
         expires_at=datetime.utcnow() + timedelta(seconds=settings.CHAT_ACCEPT_TIMEOUT_SEC),
     )
@@ -1472,12 +1475,14 @@ def _refund_blocked(db: Session, session: ChatSession):
 
 
 def _resolve_consult_coupon(db: Session, user_id: str, scope: str,
-                            astrologer_id: str, total: float):
+                            astrologer_id: str, total: float, code: Optional[str] = None):
     """Best eligible consultation coupon for this session. Returns
-    (discount, DiscountResult|None). Money is moved by the caller."""
+    (discount, DiscountResult|None). A user-entered `code` (astrologer offer or
+    admin code) wins when eligible; otherwise the best auto coupon applies.
+    Money is moved by the caller."""
     from app.services import coupon_service
     disc = coupon_service.resolve_discount(
-        db, user_id, scope, total, astrologer_id=astrologer_id)
+        db, user_id, scope, total, astrologer_id=astrologer_id, code=code)
     if disc and disc.discount_amount > 0:
         return min(float(disc.discount_amount), float(total)), disc
     return 0.0, None
@@ -1521,7 +1526,8 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str
     # ── coupon: chat was debited upfront (block/extra), so a discount is
     #    refunded to the user; earning/commission recomputed per funded_by. ──
     discount, disc = _resolve_consult_coupon(db, session.user_id, "chat",
-                                             session.astrologer_id, total)
+                                             session.astrologer_id, total,
+                                             code=getattr(session, "coupon_code", None))
     if disc:
         from app.services import coupon_service
         _credit_wallet(db, session.user_id, discount,

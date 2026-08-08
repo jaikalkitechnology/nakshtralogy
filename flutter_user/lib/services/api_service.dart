@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
+import 'app_mode.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -731,6 +732,10 @@ class ApiService {
     if (specialization != null && specialization.isNotEmpty) params['specialization'] = specialization;
     if (language != null && language.isNotEmpty) params['language'] = language;
     if (onlineOnly) params['online_only'] = 'true';
+    // Forward the app's resolved region (honours the user's manual India/Intl
+    // choice) so rate-card currency matches the rest of the app — otherwise the
+    // endpoint would fall back to the raw device-locale country.
+    params['region'] = AppMode.instance.region;
     final uri = Uri.parse('${ApiConstants.astrologerBase}/list').replace(queryParameters: params);
     final resp = await http.get(uri, headers: _headers);
     if (resp.statusCode == 200) {
@@ -741,10 +746,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> fetchAstrologerDetail(String id) async {
-    final resp = await http.get(
-      Uri.parse('${ApiConstants.astrologerBase}/$id'),
-      headers: _headers,
-    );
+    final uri = Uri.parse('${ApiConstants.astrologerBase}/$id')
+        .replace(queryParameters: {'region': AppMode.instance.region});
+    final resp = await http.get(uri, headers: _headers);
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
@@ -937,11 +941,15 @@ class ApiService {
 
   // ── Calls ─────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> initiateCall(String astrologerProfileId, String callType) async {
+  Future<Map<String, dynamic>> initiateCall(String astrologerProfileId, String callType, {String? couponCode}) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.callInitiate),
       headers: _headers,
-      body: jsonEncode({'astrologer_profile_id': astrologerProfileId, 'call_type': callType}),
+      body: jsonEncode({
+        'astrologer_profile_id': astrologerProfileId,
+        'call_type': callType,
+        if (couponCode != null && couponCode.trim().isNotEmpty) 'coupon_code': couponCode.trim(),
+      }),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
@@ -964,11 +972,14 @@ class ApiService {
 
   // ── Chat ──────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> initiateChat(String astrologerProfileId) async {
+  Future<Map<String, dynamic>> initiateChat(String astrologerProfileId, {String? couponCode}) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.chatInitiate),
       headers: _headers,
-      body: jsonEncode({'astrologer_profile_id': astrologerProfileId}),
+      body: jsonEncode({
+        'astrologer_profile_id': astrologerProfileId,
+        if (couponCode != null && couponCode.trim().isNotEmpty) 'coupon_code': couponCode.trim(),
+      }),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
