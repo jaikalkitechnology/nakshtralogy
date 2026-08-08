@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
+import '../utils/menu_labels.dart';
 
 /// Legal / policy links shown in Profile → "About & Legal".
 /// All three pages live on nakshatralogy.com and open in the external browser.
@@ -17,13 +18,13 @@ class LegalSection extends StatelessWidget {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open $url')),
+          SnackBar(content: Text(MenuLabels.of(context, 'couldNotOpen'))),
         );
       }
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open $url')),
+          SnackBar(content: Text(MenuLabels.of(context, 'couldNotOpen'))),
         );
       }
     }
@@ -32,14 +33,14 @@ class LegalSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Padding(
-        padding: EdgeInsets.only(bottom: 8, left: 4),
-        child: Text('About & Legal',
-            style: TextStyle(color: AppColors.smoke, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8, left: 4),
+        child: Text(MenuLabels.of(context, 'aboutLegal'),
+            style: const TextStyle(color: AppColors.smoke, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
       ),
-      _tile(context, Icons.privacy_tip_outlined, 'Privacy Policy', privacyUrl),
-      _tile(context, Icons.description_outlined, 'Terms & Conditions', termsUrl),
-      _tile(context, Icons.receipt_long_outlined, 'Refund Policy', refundUrl),
+      _tile(context, Icons.privacy_tip_outlined, MenuLabels.of(context, 'privacyPolicy'), privacyUrl),
+      _tile(context, Icons.description_outlined, MenuLabels.of(context, 'termsConditions'), termsUrl),
+      _tile(context, Icons.receipt_long_outlined, MenuLabels.of(context, 'refundPolicy'), refundUrl),
     ]);
   }
 

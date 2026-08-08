@@ -47,6 +47,7 @@ from app.schemas.service_schema import (
 )
 from app.core import pricing as pricing_util
 from app.core import region as region_util
+from app.services import pricing_cards
 
 router = APIRouter()
 
@@ -156,6 +157,7 @@ def list_pricing(
     region: Optional[str] = Query(None, description="Session region override IN|INTL"),
     x_device_country: Optional[str] = Header(None),
     db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
 ):
     """
     Public: list active service pricing.
@@ -164,7 +166,8 @@ def list_pricing(
     Each row carries a session view (`session_currency`, `session_amount`,
     `pay_via`) for the caller's region — USD/IAP for international, ₹/wallet for
     India. Region comes from ?region= or the X-Device-Country hint (no user
-    context on this public endpoint).
+    context on this public endpoint). The card copy (name / tagline / features)
+    is localized to `lang` (Accept-Language or ?lang=), falling back to English.
     """
     q = db.query(ServicePricing)
     if not include_inactive:
@@ -183,6 +186,7 @@ def list_pricing(
     mult = pricing_util.get_multiplier(db)
     for sp in rows:
         _apply_session_pricing(sp, sess, fx, mult)
+        pricing_cards.apply_card_i18n(sp, lang)
     return rows
 
 
@@ -199,6 +203,7 @@ def get_pricing(
         raise HTTPException(status_code=404, detail=t("err.service_not_found", lang))
     sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
     _apply_session_pricing(p, sess, pricing_util.get_fx_rate(db), pricing_util.get_multiplier(db))
+    pricing_cards.apply_card_i18n(p, lang)
     return p
 
 

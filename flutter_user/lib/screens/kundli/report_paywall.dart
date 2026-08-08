@@ -164,6 +164,14 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
   List<String> get _features =>
       (widget.pricing['features_json'] as List?)?.map((e) => e.toString()).toList() ?? const [];
 
+  /// Localized one-line product tagline from the backend card catalog
+  /// (ServicePricing.description is overlaid per language). Falls back to the
+  /// generic locked subtitle when a row carries no tagline.
+  String _tagline(AppLocalizations l) {
+    final d = (widget.pricing['description'] ?? '').toString().trim();
+    return d.isNotEmpty ? d : l.pwLockedSubtitle;
+  }
+
   // ── International (store IAP) vs India (wallet) ──────────────────────
   bool get _intl => AppMode.instance.isInternational;
   double get _usd =>
@@ -355,7 +363,9 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.ivory, fontSize: 19, fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
-          Text(l.pwLockedSubtitle, textAlign: TextAlign.center,
+          // Localized product tagline (from the backend card catalog); falls
+          // back to the generic locked-subtitle when a row has no tagline.
+          Text(_tagline(l), textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.smoke, fontSize: 12, height: 1.4)),
           const SizedBox(height: 14),
           Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -380,9 +390,10 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
         Text(l.pwWhatYouGet.toUpperCase(),
             style: const TextStyle(color: AppColors.gold, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
-        ..._features.take(6).map((f) => Padding(padding: const EdgeInsets.only(bottom: 8),
+        ..._features.take(8).map((f) => Padding(padding: const EdgeInsets.only(bottom: 8),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Icon(Icons.check_circle, color: AppColors.success, size: 16),
+            const Padding(padding: EdgeInsets.only(top: 1),
+                child: Icon(Icons.check_circle, color: AppColors.success, size: 16)),
             const SizedBox(width: 8),
             Expanded(child: Text(f, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.4))),
           ]))),
