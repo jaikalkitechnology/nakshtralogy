@@ -520,10 +520,17 @@ _CARDS_EN = {
 }
 
 
-# ── Per-language overlays (agents append _CARDS_<LANG> below and register
-#    them in CARD_TRANSLATIONS). English is the canonical fallback. ────────
+# ── Per-language overlays. English is the canonical base (_CARDS_EN); every
+#    other language lives in the auto-generated pricing_cards_data module and is
+#    merged in here. A missing language or key falls back to English. ─────────
+try:
+    from app.services.pricing_cards_data import CARDS_BY_LANG as _CARDS_BY_LANG
+except Exception:  # pragma: no cover - data module optional/regenerable
+    _CARDS_BY_LANG = {}
+
 CARD_TRANSLATIONS = {
     "english": _CARDS_EN,
+    **_CARDS_BY_LANG,
 }
 
 
