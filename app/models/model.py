@@ -49,6 +49,10 @@ class User(Base):
     id = Column(String(36), primary_key=True, default=new_uuid)
     email = Column(String(255), unique=True, nullable=False, index=True)
     phone = Column(String(20), unique=True, nullable=True, index=True)
+    # Dialing / calling code captured from the app's country picker, e.g. "+91".
+    # Stored separately from the full phone (which stays "+91XXXXXXXXXX") so the
+    # country can be read without parsing. Distinct from country_code (ISO alpha-2).
+    phone_country_code = Column(String(8), nullable=True)
     password_hash = Column(String(255), nullable=True)  # nullable for Google-only users
     name = Column(String(150), nullable=True)
     avatar_url = Column(Text, nullable=True)

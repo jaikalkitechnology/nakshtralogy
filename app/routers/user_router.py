@@ -55,6 +55,7 @@ def _build_user_response(user: User, db: Session) -> UserResponse:
         id=user.id,
         email=user.email,
         phone=user.phone,
+        phone_country_code=user.phone_country_code,
         name=user.name,
         avatar_url=user.avatar_url,
         gender=user.gender,
@@ -162,6 +163,7 @@ def user_signup_send_otp(req: UserSignupOtpRequest, db: Session = Depends(get_db
     if existing and not existing.is_verified:
         existing.name = req.name
         existing.phone = req.phone
+        existing.phone_country_code = req.phone_country_code
         existing.password_hash = hash_password(req.password)
         existing.otp_code = otp
         existing.otp_expires_at = expires
@@ -173,6 +175,7 @@ def user_signup_send_otp(req: UserSignupOtpRequest, db: Session = Depends(get_db
         user = User(
             email=req.email,
             phone=req.phone,
+            phone_country_code=req.phone_country_code,
             password_hash=hash_password(req.password),
             name=req.name,
             role="user",

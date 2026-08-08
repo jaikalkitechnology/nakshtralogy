@@ -27,6 +27,7 @@ class UserSignupOtpRequest(BaseModel):
     phone: str = Field(..., min_length=6, max_length=20)
     password: str = Field(..., min_length=6, max_length=128)
     country_code: Optional[str] = Field(None, max_length=2, description="ISO alpha-2 from the picker")
+    phone_country_code: Optional[str] = Field(None, max_length=8, description="Dialing code, e.g. +91")
     fcm_token: Optional[str] = None
 
 
@@ -99,6 +100,7 @@ class UserResponse(BaseModel):
     id: str
     email: str
     phone: Optional[str] = None
+    phone_country_code: Optional[str] = None
     name: Optional[str] = None
     avatar_url: Optional[str] = None
     gender: Optional[str] = None
@@ -134,6 +136,7 @@ class UserUpdateRequest(BaseModel):
     name: Optional[str] = Field(None, max_length=150)
     phone: Optional[str] = Field(None, max_length=20)
     country_code: Optional[str] = Field(None, max_length=2, description="ISO alpha-2 from the phone picker; seeds region")
+    phone_country_code: Optional[str] = Field(None, max_length=8, description="Dialing code, e.g. +91")
     gender: Optional[str] = None
     dob: Optional[str] = None
     tob: Optional[str] = None

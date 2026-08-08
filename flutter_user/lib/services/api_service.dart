@@ -192,6 +192,7 @@ class ApiService {
     required String phone,
     required String password,
     String? countryCode,
+    String? phoneCountryCode,
     String? fcmToken,
   }) async {
     final resp = await http.post(
@@ -203,6 +204,7 @@ class ApiService {
         'phone': phone,
         'password': password,
         if (countryCode != null) 'country_code': countryCode,
+        if (phoneCountryCode != null) 'phone_country_code': phoneCountryCode,
         if (fcmToken != null) 'fcm_token': fcmToken,
       }),
     );
