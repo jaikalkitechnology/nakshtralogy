@@ -23,6 +23,7 @@ import BannerManager from "./pages/admin/BannerManager";
 import AiAgentsManager from "./pages/admin/AiAgentsManager";
 import ContactQueries from "./pages/admin/ContactQueries";
 import ChatGuard from "./pages/admin/ChatGuard";
+import CouponManager from "./pages/admin/CouponManager";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="/admin/ai-agents" element={<RequireAdmin><AdminShell><AiAgentsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/queries" element={<RequireAdmin><AdminShell><ContactQueries /></AdminShell></RequireAdmin>} />
               <Route path="/admin/chat-guard" element={<RequireAdmin><AdminShell><ChatGuard /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/coupons" element={<RequireAdmin><AdminShell><CouponManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}

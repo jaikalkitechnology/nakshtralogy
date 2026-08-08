@@ -1098,24 +1098,60 @@ def purchase_service(
             created_at=order.created_at,
         )
 
-    # paid service: debit wallet
+    # ── coupon: resolve the best eligible discount for this product ──
+    from app.services import coupon_service
+    disc = coupon_service.resolve_discount(
+        db, current_user.id, "product", price,
+        service_key=sp.service_key, code=req.coupon_code,
+    )
+    discount_amt = disc.discount_amount if disc else 0.0
+    net_price = round(price - discount_amt, 2)
+
+    # A 100% (or price-covering) coupon → grant free, no wallet debit.
+    if net_price <= 0:
+        order = ServiceOrder(
+            user_id=current_user.id,
+            service_pricing_id=sp.id,
+            chart_id=chart_ref_id,
+            amount_paid=0,
+            status="completed",
+            coupon_id=(disc.coupon_id if disc else None),
+            discount_amount=Decimal(str(discount_amt)),
+        )
+        db.add(order)
+        db.flush()
+        if disc:
+            coupon_service.record_redemption(
+                db, disc.coupon, current_user.id, "service_order", order.id,
+                price, discount_amt)
+        db.commit()
+        db.refresh(order)
+        return ServiceOrderResponse(
+            id=order.id, user_id=order.user_id,
+            service_pricing_id=order.service_pricing_id, chart_id=order.chart_id,
+            amount_paid=0, status="completed", service_name=sp.service_name,
+            service_key=sp.service_key, created_at=order.created_at,
+        )
+
+    # paid service: debit wallet (net of any discount)
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
         raise HTTPException(status_code=400, detail=t("err.wallet_not_found", lang))
-    if float(wallet.balance) < price:
+    if float(wallet.balance) < net_price:
         raise HTTPException(
             status_code=402,
-            detail=t("err.insufficient_balance", lang, price=price, balance=wallet.balance),
+            detail=t("err.insufficient_balance", lang, price=net_price, balance=wallet.balance),
         )
 
     # debit
-    wallet.balance = Decimal(str(float(wallet.balance) - price))
+    wallet.balance = Decimal(str(float(wallet.balance) - net_price))
+    _desc = f"Purchased: {sp.service_name}" + (f" (coupon -{discount_amt:g})" if discount_amt else "")
     txn = WalletTransaction(
         wallet_id=wallet.id,
         txn_type="consultation_debit",
-        amount=Decimal(str(price)),
+        amount=Decimal(str(net_price)),
         balance_after=wallet.balance,
-        description=f"Purchased: {sp.service_name}",
+        description=_desc,
         reference_type="service_order",
     )
     db.add(txn)
@@ -1125,11 +1161,18 @@ def purchase_service(
         user_id=current_user.id,
         service_pricing_id=sp.id,
         chart_id=chart_ref_id,
-        amount_paid=price,
+        amount_paid=net_price,
         wallet_txn_id=txn.id,
         status="completed",
+        coupon_id=(disc.coupon_id if disc else None),
+        discount_amount=Decimal(str(discount_amt)),
     )
     db.add(order)
+    db.flush()
+    if disc:
+        coupon_service.record_redemption(
+            db, disc.coupon, current_user.id, "service_order", order.id,
+            price, discount_amt)
     db.commit()
     db.refresh(order)
 
