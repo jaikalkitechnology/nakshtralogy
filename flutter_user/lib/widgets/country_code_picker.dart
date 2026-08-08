@@ -64,7 +64,7 @@ const List<Country> kCountries = [
   Country('Egypt', 'EG', '20', '🇪🇬'),
 ];
 
-const Country kDefaultCountry = kCountries[0]; // India
+const Country kDefaultCountry = Country('India', 'IN', '91', '🇮🇳'); // == kCountries[0]
 
 Country countryForIso(String? iso) {
   if (iso == null) return kDefaultCountry;

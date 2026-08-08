@@ -12,6 +12,7 @@ import '../../bloc/astro_profile/astro_profile_bloc.dart';
 import '../../bloc/astro_profile/astro_profile_event.dart';
 import '../../bloc/astro_profile/astro_profile_state.dart';
 import '../../services/api_service.dart';
+import '../../widgets/banner_slider.dart';
 import '../communication/live_host_screen.dart';
 import '../rashi/rashi_list_screen.dart';
 import '../specialist/specialist_milan_picker.dart';
