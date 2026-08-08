@@ -164,6 +164,30 @@ def usd_for_pricing(sp, fx_rate: float, multiplier: float) -> Optional[float]:
     return compute_usd(price, fx_rate, multiplier)
 
 
+def iap_product_id_for_agent(domain_key: str, tier_usd: float) -> str:
+    """Store product id for a paid AI agent at a tier, e.g.
+    ``com.nakshtralogy.iap.agent.career.t499``. Namespaced under ``agent`` so it
+    never collides with a service SKU sharing the same key."""
+    cents = int(round(float(tier_usd) * 100))
+    return f"{IAP_PRODUCT_PREFIX}.agent.{domain_key}.t{cents}"
+
+
+def usd_for_agent(setting, fx_rate: float, multiplier: float) -> Optional[float]:
+    """The USD amount to charge to unlock a paid AI agent (INTL session).
+
+    A free / unpriced agent (not is_paid, or price 0) has no USD price. A manual
+    override (price_usd_manual) is returned verbatim. Otherwise apply the global
+    rule. Mirrors ``usd_for_pricing`` for ServicePricing."""
+    if setting is None:
+        return None
+    price = float(getattr(setting, "price", 0) or 0)
+    if not getattr(setting, "is_paid", False) or price == 0:
+        return None
+    if getattr(setting, "price_usd_manual", False) and setting.price_usd is not None:
+        return float(setting.price_usd)
+    return compute_usd(price, fx_rate, multiplier)
+
+
 def regenerate_usd_prices(db, force: bool = False) -> dict:
     """Recompute price_usd + iap_product_id for every priced service using the
     current rule. Skips rows an admin has manually overridden unless force=True.

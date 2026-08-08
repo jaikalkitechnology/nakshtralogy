@@ -13,6 +13,8 @@ import '../../bloc/profile/profile_event.dart';
 import '../../bloc/profile/profile_state.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/phone_capture_sheet.dart';
+import '../../services/app_mode.dart';
+import '../../utils/money.dart';
 import '../auth/login_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
@@ -147,7 +149,14 @@ class _HomeScreenState extends State<HomeScreen> {
             // Live wallet balance chip
             BlocBuilder<WalletBloc, WalletState>(
               builder: (context, state) {
+                // International sessions show USD (display conversion via the
+                // backend FX rate); India shows \u20b9. Never hardcode the symbol \u2014
+                // read the display fields the backend already computes.
                 final balance = (state.wallet?['balance'] as num?)?.toDouble() ?? 0.0;
+                final displayCurrency = (state.wallet?['display_currency'] as String?) ??
+                    (AppMode.instance.isInternational ? 'USD' : 'INR');
+                final displayBalance =
+                    (state.wallet?['display_balance'] as num?)?.toDouble() ?? balance;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: Container(
@@ -163,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const Icon(Icons.account_balance_wallet, size: 14, color: AppColors.primary),
                         const SizedBox(width: 4),
                         Text(
-                          '\u20b9${balance.toStringAsFixed(0)}',
+                          Money.format(displayBalance, currency: displayCurrency),
                           style: const TextStyle(
                               color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12),
                         ),
