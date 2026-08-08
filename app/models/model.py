@@ -1174,6 +1174,15 @@ class AiAgentSetting(Base):
     test_user_ids = Column(JSON, default=[])                       # visible to these users when testing
     is_paid = Column(Boolean, default=False)
     price = Column(Numeric(10, 2), default=0)                      # one-time unlock price (INR)
+    # Internationalization — USD price sold via store IAP tiers (App Store /
+    # Google Play), mirroring ServicePricing. Default computed by the global
+    # rule usd = round_to_tier(inr × MULT ÷ FX) (see app/core/pricing.py); admin
+    # may override, which sets price_usd_manual so a bulk regenerate leaves the
+    # override untouched. iap_product_id is the store SKU. NOT used by any
+    # astrology logic — currency presentation/plumbing only.
+    price_usd = Column(Numeric(10, 2), nullable=True)
+    iap_product_id = Column(String(100), nullable=True)
+    price_usd_manual = Column(Boolean, default=False, server_default="0", nullable=False)
     free_intro = Column(Text, nullable=True)                       # optional teaser shown before unlock
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 

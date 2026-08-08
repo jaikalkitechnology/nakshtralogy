@@ -74,7 +74,21 @@ class IapService {
     required String productId,
     required String servicePricingId,
     String? chartId,
-  }) async {
+  }) {
+    return _start(productId, _PendingBuy(servicePricingId: servicePricingId, chartId: chartId));
+  }
+
+  /// Buy a paid AI agent unlock by its store product id. Same store flow as
+  /// [buy] but the backend grant targets the agent endpoint (by domain key).
+  Future<IapResult> buyAgent({
+    required String productId,
+    required String agentKey,
+  }) {
+    return _start(productId, _PendingBuy(agentKey: agentKey));
+  }
+
+  /// Shared store-purchase kick-off for services and agents.
+  Future<IapResult> _start(String productId, _PendingBuy ctx) async {
     _ensureListening();
     if (!await available()) {
       return const IapResult(ok: false, error: 'store_unavailable');
@@ -86,7 +100,7 @@ class IapService {
     final product = products.first;
     final completer = Completer<IapResult>();
     _completers[productId] = completer;
-    _pending[productId] = _PendingBuy(servicePricingId: servicePricingId, chartId: chartId);
+    _pending[productId] = ctx;
 
     final param = PurchaseParam(productDetails: product);
     try {
@@ -127,9 +141,20 @@ class IapService {
         if (ctx == null) {
           // No local context (e.g. a restore on cold start) — acknowledge only.
           result = const IapResult(ok: false, error: 'no_context');
+        } else if (ctx.agentKey != null) {
+          // Paid AI agent unlock (international store IAP).
+          final resp = await ApiService().verifyAgentIap(
+            key: ctx.agentKey!,
+            platform: platform,
+            productId: p.productID,
+            transactionId: txnId,
+            receipt: p.verificationData.serverVerificationData,
+          );
+          final ok = resp['statusCode'] == 200 || resp['statusCode'] == 201;
+          result = IapResult(ok: ok, error: ok ? null : _errorOf(resp));
         } else {
           final resp = await ApiService().verifyIap(
-            servicePricingId: ctx.servicePricingId,
+            servicePricingId: ctx.servicePricingId!,
             chartId: ctx.chartId,
             platform: platform,
             productId: p.productID,
@@ -168,7 +193,10 @@ class IapService {
 }
 
 class _PendingBuy {
-  final String servicePricingId;
+  /// Service purchase → verified against /service/iap/verify.
+  final String? servicePricingId;
   final String? chartId;
-  const _PendingBuy({required this.servicePricingId, this.chartId});
+  /// AI agent unlock → verified against /ai/agents/{key}/iap/verify.
+  final String? agentKey;
+  const _PendingBuy({this.servicePricingId, this.chartId, this.agentKey});
 }

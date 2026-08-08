@@ -11,6 +11,10 @@ interface Agent {
   key: string; label: string; emoji?: string;
   status: "draft" | "testing" | "published";
   is_paid: boolean; price: number; free_intro?: string;
+  // International (store IAP). price_usd auto-computes from ₹ unless overridden.
+  price_usd?: number | null;
+  iap_product_id?: string | null;
+  price_usd_manual?: boolean;
   test_users: { id: string; email: string; name?: string }[];
   unlocks: number;
 }
@@ -48,6 +52,13 @@ export default function AiAgentsManager() {
       status: editing.status,
       is_paid: editing.is_paid,
       price: editing.price,
+      // USD/store IAP: send the override only when the admin has chosen manual.
+      // Otherwise leave price_usd_manual=false so the backend auto-computes it
+      // from the ₹ price (and mints the store product id).
+      price_usd_manual: !!editing.price_usd_manual,
+      ...(editing.price_usd_manual
+        ? { price_usd: editing.price_usd ?? 0 }
+        : {}),
       free_intro: editing.free_intro || null,
       test_user_ids: testers,
     });
@@ -96,7 +107,8 @@ export default function AiAgentsManager() {
                   </td>
                   <td className="p-2.5">
                     {a.is_paid
-                      ? <span className="inline-flex items-center gap-1 text-primary"><Lock className="w-3.5 h-3.5" /> ₹{a.price.toFixed(0)}</span>
+                      ? <span className="inline-flex items-center gap-1 text-primary"><Lock className="w-3.5 h-3.5" /> ₹{a.price.toFixed(0)}
+                          {a.price_usd != null && <span className="text-muted-foreground">· ${a.price_usd.toFixed(2)}</span>}</span>
                       : <span className="inline-flex items-center gap-1 text-green-400"><Unlock className="w-3.5 h-3.5" /> Free</span>}
                   </td>
                   <td className="p-2.5 text-muted-foreground">{a.status === "testing" ? `${a.test_users?.length || 0}` : "—"}</td>
@@ -145,9 +157,33 @@ export default function AiAgentsManager() {
                 Paid — users unlock this AI chat once from their wallet
               </label>
               {editing.is_paid && (
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Unlock price ₹</span>
-                  <Input type="number" className="w-28" value={editing.price} onChange={(e) => setEditing({ ...editing, price: parseFloat(e.target.value) || 0 })} />
+                <div className="mt-2 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Unlock price ₹ (India · wallet)</span>
+                    <Input type="number" className="w-28" value={editing.price} onChange={(e) => setEditing({ ...editing, price: parseFloat(e.target.value) || 0 })} />
+                  </div>
+                  <div className="rounded-lg border border-border/60 p-2.5 space-y-2">
+                    <label className="flex items-center gap-2 text-sm text-foreground">
+                      <input type="checkbox" checked={!!editing.price_usd_manual}
+                        onChange={(e) => setEditing({ ...editing, price_usd_manual: e.target.checked })} />
+                      Override international USD price (store IAP)
+                    </label>
+                    {editing.price_usd_manual ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">Unlock price $</span>
+                        <Input type="number" step="0.01" className="w-28"
+                          value={editing.price_usd ?? 0}
+                          onChange={(e) => setEditing({ ...editing, price_usd: parseFloat(e.target.value) || 0 })} />
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-muted-foreground">
+                        Auto: ${editing.price_usd != null ? editing.price_usd.toFixed(2) : "—"} — computed from ₹ and rounded to the nearest App Store / Google Play tier. Sold via store IAP to international users.
+                      </p>
+                    )}
+                    {editing.iap_product_id && (
+                      <p className="text-[11px] text-muted-foreground break-all">SKU: {editing.iap_product_id}</p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

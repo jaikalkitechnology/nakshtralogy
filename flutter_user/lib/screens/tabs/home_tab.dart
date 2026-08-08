@@ -6,6 +6,7 @@ import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
 import '../../services/api_service.dart';
 import '../../services/app_mode.dart';
+import '../../services/iap_service.dart';
 import '../../utils/money.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
@@ -62,7 +63,15 @@ class _HomeTabState extends State<HomeTab> {
     final emoji = s['emoji'] as String;
 
     if (meta != null && meta['is_paid'] == true && meta['unlocked'] != true) {
-      final price = (meta['price'] as num?)?.toDouble() ?? 0;
+      // Region-aware unlock. The backend attaches a session view: India pays ₹
+      // from the wallet; international pays the USD tier via store IAP.
+      final intl = (meta['pay_via'] == 'iap') || AppMode.instance.isInternational;
+      final sessCurrency = (meta['session_currency'] as String?) ?? (intl ? 'USD' : 'INR');
+      final sessAmount = (meta['session_amount'] as num?)?.toDouble() ??
+          (intl
+              ? (meta['price_usd'] as num?)?.toDouble() ?? 0
+              : (meta['price'] as num?)?.toDouble() ?? 0);
+      final priceLabel = Money.format(sessAmount, currency: sessCurrency);
       final ok = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -73,24 +82,48 @@ class _HomeTabState extends State<HomeTab> {
             if ((meta['free_intro'] ?? '').toString().isNotEmpty)
               Padding(padding: const EdgeInsets.only(bottom: 12),
                 child: Text(meta['free_intro'].toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13))),
-            Text('Unlock this AI specialist for ₹${price.toStringAsFixed(0)} (one time). The amount is deducted from your wallet.',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text(
+              intl
+                  ? 'Unlock this AI specialist for $priceLabel (one time), purchased securely through the app store.'
+                  : 'Unlock this AI specialist for $priceLabel (one time). The amount is deducted from your wallet.',
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ]),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
             ElevatedButton(onPressed: () => Navigator.pop(ctx, true),
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
-                child: Text('Unlock ₹${price.toStringAsFixed(0)}')),
+                child: Text('Unlock $priceLabel')),
           ],
         ),
       );
       if (ok != true) return;
-      final resp = await ApiService().unlockAiAgent(key);
-      if (resp['statusCode'] != 200) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(resp['detail'] ?? 'Could not unlock (check wallet balance)'),
-          backgroundColor: AppColors.error));
-        return;
+
+      if (intl) {
+        // International → store IAP → backend verify + grant.
+        final productId = (meta['iap_product_id'] as String?) ?? '';
+        if (productId.isEmpty) {
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('This specialist is not available for purchase yet.'),
+            backgroundColor: AppColors.error));
+          return;
+        }
+        final res = await IapService.instance.buyAgent(productId: productId, agentKey: key);
+        if (!res.ok) {
+          if (mounted && res.error != 'canceled') {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Could not complete the purchase. Please try again.'),
+              backgroundColor: AppColors.error));
+          }
+          return;
+        }
+      } else {
+        final resp = await ApiService().unlockAiAgent(key);
+        if (resp['statusCode'] != 200) {
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(resp['detail'] ?? 'Could not unlock (check wallet balance)'),
+            backgroundColor: AppColors.error));
+          return;
+        }
       }
       _agentMeta = {..._agentMeta, key: {...meta, 'unlocked': true}};
     }

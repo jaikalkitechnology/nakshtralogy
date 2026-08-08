@@ -6246,6 +6246,9 @@
   "err.iap_verification_failed": {
     "english": "Purchase verification failed"
   },
+  "err.use_store_purchase": {
+    "english": "This purchase is handled by the App Store / Google Play. Please complete it there."
+  },
   "err.iap_product_mismatch": {
     "english": "Purchase product does not match this service"
   }

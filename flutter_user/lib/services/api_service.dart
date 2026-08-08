@@ -1321,9 +1321,32 @@ class ApiService {
     return {};
   }
 
-  /// Pay to unlock a paid AI agent. Returns {statusCode, ...}.
+  /// Pay to unlock a paid AI agent from the ₹ wallet (India). Returns
+  /// {statusCode, ...}. International users get 409 use_store_purchase and must
+  /// go through [verifyAgentIap] instead.
   Future<Map<String, dynamic>> unlockAiAgent(String key) async {
     final resp = await http.post(Uri.parse('${ApiConstants.baseUrl}/ai/agents/$key/unlock'), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// International store IAP unlock for a paid AI agent → backend verify + grant.
+  /// Mirrors [verifyIap] but targets the agent endpoint (keyed by domain key).
+  Future<Map<String, dynamic>> verifyAgentIap({
+    required String key,
+    required String platform,
+    required String productId,
+    required String transactionId,
+    String? receipt,
+  }) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.baseUrl}/ai/agents/$key/iap/verify'),
+      body: jsonEncode({
+        'platform': platform,
+        'product_id': productId,
+        'transaction_id': transactionId,
+        if (receipt != null) 'receipt': receipt,
+      }),
+    );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
