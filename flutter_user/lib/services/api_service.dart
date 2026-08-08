@@ -380,9 +380,13 @@ class ApiService {
         final user = (me['user'] ?? me) as Map<String, dynamic>;
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_data', jsonEncode(user));
-        final isNew = user['is_new_user'] == true ||
-            user['profile_complete'] == false ||
-            (user['dob'] == null || (user['dob'] as String?)?.isEmpty == true);
+        // Onboarding (the completion screen) is only needed until the user has a
+        // phone — that's the one mandatory field it collects. Previously this
+        // keyed off an empty `dob`, so every returning Google user (who rarely
+        // sets a birth date) was treated as "new" and re-prompted for a phone
+        // on each web login. Gate on the phone instead so it's truly one-time.
+        final phone = (user['phone'] ?? '').toString().trim();
+        final isNew = user['is_new_user'] == true || phone.isEmpty;
         return {'statusCode': 200, 'user': user, 'is_new_user': isNew};
       }
       return {'statusCode': me['statusCode'] ?? 500, ...me};
