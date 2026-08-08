@@ -369,6 +369,24 @@ export async function adminFaqSeed() {
   return request(`/faq/admin/seed`, { method: "POST" });
 }
 
+// ── Contact / Query management (website "Contact Us") ──────────────
+export async function adminContactList(params: { status?: string; q?: string } = {}) {
+  const p = new URLSearchParams();
+  if (params.status) p.set("status", params.status);
+  if (params.q) p.set("q", params.q);
+  const qs = p.toString();
+  return request(`/contact/admin${qs ? `?${qs}` : ""}`);
+}
+export async function adminContactGet(id: string) {
+  return request(`/contact/admin/${id}`);
+}
+export async function adminContactUpdate(id: string, data: { status?: string; admin_note?: string }) {
+  return request(`/contact/admin/${id}`, { method: "PATCH", body: JSON.stringify(data) });
+}
+export async function adminContactReply(id: string, body: string, resolve = false) {
+  return request(`/contact/admin/${id}/reply`, { method: "POST", body: JSON.stringify({ body, resolve }) });
+}
+
 // ── Support tickets (helpdesk) ──────────────────────────────────
 
 export async function adminSupportTickets(params: Record<string, any> = {}) {
