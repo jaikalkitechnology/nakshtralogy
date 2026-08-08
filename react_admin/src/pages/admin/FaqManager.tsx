@@ -20,29 +20,33 @@ const AUDIENCES: { key: string; label: string }[] = [
   { key: "both", label: "Both" },
 ];
 
-// Supported languages (match the apps' locales). code → label.
+// Supported languages — canonical codes matching the backend (normalize_lang).
 const LANGS: { code: string; label: string }[] = [
-  { code: "en", label: "English" },
-  { code: "hi", label: "हिन्दी (Hindi)" },
-  { code: "bn", label: "বাংলা (Bengali)" },
-  { code: "ta", label: "தமிழ் (Tamil)" },
-  { code: "te", label: "తెలుగు (Telugu)" },
-  { code: "mr", label: "मराठी (Marathi)" },
-  { code: "gu", label: "ગુજરાતી (Gujarati)" },
-  { code: "kn", label: "ಕನ್ನಡ (Kannada)" },
-  { code: "ml", label: "മലയാളം (Malayalam)" },
-  { code: "pa", label: "ਪੰਜਾਬੀ (Punjabi)" },
-  { code: "fr", label: "Français (French)" },
-  { code: "es", label: "Español (Spanish)" },
-  { code: "pt", label: "Português (Portuguese)" },
-  { code: "de", label: "Deutsch (German)" },
-  { code: "it", label: "Italiano (Italian)" },
-  { code: "ru", label: "Русский (Russian)" },
-  { code: "ar", label: "العربية (Arabic)" },
-  { code: "id", label: "Indonesia (Indonesian)" },
-  { code: "ja", label: "日本語 (Japanese)" },
+  { code: "english", label: "English" },
+  { code: "hindi", label: "हिन्दी (Hindi)" },
+  { code: "hinglish", label: "Hinglish" },
+  { code: "bengali", label: "বাংলা (Bengali)" },
+  { code: "tamil", label: "தமிழ் (Tamil)" },
+  { code: "telugu", label: "తెలుగు (Telugu)" },
+  { code: "kannada", label: "ಕನ್ನಡ (Kannada)" },
+  { code: "malayalam", label: "മലയാളം (Malayalam)" },
+  { code: "gujarati", label: "ગુજરાતી (Gujarati)" },
+  { code: "marathi", label: "मराठी (Marathi)" },
+  { code: "punjabi", label: "ਪੰਜਾਬੀ (Punjabi)" },
+  { code: "odia", label: "ଓଡ଼ିଆ (Odia)" },
+  { code: "french", label: "Français (French)" },
+  { code: "chinese", label: "中文 (Chinese)" },
+  { code: "thai", label: "ไทย (Thai)" },
+  { code: "spanish", label: "Español (Spanish)" },
+  { code: "portuguese", label: "Português (Portuguese)" },
+  { code: "german", label: "Deutsch (German)" },
+  { code: "italian", label: "Italiano (Italian)" },
+  { code: "russian", label: "Русский (Russian)" },
+  { code: "arabic", label: "العربية (Arabic)" },
+  { code: "indonesian", label: "Indonesia (Indonesian)" },
+  { code: "japanese", label: "日本語 (Japanese)" },
 ];
-const langLabel = (c?: string) => LANGS.find((l) => l.code === c)?.label || (c || "en");
+const langLabel = (c?: string) => LANGS.find((l) => l.code === c)?.label || (c || "english");
 
 export default function FaqManager() {
   const [items, setItems] = useState<Faq[]>([]);
@@ -88,11 +92,22 @@ export default function FaqManager() {
     if (r.ok) load();
   };
 
+  const [seeding, setSeeding] = useState(false);
   const seed = async () => {
+    setSeeding(true);
+    // No body → backend seeds every supported language (English + Hindi from
+    // hand sets, the rest auto-translated best-effort).
     const r = await adminFaqSeed();
+    setSeeding(false);
     if (r.ok) {
-      const n = r.data?.seeded ?? 0;
-      toast.success(n ? `Added ${n} recommended FAQ${n === 1 ? "" : "s"}` : "All recommended FAQs are already present");
+      const n = r.data?.total_added ?? r.data?.seeded ?? 0;
+      const byLang = r.data?.seeded_by_language || {};
+      const langCount = Object.values(byLang).filter((v: any) => (v || 0) > 0).length;
+      toast.success(
+        n
+          ? `Added ${n} FAQ${n === 1 ? "" : "s"} across ${langCount} language${langCount === 1 ? "" : "s"}`
+          : "All recommended FAQs are already present"
+      );
       load();
     } else {
       toast.error(r.data?.detail || "Failed");
@@ -107,7 +122,7 @@ export default function FaqManager() {
           <p className="text-sm text-muted-foreground">Help content shown in the apps' Customer Support screen — separate per app.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={seed}>Add recommended FAQ</Button>
+          <Button variant="outline" size="sm" onClick={seed} disabled={seeding} title="Seeds the recommended FAQ set in every supported language (English + Hindi hand-written; others auto-translated best-effort)">{seeding ? "Seeding all languages…" : "Add recommended FAQ (all languages)"}</Button>
           <Button variant="outline" size="sm" onClick={load} disabled={loading}><RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} /></Button>
           <Button size="sm" onClick={() => setEditing({ audience: "user", lang: langFilter || "en", is_active: true, sort_order: items.length })}><Plus className="w-4 h-4 mr-1" /> Add FAQ</Button>
         </div>
