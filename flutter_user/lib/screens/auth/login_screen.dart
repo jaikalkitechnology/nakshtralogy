@@ -12,7 +12,7 @@ import '../../services/google_auth_service.dart';
 import '../../widgets/language_selector.dart';
 import '../../main.dart' show bootGoogleError;
 import 'signup_screen.dart';
-import 'forgot_password_screen.dart';
+import 'password_otp_screen.dart';
 import 'google_profile_completion_screen.dart';
 import '../home/home_screen.dart';
 
@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())),
+                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PasswordOtpScreen(mode: PasswordOtpMode.forgot))),
                             child: Text(l.forgotPassword, style: const TextStyle(color: AppColors.primary)),
                           ),
                         ),

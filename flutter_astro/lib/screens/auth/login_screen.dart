@@ -11,7 +11,7 @@ import '../../services/api_service.dart';
 import '../../services/google_auth_service.dart';
 import '../../widgets/language_selector.dart';
 import 'signup_screen.dart';
-import 'forgot_password_screen.dart';
+import 'password_otp_screen.dart';
 import '../home/home_screen.dart';
 import '../../l10n/gen/app_localizations.dart';
 
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16),
                     TextFormField(controller: _passCtrl, obscureText: _obscure, decoration: InputDecoration(labelText: l.password, prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary), suffixIcon: IconButton(icon: Icon(_obscure ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary), onPressed: () => setState(() => _obscure = !_obscure))), validator: (v) => (v == null || v.length < 6) ? l.minSixChars : null),
                     const SizedBox(height: 8),
-                    Align(alignment: Alignment.centerRight, child: TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())), child: Text(l.forgotPassword, style: const TextStyle(color: AppColors.primary)))),
+                    Align(alignment: Alignment.centerRight, child: TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PasswordOtpScreen(mode: PasswordOtpMode.forgot))), child: Text(l.forgotPassword, style: const TextStyle(color: AppColors.primary)))),
                     const SizedBox(height: 16),
                     BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                       final loading = state is AuthLoading;

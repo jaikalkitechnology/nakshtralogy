@@ -12,6 +12,10 @@ class ApiConstants {
   static const String userGoogleLogin = '$userBase/google-login';
   static const String userForgotPassword = '$userBase/forgot-password';
   static const String userResetPassword = '$userBase/reset-password';
+  static const String userForgotSendOtp = '$userBase/forgot-password/send-otp';
+  static const String userForgotReset = '$userBase/forgot-password/reset';
+  static const String userChangePwdSendOtp = '$userBase/me/password/send-otp';
+  static const String userChangePwdWithOtp = '$userBase/me/password/change';
   static const String userRefresh = '$userBase/refresh';
   static const String userMe = '$userBase/me';
 

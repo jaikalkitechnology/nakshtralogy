@@ -39,6 +39,7 @@ from app.schemas.user_schema import (
     TokenResponse, UserResponse, UserUpdateRequest,
     ChangePasswordRequest, MessageResponse, RegionOverrideRequest,
     UserSignupOtpRequest, UserVerifyOtpRequest, UserResendOtpRequest,
+    PasswordResetOtpRequest, PasswordChangeOtpRequest,
 )
 from fastapi import Request, Header
 
@@ -338,6 +339,43 @@ def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db), lan
     return MessageResponse(message=t("msg.password_reset", lang))
 
 
+# ── Forgot Password (OTP-based) ───────────────────────────────────────
+
+@router.post("/forgot-password/send-otp", response_model=MessageResponse)
+def forgot_password_send_otp(req: ForgotPasswordRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+    """Email a 6-digit reset OTP. Never reveals whether the account exists."""
+    user = db.query(User).filter(User.email == req.email, User.role == "user").first()
+    if user and user.is_verified and user.password_hash:
+        otp = generate_otp()
+        user.otp_code = otp
+        user.otp_expires_at = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRE_MINUTES)
+        db.commit()
+        from app.services.email_service import send_otp_email
+        send_otp_email(
+            db, to=user.email, name=user.name or "", otp=otp,
+            minutes=settings.OTP_EXPIRE_MINUTES, purpose="reset your password",
+        )
+    return MessageResponse(message=t("msg.otp_sent", lang))
+
+
+@router.post("/forgot-password/reset", response_model=MessageResponse)
+def forgot_password_reset(req: PasswordResetOtpRequest, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+    """Verify the emailed OTP → set the new password."""
+    user = db.query(User).filter(User.email == req.email, User.role == "user").first()
+    if not user or not user.otp_code:
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+    if not user.otp_expires_at or user.otp_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail=t("err.otp_expired", lang))
+    if user.otp_code != req.otp.strip():
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+
+    user.password_hash = hash_password(req.new_password)
+    user.otp_code = None
+    user.otp_expires_at = None
+    db.commit()
+    return MessageResponse(message=t("msg.password_reset", lang))
+
+
 # ── Refresh Token ─────────────────────────────────────────────────────
 
 @router.post("/refresh", response_model=TokenResponse)
@@ -530,6 +568,49 @@ def change_password(
     if not current_user.password_hash or not verify_password(req.old_password, current_user.password_hash):
         raise HTTPException(status_code=400, detail=t("err.incorrect_password", lang))
     current_user.password_hash = hash_password(req.new_password)
+    db.commit()
+    return MessageResponse(message=t("msg.password_changed", lang))
+
+
+@router.post("/me/password/send-otp", response_model=MessageResponse)
+def change_password_send_otp(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Email a 6-digit OTP to the logged-in user to authorize a password change."""
+    otp = generate_otp()
+    current_user.otp_code = otp
+    current_user.otp_expires_at = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRE_MINUTES)
+    db.commit()
+    from app.services.email_service import send_otp_email
+    sent = send_otp_email(
+        db, to=current_user.email, name=current_user.name or "", otp=otp,
+        minutes=settings.OTP_EXPIRE_MINUTES, purpose="change your password",
+    )
+    if not sent:
+        raise HTTPException(status_code=502, detail=t("err.otp_email_failed", lang))
+    return MessageResponse(message=t("msg.otp_sent", lang))
+
+
+@router.post("/me/password/change", response_model=MessageResponse)
+def change_password_with_otp(
+    req: PasswordChangeOtpRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Verify the emailed OTP → set the new password (no old password needed)."""
+    if not current_user.otp_code:
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+    if not current_user.otp_expires_at or current_user.otp_expires_at < datetime.utcnow():
+        raise HTTPException(status_code=400, detail=t("err.otp_expired", lang))
+    if current_user.otp_code != req.otp.strip():
+        raise HTTPException(status_code=400, detail=t("err.invalid_otp", lang))
+
+    current_user.password_hash = hash_password(req.new_password)
+    current_user.otp_code = None
+    current_user.otp_expires_at = None
     db.commit()
     return MessageResponse(message=t("msg.password_changed", lang))
 
