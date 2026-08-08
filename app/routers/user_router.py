@@ -702,8 +702,9 @@ def get_my_wallet(
         resp["display_currency"] = "USD"
         resp["display_balance"] = round(float(wallet.balance) / fx, 2) if fx else 0.0
         resp["fx_rate_usd"] = fx
-        # International top-up happens via store IAP, not the ₹ wallet recharge.
-        resp["recharge_enabled"] = False
+        # International wallet top-up now works via the payment aggregators
+        # (PayPal / PayU / Razorpay); the USD charge credits the ₹ ledger via FX.
+        resp["recharge_enabled"] = True
     return resp
 
 
@@ -757,10 +758,18 @@ def recharge_my_wallet(
     lang: str = Depends(get_lang_user),
 ):
     """
-    Add balance to current user's wallet.
-    In production this would be called AFTER the payment gateway confirms
-    a successful payment (Razorpay webhook) — for now it's a direct add.
+    Manual wallet credit — ADMIN ONLY (e.g. goodwill / support adjustments).
+
+    Real user recharges now go through the payment aggregator: POST
+    /payments/recharge/order → hosted checkout → verify/webhook credits the
+    wallet. This direct-add is gated to admins so users can never self-credit.
     """
+    if getattr(current_user, "role", None) != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail=t("err.use_payment_method", lang) if False else
+            "Please add balance using a payment method.",
+        )
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
         wallet = Wallet(user_id=current_user.id)

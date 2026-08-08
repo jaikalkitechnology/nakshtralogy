@@ -10,7 +10,7 @@ admin-managed in PlatformSetting (category 'papg'). Money plumbing only.
 
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, Header, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -102,6 +102,50 @@ def verify_recharge(
     if not ok:
         raise HTTPException(status_code=402, detail=info)
     return info
+
+
+@router.get("/recharge/order/{order_id}")
+def recharge_order_status(
+    order_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Poll a recharge order's status (created | paid | failed). The app polls
+    this after opening the hosted checkout; the webhook credits + marks paid."""
+    from app.models.model import WalletRechargeOrder
+    order = db.query(WalletRechargeOrder).filter(
+        WalletRechargeOrder.id == order_id,
+        WalletRechargeOrder.user_id == current_user.id).first()
+    if not order:
+        raise HTTPException(404, "Order not found")
+    return {"id": order.id, "status": order.status, "amount": float(order.amount),
+            "credit_inr": float(order.credit_inr or 0), "currency": order.currency}
+
+
+@router.post("/webhook/{gateway}")
+async def gateway_webhook(gateway: str, request: Request, db: Session = Depends(get_db)):
+    """Server-to-server payment confirmation. The gateway signs the payload;
+    we verify + credit the wallet idempotently. The user's app separately polls
+    the order status. Signature is verified inside verify_and_credit."""
+    gw = gateway.strip().lower()
+    if gw not in papg._ALL:
+        raise HTTPException(404, "Unknown gateway")
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+    # Resolve the owning user from the order ref so we credit the right wallet.
+    from app.models.model import WalletRechargeOrder
+    order_ref = payload.get("order_ref") or payload.get("reference_id")
+    if not order_ref:
+        return {"ok": False, "reason": "no_order_ref"}
+    order = db.query(WalletRechargeOrder).filter(WalletRechargeOrder.id == order_ref).first()
+    if not order:
+        return {"ok": False, "reason": "unknown_order"}
+    payload["gateway"] = gw
+    payload["order_ref"] = order.id
+    ok, info = papg.verify_and_credit(db, order.user_id, payload)
+    return {"ok": ok, **info}
 
 
 # ── ADMIN (credential management) ─────────────────────────────────────

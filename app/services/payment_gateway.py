@@ -159,11 +159,42 @@ def verify_signature(db: Session, gateway: str, payload: dict) -> bool:
 
 # ── order + credit ────────────────────────────────────────────────────
 
+def _razorpay_payment_link(creds: dict, amount: float, currency: str,
+                           reference_id: str, callback_url: Optional[str]) -> Optional[str]:
+    """Create a Razorpay Payment Link (hosted checkout, works web + mobile).
+    Returns the short_url or None. Real HTTP call — only runs with live keys."""
+    try:
+        import requests
+        resp = requests.post(
+            "https://api.razorpay.com/v1/payment_links",
+            auth=(creds["key_id"], creds["key_secret"]),
+            json={
+                "amount": int(round(amount * 100)),   # paise / cents
+                "currency": currency,
+                "accept_partial": False,
+                "reference_id": reference_id,
+                "description": "Nakshatralogy wallet recharge",
+                "notify": {"sms": False, "email": False},
+                "reminder_enable": False,
+                **({"callback_url": callback_url, "callback_method": "get"} if callback_url else {}),
+            },
+            timeout=15,
+        )
+        if resp.status_code in (200, 201):
+            data = resp.json()
+            return data.get("short_url")
+        logger.warning("razorpay payment_link failed: %s %s", resp.status_code, resp.text[:200])
+    except Exception as e:  # pragma: no cover - network/keys required
+        logger.warning("razorpay payment_link error: %s", e)
+    return None
+
+
 def create_order(db: Session, user_id: str, gateway: str, amount: float,
-                 currency: str = "INR", credit_inr: Optional[float] = None):
-    """Create a WalletRechargeOrder. The real gateway order id is created by the
-    client SDK / a server call when credentials exist; we persist our record and
-    return the checkout params. Returns (order, checkout_params)."""
+                 currency: str = "INR", credit_inr: Optional[float] = None,
+                 callback_url: Optional[str] = None):
+    """Create a WalletRechargeOrder and, when the gateway is configured, a real
+    hosted-checkout URL. Returns (order, checkout_params). checkout.url is the
+    hosted page the client opens; None until credentials are configured."""
     from app.models.model import WalletRechargeOrder
     order = WalletRechargeOrder(
         user_id=user_id, gateway=gateway, amount=Decimal(str(amount)),
@@ -173,6 +204,14 @@ def create_order(db: Session, user_id: str, gateway: str, amount: float,
     db.add(order)
     db.flush()
     creds = load_creds(db, gateway)
+    checkout_url = None
+    if is_configured(db, gateway):
+        if gateway == "razorpay":
+            checkout_url = _razorpay_payment_link(creds, amount, currency, order.id, callback_url)
+        # payu / paypal hosted-link creation land with their live credentials.
+    if checkout_url:
+        order.gateway_order_id = order.gateway_order_id  # link ref stored in notes
+        order.notes = {"checkout_url": checkout_url}
     checkout = {
         "order_ref": order.id,
         "gateway": gateway,
@@ -180,6 +219,7 @@ def create_order(db: Session, user_id: str, gateway: str, amount: float,
         "amount": float(amount),
         "currency": currency,
         "environment": creds.get("environment") or "live",
+        "url": checkout_url,
     }
     return order, checkout
 

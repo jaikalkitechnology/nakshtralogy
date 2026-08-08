@@ -6,6 +6,7 @@ import '../../services/app_mode.dart';
 import '../../services/iap_service.dart';
 import '../../utils/money.dart';
 import '../../utils/coupon_labels.dart';
+import '../../widgets/recharge_sheet.dart';
 
 /// Reusable pay-per-report paywall for flutter_user.
 ///
@@ -342,67 +343,12 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
     }
   }
 
-  void _openRecharge() {
-    final l = AppLocalizations.of(context)!;
-    final suggested = (_effPrice - _balance).clamp(0, double.infinity);
-    final ctrl = TextEditingController(
-        text: suggested > 0 ? suggested.ceil().toString() : _price.ceil().toString());
-    bool submitting = false;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.card,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => StatefulBuilder(builder: (ctx, setS) => Padding(
-        padding: EdgeInsets.only(
-            left: 20, right: 20, top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            const Icon(Icons.account_balance_wallet, color: AppColors.gold),
-            const SizedBox(width: 8),
-            Text(l.pwRechargeToUnlock,
-                style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700)),
-          ]),
-          const SizedBox(height: 14),
-          TextField(
-            controller: ctrl,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(color: AppColors.ivory),
-            decoration: InputDecoration(
-              labelText: l.pwRechargeAmount,
-              labelStyle: const TextStyle(color: AppColors.smoke),
-              enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.smoke)),
-              focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(width: double.infinity, child: ElevatedButton(
-            onPressed: submitting ? null : () async {
-              final amt = double.tryParse(ctrl.text.trim()) ?? 0;
-              if (amt <= 0) return;
-              setS(() => submitting = true);
-              final r = await _api.rechargeMyWallet(amount: amt);
-              final ok = r['statusCode'] == 200 || r['statusCode'] == 201;
-              if (!ctx.mounted) return;
-              Navigator.pop(ctx);
-              if (ok) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(l.pwRechargeDone), backgroundColor: AppColors.success));
-                await _loadBalance();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(l.pwRechargeFailed), backgroundColor: AppColors.error));
-              }
-            },
-            child: submitting
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                : Text(l.pwAddMoney),
-          )),
-        ]),
-      )),
-    );
+  Future<void> _openRecharge() async {
+    // Recharge now goes through the payment aggregators (Razorpay / PayU /
+    // PayPal); suggest the shortfall as the top-up amount.
+    final suggested = (_effPrice - _balance).clamp(0, double.infinity).toDouble();
+    final ok = await showRechargeSheet(context, suggested: suggested > 0 ? suggested : _effPrice);
+    if (ok && mounted) await _loadBalance();
   }
 
   @override
