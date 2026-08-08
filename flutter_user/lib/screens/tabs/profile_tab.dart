@@ -10,6 +10,7 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/profile/profile_bloc.dart';
 import '../../widgets/legal_section.dart';
 import '../support/support_screen.dart';
+import '../invoices/invoices_screen.dart';
 import '../auth/password_otp_screen.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../widgets/astro_avatar.dart';
@@ -658,6 +659,35 @@ class _ProfileTabState extends State<ProfileTab> {
                     ),
                   ),
                 ),
+              const SizedBox(height: 12),
+
+              // ============ INVOICES ============
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const InvoicesScreen()),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(children: [
+                      const Icon(Icons.receipt_long_outlined, color: AppColors.gold, size: 22),
+                      const SizedBox(width: 12),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(MenuLabels.of(context, 'invoices'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text(MenuLabels.of(context, 'invoicesSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                      ])),
+                      const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                    ]),
+                  ),
+                ),
+              ),
               const SizedBox(height: 12),
 
               // ============ CUSTOMER SUPPORT ============

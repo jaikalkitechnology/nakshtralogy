@@ -1124,6 +1124,14 @@ def purchase_service(
             coupon_service.record_redemption(
                 db, disc.coupon, current_user.id, "service_order", order.id,
                 price, discount_amt)
+            from app.services import invoice_service
+            _inv = invoice_service.create_invoice(
+                db, user_id=current_user.id, kind="product",
+                context_type="service_order", context_id=order.id, currency="INR",
+                line_items=[{"label": sp.service_name, "qty": 1, "unit": price, "amount": price}],
+                base_amount=price, total_amount=0.0, discount_amount=discount_amt,
+                coupon_code=(disc.coupon.code if disc.coupon else None))
+            order.invoice_id = _inv.id
         db.commit()
         db.refresh(order)
         return ServiceOrderResponse(
@@ -1173,6 +1181,14 @@ def purchase_service(
         coupon_service.record_redemption(
             db, disc.coupon, current_user.id, "service_order", order.id,
             price, discount_amt)
+    from app.services import invoice_service
+    _inv = invoice_service.create_invoice(
+        db, user_id=current_user.id, kind="product",
+        context_type="service_order", context_id=order.id, currency="INR",
+        line_items=[{"label": sp.service_name, "qty": 1, "unit": price, "amount": price}],
+        base_amount=price, total_amount=net_price, discount_amount=discount_amt,
+        coupon_code=(disc.coupon.code if (disc and disc.coupon) else None))
+    order.invoice_id = _inv.id
     db.commit()
     db.refresh(order)
 

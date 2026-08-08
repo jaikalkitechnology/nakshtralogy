@@ -576,6 +576,21 @@ def call_action(
                 )
                 profile.total_consultations = (profile.total_consultations or 0) + 1
                 profile.total_minutes = (profile.total_minutes or 0) + minutes
+
+            # Invoice for the completed call.
+            try:
+                from app.services import invoice_service
+                _inv = invoice_service.create_invoice(
+                    db, user_id=call.caller_id, kind="consultation",
+                    context_type="call_session", context_id=call.id, currency="INR",
+                    line_items=[{"label": f"{call.call_type.title()} call — {minutes} min",
+                                 "qty": minutes, "unit": float(call.rate_per_min), "amount": total}],
+                    base_amount=total, total_amount=net, discount_amount=discount,
+                    coupon_code=(disc.coupon.code if (disc and disc.coupon) else None),
+                    astrologer_name=(profile.display_name if profile else None))
+                call.invoice_id = _inv.id
+            except Exception:
+                pass
         _release_astrologer(db, call.astrologer_profile_id)
 
     db.commit()
@@ -1531,6 +1546,20 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str
         )
         profile.is_busy = False
         profile.total_consultations = (profile.total_consultations or 0) + 1
+
+    # Invoice for the completed chat consultation.
+    try:
+        from app.services import invoice_service
+        _inv = invoice_service.create_invoice(
+            db, user_id=session.user_id, kind="consultation",
+            context_type="chat_session", context_id=session.id, currency="INR",
+            line_items=[{"label": "Chat consultation", "qty": 1, "unit": total, "amount": total}],
+            base_amount=total, total_amount=net, discount_amount=discount,
+            coupon_code=(disc.coupon.code if (disc and disc.coupon) else None),
+            astrologer_name=(profile.display_name if profile else None))
+        session.invoice_id = _inv.id
+    except Exception:
+        pass
 
 
 def _chat_session_response(session: ChatSession, db=None) -> ChatSessionResponse:

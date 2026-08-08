@@ -22,6 +22,8 @@ class MenuLabels {
     'termsConditions': 'Terms & Conditions',
     'refundPolicy': 'Refund Policy',
     'couldNotOpen': 'Could not open the link',
+    'invoices': 'Invoices',
+    'invoicesSub': 'View & download your receipts',
   };
 
   // Per-locale overrides. Keyed by the same code scheme as HomeLabels

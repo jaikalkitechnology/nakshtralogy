@@ -583,6 +583,20 @@ class ApiService {
     }
   }
 
+  /// The user's invoices (product + consultation receipts).
+  Future<List<dynamic>> getMyInvoices() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/me/invoices'));
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
+  /// Public printable-invoice URL for a signed download token (opens in the
+  /// browser to save / print-to-PDF).
+  String invoiceViewUrl(String invoiceId, String token) =>
+      '${ApiConstants.baseUrl}/me/invoices/$invoiceId/view?t=$token';
+
   /// Coupon offer to show on an astrologer's profile (+ already_used flag).
   Future<Map<String, dynamic>?> getAstrologerCoupon(String astrologerId) async {
     try {
