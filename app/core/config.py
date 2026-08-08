@@ -15,6 +15,11 @@ class Settings:
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = os.getenv("DEBUG", "false").lower() == "true"
 
+    # Auto-apply additive schema sync (missing tables/columns) on startup/redeploy.
+    # Default ON so a deploy picks up new model columns without a manual step; a
+    # DB toggle in the admin panel overrides this env default at runtime.
+    AUTO_SCHEMA_SYNC: bool = os.getenv("AUTO_SCHEMA_SYNC", "true").lower() == "true"
+
     # MySQL
     DB_HOST: str = os.getenv("DB_HOST", "localhost")
     DB_PORT: int = int(os.getenv("DB_PORT", "3306"))

@@ -161,3 +161,105 @@ def apply_additive(engine, dry_run: bool = True) -> dict:
                 result["errors"].append({"table": mc["table"], "column": mc["column"], "error": str(e)})
 
     return result
+
+
+# ─────────────────────── Auto-mode toggle + activity log ───────────────────────
+
+_AUTO_CATEGORY = "system"
+_AUTO_KEY = "schema_auto_sync"
+_TRUE = ("1", "true", "yes", "on")
+
+
+def get_auto_sync(db) -> bool:
+    """Whether additive schema sync auto-applies on startup/redeploy.
+
+    A DB `platform_settings` row (category=system, key=schema_auto_sync) wins;
+    otherwise the `AUTO_SCHEMA_SYNC` env default applies. Never raises.
+    """
+    from app.core.config import settings
+    try:
+        from app.models.model import PlatformSetting
+        row = (
+            db.query(PlatformSetting)
+            .filter(PlatformSetting.category == _AUTO_CATEGORY, PlatformSetting.key == _AUTO_KEY)
+            .first()
+        )
+        if row and row.value is not None:
+            return str(row.value).strip().lower() in _TRUE
+    except Exception:
+        pass
+    return bool(getattr(settings, "AUTO_SCHEMA_SYNC", True))
+
+
+def set_auto_sync(db, enabled: bool, updated_by: str | None = None) -> bool:
+    """Persist the auto-mode toggle into platform_settings. Returns the value."""
+    from app.models.model import PlatformSetting
+    row = (
+        db.query(PlatformSetting)
+        .filter(PlatformSetting.category == _AUTO_CATEGORY, PlatformSetting.key == _AUTO_KEY)
+        .first()
+    )
+    val = "true" if enabled else "false"
+    if row:
+        row.value = val
+        row.updated_by = updated_by
+    else:
+        db.add(PlatformSetting(
+            category=_AUTO_CATEGORY, key=_AUTO_KEY, value=val, is_secret=False,
+            description="Auto-apply additive schema sync (missing tables/columns) on startup/redeploy.",
+            updated_by=updated_by,
+        ))
+    db.commit()
+    return enabled
+
+
+def record_sync_log(db, result: dict, source: str = "admin", triggered_by: str | None = None):
+    """Append one SchemaSyncLog row summarising an apply/preview. Best-effort."""
+    try:
+        from app.models.model import SchemaSyncLog
+        row = SchemaSyncLog(
+            source=source,
+            dry_run=bool(result.get("dry_run")),
+            created_tables=result.get("created_tables") or [],
+            added_columns=result.get("added_columns") or [],
+            skipped=result.get("skipped") or [],
+            errors=result.get("errors") or [],
+            notes=result.get("notes") or [],
+            triggered_by=triggered_by,
+        )
+        db.add(row)
+        db.commit()
+        return row
+    except Exception as e:  # never let logging break a sync
+        logger.warning("record_sync_log failed: %s", e)
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        return None
+
+
+def run_startup_sync(engine, session_factory) -> dict | None:
+    """Called once at startup: if auto-mode is enabled, apply additive changes
+    and record an activity-log row. Returns the result dict, or None if skipped
+    / disabled. Fully guarded so a failure never blocks boot."""
+    db = session_factory()
+    try:
+        if not get_auto_sync(db):
+            logger.info("schema_sync: auto-mode disabled — skipping startup sync")
+            return None
+        result = apply_additive(engine, dry_run=False)
+        record_sync_log(db, result, source="startup")
+        n_tables = len(result.get("created_tables") or [])
+        n_cols = len(result.get("added_columns") or [])
+        if n_tables or n_cols:
+            logger.info("schema_sync startup applied: %d table(s), %d column(s)", n_tables, n_cols)
+        return result
+    except Exception as e:
+        logger.warning("schema_sync startup failed: %s", e)
+        return None
+    finally:
+        try:
+            db.close()
+        except Exception:
+            pass

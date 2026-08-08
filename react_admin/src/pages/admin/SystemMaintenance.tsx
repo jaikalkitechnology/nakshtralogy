@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   adminSchemaDiff, adminSchemaSync, adminSeedCatalog, adminSeedRun,
   adminGetSystemConfig, adminReloadConfig,
+  adminSchemaAutoGet, adminSchemaAutoSet, adminSchemaHistory,
 } from "@/services/api";
 
 /**
@@ -48,6 +49,9 @@ export default function SystemMaintenance() {
   const [schemaMsg, setSchemaMsg] = useState<Msg>(null);
   const [applyResult, setApplyResult] = useState<any>(null);
 
+  const [autoOn, setAutoOn] = useState<boolean | null>(null);
+  const [history, setHistory] = useState<any[]>([]);
+
   const loadDiff = useCallback(async () => {
     setSchemaBusy(true); setSchemaMsg(null); setApplyResult(null);
     try {
@@ -58,7 +62,30 @@ export default function SystemMaintenance() {
     finally { setSchemaBusy(false); }
   }, []);
 
-  useEffect(() => { loadDiff(); }, [loadDiff]);
+  const loadHistory = useCallback(async () => {
+    try {
+      const { ok, data } = await adminSchemaHistory(10);
+      if (ok) setHistory(data.data ?? data ?? []);
+    } catch { /* ignore */ }
+  }, []);
+
+  const loadAuto = useCallback(async () => {
+    try {
+      const { ok, data } = await adminSchemaAutoGet();
+      if (ok) setAutoOn(!!(data.data ?? data)?.enabled);
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => { loadDiff(); loadAuto(); loadHistory(); }, [loadDiff, loadAuto, loadHistory]);
+
+  const toggleAuto = async () => {
+    const next = !autoOn;
+    setAutoOn(next); // optimistic
+    try {
+      const { ok } = await adminSchemaAutoSet(next);
+      if (!ok) { setAutoOn(!next); setSchemaMsg({ ok: false, text: "Could not update auto-mode." }); }
+    } catch { setAutoOn(!next); setSchemaMsg({ ok: false, text: "Could not update auto-mode." }); }
+  };
 
   const applySchema = async () => {
     if (!window.confirm(
@@ -75,6 +102,7 @@ export default function SystemMaintenance() {
           `Applied: ${r.created_tables?.length || 0} table(s), ${r.added_columns?.length || 0} column(s)` +
           (r.errors?.length ? `, ${r.errors.length} error(s)` : "") });
         await loadDiff();
+        await loadHistory();
       } else setSchemaMsg({ ok: false, text: "Sync failed." });
     } catch { setSchemaMsg({ ok: false, text: "Sync failed." }); }
     finally { setSchemaBusy(false); }
@@ -165,6 +193,26 @@ export default function SystemMaintenance() {
         title="Database Schema Sync"
         subtitle="Auto-diff the models vs the live DB and apply missing tables/columns (never drops or renames)."
       >
+        {/* Auto-mode toggle: apply additive changes automatically on every deploy/restart */}
+        <div className="flex items-start justify-between gap-3 rounded-lg border border-border bg-muted/20 p-3">
+          <div>
+            <div className="text-sm font-semibold text-foreground">Auto-apply on deploy</div>
+            <p className="text-[11px] text-muted-foreground">
+              When ON, every startup/redeploy automatically applies missing tables &amp; columns
+              from the models — no manual step. Additive only; nothing is ever dropped.
+            </p>
+          </div>
+          <button
+            role="switch"
+            aria-checked={!!autoOn}
+            onClick={toggleAuto}
+            disabled={autoOn === null}
+            className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${autoOn ? "bg-green-500/70" : "bg-muted"}`}
+          >
+            <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${autoOn ? "left-[22px]" : "left-0.5"}`} />
+          </button>
+        </div>
+
         <div className="flex flex-wrap items-center gap-2">
           {diff && (inSync
             ? <Badge className="flex items-center gap-1 bg-green-500/20 text-green-400"><CheckCircle2 className="h-3 w-3" /> In sync</Badge>
@@ -208,6 +256,48 @@ export default function SystemMaintenance() {
             {applyResult.notes.map((n: string, i: number) => <div key={i}>• {n}</div>)}
           </div>
         )}
+
+        {/* Apply activity — auto (startup/redeploy) + manual syncs, newest first */}
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Sync activity</div>
+            <button onClick={loadHistory} className="text-[10px] text-primary hover:underline">Refresh</button>
+          </div>
+          {history.length === 0
+            ? <div className="rounded-lg border border-border bg-muted/10 p-3 text-[11px] text-muted-foreground">No sync activity yet.</div>
+            : (
+              <div className="max-h-56 overflow-auto rounded-lg border border-border bg-card">
+                <table className="w-full text-[11px]">
+                  <thead className="bg-muted/40 text-muted-foreground">
+                    <tr>
+                      <th className="px-2 py-1.5 text-left">When</th>
+                      <th className="px-2 py-1.5 text-left">Source</th>
+                      <th className="px-2 py-1.5 text-left">Applied</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map((h) => {
+                      const nt = (h.created_tables || []).length;
+                      const nc = (h.added_columns || []).length;
+                      const ne = (h.errors || []).length;
+                      return (
+                        <tr key={h.id} className="border-t border-border/50">
+                          <td className="whitespace-nowrap px-2 py-1.5 text-muted-foreground">{h.created_at ? new Date(h.created_at).toLocaleString() : "—"}</td>
+                          <td className="px-2 py-1.5">
+                            <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${h.source === "startup" ? "bg-blue-500/20 text-blue-400" : "bg-muted text-muted-foreground"}`}>{h.source}</span>
+                          </td>
+                          <td className="px-2 py-1.5 text-foreground">
+                            {nt || nc ? `${nt} table(s), ${nc} column(s)` : "no changes"}
+                            {ne > 0 && <span className="ml-1 text-destructive">· {ne} error(s)</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+        </div>
       </Section>
 
       {/* ── Seeders ── */}

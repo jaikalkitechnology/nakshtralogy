@@ -1470,3 +1470,28 @@ class IdempotencyKey(Base):
     __table_args__ = (
         UniqueConstraint("api_key_id", "key", name="uq_idem_key_per_apikey"),
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  SCHEMA SYNC LOG (admin "System / Maintenance" activity)
+# ─────────────────────────────────────────────────────────────────────
+
+class SchemaSyncLog(Base):
+    """Audit trail for the additive schema-sync feature.
+
+    One row per apply (or preview) of the model→DB additive diff, whether it
+    ran automatically on startup/redeploy or was triggered from the admin
+    panel. Purely operational plumbing — never touches astrology logic.
+    """
+    __tablename__ = "schema_sync_logs"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    source = Column(String(20), nullable=False, default="admin")   # startup | admin | auto
+    dry_run = Column(Boolean, default=False, nullable=False)
+    created_tables = Column(JSON, default=[])       # ["table", ...]
+    added_columns = Column(JSON, default=[])        # [{table, column, type}, ...]
+    skipped = Column(JSON, default=[])              # [{table, column, reason}, ...]
+    errors = Column(JSON, default=[])               # [{...}]
+    notes = Column(JSON, default=[])                # ["..."]
+    triggered_by = Column(String(36), nullable=True)  # admin user id (if manual)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False, index=True)

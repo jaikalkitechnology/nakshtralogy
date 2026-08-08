@@ -22,7 +22,9 @@ from app.core.config import settings
 from app.core.database import engine, get_db
 from app.core.dependencies import require_role
 from app.models.model import User
-from app.services.schema_sync import apply_additive, diff_schema
+from app.services.schema_sync import (
+    apply_additive, diff_schema, get_auto_sync, set_auto_sync, record_sync_log,
+)
 
 router = APIRouter()
 
@@ -41,12 +43,73 @@ def schema_diff(
 def schema_sync(
     dry_run: bool = Query(True, description="Preview only (default). Set false to apply."),
     current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
 ):
     """Apply additive schema changes (missing tables + columns). Never drops.
 
-    Call with dry_run=true first to preview; dry_run=false to apply.
+    Call with dry_run=true first to preview; dry_run=false to apply. A real
+    apply is recorded in the schema-sync activity log.
     """
-    return {"status": "ok", "data": apply_additive(engine, dry_run=dry_run)}
+    result = apply_additive(engine, dry_run=dry_run)
+    if not dry_run:
+        record_sync_log(db, result, source="admin", triggered_by=current_user.id)
+    return {"status": "ok", "data": result}
+
+
+class SchemaAutoRequest(BaseModel):
+    enabled: bool
+
+
+@router.get("/schema/auto", tags=["Admin System"])
+def schema_auto_get(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Whether additive schema sync auto-applies on every startup/redeploy."""
+    return {"status": "ok", "data": {"enabled": get_auto_sync(db)}}
+
+
+@router.post("/schema/auto", tags=["Admin System"])
+def schema_auto_set(
+    req: SchemaAutoRequest,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Turn auto-mode on/off. When ON, a redeploy applies missing columns/tables
+    automatically (additive only) — no manual click needed."""
+    set_auto_sync(db, req.enabled, updated_by=current_user.id)
+    return {"status": "ok", "data": {"enabled": req.enabled}}
+
+
+@router.get("/schema/history", tags=["Admin System"])
+def schema_history(
+    limit: int = Query(20, ge=1, le=100),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Recent schema-sync activity (auto/startup + manual applies), newest first."""
+    from app.models.model import SchemaSyncLog
+    rows = (
+        db.query(SchemaSyncLog)
+        .order_by(SchemaSyncLog.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return {"status": "ok", "data": [
+        {
+            "id": r.id,
+            "source": r.source,
+            "dry_run": r.dry_run,
+            "created_tables": r.created_tables or [],
+            "added_columns": r.added_columns or [],
+            "skipped": r.skipped or [],
+            "errors": r.errors or [],
+            "notes": r.notes or [],
+            "triggered_by": r.triggered_by,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in rows
+    ]}
 
 
 # ─────────────────────────── Seed ───────────────────────────
