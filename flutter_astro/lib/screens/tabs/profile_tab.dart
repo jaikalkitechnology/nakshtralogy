@@ -18,6 +18,7 @@ import '../../widgets/language_selector.dart';
 import '../../services/api_service.dart';
 import '../notifications/notification_screen.dart';
 import '../notifications/notification_hub_screen.dart';
+import '../coupons/my_coupons_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -346,6 +347,27 @@ class _ProfileTabState extends State<ProfileTab> {
               ]),
             ),
             const SizedBox(height: 20),
+
+            // ── My Offers (coupons) ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyCouponsScreen())),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: Row(children: const [
+                  Icon(Icons.local_offer_outlined, color: AppColors.gold, size: 22),
+                  SizedBox(width: 12),
+                  Expanded(child: Text('My Offers', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600))),
+                  Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                ]),
+              ),
+            ),
 
             // ── Notifications ──
             InkWell(

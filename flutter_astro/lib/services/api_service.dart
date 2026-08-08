@@ -1061,6 +1061,54 @@ class ApiService {
     await _authPost(Uri.parse('${ApiConstants.notifications}/read-all'));
   }
 
+  // ═══ Coupons (astrologer self-serve) ═══
+
+  Future<List<dynamic>> getMyCoupons() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/coupons/astro'));
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
+  Future<Map<String, dynamic>> createCoupon({
+    required String kind,          // first_consult | consultation
+    required String discountType,  // percent | flat
+    required num discountValue,
+    String? title,
+    num? maxDiscountAmt,
+    num? minOrderAmt,
+    List<String>? appliesTo,
+    String? expiresAt,             // ISO datetime
+  }) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.baseUrl}/coupons/astro'),
+      body: jsonEncode({
+        'kind': kind,
+        'discount_type': discountType,
+        'discount_value': discountValue,
+        if (title != null) 'title': title,
+        if (maxDiscountAmt != null) 'max_discount_amt': maxDiscountAmt,
+        if (minOrderAmt != null) 'min_order_amt': minOrderAmt,
+        if (appliesTo != null) 'applies_to': appliesTo,
+        if (expiresAt != null) 'expires_at': expiresAt,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<bool> deleteCoupon(String id) async {
+    try {
+      final resp = await http.delete(
+        Uri.parse('${ApiConstants.baseUrl}/coupons/astro/$id'),
+        headers: _headers,
+      );
+      return resp.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
   // ═══ FAQ / Customer Support ═══
 
   /// Active home-screen banners for this app (astrologer audience).

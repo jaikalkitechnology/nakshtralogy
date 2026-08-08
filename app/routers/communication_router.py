@@ -543,16 +543,28 @@ def call_action(
             total = minutes * float(call.rate_per_min)
             profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == call.astrologer_profile_id).first()
             commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
-            commission = total * commission_pct / 100
-            earning = total - commission
-            call.total_amount = Decimal(str(total))
+
+            # ── coupon: call is debited at end, so discount the debit directly ──
+            _scope = "video" if call.call_type == "video" else "call"
+            discount, disc = _resolve_consult_coupon(
+                db, call.caller_id, _scope, call.astrologer_profile_id, total)
+            if disc:
+                from app.services import coupon_service
+                call.coupon_id = disc.coupon_id
+                call.discount_amount = Decimal(str(discount))
+                coupon_service.record_redemption(
+                    db, disc.coupon, call.caller_id, "call_session", call.id, total, discount)
+            funded = disc.funded_by if disc else "platform"
+            net, earning, commission = _split_earning(total, discount, funded, commission_pct)
+            call.total_amount = Decimal(str(net))
             call.astrologer_earning = Decimal(str(earning))
             call.platform_commission = Decimal(str(commission))
 
             try:
                 call.user_wallet_txn_id = _debit_wallet(
-                    db, call.caller_id, total,
-                    f"{call.call_type.title()} call — {minutes} min × ₹{rate}/min",
+                    db, call.caller_id, net,
+                    f"{call.call_type.title()} call — {minutes} min × ₹{rate}/min"
+                    + (f" (coupon -{discount:g})" if discount else ""),
                     lang=lang,
                 )
             except HTTPException:
@@ -1444,6 +1456,32 @@ def _refund_blocked(db: Session, session: ChatSession):
             db.flush()
 
 
+def _resolve_consult_coupon(db: Session, user_id: str, scope: str,
+                            astrologer_id: str, total: float):
+    """Best eligible consultation coupon for this session. Returns
+    (discount, DiscountResult|None). Money is moved by the caller."""
+    from app.services import coupon_service
+    disc = coupon_service.resolve_discount(
+        db, user_id, scope, total, astrologer_id=astrologer_id)
+    if disc and disc.discount_amount > 0:
+        return min(float(disc.discount_amount), float(total)), disc
+    return 0.0, None
+
+
+def _split_earning(total: float, discount: float, funded_by: str, commission_pct: float):
+    """(net_to_user, astrologer_earning, platform_commission) after a coupon.
+    astrologer-funded → astrologer earns on the discounted net; platform-funded
+    → astrologer earns on the full total and the platform absorbs the discount."""
+    net = total - discount
+    if funded_by == "platform":
+        commission = total * commission_pct / 100 - discount
+        earning = total - (total * commission_pct / 100)
+    else:  # astrologer-funded (default) or no coupon (discount 0)
+        commission = net * commission_pct / 100
+        earning = net - commission
+    return net, earning, commission
+
+
 def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str = "english"):
     """End session and settle billing."""
     session.status = "completed"
@@ -1465,10 +1503,23 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str
             except HTTPException:
                 total = blocked  # cap at blocked if insufficient
 
+    # ── coupon: chat was debited upfront (block/extra), so a discount is
+    #    refunded to the user; earning/commission recomputed per funded_by. ──
+    discount, disc = _resolve_consult_coupon(db, session.user_id, "chat",
+                                             session.astrologer_id, total)
+    if disc:
+        from app.services import coupon_service
+        _credit_wallet(db, session.user_id, discount,
+                       f"Coupon discount — chat ({disc.coupon.code or 'offer'})")
+        session.coupon_id = disc.coupon_id
+        session.discount_amount = Decimal(str(discount))
+        coupon_service.record_redemption(
+            db, disc.coupon, session.user_id, "chat_session", session.id, total, discount)
+
     commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
-    commission = total * commission_pct / 100
-    earning = total - commission
-    session.total_amount = Decimal(str(total))
+    funded = disc.funded_by if disc else "platform"
+    net, earning, commission = _split_earning(total, discount, funded, commission_pct)
+    session.total_amount = Decimal(str(net))
     session.astrologer_earning = Decimal(str(earning))
     session.platform_commission = Decimal(str(commission))
     session.user_wallet_txn_id = session.block_txn_id  # the block txn IS the debit
