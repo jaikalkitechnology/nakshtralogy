@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../utils/money.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
@@ -337,7 +338,13 @@ class _AstroCard extends StatelessWidget {
     final specTail = specs.isNotEmpty ? specs.take(2).join(' \u00b7 ') : 'Astrologer';
     final specLine = years > 0 ? '$specTail \u00b7 $years ${l?.yrs ?? 'yrs'}' : specTail;
 
-    final chatRate = (a['rate_per_min_chat'] as num?)?.toInt() ?? 0;
+    // Region-aware chat rate label: USD for international (5× rule), ₹ for India.
+    final _rateCur = (a['session_currency'] as String?) ?? 'INR';
+    final _rateVal = (a['rate_chat_display'] as num?)?.toDouble() ??
+        (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0;
+    final chatRateLabel = _rateCur.toUpperCase() == 'USD'
+        ? Money.format(_rateVal, currency: 'USD', decimals: 2)
+        : Money.format(_rateVal, currency: 'INR', decimals: 0);
 
     // Reviews label e.g. 2.1k
     String reviewLabel(int n) {
@@ -441,7 +448,7 @@ class _AstroCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '\u20b9$chatRate/min',
+                        '$chatRateLabel/min',
                         style: const TextStyle(
                           fontFamily: 'Manrope',
                           color: AppColors.smoke,

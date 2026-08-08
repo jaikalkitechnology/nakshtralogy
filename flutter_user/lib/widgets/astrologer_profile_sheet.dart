@@ -8,6 +8,7 @@ import '../bloc/astrologer/astrologer_event.dart';
 import '../bloc/astrologer/astrologer_state.dart';
 import '../services/api_service.dart';
 import '../utils/coupon_labels.dart';
+import '../utils/money.dart';
 import '../screens/communication/chat_screen.dart';
 import '../screens/communication/call_screen.dart';
 
@@ -281,11 +282,17 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        _rateBox(Icons.chat_bubble_outline, l.chat, (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0, l),
+                        _rateBox(Icons.chat_bubble_outline, l.chat,
+                            (a['rate_chat_display'] as num?)?.toDouble() ?? (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0,
+                            (a['session_currency'] as String?) ?? 'INR', l),
                         const SizedBox(width: 8),
-                        _rateBox(Icons.call, l.astroVoice, (a['rate_per_min_call'] as num?)?.toDouble() ?? 0, l),
+                        _rateBox(Icons.call, l.astroVoice,
+                            (a['rate_call_display'] as num?)?.toDouble() ?? (a['rate_per_min_call'] as num?)?.toDouble() ?? 0,
+                            (a['session_currency'] as String?) ?? 'INR', l),
                         const SizedBox(width: 8),
-                        _rateBox(Icons.videocam, l.video, (a['rate_per_min_video'] as num?)?.toDouble() ?? 0, l),
+                        _rateBox(Icons.videocam, l.video,
+                            (a['rate_video_display'] as num?)?.toDouble() ?? (a['rate_per_min_video'] as num?)?.toDouble() ?? 0,
+                            (a['session_currency'] as String?) ?? 'INR', l),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -419,7 +426,13 @@ class _AstrologerProfileSheet extends StatelessWidget {
     );
   }
 
-  Widget _rateBox(IconData icon, String label, double rate, AppLocalizations l) {
+  Widget _rateBox(IconData icon, String label, double rate, String currency, AppLocalizations l) {
+    // International sessions show USD (5× rule); India shows ₹. USD keeps 2
+    // decimals for per-minute rates; ₹ stays whole.
+    final isUsd = currency.toUpperCase() == 'USD';
+    final rateText = isUsd
+        ? Money.format(rate, currency: 'USD', decimals: 2)
+        : Money.format(rate, currency: 'INR', decimals: 0);
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -435,7 +448,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
             Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
             const SizedBox(height: 2),
             Text(
-              '₹${rate.toInt()}${l.perMin}',
+              '$rateText${l.perMin}',
               style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ],
