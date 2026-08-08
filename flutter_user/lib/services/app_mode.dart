@@ -138,6 +138,10 @@ class AppMode {
   /// Fetch region from the backend (after auth). Sets the device-country hint
   /// header first. Never throws — falls back to the cached mode.
   Future<void> refreshFromServer() async {
+    // /me/region requires auth — never call it while logged out (it would 401
+    // and could trip the token-refresh/logout path). The cached region covers
+    // the pre-login UI; we refresh right after a successful login instead.
+    if (!ApiService().isLoggedIn) return;
     ApiService().setDeviceCountry(deviceCountry());
     try {
       final r = await ApiService().getMyRegion();
