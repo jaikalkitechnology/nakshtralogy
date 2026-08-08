@@ -1285,6 +1285,20 @@ def request_withdrawal(
             detail=t("err.insufficient_available_balance", lang, available=f"{available:.2f}"),
         )
 
+    # ── TDS: 10% withheld against the astrologer's PAN. No PAN on file →
+    # block the withdrawal (payout is impossible without it). The gross
+    # `amount` leaves the wallet; `net_amount` is paid to the bank; the TDS is
+    # platform-withheld for remittance. ──
+    profile = current_user.astrologer_profile
+    pan = ((getattr(profile, "pan_number", None) or "").strip().upper()) if profile else ""
+    if not pan:
+        raise HTTPException(
+            status_code=400,
+            detail="Please add your PAN in KYC before withdrawing (required for 10% TDS).",
+        )
+    tds_amount = round(req.amount * 0.10, 2)
+    net_amount = round(req.amount - tds_amount, 2)
+
     # Create debit transaction
     amount_dec = _Decimal(str(req.amount))
     new_bal = _Decimal(str(float(wallet.balance) - req.amount))
@@ -1310,6 +1324,9 @@ def request_withdrawal(
         upi_id=req.upi_id,
         notes=req.notes,
         debit_txn_id=txn.id,
+        tds_amount=_Decimal(str(tds_amount)),
+        tds_pan=pan,
+        net_amount=_Decimal(str(net_amount)),
     )
     db.add(wr)
     db.commit()
@@ -1317,6 +1334,9 @@ def request_withdrawal(
     return {
         "id": wr.id,
         "amount": float(wr.amount),
+        "tds_amount": tds_amount,
+        "net_amount": net_amount,
+        "tds_pan": pan,
         "status": wr.status,
         "new_balance": float(new_bal),
         "message": t("msg.withdrawal_submitted", lang, amount=req.amount),
@@ -1343,6 +1363,9 @@ def list_my_withdrawals(
             {
                 "id": w.id,
                 "amount": float(w.amount),
+                "tds_amount": float(w.tds_amount or 0),
+                "net_amount": float(w.net_amount) if w.net_amount is not None else float(w.amount),
+                "tds_pan": w.tds_pan,
                 "status": w.status,
                 "bank_account_name": w.bank_account_name,
                 "bank_account_number": (w.bank_account_number[-4:] if w.bank_account_number else None),

@@ -59,6 +59,7 @@ from app.models.model import (
     Notification, NotificationCampaign,
     LiveStreamViewer, LiveStreamQuestion, LiveStreamGift,
     LiveStreamSuperChat, LiveChatMessage, SessionReview,
+    WithdrawalRequest,
 )
 
 router = APIRouter()
@@ -2585,3 +2586,101 @@ def logs_session_reviews(
         "created_at": _dt(r.created_at),
     } for r, u, p in rows]
     return {"total": total, "skip": skip, "limit": limit, "items": items}
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  ASTROLOGER PAYOUTS (withdrawal approval + TDS)
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/withdrawals")
+def admin_list_withdrawals(
+    status: Optional[str] = None,
+    skip: int = 0,
+    limit: int = Query(50, le=200),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """All astrologer withdrawal requests for payout processing. Shows gross,
+    10% TDS, and the net payable to the bank (initially a manual bank transfer;
+    auto-payout lands later)."""
+    q = db.query(WithdrawalRequest)
+    if status:
+        q = q.filter(WithdrawalRequest.status == status)
+    total = q.count()
+    rows = q.order_by(WithdrawalRequest.requested_at.desc()).offset(skip).limit(limit).all()
+    names = {}
+    ids = [w.user_id for w in rows]
+    if ids:
+        for p in db.query(AstrologerProfile).filter(AstrologerProfile.user_id.in_(ids)).all():
+            names[p.user_id] = p.display_name
+    items = [{
+        "id": w.id, "user_id": w.user_id, "astrologer_name": names.get(w.user_id),
+        "amount": float(w.amount),
+        "tds_amount": float(w.tds_amount or 0),
+        "net_amount": float(w.net_amount) if w.net_amount is not None else float(w.amount),
+        "tds_pan": w.tds_pan, "status": w.status,
+        "bank_account_name": w.bank_account_name,
+        "bank_account_number": w.bank_account_number,
+        "bank_ifsc": w.bank_ifsc, "upi_id": w.upi_id,
+        "notes": w.notes, "admin_note": w.admin_note, "bank_ref": w.bank_ref,
+        "requested_at": w.requested_at.isoformat() if w.requested_at else None,
+        "processed_at": w.processed_at.isoformat() if w.processed_at else None,
+    } for w in rows]
+    agg_tds = db.query(sqlfunc.coalesce(sqlfunc.sum(WithdrawalRequest.tds_amount), 0)).filter(
+        WithdrawalRequest.status == "paid").scalar() or 0
+    return {"total": total, "items": items, "total_tds_collected": float(agg_tds)}
+
+
+class WithdrawalActionBody(BaseModel):
+    action: str                     # approve | paid | reject
+    bank_ref: Optional[str] = None
+    admin_note: Optional[str] = None
+
+
+@router.post("/withdrawals/{withdrawal_id}/action")
+def admin_action_withdrawal(
+    withdrawal_id: str,
+    body: WithdrawalActionBody,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Approve → mark paid (after the bank transfer, record bank_ref), or reject
+    (re-credit the gross amount to the astrologer's wallet). The wallet was
+    debited the GROSS at request time; TDS stays platform-withheld on payout."""
+    w = db.query(WithdrawalRequest).filter(WithdrawalRequest.id == withdrawal_id).first()
+    if not w:
+        raise HTTPException(404, "Withdrawal not found")
+    if w.status in ("paid", "rejected"):
+        raise HTTPException(409, f"Already {w.status}")
+    action = body.action
+    if body.admin_note:
+        w.admin_note = body.admin_note
+
+    if action == "approve":
+        w.status = "approved"
+    elif action == "paid":
+        w.status = "paid"
+        w.bank_ref = body.bank_ref
+        w.processed_at = datetime.utcnow()
+    elif action == "reject":
+        # Re-credit the gross amount (nothing was actually paid out).
+        wallet = db.query(Wallet).filter(Wallet.user_id == w.user_id).first()
+        if wallet:
+            wallet.balance = Decimal(str(float(wallet.balance) + float(w.amount)))
+            rtxn = WalletTransaction(
+                wallet_id=wallet.id, txn_type="refund", amount=w.amount,
+                balance_after=wallet.balance,
+                description="Withdrawal rejected — amount re-credited",
+                reference_type="withdrawal",
+            )
+            db.add(rtxn)
+            db.flush()
+            w.refund_txn_id = rtxn.id
+        w.status = "rejected"
+        w.processed_at = datetime.utcnow()
+    else:
+        raise HTTPException(400, "action must be approve | paid | reject")
+    db.commit()
+    return {"id": w.id, "status": w.status,
+            "amount": float(w.amount), "tds_amount": float(w.tds_amount or 0),
+            "net_amount": float(w.net_amount) if w.net_amount is not None else float(w.amount)}
