@@ -324,11 +324,39 @@ class _AddChartScreenState extends State<AddChartScreen> {
                     );
                   }).toList()),
                   const SizedBox(height: 14),
-                  SwitchListTile(
-                    title: Text(l.primary, style: const TextStyle(color: AppColors.ivory, fontSize: 13)),
-                    subtitle: const Text('Used for daily horoscope', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
-                    value: _isPrimary, onChanged: (v) => setState(() => _isPrimary = v),
-                    activeColor: AppColors.gold, contentPadding: EdgeInsets.zero,
+                  // The FIRST chart is your free Primary (free for all
+                  // single-chart services). Once set it is fixed — later charts
+                  // can't take over as primary, so the switch only shows for the
+                  // very first chart.
+                  BlocBuilder<ChartBloc, ChartState>(
+                    builder: (context, state) {
+                      final list = state is ChartLoaded ? state.charts : const [];
+                      final hasPrimary = list.any((c) => (c is Map) && c['is_primary'] == true);
+                      if (hasPrimary) {
+                        return Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.nebula.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                          ),
+                          child: Row(children: [
+                            const Icon(Icons.info_outline, color: AppColors.smoke, size: 18),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(
+                              'Your first chart is your free Primary. Extra charts unlock services individually.',
+                              style: const TextStyle(color: AppColors.smoke, fontSize: 11.5))),
+                          ]),
+                        );
+                      }
+                      return SwitchListTile(
+                        title: Text(l.primary, style: const TextStyle(color: AppColors.ivory, fontSize: 13)),
+                        subtitle: const Text('Free Primary — used for daily horoscope & free single-chart services',
+                            style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                        value: _isPrimary, onChanged: (v) => setState(() => _isPrimary = v),
+                        activeColor: AppColors.gold, contentPadding: EdgeInsets.zero,
+                      );
+                    },
                   ),
                   const SizedBox(height: 20),
                   BlocBuilder<ChartBloc, ChartState>(

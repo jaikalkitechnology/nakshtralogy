@@ -637,10 +637,12 @@ def create_chart(
     tz = str(coords[2]) if coords else None
 
     # ── Free Primary Kundli: the user's FIRST chart is always the primary
-    # (free forever, non-deletable). Exactly one primary per user. ──
+    # (free forever, non-deletable). The primary is FIXED once set — a later
+    # chart can NOT take over as primary (prevents gaming the free tier by
+    # swapping primary). Exactly one primary per user. ──
     existing_count = db.query(Chart).filter(Chart.user_id == current_user.id).count()
     is_first = existing_count == 0
-    is_primary = bool(req.is_primary) or is_first
+    is_primary = is_first
 
     # ── Extra-chart gate: every chart beyond the free Primary consumes a paid
     # `extra_chart` credit (a completed ServiceOrder with no chart linked yet).
@@ -1447,14 +1449,16 @@ def get_entitlements(
     decide teaser-vs-full and to render the paywall — prices always come from
     ServicePricing (admin-editable), never hardcoded in the client.
     """
-    from app.core.entitlements import find_order  # local import avoids cycle
+    from app.core.entitlements import find_order, _MULTI_CHART_KEYS  # local import avoids cycle
 
+    chart_is_primary = False
     if chart_id:
         chart = db.query(Chart).filter(
             Chart.id == chart_id, Chart.user_id == current_user.id
         ).first()
         if not chart:
             raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+        chart_is_primary = bool(chart.is_primary)
 
     privileged = getattr(current_user, "role", None) in ("astrologer", "admin")
 
@@ -1473,10 +1477,13 @@ def get_entitlements(
     for sp in rows:
         price = float(sp.price or 0)
         is_free = bool(sp.is_free) or price == 0
+        # Free Primary chart: single-chart services are free on the primary
+        # chart; multi-chart comparisons are always paid.
+        primary_free = (chart_is_primary and sp.service_key not in _MULTI_CHART_KEYS)
         order = None
-        if not is_free and not privileged and chart_id:
+        if not is_free and not primary_free and not privileged and chart_id:
             order = find_order(db, current_user.id, sp.id, chart_id)
-        unlocked = is_free or privileged or (order is not None)
+        unlocked = is_free or privileged or primary_free or (order is not None)
         usd = None if is_free else pricing_util.usd_for_pricing(sp, fx, mult)
         session_amount = 0.0 if is_free else (float(usd) if (intl and usd) else price)
         out.append({
