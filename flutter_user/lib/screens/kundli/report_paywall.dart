@@ -5,6 +5,7 @@ import '../../services/api_service.dart';
 import '../../services/app_mode.dart';
 import '../../services/iap_service.dart';
 import '../../utils/money.dart';
+import '../../utils/coupon_labels.dart';
 
 /// Reusable pay-per-report paywall for flutter_user.
 ///
@@ -158,6 +159,17 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
   bool _loadingBalance = true;
   bool _purchasing = false;
 
+  // ── Coupon state ──────────────────────────────────────────────────
+  final _couponCtrl = TextEditingController();
+  bool _couponBusy = false;
+  String? _couponCode;          // applied code
+  double _couponDiscount = 0;   // INR discount on the product price
+  String? _couponMsg;           // localized status message
+
+  /// Effective INR price after any applied coupon.
+  double get _effPrice => (_price - _couponDiscount).clamp(0, double.infinity).toDouble();
+  bool get _couponFull => _couponCode != null && _effPrice <= 0;
+
   double get _price => (widget.pricing['price'] as num?)?.toDouble() ?? 0;
   double? get _orig => (widget.pricing['original_price'] as num?)?.toDouble();
   String get _pricingId => widget.pricing['id']?.toString() ?? '';
@@ -189,10 +201,79 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
     _loadBalance();
   }
 
+  @override
+  void dispose() {
+    _couponCtrl.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadBalance() async {
     final b = await _api.getWalletBalance();
     if (!mounted) return;
     setState(() { _balance = b; _loadingBalance = false; });
+  }
+
+  /// Reason string for a coupon rejection code. Localized via CouponLabels
+  /// (English base now; other locales filled in Phase 6).
+  String _couponReason(String? reason) =>
+      CouponLabels.of(context, 'reason_${reason ?? 'invalid'}');
+
+  Future<void> _applyCoupon() async {
+    final code = _couponCtrl.text.trim();
+    if (code.isEmpty) return;
+    setState(() { _couponBusy = true; _couponMsg = null; });
+    final r = await _api.validateCoupon(
+      code: code, scope: 'product',
+      serviceKey: widget.pricing['service_key']?.toString(),
+      baseAmount: _price,
+    );
+    if (!mounted) return;
+    if (r['valid'] == true) {
+      final disc = (r['discount_amount'] as num?)?.toDouble() ?? 0;
+      final full = (_price - disc) <= 0;
+      // International pays via the store (which owns pricing), so only a
+      // full-cover (100%) coupon can apply for intl — it unlocks free via the
+      // wallet grant path. Partial coupons apply on the India wallet flow.
+      if (_intl && !full) {
+        setState(() {
+          _couponCode = null; _couponDiscount = 0;
+          _couponMsg = CouponLabels.of(context, 'reason_not_applicable');
+          _couponBusy = false;
+        });
+        return;
+      }
+      setState(() {
+        _couponCode = code;
+        _couponDiscount = disc;
+        _couponMsg = CouponLabels.of(context, 'applied');
+        _couponBusy = false;
+      });
+    } else {
+      setState(() {
+        _couponCode = null; _couponDiscount = 0;
+        _couponMsg = _couponReason(r['reason']?.toString());
+        _couponBusy = false;
+      });
+    }
+  }
+
+  /// A coupon covers the full price → grant free via the wallet purchase path
+  /// (net 0, no debit), works in any region.
+  Future<void> _unlockFree() async {
+    final l = AppLocalizations.of(context)!;
+    setState(() => _purchasing = true);
+    final resp = await _api.purchaseService(_pricingId, widget.chartId, couponCode: _couponCode);
+    if (!mounted) return;
+    final ok = resp['statusCode'] == 200 || resp['statusCode'] == 201;
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.pwUnlockedNow), backgroundColor: AppColors.success));
+      widget.onUnlocked();
+    } else {
+      setState(() => _purchasing = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.pwUnlockFailed), backgroundColor: AppColors.error));
+    }
   }
 
   /// International purchase — store IAP tier → backend verify → grant. No
@@ -242,9 +323,9 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
 
   Future<void> _unlock() async {
     final l = AppLocalizations.of(context)!;
-    if (_balance < _price) { _openRecharge(); return; }
+    if (_balance < _effPrice) { _openRecharge(); return; }
     setState(() => _purchasing = true);
-    final resp = await _api.purchaseService(_pricingId, widget.chartId);
+    final resp = await _api.purchaseService(_pricingId, widget.chartId, couponCode: _couponCode);
     if (!mounted) return;
     final ok = resp['statusCode'] == 200 || resp['statusCode'] == 201;
     if (ok) {
@@ -263,7 +344,7 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
 
   void _openRecharge() {
     final l = AppLocalizations.of(context)!;
-    final suggested = (_price - _balance).clamp(0, double.infinity);
+    final suggested = (_effPrice - _balance).clamp(0, double.infinity);
     final ctrl = TextEditingController(
         text: suggested > 0 ? suggested.ceil().toString() : _price.ceil().toString());
     bool submitting = false;
@@ -330,8 +411,8 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
     final icon = widget.pricing['icon']?.toString();
     final heroEmoji = (icon != null && icon.isNotEmpty) ? icon : widget.emoji;
     // International buys via the store (payment handled by the store), so the
-    // CTA is always enabled; India still gates on wallet balance.
-    final enough = _intl ? true : _balance >= _price;
+    // CTA is always enabled; India still gates on wallet balance (net of coupon).
+    final enough = _intl ? true : _balance >= _effPrice;
 
     return ListView(padding: const EdgeInsets.fromLTRB(20, 24, 20, 40), children: [
       // ── Locked hero ──
@@ -399,6 +480,51 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
           ]))),
       ],
 
+      // ── Coupon code ──
+      const SizedBox(height: 18),
+      Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.card.withOpacity(0.4), borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.gold.withOpacity(0.12))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: TextField(
+              controller: _couponCtrl,
+              enabled: _couponCode == null && !_couponBusy,
+              textCapitalization: TextCapitalization.characters,
+              style: const TextStyle(color: AppColors.ivory, fontSize: 13),
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: CouponLabels.of(context, 'enterCode'),
+                hintStyle: const TextStyle(color: AppColors.smoke, fontSize: 12),
+                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.smoke)),
+                focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.gold)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              ),
+            )),
+            const SizedBox(width: 8),
+            _couponCode == null
+                ? TextButton(
+                    onPressed: _couponBusy ? null : _applyCoupon,
+                    child: _couponBusy
+                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
+                        : Text(CouponLabels.of(context, 'apply'), style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700)))
+                : TextButton(
+                    onPressed: () => setState(() {
+                      _couponCode = null; _couponDiscount = 0; _couponMsg = null; _couponCtrl.clear();
+                    }),
+                    child: Text(CouponLabels.of(context, 'remove'), style: const TextStyle(color: AppColors.smoke))),
+          ]),
+          if (_couponMsg != null) Padding(padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              _couponCode != null
+                  ? '${CouponLabels.of(context, 'applied')} · −${Money.format(_couponDiscount, currency: 'INR')}'
+                  : _couponMsg!,
+              style: TextStyle(color: _couponCode != null ? AppColors.success : AppColors.error, fontSize: 11))),
+        ]),
+      ),
+
       // ── Wallet balance (India only — international pays via the store) ──
       if (!_intl) ...[
         const SizedBox(height: 20),
@@ -424,19 +550,25 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
       // ── CTA ──
       const SizedBox(height: 18),
       SizedBox(width: double.infinity, height: 52, child: ElevatedButton.icon(
-        onPressed: _purchasing ? null : (_intl ? _buyIap : _unlock),
+        onPressed: _purchasing
+            ? null
+            : (_couponFull ? _unlockFree : (_intl ? _buyIap : _unlock)),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
         icon: _purchasing
             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.midnight))
-            : Icon(enough ? Icons.lock_open : Icons.account_balance_wallet, size: 18),
+            : Icon((enough || _couponFull) ? Icons.lock_open : Icons.account_balance_wallet, size: 18),
         label: Text(
           _purchasing
               ? l.pwProcessing
-              : (_intl
-                  ? l.pwUnlockPrice(Money.format(_usd, currency: 'USD'))
-                  : (enough ? l.pwUnlockPrice(Money.format(_price, currency: 'INR')) : l.pwRechargeToUnlock)),
+              : (_couponFull
+                  ? CouponLabels.of(context, 'unlockFree')
+                  : (_intl
+                      ? l.pwUnlockPrice(Money.format(_usd, currency: 'USD'))
+                      : (enough
+                          ? l.pwUnlockPrice(Money.format(_effPrice, currency: 'INR'))
+                          : l.pwRechargeToUnlock))),
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
       )),
       const SizedBox(height: 10),

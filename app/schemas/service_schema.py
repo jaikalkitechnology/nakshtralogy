@@ -204,6 +204,7 @@ class PurchaseServiceRequest(BaseModel):
     """
     service_pricing_id: str
     chart_id: Optional[str] = None
+    coupon_code: Optional[str] = None   # optional user-entered discount code
 
 
 # ─── Kundli Compute Request ─────────────────────────────────────────

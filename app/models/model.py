@@ -381,6 +381,11 @@ class ServiceOrder(Base):
     iap_platform = Column(String(10), nullable=True)       # ios | android
     iap_product_id = Column(String(100), nullable=True)
     iap_transaction_id = Column(String(255), nullable=True, index=True)
+    # Coupon / invoice linkage (additive; nullable). discount_amount is the ₹
+    # (base currency) reduction from the applied coupon, if any.
+    coupon_id = Column(String(36), nullable=True, index=True)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    invoice_id = Column(String(36), nullable=True)
     result_json = Column(JSON, nullable=True)           # computed result data
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
@@ -767,6 +772,10 @@ class CallSession(Base):
     platform_commission = Column(Numeric(10, 2), default=0)
     user_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    # Coupon / invoice linkage (additive; nullable).
+    coupon_id = Column(String(36), nullable=True, index=True)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    invoice_id = Column(String(36), nullable=True)
     expires_at = Column(DateTime, nullable=True)          # ringing timeout (60s)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
@@ -924,6 +933,10 @@ class ChatSession(Base):
     user_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     block_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    # Coupon / invoice linkage (additive; nullable).
+    coupon_id = Column(String(36), nullable=True, index=True)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    invoice_id = Column(String(36), nullable=True)
     expires_at = Column(DateTime, nullable=True)          # 60s accept timeout
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
@@ -1556,3 +1569,95 @@ class ContactReply(Base):
     body = Column(Text, nullable=False)
     emailed = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  11. Coupons, Redemptions & Invoices
+# ══════════════════════════════════════════════════════════════════════
+
+class Coupon(Base):
+    """Unified coupon: admin (platform) or astrologer-owned. One engine drives
+    product + consultation discounts. Presentation/access + billing plumbing
+    only — never touches astrology logic.
+
+    kind:          first_consult | consultation | product | all_free | flat
+    discount_type: percent | flat | full   (full == 100%)
+    funded_by:     astrologer | platform   (whose share absorbs the discount)
+    """
+    __tablename__ = "coupons"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    code = Column(String(40), unique=True, nullable=True, index=True)  # NULL for auto first_consult offers
+    owner_type = Column(String(12), default="platform", index=True)   # platform | astrologer
+    owner_id = Column(String(36), nullable=True, index=True)          # astrologer_profile.id when astrologer
+
+    kind = Column(String(20), default="product")
+    discount_type = Column(String(10), default="percent")
+    discount_value = Column(Numeric(10, 2), default=0)                # % or ₹ (base currency); ignored for full
+    max_discount_amt = Column(Numeric(10, 2), nullable=True)          # cap for percent (₹)
+    min_order_amt = Column(Numeric(10, 2), nullable=True)
+
+    applies_to = Column(JSON, nullable=True)   # service_keys / ["chat","call","video"]; NULL = all in scope
+    first_time_only = Column(Boolean, default=True)
+    per_user_limit = Column(Integer, default=1)
+    max_redemptions = Column(Integer, nullable=True)
+    redeemed_count = Column(Integer, default=0, nullable=False)
+    funded_by = Column(String(12), default="platform")
+
+    starts_at = Column(DateTime, nullable=True)
+    expires_at = Column(DateTime, nullable=True)
+    status = Column(String(14), default="active", index=True)  # active | paused | expired | pending_review | rejected
+
+    title_i18n = Column(JSON, nullable=True)        # {"english": "...", "hindi": "...", ...}
+    description_i18n = Column(JSON, nullable=True)
+    created_by = Column(String(36), nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class CouponRedemption(Base):
+    """Ledger row — the source of truth for 'used'. One row per applied
+    discount, idempotent per (coupon, user, context)."""
+    __tablename__ = "coupon_redemptions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    coupon_id = Column(String(36), ForeignKey("coupons.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    astrologer_id = Column(String(36), nullable=True, index=True)
+    context_type = Column(String(20), nullable=False)   # service_order | chat_session | call_session
+    context_id = Column(String(36), nullable=True)
+    base_amount = Column(Numeric(10, 2), default=0)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    currency = Column(String(3), default="INR")
+    funded_by = Column(String(12), default="platform")
+    status = Column(String(12), default="applied")      # applied | reversed
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_coupon_redeem_unique", "coupon_id", "user_id", "context_id", unique=True),
+        Index("ix_coupon_redeem_user", "coupon_id", "user_id"),
+    )
+
+
+class Invoice(Base):
+    """Downloadable receipt for a completed billable event (consultation /
+    product / wallet recharge). snapshot freezes the billing detail so the PDF
+    always renders identically."""
+    __tablename__ = "invoices"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    invoice_no = Column(String(24), unique=True, nullable=False, index=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    kind = Column(String(20), default="product")          # consultation | product | wallet_recharge
+    context_type = Column(String(20), nullable=True)      # chat_session | call_session | service_order
+    context_id = Column(String(36), nullable=True, index=True)
+    currency = Column(String(3), default="INR")
+    line_items = Column(JSON, nullable=True)              # [{label, qty, unit, amount}]
+    base_amount = Column(Numeric(10, 2), default=0)
+    discount_amount = Column(Numeric(10, 2), default=0)
+    coupon_code = Column(String(40), nullable=True)
+    tax_amount = Column(Numeric(10, 2), default=0)
+    total_amount = Column(Numeric(10, 2), default=0)
+    astrologer_name = Column(String(150), nullable=True)
+    snapshot = Column(JSON, nullable=True)
+    issued_at = Column(DateTime, server_default=func.now(), nullable=False)

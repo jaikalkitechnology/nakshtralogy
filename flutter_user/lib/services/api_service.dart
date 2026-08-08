@@ -543,13 +543,67 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
-  Future<Map<String, dynamic>> purchaseService(String servicePricingId, String chartId) async {
+  Future<Map<String, dynamic>> purchaseService(String servicePricingId, String chartId,
+      {String? couponCode}) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.servicePurchase),
       headers: _headers,
-      body: jsonEncode({'service_pricing_id': servicePricingId, 'chart_id': chartId}),
+      body: jsonEncode({
+        'service_pricing_id': servicePricingId,
+        'chart_id': chartId,
+        if (couponCode != null && couponCode.trim().isNotEmpty) 'coupon_code': couponCode.trim(),
+      }),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Validate a coupon code before purchase. Returns the backend preview
+  /// {valid, reason?|discount_amount, final_amount, coupon}.
+  Future<Map<String, dynamic>> validateCoupon({
+    required String code,
+    String scope = 'product',
+    String? serviceKey,
+    String? astrologerId,
+    num? baseAmount,
+  }) async {
+    try {
+      final resp = await _authPost(
+        Uri.parse('${ApiConstants.baseUrl}/coupons/validate'),
+        body: jsonEncode({
+          'code': code.trim(),
+          'scope': scope,
+          if (serviceKey != null) 'service_key': serviceKey,
+          if (astrologerId != null) 'astrologer_id': astrologerId,
+          'base_amount': baseAmount ?? 0,
+        }),
+      );
+      return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+    } catch (_) {
+      return {'statusCode': 0, 'valid': false, 'reason': 'network'};
+    }
+  }
+
+  /// The user's invoices (product + consultation receipts).
+  Future<List<dynamic>> getMyInvoices() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/me/invoices'));
+      if (resp.statusCode == 200) return (jsonDecode(resp.body)['items'] as List?) ?? [];
+    } catch (_) {}
+    return [];
+  }
+
+  /// Public printable-invoice URL for a signed download token (opens in the
+  /// browser to save / print-to-PDF).
+  String invoiceViewUrl(String invoiceId, String token) =>
+      '${ApiConstants.baseUrl}/me/invoices/$invoiceId/view?t=$token';
+
+  /// Coupon offer to show on an astrologer's profile (+ already_used flag).
+  Future<Map<String, dynamic>?> getAstrologerCoupon(String astrologerId) async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/coupons/for-astrologer/$astrologerId'));
+      if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    } catch (_) {}
+    return null;
   }
 
   /// International store IAP: after the store purchase completes, verify the

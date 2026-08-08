@@ -164,6 +164,21 @@ def usd_for_pricing(sp, fx_rate: float, multiplier: float) -> Optional[float]:
     return compute_usd(price, fx_rate, multiplier)
 
 
+def consult_rate_usd(inr_rate: float, fx_rate: float, multiplier: float) -> float:
+    """USD display rate for a per-minute consultation rate (international).
+
+    Applies the same ``× MULTIPLIER ÷ FX`` premium rule as products, but WITHOUT
+    tier snapping — per-minute rates aren't store-IAP tiers. The astrologer sets
+    the ₹ base rate; international sessions see this USD rate. Currency
+    presentation only; the ₹ ledger/wallet is unchanged. Live international
+    consultation charging is gated on the payments (PAPG) phase."""
+    if not inr_rate:
+        return 0.0
+    if not fx_rate or fx_rate <= 0:
+        fx_rate = DEFAULT_FX_RATE
+    return round(float(inr_rate) * float(multiplier or DEFAULT_MULTIPLIER) / float(fx_rate), 2)
+
+
 def iap_product_id_for_agent(domain_key: str, tier_usd: float) -> str:
     """Store product id for a paid AI agent at a tier, e.g.
     ``com.nakshtralogy.iap.agent.career.t499``. Namespaced under ``agent`` so it

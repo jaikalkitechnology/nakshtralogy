@@ -72,6 +72,11 @@ class AstrologerProfileResponse(BaseModel):
     rate_per_min_chat: float = 0
     rate_per_min_call: float = 0
     rate_per_min_video: float = 0
+    # Region-aware display: INTL sees USD via the 5× rule; India sees ₹.
+    session_currency: str = "INR"
+    rate_chat_display: float = 0
+    rate_call_display: float = 0
+    rate_video_display: float = 0
     rate_per_session_chat: float = 0
     rate_per_session_call: float = 0
     rate_per_session_video: float = 0
@@ -156,6 +161,11 @@ class AstrologerListResponse(BaseModel):
     rate_per_min_chat: float = 0
     rate_per_min_call: float = 0
     rate_per_min_video: float = 0
+    # Region-aware display: INTL sees USD via the 5× rule; India sees ₹.
+    session_currency: str = "INR"
+    rate_chat_display: float = 0
+    rate_call_display: float = 0
+    rate_video_display: float = 0
     rating: float = 0
     total_reviews: int = 0
     total_consultations: int = 0

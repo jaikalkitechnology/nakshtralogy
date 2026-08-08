@@ -459,6 +459,49 @@ export async function adminAiAgentUpdate(key: string, data: any) {
   return request(`/ai/admin/agents/${key}`, { method: "PUT", body: JSON.stringify(data) });
 }
 
+// ── Coupons & Discounts ──────────────────────────────────────────
+export async function adminCoupons(params: Record<string, any> = {}) {
+  const q = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "" && v !== null) as [string, string][]
+  ).toString();
+  return request(`/coupons/admin${q ? `?${q}` : ""}`);
+}
+export async function adminCouponCreate(data: any) {
+  return request(`/coupons/admin`, { method: "POST", body: JSON.stringify(data) });
+}
+export async function adminCouponUpdate(id: string, data: any) {
+  return request(`/coupons/admin/${id}`, { method: "PATCH", body: JSON.stringify(data) });
+}
+export async function adminCouponModerate(id: string, action: "approve" | "reject") {
+  return request(`/coupons/admin/${id}/moderate`, { method: "POST", body: JSON.stringify({ action }) });
+}
+export async function adminCouponDelete(id: string) {
+  return request(`/coupons/admin/${id}`, { method: "DELETE" });
+}
+export async function adminCouponRedemptions(params: Record<string, any> = {}) {
+  const q = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "" && v !== null) as [string, string][]
+  ).toString();
+  return request(`/coupons/admin/redemptions${q ? `?${q}` : ""}`);
+}
+export async function downloadCouponRedemptionsCsv(): Promise<boolean> {
+  const token = getToken();
+  const resp = await fetch(`${BASE}/coupons/admin/redemptions.csv`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!resp.ok) return false;
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "coupon_redemptions.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  return true;
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {

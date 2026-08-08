@@ -637,10 +637,12 @@ def create_chart(
     tz = str(coords[2]) if coords else None
 
     # ── Free Primary Kundli: the user's FIRST chart is always the primary
-    # (free forever, non-deletable). Exactly one primary per user. ──
+    # (free forever, non-deletable). The primary is FIXED once set — a later
+    # chart can NOT take over as primary (prevents gaming the free tier by
+    # swapping primary). Exactly one primary per user. ──
     existing_count = db.query(Chart).filter(Chart.user_id == current_user.id).count()
     is_first = existing_count == 0
-    is_primary = bool(req.is_primary) or is_first
+    is_primary = is_first
 
     # ── Extra-chart gate: every chart beyond the free Primary consumes a paid
     # `extra_chart` credit (a completed ServiceOrder with no chart linked yet).
@@ -1098,24 +1100,68 @@ def purchase_service(
             created_at=order.created_at,
         )
 
-    # paid service: debit wallet
+    # ── coupon: resolve the best eligible discount for this product ──
+    from app.services import coupon_service
+    disc = coupon_service.resolve_discount(
+        db, current_user.id, "product", price,
+        service_key=sp.service_key, code=req.coupon_code,
+    )
+    discount_amt = disc.discount_amount if disc else 0.0
+    net_price = round(price - discount_amt, 2)
+
+    # A 100% (or price-covering) coupon → grant free, no wallet debit.
+    if net_price <= 0:
+        order = ServiceOrder(
+            user_id=current_user.id,
+            service_pricing_id=sp.id,
+            chart_id=chart_ref_id,
+            amount_paid=0,
+            status="completed",
+            coupon_id=(disc.coupon_id if disc else None),
+            discount_amount=Decimal(str(discount_amt)),
+        )
+        db.add(order)
+        db.flush()
+        if disc:
+            coupon_service.record_redemption(
+                db, disc.coupon, current_user.id, "service_order", order.id,
+                price, discount_amt)
+            from app.services import invoice_service
+            _inv = invoice_service.create_invoice(
+                db, user_id=current_user.id, kind="product",
+                context_type="service_order", context_id=order.id, currency="INR",
+                line_items=[{"label": sp.service_name, "qty": 1, "unit": price, "amount": price}],
+                base_amount=price, total_amount=0.0, discount_amount=discount_amt,
+                coupon_code=(disc.coupon.code if disc.coupon else None))
+            order.invoice_id = _inv.id
+        db.commit()
+        db.refresh(order)
+        return ServiceOrderResponse(
+            id=order.id, user_id=order.user_id,
+            service_pricing_id=order.service_pricing_id, chart_id=order.chart_id,
+            amount_paid=0, status="completed", service_name=sp.service_name,
+            service_key=sp.service_key, created_at=order.created_at,
+        )
+
+    # paid service: debit wallet (net of any discount)
     wallet = db.query(Wallet).filter(Wallet.user_id == current_user.id).first()
     if not wallet:
         raise HTTPException(status_code=400, detail=t("err.wallet_not_found", lang))
-    if float(wallet.balance) < price:
+    if float(wallet.balance) < net_price:
         raise HTTPException(
             status_code=402,
-            detail=t("err.insufficient_balance", lang, price=price, balance=wallet.balance),
+            detail=t("err.insufficient_balance", lang, price=net_price, balance=wallet.balance),
         )
 
     # debit
-    wallet.balance = Decimal(str(float(wallet.balance) - price))
+    wallet.balance = Decimal(str(float(wallet.balance) - net_price))
+    _desc = f"Purchased: {sp.service_name}" + (f" (coupon -{discount_amt:g})" if discount_amt else "")
     txn = WalletTransaction(
         wallet_id=wallet.id,
         txn_type="consultation_debit",
-        amount=Decimal(str(price)),
+        amount=Decimal(str(net_price)),
         balance_after=wallet.balance,
-        description=f"Purchased: {sp.service_name}",
+        description=_desc,
         reference_type="service_order",
     )
     db.add(txn)
@@ -1125,11 +1171,26 @@ def purchase_service(
         user_id=current_user.id,
         service_pricing_id=sp.id,
         chart_id=chart_ref_id,
-        amount_paid=price,
+        amount_paid=net_price,
         wallet_txn_id=txn.id,
         status="completed",
+        coupon_id=(disc.coupon_id if disc else None),
+        discount_amount=Decimal(str(discount_amt)),
     )
     db.add(order)
+    db.flush()
+    if disc:
+        coupon_service.record_redemption(
+            db, disc.coupon, current_user.id, "service_order", order.id,
+            price, discount_amt)
+    from app.services import invoice_service
+    _inv = invoice_service.create_invoice(
+        db, user_id=current_user.id, kind="product",
+        context_type="service_order", context_id=order.id, currency="INR",
+        line_items=[{"label": sp.service_name, "qty": 1, "unit": price, "amount": price}],
+        base_amount=price, total_amount=net_price, discount_amount=discount_amt,
+        coupon_code=(disc.coupon.code if (disc and disc.coupon) else None))
+    order.invoice_id = _inv.id
     db.commit()
     db.refresh(order)
 
@@ -1388,14 +1449,16 @@ def get_entitlements(
     decide teaser-vs-full and to render the paywall — prices always come from
     ServicePricing (admin-editable), never hardcoded in the client.
     """
-    from app.core.entitlements import find_order  # local import avoids cycle
+    from app.core.entitlements import find_order, _MULTI_CHART_KEYS  # local import avoids cycle
 
+    chart_is_primary = False
     if chart_id:
         chart = db.query(Chart).filter(
             Chart.id == chart_id, Chart.user_id == current_user.id
         ).first()
         if not chart:
             raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
+        chart_is_primary = bool(chart.is_primary)
 
     privileged = getattr(current_user, "role", None) in ("astrologer", "admin")
 
@@ -1414,10 +1477,13 @@ def get_entitlements(
     for sp in rows:
         price = float(sp.price or 0)
         is_free = bool(sp.is_free) or price == 0
+        # Free Primary chart: single-chart services are free on the primary
+        # chart; multi-chart comparisons are always paid.
+        primary_free = (chart_is_primary and sp.service_key not in _MULTI_CHART_KEYS)
         order = None
-        if not is_free and not privileged and chart_id:
+        if not is_free and not primary_free and not privileged and chart_id:
             order = find_order(db, current_user.id, sp.id, chart_id)
-        unlocked = is_free or privileged or (order is not None)
+        unlocked = is_free or privileged or primary_free or (order is not None)
         usd = None if is_free else pricing_util.usd_for_pricing(sp, fx, mult)
         session_amount = 0.0 if is_free else (float(usd) if (intl and usd) else price)
         out.append({

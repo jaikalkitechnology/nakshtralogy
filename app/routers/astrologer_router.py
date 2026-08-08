@@ -22,7 +22,7 @@ import uuid as _uuid
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status, Header
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
@@ -57,6 +57,26 @@ router = APIRouter()
 
 
 # ── helpers ───────────────────────────────────────────────────────────
+
+def _attach_rate_view(resp, region: str, db):
+    """Region-aware per-minute rate display: INTL → USD via the 5× rule, India →
+    ₹. Sets session_currency + rate_*_display on the response. Currency
+    presentation only; the ₹ ledger is unchanged."""
+    from app.core import pricing as pricing_util, region as region_util
+    if region_util.is_international_region(region):
+        fx = pricing_util.get_fx_rate(db)
+        mult = pricing_util.get_multiplier(db)
+        resp.session_currency = "USD"
+        resp.rate_chat_display = pricing_util.consult_rate_usd(resp.rate_per_min_chat, fx, mult)
+        resp.rate_call_display = pricing_util.consult_rate_usd(resp.rate_per_min_call, fx, mult)
+        resp.rate_video_display = pricing_util.consult_rate_usd(resp.rate_per_min_video, fx, mult)
+    else:
+        resp.session_currency = "INR"
+        resp.rate_chat_display = resp.rate_per_min_chat
+        resp.rate_call_display = resp.rate_per_min_call
+        resp.rate_video_display = resp.rate_per_min_video
+    return resp
+
 
 def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResponse:
     return AstrologerProfileResponse(
@@ -652,8 +672,12 @@ def list_astrologers(
     specialization: Optional[str] = None,
     language: Optional[str] = None,
     online_only: bool = False,
+    region: Optional[str] = None,
+    x_device_country: Optional[str] = Header(None),
     db: Session = Depends(get_db),
 ):
+    from app.core import region as region_util
+    _sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
     q = db.query(AstrologerProfile).filter(AstrologerProfile.is_approved == True)
     if online_only:
         q = q.filter(AstrologerProfile.is_online == True, AstrologerProfile.is_busy == False)
@@ -679,7 +703,7 @@ def list_astrologers(
         for u in db.query(User).filter(User.id.in_(user_ids)).all():
             avatars[u.id] = u.avatar_url
     return [
-        AstrologerListResponse(
+        _attach_rate_view(AstrologerListResponse(
             id=p.id,
             display_name=p.display_name,
             profile_image_url=p.profile_image_url,
@@ -695,7 +719,7 @@ def list_astrologers(
             total_consultations=p.total_consultations,
             is_online=p.is_online,
             is_busy=p.is_busy,
-        )
+        ), _sess, db)
         for p in profiles
     ]
 
@@ -703,14 +727,18 @@ def list_astrologers(
 # ── Public: Single Astrologer ────────────────────────────────────────
 
 @router.get("/{astrologer_id}", response_model=AstrologerProfileResponse)
-def get_astrologer(astrologer_id: str, db: Session = Depends(get_db), lang: str = Depends(get_lang)):
+def get_astrologer(astrologer_id: str, db: Session = Depends(get_db), lang: str = Depends(get_lang),
+                   region: Optional[str] = None, x_device_country: Optional[str] = Header(None)):
+    from app.core import region as region_util
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == astrologer_id,
         AstrologerProfile.is_approved == True,
     ).first()
     if not profile:
         raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
-    return _build_profile_response(profile)
+    resp = _build_profile_response(profile)
+    sess = region_util.session_region(explicit_region=region, device_country=x_device_country)
+    return _attach_rate_view(resp, sess, db)
 
 
 @router.get("/{astrologer_id}/reviews")

@@ -7,6 +7,8 @@ import '../bloc/astrologer/astrologer_bloc.dart';
 import '../bloc/astrologer/astrologer_event.dart';
 import '../bloc/astrologer/astrologer_state.dart';
 import '../services/api_service.dart';
+import '../utils/coupon_labels.dart';
+import '../utils/money.dart';
 import '../screens/communication/chat_screen.dart';
 import '../screens/communication/call_screen.dart';
 
@@ -231,6 +233,9 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
+                    // First-time / astrologer coupon offer
+                    AstrologerCouponBanner(astrologerId: a['id'] as String),
+
                     // Bio
                     if (a['bio'] != null && (a['bio'] as String).isNotEmpty) ...[
                       Text(l.astroAbout, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
@@ -277,11 +282,17 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        _rateBox(Icons.chat_bubble_outline, l.chat, (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0, l),
+                        _rateBox(Icons.chat_bubble_outline, l.chat,
+                            (a['rate_chat_display'] as num?)?.toDouble() ?? (a['rate_per_min_chat'] as num?)?.toDouble() ?? 0,
+                            (a['session_currency'] as String?) ?? 'INR', l),
                         const SizedBox(width: 8),
-                        _rateBox(Icons.call, l.astroVoice, (a['rate_per_min_call'] as num?)?.toDouble() ?? 0, l),
+                        _rateBox(Icons.call, l.astroVoice,
+                            (a['rate_call_display'] as num?)?.toDouble() ?? (a['rate_per_min_call'] as num?)?.toDouble() ?? 0,
+                            (a['session_currency'] as String?) ?? 'INR', l),
                         const SizedBox(width: 8),
-                        _rateBox(Icons.videocam, l.video, (a['rate_per_min_video'] as num?)?.toDouble() ?? 0, l),
+                        _rateBox(Icons.videocam, l.video,
+                            (a['rate_video_display'] as num?)?.toDouble() ?? (a['rate_per_min_video'] as num?)?.toDouble() ?? 0,
+                            (a['session_currency'] as String?) ?? 'INR', l),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -415,7 +426,13 @@ class _AstrologerProfileSheet extends StatelessWidget {
     );
   }
 
-  Widget _rateBox(IconData icon, String label, double rate, AppLocalizations l) {
+  Widget _rateBox(IconData icon, String label, double rate, String currency, AppLocalizations l) {
+    // International sessions show USD (5× rule); India shows ₹. USD keeps 2
+    // decimals for per-minute rates; ₹ stays whole.
+    final isUsd = currency.toUpperCase() == 'USD';
+    final rateText = isUsd
+        ? Money.format(rate, currency: 'USD', decimals: 2)
+        : Money.format(rate, currency: 'INR', decimals: 0);
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(12),
@@ -431,12 +448,102 @@ class _AstrologerProfileSheet extends StatelessWidget {
             Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
             const SizedBox(height: 2),
             Text(
-              '₹${rate.toInt()}${l.perMin}',
+              '$rateText${l.perMin}',
               style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+
+/// Shows an astrologer's active discount offer on their profile, with an
+/// "already used" state. Localized coupon title comes from the backend
+/// (title_i18n); UI labels via CouponLabels (English base). Tapping does
+/// nothing — the discount is applied automatically at consultation billing.
+class AstrologerCouponBanner extends StatefulWidget {
+  final String astrologerId;
+  const AstrologerCouponBanner({super.key, required this.astrologerId});
+
+  @override
+  State<AstrologerCouponBanner> createState() => _AstrologerCouponBannerState();
+}
+
+class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
+  Map<String, dynamic>? _coupon;
+  bool _used = false;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final r = await ApiService().getAstrologerCoupon(widget.astrologerId);
+    if (!mounted) return;
+    setState(() {
+      _coupon = (r?['coupon'] as Map?)?.cast<String, dynamic>();
+      _used = r?['already_used'] == true;
+      _loaded = true;
+    });
+  }
+
+  String _discountLabel() {
+    final c = _coupon!;
+    final type = c['discount_type']?.toString();
+    final val = (c['discount_value'] as num?)?.toDouble() ?? 0;
+    if (type == 'full') return '100%';
+    if (type == 'flat') return '₹${val.toStringAsFixed(0)}';
+    return '${val.toStringAsFixed(0)}%';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded || _coupon == null) return const SizedBox.shrink();
+    final c = _coupon!;
+    final title = (c['title'] ?? '').toString();
+    final off = _discountLabel();
+    final grey = _used;
+    final color = grey ? AppColors.textSecondary : AppColors.gold;
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        gradient: grey
+            ? null
+            : LinearGradient(colors: [AppColors.gold.withOpacity(0.16), AppColors.card.withOpacity(0.3)]),
+        color: grey ? AppColors.card.withOpacity(0.4) : null,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.35)),
+      ),
+      child: Row(children: [
+        Icon(grey ? Icons.check_circle_outline : Icons.local_offer, color: color, size: 20),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              grey ? CouponLabels.of(context, 'alreadyUsed')
+                   : (title.isNotEmpty ? title : '$off ${CouponLabels.of(context, 'firstTimeOffer')}'),
+              style: TextStyle(color: grey ? AppColors.textSecondary : AppColors.textPrimary,
+                  fontSize: 13, fontWeight: FontWeight.w700),
+            ),
+            if (!grey)
+              Text('$off ${CouponLabels.of(context, 'firstTimeOffer')} · chat / call / video',
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+          ]),
+        ),
+        if (!grey)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
+            child: Text(off, style: const TextStyle(color: AppColors.midnight, fontSize: 13, fontWeight: FontWeight.w800)),
+          ),
+      ]),
     );
   }
 }

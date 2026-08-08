@@ -25,11 +25,18 @@ from typing import Optional, Tuple
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.models.model import ServicePricing, ServiceOrder, User
+from app.models.model import ServicePricing, ServiceOrder, User, Chart
 from app.core.i18n import t
 
 # Roles that bypass end-user pay-per-report gating entirely.
 _PRIVILEGED_ROLES = ("astrologer", "admin")
+
+# Multi-chart / comparison services always involve a second chart, so they are
+# ALWAYS priced — the free-Primary rule never applies to them.
+_MULTI_CHART_KEYS = frozenset({
+    "kundli_milan", "kundli_matching", "relationship",
+    "child_probability", "love_compatibility", "karma_linkage",
+})
 
 
 def get_pricing(db: Session, service_key: str) -> Optional[ServicePricing]:
@@ -72,6 +79,15 @@ def is_entitled(
     price = float(sp.price or 0)
     if sp.is_free or price == 0:
         return True, sp, None
+
+    # Free Primary chart: single-chart services are FREE on the user's primary
+    # (first) chart. Multi-chart comparison services are always paid, and
+    # non-primary charts require an unlock.
+    if chart_id and service_key not in _MULTI_CHART_KEYS:
+        chart = db.query(Chart).filter(
+            Chart.id == chart_id, Chart.user_id == user.id).first()
+        if chart is not None and chart.is_primary:
+            return True, sp, None
 
     order = find_order(db, user.id, sp.id, chart_id)
     if order:

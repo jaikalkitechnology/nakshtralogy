@@ -493,6 +493,17 @@ class _HomeTabState extends State<HomeTab> {
   }
 }
 
+/// Region-aware per-minute chat rate label for an astrologer list row
+/// (USD for international via the 5× rule, ₹ for India).
+String _astroRate(dynamic astro) {
+  final cur = (astro['session_currency'] as String?) ?? 'INR';
+  final rate = (astro['rate_chat_display'] as num?)?.toDouble() ??
+      (astro['rate_per_min_chat'] as num?)?.toDouble() ?? 0;
+  return cur.toUpperCase() == 'USD'
+      ? Money.format(rate, currency: 'USD', decimals: 2)
+      : Money.format(rate, currency: 'INR', decimals: 0);
+}
+
 class _AstroCard extends StatelessWidget {
   final dynamic astro;
   const _AstroCard({required this.astro});
@@ -538,7 +549,7 @@ class _AstroCard extends StatelessWidget {
             const SizedBox(height: 3),
             Row(children: [
               Text('\u2605 ${rating.toStringAsFixed(1)}', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600)),
-              Text('  \u00b7  \u20b9${(astro['rate_per_min_chat'] as num?)?.toInt() ?? 0}/min',
+              Text('  \u00b7  ${_astroRate(astro)}/min',
                   style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
             ]),
           ])),

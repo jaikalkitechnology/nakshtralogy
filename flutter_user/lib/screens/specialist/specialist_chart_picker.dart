@@ -119,6 +119,21 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                               Text(name, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
                               Text('$dob • $place', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ])),
+                            // Primary chart → free; others → unlock.
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: (c['is_primary'] == true ? AppColors.success : AppColors.gold).withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                c['is_primary'] == true ? 'FREE' : 'UNLOCK',
+                                style: TextStyle(
+                                  color: c['is_primary'] == true ? AppColors.success : AppColors.gold,
+                                  fontSize: 10, fontWeight: FontWeight.w800),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.textSecondary),
                           ]),
                         ),
