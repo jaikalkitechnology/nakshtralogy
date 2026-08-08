@@ -37,6 +37,9 @@ class AgoraConfigUpdate(BaseModel):
 class InitiateCallRequest(BaseModel):
     astrologer_profile_id: str
     call_type: str = Field(..., pattern=r'^(voice|video)$')
+    # Optional coupon code the user typed (astrologer offer or admin code).
+    # Applied to the billed amount when the call is finalized.
+    coupon_code: Optional[str] = Field(None, max_length=40)
 
 
 class CallSessionResponse(BaseModel):
@@ -202,6 +205,8 @@ class SuperChatResponse(BaseModel):
 
 class InitiateChatRequest(BaseModel):
     astrologer_profile_id: str
+    # Optional coupon code applied to the chat bill at finalize.
+    coupon_code: Optional[str] = Field(None, max_length=40)
 
 
 class ChatSessionResponse(BaseModel):

@@ -785,6 +785,7 @@ class CallSession(Base):
     astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     # Coupon / invoice linkage (additive; nullable).
     coupon_id = Column(String(36), nullable=True, index=True)
+    coupon_code = Column(String(40), nullable=True)       # user-entered code, applied at finalize
     discount_amount = Column(Numeric(10, 2), default=0)
     invoice_id = Column(String(36), nullable=True)
     expires_at = Column(DateTime, nullable=True)          # ringing timeout (60s)
@@ -946,6 +947,7 @@ class ChatSession(Base):
     block_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     # Coupon / invoice linkage (additive; nullable).
     coupon_id = Column(String(36), nullable=True, index=True)
+    coupon_code = Column(String(40), nullable=True)       # user-entered code, applied at finalize
     discount_amount = Column(Numeric(10, 2), default=0)
     invoice_id = Column(String(36), nullable=True)
     expires_at = Column(DateTime, nullable=True)          # 60s accept timeout

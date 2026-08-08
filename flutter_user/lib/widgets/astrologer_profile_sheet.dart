@@ -12,9 +12,16 @@ import '../utils/money.dart';
 import '../screens/communication/chat_screen.dart';
 import '../screens/communication/call_screen.dart';
 
+/// Coupon code the user applied for the NEXT consultation (chat/call/video)
+/// on this profile. Threaded into initiateChat/initiateCall so an admin/
+/// astrologer code (e.g. a 100%-off) is honoured at billing. Reset each time
+/// the sheet opens. File-scoped because only one profile sheet is open at once.
+final ValueNotifier<String?> consultCouponCode = ValueNotifier<String?>(null);
+
 /// Bottom sheet that shows full astrologer profile with rate card and reviews.
 /// Dispatches AstrologerDetailRequested when opened and clears on close.
 Future<void> showAstrologerProfileSheet(BuildContext context, String astrologerId) {
+  consultCouponCode.value = null;
   context.read<AstrologerBloc>().add(AstrologerDetailRequested(astrologerId));
   return showModalBottomSheet(
     context: context,
@@ -43,7 +50,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
     scaffold.showSnackBar(SnackBar(content: Text(l.startingCall), duration: const Duration(seconds: 2)));
 
     try {
-      final result = await ApiService().initiateCall(astrologer['id'] as String, callType);
+      final result = await ApiService().initiateCall(astrologer['id'] as String, callType, couponCode: consultCouponCode.value);
       if (result['statusCode'] == 200 || result['statusCode'] == 201) {
         nav.push(MaterialPageRoute(builder: (_) => CallScreen(
           callId: result['id'] as String? ?? '',
@@ -73,7 +80,7 @@ class _AstrologerProfileSheet extends StatelessWidget {
     scaffold.showSnackBar(SnackBar(content: Text(l.initiatingChat), duration: const Duration(seconds: 2)));
 
     try {
-      final result = await ApiService().initiateChat(astrologer['id'] as String);
+      final result = await ApiService().initiateChat(astrologer['id'] as String, couponCode: consultCouponCode.value);
       if (result['statusCode'] == 200 || result['statusCode'] == 201) {
         final sessionId = result['id'] as String? ?? '';
         final ratePerMin = (result['rate_per_min'] as num?)?.toDouble() ?? 0;
@@ -459,10 +466,12 @@ class _AstrologerProfileSheet extends StatelessWidget {
 }
 
 
-/// Shows an astrologer's active discount offer on their profile, with an
-/// "already used" state. Localized coupon title comes from the backend
-/// (title_i18n); UI labels via CouponLabels (English base). Tapping does
-/// nothing — the discount is applied automatically at consultation billing.
+/// Shows an astrologer's active discount offer on their profile (auto-applied
+/// at billing) AND a "Have a coupon code?" field so the user can apply an
+/// astrologer or admin code (e.g. a 100%-off) to the NEXT chat/call/video.
+/// The applied code is stored in [consultCouponCode] and passed to
+/// initiateChat/initiateCall. Localized title from the backend; UI labels via
+/// CouponLabels.
 class AstrologerCouponBanner extends StatefulWidget {
   final String astrologerId;
   const AstrologerCouponBanner({super.key, required this.astrologerId});
@@ -476,10 +485,23 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
   bool _used = false;
   bool _loaded = false;
 
+  final _codeCtrl = TextEditingController();
+  bool _expanded = false;
+  bool _busy = false;
+  String? _appliedCode;   // mirrors consultCouponCode
+  String? _msg;           // localized status
+  bool _ok = false;
+
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _codeCtrl.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
@@ -501,9 +523,46 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
     return '${val.toStringAsFixed(0)}%';
   }
 
+  Future<void> _apply() async {
+    final code = _codeCtrl.text.trim();
+    if (code.isEmpty) return;
+    setState(() { _busy = true; _msg = null; });
+    // Validate against the chat scope — a consultation coupon covers
+    // chat/call/video, so the actual scope is applied at billing.
+    final r = await ApiService().validateCoupon(
+      code: code, scope: 'chat', astrologerId: widget.astrologerId, baseAmount: 0);
+    if (!mounted) return;
+    if (r['valid'] == true) {
+      consultCouponCode.value = code;
+      setState(() {
+        _appliedCode = code; _ok = true; _busy = false;
+        _msg = CouponLabels.of(context, 'applied');
+      });
+    } else {
+      consultCouponCode.value = null;
+      setState(() {
+        _appliedCode = null; _ok = false; _busy = false;
+        _msg = CouponLabels.of(context, 'reason_${r['reason'] ?? 'invalid'}');
+      });
+    }
+  }
+
+  void _remove() {
+    consultCouponCode.value = null;
+    setState(() { _appliedCode = null; _ok = false; _msg = null; _codeCtrl.clear(); });
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!_loaded || _coupon == null) return const SizedBox.shrink();
+    if (!_loaded) return const SizedBox.shrink();
+    return Column(children: [
+      if (_coupon != null) _offerBanner(),
+      _codeField(),
+      const SizedBox(height: 16),
+    ]);
+  }
+
+  Widget _offerBanner() {
     final c = _coupon!;
     final title = (c['title'] ?? '').toString();
     final off = _discountLabel();
@@ -511,7 +570,7 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
     final color = grey ? AppColors.textSecondary : AppColors.gold;
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: grey
@@ -542,6 +601,63 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
             child: Text(off, style: const TextStyle(color: AppColors.midnight, fontSize: 13, fontWeight: FontWeight.w800)),
+          ),
+      ]),
+    );
+  }
+
+  Widget _codeField() {
+    if (!_expanded && _appliedCode == null) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          onPressed: () => setState(() => _expanded = true),
+          icon: const Icon(Icons.local_activity_outlined, size: 18, color: AppColors.gold),
+          label: Text(CouponLabels.of(context, 'haveCoupon'),
+              style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600, fontSize: 13)),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: (_ok ? AppColors.success : AppColors.border).withOpacity(0.5)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: _codeCtrl,
+              enabled: _appliedCode == null && !_busy,
+              textCapitalization: TextCapitalization.characters,
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: CouponLabels.of(context, 'enterCode'),
+                hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          _appliedCode == null
+              ? TextButton(
+                  onPressed: _busy ? null : _apply,
+                  child: _busy
+                      ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
+                      : Text(CouponLabels.of(context, 'apply'),
+                          style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700)))
+              : TextButton(
+                  onPressed: _remove,
+                  child: Text(CouponLabels.of(context, 'remove'),
+                      style: const TextStyle(color: AppColors.textSecondary))),
+        ]),
+        if (_msg != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 2, left: 2),
+            child: Text(_ok ? '${CouponLabels.of(context, 'applied')} · chat / call / video' : _msg!,
+                style: TextStyle(color: _ok ? AppColors.success : AppColors.error, fontSize: 11)),
           ),
       ]),
     );

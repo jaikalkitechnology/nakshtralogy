@@ -568,7 +568,91 @@ SERVICE_PRICING = [
         "engine_function": "yearly_prediction",
         "requires_birth_data": True,
     },
+    # ── Birth chart + extra chart (Primary is free; extras are paid) ──
+    {
+        "service_key": "birth_chart",
+        "service_name": "Birth Chart (Janam Kundli)",
+        "description": "Complete birth chart with D1 kundli, planetary positions, nakshatra, dignity and all divisional charts.",
+        "icon": "\U0001f4dc",
+        "category": "kundli",
+        "price": 0, "is_free": True, "sort_order": 0,
+        "features_json": ["D1 Lagna Kundli", "10 Graha Positions", "Nakshatra & Pada", "Dignity & Vargottam", "D1-D60 Divisional Charts"],
+        "engine_function": "calculate_chart",
+        "requires_birth_data": True,
+        "max_free_per_user": 1,
+    },
+    {
+        "service_key": "extra_chart",
+        "service_name": "Additional Kundli",
+        "description": "Create an extra birth chart beyond your free Primary Kundli (family, friend or client).",
+        "icon": "➕",
+        "category": "kundli",
+        "price": 49, "original_price": 99, "is_free": False, "sort_order": 61,
+        "features_json": ["Extra saved chart", "Full kundli compute", "All divisional charts", "Reusable for reports"],
+        "engine_function": "calculate_chart",
+        "requires_birth_data": True,
+    },
+    {
+        "service_key": "daily_forecast",
+        "service_name": "Detailed Daily Forecast",
+        "description": "Personalized daily probability forecast — planetary weather across every life area for your chart.",
+        "icon": "\U0001f506",
+        "category": "forecast",
+        "price": 149, "original_price": 199, "is_free": False, "sort_order": 60,
+        "features_json": ["Daily probability scores", "Per-life-area weather", "Best/worst windows", "Actionable guidance"],
+        "engine_function": "daily_forecast",
+        "requires_birth_data": True,
+    },
 ]
+
+# ── Pay-per-report specialist catalog (mirrors POST /service/pricing/seed) ──
+# Seeded here too so the paid products always have a ServicePricing row on a
+# fresh deploy — without it the paywall/price-card fails open and never shows.
+# service_key MATCHES the specialist engine key 1:1 so /service/entitlements and
+# the 402 gate map a report to its price. Prices are DEFAULTS — admin-editable
+# via /service/pricing (the source of truth). Never touches astrology logic.
+_SINGLE_REPORTS = [
+    ("career",        "Career & Job Report",        "\U0001f4bc", "10th house, D-10 Dasamsha, Jaimini karakas & dasha career windows"),
+    ("business",      "Business & Startup Report",  "\U0001f680", "Entrepreneurial yogas, timing windows & venture-fit analysis"),
+    ("education",     "Education & Learning Report", "\U0001f393", "4th/5th house, Budha & Guru, ideal streams and study periods"),
+    ("wealth",        "Wealth & Finance Report",     "\U0001f4b0", "Dhana yogas, 2nd/11th house, income & savings potential"),
+    ("debt_recovery", "Debt & Recovery Report",      "\U0001f4c9", "6th/8th/12th house debt patterns & recovery timing"),
+    ("love",          "Love & Relationships Report", "❤️", "Venus, 5th/7th house, D-9 Navamsha & relationship patterns"),
+    ("marriage",      "Marriage & Family Report",    "\U0001f492", "7th house, marriage timing, spouse indications & family life"),
+    ("health",        "Health & Wellness Report",    "\U0001f3e5", "6th/8th house, planetary afflictions & sensitive health periods"),
+    ("mental_stress", "Mental & Stress Report",      "\U0001f9e0", "Moon, Mercury & 12th house — mental resilience and stress map"),
+    ("property",      "Property & Assets Report",    "\U0001f3e0", "4th house, land/vehicle yogas & acquisition timing"),
+    ("legal",         "Legal & Disputes Report",     "⚖️", "6th house, litigation windows & outcome tendencies"),
+    ("life_path",     "Life Path & Luck Report",     "\U0001f31f", "Atmakaraka, purpose, fortune (9th house) & luck cycles"),
+    ("character",     "Character Analysis Report",   "\U0001f50d", "Personality, temperament & psychological profile"),
+    ("past_life",     "Past Life & Karma Report",    "\U0001f52e", "D-60 Shashtiamsha karma, past-life debts & soul lessons"),
+]
+_COMBO_REPORTS = [
+    ("kundli_milan",       "Kundli Milan (Gun Milan)",  "\U0001f491", "36-point Ashtakoot, Manglik & Nadi dosha, unified compatibility"),
+    ("relationship",       "Relationship Intelligence", "\U0001f517", "2-5 chart relationship dynamics & compatibility intelligence"),
+    ("child_probability",  "Child Probability Report",  "\U0001f476", "Santaan yoga, 5th house & fertility timing for a couple"),
+    ("love_compatibility", "Love Compatibility Report", "\U0001f49e", "Romantic compatibility, emotional & karmic bonding score"),
+    ("karma_linkage",      "Past-Life Karma Linkage",   "\U0001f9ec", "Karmic ties across 2-5 charts & shared soul contracts"),
+]
+_sort = 30
+for _k, _n, _ic, _d in _SINGLE_REPORTS:
+    _sort += 1
+    SERVICE_PRICING.append({
+        "service_key": _k, "service_name": _n, "description": _d, "icon": _ic,
+        "category": "report", "price": 149, "original_price": 249, "is_free": False,
+        "sort_order": _sort,
+        "features_json": ["Full multi-chart analysis", "Score-ring + grade", "Timing windows", "Remedies & confidence"],
+        "engine_function": _k, "requires_birth_data": True,
+    })
+for _k, _n, _ic, _d in _COMBO_REPORTS:
+    _sort += 1
+    SERVICE_PRICING.append({
+        "service_key": _k, "service_name": _n, "description": _d, "icon": _ic,
+        "category": "report", "price": 299, "original_price": 499, "is_free": False,
+        "sort_order": _sort,
+        "features_json": ["Two-chart / multi-chart analysis", "Compatibility scoring", "Detailed breakdown", "Remedies & confidence"],
+        "engine_function": _k, "requires_birth_data": True,
+    })
 
 
 def _seed_service_pricing(db: Session) -> int:
