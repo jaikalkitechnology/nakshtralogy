@@ -264,8 +264,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
+  /* ============================================================
+     NAKSHATRALOGY — HOMEPAGE DESIGN SYSTEM (redesign)
+     Premium Vedic-astrology product site. Reuses the brand tokens
+     + fonts from the original. Self-contained, no new dependencies.
+     ============================================================ */
   :root {
     --midnight: #0B0B2E;
     --cosmic-void: #0A0A24;
@@ -286,11 +290,22 @@
     --font-display: 'Cormorant Garamond', serif;
     --font-body: 'Manrope', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+
+    /* surfaces */
+    --surface-1: rgba(255,255,255,0.03);
+    --surface-2: rgba(255,255,255,0.05);
+    --line: rgba(232,181,71,0.14);
+    --line-soft: rgba(255,255,255,0.08);
+    --radius: 18px;
+    --radius-lg: 24px;
+    --shadow: 0 20px 50px rgba(0,0,0,0.35);
+    --maxw: 1200px;
+    --nav-h: 70px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
+  html { scroll-padding-top: calc(var(--nav-h) + 12px); }
 
   body {
     font-family: var(--font-body);
@@ -298,2162 +313,1042 @@
     color: var(--ivory);
     overflow-x: hidden;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
+  /* starfield / aurora backdrop (kept, subtle) */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image:
-      radial-gradient(circle at 15% 25%, rgba(232,181,71,0.1), transparent 50%),
-      radial-gradient(circle at 85% 75%, rgba(74,59,140,0.2), transparent 50%),
-      radial-gradient(2px 2px at 20% 30%, white, transparent),
-      radial-gradient(1px 1px at 60% 70%, white, transparent),
-      radial-gradient(1px 1px at 50% 50%, white, transparent),
-      radial-gradient(1.5px 1.5px at 80% 10%, white, transparent),
-      radial-gradient(1px 1px at 90% 60%, white, transparent),
-      radial-gradient(1px 1px at 33% 80%, white, transparent),
-      radial-gradient(2px 2px at 15% 65%, white, transparent);
-    background-size: 100% 100%, 100% 100%, 250px 250px, 250px 250px, 250px 250px, 250px 250px, 250px 250px, 250px 250px, 250px 250px;
-    pointer-events: none;
-    opacity: 0.5;
-    z-index: 0;
+      radial-gradient(circle at 12% 18%, rgba(232,181,71,0.10), transparent 46%),
+      radial-gradient(circle at 88% 82%, rgba(74,59,140,0.22), transparent 50%),
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 50% 40%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 80% 12%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 33% 82%, rgba(255,255,255,0.6), transparent);
+    background-size: 100% 100%, 100% 100%, 260px 260px, 260px 260px, 260px 260px, 260px 260px, 260px 260px;
+    pointer-events: none; opacity: 0.55; z-index: 0;
   }
 
   .wrapper { position: relative; z-index: 1; }
-
   a { color: inherit; text-decoration: none; }
-
   img { max-width: 100%; display: block; }
+  ul { list-style: none; }
+  :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; border-radius: 6px; }
 
-  /* === NAVBAR === */
-  .navbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    padding: 18px 40px;
-    background: rgba(10,10,36,0.7);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(232,181,71,0.1);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-display);
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--ivory);
-    letter-spacing: -0.01em;
-  }
-
-  .nav-logo em { font-style: italic; color: var(--gold); font-weight: 500; }
-
-  .nav-logo-mark {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--midnight);
-    font-weight: 700;
-    font-family: var(--font-display);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    align-items: center;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-size: 14px;
-    color: var(--lavender);
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--gold); }
-
-  .nav-cta {
-    padding: 10px 20px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    color: var(--midnight);
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-
-  .nav-toggle {
-    display: none;
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    background: rgba(232,181,71,0.1);
-    border: 1px solid rgba(232,181,71,0.3);
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    cursor: pointer;
-  }
-
-  /* === HERO === */
-  .hero {
-    padding: 160px 40px 80px;
-    max-width: 1400px;
-    margin: 0 auto;
-    text-align: center;
-    position: relative;
-  }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 18px;
-    background: rgba(232,181,71,0.08);
-    border: 1px solid rgba(232,181,71,0.3);
-    border-radius: 999px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 32px;
-  }
-
-  .hero-eyebrow .dot {
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--gold);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    50% { opacity: 0.4; }
-  }
-
-  .hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(48px, 8vw, 104px);
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    line-height: 0.95;
-    margin-bottom: 28px;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--gold);
-    font-weight: 400;
-  }
-
-  .hero-sub {
-    max-width: 720px;
-    margin: 0 auto 48px;
-    color: var(--lavender);
-    font-size: clamp(16px, 2vw, 19px);
-    font-weight: 300;
-    line-height: 1.5;
-  }
-
-  .hero-ctas {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    margin-bottom: 56px;
-    flex-wrap: wrap;
-  }
-
-  .store-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 24px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(232,181,71,0.3);
-    border-radius: 14px;
-    backdrop-filter: blur(10px);
-    transition: transform 0.2s, border-color 0.2s;
-  }
-
-  .store-btn:hover {
-    transform: translateY(-2px);
-    border-color: var(--gold);
-  }
-
-  .store-btn-icon {
-    width: 32px; height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-  }
-
-  .store-btn-text { text-align: left; }
-
-  .store-btn-eyebrow {
-    font-size: 9px;
-    color: var(--smoke);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    font-family: var(--font-mono);
-    margin-bottom: 2px;
-  }
-
-  .store-btn-name {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ivory);
-    line-height: 1;
-  }
-
-  /* === HERO STATS === */
-  .hero-stats {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-    padding-top: 40px;
-    border-top: 1px solid rgba(232,181,71,0.15);
-  }
-
-  .hero-stat {
-    text-align: center;
-  }
-
-  .hero-stat-num {
-    font-family: var(--font-display);
-    font-size: 36px;
-    font-weight: 600;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .hero-stat-lbl {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--smoke);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
-
-  /* === SECTION === */
-  .section {
-    padding: 120px 40px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .section-head {
-    text-align: center;
-    margin-bottom: 80px;
-  }
-
-  .section-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-
-  .section-label::before, .section-label::after {
-    content: '';
-    width: 24px; height: 1px;
-    background: var(--gold);
-  }
-
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 64px);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    color: var(--ivory);
-    margin-bottom: 20px;
-  }
-
-  .section-title em {
-    font-style: italic;
-    color: var(--gold);
-    font-weight: 400;
-  }
-
-  .section-sub {
-    max-width: 680px;
-    margin: 0 auto;
-    color: var(--lavender);
-    font-size: 17px;
-    font-weight: 300;
-    line-height: 1.55;
-  }
-
-  /* === USER FLOW SECTION === */
-  .flow-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 32px;
-    margin-bottom: 80px;
-  }
-
-  .flow-card {
-    background: rgba(26,22,66,0.4);
-    border: 1px solid rgba(232,181,71,0.15);
-    border-radius: 24px;
-    overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s;
-  }
-
-  .flow-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(232,181,71,0.4);
-  }
-
-  .flow-mockup {
-    height: 360px;
-    background: linear-gradient(135deg, rgba(74,59,140,0.4), rgba(11,11,46,0.6));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .flow-mockup::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      radial-gradient(1px 1px at 25% 15%, rgba(255,255,255,0.5), transparent),
-      radial-gradient(1px 1px at 70% 30%, rgba(255,255,255,0.4), transparent),
-      radial-gradient(1.5px 1.5px at 45% 55%, rgba(255,255,255,0.6), transparent),
-      radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.3), transparent);
-    background-size: 200px 200px;
-  }
-
-  /* Mini phone in flow card */
-  .mini-phone {
-    width: 200px;
-    height: 320px;
-    background: #0A0A0A;
-    border-radius: 28px;
-    padding: 8px;
-    box-shadow: 0 20px 60px rgba(232,181,71,0.15);
-    position: relative;
-    z-index: 2;
-  }
-
-  .mini-phone::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 16px;
-    background: #0A0A0A;
-    border-radius: 0 0 10px 10px;
-    z-index: 10;
-  }
-
-  .mini-phone-screen {
-    width: 100%;
-    height: 100%;
-    border-radius: 22px;
-    overflow: hidden;
-    background: var(--cosmic-void);
-    position: relative;
-    padding: 24px 12px 12px;
-  }
-
-  .mini-status {
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 8px;
-    font-size: 8px;
-    color: var(--ivory);
-    font-weight: 700;
-  }
-
-  .mini-content {
-    padding: 4px;
-  }
-
-  .mini-label {
-    font-family: var(--font-mono);
-    font-size: 6px;
-    color: var(--gold);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .mini-title {
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--ivory);
-    margin-bottom: 8px;
-    line-height: 1.1;
-  }
-
-  .mini-title em { font-style: italic; color: var(--gold); }
-
-  .mini-card {
-    background: rgba(232,181,71,0.1);
-    border: 1px solid rgba(232,181,71,0.25);
-    border-radius: 8px;
-    padding: 8px;
-    margin-bottom: 5px;
-  }
-
-  .mini-card-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .mini-card-icon {
-    width: 18px; height: 18px;
-    border-radius: 5px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-  }
-
-  .mini-card-text {
-    flex: 1;
-  }
-
-  .mini-card-name {
-    font-size: 7px;
-    font-weight: 700;
-    color: var(--ivory);
-  }
-
-  .mini-card-meta {
-    font-size: 5px;
-    color: var(--smoke);
-    font-family: var(--font-mono);
-  }
-
-  .mini-card-score {
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--gold);
-  }
-
-  .mini-button {
-    display: block;
-    margin-top: 8px;
-    padding: 5px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    color: var(--midnight);
-    border-radius: 6px;
-    font-size: 7px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 0.05em;
-  }
-
-  .mini-input {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(232,181,71,0.2);
-    border-radius: 6px;
-    padding: 5px 7px;
-    margin-bottom: 4px;
-  }
-
-  .mini-input-label {
-    font-size: 5px;
-    color: var(--smoke);
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-  }
-
-  .mini-input-value {
-    font-size: 8px;
-    font-weight: 600;
-    color: var(--ivory);
-    margin-top: 1px;
-  }
-
-  /* Astrologer card mini */
-  .mini-astro-card {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(232,181,71,0.15);
-    border-radius: 8px;
-    margin-bottom: 4px;
-  }
-
-  .mini-astro-avatar {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--cosmic-pink), var(--saffron));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 9px;
-    flex-shrink: 0;
-  }
-
-  .mini-astro-info { flex: 1; }
-
-  .mini-astro-name {
-    font-size: 7px;
-    color: var(--ivory);
-    font-weight: 700;
-  }
-
-  .mini-astro-meta {
-    font-size: 5px;
-    color: var(--smoke);
-    font-family: var(--font-mono);
-  }
-
-  .mini-cta-tiny {
-    padding: 3px 7px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    color: var(--midnight);
-    border-radius: 999px;
-    font-size: 6px;
-    font-weight: 700;
-  }
-
-  /* Earnings mini */
-  .mini-earnings-hero {
-    background: linear-gradient(135deg, var(--indigo), var(--cosmic-void));
-    border-radius: 8px;
-    padding: 8px;
-    margin-bottom: 6px;
-    text-align: center;
-  }
-
-  .mini-earnings-amt {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .mini-earnings-lbl {
-    font-size: 5px;
-    color: var(--lavender);
-    font-family: var(--font-mono);
-    letter-spacing: 0.1em;
-    margin-top: 2px;
-  }
-
-  .mini-stat-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-    margin-bottom: 4px;
-  }
-
-  .mini-stat-tile {
-    background: rgba(255,255,255,0.04);
-    border-radius: 5px;
-    padding: 5px;
-    text-align: center;
-  }
-
-  .mini-stat-val {
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .mini-stat-lbl {
-    font-size: 5px;
-    color: var(--smoke);
-    font-family: var(--font-mono);
-    margin-top: 2px;
-    letter-spacing: 0.05em;
-  }
-
-  /* Flow content */
-  .flow-content {
-    padding: 32px 28px;
-  }
-
-  .flow-step {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gold);
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .flow-title {
-    font-family: var(--font-display);
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--ivory);
-    line-height: 1.1;
-    margin-bottom: 12px;
-  }
-
-  .flow-title em { font-style: italic; color: var(--gold); }
-
-  .flow-desc {
-    color: var(--lavender);
-    font-size: 14px;
-    line-height: 1.55;
-    margin-bottom: 20px;
-  }
-
-  .flow-bullets { list-style: none; }
-
-  .flow-bullets li {
-    padding: 6px 0;
-    color: var(--ivory);
-    font-size: 13px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .flow-bullets li::before {
-    content: '✦';
-    color: var(--gold);
-    flex-shrink: 0;
-    font-size: 12px;
-    margin-top: 2px;
-  }
-
-  /* === FEATURE GRID === */
-  .feat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-  }
-
-  .feat-card {
-    padding: 32px 24px;
-    background: rgba(26,22,66,0.4);
-    border: 1px solid rgba(232,181,71,0.15);
-    border-radius: 18px;
-    transition: transform 0.3s, border-color 0.3s;
-  }
-
-  .feat-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(232,181,71,0.35);
-  }
-
-  .feat-icon {
-    width: 56px; height: 56px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(232,181,71,0.2), rgba(232,181,71,0.05));
-    border: 1px solid rgba(232,181,71,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin-bottom: 18px;
-  }
-
-  .feat-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--ivory);
-    margin-bottom: 10px;
-    line-height: 1.15;
-  }
-
-  .feat-title em { font-style: italic; color: var(--gold); }
-
-  .feat-desc {
-    color: var(--lavender);
-    font-size: 13px;
-    line-height: 1.55;
-  }
-
-  /* === DUAL APP SECTION === */
-  .dual-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-
-  .app-card {
-    padding: 48px 40px;
-    background: linear-gradient(135deg, rgba(74,59,140,0.4), rgba(11,11,46,0.6));
-    border: 1px solid rgba(232,181,71,0.25);
-    border-radius: 28px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .app-card.astro {
-    background: linear-gradient(135deg, rgba(232,104,156,0.2), rgba(74,59,140,0.4));
-    border-color: rgba(232,104,156,0.3);
-  }
-
-  .app-card-icon {
-    width: 72px; height: 72px;
-    margin: 0 auto 20px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    color: var(--midnight);
-    box-shadow: 0 12px 40px rgba(232,181,71,0.3);
-  }
-
-  .app-card.astro .app-card-icon {
-    background: linear-gradient(135deg, var(--cosmic-pink), var(--saffron));
-    color: white;
-    box-shadow: 0 12px 40px rgba(232,104,156,0.3);
-  }
-
-  .app-card-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--gold);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .app-card.astro .app-card-eyebrow { color: var(--cosmic-pink); }
-
-  .app-card-title {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--ivory);
-    line-height: 1.1;
-    margin-bottom: 12px;
-  }
-
-  .app-card-title em { font-style: italic; color: var(--gold); }
-  .app-card.astro .app-card-title em { color: var(--cosmic-pink); }
-
-  .app-card-desc {
-    color: var(--lavender);
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 28px;
-  }
-
-  .app-card-features {
-    list-style: none;
-    text-align: left;
-    margin-bottom: 28px;
-  }
-
-  .app-card-features li {
-    padding: 10px 0;
-    color: var(--ivory);
-    font-size: 13px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    border-bottom: 1px dashed rgba(255,255,255,0.06);
-  }
-
-  .app-card-features li:last-child { border: 0; }
-
-  .app-card-features li::before {
-    content: '✓';
-    color: var(--gold);
-    flex-shrink: 0;
-    font-weight: 700;
-    margin-top: 1px;
-  }
-
-  .app-card.astro .app-card-features li::before { color: var(--cosmic-pink); }
-
-  .store-btns-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  /* === EARN/STATS BANNER === */
-  .earn-banner {
-    margin: 80px auto 0;
-    max-width: 1100px;
-    padding: 56px 48px;
-    background:
-      radial-gradient(ellipse at top right, rgba(232,181,71,0.2) 0%, transparent 60%),
-      radial-gradient(ellipse at bottom left, rgba(232,104,156,0.15) 0%, transparent 60%),
-      linear-gradient(135deg, rgba(74,59,140,0.5), rgba(11,11,46,0.6));
-    border: 1px solid rgba(232,181,71,0.3);
-    border-radius: 28px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .earn-banner-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--gold);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-
-  .earn-banner-title {
-    font-family: var(--font-display);
-    font-size: clamp(32px, 5vw, 56px);
-    font-weight: 500;
-    color: var(--ivory);
-    line-height: 1;
-    margin-bottom: 16px;
-  }
-
-  .earn-banner-title em { font-style: italic; color: var(--gold); }
-
-  .earn-banner-sub {
-    color: var(--lavender);
-    font-size: 16px;
-    max-width: 600px;
-    margin: 0 auto 32px;
-  }
-
-  .earn-stats {
-    display: flex;
-    justify-content: center;
-    gap: 48px;
-    flex-wrap: wrap;
-    padding-top: 32px;
-    border-top: 1px solid rgba(232,181,71,0.2);
-  }
-
-  .earn-stat-num {
-    font-family: var(--font-display);
-    font-size: 40px;
-    font-weight: 600;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .earn-stat-lbl {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--smoke);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-top: 8px;
-  }
-
-  /* === ENGINES SHOWCASE === */
-  .engines-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-  }
-
-  .engine-mini {
-    padding: 18px 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(232,181,71,0.2);
-    background: rgba(26,22,66,0.4);
-    text-align: center;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-
-  .engine-mini:hover {
-    transform: translateY(-3px);
-    border-color: var(--gold);
-  }
-
-  .engine-mini-icon {
-    width: 44px; height: 44px;
-    margin: 0 auto 10px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: var(--midnight);
-  }
-
-  .engine-mini.pink .engine-mini-icon { background: linear-gradient(135deg, var(--cosmic-pink), var(--saffron)); color: white; }
-  .engine-mini.mint .engine-mini-icon { background: linear-gradient(135deg, var(--aurora-mint), var(--lavender)); color: var(--midnight); }
-  .engine-mini.green .engine-mini-icon { background: linear-gradient(135deg, var(--success), var(--aurora-mint)); color: var(--midnight); }
-  .engine-mini.lavender .engine-mini-icon { background: linear-gradient(135deg, var(--lavender), var(--indigo)); }
-
-  .engine-mini-name {
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ivory);
-    line-height: 1.1;
-    margin-bottom: 4px;
-  }
-
-  .engine-mini-name em { font-style: italic; color: var(--gold); }
-
-  .engine-mini-keys {
-    font-size: 9px;
-    color: var(--smoke);
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-  }
-
-  /* === FAQ === */
-  .faq-list {
-    max-width: 820px;
-    margin: 0 auto;
-  }
-
-  .faq-item {
-    margin-bottom: 12px;
-    background: rgba(26,22,66,0.4);
-    border: 1px solid rgba(232,181,71,0.15);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-
-  .faq-item[open] {
-    border-color: rgba(232,181,71,0.35);
-  }
-
-  .faq-q {
-    padding: 22px 28px;
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ivory);
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-
-  .faq-q::-webkit-details-marker { display: none; }
-
-  .faq-q::after {
-    content: '+';
-    font-family: var(--font-mono);
-    font-size: 24px;
-    color: var(--gold);
-    font-weight: 300;
-    transition: transform 0.3s;
-    flex-shrink: 0;
-  }
-
-  .faq-item[open] .faq-q::after {
-    transform: rotate(45deg);
-  }
-
-  .faq-a {
-    padding: 0 28px 24px;
-    color: var(--lavender);
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  /* === FOOTER === */
-  .footer {
-    padding: 80px 40px 40px;
-    background: linear-gradient(180deg, transparent, rgba(11,11,46,0.7));
-    border-top: 1px solid rgba(232,181,71,0.15);
-    margin-top: 80px;
-  }
-
-  .footer-grid {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
-    gap: 48px;
-    margin-bottom: 56px;
-  }
-
-  .footer-brand-block .nav-logo { margin-bottom: 16px; }
-
-  .footer-brand-text {
-    color: var(--smoke);
-    font-size: 13px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    max-width: 320px;
-  }
-
-  .footer-stores {
-    display: flex;
-    gap: 8px;
-  }
-
-  .footer-store-btn {
-    padding: 8px 12px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(232,181,71,0.2);
-    border-radius: 10px;
-    font-size: 10px;
-    color: var(--ivory);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .footer-col-title {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--gold);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-  }
-
-  .footer-links {
-    list-style: none;
-  }
-
-  .footer-links li {
-    margin-bottom: 10px;
-  }
-
-  .footer-links a {
-    color: var(--lavender);
-    font-size: 13px;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--gold); }
-
-  .footer-contact-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 14px;
-    color: var(--lavender);
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .footer-contact-icon {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    background: rgba(232,181,71,0.1);
-    border: 1px solid rgba(232,181,71,0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    font-size: 12px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .footer-contact-row a:hover { color: var(--gold); }
-
-  .footer-bottom {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding-top: 32px;
-    border-top: 1px solid rgba(232,181,71,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .footer-copy {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--smoke);
-    letter-spacing: 0.05em;
-  }
-
-  .footer-copy em { font-style: italic; color: var(--gold); }
-
-  .footer-legal {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-  }
-
-  .footer-legal a {
-    font-size: 11px;
-    color: var(--smoke);
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-    transition: color 0.2s;
-  }
-
-  .footer-legal a:hover { color: var(--gold); }
-
-  /* === RESPONSIVE === */
-  @media (max-width: 1024px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-    }
-    .flow-grid {
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-    .dual-grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .navbar { padding: 14px 20px; }
-    .nav-links { display: none; }
-    .nav-toggle { display: flex; }
-    .hero { padding: 120px 20px 60px; }
-    .section { padding: 80px 20px; }
-    .footer { padding: 60px 20px 32px; }
-    .footer-grid { grid-template-columns: 1fr; }
-    .earn-banner { padding: 40px 24px; }
-    .app-card { padding: 36px 24px; }
-    .footer-bottom { flex-direction: column; align-items: flex-start; }
-    .webapp-grid { grid-template-columns: 1fr; }
-    .devapi-grid { grid-template-columns: 1fr; }
-    .devapi-endpoints { grid-template-columns: 1fr; }
-  }
-
-  /* === REAL LOGO MARK === */
-  .nav-logo-img { height: 34px; width: auto; display: block; }
-  .footer-logo-img { height: 40px; width: auto; margin-bottom: 18px; }
-
-  /* === WEB APPS (subdomains) === */
-  .webapp-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .webapp-card {
-    position: relative;
-    padding: 32px 28px;
-    background: rgba(26,22,66,0.45);
-    border: 1px solid rgba(232,181,71,0.2);
-    border-radius: 22px;
-    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-    display: flex;
-    flex-direction: column;
-  }
-  .webapp-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
-  .webapp-badge {
-    align-self: flex-start;
-    font-family: var(--font-mono);
-    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--gold);
-    background: rgba(232,181,71,0.1);
-    border: 1px solid rgba(232,181,71,0.25);
-    border-radius: 999px;
-    padding: 5px 12px; margin-bottom: 18px;
-  }
-  .webapp-icon {
-    width: 60px; height: 60px; border-radius: 16px;
-    display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    color: var(--midnight); margin-bottom: 18px;
-  }
-  .webapp-card.astro .webapp-icon { background: linear-gradient(135deg, var(--saffron), var(--cosmic-pink)); color: #fff; }
-  .webapp-card.dev .webapp-icon { background: linear-gradient(135deg, var(--indigo), var(--aurora-mint)); color: #fff; }
-  .webapp-title { font-family: var(--font-display); font-size: 25px; font-weight: 600; color: var(--ivory); margin-bottom: 8px; line-height: 1.05; }
-  .webapp-title em { font-style: italic; color: var(--gold); }
-  .webapp-url {
-    font-family: var(--font-mono); font-size: 12px; color: var(--aurora-mint);
-    letter-spacing: 0.03em; margin-bottom: 14px; word-break: break-all;
-  }
-  .webapp-desc { font-size: 14px; color: var(--lavender); line-height: 1.55; margin-bottom: 22px; flex: 1; }
-  .webapp-cta {
+  /* ---------- shared typography ---------- */
+  .eyebrow {
     display: inline-flex; align-items: center; gap: 8px;
-    align-self: flex-start;
-    padding: 11px 20px; border-radius: 999px;
-    background: linear-gradient(135deg, var(--gold), var(--saffron));
-    color: var(--midnight); font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
-    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold); font-weight: 500;
   }
-  .webapp-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(232,181,71,0.3); }
-  .webapp-card.dev .webapp-cta { background: linear-gradient(135deg, var(--aurora-mint), var(--indigo)); color: #fff; }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+  .section-head { max-width: 720px; margin: 0 auto 48px; text-align: center; }
+  .section-title {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(30px, 4.5vw, 48px); line-height: 1.08; color: var(--ivory);
+    letter-spacing: -0.01em; margin: 14px 0 12px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-sub { color: var(--lavender); font-size: clamp(15px, 1.6vw, 17px); line-height: 1.6; }
 
-  /* === DEVELOPER API === */
-  .devapi {
-    max-width: 1200px; margin: 0 auto;
-    padding: 56px 44px;
-    background: linear-gradient(135deg, rgba(31,36,89,0.7), rgba(11,11,46,0.6));
-    border: 1px solid rgba(232,181,71,0.25);
-    border-radius: 28px;
+  section.block { padding: clamp(64px, 9vw, 108px) 0; position: relative; }
+  section.block.alt { background: linear-gradient(180deg, rgba(31,36,89,0.28), transparent); }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: var(--font-body); font-weight: 700; font-size: 15px; letter-spacing: 0.01em;
+    padding: 14px 26px; border-radius: 999px; cursor: pointer; border: 1px solid transparent;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+    white-space: nowrap;
   }
-  .devapi-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 44px; align-items: center; }
-  .devapi-code {
-    background: #06061a;
-    border: 1px solid rgba(123,196,196,0.25);
-    border-radius: 16px;
-    padding: 22px 24px;
-    font-family: var(--font-mono); font-size: 12.5px; line-height: 1.9;
-    color: var(--ivory); overflow-x: auto;
+  .btn-primary { background: linear-gradient(135deg, var(--gold), var(--saffron)); color: #1a1206; box-shadow: 0 10px 28px rgba(232,181,71,0.28); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 38px rgba(232,181,71,0.40); }
+  .btn-ghost { background: var(--surface-2); color: var(--ivory); border-color: var(--line); }
+  .btn-ghost:hover { transform: translateY(-2px); border-color: var(--gold); background: rgba(232,181,71,0.08); }
+  .btn-sm { padding: 10px 18px; font-size: 13.5px; }
+  .btn-block { width: 100%; }
+
+  .link-more {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+    color: var(--gold); font-weight: 600; font-size: 14px;
   }
-  .devapi-code .c-key { color: var(--aurora-mint); }
-  .devapi-code .c-str { color: var(--gold-bright); }
-  .devapi-code .c-com { color: var(--smoke); }
-  .devapi-code .c-verb { color: var(--cosmic-pink); font-weight: 600; }
-  .devapi-features { display: flex; flex-direction: column; gap: 16px; margin: 26px 0 30px; }
-  .devapi-feature { display: flex; gap: 12px; align-items: flex-start; }
-  .devapi-feature-ic {
-    width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px;
-    background: rgba(123,196,196,0.12); border: 1px solid rgba(123,196,196,0.3);
-    display: flex; align-items: center; justify-content: center; color: var(--aurora-mint);
+  .link-more svg { transition: transform .18s ease; }
+  .link-more:hover svg { transform: translateX(3px); }
+
+  /* ============================================================ NAV */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+    display: flex; align-items: center; gap: 18px;
+    padding: 0 24px; z-index: 200;
+    background: rgba(10,10,36,0.55);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid transparent; transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
   }
-  .devapi-feature-t { font-size: 14px; font-weight: 700; color: var(--ivory); margin-bottom: 2px; }
-  .devapi-feature-d { font-size: 12.5px; color: var(--lavender); line-height: 1.5; }
-  .devapi-endpoints {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;
+  .navbar.scrolled { background: rgba(10,10,36,0.86); border-bottom-color: var(--line); box-shadow: 0 10px 30px rgba(0,0,0,0.28); }
+  .nav-inner { width: 100%; max-width: var(--maxw); margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+  .nav-logo { display: flex; align-items: center; }
+  .nav-logo-img { height: 30px; width: auto; }
+  .nav-links { display: flex; align-items: center; gap: 4px; margin-left: 14px; }
+  .nav-links > li > a, .nav-more-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 9px 13px; border-radius: 10px; font-size: 14.5px; font-weight: 500;
+    color: var(--lavender); background: none; border: none; cursor: pointer; font-family: inherit;
+    transition: color .15s ease, background .15s ease;
   }
-  .devapi-endpoint {
-    font-family: var(--font-mono); font-size: 11px; color: var(--lavender);
-    background: rgba(0,0,0,0.25); border: 1px solid rgba(232,181,71,0.12);
-    border-radius: 10px; padding: 9px 12px;
+  .nav-links > li > a:hover, .nav-more-btn:hover { color: var(--ivory); background: var(--surface-2); }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .nav-login { padding: 9px 14px; font-weight: 600; font-size: 14.5px; color: var(--ivory); border-radius: 10px; }
+  .nav-login:hover { background: var(--surface-2); }
+
+  /* More dropdown */
+  .nav-more { position: relative; }
+  .nav-more-menu {
+    position: absolute; top: calc(100% + 12px); right: 0; min-width: 220px;
+    background: rgba(16,16,46,0.97); backdrop-filter: blur(20px);
+    border: 1px solid var(--line); border-radius: 16px; padding: 8px;
+    box-shadow: var(--shadow); opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity .16s ease, transform .16s ease, visibility .16s; z-index: 210;
   }
-  .devapi-endpoint b { color: var(--aurora-mint); font-weight: 600; }
-  .devapi-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .nav-more.open .nav-more-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+  .nav-more-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 14px; color: var(--lavender); }
+  .nav-more-menu a:hover { background: var(--surface-2); color: var(--ivory); }
+  .nav-more-btn svg { transition: transform .18s ease; }
+  .nav-more.open .nav-more-btn svg { transform: rotate(180deg); }
+
+  .nav-toggle { display: none; margin-left: auto; background: var(--surface-2); border: 1px solid var(--line); color: var(--ivory); width: 42px; height: 42px; border-radius: 12px; align-items: center; justify-content: center; cursor: pointer; }
+
+  /* mobile drawer */
+  .mobile-menu { display: none; }
+  @media (max-width: 980px) {
+    .nav-links, .nav-right { display: none; }
+    .nav-toggle { display: inline-flex; }
+    .mobile-menu {
+      display: block; position: fixed; inset: var(--nav-h) 0 0 0; z-index: 190;
+      background: rgba(8,8,26,0.98); backdrop-filter: blur(14px);
+      padding: 18px 22px 40px; overflow-y: auto;
+      transform: translateX(100%); transition: transform .28s cubic-bezier(.4,0,.2,1); visibility: hidden;
+    }
+    .mobile-menu.open { transform: translateX(0); visibility: visible; }
+    .mobile-menu a, .mobile-menu .mm-group-title { display: block; }
+    .mobile-menu > a { padding: 14px 6px; font-size: 17px; font-weight: 600; border-bottom: 1px solid var(--line-soft); color: var(--ivory); }
+    .mm-group-title { margin: 18px 6px 4px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+    .mobile-menu .mm-sub a { padding: 11px 6px; font-size: 15px; color: var(--lavender); border-bottom: 1px solid var(--line-soft); }
+    .mm-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+  }
+
+  /* ============================================================ HERO */
+  .hero { padding: calc(var(--nav-h) + clamp(40px,7vw,84px)) 0 clamp(48px,7vw,72px); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+  .hero h1 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(38px, 6vw, 66px); line-height: 1.03; letter-spacing: -0.015em; margin: 18px 0 18px;
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: clamp(15px, 1.7vw, 18px); color: var(--lavender); max-width: 560px; line-height: 1.6; }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin: 30px 0 24px; }
+  .hero-trust { display: flex; flex-wrap: wrap; gap: 10px 20px; }
+  .hero-trust span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--smoke); font-weight: 500; }
+  .hero-trust span::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--aurora-mint); }
+
+  /* hero kundli preview card */
+  .kundli-preview {
+    position: relative; background: linear-gradient(160deg, rgba(31,36,89,0.55), rgba(16,16,46,0.7));
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px;
+    box-shadow: var(--shadow); backdrop-filter: blur(6px);
+  }
+  .kp-tag { position: absolute; top: 14px; right: 14px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--midnight); background: var(--gold); padding: 4px 9px; border-radius: 6px; font-weight: 700; }
+  .kp-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .kp-avatar { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--gold), var(--saffron)); display: grid; place-items: center; color: #1a1206; font-weight: 800; font-family: var(--font-display); }
+  .kp-name { font-weight: 700; font-size: 14px; }
+  .kp-meta { font-size: 11px; color: var(--smoke); font-family: var(--font-mono); }
+  .kp-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .kp-cell { background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px 12px; }
+  .kp-cell .l { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em; color: var(--smoke); text-transform: uppercase; }
+  .kp-cell .v { font-size: 15px; font-weight: 700; color: var(--ivory); margin-top: 2px; font-family: var(--font-display); }
+  .kp-scores { display: grid; gap: 9px; margin-bottom: 12px; }
+  .kp-score .top { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--lavender); margin-bottom: 4px; }
+  .kp-score .top b { color: var(--ivory); font-weight: 700; }
+  .kp-bar { height: 7px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .kp-bar > i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), var(--saffron)); }
+  .kp-transit { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--aurora-mint); background: rgba(123,196,196,0.08); border: 1px solid rgba(123,196,196,0.2); border-radius: 10px; padding: 9px 12px; }
+  .kp-transit .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--aurora-mint); box-shadow: 0 0 0 0 rgba(123,196,196,0.6); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(123,196,196,0.5);} 70%{box-shadow:0 0 0 8px rgba(123,196,196,0);} 100%{box-shadow:0 0 0 0 rgba(123,196,196,0);} }
+
+  /* ============================================================ METRICS */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .metric { text-align: center; padding: 26px 16px; background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius); }
+  .metric .n { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 3.4vw, 40px); color: var(--gold); line-height: 1; }
+  .metric .l { margin-top: 8px; font-size: 13px; color: var(--lavender); }
+
+  /* ============================================================ CATEGORY CARDS (reveal) */
+  .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .cat {
+    background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius);
+    padding: 22px; text-align: left; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .cat:hover { transform: translateY(-4px); border-color: var(--line); background: var(--surface-2); }
+  .cat-ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 14px; background: linear-gradient(135deg, var(--indigo), var(--aurora)); color: var(--gold-bright); }
+  .cat-ico svg { width: 22px; height: 22px; }
+  .cat h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ivory); }
+  .cat p { font-size: 13.5px; color: var(--smoke); margin: 4px 0 12px; }
+  .cat-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .cat-tags span { font-size: 12px; color: var(--lavender); background: rgba(184,167,224,0.1); border: 1px solid var(--line-soft); padding: 4px 10px; border-radius: 999px; }
+
+  /* ============================================================ PRODUCT PREVIEW (kundli) */
+  .preview-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: clamp(30px, 5vw, 60px); align-items: center; }
+  .chart-panel { background: linear-gradient(160deg, rgba(31,36,89,0.5), rgba(16,16,46,0.7)); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow); }
+  .north-chart { width: 100%; max-width: 340px; margin: 0 auto; aspect-ratio: 1; }
+  .north-chart svg { width: 100%; height: 100%; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; justify-content: center; }
+  .chip { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--ivory); background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 999px; padding: 6px 12px; }
+  .chip b { color: var(--gold); }
+  .feat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 22px 0; }
+  .feat { display: flex; gap: 11px; align-items: flex-start; }
+  .feat .fi { flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line-soft); display: grid; place-items: center; color: var(--gold); }
+  .feat .ft { font-size: 14px; font-weight: 700; color: var(--ivory); }
+  .feat .fd { font-size: 12.5px; color: var(--smoke); line-height: 1.45; }
+
+  /* ============================================================ HOW IT WORKS */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: relative; }
+  .steps::before { content: ''; position: absolute; top: 34px; left: 12%; right: 12%; height: 1px; background: linear-gradient(90deg, transparent, var(--line), transparent); z-index: 0; }
+  .step { position: relative; z-index: 1; text-align: center; }
+  .step-n { width: 60px; height: 60px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--gold); background: rgba(10,10,36,0.9); border: 1px solid var(--gold); box-shadow: 0 0 24px rgba(232,181,71,0.18); }
+  .step h3 { font-size: 17px; font-weight: 700; color: var(--ivory); margin-bottom: 6px; }
+  .step p { font-size: 13.5px; color: var(--smoke); }
+
+  /* ============================================================ AI SECTION */
+  .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px,5vw,56px); align-items: center; }
+  .chatbox { background: linear-gradient(160deg, rgba(31,36,89,0.5), rgba(16,16,46,0.75)); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow); }
+  .chat-top { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--line-soft); margin-bottom: 14px; }
+  .chat-ai-ava { width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, var(--indigo), var(--cosmic-pink)); display: grid; place-items: center; color: #fff; }
+  .chat-ai-name { font-weight: 700; font-size: 14px; }
+  .chat-ai-status { font-size: 11px; color: var(--success); font-family: var(--font-mono); display: flex; align-items: center; gap: 5px; }
+  .chat-ai-status::before { content:''; width:6px;height:6px;border-radius:50%;background:var(--success); }
+  .bubbles { display: flex; flex-direction: column; gap: 12px; min-height: 210px; }
+  .bubble { max-width: 84%; padding: 11px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; }
+  .bubble.user { align-self: flex-end; background: linear-gradient(135deg, var(--gold), var(--saffron)); color: #1a1206; border-bottom-right-radius: 4px; font-weight: 600; }
+  .bubble.ai { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--line-soft); color: var(--ivory); border-bottom-left-radius: 4px; }
+  .bubble.ai .typing { display: inline-flex; gap: 4px; }
+  .bubble.ai .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--lavender); animation: blink 1.4s infinite both; }
+  .bubble.ai .typing i:nth-child(2){ animation-delay:.2s } .bubble.ai .typing i:nth-child(3){ animation-delay:.4s }
+  @keyframes blink { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
+  .chat-suggests { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chat-suggests button { font-size: 12.5px; color: var(--lavender); background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: 999px; padding: 7px 13px; cursor: pointer; font-family: inherit; transition: border-color .15s ease, color .15s ease; }
+  .chat-suggests button:hover { border-color: var(--gold); color: var(--ivory); }
+
+  /* ============================================================ ENGINES */
+  .eng-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .eng { background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 20px; transition: transform .18s ease, border-color .18s ease; }
+  .eng:hover { transform: translateY(-4px); border-color: var(--line); }
+  .eng-ico { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; margin-bottom: 12px; background: linear-gradient(135deg, var(--indigo), var(--aurora)); color: var(--gold-bright); }
+  .eng h3 { font-size: 16px; font-weight: 700; color: var(--ivory); }
+  .eng p { font-size: 13px; color: var(--smoke); margin: 4px 0 10px; line-height: 1.5; }
+  .eng a { font-size: 13px; color: var(--gold); font-weight: 600; display: inline-flex; gap: 5px; align-items: center; }
+  .eng-extra { display: none; }
+  .eng-extra.show { display: grid; }
+
+  /* ============================================================ ASTROLOGERS */
+  .astro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .astro-card { background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 20px; transition: transform .18s ease, border-color .18s ease; }
+  .astro-card:hover { transform: translateY(-4px); border-color: var(--line); }
+  .astro-top { display: flex; align-items: center; gap: 12px; }
+  .astro-ava { width: 54px; height: 54px; border-radius: 14px; display: grid; place-items: center; color: #1a1206; font-weight: 800; font-family: var(--font-display); font-size: 20px; position: relative; }
+  .astro-ava .on { position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; background: var(--success); border: 2px solid var(--cosmic-void); }
+  .astro-name { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+  .astro-name svg { color: var(--aurora-mint); }
+  .astro-role { font-size: 12px; color: var(--smoke); }
+  .astro-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0; }
+  .astro-tags span { font-size: 11.5px; color: var(--lavender); background: rgba(184,167,224,0.1); border: 1px solid var(--line-soft); padding: 3px 9px; border-radius: 999px; }
+  .astro-actions { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .astro-actions a { font-size: 12.5px; font-weight: 600; padding: 9px 0; text-align: center; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line-soft); color: var(--ivory); display:flex; align-items:center; justify-content:center; gap:5px; }
+  .astro-actions a:hover { border-color: var(--gold); color: var(--gold); }
+  .note-line { text-align: center; font-size: 12.5px; color: var(--smoke); margin-top: 18px; }
+
+  /* ============================================================ SIMPLE vs EXPERT */
+  .toggle-wrap { display: flex; justify-content: center; margin-bottom: 30px; }
+  .seg { display: inline-flex; background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: 999px; padding: 5px; gap: 4px; }
+  .seg button { font-family: inherit; font-size: 14px; font-weight: 600; color: var(--lavender); background: none; border: none; padding: 9px 22px; border-radius: 999px; cursor: pointer; transition: color .15s ease, background .15s ease; }
+  .seg button.active { background: linear-gradient(135deg, var(--gold), var(--saffron)); color: #1a1206; }
+  .se-panels { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
+  .se-card { background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 22px; }
+  .se-card h4 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .se-simple .relation { font-family: var(--font-display); font-size: 22px; color: var(--ivory); margin-bottom: 6px; }
+  .se-plain { font-size: 14px; color: var(--lavender); line-height: 1.6; }
+  .se-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--success); background: rgba(107,184,138,0.1); border: 1px solid rgba(107,184,138,0.25); border-radius: 999px; padding: 5px 12px; margin: 12px 0; }
+  .se-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
+  .se-row:last-child { border-bottom: none; }
+  .se-row .k { color: var(--smoke); font-family: var(--font-mono); font-size: 12px; }
+  .se-row .v { color: var(--ivory); font-weight: 600; }
+  .se-row .v.pos { color: var(--success); } .se-row .v.dim { color: var(--smoke); }
+  /* ashtakavarga labels */
+  .av-bars { display: grid; gap: 10px; margin-top: 6px; }
+  .av-bar .top { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px; }
+  .av-bar .top .lbl { color: var(--lavender); } .av-bar .top .tag { font-weight: 700; }
+  .av-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .av-track > i { display: block; height: 100%; border-radius: 999px; }
+
+  /* ============================================================ ACCURACY */
+  .acc-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .acc { background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 22px; }
+  .acc-ico { width: 42px; height: 42px; border-radius: 11px; background: var(--surface-2); border: 1px solid var(--line-soft); display: grid; place-items: center; color: var(--gold); margin-bottom: 12px; }
+  .acc h3 { font-size: 15.5px; font-weight: 700; color: var(--ivory); margin-bottom: 5px; }
+  .acc p { font-size: 13px; color: var(--smoke); line-height: 1.5; }
+
+  /* ============================================================ TESTIMONIAL PLACEHOLDER */
+  .rating-callout { max-width: 560px; margin: 0 auto; text-align: center; background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius-lg); padding: 34px 26px; }
+  .stars { font-size: 24px; color: var(--gold); letter-spacing: 4px; }
+  .rating-callout .big { font-family: var(--font-display); font-size: 44px; font-weight: 700; color: var(--ivory); margin: 6px 0; }
+  .rating-callout p { color: var(--lavender); font-size: 14px; }
+
+  /* ============================================================ FAQ */
+  .faq-list { max-width: 800px; margin: 0 auto; display: grid; gap: 12px; }
+  .faq-item { background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: 14px; overflow: hidden; }
+  .faq-q { width: 100%; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; background: none; border: none; color: var(--ivory); font-family: inherit; font-size: 15.5px; font-weight: 600; cursor: pointer; }
+  .faq-q .ic { flex-shrink: 0; transition: transform .2s ease; color: var(--gold); }
+  .faq-item.open .faq-q .ic { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .28s ease; }
+  .faq-a p { padding: 0 20px 18px; color: var(--lavender); font-size: 14px; line-height: 1.65; }
+
+  /* ============================================================ DEV CTA + FINAL CTA */
+  .dev-cta { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; background: linear-gradient(135deg, rgba(74,59,140,0.35), rgba(31,36,89,0.4)); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px 30px; }
+  .dev-cta h3 { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--ivory); }
+  .dev-cta p { font-size: 14px; color: var(--lavender); margin-top: 4px; }
+
+  .final { text-align: center; }
+  .final-inner { background: radial-gradient(120% 120% at 50% 0%, rgba(232,181,71,0.14), transparent 60%), linear-gradient(160deg, rgba(31,36,89,0.5), rgba(16,16,46,0.6)); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(40px, 6vw, 72px) 24px; }
+  .final h2 { font-family: var(--font-display); font-weight: 600; font-size: clamp(32px, 5vw, 54px); line-height: 1.05; margin-bottom: 14px; }
+  .final h2 em { font-style: italic; color: var(--gold); }
+  .final p { color: var(--lavender); font-size: 17px; max-width: 560px; margin: 0 auto 28px; }
+  .final .hero-ctas { justify-content: center; }
+
+  /* ============================================================ FOOTER */
+  .footer { border-top: 1px solid var(--line); padding: 56px 0 32px; margin-top: 40px; }
+  .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr; gap: 30px; }
+  .footer-brand-text { color: var(--smoke); font-size: 13.5px; line-height: 1.6; margin: 14px 0 16px; max-width: 320px; }
+  .footer-col-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .footer-links { display: grid; gap: 10px; }
+  .footer-links a { font-size: 13.5px; color: var(--lavender); }
+  .footer-links a:hover { color: var(--ivory); }
+  .footer-socials { display: flex; gap: 10px; margin-top: 14px; }
+  .footer-socials a { width: 38px; height: 38px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line-soft); display: grid; place-items: center; color: var(--lavender); }
+  .footer-socials a:hover { color: var(--gold); border-color: var(--gold); }
+  .footer-bottom { max-width: var(--maxw); margin: 34px auto 0; padding: 22px 24px 0; border-top: 1px solid var(--line-soft); display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
+  .footer-copy { font-size: 12.5px; color: var(--smoke); }
+  .footer-copy em { font-style: normal; color: var(--gold); }
+  .footer-legal { display: flex; gap: 18px; }
+  .footer-legal a { font-size: 12.5px; color: var(--smoke); } .footer-legal a:hover { color: var(--ivory); }
+
+  /* ============================================================ RESPONSIVE */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-media { order: -1; max-width: 420px; margin: 0 auto; width: 100%; }
+    .preview-grid, .ai-grid { grid-template-columns: 1fr; }
+    .cat-grid, .eng-grid, .astro-grid, .acc-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: 1fr; gap: 14px; }
+    .steps::before { display: none; }
+    .step { display: grid; grid-template-columns: 60px 1fr; gap: 16px; text-align: left; align-items: center; }
+    .step-n { margin: 0; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-brand-block { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .cat-grid, .eng-grid, .astro-grid, .acc-grid, .se-panels, .feat-list, .kp-rows { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-ctas .btn { flex: 1; }
+    .dev-cta { flex-direction: column; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto; } }
 </style>
 </head>
 <body>
 <div class="wrapper">
 
-  <!-- ============================================ -->
-  <!-- NAVBAR -->
-  <!-- ============================================ -->
-  <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <a href="/" class="nav-logo" aria-label="Nakshatralogy home">
-      <img class="nav-logo-img" src="/assets/img/nakshatralogy-wordmark.png" alt="Nakshatralogy — Vedic Cosmic Wisdom" width="140" height="34" />
-    </a>
-    <ul class="nav-links">
-      <li><a href="#users">For Users</a></li>
-      <li><a href="#astrologers">For Astrologers</a></li>
-      <li><a href="#webapps">Web Apps</a></li>
-      <li><a href="#devapi">Developer API</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-    <a href="https://app.nakshatralogy.com" class="nav-cta">Launch Web App</a>
-    <button class="nav-toggle" aria-label="Toggle menu">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
+  <!-- ==================== NAV ==================== -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="Nakshatralogy home">
+        <img class="nav-logo-img" src="/assets/img/nakshatralogy-wordmark.png" alt="Nakshatralogy — Vedic Astrology" width="140" height="30" />
+      </a>
+      <ul class="nav-links">
+        <li><a href="#kundli">Kundli</a></li>
+        <li><a href="#insights">Insights</a></li>
+        <li><a href="#ai">AI Astrologer</a></li>
+        <li><a href="#astrologers">Astrologers</a></li>
+        <li><a href="https://app.nakshatralogy.com" rel="noopener">Kundli Milan</a></li>
+        <li class="nav-more" id="navMore">
+          <button class="nav-more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="navMoreMenu">More
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="nav-more-menu" id="navMoreMenu" role="menu">
+            <a role="menuitem" href="https://app.nakshatralogy.com" rel="noopener">Horoscope</a>
+            <a role="menuitem" href="#insights">Reports</a>
+            <a role="menuitem" href="https://app.nakshatralogy.com" rel="noopener">Live</a>
+            <a role="menuitem" href="https://astro.nakshatralogy.com" rel="noopener">Astrologer App</a>
+            <a role="menuitem" href="https://developer.nakshatralogy.com" rel="noopener">Developer API</a>
+            <a role="menuitem" href="https://jaikalki.com/" rel="noopener">About</a>
+            <a role="menuitem" href="contact.html">Help</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-right">
+        <a href="https://app.nakshatralogy.com" class="nav-login" rel="noopener">Login</a>
+        <a href="https://app.nakshatralogy.com" class="btn btn-primary btn-sm" rel="noopener">Get Started</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
   </nav>
 
-  <!-- ============================================ -->
-  <!-- HERO -->
-  <!-- ============================================ -->
-  <header class="hero">
-    <div class="hero-eyebrow"><span class="dot"></span>India's most advanced Vedic astrology app</div>
-    <h1>The cosmos,<br/>read by <em>experts</em><br/>and <em>AI</em>.</h1>
-    <p class="hero-sub">Generate your free Vedic Kundli, chat with certified astrologers live, and unlock 16 dimensions of your destiny — career, marriage, wealth, health, past lives, and more — all in one app.</p>
-
-    <div class="hero-ctas" id="download">
-      <a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.user" class="store-btn" aria-label="Download Nakshatralogy on Google Play Store">
-        <div class="store-btn-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M3 2.5l11.5 9.5L3 21.5V2.5zm12.5 9.5l4-2.5-4-2.5V12zm0 0l-4 2.5 4 2.5V12z"/></svg>
-        </div>
-        <div class="store-btn-text">
-          <div class="store-btn-eyebrow">GET IT ON</div>
-          <div class="store-btn-name">Google Play</div>
-        </div>
-      </a>
-      <a href="https://apps.apple.com/in/app/nakshtralogy/id000000000" class="store-btn" aria-label="Download Nakshatralogy on App Store">
-        <div class="store-btn-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.86-3.08.43-1.09-.45-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.43C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-        </div>
-        <div class="store-btn-text">
-          <div class="store-btn-eyebrow">DOWNLOAD ON</div>
-          <div class="store-btn-name">App Store</div>
-        </div>
-      </a>
+  <!-- mobile drawer -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#kundli">Kundli</a>
+    <a href="#insights">Insights</a>
+    <a href="#ai">AI Astrologer</a>
+    <a href="#astrologers">Astrologers</a>
+    <a href="https://app.nakshatralogy.com" rel="noopener">Kundli Milan</a>
+    <div class="mm-group-title">More</div>
+    <div class="mm-sub">
+      <a href="https://app.nakshatralogy.com" rel="noopener">Horoscope</a>
+      <a href="#insights">Reports</a>
+      <a href="https://app.nakshatralogy.com" rel="noopener">Live</a>
+      <a href="https://astro.nakshatralogy.com" rel="noopener">Astrologer App</a>
+      <a href="https://developer.nakshatralogy.com" rel="noopener">Developer API</a>
+      <a href="https://jaikalki.com/" rel="noopener">About</a>
+      <a href="contact.html">Help</a>
     </div>
+    <div class="mm-actions">
+      <a href="https://app.nakshatralogy.com" class="btn btn-ghost btn-block" rel="noopener">Login</a>
+      <a href="https://app.nakshatralogy.com" class="btn btn-primary btn-block" rel="noopener">Get Started</a>
+    </div>
+  </div>
 
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-num">2M+</div>
-        <div class="hero-stat-lbl">Kundlis Generated</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">5,000+</div>
-        <div class="hero-stat-lbl">Verified Astrologers</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">16</div>
-        <div class="hero-stat-lbl">Life Dimensions</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">4.7★</div>
-        <div class="hero-stat-lbl">App Rating</div>
+  <!-- ==================== HERO ==================== -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="dot"></span>Your Personal Vedic Astrology Platform</span>
+          <h1>Your Vedic Astrology,<br/><em>Decoded.</em></h1>
+          <p class="hero-sub">Generate your Kundli, understand your life's patterns, explore personalized insights with AI, or connect with a verified astrologer.</p>
+          <div class="hero-ctas">
+            <a href="https://app.nakshatralogy.com" class="btn btn-primary" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/><circle cx="12" cy="12" r="3"/></svg>
+              Generate Free Kundli
+            </a>
+            <a href="https://app.nakshatralogy.com" class="btn btn-ghost" rel="noopener">Talk to an Astrologer</a>
+          </div>
+          <div class="hero-trust" aria-label="Platform highlights">
+            <span>Vedic Astrology</span>
+            <span>AI-Powered Insights</span>
+            <span>Verified Astrologers</span>
+            <span>Swiss Ephemeris</span>
+          </div>
+        </div>
+
+        <div class="hero-media">
+          <div class="kundli-preview" role="img" aria-label="Sample Kundli dashboard preview showing ascendant, moon sign, nakshatra, current mahadasha and life-area scores">
+            <span class="kp-tag">SAMPLE</span>
+            <div class="kp-head">
+              <div class="kp-avatar">✦</div>
+              <div>
+                <div class="kp-name">Your Kundli Dashboard</div>
+                <div class="kp-meta">LAGNA CHART · VIMSHOTTARI</div>
+              </div>
+            </div>
+            <div class="kp-rows">
+              <div class="kp-cell"><div class="l">Ascendant</div><div class="v">Leo</div></div>
+              <div class="kp-cell"><div class="l">Moon Sign</div><div class="v">Cancer</div></div>
+              <div class="kp-cell"><div class="l">Nakshatra</div><div class="v">Pushya</div></div>
+              <div class="kp-cell"><div class="l">Mahadasha</div><div class="v">Jupiter</div></div>
+            </div>
+            <div class="kp-scores">
+              <div class="kp-score"><div class="top"><span>Career</span><b>Strong</b></div><div class="kp-bar"><i style="width:82%"></i></div></div>
+              <div class="kp-score"><div class="top"><span>Wealth</span><b>Good</b></div><div class="kp-bar"><i style="width:68%"></i></div></div>
+              <div class="kp-score"><div class="top"><span>Relationships</span><b>Balanced</b></div><div class="kp-bar"><i style="width:60%"></i></div></div>
+            </div>
+            <div class="kp-transit"><span class="pulse"></span> Transit: Saturn aspecting your 10th house</div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- ============================================ -->
-  <!-- USER FLOW -->
-  <!-- ============================================ -->
-  <section class="section" id="users" aria-labelledby="users-title">
-    <div class="section-head">
-      <div class="section-label">For Seekers</div>
-      <h2 class="section-title" id="users-title">Your <em>journey</em> in three taps</h2>
-      <p class="section-sub">From birth details to live consultation — Nakshatralogy guides every seeker through a beautifully crafted Vedic experience.</p>
-    </div>
-
-    <div class="flow-grid">
-
-      <!-- Step 1: Generate Kundli -->
-      <article class="flow-card">
-        <div class="flow-mockup">
-          <div class="mini-phone" aria-hidden="true">
-            <div class="mini-phone-screen">
-              <div class="mini-status"><span>9:41</span><span>●●●</span></div>
-              <div class="mini-content">
-                <div class="mini-label">STEP 1 · BIRTH DETAILS</div>
-                <div class="mini-title">Generate <em>Kundli</em></div>
-                <div class="mini-input">
-                  <div class="mini-input-label">FULL NAME</div>
-                  <div class="mini-input-value">Priya Sharma</div>
-                </div>
-                <div class="mini-input">
-                  <div class="mini-input-label">DATE OF BIRTH</div>
-                  <div class="mini-input-value">15 Aug 1995</div>
-                </div>
-                <div class="mini-input">
-                  <div class="mini-input-label">TIME OF BIRTH</div>
-                  <div class="mini-input-value">08:30 AM</div>
-                </div>
-                <div class="mini-input">
-                  <div class="mini-input-label">PLACE OF BIRTH</div>
-                  <div class="mini-input-value">Mumbai, India</div>
-                </div>
-                <div class="mini-button">GENERATE KUNDLI ✦</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flow-content">
-          <div class="flow-step">★ STEP 01</div>
-          <h3 class="flow-title">Generate your <em>free Kundli</em></h3>
-          <p class="flow-desc">Enter your birth details — name, date, time, and place — and we'll compute your complete Vedic birth chart in seconds using NASA-grade ephemeris and Lahiri Ayanamsa.</p>
-          <ul class="flow-bullets">
-            <li>Instant Lagna, Moon &amp; Sun chart</li>
-            <li>27 Nakshatras with deities</li>
-            <li>Vimshottari Dasha for 120 years</li>
-            <li>D-1 to D-60 divisional charts</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- Step 2: View AI Reports -->
-      <article class="flow-card">
-        <div class="flow-mockup">
-          <div class="mini-phone" aria-hidden="true">
-            <div class="mini-phone-screen">
-              <div class="mini-status"><span>9:41</span><span>●●●</span></div>
-              <div class="mini-content">
-                <div class="mini-label">STEP 2 · INSIGHTS</div>
-                <div class="mini-title">16 <em>Reports</em></div>
-                <div class="mini-card">
-                  <div class="mini-card-row">
-                    <div class="mini-card-icon">💼</div>
-                    <div class="mini-card-text">
-                      <div class="mini-card-name">Career</div>
-                      <div class="mini-card-meta">98 KEYS</div>
-                    </div>
-                    <div class="mini-card-score">79.8</div>
-                  </div>
-                </div>
-                <div class="mini-card">
-                  <div class="mini-card-row">
-                    <div class="mini-card-icon" style="background:linear-gradient(135deg,#E8689C,#E07A3C)">💍</div>
-                    <div class="mini-card-text">
-                      <div class="mini-card-name">Marriage</div>
-                      <div class="mini-card-meta">150 KEYS</div>
-                    </div>
-                    <div class="mini-card-score">67.7</div>
-                  </div>
-                </div>
-                <div class="mini-card">
-                  <div class="mini-card-row">
-                    <div class="mini-card-icon" style="background:linear-gradient(135deg,#F4C95D,#E8B547);color:#0B0B2E">💎</div>
-                    <div class="mini-card-text">
-                      <div class="mini-card-name">Wealth</div>
-                      <div class="mini-card-meta">85 KEYS</div>
-                    </div>
-                    <div class="mini-card-score">83.2</div>
-                  </div>
-                </div>
-                <div class="mini-card">
-                  <div class="mini-card-row">
-                    <div class="mini-card-icon" style="background:linear-gradient(135deg,#6BB88A,#7BC4C4);color:#0B0B2E">❤</div>
-                    <div class="mini-card-text">
-                      <div class="mini-card-name">Health</div>
-                      <div class="mini-card-meta">130 KEYS</div>
-                    </div>
-                    <div class="mini-card-score">62.0</div>
-                  </div>
-                </div>
-                <div class="mini-button">VIEW ALL 16 →</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flow-content">
-          <div class="flow-step">★ STEP 02</div>
-          <h3 class="flow-title">Read your <em>AI-powered</em> reports</h3>
-          <p class="flow-desc">Unlock 16 deep-dive engines — Career, Wealth, Marriage, Health, Past Life, and more. Each combines classical Jyotish with AI synthesis to deliver clarity in plain English.</p>
-          <ul class="flow-bullets">
-            <li>16 specialist engines, 2,000+ data points</li>
-            <li>15-year forecast trends &amp; timing windows</li>
-            <li>Confidence scores for every insight</li>
-            <li>Discuss with ChatGPT, Claude &amp; Gemini</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- Step 3: Connect Astrologer -->
-      <article class="flow-card">
-        <div class="flow-mockup">
-          <div class="mini-phone" aria-hidden="true">
-            <div class="mini-phone-screen">
-              <div class="mini-status"><span>9:41</span><span>●●●</span></div>
-              <div class="mini-content">
-                <div class="mini-label">STEP 3 · LIVE CONSULT</div>
-                <div class="mini-title">Talk to <em>Astrologers</em></div>
-                <div class="mini-astro-card">
-                  <div class="mini-astro-avatar">R</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Pandit Rajesh</div>
-                    <div class="mini-astro-meta">★ 4.9 · ₹25/min</div>
-                  </div>
-                  <div class="mini-cta-tiny">CHAT</div>
-                </div>
-                <div class="mini-astro-card">
-                  <div class="mini-astro-avatar" style="background:linear-gradient(135deg,#7BC4C4,#4A3B8C)">A</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Acharya Anjali</div>
-                    <div class="mini-astro-meta">★ 4.8 · ₹30/min</div>
-                  </div>
-                  <div class="mini-cta-tiny">CALL</div>
-                </div>
-                <div class="mini-astro-card">
-                  <div class="mini-astro-avatar" style="background:linear-gradient(135deg,#E8689C,#E07A3C)">K</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Guru Kamal</div>
-                    <div class="mini-astro-meta">★ 4.9 · ₹45/min</div>
-                  </div>
-                  <div class="mini-cta-tiny">CHAT</div>
-                </div>
-                <div class="mini-astro-card">
-                  <div class="mini-astro-avatar" style="background:linear-gradient(135deg,#B8A7E0,#4A3B8C)">S</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Dr. Sunita</div>
-                    <div class="mini-astro-meta">★ 4.7 · ₹35/min</div>
-                  </div>
-                  <div class="mini-cta-tiny">VIDEO</div>
-                </div>
-                <div class="mini-button">BROWSE 5,000+ →</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flow-content">
-          <div class="flow-step">★ STEP 03</div>
-          <h3 class="flow-title">Connect with <em>certified astrologers</em></h3>
-          <p class="flow-desc">Browse 5,000+ verified Vedic astrologers, filter by speciality and language, and start chatting, calling, or video-consulting in seconds. Real wisdom, on demand.</p>
-          <ul class="flow-bullets">
-            <li>Live chat, voice &amp; video consultations</li>
-            <li>Filter by speciality, language &amp; price</li>
-            <li>Secure wallet, transparent per-minute billing</li>
-            <li>Live streaming with Super Chat support</li>
-          </ul>
-        </div>
-      </article>
-
+  <!-- ==================== METRICS ==================== -->
+  <section class="block" aria-label="Platform metrics">
+    <div class="container">
+      <div class="metrics">
+        <div class="metric"><div class="n">2M+</div><div class="l">Kundlis Generated</div></div>
+        <div class="metric"><div class="n">5,000+</div><div class="l">Verified Astrologers</div></div>
+        <div class="metric"><div class="n">16</div><div class="l">Life Insights</div></div>
+        <div class="metric"><div class="n">4.7★</div><div class="l">User Rating</div></div>
+      </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- 16 ENGINES SHOWCASE -->
-  <!-- ============================================ -->
-  <section class="section" id="engines" aria-labelledby="engines-title">
-    <div class="section-head">
-      <div class="section-label">16 Insight Engines</div>
-      <h2 class="section-title" id="engines-title">Your <em>complete</em> Vedic reading</h2>
-      <p class="section-sub">Every dimension of your life, analyzed to a depth that would take a human astrologer hours to compile. All under one roof.</p>
-    </div>
-
-    <div class="engines-grid">
-      <div class="engine-mini"><div class="engine-mini-icon">💼</div><div class="engine-mini-name">Career &amp; <em>Profession</em></div><div class="engine-mini-keys">98 KEYS</div></div>
-      <div class="engine-mini pink"><div class="engine-mini-icon">🚀</div><div class="engine-mini-name">Business &amp; <em>Startup</em></div><div class="engine-mini-keys">~90 KEYS</div></div>
-      <div class="engine-mini mint"><div class="engine-mini-icon">📚</div><div class="engine-mini-name">Education &amp; <em>Learning</em></div><div class="engine-mini-keys">~120 KEYS</div></div>
-      <div class="engine-mini"><div class="engine-mini-icon">💎</div><div class="engine-mini-name">Wealth &amp; <em>Finance</em></div><div class="engine-mini-keys">~85 KEYS</div></div>
-      <div class="engine-mini"><div class="engine-mini-icon">⚖</div><div class="engine-mini-name">Debt &amp; <em>Recovery</em></div><div class="engine-mini-keys">~100 KEYS</div></div>
-      <div class="engine-mini pink"><div class="engine-mini-icon">💕</div><div class="engine-mini-name">Love &amp; <em>Romance</em></div><div class="engine-mini-keys">~120 KEYS</div></div>
-      <div class="engine-mini pink"><div class="engine-mini-icon">💍</div><div class="engine-mini-name">Marriage &amp; <em>Family</em></div><div class="engine-mini-keys">~150 KEYS</div></div>
-      <div class="engine-mini green"><div class="engine-mini-icon">❤</div><div class="engine-mini-name">Health &amp; <em>Wellness</em></div><div class="engine-mini-keys">~130 KEYS</div></div>
-      <div class="engine-mini mint"><div class="engine-mini-icon">🧠</div><div class="engine-mini-name">Mental &amp; <em>Stress</em></div><div class="engine-mini-keys">~160 KEYS</div></div>
-      <div class="engine-mini lavender"><div class="engine-mini-icon">🏘</div><div class="engine-mini-name">Property &amp; <em>Assets</em></div><div class="engine-mini-keys">~140 KEYS</div></div>
-      <div class="engine-mini"><div class="engine-mini-icon">📜</div><div class="engine-mini-name">Legal &amp; <em>Disputes</em></div><div class="engine-mini-keys">~140 KEYS</div></div>
-      <div class="engine-mini"><div class="engine-mini-icon">✦</div><div class="engine-mini-name">Life Path &amp; <em>Luck</em></div><div class="engine-mini-keys">~150 KEYS</div></div>
-      <div class="engine-mini lavender"><div class="engine-mini-icon">👤</div><div class="engine-mini-name">Character <em>Analysis</em></div><div class="engine-mini-keys">177 KEYS</div></div>
-      <div class="engine-mini lavender"><div class="engine-mini-icon">☥</div><div class="engine-mini-name">Past Life &amp; <em>Karma</em></div><div class="engine-mini-keys">116 KEYS</div></div>
-      <div class="engine-mini pink"><div class="engine-mini-icon">⚭</div><div class="engine-mini-name">Kundli <em>Milan</em></div><div class="engine-mini-keys">186 KEYS</div></div>
-      <div class="engine-mini mint"><div class="engine-mini-icon">🔗</div><div class="engine-mini-name">Relationship <em>Intel</em></div><div class="engine-mini-keys">~120/PAIR</div></div>
+  <!-- ==================== WHAT CAN YOUR KUNDLI REVEAL ==================== -->
+  <section class="block alt" id="insights" aria-labelledby="reveal-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>Life Areas</span>
+        <h2 class="section-title" id="reveal-title">What can your <em>Kundli</em> reveal?</h2>
+        <p class="section-sub">Explore the areas of life where your birth chart can provide deeper insight.</p>
+      </div>
+      <div class="cat-grid">
+        <div class="cat" tabindex="0">
+          <div class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+          <h3>Career &amp; Money</h3>
+          <p>Direction, growth and financial patterns.</p>
+          <div class="cat-tags"><span>Career</span><span>Business</span><span>Wealth</span><span>Debt</span></div>
+        </div>
+        <div class="cat" tabindex="0">
+          <div class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+          <h3>Love &amp; Relationships</h3>
+          <p>Compatibility, marriage and bonds.</p>
+          <div class="cat-tags"><span>Love</span><span>Marriage</span><span>Kundli Milan</span><span>Relationship</span></div>
+        </div>
+        <div class="cat" tabindex="0">
+          <div class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a4 4 0 0 0 0 8 4 4 0 0 1 0 8"/></svg></div>
+          <h3>Self &amp; Mind</h3>
+          <p>Temperament, clarity and life direction.</p>
+          <div class="cat-tags"><span>Character</span><span>Mental</span><span>Life Path</span></div>
+        </div>
+        <div class="cat" tabindex="0">
+          <div class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>
+          <h3>Family &amp; Life</h3>
+          <p>Home, property and domestic harmony.</p>
+          <div class="cat-tags"><span>Property</span><span>Family</span></div>
+        </div>
+        <div class="cat" tabindex="0">
+          <div class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 3 2 6 2s6-1 6-2v-5"/></svg></div>
+          <h3>Education &amp; Growth</h3>
+          <p>Learning, focus and academic timing.</p>
+          <div class="cat-tags"><span>Education</span></div>
+        </div>
+        <div class="cat" tabindex="0">
+          <div class="cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
+          <h3>Karma &amp; Spirituality</h3>
+          <p>Past-life patterns and karmic lessons.</p>
+          <div class="cat-tags"><span>Past Life</span><span>Karma</span></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px">
+        <a href="#engines" class="btn btn-ghost">Explore All 16 Insights</a>
+      </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- ASTROLOGER EARNINGS -->
-  <!-- ============================================ -->
-  <section class="section" id="astrologers" aria-labelledby="astro-title">
-    <div class="section-head">
-      <div class="section-label">For Astrologers</div>
-      <h2 class="section-title" id="astro-title">Practice <em>online</em>.<br/>Earn on your terms.</h2>
-      <p class="section-sub">Nakshatralogy is the dignified platform for certified Vedic astrologers — manage clients, set your rates, and grow a profitable practice without leaving your home.</p>
-    </div>
-
-    <div class="flow-grid">
-
-      <!-- Astrologer Step 1: Dashboard -->
-      <article class="flow-card">
-        <div class="flow-mockup">
-          <div class="mini-phone" aria-hidden="true">
-            <div class="mini-phone-screen">
-              <div class="mini-status"><span>9:41</span><span>●●●</span></div>
-              <div class="mini-content">
-                <div class="mini-label">EARNINGS · APRIL</div>
-                <div class="mini-earnings-hero">
-                  <div class="mini-earnings-amt">₹84,250</div>
-                  <div class="mini-earnings-lbl">THIS MONTH</div>
-                </div>
-                <div class="mini-stat-row">
-                  <div class="mini-stat-tile">
-                    <div class="mini-stat-val">156</div>
-                    <div class="mini-stat-lbl">SESSIONS</div>
-                  </div>
-                  <div class="mini-stat-tile">
-                    <div class="mini-stat-val">4.9★</div>
-                    <div class="mini-stat-lbl">RATING</div>
-                  </div>
-                </div>
-                <div class="mini-stat-row">
-                  <div class="mini-stat-tile">
-                    <div class="mini-stat-val">42hr</div>
-                    <div class="mini-stat-lbl">ONLINE</div>
-                  </div>
-                  <div class="mini-stat-tile">
-                    <div class="mini-stat-val">89</div>
-                    <div class="mini-stat-lbl">CLIENTS</div>
-                  </div>
-                </div>
-                <div class="mini-button">VIEW PAYOUT →</div>
-              </div>
-            </div>
+  <!-- ==================== KUNDLI PRODUCT PREVIEW ==================== -->
+  <section class="block" id="kundli" aria-labelledby="kundli-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>The Kundli</span>
+        <h2 class="section-title" id="kundli-title">One Kundli. <em>Hundreds</em> of insights.</h2>
+        <p class="section-sub">Your complete Vedic birth chart, calculated using astronomical ephemeris data and traditional Vedic astrology principles.</p>
+      </div>
+      <div class="preview-grid">
+        <div class="chart-panel">
+          <div class="north-chart" role="img" aria-label="Sample North-Indian style Kundli chart">
+            <svg viewBox="0 0 300 300" fill="none" stroke="rgba(232,181,71,0.5)" stroke-width="1.5">
+              <rect x="6" y="6" width="288" height="288" rx="6" stroke="var(--gold)"/>
+              <path d="M6 6 L150 150 L6 294 M294 6 L150 150 L294 294 M6 6 L150 150 L294 6 M6 294 L150 150 L294 294"/>
+              <path d="M150 6 L6 150 L150 294 L294 150 Z"/>
+              <g fill="var(--gold)" font-family="JetBrains Mono, monospace" font-size="13" stroke="none" text-anchor="middle">
+                <text x="150" y="52">1</text><text x="80" y="80">12</text><text x="52" y="150">11</text>
+                <text x="80" y="222">10</text><text x="150" y="255">9</text><text x="222" y="222">8</text>
+                <text x="250" y="150">7</text><text x="222" y="80">6</text>
+              </g>
+              <g fill="var(--ivory)" font-family="JetBrains Mono, monospace" font-size="11" stroke="none" text-anchor="middle">
+                <text x="150" y="90">Su Me</text><text x="150" y="215">Ma</text>
+                <text x="105" y="150">Ju</text><text x="200" y="150">Ve</text>
+              </g>
+            </svg>
           </div>
-        </div>
-        <div class="flow-content">
-          <div class="flow-step">★ EARN</div>
-          <h3 class="flow-title">Real-time <em>earnings</em> dashboard</h3>
-          <p class="flow-desc">See exactly how much you've earned, every consultation, every minute. Daily, weekly, monthly breakdowns with instant withdrawal to your bank account.</p>
-          <ul class="flow-bullets">
-            <li>Per-minute earnings, transparent splits</li>
-            <li>Instant payout requests via UPI &amp; bank</li>
-            <li>Tax-ready monthly statements</li>
-            <li>Performance analytics &amp; client retention</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- Astrologer Step 2: Live Sessions -->
-      <article class="flow-card">
-        <div class="flow-mockup">
-          <div class="mini-phone" aria-hidden="true">
-            <div class="mini-phone-screen">
-              <div class="mini-status"><span>9:41</span><span>●●●</span></div>
-              <div class="mini-content">
-                <div class="mini-label">● LIVE NOW · PRIYA S</div>
-                <div style="background:linear-gradient(135deg,#4A3B8C,#0A0A24);border-radius:8px;padding:8px;margin-bottom:6px;text-align:center">
-                  <div style="font-family:var(--font-display);font-size:20px;color:var(--gold);font-weight:700;line-height:1">12:34</div>
-                  <div style="font-size:6px;color:var(--lavender);font-family:var(--font-mono);letter-spacing:0.1em;margin-top:2px">SESSION TIMER</div>
-                </div>
-                <div class="mini-stat-row">
-                  <div class="mini-stat-tile">
-                    <div class="mini-stat-val" style="color:var(--success)">₹314</div>
-                    <div class="mini-stat-lbl">EARNED</div>
-                  </div>
-                  <div class="mini-stat-tile">
-                    <div class="mini-stat-val">25/min</div>
-                    <div class="mini-stat-lbl">RATE</div>
-                  </div>
-                </div>
-                <div style="background:rgba(232,181,71,0.1);border:1px solid rgba(232,181,71,0.25);border-radius:8px;padding:6px;margin-bottom:5px">
-                  <div style="font-size:6px;color:var(--gold);font-family:var(--font-mono);letter-spacing:0.15em;margin-bottom:2px">CHART OPEN</div>
-                  <div style="font-size:8px;color:var(--ivory);font-weight:700">Priya · 15 Aug 1995</div>
-                  <div style="font-size:6px;color:var(--smoke);margin-top:1px">LEO · PUSHYA · 7H STRONG</div>
-                </div>
-                <div class="mini-button">END SESSION</div>
-              </div>
-            </div>
+          <div class="chip-row">
+            <span class="chip">Lagna <b>Leo</b></span>
+            <span class="chip">Moon <b>Cancer</b></span>
+            <span class="chip">Nakshatra <b>Pushya</b></span>
           </div>
-        </div>
-        <div class="flow-content">
-          <div class="flow-step">★ CONSULT</div>
-          <h3 class="flow-title"><em>Live</em> chat, call &amp; video tools</h3>
-          <p class="flow-desc">Manage every consultation with a professional toolkit — built-in chart viewer, session timer, client notes, and seamless audio/video powered by Agora.</p>
-          <ul class="flow-bullets">
-            <li>One-tap chat, voice &amp; video sessions</li>
-            <li>Built-in Kundli viewer during session</li>
-            <li>Private notes saved per client</li>
-            <li>Live streaming with Super Chat tips</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- Astrologer Step 3: Client Charts -->
-      <article class="flow-card">
-        <div class="flow-mockup">
-          <div class="mini-phone" aria-hidden="true">
-            <div class="mini-phone-screen">
-              <div class="mini-status"><span>9:41</span><span>●●●</span></div>
-              <div class="mini-content">
-                <div class="mini-label">CLIENT CHARTS · 148</div>
-                <div class="mini-title">Today's <em>Sessions</em></div>
-                <div class="mini-astro-card" style="border-left:3px solid var(--gold)">
-                  <div class="mini-astro-avatar">P</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Priya Sharma</div>
-                    <div class="mini-astro-meta">15 AUG 95 · LEO</div>
-                  </div>
-                  <div style="font-size:7px;color:var(--gold);font-family:var(--font-mono);font-weight:700">11:30</div>
-                </div>
-                <div class="mini-astro-card" style="border-left:3px solid var(--gold)">
-                  <div class="mini-astro-avatar" style="background:linear-gradient(135deg,#7BC4C4,#4A3B8C)">A</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Amit Patel</div>
-                    <div class="mini-astro-meta">03 OCT 88 · LIB</div>
-                  </div>
-                  <div style="font-size:7px;color:var(--gold);font-family:var(--font-mono);font-weight:700">2:00P</div>
-                </div>
-                <div class="mini-astro-card">
-                  <div class="mini-astro-avatar" style="background:linear-gradient(135deg,#E8689C,#E07A3C)">N</div>
-                  <div class="mini-astro-info">
-                    <div class="mini-astro-name">Neha Kumar</div>
-                    <div class="mini-astro-meta">22 FEB 93 · PIS</div>
-                  </div>
-                  <div class="mini-cta-tiny">VIEW</div>
-                </div>
-                <div class="mini-button">SCHEDULE →</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flow-content">
-          <div class="flow-step">★ MANAGE</div>
-          <h3 class="flow-title">Your <em>client library</em>, organized</h3>
-          <p class="flow-desc">Every client chart you've worked on, searchable and instantly accessible. Today's appointments highlighted, client notes preserved, follow-ups scheduled.</p>
-          <ul class="flow-bullets">
-            <li>Searchable client library by name &amp; date</li>
-            <li>Today's schedule with appointment reminders</li>
-            <li>Pro-view charts with D-1/D-9/D-10 dignity tags</li>
-            <li>Recurring client follow-up tracking</li>
-          </ul>
-        </div>
-      </article>
-
-    </div>
-
-    <!-- Earnings Banner -->
-    <div class="earn-banner">
-      <div class="earn-banner-eyebrow">★ JOIN 5,000+ ASTROLOGERS</div>
-      <h3 class="earn-banner-title">Earn ₹50K to ₹5L+<br/><em>per month</em>, working from home.</h3>
-      <p class="earn-banner-sub">Top astrologers on Nakshatralogy consult 6-8 hours daily, set their own rates, and build loyal client books. Verified registration in 48 hours.</p>
-      <div class="earn-stats">
-        <div>
-          <div class="earn-stat-num">₹25–250</div>
-          <div class="earn-stat-lbl">Per Minute Range</div>
         </div>
         <div>
-          <div class="earn-stat-num">80%</div>
-          <div class="earn-stat-lbl">Earnings Share</div>
-        </div>
-        <div>
-          <div class="earn-stat-num">48hr</div>
-          <div class="earn-stat-lbl">Verification</div>
-        </div>
-        <div>
-          <div class="earn-stat-num">24/7</div>
-          <div class="earn-stat-lbl">Support</div>
+          <div class="feat-list">
+            <div class="feat"><div class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div><div class="ft">Dasha Timeline</div><div class="fd">Vimshottari periods across 120 years.</div></div></div>
+            <div class="feat"><div class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12a10 10 0 0 1 20 0"/><circle cx="12" cy="12" r="2"/></svg></div><div><div class="ft">Gochar Transits</div><div class="fd">Live planetary transit scoring.</div></div></div>
+            <div class="feat"><div class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21.4 8 14 2 9.4h7.6z"/></svg></div><div><div class="ft">Yogas</div><div class="fd">51 classical yogas with strength.</div></div></div>
+            <div class="feat"><div class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9a2 2 0 0 1 3.4 0l7.2 12.4a2 2 0 0 1-1.7 3H4.8a2 2 0 0 1-1.7-3z"/><path d="M12 9v4M12 17h.01"/></svg></div><div><div class="ft">Doshas</div><div class="fd">33 doshas with probability.</div></div></div>
+            <div class="feat"><div class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div><div class="ft">Ashtakavarga</div><div class="fd">SAV &amp; BAV strength by sign.</div></div></div>
+            <div class="feat"><div class="fi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="6"/></svg></div><div><div class="ft">Planets &amp; Houses</div><div class="fd">Positions, dignity, aspects.</div></div></div>
+          </div>
+          <a href="https://app.nakshatralogy.com" class="btn btn-primary" rel="noopener">Generate My Kundli</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- DUAL APP DOWNLOAD -->
-  <!-- ============================================ -->
-  <section class="section" id="apps" aria-labelledby="apps-title">
-    <div class="section-head">
-      <div class="section-label">Two Apps · One Mission</div>
-      <h2 class="section-title" id="apps-title">Pick your <em>side</em> of the cosmos</h2>
-      <p class="section-sub">Whether you're seeking guidance or giving it, there's a Nakshatralogy app crafted for you. Both available on Android &amp; iOS.</p>
-    </div>
-
-    <div class="dual-grid">
-
-      <!-- USER APP -->
-      <article class="app-card">
-        <div class="app-card-icon">✦</div>
-        <div class="app-card-eyebrow">FOR SEEKERS</div>
-        <h3 class="app-card-title">Nakshatralogy <em>User App</em></h3>
-        <p class="app-card-desc">Your personal Vedic guide — Kundli, AI insights, and live astrologer access in one beautiful app.</p>
-        <ul class="app-card-features">
-          <li>Free Kundli with 16 detailed reports</li>
-          <li>Live chat, call &amp; video with astrologers</li>
-          <li>AI Astrologer Chat (powered by Tara)</li>
-          <li>Daily &amp; weekly horoscope</li>
-          <li>Kundli Milan for marriage matching</li>
-          <li>Live astrology streams with Super Chat</li>
-          <li>Multi-language: English, Hindi, Marathi</li>
-        </ul>
-        <div class="store-btns-row">
-          <a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.user" class="store-btn">
-            <div class="store-btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 2.5l11.5 9.5L3 21.5V2.5zm12.5 9.5l4-2.5-4-2.5V12zm0 0l-4 2.5 4 2.5V12z"/></svg></div>
-            <div class="store-btn-text">
-              <div class="store-btn-eyebrow">GET IT ON</div>
-              <div class="store-btn-name">Google Play</div>
-            </div>
-          </a>
-          <a href="https://apps.apple.com/in/app/nakshtralogy/id000000000" class="store-btn">
-            <div class="store-btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.86-3.08.43-1.09-.45-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.43C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg></div>
-            <div class="store-btn-text">
-              <div class="store-btn-eyebrow">DOWNLOAD ON</div>
-              <div class="store-btn-name">App Store</div>
-            </div>
-          </a>
-        </div>
-      </article>
-
-      <!-- ASTROLOGER APP -->
-      <article class="app-card astro">
-        <div class="app-card-icon">★</div>
-        <div class="app-card-eyebrow">FOR ASTROLOGERS</div>
-        <h3 class="app-card-title">Nakshatralogy <em>Pro App</em></h3>
-        <p class="app-card-desc">Built for serious practitioners — manage clients, accept consultations, track earnings, and grow your practice.</p>
-        <ul class="app-card-features">
-          <li>Real-time earnings &amp; instant payout</li>
-          <li>Client chart library with private notes</li>
-          <li>Live chat, voice &amp; video sessions</li>
-          <li>Pro-view: D-1/D-9/D-10/D-60 dignity tags</li>
-          <li>Live streaming for audience consults</li>
-          <li>Auto-reminders &amp; follow-up tracking</li>
-          <li>Performance analytics &amp; reviews</li>
-        </ul>
-        <div class="store-btns-row">
-          <a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.astrologer" class="store-btn">
-            <div class="store-btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 2.5l11.5 9.5L3 21.5V2.5zm12.5 9.5l4-2.5-4-2.5V12zm0 0l-4 2.5 4 2.5V12z"/></svg></div>
-            <div class="store-btn-text">
-              <div class="store-btn-eyebrow">GET IT ON</div>
-              <div class="store-btn-name">Google Play</div>
-            </div>
-          </a>
-          <a href="https://apps.apple.com/in/app/nakshtralogy-astrologer/id000000000" class="store-btn">
-            <div class="store-btn-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.86-3.08.43-1.09-.45-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.43C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg></div>
-            <div class="store-btn-text">
-              <div class="store-btn-eyebrow">DOWNLOAD ON</div>
-              <div class="store-btn-name">App Store</div>
-            </div>
-          </a>
-        </div>
-      </article>
-
+  <!-- ==================== HOW IT WORKS ==================== -->
+  <section class="block alt" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>How it works</span>
+        <h2 class="section-title" id="how-title">From birth details to <em>real guidance</em></h2>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="step-n">01</div><div><h3>Create your Kundli</h3><p>Enter your birth details and generate your Vedic chart.</p></div></div>
+        <div class="step"><div class="step-n">02</div><div><h3>Understand your chart</h3><p>Explore planets, houses, yogas, dashas, transits and life insights.</p></div></div>
+        <div class="step"><div class="step-n">03</div><div><h3>Ask AI</h3><p>Ask questions about your Kundli in natural language.</p></div></div>
+        <div class="step"><div class="step-n">04</div><div><h3>Talk to an Astrologer</h3><p>Get personalized guidance from a verified astrologer.</p></div></div>
+      </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- WEB APPS (subdomains) -->
-  <!-- ============================================ -->
-  <section class="section" id="webapps" aria-labelledby="webapps-title">
-    <div class="section-head">
-      <div class="section-label">On Every Screen</div>
-      <h2 class="section-title" id="webapps-title">Use it on the <em>web</em>, too</h2>
-      <p class="section-sub">No download required. Nakshatralogy runs beautifully in your browser — a dedicated web experience for seekers, astrologers, and developers.</p>
-    </div>
-
-    <div class="webapp-grid">
-
-      <!-- User web app -->
-      <article class="webapp-card user">
-        <span class="webapp-badge">For Seekers</span>
-        <div class="webapp-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg>
-        </div>
-        <h3 class="webapp-title">User <em>Web App</em></h3>
-        <div class="webapp-url">app.nakshatralogy.com</div>
-        <p class="webapp-desc">Generate your free Kundli, read all 16 AI reports, check your daily horoscope, run Kundli Milan, and consult certified astrologers over chat, voice, and video — right from your browser.</p>
-        <a href="https://app.nakshatralogy.com" class="webapp-cta">Launch User App →</a>
-      </article>
-
-      <!-- Astrologer web app -->
-      <article class="webapp-card astro">
-        <span class="webapp-badge">For Astrologers</span>
-        <div class="webapp-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7l3-7z"/></svg>
-        </div>
-        <h3 class="webapp-title">Astrologer <em>Console</em></h3>
-        <div class="webapp-url">astro.nakshatralogy.com</div>
-        <p class="webapp-desc">The full practitioner console on desktop — take live consultations, open client charts with D-1/D-9/D-10 dignity tags, track real-time earnings, and request instant payouts.</p>
-        <a href="https://astro.nakshatralogy.com" class="webapp-cta">Astrologer Login →</a>
-      </article>
-
-      <!-- Developer portal -->
-      <article class="webapp-card dev">
-        <span class="webapp-badge">For Developers</span>
-        <div class="webapp-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        </div>
-        <h3 class="webapp-title">Developer <em>Portal</em></h3>
-        <div class="webapp-url">developer.nakshatralogy.com</div>
-        <p class="webapp-desc">Sign up, get API keys, subscribe to the monthly All-Access plan, fund your wallet, and call the astrology engines directly. Full docs, usage metering, and a live sandbox.</p>
-        <a href="https://developer.nakshatralogy.com" class="webapp-cta">Developer Login →</a>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- DEVELOPER API -->
-  <!-- ============================================ -->
-  <section class="section" id="devapi" aria-labelledby="devapi-title">
-    <div class="section-head">
-      <div class="section-label">Nakshatralogy Developer API</div>
-      <h2 class="section-title" id="devapi-title">Vedic astrology, <em>as an API</em></h2>
-      <p class="section-sub">Ship Kundli, matchmaking, dashas, transits, and 16 specialist reports inside your own app. One clean REST API, one simple monthly plan.</p>
-    </div>
-
-    <div class="devapi">
-      <div class="devapi-grid">
-
-        <!-- LEFT: value -->
+  <!-- ==================== AI ASTROLOGER ==================== -->
+  <section class="block" id="ai" aria-labelledby="ai-title">
+    <div class="container">
+      <div class="ai-grid">
         <div>
-          <div class="devapi-features">
-            <div class="devapi-feature">
-              <div class="devapi-feature-ic">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-              </div>
-              <div>
-                <div class="devapi-feature-t">One All-Access plan</div>
-                <div class="devapi-feature-d">A single monthly subscription unlocks every product — Kundli, Special Reports, Kundli Milan, and Today's Forecast. No per-endpoint contracts.</div>
-              </div>
-            </div>
-            <div class="devapi-feature">
-              <div class="devapi-feature-ic">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              </div>
-              <div>
-                <div class="devapi-feature-t">Wallet-funded &amp; metered</div>
-                <div class="devapi-feature-d">Top up a wallet, watch usage in real time, and pay only for what you call. Rate-limited to 1 request/second with idempotent, cacheable responses.</div>
-              </div>
-            </div>
-            <div class="devapi-feature">
-              <div class="devapi-feature-ic">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              </div>
-              <div>
-                <div class="devapi-feature-t">API keys &amp; role-based access</div>
-                <div class="devapi-feature-d">Self-service dashboard: create and rotate keys, view invoices, and manage your company or individual (GST-ready) account.</div>
-              </div>
-            </div>
-            <div class="devapi-feature">
-              <div class="devapi-feature-ic">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M2 12h20M12 2a15 15 0 010 20 15 15 0 010-20z"/></svg>
-              </div>
-              <div>
-                <div class="devapi-feature-t">The same engine, worldwide</div>
-                <div class="devapi-feature-d">Lahiri Ayanamsa + Swiss Ephemeris power every response — the identical calculations behind the Nakshatralogy apps, in JSON.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="devapi-endpoints" aria-label="Sample API endpoints">
-            <div class="devapi-endpoint"><b>POST</b> /api/v2/kundli</div>
-            <div class="devapi-endpoint"><b>POST</b> /api/v2/milan</div>
-            <div class="devapi-endpoint"><b>POST</b> /api/v2/kundli/dasha/vimshottari</div>
-            <div class="devapi-endpoint"><b>POST</b> /api/v2/kundli/gochar</div>
-            <div class="devapi-endpoint"><b>POST</b> /api/v2/reports/career</div>
-            <div class="devapi-endpoint"><b>GET</b> /api/v2/products</div>
+          <span class="eyebrow"><span class="dot"></span>AI Astrologer</span>
+          <h2 class="section-title" style="text-align:left" id="ai-title">Meet your AI astrology <em>companion</em></h2>
+          <p class="section-sub" style="text-align:left">Ask questions about your Kundli in plain language and get personalized explanations grounded in your chart.</p>
+          <div style="margin-top:24px">
+            <a href="https://app.nakshatralogy.com" class="btn btn-primary" rel="noopener">Ask AI About My Kundli</a>
           </div>
         </div>
-
-        <!-- RIGHT: code sample + CTA -->
-        <div>
-          <pre class="devapi-code" aria-label="Example request"><span class="c-com"># Nakshatralogy Developer API — generate a Kundli</span>
-<span class="c-verb">curl</span> -X POST https://api.nakshatralogy.com/api/v2/kundli \
-  -H <span class="c-str">"Authorization: Bearer sk_live_•••"</span> \
-  -H <span class="c-str">"Content-Type: application/json"</span> \
-  -d '{
-    <span class="c-key">"name"</span>:   <span class="c-str">"Rahul Kumar"</span>,
-    <span class="c-key">"gender"</span>: <span class="c-str">"M"</span>,
-    <span class="c-key">"dob"</span>:    <span class="c-str">"15/08/1992"</span>,
-    <span class="c-key">"tob"</span>:    <span class="c-str">"06:30"</span>,
-    <span class="c-key">"place"</span>:  <span class="c-str">"Delhi, India"</span>
-  }'
-
-<span class="c-com"># → { "status": "ok", "data": { "lagna": …,
-#     "planets": …, "divisionals": … } }</span></pre>
-
-          <div class="devapi-ctas" style="margin-top:24px">
-            <a href="https://developer.nakshatralogy.com" class="webapp-cta">Get API Keys →</a>
-            <a href="https://developer.nakshatralogy.com/docs" class="webapp-cta" style="background:transparent;border:1px solid rgba(232,181,71,0.35);color:var(--gold)">Read the Docs</a>
+        <div class="chatbox">
+          <div class="chat-top">
+            <div class="chat-ai-ava"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="5"/></svg></div>
+            <div><div class="chat-ai-name">AI Astrologer</div><div class="chat-ai-status">Online · reads your chart</div></div>
+          </div>
+          <div class="bubbles" id="chatBubbles">
+            <div class="bubble user" id="chatQuestion">When will my career improve?</div>
+            <div class="bubble ai" id="chatAnswer">
+              <span class="typing"><i></i><i></i><i></i></span>
+            </div>
+          </div>
+          <div class="chat-suggests" aria-label="Example questions">
+            <button type="button" data-q="When will my career improve?">When will my career improve?</button>
+            <button type="button" data-q="What does my 7th house indicate?">What does my 7th house indicate?</button>
+            <button type="button" data-q="Why am I experiencing delays?">Why am I experiencing delays?</button>
+            <button type="button" data-q="What does my current Mahadasha mean?">What does my current Mahadasha mean?</button>
+            <button type="button" data-q="What should I focus on this year?">What should I focus on this year?</button>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- FEATURES -->
-  <!-- ============================================ -->
-  <section class="section" id="features" aria-labelledby="features-title">
-    <div class="section-head">
-      <div class="section-label">Why Nakshatralogy</div>
-      <h2 class="section-title" id="features-title">Built for <em>seekers</em>,<br/>trusted by <em>practitioners</em></h2>
-      <p class="section-sub">A platform crafted with the same reverence Vedic Jyotish has been practiced for 5,000 years — paired with the precision modern technology can offer.</p>
-    </div>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon">🎯</div>
-        <h3 class="feat-title">NASA-grade <em>accuracy</em></h3>
-        <p class="feat-desc">Lahiri Ayanamsa with Swiss Ephemeris computations validated across D-1, D-9, D-10, D-24, and D-60 divisional charts.</p>
+  <!-- ==================== 16 ENGINES ==================== -->
+  <section class="block alt" id="engines" aria-labelledby="engines-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>Insight Engines</span>
+        <h2 class="section-title" id="engines-title">16 ways to <em>understand</em> your life</h2>
+        <p class="section-sub">Deep, chart-based reports across every major life area — each with a transparent confidence score.</p>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">🤖</div>
-        <h3 class="feat-title">AI-powered <em>insights</em></h3>
-        <p class="feat-desc">Each report can be discussed with ChatGPT, Claude, and Gemini — three AI models for three perspectives on your chart.</p>
+      <div class="eng-grid" id="engGrid">
+        <!-- Featured 6 -->
+        <div class="eng"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><h3>Career &amp; Job</h3><p>Direction, timing and professional growth from the 10th house &amp; dashas.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8L12 21l7.8-8.4a5.5 5.5 0 0 0 0-7.8z"/></svg></div><h3>Marriage</h3><p>Timing, partner traits and married-life harmony via the 7th house.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Wealth</h3><p>Income, savings and financial yogas from the 2nd &amp; 11th houses.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Health</h3><p>Vitality, weak periods and preventive timing from the 6th house.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M3 20l9-16 9 16"/></svg></div><h3>Kundli Milan</h3><p>Ashtakoot 8-Gun matching, Mangal Dosh &amp; Navamsa compatibility.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a4 4 0 0 0 0 8 4 4 0 0 1 0 8"/></svg></div><h3>Life Path</h3><p>Your overall trajectory, luck factors and defining strengths.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <!-- Hidden 10 -->
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/></svg></div><h3>Business</h3><p>Entrepreneurial timing, partnerships and venture strength.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4z"/><path d="M2 20h20"/></svg></div><h3>Education</h3><p>Learning aptitude, focus and academic timing from the 5th house.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg></div><h3>Love</h3><p>Romance, attraction and emotional chemistry patterns.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div><h3>Property</h3><p>Assets, real estate and vehicle acquisition timing.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Legal</h3><p>Disputes, litigation timing and favourable resolution windows.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Mental &amp; Stress</h3><p>Emotional balance, stress cycles and calming remedies.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M5 5l14 14M19 5L5 19"/></svg></div><h3>Debt</h3><p>Loan burden, recovery timing and financial-relief windows.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Character</h3><p>Core temperament, strengths and personality analysis.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg></div><h3>Past Life &amp; Karma</h3><p>Karmic patterns, past-life debts and soul lessons.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
+        <div class="eng eng-extra"><div class="eng-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div><h3>Relationship</h3><p>Bond intelligence, family ties and interpersonal dynamics.</p><a href="https://app.nakshatralogy.com" rel="noopener">Explore →</a></div>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon">🎓</div>
-        <h3 class="feat-title">Verified <em>astrologers</em></h3>
-        <p class="feat-desc">Every astrologer is credential-verified, background-checked, and rated by real consultations. No fake gurus.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔐</div>
-        <h3 class="feat-title">Private &amp; <em>encrypted</em></h3>
-        <p class="feat-desc">End-to-end encrypted consultations, secure wallet, and zero data sharing. Your chart is yours alone.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">💳</div>
-        <h3 class="feat-title">Transparent <em>billing</em></h3>
-        <p class="feat-desc">Per-minute pricing visible upfront. Wallet-based, no surprise charges, instant refunds for issues.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🌍</div>
-        <h3 class="feat-title">Multi-<em>language</em></h3>
-        <p class="feat-desc">Use the app and consult in English, Hindi, Marathi, Tamil, Telugu, Bengali, Gujarati, and more — your tongue, your stars.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📊</div>
-        <h3 class="feat-title">Confidence <em>scores</em></h3>
-        <p class="feat-desc">Every prediction comes with a confidence score so you know how reliable each insight is — full transparency, no overclaim.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">⚡</div>
-        <h3 class="feat-title">Instant <em>delivery</em></h3>
-        <p class="feat-desc">Generate Kundli in 3 seconds. Connect to an astrologer in under 30 seconds. No waiting rooms, no lengthy onboarding.</p>
+      <div style="text-align:center;margin-top:32px">
+        <button class="btn btn-ghost" id="engToggle" aria-expanded="false">View All 16</button>
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- FAQ -->
-  <!-- ============================================ -->
-  <section class="section" id="faq" aria-labelledby="faq-title">
-    <div class="section-head">
-      <div class="section-label">Common Questions</div>
-      <h2 class="section-title" id="faq-title">FAQ &amp; <em>answers</em></h2>
-    </div>
-
-    <div class="faq-list">
-      <details class="faq-item" open>
-        <summary class="faq-q">What is Nakshatralogy?</summary>
-        <div class="faq-a">Nakshatralogy is a Vedic astrology platform by <strong>Jaikalki Technology Private Limited</strong>. It generates a free Vedic Kundli (birth chart), delivers AI-powered reports across 16 life dimensions, and connects you with certified astrologers over live chat, voice, and video. It runs on Android, iOS, and the web at <a href="https://app.nakshatralogy.com" style="color:var(--gold)">app.nakshatralogy.com</a>.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Is Nakshatralogy free to use?</summary>
-        <div class="faq-a">Yes. Generating your Kundli, viewing your daily horoscope, and exploring your AI-powered birth-chart insights are free. Live consultations with certified astrologers are charged per minute, with the rate shown before you start any session. Some deep specialist reports and premium features are paid — always with the price displayed upfront.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">How accurate is the Vedic Kundli generated by Nakshatralogy?</summary>
-        <div class="faq-a">The Kundli engine uses Lahiri Ayanamsa with Swiss Ephemeris (NASA-grade astronomical data) and validates every reading across the D-1 (Rasi), D-9 (Navamsa), D-10 (Dasamsa), D-24 (Siddhamsa), and D-60 (Shashtyamsa) divisional charts. Every report carries a transparent confidence score so you know how reliable each insight is.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">How do I talk to an astrologer on Nakshatralogy?</summary>
-        <div class="faq-a">Open the Nakshatralogy app or <a href="https://app.nakshatralogy.com" style="color:var(--gold)">app.nakshatralogy.com</a>, browse 5,000+ verified astrologers, filter by speciality, language, and price, add money to your wallet, and start a chat, voice, or video consultation. Billing is per minute and fully transparent.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Can astrologers earn on Nakshatralogy?</summary>
-        <div class="faq-a">Yes. Certified Vedic astrologers can register on the dedicated astrologer app or at <a href="https://astro.nakshatralogy.com" style="color:var(--gold)">astro.nakshatralogy.com</a>, set their own per-minute rates for chat, voice, and video, and keep the majority of each consultation fee. The console provides real-time earnings, instant payouts, a client-chart library, and analytics. Verification typically completes within 48 hours.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">What life dimensions does Nakshatralogy analyze?</summary>
-        <div class="faq-a">Nakshatralogy analyzes 16 life dimensions: Career &amp; Profession, Business &amp; Startup, Education &amp; Learning, Wealth &amp; Finance, Debt &amp; Recovery, Love &amp; Romance, Marriage &amp; Family, Health &amp; Wellness, Mental &amp; Stress, Property &amp; Assets, Legal &amp; Disputes, Life Path &amp; Luck, Character Analysis, Past Life &amp; Karma, Kundli Milan (compatibility), and Relationship Intelligence.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">How does Kundli Milan / marriage matching work?</summary>
-        <div class="faq-a">Kundli Milan performs traditional Ashtakoot (8-Gun) matching across Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, and Nadi — plus modern checks for Mangal Dosh, Papasamya, D-9 Navamsa cross, Venus-Mars chemistry, and joint dasha alignment, producing a detailed compatibility report across nine domains.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Does Nakshatralogy have a developer astrology API?</summary>
-        <div class="faq-a">Yes. Developers can sign up at <a href="https://developer.nakshatralogy.com" style="color:var(--gold)">developer.nakshatralogy.com</a> for the Nakshatralogy Developer API — REST endpoints for Kundli, the 16 specialist reports, Kundli Milan, dashas, transits, and today's forecast. One monthly All-Access plan covers every product, is funded from a wallet, and is rate-limited to 1 request per second.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Is Nakshatralogy available outside India?</summary>
-        <div class="faq-a">Yes. Nakshatralogy supports international users with region detection, a dozen international languages (English, French, Spanish, German, Italian, Portuguese, Russian, Arabic, Chinese, Japanese, Thai, Indonesian), right-to-left layout for Arabic, and USD pricing via the App Store and Google Play. India uses the wallet flow in INR.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Is my birth data private and secure?</summary>
-        <div class="faq-a">Yes. Your birth details and chart data are encrypted in transit and at rest. Nakshatralogy never sells your data. Live consultations are private, and you can delete your account and associated data at any time from within the app. See our <a href="privacy-policy.html" style="color:var(--gold)">Privacy Policy</a>.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Who owns and operates Nakshatralogy?</summary>
-        <div class="faq-a">Nakshatralogy is owned and operated by <strong>Jaikalki Technology Private Limited</strong> (CIN U62091MH2025PTC438336), a company registered in Maharashtra, India, with its office at B1/A, Ground Floor, Anand India Business Hub, Deepak Hospital Road, Mira Road East, Thane, Maharashtra 401107.</div>
-      </details>
-      <details class="faq-item">
-        <summary class="faq-q">Can I get a refund if I'm not satisfied?</summary>
-        <div class="faq-a">Yes, subject to our policy. If a consultation or paid report falls short due to a technical failure or eligible issue, contact support within 48 hours and the charge will be reviewed and refunded where eligible. Read our complete <a href="refund-policy.html" style="color:var(--gold)">Refund Policy</a> for details.</div>
-      </details>
+  <!-- ==================== ASTROLOGERS ==================== -->
+  <section class="block" id="astrologers" aria-labelledby="astro-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>Human Astrologers</span>
+        <h2 class="section-title" id="astro-title">Need a <em>human</em> perspective?</h2>
+        <p class="section-sub">Connect with verified astrologers for personalized guidance over chat, call or video.</p>
+      </div>
+      <div class="astro-grid">
+        <div class="astro-card">
+          <div class="astro-top">
+            <div class="astro-ava" style="background:linear-gradient(135deg,var(--gold),var(--saffron))">A<span class="on"></span></div>
+            <div>
+              <div class="astro-name">Acharya (Vedic)
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 15.9 6.2 19l1.1-6.5L2.6 7.8l6.5-.9z"/></svg>
+              </div>
+              <div class="astro-role">Jyotish Acharya · Online</div>
+            </div>
+          </div>
+          <div class="astro-tags"><span>Career</span><span>Marriage</span><span>Hindi</span><span>English</span></div>
+          <div class="astro-actions">
+            <a href="https://app.nakshatralogy.com" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</a>
+            <a href="https://app.nakshatralogy.com" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4 12.8 12.8 0 0 0 2.8.7A2 2 0 0 1 22 16.9z"/></svg>Call</a>
+            <a href="https://app.nakshatralogy.com" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Video</a>
+          </div>
+        </div>
+        <div class="astro-card">
+          <div class="astro-top">
+            <div class="astro-ava" style="background:linear-gradient(135deg,var(--indigo),var(--cosmic-pink))">P<span class="on"></span></div>
+            <div>
+              <div class="astro-name">Pandit (KP System)
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 15.9 6.2 19l1.1-6.5L2.6 7.8l6.5-.9z"/></svg>
+              </div>
+              <div class="astro-role">KP &amp; Prashna · Online</div>
+            </div>
+          </div>
+          <div class="astro-tags"><span>Love</span><span>Finance</span><span>Marathi</span><span>English</span></div>
+          <div class="astro-actions">
+            <a href="https://app.nakshatralogy.com" rel="noopener">Chat</a>
+            <a href="https://app.nakshatralogy.com" rel="noopener">Call</a>
+            <a href="https://app.nakshatralogy.com" rel="noopener">Video</a>
+          </div>
+        </div>
+        <div class="astro-card">
+          <div class="astro-top">
+            <div class="astro-ava" style="background:linear-gradient(135deg,var(--aurora-mint),var(--indigo))">J<span class="on"></span></div>
+            <div>
+              <div class="astro-name">Jyotishi (Nadi)
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 15.9 6.2 19l1.1-6.5L2.6 7.8l6.5-.9z"/></svg>
+              </div>
+              <div class="astro-role">Nadi &amp; Remedies · Online</div>
+            </div>
+          </div>
+          <div class="astro-tags"><span>Health</span><span>Remedies</span><span>Tamil</span><span>Hindi</span></div>
+          <div class="astro-actions">
+            <a href="https://app.nakshatralogy.com" rel="noopener">Chat</a>
+            <a href="https://app.nakshatralogy.com" rel="noopener">Call</a>
+            <a href="https://app.nakshatralogy.com" rel="noopener">Video</a>
+          </div>
+        </div>
+      </div>
+      <p class="note-line">Illustrative profiles — browse live astrologers with real ratings, experience and per-minute prices in the app.</p>
+      <div style="text-align:center;margin-top:18px">
+        <a href="https://app.nakshatralogy.com" class="btn btn-primary" rel="noopener">View All Astrologers</a>
+      </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- FOOTER -->
-  <!-- ============================================ -->
+  <!-- ==================== SIMPLE vs EXPERT ==================== -->
+  <section class="block alt" aria-labelledby="se-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>Astrology for Everyone</span>
+        <h2 class="section-title" id="se-title">Simple first. <em>Technical</em> on demand.</h2>
+        <p class="section-sub">Read your chart in plain language — then expand any insight into the full Vedic detail. The same philosophy runs through Drishti, Ashtakavarga, Dasha and more.</p>
+      </div>
+      <div class="toggle-wrap">
+        <div class="seg" role="tablist" aria-label="View mode">
+          <button role="tab" class="active" data-mode="simple" aria-selected="true">Simple View</button>
+          <button role="tab" data-mode="expert" aria-selected="false">Expert View</button>
+        </div>
+      </div>
+      <div class="se-panels">
+        <!-- Drishti card -->
+        <div class="se-card">
+          <h4>Aspect · Saturn → Sun</h4>
+          <div class="se-simple" data-view="simple">
+            <div class="relation">Saturn influences your Sun.</div>
+            <div class="se-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Aspect Present</div>
+            <p class="se-plain">This can bring greater responsibility, discipline and patience — rewarding steady, honest effort over time.</p>
+          </div>
+          <div class="se-expert" data-view="expert" hidden>
+            <div class="se-row"><span class="k">Graha Drishti</span><span class="v pos">✓ 7th aspect</span></div>
+            <div class="se-row"><span class="k">Rashi Drishti</span><span class="v pos">✓ Present</span></div>
+            <div class="se-row"><span class="k">Aspect type</span><span class="v">Full (Saturn 3rd/7th/10th)</span></div>
+            <div class="se-row"><span class="k">From house</span><span class="v">10th → 4th</span></div>
+            <div class="se-row"><span class="k">Sign · degree</span><span class="v">Taurus · 14°</span></div>
+            <div class="se-row"><span class="k">Combined</span><span class="v pos">Strong · Present</span></div>
+          </div>
+        </div>
+        <!-- Ashtakavarga card -->
+        <div class="se-card">
+          <h4>Ashtakavarga · Strength</h4>
+          <div class="se-simple" data-view="simple">
+            <div class="av-bars">
+              <div class="av-bar"><div class="top"><span class="lbl">Overall</span><span class="tag" style="color:var(--success)">Very Good</span></div><div class="av-track"><i style="width:78%;background:linear-gradient(90deg,var(--success),var(--aurora-mint))"></i></div></div>
+              <div class="av-bar"><div class="top"><span class="lbl">Strongest · Leo</span><span class="tag" style="color:var(--gold)">Excellent</span></div><div class="av-track"><i style="width:90%;background:linear-gradient(90deg,var(--gold),var(--saffron))"></i></div></div>
+              <div class="av-bar"><div class="top"><span class="lbl">Weakest · Scorpio</span><span class="tag" style="color:var(--warning)">Weak</span></div><div class="av-track"><i style="width:32%;background:linear-gradient(90deg,var(--warning),var(--danger))"></i></div></div>
+            </div>
+            <p class="se-plain" style="margin-top:14px">Your strongest signs support career &amp; recognition; weaker areas ask for extra care.</p>
+          </div>
+          <div class="se-expert" data-view="expert" hidden>
+            <div class="se-row"><span class="k">SAV total</span><span class="v">337</span></div>
+            <div class="se-row"><span class="k">BAV · Sun (Leo)</span><span class="v pos">6 rekhas</span></div>
+            <div class="se-row"><span class="k">BAV · Saturn (Sco)</span><span class="v dim">2 rekhas</span></div>
+            <div class="se-row"><span class="k">Leo · SAV</span><span class="v">34</span></div>
+            <div class="se-row"><span class="k">Scorpio · SAV</span><span class="v">21</span></div>
+            <div class="se-row"><span class="k">Kaksha strength</span><span class="v pos">Above average</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ACCURACY / TRUST ==================== -->
+  <section class="block" id="trust" aria-labelledby="trust-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>Accuracy</span>
+        <h2 class="section-title" id="trust-title">Built on <em>tradition</em>. Powered by <em>technology</em>.</h2>
+      </div>
+      <div class="acc-grid">
+        <div class="acc"><div class="acc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 0 20M2 12h20"/></svg></div><h3>Swiss Ephemeris</h3><p>NASA-grade astronomical data for precise planetary positions.</p></div>
+        <div class="acc"><div class="acc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="5"/></svg></div><h3>Lahiri Ayanamsha</h3><p>The standard sidereal reference used across authentic Vedic astrology.</p></div>
+        <div class="acc"><div class="acc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z"/></svg></div><h3>Vedic Astrology</h3><p>Classical BPHS principles across 20 divisional charts.</p></div>
+        <div class="acc"><div class="acc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Secure Data</h3><p>Birth details encrypted in transit and at rest — never sold.</p></div>
+        <div class="acc"><div class="acc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div><h3>Verified Astrologers</h3><p>Every astrologer is KYC-verified before going live.</p></div>
+        <div class="acc"><div class="acc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div><h3>AI-Assisted Interpretation</h3><p>Plain-language explanations grounded in your real chart.</p></div>
+      </div>
+      <div style="text-align:center;margin-top:30px">
+        <a href="contact.html" class="link-more">Learn About Our Methodology <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== RATING / TESTIMONIAL PLACEHOLDER ==================== -->
+  <section class="block alt" aria-labelledby="rating-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>Loved by seekers</span>
+        <h2 class="section-title" id="rating-title">Trusted across <em>millions</em> of charts</h2>
+      </div>
+      <div class="rating-callout">
+        <div class="stars" aria-hidden="true">★★★★★</div>
+        <div class="big">4.7<span style="font-size:22px;color:var(--smoke)">/5</span></div>
+        <p>Average rating across app-store reviews. Verified user testimonials will appear here as they are collected in-app.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FAQ ==================== -->
+  <section class="block" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span>FAQ</span>
+        <h2 class="section-title" id="faq-title">Questions &amp; <em>answers</em></h2>
+      </div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Is the Kundli free? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>Yes. Generating your Kundli, viewing your daily horoscope, and exploring your AI-powered birth-chart insights are free. Live consultations with astrologers are charged per minute, shown before you start, and some deep specialist reports are paid — always with the price displayed upfront.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">How accurate is the Kundli? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>The engine uses Lahiri Ayanamsa with Swiss Ephemeris (NASA-grade data) and validates readings across the D-1, D-9, D-10, D-24 and D-60 divisional charts. Each report carries a transparent confidence score.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">How is my Kundli calculated? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>From your date, exact time and place of birth we compute planetary longitudes with the Swiss Ephemeris, apply the Lahiri sidereal ayanamsa, and derive your Lagna, Moon &amp; Sun charts, 20 divisional charts, Vimshottari dasha and transits using classical Vedic (BPHS) rules.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">What can I learn from my Kundli? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>16 life dimensions — career, business, wealth, debt, love, marriage, relationships, health, mental well-being, property, education, legal, life path, character, past-life &amp; karma, and Kundli Milan compatibility.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Can I talk to a real astrologer? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>Yes. Browse 5,000+ verified astrologers, filter by speciality, language and price, add money to your wallet, and start a chat, voice or video consultation. Billing is per minute and fully transparent.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">Is my birth data secure? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>Yes. Your birth details and chart data are encrypted in transit and at rest, never sold, and you can delete your account and data anytime from the app. See our <a href="privacy-policy.html" style="color:var(--gold)">Privacy Policy</a>.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">What is AI astrology? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>Our AI Astrologer reads your actual computed chart and explains it in plain language — answering questions like "when will my career improve?" grounded in your planets, houses, dashas and transits, not generic sun-sign text.</p></div></div>
+        <div class="faq-item"><button class="faq-q" aria-expanded="false">AI vs a human astrologer — what's the difference? <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></button><div class="faq-a"><p>The AI is instant, always available and great for understanding your chart and exploring questions. A verified human astrologer adds lived experience, nuanced judgement and personalized remedies for important decisions. Use both — AI to learn, an astrologer when it matters.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== DEVELOPER API (small) ==================== -->
+  <section class="block" aria-labelledby="dev-title">
+    <div class="container">
+      <div class="dev-cta">
+        <div>
+          <h3 id="dev-title">Build astrology into your product</h3>
+          <p>REST endpoints for Kundli, 16 reports, Kundli Milan, dashas &amp; transits — one wallet-funded All-Access plan.</p>
+        </div>
+        <a href="https://developer.nakshatralogy.com" class="btn btn-ghost" rel="noopener">Explore Developer API</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FINAL CTA ==================== -->
+  <section class="block final" aria-labelledby="final-title">
+    <div class="container">
+      <div class="final-inner">
+        <h2 id="final-title">Discover what your <em>stars</em> say.</h2>
+        <p>Generate your Vedic Kundli and start exploring your personalized insights.</p>
+        <div class="hero-ctas">
+          <a href="https://app.nakshatralogy.com" class="btn btn-primary" rel="noopener">Generate Free Kundli</a>
+          <a href="https://app.nakshatralogy.com" class="btn btn-ghost" rel="noopener">Talk to an Astrologer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
   <footer class="footer" role="contentinfo">
-    <div class="footer-grid">
-
-      <div class="footer-brand-block">
-        <a href="/" class="nav-logo" aria-label="Nakshatralogy home">
-          <img class="footer-logo-img" src="/assets/img/nakshatralogy-wordmark.png" alt="Nakshatralogy" width="160" height="40" />
-        </a>
-        <p class="footer-brand-text">A Vedic astrology platform by <strong style="color:var(--ivory)">Jaikalki Technology Pvt Ltd</strong> — bringing 5,000-year-old Jyotish wisdom to modern devices, with AI clarity, certified astrologer access, and a developer API.</p>
-        <div class="footer-stores">
-          <a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.user" class="footer-store-btn" aria-label="Download on Google Play">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 2.5l11.5 9.5L3 21.5V2.5z"/></svg> Play Store
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand-block">
+          <a href="/" class="nav-logo" aria-label="Nakshatralogy home">
+            <img class="nav-logo-img" src="/assets/img/nakshatralogy-wordmark.png" alt="Nakshatralogy" width="160" height="34" />
           </a>
-          <a href="https://apps.apple.com/in/app/nakshtralogy/id000000000" class="footer-store-btn" aria-label="Download on App Store">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.86-3.08.43-1.09-.45-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.43C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01z"/></svg> App Store
-          </a>
-        </div>
-      </div>
-
-      <div>
-        <div class="footer-col-title">Product</div>
-        <ul class="footer-links">
-          <li><a href="https://app.nakshatralogy.com">User Web App ↗</a></li>
-          <li><a href="https://astro.nakshatralogy.com">Astrologer Console ↗</a></li>
-          <li><a href="https://developer.nakshatralogy.com">Developer API ↗</a></li>
-          <li><a href="#engines">16 Insights</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div class="footer-col-title">Company</div>
-        <ul class="footer-links">
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="https://jaikalki.com/" target="_blank" rel="noopener">Jaikalki Technology ↗</a></li>
-          <li><a href="privacy-policy.html">Privacy Policy</a></li>
-          <li><a href="refund-policy.html">Refund Policy</a></li>
-          <li><a href="terms.html">Terms &amp; Conditions</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <div class="footer-col-title">Get in Touch</div>
-        <div class="footer-contact-row">
-          <div class="footer-contact-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-          </div>
-          <div>
-            <a href="tel:+919136914963">+91 91369 14963</a>
+          <p class="footer-brand-text">A Vedic astrology platform by <strong style="color:var(--ivory)">Jaikalki Technology Pvt Ltd</strong> — 5,000-year-old Jyotish wisdom, AI clarity, verified astrologer access, and a developer API.</p>
+          <div class="footer-socials">
+            <a href="https://x.com/JaikalkiTPL" rel="noopener" aria-label="X (Twitter)"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.8l-5.3-6.9L4.8 22H1.7l8.1-9.3L1 2h7l4.8 6.3zm-1.2 18h1.9L7.4 3.9H5.4z"/></svg></a>
+            <a href="https://www.facebook.com/JaikalkiTechnologyPvtLtd/" rel="noopener" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg></a>
+            <a href="mailto:support@jaikalkitechnology.com" aria-label="Email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg></a>
           </div>
         </div>
-        <div class="footer-contact-row">
-          <div class="footer-contact-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
-          </div>
-          <div>
-            <a href="mailto:support@jaikalkitechnology.com">support@jaikalkitechnology.com</a>
-          </div>
+        <div>
+          <div class="footer-col-title">Product</div>
+          <ul class="footer-links">
+            <li><a href="#kundli">Kundli</a></li>
+            <li><a href="#ai">AI Astrologer</a></li>
+            <li><a href="#insights">Insights</a></li>
+            <li><a href="#astrologers">Astrologers</a></li>
+            <li><a href="https://app.nakshatralogy.com" rel="noopener">Kundli Milan ↗</a></li>
+          </ul>
         </div>
-        <div class="footer-contact-row">
-          <div class="footer-contact-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <address style="font-style:normal">
-            Jaikalki Technology Pvt Ltd,<br/>
-            B1/A, Ground Floor,<br/>
-            Anand India Business Hub,<br/>
-            Deepak Hospital Road,<br/>
-            Mira Road East, Thane,<br/>
-            Maharashtra – 401107, India
-          </address>
+        <div>
+          <div class="footer-col-title">For Astrologers</div>
+          <ul class="footer-links">
+            <li><a href="https://astro.nakshatralogy.com" rel="noopener">Join as Astrologer ↗</a></li>
+            <li><a href="https://play.google.com/store/apps/details?id=com.nakshtralogy.astrologer" rel="noopener">Astrologer App ↗</a></li>
+            <li><a href="https://astro.nakshatralogy.com" rel="noopener">Astrologer Login ↗</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">For Developers</div>
+          <ul class="footer-links">
+            <li><a href="https://developer.nakshatralogy.com" rel="noopener">Developer API ↗</a></li>
+            <li><a href="https://developer.nakshatralogy.com/docs" rel="noopener">Documentation ↗</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="https://jaikalki.com/" rel="noopener">About ↗</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="privacy-policy.html">Privacy</a></li>
+            <li><a href="terms.html">Terms</a></li>
+            <li><a href="refund-policy.html">Refunds</a></li>
+          </ul>
         </div>
       </div>
-
-    </div>
-
-    <div class="footer-bottom">
-      <div class="footer-copy">© 2026 <em>Nakshatra</em>logy · A product of <a href="https://jaikalki.com/" style="color:var(--gold)">Jaikalki Technology Pvt Ltd</a> · CIN U62091MH2025PTC438336 · All rights reserved</div>
-      <div class="footer-legal">
-        <a href="privacy-policy.html">Privacy</a>
-        <a href="refund-policy.html">Refunds</a>
-        <a href="terms.html">Terms</a>
-        <a href="contact.html">Contact</a>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 <em>Nakshatra</em>logy · A product of <a href="https://jaikalki.com/" rel="noopener" style="color:var(--gold)">Jaikalki Technology Pvt Ltd</a> · CIN U62091MH2025PTC438336</div>
+        <div class="footer-legal">
+          <a href="privacy-policy.html">Privacy</a>
+          <a href="refund-policy.html">Refunds</a>
+          <a href="terms.html">Terms</a>
+          <a href="contact.html">Contact</a>
+        </div>
       </div>
     </div>
   </footer>
 
 </div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  /* sticky nav shadow */
+  var nav = $('#navbar');
+  var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 12); };
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* mobile drawer */
+  var toggle = $('#navToggle'), drawer = $('#mobileMenu');
+  var setDrawer = function (open) {
+    drawer.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle.addEventListener('click', function () { setDrawer(!drawer.classList.contains('open')); });
+  $$('#mobileMenu a').forEach(function (a) { a.addEventListener('click', function () { setDrawer(false); }); });
+
+  /* More dropdown */
+  var more = $('#navMore'), moreBtn = more ? $('.nav-more-btn', more) : null;
+  if (more) {
+    moreBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = more.classList.toggle('open');
+      moreBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', function (e) {
+      if (!more.contains(e.target)) { more.classList.remove('open'); moreBtn.setAttribute('aria-expanded', 'false'); }
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { more.classList.remove('open'); setDrawer(false); } });
+  }
+
+  /* FAQ accordion */
+  $$('#faqList .faq-item').forEach(function (item) {
+    var q = $('.faq-q', item), a = $('.faq-a', item);
+    q.addEventListener('click', function () {
+      var open = item.classList.toggle('open');
+      q.setAttribute('aria-expanded', open ? 'true' : 'false');
+      a.style.maxHeight = open ? a.scrollHeight + 'px' : '0';
+    });
+  });
+
+  /* engines: view all 16 */
+  var engToggle = $('#engToggle');
+  if (engToggle) {
+    engToggle.addEventListener('click', function () {
+      var showing = $('#engGrid').classList.toggle('show-all');
+      $$('#engGrid .eng-extra').forEach(function (el) { el.classList.toggle('show', showing); });
+      engToggle.textContent = showing ? 'Show Less' : 'View All 16';
+      engToggle.setAttribute('aria-expanded', showing ? 'true' : 'false');
+    });
+  }
+
+  /* Simple / Expert toggle */
+  $$('.seg [data-mode]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var mode = btn.getAttribute('data-mode');
+      $$('.seg [data-mode]').forEach(function (b) {
+        var on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      $$('[data-view]').forEach(function (v) { v.hidden = v.getAttribute('data-view') !== mode; });
+    });
+  });
+
+  /* AI chat demo — canned, chart-grounded style answers (illustrative) */
+  var answers = {
+    'When will my career improve?': 'Your 10th lord is strengthening as you enter a favourable Jupiter sub-period — momentum typically builds over the next 12–18 months, strongest around promotions and role changes.',
+    'What does my 7th house indicate?': 'Your 7th house governs partnership and marriage. With its lord well-placed, it points to a supportive, growth-oriented partner and steady long-term bonds.',
+    'Why am I experiencing delays?': 'Saturn’s aspect is asking for patience and structure right now. Delays here are protective — steady, honest effort is rewarded once this period matures.',
+    'What does my current Mahadasha mean?': 'You are running a Jupiter Mahadasha — a period that favours learning, mentorship, finances and expansion. Align major decisions with its supportive sub-periods.',
+    'What should I focus on this year?': 'Your chart highlights career recognition and skill-building this year. Invest in expertise and networks; relationships also benefit from clear, patient communication.'
+  };
+  var qEl = $('#chatQuestion'), aEl = $('#chatAnswer');
+  var typingHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+  var current = null;
+  function ask(q) {
+    if (!qEl || !aEl) return;
+    qEl.textContent = q;
+    aEl.innerHTML = typingHTML;
+    var token = {};
+    current = token;
+    setTimeout(function () {
+      if (current !== token) return;
+      aEl.textContent = answers[q] || 'Ask me anything about your Kundli — I read your real chart to answer.';
+    }, 900);
+  }
+  $$('.chat-suggests button').forEach(function (b) {
+    b.addEventListener('click', function () { ask(b.getAttribute('data-q')); });
+  });
+  ask('When will my career improve?');
+
+  /* year */
+  var y = $('#year'); if (y) y.textContent = new Date().getFullYear();
+})();
+</script>
+
 </body>
 </html>
