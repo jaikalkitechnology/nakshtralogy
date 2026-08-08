@@ -433,7 +433,10 @@ class ApiService {
   // ── Profile ──────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> getMe() async {
-    final resp = await http.get(Uri.parse(ApiConstants.userMe), headers: _headers);
+    // Use the refresh-aware GET so a transient expired access token is renewed
+    // and the profile (incl. the saved phone) loads reliably — a silent 401
+    // here previously left the app thinking the profile had no phone.
+    final resp = await _authGet(Uri.parse(ApiConstants.userMe));
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 

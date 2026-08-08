@@ -538,8 +538,9 @@ def update_me(
     if cc:
         current_user.country_code = cc
         if not current_user.region_manual:
+            # currency is derived from region at read time (User has no currency
+            # column) — only persist region + country here.
             current_user.region = region_util.region_for_country(cc)
-            current_user.currency = region_util.currency_for_region(current_user.region)
     # An fcm_token here syncs a device token — claim it (detach from other
     # accounts). An empty string means "forget my token" (logout).
     if "fcm_token" in update_data:
