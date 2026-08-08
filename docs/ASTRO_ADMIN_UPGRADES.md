@@ -102,3 +102,19 @@ logic — presentation/access only.
   (+country) instead of the region chip; region derived from the country
 - ✅ User app: one-time **mandatory** phone-capture sheet for legacy accounts
   without a phone (shown from Home once the profile loads)
+
+---
+
+## 8. OTP-based password change + forgot password (both apps)
+Email-OTP flow to set/reset a password — no old password required, works even
+when the user forgot it.
+
+- ✅ Backend (user + astrologer): `POST /forgot-password/send-otp` +
+  `/forgot-password/reset` (verify OTP → set password; never leaks account
+  existence), and authenticated `POST /me/password/send-otp` +
+  `/me/password/change` (OTP to the logged-in email → set new password).
+  Reuses `otp_code` + `send_otp_email`; token-based endpoints kept for compat.
+- ✅ Both apps: unified `PasswordOtpScreen` (forgot | change modes) — send code
+  → enter OTP + new password + confirm → update; 30s resend timer
+- ✅ Login screen "Forgot password?" → OTP reset screen (replaces token screen)
+- ✅ Profile: new **Change Password** card (email-OTP) in both apps

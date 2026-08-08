@@ -223,6 +223,47 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  // ── OTP-based password reset / change ──────────────────────────
+  /// Forgot password: email a reset OTP (never reveals account existence).
+  Future<Map<String, dynamic>> forgotPasswordSendOtp(String email) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.astroForgotSendOtp),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Forgot password: verify OTP + set the new password.
+  Future<Map<String, dynamic>> forgotPasswordReset({
+    required String email, required String otp, required String newPassword,
+  }) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.astroForgotReset),
+      headers: {'Content-Type': 'application/json', 'Accept-Language': _langCode},
+      body: jsonEncode({'email': email, 'otp': otp, 'new_password': newPassword}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Change password (logged in): email an OTP to authorize the change.
+  Future<Map<String, dynamic>> changePasswordSendOtp() async {
+    final resp = await http.post(Uri.parse(ApiConstants.astroChangePwdSendOtp), headers: _headers);
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Change password (logged in): verify OTP + set the new password.
+  Future<Map<String, dynamic>> changePasswordWithOtp({
+    required String otp, required String newPassword,
+  }) async {
+    final resp = await http.post(
+      Uri.parse(ApiConstants.astroChangePwdWithOtp),
+      headers: _headers,
+      body: jsonEncode({'otp': otp, 'new_password': newPassword}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,

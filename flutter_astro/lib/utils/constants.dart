@@ -24,6 +24,10 @@ class ApiConstants {
   static const String webpushConfig = '$baseUrl/config/webpush';
   static const String astroForgotPassword = '$astrologerBase/forgot-password';
   static const String astroResetPassword = '$astrologerBase/reset-password';
+  static const String astroForgotSendOtp = '$astrologerBase/forgot-password/send-otp';
+  static const String astroForgotReset = '$astrologerBase/forgot-password/reset';
+  static const String astroChangePwdSendOtp = '$astrologerBase/me/password/send-otp';
+  static const String astroChangePwdWithOtp = '$astrologerBase/me/password/change';
   static const String astroRefresh = '$astrologerBase/refresh';
   static const String astroMe = '$astrologerBase/me';
   static const String astroProfile = '$astrologerBase/me/profile';

@@ -5,6 +5,7 @@ import '../../widgets/avatar_picker.dart';
 import '../../widgets/web_notification_tile.dart';
 import '../../widgets/legal_section.dart';
 import '../support/support_screen.dart';
+import '../auth/password_otp_screen.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -418,6 +419,36 @@ class _ProfileTabState extends State<ProfileTab> {
                 ]),
               ),
             ),
+
+            // ── Change Password (OTP) ──
+            if (email.toString().isNotEmpty)
+              InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => PasswordOtpScreen(
+                    mode: PasswordOtpMode.change,
+                    email: email.toString(),
+                  ),
+                )),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                  ),
+                  child: Row(children: [
+                    const Icon(Icons.lock_outline, color: AppColors.gold, size: 22),
+                    const SizedBox(width: 12),
+                    const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('Change Password', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text('Update your password via email OTP', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                    ])),
+                    const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                  ]),
+                ),
+              ),
 
             // ── Customer Support ──
             InkWell(

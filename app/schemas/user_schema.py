@@ -65,6 +65,21 @@ class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
 
+# ── OTP-based password reset / change ─────────────────────────────────
+
+class PasswordResetOtpRequest(BaseModel):
+    """Forgot-password: verify the emailed OTP and set a new password."""
+    email: EmailStr
+    otp: str = Field(..., min_length=4, max_length=6)
+    new_password: str = Field(..., min_length=6, max_length=128)
+
+
+class PasswordChangeOtpRequest(BaseModel):
+    """Logged-in change-password: verify the emailed OTP and set a new one."""
+    otp: str = Field(..., min_length=4, max_length=6)
+    new_password: str = Field(..., min_length=6, max_length=128)
+
+
 # ── Auth Responses ────────────────────────────────────────────────────
 
 class TokenResponse(BaseModel):
