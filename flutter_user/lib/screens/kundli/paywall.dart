@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../l10n/gen/app_localizations.dart';
-import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import 'report_paywall.dart';
 
-/// Shared paywall logic: checks if a kundli section is free for the user,
-/// and if not, shows a purchase dialog that debits the wallet before unlocking.
+/// Shared paywall logic for the kundli-viewer sections (dasha, gochar, dosh,
+/// yoga, shadbala, …). Each section maps to a `service_key` from
+/// SERVICE_PRICING. Free sections (price = 0 / is_free) pass through; paid
+/// sections delegate the locked-card + purchase UX to [ensureReportUnlocked]
+/// (report_paywall.dart) so a kundli section gets the SAME region-aware
+/// treatment as the specialist reports:
+///   • India       → ₹ price, wallet debit (/service/purchase)
+///   • International → USD tier, store IAP (/service/iap/verify)
 ///
-/// Each section maps to a `service_key` from SERVICE_PRICING (seed_data).
-/// If price=0 or is_free=true → grant immediately.
-/// If paid → show confirm dialog → POST /service/purchase → on success unlock.
+/// PRESENTATION + ACCESS ONLY — this never computes or alters a chart. Prices
+/// are always read from ServicePricing (admin-editable); nothing is hardcoded.
 class PaywallService {
   PaywallService._();
   static final instance = PaywallService._();
@@ -46,15 +50,15 @@ class PaywallService {
 
   bool isUnlocked(String chartId, String section) => _unlockCache[_k(chartId, section)] ?? false;
 
-  /// Returns true if user may view the section (either free or purchased).
-  /// Shows a dialog for paid sections and handles purchase.
+  /// Returns true if user may view the section (free or purchased). For paid
+  /// sections it shows the region-aware paywall and handles the purchase.
   Future<bool> check(BuildContext context, String chartId, String section) async {
     if (isUnlocked(chartId, section)) return true;
 
     final serviceKey = sectionServiceKey[section];
     if (serviceKey == null) return true; // unknown section — allow
 
-    // Fetch pricing if not cached
+    // Fetch pricing if not cached (for the section title/emoji + free check).
     Map<String, dynamic>? pricing = _pricingCache[serviceKey];
     pricing ??= await ApiService().getServicePricingByKey(serviceKey);
     if (pricing == null) {
@@ -71,105 +75,19 @@ class PaywallService {
       return true;
     }
 
-    // Show purchase dialog
-    final purchased = await _showPurchaseDialog(context, pricing, chartId);
-    if (purchased) markUnlocked(chartId, section);
-    return purchased;
-  }
+    final reportName = pricing['service_name']?.toString() ?? 'Premium Section';
+    final iconRaw = pricing['icon']?.toString() ?? '';
+    if (!context.mounted) return false;
 
-  Future<bool> _showPurchaseDialog(BuildContext context, Map<String, dynamic> pricing, String chartId) async {
-    final price = (pricing['price'] as num?)?.toDouble() ?? 0;
-    final orig = (pricing['original_price'] as num?)?.toDouble();
-    final features = (pricing['features_json'] as List?)?.cast<String>() ?? const [];
-
-    return await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => StatefulBuilder(builder: (ctx, setS) {
-        bool purchasing = false;
-        return AlertDialog(
-          backgroundColor: AppColors.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Row(children: [
-            Text(pricing['icon']?.toString() ?? '📜', style: const TextStyle(fontSize: 28)),
-            const SizedBox(width: 10),
-            Expanded(child: Text(pricing['service_name']?.toString() ?? 'Premium Section',
-                style: const TextStyle(color: AppColors.primary, fontSize: 16, fontWeight: FontWeight.w700))),
-          ]),
-          content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if (pricing['description'] != null)
-              Text(pricing['description'].toString(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-            const SizedBox(height: 14),
-            Row(children: [
-              Text('₹${price.toStringAsFixed(0)}',
-                  style: const TextStyle(color: AppColors.primary, fontSize: 28, fontWeight: FontWeight.w700)),
-              if (orig != null && orig > price) ...[
-                const SizedBox(width: 10),
-                Text('₹${orig.toStringAsFixed(0)}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 14, decoration: TextDecoration.lineThrough)),
-              ],
-            ]),
-            const SizedBox(height: 10),
-            if (features.isNotEmpty) ...features.take(5).map((f) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Row(children: [
-                const Icon(Icons.check_circle, color: AppColors.success, size: 14),
-                const SizedBox(width: 6),
-                Expanded(child: Text(f, style: const TextStyle(color: AppColors.textPrimary, fontSize: 12))),
-              ]),
-            )),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-              child: Row(children: [
-                const Icon(Icons.account_balance_wallet, color: AppColors.accent, size: 16),
-                const SizedBox(width: 6),
-                Expanded(child: Text(AppLocalizations.of(context)?.walletDeduction ?? 'Amount deducted',
-                    style: TextStyle(color: AppColors.accent, fontSize: 11))),
-              ]),
-            ),
-          ]),
-          actions: [
-            TextButton(
-              onPressed: purchasing ? null : () => Navigator.pop(ctx, false),
-              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel', style: TextStyle(color: AppColors.textSecondary)),
-            ),
-            ElevatedButton.icon(
-              onPressed: purchasing ? null : () async {
-                setS(() => purchasing = true);
-                final resp = await ApiService().purchaseKundliSection(pricing['id'] as String, chartId);
-                if (!ctx.mounted) return;
-                if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(AppLocalizations.of(context)?.unlocked ?? 'Unlocked!'),
-                    backgroundColor: AppColors.success,
-                  ));
-                  Navigator.pop(ctx, true);
-                } else {
-                  setS(() => purchasing = false);
-                  final err = resp['detail']?.toString() ?? 'Purchase failed';
-                  ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                    content: Text(err),
-                    backgroundColor: AppColors.error,
-                  ));
-                  // Insufficient balance — offer to recharge
-                  if (err.toLowerCase().contains('balance') || err.toLowerCase().contains('402')) {
-                    // close dialog, let caller redirect to wallet
-                    Future.delayed(const Duration(milliseconds: 1200), () {
-                      if (ctx.mounted) Navigator.pop(ctx, false);
-                    });
-                  }
-                }
-              },
-              icon: purchasing
-                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
-                  : const Icon(Icons.lock_open, size: 16),
-              label: Text(purchasing ? 'Processing...' : 'Unlock ₹${price.toStringAsFixed(0)}'),
-            ),
-          ],
-        );
-      }),
-    ) ?? false;
+    // Region-aware unlock: India → ₹/wallet, International → USD/store IAP.
+    final ok = await ensureReportUnlocked(
+      context,
+      serviceKey: serviceKey,
+      chartId: chartId,
+      reportName: reportName,
+      emoji: iconRaw.isNotEmpty ? iconRaw : '🔒',
+    );
+    if (ok) markUnlocked(chartId, section);
+    return ok;
   }
 }

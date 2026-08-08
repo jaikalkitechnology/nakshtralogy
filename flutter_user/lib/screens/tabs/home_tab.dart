@@ -5,6 +5,8 @@ import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
 import '../../services/api_service.dart';
+import '../../services/app_mode.dart';
+import '../../utils/money.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
@@ -394,6 +396,13 @@ class _HomeTabState extends State<HomeTab> {
           itemCount: preview.length,
           itemBuilder: (_, i) {
             final s = preview[i];
+            // Region-aware: the backend attaches a session view (USD/IAP for
+            // international, ₹/wallet for India) using the X-Device-Country
+            // hint. Show that instead of the raw ₹ column.
+            final sessCurrency = (s['session_currency'] as String?) ??
+                (AppMode.instance.isInternational ? 'USD' : 'INR');
+            final sessAmount = (s['session_amount'] as num?)?.toDouble() ??
+                (s['price'] as num?)?.toDouble() ?? 0;
             final price = (s['price'] as num?)?.toDouble() ?? 0;
             final isFree = s['is_free'] == true || price == 0;
             return Container(
@@ -413,7 +422,7 @@ class _HomeTabState extends State<HomeTab> {
                       color: isFree ? AppColors.success.withOpacity(0.15) : AppColors.gold.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(isFree ? 'FREE' : '\u20b9${price.toInt()}',
+                    child: Text(isFree ? 'FREE' : Money.format(sessAmount, currency: sessCurrency),
                         style: TextStyle(color: isFree ? AppColors.success : AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700)),
                   ),
                 ]),

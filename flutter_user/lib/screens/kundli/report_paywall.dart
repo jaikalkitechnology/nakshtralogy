@@ -211,9 +211,25 @@ class _ReportPaywallCardState extends State<ReportPaywallCard> {
       setState(() => _purchasing = false);
       if (res.error != 'canceled') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(res.error ?? l.pwUnlockFailed), backgroundColor: AppColors.error));
+          content: Text(_iapErrorMessage(res.error, l)), backgroundColor: AppColors.error));
       }
     }
+  }
+
+  /// Turn an [IapService] error code into a user-facing message. The internal
+  /// codes (store not available on this device — e.g. web —, product tier not
+  /// yet published in the store, no purchase context, generic purchase error)
+  /// are opaque to users, so they collapse to the localized generic failure.
+  /// Anything else is a human-readable message the backend already returned.
+  String _iapErrorMessage(String? error, AppLocalizations l) {
+    const opaque = {
+      'store_unavailable', 'product_not_found', 'no_context',
+      'purchase_error', 'verify_failed', 'canceled',
+    };
+    if (error == null || error.isEmpty || opaque.contains(error)) {
+      return l.pwUnlockFailed;
+    }
+    return error;
   }
 
   Future<void> _unlock() async {

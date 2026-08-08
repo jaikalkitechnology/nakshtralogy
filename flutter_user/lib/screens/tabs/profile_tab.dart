@@ -30,6 +30,8 @@ import '../notifications/notification_screen.dart';
 import '../tabs/wallet_tab.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
 import '../../widgets/language_selector.dart';
+import '../../services/app_mode.dart';
+import '../../utils/money.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -414,7 +416,13 @@ class _ProfileTabState extends State<ProfileTab> {
                   final chartsCount = chartState is ChartLoaded ? chartState.charts.length : 0;
                   return BlocBuilder<WalletBloc, WalletState>(
                     builder: (context, walletState) {
-                      final balance = (walletState.wallet?['balance'] as num?)?.toDouble() ?? 0.0;
+                      // International sessions show the balance in USD (backend
+                      // display conversion); India shows ₹. Read the display
+                      // fields — never hardcode the symbol.
+                      final rawBalance = (walletState.wallet?['balance'] as num?)?.toDouble() ?? 0.0;
+                      final displayCurrency = (walletState.wallet?['display_currency'] as String?) ??
+                          (AppMode.instance.isInternational ? 'USD' : 'INR');
+                      final balance = (walletState.wallet?['display_balance'] as num?)?.toDouble() ?? rawBalance;
                       return Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16),
                         padding: const EdgeInsets.all(16),
@@ -449,7 +457,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               ),
                               Expanded(
                                 child: _profileStat(
-                                  '\u20b9${balance.toStringAsFixed(0)}',
+                                  Money.format(balance, currency: displayCurrency),
                                   'WALLET',
                                 ),
                               ),
