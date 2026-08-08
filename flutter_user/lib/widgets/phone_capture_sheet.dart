@@ -55,6 +55,7 @@ class _PhoneCaptureBodyState extends State<_PhoneCaptureBody> {
       final res = await ApiService().updateMe({
         'phone': fullPhone,
         'country_code': _country.iso,
+        'phone_country_code': '+${_country.dial}',
       });
       if (!mounted) return;
       if (res['statusCode'] == 200) {

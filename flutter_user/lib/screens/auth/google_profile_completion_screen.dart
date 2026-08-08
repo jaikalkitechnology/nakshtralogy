@@ -100,6 +100,7 @@ class _GoogleProfileCompletionScreenState
       final res = await ApiService().updateMe({
         'phone': fullPhone,
         'country_code': _country.iso,
+        'phone_country_code': '+${_country.dial}',
         'preferred_language': _langCode,
       });
       if (res['statusCode'] == 200 && res['user'] is Map) {

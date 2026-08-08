@@ -59,6 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
         phone: fullPhone,
         password: _passCtrl.text,
         countryCode: _country.iso,
+        phoneCountryCode: '+${_country.dial}',
         fcmToken: fcmToken,
       );
       if (!mounted) return;
