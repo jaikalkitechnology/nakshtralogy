@@ -66,6 +66,7 @@ class ApiService {
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept-Language': _langCode,
+    'X-App-Client': 'user',
     if (_deviceCountry != null) 'X-Device-Country': _deviceCountry!,
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };

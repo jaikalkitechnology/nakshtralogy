@@ -58,6 +58,7 @@ class ApiService {
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept-Language': _langCode,
+    'X-App-Client': 'astro',
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
