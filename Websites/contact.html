@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Contact Us | Nakshatralogy by Jaikalki Technology Pvt Ltd</title>
-<meta name="description" content="Contact Nakshatralogy (Jaikalki Technology Private Limited) for user support, astrologer registration, developer API, business, or media. Email support@jaikalkitechnology.com or call +91 91369 14963."/>
+<meta name="description" content="Contact Nakshatralogy (Jaikalki Technology Private Limited) for user support, astrologer registration, developer API, business, or media. Email support@jaikalki.com or call +91 91369 14963."/>
 <meta name="keywords" content="nakshatralogy contact, jaikalki technology contact, astrologer registration, developer api support, vedic astrology app support, thane mira road"/>
 <meta name="robots" content="index, follow"/>
 <meta name="author" content="Jaikalki Technology Private Limited"/>
@@ -50,13 +50,13 @@
       "@type": "ContactPoint",
       "telephone": "+91-91369-14963",
       "contactType": "customer support",
-      "email": "support@jaikalkitechnology.com",
+      "email": "support@jaikalki.com",
       "availableLanguage": ["English", "Hindi", "Marathi"],
       "areaServed": "IN"
     },{
       "@type": "ContactPoint",
       "contactType": "technical support",
-      "email": "support@jaikalkitechnology.com",
+      "email": "support@jaikalki.com",
       "areaServed": "IN"
     }],
     "sameAs": [
@@ -572,7 +572,7 @@
         <div class="channel-tag">USER SUPPORT</div>
         <h3 class="channel-title">App help &amp; <em>questions</em></h3>
         <p class="channel-desc">Issues with Kundli, consultations, payments, or refunds.</p>
-        <a href="mailto:support@jaikalkitechnology.com?subject=User%20Support" class="channel-link">support@jaikalkitechnology.com</a>
+        <a href="mailto:support@jaikalki.com?subject=User%20Support" class="channel-link">support@jaikalki.com</a>
       </div>
 
       <div class="channel-card astro">
@@ -582,7 +582,7 @@
         <div class="channel-tag">ASTROLOGER ONBOARDING</div>
         <h3 class="channel-title">Join as <em>astrologer</em></h3>
         <p class="channel-desc">Verified Vedic practitioners — register and start earning.</p>
-        <a href="mailto:support@jaikalkitechnology.com?subject=Astrologer%20Registration" class="channel-link">support@jaikalkitechnology.com</a>
+        <a href="mailto:support@jaikalki.com?subject=Astrologer%20Registration" class="channel-link">support@jaikalki.com</a>
       </div>
 
       <div class="channel-card biz">
@@ -602,7 +602,7 @@
         <div class="channel-tag">DEVELOPER API</div>
         <h3 class="channel-title">Build with the <em>API</em></h3>
         <p class="channel-desc">API keys, plans, docs &amp; integration help at developer.nakshatralogy.com.</p>
-        <a href="mailto:support@jaikalkitechnology.com?subject=Developer%20API" class="channel-link">support@jaikalkitechnology.com</a>
+        <a href="mailto:support@jaikalki.com?subject=Developer%20API" class="channel-link">support@jaikalki.com</a>
       </div>
 
       <div class="channel-card media">
@@ -626,7 +626,11 @@
       <h2 class="form-title">Tell us <em>everything</em></h2>
       <p class="form-sub">Fill out the form below and we'll respond within 24 hours, Monday through Saturday.</p>
 
-      <form action="mailto:support@jaikalkitechnology.com" method="post" enctype="text/plain">
+      <form id="contactForm" novalidate>
+        <!-- Honeypot: hidden from humans; bots that fill it are silently dropped -->
+        <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+          <label>Company<input type="text" name="company" id="company" tabindex="-1" autocomplete="off"></label>
+        </div>
         <div class="form-row two-col">
           <div>
             <label class="form-label" for="name">FULL NAME *</label>
@@ -663,8 +667,98 @@
           <textarea class="form-textarea" id="message" name="message" placeholder="Share as much detail as you can — your phone number, booking ID, or any context that helps us assist you better." required></textarea>
         </div>
 
-        <button type="submit" class="form-submit">Send Message ✦</button>
+        <div class="form-row">
+          <label class="form-label" for="captchaAnswer">SECURITY CHECK * &nbsp;<span style="color:var(--smoke);font-weight:400;text-transform:none">— solve to prove you're human</span></label>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div id="captchaQuestion" style="font-family:var(--font-mono);font-size:18px;color:var(--gold);background:rgba(255,255,255,0.04);border:1px solid var(--line,rgba(232,181,71,0.14));border-radius:10px;padding:10px 16px;min-width:90px;text-align:center">…</div>
+            <span style="color:var(--smoke);font-size:18px">=</span>
+            <input class="form-input" style="max-width:120px" type="text" inputmode="numeric" id="captchaAnswer" name="captchaAnswer" placeholder="?" autocomplete="off" required>
+            <button type="button" id="captchaRefresh" title="New question" style="background:none;border:1px solid var(--line,rgba(232,181,71,0.14));color:var(--smoke);border-radius:10px;padding:9px 11px;cursor:pointer">↻</button>
+          </div>
+        </div>
+
+        <div id="formStatus" role="status" aria-live="polite" style="display:none;margin:6px 0 14px;padding:12px 14px;border-radius:10px;font-size:14px"></div>
+
+        <button type="submit" class="form-submit" id="formSubmit">Send Message ✦</button>
       </form>
+
+      <script>
+      (function () {
+        var API = 'https://api.nakshatralogy.com/api/v1/contact';
+        var form = document.getElementById('contactForm');
+        if (!form) return;
+        var qEl = document.getElementById('captchaQuestion');
+        var ansEl = document.getElementById('captchaAnswer');
+        var refreshBtn = document.getElementById('captchaRefresh');
+        var statusEl = document.getElementById('formStatus');
+        var submitBtn = document.getElementById('formSubmit');
+        var captchaToken = '';
+
+        function showStatus(msg, ok) {
+          statusEl.style.display = 'block';
+          statusEl.textContent = msg;
+          statusEl.style.background = ok ? 'rgba(107,184,138,0.12)' : 'rgba(217,85,85,0.12)';
+          statusEl.style.border = '1px solid ' + (ok ? 'rgba(107,184,138,0.4)' : 'rgba(217,85,85,0.4)');
+          statusEl.style.color = ok ? '#8fd6ac' : '#ea9a9a';
+        }
+
+        function loadCaptcha() {
+          qEl.textContent = '…';
+          fetch(API + '/captcha', { headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (j) {
+              var d = (j && j.data) || {};
+              captchaToken = d.token || '';
+              qEl.textContent = d.question || '—';
+            })
+            .catch(function () { qEl.textContent = '?'; });
+        }
+        refreshBtn.addEventListener('click', loadCaptcha);
+        loadCaptcha();
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (!form.checkValidity()) { form.reportValidity(); return; }
+          submitBtn.disabled = true;
+          var prev = submitBtn.textContent;
+          submitBtn.textContent = 'Sending…';
+          var payload = {
+            name: (form.name && form.name.value || '').trim(),
+            email: (form.email && form.email.value || '').trim(),
+            phone: (form.phone && form.phone.value || '').trim(),
+            subject: (form.subject && form.subject.value || '').trim(),
+            message: (form.message && form.message.value || '').trim(),
+            company: (document.getElementById('company') || {}).value || '',
+            captcha_token: captchaToken,
+            captcha_answer: (ansEl.value || '').trim(),
+            lang: (document.documentElement.lang || 'en')
+          };
+          fetch(API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(function (r) {
+            return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+          }).then(function (res) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = prev;
+            if (res.ok) {
+              showStatus((res.j && res.j.message) || "Thanks — we'll get back to you soon.", true);
+              form.reset();
+              loadCaptcha();
+            } else {
+              showStatus((res.j && res.j.detail) || 'Could not send your message. Please try again.', false);
+              loadCaptcha();
+              ansEl.value = '';
+            }
+          }).catch(function () {
+            submitBtn.disabled = false;
+            submitBtn.textContent = prev;
+            showStatus('Network error — please check your connection and try again.', false);
+          });
+        });
+      })();
+      </script>
     </div>
 
     <!-- RIGHT: INFO -->
@@ -708,7 +802,7 @@
           </div>
           <div class="info-row-content">
             <div class="info-row-label">EMAIL</div>
-            <div class="info-row-value"><a href="mailto:support@jaikalkitechnology.com">support@jaikalkitechnology.com</a></div>
+            <div class="info-row-value"><a href="mailto:support@jaikalki.com">support@jaikalki.com</a></div>
           </div>
         </div>
 

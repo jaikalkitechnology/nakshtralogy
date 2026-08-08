@@ -1499,3 +1499,45 @@ class SchemaSyncLog(Base):
     notes = Column(JSON, default=[])                # ["..."]
     triggered_by = Column(String(36), nullable=True)  # admin user id (if manual)
     created_at = Column(DateTime, server_default=func.now(), nullable=False, index=True)
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  CONTACT / QUERY MANAGEMENT (public website "Contact Us" form)
+# ─────────────────────────────────────────────────────────────────────
+
+class ContactMessage(Base):
+    """A query submitted from the marketing website's Contact Us form.
+
+    Public write (spam-guarded by a server-verified math captcha + honeypot);
+    admin-only read/manage + email reply in the panel. Operational only — no
+    astrology logic."""
+    __tablename__ = "contact_messages"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    name = Column(String(150), nullable=False)
+    email = Column(String(200), nullable=False, index=True)
+    phone = Column(String(40), nullable=True)
+    subject = Column(String(120), nullable=True)
+    message = Column(Text, nullable=False)
+    source = Column(String(40), default="website")           # website | app | other
+    status = Column(String(20), default="new", index=True)   # new | read | replied | resolved | spam
+    lang = Column(String(20), nullable=True)
+    ip = Column(String(64), nullable=True)
+    user_agent = Column(String(400), nullable=True)
+    admin_note = Column(Text, nullable=True)
+    handled_by = Column(String(36), nullable=True)           # admin user id
+    last_reply_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False, index=True)
+    resolved_at = Column(DateTime, nullable=True)
+
+
+class ContactReply(Base):
+    """An admin reply to a contact query (also emailed to the submitter)."""
+    __tablename__ = "contact_replies"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    message_id = Column(String(36), ForeignKey("contact_messages.id", ondelete="CASCADE"), index=True, nullable=False)
+    admin_id = Column(String(36), nullable=True)
+    body = Column(Text, nullable=False)
+    emailed = Column(Boolean, default=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
