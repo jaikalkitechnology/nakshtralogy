@@ -566,6 +566,25 @@ class ApiService {
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};
   }
 
+  // ── Payout KYC (PAN / GST + bank details for withdrawals) ───
+
+  Future<Map<String, dynamic>> getPayoutKyc() async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/payout-kyc'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> savePayoutKyc(Map<String, dynamic> fields) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/me/payout-kyc'),
+      headers: _headers,
+      body: jsonEncode(fields),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> uploadProfileImage(Uint8List bytes, String fileName) async {
     final request = http.MultipartRequest('POST', Uri.parse('${ApiConstants.commBase}/chat/upload'));
     request.headers.addAll(_headers);

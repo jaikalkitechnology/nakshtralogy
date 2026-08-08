@@ -535,6 +535,18 @@ def astrologer_detail_admin(
             "is_busy": p.is_busy,
         },
         "wallet_balance": float(wallet.balance) if wallet else 0.0,
+        # Payout & tax KYC (PAN/GST + bank details for withdrawals + TDS).
+        "payout_kyc": {
+            "pan_number": p.pan_number,
+            "pan_name": p.pan_name,
+            "pan_doc_url": p.pan_doc_url,
+            "gst_number": p.gst_number,
+            "bank_account_name": p.bank_account_name,
+            "bank_account_number": p.bank_account_number,
+            "bank_ifsc": p.bank_ifsc,
+            "bank_proof_url": p.bank_proof_url,
+            "payout_ready": bool(p.pan_number and p.bank_account_number and p.bank_proof_url),
+        },
         "kyc_documents": [
             {
                 "id": k.id,

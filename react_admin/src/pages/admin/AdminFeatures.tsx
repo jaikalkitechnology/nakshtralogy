@@ -548,6 +548,7 @@ const AdminFeatures = () => {
           ...a,
           personal: data.personal,
           professional: data.professional,
+          payout_kyc: data.payout_kyc || null,
           kyc_documents: data.kyc_documents || [],
         });
       }
@@ -2202,6 +2203,32 @@ const AdminFeatures = () => {
                       <TokenRow label="Native (Android/iOS)" value={astroDetail.personal?.fcm_token} />
                       <TokenRow label="Web" value={astroDetail.personal?.fcm_token_web} />
                     </div>
+
+                    {/* Payout & tax KYC — PAN/GST + bank details for withdrawals (10% TDS vs PAN) */}
+                    {astroDetail.payout_kyc && (
+                      <div>
+                        <p className="text-muted-foreground text-xs mb-2 flex items-center gap-1">
+                          <FileText className="w-3.5 h-3.5" /> Payout & Tax Details
+                          {astroDetail.payout_kyc.payout_ready
+                            ? <Badge className="bg-green-500/20 text-green-400">payout ready</Badge>
+                            : <Badge className="bg-yellow-500/20 text-yellow-400">incomplete</Badge>}
+                        </p>
+                        <div className="rounded-xl border border-border p-3 bg-muted/20 space-y-1.5 text-xs">
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                            <div><span className="text-muted-foreground">PAN:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.pan_number || "—"}</span></div>
+                            <div><span className="text-muted-foreground">Name (PAN):</span> <span className="text-foreground">{astroDetail.payout_kyc.pan_name || "—"}</span></div>
+                            <div><span className="text-muted-foreground">GST:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.gst_number || "—"}</span></div>
+                            <div><span className="text-muted-foreground">A/C name:</span> <span className="text-foreground">{astroDetail.payout_kyc.bank_account_name || "—"}</span></div>
+                            <div><span className="text-muted-foreground">A/C no.:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.bank_account_number || "—"}</span></div>
+                            <div><span className="text-muted-foreground">IFSC:</span> <span className="font-mono text-foreground">{astroDetail.payout_kyc.bank_ifsc || "—"}</span></div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 pt-1">
+                            <KycFileView label="PAN card" path={astroDetail.payout_kyc.pan_doc_url} />
+                            <KycFileView label="Bank proof" path={astroDetail.payout_kyc.bank_proof_url} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* KYC documents — image / PDF viewers (admin-authorized) */}
                     <div>

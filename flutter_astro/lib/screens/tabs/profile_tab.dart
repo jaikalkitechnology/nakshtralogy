@@ -19,6 +19,7 @@ import '../../services/api_service.dart';
 import '../notifications/notification_screen.dart';
 import '../notifications/notification_hub_screen.dart';
 import '../coupons/my_coupons_screen.dart';
+import '../kyc/payout_kyc_screen.dart';
 import '../../utils/astro_labels.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -348,6 +349,30 @@ class _ProfileTabState extends State<ProfileTab> {
               ]),
             ),
             const SizedBox(height: 20),
+
+            // ── Payout & tax details (PAN/GST + bank for withdrawals) ──
+            InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PayoutKycScreen())),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+                ),
+                child: Row(children: [
+                  const Icon(Icons.account_balance_outlined, color: AppColors.gold, size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(AstroLabels.of(context, 'payoutManage'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text(AstroLabels.of(context, 'payoutManageSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  ])),
+                  const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+                ]),
+              ),
+            ),
 
             // ── My Offers (coupons) ──
             InkWell(

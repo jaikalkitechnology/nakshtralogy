@@ -18,6 +18,7 @@ GET  /{astrologer_id}   — public: single astrologer detail
 """
 
 import os
+import re
 import uuid as _uuid
 from datetime import datetime, timedelta
 from typing import List, Optional
@@ -938,6 +939,113 @@ def download_kyc_file(
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail=t("err.file_not_found", lang))
     return FileResponse(file_path, filename=filename)
+
+
+# ── Payout KYC (PAN / GST + bank details for withdrawals) ─────────────
+#  Separate from identity KYC above: this captures the tax/bank details the
+#  astrologer needs BEFORE they can withdraw (10% TDS is charged against the
+#  PAN; net is paid to the bank account). Ask ONLY a PAN number OR a GST
+#  number, the name as per PAN, the PAN doc, and bank details + a proof
+#  (cancelled cheque / passbook / statement screenshot). Never astrology logic.
+
+_PAN_RE = re.compile(r"^[A-Z]{5}[0-9]{4}[A-Z]$")
+_GST_RE = re.compile(r"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]{3}$")
+
+
+class PayoutKycRequest(_BaseModel):
+    pan_number: Optional[str] = _Field(None, max_length=10)
+    pan_name: Optional[str] = _Field(None, max_length=150)
+    pan_doc_url: Optional[str] = _Field(None, max_length=255)
+    gst_number: Optional[str] = _Field(None, max_length=20)
+    bank_account_name: Optional[str] = _Field(None, max_length=150)
+    bank_account_number: Optional[str] = _Field(None, max_length=50)
+    bank_ifsc: Optional[str] = _Field(None, max_length=20)
+    bank_proof_url: Optional[str] = _Field(None, max_length=255)
+
+
+def _payout_kyc_view(profile: AstrologerProfile) -> dict:
+    return {
+        "pan_number": profile.pan_number,
+        "pan_name": profile.pan_name,
+        "pan_doc_url": profile.pan_doc_url,
+        "gst_number": profile.gst_number,
+        "bank_account_name": profile.bank_account_name,
+        "bank_account_number": profile.bank_account_number,
+        "bank_ifsc": profile.bank_ifsc,
+        "bank_proof_url": profile.bank_proof_url,
+        # payout is ready once a PAN (for TDS) + a bank account + a proof exist.
+        "payout_ready": bool(
+            profile.pan_number and profile.bank_account_number and profile.bank_proof_url
+        ),
+    }
+
+
+@router.get("/me/payout-kyc")
+def get_my_payout_kyc(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Return the astrologer's payout KYC (PAN/GST + bank details)."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
+    profile = db.query(AstrologerProfile).filter(
+        AstrologerProfile.user_id == current_user.id
+    ).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail=t("err.astrologer_profile_not_found", lang))
+    return _payout_kyc_view(profile)
+
+
+@router.post("/me/payout-kyc")
+def save_my_payout_kyc(
+    req: PayoutKycRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Save the astrologer's payout KYC — ask ONLY PAN or GST (at least one),
+    the name as per PAN, the PAN doc, and bank details + a proof. Validated
+    format for PAN/GST. Only writes provided (non-null) fields."""
+    if current_user.role != "astrologer":
+        raise HTTPException(status_code=403, detail=t("err.not_astrologer_account", lang))
+    profile = db.query(AstrologerProfile).filter(
+        AstrologerProfile.user_id == current_user.id
+    ).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail=t("err.astrologer_profile_not_found", lang))
+
+    data = req.model_dump(exclude_unset=True)
+
+    pan = (data.get("pan_number") or "").strip().upper() or None
+    gst = (data.get("gst_number") or "").strip().upper() or None
+    # Must supply at least one of PAN / GST (either on this request or already
+    # on file). PAN is what TDS is charged against, so it's strongly preferred.
+    if "pan_number" in data or "gst_number" in data:
+        eff_pan = pan if "pan_number" in data else profile.pan_number
+        eff_gst = gst if "gst_number" in data else profile.gst_number
+        if not eff_pan and not eff_gst:
+            raise HTTPException(status_code=400, detail=t("err.pan_or_gst_required", lang))
+    if pan and not _PAN_RE.match(pan):
+        raise HTTPException(status_code=400, detail=t("err.invalid_pan", lang))
+    if gst and not _GST_RE.match(gst):
+        raise HTTPException(status_code=400, detail=t("err.invalid_gst", lang))
+
+    if "pan_number" in data:
+        profile.pan_number = pan
+    if "gst_number" in data:
+        profile.gst_number = gst
+    for f in ("pan_name", "pan_doc_url", "bank_account_name",
+              "bank_account_number", "bank_ifsc", "bank_proof_url"):
+        if f in data:
+            v = data.get(f)
+            setattr(profile, f, (v.strip() if isinstance(v, str) else v) or None)
+
+    db.commit()
+    db.refresh(profile)
+    out = _payout_kyc_view(profile)
+    out["message"] = t("msg.payout_kyc_saved", lang)
+    return out
 
 
 @router.get("/me/stats")
