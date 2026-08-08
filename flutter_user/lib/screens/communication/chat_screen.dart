@@ -198,6 +198,24 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _msgCtrl.clear();
   }
 
+  Future<void> _reportMessage(int index) async {
+    if (index < 0 || index >= _messages.length) return;
+    final id = _messages[index]['id']?.toString();
+    if (id == null || id.isEmpty) return;
+    setState(() => _messages[index]['reported'] = true); // optimistic
+    try {
+      await _api.reportChatMessage(id);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Reported. Never pay an astrologer outside the app."),
+          backgroundColor: AppColors.nebula,
+        ));
+      }
+    } catch (_) {
+      if (mounted) setState(() => _messages[index]['reported'] = false);
+    }
+  }
+
   void _sendFileMessage(String mediaUrl, String fileName, int fileSize, String fileType) {
     _channel?.sink.add(jsonEncode({
       'type': 'message',
@@ -430,6 +448,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 message: _messages[i],
                 isMe: _messages[i]['sender_id'] == _myUserId,
                 baseUrl: ApiConstants.baseUrl,
+                onReport: () => _reportMessage(i),
               ),
             ),
           ),
@@ -524,7 +543,8 @@ class _MessageBubble extends StatelessWidget {
   final Map<String, dynamic> message;
   final bool isMe;
   final String baseUrl;
-  const _MessageBubble({required this.message, required this.isMe, required this.baseUrl});
+  final VoidCallback? onReport;
+  const _MessageBubble({required this.message, required this.isMe, required this.baseUrl, this.onReport});
 
   @override
   Widget build(BuildContext context) {
@@ -630,6 +650,47 @@ class _MessageBubble extends StatelessWidget {
               ]),
             ),
           ),
+
+          // Chat-guard: safety warning under a flagged astrologer message.
+          if (!isMe && message['flagged'] == true)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                margin: const EdgeInsets.only(top: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.10),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.error.withOpacity(0.4)),
+                ),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Row(children: [
+                    Icon(Icons.shield_outlined, color: AppColors.error, size: 15),
+                    SizedBox(width: 6),
+                    Expanded(child: Text(
+                      'This looks like a request to pay or talk outside the app. Never pay an astrologer directly — pay only inside Nakshatralogy.',
+                      style: TextStyle(color: AppColors.error, fontSize: 11.5, height: 1.35),
+                    )),
+                  ]),
+                  if (onReport != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: message['reported'] == true ? null : onReport,
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          minimumSize: const Size(0, 28),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        icon: Icon(message['reported'] == true ? Icons.check : Icons.flag_outlined, size: 14, color: AppColors.error),
+                        label: Text(message['reported'] == true ? 'Reported' : 'Report',
+                            style: const TextStyle(color: AppColors.error, fontSize: 11.5, fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                ]),
+              ),
+            ),
         ],
       ),
     );
