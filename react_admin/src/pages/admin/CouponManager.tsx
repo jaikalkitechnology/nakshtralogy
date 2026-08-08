@@ -6,6 +6,7 @@ import { Ticket, RefreshCw, Plus, X, Check, Ban, Trash2 } from "lucide-react";
 import {
   adminCoupons, adminCouponCreate, adminCouponUpdate,
   adminCouponModerate, adminCouponDelete, adminCouponRedemptions,
+  downloadCouponRedemptionsCsv,
 } from "@/services/api";
 import { toast } from "sonner";
 
@@ -197,8 +198,8 @@ export default function CouponManager() {
       ) : (
         <div className="rounded-xl border border-border bg-card/60 overflow-hidden">
           <div className="flex items-center justify-between p-3 text-sm">
-            <span className="text-muted-foreground">{redTotal} redemptions</span>
-            <span className="text-primary font-semibold">₹{redDiscount.toFixed(2)} total discount applied</span>
+            <span className="text-muted-foreground">{redTotal} redemptions · <span className="text-primary font-semibold">₹{redDiscount.toFixed(2)} total discount</span></span>
+            <Button size="sm" variant="outline" onClick={async () => { const ok = await downloadCouponRedemptionsCsv(); if (!ok) toast.error("Export failed"); }}>Export CSV</Button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

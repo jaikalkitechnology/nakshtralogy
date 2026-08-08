@@ -10,11 +10,14 @@ consultation finalization) via app.services.coupon_service — these endpoints
 only manage/validate coupons. Ledger/billing plumbing only; no astrology logic.
 """
 
+import csv
+import io
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -292,6 +295,30 @@ def admin_redemptions(
     agg = db.query(func.coalesce(func.sum(CouponRedemption.discount_amount), 0)).filter(
         CouponRedemption.status == "applied").scalar() or 0
     return {"items": items, "total": total, "total_discount_applied": float(agg)}
+
+
+@router.get("/admin/redemptions.csv", response_class=PlainTextResponse)
+def admin_redemptions_csv(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Full redemptions ledger as CSV (all rows)."""
+    rows = db.query(CouponRedemption).order_by(CouponRedemption.created_at.desc()).all()
+    code_by_id = {c.id: c.code for c in db.query(Coupon.id, Coupon.code).all()}
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["created_at", "coupon_code", "user_id", "astrologer_id", "context_type",
+                "context_id", "base_amount", "discount_amount", "currency", "funded_by", "status"])
+    for r in rows:
+        w.writerow([
+            r.created_at.isoformat() if r.created_at else "",
+            code_by_id.get(r.coupon_id) or r.coupon_id,
+            r.user_id, r.astrologer_id or "", r.context_type, r.context_id or "",
+            float(r.base_amount or 0), float(r.discount_amount or 0),
+            r.currency, r.funded_by, r.status,
+        ])
+    return PlainTextResponse(buf.getvalue(), headers={
+        "Content-Disposition": 'attachment; filename="coupon_redemptions.csv"'})
 
 
 # ══════════════════════════════════════════════════════════════════════

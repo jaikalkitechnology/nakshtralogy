@@ -484,6 +484,23 @@ export async function adminCouponRedemptions(params: Record<string, any> = {}) {
   ).toString();
   return request(`/coupons/admin/redemptions${q ? `?${q}` : ""}`);
 }
+export async function downloadCouponRedemptionsCsv(): Promise<boolean> {
+  const token = getToken();
+  const resp = await fetch(`${BASE}/coupons/admin/redemptions.csv`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!resp.ok) return false;
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "coupon_redemptions.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  return true;
+}
 
 // ── KYC ──────────────────────────────────────────────────────────
 
