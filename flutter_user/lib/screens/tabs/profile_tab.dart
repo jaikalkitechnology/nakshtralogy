@@ -32,6 +32,7 @@ import '../../widgets/astrologer_profile_sheet.dart';
 import '../../widgets/language_selector.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
+import '../../utils/menu_labels.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -648,9 +649,9 @@ class _ProfileTabState extends State<ProfileTab> {
                       child: Row(children: [
                         const Icon(Icons.lock_outline, color: AppColors.gold, size: 22),
                         const SizedBox(width: 12),
-                        const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text('Change Password', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                          Text('Update your password via email OTP', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(MenuLabels.of(context, 'changePassword'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                          Text(MenuLabels.of(context, 'changePasswordSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                         ])),
                         const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                       ]),
@@ -677,9 +678,9 @@ class _ProfileTabState extends State<ProfileTab> {
                     child: Row(children: [
                       const Icon(Icons.support_agent, color: AppColors.gold, size: 22),
                       const SizedBox(width: 12),
-                      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text('Customer Support', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('FAQ & raise a ticket', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(MenuLabels.of(context, 'customerSupport'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                        Text(MenuLabels.of(context, 'customerSupportSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                       ])),
                       const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                     ]),
