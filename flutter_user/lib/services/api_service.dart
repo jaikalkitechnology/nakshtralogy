@@ -748,6 +748,16 @@ class ApiService {
     return [];
   }
 
+  /// Report a chat message (e.g. an astrologer asking for off-platform payment).
+  Future<Map<String, dynamic>> reportChatMessage(String messageId, {String? reason}) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.commBase}/chat/message/$messageId/report'),
+      headers: _headers,
+      body: jsonEncode({if (reason != null) 'reason': reason}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   Future<Map<String, dynamic>> joinLiveStream(String streamId) async {
     final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/join'), headers: _headers);
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};

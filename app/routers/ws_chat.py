@@ -305,6 +305,19 @@ async def websocket_chat(
                     file_name=file_name,
                     file_size=file_size,
                 )
+                # Chat-guard: flag off-platform payment/solicitation in ASTROLOGER
+                # text messages so the user is warned and moderation can review.
+                guard_reasons = []
+                if is_astrologer and message_type == "text":
+                    try:
+                        from app.core.chat_guard import scan
+                        g = scan(content)
+                        if g["flagged"]:
+                            msg.flagged = True
+                            msg.flag_reasons = g["reasons"]
+                            guard_reasons = g["reasons"]
+                    except Exception:
+                        pass
                 db.add(msg)
                 db.commit()
                 db.refresh(msg)
@@ -322,6 +335,8 @@ async def websocket_chat(
                     "file_name": file_name,
                     "file_size": file_size,
                     "timestamp": msg.created_at.isoformat(),
+                    "flagged": bool(guard_reasons),
+                    "flag_reasons": guard_reasons,
                     "user_message_count": session.user_message_count or 0,
                     "remaining_messages": max(0, (session.session_message_limit or 45) - (session.user_message_count or 0)),
                 })

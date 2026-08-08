@@ -243,6 +243,9 @@ class ChatMessageResponse(BaseModel):
     file_name: Optional[str] = None
     file_size: Optional[int] = None
     created_at: Optional[datetime] = None
+    flagged: bool = False
+    flag_reasons: Optional[List[str]] = None
+    reported: bool = False
 
 
 # ─── Session Reviews (chat / voice / video) ──────────────────────────

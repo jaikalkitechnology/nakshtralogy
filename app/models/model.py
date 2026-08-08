@@ -942,6 +942,12 @@ class LiveChatMessage(Base):
     media_url = Column(Text, nullable=True)
     file_name = Column(String(255), nullable=True)       # original file name for downloads
     file_size = Column(Integer, nullable=True)            # file size in bytes
+    # Chat-guard: off-platform-solicitation detection (astrologer messages) +
+    # user reporting. Operational safety only — never astrology logic.
+    flagged = Column(Boolean, default=False, index=True)
+    flag_reasons = Column(JSON, default=[])              # ["upi","phone",...]
+    reported = Column(Boolean, default=False, index=True)
+    report_reason = Column(Text, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     session = relationship("ChatSession", back_populates="messages")

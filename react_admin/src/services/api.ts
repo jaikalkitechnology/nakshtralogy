@@ -387,6 +387,11 @@ export async function adminContactReply(id: string, body: string, resolve = fals
   return request(`/contact/admin/${id}/reply`, { method: "POST", body: JSON.stringify({ body, resolve }) });
 }
 
+// ── Chat-guard moderation (off-platform solicitation flags + user reports) ──
+export async function adminChatFlags(kind: "all" | "flagged" | "reported" = "all", skip = 0, limit = 50) {
+  return request(`/admin/logs/chat-flags?kind=${kind}&skip=${skip}&limit=${limit}`);
+}
+
 // ── Support tickets (helpdesk) ──────────────────────────────────
 
 export async function adminSupportTickets(params: Record<string, any> = {}) {

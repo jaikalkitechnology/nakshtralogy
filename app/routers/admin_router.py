@@ -2478,6 +2478,42 @@ def logs_chats(
     return {"total": total, "skip": skip, "limit": limit, "items": items}
 
 
+@router.get("/logs/chat-flags")
+def logs_chat_flags(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    kind: Optional[str] = Query(None, description="flagged | reported | all"),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Chat-guard moderation feed: astrologer messages auto-flagged for
+    off-platform payment/solicitation, plus user-reported messages."""
+    q = db.query(LiveChatMessage, ChatSession, AstrologerProfile).outerjoin(
+        ChatSession, LiveChatMessage.session_id == ChatSession.id
+    ).outerjoin(
+        AstrologerProfile, ChatSession.astrologer_id == AstrologerProfile.id
+    )
+    if kind == "reported":
+        q = q.filter(LiveChatMessage.reported == True)  # noqa: E712
+    elif kind == "flagged":
+        q = q.filter(LiveChatMessage.flagged == True)  # noqa: E712
+    else:
+        q = q.filter((LiveChatMessage.flagged == True) | (LiveChatMessage.reported == True))  # noqa: E712
+    total = q.count()
+    rows = q.order_by(LiveChatMessage.created_at.desc()).offset(skip).limit(limit).all()
+    items = [{
+        "id": m.id, "session_id": m.session_id,
+        "astrologer_id": (s.astrologer_id if s else None),
+        "astrologer_name": (p.display_name if p else None),
+        "user_id": (s.user_id if s else None),
+        "content": m.content,
+        "flagged": bool(m.flagged), "flag_reasons": m.flag_reasons or [],
+        "reported": bool(m.reported), "report_reason": m.report_reason,
+        "created_at": _dt(m.created_at),
+    } for m, s, p in rows]
+    return {"total": total, "skip": skip, "limit": limit, "items": items}
+
+
 @router.get("/logs/chats/{session_id}")
 def logs_chat_transcript(
     session_id: str,

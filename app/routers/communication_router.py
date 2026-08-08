@@ -44,6 +44,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
 from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -1534,8 +1535,42 @@ def get_chat_messages(
             message_type=m.message_type, content=m.content,
             media_url=m.media_url, file_name=m.file_name,
             file_size=m.file_size, created_at=m.created_at,
+            flagged=bool(getattr(m, "flagged", False)),
+            flag_reasons=getattr(m, "flag_reasons", None) or None,
+            reported=bool(getattr(m, "reported", False)),
         ) for m in msgs
     ]
+
+
+class ChatReportRequest(BaseModel):
+    reason: Optional[str] = Field(None, max_length=500)
+
+
+@router.post("/chat/message/{message_id}/report")
+def report_chat_message(
+    message_id: str,
+    req: ChatReportRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """User reports a chat message (e.g. an astrologer asking for off-platform
+    payment). Marks the message reported for moderation; the reporter must be a
+    participant in that session."""
+    m = db.query(LiveChatMessage).filter(LiveChatMessage.id == message_id).first()
+    if not m:
+        raise HTTPException(status_code=404, detail="Message not found")
+    session = db.query(ChatSession).filter(ChatSession.id == m.session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
+    astro_user_id = profile.user_id if profile else None
+    if current_user.id != session.user_id and current_user.id != astro_user_id:
+        raise HTTPException(status_code=403, detail=t("err.not_participant", lang))
+    m.reported = True
+    m.report_reason = (req.reason or "").strip()[:500] or "reported by user"
+    db.commit()
+    return {"status": "ok", "message": "Thanks — we'll review this. Never pay an astrologer outside the app."}
 
 
 @router.get("/chat/history", response_model=List[ChatSessionResponse])
@@ -1595,6 +1630,16 @@ def send_chat_message_rest(
         file_name=req.file_name,
         file_size=req.file_size,
     )
+    # Chat-guard: flag off-platform payment/solicitation in ASTROLOGER messages.
+    if not is_user and req.message_type == "text":
+        try:
+            from app.core.chat_guard import scan
+            g = scan(req.content)
+            if g["flagged"]:
+                msg.flagged = True
+                msg.flag_reasons = g["reasons"]
+        except Exception:
+            pass
     db.add(msg)
     db.commit()
     db.refresh(msg)
