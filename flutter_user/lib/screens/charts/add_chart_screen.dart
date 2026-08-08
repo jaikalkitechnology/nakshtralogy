@@ -7,6 +7,7 @@ import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
 import '../../bloc/chart/chart_state.dart';
 import '../../services/api_service.dart';
+import '../../widgets/recharge_sheet.dart';
 
 class AddChartScreen extends StatefulWidget {
   const AddChartScreen({super.key});
@@ -167,15 +168,10 @@ class _AddChartScreenState extends State<AddChartScreen> {
               SizedBox(width: double.infinity, child: ElevatedButton(
                 onPressed: (loading || busy) ? null : () async {
                   if (!enough) {
-                    final amt = await _rechargeDialog(ctx, st.price - balance);
-                    if (amt != null && amt > 0) {
-                      final r = await api.rechargeMyWallet(amount: amt);
-                      if (r['statusCode'] == 200 || r['statusCode'] == 201) {
-                        final nb = await api.getWalletBalance();
-                        if (ctx.mounted) setSheet(() => balance = nb);
-                      } else if (ctx.mounted) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(l.pwRechargeFailed), backgroundColor: AppColors.error));
-                      }
+                    final ok = await showRechargeSheet(ctx, suggested: (st.price - balance).clamp(0, double.infinity).toDouble());
+                    if (ok) {
+                      final nb = await api.getWalletBalance();
+                      if (ctx.mounted) setSheet(() => balance = nb);
                     }
                     return;
                   }

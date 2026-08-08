@@ -20,6 +20,7 @@ bearer_scheme = HTTPBearer(auto_error=False)
 def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
+    x_app_client: Optional[str] = Header(None),
 ) -> User:
     if credentials is None or not credentials.credentials:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
@@ -29,6 +30,13 @@ def get_current_user(
     user = db.query(User).filter(User.id == payload["sub"]).first()
     if not user or not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found or deactivated")
+    # Which app is calling ("user" | "astro"). Lets entitlements charge an
+    # astrologer like a normal user when they use the USER app, while keeping
+    # free client-service in the astrologer app. Request-scoped, not persisted.
+    try:
+        user._app_client = (x_app_client or "").strip().lower() or None
+    except Exception:
+        pass
     return user
 
 

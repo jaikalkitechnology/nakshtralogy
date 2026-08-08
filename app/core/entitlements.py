@@ -31,6 +31,26 @@ from app.core.i18n import t
 # Roles that bypass end-user pay-per-report gating entirely.
 _PRIVILEGED_ROLES = ("astrologer", "admin")
 
+
+def _is_privileged(user: Optional[User]) -> bool:
+    """Should this caller bypass pay-per-report gating?
+
+    admin  → always (support/ops).
+    astrologer → only in the astrologer app (serving a client). When an
+        astrologer signs into the USER app (``X-App-Client: user`` stamped as
+        ``user._app_client``) they are treated as an ordinary paying user for
+        all services on their own wallet — per product requirement
+        "if any astrologer login user app then treat as user for all services".
+    """
+    if user is None:
+        return False
+    role = getattr(user, "role", None)
+    if role == "admin":
+        return True
+    if role == "astrologer":
+        return getattr(user, "_app_client", None) != "user"
+    return False
+
 # Multi-chart / comparison services always involve a second chart, so they are
 # ALWAYS priced — the free-Primary rule never applies to them.
 _MULTI_CHART_KEYS = frozenset({
@@ -68,7 +88,7 @@ def is_entitled(
 
     entitled=True with pricing=None means "no priced row → fail-open allow".
     """
-    if user is not None and getattr(user, "role", None) in _PRIVILEGED_ROLES:
+    if _is_privileged(user):
         return True, None, None
 
     sp = get_pricing(db, service_key)

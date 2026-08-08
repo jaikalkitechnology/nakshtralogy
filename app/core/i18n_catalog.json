@@ -6251,5 +6251,61 @@
   },
   "err.iap_product_mismatch": {
     "english": "Purchase product does not match this service"
+  },
+  "err.invalid_pan": {
+    "english": "Please enter a valid PAN (e.g. ABCDE1234F).",
+    "hindi": "कृपया एक वैध PAN दर्ज करें (उदाहरण: ABCDE1234F)।",
+    "hinglish": "Kripya ek valid PAN darj karein (jaise ABCDE1234F).",
+    "bengali": "অনুগ্রহ করে একটি বৈধ PAN লিখুন (যেমন ABCDE1234F)।",
+    "tamil": "சரியான PAN ஐ உள்ளிடவும் (எ.கா. ABCDE1234F).",
+    "telugu": "దయచేసి సరైన PAN నమోదు చేయండి (ఉదా. ABCDE1234F).",
+    "kannada": "ದಯವಿಟ್ಟು ಮಾನ್ಯ PAN ನಮೂದಿಸಿ (ಉದಾ. ABCDE1234F).",
+    "malayalam": "ദയവായി സാധുവായ PAN നൽകുക (ഉദാ. ABCDE1234F).",
+    "gujarati": "કૃપા કરીને માન્ય PAN દાખલ કરો (દા.ત. ABCDE1234F).",
+    "marathi": "कृपया वैध PAN प्रविष्ट करा (उदा. ABCDE1234F).",
+    "punjabi": "ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ PAN ਦਰਜ ਕਰੋ (ਜਿਵੇਂ ABCDE1234F)।",
+    "odia": "ଦୟାକରି ଏକ ବୈଧ PAN ପ୍ରବେଶ କରନ୍ତୁ (ଯଥା ABCDE1234F)।"
+  },
+  "err.invalid_gst": {
+    "english": "Please enter a valid GST number.",
+    "hindi": "कृपया एक वैध GST नंबर दर्ज करें।",
+    "hinglish": "Kripya ek valid GST number darj karein.",
+    "bengali": "অনুগ্রহ করে একটি বৈধ GST নম্বর লিখুন।",
+    "tamil": "சரியான GST எண்ணை உள்ளிடவும்.",
+    "telugu": "దయచేసి సరైన GST నంబర్ నమోదు చేయండి.",
+    "kannada": "ದಯವಿಟ್ಟು ಮಾನ್ಯ GST ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+    "malayalam": "ദയവായി സാധുവായ GST നമ്പർ നൽകുക.",
+    "gujarati": "કૃપા કરીને માન્ય GST નંબર દાખલ કરો.",
+    "marathi": "कृपया वैध GST क्रमांक प्रविष्ट करा.",
+    "punjabi": "ਕਿਰਪਾ ਕਰਕੇ ਵੈਧ GST ਨੰਬਰ ਦਰਜ ਕਰੋ।",
+    "odia": "ଦୟାକରି ଏକ ବୈଧ GST ନମ୍ବର ପ୍ରବେଶ କରନ୍ତୁ।"
+  },
+  "err.pan_or_gst_required": {
+    "english": "Please provide a PAN number or a GST number.",
+    "hindi": "कृपया PAN नंबर या GST नंबर प्रदान करें।",
+    "hinglish": "Kripya PAN number ya GST number pradan karein.",
+    "bengali": "অনুগ্রহ করে একটি PAN নম্বর বা GST নম্বর প্রদান করুন।",
+    "tamil": "PAN எண் அல்லது GST எண்ணை வழங்கவும்.",
+    "telugu": "దయచేసి PAN నంబర్ లేదా GST నంబర్ అందించండి.",
+    "kannada": "ದಯವಿಟ್ಟು PAN ಸಂಖ್ಯೆ ಅಥವಾ GST ಸಂಖ್ಯೆಯನ್ನು ಒದಗಿಸಿ.",
+    "malayalam": "ദയവായി PAN നമ്പർ അല്ലെങ്കിൽ GST നമ്പർ നൽകുക.",
+    "gujarati": "કૃપા કરીને PAN નંબર અથવા GST નંબર આપો.",
+    "marathi": "कृपया PAN क्रमांक किंवा GST क्रमांक द्या.",
+    "punjabi": "ਕਿਰਪਾ ਕਰਕੇ PAN ਨੰਬਰ ਜਾਂ GST ਨੰਬਰ ਪ੍ਰਦਾਨ ਕਰੋ।",
+    "odia": "ଦୟାକରି PAN ନମ୍ବର କିମ୍ବା GST ନମ୍ବର ପ୍ରଦାନ କରନ୍ତୁ।"
+  },
+  "msg.payout_kyc_saved": {
+    "english": "Your payout details have been saved.",
+    "hindi": "आपका भुगतान विवरण सहेज लिया गया है।",
+    "hinglish": "Aapka payout detail save ho gaya hai.",
+    "bengali": "আপনার পেআউট বিবরণ সংরক্ষিত হয়েছে।",
+    "tamil": "உங்கள் பணம் செலுத்தும் விவரங்கள் சேமிக்கப்பட்டுள்ளன.",
+    "telugu": "మీ చెల్లింపు వివరాలు సేవ్ చేయబడ్డాయి.",
+    "kannada": "ನಿಮ್ಮ ಪಾವತಿ ವಿವರಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ.",
+    "malayalam": "നിങ്ങളുടെ പേഔട്ട് വിവരങ്ങൾ സംരക്ഷിച്ചു.",
+    "gujarati": "તમારી પેઆઉટ વિગતો સાચવવામાં આવી છે.",
+    "marathi": "तुमचे पेआउट तपशील जतन केले गेले आहेत.",
+    "punjabi": "ਤੁਹਾਡੇ ਭੁਗਤਾਨ ਵੇਰਵੇ ਸੁਰੱਖਿਅਤ ਕਰ ਦਿੱਤੇ ਗਏ ਹਨ।",
+    "odia": "ଆପଣଙ୍କର ପେଆଉଟ ବିବରଣୀ ସେଭ୍ ହୋଇଛି।"
   }
 }

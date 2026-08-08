@@ -502,6 +502,25 @@ export async function downloadCouponRedemptionsCsv(): Promise<boolean> {
   return true;
 }
 
+// ── Astrologer payouts (withdrawals + TDS) ───────────────────────
+export async function adminWithdrawals(params: Record<string, any> = {}) {
+  const q = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "" && v !== null) as [string, string][]
+  ).toString();
+  return request(`/admin/withdrawals${q ? `?${q}` : ""}`);
+}
+export async function adminWithdrawalAction(id: string, data: { action: string; bank_ref?: string; admin_note?: string }) {
+  return request(`/admin/withdrawals/${id}/action`, { method: "POST", body: JSON.stringify(data) });
+}
+
+// ── Payment gateways (PAPG) ──────────────────────────────────────
+export async function adminPaymentGateways() {
+  return request(`/payments/admin/gateways`);
+}
+export async function adminPaymentGatewayUpdate(gateway: string, data: any) {
+  return request(`/payments/admin/gateways/${gateway}`, { method: "PUT", body: JSON.stringify(data) });
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {

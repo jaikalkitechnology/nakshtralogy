@@ -66,6 +66,7 @@ class ApiService {
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept-Language': _langCode,
+    'X-App-Client': 'user',
     if (_deviceCountry != null) 'X-Device-Country': _deviceCountry!,
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
@@ -581,6 +582,35 @@ class ApiService {
     } catch (_) {
       return {'statusCode': 0, 'valid': false, 'reason': 'network'};
     }
+  }
+
+  // ═══ Payment gateways (PAPG) — wallet recharge ═══
+
+  /// Region-aware recharge gateways {region, currency, gateways:[{gateway,public_key,...}]}.
+  Future<Map<String, dynamic>?> getRechargeGateways() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/payments/gateways'));
+      if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    } catch (_) {}
+    return null;
+  }
+
+  /// Create a recharge order. Returns {order, checkout:{url,...}}.
+  Future<Map<String, dynamic>> createRechargeOrder(String gateway, num amount) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.baseUrl}/payments/recharge/order'),
+      body: jsonEncode({'gateway': gateway, 'amount': amount}),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  /// Poll a recharge order's status (created | paid | failed).
+  Future<String?> getRechargeOrderStatus(String orderId) async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/payments/recharge/order/$orderId'));
+      if (resp.statusCode == 200) return jsonDecode(resp.body)['status']?.toString();
+    } catch (_) {}
+    return null;
   }
 
   /// The user's invoices (product + consultation receipts).

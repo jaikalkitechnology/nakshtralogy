@@ -166,7 +166,7 @@ class AstrologerProfile(Base):
     rate_per_msg_chat = Column(Numeric(10, 2), default=0)
     # Super chat minimum rate (used during live streaming)
     super_chat_rate = Column(Numeric(10, 2), default=50)
-    commission_pct = Column(Numeric(5, 2), default=30.00)
+    commission_pct = Column(Numeric(5, 2), default=50.00)   # platform commission — 50% for new signups
     rating = Column(Numeric(3, 2), default=0.00)
     total_reviews = Column(Integer, default=0)
     total_consultations = Column(Integer, default=0)
@@ -178,6 +178,17 @@ class AstrologerProfile(Base):
     rejection_reason = Column(Text, nullable=True)         # admin's reason on reject
     rejected_sections = Column(JSON, default=[])           # ["kyc","personal","professional"]
     rejected_at = Column(DateTime, nullable=True)
+    # ── KYC + payout (simplified): PAN or GST, name as per PAN, and bank
+    # details with proof — used for withdrawals + 10% TDS. Additive/nullable
+    # (schema_sync auto-adds). NOT astrology logic. ──
+    pan_number = Column(String(10), nullable=True)
+    pan_name = Column(String(150), nullable=True)          # name as per PAN
+    pan_doc_url = Column(String(255), nullable=True)       # PAN card photo/pdf
+    gst_number = Column(String(20), nullable=True)
+    bank_account_name = Column(String(150), nullable=True)
+    bank_account_number = Column(String(50), nullable=True)
+    bank_ifsc = Column(String(20), nullable=True)
+    bank_proof_url = Column(String(255), nullable=True)    # cancelled cheque / passbook / statement
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -1062,6 +1073,11 @@ class WithdrawalRequest(Base):
     notes = Column(Text, nullable=True)           # astrologer's note
     admin_note = Column(Text, nullable=True)      # admin's reason
     bank_ref = Column(String(100), nullable=True) # txn ref after payout
+    # TDS: 10% deducted against the astrologer's PAN. gross = amount; net_amount
+    # is what's actually paid out; tds_pan snapshots the PAN at request time.
+    tds_amount = Column(Numeric(10, 2), default=0)
+    tds_pan = Column(String(10), nullable=True)
+    net_amount = Column(Numeric(10, 2), nullable=True)
     debit_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     refund_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     requested_at = Column(DateTime, server_default=func.now(), nullable=False)
@@ -1661,3 +1677,33 @@ class Invoice(Base):
     astrologer_name = Column(String(150), nullable=True)
     snapshot = Column(JSON, nullable=True)
     issued_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  12. Payment Gateway (PAPG) wallet recharge orders
+# ══════════════════════════════════════════════════════════════════════
+
+class WalletRechargeOrder(Base):
+    """A real-money wallet top-up order created against a payment aggregator
+    (Razorpay / PayU / PayPal). The gateway confirms payment; we verify the
+    signature and credit the wallet exactly once (idempotent on the gateway
+    payment id). Money plumbing only — never touches astrology logic."""
+    __tablename__ = "wallet_recharge_orders"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    gateway = Column(String(20), nullable=False)          # razorpay | payu | paypal
+    amount = Column(Numeric(10, 2), nullable=False)       # charged amount (display currency)
+    currency = Column(String(3), default="INR")
+    credit_inr = Column(Numeric(10, 2), nullable=True)    # amount credited to the ₹ ledger
+    gateway_order_id = Column(String(120), nullable=True, index=True)
+    gateway_payment_id = Column(String(120), nullable=True, index=True)
+    status = Column(String(16), default="created", index=True)  # created | paid | failed
+    txn_id = Column(String(36), nullable=True)            # WalletTransaction id on credit
+    notes = Column(JSON, nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_recharge_gateway_payment", "gateway", "gateway_payment_id", unique=True),
+    )

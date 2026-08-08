@@ -58,6 +58,7 @@ class ApiService {
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
     'Accept-Language': _langCode,
+    'X-App-Client': 'astro',
     if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
   };
 
@@ -563,6 +564,25 @@ class ApiService {
     final streamedResp = await request.send();
     final body = await streamedResp.stream.bytesToString();
     return {'statusCode': streamedResp.statusCode, ...jsonDecode(body)};
+  }
+
+  // ── Payout KYC (PAN / GST + bank details for withdrawals) ───
+
+  Future<Map<String, dynamic>> getPayoutKyc() async {
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.astrologerBase}/me/payout-kyc'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
+  Future<Map<String, dynamic>> savePayoutKyc(Map<String, dynamic> fields) async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.astrologerBase}/me/payout-kyc'),
+      headers: _headers,
+      body: jsonEncode(fields),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
   Future<Map<String, dynamic>> uploadProfileImage(Uint8List bytes, String fileName) async {

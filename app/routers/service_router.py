@@ -649,7 +649,8 @@ def create_chart(
     # Money only ever moves through /service/purchase — here we merely consume
     # an already-bought credit, or 402 if none exists. ──
     extra_credit = None
-    if not is_first and getattr(current_user, "role", None) not in ("astrologer", "admin"):
+    from app.core.entitlements import _is_privileged as _ent_privileged
+    if not is_first and not _ent_privileged(current_user):
         from app.core.entitlements import get_pricing, payment_required_detail
         sp_extra = get_pricing(db, "extra_chart")
         if sp_extra and not sp_extra.is_free and float(sp_extra.price or 0) > 0:
@@ -1460,7 +1461,8 @@ def get_entitlements(
             raise HTTPException(status_code=404, detail=t("err.chart_not_found", lang))
         chart_is_primary = bool(chart.is_primary)
 
-    privileged = getattr(current_user, "role", None) in ("astrologer", "admin")
+    from app.core.entitlements import _is_privileged as _ent_privileged
+    privileged = _ent_privileged(current_user)
 
     # Session region → currency for this user (drives USD/IAP vs ₹/wallet).
     sess = region_util.session_region(user_region=getattr(current_user, "region", None))

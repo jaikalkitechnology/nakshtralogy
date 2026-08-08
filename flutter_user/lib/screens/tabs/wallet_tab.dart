@@ -6,6 +6,7 @@ import '../../bloc/wallet/wallet_bloc.dart';
 import '../../bloc/wallet/wallet_event.dart';
 import '../../bloc/wallet/wallet_state.dart';
 import '../../services/app_mode.dart';
+import '../../widgets/recharge_sheet.dart';
 import '../../utils/money.dart';
 
 class WalletTab extends StatefulWidget {
@@ -186,7 +187,12 @@ class _WalletTabState extends State<WalletTab> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: _openRechargeDialog,
+                          onPressed: () async {
+                            final ok = await showRechargeSheet(context);
+                            if (ok && context.mounted) {
+                              context.read<WalletBloc>().add(WalletLoadRequested(page: 0, txnType: _filter));
+                            }
+                          },
                           icon: const Icon(Icons.add, size: 18),
                           label: Text(l.addBalance),
                         ),
@@ -232,8 +238,11 @@ class _WalletTabState extends State<WalletTab> {
                       return Padding(
                         padding: const EdgeInsetsDirectional.only(end: 8),
                         child: OutlinedButton(
-                          onPressed: () {
-                            context.read<WalletBloc>().add(WalletRechargeRequested(amount: amt.toDouble()));
+                          onPressed: () async {
+                            final ok = await showRechargeSheet(context, suggested: amt.toDouble());
+                            if (ok && context.mounted) {
+                              context.read<WalletBloc>().add(WalletLoadRequested(page: 0, txnType: _filter));
+                            }
                           },
                           style: OutlinedButton.styleFrom(
                             minimumSize: Size.zero,

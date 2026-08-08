@@ -22,7 +22,7 @@ from app.routers import (
     ai_agent_router,
     developer_router, admin_developer_router,
     config_router, admin_system_router, contact_router,
-    coupon_router, invoice_router,
+    coupon_router, invoice_router, payment_router,
 )
 
 logger = logging.getLogger("session_cleanup")
@@ -206,6 +206,7 @@ app.include_router(banner_router.router, prefix="/api/v1/banners", tags=["Banner
 app.include_router(contact_router.router, prefix="/api/v1/contact", tags=["Contact / Queries"])
 app.include_router(coupon_router.router, prefix="/api/v1/coupons", tags=["Coupons & Discounts"])
 app.include_router(invoice_router.router, prefix="/api/v1/me/invoices", tags=["Invoices"])
+app.include_router(payment_router.router, prefix="/api/v1/payments", tags=["Payments (PAPG)"])
 app.include_router(ai_agent_router.router, prefix="/api/v1/ai", tags=["AI Agents"])
 app.include_router(developer_router.router, prefix="/api/v1/developer", tags=["Developer API Platform"])
 app.include_router(admin_developer_router.router, prefix="/api/v1/admin", tags=["Admin — Developer Platform"])
