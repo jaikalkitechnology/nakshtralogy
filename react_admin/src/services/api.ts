@@ -632,6 +632,21 @@ export async function adminSchemaSync(dryRun: boolean) {
   return request(`/admin/system/schema/sync?dry_run=${dryRun}`, { method: "POST" });
 }
 
+export async function adminSchemaAutoGet() {
+  return request("/admin/system/schema/auto");
+}
+
+export async function adminSchemaAutoSet(enabled: boolean) {
+  return request("/admin/system/schema/auto", {
+    method: "POST",
+    body: JSON.stringify({ enabled }),
+  });
+}
+
+export async function adminSchemaHistory(limit = 20) {
+  return request(`/admin/system/schema/history?limit=${limit}`);
+}
+
 export async function adminSeedCatalog() {
   return request("/admin/system/seed/catalog");
 }

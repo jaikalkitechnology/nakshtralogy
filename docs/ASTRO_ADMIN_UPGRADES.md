@@ -118,3 +118,19 @@ when the user forgot it.
   → enter OTP + new password + confirm → update; 30s resend timer
 - ✅ Login screen "Forgot password?" → OTP reset screen (replaces token screen)
 - ✅ Profile: new **Change Password** card (email-OTP) in both apps
+
+---
+
+## 9. Schema Sync — auto mode + apply-activity log (admin System tab)
+The additive model→DB diff/apply already existed; this adds hands-off deploys
+and an audit trail so newly-added model columns land without a manual click.
+
+- ✅ Backend: `AUTO_SCHEMA_SYNC` env default (ON) + a DB toggle
+  (`platform_settings` system/schema_auto_sync) that overrides it at runtime
+- ✅ Backend: startup runs `run_startup_sync()` — when auto-mode is ON, applies
+  missing tables/columns on every redeploy (additive only; fully guarded)
+- ✅ Backend: `SchemaSyncLog` table + `GET /admin/system/schema/history`;
+  manual applies and startup runs are recorded (source, +tables, +columns, errors)
+- ✅ Backend: `GET/POST /admin/system/schema/auto` to read/set auto-mode
+- ✅ Admin: System tab — "Auto-apply on deploy" switch + "Sync activity" log,
+  alongside the existing Check-for-changes / Apply-additive controls

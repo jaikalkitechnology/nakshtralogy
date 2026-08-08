@@ -134,6 +134,15 @@ async def _cleanup_stale_sessions():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    # Auto-apply additive schema changes (missing tables/columns from the models)
+    # when auto-mode is enabled — so a redeploy picks up new columns without a
+    # manual step. Fully guarded; records an activity-log row. Additive only.
+    try:
+        from app.core.database import engine as _engine
+        from app.services.schema_sync import run_startup_sync
+        run_startup_sync(_engine, SessionLocal)
+    except Exception as _e:  # never block boot on schema sync
+        logging.getLogger("schema_sync").warning("startup sync error: %s", _e)
     # Load AI config (languages, domains, engines) from DB into memory cache
     from app.ai_config import ai_cache
     ai_cache.load_from_db()
