@@ -688,6 +688,8 @@ class _HealthState extends State<HealthReportScreen> {
     final topics = <String>[l.hwTopicImmunity, l.hwTopicSleep, l.hwTopicStress, l.hwTopicFertility, l.hwTopicDiet, l.hwTopicTiming, l.hwTopicMental, l.hwTopicPrevention];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'health_wellness', label: 'Health & Wellness', emoji: '🏥'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data!, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data!, 'claude')),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
@@ -596,16 +597,23 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
           (q is Map ? (q['short_label'] ?? q['text'] ?? '') : q).toString()
       ).where((s) => s.isNotEmpty).toList();
     } else {
-      final samples = {
-        'career_job': ['Will I get promotion?', 'Job change kab hoga?', 'Career growth'],
-        'business_startup': ['Should I start business?', 'Partnership success?'],
-        'money_wealth': ['When will wealth increase?', 'Financial growth kab?'],
-        'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?'],
-        'marriage_family': ['Marriage kab hogi?', 'Family harmony?'],
-        'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?'],
-        'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?'],
+      // Domain-specific starter questions so every AI specialist opens with
+      // helpful prompts even before the DB list loads (covers all 12 agents).
+      const samples = <String, List<String>>{
+        'career_job': ['Will I get a promotion?', 'Job change kab hoga?', 'Best career field for me?', 'Government job yog?'],
+        'business_startup': ['Should I start a business?', 'Best time to launch?', 'Partnership success?', 'Business growth kab?'],
+        'education_career': ['Higher studies abroad?', 'Which field to study?', 'Exam success yog?', 'Concentration kaise badhe?'],
+        'money_wealth': ['When will wealth increase?', 'Financial growth kab?', 'Best time to invest?', 'Savings improve kaise?'],
+        'debt_recovery': ['Will my loan clear?', 'Kab tak debt-free?', 'Money stuck with someone?', 'Recover pending dues?'],
+        'love_relationship': ['Will I find love?', 'Relationship mein kya hoga?', 'Is this the right partner?', 'Breakup ya patchup?'],
+        'marriage_family': ['Marriage kab hogi?', 'Love or arranged?', 'Family harmony?', 'Childbirth yog?'],
+        'health_wellness': ['Health concerns?', 'Swasthya kaisa rahega?', 'Chronic issue relief?', 'Best time for surgery?'],
+        'mental_stress': ['Why so much stress?', 'Mann shaant kaise ho?', 'Anxiety kab kam hogi?', 'Peace of mind remedies?'],
+        'property_assets': ['Will I buy a house?', 'Property kab milegi?', 'Good time for real estate?', 'Vehicle purchase yog?'],
+        'legal_dispute': ['Will I win the case?', 'Court matter kab suljhega?', 'Settle or fight?', 'Property dispute result?'],
+        'life_path_luck': ['Is Rajyog in my chart?', 'Bhagya kab chamkega?', 'My life purpose?', 'Lucky period ahead?'],
       };
-      chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions'];
+      chips = samples[widget.domainKey] ?? ['What does my chart say?', 'Future predictions', 'Best remedies for me?'];
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -707,10 +715,17 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
             const SizedBox(height: 8),
           ],
           if (text.isNotEmpty)
-            Text(text, style: TextStyle(
-              color: isUser ? AppColors.midnight : AppColors.ivory,
-              fontSize: 13, fontWeight: isUser ? FontWeight.w500 : FontWeight.normal, height: 1.4,
-            )),
+            isUser
+                ? Text(text, style: const TextStyle(
+                    color: AppColors.midnight,
+                    fontSize: 13, fontWeight: FontWeight.w500, height: 1.4,
+                  ))
+                // Bot replies are selectable so any portion can be copied,
+                // matching ChatGPT / Claude / Gemini.
+                : SelectableText(text, style: const TextStyle(
+                    color: AppColors.ivory,
+                    fontSize: 13, fontWeight: FontWeight.normal, height: 1.4,
+                  )),
           if (streaming && text.isEmpty)
             Row(mainAxisSize: MainAxisSize.min, children: [
               const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColors.gold)),
@@ -722,36 +737,73 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
               padding: const EdgeInsets.only(top: 4),
               child: SizedBox(width: 8, height: 8, child: CircularProgressIndicator(strokeWidth: 1, color: AppColors.gold.withOpacity(0.5))),
             ),
-          // 👍/👎 feedback row — only on completed bot messages with a message_id
-          if (!isUser && !streaming && text.isNotEmpty && msg['message_id'] != null)
-            _feedbackRow(msg),
+          // Copy + 👍/👎 row on completed bot messages (copy is always
+          // available; feedback shows only when the message has an id).
+          if (!isUser && !streaming && text.isNotEmpty)
+            _feedbackRow(msg, text),
         ]),
       ),
     );
   }
 
-  Widget _feedbackRow(Map<String, dynamic> msg) {
+  Widget _feedbackRow(Map<String, dynamic> msg, String text) {
     final rating = (msg['feedback'] as int?) ?? 0;
+    final hasId = msg['message_id'] != null;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        _thumbButton(
-          icon: Icons.thumb_up_outlined, iconSelected: Icons.thumb_up,
-          active: rating == 1, color: AppColors.success,
-          onTap: () => _sendFeedback(msg, 1),
-        ),
-        const SizedBox(width: 6),
-        _thumbButton(
-          icon: Icons.thumb_down_outlined, iconSelected: Icons.thumb_down,
-          active: rating == -1, color: AppColors.error,
-          onTap: () => _sendFeedback(msg, -1),
-        ),
-        if (rating != 0) ...[
-          const SizedBox(width: 8),
-          Text(rating == 1 ? AppLocalizations.of(context)!.aiThanks : AppLocalizations.of(context)!.aiFeedbackNoted,
-              style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+        _copyButton(text),
+        if (hasId) ...[
+          const SizedBox(width: 6),
+          _thumbButton(
+            icon: Icons.thumb_up_outlined, iconSelected: Icons.thumb_up,
+            active: rating == 1, color: AppColors.success,
+            onTap: () => _sendFeedback(msg, 1),
+          ),
+          const SizedBox(width: 6),
+          _thumbButton(
+            icon: Icons.thumb_down_outlined, iconSelected: Icons.thumb_down,
+            active: rating == -1, color: AppColors.error,
+            onTap: () => _sendFeedback(msg, -1),
+          ),
+          if (rating != 0) ...[
+            const SizedBox(width: 8),
+            Text(rating == 1 ? AppLocalizations.of(context)!.aiThanks : AppLocalizations.of(context)!.aiFeedbackNoted,
+                style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+          ],
         ],
       ]),
+    );
+  }
+
+  Widget _copyButton(String text) {
+    return GestureDetector(
+      onTap: () async {
+        await Clipboard.setData(ClipboardData(text: text));
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.sumCopied),
+          duration: const Duration(milliseconds: 1200),
+          behavior: SnackBarBehavior.floating,
+        ));
+      },
+      child: Tooltip(
+        message: MaterialLocalizations.of(context).copyButtonLabel,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.lavender.withOpacity(0.25)),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            const Icon(Icons.copy_rounded, size: 13, color: AppColors.lavender),
+            const SizedBox(width: 4),
+            Text(MaterialLocalizations.of(context).copyButtonLabel,
+                style: const TextStyle(color: AppColors.lavender, fontSize: 10, fontWeight: FontWeight.w600)),
+          ]),
+        ),
+      ),
     );
   }
 

@@ -650,6 +650,8 @@ class _PropertyState extends State<PropertyReportScreen> {
     final topics = <String>[l.prTopicBuying, l.prTopicInherit, l.prTopicVehicle, l.prTopicRental, l.prTopicLand, l.prTopicLegal, l.prTopicForeign, l.prTopicTiming];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'property_assets', label: 'Property & Assets', emoji: '🏠'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data!, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data!, 'claude')),

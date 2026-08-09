@@ -518,6 +518,8 @@ class _RelationshipReportState extends State<RelationshipReportScreen> {
     final topics = <String>[l.riTopicDynamics, l.riTopicPairwise, l.riTopicAlerts, l.riTopicGrowth, l.riTopicRecs, l.riTopicTheme];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'love_relationship', label: 'Love & Relationship', emoji: '❤️'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),
