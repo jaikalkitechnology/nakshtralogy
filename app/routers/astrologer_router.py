@@ -79,6 +79,43 @@ def _attach_rate_view(resp, region: str, db):
     return resp
 
 
+def _offer_label(discount_type: str, discount_value: float) -> str:
+    if discount_type == "full":
+        return "100% OFF"
+    if discount_type == "flat":
+        return f"₹{discount_value:g} OFF"
+    return f"{discount_value:g}% OFF"
+
+
+def _offers_for_profiles(db, profile_ids):
+    """Best ACTIVE astrologer discount per profile → compact card badge.
+    Returns {profile_id: {label, discount_type, discount_value, code,
+    first_time_only}}. One query; highest discount wins. Presentation only."""
+    from app.models.model import Coupon
+    if not profile_ids:
+        return {}
+    rows = db.query(Coupon).filter(
+        Coupon.owner_type == "astrologer",
+        Coupon.owner_id.in_(profile_ids),
+        Coupon.status == "active",
+    ).all()
+    best = {}
+    for c in rows:
+        pid = c.owner_id
+        val = float(c.discount_value or 0)
+        # "full" (100%) always ranks highest; else by numeric value.
+        rank = 10_000 if c.discount_type == "full" else val
+        if pid not in best or rank > best[pid][0]:
+            best[pid] = (rank, {
+                "label": _offer_label(c.discount_type, val),
+                "discount_type": c.discount_type,
+                "discount_value": val,
+                "code": c.code,
+                "first_time_only": bool(c.first_time_only),
+            })
+    return {pid: v[1] for pid, v in best.items()}
+
+
 def _build_profile_response(profile: AstrologerProfile) -> AstrologerProfileResponse:
     return AstrologerProfileResponse(
         id=profile.id,
@@ -703,8 +740,12 @@ def list_astrologers(
     if user_ids:
         for u in db.query(User).filter(User.id.in_(user_ids)).all():
             avatars[u.id] = u.avatar_url
+
+    # Best active discount offer per astrologer → advertise on the list card.
+    offers = _offers_for_profiles(db, [p.id for p in profiles])
     return [
         _attach_rate_view(AstrologerListResponse(
+            offer=offers.get(p.id),
             id=p.id,
             display_name=p.display_name,
             profile_image_url=p.profile_image_url,

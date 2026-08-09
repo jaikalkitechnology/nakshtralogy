@@ -457,6 +457,31 @@ class _AstroCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // Discount badge — the astrologer's active offer.
+                  if ((a['offer'] as Map?)?['label'] != null) ...[
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.gold.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.gold.withOpacity(0.4)),
+                      ),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(Icons.local_offer, size: 10, color: AppColors.gold),
+                        const SizedBox(width: 3),
+                        Text(
+                          (a['offer'] as Map)['label'].toString(),
+                          style: const TextStyle(
+                            fontFamily: 'Manrope',
+                            color: AppColors.gold,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ]),
+                    ),
+                  ],
                 ],
               ),
             ),

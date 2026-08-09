@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../theme/app_theme.dart';
 import 'astro_avatar.dart';
@@ -562,10 +563,28 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
     ]);
   }
 
+  void _applyAstroCode(String code) {
+    _codeCtrl.text = code;
+    consultCouponCode.value = code;
+    setState(() { _appliedCode = code; _ok = true; _expanded = true; _msg = CouponLabels.of(context, 'applied'); });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('${CouponLabels.of(context, 'applied')} · $code'),
+      backgroundColor: AppColors.success, duration: const Duration(seconds: 2)));
+  }
+
+  Future<void> _copyCode(String code) async {
+    await Clipboard.setData(ClipboardData(text: code));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Code $code copied'), duration: const Duration(seconds: 2)));
+  }
+
   Widget _offerBanner() {
     final c = _coupon!;
     final title = (c['title'] ?? '').toString();
     final off = _discountLabel();
+    final code = (c['code'] ?? '').toString();
+    final audienceAll = c['first_time_only'] == false;
     final grey = _used;
     final color = grey ? AppColors.textSecondary : AppColors.gold;
     return Container(
@@ -580,28 +599,70 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withOpacity(0.35)),
       ),
-      child: Row(children: [
-        Icon(grey ? Icons.check_circle_outline : Icons.local_offer, color: color, size: 20),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              grey ? CouponLabels.of(context, 'alreadyUsed')
-                   : (title.isNotEmpty ? title : '$off ${CouponLabels.of(context, 'firstTimeOffer')}'),
-              style: TextStyle(color: grey ? AppColors.textSecondary : AppColors.textPrimary,
-                  fontSize: 13, fontWeight: FontWeight.w700),
-            ),
-            if (!grey)
-              Text('$off ${CouponLabels.of(context, 'firstTimeOffer')} · chat / call / video',
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-          ]),
-        ),
-        if (!grey)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
-            child: Text(off, style: const TextStyle(color: AppColors.midnight, fontSize: 13, fontWeight: FontWeight.w800)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(grey ? Icons.check_circle_outline : Icons.local_offer, color: color, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                grey ? CouponLabels.of(context, 'alreadyUsed')
+                     : (title.isNotEmpty ? title : '$off ${audienceAll ? 'offer' : CouponLabels.of(context, 'firstTimeOffer')}'),
+                style: TextStyle(color: grey ? AppColors.textSecondary : AppColors.textPrimary,
+                    fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              if (!grey)
+                Text('$off · chat / call / video${audienceAll ? '' : ' · ${CouponLabels.of(context, 'firstTimeOffer')}'}',
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+            ]),
           ),
+          if (!grey)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
+              child: Text(off, style: const TextStyle(color: AppColors.midnight, fontSize: 13, fontWeight: FontWeight.w800)),
+            ),
+        ]),
+        // Code row — copy + one-tap apply (when the offer carries a code).
+        if (!grey && code.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Row(children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.gold.withOpacity(0.4), style: BorderStyle.solid),
+                ),
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text(code, style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                  GestureDetector(
+                    onTap: () => _copyCode(code),
+                    child: const Icon(Icons.copy, size: 16, color: AppColors.textSecondary),
+                  ),
+                ]),
+              ),
+            ),
+            const SizedBox(width: 8),
+            _appliedCode == code
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Icon(Icons.check_circle, color: AppColors.success, size: 22))
+                : ElevatedButton(
+                    onPressed: () => _applyAstroCode(code),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10)),
+                    child: Text(CouponLabels.of(context, 'apply'), style: const TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+          ]),
+        ],
+        if (!grey && code.isEmpty) ...[
+          const SizedBox(height: 6),
+          Text('Applied automatically — no code needed',
+              style: TextStyle(color: AppColors.success.withOpacity(0.9), fontSize: 11)),
+        ],
       ]),
     );
   }
