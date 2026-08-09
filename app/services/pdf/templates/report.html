@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% macro meter(label, value, pct, band) %}
+  <div class="metric">
+    <div class="m-top"><span class="m-label">{{ label }}</span>
+      <span class="m-val band-{{ band }}">{{ value }}</span></div>
+    <div class="bar"><span class="bg-{{ band }}" style="width: {{ pct }}%"></span></div>
+  </div>
+{% endmacro %}
+
+{% macro render_blocks(blocks) %}
+  {% for b in blocks %}
+    {% if b.type == 'meter' %}
+      <div class="metrics">{{ meter(b.label, b.value, b.pct, b.band) }}</div>
+    {% elif b.type == 'kv' %}
+      <div class="kv">
+        {% for k, v in b['items'] %}<div class="row"><span class="k">{{ k }}</span><span class="v">{{ v }}</span></div>{% endfor %}
+      </div>
+    {% elif b.type == 'bullets' %}
+      {% if b.title %}<div style="font-weight:700;color:#46425e;margin:2px 0 4px">{{ b.title }}</div>{% endif %}
+      <ul class="bullets">{% for it in b['items'] %}<li>{{ it }}</li>{% endfor %}</ul>
+    {% elif b.type == 'table' %}
+      {% if b.title %}<div style="font-weight:700;color:#46425e;margin:2px 0 6px">{{ b.title }}</div>{% endif %}
+      <table class="grid"><thead><tr>{% for h in b.head %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for r in b.rows %}<tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}</tbody></table>
+    {% elif b.type == 'para' %}
+      {% if b.title %}<div style="font-weight:700;color:#46425e;margin:2px 0 4px">{{ b.title }}</div>{% endif %}
+      <div class="para">{{ b.text }}</div>
+    {% elif b.type == 'group' %}
+      {% if b.title %}<div style="font-weight:700;color:#46425e;margin:6px 0 4px">{{ b.title }}</div>{% endif %}
+      {{ render_blocks(b.blocks) }}
+    {% elif b.type == 'cards' %}
+      {% if b.title %}<div style="font-weight:700;color:#46425e;margin:2px 0 6px">{{ b.title }}</div>{% endif %}
+      {% for c in b.cards %}<div class="card">{{ render_blocks(c.blocks) }}</div>{% endfor %}
+    {% endif %}
+  {% endfor %}
+{% endmacro %}
+
+{% block content %}
+  {% set v = view %}
+  {% if v.hero %}
+    <div class="hero">
+      <div class="ring bg-{{ v.hero.band }}">
+        <div style="text-align:center"><div class="num">{{ v.hero.value }}</div><div class="den">/ 100</div></div>
+      </div>
+      <div>
+        <div class="h-title">{{ v.hero.title }}</div>
+        {% if v.hero.verdict %}<div class="h-verdict">{{ v.hero.verdict }}</div>{% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if v.metrics %}
+    <div class="metrics">
+      {% for m in v.metrics %}{{ meter(m.label, m.value, m.pct, m.band) }}{% endfor %}
+    </div>
+  {% endif %}
+
+  {% for s in v.sections %}
+    <div class="section {{ s.kind }}">
+      <h2>{{ s.title }}</h2>
+      <div class="card">{{ render_blocks(s.blocks) }}</div>
+    </div>
+  {% endfor %}
+{% endblock %}
