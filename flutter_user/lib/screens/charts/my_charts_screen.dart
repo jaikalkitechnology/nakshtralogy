@@ -145,9 +145,20 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
                   // ====== TITLE + ADD BUTTON ======
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                      padding: const EdgeInsets.fromLTRB(8, 12, 20, 12),
                       child: Row(
                         children: [
+                          // Back button — iOS web has no hardware/browser back
+                          // affordance inside the app, so provide an explicit one.
+                          if (Navigator.of(context).canPop())
+                            IconButton(
+                              onPressed: () => Navigator.of(context).maybePop(),
+                              icon: const Icon(Icons.arrow_back, color: AppColors.ivory),
+                              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                              splashRadius: 22,
+                            )
+                          else
+                            const SizedBox(width: 12),
                           Expanded(
                             child: RichText(
                               text: const TextSpan(

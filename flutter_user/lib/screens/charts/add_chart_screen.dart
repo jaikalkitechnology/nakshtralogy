@@ -33,9 +33,18 @@ class _AddChartScreenState extends State<AddChartScreen> {
   OverlayEntry? _overlay;
 
   Future<void> _pickDate() async {
+    // The date picker's manual-entry (keyboard) field formats the date from
+    // the active locale. US English is month-first (MM/DD/YYYY) while every
+    // other language in this app is day-first (DD/MM/YYYY) — which is the
+    // format we store. Force English to en_GB so it too shows DD/MM/YYYY,
+    // keeping the picker's language unchanged; other locales stay as-is.
+    final current = Localizations.localeOf(context);
+    final pickerLocale =
+        current.languageCode == 'en' ? const Locale('en', 'GB') : current;
     final picked = await showDatePicker(
       context: context, initialDate: DateTime(1990, 1, 1),
       firstDate: DateTime(1900), lastDate: DateTime.now(),
+      locale: pickerLocale,
       builder: (context, child) => Theme(data: ThemeData.dark().copyWith(colorScheme: const ColorScheme.dark(primary: AppColors.primary)), child: child!),
     );
     if (picked != null) _dobCtrl.text = '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
