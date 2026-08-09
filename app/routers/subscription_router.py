@@ -196,6 +196,23 @@ def admin_list_plans(
     return {"items": [_plan_admin_dict(sp) for sp in rows]}
 
 
+@router.post("/subscriptions/admin/plans/seed")
+def admin_seed_plans(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Seed the 3 default NakshtralogyPlus plans (7 / 15 / 30 days). Idempotent —
+    only inserts the plans that don't already exist; existing plans (and any
+    admin edits to them) are left untouched."""
+    from app.seeds.seed_data import _seed_plus_plans
+    created = _seed_plus_plans(db)
+    db.commit()
+    rows = db.query(PlusPlan).order_by(
+        PlusPlan.sort_order, PlusPlan.duration_days).all()
+    return {"created": created, "total": len(rows),
+            "items": [_plan_admin_dict(sp) for sp in rows]}
+
+
 def _apply_plan(sp: PlusPlan, req: PlanBody):
     if req.code is not None:
         sp.code = req.code.strip()

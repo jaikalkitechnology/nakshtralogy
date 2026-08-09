@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Crown, RefreshCw, Plus, X, Trash2 } from "lucide-react";
+import { Crown, RefreshCw, Plus, X, Trash2, Sparkles } from "lucide-react";
 import {
   adminPlusPlans, adminPlusPlanCreate, adminPlusPlanUpdate, adminPlusPlanDelete,
-  adminPlusSubscribers,
+  adminPlusSubscribers, adminPlusPlanSeed,
 } from "@/services/api";
 import { toast } from "sonner";
 
@@ -29,6 +29,7 @@ export default function Subscriptions() {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<Partial<PlanRow> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
   const loadPlans = useCallback(async () => {
     setLoading(true);
@@ -68,6 +69,17 @@ export default function Subscriptions() {
     else toast.error(r.data?.detail || "Failed to save");
   };
 
+  const seedDefaults = async () => {
+    setSeeding(true);
+    const r = await adminPlusPlanSeed();
+    setSeeding(false);
+    if (r.ok) {
+      const n = r.data?.created ?? 0;
+      toast.success(n > 0 ? `Added ${n} default plan${n === 1 ? "" : "s"}` : "Default plans already exist");
+      loadPlans();
+    } else toast.error(r.data?.detail || "Could not seed plans");
+  };
+
   const del = async (p: PlanRow) => {
     if (!window.confirm(`Delete plan "${p.name}"? (deactivated if it has subscribers)`)) return;
     const r = await adminPlusPlanDelete(p.id);
@@ -91,6 +103,11 @@ export default function Subscriptions() {
           <Button variant="outline" size="sm" onClick={() => (tab === "plans" ? loadPlans() : loadSubs())} disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </Button>
+          {tab === "plans" && (
+            <Button variant="outline" size="sm" onClick={seedDefaults} disabled={seeding}>
+              <Sparkles className={`w-4 h-4 mr-1 ${seeding ? "animate-pulse" : ""}`} /> Seed defaults
+            </Button>
+          )}
           {tab === "plans" && <Button size="sm" onClick={() => setEditing(blank())}><Plus className="w-4 h-4 mr-1" /> New plan</Button>}
         </div>
       </div>
@@ -123,7 +140,15 @@ export default function Subscriptions() {
               </div>
             </div>
           ))}
-          {plans.length === 0 && !loading && <p className="text-sm text-muted-foreground">No plans yet. Create one or run the seed.</p>}
+          {plans.length === 0 && !loading && (
+            <div className="col-span-full grid place-items-center gap-3 rounded-xl border border-dashed border-border py-10 text-center">
+              <Crown className="w-8 h-8 text-primary/60" />
+              <p className="text-sm text-muted-foreground">No plans yet. Seed the 3 default plans (7 / 15 / 30 days) to get started.</p>
+              <Button size="sm" onClick={seedDefaults} disabled={seeding}>
+                <Sparkles className="w-4 h-4 mr-1" /> {seeding ? "Seeding…" : "Seed default plans"}
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card/60 overflow-hidden">
