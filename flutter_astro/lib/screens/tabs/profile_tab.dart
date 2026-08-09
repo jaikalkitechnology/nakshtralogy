@@ -20,6 +20,7 @@ import '../notifications/notification_screen.dart';
 import '../notifications/notification_hub_screen.dart';
 import '../coupons/my_coupons_screen.dart';
 import '../kyc/payout_kyc_screen.dart';
+import '../profile/edit_profile_screen.dart';
 import '../../utils/astro_labels.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -84,133 +85,15 @@ class _ProfileTabState extends State<ProfileTab> {
     if (mounted) setState(() => _biometricEnabled = value);
   }
 
-  void _showEditDialog(Map<String, dynamic> me) {
-    final l = AppLocalizations.of(context)!;
-    final profile = (me['profile'] ?? me['astrologer_profile'] ?? {}) as Map<String, dynamic>;
-    final nameCtrl = TextEditingController(text: me['name'] ?? '');
-    final phoneCtrl = TextEditingController(text: me['phone'] ?? '');
-    final displayCtrl = TextEditingController(text: profile['display_name'] ?? '');
-    final bioCtrl = TextEditingController(text: profile['bio'] ?? '');
-    final expCtrl = TextEditingController(text: '${profile['experience_years'] ?? ''}');
-    final langCtrl = TextEditingController(text: (profile['languages'] as List?)?.join(', ') ?? '');
-    final specCtrl = TextEditingController(text: (profile['specializations'] as List?)?.join(', ') ?? '');
-    final qualCtrl = TextEditingController(text: profile['qualification'] ?? '');
-    final imgCtrl = TextEditingController(text: profile['profile_image_url'] ?? '');
-    final chatMinCtrl = TextEditingController(text: '${profile['rate_per_min_chat'] ?? ''}');
-    final callMinCtrl = TextEditingController(text: '${profile['rate_per_min_call'] ?? ''}');
-    final videoMinCtrl = TextEditingController(text: '${profile['rate_per_min_video'] ?? ''}');
-    final chatSessCtrl = TextEditingController(text: '${profile['rate_per_session_chat'] ?? ''}');
-    final callSessCtrl = TextEditingController(text: '${profile['rate_per_session_call'] ?? ''}');
-    final videoSessCtrl = TextEditingController(text: '${profile['rate_per_session_video'] ?? ''}');
-    final msgLimitCtrl = TextEditingController(text: '${profile['session_message_limit'] ?? 45}');
-    final validityCtrl = TextEditingController(text: '${profile['session_validity_hours'] ?? 24}');
-    final perMsgCtrl = TextEditingController(text: '${profile['rate_per_msg_chat'] ?? ''}');
-    final superChatCtrl = TextEditingController(text: '${profile['super_chat_rate'] ?? 50}');
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.card,
-        title: Text('${l.edit} Profile', style: const TextStyle(color: AppColors.primary)),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
-            _field(nameCtrl, 'Full Name', Icons.person),
-            _field(phoneCtrl, 'Phone', Icons.phone),
-            _field(displayCtrl, 'Display Name', Icons.badge),
-            _field(bioCtrl, 'Bio', Icons.description, maxLines: 3),
-            _field(expCtrl, 'Experience (years)', Icons.work_history, isNum: true),
-            _field(langCtrl, 'Languages (comma separated)', Icons.language),
-            _field(specCtrl, 'Specializations (comma separated)', Icons.auto_awesome),
-            _field(qualCtrl, 'Qualification', Icons.school),
-            const Divider(color: AppColors.border, height: 28),
-            const Align(alignment: Alignment.centerLeft, child: Text('Per-Minute Rates', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(child: _field(chatMinCtrl, 'Chat ₹/min', Icons.chat, isNum: true)),
-              const SizedBox(width: 8),
-              Expanded(child: _field(callMinCtrl, 'Call ₹/min', Icons.phone, isNum: true)),
-              const SizedBox(width: 8),
-              Expanded(child: _field(videoMinCtrl, 'Video ₹/min', Icons.videocam, isNum: true)),
-            ]),
-            const SizedBox(height: 12),
-            const Align(alignment: Alignment.centerLeft, child: Text('Per-Session Rates', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(child: _field(chatSessCtrl, 'Chat ₹/sess', Icons.chat, isNum: true)),
-              const SizedBox(width: 8),
-              Expanded(child: _field(callSessCtrl, 'Call ₹/sess', Icons.phone, isNum: true)),
-              const SizedBox(width: 8),
-              Expanded(child: _field(videoSessCtrl, 'Video ₹/sess', Icons.videocam, isNum: true)),
-            ]),
-            const SizedBox(height: 12),
-            Row(children: [
-              Expanded(child: _field(msgLimitCtrl, 'Msg Limit/Session', Icons.message, isNum: true)),
-              const SizedBox(width: 8),
-              Expanded(child: _field(validityCtrl, 'Validity (hrs)', Icons.timer, isNum: true)),
-            ]),
-            const Divider(color: AppColors.border, height: 28),
-            const Align(alignment: Alignment.centerLeft, child: Text('Per-Message & Super Chat', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600))),
-            const SizedBox(height: 4),
-            const Text('Per-message charges each user message individually', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(child: _field(perMsgCtrl, 'Chat ₹/message', Icons.message, isNum: true)),
-              const SizedBox(width: 8),
-              Expanded(child: _field(superChatCtrl, 'Super Chat min ₹', Icons.attach_money, isNum: true)),
-            ]),
-          ])),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.cancel, style: const TextStyle(color: AppColors.textSecondary))),
-          BlocBuilder<AstroProfileBloc, AstroProfileState>(builder: (context, state) {
-            return ElevatedButton(
-              onPressed: state.saving ? null : () {
-                final userFields = <String, dynamic>{};
-                if (nameCtrl.text.trim().isNotEmpty) userFields['name'] = nameCtrl.text.trim();
-                if (phoneCtrl.text.trim().isNotEmpty) userFields['phone'] = phoneCtrl.text.trim();
-
-                final pf = <String, dynamic>{};
-                if (displayCtrl.text.trim().isNotEmpty) pf['display_name'] = displayCtrl.text.trim();
-                if (bioCtrl.text.trim().isNotEmpty) pf['bio'] = bioCtrl.text.trim();
-                if (expCtrl.text.trim().isNotEmpty) pf['experience_years'] = int.tryParse(expCtrl.text.trim());
-                if (langCtrl.text.trim().isNotEmpty) pf['languages'] = langCtrl.text.trim().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-                if (specCtrl.text.trim().isNotEmpty) pf['specializations'] = specCtrl.text.trim().split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-                if (qualCtrl.text.trim().isNotEmpty) pf['qualification'] = qualCtrl.text.trim();
-                if (imgCtrl.text.trim().isNotEmpty) pf['profile_image_url'] = imgCtrl.text.trim();
-                if (chatMinCtrl.text.trim().isNotEmpty) pf['rate_per_min_chat'] = double.tryParse(chatMinCtrl.text.trim());
-                if (callMinCtrl.text.trim().isNotEmpty) pf['rate_per_min_call'] = double.tryParse(callMinCtrl.text.trim());
-                if (videoMinCtrl.text.trim().isNotEmpty) pf['rate_per_min_video'] = double.tryParse(videoMinCtrl.text.trim());
-                if (chatSessCtrl.text.trim().isNotEmpty) pf['rate_per_session_chat'] = double.tryParse(chatSessCtrl.text.trim());
-                if (callSessCtrl.text.trim().isNotEmpty) pf['rate_per_session_call'] = double.tryParse(callSessCtrl.text.trim());
-                if (videoSessCtrl.text.trim().isNotEmpty) pf['rate_per_session_video'] = double.tryParse(videoSessCtrl.text.trim());
-                if (msgLimitCtrl.text.trim().isNotEmpty) pf['session_message_limit'] = int.tryParse(msgLimitCtrl.text.trim());
-                if (validityCtrl.text.trim().isNotEmpty) pf['session_validity_hours'] = int.tryParse(validityCtrl.text.trim());
-                if (perMsgCtrl.text.trim().isNotEmpty) pf['rate_per_msg_chat'] = double.tryParse(perMsgCtrl.text.trim());
-                if (superChatCtrl.text.trim().isNotEmpty) pf['super_chat_rate'] = double.tryParse(superChatCtrl.text.trim());
-
-                context.read<AstroProfileBloc>().add(AstroProfileUpdateRequested(userFields: userFields, profileFields: pf));
-                Navigator.pop(ctx);
-              },
-              child: state.saving ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : Text(AppLocalizations.of(context)?.save ?? 'Save'),
-            );
-          }),
-        ],
+  void _openEditProfile(Map<String, dynamic> me) {
+    // Full-screen editor. The bloc is provided above this subtree, so the
+    // pushed route can read/dispatch AstroProfileBloc directly.
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => BlocProvider.value(
+        value: context.read<AstroProfileBloc>(),
+        child: EditProfileScreen(me: me),
       ),
-    );
-  }
-
-  Widget _field(TextEditingController ctrl, String label, IconData icon, {bool isNum = false, int maxLines = 1}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextField(
-        controller: ctrl,
-        keyboardType: isNum ? TextInputType.number : TextInputType.text,
-        maxLines: maxLines,
-        style: const TextStyle(fontSize: 14),
-        decoration: InputDecoration(labelText: label, prefixIcon: Icon(icon, size: 20), isDense: true, contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12)),
-      ),
-    );
+    ));
   }
 
   @override
@@ -283,7 +166,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ]),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
-                  onPressed: () => _showEditDialog(me),
+                  onPressed: () => _openEditProfile(me),
                   icon: const Icon(Icons.edit, size: 18),
                   label: Text(l.editProfile),
                   style: ElevatedButton.styleFrom(minimumSize: const Size(200, 42)),
