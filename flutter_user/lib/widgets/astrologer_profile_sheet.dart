@@ -487,7 +487,10 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
   bool _loaded = false;
 
   final _codeCtrl = TextEditingController();
-  bool _expanded = false;
+  // Expanded by default so the code input + Apply button are always visible on
+  // the profile — users shouldn't have to discover a hidden "Have a coupon?"
+  // link first.
+  bool _expanded = true;
   bool _busy = false;
   String? _appliedCode;   // mirrors consultCouponCode
   String? _msg;           // localized status
@@ -506,7 +509,10 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
   }
 
   Future<void> _load() async {
-    final r = await ApiService().getAstrologerCoupon(widget.astrologerId);
+    Map<String, dynamic>? r;
+    try {
+      r = await ApiService().getAstrologerCoupon(widget.astrologerId);
+    } catch (_) {/* offer stays hidden; the manual code field still shows */}
     if (!mounted) return;
     setState(() {
       _coupon = (r?['coupon'] as Map?)?.cast<String, dynamic>();
@@ -555,9 +561,11 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_loaded) return const SizedBox.shrink();
+    // The manual code field renders immediately (even before the offer loads or
+    // if the offer lookup fails), so the coupon input + Apply button are always
+    // available. The astrologer's own offer banner appears once loaded.
     return Column(children: [
-      if (_coupon != null) _offerBanner(),
+      if (_loaded && _coupon != null) _offerBanner(),
       _codeField(),
       const SizedBox(height: 16),
     ]);
@@ -687,6 +695,13 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
         border: Border.all(color: (_ok ? AppColors.success : AppColors.border).withOpacity(0.5)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.local_activity_outlined, size: 16, color: AppColors.gold),
+          const SizedBox(width: 6),
+          Text(CouponLabels.of(context, 'haveCoupon'),
+              style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600, fontSize: 12)),
+        ]),
+        const SizedBox(height: 6),
         Row(children: [
           Expanded(
             child: TextField(

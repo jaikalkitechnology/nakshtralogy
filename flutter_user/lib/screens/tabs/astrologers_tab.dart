@@ -9,9 +9,6 @@ import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
-import '../../services/api_service.dart';
-import '../communication/chat_screen.dart';
-import '../communication/call_screen.dart';
 
 class AstrologersTab extends StatefulWidget {
   const AstrologersTab({super.key});
@@ -256,73 +253,6 @@ class _AstroCard extends StatelessWidget {
   final int index;
   const _AstroCard({required this.astro, required this.saved, required this.index});
 
-  Future<void> _startChat(BuildContext context, Map<String, dynamic> a) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)?.initiatingChat ?? 'Initiating chat...'), duration: const Duration(seconds: 2)),
-    );
-    try {
-      final result = await ApiService().initiateChat(a['id'] as String);
-      if (!context.mounted) return;
-      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => ChatScreen(
-            sessionId: result['id'] as String? ?? '',
-            astrologerName: a['display_name'] ?? 'Astrologer',
-            ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
-            ratePerSession: (result['rate_per_session'] as num?)?.toDouble() ?? 0,
-            billingMode: result['billing_mode'] ?? 'per_session',
-            sessionMessageLimit: result['session_message_limit'] ?? 45,
-          ),
-        ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['detail'] ?? 'Failed'), backgroundColor: AppColors.error),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
-        );
-      }
-    }
-  }
-
-  Future<void> _startCall(BuildContext context, Map<String, dynamic> a, String callType) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${AppLocalizations.of(context)?.startingCall ?? 'Starting call...'}'), duration: const Duration(seconds: 2)),
-    );
-    try {
-      final result = await ApiService().initiateCall(a['id'] as String, callType);
-      if (!context.mounted) return;
-      if (result['statusCode'] == 200 || result['statusCode'] == 201) {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) => CallScreen(
-            callId: result['id'] as String? ?? '',
-            channelName: result['channel_name'] as String? ?? '',
-            agoraToken: result['agora_token'] as String? ?? '',
-            agoraAppId: result['agora_app_id'] as String? ?? '',
-            callType: callType,
-            astrologerName: a['display_name'] ?? 'Astrologer',
-            ratePerMin: (result['rate_per_min'] as num?)?.toDouble() ?? 0,
-            eligibleMinutes: result['eligible_minutes'] ?? 0,
-            maxCallSeconds: result['max_call_seconds'] ?? 0,
-          ),
-        ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['detail'] ?? 'Failed'), backgroundColor: AppColors.error),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -491,7 +421,9 @@ class _AstroCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onTap: isOnline ? () => _startChat(context, a) : null,
+                  // Open the profile first so the coupon field + rate card are
+                  // shown before the session starts (chat begins from there).
+                  onTap: isOnline ? () => showAstrologerProfileSheet(context, a['id'] as String) : null,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
@@ -518,7 +450,9 @@ class _AstroCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 GestureDetector(
-                  onTap: isOnline ? () => _startCall(context, a, 'voice') : null,
+                  // Route through the profile so the coupon can be applied
+                  // before starting the call.
+                  onTap: isOnline ? () => showAstrologerProfileSheet(context, a['id'] as String) : null,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
