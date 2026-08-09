@@ -47,6 +47,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   int _userMessageCount = 0;
   int _remainingMessages = 0;
   bool _uploading = false;
+  // Connecting screen: wait up to 60s for the astrologer to accept.
+  bool _ended = false;              // guards a single end/cancel (no double refund)
+  Timer? _connectTimer;
+  int _connectRemaining = 60;
 
   @override
   void initState() {
@@ -54,6 +58,38 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _remainingMessages = widget.sessionMessageLimit;
     _connect();
+    _startConnectCountdown();
+  }
+
+  void _startConnectCountdown() {
+    _connectTimer?.cancel();
+    _connectRemaining = 60;
+    _connectTimer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (_connected) { t.cancel(); return; }
+      if (!mounted) { t.cancel(); return; }
+      setState(() => _connectRemaining--);
+      if (_connectRemaining <= 0) {
+        t.cancel();
+        _cancelAndLeave(reason: 'No answer — request cancelled, amount refunded');
+      }
+    });
+  }
+
+  void _onConnected() {
+    _connectTimer?.cancel();
+    if (!_connected) setState(() => _connected = true);
+    _startTimer();
+    _pollTimer?.cancel();
+  }
+
+  /// Cancel a still-connecting request exactly once and leave (single refund).
+  void _cancelAndLeave({required String reason}) {
+    _sendEndSession(); // guarded — fires cancel at most once
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(reason), backgroundColor: AppColors.nebula));
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -64,8 +100,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   void _sendEndSession() {
+    // Fire once only — dispose() runs after an explicit end/back, so without
+    // this guard a cancel would be sent twice and the block refunded twice.
+    if (_ended) return;
+    _ended = true;
     if (!_connected) {
-      // Still in "waiting" state — cancel via REST API to get refund
+      // Still in "waiting" state — cancel via REST API to get the (single) refund
       _api.chatAction(widget.sessionId, 'cancel').catchError((_) {});
     } else {
       try {
@@ -105,8 +145,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               _remainingMessages = (data['session_message_limit'] ?? widget.sessionMessageLimit) - _userMessageCount;
             });
             if (isActive) {
-              _startTimer();
-              _pollTimer?.cancel(); // stop polling once connected
+              _onConnected();
             } else {
               // Session is still "waiting" — poll backend to detect acceptance
               _startPollingForAcceptance();
@@ -114,9 +153,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             break;
           case 'session_accepted':
             // Backend pushed acceptance notification through WS
-            setState(() => _connected = true);
-            _startTimer();
-            _pollTimer?.cancel();
+            _onConnected();
             break;
           case 'session_ended':
             _timer?.cancel();
@@ -156,8 +193,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           _pollTimer?.cancel();
           // Reconnect WS to get active session
           _channel?.sink.close();
-          setState(() => _connected = true);
-          _startTimer();
+          _onConnected();
           _connect(); // reconnect WS which will now get active status
         } else if (status == 'expired' || status == 'cancelled') {
           _pollTimer?.cancel();
@@ -320,14 +356,74 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _sendEndSession();
     _timer?.cancel();
     _pollTimer?.cancel();
+    _connectTimer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
     super.dispose();
   }
 
+  /// Full-screen "connecting" view shown until the astrologer accepts (max 60s).
+  Widget _connectingView() {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Container(
+                width: 96, height: 96,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(colors: [AppColors.indigo, AppColors.lavender]),
+                ),
+                child: Center(
+                  child: Text(
+                    widget.astrologerName.isNotEmpty ? widget.astrologerName[0].toUpperCase() : '?',
+                    style: const TextStyle(color: AppColors.ivory, fontSize: 40, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(widget.astrologerName,
+                  style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              const Text('Connecting…', style: TextStyle(color: AppColors.smoke, fontSize: 14)),
+              const SizedBox(height: 20),
+              const SizedBox(width: 26, height: 26, child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.gold)),
+              const SizedBox(height: 20),
+              Text('Waiting for the astrologer to accept · ${_connectRemaining}s',
+                  style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
+              const SizedBox(height: 6),
+              const Text('If not accepted, your amount is refunded automatically.',
+                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity, height: 50,
+                child: OutlinedButton.icon(
+                  onPressed: () => _cancelAndLeave(reason: 'Request cancelled — amount refunded'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: const BorderSide(color: AppColors.error),
+                  ),
+                  icon: const Icon(Icons.close),
+                  label: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w700)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Show the connecting screen until the astrologer accepts (both connected).
+    if (!_connected) return _connectingView();
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: PreferredSize(
