@@ -40,7 +40,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 13;
+  static const _sectionCount = 12;
 
   // [label, icon, section-key used by paywall]
   static List<List<Object>> _sections(AppLocalizations l) => <List<Object>>[
@@ -48,8 +48,8 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.planets, Icons.public, 'planets'],
     [l.kundli, Icons.grid_on, 'kundli'],
     [l.divisions, Icons.apps, 'divisions'],
-    [l.vimshottari, Icons.timeline, 'vimshottari'],
-    [l.moola, Icons.schedule, 'moola'],
+    // One Dasha tab hosts both Vimshottari & Moola via an in-tab toggle.
+    [l.dasha, Icons.timeline, 'vimshottari'],
     [l.gochar, Icons.wb_sunny, 'gochar'],
     [l.dosh, Icons.warning, 'dosh'],
     [l.yoga, Icons.auto_awesome, 'yoga'],
@@ -164,9 +164,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         _PaidTab(chartId: widget.chartId, section: 'divisions',
                             builder: (_) => DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap(), complete: _complete)),
                         _PaidTab(chartId: widget.chartId, section: 'vimshottari',
-                            builder: (_) => DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari')),
-                        _PaidTab(chartId: widget.chartId, section: 'moola',
-                            builder: (_) => DashaTreeWidget(chartId: widget.chartId, type: 'moola')),
+                            builder: (_) => DashaTreeTabs(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'gochar',
                             builder: (_) => GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx())),
                         _PaidTab(chartId: widget.chartId, section: 'dosh',

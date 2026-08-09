@@ -222,3 +222,70 @@ class _Level {
   final List<Map<String, dynamic>> items;
   _Level({required this.title, required this.level, required this.items});
 }
+
+/// One dasha viewer for BOTH systems: a Vimshottari / Moola segmented toggle
+/// above a single [DashaTreeWidget]. Switching the toggle re-keys the tree so
+/// it reloads for the chosen system. Presentation only — same endpoints/data.
+class DashaTreeTabs extends StatefulWidget {
+  final String chartId;
+  const DashaTreeTabs({super.key, required this.chartId});
+
+  @override
+  State<DashaTreeTabs> createState() => _DashaTreeTabsState();
+}
+
+class _DashaTreeTabsState extends State<DashaTreeTabs> {
+  String _type = 'vimshottari';
+
+  Widget _seg(String label, String type) {
+    final sel = _type == type;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _type = type),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          height: 38,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: sel ? AppColors.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Text(label,
+              maxLines: 1, overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: sel ? AppColors.midnight : AppColors.textSecondary,
+                fontSize: 13,
+                fontWeight: sel ? FontWeight.w800 : FontWeight.w600,
+              )),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+        child: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(children: [
+            _seg(l.vimshottari, 'vimshottari'),
+            const SizedBox(width: 6),
+            _seg(l.moola, 'moola'),
+          ]),
+        ),
+      ),
+      Expanded(
+        child: DashaTreeWidget(
+          key: ValueKey(_type), chartId: widget.chartId, type: _type),
+      ),
+    ]);
+  }
+}
