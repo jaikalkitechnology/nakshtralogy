@@ -106,7 +106,7 @@ def _block_for(key: str, value: Any, depth: int = 0) -> dict | None:
             flat = all(
                 all(not isinstance(dv, (dict, list)) for dv in d.values())
                 for d in items)
-            if flat and 1 <= len(cols) <= 5:
+            if flat and 1 <= len(cols) <= 8:
                 head = [_title(c) for c in cols]
                 rows = [[_fmt(d.get(c, "")) for c in cols] for d in items]
                 return {"type": "table", "title": label, "head": head, "rows": rows}
@@ -203,7 +203,13 @@ def build_report_view(data: dict) -> dict:
         kind = "remedy" if _REMEDY_HINT.search(k) else \
                "timing" if _TIMING_HINT.search(k) else "default"
         title = blk.get("title") or _title(k)
-        blocks = blk.get("blocks") if blk["type"] == "group" else [blk]
+        if blk["type"] == "group":
+            blocks = blk.get("blocks")
+        else:
+            # The section heading already carries the label; drop the block's
+            # own title so it isn't shown twice.
+            blk = {**blk, "title": None}
+            blocks = [blk]
         sections.append({"title": title, "kind": kind, "blocks": blocks})
 
     return {"hero": hero, "metrics": metrics, "sections": sections}

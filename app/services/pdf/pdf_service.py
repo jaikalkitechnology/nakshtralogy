@@ -77,18 +77,11 @@ async def render_report_pdf(*, engine_label, data, subject, subject_meta,
     return await _render("report.html", ctx, ctx["brand"])
 
 
-async def render_kundli_pdf(*, title, data, subject, subject_meta, lang,
-                            generated_on, labels, is_astro=False) -> bytes:
-    ctx = _base_ctx(title=title, subject=subject, subject_meta=subject_meta,
-                    lang=lang, generated_on=generated_on, labels=labels, is_astro=is_astro)
-    ctx["k"] = data
-    return await _render("kundli.html", ctx, ctx["brand"])
-
-
-async def render_generic_pdf(*, template, title, data, subject, subject_meta,
+async def render_generic_pdf(*, title, data, subject, subject_meta,
                              lang, generated_on, labels, is_astro=False) -> bytes:
-    """Milan / forecast reuse the generic report view for their body."""
+    """Kundli / milan / forecast reuse the generic report view for their body
+    (the report template renders any normalized view beautifully)."""
     ctx = _base_ctx(title=title, subject=subject, subject_meta=subject_meta,
                     lang=lang, generated_on=generated_on, labels=labels, is_astro=is_astro)
     ctx["view"] = build_report_view(data)
-    return await _render(template, ctx, ctx["brand"])
+    return await _render("report.html", ctx, ctx["brand"])
