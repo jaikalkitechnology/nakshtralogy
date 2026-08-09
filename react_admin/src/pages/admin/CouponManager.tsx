@@ -6,7 +6,7 @@ import { Ticket, RefreshCw, Plus, X, Check, Ban, Trash2 } from "lucide-react";
 import {
   adminCoupons, adminCouponCreate, adminCouponUpdate,
   adminCouponModerate, adminCouponDelete, adminCouponRedemptions,
-  downloadCouponRedemptionsCsv,
+  downloadCouponRedemptionsCsv, adminCouponConfig, adminCouponConfigUpdate,
 } from "@/services/api";
 import { toast } from "sonner";
 
@@ -48,6 +48,25 @@ export default function CouponManager() {
   const [reds, setReds] = useState<any[]>([]);
   const [redTotal, setRedTotal] = useState(0);
   const [redDiscount, setRedDiscount] = useState(0);
+
+  const [autoApprove, setAutoApprove] = useState(false);
+  const loadConfig = useCallback(async () => {
+    const r = await adminCouponConfig();
+    if (r.ok) setAutoApprove(r.data?.astro_auto_approve === true);
+  }, []);
+  useEffect(() => { loadConfig(); }, [loadConfig]);
+  const toggleAutoApprove = async () => {
+    const next = !autoApprove;
+    setAutoApprove(next); // optimistic
+    const r = await adminCouponConfigUpdate({ astro_auto_approve: next });
+    if (r.ok) {
+      setAutoApprove(r.data?.astro_auto_approve === true);
+      toast.success(next ? "Astrologer offers now go live instantly" : "Astrologer offers now require review");
+    } else {
+      setAutoApprove(!next); // revert
+      toast.error(r.data?.detail || "Could not update setting");
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -144,6 +163,25 @@ export default function CouponManager() {
 
       {tab === "coupons" ? (
         <>
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card/60 p-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Auto-approve astrologer offers</p>
+              <p className="text-xs text-muted-foreground">
+                {autoApprove
+                  ? "New astrologer offers go LIVE immediately. Abuse-language screening on the code/name still applies."
+                  : "New astrologer offers stay in review until you approve them."}
+              </p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={autoApprove}
+              onClick={toggleAutoApprove}
+              className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${autoApprove ? "bg-primary" : "bg-muted"}`}
+            >
+              <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${autoApprove ? "translate-x-5" : "translate-x-0.5"}`} />
+            </button>
+          </div>
+
           <div className="flex flex-wrap gap-2">
             <select value={fOwner} onChange={(e) => setFOwner(e.target.value)} className="rounded-md border border-border bg-card px-2 py-1 text-xs text-foreground">
               <option value="">All owners</option>

@@ -475,6 +475,12 @@ export async function adminCouponUpdate(id: string, data: any) {
 export async function adminCouponModerate(id: string, action: "approve" | "reject") {
   return request(`/coupons/admin/${id}/moderate`, { method: "POST", body: JSON.stringify({ action }) });
 }
+export async function adminCouponConfig() {
+  return request(`/coupons/admin/config`);
+}
+export async function adminCouponConfigUpdate(data: { astro_auto_approve?: boolean }) {
+  return request(`/coupons/admin/config`, { method: "PUT", body: JSON.stringify(data) });
+}
 export async function adminCouponDelete(id: string) {
   return request(`/coupons/admin/${id}`, { method: "DELETE" });
 }
