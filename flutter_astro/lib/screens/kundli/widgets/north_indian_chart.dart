@@ -143,12 +143,15 @@ class NorthIndianChartWidget extends StatelessWidget {
             final degreeVal = planet['degree'] as num?;
             final flags = (planet['flags'] as List?) ?? [];
             final dignity = (planet['dignity'] ?? '').toString().toLowerCase();
-            var flagStr = '';
-            if (flags.contains('R')) flagStr += 'R';
-            if (flags.contains('C')) flagStr += 'C';
-            if (flags.contains('V')) flagStr += 'V';
-            if (dignity == 'exalted') flagStr += '\u2191';
-            if (dignity == 'debilitated') flagStr += '\u2193';
+            // Symbol set (matches the legend): * retrograde, ^ combust,
+            // \u25ab vargottama, \u2191 exalted, \u2193 debilitated.
+            final marks = <String>[];
+            if (flags.contains('R')) marks.add('*');
+            if (flags.contains('C')) marks.add('^');
+            if (flags.contains('V')) marks.add('\u25ab');       // \u25ab
+            if (dignity == 'exalted') marks.add('\u2191');      // \u2191
+            if (dignity == 'debilitated') marks.add('\u2193');  // \u2193
+            final flagStr = marks.join(' ');
             final abbr = name.length > 2 ? name.substring(0, 2) : name;
             return Padding(
               padding: const EdgeInsets.only(top: 1.5),
@@ -166,7 +169,10 @@ class NorthIndianChartWidget extends StatelessWidget {
                   if (flagStr.isNotEmpty)
                     TextSpan(
                       text: ' $flagStr',
-                      style: TextStyle(color: const Color(0xFFFFB020), fontSize: base - 1, fontWeight: FontWeight.w800),
+                      style: TextStyle(
+                        color: const Color(0xFFFFB020), fontSize: base - 1, fontWeight: FontWeight.w800,
+                        fontFamilyFallback: _symbolFonts,
+                      ),
                     ),
                   if (degreeVal != null)
                     TextSpan(
@@ -183,7 +189,9 @@ class NorthIndianChartWidget extends StatelessWidget {
 
   Widget _legend(BuildContext context) {
     const style = TextStyle(color: AppColors.textPrimary, fontSize: 11.5, fontWeight: FontWeight.w500);
-    const symStyle = TextStyle(color: Color(0xFFFFB020), fontSize: 12.5, fontWeight: FontWeight.w800);
+    const symStyle = TextStyle(
+        color: Color(0xFFFFB020), fontSize: 12.5, fontWeight: FontWeight.w800,
+        fontFamilyFallback: _symbolFonts);
     Widget item(String sym, String label) => Row(mainAxisSize: MainAxisSize.min,
         children: [Text('$sym ', style: symStyle), Text(label, style: style)]);
     final l = AppLocalizations.of(context);
@@ -198,9 +206,9 @@ class NorthIndianChartWidget extends StatelessWidget {
         spacing: 16,
         runSpacing: 6,
         children: [
-          item('R', l?.retrograde ?? 'Retrograde'),
-          item('C', l?.combust ?? 'Combust'),
-          item('V', l?.vargottama ?? 'Vargottama'),
+          item('*', l?.retrograde ?? 'Retrograde'),
+          item('^', l?.combust ?? 'Combust'),
+          item('\u25ab', l?.vargottama ?? 'Vargottama'),
           item('\u2191', l?.exalted ?? 'Exalted'),
           item('\u2193', l?.debilitated ?? 'Debilitated'),
         ],
@@ -208,6 +216,10 @@ class NorthIndianChartWidget extends StatelessWidget {
     );
   }
 }
+
+/// Fonts to fall back to for the dignity glyphs (\u2191 \u2193 \u25ab) the primary UI font
+/// (Manrope) doesn't include, so they render on Android + iOS + web.
+const List<String> _symbolFonts = ['Roboto', 'NotoSansSymbols', 'Segoe UI Symbol', 'Apple Symbols', 'Arial'];
 
 
 /// Draws the North Indian chart geometry:
