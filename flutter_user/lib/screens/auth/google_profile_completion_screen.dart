@@ -53,10 +53,18 @@ class _GoogleProfileCompletionScreenState
     if (_seededFromContext) return;
     _seededFromContext = true;
     final loc = Localizations.localeOf(context);
-    final tag = loc.scriptCode != null
-        ? '${loc.languageCode}_${loc.scriptCode}'
-        : loc.languageCode;
-    if (_languages.any((o) => o.code == tag)) _langCode = tag;
+    // Resolve to a code that EXISTS in the options (iOS attaches scriptCode:'Latn'
+    // to Latin locales, so 'fr_Latn' wouldn't match 'fr').
+    final codes = _languages.map((o) => o.code).toSet();
+    final lang = loc.languageCode;
+    final sc = loc.scriptCode;
+    final cc = loc.countryCode;
+    final tag = (sc != null && codes.contains('${lang}_$sc'))
+        ? '${lang}_$sc'
+        : (cc != null && codes.contains('${lang}_$cc'))
+            ? '${lang}_$cc'
+            : lang;
+    if (codes.contains(tag)) _langCode = tag;
   }
 
   // Region follows the picked country deterministically.
