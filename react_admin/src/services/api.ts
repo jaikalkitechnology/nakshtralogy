@@ -489,6 +489,9 @@ export async function adminPlusPlans() {
 export async function adminPlusPlanCreate(data: any) {
   return request(`/subscriptions/admin/plans`, { method: "POST", body: JSON.stringify(data) });
 }
+export async function adminPlusPlanSeed() {
+  return request(`/subscriptions/admin/plans/seed`, { method: "POST" });
+}
 export async function adminPlusPlanUpdate(id: string, data: any) {
   return request(`/subscriptions/admin/plans/${id}`, { method: "PUT", body: JSON.stringify(data) });
 }
