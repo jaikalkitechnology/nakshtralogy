@@ -945,6 +945,7 @@ class ChatSession(Base):
     user_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     astro_wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
     block_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    refund_txn_id = Column(String(36), nullable=True)     # set once the block is refunded (idempotency)
     # Coupon / invoice linkage (additive; nullable).
     coupon_id = Column(String(36), nullable=True, index=True)
     coupon_code = Column(String(40), nullable=True)       # user-entered code, applied at finalize

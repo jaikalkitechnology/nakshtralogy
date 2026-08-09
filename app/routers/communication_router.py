@@ -574,7 +574,7 @@ def call_action(
             if profile:
                 call.astro_wallet_txn_id = _credit_wallet(
                     db, profile.user_id, earning,
-                    f"{call.call_type.title()} call earning — ₹{total} ({commission_pct}% commission)"
+                    f"{call.call_type.title()} call earning — {commission_pct:g}% of ₹{total:g}"
                 )
                 profile.total_consultations = (profile.total_consultations or 0) + 1
                 profile.total_minutes = (profile.total_minutes or 0) + minutes
@@ -1444,11 +1444,16 @@ def chat_action(
         _finalize_chat_billing(db, session, profile, lang=lang)
 
     elif req.action == "cancel":
-        session.status = "cancelled"
-        session.ended_at = datetime.utcnow()
-        _refund_blocked(db, session)
-        if profile:
-            profile.is_busy = False
+        # Only a still-pending session can be cancelled+refunded. A session
+        # already terminal (cancelled/expired/completed) is a no-op — this,
+        # plus the idempotent _refund_blocked, prevents the double refund from
+        # a client that cancels twice (e.g. dialog + dispose).
+        if session.status in ("waiting", "active"):
+            session.status = "cancelled"
+            session.ended_at = datetime.utcnow()
+            _refund_blocked(db, session)
+            if profile:
+                profile.is_busy = False
 
     db.commit()
     db.refresh(session)
@@ -1456,22 +1461,32 @@ def chat_action(
 
 
 def _refund_blocked(db: Session, session: ChatSession):
-    """Refund blocked amount back to user wallet if not yet charged."""
-    if session.blocked_amount and float(session.blocked_amount) > 0 and not session.user_wallet_txn_id:
-        wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
-        if wallet:
-            refund_amt = float(session.blocked_amount)
-            wallet.balance = Decimal(str(float(wallet.balance) + refund_amt))
-            txn = WalletTransaction(
-                wallet_id=wallet.id,
-                txn_type="refund",
-                amount=Decimal(str(refund_amt)),
-                balance_after=wallet.balance,
-                description="Chat cancelled/expired — blocked amount refunded",
-                reference_type="chat_refund",
-            )
-            db.add(txn)
-            db.flush()
+    """Refund the blocked amount back to the user — EXACTLY ONCE. Idempotent:
+    a second call (double-cancel from the client, or a cancel racing the
+    expiry watchdog) is a no-op because `refund_txn_id` is already set. Never
+    refunds a session that was actually charged (`user_wallet_txn_id`)."""
+    if getattr(session, "refund_txn_id", None):
+        return  # already refunded
+    if session.user_wallet_txn_id:
+        return  # was charged, not refundable
+    if not (session.blocked_amount and float(session.blocked_amount) > 0):
+        return
+    wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
+    if not wallet:
+        return
+    refund_amt = float(session.blocked_amount)
+    wallet.balance = Decimal(str(float(wallet.balance) + refund_amt))
+    txn = WalletTransaction(
+        wallet_id=wallet.id,
+        txn_type="refund",
+        amount=Decimal(str(refund_amt)),
+        balance_after=wallet.balance,
+        description="Chat cancelled/expired — blocked amount refunded",
+        reference_type="chat_refund",
+    )
+    db.add(txn)
+    db.flush()
+    session.refund_txn_id = txn.id  # mark refunded → idempotent
 
 
 def _resolve_consult_coupon(db: Session, user_id: str, scope: str,
@@ -1490,38 +1505,58 @@ def _resolve_consult_coupon(db: Session, user_id: str, scope: str,
 
 def _split_earning(total: float, discount: float, funded_by: str, commission_pct: float):
     """(net_to_user, astrologer_earning, platform_commission) after a coupon.
-    astrologer-funded → astrologer earns on the discounted net; platform-funded
-    → astrologer earns on the full total and the platform absorbs the discount."""
+
+    ``commission_pct`` is the ASTROLOGER's earning share: for a ₹100 bill at
+    30%, the astrologer earns ₹30 and the platform keeps ₹70. (Product rule —
+    the astrologer receives the set percentage, the platform the remainder.)
+    astrologer-funded → astrologer earns their % on the discounted net;
+    platform-funded → astrologer earns their % on the full total and the
+    platform absorbs the discount."""
     net = total - discount
     if funded_by == "platform":
-        commission = total * commission_pct / 100 - discount
-        earning = total - (total * commission_pct / 100)
+        earning = total * commission_pct / 100
+        commission = total - earning - discount   # platform keeps the rest, absorbs discount
     else:  # astrologer-funded (default) or no coupon (discount 0)
-        commission = net * commission_pct / 100
-        earning = net - commission
+        earning = net * commission_pct / 100
+        commission = net - earning
     return net, earning, commission
 
 
-def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str = "english"):
-    """End session and settle billing."""
+def chat_billable_total(db: Session, session: ChatSession, lang: str = "english") -> float:
+    """The ₹ total for a chat session. per_session → the flat block; per_minute
+    → minutes × rate (debits any overage beyond the block, capped on shortfall).
+    Idempotent: the per-minute overage is only debited when the session is being
+    settled for the first time (guarded by the caller)."""
+    if session.billing_mode == "per_session":
+        return float(session.blocked_amount or session.rate_per_session or 0)
+    minutes = max(1, math.ceil((session.duration_sec or 0) / 60))
+    total = minutes * float(session.rate_per_min or 0)
+    blocked = float(session.blocked_amount or 0)
+    if total > blocked:
+        extra = total - blocked
+        try:
+            _debit_wallet(db, session.user_id, extra, f"Chat extra - {minutes} min", lang=lang)
+        except HTTPException:
+            total = blocked  # cap at blocked if insufficient
+    return total
+
+
+def settle_chat(db: Session, session: ChatSession, profile, lang: str = "english") -> None:
+    """Single, idempotent chat settlement used by EVERY termination path (REST
+    end, WebSocket complete, watchdog). Applies the coupon (credit-back on the
+    already-debited block), splits earnings per the flip rule, credits the
+    astrologer, and writes the invoice — exactly once per session."""
+    # Idempotency: a session already settled (astrologer credited) is never
+    # settled again — prevents double earnings/invoices across paths.
+    if session.astro_wallet_txn_id:
+        return
     session.status = "completed"
-    session.ended_at = datetime.utcnow()
-    if session.started_at:
+    if not session.ended_at:
+        session.ended_at = datetime.utcnow()
+    if session.started_at and not session.duration_sec:
         session.duration_sec = int((session.ended_at - session.started_at).total_seconds())
 
-    if session.billing_mode == "per_session":
-        total = float(session.blocked_amount or session.rate_per_session or 0)
-    else:
-        minutes = max(1, math.ceil(session.duration_sec / 60))
-        total = minutes * float(session.rate_per_min)
-        blocked = float(session.blocked_amount or 0)
-        if total > blocked:
-            # Debit additional from wallet
-            extra = total - blocked
-            try:
-                _debit_wallet(db, session.user_id, extra, f"Chat extra - {minutes} min", lang=lang)
-            except HTTPException:
-                total = blocked  # cap at blocked if insufficient
+    total = chat_billable_total(db, session, lang=lang)
 
     # ── coupon: chat was debited upfront (block/extra), so a discount is
     #    refunded to the user; earning/commission recomputed per funded_by. ──
@@ -1548,7 +1583,7 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str
     if profile:
         session.astro_wallet_txn_id = _credit_wallet(
             db, profile.user_id, earning,
-            f"Chat earning — ₹{total} ({commission_pct}% commission)"
+            f"Chat earning — {commission_pct:g}% of ₹{total:g}"
         )
         profile.is_busy = False
         profile.total_consultations = (profile.total_consultations or 0) + 1
@@ -1566,6 +1601,11 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str
         session.invoice_id = _inv.id
     except Exception:
         pass
+
+
+def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str = "english"):
+    """REST `end` action → settle via the shared idempotent path."""
+    settle_chat(db, session, profile, lang=lang)
 
 
 def _chat_session_response(session: ChatSession, db=None) -> ChatSessionResponse:

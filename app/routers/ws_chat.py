@@ -264,8 +264,12 @@ async def websocket_chat(
                 if is_user:
                     session.user_message_count = (session.user_message_count or 0) + 1
 
-                    # Per-message billing: deduct from user, credit astrologer per message
-                    if rate_per_msg > 0:
+                    # Per-message billing ONLY for a dedicated per-message plan.
+                    # For per_session (flat block) and per_minute (settled by time
+                    # at the end) the message must NOT be charged again — doing so
+                    # stacked a "Chat message #N" debit on top of the block and
+                    # over-charged the user. Astrologer earns the SET % (flip rule).
+                    if rate_per_msg > 0 and session.billing_mode == "per_message":
                         try:
                             user_wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
                             if user_wallet and float(user_wallet.balance) >= rate_per_msg:
@@ -277,9 +281,9 @@ async def websocket_chat(
                                     description=f"Chat message #{session.user_message_count}",
                                     reference_type="chat_per_msg",
                                 ))
-                                # Credit astrologer after commission
+                                # Credit astrologer their set % share
                                 comm_pct = float(profile.commission_pct) if profile else 30.0
-                                earning = rate_per_msg * (1 - comm_pct / 100)
+                                earning = rate_per_msg * comm_pct / 100
                                 if profile:
                                     _credit_astro_wallet(db, profile.user_id, earning,
                                         f"Chat msg earning #{session.user_message_count}")
@@ -420,34 +424,14 @@ async def websocket_chat(
 
 
 async def _complete_session(db: Session, session: ChatSession, profile):
-    """Finalize session billing and mark as completed."""
-    session.status = "completed"
-    session.ended_at = datetime.utcnow()
-    if session.started_at:
-        session.duration_sec = int((session.ended_at - session.started_at).total_seconds())
+    """Finalize session billing and mark as completed.
 
-    if session.billing_mode == "per_session":
-        total = float(session.blocked_amount or session.rate_per_session or 0)
-    else:
-        minutes = max(1, math.ceil(session.duration_sec / 60))
-        total = minutes * float(session.rate_per_min or 0)
-
-    commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
-    commission = total * commission_pct / 100
-    earning = total - commission
-    session.total_amount = Decimal(str(total))
-    session.astrologer_earning = Decimal(str(earning))
-    session.platform_commission = Decimal(str(commission))
-    session.user_wallet_txn_id = session.block_txn_id
-
-    if profile:
-        session.astro_wallet_txn_id = _credit_astro_wallet(
-            db, profile.user_id, earning,
-            f"Chat earning — ₹{total} ({commission_pct}% commission)"
-        )
-        profile.is_busy = False
-        profile.total_consultations = (profile.total_consultations or 0) + 1
-
+    Delegates to the single shared settlement in communication_router so the
+    coupon, the earning split (astrologer earns the set %), and the invoice are
+    applied identically on every termination path — and only ONCE per session
+    (settle_chat is idempotent)."""
+    from app.routers.communication_router import settle_chat
+    settle_chat(db, session, profile)
     db.commit()
 
 
