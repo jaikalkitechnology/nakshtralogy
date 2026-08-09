@@ -85,7 +85,10 @@ async def _cleanup_stale_sessions():
             if stale_calls:
                 logger.info("Force-ended %d stale active calls", len(stale_calls))
 
-            # 3. Chat sessions stuck in "waiting" past expiry
+            # 3. Chat sessions stuck in "waiting" past expiry → expire + REFUND
+            #    the blocked amount (idempotent) so an unanswered request never
+            #    leaves the user's money held.
+            from app.routers.communication_router import _refund_blocked, settle_chat
             expired_chats = db.query(ChatSession).filter(
                 ChatSession.status == "waiting",
                 ChatSession.expires_at < now,
@@ -93,25 +96,30 @@ async def _cleanup_stale_sessions():
             for chat in expired_chats:
                 chat.status = "expired"
                 chat.ended_at = now
+                _refund_blocked(db, chat)
+                prof = db.query(AstrologerProfile).filter(
+                    AstrologerProfile.id == chat.astrologer_id
+                ).first()
+                if prof:
+                    prof.is_busy = False
             if expired_chats:
-                logger.info("Expired %d waiting chats", len(expired_chats))
+                logger.info("Expired + refunded %d waiting chats", len(expired_chats))
 
-            # 4. Chat sessions active but past session_expires_at
+            # 4. Chat sessions active but past session_expires_at → settle once
+            #    through the shared path (coupon + earning split + invoice).
             expired_active = db.query(ChatSession).filter(
                 ChatSession.status == "active",
                 ChatSession.session_expires_at != None,
                 ChatSession.session_expires_at < now,
             ).all()
             for chat in expired_active:
-                chat.status = "completed"
                 chat.ended_at = now
                 if chat.started_at:
                     chat.duration_sec = int((now - chat.started_at).total_seconds())
                 prof = db.query(AstrologerProfile).filter(
                     AstrologerProfile.id == chat.astrologer_id
                 ).first()
-                if prof:
-                    prof.is_busy = False
+                settle_chat(db, chat, prof)
             if expired_active:
                 logger.info("Auto-completed %d expired active chats", len(expired_active))
 
