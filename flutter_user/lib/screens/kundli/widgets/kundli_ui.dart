@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../../ai/ai_specialist_chat_screen.dart';
 
 /// ════════════════════════════════════════════════════════════════════
 ///  Shared UI foundation for the Complete Birth Chart redesign
@@ -349,6 +350,59 @@ class _KFadeInState extends State<KFadeIn> with SingleTickerProviderStateMixin {
         return Opacity(opacity: _c.value, child: Transform.translate(offset: Offset(0, (1 - t) * 16), child: child));
       },
       child: widget.child,
+    );
+  }
+}
+
+/// Prominent in-app "Chat with AI" call-to-action shown at the bottom of each
+/// specialist report. Opens the app's own AI specialist chat scoped to the
+/// report's domain (career, wealth, marriage, …) instead of copying to an
+/// external assistant. Presentation only — navigation to an existing screen.
+class ReportAiChatCta extends StatelessWidget {
+  final String domainKey;
+  final String label;
+  final String emoji;
+  const ReportAiChatCta({
+    super.key,
+    required this.domainKey,
+    required this.label,
+    required this.emoji,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => AiSpecialistChatScreen(
+          domainKey: domainKey, label: label, emoji: emoji),
+      )),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [AppColors.gold, AppColors.saffron]),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: AppColors.gold.withOpacity(0.25), blurRadius: 14, offset: const Offset(0, 4))],
+        ),
+        child: Row(children: [
+          Container(
+            width: 34, height: 34,
+            decoration: BoxDecoration(color: AppColors.midnight.withOpacity(0.18), borderRadius: BorderRadius.circular(10)),
+            child: const Center(child: Icon(Icons.auto_awesome, color: AppColors.midnight, size: 19)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Chat with AI', style: const TextStyle(color: AppColors.midnight, fontSize: 15, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 1),
+              Text('$emoji  ${AppLocalizations.of(context)?.crAskAbout ?? 'Ask about'} $label',
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: AppColors.midnight.withOpacity(0.75), fontSize: 11, fontWeight: FontWeight.w600)),
+            ]),
+          ),
+          const Icon(Icons.arrow_forward_rounded, color: AppColors.midnight, size: 20),
+        ]),
+      ),
     );
   }
 }

@@ -614,6 +614,8 @@ class _LoveCompatibilityReportState extends State<LoveCompatibilityReportScreen>
     final topics = <String>[l.lcTopicTiming, l.lcTopicChallenges, l.lcTopicKarmic, l.lcTopicRemedies, l.lcTopicLongterm, l.lcTopicDynamics];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'love_relationship', label: 'Love & Relationship', emoji: '❤️'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),

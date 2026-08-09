@@ -727,6 +727,8 @@ class _MilanReportState extends State<MilanReportScreen> {
     final topics = <String>[l.kmTopicAshtakoot, l.kmTopicMangal, l.kmTopicD9, l.kmTopicTiming, l.kmTopicRisks, l.kmTopicGrowth, l.kmTopicRemedies, l.kmTopicVerdict];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'marriage_family', label: 'Marriage & Family', emoji: '💒'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),

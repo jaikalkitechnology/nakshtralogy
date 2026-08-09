@@ -636,6 +636,8 @@ class _ChildProbabilityReportState extends State<ChildProbabilityReportScreen> {
     final topics = <String>[l.cpTopicTiming, l.cpTopicNumber, l.cpTopicDosha, l.cpTopicRemedies, l.cpTopicFifthHouse, l.cpTopicJupiter];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'marriage_family', label: 'Marriage & Family', emoji: '💒'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),

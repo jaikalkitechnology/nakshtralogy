@@ -709,6 +709,8 @@ class _MarriageState extends State<MarriageReportScreen> {
     final topics = <String>[l.mrTopicWhen, l.mrTopicSpouse, l.mrTopicCompat, l.mrTopicDelay, l.mrTopicMangal, l.mrTopicChildren, l.mrTopicInLaws, l.mrTopicHarmony];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'marriage_family', label: 'Marriage & Family', emoji: '💒'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data!, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data!, 'claude')),

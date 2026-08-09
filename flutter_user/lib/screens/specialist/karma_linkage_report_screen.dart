@@ -561,6 +561,8 @@ class _KarmaLinkageReportState extends State<KarmaLinkageReportScreen> {
     final topics = <String>[l.klTopicLinkage, l.klTopicPairwise, l.klTopicDebts, l.klTopicLessons, l.klTopicTiming, l.klTopicGroup];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'life_path_luck', label: 'Life Path & Luck', emoji: '🌟'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data, 'claude')),

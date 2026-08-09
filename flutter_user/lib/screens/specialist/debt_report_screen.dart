@@ -708,6 +708,8 @@ class _DebtReportState extends State<DebtReportScreen> {
     final topics = <String>[l.dbTopicRecovery, l.dbTopicNegotiate, l.dbTopicBorrowing, l.dbTopicCrisis, l.dbTopicAncestral, l.dbTopicTimeline, l.dbTopicPsychology, l.dbTopicCategories];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportAiChatCta(domainKey: 'debt_recovery', label: 'Debt Recovery', emoji: '📉'),
+      const SizedBox(height: 14),
       Row(children: [
         _aiBtn('ChatGPT', '🤖', () => _launchAi(_data!, 'chatgpt')),
         _aiBtn('Claude', '✳️', () => _launchAi(_data!, 'claude')),
