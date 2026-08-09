@@ -149,8 +149,10 @@ class NorthIndianChartWidget extends StatelessWidget {
             if (flags.contains('R')) marks.add('*');
             if (flags.contains('C')) marks.add('^');
             if (flags.contains('V')) marks.add('\u25ab');       // \u25ab
-            if (dignity == 'exalted') marks.add('\u2191');      // \u2191
-            if (dignity == 'debilitated') marks.add('\u2193');  // \u2193
+            // Backend dignity is a phrase ("Uch (Exalted) \u2b06" / "Neech
+            // (Debilitated) \u2b07") \u2014 match by substring so \u2191/\u2193 appear.
+            if (dignity.contains('uch') || dignity.contains('exalt')) marks.add('\u2191');   // \u2191
+            if (dignity.contains('neech') || dignity.contains('debil')) marks.add('\u2193'); // \u2193
             final flagStr = marks.join(' ');
             final abbr = name.length > 2 ? name.substring(0, 2) : name;
             return Padding(

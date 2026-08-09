@@ -158,6 +158,25 @@ String kGenderLabel(String planet, AppLocalizations l) {
 
 String kElementLabel2(String t, AppLocalizations l) => t == 'ether' ? l.sumEther : kElementLabel(t, l);
 
+/// Canonical exaltation sign per planet (0=Aries … 11=Pisces). Debilitation is
+/// the 7th sign from exaltation. Used to show ↑/↓ in DIVISIONAL charts, where
+/// the backend sends only the varga sign (no dignity string). Rahu/Ketu have no
+/// classical consensus, so they're omitted.
+const Map<String, int> _kExaltSign = {
+  'Sun': 0, 'Moon': 1, 'Mars': 9, 'Mercury': 5,
+  'Jupiter': 3, 'Venus': 11, 'Saturn': 6,
+};
+
+/// Sign-based dignity ('exalted' | 'debilitated' | '') for a planet in a given
+/// sign — for divisional-chart symbol display. Presentation only.
+String kSignDignity(String planet, int signIdx) {
+  final ex = _kExaltSign[planet];
+  if (ex == null) return '';
+  if (signIdx == ex) return 'exalted';
+  if (signIdx == (ex + 6) % 12) return 'debilitated';
+  return '';
+}
+
 /// Sign relationship of a planet in its occupied sign.
 /// Prefers the backend dignity (own/exalted/debilitated); otherwise derives
 /// friend/enemy/neutral from the sign-lord's natural relationship.
