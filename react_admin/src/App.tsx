@@ -26,6 +26,7 @@ import ChatGuard from "./pages/admin/ChatGuard";
 import CouponManager from "./pages/admin/CouponManager";
 import PaymentGateways from "./pages/admin/PaymentGateways";
 import Withdrawals from "./pages/admin/Withdrawals";
+import Subscriptions from "./pages/admin/Subscriptions";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,7 @@ const App = () => (
               <Route path="/admin/coupons" element={<RequireAdmin><AdminShell><CouponManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/payment-gateways" element={<RequireAdmin><AdminShell><PaymentGateways /></AdminShell></RequireAdmin>} />
               <Route path="/admin/withdrawals" element={<RequireAdmin><AdminShell><Withdrawals /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/subscriptions" element={<RequireAdmin><AdminShell><Subscriptions /></AdminShell></RequireAdmin>} />
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/system" element={<RequireAdmin><AdminShell><SystemMaintenance /></AdminShell></RequireAdmin>} />
               {/* Screens with no backend yet — clearly labelled "coming soon" rather than faked */}
