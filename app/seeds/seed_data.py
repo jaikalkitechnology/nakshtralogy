@@ -24,7 +24,7 @@ from app.models.model import (
     User, Wallet, AstrologerProfile, AstrologerAvailability,
     ServicePricing, GiftPricing, AgoraConfig, Notification,
     PlatformSetting, DeveloperProfile, ApiKey, SubscriptionPlan,
-    ApiProduct, DeveloperSubscription,
+    ApiProduct, DeveloperSubscription, PlusPlan,
 )
 
 
@@ -35,6 +35,7 @@ def seed_all(db: Session) -> dict:
     summary["users"] = _seed_users(db)
     summary["astrologers"] = _seed_astrologers(db)
     summary["service_pricing"] = _seed_service_pricing(db)
+    summary["plus_plans"] = _seed_plus_plans(db)
     summary["gift_pricing"] = _seed_gift_pricing(db)
     summary["agora_config"] = _seed_agora_config(db)
     summary["platform_settings"] = _seed_platform_settings(db)
@@ -668,6 +669,42 @@ def _seed_service_pricing(db: Session) -> int:
     db.query(ServicePricing).filter(ServicePricing.price_usd_manual.is_(None)).update(
         {ServicePricing.price_usd_manual: False}, synchronize_session=False
     )
+    return created
+
+
+# ─── 4b. NakshtralogyPlus plans (7 / 15 / 30 days) ────────────────────
+
+PLUS_PLANS = [
+    {
+        "code": "plus_7", "name": "NakshtralogyPlus — 7 Days", "duration_days": 7,
+        "price": 99, "original_price": 199, "icon": "✨", "sort_order": 1,
+        "features_json": ["All reports & kundli free", "All divisional charts",
+                          "Daily forecast & moola dasha", "Unlimited birth charts",
+                          "AI astro readings"],
+    },
+    {
+        "code": "plus_15", "name": "NakshtralogyPlus — 15 Days", "duration_days": 15,
+        "price": 179, "original_price": 349, "icon": "\U0001f31f", "sort_order": 2,
+        "features_json": ["Everything in 7-day", "Best value for regular seekers",
+                          "Unlimited birth charts", "AI astro readings"],
+    },
+    {
+        "code": "plus_30", "name": "NakshtralogyPlus — 30 Days", "duration_days": 30,
+        "price": 299, "original_price": 599, "icon": "\U0001f451", "sort_order": 3,
+        "features_json": ["Everything in 15-day", "Full month all-access",
+                          "Unlimited birth charts", "AI astro readings",
+                          "Best price per day"],
+    },
+]
+
+
+def _seed_plus_plans(db: Session) -> int:
+    created = 0
+    for p in PLUS_PLANS:
+        if db.query(PlusPlan).filter(PlusPlan.code == p["code"]).first():
+            continue
+        db.add(PlusPlan(**p))
+        created += 1
     return created
 
 

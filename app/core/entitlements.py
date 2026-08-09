@@ -100,6 +100,16 @@ def is_entitled(
     if sp.is_free or price == 0:
         return True, sp, None
 
+    # NakshtralogyPlus: an active subscription unlocks every paid PRODUCT
+    # (reports, kundli, forecasts, AI readings, extra charts). Live astrologer
+    # chat/call/video are billed separately and never reach this gate.
+    try:
+        from app.services import subscription_service
+        if user is not None and subscription_service.has_active(db, user.id):
+            return True, sp, None
+    except Exception:
+        pass
+
     # Free Primary chart: single-chart services are FREE on the user's primary
     # (first) chart. Multi-chart comparison services are always paid, and
     # non-primary charts require an unlock.
