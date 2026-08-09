@@ -171,6 +171,10 @@ class AstrologerListResponse(BaseModel):
     total_consultations: int = 0
     is_online: bool = False
     is_busy: bool = False
+    # Compact active discount offer to advertise on the list card, e.g.
+    # {"label": "20% OFF", "discount_type": "percent", "discount_value": 20,
+    #  "code": "FREE100" | null, "first_time_only": true}. Null when none.
+    offer: Optional[dict] = None
 
     class Config:
         from_attributes = True

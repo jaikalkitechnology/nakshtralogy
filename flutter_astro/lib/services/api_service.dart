@@ -1095,6 +1095,7 @@ class ApiService {
     required String kind,          // first_consult | consultation
     required String discountType,  // percent | flat
     required num discountValue,
+    String? code,                  // optional user-facing code
     String? title,
     num? maxDiscountAmt,
     num? minOrderAmt,
@@ -1107,6 +1108,7 @@ class ApiService {
         'kind': kind,
         'discount_type': discountType,
         'discount_value': discountValue,
+        if (code != null && code.trim().isNotEmpty) 'code': code.trim(),
         if (title != null) 'title': title,
         if (maxDiscountAmt != null) 'max_discount_amt': maxDiscountAmt,
         if (minOrderAmt != null) 'min_order_amt': minOrderAmt,

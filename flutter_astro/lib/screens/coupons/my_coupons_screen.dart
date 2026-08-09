@@ -115,10 +115,28 @@ class _MyCouponsScreenState extends State<MyCouponsScreen> {
                             ),
                             const SizedBox(width: 12),
                             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text((c['title'] ?? 'First-time offer').toString(),
+                              Text((c['title'] ?? 'Offer').toString(),
                                   style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 3),
+                              Row(children: [
+                                if ((c['code'] ?? '').toString().isNotEmpty) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.background,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: AppColors.gold.withOpacity(0.4)),
+                                    ),
+                                    child: Text(c['code'].toString(),
+                                        style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                                  ),
+                                  const SizedBox(width: 6),
+                                ],
+                                Text(c['first_time_only'] == true ? 'First-time' : 'All clients',
+                                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                              ]),
                               const SizedBox(height: 2),
-                              Text('${c['kind']} · ${c['redeemed_count'] ?? 0} used',
+                              Text('${c['redeemed_count'] ?? 0} used',
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ])),
                             Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
@@ -148,20 +166,24 @@ class _CreateCouponSheet extends StatefulWidget {
 }
 
 class _CreateCouponSheetState extends State<_CreateCouponSheet> {
-  final _title = TextEditingController(text: 'Get a discount on your first consultation');
+  final _title = TextEditingController(text: 'Get a discount on your consultation');
   final _value = TextEditingController(text: '20');
+  final _code = TextEditingController();
   String _discountType = 'percent';
+  bool _firstTimeOnly = true;   // true → first_consult ; false → consultation (all clients)
   bool _saving = false;
 
   @override
-  void dispose() { _title.dispose(); _value.dispose(); super.dispose(); }
+  void dispose() { _title.dispose(); _value.dispose(); _code.dispose(); super.dispose(); }
 
   Future<void> _save() async {
     final v = double.tryParse(_value.text.trim()) ?? 0;
     if (v <= 0) return;
     setState(() => _saving = true);
     final resp = await ApiService().createCoupon(
-      kind: 'first_consult', discountType: _discountType, discountValue: v,
+      kind: _firstTimeOnly ? 'first_consult' : 'consultation',
+      discountType: _discountType, discountValue: v,
+      code: _code.text.trim().isEmpty ? null : _code.text.trim().toUpperCase(),
       title: _title.text.trim().isEmpty ? null : _title.text.trim(),
     );
     if (!mounted) return;
@@ -175,6 +197,25 @@ class _CreateCouponSheetState extends State<_CreateCouponSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(resp['detail']?.toString() ?? 'Failed'), backgroundColor: AppColors.error));
     }
+  }
+
+  Widget _audienceChip(String label, bool firstTime) {
+    final sel = _firstTimeOnly == firstTime;
+    return GestureDetector(
+      onTap: () => setState(() => _firstTimeOnly = firstTime),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: sel ? AppColors.gold.withOpacity(0.16) : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: sel ? AppColors.gold : AppColors.border),
+        ),
+        child: Text(label,
+            style: TextStyle(color: sel ? AppColors.gold : AppColors.textSecondary,
+                fontSize: 12, fontWeight: sel ? FontWeight.w700 : FontWeight.w500)),
+      ),
+    );
   }
 
   Widget _field(TextEditingController c, String label, {bool number = false}) => TextField(
@@ -194,9 +235,9 @@ class _CreateCouponSheetState extends State<_CreateCouponSheet> {
     return Padding(
       padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
       child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('New first-time offer', style: TextStyle(color: AppColors.textPrimary, fontSize: 17, fontWeight: FontWeight.w700)),
+        const Text('New offer', style: TextStyle(color: AppColors.textPrimary, fontSize: 17, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        const Text('Shown on your profile to first-time clients and applied automatically to chat / call / video billing.',
+        const Text('Shown on your profile and applied to chat / call / video billing. Goes to admin review before going live.',
             style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
         const SizedBox(height: 16),
         _field(_title, 'Offer title (optional)'),
@@ -216,6 +257,20 @@ class _CreateCouponSheetState extends State<_CreateCouponSheet> {
           )),
           const SizedBox(width: 12),
           Expanded(child: _field(_value, _discountType == 'percent' ? 'Value %' : 'Value ₹', number: true)),
+        ]),
+        const SizedBox(height: 12),
+        _field(_code, 'Coupon code (optional — leave blank to auto-apply)'),
+        const SizedBox(height: 6),
+        const Text('With a code, clients enter/copy it to apply. Without a code, the offer applies automatically at billing.',
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+        const SizedBox(height: 14),
+        // Audience: first-time clients only vs all clients.
+        const Text('Who can use it', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        const SizedBox(height: 6),
+        Row(children: [
+          Expanded(child: _audienceChip('First-time clients', true)),
+          const SizedBox(width: 8),
+          Expanded(child: _audienceChip('All clients', false)),
         ]),
         const SizedBox(height: 18),
         SizedBox(width: double.infinity, height: 48, child: ElevatedButton(
