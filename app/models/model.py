@@ -1709,3 +1709,61 @@ class WalletRechargeOrder(Base):
     __table_args__ = (
         Index("ix_recharge_gateway_payment", "gateway", "gateway_payment_id", unique=True),
     )
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  NakshtralogyPlus — time-boxed all-access subscription
+# ─────────────────────────────────────────────────────────────────────
+
+class PlusPlan(Base):
+    """An admin-editable NakshtralogyPlus plan (7 / 15 / 30 days). Grants
+    all-access to every paid PRODUCT (reports, kundli, forecasts, AI readings,
+    unlimited charts) for its duration — EXCLUDING live astrologer chat/call/
+    video, which remain pay-per-use. Presentation/access + pricing only; never
+    touches astrology logic. Prices are ₹ (India); USD is derived for display.
+    (Named PlusPlan to avoid the developer-platform SubscriptionPlan table.)"""
+    __tablename__ = "plus_plans"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    code = Column(String(30), nullable=False, unique=True, index=True)  # plus_7 | plus_15 | plus_30
+    name = Column(String(120), nullable=False)
+    duration_days = Column(Integer, nullable=False)
+    price = Column(Numeric(10, 2), nullable=False, default=0)           # ₹
+    original_price = Column(Numeric(10, 2), nullable=True)
+    price_usd = Column(Numeric(10, 2), nullable=True)                   # manual override; else derived
+    price_usd_manual = Column(Boolean, default=False, nullable=False)
+    icon = Column(String(16), nullable=True)
+    features_json = Column(JSON, nullable=True)
+    is_active = Column(Boolean, default=True, index=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class UserSubscription(Base):
+    """A user's purchased NakshtralogyPlus period. Exactly one row is 'active'
+    with expires_at > now at a time; a new purchase extends expires_at. Access
+    is checked via expires_at, so expiry needs no cron. Money moves through the
+    normal wallet/coupon path; this row is the entitlement record."""
+    __tablename__ = "user_subscriptions"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    plan_id = Column(String(36), ForeignKey("plus_plans.id"), nullable=True)
+    plan_code = Column(String(30), nullable=True)
+    started_at = Column(DateTime, server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    status = Column(String(16), default="active", index=True)  # active | expired | cancelled
+    amount_paid = Column(Numeric(10, 2), default=0)
+    currency = Column(String(3), default="INR")
+    discount_amount = Column(Numeric(10, 2), default=0)
+    coupon_id = Column(String(36), nullable=True, index=True)
+    coupon_code = Column(String(40), nullable=True)
+    wallet_txn_id = Column(String(36), nullable=True)
+    invoice_id = Column(String(36), nullable=True)
+    order_ref = Column(String(120), nullable=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_usersub_user_status", "user_id", "status"),
+    )

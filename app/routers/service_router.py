@@ -650,7 +650,10 @@ def create_chart(
     # an already-bought credit, or 402 if none exists. ──
     extra_credit = None
     from app.core.entitlements import _is_privileged as _ent_privileged
-    if not is_first and not _ent_privileged(current_user):
+    from app.services import subscription_service as _sub_svc
+    # NakshtralogyPlus grants unlimited charts while active.
+    _has_plus = _sub_svc.has_active(db, current_user.id)
+    if not is_first and not _ent_privileged(current_user) and not _has_plus:
         from app.core.entitlements import get_pricing, payment_required_detail
         sp_extra = get_pricing(db, "extra_chart")
         if sp_extra and not sp_extra.is_free and float(sp_extra.price or 0) > 0:
@@ -1463,6 +1466,9 @@ def get_entitlements(
 
     from app.core.entitlements import _is_privileged as _ent_privileged
     privileged = _ent_privileged(current_user)
+    # NakshtralogyPlus unlocks all products while active.
+    from app.services import subscription_service as _sub_svc
+    has_plus = _sub_svc.has_active(db, current_user.id)
 
     # Session region → currency for this user (drives USD/IAP vs ₹/wallet).
     sess = region_util.session_region(user_region=getattr(current_user, "region", None))
@@ -1485,7 +1491,7 @@ def get_entitlements(
         order = None
         if not is_free and not primary_free and not privileged and chart_id:
             order = find_order(db, current_user.id, sp.id, chart_id)
-        unlocked = is_free or privileged or primary_free or (order is not None)
+        unlocked = is_free or privileged or has_plus or primary_free or (order is not None)
         usd = None if is_free else pricing_util.usd_for_pricing(sp, fx, mult)
         session_amount = 0.0 if is_free else (float(usd) if (intl and usd) else price)
         out.append({
@@ -1514,6 +1520,7 @@ def get_entitlements(
         "is_international": intl,
         "currency": "USD" if intl else "INR",
         "privileged": privileged,
+        "has_plus": has_plus,
         "entitlements": out,
     }
 

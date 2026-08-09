@@ -117,6 +117,49 @@ def _apply_fields(c: Coupon, req, *, allow_owner_fields: bool):
         c.funded_by = req.funded_by
 
 
+# ── coupon platform settings (admin toggles) ──────────────────────────
+
+_SETTINGS_CAT = "coupons"
+_AUTO_APPROVE_KEY = "astro_auto_approve"
+
+
+def _get_setting(db: Session, key: str) -> Optional[str]:
+    from app.models.model import PlatformSetting
+    row = db.query(PlatformSetting).filter(
+        PlatformSetting.category == _SETTINGS_CAT, PlatformSetting.key == key
+    ).first()
+    return row.value if row else None
+
+
+def _set_setting(db: Session, key: str, value: str, user_id: Optional[str] = None) -> None:
+    from app.models.model import PlatformSetting
+    row = db.query(PlatformSetting).filter(
+        PlatformSetting.category == _SETTINGS_CAT, PlatformSetting.key == key
+    ).first()
+    if row:
+        row.value = value
+        row.updated_by = user_id
+    else:
+        db.add(PlatformSetting(category=_SETTINGS_CAT, key=key, value=value, updated_by=user_id))
+
+
+def _astro_auto_approve(db: Session) -> bool:
+    """When ON, astrologer offers go straight to ACTIVE (no manual review).
+    Default OFF (offers still require admin approval)."""
+    v = _get_setting(db, _AUTO_APPROVE_KEY)
+    return str(v or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _guard_coupon_text(*texts: Optional[str]) -> None:
+    """Reject a coupon whose code/title/description carries abusive language —
+    these strings render on user-facing surfaces. Raises HTTP 400."""
+    from app.core.profanity import first_clean_error
+    bad = first_clean_error(*texts)
+    if bad is not None:
+        raise HTTPException(
+            400, "Please remove inappropriate language from the coupon name/code.")
+
+
 # ── request models ────────────────────────────────────────────────────
 
 class CouponBody(BaseModel):
@@ -151,6 +194,35 @@ class ValidateBody(BaseModel):
 # ══════════════════════════════════════════════════════════════════════
 #  ADMIN
 # ══════════════════════════════════════════════════════════════════════
+
+class CouponConfigBody(BaseModel):
+    astro_auto_approve: Optional[bool] = None
+
+
+@router.get("/admin/config")
+def admin_get_config(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Coupon platform toggles (admin)."""
+    return {"astro_auto_approve": _astro_auto_approve(db)}
+
+
+@router.put("/admin/config")
+def admin_set_config(
+    req: CouponConfigBody,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Update coupon toggles. When astro_auto_approve is ON, astrologer offers
+    go live immediately (no manual review). Abuse-language screening on the
+    code/name still applies regardless."""
+    if req.astro_auto_approve is not None:
+        _set_setting(db, _AUTO_APPROVE_KEY,
+                     "true" if req.astro_auto_approve else "false", current_user.id)
+    db.commit()
+    return {"astro_auto_approve": _astro_auto_approve(db)}
+
 
 @router.get("/admin")
 def admin_list(
@@ -354,6 +426,8 @@ def astro_create(
     """Astrologer creates a first-time / consultation discount. Starts
     pending_review; astrologer-funded; scoped to chat/call/video."""
     p = _my_profile(current_user)
+    # Abuse guard: code/title/description show on user-facing surfaces.
+    _guard_coupon_text(req.code, req.title, req.description)
     kind = req.kind if req.kind in ("first_consult", "consultation") else "first_consult"
     dtype = req.discount_type or "percent"
     if dtype not in ("percent", "flat"):
@@ -362,12 +436,14 @@ def astro_create(
         exists = db.query(Coupon).filter(func.lower(Coupon.code) == req.code.strip().lower()).first()
         if exists:
             raise HTTPException(409, "Coupon code already exists")
+    # Admin toggle: auto-approve astrologer offers (skip manual review).
+    initial_status = "active" if _astro_auto_approve(db) else "pending_review"
     c = Coupon(
         owner_type="astrologer", owner_id=p.id, kind=kind, discount_type=dtype,
         funded_by="astrologer",           # astrologer bears their own promo
         first_time_only=(kind == "first_consult"),
         per_user_limit=1,
-        status="pending_review",          # admin must approve
+        status=initial_status,
         applies_to=(req.applies_to or ["chat", "call", "video"]),
         created_by=current_user.id,
     )
@@ -377,7 +453,7 @@ def astro_create(
     c.owner_type = "astrologer"
     c.owner_id = p.id
     c.funded_by = "astrologer"
-    c.status = "pending_review"
+    c.status = initial_status
     db.add(c)
     db.commit()
     db.refresh(c)
@@ -397,16 +473,19 @@ def astro_update(
     ).first()
     if not c:
         raise HTTPException(404, "Coupon not found")
+    _guard_coupon_text(req.code, req.title, req.description)
+    auto = _astro_auto_approve(db)
     _apply_fields(c, req, allow_owner_fields=False)
     # astrologers may only pause/resume their own coupon; edits re-enter review
     if req.status in ("active", "paused"):
-        if req.status == "active" and c.status in ("pending_review", "rejected"):
-            pass  # cannot self-approve
+        if req.status == "active" and c.status in ("pending_review", "rejected") and not auto:
+            pass  # cannot self-approve while manual review is on
         else:
             c.status = req.status
     if any(v is not None for v in (req.discount_value, req.discount_type, req.applies_to, req.min_order_amt)):
-        if c.status == "active":
-            c.status = "pending_review"   # material change → re-moderate
+        # material change → re-moderate, unless auto-approve is on
+        if c.status == "active" and not auto:
+            c.status = "pending_review"
     db.commit()
     db.refresh(c)
     return _coupon_dict(c)

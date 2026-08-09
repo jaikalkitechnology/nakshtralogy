@@ -475,6 +475,32 @@ export async function adminCouponUpdate(id: string, data: any) {
 export async function adminCouponModerate(id: string, action: "approve" | "reject") {
   return request(`/coupons/admin/${id}/moderate`, { method: "POST", body: JSON.stringify({ action }) });
 }
+export async function adminCouponConfig() {
+  return request(`/coupons/admin/config`);
+}
+export async function adminCouponConfigUpdate(data: { astro_auto_approve?: boolean }) {
+  return request(`/coupons/admin/config`, { method: "PUT", body: JSON.stringify(data) });
+}
+
+// ── NakshtralogyPlus subscription plans ──
+export async function adminPlusPlans() {
+  return request(`/subscriptions/admin/plans`);
+}
+export async function adminPlusPlanCreate(data: any) {
+  return request(`/subscriptions/admin/plans`, { method: "POST", body: JSON.stringify(data) });
+}
+export async function adminPlusPlanUpdate(id: string, data: any) {
+  return request(`/subscriptions/admin/plans/${id}`, { method: "PUT", body: JSON.stringify(data) });
+}
+export async function adminPlusPlanDelete(id: string) {
+  return request(`/subscriptions/admin/plans/${id}`, { method: "DELETE" });
+}
+export async function adminPlusSubscribers(params: Record<string, any> = {}) {
+  const q = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "" && v !== null) as [string, string][]
+  ).toString();
+  return request(`/subscriptions/admin/subscribers${q ? `?${q}` : ""}`);
+}
 export async function adminCouponDelete(id: string) {
   return request(`/coupons/admin/${id}`, { method: "DELETE" });
 }
