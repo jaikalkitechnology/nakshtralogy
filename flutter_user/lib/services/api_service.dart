@@ -585,6 +585,38 @@ class ApiService {
     }
   }
 
+  // ═══ NakshtralogyPlus subscription ═══
+
+  /// Region-priced Plus plans + the user's current subscription status.
+  Future<Map<String, dynamic>?> getPlusPlans() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/subscriptions/plans'));
+      if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    } catch (_) {}
+    return null;
+  }
+
+  /// Current subscription {active, plan_code, expires_at, days_left}.
+  Future<Map<String, dynamic>?> getMySubscription() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/me/subscription'));
+      if (resp.statusCode == 200) return jsonDecode(resp.body) as Map<String, dynamic>;
+    } catch (_) {}
+    return null;
+  }
+
+  /// Buy a Plus plan (wallet + optional coupon; a 100%-off coupon activates free).
+  Future<Map<String, dynamic>> purchasePlus(String planCode, {String? couponCode}) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.baseUrl}/subscriptions/purchase'),
+      body: jsonEncode({
+        'plan_code': planCode,
+        if (couponCode != null && couponCode.trim().isNotEmpty) 'coupon_code': couponCode.trim(),
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ═══ Payment gateways (PAPG) — wallet recharge ═══
 
   /// Region-aware recharge gateways {region, currency, gateways:[{gateway,public_key,...}]}.

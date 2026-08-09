@@ -27,6 +27,8 @@ import '../../bloc/wallet/wallet_state.dart';
 import '../communication/call_history_screen.dart';
 import '../communication/chat_history_screen.dart';
 import '../charts/my_charts_screen.dart';
+import '../plus/nakshtralogy_plus_screen.dart';
+import '../../utils/plus_labels.dart';
 import '../notifications/notification_screen.dart';
 import '../tabs/wallet_tab.dart';
 import '../../widgets/astrologer_profile_sheet.dart';
@@ -46,6 +48,7 @@ class _ProfileTabState extends State<ProfileTab> {
   int _unreadNotifs = 0;
   bool _biometricEnabled = false;
   bool _biometricAvailable = false;
+  Map<String, dynamic>? _plusStatus;
 
   @override
   void initState() {
@@ -55,12 +58,18 @@ class _ProfileTabState extends State<ProfileTab> {
       context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
       _loadUnread();
       _loadBiometric();
+      _loadPlus();
     });
   }
 
   Future<void> _loadUnread() async {
     final count = await ApiService().getUnreadCount();
     if (mounted) setState(() => _unreadNotifs = count);
+  }
+
+  Future<void> _loadPlus() async {
+    final s = await ApiService().getMySubscription();
+    if (mounted) setState(() => _plusStatus = s);
   }
 
   Future<void> _loadBiometric() async {
@@ -473,6 +482,13 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
               const SizedBox(height: 24),
 
+              // ============ NakshtralogyPlus ============
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _plusCard(),
+              ),
+              const SizedBox(height: 16),
+
               // ============ MENU LIST ============
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -770,6 +786,56 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
         );
       },
+    );
+  }
+
+  Widget _plusCard() {
+    final active = _plusStatus?['active'] == true;
+    final daysLeft = (_plusStatus?['days_left'] as num?)?.toInt() ?? 0;
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const NakshtralogyPlusScreen()));
+        _loadPlus();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: active
+                ? [AppColors.gold.withOpacity(0.28), AppColors.nebula.withOpacity(0.5)]
+                : [AppColors.gold.withOpacity(0.16), AppColors.nebula.withOpacity(0.4)],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.gold.withOpacity(active ? 0.6 : 0.35)),
+        ),
+        child: Row(children: [
+          const Text('✨', style: TextStyle(fontSize: 28)),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Text(PlusLabels.of(context, 'plus'),
+                  style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w800)),
+              if (active) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(color: AppColors.success, borderRadius: BorderRadius.circular(6)),
+                  child: const Text('ACTIVE', style: TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.w900)),
+                ),
+              ],
+            ]),
+            const SizedBox(height: 2),
+            Text(
+              active
+                  ? '$daysLeft ${PlusLabels.of(context, 'daysLeft')}'
+                  : PlusLabels.of(context, 'subtitle'),
+              style: const TextStyle(color: AppColors.smoke, fontSize: 12),
+            ),
+          ])),
+          const Icon(Icons.chevron_right, color: AppColors.gold),
+        ]),
+      ),
     );
   }
 
