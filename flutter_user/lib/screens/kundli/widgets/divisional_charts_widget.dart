@@ -518,7 +518,7 @@ class _DivisionalChartsWidgetState extends State<DivisionalChartsWidget> {
         if (p['combust'] == true) flags.add('C');
         if (p['vargottam'] == true) flags.add('V');
       }
-      byRashi.putIfAbsent(si, () => []).add({'planet': KundliNames.planet(planet, loc), if (vargaDeg != null) 'degree': vargaDeg, 'flags': flags});
+      byRashi.putIfAbsent(si, () => []).add({'planet': KundliNames.planet(planet, loc), if (vargaDeg != null) 'degree': vargaDeg, 'flags': flags, 'dignity': kSignDignity(planet, si)});
     });
     return List.generate(12, (h) {
       final ri = (base + h) % 12;

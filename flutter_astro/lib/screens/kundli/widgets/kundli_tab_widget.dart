@@ -75,6 +75,8 @@ class _KundliTabWidgetState extends State<KundliTabWidget> {
         byRashi.putIfAbsent(si, () => []).add({
           'planet': (p?['planet_local'] ?? name),
           if (lon != null) 'degree': ((lon % 30) * d) % 30,
+          // Divisional dignity from the varga sign (backend sends no dignity here).
+          'dignity': kSignDignity(name, si),
           'flags': [
             if (p?['vakri'] == true) 'R',
             if (p?['combust'] == true) 'C',
