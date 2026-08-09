@@ -50,8 +50,19 @@ class AstroLabels {
     'or': {'tdsChallan': 'TDS ଚାଲାନ', 'comingSoon': 'ଶୀଘ୍ର ଆସୁଛି', 'myOffers': 'ମୋର ଅଫର', 'tdsChallanSub': 'ଆପଣଙ୍କ TDS ପ୍ରମାଣପତ୍ର ଡାଉନଲୋଡ କରନ୍ତୁ', 'payoutTitle': 'ପେଆଉଟ ଏବଂ ଟ୍ୟାକ୍ସ ବିବରଣୀ', 'payoutSub': 'ଉଇଥଡ୍ରାଲ ପାଇବା ପାଇଁ ଆପଣଙ୍କ PAN/GST ଏବଂ ବ୍ୟାଙ୍କ ବିବରଣୀ ଯୋଡ଼ନ୍ତୁ। ଆପଣଙ୍କ PAN ଉପରେ 10% TDS କଟାଯାଏ।', 'taxSection': 'ଟ୍ୟାକ୍ସ ବିବରଣୀ', 'panOrGstNote': 'ଅତି କମରେ ଗୋଟିଏ PAN କିମ୍ବା GST ନମ୍ବର ପ୍ରଦାନ କରନ୍ତୁ। ପେଆଉଟ ପାଇବା ପାଇଁ PAN ଆବଶ୍ୟକ (ଏହା ଉପରେ 10% TDS କଟାଯାଏ)।', 'panLabel': 'PAN ନମ୍ବର', 'panNameLabel': 'PAN ଅନୁଯାୟୀ ନାମ', 'gstLabel': 'GST ନମ୍ବର (ଇଚ୍ଛାଧୀନ)', 'uploadPanDoc': 'PAN କାର୍ଡ ଅପଲୋଡ କରନ୍ତୁ (ଫଟୋ କିମ୍ବା PDF)', 'bankSection': 'ପେଆଉଟ ପାଇଁ ବ୍ୟାଙ୍କ ଖାତା', 'bankNameLabel': 'ଖାତାଧାରକଙ୍କ ନାମ', 'bankNumberLabel': 'ଖାତା ନମ୍ବର', 'ifscLabel': 'IFSC କୋଡ', 'uploadBankProof': 'ପ୍ରମାଣ ଅପଲୋଡ କରନ୍ତୁ — ବାତିଲ ଚେକ, ପାସବୁକ କିମ୍ବା ଷ୍ଟେଟମେଣ୍ଟ', 'tapToUpload': 'ଅପଲୋଡ କରିବାକୁ ଟାପ କରନ୍ତୁ (ଛବି କିମ୍ବା PDF)', 'uploaded': 'ଅପଲୋଡ ହୋଇଛି', 'uploadingFile': 'ଅପଲୋଡ ହେଉଛି…', 'saveDetails': 'ବିବରଣୀ ସେଭ କରନ୍ତୁ', 'saving': 'ସେଭ ହେଉଛି…', 'payoutReady': 'ପେଆଉଟ ପ୍ରସ୍ତୁତ', 'payoutIncomplete': 'ପେଆଉଟ ସକ୍ରିୟ କରିବାକୁ PAN, ବ୍ୟାଙ୍କ ଖାତା ଏବଂ ପ୍ରମାଣ ଯୋଡ଼ନ୍ତୁ', 'payoutSaved': 'ଆପଣଙ୍କ ପେଆଉଟ ବିବରଣୀ ସେଭ ହୋଇଛି', 'payoutManage': 'ପେଆଉଟ ଏବଂ ଟ୍ୟାକ୍ସ ବିବରଣୀ', 'payoutManageSub': 'ଉଇଥଡ୍ରାଲ ପାଇଁ PAN / GST + ବ୍ୟାଙ୍କ ଖାତା'},
   };
 
-  static String _key(Locale l) =>
-      l.scriptCode == 'Latn' ? '${l.languageCode}_${l.scriptCode}' : l.languageCode;
+  // Resolve to a key that EXISTS in _m: try lang_script (hi_Latn, zh_Hans),
+  // then lang_region (pt_BR), then bare lang. iOS Safari attaches
+  // scriptCode:'Latn' to Latin-script locales (fr/es/de/…), which used to
+  // produce a missing 'fr_Latn' key and fall back to English — the graceful
+  // fallback fixes that so the selected language shows on iOS web too.
+  static String _key(Locale l) {
+    final lang = l.languageCode;
+    final sc = l.scriptCode;
+    final cc = l.countryCode;
+    if (sc != null && sc.isNotEmpty && _m.containsKey('${lang}_$sc')) return '${lang}_$sc';
+    if (cc != null && cc.isNotEmpty && _m.containsKey('${lang}_$cc')) return '${lang}_$cc';
+    return lang;
+  }
 
   static String of(BuildContext context, String key) {
     final code = _key(Localizations.localeOf(context));

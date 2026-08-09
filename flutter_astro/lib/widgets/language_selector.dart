@@ -21,9 +21,18 @@ class LanguageSelector {
   static void show(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context);
-    final currentLocale = locale.scriptCode != null
-        ? '${locale.languageCode}_${locale.scriptCode}'
-        : locale.languageCode;
+    // Resolve to a code that EXISTS in the options — iOS Safari attaches
+    // scriptCode:'Latn' to Latin locales, so a naive '<lang>_<script>' wouldn't
+    // match and the current language wouldn't be ticked.
+    final codes = languages.map((m) => m['code']).toSet();
+    final lang = locale.languageCode;
+    final sc = locale.scriptCode;
+    final cc = locale.countryCode;
+    final currentLocale = (sc != null && codes.contains('${lang}_$sc'))
+        ? '${lang}_$sc'
+        : (cc != null && codes.contains('${lang}_$cc'))
+            ? '${lang}_$cc'
+            : lang;
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.nebula,
