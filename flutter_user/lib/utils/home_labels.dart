@@ -30,8 +30,19 @@ class HomeLabels {
     'ja': {'career': 'キャリア・仕事', 'wealth': '財産・お金', 'marriage': '結婚・家族', 'love': '恋愛・人間関係', 'health': '健康・ウェルネス', 'business': 'ビジネス・起業', 'kundli_milan': 'クンドリ・ミラン', 'relationship': '相性分析', 'career_job': 'キャリア・仕事', 'business_startup': 'ビジネス・起業', 'education_career': '教育・学習', 'money_wealth': '財産・お金', 'debt_recovery': '借金・回収', 'love_relationship': '恋愛・人間関係', 'marriage_family': '結婚・家族', 'health_wellness': '健康・ウェルネス', 'mental_stress': 'メンタル・ストレス', 'property_assets': '不動産・資産', 'legal_dispute': '法律・紛争', 'life_path_luck': '人生と運勢'},
   };
 
-  static String _key(Locale l) =>
-      l.scriptCode == 'Latn' ? '${l.languageCode}_${l.scriptCode}' : l.languageCode;
+  // Resolve to a key that EXISTS in _m: try lang_script (hi_Latn, zh_Hans),
+  // then lang_region (pt_BR), then bare lang. iOS Safari attaches
+  // scriptCode:'Latn' to Latin-script locales (fr/es/de/…), which used to
+  // produce a missing 'fr_Latn' key and fall back to English — the graceful
+  // fallback fixes that so the selected language shows on iOS web too.
+  static String _key(Locale l) {
+    final lang = l.languageCode;
+    final sc = l.scriptCode;
+    final cc = l.countryCode;
+    if (sc != null && sc.isNotEmpty && _m.containsKey('${lang}_$sc')) return '${lang}_$sc';
+    if (cc != null && cc.isNotEmpty && _m.containsKey('${lang}_$cc')) return '${lang}_$cc';
+    return lang;
+  }
 
   static String label(String key, Locale locale, String fallback) =>
       _m[_key(locale)]?[key] ?? fallback;

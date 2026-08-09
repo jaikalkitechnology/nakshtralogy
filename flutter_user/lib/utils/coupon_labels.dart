@@ -50,8 +50,19 @@ class CouponLabels {
     'zh': {'haveCoupon': '有优惠券吗？', 'enterCode': '输入代码', 'apply': '使用', 'applied': '优惠券已应用', 'remove': '移除', 'unlockFree': '免费解锁', 'youSave': '您节省了', 'firstTimeOffer': '新用户专享', 'alreadyUsed': '您已使用过此优惠', 'reason_invalid': '优惠券代码无效', 'reason_expired': '此优惠券已过期', 'reason_unavailable': '此优惠券暂时不可用', 'reason_already_used': '您已使用过此优惠券', 'reason_not_first_time': '此优惠仅限新用户使用', 'reason_not_applicable': '此优惠券不适用于此处', 'reason_min_order': '订单金额未达到此优惠券的最低要求', 'reason_network': '无法验证优惠券，请重试'},
   };
 
-  static String _key(Locale l) =>
-      l.scriptCode == 'Latn' ? '${l.languageCode}_${l.scriptCode}' : l.languageCode;
+  // Resolve to a key that EXISTS in _m: try lang_script (hi_Latn, zh_Hans),
+  // then lang_region (pt_BR), then bare lang. iOS Safari attaches
+  // scriptCode:'Latn' to Latin-script locales (fr/es/de/…), which used to
+  // produce a missing 'fr_Latn' key and fall back to English — the graceful
+  // fallback fixes that so the selected language shows on iOS web too.
+  static String _key(Locale l) {
+    final lang = l.languageCode;
+    final sc = l.scriptCode;
+    final cc = l.countryCode;
+    if (sc != null && sc.isNotEmpty && _m.containsKey('${lang}_$sc')) return '${lang}_$sc';
+    if (cc != null && cc.isNotEmpty && _m.containsKey('${lang}_$cc')) return '${lang}_$cc';
+    return lang;
+  }
 
   static String of(BuildContext context, String key) {
     final code = _key(Localizations.localeOf(context));

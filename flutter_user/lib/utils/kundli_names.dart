@@ -40,8 +40,17 @@ class KundliNames {
     'Sg': 'Sagittarius', 'Cp': 'Capricorn', 'Aq': 'Aquarius', 'Pi': 'Pisces',
   };
 
-  static String _key(Locale l) =>
-      l.scriptCode == 'Latn' ? '${l.languageCode}_${l.scriptCode}' : l.languageCode;
+  // Resolve to a key that EXISTS in the name maps: try lang_script (hi_Latn),
+  // then lang_region, then bare lang. iOS Safari attaches scriptCode:'Latn' to
+  // Latin locales, which used to yield a missing key and fall back to English.
+  static String _key(Locale l) {
+    final lang = l.languageCode;
+    final sc = l.scriptCode;
+    final cc = l.countryCode;
+    if (sc != null && sc.isNotEmpty && _planet.containsKey('${lang}_$sc')) return '${lang}_$sc';
+    if (cc != null && cc.isNotEmpty && _planet.containsKey('${lang}_$cc')) return '${lang}_$cc';
+    return lang;
+  }
 
   /// Localized planet name (e.g. 'Sun' -> 'सूर्य'); English name if unmapped.
   static String planet(String english, Locale locale) =>
