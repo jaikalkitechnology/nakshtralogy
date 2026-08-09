@@ -456,7 +456,11 @@ class _S extends State<DailyForecastScreen> {
       KSectionHeader(icon: Icons.auto_awesome_rounded, title: l.fdHighlights, color: AppColors.gold),
       ...flags.take(5).map((f) {
         final sev = f['severity']?.toString() ?? 'ELEVATED';
-        final col = _severityColor(sev);
+        // Colour by VALENCE (is this a favourable event or a caution/risk),
+        // not by raw intensity — otherwise a strongly positive day reads red
+        // and a low-caution reads calm blue. Strength is still conveyed by the
+        // badge label and the progress bar.
+        final col = _flagColor(f);
         final prob = (f['probability_score'] as num?)?.toDouble() ?? 0;
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
@@ -466,7 +470,7 @@ class _S extends State<DailyForecastScreen> {
             border: Border.all(color: col.withOpacity(0.22))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Text(_severityEmoji(sev), style: const TextStyle(fontSize: 16)), const SizedBox(width: 8),
+              Text(_flagEmoji(f), style: const TextStyle(fontSize: 16)), const SizedBox(width: 8),
               Expanded(child: Text(f['event']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 13.5, fontWeight: FontWeight.w800))),
               Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(color: col.withOpacity(0.14), borderRadius: BorderRadius.circular(8)),
@@ -1057,22 +1061,39 @@ class _S extends State<DailyForecastScreen> {
     if (s >= 38) return KColors.orange;
     return KColors.red;
   }
-  Color _severityColor(String sev) {
-    switch (sev.toUpperCase()) {
-      case 'CRITICAL': return KColors.red;
-      case 'HIGH': return KColors.orange;
-      case 'ELEVATED': return KColors.yellow;
-      default: return KColors.blue;
-    }
+  /// A highlight flag is a "caution" when it warns against pushing in a weak
+  /// domain (backend type `depressed_probability`) or when it describes a
+  /// risk/protective event (accident, expense-outflow, loss, medical, etc.).
+  /// Everything else is a favourable/beneficial window. Presentation only —
+  /// derived from the flag's own fields, no scoring change.
+  bool _isCautionFlag(Map f) {
+    if ((f['type']?.toString() ?? '') == 'depressed_probability') return true;
+    final t = '${f['event'] ?? ''} ${f['recommended_action'] ?? ''}'.toLowerCase();
+    const markers = [
+      'risk', 'protective', 'protection', 'accident', 'expense', 'outflow',
+      'hospitaliz', 'medical-procedure', 'surgery', 'defer', 'awareness', 'loss',
+    ];
+    return markers.any(t.contains);
   }
-  String _severityEmoji(String sev) {
-    switch (sev.toUpperCase()) {
-      case 'CRITICAL': return '🚨';
-      case 'HIGH': return '🔶';
-      case 'ELEVATED': return '⭐';
-      default: return '🔷';
+
+  /// Green for favourable windows; amber/red for cautions & risks (red only
+  /// for the highest-severity risks). Strength is still shown by the badge.
+  Color _flagColor(Map f) {
+    if (_isCautionFlag(f)) {
+      return (f['severity']?.toString().toUpperCase() == 'CRITICAL')
+          ? KColors.red
+          : KColors.orange;
     }
+    return KColors.green;
   }
+
+  String _flagEmoji(Map f) {
+    if (_isCautionFlag(f)) {
+      return (f['severity']?.toString().toUpperCase() == 'CRITICAL') ? '🚨' : '⚠️';
+    }
+    return '✨';
+  }
+
   String _severityLabel(String sev, AppLocalizations l) {
     switch (sev.toUpperCase()) {
       case 'CRITICAL': return l.fdProbVeryHigh;
