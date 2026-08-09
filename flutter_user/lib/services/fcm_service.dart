@@ -140,6 +140,12 @@ class FcmService {
   String? get initError => _initError;
 
   Future<void> init() async {
+    // Web push is handled entirely by WebPushService, where permission is
+    // requested ONLY from a user gesture (iOS Safari/PWA requires that). Never
+    // run the native FCM path on web — it would prompt for permission during
+    // login (and only in the flows that keep a gesture, e.g. email+password),
+    // which is exactly the inconsistency we avoid.
+    if (kIsWeb) return;
     try {
       await Firebase.initializeApp();
     } catch (e) {
@@ -221,6 +227,11 @@ class FcmService {
 
   /// Get FCM token — retries Firebase if not available.
   Future<String?> getToken() async {
+    // On web, the token + permission are owned by WebPushService (gesture-only
+    // permission). Returning null here means the login/signup call never
+    // triggers a browser permission prompt — the home-screen "Enable" prompt is
+    // the single, consistent entry point for BOTH email and Google logins.
+    if (kIsWeb) return null;
     // Return cached token if available
     if (_fcmToken != null && _fcmToken!.isNotEmpty) return _fcmToken;
 

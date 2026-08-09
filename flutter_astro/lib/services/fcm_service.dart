@@ -337,6 +337,10 @@ class FcmService {
   String? get initError => _initError;
 
   Future<void> init() async {
+    // Web push is handled by WebPushService (permission requested only from a
+    // user gesture — iOS Safari/PWA requires it). Never run the native FCM path
+    // on web; it would prompt for permission during login.
+    if (kIsWeb) return;
     try {
       await Firebase.initializeApp();
     } catch (e) {
@@ -410,6 +414,9 @@ class FcmService {
   }
 
   Future<String?> getToken() async {
+    // On web the token + permission are owned by WebPushService (gesture-only
+    // permission), so login/signup never triggers a browser prompt here.
+    if (kIsWeb) return null;
     if (_fcmToken != null && _fcmToken!.isNotEmpty) return _fcmToken;
     final prefs = await SharedPreferences.getInstance();
     _fcmToken = prefs.getString('fcm_token');

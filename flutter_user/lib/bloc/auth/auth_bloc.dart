@@ -196,10 +196,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _syncFcmTokenInBackground() {
     Future.delayed(const Duration(seconds: 2), () async {
       try {
-        // Web / iOS PWA: the login/signup call already registered the single push
-        // token. Don't re-register from here — the device holds only one push
-        // registration and a second one invalidated the working token on iOS.
-        if (!kIsWeb) {
+        if (kIsWeb) {
+          // Web / iOS PWA: register the push token ONLY if permission is already
+          // granted (returning user). This NEVER prompts — the permission dialog
+          // is requested solely from the home-screen "Enable" gesture, so email
+          // and Google logins behave identically (neither pops the prompt).
+          await WebPushService().registerAfterLogin();
+        } else {
           await FcmService().ensureTokenSynced();
         }
       } catch (e) {
