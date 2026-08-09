@@ -735,6 +735,8 @@ class _EducationState extends State<EducationReportScreen> {
     final topics = <String>[l.edTopicSubjects, l.edTopicDegree, l.edTopicAbroad, l.edTopicExam, l.edTopicHabits, l.edTopicCareerLink, l.edTopicTiming, l.edTopicScholarship];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/education/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'education_career', label: 'Education', emoji: '🎓'),
       const SizedBox(height: 14),
       Row(children: [

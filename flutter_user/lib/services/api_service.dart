@@ -661,6 +661,22 @@ class ApiService {
       '${ApiConstants.baseUrl}/me/invoices/$invoiceId/view?t=$token';
 
   /// Coupon offer to show on an astrologer's profile (+ already_used flag).
+  /// Fetch a server-generated PDF (report/kundli/milan/forecast) as bytes.
+  /// [path] is relative to the pdf base, e.g. 'report/career/<chartId>'.
+  /// Returns (statusCode, bytes?) so callers can distinguish 402 (needs
+  /// unlock) / 503 (renderer unavailable) from success.
+  Future<(int, List<int>?)> fetchPdf(String path, {String? lang}) async {
+    final l = lang ?? await _appLang();
+    final sep = path.contains('?') ? '&' : '?';
+    final resp = await http.get(
+      Uri.parse('${ApiConstants.baseUrl}/pdf/$path${sep}lang=$l'),
+      headers: _headers,
+    );
+    if (resp.statusCode == 401) await _tryRefresh();
+    if (resp.statusCode == 200) return (200, resp.bodyBytes);
+    return (resp.statusCode, null);
+  }
+
   Future<Map<String, dynamic>?> getAstrologerCoupon(String astrologerId) async {
     try {
       final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/coupons/for-astrologer/$astrologerId'));

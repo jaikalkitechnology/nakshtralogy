@@ -676,6 +676,8 @@ class _LoveState extends State<LoveReportScreen> {
     final topics = <String>[l.lvTopicWhen, l.lvTopicSoulmate, l.lvTopicCurrent, l.lvTopicHeal, l.lvTopicCommit, l.lvTopicLoveVsArranged, l.lvTopicHeartbreak, l.lvTopicConfidence];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/love/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'love_relationship', label: 'Love & Relationship', emoji: '❤️'),
       const SizedBox(height: 14),
       Row(children: [

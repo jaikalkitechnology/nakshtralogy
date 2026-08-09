@@ -806,6 +806,8 @@ class _LifePathReportState extends State<LifePathReportScreen> {
     final topics = <String>[l.lpTopicPurpose, l.lpTopicFortune, l.lpTopicKarma, l.lpTopicMilestones, l.lpTopicDestiny, l.lpTopicSpiritual, l.lpTopicChallenges, l.lpTopicTiming];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/life_path/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'life_path_luck', label: 'Life Path & Luck', emoji: '🌟'),
       const SizedBox(height: 14),
       Row(children: [

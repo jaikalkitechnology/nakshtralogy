@@ -673,6 +673,8 @@ class _PastLifeReportState extends State<PastLifeReportScreen> {
     final topics = <String>[l.pkTopicMastery, l.pkTopicUnfinished, l.pkTopicRelationships, l.pkTopicDebts, l.pkTopicResolution, l.pkTopicMemory, l.pkTopicTiming, l.pkTopicProfile];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/past_life/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'life_path_luck', label: 'Life Path & Luck', emoji: '🌟'),
       const SizedBox(height: 14),
       Row(children: [

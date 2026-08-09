@@ -735,6 +735,8 @@ class _MentalState extends State<MentalReportScreen> {
     final topics = <String>[l.mnTopicResilience, l.mnTopicCoping, l.mnTopicSleep, l.mnTopicBurnout, l.mnTopicTherapy, l.mnTopicPractices, l.mnTopicTiming, l.mnTopicSupport];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/mental_stress/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'mental_stress', label: 'Mental Stress', emoji: '🧠'),
       const SizedBox(height: 14),
       Row(children: [

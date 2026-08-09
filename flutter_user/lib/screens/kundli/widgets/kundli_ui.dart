@@ -1,6 +1,9 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
+import '../../../services/api_service.dart';
 import '../../ai/ai_specialist_chat_screen.dart';
 
 /// ════════════════════════════════════════════════════════════════════
@@ -402,6 +405,72 @@ class ReportAiChatCta extends StatelessWidget {
           ),
           const Icon(Icons.arrow_forward_rounded, color: AppColors.midnight, size: 20),
         ]),
+      ),
+    );
+  }
+}
+
+/// Fetch a server-generated PDF and open the platform share/download sheet.
+/// Shared by the full-width [ReportPdfButton] and AppBar icon actions.
+/// Returns true on success. Presentation only — PDF is produced server-side.
+Future<bool> downloadReportPdf(BuildContext context, String path, String filename) async {
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    final (status, bytes) = await ApiService().fetchPdf(path);
+    if (status == 200 && bytes != null) {
+      await Printing.sharePdf(bytes: Uint8List.fromList(bytes), filename: '$filename.pdf');
+      return true;
+    }
+    final msg = status == 503
+        ? 'PDF service is temporarily unavailable. Please try again later.'
+        : status == 402
+            ? 'Please unlock this first.'
+            : 'Could not generate the PDF. Please try again.';
+    messenger.showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppColors.error));
+  } catch (_) {
+    messenger.showSnackBar(const SnackBar(
+        content: Text('Could not generate the PDF. Please try again.'),
+        backgroundColor: AppColors.error));
+  }
+  return false;
+}
+
+/// "Download PDF" button that fetches a server-generated, branded, localized
+/// PDF (report / kundli / milan / forecast) and opens the platform share /
+/// download sheet. Presentation only — the PDF is produced server-side.
+class ReportPdfButton extends StatefulWidget {
+  final String path;      // e.g. 'report/career/<chartId>'
+  final String filename;  // without extension
+  final String? label;
+  const ReportPdfButton({super.key, required this.path, required this.filename, this.label});
+
+  @override
+  State<ReportPdfButton> createState() => _ReportPdfButtonState();
+}
+
+class _ReportPdfButtonState extends State<ReportPdfButton> {
+  bool _busy = false;
+
+  Future<void> _download() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    await downloadReportPdf(context, widget.path, widget.filename);
+    if (mounted) setState(() => _busy = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: _busy ? null : _download,
+      icon: _busy
+          ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
+          : const Icon(Icons.picture_as_pdf_outlined, size: 18, color: AppColors.gold),
+      label: Text(widget.label ?? 'Download PDF',
+          style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700)),
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(double.infinity, 46),
+        side: BorderSide(color: AppColors.gold.withOpacity(0.5)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );
   }

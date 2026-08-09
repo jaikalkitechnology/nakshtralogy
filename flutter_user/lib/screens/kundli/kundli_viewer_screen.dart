@@ -16,6 +16,7 @@ import 'widgets/ashtakavarga_widget.dart';
 import 'widgets/aspects_widget.dart';
 import 'widgets/bhava_widget.dart';
 import 'widgets/gochar_widget.dart';
+import 'widgets/kundli_ui.dart';
 
 /// User-side kundli viewer with per-tab paywall.
 /// Fetches only the lightweight chart on open; each tab paywall-gates its
@@ -124,7 +125,15 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           Text(widget.clientName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
           Text(l.completeBirthChart, style: const TextStyle(color: AppColors.primary, fontSize: 11)),
         ]),
-        actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _load)],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: 'Download PDF',
+            onPressed: () => downloadReportPdf(
+                context, 'kundli/${widget.chartId}', 'kundli-${widget.clientName}'),
+          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
+        ],
         bottom: TabBar(
           controller: _tabs,
           isScrollable: true,

@@ -677,6 +677,8 @@ class _CareerReportState extends State<CareerReportScreen> {
     final topics = <String>[l.crTopicChange, l.crTopicGovt, l.crTopicBusiness, l.crTopicPromotion, l.crTopicMarriage, l.crTopicAbroad, l.crTopicIncome, l.crTopicPurpose, l.crTopicResume];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/career/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'career_job', label: 'Career & Job', emoji: '💼'),
       const SizedBox(height: 14),
       Row(children: [

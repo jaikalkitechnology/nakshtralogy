@@ -687,6 +687,8 @@ class _LegalState extends State<LegalReportScreen> {
     final topics = <String>[l.lgTopicWinChance, l.lgTopicStrategy, l.lgTopicContract, l.lgTopicTiming, l.lgTopicSettlement, l.lgTopicEnemies, l.lgTopicProtection, l.lgTopicCareer];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/legal/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'legal_dispute', label: 'Legal & Dispute', emoji: '⚖️'),
       const SizedBox(height: 14),
       Row(children: [
