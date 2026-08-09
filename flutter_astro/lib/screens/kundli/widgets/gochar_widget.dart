@@ -461,6 +461,10 @@ class _GocharWidgetState extends State<GocharWidget> {
     final flags = (r['flags'] as List).cast<dynamic>();
     final retro = flags.contains('R');
     final combust = flags.contains('C');
+    final vargottam = flags.contains('V');
+    final dignity = (r['dignity'] ?? '').toString().toLowerCase();
+    final exalted = dignity == 'exalted' || flags.contains('E');
+    final debilitated = dignity == 'debilitated' || flags.contains('D');
     return Container(
       margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
@@ -473,14 +477,19 @@ class _GocharWidgetState extends State<GocharWidget> {
           Text('${KundliNames.rashiShort(r['sign'] as String, loc)} · ${kOrdinal(r['house'] as int)} ${l.house}${r['degree'] != null ? ' · ${(r['degree'] as num).toInt()}°' : ''}',
               style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
         ])),
-        if (retro) _flag('R', KColors.blue),
-        if (combust) _flag('C', KColors.orange),
+        if (retro) _flag('*', KColors.blue),
+        if (combust) _flag('^', KColors.orange),
+        if (vargottam) _flag('▫', KColors.gold),
+        if (exalted) _flag('↑', KColors.green),
+        if (debilitated) _flag('↓', KColors.red),
       ]),
     );
   }
 
   Widget _flag(String s, Color c) => Container(margin: const EdgeInsets.only(left: 4), padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: c.withOpacity(0.18), borderRadius: BorderRadius.circular(5)), child: Text(s, style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w800)));
+      decoration: BoxDecoration(color: c.withOpacity(0.18), borderRadius: BorderRadius.circular(5)),
+      child: Text(s, style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w800,
+          fontFamilyFallback: const ['Roboto', 'NotoSansSymbols', 'Segoe UI Symbol', 'Apple Symbols', 'Arial'])));
 
   // ── 19. daily plan ──
   Widget _dailyPlan(AppLocalizations l) {
