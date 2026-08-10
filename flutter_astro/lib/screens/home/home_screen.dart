@@ -33,6 +33,7 @@ import '../communication/active_call_screen.dart';
 import '../communication/live_host_screen.dart';
 import '../../widgets/notification_bell.dart';
 import '../notifications/notification_hub_screen.dart';
+import '../../utils/responsive.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -249,6 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return const KycPendingScreen();
           }
           final l = AppLocalizations.of(context)!;
+          final wide = Responsive.isDesktop(context);
           final tabTitle = _currentIndex == 1
               ? l.astrology
               : _currentIndex == 2
@@ -260,14 +262,43 @@ class _HomeScreenState extends State<HomeScreen> {
                           : null;
           return Scaffold(
             appBar: AppBar(
-              titleSpacing: 16,
-              title: _currentIndex == 0
+              titleSpacing: wide ? 20 : 16,
+              toolbarHeight: wide ? 64 : null,
+              title: wide
+                  // Desktop: brand + inline top navigation (replaces the mobile
+                  // bottom bar). Go Live moves to an action button on the right.
                   ? Row(mainAxisSize: MainAxisSize.min, children: [
                       const Text('\u{1F52E} ', style: TextStyle(fontSize: 20)),
-                      Text(l.dashboard, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text('Astro', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
+                      const SizedBox(width: 28),
+                      _desktopNavButton(0, Icons.home_rounded, l.home),
+                      _desktopNavButton(1, Icons.auto_awesome, l.astrology),
+                      _desktopNavButton(2, Icons.inbox_rounded, l.requests),
+                      _desktopNavButton(3, Icons.account_balance_wallet_rounded, l.wallet),
+                      _desktopNavButton(4, Icons.person_rounded, l.profile),
                     ])
-                  : Text(tabTitle ?? '', style: const TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold, fontSize: 18)),
+                  : _currentIndex == 0
+                      ? Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Text('\u{1F52E} ', style: TextStyle(fontSize: 20)),
+                          Text(l.dashboard, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
+                        ])
+                      : Text(tabTitle ?? '', style: const TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold, fontSize: 18)),
               actions: [
+                // Desktop-only Go Live button (mobile keeps the bottom-bar FAB).
+                if (wide)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ElevatedButton.icon(
+                      onPressed: () => _startLive(context),
+                      icon: const Icon(Icons.podcasts_rounded, size: 16),
+                      label: Text(l.live),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.error,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      ),
+                    ),
+                  ),
                 // Notifications hub → Requests + all notifications (unread badge)
                 NotificationBell(onOpen: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const NotificationHubScreen(initialTab: 0)),
@@ -340,17 +371,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            body: IndexedStack(
-              index: _currentIndex,
-              children: [
-                HomeTab(onNavigate: (i) => setState(() => _currentIndex = i)),
-                const ClientChartsScreen(),
-                const RequestsTab(),
-                const EarningsTab(),
-                const ProfileTab(),
-              ],
-            ),
-            bottomNavigationBar: _buildBottomBar(context, l),
+            body: () {
+              final stack = IndexedStack(
+                index: _currentIndex,
+                children: [
+                  HomeTab(onNavigate: (i) => setState(() => _currentIndex = i)),
+                  const ClientChartsScreen(),
+                  const RequestsTab(),
+                  const EarningsTab(),
+                  const ProfileTab(),
+                ],
+              );
+              if (!wide) return stack;
+              return Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: Responsive.maxContent),
+                  child: stack,
+                ),
+              );
+            }(),
+            bottomNavigationBar: wide ? null : _buildBottomBar(context, l),
           );
         },
       ),
@@ -396,6 +437,35 @@ class _HomeScreenState extends State<HomeScreen> {
               _navSlot(icon: Icons.account_balance_wallet_rounded, label: l.wallet, index: 3),
               _navSlot(icon: Icons.person_rounded, label: l.profile, index: 4),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Desktop top-nav item with a gold active pill (width>=1024 only).
+  Widget _desktopNavButton(int index, IconData icon, String label) {
+    final selected = _currentIndex == index;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: Material(
+        color: selected ? AppColors.gold.withOpacity(0.14) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => setState(() => _currentIndex = index),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(icon, size: 17, color: selected ? AppColors.gold : AppColors.smoke),
+              const SizedBox(width: 7),
+              Text(label,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color: selected ? AppColors.gold : AppColors.ivory,
+                  )),
+            ]),
           ),
         ),
       ),
