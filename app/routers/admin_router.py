@@ -286,6 +286,9 @@ def list_users(
                 "profile_approved": u.profile_approved,
                 "wallet_balance": float(w.balance) if w else 0,
                 "created_at": str(u.created_at) if u.created_at else None,
+                "deletion_requested_at": str(u.deletion_requested_at) if getattr(u, "deletion_requested_at", None) else None,
+                "deletion_scheduled_at": str(u.deletion_scheduled_at) if getattr(u, "deletion_scheduled_at", None) else None,
+                "deleted_at": str(u.deleted_at) if getattr(u, "deleted_at", None) else None,
             }
             for u, w in rows
         ],
