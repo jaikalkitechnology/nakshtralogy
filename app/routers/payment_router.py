@@ -137,20 +137,33 @@ async def gateway_webhook(gateway: str, request: Request, db: Session = Depends(
         raise HTTPException(404, "Unknown gateway")
 
     raw = await request.body()
-    try:
-        payload = _json.loads(raw) if raw else {}
-    except Exception:
-        payload = {}
-
     ev = PaymentWebhookEvent(
         gateway=gw,
         raw=(raw.decode("utf-8", "replace")[:20000] if raw else None),
     )
 
+    def _as_json():
+        try:
+            return _json.loads(raw) if raw else {}
+        except Exception:
+            return {}
+
     if gw == "razorpay":
-        _process_razorpay_webhook(db, request, raw, payload, ev)
+        _process_razorpay_webhook(db, request, raw, _as_json(), ev)
+    elif gw == "payu":
+        # PayU posts application/x-www-form-urlencoded (occasionally JSON).
+        ctype = (request.headers.get("content-type") or "").lower()
+        if "json" in ctype:
+            form = _as_json()
+        else:
+            from urllib.parse import parse_qs
+            form = {k: v[0] for k, v in
+                    parse_qs(raw.decode("utf-8", "replace")).items()} if raw else {}
+        _process_payu_webhook(db, form, ev)
+    elif gw == "paypal":
+        _process_paypal_webhook(db, request, raw, _as_json(), ev)
     else:
-        _process_generic_webhook(db, gw, payload, ev)
+        _process_generic_webhook(db, gw, _as_json(), ev)
 
     try:
         db.add(ev)
@@ -237,8 +250,127 @@ def _process_razorpay_webhook(db, request, raw, payload, ev):
         ev.error = str(e)[:500]
 
 
+def _process_payu_webhook(db, form, ev):
+    """PayU S2S / callback: verify the reverse hash, then credit/fail the order
+    (txnid == our WalletRechargeOrder id). Fills the `ev` log row in place."""
+    from decimal import Decimal
+    from app.models.model import WalletRechargeOrder
+
+    status = (form.get("status") or "").strip().lower()
+    ev.event = status or "callback"
+    txnid = form.get("txnid")
+    ev.order_ref = txnid
+    ev.gateway_order_id = txnid
+    ev.payment_id = form.get("mihpayid") or form.get("payuMoneyId")
+    try:
+        ev.amount = Decimal(str(form.get("amount") or 0))
+    except Exception:
+        pass
+    ev.currency = "INR"
+
+    creds = papg.load_creds(db, "payu")
+    ev.signature_valid = papg.verify_payu_webhook(
+        creds.get("merchant_salt"), creds.get("merchant_key"), form)
+
+    order = None
+    if txnid:
+        order = db.query(WalletRechargeOrder).filter(WalletRechargeOrder.id == txnid).first()
+    if order:
+        ev.user_id = order.user_id
+
+    if not ev.signature_valid:
+        ev.status = "invalid_signature"
+        return
+    try:
+        if status == "success" and order is not None:
+            ok, info = papg.credit_paid_order(db, order, ev.payment_id, ev.gateway_order_id)
+            ev.status = "credited" if ok else "error"
+            if not ok:
+                ev.error = info.get("code")
+        elif status in ("failure", "failed") and order is not None:
+            if order.status != "paid":
+                order.status = "failed"
+                db.commit()
+            ev.status = "processed"
+        else:
+            ev.status = "ignored"
+    except Exception as e:
+        db.rollback()
+        ev.status = "error"
+        ev.error = str(e)[:500]
+
+
+def _process_paypal_webhook(db, request, raw, payload, ev):
+    """PayPal webhook: verify via PayPal's verify-webhook-signature API, then
+    credit on PAYMENT.CAPTURE.COMPLETED. The order ref travels in the capture's
+    custom_id / invoice_id. Fills the `ev` log row in place."""
+    from decimal import Decimal
+    from app.models.model import PaymentWebhookEvent, WalletRechargeOrder
+
+    ev.event = payload.get("event_type")
+    ev.event_id = payload.get("id")
+    resource = payload.get("resource") or {}
+    related = (resource.get("supplementary_data") or {}).get("related_ids") or {}
+    ev.order_ref = (resource.get("custom_id") or resource.get("invoice_id")
+                    or related.get("order_id"))
+    ev.payment_id = resource.get("id")
+    ev.gateway_order_id = related.get("order_id")
+    amt = resource.get("amount") or {}
+    try:
+        if amt.get("value") is not None:
+            ev.amount = Decimal(str(amt.get("value")))
+    except Exception:
+        pass
+    ev.currency = amt.get("currency_code")
+
+    creds = papg.load_creds(db, "paypal")
+    ev.signature_valid = papg.verify_paypal_webhook(creds, request.headers, raw)
+
+    if not ev.signature_valid:
+        ev.status = "invalid_signature"
+        return
+
+    if ev.event_id:
+        dup = db.query(PaymentWebhookEvent).filter(
+            PaymentWebhookEvent.gateway == "paypal",
+            PaymentWebhookEvent.event_id == ev.event_id,
+            PaymentWebhookEvent.status.in_(["credited", "processed", "ignored", "duplicate"]),
+        ).first()
+        if dup:
+            ev.status = "duplicate"
+            return
+
+    order = None
+    if ev.order_ref:
+        order = db.query(WalletRechargeOrder).filter(
+            WalletRechargeOrder.id == ev.order_ref).first()
+    if order:
+        ev.user_id = order.user_id
+
+    success = {"PAYMENT.CAPTURE.COMPLETED", "CHECKOUT.ORDER.APPROVED"}
+    failed = {"PAYMENT.CAPTURE.DENIED", "PAYMENT.CAPTURE.REFUNDED",
+              "PAYMENT.CAPTURE.REVERSED", "CHECKOUT.ORDER.VOIDED"}
+    try:
+        if ev.event in success and order is not None:
+            ok, info = papg.credit_paid_order(db, order, ev.payment_id, ev.gateway_order_id)
+            ev.status = "credited" if ok else "error"
+            if not ok:
+                ev.error = info.get("code")
+        elif ev.event in failed and order is not None:
+            if order.status != "paid":
+                order.status = "failed"
+                db.commit()
+            ev.status = "processed"
+        else:
+            ev.status = "ignored"
+    except Exception as e:
+        db.rollback()
+        ev.status = "error"
+        ev.error = str(e)[:500]
+
+
 def _process_generic_webhook(db, gw, payload, ev):
-    """PayU / PayPal fall back to the reference-based verify_and_credit path."""
+    """Fallback reference-based verify_and_credit path (unused gateways)."""
     from app.models.model import WalletRechargeOrder
     ev.event = payload.get("event") or "callback"
     order_ref = payload.get("order_ref") or payload.get("reference_id")

@@ -34,7 +34,7 @@ _INTL = ("payu", "razorpay", "paypal")
 _CRED_KEYS = {
     "razorpay": ["key_id", "key_secret", "webhook_secret"],
     "payu": ["merchant_key", "merchant_salt"],
-    "paypal": ["client_id", "client_secret", "environment"],  # environment: sandbox|live
+    "paypal": ["client_id", "client_secret", "environment", "webhook_id"],  # environment: sandbox|live
 }
 # Which credential is safe to expose to the client (public checkout key).
 _PUBLIC_KEY = {"razorpay": "key_id", "payu": "merchant_key", "paypal": "client_id"}
@@ -349,3 +349,80 @@ def credit_paid_order(db: Session, order, payment_id: Optional[str],
     db.commit()
     return True, {"code": "credited", "amount": credit,
                   "balance": float(wallet.balance), "txn_id": txn.id, "order_id": order.id}
+
+
+def verify_payu_webhook(salt: Optional[str], key: Optional[str], form: dict) -> bool:
+    """PayU response (reverse) hash check. Recomputes sha512 over the salted
+    field sequence and compares to the posted `hash`. Tries the two common
+    field layouts (with / without the reserved udf6-10 slots). Never raises."""
+    if not (salt and key):
+        return False
+    posted = (form.get("hash") or "").strip().lower()
+    if not posted:
+        return False
+    status = form.get("status", "")
+    email = form.get("email", "")
+    firstname = form.get("firstname", "")
+    productinfo = form.get("productinfo", "")
+    amount = form.get("amount", "")
+    txnid = form.get("txnid", "")
+    u = [form.get(f"udf{i}", "") for i in range(1, 6)]  # udf1..udf5
+    # Reverse hash sequences (salt first, key last).
+    seq_simple = [salt, status, u[4], u[3], u[2], u[1], u[0],
+                  email, firstname, productinfo, amount, txnid, key]
+    # With reserved udf6..udf10 (5 empty slots after status).
+    seq_reserved = [salt, status, "", "", "", "", "",
+                    u[4], u[3], u[2], u[1], u[0],
+                    email, firstname, productinfo, amount, txnid, key]
+    for seq in (seq_simple, seq_reserved):
+        digest = hashlib.sha512("|".join(seq).encode()).hexdigest()
+        if hmac.compare_digest(digest, posted):
+            return True
+    return False
+
+
+def verify_paypal_webhook(creds: dict, headers, raw_body: bytes) -> bool:
+    """Verify a PayPal webhook via PayPal's verify-webhook-signature API.
+    Requires client_id/secret + webhook_id in creds. Returns False (unverified)
+    when creds are missing or the call fails — the event is still logged."""
+    webhook_id = creds.get("webhook_id")
+    client_id = creds.get("client_id")
+    client_secret = creds.get("client_secret")
+    if not (webhook_id and client_id and client_secret):
+        return False
+    live = (creds.get("environment") or "live").lower() != "sandbox"
+    base = "https://api-m.paypal.com" if live else "https://api-m.sandbox.paypal.com"
+    try:
+        import json as _json
+        import requests
+
+        def _h(name):
+            try:
+                return headers.get(name)
+            except Exception:
+                return None
+
+        tok = requests.post(
+            f"{base}/v1/oauth2/token",
+            auth=(client_id, client_secret),
+            data={"grant_type": "client_credentials"}, timeout=15)
+        if tok.status_code != 200:
+            return False
+        access = tok.json().get("access_token")
+        body = {
+            "auth_algo": _h("paypal-auth-algo"),
+            "cert_url": _h("paypal-cert-url"),
+            "transmission_id": _h("paypal-transmission-id"),
+            "transmission_sig": _h("paypal-transmission-sig"),
+            "transmission_time": _h("paypal-transmission-time"),
+            "webhook_id": webhook_id,
+            "webhook_event": _json.loads(raw_body or b"{}"),
+        }
+        r = requests.post(
+            f"{base}/v1/notifications/verify-webhook-signature",
+            headers={"Authorization": f"Bearer {access}", "Content-Type": "application/json"},
+            json=body, timeout=15)
+        return r.status_code == 200 and r.json().get("verification_status") == "SUCCESS"
+    except Exception as e:  # pragma: no cover - network/creds required
+        logger.warning("paypal webhook verify error: %s", e)
+        return False
