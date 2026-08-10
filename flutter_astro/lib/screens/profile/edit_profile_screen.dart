@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/responsive.dart';
 import '../../widgets/avatar_picker.dart';
 import '../../bloc/astro_profile/astro_profile_bloc.dart';
 import '../../bloc/astro_profile/astro_profile_event.dart';
@@ -289,7 +290,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             bottom: false,
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 640),
+                constraints: BoxConstraints(maxWidth: Responsive.isDesktop(context) ? 980 : 640),
                 child: Form(
                   key: _formKey,
                   child: Column(children: [
@@ -297,21 +298,52 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: ListView(
                         controller: _scrollCtrl,
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                        children: [
-                          _preview(),
-                          if (_dirty) ...[
-                            const SizedBox(height: 12),
-                            _unsavedBadge(),
-                          ],
-                          const SizedBox(height: 20),
-                          _profileSection(),
-                          const SizedBox(height: 16),
-                          _professionalSection(),
-                          const SizedBox(height: 16),
-                          _pricingSection(),
-                          const SizedBox(height: 16),
-                          _messageSettingsSection(),
-                        ],
+                        children: Responsive.isDesktop(context)
+                            // Desktop: two columns — form fields on the left,
+                            // preview + pricing + message settings on the right.
+                            ? [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(children: [
+                                        _profileSection(),
+                                        const SizedBox(height: 16),
+                                        _professionalSection(),
+                                      ]),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(children: [
+                                        _preview(),
+                                        if (_dirty) ...[
+                                          const SizedBox(height: 12),
+                                          _unsavedBadge(),
+                                        ],
+                                        const SizedBox(height: 16),
+                                        _pricingSection(),
+                                        const SizedBox(height: 16),
+                                        _messageSettingsSection(),
+                                      ]),
+                                    ),
+                                  ],
+                                ),
+                              ]
+                            : [
+                                _preview(),
+                                if (_dirty) ...[
+                                  const SizedBox(height: 12),
+                                  _unsavedBadge(),
+                                ],
+                                const SizedBox(height: 20),
+                                _profileSection(),
+                                const SizedBox(height: 16),
+                                _professionalSection(),
+                                const SizedBox(height: 16),
+                                _pricingSection(),
+                                const SizedBox(height: 16),
+                                _messageSettingsSection(),
+                              ],
                       ),
                     ),
                     _saveBar(l),
