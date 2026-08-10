@@ -785,12 +785,92 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 10),
+
+              // ============ DELETE ACCOUNT ============
+              Center(
+                child: TextButton.icon(
+                  onPressed: _confirmDeleteAccount,
+                  icon: const Icon(Icons.delete_forever_outlined,
+                      color: AppColors.error, size: 16),
+                  label: Text(
+                    MenuLabels.of(context, 'deleteAccount'),
+                    style: const TextStyle(
+                      color: AppColors.error,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
             ],
           ),
         );
       },
     );
+  }
+
+  Future<void> _confirmDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.midnight,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(children: [
+          const Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(MenuLabels.of(context, 'deleteAccountTitle'),
+                style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700)),
+          ),
+        ]),
+        content: Text(MenuLabels.of(context, 'deleteAccountBody'),
+            style: const TextStyle(color: AppColors.smoke, fontSize: 13, height: 1.5)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(MenuLabels.of(context, 'deleteAccountCancel'),
+                style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(MenuLabels.of(context, 'deleteAccountConfirm'),
+                style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator(color: AppColors.gold)),
+    );
+    Map<String, dynamic> res;
+    try {
+      res = await ApiService().deleteMyAccount();
+    } catch (_) {
+      res = {'statusCode': 0};
+    }
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop(); // close loader
+    final ok = (res['statusCode'] == 200 || res['statusCode'] == 201);
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(MenuLabels.of(context, 'deleteAccountDone')),
+        backgroundColor: AppColors.error,
+        duration: const Duration(seconds: 5),
+      ));
+      context.read<AuthBloc>().add(AuthLogoutRequested());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(MenuLabels.of(context, 'deleteAccountError')),
+        backgroundColor: AppColors.error,
+      ));
+    }
   }
 
   Widget _plusCard() {
