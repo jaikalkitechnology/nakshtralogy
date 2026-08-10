@@ -444,43 +444,48 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
             const SizedBox(height: 10),
 
-            // ── Delete account ──
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.04),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.error.withOpacity(0.25)),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: _confirmDeleteAccount,
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: AppColors.error.withOpacity(0.12),
-                        shape: BoxShape.circle,
+            // ── Delete account (native mobile apps only) ──
+            // Hidden on web: self-service deletion is offered in the iOS /
+            // Android apps (App Store / Play Store requirement); web users
+            // manage deletion via support or the mobile app.
+            if (!kIsWeb) ...[
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.04),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.error.withOpacity(0.25)),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: _confirmDeleteAccount,
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.delete_forever_outlined, color: AppColors.error, size: 16),
                       ),
-                      child: const Icon(Icons.delete_forever_outlined, color: AppColors.error, size: 16),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(AstroLabels.of(context, 'deleteAccount'),
-                            style: const TextStyle(color: AppColors.error, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text(AstroLabels.of(context, 'deleteAccountSub'),
-                            style: TextStyle(color: AppColors.error.withOpacity(0.7), fontSize: 11)),
-                      ]),
-                    ),
-                    Icon(Icons.chevron_right, color: AppColors.error.withOpacity(0.6), size: 20),
-                  ]),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(AstroLabels.of(context, 'deleteAccount'),
+                              style: const TextStyle(color: AppColors.error, fontSize: 14, fontWeight: FontWeight.w600)),
+                          Text(AstroLabels.of(context, 'deleteAccountSub'),
+                              style: TextStyle(color: AppColors.error.withOpacity(0.7), fontSize: 11)),
+                        ]),
+                      ),
+                      Icon(Icons.chevron_right, color: AppColors.error.withOpacity(0.6), size: 20),
+                    ]),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
+            ],
           ]),
         );
       },
