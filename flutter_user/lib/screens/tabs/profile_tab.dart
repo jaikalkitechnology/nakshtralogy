@@ -656,95 +656,26 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
               const SizedBox(height: 12),
 
-              // ============ CHANGE PASSWORD (OTP) ============
-              if ((me?['email'] ?? '').toString().isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.gold.withOpacity(0.15)),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => PasswordOtpScreen(
-                        mode: PasswordOtpMode.change,
-                        email: (me?['email'] ?? '').toString(),
-                      ),
-                    )),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Row(children: [
-                        const Icon(Icons.lock_outline, color: AppColors.gold, size: 22),
-                        const SizedBox(width: 12),
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(MenuLabels.of(context, 'changePassword'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                          Text(MenuLabels.of(context, 'changePasswordSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
-                        ])),
-                        const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                      ]),
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 12),
-
-              // ============ INVOICES ============
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const InvoicesScreen()),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Row(children: [
-                      const Icon(Icons.receipt_long_outlined, color: AppColors.gold, size: 22),
-                      const SizedBox(width: 12),
-                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(MenuLabels.of(context, 'invoices'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text(MenuLabels.of(context, 'invoicesSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
-                      ])),
-                      const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                    ]),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // ============ CUSTOMER SUPPORT ============
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SupportScreen()),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Row(children: [
-                      const Icon(Icons.support_agent, color: AppColors.gold, size: 22),
-                      const SizedBox(width: 12),
-                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(MenuLabels.of(context, 'customerSupport'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text(MenuLabels.of(context, 'customerSupportSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
-                      ])),
-                      const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                    ]),
-                  ),
-                ),
-              ),
+              // ======= ACCOUNT SETTINGS (2-column grid on desktop) =======
+              _settingsGrid(desktop, [
+                if ((me?['email'] ?? '').toString().isNotEmpty)
+                  _menuTile(Icons.lock_outline, MenuLabels.of(context, 'changePassword'),
+                      MenuLabels.of(context, 'changePasswordSub'),
+                      () => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => PasswordOtpScreen(
+                              mode: PasswordOtpMode.change,
+                              email: (me?['email'] ?? '').toString(),
+                            ),
+                          ))),
+                _menuTile(Icons.receipt_long_outlined, MenuLabels.of(context, 'invoices'),
+                    MenuLabels.of(context, 'invoicesSub'),
+                    () => Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => const InvoicesScreen()))),
+                _menuTile(Icons.support_agent, MenuLabels.of(context, 'customerSupport'),
+                    MenuLabels.of(context, 'customerSupportSub'),
+                    () => Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => const SupportScreen()))),
+              ]),
               const SizedBox(height: 12),
 
               // ============ ABOUT & LEGAL ============
@@ -842,6 +773,62 @@ class _ProfileTabState extends State<ProfileTab> {
           ))),
         );
       },
+    );
+  }
+
+  /// A single settings tile (icon + title + subtitle + chevron). Width is set
+  /// by the parent so it fits either a full-width column or a 2-up grid.
+  Widget _menuTile(IconData icon, String title, String sub, VoidCallback onTap) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(children: [
+            Icon(icon, color: AppColors.gold, size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+              Text(sub, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+            ])),
+            const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  /// Lays settings tiles in two columns on desktop, stacked on mobile.
+  Widget _settingsGrid(bool desktop, List<Widget> tiles) {
+    if (!desktop) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(children: [
+          for (int i = 0; i < tiles.length; i++) ...[
+            tiles[i],
+            if (i != tiles.length - 1) const SizedBox(height: 12),
+          ],
+        ]),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: LayoutBuilder(builder: (context, c) {
+        const gap = 12.0;
+        final w = (c.maxWidth - gap) / 2;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: tiles.map((t) => SizedBox(width: w, child: t)).toList(),
+        );
+      }),
     );
   }
 
