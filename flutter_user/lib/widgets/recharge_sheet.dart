@@ -5,6 +5,7 @@ import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 import '../services/app_mode.dart';
 import '../utils/money.dart';
+import '../utils/razorpay_checkout.dart';
 
 /// Wallet recharge via a payment aggregator (Razorpay / PayU / PayPal).
 /// Region-aware gateway list (India: PayU + Razorpay; International: + PayPal).
@@ -83,13 +84,49 @@ class _RechargeSheetState extends State<_RechargeSheet> {
     final checkout = (resp['checkout'] as Map?)?.cast<String, dynamic>() ?? {};
     final orderId = (resp['order'] as Map?)?['id']?.toString();
     final url = checkout['url']?.toString();
+
+    // Preferred: native Razorpay Checkout — an in-app modal / in-page overlay
+    // (no external browser). Falls back to the hosted link if unavailable.
+    final rzpOrderId = checkout['razorpay_order_id']?.toString();
+    final key = checkout['public_key']?.toString();
+    if (_gateway == 'razorpay' && orderId != null &&
+        rzpOrderId != null && rzpOrderId.isNotEmpty &&
+        key != null && key.isNotEmpty) {
+      try {
+        final amountPaise = (checkout['amount_paise'] as num?)?.toInt()
+            ?? (amt * 100).round();
+        final result = await openRazorpayCheckout(RazorpayOptions(
+          key: key, orderId: rzpOrderId, amountPaise: amountPaise,
+          currency: checkout['currency']?.toString() ?? _currency,
+        ));
+        if (!mounted) return;
+        if (result.success) {
+          setState(() => _status = 'Confirming payment…');
+          // Verify (credits immediately); the webhook also credits — idempotent.
+          await _api.verifyRecharge(
+            gateway: 'razorpay', orderRef: orderId,
+            gatewayOrderId: result.orderId ?? rzpOrderId,
+            gatewayPaymentId: result.paymentId, signature: result.signature);
+          _startPolling(orderId);
+        } else {
+          setState(() { _busy = false; _status = null; });
+          if (!result.cancelled) {
+            _snack(result.error ?? 'Payment failed', AppColors.error);
+          }
+        }
+        return;
+      } catch (_) {
+        // Fall through to the hosted-link flow below.
+      }
+    }
+
     if (url == null || url.isEmpty) {
       // Gateway configured but no hosted link yet (pre-go-live).
       setState(() => _busy = false);
       _snack('This payment method is being set up. Please try another or check back soon.', AppColors.error);
       return;
     }
-    // Open the hosted checkout, then poll the order until it's confirmed.
+    // Fallback: open the hosted checkout, then poll the order until confirmed.
     await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     if (orderId != null) _startPolling(orderId);
   }
