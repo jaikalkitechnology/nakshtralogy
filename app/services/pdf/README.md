@@ -12,12 +12,18 @@ Already in `requirements.txt`:
 pip install -r requirements.txt        # installs jinja2 + playwright
 ```
 
-## 2. The Chromium browser (REQUIRED — this is what a bare `pip install` misses)
-`pip install playwright` installs the Python bindings only. The actual browser
-must be downloaded once:
+## 2. The Chromium browser + its OS libraries (REQUIRED)
+`pip install playwright` installs the Python bindings only. You MUST also
+download the browser **and** its shared libraries, or launch fails at runtime
+with a 503 (RuntimeError: "Could not launch Chromium"):
+```
+python -m playwright install --with-deps chromium   # browser + OS libs in one step
+```
+`--with-deps` is important — installing the browser WITHOUT its system
+libraries (libnss3, libatk, libgbm, …) is the usual cause of a 503 on an
+otherwise-working server. If you cannot use `--with-deps`, run both:
 ```
 python -m playwright install chromium
-# and its OS libraries (Debian/Ubuntu):
 python -m playwright install-deps chromium
 ```
 On a locked-down image you can instead point at an existing Chromium:

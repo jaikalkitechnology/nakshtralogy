@@ -65,9 +65,14 @@ def _pct(v: float) -> int:
     return max(0, min(100, int(round(v))))
 
 
-def _block_for(key: str, value: Any, depth: int = 0) -> dict | None:
-    """Build a single typed block for a (key, value) pair, or None to skip."""
-    if key in _HIDDEN or _HIDDEN_PAT.search(str(key)):
+def _block_for(key: Any, value: Any, depth: int = 0) -> dict | None:
+    """Build a single typed block for a (key, value) pair, or None to skip.
+
+    Keys may be non-strings (e.g. int house numbers), so coerce first — the
+    regex hints and label helpers all require a string.
+    """
+    key = str(key)
+    if key in _HIDDEN or _HIDDEN_PAT.search(key):
         return None
     label = _title(key)
 
@@ -160,8 +165,8 @@ def build_report_view(data: dict) -> dict:
     # Hero: the "overall …" score, else the first score-like number.
     best_key = None
     for k, v in data.items():
-        if _is_num(v) and _SCORE_HINT.search(k) and 0 <= float(v) <= 100:
-            if _OVERALL_HINT.search(k):
+        if _is_num(v) and _SCORE_HINT.search(str(k)) and 0 <= float(v) <= 100:
+            if _OVERALL_HINT.search(str(k)):
                 best_key = k
                 break
             if best_key is None:
@@ -174,7 +179,7 @@ def build_report_view(data: dict) -> dict:
 
     # Verdict / summary text near the top.
     for k, v in data.items():
-        if isinstance(v, str) and v.strip() and _VERDICT_HINT.search(k):
+        if isinstance(v, str) and v.strip() and _VERDICT_HINT.search(str(k)):
             verdict_text = v.strip()
             used.add(k)
             break
@@ -186,7 +191,7 @@ def build_report_view(data: dict) -> dict:
     for k, v in data.items():
         if k in used:
             continue
-        if _is_num(v) and _SCORE_HINT.search(k) and 0 <= float(v) <= 100:
+        if _is_num(v) and _SCORE_HINT.search(str(k)) and 0 <= float(v) <= 100:
             metrics.append({"label": _title(k), "value": _fmt(v),
                             "pct": _pct(float(v)), "band": band_for(float(v))})
             used.add(k)
@@ -200,8 +205,8 @@ def build_report_view(data: dict) -> dict:
         blk = _block_for(k, v)
         if blk is None:
             continue
-        kind = "remedy" if _REMEDY_HINT.search(k) else \
-               "timing" if _TIMING_HINT.search(k) else "default"
+        kind = "remedy" if _REMEDY_HINT.search(str(k)) else \
+               "timing" if _TIMING_HINT.search(str(k)) else "default"
         title = blk.get("title") or _title(k)
         if blk["type"] == "group":
             blocks = blk.get("blocks")
