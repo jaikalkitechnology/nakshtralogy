@@ -35,6 +35,11 @@ class AppMode {
   String? countryCode;
   bool manual = false;
 
+  /// The user's DECLARED country (from their profile / phone). Preferred over
+  /// the device UI-language country when hinting the backend, so a declared
+  /// India user on an "English (US)" phone is never pushed to international/USD.
+  String? _profileCountry;
+
   bool get isInternational => region.toUpperCase() == 'INTL';
   AppModeKind get kind => isInternational ? AppModeKind.international : AppModeKind.india;
 
@@ -142,11 +147,47 @@ class AppMode {
     // and could trip the token-refresh/logout path). The cached region covers
     // the pre-login UI; we refresh right after a successful login instead.
     if (!ApiService().isLoggedIn) return;
-    ApiService().setDeviceCountry(deviceCountry());
+    // Hint priority: the user's DECLARED country → last-known stored country →
+    // device UI-language country (weakest, can be 'US' on an English phone).
+    ApiService().setDeviceCountry(_profileCountry ?? countryCode ?? deviceCountry());
     try {
       final r = await ApiService().getMyRegion();
       if (r['statusCode'] == 200) applyMap(r);
     } catch (_) {/* keep cached mode */}
+  }
+
+  /// Feed the user's declared country (profile `country_code`, else their phone
+  /// calling code) once the profile is known. If it gives us a better hint than
+  /// what's cached — and the user hasn't manually chosen a region — re-resolve
+  /// the region so India users on English-locale phones drop out of USD mode.
+  void setProfileCountry(String? countryIso, [String? phone]) {
+    var cc = (countryIso ?? '').trim().toUpperCase();
+    if (cc.isEmpty) cc = _countryFromPhone(phone) ?? '';
+    if (cc.isEmpty || cc == _profileCountry) return;
+    _profileCountry = cc;
+    if (!manual) refreshFromServer();
+  }
+
+  /// Best-effort ISO country from an E.164 phone (`+<code>…`). Covers the app's
+  /// main markets; returns null when no leading `+code` is present.
+  static String? _countryFromPhone(String? phone) {
+    if (phone == null) return null;
+    final s = phone.trim();
+    if (!s.startsWith('+')) return null;
+    final digits = s.substring(1).replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return null;
+    const dial = <String, String>{
+      '91': 'IN', '1': 'US', '44': 'GB', '61': 'AU', '971': 'AE', '65': 'SG',
+      '60': 'MY', '977': 'NP', '94': 'LK', '880': 'BD', '92': 'PK', '49': 'DE',
+      '33': 'FR', '39': 'IT', '34': 'ES', '7': 'RU', '81': 'JP', '86': 'CN',
+      '66': 'TH', '62': 'ID', '55': 'BR', '64': 'NZ', '27': 'ZA',
+    };
+    for (final len in const [3, 2, 1]) {
+      if (digits.length >= len && dial.containsKey(digits.substring(0, len))) {
+        return dial[digits.substring(0, len)];
+      }
+    }
+    return null;
   }
 
   /// Manual override from Settings.

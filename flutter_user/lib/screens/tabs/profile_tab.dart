@@ -595,7 +595,11 @@ class _ProfileTabState extends State<ProfileTab> {
                               child: Row(
                                 children: [
                                   AstroAvatar(
-                                    imageUrl: a['profile_image_url']?.toString(),
+                                    // Fall back to the account/Google photo when
+                                    // no uploaded image (else the avatar is blank).
+                                    imageUrl: ((a['profile_image_url'] ?? '').toString().isNotEmpty)
+                                        ? a['profile_image_url']?.toString()
+                                        : a['user_avatar']?.toString(),
                                     name: (a['display_name'] ?? '').toString(),
                                     size: 32,
                                     ring: false,
