@@ -84,6 +84,11 @@ class User(Base):
     terms_accepted_at = Column(DateTime, nullable=True)  # T&C acceptance at signup
     reset_token = Column(String(255), nullable=True)
     reset_token_expires = Column(DateTime, nullable=True)
+    # Account deletion (self or admin): 30-day grace, then a purge job scrubs PII
+    # in place and removes owned personal data. Recoverable until deleted_at.
+    deletion_requested_at = Column(DateTime, nullable=True)   # when deletion was asked
+    deletion_scheduled_at = Column(DateTime, nullable=True)   # requested + grace (purge date)
+    deleted_at = Column(DateTime, nullable=True)              # when actually purged/anonymized
     last_login_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

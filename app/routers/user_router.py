@@ -251,6 +251,12 @@ def login(req: UserLoginRequest, db: Session = Depends(get_db), lang: str = Depe
     user = db.query(User).filter(User.email == req.email, User.role.in_(["user", "admin"])).first()
     if not user or not user.password_hash or not verify_password(req.password, user.password_hash):
         raise HTTPException(status_code=401, detail=t("err.invalid_credentials", lang))
+    # Recover a pending deletion: logging back in within the grace window
+    # restores the account (a purged account's email is already scrubbed, so it
+    # can't reach here).
+    if user.deletion_requested_at and not user.deleted_at:
+        from app.services import account_deletion as ad
+        ad.cancel_deletion(db, user)
     if not user.is_active:
         raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     if req.fcm_token:
@@ -298,6 +304,10 @@ def google_login(req: GoogleLoginRequest, db: Session = Depends(get_db), lang: s
         db.commit()
         db.refresh(user)
 
+    # Recover a pending deletion on re-login within the grace window.
+    if user.deletion_requested_at and not user.deleted_at:
+        from app.services import account_deletion as ad
+        ad.cancel_deletion(db, user)
     if not user.is_active:
         raise HTTPException(status_code=403, detail=t("err.account_deactivated", lang))
     return _issue_tokens(user, db)
@@ -645,6 +655,50 @@ def deactivate_me(
     current_user.is_active = False
     db.commit()
     return MessageResponse(message=t("msg.account_deactivated", lang))
+
+
+# ── Account deletion (self-service, 30-day grace) ─────────────────────
+@router.post("/me/delete")
+def request_account_deletion(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Request permanent deletion of the account. The account is locked now and
+    all personal data is erased after a 30-day grace period. The user can
+    recover by simply logging back in within that window."""
+    from app.services import account_deletion as ad
+    res = ad.request_deletion(db, current_user)
+    return {
+        "status": res["status"],
+        "scheduled_at": res["scheduled_at"],
+        "grace_days": res["grace_days"],
+        "message": t("msg.account_deletion_scheduled", lang)
+        if _has_key("msg.account_deletion_scheduled")
+        else "Your account is scheduled for deletion. Log in within "
+             f"{res['grace_days']} days to cancel.",
+    }
+
+
+@router.post("/me/delete/cancel")
+def cancel_account_deletion(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Cancel a pending deletion and reactivate the account."""
+    from app.services import account_deletion as ad
+    ok = ad.cancel_deletion(db, current_user)
+    if not ok:
+        raise HTTPException(400, "Account can no longer be restored")
+    return {"status": "active", "message": "Your account deletion was cancelled."}
+
+
+def _has_key(key: str) -> bool:
+    try:
+        return t(key, "en") != key
+    except Exception:
+        return False
 
 
 # ══════════════════════════════════════════════════════════════════════
