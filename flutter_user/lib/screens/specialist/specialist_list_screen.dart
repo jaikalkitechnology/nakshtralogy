@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../widgets/hover_lift.dart';
 import 'specialist_chart_picker.dart';
 import 'specialist_milan_picker.dart';
 import 'specialist_relationship_picker.dart';
@@ -147,9 +148,24 @@ class _S extends State<SpecialistListScreen> {
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
     child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)));
 
-  Widget _engineGrid(List<Map<String, dynamic>> engines) => Container(
+  Widget _engineGrid(List<Map<String, dynamic>> engines) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 12),
-    child: Wrap(spacing: 8, runSpacing: 8, children: engines.map((e) => _engineTile(e)).toList()));
+    // Responsive column count driven by the ACTUAL available width (not the
+    // full viewport) so cards never collapse into one giant column inside the
+    // centered desktop container: 3-up on wide desktop, 2-up on tablet, 1-up
+    // on mobile.
+    child: LayoutBuilder(builder: (context, c) {
+      final cols = c.maxWidth >= 1080 ? 3 : (c.maxWidth >= 660 ? 2 : 1);
+      const gap = 10.0;
+      final tileW = (c.maxWidth - gap * (cols - 1)) / cols;
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: engines
+            .map((e) => SizedBox(width: tileW, child: HoverLift(child: _engineTile(e))))
+            .toList(),
+      );
+    }));
 
   Widget _engineTile(Map<String, dynamic> e) {
     final l = AppLocalizations.of(context)!;
@@ -171,10 +187,8 @@ class _S extends State<SpecialistListScreen> {
     final em = parts.length > 1 ? parts[1] : '';
     return GestureDetector(
       onTap: () => _openEngine(key, localName, e['icon'] as String),
-      child: SizedBox(
-        width: (MediaQuery.of(context).size.width - 40) / 2,
-        child: Container(
-          padding: const EdgeInsets.all(12),
+      child: Container(
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
               colors: [AppColors.gold.withOpacity(0.08), const Color(0xFF1A1642).withOpacity(0.6)]),
@@ -200,7 +214,7 @@ class _S extends State<SpecialistListScreen> {
               Text(e['sub'] as String, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 0.5)),
             ]),
           ]),
-        )));
+        ));
   }
 
   void _openEngine(String key, String label, String emoji) {
