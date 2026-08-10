@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../services/api_service.dart';
+import '../../services/app_mode.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
@@ -19,6 +20,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (res['statusCode'] == 200) {
         final me = Map<String, dynamic>.from(res)..remove('statusCode');
         emit(state.copyWith(loading: false, me: me));
+        // Safeguard: feed the declared profile country into region resolution
+        // so a device UI-language of "English (US)" can't force USD/international.
+        AppMode.instance.setProfileCountry(
+            me['country_code']?.toString(), me['phone']?.toString());
       } else {
         emit(state.copyWith(loading: false, error: res['detail'] ?? 'Failed to load profile'));
       }
