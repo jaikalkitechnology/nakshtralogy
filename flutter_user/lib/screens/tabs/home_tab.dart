@@ -528,7 +528,11 @@ class _AstroCard extends StatelessWidget {
           // Avatar with online dot
           Stack(children: [
             AstroAvatar(
-              imageUrl: astro['profile_image_url']?.toString(),
+              // Fall back to the Google/account photo when no uploaded image,
+              // matching the astrologers tab & profile sheet (else it's blank).
+              imageUrl: ((astro['profile_image_url'] ?? '').toString().isNotEmpty)
+                  ? astro['profile_image_url']?.toString()
+                  : astro['user_avatar']?.toString(),
               name: (astro['display_name'] ?? '').toString(),
               size: 48,
             ),
