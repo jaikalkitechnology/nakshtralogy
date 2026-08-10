@@ -174,6 +174,11 @@ def _razorpay_payment_link(creds: dict, amount: float, currency: str,
                 "accept_partial": False,
                 "reference_id": reference_id,
                 "description": "Nakshatralogy wallet recharge",
+                # Ride our order id along on the payment too: Razorpay copies a
+                # payment link's notes onto the resulting payment, so the
+                # payment.captured webhook (which has NO reference_id) can still
+                # map back to this WalletRechargeOrder.
+                "notes": {"order_ref": reference_id},
                 "notify": {"sms": False, "email": False},
                 "reminder_enable": False,
                 **({"callback_url": callback_url, "callback_method": "get"} if callback_url else {}),
@@ -189,12 +194,40 @@ def _razorpay_payment_link(creds: dict, amount: float, currency: str,
     return None
 
 
+def _razorpay_create_order(creds: dict, amount: float, currency: str,
+                           receipt: str) -> Optional[dict]:
+    """Create a Razorpay Order (Orders API) so the client can open the native
+    Checkout (in-app modal / in-page overlay — no external browser). We store
+    the returned order id, and the payment.captured webhook maps back to us via
+    that same order_id. Real HTTP call — only runs with live keys."""
+    try:
+        import requests
+        resp = requests.post(
+            "https://api.razorpay.com/v1/orders",
+            auth=(creds["key_id"], creds["key_secret"]),
+            json={
+                "amount": int(round(amount * 100)),   # paise / cents
+                "currency": currency,
+                "receipt": (receipt or "")[:40],
+                "notes": {"order_ref": receipt},
+            },
+            timeout=15,
+        )
+        if resp.status_code in (200, 201):
+            return resp.json()
+        logger.warning("razorpay order failed: %s %s", resp.status_code, resp.text[:200])
+    except Exception as e:  # pragma: no cover - network/keys required
+        logger.warning("razorpay order error: %s", e)
+    return None
+
+
 def create_order(db: Session, user_id: str, gateway: str, amount: float,
                  currency: str = "INR", credit_inr: Optional[float] = None,
                  callback_url: Optional[str] = None):
-    """Create a WalletRechargeOrder and, when the gateway is configured, a real
-    hosted-checkout URL. Returns (order, checkout_params). checkout.url is the
-    hosted page the client opens; None until credentials are configured."""
+    """Create a WalletRechargeOrder plus, when the gateway is configured, the
+    params the client needs to pay. For Razorpay this is a native-Checkout order
+    (razorpay_order_id + key) — opens in-app/in-page — with a hosted payment
+    link kept as a fallback. Returns (order, checkout_params)."""
     from app.models.model import WalletRechargeOrder
     order = WalletRechargeOrder(
         user_id=user_id, gateway=gateway, amount=Decimal(str(amount)),
@@ -205,18 +238,25 @@ def create_order(db: Session, user_id: str, gateway: str, amount: float,
     db.flush()
     creds = load_creds(db, gateway)
     checkout_url = None
+    razorpay_order_id = None
     if is_configured(db, gateway):
         if gateway == "razorpay":
+            rzp = _razorpay_create_order(creds, amount, currency, order.id)
+            if rzp and rzp.get("id"):
+                razorpay_order_id = rzp["id"]
+                order.gateway_order_id = razorpay_order_id  # reliable webhook match
+            # Hosted payment link kept as a fallback (e.g. web without the SDK).
             checkout_url = _razorpay_payment_link(creds, amount, currency, order.id, callback_url)
         # payu / paypal hosted-link creation land with their live credentials.
     if checkout_url:
-        order.gateway_order_id = order.gateway_order_id  # link ref stored in notes
         order.notes = {"checkout_url": checkout_url}
     checkout = {
         "order_ref": order.id,
         "gateway": gateway,
         "public_key": creds.get(_PUBLIC_KEY[gateway]),
+        "razorpay_order_id": razorpay_order_id,
         "amount": float(amount),
+        "amount_paise": int(round(amount * 100)),
         "currency": currency,
         "environment": creds.get("environment") or "live",
         "url": checkout_url,

@@ -226,6 +226,11 @@ def _process_razorpay_webhook(db, request, raw, payload, ev):
     if reference_id:
         order = db.query(WalletRechargeOrder).filter(
             WalletRechargeOrder.id == reference_id).first()
+    # Native-Checkout flow: match by the Razorpay order id we stored at creation.
+    if order is None and ev.gateway_order_id:
+        order = db.query(WalletRechargeOrder).filter(
+            WalletRechargeOrder.gateway == "razorpay",
+            WalletRechargeOrder.gateway_order_id == ev.gateway_order_id).first()
     if order:
         ev.user_id = order.user_id
 
