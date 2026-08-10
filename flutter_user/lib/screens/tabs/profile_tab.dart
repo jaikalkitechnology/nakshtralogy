@@ -112,6 +112,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
   void _openEditDialog(Map<String, dynamic> me) {
     final l = AppLocalizations.of(context)!;
+    final desktop = Responsive.isDesktop(context);
     final nameCtrl = TextEditingController(text: me['name'] ?? '');
     final phoneCtrl = TextEditingController(text: me['phone'] ?? '');
     final dobCtrl = TextEditingController(text: me['dob'] ?? '');
@@ -140,56 +141,71 @@ class _ProfileTabState extends State<ProfileTab> {
           child: AlertDialog(
             backgroundColor: AppColors.card,
             title: Text(l.editProfile, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
-            content: SingleChildScrollView(
-              child: StatefulBuilder(
-                builder: (ctx, setSt) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: nameCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'Full Name'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: phoneCtrl,
-                      keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'Phone'),
-                    ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      initialValue: gender.isEmpty ? null : gender,
-                      decoration: const InputDecoration(labelText: 'Gender'),
-                      dropdownColor: AppColors.card,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      items: [
-                        DropdownMenuItem(value: 'male', child: Text(l.male)),
-                        DropdownMenuItem(value: 'female', child: Text(l.female)),
-                        DropdownMenuItem(value: 'other', child: Text(l.other)),
-                      ],
-                      onChanged: (v) => setSt(() => gender = v ?? ''),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: dobCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'DOB (DD/MM/YYYY)'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: tobCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'TOB (HH:MM)'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: placeCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'Birth Place'),
-                    ),
-                  ],
+            content: SizedBox(
+              // Two-column form on desktop, single column on mobile.
+              width: desktop ? 560 : double.maxFinite,
+              child: SingleChildScrollView(
+                child: StatefulBuilder(
+                  builder: (ctx, setSt) {
+                    final fields = <Widget>[
+                      TextField(
+                        controller: nameCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'Full Name'),
+                      ),
+                      TextField(
+                        controller: phoneCtrl,
+                        keyboardType: TextInputType.phone,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'Phone'),
+                      ),
+                      DropdownButtonFormField<String>(
+                        initialValue: gender.isEmpty ? null : gender,
+                        decoration: const InputDecoration(labelText: 'Gender'),
+                        dropdownColor: AppColors.card,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        items: [
+                          DropdownMenuItem(value: 'male', child: Text(l.male)),
+                          DropdownMenuItem(value: 'female', child: Text(l.female)),
+                          DropdownMenuItem(value: 'other', child: Text(l.other)),
+                        ],
+                        onChanged: (v) => setSt(() => gender = v ?? ''),
+                      ),
+                      TextField(
+                        controller: dobCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'DOB (DD/MM/YYYY)'),
+                      ),
+                      TextField(
+                        controller: tobCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'TOB (HH:MM)'),
+                      ),
+                      TextField(
+                        controller: placeCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'Birth Place'),
+                      ),
+                    ];
+                    if (!desktop) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0; i < fields.length; i++) ...[
+                            fields[i],
+                            if (i != fields.length - 1) const SizedBox(height: 8),
+                          ],
+                        ],
+                      );
+                    }
+                    return Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                          fields.map((f) => SizedBox(width: 262, child: f)).toList(),
+                    );
+                  },
                 ),
               ),
             ),
