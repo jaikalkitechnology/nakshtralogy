@@ -4,6 +4,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
 import '../../widgets/banner_slider.dart';
+import '../../widgets/hover_lift.dart';
 import '../../services/api_service.dart';
 import '../../services/app_mode.dart';
 import '../../services/iap_service.dart';
@@ -247,9 +248,15 @@ class _HomeTabState extends State<HomeTab> {
     ];
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Wrap(spacing: 8, runSpacing: 8, children: actions.map((a) => SizedBox(
-        width: (MediaQuery.of(context).size.width - 48) / 3,
-        child: GestureDetector(
+      child: LayoutBuilder(builder: (context, c) {
+        // 6-up on desktop, 3-up on mobile — sized off the actual available
+        // width so the tiles stay compact instead of ballooning on desktop.
+        final cols = c.maxWidth >= 720 ? 6 : 3;
+        const gap = 8.0;
+        final tileW = (c.maxWidth - gap * (cols - 1)) / cols;
+        return Wrap(spacing: gap, runSpacing: gap, children: actions.map((a) => SizedBox(
+        width: tileW,
+        child: HoverLift(child: GestureDetector(
           onTap: a['onTap'] as VoidCallback?,
           child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -270,8 +277,9 @@ class _HomeTabState extends State<HomeTab> {
             const SizedBox(height: 6),
             Text(a['label'] as String, style: const TextStyle(color: AppColors.ivory, fontSize: 10, fontWeight: FontWeight.w600)),
           ]),
-        )),
-      )).toList()),
+        ))),
+      )).toList());
+      }),
     );
   }
 
@@ -373,8 +381,10 @@ class _HomeTabState extends State<HomeTab> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.6,
+      // Auto-fit columns by width (≈3-up desktop, 2-up mobile) with a fixed
+      // compact row height so cards never stretch on large screens.
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 360, crossAxisSpacing: 10, mainAxisSpacing: 10, mainAxisExtent: 62,
       ),
       itemCount: _reportsPreview.length,
       itemBuilder: (_, i) {
