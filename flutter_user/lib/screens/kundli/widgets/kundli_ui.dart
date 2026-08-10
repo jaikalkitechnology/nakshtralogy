@@ -1,9 +1,8 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/pdf_saver.dart';
 import '../../ai/ai_specialist_chat_screen.dart';
 
 /// ════════════════════════════════════════════════════════════════════
@@ -414,13 +413,17 @@ class ReportAiChatCta extends StatelessWidget {
 /// Shared by the full-width [ReportPdfButton] and AppBar icon actions.
 /// Returns true on success. Presentation only — PDF is produced server-side.
 Future<bool> downloadReportPdf(BuildContext context, String path, String filename) async {
+  // Open the iOS target tab NOW (first thing, still inside the tap gesture) —
+  // iOS Safari blocks opening a tab after the async fetch. No-op elsewhere.
+  final target = preparePdfTarget();
   final messenger = ScaffoldMessenger.of(context);
   try {
     final (status, bytes) = await ApiService().fetchPdf(path);
     if (status == 200 && bytes != null) {
-      await Printing.sharePdf(bytes: Uint8List.fromList(bytes), filename: '$filename.pdf');
+      await savePdf(bytes, filename, target: target);
       return true;
     }
+    closePdfTarget(target);
     final msg = status == 503
         ? 'PDF service is temporarily unavailable. Please try again later.'
         : status == 402
@@ -428,6 +431,7 @@ Future<bool> downloadReportPdf(BuildContext context, String path, String filenam
             : 'Could not generate the PDF. Please try again.';
     messenger.showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppColors.error));
   } catch (_) {
+    closePdfTarget(target);
     messenger.showSnackBar(const SnackBar(
         content: Text('Could not generate the PDF. Please try again.'),
         backgroundColor: AppColors.error));
