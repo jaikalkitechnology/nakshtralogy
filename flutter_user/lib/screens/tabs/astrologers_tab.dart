@@ -5,6 +5,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../utils/money.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/astro_avatar.dart';
+import '../../widgets/hover_lift.dart';
 import '../../bloc/astrologer/astrologer_bloc.dart';
 import '../../bloc/astrologer/astrologer_event.dart';
 import '../../bloc/astrologer/astrologer_state.dart';
@@ -88,16 +89,38 @@ class _AstrologersTabState extends State<AstrologersTab> {
               return RefreshIndicator(
                 color: AppColors.gold,
                 onRefresh: () async => _loadFiltered(),
-                child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
-                  itemCount: state.list.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (_, i) => _AstroCard(
-                    astro: state.list[i],
-                    saved: state.savedIds.contains(state.list[i]['id']),
-                    index: i,
-                  ),
-                ),
+                child: LayoutBuilder(builder: (context, c) {
+                  // Desktop: two horizontal cards per row so they don't stretch
+                  // across the full width with dead space. Mobile keeps the
+                  // single-column list. Each card lifts subtly on hover.
+                  final twoCol = c.maxWidth >= 900;
+                  if (!twoCol) {
+                    return ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
+                      itemCount: state.list.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      itemBuilder: (_, i) => HoverLift(child: _AstroCard(
+                        astro: state.list[i],
+                        saved: state.savedIds.contains(state.list[i]['id']),
+                        index: i,
+                      )),
+                    );
+                  }
+                  const gap = 12.0;
+                  final tileW = (c.maxWidth - 32 - gap) / 2;
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Wrap(spacing: gap, runSpacing: gap, children: [
+                      for (int i = 0; i < state.list.length; i++)
+                        SizedBox(width: tileW, child: HoverLift(child: _AstroCard(
+                          astro: state.list[i],
+                          saved: state.savedIds.contains(state.list[i]['id']),
+                          index: i,
+                        ))),
+                    ]),
+                  );
+                }),
               );
             },
           ),
