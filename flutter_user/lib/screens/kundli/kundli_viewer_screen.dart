@@ -16,6 +16,7 @@ import 'widgets/ashtakavarga_widget.dart';
 import 'widgets/aspects_widget.dart';
 import 'widgets/bhava_widget.dart';
 import 'widgets/gochar_widget.dart';
+import 'widgets/kundli_ui.dart';
 
 /// User-side kundli viewer with per-tab paywall.
 /// Fetches only the lightweight chart on open; each tab paywall-gates its
@@ -39,7 +40,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
   bool _loading = true;
   String? _error;
 
-  static const _sectionCount = 13;
+  static const _sectionCount = 12;
 
   // [label, icon, section-key used by paywall]
   static List<List<Object>> _sections(AppLocalizations l) => <List<Object>>[
@@ -47,8 +48,8 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
     [l.planets, Icons.public, 'planets'],
     [l.kundli, Icons.grid_on, 'kundli'],
     [l.divisions, Icons.apps, 'divisions'],
-    [l.vimshottari, Icons.timeline, 'vimshottari'],
-    [l.moola, Icons.schedule, 'moola'],
+    // One Dasha tab hosts both Vimshottari & Moola via an in-tab toggle.
+    [l.dasha, Icons.timeline, 'vimshottari'],
     [l.gochar, Icons.wb_sunny, 'gochar'],
     [l.dosh, Icons.warning, 'dosh'],
     [l.yoga, Icons.auto_awesome, 'yoga'],
@@ -124,7 +125,15 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           Text(widget.clientName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
           Text(l.completeBirthChart, style: const TextStyle(color: AppColors.primary, fontSize: 11)),
         ]),
-        actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: _load)],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: 'Download PDF',
+            onPressed: () => downloadReportPdf(
+                context, 'kundli/${widget.chartId}', 'kundli-${widget.clientName}'),
+          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
+        ],
         bottom: TabBar(
           controller: _tabs,
           isScrollable: true,
@@ -155,9 +164,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                         _PaidTab(chartId: widget.chartId, section: 'divisions',
                             builder: (_) => DivisionalChartsWidget(chartId: widget.chartId, divisionalsMap: _divisionalsMap(), planetsMap: _planetsMap(), complete: _complete)),
                         _PaidTab(chartId: widget.chartId, section: 'vimshottari',
-                            builder: (_) => DashaTreeWidget(chartId: widget.chartId, type: 'vimshottari')),
-                        _PaidTab(chartId: widget.chartId, section: 'moola',
-                            builder: (_) => DashaTreeWidget(chartId: widget.chartId, type: 'moola')),
+                            builder: (_) => DashaTreeTabs(chartId: widget.chartId)),
                         _PaidTab(chartId: widget.chartId, section: 'gochar',
                             builder: (_) => GocharWidget(chartId: widget.chartId, rashiIdx: _moonRashiIdx())),
                         _PaidTab(chartId: widget.chartId, section: 'dosh',

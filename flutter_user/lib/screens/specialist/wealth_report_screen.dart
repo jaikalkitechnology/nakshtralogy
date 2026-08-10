@@ -661,6 +661,8 @@ class _WealthState extends State<WealthReportScreen> {
     final topics = <String>[l.wlTopicGrow, l.wlTopicInvest, l.wlTopicDebt, l.wlTopicProperty, l.wlTopicRetire, l.wlTopicPassive, l.wlTopicWindfall, l.wlTopicTiming];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/wealth/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'money_wealth', label: 'Money & Wealth', emoji: '💰'),
       const SizedBox(height: 14),
       Row(children: [

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ dir | default('ltr') }}">
+<head>
+<meta charset="utf-8">
+<style>
+  /* Font stack covers every script the app ships in; Chromium picks the
+     right glyphs per run via automatic fallback (system Noto fonts). */
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Noto Sans', 'Noto Sans Devanagari', 'Noto Sans Tamil',
+      'Noto Sans Telugu', 'Noto Sans Kannada', 'Noto Sans Malayalam',
+      'Noto Sans Gujarati', 'Noto Sans Bengali', 'Noto Sans Gurmukhi',
+      'Noto Sans Oriya', 'Noto Sans Arabic', 'Noto Sans Thai',
+      'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Noto Sans Symbols',
+      'Segoe UI', Arial, sans-serif;
+    color: #E9E6F5; background: #ffffff; font-size: 12px; line-height: 1.5;
+  }
+  :root {
+    --navy: #0B0B2E; --navy2: #171041; --ink: #14122b;
+    --gold: #E8B547; --gold2: #F4CC6B; --saffron: #E07A3C;
+    --ivory: #F5EEE0; --muted: #8A8298; --line: #E7E3F0;
+    --great: #4FB477; --good: #5B9BD5; --ok: #E3B23C; --weak: #E0883C; --low: #D95555;
+  }
+  .band-great { color: var(--great); } .bg-great { background: var(--great); }
+  .band-good  { color: var(--good);  } .bg-good  { background: var(--good);  }
+  .band-ok    { color: var(--ok);    } .bg-ok    { background: var(--ok);    }
+  .band-weak  { color: var(--weak);  } .bg-weak  { background: var(--weak);  }
+  .band-low   { color: var(--low);   } .bg-low   { background: var(--low);   }
+
+  /* ── Cover ── */
+  .cover {
+    background: linear-gradient(150deg, #0B0B2E 0%, #171041 55%, #241a54 100%);
+    color: var(--ivory); text-align: center;
+    padding: 90px 40px 60px; border-radius: 0; page-break-after: always;
+    min-height: 250mm; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+  }
+  .cover img.logo { width: 220px; max-width: 60%; margin-bottom: 26px; }
+  .cover .kicker { letter-spacing: 3px; font-size: 11px; color: var(--gold2);
+    text-transform: uppercase; font-weight: 700; }
+  .cover h1 { font-size: 30px; margin: 10px 0 6px; color: #fff; font-weight: 800; }
+  .cover .subject { font-size: 18px; margin-top: 30px; color: var(--gold2); font-weight: 700; }
+  .cover .meta { margin-top: 6px; font-size: 12.5px; color: #C9C3DE; }
+  .cover .rule { width: 70px; height: 3px; background: var(--gold); margin: 22px auto; border-radius: 2px; }
+  .cover .foot { margin-top: auto; font-size: 10.5px; color: #9A93B4; }
+
+  /* ── Content page ── */
+  .page { padding: 6mm 2mm; color: var(--ink); }
+  .doc-title { color: var(--navy); font-size: 20px; font-weight: 800; margin: 0 0 2px; }
+  .doc-sub { color: var(--muted); font-size: 11.5px; margin: 0 0 16px; }
+
+  .hero {
+    display: flex; align-items: center; gap: 18px;
+    background: linear-gradient(135deg, #f7f4ff, #efeaff);
+    border: 1px solid #e3ddf5; border-radius: 16px; padding: 16px 18px; margin-bottom: 16px;
+  }
+  .ring { width: 78px; height: 78px; border-radius: 50%; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; }
+  .ring .num { font-size: 22px; line-height: 1; } .ring .den { font-size: 9px; opacity: .85; }
+  .hero .h-title { color: var(--navy); font-size: 14px; font-weight: 800; }
+  .hero .h-verdict { color: #4a4560; font-size: 11.5px; margin-top: 4px; }
+
+  .metrics { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .metric { flex: 1 1 45%; min-width: 45%; background: #faf9ff; border: 1px solid var(--line);
+    border-radius: 12px; padding: 10px 12px; }
+  .metric .m-top { display: flex; justify-content: space-between; font-size: 11px; }
+  .metric .m-label { color: #46425e; font-weight: 600; }
+  .metric .m-val { font-weight: 800; }
+  .bar { height: 6px; border-radius: 4px; background: #ece8f6; margin-top: 6px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; border-radius: 4px; }
+
+  .section { margin-bottom: 14px; break-inside: avoid; }
+  .section > h2 { color: var(--navy); font-size: 13.5px; font-weight: 800; margin: 0 0 8px;
+    padding-left: 10px; border-left: 4px solid var(--gold); }
+  .section.remedy > h2 { border-left-color: var(--great); }
+  .section.timing > h2 { border-left-color: var(--good); }
+  .card { background: #fbfaff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
+
+  .kv { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .kv .row { flex: 1 1 45%; min-width: 45%; display: flex; justify-content: space-between; gap: 10px;
+    padding: 5px 0; border-bottom: 1px dashed #ece7f6; }
+  .kv .k { color: var(--muted); } .kv .v { color: var(--ink); font-weight: 600; text-align: right; }
+
+  ul.bullets { margin: 4px 0 0; padding-left: 18px; }
+  ul.bullets li { margin: 3px 0; color: #34304a; }
+
+  table.grid { width: 100%; border-collapse: collapse; font-size: 11px; }
+  table.grid th { background: var(--navy); color: #fff; text-align: left; padding: 7px 9px; font-weight: 700; }
+  table.grid td { padding: 6px 9px; border-bottom: 1px solid var(--line); color: #34304a; }
+  table.grid tr:nth-child(even) td { background: #faf9ff; }
+
+  .para { color: #34304a; font-size: 12px; }
+  .tag { display: inline-block; background: #f0ecff; color: #4a3b8c; border: 1px solid #e0d9f5;
+    border-radius: 20px; padding: 3px 10px; font-size: 10.5px; margin: 3px 4px 0 0; }
+  [dir="rtl"] .kv .v { text-align: left; }
+  [dir="rtl"] .section > h2 { border-left: none; border-right: 4px solid var(--gold); padding-left: 0; padding-right: 10px; }
+</style>
+</head>
+<body>
+  <div class="cover">
+    {% if logo %}<img class="logo" src="{{ logo }}" alt="Nakshatralogy">{% endif %}
+    <div class="kicker">{{ brand | default('Nakshatralogy') }}</div>
+    <h1>{{ title }}</h1>
+    <div class="rule"></div>
+    {% if subject %}<div class="subject">{{ subject }}</div>{% endif %}
+    {% if subject_meta %}<div class="meta">{{ subject_meta }}</div>{% endif %}
+    <div class="foot">
+      {{ generated_label | default('Generated') }} · {{ generated_on }}<br>
+      {{ brand | default('Nakshatralogy') }}
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="doc-title">{{ title }}</div>
+    {% if subject %}<div class="doc-sub">{{ subject }}{% if subject_meta %} · {{ subject_meta }}{% endif %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

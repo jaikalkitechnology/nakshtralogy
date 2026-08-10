@@ -813,6 +813,8 @@ class _BizState extends State<BusinessReportScreen> {
     final topics = <String>[l.bzTopicStart, l.bzTopicIdea, l.bzTopicPartner, l.bzTopicFunding, l.bzTopicScale, l.bzTopicRisk, l.bzTopicJob, l.bzTopicTiming];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      ReportPdfButton(path: 'report/business/${widget.chartId}', filename: 'report-${widget.chartName}'),
+      const SizedBox(height: 10),
       ReportAiChatCta(domainKey: 'business_startup', label: 'Business & Startup', emoji: '🚀'),
       const SizedBox(height: 14),
       Row(children: [

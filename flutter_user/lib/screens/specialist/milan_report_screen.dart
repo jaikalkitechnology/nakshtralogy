@@ -17,7 +17,9 @@ import '../kundli/widgets/kundli_ui.dart';
 class MilanReportScreen extends StatefulWidget {
   final String name1, name2;
   final Map<String, dynamic> data;
-  const MilanReportScreen({super.key, required this.name1, required this.name2, required this.data});
+  final String? chartId1, chartId2;  // enable server-side PDF export when present
+  const MilanReportScreen({super.key, required this.name1, required this.name2,
+      required this.data, this.chartId1, this.chartId2});
   @override
   State<MilanReportScreen> createState() => _MilanReportState();
 }
@@ -727,6 +729,12 @@ class _MilanReportState extends State<MilanReportScreen> {
     final topics = <String>[l.kmTopicAshtakoot, l.kmTopicMangal, l.kmTopicD9, l.kmTopicTiming, l.kmTopicRisks, l.kmTopicGrowth, l.kmTopicRemedies, l.kmTopicVerdict];
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       KSectionHeader(icon: Icons.forum_rounded, title: l.crDiscussAi, color: AppColors.gold),
+      if (widget.chartId1 != null && widget.chartId2 != null) ...[
+        ReportPdfButton(
+          path: 'milan/${widget.chartId1}/${widget.chartId2}',
+          filename: 'milan-${widget.name1}-${widget.name2}'),
+        const SizedBox(height: 10),
+      ],
       ReportAiChatCta(domainKey: 'marriage_family', label: 'Marriage & Family', emoji: '💒'),
       const SizedBox(height: 14),
       Row(children: [

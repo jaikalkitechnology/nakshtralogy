@@ -108,7 +108,15 @@ class _S extends State<DailyForecastScreen> {
           Text(l.forecast, style: const TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w700)),
         ]),
         centerTitle: true,
-        actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.ivory, size: 18),
+            tooltip: 'Download PDF',
+            onPressed: () => downloadReportPdf(
+                context, 'forecast/${widget.chartId}', 'forecast-${widget.chartName}'),
+          ),
+          IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load),
+        ],
       ),
       SliverPadding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),

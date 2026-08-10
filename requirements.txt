@@ -1,0 +1,4 @@
+
+# PDF export (server-side HTML -> PDF via headless Chromium)
+jinja2
+playwright

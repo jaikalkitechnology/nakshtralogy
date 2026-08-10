@@ -62,6 +62,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
         Navigator.push(context, MaterialPageRoute(
           builder: (_) => MilanReportScreen(
             name1: name1, name2: name2,
+            chartId1: ids[0], chartId2: ids[1],
             data: (resp['data'] as Map).cast<String, dynamic>(),
           ),
         ));
