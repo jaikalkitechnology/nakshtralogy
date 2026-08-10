@@ -1581,6 +1581,41 @@ const AdminFeatures = () => {
                           {a.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
                         </Button>
                       </div>
+
+                      {/* Account deletion (schedule / delete-now / restore) */}
+                      {!a.deleted_at ? (
+                        a.deletion_requested_at ? (
+                          <Button
+                            size="sm" variant="outline"
+                            onClick={() => cancelUserDeletion({ id: a.user_id, name: a.display_name, email: a.email })}
+                            className="h-7 text-[11px] w-full border-green-500/60 text-green-400 hover:bg-green-500/10"
+                            title={`Deletion scheduled${a.deletion_scheduled_at ? ` for ${new Date(a.deletion_scheduled_at).toLocaleDateString()}` : ""} — click to restore`}
+                          >
+                            <CheckCircle className="w-3 h-3 mr-1" /> Restore account
+                          </Button>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-1">
+                            <Button
+                              size="sm" variant="outline"
+                              onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "schedule")}
+                              className="h-7 text-[11px] border-destructive/60 text-destructive hover:bg-destructive/10"
+                              title="Schedule deletion (30-day grace)"
+                            >
+                              <Trash2 className="w-3 h-3 mr-1" /> Delete
+                            </Button>
+                            <Button
+                              size="sm" variant="outline"
+                              onClick={() => deleteUserAccount({ id: a.user_id, name: a.display_name, email: a.email }, "immediate")}
+                              className="h-7 text-[11px] border-destructive text-destructive hover:bg-destructive/20"
+                              title="Delete now (permanent)"
+                            >
+                              <Trash2 className="w-3 h-3 mr-1" /> Delete now
+                            </Button>
+                          </div>
+                        )
+                      ) : (
+                        <Badge className="bg-destructive/20 text-destructive text-[10px] w-full justify-center py-1">deleted</Badge>
+                      )}
                     </div>
                   ))}
                 </div>
