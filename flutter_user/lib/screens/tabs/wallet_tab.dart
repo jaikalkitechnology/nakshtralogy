@@ -8,6 +8,7 @@ import '../../bloc/wallet/wallet_state.dart';
 import '../../services/app_mode.dart';
 import '../../widgets/recharge_sheet.dart';
 import '../../utils/money.dart';
+import '../../utils/responsive.dart';
 
 class WalletTab extends StatefulWidget {
   const WalletTab({super.key});
@@ -129,6 +130,14 @@ class _WalletTabState extends State<WalletTab> {
     );
   }
 
+  /// On desktop, cap a block's width and pin it to the left so wallet controls
+  /// form a tidy column instead of stretching across the whole page.
+  Widget _leftCol(bool desktop, Widget child) => desktop
+      ? Align(
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 560), child: child))
+      : child;
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -148,6 +157,7 @@ class _WalletTabState extends State<WalletTab> {
         final intl = displayCurrency.toUpperCase() == 'USD';
         final rechargeEnabled = (wallet?['recharge_enabled'] as bool?) ?? !intl;
         double conv(double inr) => (intl && fx != null && fx > 0) ? inr / fx : inr;
+        final desktop = Responsive.isDesktop(context);
 
         return RefreshIndicator(
           color: AppColors.primary,
@@ -157,8 +167,9 @@ class _WalletTabState extends State<WalletTab> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // Balance card
-              Container(
+              // Balance card (constrained to a left column on desktop so it
+              // doesn't stretch into one wide, empty card).
+              _leftCol(desktop, Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -225,12 +236,12 @@ class _WalletTabState extends State<WalletTab> {
                     ),
                   ],
                 ),
-              ),
+              )),
               const SizedBox(height: 16),
 
               // Quick recharge chips (India-only — international tops up via IAP)
               if (rechargeEnabled) ...[
-                SizedBox(
+                _leftCol(desktop, SizedBox(
                   height: 38,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
@@ -256,7 +267,7 @@ class _WalletTabState extends State<WalletTab> {
                       );
                     }).toList(),
                   ),
-                ),
+                )),
                 const SizedBox(height: 20),
               ],
 
