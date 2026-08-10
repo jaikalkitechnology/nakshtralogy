@@ -15,6 +15,7 @@ import '../../widgets/astro_avatar.dart';
 import '../../widgets/phone_capture_sheet.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
+import '../../utils/responsive.dart';
 import '../auth/login_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
@@ -88,6 +89,41 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Desktop top-nav item with a gold active pill (used only for width>=1024).
+  Widget _desktopNavButton(int index, IconData icon, String label) {
+    final selected = _currentIndex == index;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: Material(
+        color: selected ? AppColors.gold.withOpacity(0.14) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => setState(() => _currentIndex = index),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 17, color: selected ? AppColors.gold : AppColors.smoke),
+                const SizedBox(width: 7),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color: selected ? AppColors.gold : AppColors.ivory,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   List<_NavItem> _navItems(BuildContext context) {
     final l = AppLocalizations.of(context)!;
     return [
@@ -101,6 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    final wide = Responsive.isDesktop(context);
     return MultiBlocListener(
       listeners: [
         BlocListener<AuthBloc, AuthState>(
@@ -120,11 +158,22 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: wide ? 64 : kToolbarHeight,
+          titleSpacing: wide ? 24 : NavigationToolbar.kMiddleSpacing,
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Nakshatra', style: TextStyle(color: AppColors.ivory, fontWeight: FontWeight.w700, fontSize: 18)),
               Text('logy', style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700, fontSize: 18, fontStyle: FontStyle.italic)),
+              // Desktop centre navigation (>=1024px): the mobile bottom bar is
+              // replaced by an inline top nav. Profile stays on the avatar.
+              if (wide) ...[
+                const SizedBox(width: 36),
+                _desktopNavButton(0, Icons.home, l.home),
+                _desktopNavButton(1, Icons.star, l.astrologers),
+                _desktopNavButton(2, Icons.assessment, l.reports),
+                _desktopNavButton(3, Icons.account_balance_wallet, l.wallet),
+              ],
             ],
           ),
           actions: [
@@ -206,21 +255,33 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            HomeTab(
-              onSeeAllAstrologers: () => setState(() => _currentIndex = 1),
-              onSeeAllServices: () => setState(() => _currentIndex = 2),
-              onOpenKundli: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyChartsScreen())),
+        body: () {
+          final stack = IndexedStack(
+            index: _currentIndex,
+            children: [
+              HomeTab(
+                onSeeAllAstrologers: () => setState(() => _currentIndex = 1),
+                onSeeAllServices: () => setState(() => _currentIndex = 2),
+                onOpenKundli: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyChartsScreen())),
+              ),
+              const AstrologersTab(),
+              const SpecialistListScreen(showAppBar: false),
+              const WalletTab(),
+              const ProfileTab(),
+            ],
+          );
+          // On desktop, centre the content and cap its width so pages don't
+          // stretch edge-to-edge on wide monitors.
+          if (!wide) return stack;
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: Responsive.maxContent),
+              child: stack,
             ),
-            const AstrologersTab(),
-            const SpecialistListScreen(showAppBar: false),
-            const WalletTab(),
-            const ProfileTab(),
-          ],
-        ),
-        bottomNavigationBar: Container(
+          );
+        }(),
+        bottomNavigationBar: wide ? null : Container(
           decoration: BoxDecoration(
             color: AppColors.midnight.withOpacity(0.95),
             border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.15))),
