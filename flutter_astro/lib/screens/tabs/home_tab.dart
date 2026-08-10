@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/responsive.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
@@ -177,7 +178,11 @@ class _HomeTabState extends State<HomeTab> {
         return RefreshIndicator(
           color: AppColors.primary,
           onRefresh: () async => context.read<DashboardBloc>().add(DashboardLoadRequested()),
-          child: ListView(
+          // Desktop: cap + centre the dashboard column so cards stay readable
+          // instead of stretching across the full width.
+          child: Center(child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: Responsive.isDesktop(context) ? 1080 : double.infinity),
+            child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: [
               // ══════════════════════ GREETING HERO ══════════════════════
@@ -339,7 +344,7 @@ class _HomeTabState extends State<HomeTab> {
               // ══════════════════════ 10. DAILY MOTIVATION ═══════════════
               _MotivationCard(l: l),
             ],
-          ),
+          ))),
         );
       },
     );

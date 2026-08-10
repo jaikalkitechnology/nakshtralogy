@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/responsive.dart';
 import '../../bloc/astro_wallet/astro_wallet_bloc.dart';
 import '../../bloc/astro_wallet/astro_wallet_event.dart';
 import '../../bloc/astro_wallet/astro_wallet_state.dart';
@@ -133,7 +134,9 @@ class _EarningsTabState extends State<EarningsTab> {
         return RefreshIndicator(
           color: AppColors.primary,
           onRefresh: () async => context.read<AstroWalletBloc>().add(AstroWalletLoadRequested(page: state.page, kind: state.kind)),
-          child: ListView(padding: const EdgeInsets.all(16), children: [
+          child: Center(child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: Responsive.isDesktop(context) ? 720 : double.infinity),
+            child: ListView(padding: const EdgeInsets.all(16), children: [
             // ── Gold Hero Card ──
             Container(
               padding: const EdgeInsets.all(20),
@@ -230,7 +233,7 @@ class _EarningsTabState extends State<EarningsTab> {
               const SizedBox(height: 10),
               ...state.withdrawals.map((w) => _WithdrawalRow(withdrawal: w as Map<String, dynamic>)),
             ],
-          ]),
+          ]))),
         );
       },
     );

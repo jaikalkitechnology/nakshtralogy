@@ -37,6 +37,7 @@ import '../../widgets/language_selector.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
 import '../../utils/menu_labels.dart';
+import '../../utils/responsive.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -111,6 +112,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
   void _openEditDialog(Map<String, dynamic> me) {
     final l = AppLocalizations.of(context)!;
+    final desktop = Responsive.isDesktop(context);
     final nameCtrl = TextEditingController(text: me['name'] ?? '');
     final phoneCtrl = TextEditingController(text: me['phone'] ?? '');
     final dobCtrl = TextEditingController(text: me['dob'] ?? '');
@@ -139,56 +141,71 @@ class _ProfileTabState extends State<ProfileTab> {
           child: AlertDialog(
             backgroundColor: AppColors.card,
             title: Text(l.editProfile, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
-            content: SingleChildScrollView(
-              child: StatefulBuilder(
-                builder: (ctx, setSt) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: nameCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'Full Name'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: phoneCtrl,
-                      keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'Phone'),
-                    ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      initialValue: gender.isEmpty ? null : gender,
-                      decoration: const InputDecoration(labelText: 'Gender'),
-                      dropdownColor: AppColors.card,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      items: [
-                        DropdownMenuItem(value: 'male', child: Text(l.male)),
-                        DropdownMenuItem(value: 'female', child: Text(l.female)),
-                        DropdownMenuItem(value: 'other', child: Text(l.other)),
-                      ],
-                      onChanged: (v) => setSt(() => gender = v ?? ''),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: dobCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'DOB (DD/MM/YYYY)'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: tobCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'TOB (HH:MM)'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: placeCtrl,
-                      style: const TextStyle(color: AppColors.textPrimary),
-                      decoration: const InputDecoration(labelText: 'Birth Place'),
-                    ),
-                  ],
+            content: SizedBox(
+              // Two-column form on desktop, single column on mobile.
+              width: desktop ? 560 : double.maxFinite,
+              child: SingleChildScrollView(
+                child: StatefulBuilder(
+                  builder: (ctx, setSt) {
+                    final fields = <Widget>[
+                      TextField(
+                        controller: nameCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'Full Name'),
+                      ),
+                      TextField(
+                        controller: phoneCtrl,
+                        keyboardType: TextInputType.phone,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'Phone'),
+                      ),
+                      DropdownButtonFormField<String>(
+                        initialValue: gender.isEmpty ? null : gender,
+                        decoration: const InputDecoration(labelText: 'Gender'),
+                        dropdownColor: AppColors.card,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        items: [
+                          DropdownMenuItem(value: 'male', child: Text(l.male)),
+                          DropdownMenuItem(value: 'female', child: Text(l.female)),
+                          DropdownMenuItem(value: 'other', child: Text(l.other)),
+                        ],
+                        onChanged: (v) => setSt(() => gender = v ?? ''),
+                      ),
+                      TextField(
+                        controller: dobCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'DOB (DD/MM/YYYY)'),
+                      ),
+                      TextField(
+                        controller: tobCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'TOB (HH:MM)'),
+                      ),
+                      TextField(
+                        controller: placeCtrl,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(labelText: 'Birth Place'),
+                      ),
+                    ];
+                    if (!desktop) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0; i < fields.length; i++) ...[
+                            fields[i],
+                            if (i != fields.length - 1) const SizedBox(height: 8),
+                          ],
+                        ],
+                      );
+                    }
+                    return Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children:
+                          fields.map((f) => SizedBox(width: 262, child: f)).toList(),
+                    );
+                  },
                 ),
               ),
             ),
@@ -342,6 +359,7 @@ class _ProfileTabState extends State<ProfileTab> {
             ? me!['name'].toString().trim().substring(0, 1).toUpperCase()
             : '\u{1F464}';
         final signNak = _resolveSignNakshatra(me);
+        final desktop = Responsive.isDesktop(context);
 
         return RefreshIndicator(
           color: AppColors.gold,
@@ -350,8 +368,13 @@ class _ProfileTabState extends State<ProfileTab> {
             context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
             _loadUnread();
           },
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 24),
+          // On desktop, cap the content width and reduce the top padding so the
+          // profile isn't a narrow strip floating in a wide, empty page.
+          child: Center(
+            child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: desktop ? 900 : double.infinity),
+            child: ListView(
+            padding: EdgeInsets.symmetric(vertical: desktop ? 14 : 24),
             children: [
               // ============ HEADER ============
               Center(
@@ -649,95 +672,26 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
               const SizedBox(height: 12),
 
-              // ============ CHANGE PASSWORD (OTP) ============
-              if ((me?['email'] ?? '').toString().isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.gold.withOpacity(0.15)),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => PasswordOtpScreen(
-                        mode: PasswordOtpMode.change,
-                        email: (me?['email'] ?? '').toString(),
-                      ),
-                    )),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Row(children: [
-                        const Icon(Icons.lock_outline, color: AppColors.gold, size: 22),
-                        const SizedBox(width: 12),
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(MenuLabels.of(context, 'changePassword'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                          Text(MenuLabels.of(context, 'changePasswordSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
-                        ])),
-                        const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                      ]),
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 12),
-
-              // ============ INVOICES ============
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const InvoicesScreen()),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Row(children: [
-                      const Icon(Icons.receipt_long_outlined, color: AppColors.gold, size: 22),
-                      const SizedBox(width: 12),
-                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(MenuLabels.of(context, 'invoices'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text(MenuLabels.of(context, 'invoicesSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
-                      ])),
-                      const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                    ]),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // ============ CUSTOMER SUPPORT ============
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.gold.withOpacity(0.15)),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SupportScreen()),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Row(children: [
-                      const Icon(Icons.support_agent, color: AppColors.gold, size: 22),
-                      const SizedBox(width: 12),
-                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(MenuLabels.of(context, 'customerSupport'), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text(MenuLabels.of(context, 'customerSupportSub'), style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
-                      ])),
-                      const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
-                    ]),
-                  ),
-                ),
-              ),
+              // ======= ACCOUNT SETTINGS (2-column grid on desktop) =======
+              _settingsGrid(desktop, [
+                if ((me?['email'] ?? '').toString().isNotEmpty)
+                  _menuTile(Icons.lock_outline, MenuLabels.of(context, 'changePassword'),
+                      MenuLabels.of(context, 'changePasswordSub'),
+                      () => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => PasswordOtpScreen(
+                              mode: PasswordOtpMode.change,
+                              email: (me?['email'] ?? '').toString(),
+                            ),
+                          ))),
+                _menuTile(Icons.receipt_long_outlined, MenuLabels.of(context, 'invoices'),
+                    MenuLabels.of(context, 'invoicesSub'),
+                    () => Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => const InvoicesScreen()))),
+                _menuTile(Icons.support_agent, MenuLabels.of(context, 'customerSupport'),
+                    MenuLabels.of(context, 'customerSupportSub'),
+                    () => Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => const SupportScreen()))),
+              ]),
               const SizedBox(height: 12),
 
               // ============ ABOUT & LEGAL ============
@@ -832,9 +786,65 @@ class _ProfileTabState extends State<ProfileTab> {
                 const SizedBox(height: 28),
               ],
             ],
-          ),
+          ))),
         );
       },
+    );
+  }
+
+  /// A single settings tile (icon + title + subtitle + chevron). Width is set
+  /// by the parent so it fits either a full-width column or a 2-up grid.
+  Widget _menuTile(IconData icon, String title, String sub, VoidCallback onTap) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.gold.withOpacity(0.15)),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(children: [
+            Icon(icon, color: AppColors.gold, size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+              Text(sub, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+            ])),
+            const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  /// Lays settings tiles in two columns on desktop, stacked on mobile.
+  Widget _settingsGrid(bool desktop, List<Widget> tiles) {
+    if (!desktop) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(children: [
+          for (int i = 0; i < tiles.length; i++) ...[
+            tiles[i],
+            if (i != tiles.length - 1) const SizedBox(height: 12),
+          ],
+        ]),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: LayoutBuilder(builder: (context, c) {
+        const gap = 12.0;
+        final w = (c.maxWidth - gap) / 2;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: tiles.map((t) => SizedBox(width: w, child: t)).toList(),
+        );
+      }),
     );
   }
 

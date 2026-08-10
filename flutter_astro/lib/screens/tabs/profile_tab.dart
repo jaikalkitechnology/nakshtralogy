@@ -8,6 +8,7 @@ import '../../widgets/legal_section.dart';
 import '../support/support_screen.dart';
 import '../auth/password_otp_screen.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/responsive.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/astro_profile/astro_profile_bloc.dart';
@@ -135,7 +136,9 @@ class _ProfileTabState extends State<ProfileTab> {
         return RefreshIndicator(
           color: AppColors.primary,
           onRefresh: () async => context.read<AstroProfileBloc>().add(AstroProfileLoadRequested()),
-          child: ListView(padding: const EdgeInsets.all(16), children: [
+          child: Center(child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: Responsive.isDesktop(context) ? 820 : double.infinity),
+            child: ListView(padding: const EdgeInsets.all(16), children: [
             // ── Profile Header ──
             Container(
               padding: const EdgeInsets.all(20),
@@ -487,7 +490,7 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
               const SizedBox(height: 20),
             ],
-          ]),
+          ]))),
         );
       },
     );
