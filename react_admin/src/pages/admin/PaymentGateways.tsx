@@ -15,9 +15,9 @@ interface Gateway {
 }
 
 const META: Record<string, { label: string; note: string }> = {
-  razorpay: { label: "Razorpay", note: "India + international cards/UPI. Fields: key_id, key_secret, webhook_secret." },
-  payu: { label: "PayU", note: "India + international. Fields: merchant_key, merchant_salt." },
-  paypal: { label: "PayPal", note: "International only. Fields: client_id, client_secret, environment (sandbox|live)." },
+  razorpay: { label: "Razorpay", note: "India + international cards/UPI. Fields: key_id, key_secret, webhook_secret. Webhook: /api/v1/payments/webhook/razorpay" },
+  payu: { label: "PayU", note: "India + international. Fields: merchant_key, merchant_salt. Webhook/callback: /api/v1/payments/webhook/payu" },
+  paypal: { label: "PayPal", note: "International only. Fields: client_id, client_secret, environment (sandbox|live), webhook_id. Webhook: /api/v1/payments/webhook/paypal" },
 };
 
 export default function PaymentGateways() {

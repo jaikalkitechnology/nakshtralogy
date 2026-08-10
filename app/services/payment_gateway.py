@@ -34,7 +34,7 @@ _INTL = ("payu", "razorpay", "paypal")
 _CRED_KEYS = {
     "razorpay": ["key_id", "key_secret", "webhook_secret"],
     "payu": ["merchant_key", "merchant_salt"],
-    "paypal": ["client_id", "client_secret", "environment"],  # environment: sandbox|live
+    "paypal": ["client_id", "client_secret", "environment", "webhook_id"],  # environment: sandbox|live
 }
 # Which credential is safe to expose to the client (public checkout key).
 _PUBLIC_KEY = {"razorpay": "key_id", "payu": "merchant_key", "paypal": "client_id"}
@@ -174,6 +174,11 @@ def _razorpay_payment_link(creds: dict, amount: float, currency: str,
                 "accept_partial": False,
                 "reference_id": reference_id,
                 "description": "Nakshatralogy wallet recharge",
+                # Ride our order id along on the payment too: Razorpay copies a
+                # payment link's notes onto the resulting payment, so the
+                # payment.captured webhook (which has NO reference_id) can still
+                # map back to this WalletRechargeOrder.
+                "notes": {"order_ref": reference_id},
                 "notify": {"sms": False, "email": False},
                 "reminder_enable": False,
                 **({"callback_url": callback_url, "callback_method": "get"} if callback_url else {}),
@@ -189,12 +194,40 @@ def _razorpay_payment_link(creds: dict, amount: float, currency: str,
     return None
 
 
+def _razorpay_create_order(creds: dict, amount: float, currency: str,
+                           receipt: str) -> Optional[dict]:
+    """Create a Razorpay Order (Orders API) so the client can open the native
+    Checkout (in-app modal / in-page overlay — no external browser). We store
+    the returned order id, and the payment.captured webhook maps back to us via
+    that same order_id. Real HTTP call — only runs with live keys."""
+    try:
+        import requests
+        resp = requests.post(
+            "https://api.razorpay.com/v1/orders",
+            auth=(creds["key_id"], creds["key_secret"]),
+            json={
+                "amount": int(round(amount * 100)),   # paise / cents
+                "currency": currency,
+                "receipt": (receipt or "")[:40],
+                "notes": {"order_ref": receipt},
+            },
+            timeout=15,
+        )
+        if resp.status_code in (200, 201):
+            return resp.json()
+        logger.warning("razorpay order failed: %s %s", resp.status_code, resp.text[:200])
+    except Exception as e:  # pragma: no cover - network/keys required
+        logger.warning("razorpay order error: %s", e)
+    return None
+
+
 def create_order(db: Session, user_id: str, gateway: str, amount: float,
                  currency: str = "INR", credit_inr: Optional[float] = None,
                  callback_url: Optional[str] = None):
-    """Create a WalletRechargeOrder and, when the gateway is configured, a real
-    hosted-checkout URL. Returns (order, checkout_params). checkout.url is the
-    hosted page the client opens; None until credentials are configured."""
+    """Create a WalletRechargeOrder plus, when the gateway is configured, the
+    params the client needs to pay. For Razorpay this is a native-Checkout order
+    (razorpay_order_id + key) — opens in-app/in-page — with a hosted payment
+    link kept as a fallback. Returns (order, checkout_params)."""
     from app.models.model import WalletRechargeOrder
     order = WalletRechargeOrder(
         user_id=user_id, gateway=gateway, amount=Decimal(str(amount)),
@@ -205,18 +238,25 @@ def create_order(db: Session, user_id: str, gateway: str, amount: float,
     db.flush()
     creds = load_creds(db, gateway)
     checkout_url = None
+    razorpay_order_id = None
     if is_configured(db, gateway):
         if gateway == "razorpay":
+            rzp = _razorpay_create_order(creds, amount, currency, order.id)
+            if rzp and rzp.get("id"):
+                razorpay_order_id = rzp["id"]
+                order.gateway_order_id = razorpay_order_id  # reliable webhook match
+            # Hosted payment link kept as a fallback (e.g. web without the SDK).
             checkout_url = _razorpay_payment_link(creds, amount, currency, order.id, callback_url)
         # payu / paypal hosted-link creation land with their live credentials.
     if checkout_url:
-        order.gateway_order_id = order.gateway_order_id  # link ref stored in notes
         order.notes = {"checkout_url": checkout_url}
     checkout = {
         "order_ref": order.id,
         "gateway": gateway,
         "public_key": creds.get(_PUBLIC_KEY[gateway]),
+        "razorpay_order_id": razorpay_order_id,
         "amount": float(amount),
+        "amount_paise": int(round(amount * 100)),
         "currency": currency,
         "environment": creds.get("environment") or "live",
         "url": checkout_url,
@@ -349,3 +389,80 @@ def credit_paid_order(db: Session, order, payment_id: Optional[str],
     db.commit()
     return True, {"code": "credited", "amount": credit,
                   "balance": float(wallet.balance), "txn_id": txn.id, "order_id": order.id}
+
+
+def verify_payu_webhook(salt: Optional[str], key: Optional[str], form: dict) -> bool:
+    """PayU response (reverse) hash check. Recomputes sha512 over the salted
+    field sequence and compares to the posted `hash`. Tries the two common
+    field layouts (with / without the reserved udf6-10 slots). Never raises."""
+    if not (salt and key):
+        return False
+    posted = (form.get("hash") or "").strip().lower()
+    if not posted:
+        return False
+    status = form.get("status", "")
+    email = form.get("email", "")
+    firstname = form.get("firstname", "")
+    productinfo = form.get("productinfo", "")
+    amount = form.get("amount", "")
+    txnid = form.get("txnid", "")
+    u = [form.get(f"udf{i}", "") for i in range(1, 6)]  # udf1..udf5
+    # Reverse hash sequences (salt first, key last).
+    seq_simple = [salt, status, u[4], u[3], u[2], u[1], u[0],
+                  email, firstname, productinfo, amount, txnid, key]
+    # With reserved udf6..udf10 (5 empty slots after status).
+    seq_reserved = [salt, status, "", "", "", "", "",
+                    u[4], u[3], u[2], u[1], u[0],
+                    email, firstname, productinfo, amount, txnid, key]
+    for seq in (seq_simple, seq_reserved):
+        digest = hashlib.sha512("|".join(seq).encode()).hexdigest()
+        if hmac.compare_digest(digest, posted):
+            return True
+    return False
+
+
+def verify_paypal_webhook(creds: dict, headers, raw_body: bytes) -> bool:
+    """Verify a PayPal webhook via PayPal's verify-webhook-signature API.
+    Requires client_id/secret + webhook_id in creds. Returns False (unverified)
+    when creds are missing or the call fails — the event is still logged."""
+    webhook_id = creds.get("webhook_id")
+    client_id = creds.get("client_id")
+    client_secret = creds.get("client_secret")
+    if not (webhook_id and client_id and client_secret):
+        return False
+    live = (creds.get("environment") or "live").lower() != "sandbox"
+    base = "https://api-m.paypal.com" if live else "https://api-m.sandbox.paypal.com"
+    try:
+        import json as _json
+        import requests
+
+        def _h(name):
+            try:
+                return headers.get(name)
+            except Exception:
+                return None
+
+        tok = requests.post(
+            f"{base}/v1/oauth2/token",
+            auth=(client_id, client_secret),
+            data={"grant_type": "client_credentials"}, timeout=15)
+        if tok.status_code != 200:
+            return False
+        access = tok.json().get("access_token")
+        body = {
+            "auth_algo": _h("paypal-auth-algo"),
+            "cert_url": _h("paypal-cert-url"),
+            "transmission_id": _h("paypal-transmission-id"),
+            "transmission_sig": _h("paypal-transmission-sig"),
+            "transmission_time": _h("paypal-transmission-time"),
+            "webhook_id": webhook_id,
+            "webhook_event": _json.loads(raw_body or b"{}"),
+        }
+        r = requests.post(
+            f"{base}/v1/notifications/verify-webhook-signature",
+            headers={"Authorization": f"Bearer {access}", "Content-Type": "application/json"},
+            json=body, timeout=15)
+        return r.status_code == 200 and r.json().get("verification_status") == "SUCCESS"
+    except Exception as e:  # pragma: no cover - network/creds required
+        logger.warning("paypal webhook verify error: %s", e)
+        return False

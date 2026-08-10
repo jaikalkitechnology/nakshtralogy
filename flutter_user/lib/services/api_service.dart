@@ -637,6 +637,28 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  /// Verify a native-checkout Razorpay payment (payment_id / order_id /
+  /// signature) and credit the wallet. Idempotent with the webhook.
+  Future<Map<String, dynamic>> verifyRecharge({
+    required String gateway,
+    required String orderRef,
+    String? gatewayOrderId,
+    String? gatewayPaymentId,
+    String? signature,
+  }) async {
+    final resp = await _authPost(
+      Uri.parse('${ApiConstants.baseUrl}/payments/recharge/verify'),
+      body: jsonEncode({
+        'gateway': gateway,
+        'order_ref': orderRef,
+        if (gatewayOrderId != null) 'gateway_order_id': gatewayOrderId,
+        if (gatewayPaymentId != null) 'gateway_payment_id': gatewayPaymentId,
+        if (signature != null) 'signature': signature,
+      }),
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   /// Poll a recharge order's status (created | paid | failed).
   Future<String?> getRechargeOrderStatus(String orderId) async {
     try {
