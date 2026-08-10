@@ -472,11 +472,26 @@ def get_my_region(
     client_ip = region_util.client_ip_from_headers(
         headers, request.client.host if request.client else None
     )
-    region, cc = region_util.resolve_region(
-        device_country=x_device_country,
-        client_ip=client_ip,
-        stored_country=current_user.country_code,
-    )
+    # Authoritative order: the user's REAL phone calling code (declared at
+    # signup, immune to the phone's UI language) → their stored profile country
+    # → only then the device-locale hint / IP. The device-locale country was
+    # pushing Indian users whose phone language is "English (US)" into
+    # international/USD mode and overwriting their correct country; phone-first
+    # fixes that and self-heals any country that was previously corrupted.
+    region = cc = None
+    if current_user.phone:
+        r, c = region_util.region_from_phone(current_user.phone)
+        if c:  # only trust it when a calling code was actually parsed
+            region, cc = r, c
+    if region is None and current_user.country_code:
+        region = region_util.region_for_country(current_user.country_code)
+        cc = current_user.country_code
+    if region is None:
+        region, cc = region_util.resolve_region(
+            device_country=x_device_country,
+            client_ip=client_ip,
+            stored_country=None,
+        )
     changed = False
     if region != current_user.region:
         current_user.region = region
