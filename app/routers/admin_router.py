@@ -286,6 +286,9 @@ def list_users(
                 "profile_approved": u.profile_approved,
                 "wallet_balance": float(w.balance) if w else 0,
                 "created_at": str(u.created_at) if u.created_at else None,
+                "deletion_requested_at": str(u.deletion_requested_at) if getattr(u, "deletion_requested_at", None) else None,
+                "deletion_scheduled_at": str(u.deletion_scheduled_at) if getattr(u, "deletion_scheduled_at", None) else None,
+                "deleted_at": str(u.deleted_at) if getattr(u, "deleted_at", None) else None,
             }
             for u, w in rows
         ],
@@ -393,6 +396,64 @@ def toggle_user(
     user.is_active = not user.is_active
     db.commit()
     return {"id": user.id, "is_active": user.is_active}
+
+
+# ── Account deletion (admin) — works for user / astrologer / developer ──
+@router.post("/users/{user_id}/delete")
+def admin_delete_user(
+    user_id: str,
+    mode: str = "schedule",   # schedule (30-day grace) | immediate (purge now)
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    """Delete any account and its personal records. `immediate` purges now;
+    `schedule` starts the 30-day grace. Financial + counterparty records are
+    retained anonymised — other users are never affected. Admins cannot be
+    deleted from here (guard against self/admin removal)."""
+    from app.services import account_deletion as ad
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
+    if user.role == "admin":
+        raise HTTPException(status_code=400, detail="Admin accounts cannot be deleted here")
+    if getattr(user, "deleted_at", None):
+        raise HTTPException(status_code=400, detail="Account is already deleted")
+    res = ad.request_deletion(db, user, immediate=(mode == "immediate"))
+    return {"id": user.id, "role": user.role, **res}
+
+
+@router.post("/users/{user_id}/delete/cancel")
+def admin_cancel_delete(
+    user_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang_user),
+):
+    from app.services import account_deletion as ad
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=t("err.user_not_found", lang))
+    if not ad.cancel_deletion(db, user):
+        raise HTTPException(status_code=400, detail="Account can no longer be restored")
+    return {"id": user.id, "status": "active"}
+
+
+@router.get("/pending-deletions")
+def admin_pending_deletions(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Accounts scheduled for deletion but not yet purged (for oversight)."""
+    rows = db.query(User).filter(
+        User.deletion_requested_at.isnot(None),
+        User.deleted_at.is_(None),
+    ).order_by(User.deletion_scheduled_at.asc()).limit(500).all()
+    return {"items": [{
+        "id": u.id, "name": u.name, "email": u.email, "role": u.role,
+        "requested_at": u.deletion_requested_at.isoformat() if u.deletion_requested_at else None,
+        "scheduled_at": u.deletion_scheduled_at.isoformat() if u.deletion_scheduled_at else None,
+    } for u in rows]}
 
 
 @router.patch("/users/{user_id}/approve-profile")

@@ -48,6 +48,7 @@ import {
   fetchUsdPricingSettings, updateUsdPricingSettings, regenerateUsdPricing,
   createGiftPricing, updateGiftPricing, toggleGiftPricing, deleteGiftPricing,
   adminListUsers, adminAdjustWallet, adminToggleUser, adminGetUser,
+  adminDeleteUser, adminCancelDeleteUser,
   adminListAstrologers, adminApproveAstrologer, adminRejectAstrologer,
   adminBlockAstrologer, adminSetCommission, adminAstrologerDetail, adminSendNotification,
   adminListKyc, adminApproveKyc, adminRejectKyc,
@@ -481,6 +482,32 @@ const AdminFeatures = () => {
   const toggleUser = async (userId: string) => {
     await adminToggleUser(userId);
     fetchData();
+  };
+
+  // ── Account deletion (user / astrologer / developer) ────────────
+  const deleteUserAccount = async (u: any, mode: "schedule" | "immediate") => {
+    const label = u?.name || u?.email || "this account";
+    const warn = mode === "immediate"
+      ? `PERMANENTLY delete ${label} now? Personal data is erased immediately and cannot be recovered. Financial & counterparty records are kept anonymised.`
+      : `Schedule ${label} for deletion? The account is locked now and purged after 30 days. It can be restored within the grace period.`;
+    if (!window.confirm(warn)) return;
+    try {
+      await adminDeleteUser(u.id, mode);
+      toast.success(mode === "immediate" ? "Account deleted" : "Account scheduled for deletion (30-day grace)");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not delete account");
+    }
+  };
+
+  const cancelUserDeletion = async (u: any) => {
+    try {
+      await adminCancelDeleteUser(u.id);
+      toast.success("Deletion cancelled — account restored");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not cancel deletion");
+    }
   };
 
   // ── Wallet action (add fund / remove fund / bonus) ─────────────
@@ -1031,6 +1058,40 @@ const AdminFeatures = () => {
         >
           {u.is_active ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
         </Button>
+        {u.role !== "admin" && !u.deleted_at && (
+          u.deletion_requested_at ? (
+            <Button
+              size="sm" variant="outline"
+              onClick={() => cancelUserDeletion(u)}
+              className="h-7 text-xs border-green-500/60 text-green-400 hover:bg-green-500/10"
+              title={`Deletion scheduled${u.deletion_scheduled_at ? ` for ${new Date(u.deletion_scheduled_at).toLocaleDateString()}` : ""} — click to restore`}
+            >
+              <CheckCircle className="w-3 h-3" /> Restore
+            </Button>
+          ) : (
+            <>
+              <Button
+                size="sm" variant="outline"
+                onClick={() => deleteUserAccount(u, "schedule")}
+                className="h-7 text-xs border-destructive/60 text-destructive hover:bg-destructive/10"
+                title="Schedule deletion (30-day grace)"
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+              <Button
+                size="sm" variant="outline"
+                onClick={() => deleteUserAccount(u, "immediate")}
+                className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/20"
+                title="Delete now (permanent)"
+              >
+                <Trash2 className="w-3 h-3" /> Now
+              </Button>
+            </>
+          )
+        )}
+        {u.deleted_at && (
+          <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>
+        )}
       </div>
     ) },
   ];

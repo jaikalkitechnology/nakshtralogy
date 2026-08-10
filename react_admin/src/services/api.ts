@@ -83,6 +83,22 @@ export async function adminVerifyUser(userId: string) {
   return request(`/admin/users/${userId}/verify`, { method: "PATCH" });
 }
 
+// ── Account deletion (user / astrologer / developer) ──────────────
+// mode: "schedule" (30-day grace) | "immediate" (purge now). Anonymises the
+// account & hard-deletes personal data; financial + counterparty records are
+// retained anonymised so other users are never affected.
+export async function adminDeleteUser(userId: string, mode: "schedule" | "immediate" = "schedule") {
+  return request(`/admin/users/${userId}/delete?mode=${mode}`, { method: "POST" });
+}
+
+export async function adminCancelDeleteUser(userId: string) {
+  return request(`/admin/users/${userId}/delete/cancel`, { method: "POST" });
+}
+
+export async function adminPendingDeletions() {
+  return request(`/admin/pending-deletions`);
+}
+
 // ── Astrologers ──────────────────────────────────────────────────
 
 export async function fetchAstrologers(skip = 0, limit = 50) {

@@ -457,6 +457,16 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  /// Request permanent account deletion (30-day grace). The account is locked
+  /// immediately; logging back in within the window cancels it.
+  Future<Map<String, dynamic>> deleteMyAccount() async {
+    final resp = await http.post(
+      Uri.parse('${ApiConstants.userMe}/delete'),
+      headers: _headers,
+    );
+    return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
+  }
+
   // ── Region / AppMode (IN|INTL) ────────────────────────────────
 
   /// Resolve + cache the caller's region on the backend. Sends the device

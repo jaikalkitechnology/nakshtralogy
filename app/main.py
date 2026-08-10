@@ -37,6 +37,7 @@ async def _daily_precompute_loop():
     POST /api/v1/admin/usage-rollup."""
     from app.services.daily_precompute import run_daily_precompute
     from app.services.usage_rollup import run_daily_rollup
+    from app.services.account_deletion import run_due_purges
     while True:
         try:
             db = SessionLocal()
@@ -45,6 +46,9 @@ async def _daily_precompute_loop():
                 logger.info("Daily precompute: %s", summary)
                 rollup_summary = run_daily_rollup(db)
                 logger.info("Daily usage rollup: %s", rollup_summary)
+                purged = run_due_purges(db)
+                if purged:
+                    logger.info("Account purge: %d account(s) purged", purged)
             finally:
                 db.close()
         except Exception as e:
