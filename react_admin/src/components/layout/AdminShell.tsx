@@ -46,6 +46,7 @@ const NAV: NavGroup[] = [
     { to: "/admin/coupons", label: "Coupons & Discounts", icon: Ticket },
     { to: "/admin/subscriptions", label: "NakshtralogyPlus", icon: Crown },
     { to: "/admin/payment-gateways", label: "Payment Gateways", icon: CreditCard },
+    { to: "/admin/payments", label: "Payments & Webhooks", icon: Receipt },
     { to: "/admin/withdrawals", label: "Astrologer Payouts", icon: Banknote },
     { to: "/admin/content", label: "Content Management", icon: FolderKanban },
     { to: "/admin/audit-logs", label: "Audit Logs", icon: ScrollText },

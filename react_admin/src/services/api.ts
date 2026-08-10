@@ -550,6 +550,28 @@ export async function adminPaymentGatewayUpdate(gateway: string, data: any) {
   return request(`/payments/admin/gateways/${gateway}`, { method: "PUT", body: JSON.stringify(data) });
 }
 
+// ── Payment transactions + webhook logs (Razorpay etc.) ──────────
+export async function adminPaymentSummary() {
+  return request(`/payments/admin/summary`);
+}
+export async function adminPaymentTransactions(params: Record<string, any> = {}) {
+  const q = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "" && v !== null)
+      .map(([k, v]) => [k, String(v)])
+  ).toString();
+  return request(`/payments/admin/transactions${q ? `?${q}` : ""}`);
+}
+export async function adminPaymentWebhooks(params: Record<string, any> = {}) {
+  const q = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== "" && v !== null)
+      .map(([k, v]) => [k, String(v)])
+  ).toString();
+  return request(`/payments/admin/webhooks${q ? `?${q}` : ""}`);
+}
+export async function adminPaymentWebhookDetail(id: string) {
+  return request(`/payments/admin/webhooks/${id}`);
+}
+
 // ── KYC ──────────────────────────────────────────────────────────
 
 export async function adminListKyc(params: Record<string, any> = {}) {

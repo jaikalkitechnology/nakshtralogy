@@ -286,3 +286,66 @@ def verify_and_credit(db: Session, user_id: str, payload: dict, lang: str = "eng
     db.commit()
     return True, {"code": "credited", "amount": credit, "balance": float(wallet.balance),
                   "txn_id": txn.id, "order_id": order.id if order else None}
+
+
+# ── webhook signature + crediting (server-to-server) ───────────────────────
+def verify_webhook_signature(secret: str, raw_body: bytes, header_sig: str) -> bool:
+    """Razorpay/standard webhook auth: HMAC-SHA256 of the RAW request body with
+    the webhook secret, compared to the signature header. Never raises."""
+    if not (secret and raw_body and header_sig):
+        return False
+    try:
+        expected = hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, header_sig.strip())
+    except Exception:
+        return False
+
+
+def credit_paid_order(db: Session, order, payment_id: Optional[str],
+                      gateway_order_id: Optional[str] = None):
+    """Credit a recharge order's ₹ to the wallet exactly once. Idempotent on the
+    order status and the gateway payment id. The webhook must have been
+    signature-verified before calling this. Returns (ok, info)."""
+    from app.models.model import Wallet, WalletTransaction, WalletRechargeOrder
+
+    if order is None:
+        return False, {"code": "no_order"}
+    if order.status == "paid":
+        return True, {"code": "already_credited", "order_id": order.id,
+                      "amount": float(order.credit_inr or 0)}
+    # Idempotency across orders (a replayed payment id already credited).
+    if payment_id:
+        done = db.query(WalletRechargeOrder).filter(
+            WalletRechargeOrder.gateway == order.gateway,
+            WalletRechargeOrder.gateway_payment_id == payment_id,
+            WalletRechargeOrder.status == "paid").first()
+        if done:
+            return True, {"code": "already_credited", "order_id": done.id,
+                          "amount": float(done.credit_inr or 0)}
+
+    credit = float(order.credit_inr if order.credit_inr is not None else order.amount)
+    if credit <= 0:
+        return False, {"code": "zero_amount"}
+
+    wallet = db.query(Wallet).filter(Wallet.user_id == order.user_id).first()
+    if not wallet:
+        wallet = Wallet(user_id=order.user_id)
+        db.add(wallet)
+        db.flush()
+    wallet.balance = Decimal(str(float(wallet.balance) + credit))
+    txn = WalletTransaction(
+        wallet_id=wallet.id, txn_type="recharge",
+        amount=Decimal(str(credit)), balance_after=wallet.balance,
+        description=f"Wallet recharge via {order.gateway}",
+        reference_type="recharge",
+        reference_id=(payment_id or order.id),
+    )
+    db.add(txn)
+    db.flush()
+    order.status = "paid"
+    order.gateway_payment_id = payment_id or order.gateway_payment_id
+    order.gateway_order_id = gateway_order_id or order.gateway_order_id
+    order.txn_id = txn.id
+    db.commit()
+    return True, {"code": "credited", "amount": credit,
+                  "balance": float(wallet.balance), "txn_id": txn.id, "order_id": order.id}
