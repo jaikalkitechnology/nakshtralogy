@@ -1712,6 +1712,35 @@ class WalletRechargeOrder(Base):
     )
 
 
+class PaymentWebhookEvent(Base):
+    """Immutable audit log of every payment-gateway webhook we receive
+    (Razorpay / PayU / PayPal). We store the raw payload, whether the signature
+    verified, and the outcome of processing — so admins have a complete,
+    replay-safe record of all gateway callbacks. Money plumbing only."""
+    __tablename__ = "payment_webhook_events"
+
+    id = Column(String(36), primary_key=True, default=new_uuid)
+    gateway = Column(String(20), nullable=False, index=True)        # razorpay | payu | paypal
+    event = Column(String(80), nullable=True, index=True)           # e.g. payment.captured
+    event_id = Column(String(120), nullable=True, index=True)       # gateway event id (idempotency)
+    payment_id = Column(String(120), nullable=True, index=True)     # gateway payment id
+    gateway_order_id = Column(String(120), nullable=True, index=True)  # razorpay order / payment-link id
+    order_ref = Column(String(36), nullable=True, index=True)       # our WalletRechargeOrder id
+    user_id = Column(String(36), nullable=True, index=True)
+    amount = Column(Numeric(12, 2), nullable=True)                  # gateway amount (major units)
+    currency = Column(String(3), nullable=True)
+    signature_valid = Column(Boolean, default=False, nullable=False)
+    # received | processed | credited | ignored | duplicate | invalid_signature | error
+    status = Column(String(24), default="received", nullable=False, index=True)
+    error = Column(Text, nullable=True)
+    raw = Column(Text, nullable=True)                              # full JSON payload
+    created_at = Column(DateTime, server_default=func.now(), nullable=False, index=True)
+
+    __table_args__ = (
+        Index("ix_webhook_gateway_event_id", "gateway", "event_id"),
+    )
+
+
 # ─────────────────────────────────────────────────────────────────────
 #  NakshtralogyPlus — time-boxed all-access subscription
 # ─────────────────────────────────────────────────────────────────────

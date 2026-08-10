@@ -25,6 +25,7 @@ import ContactQueries from "./pages/admin/ContactQueries";
 import ChatGuard from "./pages/admin/ChatGuard";
 import CouponManager from "./pages/admin/CouponManager";
 import PaymentGateways from "./pages/admin/PaymentGateways";
+import Payments from "./pages/admin/Payments";
 import Withdrawals from "./pages/admin/Withdrawals";
 import Subscriptions from "./pages/admin/Subscriptions";
 
@@ -77,6 +78,7 @@ const App = () => (
               <Route path="/admin/chat-guard" element={<RequireAdmin><AdminShell><ChatGuard /></AdminShell></RequireAdmin>} />
               <Route path="/admin/coupons" element={<RequireAdmin><AdminShell><CouponManager /></AdminShell></RequireAdmin>} />
               <Route path="/admin/payment-gateways" element={<RequireAdmin><AdminShell><PaymentGateways /></AdminShell></RequireAdmin>} />
+              <Route path="/admin/payments" element={<RequireAdmin><AdminShell><Payments /></AdminShell></RequireAdmin>} />
               <Route path="/admin/withdrawals" element={<RequireAdmin><AdminShell><Withdrawals /></AdminShell></RequireAdmin>} />
               <Route path="/admin/subscriptions" element={<RequireAdmin><AdminShell><Subscriptions /></AdminShell></RequireAdmin>} />
               <Route path="/admin/notifications" element={<RequireAdmin><AdminShell><NotificationsManager /></AdminShell></RequireAdmin>} />

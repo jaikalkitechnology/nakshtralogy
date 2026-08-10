@@ -124,28 +124,143 @@ def recharge_order_status(
 
 @router.post("/webhook/{gateway}")
 async def gateway_webhook(gateway: str, request: Request, db: Session = Depends(get_db)):
-    """Server-to-server payment confirmation. The gateway signs the payload;
-    we verify + credit the wallet idempotently. The user's app separately polls
-    the order status. Signature is verified inside verify_and_credit."""
+    """Server-to-server payment confirmation. Every event is signature-verified
+    and recorded in payment_webhook_events (raw payload + outcome), then the
+    wallet is credited idempotently. Always returns 2xx so the gateway does not
+    retry a call we've already logged."""
+    import json as _json
+    from decimal import Decimal
+    from app.models.model import PaymentWebhookEvent, WalletRechargeOrder
+
     gw = gateway.strip().lower()
     if gw not in papg._ALL:
         raise HTTPException(404, "Unknown gateway")
+
+    raw = await request.body()
     try:
-        payload = await request.json()
+        payload = _json.loads(raw) if raw else {}
     except Exception:
         payload = {}
-    # Resolve the owning user from the order ref so we credit the right wallet.
+
+    ev = PaymentWebhookEvent(
+        gateway=gw,
+        raw=(raw.decode("utf-8", "replace")[:20000] if raw else None),
+    )
+
+    if gw == "razorpay":
+        _process_razorpay_webhook(db, request, raw, payload, ev)
+    else:
+        _process_generic_webhook(db, gw, payload, ev)
+
+    try:
+        db.add(ev)
+        db.commit()
+    except Exception:
+        db.rollback()
+    return {"ok": ev.status in ("credited", "processed", "duplicate", "ignored"),
+            "status": ev.status}
+
+
+def _process_razorpay_webhook(db, request, raw, payload, ev):
+    """Verify the X-Razorpay-Signature over the raw body, decode the event, and
+    credit/fail the matching recharge order. Fills the `ev` log row in place."""
+    from decimal import Decimal
+    from app.models.model import PaymentWebhookEvent, WalletRechargeOrder
+
+    sig = request.headers.get("X-Razorpay-Signature", "")
+    ev.event = payload.get("event")
+    ev.event_id = request.headers.get("X-Razorpay-Event-Id")
+
+    creds = papg.load_creds(db, "razorpay")
+    ev.signature_valid = papg.verify_webhook_signature(
+        creds.get("webhook_secret"), raw, sig)
+
+    pl = payload.get("payload") or {}
+    plink = (pl.get("payment_link") or {}).get("entity") or {}
+    pay = (pl.get("payment") or {}).get("entity") or {}
+    order_entity = (pl.get("order") or {}).get("entity") or {}
+
+    reference_id = (plink.get("reference_id")
+                    or (pay.get("notes") or {}).get("order_ref")
+                    or order_entity.get("receipt"))
+    ev.payment_id = pay.get("id") or plink.get("id")
+    ev.gateway_order_id = pay.get("order_id") or plink.get("id") or order_entity.get("id")
+    ev.order_ref = reference_id
+    amt = pay.get("amount") or plink.get("amount") or order_entity.get("amount")
+    if amt is not None:
+        try:
+            ev.amount = Decimal(str(int(amt) / 100.0))
+        except Exception:
+            pass
+    ev.currency = pay.get("currency") or plink.get("currency") or order_entity.get("currency")
+
+    if not ev.signature_valid:
+        ev.status = "invalid_signature"
+        return
+
+    # Idempotency: same event already handled.
+    if ev.event_id:
+        dup = db.query(PaymentWebhookEvent).filter(
+            PaymentWebhookEvent.gateway == "razorpay",
+            PaymentWebhookEvent.event_id == ev.event_id,
+            PaymentWebhookEvent.status.in_(["credited", "processed", "ignored", "duplicate"]),
+        ).first()
+        if dup:
+            ev.status = "duplicate"
+            return
+
+    order = None
+    if reference_id:
+        order = db.query(WalletRechargeOrder).filter(
+            WalletRechargeOrder.id == reference_id).first()
+    if order:
+        ev.user_id = order.user_id
+
+    success = {"payment_link.paid", "order.paid", "payment.captured"}
+    failed = {"payment.failed", "payment_link.cancelled", "payment_link.expired"}
+    try:
+        if ev.event in success and order is not None:
+            ok, info = papg.credit_paid_order(db, order, ev.payment_id, ev.gateway_order_id)
+            ev.status = "credited" if ok else "error"
+            if not ok:
+                ev.error = info.get("code")
+        elif ev.event in failed and order is not None:
+            if order.status != "paid":
+                order.status = "failed"
+                db.commit()
+            ev.status = "processed"
+        else:
+            ev.status = "ignored"
+    except Exception as e:
+        db.rollback()
+        ev.status = "error"
+        ev.error = str(e)[:500]
+
+
+def _process_generic_webhook(db, gw, payload, ev):
+    """PayU / PayPal fall back to the reference-based verify_and_credit path."""
     from app.models.model import WalletRechargeOrder
+    ev.event = payload.get("event") or "callback"
     order_ref = payload.get("order_ref") or payload.get("reference_id")
+    ev.order_ref = order_ref
+    ev.payment_id = payload.get("gateway_payment_id")
     if not order_ref:
-        return {"ok": False, "reason": "no_order_ref"}
+        ev.status = "ignored"
+        ev.error = "no_order_ref"
+        return
     order = db.query(WalletRechargeOrder).filter(WalletRechargeOrder.id == order_ref).first()
     if not order:
-        return {"ok": False, "reason": "unknown_order"}
+        ev.status = "ignored"
+        ev.error = "unknown_order"
+        return
+    ev.user_id = order.user_id
     payload["gateway"] = gw
     payload["order_ref"] = order.id
     ok, info = papg.verify_and_credit(db, order.user_id, payload)
-    return {"ok": ok, **info}
+    ev.signature_valid = ok or info.get("code") == "already_credited"
+    ev.status = "credited" if ok else "error"
+    if not ok:
+        ev.error = info.get("code")
 
 
 # ── ADMIN (credential management) ─────────────────────────────────────
@@ -196,3 +311,131 @@ def admin_update_gateway(
         _set(f"{gw}_enabled", "true" if body.enabled else "false")
     db.commit()
     return {"gateway": gw, **next((s for s in papg.admin_status(db) if s["gateway"] == gw), {})}
+
+
+# ── ADMIN (transactions + webhook logs) ───────────────────────────────
+@router.get("/admin/transactions")
+def admin_transactions(
+    gateway: Optional[str] = None,
+    status: Optional[str] = None,
+    q: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """All wallet-recharge transactions across gateways (Razorpay included),
+    newest first, with the payer's name/email. Filter by gateway/status or a
+    free-text query over order id / payment id / user."""
+    from app.models.model import WalletRechargeOrder
+    limit = max(1, min(limit, 200))
+    query = db.query(WalletRechargeOrder, User).outerjoin(
+        User, User.id == WalletRechargeOrder.user_id)
+    if gateway:
+        query = query.filter(WalletRechargeOrder.gateway == gateway.strip().lower())
+    if status:
+        query = query.filter(WalletRechargeOrder.status == status.strip().lower())
+    if q:
+        like = f"%{q.strip()}%"
+        query = query.filter(
+            (WalletRechargeOrder.id.ilike(like)) |
+            (WalletRechargeOrder.gateway_payment_id.ilike(like)) |
+            (WalletRechargeOrder.gateway_order_id.ilike(like)) |
+            (User.name.ilike(like)) | (User.email.ilike(like)))
+    total = query.count()
+    rows = query.order_by(WalletRechargeOrder.created_at.desc()).offset(offset).limit(limit).all()
+    items = []
+    for o, u in rows:
+        items.append({
+            "id": o.id, "gateway": o.gateway, "status": o.status,
+            "amount": float(o.amount), "currency": o.currency,
+            "credit_inr": float(o.credit_inr or 0),
+            "gateway_order_id": o.gateway_order_id,
+            "gateway_payment_id": o.gateway_payment_id,
+            "txn_id": o.txn_id,
+            "user_id": o.user_id,
+            "user_name": (u.name if u else None),
+            "user_email": (u.email if u else None),
+            "created_at": o.created_at.isoformat() if o.created_at else None,
+            "updated_at": o.updated_at.isoformat() if o.updated_at else None,
+        })
+    return {"total": total, "limit": limit, "offset": offset, "items": items}
+
+
+@router.get("/admin/webhooks")
+def admin_webhooks(
+    gateway: Optional[str] = None,
+    status: Optional[str] = None,
+    event: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Every gateway webhook we've received (raw record + outcome), newest
+    first. This is the authoritative log of Razorpay callbacks."""
+    from app.models.model import PaymentWebhookEvent
+    limit = max(1, min(limit, 200))
+    query = db.query(PaymentWebhookEvent)
+    if gateway:
+        query = query.filter(PaymentWebhookEvent.gateway == gateway.strip().lower())
+    if status:
+        query = query.filter(PaymentWebhookEvent.status == status.strip().lower())
+    if event:
+        query = query.filter(PaymentWebhookEvent.event == event.strip())
+    total = query.count()
+    rows = query.order_by(PaymentWebhookEvent.created_at.desc()).offset(offset).limit(limit).all()
+    return {"total": total, "limit": limit, "offset": offset,
+            "items": [_webhook_dict(e, include_raw=False) for e in rows]}
+
+
+@router.get("/admin/webhooks/{event_id}")
+def admin_webhook_detail(
+    event_id: str,
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Full webhook record including the raw payload."""
+    from app.models.model import PaymentWebhookEvent
+    e = db.query(PaymentWebhookEvent).filter(PaymentWebhookEvent.id == event_id).first()
+    if not e:
+        raise HTTPException(404, "Not found")
+    return _webhook_dict(e, include_raw=True)
+
+
+@router.get("/admin/summary")
+def admin_payments_summary(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Headline totals for the admin payments dashboard."""
+    from sqlalchemy import func as _f
+    from app.models.model import WalletRechargeOrder, PaymentWebhookEvent
+    by_status = dict(db.query(WalletRechargeOrder.status, _f.count())
+                     .group_by(WalletRechargeOrder.status).all())
+    paid_total = db.query(_f.coalesce(_f.sum(WalletRechargeOrder.credit_inr), 0)) \
+        .filter(WalletRechargeOrder.status == "paid").scalar()
+    webhooks_total = db.query(_f.count()).select_from(PaymentWebhookEvent).scalar()
+    invalid = db.query(_f.count()).select_from(PaymentWebhookEvent) \
+        .filter(PaymentWebhookEvent.status == "invalid_signature").scalar()
+    return {
+        "orders_by_status": {k: int(v) for k, v in by_status.items()},
+        "paid_total_inr": float(paid_total or 0),
+        "webhooks_total": int(webhooks_total or 0),
+        "webhooks_invalid_signature": int(invalid or 0),
+    }
+
+
+def _webhook_dict(e, include_raw: bool = False) -> dict:
+    d = {
+        "id": e.id, "gateway": e.gateway, "event": e.event, "event_id": e.event_id,
+        "payment_id": e.payment_id, "gateway_order_id": e.gateway_order_id,
+        "order_ref": e.order_ref, "user_id": e.user_id,
+        "amount": float(e.amount) if e.amount is not None else None,
+        "currency": e.currency, "signature_valid": e.signature_valid,
+        "status": e.status, "error": e.error,
+        "created_at": e.created_at.isoformat() if e.created_at else None,
+    }
+    if include_raw:
+        d["raw"] = e.raw
+    return d
