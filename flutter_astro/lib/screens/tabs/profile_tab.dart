@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../widgets/avatar_picker.dart';
