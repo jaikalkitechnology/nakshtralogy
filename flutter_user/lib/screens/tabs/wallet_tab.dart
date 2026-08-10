@@ -138,6 +138,81 @@ class _WalletTabState extends State<WalletTab> {
           child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 560), child: child))
       : child;
 
+  /// Desktop-only statement table: Date · Description · Type · Amount ·
+  /// Balance. Mobile keeps the per-transaction cards. Presentation only — the
+  /// same transaction fields the cards already read.
+  Widget _txnTable(List<dynamic> txns, double Function(double) conv, String cur) {
+    const headStyle = TextStyle(
+        color: AppColors.textSecondary, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.6);
+    Widget cell(Widget child, int flex, {Alignment align = Alignment.centerLeft}) =>
+        Expanded(flex: flex, child: Align(alignment: align, child: child));
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: AppColors.border)),
+          ),
+          child: Row(children: [
+            cell(const Text('DATE', style: headStyle), 3),
+            cell(const Text('DESCRIPTION', style: headStyle), 5),
+            cell(const Text('TYPE', style: headStyle), 2),
+            cell(const Text('AMOUNT', style: headStyle), 2, align: Alignment.centerRight),
+            cell(const Text('BALANCE', style: headStyle), 2, align: Alignment.centerRight),
+          ]),
+        ),
+        ...txns.asMap().entries.map((e) {
+          final t = e.value as Map<String, dynamic>;
+          final isCredit = t['direction'] == 'credit';
+          final last = e.key == txns.length - 1;
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            decoration: BoxDecoration(
+              border: last
+                  ? null
+                  : Border(bottom: BorderSide(color: AppColors.border.withValues(alpha: 0.5))),
+            ),
+            child: Row(children: [
+              cell(Text((t['created_at'] as String?)?.substring(0, 16).replaceAll('T', '  ') ?? '—',
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)), 3),
+              cell(Text(
+                  (t['label'] ?? t['description'] ?? t['txn_type'] ?? '—').toString(),
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w500)), 5),
+              cell(_typeBadge(isCredit), 2),
+              cell(Text(
+                  '${isCredit ? '+' : '−'}${Money.format(conv((t['amount'] as num?)?.toDouble() ?? 0), currency: cur)}',
+                  style: TextStyle(
+                      color: isCredit ? AppColors.success : AppColors.error,
+                      fontSize: 12.5, fontWeight: FontWeight.bold)),
+                  2, align: Alignment.centerRight),
+              cell(Text(Money.format(conv((t['balance_after'] as num?)?.toDouble() ?? 0), currency: cur),
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11.5)), 2,
+                  align: Alignment.centerRight),
+            ]),
+          );
+        }),
+      ]),
+    );
+  }
+
+  Widget _typeBadge(bool isCredit) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: (isCredit ? AppColors.success : AppColors.error).withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(isCredit ? 'Credit' : 'Debit',
+            style: TextStyle(
+                color: isCredit ? AppColors.success : AppColors.error,
+                fontSize: 10, fontWeight: FontWeight.w700)),
+      );
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
@@ -311,6 +386,8 @@ class _WalletTabState extends State<WalletTab> {
                         style: const TextStyle(color: AppColors.textSecondary)),
                   ),
                 )
+              else if (desktop)
+                _txnTable(state.transactions, conv, displayCurrency)
               else
                 ...state.transactions.map((t) {
                   final isCredit = t['direction'] == 'credit';
