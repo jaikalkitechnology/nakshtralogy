@@ -38,6 +38,7 @@ class _HomeTabState extends State<HomeTab> {
   // Admin-controlled AI agent metadata keyed by domain key: {status, is_paid,
   // price, unlocked, free_intro}. Empty until loaded (then we filter the list).
   Map<String, dynamic> _agentMeta = {};
+  bool _agentMetaLoaded = false;
 
   @override
   void initState() {
@@ -52,7 +53,7 @@ class _HomeTabState extends State<HomeTab> {
 
   Future<void> _loadAgents() async {
     final m = await ApiService().getAiAgents();
-    if (mounted && m.isNotEmpty) setState(() => _agentMeta = m);
+    if (mounted) setState(() { _agentMeta = m; _agentMetaLoaded = true; });
   }
 
   /// Open an AI specialist, applying the admin paywall for paid agents.
@@ -301,12 +302,13 @@ class _HomeTabState extends State<HomeTab> {
   ];
 
   Widget _aiSpecialistCarousel() {
-    // When agent metadata is loaded, show only the agents the admin has made
-    // visible to this user (published, or testing + tester). Before it loads (or
-    // if the backend doesn't support it yet) fall back to the full static list.
-    final visible = _agentMeta.isEmpty
-        ? _aiSpecialists
-        : _aiSpecialists.where((s) => _agentMeta.containsKey(s['key'])).toList();
+    // Show only the agents the admin has made visible to this user (published,
+    // or testing + tester). We ALWAYS filter by the backend metadata so an
+    // admin "draft" agent never leaks into the app — before metadata loads we
+    // show nothing rather than the full static list (which would flash drafts).
+    if (!_agentMetaLoaded) return const SizedBox.shrink();
+    final visible =
+        _aiSpecialists.where((s) => _agentMeta.containsKey(s['key'])).toList();
     if (visible.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: 100,

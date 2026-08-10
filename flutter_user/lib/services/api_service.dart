@@ -1487,7 +1487,10 @@ class ApiService {
   /// AI agents visible to me with pricing + unlock state (keyed by domain key).
   Future<Map<String, dynamic>> getAiAgents() async {
     try {
-      final resp = await http.get(Uri.parse('${ApiConstants.baseUrl}/ai/agents'), headers: _headers);
+      // Refresh-aware GET so a transient expired access token is renewed —
+      // otherwise a silent 401 returned {} and the home carousel fell back to
+      // showing every agent (including admin drafts).
+      final resp = await _authGet(Uri.parse('${ApiConstants.baseUrl}/ai/agents'));
       if (resp.statusCode == 200) {
         final items = (jsonDecode(resp.body)['items'] as List?) ?? [];
         return {for (final a in items) (a['key'] as String): a as Map<String, dynamic>};
