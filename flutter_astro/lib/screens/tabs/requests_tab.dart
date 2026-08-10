@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/responsive.dart';
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../bloc/dashboard/dashboard_event.dart';
 import '../../bloc/dashboard/dashboard_state.dart';
@@ -37,7 +38,9 @@ class RequestsTab extends StatelessWidget {
         return RefreshIndicator(
           color: AppColors.primary,
           onRefresh: () async => context.read<DashboardBloc>().add(DashboardLoadRequested()),
-          child: ListView.builder(
+          child: Center(child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: Responsive.isDesktop(context) ? 900 : double.infinity),
+            child: ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: requests.length,
             itemBuilder: (context, index) {
@@ -47,7 +50,7 @@ class RequestsTab extends StatelessWidget {
                 onUpdated: () => context.read<DashboardBloc>().add(DashboardLoadRequested()),
               );
             },
-          ),
+          ))),
         );
       },
     );
