@@ -37,6 +37,7 @@ import '../../widgets/language_selector.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
 import '../../utils/menu_labels.dart';
+import '../../utils/responsive.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -342,6 +343,7 @@ class _ProfileTabState extends State<ProfileTab> {
             ? me!['name'].toString().trim().substring(0, 1).toUpperCase()
             : '\u{1F464}';
         final signNak = _resolveSignNakshatra(me);
+        final desktop = Responsive.isDesktop(context);
 
         return RefreshIndicator(
           color: AppColors.gold,
@@ -350,8 +352,13 @@ class _ProfileTabState extends State<ProfileTab> {
             context.read<AstrologerBloc>().add(AstrologerSavedLoadRequested());
             _loadUnread();
           },
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 24),
+          // On desktop, cap the content width and reduce the top padding so the
+          // profile isn't a narrow strip floating in a wide, empty page.
+          child: Center(
+            child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: desktop ? 900 : double.infinity),
+            child: ListView(
+            padding: EdgeInsets.symmetric(vertical: desktop ? 14 : 24),
             children: [
               // ============ HEADER ============
               Center(
@@ -832,7 +839,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 const SizedBox(height: 28),
               ],
             ],
-          ),
+          ))),
         );
       },
     );
