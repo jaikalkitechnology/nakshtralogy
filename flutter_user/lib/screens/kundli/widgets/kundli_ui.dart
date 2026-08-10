@@ -1,9 +1,8 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../theme/app_theme.dart';
 import '../../../services/api_service.dart';
+import '../../../utils/pdf_saver.dart';
 import '../../ai/ai_specialist_chat_screen.dart';
 
 /// ════════════════════════════════════════════════════════════════════
@@ -418,7 +417,7 @@ Future<bool> downloadReportPdf(BuildContext context, String path, String filenam
   try {
     final (status, bytes) = await ApiService().fetchPdf(path);
     if (status == 200 && bytes != null) {
-      await Printing.sharePdf(bytes: Uint8List.fromList(bytes), filename: '$filename.pdf');
+      await savePdf(bytes, filename);
       return true;
     }
     final msg = status == 503
