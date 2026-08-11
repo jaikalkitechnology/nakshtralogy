@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
 import '../../services/api_service.dart';
@@ -426,6 +427,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
                 message: _messages[i],
                 isMe: _messages[i]['sender_id'] == _myUserId,
                 baseUrl: ApiConstants.baseUrl,
+                token: _api.accessToken,
               ),
             ),
           ),
@@ -519,7 +521,16 @@ class _AstroMessageBubble extends StatelessWidget {
   final Map<String, dynamic> message;
   final bool isMe;
   final String baseUrl;
-  const _AstroMessageBubble({required this.message, required this.isMe, required this.baseUrl});
+  final String token;
+  const _AstroMessageBubble({required this.message, required this.isMe, required this.baseUrl, this.token = ''});
+
+  /// Authenticated media URL — the download endpoint needs a JWT and
+  /// Image.network can't set an Authorization header, so pass it as ?token=.
+  String _mediaUrl(String url) {
+    final abs = url.startsWith('http') ? url : '$baseUrl$url';
+    if (token.isEmpty) return abs;
+    return abs + (abs.contains('?') ? '&' : '?') + 'token=$token';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -577,7 +588,7 @@ class _AstroMessageBubble extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                      mediaUrl.startsWith('http') ? mediaUrl : '$baseUrl$mediaUrl',
+                      _mediaUrl(mediaUrl),
                       width: 200, fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
                         width: 200, height: 100, color: AppColors.nebula,
@@ -586,7 +597,10 @@ class _AstroMessageBubble extends StatelessWidget {
                     ),
                   )
                 else if (msgType == 'pdf' && mediaUrl != null)
-                  Container(
+                  GestureDetector(
+                    onTap: () => launchUrl(Uri.parse(_mediaUrl(mediaUrl)),
+                        mode: LaunchMode.externalApplication),
+                    child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: (isMe ? AppColors.midnight : AppColors.nebula).withOpacity(0.3),
@@ -602,7 +616,7 @@ class _AstroMessageBubble extends StatelessWidget {
                       ])),
                       Icon(Icons.download, color: isMe ? AppColors.midnight.withOpacity(0.6) : AppColors.gold, size: 22),
                     ]),
-                  )
+                  ))
                 else
                   Text(
                     content,

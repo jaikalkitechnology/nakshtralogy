@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
 import '../../services/api_service.dart';
@@ -265,10 +266,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         final status = resp['status'] ?? '';
         if (status == 'active') {
           _pollTimer?.cancel();
-          // Reconnect WS to get active session
-          _channel?.sink.close();
+          // The socket that connected during "waiting" is already registered on
+          // the server and receives all broadcasts once the session is active —
+          // so just mark connected. (Previously we closed + reconnected here,
+          // which raced the server's one-socket-per-user takeover and dropped
+          // messages in BOTH directions.)
           _onConnected();
-          _connect(); // reconnect WS which will now get active status
         } else if (status == 'expired' || status == 'cancelled') {
           _pollTimer?.cancel();
           if (mounted) {
@@ -632,6 +635,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 message: _messages[i],
                 isMe: _messages[i]['sender_id'] == _myUserId,
                 baseUrl: ApiConstants.baseUrl,
+                token: _api.accessToken,
                 onReport: () => _reportMessage(i),
               ),
             ),
@@ -727,8 +731,18 @@ class _MessageBubble extends StatelessWidget {
   final Map<String, dynamic> message;
   final bool isMe;
   final String baseUrl;
+  final String token;
   final VoidCallback? onReport;
-  const _MessageBubble({required this.message, required this.isMe, required this.baseUrl, this.onReport});
+  const _MessageBubble({required this.message, required this.isMe, required this.baseUrl, this.token = '', this.onReport});
+
+  /// Absolute, authenticated URL for a chat media file. The download endpoint
+  /// needs a JWT, and Image.network / web <img> cannot set an Authorization
+  /// header — so the token rides as a query param instead.
+  String _mediaUrl(String url) {
+    final abs = url.startsWith('http') ? url : '$baseUrl$url';
+    if (token.isEmpty) return abs;
+    return abs + (abs.contains('?') ? '&' : '?') + 'token=$token';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -788,11 +802,11 @@ class _MessageBubble extends StatelessWidget {
                 // Image message
                 if (msgType == 'image' && mediaUrl != null)
                   GestureDetector(
-                    onTap: () => _showFullImage(context, mediaUrl),
+                    onTap: () => _showFullImage(context, _mediaUrl(mediaUrl)),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        mediaUrl.startsWith('http') ? mediaUrl : '$baseUrl$mediaUrl',
+                        _mediaUrl(mediaUrl),
                         width: 200, fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           width: 200, height: 100,
@@ -804,7 +818,10 @@ class _MessageBubble extends StatelessWidget {
                   )
                 // PDF message
                 else if (msgType == 'pdf' && mediaUrl != null)
-                  Container(
+                  GestureDetector(
+                    onTap: () => launchUrl(Uri.parse(_mediaUrl(mediaUrl)),
+                        mode: LaunchMode.externalApplication),
+                    child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: (isMe ? AppColors.midnight : AppColors.nebula).withOpacity(0.3),
@@ -820,7 +837,7 @@ class _MessageBubble extends StatelessWidget {
                       ])),
                       Icon(Icons.download, color: isMe ? AppColors.midnight.withOpacity(0.6) : AppColors.gold, size: 22),
                     ]),
-                  )
+                  ))
                 // Text message
                 else
                   Text(

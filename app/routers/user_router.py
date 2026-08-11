@@ -925,7 +925,14 @@ def list_my_saved_astrologers(
     rows = (
         db.query(_SavedAstro, _AstroProfile)
         .join(_AstroProfile, _SavedAstro.astrologer_profile_id == _AstroProfile.id)
-        .filter(_SavedAstro.user_id == current_user.id)
+        # Exclude astrologers whose account has been deleted/anonymized so they
+        # never linger in the user's saved list (nothing to open, can't consult).
+        .join(User, User.id == _AstroProfile.user_id)
+        .filter(
+            _SavedAstro.user_id == current_user.id,
+            User.deleted_at.is_(None),
+            User.is_active == True,
+        )
         .order_by(
             _AstroProfile.is_online.desc(),
             _AstroProfile.is_busy.asc(),
