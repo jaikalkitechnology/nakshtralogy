@@ -520,13 +520,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _RateRow(icon: Icons.call_outlined, label: 'Call', controller: _callMin, unit: '/ min'),
           _RateRow(icon: Icons.videocam_outlined, label: 'Video', controller: _videoMin, unit: '/ min'),
         ] else if (_pricingTab == 1) ...[
+          // Session pricing applies to CHAT only. Audio & video calls are always
+          // billed per minute, so no per-session fields are shown for them.
           _RateRow(icon: Icons.chat_bubble_outline, label: 'Chat', controller: _chatSess, unit: '/ session'),
-          _RateRow(icon: Icons.call_outlined, label: 'Call', controller: _callSess, unit: '/ session'),
-          _RateRow(icon: Icons.videocam_outlined, label: 'Video', controller: _videoSess, unit: '/ session'),
+          const Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text('Audio and video calls are billed per minute (set under "Per Minute"). Session pricing applies to chat only.',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          ),
         ] else ...[
           const Padding(
             padding: EdgeInsets.only(bottom: 12),
-            child: Text('Users are charged these rates when sending paid messages.',
+            child: Text('After a chat session\'s included messages are used up, each further message is charged this rate (the chat stays open).',
                 style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
           _RateRow(icon: Icons.mail_outline, label: 'Per Message', controller: _perMsg, unit: '/ msg'),

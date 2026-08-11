@@ -217,7 +217,10 @@ def settle_call(db: Session, call, lang: str = "english"):
     rate = float(call.rate_per_min)
     if call.started_at and call.ended_at:
         call.duration_sec = int((call.ended_at - call.started_at).total_seconds())
-        minutes = max(1, math.ceil(call.duration_sec / 60))
+        # Connect-grace: a call that lasted only a few seconds (misdial, "can't
+        # hear you, call back") is free — no minute billed, no payout.
+        _grace = getattr(settings, "CALL_FREE_GRACE_SEC", 10)
+        minutes = 0 if call.duration_sec <= _grace else max(1, math.ceil(call.duration_sec / 60))
         total = minutes * rate
         profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == call.astrologer_profile_id).first()
         commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
@@ -235,12 +238,15 @@ def settle_call(db: Session, call, lang: str = "english"):
         funded = disc.funded_by if disc else "platform"
         net, earning, commission = _split_earning(total, discount, funded, commission_pct)
 
-        call.user_wallet_txn_id, collected = _debit_wallet_capped(
-            db, call.caller_id, net,
-            f"{call.call_type.title()} call — {minutes} min × ₹{rate:g}/min"
-            + (f" (coupon -{discount:g})" if discount else ""),
-            lang=lang,
-        )
+        if net > 0:
+            call.user_wallet_txn_id, collected = _debit_wallet_capped(
+                db, call.caller_id, net,
+                f"{call.call_type.title()} call — {minutes} min × ₹{rate:g}/min"
+                + (f" (coupon -{discount:g})" if discount else ""),
+                lang=lang,
+            )
+        else:
+            collected = 0.0  # free (connect-grace) — no charge, no ₹0 statement line
         if collected < net and net > 0:
             ratio = collected / net
             earning = round(earning * ratio, 2)
@@ -258,19 +264,20 @@ def settle_call(db: Session, call, lang: str = "english"):
             profile.total_consultations = (profile.total_consultations or 0) + 1
             profile.total_minutes = (profile.total_minutes or 0) + minutes
 
-        try:
-            from app.services import invoice_service
-            _inv = invoice_service.create_invoice(
-                db, user_id=call.caller_id, kind="consultation",
-                context_type="call_session", context_id=call.id, currency="INR",
-                line_items=[{"label": f"{call.call_type.title()} call — {minutes} min",
-                             "qty": minutes, "unit": rate, "amount": total}],
-                base_amount=total, total_amount=net, discount_amount=discount,
-                coupon_code=(disc.coupon.code if (disc and disc.coupon) else None),
-                astrologer_name=(profile.display_name if profile else None))
-            call.invoice_id = _inv.id
-        except Exception:
-            pass
+        if minutes > 0:  # no invoice for a free (connect-grace) call
+            try:
+                from app.services import invoice_service
+                _inv = invoice_service.create_invoice(
+                    db, user_id=call.caller_id, kind="consultation",
+                    context_type="call_session", context_id=call.id, currency="INR",
+                    line_items=[{"label": f"{call.call_type.title()} call — {minutes} min",
+                                 "qty": minutes, "unit": rate, "amount": total}],
+                    base_amount=total, total_amount=net, discount_amount=discount,
+                    coupon_code=(disc.coupon.code if (disc and disc.coupon) else None),
+                    astrologer_name=(profile.display_name if profile else None))
+                call.invoice_id = _inv.id
+            except Exception:
+                pass
     _release_astrologer(db, call.astrologer_profile_id)
 
 
@@ -842,7 +849,10 @@ def get_call(
     low = False
     if call.status == "active" and call.started_at:
         elapsed = max(0, int((datetime.utcnow() - call.started_at).total_seconds()))
-        billed = math.ceil(elapsed / 60) * rate if rate > 0 else 0.0
+        # Connect-grace: the meter reads ₹0 for the first few seconds (matches
+        # settlement, where a call that ends within the grace is free).
+        _grace = getattr(settings, "CALL_FREE_GRACE_SEC", 10)
+        billed = (math.ceil(elapsed / 60) * rate) if (rate > 0 and elapsed > _grace) else 0.0
         w = db.query(Wallet).filter(Wallet.user_id == call.caller_id).first()
         balance = float(w.balance) if w else 0.0
         # Seconds of funds left = (balance already blocked by nothing; call bills
