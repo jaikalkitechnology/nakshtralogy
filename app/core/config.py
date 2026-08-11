@@ -74,6 +74,9 @@ class Settings:
     # Communication
     CALL_RING_TIMEOUT_SEC: int = 60       # missed if no answer in 60s
     CHAT_ACCEPT_TIMEOUT_SEC: int = 60     # chat request expires in 60s
+    # Connect grace: a call that lasts <= this many seconds is NOT charged
+    # (misdial / "can't hear you, call back"). 0 disables the grace.
+    CALL_FREE_GRACE_SEC: int = 10
     PLATFORM_COMMISSION_PCT: float = 30.0 # default 30% cut
 
     # Firebase FCM (dual-project: user app + astro app)

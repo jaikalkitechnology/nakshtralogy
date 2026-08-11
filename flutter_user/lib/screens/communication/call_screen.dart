@@ -8,6 +8,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../../widgets/session_review_dialog.dart';
+import '../../widgets/recharge_sheet.dart';
 
 class CallScreen extends StatefulWidget {
   final String callId;
@@ -54,6 +55,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   double _serverBalance = 0;
   int _serverRemaining = -1;
   bool _lowWarned = false;
+  bool _low = false;             // persistent low-balance banner (mid-call recharge)
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -294,6 +296,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
           _serverRemaining = (r['remaining_seconds'] as num?)?.toInt() ?? _serverRemaining;
         });
         final low = r['low_balance'] == true;
+        if (mounted) setState(() => _low = low);
         if (low && !_lowWarned && mounted) {
           _lowWarned = true;
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -303,6 +306,26 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         if (_serverRemaining == 0) _endCall();
       } catch (_) {}
     });
+  }
+
+  /// Mid-call recharge: open the recharge sheet WITHOUT ending the call. On
+  /// success, clear the low-balance state and immediately refresh billing so the
+  /// new balance extends the remaining time and the call keeps going.
+  Future<void> _rechargeMidCall() async {
+    final ok = await showRechargeSheet(context, suggested: (widget.ratePerMin * 5));
+    if (!mounted) return;
+    if (ok) {
+      setState(() { _low = false; _lowWarned = false; });
+      try {
+        final r = await _api.getCall(widget.callId);
+        if (!mounted) return;
+        setState(() {
+          _serverBalance = (r['user_balance'] as num?)?.toDouble() ?? _serverBalance;
+          _serverRemaining = (r['remaining_seconds'] as num?)?.toInt() ?? _serverRemaining;
+          _low = r['low_balance'] == true;
+        });
+      } catch (_) {}
+    }
   }
 
   String get _formattedTime {
@@ -535,6 +558,34 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
                       padding: const EdgeInsets.only(top: 6),
                       child: Text('Max ${widget.eligibleMinutes} min (₹${(widget.eligibleMinutes * widget.ratePerMin).toInt()} balance)',
                           style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                    ),
+                  // Mid-call low-balance banner → recharge without dropping the call.
+                  if (_low)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withOpacity(0.18),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.error.withOpacity(0.5)),
+                        ),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          const Icon(Icons.account_balance_wallet_outlined, size: 16, color: AppColors.error),
+                          const SizedBox(width: 8),
+                          const Flexible(child: Text('Low balance — under a minute left',
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600))),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: _rechargeMidCall,
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                minimumSize: const Size(0, 32), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                            child: const Text('Add money', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+                          ),
+                        ]),
+                      ),
                     ),
                 ] else ...[
                   Text(_status == 'ringing' ? 'Ringing...' : _status,
