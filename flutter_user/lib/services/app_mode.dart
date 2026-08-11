@@ -35,6 +35,12 @@ class AppMode {
   String? countryCode;
   bool manual = false;
 
+  /// True once the region has been resolved authoritatively (backend /me/region
+  /// or a manual choice). Until then, `region` is only the cached default and
+  /// the LANGUAGE picker falls back to the device country so an international
+  /// user isn't shown the Indian language list on the pre-login screen.
+  bool _regionResolved = false;
+
   /// The user's DECLARED country (from their profile / phone). Preferred over
   /// the device UI-language country when hinting the backend, so a declared
   /// India user on an "English (US)" phone is never pushed to international/USD.
@@ -76,9 +82,22 @@ class AppMode {
     LangOption('ja', 'Japanese', '日本語'),
   ];
 
+  /// Whether the LANGUAGE picker should show the international list. Once the
+  /// region is resolved (backend or manual) we honour it exactly. Before that
+  /// — e.g. the pre-login language screen — we fall back to the device country
+  /// so an international user sees international languages and a domestic user
+  /// (or unknown/India device) keeps the Indian list. This only affects the
+  /// language list; currency/pricing still wait for the authoritative region.
+  bool get showInternationalLanguages {
+    if (_regionResolved || manual) return isInternational;
+    final dc = (_profileCountry ?? countryCode ?? deviceCountry())?.toUpperCase();
+    if (dc == null || dc.isEmpty) return isInternational; // unknown → cached default (IN)
+    return dc != 'IN';
+  }
+
   /// The language list to show for the current mode.
   List<LangOption> get languages =>
-      isInternational ? internationalLanguages : indianLanguages;
+      showInternationalLanguages ? internationalLanguages : indianLanguages;
 
   /// Language codes with right-to-left script (mirror the UI for these).
   static const Set<String> rtlCodes = {'ar'};
@@ -137,6 +156,7 @@ class AppMode {
     if (m['currency'] is String) currency = m['currency'];
     if (m['country_code'] is String) countryCode = m['country_code'];
     manual = m['manual'] == true;
+    _regionResolved = true;
     _persist();
   }
 
@@ -199,6 +219,7 @@ class AppMode {
       region = newRegion;
       currency = isInternational ? 'USD' : 'INR';
       manual = true;
+      _regionResolved = true;
       _persist();
     }
   }

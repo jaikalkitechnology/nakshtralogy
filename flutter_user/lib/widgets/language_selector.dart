@@ -34,9 +34,9 @@ class LanguageSelector {
           Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.smoke, borderRadius: BorderRadius.circular(2))),
           const SizedBox(height: 16),
           Text(AppLocalizations.of(ctx)!.selectLanguage, style: const TextStyle(color: AppColors.gold, fontSize: 18, fontWeight: FontWeight.w700)),
-          // Only show the Hindi endonym subtitle in India mode — international
-          // mode must never surface an Indian script.
-          if (!AppMode.instance.isInternational)
+          // Only show the Hindi endonym subtitle when the Indian list is shown —
+          // international mode must never surface an Indian script.
+          if (!AppMode.instance.showInternationalLanguages)
             const Text('भाषा चुनें', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
           const SizedBox(height: 16),
           Flexible(
