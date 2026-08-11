@@ -794,6 +794,10 @@ class CallSession(Base):
     discount_amount = Column(Numeric(10, 2), default=0)
     invoice_id = Column(String(36), nullable=True)
     expires_at = Column(DateTime, nullable=True)          # ringing timeout (60s)
+    # Hard cap = started_at + funded minutes (from caller balance at accept). The
+    # watchdog auto-ends + settles a call past this so an over-run can't run for
+    # hours. Nullable — schema_sync auto-adds. NOT astrology logic.
+    max_end_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     __table_args__ = (

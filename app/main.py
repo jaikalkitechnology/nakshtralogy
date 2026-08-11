@@ -65,7 +65,11 @@ async def _cleanup_stale_sessions():
             db = SessionLocal()
             now = datetime.utcnow()
 
-            # 1. Calls stuck in "ringing" past expiry
+            from app.routers.communication_router import _release_astrologer, settle_call
+
+            # 1. Calls stuck in "ringing" past expiry → missed, and FREE the
+            #    astrologer (initiate had set is_busy=True; an unanswered call
+            #    otherwise left them permanently "busy" and unreachable).
             expired_calls = db.query(CallSession).filter(
                 CallSession.status == "ringing",
                 CallSession.expires_at < now,
@@ -73,10 +77,13 @@ async def _cleanup_stale_sessions():
             for call in expired_calls:
                 call.status = "missed"
                 call.ended_at = now
+                _release_astrologer(db, call.astrologer_profile_id)
             if expired_calls:
                 logger.info("Cleaned %d expired ringing calls", len(expired_calls))
 
-            # 2. Calls stuck in "active" for >3 hours (safety net)
+            # 2. Calls stuck in "active" for >3 hours (safety net) → SETTLE them
+            #    through the real billing path (a bare status flip billed ₹0 and
+            #    left the astrologer busy).
             stale_cutoff = now - timedelta(hours=3)
             stale_calls = db.query(CallSession).filter(
                 CallSession.status == "active",
@@ -85,10 +92,23 @@ async def _cleanup_stale_sessions():
             for call in stale_calls:
                 call.status = "completed"
                 call.ended_at = now
-                if call.started_at:
-                    call.duration_sec = int((now - call.started_at).total_seconds())
+                settle_call(db, call)
             if stale_calls:
-                logger.info("Force-ended %d stale active calls", len(stale_calls))
+                logger.info("Force-ended + settled %d stale active calls", len(stale_calls))
+
+            # 2b. Calls that ran past their funded minutes (max_end_at) → end + bill
+            #     now instead of letting the meter run to the 3h net.
+            over_funded = db.query(CallSession).filter(
+                CallSession.status == "active",
+                CallSession.max_end_at != None,
+                CallSession.max_end_at < now,
+            ).all()
+            for call in over_funded:
+                call.status = "completed"
+                call.ended_at = now
+                settle_call(db, call)
+            if over_funded:
+                logger.info("Auto-ended + settled %d calls past funded minutes", len(over_funded))
 
             # 3. Chat sessions stuck in "waiting" past expiry → expire + REFUND
             #    the blocked amount (idempotent) so an unanswered request never

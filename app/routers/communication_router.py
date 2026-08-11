@@ -142,6 +142,37 @@ def _debit_wallet(db: Session, user_id: str, amount: float, description: str, la
     return txn.id
 
 
+def _debit_wallet_capped(db: Session, user_id: str, amount: float, description: str,
+                         lang: str = "english"):
+    """Debit up to the wallet's AVAILABLE balance (never overdraws) and report how
+    much was actually collected. Used at settlement (call/chat end) so a balance
+    that ran dry mid-session settles partially instead of the debit throwing and
+    being swallowed — which previously still paid the astrologer in full on money
+    that was never collected. Returns (txn_id_or_None, collected_amount).
+    Row-locked so concurrent debits can't oversell the wallet."""
+    wallet = db.query(Wallet).filter(Wallet.user_id == user_id).with_for_update().first()
+    if not wallet:
+        return None, 0.0
+    bal = float(wallet.balance)
+    want = float(amount)
+    collected = min(bal, want) if want > 0 else 0.0
+    if collected <= 0:
+        return None, 0.0
+    wallet.balance = Decimal(str(bal - collected))
+    partial = collected < want
+    txn = WalletTransaction(
+        wallet_id=wallet.id,
+        txn_type="consultation_debit",
+        amount=Decimal(str(collected)),
+        balance_after=wallet.balance,
+        description=description + (f" (partial: ₹{collected:g} of ₹{want:g})" if partial else ""),
+        reference_type="communication",
+    )
+    db.add(txn)
+    db.flush()
+    return txn.id, collected
+
+
 def _credit_wallet(db: Session, user_id: str, amount: float, description: str) -> Optional[str]:
     wallet = db.query(Wallet).filter(Wallet.user_id == user_id).first()
     if not wallet:
@@ -158,6 +189,77 @@ def _credit_wallet(db: Session, user_id: str, amount: float, description: str) -
     db.add(txn)
     db.flush()
     return txn.id
+
+
+def settle_call(db: Session, call, lang: str = "english"):
+    """Bill + settle a completed call. Shared by the /end endpoint and the
+    stale-call watchdog so a call that never received an explicit `end` (killed
+    tab, 3-hour hang) is still charged and paid out — instead of the old bare
+    status flip that billed ₹0. Assumes call.status/ended_at are set. Debits only
+    what the wallet can cover, credits the astrologer their share of what was
+    collected, writes an invoice, and frees the astrologer. Guarded by
+    user_wallet_txn_id / astro_wallet_txn_id so a second settle can't double-charge."""
+    if getattr(call, "user_wallet_txn_id", None) or getattr(call, "astro_wallet_txn_id", None):
+        _release_astrologer(db, call.astrologer_profile_id)
+        return
+    rate = float(call.rate_per_min)
+    if call.started_at and call.ended_at:
+        call.duration_sec = int((call.ended_at - call.started_at).total_seconds())
+        minutes = max(1, math.ceil(call.duration_sec / 60))
+        total = minutes * rate
+        profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == call.astrologer_profile_id).first()
+        commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
+
+        _scope = "video" if call.call_type == "video" else "call"
+        discount, disc = _resolve_consult_coupon(
+            db, call.caller_id, _scope, call.astrologer_profile_id, total,
+            code=getattr(call, "coupon_code", None))
+        if disc:
+            from app.services import coupon_service
+            call.coupon_id = disc.coupon_id
+            call.discount_amount = Decimal(str(discount))
+            coupon_service.record_redemption(
+                db, disc.coupon, call.caller_id, "call_session", call.id, total, discount)
+        funded = disc.funded_by if disc else "platform"
+        net, earning, commission = _split_earning(total, discount, funded, commission_pct)
+
+        call.user_wallet_txn_id, collected = _debit_wallet_capped(
+            db, call.caller_id, net,
+            f"{call.call_type.title()} call — {minutes} min × ₹{rate:g}/min"
+            + (f" (coupon -{discount:g})" if discount else ""),
+            lang=lang,
+        )
+        if collected < net and net > 0:
+            ratio = collected / net
+            earning = round(earning * ratio, 2)
+            commission = round(collected - earning, 2)
+        call.total_amount = Decimal(str(collected))
+        call.astrologer_earning = Decimal(str(earning))
+        call.platform_commission = Decimal(str(commission))
+
+        if profile and collected > 0:
+            call.astro_wallet_txn_id = _credit_wallet(
+                db, profile.user_id, earning,
+                f"{call.call_type.title()} call earning — {commission_pct:g}% of ₹{total:g}"
+                + (f" (partial ₹{collected:g})" if collected < net else "")
+            )
+            profile.total_consultations = (profile.total_consultations or 0) + 1
+            profile.total_minutes = (profile.total_minutes or 0) + minutes
+
+        try:
+            from app.services import invoice_service
+            _inv = invoice_service.create_invoice(
+                db, user_id=call.caller_id, kind="consultation",
+                context_type="call_session", context_id=call.id, currency="INR",
+                line_items=[{"label": f"{call.call_type.title()} call — {minutes} min",
+                             "qty": minutes, "unit": rate, "amount": total}],
+                base_amount=total, total_amount=net, discount_amount=discount,
+                coupon_code=(disc.coupon.code if (disc and disc.coupon) else None),
+                astrologer_name=(profile.display_name if profile else None))
+            call.invoice_id = _inv.id
+        except Exception:
+            pass
+    _release_astrologer(db, call.astrologer_profile_id)
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -495,6 +597,10 @@ def call_action(
             raise HTTPException(status_code=400, detail=t("err.call_expired", lang))
         call.status = "active"
         call.started_at = datetime.utcnow()
+        # Persist a hard end time from the caller's funded minutes so the watchdog
+        # can auto-end + settle an over-run (clamped to the 3h safety net).
+        if max_call_seconds > 0:
+            call.max_end_at = call.started_at + timedelta(seconds=min(max_call_seconds, 3 * 3600))
 
         # FCM push to user that call is accepted
         from app.services.fcm_service import notify_call_accepted as _notify_call_accepted
@@ -538,62 +644,7 @@ def call_action(
             raise HTTPException(status_code=400, detail=t("err.call_not_active", lang))
         call.status = "completed"
         call.ended_at = datetime.utcnow()
-        if call.started_at:
-            call.duration_sec = int((call.ended_at - call.started_at).total_seconds())
-            minutes = max(1, math.ceil(call.duration_sec / 60))
-            total = minutes * float(call.rate_per_min)
-            profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == call.astrologer_profile_id).first()
-            commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
-
-            # ── coupon: call is debited at end, so discount the debit directly ──
-            _scope = "video" if call.call_type == "video" else "call"
-            discount, disc = _resolve_consult_coupon(
-                db, call.caller_id, _scope, call.astrologer_profile_id, total,
-                code=getattr(call, "coupon_code", None))
-            if disc:
-                from app.services import coupon_service
-                call.coupon_id = disc.coupon_id
-                call.discount_amount = Decimal(str(discount))
-                coupon_service.record_redemption(
-                    db, disc.coupon, call.caller_id, "call_session", call.id, total, discount)
-            funded = disc.funded_by if disc else "platform"
-            net, earning, commission = _split_earning(total, discount, funded, commission_pct)
-            call.total_amount = Decimal(str(net))
-            call.astrologer_earning = Decimal(str(earning))
-            call.platform_commission = Decimal(str(commission))
-
-            try:
-                call.user_wallet_txn_id = _debit_wallet(
-                    db, call.caller_id, net,
-                    f"{call.call_type.title()} call — {minutes} min × ₹{rate}/min"
-                    + (f" (coupon -{discount:g})" if discount else ""),
-                    lang=lang,
-                )
-            except HTTPException:
-                pass
-            if profile:
-                call.astro_wallet_txn_id = _credit_wallet(
-                    db, profile.user_id, earning,
-                    f"{call.call_type.title()} call earning — {commission_pct:g}% of ₹{total:g}"
-                )
-                profile.total_consultations = (profile.total_consultations or 0) + 1
-                profile.total_minutes = (profile.total_minutes or 0) + minutes
-
-            # Invoice for the completed call.
-            try:
-                from app.services import invoice_service
-                _inv = invoice_service.create_invoice(
-                    db, user_id=call.caller_id, kind="consultation",
-                    context_type="call_session", context_id=call.id, currency="INR",
-                    line_items=[{"label": f"{call.call_type.title()} call — {minutes} min",
-                                 "qty": minutes, "unit": float(call.rate_per_min), "amount": total}],
-                    base_amount=total, total_amount=net, discount_amount=discount,
-                    coupon_code=(disc.coupon.code if (disc and disc.coupon) else None),
-                    astrologer_name=(profile.display_name if profile else None))
-                call.invoice_id = _inv.id
-            except Exception:
-                pass
-        _release_astrologer(db, call.astrologer_profile_id)
+        settle_call(db, call, lang)
 
     db.commit()
     db.refresh(call)
