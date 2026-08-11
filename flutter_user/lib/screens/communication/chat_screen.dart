@@ -233,6 +233,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             break;
           case 'pong':
             break;
+          case 'billing_tick':
+            // Server-authoritative cost — replaces the local timer estimate.
+            final billed = (data['billed_so_far'] as num?)?.toDouble();
+            if (billed != null) setState(() => _serverBilled = billed);
+            break;
           case 'session_taken_over':
             _ended = true; // don't fire cancel/end for a takeover
             _pingTimer?.cancel();
@@ -288,7 +293,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return '${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
+  double _serverBilled = -1;   // from server billing_tick; <0 = not yet received
+
   double get _currentCost {
+    if (_serverBilled >= 0) return _serverBilled;
     if (widget.billingMode == 'per_session') return widget.ratePerSession;
     return (_seconds / 60).ceil() * widget.ratePerMin;
   }

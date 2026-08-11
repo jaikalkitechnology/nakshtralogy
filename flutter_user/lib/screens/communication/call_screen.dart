@@ -47,6 +47,13 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   Timer? _pollTimer;
   Timer? _rtcGraceTimer;         // grace window before ending on a remote drop
   bool _peerReconnecting = false;
+  // Server-authoritative billing (from GET /call/{id}) — replaces the local
+  // timer's cost estimate, which drifts on a backgrounded web tab.
+  Timer? _billingTimer;
+  double _serverBilled = -1;     // <0 = not yet received
+  double _serverBalance = 0;
+  int _serverRemaining = -1;
+  bool _lowWarned = false;
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -90,6 +97,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
           setState(() => _status = 'active');
           _startTimer();
           _startMaxTimer();
+          _startBillingRefresh();
           _pollTimer?.cancel();
         } else if (callStatus == 'missed' || callStatus == 'rejected' || callStatus == 'cancelled' || callStatus == 'expired') {
           _pollTimer?.cancel();
@@ -149,6 +157,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         _pollTimer?.cancel();
         _startTimer();
         _startMaxTimer();
+        _startBillingRefresh();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(AppLocalizations.of(context)?.callActive ?? 'Call active'),
@@ -268,13 +277,42 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Poll the server's authoritative meter every 10s during an active call:
+  /// render the real billed amount, warn on low balance, and auto-end when the
+  /// funded time runs out (a client backstop to the server watchdog).
+  void _startBillingRefresh() {
+    _billingTimer?.cancel();
+    _billingTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
+      if (!mounted || _status != 'active' || _ending) return;
+      try {
+        final r = await _api.getCall(widget.callId);
+        if (!mounted) return;
+        if (r['status'] != null && r['status'] != 'active') { _endCall(); return; }
+        setState(() {
+          _serverBilled = (r['billed_so_far'] as num?)?.toDouble() ?? _serverBilled;
+          _serverBalance = (r['user_balance'] as num?)?.toDouble() ?? _serverBalance;
+          _serverRemaining = (r['remaining_seconds'] as num?)?.toInt() ?? _serverRemaining;
+        });
+        final low = r['low_balance'] == true;
+        if (low && !_lowWarned && mounted) {
+          _lowWarned = true;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)?.lessThanOneMin ?? 'Balance low — under a minute left'),
+            backgroundColor: Colors.orange, duration: const Duration(seconds: 5)));
+        }
+        if (_serverRemaining == 0) _endCall();
+      } catch (_) {}
+    });
+  }
+
   String get _formattedTime {
     final min = _seconds ~/ 60;
     final sec = _seconds % 60;
     return '${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
-  double get _currentCost => (_seconds / 60).ceil() * widget.ratePerMin;
+  double get _currentCost =>
+      _serverBilled >= 0 ? _serverBilled : (_seconds / 60).ceil() * widget.ratePerMin;
 
   int get _remainingSeconds {
     if (widget.maxCallSeconds <= 0) return 9999;
@@ -354,6 +392,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     _maxTimer?.cancel();
     _pollTimer?.cancel();
     _rtcGraceTimer?.cancel();
+    _billingTimer?.cancel();
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();
