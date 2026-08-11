@@ -10691,4 +10691,263 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get lessThanOneMin => '1 മിനിറ്റിൽ താഴെ ബാക്കി';
+
+  @override
+  String get biometricNotAvailable => 'ഈ ഡിവൈസിൽ ബയോമെട്രിക് ലഭ്യമല്ല';
+
+  @override
+  String biometricErrorWithDetails(String error) {
+    return 'ബയോമെട്രിക് പിശക്: $error';
+  }
+
+  @override
+  String get rateCardsTitle => 'റേറ്റ് കാർഡുകൾ';
+
+  @override
+  String get perMinuteLabel => 'ഓരോ മിനിറ്റും';
+
+  @override
+  String get perSessionLabel => 'ഓരോ സെഷനും';
+
+  @override
+  String get otherChargesLabel => 'മറ്റ് ചാർജുകൾ';
+
+  @override
+  String sessionLimitInfo(Object limit, Object hours) {
+    return 'സെഷൻ: $limit മെസേജുകൾ, $hours മണിക്കൂർ സാധുത';
+  }
+
+  @override
+  String get chatWord => 'ചാറ്റ്';
+
+  @override
+  String get callWord => 'കോൾ';
+
+  @override
+  String get perMsgLabel => 'ഓരോ മെസേജിനും';
+
+  @override
+  String get superChatLabel => 'സൂപ്പർ ചാറ്റ്';
+
+  @override
+  String get changePasswordTitle => 'പാസ്‌വേഡ് മാറ്റുക';
+
+  @override
+  String get changePasswordSub =>
+      'ഇമെയിൽ OTP വഴി നിങ്ങളുടെ പാസ്‌വേഡ് അപ്‌ഡേറ്റ് ചെയ്യുക';
+
+  @override
+  String get customerSupportTitle => 'കസ്റ്റമർ സപ്പോർട്ട്';
+
+  @override
+  String get customerSupportSub => 'FAQ ഉം ടിക്കറ്റ് ഉയർത്തുക';
+
+  @override
+  String get notSetLabel => 'സെറ്റ് ചെയ്തിട്ടില്ല';
+
+  @override
+  String get phoneLabel => 'ഫോൺ';
+
+  @override
+  String get experienceLabel => 'പരിചയം';
+
+  @override
+  String get verifyToEnableBiometric =>
+      'ബയോമെട്രിക് ലോഗിൻ പ്രവർത്തനക്ഷമമാക്കാൻ പരിശോധിക്കുക';
+
+  @override
+  String get tapToChangeAppLanguage => 'ആപ്പിന്റെ ഭാഷ മാറ്റാൻ ടാപ്പ് ചെയ്യുക';
+
+  @override
+  String get discardChangesTitle => 'മാറ്റങ്ങൾ ഉപേക്ഷിക്കണോ?';
+
+  @override
+  String get discardChangesBody =>
+      'നിങ്ങളുടെ മാറ്റങ്ങൾ സേവ് ചെയ്തിട്ടില്ല. ഇപ്പോൾ പോയാൽ നിങ്ങളുടെ എഡിറ്റുകൾ നഷ്ടമാകും.';
+
+  @override
+  String get keepEditing => 'എഡിറ്റിംഗ് തുടരുക';
+
+  @override
+  String get discardAction => 'ഉപേക്ഷിക്കുക';
+
+  @override
+  String get newRatingLabel => 'പുതിയത്';
+
+  @override
+  String get yrsSuffix => 'വർഷം';
+
+  @override
+  String get unsavedChangesLabel => 'സേവ് ചെയ്യാത്ത മാറ്റങ്ങൾ';
+
+  @override
+  String get profileInformationTitle => 'പ്രൊഫൈൽ വിവരങ്ങൾ';
+
+  @override
+  String get yourFullNameHint => 'നിങ്ങളുടെ പൂർണ്ണ നാമം';
+
+  @override
+  String get shownToUsersHint => 'ഉപയോക്താക്കൾക്ക് കാണിക്കുന്നു';
+
+  @override
+  String get bioHint =>
+      'നിങ്ങളുടെ ജ്യോതിഷ അനുഭവത്തെക്കുറിച്ച് ഉപയോക്താക്കളോട് പറയുക…';
+
+  @override
+  String get professionalInformationTitle => 'പ്രൊഫഷണൽ വിവരങ്ങൾ';
+
+  @override
+  String get validYearsError => 'വർഷങ്ങളുടെ സാധുവായ എണ്ണം നൽകുക.';
+
+  @override
+  String get addLanguageHint => 'ഒരു ഭാഷ ചേർക്കുക';
+
+  @override
+  String get addSpecializationHint => 'ഒരു സ്പെഷ്യലൈസേഷൻ ചേർക്കുക';
+
+  @override
+  String get qualificationHint => 'ഉദാ. B.Sc, ജ്യോതിഷ ആചാര്യ';
+
+  @override
+  String get consultationPricingTitle => 'കൺസൾട്ടേഷൻ വില';
+
+  @override
+  String get consultationPricingSubtitle =>
+      'നിങ്ങളുടെ കൺസൾട്ടേഷനുകൾക്ക് ഉപയോക്താക്കളിൽ നിന്ന് എങ്ങനെ ചാർജ് ചെയ്യണമെന്ന് സെറ്റ് ചെയ്യുക.';
+
+  @override
+  String get perMessageLabel => 'ഓരോ മെസേജിനും';
+
+  @override
+  String get perMinUnit => '/ മിനിറ്റ്';
+
+  @override
+  String get perSessionUnit => '/ സെഷൻ';
+
+  @override
+  String get audioVideoBilledPerMinuteNote =>
+      'ഓഡിയോ, വീഡിയോ കോളുകൾ ഓരോ മിനിറ്റിനും ബിൽ ചെയ്യുന്നു (\"ഓരോ മിനിറ്റും\" എന്നതിൽ സെറ്റ് ചെയ്യുക). സെഷൻ വില ചാറ്റിന് മാത്രം ബാധകമാണ്.';
+
+  @override
+  String get chatSessionMessageNote =>
+      'ചാറ്റ് സെഷനിലെ ഉൾപ്പെട്ട മെസേജുകൾ തീർന്നാൽ, അടുത്ത ഓരോ മെസേജിനും ഈ നിരക്ക് ബാധകമാകും (ചാറ്റ് തുറന്നിരിക്കും).';
+
+  @override
+  String get perMsgUnit => '/ മെസേജ്';
+
+  @override
+  String get minUnit => 'മിനിറ്റ്';
+
+  @override
+  String get messageSettingsTitle => 'മെസേജ് ക്രമീകരണങ്ങൾ';
+
+  @override
+  String get messageSettingsSubtitle =>
+      'ഇത് ഓരോ സെഷനിലും പെയ്ഡ്-മെസേജ് പരിധിയും സാധുതയും നിയന്ത്രിക്കുന്നു.';
+
+  @override
+  String get messagesPerSessionLabel => 'ഓരോ സെഷനിലും മെസേജുകൾ';
+
+  @override
+  String get msgsUnit => 'മെസേജുകൾ';
+
+  @override
+  String get validMessagesError => 'മെസേജുകളുടെ സാധുവായ എണ്ണം നൽകുക.';
+
+  @override
+  String get sessionValidityLabel => 'സെഷൻ സാധുത';
+
+  @override
+  String get hoursUnit => 'മണിക്കൂർ';
+
+  @override
+  String get validHoursError => 'മണിക്കൂറുകളുടെ സാധുവായ എണ്ണം നൽകുക.';
+
+  @override
+  String get saveChangesButton => 'മാറ്റങ്ങൾ സേവ് ചെയ്യുക';
+
+  @override
+  String get suggestionsLabel => 'നിർദ്ദേശങ്ങൾ';
+
+  @override
+  String get addButton => 'ചേർക്കുക';
+
+  @override
+  String removeChipLabel(String value) {
+    return '$value നീക്കം ചെയ്യുക';
+  }
+
+  @override
+  String reportCopiedOpeningAi(String ai) {
+    return 'റിപ്പോർട്ട് കോപ്പി ചെയ്തു! $ai തുറക്കുന്നു — ചർച്ചയ്ക്കായി പേസ്റ്റ് ചെയ്യുക.';
+  }
+
+  @override
+  String get kundliMilanReportTitle => 'കുണ്ഡലി മിലൻ റിപ്പോർട്ട്';
+
+  @override
+  String get milanPersonOne => 'വ്യക്തി 1';
+
+  @override
+  String get milanPersonTwo => 'വ്യക്തി 2';
+
+  @override
+  String get runningMilanAnalysis => 'മിലൻ വിശകലനം നടക്കുന്നു...';
+
+  @override
+  String selectedOfTwo(Object count) {
+    return '$count/2 തിരഞ്ഞെടുത്തു';
+  }
+
+  @override
+  String get runMilanAnalysisButton => 'മിലൻ വിശകലനം പ്രവർത്തിപ്പിക്കുക';
+
+  @override
+  String get relationshipIntelligenceTitle => 'ബന്ധ ഇന്റലിജൻസ്';
+
+  @override
+  String analyzingChartsCount(Object count) {
+    return '$count ചാർട്ടുകൾ വിശകലനം ചെയ്യുന്നു...';
+  }
+
+  @override
+  String get relationshipContextLabel => 'ബന്ധ സന്ദർഭം';
+
+  @override
+  String get generalWord => 'പൊതുവായ';
+
+  @override
+  String get teamWord => 'ടീം';
+
+  @override
+  String get friendshipWord => 'സൗഹൃദം';
+
+  @override
+  String analyzeChartsCountButton(Object count) {
+    return '$count ചാർട്ടുകൾ വിശകലനം ചെയ്യുക';
+  }
+
+  @override
+  String get keyScoresCaps => 'പ്രധാന സ്കോറുകൾ';
+
+  @override
+  String get astrologicalWord => 'ജ്യോതിഷപരമായ';
+
+  @override
+  String allScoresCount(Object count) {
+    return 'എല്ലാ സ്കോറുകളും ($count)';
+  }
+
+  @override
+  String get amountRupeesLabel => 'തുക (₹)';
+
+  @override
+  String withdrawMinAmount(Object min) {
+    return 'പിൻവലിക്കുക (കുറഞ്ഞത് ₹$min)';
+  }
+
+  @override
+  String upiIdWithValue(String value) {
+    return 'UPI: $value';
+  }
 }

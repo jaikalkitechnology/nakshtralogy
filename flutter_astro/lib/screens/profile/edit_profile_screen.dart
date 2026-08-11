@@ -195,23 +195,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<bool> _confirmDiscard() async {
     if (!_dirty) return true;
+    final l = AppLocalizations.of(context);
     final res = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        title: const Text('Discard changes?',
-            style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700)),
-        content: const Text('You have unsaved changes. If you leave now, your edits will be lost.',
-            style: TextStyle(color: AppColors.textSecondary)),
+        title: Text(l?.discardChangesTitle ?? 'Discard changes?',
+            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w700)),
+        content: Text(l?.discardChangesBody ?? 'You have unsaved changes. If you leave now, your edits will be lost.',
+            style: const TextStyle(color: AppColors.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Keep editing', style: TextStyle(color: AppColors.textSecondary)),
+            child: Text(l?.keepEditing ?? 'Keep editing', style: const TextStyle(color: AppColors.textSecondary)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Discard', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w700)),
+            child: Text(l?.discardAction ?? 'Discard', style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -359,9 +360,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // ── Profile preview ──
   Widget _preview() {
+    final l = AppLocalizations.of(context);
     final display = _display.text.trim().isNotEmpty
         ? _display.text.trim()
-        : (_name.text.trim().isNotEmpty ? _name.text.trim() : 'Astrologer');
+        : (_name.text.trim().isNotEmpty ? _name.text.trim() : (l?.astrologer ?? 'Astrologer'));
     final rating = (_profile['rating'] as num?)?.toDouble() ?? 0.0;
     final reviews = (_profile['total_reviews'] as num?)?.toInt() ?? 0;
     final uploaded = (_profile['profile_image_url'] ?? '').toString();
@@ -399,11 +401,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Row(children: [
               const Icon(Icons.star, color: AppColors.gold, size: 15),
               const SizedBox(width: 3),
-              Text(rating > 0 ? '${rating.toStringAsFixed(1)} ($reviews)' : 'New',
+              Text(rating > 0 ? '${rating.toStringAsFixed(1)} ($reviews)' : (l?.newRatingLabel ?? 'New'),
                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 12.5)),
               if (expYears != null && expYears > 0) ...[
                 const Text('   •   ', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
-                Text('$expYears yrs',
+                Text('$expYears ${l?.yrsSuffix ?? 'yrs'}',
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 12.5)),
               ],
             ]),
@@ -426,33 +428,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _unsavedBadge() {
+    final l = AppLocalizations.of(context);
     return Row(children: [
       Container(width: 8, height: 8,
         decoration: const BoxDecoration(color: AppColors.gold, shape: BoxShape.circle)),
       const SizedBox(width: 8),
-      const Text('Unsaved changes',
-          style: TextStyle(color: AppColors.gold, fontSize: 12.5, fontWeight: FontWeight.w600)),
+      Text(l?.unsavedChangesLabel ?? 'Unsaved changes',
+          style: const TextStyle(color: AppColors.gold, fontSize: 12.5, fontWeight: FontWeight.w600)),
     ]);
   }
 
   // ── Sections ──
   Widget _profileSection() {
+    final l = AppLocalizations.of(context);
     return _SectionCard(
       icon: Icons.person_outline,
-      title: 'Profile Information',
+      title: l?.profileInformationTitle ?? 'Profile Information',
       expanded: _profileOpen,
       onToggle: () => setState(() => _profileOpen = !_profileOpen),
       children: [
-        _LabeledField(label: 'Full Name', controller: _name, icon: Icons.person_outline,
-            hint: 'Your full name', textCapitalization: TextCapitalization.words),
-        _LabeledField(label: 'Phone', controller: _phone, icon: Icons.phone_outlined,
+        _LabeledField(label: l?.fullNameLabel ?? 'Full Name', controller: _name, icon: Icons.person_outline,
+            hint: l?.yourFullNameHint ?? 'Your full name', textCapitalization: TextCapitalization.words),
+        _LabeledField(label: l?.phoneLabel ?? 'Phone', controller: _phone, icon: Icons.phone_outlined,
             hint: '9999990000', keyboardType: TextInputType.phone,
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9+ ]'))]),
-        _LabeledField(label: 'Display Name', controller: _display, icon: Icons.badge_outlined,
-            hint: 'Shown to users', textCapitalization: TextCapitalization.words),
+        _LabeledField(label: l?.displayNameLabel ?? 'Display Name', controller: _display, icon: Icons.badge_outlined,
+            hint: l?.shownToUsersHint ?? 'Shown to users', textCapitalization: TextCapitalization.words),
         _LabeledField(
-          label: 'Bio', controller: _bio, icon: Icons.description_outlined,
-          hint: 'Tell users about your astrology experience…',
+          label: l?.bioLabel ?? 'Bio', controller: _bio, icon: Icons.description_outlined,
+          hint: l?.bioHint ?? 'Tell users about your astrology experience…',
           maxLines: 4, maxLength: _bioMax, showCounter: true,
           textCapitalization: TextCapitalization.sentences,
         ),
@@ -461,105 +465,108 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _professionalSection() {
+    final l = AppLocalizations.of(context);
     return _SectionCard(
       icon: Icons.school_outlined,
-      title: 'Professional Information',
+      title: l?.professionalInformationTitle ?? 'Professional Information',
       expanded: _proOpen,
       onToggle: () => setState(() => _proOpen = !_proOpen),
       children: [
         _LabeledField(
-          label: 'Experience', controller: _exp, icon: Icons.work_history_outlined,
-          hint: '10', suffixText: 'years', keyboardType: TextInputType.number,
+          label: l?.experienceLabel ?? 'Experience', controller: _exp, icon: Icons.work_history_outlined,
+          hint: '10', suffixText: l?.dbYears ?? 'years', keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (v) {
             final t = v?.trim() ?? '';
             if (t.isEmpty) return null;
             final n = int.tryParse(t);
-            if (n == null || n < 0 || n > 100) return 'Enter a valid number of years.';
+            if (n == null || n < 0 || n > 100) return l?.validYearsError ?? 'Enter a valid number of years.';
             return null;
           },
         ),
         _ChipSelector(
-          label: 'Languages',
+          label: l?.languagesLabel ?? 'Languages',
           values: _languages,
           suggestions: _langSuggestions,
-          addHint: 'Add a language',
+          addHint: l?.addLanguageHint ?? 'Add a language',
           onChanged: (v) => setState(() { _languages = v; _recomputeDirty(); }),
         ),
         const SizedBox(height: 14),
         _ChipSelector(
-          label: 'Specializations',
+          label: l?.specializationsLabel ?? 'Specializations',
           values: _specializations,
           suggestions: _specSuggestions,
-          addHint: 'Add a specialization',
+          addHint: l?.addSpecializationHint ?? 'Add a specialization',
           onChanged: (v) => setState(() { _specializations = v; _recomputeDirty(); }),
         ),
         const SizedBox(height: 14),
-        _LabeledField(label: 'Qualification', controller: _qual, icon: Icons.school_outlined,
-            hint: 'e.g. B.Sc, Jyotish Acharya', textCapitalization: TextCapitalization.words),
+        _LabeledField(label: l?.qualificationLabel ?? 'Qualification', controller: _qual, icon: Icons.school_outlined,
+            hint: l?.qualificationHint ?? 'e.g. B.Sc, Jyotish Acharya', textCapitalization: TextCapitalization.words),
       ],
     );
   }
 
   Widget _pricingSection() {
+    final l = AppLocalizations.of(context);
     return _SectionCard(
       icon: Icons.payments_outlined,
-      title: 'Consultation Pricing',
-      subtitle: 'Set how users are charged for your consultations.',
+      title: l?.consultationPricingTitle ?? 'Consultation Pricing',
+      subtitle: l?.consultationPricingSubtitle ?? 'Set how users are charged for your consultations.',
       expanded: _pricingOpen,
       onToggle: () => setState(() => _pricingOpen = !_pricingOpen),
       children: [
         _Segmented(
-          options: const ['Per Minute', 'Per Session', 'Per Message'],
+          options: [l?.perMinuteLabel ?? 'Per Minute', l?.perSessionLabel ?? 'Per Session', l?.perMessageLabel ?? 'Per Message'],
           selected: _pricingTab,
           onChanged: (i) => setState(() => _pricingTab = i),
         ),
         const SizedBox(height: 16),
         if (_pricingTab == 0) ...[
-          _RateRow(icon: Icons.chat_bubble_outline, label: 'Chat', controller: _chatMin, unit: '/ min'),
-          _RateRow(icon: Icons.call_outlined, label: 'Call', controller: _callMin, unit: '/ min'),
-          _RateRow(icon: Icons.videocam_outlined, label: 'Video', controller: _videoMin, unit: '/ min'),
+          _RateRow(icon: Icons.chat_bubble_outline, label: l?.chatWord ?? 'Chat', controller: _chatMin, unit: l?.perMinUnit ?? '/ min'),
+          _RateRow(icon: Icons.call_outlined, label: l?.callWord ?? 'Call', controller: _callMin, unit: l?.perMinUnit ?? '/ min'),
+          _RateRow(icon: Icons.videocam_outlined, label: l?.video ?? 'Video', controller: _videoMin, unit: l?.perMinUnit ?? '/ min'),
         ] else if (_pricingTab == 1) ...[
           // Session pricing applies to CHAT only. Audio & video calls are always
           // billed per minute, so no per-session fields are shown for them.
-          _RateRow(icon: Icons.chat_bubble_outline, label: 'Chat', controller: _chatSess, unit: '/ session'),
-          const Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text('Audio and video calls are billed per minute (set under "Per Minute"). Session pricing applies to chat only.',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          _RateRow(icon: Icons.chat_bubble_outline, label: l?.chatWord ?? 'Chat', controller: _chatSess, unit: l?.perSessionUnit ?? '/ session'),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(l?.audioVideoBilledPerMinuteNote ?? 'Audio and video calls are billed per minute (set under "Per Minute"). Session pricing applies to chat only.',
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
         ] else ...[
-          const Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: Text('After a chat session\'s included messages are used up, each further message is charged this rate (the chat stays open).',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(l?.chatSessionMessageNote ?? 'After a chat session\'s included messages are used up, each further message is charged this rate (the chat stays open).',
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
-          _RateRow(icon: Icons.mail_outline, label: 'Per Message', controller: _perMsg, unit: '/ msg'),
-          _RateRow(icon: Icons.bolt_outlined, label: 'Super Chat', controller: _superChat, unit: 'min'),
+          _RateRow(icon: Icons.mail_outline, label: l?.perMessageLabel ?? 'Per Message', controller: _perMsg, unit: l?.perMsgUnit ?? '/ msg'),
+          _RateRow(icon: Icons.bolt_outlined, label: l?.superChatLabel ?? 'Super Chat', controller: _superChat, unit: l?.minUnit ?? 'min'),
         ],
       ],
     );
   }
 
   Widget _messageSettingsSection() {
+    final l = AppLocalizations.of(context);
     return _SectionCard(
       icon: Icons.forum_outlined,
-      title: 'Message Settings',
-      subtitle: 'Controls paid-message allowance and validity per session.',
+      title: l?.messageSettingsTitle ?? 'Message Settings',
+      subtitle: l?.messageSettingsSubtitle ?? 'Controls paid-message allowance and validity per session.',
       expanded: _msgOpen,
       onToggle: () => setState(() => _msgOpen = !_msgOpen),
       children: [
         _LabeledField(
-          label: 'Messages per session', controller: _msgLimit, icon: Icons.message_outlined,
-          hint: '45', suffixText: 'msgs', keyboardType: TextInputType.number,
+          label: l?.messagesPerSessionLabel ?? 'Messages per session', controller: _msgLimit, icon: Icons.message_outlined,
+          hint: '45', suffixText: l?.msgsUnit ?? 'msgs', keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (v) => _positiveIntOrNull(v, 'Enter a valid number of messages.'),
+          validator: (v) => _positiveIntOrNull(v, l?.validMessagesError ?? 'Enter a valid number of messages.'),
         ),
         _LabeledField(
-          label: 'Session validity', controller: _validity, icon: Icons.timer_outlined,
-          hint: '24', suffixText: 'hours', keyboardType: TextInputType.number,
+          label: l?.sessionValidityLabel ?? 'Session validity', controller: _validity, icon: Icons.timer_outlined,
+          hint: '24', suffixText: l?.hoursUnit ?? 'hours', keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (v) => _positiveIntOrNull(v, 'Enter a valid number of hours.'),
+          validator: (v) => _positiveIntOrNull(v, l?.validHoursError ?? 'Enter a valid number of hours.'),
         ),
       ],
     );
@@ -608,7 +615,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: state.saving
                       ? const SizedBox(width: 20, height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.midnight))
-                      : const Text('Save Changes'),
+                      : Text(l?.saveChangesButton ?? 'Save Changes'),
                 ),
               ),
             ]),
@@ -840,7 +847,7 @@ class _ChipSelector extends StatelessWidget {
           ),
           if (unused.isNotEmpty) ...[
             const SizedBox(height: 16),
-            const Text('Suggestions', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text(AppLocalizations.of(ctx)?.suggestionsLabel ?? 'Suggestions', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             const SizedBox(height: 8),
             Wrap(spacing: 8, runSpacing: 8, children: [
               for (final s in unused)
@@ -858,7 +865,7 @@ class _ChipSelector extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
               style: ElevatedButton.styleFrom(minimumSize: const Size(0, 46)),
-              child: const Text('Add'),
+              child: Text(AppLocalizations.of(ctx)?.addButton ?? 'Add'),
             ),
           ),
         ]),
@@ -895,7 +902,7 @@ class _ChipSelector extends StatelessWidget {
                 onTap: () => onChanged(values.where((e) => e != v).toList()),
                 child: Semantics(
                   button: true,
-                  label: 'Remove $v',
+                  label: AppLocalizations.of(context)?.removeChipLabel(v) ?? 'Remove $v',
                   child: const Padding(
                     padding: EdgeInsets.all(2),
                     child: Icon(Icons.close, size: 15, color: AppColors.gold),
@@ -914,10 +921,10 @@ class _ChipSelector extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.gold.withOpacity(0.5)),
             ),
-            child: const Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(Icons.add, size: 15, color: AppColors.gold),
-              SizedBox(width: 4),
-              Text('Add', style: TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w600)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              const Icon(Icons.add, size: 15, color: AppColors.gold),
+              const SizedBox(width: 4),
+              Text(AppLocalizations.of(context)?.addButton ?? 'Add', style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w600)),
             ]),
           ),
         ),

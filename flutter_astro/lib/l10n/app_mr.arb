@@ -3415,5 +3415,155 @@
   "worstWindows": "सर्वात वाईट कालावधी",
   "yogaAnalysis": "योग विश्लेषण",
   "unlocked": "अनलॉक झाले!",
-  "lessThanOneMin": "1 मिनिटापेक्षा कमी शिल्लक"
+  "lessThanOneMin": "1 मिनिटापेक्षा कमी शिल्लक",
+  "biometricNotAvailable": "या डिव्हाइसवर बायोमेट्रिक उपलब्ध नाही",
+  "biometricErrorWithDetails": "बायोमेट्रिक त्रुटी: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "रेट कार्ड",
+  "perMinuteLabel": "प्रति मिनिट",
+  "perSessionLabel": "प्रति सेशन",
+  "otherChargesLabel": "इतर शुल्क",
+  "sessionLimitInfo": "सेशन: {limit} मेसेज, {hours} तास वैधता",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "चॅट",
+  "callWord": "कॉल",
+  "perMsgLabel": "प्रति मेसेज",
+  "superChatLabel": "सुपर चॅट",
+  "changePasswordTitle": "पासवर्ड बदला",
+  "changePasswordSub": "ईमेल OTP द्वारे तुमचा पासवर्ड अपडेट करा",
+  "customerSupportTitle": "ग्राहक सहाय्य",
+  "customerSupportSub": "FAQ आणि तिकीट नोंदवा",
+  "notSetLabel": "सेट केलेले नाही",
+  "phoneLabel": "फोन",
+  "experienceLabel": "अनुभव",
+  "verifyToEnableBiometric": "बायोमेट्रिक लॉगिन सक्षम करण्यासाठी सत्यापित करा",
+  "tapToChangeAppLanguage": "अ‍ॅपची भाषा बदलण्यासाठी टॅप करा",
+  "discardChangesTitle": "बदल रद्द करायचे?",
+  "discardChangesBody": "तुमचे बदल जतन केलेले नाहीत. आता बाहेर गेल्यास तुमचे बदल गमावले जातील.",
+  "keepEditing": "संपादन सुरू ठेवा",
+  "discardAction": "रद्द करा",
+  "newRatingLabel": "नवीन",
+  "yrsSuffix": "वर्षे",
+  "unsavedChangesLabel": "जतन न केलेले बदल",
+  "profileInformationTitle": "प्रोफाइल माहिती",
+  "yourFullNameHint": "तुमचे पूर्ण नाव",
+  "shownToUsersHint": "वापरकर्त्यांना दाखवले जाते",
+  "bioHint": "तुमच्या ज्योतिष अनुभवाबद्दल वापरकर्त्यांना सांगा…",
+  "professionalInformationTitle": "व्यावसायिक माहिती",
+  "validYearsError": "वर्षांची वैध संख्या टाका.",
+  "addLanguageHint": "एक भाषा जोडा",
+  "addSpecializationHint": "एक विशेषज्ञता जोडा",
+  "qualificationHint": "उदा. B.Sc, ज्योतिष आचार्य",
+  "consultationPricingTitle": "सल्ला दर",
+  "consultationPricingSubtitle": "तुमच्या सल्लामसलतीसाठी वापरकर्त्यांकडून कसे शुल्क घ्यायचे ते सेट करा.",
+  "perMessageLabel": "प्रति मेसेज",
+  "perMinUnit": "/ मिनिट",
+  "perSessionUnit": "/ सेशन",
+  "audioVideoBilledPerMinuteNote": "ऑडिओ आणि व्हिडिओ कॉल्स प्रति मिनिट बिल केले जातात (\"प्रति मिनिट\" मध्ये सेट करा). सेशन दर फक्त चॅटला लागू होतो.",
+  "chatSessionMessageNote": "चॅट सेशनमधील समाविष्ट मेसेज संपल्यानंतर, प्रत्येक पुढील मेसेजसाठी हा दर लागू होईल (चॅट उघडी राहते).",
+  "perMsgUnit": "/ मेसेज",
+  "minUnit": "मिनिट",
+  "messageSettingsTitle": "मेसेज सेटिंग्ज",
+  "messageSettingsSubtitle": "हे प्रति सेशन पेड-मेसेज मर्यादा आणि वैधता नियंत्रित करते.",
+  "messagesPerSessionLabel": "प्रति सेशन मेसेज",
+  "msgsUnit": "मेसेज",
+  "validMessagesError": "मेसेजची वैध संख्या टाका.",
+  "sessionValidityLabel": "सेशन वैधता",
+  "hoursUnit": "तास",
+  "validHoursError": "तासांची वैध संख्या टाका.",
+  "saveChangesButton": "बदल जतन करा",
+  "suggestionsLabel": "सूचना",
+  "addButton": "जोडा",
+  "removeChipLabel": "{value} काढा",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "रिपोर्ट कॉपी झाली! {ai} उघडत आहे — चर्चेसाठी पेस्ट करा.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "कुंडली मिलन रिपोर्ट",
+  "milanPersonOne": "व्यक्ती 1",
+  "milanPersonTwo": "व्यक्ती 2",
+  "runningMilanAnalysis": "मिलन विश्लेषण सुरू आहे...",
+  "selectedOfTwo": "{count}/2 निवडले",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "मिलन विश्लेषण चालवा",
+  "relationshipIntelligenceTitle": "संबंध बुद्धिमत्ता",
+  "analyzingChartsCount": "{count} चार्ट्सचे विश्लेषण केले जात आहे...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "संबंध संदर्भ",
+  "generalWord": "सामान्य",
+  "teamWord": "टीम",
+  "friendshipWord": "मैत्री",
+  "analyzeChartsCountButton": "{count} चार्ट्सचे विश्लेषण करा",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "मुख्य स्कोअर",
+  "astrologicalWord": "ज्योतिषशास्त्रीय",
+  "allScoresCount": "सर्व स्कोअर ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "रक्कम (₹)",
+  "withdrawMinAmount": "काढा (किमान ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -44,7 +44,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
           _loading = false;
         });
       } else {
-        setState(() { _error = resp['detail']?.toString() ?? 'Failed'; _loading = false; });
+        setState(() { _error = resp['detail']?.toString() ?? AppLocalizations.of(context)?.fcFailed ?? 'Failed'; _loading = false; });
       }
     } catch (e) { if (!mounted) return; setState(() { _error = e.toString(); _loading = false; }); }
   }

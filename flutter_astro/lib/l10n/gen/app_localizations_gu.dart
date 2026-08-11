@@ -10655,4 +10655,261 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get lessThanOneMin => '1 મિનિટથી ઓછો સમય બાકી';
+
+  @override
+  String get biometricNotAvailable => 'આ ડિવાઇસ પર બાયોમેટ્રિક ઉપલબ્ધ નથી';
+
+  @override
+  String biometricErrorWithDetails(String error) {
+    return 'બાયોમેટ્રિક ભૂલ: $error';
+  }
+
+  @override
+  String get rateCardsTitle => 'રેટ કાર્ડ';
+
+  @override
+  String get perMinuteLabel => 'પ્રતિ મિનિટ';
+
+  @override
+  String get perSessionLabel => 'પ્રતિ સેશન';
+
+  @override
+  String get otherChargesLabel => 'અન્ય ચાર્જ';
+
+  @override
+  String sessionLimitInfo(Object limit, Object hours) {
+    return 'સેશન: $limit મેસેજ, $hours કલાક માન્યતા';
+  }
+
+  @override
+  String get chatWord => 'ચેટ';
+
+  @override
+  String get callWord => 'કૉલ';
+
+  @override
+  String get perMsgLabel => 'પ્રતિ મેસેજ';
+
+  @override
+  String get superChatLabel => 'સુપર ચેટ';
+
+  @override
+  String get changePasswordTitle => 'પાસવર્ડ બદલો';
+
+  @override
+  String get changePasswordSub => 'ઈમેલ OTP દ્વારા તમારો પાસવર્ડ અપડેટ કરો';
+
+  @override
+  String get customerSupportTitle => 'કસ્ટમર સપોર્ટ';
+
+  @override
+  String get customerSupportSub => 'FAQ અને ટિકિટ રેઝ કરો';
+
+  @override
+  String get notSetLabel => 'સેટ નથી';
+
+  @override
+  String get phoneLabel => 'ફોન';
+
+  @override
+  String get experienceLabel => 'અનુભવ';
+
+  @override
+  String get verifyToEnableBiometric =>
+      'બાયોમેટ્રિક લોગિન સક્ષમ કરવા માટે ચકાસો';
+
+  @override
+  String get tapToChangeAppLanguage => 'એપની ભાષા બદલવા માટે ટેપ કરો';
+
+  @override
+  String get discardChangesTitle => 'ફેરફારો રદ કરવા છે?';
+
+  @override
+  String get discardChangesBody =>
+      'તમારી પાસે સેવ ન થયેલા ફેરફારો છે. હવે બહાર જશો તો તમારા ફેરફારો ખોવાઈ જશે.';
+
+  @override
+  String get keepEditing => 'એડિટ ચાલુ રાખો';
+
+  @override
+  String get discardAction => 'રદ કરો';
+
+  @override
+  String get newRatingLabel => 'નવું';
+
+  @override
+  String get yrsSuffix => 'વર્ષ';
+
+  @override
+  String get unsavedChangesLabel => 'સેવ ન થયેલા ફેરફારો';
+
+  @override
+  String get profileInformationTitle => 'પ્રોફાઇલ માહિતી';
+
+  @override
+  String get yourFullNameHint => 'તમારું સંપૂર્ણ નામ';
+
+  @override
+  String get shownToUsersHint => 'વપરાશકર્તાઓને બતાવવામાં આવે છે';
+
+  @override
+  String get bioHint => 'તમારા જ્યોતિષ અનુભવ વિશે વપરાશકર્તાઓને જણાવો…';
+
+  @override
+  String get professionalInformationTitle => 'વ્યવસાયિક માહિતી';
+
+  @override
+  String get validYearsError => 'વર્ષોની માન્ય સંખ્યા દાખલ કરો.';
+
+  @override
+  String get addLanguageHint => 'એક ભાષા ઉમેરો';
+
+  @override
+  String get addSpecializationHint => 'એક વિશેષતા ઉમેરો';
+
+  @override
+  String get qualificationHint => 'દા.ત. B.Sc, જ્યોતિષ આચાર્ય';
+
+  @override
+  String get consultationPricingTitle => 'સલાહ કિંમત';
+
+  @override
+  String get consultationPricingSubtitle =>
+      'તમારી સલાહ માટે વપરાશકર્તાઓ પાસેથી કેવી રીતે ચાર્જ લેવો તે સેટ કરો.';
+
+  @override
+  String get perMessageLabel => 'પ્રતિ મેસેજ';
+
+  @override
+  String get perMinUnit => '/ મિનિટ';
+
+  @override
+  String get perSessionUnit => '/ સેશન';
+
+  @override
+  String get audioVideoBilledPerMinuteNote =>
+      'ઓડિયો અને વિડિયો કૉલ પ્રતિ મિનિટ બિલ થાય છે (\"પ્રતિ મિનિટ\"માં સેટ કરો). સેશન કિંમત માત્ર ચેટ પર લાગુ થાય છે.';
+
+  @override
+  String get chatSessionMessageNote =>
+      'ચેટ સેશનના સમાવિષ્ટ મેસેજ પૂરા થયા પછી, દરેક વધુ મેસેજ પર આ દર લાગુ થશે (ચેટ ખુલ્લી રહે છે).';
+
+  @override
+  String get perMsgUnit => '/ મેસેજ';
+
+  @override
+  String get minUnit => 'મિનિટ';
+
+  @override
+  String get messageSettingsTitle => 'મેસેજ સેટિંગ્સ';
+
+  @override
+  String get messageSettingsSubtitle =>
+      'આ પ્રતિ સેશન પેઇડ-મેસેજ મર્યાદા અને માન્યતાને નિયંત્રિત કરે છે.';
+
+  @override
+  String get messagesPerSessionLabel => 'પ્રતિ સેશન મેસેજ';
+
+  @override
+  String get msgsUnit => 'મેસેજ';
+
+  @override
+  String get validMessagesError => 'મેસેજની માન્ય સંખ્યા દાખલ કરો.';
+
+  @override
+  String get sessionValidityLabel => 'સેશન માન્યતા';
+
+  @override
+  String get hoursUnit => 'કલાક';
+
+  @override
+  String get validHoursError => 'કલાકોની માન્ય સંખ્યા દાખલ કરો.';
+
+  @override
+  String get saveChangesButton => 'ફેરફારો સાચવો';
+
+  @override
+  String get suggestionsLabel => 'સૂચનો';
+
+  @override
+  String get addButton => 'ઉમેરો';
+
+  @override
+  String removeChipLabel(String value) {
+    return '$value દૂર કરો';
+  }
+
+  @override
+  String reportCopiedOpeningAi(String ai) {
+    return 'રિપોર્ટ કોપી થઈ! $ai ખોલાઈ રહ્યું છે — ચર્ચા માટે પેસ્ટ કરો.';
+  }
+
+  @override
+  String get kundliMilanReportTitle => 'કુંડળી મિલન રિપોર્ટ';
+
+  @override
+  String get milanPersonOne => 'વ્યક્તિ 1';
+
+  @override
+  String get milanPersonTwo => 'વ્યક્તિ 2';
+
+  @override
+  String get runningMilanAnalysis => 'મિલન વિશ્લેષણ ચાલી રહ્યું છે...';
+
+  @override
+  String selectedOfTwo(Object count) {
+    return '$count/2 પસંદ કરેલ';
+  }
+
+  @override
+  String get runMilanAnalysisButton => 'મિલન વિશ્લેષણ ચલાવો';
+
+  @override
+  String get relationshipIntelligenceTitle => 'સંબંધ ઇન્ટેલિજન્સ';
+
+  @override
+  String analyzingChartsCount(Object count) {
+    return '$count ચાર્ટનું વિશ્લેષણ થઈ રહ્યું છે...';
+  }
+
+  @override
+  String get relationshipContextLabel => 'સંબંધ સંદર્ભ';
+
+  @override
+  String get generalWord => 'સામાન્ય';
+
+  @override
+  String get teamWord => 'ટીમ';
+
+  @override
+  String get friendshipWord => 'મિત્રતા';
+
+  @override
+  String analyzeChartsCountButton(Object count) {
+    return '$count ચાર્ટનું વિશ્લેષણ કરો';
+  }
+
+  @override
+  String get keyScoresCaps => 'મુખ્ય સ્કોર';
+
+  @override
+  String get astrologicalWord => 'જ્યોતિષીય';
+
+  @override
+  String allScoresCount(Object count) {
+    return 'બધા સ્કોર ($count)';
+  }
+
+  @override
+  String get amountRupeesLabel => 'રકમ (₹)';
+
+  @override
+  String withdrawMinAmount(Object min) {
+    return 'ઉપાડો (ન્યૂનતમ ₹$min)';
+  }
+
+  @override
+  String upiIdWithValue(String value) {
+    return 'UPI: $value';
+  }
 }

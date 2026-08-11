@@ -41,7 +41,7 @@ class _EarningsTabState extends State<EarningsTab> {
             TextField(
               controller: amountCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Amount (₹)', prefixIcon: Icon(Icons.currency_rupee)),
+              decoration: InputDecoration(labelText: l.amountRupeesLabel, prefixIcon: const Icon(Icons.currency_rupee)),
             ),
             const SizedBox(height: 14),
             // UPI / Bank toggle
@@ -68,19 +68,19 @@ class _EarningsTabState extends State<EarningsTab> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: !isUpi ? AppColors.primary : AppColors.border),
                   ),
-                  child: Center(child: Text('Bank Transfer', style: TextStyle(color: !isUpi ? AppColors.primary : AppColors.textSecondary, fontWeight: FontWeight.w600))),
+                  child: Center(child: Text(l.bankTransfer, style: TextStyle(color: !isUpi ? AppColors.primary : AppColors.textSecondary, fontWeight: FontWeight.w600))),
                 ),
               )),
             ]),
             const SizedBox(height: 14),
             if (isUpi)
-              TextField(controller: upiCtrl, decoration: const InputDecoration(labelText: 'UPI ID', prefixIcon: Icon(Icons.account_balance)))
+              TextField(controller: upiCtrl, decoration: InputDecoration(labelText: l.upiId, prefixIcon: const Icon(Icons.account_balance)))
             else ...[
-              TextField(controller: bankNameCtrl, decoration: const InputDecoration(labelText: 'Account Holder Name', prefixIcon: Icon(Icons.person))),
+              TextField(controller: bankNameCtrl, decoration: InputDecoration(labelText: l.accountHolderName, prefixIcon: const Icon(Icons.person))),
               const SizedBox(height: 10),
-              TextField(controller: bankAccCtrl, decoration: const InputDecoration(labelText: 'Account Number', prefixIcon: Icon(Icons.numbers))),
+              TextField(controller: bankAccCtrl, decoration: InputDecoration(labelText: l.accountNumber, prefixIcon: const Icon(Icons.numbers))),
               const SizedBox(height: 10),
-              TextField(controller: bankIfscCtrl, decoration: const InputDecoration(labelText: 'IFSC Code', prefixIcon: Icon(Icons.code))),
+              TextField(controller: bankIfscCtrl, decoration: InputDecoration(labelText: l.ifscCode, prefixIcon: const Icon(Icons.code))),
             ],
           ])),
           actions: [
@@ -165,7 +165,7 @@ class _EarningsTabState extends State<EarningsTab> {
                 ElevatedButton.icon(
                   onPressed: _showWithdrawDialog,
                   icon: const Icon(Icons.account_balance_wallet),
-                  label: Text('Withdraw (min ₹$minWithdraw)'),
+                  label: Text(l.withdrawMinAmount(minWithdraw)),
                   style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 46)),
                 ),
               ]),
@@ -295,10 +295,11 @@ class _WithdrawalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final amount = withdrawal['amount'] ?? 0;
     final status = withdrawal['status'] ?? 'pending';
     final createdAt = withdrawal['created_at'] ?? '';
-    final method = withdrawal['upi_id'] != null ? 'UPI: ${withdrawal['upi_id']}' : 'Bank Transfer';
+    final method = withdrawal['upi_id'] != null ? l.upiIdWithValue(withdrawal['upi_id'].toString()) : l.bankTransfer;
 
     Color statusColor;
     switch (status) {

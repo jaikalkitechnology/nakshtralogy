@@ -3415,5 +3415,155 @@
   "worstWindows": "చెత్త కాలాలు",
   "yogaAnalysis": "యోగ విశ్లేషణ",
   "unlocked": "అన్‌లాక్ అయింది!",
-  "lessThanOneMin": "1 నిమిషం కంటే తక్కువ మిగిలింది"
+  "lessThanOneMin": "1 నిమిషం కంటే తక్కువ మిగిలింది",
+  "biometricNotAvailable": "ఈ డివైజ్‌లో బయోమెట్రిక్ అందుబాటులో లేదు",
+  "biometricErrorWithDetails": "బయోమెట్రిక్ లోపం: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "రేట్ కార్డులు",
+  "perMinuteLabel": "నిమిషానికి",
+  "perSessionLabel": "సెషన్‌కు",
+  "otherChargesLabel": "ఇతర ఛార్జీలు",
+  "sessionLimitInfo": "సెషన్: {limit} మెసేజ్‌లు, {hours} గంటల చెల్లుబాటు",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "చాట్",
+  "callWord": "కాల్",
+  "perMsgLabel": "మెసేజ్‌కు",
+  "superChatLabel": "సూపర్ చాట్",
+  "changePasswordTitle": "పాస్‌వర్డ్ మార్చండి",
+  "changePasswordSub": "ఇమెయిల్ OTP ద్వారా మీ పాస్‌వర్డ్‌ను అప్‌డేట్ చేయండి",
+  "customerSupportTitle": "కస్టమర్ సపోర్ట్",
+  "customerSupportSub": "FAQ మరియు టికెట్ నమోదు చేయండి",
+  "notSetLabel": "సెట్ చేయలేదు",
+  "phoneLabel": "ఫోన్",
+  "experienceLabel": "అనుభవం",
+  "verifyToEnableBiometric": "బయోమెట్రిక్ లాగిన్‌ను ప్రారంభించడానికి ధృవీకరించండి",
+  "tapToChangeAppLanguage": "యాప్ భాషను మార్చడానికి నొక్కండి",
+  "discardChangesTitle": "మార్పులను రద్దు చేయాలా?",
+  "discardChangesBody": "మీ మార్పులు సేవ్ చేయబడలేదు. ఇప్పుడు వెళ్తే మీ మార్పులు కోల్పోతారు.",
+  "keepEditing": "ఎడిటింగ్ కొనసాగించండి",
+  "discardAction": "రద్దు చేయి",
+  "newRatingLabel": "కొత్తది",
+  "yrsSuffix": "సంవత్సరాలు",
+  "unsavedChangesLabel": "సేవ్ చేయని మార్పులు",
+  "profileInformationTitle": "ప్రొఫైల్ సమాచారం",
+  "yourFullNameHint": "మీ పూర్తి పేరు",
+  "shownToUsersHint": "వినియోగదారులకు చూపబడుతుంది",
+  "bioHint": "మీ జ్యోతిష్య అనుభవం గురించి వినియోగదారులకు చెప్పండి…",
+  "professionalInformationTitle": "వృత్తిపరమైన సమాచారం",
+  "validYearsError": "సంవత్సరాల సరైన సంఖ్యను నమోదు చేయండి.",
+  "addLanguageHint": "ఒక భాషను జోడించండి",
+  "addSpecializationHint": "ఒక స్పెషలైజేషన్‌ను జోడించండి",
+  "qualificationHint": "ఉదా. B.Sc, జ్యోతిష ఆచార్య",
+  "consultationPricingTitle": "సంప్రదింపు ధర",
+  "consultationPricingSubtitle": "మీ సంప్రదింపుల కోసం వినియోగదారుల నుండి ఎలా ఛార్జ్ చేయాలో సెట్ చేయండి.",
+  "perMessageLabel": "మెసేజ్‌కు",
+  "perMinUnit": "/ నిమిషం",
+  "perSessionUnit": "/ సెషన్",
+  "audioVideoBilledPerMinuteNote": "ఆడియో మరియు వీడియో కాల్‌లు నిమిషానికి బిల్ చేయబడతాయి (\"నిమిషానికి\"లో సెట్ చేయండి). సెషన్ ధర చాట్‌కు మాత్రమే వర్తిస్తుంది.",
+  "chatSessionMessageNote": "చాట్ సెషన్‌లో ఉన్న మెసేజ్‌లు అయిపోయాక, తర్వాతి ప్రతి మెసేజ్‌కు ఈ రేటు వర్తిస్తుంది (చాట్ తెరిచి ఉంటుంది).",
+  "perMsgUnit": "/ మెసేజ్",
+  "minUnit": "నిమిషం",
+  "messageSettingsTitle": "మెసేజ్ సెట్టింగ్‌లు",
+  "messageSettingsSubtitle": "ఇది సెషన్‌కు చెల్లింపు-మెసేజ్ పరిమితి మరియు చెల్లుబాటును నియంత్రిస్తుంది.",
+  "messagesPerSessionLabel": "సెషన్‌కు మెసేజ్‌లు",
+  "msgsUnit": "మెసేజ్‌లు",
+  "validMessagesError": "మెసేజ్‌ల సరైన సంఖ్యను నమోదు చేయండి.",
+  "sessionValidityLabel": "సెషన్ చెల్లుబాటు",
+  "hoursUnit": "గంటలు",
+  "validHoursError": "గంటల సరైన సంఖ్యను నమోదు చేయండి.",
+  "saveChangesButton": "మార్పులను సేవ్ చేయండి",
+  "suggestionsLabel": "సూచనలు",
+  "addButton": "జోడించు",
+  "removeChipLabel": "{value} తీసివేయండి",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "రిపోర్ట్ కాపీ చేయబడింది! {ai} తెరవబడుతోంది — చర్చించడానికి పేస్ట్ చేయండి.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "కుండలి మిలన్ నివేదిక",
+  "milanPersonOne": "వ్యక్తి 1",
+  "milanPersonTwo": "వ్యక్తి 2",
+  "runningMilanAnalysis": "మిలన్ విశ్లేషణ జరుగుతోంది...",
+  "selectedOfTwo": "{count}/2 ఎంచుకున్నారు",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "మిలన్ విశ్లేషణను రన్ చేయండి",
+  "relationshipIntelligenceTitle": "సంబంధ ఇంటెలిజెన్స్",
+  "analyzingChartsCount": "{count} చార్టులు విశ్లేషించబడుతున్నాయి...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "సంబంధ సందర్భం",
+  "generalWord": "సాధారణ",
+  "teamWord": "టీమ్",
+  "friendshipWord": "మిత్రత్వం",
+  "analyzeChartsCountButton": "{count} చార్టులను విశ్లేషించండి",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "ముఖ్య స్కోర్‌లు",
+  "astrologicalWord": "జ్యోతిష్య",
+  "allScoresCount": "అన్ని స్కోర్‌లు ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "మొత్తం (₹)",
+  "withdrawMinAmount": "విత్‌డ్రా చేయండి (కనీసం ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -3415,5 +3415,155 @@
   "worstWindows": "સૌથી ખરાબ વિન્ડો",
   "yogaAnalysis": "યોગ વિશ્લેષણ",
   "unlocked": "અનલૉક થયું!",
-  "lessThanOneMin": "1 મિનિટથી ઓછો સમય બાકી"
+  "lessThanOneMin": "1 મિનિટથી ઓછો સમય બાકી",
+  "biometricNotAvailable": "આ ડિવાઇસ પર બાયોમેટ્રિક ઉપલબ્ધ નથી",
+  "biometricErrorWithDetails": "બાયોમેટ્રિક ભૂલ: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "રેટ કાર્ડ",
+  "perMinuteLabel": "પ્રતિ મિનિટ",
+  "perSessionLabel": "પ્રતિ સેશન",
+  "otherChargesLabel": "અન્ય ચાર્જ",
+  "sessionLimitInfo": "સેશન: {limit} મેસેજ, {hours} કલાક માન્યતા",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "ચેટ",
+  "callWord": "કૉલ",
+  "perMsgLabel": "પ્રતિ મેસેજ",
+  "superChatLabel": "સુપર ચેટ",
+  "changePasswordTitle": "પાસવર્ડ બદલો",
+  "changePasswordSub": "ઈમેલ OTP દ્વારા તમારો પાસવર્ડ અપડેટ કરો",
+  "customerSupportTitle": "કસ્ટમર સપોર્ટ",
+  "customerSupportSub": "FAQ અને ટિકિટ રેઝ કરો",
+  "notSetLabel": "સેટ નથી",
+  "phoneLabel": "ફોન",
+  "experienceLabel": "અનુભવ",
+  "verifyToEnableBiometric": "બાયોમેટ્રિક લોગિન સક્ષમ કરવા માટે ચકાસો",
+  "tapToChangeAppLanguage": "એપની ભાષા બદલવા માટે ટેપ કરો",
+  "discardChangesTitle": "ફેરફારો રદ કરવા છે?",
+  "discardChangesBody": "તમારી પાસે સેવ ન થયેલા ફેરફારો છે. હવે બહાર જશો તો તમારા ફેરફારો ખોવાઈ જશે.",
+  "keepEditing": "એડિટ ચાલુ રાખો",
+  "discardAction": "રદ કરો",
+  "newRatingLabel": "નવું",
+  "yrsSuffix": "વર્ષ",
+  "unsavedChangesLabel": "સેવ ન થયેલા ફેરફારો",
+  "profileInformationTitle": "પ્રોફાઇલ માહિતી",
+  "yourFullNameHint": "તમારું સંપૂર્ણ નામ",
+  "shownToUsersHint": "વપરાશકર્તાઓને બતાવવામાં આવે છે",
+  "bioHint": "તમારા જ્યોતિષ અનુભવ વિશે વપરાશકર્તાઓને જણાવો…",
+  "professionalInformationTitle": "વ્યવસાયિક માહિતી",
+  "validYearsError": "વર્ષોની માન્ય સંખ્યા દાખલ કરો.",
+  "addLanguageHint": "એક ભાષા ઉમેરો",
+  "addSpecializationHint": "એક વિશેષતા ઉમેરો",
+  "qualificationHint": "દા.ત. B.Sc, જ્યોતિષ આચાર્ય",
+  "consultationPricingTitle": "સલાહ કિંમત",
+  "consultationPricingSubtitle": "તમારી સલાહ માટે વપરાશકર્તાઓ પાસેથી કેવી રીતે ચાર્જ લેવો તે સેટ કરો.",
+  "perMessageLabel": "પ્રતિ મેસેજ",
+  "perMinUnit": "/ મિનિટ",
+  "perSessionUnit": "/ સેશન",
+  "audioVideoBilledPerMinuteNote": "ઓડિયો અને વિડિયો કૉલ પ્રતિ મિનિટ બિલ થાય છે (\"પ્રતિ મિનિટ\"માં સેટ કરો). સેશન કિંમત માત્ર ચેટ પર લાગુ થાય છે.",
+  "chatSessionMessageNote": "ચેટ સેશનના સમાવિષ્ટ મેસેજ પૂરા થયા પછી, દરેક વધુ મેસેજ પર આ દર લાગુ થશે (ચેટ ખુલ્લી રહે છે).",
+  "perMsgUnit": "/ મેસેજ",
+  "minUnit": "મિનિટ",
+  "messageSettingsTitle": "મેસેજ સેટિંગ્સ",
+  "messageSettingsSubtitle": "આ પ્રતિ સેશન પેઇડ-મેસેજ મર્યાદા અને માન્યતાને નિયંત્રિત કરે છે.",
+  "messagesPerSessionLabel": "પ્રતિ સેશન મેસેજ",
+  "msgsUnit": "મેસેજ",
+  "validMessagesError": "મેસેજની માન્ય સંખ્યા દાખલ કરો.",
+  "sessionValidityLabel": "સેશન માન્યતા",
+  "hoursUnit": "કલાક",
+  "validHoursError": "કલાકોની માન્ય સંખ્યા દાખલ કરો.",
+  "saveChangesButton": "ફેરફારો સાચવો",
+  "suggestionsLabel": "સૂચનો",
+  "addButton": "ઉમેરો",
+  "removeChipLabel": "{value} દૂર કરો",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "રિપોર્ટ કોપી થઈ! {ai} ખોલાઈ રહ્યું છે — ચર્ચા માટે પેસ્ટ કરો.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "કુંડળી મિલન રિપોર્ટ",
+  "milanPersonOne": "વ્યક્તિ 1",
+  "milanPersonTwo": "વ્યક્તિ 2",
+  "runningMilanAnalysis": "મિલન વિશ્લેષણ ચાલી રહ્યું છે...",
+  "selectedOfTwo": "{count}/2 પસંદ કરેલ",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "મિલન વિશ્લેષણ ચલાવો",
+  "relationshipIntelligenceTitle": "સંબંધ ઇન્ટેલિજન્સ",
+  "analyzingChartsCount": "{count} ચાર્ટનું વિશ્લેષણ થઈ રહ્યું છે...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "સંબંધ સંદર્ભ",
+  "generalWord": "સામાન્ય",
+  "teamWord": "ટીમ",
+  "friendshipWord": "મિત્રતા",
+  "analyzeChartsCountButton": "{count} ચાર્ટનું વિશ્લેષણ કરો",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "મુખ્ય સ્કોર",
+  "astrologicalWord": "જ્યોતિષીય",
+  "allScoresCount": "બધા સ્કોર ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "રકમ (₹)",
+  "withdrawMinAmount": "ઉપાડો (ન્યૂનતમ ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

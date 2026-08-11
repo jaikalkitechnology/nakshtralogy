@@ -43,8 +43,9 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
     final ids = _selected.toList();
     final c1 = _charts.firstWhere((c) => c['id'] == ids[0]);
     final c2 = _charts.firstWhere((c) => c['id'] == ids[1]);
-    final name1 = c1['name']?.toString() ?? 'Person 1';
-    final name2 = c2['name']?.toString() ?? 'Person 2';
+    final l = AppLocalizations.of(context);
+    final name1 = c1['name']?.toString() ?? (l?.milanPersonOne ?? 'Person 1');
+    final name2 = c2['name']?.toString() ?? (l?.milanPersonTwo ?? 'Person 2');
 
     setState(() => _analyzing = true);
     try {
@@ -60,24 +61,25 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(resp['detail']?.toString() ?? 'Analysis failed')));
+          SnackBar(content: Text(resp['detail']?.toString() ?? AppLocalizations.of(context)?.analysisFailed ?? 'Analysis failed')));
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _analyzing = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.errorWithDetails(e.toString()) ?? 'Error: $e')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Row(children: [
-          Text('💑', style: TextStyle(fontSize: 20)),
-          SizedBox(width: 8),
-          Text('Kundli Milan Report', style: TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
+        title: Row(children: [
+          const Text('💑', style: TextStyle(fontSize: 20)),
+          const SizedBox(width: 8),
+          Text(l?.kundliMilanReportTitle ?? 'Kundli Milan Report', style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
         ]),
       ),
       body: DesktopCenter(
@@ -88,7 +90,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                   const CircularProgressIndicator(color: AppColors.primary),
                   const SizedBox(height: 16),
-                  const Text('Running Milan analysis...', style: TextStyle(color: AppColors.textSecondary)),
+                  Text(l?.runningMilanAnalysis ?? 'Running Milan analysis...', style: const TextStyle(color: AppColors.textSecondary)),
                 ]))
               : Column(children: [
                   Container(
@@ -97,10 +99,10 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                       gradient: LinearGradient(colors: [Colors.pink.withOpacity(0.1), Colors.transparent]),
                     ),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(AppLocalizations.of(context)?.selectChartsForMilan ?? 'Select 2 Charts',
-                          style: TextStyle(color: Colors.pink, fontSize: 14, fontWeight: FontWeight.w700)),
+                      Text(l?.selectChartsForMilan ?? 'Select 2 Charts',
+                          style: const TextStyle(color: Colors.pink, fontSize: 14, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
-                      Text('${_selected.length}/2 selected',
+                      Text(l?.selectedOfTwo(_selected.length) ?? '${_selected.length}/2 selected',
                           style: TextStyle(color: _selected.length == 2 ? Colors.green : AppColors.textSecondary, fontSize: 12)),
                     ]),
                   ),
@@ -110,7 +112,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                     itemBuilder: (ctx, i) {
                       final c = _charts[i];
                       final id = c['id']?.toString() ?? '';
-                      final name = c['name']?.toString() ?? 'Unknown';
+                      final name = c['name']?.toString() ?? (l?.unknownName ?? 'Unknown');
                       final dob = c['dob']?.toString() ?? '';
                       final place = c['place']?.toString() ?? '';
                       final gender = c['gender']?.toString() ?? '';
@@ -141,7 +143,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(color: Colors.pink.withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
-                                child: Text(_selected.toList().indexOf(id) == 0 ? 'Person 1' : 'Person 2',
+                                child: Text(_selected.toList().indexOf(id) == 0 ? (l?.milanPersonOne ?? 'Person 1') : (l?.milanPersonTwo ?? 'Person 2'),
                                     style: const TextStyle(color: Colors.pink, fontSize: 10, fontWeight: FontWeight.w600)),
                               ),
                           ]),
@@ -158,7 +160,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.pink, foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: const Text('Run Milan Analysis', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                child: Text(l?.runMilanAnalysisButton ?? 'Run Milan Analysis', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               )))
           : null,
     );
