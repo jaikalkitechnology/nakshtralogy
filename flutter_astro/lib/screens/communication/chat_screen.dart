@@ -45,6 +45,13 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
   int _userMessageCount = 0;
   int _remainingMessages = 0;
   bool _uploading = false;
+  // Auto-heal: keep the socket alive with pings and reconnect (with backoff) on
+  // a drop instead of leaving the header stuck on "Connecting…".
+  Timer? _pingTimer;
+  Timer? _reconnectTimer;
+  bool _reconnecting = false;
+  bool _closed = false;             // set on intentional end/leave — stops reconnect
+  int _reconnectAttempts = 0;
 
   @override
   void initState() {
@@ -62,9 +69,33 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
   }
 
   void _sendEndSession() {
+    _closed = true;
+    _pingTimer?.cancel();
+    _reconnectTimer?.cancel();
     try {
       _channel?.sink.add(jsonEncode({'type': 'end_session'}));
     } catch (_) {}
+  }
+
+  void _startPing() {
+    _pingTimer?.cancel();
+    _pingTimer = Timer.periodic(const Duration(seconds: 25), (_) {
+      try { _channel?.sink.add(jsonEncode({'type': 'ping'})); } catch (_) {}
+    });
+  }
+
+  void _onSocketClosed() {
+    _pingTimer?.cancel();
+    if (_closed || !mounted) return;
+    setState(() { _connected = false; _reconnecting = true; });
+    _reconnectTimer?.cancel();
+    const backoff = [2, 4, 8, 16, 30];
+    final delay = backoff[_reconnectAttempts.clamp(0, backoff.length - 1)];
+    _reconnectAttempts++;
+    _reconnectTimer = Timer(Duration(seconds: delay), () {
+      if (_closed || !mounted) return;
+      _connect();
+    });
   }
 
   Future<void> _connect() async {
@@ -75,6 +106,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
       _myUserId = jsonDecode(userData)['id'];
     }
 
+    try { _channel?.sink.close(); } catch (_) {}
     final uri = Uri.parse('${ApiConstants.wsChat}/${widget.sessionId}?token=$token');
     _channel = WebSocketChannel.connect(uri);
 
@@ -91,12 +123,35 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
             _scrollToBottom();
             break;
           case 'session_info':
+            final active = data['status'] == 'active';
             setState(() {
-              _connected = data['status'] == 'active';
+              _connected = active;
+              _reconnecting = false;
               _userMessageCount = data['user_message_count'] ?? 0;
               _remainingMessages = (data['session_message_limit'] ?? widget.sessionMessageLimit) - _userMessageCount;
             });
-            if (_connected) _startTimer();
+            if (active) {
+              _reconnectAttempts = 0;
+              _startTimer();
+              _startPing();
+            }
+            break;
+          case 'ping':
+            try { _channel?.sink.add(jsonEncode({'type': 'pong'})); } catch (_) {}
+            break;
+          case 'pong':
+            break;
+          case 'session_taken_over':
+            _closed = true;
+            _pingTimer?.cancel();
+            _reconnectTimer?.cancel();
+            _timer?.cancel();
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(data['message'] ?? 'Chat opened on another device'),
+                backgroundColor: AppColors.error));
+              Navigator.pop(context);
+            }
             break;
           case 'session_ended':
             _timer?.cancel();
@@ -117,12 +172,13 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
             break;
         }
       },
-      onDone: () => setState(() => _connected = false),
-      onError: (_) => setState(() => _connected = false),
+      onDone: _onSocketClosed,
+      onError: (_) => _onSocketClosed(),
     );
   }
 
   void _startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() => _seconds++);
     });
@@ -239,6 +295,8 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
     WidgetsBinding.instance.removeObserver(this);
     _sendEndSession();
     _timer?.cancel();
+    _pingTimer?.cancel();
+    _reconnectTimer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
@@ -292,7 +350,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
                       children: [
                         Text(widget.userName, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
                         Text(
-                          _connected ? 'Online' : 'Connecting...',
+                          _connected ? 'Online' : (_reconnecting ? 'Reconnecting…' : 'Connecting...'),
                           style: TextStyle(color: _connected ? AppColors.success : AppColors.smoke, fontSize: 12),
                         ),
                       ],
