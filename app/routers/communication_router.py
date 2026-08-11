@@ -1218,12 +1218,14 @@ def send_gift(
     db.add(lg)
     stream.total_gifts_amount = Decimal(str(float(stream.total_gifts_amount or 0) + price))
 
-    # credit astrologer (minus commission)
-    commission = price * settings.PLATFORM_COMMISSION_PCT / 100
-    earning = price - commission
+    # Credit the astrologer their SHARE (commission_pct = astrologer's %), using
+    # the same split as calls/chat so gifts aren't paid on the inverted convention.
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == stream.astrologer_profile_id).first()
+    commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
+    _, earning, _ = _split_earning(price, 0.0, "astrologer", commission_pct)
     if profile:
-        _credit_wallet(db, profile.user_id, earning, f"Gift earning: {gift.name}")
+        _credit_wallet(db, profile.user_id, earning,
+                       f"Gift earning: {gift.name} ({commission_pct:g}% share)")
 
     db.commit()
     db.refresh(lg)
@@ -1276,10 +1278,10 @@ def send_super_chat(
     # Credit astrologer (minus commission)
     profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == stream.astrologer_profile_id).first()
     commission_pct = float(profile.commission_pct) if profile else settings.PLATFORM_COMMISSION_PCT
-    commission = amount * commission_pct / 100
-    earning = amount - commission
+    _, earning, _ = _split_earning(amount, 0.0, "astrologer", commission_pct)
     if profile:
-        _credit_wallet(db, profile.user_id, earning, f"Super Chat earning: ₹{amount} ({commission_pct}% commission)")
+        _credit_wallet(db, profile.user_id, earning,
+                       f"Super Chat earning: ₹{amount} ({commission_pct:g}% share)")
 
     db.commit()
     db.refresh(sc)
