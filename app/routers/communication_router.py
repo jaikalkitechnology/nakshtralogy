@@ -1311,6 +1311,19 @@ def send_gift(
     if not gift:
         raise HTTPException(status_code=404, detail=t("err.gift_not_found", lang))
 
+    # Idempotency: a retry / double-tap with the same key returns the first
+    # result instead of debiting + crediting a second time.
+    if req.idempotency_key:
+        dup = db.query(LiveStreamGift).filter(
+            LiveStreamGift.idempotency_key == req.idempotency_key,
+            LiveStreamGift.sender_id == current_user.id,
+        ).first()
+        if dup:
+            return GiftSentResponse(
+                id=dup.id, sender_name=dup.sender_name,
+                gift_name=_gift_display_name(gift.name, lang), gift_icon=gift.icon,
+                amount=float(dup.amount), created_at=dup.created_at)
+
     price = float(gift.price)
     txn_id = _debit_wallet(db, current_user.id, price, f"Gift: {gift.name} in live stream", lang=lang)
 
@@ -1321,6 +1334,7 @@ def send_gift(
         sender_name=current_user.name,
         amount=price,
         wallet_txn_id=txn_id,
+        idempotency_key=req.idempotency_key,
     )
     db.add(lg)
     stream.total_gifts_amount = Decimal(str(float(stream.total_gifts_amount or 0) + price))
@@ -1368,6 +1382,18 @@ def send_super_chat(
     amount = req.amount
     if amount < min_rate:
         raise HTTPException(status_code=400, detail=t("err.min_super_chat_amount", lang, amount=min_rate))
+
+    # Idempotency: a retry / double-tap with the same key returns the first result.
+    if req.idempotency_key:
+        dup = db.query(LiveStreamSuperChat).filter(
+            LiveStreamSuperChat.idempotency_key == req.idempotency_key,
+            LiveStreamSuperChat.sender_id == current_user.id,
+        ).first()
+        if dup:
+            return SuperChatResponse(
+                id=dup.id, sender_name=dup.sender_name, message=dup.message,
+                amount=float(dup.amount), is_pinned=dup.is_pinned, created_at=dup.created_at)
+
     txn_id = _debit_wallet(db, current_user.id, amount, f"Super Chat in live stream: ₹{amount}", lang=lang)
 
     sc = LiveStreamSuperChat(
@@ -1378,6 +1404,7 @@ def send_super_chat(
         amount=Decimal(str(amount)),
         is_pinned=True,
         wallet_txn_id=txn_id,
+        idempotency_key=req.idempotency_key,
     )
     db.add(sc)
     stream.total_gifts_amount = Decimal(str(float(stream.total_gifts_amount or 0) + amount))

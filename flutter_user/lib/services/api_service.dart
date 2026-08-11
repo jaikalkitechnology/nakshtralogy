@@ -969,8 +969,9 @@ class ApiService {
     return [];
   }
 
-  Future<Map<String, dynamic>> sendLiveGift(String streamId, String giftPricingId) async {
-    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/gift'), headers: _headers, body: jsonEncode({'gift_pricing_id': giftPricingId}));
+  Future<Map<String, dynamic>> sendLiveGift(String streamId, String giftPricingId, {String? idempotencyKey}) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/gift'), headers: _headers,
+        body: jsonEncode({'gift_pricing_id': giftPricingId, if (idempotencyKey != null) 'idempotency_key': idempotencyKey}));
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
@@ -980,8 +981,9 @@ class ApiService {
     return [];
   }
 
-  Future<Map<String, dynamic>> sendSuperChat(String streamId, String message, double amount) async {
-    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/super-chat'), headers: _headers, body: jsonEncode({'message': message, 'amount': amount}));
+  Future<Map<String, dynamic>> sendSuperChat(String streamId, String message, double amount, {String? idempotencyKey}) async {
+    final resp = await http.post(Uri.parse('${ApiConstants.commBase}/live/$streamId/super-chat'), headers: _headers,
+        body: jsonEncode({'message': message, 'amount': amount, if (idempotencyKey != null) 'idempotency_key': idempotencyKey}));
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 

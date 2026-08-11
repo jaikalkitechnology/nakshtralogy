@@ -178,7 +178,9 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   }
 
   Future<void> _sendGift(Map<String, dynamic> gift) async {
-    final resp = await _api.sendLiveGift(widget.streamId, gift['id']);
+    // One-time key so a dropped-response retry of THIS send isn't charged twice.
+    final key = 'g_${DateTime.now().microsecondsSinceEpoch}_${gift['id']}';
+    final resp = await _api.sendLiveGift(widget.streamId, gift['id'], idempotencyKey: key);
     if (mounted) {
       if (resp['statusCode'] == 200) {
         // Show gift animation overlay
@@ -232,7 +234,8 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
                 return;
               }
               Navigator.pop(ctx);
-              final resp = await _api.sendSuperChat(widget.streamId, message, amount);
+              final scKey = 'sc_${DateTime.now().microsecondsSinceEpoch}';
+              final resp = await _api.sendSuperChat(widget.streamId, message, amount, idempotencyKey: scKey);
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(resp['statusCode'] == 200 ? 'Super Chat sent!' : resp['detail'] ?? 'Failed'),

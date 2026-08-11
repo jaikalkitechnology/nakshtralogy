@@ -894,6 +894,9 @@ class LiveStreamGift(Base):
     sender_name = Column(String(150), nullable=True)
     amount = Column(Numeric(10, 2), nullable=False)
     wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    # Client-supplied one-time key: a retry / double-tap with the same key is
+    # returned as-is instead of charging twice. Nullable — schema_sync auto-adds.
+    idempotency_key = Column(String(64), nullable=True, index=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     stream = relationship("LiveStream", back_populates="gifts")
@@ -911,6 +914,9 @@ class LiveStreamSuperChat(Base):
     amount = Column(Numeric(10, 2), nullable=False)
     is_pinned = Column(Boolean, default=True)
     wallet_txn_id = Column(String(36), ForeignKey("wallet_transactions.id"), nullable=True)
+    # Client-supplied one-time key: a retry / double-tap with the same key is
+    # returned as-is instead of charging twice. Nullable — schema_sync auto-adds.
+    idempotency_key = Column(String(64), nullable=True, index=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     stream = relationship("LiveStream", back_populates="super_chats")
