@@ -541,10 +541,19 @@ def coupon_for_astrologer(
 ):
     """The active astrologer offer to show on the profile, plus whether this
     user has already used it."""
+    # An astrologer may have more than one active coupon. Prefer one that
+    # carries a redeemable CODE (so the user always sees a code to copy/apply),
+    # then the biggest discount, then the newest — deterministic instead of
+    # arbitrarily returning a code-less coupon and hiding the code row.
+    has_code = func.coalesce(func.nullif(Coupon.code, ""), None).isnot(None)
     c = db.query(Coupon).filter(
         Coupon.owner_type == "astrologer", Coupon.owner_id == astrologer_id,
         Coupon.status == "active",
-    ).order_by(Coupon.discount_value.desc()).first()
+    ).order_by(
+        has_code.desc(),
+        Coupon.discount_value.desc(),
+        Coupon.created_at.desc(),
+    ).first()
     if not c:
         return {"coupon": None}
     used = coupon_service.already_used(db, c.id, current_user.id)
