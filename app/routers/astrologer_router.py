@@ -531,6 +531,36 @@ def register_push_token(
     return MessageResponse(message=t("msg.push_token_registered", lang))
 
 
+class VoipTokenRegisterRequest(_PushBaseModel):
+    voip_token: str
+
+
+@router.post("/push/voip/register", response_model=MessageResponse)
+def register_voip_token(
+    req: VoipTokenRegisterRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    lang: str = Depends(get_lang),
+):
+    """Register this astrologer's iOS PushKit VoIP token so incoming calls can
+    wake a full-screen CallKit UI even when the app is killed. An empty token
+    clears it (logout / VoIP disabled)."""
+    tok = (req.voip_token or "").strip()
+    # A VoIP token is device-bound; detach it from any other account that
+    # registered the same device so an account switch never mis-rings.
+    if tok:
+        others = (
+            db.query(User)
+            .filter(User.voip_token == tok, User.id != current_user.id)
+            .all()
+        )
+        for o in others:
+            o.voip_token = None
+    current_user.voip_token = tok or None
+    db.commit()
+    return MessageResponse(message=t("msg.push_token_registered", lang))
+
+
 # ── Get My Profile ────────────────────────────────────────────────────
 
 @router.get("/me", response_model=AstrologerFullResponse)
