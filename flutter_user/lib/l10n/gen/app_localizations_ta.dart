@@ -11864,4 +11864,160 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get reportCopied => 'அறிக்கை நகலெடுக்கப்பட்டது!';
+
+  @override
+  String get biometricNotAvailable => 'இந்த சாதனத்தில் பயோமெட்ரிக் இல்லை';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'பயோமெட்ரிக் பிழை: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'பயோமெட்ரிக் உள்நுழைவை இயக்க சரிபார்க்கவும்';
+
+  @override
+  String get dobFormatLabel => 'பிறந்த தேதி (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'பிறந்த நேரம் (HH:MM)';
+
+  @override
+  String get phoneLabel => 'தொலைபேசி';
+
+  @override
+  String get activeBadge => 'செயலில்';
+
+  @override
+  String get chartCategoryLabel => 'வகை';
+
+  @override
+  String get freePrimaryDescription =>
+      'ஃப்ரீ ப்ரைமரி — தினசரி ராசிபலன் மற்றும் இலவச ஒற்றை-சார்ட் சேவைகளுக்குப் பயன்படுகிறது';
+
+  @override
+  String get searchChartsHint => 'பெயர் அல்லது பிறந்த தேதி மூலம் தேடுங்கள்...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return '$price க்கு அன்லாக் செய்யவும்';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'இந்த AI நிபுணரை $price க்கு (ஒரு முறை) அன்லாக் செய்யவும், இது ஆப் ஸ்டோர் மூலம் பாதுகாப்பாக வாங்கப்படுகிறது.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'இந்த AI நிபுணரை $price க்கு (ஒரு முறை) அன்லாக் செய்யவும். தொகை உங்கள் வாலட்டில் இருந்து கழிக்கப்படும்.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'இந்த நிபுணர் இன்னும் வாங்குவதற்குக் கிடைக்கவில்லை.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'வாங்குதலை முடிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'அன்லாக் செய்ய முடியவில்லை (வாலட் இருப்பைச் சரிபார்க்கவும்)';
+
+  @override
+  String get freeBadge => 'இலவசம்';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'உங்கள் செயலில் உள்ள $kind நடந்து கொண்டிருக்கிறது';
+  }
+
+  @override
+  String get returnLabel => 'திரும்பு';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'ஆலோசனை மற்றும் சலுகை விழிப்பூட்டல்களைப் பெற அறிவிப்புகளை இயக்கவும்';
+
+  @override
+  String get enableLabel => 'இயக்கு';
+
+  @override
+  String get notificationsEnabled => 'அறிவிப்புகள் இயக்கப்பட்டன';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'இயக்க முடியவில்லை — உங்கள் உலாவியில் அறிவிப்புகளை அனுமதிக்கவும்';
+
+  @override
+  String get amountInrLabel => 'தொகை (₹)';
+
+  @override
+  String get noteOptionalLabel => 'குறிப்பு (விருப்பம்)';
+
+  @override
+  String get txnDate => 'தேதி';
+
+  @override
+  String get txnDescription => 'விவரம்';
+
+  @override
+  String get txnType => 'வகை';
+
+  @override
+  String get txnAmount => 'தொகை';
+
+  @override
+  String get txnBalance => 'இருப்பு';
+
+  @override
+  String get credit => 'கிரெடிட்';
+
+  @override
+  String get debit => 'டெபிட்';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 உற்பத்தியில் இது Razorpay/Stripe க்கு திருப்பிவிடப்படும்.';
+
+  @override
+  String get downloadPdf => 'PDF பதிவிறக்கவும்';
+
+  @override
+  String get chatWithAiCta => 'AI உடன் அரட்டை அடிக்கவும்';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'PDF சேவை தற்காலிகமாக கிடைக்கவில்லை. பின்னர் முயற்சிக்கவும்.';
+
+  @override
+  String get pleaseUnlockFirst => 'முதலில் இதை அன்லாக் செய்யவும்.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.';
+
+  @override
+  String get statConsults => 'ஆலோசனைகள்';
+
+  @override
+  String get statCharts => 'சார்ட்கள்';
+
+  @override
+  String get statWallet => 'வாலட்';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'உங்கள் முதல் சார்ட் உங்கள் இலவச ப்ரைமரி. கூடுதல் சார்ட்கள் தனித்தனியாக சேவைகளை அன்லாக் செய்யும்.';
+
+  @override
+  String get tryDifferentFilter => 'வேறு வடிப்பானை முயற்சிக்கவும்';
+
+  @override
+  String get defaultChartName => 'சார்ட்';
+
+  @override
+  String get balAbbr => 'இருப்பு';
 }

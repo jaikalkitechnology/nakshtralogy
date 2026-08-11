@@ -3789,5 +3789,85 @@
   "houseAnalysis": "การวิเคราะห์เรือน",
   "jaiminiKarakas": "Karaka แบบ Jaimini",
   "copyFullReport": "คัดลอกข้อมูลรายงานฉบับเต็ม",
-  "reportCopied": "คัดลอกข้อมูลรายงานแล้ว!"
+  "reportCopied": "คัดลอกข้อมูลรายงานแล้ว!",
+  "biometricNotAvailable": "ไม่มีระบบไบโอเมตริกซ์ในอุปกรณ์นี้",
+  "biometricErrorMsg": "ข้อผิดพลาดไบโอเมตริกซ์: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "ยืนยันเพื่อเปิดใช้การเข้าสู่ระบบด้วยไบโอเมตริกซ์",
+  "dobFormatLabel": "วันเกิด (DD/MM/YYYY)",
+  "tobFormatLabel": "เวลาเกิด (HH:MM)",
+  "phoneLabel": "โทรศัพท์",
+  "activeBadge": "ใช้งานอยู่",
+  "chartCategoryLabel": "หมวดหมู่",
+  "freePrimaryDescription": "หลักฟรี — ใช้สำหรับดูดวงประจำวันและบริการแผนภูมิเดี่ยวฟรี",
+  "searchChartsHint": "ค้นหาด้วยชื่อหรือวันเกิด...",
+  "unlockPriceLabel": "ปลดล็อกด้วย {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "ปลดล็อกผู้เชี่ยวชาญ AI นี้ด้วย {price} (ครั้งเดียว) ซื้ออย่างปลอดภัยผ่านแอปสโตร์",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "ปลดล็อกผู้เชี่ยวชาญ AI นี้ด้วย {price} (ครั้งเดียว) จำนวนเงินจะถูกหักจากกระเป๋าเงินของคุณ",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "ผู้เชี่ยวชาญนี้ยังไม่พร้อมให้ซื้อ",
+  "couldNotCompletePurchase": "ไม่สามารถทำการซื้อให้เสร็จสมบูรณ์ได้ กรุณาลองอีกครั้ง",
+  "couldNotUnlockWalletBalance": "ไม่สามารถปลดล็อกได้ (ตรวจสอบยอดเงินในกระเป๋าเงิน)",
+  "freeBadge": "ฟรี",
+  "activeSessionInProgress": "คุณมี {kind} ที่กำลังดำเนินอยู่",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "กลับไป",
+  "enableNotificationsForAlerts": "เปิดใช้การแจ้งเตือนเพื่อรับการแจ้งเตือนการปรึกษาและข้อเสนอ",
+  "enableLabel": "เปิดใช้งาน",
+  "notificationsEnabled": "เปิดใช้การแจ้งเตือนแล้ว",
+  "couldNotEnableNotifications": "ไม่สามารถเปิดใช้งานได้ — อนุญาตการแจ้งเตือนในเบราว์เซอร์ของคุณ",
+  "amountInrLabel": "จำนวน (₹)",
+  "noteOptionalLabel": "บันทึก (ไม่บังคับ)",
+  "txnDate": "วันที่",
+  "txnDescription": "รายละเอียด",
+  "txnType": "ประเภท",
+  "txnAmount": "จำนวน",
+  "txnBalance": "ยอดคงเหลือ",
+  "credit": "เครดิต",
+  "debit": "เดบิต",
+  "razorpayStripeNote": "💳 ในระบบจริงจะถูกเปลี่ยนเส้นทางไปยัง Razorpay/Stripe",
+  "downloadPdf": "ดาวน์โหลด PDF",
+  "chatWithAiCta": "แชทกับ AI",
+  "pdfServiceUnavailable": "บริการ PDF ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้งในภายหลัง",
+  "pleaseUnlockFirst": "กรุณาปลดล็อกสิ่งนี้ก่อน",
+  "couldNotGeneratePdf": "ไม่สามารถสร้าง PDF ได้ กรุณาลองอีกครั้ง",
+  "statConsults": "การปรึกษา",
+  "statCharts": "แผนภูมิ",
+  "statWallet": "กระเป๋าเงิน",
+  "firstChartPrimaryInfo": "แผนภูมิแรกของคุณคือแผนภูมิหลักฟรี แผนภูมิเพิ่มเติมจะปลดล็อกบริการแยกกัน",
+  "tryDifferentFilter": "ลองใช้ตัวกรองอื่น",
+  "defaultChartName": "แผนภูมิ",
+  "balAbbr": "คงเหลือ"
 }

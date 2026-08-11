@@ -3789,5 +3789,85 @@
   "houseAnalysis": "ಭಾವ ವಿಶ್ಲೇಷಣೆ",
   "jaiminiKarakas": "ಜೈಮಿನಿ ಕಾರಕಗಳು",
   "copyFullReport": "ಸಂಪೂರ್ಣ ವರದಿ ನಕಲಿಸಿ",
-  "reportCopied": "ವರದಿ ನಕಲಾಗಿದೆ!"
+  "reportCopied": "ವರದಿ ನಕಲಾಗಿದೆ!",
+  "biometricNotAvailable": "ಈ ಸಾಧನದಲ್ಲಿ ಬಯೋಮೆಟ್ರಿಕ್ ಲಭ್ಯವಿಲ್ಲ",
+  "biometricErrorMsg": "ಬಯೋಮೆಟ್ರಿಕ್ ದೋಷ: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್ ಸಕ್ರಿಯಗೊಳಿಸಲು ಪರಿಶೀಲಿಸಿ",
+  "dobFormatLabel": "ಜನ್ಮ ದಿನಾಂಕ (DD/MM/YYYY)",
+  "tobFormatLabel": "ಜನ್ಮ ಸಮಯ (HH:MM)",
+  "phoneLabel": "ಫೋನ್",
+  "activeBadge": "ಸಕ್ರಿಯ",
+  "chartCategoryLabel": "ವರ್ಗ",
+  "freePrimaryDescription": "ಫ್ರೀ ಪ್ರೈಮರಿ — ದೈನಂದಿನ ರಾಶಿಫಲ ಮತ್ತು ಉಚಿತ ಸಿಂಗಲ್-ಚಾರ್ಟ್ ಸೇವೆಗಳಿಗೆ ಬಳಸಲಾಗುತ್ತದೆ",
+  "searchChartsHint": "ಹೆಸರು ಅಥವಾ ಜನ್ಮ ದಿನಾಂಕದಿಂದ ಹುಡುಕಿ...",
+  "unlockPriceLabel": "{price} ಗೆ ಅನ್‌ಲಾಕ್ ಮಾಡಿ",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "ಈ AI ತಜ್ಞರನ್ನು {price} ಗೆ (ಒಂದೇ ಬಾರಿ) ಅನ್‌ಲಾಕ್ ಮಾಡಿ, ಇದನ್ನು ಆಪ್ ಸ್ಟೋರ್ ಮೂಲಕ ಸುರಕ್ಷಿತವಾಗಿ ಖರೀದಿಸಲಾಗುತ್ತದೆ.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "ಈ AI ತಜ್ಞರನ್ನು {price} ಗೆ (ಒಂದೇ ಬಾರಿ) ಅನ್‌ಲಾಕ್ ಮಾಡಿ. ಮೊತ್ತವನ್ನು ನಿಮ್ಮ ವಾಲೆಟ್‌ನಿಂದ ಕಡಿತಗೊಳಿಸಲಾಗುತ್ತದೆ.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "ಈ ತಜ್ಞರು ಇನ್ನೂ ಖರೀದಿಗೆ ಲಭ್ಯವಿಲ್ಲ.",
+  "couldNotCompletePurchase": "ಖರೀದಿಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "couldNotUnlockWalletBalance": "ಅನ್‌ಲಾಕ್ ಮಾಡಲಾಗಲಿಲ್ಲ (ವಾಲೆಟ್ ಬಾಕಿ ಪರಿಶೀಲಿಸಿ)",
+  "freeBadge": "ಫ್ರೀ",
+  "activeSessionInProgress": "ನಿಮ್ಮ ಸಕ್ರಿಯ {kind} ಪ್ರಗತಿಯಲ್ಲಿದೆ",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "ಹಿಂತಿರುಗಿ",
+  "enableNotificationsForAlerts": "ಸಲಹೆ ಮತ್ತು ಆಫರ್ ಎಚ್ಚರಿಕೆಗಳನ್ನು ಪಡೆಯಲು ಅಧಿಸೂಚನೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ",
+  "enableLabel": "ಸಕ್ರಿಯಗೊಳಿಸಿ",
+  "notificationsEnabled": "ಅಧಿಸೂಚನೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
+  "couldNotEnableNotifications": "ಸಕ್ರಿಯಗೊಳಿಸಲಾಗಲಿಲ್ಲ — ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಅಧಿಸೂಚನೆಗಳನ್ನು ಅನುಮತಿಸಿ",
+  "amountInrLabel": "ಮೊತ್ತ (₹)",
+  "noteOptionalLabel": "ಟಿಪ್ಪಣಿ (ಆಯ್ಕೆಯ)",
+  "txnDate": "ದಿನಾಂಕ",
+  "txnDescription": "ವಿವರಣೆ",
+  "txnType": "ಪ್ರಕಾರ",
+  "txnAmount": "ಮೊತ್ತ",
+  "txnBalance": "ಬಾಕಿ",
+  "credit": "ಕ್ರೆಡಿಟ್",
+  "debit": "ಡೆಬಿಟ್",
+  "razorpayStripeNote": "💳 ಪ್ರೊಡಕ್ಷನ್‌ನಲ್ಲಿ ಇದು Razorpay/Stripe ಗೆ ಮರುನಿರ್ದೇಶಿಸುತ್ತದೆ.",
+  "downloadPdf": "PDF ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "chatWithAiCta": "AI ಜೊತೆ ಚಾಟ್ ಮಾಡಿ",
+  "pdfServiceUnavailable": "PDF ಸೇವೆ ತಾತ್ಕಾಲಿಕವಾಗಿ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "pleaseUnlockFirst": "ದಯವಿಟ್ಟು ಮೊದಲು ಇದನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ.",
+  "couldNotGeneratePdf": "PDF ರಚಿಸಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "statConsults": "ಸಲಹೆಗಳು",
+  "statCharts": "ಚಾರ್ಟ್‌ಗಳು",
+  "statWallet": "ವಾಲೆಟ್",
+  "firstChartPrimaryInfo": "ನಿಮ್ಮ ಮೊದಲ ಚಾರ್ಟ್ ನಿಮ್ಮ ಫ್ರೀ ಪ್ರೈಮರಿ. ಹೆಚ್ಚುವರಿ ಚಾರ್ಟ್‌ಗಳು ಪ್ರತ್ಯೇಕವಾಗಿ ಸೇವೆಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡುತ್ತವೆ.",
+  "tryDifferentFilter": "ಬೇರೆ ಫಿಲ್ಟರ್ ಪ್ರಯತ್ನಿಸಿ",
+  "defaultChartName": "ಚಾರ್ಟ್",
+  "balAbbr": "ಬಾಕಿ"
 }

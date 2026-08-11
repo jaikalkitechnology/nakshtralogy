@@ -3789,5 +3789,85 @@
   "houseAnalysis": "भाव विश्लेषण",
   "jaiminiKarakas": "जैमिनी कारक",
   "copyFullReport": "पूरी रिपोर्ट कॉपी करें",
-  "reportCopied": "रिपोर्ट कॉपी हो गई!"
+  "reportCopied": "रिपोर्ट कॉपी हो गई!",
+  "biometricNotAvailable": "इस डिवाइस पर बायोमेट्रिक उपलब्ध नहीं है",
+  "biometricErrorMsg": "बायोमेट्रिक त्रुटि: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "बायोमेट्रिक लॉगिन सक्षम करने के लिए सत्यापित करें",
+  "dobFormatLabel": "जन्म तिथि (DD/MM/YYYY)",
+  "tobFormatLabel": "जन्म समय (HH:MM)",
+  "phoneLabel": "फ़ोन",
+  "activeBadge": "सक्रिय",
+  "chartCategoryLabel": "श्रेणी",
+  "freePrimaryDescription": "फ्री प्राइमरी — दैनिक राशिफल और मुफ्त सिंगल-चार्ट सेवाओं के लिए उपयोग होता है",
+  "searchChartsHint": "नाम या जन्म तिथि से खोजें...",
+  "unlockPriceLabel": "{price} में अनलॉक करें",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "इस AI विशेषज्ञ को {price} में (एक बार) अनलॉक करें, जिसे ऐप स्टोर के माध्यम से सुरक्षित रूप से खरीदा जाता है।",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "इस AI विशेषज्ञ को {price} में (एक बार) अनलॉक करें। राशि आपके वॉलेट से काट ली जाएगी।",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "यह विशेषज्ञ अभी खरीद के लिए उपलब्ध नहीं है।",
+  "couldNotCompletePurchase": "खरीद पूरी नहीं हो सकी। कृपया पुनः प्रयास करें।",
+  "couldNotUnlockWalletBalance": "अनलॉक नहीं हो सका (वॉलेट बैलेंस जांचें)",
+  "freeBadge": "फ्री",
+  "activeSessionInProgress": "आपका एक सक्रिय {kind} जारी है",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "वापस जाएं",
+  "enableNotificationsForAlerts": "सलाह और ऑफ़र अलर्ट पाने के लिए नोटिफ़िकेशन सक्षम करें",
+  "enableLabel": "सक्षम करें",
+  "notificationsEnabled": "नोटिफ़िकेशन सक्षम किए गए",
+  "couldNotEnableNotifications": "सक्षम नहीं हो सका — अपने ब्राउज़र में नोटिफ़िकेशन की अनुमति दें",
+  "amountInrLabel": "राशि (₹)",
+  "noteOptionalLabel": "नोट (वैकल्पिक)",
+  "txnDate": "तिथि",
+  "txnDescription": "विवरण",
+  "txnType": "प्रकार",
+  "txnAmount": "राशि",
+  "txnBalance": "बैलेंस",
+  "credit": "क्रेडिट",
+  "debit": "डेबिट",
+  "razorpayStripeNote": "💳 प्रोडक्शन में यह Razorpay/Stripe पर रीडायरेक्ट होगा।",
+  "downloadPdf": "PDF डाउनलोड करें",
+  "chatWithAiCta": "AI से चैट करें",
+  "pdfServiceUnavailable": "PDF सेवा अभी अस्थायी रूप से अनुपलब्ध है। कृपया बाद में पुनः प्रयास करें।",
+  "pleaseUnlockFirst": "कृपया पहले इसे अनलॉक करें।",
+  "couldNotGeneratePdf": "PDF तैयार नहीं हो सका। कृपया पुनः प्रयास करें।",
+  "statConsults": "सलाह",
+  "statCharts": "चार्ट्स",
+  "statWallet": "वॉलेट",
+  "firstChartPrimaryInfo": "आपका पहला चार्ट आपका फ्री प्राइमरी है। अतिरिक्त चार्ट व्यक्तिगत रूप से सेवाएं अनलॉक करते हैं।",
+  "tryDifferentFilter": "एक अलग फ़िल्टर आज़माएं",
+  "defaultChartName": "चार्ट",
+  "balAbbr": "बैलेंस"
 }

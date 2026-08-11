@@ -11885,4 +11885,161 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get reportCopied => 'Berichtsdaten kopiert!';
+
+  @override
+  String get biometricNotAvailable =>
+      'Biometrie ist auf diesem Gerät nicht verfügbar';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'Biometrie-Fehler: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'Bestätigen, um die biometrische Anmeldung zu aktivieren';
+
+  @override
+  String get dobFormatLabel => 'Geburtsdatum (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'Geburtszeit (HH:MM)';
+
+  @override
+  String get phoneLabel => 'Telefon';
+
+  @override
+  String get activeBadge => 'AKTIV';
+
+  @override
+  String get chartCategoryLabel => 'Kategorie';
+
+  @override
+  String get freePrimaryDescription =>
+      'Kostenlos Primär — wird für das tägliche Horoskop & kostenlose Einzelchart-Dienste verwendet';
+
+  @override
+  String get searchChartsHint => 'Nach Name oder Geburtsdatum suchen...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'Für $price freischalten';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'Schalte diesen KI-Spezialisten für $price (einmalig) frei, sicher über den App Store gekauft.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'Schalte diesen KI-Spezialisten für $price (einmalig) frei. Der Betrag wird von deinem Wallet abgezogen.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'Dieser Spezialist ist noch nicht zum Kauf verfügbar.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'Freischalten nicht möglich (Wallet-Guthaben prüfen)';
+
+  @override
+  String get freeBadge => 'KOSTENLOS';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'Du hast eine aktive $kind in Bearbeitung';
+  }
+
+  @override
+  String get returnLabel => 'Zurückkehren';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'Benachrichtigungen aktivieren, um Beratungs- & Angebotshinweise zu erhalten';
+
+  @override
+  String get enableLabel => 'Aktivieren';
+
+  @override
+  String get notificationsEnabled => 'Benachrichtigungen aktiviert';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'Konnte nicht aktiviert werden — erlaube Benachrichtigungen in deinem Browser';
+
+  @override
+  String get amountInrLabel => 'Betrag (₹)';
+
+  @override
+  String get noteOptionalLabel => 'Notiz (optional)';
+
+  @override
+  String get txnDate => 'DATUM';
+
+  @override
+  String get txnDescription => 'BESCHREIBUNG';
+
+  @override
+  String get txnType => 'TYP';
+
+  @override
+  String get txnAmount => 'BETRAG';
+
+  @override
+  String get txnBalance => 'KONTOSTAND';
+
+  @override
+  String get credit => 'Gutschrift';
+
+  @override
+  String get debit => 'Abbuchung';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 In der Produktion wird dies zu Razorpay/Stripe weitergeleitet.';
+
+  @override
+  String get downloadPdf => 'PDF herunterladen';
+
+  @override
+  String get chatWithAiCta => 'Mit KI chatten';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'Der PDF-Dienst ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.';
+
+  @override
+  String get pleaseUnlockFirst => 'Bitte schalte dies zuerst frei.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'Die PDF konnte nicht erstellt werden. Bitte versuche es erneut.';
+
+  @override
+  String get statConsults => 'BERATUNGEN';
+
+  @override
+  String get statCharts => 'CHARTS';
+
+  @override
+  String get statWallet => 'WALLET';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'Dein erstes Chart ist dein kostenloses Primär-Chart. Zusätzliche Charts schalten Dienste einzeln frei.';
+
+  @override
+  String get tryDifferentFilter => 'Versuche einen anderen Filter';
+
+  @override
+  String get defaultChartName => 'Chart';
+
+  @override
+  String get balAbbr => 'Saldo';
 }

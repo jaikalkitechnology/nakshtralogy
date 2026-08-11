@@ -11735,4 +11735,150 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get reportCopied => 'レポートデータをコピーしました！';
+
+  @override
+  String get biometricNotAvailable => 'このデバイスでは生体認証を利用できません';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return '生体認証エラー: $error';
+  }
+
+  @override
+  String get biometricVerifyReason => '生体認証ログインを有効にするには確認してください';
+
+  @override
+  String get dobFormatLabel => '生年月日 (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => '出生時刻 (HH:MM)';
+
+  @override
+  String get phoneLabel => '電話番号';
+
+  @override
+  String get activeBadge => 'アクティブ';
+
+  @override
+  String get chartCategoryLabel => 'カテゴリー';
+
+  @override
+  String get freePrimaryDescription => '無料プライマリー — 毎日の星占いと無料の単一チャートサービスに使用されます';
+
+  @override
+  String get searchChartsHint => '名前または生年月日で検索...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return '$priceでロック解除';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'このAIスペシャリストを$price（一回限り）でロック解除、アプリストアから安全に購入されます。';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'このAIスペシャリストを$price（一回限り）でロック解除します。金額はウォレットから引かれます。';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase => 'このスペシャリストはまだ購入できません。';
+
+  @override
+  String get couldNotCompletePurchase => '購入を完了できませんでした。もう一度お試しください。';
+
+  @override
+  String get couldNotUnlockWalletBalance => 'ロック解除できませんでした（ウォレット残高を確認してください）';
+
+  @override
+  String get freeBadge => '無料';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return '進行中のアクティブな$kindがあります';
+  }
+
+  @override
+  String get returnLabel => '戻る';
+
+  @override
+  String get enableNotificationsForAlerts => '相談やオファーの通知を受け取るには通知を有効にしてください';
+
+  @override
+  String get enableLabel => '有効にする';
+
+  @override
+  String get notificationsEnabled => '通知が有効になりました';
+
+  @override
+  String get couldNotEnableNotifications => '有効にできませんでした — ブラウザで通知を許可してください';
+
+  @override
+  String get amountInrLabel => '金額 (₹)';
+
+  @override
+  String get noteOptionalLabel => 'メモ（任意）';
+
+  @override
+  String get txnDate => '日付';
+
+  @override
+  String get txnDescription => '説明';
+
+  @override
+  String get txnType => '種類';
+
+  @override
+  String get txnAmount => '金額';
+
+  @override
+  String get txnBalance => '残高';
+
+  @override
+  String get credit => 'クレジット';
+
+  @override
+  String get debit => 'デビット';
+
+  @override
+  String get razorpayStripeNote => '💳 本番環境ではRazorpay/Stripeにリダイレクトされます。';
+
+  @override
+  String get downloadPdf => 'PDFをダウンロード';
+
+  @override
+  String get chatWithAiCta => 'AIとチャットする';
+
+  @override
+  String get pdfServiceUnavailable => 'PDFサービスは一時的に利用できません。後でもう一度お試しください。';
+
+  @override
+  String get pleaseUnlockFirst => 'まずこれをロック解除してください。';
+
+  @override
+  String get couldNotGeneratePdf => 'PDFを生成できませんでした。もう一度お試しください。';
+
+  @override
+  String get statConsults => '相談';
+
+  @override
+  String get statCharts => 'チャート';
+
+  @override
+  String get statWallet => 'ウォレット';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      '最初のチャートは無料のプライマリーです。追加のチャートは個別にサービスをロック解除します。';
+
+  @override
+  String get tryDifferentFilter => '別のフィルターを試してください';
+
+  @override
+  String get defaultChartName => 'チャート';
+
+  @override
+  String get balAbbr => '残高';
 }

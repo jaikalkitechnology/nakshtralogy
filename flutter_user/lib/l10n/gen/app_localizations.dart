@@ -22888,6 +22888,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report data copied!'**
   String get reportCopied;
+
+  /// No description provided for @biometricNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric not available on this device'**
+  String get biometricNotAvailable;
+
+  /// No description provided for @biometricErrorMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric error: {error}'**
+  String biometricErrorMsg(Object error);
+
+  /// No description provided for @biometricVerifyReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify to enable biometric login'**
+  String get biometricVerifyReason;
+
+  /// No description provided for @dobFormatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DOB (DD/MM/YYYY)'**
+  String get dobFormatLabel;
+
+  /// No description provided for @tobFormatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TOB (HH:MM)'**
+  String get tobFormatLabel;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phoneLabel;
+
+  /// No description provided for @activeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIVE'**
+  String get activeBadge;
+
+  /// No description provided for @chartCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get chartCategoryLabel;
+
+  /// No description provided for @freePrimaryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Primary — used for daily horoscope & free single-chart services'**
+  String get freePrimaryDescription;
+
+  /// No description provided for @searchChartsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or birth date...'**
+  String get searchChartsHint;
+
+  /// No description provided for @unlockPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock {price}'**
+  String unlockPriceLabel(Object price);
+
+  /// No description provided for @unlockAiSpecialistIntl.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock this AI specialist for {price} (one time), purchased securely through the app store.'**
+  String unlockAiSpecialistIntl(Object price);
+
+  /// No description provided for @unlockAiSpecialistWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock this AI specialist for {price} (one time). The amount is deducted from your wallet.'**
+  String unlockAiSpecialistWallet(Object price);
+
+  /// No description provided for @specialistNotAvailablePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'This specialist is not available for purchase yet.'**
+  String get specialistNotAvailablePurchase;
+
+  /// No description provided for @couldNotCompletePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the purchase. Please try again.'**
+  String get couldNotCompletePurchase;
+
+  /// No description provided for @couldNotUnlockWalletBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not unlock (check wallet balance)'**
+  String get couldNotUnlockWalletBalance;
+
+  /// No description provided for @freeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'FREE'**
+  String get freeBadge;
+
+  /// No description provided for @activeSessionInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'You have an active {kind} in progress'**
+  String activeSessionInProgress(Object kind);
+
+  /// No description provided for @returnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get returnLabel;
+
+  /// No description provided for @enableNotificationsForAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable notifications to get consultation & offer alerts'**
+  String get enableNotificationsForAlerts;
+
+  /// No description provided for @enableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enableLabel;
+
+  /// No description provided for @notificationsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications enabled'**
+  String get notificationsEnabled;
+
+  /// No description provided for @couldNotEnableNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not enable — allow notifications in your browser'**
+  String get couldNotEnableNotifications;
+
+  /// No description provided for @amountInrLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (₹)'**
+  String get amountInrLabel;
+
+  /// No description provided for @noteOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get noteOptionalLabel;
+
+  /// No description provided for @txnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'DATE'**
+  String get txnDate;
+
+  /// No description provided for @txnDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'DESCRIPTION'**
+  String get txnDescription;
+
+  /// No description provided for @txnType.
+  ///
+  /// In en, this message translates to:
+  /// **'TYPE'**
+  String get txnType;
+
+  /// No description provided for @txnAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'AMOUNT'**
+  String get txnAmount;
+
+  /// No description provided for @txnBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'BALANCE'**
+  String get txnBalance;
+
+  /// No description provided for @credit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit'**
+  String get credit;
+
+  /// No description provided for @debit.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit'**
+  String get debit;
+
+  /// No description provided for @razorpayStripeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'💳 In production this will redirect to Razorpay/Stripe.'**
+  String get razorpayStripeNote;
+
+  /// No description provided for @downloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download PDF'**
+  String get downloadPdf;
+
+  /// No description provided for @chatWithAiCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with AI'**
+  String get chatWithAiCta;
+
+  /// No description provided for @pdfServiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF service is temporarily unavailable. Please try again later.'**
+  String get pdfServiceUnavailable;
+
+  /// No description provided for @pleaseUnlockFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please unlock this first.'**
+  String get pleaseUnlockFirst;
+
+  /// No description provided for @couldNotGeneratePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not generate the PDF. Please try again.'**
+  String get couldNotGeneratePdf;
+
+  /// No description provided for @statConsults.
+  ///
+  /// In en, this message translates to:
+  /// **'CONSULTS'**
+  String get statConsults;
+
+  /// No description provided for @statCharts.
+  ///
+  /// In en, this message translates to:
+  /// **'CHARTS'**
+  String get statCharts;
+
+  /// No description provided for @statWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'WALLET'**
+  String get statWallet;
+
+  /// No description provided for @firstChartPrimaryInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first chart is your free Primary. Extra charts unlock services individually.'**
+  String get firstChartPrimaryInfo;
+
+  /// No description provided for @tryDifferentFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different filter'**
+  String get tryDifferentFilter;
+
+  /// No description provided for @defaultChartName.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart'**
+  String get defaultChartName;
+
+  /// No description provided for @balAbbr.
+  ///
+  /// In en, this message translates to:
+  /// **'Bal'**
+  String get balAbbr;
 }
 
 class _AppLocalizationsDelegate

@@ -141,6 +141,8 @@ class _GoogleProfileCompletionScreenState
               const SizedBox(height: 16),
               Text(
                 name.isEmpty ? l.awCompleteProfileTitle : l.awWelcomeName(name),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium
@@ -196,6 +198,8 @@ class _GoogleProfileCompletionScreenState
                         .map((o) => DropdownMenuItem(
                               value: o.code,
                               child: Text('${o.native}  (${o.name})',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       color: AppColors.textPrimary)),
                             ))

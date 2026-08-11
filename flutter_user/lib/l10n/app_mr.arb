@@ -3789,5 +3789,85 @@
   "houseAnalysis": "भाव विश्लेषण",
   "jaiminiKarakas": "जैमिनी कारक",
   "copyFullReport": "संपूर्ण अहवाल कॉपी करा",
-  "reportCopied": "अहवाल कॉपी झाला!"
+  "reportCopied": "अहवाल कॉपी झाला!",
+  "biometricNotAvailable": "या डिव्हाइसवर बायोमेट्रिक उपलब्ध नाही",
+  "biometricErrorMsg": "बायोमेट्रिक त्रुटी: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "बायोमेट्रिक लॉगिन सक्षम करण्यासाठी सत्यापित करा",
+  "dobFormatLabel": "जन्मतारीख (DD/MM/YYYY)",
+  "tobFormatLabel": "जन्मवेळ (HH:MM)",
+  "phoneLabel": "फोन",
+  "activeBadge": "सक्रिय",
+  "chartCategoryLabel": "श्रेणी",
+  "freePrimaryDescription": "फ्री प्रायमरी — दैनिक राशिभविष्य आणि मोफत सिंगल-चार्ट सेवांसाठी वापरली जाते",
+  "searchChartsHint": "नाव किंवा जन्मतारखेने शोधा...",
+  "unlockPriceLabel": "{price} मध्ये अनलॉक करा",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "या AI तज्ञाला {price} मध्ये (एकदा) अनलॉक करा, जे अॅप स्टोअरद्वारे सुरक्षितपणे विकत घेतले जाते.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "या AI तज्ञाला {price} मध्ये (एकदा) अनलॉक करा. रक्कम तुमच्या वॉलेटमधून वजा केली जाईल.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "हा तज्ञ अद्याप खरेदीसाठी उपलब्ध नाही.",
+  "couldNotCompletePurchase": "खरेदी पूर्ण होऊ शकली नाही. कृपया पुन्हा प्रयत्न करा.",
+  "couldNotUnlockWalletBalance": "अनलॉक होऊ शकले नाही (वॉलेट शिल्लक तपासा)",
+  "freeBadge": "फ्री",
+  "activeSessionInProgress": "तुमचा एक सक्रिय {kind} सुरू आहे",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "परत जा",
+  "enableNotificationsForAlerts": "सल्ला आणि ऑफर अलर्ट मिळवण्यासाठी नोटिफिकेशन सक्षम करा",
+  "enableLabel": "सक्षम करा",
+  "notificationsEnabled": "नोटिफिकेशन सक्षम केले",
+  "couldNotEnableNotifications": "सक्षम होऊ शकले नाही — तुमच्या ब्राउझरमध्ये नोटिफिकेशनला परवानगी द्या",
+  "amountInrLabel": "रक्कम (₹)",
+  "noteOptionalLabel": "टीप (पर्यायी)",
+  "txnDate": "तारीख",
+  "txnDescription": "वर्णन",
+  "txnType": "प्रकार",
+  "txnAmount": "रक्कम",
+  "txnBalance": "शिल्लक",
+  "credit": "क्रेडिट",
+  "debit": "डेबिट",
+  "razorpayStripeNote": "💳 प्रॉडक्शनमध्ये हे Razorpay/Stripe वर रीडायरेक्ट होईल.",
+  "downloadPdf": "PDF डाउनलोड करा",
+  "chatWithAiCta": "AI सोबत चॅट करा",
+  "pdfServiceUnavailable": "PDF सेवा तात्पुरती अनुपलब्ध आहे. कृपया नंतर पुन्हा प्रयत्न करा.",
+  "pleaseUnlockFirst": "कृपया आधी हे अनलॉक करा.",
+  "couldNotGeneratePdf": "PDF तयार होऊ शकले नाही. कृपया पुन्हा प्रयत्न करा.",
+  "statConsults": "सल्ला",
+  "statCharts": "चार्ट्स",
+  "statWallet": "वॉलेट",
+  "firstChartPrimaryInfo": "तुमचा पहिला चार्ट तुमचा फ्री प्रायमरी आहे. अतिरिक्त चार्ट्स स्वतंत्रपणे सेवा अनलॉक करतात.",
+  "tryDifferentFilter": "वेगळे फिल्टर वापरून पहा",
+  "defaultChartName": "चार्ट",
+  "balAbbr": "शिल्लक"
 }

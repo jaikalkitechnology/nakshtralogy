@@ -3789,5 +3789,85 @@
   "houseAnalysis": "Analisi delle Case",
   "jaiminiKarakas": "Karaka Jaimini",
   "copyFullReport": "Copia i dati completi del report",
-  "reportCopied": "Dati del report copiati!"
+  "reportCopied": "Dati del report copiati!",
+  "biometricNotAvailable": "La biometria non è disponibile su questo dispositivo",
+  "biometricErrorMsg": "Errore biometrico: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Verifica per attivare l'accesso biometrico",
+  "dobFormatLabel": "Data di nascita (DD/MM/YYYY)",
+  "tobFormatLabel": "Ora di nascita (HH:MM)",
+  "phoneLabel": "Telefono",
+  "activeBadge": "ATTIVO",
+  "chartCategoryLabel": "Categoria",
+  "freePrimaryDescription": "Primario Gratuito — utilizzato per l'oroscopo quotidiano e i servizi gratuiti a carta unica",
+  "searchChartsHint": "Cerca per nome o data di nascita...",
+  "unlockPriceLabel": "Sblocca per {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Sblocca questo specialista IA per {price} (una tantum), acquistato in modo sicuro tramite l'app store.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Sblocca questo specialista IA per {price} (una tantum). L'importo verrà detratto dal tuo portafoglio.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "Questo specialista non è ancora disponibile per l’acquisto.",
+  "couldNotCompletePurchase": "Impossibile completare l’acquisto. Riprova.",
+  "couldNotUnlockWalletBalance": "Impossibile sbloccare (controlla il saldo del portafoglio)",
+  "freeBadge": "GRATIS",
+  "activeSessionInProgress": "Hai un/una {kind} attivo in corso",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Torna",
+  "enableNotificationsForAlerts": "Attiva le notifiche per ricevere avvisi di consulenza e offerte",
+  "enableLabel": "Attiva",
+  "notificationsEnabled": "Notifiche attivate",
+  "couldNotEnableNotifications": "Impossibile attivare — consenti le notifiche nel tuo browser",
+  "amountInrLabel": "Importo (₹)",
+  "noteOptionalLabel": "Nota (opzionale)",
+  "txnDate": "DATA",
+  "txnDescription": "DESCRIZIONE",
+  "txnType": "TIPO",
+  "txnAmount": "IMPORTO",
+  "txnBalance": "SALDO",
+  "credit": "Credito",
+  "debit": "Debito",
+  "razorpayStripeNote": "💳 In produzione questo reindirizzerà a Razorpay/Stripe.",
+  "downloadPdf": "Scarica PDF",
+  "chatWithAiCta": "Chatta con l'IA",
+  "pdfServiceUnavailable": "Il servizio PDF è temporaneamente non disponibile. Riprova più tardi.",
+  "pleaseUnlockFirst": "Sblocca prima questo.",
+  "couldNotGeneratePdf": "Impossibile generare il PDF. Riprova.",
+  "statConsults": "CONSULTI",
+  "statCharts": "GRAFICI",
+  "statWallet": "PORTAFOGLIO",
+  "firstChartPrimaryInfo": "La tua prima carta è la tua Primaria gratuita. Le carte aggiuntive sbloccano i servizi singolarmente.",
+  "tryDifferentFilter": "Prova un filtro diverso",
+  "defaultChartName": "Carta",
+  "balAbbr": "Saldo"
 }

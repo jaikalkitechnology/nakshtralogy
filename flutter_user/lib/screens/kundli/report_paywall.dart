@@ -118,6 +118,7 @@ class _PaywallGateState extends State<PaywallGate> {
             leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory),
                 onPressed: () => Navigator.pop(context)),
             title: Text(widget.reportName,
+                maxLines: 1, overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w700)),
           ),
           body: ReportPaywallCard(

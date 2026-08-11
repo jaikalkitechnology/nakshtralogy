@@ -104,14 +104,14 @@ class _S extends State<DailyForecastScreen> {
         backgroundColor: AppColors.background, pinned: true,
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
         title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-          Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w700)),
-          Text(l.forecast, style: const TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w700)),
+          Text(widget.chartName.toUpperCase(), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w700)),
+          Text(l.forecast, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w700)),
         ]),
         centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.ivory, size: 18),
-            tooltip: 'Download PDF',
+            tooltip: l.downloadPdf,
             onPressed: () => downloadReportPdf(
                 context, 'forecast/${widget.chartId}', 'forecast-${widget.chartName}'),
           ),
@@ -281,11 +281,11 @@ class _S extends State<DailyForecastScreen> {
     return _card(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         const Text('🧭', style: TextStyle(fontSize: 16)), const SizedBox(width: 8),
-        Text(l.fdTodaysFocus, style: const TextStyle(color: AppColors.ivory, fontSize: 15.5, fontWeight: FontWeight.w800)),
+        Flexible(child: Text(l.fdTodaysFocus, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 15.5, fontWeight: FontWeight.w800))),
         const Spacer(),
         Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
           decoration: BoxDecoration(color: AppColors.gold.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
-          child: Text('⏱ ${l.fdReadingTime}: ${l.fdSeconds30}', style: const TextStyle(color: AppColors.gold, fontSize: 9.5, fontWeight: FontWeight.w700))),
+          child: Text('⏱ ${l.fdReadingTime}: ${l.fdSeconds30}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.gold, fontSize: 9.5, fontWeight: FontWeight.w700))),
       ]),
       const SizedBox(height: 12),
       Wrap(spacing: 8, runSpacing: 8, children: [
@@ -301,7 +301,7 @@ class _S extends State<DailyForecastScreen> {
   Widget _focusLine(String emoji, String label, String body, Color c) => Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Text(emoji, style: const TextStyle(fontSize: 14)), const SizedBox(width: 8),
     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: TextStyle(color: c, fontSize: 11, fontWeight: FontWeight.w800)),
+      Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 11, fontWeight: FontWeight.w800)),
       const SizedBox(height: 2),
       Text(body, style: const TextStyle(color: AppColors.ivory, fontSize: 12.5, height: 1.4)),
     ])),
@@ -418,9 +418,9 @@ class _S extends State<DailyForecastScreen> {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: accent.withOpacity(0.10), borderRadius: BorderRadius.circular(10)),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(recLabel, style: TextStyle(color: accent, fontSize: 10.5, fontWeight: FontWeight.w800)),
+            Flexible(child: Text(recLabel, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: accent, fontSize: 10.5, fontWeight: FontWeight.w800))),
             const SizedBox(width: 8),
-            Expanded(child: Text(rec, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+            Expanded(flex: 2, child: Text(rec, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
           ]),
         ),
       ],
@@ -481,8 +481,9 @@ class _S extends State<DailyForecastScreen> {
               Text(_flagEmoji(f), style: const TextStyle(fontSize: 16)), const SizedBox(width: 8),
               Expanded(child: Text(f['event']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 13.5, fontWeight: FontWeight.w800))),
               Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                constraints: const BoxConstraints(maxWidth: 110),
                 decoration: BoxDecoration(color: col.withOpacity(0.14), borderRadius: BorderRadius.circular(8)),
-                child: Text(_severityLabel(sev, l), style: TextStyle(color: col, fontSize: 9.5, fontWeight: FontWeight.w800))),
+                child: FittedBox(fit: BoxFit.scaleDown, child: Text(_severityLabel(sev, l), maxLines: 1, style: TextStyle(color: col, fontSize: 9.5, fontWeight: FontWeight.w800)))),
             ]),
             const SizedBox(height: 8),
             Row(children: [
@@ -495,8 +496,8 @@ class _S extends State<DailyForecastScreen> {
             if ((f['recommended_action']?.toString() ?? '').isNotEmpty) ...[
               const SizedBox(height: 10),
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('${l.fdWhatToDo}: ', style: TextStyle(color: col, fontSize: 11, fontWeight: FontWeight.w800)),
-                Expanded(child: Text(f['recommended_action'].toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+                Flexible(child: Text('${l.fdWhatToDo}: ', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: col, fontSize: 11, fontWeight: FontWeight.w800))),
+                Expanded(flex: 2, child: Text(f['recommended_action'].toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
               ]),
             ],
           ]),
@@ -580,8 +581,8 @@ class _S extends State<DailyForecastScreen> {
           Row(children: [
             Text(_areaEmoji(h), style: const TextStyle(fontSize: 26)), const SizedBox(width: 10),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(_areaName(h, l), style: const TextStyle(color: AppColors.ivory, fontSize: 19, fontWeight: FontWeight.w800)),
-              Text(_status(score, l), style: TextStyle(color: col, fontSize: 12.5, fontWeight: FontWeight.w700)),
+              Text(_areaName(h, l), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 19, fontWeight: FontWeight.w800)),
+              Text(_status(score, l), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: col, fontSize: 12.5, fontWeight: FontWeight.w700)),
             ])),
             Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: col, fontSize: 26, fontWeight: FontWeight.w800)),
           ]),
@@ -752,7 +753,7 @@ class _S extends State<DailyForecastScreen> {
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         Text(emoji, style: const TextStyle(fontSize: 18)), const SizedBox(width: 8),
-        Text(header, style: TextStyle(color: c, fontSize: 13, fontWeight: FontWeight.w800)),
+        Flexible(child: Text(header, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 13, fontWeight: FontWeight.w800))),
         const Spacer(),
         Text('${prob.toStringAsFixed(0)}%', style: TextStyle(color: c, fontSize: 20, fontWeight: FontWeight.w800)),
       ]),
@@ -764,8 +765,8 @@ class _S extends State<DailyForecastScreen> {
         Container(padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: c.withOpacity(0.10), borderRadius: BorderRadius.circular(10)),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('$recLabel  ', style: TextStyle(color: c, fontSize: 10.5, fontWeight: FontWeight.w800)),
-            Expanded(child: Text(rec, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+            Flexible(child: Text('$recLabel  ', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 10.5, fontWeight: FontWeight.w800))),
+            Expanded(flex: 2, child: Text(rec, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
           ]))],
     ]),
   );
@@ -799,7 +800,7 @@ class _S extends State<DailyForecastScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: c.withOpacity(0.2))),
       child: Row(children: [
-        Text(m['window']?.toString() ?? '', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
+        Flexible(child: Text(m['window']?.toString() ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800))),
         const SizedBox(width: 12),
         Expanded(child: Text(_prettyEvent(label, l), style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.3), maxLines: 2, overflow: TextOverflow.ellipsis)),
         const SizedBox(width: 8),
@@ -946,7 +947,7 @@ class _S extends State<DailyForecastScreen> {
           Center(child: Container(width: 42, height: 4, margin: const EdgeInsets.only(bottom: 18),
             decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
           Row(children: [Text(emoji, style: const TextStyle(fontSize: 22)), const SizedBox(width: 8),
-            Text(title, style: const TextStyle(color: AppColors.ivory, fontSize: 19, fontWeight: FontWeight.w800))]),
+            Expanded(child: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 19, fontWeight: FontWeight.w800)))]),
           const SizedBox(height: 16),
           ...paragraphs.map((p) => Padding(padding: const EdgeInsets.only(bottom: 14),
             child: Text(p, style: const TextStyle(color: AppColors.parchment, fontSize: 13.5, height: 1.6)))),
@@ -989,8 +990,8 @@ class _S extends State<DailyForecastScreen> {
   Widget _kv(String emoji, String label, String value, Color c) => Padding(padding: const EdgeInsets.only(top: 8),
     child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text('$emoji ', style: const TextStyle(fontSize: 12)),
-      Text('$label: ', style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w800)),
-      Expanded(child: Text(value, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
+      Flexible(child: Text('$label: ', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w800))),
+      Expanded(flex: 2, child: Text(value, style: const TextStyle(color: AppColors.ivory, fontSize: 11.5, height: 1.4))),
     ]));
 
   Widget _adviceBox(String label, String body, Color c) => Container(
@@ -998,7 +999,7 @@ class _S extends State<DailyForecastScreen> {
     decoration: BoxDecoration(color: c.withOpacity(0.09), borderRadius: BorderRadius.circular(12), border: Border.all(color: c.withOpacity(0.22))),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [const Text('✨', style: TextStyle(fontSize: 12)), const SizedBox(width: 6),
-        Text(label, style: TextStyle(color: c, fontSize: 11, fontWeight: FontWeight.w800))]),
+        Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 11, fontWeight: FontWeight.w800)))]),
       const SizedBox(height: 5),
       Text(body, style: const TextStyle(color: AppColors.ivory, fontSize: 12, height: 1.5)),
     ]),

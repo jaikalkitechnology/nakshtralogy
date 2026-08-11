@@ -3789,5 +3789,85 @@
   "houseAnalysis": "ハウス分析",
   "jaiminiKarakas": "ジャイミニ・カーラカ",
   "copyFullReport": "レポートデータ全体をコピー",
-  "reportCopied": "レポートデータをコピーしました！"
+  "reportCopied": "レポートデータをコピーしました！",
+  "biometricNotAvailable": "このデバイスでは生体認証を利用できません",
+  "biometricErrorMsg": "生体認証エラー: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "生体認証ログインを有効にするには確認してください",
+  "dobFormatLabel": "生年月日 (DD/MM/YYYY)",
+  "tobFormatLabel": "出生時刻 (HH:MM)",
+  "phoneLabel": "電話番号",
+  "activeBadge": "アクティブ",
+  "chartCategoryLabel": "カテゴリー",
+  "freePrimaryDescription": "無料プライマリー — 毎日の星占いと無料の単一チャートサービスに使用されます",
+  "searchChartsHint": "名前または生年月日で検索...",
+  "unlockPriceLabel": "{price}でロック解除",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "このAIスペシャリストを{price}（一回限り）でロック解除、アプリストアから安全に購入されます。",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "このAIスペシャリストを{price}（一回限り）でロック解除します。金額はウォレットから引かれます。",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "このスペシャリストはまだ購入できません。",
+  "couldNotCompletePurchase": "購入を完了できませんでした。もう一度お試しください。",
+  "couldNotUnlockWalletBalance": "ロック解除できませんでした（ウォレット残高を確認してください）",
+  "freeBadge": "無料",
+  "activeSessionInProgress": "進行中のアクティブな{kind}があります",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "戻る",
+  "enableNotificationsForAlerts": "相談やオファーの通知を受け取るには通知を有効にしてください",
+  "enableLabel": "有効にする",
+  "notificationsEnabled": "通知が有効になりました",
+  "couldNotEnableNotifications": "有効にできませんでした — ブラウザで通知を許可してください",
+  "amountInrLabel": "金額 (₹)",
+  "noteOptionalLabel": "メモ（任意）",
+  "txnDate": "日付",
+  "txnDescription": "説明",
+  "txnType": "種類",
+  "txnAmount": "金額",
+  "txnBalance": "残高",
+  "credit": "クレジット",
+  "debit": "デビット",
+  "razorpayStripeNote": "💳 本番環境ではRazorpay/Stripeにリダイレクトされます。",
+  "downloadPdf": "PDFをダウンロード",
+  "chatWithAiCta": "AIとチャットする",
+  "pdfServiceUnavailable": "PDFサービスは一時的に利用できません。後でもう一度お試しください。",
+  "pleaseUnlockFirst": "まずこれをロック解除してください。",
+  "couldNotGeneratePdf": "PDFを生成できませんでした。もう一度お試しください。",
+  "statConsults": "相談",
+  "statCharts": "チャート",
+  "statWallet": "ウォレット",
+  "firstChartPrimaryInfo": "最初のチャートは無料のプライマリーです。追加のチャートは個別にサービスをロック解除します。",
+  "tryDifferentFilter": "別のフィルターを試してください",
+  "defaultChartName": "チャート",
+  "balAbbr": "残高"
 }

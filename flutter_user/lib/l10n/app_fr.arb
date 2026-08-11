@@ -3789,5 +3789,85 @@
   "houseAnalysis": "Analyse des maisons",
   "jaiminiKarakas": "Karakas Jaimini",
   "copyFullReport": "Copier toutes les données du rapport",
-  "reportCopied": "Données du rapport copiées !"
+  "reportCopied": "Données du rapport copiées !",
+  "biometricNotAvailable": "La biométrie n'est pas disponible sur cet appareil",
+  "biometricErrorMsg": "Erreur biométrique : {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Vérifiez pour activer la connexion biométrique",
+  "dobFormatLabel": "Date de naissance (DD/MM/YYYY)",
+  "tobFormatLabel": "Heure de naissance (HH:MM)",
+  "phoneLabel": "Téléphone",
+  "activeBadge": "ACTIF",
+  "chartCategoryLabel": "Catégorie",
+  "freePrimaryDescription": "Principal gratuit — utilisé pour l'horoscope quotidien et les services de carte unique gratuits",
+  "searchChartsHint": "Rechercher par nom ou date de naissance...",
+  "unlockPriceLabel": "Débloquer pour {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Débloquez cet expert IA pour {price} (une fois), acheté en toute sécurité via l'App Store.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Débloquez cet expert IA pour {price} (une fois). Le montant sera déduit de votre portefeuille.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "Cet expert n'est pas encore disponible à l'achat.",
+  "couldNotCompletePurchase": "Impossible de finaliser l'achat. Veuillez réessayer.",
+  "couldNotUnlockWalletBalance": "Impossible de débloquer (vérifiez le solde du portefeuille)",
+  "freeBadge": "GRATUIT",
+  "activeSessionInProgress": "Vous avez un(e) {kind} actif en cours",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Retour",
+  "enableNotificationsForAlerts": "Activez les notifications pour recevoir des alertes de consultation et d'offres",
+  "enableLabel": "Activer",
+  "notificationsEnabled": "Notifications activées",
+  "couldNotEnableNotifications": "Impossible d'activer — autorisez les notifications dans votre navigateur",
+  "amountInrLabel": "Montant (₹)",
+  "noteOptionalLabel": "Note (facultatif)",
+  "txnDate": "DATE",
+  "txnDescription": "DESCRIPTION",
+  "txnType": "TYPE",
+  "txnAmount": "MONTANT",
+  "txnBalance": "SOLDE",
+  "credit": "Crédit",
+  "debit": "Débit",
+  "razorpayStripeNote": "💳 En production, cela redirigera vers Razorpay/Stripe.",
+  "downloadPdf": "Télécharger le PDF",
+  "chatWithAiCta": "Discuter avec l'IA",
+  "pdfServiceUnavailable": "Le service PDF est temporairement indisponible. Veuillez réessayer plus tard.",
+  "pleaseUnlockFirst": "Veuillez d'abord débloquer ceci.",
+  "couldNotGeneratePdf": "Impossible de générer le PDF. Veuillez réessayer.",
+  "statConsults": "CONSULTATIONS",
+  "statCharts": "CARTES",
+  "statWallet": "PORTEFEUILLE",
+  "firstChartPrimaryInfo": "Votre première carte est votre carte Principale gratuite. Les cartes supplémentaires débloquent les services individuellement.",
+  "tryDifferentFilter": "Essayez un autre filtre",
+  "defaultChartName": "Carte",
+  "balAbbr": "Solde"
 }

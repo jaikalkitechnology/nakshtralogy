@@ -3789,5 +3789,85 @@
   "houseAnalysis": "பாவ பகுப்பாய்வு",
   "jaiminiKarakas": "ஜைமினி காரகங்கள்",
   "copyFullReport": "முழு அறிக்கையை நகலெடுக்கவும்",
-  "reportCopied": "அறிக்கை நகலெடுக்கப்பட்டது!"
+  "reportCopied": "அறிக்கை நகலெடுக்கப்பட்டது!",
+  "biometricNotAvailable": "இந்த சாதனத்தில் பயோமெட்ரிக் இல்லை",
+  "biometricErrorMsg": "பயோமெட்ரிக் பிழை: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "பயோமெட்ரிக் உள்நுழைவை இயக்க சரிபார்க்கவும்",
+  "dobFormatLabel": "பிறந்த தேதி (DD/MM/YYYY)",
+  "tobFormatLabel": "பிறந்த நேரம் (HH:MM)",
+  "phoneLabel": "தொலைபேசி",
+  "activeBadge": "செயலில்",
+  "chartCategoryLabel": "வகை",
+  "freePrimaryDescription": "ஃப்ரீ ப்ரைமரி — தினசரி ராசிபலன் மற்றும் இலவச ஒற்றை-சார்ட் சேவைகளுக்குப் பயன்படுகிறது",
+  "searchChartsHint": "பெயர் அல்லது பிறந்த தேதி மூலம் தேடுங்கள்...",
+  "unlockPriceLabel": "{price} க்கு அன்லாக் செய்யவும்",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "இந்த AI நிபுணரை {price} க்கு (ஒரு முறை) அன்லாக் செய்யவும், இது ஆப் ஸ்டோர் மூலம் பாதுகாப்பாக வாங்கப்படுகிறது.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "இந்த AI நிபுணரை {price} க்கு (ஒரு முறை) அன்லாக் செய்யவும். தொகை உங்கள் வாலட்டில் இருந்து கழிக்கப்படும்.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "இந்த நிபுணர் இன்னும் வாங்குவதற்குக் கிடைக்கவில்லை.",
+  "couldNotCompletePurchase": "வாங்குதலை முடிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
+  "couldNotUnlockWalletBalance": "அன்லாக் செய்ய முடியவில்லை (வாலட் இருப்பைச் சரிபார்க்கவும்)",
+  "freeBadge": "இலவசம்",
+  "activeSessionInProgress": "உங்கள் செயலில் உள்ள {kind} நடந்து கொண்டிருக்கிறது",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "திரும்பு",
+  "enableNotificationsForAlerts": "ஆலோசனை மற்றும் சலுகை விழிப்பூட்டல்களைப் பெற அறிவிப்புகளை இயக்கவும்",
+  "enableLabel": "இயக்கு",
+  "notificationsEnabled": "அறிவிப்புகள் இயக்கப்பட்டன",
+  "couldNotEnableNotifications": "இயக்க முடியவில்லை — உங்கள் உலாவியில் அறிவிப்புகளை அனுமதிக்கவும்",
+  "amountInrLabel": "தொகை (₹)",
+  "noteOptionalLabel": "குறிப்பு (விருப்பம்)",
+  "txnDate": "தேதி",
+  "txnDescription": "விவரம்",
+  "txnType": "வகை",
+  "txnAmount": "தொகை",
+  "txnBalance": "இருப்பு",
+  "credit": "கிரெடிட்",
+  "debit": "டெபிட்",
+  "razorpayStripeNote": "💳 உற்பத்தியில் இது Razorpay/Stripe க்கு திருப்பிவிடப்படும்.",
+  "downloadPdf": "PDF பதிவிறக்கவும்",
+  "chatWithAiCta": "AI உடன் அரட்டை அடிக்கவும்",
+  "pdfServiceUnavailable": "PDF சேவை தற்காலிகமாக கிடைக்கவில்லை. பின்னர் முயற்சிக்கவும்.",
+  "pleaseUnlockFirst": "முதலில் இதை அன்லாக் செய்யவும்.",
+  "couldNotGeneratePdf": "PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
+  "statConsults": "ஆலோசனைகள்",
+  "statCharts": "சார்ட்கள்",
+  "statWallet": "வாலட்",
+  "firstChartPrimaryInfo": "உங்கள் முதல் சார்ட் உங்கள் இலவச ப்ரைமரி. கூடுதல் சார்ட்கள் தனித்தனியாக சேவைகளை அன்லாக் செய்யும்.",
+  "tryDifferentFilter": "வேறு வடிப்பானை முயற்சிக்கவும்",
+  "defaultChartName": "சார்ட்",
+  "balAbbr": "இருப்பு"
 }

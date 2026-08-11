@@ -71,8 +71,8 @@ class _WalletTabState extends State<WalletTab> {
                         controller: amountCtrl,
                         keyboardType: TextInputType.number,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(
-                          labelText: 'Amount (₹)',
+                        decoration: InputDecoration(
+                          labelText: l.amountInrLabel,
                           prefixText: '₹ ',
                         ),
                       ),
@@ -93,12 +93,12 @@ class _WalletTabState extends State<WalletTab> {
                       TextField(
                         controller: noteCtrl,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(labelText: 'Note (optional)'),
+                        decoration: InputDecoration(labelText: l.noteOptionalLabel),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        '💳 In production this will redirect to Razorpay/Stripe.',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
+                      Text(
+                        l.razorpayStripeNote,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 10),
                       ),
                     ],
                   );
@@ -142,6 +142,7 @@ class _WalletTabState extends State<WalletTab> {
   /// Balance. Mobile keeps the per-transaction cards. Presentation only — the
   /// same transaction fields the cards already read.
   Widget _txnTable(List<dynamic> txns, double Function(double) conv, String cur) {
+    final l = AppLocalizations.of(context)!;
     const headStyle = TextStyle(
         color: AppColors.textSecondary, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.6);
     Widget cell(Widget child, int flex, {Alignment align = Alignment.centerLeft}) =>
@@ -159,11 +160,11 @@ class _WalletTabState extends State<WalletTab> {
             border: Border(bottom: BorderSide(color: AppColors.border)),
           ),
           child: Row(children: [
-            cell(const Text('DATE', style: headStyle), 3),
-            cell(const Text('DESCRIPTION', style: headStyle), 5),
-            cell(const Text('TYPE', style: headStyle), 2),
-            cell(const Text('AMOUNT', style: headStyle), 2, align: Alignment.centerRight),
-            cell(const Text('BALANCE', style: headStyle), 2, align: Alignment.centerRight),
+            cell(Text(l.txnDate, maxLines: 1, overflow: TextOverflow.ellipsis, style: headStyle), 3),
+            cell(Text(l.txnDescription, maxLines: 1, overflow: TextOverflow.ellipsis, style: headStyle), 5),
+            cell(Text(l.txnType, maxLines: 1, overflow: TextOverflow.ellipsis, style: headStyle), 2),
+            cell(Text(l.txnAmount, maxLines: 1, overflow: TextOverflow.ellipsis, style: headStyle), 2, align: Alignment.centerRight),
+            cell(Text(l.txnBalance, maxLines: 1, overflow: TextOverflow.ellipsis, style: headStyle), 2, align: Alignment.centerRight),
           ]),
         ),
         ...txns.asMap().entries.map((e) {
@@ -179,6 +180,7 @@ class _WalletTabState extends State<WalletTab> {
             ),
             child: Row(children: [
               cell(Text((t['created_at'] as String?)?.substring(0, 16).replaceAll('T', '  ') ?? '—',
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)), 3),
               cell(Text(
                   (t['label'] ?? t['description'] ?? t['txn_type'] ?? '—').toString(),
@@ -187,11 +189,13 @@ class _WalletTabState extends State<WalletTab> {
               cell(_typeBadge(isCredit), 2),
               cell(Text(
                   '${isCredit ? '+' : '−'}${Money.format(conv((t['amount'] as num?)?.toDouble() ?? 0), currency: cur)}',
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       color: isCredit ? AppColors.success : AppColors.error,
                       fontSize: 12.5, fontWeight: FontWeight.bold)),
                   2, align: Alignment.centerRight),
               cell(Text(Money.format(conv((t['balance_after'] as num?)?.toDouble() ?? 0), currency: cur),
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 11.5)), 2,
                   align: Alignment.centerRight),
             ]),
@@ -207,10 +211,12 @@ class _WalletTabState extends State<WalletTab> {
           color: (isCredit ? AppColors.success : AppColors.error).withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(6),
         ),
-        child: Text(isCredit ? 'Credit' : 'Debit',
+        child: FittedBox(fit: BoxFit.scaleDown, child: Text(
+            isCredit ? AppLocalizations.of(context)!.credit : AppLocalizations.of(context)!.debit,
+            maxLines: 1,
             style: TextStyle(
                 color: isCredit ? AppColors.success : AppColors.error,
-                fontSize: 10, fontWeight: FontWeight.w700)),
+                fontSize: 10, fontWeight: FontWeight.w700))),
       );
 
   @override
@@ -258,10 +264,13 @@ class _WalletTabState extends State<WalletTab> {
                 child: Column(
                   children: [
                     Text(l.walletBalance,
+                        maxLines: 1, overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     const SizedBox(height: 6),
                     Text(
                       Money.format(displayBalance, currency: displayCurrency, decimals: 2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 32,
@@ -290,8 +299,10 @@ class _WalletTabState extends State<WalletTab> {
                           child: Column(
                             children: [
                               Text(l.totalCredit,
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
                               Text('+${Money.format(conv(totalCredit), currency: displayCurrency)}',
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(color: AppColors.success, fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
                           ),
@@ -301,8 +312,10 @@ class _WalletTabState extends State<WalletTab> {
                           child: Column(
                             children: [
                               Text(l.totalDebit,
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 9)),
                               Text('−${Money.format(conv(totalDebit), currency: displayCurrency)}',
+                                  maxLines: 1, overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.bold)),
                             ],
                           ),
@@ -349,8 +362,9 @@ class _WalletTabState extends State<WalletTab> {
               // Filter + statement
               Row(
                 children: [
-                  Text(l.statement,
-                      style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600)),
+                  Flexible(child: Text(l.statement,
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.w600))),
                   const Spacer(),
                   DropdownButton<String>(
                     value: _filter,
@@ -420,6 +434,8 @@ class _WalletTabState extends State<WalletTab> {
                             children: [
                               Text(
                                 t['label'] ?? t['txn_type'] ?? '—',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
                               ),
@@ -432,6 +448,8 @@ class _WalletTabState extends State<WalletTab> {
                                 ),
                               Text(
                                 (t['created_at'] as String?)?.substring(0, 16) ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(color: AppColors.textSecondary, fontSize: 9),
                               ),
                             ],
@@ -442,6 +460,8 @@ class _WalletTabState extends State<WalletTab> {
                           children: [
                             Text(
                               '${isCredit ? '+' : '−'}${Money.format(conv((t['amount'] as num?)?.toDouble() ?? 0), currency: displayCurrency)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: isCredit ? AppColors.success : AppColors.error,
                                 fontSize: 13,
@@ -449,7 +469,9 @@ class _WalletTabState extends State<WalletTab> {
                               ),
                             ),
                             Text(
-                              'Bal ${Money.format(conv((t['balance_after'] as num?)?.toDouble() ?? 0), currency: displayCurrency)}',
+                              '${l.balAbbr} ${Money.format(conv((t['balance_after'] as num?)?.toDouble() ?? 0), currency: displayCurrency)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: AppColors.textSecondary, fontSize: 9),
                             ),
                           ],

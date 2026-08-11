@@ -11864,4 +11864,161 @@ class AppLocalizationsMl extends AppLocalizations {
 
   @override
   String get reportCopied => 'റിപ്പോര്‍ട്ട് പകര്‍ത്തി!';
+
+  @override
+  String get biometricNotAvailable => 'ഈ ഡിവൈസിൽ ബയോമെട്രിക് ലഭ്യമല്ല';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'ബയോമെട്രിക് പിശക്: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'ബയോമെട്രിക് ലോഗിൻ പ്രവർത്തനക്ഷമമാക്കാൻ പരിശോധിക്കുക';
+
+  @override
+  String get dobFormatLabel => 'ജനനത്തീയതി (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'ജനന സമയം (HH:MM)';
+
+  @override
+  String get phoneLabel => 'ഫോൺ';
+
+  @override
+  String get activeBadge => 'സജീവം';
+
+  @override
+  String get chartCategoryLabel => 'വിഭാഗം';
+
+  @override
+  String get freePrimaryDescription =>
+      'ഫ്രീ പ്രൈമറി — ദിവസേനയുള്ള ജാതകവും ഫ്രീ സിംഗിൾ-ചാർട്ട് സേവനങ്ങൾക്കും ഉപയോഗിക്കുന്നു';
+
+  @override
+  String get searchChartsHint =>
+      'പേര് അല്ലെങ്കിൽ ജനനത്തീയതി ഉപയോഗിച്ച് തിരയുക...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return '$price-ന് അൺലോക്ക് ചെയ്യുക';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'ഈ AI സ്പെഷ്യലിസ്റ്റിനെ $price-ന് (ഒരു തവണ) അൺലോക്ക് ചെയ്യുക, ആപ്പ് സ്റ്റോർ വഴി സുരക്ഷിതമായി വാങ്ങുന്നു.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'ഈ AI സ്പെഷ്യലിസ്റ്റിനെ $price-ന് (ഒരു തവണ) അൺലോക്ക് ചെയ്യുക. തുക നിങ്ങളുടെ വാലറ്റിൽ നിന്ന് കുറയ്ക്കും.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'ഈ സ്പെഷ്യലിസ്റ്റ് ഇതുവരെ വാങ്ങാൻ ലഭ്യമല്ല.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'വാങ്ങൽ പൂർത്തിയാക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'അൺലോക്ക് ചെയ്യാൻ കഴിഞ്ഞില്ല (വാലറ്റ് ബാലൻസ് പരിശോധിക്കുക)';
+
+  @override
+  String get freeBadge => 'ഫ്രീ';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'നിങ്ങളുടെ സജീവമായ $kind തുടരുന്നു';
+  }
+
+  @override
+  String get returnLabel => 'മടങ്ങുക';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'കൺസൾട്ടേഷനും ഓഫർ അലേർട്ടുകളും ലഭിക്കാൻ അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക';
+
+  @override
+  String get enableLabel => 'പ്രവർത്തനക്ഷമമാക്കുക';
+
+  @override
+  String get notificationsEnabled => 'അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കി';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'പ്രവർത്തനക്ഷമമാക്കാൻ കഴിഞ്ഞില്ല — നിങ്ങളുടെ ബ്രൗസറിൽ അറിയിപ്പുകൾ അനുവദിക്കുക';
+
+  @override
+  String get amountInrLabel => 'തുക (₹)';
+
+  @override
+  String get noteOptionalLabel => 'കുറിപ്പ് (ഓപ്ഷണൽ)';
+
+  @override
+  String get txnDate => 'തീയതി';
+
+  @override
+  String get txnDescription => 'വിവരണം';
+
+  @override
+  String get txnType => 'തരം';
+
+  @override
+  String get txnAmount => 'തുക';
+
+  @override
+  String get txnBalance => 'ബാലൻസ്';
+
+  @override
+  String get credit => 'ക്രെഡിറ്റ്';
+
+  @override
+  String get debit => 'ഡെബിറ്റ്';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 പ്രൊഡക്ഷനിൽ ഇത് Razorpay/Stripe-ലേക്ക് റീഡയറക്ട് ചെയ്യും.';
+
+  @override
+  String get downloadPdf => 'PDF ഡൗൺലോഡ് ചെയ്യുക';
+
+  @override
+  String get chatWithAiCta => 'AI-യുമായി ചാറ്റ് ചെയ്യുക';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'PDF സേവനം താൽക്കാലികമായി ലഭ്യമല്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get pleaseUnlockFirst => 'ദയവായി ആദ്യം ഇത് അൺലോക്ക് ചെയ്യുക.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'PDF ജനറേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.';
+
+  @override
+  String get statConsults => 'കൺസൾട്ടേഷനുകൾ';
+
+  @override
+  String get statCharts => 'ചാർട്ടുകൾ';
+
+  @override
+  String get statWallet => 'വാലറ്റ്';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'നിങ്ങളുടെ ആദ്യ ചാർട്ട് നിങ്ങളുടെ ഫ്രീ പ്രൈമറിയാണ്. അധിക ചാർട്ടുകൾ വ്യക്തിഗതമായി സേവനങ്ങൾ അൺലോക്ക് ചെയ്യുന്നു.';
+
+  @override
+  String get tryDifferentFilter => 'വ്യത്യസ്തമായ ഫിൽട്ടർ ശ്രമിക്കുക';
+
+  @override
+  String get defaultChartName => 'ചാർട്ട്';
+
+  @override
+  String get balAbbr => 'ബാൽ';
 }

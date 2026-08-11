@@ -3789,5 +3789,85 @@
   "houseAnalysis": "Análisis de Casas",
   "jaiminiKarakas": "Karakas de Jaimini",
   "copyFullReport": "Copiar los datos completos del informe",
-  "reportCopied": "¡Datos del informe copiados!"
+  "reportCopied": "¡Datos del informe copiados!",
+  "biometricNotAvailable": "La biometría no está disponible en este dispositivo",
+  "biometricErrorMsg": "Error de biometría: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Verifica para activar el inicio de sesión biométrico",
+  "dobFormatLabel": "Fecha de nacimiento (DD/MM/YYYY)",
+  "tobFormatLabel": "Hora de nacimiento (HH:MM)",
+  "phoneLabel": "Teléfono",
+  "activeBadge": "ACTIVO",
+  "chartCategoryLabel": "Categoría",
+  "freePrimaryDescription": "Principal Gratuito — se usa para el horóscopo diario y servicios de carta única gratuitos",
+  "searchChartsHint": "Buscar por nombre o fecha de nacimiento...",
+  "unlockPriceLabel": "Desbloquear por {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Desbloquea este especialista de IA por {price} (una vez), comprado de forma segura a través de la tienda de aplicaciones.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Desbloquea este especialista de IA por {price} (una vez). El monto se deducirá de tu billetera.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "Este especialista aún no está disponible para comprar.",
+  "couldNotCompletePurchase": "No se pudo completar la compra. Inténtalo de nuevo.",
+  "couldNotUnlockWalletBalance": "No se pudo desbloquear (verifica el saldo de tu billetera)",
+  "freeBadge": "GRATIS",
+  "activeSessionInProgress": "Tienes un(a) {kind} activo en curso",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Volver",
+  "enableNotificationsForAlerts": "Activa las notificaciones para recibir alertas de consultas y ofertas",
+  "enableLabel": "Activar",
+  "notificationsEnabled": "Notificaciones activadas",
+  "couldNotEnableNotifications": "No se pudo activar — permite las notificaciones en tu navegador",
+  "amountInrLabel": "Monto (₹)",
+  "noteOptionalLabel": "Nota (opcional)",
+  "txnDate": "FECHA",
+  "txnDescription": "DESCRIPCIÓN",
+  "txnType": "TIPO",
+  "txnAmount": "MONTO",
+  "txnBalance": "SALDO",
+  "credit": "Crédito",
+  "debit": "Débito",
+  "razorpayStripeNote": "💳 En producción, esto redirigirá a Razorpay/Stripe.",
+  "downloadPdf": "Descargar PDF",
+  "chatWithAiCta": "Chatear con IA",
+  "pdfServiceUnavailable": "El servicio de PDF no está disponible temporalmente. Inténtalo de nuevo más tarde.",
+  "pleaseUnlockFirst": "Por favor, desbloquea esto primero.",
+  "couldNotGeneratePdf": "No se pudo generar el PDF. Inténtalo de nuevo.",
+  "statConsults": "CONSULTAS",
+  "statCharts": "GRÁFICOS",
+  "statWallet": "BILLETERA",
+  "firstChartPrimaryInfo": "Tu primera carta es tu Principal gratuita. Las cartas adicionales desbloquean servicios individualmente.",
+  "tryDifferentFilter": "Prueba un filtro diferente",
+  "defaultChartName": "Carta",
+  "balAbbr": "Saldo"
 }

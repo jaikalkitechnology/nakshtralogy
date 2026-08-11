@@ -3789,5 +3789,85 @@
   "houseAnalysis": "ਭਾਵ ਵਿਸ਼ਲੇਸ਼ਣ",
   "jaiminiKarakas": "ਜੈਮਿਨੀ ਕਾਰਕ",
   "copyFullReport": "ਪੂਰੀ ਰਿਪੋਰਟ ਕਾਪੀ ਕਰੋ",
-  "reportCopied": "ਰਿਪੋਰਟ ਕਾਪੀ ਹੋ ਗਈ!"
+  "reportCopied": "ਰਿਪੋਰਟ ਕਾਪੀ ਹੋ ਗਈ!",
+  "biometricNotAvailable": "ਇਸ ਡਿਵਾਈਸ ਤੇ ਬਾਇਓਮੈਟ੍ਰਿਕ ਉਪਲਬਧ ਨਹੀਂ ਹੈ",
+  "biometricErrorMsg": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਗਲਤੀ: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਇਨ ਯੋਗ ਕਰਨ ਲਈ ਪੁਸ਼ਟੀ ਕਰੋ",
+  "dobFormatLabel": "ਜਨਮ ਮਿਤੀ (DD/MM/YYYY)",
+  "tobFormatLabel": "ਜਨਮ ਸਮਾਂ (HH:MM)",
+  "phoneLabel": "ਫ਼ੋਨ",
+  "activeBadge": "ਸਰਗਰਮ",
+  "chartCategoryLabel": "ਸ਼੍ਰੇਣੀ",
+  "freePrimaryDescription": "ਫ੍ਰੀ ਪ੍ਰਾਇਮਰੀ — ਰੋਜ਼ਾਨਾ ਰਾਸ਼ੀਫਲ ਅਤੇ ਫ੍ਰੀ ਸਿੰਗਲ-ਚਾਰਟ ਸੇਵਾਵਾਂ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਹੈ",
+  "searchChartsHint": "ਨਾਮ ਜਾਂ ਜਨਮ ਮਿਤੀ ਦੁਆਰਾ ਖੋਜੋ...",
+  "unlockPriceLabel": "{price} ਵਿੱਚ ਅਨਲੌਕ ਕਰੋ",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "ਇਸ AI ਮਾਹਰ ਨੂੰ {price} ਵਿੱਚ (ਇੱਕ ਵਾਰ) ਅਨਲੌਕ ਕਰੋ, ਜੋ ਐਪ ਸਟੋਰ ਰਾਹੀਂ ਸੁਰੱਖਿਅਤ ਢੰਗ ਨਾਲ ਖਰੀਦਿਆ ਜਾਂਦਾ ਹੈ।",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "ਇਸ AI ਮਾਹਰ ਨੂੰ {price} ਵਿੱਚ (ਇੱਕ ਵਾਰ) ਅਨਲੌਕ ਕਰੋ। ਰਾਸ਼ੀ ਤੁਹਾਡੇ ਵਾਲਿਟ ਵਿੱਚੋਂ ਕੱਟੀ ਜਾਵੇਗੀ।",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "ਇਹ ਮਾਹਰ ਅਜੇ ਖਰੀਦ ਲਈ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।",
+  "couldNotCompletePurchase": "ਖਰੀਦ ਪੂਰੀ ਨਹੀਂ ਹੋ ਸਕੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "couldNotUnlockWalletBalance": "ਅਨਲੌਕ ਨਹੀਂ ਹੋ ਸਕਿਆ (ਵਾਲਿਟ ਬਕਾਇਆ ਚੈੱਕ ਕਰੋ)",
+  "freeBadge": "ਫ੍ਰੀ",
+  "activeSessionInProgress": "ਤੁਹਾਡਾ ਇੱਕ ਸਰਗਰਮ {kind} ਚੱਲ ਰਿਹਾ ਹੈ",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "ਵਾਪਸ ਜਾਓ",
+  "enableNotificationsForAlerts": "ਸਲਾਹ ਅਤੇ ਆਫਰ ਅਲਰਟ ਪ੍ਰਾਪਤ ਕਰਨ ਲਈ ਨੋਟੀਫਿਕੇਸ਼ਨ ਯੋਗ ਕਰੋ",
+  "enableLabel": "ਯੋਗ ਕਰੋ",
+  "notificationsEnabled": "ਨੋਟੀਫਿਕੇਸ਼ਨ ਯੋਗ ਕੀਤੇ ਗਏ",
+  "couldNotEnableNotifications": "ਯੋਗ ਨਹੀਂ ਹੋ ਸਕਿਆ — ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਨੋਟੀਫਿਕੇਸ਼ਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ",
+  "amountInrLabel": "ਰਾਸ਼ੀ (₹)",
+  "noteOptionalLabel": "ਨੋਟ (ਵਿਕਲਪਿਕ)",
+  "txnDate": "ਮਿਤੀ",
+  "txnDescription": "ਵੇਰਵਾ",
+  "txnType": "ਕਿਸਮ",
+  "txnAmount": "ਰਾਸ਼ੀ",
+  "txnBalance": "ਬਕਾਇਆ",
+  "credit": "ਕ੍ਰੈਡਿਟ",
+  "debit": "ਡੈਬਿਟ",
+  "razorpayStripeNote": "💳 ਪ੍ਰੋਡਕਸ਼ਨ ਵਿੱਚ ਇਹ Razorpay/Stripe ਤੇ ਰੀਡਾਇਰੈਕਟ ਹੋਵੇਗਾ।",
+  "downloadPdf": "PDF ਡਾਊਨਲੋਡ ਕਰੋ",
+  "chatWithAiCta": "AI ਨਾਲ ਗੱਲਬਾਤ ਕਰੋ",
+  "pdfServiceUnavailable": "PDF ਸੇਵਾ ਅਸਥਾਈ ਤੌਰ ਤੇ ਅਣਉਪਲਬਧ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਬਾਅਦ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "pleaseUnlockFirst": "ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਇਸਨੂੰ ਅਨਲੌਕ ਕਰੋ।",
+  "couldNotGeneratePdf": "PDF ਤਿਆਰ ਨਹੀਂ ਹੋ ਸਕੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+  "statConsults": "ਸਲਾਹਾਂ",
+  "statCharts": "ਚਾਰਟ",
+  "statWallet": "ਵਾਲਿਟ",
+  "firstChartPrimaryInfo": "ਤੁਹਾਡਾ ਪਹਿਲਾ ਚਾਰਟ ਤੁਹਾਡਾ ਫ੍ਰੀ ਪ੍ਰਾਇਮਰੀ ਹੈ। ਵਾਧੂ ਚਾਰਟ ਵੱਖਰੇ ਤੌਰ ਤੇ ਸੇਵਾਵਾਂ ਅਨਲੌਕ ਕਰਦੇ ਹਨ।",
+  "tryDifferentFilter": "ਵੱਖਰਾ ਫਿਲਟਰ ਅਜ਼ਮਾਓ",
+  "defaultChartName": "ਚਾਰਟ",
+  "balAbbr": "ਬਕਾ"
 }

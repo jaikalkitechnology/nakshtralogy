@@ -11844,4 +11844,159 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get reportCopied => 'คัดลอกข้อมูลรายงานแล้ว!';
+
+  @override
+  String get biometricNotAvailable => 'ไม่มีระบบไบโอเมตริกซ์ในอุปกรณ์นี้';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'ข้อผิดพลาดไบโอเมตริกซ์: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'ยืนยันเพื่อเปิดใช้การเข้าสู่ระบบด้วยไบโอเมตริกซ์';
+
+  @override
+  String get dobFormatLabel => 'วันเกิด (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'เวลาเกิด (HH:MM)';
+
+  @override
+  String get phoneLabel => 'โทรศัพท์';
+
+  @override
+  String get activeBadge => 'ใช้งานอยู่';
+
+  @override
+  String get chartCategoryLabel => 'หมวดหมู่';
+
+  @override
+  String get freePrimaryDescription =>
+      'หลักฟรี — ใช้สำหรับดูดวงประจำวันและบริการแผนภูมิเดี่ยวฟรี';
+
+  @override
+  String get searchChartsHint => 'ค้นหาด้วยชื่อหรือวันเกิด...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'ปลดล็อกด้วย $price';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'ปลดล็อกผู้เชี่ยวชาญ AI นี้ด้วย $price (ครั้งเดียว) ซื้ออย่างปลอดภัยผ่านแอปสโตร์';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'ปลดล็อกผู้เชี่ยวชาญ AI นี้ด้วย $price (ครั้งเดียว) จำนวนเงินจะถูกหักจากกระเป๋าเงินของคุณ';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'ผู้เชี่ยวชาญนี้ยังไม่พร้อมให้ซื้อ';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'ไม่สามารถทำการซื้อให้เสร็จสมบูรณ์ได้ กรุณาลองอีกครั้ง';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'ไม่สามารถปลดล็อกได้ (ตรวจสอบยอดเงินในกระเป๋าเงิน)';
+
+  @override
+  String get freeBadge => 'ฟรี';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'คุณมี $kind ที่กำลังดำเนินอยู่';
+  }
+
+  @override
+  String get returnLabel => 'กลับไป';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'เปิดใช้การแจ้งเตือนเพื่อรับการแจ้งเตือนการปรึกษาและข้อเสนอ';
+
+  @override
+  String get enableLabel => 'เปิดใช้งาน';
+
+  @override
+  String get notificationsEnabled => 'เปิดใช้การแจ้งเตือนแล้ว';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'ไม่สามารถเปิดใช้งานได้ — อนุญาตการแจ้งเตือนในเบราว์เซอร์ของคุณ';
+
+  @override
+  String get amountInrLabel => 'จำนวน (₹)';
+
+  @override
+  String get noteOptionalLabel => 'บันทึก (ไม่บังคับ)';
+
+  @override
+  String get txnDate => 'วันที่';
+
+  @override
+  String get txnDescription => 'รายละเอียด';
+
+  @override
+  String get txnType => 'ประเภท';
+
+  @override
+  String get txnAmount => 'จำนวน';
+
+  @override
+  String get txnBalance => 'ยอดคงเหลือ';
+
+  @override
+  String get credit => 'เครดิต';
+
+  @override
+  String get debit => 'เดบิต';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 ในระบบจริงจะถูกเปลี่ยนเส้นทางไปยัง Razorpay/Stripe';
+
+  @override
+  String get downloadPdf => 'ดาวน์โหลด PDF';
+
+  @override
+  String get chatWithAiCta => 'แชทกับ AI';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'บริการ PDF ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้งในภายหลัง';
+
+  @override
+  String get pleaseUnlockFirst => 'กรุณาปลดล็อกสิ่งนี้ก่อน';
+
+  @override
+  String get couldNotGeneratePdf => 'ไม่สามารถสร้าง PDF ได้ กรุณาลองอีกครั้ง';
+
+  @override
+  String get statConsults => 'การปรึกษา';
+
+  @override
+  String get statCharts => 'แผนภูมิ';
+
+  @override
+  String get statWallet => 'กระเป๋าเงิน';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'แผนภูมิแรกของคุณคือแผนภูมิหลักฟรี แผนภูมิเพิ่มเติมจะปลดล็อกบริการแยกกัน';
+
+  @override
+  String get tryDifferentFilter => 'ลองใช้ตัวกรองอื่น';
+
+  @override
+  String get defaultChartName => 'แผนภูมิ';
+
+  @override
+  String get balAbbr => 'คงเหลือ';
 }

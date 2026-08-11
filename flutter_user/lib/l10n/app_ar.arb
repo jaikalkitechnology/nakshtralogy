@@ -3789,5 +3789,85 @@
   "houseAnalysis": "تحليل البيت",
   "jaiminiKarakas": "كاراكات Jaimini",
   "copyFullReport": "نسخ بيانات التقرير الكاملة",
-  "reportCopied": "تم نسخ بيانات التقرير!"
+  "reportCopied": "تم نسخ بيانات التقرير!",
+  "biometricNotAvailable": "البصمة الحيوية غير متوفرة على هذا الجهاز",
+  "biometricErrorMsg": "خطأ في البصمة الحيوية: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "تحقق لتفعيل تسجيل الدخول بالبصمة الحيوية",
+  "dobFormatLabel": "تاريخ الميلاد (DD/MM/YYYY)",
+  "tobFormatLabel": "وقت الميلاد (HH:MM)",
+  "phoneLabel": "الهاتف",
+  "activeBadge": "نشط",
+  "chartCategoryLabel": "الفئة",
+  "freePrimaryDescription": "الأساسي المجاني — يُستخدم للأبراج اليومية وخدمات الرسم البياني المفرد المجانية",
+  "searchChartsHint": "البحث بالاسم أو تاريخ الميلاد...",
+  "unlockPriceLabel": "فتح مقابل {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "افتح هذا الخبير الذكي مقابل {price} (مرة واحدة)، يتم الشراء بأمان عبر متجر التطبيقات.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "افتح هذا الخبير الذكي مقابل {price} (مرة واحدة). سيتم خصم المبلغ من محفظتك.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "هذا الخبير غير متاح للشراء حاليًا.",
+  "couldNotCompletePurchase": "تعذر إتمام الشراء. يرجى المحاولة مرة أخرى.",
+  "couldNotUnlockWalletBalance": "تعذر فتح القفل (تحقق من رصيد المحفظة)",
+  "freeBadge": "مجاني",
+  "activeSessionInProgress": "لديك {kind} نشط قيد التنفيذ",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "عودة",
+  "enableNotificationsForAlerts": "فعّل الإشعارات للحصول على تنبيهات الاستشارة والعروض",
+  "enableLabel": "تفعيل",
+  "notificationsEnabled": "تم تفعيل الإشعارات",
+  "couldNotEnableNotifications": "تعذر التفعيل — يرجى السماح بالإشعارات في متصفحك",
+  "amountInrLabel": "المبلغ (₹)",
+  "noteOptionalLabel": "ملاحظة (اختياري)",
+  "txnDate": "التاريخ",
+  "txnDescription": "الوصف",
+  "txnType": "النوع",
+  "txnAmount": "المبلغ",
+  "txnBalance": "الرصيد",
+  "credit": "إيداع",
+  "debit": "خصم",
+  "razorpayStripeNote": "💳 في الإنتاج، سيتم التوجيه إلى Razorpay/Stripe.",
+  "downloadPdf": "تنزيل PDF",
+  "chatWithAiCta": "تحدث مع الذكاء الاصطناعي",
+  "pdfServiceUnavailable": "خدمة PDF غير متوفرة مؤقتًا. يرجى المحاولة مرة أخرى لاحقًا.",
+  "pleaseUnlockFirst": "يرجى فتح هذا أولاً.",
+  "couldNotGeneratePdf": "تعذر إنشاء ملف PDF. يرجى المحاولة مرة أخرى.",
+  "statConsults": "الاستشارات",
+  "statCharts": "الرسوم البيانية",
+  "statWallet": "المحفظة",
+  "firstChartPrimaryInfo": "مخططك الأول هو الأساسي المجاني. المخططات الإضافية تفتح الخدمات بشكل فردي.",
+  "tryDifferentFilter": "جرّب مرشحًا مختلفًا",
+  "defaultChartName": "مخطط",
+  "balAbbr": "الرصيد"
 }

@@ -11900,4 +11900,161 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get reportCopied => 'Données du rapport copiées !';
+
+  @override
+  String get biometricNotAvailable =>
+      'La biométrie n\'est pas disponible sur cet appareil';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'Erreur biométrique : $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'Vérifiez pour activer la connexion biométrique';
+
+  @override
+  String get dobFormatLabel => 'Date de naissance (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'Heure de naissance (HH:MM)';
+
+  @override
+  String get phoneLabel => 'Téléphone';
+
+  @override
+  String get activeBadge => 'ACTIF';
+
+  @override
+  String get chartCategoryLabel => 'Catégorie';
+
+  @override
+  String get freePrimaryDescription =>
+      'Principal gratuit — utilisé pour l\'horoscope quotidien et les services de carte unique gratuits';
+
+  @override
+  String get searchChartsHint => 'Rechercher par nom ou date de naissance...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'Débloquer pour $price';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'Débloquez cet expert IA pour $price (une fois), acheté en toute sécurité via l\'App Store.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'Débloquez cet expert IA pour $price (une fois). Le montant sera déduit de votre portefeuille.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'Cet expert n\'est pas encore disponible à l\'achat.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'Impossible de finaliser l\'achat. Veuillez réessayer.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'Impossible de débloquer (vérifiez le solde du portefeuille)';
+
+  @override
+  String get freeBadge => 'GRATUIT';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'Vous avez un(e) $kind actif en cours';
+  }
+
+  @override
+  String get returnLabel => 'Retour';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'Activez les notifications pour recevoir des alertes de consultation et d\'offres';
+
+  @override
+  String get enableLabel => 'Activer';
+
+  @override
+  String get notificationsEnabled => 'Notifications activées';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'Impossible d\'activer — autorisez les notifications dans votre navigateur';
+
+  @override
+  String get amountInrLabel => 'Montant (₹)';
+
+  @override
+  String get noteOptionalLabel => 'Note (facultatif)';
+
+  @override
+  String get txnDate => 'DATE';
+
+  @override
+  String get txnDescription => 'DESCRIPTION';
+
+  @override
+  String get txnType => 'TYPE';
+
+  @override
+  String get txnAmount => 'MONTANT';
+
+  @override
+  String get txnBalance => 'SOLDE';
+
+  @override
+  String get credit => 'Crédit';
+
+  @override
+  String get debit => 'Débit';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 En production, cela redirigera vers Razorpay/Stripe.';
+
+  @override
+  String get downloadPdf => 'Télécharger le PDF';
+
+  @override
+  String get chatWithAiCta => 'Discuter avec l\'IA';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'Le service PDF est temporairement indisponible. Veuillez réessayer plus tard.';
+
+  @override
+  String get pleaseUnlockFirst => 'Veuillez d\'abord débloquer ceci.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'Impossible de générer le PDF. Veuillez réessayer.';
+
+  @override
+  String get statConsults => 'CONSULTATIONS';
+
+  @override
+  String get statCharts => 'CARTES';
+
+  @override
+  String get statWallet => 'PORTEFEUILLE';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'Votre première carte est votre carte Principale gratuite. Les cartes supplémentaires débloquent les services individuellement.';
+
+  @override
+  String get tryDifferentFilter => 'Essayez un autre filtre';
+
+  @override
+  String get defaultChartName => 'Carte';
+
+  @override
+  String get balAbbr => 'Solde';
 }

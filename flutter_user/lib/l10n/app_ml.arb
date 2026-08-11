@@ -3789,5 +3789,85 @@
   "houseAnalysis": "ഭാവ വിശകലനം",
   "jaiminiKarakas": "ജൈമിനി കാരകങ്ങള്‍",
   "copyFullReport": "മുഴുവന്‍ റിപ്പോര്‍ട്ട് പകര്‍ത്തുക",
-  "reportCopied": "റിപ്പോര്‍ട്ട് പകര്‍ത്തി!"
+  "reportCopied": "റിപ്പോര്‍ട്ട് പകര്‍ത്തി!",
+  "biometricNotAvailable": "ഈ ഡിവൈസിൽ ബയോമെട്രിക് ലഭ്യമല്ല",
+  "biometricErrorMsg": "ബയോമെട്രിക് പിശക്: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "ബയോമെട്രിക് ലോഗിൻ പ്രവർത്തനക്ഷമമാക്കാൻ പരിശോധിക്കുക",
+  "dobFormatLabel": "ജനനത്തീയതി (DD/MM/YYYY)",
+  "tobFormatLabel": "ജനന സമയം (HH:MM)",
+  "phoneLabel": "ഫോൺ",
+  "activeBadge": "സജീവം",
+  "chartCategoryLabel": "വിഭാഗം",
+  "freePrimaryDescription": "ഫ്രീ പ്രൈമറി — ദിവസേനയുള്ള ജാതകവും ഫ്രീ സിംഗിൾ-ചാർട്ട് സേവനങ്ങൾക്കും ഉപയോഗിക്കുന്നു",
+  "searchChartsHint": "പേര് അല്ലെങ്കിൽ ജനനത്തീയതി ഉപയോഗിച്ച് തിരയുക...",
+  "unlockPriceLabel": "{price}-ന് അൺലോക്ക് ചെയ്യുക",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "ഈ AI സ്പെഷ്യലിസ്റ്റിനെ {price}-ന് (ഒരു തവണ) അൺലോക്ക് ചെയ്യുക, ആപ്പ് സ്റ്റോർ വഴി സുരക്ഷിതമായി വാങ്ങുന്നു.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "ഈ AI സ്പെഷ്യലിസ്റ്റിനെ {price}-ന് (ഒരു തവണ) അൺലോക്ക് ചെയ്യുക. തുക നിങ്ങളുടെ വാലറ്റിൽ നിന്ന് കുറയ്ക്കും.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "ഈ സ്പെഷ്യലിസ്റ്റ് ഇതുവരെ വാങ്ങാൻ ലഭ്യമല്ല.",
+  "couldNotCompletePurchase": "വാങ്ങൽ പൂർത്തിയാക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.",
+  "couldNotUnlockWalletBalance": "അൺലോക്ക് ചെയ്യാൻ കഴിഞ്ഞില്ല (വാലറ്റ് ബാലൻസ് പരിശോധിക്കുക)",
+  "freeBadge": "ഫ്രീ",
+  "activeSessionInProgress": "നിങ്ങളുടെ സജീവമായ {kind} തുടരുന്നു",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "മടങ്ങുക",
+  "enableNotificationsForAlerts": "കൺസൾട്ടേഷനും ഓഫർ അലേർട്ടുകളും ലഭിക്കാൻ അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക",
+  "enableLabel": "പ്രവർത്തനക്ഷമമാക്കുക",
+  "notificationsEnabled": "അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കി",
+  "couldNotEnableNotifications": "പ്രവർത്തനക്ഷമമാക്കാൻ കഴിഞ്ഞില്ല — നിങ്ങളുടെ ബ്രൗസറിൽ അറിയിപ്പുകൾ അനുവദിക്കുക",
+  "amountInrLabel": "തുക (₹)",
+  "noteOptionalLabel": "കുറിപ്പ് (ഓപ്ഷണൽ)",
+  "txnDate": "തീയതി",
+  "txnDescription": "വിവരണം",
+  "txnType": "തരം",
+  "txnAmount": "തുക",
+  "txnBalance": "ബാലൻസ്",
+  "credit": "ക്രെഡിറ്റ്",
+  "debit": "ഡെബിറ്റ്",
+  "razorpayStripeNote": "💳 പ്രൊഡക്ഷനിൽ ഇത് Razorpay/Stripe-ലേക്ക് റീഡയറക്ട് ചെയ്യും.",
+  "downloadPdf": "PDF ഡൗൺലോഡ് ചെയ്യുക",
+  "chatWithAiCta": "AI-യുമായി ചാറ്റ് ചെയ്യുക",
+  "pdfServiceUnavailable": "PDF സേവനം താൽക്കാലികമായി ലഭ്യമല്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
+  "pleaseUnlockFirst": "ദയവായി ആദ്യം ഇത് അൺലോക്ക് ചെയ്യുക.",
+  "couldNotGeneratePdf": "PDF ജനറേറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.",
+  "statConsults": "കൺസൾട്ടേഷനുകൾ",
+  "statCharts": "ചാർട്ടുകൾ",
+  "statWallet": "വാലറ്റ്",
+  "firstChartPrimaryInfo": "നിങ്ങളുടെ ആദ്യ ചാർട്ട് നിങ്ങളുടെ ഫ്രീ പ്രൈമറിയാണ്. അധിക ചാർട്ടുകൾ വ്യക്തിഗതമായി സേവനങ്ങൾ അൺലോക്ക് ചെയ്യുന്നു.",
+  "tryDifferentFilter": "വ്യത്യസ്തമായ ഫിൽട്ടർ ശ്രമിക്കുക",
+  "defaultChartName": "ചാർട്ട്",
+  "balAbbr": "ബാൽ"
 }

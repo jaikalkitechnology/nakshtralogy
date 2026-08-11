@@ -14,10 +14,10 @@ class ReportHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text.rich(TextSpan(children: [
+      Flexible(child: Text.rich(TextSpan(children: [
         TextSpan(text: '$prefix ', style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w600, fontFamily: 'serif')),
         TextSpan(text: suffix, style: const TextStyle(color: AppColors.gold, fontSize: 15, fontWeight: FontWeight.w500, fontFamily: 'serif', fontStyle: FontStyle.italic)),
-      ])),
+      ]), maxLines: 1, overflow: TextOverflow.ellipsis)),
       Container(padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
         decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(6),
           border: Border.all(color: AppColors.gold.withOpacity(0.15))),
@@ -88,7 +88,7 @@ class DignityBadge extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 5),
     decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0x0DFFFFFF), width: 0.5))),
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(planet, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600, fontFamily: 'serif')),
+      Flexible(child: Text(planet, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 11, fontWeight: FontWeight.w600, fontFamily: 'serif'))),
       Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(color: _color.withOpacity(0.15), borderRadius: BorderRadius.circular(4),
           border: Border.all(color: _color.withOpacity(0.4))),
@@ -199,7 +199,7 @@ class ConfidenceBlock extends StatelessWidget {
             final v = ((layer.value as num).toDouble() * (layer.value is double && (layer.value as double) <= 1.0 ? 100 : 1)).clamp(0, 100).toDouble();
             return Padding(padding: const EdgeInsets.only(bottom: 6), child: Column(children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(_fmt(layer.key), style: const TextStyle(color: AppColors.lavender, fontSize: 9)),
+                Flexible(child: Text(_fmt(layer.key), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.lavender, fontSize: 9))),
                 Text('${v.toStringAsFixed(0)}%', style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700, fontFamily: 'monospace')),
               ]),
               const SizedBox(height: 3),
@@ -231,7 +231,7 @@ class TimingWindowCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(14), border: Border.all(color: color.withOpacity(isPeak ? 0.4 : 0.2))),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(title, style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif')),
+        Flexible(child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w600, fontFamily: 'serif'))),
         Container(width: 26, height: 26, decoration: BoxDecoration(color: color.withOpacity(0.2), shape: BoxShape.circle),
           child: Center(child: Text(icon, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w700)))),
       ]),
@@ -285,7 +285,8 @@ class KeyValueBox extends StatelessWidget {
       ...rows.entries.map((e) => Container(padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0x14FFFFFF), width: 0.5))),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(e.key, style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 1, fontFamily: 'monospace')),
+          Flexible(child: Text(e.key, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 9, letterSpacing: 1, fontFamily: 'monospace'))),
+          const SizedBox(width: 8),
           Flexible(child: Text(e.value, textAlign: TextAlign.right,
             style: const TextStyle(color: AppColors.gold, fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'serif'),
             maxLines: 2, overflow: TextOverflow.ellipsis)),

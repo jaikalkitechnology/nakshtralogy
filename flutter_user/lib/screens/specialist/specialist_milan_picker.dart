@@ -86,7 +86,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
         title: Row(children: [
           const Text('💑', style: TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
-          Text(l.kundliMilanReportTitle, style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
+          Expanded(child: Text(l.kundliMilanReportTitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700))),
         ]),
       ),
       body: _loading
@@ -140,16 +140,17 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                                   : Text(gender == 'M' ? '♂' : gender == 'F' ? '♀' : '?', style: const TextStyle(fontSize: 18))),
                             const SizedBox(width: 12),
                             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(name, style: TextStyle(color: isSelected ? Colors.pink : AppColors.textPrimary,
+                              Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: isSelected ? Colors.pink : AppColors.textPrimary,
                                   fontSize: 14, fontWeight: FontWeight.w600)),
-                              Text('$dob • $place', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                              Text('$dob • $place', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ])),
                             if (isSelected)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(color: Colors.pink.withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
-                                child: Text(_selected.toList().indexOf(id) == 0 ? l.personOneLabel : l.personTwoLabel,
-                                    style: const TextStyle(color: Colors.pink, fontSize: 10, fontWeight: FontWeight.w600)),
+                                child: FittedBox(fit: BoxFit.scaleDown, child: Text(_selected.toList().indexOf(id) == 0 ? l.personOneLabel : l.personTwoLabel,
+                                    maxLines: 1,
+                                    style: const TextStyle(color: Colors.pink, fontSize: 10, fontWeight: FontWeight.w600))),
                               ),
                           ]),
                         ),
