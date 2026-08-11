@@ -77,7 +77,11 @@ class Settings:
     # Connect grace: a call that lasts <= this many seconds is NOT charged
     # (misdial / "can't hear you, call back"). 0 disables the grace.
     CALL_FREE_GRACE_SEC: int = 10
-    PLATFORM_COMMISSION_PCT: float = 30.0 # default 30% cut
+    # Astrologer's earning SHARE (%) — fallback when a profile has no explicit
+    # value. It is the astrologer's cut of every billable communication, gift
+    # and super chat; the platform keeps the remainder. Policy: astrologer 70%,
+    # platform fee 30%.
+    PLATFORM_COMMISSION_PCT: float = 70.0
 
     # Firebase FCM (dual-project: user app + astro app)
     FIREBASE_USER_SA_PATH: str = os.getenv("FIREBASE_USER_SA_PATH", "credentials/firebase-user-sa.json")

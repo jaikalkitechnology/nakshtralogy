@@ -172,7 +172,7 @@ class AstrologerProfile(Base):
     rate_per_msg_chat = Column(Numeric(10, 2), default=0)
     # Super chat minimum rate (used during live streaming)
     super_chat_rate = Column(Numeric(10, 2), default=50)
-    commission_pct = Column(Numeric(5, 2), default=50.00)   # platform commission — 50% for new signups
+    commission_pct = Column(Numeric(5, 2), default=70.00)   # astrologer earning share — 70%; platform fee 30%
     rating = Column(Numeric(3, 2), default=0.00)
     total_reviews = Column(Integer, default=0)
     total_consultations = Column(Integer, default=0)
