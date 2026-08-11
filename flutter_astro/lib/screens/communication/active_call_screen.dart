@@ -210,7 +210,10 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+    // Only end on a real teardown (detached). 'paused' fires for a
+    // notification pull-down / screen lock / app-switch and previously killed
+    // the astrologer's live call the instant they glanced away.
+    if (state == AppLifecycleState.detached) {
       _endCall();
     }
   }

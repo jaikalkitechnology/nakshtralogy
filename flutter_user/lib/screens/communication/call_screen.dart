@@ -65,7 +65,13 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+    // Only end the call when the app is really being torn down (detached).
+    // 'paused' fires for a notification pull-down, a screen lock, or an
+    // app-switch — ending on that killed calls the moment the user glanced
+    // away. On web 'paused' isn't reliably delivered for a backgrounded tab
+    // anyway, so we keep the RTC connection through background and let the
+    // user return to the live call.
+    if (state == AppLifecycleState.detached) {
       _endCall(fromLifecycle: true);
     }
   }
@@ -271,7 +277,12 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
 
   Future<void> _toggleSpeaker() async {
     setState(() => _isSpeaker = !_isSpeaker);
-    await _engine?.setEnableSpeakerphone(_isSpeaker);
+    // setEnableSpeakerphone is a mobile-only audio-route API — calling it on
+    // web can throw. The browser manages the output device itself.
+    if (kIsWeb) return;
+    try {
+      await _engine?.setEnableSpeakerphone(_isSpeaker);
+    } catch (_) {/* audio route not switchable on this platform */}
   }
 
   Future<void> _toggleVideo() async {
