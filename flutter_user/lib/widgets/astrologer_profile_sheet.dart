@@ -241,8 +241,15 @@ class _AstrologerProfileSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // First-time / astrologer coupon offer
-                    AstrologerCouponBanner(astrologerId: a['id'] as String),
+                    // First-time / astrologer coupon offer.
+                    // Stable key: the sheet is a BlocBuilder that rebuilds when
+                    // the astrologer detail/reviews load in separate emits —
+                    // without a key the banner's State was discarded and
+                    // reloaded each time, so it flashed and vanished on mobile.
+                    AstrologerCouponBanner(
+                      key: ValueKey('astro_coupon_${a['id']}'),
+                      astrologerId: a['id'] as String,
+                    ),
 
                     // Bio
                     if (a['bio'] != null && (a['bio'] as String).isNotEmpty) ...[
