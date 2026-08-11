@@ -8,9 +8,9 @@ import '../utils/menu_labels.dart';
 class LegalSection extends StatelessWidget {
   const LegalSection({super.key});
 
-  static const String privacyUrl = 'https://nakshatralogy.com/privacy.html';
+  static const String privacyUrl = 'https://nakshatralogy.com/privacy-policy.html';
   static const String termsUrl = 'https://nakshatralogy.com/terms.html';
-  static const String refundUrl = 'https://nakshatralogy.com/refund.html';
+  static const String refundUrl = 'https://nakshatralogy.com/refund-policy.html';
 
   Future<void> _open(BuildContext context, String url) async {
     final uri = Uri.parse(url);

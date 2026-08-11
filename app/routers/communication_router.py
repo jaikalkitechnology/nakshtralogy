@@ -38,9 +38,12 @@ import os
 import uuid
 import time
 import math
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import List, Optional
+
+logger = logging.getLogger(__name__)
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status, Header
 from fastapi.responses import FileResponse
@@ -810,20 +813,25 @@ def call_history(
     app_id, _ = _get_agora_creds(db)
     results = []
     for c in calls:
-        astrologer_name = None
-        if c.astrologer_profile_id:
-            profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == c.astrologer_profile_id).first()
-            if profile:
-                astrologer_name = profile.display_name
-        results.append(CallSessionResponse(
-            id=c.id, channel_name=c.channel_name,
-            caller_id=c.caller_id, receiver_id=c.receiver_id,
-            call_type=c.call_type, rate_per_min=float(c.rate_per_min),
-            status=c.status, agora_app_id=app_id,
-            started_at=c.started_at, ended_at=c.ended_at,
-            duration_sec=c.duration_sec, total_amount=float(c.total_amount or 0),
-            created_at=c.created_at, astrologer_name=astrologer_name,
-        ))
+        # Per-row guard: one malformed/legacy row must not blank the whole
+        # history (a single 500 made the client show "no history").
+        try:
+            astrologer_name = None
+            if c.astrologer_profile_id:
+                profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == c.astrologer_profile_id).first()
+                if profile:
+                    astrologer_name = profile.display_name
+            results.append(CallSessionResponse(
+                id=c.id, channel_name=c.channel_name or "",
+                caller_id=c.caller_id, receiver_id=c.receiver_id,
+                call_type=c.call_type, rate_per_min=float(c.rate_per_min or 0),
+                status=c.status, agora_app_id=app_id,
+                started_at=c.started_at, ended_at=c.ended_at,
+                duration_sec=c.duration_sec or 0, total_amount=float(c.total_amount or 0),
+                created_at=c.created_at, astrologer_name=astrologer_name,
+            ))
+        except Exception as e:  # noqa: BLE001
+            logger.warning("call_history: skipped row %s (%s)", getattr(c, "id", "?"), e)
     return results
 
 
@@ -1906,7 +1914,14 @@ def chat_history(
             db.query(AstrologerProfile.id).filter(AstrologerProfile.user_id == current_user.id)
         ))
     ).order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
-    return [_chat_session_response(s, db) for s in sessions]
+    out = []
+    for s in sessions:
+        # Per-row guard so one bad/legacy row can't blank the whole history.
+        try:
+            out.append(_chat_session_response(s, db))
+        except Exception as e:  # noqa: BLE001
+            logger.warning("chat_history: skipped row %s (%s)", getattr(s, "id", "?"), e)
+    return out
 
 
 # ── Send Message via REST (for inline notification reply) ────────────

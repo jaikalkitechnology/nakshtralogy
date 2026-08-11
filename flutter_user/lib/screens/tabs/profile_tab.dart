@@ -571,13 +571,6 @@ class _ProfileTabState extends State<ProfileTab> {
                       _menuDivider(),
                       _biometricToggle(l),
                     ],
-                    _menuDivider(),
-                    _menuItem(
-                      emoji: '\u2753',
-                      label: l.helpSupport,
-                      onTap: () => _showComingSoon(l.helpSupport),
-                      isLast: true,
-                    ),
                   ],
                 ),
               ),
@@ -643,8 +636,22 @@ class _ProfileTabState extends State<ProfileTab> {
                                     style: const TextStyle(
                                         color: AppColors.gold, fontSize: 11, fontWeight: FontWeight.w700),
                                   ),
-                                  const SizedBox(width: 4),
-                                  const Icon(Icons.chevron_right, size: 14, color: AppColors.smoke),
+                                  const SizedBox(width: 2),
+                                  // Remove from saved (works even for an astrologer
+                                  // whose account was later removed).
+                                  IconButton(
+                                    icon: const Icon(Icons.bookmark_remove_outlined,
+                                        size: 18, color: AppColors.smoke),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                    tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                                    onPressed: () {
+                                      final rid = a['id']?.toString();
+                                      if (rid != null) {
+                                        context.read<AstrologerBloc>().add(AstrologerToggleSave(rid));
+                                      }
+                                    },
+                                  ),
                                 ],
                               ),
                             ))),
