@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Astrologer self-serve discount offers. Create a first-time / consultation
 /// coupon that shows on your profile and auto-applies to chat/call/video
@@ -80,7 +81,9 @@ class _MyCouponsScreenState extends State<MyCouponsScreen> {
         onPressed: _openCreate,
         icon: const Icon(Icons.add), label: const Text('New offer'),
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 900,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : RefreshIndicator(
               color: AppColors.gold,
@@ -155,6 +158,7 @@ class _MyCouponsScreenState extends State<MyCouponsScreen> {
                       },
                     ),
             ),
+      ),
     );
   }
 }

@@ -11,6 +11,7 @@ import '../../bloc/kyc/kyc_bloc.dart';
 import '../../bloc/kyc/kyc_event.dart';
 import '../../bloc/kyc/kyc_state.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 
 class KycSubmitScreen extends StatefulWidget {
   const KycSubmitScreen({super.key});
@@ -199,7 +200,9 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
               IconButton(icon: const Icon(Icons.logout), onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested())),
             ],
           ),
-          body: SingleChildScrollView(
+          body: DesktopCenter(
+            maxWidth: 720,
+            child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               // Banner
@@ -293,7 +296,7 @@ class _KycSubmitScreenState extends State<KycSubmitScreen> {
                 ]),
               ),
             ]),
-          ),
+          )),
         );
       },
     );

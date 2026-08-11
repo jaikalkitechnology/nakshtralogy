@@ -7,6 +7,7 @@ import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
 import '../../bloc/chart/chart_state.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 
 class AddClientChartScreen extends StatefulWidget {
   const AddClientChartScreen({super.key});
@@ -174,7 +175,9 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context)),
           title: Text(l.newClientChart),
         ),
-        body: GestureDetector(
+        body: DesktopCenter(
+          maxWidth: 640,
+          child: GestureDetector(
           onTap: () { FocusScope.of(context).unfocus(); _removeOverlay(); },
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
@@ -256,7 +259,7 @@ class _AddClientChartScreenState extends State<AddClientChartScreen> {
               ),
             ),
           ),
-        ),
+        )),
       ),
     );
   }

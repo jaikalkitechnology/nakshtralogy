@@ -17,6 +17,7 @@ import 'lifepath_report_screen.dart';
 import 'character_report_screen.dart';
 import 'pastlife_report_screen.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../widgets/desktop_center.dart';
 
 class SpecialistChartPicker extends StatefulWidget {
   final String specialistKey, specialistLabel, specialistEmoji;
@@ -56,7 +57,9 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
           Text(widget.specialistLabel, style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
         ]),
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 720,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _charts.isEmpty
               ? Center(child: Text(l.noChartsCreateFirst, style: const TextStyle(color: AppColors.textSecondary)))
@@ -121,6 +124,7 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                     },
                   )),
                 ]),
+      ),
     );
   }
 }

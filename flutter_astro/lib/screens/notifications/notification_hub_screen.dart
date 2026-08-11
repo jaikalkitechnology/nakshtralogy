@@ -3,6 +3,7 @@ import '../../theme/app_theme.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../tabs/requests_tab.dart';
 import 'notification_screen.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Combined notifications hub: the astrologer's incoming call/chat **Requests**
 /// (with accept/decline) AND **all notifications** (including admin messages) in
@@ -33,10 +34,12 @@ class NotificationHubScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(children: [
+        body: DesktopCenter(
+          maxWidth: 900,
+          child: const TabBarView(children: [
           RequestsTab(),
           NotificationScreen(embedded: true),
-        ]),
+        ])),
       ),
     );
   }

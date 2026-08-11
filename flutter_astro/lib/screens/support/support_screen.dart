@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'tickets_screen.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Customer Support — a searchable FAQ (admin-managed) plus an entry point to
 /// raise a support ticket. The FAQ content is served by the backend so admins
@@ -53,7 +54,9 @@ class _SupportScreenState extends State<SupportScreen> {
         title: const Text('Customer Support', style: TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold)),
         iconTheme: const IconThemeData(color: AppColors.ivory),
       ),
-      body: RefreshIndicator(
+      body: DesktopCenter(
+        maxWidth: 900,
+        child: RefreshIndicator(
         onRefresh: _load,
         color: AppColors.gold,
         child: ListView(
@@ -121,7 +124,7 @@ class _SupportScreenState extends State<SupportScreen> {
               ..._filtered.map(_faqTile),
           ],
         ),
-      ),
+      )),
     );
   }
 

@@ -3,6 +3,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'milan_report_screen.dart';
+import '../../widgets/desktop_center.dart';
 
 class SpecialistMilanPicker extends StatefulWidget {
   const SpecialistMilanPicker({super.key});
@@ -79,7 +80,9 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
           Text('Kundli Milan Report', style: TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
         ]),
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 720,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _analyzing
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -147,6 +150,7 @@ class _SpecialistMilanPickerState extends State<SpecialistMilanPicker> {
                     },
                   )),
                 ]),
+      ),
       bottomNavigationBar: _selected.length == 2
           ? SafeArea(child: Padding(padding: const EdgeInsets.all(16),
               child: ElevatedButton(
