@@ -64,6 +64,7 @@ from sqlalchemy import func as _sql_func
 from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
 from app.routers.notification_router import save_notification
 from app.routers.ws_astrologer import push_to_astrologer
+from app.core.async_bridge import schedule_coro
 import asyncio
 from app.schemas.communication_schema import (
     AgoraConfigCreate, AgoraConfigResponse, AgoraConfigUpdate,
@@ -581,10 +582,7 @@ def initiate_call(
             "agora_token": token_receiver,
             "agora_app_id": app_id,
         }
-        try:
-            asyncio.get_event_loop().create_task(push_to_astrologer(astro_user.id, call_data))
-        except Exception:
-            pass
+        schedule_coro(push_to_astrologer(astro_user.id, call_data))
         if astro_user.fcm_token or astro_user.fcm_token_web:
             notify_call_incoming(
                 fcm_token=astro_user.fcm_token,
@@ -1575,10 +1573,7 @@ def initiate_chat(
             "session_message_limit": str(session.session_message_limit or 45),
         }
         # Real-time WebSocket push (instant, no delay)
-        try:
-            asyncio.get_event_loop().create_task(push_to_astrologer(astro_user.id, chat_data))
-        except Exception:
-            pass
+        schedule_coro(push_to_astrologer(astro_user.id, chat_data))
         # FCM push (backup for background/terminated)
         if astro_user.fcm_token or astro_user.fcm_token_web:
             notify_chat_request(
@@ -1637,10 +1632,7 @@ def chat_action(
             )
         # Notify user through WebSocket that session is accepted
         from app.routers.ws_chat import notify_session_accepted
-        try:
-            asyncio.get_event_loop().create_task(notify_session_accepted(session.id))
-        except Exception:
-            pass
+        schedule_coro(notify_session_accepted(session.id))
         # FCM push to user that chat is accepted
         chat_user = db.query(User).filter(User.id == session.user_id).first()
         astrologer_display_name = current_user.name or t("label.default_astrologer_name", lang)
