@@ -10,6 +10,7 @@ import '../../bloc/auth/auth_state.dart';
 import '../../services/api_service.dart';
 import '../../services/google_auth_service.dart';
 import '../../widgets/language_selector.dart';
+import '../../widgets/desktop_center.dart';
 import 'otp_verify_screen.dart';
 
 /// Short astrologer signup — only the essentials (name, email, phone, password)
@@ -127,7 +128,9 @@ class _SignupScreenState extends State<SignupScreen> {
           ],
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
+          child: DesktopCenter(
+            maxWidth: 640,
+            child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
               const SizedBox(height: 12),
@@ -192,7 +195,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ]),
               const SizedBox(height: 20),
             ]),
-          ),
+          )),
         ),
       ),
     );

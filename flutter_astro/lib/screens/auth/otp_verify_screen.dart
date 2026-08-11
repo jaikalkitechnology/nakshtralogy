@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 import '../home/home_screen.dart';
 
 /// Email-OTP verification for the short signup flow. On success the backend
@@ -95,7 +96,9 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context)),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: DesktopCenter(
+          maxWidth: 520,
+          child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             const SizedBox(height: 24),
@@ -139,7 +142,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
             ),
             const SizedBox(height: 20),
           ]),
-        ),
+        )),
       ),
     );
   }

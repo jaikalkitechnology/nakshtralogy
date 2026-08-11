@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 
 enum PasswordOtpMode { forgot, change }
 
@@ -126,7 +127,9 @@ class _PasswordOtpScreenState extends State<PasswordOtpScreen> {
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary), onPressed: () => Navigator.pop(context)),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: DesktopCenter(
+          maxWidth: 520,
+          child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(children: [
             const SizedBox(height: 28),
@@ -214,7 +217,7 @@ class _PasswordOtpScreenState extends State<PasswordOtpScreen> {
             ),
             const SizedBox(height: 24),
           ]),
-        ),
+        )),
       ),
     );
   }
