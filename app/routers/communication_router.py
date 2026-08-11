@@ -108,7 +108,15 @@ def _generate_agora_token(app_id: str, app_cert: str, channel: str, uid: int, ro
         )
         return token
     except ImportError:
-        # dev fallback — return app_id as token (non-functional)
+        # dev fallback — a NON-FUNCTIONAL placeholder. If the Agora project
+        # enforces tokens (the normal prod setting) every join fails auth and the
+        # call connects no audio/video. Log LOUDLY so this misconfig is visible
+        # instead of failing silently. Install `agora-token-builder` in prod.
+        logger.error(
+            "agora_token_builder NOT installed — issuing a non-functional dev "
+            "token for channel %s. Calls/live WILL NOT connect if the Agora "
+            "project enforces tokens. Install 'agora-token-builder'.", channel
+        )
         return f"dev_token_{channel}_{uid}"
 
 

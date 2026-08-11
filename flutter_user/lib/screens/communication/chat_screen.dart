@@ -95,6 +95,36 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _startTimer();
     _startPing();
     _pollTimer?.cancel();
+    // Pull any messages that were broadcast while our socket was down (initial
+    // connect window or a reconnect). Without this, messages sent during that
+    // gap never appear in the live view — only later in history.
+    _syncHistory();
+  }
+
+  /// Fetch persisted messages and merge any we don't already show (dedup by id).
+  Future<void> _syncHistory() async {
+    try {
+      final history = await _api.getChatMessages(widget.sessionId, limit: 200);
+      if (!mounted || history.isEmpty) return;
+      final seen = _messages.map((m) => m['id']?.toString()).toSet();
+      final fresh = <Map<String, dynamic>>[];
+      for (final h in history) {
+        final m = Map<String, dynamic>.from(h as Map);
+        m['timestamp'] ??= m['created_at'];        // history uses created_at
+        m['is_astrologer'] ??= (m['sender_id'] != _myUserId);
+        if (!seen.contains(m['id']?.toString())) fresh.add(m);
+      }
+      if (fresh.isEmpty) return;
+      setState(() {
+        final all = <Map<String, dynamic>>[...fresh, ..._messages];
+        all.sort((a, b) => (a['timestamp']?.toString() ?? '')
+            .compareTo(b['timestamp']?.toString() ?? ''));
+        _messages
+          ..clear()
+          ..addAll(all);
+      });
+      _scrollToBottom();
+    } catch (_) {/* best-effort */}
   }
 
   void _startPing() {

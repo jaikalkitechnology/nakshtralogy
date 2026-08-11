@@ -135,6 +135,9 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
               _reconnectAttempts = 0;
               _startTimer();
               _startPing();
+              // Pull messages sent while our socket was down (connect/reconnect
+              // gap) so nothing is missing from the live view.
+              _syncHistory();
             }
             break;
           case 'ping':
@@ -289,6 +292,33 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
         _scrollCtrl.animateTo(_scrollCtrl.position.maxScrollExtent, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
       }
     });
+  }
+
+  /// Fetch persisted messages and merge any we don't already show (dedup by id),
+  /// so messages sent while our socket was down (connect/reconnect gap) appear.
+  Future<void> _syncHistory() async {
+    try {
+      final history = await _api.getChatMessages(widget.sessionId, limit: 200);
+      if (!mounted || history.isEmpty) return;
+      final seen = _messages.map((m) => m['id']?.toString()).toSet();
+      final fresh = <Map<String, dynamic>>[];
+      for (final h in history) {
+        final m = Map<String, dynamic>.from(h as Map);
+        m['timestamp'] ??= m['created_at'];
+        m['is_astrologer'] ??= (m['sender_id'] == _myUserId);
+        if (!seen.contains(m['id']?.toString())) fresh.add(m);
+      }
+      if (fresh.isEmpty) return;
+      setState(() {
+        final all = <Map<String, dynamic>>[...fresh, ..._messages];
+        all.sort((a, b) => (a['timestamp']?.toString() ?? '')
+            .compareTo(b['timestamp']?.toString() ?? ''));
+        _messages
+          ..clear()
+          ..addAll(all);
+      });
+      _scrollToBottom();
+    } catch (_) {/* best-effort */}
   }
 
   @override
