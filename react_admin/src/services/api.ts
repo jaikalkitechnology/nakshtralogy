@@ -62,6 +62,14 @@ export async function adminStats() {
   return request(`/admin/stats`);
 }
 
+export async function adminDashboardRevenue(range: "today" | "week" | "month" | "year" = "month") {
+  return request(`/admin/dashboard/revenue?range=${range}`);
+}
+
+export async function adminDashboardSummary() {
+  return request(`/admin/dashboard/summary`);
+}
+
 // ── Users ────────────────────────────────────────────────────────
 
 export async function adminListUsers(params: Record<string, any> = {}) {

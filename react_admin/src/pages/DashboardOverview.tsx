@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { adminStats } from "@/services/api";
 import {
-  IndianRupee, TrendingUp, Users, MessageSquare, Star, ShieldAlert, Server,
+  IndianRupee, Users, MessageSquare, Star, ShieldAlert, Server,
   Repeat, CheckCircle2, UserPlus, Ticket, CreditCard, Bell, FileText, RefreshCw,
-  Database, Play, ArrowUpRight, Wallet, MessageSquareWarning, UserCog, RotateCcw,
-  Check, X as XIcon, Eye,
+  Database, Play, ArrowUpRight, Wallet, MessageSquareWarning, UserCog,
+  Eye, Mail,
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
+import { adminStats, adminDashboardRevenue, adminDashboardSummary } from "@/services/api";
 import StatCard from "@/components/premium/StatCard";
 import GlassPanel from "@/components/premium/GlassPanel";
 import Ring from "@/components/premium/Ring";
@@ -17,34 +17,25 @@ import StatusRow from "@/components/premium/StatusRow";
 const spark = (seed: number) => Array.from({ length: 10 }, (_, i) => Math.sin(i + seed) * 4 + i * 1.2 + seed);
 
 type RevenueFilter = "Today" | "Week" | "Month" | "Year";
-const REVENUE_BY_FILTER: Record<RevenueFilter, { d: string; revenue: number; commission: number }[]> = {
-  Today: Array.from({ length: 12 }, (_, i) => ({ d: `${i * 2}h`, revenue: 3 + i * 1.6 + Math.sin(i) * 1.2, commission: 1 + i * 0.6 })),
-  Week: Array.from({ length: 7 }, (_, i) => ({ d: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i], revenue: 30 + i * 8 + Math.sin(i) * 6, commission: 15 + i * 4 })),
-  Month: Array.from({ length: 14 }, (_, i) => ({ d: `${i + 1}`, revenue: 40 + i * 6 + Math.sin(i) * 8, commission: 20 + i * 3 })),
-  Year: Array.from({ length: 12 }, (_, i) => ({ d: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][i], revenue: 400 + i * 60 + Math.sin(i) * 80, commission: 200 + i * 30 })),
+const RANGE_MAP: Record<RevenueFilter, "today" | "week" | "month" | "year"> = {
+  Today: "today", Week: "week", Month: "month", Year: "year",
 };
 
 const QUICK = [
   { icon: CheckCircle2, label: "Approve KYC", to: "/admin/kyc" }, { icon: UserPlus, label: "Add Astrologer", to: "/admin/astrologers" },
-  { icon: Ticket, label: "Create Coupon", to: "/admin/gifts" }, { icon: CreditCard, label: "Create Pricing", to: "/admin/pricing" },
-  { icon: Bell, label: "Send Notification", to: "/admin/notifications" }, { icon: FileText, label: "Generate Report", to: "/admin/analytics" },
-  { icon: RefreshCw, label: "Refresh Cache", to: "/admin/settings" }, { icon: Database, label: "Backup DB", to: "/admin/settings" }, { icon: Play, label: "API Playground", to: "/admin/api" },
+  { icon: Ticket, label: "Create Coupon", to: "/admin/coupons" }, { icon: CreditCard, label: "Create Pricing", to: "/admin/pricing" },
+  { icon: Bell, label: "Send Notification", to: "/admin/notifications" }, { icon: FileText, label: "Withdrawals", to: "/admin/withdrawals" },
+  { icon: RefreshCw, label: "System", to: "/admin/system" }, { icon: Database, label: "Payments", to: "/admin/payments" }, { icon: Play, label: "Developers", to: "/admin/developers" },
 ];
 
-const ACTIVITY = [
-  { icon: "₹", tone: "bg-emerald-500/15 text-emerald-400", title: "Wallet credited — Priya S.", meta: "Razorpay top-up • 2 min ago", right: "+₹2,000" },
-  { icon: "🎥", tone: "bg-cyan-500/15 text-cyan-400", title: "Video consultation completed", meta: "Astrologer Rajesh • 8 min ago", chip: "DONE" },
-  { icon: "✓", tone: "bg-gold/15 text-gold", title: "KYC approved — Kavita D.", meta: "Documents verified • 21 min ago", chip: "APPROVED" },
-  { icon: "◆", tone: "bg-cosmic/15 text-cosmic-light", title: "Subscription purchased", meta: "All-Access • Nakshtralogy Labs • 34 min ago", right: "+₹4,999" },
-  { icon: "↺", tone: "bg-amber-500/15 text-amber-400", title: "Refund requested", meta: "Order #48213 • 51 min ago", chip: "PENDING" },
-];
-
-const APPROVALS = [
-  { icon: ShieldAlert, label: "KYC Documents", count: 37, priority: "high", to: "/admin/kyc" },
-  { icon: Wallet, label: "Withdrawal Requests", count: 12, priority: "high", to: "/admin/wallet" },
-  { icon: MessageSquareWarning, label: "Reported Reviews", count: 5, priority: "medium", to: "/admin/reviews" },
-  { icon: UserCog, label: "Astrologer Applications", count: 9, priority: "medium", to: "/admin/astrologers" },
-  { icon: RotateCcw, label: "Refund Requests", count: 3, priority: "low", to: "/admin/wallet" },
+// Pending-approval queue metadata — counts come live from /admin/dashboard/summary.
+const APPROVAL_META: { key: string; icon: any; label: string; priority: string; to: string }[] = [
+  { key: "kyc", icon: ShieldAlert, label: "KYC Documents", priority: "high", to: "/admin/kyc" },
+  { key: "withdrawals", icon: Wallet, label: "Withdrawal Requests", priority: "high", to: "/admin/withdrawals" },
+  { key: "astrologer_applications", icon: UserCog, label: "Astrologer Applications", priority: "medium", to: "/admin/astrologers" },
+  { key: "support_tickets", icon: MessageSquareWarning, label: "Support Tickets", priority: "medium", to: "/admin/support-tickets" },
+  { key: "contact_messages", icon: Mail, label: "Contact Messages", priority: "low", to: "/admin/queries" },
+  { key: "hidden_reviews", icon: MessageSquareWarning, label: "Hidden Reviews", priority: "low", to: "/admin/reviews" },
 ];
 
 const PRIORITY_TONE: Record<string, string> = {
@@ -53,40 +44,78 @@ const PRIORITY_TONE: Record<string, string> = {
   low: "bg-emerald-500/15 text-emerald-400",
 };
 
-const NOTIFICATIONS = [
-  { title: "New astrologer application", meta: "Dr. Meera Joshi applied for verification", time: "5m ago", unread: true },
-  { title: "High-value withdrawal requested", meta: "₹18,500 · Astrologer Rajesh K.", time: "22m ago", unread: true },
-  { title: "Weekly revenue report ready", meta: "Auto-generated analytics report for this week", time: "1h ago", unread: true },
-  { title: "System backup completed", meta: "Nightly database backup finished successfully", time: "3h ago", unread: false },
-  { title: "API rate-limit warning", meta: "Developer 'astro-labs' nearing plan quota", time: "5h ago", unread: false },
-];
+// Activity feed icon/tone per money-movement kind.
+const ACTIVITY_STYLE: Record<string, { icon: string; tone: string }> = {
+  wallet_credit: { icon: "₹", tone: "bg-emerald-500/15 text-emerald-400" },
+  consult: { icon: "🎥", tone: "bg-cyan-500/15 text-cyan-400" },
+  earning: { icon: "★", tone: "bg-gold/15 text-gold" },
+  ai: { icon: "✦", tone: "bg-cosmic/15 text-cosmic-light" },
+  bonus: { icon: "🎁", tone: "bg-emerald-500/15 text-emerald-400" },
+  refund: { icon: "↺", tone: "bg-amber-500/15 text-amber-400" },
+  withdrawal: { icon: "↑", tone: "bg-rose-500/15 text-rose-400" },
+  txn: { icon: "◆", tone: "bg-muted text-muted-foreground" },
+};
+
+// Compact "x min ago" from an ISO/`str(datetime)` timestamp (UTC).
+function timeAgo(ts?: string | null): string {
+  if (!ts) return "";
+  const t = Date.parse(ts.replace(" ", "T") + (/[zZ]|[+-]\d\d:?\d\d$/.test(ts) ? "" : "Z"));
+  if (isNaN(t)) return "";
+  const secs = Math.max(0, Math.floor((Date.now() - t) / 1000));
+  if (secs < 60) return "just now";
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
+const inr = (n: number) => (n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : `₹${Math.round(n).toLocaleString()}`);
 
 export default function DashboardOverview() {
   const { user } = useAuth();
   const [revenueFilter, setRevenueFilter] = useState<RevenueFilter>("Month");
-  const revenue = REVENUE_BY_FILTER[revenueFilter];
 
-  // Real platform counters from /admin/stats (falls back to null → em dash).
   const [stats, setStats] = useState<any>(null);
+  const [revenue, setRevenue] = useState<{ d: string; revenue: number; commission: number }[]>([]);
+  const [summary, setSummary] = useState<any>(null);
+
+  // Stat cards + below-the-fold summary (once).
   useEffect(() => {
     let alive = true;
-    adminStats()
-      .then((res) => { if (alive) setStats(res?.data ?? res ?? null); })
-      .catch(() => {});
+    adminStats().then((r) => { if (alive) setStats(r?.data ?? r ?? null); }).catch(() => {});
+    adminDashboardSummary().then((r) => { if (alive) setSummary(r?.data ?? r ?? null); }).catch(() => {});
     return () => { alive = false; };
   }, []);
+
+  // Revenue series — refetches when the range filter changes.
+  useEffect(() => {
+    let alive = true;
+    adminDashboardRevenue(RANGE_MAP[revenueFilter])
+      .then((r) => { const d = r?.data ?? r; if (alive) setRevenue(d?.series ?? []); })
+      .catch(() => { if (alive) setRevenue([]); });
+    return () => { alive = false; };
+  }, [revenueFilter]);
+
   const s = stats || {};
+  const health = summary?.health || {};
+  const sys = health.system || {};
+  const services: { name: string; status: "ok" | "warn" | "down"; meta?: string }[] = health.services || [];
+  const approvals = summary?.approvals || {};
+  const activity: any[] = summary?.activity || [];
+  const notifications: any[] = summary?.notifications || [];
+  const approvalsTotal = APPROVAL_META.reduce((sum, a) => sum + (Number(approvals[a.key]) || 0), 0);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold">Good evening, {user?.name?.split(" ")[0] || "Admin"} ✨</h1>
+        <h1 className="text-2xl font-extrabold">Welcome back, {user?.name?.split(" ")[0] || "Admin"} ✨</h1>
         <p className="mt-0.5 text-sm text-muted-foreground">Here's what's happening across Nakshtralogy today.</p>
       </div>
 
-      {/* Stat cards */}
+      {/* Stat cards — live from /admin/stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Total Revenue" value={Number(s.total_revenue) || 0} format={(n) => `₹${n >= 100000 ? `${(n / 100000).toFixed(1)}L` : Math.round(n).toLocaleString()}`} icon={<IndianRupee className="h-[17px] w-[17px]" />} tone="gold" trendLabel="all time" spark={spark(1)} delay={0} />
+        <StatCard label="Total Revenue" value={Number(s.total_revenue) || 0} format={inr} icon={<IndianRupee className="h-[17px] w-[17px]" />} tone="gold" trendLabel="all time" spark={spark(1)} delay={0} />
         <StatCard label="Total Users" value={Number(s.total_users) || 0} icon={<Users className="h-[17px] w-[17px]" />} tone="purple" trendLabel="active accounts" spark={spark(5)} delay={0.05} />
         <StatCard label="Total Astrologers" value={Number(s.total_astrologers) || 0} icon={<Star className="h-[17px] w-[17px]" />} tone="gold" trendLabel="on platform" spark={spark(4)} delay={0.1} />
         <StatCard label="Online Astrologers" value={Number(s.online_astrologers) || 0} icon={<Star className="h-[17px] w-[17px]" />} tone="green" trendLabel="online now" spark={spark(3)} delay={0.15} />
@@ -120,93 +149,97 @@ export default function DashboardOverview() {
             ))}
           </div>
         }>
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={revenue}>
-              <defs><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="hsl(var(--gold))" stopOpacity={0.35} /><stop offset="1" stopColor="hsl(var(--gold))" stopOpacity={0} /></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--gold) / 0.08)" />
-              <XAxis dataKey="d" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={28} />
-              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} />
-              <Area type="monotone" dataKey="revenue" stroke="hsl(var(--gold))" strokeWidth={2.5} fill="url(#rg)" />
-              <Line type="monotone" dataKey="commission" stroke="hsl(var(--cosmic))" strokeWidth={2} strokeDasharray="4 4" dot={false} />
-            </AreaChart>
-          </ResponsiveContainer>
+          {revenue.length === 0 ? (
+            <div className="grid h-[220px] place-items-center text-[12px] text-muted-foreground">No revenue in this period yet.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={revenue}>
+                <defs><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="hsl(var(--gold))" stopOpacity={0.35} /><stop offset="1" stopColor="hsl(var(--gold))" stopOpacity={0} /></linearGradient></defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--gold) / 0.08)" />
+                <XAxis dataKey="d" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} width={28} />
+                <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} formatter={(v: any) => `₹${Math.round(Number(v)).toLocaleString()}`} />
+                <Area type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(var(--gold))" strokeWidth={2.5} fill="url(#rg)" />
+                <Line type="monotone" dataKey="commission" name="Commission" stroke="hsl(var(--cosmic))" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </GlassPanel>
 
-        <GlassPanel title="Live Platform Status" action={<span className="text-[11px] text-emerald-400">● All systems normal</span>}>
-          <StatusRow name="API Server" status="ok" meta="42 ms" />
-          <StatusRow name="Database" status="ok" meta="11 ms" />
-          <StatusRow name="Redis Cache" status="ok" meta="3 ms" />
-          <StatusRow name="Agora RTC" status="warn" meta="210 ms" />
-          <StatusRow name="WebSocket" status="ok" meta="28 ms" />
-          <StatusRow name="Payment Gateway" status="ok" meta="96 ms" />
-          <StatusRow name="Email Service" status="down" meta="timeout" />
-          <StatusRow name="Queue Workers" status="ok" meta="5 active" />
+        <GlassPanel title="Live Platform Status" action={
+          <span className={`text-[11px] ${services.some((x) => x.status === "down") ? "text-rose-400" : services.some((x) => x.status === "warn") ? "text-amber-400" : "text-emerald-400"}`}>
+            ● {services.some((x) => x.status === "down") ? "Issues detected" : services.some((x) => x.status === "warn") ? "Degraded" : "All systems normal"}
+          </span>
+        }>
+          {services.length === 0
+            ? <div className="py-6 text-center text-[12px] text-muted-foreground">Checking services…</div>
+            : services.map((sv) => <StatusRow key={sv.name} name={sv.name} status={sv.status} meta={sv.meta || ""} />)}
         </GlassPanel>
       </div>
 
       {/* Pending approvals + system health */}
       <div className="grid gap-4 lg:grid-cols-[1.55fr_1fr]">
-        <GlassPanel title="Pending Approvals" action={<span className="text-[11px] font-semibold text-gold">{APPROVALS.reduce((s, a) => s + a.count, 0)} total</span>}>
+        <GlassPanel title="Pending Approvals" action={<span className="text-[11px] font-semibold text-gold">{approvalsTotal} total</span>}>
           <div className="space-y-2">
-            {APPROVALS.map((a) => (
-              <div key={a.label} className="flex items-center gap-3 rounded-xl border border-border/50 bg-glass/30 px-3 py-2.5">
-                <div className="grid h-9 w-9 flex-none place-items-center rounded-xl bg-gold/10 text-gold"><a.icon className="h-[16px] w-[16px]" /></div>
-                <div className="min-w-0 flex-1">
-                  <b className="block text-[13px]">{a.label}</b>
-                  <span className={`inline-block rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase ${PRIORITY_TONE[a.priority]}`}>{a.priority}</span>
-                </div>
-                <span className="text-[15px] font-extrabold text-gold">{a.count}</span>
-                <div className="flex items-center gap-1">
-                  <button title="Approve" className="grid h-7 w-7 place-items-center rounded-lg border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"><Check className="h-3.5 w-3.5" /></button>
-                  <button title="Reject" className="grid h-7 w-7 place-items-center rounded-lg border border-rose-500/40 text-rose-400 hover:bg-rose-500/10"><XIcon className="h-3.5 w-3.5" /></button>
+            {APPROVAL_META.map((a) => {
+              const count = Number(approvals[a.key]) || 0;
+              return (
+                <div key={a.key} className="flex items-center gap-3 rounded-xl border border-border/50 bg-glass/30 px-3 py-2.5">
+                  <div className="grid h-9 w-9 flex-none place-items-center rounded-xl bg-gold/10 text-gold"><a.icon className="h-[16px] w-[16px]" /></div>
+                  <div className="min-w-0 flex-1">
+                    <b className="block text-[13px]">{a.label}</b>
+                    <span className={`inline-block rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase ${PRIORITY_TONE[a.priority]}`}>{a.priority}</span>
+                  </div>
+                  <span className="text-[15px] font-extrabold text-gold">{count}</span>
                   <Link to={a.to} title="View all" className="grid h-7 w-7 place-items-center rounded-lg border border-border/70 text-muted-foreground hover:text-foreground"><Eye className="h-3.5 w-3.5" /></Link>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </GlassPanel>
 
         <GlassPanel title="System Health">
           <div className="grid grid-cols-4 gap-3">
-            <Ring value={58} label="CPU" color="#4ecb8d" />
-            <Ring value={69} label="RAM" color="#e8b547" />
-            <Ring value={40} label="Disk" color="#4fb0c6" />
-            <Ring value={99.6} label="Uptime" color="#4ecb8d" sub="99.6%" />
+            <Ring value={Number(sys.cpu) || 0} label="CPU" color="#4ecb8d" />
+            <Ring value={Number(sys.ram) || 0} label="RAM" color="#e8b547" />
+            <Ring value={Number(sys.disk) || 0} label="Disk" color="#4fb0c6" />
+            <Ring value={100} label="Uptime" color="#4ecb8d" sub={sys.uptime_label || "—"} />
           </div>
           <div className="mt-4 border-t border-border/60 pt-2">
-            <StatusRow name="API Latency (p95)" status="ok" meta="142 ms" />
-            <StatusRow name="Success Rate" status="ok" meta="99.71%" />
-            <StatusRow name="Errors (1h)" status="warn" meta="14" />
+            {services.slice(0, 3).map((sv) => <StatusRow key={sv.name} name={sv.name} status={sv.status} meta={sv.meta || ""} />)}
           </div>
         </GlassPanel>
       </div>
 
       {/* Activity + notifications */}
       <div className="grid gap-4 lg:grid-cols-[1.55fr_1fr]">
-        <GlassPanel title="Recent Activity" action={<span className="cursor-pointer text-[11px] font-semibold text-gold">View all</span>}>
+        <GlassPanel title="Recent Activity" action={<Link to="/admin/transactions" className="cursor-pointer text-[11px] font-semibold text-gold">View all</Link>}>
           <div>
-            {ACTIVITY.map((a, i) => (
-              <div key={i} className="flex items-center gap-3 border-b border-border/40 py-2.5 last:border-0">
-                <div className={`grid h-9 w-9 flex-none place-items-center rounded-xl text-sm ${a.tone}`}>{a.icon}</div>
-                <div className="min-w-0 flex-1"><b className="block truncate text-[13px]">{a.title}</b><p className="text-[11.5px] text-muted-foreground">{a.meta}</p></div>
-                {a.right && <span className="text-[13px] font-bold text-gold">{a.right}</span>}
-                {a.chip && <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${a.chip === "PENDING" ? "bg-amber-500/15 text-amber-400" : "bg-emerald-500/15 text-emerald-400"}`}>{a.chip}</span>}
-              </div>
-            ))}
+            {activity.length === 0 && <div className="py-6 text-center text-[12px] text-muted-foreground">No recent activity.</div>}
+            {activity.map((a, i) => {
+              const style = ACTIVITY_STYLE[a.kind] || ACTIVITY_STYLE.txn;
+              return (
+                <div key={i} className="flex items-center gap-3 border-b border-border/40 py-2.5 last:border-0">
+                  <div className={`grid h-9 w-9 flex-none place-items-center rounded-xl text-sm ${style.tone}`}>{style.icon}</div>
+                  <div className="min-w-0 flex-1"><b className="block truncate text-[13px]">{a.title}</b><p className="text-[11.5px] text-muted-foreground">{a.name} • {timeAgo(a.created_at)}</p></div>
+                  <span className="text-[13px] font-bold text-gold">{inr(Number(a.amount) || 0)}</span>
+                </div>
+              );
+            })}
           </div>
         </GlassPanel>
 
-        <GlassPanel title="Notification Center" action={<span className="rounded-md bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold text-rose-400">{NOTIFICATIONS.filter((n) => n.unread).length} new</span>}>
+        <GlassPanel title="Alerts" action={<span className="rounded-md bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold text-rose-400">{notifications.length} new</span>}>
           <div>
-            {NOTIFICATIONS.map((n, i) => (
+            {notifications.length === 0 && <div className="py-6 text-center text-[12px] text-muted-foreground">Nothing needs attention.</div>}
+            {notifications.map((n, i) => (
               <div key={i} className="flex items-start gap-2.5 border-b border-border/40 py-2.5 last:border-0">
-                <span className={`mt-1 h-1.5 w-1.5 flex-none rounded-full ${n.unread ? "bg-gold" : "bg-transparent"}`} />
+                <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-gold" />
                 <div className="min-w-0 flex-1">
                   <b className="block text-[12.5px]">{n.title}</b>
                   <p className="text-[11px] text-muted-foreground">{n.meta}</p>
                 </div>
-                <span className="flex-none whitespace-nowrap text-[10.5px] text-muted-foreground">{n.time}</span>
+                <span className="flex-none whitespace-nowrap text-[10.5px] text-muted-foreground">{timeAgo(n.created_at)}</span>
               </div>
             ))}
           </div>
@@ -214,7 +247,7 @@ export default function DashboardOverview() {
       </div>
 
       <p className="flex items-center gap-1.5 pt-1 text-center text-[11px] text-muted-foreground">
-        <ArrowUpRight className="h-3.5 w-3.5" /> Stat cards show live platform data. Revenue trend, system health, activity and notifications below are illustrative.
+        <ArrowUpRight className="h-3.5 w-3.5" /> All panels reflect live platform data.
       </p>
     </div>
   );

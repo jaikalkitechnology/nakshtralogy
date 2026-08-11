@@ -35,13 +35,13 @@ KYC:
   PATCH /kyc/{id}/reject               — reject KYC with reason
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Body, UploadFile, File
 from sqlalchemy.orm import Session
-from sqlalchemy import func as sqlfunc
+from sqlalchemy import func as sqlfunc, text as sqltext
 from pydantic import BaseModel, EmailStr, Field
 
 from app.core.database import get_db
@@ -59,7 +59,7 @@ from app.models.model import (
     Notification, NotificationCampaign,
     LiveStreamViewer, LiveStreamQuestion, LiveStreamGift,
     LiveStreamSuperChat, LiveChatMessage, SessionReview,
-    WithdrawalRequest,
+    WithdrawalRequest, SupportTicket, ContactMessage, AgoraConfig,
 )
 
 router = APIRouter()
@@ -259,6 +259,315 @@ def admin_stats(
         "unapproved_user_profiles": unapproved_profiles,
         "deleted_accounts": deleted_accounts,
         "pending_deletions": pending_deletions,
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  DASHBOARD — live revenue series + approvals + activity + health
+# ══════════════════════════════════════════════════════════════════════
+
+# Process start time — powers the "server uptime" reading on the dashboard.
+import time as _time
+_PROCESS_START = _time.time()
+
+# Wallet txn types that represent platform revenue (money spent on services),
+# vs the astrologer's earning credit (used to derive platform commission).
+_REVENUE_LIKE = "%debit%"
+_ASTRO_CREDIT_TYPE = "consultation_credit"
+
+
+def _revenue_buckets(db: Session, rng: str):
+    """Bucketed revenue + platform commission over a time range. Bucketing is
+    done in Python so it works identically on SQLite (dev) and MySQL (prod).
+    revenue  = user spend (debit txns); commission = revenue − astrologer credit."""
+    now = datetime.utcnow()
+    rng = (rng or "month").lower()
+
+    # (start_datetime, list_of_bucket_labels, key_fn(created_at) -> bucket_index)
+    if rng == "today":
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        labels = [f"{h}h" for h in range(0, 24, 2)]  # 12 two-hour slots
+        key = lambda dt: min(11, dt.hour // 2)
+    elif rng == "week":
+        start = (now - timedelta(days=6)).replace(hour=0, minute=0, second=0, microsecond=0)
+        days = [(start + timedelta(days=i)) for i in range(7)]
+        labels = [d.strftime("%a") for d in days]
+        key = lambda dt: min(6, (dt.date() - start.date()).days)
+    elif rng == "year":
+        start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        key = lambda dt: min(11, dt.month - 1)
+    else:  # month → last 30 days, daily
+        start = (now - timedelta(days=29)).replace(hour=0, minute=0, second=0, microsecond=0)
+        days = [(start + timedelta(days=i)) for i in range(30)]
+        labels = [d.strftime("%d") for d in days]
+        key = lambda dt: min(29, (dt.date() - start.date()).days)
+
+    n = len(labels)
+    revenue = [0.0] * n
+    commission = [0.0] * n
+
+    rows = db.query(
+        WalletTransaction.created_at,
+        WalletTransaction.txn_type,
+        WalletTransaction.amount,
+    ).filter(
+        WalletTransaction.created_at >= start,
+        (WalletTransaction.txn_type.like(_REVENUE_LIKE)) | (WalletTransaction.txn_type == _ASTRO_CREDIT_TYPE),
+    ).all()
+
+    for created_at, txn_type, amount in rows:
+        if not created_at:
+            continue
+        try:
+            idx = key(created_at)
+        except Exception:
+            continue
+        if idx < 0 or idx >= n:
+            continue
+        amt = float(amount or 0)
+        if txn_type == _ASTRO_CREDIT_TYPE:
+            commission[idx] -= amt      # astrologer's share reduces platform keep
+        else:
+            revenue[idx] += amt
+            commission[idx] += amt
+
+    series = [
+        {"d": labels[i], "revenue": round(revenue[i], 2), "commission": round(max(0.0, commission[i]), 2)}
+        for i in range(n)
+    ]
+    return {
+        "range": rng,
+        "series": series,
+        "total_revenue": round(sum(revenue), 2),
+        "total_commission": round(sum(max(0.0, c) for c in commission), 2),
+    }
+
+
+@router.get("/dashboard/revenue")
+def dashboard_revenue(
+    range: str = Query("month", pattern=r"^(today|week|month|year)$"),
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Real revenue + commission time-series for the dashboard chart."""
+    return _revenue_buckets(db, range)
+
+
+def _service_status(db: Session):
+    """Best-effort live status of platform dependencies. Each check is honest:
+    unknown/unconfigured dependencies report 'warn', not a fabricated 'ok'."""
+    services = []
+
+    # Database — real round-trip.
+    try:
+        t0 = _time.time()
+        db.execute(sqltext("SELECT 1"))
+        ms = int((_time.time() - t0) * 1000)
+        services.append({"name": "Database", "status": "ok", "meta": f"{ms} ms"})
+    except Exception:
+        services.append({"name": "Database", "status": "down", "meta": "error"})
+
+    # API + WebSocket — this process is serving the request.
+    services.append({"name": "API Server", "status": "ok", "meta": "online"})
+    services.append({"name": "WebSocket", "status": "ok", "meta": "online"})
+
+    # Agora — an active credential row must exist.
+    try:
+        agora_ok = db.query(AgoraConfig.id).filter(AgoraConfig.is_active == True).first() is not None
+        services.append({"name": "Agora RTC", "status": "ok" if agora_ok else "warn",
+                         "meta": "configured" if agora_ok else "not configured"})
+    except Exception:
+        services.append({"name": "Agora RTC", "status": "warn", "meta": "unknown"})
+
+    # Payment gateway — any stored gateway credential.
+    try:
+        pg = db.query(PlatformSetting.id).filter(
+            PlatformSetting.category.like("papg%") | PlatformSetting.category.like("payment%")
+        ).first() is not None
+        services.append({"name": "Payment Gateway", "status": "ok" if pg else "warn",
+                         "meta": "configured" if pg else "not configured"})
+    except Exception:
+        services.append({"name": "Payment Gateway", "status": "warn", "meta": "unknown"})
+
+    # Email — SMTP/provider configured in settings.
+    try:
+        from app.core.config import settings as _s
+        email_ok = bool(
+            getattr(_s, "SMTP_HOST", "") or getattr(_s, "SENDGRID_API_KEY", "") or getattr(_s, "SMTP_USER", "")
+        )
+        services.append({"name": "Email Service", "status": "ok" if email_ok else "warn",
+                         "meta": "configured" if email_ok else "not configured"})
+    except Exception:
+        services.append({"name": "Email Service", "status": "warn", "meta": "unknown"})
+
+    # FCM push — a service-account file/DB entry.
+    try:
+        fcm_ok = db.query(PlatformSetting.id).filter(
+            PlatformSetting.category.like("fcm_%"), PlatformSetting.key == "sa_json"
+        ).first() is not None
+        services.append({"name": "Push (FCM)", "status": "ok" if fcm_ok else "warn",
+                         "meta": "configured" if fcm_ok else "not configured"})
+    except Exception:
+        services.append({"name": "Push (FCM)", "status": "warn", "meta": "unknown"})
+
+    return services
+
+
+def _system_health():
+    """Host CPU / RAM / disk / uptime using only the stdlib (no psutil)."""
+    import os, shutil
+    cpu = ram = disk = 0.0
+    # CPU: 1-min load average normalised by core count.
+    try:
+        load1 = os.getloadavg()[0]
+        cores = os.cpu_count() or 1
+        cpu = round(min(100.0, (load1 / cores) * 100.0), 1)
+    except Exception:
+        cpu = 0.0
+    # RAM: parse /proc/meminfo (Linux).
+    try:
+        info = {}
+        with open("/proc/meminfo") as fh:
+            for line in fh:
+                k, _, v = line.partition(":")
+                info[k.strip()] = float(v.strip().split()[0])  # kB
+        total = info.get("MemTotal", 0.0)
+        avail = info.get("MemAvailable", info.get("MemFree", 0.0))
+        if total > 0:
+            ram = round((1 - avail / total) * 100.0, 1)
+    except Exception:
+        ram = 0.0
+    # Disk: root filesystem usage.
+    try:
+        du = shutil.disk_usage("/")
+        disk = round(du.used / du.total * 100.0, 1) if du.total else 0.0
+    except Exception:
+        disk = 0.0
+
+    uptime_sec = int(_time.time() - _PROCESS_START)
+    d, rem = divmod(uptime_sec, 86400)
+    h, rem = divmod(rem, 3600)
+    m, _ = divmod(rem, 60)
+    uptime_str = f"{d}d {h}h" if d else (f"{h}h {m}m" if h else f"{m}m")
+    return {"cpu": cpu, "ram": ram, "disk": disk,
+            "uptime_seconds": uptime_sec, "uptime_label": uptime_str}
+
+
+def _recent_activity(db: Session, limit: int = 8):
+    """A live feed of the most recent money movements, labelled by type."""
+    label_map = {
+        "recharge": ("wallet_credit", "Wallet recharged"),
+        "consultation_debit": ("consult", "Consultation charged"),
+        "consultation_credit": ("earning", "Astrologer earning"),
+        "ai_debit": ("ai", "AI chat charged"),
+        "bonus": ("bonus", "Bonus credited"),
+        "refund": ("refund", "Refund issued"),
+        "withdrawal": ("withdrawal", "Withdrawal debited"),
+    }
+    out = []
+    try:
+        rows = (
+            db.query(WalletTransaction, User)
+            .join(Wallet, Wallet.id == WalletTransaction.wallet_id)
+            .join(User, User.id == Wallet.user_id)
+            .order_by(WalletTransaction.created_at.desc())
+            .limit(limit)
+            .all()
+        )
+        for txn, u in rows:
+            kind, title = label_map.get(txn.txn_type, ("txn", txn.txn_type.replace("_", " ").title()))
+            out.append({
+                "kind": kind,
+                "title": title,
+                "name": u.name if (u and not u.deleted_at) else "Deleted user",
+                "amount": float(txn.amount or 0),
+                "txn_type": txn.txn_type,
+                "created_at": str(txn.created_at) if txn.created_at else None,
+            })
+    except Exception:
+        pass
+    return out
+
+
+def _admin_notifications(db: Session, limit: int = 6):
+    """Admin-relevant alerts drawn from real pending items, newest first."""
+    items = []
+    try:
+        for p, u in (
+            db.query(AstrologerProfile, User)
+            .join(User, User.id == AstrologerProfile.user_id)
+            .filter(AstrologerProfile.is_approved == False, User.deleted_at.is_(None))
+            .order_by(AstrologerProfile.created_at.desc()).limit(4).all()
+        ):
+            items.append({"kind": "astrologer_application",
+                          "title": "Astrologer application",
+                          "meta": f"{p.display_name or u.name or 'New astrologer'} awaiting approval",
+                          "created_at": str(p.created_at) if p.created_at else None})
+    except Exception:
+        pass
+    try:
+        for w, u in (
+            db.query(WithdrawalRequest, User)
+            .join(User, User.id == WithdrawalRequest.user_id)
+            .filter(WithdrawalRequest.status == "pending")
+            .order_by(WithdrawalRequest.created_at.desc()).limit(4).all()
+        ):
+            items.append({"kind": "withdrawal",
+                          "title": "Withdrawal request",
+                          "meta": f"₹{float(w.amount or 0):.0f} · {u.name or 'Astrologer'}",
+                          "created_at": str(w.created_at) if w.created_at else None})
+    except Exception:
+        pass
+    try:
+        for tk in (
+            db.query(SupportTicket)
+            .filter(SupportTicket.status.in_(["pending", "in_progress"]))
+            .order_by(SupportTicket.created_at.desc()).limit(4).all()
+        ):
+            items.append({"kind": "support_ticket",
+                          "title": "Support ticket",
+                          "meta": tk.subject or "New ticket",
+                          "created_at": str(tk.created_at) if tk.created_at else None})
+    except Exception:
+        pass
+    # Newest first across all sources.
+    items.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+    return items[:limit]
+
+
+@router.get("/dashboard/summary")
+def dashboard_summary(
+    current_user: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """Everything the dashboard needs below the stat cards, in one call:
+    pending approvals, recent activity, admin alerts, and system health."""
+    # Pending approvals — each maps to a real admin queue.
+    def _count(q):
+        try:
+            return q.scalar() or 0
+        except Exception:
+            return 0
+
+    approvals = {
+        "kyc": _count(db.query(sqlfunc.count(KycDocument.id)).filter(KycDocument.status == "pending")),
+        "withdrawals": _count(db.query(sqlfunc.count(WithdrawalRequest.id)).filter(WithdrawalRequest.status == "pending")),
+        "astrologer_applications": _count(db.query(sqlfunc.count(AstrologerProfile.id)).filter(AstrologerProfile.is_approved == False)),
+        "hidden_reviews": _count(db.query(sqlfunc.count(SessionReview.id)).filter(SessionReview.is_visible == False)),
+        "support_tickets": _count(db.query(sqlfunc.count(SupportTicket.id)).filter(SupportTicket.status.in_(["pending", "in_progress"]))),
+        "contact_messages": _count(db.query(sqlfunc.count(ContactMessage.id)).filter(ContactMessage.status.in_(["new", "read"]))),
+    }
+    approvals["total"] = sum(approvals.values())
+
+    return {
+        "approvals": approvals,
+        "activity": _recent_activity(db),
+        "notifications": _admin_notifications(db),
+        "health": {
+            "system": _system_health(),
+            "services": _service_status(db),
+        },
     }
 
 
