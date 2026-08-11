@@ -140,6 +140,37 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (type == 'session_update') {
       // Refresh dashboard
       context.read<DashboardBloc>().add(DashboardLoadRequested());
+    } else if (type == 'session_taken_over') {
+      // The account signed in on another device — the realtime service has
+      // already stopped reconnecting. Ask the astrologer which device wins.
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppColors.card,
+          title: const Text('Signed in elsewhere', style: TextStyle(color: AppColors.primary)),
+          content: Text(
+            data['message']?.toString() ??
+                'Your account is now active on another device. Use it here to take the connection back.',
+            style: const TextStyle(color: AppColors.textPrimary)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                context.read<AuthBloc>().add(AuthLogoutRequested());
+              },
+              child: const Text('Log out', style: TextStyle(color: AppColors.textSecondary)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                RealtimeService().resume();
+              },
+              child: const Text('Use here'),
+            ),
+          ],
+        ),
+      );
     }
   }
 

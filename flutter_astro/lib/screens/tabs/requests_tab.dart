@@ -161,6 +161,38 @@ class _RequestActionCardState extends State<_RequestActionCard> {
     if (mounted) setState(() => _loading = false);
   }
 
+  /// Re-open a still-active call (the astrologer left the call screen — e.g. an
+  /// app-switch — and taps "In Progress" to return). Fetches the live channel +
+  /// token; if the call has since ended, just refreshes the list.
+  Future<void> _reenterCall(String callId, String userName, String callType) async {
+    setState(() => _loading = true);
+    try {
+      final resp = await _api.getCall(callId);
+      if (!mounted) return;
+      if (resp['statusCode'] == 200 && resp['status'] == 'active') {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => ActiveCallScreen(
+            callId: callId,
+            channelName: resp['channel_name'] ?? '',
+            agoraToken: resp['agora_token'] ?? '',
+            agoraAppId: resp['agora_app_id'] ?? '',
+            callType: callType,
+            peerName: userName,
+            ratePerMin: (resp['rate_per_min'] as num?)?.toDouble() ?? 0,
+            isAstrologer: true,
+          ),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Call is no longer active'), backgroundColor: AppColors.error));
+        widget.onUpdated();
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+    if (mounted) setState(() => _loading = false);
+  }
+
   Future<void> _enterChat(String sessionId, String userName) async {
     setState(() => _loading = true);
     try {
@@ -334,6 +366,7 @@ class _RequestActionCardState extends State<_RequestActionCard> {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     if (type == 'chat') _enterChat(id, userName);
+                    else _reenterCall(id, userName, type);
                   },
                   icon: Icon(type == 'chat' ? Icons.chat : Icons.open_in_new, size: 18),
                   label: Text(type == 'chat' ? (AppLocalizations.of(context)?.enterChat ?? 'Enter Chat') : (AppLocalizations.of(context)?.inProgress ?? 'In Progress')),

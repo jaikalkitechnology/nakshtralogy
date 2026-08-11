@@ -626,7 +626,23 @@ def update_status(
     if req.is_online is not None:
         profile.is_online = req.is_online
     if req.is_busy is not None:
-        profile.is_busy = req.is_busy
+        # Don't let the astrologer clear busy while a real session is live — that
+        # would let a second caller through the busy guard mid-call/chat. Busy is
+        # otherwise system-managed (set on initiate, cleared on end/watchdog).
+        if req.is_busy is False:
+            from app.models.model import CallSession, ChatSession
+            live_call = db.query(CallSession).filter(
+                CallSession.astrologer_profile_id == profile.id,
+                CallSession.status.in_(["ringing", "active"]),
+            ).first()
+            live_chat = db.query(ChatSession).filter(
+                ChatSession.astrologer_id == profile.id,
+                ChatSession.status.in_(["waiting", "active"]),
+            ).first()
+            if not (live_call or live_chat):
+                profile.is_busy = False
+        else:
+            profile.is_busy = req.is_busy
     db.commit()
     db.refresh(profile)
     return _build_profile_response(profile)

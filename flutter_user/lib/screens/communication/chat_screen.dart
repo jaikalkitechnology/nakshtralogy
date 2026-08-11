@@ -51,6 +51,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   bool _ended = false;              // guards a single end/cancel (no double refund)
   Timer? _connectTimer;
   int _connectRemaining = 60;
+  // Auto-heal: once a chat has been active we keep the socket alive with pings
+  // and reconnect it (with backoff) on a drop, instead of dying on the initial
+  // "Connecting…" screen while the server session keeps billing.
+  Timer? _pingTimer;
+  Timer? _reconnectTimer;
+  bool _wasActive = false;          // ever reached "active" — controls reconnect + end-vs-cancel
+  bool _reconnecting = false;
+  int _reconnectAttempts = 0;
 
   @override
   void initState() {
@@ -77,9 +85,47 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   void _onConnected() {
     _connectTimer?.cancel();
-    if (!_connected) setState(() => _connected = true);
+    _reconnectTimer?.cancel();
+    _wasActive = true;
+    _reconnectAttempts = 0;
+    if (!_connected || _reconnecting) {
+      setState(() { _connected = true; _reconnecting = false; });
+    }
     _startTimer();
+    _startPing();
     _pollTimer?.cancel();
+  }
+
+  void _startPing() {
+    _pingTimer?.cancel();
+    _pingTimer = Timer.periodic(const Duration(seconds: 25), (_) {
+      try { _channel?.sink.add(jsonEncode({'type': 'ping'})); } catch (_) {}
+    });
+  }
+
+  /// Socket closed/errored. If the chat was active and we didn't end it, keep
+  /// the session and reconnect with backoff rather than dropping to a dead
+  /// "Connecting…" screen (the server session is still live and billing).
+  void _onSocketClosed() {
+    _pingTimer?.cancel();
+    if (_ended || !mounted) return;
+    if (_wasActive) {
+      setState(() { _connected = false; _reconnecting = true; });
+      _scheduleReconnect();
+    } else {
+      setState(() => _connected = false);
+    }
+  }
+
+  void _scheduleReconnect() {
+    _reconnectTimer?.cancel();
+    const backoff = [2, 4, 8, 16, 30];
+    final delay = backoff[_reconnectAttempts.clamp(0, backoff.length - 1)];
+    _reconnectAttempts++;
+    _reconnectTimer = Timer(Duration(seconds: delay), () {
+      if (_ended || !mounted) return;
+      _connect();
+    });
   }
 
   /// Cancel a still-connecting request exactly once and leave (single refund).
@@ -104,7 +150,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     // this guard a cancel would be sent twice and the block refunded twice.
     if (_ended) return;
     _ended = true;
-    if (!_connected) {
+    _pingTimer?.cancel();
+    _reconnectTimer?.cancel();
+    // Use _wasActive (not the momentary _connected) so a session that is active
+    // but mid-reconnect ends via end_session — NOT a refund-cancel of an
+    // already-charged session.
+    if (!_wasActive) {
       // Still in "waiting" state — cancel via REST API to get the (single) refund
       _api.chatAction(widget.sessionId, 'cancel').catchError((_) {});
     } else {
@@ -122,6 +173,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       _myUserId = jsonDecode(userData)['id'];
     }
 
+    try { _channel?.sink.close(); } catch (_) {}
     final uri = Uri.parse('${ApiConstants.wsChat}/${widget.sessionId}?token=$token');
     _channel = WebSocketChannel.connect(uri);
 
@@ -176,10 +228,32 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           case 'typing':
             // Could show typing indicator
             break;
+          case 'ping':
+            try { _channel?.sink.add(jsonEncode({'type': 'pong'})); } catch (_) {}
+            break;
+          case 'pong':
+            break;
+          case 'billing_tick':
+            // Server-authoritative cost — replaces the local timer estimate.
+            final billed = (data['billed_so_far'] as num?)?.toDouble();
+            if (billed != null) setState(() => _serverBilled = billed);
+            break;
+          case 'session_taken_over':
+            _ended = true; // don't fire cancel/end for a takeover
+            _pingTimer?.cancel();
+            _reconnectTimer?.cancel();
+            _timer?.cancel();
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(data['message'] ?? 'Chat opened on another device'),
+                backgroundColor: AppColors.nebula));
+              Navigator.pop(context);
+            }
+            break;
         }
       },
-      onDone: () => setState(() => _connected = false),
-      onError: (_) => setState(() => _connected = false),
+      onDone: _onSocketClosed,
+      onError: (_) => _onSocketClosed(),
     );
   }
 
@@ -219,7 +293,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     return '${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
+  double _serverBilled = -1;   // from server billing_tick; <0 = not yet received
+
   double get _currentCost {
+    if (_serverBilled >= 0) return _serverBilled;
     if (widget.billingMode == 'per_session') return widget.ratePerSession;
     return (_seconds / 60).ceil() * widget.ratePerMin;
   }
@@ -357,6 +434,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _timer?.cancel();
     _pollTimer?.cancel();
     _connectTimer?.cancel();
+    _pingTimer?.cancel();
+    _reconnectTimer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
@@ -391,28 +470,37 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               Text(widget.astrologerName,
                   style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              const Text('Connecting…', style: TextStyle(color: AppColors.smoke, fontSize: 14)),
+              Text(_reconnecting ? 'Reconnecting…' : 'Connecting…',
+                  style: const TextStyle(color: AppColors.smoke, fontSize: 14)),
               const SizedBox(height: 20),
               const SizedBox(width: 26, height: 26, child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.gold)),
               const SizedBox(height: 20),
-              Text('Waiting for the astrologer to accept · ${_connectRemaining}s',
+              Text(_reconnecting
+                      ? 'Connection lost — restoring your chat…'
+                      : 'Waiting for the astrologer to accept · ${_connectRemaining}s',
+                  textAlign: TextAlign.center,
                   style: const TextStyle(color: AppColors.smoke, fontSize: 12)),
-              const SizedBox(height: 6),
-              const Text('If not accepted, your amount is refunded automatically.',
-                  textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+              if (!_reconnecting) ...[
+                const SizedBox(height: 6),
+                const Text('If not accepted, your amount is refunded automatically.',
+                    textAlign: TextAlign.center, style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+              ],
               const Spacer(),
-              SizedBox(
-                width: double.infinity, height: 50,
-                child: OutlinedButton.icon(
-                  onPressed: () => _cancelAndLeave(reason: 'Request cancelled — amount refunded'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                    side: const BorderSide(color: AppColors.error),
+              // While reconnecting an ACTIVE session, don't offer a refund-cancel
+              // (the session is already charged). Only offer cancel pre-accept.
+              if (!_reconnecting)
+                SizedBox(
+                  width: double.infinity, height: 50,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _cancelAndLeave(reason: 'Request cancelled — amount refunded'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                      side: const BorderSide(color: AppColors.error),
+                    ),
+                    icon: const Icon(Icons.close),
+                    label: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w700)),
                   ),
-                  icon: const Icon(Icons.close),
-                  label: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
-              ),
             ],
           ),
         ),

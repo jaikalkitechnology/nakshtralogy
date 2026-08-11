@@ -457,6 +457,18 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
 
+  /// The user's current live call and/or chat (for resume-after-reopen). Returns
+  /// {call, chat} where each is null when there's none.
+  Future<Map<String, dynamic>> getActiveSession() async {
+    try {
+      final resp = await _authGet(Uri.parse('${ApiConstants.commBase}/active'));
+      if (resp.statusCode == 200) {
+        return jsonDecode(resp.body) as Map<String, dynamic>;
+      }
+    } catch (_) {}
+    return {'call': null, 'chat': null};
+  }
+
   /// Request permanent account deletion (30-day grace). The account is locked
   /// immediately; logging back in within the window cancels it.
   Future<Map<String, dynamic>> deleteMyAccount() async {

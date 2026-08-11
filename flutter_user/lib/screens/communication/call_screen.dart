@@ -45,6 +45,15 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   Timer? _timer;
   Timer? _maxTimer;
   Timer? _pollTimer;
+  Timer? _rtcGraceTimer;         // grace window before ending on a remote drop
+  bool _peerReconnecting = false;
+  // Server-authoritative billing (from GET /call/{id}) — replaces the local
+  // timer's cost estimate, which drifts on a backgrounded web tab.
+  Timer? _billingTimer;
+  double _serverBilled = -1;     // <0 = not yet received
+  double _serverBalance = 0;
+  int _serverRemaining = -1;
+  bool _lowWarned = false;
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -65,7 +74,13 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
+    // Only end the call when the app is really being torn down (detached).
+    // 'paused' fires for a notification pull-down, a screen lock, or an
+    // app-switch — ending on that killed calls the moment the user glanced
+    // away. On web 'paused' isn't reliably delivered for a backgrounded tab
+    // anyway, so we keep the RTC connection through background and let the
+    // user return to the live call.
+    if (state == AppLifecycleState.detached) {
       _endCall(fromLifecycle: true);
     }
   }
@@ -82,6 +97,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
           setState(() => _status = 'active');
           _startTimer();
           _startMaxTimer();
+          _startBillingRefresh();
           _pollTimer?.cancel();
         } else if (callStatus == 'missed' || callStatus == 'rejected' || callStatus == 'cancelled' || callStatus == 'expired') {
           _pollTimer?.cancel();
@@ -127,14 +143,21 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       },
       onUserJoined: (connection, remoteUid, elapsed) {
         debugPrint('Remote user joined: $remoteUid');
+        // Cancel any in-flight reconnect grace — the peer is back.
+        _rtcGraceTimer?.cancel();
+        if (_peerReconnecting && mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
         setState(() {
           _remoteJoined = true;
           _remoteUid = remoteUid;
           _status = 'active';
+          _peerReconnecting = false;
         });
         _pollTimer?.cancel();
         _startTimer();
         _startMaxTimer();
+        _startBillingRefresh();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(AppLocalizations.of(context)?.callActive ?? 'Call active'),
@@ -147,8 +170,19 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         setState(() {
           _remoteJoined = false;
           _remoteUid = null;
+          _peerReconnecting = true;
         });
-        _endCall();
+        // Grace window: a brief network blip shouldn't end the call. Wait for the
+        // peer to rejoin; only end if they don't come back in time.
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Reconnecting…'),
+            duration: Duration(seconds: 20), backgroundColor: AppColors.card));
+        }
+        _rtcGraceTimer?.cancel();
+        _rtcGraceTimer = Timer(const Duration(seconds: 20), () {
+          if (mounted && _peerReconnecting) _endCall();
+        });
       },
       onConnectionStateChanged: (connection, state, reason) {
         debugPrint('Agora connection: state=$state reason=$reason');
@@ -243,13 +277,42 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Poll the server's authoritative meter every 10s during an active call:
+  /// render the real billed amount, warn on low balance, and auto-end when the
+  /// funded time runs out (a client backstop to the server watchdog).
+  void _startBillingRefresh() {
+    _billingTimer?.cancel();
+    _billingTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
+      if (!mounted || _status != 'active' || _ending) return;
+      try {
+        final r = await _api.getCall(widget.callId);
+        if (!mounted) return;
+        if (r['status'] != null && r['status'] != 'active') { _endCall(); return; }
+        setState(() {
+          _serverBilled = (r['billed_so_far'] as num?)?.toDouble() ?? _serverBilled;
+          _serverBalance = (r['user_balance'] as num?)?.toDouble() ?? _serverBalance;
+          _serverRemaining = (r['remaining_seconds'] as num?)?.toInt() ?? _serverRemaining;
+        });
+        final low = r['low_balance'] == true;
+        if (low && !_lowWarned && mounted) {
+          _lowWarned = true;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)?.lessThanOneMin ?? 'Balance low — under a minute left'),
+            backgroundColor: Colors.orange, duration: const Duration(seconds: 5)));
+        }
+        if (_serverRemaining == 0) _endCall();
+      } catch (_) {}
+    });
+  }
+
   String get _formattedTime {
     final min = _seconds ~/ 60;
     final sec = _seconds % 60;
     return '${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
-  double get _currentCost => (_seconds / 60).ceil() * widget.ratePerMin;
+  double get _currentCost =>
+      _serverBilled >= 0 ? _serverBilled : (_seconds / 60).ceil() * widget.ratePerMin;
 
   int get _remainingSeconds {
     if (widget.maxCallSeconds <= 0) return 9999;
@@ -271,7 +334,12 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
 
   Future<void> _toggleSpeaker() async {
     setState(() => _isSpeaker = !_isSpeaker);
-    await _engine?.setEnableSpeakerphone(_isSpeaker);
+    // setEnableSpeakerphone is a mobile-only audio-route API — calling it on
+    // web can throw. The browser manages the output device itself.
+    if (kIsWeb) return;
+    try {
+      await _engine?.setEnableSpeakerphone(_isSpeaker);
+    } catch (_) {/* audio route not switchable on this platform */}
   }
 
   Future<void> _toggleVideo() async {
@@ -323,6 +391,8 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     _timer?.cancel();
     _maxTimer?.cancel();
     _pollTimer?.cancel();
+    _rtcGraceTimer?.cancel();
+    _billingTimer?.cancel();
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();

@@ -61,6 +61,13 @@ class CallSessionResponse(BaseModel):
     expires_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
     astrologer_name: Optional[str] = None
+    # Server-authoritative live billing (populated on GET during an active call)
+    # so the client renders the real meter instead of a drifting local timer.
+    elapsed_seconds: int = 0
+    billed_so_far: float = 0            # minutes-so-far × rate
+    user_balance: float = 0            # caller's current wallet balance
+    remaining_seconds: int = 0         # until funds / eligible run out
+    low_balance: bool = False          # < ~60s of funds left
 
 
 class CallActionRequest(BaseModel):

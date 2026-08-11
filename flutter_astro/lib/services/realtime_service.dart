@@ -18,6 +18,10 @@ class RealtimeService {
   Timer? _pingTimer;
   bool _connected = false;
   int _reconnectAttempts = 0;
+  // Set when the server closes us because the account connected on another
+  // device. We STOP reconnecting to avoid a take-over war (both devices would
+  // otherwise keep reconnecting and kicking each other).
+  bool _takenOver = false;
   static const int _maxReconnectDelay = 30; // seconds
 
   /// Stream of real-time events from backend.
@@ -28,7 +32,7 @@ class RealtimeService {
 
   /// Connect to the astrologer WebSocket channel.
   Future<void> connect() async {
-    if (_connected) return;
+    if (_connected || _takenOver) return;
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
@@ -56,6 +60,15 @@ class RealtimeService {
               _connected = true;
               _reconnectAttempts = 0;
               debugPrint('RealtimeService: Connected');
+            }
+
+            if (data['type'] == 'session_taken_over') {
+              // Another device took the channel — stop reconnecting so the two
+              // devices don't fight over it. The UI decides what to do next.
+              _takenOver = true;
+              _reconnectTimer?.cancel();
+              _pingTimer?.cancel();
+              _connected = false;
             }
 
             // Push event to listeners
@@ -91,7 +104,15 @@ class RealtimeService {
     }
   }
 
+  /// Re-take the realtime channel on THIS device (clears the taken-over lock).
+  void resume() {
+    _takenOver = false;
+    _reconnectAttempts = 0;
+    connect();
+  }
+
   void _scheduleReconnect() {
+    if (_takenOver) return;
     _reconnectTimer?.cancel();
     _reconnectAttempts++;
     // Exponential backoff: 1s, 2s, 4s, 8s, ... max 30s
@@ -108,6 +129,7 @@ class RealtimeService {
     _channel = null;
     _connected = false;
     _reconnectAttempts = 0;
+    _takenOver = false;
     debugPrint('RealtimeService: Disconnected (manual)');
   }
 
