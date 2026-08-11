@@ -6,6 +6,7 @@ import 'child_probability_report_screen.dart';
 import 'love_compatibility_report_screen.dart';
 import 'karma_linkage_report_screen.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../widgets/desktop_center.dart';
 
 class MultiChartPicker extends StatefulWidget {
   final String specialistKey;
@@ -151,7 +152,9 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
           ),
         ]),
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 720,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _analyzing
               ? Center(
@@ -297,6 +300,7 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                     ),
                   ),
                 ]),
+      ),
       bottomNavigationBar: _selected.length >= _minCharts
           ? SafeArea(
               child: Padding(

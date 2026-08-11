@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 
 const _kCategories = ['Notifications', 'Calls', 'Chat', 'Payments', 'Withdrawal', 'Account', 'Other'];
 
@@ -66,7 +67,9 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
         icon: const Icon(Icons.add),
         label: const Text('Raise Ticket'),
       ),
-      body: RefreshIndicator(
+      body: DesktopCenter(
+        maxWidth: 900,
+        child: RefreshIndicator(
         onRefresh: _load,
         color: AppColors.gold,
         child: _loading
@@ -84,7 +87,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                     itemCount: _tickets.length,
                     itemBuilder: (_, i) => _ticketCard(_tickets[i]),
                   ),
-      ),
+      )),
     );
   }
 
@@ -190,7 +193,9 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         title: const Text('Raise a Ticket', style: TextStyle(color: AppColors.ivory, fontWeight: FontWeight.bold)),
         iconTheme: const IconThemeData(color: AppColors.ivory),
       ),
-      body: ListView(padding: const EdgeInsets.all(16), children: [
+      body: DesktopCenter(
+        maxWidth: 900,
+        child: ListView(padding: const EdgeInsets.all(16), children: [
         _label('Subject'),
         _input(_subject, 'Brief summary of the issue'),
         const SizedBox(height: 14),
@@ -246,7 +251,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                 : const Text('Submit Ticket', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
-      ]),
+      ])),
     );
   }
 

@@ -5,6 +5,7 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../widgets/desktop_center.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -35,7 +36,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           else if (state is AuthFailure) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message), backgroundColor: AppColors.error));
         },
         child: SafeArea(
-          child: SingleChildScrollView(
+          child: DesktopCenter(
+            maxWidth: 640,
+            child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
               const SizedBox(height: 40),
@@ -61,7 +64,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 20),
               TextButton(onPressed: () => Navigator.pop(context), child: Text(l.backToSignIn, style: const TextStyle(color: AppColors.primary))),
             ]),
-          ),
+          )),
         ),
       ),
     );

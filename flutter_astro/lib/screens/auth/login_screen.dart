@@ -10,6 +10,7 @@ import '../../bloc/auth/auth_state.dart';
 import '../../services/api_service.dart';
 import '../../services/google_auth_service.dart';
 import '../../widgets/language_selector.dart';
+import '../../widgets/desktop_center.dart';
 import 'signup_screen.dart';
 import 'password_otp_screen.dart';
 import '../home/home_screen.dart';
@@ -117,7 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
+          child: DesktopCenter(
+            maxWidth: 640,
+            child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(children: [
               const SizedBox(height: 8),
@@ -175,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ]),
               const SizedBox(height: 20),
             ]),
-          ),
+          )),
         ),
       ),
     );

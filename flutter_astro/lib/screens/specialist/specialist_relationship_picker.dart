@@ -3,6 +3,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'relationship_report_screen.dart';
+import '../../widgets/desktop_center.dart';
 
 class SpecialistRelationshipPicker extends StatefulWidget {
   const SpecialistRelationshipPicker({super.key});
@@ -90,7 +91,9 @@ class _State extends State<SpecialistRelationshipPicker> {
           Text('Relationship Intelligence', style: TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
         ]),
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 720,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _analyzing
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -187,6 +190,7 @@ class _State extends State<SpecialistRelationshipPicker> {
                     },
                   )),
                 ]),
+      ),
       bottomNavigationBar: _selected.length >= 2
           ? SafeArea(child: Padding(padding: const EdgeInsets.all(16),
               child: ElevatedButton(

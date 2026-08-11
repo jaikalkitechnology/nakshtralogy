@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/desktop_center.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
@@ -131,7 +132,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
           )).toList(),
         ),
       ),
-      body: _loading
+      body: DesktopCenter(maxWidth: 1100, child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : _error != null
               ? _errorView()
@@ -159,7 +160,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
                             aspects: (_complete?['aspect_matrix'] as Map?)?.cast<String, dynamic>(),
                             shadbala: ((_complete?['shadbala'] as Map?)?['planets'] as Map?)?.cast<String, dynamic>()),
                       ],
-                    ),
+                    )),
     );
   }
 

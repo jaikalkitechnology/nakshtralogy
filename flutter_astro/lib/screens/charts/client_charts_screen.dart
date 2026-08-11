@@ -7,6 +7,7 @@ import '../../bloc/chart/chart_event.dart';
 import '../../bloc/chart/chart_state.dart';
 import 'add_client_chart_screen.dart';
 import '../kundli/kundli_viewer_screen.dart';
+import '../../widgets/desktop_center.dart';
 
 const _months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
@@ -83,7 +84,9 @@ class _ClientChartsScreenState extends State<ClientChartsScreen> {
 
         return Stack(
           children: [
-            RefreshIndicator(
+            DesktopCenter(
+              maxWidth: 900,
+              child: RefreshIndicator(
               onRefresh: () async => context.read<ChartBloc>().add(ChartLoadRequested()),
               color: AppColors.gold,
               backgroundColor: AppColors.nebula,
@@ -139,7 +142,7 @@ class _ClientChartsScreenState extends State<ClientChartsScreen> {
                   ],
                 ],
               ),
-            ),
+            )),
             Positioned(
               right: 16,
               bottom: 16,

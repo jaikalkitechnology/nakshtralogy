@@ -6,6 +6,7 @@ import '../../utils/kundli_names.dart';
 import '../kundli/widgets/kundli_ui.dart';
 import '../kundli/widgets/north_indian_chart.dart';
 import 'rashi_shared.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Premium, beginner-friendly detail page for a single zodiac sign.
 ///
@@ -80,11 +81,14 @@ class _RashiDetailScreenState extends State<RashiDetailScreen> {
             style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh))],
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 900,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _error != null ? _errView(l)
           : d == null ? const SizedBox.shrink()
           : ListView(padding: const EdgeInsets.fromLTRB(16, 10, 16, 36), children: _sections(l, d)),
+      ),
     );
   }
 

@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../services/api_service.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Post-login onboarding for astrologers: Step 1 Personal info (mobile number
 /// mandatory) → Step 2 Professional info. KYC follows this in the HomeScreen
@@ -167,7 +168,9 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(children: [
+        child: DesktopCenter(
+          maxWidth: 720,
+          child: Column(children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
             child: Row(children: [
@@ -183,7 +186,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen> {
               children: [_personalStep(), _professionalStep()],
             ),
           ),
-        ]),
+        ])),
       ),
     );
   }

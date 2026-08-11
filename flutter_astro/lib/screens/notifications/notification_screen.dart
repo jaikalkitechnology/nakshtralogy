@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../widgets/desktop_center.dart';
 
 class NotificationScreen extends StatefulWidget {
   /// When true, renders just the list body (no Scaffold/AppBar) so it can be
@@ -70,7 +71,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           IconButton(onPressed: _load, icon: const Icon(Icons.refresh, size: 20)),
         ],
       ),
-      body: body,
+      body: DesktopCenter(maxWidth: 900, child: body),
     );
   }
 

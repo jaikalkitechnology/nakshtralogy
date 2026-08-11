@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import '../../utils/astro_labels.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Payout & tax KYC — captures the PAN/GST + bank details an astrologer needs
 /// before withdrawing. Ask ONLY a PAN or GST number, the name as per PAN, the
@@ -249,7 +250,9 @@ class _PayoutKycScreenState extends State<PayoutKycScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_L('payoutTitle'))),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 720,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -328,6 +331,7 @@ class _PayoutKycScreenState extends State<PayoutKycScreen> {
                 const SizedBox(height: 24),
               ]),
             ),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../widgets/desktop_center.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -47,7 +48,7 @@ class _LoveCompatibilityReportState extends State<LoveCompatibilityReportScreen>
           Text(l.lcSubtitle, style: const TextStyle(color: AppColors.gold, fontSize: 10)),
         ]),
       ),
-      body: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l)),
+      body: DesktopCenter(maxWidth: 1000, child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l))),
     );
   }
 

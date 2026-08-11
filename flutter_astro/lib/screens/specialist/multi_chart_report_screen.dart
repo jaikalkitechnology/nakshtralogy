@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/desktop_center.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
@@ -82,7 +83,7 @@ class MultiChartReportScreen extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A24),
-      body: CustomScrollView(slivers: [
+      body: DesktopCenter(maxWidth: 1000, child: CustomScrollView(slivers: [
         // ── App bar ──
         SliverAppBar(
           backgroundColor: const Color(0xFF0A0A24),
@@ -117,7 +118,7 @@ class MultiChartReportScreen extends StatelessWidget {
           _aiBar(context, l),
           const SizedBox(height: 40),
         ])),
-      ]),
+      ])),
     );
   }
 
