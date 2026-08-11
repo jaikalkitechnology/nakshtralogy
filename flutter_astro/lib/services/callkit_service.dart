@@ -187,24 +187,20 @@ class CallkitService {
     // Merge top-level + extra so we can read call fields regardless of source.
     final data = <String, dynamic>{...body, ...extra};
 
-    switch (event.event) {
-      case Event.actionDidUpdateDevicePushTokenVoIP:
-        _sendVoipToken((body['deviceTokenVoIP'] ?? body['token'])?.toString());
-        break;
-      case Event.actionCallAccept:
-        _onAccept(data);
-        break;
-      case Event.actionCallDecline:
-      case Event.actionCallTimeout:
-        _onDecline(data);
-        break;
-      case Event.actionCallEnded:
-        // Native hang-up while ringing → treat as decline; if already in the
-        // live screen, that screen owns the real end.
-        break;
-      default:
-        break;
+    // Match on the event NAME rather than referencing Event.* enum members
+    // directly: the exact member spellings differ between flutter_callkit_incoming
+    // versions, and referencing a missing one is a compile error.
+    final name = event.event.toString().split('.').last.toLowerCase();
+
+    if (name.contains('pushtokenvoip')) {
+      _sendVoipToken((body['deviceTokenVoIP'] ?? body['token'])?.toString());
+    } else if (name.contains('accept')) {
+      _onAccept(data);
+    } else if (name.contains('decline') || name.contains('timeout')) {
+      _onDecline(data);
     }
+    // actionCallEnded while ringing needs no action here; if already in the live
+    // screen, that screen owns the real end.
   }
 
   void _onAccept(Map<String, dynamic> data) {
