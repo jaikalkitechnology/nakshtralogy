@@ -762,14 +762,39 @@ def get_call(
         raise HTTPException(status_code=404, detail=t("err.call_not_found", lang))
     app_id, _ = _get_agora_creds(db)
     token = call.agora_token_caller if current_user.id == call.caller_id else call.agora_token_receiver
+
+    # Server-authoritative live billing while the call is active, so the client
+    # renders the real meter (and can warn / auto-end near the funded limit)
+    # instead of trusting a local timer that drifts on a backgrounded web tab.
+    rate = float(call.rate_per_min or 0)
+    elapsed = 0
+    billed = 0.0
+    balance = 0.0
+    remaining = 0
+    low = False
+    if call.status == "active" and call.started_at:
+        elapsed = max(0, int((datetime.utcnow() - call.started_at).total_seconds()))
+        billed = math.ceil(elapsed / 60) * rate if rate > 0 else 0.0
+        w = db.query(Wallet).filter(Wallet.user_id == call.caller_id).first()
+        balance = float(w.balance) if w else 0.0
+        # Seconds of funds left = (balance already blocked by nothing; call bills
+        # at end) → affordable-from-balance minus what's accrued so far.
+        affordable = int(balance / rate * 60) if rate > 0 else 0
+        remaining = max(0, affordable - elapsed)
+        if call.max_end_at:
+            remaining = min(remaining, max(0, int((call.max_end_at - datetime.utcnow()).total_seconds())))
+        low = 0 < remaining <= 60
+
     return CallSessionResponse(
         id=call.id, channel_name=call.channel_name,
         caller_id=call.caller_id, receiver_id=call.receiver_id,
-        call_type=call.call_type, rate_per_min=float(call.rate_per_min),
+        call_type=call.call_type, rate_per_min=rate,
         status=call.status, agora_token=token, agora_app_id=app_id,
         started_at=call.started_at, ended_at=call.ended_at,
         duration_sec=call.duration_sec, total_amount=float(call.total_amount or 0),
         expires_at=call.expires_at, created_at=call.created_at,
+        elapsed_seconds=elapsed, billed_so_far=round(billed, 2),
+        user_balance=round(balance, 2), remaining_seconds=remaining, low_balance=low,
     )
 
 

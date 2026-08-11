@@ -269,6 +269,27 @@ async def websocket_chat(
                         await websocket.send_json({"type": "pong"})
                     except Exception:
                         break
+                    # Piggyback a server-authoritative billing tick to the USER so
+                    # the meter it shows is the real one, not a drifting local
+                    # timer. (Astrologer side doesn't need it.)
+                    if is_user:
+                        try:
+                            db.refresh(session)
+                            elapsed = (int((datetime.utcnow() - session.started_at).total_seconds())
+                                       if session.started_at else 0)
+                            if session.billing_mode == "per_minute":
+                                cost = math.ceil(elapsed / 60) * float(session.rate_per_min or 0)
+                            else:
+                                cost = float(session.blocked_amount or session.rate_per_session or 0)
+                            w = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
+                            await websocket.send_json({
+                                "type": "billing_tick",
+                                "elapsed_seconds": elapsed,
+                                "billed_so_far": round(cost, 2),
+                                "user_balance": round(float(w.balance) if w else 0.0, 2),
+                            })
+                        except Exception:
+                            pass
                 continue
 
             if msg_type == "message":
