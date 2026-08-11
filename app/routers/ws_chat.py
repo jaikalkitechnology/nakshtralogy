@@ -446,7 +446,9 @@ async def websocket_chat(
     except WebSocketDisconnect:
         pass
     except Exception:
-        pass
+        # Don't swallow silently — an unhandled error here drops the socket
+        # (abnormal 1006 close) and looks like "messages not delivered".
+        logger.exception("Chat WS handler crashed for session %s", session_id)
     finally:
         # cleanup — only if the entry still points at THIS socket (a newer device
         # may have taken over; don't delete its registration).
@@ -472,7 +474,11 @@ async def websocket_chat(
                         prof = db2.query(AstrologerProfile).filter(
                             AstrologerProfile.id == sess.astrologer_id
                         ).first()
-                        import asyncio
+                        # NOTE: no local `import asyncio` here — a function-local
+                        # import makes `asyncio` local for the WHOLE function, so
+                        # the `asyncio.wait_for(...)` in the receive loop above
+                        # raised UnboundLocalError and crashed every chat socket
+                        # (abnormal 1006 close → "messages not delivered").
                         loop = asyncio.get_event_loop()
                         loop.create_task(_complete_session(db2, sess, prof))
                         logger.info("Auto-ended chat session %s (both parties disconnected)", session_id)
