@@ -71,6 +71,17 @@ async def websocket_astrologer(
             return
 
         await websocket.accept()
+        # One realtime socket per astrologer: if another device is already
+        # connected, tell it it was taken over and drop it — otherwise the old
+        # socket leaks half-open and two devices both receive/accept calls.
+        old = _astrologer_connections.get(user.id)
+        if old is not None and old is not websocket:
+            try:
+                await old.send_json({"type": "session_taken_over",
+                                     "message": "Signed in on another device"})
+                await old.close(code=4009, reason="Taken over elsewhere")
+            except Exception:
+                pass
         _astrologer_connections[user.id] = websocket
         logger.info(f"Astrologer WS connected: {user.id} ({user.name})")
 
@@ -95,6 +106,8 @@ async def websocket_astrologer(
     except Exception as e:
         logger.warning(f"Astrologer WS error: {e}")
     finally:
-        if user and user.id in _astrologer_connections:
+        # Only remove the map entry if it still points at THIS socket — a newer
+        # device may have replaced us, and we must not delete its entry.
+        if user and _astrologer_connections.get(user.id) is websocket:
             del _astrologer_connections[user.id]
         db.close()

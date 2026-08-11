@@ -188,9 +188,18 @@ async def websocket_chat(
         # accept connection
         await websocket.accept()
 
-        # register
+        # register — one chat socket per participant: drop an older device's
+        # socket for this session so it can't linger half-open.
         if session_id not in _connections:
             _connections[session_id] = {}
+        old = _connections[session_id].get(user.id)
+        if old is not None and old is not websocket:
+            try:
+                await old.send_json({"type": "session_taken_over",
+                                     "message": "Chat opened on another device"})
+                await old.close(code=4009, reason="Taken over elsewhere")
+            except Exception:
+                pass
         _connections[session_id][user.id] = websocket
 
         # Determine who is user vs astrologer
@@ -391,8 +400,10 @@ async def websocket_chat(
     except Exception:
         pass
     finally:
-        # cleanup
-        if session_id in _connections and user and user.id in _connections.get(session_id, {}):
+        # cleanup — only if the entry still points at THIS socket (a newer device
+        # may have taken over; don't delete its registration).
+        if (session_id in _connections and user
+                and _connections.get(session_id, {}).get(user.id) is websocket):
             del _connections[session_id][user.id]
 
             await _broadcast(session_id, {

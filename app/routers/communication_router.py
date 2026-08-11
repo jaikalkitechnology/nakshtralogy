@@ -463,10 +463,20 @@ def initiate_call(
     - Sends FCM push to astrologer
     - Rings for 60s, then expires
     """
+    # Block a second concurrent session for THIS user (no double-billing / no
+    # calling while already in a call or chat).
+    _existing = _caller_active_session(db, current_user.id)
+    if _existing:
+        raise HTTPException(status_code=409, detail=t("err.already_in_session", lang)
+                            if _has_comm_key("err.already_in_session")
+                            else "You're already in a call or chat. Finish it first.")
+
+    # Lock the astrologer row so the busy check-and-set is atomic — two callers
+    # can't both read is_busy=False and both seize the astrologer.
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == req.astrologer_profile_id,
         AstrologerProfile.is_approved == True,
-    ).first()
+    ).with_for_update().first()
     if not profile:
         raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
     if not profile.is_online or profile.is_busy:
@@ -660,6 +670,34 @@ def call_action(
         duration_sec=call.duration_sec, total_amount=float(call.total_amount or 0),
         expires_at=call.expires_at, created_at=call.created_at,
     )
+
+
+def _has_comm_key(key: str) -> bool:
+    """True if the i18n catalog actually has this key (t() echoes the key when
+    missing), so we can fall back to plain English for keys not yet translated."""
+    try:
+        return t(key, "en") != key
+    except Exception:
+        return False
+
+
+def _caller_active_session(db: Session, user_id: str):
+    """Return a short label if the user already has a live call/chat, else None.
+    Used to block a second concurrent session (a user could otherwise place two
+    calls at once or call while in a chat — each billed independently)."""
+    live_call = db.query(CallSession).filter(
+        CallSession.caller_id == user_id,
+        CallSession.status.in_(["ringing", "active"]),
+    ).first()
+    if live_call:
+        return "call"
+    live_chat = db.query(ChatSession).filter(
+        ChatSession.user_id == user_id,
+        ChatSession.status.in_(["waiting", "active"]),
+    ).first()
+    if live_chat:
+        return "chat"
+    return None
 
 
 def _release_astrologer(db: Session, profile_id: str):
@@ -1328,10 +1366,18 @@ def initiate_chat(
       - astrologer share credited to their wallet
     Session ends when: user hits message limit, validity expires, or either party ends.
     """
+    # Block a second concurrent session for this user (no calling/chatting twice).
+    _existing = _caller_active_session(db, current_user.id)
+    if _existing:
+        raise HTTPException(status_code=409, detail=t("err.already_in_session", lang)
+                            if _has_comm_key("err.already_in_session")
+                            else "You're already in a call or chat. Finish it first.")
+
+    # Lock the astrologer row so the busy check-and-set is atomic.
     profile = db.query(AstrologerProfile).filter(
         AstrologerProfile.id == req.astrologer_profile_id,
         AstrologerProfile.is_approved == True,
-    ).first()
+    ).with_for_update().first()
     if not profile:
         raise HTTPException(status_code=404, detail=t("err.astrologer_not_found", lang))
     if not profile.is_online or profile.is_busy:
