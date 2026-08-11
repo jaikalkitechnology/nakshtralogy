@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/desktop_center.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/forecast_labels.dart';
@@ -78,9 +79,9 @@ class _S extends State<DailyForecastScreen> {
         label: Text(l.fdAskAi, style: const TextStyle(fontWeight: FontWeight.w800)),
         onPressed: _showAskAi,
       ),
-      body: _loading
+      body: DesktopCenter(maxWidth: 1100, child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
-          : _error != null ? _errV() : _d != null ? _report(l) : const SizedBox.shrink(),
+          : _error != null ? _errV() : _d != null ? _report(l) : const SizedBox.shrink()),
     );
   }
 

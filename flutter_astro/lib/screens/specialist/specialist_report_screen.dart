@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/desktop_center.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
@@ -51,9 +52,9 @@ class _State extends State<SpecialistReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(backgroundColor: const Color(0xFF0A0A24),
-      body: _loading ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
+      body: DesktopCenter(maxWidth: 1000, child: _loading ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _error != null ? _errView()
-          : _data != null ? _report() : const SizedBox.shrink());
+          : _data != null ? _report() : const SizedBox.shrink()));
   }
 
   Widget _errView() => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [

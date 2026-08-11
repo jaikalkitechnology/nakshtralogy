@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../widgets/desktop_center.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -67,11 +68,11 @@ class _LegalState extends State<LegalReportScreen> {
         ]),
         actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],
       ),
-      body: _loading
+      body: DesktopCenter(maxWidth: 1000, child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _error != null ? _errView(l)
           : _data == null ? const SizedBox.shrink()
-          : ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l)),
+          : ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 40), children: _sections(l))),
     );
   }
 
