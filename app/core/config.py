@@ -80,6 +80,20 @@ class Settings:
     FIREBASE_USER_SA_PATH: str = os.getenv("FIREBASE_USER_SA_PATH", "credentials/firebase-user-sa.json")
     FIREBASE_ASTRO_SA_PATH: str = os.getenv("FIREBASE_ASTRO_SA_PATH", "credentials/firebase-astro-sa.json")
 
+    # iOS VoIP push (Apple PushKit) — wakes the astrologer app for a full-screen
+    # CallKit incoming-call UI even when the app is killed/backgrounded. Firebase
+    # CANNOT send VoIP pushes, so we talk to APNs directly with a token-based
+    # (.p8 key, ES256 JWT) connection. All four must be set for VoIP to fire; if
+    # any is blank the sender is a no-op and we fall back to the FCM data push.
+    APNS_VOIP_KEY_ID: str = os.getenv("APNS_VOIP_KEY_ID", "")        # 10-char Key ID of the .p8
+    APNS_VOIP_TEAM_ID: str = os.getenv("APNS_VOIP_TEAM_ID", "")     # 10-char Apple Team ID
+    APNS_VOIP_AUTH_KEY_PATH: str = os.getenv("APNS_VOIP_AUTH_KEY_PATH", "credentials/apns-voip-authkey.p8")
+    # Topic for VoIP pushes is the app bundle id + ".voip"
+    APNS_VOIP_BUNDLE_ID: str = os.getenv("APNS_VOIP_BUNDLE_ID", "")  # e.g. com.nakshtralogy.astro
+    # Use Apple's production APNs host by default; set to "true" only for
+    # sandbox/TestFlight development builds signed with a development profile.
+    APNS_USE_SANDBOX: bool = os.getenv("APNS_USE_SANDBOX", "false").lower() == "true"
+
     # CORS
     CORS_ORIGINS: list = ["*"]
 

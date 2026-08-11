@@ -9,6 +9,7 @@ import '../screens/communication/chat_screen.dart';
 import '../screens/communication/incoming_call_screen.dart';
 import '../screens/communication/active_call_screen.dart';
 import '../services/api_service.dart';
+import '../services/callkit_service.dart';
 
 /// Global navigator key — set in MaterialApp so FCM can navigate from anywhere.
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -373,6 +374,10 @@ class FcmService {
 
       await _initLocalNotifications();
 
+      // CallKit / PushKit: registers the iOS VoIP token and bridges native
+      // Accept/Decline. On iOS this is what lets a killed app ring full-screen.
+      await CallkitService().init();
+
       await _fetchAndSaveToken();
 
       _messaging!.onTokenRefresh.listen((newToken) async {
@@ -503,6 +508,12 @@ class FcmService {
     if (type == 'incoming_call') {
       final callId = data['call_id'];
       if (callId != null) {
+        // iOS: use the native CallKit UI (consistent with the killed-app VoIP
+        // ring). Android keeps the in-app ringing screen.
+        if (defaultTargetPlatform == TargetPlatform.iOS) {
+          CallkitService().showIncomingCall(Map<String, dynamic>.from(data));
+          return;
+        }
         navigatorKey.currentState?.push(MaterialPageRoute(
           builder: (_) => IncomingCallScreen(
             callId: callId,

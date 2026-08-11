@@ -4,7 +4,7 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
+/// The translations for Indonesian (`id`).
 class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
@@ -19,11 +19,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String awWelcomeName(String name) {
-    return 'Selamat datang, ${name}!';
+    return 'Selamat datang, $name!';
   }
 
   @override
-  String get awCompleteProfileSubtitle => 'Beberapa detail untuk menyesuaikan Nakshatralogy untuk Anda.';
+  String get awCompleteProfileSubtitle =>
+      'Beberapa detail untuk menyesuaikan Nakshatralogy untuk Anda.';
 
   @override
   String get awRegionLabel => 'Wilayah';
@@ -41,10 +42,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get awFinishSetup => 'Selesaikan pengaturan';
 
   @override
-  String get awChatFileWebUnsupported => 'Berbagi file belum tersedia di web. Silakan gunakan aplikasi seluler.';
+  String get awChatFileWebUnsupported =>
+      'Berbagi file belum tersedia di web. Silakan gunakan aplikasi seluler.';
 
   @override
-  String get awVideoUnsupported => 'Panggilan video tidak didukung di browser ini. Silakan gunakan aplikasi seluler kami atau browser desktop yang didukung.';
+  String get awVideoUnsupported =>
+      'Panggilan video tidak didukung di browser ini. Silakan gunakan aplikasi seluler kami atau browser desktop yang didukung.';
 
   @override
   String get awClose => 'Tutup';
@@ -57,16 +60,17 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String pwUnlockFull(Object name) {
-    return 'Buka penuh ${name}';
+    return 'Buka penuh $name';
   }
 
   @override
   String pwUnlockPrice(Object price) {
-    return 'Buka · ${price}';
+    return 'Buka · $price';
   }
 
   @override
-  String get pwOneTime => 'Buka sekali bayar — milik Anda selamanya untuk chart ini';
+  String get pwOneTime =>
+      'Buka sekali bayar — milik Anda selamanya untuk chart ini';
 
   @override
   String get pwWhatYouGet => 'Apa yang Anda dapatkan';
@@ -102,7 +106,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get pwProcessing => 'Memproses…';
 
   @override
-  String get pwPrimaryNoDelete => 'Kundli Utama Anda tidak dapat dihapus — gratis selamanya.';
+  String get pwPrimaryNoDelete =>
+      'Kundli Utama Anda tidak dapat dihapus — gratis selamanya.';
 
   @override
   String get pwPrimaryNoEdit => 'Kundli Utama Anda tidak dapat diedit.';
@@ -129,13 +134,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get photoUpdated => 'Foto diperbarui';
 
   @override
-  String get photoUploadFailed => 'Tidak dapat mengunggah foto. Silakan coba lagi.';
+  String get photoUploadFailed =>
+      'Tidak dapat mengunggah foto. Silakan coba lagi.';
 
   @override
   String get tapToChangePhoto => 'Ketuk untuk mengganti foto';
 
   @override
-  String get klSubtitle => 'Laporan Karma Linkage Kehidupan Lampau Weda bertenaga AI';
+  String get klSubtitle =>
+      'Laporan Karma Linkage Kehidupan Lampau Weda bertenaga AI';
 
   @override
   String get klTitle => 'Karma Linkage Kehidupan Lampau';
@@ -183,7 +190,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get klFoundationTitle => 'Fondasi Karma per Chart';
 
   @override
-  String get klFoundationSubtitle => 'Penguasaan kehidupan lampau dan arah kehidupan saat ini untuk setiap jiwa';
+  String get klFoundationSubtitle =>
+      'Penguasaan kehidupan lampau dan arah kehidupan saat ini untuk setiap jiwa';
 
   @override
   String get klKetuMastery => 'Penguasaan Ketu';
@@ -231,7 +239,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get klDebtsTitle => 'Hutang Karma & Penyelesaiannya';
 
   @override
-  String get klNoDebtsDetected => 'Tidak ada hutang karma terdeteksi dalam kelompok ini';
+  String get klNoDebtsDetected =>
+      'Tidak ada hutang karma terdeteksi dalam kelompok ini';
 
   @override
   String get klTimingTitle => 'Waktu Karma Moola Dasha';
@@ -241,7 +250,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String klAuditSubtitle(Object count) {
-    return '${count} parameter karma diperiksa';
+    return '$count parameter karma diperiksa';
   }
 
   @override
@@ -386,7 +395,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get lcChallengesTitle => 'Tantangan & Gesekan';
 
   @override
-  String get lcNoChallenges => 'Tidak ada titik gesekan signifikan yang terdeteksi di kedua chart';
+  String get lcNoChallenges =>
+      'Tidak ada titik gesekan signifikan yang terdeteksi di kedua chart';
 
   @override
   String get lcTotalPenalty => 'Total Penalti Tantangan';
@@ -527,7 +537,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get cpDoshaTitle => 'Analisis Dosha';
 
   @override
-  String get cpNoDoshasDetected => 'Tidak ada dosha terkait keturunan yang terdeteksi di kedua chart';
+  String get cpNoDoshasDetected =>
+      'Tidak ada dosha terkait keturunan yang terdeteksi di kedua chart';
 
   @override
   String get cpRemediesTitle => 'Solusi yang Direkomendasikan';
@@ -594,7 +605,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String riProfilesSubtitle(Object count) {
-    return '${count} orang dalam kelompok ini';
+    return '$count orang dalam kelompok ini';
   }
 
   @override
@@ -644,7 +655,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String riPairwiseSubtitle(Object count) {
-    return '${count} pasangan dianalisis';
+    return '$count pasangan dianalisis';
   }
 
   @override
@@ -745,7 +756,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String kmAshtakootScore(Object score) {
-    return 'Ashtakoot: ${score}/36';
+    return 'Ashtakoot: $score/36';
   }
 
   @override
@@ -788,7 +799,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get kmAshtakootTitle => 'Ashtakoot Guna Milan';
 
   @override
-  String get kmAshtakootSubtitle => 'Sistem pencocokan klasik 8 poin, dari total 36';
+  String get kmAshtakootSubtitle =>
+      'Sistem pencocokan klasik 8 poin, dari total 36';
 
   @override
   String get kmNadiSeverity => 'Tingkat keparahan Nadi';
@@ -806,7 +818,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get kmD9Title => 'D9 Navamsa — Karma Pernikahan';
 
   @override
-  String get kmD9Subtitle => 'Chart pernikahan tingkat jiwa, dianggap paling penting secara klasik';
+  String get kmD9Subtitle =>
+      'Chart pernikahan tingkat jiwa, dianggap paling penting secara klasik';
 
   @override
   String get kmD9Score => 'Kecocokan D9';
@@ -1017,7 +1030,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String pkHeroSummary(Object theme, Object relation, Object strategy) {
-    return 'Chart Anda menunjukkan tanda kehidupan lampau \'${theme}\', saat ini ${relation} ke dalam kehidupan ini. Jalan yang direkomendasikan: ${strategy}.';
+    return 'Chart Anda menunjukkan tanda kehidupan lampau \'$theme\', saat ini $relation ke dalam kehidupan ini. Jalan yang direkomendasikan: $strategy.';
   }
 
   @override
@@ -1114,7 +1127,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get pkForeignResidence => 'Karma tinggal di luar negeri';
 
   @override
-  String get pkRelationshipsTitle => 'Hubungan Masa Lampau yang Dibawa ke Depan';
+  String get pkRelationshipsTitle =>
+      'Hubungan Masa Lampau yang Dibawa ke Depan';
 
   @override
   String get pkSpouseConnection => 'Koneksi Kembali dengan Pasangan';
@@ -1465,7 +1479,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get chMoodPatterns => 'Pola Suasana Hati';
 
   @override
-  String get chKemadrumaPresent => 'Kemadruma Yoga hadir — perawatan diri emosional ekstra akan bermanfaat.';
+  String get chKemadrumaPresent =>
+      'Kemadruma Yoga hadir — perawatan diri emosional ekstra akan bermanfaat.';
 
   @override
   String get chFatherImprint => 'Kualitas jejak sang ayah';
@@ -1495,7 +1510,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get chGunaTitle => 'Profil Guna & Dosha';
 
   @override
-  String get chGunaSubtitle => 'Sifat batin dan konstitusi Anda, gaya Weda klasik';
+  String get chGunaSubtitle =>
+      'Sifat batin dan konstitusi Anda, gaya Weda klasik';
 
   @override
   String get chSattva => 'Sattva';
@@ -1558,7 +1574,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get chShadowTitle => 'Bayangan & Area Pertumbuhan';
 
   @override
-  String get chShadowSubtitle => 'Kesadaran lembut akan pola yang perlu dikerjakan';
+  String get chShadowSubtitle =>
+      'Kesadaran lembut akan pola yang perlu dikerjakan';
 
   @override
   String get chShadowPatterns => 'Pola Bayangan';
@@ -1654,7 +1671,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get chEmotionalReceptivity => 'Reseptivitas emosional';
 
   @override
-  String get chVerificationTitle => 'Terverifikasi Lintas Chart (D9/D12/D30/D60)';
+  String get chVerificationTitle =>
+      'Terverifikasi Lintas Chart (D9/D12/D30/D60)';
 
   @override
   String get chD9Label => 'D9 Dharma-Karakter';
@@ -1694,7 +1712,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String chAgeRangeLabel(Object ageRange) {
-    return 'Usia ${ageRange}';
+    return 'Usia $ageRange';
   }
 
   @override
@@ -1752,7 +1770,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get chTopicTiming => 'Waktu terbaik untuk kerja karakter';
 
   @override
-  String get lpSubtitle => 'Laporan Jalan Hidup & Keberuntungan Weda bertenaga AI';
+  String get lpSubtitle =>
+      'Laporan Jalan Hidup & Keberuntungan Weda bertenaga AI';
 
   @override
   String get lpTitle => 'Jalan Hidup & Keberuntungan';
@@ -1762,7 +1781,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String lpHeroSummary(Object archetype, Object domain, Object probability) {
-    return 'Anda adalah ${archetype} dengan tujuan utama di ${domain}. Analisis kami menunjukkan potensi pemenuhan hidup secara keseluruhan sebesar ${probability}%.';
+    return 'Anda adalah $archetype dengan tujuan utama di $domain. Analisis kami menunjukkan potensi pemenuhan hidup secara keseluruhan sebesar $probability%.';
   }
 
   @override
@@ -1823,7 +1842,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get lpKarakaTitle => 'Planet Dharma Anda';
 
   @override
-  String get lpKarakaSubtitle => 'Seberapa kuat setiap planet mendukung tujuan hidup Anda';
+  String get lpKarakaSubtitle =>
+      'Seberapa kuat setiap planet mendukung tujuan hidup Anda';
 
   @override
   String get lpVerificationTitle => 'Terverifikasi Lintas Chart (D9 / D60)';
@@ -1833,7 +1853,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String lpD9Explain(Object stage) {
-    return 'Tahap evolusi jiwa Anda adalah \'${stage}\' pada chart Navamsa.';
+    return 'Tahap evolusi jiwa Anda adalah \'$stage\' pada chart Navamsa.';
   }
 
   @override
@@ -1946,12 +1966,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String lpDharmicMilestone(Object age) {
-    return 'Tonggak Dharma (Usia ${age})';
+    return 'Tonggak Dharma (Usia $age)';
   }
 
   @override
   String lpAgeLabel(Object age) {
-    return 'Usia ${age}';
+    return 'Usia $age';
   }
 
   @override
@@ -2144,8 +2164,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get dbSnapshotHeader => 'Ringkasan Pemulihan Hutang';
 
   @override
-  String dbHeroSummary(Object phase, Object personality, Object probability, Object years) {
-    return 'Anda saat ini berada dalam fase \'${phase}\' dengan pendekatan ${personality} terhadap uang. Analisis kami menunjukkan peluang ${probability}% untuk bebas hutang dalam sekitar ${years} tahun.';
+  String dbHeroSummary(
+    Object phase,
+    Object personality,
+    Object probability,
+    Object years,
+  ) {
+    return 'Anda saat ini berada dalam fase \'$phase\' dengan pendekatan $personality terhadap uang. Analisis kami menunjukkan peluang $probability% untuk bebas hutang dalam sekitar $years tahun.';
   }
 
   @override
@@ -2209,7 +2234,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get dbKarakaTitle => 'Planet Hutang Anda';
 
   @override
-  String get dbKarakaSubtitle => 'Seberapa kuat setiap planet mendukung pemulihan hutang Anda';
+  String get dbKarakaSubtitle =>
+      'Seberapa kuat setiap planet mendukung pemulihan hutang Anda';
 
   @override
   String get dbVerificationTitle => 'Terverifikasi Lintas Chart (D6)';
@@ -2245,7 +2271,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get dbCategoriesTitle => 'Pengawasan Kategori Hutang';
 
   @override
-  String get dbCategoriesSubtitle => 'Jenis hutang mana yang perlu perhatian paling besar';
+  String get dbCategoriesSubtitle =>
+      'Jenis hutang mana yang perlu perhatian paling besar';
 
   @override
   String get dbTimelineTitle => 'Garis Waktu Bebas Hutang';
@@ -2296,37 +2323,45 @@ class AppLocalizationsId extends AppLocalizations {
   String get dbRiskDefault => 'Risiko Gagal Bayar';
 
   @override
-  String get dbRiskDefaultExp => 'Kemungkinan melewatkan pembayaran terjadwal cukup parah hingga memicu status gagal bayar dengan pemberi pinjaman.';
+  String get dbRiskDefaultExp =>
+      'Kemungkinan melewatkan pembayaran terjadwal cukup parah hingga memicu status gagal bayar dengan pemberi pinjaman.';
 
   @override
-  String get dbRiskDefaultFix => 'Otomatiskan pembayaran minimum dan simpan buffer 1 bulan agar satu siklus pendapatan yang terlewat tidak berdampak berantai.';
+  String get dbRiskDefaultFix =>
+      'Otomatiskan pembayaran minimum dan simpan buffer 1 bulan agar satu siklus pendapatan yang terlewat tidak berdampak berantai.';
 
   @override
   String get dbRiskBankruptcy => 'Risiko Kebangkrutan';
 
   @override
-  String get dbRiskBankruptcyExp => 'Probabilitas beban hutang tumbuh melebihi apa yang bisa ditutupi secara realistis oleh pendapatan dan aset.';
+  String get dbRiskBankruptcyExp =>
+      'Probabilitas beban hutang tumbuh melebihi apa yang bisa ditutupi secara realistis oleh pendapatan dan aset.';
 
   @override
-  String get dbRiskBankruptcyFix => 'Dapatkan tinjauan hutang profesional sebelum mengambil pinjaman atau jalur kredit baru.';
+  String get dbRiskBankruptcyFix =>
+      'Dapatkan tinjauan hutang profesional sebelum mengambil pinjaman atau jalur kredit baru.';
 
   @override
   String get dbRiskAssetSeizure => 'Risiko Penyitaan Aset';
 
   @override
-  String get dbRiskAssetSeizureExp => 'Kemungkinan gagal bayar pinjaman berjaminan dapat menyebabkan pemberi pinjaman menyita agunan atau properti.';
+  String get dbRiskAssetSeizureExp =>
+      'Kemungkinan gagal bayar pinjaman berjaminan dapat menyebabkan pemberi pinjaman menyita agunan atau properti.';
 
   @override
-  String get dbRiskAssetSeizureFix => 'Prioritaskan pembayaran pinjaman berjaminan terlebih dahulu, dan lakukan refinancing lebih awal jika ada kemungkinan celah pembayaran.';
+  String get dbRiskAssetSeizureFix =>
+      'Prioritaskan pembayaran pinjaman berjaminan terlebih dahulu, dan lakukan refinancing lebih awal jika ada kemungkinan celah pembayaran.';
 
   @override
   String get dbRiskChronic => 'Risiko Hutang Berulang Kronis';
 
   @override
-  String get dbRiskChronicExp => 'Kecenderungan untuk kembali terjerat hutang bahkan setelah melunasi beban saat ini.';
+  String get dbRiskChronicExp =>
+      'Kecenderungan untuk kembali terjerat hutang bahkan setelah melunasi beban saat ini.';
 
   @override
-  String get dbRiskChronicFix => 'Bangun dana darurat khusus sebelum meningkatkan pengeluaran gaya hidup setelah pelunasan.';
+  String get dbRiskChronicFix =>
+      'Bangun dana darurat khusus sebelum meningkatkan pengeluaran gaya hidup setelah pelunasan.';
 
   @override
   String get dbReindebtTrigger => 'Pemicu Hutang Kembali';
@@ -2344,7 +2379,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get dbCrisisTitle => 'Kesiapan Menghadapi Krisis';
 
   @override
-  String get dbCrisisSubtitle => 'Cara mengenali masalah lebih awal dan merespons dengan tenang';
+  String get dbCrisisSubtitle =>
+      'Cara mengenali masalah lebih awal dan merespons dengan tenang';
 
   @override
   String get dbWarningSigns => 'Tanda Peringatan Dini';
@@ -2518,7 +2554,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get mnSupportBannerTitle => 'Catatan Lembut';
 
   @override
-  String get mnSupportBannerBody => 'Chart Anda menunjukkan ini bisa menjadi waktu yang tepat untuk mengandalkan dukungan tambahan — teman terpercaya, anggota keluarga, atau profesional. Mencari bantuan adalah tanda kekuatan, bukan kelemahan.';
+  String get mnSupportBannerBody =>
+      'Chart Anda menunjukkan ini bisa menjadi waktu yang tepat untuk mengandalkan dukungan tambahan — teman terpercaya, anggota keluarga, atau profesional. Mencari bantuan adalah tanda kekuatan, bukan kelemahan.';
 
   @override
   String get mnProfileTitle => 'Cetak Biru Emosional Anda';
@@ -2812,13 +2849,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get mnTopicTherapy => 'Gaya terapi mana yang cocok untuk saya?';
 
   @override
-  String get mnTopicPractices => 'Praktik harian apa yang paling membantu saya?';
+  String get mnTopicPractices =>
+      'Praktik harian apa yang paling membantu saya?';
 
   @override
   String get mnTopicTiming => 'Kapan tahun kesejahteraan terbaik saya?';
 
   @override
-  String get mnTopicSupport => 'Bagaimana saya membangun jaringan dukungan yang kuat?';
+  String get mnTopicSupport =>
+      'Bagaimana saya membangun jaringan dukungan yang kuat?';
 
   @override
   String get lgSubtitle => 'Laporan Hukum Weda bertenaga AI';
@@ -2899,7 +2938,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get lgKarakaTitle => 'Planet Hukum Anda';
 
   @override
-  String get lgKarakaSubtitle => 'Planet mana yang membentuk keberuntungan hukum Anda';
+  String get lgKarakaSubtitle =>
+      'Planet mana yang membentuk keberuntungan hukum Anda';
 
   @override
   String get lgYogasTitle => 'Yoga Hukum & Perlindungan';
@@ -2980,7 +3020,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get lgEnemyDefeatCapacity => 'Kapasitas Mengalahkan Musuh';
 
   @override
-  String get lgCriminalFinancialTitle => 'Pengawasan Risiko Kriminal & Finansial';
+  String get lgCriminalFinancialTitle =>
+      'Pengawasan Risiko Kriminal & Finansial';
 
   @override
   String get lgCriminalRisk => 'Risiko Keterlibatan Kriminal';
@@ -3133,7 +3174,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get lgTopicTiming => 'Waktu terbaik untuk menyelesaikan perselisihan?';
 
   @override
-  String get lgTopicSettlement => 'Haruskah saya berdamai atau melanjutkan perkara?';
+  String get lgTopicSettlement =>
+      'Haruskah saya berdamai atau melanjutkan perkara?';
 
   @override
   String get lgTopicEnemies => 'Siapa musuh tersembunyi saya?';
@@ -3229,7 +3271,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get prKarakaTitle => 'Planet Properti Anda';
 
   @override
-  String get prKarakaSubtitle => 'Planet mana yang membentuk keberuntungan properti Anda';
+  String get prKarakaSubtitle =>
+      'Planet mana yang membentuk keberuntungan properti Anda';
 
   @override
   String get prPrimaryKaraka => 'Karaka Utama';
@@ -3571,7 +3614,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get edYogaAbsent => 'Tidak Ada';
 
   @override
-  String get edYogaNoneNote => 'Tidak ada yoga pendidikan klasik — kesuksesan datang dari usaha dan disiplin yang konsisten.';
+  String get edYogaNoneNote =>
+      'Tidak ada yoga pendidikan klasik — kesuksesan datang dari usaha dan disiplin yang konsisten.';
 
   @override
   String get edVerificationTitle => 'Verifikasi Lintas Chart';
@@ -3865,7 +3909,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get hwCategoriesTitle => 'Pengawasan Kategori Penyakit';
 
   @override
-  String get hwCategoriesSubtitle => 'Kerentanan di berbagai kategori kesehatan utama';
+  String get hwCategoriesSubtitle =>
+      'Kerentanan di berbagai kategori kesehatan utama';
 
   @override
   String get hwLowRiskCategories => 'Kategori Risiko Rendah';
@@ -3892,7 +3937,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get hwTimelineTitle => 'Garis Waktu Kesehatan';
 
   @override
-  String get hwTimelineSubtitle => 'Tahun puncak, tahun kehati-hatian & jendela pemulihan';
+  String get hwTimelineSubtitle =>
+      'Tahun puncak, tahun kehati-hatian & jendela pemulihan';
 
   @override
   String get hwPeakYears => 'Tahun Puncak Kesejahteraan';
@@ -3913,7 +3959,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get hwLifestyleTitle => 'Panduan Gaya Hidup Anda';
 
   @override
-  String get hwLifestyleSubtitle => 'Apa yang chart Anda katakan tentang kebiasaan harian';
+  String get hwLifestyleSubtitle =>
+      'Apa yang chart Anda katakan tentang kebiasaan harian';
 
   @override
   String get hwSleepDiscipline => 'Dampak Disiplin Tidur';
@@ -3949,7 +3996,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get hwSpecialTitle => 'Tahap Kehidupan & Topik Khusus';
 
   @override
-  String get hwSpecialSubtitle => 'Kesuburan, kesehatan masa kecil, kebiasaan & kelelahan';
+  String get hwSpecialSubtitle =>
+      'Kesuburan, kesehatan masa kecil, kebiasaan & kelelahan';
 
   @override
   String get hwFertility => 'Indikator Kesuburan';
@@ -4384,13 +4432,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get mrSoulAlignment => 'Keselarasan Jiwa';
 
   @override
-  String get mrAlignStrong => 'Jiwa Anda dan pasangan ideal Anda sangat selaras — ikatan yang sangat memuaskan sangat didukung.';
+  String get mrAlignStrong =>
+      'Jiwa Anda dan pasangan ideal Anda sangat selaras — ikatan yang sangat memuaskan sangat didukung.';
 
   @override
-  String get mrAlignModerate => 'Jiwa Anda dan pasangan ideal Anda cukup selaras — ikatan yang memuaskan tumbuh dengan usaha yang sadar.';
+  String get mrAlignModerate =>
+      'Jiwa Anda dan pasangan ideal Anda cukup selaras — ikatan yang memuaskan tumbuh dengan usaha yang sadar.';
 
   @override
-  String get mrAlignLow => 'Jiwa Anda dan kemitraan Anda memerlukan integrasi yang sadar — pilihlah pasangan yang benar-benar sesuai dengan nilai batin Anda.';
+  String get mrAlignLow =>
+      'Jiwa Anda dan kemitraan Anda memerlukan integrasi yang sadar — pilihlah pasangan yang benar-benar sesuai dengan nilai batin Anda.';
 
   @override
   String get mrTechDarakaraka => 'Planet pasangan (Darakaraka)';
@@ -4528,10 +4579,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get mrChallenges => 'Tantangan yang Perlu Diwaspadai';
 
   @override
-  String get mrMangalPresent => 'Mangal Dosh terdapat dalam chart — tinjau solusi dan kecocokan dengan saksama.';
+  String get mrMangalPresent =>
+      'Mangal Dosh terdapat dalam chart — tinjau solusi dan kecocokan dengan saksama.';
 
   @override
-  String get mrMangalAbsent => 'Tidak ada Mangal Dosh terdeteksi — indikator pernikahan yang mendukung.';
+  String get mrMangalAbsent =>
+      'Tidak ada Mangal Dosh terdeteksi — indikator pernikahan yang mendukung.';
 
   @override
   String get mrRiskConflict => 'Konflik';
@@ -4894,13 +4947,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get bzDirectionStrength => 'Kejelasan Arah';
 
   @override
-  String get bzAlignStrong => 'Tujuan jiwa dan arah bisnis Anda sangat selaras — membangun usaha terasa alami dan memuaskan.';
+  String get bzAlignStrong =>
+      'Tujuan jiwa dan arah bisnis Anda sangat selaras — membangun usaha terasa alami dan memuaskan.';
 
   @override
-  String get bzAlignModerate => 'Tujuan jiwa dan arah bisnis Anda cukup selaras — sebuah usaha bekerja paling baik saat mencerminkan nilai-nilai batin Anda.';
+  String get bzAlignModerate =>
+      'Tujuan jiwa dan arah bisnis Anda cukup selaras — sebuah usaha bekerja paling baik saat mencerminkan nilai-nilai batin Anda.';
 
   @override
-  String get bzAlignLow => 'Tujuan jiwa dan arah bisnis Anda memerlukan keselarasan yang sadar — pilihlah usaha yang benar-benar sesuai dengan diri Anda.';
+  String get bzAlignLow =>
+      'Tujuan jiwa dan arah bisnis Anda memerlukan keselarasan yang sadar — pilihlah usaha yang benar-benar sesuai dengan diri Anda.';
 
   @override
   String get bzTechAtmakaraka => 'Planet jiwa (Atmakaraka)';
@@ -5077,28 +5133,36 @@ class AppLocalizationsId extends AppLocalizations {
   String get bzRiskLegal => 'Hukum / Regulasi';
 
   @override
-  String get bzFinancialExp => 'Risiko kerugian uang akibat investasi berlebihan atau waktu arus kas yang buruk selama menjalankan usaha.';
+  String get bzFinancialExp =>
+      'Risiko kerugian uang akibat investasi berlebihan atau waktu arus kas yang buruk selama menjalankan usaha.';
 
   @override
-  String get bzFinancialFix => 'Simpan cadangan kas, mulai secara ramping, dan validasi permintaan sebelum meningkatkan pengeluaran.';
+  String get bzFinancialFix =>
+      'Simpan cadangan kas, mulai secara ramping, dan validasi permintaan sebelum meningkatkan pengeluaran.';
 
   @override
-  String get bzBurnoutExp => 'Mendorong diri terlalu keras dalam waktu lama dapat menguras energi dan fokus Anda.';
+  String get bzBurnoutExp =>
+      'Mendorong diri terlalu keras dalam waktu lama dapat menguras energi dan fokus Anda.';
 
   @override
-  String get bzBurnoutFix => 'Lindungi waktu istirahat, delegasikan lebih awal, dan atur ritme dorongan besar di sekitar periode yang mendukung.';
+  String get bzBurnoutFix =>
+      'Lindungi waktu istirahat, delegasikan lebih awal, dan atur ritme dorongan besar di sekitar periode yang mendukung.';
 
   @override
-  String get bzTeamExp => 'Gesekan dengan co-founder atau staf dapat memperlambat laju bisnis.';
+  String get bzTeamExp =>
+      'Gesekan dengan co-founder atau staf dapat memperlambat laju bisnis.';
 
   @override
-  String get bzTeamFix => 'Tetapkan peran dan harapan secara tertulis dengan jelas, dan berkomunikasilah secara rutin.';
+  String get bzTeamFix =>
+      'Tetapkan peran dan harapan secara tertulis dengan jelas, dan berkomunikasilah secara rutin.';
 
   @override
-  String get bzLegalExp => 'Masalah kepatuhan, kontrak, atau regulasi dapat menciptakan hambatan.';
+  String get bzLegalExp =>
+      'Masalah kepatuhan, kontrak, atau regulasi dapat menciptakan hambatan.';
 
   @override
-  String get bzLegalFix => 'Pastikan kontrak ditinjau, jaga dokumen tetap rapi, dan konsultasikan dengan profesional sejak dini.';
+  String get bzLegalFix =>
+      'Pastikan kontrak ditinjau, jaga dokumen tetap rapi, dan konsultasikan dengan profesional sejak dini.';
 
   @override
   String get bzImprovementPlan => 'Rencana Peningkatan';
@@ -5254,13 +5318,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get crAlignment => 'Keselarasan Jiwa ↔ Karier';
 
   @override
-  String get crAlignStrong => 'Minat alami Anda dan jalur karier Anda sangat selaras.';
+  String get crAlignStrong =>
+      'Minat alami Anda dan jalur karier Anda sangat selaras.';
 
   @override
-  String get crAlignModerate => 'Minat alami Anda dan jalur karier Anda cukup selaras.';
+  String get crAlignModerate =>
+      'Minat alami Anda dan jalur karier Anda cukup selaras.';
 
   @override
-  String get crAlignLow => 'Minat alami Anda dan jalur karier Anda memerlukan keselarasan yang sadar.';
+  String get crAlignLow =>
+      'Minat alami Anda dan jalur karier Anda memerlukan keselarasan yang sadar.';
 
   @override
   String get crTechAtmakaraka => 'Atmakaraka (Indikator Jiwa)';
@@ -5410,34 +5477,44 @@ class AppLocalizationsId extends AppLocalizations {
   String get crPrevention => 'Pencegahan';
 
   @override
-  String get crBurnoutExp => 'Fase yang panjang dan menuntut dapat menguras energi Anda seiring waktu.';
+  String get crBurnoutExp =>
+      'Fase yang panjang dan menuntut dapat menguras energi Anda seiring waktu.';
 
   @override
-  String get crBurnoutFix => 'Lindungi waktu istirahat, tetapkan batasan, dan atur ritme dorongan besar.';
+  String get crBurnoutFix =>
+      'Lindungi waktu istirahat, tetapkan batasan, dan atur ritme dorongan besar.';
 
   @override
-  String get crRecognitionExp => 'Penghargaan dan pengakuan mungkin datang lebih lambat dari usaha Anda.';
+  String get crRecognitionExp =>
+      'Penghargaan dan pengakuan mungkin datang lebih lambat dari usaha Anda.';
 
   @override
-  String get crRecognitionFix => 'Dokumentasikan pencapaian dan buat kontribusi Anda terlihat oleh atasan.';
+  String get crRecognitionFix =>
+      'Dokumentasikan pencapaian dan buat kontribusi Anda terlihat oleh atasan.';
 
   @override
-  String get crConflictExp => 'Gesekan dengan rekan kerja atau atasan bisa muncul sesekali.';
+  String get crConflictExp =>
+      'Gesekan dengan rekan kerja atau atasan bisa muncul sesekali.';
 
   @override
-  String get crConflictFix => 'Berkomunikasilah dengan tenang dan pilih pertarungan Anda dengan bijak.';
+  String get crConflictFix =>
+      'Berkomunikasilah dengan tenang dan pilih pertarungan Anda dengan bijak.';
 
   @override
-  String get crFinancialExp => 'Pendapatan mungkin terasa tidak merata pada fase-fase tertentu.';
+  String get crFinancialExp =>
+      'Pendapatan mungkin terasa tidak merata pada fase-fase tertentu.';
 
   @override
-  String get crFinancialFix => 'Simpan dana cadangan dan hindari komitmen finansial berlebihan.';
+  String get crFinancialFix =>
+      'Simpan dana cadangan dan hindari komitmen finansial berlebihan.';
 
   @override
-  String get crOverqualExp => 'Anda mungkin sesekali merasa kurang dimanfaatkan atau kurang tertantang.';
+  String get crOverqualExp =>
+      'Anda mungkin sesekali merasa kurang dimanfaatkan atau kurang tertantang.';
 
   @override
-  String get crOverqualFix => 'Carilah peran yang menantang dan terus belajar agar tetap terlibat.';
+  String get crOverqualFix =>
+      'Carilah peran yang menantang dan terus belajar agar tetap terlibat.';
 
   @override
   String get crImprovementPlan => 'Rencana Peningkatan Karier';
@@ -5467,16 +5544,20 @@ class AppLocalizationsId extends AppLocalizations {
   String get crWeek4 => 'Minggu 4 · Visibilitas Karier';
 
   @override
-  String get crWeek1Tip => 'Perbarui resume dan LinkedIn Anda seputar tema karier terkuat Anda.';
+  String get crWeek1Tip =>
+      'Perbarui resume dan LinkedIn Anda seputar tema karier terkuat Anda.';
 
   @override
-  String get crWeek2Tip => 'Pilih satu keterampilan bernilai tinggi di bidang terbaik Anda dan latih setiap hari.';
+  String get crWeek2Tip =>
+      'Pilih satu keterampilan bernilai tinggi di bidang terbaik Anda dan latih setiap hari.';
 
   @override
-  String get crWeek3Tip => 'Sambung kembali dengan mentor dan hubungi dua kontak industri baru.';
+  String get crWeek3Tip =>
+      'Sambung kembali dengan mentor dan hubungi dua kontak industri baru.';
 
   @override
-  String get crWeek4Tip => 'Bagikan pekerjaan Anda secara publik dan menjadi sukarelawan untuk proyek yang terlihat.';
+  String get crWeek4Tip =>
+      'Bagikan pekerjaan Anda secara publik dan menjadi sukarelawan untuk proyek yang terlihat.';
 
   @override
   String get crPriority => 'Prioritas';
@@ -5524,7 +5605,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get crReliabilityModerate => 'Keandalan Sedang';
 
   @override
-  String get crReliabilityExplain => 'Laporan ini menggabungkan birth chart, chart divisional, dan indikator Jaimini Anda. Skor mencerminkan seberapa kuat lapisan-lapisan chart ini saling sesuai.';
+  String get crReliabilityExplain =>
+      'Laporan ini menggabungkan birth chart, chart divisional, dan indikator Jaimini Anda. Skor mencerminkan seberapa kuat lapisan-lapisan chart ini saling sesuai.';
 
   @override
   String get crChartLayers => 'Lapisan & bobot chart';
@@ -5579,7 +5661,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String crAlignExplainKaraka(Object soul, Object career) {
-    return '${soul} memandu panggilan batin Anda, sementara ${career} membentuk profesi luar Anda.';
+    return '$soul memandu panggilan batin Anda, sementara $career membentuk profesi luar Anda.';
   }
 
   @override
@@ -5670,7 +5752,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get rzWhatChartMeans => 'Apa arti chart ini';
 
   @override
-  String get rzChartExplain => 'Diagram ini menunjukkan posisi setiap planet di langit hari ini, dipetakan ke zodiak Anda. Planet di rumah yang mendukung mengangkat hari Anda; yang berada di rumah sulit membutuhkan perhatian.';
+  String get rzChartExplain =>
+      'Diagram ini menunjukkan posisi setiap planet di langit hari ini, dipetakan ke zodiak Anda. Planet di rumah yang mendukung mengangkat hari Anda; yang berada di rumah sulit membutuhkan perhatian.';
 
   @override
   String get rzDoNetworking => 'Jaringan & koneksi';
@@ -5724,13 +5807,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get rzSteady => 'Stabil';
 
   @override
-  String get rzTomorrowUpLine => 'Energi diperkirakan meningkat besok — rencanakan lebih awal untuk tugas-tugas penting.';
+  String get rzTomorrowUpLine =>
+      'Energi diperkirakan meningkat besok — rencanakan lebih awal untuk tugas-tugas penting.';
 
   @override
-  String get rzTomorrowDownLine => 'Energi mungkin sedikit menurun besok — jaga hari tetap ringan dan stabil.';
+  String get rzTomorrowDownLine =>
+      'Energi mungkin sedikit menurun besok — jaga hari tetap ringan dan stabil.';
 
   @override
-  String get rzTomorrowFlatLine => 'Energi tetap stabil besok — hari yang tenang dan seimbang menanti.';
+  String get rzTomorrowFlatLine =>
+      'Energi tetap stabil besok — hari yang tenang dan seimbang menanti.';
 
   @override
   String get rzWeeklyTrend => 'Tren Mingguan';
@@ -5776,32 +5862,32 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String rzHomeSummary(Object dom, Object chal) {
-    return '${dom} menentukan nada hari ini, sementara ${chal} membutuhkan kesabaran dan perhatian.';
+    return '$dom menentukan nada hari ini, sementara $chal membutuhkan kesabaran dan perhatian.';
   }
 
   @override
   String rzInsightGood(Object karaka) {
-    return 'Hari yang baik untuk ${karaka}.';
+    return 'Hari yang baik untuk $karaka.';
   }
 
   @override
   String rzInsightHard(Object karaka) {
-    return 'Bersikaplah pelan-pelan dengan ${karaka} hari ini.';
+    return 'Bersikaplah pelan-pelan dengan $karaka hari ini.';
   }
 
   @override
   String rzInfluenceGood(Object karaka) {
-    return '${karaka} didukung dengan baik hari ini.';
+    return '$karaka didukung dengan baik hari ini.';
   }
 
   @override
   String rzInfluenceHard(Object karaka) {
-    return '${karaka} mungkin menghadapi keterlambatan hari ini.';
+    return '$karaka mungkin menghadapi keterlambatan hari ini.';
   }
 
   @override
   String rzDetailSummary(Object strong, Object weak) {
-    return 'Hari ini mendukung ${strong}, sementara ${weak} membutuhkan kesabaran dan perhatian.';
+    return 'Hari ini mendukung $strong, sementara $weak membutuhkan kesabaran dan perhatian.';
   }
 
   @override
@@ -5880,10 +5966,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get fdRecommendation => 'Rekomendasi';
 
   @override
-  String get fdNoActions => 'Tidak ada hal besar untuk didorong hari ini — jaga rutinitas tetap stabil dan tenang.';
+  String get fdNoActions =>
+      'Tidak ada hal besar untuk didorong hari ini — jaga rutinitas tetap stabil dan tenang.';
 
   @override
-  String get fdNoCautions => 'Tidak ada kehati-hatian besar hari ini — lanjutkan dengan kesadaran normal.';
+  String get fdNoCautions =>
+      'Tidak ada kehati-hatian besar hari ini — lanjutkan dengan kesadaran normal.';
 
   @override
   String get fdHighlights => 'Sorotan Hari Ini';
@@ -5970,7 +6058,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get fdOverallStatus => 'Status Keseluruhan';
 
   @override
-  String get fdNoPlanetTransit => 'Tidak ada planet besar yang sedang transit di area ini hari ini.';
+  String get fdNoPlanetTransit =>
+      'Tidak ada planet besar yang sedang transit di area ini hari ini.';
 
   @override
   String get fdFinancialOutlook => 'Prospek Keuangan';
@@ -6057,7 +6146,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get fdAskAi => 'Tanya AI';
 
   @override
-  String get fdAskAiSub => 'Ketuk pertanyaan untuk mendapatkan jawaban hari ini';
+  String get fdAskAiSub =>
+      'Ketuk pertanyaan untuk mendapatkan jawaban hari ini';
 
   @override
   String get fdQ1 => 'Mengapa karier terasa lambat hari ini?';
@@ -6079,12 +6169,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String fdAiSummaryLine(Object top, Object weak, Object fin) {
-    return 'Hari ini paling cocok untuk ${top}. ${weak} mungkin terasa lambat, jadi hindari keputusan besar di sana. Secara finansial hari ini terlihat ${fin}.';
+    return 'Hari ini paling cocok untuk $top. $weak mungkin terasa lambat, jadi hindari keputusan besar di sana. Secara finansial hari ini terlihat $fin.';
   }
 
   @override
   String fdThemeFocusLine(Object top) {
-    return 'Energi Anda hari ini terkumpul di sekitar ${top} — manfaatkan itu dan bersikap lembut di area lain.';
+    return 'Energi Anda hari ini terkumpul di sekitar $top — manfaatkan itu dan bersikap lembut di area lain.';
   }
 
   @override
@@ -6185,27 +6275,27 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String gochThemeGrowth(Object area) {
-    return 'Hari pertumbuhan di ${area} — manfaatkan itu.';
+    return 'Hari pertumbuhan di $area — manfaatkan itu.';
   }
 
   @override
   String gochThemeChallenge(Object area) {
-    return 'Tetap sabar dengan ${area} hari ini — jalani dengan mantap.';
+    return 'Tetap sabar dengan $area hari ini — jalani dengan mantap.';
   }
 
   @override
   String gochPosLine(Object area) {
-    return '${area} sedang sangat didukung saat ini.';
+    return '$area sedang sangat didukung saat ini.';
   }
 
   @override
   String gochChalLine(Object area) {
-    return '${area} membutuhkan perhatian ekstra hari ini.';
+    return '$area membutuhkan perhatian ekstra hari ini.';
   }
 
   @override
   String gochAiFocusLine(Object a1, Object a2) {
-    return 'Curahkan energi Anda ke ${a1} hari ini, dan bersikap lembut dengan ${a2}.';
+    return 'Curahkan energi Anda ke $a1 hari ini, dan bersikap lembut dengan $a2.';
   }
 
   @override
@@ -6270,37 +6360,37 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String divAiUse(Object purpose) {
-    return 'Gunakan chart ini untuk menganalisis ${purpose}.';
+    return 'Gunakan chart ini untuk menganalisis $purpose.';
   }
 
   @override
   String divHeroSummary(Object c1, Object c2) {
-    return 'Chart ${c1} dan ${c2} Anda sangat penting — mulailah dari sana untuk area yang mereka cakup, lalu jelajahi yang lain sesuai kebutuhan.';
+    return 'Chart $c1 dan $c2 Anda sangat penting — mulailah dari sana untuk area yang mereka cakup, lalu jelajahi yang lain sesuai kebutuhan.';
   }
 
   @override
   String divRecReasonHouse(Object house) {
-    return 'Rumah ke-${house} Anda perlu ditinjau lebih dekat — chart ini menunjukkannya secara mendalam.';
+    return 'Rumah ke-$house Anda perlu ditinjau lebih dekat — chart ini menunjukkannya secara mendalam.';
   }
 
   @override
   String divRecReasonPlanet(Object planet) {
-    return '${planet} adalah planet kunci namun sedang diuji — chart ini mengungkap kondisinya yang lebih dalam.';
+    return '$planet adalah planet kunci namun sedang diuji — chart ini mengungkap kondisinya yang lebih dalam.';
   }
 
   @override
   String divRecReasonDasha(Object planet) {
-    return 'Anda sedang berada dalam Mahadasha ${planet}, jadi chart ini sangat tepat waktu sekarang.';
+    return 'Anda sedang berada dalam Mahadasha $planet, jadi chart ini sangat tepat waktu sekarang.';
   }
 
   @override
   String divRecSummary(Object c1) {
-    return 'Berdasarkan chart Anda, ${c1} sebaiknya menjadi prioritas tertinggi Anda. Chart di bawah diurutkan berdasarkan seberapa relevan bagi Anda saat ini.';
+    return 'Berdasarkan chart Anda, $c1 sebaiknya menjadi prioritas tertinggi Anda. Chart di bawah diurutkan berdasarkan seberapa relevan bagi Anda saat ini.';
   }
 
   @override
   String divWhenToUseLine(Object purpose) {
-    return 'Buka chart ini saat Anda ingin mempelajari ${purpose}.';
+    return 'Buka chart ini saat Anda ingin mempelajari $purpose.';
   }
 
   @override
@@ -6353,19 +6443,21 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String yogaHeroSummary(Object count, Object planets) {
-    return 'Chart Anda membawa ${count} yoga aktif — kombinasi planet yang mendukung. Kombinasi yang melibatkan ${planets} menciptakan pengaruh yang sangat membantu untuk pertumbuhan dan kesuksesan.';
+    return 'Chart Anda membawa $count yoga aktif — kombinasi planet yang mendukung. Kombinasi yang melibatkan $planets menciptakan pengaruh yang sangat membantu untuk pertumbuhan dan kesuksesan.';
   }
 
   @override
   String yogaAiLine(Object name, Object areas) {
-    return '${name} mendukung ${areas}, dan manfaatnya bertambah ketika planet-planetnya aktif dalam dasha atau transit.';
+    return '$name mendukung $areas, dan manfaatnya bertambah ketika planet-planetnya aktif dalam dasha atau transit.';
   }
 
   @override
-  String get yogaAiGeneric => 'Yoga ini adalah kombinasi yang mendukung dalam chart Anda yang memperkuat area kehidupan yang terkait.';
+  String get yogaAiGeneric =>
+      'Yoga ini adalah kombinasi yang mendukung dalam chart Anda yang memperkuat area kehidupan yang terkait.';
 
   @override
-  String get yogaExplainReassure => 'Yoga adalah titik terang dalam chart Anda — kombinasi planet yang membantu dan bekerja untuk kepentingan Anda. Yoga yang lebih kuat memberikan manfaat yang bertahan lama, terutama selama periode planet yang membentuknya.';
+  String get yogaExplainReassure =>
+      'Yoga adalah titik terang dalam chart Anda — kombinasi planet yang membantu dan bekerja untuk kepentingan Anda. Yoga yang lebih kuat memberikan manfaat yang bertahan lama, terutama selama periode planet yang membentuknya.';
 
   @override
   String get doshSevere => 'Parah';
@@ -6452,33 +6544,37 @@ class AppLocalizationsId extends AppLocalizations {
   String get remLifestyle => 'Gaya Hidup';
 
   @override
-  String get remLifestyleGeneric => 'Praktikkan rasa syukur, disiplin, dan sedekah yang terkait dengan planet ini, serta jaga perilaku yang baik.';
+  String get remLifestyleGeneric =>
+      'Praktikkan rasa syukur, disiplin, dan sedekah yang terkait dengan planet ini, serta jaga perilaku yang baik.';
 
   @override
   String get doshExplain => 'Jelaskan Dosha Saya';
 
   @override
-  String get doshExplainSubtitle => 'Tinjauan yang tenang dan praktis tentang dosha Anda';
+  String get doshExplainSubtitle =>
+      'Tinjauan yang tenang dan praktis tentang dosha Anda';
 
   @override
-  String get doshExplainReassure => 'Dosha itu umum — hampir setiap chart memilikinya. Dosha menggambarkan kecenderungan, bukan takdir yang tetap. Kesadaran, perilaku baik, dan solusi sederhana mengurangi dampak praktisnya, jadi tidak perlu khawatir.';
+  String get doshExplainReassure =>
+      'Dosha itu umum — hampir setiap chart memilikinya. Dosha menggambarkan kecenderungan, bukan takdir yang tetap. Kesadaran, perilaku baik, dan solusi sederhana mengurangi dampak praktisnya, jadi tidak perlu khawatir.';
 
   @override
-  String get doshAiGeneric => 'Dosha ini menggambarkan kecenderungan dalam chart Anda. Dampak praktisnya biasanya ringan dan dapat diseimbangkan dengan kesadaran dan solusi sederhana.';
+  String get doshAiGeneric =>
+      'Dosha ini menggambarkan kecenderungan dalam chart Anda. Dampak praktisnya biasanya ringan dan dapat diseimbangkan dengan kesadaran dan solusi sederhana.';
 
   @override
   String doshHeroSummary(Object active, Object total) {
-    return 'Chart Anda menunjukkan ${active} dosha aktif dari ${total} yang diperiksa. Sebagian besar ringan dan hanya sedikit yang perlu perhatian. Dengan pemahaman dan solusi sederhana, dampak praktisnya dapat diringankan.';
+    return 'Chart Anda menunjukkan $active dosha aktif dari $total yang diperiksa. Sebagian besar ringan dan hanya sedikit yang perlu perhatian. Dengan pemahaman dan solusi sederhana, dampak praktisnya dapat diringankan.';
   }
 
   @override
   String doshAiLine(Object areas, Object planet) {
-    return 'Dosha ini terutama memengaruhi ${areas}. Selama periode ${planet}, dampaknya bisa terasa lebih kuat, dan solusi membantu menyeimbangkannya.';
+    return 'Dosha ini terutama memengaruhi $areas. Selama periode $planet, dampaknya bisa terasa lebih kuat, dan solusi membantu menyeimbangkannya.';
   }
 
   @override
   String doshTimelineLine(Object planet) {
-    return 'Dampaknya paling terasa selama Mahadasha dan Antardasha ${planet}, dan saat ${planet} aktif dalam transit.';
+    return 'Dampaknya paling terasa selama Mahadasha dan Antardasha $planet, dan saat $planet aktif dalam transit.';
   }
 
   @override
@@ -6569,58 +6665,63 @@ class AppLocalizationsId extends AppLocalizations {
   String get sbPlanetDetails => 'Detail Planet';
 
   @override
-  String get sbBodyWhatIs => 'Shadbala (\'kekuatan enam lipat\') mengukur seberapa besar kekuatan setiap planet untuk memberikan hasilnya, dengan menjumlahkan enam sumber kekuatan yang independen.';
+  String get sbBodyWhatIs =>
+      'Shadbala (\'kekuatan enam lipat\') mengukur seberapa besar kekuatan setiap planet untuk memberikan hasilnya, dengan menjumlahkan enam sumber kekuatan yang independen.';
 
   @override
-  String get sbBodyRupas => 'Kekuatan diukur dalam Rupa (1 Rupa = 60 Virupa). Setiap planet membutuhkan kekuatan Rupa minimum untuk dianggap kuat; semakin banyak Rupa berarti hasilnya semakin optimal.';
+  String get sbBodyRupas =>
+      'Kekuatan diukur dalam Rupa (1 Rupa = 60 Virupa). Setiap planet membutuhkan kekuatan Rupa minimum untuk dianggap kuat; semakin banyak Rupa berarti hasilnya semakin optimal.';
 
   @override
-  String get sbBodyHowCalc => 'Enam bala dijumlahkan: Sthana (posisi), Dig (arah), Kala (waktu), Chesta (gerak), Naisargika (alami), dan Drik (aspek). Totalnya dibandingkan dengan minimum yang dibutuhkan planet untuk mendapatkan persentase.';
+  String get sbBodyHowCalc =>
+      'Enam bala dijumlahkan: Sthana (posisi), Dig (arah), Kala (waktu), Chesta (gerak), Naisargika (alami), dan Drik (aspek). Totalnya dibandingkan dengan minimum yang dibutuhkan planet untuk mendapatkan persentase.';
 
   @override
-  String get sbBodyHowUse => 'Planet di atas 100% memberikan signifikasinya dengan nyaman; di bawah 100% membutuhkan dukungan. Utamakan planet terkuat Anda untuk hal-hal penting, dan berikan solusi serta kesabaran untuk yang terlemah.';
+  String get sbBodyHowUse =>
+      'Planet di atas 100% memberikan signifikasinya dengan nyaman; di bawah 100% membutuhkan dukungan. Utamakan planet terkuat Anda untuk hal-hal penting, dan berikan solusi serta kesabaran untuk yang terlemah.';
 
   @override
-  String get sbRemedyStrong => 'Didukung dengan baik — tidak perlu solusi khusus; Anda dapat menggunakan periode planet ini dengan percaya diri.';
+  String get sbRemedyStrong =>
+      'Didukung dengan baik — tidak perlu solusi khusus; Anda dapat menggunakan periode planet ini dengan percaya diri.';
 
   @override
   String sbHeroSummary(Object strongP, Object strongTrait, Object weakP) {
-    return '${strongP} adalah planet terkuat Anda, memberikan dukungan sangat baik untuk ${strongTrait}. ${weakP} adalah yang terlemah dan paling diuntungkan dari solusi.';
+    return '$strongP adalah planet terkuat Anda, memberikan dukungan sangat baik untuk $strongTrait. $weakP adalah yang terlemah dan paling diuntungkan dari solusi.';
   }
 
   @override
   String sbCardAi(Object planet, Object category, Object karakatva) {
-    return '${planet} memiliki Shadbala ${category}, sehingga ${karakatva} miliknya didukung sesuai dengan itu.';
+    return '$planet memiliki Shadbala $category, sehingga $karakatva miliknya didukung sesuai dengan itu.';
   }
 
   @override
   String sbWhyLine(Object bala, Object rupa) {
-    return 'Terkuat melalui ${bala} (${rupa} rupa).';
+    return 'Terkuat melalui $bala ($rupa rupa).';
   }
 
   @override
   String sbWeakLine(Object bala) {
-    return 'Terlemah di ${bala}, yang menurunkan total.';
+    return 'Terlemah di $bala, yang menurunkan total.';
   }
 
   @override
   String sbMahadashaLine(Object planet, Object karak) {
-    return 'Selama Mahadasha ${planet}, ${karak} miliknya menjadi menonjol.';
+    return 'Selama Mahadasha $planet, $karak miliknya menjadi menonjol.';
   }
 
   @override
   String sbEffectStrong(Object karak) {
-    return 'Dengan Shadbala yang kuat, ${karak} secara alami didukung.';
+    return 'Dengan Shadbala yang kuat, $karak secara alami didukung.';
   }
 
   @override
   String sbEffectWeak(Object karak) {
-    return 'Dengan Shadbala yang sedang, ${karak} mungkin membutuhkan usaha sadar.';
+    return 'Dengan Shadbala yang sedang, $karak mungkin membutuhkan usaha sadar.';
   }
 
   @override
   String sbRemedyWeak(Object planet) {
-    return 'Perkuat ${planet} melalui mantra, batu permata, atau sedekahnya, dan bertindaklah dengan sabar selama periodenya.';
+    return 'Perkuat $planet melalui mantra, batu permata, atau sedekahnya, dan bertindaklah dengan sabar selama periodenya.';
   }
 
   @override
@@ -6687,38 +6788,43 @@ class AppLocalizationsId extends AppLocalizations {
   String get bhExplainSubtitle => 'Ringkasan sederhana dari 12 rumah Anda';
 
   @override
-  String bhHeroSummary(Object s1, Object s2, Object strongArea, Object weakArea) {
-    return 'Rumah terkuat Anda adalah ${s1} dan ${s2}. ${strongArea} secara alami kuat, sementara ${weakArea} membutuhkan lebih banyak usaha.';
+  String bhHeroSummary(
+    Object s1,
+    Object s2,
+    Object strongArea,
+    Object weakArea,
+  ) {
+    return 'Rumah terkuat Anda adalah $s1 dan $s2. $strongArea secara alami kuat, sementara $weakArea membutuhkan lebih banyak usaha.';
   }
 
   @override
   String bhLordLine(Object lord, Object relation) {
-    return 'Penguasanya, ${lord}, ditempatkan sebagai ${relation}.';
+    return 'Penguasanya, $lord, ditempatkan sebagai $relation.';
   }
 
   @override
   String bhWhyLine(Object sav) {
-    return 'Rumah ini membawa ${sav} poin baik (SAV); penghuni dan aspeknya membentuk skor selebihnya.';
+    return 'Rumah ini membawa $sav poin baik (SAV); penghuni dan aspeknya membentuk skor selebihnya.';
   }
 
   @override
   String bhGoodLine(Object meaning) {
-    return 'Ketika kuat, ini mendukung ${meaning}.';
+    return 'Ketika kuat, ini mendukung $meaning.';
   }
 
   @override
   String bhChallengeLine(Object meaning) {
-    return 'Ketika lemah, ${meaning} mungkin membutuhkan usaha dan perhatian ekstra.';
+    return 'Ketika lemah, $meaning mungkin membutuhkan usaha dan perhatian ekstra.';
   }
 
   @override
   String bhRemedyLine(Object lord) {
-    return 'Perkuat penguasanya ${lord} dan hormati hal-hal terkait rumah ini untuk meningkatkannya.';
+    return 'Perkuat penguasanya $lord dan hormati hal-hal terkait rumah ini untuk meningkatkannya.';
   }
 
   @override
   String bhCardAi(Object house, Object strengthWord, Object meaning) {
-    return '${house} Anda ${strengthWord}. Ini mengatur ${meaning}.';
+    return '$house Anda $strengthWord. Ini mengatur $meaning.';
   }
 
   @override
@@ -6753,32 +6859,32 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String kunHouseLine(Object ordinal, Object meaning) {
-    return 'Rumah ke-${ordinal} mengatur ${meaning}.';
+    return 'Rumah ke-$ordinal mengatur $meaning.';
   }
 
   @override
   String kunHouseOccupied(Object planets) {
-    return '${planets} yang ditempatkan di sini membentuk hasilnya.';
+    return '$planets yang ditempatkan di sini membentuk hasilnya.';
   }
 
   @override
   String kunExplainAsc(Object asc) {
-    return 'Ascendant Anda adalah ${asc}, membentuk pandangan hidup Anda dan bagaimana orang lain pertama kali melihat Anda.';
+    return 'Ascendant Anda adalah $asc, membentuk pandangan hidup Anda dan bagaimana orang lain pertama kali melihat Anda.';
   }
 
   @override
   String kunExplainMoon(Object moon) {
-    return 'Pikiran dan emosi Anda mengikuti Bulan di ${moon}.';
+    return 'Pikiran dan emosi Anda mengikuti Bulan di $moon.';
   }
 
   @override
   String kunExplainStrong(Object planet) {
-    return '${planet} adalah planet terkuat Anda — area alami kemudahan dan dukungan.';
+    return '$planet adalah planet terkuat Anda — area alami kemudahan dan dukungan.';
   }
 
   @override
   String kunExplainWeak(Object planet) {
-    return '${planet} adalah planet Anda yang paling diuji — kesabaran dan usaha membuahkan hasil di sini.';
+    return '$planet adalah planet Anda yang paling diuji — kesabaran dan usaha membuahkan hasil di sini.';
   }
 
   @override
@@ -6855,52 +6961,52 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String plLordOfHouses(Object houses) {
-    return 'Penguasa rumah ${houses}';
+    return 'Penguasa rumah $houses';
   }
 
   @override
   String plNakMeaning(Object nakLord, Object trait) {
-    return 'Dikuasai oleh ${nakLord}, membawa ${trait}.';
+    return 'Dikuasai oleh $nakLord, membawa $trait.';
   }
 
   @override
   String plAiPlace(Object planet, Object sign, Object house) {
-    return '${planet} berada di ${sign}, di rumah ke-${house}.';
+    return '$planet berada di $sign, di rumah ke-$house.';
   }
 
   @override
   String plAiKarakStrong(Object karak) {
-    return 'Signifikasi utamanya — ${karak} — didukung dengan baik di sini.';
+    return 'Signifikasi utamanya — $karak — didukung dengan baik di sini.';
   }
 
   @override
   String plAiKarakWeak(Object karak) {
-    return 'Signifikasi utamanya — ${karak} — mungkin membutuhkan usaha sadar di sini.';
+    return 'Signifikasi utamanya — $karak — mungkin membutuhkan usaha sadar di sini.';
   }
 
   @override
   String plAiExalted(Object planet) {
-    return '${planet} sedang exalted (mulia), memberikan hasil terbaiknya.';
+    return '$planet sedang exalted (mulia), memberikan hasil terbaiknya.';
   }
 
   @override
   String plAiDebilitated(Object planet) {
-    return '${planet} sedang debilitated (lemah) dan membutuhkan dukungan untuk memberikan hasilnya.';
+    return '$planet sedang debilitated (lemah) dan membutuhkan dukungan untuk memberikan hasilnya.';
   }
 
   @override
   String plAiCombust(Object planet) {
-    return '${planet} sedang combust (terbakar), sehingga bekerja kurang terbuka di bawah sinar Matahari.';
+    return '$planet sedang combust (terbakar), sehingga bekerja kurang terbuka di bawah sinar Matahari.';
   }
 
   @override
   String plAiVargottama(Object planet) {
-    return '${planet} adalah vargottama — penempatan kuat yang berulang di navamsa.';
+    return '$planet adalah vargottama — penempatan kuat yang berulang di navamsa.';
   }
 
   @override
   String plAiRetrograde(Object planet) {
-    return '${planet} sedang retrograde, mengarahkan energinya ke dalam dan memperkuatnya.';
+    return '$planet sedang retrograde, mengarahkan energinya ke dalam dan memperkuatnya.';
   }
 
   @override
@@ -6910,16 +7016,20 @@ class AppLocalizationsId extends AppLocalizations {
   String get plHouse2 => 'kekayaan, keluarga, ucapan, dan makanan';
 
   @override
-  String get plHouse3 => 'keberanian, saudara kandung, komunikasi, dan perjalanan singkat';
+  String get plHouse3 =>
+      'keberanian, saudara kandung, komunikasi, dan perjalanan singkat';
 
   @override
-  String get plHouse4 => 'rumah, ibu, kenyamanan, properti, dan kedamaian batin';
+  String get plHouse4 =>
+      'rumah, ibu, kenyamanan, properti, dan kedamaian batin';
 
   @override
-  String get plHouse5 => 'anak-anak, kreativitas, kecerdasan, romansa, dan kebajikan masa lalu';
+  String get plHouse5 =>
+      'anak-anak, kreativitas, kecerdasan, romansa, dan kebajikan masa lalu';
 
   @override
-  String get plHouse6 => 'kesehatan, musuh, hutang, pengabdian, dan pekerjaan sehari-hari';
+  String get plHouse6 =>
+      'kesehatan, musuh, hutang, pengabdian, dan pekerjaan sehari-hari';
 
   @override
   String get plHouse7 => 'pernikahan, kemitraan, dan hubungan bisnis';
@@ -6928,16 +7038,19 @@ class AppLocalizationsId extends AppLocalizations {
   String get plHouse8 => 'umur panjang, transformasi, rahasia, dan warisan';
 
   @override
-  String get plHouse9 => 'keberuntungan, dharma, pembelajaran tinggi, guru, dan ayah';
+  String get plHouse9 =>
+      'keberuntungan, dharma, pembelajaran tinggi, guru, dan ayah';
 
   @override
   String get plHouse10 => 'karier, status, otoritas, dan karma publik';
 
   @override
-  String get plHouse11 => 'keuntungan, pendapatan, teman, jaringan, dan keinginan yang terpenuhi';
+  String get plHouse11 =>
+      'keuntungan, pendapatan, teman, jaringan, dan keinginan yang terpenuhi';
 
   @override
-  String get plHouse12 => 'kehilangan, pengeluaran, negeri asing, spiritualitas, dan pembebasan';
+  String get plHouse12 =>
+      'kehilangan, pengeluaran, negeri asing, spiritualitas, dan pembebasan';
 
   @override
   String get sumVeryStrong => 'Sangat Kuat';
@@ -7069,64 +7182,84 @@ class AppLocalizationsId extends AppLocalizations {
   String get sumCopied => 'Disalin ke papan klip';
 
   @override
-  String get sumNatureFire => 'Anda memiliki sifat yang berani, energik, dan visioner yang memimpin dari depan.';
+  String get sumNatureFire =>
+      'Anda memiliki sifat yang berani, energik, dan visioner yang memimpin dari depan.';
 
   @override
-  String get sumNatureEarth => 'Anda memiliki sifat yang praktis, membumi, dan disiplin yang membangun hasil yang bertahan lama.';
+  String get sumNatureEarth =>
+      'Anda memiliki sifat yang praktis, membumi, dan disiplin yang membangun hasil yang bertahan lama.';
 
   @override
-  String get sumNatureAir => 'Anda memiliki sifat yang ingin tahu, komunikatif, dan intelektual yang berkembang dengan ide-ide baru.';
+  String get sumNatureAir =>
+      'Anda memiliki sifat yang ingin tahu, komunikatif, dan intelektual yang berkembang dengan ide-ide baru.';
 
   @override
-  String get sumNatureWater => 'Anda memiliki sifat yang intuitif, emosional, dan berempati dengan sensitivitas batin yang mendalam.';
+  String get sumNatureWater =>
+      'Anda memiliki sifat yang intuitif, emosional, dan berempati dengan sensitivitas batin yang mendalam.';
 
   @override
-  String get sumGradePhraseExcellent => 'Sangat didukung — hasil yang menguntungkan mungkin terjadi dengan usaha yang konsisten.';
+  String get sumGradePhraseExcellent =>
+      'Sangat didukung — hasil yang menguntungkan mungkin terjadi dengan usaha yang konsisten.';
 
   @override
-  String get sumGradePhraseGood => 'Didukung dengan baik — umumnya positif dengan sedikit perhatian.';
+  String get sumGradePhraseGood =>
+      'Didukung dengan baik — umumnya positif dengan sedikit perhatian.';
 
   @override
-  String get sumGradePhraseAverage => 'Dukungan campuran — hasil bergantung pada usaha dan waktu.';
+  String get sumGradePhraseAverage =>
+      'Dukungan campuran — hasil bergantung pada usaha dan waktu.';
 
   @override
-  String get sumGradePhraseWeak => 'Perlu perhatian — kesabaran dan solusi membantu di sini.';
+  String get sumGradePhraseWeak =>
+      'Perlu perhatian — kesabaran dan solusi membantu di sini.';
 
   @override
-  String get kDefCombust => 'Planet yang terlalu dekat dengan Matahari, sehingga energinya \'terbakar\' dan melemah.';
+  String get kDefCombust =>
+      'Planet yang terlalu dekat dengan Matahari, sehingga energinya \'terbakar\' dan melemah.';
 
   @override
-  String get kDefRetrograde => 'Planet yang tampak bergerak mundur; efeknya mengarah ke dalam dan menguat.';
+  String get kDefRetrograde =>
+      'Planet yang tampak bergerak mundur; efeknya mengarah ke dalam dan menguat.';
 
   @override
-  String get kDefNakshatra => 'Salah satu dari 27 rumah bulan yang dilalui Bulan dan planet-planet.';
+  String get kDefNakshatra =>
+      'Salah satu dari 27 rumah bulan yang dilalui Bulan dan planet-planet.';
 
   @override
-  String get kDefVargottama => 'Planet di zodiak yang sama baik di birth chart (D1) maupun navamsa (D9) — tanda kekuatan.';
+  String get kDefVargottama =>
+      'Planet di zodiak yang sama baik di birth chart (D1) maupun navamsa (D9) — tanda kekuatan.';
 
   @override
-  String get kDefOwnSign => 'Planet yang berada di zodiak yang dikuasainya, di mana ia merasa seperti di rumah sendiri dan memberikan hasil yang stabil.';
+  String get kDefOwnSign =>
+      'Planet yang berada di zodiak yang dikuasainya, di mana ia merasa seperti di rumah sendiri dan memberikan hasil yang stabil.';
 
   @override
-  String get kDefExalted => 'Planet di zodiak kekuatan tertingginya, memberikan hasil terbaiknya.';
+  String get kDefExalted =>
+      'Planet di zodiak kekuatan tertingginya, memberikan hasil terbaiknya.';
 
   @override
-  String get kDefDebilitated => 'Planet di zodiak terlemahnya, di mana ia kesulitan memberikan hasil.';
+  String get kDefDebilitated =>
+      'Planet di zodiak terlemahnya, di mana ia kesulitan memberikan hasil.';
 
   @override
-  String get kDefMooltrikona => 'Bagian khusus dari zodiak sendiri sebuah planet di mana ia sangat kuat.';
+  String get kDefMooltrikona =>
+      'Bagian khusus dari zodiak sendiri sebuah planet di mana ia sangat kuat.';
 
   @override
-  String get kDefAscendant => 'Zodiak yang terbit di cakrawala timur saat lahir — Lagna, fondasi dari chart.';
+  String get kDefAscendant =>
+      'Zodiak yang terbit di cakrawala timur saat lahir — Lagna, fondasi dari chart.';
 
   @override
-  String get kDefMahadasha => 'Periode planet utama yang mewarnai rentang panjang kehidupan.';
+  String get kDefMahadasha =>
+      'Periode planet utama yang mewarnai rentang panjang kehidupan.';
 
   @override
-  String get kDefAntardasha => 'Sub-periode dalam Mahadasha yang menyempurnakan hasilnya.';
+  String get kDefAntardasha =>
+      'Sub-periode dalam Mahadasha yang menyempurnakan hasilnya.';
 
   @override
-  String get kDefPada => 'Salah satu dari empat bagian nakshatra yang ditempati sebuah planet.';
+  String get kDefPada =>
+      'Salah satu dari empat bagian nakshatra yang ditempati sebuah planet.';
 
   @override
   String get aspGivesAspectTo => 'Memberikan Aspek Ke';
@@ -7222,16 +7355,20 @@ class AppLocalizationsId extends AppLocalizations {
   String get aspQPredict => 'Bagaimana aspek memengaruhi prediksi';
 
   @override
-  String get aspGrahaBody => 'Graha Drishti adalah aspek yang dipancarkan planet dari posisinya. Setiap planet sepenuhnya mengaspek rumah/planet ke-7 dari dirinya sendiri (pengaruh langsung, berhadap-hadapan). Selain itu, Mars mengaspek rumah ke-4 dan ke-8, Jupiter rumah ke-5 dan ke-9, dan Saturnus rumah ke-3 dan ke-10. Rahu dan Ketu biasanya diberikan aspek ke-5, ke-7, dan ke-9. Aspek sebuah planet mewarnai planet atau rumah yang terkena dengan sifatnya sendiri.';
+  String get aspGrahaBody =>
+      'Graha Drishti adalah aspek yang dipancarkan planet dari posisinya. Setiap planet sepenuhnya mengaspek rumah/planet ke-7 dari dirinya sendiri (pengaruh langsung, berhadap-hadapan). Selain itu, Mars mengaspek rumah ke-4 dan ke-8, Jupiter rumah ke-5 dan ke-9, dan Saturnus rumah ke-3 dan ke-10. Rahu dan Ketu biasanya diberikan aspek ke-5, ke-7, dan ke-9. Aspek sebuah planet mewarnai planet atau rumah yang terkena dengan sifatnya sendiri.';
 
   @override
-  String get aspRashiBody => 'Rashi Drishti adalah aspek zodiak-ke-zodiak dari astrologi Jaimini, tidak bergantung pada planet apa pun yang berada di sana. Zodiak bergerak (movable) mengaspek zodiak tetap (fixed) (kecuali yang bersebelahan), zodiak tetap mengaspek zodiak bergerak (kecuali yang bersebelahan), dan zodiak ganda (dual) mengaspek zodiak ganda lainnya. Ini digunakan terutama dalam prediksi Jaimini dan untuk menilai hubungan antar rumah.';
+  String get aspRashiBody =>
+      'Rashi Drishti adalah aspek zodiak-ke-zodiak dari astrologi Jaimini, tidak bergantung pada planet apa pun yang berada di sana. Zodiak bergerak (movable) mengaspek zodiak tetap (fixed) (kecuali yang bersebelahan), zodiak tetap mengaspek zodiak bergerak (kecuali yang bersebelahan), dan zodiak ganda (dual) mengaspek zodiak ganda lainnya. Ini digunakan terutama dalam prediksi Jaimini dan untuk menilai hubungan antar rumah.';
 
   @override
-  String get aspDiffBody => 'Graha Drishti dipancarkan oleh sebuah planet dan bergantung pada di mana planet itu berada. Rashi Drishti dimiliki oleh zodiak itu sendiri dan berlaku untuk apa pun yang ditempatkan di dalamnya. Graha Drishti bersifat searah (planet A melihat planet B), sedangkan Rashi Drishti biasanya bersifat timbal balik antar zodiak. Ketika keduanya mengarah ke target yang sama, pengaruhnya sangat kuat.';
+  String get aspDiffBody =>
+      'Graha Drishti dipancarkan oleh sebuah planet dan bergantung pada di mana planet itu berada. Rashi Drishti dimiliki oleh zodiak itu sendiri dan berlaku untuk apa pun yang ditempatkan di dalamnya. Graha Drishti bersifat searah (planet A melihat planet B), sedangkan Rashi Drishti biasanya bersifat timbal balik antar zodiak. Ketika keduanya mengarah ke target yang sama, pengaruhnya sangat kuat.';
 
   @override
-  String get aspPredictBody => 'Aspek menunjukkan di mana sebuah planet memperluas pengaruhnya melampaui rumahnya sendiri. Aspek baik (Jupiter, Venus, Bulan/Merkurius yang ditempatkan dengan baik) mendukung dan melindungi sasarannya; aspek buruk (Saturnus, Mars, Matahari, Rahu, Ketu) dapat memberi tekanan, menunda, atau menantangnya. Membaca planet mana yang mengaspek sebuah rumah atau planet menjelaskan mengapa hasil muncul seperti itu.';
+  String get aspPredictBody =>
+      'Aspek menunjukkan di mana sebuah planet memperluas pengaruhnya melampaui rumahnya sendiri. Aspek baik (Jupiter, Venus, Bulan/Merkurius yang ditempatkan dengan baik) mendukung dan melindungi sasarannya; aspek buruk (Saturnus, Mars, Matahari, Rahu, Ketu) dapat memberi tekanan, menunda, atau menantangnya. Membaca planet mana yang mengaspek sebuah rumah atau planet menjelaskan mengapa hasil muncul seperti itu.';
 
   @override
   String get aspTraitSun => 'otoritas, kepemimpinan, dan vitalitas';
@@ -7243,31 +7380,35 @@ class AppLocalizationsId extends AppLocalizations {
   String get aspTraitMars => 'energi, keberanian, dan dorongan';
 
   @override
-  String get aspTraitMercury => 'komunikasi, intelek, dan kemampuan beradaptasi';
+  String get aspTraitMercury =>
+      'komunikasi, intelek, dan kemampuan beradaptasi';
 
   @override
-  String get aspTraitJupiter => 'kebijaksanaan, pertumbuhan, dan keberuntungan baik';
+  String get aspTraitJupiter =>
+      'kebijaksanaan, pertumbuhan, dan keberuntungan baik';
 
   @override
   String get aspTraitVenus => 'cinta, keharmonisan, dan kenyamanan';
 
   @override
-  String get aspTraitSaturn => 'disiplin, tanggung jawab, dan kesuksesan yang sabar, kadang tertunda';
+  String get aspTraitSaturn =>
+      'disiplin, tanggung jawab, dan kesuksesan yang sabar, kadang tertunda';
 
   @override
-  String get aspTraitRahu => 'ambisi, intensitas, dan perubahan yang tidak konvensional';
+  String get aspTraitRahu =>
+      'ambisi, intensitas, dan perubahan yang tidak konvensional';
 
   @override
   String get aspTraitKetu => 'detasemen, spiritualitas, dan perubahan mendadak';
 
   @override
   String aspAiInfluence(Object planet, Object targets, Object trait) {
-    return '${planet} sedang memengaruhi ${targets}. Ini dapat membawa ${trait} ke area yang diwakili oleh planet-planet ini.';
+    return '$planet sedang memengaruhi $targets. Ini dapat membawa $trait ke area yang diwakili oleh planet-planet ini.';
   }
 
   @override
   String aspAiNone(Object planet) {
-    return '${planet} tidak memberikan aspek khusus pada planet lain di sini; pengaruhnya bekerja terutama melalui zodiak dan rumahnya sendiri.';
+    return '$planet tidak memberikan aspek khusus pada planet lain di sini; pengaruhnya bekerja terutama melalui zodiak dan rumahnya sendiri.';
   }
 
   @override
@@ -7364,53 +7505,58 @@ class AppLocalizationsId extends AppLocalizations {
   String get avQSavVsBav => 'SAV vs BAV';
 
   @override
-  String get avABody => 'Ashtakavarga adalah sistem kekuatan berbasis poin dalam astrologi Weda. Setiap planet memberikan poin baik (bindu, juga disebut rekha) ke dua belas zodiak berdasarkan posisinya. Poin yang lebih tinggi pada suatu zodiak berarti area kehidupan tersebut mendapat dukungan yang lebih lancar selama periode dan transit planet terkait.';
+  String get avABody =>
+      'Ashtakavarga adalah sistem kekuatan berbasis poin dalam astrologi Weda. Setiap planet memberikan poin baik (bindu, juga disebut rekha) ke dua belas zodiak berdasarkan posisinya. Poin yang lebih tinggi pada suatu zodiak berarti area kehidupan tersebut mendapat dukungan yang lebih lancar selama periode dan transit planet terkait.';
 
   @override
-  String get avSavBody => 'SAV (Sarva Ashtakavarga) menjumlahkan poin dari ketujuh planet untuk setiap zodiak. Ini memberikan satu skor kekuatan per zodiak, sehingga Anda dapat dengan cepat melihat zodiak mana — dan rumah yang jatuh di dalamnya — yang paling didukung dalam chart Anda.';
+  String get avSavBody =>
+      'SAV (Sarva Ashtakavarga) menjumlahkan poin dari ketujuh planet untuk setiap zodiak. Ini memberikan satu skor kekuatan per zodiak, sehingga Anda dapat dengan cepat melihat zodiak mana — dan rumah yang jatuh di dalamnya — yang paling didukung dalam chart Anda.';
 
   @override
-  String get avBavBody => 'BAV (Bhinna Ashtakavarga) menunjukkan poin dari satu planet di seluruh dua belas zodiak. Ini memberi tahu Anda zodiak mana yang paling didukung oleh planet tertentu, yang penting saat dasha atau transit planet tersebut aktif.';
+  String get avBavBody =>
+      'BAV (Bhinna Ashtakavarga) menunjukkan poin dari satu planet di seluruh dua belas zodiak. Ini memberi tahu Anda zodiak mana yang paling didukung oleh planet tertentu, yang penting saat dasha atau transit planet tersebut aktif.';
 
   @override
-  String get avHowToReadBody => 'Angka yang lebih tinggi lebih baik. Untuk SAV, zodiak rata-rata mendapat sekitar 28 poin — di atas 30 tergolong kuat dan di bawah 25 perlu perhatian. Untuk BAV, setiap zodiak berkisar dari 0 hingga 8, dengan 4 sebagai rata-rata. Utamakan zodiak terkuat Anda untuk tindakan penting, dan tetap sabar serta disiplin dengan zodiak terlemah Anda.';
+  String get avHowToReadBody =>
+      'Angka yang lebih tinggi lebih baik. Untuk SAV, zodiak rata-rata mendapat sekitar 28 poin — di atas 30 tergolong kuat dan di bawah 25 perlu perhatian. Untuk BAV, setiap zodiak berkisar dari 0 hingga 8, dengan 4 sebagai rata-rata. Utamakan zodiak terkuat Anda untuk tindakan penting, dan tetap sabar serta disiplin dengan zodiak terlemah Anda.';
 
   @override
-  String get avSavVsBavBody => 'SAV adalah total gabungan dari semua planet dan menunjukkan kekuatan keseluruhan sebuah zodiak. BAV adalah kontribusi satu planet dan menunjukkan planet mana yang mendukung zodiak tersebut. Gunakan SAV untuk gambaran besar, dan BAV untuk memahami planet mana yang mendorong kekuatan sebuah zodiak.';
+  String get avSavVsBavBody =>
+      'SAV adalah total gabungan dari semua planet dan menunjukkan kekuatan keseluruhan sebuah zodiak. BAV adalah kontribusi satu planet dan menunjukkan planet mana yang mendukung zodiak tersebut. Gunakan SAV untuk gambaran besar, dan BAV untuk memahami planet mana yang mendorong kekuatan sebuah zodiak.';
 
   @override
   String avSummaryInsight(Object s1, Object s2, Object s3, Object weak) {
-    return 'Chart Anda paling kuat di ${s1}, ${s2}, dan ${s3}. Zodiak ini memberikan dukungan yang lebih baik selama periode dan transit planet. ${weak} saat ini memiliki dukungan paling sedikit, jadi kesabaran dan disiplin membantu dalam hal-hal yang terkait dengannya.';
+    return 'Chart Anda paling kuat di $s1, $s2, dan $s3. Zodiak ini memberikan dukungan yang lebih baik selama periode dan transit planet. $weak saat ini memiliki dukungan paling sedikit, jadi kesabaran dan disiplin membantu dalam hal-hal yang terkait dengannya.';
   }
 
   @override
   String avBavInsight(Object planet, Object s1, Object s2) {
-    return '${planet} tampil paling kuat melalui ${s1} dan ${s2}. Hal-hal yang dikuasai oleh ${planet} cenderung membaik ketika zodiak-zodiak ini teraktivasi.';
+    return '$planet tampil paling kuat melalui $s1 dan $s2. Hal-hal yang dikuasai oleh $planet cenderung membaik ketika zodiak-zodiak ini teraktivasi.';
   }
 
   @override
   String avInsightStrong(Object s1, Object s2) {
-    return 'Zodiak terkuat Anda adalah ${s1} dan ${s2} — utamakan awal yang penting saat planet melintasi zodiak tersebut.';
+    return 'Zodiak terkuat Anda adalah $s1 dan $s2 — utamakan awal yang penting saat planet melintasi zodiak tersebut.';
   }
 
   @override
   String avInsightWeak(Object s1) {
-    return '${s1} memiliki dukungan paling sedikit — bergeraklah dengan hati-hati dan hindari komitmen berlebihan dalam hal-halnya.';
+    return '$s1 memiliki dukungan paling sedikit — bergeraklah dengan hati-hati dan hindari komitmen berlebihan dalam hal-halnya.';
   }
 
   @override
   String avInsightBestPlanet(Object planet) {
-    return '${planet} membawa poin paling banyak, sehingga signifikasinya sangat didukung dalam hidup Anda.';
+    return '$planet membawa poin paling banyak, sehingga signifikasinya sangat didukung dalam hidup Anda.';
   }
 
   @override
   String avInsightWeakPlanet(Object planet) {
-    return '${planet} membawa poin paling sedikit dan paling diuntungkan dari solusi dan usaha sadar.';
+    return '$planet membawa poin paling sedikit dan paling diuntungkan dari solusi dan usaha sadar.';
   }
 
   @override
   String avInsightAverage(Object avg) {
-    return 'Zodiak dengan skor di atas rata-rata Anda sebesar ${avg} poin cenderung memberikan hasil yang lebih lancar dan lebih dapat diandalkan.';
+    return 'Zodiak dengan skor di atas rata-rata Anda sebesar $avg poin cenderung memberikan hasil yang lebih lancar dan lebih dapat diandalkan.';
   }
 
   @override
@@ -7625,7 +7771,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dominantLabel(Object value) {
-    return 'Dominan: ${value}';
+    return 'Dominan: $value';
   }
 
   @override
@@ -7636,7 +7782,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String secondaryLabel(Object value) {
-    return ' · Sekunder: ${value}';
+    return ' · Sekunder: $value';
   }
 
   @override
@@ -7707,7 +7853,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String debtRecoveryTimelineSubtitle(Object pct, Object years) {
-    return 'Pemulihan: ${pct}% · Garis Waktu: ${years} tahun';
+    return 'Pemulihan: $pct% · Garis Waktu: $years tahun';
   }
 
   @override
@@ -7715,7 +7861,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String debtFreeYear(Object year) {
-    return 'Tahun ${year}';
+    return 'Tahun $year';
   }
 
   @override
@@ -7795,7 +7941,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String legalResilienceSubtitle(Object pct) {
-    return 'Ketahanan: ${pct}/100';
+    return 'Ketahanan: $pct/100';
   }
 
   @override
@@ -7917,7 +8063,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String lifepathFulfillmentSubtitle(Object pct) {
-    return 'Pemenuhan: ${pct}%';
+    return 'Pemenuhan: $pct%';
   }
 
   @override
@@ -7978,13 +8124,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get pastlifeFamilyRoleLabel => 'PERAN KELUARGA';
 
   @override
-  String get pastlifeSkillsCarriedTitle => '★ KETERAMPILAN YANG DIBAWA KE DEPAN';
+  String get pastlifeSkillsCarriedTitle =>
+      '★ KETERAMPILAN YANG DIBAWA KE DEPAN';
 
   @override
   String get pastlifeNaturalAttractionsTitle => '● KETERTARIKAN ALAMI';
 
   @override
-  String get pastlifeUnexplainedFearsTitle => '⚠ KETAKUTAN YANG TIDAK TERJELASKAN';
+  String get pastlifeUnexplainedFearsTitle =>
+      '⚠ KETAKUTAN YANG TIDAK TERJELASKAN';
 
   @override
   String get pastlifeMagneticPullsTitle => '→ TARIKAN MAGNETIS';
@@ -8048,7 +8196,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String pastlifeMaturityStatusSubtitle(Object maturity, Object status) {
-    return 'Kematangan: ${maturity} · Status: ${status}';
+    return 'Kematangan: $maturity · Status: $status';
   }
 
   @override
@@ -8071,7 +8219,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String pastlifeShadowPrefix(Object shadow) {
-    return '⚠ Bayangan: ${shadow}';
+    return '⚠ Bayangan: $shadow';
   }
 
   @override
@@ -8135,7 +8283,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get mentalUnhealthyRisksTitle => '⚠ RISIKO TIDAK SEHAT';
 
   @override
-  String get mentalRecommendedAlternativesTitle => '✦ ALTERNATIF YANG DIREKOMENDASIKAN';
+  String get mentalRecommendedAlternativesTitle =>
+      '✦ ALTERNATIF YANG DIREKOMENDASIKAN';
 
   @override
   String get mentalSleepQualityStat => 'KUALITAS TIDUR';
@@ -8262,7 +8411,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String characterRealizationSubtitle(Object pct) {
-    return 'Realisasi: ${pct}%';
+    return 'Realisasi: $pct%';
   }
 
   @override
@@ -8453,7 +8602,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String wealthSuccessProbabilitySubtitle(Object pct) {
-    return 'Probabilitas sukses: ${pct}%';
+    return 'Probabilitas sukses: $pct%';
   }
 
   @override
@@ -8461,12 +8610,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String wealthPrimaryLabel(Object value) {
-    return 'Utama: ${value}';
+    return 'Utama: $value';
   }
 
   @override
   String wealthPeakLabel(Object value) {
-    return 'Puncak: ${value}';
+    return 'Puncak: $value';
   }
 
   @override
@@ -8483,7 +8632,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String wealthDrivenByLabel(Object planet) {
-    return 'Didorong oleh ${planet}';
+    return 'Didorong oleh $planet';
   }
 
   @override
@@ -8545,7 +8694,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String marriageRealizationSubtitle(Object pct) {
-    return 'Realisasi: ${pct}%';
+    return 'Realisasi: $pct%';
   }
 
   @override
@@ -8601,12 +8750,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String marriageSeveritySubtitle(Object value) {
-    return 'Tingkat keparahan: ${value}';
+    return 'Tingkat keparahan: $value';
   }
 
   @override
   String marriageCancellationSubtitle(Object value) {
-    return 'Pembatalan: ${value}';
+    return 'Pembatalan: $value';
   }
 
   @override
@@ -8653,22 +8802,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String multiChartPromptChatgpt(Object formatted) {
-    return 'Analisis laporan astrologi Weda ini dan berikan wawasan terperinci:\n\n${formatted}';
+    return 'Analisis laporan astrologi Weda ini dan berikan wawasan terperinci:\n\n$formatted';
   }
 
   @override
   String multiChartPromptClaude(Object formatted) {
-    return 'Berikut adalah laporan spesialis astrologi Weda. Mohon analisis secara menyeluruh dan berikan wawasan yang dapat ditindaklanjuti:\n\n${formatted}';
+    return 'Berikut adalah laporan spesialis astrologi Weda. Mohon analisis secara menyeluruh dan berikan wawasan yang dapat ditindaklanjuti:\n\n$formatted';
   }
 
   @override
   String multiChartPromptGemini(Object formatted) {
-    return 'Tinjau analisis astrologi Weda ini dan jelaskan temuan utamanya dengan bahasa yang sederhana:\n\n${formatted}';
+    return 'Tinjau analisis astrologi Weda ini dan jelaskan temuan utamanya dengan bahasa yang sederhana:\n\n$formatted';
   }
 
   @override
   String multiChartCopiedForLabel(Object label) {
-    return 'Disalin untuk ${label}!';
+    return 'Disalin untuk $label!';
   }
 
   @override
@@ -8760,7 +8909,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String jupiterInSignHeading(String sign) {
-    return 'Jupiter di ${sign}';
+    return 'Jupiter di $sign';
   }
 
   @override
@@ -8822,7 +8971,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String copiedForName(String name) {
-    return 'Disalin untuk ${name}!';
+    return 'Disalin untuk $name!';
   }
 
   @override
@@ -8845,12 +8994,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String factorPrefix(String factor) {
-    return 'Faktor: ${factor}';
+    return 'Faktor: $factor';
   }
 
   @override
   String appliesToLabel(String value) {
-    return 'Berlaku untuk: ${value}';
+    return 'Berlaku untuk: $value';
   }
 
   @override
@@ -8960,7 +9109,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String karmaLinkageFactorsHeader(int count) {
-    return 'FAKTOR LINKAGE (${count} aktif)';
+    return 'FAKTOR LINKAGE ($count aktif)';
   }
 
   @override
@@ -9019,7 +9168,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String moolaDashaPrefix(String value) {
-    return 'Moola Dasha: ${value}';
+    return 'Moola Dasha: $value';
   }
 
   @override
@@ -9029,7 +9178,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get karmaMutualTeachingHeader => 'PETA PENGAJARAN TIMBAL BALIK';
 
   @override
-  String get karmaTeachingDynamicsPlaceholder => 'Dinamika pengajaran akan muncul seiring dalamnya koneksi karma.';
+  String get karmaTeachingDynamicsPlaceholder =>
+      'Dinamika pengajaran akan muncul seiring dalamnya koneksi karma.';
 
   @override
   String get typeFieldLabel => 'Jenis';
@@ -9042,7 +9192,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dashaTimingPrefix(String value) {
-    return 'Waktu Dasha: ${value}';
+    return 'Waktu Dasha: $value';
   }
 
   @override
@@ -9065,7 +9215,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String parametersAuditedHeading(int count) {
-    return '${count} PARAMETER DIAUDIT';
+    return '$count PARAMETER DIAUDIT';
   }
 
   @override
@@ -9073,7 +9223,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String weightPrefix(String value) {
-    return 'B: ${value}';
+    return 'B: $value';
   }
 
   @override
@@ -9348,7 +9498,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String fulfillmentPctLabel(String pct) {
-    return 'Pemenuhan: ${pct}%';
+    return 'Pemenuhan: $pct%';
   }
 
   @override
@@ -9464,7 +9614,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String lifetimeCountFulfillmentLabel(String count, String pct) {
-    return 'Jumlah seumur hidup: ${count} · Pemenuhan: ${pct}%';
+    return 'Jumlah seumur hidup: $count · Pemenuhan: $pct%';
   }
 
   @override
@@ -9490,7 +9640,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String allScoresCountLabel(int count) {
-    return 'Semua Skor (${count})';
+    return 'Semua Skor ($count)';
   }
 
   @override
@@ -9504,22 +9654,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String selectKarmaChartsLabel(int max) {
-    return 'Pilih 2-${max} Chart';
+    return 'Pilih 2-$max Chart';
   }
 
   @override
   String selectChartsLabelCount(int max) {
-    return 'Pilih ${max} Chart';
+    return 'Pilih $max Chart';
   }
 
   @override
   String runningAnalysisLabel(String label) {
-    return 'Menjalankan analisis ${label}...';
+    return 'Menjalankan analisis $label...';
   }
 
   @override
   String pickKarmicChartsHint(int max) {
-    return 'Pilih 2 hingga ${max} chart untuk menganalisis tautan karma';
+    return 'Pilih 2 hingga $max chart untuk menganalisis tautan karma';
   }
 
   @override
@@ -9536,7 +9686,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String analyzeChartsCountLabel(int count) {
-    return 'Analisis ${count} Chart';
+    return 'Analisis $count Chart';
   }
 
   @override
@@ -9562,7 +9712,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String analyzingChartsCountLabel(int count) {
-    return 'Menganalisis ${count} chart...';
+    return 'Menganalisis $count chart...';
   }
 
   @override
@@ -9576,14 +9726,15 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String selectedCountOfTwoLabel(int count) {
-    return '${count}/2 dipilih';
+    return '$count/2 dipilih';
   }
 
   @override
   String get runMilanAnalysisBtn => 'Jalankan Analisis Milan';
 
   @override
-  String get noChartsCreateFirst => 'Belum ada chart. Buat birth chart terlebih dahulu.';
+  String get noChartsCreateFirst =>
+      'Belum ada chart. Buat birth chart terlebih dahulu.';
 
   @override
   String get selectBirthChartAnalyze => 'Pilih birth chart untuk dianalisis';
@@ -9593,27 +9744,27 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String doshActiveCount(Object active, Object total) {
-    return '${active} aktif / ${total} diperiksa';
+    return '$active aktif / $total diperiksa';
   }
 
   @override
   String yogaActiveCount(Object active, Object total) {
-    return '${active} aktif / ${total} yoga diperiksa';
+    return '$active aktif / $total yoga diperiksa';
   }
 
   @override
   String yogaActiveHeader(Object count) {
-    return 'YOGA AKTIF (${count})';
+    return 'YOGA AKTIF ($count)';
   }
 
   @override
   String yogaHideInactiveCount(Object count) {
-    return 'Sembunyikan yoga tidak aktif (${count})';
+    return 'Sembunyikan yoga tidak aktif ($count)';
   }
 
   @override
   String yogaShowInactiveCount(Object count) {
-    return 'Tampilkan yoga tidak aktif (${count})';
+    return 'Tampilkan yoga tidak aktif ($count)';
   }
 
   @override
@@ -9621,37 +9772,37 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dashaDrillMd(Object planet) {
-    return '${planet} MD → Antardasha';
+    return '$planet MD → Antardasha';
   }
 
   @override
   String dashaDrillAd(Object planet) {
-    return '${planet} AD → Pratyantardasha';
+    return '$planet AD → Pratyantardasha';
   }
 
   @override
   String dashaDrillPd(Object planet) {
-    return '${planet} PD → Sookshmadasha';
+    return '$planet PD → Sookshmadasha';
   }
 
   @override
   String dashaDrillSub(Object planet) {
-    return 'Sub-periode ${planet}';
+    return 'Sub-periode $planet';
   }
 
   @override
   String dashaBirthLordBalance(Object lord, Object balance) {
-    return 'Penguasa Kelahiran: ${lord} • Sisa: ${balance} tahun';
+    return 'Penguasa Kelahiran: $lord • Sisa: $balance tahun';
   }
 
   @override
   String dashaLagnaBalance(Object lagna, Object balance) {
-    return 'Lagna: ${lagna} • Sisa: ${balance} tahun';
+    return 'Lagna: $lagna • Sisa: $balance tahun';
   }
 
   @override
   String dashaYearsValue(Object years) {
-    return '${years} tahun';
+    return '$years tahun';
   }
 
   @override
@@ -9659,17 +9810,17 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dashaAsOf(Object date) {
-    return 'Per tanggal: ${date}';
+    return 'Per tanggal: $date';
   }
 
   @override
   String dashaActiveYogasCount(Object count) {
-    return 'Yoga Aktif dalam Periode Saat Ini (${count})';
+    return 'Yoga Aktif dalam Periode Saat Ini ($count)';
   }
 
   @override
   String dashaActiveDoshasCount(Object count) {
-    return 'Dosha Aktif dalam Periode Saat Ini (${count})';
+    return 'Dosha Aktif dalam Periode Saat Ini ($count)';
   }
 
   @override
@@ -9815,7 +9966,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String lifeAreaGrade(Object grade) {
-    return 'Peringkat: ${grade}';
+    return 'Peringkat: $grade';
   }
 
   @override
@@ -9823,17 +9974,17 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String planetNakPada(Object nakshatra, Object pada) {
-    return 'Nak: ${nakshatra} (${pada})';
+    return 'Nak: $nakshatra ($pada)';
   }
 
   @override
   String planetNakLord(Object lord) {
-    return 'NL: ${lord}';
+    return 'NL: $lord';
   }
 
   @override
   String planetLongitude(Object value) {
-    return 'Bujur: ${value}°';
+    return 'Bujur: $value°';
   }
 
   @override
@@ -9856,27 +10007,27 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String kundliEngineLabel(Object engine) {
-    return 'Mesin: ${engine}';
+    return 'Mesin: $engine';
   }
 
   @override
   String kundliDegreeNakshatra(Object degree, Object nakshatra, Object pada) {
-    return 'Derajat: ${degree}°  •  Nakshatra: ${nakshatra} (${pada})';
+    return 'Derajat: $degree°  •  Nakshatra: $nakshatra ($pada)';
   }
 
   @override
   String kundliNakLordDignity(Object lord, Object dignity) {
-    return 'Penguasa Nakshatra: ${lord}  •  Dignitas: ${dignity}';
+    return 'Penguasa Nakshatra: $lord  •  Dignitas: $dignity';
   }
 
   @override
   String kundliChartHeader(Object base, Object sign) {
-    return 'Chart ${base} — ${sign}';
+    return 'Chart $base — $sign';
   }
 
   @override
   String kundliBaseChart(Object base) {
-    return 'Chart ${base}';
+    return 'Chart $base';
   }
 
   @override
@@ -9920,7 +10071,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String dashaLabel(Object dasha) {
-    return 'Dasha: ${dasha}';
+    return 'Dasha: $dasha';
   }
 
   @override
@@ -10045,12 +10196,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String bhavaSignLord(Object sign, Object lord) {
-    return '${sign} • Penguasa: ${lord}';
+    return '$sign • Penguasa: $lord';
   }
 
   @override
   String bhavaSav(Object value) {
-    return 'SAV: ${value}';
+    return 'SAV: $value';
   }
 
   @override
@@ -10058,17 +10209,17 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String savSubtitle(Object total, Object avg) {
-    return 'Total: ${total} rekha (rata-rata zodiak = ${avg})';
+    return 'Total: $total rekha (rata-rata zodiak = $avg)';
   }
 
   @override
   String ashtakavargaBav(Object planet) {
-    return '${planet} — BAV';
+    return '$planet — BAV';
   }
 
   @override
   String bavSubtitle(Object total, Object score) {
-    return 'Total: ${total} rekha • Pada zodiak natal: ${score}';
+    return 'Total: $total rekha • Pada zodiak natal: $score';
   }
 
   @override
@@ -10076,12 +10227,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String gocharTransitScores(Object date) {
-    return 'Gochar (Skor Transit) — ${date}';
+    return 'Gochar (Skor Transit) — $date';
   }
 
   @override
   String gocharNativeMoon(Object sign) {
-    return 'Bulan Natal: ${sign}';
+    return 'Bulan Natal: $sign';
   }
 
   @override
@@ -10092,7 +10243,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String copiedOpening(Object ai) {
-    return 'Disalin! Membuka ${ai}...';
+    return 'Disalin! Membuka $ai...';
   }
 
   @override
@@ -10442,26 +10593,27 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String aiAutoArrow(String lang) {
-    return 'Otomatis → ${lang}';
+    return 'Otomatis → $lang';
   }
 
   @override
   String aiLanguageLabel(String lang) {
-    return 'Bahasa: ${lang}';
+    return 'Bahasa: $lang';
   }
 
   @override
   String get aiNoBirthCharts => 'Tidak ada birth chart ditemukan';
 
   @override
-  String get aiCreateChartFirst => 'Buat birth chart terlebih dahulu untuk mengobrol dengan AI';
+  String get aiCreateChartFirst =>
+      'Buat birth chart terlebih dahulu untuk mengobrol dengan AI';
 
   @override
   String get aiSelectChartBegin => 'Pilih birth chart untuk memulai analisis';
 
   @override
   String aiAnalyzingName(String name) {
-    return 'Menganalisis: ${name}';
+    return 'Menganalisis: $name';
   }
 
   @override
@@ -10502,7 +10654,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String astroErrorDetail(String error) {
-    return 'Kesalahan: ${error}';
+    return 'Kesalahan: $error';
   }
 
   @override
@@ -10528,7 +10680,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String astroReviews(int count) {
-    return 'Ulasan (${count})';
+    return 'Ulasan ($count)';
   }
 
   @override
@@ -10538,7 +10690,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get astroAnonymous => 'Anonim';
 
   @override
-  String get forgotPasswordSubtitle => 'Masukkan email Anda dan kami akan mengirimkan\ntautan untuk mengatur ulang kata sandi Anda.';
+  String get forgotPasswordSubtitle =>
+      'Masukkan email Anda dan kami akan mengirimkan\ntautan untuk mengatur ulang kata sandi Anda.';
 
   @override
   String get emailHint => 'email@anda.com';
@@ -10814,7 +10967,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get premiumSection => 'Bagian Premium';
 
   @override
-  String get unlockReading => 'Buka pembacaan ini untuk melihat analisis terperinci.';
+  String get unlockReading =>
+      'Buka pembacaan ini untuk melihat analisis terperinci.';
 
   @override
   String get unlock => 'Buka';
@@ -10895,7 +11049,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get endChat => 'Akhiri Chat?';
 
   @override
-  String get endChatConfirm => 'Apakah Anda yakin ingin mengakhiri sesi chat ini?';
+  String get endChatConfirm =>
+      'Apakah Anda yakin ingin mengakhiri sesi chat ini?';
 
   @override
   String get sendPhoto => 'Kirim Foto';
@@ -10946,7 +11101,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get noLiveStreams => 'Belum ada live stream saat ini';
 
   @override
-  String get astrologerUnavailable => 'Astrolog tidak tersedia. Mengakhiri stream.';
+  String get astrologerUnavailable =>
+      'Astrolog tidak tersedia. Mengakhiri stream.';
 
   @override
   String get streamEnded => 'Stream berakhir';
@@ -11078,7 +11234,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get expertEngines => 'mesin ahli';
 
   @override
-  String get eachInsightConsultation => 'Setiap wawasan adalah konsultasi yang lengkap';
+  String get eachInsightConsultation =>
+      'Setiap wawasan adalah konsultasi yang lengkap';
 
   @override
   String get engines => 'MESIN';
@@ -11147,7 +11304,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get jupiterFavorsBold => 'Jupiter mendukung langkah berani';
 
   @override
-  String get careerIlluminated => 'Sektor karier Anda bersinar terang — percayai insting Anda.';
+  String get careerIlluminated =>
+      'Sektor karier Anda bersinar terang — percayai insting Anda.';
 
   @override
   String get todaysForecast => 'Ramalan Hari Ini';
@@ -11213,13 +11371,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get noChatSessions => 'Belum Ada Sesi Chat';
 
   @override
-  String get chatAppearHere => 'Percakapan Anda dengan astrolog akan muncul di sini.';
+  String get chatAppearHere =>
+      'Percakapan Anda dengan astrolog akan muncul di sini.';
 
   @override
   String get noCallsYet => 'Belum Ada Panggilan';
 
   @override
-  String get callAppearHere => 'Riwayat panggilan Anda dengan astrolog akan muncul di sini.';
+  String get callAppearHere =>
+      'Riwayat panggilan Anda dengan astrolog akan muncul di sini.';
 
   @override
   String get chatWith => 'Chat dengan';
@@ -11438,22 +11598,27 @@ class AppLocalizationsId extends AppLocalizations {
   String get characterOverview => 'Ikhtisar Karakter';
 
   @override
-  String get noYogasActive => 'Tidak ada yoga yang aktif saat ini dalam chart ini.';
+  String get noYogasActive =>
+      'Tidak ada yoga yang aktif saat ini dalam chart ini.';
 
   @override
-  String get basedOnPlanetStrengths => 'Berdasarkan kekuatan planet & penempatan rumah';
+  String get basedOnPlanetStrengths =>
+      'Berdasarkan kekuatan planet & penempatan rumah';
 
   @override
   String get basedOnTransits => 'Berdasarkan transit planet saat ini';
 
   @override
-  String get currentPlanetPositions => 'Posisi planet saat ini dengan zodiak Anda sebagai rumah ke-1';
+  String get currentPlanetPositions =>
+      'Posisi planet saat ini dengan zodiak Anda sebagai rumah ke-1';
 
   @override
-  String get favorablePeriodAdvice => 'Periode yang mendukung — fokus pada pertumbuhan karier dan hubungan.';
+  String get favorablePeriodAdvice =>
+      'Periode yang mendukung — fokus pada pertumbuhan karier dan hubungan.';
 
   @override
-  String get noClassicalYogas => 'Tanpa yoga pembelajaran klasik, kesuksesan datang dari usaha yang konsisten.';
+  String get noClassicalYogas =>
+      'Tanpa yoga pembelajaran klasik, kesuksesan datang dari usaha yang konsisten.';
 
   @override
   String get walletDeduction => 'Jumlah akan dipotong dari dompet Anda';
@@ -11543,7 +11708,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get transitMarriageWindows => 'Jendela Waktu Pernikahan Transit';
 
   @override
-  String get overlappingWindows => 'Jendela Waktu Pernikahan yang Tumpang Tindih';
+  String get overlappingWindows =>
+      'Jendela Waktu Pernikahan yang Tumpang Tindih';
 
   @override
   String get overallStrength => 'KEKUATAN KESELURUHAN';

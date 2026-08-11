@@ -597,6 +597,30 @@ def initiate_call(
                 agora_token=token_receiver,
                 agora_app_id=app_id,
             )
+        # iOS: a VoIP (PushKit) push wakes a full-screen CallKit UI even when the
+        # astro app is killed — something the FCM notification above cannot do.
+        # Fires only when VoIP is configured and the device registered a token;
+        # otherwise it's a safe no-op and the FCM push still rings the call.
+        if getattr(astro_user, "voip_token", None):
+            try:
+                from app.services import voip_push
+                ok, detail = voip_push.send_voip_call(
+                    astro_user.voip_token,
+                    call_id=call.id,
+                    channel_name=channel,
+                    caller_name=caller_display_name,
+                    call_type=req.call_type,
+                    agora_token=token_receiver,
+                    agora_app_id=app_id,
+                    extra={"rate_per_min": str(rate)},
+                )
+                # Apple says the token is permanently dead → drop it so we stop
+                # trying and the device re-registers a fresh one on next launch.
+                if not ok and voip_push.token_is_dead(detail):
+                    astro_user.voip_token = None
+                    db.commit()
+            except Exception:
+                pass
         rlang = resolve_user_lang(astro_user, lang)
         save_notification(
             db, astro_user.id,

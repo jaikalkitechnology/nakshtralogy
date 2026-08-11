@@ -1,0 +1,12 @@
+client id for android user: 18141159709-js0h85rvnq2i3chkdjaobi57dm31flgr.apps.googleusercontent.com
+
+
+client id for android user: 18141159709-4g9p1adtojbpiabkt8ghussjsbb5md99.apps.googleusercontent.com
+
+* web *
+
+clint id user: 18141159709-1e734smcn07jk5qhs55ecci5ere3hgpa.apps.googleusercontent.com
+client secret user: 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
+
+clint id astro: 18141159709-322gno909nndebtqj62000ltrbq82atu.apps.googleusercontent.com
+client secret astro: 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
