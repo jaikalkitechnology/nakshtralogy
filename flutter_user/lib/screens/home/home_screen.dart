@@ -22,6 +22,9 @@ import '../tabs/astrologers_tab.dart';
 import '../tabs/wallet_tab.dart';
 import '../tabs/profile_tab.dart';
 import '../communication/live_viewer_screen.dart';
+import '../communication/call_screen.dart';
+import '../communication/chat_screen.dart';
+import '../../services/api_service.dart';
 import '../charts/my_charts_screen.dart';
 import '../specialist/specialist_list_screen.dart';
 
@@ -32,9 +35,66 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int _currentIndex = 0;
   bool _phonePrompted = false;
+  bool _checkingActive = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // On foreground, check for a live call/chat the user may have left (app
+    // switch, sleep) and offer to rejoin — so a paid session isn't orphaned.
+    if (state == AppLifecycleState.resumed) _checkActiveSession();
+  }
+
+  /// Ask the backend for any live call/chat and surface a "Return" banner.
+  Future<void> _checkActiveSession() async {
+    if (_checkingActive || !mounted) return;
+    _checkingActive = true;
+    try {
+      final res = await ApiService().getActiveSession();
+      if (!mounted) return;
+      final call = res['call'] as Map<String, dynamic>?;
+      final chat = res['chat'] as Map<String, dynamic>?;
+      if (call != null && call['status'] == 'active') {
+        _showReturnBanner('call', () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CallScreen(
+            callId: call['id'] ?? '',
+            channelName: call['channel_name'] ?? '',
+            agoraToken: call['agora_token'] ?? '',
+            agoraAppId: call['agora_app_id'] ?? '',
+            callType: call['call_type'] ?? 'voice',
+            astrologerName: 'Astrologer',
+            ratePerMin: (call['rate_per_min'] as num?)?.toDouble() ?? 0,
+          )));
+        });
+      } else if (chat != null && (chat['status'] == 'active')) {
+        _showReturnBanner('chat', () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatScreen(
+            sessionId: chat['id'] ?? '',
+            astrologerName: 'Astrologer',
+            ratePerMin: (chat['rate_per_min'] as num?)?.toDouble() ?? 0,
+            ratePerSession: (chat['rate_per_session'] as num?)?.toDouble() ?? 0,
+            billingMode: chat['billing_mode'] ?? 'per_session',
+          )));
+        });
+      }
+    } catch (_) {} finally {
+      _checkingActive = false;
+    }
+  }
+
+  void _showReturnBanner(String kind, VoidCallback onReturn) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: const Duration(seconds: 8),
+      backgroundColor: AppColors.card,
+      content: Text('You have an active $kind in progress',
+          style: const TextStyle(color: AppColors.ivory)),
+      action: SnackBarAction(
+        label: 'Return', textColor: AppColors.gold, onPressed: onReturn),
+    ));
+  }
 
   /// Existing accounts without a phone (older Google signups) get a one-time
   /// mandatory prompt — the country code also seeds their region.
@@ -52,12 +112,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _maybePromptWebNotifications();
       // Load the profile so the top-right avatar shows immediately.
       context.read<ProfileBloc>().add(ProfileLoadRequested());
+      _checkActiveSession();
     });
   }
 
