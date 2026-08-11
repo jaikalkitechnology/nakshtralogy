@@ -94,7 +94,10 @@ Future<void> _showChatRequestNotification(Map<String, dynamic> data) async {
           AndroidNotificationAction('decline_chat', 'Decline', cancelNotification: true),
         ],
       ),
-      iOS: const DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+      iOS: const DarwinNotificationDetails(
+        presentAlert: true, presentBadge: true, presentSound: true,
+        interruptionLevel: InterruptionLevel.timeSensitive,
+      ),
     ),
     payload: jsonEncode(data),
   );
@@ -156,6 +159,10 @@ Future<void> _showCallNotification(Map<String, dynamic> data) async {
         presentAlert: true,
         presentBadge: true,
         presentSound: true,
+        // Break through Focus / silent / Do-Not-Disturb — an incoming call is
+        // time-sensitive. (Full CallKit ringing needs a VoIP push; this is the
+        // strongest surfacing possible without that infrastructure.)
+        interruptionLevel: InterruptionLevel.timeSensitive,
       ),
     ),
     payload: jsonEncode(data),
