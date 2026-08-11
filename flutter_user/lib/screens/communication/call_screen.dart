@@ -45,6 +45,8 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   Timer? _timer;
   Timer? _maxTimer;
   Timer? _pollTimer;
+  Timer? _rtcGraceTimer;         // grace window before ending on a remote drop
+  bool _peerReconnecting = false;
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -133,10 +135,16 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       },
       onUserJoined: (connection, remoteUid, elapsed) {
         debugPrint('Remote user joined: $remoteUid');
+        // Cancel any in-flight reconnect grace — the peer is back.
+        _rtcGraceTimer?.cancel();
+        if (_peerReconnecting && mounted) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
         setState(() {
           _remoteJoined = true;
           _remoteUid = remoteUid;
           _status = 'active';
+          _peerReconnecting = false;
         });
         _pollTimer?.cancel();
         _startTimer();
@@ -153,8 +161,19 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         setState(() {
           _remoteJoined = false;
           _remoteUid = null;
+          _peerReconnecting = true;
         });
-        _endCall();
+        // Grace window: a brief network blip shouldn't end the call. Wait for the
+        // peer to rejoin; only end if they don't come back in time.
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Reconnecting…'),
+            duration: Duration(seconds: 20), backgroundColor: AppColors.card));
+        }
+        _rtcGraceTimer?.cancel();
+        _rtcGraceTimer = Timer(const Duration(seconds: 20), () {
+          if (mounted && _peerReconnecting) _endCall();
+        });
       },
       onConnectionStateChanged: (connection, state, reason) {
         debugPrint('Agora connection: state=$state reason=$reason');
@@ -334,6 +353,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     _timer?.cancel();
     _maxTimer?.cancel();
     _pollTimer?.cancel();
+    _rtcGraceTimer?.cancel();
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();

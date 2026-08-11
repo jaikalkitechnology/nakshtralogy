@@ -40,6 +40,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
   RtcEngine? _engine;
   int _seconds = 0;
   Timer? _timer;
+  Timer? _rtcGraceTimer;
+  bool _peerReconnecting = false;
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -86,9 +88,14 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
         },
         onUserJoined: (connection, remoteUid, elapsed) {
           debugPrint('Remote user joined: $remoteUid');
+          _rtcGraceTimer?.cancel();
+          if (_peerReconnecting && mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }
           setState(() {
             _remoteJoined = true;
             _remoteUid = remoteUid;
+            _peerReconnecting = false;
           });
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -99,8 +106,18 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
         },
         onUserOffline: (connection, remoteUid, reason) {
           debugPrint('Remote user left: $remoteUid reason=$reason');
-          setState(() { _remoteJoined = false; _remoteUid = null; });
-          _endCall();
+          setState(() { _remoteJoined = false; _remoteUid = null; _peerReconnecting = true; });
+          // Grace window — a blip shouldn't end the call. End only if the peer
+          // doesn't rejoin in time.
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Reconnecting…'),
+              duration: Duration(seconds: 20), backgroundColor: AppColors.card));
+          }
+          _rtcGraceTimer?.cancel();
+          _rtcGraceTimer = Timer(const Duration(seconds: 20), () {
+            if (mounted && _peerReconnecting) _endCall();
+          });
         },
         onConnectionStateChanged: (connection, state, reason) {
           debugPrint('Agora connection: state=$state reason=$reason');
@@ -239,6 +256,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    _rtcGraceTimer?.cancel();
     _engine?.leaveChannel();
     _engine?.release();
     super.dispose();
