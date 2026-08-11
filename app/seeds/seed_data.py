@@ -346,7 +346,7 @@ def _seed_astrologers(db: Session) -> int:
             is_approved=True,
             is_online=True,
             approved_at=datetime.utcnow(),
-            commission_pct=Decimal("30.00"),
+            commission_pct=Decimal("70.00"),   # astrologer earns 70%; platform fee 30%
         )
         db.add(profile)
         db.flush()

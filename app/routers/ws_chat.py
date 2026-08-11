@@ -349,7 +349,7 @@ async def websocket_chat(
                                 ))
                                 overage_charged = rate_per_msg if _is_overage else 0.0
                                 # Credit astrologer their set % share
-                                comm_pct = float(profile.commission_pct) if profile else 30.0
+                                comm_pct = float(profile.commission_pct) if profile else 70.0
                                 earning = rate_per_msg * comm_pct / 100
                                 if profile:
                                     _credit_astro_wallet(db, profile.user_id, earning,

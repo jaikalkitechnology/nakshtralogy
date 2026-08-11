@@ -54,10 +54,52 @@ def _run_dev_migrations():
             logger.warning("Dev migration skipped (%s.%s): %s", table, column, e)
 
 
+def _run_data_fixes():
+    """One-time data corrections that must run against existing rows (which
+    column defaults never touch). Each fix is guarded by a marker row in
+    ``platform_settings`` so it applies exactly once and never clobbers later
+    admin edits on subsequent boots."""
+    # Earning-split policy: astrologer 70% / platform fee 30%. Move every
+    # existing astrologer profile to a 70% earning share, once.
+    try:
+        from app.models.model import PlatformSetting, AstrologerProfile, new_uuid
+        db = SessionLocal()
+        try:
+            marker = (
+                db.query(PlatformSetting)
+                .filter(
+                    PlatformSetting.category == "earning_policy",
+                    PlatformSetting.key == "astro_share_70_30_applied",
+                )
+                .first()
+            )
+            if marker is None:
+                updated = (
+                    db.query(AstrologerProfile)
+                    .update({AstrologerProfile.commission_pct: 70.00})
+                )
+                db.add(
+                    PlatformSetting(
+                        id=new_uuid(),
+                        category="earning_policy",
+                        key="astro_share_70_30_applied",
+                        value="70",
+                        description="Astrologer earning share set to 70% (platform fee 30%).",
+                    )
+                )
+                db.commit()
+                logger.info("Applied 70/30 earning split to %s astrologer profiles", updated)
+        finally:
+            db.close()
+    except Exception as e:
+        logger.warning("Earning-split data fix skipped: %s", e)
+
+
 def create_tables():
     """Create all tables (use Alembic in production)."""
     Base.metadata.create_all(bind=engine)
     _run_dev_migrations()
+    _run_data_fixes()
 
 
 def get_db():
