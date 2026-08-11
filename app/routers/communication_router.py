@@ -783,6 +783,41 @@ def _release_astrologer(db: Session, profile_id: str):
         profile.is_busy = False
 
 
+# NOTE: /call/history MUST be declared before /call/{call_id} — otherwise the
+# dynamic route captures "history" as a call_id and the history endpoint 404s
+# (which made the user's consultation history appear empty).
+@router.get("/call/history", response_model=List[CallSessionResponse])
+def call_history(
+    skip: int = 0, limit: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    calls = db.query(CallSession).filter(
+        (CallSession.caller_id == current_user.id) | (CallSession.receiver_id == current_user.id)
+    ).order_by(CallSession.created_at.desc()).offset(skip).limit(limit).all()
+    app_id, _ = _get_agora_creds(db)
+    results = []
+    for c in calls:
+        try:
+            astrologer_name = None
+            if c.astrologer_profile_id:
+                profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == c.astrologer_profile_id).first()
+                if profile:
+                    astrologer_name = profile.display_name
+            results.append(CallSessionResponse(
+                id=c.id, channel_name=c.channel_name or "",
+                caller_id=c.caller_id, receiver_id=c.receiver_id,
+                call_type=c.call_type, rate_per_min=float(c.rate_per_min or 0),
+                status=c.status, agora_app_id=app_id,
+                started_at=c.started_at, ended_at=c.ended_at,
+                duration_sec=c.duration_sec or 0, total_amount=float(c.total_amount or 0),
+                created_at=c.created_at, astrologer_name=astrologer_name,
+            ))
+        except Exception as e:  # noqa: BLE001
+            logger.warning("call_history: skipped row %s (%s)", getattr(c, "id", "?"), e)
+    return results
+
+
 @router.get("/call/{call_id}", response_model=CallSessionResponse)
 def get_call(
     call_id: str,
@@ -829,40 +864,6 @@ def get_call(
         elapsed_seconds=elapsed, billed_so_far=round(billed, 2),
         user_balance=round(balance, 2), remaining_seconds=remaining, low_balance=low,
     )
-
-
-@router.get("/call/history", response_model=List[CallSessionResponse])
-def call_history(
-    skip: int = 0, limit: int = 20,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    calls = db.query(CallSession).filter(
-        (CallSession.caller_id == current_user.id) | (CallSession.receiver_id == current_user.id)
-    ).order_by(CallSession.created_at.desc()).offset(skip).limit(limit).all()
-    app_id, _ = _get_agora_creds(db)
-    results = []
-    for c in calls:
-        # Per-row guard: one malformed/legacy row must not blank the whole
-        # history (a single 500 made the client show "no history").
-        try:
-            astrologer_name = None
-            if c.astrologer_profile_id:
-                profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == c.astrologer_profile_id).first()
-                if profile:
-                    astrologer_name = profile.display_name
-            results.append(CallSessionResponse(
-                id=c.id, channel_name=c.channel_name or "",
-                caller_id=c.caller_id, receiver_id=c.receiver_id,
-                call_type=c.call_type, rate_per_min=float(c.rate_per_min or 0),
-                status=c.status, agora_app_id=app_id,
-                started_at=c.started_at, ended_at=c.ended_at,
-                duration_sec=c.duration_sec or 0, total_amount=float(c.total_amount or 0),
-                created_at=c.created_at, astrologer_name=astrologer_name,
-            ))
-        except Exception as e:  # noqa: BLE001
-            logger.warning("call_history: skipped row %s (%s)", getattr(c, "id", "?"), e)
-    return results
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1859,6 +1860,30 @@ def _chat_session_response(session: ChatSession, db=None) -> ChatSessionResponse
     )
 
 
+# NOTE: /chat/history MUST be declared before /chat/{session_id} — otherwise the
+# dynamic route captures "history" as a session_id and history 404s (which made
+# the user's consultation history appear empty).
+@router.get("/chat/history", response_model=List[ChatSessionResponse])
+def chat_history(
+    skip: int = 0, limit: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    sessions = db.query(ChatSession).filter(
+        (ChatSession.user_id == current_user.id) |
+        (ChatSession.astrologer_id.in_(
+            db.query(AstrologerProfile.id).filter(AstrologerProfile.user_id == current_user.id)
+        ))
+    ).order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
+    out = []
+    for s in sessions:
+        try:
+            out.append(_chat_session_response(s, db))
+        except Exception as e:  # noqa: BLE001
+            logger.warning("chat_history: skipped row %s (%s)", getattr(s, "id", "?"), e)
+    return out
+
+
 @router.get("/chat/{session_id}", response_model=ChatSessionResponse)
 def get_chat_session(
     session_id: str,
@@ -1924,28 +1949,6 @@ def report_chat_message(
     m.report_reason = (req.reason or "").strip()[:500] or "reported by user"
     db.commit()
     return {"status": "ok", "message": "Thanks — we'll review this. Never pay an astrologer outside the app."}
-
-
-@router.get("/chat/history", response_model=List[ChatSessionResponse])
-def chat_history(
-    skip: int = 0, limit: int = 20,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    sessions = db.query(ChatSession).filter(
-        (ChatSession.user_id == current_user.id) |
-        (ChatSession.astrologer_id.in_(
-            db.query(AstrologerProfile.id).filter(AstrologerProfile.user_id == current_user.id)
-        ))
-    ).order_by(ChatSession.created_at.desc()).offset(skip).limit(limit).all()
-    out = []
-    for s in sessions:
-        # Per-row guard so one bad/legacy row can't blank the whole history.
-        try:
-            out.append(_chat_session_response(s, db))
-        except Exception as e:  # noqa: BLE001
-            logger.warning("chat_history: skipped row %s (%s)", getattr(s, "id", "?"), e)
-    return out
 
 
 # ── Send Message via REST (for inline notification reply) ────────────
