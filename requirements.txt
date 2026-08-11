@@ -10,3 +10,8 @@ httpx[http2]
 h2
 PyJWT
 cryptography
+
+# Agora RTC token generation for calls / live streams. Without it the backend
+# falls back to a NON-FUNCTIONAL dev token and calls never connect audio/video
+# when the Agora project enforces tokens.
+agora-token-builder

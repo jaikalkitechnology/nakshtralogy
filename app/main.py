@@ -168,6 +168,14 @@ async def _cleanup_stale_sessions():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    # Capture the running loop so synchronous endpoints (threadpool workers) can
+    # schedule real-time WebSocket pushes onto it — otherwise those pushes raise
+    # in the worker thread and are silently dropped (delivery falls back to FCM).
+    try:
+        from app.core.async_bridge import set_main_loop
+        set_main_loop(asyncio.get_running_loop())
+    except Exception as _e:  # never block boot
+        logging.getLogger("async_bridge").warning("set_main_loop failed: %s", _e)
     # Auto-apply additive schema changes (missing tables/columns from the models)
     # when auto-mode is enabled — so a redeploy picks up new columns without a
     # manual step. Fully guarded; records an activity-log row. Additive only.
