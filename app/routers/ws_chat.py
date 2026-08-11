@@ -14,6 +14,7 @@ Billing integration:
   - Supports text, image, and pdf message types
 """
 
+import asyncio
 import json
 import math
 import logging
@@ -238,11 +239,37 @@ async def websocket_chat(
             "started_at": str(session.started_at) if session.started_at else None,
         })
 
-        # listen for messages
+        # listen for messages, with a liveness timeout so a half-open socket is
+        # eventually detected instead of lingering (which kept the user "present",
+        # suppressed the fallback FCM, and delayed settlement). Conservative: the
+        # client pings periodically (traffic resets the counter); we only probe
+        # after 5 min of total silence and drop after ~15 min. Handles ping/pong.
+        _missed = 0
         while True:
-            raw = await websocket.receive_text()
+            try:
+                raw = await asyncio.wait_for(websocket.receive_text(), timeout=300)
+            except asyncio.TimeoutError:
+                _missed += 1
+                if _missed >= 3:
+                    logger.info("Chat WS idle — dropping half-open socket for %s",
+                                user.id if user else "?")
+                    break
+                try:
+                    await websocket.send_json({"type": "ping"})
+                except Exception:
+                    break
+                continue
+            _missed = 0
             data = json.loads(raw)
             msg_type = data.get("type", "text")
+
+            if msg_type in ("ping", "pong"):
+                if msg_type == "ping":
+                    try:
+                        await websocket.send_json({"type": "pong"})
+                    except Exception:
+                        break
+                continue
 
             if msg_type == "message":
                 # Refresh session from DB

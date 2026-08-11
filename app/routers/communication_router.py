@@ -446,6 +446,50 @@ def seed_gifts(
 
 
 # ══════════════════════════════════════════════════════════════════════
+#  ACTIVE-SESSION RESUME
+# ══════════════════════════════════════════════════════════════════════
+
+@router.get("/active")
+def my_active_session(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """The caller's current live call and/or chat, so a killed/reopened client
+    can rejoin instead of orphaning blocked funds and the astrologer's busy flag.
+    Returns {call, chat} (each null when none)."""
+    out = {"call": None, "chat": None}
+    call = db.query(CallSession).filter(
+        CallSession.caller_id == current_user.id,
+        CallSession.status.in_(["ringing", "active"]),
+    ).order_by(CallSession.created_at.desc()).first()
+    if call:
+        app_id, _ = _get_agora_creds(db)
+        out["call"] = {
+            "id": call.id, "channel_name": call.channel_name,
+            "call_type": call.call_type, "status": call.status,
+            "rate_per_min": float(call.rate_per_min),
+            "agora_token": call.agora_token_caller, "agora_app_id": app_id,
+            "started_at": call.started_at.isoformat() if call.started_at else None,
+            "max_end_at": call.max_end_at.isoformat() if call.max_end_at else None,
+            "astrologer_profile_id": call.astrologer_profile_id,
+        }
+    chat = db.query(ChatSession).filter(
+        ChatSession.user_id == current_user.id,
+        ChatSession.status.in_(["waiting", "active"]),
+    ).order_by(ChatSession.created_at.desc()).first()
+    if chat:
+        out["chat"] = {
+            "id": chat.id, "status": chat.status,
+            "billing_mode": chat.billing_mode,
+            "rate_per_min": float(chat.rate_per_min or 0),
+            "rate_per_session": (float(chat.rate_per_session) if chat.rate_per_session else None),
+            "astrologer_id": chat.astrologer_id,
+            "started_at": chat.started_at.isoformat() if chat.started_at else None,
+        }
+    return out
+
+
+# ══════════════════════════════════════════════════════════════════════
 #  VOICE / VIDEO CALLS
 # ══════════════════════════════════════════════════════════════════════
 
