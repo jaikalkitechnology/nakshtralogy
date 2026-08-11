@@ -318,15 +318,23 @@ async def websocket_chat(
                 file_size = data.get("file_size")
 
                 # Track user message count (only user messages count toward limit)
+                overage_charged = 0.0
                 if is_user:
                     session.user_message_count = (session.user_message_count or 0) + 1
 
-                    # Per-message billing ONLY for a dedicated per-message plan.
-                    # For per_session (flat block) and per_minute (settled by time
-                    # at the end) the message must NOT be charged again — doing so
-                    # stacked a "Chat message #N" debit on top of the block and
-                    # over-charged the user. Astrologer earns the SET % (flip rule).
-                    if rate_per_msg > 0 and session.billing_mode == "per_message":
+                    _limit = session.session_message_limit or 45
+                    # Two ways a user message gets a per-message charge:
+                    #  1. a dedicated per-message plan (billing_mode == per_message)
+                    #  2. per-session OVERAGE — the session's included messages are
+                    #     used up (count > limit) and the astrologer set a
+                    #     per-message rate, so the user chose to keep chatting.
+                    # For per_session within the included quota, and for per_minute
+                    # (settled by time), the message is NOT charged again.
+                    _is_overage = (session.billing_mode == "per_session"
+                                   and (session.user_message_count or 0) > _limit)
+                    _charge_msg = rate_per_msg > 0 and (
+                        session.billing_mode == "per_message" or _is_overage)
+                    if _charge_msg:
                         try:
                             user_wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
                             if user_wallet and float(user_wallet.balance) >= rate_per_msg:
@@ -335,15 +343,18 @@ async def websocket_chat(
                                 db.add(WalletTransaction(
                                     wallet_id=user_wallet.id, txn_type="consultation_debit",
                                     amount=Decimal(str(rate_per_msg)), balance_after=user_wallet.balance,
-                                    description=f"Chat message #{session.user_message_count}",
-                                    reference_type="chat_per_msg",
+                                    description=(f"Chat extra message (after {_limit})"
+                                                 if _is_overage else f"Chat message #{session.user_message_count}"),
+                                    reference_type=("chat_overage" if _is_overage else "chat_per_msg"),
                                 ))
+                                overage_charged = rate_per_msg if _is_overage else 0.0
                                 # Credit astrologer their set % share
                                 comm_pct = float(profile.commission_pct) if profile else 30.0
                                 earning = rate_per_msg * comm_pct / 100
                                 if profile:
                                     _credit_astro_wallet(db, profile.user_id, earning,
-                                        f"Chat msg earning #{session.user_message_count}")
+                                        (f"Chat extra-msg earning" if _is_overage
+                                         else f"Chat msg earning #{session.user_message_count}"))
                             else:
                                 # Insufficient balance → end session
                                 await _complete_session(db, session, profile)
@@ -400,6 +411,7 @@ async def websocket_chat(
                     "flag_reasons": guard_reasons,
                     "user_message_count": session.user_message_count or 0,
                     "remaining_messages": max(0, (session.session_message_limit or 45) - (session.user_message_count or 0)),
+                    "overage_charged": overage_charged,   # >0 → this msg billed per-message
                 })
 
                 # ── Send FCM push to the OTHER participant ──
@@ -408,16 +420,32 @@ async def websocket_chat(
                 except Exception as fcm_err:
                     logger.warning(f"FCM push failed: {fcm_err}")
 
-                # Check if user hit message limit (per-session mode)
+                # Included-message limit reached (per-session mode).
                 if is_user and session.billing_mode == "per_session":
-                    if (session.user_message_count or 0) >= (session.session_message_limit or 45):
-                        await _complete_session(db, session, profile)
-                        await _broadcast(session_id, {
-                            "type": "session_ended",
-                            "reason": f"Message limit reached ({session.session_message_limit})",
-                            "timestamp": datetime.utcnow().isoformat(),
-                        })
-                        break
+                    _limit = session.session_message_limit or 45
+                    _count = session.user_message_count or 0
+                    if _count >= _limit:
+                        if rate_per_msg > 0:
+                            # Overage available — keep the session OPEN and let the
+                            # user continue at the per-message rate. Announce once,
+                            # exactly at the boundary, so the client shows the
+                            # "continue at ₹X/message" bar.
+                            if _count == _limit:
+                                await _broadcast(session_id, {
+                                    "type": "overage_started",
+                                    "rate_per_msg": rate_per_msg,
+                                    "message_limit": _limit,
+                                    "timestamp": datetime.utcnow().isoformat(),
+                                })
+                        else:
+                            # No overage rate set → end at the included limit.
+                            await _complete_session(db, session, profile)
+                            await _broadcast(session_id, {
+                                "type": "session_ended",
+                                "reason": f"Message limit reached ({_limit})",
+                                "timestamp": datetime.utcnow().isoformat(),
+                            })
+                            break
 
             elif msg_type == "typing":
                 await _broadcast(session_id, {

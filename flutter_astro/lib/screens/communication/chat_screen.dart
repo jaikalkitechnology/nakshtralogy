@@ -45,6 +45,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
   bool _connected = false;
   int _userMessageCount = 0;
   int _remainingMessages = 0;
+  bool _overage = false;   // user is now paying per-message (session quota used up)
   bool _uploading = false;
   // Auto-heal: keep the socket alive with pings and reconnect (with backoff) on
   // a drop instead of leaving the header stuck on "Connecting…".
@@ -122,6 +123,9 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
               _remainingMessages = data['remaining_messages'] ?? _remainingMessages;
             });
             _scrollToBottom();
+            break;
+          case 'overage_started':
+            setState(() => _overage = true);  // client is now paying per-message
             break;
           case 'session_info':
             final active = data['status'] == 'active';
@@ -427,8 +431,11 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
               ),
               const SizedBox(width: 10),
               Expanded(child: Text(
-                'Msgs: $_userMessageCount/${widget.sessionMessageLimit} ($_remainingMessages left)',
-                style: const TextStyle(color: AppColors.lavender, fontSize: 12),
+                _overage
+                    ? 'Pay-per-message active'
+                    : 'Msgs: $_userMessageCount/${widget.sessionMessageLimit} ($_remainingMessages left)',
+                style: TextStyle(color: _overage ? AppColors.saffron : AppColors.lavender, fontSize: 12,
+                    fontWeight: _overage ? FontWeight.w700 : FontWeight.w400),
               )),
               // Earning badge (gold-saffron gradient)
               Container(
