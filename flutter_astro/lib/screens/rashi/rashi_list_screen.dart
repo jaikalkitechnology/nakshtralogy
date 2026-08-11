@@ -6,6 +6,7 @@ import '../../utils/kundli_names.dart';
 import '../kundli/widgets/kundli_ui.dart';
 import 'rashi_detail_screen.dart';
 import 'rashi_shared.dart';
+import '../../widgets/desktop_center.dart';
 
 /// Home → Rashi: a modern zodiac dashboard.
 ///
@@ -58,7 +59,9 @@ class _RashiListScreenState extends State<RashiListScreen> {
         title: Text(l.rashi, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
         actions: [IconButton(onPressed: _load, icon: const Icon(Icons.refresh))],
       ),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 1100,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _error != null ? _errView(l)
           : RefreshIndicator(
@@ -74,6 +77,7 @@ class _RashiListScreenState extends State<RashiListScreen> {
                 _grid(l),
               ]),
             ),
+      ),
     );
   }
 

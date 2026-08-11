@@ -3,6 +3,7 @@ import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'daily_forecast_screen.dart';
+import '../../widgets/desktop_center.dart';
 
 class ForecastChartPicker extends StatefulWidget {
   const ForecastChartPicker({super.key});
@@ -35,7 +36,9 @@ class _S extends State<ForecastChartPicker> {
           TextSpan(text: "Today's ", style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
           TextSpan(text: 'Forecast', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic)),
         ]))),
-      body: _loading
+      body: DesktopCenter(
+        maxWidth: 720,
+        child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _charts.isEmpty
               ? Center(child: Text(AppLocalizations.of(context)?.noCharts ?? 'No charts', style: const TextStyle(color: AppColors.smoke)))
@@ -59,7 +62,7 @@ class _S extends State<ForecastChartPicker> {
                           ])),
                           const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.smoke),
                         ])));
-                  }),
+                  })),
     );
   }
 }
