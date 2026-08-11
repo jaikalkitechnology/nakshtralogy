@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { adminStats } from "@/services/api";
 import {
   IndianRupee, TrendingUp, Users, MessageSquare, Star, ShieldAlert, Server,
   Repeat, CheckCircle2, UserPlus, Ticket, CreditCard, Bell, FileText, RefreshCw,
@@ -64,6 +65,18 @@ export default function DashboardOverview() {
   const { user } = useAuth();
   const [revenueFilter, setRevenueFilter] = useState<RevenueFilter>("Month");
   const revenue = REVENUE_BY_FILTER[revenueFilter];
+
+  // Real platform counters from /admin/stats (falls back to null → em dash).
+  const [stats, setStats] = useState<any>(null);
+  useEffect(() => {
+    let alive = true;
+    adminStats()
+      .then((res) => { if (alive) setStats(res?.data ?? res ?? null); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  const s = stats || {};
+
   return (
     <div className="space-y-6">
       <div>
@@ -73,14 +86,14 @@ export default function DashboardOverview() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Total Revenue" value={1840000} format={(n) => `₹${(n / 100000).toFixed(1)}L`} icon={<IndianRupee className="h-[17px] w-[17px]" />} tone="gold" trend={12.4} trendLabel="vs last month" spark={spark(1)} delay={0} />
-        <StatCard label="Today's Revenue" value={64200} format={(n) => `₹${Math.round(n).toLocaleString()}`} icon={<TrendingUp className="h-[17px] w-[17px]" />} tone="green" trend={8.1} trendLabel="today" spark={spark(3)} delay={0.05} />
-        <StatCard label="Total Users" value={42318} icon={<Users className="h-[17px] w-[17px]" />} tone="purple" trend={3.9} trendLabel="this week" spark={spark(5)} delay={0.1} />
-        <StatCard label="Live Consultations" value={128} icon={<MessageSquare className="h-[17px] w-[17px]" />} tone="teal" trend={22} trendLabel="now live" spark={spark(2)} delay={0.15} />
-        <StatCard label="Active Astrologers" value={1204} icon={<Star className="h-[17px] w-[17px]" />} tone="gold" trend={5} trendLabel="online now" spark={spark(4)} delay={0.2} />
-        <StatCard label="Pending KYC" value={37} icon={<ShieldAlert className="h-[17px] w-[17px]" />} tone="amber" trend={9} trendLabel="need review" spark={spark(6)} delay={0.25} />
-        <StatCard label="API Requests (24h)" value={312000} format={(n) => `${Math.round(n / 1000)}K`} icon={<Server className="h-[17px] w-[17px]" />} tone="purple" trend={14.7} trendLabel="" spark={spark(7)} delay={0.3} />
-        <StatCard label="Subscription MRR" value={210000} format={(n) => `₹${(n / 100000).toFixed(1)}L`} icon={<Repeat className="h-[17px] w-[17px]" />} tone="green" trend={6.2} trendLabel="" spark={spark(8)} delay={0.35} />
+        <StatCard label="Total Revenue" value={Number(s.total_revenue) || 0} format={(n) => `₹${n >= 100000 ? `${(n / 100000).toFixed(1)}L` : Math.round(n).toLocaleString()}`} icon={<IndianRupee className="h-[17px] w-[17px]" />} tone="gold" trendLabel="all time" spark={spark(1)} delay={0} />
+        <StatCard label="Total Users" value={Number(s.total_users) || 0} icon={<Users className="h-[17px] w-[17px]" />} tone="purple" trendLabel="active accounts" spark={spark(5)} delay={0.05} />
+        <StatCard label="Total Astrologers" value={Number(s.total_astrologers) || 0} icon={<Star className="h-[17px] w-[17px]" />} tone="gold" trendLabel="on platform" spark={spark(4)} delay={0.1} />
+        <StatCard label="Online Astrologers" value={Number(s.online_astrologers) || 0} icon={<Star className="h-[17px] w-[17px]" />} tone="green" trendLabel="online now" spark={spark(3)} delay={0.15} />
+        <StatCard label="Live Consultations" value={Number(s.active_sessions) || 0} icon={<MessageSquare className="h-[17px] w-[17px]" />} tone="teal" trendLabel="calls + chats" spark={spark(2)} delay={0.2} />
+        <StatCard label="Live Streams" value={Number(s.active_streams) || 0} icon={<Server className="h-[17px] w-[17px]" />} tone="purple" trendLabel="now live" spark={spark(7)} delay={0.25} />
+        <StatCard label="Pending KYC" value={Number(s.pending_kyc) || 0} icon={<ShieldAlert className="h-[17px] w-[17px]" />} tone="amber" trendLabel="need review" spark={spark(6)} delay={0.3} />
+        <StatCard label="Pending Deletions" value={Number(s.pending_deletions) || 0} icon={<Repeat className="h-[17px] w-[17px]" />} tone="amber" trendLabel="in grace period" spark={spark(8)} delay={0.35} />
       </div>
 
       {/* Quick actions */}
@@ -201,7 +214,7 @@ export default function DashboardOverview() {
       </div>
 
       <p className="flex items-center gap-1.5 pt-1 text-center text-[11px] text-muted-foreground">
-        <ArrowUpRight className="h-3.5 w-3.5" /> Live counters above illustrate layout; wire real endpoints as the platform grows.
+        <ArrowUpRight className="h-3.5 w-3.5" /> Stat cards show live platform data. Revenue trend, system health, activity and notifications below are illustrative.
       </p>
     </div>
   );

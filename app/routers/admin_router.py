@@ -219,19 +219,28 @@ def admin_stats(
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
-    total_users = db.query(sqlfunc.count(User.id)).filter(User.role == "user").scalar() or 0
-    total_astrologers = db.query(sqlfunc.count(User.id)).filter(User.role == "astrologer").scalar() or 0
-    total_admins = db.query(sqlfunc.count(User.id)).filter(User.role == "admin").scalar() or 0
+    # Counts exclude deleted/anonymized accounts so the overview reflects the
+    # real, live population (a purged account keeps its row for FK integrity).
+    _live = User.deleted_at.is_(None)
+    total_users = db.query(sqlfunc.count(User.id)).filter(User.role == "user", _live).scalar() or 0
+    total_astrologers = db.query(sqlfunc.count(User.id)).filter(User.role == "astrologer", _live).scalar() or 0
+    total_admins = db.query(sqlfunc.count(User.id)).filter(User.role == "admin", _live).scalar() or 0
     total_revenue = db.query(sqlfunc.sum(WalletTransaction.amount)).filter(
         WalletTransaction.txn_type.like("%debit%")
     ).scalar() or 0
     active_calls = db.query(sqlfunc.count(CallSession.id)).filter(CallSession.status == "active").scalar() or 0
     active_chats = db.query(sqlfunc.count(ChatSession.id)).filter(ChatSession.status == "active").scalar() or 0
     active_streams = db.query(sqlfunc.count(LiveStream.id)).filter(LiveStream.status == "live").scalar() or 0
+    online_astrologers = db.query(sqlfunc.count(AstrologerProfile.id)).filter(AstrologerProfile.is_online == True).scalar() or 0
     total_orders = db.query(sqlfunc.count(ServiceOrder.id)).scalar() or 0
     pending_kyc = db.query(sqlfunc.count(KycDocument.id)).filter(KycDocument.status == "pending").scalar() or 0
     pending_approvals = db.query(sqlfunc.count(AstrologerProfile.id)).filter(AstrologerProfile.is_approved == False).scalar() or 0
-    unapproved_profiles = db.query(sqlfunc.count(User.id)).filter(User.profile_approved == False, User.role == "user").scalar() or 0
+    unapproved_profiles = db.query(sqlfunc.count(User.id)).filter(User.profile_approved == False, User.role == "user", _live).scalar() or 0
+    # Deletion lifecycle counters for the overview.
+    deleted_accounts = db.query(sqlfunc.count(User.id)).filter(User.deleted_at.isnot(None)).scalar() or 0
+    pending_deletions = db.query(sqlfunc.count(User.id)).filter(
+        User.deletion_scheduled_at.isnot(None), User.deleted_at.is_(None)
+    ).scalar() or 0
 
     return {
         "total_users": total_users,
@@ -240,11 +249,16 @@ def admin_stats(
         "total_all": total_users + total_astrologers + total_admins,
         "total_revenue": float(total_revenue),
         "active_sessions": active_calls + active_chats,
+        "active_calls": active_calls,
+        "active_chats": active_chats,
         "active_streams": active_streams,
+        "online_astrologers": online_astrologers,
         "total_orders": total_orders,
         "pending_kyc": pending_kyc,
         "pending_astro_approvals": pending_approvals,
         "unapproved_user_profiles": unapproved_profiles,
+        "deleted_accounts": deleted_accounts,
+        "pending_deletions": pending_deletions,
     }
 
 
@@ -259,6 +273,10 @@ def list_users(
     role: Optional[str] = None,
     search: Optional[str] = None,
     is_active: Optional[bool] = None,
+    # Deletion filter: "active" (default) hides deleted/anonymized accounts;
+    # "deleted" shows only them; "pending" shows those scheduled but not yet
+    # purged; "all" shows everything.
+    deletion_status: Optional[str] = None,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
@@ -267,6 +285,15 @@ def list_users(
         q = q.filter(User.role == role)
     if is_active is not None:
         q = q.filter(User.is_active == is_active)
+    ds = (deletion_status or "active").lower()
+    if ds == "deleted":
+        q = q.filter(User.deleted_at.isnot(None))
+    elif ds == "pending":
+        q = q.filter(User.deletion_scheduled_at.isnot(None), User.deleted_at.is_(None))
+    elif ds == "all":
+        pass
+    else:  # "active" (default) — hide deleted/anonymized accounts
+        q = q.filter(User.deleted_at.is_(None))
     if search:
         q = q.filter(
             (User.name.like(f"%{search}%")) |
@@ -496,6 +523,8 @@ def list_astrologers_admin(
     limit: int = Query(50, ge=1, le=200),
     search: Optional[str] = None,
     approved_only: bool = False,
+    # See list_users: "active" (default) hides deleted, "deleted"/"pending"/"all".
+    deletion_status: Optional[str] = None,
     current_user: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
 ):
@@ -504,6 +533,15 @@ def list_astrologers_admin(
     ).outerjoin(Wallet, Wallet.user_id == User.id)
     if approved_only:
         q = q.filter(AstrologerProfile.is_approved == True)
+    ds = (deletion_status or "active").lower()
+    if ds == "deleted":
+        q = q.filter(User.deleted_at.isnot(None))
+    elif ds == "pending":
+        q = q.filter(User.deletion_scheduled_at.isnot(None), User.deleted_at.is_(None))
+    elif ds == "all":
+        pass
+    else:  # "active" (default) — hide deleted/anonymized accounts
+        q = q.filter(User.deleted_at.is_(None))
     if search:
         q = q.filter(
             (AstrologerProfile.display_name.like(f"%{search}%")) |

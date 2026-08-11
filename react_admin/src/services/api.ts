@@ -56,6 +56,12 @@ export function getStoredUser() {
   return raw ? JSON.parse(raw) : null;
 }
 
+// ── Dashboard ────────────────────────────────────────────────────
+
+export async function adminStats() {
+  return request(`/admin/stats`);
+}
+
 // ── Users ────────────────────────────────────────────────────────
 
 export async function adminListUsers(params: Record<string, any> = {}) {
