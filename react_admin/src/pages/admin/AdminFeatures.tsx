@@ -148,6 +148,7 @@ const AdminFeatures = () => {
   const [userPage, setUserPage] = useState(0);
   const [userFilterStatus, setUserFilterStatus] = useState<string>("all"); // all | active | blocked
   const [userFilterRole, setUserFilterRole] = useState<string>("user");    // user | astrologer | admin | all
+  const [userDeletionFilter, setUserDeletionFilter] = useState<string>("active"); // active | pending | deleted | all
 
   // Wallet action dialog
   const [walletDialog, setWalletDialog] = useState<{
@@ -166,6 +167,7 @@ const AdminFeatures = () => {
   const [astroPage, setAstroPage] = useState(0);
   const [astroTotal, setAstroTotal] = useState(0);
   const [astroFilter, setAstroFilter] = useState<string>("all"); // all | pending | approved | online
+  const [astroDeletionFilter, setAstroDeletionFilter] = useState<string>("active"); // active | pending | deleted | all
   const [astroSearch, setAstroSearch] = useState("");
 
   // Astrologer wallet dialog (reuses same walletDialog pattern)
@@ -337,6 +339,8 @@ const AdminFeatures = () => {
         if (userFilterStatus === "active") params.is_active = true;
         else if (userFilterStatus === "blocked") params.is_active = false;
         if (searchQuery) params.search = searchQuery;
+        // Hide deleted/anonymized accounts unless the deletion filter opts in.
+        params.deletion_status = userDeletionFilter;
         const { data } = await adminListUsers(params);
         setUsers(data.users || []);
         setUsersTotal(data.total || 0);
@@ -348,6 +352,8 @@ const AdminFeatures = () => {
         };
         if (astroSearch) params.search = astroSearch;
         if (astroFilter === "approved") params.approved_only = true;
+        // Hide deleted/anonymized accounts unless the deletion filter opts in.
+        params.deletion_status = astroDeletionFilter;
         const { data } = await adminListAstrologers(params);
         let list = data.astrologers || [];
         // client-side filter for pending / online
@@ -454,8 +460,8 @@ const AdminFeatures = () => {
     } catch (e) { console.error(e); }
     setLoading(false);
   }, [authLoading, user,
-      activeTab, searchQuery, userPage, userFilterStatus, userFilterRole,
-      astroPage, astroFilter, astroSearch, kycPage, kycFilter,
+      activeTab, searchQuery, userPage, userFilterStatus, userFilterRole, userDeletionFilter,
+      astroPage, astroFilter, astroDeletionFilter, astroSearch, kycPage, kycFilter,
       walletPage, walletFilterType, walletFilterRole, walletSearchTerm,
       walletDateFrom, walletDateTo,
       pricingFilterCategory, pricingFilterStatus, pricingSearch,
@@ -467,8 +473,8 @@ const AdminFeatures = () => {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   // Reset page to 0 when filters change
-  useEffect(() => { setUserPage(0); }, [userFilterStatus, userFilterRole, searchQuery]);
-  useEffect(() => { setAstroPage(0); }, [astroFilter, astroSearch]);
+  useEffect(() => { setUserPage(0); }, [userFilterStatus, userFilterRole, userDeletionFilter, searchQuery]);
+  useEffect(() => { setAstroPage(0); }, [astroFilter, astroDeletionFilter, astroSearch]);
   useEffect(() => { setKycPage(0); }, [kycFilter]);
   useEffect(() => { setWalletPage(0); },
     [walletFilterType, walletFilterRole, walletSearchTerm, walletDateFrom, walletDateTo]);
@@ -1026,15 +1032,23 @@ const AdminFeatures = () => {
   // ── DataTable column definitions (D.1/D.2/D.3 premium tables) ────
   // Render cells reuse the exact same handlers as before — no behavior change.
   const userColumns: DataTableColumn<any>[] = [
-    { key: "name", header: "Name", sortable: true, render: (u) => <span className="font-medium text-foreground">{u.name || "—"}</span> },
+    { key: "name", header: "Name", sortable: true, render: (u) => (
+      <span className="font-medium text-foreground inline-flex items-center gap-1.5">
+        {u.name || "—"}
+        {u.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">deleted</Badge>}
+        {!u.deleted_at && u.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">deleting</Badge>}
+      </span>
+    ) },
     { key: "email", header: "Email", sortable: true, hideBelow: "md" },
     { key: "phone", header: "Phone", hideBelow: "lg", render: (u) => u.phone || "—" },
     { key: "role", header: "Role", sortable: true, render: (u) => <Badge variant="outline" className="border-border text-xs capitalize">{u.role}</Badge> },
     { key: "wallet_balance", header: "Balance", align: "right", sortable: true, render: (u) => <span className="font-semibold text-primary">₹{u.wallet_balance}</span> },
     { key: "is_active", header: "Status", align: "center", render: (u) => (
-      <Badge className={u.is_active ? "bg-green-500/20 text-green-400" : "bg-destructive/20 text-destructive"}>
-        {u.is_active ? "active" : "blocked"}
-      </Badge>
+      u.deleted_at
+        ? <Badge className="bg-destructive/20 text-destructive">deleted</Badge>
+        : <Badge className={u.is_active ? "bg-green-500/20 text-green-400" : "bg-destructive/20 text-destructive"}>
+            {u.is_active ? "active" : "blocked"}
+          </Badge>
     ) },
     { key: "actions", header: "Actions", align: "center", className: "whitespace-nowrap", render: (u) => (
       <div className="flex gap-1 justify-center flex-wrap" onClick={(e) => e.stopPropagation()}>
@@ -1232,6 +1246,17 @@ const AdminFeatures = () => {
                       <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="active">Active</SelectItem>
                       <SelectItem value="blocked">Blocked</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={userDeletionFilter} onValueChange={setUserDeletionFilter}>
+                    <SelectTrigger className="w-full md:w-44 bg-muted border-border">
+                      <SelectValue placeholder="Deletion" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Exclude deleted</SelectItem>
+                      <SelectItem value="pending">Pending deletion</SelectItem>
+                      <SelectItem value="deleted">Deleted only</SelectItem>
+                      <SelectItem value="all">Include deleted</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1434,6 +1459,17 @@ const AdminFeatures = () => {
                       <SelectItem value="online">Online Now</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Select value={astroDeletionFilter} onValueChange={setAstroDeletionFilter}>
+                    <SelectTrigger className="w-full md:w-44 bg-muted border-border">
+                      <SelectValue placeholder="Deletion" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Exclude deleted</SelectItem>
+                      <SelectItem value="pending">Pending deletion</SelectItem>
+                      <SelectItem value="deleted">Deleted only</SelectItem>
+                      <SelectItem value="all">Include deleted</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <p className="text-xs text-muted-foreground">
@@ -1475,6 +1511,8 @@ const AdminFeatures = () => {
                           </Badge>
                           {a.is_online && <Badge className="bg-green-500/20 text-green-400 text-[10px]">Online</Badge>}
                           {!a.is_active && <Badge className="bg-destructive/20 text-destructive text-[10px]">Blocked</Badge>}
+                          {a.deleted_at && <Badge className="bg-destructive/20 text-destructive text-[10px]">Deleted</Badge>}
+                          {!a.deleted_at && a.deletion_scheduled_at && <Badge className="bg-amber-500/20 text-amber-400 text-[10px]">Deleting</Badge>}
                         </div>
                       </div>
 
