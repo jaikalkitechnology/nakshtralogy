@@ -25,6 +25,10 @@ dependencies:
   firebase_core: ^3.12.1
   firebase_messaging: ^15.2.4
   flutter_local_notifications: ^18.0.1
+  # Full-screen native incoming-call UI (CallKit on iOS, ConnectionService on
+  # Android). On iOS it also registers the PushKit VoIP token used to wake the
+  # app for a call while it is killed/backgrounded — the one thing FCM cannot do.
+  flutter_callkit_incoming: ^2.5.0
   local_auth: ^2.3.0
   url_launcher: ^6.2.5
   app_links: ^6.3.0

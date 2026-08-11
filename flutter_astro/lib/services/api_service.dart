@@ -397,6 +397,22 @@ class ApiService {
     return {'statusCode': resp.statusCode, ...data};
   }
 
+  /// Register (or clear, with an empty string) this device's iOS PushKit VoIP
+  /// token so the backend can wake a full-screen CallKit UI for incoming calls.
+  Future<Map<String, dynamic>> registerVoipToken(String voipToken) async {
+    final resp = await _authPost(
+      Uri.parse(ApiConstants.astroVoipRegister),
+      body: jsonEncode({'voip_token': voipToken}),
+    );
+    Map<String, dynamic> data;
+    try {
+      data = jsonDecode(resp.body) as Map<String, dynamic>;
+    } catch (_) {
+      data = <String, dynamic>{};
+    }
+    return {'statusCode': resp.statusCode, ...data};
+  }
+
   Future<Map<String, dynamic>> forgotPassword(String email) async {
     final resp = await http.post(
       Uri.parse(ApiConstants.astroForgotPassword),
