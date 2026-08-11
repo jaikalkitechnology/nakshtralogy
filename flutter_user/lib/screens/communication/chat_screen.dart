@@ -48,6 +48,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   int _userMessageCount = 0;
   int _remainingMessages = 0;
   bool _uploading = false;
+  // Per-session overage: once the included messages are used up and the
+  // astrologer set a per-message rate, the session stays open and each further
+  // message is charged _overageRate. Server drives this via the
+  // 'overage_started' event + per-message 'overage_charged' on each message.
+  bool _overage = false;
+  double _overageRate = 0;
+  double _overageSpent = 0;
   // Connecting screen: wait up to 60s for the astrologer to accept.
   bool _ended = false;              // guards a single end/cancel (no double refund)
   Timer? _connectTimer;
@@ -217,8 +224,17 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               _messages.add(data);
               _userMessageCount = data['user_message_count'] ?? _userMessageCount;
               _remainingMessages = data['remaining_messages'] ?? _remainingMessages;
+              final oc = (data['overage_charged'] as num?)?.toDouble() ?? 0;
+              if (oc > 0) _overageSpent += oc;
             });
             _scrollToBottom();
+            break;
+          case 'overage_started':
+            // Included messages used up — session stays open, now pay-per-message.
+            setState(() {
+              _overage = true;
+              _overageRate = (data['rate_per_msg'] as num?)?.toDouble() ?? _overageRate;
+            });
             break;
           case 'session_info':
             final isActive = data['status'] == 'active';
@@ -633,9 +649,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               const Icon(Icons.auto_awesome, size: 14, color: AppColors.lavender),
               const SizedBox(width: 6),
               Expanded(child: Text(
-                widget.billingMode == 'per_session'
-                    ? 'Session: $_userMessageCount/${widget.sessionMessageLimit} msgs ($_remainingMessages left)'
-                    : 'Duration: $_formattedTime',
+                _overage
+                    ? 'Pay-per-message \u00b7 \u20b9${_overageSpent.toStringAsFixed(0)} extra'
+                    : widget.billingMode == 'per_session'
+                        ? 'Session: $_userMessageCount/${widget.sessionMessageLimit} msgs ($_remainingMessages left)'
+                        : 'Duration: $_formattedTime',
                 style: const TextStyle(color: AppColors.lavender, fontSize: 12),
               )),
               // Rate badge (gold-saffron gradient)
@@ -646,9 +664,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  widget.billingMode == 'per_session'
-                      ? '\u20b9${widget.ratePerSession.toInt()}/sess'
-                      : '\u20b9${_currentCost.toStringAsFixed(0)}',
+                  _overage
+                      ? '\u20b9${_overageRate.toStringAsFixed(0)}/msg'
+                      : widget.billingMode == 'per_session'
+                          ? '\u20b9${widget.ratePerSession.toInt()}/sess'
+                          : '\u20b9${_currentCost.toStringAsFixed(0)}',
                   style: const TextStyle(color: AppColors.midnight, fontSize: 11, fontWeight: FontWeight.w700),
                 ),
               ),
@@ -680,6 +700,23 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold)),
                 SizedBox(width: 8),
                 Text('Uploading file...', style: TextStyle(color: AppColors.smoke, fontSize: 12)),
+              ]),
+            ),
+
+          // Overage notice — shown once the session's included messages are used
+          // up; every further message now costs the per-message rate.
+          if (_overage)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              color: AppColors.saffron.withOpacity(0.14),
+              child: Row(children: [
+                const Icon(Icons.info_outline, size: 15, color: AppColors.saffron),
+                const SizedBox(width: 8),
+                Expanded(child: Text(
+                  'Session messages used up. Continue at ₹${_overageRate.toStringAsFixed(0)} per message.',
+                  style: const TextStyle(color: AppColors.saffron, fontSize: 11.5, fontWeight: FontWeight.w600),
+                )),
               ]),
             ),
 
