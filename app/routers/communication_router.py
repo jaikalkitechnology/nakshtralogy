@@ -42,7 +42,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status, Header
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -2074,13 +2074,24 @@ async def upload_chat_file(
 @router.get("/chat/file/{year}/{month}/{day}/{filename}")
 def download_chat_file(
     year: str, month: str, day: str, filename: str,
-    current_user: User = Depends(get_current_user),
-    lang: str = Depends(get_lang_user),
+    token: Optional[str] = Query(None),
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
 ):
-    """Download a chat file. Requires authentication (only chat participants can access)."""
+    """Download a chat file. Authenticated so only logged-in participants can
+    access. Accepts the JWT via a `?token=` query param (so Image.network / a
+    plain <img> / web can load it without a custom Authorization header, which
+    they cannot set) OR the standard Authorization: Bearer header."""
+    from app.core.security import decode_access_token
+    raw = token
+    if not raw and authorization and authorization.lower().startswith("bearer "):
+        raw = authorization[7:]
+    payload = decode_access_token(raw) if raw else None
+    if not payload:
+        raise HTTPException(status_code=401, detail="Unauthorized")
     file_path = os.path.join(UPLOAD_DIR, year, month, day, filename)
     if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail=t("err.chat_file_not_found", lang))
+        raise HTTPException(status_code=404, detail=t("err.chat_file_not_found", "en"))
     return FileResponse(file_path, filename=filename)
 
 
