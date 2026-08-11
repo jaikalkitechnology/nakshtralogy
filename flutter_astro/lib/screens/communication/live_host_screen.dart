@@ -559,7 +559,7 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: LinearProgressIndicator(
-                          value: (_giftGoal > 0 ? (_totalGifts / _giftGoal) : 0).clamp(0.0, 1.0),
+                          value: (_giftGoal > 0 ? (_totalGifts / _giftGoal) : 0.0).clamp(0.0, 1.0).toDouble(),
                           minHeight: 8,
                           backgroundColor: Colors.white24,
                           valueColor: const AlwaysStoppedAnimation(AppColors.primary),
