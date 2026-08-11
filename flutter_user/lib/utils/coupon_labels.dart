@@ -10,6 +10,7 @@ class CouponLabels {
     'enterCode': 'Enter code',
     'apply': 'Apply',
     'applied': 'Coupon applied',
+    'autoApplied': 'Applied automatically at checkout — no code needed',
     'remove': 'Remove',
     'unlockFree': 'Unlock free',
     'youSave': 'You save',

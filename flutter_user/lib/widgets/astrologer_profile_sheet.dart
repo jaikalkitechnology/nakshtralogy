@@ -674,9 +674,26 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
           ]),
         ],
         if (!grey && code.isEmpty) ...[
-          const SizedBox(height: 6),
-          Text('Applied automatically — no code needed',
-              style: TextStyle(color: AppColors.success.withOpacity(0.9), fontSize: 11)),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.success.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.success.withOpacity(0.4)),
+            ),
+            child: Row(children: [
+              const Icon(Icons.check_circle, color: AppColors.success, size: 16),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  CouponLabels.of(context, 'autoApplied'),
+                  style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ]),
+          ),
         ],
       ]),
     );
