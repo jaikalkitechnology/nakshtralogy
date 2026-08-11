@@ -76,6 +76,7 @@ class User(Base):
     google_id = Column(String(255), unique=True, nullable=True)
     fcm_token = Column(Text, nullable=True)          # native (android/ios) push token
     fcm_token_web = Column(Text, nullable=True)      # Flutter Web / browser FCM push token
+    voip_token = Column(Text, nullable=True)         # iOS PushKit VoIP token (CallKit wake)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
     profile_approved = Column(Boolean, default=False, nullable=False)  # admin approves user profile

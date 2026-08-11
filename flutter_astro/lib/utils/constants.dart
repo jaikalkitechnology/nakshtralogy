@@ -20,6 +20,8 @@ class ApiConstants {
 
   // Astrologer push-token registration (web + native).
   static const String astroPushRegister = '$astrologerBase/push/register';
+  // iOS PushKit VoIP token registration (CallKit full-screen ringing).
+  static const String astroVoipRegister = '$astrologerBase/push/voip/register';
   // Public web-push (Firebase web + VAPID) config for runtime init.
   static const String webpushConfig = '$baseUrl/config/webpush';
   static const String astroForgotPassword = '$astrologerBase/forgot-password';
