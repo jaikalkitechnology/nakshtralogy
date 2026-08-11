@@ -20,14 +20,26 @@ class _State extends State<SpecialistRelationshipPicker> {
   final List<String> _selected = [];
   String _context = 'general';
 
-  static const _contexts = [
-    {'key': 'general',    'label': 'General',     'icon': Icons.groups},
-    {'key': 'love',       'label': 'Love',        'icon': Icons.favorite},
-    {'key': 'business',   'label': 'Business',    'icon': Icons.business},
-    {'key': 'family',     'label': 'Family',      'icon': Icons.family_restroom},
-    {'key': 'team',       'label': 'Team',        'icon': Icons.group_work},
-    {'key': 'friendship', 'label': 'Friendship',  'icon': Icons.handshake},
+  static const _contextKeys = [
+    {'key': 'general',    'icon': Icons.groups},
+    {'key': 'love',       'icon': Icons.favorite},
+    {'key': 'business',   'icon': Icons.business},
+    {'key': 'family',     'icon': Icons.family_restroom},
+    {'key': 'team',       'icon': Icons.group_work},
+    {'key': 'friendship', 'icon': Icons.handshake},
   ];
+
+  String _contextLabel(AppLocalizations? l, String key) {
+    switch (key) {
+      case 'general': return l?.generalWord ?? 'General';
+      case 'love': return l?.love ?? 'Love';
+      case 'business': return l?.businessWord ?? 'Business';
+      case 'family': return l?.fdFamily ?? 'Family';
+      case 'team': return l?.teamWord ?? 'Team';
+      case 'friendship': return l?.friendshipWord ?? 'Friendship';
+      default: return key;
+    }
+  }
 
   @override
   void initState() { super.initState(); _load(); }
@@ -76,19 +88,20 @@ class _State extends State<SpecialistRelationshipPicker> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _analyzing = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.errorWithDetails(e.toString()) ?? 'Error: $e')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Row(children: [
-          Text('🔗', style: TextStyle(fontSize: 20)),
-          SizedBox(width: 8),
-          Text('Relationship Intelligence', style: TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
+        title: Row(children: [
+          const Text('🔗', style: TextStyle(fontSize: 20)),
+          const SizedBox(width: 8),
+          Text(l?.relationshipIntelligenceTitle ?? 'Relationship Intelligence', style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
         ]),
       ),
       body: DesktopCenter(
@@ -99,18 +112,18 @@ class _State extends State<SpecialistRelationshipPicker> {
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                   const CircularProgressIndicator(color: AppColors.primary),
                   const SizedBox(height: 16),
-                  Text('Analyzing ${_selected.length} charts...', style: const TextStyle(color: AppColors.textSecondary)),
+                  Text(l?.analyzingChartsCount(_selected.length) ?? 'Analyzing ${_selected.length} charts...', style: const TextStyle(color: AppColors.textSecondary)),
                 ]))
               : Column(children: [
                   // Context selector
                   Container(
                     padding: const EdgeInsets.fromLTRB(14, 10, 14, 6),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Relationship Context', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                      Text(l?.relationshipContextLabel ?? 'Relationship Context', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                       const SizedBox(height: 6),
                       SizedBox(height: 34, child: ListView(
                         scrollDirection: Axis.horizontal,
-                        children: _contexts.map((c) {
+                        children: _contextKeys.map((c) {
                           final sel = _context == c['key'];
                           return Padding(padding: const EdgeInsets.only(right: 6), child: GestureDetector(
                             onTap: () => setState(() => _context = c['key'] as String),
@@ -124,7 +137,7 @@ class _State extends State<SpecialistRelationshipPicker> {
                               child: Row(mainAxisSize: MainAxisSize.min, children: [
                                 Icon(c['icon'] as IconData, size: 14, color: sel ? AppColors.primary : AppColors.textSecondary),
                                 const SizedBox(width: 4),
-                                Text(c['label'] as String, style: TextStyle(
+                                Text(_contextLabel(l, c['key'] as String), style: TextStyle(
                                   color: sel ? AppColors.primary : AppColors.textSecondary, fontSize: 11, fontWeight: sel ? FontWeight.w600 : FontWeight.normal)),
                               ]),
                             ),
@@ -157,7 +170,7 @@ class _State extends State<SpecialistRelationshipPicker> {
                     itemBuilder: (ctx, i) {
                       final c = _charts[i];
                       final id = c['id']?.toString() ?? '';
-                      final name = c['name']?.toString() ?? 'Unknown';
+                      final name = c['name']?.toString() ?? (l?.unknownName ?? 'Unknown');
                       final dob = c['dob']?.toString() ?? '';
                       final place = c['place']?.toString() ?? '';
                       final gender = c['gender']?.toString() ?? '';
@@ -198,7 +211,7 @@ class _State extends State<SpecialistRelationshipPicker> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: Text('Analyze ${_selected.length} Charts', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                child: Text(l?.analyzeChartsCountButton(_selected.length) ?? 'Analyze ${_selected.length} Charts', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               )))
           : null,
     );

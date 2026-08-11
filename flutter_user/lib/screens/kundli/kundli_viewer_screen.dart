@@ -122,13 +122,13 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
             ),
       appBar: AppBar(
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-          Text(widget.clientName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
-          Text(l.completeBirthChart, style: const TextStyle(color: AppColors.primary, fontSize: 11)),
+          Text(widget.clientName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(l.completeBirthChart, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.primary, fontSize: 11)),
         ]),
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined),
-            tooltip: 'Download PDF',
+            tooltip: l.downloadPdf,
             onPressed: () => downloadReportPdf(
                 context, 'kundli/${widget.chartId}', 'kundli-${widget.clientName}'),
           ),

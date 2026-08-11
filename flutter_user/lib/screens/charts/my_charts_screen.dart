@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../utils/month_labels.dart';
 import '../../theme/app_theme.dart';
 import '../../bloc/chart/chart_bloc.dart';
 import '../../bloc/chart/chart_event.dart';
@@ -16,11 +17,6 @@ class MyChartsScreen extends StatefulWidget {
 }
 
 class _MyChartsScreenState extends State<MyChartsScreen> {
-  static const _months = [
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
-  ];
-
   static const _avatarGradients = <List<Color>>[
     [AppColors.gold, AppColors.saffron],
     [AppColors.saffron, AppColors.cosmicPink],
@@ -56,7 +52,8 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
     if (parts.length != 3) return dob;
     final m = int.tryParse(parts[1]);
     if (m == null || m < 1 || m > 12) return dob;
-    return '${parts[0].padLeft(2, '0')} ${_months[m - 1]} ${parts[2]}';
+    final monthAbbr = MonthLabels.abbr(context, m);
+    return '${parts[0].padLeft(2, '0')} $monthAbbr ${parts[2]}';
   }
 
   String _metaLine(Map c) {
@@ -115,7 +112,7 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
       listener: (context, state) {
         if (state is ChartCreated) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Birth chart created!'), backgroundColor: AppColors.success),
+            SnackBar(content: Text(l.birthChartCreated), backgroundColor: AppColors.success),
           );
         } else if (state is ChartFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -229,7 +226,7 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
                           onChanged: (v) => setState(() => _query = v),
                           style: const TextStyle(color: AppColors.ivory, fontSize: 13),
                           decoration: InputDecoration(
-                            hintText: 'Search by name or birth date...',
+                            hintText: l.searchChartsHint,
                             hintStyle: const TextStyle(color: AppColors.smoke, fontSize: 13),
                             prefixIcon: const Icon(Icons.search, color: AppColors.smoke, size: 20),
                             border: InputBorder.none,
@@ -301,7 +298,7 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                allCharts.isEmpty ? l.createFirst : 'Try a different filter',
+                                allCharts.isEmpty ? l.createFirst : l.tryDifferentFilter,
                                 style: const TextStyle(color: AppColors.smoke),
                                 textAlign: TextAlign.center,
                               ),
@@ -431,7 +428,7 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
             MaterialPageRoute(
               builder: (_) => KundliViewerScreen(
                 chartId: c['id']?.toString() ?? '',
-                clientName: name.isEmpty ? 'Chart' : name,
+                clientName: name.isEmpty ? l.defaultChartName : name,
               ),
             ),
           ),
@@ -493,12 +490,16 @@ class _MyChartsScreenState extends State<MyChartsScreen> {
                                 color: AppColors.gold.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Text(
-                                l.primary,
-                                style: const TextStyle(
-                                  color: AppColors.gold,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  l.primary,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: AppColors.gold,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),

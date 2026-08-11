@@ -3415,5 +3415,155 @@
   "worstWindows": "WORST WINDOWS",
   "yogaAnalysis": "Yoga Analysis",
   "unlocked": "Unlock ho gaya!",
-  "lessThanOneMin": "1 minute se kam bacha hai"
+  "lessThanOneMin": "1 minute se kam bacha hai",
+  "biometricNotAvailable": "Biometric is device par available nahi hai",
+  "biometricErrorWithDetails": "Biometric error: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "Rate Cards",
+  "perMinuteLabel": "Per-Minute",
+  "perSessionLabel": "Per-Session",
+  "otherChargesLabel": "Anya Charges",
+  "sessionLimitInfo": "Session: {limit} msgs, {hours}hr validity",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "Chat",
+  "callWord": "Call",
+  "perMsgLabel": "Per-Msg",
+  "superChatLabel": "Super Chat",
+  "changePasswordTitle": "Password Badlein",
+  "changePasswordSub": "Email OTP ke through apna password update karein",
+  "customerSupportTitle": "Customer Support",
+  "customerSupportSub": "FAQ aur ticket raise karein",
+  "notSetLabel": "Set nahi hai",
+  "phoneLabel": "Phone",
+  "experienceLabel": "Experience",
+  "verifyToEnableBiometric": "Biometric login enable karne ke liye verify karein",
+  "tapToChangeAppLanguage": "App ki language badalne ke liye tap karein",
+  "discardChangesTitle": "Changes discard karein?",
+  "discardChangesBody": "Aapke paas unsaved changes hain. Abhi bahar jaane par aapke edits kho jayenge.",
+  "keepEditing": "Editing jaari rakhein",
+  "discardAction": "Discard karein",
+  "newRatingLabel": "Naya",
+  "yrsSuffix": "yrs",
+  "unsavedChangesLabel": "Unsaved changes",
+  "profileInformationTitle": "Profile Information",
+  "yourFullNameHint": "Aapka pura naam",
+  "shownToUsersHint": "Users ko dikhaya jaata hai",
+  "bioHint": "Users ko apne astrology experience ke baare mein batayein…",
+  "professionalInformationTitle": "Professional Information",
+  "validYearsError": "Years ki valid number daalein.",
+  "addLanguageHint": "Ek language jodein",
+  "addSpecializationHint": "Ek specialization jodein",
+  "qualificationHint": "Jaise B.Sc, Jyotish Acharya",
+  "consultationPricingTitle": "Consultation Pricing",
+  "consultationPricingSubtitle": "Set karein ki users se aapke consultations ke liye kaise charge liya jaaye.",
+  "perMessageLabel": "Per Message",
+  "perMinUnit": "/ min",
+  "perSessionUnit": "/ session",
+  "audioVideoBilledPerMinuteNote": "Audio aur video calls per minute bill hote hain (\"Per Minute\" mein set karein). Session pricing sirf chat par lagu hota hai.",
+  "chatSessionMessageNote": "Chat session ke included messages khatam hone ke baad, har further message par yeh rate lagega (chat open rehti hai).",
+  "perMsgUnit": "/ msg",
+  "minUnit": "min",
+  "messageSettingsTitle": "Message Settings",
+  "messageSettingsSubtitle": "Yeh per session paid-message allowance aur validity control karta hai.",
+  "messagesPerSessionLabel": "Messages per session",
+  "msgsUnit": "msgs",
+  "validMessagesError": "Messages ki valid number daalein.",
+  "sessionValidityLabel": "Session validity",
+  "hoursUnit": "hours",
+  "validHoursError": "Hours ki valid number daalein.",
+  "saveChangesButton": "Changes Save Karein",
+  "suggestionsLabel": "Suggestions",
+  "addButton": "Add Karein",
+  "removeChipLabel": "{value} hatayein",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "Report copy ho gayi! {ai} khola ja raha hai — discuss karne ke liye paste karein.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "Kundli Milan Report",
+  "milanPersonOne": "Person 1",
+  "milanPersonTwo": "Person 2",
+  "runningMilanAnalysis": "Milan analysis chal raha hai...",
+  "selectedOfTwo": "{count}/2 selected",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "Milan Analysis Run Karein",
+  "relationshipIntelligenceTitle": "Relationship Intelligence",
+  "analyzingChartsCount": "{count} charts analyze ho rahe hain...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "Relationship Context",
+  "generalWord": "General",
+  "teamWord": "Team",
+  "friendshipWord": "Friendship",
+  "analyzeChartsCountButton": "{count} Charts Analyze Karein",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "KEY SCORES",
+  "astrologicalWord": "Astrological",
+  "allScoresCount": "All Scores ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "Amount (₹)",
+  "withdrawMinAmount": "Withdraw karein (min ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

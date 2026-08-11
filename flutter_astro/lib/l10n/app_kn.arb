@@ -3415,5 +3415,155 @@
   "worstWindows": "ಕೆಟ್ಟ ಅವಧಿಗಳು",
   "yogaAnalysis": "ಯೋಗ ವಿಶ್ಲೇಷಣೆ",
   "unlocked": "ಅನ್‌ಲಾಕ್ ಆಗಿದೆ!",
-  "lessThanOneMin": "1 ನಿಮಿಷಕ್ಕಿಂತ ಕಡಿಮೆ ಉಳಿದಿದೆ"
+  "lessThanOneMin": "1 ನಿಮಿಷಕ್ಕಿಂತ ಕಡಿಮೆ ಉಳಿದಿದೆ",
+  "biometricNotAvailable": "ಈ ಡಿವೈಸ್‌ನಲ್ಲಿ ಬಯೋಮೆಟ್ರಿಕ್ ಲಭ್ಯವಿಲ್ಲ",
+  "biometricErrorWithDetails": "ಬಯೋಮೆಟ್ರಿಕ್ ದೋಷ: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "ದರ ಕಾರ್ಡ್‌ಗಳು",
+  "perMinuteLabel": "ಪ್ರತಿ ನಿಮಿಷ",
+  "perSessionLabel": "ಪ್ರತಿ ಸೆಶನ್",
+  "otherChargesLabel": "ಇತರ ಶುಲ್ಕಗಳು",
+  "sessionLimitInfo": "ಸೆಶನ್: {limit} ಸಂದೇಶಗಳು, {hours} ಗಂಟೆ ಮಾನ್ಯತೆ",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "ಚಾಟ್",
+  "callWord": "ಕರೆ",
+  "perMsgLabel": "ಪ್ರತಿ ಸಂದೇಶ",
+  "superChatLabel": "ಸೂಪರ್ ಚಾಟ್",
+  "changePasswordTitle": "ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಯಿಸಿ",
+  "changePasswordSub": "ಇಮೇಲ್ OTP ಮೂಲಕ ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
+  "customerSupportTitle": "ಗ್ರಾಹಕ ಸಹಾಯ",
+  "customerSupportSub": "FAQ ಮತ್ತು ಟಿಕೆಟ್ ರೈಸ್ ಮಾಡಿ",
+  "notSetLabel": "ಹೊಂದಿಸಿಲ್ಲ",
+  "phoneLabel": "ಫೋನ್",
+  "experienceLabel": "ಅನುಭವ",
+  "verifyToEnableBiometric": "ಬಯೋಮೆಟ್ರಿಕ್ ಲಾಗಿನ್ ಸಕ್ರಿಯಗೊಳಿಸಲು ಪರಿಶೀಲಿಸಿ",
+  "tapToChangeAppLanguage": "ಆಪ್ ಭಾಷೆಯನ್ನು ಬದಲಾಯಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
+  "discardChangesTitle": "ಬದಲಾವಣೆಗಳನ್ನು ರದ್ದುಗೊಳಿಸುವುದೇ?",
+  "discardChangesBody": "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳು ಉಳಿಸಲಾಗಿಲ್ಲ. ಈಗ ಹೊರಟರೆ ನಿಮ್ಮ ಬದಲಾವಣೆಗಳು ಕಳೆದುಹೋಗುತ್ತವೆ.",
+  "keepEditing": "ಎಡಿಟ್ ಮುಂದುವರಿಸಿ",
+  "discardAction": "ರದ್ದುಗೊಳಿಸಿ",
+  "newRatingLabel": "ಹೊಸದು",
+  "yrsSuffix": "ವರ್ಷಗಳು",
+  "unsavedChangesLabel": "ಉಳಿಸದ ಬದಲಾವಣೆಗಳು",
+  "profileInformationTitle": "ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿ",
+  "yourFullNameHint": "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು",
+  "shownToUsersHint": "ಬಳಕೆದಾರರಿಗೆ ತೋರಿಸಲಾಗುತ್ತದೆ",
+  "bioHint": "ನಿಮ್ಮ ಜ್ಯೋತಿಷ್ಯ ಅನುಭವದ ಬಗ್ಗೆ ಬಳಕೆದಾರರಿಗೆ ತಿಳಿಸಿ…",
+  "professionalInformationTitle": "ವೃತ್ತಿಪರ ಮಾಹಿತಿ",
+  "validYearsError": "ವರ್ಷಗಳ ಮಾನ್ಯ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+  "addLanguageHint": "ಒಂದು ಭಾಷೆಯನ್ನು ಸೇರಿಸಿ",
+  "addSpecializationHint": "ಒಂದು ವಿಶೇಷತೆಯನ್ನು ಸೇರಿಸಿ",
+  "qualificationHint": "ಉದಾ. B.Sc, ಜ್ಯೋತಿಷ್ಯ ಆಚಾರ್ಯ",
+  "consultationPricingTitle": "ಸಲಹಾ ಬೆಲೆ",
+  "consultationPricingSubtitle": "ನಿಮ್ಮ ಸಲಹೆಗಳಿಗಾಗಿ ಬಳಕೆದಾರರಿಗೆ ಹೇಗೆ ಶುಲ್ಕ ವಿಧಿಸಬೇಕು ಎಂಬುದನ್ನು ಹೊಂದಿಸಿ.",
+  "perMessageLabel": "ಪ್ರತಿ ಸಂದೇಶ",
+  "perMinUnit": "/ ನಿಮಿಷ",
+  "perSessionUnit": "/ ಸೆಶನ್",
+  "audioVideoBilledPerMinuteNote": "ಆಡಿಯೋ ಮತ್ತು ವಿಡಿಯೋ ಕರೆಗಳನ್ನು ಪ್ರತಿ ನಿಮಿಷಕ್ಕೆ ಬಿಲ್ ಮಾಡಲಾಗುತ್ತದೆ (\"ಪ್ರತಿ ನಿಮಿಷ\"ದಲ್ಲಿ ಹೊಂದಿಸಿ). ಸೆಶನ್ ಬೆಲೆ ಚಾಟ್‌ಗೆ ಮಾತ್ರ ಅನ್ವಯಿಸುತ್ತದೆ.",
+  "chatSessionMessageNote": "ಚಾಟ್ ಸೆಶನ್‌ನಲ್ಲಿ ಸೇರಿಸಲಾದ ಸಂದೇಶಗಳು ಮುಗಿದ ನಂತರ, ಪ್ರತಿ ಹೆಚ್ಚಿನ ಸಂದೇಶಕ್ಕೆ ಈ ದರ ಅನ್ವಯಿಸುತ್ತದೆ (ಚಾಟ್ ತೆರೆದಿರುತ್ತದೆ).",
+  "perMsgUnit": "/ ಸಂದೇಶ",
+  "minUnit": "ನಿಮಿಷ",
+  "messageSettingsTitle": "ಸಂದೇಶ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "messageSettingsSubtitle": "ಇದು ಪ್ರತಿ ಸೆಶನ್‌ಗೆ ಪೇಯ್ಡ್-ಸಂದೇಶ ಮಿತಿ ಮತ್ತು ಮಾನ್ಯತೆಯನ್ನು ನಿಯಂತ್ರಿಸುತ್ತದೆ.",
+  "messagesPerSessionLabel": "ಪ್ರತಿ ಸೆಶನ್‌ಗೆ ಸಂದೇಶಗಳು",
+  "msgsUnit": "ಸಂದೇಶಗಳು",
+  "validMessagesError": "ಸಂದೇಶಗಳ ಮಾನ್ಯ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+  "sessionValidityLabel": "ಸೆಶನ್ ಮಾನ್ಯತೆ",
+  "hoursUnit": "ಗಂಟೆಗಳು",
+  "validHoursError": "ಗಂಟೆಗಳ ಮಾನ್ಯ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.",
+  "saveChangesButton": "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ",
+  "suggestionsLabel": "ಸಲಹೆಗಳು",
+  "addButton": "ಸೇರಿಸಿ",
+  "removeChipLabel": "{value} ತೆಗೆದುಹಾಕಿ",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "ವರದಿ ನಕಲಿಸಲಾಗಿದೆ! {ai} ತೆರೆಯಲಾಗುತ್ತಿದೆ — ಚರ್ಚಿಸಲು ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "ಕುಂಡಲಿ ಮಿಲನ್ ವರದಿ",
+  "milanPersonOne": "ವ್ಯಕ್ತಿ 1",
+  "milanPersonTwo": "ವ್ಯಕ್ತಿ 2",
+  "runningMilanAnalysis": "ಮಿಲನ್ ವಿಶ್ಲೇಷಣೆ ನಡೆಯುತ್ತಿದೆ...",
+  "selectedOfTwo": "{count}/2 ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "ಮಿಲನ್ ವಿಶ್ಲೇಷಣೆ ಚಲಾಯಿಸಿ",
+  "relationshipIntelligenceTitle": "ಸಂಬಂಧ ಇಂಟೆಲಿಜೆನ್ಸ್",
+  "analyzingChartsCount": "{count} ಚಾರ್ಟ್‌ಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "ಸಂಬಂಧದ ಸಂದರ್ಭ",
+  "generalWord": "ಸಾಮಾನ್ಯ",
+  "teamWord": "ತಂಡ",
+  "friendshipWord": "ಸ್ನೇಹ",
+  "analyzeChartsCountButton": "{count} ಚಾರ್ಟ್‌ಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಿ",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "ಮುಖ್ಯ ಸ್ಕೋರ್‌ಗಳು",
+  "astrologicalWord": "ಜ್ಯೋತಿಷ್ಯ ಸಂಬಂಧಿತ",
+  "allScoresCount": "ಎಲ್ಲಾ ಸ್ಕೋರ್‌ಗಳು ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "ಮೊತ್ತ (₹)",
+  "withdrawMinAmount": "ಹಿಂಪಡೆಯಿರಿ (ಕನಿಷ್ಠ ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

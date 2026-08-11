@@ -79,22 +79,22 @@ class _HomeTabState extends State<HomeTab> {
         builder: (ctx) => AlertDialog(
           backgroundColor: AppColors.card,
           title: Row(children: [Text(emoji, style: const TextStyle(fontSize: 22)), const SizedBox(width: 8),
-            Expanded(child: Text(label, style: const TextStyle(color: AppColors.primary, fontSize: 16)))]),
+            Expanded(child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.primary, fontSize: 16)))]),
           content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             if ((meta['free_intro'] ?? '').toString().isNotEmpty)
               Padding(padding: const EdgeInsets.only(bottom: 12),
                 child: Text(meta['free_intro'].toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13))),
             Text(
               intl
-                  ? 'Unlock this AI specialist for $priceLabel (one time), purchased securely through the app store.'
-                  : 'Unlock this AI specialist for $priceLabel (one time). The amount is deducted from your wallet.',
+                  ? AppLocalizations.of(context)!.unlockAiSpecialistIntl(priceLabel)
+                  : AppLocalizations.of(context)!.unlockAiSpecialistWallet(priceLabel),
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ]),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary))),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: AppColors.textSecondary))),
             ElevatedButton(onPressed: () => Navigator.pop(ctx, true),
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.midnight),
-                child: Text('Unlock $priceLabel')),
+                child: Text(AppLocalizations.of(context)!.unlockPriceLabel(priceLabel), maxLines: 1, overflow: TextOverflow.ellipsis)),
           ],
         ),
       );
@@ -104,16 +104,16 @@ class _HomeTabState extends State<HomeTab> {
         // International → store IAP → backend verify + grant.
         final productId = (meta['iap_product_id'] as String?) ?? '';
         if (productId.isEmpty) {
-          if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('This specialist is not available for purchase yet.'),
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)!.specialistNotAvailablePurchase),
             backgroundColor: AppColors.error));
           return;
         }
         final res = await IapService.instance.buyAgent(productId: productId, agentKey: key);
         if (!res.ok) {
           if (mounted && res.error != 'canceled') {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Could not complete the purchase. Please try again.'),
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(AppLocalizations.of(context)!.couldNotCompletePurchase),
               backgroundColor: AppColors.error));
           }
           return;
@@ -122,7 +122,7 @@ class _HomeTabState extends State<HomeTab> {
         final resp = await ApiService().unlockAiAgent(key);
         if (resp['statusCode'] != 200) {
           if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(resp['detail'] ?? 'Could not unlock (check wallet balance)'),
+            content: Text(resp['detail'] ?? AppLocalizations.of(context)!.couldNotUnlockWalletBalance),
             backgroundColor: AppColors.error));
           return;
         }
@@ -287,9 +287,9 @@ class _HomeTabState extends State<HomeTab> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(children: [
-        Text(title, style: const TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700)),
+        Flexible(child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontFamily: 'Manrope', color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w700))),
         const Spacer(),
-        Text(trailing, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+        Text(trailing, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
       ]),
     );
   }
@@ -467,8 +467,9 @@ class _HomeTabState extends State<HomeTab> {
                       color: isFree ? AppColors.success.withOpacity(0.15) : AppColors.gold.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(isFree ? 'FREE' : Money.format(sessAmount, currency: sessCurrency),
-                        style: TextStyle(color: isFree ? AppColors.success : AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700)),
+                    child: FittedBox(fit: BoxFit.scaleDown, child: Text(isFree ? AppLocalizations.of(context)!.freeBadge : Money.format(sessAmount, currency: sessCurrency),
+                        maxLines: 1,
+                        style: TextStyle(color: isFree ? AppColors.success : AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700))),
                   ),
                 ]),
                 const SizedBox(height: 8),
@@ -556,17 +557,18 @@ class _AstroCard extends StatelessWidget {
           const SizedBox(width: 12),
           // Info
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(astro['display_name'] ?? '\u2014', style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700)),
+            Text(astro['display_name'] ?? '\u2014', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w700)),
             Text(
               ((astro['specializations'] as List?) ?? []).isNotEmpty
                   ? (astro['specializations'] as List).take(2).join(' \u00b7 ')
-                  : 'Astrologer',
+                  : AppLocalizations.of(context)!.astrologer,
               style: const TextStyle(color: AppColors.smoke, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
             const SizedBox(height: 3),
             Row(children: [
               Text('\u2605 ${rating.toStringAsFixed(1)}', style: const TextStyle(color: AppColors.gold, fontSize: 10, fontWeight: FontWeight.w600)),
-              Text('  \u00b7  ${_astroRate(astro)}/min',
-                  style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
+              Flexible(child: Text('  \u00b7  ${_astroRate(astro)}/min',
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: AppColors.smoke, fontSize: 10))),
             ]),
           ])),
           // CTA

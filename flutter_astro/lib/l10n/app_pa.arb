@@ -3415,5 +3415,155 @@
   "worstWindows": "ਸਭ ਤੋਂ ਮਾੜੇ ਸਮੇਂ",
   "yogaAnalysis": "ਯੋਗ ਵਿਸ਼ਲੇਸ਼ਣ",
   "unlocked": "ਖੁੱਲ੍ਹ ਗਿਆ!",
-  "lessThanOneMin": "1 ਮਿੰਟ ਤੋਂ ਘੱਟ ਬਾਕੀ"
+  "lessThanOneMin": "1 ਮਿੰਟ ਤੋਂ ਘੱਟ ਬਾਕੀ",
+  "biometricNotAvailable": "ਇਸ ਡਿਵਾਈਸ 'ਤੇ ਬਾਇਓਮੈਟ੍ਰਿਕ ਉਪਲਬਧ ਨਹੀਂ ਹੈ",
+  "biometricErrorWithDetails": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਗੜਬੜੀ: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "ਰੇਟ ਕਾਰਡ",
+  "perMinuteLabel": "ਪ੍ਰਤੀ ਮਿੰਟ",
+  "perSessionLabel": "ਪ੍ਰਤੀ ਸੈਸ਼ਨ",
+  "otherChargesLabel": "ਹੋਰ ਖਰਚੇ",
+  "sessionLimitInfo": "ਸੈਸ਼ਨ: {limit} ਸੁਨੇਹੇ, {hours} ਘੰਟੇ ਵੈਧਤਾ",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "ਚੈਟ",
+  "callWord": "ਕਾਲ",
+  "perMsgLabel": "ਪ੍ਰਤੀ ਸੁਨੇਹਾ",
+  "superChatLabel": "ਸੁਪਰ ਚੈਟ",
+  "changePasswordTitle": "ਪਾਸਵਰਡ ਬਦਲੋ",
+  "changePasswordSub": "ਈਮੇਲ OTP ਰਾਹੀਂ ਆਪਣਾ ਪਾਸਵਰਡ ਅੱਪਡੇਟ ਕਰੋ",
+  "customerSupportTitle": "ਗਾਹਕ ਸਹਾਇਤਾ",
+  "customerSupportSub": "FAQ ਅਤੇ ਟਿਕਟ ਦਰਜ ਕਰੋ",
+  "notSetLabel": "ਸੈੱਟ ਨਹੀਂ ਹੈ",
+  "phoneLabel": "ਫੋਨ",
+  "experienceLabel": "ਤਜਰਬਾ",
+  "verifyToEnableBiometric": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਲੌਗਇਨ ਸਮਰੱਥ ਕਰਨ ਲਈ ਪੁਸ਼ਟੀ ਕਰੋ",
+  "tapToChangeAppLanguage": "ਐਪ ਦੀ ਭਾਸ਼ਾ ਬਦਲਣ ਲਈ ਟੈਪ ਕਰੋ",
+  "discardChangesTitle": "ਬਦਲਾਅ ਰੱਦ ਕਰਨੇ ਹਨ?",
+  "discardChangesBody": "ਤੁਹਾਡੇ ਬਦਲਾਅ ਸੇਵ ਨਹੀਂ ਹੋਏ ਹਨ। ਹੁਣੇ ਬਾਹਰ ਜਾਣ ਨਾਲ ਤੁਹਾਡੇ ਬਦਲਾਅ ਗੁੰਮ ਜਾਣਗੇ।",
+  "keepEditing": "ਸੰਪਾਦਨ ਜਾਰੀ ਰੱਖੋ",
+  "discardAction": "ਰੱਦ ਕਰੋ",
+  "newRatingLabel": "ਨਵਾਂ",
+  "yrsSuffix": "ਸਾਲ",
+  "unsavedChangesLabel": "ਸੇਵ ਨਾ ਹੋਏ ਬਦਲਾਅ",
+  "profileInformationTitle": "ਪ੍ਰੋਫਾਈਲ ਜਾਣਕਾਰੀ",
+  "yourFullNameHint": "ਤੁਹਾਡਾ ਪੂਰਾ ਨਾਮ",
+  "shownToUsersHint": "ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਦਿਖਾਇਆ ਜਾਂਦਾ ਹੈ",
+  "bioHint": "ਆਪਣੇ ਜੋਤਿਸ਼ ਤਜਰਬੇ ਬਾਰੇ ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਦੱਸੋ…",
+  "professionalInformationTitle": "ਪੇਸ਼ੇਵਰ ਜਾਣਕਾਰੀ",
+  "validYearsError": "ਸਾਲਾਂ ਦੀ ਸਹੀ ਗਿਣਤੀ ਦਰਜ ਕਰੋ।",
+  "addLanguageHint": "ਇੱਕ ਭਾਸ਼ਾ ਸ਼ਾਮਲ ਕਰੋ",
+  "addSpecializationHint": "ਇੱਕ ਮਾਹਰਤਾ ਸ਼ਾਮਲ ਕਰੋ",
+  "qualificationHint": "ਜਿਵੇਂ B.Sc, ਜੋਤਿਸ਼ ਆਚਾਰੀਆ",
+  "consultationPricingTitle": "ਸਲਾਹ ਕੀਮਤ",
+  "consultationPricingSubtitle": "ਆਪਣੀਆਂ ਸਲਾਹਾਂ ਲਈ ਵਰਤੋਂਕਾਰਾਂ ਤੋਂ ਕਿਵੇਂ ਖਰਚਾ ਲਿਆ ਜਾਵੇ ਇਹ ਸੈੱਟ ਕਰੋ।",
+  "perMessageLabel": "ਪ੍ਰਤੀ ਸੁਨੇਹਾ",
+  "perMinUnit": "/ ਮਿੰਟ",
+  "perSessionUnit": "/ ਸੈਸ਼ਨ",
+  "audioVideoBilledPerMinuteNote": "ਆਡੀਓ ਅਤੇ ਵੀਡੀਓ ਕਾਲਾਂ ਪ੍ਰਤੀ ਮਿੰਟ ਬਿੱਲ ਹੁੰਦੀਆਂ ਹਨ (\"ਪ੍ਰਤੀ ਮਿੰਟ\" ਵਿੱਚ ਸੈੱਟ ਕਰੋ)। ਸੈਸ਼ਨ ਕੀਮਤ ਸਿਰਫ਼ ਚੈਟ 'ਤੇ ਲਾਗੂ ਹੁੰਦੀ ਹੈ।",
+  "chatSessionMessageNote": "ਚੈਟ ਸੈਸ਼ਨ ਦੇ ਸ਼ਾਮਲ ਸੁਨੇਹੇ ਖਤਮ ਹੋਣ ਤੋਂ ਬਾਅਦ, ਹਰ ਅਗਲੇ ਸੁਨੇਹੇ 'ਤੇ ਇਹ ਰੇਟ ਲਾਗੂ ਹੋਵੇਗਾ (ਚੈਟ ਖੁੱਲ੍ਹੀ ਰਹਿੰਦੀ ਹੈ)।",
+  "perMsgUnit": "/ ਸੁਨੇਹਾ",
+  "minUnit": "ਮਿੰਟ",
+  "messageSettingsTitle": "ਸੁਨੇਹਾ ਸੈਟਿੰਗਾਂ",
+  "messageSettingsSubtitle": "ਇਹ ਹਰ ਸੈਸ਼ਨ ਲਈ ਪੇਡ-ਸੁਨੇਹਾ ਸੀਮਾ ਅਤੇ ਵੈਧਤਾ ਨੂੰ ਕੰਟਰੋਲ ਕਰਦਾ ਹੈ।",
+  "messagesPerSessionLabel": "ਪ੍ਰਤੀ ਸੈਸ਼ਨ ਸੁਨੇਹੇ",
+  "msgsUnit": "ਸੁਨੇਹੇ",
+  "validMessagesError": "ਸੁਨੇਹਿਆਂ ਦੀ ਸਹੀ ਗਿਣਤੀ ਦਰਜ ਕਰੋ।",
+  "sessionValidityLabel": "ਸੈਸ਼ਨ ਵੈਧਤਾ",
+  "hoursUnit": "ਘੰਟੇ",
+  "validHoursError": "ਘੰਟਿਆਂ ਦੀ ਸਹੀ ਗਿਣਤੀ ਦਰਜ ਕਰੋ।",
+  "saveChangesButton": "ਬਦਲਾਅ ਸੇਵ ਕਰੋ",
+  "suggestionsLabel": "ਸੁਝਾਅ",
+  "addButton": "ਸ਼ਾਮਲ ਕਰੋ",
+  "removeChipLabel": "{value} ਹਟਾਓ",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "ਰਿਪੋਰਟ ਕਾਪੀ ਹੋ ਗਈ! {ai} ਖੋਲ੍ਹੀ ਜਾ ਰਹੀ ਹੈ — ਚਰਚਾ ਲਈ ਪੇਸਟ ਕਰੋ।",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "ਕੁੰਡਲੀ ਮਿਲਨ ਰਿਪੋਰਟ",
+  "milanPersonOne": "ਵਿਅਕਤੀ 1",
+  "milanPersonTwo": "ਵਿਅਕਤੀ 2",
+  "runningMilanAnalysis": "ਮਿਲਨ ਵਿਸ਼ਲੇਸ਼ਣ ਚੱਲ ਰਿਹਾ ਹੈ...",
+  "selectedOfTwo": "{count}/2 ਚੁਣਿਆ",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "ਮਿਲਨ ਵਿਸ਼ਲੇਸ਼ਣ ਚਲਾਓ",
+  "relationshipIntelligenceTitle": "ਸਬੰਧ ਬੁੱਧੀ",
+  "analyzingChartsCount": "{count} ਚਾਰਟਾਂ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "ਸਬੰਧ ਪ੍ਰਸੰਗ",
+  "generalWord": "ਆਮ",
+  "teamWord": "ਟੀਮ",
+  "friendshipWord": "ਦੋਸਤੀ",
+  "analyzeChartsCountButton": "{count} ਚਾਰਟਾਂ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "ਮੁੱਖ ਸਕੋਰ",
+  "astrologicalWord": "ਜੋਤਿਸ਼ੀ",
+  "allScoresCount": "ਸਾਰੇ ਸਕੋਰ ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "ਰਕਮ (₹)",
+  "withdrawMinAmount": "ਕਢਵਾਓ (ਘੱਟੋ-ਘੱਟ ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

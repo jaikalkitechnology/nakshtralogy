@@ -3415,5 +3415,155 @@
   "worstWindows": "മോശം കാലയളവുകൾ",
   "yogaAnalysis": "യോഗ വിശകലനം",
   "unlocked": "അൺലോക്ക് ചെയ്തു!",
-  "lessThanOneMin": "1 മിനിറ്റിൽ താഴെ ബാക്കി"
+  "lessThanOneMin": "1 മിനിറ്റിൽ താഴെ ബാക്കി",
+  "biometricNotAvailable": "ഈ ഡിവൈസിൽ ബയോമെട്രിക് ലഭ്യമല്ല",
+  "biometricErrorWithDetails": "ബയോമെട്രിക് പിശക്: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "റേറ്റ് കാർഡുകൾ",
+  "perMinuteLabel": "ഓരോ മിനിറ്റും",
+  "perSessionLabel": "ഓരോ സെഷനും",
+  "otherChargesLabel": "മറ്റ് ചാർജുകൾ",
+  "sessionLimitInfo": "സെഷൻ: {limit} മെസേജുകൾ, {hours} മണിക്കൂർ സാധുത",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "ചാറ്റ്",
+  "callWord": "കോൾ",
+  "perMsgLabel": "ഓരോ മെസേജിനും",
+  "superChatLabel": "സൂപ്പർ ചാറ്റ്",
+  "changePasswordTitle": "പാസ്‌വേഡ് മാറ്റുക",
+  "changePasswordSub": "ഇമെയിൽ OTP വഴി നിങ്ങളുടെ പാസ്‌വേഡ് അപ്‌ഡേറ്റ് ചെയ്യുക",
+  "customerSupportTitle": "കസ്റ്റമർ സപ്പോർട്ട്",
+  "customerSupportSub": "FAQ ഉം ടിക്കറ്റ് ഉയർത്തുക",
+  "notSetLabel": "സെറ്റ് ചെയ്തിട്ടില്ല",
+  "phoneLabel": "ഫോൺ",
+  "experienceLabel": "പരിചയം",
+  "verifyToEnableBiometric": "ബയോമെട്രിക് ലോഗിൻ പ്രവർത്തനക്ഷമമാക്കാൻ പരിശോധിക്കുക",
+  "tapToChangeAppLanguage": "ആപ്പിന്റെ ഭാഷ മാറ്റാൻ ടാപ്പ് ചെയ്യുക",
+  "discardChangesTitle": "മാറ്റങ്ങൾ ഉപേക്ഷിക്കണോ?",
+  "discardChangesBody": "നിങ്ങളുടെ മാറ്റങ്ങൾ സേവ് ചെയ്തിട്ടില്ല. ഇപ്പോൾ പോയാൽ നിങ്ങളുടെ എഡിറ്റുകൾ നഷ്ടമാകും.",
+  "keepEditing": "എഡിറ്റിംഗ് തുടരുക",
+  "discardAction": "ഉപേക്ഷിക്കുക",
+  "newRatingLabel": "പുതിയത്",
+  "yrsSuffix": "വർഷം",
+  "unsavedChangesLabel": "സേവ് ചെയ്യാത്ത മാറ്റങ്ങൾ",
+  "profileInformationTitle": "പ്രൊഫൈൽ വിവരങ്ങൾ",
+  "yourFullNameHint": "നിങ്ങളുടെ പൂർണ്ണ നാമം",
+  "shownToUsersHint": "ഉപയോക്താക്കൾക്ക് കാണിക്കുന്നു",
+  "bioHint": "നിങ്ങളുടെ ജ്യോതിഷ അനുഭവത്തെക്കുറിച്ച് ഉപയോക്താക്കളോട് പറയുക…",
+  "professionalInformationTitle": "പ്രൊഫഷണൽ വിവരങ്ങൾ",
+  "validYearsError": "വർഷങ്ങളുടെ സാധുവായ എണ്ണം നൽകുക.",
+  "addLanguageHint": "ഒരു ഭാഷ ചേർക്കുക",
+  "addSpecializationHint": "ഒരു സ്പെഷ്യലൈസേഷൻ ചേർക്കുക",
+  "qualificationHint": "ഉദാ. B.Sc, ജ്യോതിഷ ആചാര്യ",
+  "consultationPricingTitle": "കൺസൾട്ടേഷൻ വില",
+  "consultationPricingSubtitle": "നിങ്ങളുടെ കൺസൾട്ടേഷനുകൾക്ക് ഉപയോക്താക്കളിൽ നിന്ന് എങ്ങനെ ചാർജ് ചെയ്യണമെന്ന് സെറ്റ് ചെയ്യുക.",
+  "perMessageLabel": "ഓരോ മെസേജിനും",
+  "perMinUnit": "/ മിനിറ്റ്",
+  "perSessionUnit": "/ സെഷൻ",
+  "audioVideoBilledPerMinuteNote": "ഓഡിയോ, വീഡിയോ കോളുകൾ ഓരോ മിനിറ്റിനും ബിൽ ചെയ്യുന്നു (\"ഓരോ മിനിറ്റും\" എന്നതിൽ സെറ്റ് ചെയ്യുക). സെഷൻ വില ചാറ്റിന് മാത്രം ബാധകമാണ്.",
+  "chatSessionMessageNote": "ചാറ്റ് സെഷനിലെ ഉൾപ്പെട്ട മെസേജുകൾ തീർന്നാൽ, അടുത്ത ഓരോ മെസേജിനും ഈ നിരക്ക് ബാധകമാകും (ചാറ്റ് തുറന്നിരിക്കും).",
+  "perMsgUnit": "/ മെസേജ്",
+  "minUnit": "മിനിറ്റ്",
+  "messageSettingsTitle": "മെസേജ് ക്രമീകരണങ്ങൾ",
+  "messageSettingsSubtitle": "ഇത് ഓരോ സെഷനിലും പെയ്ഡ്-മെസേജ് പരിധിയും സാധുതയും നിയന്ത്രിക്കുന്നു.",
+  "messagesPerSessionLabel": "ഓരോ സെഷനിലും മെസേജുകൾ",
+  "msgsUnit": "മെസേജുകൾ",
+  "validMessagesError": "മെസേജുകളുടെ സാധുവായ എണ്ണം നൽകുക.",
+  "sessionValidityLabel": "സെഷൻ സാധുത",
+  "hoursUnit": "മണിക്കൂർ",
+  "validHoursError": "മണിക്കൂറുകളുടെ സാധുവായ എണ്ണം നൽകുക.",
+  "saveChangesButton": "മാറ്റങ്ങൾ സേവ് ചെയ്യുക",
+  "suggestionsLabel": "നിർദ്ദേശങ്ങൾ",
+  "addButton": "ചേർക്കുക",
+  "removeChipLabel": "{value} നീക്കം ചെയ്യുക",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "റിപ്പോർട്ട് കോപ്പി ചെയ്തു! {ai} തുറക്കുന്നു — ചർച്ചയ്ക്കായി പേസ്റ്റ് ചെയ്യുക.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "കുണ്ഡലി മിലൻ റിപ്പോർട്ട്",
+  "milanPersonOne": "വ്യക്തി 1",
+  "milanPersonTwo": "വ്യക്തി 2",
+  "runningMilanAnalysis": "മിലൻ വിശകലനം നടക്കുന്നു...",
+  "selectedOfTwo": "{count}/2 തിരഞ്ഞെടുത്തു",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "മിലൻ വിശകലനം പ്രവർത്തിപ്പിക്കുക",
+  "relationshipIntelligenceTitle": "ബന്ധ ഇന്റലിജൻസ്",
+  "analyzingChartsCount": "{count} ചാർട്ടുകൾ വിശകലനം ചെയ്യുന്നു...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "ബന്ധ സന്ദർഭം",
+  "generalWord": "പൊതുവായ",
+  "teamWord": "ടീം",
+  "friendshipWord": "സൗഹൃദം",
+  "analyzeChartsCountButton": "{count} ചാർട്ടുകൾ വിശകലനം ചെയ്യുക",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "പ്രധാന സ്കോറുകൾ",
+  "astrologicalWord": "ജ്യോതിഷപരമായ",
+  "allScoresCount": "എല്ലാ സ്കോറുകളും ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "തുക (₹)",
+  "withdrawMinAmount": "പിൻവലിക്കുക (കുറഞ്ഞത് ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -3789,5 +3789,85 @@
   "houseAnalysis": "Analisis Rumah",
   "jaiminiKarakas": "Karaka Jaimini",
   "copyFullReport": "Salin data laporan lengkap",
-  "reportCopied": "Data laporan disalin!"
+  "reportCopied": "Data laporan disalin!",
+  "biometricNotAvailable": "Biometrik tidak tersedia di perangkat ini",
+  "biometricErrorMsg": "Kesalahan biometrik: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Verifikasi untuk mengaktifkan login biometrik",
+  "dobFormatLabel": "Tanggal Lahir (DD/MM/YYYY)",
+  "tobFormatLabel": "Waktu Lahir (HH:MM)",
+  "phoneLabel": "Telepon",
+  "activeBadge": "AKTIF",
+  "chartCategoryLabel": "Kategori",
+  "freePrimaryDescription": "Utama Gratis — digunakan untuk horoskop harian & layanan bagan tunggal gratis",
+  "searchChartsHint": "Cari berdasarkan nama atau tanggal lahir...",
+  "unlockPriceLabel": "Buka untuk {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Buka spesialis AI ini seharga {price} (sekali), dibeli dengan aman melalui app store.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Buka spesialis AI ini seharga {price} (sekali). Jumlahnya akan dipotong dari dompet Anda.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "Spesialis ini belum tersedia untuk dibeli.",
+  "couldNotCompletePurchase": "Tidak dapat menyelesaikan pembelian. Silakan coba lagi.",
+  "couldNotUnlockWalletBalance": "Tidak dapat membuka (periksa saldo dompet)",
+  "freeBadge": "GRATIS",
+  "activeSessionInProgress": "Anda memiliki {kind} aktif yang sedang berlangsung",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Kembali",
+  "enableNotificationsForAlerts": "Aktifkan notifikasi untuk mendapatkan peringatan konsultasi & penawaran",
+  "enableLabel": "Aktifkan",
+  "notificationsEnabled": "Notifikasi diaktifkan",
+  "couldNotEnableNotifications": "Tidak dapat mengaktifkan — izinkan notifikasi di browser Anda",
+  "amountInrLabel": "Jumlah (₹)",
+  "noteOptionalLabel": "Catatan (opsional)",
+  "txnDate": "TANGGAL",
+  "txnDescription": "DESKRIPSI",
+  "txnType": "JENIS",
+  "txnAmount": "JUMLAH",
+  "txnBalance": "SALDO",
+  "credit": "Kredit",
+  "debit": "Debit",
+  "razorpayStripeNote": "💳 Dalam produksi, ini akan mengarahkan ke Razorpay/Stripe.",
+  "downloadPdf": "Unduh PDF",
+  "chatWithAiCta": "Chat dengan AI",
+  "pdfServiceUnavailable": "Layanan PDF sementara tidak tersedia. Silakan coba lagi nanti.",
+  "pleaseUnlockFirst": "Silakan buka ini terlebih dahulu.",
+  "couldNotGeneratePdf": "Tidak dapat membuat PDF. Silakan coba lagi.",
+  "statConsults": "KONSULTASI",
+  "statCharts": "BAGAN",
+  "statWallet": "DOMPET",
+  "firstChartPrimaryInfo": "Bagan pertama Anda adalah Utama gratis Anda. Bagan tambahan membuka layanan secara individual.",
+  "tryDifferentFilter": "Coba filter yang berbeda",
+  "defaultChartName": "Bagan",
+  "balAbbr": "Saldo"
 }

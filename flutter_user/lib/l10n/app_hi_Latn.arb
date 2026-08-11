@@ -3789,5 +3789,85 @@
   "houseAnalysis": "House Analysis",
   "jaiminiKarakas": "Jaimini Karakas",
   "copyFullReport": "Poori report copy karein",
-  "reportCopied": "Report copy ho gayi!"
+  "reportCopied": "Report copy ho gayi!",
+  "biometricNotAvailable": "Is device par biometric available nahi hai",
+  "biometricErrorMsg": "Biometric error: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Biometric login enable karne ke liye verify karein",
+  "dobFormatLabel": "DOB (DD/MM/YYYY)",
+  "tobFormatLabel": "TOB (HH:MM)",
+  "phoneLabel": "Phone",
+  "activeBadge": "ACTIVE",
+  "chartCategoryLabel": "Category",
+  "freePrimaryDescription": "Free Primary — daily horoscope aur free single-chart services ke liye use hota hai",
+  "searchChartsHint": "Naam ya janam tithi se search karein...",
+  "unlockPriceLabel": "{price} mein unlock karein",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Is AI specialist ko {price} mein (ek baar) unlock karein, jo app store ke through securely purchase hota hai.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Is AI specialist ko {price} mein (ek baar) unlock karein. Amount aapke wallet se deduct ho jayega.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "Yeh specialist abhi purchase ke liye available nahi hai.",
+  "couldNotCompletePurchase": "Purchase complete nahi ho paya. Please phir try karein.",
+  "couldNotUnlockWalletBalance": "Unlock nahi ho paya (wallet balance check karein)",
+  "freeBadge": "FREE",
+  "activeSessionInProgress": "Aapka ek active {kind} chal raha hai",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Return",
+  "enableNotificationsForAlerts": "Consultation aur offer alerts pane ke liye notifications enable karein",
+  "enableLabel": "Enable Karein",
+  "notificationsEnabled": "Notifications enable ho gaye",
+  "couldNotEnableNotifications": "Enable nahi ho paya — apne browser mein notifications allow karein",
+  "amountInrLabel": "Amount (₹)",
+  "noteOptionalLabel": "Note (optional)",
+  "txnDate": "DATE",
+  "txnDescription": "DESCRIPTION",
+  "txnType": "TYPE",
+  "txnAmount": "AMOUNT",
+  "txnBalance": "BALANCE",
+  "credit": "Credit",
+  "debit": "Debit",
+  "razorpayStripeNote": "💳 Production mein yeh Razorpay/Stripe par redirect hoga.",
+  "downloadPdf": "PDF Download Karein",
+  "chatWithAiCta": "AI se Chat Karein",
+  "pdfServiceUnavailable": "PDF service abhi temporarily unavailable hai. Please baad mein try karein.",
+  "pleaseUnlockFirst": "Please pehle isse unlock karein.",
+  "couldNotGeneratePdf": "PDF generate nahi ho paya. Please phir try karein.",
+  "statConsults": "CONSULTS",
+  "statCharts": "CHARTS",
+  "statWallet": "WALLET",
+  "firstChartPrimaryInfo": "Aapka pehla chart aapka free Primary hai. Extra charts individually services unlock karte hain.",
+  "tryDifferentFilter": "Ek alag filter try karein",
+  "defaultChartName": "Chart",
+  "balAbbr": "Bal"
 }

@@ -20620,6 +20620,468 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Less than 1 minute remaining'**
   String get lessThanOneMin;
+
+  /// No description provided for @biometricNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric not available on this device'**
+  String get biometricNotAvailable;
+
+  /// No description provided for @biometricErrorWithDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric error: {error}'**
+  String biometricErrorWithDetails(String error);
+
+  /// No description provided for @rateCardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Cards'**
+  String get rateCardsTitle;
+
+  /// No description provided for @perMinuteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Minute'**
+  String get perMinuteLabel;
+
+  /// No description provided for @perSessionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Session'**
+  String get perSessionLabel;
+
+  /// No description provided for @otherChargesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Charges'**
+  String get otherChargesLabel;
+
+  /// No description provided for @sessionLimitInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Session: {limit} msgs, {hours}hr validity'**
+  String sessionLimitInfo(Object limit, Object hours);
+
+  /// No description provided for @chatWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chatWord;
+
+  /// No description provided for @callWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callWord;
+
+  /// No description provided for @perMsgLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Msg'**
+  String get perMsgLabel;
+
+  /// No description provided for @superChatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Super Chat'**
+  String get superChatLabel;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePasswordTitle;
+
+  /// No description provided for @changePasswordSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your password via email OTP'**
+  String get changePasswordSub;
+
+  /// No description provided for @customerSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Support'**
+  String get customerSupportTitle;
+
+  /// No description provided for @customerSupportSub.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ & raise a ticket'**
+  String get customerSupportSub;
+
+  /// No description provided for @notSetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get notSetLabel;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phoneLabel;
+
+  /// No description provided for @experienceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get experienceLabel;
+
+  /// No description provided for @verifyToEnableBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify to enable biometric login'**
+  String get verifyToEnableBiometric;
+
+  /// No description provided for @tapToChangeAppLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change app language'**
+  String get tapToChangeAppLanguage;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get discardChangesTitle;
+
+  /// No description provided for @discardChangesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. If you leave now, your edits will be lost.'**
+  String get discardChangesBody;
+
+  /// No description provided for @keepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get keepEditing;
+
+  /// No description provided for @discardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get discardAction;
+
+  /// No description provided for @newRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newRatingLabel;
+
+  /// No description provided for @yrsSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'yrs'**
+  String get yrsSuffix;
+
+  /// No description provided for @unsavedChangesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved changes'**
+  String get unsavedChangesLabel;
+
+  /// No description provided for @profileInformationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Information'**
+  String get profileInformationTitle;
+
+  /// No description provided for @yourFullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your full name'**
+  String get yourFullNameHint;
+
+  /// No description provided for @shownToUsersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown to users'**
+  String get shownToUsersHint;
+
+  /// No description provided for @bioHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell users about your astrology experience…'**
+  String get bioHint;
+
+  /// No description provided for @professionalInformationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Information'**
+  String get professionalInformationTitle;
+
+  /// No description provided for @validYearsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number of years.'**
+  String get validYearsError;
+
+  /// No description provided for @addLanguageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a language'**
+  String get addLanguageHint;
+
+  /// No description provided for @addSpecializationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a specialization'**
+  String get addSpecializationHint;
+
+  /// No description provided for @qualificationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. B.Sc, Jyotish Acharya'**
+  String get qualificationHint;
+
+  /// No description provided for @consultationPricingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation Pricing'**
+  String get consultationPricingTitle;
+
+  /// No description provided for @consultationPricingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set how users are charged for your consultations.'**
+  String get consultationPricingSubtitle;
+
+  /// No description provided for @perMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Message'**
+  String get perMessageLabel;
+
+  /// No description provided for @perMinUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'/ min'**
+  String get perMinUnit;
+
+  /// No description provided for @perSessionUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'/ session'**
+  String get perSessionUnit;
+
+  /// No description provided for @audioVideoBilledPerMinuteNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio and video calls are billed per minute (set under \"Per Minute\"). Session pricing applies to chat only.'**
+  String get audioVideoBilledPerMinuteNote;
+
+  /// No description provided for @chatSessionMessageNote.
+  ///
+  /// In en, this message translates to:
+  /// **'After a chat session\'s included messages are used up, each further message is charged this rate (the chat stays open).'**
+  String get chatSessionMessageNote;
+
+  /// No description provided for @perMsgUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'/ msg'**
+  String get perMsgUnit;
+
+  /// No description provided for @minUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minUnit;
+
+  /// No description provided for @messageSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Message Settings'**
+  String get messageSettingsTitle;
+
+  /// No description provided for @messageSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Controls paid-message allowance and validity per session.'**
+  String get messageSettingsSubtitle;
+
+  /// No description provided for @messagesPerSessionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages per session'**
+  String get messagesPerSessionLabel;
+
+  /// No description provided for @msgsUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'msgs'**
+  String get msgsUnit;
+
+  /// No description provided for @validMessagesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number of messages.'**
+  String get validMessagesError;
+
+  /// No description provided for @sessionValidityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Session validity'**
+  String get sessionValidityLabel;
+
+  /// No description provided for @hoursUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get hoursUnit;
+
+  /// No description provided for @validHoursError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number of hours.'**
+  String get validHoursError;
+
+  /// No description provided for @saveChangesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChangesButton;
+
+  /// No description provided for @suggestionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get suggestionsLabel;
+
+  /// No description provided for @addButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addButton;
+
+  /// No description provided for @removeChipLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {value}'**
+  String removeChipLabel(String value);
+
+  /// No description provided for @reportCopiedOpeningAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Report copied! Opening {ai} — paste to discuss.'**
+  String reportCopiedOpeningAi(String ai);
+
+  /// No description provided for @kundliMilanReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli Milan Report'**
+  String get kundliMilanReportTitle;
+
+  /// No description provided for @milanPersonOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Person 1'**
+  String get milanPersonOne;
+
+  /// No description provided for @milanPersonTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Person 2'**
+  String get milanPersonTwo;
+
+  /// No description provided for @runningMilanAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Running Milan analysis...'**
+  String get runningMilanAnalysis;
+
+  /// No description provided for @selectedOfTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/2 selected'**
+  String selectedOfTwo(Object count);
+
+  /// No description provided for @runMilanAnalysisButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Milan Analysis'**
+  String get runMilanAnalysisButton;
+
+  /// No description provided for @relationshipIntelligenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Intelligence'**
+  String get relationshipIntelligenceTitle;
+
+  /// No description provided for @analyzingChartsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing {count} charts...'**
+  String analyzingChartsCount(Object count);
+
+  /// No description provided for @relationshipContextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship Context'**
+  String get relationshipContextLabel;
+
+  /// No description provided for @generalWord.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get generalWord;
+
+  /// No description provided for @teamWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get teamWord;
+
+  /// No description provided for @friendshipWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Friendship'**
+  String get friendshipWord;
+
+  /// No description provided for @analyzeChartsCountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze {count} Charts'**
+  String analyzeChartsCountButton(Object count);
+
+  /// No description provided for @keyScoresCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'KEY SCORES'**
+  String get keyScoresCaps;
+
+  /// No description provided for @astrologicalWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrological'**
+  String get astrologicalWord;
+
+  /// No description provided for @allScoresCount.
+  ///
+  /// In en, this message translates to:
+  /// **'All Scores ({count})'**
+  String allScoresCount(Object count);
+
+  /// No description provided for @amountRupeesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (₹)'**
+  String get amountRupeesLabel;
+
+  /// No description provided for @withdrawMinAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw (min ₹{min})'**
+  String withdrawMinAmount(Object min);
+
+  /// No description provided for @upiIdWithValue.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI: {value}'**
+  String upiIdWithValue(String value);
 }
 
 class _AppLocalizationsDelegate

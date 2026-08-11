@@ -11819,4 +11819,161 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reportCopied => 'تم نسخ بيانات التقرير!';
+
+  @override
+  String get biometricNotAvailable =>
+      'البصمة الحيوية غير متوفرة على هذا الجهاز';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'خطأ في البصمة الحيوية: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'تحقق لتفعيل تسجيل الدخول بالبصمة الحيوية';
+
+  @override
+  String get dobFormatLabel => 'تاريخ الميلاد (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'وقت الميلاد (HH:MM)';
+
+  @override
+  String get phoneLabel => 'الهاتف';
+
+  @override
+  String get activeBadge => 'نشط';
+
+  @override
+  String get chartCategoryLabel => 'الفئة';
+
+  @override
+  String get freePrimaryDescription =>
+      'الأساسي المجاني — يُستخدم للأبراج اليومية وخدمات الرسم البياني المفرد المجانية';
+
+  @override
+  String get searchChartsHint => 'البحث بالاسم أو تاريخ الميلاد...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'فتح مقابل $price';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'افتح هذا الخبير الذكي مقابل $price (مرة واحدة)، يتم الشراء بأمان عبر متجر التطبيقات.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'افتح هذا الخبير الذكي مقابل $price (مرة واحدة). سيتم خصم المبلغ من محفظتك.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'هذا الخبير غير متاح للشراء حاليًا.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'تعذر إتمام الشراء. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'تعذر فتح القفل (تحقق من رصيد المحفظة)';
+
+  @override
+  String get freeBadge => 'مجاني';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'لديك $kind نشط قيد التنفيذ';
+  }
+
+  @override
+  String get returnLabel => 'عودة';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'فعّل الإشعارات للحصول على تنبيهات الاستشارة والعروض';
+
+  @override
+  String get enableLabel => 'تفعيل';
+
+  @override
+  String get notificationsEnabled => 'تم تفعيل الإشعارات';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'تعذر التفعيل — يرجى السماح بالإشعارات في متصفحك';
+
+  @override
+  String get amountInrLabel => 'المبلغ (₹)';
+
+  @override
+  String get noteOptionalLabel => 'ملاحظة (اختياري)';
+
+  @override
+  String get txnDate => 'التاريخ';
+
+  @override
+  String get txnDescription => 'الوصف';
+
+  @override
+  String get txnType => 'النوع';
+
+  @override
+  String get txnAmount => 'المبلغ';
+
+  @override
+  String get txnBalance => 'الرصيد';
+
+  @override
+  String get credit => 'إيداع';
+
+  @override
+  String get debit => 'خصم';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 في الإنتاج، سيتم التوجيه إلى Razorpay/Stripe.';
+
+  @override
+  String get downloadPdf => 'تنزيل PDF';
+
+  @override
+  String get chatWithAiCta => 'تحدث مع الذكاء الاصطناعي';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'خدمة PDF غير متوفرة مؤقتًا. يرجى المحاولة مرة أخرى لاحقًا.';
+
+  @override
+  String get pleaseUnlockFirst => 'يرجى فتح هذا أولاً.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'تعذر إنشاء ملف PDF. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get statConsults => 'الاستشارات';
+
+  @override
+  String get statCharts => 'الرسوم البيانية';
+
+  @override
+  String get statWallet => 'المحفظة';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'مخططك الأول هو الأساسي المجاني. المخططات الإضافية تفتح الخدمات بشكل فردي.';
+
+  @override
+  String get tryDifferentFilter => 'جرّب مرشحًا مختلفًا';
+
+  @override
+  String get defaultChartName => 'مخطط';
+
+  @override
+  String get balAbbr => 'الرصيد';
 }

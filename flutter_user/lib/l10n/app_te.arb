@@ -3789,5 +3789,85 @@
   "houseAnalysis": "భావ విశ్లేషణ",
   "jaiminiKarakas": "జైమిని కారకాలు",
   "copyFullReport": "పూర్తి నివేదిక కాపీ చేయండి",
-  "reportCopied": "నివేదిక కాపీ అయింది!"
+  "reportCopied": "నివేదిక కాపీ అయింది!",
+  "biometricNotAvailable": "ఈ డివైస్‌లో బయోమెట్రిక్ అందుబాటులో లేదు",
+  "biometricErrorMsg": "బయోమెట్రిక్ లోపం: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "బయోమెట్రిక్ లాగిన్‌ను ప్రారంభించడానికి ధృవీకరించండి",
+  "dobFormatLabel": "పుట్టిన తేదీ (DD/MM/YYYY)",
+  "tobFormatLabel": "పుట్టిన సమయం (HH:MM)",
+  "phoneLabel": "ఫోన్",
+  "activeBadge": "యాక్టివ్",
+  "chartCategoryLabel": "వర్గం",
+  "freePrimaryDescription": "ఫ్రీ ప్రైమరీ — రోజువారీ రాశిఫలం మరియు ఫ్రీ సింగిల్-చార్ట్ సేవలకు ఉపయోగించబడుతుంది",
+  "searchChartsHint": "పేరు లేదా పుట్టిన తేదీ ద్వారా శోధించండి...",
+  "unlockPriceLabel": "{price}కి అన్‌లాక్ చేయండి",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "ఈ AI నిపుణుడిని {price}కి (ఒకసారి) అన్‌లాక్ చేయండి, ఇది యాప్ స్టోర్ ద్వారా సురక్షితంగా కొనుగోలు చేయబడుతుంది.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "ఈ AI నిపుణుడిని {price}కి (ఒకసారి) అన్‌లాక్ చేయండి. మొత్తం మీ వాలెట్ నుండి తీసివేయబడుతుంది.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "ఈ నిపుణుడు ఇంకా కొనుగోలుకు అందుబాటులో లేదు.",
+  "couldNotCompletePurchase": "కొనుగోలు పూర్తి కాలేదు. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+  "couldNotUnlockWalletBalance": "అన్‌లాక్ చేయలేకపోయింది (వాలెట్ బ్యాలెన్స్ చూడండి)",
+  "freeBadge": "ఫ్రీ",
+  "activeSessionInProgress": "మీ యాక్టివ్ {kind} జరుగుతోంది",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "తిరిగి వెళ్ళు",
+  "enableNotificationsForAlerts": "సలహా మరియు ఆఫర్ అలర్ట్‌లు పొందడానికి నోటిఫికేషన్‌లను ప్రారంభించండి",
+  "enableLabel": "ప్రారంభించు",
+  "notificationsEnabled": "నోటిఫికేషన్‌లు ప్రారంభించబడ్డాయి",
+  "couldNotEnableNotifications": "ప్రారంభించలేకపోయింది — మీ బ్రౌజర్‌లో నోటిఫికేషన్‌లను అనుమతించండి",
+  "amountInrLabel": "మొత్తం (₹)",
+  "noteOptionalLabel": "గమనిక (ఐచ్ఛికం)",
+  "txnDate": "తేదీ",
+  "txnDescription": "వివరణ",
+  "txnType": "రకం",
+  "txnAmount": "మొత్తం",
+  "txnBalance": "బ్యాలెన్స్",
+  "credit": "క్రెడిట్",
+  "debit": "డెబిట్",
+  "razorpayStripeNote": "💳 ప్రొడక్షన్‌లో ఇది Razorpay/Stripeకి రీడైరెక్ట్ అవుతుంది.",
+  "downloadPdf": "PDF డౌన్‌లోడ్ చేయండి",
+  "chatWithAiCta": "AI తో చాట్ చేయండి",
+  "pdfServiceUnavailable": "PDF సేవ తాత్కాలికంగా అందుబాటులో లేదు. దయచేసి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "pleaseUnlockFirst": "దయచేసి మొదట దీన్ని అన్‌లాక్ చేయండి.",
+  "couldNotGeneratePdf": "PDF సృష్టించలేకపోయింది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+  "statConsults": "సలహాలు",
+  "statCharts": "చార్ట్‌లు",
+  "statWallet": "వాలెట్",
+  "firstChartPrimaryInfo": "మీ మొదటి చార్ట్ మీ ఫ్రీ ప్రైమరీ. అదనపు చార్ట్‌లు వ్యక్తిగతంగా సేవలను అన్‌లాక్ చేస్తాయి.",
+  "tryDifferentFilter": "వేరే ఫిల్టర్ ప్రయత్నించండి",
+  "defaultChartName": "చార్ట్",
+  "balAbbr": "బ్యాల్"
 }

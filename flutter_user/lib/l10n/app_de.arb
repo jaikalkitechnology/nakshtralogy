@@ -3789,5 +3789,85 @@
   "houseAnalysis": "Hausanalyse",
   "jaiminiKarakas": "Jaimini-Karakas",
   "copyFullReport": "Vollständige Berichtsdaten kopieren",
-  "reportCopied": "Berichtsdaten kopiert!"
+  "reportCopied": "Berichtsdaten kopiert!",
+  "biometricNotAvailable": "Biometrie ist auf diesem Gerät nicht verfügbar",
+  "biometricErrorMsg": "Biometrie-Fehler: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Bestätigen, um die biometrische Anmeldung zu aktivieren",
+  "dobFormatLabel": "Geburtsdatum (DD/MM/YYYY)",
+  "tobFormatLabel": "Geburtszeit (HH:MM)",
+  "phoneLabel": "Telefon",
+  "activeBadge": "AKTIV",
+  "chartCategoryLabel": "Kategorie",
+  "freePrimaryDescription": "Kostenlos Primär — wird für das tägliche Horoskop & kostenlose Einzelchart-Dienste verwendet",
+  "searchChartsHint": "Nach Name oder Geburtsdatum suchen...",
+  "unlockPriceLabel": "Für {price} freischalten",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Schalte diesen KI-Spezialisten für {price} (einmalig) frei, sicher über den App Store gekauft.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Schalte diesen KI-Spezialisten für {price} (einmalig) frei. Der Betrag wird von deinem Wallet abgezogen.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "Dieser Spezialist ist noch nicht zum Kauf verfügbar.",
+  "couldNotCompletePurchase": "Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
+  "couldNotUnlockWalletBalance": "Freischalten nicht möglich (Wallet-Guthaben prüfen)",
+  "freeBadge": "KOSTENLOS",
+  "activeSessionInProgress": "Du hast eine aktive {kind} in Bearbeitung",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Zurückkehren",
+  "enableNotificationsForAlerts": "Benachrichtigungen aktivieren, um Beratungs- & Angebotshinweise zu erhalten",
+  "enableLabel": "Aktivieren",
+  "notificationsEnabled": "Benachrichtigungen aktiviert",
+  "couldNotEnableNotifications": "Konnte nicht aktiviert werden — erlaube Benachrichtigungen in deinem Browser",
+  "amountInrLabel": "Betrag (₹)",
+  "noteOptionalLabel": "Notiz (optional)",
+  "txnDate": "DATUM",
+  "txnDescription": "BESCHREIBUNG",
+  "txnType": "TYP",
+  "txnAmount": "BETRAG",
+  "txnBalance": "KONTOSTAND",
+  "credit": "Gutschrift",
+  "debit": "Abbuchung",
+  "razorpayStripeNote": "💳 In der Produktion wird dies zu Razorpay/Stripe weitergeleitet.",
+  "downloadPdf": "PDF herunterladen",
+  "chatWithAiCta": "Mit KI chatten",
+  "pdfServiceUnavailable": "Der PDF-Dienst ist vorübergehend nicht verfügbar. Bitte versuche es später erneut.",
+  "pleaseUnlockFirst": "Bitte schalte dies zuerst frei.",
+  "couldNotGeneratePdf": "Die PDF konnte nicht erstellt werden. Bitte versuche es erneut.",
+  "statConsults": "BERATUNGEN",
+  "statCharts": "CHARTS",
+  "statWallet": "WALLET",
+  "firstChartPrimaryInfo": "Dein erstes Chart ist dein kostenloses Primär-Chart. Zusätzliche Charts schalten Dienste einzeln frei.",
+  "tryDifferentFilter": "Versuche einen anderen Filter",
+  "defaultChartName": "Chart",
+  "balAbbr": "Saldo"
 }

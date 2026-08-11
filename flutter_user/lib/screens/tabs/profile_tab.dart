@@ -91,17 +91,17 @@ class _ProfileTabState extends State<ProfileTab> {
         final available = await auth.canCheckBiometrics || await auth.isDeviceSupported();
         if (!available) {
           if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Biometric not available on this device')));
+            SnackBar(content: Text(AppLocalizations.of(context)!.biometricNotAvailable)));
           return;
         }
         final ok = await auth.authenticate(
-          localizedReason: 'Verify to enable biometric login',
+          localizedReason: AppLocalizations.of(context)!.biometricVerifyReason,
           options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
         );
         if (!ok) return;
       } catch (e) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Biometric error: $e')));
+          SnackBar(content: Text(AppLocalizations.of(context)!.biometricErrorMsg(e))));
         return;
       }
     }
@@ -151,17 +151,17 @@ class _ProfileTabState extends State<ProfileTab> {
                       TextField(
                         controller: nameCtrl,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(labelText: 'Full Name'),
+                        decoration: InputDecoration(labelText: l.fullName),
                       ),
                       TextField(
                         controller: phoneCtrl,
                         keyboardType: TextInputType.phone,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(labelText: 'Phone'),
+                        decoration: InputDecoration(labelText: l.phoneLabel),
                       ),
                       DropdownButtonFormField<String>(
                         initialValue: gender.isEmpty ? null : gender,
-                        decoration: const InputDecoration(labelText: 'Gender'),
+                        decoration: InputDecoration(labelText: l.gender),
                         dropdownColor: AppColors.card,
                         style: const TextStyle(color: AppColors.textPrimary),
                         items: [
@@ -174,17 +174,17 @@ class _ProfileTabState extends State<ProfileTab> {
                       TextField(
                         controller: dobCtrl,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(labelText: 'DOB (DD/MM/YYYY)'),
+                        decoration: InputDecoration(labelText: l.dobFormatLabel),
                       ),
                       TextField(
                         controller: tobCtrl,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(labelText: 'TOB (HH:MM)'),
+                        decoration: InputDecoration(labelText: l.tobFormatLabel),
                       ),
                       TextField(
                         controller: placeCtrl,
                         style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(labelText: 'Birth Place'),
+                        decoration: InputDecoration(labelText: l.birthPlace),
                       ),
                     ];
                     if (!desktop) {
@@ -342,7 +342,7 @@ class _ProfileTabState extends State<ProfileTab> {
     if (sign == null && nak == null) return '';
     final parts = <String>[];
     if (sign != null) parts.add(sign.toString().toUpperCase());
-    if (nak != null) parts.add('${nak.toString().toUpperCase()} NAKSHATRA');
+    if (nak != null) parts.add('${nak.toString().toUpperCase()} ${AppLocalizations.of(context)!.nakshatraLabel.toUpperCase()}');
     return parts.join(' \u00b7 ');
   }
 
@@ -473,7 +473,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Expanded(
                                 child: _profileStat(
                                   profState.ordersTotal.toString(),
-                                  'CONSULTS',
+                                  l.statConsults,
                                 ),
                               ),
                               Container(
@@ -483,7 +483,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Expanded(
                                 child: _profileStat(
                                   chartsCount.toString(),
-                                  'CHARTS',
+                                  l.statCharts,
                                 ),
                               ),
                               Container(
@@ -493,7 +493,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Expanded(
                                 child: _profileStat(
                                   Money.format(balance, currency: displayCurrency),
-                                  'WALLET',
+                                  l.statWallet,
                                 ),
                               ),
                             ],
@@ -625,6 +625,8 @@ class _ProfileTabState extends State<ProfileTab> {
                                   Expanded(
                                     child: Text(
                                       a['display_name'] ?? '\u2014',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
                                           color: AppColors.ivory,
                                           fontSize: 12,
@@ -735,6 +737,8 @@ class _ProfileTabState extends State<ProfileTab> {
                         Expanded(
                           child: Text(
                             l.logout,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: AppColors.error,
                               fontSize: 14,
@@ -780,8 +784,10 @@ class _ProfileTabState extends State<ProfileTab> {
                         Expanded(
                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Text(MenuLabels.of(context, 'deleteAccount'),
+                                maxLines: 1, overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(color: AppColors.error, fontSize: 14, fontWeight: FontWeight.w600)),
                             Text(MenuLabels.of(context, 'deleteAccountSub'),
+                                maxLines: 2, overflow: TextOverflow.ellipsis,
                                 style: TextStyle(color: AppColors.error.withOpacity(0.7), fontSize: 11)),
                           ]),
                         ),
@@ -818,8 +824,8 @@ class _ProfileTabState extends State<ProfileTab> {
             const SizedBox(width: 12),
             Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-              Text(sub, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+              Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+              Text(sub, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
             ])),
             const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
           ]),
@@ -941,14 +947,15 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Text(PlusLabels.of(context, 'plus'),
-                  style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w800)),
+              Flexible(child: Text(PlusLabels.of(context, 'plus'),
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: AppColors.ivory, fontSize: 15, fontWeight: FontWeight.w800))),
               if (active) ...[
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(color: AppColors.success, borderRadius: BorderRadius.circular(6)),
-                  child: const Text('ACTIVE', style: TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.w900)),
+                  child: Text(AppLocalizations.of(context)!.activeBadge, style: const TextStyle(color: AppColors.midnight, fontSize: 8, fontWeight: FontWeight.w900)),
                 ),
               ],
             ]),
@@ -972,6 +979,8 @@ class _ProfileTabState extends State<ProfileTab> {
       children: [
         Text(
           value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: AppColors.ivory,
             fontSize: 18,
@@ -982,6 +991,9 @@ class _ProfileTabState extends State<ProfileTab> {
         const SizedBox(height: 4),
         Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             color: AppColors.smoke,
             fontSize: 9,
@@ -1026,6 +1038,8 @@ class _ProfileTabState extends State<ProfileTab> {
               Expanded(
                 child: Text(
                   label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.ivory,
                     fontSize: 14,
@@ -1049,7 +1063,7 @@ class _ProfileTabState extends State<ProfileTab> {
         decoration: const BoxDecoration(color: AppColors.nebula, shape: BoxShape.circle),
         child: const Center(child: Icon(Icons.fingerprint, size: 16, color: AppColors.gold))),
       const SizedBox(width: 14),
-      Expanded(child: Text(l.biometricLogin, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
+      Expanded(child: Text(l.biometricLogin, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
       SizedBox(height: 28, child: Switch.adaptive(
         value: _biometricEnabled, onChanged: _toggleBiometric,
         activeColor: AppColors.gold)),
@@ -1072,7 +1086,7 @@ class _ProfileTabState extends State<ProfileTab> {
               decoration: const BoxDecoration(color: AppColors.nebula, shape: BoxShape.circle),
               child: Center(child: Text(emoji, style: const TextStyle(fontSize: 14)))),
             const SizedBox(width: 14),
-            Expanded(child: Text(label, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
+            Expanded(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Manrope'))),
             if (badge > 0) Container(
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),

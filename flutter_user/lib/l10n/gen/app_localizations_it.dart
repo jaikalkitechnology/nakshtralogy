@@ -11869,4 +11869,160 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get reportCopied => 'Dati del report copiati!';
+
+  @override
+  String get biometricNotAvailable =>
+      'La biometria non è disponibile su questo dispositivo';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'Errore biometrico: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'Verifica per attivare l\'accesso biometrico';
+
+  @override
+  String get dobFormatLabel => 'Data di nascita (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'Ora di nascita (HH:MM)';
+
+  @override
+  String get phoneLabel => 'Telefono';
+
+  @override
+  String get activeBadge => 'ATTIVO';
+
+  @override
+  String get chartCategoryLabel => 'Categoria';
+
+  @override
+  String get freePrimaryDescription =>
+      'Primario Gratuito — utilizzato per l\'oroscopo quotidiano e i servizi gratuiti a carta unica';
+
+  @override
+  String get searchChartsHint => 'Cerca per nome o data di nascita...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'Sblocca per $price';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'Sblocca questo specialista IA per $price (una tantum), acquistato in modo sicuro tramite l\'app store.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'Sblocca questo specialista IA per $price (una tantum). L\'importo verrà detratto dal tuo portafoglio.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'Questo specialista non è ancora disponibile per l’acquisto.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'Impossibile completare l’acquisto. Riprova.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'Impossibile sbloccare (controlla il saldo del portafoglio)';
+
+  @override
+  String get freeBadge => 'GRATIS';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'Hai un/una $kind attivo in corso';
+  }
+
+  @override
+  String get returnLabel => 'Torna';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'Attiva le notifiche per ricevere avvisi di consulenza e offerte';
+
+  @override
+  String get enableLabel => 'Attiva';
+
+  @override
+  String get notificationsEnabled => 'Notifiche attivate';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'Impossibile attivare — consenti le notifiche nel tuo browser';
+
+  @override
+  String get amountInrLabel => 'Importo (₹)';
+
+  @override
+  String get noteOptionalLabel => 'Nota (opzionale)';
+
+  @override
+  String get txnDate => 'DATA';
+
+  @override
+  String get txnDescription => 'DESCRIZIONE';
+
+  @override
+  String get txnType => 'TIPO';
+
+  @override
+  String get txnAmount => 'IMPORTO';
+
+  @override
+  String get txnBalance => 'SALDO';
+
+  @override
+  String get credit => 'Credito';
+
+  @override
+  String get debit => 'Debito';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 In produzione questo reindirizzerà a Razorpay/Stripe.';
+
+  @override
+  String get downloadPdf => 'Scarica PDF';
+
+  @override
+  String get chatWithAiCta => 'Chatta con l\'IA';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'Il servizio PDF è temporaneamente non disponibile. Riprova più tardi.';
+
+  @override
+  String get pleaseUnlockFirst => 'Sblocca prima questo.';
+
+  @override
+  String get couldNotGeneratePdf => 'Impossibile generare il PDF. Riprova.';
+
+  @override
+  String get statConsults => 'CONSULTI';
+
+  @override
+  String get statCharts => 'GRAFICI';
+
+  @override
+  String get statWallet => 'PORTAFOGLIO';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'La tua prima carta è la tua Primaria gratuita. Le carte aggiuntive sbloccano i servizi singolarmente.';
+
+  @override
+  String get tryDifferentFilter => 'Prova un filtro diverso';
+
+  @override
+  String get defaultChartName => 'Carta';
+
+  @override
+  String get balAbbr => 'Saldo';
 }

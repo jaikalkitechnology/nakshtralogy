@@ -3415,5 +3415,155 @@
   "worstWindows": "மோசமான காலம்",
   "yogaAnalysis": "யோக பகுப்பாய்வு",
   "unlocked": "திறக்கப்பட்டது!",
-  "lessThanOneMin": "1 நிமிடத்திற்கும் குறைவாக உள்ளது"
+  "lessThanOneMin": "1 நிமிடத்திற்கும் குறைவாக உள்ளது",
+  "biometricNotAvailable": "இந்த சாதனத்தில் பயோமெட்ரிக் கிடைக்கவில்லை",
+  "biometricErrorWithDetails": "பயோமெட்ரிக் பிழை: {error}",
+  "@biometricErrorWithDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "rateCardsTitle": "கட்டண அட்டைகள்",
+  "perMinuteLabel": "நிமிடத்திற்கு",
+  "perSessionLabel": "அமர்வுக்கு",
+  "otherChargesLabel": "மற்ற கட்டணங்கள்",
+  "sessionLimitInfo": "அமர்வு: {limit} செய்திகள், {hours} மணிநேர செல்லுபடி",
+  "@sessionLimitInfo": {
+    "placeholders": {
+      "limit": {
+        "type": "Object"
+      },
+      "hours": {
+        "type": "Object"
+      }
+    }
+  },
+  "chatWord": "அரட்டை",
+  "callWord": "அழைப்பு",
+  "perMsgLabel": "செய்திக்கு",
+  "superChatLabel": "சூப்பர் சாட்",
+  "changePasswordTitle": "கடவுச்சொல்லை மாற்று",
+  "changePasswordSub": "மின்னஞ்சல் OTP மூலம் உங்கள் கடவுச்சொல்லைப் புதுப்பிக்கவும்",
+  "customerSupportTitle": "வாடிக்கையாளர் ஆதரவு",
+  "customerSupportSub": "FAQ மற்றும் டிக்கெட் பதிவு செய்யவும்",
+  "notSetLabel": "அமைக்கப்படவில்லை",
+  "phoneLabel": "தொலைபேசி",
+  "experienceLabel": "அனுபவம்",
+  "verifyToEnableBiometric": "பயோமெட்ரிக் உள்நுழைவை இயக்க சரிபார்க்கவும்",
+  "tapToChangeAppLanguage": "ஆப் மொழியை மாற்ற தட்டவும்",
+  "discardChangesTitle": "மாற்றங்களை நிராகரிக்கவா?",
+  "discardChangesBody": "உங்கள் மாற்றங்கள் சேமிக்கப்படவில்லை. இப்போது வெளியேறினால் உங்கள் திருத்தங்கள் இழக்கப்படும்.",
+  "keepEditing": "திருத்துவதைத் தொடரவும்",
+  "discardAction": "நிராகரி",
+  "newRatingLabel": "புதியது",
+  "yrsSuffix": "ஆண்டுகள்",
+  "unsavedChangesLabel": "சேமிக்கப்படாத மாற்றங்கள்",
+  "profileInformationTitle": "சுயவிவரத் தகவல்",
+  "yourFullNameHint": "உங்கள் முழுப் பெயர்",
+  "shownToUsersHint": "பயனர்களுக்குக் காட்டப்படும்",
+  "bioHint": "உங்கள் ஜோதிட அனுபவத்தைப் பயனர்களுக்குச் சொல்லுங்கள்…",
+  "professionalInformationTitle": "தொழில்முறை தகவல்",
+  "validYearsError": "ஆண்டுகளின் சரியான எண்ணிக்கையை உள்ளிடவும்.",
+  "addLanguageHint": "ஒரு மொழியைச் சேர்க்கவும்",
+  "addSpecializationHint": "ஒரு நிபுணத்துவத்தைச் சேர்க்கவும்",
+  "qualificationHint": "எ.கா. B.Sc, ஜோதிட ஆச்சார்யா",
+  "consultationPricingTitle": "ஆலோசனை கட்டணம்",
+  "consultationPricingSubtitle": "உங்கள் ஆலோசனைகளுக்கு பயனர்களிடம் எவ்வாறு கட்டணம் வசூலிக்கப்படும் என்பதை அமைக்கவும்.",
+  "perMessageLabel": "செய்திக்கு",
+  "perMinUnit": "/ நிமிடம்",
+  "perSessionUnit": "/ அமர்வு",
+  "audioVideoBilledPerMinuteNote": "ஆடியோ மற்றும் வீடியோ அழைப்புகள் நிமிடத்திற்கு பில் செய்யப்படும் (\"நிமிடத்திற்கு\" என்பதில் அமைக்கவும்). அமர்வு கட்டணம் அரட்டைக்கு மட்டுமே பொருந்தும்.",
+  "chatSessionMessageNote": "அரட்டை அமர்வில் உள்ள செய்திகள் தீர்ந்த பிறகு, அடுத்த ஒவ்வொரு செய்திக்கும் இந்த கட்டணம் பொருந்தும் (அரட்டை திறந்திருக்கும்).",
+  "perMsgUnit": "/ செய்தி",
+  "minUnit": "நிமிடம்",
+  "messageSettingsTitle": "செய்தி அமைப்புகள்",
+  "messageSettingsSubtitle": "இது ஒரு அமர்வுக்கு பணம் செலுத்திய-செய்தி வரம்பையும் செல்லுபடியையும் கட்டுப்படுத்துகிறது.",
+  "messagesPerSessionLabel": "அமர்வுக்கு செய்திகள்",
+  "msgsUnit": "செய்திகள்",
+  "validMessagesError": "செய்திகளின் சரியான எண்ணிக்கையை உள்ளிடவும்.",
+  "sessionValidityLabel": "அமர்வு செல்லுபடி",
+  "hoursUnit": "மணி நேரம்",
+  "validHoursError": "மணிநேரங்களின் சரியான எண்ணிக்கையை உள்ளிடவும்.",
+  "saveChangesButton": "மாற்றங்களைச் சேமிக்கவும்",
+  "suggestionsLabel": "பரிந்துரைகள்",
+  "addButton": "சேர்",
+  "removeChipLabel": "{value} அகற்று",
+  "@removeChipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "reportCopiedOpeningAi": "அறிக்கை நகலெடுக்கப்பட்டது! {ai} திறக்கப்படுகிறது — விவாதிக்க பேஸ்ட் செய்யவும்.",
+  "@reportCopiedOpeningAi": {
+    "placeholders": {
+      "ai": {
+        "type": "String"
+      }
+    }
+  },
+  "kundliMilanReportTitle": "குண்டலி மிலன் அறிக்கை",
+  "milanPersonOne": "நபர் 1",
+  "milanPersonTwo": "நபர் 2",
+  "runningMilanAnalysis": "மிலன் பகுப்பாய்வு நடைபெறுகிறது...",
+  "selectedOfTwo": "{count}/2 தேர்ந்தெடுக்கப்பட்டது",
+  "@selectedOfTwo": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "runMilanAnalysisButton": "மிலன் பகுப்பாய்வை இயக்கு",
+  "relationshipIntelligenceTitle": "உறவு நுண்ணறிவு",
+  "analyzingChartsCount": "{count} சாதகங்கள் பகுப்பாய்வு செய்யப்படுகிறது...",
+  "@analyzingChartsCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "relationshipContextLabel": "உறவு சூழல்",
+  "generalWord": "பொது",
+  "teamWord": "குழு",
+  "friendshipWord": "நட்பு",
+  "analyzeChartsCountButton": "{count} சாதகங்களை பகுப்பாய்வு செய்யவும்",
+  "@analyzeChartsCountButton": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "keyScoresCaps": "முக்கிய மதிப்பெண்கள்",
+  "astrologicalWord": "ஜோதிட",
+  "allScoresCount": "அனைத்து மதிப்பெண்களும் ({count})",
+  "@allScoresCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "amountRupeesLabel": "தொகை (₹)",
+  "withdrawMinAmount": "பணத்தை எடு (குறைந்தபட்சம் ₹{min})",
+  "@withdrawMinAmount": {
+    "placeholders": {
+      "min": {
+        "type": "Object"
+      }
+    }
+  },
+  "upiIdWithValue": "UPI: {value}",
+  "@upiIdWithValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  }
 }

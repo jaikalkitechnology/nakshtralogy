@@ -89,10 +89,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       duration: const Duration(seconds: 8),
       backgroundColor: AppColors.card,
-      content: Text('You have an active $kind in progress',
+      content: Text(AppLocalizations.of(context)!.activeSessionInProgress(kind),
+          maxLines: 2, overflow: TextOverflow.ellipsis,
           style: const TextStyle(color: AppColors.ivory)),
       action: SnackBarAction(
-        label: 'Return', textColor: AppColors.gold, onPressed: onReturn),
+        label: AppLocalizations.of(context)!.returnLabel, textColor: AppColors.gold, onPressed: onReturn),
     ));
   }
 
@@ -138,16 +139,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: const Duration(seconds: 12),
         backgroundColor: AppColors.card,
-        content: const Text('Enable notifications to get consultation & offer alerts',
-            style: TextStyle(color: AppColors.ivory)),
+        content: Text(AppLocalizations.of(context)!.enableNotificationsForAlerts,
+            maxLines: 2, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: AppColors.ivory)),
         action: SnackBarAction(
-          label: 'Enable',
+          label: AppLocalizations.of(context)!.enableLabel,
           textColor: AppColors.primary,
           onPressed: () async {
             final ok = await WebPushService().enableFromGesture();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(ok ? 'Notifications enabled' : 'Could not enable — allow notifications in your browser'),
+                content: Text(ok ? AppLocalizations.of(context)!.notificationsEnabled : AppLocalizations.of(context)!.couldNotEnableNotifications),
                 backgroundColor: ok ? AppColors.success : AppColors.error,
               ));
             }
@@ -178,6 +180,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 const SizedBox(width: 7),
                 Text(
                   label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
@@ -256,10 +260,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppColors.error.withOpacity(0.4)),
                 ),
-                child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.live_tv, size: 14, color: AppColors.error),
-                  SizedBox(width: 4),
-                  Text('Live', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600, fontSize: 12)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.live_tv, size: 14, color: AppColors.error),
+                  const SizedBox(width: 4),
+                  Text(l.live, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w600, fontSize: 12)),
                 ]),
               ),
             ),

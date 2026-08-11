@@ -11876,4 +11876,159 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get reportCopied => 'Данные отчёта скопированы!';
+
+  @override
+  String get biometricNotAvailable => 'Биометрия недоступна на этом устройстве';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'Ошибка биометрии: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'Подтвердите, чтобы включить биометрический вход';
+
+  @override
+  String get dobFormatLabel => 'Дата рождения (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'Время рождения (HH:MM)';
+
+  @override
+  String get phoneLabel => 'Телефон';
+
+  @override
+  String get activeBadge => 'АКТИВНО';
+
+  @override
+  String get chartCategoryLabel => 'Категория';
+
+  @override
+  String get freePrimaryDescription =>
+      'Бесплатный основной — используется для ежедневного гороскопа и бесплатных услуг с одной картой';
+
+  @override
+  String get searchChartsHint => 'Поиск по имени или дате рождения...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'Открыть за $price';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'Откройте доступ к этому ИИ-специалисту за $price (единоразово), покупка безопасно через магазин приложений.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'Откройте доступ к этому ИИ-специалисту за $price (единоразово). Сумма будет списана с вашего кошелька.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'Этот специалист еще не доступен для покупки.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'Не удалось завершить покупку. Попробуйте снова.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'Не удалось разблокировать (проверьте баланс кошелька)';
+
+  @override
+  String get freeBadge => 'БЕСПЛАТНО';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'У вас есть активная $kind в процессе';
+  }
+
+  @override
+  String get returnLabel => 'Вернуться';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'Включите уведомления, чтобы получать оповещения о консультациях и предложениях';
+
+  @override
+  String get enableLabel => 'Включить';
+
+  @override
+  String get notificationsEnabled => 'Уведомления включены';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'Не удалось включить — разрешите уведомления в браузере';
+
+  @override
+  String get amountInrLabel => 'Сумма (₹)';
+
+  @override
+  String get noteOptionalLabel => 'Заметка (необязательно)';
+
+  @override
+  String get txnDate => 'ДАТА';
+
+  @override
+  String get txnDescription => 'ОПИСАНИЕ';
+
+  @override
+  String get txnType => 'ТИП';
+
+  @override
+  String get txnAmount => 'СУММА';
+
+  @override
+  String get txnBalance => 'БАЛАНС';
+
+  @override
+  String get credit => 'Пополнение';
+
+  @override
+  String get debit => 'Списание';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 В production-версии это перенаправит на Razorpay/Stripe.';
+
+  @override
+  String get downloadPdf => 'Скачать PDF';
+
+  @override
+  String get chatWithAiCta => 'Чат с ИИ';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'Служба PDF временно недоступна. Попробуйте позже.';
+
+  @override
+  String get pleaseUnlockFirst => 'Сначала разблокируйте это.';
+
+  @override
+  String get couldNotGeneratePdf => 'Не удалось создать PDF. Попробуйте снова.';
+
+  @override
+  String get statConsults => 'КОНСУЛЬТАЦИИ';
+
+  @override
+  String get statCharts => 'КАРТЫ';
+
+  @override
+  String get statWallet => 'КОШЕЛЁК';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'Ваша первая карта — это бесплатная основная карта. Дополнительные карты открывают услуги по отдельности.';
+
+  @override
+  String get tryDifferentFilter => 'Попробуйте другой фильтр';
+
+  @override
+  String get defaultChartName => 'Карта';
+
+  @override
+  String get balAbbr => 'Бал.';
 }

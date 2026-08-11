@@ -10665,4 +10665,262 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get lessThanOneMin => '১ মিনিটেরও কম বাকি';
+
+  @override
+  String get biometricNotAvailable => 'এই ডিভাইসে বায়োমেট্রিক উপলব্ধ নয়';
+
+  @override
+  String biometricErrorWithDetails(String error) {
+    return 'বায়োমেট্রিক ত্রুটি: $error';
+  }
+
+  @override
+  String get rateCardsTitle => 'রেট কার্ড';
+
+  @override
+  String get perMinuteLabel => 'প্রতি মিনিট';
+
+  @override
+  String get perSessionLabel => 'প্রতি সেশন';
+
+  @override
+  String get otherChargesLabel => 'অন্যান্য চার্জ';
+
+  @override
+  String sessionLimitInfo(Object limit, Object hours) {
+    return 'সেশন: $limit বার্তা, $hours ঘণ্টা বৈধতা';
+  }
+
+  @override
+  String get chatWord => 'চ্যাট';
+
+  @override
+  String get callWord => 'কল';
+
+  @override
+  String get perMsgLabel => 'প্রতি বার্তা';
+
+  @override
+  String get superChatLabel => 'সুপার চ্যাট';
+
+  @override
+  String get changePasswordTitle => 'পাসওয়ার্ড পরিবর্তন করুন';
+
+  @override
+  String get changePasswordSub =>
+      'ইমেল OTP এর মাধ্যমে আপনার পাসওয়ার্ড আপডেট করুন';
+
+  @override
+  String get customerSupportTitle => 'কাস্টমার সাপোর্ট';
+
+  @override
+  String get customerSupportSub => 'FAQ ও টিকিট রেজ করুন';
+
+  @override
+  String get notSetLabel => 'সেট করা নেই';
+
+  @override
+  String get phoneLabel => 'ফোন';
+
+  @override
+  String get experienceLabel => 'অভিজ্ঞতা';
+
+  @override
+  String get verifyToEnableBiometric =>
+      'বায়োমেট্রিক লগইন সক্রিয় করতে যাচাই করুন';
+
+  @override
+  String get tapToChangeAppLanguage => 'অ্যাপের ভাষা পরিবর্তন করতে ট্যাপ করুন';
+
+  @override
+  String get discardChangesTitle => 'পরিবর্তনগুলি বাতিল করবেন?';
+
+  @override
+  String get discardChangesBody =>
+      'আপনার কিছু পরিবর্তন সংরক্ষিত হয়নি। এখন চলে গেলে আপনার এডিট হারিয়ে যাবে।';
+
+  @override
+  String get keepEditing => 'এডিট চালিয়ে যান';
+
+  @override
+  String get discardAction => 'বাতিল করুন';
+
+  @override
+  String get newRatingLabel => 'নতুন';
+
+  @override
+  String get yrsSuffix => 'বছর';
+
+  @override
+  String get unsavedChangesLabel => 'অসংরক্ষিত পরিবর্তন';
+
+  @override
+  String get profileInformationTitle => 'প্রোফাইল তথ্য';
+
+  @override
+  String get yourFullNameHint => 'আপনার সম্পূর্ণ নাম';
+
+  @override
+  String get shownToUsersHint => 'ব্যবহারকারীদের দেখানো হয়';
+
+  @override
+  String get bioHint => 'আপনার জ্যোতিষ অভিজ্ঞতা সম্পর্কে ব্যবহারকারীদের জানান…';
+
+  @override
+  String get professionalInformationTitle => 'পেশাগত তথ্য';
+
+  @override
+  String get validYearsError => 'বৈধ বছরের সংখ্যা লিখুন।';
+
+  @override
+  String get addLanguageHint => 'একটি ভাষা যুক্ত করুন';
+
+  @override
+  String get addSpecializationHint => 'একটি বিশেষত্ব যুক্ত করুন';
+
+  @override
+  String get qualificationHint => 'যেমন B.Sc, জ্যোতিষ আচার্য';
+
+  @override
+  String get consultationPricingTitle => 'পরামর্শের মূল্য';
+
+  @override
+  String get consultationPricingSubtitle =>
+      'আপনার পরামর্শের জন্য ব্যবহারকারীদের কীভাবে চার্জ করা হবে তা সেট করুন।';
+
+  @override
+  String get perMessageLabel => 'প্রতি বার্তা';
+
+  @override
+  String get perMinUnit => '/ মিনিট';
+
+  @override
+  String get perSessionUnit => '/ সেশন';
+
+  @override
+  String get audioVideoBilledPerMinuteNote =>
+      'অডিও এবং ভিডিও কল প্রতি মিনিট বিল হয় (\"প্রতি মিনিট\"-এ সেট করুন)। সেশন মূল্য শুধু চ্যাটে প্রযোজ্য।';
+
+  @override
+  String get chatSessionMessageNote =>
+      'চ্যাট সেশনের অন্তর্ভুক্ত বার্তা শেষ হয়ে গেলে, পরবর্তী প্রতিটি বার্তার জন্য এই রেট প্রযোজ্য হবে (চ্যাট খোলা থাকে)।';
+
+  @override
+  String get perMsgUnit => '/ বার্তা';
+
+  @override
+  String get minUnit => 'মিনিট';
+
+  @override
+  String get messageSettingsTitle => 'মেসেজ সেটিংস';
+
+  @override
+  String get messageSettingsSubtitle =>
+      'এটি প্রতি সেশন পেইড-বার্তা সীমা এবং বৈধতা নিয়ন্ত্রণ করে।';
+
+  @override
+  String get messagesPerSessionLabel => 'প্রতি সেশন বার্তা';
+
+  @override
+  String get msgsUnit => 'বার্তা';
+
+  @override
+  String get validMessagesError => 'বৈধ বার্তার সংখ্যা লিখুন।';
+
+  @override
+  String get sessionValidityLabel => 'সেশন বৈধতা';
+
+  @override
+  String get hoursUnit => 'ঘণ্টা';
+
+  @override
+  String get validHoursError => 'বৈধ ঘণ্টার সংখ্যা লিখুন।';
+
+  @override
+  String get saveChangesButton => 'পরিবর্তন সংরক্ষণ করুন';
+
+  @override
+  String get suggestionsLabel => 'পরামর্শ';
+
+  @override
+  String get addButton => 'যুক্ত করুন';
+
+  @override
+  String removeChipLabel(String value) {
+    return '$value সরান';
+  }
+
+  @override
+  String reportCopiedOpeningAi(String ai) {
+    return 'রিপোর্ট কপি হয়েছে! $ai খোলা হচ্ছে — আলোচনার জন্য পেস্ট করুন।';
+  }
+
+  @override
+  String get kundliMilanReportTitle => 'কুণ্ডলী মিলন রিপোর্ট';
+
+  @override
+  String get milanPersonOne => 'ব্যক্তি ১';
+
+  @override
+  String get milanPersonTwo => 'ব্যক্তি ২';
+
+  @override
+  String get runningMilanAnalysis => 'মিলন বিশ্লেষণ চলছে...';
+
+  @override
+  String selectedOfTwo(Object count) {
+    return '$count/2 নির্বাচিত';
+  }
+
+  @override
+  String get runMilanAnalysisButton => 'মিলন বিশ্লেষণ চালান';
+
+  @override
+  String get relationshipIntelligenceTitle => 'সম্পর্ক ইন্টেলিজেন্স';
+
+  @override
+  String analyzingChartsCount(Object count) {
+    return '$count চার্ট বিশ্লেষণ করা হচ্ছে...';
+  }
+
+  @override
+  String get relationshipContextLabel => 'সম্পর্কের প্রসঙ্গ';
+
+  @override
+  String get generalWord => 'সাধারণ';
+
+  @override
+  String get teamWord => 'টিম';
+
+  @override
+  String get friendshipWord => 'বন্ধুত্ব';
+
+  @override
+  String analyzeChartsCountButton(Object count) {
+    return '$count চার্ট বিশ্লেষণ করুন';
+  }
+
+  @override
+  String get keyScoresCaps => 'মূল স্কোর';
+
+  @override
+  String get astrologicalWord => 'জ্যোতিষশাস্ত্রীয়';
+
+  @override
+  String allScoresCount(Object count) {
+    return 'সব স্কোর ($count)';
+  }
+
+  @override
+  String get amountRupeesLabel => 'পরিমাণ (₹)';
+
+  @override
+  String withdrawMinAmount(Object min) {
+    return 'উত্তোলন করুন (সর্বনিম্ন ₹$min)';
+  }
+
+  @override
+  String upiIdWithValue(String value) {
+    return 'UPI: $value';
+  }
 }

@@ -11825,4 +11825,160 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get reportCopied => 'अहवाल कॉपी झाला!';
+
+  @override
+  String get biometricNotAvailable => 'या डिव्हाइसवर बायोमेट्रिक उपलब्ध नाही';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'बायोमेट्रिक त्रुटी: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'बायोमेट्रिक लॉगिन सक्षम करण्यासाठी सत्यापित करा';
+
+  @override
+  String get dobFormatLabel => 'जन्मतारीख (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'जन्मवेळ (HH:MM)';
+
+  @override
+  String get phoneLabel => 'फोन';
+
+  @override
+  String get activeBadge => 'सक्रिय';
+
+  @override
+  String get chartCategoryLabel => 'श्रेणी';
+
+  @override
+  String get freePrimaryDescription =>
+      'फ्री प्रायमरी — दैनिक राशिभविष्य आणि मोफत सिंगल-चार्ट सेवांसाठी वापरली जाते';
+
+  @override
+  String get searchChartsHint => 'नाव किंवा जन्मतारखेने शोधा...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return '$price मध्ये अनलॉक करा';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'या AI तज्ञाला $price मध्ये (एकदा) अनलॉक करा, जे अॅप स्टोअरद्वारे सुरक्षितपणे विकत घेतले जाते.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'या AI तज्ञाला $price मध्ये (एकदा) अनलॉक करा. रक्कम तुमच्या वॉलेटमधून वजा केली जाईल.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'हा तज्ञ अद्याप खरेदीसाठी उपलब्ध नाही.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'खरेदी पूर्ण होऊ शकली नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'अनलॉक होऊ शकले नाही (वॉलेट शिल्लक तपासा)';
+
+  @override
+  String get freeBadge => 'फ्री';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'तुमचा एक सक्रिय $kind सुरू आहे';
+  }
+
+  @override
+  String get returnLabel => 'परत जा';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'सल्ला आणि ऑफर अलर्ट मिळवण्यासाठी नोटिफिकेशन सक्षम करा';
+
+  @override
+  String get enableLabel => 'सक्षम करा';
+
+  @override
+  String get notificationsEnabled => 'नोटिफिकेशन सक्षम केले';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'सक्षम होऊ शकले नाही — तुमच्या ब्राउझरमध्ये नोटिफिकेशनला परवानगी द्या';
+
+  @override
+  String get amountInrLabel => 'रक्कम (₹)';
+
+  @override
+  String get noteOptionalLabel => 'टीप (पर्यायी)';
+
+  @override
+  String get txnDate => 'तारीख';
+
+  @override
+  String get txnDescription => 'वर्णन';
+
+  @override
+  String get txnType => 'प्रकार';
+
+  @override
+  String get txnAmount => 'रक्कम';
+
+  @override
+  String get txnBalance => 'शिल्लक';
+
+  @override
+  String get credit => 'क्रेडिट';
+
+  @override
+  String get debit => 'डेबिट';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 प्रॉडक्शनमध्ये हे Razorpay/Stripe वर रीडायरेक्ट होईल.';
+
+  @override
+  String get downloadPdf => 'PDF डाउनलोड करा';
+
+  @override
+  String get chatWithAiCta => 'AI सोबत चॅट करा';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'PDF सेवा तात्पुरती अनुपलब्ध आहे. कृपया नंतर पुन्हा प्रयत्न करा.';
+
+  @override
+  String get pleaseUnlockFirst => 'कृपया आधी हे अनलॉक करा.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'PDF तयार होऊ शकले नाही. कृपया पुन्हा प्रयत्न करा.';
+
+  @override
+  String get statConsults => 'सल्ला';
+
+  @override
+  String get statCharts => 'चार्ट्स';
+
+  @override
+  String get statWallet => 'वॉलेट';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'तुमचा पहिला चार्ट तुमचा फ्री प्रायमरी आहे. अतिरिक्त चार्ट्स स्वतंत्रपणे सेवा अनलॉक करतात.';
+
+  @override
+  String get tryDifferentFilter => 'वेगळे फिल्टर वापरून पहा';
+
+  @override
+  String get defaultChartName => 'चार्ट';
+
+  @override
+  String get balAbbr => 'शिल्लक';
 }

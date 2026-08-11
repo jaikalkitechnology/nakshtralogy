@@ -10660,4 +10660,261 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get lessThanOneMin => '1 मिनिटापेक्षा कमी शिल्लक';
+
+  @override
+  String get biometricNotAvailable => 'या डिव्हाइसवर बायोमेट्रिक उपलब्ध नाही';
+
+  @override
+  String biometricErrorWithDetails(String error) {
+    return 'बायोमेट्रिक त्रुटी: $error';
+  }
+
+  @override
+  String get rateCardsTitle => 'रेट कार्ड';
+
+  @override
+  String get perMinuteLabel => 'प्रति मिनिट';
+
+  @override
+  String get perSessionLabel => 'प्रति सेशन';
+
+  @override
+  String get otherChargesLabel => 'इतर शुल्क';
+
+  @override
+  String sessionLimitInfo(Object limit, Object hours) {
+    return 'सेशन: $limit मेसेज, $hours तास वैधता';
+  }
+
+  @override
+  String get chatWord => 'चॅट';
+
+  @override
+  String get callWord => 'कॉल';
+
+  @override
+  String get perMsgLabel => 'प्रति मेसेज';
+
+  @override
+  String get superChatLabel => 'सुपर चॅट';
+
+  @override
+  String get changePasswordTitle => 'पासवर्ड बदला';
+
+  @override
+  String get changePasswordSub => 'ईमेल OTP द्वारे तुमचा पासवर्ड अपडेट करा';
+
+  @override
+  String get customerSupportTitle => 'ग्राहक सहाय्य';
+
+  @override
+  String get customerSupportSub => 'FAQ आणि तिकीट नोंदवा';
+
+  @override
+  String get notSetLabel => 'सेट केलेले नाही';
+
+  @override
+  String get phoneLabel => 'फोन';
+
+  @override
+  String get experienceLabel => 'अनुभव';
+
+  @override
+  String get verifyToEnableBiometric =>
+      'बायोमेट्रिक लॉगिन सक्षम करण्यासाठी सत्यापित करा';
+
+  @override
+  String get tapToChangeAppLanguage => 'अ‍ॅपची भाषा बदलण्यासाठी टॅप करा';
+
+  @override
+  String get discardChangesTitle => 'बदल रद्द करायचे?';
+
+  @override
+  String get discardChangesBody =>
+      'तुमचे बदल जतन केलेले नाहीत. आता बाहेर गेल्यास तुमचे बदल गमावले जातील.';
+
+  @override
+  String get keepEditing => 'संपादन सुरू ठेवा';
+
+  @override
+  String get discardAction => 'रद्द करा';
+
+  @override
+  String get newRatingLabel => 'नवीन';
+
+  @override
+  String get yrsSuffix => 'वर्षे';
+
+  @override
+  String get unsavedChangesLabel => 'जतन न केलेले बदल';
+
+  @override
+  String get profileInformationTitle => 'प्रोफाइल माहिती';
+
+  @override
+  String get yourFullNameHint => 'तुमचे पूर्ण नाव';
+
+  @override
+  String get shownToUsersHint => 'वापरकर्त्यांना दाखवले जाते';
+
+  @override
+  String get bioHint => 'तुमच्या ज्योतिष अनुभवाबद्दल वापरकर्त्यांना सांगा…';
+
+  @override
+  String get professionalInformationTitle => 'व्यावसायिक माहिती';
+
+  @override
+  String get validYearsError => 'वर्षांची वैध संख्या टाका.';
+
+  @override
+  String get addLanguageHint => 'एक भाषा जोडा';
+
+  @override
+  String get addSpecializationHint => 'एक विशेषज्ञता जोडा';
+
+  @override
+  String get qualificationHint => 'उदा. B.Sc, ज्योतिष आचार्य';
+
+  @override
+  String get consultationPricingTitle => 'सल्ला दर';
+
+  @override
+  String get consultationPricingSubtitle =>
+      'तुमच्या सल्लामसलतीसाठी वापरकर्त्यांकडून कसे शुल्क घ्यायचे ते सेट करा.';
+
+  @override
+  String get perMessageLabel => 'प्रति मेसेज';
+
+  @override
+  String get perMinUnit => '/ मिनिट';
+
+  @override
+  String get perSessionUnit => '/ सेशन';
+
+  @override
+  String get audioVideoBilledPerMinuteNote =>
+      'ऑडिओ आणि व्हिडिओ कॉल्स प्रति मिनिट बिल केले जातात (\"प्रति मिनिट\" मध्ये सेट करा). सेशन दर फक्त चॅटला लागू होतो.';
+
+  @override
+  String get chatSessionMessageNote =>
+      'चॅट सेशनमधील समाविष्ट मेसेज संपल्यानंतर, प्रत्येक पुढील मेसेजसाठी हा दर लागू होईल (चॅट उघडी राहते).';
+
+  @override
+  String get perMsgUnit => '/ मेसेज';
+
+  @override
+  String get minUnit => 'मिनिट';
+
+  @override
+  String get messageSettingsTitle => 'मेसेज सेटिंग्ज';
+
+  @override
+  String get messageSettingsSubtitle =>
+      'हे प्रति सेशन पेड-मेसेज मर्यादा आणि वैधता नियंत्रित करते.';
+
+  @override
+  String get messagesPerSessionLabel => 'प्रति सेशन मेसेज';
+
+  @override
+  String get msgsUnit => 'मेसेज';
+
+  @override
+  String get validMessagesError => 'मेसेजची वैध संख्या टाका.';
+
+  @override
+  String get sessionValidityLabel => 'सेशन वैधता';
+
+  @override
+  String get hoursUnit => 'तास';
+
+  @override
+  String get validHoursError => 'तासांची वैध संख्या टाका.';
+
+  @override
+  String get saveChangesButton => 'बदल जतन करा';
+
+  @override
+  String get suggestionsLabel => 'सूचना';
+
+  @override
+  String get addButton => 'जोडा';
+
+  @override
+  String removeChipLabel(String value) {
+    return '$value काढा';
+  }
+
+  @override
+  String reportCopiedOpeningAi(String ai) {
+    return 'रिपोर्ट कॉपी झाली! $ai उघडत आहे — चर्चेसाठी पेस्ट करा.';
+  }
+
+  @override
+  String get kundliMilanReportTitle => 'कुंडली मिलन रिपोर्ट';
+
+  @override
+  String get milanPersonOne => 'व्यक्ती 1';
+
+  @override
+  String get milanPersonTwo => 'व्यक्ती 2';
+
+  @override
+  String get runningMilanAnalysis => 'मिलन विश्लेषण सुरू आहे...';
+
+  @override
+  String selectedOfTwo(Object count) {
+    return '$count/2 निवडले';
+  }
+
+  @override
+  String get runMilanAnalysisButton => 'मिलन विश्लेषण चालवा';
+
+  @override
+  String get relationshipIntelligenceTitle => 'संबंध बुद्धिमत्ता';
+
+  @override
+  String analyzingChartsCount(Object count) {
+    return '$count चार्ट्सचे विश्लेषण केले जात आहे...';
+  }
+
+  @override
+  String get relationshipContextLabel => 'संबंध संदर्भ';
+
+  @override
+  String get generalWord => 'सामान्य';
+
+  @override
+  String get teamWord => 'टीम';
+
+  @override
+  String get friendshipWord => 'मैत्री';
+
+  @override
+  String analyzeChartsCountButton(Object count) {
+    return '$count चार्ट्सचे विश्लेषण करा';
+  }
+
+  @override
+  String get keyScoresCaps => 'मुख्य स्कोअर';
+
+  @override
+  String get astrologicalWord => 'ज्योतिषशास्त्रीय';
+
+  @override
+  String allScoresCount(Object count) {
+    return 'सर्व स्कोअर ($count)';
+  }
+
+  @override
+  String get amountRupeesLabel => 'रक्कम (₹)';
+
+  @override
+  String withdrawMinAmount(Object min) {
+    return 'काढा (किमान ₹$min)';
+  }
+
+  @override
+  String upiIdWithValue(String value) {
+    return 'UPI: $value';
+  }
 }

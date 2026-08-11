@@ -241,13 +241,15 @@ class _KundliTabWidgetState extends State<KundliTabWidget> {
               const SizedBox(width: 11),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('${kOrdinal(h)} ${l.house} · ${KundliNames.rashiShort(_signsShort[signIdx < 0 ? 0 : signIdx], loc)}',
+                    maxLines: 1, overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
                 if (lord.isNotEmpty)
-                  Text('${l.kunLord}: ${KundliNames.planet(lord, loc)}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  Text('${l.kunLord}: ${KundliNames.planet(lord, loc)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
               ])),
+              const SizedBox(width: 8),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Text('${score.toStringAsFixed(0)}%', style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w800)),
-                Text(kStrengthLabel(score, l), style: TextStyle(color: color, fontSize: 9.5, fontWeight: FontWeight.w700)),
+                Text(kStrengthLabel(score, l), maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontSize: 9.5, fontWeight: FontWeight.w700)),
               ]),
             ]),
             const SizedBox(height: 10),
@@ -333,22 +335,24 @@ class _KundliTabWidgetState extends State<KundliTabWidget> {
                 child: Text(_symbol(name), style: const TextStyle(fontSize: 22, color: AppColors.ivory))),
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text((p['planet_local'] ?? name).toString(), style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
+              Text((p['planet_local'] ?? name).toString(), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
               Text('${p['sign_full_local'] ?? p['sign_full']} · ${l.house} $house · ${(p['degree'] as num?)?.toStringAsFixed(2)}°',
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: AppColors.primary, fontSize: 12.5, fontWeight: FontWeight.w600)),
             ])),
             if (rel != 'neutral')
               Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  constraints: const BoxConstraints(maxWidth: 100),
                   decoration: BoxDecoration(color: relColor.withOpacity(0.16), borderRadius: BorderRadius.circular(8), border: Border.all(color: relColor.withOpacity(0.5))),
-                  child: Text(kRelationLabel(rel, l), style: TextStyle(color: relColor, fontSize: 11, fontWeight: FontWeight.w700))),
+                  child: FittedBox(fit: BoxFit.scaleDown, child: Text(kRelationLabel(rel, l), maxLines: 1, style: TextStyle(color: relColor, fontSize: 11, fontWeight: FontWeight.w700)))),
           ]),
           const SizedBox(height: 16),
           if (score != null) ...[
             Row(children: [
-              Text('${l.plStrength}:  ', style: const TextStyle(color: AppColors.smoke, fontSize: 13)),
+              Flexible(child: Text('${l.plStrength}:  ', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 13))),
               KStars(filled: kStars(score), size: 15, color: KColors.forScore(score)),
               const Spacer(),
-              Text('${score.toStringAsFixed(0)}% · ${kStrengthLabel(score, l)}', style: TextStyle(color: KColors.forScore(score), fontSize: 12.5, fontWeight: FontWeight.w700)),
+              Flexible(child: Text('${score.toStringAsFixed(0)}% · ${kStrengthLabel(score, l)}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: KColors.forScore(score), fontSize: 12.5, fontWeight: FontWeight.w700))),
             ]),
             const SizedBox(height: 12),
           ],
@@ -364,7 +368,7 @@ class _KundliTabWidgetState extends State<KundliTabWidget> {
   Widget _sheetRow(String k, String v) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(width: 120, child: Text(k, style: const TextStyle(color: AppColors.smoke, fontSize: 12.5))),
+          SizedBox(width: 120, child: Text(k, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 12.5))),
           Expanded(child: Text(v, style: const TextStyle(color: AppColors.parchment, fontSize: 12.5, fontWeight: FontWeight.w600))),
         ]),
       );

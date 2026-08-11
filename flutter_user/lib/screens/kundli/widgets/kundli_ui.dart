@@ -261,8 +261,8 @@ class KSectionHeader extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(color: AppColors.ivory, fontSize: 15.5, fontWeight: FontWeight.w800)),
-          if (subtitle != null) Text(subtitle!, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+          Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 15.5, fontWeight: FontWeight.w800)),
+          if (subtitle != null) Text(subtitle!, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
         ])),
       ]),
     );
@@ -395,7 +395,7 @@ class ReportAiChatCta extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Chat with AI', style: const TextStyle(color: AppColors.midnight, fontSize: 15, fontWeight: FontWeight.w800)),
+              Text(AppLocalizations.of(context)?.chatWithAiCta ?? 'Chat with AI', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.midnight, fontSize: 15, fontWeight: FontWeight.w800)),
               const SizedBox(height: 1),
               Text('$emoji  ${AppLocalizations.of(context)?.crAskAbout ?? 'Ask about'} $label',
                   maxLines: 1, overflow: TextOverflow.ellipsis,
@@ -417,6 +417,7 @@ Future<bool> downloadReportPdf(BuildContext context, String path, String filenam
   // iOS Safari blocks opening a tab after the async fetch. No-op elsewhere.
   final target = preparePdfTarget();
   final messenger = ScaffoldMessenger.of(context);
+  final l = AppLocalizations.of(context)!;
   try {
     final (status, bytes) = await ApiService().fetchPdf(path);
     if (status == 200 && bytes != null) {
@@ -425,15 +426,15 @@ Future<bool> downloadReportPdf(BuildContext context, String path, String filenam
     }
     closePdfTarget(target);
     final msg = status == 503
-        ? 'PDF service is temporarily unavailable. Please try again later.'
+        ? l.pdfServiceUnavailable
         : status == 402
-            ? 'Please unlock this first.'
-            : 'Could not generate the PDF. Please try again.';
+            ? l.pleaseUnlockFirst
+            : l.couldNotGeneratePdf;
     messenger.showSnackBar(SnackBar(content: Text(msg), backgroundColor: AppColors.error));
   } catch (_) {
     closePdfTarget(target);
-    messenger.showSnackBar(const SnackBar(
-        content: Text('Could not generate the PDF. Please try again.'),
+    messenger.showSnackBar(SnackBar(
+        content: Text(l.couldNotGeneratePdf),
         backgroundColor: AppColors.error));
   }
   return false;
@@ -469,7 +470,8 @@ class _ReportPdfButtonState extends State<ReportPdfButton> {
       icon: _busy
           ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
           : const Icon(Icons.picture_as_pdf_outlined, size: 18, color: AppColors.gold),
-      label: Text(widget.label ?? 'Download PDF',
+      label: Text(widget.label ?? AppLocalizations.of(context)!.downloadPdf,
+          maxLines: 1, overflow: TextOverflow.ellipsis,
           style: const TextStyle(color: AppColors.gold, fontWeight: FontWeight.w700)),
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(double.infinity, 46),

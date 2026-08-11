@@ -250,7 +250,7 @@ class _AddChartScreenState extends State<AddChartScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
-          title: Text(l.newBirthChart),
+          title: Text(l.newBirthChart, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         body: GestureDetector(
           onTap: () { FocusScope.of(context).unfocus(); _removeOverlay(); },
@@ -316,7 +316,7 @@ class _AddChartScreenState extends State<AddChartScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Text('Category', style: const TextStyle(color: AppColors.smoke, fontSize: 13)),
+                  Text(l.chartCategoryLabel, style: const TextStyle(color: AppColors.smoke, fontSize: 13)),
                   const SizedBox(height: 8),
                   Wrap(spacing: 8, children: ['self', 'family', 'friend', 'other'].map((c) {
                     final labels = {'self': '\u{1F464} Self', 'family': '\u{1F46A} Family', 'friend': '\u{1F91D} Friend', 'other': '\u{2728} Other'};
@@ -349,15 +349,17 @@ class _AddChartScreenState extends State<AddChartScreen> {
                             const Icon(Icons.info_outline, color: AppColors.smoke, size: 18),
                             const SizedBox(width: 10),
                             Expanded(child: Text(
-                              'Your first chart is your free Primary. Extra charts unlock services individually.',
+                              l.firstChartPrimaryInfo,
+                              maxLines: 3, overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: AppColors.smoke, fontSize: 11.5))),
                           ]),
                         );
                       }
                       return SwitchListTile(
-                        title: Text(l.primary, style: const TextStyle(color: AppColors.ivory, fontSize: 13)),
-                        subtitle: const Text('Free Primary — used for daily horoscope & free single-chart services',
-                            style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                        title: Text(l.primary, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 13)),
+                        subtitle: Text(l.freePrimaryDescription,
+                            maxLines: 2, overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                         value: _isPrimary, onChanged: (v) => setState(() => _isPrimary = v),
                         activeColor: AppColors.gold, contentPadding: EdgeInsets.zero,
                       );

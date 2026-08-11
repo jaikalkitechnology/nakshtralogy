@@ -79,7 +79,7 @@ class _KundliViewerScreenState extends State<KundliViewerScreen> with TickerProv
         _prefetchComplete();
       } else {
         setState(() {
-          _error = (resp['detail'] is Map ? (resp['detail'] as Map)['error'] : resp['detail'])?.toString() ?? 'Failed to load';
+          _error = (resp['detail'] is Map ? (resp['detail'] as Map)['error'] : resp['detail'])?.toString() ?? AppLocalizations.of(context)!.failedToLoad;
           _loading = false;
         });
       }

@@ -3789,5 +3789,85 @@
   "houseAnalysis": "宫位分析",
   "jaiminiKarakas": "遮米尼徵星（Jaimini Karakas）",
   "copyFullReport": "复制完整报告数据",
-  "reportCopied": "报告数据已复制！"
+  "reportCopied": "报告数据已复制！",
+  "biometricNotAvailable": "此设备不支持生物识别",
+  "biometricErrorMsg": "生物识别错误：{error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "验证以启用生物识别登录",
+  "dobFormatLabel": "出生日期 (DD/MM/YYYY)",
+  "tobFormatLabel": "出生时间 (HH:MM)",
+  "phoneLabel": "电话",
+  "activeBadge": "激活中",
+  "chartCategoryLabel": "类别",
+  "freePrimaryDescription": "免费主档案 — 用于每日星座运势和免费单图服务",
+  "searchChartsHint": "按姓名或出生日期搜索...",
+  "unlockPriceLabel": "以{price}解锁",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "以{price}（一次性）解锁此AI专家，通过应用商店安全购买。",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "以{price}（一次性）解锁此AI专家。金额将从您的钱包中扣除。",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "该专家暂不支持购买。",
+  "couldNotCompletePurchase": "无法完成购买。请重试。",
+  "couldNotUnlockWalletBalance": "无法解锁（请检查钱包余额）",
+  "freeBadge": "免费",
+  "activeSessionInProgress": "您有一个正在进行的{kind}",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "返回",
+  "enableNotificationsForAlerts": "启用通知以获取咨询和优惠提醒",
+  "enableLabel": "启用",
+  "notificationsEnabled": "通知已启用",
+  "couldNotEnableNotifications": "无法启用 — 请在浏览器中允许通知",
+  "amountInrLabel": "金额 (₹)",
+  "noteOptionalLabel": "备注（可选）",
+  "txnDate": "日期",
+  "txnDescription": "描述",
+  "txnType": "类型",
+  "txnAmount": "金额",
+  "txnBalance": "余额",
+  "credit": "入账",
+  "debit": "出账",
+  "razorpayStripeNote": "💳 在生产环境中，这将跳转到 Razorpay/Stripe。",
+  "downloadPdf": "下载PDF",
+  "chatWithAiCta": "与AI聊天",
+  "pdfServiceUnavailable": "PDF服务暂时不可用，请稍后再试。",
+  "pleaseUnlockFirst": "请先解锁此内容。",
+  "couldNotGeneratePdf": "无法生成PDF。请重试。",
+  "statConsults": "咨询次数",
+  "statCharts": "星盘数",
+  "statWallet": "钱包",
+  "firstChartPrimaryInfo": "您的第一张星盘是免费主档案。额外的星盘将单独解锁服务。",
+  "tryDifferentFilter": "尝试其他筛选条件",
+  "defaultChartName": "星盘",
+  "balAbbr": "余额"
 }

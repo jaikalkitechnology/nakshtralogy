@@ -92,7 +92,7 @@ class _S extends State<SpecialistListScreen> {
     child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)), const SizedBox(width: 6),
-        Text('★ ${l.yourCompleteReading}', style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700)),
+        Flexible(child: Text('★ ${l.yourCompleteReading}', maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.gold, fontSize: 9, fontWeight: FontWeight.w700))),
         const SizedBox(width: 6), Container(width: 16, height: 1, color: AppColors.gold.withOpacity(0.4)),
       ]),
       const SizedBox(height: 10),
@@ -138,7 +138,7 @@ class _S extends State<SpecialistListScreen> {
             color: active ? null : Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: active ? Colors.transparent : AppColors.gold.withOpacity(0.2))),
-          child: Text(labels[f] ?? f, style: TextStyle(
+          child: Text(labels[f] ?? f, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(
             color: active ? AppColors.midnight : AppColors.smoke,
             fontSize: 10, fontWeight: active ? FontWeight.w700 : FontWeight.w500))));
     }).toList()));
@@ -146,7 +146,7 @@ class _S extends State<SpecialistListScreen> {
 
   Widget _groupDivider(String label) => Container(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-    child: Text(label, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)));
+    child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 10, fontWeight: FontWeight.w700)));
 
   Widget _engineGrid(List<Map<String, dynamic>> engines) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -209,9 +209,9 @@ class _S extends State<SpecialistListScreen> {
               Text.rich(TextSpan(children: [
                 TextSpan(text: em.isNotEmpty ? '$title & ' : title, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600)),
                 if (em.isNotEmpty) TextSpan(text: em, style: const TextStyle(color: AppColors.gold, fontSize: 13, fontStyle: FontStyle.italic)),
-              ])),
+              ]), maxLines: 2, overflow: TextOverflow.ellipsis),
               const SizedBox(height: 3),
-              Text(e['sub'] as String, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 0.5)),
+              Text(e['sub'] as String, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 8, fontFamily: 'monospace', letterSpacing: 0.5)),
             ]),
           ]),
         ));

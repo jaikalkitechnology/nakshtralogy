@@ -30,16 +30,16 @@ class _S extends State<ForecastChartPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Scaffold(backgroundColor: const Color(0xFF0A0A24),
       appBar: AppBar(backgroundColor: const Color(0xFF0A0A24),
-        title: const Text.rich(TextSpan(children: [
-          TextSpan(text: "Today's ", style: TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600)),
-          TextSpan(text: 'Forecast', style: TextStyle(color: AppColors.gold, fontSize: 18, fontStyle: FontStyle.italic)),
-        ]))),
+        title: Text(l.todaysForecast,
+            maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w600))),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.gold))
           : _charts.isEmpty
-              ? Center(child: Text(AppLocalizations.of(context)?.noCharts ?? 'No charts', style: const TextStyle(color: AppColors.smoke)))
+              ? Center(child: Text(l.noCharts, style: const TextStyle(color: AppColors.smoke)))
               : ListView.builder(padding: const EdgeInsets.all(12), itemCount: _charts.length,
                   itemBuilder: (ctx, i) {
                     final c = _charts[i];
@@ -48,9 +48,9 @@ class _S extends State<ForecastChartPicker> {
                         builder: (_) => PaywallGate(
                           serviceKey: 'daily_forecast',
                           chartId: c['id']?.toString() ?? '',
-                          reportName: c['name']?.toString() ?? 'Chart',
+                          reportName: c['name']?.toString() ?? l.defaultChartName,
                           emoji: '🔆',
-                          builder: (_) => DailyForecastScreen(chartId: c['id']?.toString() ?? '', chartName: c['name']?.toString() ?? 'Chart'),
+                          builder: (_) => DailyForecastScreen(chartId: c['id']?.toString() ?? '', chartName: c['name']?.toString() ?? l.defaultChartName),
                         ))),
                       child: Container(margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -61,8 +61,8 @@ class _S extends State<ForecastChartPicker> {
                             child: const Center(child: Text('☀', style: TextStyle(fontSize: 18)))),
                           const SizedBox(width: 12),
                           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                            Text('${c['dob'] ?? ""} • ${c['place'] ?? ""}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                            Text(c['name']?.toString() ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                            Text('${c['dob'] ?? ""} • ${c['place'] ?? ""}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                           ])),
                           const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.smoke),
                         ])));

@@ -11857,4 +11857,161 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get reportCopied => 'Data laporan disalin!';
+
+  @override
+  String get biometricNotAvailable =>
+      'Biometrik tidak tersedia di perangkat ini';
+
+  @override
+  String biometricErrorMsg(Object error) {
+    return 'Kesalahan biometrik: $error';
+  }
+
+  @override
+  String get biometricVerifyReason =>
+      'Verifikasi untuk mengaktifkan login biometrik';
+
+  @override
+  String get dobFormatLabel => 'Tanggal Lahir (DD/MM/YYYY)';
+
+  @override
+  String get tobFormatLabel => 'Waktu Lahir (HH:MM)';
+
+  @override
+  String get phoneLabel => 'Telepon';
+
+  @override
+  String get activeBadge => 'AKTIF';
+
+  @override
+  String get chartCategoryLabel => 'Kategori';
+
+  @override
+  String get freePrimaryDescription =>
+      'Utama Gratis — digunakan untuk horoskop harian & layanan bagan tunggal gratis';
+
+  @override
+  String get searchChartsHint => 'Cari berdasarkan nama atau tanggal lahir...';
+
+  @override
+  String unlockPriceLabel(Object price) {
+    return 'Buka untuk $price';
+  }
+
+  @override
+  String unlockAiSpecialistIntl(Object price) {
+    return 'Buka spesialis AI ini seharga $price (sekali), dibeli dengan aman melalui app store.';
+  }
+
+  @override
+  String unlockAiSpecialistWallet(Object price) {
+    return 'Buka spesialis AI ini seharga $price (sekali). Jumlahnya akan dipotong dari dompet Anda.';
+  }
+
+  @override
+  String get specialistNotAvailablePurchase =>
+      'Spesialis ini belum tersedia untuk dibeli.';
+
+  @override
+  String get couldNotCompletePurchase =>
+      'Tidak dapat menyelesaikan pembelian. Silakan coba lagi.';
+
+  @override
+  String get couldNotUnlockWalletBalance =>
+      'Tidak dapat membuka (periksa saldo dompet)';
+
+  @override
+  String get freeBadge => 'GRATIS';
+
+  @override
+  String activeSessionInProgress(Object kind) {
+    return 'Anda memiliki $kind aktif yang sedang berlangsung';
+  }
+
+  @override
+  String get returnLabel => 'Kembali';
+
+  @override
+  String get enableNotificationsForAlerts =>
+      'Aktifkan notifikasi untuk mendapatkan peringatan konsultasi & penawaran';
+
+  @override
+  String get enableLabel => 'Aktifkan';
+
+  @override
+  String get notificationsEnabled => 'Notifikasi diaktifkan';
+
+  @override
+  String get couldNotEnableNotifications =>
+      'Tidak dapat mengaktifkan — izinkan notifikasi di browser Anda';
+
+  @override
+  String get amountInrLabel => 'Jumlah (₹)';
+
+  @override
+  String get noteOptionalLabel => 'Catatan (opsional)';
+
+  @override
+  String get txnDate => 'TANGGAL';
+
+  @override
+  String get txnDescription => 'DESKRIPSI';
+
+  @override
+  String get txnType => 'JENIS';
+
+  @override
+  String get txnAmount => 'JUMLAH';
+
+  @override
+  String get txnBalance => 'SALDO';
+
+  @override
+  String get credit => 'Kredit';
+
+  @override
+  String get debit => 'Debit';
+
+  @override
+  String get razorpayStripeNote =>
+      '💳 Dalam produksi, ini akan mengarahkan ke Razorpay/Stripe.';
+
+  @override
+  String get downloadPdf => 'Unduh PDF';
+
+  @override
+  String get chatWithAiCta => 'Chat dengan AI';
+
+  @override
+  String get pdfServiceUnavailable =>
+      'Layanan PDF sementara tidak tersedia. Silakan coba lagi nanti.';
+
+  @override
+  String get pleaseUnlockFirst => 'Silakan buka ini terlebih dahulu.';
+
+  @override
+  String get couldNotGeneratePdf =>
+      'Tidak dapat membuat PDF. Silakan coba lagi.';
+
+  @override
+  String get statConsults => 'KONSULTASI';
+
+  @override
+  String get statCharts => 'BAGAN';
+
+  @override
+  String get statWallet => 'DOMPET';
+
+  @override
+  String get firstChartPrimaryInfo =>
+      'Bagan pertama Anda adalah Utama gratis Anda. Bagan tambahan membuka layanan secara individual.';
+
+  @override
+  String get tryDifferentFilter => 'Coba filter yang berbeda';
+
+  @override
+  String get defaultChartName => 'Bagan';
+
+  @override
+  String get balAbbr => 'Saldo';
 }

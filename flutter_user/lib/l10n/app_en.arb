@@ -4,7 +4,13 @@
   "awGoogleFailed": "Google sign-in failed. Please try again.",
   "awCompleteProfileTitle": "Complete your profile",
   "awWelcomeName": "Welcome, {name}!",
-  "@awWelcomeName": {"placeholders": {"name": {"type": "String"}}},
+  "@awWelcomeName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "awCompleteProfileSubtitle": "A couple of details to personalize Nakshatralogy for you.",
   "awRegionLabel": "Region",
   "awRegionIndia": "India",
@@ -5053,5 +5059,85 @@
   "houseAnalysis": "House Analysis",
   "jaiminiKarakas": "Jaimini Karakas",
   "copyFullReport": "Copy full report data",
-  "reportCopied": "Report data copied!"
+  "reportCopied": "Report data copied!",
+  "biometricNotAvailable": "Biometric not available on this device",
+  "biometricErrorMsg": "Biometric error: {error}",
+  "@biometricErrorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "biometricVerifyReason": "Verify to enable biometric login",
+  "dobFormatLabel": "DOB (DD/MM/YYYY)",
+  "tobFormatLabel": "TOB (HH:MM)",
+  "phoneLabel": "Phone",
+  "activeBadge": "ACTIVE",
+  "chartCategoryLabel": "Category",
+  "freePrimaryDescription": "Free Primary — used for daily horoscope & free single-chart services",
+  "searchChartsHint": "Search by name or birth date...",
+  "unlockPriceLabel": "Unlock {price}",
+  "@unlockPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistIntl": "Unlock this AI specialist for {price} (one time), purchased securely through the app store.",
+  "@unlockAiSpecialistIntl": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "unlockAiSpecialistWallet": "Unlock this AI specialist for {price} (one time). The amount is deducted from your wallet.",
+  "@unlockAiSpecialistWallet": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "specialistNotAvailablePurchase": "This specialist is not available for purchase yet.",
+  "couldNotCompletePurchase": "Could not complete the purchase. Please try again.",
+  "couldNotUnlockWalletBalance": "Could not unlock (check wallet balance)",
+  "freeBadge": "FREE",
+  "activeSessionInProgress": "You have an active {kind} in progress",
+  "@activeSessionInProgress": {
+    "placeholders": {
+      "kind": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnLabel": "Return",
+  "enableNotificationsForAlerts": "Enable notifications to get consultation & offer alerts",
+  "enableLabel": "Enable",
+  "notificationsEnabled": "Notifications enabled",
+  "couldNotEnableNotifications": "Could not enable — allow notifications in your browser",
+  "amountInrLabel": "Amount (₹)",
+  "noteOptionalLabel": "Note (optional)",
+  "txnDate": "DATE",
+  "txnDescription": "DESCRIPTION",
+  "txnType": "TYPE",
+  "txnAmount": "AMOUNT",
+  "txnBalance": "BALANCE",
+  "credit": "Credit",
+  "debit": "Debit",
+  "razorpayStripeNote": "💳 In production this will redirect to Razorpay/Stripe.",
+  "downloadPdf": "Download PDF",
+  "chatWithAiCta": "Chat with AI",
+  "pdfServiceUnavailable": "PDF service is temporarily unavailable. Please try again later.",
+  "pleaseUnlockFirst": "Please unlock this first.",
+  "couldNotGeneratePdf": "Could not generate the PDF. Please try again.",
+  "statConsults": "CONSULTS",
+  "statCharts": "CHARTS",
+  "statWallet": "WALLET",
+  "firstChartPrimaryInfo": "Your first chart is your free Primary. Extra charts unlock services individually.",
+  "tryDifferentFilter": "Try a different filter",
+  "defaultChartName": "Chart",
+  "balAbbr": "Bal"
 }

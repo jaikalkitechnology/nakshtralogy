@@ -68,17 +68,17 @@ class _ProfileTabState extends State<ProfileTab> {
         final available = await auth.canCheckBiometrics || await auth.isDeviceSupported();
         if (!available) {
           if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Biometric not available on this device')));
+            SnackBar(content: Text(AppLocalizations.of(context)!.biometricNotAvailable)));
           return;
         }
         final ok = await auth.authenticate(
-          localizedReason: 'Verify to enable biometric login',
+          localizedReason: AppLocalizations.of(context)!.verifyToEnableBiometric,
           options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
         );
         if (!ok) return;
       } catch (e) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Biometric error: $e')));
+          SnackBar(content: Text(AppLocalizations.of(context)!.biometricErrorWithDetails(e.toString()))));
         return;
       }
     }
@@ -166,7 +166,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   const Icon(Icons.star, color: Colors.amber, size: 18),
                   const SizedBox(width: 4),
-                  Text('${(rating as num).toStringAsFixed(1)} ($totalReviews reviews)', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                  Text('${(rating as num).toStringAsFixed(1)} ($totalReviews ${l.reviews})', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                 ]),
                 const SizedBox(height: 14),
                 ElevatedButton.icon(
@@ -184,12 +184,12 @@ class _ProfileTabState extends State<ProfileTab> {
 
             // ── Details ──
             _DetailSection(items: [
-              _DetailItem(icon: Icons.email, label: 'Email', value: email),
-              _DetailItem(icon: Icons.phone, label: 'Phone', value: phone.isNotEmpty ? phone : 'Not set'),
-              _DetailItem(icon: Icons.work_history, label: 'Experience', value: exp != null ? '$exp years' : 'Not set'),
-              _DetailItem(icon: Icons.language, label: 'Languages', value: langs.isNotEmpty ? langs : 'Not set'),
-              _DetailItem(icon: Icons.auto_awesome, label: 'Specializations', value: specs.isNotEmpty ? specs : 'Not set'),
-              _DetailItem(icon: Icons.school, label: 'Qualification', value: qual.isNotEmpty ? qual : 'Not set'),
+              _DetailItem(icon: Icons.email, label: l.email, value: email),
+              _DetailItem(icon: Icons.phone, label: l.phoneLabel, value: phone.isNotEmpty ? phone : l.notSetLabel),
+              _DetailItem(icon: Icons.work_history, label: l.experienceLabel, value: exp != null ? '$exp ${l.dbYears}' : l.notSetLabel),
+              _DetailItem(icon: Icons.language, label: l.languagesLabel, value: langs.isNotEmpty ? langs : l.notSetLabel),
+              _DetailItem(icon: Icons.auto_awesome, label: l.specializationsLabel, value: specs.isNotEmpty ? specs : l.notSetLabel),
+              _DetailItem(icon: Icons.school, label: l.qualificationLabel, value: qual.isNotEmpty ? qual : l.notSetLabel),
             ]),
             const SizedBox(height: 16),
 
@@ -198,39 +198,39 @@ class _ProfileTabState extends State<ProfileTab> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Rate Cards', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(l.rateCardsTitle, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 12),
-                const Text('Per-Minute', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                Text(l.perMinuteLabel, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                 const SizedBox(height: 6),
                 Row(children: [
-                  _RateChip(label: 'Chat', value: '₹${profile['rate_per_min_chat'] ?? 0}/min', color: AppColors.accent),
+                  _RateChip(label: l.chatWord, value: '₹${profile['rate_per_min_chat'] ?? 0}/min', color: AppColors.accent),
                   const SizedBox(width: 8),
-                  _RateChip(label: 'Call', value: '₹${profile['rate_per_min_call'] ?? 0}/min', color: AppColors.success),
+                  _RateChip(label: l.callWord, value: '₹${profile['rate_per_min_call'] ?? 0}/min', color: AppColors.success),
                   const SizedBox(width: 8),
-                  _RateChip(label: 'Video', value: '₹${profile['rate_per_min_video'] ?? 0}/min', color: AppColors.primary),
+                  _RateChip(label: l.video, value: '₹${profile['rate_per_min_video'] ?? 0}/min', color: AppColors.primary),
                 ]),
                 const SizedBox(height: 12),
-                const Text('Per-Session', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                Text(l.perSessionLabel, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                 const SizedBox(height: 6),
                 Row(children: [
-                  _RateChip(label: 'Chat', value: '₹${profile['rate_per_session_chat'] ?? 0}', color: AppColors.accent),
+                  _RateChip(label: l.chatWord, value: '₹${profile['rate_per_session_chat'] ?? 0}', color: AppColors.accent),
                   const SizedBox(width: 8),
-                  _RateChip(label: 'Call', value: '₹${profile['rate_per_session_call'] ?? 0}', color: AppColors.success),
+                  _RateChip(label: l.callWord, value: '₹${profile['rate_per_session_call'] ?? 0}', color: AppColors.success),
                   const SizedBox(width: 8),
-                  _RateChip(label: 'Video', value: '₹${profile['rate_per_session_video'] ?? 0}', color: AppColors.primary),
+                  _RateChip(label: l.video, value: '₹${profile['rate_per_session_video'] ?? 0}', color: AppColors.primary),
                 ]),
                 const SizedBox(height: 10),
-                Text('Session: ${profile['session_message_limit'] ?? 45} msgs, ${profile['session_validity_hours'] ?? 24}hr validity',
+                Text(l.sessionLimitInfo(profile['session_message_limit'] ?? 45, profile['session_validity_hours'] ?? 24),
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 if ((profile['rate_per_msg_chat'] ?? 0) > 0 || (profile['super_chat_rate'] ?? 0) > 0) ...[
                   const SizedBox(height: 12),
-                  const Text('Other Charges', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                  Text(l.otherChargesLabel, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                   const SizedBox(height: 6),
                   Row(children: [
                     if ((profile['rate_per_msg_chat'] ?? 0) > 0)
-                      _RateChip(label: 'Per-Msg', value: '₹${profile['rate_per_msg_chat']}/msg', color: Colors.orange),
+                      _RateChip(label: l.perMsgLabel, value: '₹${profile['rate_per_msg_chat']}/msg', color: Colors.orange),
                     if ((profile['rate_per_msg_chat'] ?? 0) > 0) const SizedBox(width: 8),
-                    _RateChip(label: 'Super Chat', value: '₹${profile['super_chat_rate'] ?? 50} min', color: Colors.amber),
+                    _RateChip(label: l.superChatLabel, value: '₹${profile['super_chat_rate'] ?? 50} min', color: Colors.amber),
                   ]),
                 ],
               ]),
@@ -370,9 +370,9 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: Row(children: [
                   const Icon(Icons.language, color: AppColors.gold, size: 22),
                   const SizedBox(width: 12),
-                  const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Language / \u092d\u093e\u0937\u093e', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                    Text('Tap to change app language', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(l.language, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text(l.tapToChangeAppLanguage, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                   ])),
                   const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                 ]),
@@ -400,9 +400,9 @@ class _ProfileTabState extends State<ProfileTab> {
                   child: Row(children: [
                     const Icon(Icons.lock_outline, color: AppColors.gold, size: 22),
                     const SizedBox(width: 12),
-                    const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('Change Password', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                      Text('Update your password via email OTP', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(l.changePasswordTitle, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text(l.changePasswordSub, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                     ])),
                     const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                   ]),
@@ -426,9 +426,9 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: Row(children: [
                   const Icon(Icons.support_agent, color: AppColors.gold, size: 22),
                   const SizedBox(width: 12),
-                  const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Customer Support', style: TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                    Text('FAQ & raise a ticket', style: TextStyle(color: AppColors.smoke, fontSize: 11)),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(l.customerSupportTitle, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text(l.customerSupportSub, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                   ])),
                   const Icon(Icons.chevron_right, color: AppColors.gold, size: 20),
                 ]),
