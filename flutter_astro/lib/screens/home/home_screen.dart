@@ -264,18 +264,32 @@ class _HomeScreenState extends State<HomeScreen> {
             appBar: AppBar(
               titleSpacing: wide ? 20 : 16,
               toolbarHeight: wide ? 64 : null,
+              // Desktop: the inline navigation lives in a full-width bar under
+              // the AppBar (see `bottom:` below) so it can't be squeezed out by
+              // the action buttons. The title keeps just the brand.
+              bottom: wide
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(46),
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(children: [
+                            _desktopNavButton(0, Icons.home_rounded, l.home),
+                            _desktopNavButton(1, Icons.auto_awesome, l.astrology),
+                            _desktopNavButton(2, Icons.inbox_rounded, l.requests),
+                            _desktopNavButton(3, Icons.account_balance_wallet_rounded, l.wallet),
+                            _desktopNavButton(4, Icons.person_rounded, l.profile),
+                          ]),
+                        ),
+                      ),
+                    )
+                  : null,
               title: wide
-                  // Desktop: brand + inline top navigation (replaces the mobile
-                  // bottom bar). Go Live moves to an action button on the right.
                   ? Row(mainAxisSize: MainAxisSize.min, children: [
                       const Text('\u{1F52E} ', style: TextStyle(fontSize: 20)),
                       Text('Astro', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
-                      const SizedBox(width: 28),
-                      _desktopNavButton(0, Icons.home_rounded, l.home),
-                      _desktopNavButton(1, Icons.auto_awesome, l.astrology),
-                      _desktopNavButton(2, Icons.inbox_rounded, l.requests),
-                      _desktopNavButton(3, Icons.account_balance_wallet_rounded, l.wallet),
-                      _desktopNavButton(4, Icons.person_rounded, l.profile),
                     ])
                   : _currentIndex == 0
                       ? Row(mainAxisSize: MainAxisSize.min, children: [
