@@ -181,6 +181,7 @@ class GiftPricingResponse(BaseModel):
 
 class SendGiftRequest(BaseModel):
     gift_pricing_id: str
+    idempotency_key: Optional[str] = Field(None, max_length=64)  # dedupe retries/double-taps
 
 
 class GiftSentResponse(BaseModel):
@@ -197,6 +198,7 @@ class GiftSentResponse(BaseModel):
 class SuperChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=300)
     amount: float = Field(..., gt=0)
+    idempotency_key: Optional[str] = Field(None, max_length=64)  # dedupe retries/double-taps
 
 
 class SuperChatResponse(BaseModel):
