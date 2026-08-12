@@ -327,7 +327,7 @@ class _YogaViewState extends State<_YogaView> with SingleTickerProviderStateMixi
           Container(width: 6, height: 40, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(_name(y), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
+            Text(_name(y), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
             const SizedBox(height: 3),
             Text('${y['category'] ?? ''}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
           ])),
@@ -397,8 +397,8 @@ class _YogaViewState extends State<_YogaView> with SingleTickerProviderStateMixi
               Container(width: 6, height: 40, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(_name(y), style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
-                Text('${y['category'] ?? ''}', style: const TextStyle(color: AppColors.smoke, fontSize: 11.5)),
+                Text(_name(y), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
+                Text('${y['category'] ?? ''}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5)),
               ])),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 KStars(filled: yogaStars(score), size: 14, color: color),
@@ -495,7 +495,7 @@ class _YogaCardState extends State<_YogaCard> {
               Container(width: 6, height: 42, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 14.5, fontWeight: FontWeight.w800)),
+                Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14.5, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 3),
                 Row(children: [
                   KStars(filled: yogaStars(score), size: 12, color: color),

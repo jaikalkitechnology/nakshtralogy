@@ -102,11 +102,11 @@ class _State extends State<SpecialistReportScreen> {
       SliverAppBar(backgroundColor: const Color(0xFF0A0A24), pinned: true,
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
         title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-          Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
+          Text(widget.chartName.toUpperCase(), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace')),
           Text.rich(TextSpan(children: [
             TextSpan(text: '${widget.specialistEmoji} ', style: const TextStyle(fontSize: 16)),
             TextSpan(text: widget.specialistLabel, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
-          ])),
+          ]), maxLines: 1, overflow: TextOverflow.ellipsis),
         ]),
         centerTitle: true,
         actions: [if (widget.specialistKey.isNotEmpty) IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],

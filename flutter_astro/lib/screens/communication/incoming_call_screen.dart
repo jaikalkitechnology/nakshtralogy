@@ -196,7 +196,10 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> with SingleTick
               Text('Incoming ${widget.callType == 'video' ? 'Video' : 'Voice'} Call',
                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
               const SizedBox(height: 8),
-              Text(widget.callerName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(widget.callerName, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
+              ),
               const SizedBox(height: 4),
               Text('\u20b9${widget.ratePerMin.toInt()}/min', style: const TextStyle(color: AppColors.primary, fontSize: 16)),
               const SizedBox(height: 16),

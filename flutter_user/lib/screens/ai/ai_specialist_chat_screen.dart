@@ -431,7 +431,7 @@ class _AiSpecialistChatScreenState extends State<AiSpecialistChatScreen> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text(c['name']?.toString() ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
                     Text('${c['dob']} · ${c['tob']} · ${c['place']}', style: const TextStyle(color: AppColors.smoke, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
                   ])),
                   const Icon(Icons.arrow_forward_ios, color: AppColors.gold, size: 14),

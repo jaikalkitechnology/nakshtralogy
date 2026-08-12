@@ -193,9 +193,9 @@ class _State extends State<SpecialistRelationshipPicker> {
                                   : Text(gender == 'M' ? '♂' : gender == 'F' ? '♀' : '?', style: const TextStyle(fontSize: 18))),
                             const SizedBox(width: 12),
                             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(name, style: TextStyle(color: isSelected ? Colors.purple : AppColors.textPrimary,
+                              Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: isSelected ? Colors.purple : AppColors.textPrimary,
                                   fontSize: 14, fontWeight: FontWeight.w600)),
-                              Text('$dob • $place', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                              Text('$dob • $place', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ])),
                           ]),
                         ),

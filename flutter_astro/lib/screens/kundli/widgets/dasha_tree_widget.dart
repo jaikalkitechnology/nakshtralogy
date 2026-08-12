@@ -104,9 +104,9 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
           if (_stack.length > 1) IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.primary), onPressed: _pop, padding: EdgeInsets.zero, constraints: const BoxConstraints()),
           if (_stack.length > 1) const SizedBox(width: 8),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(current.title, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
+            Text(current.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w700)),
             const SizedBox(height: 2),
-            Text(_breadcrumb(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+            Text(_breadcrumb(), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
           ])),
         ]),
       ),
@@ -122,6 +122,8 @@ class _DashaTreeWidgetState extends State<DashaTreeWidget> with AutomaticKeepAli
               widget.type == 'vimshottari'
                   ? 'Birth Lord: ${KundliNames.planet('${_root?['moon_lord']}', Localizations.localeOf(context))} • Balance: ${_root?['balance_yrs']} yrs'
                   : 'Lagna: ${KundliNames.rashiAny('${_root?['lagna_sign'] ?? ''}', Localizations.localeOf(context))} • Balance: ${_root?['balance_yrs']} yrs',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: AppColors.accent, fontSize: 11),
             )),
           ]),

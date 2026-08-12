@@ -198,7 +198,7 @@ class _ChildProbabilityReportState extends State<ChildProbabilityReportScreen> {
         decoration: BoxDecoration(color: c.withOpacity(0.16), borderRadius: BorderRadius.circular(8)),
         child: Text(_titleCase(p['role'].toString()), style: TextStyle(color: c, fontSize: 9, fontWeight: FontWeight.w700))),
       const SizedBox(height: 6),
-      Text(p['name']?.toString() ?? '?', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
+      Text(p['name']?.toString() ?? '?', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
       const SizedBox(height: 4),
       Text('${p['lagna'] ?? ''} ${l.cpLagnaSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
       if (p['moon_sign'] != null) Text('${p['moon_sign']} ${l.cpMoonSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),

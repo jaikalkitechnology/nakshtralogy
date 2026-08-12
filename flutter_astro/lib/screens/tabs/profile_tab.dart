@@ -157,10 +157,10 @@ class _ProfileTabState extends State<ProfileTab> {
                 Text(AppLocalizations.of(context)?.tapToChangePhoto ?? 'Tap to change photo',
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 const SizedBox(height: 10),
-                Text(displayName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(displayName, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                 if (bio.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(bio, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13), textAlign: TextAlign.center),
+                  Text(bio, maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13), textAlign: TextAlign.center),
                 ],
                 const SizedBox(height: 10),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -601,9 +601,9 @@ class _RateChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(10), border: Border.all(color: color.withOpacity(0.3))),
         child: Column(children: [
-          Text(label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w500)),
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w500)),
           const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.bold)),
+          Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.bold)),
         ]),
       ),
     );

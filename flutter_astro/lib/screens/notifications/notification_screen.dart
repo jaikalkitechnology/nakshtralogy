@@ -136,7 +136,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           const SizedBox(width: 10),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Expanded(child: Text(title, style: TextStyle(
+              Expanded(child: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(
                 color: AppColors.textPrimary, fontSize: 13,
                 fontWeight: isRead ? FontWeight.w500 : FontWeight.w700))),
               if (!isRead) Container(

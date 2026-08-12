@@ -54,7 +54,7 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
         title: Row(children: [
           Text(widget.specialistEmoji, style: const TextStyle(fontSize: 20)),
           const SizedBox(width: 8),
-          Text(widget.specialistLabel, style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
+          Expanded(child: Text(widget.specialistLabel, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700))),
         ]),
       ),
       body: DesktopCenter(
@@ -114,8 +114,8 @@ class _SpecialistChartPickerState extends State<SpecialistChartPicker> {
                               child: Icon(Icons.person, size: 18, color: AppColors.textSecondary)),
                             const SizedBox(width: 12),
                             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(name, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
-                              Text('$dob • $place', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                              Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
+                              Text('$dob • $place', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ])),
                             const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.textSecondary),
                           ]),

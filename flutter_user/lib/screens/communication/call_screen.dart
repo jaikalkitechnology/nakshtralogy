@@ -570,7 +570,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
                     )),
                   ),
                   const SizedBox(height: 20),
-                  Text(widget.astrologerName, style: const TextStyle(color: AppColors.ivory, fontSize: 22, fontWeight: FontWeight.w700)),
+                  Text(widget.astrologerName, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.ivory, fontSize: 22, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 4),
                   Text(isVideo ? 'Video Call' : 'Voice Call', style: const TextStyle(color: AppColors.smoke, fontSize: 14)),
                   const SizedBox(height: 16),
