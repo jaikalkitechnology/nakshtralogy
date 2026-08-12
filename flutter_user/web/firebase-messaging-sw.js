@@ -16,7 +16,11 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-com
 const CONFIG_URL = 'https://api.nakshatralogy.com/api/v1/config/webpush?role=user';
 
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+// NOTE: intentionally NO clients.claim() — a push-only SW does not need to
+// control page fetches, and claiming an already-open tab on an update triggers
+// a controllerchange that can reload the page (killing an in-progress video
+// call / live stream on iOS). Push events are delivered regardless of control.
+self.addEventListener('activate', () => {});
 
 // Single display path for both handlers below. The `tag` (server-sent `nid`)
 // makes the FCM handler and the raw-push handler collapse to ONE notification
