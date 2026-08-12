@@ -61,7 +61,7 @@ from app.models.model import (
     ChatSession, LiveChatMessage, LiveStreamSuperChat, SessionReview,
 )
 from sqlalchemy import func as _sql_func
-from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push
+from app.services.fcm_service import notify_chat_request, notify_chat_accepted, send_push, push_to_user
 from app.routers.notification_router import save_notification
 from app.routers.ws_astrologer import push_to_astrologer
 from app.core.async_bridge import schedule_coro
@@ -512,6 +512,23 @@ def my_active_session(
 #  VOICE / VIDEO CALLS
 # ══════════════════════════════════════════════════════════════════════
 
+def _consult_pricing(db: Session, user) -> tuple:
+    """(multiplier, currency, fx_rate) for a caller's region.
+
+    International (INTL) consultations are billed at the same ``× MULTIPLIER``
+    premium as products (default 5×); the astrologer earns their commission %
+    of the full premium amount. The wallet ledger is INR, so the effective
+    per-minute ₹ rate we store and bill = base_rate × multiplier. ``currency``
+    and ``fx_rate`` are for USD *display* on the caller's screens
+    (usd = effective_inr ÷ fx)."""
+    from app.core import region as region_util, pricing as pricing_util
+    region = getattr(user, "region", None) or region_util.IN
+    fx = pricing_util.get_fx_rate(db)
+    if region_util.is_international_region(region):
+        return float(pricing_util.get_multiplier(db)), "USD", fx
+    return 1.0, "INR", fx
+
+
 @router.post("/call/initiate", response_model=CallSessionResponse)
 def initiate_call(
     req: InitiateCallRequest,
@@ -545,8 +562,12 @@ def initiate_call(
     if not profile.is_online or profile.is_busy:
         raise HTTPException(status_code=400, detail=t("err.astrologer_not_available", lang))
 
-    # determine rate
-    rate = float(profile.rate_per_min_call) if req.call_type == "voice" else float(profile.rate_per_min_video)
+    # determine rate — international callers pay the 5× premium (billed in the
+    # ₹ ledger as base × multiplier; displayed in USD). Astrologer earns their
+    # commission % of this effective rate.
+    _base_rate = float(profile.rate_per_min_call) if req.call_type == "voice" else float(profile.rate_per_min_video)
+    _mult, _currency, _fx = _consult_pricing(db, current_user)
+    rate = _base_rate * _mult
     if rate <= 0:
         raise HTTPException(status_code=400, detail=t("err.call_rate_not_set", lang, call_type=req.call_type))
 
@@ -742,6 +763,30 @@ def call_action(
 
     db.commit()
     db.refresh(call)
+
+    # ── Notify the OTHER party that the call ended / was cancelled / rejected.
+    # Previously only `accept` pushed an event, so when the user hung up the
+    # astrologer's screen never got a signal (Agora's peer-left event is
+    # unreliable on web/iOS) and stayed stuck on the call. Push to the
+    # astrologer over their live WS, and to the user over FCM data. ──
+    if req.action in ("end", "reject", "cancel"):
+        _ended_by = "astrologer" if current_user.id == call.receiver_id else "user"
+        _evt = {
+            "type": "call_ended", "call_id": call.id, "status": call.status,
+            "reason": req.action, "ended_by": _ended_by,
+            "duration_sec": int(call.duration_sec or 0),
+            "total_amount": float(call.total_amount or 0),
+        }
+        try:
+            schedule_coro(push_to_astrologer(call.receiver_id, _evt))
+        except Exception:
+            logger.warning("call_ended push_to_astrologer failed", exc_info=True)
+        try:
+            _peer = db.query(User).filter(User.id == call.caller_id).first()
+            if _peer is not None:
+                push_to_user(_peer, "Call ended", "", role="user", data=_evt)
+        except Exception:
+            logger.warning("call_ended push_to_user failed", exc_info=True)
 
     return CallSessionResponse(
         id=call.id, channel_name=call.channel_name,
@@ -1528,9 +1573,12 @@ def initiate_chat(
     if not profile.is_online or profile.is_busy:
         raise HTTPException(status_code=400, detail=t("err.astrologer_not_available", lang))
 
-    # Determine billing mode
-    session_rate = float(profile.rate_per_session_chat or 0)
-    minute_rate = float(profile.rate_per_min_chat or 0)
+    # Determine billing mode — international callers pay the 5× premium on both
+    # session and per-minute chat rates (billed in the ₹ ledger as base × mult;
+    # displayed in USD). Astrologer earns their commission % of the effective rate.
+    _mult, _currency, _fx = _consult_pricing(db, current_user)
+    session_rate = float(profile.rate_per_session_chat or 0) * _mult
+    minute_rate = float(profile.rate_per_min_chat or 0) * _mult
     if session_rate > 0:
         billing_mode = "per_session"
         block_amount = session_rate
