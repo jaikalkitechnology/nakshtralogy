@@ -106,6 +106,12 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
         },
         onUserOffline: (connection, remoteUid, reason) {
           debugPrint('Remote user left: $remoteUid reason=$reason');
+          // The user intentionally hung up (quit) → end cleanly and say so,
+          // instead of showing "Reconnecting…". Only a network drop gets grace.
+          if (reason == UserOfflineReasonType.userOfflineQuit) {
+            _endCall(endedBy: 'user');
+            return;
+          }
           setState(() { _remoteJoined = false; _remoteUid = null; _peerReconnecting = true; });
           // Grace window — a blip shouldn't end the call. End only if the peer
           // doesn't rejoin in time.
@@ -116,7 +122,7 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
           }
           _rtcGraceTimer?.cancel();
           _rtcGraceTimer = Timer(const Duration(seconds: 20), () {
-            if (mounted && _peerReconnecting) _endCall();
+            if (mounted && _peerReconnecting) _endCall(endedBy: 'user');
           });
         },
         onConnectionStateChanged: (connection, state, reason) {
@@ -235,10 +241,15 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
     }
   }
 
-  Future<void> _endCall() async {
+  Future<void> _endCall({String? endedBy}) async {
     if (_ending) return;
     _ending = true;
+    // Stop the reconnect grace + clear any "Reconnecting…" snackbar so it can't
+    // linger after the call has ended.
     _timer?.cancel();
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
+    if (mounted) ScaffoldMessenger.of(context).clearSnackBars();
 
     try {
       await _engine?.leaveChannel();
@@ -248,6 +259,14 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
     try {
       await _api.callAction(widget.callId, 'end');
     } catch (_) {}
+
+    // Tell the astrologer who ended (the user hung up), then return.
+    if (endedBy != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Call ended by ${widget.peerName.isNotEmpty ? widget.peerName : endedBy}'),
+        backgroundColor: AppColors.card, duration: const Duration(seconds: 3)));
+      await Future.delayed(const Duration(milliseconds: 1200));
+    }
 
     if (mounted) Navigator.pop(context);
   }

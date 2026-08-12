@@ -187,6 +187,13 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       },
       onUserOffline: (connection, remoteUid, reason) {
         debugPrint('Remote user left: $remoteUid reason=$reason');
+        // The astrologer intentionally hung up (quit) → end cleanly and say so,
+        // instead of showing "Reconnecting…" for the whole grace window. Only a
+        // genuine network drop gets the reconnect grace.
+        if (reason == UserOfflineReasonType.userOfflineQuit) {
+          _endCall(endedBy: 'astrologer');
+          return;
+        }
         setState(() {
           _remoteJoined = false;
           _remoteUid = null;
@@ -201,7 +208,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
         }
         _rtcGraceTimer?.cancel();
         _rtcGraceTimer = Timer(const Duration(seconds: 20), () {
-          if (mounted && _peerReconnecting) _endCall();
+          if (mounted && _peerReconnecting) _endCall(endedBy: 'astrologer');
         });
       },
       onConnectionStateChanged: (connection, state, reason) {
@@ -402,11 +409,18 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     await _engine?.switchCamera();
   }
 
-  Future<void> _endCall({bool fromLifecycle = false}) async {
+  Future<void> _endCall({bool fromLifecycle = false, String? endedBy}) async {
     if (_ending) return;
     _ending = true;
+    // Stop EVERYTHING that could keep showing "Reconnecting…" or re-poll behind
+    // the review dialog: all timers, the reconnect grace, and any live snackbar.
     _timer?.cancel();
     _maxTimer?.cancel();
+    _pollTimer?.cancel();
+    _billingTimer?.cancel();
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
+    if (mounted) ScaffoldMessenger.of(context).clearSnackBars();
 
     try {
       await _engine?.leaveChannel();
@@ -419,6 +433,13 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       final action = wasConnected ? 'end' : 'cancel';
       await _api.callAction(widget.callId, action);
     } catch (_) {}
+
+    // Tell the user who ended (the peer hung up) so it isn't a silent drop.
+    if (endedBy != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Call ended by ${endedBy == 'astrologer' ? widget.astrologerName : endedBy}'),
+        backgroundColor: AppColors.card, duration: const Duration(seconds: 4)));
+    }
 
     // Prompt for a rating only for calls that actually connected — never for a
     // cancelled/unanswered call. Skippable; not shown when ended by lifecycle.
