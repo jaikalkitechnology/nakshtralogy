@@ -19,6 +19,12 @@ import '../screens/communication/call_screen.dart';
 /// the sheet opens. File-scoped because only one profile sheet is open at once.
 final ValueNotifier<String?> consultCouponCode = ValueNotifier<String?>(null);
 
+/// Guards against a double consultation start. On iOS Safari / PWA a single tap
+/// can dispatch twice (pointer + click), firing two initiate requests so the
+/// astrologer is rung twice. Only one profile sheet is open at a time, so a
+/// file-scoped flag is enough; it is cleared as soon as the request settles.
+bool _consultStarting = false;
+
 /// Bottom sheet that shows full astrologer profile with rate card and reviews.
 /// Dispatches AstrologerDetailRequested when opened and clears on close.
 Future<void> showAstrologerProfileSheet(BuildContext context, String astrologerId) {
@@ -43,6 +49,8 @@ class _AstrologerProfileSheet extends StatelessWidget {
   const _AstrologerProfileSheet();
 
   Future<void> _startCall(BuildContext context, Map<String, dynamic> astrologer, String callType) async {
+    if (_consultStarting) return;   // ignore a duplicate tap (iOS double-fire)
+    _consultStarting = true;
     final l = AppLocalizations.of(context)!;
     Navigator.pop(context);
     final scaffold = ScaffoldMessenger.of(context);
@@ -69,10 +77,14 @@ class _AstrologerProfileSheet extends StatelessWidget {
       }
     } catch (e) {
       scaffold.showSnackBar(SnackBar(content: Text(l.astroErrorDetail(e.toString())), backgroundColor: AppColors.error));
+    } finally {
+      _consultStarting = false;
     }
   }
 
   Future<void> _startChat(BuildContext context, Map<String, dynamic> astrologer) async {
+    if (_consultStarting) return;   // ignore a duplicate tap (iOS double-fire)
+    _consultStarting = true;
     final l = AppLocalizations.of(context)!;
     Navigator.pop(context); // close the sheet
     final scaffold = ScaffoldMessenger.of(context);
@@ -105,6 +117,8 @@ class _AstrologerProfileSheet extends StatelessWidget {
       }
     } catch (e) {
       scaffold.showSnackBar(SnackBar(content: Text(l.astroErrorDetail(e.toString())), backgroundColor: AppColors.error));
+    } finally {
+      _consultStarting = false;
     }
   }
 
