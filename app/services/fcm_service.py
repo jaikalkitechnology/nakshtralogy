@@ -77,6 +77,21 @@ def _init_user_app() -> Optional[firebase_admin.App]:
         return _user_app
     cred, source = _build_credential("user", settings.FIREBASE_USER_SA_PATH)
     if not cred:
+        # Fall back to the astrologer service account. The user and astrologer
+        # apps live in the SAME Firebase project, and an FCM token belongs to the
+        # project (not the individual app), so the astro credential can deliver
+        # to user tokens too. This is exactly why astrologer notifications worked
+        # while user ones didn't: the user service account was never configured
+        # (a placeholder), but the astrologer one is valid. If a real, separate
+        # user credential is later provided, it takes precedence over this
+        # fallback (this branch only runs when the user one is missing/invalid).
+        fb_cred, fb_source = _build_credential("astro", settings.FIREBASE_ASTRO_SA_PATH)
+        if fb_cred:
+            cred = fb_cred
+            source = f"fallback→astro ({fb_source})"
+            logger.warning("Firebase User SA missing/invalid — falling back to the "
+                           "astrologer credential (same project): %s", source)
+    if not cred:
         _init_error["user"] = source
         logger.warning(f"Firebase User SA unavailable — {source}")
         return None
