@@ -18,6 +18,23 @@ self.addEventListener('activate', function (event) {
   event.waitUntil(self.clients.claim());
 });
 
+// Single display path for both handlers below. The `tag` (server-sent `nid`)
+// makes the FCM handler and the raw-push handler collapse to ONE notification
+// on browsers where both fire (Android), while distinct messages still alert.
+function nkShow(payload) {
+  const n = (payload && payload.notification) || {};
+  const data = (payload && payload.data) || {};
+  const title = n.title || data.title || 'Nakshatralogy Astro';
+  const tag = data.nid || data.session_id || data.call_id || data.type || 'nakshatralogy';
+  return self.registration.showNotification(title, {
+    body: n.body || data.body || '',
+    icon: '/icons/Icon-192.png',
+    badge: '/icons/Icon-192.png',
+    tag: tag,
+    data: data,
+  });
+}
+
 async function initMessaging() {
   try {
     const res = await fetch(WEBPUSH_CONFIG_URL, { credentials: 'omit' });
@@ -33,24 +50,24 @@ async function initMessaging() {
       authDomain: cfg.web_auth_domain,
     });
 
-    const messaging = firebase.messaging();
-    messaging.onBackgroundMessage(function (payload) {
-      const n = payload.notification || {};
-      const data = payload.data || {};
-      const title = n.title || data.title || 'Nakshatralogy Astro';
-      self.registration.showNotification(title, {
-        body: n.body || data.body || '',
-        icon: '/icons/Icon-192.png',
-        badge: '/icons/Icon-192.png',
-        data: data,
-      });
-    });
+    // Fires on Android/Chrome for data messages. iOS Safari PWAs do NOT fire
+    // this reliably — the raw `push` listener below covers them.
+    firebase.messaging().onBackgroundMessage(function (payload) { nkShow(payload); });
   } catch (e) {
     // No-op: web push simply stays inactive until config is available.
   }
 }
 
 initMessaging();
+
+// Raw Web Push event — the reliable background path on iOS Safari PWAs (and a
+// safety net everywhere). FCM data messages arrive here as { data: {...} }.
+// The shared `tag` dedupes against onBackgroundMessage so no duplicate shows.
+self.addEventListener('push', function (event) {
+  let payload = {};
+  try { payload = event.data ? event.data.json() : {}; } catch (e) { payload = {}; }
+  event.waitUntil(nkShow(payload));
+});
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();

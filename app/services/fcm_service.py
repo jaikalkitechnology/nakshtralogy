@@ -11,6 +11,7 @@ FCM tokens from user app go to user project, astro app to astro project.
 
 import os
 import json
+import uuid
 import logging
 from typing import Optional
 
@@ -206,46 +207,59 @@ def _get_app_for_role(role: str) -> Optional[firebase_admin.App]:
     return _init_user_app()  # user & admin use user project
 
 
-def _send_one(app, token: str, title: str, body: str, data: Optional[dict]) -> bool:
+def _send_one(app, token: str, title: str, body: str, data: Optional[dict],
+              is_web: bool = False) -> bool:
     """Build and send a single FCM v1 message to one token.
 
-    The same message body works for native (android/apns) AND web tokens —
-    FCM v1 applies the platform-specific block that matches the token type and
-    ignores the rest, and a ``webpush`` block is added so browser tokens get a
-    proper notification payload.
+    Native (android/apns) and WEB tokens need different message shapes:
+
+    * Native tokens get a ``notification`` payload so the OS shows it in the
+      system tray while the app is backgrounded/killed.
+    * WEB tokens get a **data-only** message (no top-level ``notification`` and
+      no ``webpush.notification``). A notification payload makes FCM auto-display
+      the message, which works on Android Chrome PWAs but is UNRELIABLE on iOS
+      Safari PWAs and, worse, stops the service worker's ``onBackgroundMessage``
+      from firing at all. Sending data-only makes the SW handler run on BOTH
+      Android and iOS, so our own ``showNotification`` renders it identically —
+      which is how Android already works and what we now want on iOS.
+
+    Title/body always ride in ``data`` too, so the SW (and the Dart foreground
+    handler) can render the notification from the data fields.
     """
     try:
-        # Include title/body in DATA too: the web service worker's
-        # onBackgroundMessage reads data.title/body, so a browser (esp. an iOS
-        # Safari PWA, where auto-display of the notification payload is
-        # unreliable) can still render the notification from the data.
         payload = {k: str(v) for k, v in (data or {}).items()}
         payload.setdefault("title", title)
         payload.setdefault("body", body)
-        message = messaging.Message(
-            notification=messaging.Notification(title=title, body=body),
-            token=token,
-            data=payload,
-            android=messaging.AndroidConfig(
-                priority="high",
-                notification=messaging.AndroidNotification(
-                    sound="default",
-                    click_action="FLUTTER_NOTIFICATION_CLICK",
+        # Unique per-send id: the web SW uses it as the notification `tag` so its
+        # two display handlers (FCM onBackgroundMessage + the raw push listener
+        # that iOS needs) collapse to ONE notification, while distinct messages
+        # still alert separately.
+        payload.setdefault("nid", uuid.uuid4().hex)
+        if is_web:
+            # Data-only: the service worker owns display on every browser.
+            message = messaging.Message(
+                token=token,
+                data=payload,
+                webpush=messaging.WebpushConfig(headers={"Urgency": "high"}),
+            )
+        else:
+            message = messaging.Message(
+                notification=messaging.Notification(title=title, body=body),
+                token=token,
+                data=payload,
+                android=messaging.AndroidConfig(
+                    priority="high",
+                    notification=messaging.AndroidNotification(
+                        sound="default",
+                        click_action="FLUTTER_NOTIFICATION_CLICK",
+                    ),
                 ),
-            ),
-            apns=messaging.APNSConfig(
-                payload=messaging.APNSPayload(
-                    aps=messaging.Aps(sound="default", badge=1),
+                apns=messaging.APNSConfig(
+                    payload=messaging.APNSPayload(
+                        aps=messaging.Aps(sound="default", badge=1),
+                    ),
                 ),
-            ),
-            webpush=messaging.WebpushConfig(
-                headers={"Urgency": "high"},
-                notification=messaging.WebpushNotification(
-                    title=title, body=body,
-                    icon="/icons/Icon-192.png", badge="/icons/Icon-192.png",
-                ),
-            ),
-        )
+            )
         response = messaging.send(message, app=app)
         logger.info(f"FCM sent: {response}")
         _record_send(token, True, None, "send")
@@ -281,13 +295,14 @@ def send_push(
                      "send")
         return False
 
-    tokens = [tok for tok in (fcm_token, web_token) if tok]
+    tokens = [(fcm_token, False), (web_token, True)]
+    tokens = [(tok, is_web) for tok, is_web in tokens if tok]
     if not tokens:
         return False
 
     sent_any = False
-    for tok in tokens:
-        if _send_one(app, tok, title, body, data):
+    for tok, is_web in tokens:
+        if _send_one(app, tok, title, body, data, is_web=is_web):
             sent_any = True
     return sent_any
 
@@ -325,29 +340,49 @@ def send_push_multi(
 ) -> int:
     """Send push to multiple devices (native + web tokens). Returns count of
     successful sends."""
-    all_tokens = [tok for tok in (list(fcm_tokens or []) + list(web_tokens or [])) if tok]
-    if not all_tokens:
+    native = [t for t in (fcm_tokens or []) if t]
+    web = [t for t in (web_tokens or []) if t]
+    if not native and not web:
         return 0
     app = _get_app_for_role(role)
     if not app:
         return 0
 
-    try:
-        message = messaging.MulticastMessage(
-            notification=messaging.Notification(title=title, body=body),
-            tokens=all_tokens,
-            data={k: str(v) for k, v in (data or {}).items()},
-            android=messaging.AndroidConfig(priority="high"),
-            webpush=messaging.WebpushConfig(
-                notification=messaging.WebpushNotification(title=title, body=body),
-            ),
-        )
-        response = messaging.send_each_for_multicast(message, app=app)
-        logger.info(f"FCM multicast: {response.success_count} success, {response.failure_count} failed")
-        return response.success_count
-    except Exception as e:
-        logger.error(f"FCM multicast failed: {e}")
-        return 0
+    # title/body ride in data too so the web SW can render from data fields.
+    payload = {k: str(v) for k, v in (data or {}).items()}
+    payload.setdefault("title", title)
+    payload.setdefault("body", body)
+    payload.setdefault("nid", uuid.uuid4().hex)
+    sent = 0
+
+    # Native tokens: notification payload (OS shows it in the tray).
+    if native:
+        try:
+            resp = messaging.send_each_for_multicast(messaging.MulticastMessage(
+                notification=messaging.Notification(title=title, body=body),
+                tokens=native, data=payload,
+                android=messaging.AndroidConfig(priority="high"),
+                apns=messaging.APNSConfig(payload=messaging.APNSPayload(
+                    aps=messaging.Aps(sound="default", badge=1))),
+            ), app=app)
+            sent += resp.success_count
+        except Exception as e:
+            logger.error(f"FCM native multicast failed: {e}")
+
+    # Web tokens: DATA-ONLY so the service worker's onBackgroundMessage fires and
+    # renders the notification identically on Android AND iOS PWAs.
+    if web:
+        try:
+            resp = messaging.send_each_for_multicast(messaging.MulticastMessage(
+                tokens=web, data=payload,
+                webpush=messaging.WebpushConfig(headers={"Urgency": "high"}),
+            ), app=app)
+            sent += resp.success_count
+        except Exception as e:
+            logger.error(f"FCM web multicast failed: {e}")
+
+    logger.info(f"FCM multicast: {sent} success")
+    return sent
 
 
 # ── Notification Helpers ──────────────────────────────────────────────
