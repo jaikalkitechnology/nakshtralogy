@@ -209,7 +209,27 @@
             ['loadedmetadata', 'canplay', 'stalled', 'suspend', 'emptied'].forEach(function (ev) {
               v.addEventListener(ev, function () { fix(v); });
             });
+            // iOS PWA: a <video> bound to a WebRTC MediaStream is often present
+            // but BLACK (the first frame never paints). Re-binding srcObject
+            // forces iOS to paint. Kicks only while it still looks black.
+            setTimeout(function () { kick(v); }, 300);
+            setTimeout(function () { kick(v); }, 1200);
+            setTimeout(function () { kick(v); }, 2500);
           }
+        } catch (e) {}
+      }
+      // Force the first frame on iOS by re-attaching the MediaStream. No-op once
+      // the video is actually rendering (videoWidth>0 and playing).
+      function kick(v) {
+        try {
+          var s = v.srcObject;
+          if (!s) return;
+          if (v.videoWidth > 0 && !v.paused) return; // already rendering
+          v.srcObject = null;
+          v.srcObject = s;
+          v.muted = true;
+          v.playsInline = true;
+          var p = v.play(); if (p && p.catch) p.catch(function () {});
         } catch (e) {}
       }
       function scan() { document.querySelectorAll('video').forEach(fix); }
