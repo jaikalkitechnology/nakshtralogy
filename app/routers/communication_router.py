@@ -1902,10 +1902,16 @@ def _finalize_chat_billing(db: Session, session: ChatSession, profile, lang: str
 
 def _chat_session_response(session: ChatSession, db=None) -> ChatSessionResponse:
     astrologer_name = None
+    _currency, _fx = "INR", 0.0
     if db and session.astrologer_id:
         profile = db.query(AstrologerProfile).filter(AstrologerProfile.id == session.astrologer_id).first()
         if profile:
             astrologer_name = profile.display_name
+    # Display currency follows the chat's user (INTL → USD). Rates stay in the
+    # ₹ ledger; the client divides by fx_rate to show USD.
+    if db:
+        _cu = db.query(User).filter(User.id == session.user_id).first()
+        _, _currency, _fx = _consult_pricing(db, _cu)
     return ChatSessionResponse(
         id=session.id, user_id=session.user_id,
         astrologer_id=session.astrologer_id,

@@ -55,6 +55,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   bool _overage = false;
   double _overageRate = 0;
   double _overageSpent = 0;
+  String _currency = 'INR';   // 'USD' for international users (5× rule)
+  double _fx = 0;             // INR per 1 USD (from session_info)
+
+  /// Format an INR-ledger amount in the user's display currency.
+  String _money(double inr) => (_currency == 'USD' && _fx > 0)
+      ? '\$${(inr / _fx).toStringAsFixed(2)}'
+      : '₹${inr.toStringAsFixed(0)}';
   // Connecting screen: wait up to 60s for the astrologer to accept.
   bool _ended = false;              // guards a single end/cancel (no double refund)
   Timer? _connectTimer;
@@ -242,6 +249,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               _connected = isActive;
               _userMessageCount = data['user_message_count'] ?? 0;
               _remainingMessages = (data['session_message_limit'] ?? widget.sessionMessageLimit) - _userMessageCount;
+              _currency = data['currency']?.toString() ?? _currency;
+              _fx = (data['fx_rate'] as num?)?.toDouble() ?? _fx;
             });
             if (isActive) {
               _onConnected();
@@ -650,7 +659,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               const SizedBox(width: 6),
               Expanded(child: Text(
                 _overage
-                    ? 'Pay-per-message \u00b7 \u20b9${_overageSpent.toStringAsFixed(0)} extra'
+                    ? 'Pay-per-message \u00b7 ${_money(_overageSpent)} extra'
                     : widget.billingMode == 'per_session'
                         ? 'Session: $_userMessageCount/${widget.sessionMessageLimit} msgs ($_remainingMessages left)'
                         : 'Duration: $_formattedTime',
@@ -665,10 +674,10 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 ),
                 child: Text(
                   _overage
-                      ? '\u20b9${_overageRate.toStringAsFixed(0)}/msg'
+                      ? '${_money(_overageRate)}/msg'
                       : widget.billingMode == 'per_session'
-                          ? '\u20b9${widget.ratePerSession.toInt()}/sess'
-                          : '\u20b9${_currentCost.toStringAsFixed(0)}',
+                          ? '${_money(widget.ratePerSession)}/sess'
+                          : _money(_currentCost),
                   style: const TextStyle(color: AppColors.midnight, fontSize: 11, fontWeight: FontWeight.w700),
                 ),
               ),
@@ -714,7 +723,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 const Icon(Icons.info_outline, size: 15, color: AppColors.saffron),
                 const SizedBox(width: 8),
                 Expanded(child: Text(
-                  'Session messages used up. Continue at ₹${_overageRate.toStringAsFixed(0)} per message.',
+                  'Session messages used up. Continue at ${_money(_overageRate)} per message.',
                   style: const TextStyle(color: AppColors.saffron, fontSize: 11.5, fontWeight: FontWeight.w600),
                 )),
               ]),
