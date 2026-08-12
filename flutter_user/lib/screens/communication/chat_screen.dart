@@ -360,13 +360,91 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   }
 
   void _sendMessage() {
-    if (_msgCtrl.text.trim().isEmpty || _channel == null) return;
-    _channel!.sink.add(jsonEncode({
-      'type': 'message',
-      'content': _msgCtrl.text.trim(),
-      'message_type': 'text',
-    }));
+    final text = _msgCtrl.text.trim();
+    if (text.isEmpty) return;
     _msgCtrl.clear();
+    _sendViaRest(content: text, messageType: 'text');
+  }
+
+  /// Reliable send: persist + deliver via the REST endpoint (HTTP fails loudly,
+  /// unlike a half-open WebSocket whose send is silently dropped — which was
+  /// leaving user messages neither saved nor delivered). The message shows
+  /// immediately as an optimistic bubble, then reconciles to the server copy.
+  /// The backend broadcasts it to a WS-connected astrologer, so nothing is lost.
+  Future<void> _sendViaRest({
+    required String content,
+    required String messageType,
+    String? mediaUrl,
+    String? fileName,
+    int? fileSize,
+  }) async {
+    final tempId = 'local-${DateTime.now().microsecondsSinceEpoch}';
+    final nowIso = DateTime.now().toIso8601String();
+    setState(() {
+      _messages.add({
+        'id': tempId,
+        'sender_id': _myUserId,
+        'is_astrologer': false,
+        'message_type': messageType,
+        'content': content,
+        'media_url': mediaUrl,
+        'file_name': fileName,
+        'file_size': fileSize,
+        'timestamp': nowIso,
+        'pending': true,
+      });
+    });
+    _scrollToBottom();
+
+    void _markFailed(String? detail) {
+      if (!mounted) return;
+      setState(() {
+        final i = _messages.indexWhere((m) => m['id'] == tempId);
+        if (i >= 0) {
+          _messages[i]['pending'] = false;
+          _messages[i]['failed'] = true;
+        }
+      });
+      if (detail != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(detail), backgroundColor: AppColors.error));
+      }
+    }
+
+    try {
+      final resp = await _api.sendChatMessageViaApi(
+        widget.sessionId, content,
+        messageType: messageType, mediaUrl: mediaUrl,
+        fileName: fileName, fileSize: fileSize,
+      );
+      final code = (resp['statusCode'] as int?) ?? 0;
+      if (code == 200) {
+        if (!mounted) return;
+        setState(() {
+          final i = _messages.indexWhere((m) => m['id'] == tempId);
+          if (i >= 0) {
+            _messages[i]['id'] = resp['id'] ?? tempId;
+            _messages[i]['timestamp'] = resp['created_at'] ?? nowIso;
+            _messages[i]['pending'] = false;
+            _messages[i].remove('failed');
+          }
+          final oc = (resp['overage_charged'] as num?)?.toDouble() ?? 0;
+          if (oc > 0) _overageSpent += oc;
+          if (resp['user_message_count'] != null) {
+            _userMessageCount = resp['user_message_count'];
+          }
+          if (resp['remaining_messages'] != null) {
+            _remainingMessages = resp['remaining_messages'];
+          }
+        });
+      } else if (code == 402) {
+        _markFailed(resp['detail']?.toString() ?? 'Insufficient balance');
+      } else {
+        _markFailed(null);
+      }
+    } catch (_) {
+      _markFailed(null);
+    }
   }
 
   Future<void> _reportMessage(int index) async {
@@ -387,15 +465,29 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Re-send a message whose delivery failed (tap on the "Not sent" bubble).
+  void _retryMessage(int index) {
+    if (index < 0 || index >= _messages.length) return;
+    final m = _messages[index];
+    if (m['failed'] != true) return;
+    setState(() => _messages.removeAt(index));
+    _sendViaRest(
+      content: (m['content'] ?? '').toString(),
+      messageType: (m['message_type'] ?? 'text').toString(),
+      mediaUrl: m['media_url']?.toString(),
+      fileName: m['file_name']?.toString(),
+      fileSize: m['file_size'] is int ? m['file_size'] as int : null,
+    );
+  }
+
   void _sendFileMessage(String mediaUrl, String fileName, int fileSize, String fileType) {
-    _channel?.sink.add(jsonEncode({
-      'type': 'message',
-      'content': fileType == 'pdf' ? '📄 $fileName' : '📷 Photo',
-      'message_type': fileType,
-      'media_url': mediaUrl,
-      'file_name': fileName,
-      'file_size': fileSize,
-    }));
+    _sendViaRest(
+      content: fileType == 'pdf' ? '📄 $fileName' : '📷 Photo',
+      messageType: fileType,
+      mediaUrl: mediaUrl,
+      fileName: fileName,
+      fileSize: fileSize,
+    );
   }
 
   Future<void> _pickAndUploadFile(String type) async {
@@ -696,6 +788,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                 baseUrl: ApiConstants.baseUrl,
                 token: _api.accessToken,
                 onReport: () => _reportMessage(i),
+                onRetry: () => _retryMessage(i),
               ),
             ),
           ),
@@ -809,7 +902,8 @@ class _MessageBubble extends StatelessWidget {
   final String baseUrl;
   final String token;
   final VoidCallback? onReport;
-  const _MessageBubble({required this.message, required this.isMe, required this.baseUrl, this.token = '', this.onReport});
+  final VoidCallback? onRetry;
+  const _MessageBubble({required this.message, required this.isMe, required this.baseUrl, this.token = '', this.onReport, this.onRetry});
 
   /// Absolute, authenticated URL for a chat media file. The download endpoint
   /// needs a JWT, and Image.network / web <img> cannot set an Authorization
@@ -927,6 +1021,36 @@ class _MessageBubble extends StatelessWidget {
               ]),
             ),
           ),
+
+          // Send status (own messages only): sending… / not-sent tap-to-retry.
+          if (isMe && message['pending'] == true)
+            const Padding(
+              padding: EdgeInsets.only(top: 3, right: 2),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.access_time, size: 11, color: AppColors.smoke),
+                  SizedBox(width: 3),
+                  Text('Sending…', style: TextStyle(color: AppColors.smoke, fontSize: 10)),
+                ]),
+              ),
+            ),
+          if (isMe && message['failed'] == true)
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: onRetry,
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 3, right: 2),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.error_outline, size: 12, color: AppColors.error),
+                    SizedBox(width: 3),
+                    Text('Not sent · Tap to retry',
+                        style: TextStyle(color: AppColors.error, fontSize: 10, fontWeight: FontWeight.w600)),
+                  ]),
+                ),
+              ),
+            ),
 
           // Chat-guard: safety warning under a flagged astrologer message.
           if (!isMe && message['flagged'] == true)

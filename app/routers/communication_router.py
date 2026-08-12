@@ -2033,10 +2033,18 @@ def send_chat_message_rest(
     lang: str = Depends(get_lang_user),
 ):
     """
-    Send a chat message via REST API (used for inline notification replies).
-    This endpoint persists the message and sends FCM to the other participant.
-    WebSocket-connected clients will NOT see this message unless they refresh.
+    Send a chat message via REST API.
+
+    This is the RELIABLE send path (used by the user app for every message and
+    for inline notification replies): HTTP fails loudly, unlike a half-open
+    WebSocket whose `send` is silently dropped — which was leaving user messages
+    neither saved nor delivered. It persists the message, applies per-message /
+    overage billing (identical to the WS handler via the shared helper),
+    BROADCASTS to any WebSocket-connected participant so they see it live, and
+    sends an FCM fallback to a participant who is not currently connected.
     """
+    from app.routers.ws_chat import _connections, _broadcast, charge_user_message
+
     session = db.query(ChatSession).filter(ChatSession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail=t("err.session_not_found", lang))
@@ -2050,10 +2058,30 @@ def send_chat_message_rest(
         raise HTTPException(status_code=403, detail=t("err.not_participant", lang))
 
     is_user = current_user.id == session.user_id
+    rate_per_msg = float(profile.rate_per_msg_chat or 0) if profile else 0.0
 
-    # Track user message count
+    # Track user message count + apply per-message / overage billing (shared with
+    # the WS handler so both paths charge identically).
+    overage_charged = 0.0
+    overage_started = False
     if is_user:
         session.user_message_count = (session.user_message_count or 0) + 1
+        _bill = charge_user_message(db, session, profile, rate_per_msg)
+        if _bill["insufficient"]:
+            # Not enough balance for this message → settle + close the session.
+            # Settle synchronously (the request's db closes right after we return,
+            # so it must not be touched from a scheduled coroutine); only the
+            # WS broadcast — which never touches the db — is scheduled.
+            settle_chat(db, session, profile, lang)
+            db.commit()
+            schedule_coro(_broadcast(session_id, {
+                "type": "session_ended",
+                "reason": "Insufficient balance for next message",
+                "timestamp": datetime.utcnow().isoformat(),
+            }))
+            raise HTTPException(status_code=402, detail=t("err.insufficient_balance", lang))
+        overage_charged = _bill["overage"]
+        overage_started = _bill["overage_started"]
 
     msg = LiveChatMessage(
         session_id=session_id,
@@ -2065,6 +2093,7 @@ def send_chat_message_rest(
         file_size=req.file_size,
     )
     # Chat-guard: flag off-platform payment/solicitation in ASTROLOGER messages.
+    guard_reasons = []
     if not is_user and req.message_type == "text":
         try:
             from app.core.chat_guard import scan
@@ -2072,14 +2101,58 @@ def send_chat_message_rest(
             if g["flagged"]:
                 msg.flagged = True
                 msg.flag_reasons = g["reasons"]
+                guard_reasons = g["reasons"]
         except Exception:
             pass
     db.add(msg)
     db.commit()
     db.refresh(msg)
 
-    # Send FCM to the other participant
-    if is_user and profile:
+    _limit = session.session_message_limit or 45
+    _remaining = max(0, _limit - (session.user_message_count or 0))
+
+    # ── Broadcast to WebSocket-connected participants (real-time delivery) ──
+    # Exclude the sender so their own optimistic bubble is not duplicated by an
+    # echo. A connected recipient sees the message instantly; if they are not
+    # connected, the FCM push below is the fallback.
+    try:
+        schedule_coro(_broadcast(session_id, {
+            "type": "message",
+            "id": msg.id,
+            "sender_id": current_user.id,
+            "sender_name": current_user.name,
+            "is_astrologer": not is_user,
+            "message_type": req.message_type,
+            "content": req.content,
+            "media_url": req.media_url,
+            "file_name": req.file_name,
+            "file_size": req.file_size,
+            "timestamp": msg.created_at.isoformat(),
+            "flagged": bool(guard_reasons),
+            "flag_reasons": guard_reasons,
+            "user_message_count": session.user_message_count or 0,
+            "remaining_messages": _remaining,
+            "overage_charged": overage_charged,
+        }, exclude=current_user.id))
+        if overage_started:
+            schedule_coro(_broadcast(session_id, {
+                "type": "overage_started",
+                "rate_per_msg": rate_per_msg,
+                "message_limit": _limit,
+                "timestamp": datetime.utcnow().isoformat(),
+            }))
+    except Exception as bcast_err:
+        logger.warning(f"Chat REST broadcast failed: {bcast_err}")
+
+    # Recipient currently connected via WS? Then the broadcast already delivered
+    # it — skip the (duplicate) push. Only push when they are NOT connected.
+    _recipient_id = astro_user_id if is_user else session.user_id
+    _recipient_connected = (
+        session_id in _connections and _recipient_id in _connections[session_id]
+    )
+
+    # Send FCM to the other participant (only if not connected)
+    if is_user and profile and not _recipient_connected:
         astro_u = db.query(User).filter(User.id == profile.user_id).first()
         sender_display_name = current_user.name or t("label.default_user_name", lang)
         rlang = resolve_user_lang(astro_u, lang)
@@ -2101,7 +2174,7 @@ def send_chat_message_rest(
                     "session_message_limit": str(session.session_message_limit or 45),
                 },
             )
-    elif not is_user:
+    elif not is_user and not _recipient_connected:
         chat_user = db.query(User).filter(User.id == session.user_id).first()
         sender_display_name = current_user.name or t("label.default_astrologer_name", lang)
         rlang = resolve_user_lang(chat_user, lang)
@@ -2129,6 +2202,10 @@ def send_chat_message_rest(
         message_type=msg.message_type, content=msg.content,
         media_url=msg.media_url, file_name=msg.file_name,
         file_size=msg.file_size, created_at=msg.created_at,
+        flagged=bool(guard_reasons), flag_reasons=guard_reasons or None,
+        user_message_count=(session.user_message_count or 0) if is_user else None,
+        remaining_messages=_remaining if is_user else None,
+        overage_charged=overage_charged,
     )
 
 

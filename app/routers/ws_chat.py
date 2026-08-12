@@ -80,6 +80,55 @@ def _credit_astro_wallet(db: Session, user_id: str, amount: float, desc: str):
     return txn.id
 
 
+def charge_user_message(db: Session, session: ChatSession, profile, rate_per_msg: float) -> dict:
+    """Apply per-message / overage billing for ONE user message.
+
+    Shared source of truth for both the WebSocket handler and the REST send
+    endpoint so the two paths always charge identically. Assumes
+    `session.user_message_count` has ALREADY been incremented for this message.
+
+    Returns {"charged": bool, "overage": float, "insufficient": bool,
+             "overage_started": bool}. The caller owns termination/announcement:
+    on `insufficient` end the session; on `overage_started` announce the bar.
+    """
+    _limit = session.session_message_limit or 45
+    _count = session.user_message_count or 0
+    # Overage = per-session plan whose included quota is now exceeded.
+    _is_overage = (session.billing_mode == "per_session" and _count > _limit)
+    _charge = rate_per_msg > 0 and (session.billing_mode == "per_message" or _is_overage)
+    # The boundary message (exactly at the limit) opens the pay-per-message bar.
+    _overage_started = (session.billing_mode == "per_session"
+                        and rate_per_msg > 0 and _count == _limit)
+    if not _charge:
+        return {"charged": False, "overage": 0.0, "insufficient": False,
+                "overage_started": _overage_started}
+    try:
+        user_wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
+        if not user_wallet or float(user_wallet.balance) < rate_per_msg:
+            return {"charged": False, "overage": 0.0, "insufficient": True,
+                    "overage_started": _overage_started}
+        user_wallet.balance = Decimal(str(float(user_wallet.balance) - rate_per_msg))
+        db.add(WalletTransaction(
+            wallet_id=user_wallet.id, txn_type="consultation_debit",
+            amount=Decimal(str(rate_per_msg)), balance_after=user_wallet.balance,
+            description=(f"Chat extra message (after {_limit})"
+                         if _is_overage else f"Chat message #{_count}"),
+            reference_type=("chat_overage" if _is_overage else "chat_per_msg"),
+        ))
+        comm_pct = float(profile.commission_pct) if profile else 70.0
+        earning = rate_per_msg * comm_pct / 100
+        if profile:
+            _credit_astro_wallet(db, profile.user_id, earning,
+                (f"Chat extra-msg earning" if _is_overage
+                 else f"Chat msg earning #{_count}"))
+        return {"charged": True, "overage": (rate_per_msg if _is_overage else 0.0),
+                "insufficient": False, "overage_started": _overage_started}
+    except Exception as billing_err:
+        logger.warning(f"Per-message billing error: {billing_err}")
+        return {"charged": False, "overage": 0.0, "insufficient": False,
+                "overage_started": _overage_started}
+
+
 def _send_chat_fcm(db: Session, session: ChatSession, sender: User, sender_is_astrologer: bool, content: str, message_type: str):
     """
     Send FCM push to the OTHER participant in the chat.
@@ -334,51 +383,18 @@ async def websocket_chat(
                 overage_charged = 0.0
                 if is_user:
                     session.user_message_count = (session.user_message_count or 0) + 1
-
-                    _limit = session.session_message_limit or 45
-                    # Two ways a user message gets a per-message charge:
-                    #  1. a dedicated per-message plan (billing_mode == per_message)
-                    #  2. per-session OVERAGE — the session's included messages are
-                    #     used up (count > limit) and the astrologer set a
-                    #     per-message rate, so the user chose to keep chatting.
-                    # For per_session within the included quota, and for per_minute
-                    # (settled by time), the message is NOT charged again.
-                    _is_overage = (session.billing_mode == "per_session"
-                                   and (session.user_message_count or 0) > _limit)
-                    _charge_msg = rate_per_msg > 0 and (
-                        session.billing_mode == "per_message" or _is_overage)
-                    if _charge_msg:
-                        try:
-                            user_wallet = db.query(Wallet).filter(Wallet.user_id == session.user_id).first()
-                            if user_wallet and float(user_wallet.balance) >= rate_per_msg:
-                                # Deduct from user
-                                user_wallet.balance = Decimal(str(float(user_wallet.balance) - rate_per_msg))
-                                db.add(WalletTransaction(
-                                    wallet_id=user_wallet.id, txn_type="consultation_debit",
-                                    amount=Decimal(str(rate_per_msg)), balance_after=user_wallet.balance,
-                                    description=(f"Chat extra message (after {_limit})"
-                                                 if _is_overage else f"Chat message #{session.user_message_count}"),
-                                    reference_type=("chat_overage" if _is_overage else "chat_per_msg"),
-                                ))
-                                overage_charged = rate_per_msg if _is_overage else 0.0
-                                # Credit astrologer their set % share
-                                comm_pct = float(profile.commission_pct) if profile else 70.0
-                                earning = rate_per_msg * comm_pct / 100
-                                if profile:
-                                    _credit_astro_wallet(db, profile.user_id, earning,
-                                        (f"Chat extra-msg earning" if _is_overage
-                                         else f"Chat msg earning #{session.user_message_count}"))
-                            else:
-                                # Insufficient balance → end session
-                                await _complete_session(db, session, profile)
-                                await _broadcast(session_id, {
-                                    "type": "session_ended",
-                                    "reason": "Insufficient balance for next message",
-                                    "timestamp": datetime.utcnow().isoformat(),
-                                })
-                                break
-                        except Exception as billing_err:
-                            logger.warning(f"Per-message billing error: {billing_err}")
+                    # Per-message / overage billing — same math as the REST path.
+                    _bill = charge_user_message(db, session, profile, rate_per_msg)
+                    if _bill["insufficient"]:
+                        # Insufficient balance → end session
+                        await _complete_session(db, session, profile)
+                        await _broadcast(session_id, {
+                            "type": "session_ended",
+                            "reason": "Insufficient balance for next message",
+                            "timestamp": datetime.utcnow().isoformat(),
+                        })
+                        break
+                    overage_charged = _bill["overage"]
 
                 # persist message
                 msg = LiveChatMessage(

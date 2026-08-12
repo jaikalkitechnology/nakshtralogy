@@ -1107,12 +1107,25 @@ class ApiService {
   }
 
   /// Send a chat message via REST API (used for inline notification reply).
-  Future<Map<String, dynamic>> sendChatMessageViaApi(String sessionId, String content) async {
+  Future<Map<String, dynamic>> sendChatMessageViaApi(
+    String sessionId,
+    String content, {
+    String messageType = 'text',
+    String? mediaUrl,
+    String? fileName,
+    int? fileSize,
+  }) async {
     await loadTokens();
     final resp = await http.post(
       Uri.parse('${ApiConstants.commBase}/chat/$sessionId/message'),
       headers: _headers,
-      body: jsonEncode({'content': content, 'message_type': 'text'}),
+      body: jsonEncode({
+        'content': content,
+        'message_type': messageType,
+        if (mediaUrl != null) 'media_url': mediaUrl,
+        if (fileName != null) 'file_name': fileName,
+        if (fileSize != null) 'file_size': fileSize,
+      }),
     );
     return {'statusCode': resp.statusCode, ...jsonDecode(resp.body)};
   }
