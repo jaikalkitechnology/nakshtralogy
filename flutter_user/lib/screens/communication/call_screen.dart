@@ -56,6 +56,8 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   int _serverRemaining = -1;
   bool _lowWarned = false;
   bool _low = false;             // persistent low-balance banner (mid-call recharge)
+  String _currency = 'INR';      // 'USD' for international callers (5× rule)
+  double _fx = 0;                // INR per 1 USD (from server meter)
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
@@ -294,6 +296,8 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
           _serverBilled = (r['billed_so_far'] as num?)?.toDouble() ?? _serverBilled;
           _serverBalance = (r['user_balance'] as num?)?.toDouble() ?? _serverBalance;
           _serverRemaining = (r['remaining_seconds'] as num?)?.toInt() ?? _serverRemaining;
+          _currency = r['currency']?.toString() ?? _currency;
+          _fx = (r['fx_rate'] as num?)?.toDouble() ?? _fx;
         });
         final low = r['low_balance'] == true;
         if (mounted) setState(() => _low = low);
@@ -336,6 +340,12 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
 
   double get _currentCost =>
       _serverBilled >= 0 ? _serverBilled : (_seconds / 60).ceil() * widget.ratePerMin;
+
+  /// Format an INR-ledger amount in the caller's display currency. International
+  /// callers (5× rule) see USD = ₹amount ÷ fx; India keeps ₹.
+  String _money(double inr) => (_currency == 'USD' && _fx > 0)
+      ? '\$${(inr / _fx).toStringAsFixed(2)}'
+      : '₹${inr.toStringAsFixed(0)}';
 
   int get _remainingSeconds {
     if (widget.maxCallSeconds <= 0) return 9999;
@@ -544,7 +554,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
                       Text('\u25cf CONNECTED', style: TextStyle(color: AppColors.success, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 2)),
                       const SizedBox(height: 4),
                       Text(_formattedTime, style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w500, fontFamily: 'monospace')),
-                      Text('\u20b9${_currentCost.toStringAsFixed(0)} \u00b7 \u20b9${widget.ratePerMin.toInt()}/min',
+                      Text('${_money(_currentCost)} \u00b7 ${_money(widget.ratePerMin)}/min',
                           style: const TextStyle(color: AppColors.gold, fontSize: 12)),
                       if (_remainingTime.isNotEmpty)
                         Text(_remainingTime, style: TextStyle(
@@ -556,7 +566,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
                   if (widget.eligibleMinutes > 0)
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
-                      child: Text('Max ${widget.eligibleMinutes} min (₹${(widget.eligibleMinutes * widget.ratePerMin).toInt()} balance)',
+                      child: Text('Max ${widget.eligibleMinutes} min (${_money((widget.eligibleMinutes * widget.ratePerMin).toDouble())} balance)',
                           style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                     ),
                   // Mid-call low-balance banner → recharge without dropping the call.

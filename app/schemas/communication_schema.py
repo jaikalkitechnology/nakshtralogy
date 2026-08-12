@@ -68,6 +68,11 @@ class CallSessionResponse(BaseModel):
     user_balance: float = 0            # caller's current wallet balance
     remaining_seconds: int = 0         # until funds / eligible run out
     low_balance: bool = False          # < ~60s of funds left
+    # Display currency for the caller (international = USD via the 5× rule).
+    # Amounts above stay in the ₹ ledger; the client divides by fx_rate to show
+    # USD when currency == "USD".
+    currency: str = "INR"
+    fx_rate: float = 0                 # INR per 1 USD (only meaningful for USD)
 
 
 class CallActionRequest(BaseModel):
@@ -237,6 +242,10 @@ class ChatSessionResponse(BaseModel):
     expires_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
     astrologer_name: Optional[str] = None
+    # Display currency for the user (international = USD via the 5× rule). Rates
+    # above stay in the ₹ ledger; the client divides by fx_rate for USD display.
+    currency: str = "INR"
+    fx_rate: float = 0
 
 
 class ChatMessageRequest(BaseModel):
