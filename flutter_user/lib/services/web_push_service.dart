@@ -51,6 +51,11 @@ class WebPushService {
   /// 'granted' | 'denied' | 'default' | 'unsupported'.
   String get permissionState => kIsWeb ? webNotificationPermission() : 'unsupported';
 
+  /// True when we're an iOS browser that is NOT an installed PWA. iOS only
+  /// allows web push from a home-screen (standalone) PWA, so in this state the
+  /// user must "Add to Home Screen" first — enabling from a Safari tab can't work.
+  bool get iosNeedsInstall => kIsWeb && webIsIos() && !webIsStandalonePwa();
+
   /// Request permission + fetch/register the token IN RESPONSE TO A USER TAP.
   /// This is the ONLY place permission is ever requested — the same on Android
   /// and iOS — so we never trigger the browser prompt automatically during boot

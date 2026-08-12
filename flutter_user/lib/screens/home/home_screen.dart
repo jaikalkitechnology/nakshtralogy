@@ -136,6 +136,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (!kIsWeb) return;
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted || !WebPushService().needsWebEnable) return;
+      // iOS: web push only works from an installed (home-screen) PWA — a Safari
+      // tab can never be granted. Guide the user to Add to Home Screen instead
+      // of offering an Enable button that iOS would reject.
+      if (WebPushService().iosNeedsInstall) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          duration: Duration(seconds: 12),
+          backgroundColor: AppColors.card,
+          content: Text(
+            'To get call & chat alerts on iPhone: tap the Share icon, choose '
+            '"Add to Home Screen", then open the app from your home screen.',
+            maxLines: 3, overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: AppColors.ivory)),
+        ));
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: const Duration(seconds: 12),
         backgroundColor: AppColors.card,

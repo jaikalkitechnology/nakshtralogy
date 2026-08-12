@@ -5,6 +5,25 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'active_call_screen.dart';
 
+/// De-duplicates an incoming call that arrives over more than one channel.
+/// The same call is pushed by the astrologer WebSocket AND by FCM (and VoIP),
+/// so without this the ringing screen opened twice. Every show-site asks
+/// [firstTime] before presenting; only the first delivery for a call_id (within
+/// the window) returns true.
+class IncomingCallGuard {
+  IncomingCallGuard._();
+  static final Map<String, int> _seen = {};
+
+  static bool firstTime(String callId) {
+    if (callId.isEmpty) return true;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    _seen.removeWhere((_, t) => now - t > 90000); // forget after 90s
+    if (_seen.containsKey(callId)) return false;
+    _seen[callId] = now;
+    return true;
+  }
+}
+
 class IncomingCallScreen extends StatefulWidget {
   final String callId;
   final String callerName;
