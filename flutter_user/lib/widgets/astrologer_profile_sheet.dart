@@ -583,7 +583,7 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
     consultCouponCode.value = code;
     setState(() { _appliedCode = code; _ok = true; _expanded = true; _msg = CouponLabels.of(context, 'applied'); });
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('${CouponLabels.of(context, 'applied')} · $code'),
+      content: Text('${CouponLabels.of(context, 'applied')} · ${_discountLabel()} ${CouponLabels.of(context, 'off')} · $code'),
       backgroundColor: AppColors.success, duration: const Duration(seconds: 2)));
   }
 
@@ -687,10 +687,17 @@ class _AstrologerCouponBannerState extends State<AstrologerCouponBanner> {
               const Icon(Icons.check_circle, color: AppColors.success, size: 16),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  CouponLabels.of(context, 'autoApplied'),
-                  style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w600),
-                ),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  // Green confirmation with the discount up front, e.g. "Coupon applied · 20% off".
+                  Text(
+                    '${CouponLabels.of(context, 'applied')} · $off ${CouponLabels.of(context, 'off')}',
+                    style: const TextStyle(color: AppColors.success, fontSize: 13, fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    CouponLabels.of(context, 'autoApplied'),
+                    style: TextStyle(color: AppColors.success.withOpacity(0.85), fontSize: 11, fontWeight: FontWeight.w500),
+                  ),
+                ]),
               ),
             ]),
           ),
