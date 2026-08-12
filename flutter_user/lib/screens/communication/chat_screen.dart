@@ -76,6 +76,13 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   // socket, or a multi-worker backend where the peer's send and our WS live on
   // different workers with separate in-memory connection maps).
   Timer? _syncTimer;
+  // PWA/app lifecycle: when the app is backgrounded we intentionally drop the
+  // socket so the server delivers new messages via FCM (a still-"connected"
+  // socket suppresses the push); we reconnect on resume. `_selfReconnectAt`
+  // marks that reconnect so the server's one-socket takeover message (which can
+  // race our own new socket) is ignored instead of bouncing us off the screen.
+  bool _backgrounded = false;
+  DateTime? _selfReconnectAt;
   bool _wasActive = false;          // ever reached "active" — controls reconnect + end-vs-cancel
   bool _reconnecting = false;
   int _reconnectAttempts = 0;
@@ -123,11 +130,27 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   /// Safety-net poll: every few seconds, merge any persisted messages we don't
   /// already show. Guarantees the astrologer's replies appear even when the live
-  /// WS broadcast can't reach us.
+  /// WS broadcast can't reach us. Every other tick it also verifies the session
+  /// is still alive, so if the astrologer ends and the WS event never arrives
+  /// (e.g. a cross-worker broadcast we're not on) we still close the screen.
+  int _syncTicks = 0;
   void _startSync() {
     _syncTimer?.cancel();
-    _syncTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+    _syncTicks = 0;
+    _syncTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
       if (_ended || !mounted) return;
+      _syncTicks++;
+      if (_syncTicks % 2 == 0) {
+        try {
+          final s = await _api.getChatSession(widget.sessionId);
+          final st = (s['status'] ?? '').toString();
+          if (st.isNotEmpty && st != 'active' && st != 'waiting') {
+            _handleSessionEnded('Chat session has ended');
+            return;
+          }
+        } catch (_) {/* transient — try again next tick */}
+        if (_ended || !mounted) return;
+      }
       _syncHistory();
     });
   }
@@ -189,6 +212,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   void _onSocketClosed() {
     _pingTimer?.cancel();
     if (_ended || !mounted) return;
+    // Intentionally closed for backgrounding — stay offline so the server
+    // pushes new messages; we reconnect on resume, not here.
+    if (_backgrounded) { setState(() => _connected = false); return; }
     if (_wasActive) {
       setState(() { _connected = false; _reconnecting = true; });
       _scheduleReconnect();
@@ -222,7 +248,71 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {
       _sendEndSession();
+    } else if (state == AppLifecycleState.paused ||
+               state == AppLifecycleState.hidden) {
+      // Backgrounded / minimised. Drop the socket so the server sees us as
+      // offline and PUSHES new messages (an open socket suppresses the FCM),
+      // but keep the session alive — the astrologer is still there.
+      if (_ended || !_wasActive) return;
+      _backgrounded = true;
+      _pingTimer?.cancel();
+      _reconnectTimer?.cancel();
+      _syncTimer?.cancel();
+      try { _channel?.sink.close(); } catch (_) {}
+      if (mounted) setState(() => _connected = false);
+    } else if (state == AppLifecycleState.resumed) {
+      if (_backgrounded && !_ended) {
+        _backgrounded = false;
+        _selfReconnectAt = DateTime.now();   // suppress the takeover-race pop
+        // If the astrologer ended while we were away, show that instead of
+        // looping on a reconnect the server will reject.
+        _checkEndedThenReconnect();
+      }
     }
+  }
+
+  /// On resume: if the session has ended, surface it; otherwise reconnect and
+  /// pull anything received while we were backgrounded.
+  Future<void> _checkEndedThenReconnect() async {
+    try {
+      final resp = await _api.getChatSession(widget.sessionId);
+      final status = (resp['status'] ?? '').toString();
+      if (status.isNotEmpty && status != 'active' && status != 'waiting') {
+        _handleSessionEnded('Chat session has ended');
+        return;
+      }
+    } catch (_) {/* fall through to reconnect */}
+    if (_ended || !mounted) return;
+    _connect();
+    _syncHistory();
+  }
+
+  /// Show the "session ended" dialog once and stop all timers/reconnects. Used
+  /// when the astrologer ends the chat (WS event missed while backgrounded, or
+  /// detected by the safety-net poll).
+  void _handleSessionEnded(String reason) {
+    if (_ended) return;
+    _ended = true;
+    _timer?.cancel();
+    _pollTimer?.cancel();
+    _pingTimer?.cancel();
+    _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
+    try { _channel?.sink.close(); } catch (_) {}
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text('Session Ended', style: TextStyle(color: AppColors.primary)),
+        content: Text(reason, style: const TextStyle(color: AppColors.textPrimary)),
+        actions: [
+          ElevatedButton(onPressed: () { Navigator.pop(ctx); _reviewThenPop(); },
+              child: Text(AppLocalizations.of(context)?.ok ?? 'OK')),
+        ],
+      ),
+    );
   }
 
   void _sendEndSession() {
@@ -299,23 +389,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             _onConnected();
             break;
           case 'session_ended':
-            _timer?.cancel();
-            _pollTimer?.cancel();
-            _syncTimer?.cancel();
-            if (mounted) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (ctx) => AlertDialog(
-                  backgroundColor: AppColors.card,
-                  title: const Text('Session Ended', style: TextStyle(color: AppColors.primary)),
-                  content: Text(data['reason'] ?? 'Chat session has ended', style: const TextStyle(color: AppColors.textPrimary)),
-                  actions: [
-                    ElevatedButton(onPressed: () { Navigator.pop(ctx); _reviewThenPop(); }, child: Text(AppLocalizations.of(context)?.ok ?? 'OK')),
-                  ],
-                ),
-              );
-            }
+            _handleSessionEnded(data['reason'] ?? 'Chat session has ended');
             break;
           case 'typing':
             // Could show typing indicator
@@ -331,6 +405,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             if (billed != null) setState(() => _serverBilled = billed);
             break;
           case 'session_taken_over':
+            // Ignore the takeover that our OWN resume-reconnect can trigger:
+            // when we reopen the socket after backgrounding, the server may send
+            // this to the just-closed socket. Only a genuine other-device
+            // takeover (outside the self-reconnect window) should leave.
+            if (_selfReconnectAt != null &&
+                DateTime.now().difference(_selfReconnectAt!) < const Duration(seconds: 8)) {
+              break;
+            }
             _ended = true; // don't fire cancel/end for a takeover
             _pingTimer?.cancel();
             _reconnectTimer?.cancel();

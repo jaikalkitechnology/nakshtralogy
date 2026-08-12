@@ -86,7 +86,23 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
     // user return to the live call.
     if (state == AppLifecycleState.detached) {
       _endCall(fromLifecycle: true);
+    } else if (state == AppLifecycleState.resumed) {
+      // Returning to the foreground: verify the call is still live. If the
+      // astrologer ended it while we were away, close now instead of waiting
+      // for the next billing poll (and never leave a dead call on screen).
+      _refreshCallOnResume();
     }
+  }
+
+  Future<void> _refreshCallOnResume() async {
+    if (_ending) return;
+    try {
+      final r = await _api.getCall(widget.callId);
+      final st = (r['status'] ?? '').toString();
+      if (st.isNotEmpty && st != 'active' && st != 'ringing') {
+        if (mounted) _endCall();
+      }
+    } catch (_) {/* transient — billing poll will catch it */}
   }
 
   /// Poll backend every 2s to detect when call becomes active/completed.
