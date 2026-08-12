@@ -672,6 +672,7 @@ def initiate_call(
         eligible_minutes=eligible_minutes,
         max_call_seconds=max_call_seconds,
         expires_at=call.expires_at, created_at=call.created_at,
+        currency=_currency, fx_rate=_fx,
     )
 
 
@@ -908,6 +909,10 @@ def get_call(
             remaining = min(remaining, max(0, int((call.max_end_at - datetime.utcnow()).total_seconds())))
         low = 0 < remaining <= 60
 
+    # Display currency follows the caller's region (INTL → USD). Rate is already
+    # the effective ₹ (base×mult); the client divides by fx_rate to show USD.
+    _caller = db.query(User).filter(User.id == call.caller_id).first()
+    _gc_mult, _gc_currency, _gc_fx = _consult_pricing(db, _caller)
     return CallSessionResponse(
         id=call.id, channel_name=call.channel_name,
         caller_id=call.caller_id, receiver_id=call.receiver_id,
@@ -918,6 +923,7 @@ def get_call(
         expires_at=call.expires_at, created_at=call.created_at,
         elapsed_seconds=elapsed, billed_so_far=round(billed, 2),
         user_balance=round(balance, 2), remaining_seconds=remaining, low_balance=low,
+        currency=_gc_currency, fx_rate=_gc_fx,
     )
 
 
@@ -1915,6 +1921,7 @@ def _chat_session_response(session: ChatSession, db=None) -> ChatSessionResponse
         duration_sec=session.duration_sec, total_amount=float(session.total_amount or 0),
         expires_at=session.expires_at, created_at=session.created_at,
         astrologer_name=astrologer_name,
+        currency=_currency, fx_rate=_fx,
     )
 
 

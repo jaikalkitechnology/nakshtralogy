@@ -191,7 +191,14 @@
           v.setAttribute('playsinline', '');
           v.setAttribute('webkit-playsinline', '');
           v.setAttribute('autoplay', '');
+          v.setAttribute('muted', '');
           v.playsInline = true;
+          // iOS Safari rejects play() on a <video> that carries an audio track
+          // unless it is muted. Agora renders REMOTE audio through a separate
+          // element, so muting the video element keeps sound and lets the
+          // remote/viewer video actually render (was black/white before). Local
+          // preview video is already silent, so this is a no-op there.
+          v.muted = true;
           if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
         } catch (e) {}
       }

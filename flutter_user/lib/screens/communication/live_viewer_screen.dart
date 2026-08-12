@@ -29,6 +29,7 @@ class LiveViewerScreen extends StatefulWidget {
 class _LiveViewerScreenState extends State<LiveViewerScreen> {
   final _api = ApiService();
   final _questionCtrl = TextEditingController();
+  bool _leaving = false;   // guard: back + host-left + timeout can all fire
   RtcEngine? _engine;
   String? _agoraToken;
   String? _agoraAppId;
@@ -290,13 +291,20 @@ class _LiveViewerScreenState extends State<LiveViewerScreen> {
   }
 
   Future<void> _leaveStream() async {
+    if (_leaving) return;          // idempotent — never pop twice → no blank route
+    _leaving = true;
     _pollTimer?.cancel();
     _hostTimeout?.cancel();
-    await _engine?.leaveChannel();
-    await _engine?.release();
-    _engine = null;
-    await _api.leaveLiveStream(widget.streamId);
-    if (mounted) Navigator.pop(context);
+    // Remove the Agora platform view from the tree FIRST (setState null), so it
+    // is disposed before we tear down the engine — otherwise the leftover
+    // <video>/canvas element paints over the previous screen on web (white
+    // screen on back/disconnect). Then release the engine off the UI path.
+    final engine = _engine;
+    if (mounted) setState(() { _remoteUid = null; _engine = null; });
+    try { await engine?.leaveChannel(); } catch (_) {}
+    try { await engine?.release(); } catch (_) {}
+    try { await _api.leaveLiveStream(widget.streamId); } catch (_) {}
+    if (mounted && Navigator.canPop(context)) Navigator.pop(context);
   }
 
   @override
