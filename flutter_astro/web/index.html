@@ -197,6 +197,16 @@
           // remote (client's) video render in a video call (was black on iOS).
           v.muted = true;
           if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+          // Re-apply on the media events iOS fires when Agora binds/rebinds a
+          // track. Without this the FIRST play() (before we muted) is rejected
+          // and the element stays black until the slow poll; re-fixing on
+          // loadedmetadata/canplay/stalled un-blacks it the instant it can play.
+          if (!v.__nkBound) {
+            v.__nkBound = true;
+            ['loadedmetadata', 'canplay', 'stalled', 'suspend', 'emptied'].forEach(function (ev) {
+              v.addEventListener(ev, function () { fix(v); });
+            });
+          }
         } catch (e) {}
       }
       function scan() { document.querySelectorAll('video').forEach(fix); }
@@ -206,7 +216,7 @@
         obs.observe(document.body, { childList: true, subtree: true });
         scan();
       });
-      setInterval(scan, 1500); // safety net for elements added between mutations
+      setInterval(scan, 800); // safety net for elements added between mutations
     })();
   </script>
 

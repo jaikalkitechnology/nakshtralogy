@@ -14,9 +14,11 @@ const WEBPUSH_CONFIG_URL =
 self.addEventListener('install', function () {
   self.skipWaiting();
 });
-self.addEventListener('activate', function (event) {
-  event.waitUntil(self.clients.claim());
-});
+// NOTE: intentionally NO clients.claim() — a push-only SW does not need to
+// control page fetches, and claiming an already-open tab on an update triggers
+// a controllerchange that can reload the page (killing an in-progress live
+// stream / video call on iOS). Push events are delivered regardless of control.
+self.addEventListener('activate', function () {});
 
 // Single display path for both handlers below. The `tag` (server-sent `nid`)
 // makes the FCM handler and the raw-push handler collapse to ONE notification
