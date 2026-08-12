@@ -105,8 +105,8 @@ class _S extends State<DailyForecastScreen> {
         backgroundColor: AppColors.background, pinned: true,
         leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.ivory), onPressed: () => Navigator.pop(context)),
         title: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-          Text(widget.chartName.toUpperCase(), style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w700)),
-          Text(l.forecast, style: const TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w700)),
+          Text(widget.chartName.toUpperCase(), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.gold, fontSize: 9, letterSpacing: 1.4, fontWeight: FontWeight.w700)),
+          Text(l.forecast, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 17, fontWeight: FontWeight.w700)),
         ]),
         centerTitle: true,
         actions: [IconButton(icon: const Icon(Icons.refresh, color: AppColors.ivory, size: 18), onPressed: _load)],

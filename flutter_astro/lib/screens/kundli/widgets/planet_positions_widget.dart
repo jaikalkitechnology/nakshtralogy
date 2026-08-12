@@ -210,9 +210,10 @@ class _PlanetCardState extends State<_PlanetCard> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 15.5, fontWeight: FontWeight.w800)),
+                  Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 15.5, fontWeight: FontWeight.w800)),
                   const SizedBox(height: 2),
                   Text('$signName · ${l.house} $_house · $degree°',
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: AppColors.primary, fontSize: 12.5, fontWeight: FontWeight.w600)),
                 ])),
                 AnimatedRotation(

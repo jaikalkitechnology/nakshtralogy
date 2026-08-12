@@ -257,6 +257,8 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                   Text(
                                     name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: isSelected ? color : AppColors.textPrimary,
                                       fontSize: 14,
@@ -265,6 +267,8 @@ class _MultiChartPickerState extends State<MultiChartPicker> {
                                   ),
                                   Text(
                                     '$dob  $place',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                                   ),
                                 ]),

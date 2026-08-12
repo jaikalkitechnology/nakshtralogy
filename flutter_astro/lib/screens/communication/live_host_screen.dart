@@ -474,7 +474,10 @@ class _LiveHostScreenState extends State<LiveHostScreen> with WidgetsBindingObse
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                   const Text('\u{1F52E}', style: TextStyle(fontSize: 64)),
                   const SizedBox(height: 16),
-                  Text(widget.title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(widget.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     (kIsWeb && !_cameraStarted)

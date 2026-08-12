@@ -348,7 +348,10 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                     )),
                   ),
                   const SizedBox(height: 20),
-                  Text(widget.peerName, style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(widget.peerName, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
+                  ),
                   const SizedBox(height: 4),
                   Text(isVideo ? l.callVideoCall : l.callVoiceCall, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14)),
                   const SizedBox(height: 16),

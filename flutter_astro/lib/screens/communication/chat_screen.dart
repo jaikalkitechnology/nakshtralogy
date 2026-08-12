@@ -404,9 +404,11 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(widget.userName, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(widget.userName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
                         Text(
                           _connected ? 'Online' : (_reconnecting ? 'Reconnecting…' : 'Connecting...'),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: _connected ? AppColors.success : AppColors.smoke, fontSize: 12),
                         ),
                       ],

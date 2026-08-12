@@ -155,11 +155,11 @@ class _EarningsTabState extends State<EarningsTab> {
                 Text('\u20b9$balance', style: const TextStyle(color: AppColors.midnight, fontSize: 40, fontWeight: FontWeight.w700, height: 1)),
                 const SizedBox(height: 14),
                 Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  _WalletStat(label: l.totalCredit, value: '₹$totalEarned'),
+                  Flexible(child: _WalletStat(label: l.totalCredit, value: '₹$totalEarned')),
                   Container(width: 1, height: 30, color: AppColors.border),
-                  _WalletStat(label: l.totalDebit, value: '₹$totalWithdrawn'),
+                  Flexible(child: _WalletStat(label: l.totalDebit, value: '₹$totalWithdrawn')),
                   Container(width: 1, height: 30, color: AppColors.border),
-                  _WalletStat(label: l.withdraw, value: '₹$withdrawable'),
+                  Flexible(child: _WalletStat(label: l.withdraw, value: '₹$withdrawable')),
                 ]),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
@@ -247,9 +247,9 @@ class _WalletStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Text(value, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
-      Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
+      Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
     ]);
   }
 }
@@ -280,8 +280,8 @@ class _TxnRow extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(desc.toString(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500)),
-          Text(createdAt.toString(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+          Text(desc.toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500)),
+          Text(createdAt.toString(), maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
         ])),
         Text('${isCredit ? '+' : '-'}₹$amount', style: TextStyle(color: isCredit ? AppColors.success : AppColors.error, fontWeight: FontWeight.w600, fontSize: 14)),
       ]),

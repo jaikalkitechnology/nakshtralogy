@@ -269,7 +269,7 @@ class _DoshViewState extends State<_DoshView> with SingleTickerProviderStateMixi
           Container(width: 6, height: 40, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(_doshName(d), style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
+            Text(_doshName(d), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
             const SizedBox(height: 3),
             Text('${d['category'] ?? ''}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
           ])),
@@ -395,8 +395,8 @@ class _DoshViewState extends State<_DoshView> with SingleTickerProviderStateMixi
               Container(width: 6, height: 40, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(_doshName(d), style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
-                Text('${d['category'] ?? ''}', style: const TextStyle(color: AppColors.smoke, fontSize: 11.5)),
+                Text(_doshName(d), maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 18, fontWeight: FontWeight.w800)),
+                Text('${d['category'] ?? ''}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11.5)),
               ])),
               Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 KStars(filled: doshStars(score), size: 14, color: color),
@@ -497,7 +497,7 @@ class _DoshCardState extends State<_DoshCard> {
               Container(width: 6, height: 42, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3))),
               const SizedBox(width: 12),
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(name, style: const TextStyle(color: AppColors.ivory, fontSize: 14.5, fontWeight: FontWeight.w800)),
+                Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14.5, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 3),
                 Row(children: [
                   KStars(filled: doshStars(score), size: 12, color: color),

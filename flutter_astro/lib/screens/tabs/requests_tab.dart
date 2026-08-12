@@ -294,9 +294,9 @@ class _RequestActionCardState extends State<_RequestActionCard> {
             ),
             const SizedBox(width: 14),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(userName, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 16)),
+              Text(userName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 16)),
               const SizedBox(height: 2),
-              Text('${type.toString().toUpperCase()} ${AppLocalizations.of(context)?.consultation ?? 'consultation'}', style: TextStyle(color: typeColor, fontSize: 13, fontWeight: FontWeight.w500)),
+              Text('${type.toString().toUpperCase()} ${AppLocalizations.of(context)?.consultation ?? 'consultation'}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: typeColor, fontSize: 13, fontWeight: FontWeight.w500)),
             ])),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -453,7 +453,7 @@ class _CompletedChatViewState extends State<_CompletedChatView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: Text('Chat with ${widget.userName}')),
+      appBar: AppBar(title: Text('Chat with ${widget.userName}', maxLines: 1, overflow: TextOverflow.ellipsis)),
       body: Column(children: [
         _summaryCard(),
         const Divider(height: 1, color: AppColors.border),

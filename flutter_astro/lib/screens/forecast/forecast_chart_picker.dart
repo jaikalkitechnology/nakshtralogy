@@ -57,8 +57,8 @@ class _S extends State<ForecastChartPicker> {
                             child: const Center(child: Text('☀', style: TextStyle(fontSize: 18)))),
                           const SizedBox(width: 12),
                           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
-                            Text('${c['dob'] ?? ""} • ${c['place'] ?? ""}', style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
+                            Text(c['name']?.toString() ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w600)),
+                            Text('${c['dob'] ?? ""} • ${c['place'] ?? ""}', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.smoke, fontSize: 11)),
                           ])),
                           const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.smoke),
                         ])));
