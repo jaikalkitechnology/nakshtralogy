@@ -18,6 +18,23 @@ const CONFIG_URL = 'https://api.nakshatralogy.com/api/v1/config/webpush?role=use
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
+// Single display path for both handlers below. The `tag` (server-sent `nid`)
+// makes the FCM handler and the raw-push handler collapse to ONE notification
+// on browsers where both fire (Android), while distinct messages still alert.
+function nkShow(payload) {
+  const n = (payload && payload.notification) || {};
+  const data = (payload && payload.data) || {};
+  const title = n.title || data.title || 'Nakshatralogy';
+  const tag = data.nid || data.session_id || data.call_id || data.type || 'nakshatralogy';
+  return self.registration.showNotification(title, {
+    body: n.body || data.body || '',
+    icon: '/icons/Icon-192.png',
+    badge: '/icons/Icon-192.png',
+    tag: tag,
+    data: data,
+  });
+}
+
 fetch(CONFIG_URL)
   .then((r) => r.json())
   .then((cfg) => {
@@ -33,23 +50,23 @@ fetch(CONFIG_URL)
       authDomain: cfg.web_auth_domain || undefined,
     });
 
-    const messaging = firebase.messaging();
-    messaging.onBackgroundMessage((payload) => {
-      const n = payload.notification || {};
-      const data = payload.data || {};
-      const title = n.title || data.title || 'Nakshatralogy';
-      self.registration.showNotification(title, {
-        body: n.body || data.body || '',
-        icon: '/icons/Icon-192.png',
-        badge: '/icons/Icon-192.png',
-        data: data,
-      });
-    });
+    // Fires on Android/Chrome for data messages. iOS Safari PWAs do NOT fire
+    // this reliably — the raw `push` listener below covers them.
+    firebase.messaging().onBackgroundMessage((payload) => nkShow(payload));
   })
   .catch((e) => {
     // Non-fatal: without config there is simply no background push.
     console.warn('[nakshatralogy-sw] webpush config unavailable:', e);
   });
+
+// Raw Web Push event — the reliable background path on iOS Safari PWAs (and a
+// safety net everywhere). FCM data messages arrive here as { data: {...} }.
+// The shared `tag` dedupes against onBackgroundMessage so no duplicate shows.
+self.addEventListener('push', (event) => {
+  let payload = {};
+  try { payload = event.data ? event.data.json() : {}; } catch (e) { payload = {}; }
+  event.waitUntil(nkShow(payload));
+});
 
 // Focus/open the app when a notification is tapped.
 self.addEventListener('notificationclick', (event) => {
