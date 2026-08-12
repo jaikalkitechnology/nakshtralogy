@@ -269,6 +269,11 @@ class ChatMessageResponse(BaseModel):
     flagged: bool = False
     flag_reasons: Optional[List[str]] = None
     reported: bool = False
+    # Live billing/counter echo (so a REST-sent message updates the sender's UI
+    # the same way the WebSocket 'message' broadcast does).
+    user_message_count: Optional[int] = None
+    remaining_messages: Optional[int] = None
+    overage_charged: float = 0.0
 
 
 # ─── Session Reviews (chat / voice / video) ──────────────────────────
