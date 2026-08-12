@@ -51,6 +51,12 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
   // a drop instead of leaving the header stuck on "Connecting…".
   Timer? _pingTimer;
   Timer? _reconnectTimer;
+  // Safety-net poll: the live WS broadcast can miss (a half-open socket, or a
+  // multi-worker backend where the sender's REST request and this WS live on
+  // different workers with separate in-memory connection maps). A light periodic
+  // history sync (dedup by id) guarantees new messages appear within seconds no
+  // matter the transport, so the astrologer never has to rely on a push alone.
+  Timer? _syncTimer;
   bool _reconnecting = false;
   bool _closed = false;             // set on intentional end/leave — stops reconnect
   int _reconnectAttempts = 0;
@@ -139,6 +145,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
               _reconnectAttempts = 0;
               _startTimer();
               _startPing();
+              _startSync();
               // Pull messages sent while our socket was down (connect/reconnect
               // gap) so nothing is missing from the live view.
               _syncHistory();
@@ -154,6 +161,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
             _pingTimer?.cancel();
             _reconnectTimer?.cancel();
             _timer?.cancel();
+            _syncTimer?.cancel();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(data['message'] ?? 'Chat opened on another device'),
@@ -163,6 +171,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
             break;
           case 'session_ended':
             _timer?.cancel();
+            _syncTimer?.cancel();
             if (mounted) {
               showDialog(
                 context: context,
@@ -298,6 +307,17 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
     });
   }
 
+  /// Safety-net poll: every few seconds, merge any persisted messages we don't
+  /// already show. Cheap (dedup by id, only new rows are added) and guarantees
+  /// delivery even when the live WS broadcast can't reach us.
+  void _startSync() {
+    _syncTimer?.cancel();
+    _syncTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (_closed || !mounted) return;
+      _syncHistory();
+    });
+  }
+
   /// Fetch persisted messages and merge any we don't already show (dedup by id),
   /// so messages sent while our socket was down (connect/reconnect gap) appear.
   Future<void> _syncHistory() async {
@@ -332,6 +352,7 @@ class _AstroChatScreenState extends State<AstroChatScreen> with WidgetsBindingOb
     _timer?.cancel();
     _pingTimer?.cancel();
     _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();

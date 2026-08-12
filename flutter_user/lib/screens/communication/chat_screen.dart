@@ -71,6 +71,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   // "Connecting…" screen while the server session keeps billing.
   Timer? _pingTimer;
   Timer? _reconnectTimer;
+  // Safety-net poll (see astro app): a light periodic history sync so new
+  // messages appear even if the live WS broadcast can't reach us (half-open
+  // socket, or a multi-worker backend where the peer's send and our WS live on
+  // different workers with separate in-memory connection maps).
+  Timer? _syncTimer;
   bool _wasActive = false;          // ever reached "active" — controls reconnect + end-vs-cancel
   bool _reconnecting = false;
   int _reconnectAttempts = 0;
@@ -108,11 +113,23 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     }
     _startTimer();
     _startPing();
+    _startSync();
     _pollTimer?.cancel();
     // Pull any messages that were broadcast while our socket was down (initial
     // connect window or a reconnect). Without this, messages sent during that
     // gap never appear in the live view — only later in history.
     _syncHistory();
+  }
+
+  /// Safety-net poll: every few seconds, merge any persisted messages we don't
+  /// already show. Guarantees the astrologer's replies appear even when the live
+  /// WS broadcast can't reach us.
+  void _startSync() {
+    _syncTimer?.cancel();
+    _syncTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (_ended || !mounted) return;
+      _syncHistory();
+    });
   }
 
   /// Fetch persisted messages and merge any we don't already show (dedup by id).
@@ -126,9 +143,27 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         final m = Map<String, dynamic>.from(h as Map);
         m['timestamp'] ??= m['created_at'];        // history uses created_at
         m['is_astrologer'] ??= (m['sender_id'] != _myUserId);
-        if (!seen.contains(m['id']?.toString())) fresh.add(m);
+        if (seen.contains(m['id']?.toString())) continue;
+        // Reconcile an optimistic (still-pending, temp-id) copy of one of OUR
+        // messages instead of adding a duplicate — covers the race where the
+        // server persists just before _sendViaRest reconciles the temp id.
+        if (m['sender_id'] == _myUserId) {
+          final pi = _messages.indexWhere((x) =>
+              (x['id']?.toString().startsWith('local-') ?? false) &&
+              x['content'] == m['content'] &&
+              x['message_type'] == m['message_type']);
+          if (pi >= 0) {
+            _messages[pi]['id'] = m['id'];
+            _messages[pi]['timestamp'] = m['timestamp'];
+            _messages[pi]['pending'] = false;
+            _messages[pi].remove('failed');
+            seen.add(m['id']?.toString());
+            continue;
+          }
+        }
+        fresh.add(m);
       }
-      if (fresh.isEmpty) return;
+      if (fresh.isEmpty) { if (mounted) setState(() {}); return; }
       setState(() {
         final all = <Map<String, dynamic>>[...fresh, ..._messages];
         all.sort((a, b) => (a['timestamp']?.toString() ?? '')
@@ -266,6 +301,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
           case 'session_ended':
             _timer?.cancel();
             _pollTimer?.cancel();
+            _syncTimer?.cancel();
             if (mounted) {
               showDialog(
                 context: context,
@@ -299,6 +335,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
             _pingTimer?.cancel();
             _reconnectTimer?.cancel();
             _timer?.cancel();
+            _syncTimer?.cancel();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(data['message'] ?? 'Chat opened on another device'),
@@ -586,6 +623,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _connectTimer?.cancel();
     _pingTimer?.cancel();
     _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
     _channel?.sink.close();
     _msgCtrl.dispose();
     _scrollCtrl.dispose();
