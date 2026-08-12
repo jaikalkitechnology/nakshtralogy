@@ -223,6 +223,17 @@ async def websocket_chat(
         # Per-message rate from astrologer profile
         rate_per_msg = float(profile.rate_per_msg_chat or 0) if profile else 0
 
+        # Display currency for the chat's user (international = USD via the 5×
+        # rule). Rates stay in the ₹ ledger; the client divides by fx for USD.
+        try:
+            from app.core import region as _region_util, pricing as _pricing_util
+            _cu = db.query(User).filter(User.id == session.user_id).first()
+            _is_intl = _region_util.is_international_region(getattr(_cu, "region", None) or _region_util.IN)
+            _currency = "USD" if _is_intl else "INR"
+            _fx = float(_pricing_util.get_fx_rate(db))
+        except Exception:
+            _currency, _fx = "INR", 0.0
+
         # send session info
         await websocket.send_json({
             "type": "session_info",
@@ -237,6 +248,8 @@ async def websocket_chat(
             "user_message_count": session.user_message_count or 0,
             "session_expires_at": str(session.session_expires_at) if session.session_expires_at else None,
             "started_at": str(session.started_at) if session.started_at else None,
+            "currency": _currency,
+            "fx_rate": _fx,
         })
 
         # listen for messages, with a liveness timeout so a half-open socket is
