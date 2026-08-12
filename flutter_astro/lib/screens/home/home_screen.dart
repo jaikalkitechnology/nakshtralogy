@@ -125,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final type = data['type'];
 
     if (type == 'incoming_call') {
-      // Show incoming call screen as overlay
+      // Show incoming call screen as overlay — but only once per call, even if
+      // it also arrives via FCM/VoIP.
+      if (!IncomingCallGuard.firstTime((data['call_id'] ?? '').toString())) return;
       Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => IncomingCallScreen(
           callId: data['call_id'] ?? '',

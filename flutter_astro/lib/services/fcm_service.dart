@@ -291,10 +291,10 @@ void _handleRejectCallFromNotification(Map<String, dynamic> data) {
 void _navigateFromNotification(Map<String, dynamic> data) {
   final type = data['type'];
 
-  // Incoming call → open ringing screen
+  // Incoming call → open ringing screen (once per call across WS/FCM/VoIP)
   if (type == 'incoming_call') {
     final callId = data['call_id'];
-    if (callId != null) {
+    if (callId != null && IncomingCallGuard.firstTime(callId.toString())) {
       navigatorKey.currentState?.push(MaterialPageRoute(
         builder: (_) => IncomingCallScreen(
           callId: callId,
@@ -507,7 +507,7 @@ class FcmService {
     // ── Incoming call while app is in foreground → navigate directly ──
     if (type == 'incoming_call') {
       final callId = data['call_id'];
-      if (callId != null) {
+      if (callId != null && IncomingCallGuard.firstTime(callId.toString())) {
         // iOS: use the native CallKit UI (consistent with the killed-app VoIP
         // ring). Android keeps the in-app ringing screen.
         if (defaultTargetPlatform == TargetPlatform.iOS) {

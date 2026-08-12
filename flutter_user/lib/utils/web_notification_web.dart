@@ -97,3 +97,27 @@ void _fallbackNotification(String title, String body, String icon) {
     html.Notification(title, body: body, icon: icon);
   } catch (_) {}
 }
+
+/// True on an iPhone/iPad browser.
+bool webIsIos() {
+  try {
+    final ua = html.window.navigator.userAgent;
+    return RegExp(r'iPad|iPhone|iPod').hasMatch(ua) ||
+        // iPadOS 13+ reports as Mac; detect touch to disambiguate.
+        (ua.contains('Macintosh') && (html.window.navigator.maxTouchPoints ?? 0) > 1);
+  } catch (_) {
+    return false;
+  }
+}
+
+/// True when the page runs as an INSTALLED PWA (Add to Home Screen / standalone)
+/// rather than in a browser tab. iOS web push only works in this mode.
+bool webIsStandalonePwa() {
+  try {
+    final mm = html.window.matchMedia('(display-mode: standalone)').matches;
+    final iosStandalone = (html.window.navigator as dynamic).standalone == true;
+    return mm || iosStandalone;
+  } catch (_) {
+    return false;
+  }
+}

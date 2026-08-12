@@ -10,3 +10,7 @@ String? webLoadToken() => null;
 int? webTokenSavedAtMs() => null;
 void webSaveToken(String token) {}
 void webClearToken() {}
+
+// PWA/browser environment probes — web-only; false off-web.
+bool webIsIos() => false;
+bool webIsStandalonePwa() => false;
