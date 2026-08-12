@@ -1,0 +1,91 @@
+name: Build APKs (user + astrologer)
+
+# Builds installable (debug-signed release) APKs for both mobile apps on GitHub's
+# runners — the Android SDK/NDK can't be fetched inside the dev sandbox, so the
+# build runs here. APKs are published as downloadable workflow artifacts AND
+# attached to a GitHub Release for a stable download link.
+
+on:
+  workflow_dispatch: {}          # run manually from the Actions tab
+  push:
+    branches:
+      - claude/multi-language-support-agents-g6p93h
+    paths:
+      - 'flutter_user/**'
+      - 'flutter_astro/**'
+      - '.github/workflows/build-apks.yml'
+
+permissions:
+  contents: write                # needed to create the Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: flutter_user
+            out: nakshatralogy-user.apk
+          - app: flutter_astro
+            out: nakshatralogy-astrologer.apk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+          cache: true
+
+      - name: Build ${{ matrix.app }} release APK
+        working-directory: ${{ matrix.app }}
+        run: |
+          flutter pub get
+          # Regenerate localisations cleanly (the committed gen files include a
+          # stale script-variant that otherwise fails compilation).
+          rm -rf lib/l10n/gen
+          flutter gen-l10n || true
+          flutter build apk --release
+          mkdir -p "$GITHUB_WORKSPACE/apks"
+          cp build/app/outputs/flutter-apk/app-release.apk "$GITHUB_WORKSPACE/apks/${{ matrix.out }}"
+
+      - name: Upload ${{ matrix.out }} as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.out }}
+          path: apks/${{ matrix.out }}
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all APK artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: apks
+          merge-multiple: true
+
+      - name: Publish a Release with the APKs
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-build-${{ github.run_number }}
+          name: Nakshatralogy APKs (build ${{ github.run_number }})
+          body: |
+            Installable debug-signed release APKs for sideloading / testing.
+
+            - **nakshatralogy-user.apk** — end-user app (`com.nakshtralogy.app`)
+            - **nakshatralogy-astrologer.apk** — astrologer app (`com.nakshtralogy.astro`)
+
+            On the phone: allow "install from unknown sources", then open the APK.
+            (Debug-signed — for testing only, not a Play Store build.)
+          files: apks/*.apk
+          draft: false
+          prerelease: true
