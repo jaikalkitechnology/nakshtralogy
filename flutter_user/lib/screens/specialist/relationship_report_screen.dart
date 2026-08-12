@@ -180,7 +180,7 @@ class _RelationshipReportState extends State<RelationshipReportScreen> {
           decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Expanded(child: Text(p['name']?.toString() ?? '?', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800))),
+              Expanded(child: Text(p['name']?.toString() ?? '?', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800))),
               Text('${p['lagna_sign_name'] ?? ''} ${l.riLagnaSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
             ]),
             if (p['character_archetype'] != null) Text(_titleCase(p['character_archetype'].toString()), style: TextStyle(color: c, fontSize: 11.5, fontWeight: FontWeight.w600)),
@@ -423,7 +423,7 @@ class _RelationshipReportState extends State<RelationshipReportScreen> {
           margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(r['name']?.toString() ?? '?', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
+            Text(r['name']?.toString() ?? '?', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
             if (r['karmic_lesson_in_this_group'] != null) Padding(padding: const EdgeInsets.only(top: 4),
               child: Text('🕉️ ${r['karmic_lesson_in_this_group']}', style: const TextStyle(color: AppColors.lavender, fontSize: 11, height: 1.35, fontStyle: FontStyle.italic))),
             if (r['recommended_self_cultivation'] != null) Padding(padding: const EdgeInsets.only(top: 6),

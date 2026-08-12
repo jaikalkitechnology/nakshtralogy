@@ -103,7 +103,7 @@ class _AddChartScreenState extends State<AddChartScreen> {
                 return ListTile(
                   dense: true,
                   leading: const Icon(Icons.location_on, color: AppColors.gold, size: 18),
-                  title: Text(c['name']?.toString() ?? '', style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600)),
+                  title: Text(c['name']?.toString() ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 13, fontWeight: FontWeight.w600)),
                   subtitle: Text(c['display_name']?.toString() ?? '', style: const TextStyle(color: AppColors.smoke, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
                   trailing: Text('${(c['latitude'] as num?)?.toStringAsFixed(2) ?? ''}, ${(c['longitude'] as num?)?.toStringAsFixed(2) ?? ''}',
                       style: const TextStyle(color: AppColors.smoke, fontSize: 9)),

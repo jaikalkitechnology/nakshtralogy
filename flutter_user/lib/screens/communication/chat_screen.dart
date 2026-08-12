@@ -738,6 +738,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
               ),
               const SizedBox(height: 20),
               Text(widget.astrologerName,
+                  maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center,
                   style: const TextStyle(color: AppColors.ivory, fontSize: 20, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               Text(_reconnecting ? 'Reconnecting…' : 'Connecting…',
@@ -825,7 +826,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(widget.astrologerName, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(widget.astrologerName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 16, fontWeight: FontWeight.w600)),
                         Text(
                           _connected ? 'Online' : 'Connecting...',
                           style: TextStyle(color: _connected ? AppColors.success : AppColors.smoke, fontSize: 12),

@@ -193,7 +193,7 @@ class _LoveCompatibilityReportState extends State<LoveCompatibilityReportScreen>
     padding: const EdgeInsets.all(13),
     decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(p['name']?.toString() ?? '?', style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
+      Text(p['name']?.toString() ?? '?', maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.ivory, fontSize: 14, fontWeight: FontWeight.w800)),
       const SizedBox(height: 4),
       Text('${p['lagna'] ?? ''} ${l.cpLagnaSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),
       if (p['moon_sign'] != null) Text('${p['moon_sign']} ${l.cpMoonSuffix}', style: const TextStyle(color: AppColors.smoke, fontSize: 10)),

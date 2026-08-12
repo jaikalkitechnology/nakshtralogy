@@ -184,7 +184,7 @@ class _KarmaLinkageReportState extends State<KarmaLinkageReportScreen> {
           margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.all(13),
           decoration: BoxDecoration(color: c.withOpacity(0.06), borderRadius: BorderRadius.circular(16), border: Border.all(color: c.withOpacity(0.22))),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(p['name']?.toString() ?? '?', style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
+            Text(p['name']?.toString() ?? '?', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: c, fontSize: 14, fontWeight: FontWeight.w800)),
             const SizedBox(height: 4),
             Wrap(spacing: 8, runSpacing: 6, children: [
               if (p['lagna'] != null) _pill('${l.cpLagnaSuffix}: ${p['lagna']}', c),

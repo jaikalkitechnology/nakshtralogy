@@ -198,6 +198,8 @@ class _AstrologerProfileSheet extends StatelessWidget {
                             children: [
                               Text(
                                 a['display_name'] ?? '—',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   color: AppColors.textPrimary,
                                   fontSize: 18,
@@ -361,12 +363,16 @@ class _AstrologerProfileSheet extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  r['user_name'] ?? l.astroAnonymous,
-                                  style: const TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                                Flexible(
+                                  child: Text(
+                                    r['user_name'] ?? l.astroAnonymous,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: AppColors.textPrimary,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                                 const Spacer(),
