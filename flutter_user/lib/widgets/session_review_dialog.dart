@@ -92,19 +92,25 @@ class _SessionReviewDialogState extends State<_SessionReviewDialog> {
             style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.normal)),
       ]),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: List.generate(5, (i) {
-          final idx = i + 1;
-          return IconButton(
-            onPressed: () => setState(() => _rating = idx),
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            constraints: const BoxConstraints(),
-            icon: Icon(
-              idx <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
-              color: idx <= _rating ? AppColors.primary : AppColors.textSecondary,
-              size: 36,
-            ),
-          );
-        })),
+        // FittedBox: the five 40px stars are ~200px wide and overflowed the
+        // dialog on narrow screens / large display-scale. Scale the row down to
+        // fit when needed instead of clipping.
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(mainAxisSize: MainAxisSize.min, children: List.generate(5, (i) {
+            final idx = i + 1;
+            return IconButton(
+              onPressed: () => setState(() => _rating = idx),
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              constraints: const BoxConstraints(),
+              icon: Icon(
+                idx <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                color: idx <= _rating ? AppColors.primary : AppColors.textSecondary,
+                size: 36,
+              ),
+            );
+          })),
+        ),
         const SizedBox(height: 10),
         TextField(
           controller: _commentCtrl,
