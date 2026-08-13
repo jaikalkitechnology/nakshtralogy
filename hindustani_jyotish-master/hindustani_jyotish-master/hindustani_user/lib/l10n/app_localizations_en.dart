@@ -321,6 +321,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultReconnectingChat => 'Reconnecting chat…';
 
   @override
+  String get consultSending => 'Sending…';
+
+  @override
+  String get consultNotSentRetry => 'Not sent · Tap to retry';
+
+  @override
   String get consultSpeakerOn => 'Speaker on';
 
   @override

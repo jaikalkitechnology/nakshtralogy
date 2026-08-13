@@ -114,6 +114,8 @@
   "consultEndedInBackgroundTitle": "कॉल समाप्त हुई",
   "consultEndedInBackgroundBody": "ऐप बैकग्राउंड में होने के दौरान यह कॉल समाप्त हो गई।",
   "consultReconnectingChat": "चैट पुनः जोड़ी जा रही है…",
+  "consultSending": "भेजा जा रहा है…",
+  "consultNotSentRetry": "नहीं भेजा गया · पुनः प्रयास करें",
   "consultSpeakerOn": "स्पीकर चालू",
   "consultSpeakerOff": "स्पीकर बंद",
 

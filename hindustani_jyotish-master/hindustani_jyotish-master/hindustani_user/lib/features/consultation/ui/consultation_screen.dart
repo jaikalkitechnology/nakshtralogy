@@ -77,6 +77,29 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   String? _lastReportedDrop;
   Timer? _reconnectTimer;
 
+  /// Safety-net history poll (see [_startSync]): pulls persisted messages the
+  /// live socket may have missed (a half-open socket, or a multi-worker
+  /// backend where the peer's send and our WS landed on different workers).
+  Timer? _syncTimer;
+  int _syncTicks = 0;
+
+  /// True while the app is intentionally offline (minimised) — the socket was
+  /// closed so the backend's per-message push fires. Reconnect/poll stay idle
+  /// until [_onResumed] brings us back.
+  bool _backgrounded = false;
+
+  /// Stamped when our OWN resume-reconnect reopens the socket, so a
+  /// server-initiated close/takeover that races that reconnect (within
+  /// [_selfReconnectWindow]) is treated as expected noise rather than a real
+  /// drop. Hindustani's backend does not currently emit a takeover frame, so
+  /// this only suppresses the self-induced `closed` from our own reopen.
+  DateTime? _selfReconnectAt;
+  static const _selfReconnectWindow = Duration(seconds: 8);
+
+  /// Guards the single chat-ended path ([_handleChatEnded]) so the ended
+  /// dialog shows exactly once and every timer is stopped once.
+  bool _chatEndedHandled = false;
+
   // Who the other party is — not included in the request/start/accept
   // responses (only `/me/consultations` carries it), so it's fetched
   // separately and shown best-effort; the screen works fine without it.
@@ -123,6 +146,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.cancel();
     _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
     _chatSub?.cancel();
     _chat?.dispose();
     _agora?.dispose();
@@ -138,30 +162,79 @@ class _ConsultationScreenState extends State<ConsultationScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) unawaited(_onResumed());
-    // paused/inactive/hidden/detached: nothing to do eagerly. The ticker
-    // keeps running (possibly throttled by the OS) and the wall-clock
-    // heartbeat check is what protects billing — there is no local state to
-    // freeze on the way OUT; all the recovery work happens on the way back.
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_onResumed());
+      return;
+    }
+    // Chat minimised/backgrounded: intentionally CLOSE the socket so the
+    // backend sees this user offline and delivers the next message via the
+    // Phase-2a per-message push (an open socket suppresses it). The session
+    // stays alive; we reconnect + re-pull on resume. For a call there is no
+    // local state to freeze on the way OUT — the ticker keeps running
+    // (possibly throttled) and the wall-clock heartbeat check protects
+    // billing — so calls do nothing here.
+    if (_isChat &&
+        (state == AppLifecycleState.paused ||
+            state == AppLifecycleState.hidden)) {
+      _onBackgroundedChat();
+    }
+  }
+
+  /// Chat went to the background — drop the socket (so the per-message push
+  /// fires) and idle the reconnect/poll timers, but keep the session.
+  void _onBackgroundedChat() {
+    if (_status == 'completed' || _chatEndedHandled) return;
+    _backgrounded = true;
+    _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
+    _closeChatSocket();
+  }
+
+  void _closeChatSocket() {
+    _chatSub?.cancel();
+    _chatSub = null;
+    _chat?.dispose();
+    _chat = null;
   }
 
   /// Runs whenever the app comes back to the foreground.
   Future<void> _onResumed() async {
     if (_isChat) {
-      // A backgrounded app very likely had its socket suspended by the OS —
-      // reopen unconditionally rather than waiting on the timer-based
-      // reconnect in `_scheduleReconnect`, and refresh history in case
+      if (_status == 'completed' || _chatEndedHandled) return;
+      _backgrounded = false;
+      // Mark this as OUR reconnect so a close that races it is ignored (see
+      // `_selfReconnectAt`).
+      _selfReconnectAt = clock.now();
+      // A backgrounded app very likely had its socket suspended by the OS (or
+      // we closed it on purpose above) — reopen unconditionally rather than
+      // waiting on the timer-based reconnect, and refresh history in case
       // messages arrived while it was down. Reconnecting is idempotent
-      // (message de-dup via `_seen`, `status` just re-sets the same value),
-      // so this is safe even when the socket was actually still healthy.
-      if (_status != 'completed') {
-        _openSocket();
-        unawaited(_preloadHistory());
-      }
+      // (message de-dup via `_seen`, `status` just re-sets the same value).
+      _openSocket();
+      unawaited(_preloadHistory());
+      _startSync();
+      // Detect a session the backend ended while we were away, so the user
+      // isn't left on a live-looking dead thread.
+      unawaited(_verifyChatStillActive());
       return;
     }
     if (!_live || _ended) return;
     await _resyncCallFromServer();
+  }
+
+  /// Cheap status check: if the consultation is no longer live server-side
+  /// (the astrologer ended it, or the abandoned-session sweep did while we
+  /// were backgrounded), route through the single ended path.
+  Future<void> _verifyChatStillActive() async {
+    try {
+      final c = await _repo.findMine(widget.consultationId);
+      if (!mounted || _chatEndedHandled) return;
+      if (c != null && c.status == ConsultationStatus.completed) {
+        await _handleChatEnded();
+      }
+    } on ApiException catch (_) {
+      // Best-effort — the safety-net poll will retry.
+    }
   }
 
   Future<void> _loadAstrologerInfo() async {
@@ -181,6 +254,41 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   void _connectChat() {
     _preloadHistory();
     _openSocket();
+    _startSync();
+  }
+
+  /// Safety-net poll: every few seconds merge any persisted messages the live
+  /// socket may have missed (half-open socket, or a cross-worker backend where
+  /// the peer's send and our WS live on different in-memory connection maps).
+  /// Every OTHER tick it also verifies the session is still active, so if the
+  /// astrologer ends it and the WS `status` frame never reaches us we still
+  /// close the screen via the single [_handleChatEnded] path.
+  void _startSync() {
+    _syncTimer?.cancel();
+    _syncTicks = 0;
+    _syncTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
+      if (!mounted ||
+          _backgrounded ||
+          _status == 'completed' ||
+          _chatEndedHandled) {
+        return;
+      }
+      _syncTicks++;
+      if (_syncTicks.isEven) {
+        try {
+          final c = await _repo.findMine(widget.consultationId);
+          if (!mounted || _chatEndedHandled) return;
+          if (c != null && c.status == ConsultationStatus.completed) {
+            await _handleChatEnded();
+            return;
+          }
+        } on ApiException catch (_) {
+          // Transient — try again next tick.
+        }
+        if (!mounted || _status == 'completed' || _chatEndedHandled) return;
+      }
+      unawaited(_preloadHistory());
+    });
   }
 
   void _openSocket() {
@@ -205,14 +313,22 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   /// The socket dropped (`closed`). Show a subtle reconnecting state and try
   /// again with a short backoff, unless the consultation is already over.
   void _scheduleReconnect() {
-    if (_status == 'completed') return;
+    if (_status == 'completed' || _chatEndedHandled || _backgrounded) return;
     setState(() => _reconnecting = true);
     _reconnectTimer?.cancel();
     final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
-      if (!mounted || _status == 'completed') return;
+      if (!mounted ||
+          _status == 'completed' ||
+          _chatEndedHandled ||
+          _backgrounded) {
+        return;
+      }
       _reconnectAttempts++;
       _openSocket();
+      // Pull anything said while the socket was down — the server only streams
+      // live frames, so a REST history merge fills the gap.
+      unawaited(_preloadHistory());
     });
   }
 
@@ -227,7 +343,28 @@ class _ConsultationScreenState extends State<ConsultationScreen>
 
   void _addAll(List<Map<String, dynamic>> msgs) {
     for (final m in msgs) {
-      if (_seen.add('${m['id']}')) _messages.add(m);
+      final id = '${m['id']}';
+      if (_seen.contains(id)) continue;
+      // Reconcile the server copy of one of OUR still-pending optimistic
+      // bubbles (matched on body) instead of adding a duplicate — covers the
+      // race where the WS echo or a history poll arrives before `_sendBody`
+      // gets its REST response back.
+      if (m['sender_role'] == 'user') {
+        final pi = _messages.indexWhere((x) =>
+            (x['id']?.toString().startsWith('local-') ?? false) &&
+            x['pending'] == true &&
+            x['body'] == m['body']);
+        if (pi >= 0) {
+          _seen.add(id);
+          _messages[pi]
+            ..['id'] = m['id']
+            ..['created_at'] = m['created_at'] ?? _messages[pi]['created_at']
+            ..['pending'] = false
+            ..remove('failed');
+          continue;
+        }
+      }
+      if (_seen.add(id)) _messages.add(m);
     }
   }
 
@@ -237,16 +374,20 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         // Once the astrologer accepts, this flips `_chatActive` true so the
         // composer unlocks and outgoing messages are allowed.
         final wasActive = _chatActive;
+        final newStatus = '${event['status']}';
+        if (newStatus == 'completed') {
+          _markConnected();
+          unawaited(_handleChatEnded());
+          return;
+        }
         setState(() {
           _markConnected();
-          _status = '${event['status']}';
+          _status = newStatus;
         });
         // Keep the screen awake only while the chat is actually active — not
         // from initial screen entry (the "waiting for astrologer" state).
         if (!wasActive && _chatActive) {
           unawaited(_wakelock.acquire());
-        } else if (_status == 'completed') {
-          unawaited(_wakelock.release());
         }
       case 'history':
         final msgs = ((event['messages'] as List?) ?? const [])
@@ -270,11 +411,48 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       case 'closed':
         // Socket dropped. REST send still works, but show a subtle reconnecting
         // state and attempt to re-establish the live link.
+        if (_backgrounded) return; // closed on purpose; reopen on resume
         final detail = event['detail'];
         if (detail != null) debugPrint('[chat] socket closed: $detail');
-        _showDropReason(detail?.toString());
+        // A close that races our own resume-reconnect is expected noise — the
+        // just-superseded socket winding down — so don't alarm the user.
+        if (!_withinSelfReconnectWindow()) _showDropReason(detail?.toString());
         _scheduleReconnect();
     }
+  }
+
+  bool _withinSelfReconnectWindow() {
+    final at = _selfReconnectAt;
+    return at != null && clock.now().difference(at) < _selfReconnectWindow;
+  }
+
+  /// The single chat-ended path: stop every timer/reconnect, tear the socket
+  /// down, release the wakelock, and show the ended dialog exactly once.
+  Future<void> _handleChatEnded() async {
+    if (_chatEndedHandled) return;
+    _chatEndedHandled = true;
+    _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
+    _closeChatSocket();
+    unawaited(_wakelock.release());
+    if (mounted) setState(() => _status = 'completed');
+    if (!mounted) return;
+    final l = AppLocalizations.of(context);
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.indigoDeep,
+        title: Text(l.consultSessionEnded, style: AppTextStyles.heading(size: 18)),
+        content: Text(l.consultChatEnded, style: AppTextStyles.body()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l.commonDone),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Surfaces WHY the chat socket dropped so a reconnect is diagnosable from
@@ -308,16 +486,66 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     final text = _msgController.text.trim();
     if (text.isEmpty || !_chatActive) return;
     _msgController.clear();
-    // Send over REST (persists + bills + broadcasts); show it immediately.
+    await _sendBody(text);
+  }
+
+  /// Optimistic send: show a local temp-id bubble ("Sending…") immediately,
+  /// then send over REST (which persists + bills + broadcasts). On success
+  /// reconcile the temp bubble to the server copy (swap id/timestamp, clear
+  /// pending) — the `_seen` set makes the echoed WS/history copy de-dup. On
+  /// error or a 402 (insufficient balance) mark it failed ("Not sent · Tap to
+  /// retry") so nothing silently disappears.
+  Future<void> _sendBody(String text) async {
+    final tempId = 'local-${clock.now().microsecondsSinceEpoch}';
+    setState(() {
+      _messages.add({
+        'id': tempId,
+        'sender_role': 'user',
+        'body': text,
+        'created_at': clock.now().toIso8601String(),
+        'pending': true,
+      });
+    });
+    _scrollToEnd();
+
     try {
       final msg = await _repo.sendMessage(widget.consultationId, text);
-      if (mounted) {
-        setState(() => _addAll([msg]));
-        _scrollToEnd();
-      }
+      if (!mounted) return;
+      final i = _messages.indexWhere((m) => m['id'] == tempId);
+      // If the WS echo / history poll already reconciled this bubble (its id
+      // is no longer the temp id), there's nothing left to do.
+      if (i < 0) return;
+      final serverId = '${msg['id']}';
+      _seen.add(serverId);
+      setState(() {
+        _messages[i]
+          ..['id'] = msg['id']
+          ..['created_at'] = msg['created_at'] ?? _messages[i]['created_at']
+          ..['pending'] = false
+          ..remove('failed');
+      });
+      _scrollToEnd();
     } on ApiException catch (e) {
-      if (mounted) setState(() => _note = e.message);
+      if (!mounted) return;
+      setState(() {
+        final i = _messages.indexWhere((m) => m['id'] == tempId);
+        if (i >= 0) {
+          _messages[i]['pending'] = false;
+          _messages[i]['failed'] = true;
+        }
+        _note = e.message;
+      });
     }
+  }
+
+  /// Re-send a message whose delivery failed (tap on its "Not sent" bubble).
+  void _retryChat(int index) {
+    if (index < 0 || index >= _messages.length) return;
+    final m = _messages[index];
+    if (m['failed'] != true) return;
+    final body = '${m['body']}';
+    setState(() => _messages.removeAt(index));
+    unawaited(_sendBody(body));
   }
 
   // ── Call / video (Agora A/V + REST heartbeat billing) ───────────────
@@ -726,34 +954,64 @@ class _ConsultationScreenState extends State<ConsultationScreen>
                     itemBuilder: (_, i) {
                       final m = _messages[i];
                       final mine = m['sender_role'] == 'user';
-                      return Align(
-                        alignment: mine
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 4),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
+                      final pending = m['pending'] == true;
+                      final failed = m['failed'] == true;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Align(
+                            alignment: mine
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              constraints: BoxConstraints(
+                                maxWidth:
+                                    (MediaQuery.sizeOf(context).width
+                                            .clamp(0, Responsive.readableMaxWidth)) *
+                                        0.72,
+                              ),
+                              decoration: BoxDecoration(
+                                color: mine
+                                    ? AppColors.saffron.withValues(
+                                        alpha: pending ? 0.10 : 0.18)
+                                    : AppColors.surface2,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Text(
+                                '${m['body']}',
+                                style: AppTextStyles.body(size: 14),
+                              ),
+                            ),
                           ),
-                          constraints: BoxConstraints(
-                            maxWidth:
-                                (MediaQuery.sizeOf(
-                                  context,
-                                ).width.clamp(0, Responsive.readableMaxWidth)) *
-                                0.72,
-                          ),
-                          decoration: BoxDecoration(
-                            color: mine
-                                ? AppColors.saffron.withValues(alpha: 0.18)
-                                : AppColors.surface2,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Text(
-                            '${m['body']}',
-                            style: AppTextStyles.body(size: 14),
-                          ),
-                        ),
+                          if (mine && pending)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2, bottom: 2, right: 2),
+                              child: Text(
+                                l.consultSending,
+                                textAlign: TextAlign.right,
+                                style: AppTextStyles.label(color: AppColors.ivoryFaint),
+                              ),
+                            )
+                          else if (mine && failed)
+                            GestureDetector(
+                              onTap: () => _retryChat(i),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 2, bottom: 2, right: 2),
+                                child: Text(
+                                  l.consultNotSentRetry,
+                                  textAlign: TextAlign.right,
+                                  style: AppTextStyles.label(color: AppColors.danger),
+                                ),
+                              ),
+                            )
+                          else
+                            const SizedBox(height: 4),
+                        ],
                       );
                     },
                   ),

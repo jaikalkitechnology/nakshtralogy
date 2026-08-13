@@ -674,6 +674,18 @@ abstract class AppLocalizations {
   /// **'Reconnecting chat…'**
   String get consultReconnectingChat;
 
+  /// Status under an outgoing chat bubble while its REST send is in flight
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get consultSending;
+
+  /// Status under an outgoing chat bubble whose send failed; tapping it re-sends
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent · Tap to retry'**
+  String get consultNotSentRetry;
+
   /// No description provided for @consultSpeakerOn.
   ///
   /// In en, this message translates to:

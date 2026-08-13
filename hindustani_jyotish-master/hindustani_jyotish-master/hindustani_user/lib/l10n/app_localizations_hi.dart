@@ -322,6 +322,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get consultReconnectingChat => 'चैट पुनः जोड़ी जा रही है…';
 
   @override
+  String get consultSending => 'भेजा जा रहा है…';
+
+  @override
+  String get consultNotSentRetry => 'नहीं भेजा गया · पुनः प्रयास करें';
+
+  @override
   String get consultSpeakerOn => 'स्पीकर चालू';
 
   @override

@@ -117,6 +117,10 @@
   "consultEndedInBackgroundTitle": "Call ended",
   "consultEndedInBackgroundBody": "This call ended while the app was in the background.",
   "consultReconnectingChat": "Reconnecting chat…",
+  "consultSending": "Sending…",
+  "@consultSending": { "description": "Status under an outgoing chat bubble while its REST send is in flight" },
+  "consultNotSentRetry": "Not sent · Tap to retry",
+  "@consultNotSentRetry": { "description": "Status under an outgoing chat bubble whose send failed; tapping it re-sends" },
   "consultSpeakerOn": "Speaker on",
   "consultSpeakerOff": "Speaker off",
 
