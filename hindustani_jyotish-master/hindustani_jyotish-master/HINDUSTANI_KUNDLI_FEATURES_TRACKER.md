@@ -32,7 +32,7 @@ Second work stream (after the comms tracker `HINDUSTANI_TASK_TRACKER.md`, all 7 
 
 | D | Google login → persist profile picture (fix + refresh) | ✅ | A |
 | E | Astro Edit Profile + Bank/PAN in the profile section | ✅ | A |
-| F | Design polish to match `hindustani-jyotishi.html` + QA pass | ⬜ | B,C,D,E |
+| F | Design polish to match `hindustani-jyotishi.html` + QA pass | ✅ | B,C,D,E |
 
 Order: **A → B → C → D → E → F.** A is first so any new columns from B/E auto-apply. Commit per phase.
 

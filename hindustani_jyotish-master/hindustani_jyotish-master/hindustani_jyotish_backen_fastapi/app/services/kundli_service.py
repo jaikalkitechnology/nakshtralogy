@@ -77,10 +77,15 @@ async def _external(
     try:
         data = await nk.call(path, payload)
     except NakshatralogyError:
-        await wallet_service.credit_user(
-            db, user, amount,
-            type=TransactionType.refund, reference_id=f"{insight_type}:failed",
-        )
+        # Only refund a real debit. Free insight types (see FREE_INSIGHT_TYPES)
+        # charge nothing, and crediting ₹0 raises "Credit amount must be
+        # positive" — which would turn a clean upstream 502 into an
+        # unhandled 500. Skip the no-op refund for a zero charge.
+        if amount > 0:
+            await wallet_service.credit_user(
+                db, user, amount,
+                type=TransactionType.refund, reference_id=f"{insight_type}:failed",
+            )
         raise
     return amount, data
 

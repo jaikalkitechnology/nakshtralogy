@@ -57,12 +57,16 @@ class KundliSummaryView extends StatelessWidget {
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('${chart['name'] ?? ''}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.display(size: 20)),
             const SizedBox(height: 2),
             Text([chart['dob'], chart['tob'], chart['place']]
                 .whereType<String>()
                 .where((s) => s.isNotEmpty)
                 .join(' · '),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
           ]),
         ),
