@@ -674,6 +674,30 @@ abstract class AppLocalizations {
   /// **'Reconnecting chat…'**
   String get consultReconnectingChat;
 
+  /// Call status shown while waiting for the astrologer's stream to come back after a network blip, before the grace window ends the call
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting…'**
+  String get consultCallReconnecting;
+
+  /// No description provided for @consultSessionEndedTimeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ended (time limit reached)'**
+  String get consultSessionEndedTimeUp;
+
+  /// No description provided for @consultCallEndedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Call ended by {name}'**
+  String consultCallEndedBy(String name);
+
+  /// No description provided for @consultTheAstrologer.
+  ///
+  /// In en, this message translates to:
+  /// **'the astrologer'**
+  String get consultTheAstrologer;
+
   /// Status under an outgoing chat bubble while its REST send is in flight
   ///
   /// In en, this message translates to:

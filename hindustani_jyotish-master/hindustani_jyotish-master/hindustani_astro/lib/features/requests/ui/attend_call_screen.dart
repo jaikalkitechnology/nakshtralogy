@@ -69,6 +69,20 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   bool _sessionEnded = false;
   Timer? _endedPopTimer;
 
+  /// Set the moment any teardown starts (End button, back-guard, or the
+  /// server-ended re-sync) so the peer-offline handler bails out instead of
+  /// surfacing a stray "Reconnecting…" — leaving the channel makes Agora
+  /// report the seeker offline, often NOT as a clean quit.
+  bool _ending = false;
+
+  /// Reconnect grace on a seeker drop: a genuine network blip holds a bounded
+  /// "Reconnecting…" state; only a drop that outlasts [_reconnectGrace] ends
+  /// the call. A clean hang-up ends immediately. Wired to
+  /// `AgoraCallService.peerLeft` via [_onPeerLeft].
+  Timer? _rtcGraceTimer;
+  bool _peerReconnecting = false;
+  static const _reconnectGrace = Duration(seconds: 20);
+
   /// Speaker vs earpiece routing. Agora exposes no getter for the CURRENT
   /// route, so this only tracks what this screen has explicitly set — seeded
   /// with a reasonable default per call type (video calls conventionally
@@ -94,6 +108,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
       // Test-only path — see [agoraOverride]'s doc.
       override.remoteUid.addListener(_refresh);
       override.joined.addListener(_refresh);
+      override.peerLeft.addListener(_onPeerLeft);
       if (!mounted) return;
       setState(() => _agora = override);
       unawaited(_wakelock.acquire());
@@ -124,6 +139,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
       await agora.init(widget.grant.appId);
       agora.remoteUid.addListener(_refresh);
       agora.joined.addListener(_refresh);
+      agora.peerLeft.addListener(_onPeerLeft);
       await agora.join(widget.grant, video: widget.video);
       if (!mounted) return;
       setState(() => _agora = agora);
@@ -159,6 +175,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// [SessionEndedView], which auto-returns to Requests shortly after.
   Future<void> _handleSessionEnded() async {
     if (_sessionEnded || !mounted) return;
+    // Mark teardown in-flight up front so a peer-offline event fired by our
+    // own leave() below can't surface a stray "Reconnecting…".
+    _ending = true;
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     _elapsedTicker?.cancel();
     await _agora?.leave();
     await _agora?.dispose();
@@ -185,6 +206,40 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     _elapsedTicker = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       setState(() => _elapsed = DateTime.now().difference(_connectedAt!));
+    });
+  }
+
+  /// The seeker's display name for the header + end-of-call attribution.
+  String get _seekerName =>
+      (widget.userName != null && widget.userName!.trim().isNotEmpty)
+          ? widget.userName!
+          : 'Seeker';
+
+  /// The seeker's media stream came or went. A clean hang-up
+  /// ([PeerLeaveReason.quit]) ends the call immediately, attributed to the
+  /// seeker. A genuine drop ([PeerLeaveReason.dropped]) starts a bounded
+  /// "Reconnecting…" grace window and only ends if they don't return before
+  /// it elapses; a rejoin clears `peerLeft` and cancels the grace.
+  ///
+  /// Bails out once teardown has started (`_ending`/`_sessionEnded`) so our
+  /// own `leave()` — which makes Agora report the seeker offline, often NOT
+  /// as a clean quit — can't pop a stray "Reconnecting…" after the call ends.
+  void _onPeerLeft() {
+    if (!mounted || _ending || _sessionEnded) return;
+    final reason = _agora?.peerLeft.value;
+    if (reason == null) {
+      _rtcGraceTimer?.cancel();
+      if (_peerReconnecting) setState(() => _peerReconnecting = false);
+      return;
+    }
+    if (reason == PeerLeaveReason.quit) {
+      _end(endedBy: _seekerName);
+      return;
+    }
+    setState(() => _peerReconnecting = true);
+    _rtcGraceTimer?.cancel();
+    _rtcGraceTimer = Timer(_reconnectGrace, () {
+      if (mounted && _peerReconnecting && !_ending) _end(endedBy: _seekerName);
     });
   }
 
@@ -224,10 +279,30 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     if (confirmed == true) await _end();
   }
 
-  Future<void> _end() async {
+  /// Ends the call. [endedBy] names who hung up when the OTHER party ended it
+  /// (a clean seeker hang-up, or a drop that outlasted the grace window) so it
+  /// shows `Call ended by <name>` rather than a silent disconnect. When the
+  /// astrologer ends it themselves (End button / back-guard) [endedBy] is null
+  /// — they don't need to be told who ended it.
+  Future<void> _end({String? endedBy}) async {
+    if (_ending) return;
+    _ending = true;
     _elapsedTicker?.cancel();
+    // Stop the reconnect grace + clear any "Reconnecting…" snackbar so it
+    // can't linger after the call has ended.
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
+    if (mounted) ScaffoldMessenger.of(context).clearSnackBars();
     await _agora?.leave();
     unawaited(_wakelock.release());
+    if (endedBy != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Call ended by $endedBy'),
+        backgroundColor: AppColors.surface2,
+        duration: const Duration(seconds: 3),
+      ));
+      await Future.delayed(const Duration(milliseconds: 1200));
+    }
     if (mounted) Navigator.pop(context);
   }
 
@@ -235,6 +310,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _elapsedTicker?.cancel();
+    _rtcGraceTimer?.cancel();
     _endedPopTimer?.cancel();
     _agora?.dispose();
     // Unconditional — WakelockPlus.disable() is idempotent, safe even if
@@ -266,8 +342,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     // The join attempt failed outright (no Agora credentials, permission
     // denied, SDK error) — distinct from "still trying".
     final failed = _note != null && !remoteJoined;
-    final seekerName =
-        (widget.userName != null && widget.userName!.trim().isNotEmpty) ? widget.userName! : 'Seeker';
+    final seekerName = _seekerName;
 
     return PopScope(
       // Guard the back button for the whole life of a call attempt (from the
@@ -300,9 +375,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                                   ? "Couldn't connect"
                                   : connecting
                                       ? 'Connecting…'
-                                      : (remoteJoined
-                                          ? 'Connected'
-                                          : 'Waiting for the seeker…'),
+                                      : _peerReconnecting
+                                          ? 'Reconnecting…'
+                                          : (remoteJoined
+                                              ? 'Connected'
+                                              : 'Waiting for the seeker…'),
                               style: AppTextStyles.body(color: AppColors.ivoryDim),
                             ),
                             if (remoteJoined) ...[
@@ -353,6 +430,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                           _ConnectionPill(
                             connecting: connecting,
                             remoteJoined: remoteJoined,
+                            reconnecting: _peerReconnecting,
                             failed: _note != null && !remoteJoined,
                             elapsedLabel: remoteJoined ? _fmtElapsed(_elapsed) : null,
                           ),
@@ -431,11 +509,17 @@ class _ConnectionPill extends StatelessWidget {
   const _ConnectionPill({
     required this.connecting,
     required this.remoteJoined,
+    this.reconnecting = false,
     this.failed = false,
     this.elapsedLabel,
   });
   final bool connecting;
   final bool remoteJoined;
+
+  /// The seeker's stream dropped on a network blip and we're holding the
+  /// bounded reconnect grace — shown instead of "Waiting" so the astrologer
+  /// knows the call is mid-recovery, not idle.
+  final bool reconnecting;
 
   /// The join failed outright (no Agora credentials, permission denied, SDK
   /// error). Without this the pill kept saying "Connecting" forever directly
@@ -453,12 +537,16 @@ class _ConnectionPill extends StatelessWidget {
         ? AppColors.danger
         : connecting
             ? AppColors.gold
-            : (remoteJoined ? AppColors.success : AppColors.info);
+            : reconnecting
+                ? AppColors.gold
+                : (remoteJoined ? AppColors.success : AppColors.info);
     final String label = failed
         ? "Can't connect"
         : connecting
             ? 'Connecting'
-            : (remoteJoined ? 'Live · ${elapsedLabel ?? ''}' : 'Waiting');
+            : reconnecting
+                ? 'Reconnecting'
+                : (remoteJoined ? 'Live · ${elapsedLabel ?? ''}' : 'Waiting');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(

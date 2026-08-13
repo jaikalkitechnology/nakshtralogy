@@ -322,6 +322,20 @@ class AppLocalizationsHi extends AppLocalizations {
   String get consultReconnectingChat => 'चैट पुनः जोड़ी जा रही है…';
 
   @override
+  String get consultCallReconnecting => 'पुनः जुड़ रहे हैं…';
+
+  @override
+  String get consultSessionEndedTimeUp => 'सत्र समाप्त (समय सीमा पूरी हुई)';
+
+  @override
+  String consultCallEndedBy(String name) {
+    return '$name ने कॉल समाप्त की';
+  }
+
+  @override
+  String get consultTheAstrologer => 'ज्योतिषी';
+
+  @override
   String get consultSending => 'भेजा जा रहा है…';
 
   @override

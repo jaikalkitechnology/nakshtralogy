@@ -321,6 +321,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultReconnectingChat => 'Reconnecting chat…';
 
   @override
+  String get consultCallReconnecting => 'Reconnecting…';
+
+  @override
+  String get consultSessionEndedTimeUp => 'Session ended (time limit reached)';
+
+  @override
+  String consultCallEndedBy(String name) {
+    return 'Call ended by $name';
+  }
+
+  @override
+  String get consultTheAstrologer => 'the astrologer';
+
+  @override
   String get consultSending => 'Sending…';
 
   @override

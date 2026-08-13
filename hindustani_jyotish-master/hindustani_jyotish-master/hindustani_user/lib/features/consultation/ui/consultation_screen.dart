@@ -116,6 +116,15 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   AgoraCallService? _agora;
   bool _speakerOn = false;
 
+  /// Reconnect grace on a peer drop: when the astrologer's media stream goes
+  /// offline because of a genuine network blip (NOT a clean hang-up), hold a
+  /// bounded "Reconnecting…" state and only end the call if they don't come
+  /// back within [_reconnectGrace]. A clean hang-up ends immediately with
+  /// attribution. Wired to `AgoraCallService.peerLeft` (see `_onPeerLeft`).
+  Timer? _rtcGraceTimer;
+  bool _peerReconnecting = false;
+  static const _reconnectGrace = Duration(seconds: 20);
+
   // Wall-clock-based heartbeat cadence (see `_maybeHeartbeat`) — protects
   // billing/sync against a throttled or fully-suspended background ticker.
   DateTime? _lastHeartbeatAt;
@@ -145,6 +154,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.cancel();
+    _rtcGraceTimer?.cancel();
     _reconnectTimer?.cancel();
     _syncTimer?.cancel();
     _chatSub?.cancel();
@@ -579,6 +589,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       agora.remoteUid.addListener(_onAgoraChange);
       agora.joined.addListener(_onAgoraChange);
       agora.mediaFailure.addListener(_onAgoraChange);
+      agora.peerLeft.addListener(_onPeerLeft);
       await agora.join(grant, video: _isVideo);
       _agora = agora;
       _ended = false;
@@ -604,6 +615,40 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     setState(() {
       final failure = _agora?.mediaFailure.value;
       if (failure != null) _note = failure;
+    });
+  }
+
+  /// The astrologer's media stream came or went. A clean hang-up
+  /// ([PeerLeaveReason.quit]) ends the call immediately, attributed to the
+  /// astrologer. A genuine drop ([PeerLeaveReason.dropped]) starts a bounded
+  /// "Reconnecting…" grace window — the call ends only if they don't return
+  /// before it elapses; if they rejoin, `peerLeft` clears and the grace is
+  /// cancelled.
+  ///
+  /// Bails out once we're already ending (`_ended`) so our OWN
+  /// `leave()`/teardown — which makes Agora report the peer offline, often
+  /// NOT as a clean quit — can't surface a stray "Reconnecting…" after the
+  /// user hit End.
+  void _onPeerLeft() {
+    if (!mounted || _ended) return;
+    final reason = _agora?.peerLeft.value;
+    if (reason == null) {
+      // Peer is back — cancel the grace and drop the reconnecting banner.
+      _rtcGraceTimer?.cancel();
+      if (_peerReconnecting) setState(() => _peerReconnecting = false);
+      return;
+    }
+    if (reason == PeerLeaveReason.quit) {
+      unawaited(_endCall(endedBy: _CallEndedBy.astrologer));
+      return;
+    }
+    // Genuine network drop → hold a bounded grace window.
+    setState(() => _peerReconnecting = true);
+    _rtcGraceTimer?.cancel();
+    _rtcGraceTimer = Timer(_reconnectGrace, () {
+      if (mounted && _peerReconnecting && !_ended) {
+        unawaited(_endCall(endedBy: _CallEndedBy.astrologer));
+      }
     });
   }
 
@@ -654,7 +699,9 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         if (serverElapsed != null) _elapsed = serverElapsed;
         _charged = '${res['amount_charged']}';
       });
-      if (res['should_end'] == true) _endCall(auto: true);
+      if (res['should_end'] == true) {
+        _endCall(endedBy: _CallEndedBy.timeout);
+      }
     } on ApiException catch (e) {
       if (!mounted) return;
       if (e.statusCode == 409) {
@@ -666,7 +713,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       }
       // Surface the failure; on insufficient balance (402) end the session.
       setState(() => _note = e.message);
-      if (e.isPaymentRequired) _endCall(auto: true);
+      if (e.isPaymentRequired) _endCall(endedBy: _CallEndedBy.balance);
     } finally {
       _heartbeatInFlight = false;
     }
@@ -713,6 +760,8 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     if (_ended) return;
     _ended = true;
     _ticker?.cancel();
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     await _agora?.leave();
     unawaited(_wakelock.release());
     if (mounted) setState(() => _live = false);
@@ -775,6 +824,8 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   Future<void> _abortStartedCall(String reason) async {
     _ended = true;
     _ticker?.cancel();
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     await _agora?.leave();
     unawaited(_wakelock.release());
     try {
@@ -791,16 +842,20 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     }
   }
 
-  Future<void> _endCall({bool auto = false}) async {
+  Future<void> _endCall({_CallEndedBy endedBy = _CallEndedBy.user}) async {
     if (_ended) return; // guard against double-end (should_end + manual/402)
     _ended = true;
     _ticker?.cancel();
+    // Stop the reconnect grace and drop any "Reconnecting…" state so teardown
+    // can't leave a phantom banner behind.
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     await _agora?.leave();
     unawaited(_wakelock.release());
     if (mounted) setState(() => _live = false);
     try {
       final res = await _repo.end(widget.consultationId);
-      if (mounted) _showSummary(res, auto: auto);
+      if (mounted) _showSummary(res, endedBy: endedBy);
     } on ApiException catch (e) {
       if (mounted) setState(() => _note = e.message);
     }
@@ -858,14 +913,24 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     }
   }
 
-  void _showSummary(Map<String, dynamic> res, {required bool auto}) {
+  void _showSummary(Map<String, dynamic> res, {required _CallEndedBy endedBy}) {
     final l = AppLocalizations.of(context);
+    // Attribute the end so it never reads as a silent drop: the astrologer
+    // hung up, the balance ran out, the time cap was hit, or (default) the
+    // user ended it themselves.
+    final title = switch (endedBy) {
+      _CallEndedBy.astrologer =>
+        l.consultCallEndedBy(_astrologerName ?? l.consultTheAstrologer),
+      _CallEndedBy.balance => l.consultSessionEndedLowBalance,
+      _CallEndedBy.timeout => l.consultSessionEndedTimeUp,
+      _CallEndedBy.user => l.consultSessionEnded,
+    };
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.indigoDeep,
         title: Text(
-          auto ? l.consultSessionEndedLowBalance : l.consultSessionEnded,
+          title,
           style: AppTextStyles.heading(size: 18),
         ),
         content: Column(
@@ -905,6 +970,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     if (!_live) return l.consultReady;
     final agora = _agora;
     if (agora == null || !agora.joined.value) return l.consultConnecting;
+    if (_peerReconnecting) return l.consultCallReconnecting;
     if (agora.remoteUid.value == null) return l.consultWaitingAstrologerJoin;
     return '$_timer  ·  ₹$_charged ${l.consultSoFar}';
   }
@@ -1186,6 +1252,10 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     );
   }
 }
+
+/// Who/what ended a call — drives the end-of-call attribution so a session
+/// never closes as an unexplained drop.
+enum _CallEndedBy { user, astrologer, balance, timeout }
 
 /// The other party's photo when available, else the app's diya mark — used
 /// for the astrologer in the call/video "connecting"/"waiting" state.
