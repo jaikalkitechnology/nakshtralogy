@@ -134,6 +134,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   /// Safari requires it). If we don't have a token yet, offer a one-tap prompt.
   void _maybePromptWebNotifications() {
     if (!kIsWeb) return;
+    // Permission already granted → make sure the token is actually registered on
+    // the server. Covers the case where web-push config was configured AFTER the
+    // user granted (so no Enable tap re-runs), and every normal app open.
+    if (!WebPushService().needsWebEnable) {
+      WebPushService().registerAfterLogin();
+      return;
+    }
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted || !WebPushService().needsWebEnable) return;
       // iOS: web push only works from an installed (home-screen) PWA — a Safari

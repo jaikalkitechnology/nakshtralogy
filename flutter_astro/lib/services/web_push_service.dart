@@ -200,9 +200,12 @@ class WebPushService {
       await _register();           // re-bind the in-memory token
       return;
     }
+    // Ensure Firebase is initialised, THEN actually fetch + register the token.
+    // (init() only sets up Firebase + handlers; it does NOT register.)
     if (!_initialized || _messaging == null) {
-      await init();                // init() re-registers the persisted token
-    } else {
+      await init();
+    }
+    if (_messaging != null) {
       await _registerPersistedOrFetch();
     }
   }
