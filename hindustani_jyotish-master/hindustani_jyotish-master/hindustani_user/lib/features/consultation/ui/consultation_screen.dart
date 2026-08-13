@@ -378,7 +378,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     if (_status == 'completed' || _chatEndedHandled || _backgrounded) return;
     setState(() => _reconnecting = true);
     _reconnectTimer?.cancel();
-    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    final secs = chatReconnectDelaySeconds(_reconnectAttempts);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
       if (!mounted ||
           _status == 'completed' ||
@@ -1275,9 +1275,15 @@ class _ConsultationScreenState extends State<ConsultationScreen>
                       _PartyAvatar(photoUrl: _astrologerPhotoUrl),
                       const SizedBox(height: 16),
                       if (_astrologerName != null)
-                        Text(
-                          _astrologerName!,
-                          style: AppTextStyles.heading(size: 18),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            _astrologerName!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.heading(size: 18),
+                          ),
                         ),
                       const SizedBox(height: 12),
                       if (_live && engineJoined && remoteJoined)

@@ -248,7 +248,7 @@ class _IncomingCallScreenState extends State<IncomingCallScreen>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  widget.callerName.trim().isNotEmpty ? widget.callerName : 'Seeker',
+                  widget.callerName.trim().isNotEmpty ? widget.callerName : l.commonSeeker,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,

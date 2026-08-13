@@ -142,6 +142,8 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
               children: [
                 Text(
                   'Consult ${state.astrologerName}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.heading(size: 18),
                 ),
                 const SizedBox(height: 4),

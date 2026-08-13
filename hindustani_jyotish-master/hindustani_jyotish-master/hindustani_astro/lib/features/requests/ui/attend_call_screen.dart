@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/session_ended_view.dart';
 import '../../portal/portal_repository.dart';
@@ -124,8 +125,8 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     final ok = await AgoraCallService.requestPermissions(video: widget.video);
     if (!mounted) return;
     if (!ok) {
-      setState(() => _note =
-          'Microphone${widget.video ? ' and camera' : ''} permission is required to take this call. Enable it in Settings and try again.');
+      final l = AppLocalizations.of(context);
+      setState(() => _note = widget.video ? l.callPermMicCam : l.callPermMic);
       return;
     }
     // A placeholder grant from the server (empty/dev app id, or a dev/
@@ -135,8 +136,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     // real app id is a valid App-ID-only Agora project, not a placeholder —
     // AgoraGrant.isPlaceholder already accounts for that.
     if (widget.grant.isPlaceholder) {
-      setState(() => _note =
-          'Astrologer A/V not available — server Agora token missing.');
+      setState(() => _note = AppLocalizations.of(context).callAvUnavailable);
       return;
     }
     try {
@@ -154,7 +154,8 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     } catch (e, st) {
       debugPrint('[call] Agora join failed: $e\n$st');
       if (!mounted) return;
-      setState(() => _note = 'Could not connect the call: $e');
+      setState(() =>
+          _note = AppLocalizations.of(context).callConnectFailed(e.toString()));
     }
   }
 
@@ -222,7 +223,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   String get _seekerName =>
       (widget.userName != null && widget.userName!.trim().isNotEmpty)
           ? widget.userName!
-          : 'Seeker';
+          : AppLocalizations.of(context).commonSeeker;
 
   /// The seeker's media stream came or went. A clean hang-up
   /// ([PeerLeaveReason.quit]) ends the call immediately, attributed to the
@@ -270,17 +271,17 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// back-button intercept in [build] so neither can drop a live session
   /// silently. Mirrors `GoLiveScreen._confirmAndEnd`.
   Future<void> _confirmAndEnd() async {
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('End this call?'),
-        content: const Text(
-            "The seeker will be disconnected and this session will end. This can't be undone."),
+        title: Text(l.callEndConfirmTitle),
+        content: Text(l.callEndConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l.commonCancel)),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text('End', style: TextStyle(color: AppColors.danger)),
+            child: Text(l.commonEnd, style: TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -306,7 +307,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     unawaited(_wakelock.release());
     if (endedBy != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Call ended by $endedBy'),
+        content: Text(AppLocalizations.of(context).callEndedBy(endedBy)),
         backgroundColor: AppColors.surface2,
         duration: const Duration(seconds: 3),
       ));
@@ -345,6 +346,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
       );
     }
 
+    final l = AppLocalizations.of(context);
     final agora = _agora;
     final remoteJoined = agora?.remoteUid.value != null;
     final connecting = agora == null || !agora.joined.value;
@@ -381,14 +383,14 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                               // don't keep claiming it's still connecting —
                               // the reason is spelled out in the banner below.
                               failed
-                                  ? "Couldn't connect"
+                                  ? l.callCantConnect
                                   : connecting
-                                      ? 'Connecting…'
+                                      ? l.callConnecting
                                       : _peerReconnecting
-                                          ? 'Reconnecting…'
+                                          ? l.callReconnecting
                                           : (remoteJoined
-                                              ? 'Connected'
-                                              : 'Waiting for the seeker…'),
+                                              ? l.callConnected
+                                              : l.callWaitingForSeeker),
                               style: AppTextStyles.body(color: AppColors.ivoryDim),
                             ),
                             if (remoteJoined) ...[
@@ -422,7 +424,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(widget.video ? 'Video Call' : 'Audio Call',
+                                Text(widget.video ? l.callVideoTitle : l.callAudioTitle,
                                     style: AppTextStyles.heading(size: 18)),
                                 Text(seekerName,
                                     maxLines: 1,
@@ -467,14 +469,14 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                                 const SizedBox(width: 7),
                                 // Exact "Earnings so far: ₹<payout>" text kept as
                                 // one Text node (net of commission).
-                                Text('Earnings so far: ₹$_payout',
+                                Text(l.callEarningsSoFar(_payout!),
                                     style: AppTextStyles.mono(
                                         size: 14,
                                         color: AppColors.success,
                                         weight: FontWeight.w700)),
                                 if (_rate != null) ...[
                                   const SizedBox(width: 8),
-                                  Text('· ₹$_rate/min',
+                                  Text(l.callRateDotPerMin(_rate!),
                                       style: AppTextStyles.mono(
                                           size: 11, color: AppColors.ivoryDim)),
                                 ],
@@ -577,13 +579,14 @@ class _ConnectionPill extends StatelessWidget {
             : reconnecting
                 ? AppColors.gold
                 : (remoteJoined ? AppColors.success : AppColors.info);
+    final l = AppLocalizations.of(context);
     final String label = failed
-        ? "Can't connect"
+        ? l.callPillCantConnect
         : connecting
-            ? 'Connecting'
+            ? l.callPillConnecting
             : reconnecting
-                ? 'Reconnecting'
-                : (remoteJoined ? 'Live · ${elapsedLabel ?? ''}' : 'Waiting');
+                ? l.callPillReconnecting
+                : (remoteJoined ? l.callPillLive(elapsedLabel ?? '') : l.callPillWaiting);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(

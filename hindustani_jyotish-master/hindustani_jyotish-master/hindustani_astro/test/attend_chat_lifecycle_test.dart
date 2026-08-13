@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hindustani_astro/core/di.dart';
 import 'package:hindustani_astro/features/portal/portal_repository.dart';
+import 'package:hindustani_astro/l10n/app_localizations.dart';
 import 'package:hindustani_astro/features/requests/ui/attend_chat_screen.dart';
 import 'package:hj_core/hj_core.dart';
 
@@ -107,6 +108,8 @@ void main() {
     socket = _FakeChatSocket();
     await tester.pumpWidget(MaterialApp(
       theme: AppTheme.dark(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const Scaffold(body: Center(child: Text('Requests Screen'))),
     ));
     final context = tester.element(find.text('Requests Screen'));

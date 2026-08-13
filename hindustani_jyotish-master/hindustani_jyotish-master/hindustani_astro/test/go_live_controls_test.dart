@@ -15,6 +15,7 @@ import 'package:hindustani_astro/core/di.dart';
 import 'package:hindustani_astro/features/live/broadcast_cubit.dart';
 import 'package:hindustani_astro/features/live/ui/go_live_screen.dart';
 import 'package:hindustani_astro/features/portal/portal_repository.dart';
+import 'package:hindustani_astro/l10n/app_localizations.dart';
 import 'package:hj_core/hj_core.dart';
 
 class _FakePortalRepository implements PortalRepository {
@@ -67,6 +68,8 @@ void main() {
     // passed because it skipped the app theme; never let that happen again.
     await tester.pumpWidget(MaterialApp(
       theme: AppTheme.dark(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: GoLiveScreen(cubitOverride: cubit),
     ));
     await tester.pump();

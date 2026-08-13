@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/session_ended_view.dart';
 import '../../portal/portal_repository.dart';
 
-/// Banner text shown while the socket is down. Kept as a constant so
-/// [_markConnected] can tell "our own reconnecting banner" apart from a real
-/// server `error` note and only clear the former.
-const _kReconnectingNote = 'Reconnecting…';
+/// Internal sentinel value for [_note] while the socket is down. Kept as a
+/// constant so [_markConnected] can tell "our own reconnecting banner" apart
+/// from a real server `error` note and only clear the former. This is an
+/// identity marker only — it is NEVER shown to the astrologer directly; the
+/// build method renders the localized [AppLocalizations.chatReconnecting]
+/// whenever `_note` equals this sentinel.
+const _kReconnectingNote = '__reconnecting__';
 
 /// Astrologer-side chat thread — the real-time mirror of the user's chat,
 /// over the same consultation WebSocket. Earnings accrue per user message.
@@ -256,7 +260,7 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
     }
     setState(() => _note = _kReconnectingNote);
     _reconnectTimer?.cancel();
-    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    final secs = chatReconnectDelaySeconds(_reconnectAttempts);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
       if (!mounted ||
           _status == 'completed' ||
@@ -448,6 +452,11 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
         ),
       );
     }
+    final l = AppLocalizations.of(context);
+    final seekerName =
+        (widget.userName != null && widget.userName!.trim().isNotEmpty)
+            ? widget.userName!
+            : l.commonSeeker;
     return Scaffold(
       body: CosmicBackground(
         child: SafeArea(
@@ -465,11 +474,11 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              'Chat with ${(widget.userName != null && widget.userName!.trim().isNotEmpty) ? widget.userName! : 'Seeker'}',
+                              l.chatWithName(seekerName),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.heading(size: 18)),
-                          Text(_status == 'completed' ? 'Ended' : 'Live',
+                          Text(_status == 'completed' ? l.chatEnded : l.chatLive,
                               style: AppTextStyles.mono(size: 12, color: AppColors.success)),
                         ],
                       ),
@@ -478,7 +487,7 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                       onPressed: () => Navigator.pop(context),
                       // Icon-only, so without this a screen reader announces
                       // nothing.
-                      tooltip: 'Close',
+                      tooltip: l.commonClose,
                       icon: Icon(Icons.close, color: AppColors.ivoryDim),
                     ),
                   ],
@@ -489,12 +498,14 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                   width: double.infinity,
                   color: AppColors.danger.withValues(alpha: 0.14),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Text(_note!, style: AppTextStyles.body(size: 13, color: AppColors.danger)),
+                  child: Text(
+                      _note == _kReconnectingNote ? l.chatReconnecting : _note!,
+                      style: AppTextStyles.body(size: 13, color: AppColors.danger)),
                 ),
               Expanded(
                 child: _messages.isEmpty
                     ? Center(
-                        child: Text('Waiting for the seeker to say Namaste 🙏',
+                        child: Text(l.chatWaitingNamaste,
                             style: AppTextStyles.body(color: AppColors.ivoryFaint)))
                     : ListView.builder(
                         controller: _scroll,
@@ -534,7 +545,7 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       top: 2, bottom: 2, right: 2),
-                                  child: Text('Sending…',
+                                  child: Text(l.chatSending,
                                       textAlign: TextAlign.right,
                                       style: AppTextStyles.label(
                                           color: AppColors.ivoryFaint)),
@@ -545,7 +556,7 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         top: 2, bottom: 2, right: 2),
-                                    child: Text('Not sent · Tap to retry',
+                                    child: Text(l.chatNotSentRetry,
                                         textAlign: TextAlign.right,
                                         style: AppTextStyles.label(
                                             color: AppColors.danger)),
@@ -568,7 +579,7 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                         controller: _controller,
                         enabled: _active,
                         decoration: InputDecoration(
-                            hintText: _active ? 'Reply…' : 'Chat ended'),
+                            hintText: _active ? l.chatReplyHint : l.chatEndedHint),
                         onSubmitted: (_) => _send(),
                       ),
                     ),
@@ -576,7 +587,7 @@ class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBinding
                     // Icon-only, so without a tooltip a screen reader
                     // announces nothing.
                     IconButton.filled(
-                      tooltip: 'Send message',
+                      tooltip: l.chatSendTooltip,
                       onPressed: _active ? _send : null,
                       style: IconButton.styleFrom(backgroundColor: AppColors.saffron),
                       icon: Icon(Icons.send, color: AppColors.indigoVoid),

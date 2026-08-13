@@ -178,7 +178,7 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
     if (state.ended) return;
     _emit(state.copyWith(reconnecting: true));
     _reconnectTimer?.cancel();
-    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    final secs = chatReconnectDelaySeconds(_reconnectAttempts);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
       if (isClosed || state.ended) return;
       _reconnectAttempts++;

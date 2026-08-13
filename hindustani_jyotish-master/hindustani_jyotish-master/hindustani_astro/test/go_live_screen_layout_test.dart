@@ -27,6 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hindustani_astro/features/live/broadcast_cubit.dart';
 import 'package:hindustani_astro/features/live/ui/go_live_screen.dart';
 import 'package:hindustani_astro/features/portal/portal_repository.dart';
+import 'package:hindustani_astro/l10n/app_localizations.dart';
 import 'package:hj_core/hj_core.dart';
 
 /// Never actually called in these tests — the injected cubit's state is
@@ -44,7 +45,11 @@ class _TestBroadcastCubit extends BroadcastCubit {
   void force(BroadcastState s) => emit(s);
 }
 
-Widget _wrap(Widget child) => MaterialApp(home: child);
+Widget _wrap(Widget child) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    );
 
 BroadcastState _liveState({
   List<BroadcastChatLine> chat = const [],

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../auth/astro_session_cubit.dart';
 import '../../portal/portal_repository.dart';
@@ -41,8 +42,15 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
   late final BroadcastCubit _cubit =
       widget.cubitOverride ?? BroadcastCubit(getIt<PortalRepository>());
 
-  final _title = TextEditingController(text: 'Evening Rashifal');
+  final _title = TextEditingController();
   final _compose = TextEditingController();
+
+  /// The default stream title is seeded once, from the ARB, the first time
+  /// dependencies (localizations) are available — not as a field initializer,
+  /// since [AppLocalizations] needs a [BuildContext]. The guard stops a later
+  /// [didChangeDependencies] (e.g. a locale flip) from clobbering whatever the
+  /// astrologer has since typed.
+  bool _titleSeeded = false;
 
   // The viewer the astrologer is @-tagging in their next reply (tap a viewer
   // chat line to set it; cleared after sending or via the little chip).
@@ -61,6 +69,15 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
   // that proven layout, and the astrologer types exactly where they'd
   // expect to: directly in the bar at the bottom of the live screen.
   final _composeFocus = FocusNode();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_titleSeeded) {
+      _titleSeeded = true;
+      _title.text = AppLocalizations.of(context).liveDefaultTitle;
+    }
+  }
 
   @override
   void dispose() {
@@ -88,8 +105,8 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
         _isUnset(a?.rateVideoPerMin);
     if (!missing) return false;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Set your chat, call, and video rates before going live.'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).liveSetRatesFirst),
       ),
     );
     context.push('/settings');
@@ -115,11 +132,10 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
     setState(() => _replyToName = null);
     debugPrint('[GoLiveScreen] _sendChat: sent=$sent');
     if (!mounted) return;
+    final l = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          sent ? 'Message sent' : "Couldn't send — reconnecting to chat, try again in a moment.",
-        ),
+        content: Text(sent ? l.liveMessageSent : l.liveMessageSendFailed),
       ),
     );
   }
@@ -136,7 +152,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
     if (!mounted) return;
     if (!sent) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Couldn't pin — reconnecting to chat, try again.")),
+        SnackBar(content: Text(AppLocalizations.of(context).livePinFailed)),
       );
     }
   }
@@ -145,20 +161,21 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
   Future<void> _editGiftGoal() async {
     final current = _cubit.state.giftGoal;
     final ctrl = TextEditingController(text: current > 0 ? current.toStringAsFixed(0) : '');
+    final l = AppLocalizations.of(context);
     final value = await showDialog<double>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Set gifting goal'),
+        title: Text(l.liveSetGiftGoalTitle),
         content: TextField(
           controller: ctrl,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(prefixText: '₹ ', hintText: 'e.g. 5000'),
+          decoration: InputDecoration(prefixText: '₹ ', hintText: l.liveGiftGoalHint),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(l.commonCancel)),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(double.tryParse(ctrl.text.trim()) ?? 0),
-            child: const Text('Save'),
+            child: Text(l.commonSave),
           ),
         ],
       ),
@@ -171,17 +188,17 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
   /// back-button intercept in [build] so neither can end the broadcast
   /// without explicit confirmation.
   Future<void> _confirmAndEnd() async {
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('End live broadcast?'),
-        content: const Text(
-            "Your viewers will be disconnected and this session will end. This can't be undone."),
+        title: Text(l.liveEndConfirmTitle),
+        content: Text(l.liveEndConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l.commonCancel)),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text('End', style: TextStyle(color: AppColors.danger)),
+            child: Text(l.commonEnd, style: TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -234,6 +251,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
 
   // ── Pre-live setup ──────────────────────────────────────────────────
   Widget _buildSetup(BroadcastState state) {
+    final l = AppLocalizations.of(context);
     return CosmicBackground(
       child: SafeArea(
         child: Center(
@@ -258,7 +276,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                     onPressed: () => Navigator.of(context).maybePop(),
                     icon: Icon(Icons.arrow_back, color: AppColors.ivoryDim),
                   ),
-                  Text('Go Live', style: AppTextStyles.display(size: 24)),
+                  Text(l.dashGoLive, style: AppTextStyles.display(size: 24)),
                 ],
               ),
               const SizedBox(height: 8),
@@ -280,10 +298,10 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                         child: const Icon(Icons.sensors, size: 44, color: Colors.white),
                       ),
                       const SizedBox(height: 20),
-                      Text('Start a live session', style: AppTextStyles.heading(size: 20)),
+                      Text(l.liveStartTitle, style: AppTextStyles.heading(size: 20)),
                       const SizedBox(height: 8),
                       Text(
-                        'Your followers get notified when you go live.',
+                        l.liveStartSubtitle,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.body(size: 13, color: AppColors.ivoryDim),
                       ),
@@ -299,7 +317,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
               TextField(
                 controller: _title,
                 maxLength: 200,
-                decoration: const InputDecoration(labelText: 'Stream title'),
+                decoration: InputDecoration(labelText: l.liveStreamTitleLabel),
               ),
               const SizedBox(height: 12),
               ElevatedButton.icon(
@@ -311,7 +329,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                 icon: state.busy
                     ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.podcasts),
-                label: Text(state.busy ? 'Starting…' : 'Go Live'),
+                label: Text(state.busy ? l.liveStarting : l.dashGoLive),
               ),
             ],
           ),
@@ -338,6 +356,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
   // would turn them near-black in light mode and make them unreadable
   // against the still-dark video scrim underneath.
   Widget _buildLive(BroadcastState state) {
+    final l = AppLocalizations.of(context);
     final agora = state.agora;
     return Stack(
       fit: StackFit.expand,
@@ -426,7 +445,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                   children: [
                     _RoundControl(
                       icon: Icons.emoji_events_outlined,
-                      tooltip: 'Gifting goal',
+                      tooltip: l.liveGiftGoalTooltip,
                       onTap: _editGiftGoal,
                     ),
                     const SizedBox(width: 10),
@@ -434,7 +453,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                     const SizedBox(width: 10),
                     _RoundControl(
                       icon: Icons.cameraswitch_outlined,
-                      tooltip: 'Flip camera',
+                      tooltip: l.liveFlipCamera,
                       onTap: agora == null ? null : () => agora.switchCamera(),
                     ),
                   ],
@@ -473,10 +492,10 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
               Visibility(
                 visible: state.mediaReconnecting,
                 maintainState: true,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: _ReconnectingBanner(
-                    label: 'Reconnecting video…',
+                    label: l.liveReconnectingVideo,
                   ),
                 ),
               ),
@@ -493,9 +512,9 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
               Visibility(
                 visible: state.reconnecting,
                 maintainState: true,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: _ReconnectingBanner(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _ReconnectingBanner(label: l.liveReconnectingChat),
                 ),
               ),
               const Spacer(),
@@ -537,7 +556,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                       maintainState: true,
                       child: Center(
                         child: Text(
-                          'Viewer messages will appear here…',
+                          l.liveChatEmpty,
                           style: AppTextStyles.body(size: 12, color: Colors.white70),
                         ),
                       ),
@@ -606,7 +625,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('Replying to @${_replyToName ?? ''}',
+                              Text(l.liveReplyingTo(_replyToName ?? ''),
                                   style: AppTextStyles.body(size: 12, color: Colors.white)),
                               const SizedBox(width: 6),
                               GestureDetector(
@@ -635,8 +654,8 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                               onSubmitted: (_) => _sendChat(),
                               decoration: InputDecoration(
                                 hintText: _replyToName != null
-                                    ? 'Reply to @$_replyToName…'
-                                    : 'Say hi to your viewers…',
+                                    ? l.liveReplyHint(_replyToName!)
+                                    : l.liveSayHiHint,
                                 hintStyle: const TextStyle(color: Colors.white54),
                                 border: InputBorder.none,
                                 contentPadding:
@@ -664,6 +683,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
 
   // ── Post-live summary ───────────────────────────────────────────────
   Widget _buildSummary(BroadcastState state) {
+    final l = AppLocalizations.of(context);
     final s = state.summary ?? const {};
     final peak = (s['peak_viewers'] as int?) ?? state.peakViewers;
     final startedAt = s['started_at'] != null
@@ -693,9 +713,9 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
               const SizedBox(height: 20),
               const Icon(Icons.celebration, size: 56, color: AppColors.gold),
               const SizedBox(height: 16),
-              Text('That’s a wrap!', textAlign: TextAlign.center, style: AppTextStyles.display(size: 26)),
+              Text(l.liveWrapTitle, textAlign: TextAlign.center, style: AppTextStyles.display(size: 26)),
               const SizedBox(height: 6),
-              Text('Here’s how your session went.',
+              Text(l.liveWrapSubtitle,
                   textAlign: TextAlign.center, style: AppTextStyles.body(size: 13, color: AppColors.ivoryDim)),
               // The astrologer's own client can land here without ever
               // tapping End (see BroadcastCubit._onEndedByServer) — e.g.
@@ -731,14 +751,14 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                 children: [
                   Expanded(
                     child: _SummaryTile(
-                        label: 'Duration',
+                        label: l.liveDuration,
                         value: _formatDuration(duration),
                         color: AppColors.info),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _SummaryTile(
-                        label: 'Peak viewers', value: '$peak', color: AppColors.live),
+                        label: l.livePeakViewers, value: '$peak', color: AppColors.live),
                   ),
                 ],
               ),
@@ -746,7 +766,7 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
                 onPressed: () => Navigator.of(context).maybePop(),
-                child: const Text('Done'),
+                child: Text(l.commonDone),
               ),
             ],
           ),
@@ -801,7 +821,8 @@ class _LiveBadgeState extends State<_LiveBadge> with SingleTickerProviderStateMi
             child: Container(width: 8, height: 8, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white)),
           ),
           const SizedBox(width: 6),
-          Text('LIVE', style: AppTextStyles.label(size: 12, color: Colors.white)),
+          Text(AppLocalizations.of(context).liveBadge,
+              style: AppTextStyles.label(size: 12, color: Colors.white)),
         ],
       ),
     );
@@ -855,7 +876,7 @@ class _EndButton extends StatelessWidget {
       icon: busy
           ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
           : const Icon(Icons.stop_circle_outlined, size: 20),
-      label: const Text('End Live'),
+      label: Text(AppLocalizations.of(context).liveEndButton),
     );
   }
 }
@@ -913,17 +934,18 @@ class _MuteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final service = agora;
     if (service == null) {
-      return const _RoundControl(
-        icon: Icons.mic, tooltip: 'Mute microphone', onTap: null,
+      return _RoundControl(
+        icon: Icons.mic, tooltip: l.liveMuteMic, onTap: null,
       );
     }
     return ValueListenableBuilder<bool>(
       valueListenable: service.muted,
       builder: (_, muted, _) => _RoundControl(
         icon: muted ? Icons.mic_off : Icons.mic,
-        tooltip: muted ? 'Unmute microphone' : 'Mute microphone',
+        tooltip: muted ? l.liveUnmuteMic : l.liveMuteMic,
         active: muted,
         onTap: () => service.toggleMute(),
       ),
@@ -962,7 +984,7 @@ class _ChatBubble extends StatelessWidget {
           icon: Icons.card_giftcard,
           user: line.user,
           amount: line.amount,
-          detail: '${line.giftEmoji != null ? '${line.giftEmoji} ' : ''}${line.giftName ?? 'Gift'}',
+          detail: '${line.giftEmoji != null ? '${line.giftEmoji} ' : ''}${line.giftName ?? AppLocalizations.of(context).liveGift}',
         );
       case 'chat':
       default:
@@ -1041,7 +1063,7 @@ class _EventRow extends StatelessWidget {
 /// Subtle "reconnecting" indicator shown while the chat WebSocket is being
 /// re-established after an unexpected drop (see `BroadcastCubit._scheduleReconnect`).
 class _ReconnectingBanner extends StatelessWidget {
-  const _ReconnectingBanner({this.label = 'Reconnecting chat…'});
+  const _ReconnectingBanner({required this.label});
   final String label;
   @override
   Widget build(BuildContext context) {
@@ -1123,7 +1145,7 @@ class _GiftRibbon extends StatelessWidget {
                   topGifters
                       .take(3)
                       .map((g) =>
-                          '${g['name'] ?? 'User'} (₹${_amt(g['amount'])})')
+                          '${g['name'] ?? AppLocalizations.of(context).commonUser} (₹${_amt(g['amount'])})')
                       .join('   '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1166,7 +1188,7 @@ class _PinnedBanner extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               text: TextSpan(children: [
                 TextSpan(
-                    text: 'Answering now — ',
+                    text: AppLocalizations.of(context).liveAnsweringNow,
                     style: AppTextStyles.body(
                         size: 11, weight: FontWeight.w700, color: AppColors.saffron)),
                 TextSpan(
@@ -1185,7 +1207,7 @@ class _PinnedBanner extends StatelessWidget {
                 color: AppColors.success,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text('Done',
+              child: Text(AppLocalizations.of(context).commonDone,
                   style: AppTextStyles.label(size: 10, color: Colors.white)),
             ),
           ),
