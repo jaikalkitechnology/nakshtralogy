@@ -44,6 +44,15 @@ Order: **A → B → C → D → E → F.** A is first so any new columns from B
 
 ---
 
+> **REVISION (per user):** The kundli DATA SOURCE should be **Nakshatralogy's
+> Developer API** (Nakshatralogy exposes a developer/gateway API for kundli),
+> not an embedded engine. Plan: keep the app-facing `/v1/kundli/*` router +
+> `{status,data,meta}` envelope UNCHANGED (so Phase C's UI is unaffected), but
+> power it by **calling the Nakshatralogy developer API** when configured, with
+> the already-ported local engine kept only as an **offline/dev fallback**. A
+> follow-up "Phase B2" wires the developer-API client + maps its response to the
+> section shapes. Moola stays excluded.
+
 ## PHASE B — Kundli engine + backend router (full suite, minus Moola Dasha)  ⬜
 
 **Decision:** port Nakshtralogy's **self-contained engine** so the full analysis works **offline** (no dependency on the paid external Nakshatralogy API) and matches Nakshtralogy exactly. Hindustani's existing external client + `_curate_kundli` stay as-is for when the provider key IS set; the ported engine powers the always-available path.
