@@ -18,7 +18,18 @@ Second work stream (after the comms tracker `HINDUSTANI_TASK_TRACKER.md`, all 7 
 |---|---|---|---|
 | A | Admin auto column-sync ("auto mode") + auto-everything | ✅ | — |
 | B | Kundli engine + backend router — full suite **minus Moola Dasha** | ✅ | A |
+| B2 | Source kundli from Nakshatralogy **developer API** + make it **FREE** | 🟡 | B |
 | C | Kundli full viewer UI (user app) — design-matched | 🟡 | B |
+
+### PHASE B2 — developer-API source + free kundli  🟡
+**Finding:** Nakshatralogy's developer API is `/api/v2/*` (`Authorization: Bearer sk_live_…`). `POST /api/v2/kundli/all` → one call returns the full engine payload `{chart, vimshottari, moola_dasha, dosh_analysis, yoga_analysis, shadbala, ashtakavarga, aspect_matrix, life_areas, bhava_strength, dasha_activation, chakra_health, gochar_today}`. Hindustani's existing `app/services/nakshatralogy.py` already calls this API (the `/api/v2/kundli` alias) with the Bearer key.
+- [ ] Point Hindustani's kundli **compute** at the developer API `POST /api/v2/kundli/all` (via `nakshatralogy.py`) when `NAKSHATRALOGY_API_KEY` is set; **fall back to the local ported engine** (Phase B) when the key is empty (dev/CI). Strip `moola_dasha` from the result either way.
+- [ ] Parametrised sections: `vimshottari?levels` → `/api/v2/kundli/dasha/vimshottari` (dev key set) else local; `dasha-activation?query_date` → dev granular endpoint else local. Keep NO `/dasha/moola`.
+- [ ] **FREE:** remove `_guard_balance` + `debit_user` from `/v1/kundli/compute` — end user pays nothing. Still save `data_json` for free reopen. (Nakshatralogy meters Hindustani's developer account server-side — operational cost, not user-facing.)
+- [ ] Keep the app-facing `/v1/kundli/*` endpoints + `{status,data,meta}` envelope + section shapes UNCHANGED so Phase C's UI needs no change.
+- [ ] Tests: dev-API path (mock httpx transport) returns full suite minus moola; no-key path uses local engine; compute charges **nothing**; reopen free.
+**Exit:** kundli data comes from Nakshatralogy's developer API (engine = fallback), free to the user, Moola excluded. **Commit:** `feat(hindustani): kundli via nakshatralogy developer API, free`.
+
 | D | Google login → persist profile picture (fix + refresh) | ⬜ | A |
 | E | Astro Edit Profile + Bank/PAN in the profile section | ⬜ | A |
 | F | Design polish to match `hindustani-jyotishi.html` + QA pass | ⬜ | B,C,D,E |
