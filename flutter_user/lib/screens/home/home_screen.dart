@@ -16,6 +16,7 @@ import '../../widgets/phone_capture_sheet.dart';
 import '../../services/app_mode.dart';
 import '../../utils/money.dart';
 import '../../utils/responsive.dart';
+import '../../utils/comm_session_guard.dart';
 import '../auth/login_screen.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/astrologers_tab.dart';
@@ -50,6 +51,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   /// Ask the backend for any live call/chat and surface a "Return" banner.
   Future<void> _checkActiveSession() async {
     if (_checkingActive || !mounted) return;
+    // A chat/call screen is already open (possibly just minimised) — don't offer
+    // a "Return" banner. Tapping it would push a SECOND screen for the same
+    // session (mobile: races the one-socket takeover and drops the live chat;
+    // web: opens a duplicate with the same history). The open screen reconnects
+    // on resume by itself, and while minimised the server pushes new messages.
+    if (CommSessionGuard.isOpen) return;
     _checkingActive = true;
     try {
       final res = await ApiService().getActiveSession();

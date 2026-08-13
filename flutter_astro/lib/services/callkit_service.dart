@@ -6,8 +6,7 @@ import 'package:flutter_callkit_incoming/entities/entities.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 
 import 'api_service.dart';
-import 'fcm_service.dart' show navigatorKey;
-import '../screens/communication/active_call_screen.dart';
+import 'fcm_service.dart' show openAstroActiveCall;
 
 /// CallKit / VoIP integration for the astrologer app.
 ///
@@ -215,25 +214,21 @@ class CallkitService {
           endCall(callId);
           return;
         }
-        final callType = (data['call_type'] ?? 'voice').toString();
-        final callerName = (data['caller_name'] ?? 'User').toString();
-        final ratePerMin =
-            double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0;
-        navigatorKey.currentState?.push(MaterialPageRoute(
-          builder: (_) => ActiveCallScreen(
-            callId: callId,
-            channelName:
-                (resp['channel_name'] ?? data['channel_name'] ?? '').toString(),
-            agoraToken:
-                (resp['agora_token'] ?? data['agora_token'] ?? '').toString(),
-            agoraAppId:
-                (resp['agora_app_id'] ?? data['agora_app_id'] ?? '').toString(),
-            callType: callType,
-            peerName: callerName,
-            ratePerMin: ratePerMin,
-            isAstrologer: true,
-          ),
-        ));
+        // Clears any lingering ringing/active-call route so ending this call
+        // returns to the dashboard, not the previous call's stale UI.
+        openAstroActiveCall(
+          callId: callId,
+          channelName:
+              (resp['channel_name'] ?? data['channel_name'] ?? '').toString(),
+          agoraToken:
+              (resp['agora_token'] ?? data['agora_token'] ?? '').toString(),
+          agoraAppId:
+              (resp['agora_app_id'] ?? data['agora_app_id'] ?? '').toString(),
+          callType: (data['call_type'] ?? 'voice').toString(),
+          peerName: (data['caller_name'] ?? 'User').toString(),
+          ratePerMin:
+              double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0,
+        );
       }).catchError((e) {
         debugPrint('CallKit accept -> callAction failed: $e');
         endCall(callId);
