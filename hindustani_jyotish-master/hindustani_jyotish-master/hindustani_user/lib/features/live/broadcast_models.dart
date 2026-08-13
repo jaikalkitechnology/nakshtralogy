@@ -48,6 +48,7 @@ class BroadcastOut extends Equatable {
     required this.peakViewers,
     required this.astrologerName,
     this.astrologerPhoto,
+    this.giftGoal = 0,
   });
 
   final String id;
@@ -59,6 +60,9 @@ class BroadcastOut extends Equatable {
   final int peakViewers;
   final String astrologerName;
   final String? astrologerPhoto;
+
+  /// Host-set gifting goal in ₹ (0 when unset).
+  final double giftGoal;
 
   factory BroadcastOut.fromJson(Map<String, dynamic> j) => BroadcastOut(
         id: '${j['id']}',
@@ -76,10 +80,11 @@ class BroadcastOut extends Equatable {
         peakViewers: (j['peak_viewers'] as num?)?.toInt() ?? 0,
         astrologerName: (j['astrologer_name'] as String?) ?? 'Astrologer',
         astrologerPhoto: j['astrologer_photo'] as String?,
+        giftGoal: double.tryParse('${j['gift_goal'] ?? ''}') ?? 0,
       );
 
   @override
-  List<Object?> get props => [id, currentViewers, peakViewers, title];
+  List<Object?> get props => [id, currentViewers, peakViewers, title, giftGoal];
 }
 
 /// Result of `POST /broadcasts/{id}/join`: the broadcast record plus Agora

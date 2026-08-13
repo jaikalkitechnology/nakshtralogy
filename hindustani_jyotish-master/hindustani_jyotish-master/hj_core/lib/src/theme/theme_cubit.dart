@@ -4,84 +4,42 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'app_colors.dart';
 
-/// [mode] is the user's preference (system/light/dark); [brightness] is what
-/// that preference currently RESOLVES to — the same value both times for an
-/// explicit light/dark choice, but tracks the live OS setting while
-/// [mode] is [ThemeMode.system]. Kept as a Dart record (structural `==`) so a
-/// platform brightness flip while on "System" produces a genuinely different
-/// state — a plain `Cubit<ThemeMode>` would treat two `ThemeMode.system`
-/// emissions as identical and silently skip the rebuild.
+/// [mode] is the active theme mode; [brightness] is what it resolves to.
+/// The app is **dark-only** — both are permanently pinned to dark. The record
+/// shape (structural `==`) is retained so callers that destructure
+/// `state.mode` / `state.brightness` keep compiling unchanged.
 typedef ThemeState = ({ThemeMode mode, Brightness brightness});
 
-/// Holds the user-selected theme (system default / light / dark) and
-/// persists the explicit choice in secure storage. Shared by both apps —
-/// identical logic, no app-specific bits.
+/// Dark-only theme holder. The app has no light mode and no theme toggle: the
+/// state is fixed at `(mode: ThemeMode.dark, brightness: Brightness.dark)` and
+/// never changes. Public API ([load], [setMode], the [ThemeState] shape) is
+/// preserved so existing call sites still compile, but every path resolves to
+/// dark — nothing is read from or written to storage, and OS brightness flips
+/// are ignored.
 ///
-/// Every emission also calls [AppColors.setBrightness], since that's what
-/// actually drives every `AppColors.x` read app-wide (see the class docs on
-/// [AppColors]). The app root must wrap `MaterialApp` in a `BlocBuilder`
-/// listening to this cubit so the whole tree rebuilds — and therefore
-/// re-reads `AppColors.x` — on every change, including a system-brightness
-/// flip while on "System".
-class ThemeCubit extends Cubit<ThemeState> with WidgetsBindingObserver {
+/// Every (single) emission still calls [AppColors.setBrightness], since that's
+/// what drives every `AppColors.x` read app-wide (see [AppColors]).
+class ThemeCubit extends Cubit<ThemeState> {
   ThemeCubit([FlutterSecureStorage? storage])
       : _storage = storage ?? const FlutterSecureStorage(),
-        super((mode: ThemeMode.system, brightness: _platformBrightness())) {
-    AppColors.setBrightness(state.brightness);
-    // Live-updates AppColors (and, via the BlocBuilder in app.dart, the
-    // whole widget tree) when the OS theme changes while mode == system.
-    // MaterialApp's own Theme.of(context) already follows system brightness
-    // automatically via MediaQuery — this observer exists purely to keep the
-    // separate AppColors.x getters (read outside any BuildContext) in sync.
-    // Uses WidgetsBinding.addObserver (not PlatformDispatcher.
-    // onPlatformBrightnessChanged directly) so it composes with Flutter's
-    // own internal listener and any other observer instead of replacing it.
-    WidgetsBinding.instance.addObserver(this);
+        super((mode: ThemeMode.dark, brightness: Brightness.dark)) {
+    AppColors.setBrightness(Brightness.dark);
   }
 
+  // Retained only so the constructor signature is unchanged for callers/tests
+  // that inject a storage double. The dark-only cubit never touches it.
+  // ignore: unused_field
   final FlutterSecureStorage _storage;
-  static const _key = 'hj_theme_mode';
 
-  static Brightness _platformBrightness() =>
-      WidgetsBinding.instance.platformDispatcher.platformBrightness;
-
-  @override
-  void didChangePlatformBrightness() {
-    if (state.mode != ThemeMode.system) return;
-    _apply(ThemeMode.system);
-  }
-
-  @override
-  Future<void> close() {
-    WidgetsBinding.instance.removeObserver(this);
-    return super.close();
-  }
-
-  /// Restore the persisted choice (call before the first frame). Defaults to
-  /// [ThemeMode.system] — follow the device setting — when nothing has been
-  /// saved yet.
+  /// No-op in dark-only mode (kept for API compatibility — `main.dart` awaits
+  /// it at startup). Always resolves to dark.
   Future<void> load() async {
-    final saved = await _storage.read(key: _key);
-    final mode = switch (saved) {
-      'light' => ThemeMode.light,
-      'dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
-    };
-    _apply(mode);
+    AppColors.setBrightness(Brightness.dark);
   }
 
+  /// No-op in dark-only mode: the theme cannot change. Kept so any lingering
+  /// caller still compiles. Always keeps the app dark.
   Future<void> setMode(ThemeMode mode) async {
-    _apply(mode);
-    await _storage.write(key: _key, value: mode.name);
-  }
-
-  void _apply(ThemeMode mode) {
-    final brightness = switch (mode) {
-      ThemeMode.light => Brightness.light,
-      ThemeMode.dark => Brightness.dark,
-      ThemeMode.system => _platformBrightness(),
-    };
-    AppColors.setBrightness(brightness);
-    emit((mode: mode, brightness: brightness));
+    AppColors.setBrightness(Brightness.dark);
   }
 }

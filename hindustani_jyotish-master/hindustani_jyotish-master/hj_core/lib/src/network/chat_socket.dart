@@ -54,6 +54,18 @@ String describeSocketFailure({int? code, String? reason, Object? error}) {
   }
 }
 
+/// Shared reconnect backoff for chat / live-broadcast sockets.
+///
+/// The four reconnect owners — the user & astrologer consultation-chat
+/// screens and the user & astrologer live-broadcast cubits — all retry a
+/// dropped socket on the SAME schedule: 2s, 4s, 6s, … capped at 15s, where
+/// [attempts] is the number of retries ALREADY made (0 for the first retry).
+/// Extracted here so those owners share one definition instead of each
+/// re-inlining `(2 * (attempts + 1)).clamp(2, 15)`; the result is identical to
+/// that expression, so behaviour is unchanged.
+int chatReconnectDelaySeconds(int attempts) =>
+    (2 * (attempts + 1)).clamp(2, 15);
+
 class ChatSocket {
   ChatSocket(this._config, this._tokens, [this._api]);
 

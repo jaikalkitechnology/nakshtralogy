@@ -74,6 +74,7 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
           astrologerId: broadcast.astrologerId,
           astrologerPhoto: broadcast.astrologerPhoto,
           viewers: broadcast.currentViewers,
+          giftGoal: broadcast.giftGoal,
         ),
       );
       // Warm the Super Chat preset picker in the background so it's usually
@@ -177,7 +178,7 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
     if (state.ended) return;
     _emit(state.copyWith(reconnecting: true));
     _reconnectTimer?.cancel();
-    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    final secs = chatReconnectDelaySeconds(_reconnectAttempts);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
       if (isClosed || state.ended) return;
       _reconnectAttempts++;
@@ -205,6 +206,26 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
         } else if (v != null) {
           _emit(withViewers);
         }
+      case 'pinned':
+        // Host pinned a viewer question as "Answering now" — shown in a
+        // banner, not the message list.
+        _emit(state.copyWith(
+          pinnedUser: '${event['user'] ?? 'Viewer'}',
+          pinnedMessage: '${event['message'] ?? ''}',
+        ));
+      case 'unpinned':
+        _emit(state.copyWith(clearPinned: true));
+      case 'gift_update':
+        // Refreshed gifting total / goal / top-gifters ribbon.
+        _emit(state.copyWith(
+          giftTotal: double.tryParse('${event['total'] ?? ''}') ?? state.giftTotal,
+          giftGoal: double.tryParse('${event['goal'] ?? ''}') ?? 0,
+          topGifters: (event['top'] as List?)
+                  ?.whereType<Map>()
+                  .map((m) => Map<String, dynamic>.from(m))
+                  .toList() ??
+              state.topGifters,
+        ));
       case 'ended':
         // The astrologer ended it, the connection was lost, or the session
         // expired — either way the broadcast is over server-side. Stop

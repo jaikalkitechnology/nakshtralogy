@@ -79,6 +79,12 @@ class BroadcastState extends Equatable {
     this.peakViewers = 0,
     this.chat = const [],
     this.summary,
+    this.pinnedUser,
+    this.pinnedMessage,
+    this.giftTotal = 0,
+    this.giftGoal = 0,
+    this.topGifters = const [],
+    this.mediaReconnecting = false,
   });
 
   /// Pre-live setup → broadcasting → post-broadcast summary.
@@ -124,6 +130,25 @@ class BroadcastState extends Equatable {
   /// ended (the already-ended race; see `BroadcastCubit.end`).
   final Map<String, dynamic>? summary;
 
+  // ── Phase 6: pinned Q&A + gifting ribbon + media grace ────────────────
+  /// The viewer whose question the host has pinned as "Answering now" (null
+  /// when nothing is pinned), and its text.
+  final String? pinnedUser;
+  final String? pinnedMessage;
+  bool get hasPinned => pinnedUser != null;
+
+  /// Running gifting total (₹) and the host-set goal (₹, 0 = no goal), plus
+  /// the top gifters ribbon (`{name, amount}` maps, highest first) — all fed
+  /// by the server's `gift_update` chat frame.
+  final double giftTotal;
+  final double giftGoal;
+  final List<Map<String, dynamic>> topGifters;
+
+  /// True while the host's Agora media is down and inside the reconnect grace
+  /// window — the stream isn't ended yet; it recovers if media comes back
+  /// before the window elapses (see `BroadcastCubit._onAgoraMediaChanged`).
+  final bool mediaReconnecting;
+
   BroadcastState copyWith({
     BroadcastPhase? phase,
     bool? busy,
@@ -140,6 +165,13 @@ class BroadcastState extends Equatable {
     int? peakViewers,
     List<BroadcastChatLine>? chat,
     Map<String, dynamic>? summary,
+    String? pinnedUser,
+    String? pinnedMessage,
+    bool clearPinned = false,
+    double? giftTotal,
+    double? giftGoal,
+    List<Map<String, dynamic>>? topGifters,
+    bool? mediaReconnecting,
   }) {
     return BroadcastState(
       phase: phase ?? this.phase,
@@ -154,6 +186,12 @@ class BroadcastState extends Equatable {
       peakViewers: peakViewers ?? this.peakViewers,
       chat: chat ?? this.chat,
       summary: summary ?? this.summary,
+      pinnedUser: clearPinned ? null : (pinnedUser ?? this.pinnedUser),
+      pinnedMessage: clearPinned ? null : (pinnedMessage ?? this.pinnedMessage),
+      giftTotal: giftTotal ?? this.giftTotal,
+      giftGoal: giftGoal ?? this.giftGoal,
+      topGifters: topGifters ?? this.topGifters,
+      mediaReconnecting: mediaReconnecting ?? this.mediaReconnecting,
     );
   }
 
@@ -171,5 +209,11 @@ class BroadcastState extends Equatable {
         peakViewers,
         chat,
         summary,
+        pinnedUser,
+        pinnedMessage,
+        giftTotal,
+        giftGoal,
+        topGifters,
+        mediaReconnecting,
       ];
 }

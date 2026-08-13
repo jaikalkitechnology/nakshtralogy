@@ -321,10 +321,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consultReconnectingChat => 'Reconnecting chat…';
 
   @override
+  String get consultCallReconnecting => 'Reconnecting…';
+
+  @override
+  String get consultSessionEndedTimeUp => 'Session ended (time limit reached)';
+
+  @override
+  String consultCallEndedBy(String name) {
+    return 'Call ended by $name';
+  }
+
+  @override
+  String get consultTheAstrologer => 'the astrologer';
+
+  @override
+  String get consultSending => 'Sending…';
+
+  @override
+  String get consultNotSentRetry => 'Not sent · Tap to retry';
+
+  @override
   String get consultSpeakerOn => 'Speaker on';
 
   @override
   String get consultSpeakerOff => 'Speaker off';
+
+  @override
+  String consultSessionMsgs(Object used, Object cap, Object left) {
+    return 'Session: $used/$cap msgs ($left left)';
+  }
+
+  @override
+  String consultPerMsgRate(Object rate) {
+    return '₹$rate/msg';
+  }
+
+  @override
+  String get consultConnectedLabel => 'CONNECTED';
+
+  @override
+  String consultChargedRate(Object charged, Object rate) {
+    return '₹$charged · ₹$rate/min';
+  }
+
+  @override
+  String consultBalanceMinutes(Object balance, Object minutes) {
+    return 'Balance ₹$balance · ~$minutes min left';
+  }
+
+  @override
+  String consultBalanceRemaining(Object balance) {
+    return 'Balance ₹$balance';
+  }
+
+  @override
+  String get consultLowBalanceBanner => 'Low balance — under a minute left';
+
+  @override
+  String get consultAddMoney => 'Add money';
+
+  @override
+  String get consultRechargeTitle => 'Add money to wallet';
+
+  @override
+  String get consultRechargeSubtitle => 'Top up without ending the call.';
+
+  @override
+  String consultRechargeAdded(Object amount) {
+    return '₹$amount added — the call continues.';
+  }
 
   @override
   String get profileTitle => 'Profile';
@@ -657,4 +722,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imageViewerClose => 'Close';
+
+  @override
+  String get liveAnsweringNow => 'Answering now';
+
+  @override
+  String get liveTopGifters => 'Top gifters';
+
+  @override
+  String get liveReconnectingVideo => 'Reconnecting to video…';
 }

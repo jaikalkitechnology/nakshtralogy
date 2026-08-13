@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/session_ended_view.dart';
 import '../../portal/portal_repository.dart';
@@ -60,6 +61,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// successful fetch; never fabricated.
   String? _payout;
 
+  /// The seeker's per-minute rate for this call (`Consultation.rate`), shown
+  /// as context next to the live earnings. Null until the first successful
+  /// [_resync] / when the server reports no rate.
+  String? _rate;
+
   DateTime? _connectedAt;
   Duration _elapsed = Duration.zero;
   Timer? _elapsedTicker;
@@ -68,6 +74,20 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// longer active — swaps the whole screen to [SessionEndedView].
   bool _sessionEnded = false;
   Timer? _endedPopTimer;
+
+  /// Set the moment any teardown starts (End button, back-guard, or the
+  /// server-ended re-sync) so the peer-offline handler bails out instead of
+  /// surfacing a stray "Reconnecting…" — leaving the channel makes Agora
+  /// report the seeker offline, often NOT as a clean quit.
+  bool _ending = false;
+
+  /// Reconnect grace on a seeker drop: a genuine network blip holds a bounded
+  /// "Reconnecting…" state; only a drop that outlasts [_reconnectGrace] ends
+  /// the call. A clean hang-up ends immediately. Wired to
+  /// `AgoraCallService.peerLeft` via [_onPeerLeft].
+  Timer? _rtcGraceTimer;
+  bool _peerReconnecting = false;
+  static const _reconnectGrace = Duration(seconds: 20);
 
   /// Speaker vs earpiece routing. Agora exposes no getter for the CURRENT
   /// route, so this only tracks what this screen has explicitly set — seeded
@@ -94,6 +114,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
       // Test-only path — see [agoraOverride]'s doc.
       override.remoteUid.addListener(_refresh);
       override.joined.addListener(_refresh);
+      override.peerLeft.addListener(_onPeerLeft);
       if (!mounted) return;
       setState(() => _agora = override);
       unawaited(_wakelock.acquire());
@@ -104,8 +125,8 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     final ok = await AgoraCallService.requestPermissions(video: widget.video);
     if (!mounted) return;
     if (!ok) {
-      setState(() => _note =
-          'Microphone${widget.video ? ' and camera' : ''} permission is required to take this call. Enable it in Settings and try again.');
+      final l = AppLocalizations.of(context);
+      setState(() => _note = widget.video ? l.callPermMicCam : l.callPermMic);
       return;
     }
     // A placeholder grant from the server (empty/dev app id, or a dev/
@@ -115,8 +136,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     // real app id is a valid App-ID-only Agora project, not a placeholder —
     // AgoraGrant.isPlaceholder already accounts for that.
     if (widget.grant.isPlaceholder) {
-      setState(() => _note =
-          'Astrologer A/V not available — server Agora token missing.');
+      setState(() => _note = AppLocalizations.of(context).callAvUnavailable);
       return;
     }
     try {
@@ -124,6 +144,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
       await agora.init(widget.grant.appId);
       agora.remoteUid.addListener(_refresh);
       agora.joined.addListener(_refresh);
+      agora.peerLeft.addListener(_onPeerLeft);
       await agora.join(widget.grant, video: widget.video);
       if (!mounted) return;
       setState(() => _agora = agora);
@@ -133,7 +154,8 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     } catch (e, st) {
       debugPrint('[call] Agora join failed: $e\n$st');
       if (!mounted) return;
-      setState(() => _note = 'Could not connect the call: $e');
+      setState(() =>
+          _note = AppLocalizations.of(context).callConnectFailed(e.toString()));
     }
   }
 
@@ -148,7 +170,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
         await _handleSessionEnded();
         return;
       }
-      setState(() => _payout = c.astrologerPayout);
+      setState(() {
+        _payout = c.astrologerPayout;
+        final rate = double.tryParse(c.rate);
+        if (rate != null && rate > 0) _rate = c.rate;
+      });
     } on ApiException catch (_) {
       // Best-effort — a re-sync failure must not disrupt an otherwise-live call.
     }
@@ -159,6 +185,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// [SessionEndedView], which auto-returns to Requests shortly after.
   Future<void> _handleSessionEnded() async {
     if (_sessionEnded || !mounted) return;
+    // Mark teardown in-flight up front so a peer-offline event fired by our
+    // own leave() below can't surface a stray "Reconnecting…".
+    _ending = true;
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     _elapsedTicker?.cancel();
     await _agora?.leave();
     await _agora?.dispose();
@@ -188,6 +219,40 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     });
   }
 
+  /// The seeker's display name for the header + end-of-call attribution.
+  String get _seekerName =>
+      (widget.userName != null && widget.userName!.trim().isNotEmpty)
+          ? widget.userName!
+          : AppLocalizations.of(context).commonSeeker;
+
+  /// The seeker's media stream came or went. A clean hang-up
+  /// ([PeerLeaveReason.quit]) ends the call immediately, attributed to the
+  /// seeker. A genuine drop ([PeerLeaveReason.dropped]) starts a bounded
+  /// "Reconnecting…" grace window and only ends if they don't return before
+  /// it elapses; a rejoin clears `peerLeft` and cancels the grace.
+  ///
+  /// Bails out once teardown has started (`_ending`/`_sessionEnded`) so our
+  /// own `leave()` — which makes Agora report the seeker offline, often NOT
+  /// as a clean quit — can't pop a stray "Reconnecting…" after the call ends.
+  void _onPeerLeft() {
+    if (!mounted || _ending || _sessionEnded) return;
+    final reason = _agora?.peerLeft.value;
+    if (reason == null) {
+      _rtcGraceTimer?.cancel();
+      if (_peerReconnecting) setState(() => _peerReconnecting = false);
+      return;
+    }
+    if (reason == PeerLeaveReason.quit) {
+      _end(endedBy: _seekerName);
+      return;
+    }
+    setState(() => _peerReconnecting = true);
+    _rtcGraceTimer?.cancel();
+    _rtcGraceTimer = Timer(_reconnectGrace, () {
+      if (mounted && _peerReconnecting && !_ending) _end(endedBy: _seekerName);
+    });
+  }
+
   /// Whether there is a live/in-progress call attempt worth protecting from
   /// an accidental back-press — true from the moment permissions/join start
   /// until either a fatal [_note] (nothing left to protect) or the session
@@ -206,17 +271,17 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// back-button intercept in [build] so neither can drop a live session
   /// silently. Mirrors `GoLiveScreen._confirmAndEnd`.
   Future<void> _confirmAndEnd() async {
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('End this call?'),
-        content: const Text(
-            "The seeker will be disconnected and this session will end. This can't be undone."),
+        title: Text(l.callEndConfirmTitle),
+        content: Text(l.callEndConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l.commonCancel)),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text('End', style: TextStyle(color: AppColors.danger)),
+            child: Text(l.commonEnd, style: TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -224,10 +289,30 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
     if (confirmed == true) await _end();
   }
 
-  Future<void> _end() async {
+  /// Ends the call. [endedBy] names who hung up when the OTHER party ended it
+  /// (a clean seeker hang-up, or a drop that outlasted the grace window) so it
+  /// shows `Call ended by <name>` rather than a silent disconnect. When the
+  /// astrologer ends it themselves (End button / back-guard) [endedBy] is null
+  /// — they don't need to be told who ended it.
+  Future<void> _end({String? endedBy}) async {
+    if (_ending) return;
+    _ending = true;
     _elapsedTicker?.cancel();
+    // Stop the reconnect grace + clear any "Reconnecting…" snackbar so it
+    // can't linger after the call has ended.
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
+    if (mounted) ScaffoldMessenger.of(context).clearSnackBars();
     await _agora?.leave();
     unawaited(_wakelock.release());
+    if (endedBy != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(AppLocalizations.of(context).callEndedBy(endedBy)),
+        backgroundColor: AppColors.surface2,
+        duration: const Duration(seconds: 3),
+      ));
+      await Future.delayed(const Duration(milliseconds: 1200));
+    }
     if (mounted) Navigator.pop(context);
   }
 
@@ -235,6 +320,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _elapsedTicker?.cancel();
+    _rtcGraceTimer?.cancel();
     _endedPopTimer?.cancel();
     _agora?.dispose();
     // Unconditional — WakelockPlus.disable() is idempotent, safe even if
@@ -260,14 +346,14 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
       );
     }
 
+    final l = AppLocalizations.of(context);
     final agora = _agora;
     final remoteJoined = agora?.remoteUid.value != null;
     final connecting = agora == null || !agora.joined.value;
     // The join attempt failed outright (no Agora credentials, permission
     // denied, SDK error) — distinct from "still trying".
     final failed = _note != null && !remoteJoined;
-    final seekerName =
-        (widget.userName != null && widget.userName!.trim().isNotEmpty) ? widget.userName! : 'Seeker';
+    final seekerName = _seekerName;
 
     return PopScope(
       // Guard the back button for the whole life of a call attempt (from the
@@ -297,12 +383,14 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                               // don't keep claiming it's still connecting —
                               // the reason is spelled out in the banner below.
                               failed
-                                  ? "Couldn't connect"
+                                  ? l.callCantConnect
                                   : connecting
-                                      ? 'Connecting…'
-                                      : (remoteJoined
-                                          ? 'Connected'
-                                          : 'Waiting for the seeker…'),
+                                      ? l.callConnecting
+                                      : _peerReconnecting
+                                          ? l.callReconnecting
+                                          : (remoteJoined
+                                              ? l.callConnected
+                                              : l.callWaitingForSeeker),
                               style: AppTextStyles.body(color: AppColors.ivoryDim),
                             ),
                             if (remoteJoined) ...[
@@ -336,7 +424,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(widget.video ? 'Video Call' : 'Audio Call',
+                                Text(widget.video ? l.callVideoTitle : l.callAudioTitle,
                                     style: AppTextStyles.heading(size: 18)),
                                 Text(seekerName,
                                     maxLines: 1,
@@ -353,6 +441,7 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                           _ConnectionPill(
                             connecting: connecting,
                             remoteJoined: remoteJoined,
+                            reconnecting: _peerReconnecting,
                             failed: _note != null && !remoteJoined,
                             elapsedLabel: remoteJoined ? _fmtElapsed(_elapsed) : null,
                           ),
@@ -364,8 +453,36 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('Earnings so far: ₹$_payout',
-                              style: AppTextStyles.mono(size: 12, color: AppColors.success)),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: AppColors.success.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: AppColors.success.withValues(alpha: 0.4)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.savings_outlined,
+                                    size: 15, color: AppColors.success),
+                                const SizedBox(width: 7),
+                                // Exact "Earnings so far: ₹<payout>" text kept as
+                                // one Text node (net of commission).
+                                Text(l.callEarningsSoFar(_payout!),
+                                    style: AppTextStyles.mono(
+                                        size: 14,
+                                        color: AppColors.success,
+                                        weight: FontWeight.w700)),
+                                if (_rate != null) ...[
+                                  const SizedBox(width: 8),
+                                  Text(l.callRateDotPerMin(_rate!),
+                                      style: AppTextStyles.mono(
+                                          size: 11, color: AppColors.ivoryDim)),
+                                ],
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     if (_note != null)
@@ -431,11 +548,17 @@ class _ConnectionPill extends StatelessWidget {
   const _ConnectionPill({
     required this.connecting,
     required this.remoteJoined,
+    this.reconnecting = false,
     this.failed = false,
     this.elapsedLabel,
   });
   final bool connecting;
   final bool remoteJoined;
+
+  /// The seeker's stream dropped on a network blip and we're holding the
+  /// bounded reconnect grace — shown instead of "Waiting" so the astrologer
+  /// knows the call is mid-recovery, not idle.
+  final bool reconnecting;
 
   /// The join failed outright (no Agora credentials, permission denied, SDK
   /// error). Without this the pill kept saying "Connecting" forever directly
@@ -453,12 +576,17 @@ class _ConnectionPill extends StatelessWidget {
         ? AppColors.danger
         : connecting
             ? AppColors.gold
-            : (remoteJoined ? AppColors.success : AppColors.info);
+            : reconnecting
+                ? AppColors.gold
+                : (remoteJoined ? AppColors.success : AppColors.info);
+    final l = AppLocalizations.of(context);
     final String label = failed
-        ? "Can't connect"
+        ? l.callPillCantConnect
         : connecting
-            ? 'Connecting'
-            : (remoteJoined ? 'Live · ${elapsedLabel ?? ''}' : 'Waiting');
+            ? l.callPillConnecting
+            : reconnecting
+                ? l.callPillReconnecting
+                : (remoteJoined ? l.callPillLive(elapsedLabel ?? '') : l.callPillWaiting);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(

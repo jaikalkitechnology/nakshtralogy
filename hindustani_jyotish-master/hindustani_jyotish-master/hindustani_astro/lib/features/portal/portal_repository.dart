@@ -182,12 +182,24 @@ class PortalRepository {
   }
 
   /// Starts a broadcast. Returns `{"broadcast": BroadcastOut, "agora": AgoraGrantOut}`.
-  /// The server 409s if this astrologer already has an active broadcast.
-  Future<Map<String, dynamic>> startBroadcast(String? title) async =>
-      await _api.post('/broadcasts/start', body: {'title': title}) as Map<String, dynamic>;
+  ///
+  /// `endExisting: true` (the default from the Go Live screen) auto-ends this
+  /// astrologer's prior still-active broadcast server-side — a stream left
+  /// running on another device / an earlier session — instead of the server
+  /// 409-ing. It does NOT defeat the concurrent double-start guard (that's a
+  /// server-side row lock).
+  Future<Map<String, dynamic>> startBroadcast(String? title, {bool endExisting = true}) async =>
+      await _api.post(
+        '/broadcasts/start',
+        body: {'title': title, 'end_existing': endExisting},
+      ) as Map<String, dynamic>;
 
   /// Ends the broadcast and returns the final `BroadcastOut` (started_at,
   /// ended_at, peak_viewers) for the post-broadcast summary.
   Future<Map<String, dynamic>> endBroadcast(String id) async =>
       await _api.post('/broadcasts/$id/end') as Map<String, dynamic>;
+
+  /// Sets (or clears, with 0) the gifting goal (₹) on a live broadcast.
+  Future<void> setBroadcastGiftGoal(String id, double goal) async =>
+      await _api.post('/broadcasts/$id/gift-goal', body: {'goal': goal});
 }

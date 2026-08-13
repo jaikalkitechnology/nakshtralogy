@@ -49,9 +49,11 @@ class HindustaniUserApp extends StatelessWidget {
                 onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
                 debugShowCheckedModeBanner: false,
                 scaffoldMessengerKey: scaffoldMessengerKey,
-                theme: AppTheme.light(),
+                // Dark-only app: a single dark theme, pinned. No light theme,
+                // no system flip — themeState is permanently dark.
+                theme: AppTheme.dark(),
                 darkTheme: AppTheme.dark(),
-                themeMode: themeState.mode,
+                themeMode: ThemeMode.dark,
                 locale: locale,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,

@@ -32,6 +32,16 @@ class RoomHub:
         self._ns = namespace
         self._channel = f"wsroom:{namespace}"
         self._rooms: dict[str, set] = {}
+        # Per-room presence, keyed by an opaque principal key (e.g.
+        # "user:<id>" / "astrologer:<id>") → open-socket refcount. Lets a
+        # caller ask "is the RECIPIENT connected on this room's socket?" so a
+        # redundant push isn't sent for a message the socket already delivered
+        # (see is_present). Process-LOCAL, mirroring _rooms — with the Redis
+        # fan-out a peer connected on another worker isn't reflected here, so
+        # in a multi-worker deploy the gate can occasionally let a push through
+        # for an already-connected peer (a duplicate, never a miss). Single
+        # worker — the documented chat topology without Redis — is exact.
+        self._presence: dict[str, dict[str, int]] = {}
         self._redis = None
         self._sub_task: asyncio.Task | None = None
         self._started = False
@@ -88,6 +98,31 @@ class RoomHub:
 
     def members(self, room: str) -> int:
         return len(self._rooms.get(room, ()))
+
+    def mark_present(self, room: str, key: str) -> None:
+        """Record that principal ``key`` has an open socket on ``room``.
+        Refcounted so a principal with two sockets (a brief reconnect overlap)
+        stays present until the last one closes."""
+        room_presence = self._presence.setdefault(room, {})
+        room_presence[key] = room_presence.get(key, 0) + 1
+
+    def mark_absent(self, room: str, key: str) -> None:
+        """Drop one open-socket reference for principal ``key`` on ``room``."""
+        room_presence = self._presence.get(room)
+        if not room_presence:
+            return
+        remaining = room_presence.get(key, 0) - 1
+        if remaining <= 0:
+            room_presence.pop(key, None)
+            if not room_presence:
+                self._presence.pop(room, None)
+        else:
+            room_presence[key] = remaining
+
+    def is_present(self, room: str, key: str) -> bool:
+        """True if principal ``key`` currently has a socket open on ``room``
+        (in THIS process — see the note on _presence)."""
+        return key in self._presence.get(room, {})
 
     async def _local_send(self, room: str, payload: dict) -> None:
         dead = []

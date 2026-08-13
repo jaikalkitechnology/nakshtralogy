@@ -322,10 +322,75 @@ class AppLocalizationsHi extends AppLocalizations {
   String get consultReconnectingChat => 'चैट पुनः जोड़ी जा रही है…';
 
   @override
+  String get consultCallReconnecting => 'पुनः जुड़ रहे हैं…';
+
+  @override
+  String get consultSessionEndedTimeUp => 'सत्र समाप्त (समय सीमा पूरी हुई)';
+
+  @override
+  String consultCallEndedBy(String name) {
+    return '$name ने कॉल समाप्त की';
+  }
+
+  @override
+  String get consultTheAstrologer => 'ज्योतिषी';
+
+  @override
+  String get consultSending => 'भेजा जा रहा है…';
+
+  @override
+  String get consultNotSentRetry => 'नहीं भेजा गया · पुनः प्रयास करें';
+
+  @override
   String get consultSpeakerOn => 'स्पीकर चालू';
 
   @override
   String get consultSpeakerOff => 'स्पीकर बंद';
+
+  @override
+  String consultSessionMsgs(Object used, Object cap, Object left) {
+    return 'सत्र: $used/$cap संदेश ($left शेष)';
+  }
+
+  @override
+  String consultPerMsgRate(Object rate) {
+    return '₹$rate/संदेश';
+  }
+
+  @override
+  String get consultConnectedLabel => 'जुड़ा हुआ';
+
+  @override
+  String consultChargedRate(Object charged, Object rate) {
+    return '₹$charged · ₹$rate/मिनट';
+  }
+
+  @override
+  String consultBalanceMinutes(Object balance, Object minutes) {
+    return 'शेष ₹$balance · ~$minutes मिनट बाकी';
+  }
+
+  @override
+  String consultBalanceRemaining(Object balance) {
+    return 'शेष ₹$balance';
+  }
+
+  @override
+  String get consultLowBalanceBanner => 'कम बैलेंस — एक मिनट से कम बचा है';
+
+  @override
+  String get consultAddMoney => 'पैसे जोड़ें';
+
+  @override
+  String get consultRechargeTitle => 'वॉलेट में पैसे जोड़ें';
+
+  @override
+  String get consultRechargeSubtitle => 'कॉल समाप्त किए बिना रिचार्ज करें।';
+
+  @override
+  String consultRechargeAdded(Object amount) {
+    return '₹$amount जोड़े गए — कॉल जारी है।';
+  }
 
   @override
   String get profileTitle => 'प्रोफ़ाइल';
@@ -657,4 +722,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get imageViewerClose => 'बंद करें';
+
+  @override
+  String get liveAnsweringNow => 'अभी उत्तर दे रहे हैं';
+
+  @override
+  String get liveTopGifters => 'शीर्ष उपहारदाता';
+
+  @override
+  String get liveReconnectingVideo => 'वीडियो से पुनः कनेक्ट हो रहा है…';
 }

@@ -36,6 +36,21 @@ class BroadcastCubit extends Cubit<BroadcastState> {
   Timer? _reconnectTimer;
   int _reconnectAttempts = 0;
 
+  // Presence heartbeat: while live, the host pings `{"type":"heartbeat"}` over
+  // the chat socket so the server can stamp last_heartbeat_at and its
+  // background watchdog can force-end this broadcast if the host vanishes even
+  // across a worker restart (the server's in-memory disconnect-grace timer
+  // can't survive that). Cadence is well under the server's 150s grace.
+  Timer? _heartbeatTimer;
+  static const _heartbeatInterval = Duration(seconds: 30);
+
+  // Media reconnect grace: a brief Agora media blip must NOT instantly kill the
+  // broadcast — show a reconnecting state and let the SDK recover, ending only
+  // if media stays down past this window. Mirrors the call-screen reconnect
+  // grace and the chat-socket reconnect above.
+  Timer? _mediaGraceTimer;
+  static const _mediaGrace = Duration(seconds: 45);
+
   bool _wakelockHeld = false;
 
   /// Starts the broadcast: requests permissions, tells the server, opens the
@@ -108,6 +123,7 @@ class BroadcastCubit extends Cubit<BroadcastState> {
         agoraConnected: agora.joined.value,
         phase: BroadcastPhase.live,
       ));
+      _startHeartbeat();
       await _acquireWakelock();
     } on ApiException catch (e) {
       _emit(state.copyWith(note: e.message));
@@ -136,6 +152,10 @@ class BroadcastCubit extends Cubit<BroadcastState> {
     }
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+    _mediaGraceTimer?.cancel();
+    _mediaGraceTimer = null;
     await _socketSub?.cancel();
     _socket?.dispose();
     _socket = null;
@@ -180,7 +200,7 @@ class BroadcastCubit extends Cubit<BroadcastState> {
     if (state.broadcastId == null || state.phase == BroadcastPhase.ended) return;
     _emit(state.copyWith(reconnecting: true));
     _reconnectTimer?.cancel();
-    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    final secs = chatReconnectDelaySeconds(_reconnectAttempts);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
       if (isClosed) return;
       final id = state.broadcastId;
@@ -202,6 +222,31 @@ class BroadcastCubit extends Cubit<BroadcastState> {
       return;
     }
     _markConnected();
+    // Pinned "Answering now" Q&A + gifting ribbon frames update state fields
+    // rather than the chat list.
+    if (kind == 'pinned') {
+      _emit(state.copyWith(
+        pinnedUser: '${e['user'] ?? 'Viewer'}',
+        pinnedMessage: '${e['message'] ?? ''}',
+      ));
+      return;
+    }
+    if (kind == 'unpinned') {
+      _emit(state.copyWith(clearPinned: true));
+      return;
+    }
+    if (kind == 'gift_update') {
+      _emit(state.copyWith(
+        giftTotal: double.tryParse('${e['total'] ?? ''}') ?? state.giftTotal,
+        giftGoal: double.tryParse('${e['goal'] ?? ''}') ?? 0,
+        topGifters: (e['top'] as List?)
+                ?.whereType<Map>()
+                .map((m) => Map<String, dynamic>.from(m))
+                .toList() ??
+            state.topGifters,
+      ));
+      return;
+    }
     var chat = state.chat;
     var viewers = state.viewers;
     var peakViewers = state.peakViewers;
@@ -271,18 +316,102 @@ class BroadcastCubit extends Cubit<BroadcastState> {
   void _onAgoraJoinedChanged() {
     if (isClosed) return;
     final agora = state.agora;
-    if (agora != null) _emit(state.copyWith(agoraConnected: agora.joined.value));
+    if (agora == null) return;
+    final connected = agora.joined.value;
+    _emit(state.copyWith(agoraConnected: connected));
+    // Media recovered inside the grace window — cancel the pending auto-end.
+    if (connected && state.mediaReconnecting) {
+      _mediaGraceTimer?.cancel();
+      _emit(state.copyWith(mediaReconnecting: false));
+    }
   }
 
   /// The engine reported a fatal media failure MID-broadcast (e.g. the token
   /// expired, or the connection was rejected on a reconnect attempt). Chat
   /// keeps working either way — but the astrologer must see that their video
-  /// feed is down instead of unknowingly talking to a frozen stream.
+  /// feed is down instead of unknowingly talking to a frozen stream, and the
+  /// stream must end (attributed to the connection) if it doesn't come back
+  /// within the grace window. A brief blip the SDK recovers from clears the
+  /// reconnecting state via [_onAgoraJoinedChanged] without ending anything.
   void _onAgoraMediaFailure() {
     if (isClosed) return;
     final failure = state.agora?.mediaFailure.value;
     if (failure != null && state.phase == BroadcastPhase.live) {
-      _emit(state.copyWith(note: 'Live video issue: $failure'));
+      _beginMediaGrace('Live video issue: $failure');
+    }
+  }
+
+  /// Enter the media reconnect-grace window: surface a reconnecting state and
+  /// arm a single auto-end timer. Idempotent while already in the window (the
+  /// timer isn't restarted on repeated failures).
+  void _beginMediaGrace(String note) {
+    if (state.mediaReconnecting) return;
+    _emit(state.copyWith(mediaReconnecting: true, note: note));
+    _mediaGraceTimer?.cancel();
+    _mediaGraceTimer = Timer(_mediaGrace, () {
+      if (isClosed || state.phase != BroadcastPhase.live) return;
+      // Still down after the grace window — end the broadcast (attributed to
+      // the lost connection). Goes through the normal end path so Agora + the
+      // socket + wakelock all tear down exactly as a manual End would.
+      _emit(state.copyWith(
+        note: 'Live stream ended — your connection could not be restored.',
+      ));
+      end();
+    });
+  }
+
+  // ── Presence heartbeat ────────────────────────────────────────────────
+  void _startHeartbeat() {
+    _heartbeatTimer?.cancel();
+    // Send one immediately so last_heartbeat_at is stamped right at go-live,
+    // then on a steady cadence for the life of the broadcast.
+    _socket?.sendFrame(const {'type': 'heartbeat'});
+    _heartbeatTimer = Timer.periodic(_heartbeatInterval, (_) {
+      if (isClosed || state.phase != BroadcastPhase.live) return;
+      _socket?.sendFrame(const {'type': 'heartbeat'});
+    });
+  }
+
+  // ── Pinned "Answering now" Q&A ────────────────────────────────────────
+  /// Pin a viewer's chat line as "Answering now". Optimistically reflects it
+  /// locally; the server fans out the authoritative `pinned` frame (which also
+  /// reaches every viewer). Returns false if the control frame couldn't be
+  /// sent (socket mid-reconnect).
+  bool pinQuestion(String user, String message) {
+    final sent = _socket?.sendFrame({'type': 'pin', 'user': user, 'message': message}) ?? false;
+    if (sent) _emit(state.copyWith(pinnedUser: user, pinnedMessage: message));
+    return sent;
+  }
+
+  /// Clear the current "Answering now" pin.
+  bool unpinQuestion() {
+    final sent = _socket?.sendFrame(const {'type': 'unpin'}) ?? false;
+    if (sent) _emit(state.copyWith(clearPinned: true));
+    return sent;
+  }
+
+  /// Host reply that @-tags a viewer — sent as a normal chat line with the tag
+  /// prepended, so it shows in the same overlay for everyone. Returns false if
+  /// the socket wasn't connected (same contract as [sendChat]).
+  bool sendReply(String text, {String? toName}) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return true;
+    final body = (toName != null && toName.isNotEmpty) ? '@$toName $trimmed' : trimmed;
+    return _socket?.send(body) ?? false;
+  }
+
+  // ── Gift goal ─────────────────────────────────────────────────────────
+  /// Set (or clear, with 0) the gifting goal. Optimistically reflects it; the
+  /// server also fans out a `gift_update` carrying the new goal.
+  Future<void> setGiftGoal(double goal) async {
+    final id = state.broadcastId;
+    if (id == null) return;
+    _emit(state.copyWith(giftGoal: goal));
+    try {
+      await _repo.setBroadcastGiftGoal(id, goal);
+    } catch (_) {
+      // Best-effort — the optimistic value stays; the next gift_update
+      // reconciles it if the server rejected the write.
     }
   }
 
@@ -361,6 +490,10 @@ class BroadcastCubit extends Cubit<BroadcastState> {
   Future<void> _teardownMedia() async {
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+    _mediaGraceTimer?.cancel();
+    _mediaGraceTimer = null;
     await _socketSub?.cancel();
     _socket?.dispose();
     _socket = null;

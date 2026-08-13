@@ -42,6 +42,17 @@ class AgoraJoinException implements Exception {
   String toString() => message;
 }
 
+/// Why the remote party left the channel, surfaced via [AgoraCallService.peerLeft].
+///
+/// Agora only tells you the remote peer went offline through a single event;
+/// the *reason* it carries is what lets a caller distinguish a deliberate
+/// hang-up ([quit] — end the call immediately and attribute it) from a
+/// transient network drop ([dropped] — hold a bounded "Reconnecting…" grace
+/// window and only end if they don't return). Without this, every peer
+/// departure looks identical and a brief blip is indistinguishable from a
+/// real hang-up.
+enum PeerLeaveReason { quit, dropped }
+
 /// Wraps the Agora RTC engine for 1:1 consultation calls and live streaming.
 ///
 /// Usage: `await init(appId)` once, then `join(grant, video: …)`. The UI renders
@@ -89,6 +100,14 @@ class AgoraCallService {
   /// The remote party's uid once they join (null before/after).
   final ValueNotifier<int?> remoteUid = ValueNotifier<int?>(null);
 
+  /// The reason the remote party most recently left, or null while they are
+  /// present (or have never joined). Set on `onUserOffline`, cleared back to
+  /// null on `onUserJoined` so a rejoin within a caller's grace window reads
+  /// as "peer is back". Screens listen to this to tell a clean hang-up
+  /// ([PeerLeaveReason.quit]) apart from a network blip ([PeerLeaveReason.dropped]).
+  final ValueNotifier<PeerLeaveReason?> peerLeft =
+      ValueNotifier<PeerLeaveReason?>(null);
+
   /// Whether we've joined the channel.
   final ValueNotifier<bool> joined = ValueNotifier<bool>(false);
 
@@ -130,9 +149,19 @@ class AgoraCallService {
       },
       onUserJoined: (RtcConnection connection, int uid, int elapsed) {
         remoteUid.value = uid;
+        // The peer is present again — clear any pending "left" reason so a
+        // caller's reconnect grace can see they came back.
+        peerLeft.value = null;
       },
       onUserOffline: (RtcConnection connection, int uid, UserOfflineReasonType reason) {
-        if (remoteUid.value == uid) remoteUid.value = null;
+        if (remoteUid.value == uid) {
+          remoteUid.value = null;
+          // Preserve WHY they left so the screen can end immediately on a
+          // deliberate hang-up but hold a grace window on a network drop.
+          peerLeft.value = reason == UserOfflineReasonType.userOfflineQuit
+              ? PeerLeaveReason.quit
+              : PeerLeaveReason.dropped;
+        }
       },
       onLeaveChannel: (RtcConnection connection, RtcStats stats) {
         joined.value = false;
@@ -398,6 +427,7 @@ class AgoraCallService {
     if (_disposed) return;
     _disposed = true;
     remoteUid.dispose();
+    peerLeft.dispose();
     joined.dispose();
     muted.dispose();
     videoEnabled.dispose();

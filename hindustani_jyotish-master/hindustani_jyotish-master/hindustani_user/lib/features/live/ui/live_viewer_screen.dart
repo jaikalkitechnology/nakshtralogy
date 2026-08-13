@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../consultation/consultation_repository.dart';
 import '../../discovery/discovery_repository.dart';
@@ -141,6 +142,8 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
               children: [
                 Text(
                   'Consult ${state.astrologerName}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.heading(size: 18),
                 ),
                 const SizedBox(height: 4),
@@ -288,6 +291,20 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
                 child: Column(
                   children: [
                     _topBar(context, state),
+                    // Gift goal progress + top-gifters ribbon. Always mounted,
+                    // toggled (Visibility maintainState) — same hit-test-safe
+                    // convention as the reconnecting bar.
+                    Visibility(
+                      visible: state.giftGoal > 0 || state.topGifters.isNotEmpty,
+                      maintainState: true,
+                      child: _giftRibbon(state),
+                    ),
+                    // Pinned "Answering now" question banner.
+                    Visibility(
+                      visible: state.hasPinned,
+                      maintainState: true,
+                      child: _pinnedBanner(context, state),
+                    ),
                     // Visibility (element always mounted, maintainState so
                     // it's never disposed/recreated), not
                     // `if (state.reconnecting) ...` — a conditional widget
@@ -424,6 +441,107 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
           Text(
             'Reconnecting to live chat…',
             style: AppTextStyles.body(size: 12, color: AppColors.info),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _giftRibbon(BroadcastViewerState state) {
+    final goal = state.giftGoal;
+    final total = state.giftTotal;
+    final progress = goal > 0 ? (total / goal).clamp(0.0, 1.0) : 0.0;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: _chromeVeil(darkAlpha: 0.35, lightAlpha: 0.8),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (goal > 0) ...[
+            Row(
+              children: [
+                Icon(Icons.emoji_events, size: 14, color: AppColors.gold),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: progress.toDouble(),
+                      minHeight: 8,
+                      backgroundColor: AppColors.borderSoft,
+                      valueColor: AlwaysStoppedAnimation(AppColors.gold),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text('₹${total.toStringAsFixed(0)}/₹${goal.toStringAsFixed(0)}',
+                    style: AppTextStyles.mono(size: 10, color: AppColors.ivoryDim)),
+              ],
+            ),
+            if (state.topGifters.isNotEmpty) const SizedBox(height: 6),
+          ],
+          if (state.topGifters.isNotEmpty)
+            Row(
+              children: [
+                const Text('🏆', style: TextStyle(fontSize: 12)),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    state.topGifters
+                        .take(3)
+                        .map((g) => '${g['name'] ?? 'User'} (₹${_amt(g['amount'])})')
+                        .join('   '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body(
+                        size: 10, weight: FontWeight.w600, color: AppColors.saffronBright),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _amt(Object? v) => (double.tryParse('$v') ?? 0).toStringAsFixed(0);
+
+  Widget _pinnedBanner(BuildContext context, BroadcastViewerState state) {
+    final l = AppLocalizations.of(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.saffron.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.saffron.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.push_pin, size: 15, color: AppColors.saffron),
+          const SizedBox(width: 6),
+          Expanded(
+            child: RichText(
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(children: [
+                TextSpan(
+                    text: '${l.liveAnsweringNow} — ',
+                    style: AppTextStyles.body(
+                        size: 11, weight: FontWeight.w700, color: AppColors.saffron)),
+                TextSpan(
+                    text: '${state.pinnedUser}: ',
+                    style: AppTextStyles.body(size: 11, weight: FontWeight.w600)),
+                TextSpan(
+                    text: state.pinnedMessage ?? '',
+                    style: AppTextStyles.body(size: 11, color: AppColors.ivoryDim)),
+              ]),
+            ),
           ),
         ],
       ),

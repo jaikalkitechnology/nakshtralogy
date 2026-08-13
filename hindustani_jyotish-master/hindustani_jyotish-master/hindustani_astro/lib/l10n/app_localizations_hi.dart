@@ -340,4 +340,259 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get themeSystem => 'सिस्टम डिफ़ॉल्ट';
+
+  @override
+  String get callIncomingVoice => 'इनकमिंग वॉइस कॉल';
+
+  @override
+  String get callIncomingVideo => 'इनकमिंग वीडियो कॉल';
+
+  @override
+  String callRatePerMin(String rate) {
+    return '₹$rate/मिनट';
+  }
+
+  @override
+  String callAutoDeclineIn(int seconds) {
+    return '$seconds सेकंड में अपने-आप अस्वीकार';
+  }
+
+  @override
+  String get callAccept => 'स्वीकारें';
+
+  @override
+  String get callDecline => 'अस्वीकारें';
+
+  @override
+  String get callConnecting => 'कनेक्ट हो रहा है…';
+
+  @override
+  String get callExpired => 'कॉल समाप्त';
+
+  @override
+  String get callExpiredBody => 'यह कॉल अनुरोध अब उपलब्ध नहीं है।';
+
+  @override
+  String get callCouldNotStart =>
+      'कॉल शुरू नहीं हो सकी: सर्वर ने Agora कॉल विवरण नहीं लौटाया।';
+
+  @override
+  String get commonSeeker => 'जिज्ञासु';
+
+  @override
+  String get commonClose => 'बंद करें';
+
+  @override
+  String get commonUser => 'उपयोगकर्ता';
+
+  @override
+  String get commonEnd => 'समाप्त करें';
+
+  @override
+  String get callPermMic =>
+      'यह कॉल लेने के लिए माइक्रोफ़ोन की अनुमति आवश्यक है। इसे सेटिंग्स में सक्षम करें और पुनः प्रयास करें।';
+
+  @override
+  String get callPermMicCam =>
+      'यह कॉल लेने के लिए माइक्रोफ़ोन और कैमरे की अनुमति आवश्यक है। इसे सेटिंग्स में सक्षम करें और पुनः प्रयास करें।';
+
+  @override
+  String get callAvUnavailable =>
+      'ज्योतिषी ऑडियो/वीडियो उपलब्ध नहीं — सर्वर का Agora टोकन अनुपलब्ध है।';
+
+  @override
+  String callConnectFailed(String error) {
+    return 'कॉल कनेक्ट नहीं हो सकी: $error';
+  }
+
+  @override
+  String get callEndConfirmTitle => 'यह कॉल समाप्त करें?';
+
+  @override
+  String get callEndConfirmBody =>
+      'जिज्ञासु का संपर्क टूट जाएगा और यह सत्र समाप्त हो जाएगा। इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String callEndedBy(String name) {
+    return '$name ने कॉल समाप्त की';
+  }
+
+  @override
+  String get callCantConnect => 'कनेक्ट नहीं हो सका';
+
+  @override
+  String get callReconnecting => 'पुनः कनेक्ट हो रहा है…';
+
+  @override
+  String get callConnected => 'कनेक्ट हो गया';
+
+  @override
+  String get callWaitingForSeeker => 'जिज्ञासु की प्रतीक्षा है…';
+
+  @override
+  String get callVideoTitle => 'वीडियो कॉल';
+
+  @override
+  String get callAudioTitle => 'ऑडियो कॉल';
+
+  @override
+  String callEarningsSoFar(String amount) {
+    return 'अब तक की कमाई: ₹$amount';
+  }
+
+  @override
+  String callRateDotPerMin(String rate) {
+    return '· ₹$rate/मिनट';
+  }
+
+  @override
+  String get callPillCantConnect => 'कनेक्ट नहीं';
+
+  @override
+  String get callPillConnecting => 'कनेक्ट हो रहा है';
+
+  @override
+  String get callPillReconnecting => 'पुनः कनेक्ट';
+
+  @override
+  String get callPillWaiting => 'प्रतीक्षा';
+
+  @override
+  String callPillLive(String elapsed) {
+    return 'लाइव · $elapsed';
+  }
+
+  @override
+  String get chatReconnecting => 'पुनः कनेक्ट हो रहा है…';
+
+  @override
+  String chatWithName(String name) {
+    return '$name के साथ चैट';
+  }
+
+  @override
+  String get chatEnded => 'समाप्त';
+
+  @override
+  String get chatLive => 'लाइव';
+
+  @override
+  String get chatWaitingNamaste => 'जिज्ञासु के नमस्ते कहने की प्रतीक्षा है 🙏';
+
+  @override
+  String get chatSending => 'भेजा जा रहा है…';
+
+  @override
+  String get chatNotSentRetry => 'नहीं भेजा गया · पुनः प्रयास हेतु टैप करें';
+
+  @override
+  String get chatReplyHint => 'उत्तर दें…';
+
+  @override
+  String get chatEndedHint => 'चैट समाप्त';
+
+  @override
+  String get chatSendTooltip => 'संदेश भेजें';
+
+  @override
+  String get liveDefaultTitle => 'संध्या राशिफल';
+
+  @override
+  String get liveSetRatesFirst =>
+      'लाइव जाने से पहले अपनी चैट, कॉल और वीडियो दरें निर्धारित करें।';
+
+  @override
+  String get liveMessageSent => 'संदेश भेजा गया';
+
+  @override
+  String get liveMessageSendFailed =>
+      'भेजा नहीं जा सका — चैट से पुनः कनेक्ट हो रहा है, कुछ ही पल में फिर प्रयास करें।';
+
+  @override
+  String get livePinFailed =>
+      'पिन नहीं किया जा सका — चैट से पुनः कनेक्ट हो रहा है, फिर प्रयास करें।';
+
+  @override
+  String get liveSetGiftGoalTitle => 'गिफ़्ट लक्ष्य निर्धारित करें';
+
+  @override
+  String get liveGiftGoalHint => 'उदा. 5000';
+
+  @override
+  String get liveEndConfirmTitle => 'लाइव प्रसारण समाप्त करें?';
+
+  @override
+  String get liveEndConfirmBody =>
+      'आपके दर्शकों का संपर्क टूट जाएगा और यह सत्र समाप्त हो जाएगा। इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String get liveStartTitle => 'लाइव सत्र शुरू करें';
+
+  @override
+  String get liveStartSubtitle =>
+      'जब आप लाइव जाते हैं तो आपके अनुयायियों को सूचना मिलती है।';
+
+  @override
+  String get liveStreamTitleLabel => 'प्रसारण शीर्षक';
+
+  @override
+  String get liveStarting => 'शुरू हो रहा है…';
+
+  @override
+  String get liveGiftGoalTooltip => 'गिफ़्ट लक्ष्य';
+
+  @override
+  String get liveFlipCamera => 'कैमरा बदलें';
+
+  @override
+  String get liveReconnectingVideo => 'वीडियो पुनः कनेक्ट हो रहा है…';
+
+  @override
+  String get liveReconnectingChat => 'चैट पुनः कनेक्ट हो रही है…';
+
+  @override
+  String get liveChatEmpty => 'दर्शकों के संदेश यहाँ दिखाई देंगे…';
+
+  @override
+  String liveReplyingTo(String name) {
+    return '@$name को उत्तर';
+  }
+
+  @override
+  String liveReplyHint(String name) {
+    return '@$name को उत्तर दें…';
+  }
+
+  @override
+  String get liveSayHiHint => 'अपने दर्शकों को नमस्ते कहें…';
+
+  @override
+  String get liveWrapTitle => 'यह रहा समापन!';
+
+  @override
+  String get liveWrapSubtitle => 'देखें आपका सत्र कैसा रहा।';
+
+  @override
+  String get liveDuration => 'अवधि';
+
+  @override
+  String get livePeakViewers => 'अधिकतम दर्शक';
+
+  @override
+  String get liveBadge => 'लाइव';
+
+  @override
+  String get liveEndButton => 'लाइव समाप्त';
+
+  @override
+  String get liveMuteMic => 'माइक्रोफ़ोन म्यूट करें';
+
+  @override
+  String get liveUnmuteMic => 'माइक्रोफ़ोन अनम्यूट करें';
+
+  @override
+  String get liveGift => 'गिफ़्ट';
+
+  @override
+  String get liveAnsweringNow => 'अभी उत्तर दे रहे हैं — ';
 }

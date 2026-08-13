@@ -382,7 +382,7 @@ class _RequestCard extends StatelessWidget {
                     Text(
                       (c.userName != null && c.userName!.trim().isNotEmpty)
                           ? c.userName!
-                          : 'Seeker',
+                          : l.commonSeeker,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.body(size: 15, weight: FontWeight.w700),

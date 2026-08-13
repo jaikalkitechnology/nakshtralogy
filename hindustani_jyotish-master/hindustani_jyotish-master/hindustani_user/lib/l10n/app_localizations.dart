@@ -674,6 +674,42 @@ abstract class AppLocalizations {
   /// **'Reconnecting chat…'**
   String get consultReconnectingChat;
 
+  /// Call status shown while waiting for the astrologer's stream to come back after a network blip, before the grace window ends the call
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting…'**
+  String get consultCallReconnecting;
+
+  /// No description provided for @consultSessionEndedTimeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ended (time limit reached)'**
+  String get consultSessionEndedTimeUp;
+
+  /// No description provided for @consultCallEndedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Call ended by {name}'**
+  String consultCallEndedBy(String name);
+
+  /// No description provided for @consultTheAstrologer.
+  ///
+  /// In en, this message translates to:
+  /// **'the astrologer'**
+  String get consultTheAstrologer;
+
+  /// Status under an outgoing chat bubble while its REST send is in flight
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get consultSending;
+
+  /// Status under an outgoing chat bubble whose send failed; tapping it re-sends
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent · Tap to retry'**
+  String get consultNotSentRetry;
+
   /// No description provided for @consultSpeakerOn.
   ///
   /// In en, this message translates to:
@@ -685,6 +721,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Speaker off'**
   String get consultSpeakerOff;
+
+  /// Chat billing strip: messages used out of the per-session cap, with the remaining count
+  ///
+  /// In en, this message translates to:
+  /// **'Session: {used}/{cap} msgs ({left} left)'**
+  String consultSessionMsgs(Object used, Object cap, Object left);
+
+  /// Chat rate badge (per message)
+  ///
+  /// In en, this message translates to:
+  /// **'₹{rate}/msg'**
+  String consultPerMsgRate(Object rate);
+
+  /// Connected badge on the active call billing panel
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTED'**
+  String get consultConnectedLabel;
+
+  /// Active-call billing line: amount charged so far and the per-minute rate
+  ///
+  /// In en, this message translates to:
+  /// **'₹{charged} · ₹{rate}/min'**
+  String consultChargedRate(Object charged, Object rate);
+
+  /// Active-call remaining wallet balance and the minutes it buys at the current rate
+  ///
+  /// In en, this message translates to:
+  /// **'Balance ₹{balance} · ~{minutes} min left'**
+  String consultBalanceMinutes(Object balance, Object minutes);
+
+  /// Active-call remaining wallet balance when the per-minute rate isn't known
+  ///
+  /// In en, this message translates to:
+  /// **'Balance ₹{balance}'**
+  String consultBalanceRemaining(Object balance);
+
+  /// Mid-call low-balance banner headline
+  ///
+  /// In en, this message translates to:
+  /// **'Low balance — under a minute left'**
+  String get consultLowBalanceBanner;
+
+  /// Button that opens the mid-call recharge sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Add money'**
+  String get consultAddMoney;
+
+  /// Title of the mid-call recharge bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Add money to wallet'**
+  String get consultRechargeTitle;
+
+  /// Subtitle of the mid-call recharge bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Top up without ending the call.'**
+  String get consultRechargeSubtitle;
+
+  /// Snackbar after a successful mid-call recharge
+  ///
+  /// In en, this message translates to:
+  /// **'₹{amount} added — the call continues.'**
+  String consultRechargeAdded(Object amount);
 
   /// No description provided for @profileTitle.
   ///
@@ -1315,6 +1417,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get imageViewerClose;
+
+  /// Label on the pinned-question banner in a live stream — the question the astrologer is answering right now
+  ///
+  /// In en, this message translates to:
+  /// **'Answering now'**
+  String get liveAnsweringNow;
+
+  /// Label/tooltip for the top-gifters ribbon shown over a live stream
+  ///
+  /// In en, this message translates to:
+  /// **'Top gifters'**
+  String get liveTopGifters;
+
+  /// Shown over the live viewer while the host video is momentarily down and recovering
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting to video…'**
+  String get liveReconnectingVideo;
 }
 
 class _AppLocalizationsDelegate

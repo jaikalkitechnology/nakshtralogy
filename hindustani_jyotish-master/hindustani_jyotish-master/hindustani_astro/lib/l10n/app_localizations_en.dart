@@ -337,4 +337,259 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System default';
+
+  @override
+  String get callIncomingVoice => 'Incoming voice call';
+
+  @override
+  String get callIncomingVideo => 'Incoming video call';
+
+  @override
+  String callRatePerMin(String rate) {
+    return '₹$rate/min';
+  }
+
+  @override
+  String callAutoDeclineIn(int seconds) {
+    return 'Auto-decline in ${seconds}s';
+  }
+
+  @override
+  String get callAccept => 'Accept';
+
+  @override
+  String get callDecline => 'Decline';
+
+  @override
+  String get callConnecting => 'Connecting…';
+
+  @override
+  String get callExpired => 'Call expired';
+
+  @override
+  String get callExpiredBody => 'This call request is no longer available.';
+
+  @override
+  String get callCouldNotStart =>
+      'Call could not start: the server did not return Agora call details.';
+
+  @override
+  String get commonSeeker => 'Seeker';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get commonUser => 'User';
+
+  @override
+  String get commonEnd => 'End';
+
+  @override
+  String get callPermMic =>
+      'Microphone permission is required to take this call. Enable it in Settings and try again.';
+
+  @override
+  String get callPermMicCam =>
+      'Microphone and camera permission is required to take this call. Enable it in Settings and try again.';
+
+  @override
+  String get callAvUnavailable =>
+      'Astrologer A/V not available — server Agora token missing.';
+
+  @override
+  String callConnectFailed(String error) {
+    return 'Could not connect the call: $error';
+  }
+
+  @override
+  String get callEndConfirmTitle => 'End this call?';
+
+  @override
+  String get callEndConfirmBody =>
+      'The seeker will be disconnected and this session will end. This can\'t be undone.';
+
+  @override
+  String callEndedBy(String name) {
+    return 'Call ended by $name';
+  }
+
+  @override
+  String get callCantConnect => 'Couldn\'t connect';
+
+  @override
+  String get callReconnecting => 'Reconnecting…';
+
+  @override
+  String get callConnected => 'Connected';
+
+  @override
+  String get callWaitingForSeeker => 'Waiting for the seeker…';
+
+  @override
+  String get callVideoTitle => 'Video Call';
+
+  @override
+  String get callAudioTitle => 'Audio Call';
+
+  @override
+  String callEarningsSoFar(String amount) {
+    return 'Earnings so far: ₹$amount';
+  }
+
+  @override
+  String callRateDotPerMin(String rate) {
+    return '· ₹$rate/min';
+  }
+
+  @override
+  String get callPillCantConnect => 'Can\'t connect';
+
+  @override
+  String get callPillConnecting => 'Connecting';
+
+  @override
+  String get callPillReconnecting => 'Reconnecting';
+
+  @override
+  String get callPillWaiting => 'Waiting';
+
+  @override
+  String callPillLive(String elapsed) {
+    return 'Live · $elapsed';
+  }
+
+  @override
+  String get chatReconnecting => 'Reconnecting…';
+
+  @override
+  String chatWithName(String name) {
+    return 'Chat with $name';
+  }
+
+  @override
+  String get chatEnded => 'Ended';
+
+  @override
+  String get chatLive => 'Live';
+
+  @override
+  String get chatWaitingNamaste => 'Waiting for the seeker to say Namaste 🙏';
+
+  @override
+  String get chatSending => 'Sending…';
+
+  @override
+  String get chatNotSentRetry => 'Not sent · Tap to retry';
+
+  @override
+  String get chatReplyHint => 'Reply…';
+
+  @override
+  String get chatEndedHint => 'Chat ended';
+
+  @override
+  String get chatSendTooltip => 'Send message';
+
+  @override
+  String get liveDefaultTitle => 'Evening Rashifal';
+
+  @override
+  String get liveSetRatesFirst =>
+      'Set your chat, call, and video rates before going live.';
+
+  @override
+  String get liveMessageSent => 'Message sent';
+
+  @override
+  String get liveMessageSendFailed =>
+      'Couldn\'t send — reconnecting to chat, try again in a moment.';
+
+  @override
+  String get livePinFailed =>
+      'Couldn\'t pin — reconnecting to chat, try again.';
+
+  @override
+  String get liveSetGiftGoalTitle => 'Set gifting goal';
+
+  @override
+  String get liveGiftGoalHint => 'e.g. 5000';
+
+  @override
+  String get liveEndConfirmTitle => 'End live broadcast?';
+
+  @override
+  String get liveEndConfirmBody =>
+      'Your viewers will be disconnected and this session will end. This can\'t be undone.';
+
+  @override
+  String get liveStartTitle => 'Start a live session';
+
+  @override
+  String get liveStartSubtitle =>
+      'Your followers get notified when you go live.';
+
+  @override
+  String get liveStreamTitleLabel => 'Stream title';
+
+  @override
+  String get liveStarting => 'Starting…';
+
+  @override
+  String get liveGiftGoalTooltip => 'Gifting goal';
+
+  @override
+  String get liveFlipCamera => 'Flip camera';
+
+  @override
+  String get liveReconnectingVideo => 'Reconnecting video…';
+
+  @override
+  String get liveReconnectingChat => 'Reconnecting chat…';
+
+  @override
+  String get liveChatEmpty => 'Viewer messages will appear here…';
+
+  @override
+  String liveReplyingTo(String name) {
+    return 'Replying to @$name';
+  }
+
+  @override
+  String liveReplyHint(String name) {
+    return 'Reply to @$name…';
+  }
+
+  @override
+  String get liveSayHiHint => 'Say hi to your viewers…';
+
+  @override
+  String get liveWrapTitle => 'That’s a wrap!';
+
+  @override
+  String get liveWrapSubtitle => 'Here’s how your session went.';
+
+  @override
+  String get liveDuration => 'Duration';
+
+  @override
+  String get livePeakViewers => 'Peak viewers';
+
+  @override
+  String get liveBadge => 'LIVE';
+
+  @override
+  String get liveEndButton => 'End Live';
+
+  @override
+  String get liveMuteMic => 'Mute microphone';
+
+  @override
+  String get liveUnmuteMic => 'Unmute microphone';
+
+  @override
+  String get liveGift => 'Gift';
+
+  @override
+  String get liveAnsweringNow => 'Answering now — ';
 }

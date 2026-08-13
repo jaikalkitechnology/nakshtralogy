@@ -194,10 +194,12 @@ async def test_gift_send_rejected_when_broadcast_not_live(client):
 
 # ── WebSocket broadcast payload shape ─────────────────────────────────────
 async def test_super_chat_broadcasts_ws_payload_shape(client, monkeypatch):
-    captured: dict = {}
+    # A super-chat now fans out TWO frames: the super_chat itself, then a
+    # gift_update refreshing the goal/total/top-gifters ribbon (Phase 6).
+    frames: list[dict] = []
 
     async def _fake_broadcast(room, payload):
-        captured.update(payload)
+        frames.append(dict(payload))
 
     monkeypatch.setattr(broadcast_service.chat_manager, "broadcast", _fake_broadcast)
 
@@ -212,19 +214,22 @@ async def test_super_chat_broadcasts_ws_payload_shape(client, monkeypatch):
     )
     assert r.status_code == 200, r.text
 
-    assert captured == {
+    assert {
         "kind": "super_chat",
         "user": "Anonymous",
         "amount": "100.00",
         "message": "Jai Shri Ram",
-    }
+    } in frames
+    update = next(f for f in frames if f["kind"] == "gift_update")
+    assert update["total"] == "100.00"
+    assert update["top"][0] == {"name": "Anonymous", "amount": "100.00"}
 
 
 async def test_gift_broadcasts_ws_payload_shape(client, monkeypatch):
-    captured: dict = {}
+    frames: list[dict] = []
 
     async def _fake_broadcast(room, payload):
-        captured.update(payload)
+        frames.append(dict(payload))
 
     monkeypatch.setattr(broadcast_service.chat_manager, "broadcast", _fake_broadcast)
 
@@ -237,13 +242,82 @@ async def test_gift_broadcasts_ws_payload_shape(client, monkeypatch):
     )
     assert r.status_code == 200, r.text
 
-    assert captured == {
+    assert {
         "kind": "gift",
         "user": "Anonymous",
         "amount": "101.00",
         "gift_name": "Diya",
         "gift_emoji": "\U0001FA94",
-    }
+    } in frames
+    update = next(f for f in frames if f["kind"] == "gift_update")
+    assert update["total"] == "101.00"
+
+
+# ── Gift goal + top-gifters (Phase 6) ─────────────────────────────────────
+async def test_set_gift_goal_and_it_surfaces_in_join_and_ws(client, monkeypatch):
+    frames: list[dict] = []
+
+    async def _fake_broadcast(room, payload):
+        frames.append(dict(payload))
+
+    monkeypatch.setattr(broadcast_service.chat_manager, "broadcast", _fake_broadcast)
+
+    aid, ah = await _approved_astrologer(client, mobile="+919788000020")
+    broadcast_id = await _live_broadcast(client, ah)
+
+    r = await client.post(
+        f"/v1/broadcasts/{broadcast_id}/gift-goal", json={"goal": "5000"}, headers=ah
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["gift_goal"] == "5000.00"
+
+    # A gift_update frame fanned out carrying the new goal.
+    update = next(f for f in frames if f["kind"] == "gift_update")
+    assert update["goal"] == "5000.00"
+
+    # The goal is visible to a joining viewer.
+    _uid, uh = await _funded_viewer(client, mobile="+919777000020")
+    r = await client.post(f"/v1/broadcasts/{broadcast_id}/join", headers=uh)
+    assert r.json()["broadcast"]["gift_goal"] == "5000.00"
+
+
+async def test_gift_goal_zero_clears_it(client):
+    aid, ah = await _approved_astrologer(client, mobile="+919788000021")
+    broadcast_id = await _live_broadcast(client, ah)
+    await client.post(f"/v1/broadcasts/{broadcast_id}/gift-goal", json={"goal": "1000"}, headers=ah)
+    r = await client.post(
+        f"/v1/broadcasts/{broadcast_id}/gift-goal", json={"goal": "0"}, headers=ah
+    )
+    assert r.status_code == 200
+    assert r.json()["gift_goal"] is None
+
+
+async def test_gift_goal_rejected_for_other_astrologer(client):
+    aid, ah = await _approved_astrologer(client, mobile="+919788000022")
+    broadcast_id = await _live_broadcast(client, ah)
+    _aid2, ah2 = await _approved_astrologer(client, mobile="+919788000023")
+    r = await client.post(
+        f"/v1/broadcasts/{broadcast_id}/gift-goal", json={"goal": "100"}, headers=ah2
+    )
+    assert r.status_code == 404
+
+
+async def test_gifting_summary_aggregates_top_gifters(client):
+    aid, ah = await _approved_astrologer(client, mobile="+919788000024")
+    broadcast_id = await _live_broadcast(client, ah)
+
+    _u1, uh1 = await _funded_viewer(client, mobile="+919777000024")
+    _u2, uh2 = await _funded_viewer(client, mobile="+919777000025")
+    # u1 sends two gifts, u2 one — u1 should rank first by aggregate spend.
+    await client.post(f"/v1/broadcasts/{broadcast_id}/gift", json={"gift_key": "diya"}, headers=uh1)
+    await client.post(f"/v1/broadcasts/{broadcast_id}/gift", json={"gift_key": "diya"}, headers=uh1)
+    await client.post(f"/v1/broadcasts/{broadcast_id}/gift", json={"gift_key": "rose"}, headers=uh2)
+
+    async with AsyncSessionLocal() as db:
+        summary = await broadcast_service.gifting_summary(db, broadcast_id)
+    assert summary["total"] == "203.00"  # 101 + 101 + 1
+    assert summary["top"][0]["amount"] == "202.00"
+    assert len(summary["top"]) == 2
 
 
 # ── Preset editing via PATCH /astrologer/me ───────────────────────────────

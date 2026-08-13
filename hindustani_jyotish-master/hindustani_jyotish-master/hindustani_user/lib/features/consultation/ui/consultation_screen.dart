@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
@@ -10,6 +11,8 @@ import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/cosmic_background.dart';
+import '../../wallet/wallet_checkout.dart';
+import '../../wallet/wallet_repository.dart';
 import '../consultation_repository.dart';
 
 /// Adapts to the consultation type: a real-time chat thread (WebSocket), or an
@@ -77,11 +80,70 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   String? _lastReportedDrop;
   Timer? _reconnectTimer;
 
+  /// Safety-net history poll (see [_startSync]): pulls persisted messages the
+  /// live socket may have missed (a half-open socket, or a multi-worker
+  /// backend where the peer's send and our WS landed on different workers).
+  Timer? _syncTimer;
+  int _syncTicks = 0;
+
+  /// True while the app is intentionally offline (minimised) — the socket was
+  /// closed so the backend's per-message push fires. Reconnect/poll stay idle
+  /// until [_onResumed] brings us back.
+  bool _backgrounded = false;
+
+  /// Stamped when our OWN resume-reconnect reopens the socket, so a
+  /// server-initiated close/takeover that races that reconnect (within
+  /// [_selfReconnectWindow]) is treated as expected noise rather than a real
+  /// drop. Hindustani's backend does not currently emit a takeover frame, so
+  /// this only suppresses the self-induced `closed` from our own reopen.
+  DateTime? _selfReconnectAt;
+  static const _selfReconnectWindow = Duration(seconds: 8);
+
+  /// Guards the single chat-ended path ([_handleChatEnded]) so the ended
+  /// dialog shows exactly once and every timer is stopped once.
+  bool _chatEndedHandled = false;
+
   // Who the other party is — not included in the request/start/accept
   // responses (only `/me/consultations` carries it), so it's fetched
   // separately and shown best-effort; the screen works fine without it.
   String? _astrologerName;
   String? _astrologerPhotoUrl;
+
+  // ── Billing display (Phase 5) ───────────────────────────────────────
+  // All figures below are SERVER-sourced (the per-minute heartbeat and the
+  // `/me/consultations` session record), never derived from the local ticker.
+  //
+  // The session's per-unit rate captured at request time — ₹/min for
+  // call/video, ₹/message for chat (`Consultation.rate`). Null until the
+  // first `findMine` lands; the rate badge/`per-min` line simply omit until
+  // then.
+  double? _rate;
+
+  /// The seeker's authoritative wallet balance from the latest heartbeat
+  /// (`wallet_balance`). Drives the remaining-minutes readout and the
+  /// low-balance banner. Null until the first heartbeat of a call.
+  double? _walletBalance;
+
+  /// Server-side count of messages billed on this chat session
+  /// (`Consultation.message_count`, both parties) — the numerator of the
+  /// "used / cap" strip. Refreshed by the same `findMine` the sync poll
+  /// already runs. Null until the first fetch.
+  int? _sessionMsgCount;
+
+  /// Per-session chat message cap. The backend caps a chat at
+  /// `settings.CHAT_MESSAGE_CAP` (50) total messages; there is no
+  /// per-astrologer override in the model, so mirror the backend constant.
+  static const _chatMessageCap = 50;
+
+  /// Sticky low-balance banner shown mid-call once the remaining balance buys
+  /// less than a minute, so the seeker can recharge instead of being dropped.
+  /// The heartbeat carries no explicit low-balance flag, so this is derived
+  /// from `wallet_balance ÷ rate` (see [_lowBalance]) and latched true so a
+  /// balance ticking just over/under the line doesn't flicker the banner.
+  bool _lowBalance = false;
+
+  /// Guards against opening a second recharge sheet while one is already up.
+  bool _recharging = false;
 
   // Call/video state
   Timer? _ticker;
@@ -92,6 +154,15 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   String? _note;
   AgoraCallService? _agora;
   bool _speakerOn = false;
+
+  /// Reconnect grace on a peer drop: when the astrologer's media stream goes
+  /// offline because of a genuine network blip (NOT a clean hang-up), hold a
+  /// bounded "Reconnecting…" state and only end the call if they don't come
+  /// back within [_reconnectGrace]. A clean hang-up ends immediately with
+  /// attribution. Wired to `AgoraCallService.peerLeft` (see `_onPeerLeft`).
+  Timer? _rtcGraceTimer;
+  bool _peerReconnecting = false;
+  static const _reconnectGrace = Duration(seconds: 20);
 
   // Wall-clock-based heartbeat cadence (see `_maybeHeartbeat`) — protects
   // billing/sync against a throttled or fully-suspended background ticker.
@@ -122,7 +193,9 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.cancel();
+    _rtcGraceTimer?.cancel();
     _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
     _chatSub?.cancel();
     _chat?.dispose();
     _agora?.dispose();
@@ -138,30 +211,79 @@ class _ConsultationScreenState extends State<ConsultationScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) unawaited(_onResumed());
-    // paused/inactive/hidden/detached: nothing to do eagerly. The ticker
-    // keeps running (possibly throttled by the OS) and the wall-clock
-    // heartbeat check is what protects billing — there is no local state to
-    // freeze on the way OUT; all the recovery work happens on the way back.
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_onResumed());
+      return;
+    }
+    // Chat minimised/backgrounded: intentionally CLOSE the socket so the
+    // backend sees this user offline and delivers the next message via the
+    // Phase-2a per-message push (an open socket suppresses it). The session
+    // stays alive; we reconnect + re-pull on resume. For a call there is no
+    // local state to freeze on the way OUT — the ticker keeps running
+    // (possibly throttled) and the wall-clock heartbeat check protects
+    // billing — so calls do nothing here.
+    if (_isChat &&
+        (state == AppLifecycleState.paused ||
+            state == AppLifecycleState.hidden)) {
+      _onBackgroundedChat();
+    }
+  }
+
+  /// Chat went to the background — drop the socket (so the per-message push
+  /// fires) and idle the reconnect/poll timers, but keep the session.
+  void _onBackgroundedChat() {
+    if (_status == 'completed' || _chatEndedHandled) return;
+    _backgrounded = true;
+    _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
+    _closeChatSocket();
+  }
+
+  void _closeChatSocket() {
+    _chatSub?.cancel();
+    _chatSub = null;
+    _chat?.dispose();
+    _chat = null;
   }
 
   /// Runs whenever the app comes back to the foreground.
   Future<void> _onResumed() async {
     if (_isChat) {
-      // A backgrounded app very likely had its socket suspended by the OS —
-      // reopen unconditionally rather than waiting on the timer-based
-      // reconnect in `_scheduleReconnect`, and refresh history in case
+      if (_status == 'completed' || _chatEndedHandled) return;
+      _backgrounded = false;
+      // Mark this as OUR reconnect so a close that races it is ignored (see
+      // `_selfReconnectAt`).
+      _selfReconnectAt = clock.now();
+      // A backgrounded app very likely had its socket suspended by the OS (or
+      // we closed it on purpose above) — reopen unconditionally rather than
+      // waiting on the timer-based reconnect, and refresh history in case
       // messages arrived while it was down. Reconnecting is idempotent
-      // (message de-dup via `_seen`, `status` just re-sets the same value),
-      // so this is safe even when the socket was actually still healthy.
-      if (_status != 'completed') {
-        _openSocket();
-        unawaited(_preloadHistory());
-      }
+      // (message de-dup via `_seen`, `status` just re-sets the same value).
+      _openSocket();
+      unawaited(_preloadHistory());
+      _startSync();
+      // Detect a session the backend ended while we were away, so the user
+      // isn't left on a live-looking dead thread.
+      unawaited(_verifyChatStillActive());
       return;
     }
     if (!_live || _ended) return;
     await _resyncCallFromServer();
+  }
+
+  /// Cheap status check: if the consultation is no longer live server-side
+  /// (the astrologer ended it, or the abandoned-session sweep did while we
+  /// were backgrounded), route through the single ended path.
+  Future<void> _verifyChatStillActive() async {
+    try {
+      final c = await _repo.findMine(widget.consultationId);
+      if (!mounted || _chatEndedHandled) return;
+      if (c != null && c.status == ConsultationStatus.completed) {
+        await _handleChatEnded();
+      }
+    } on ApiException catch (_) {
+      // Best-effort — the safety-net poll will retry.
+    }
   }
 
   Future<void> _loadAstrologerInfo() async {
@@ -171,16 +293,64 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       setState(() {
         _astrologerName = c.astrologerName;
         _astrologerPhotoUrl = c.astrologerPhotoUrl;
+        _absorbSessionBilling(c);
       });
     } on ApiException catch (_) {
       // Best-effort — the header just falls back to the generic title.
     }
   }
 
+  /// Pulls the SERVER-authoritative billing figures off a consultation record
+  /// (`rate`, `message_count`) into the display state. Call inside a
+  /// `setState`. The per-minute wallet balance comes from the heartbeat, not
+  /// here — `findMine` doesn't carry it.
+  void _absorbSessionBilling(Consultation c) {
+    final rate = double.tryParse(c.rate);
+    if (rate != null && rate > 0) _rate = rate;
+    _sessionMsgCount = c.messageCount;
+  }
+
   // ── Chat (WebSocket) ────────────────────────────────────────────────
   void _connectChat() {
     _preloadHistory();
     _openSocket();
+    _startSync();
+  }
+
+  /// Safety-net poll: every few seconds merge any persisted messages the live
+  /// socket may have missed (half-open socket, or a cross-worker backend where
+  /// the peer's send and our WS live on different in-memory connection maps).
+  /// Every OTHER tick it also verifies the session is still active, so if the
+  /// astrologer ends it and the WS `status` frame never reaches us we still
+  /// close the screen via the single [_handleChatEnded] path.
+  void _startSync() {
+    _syncTimer?.cancel();
+    _syncTicks = 0;
+    _syncTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
+      if (!mounted ||
+          _backgrounded ||
+          _status == 'completed' ||
+          _chatEndedHandled) {
+        return;
+      }
+      _syncTicks++;
+      if (_syncTicks.isEven) {
+        try {
+          final c = await _repo.findMine(widget.consultationId);
+          if (!mounted || _chatEndedHandled) return;
+          if (c != null && c.status == ConsultationStatus.completed) {
+            await _handleChatEnded();
+            return;
+          }
+          // Refresh the billing strip (server message count + rate).
+          if (c != null) setState(() => _absorbSessionBilling(c));
+        } on ApiException catch (_) {
+          // Transient — try again next tick.
+        }
+        if (!mounted || _status == 'completed' || _chatEndedHandled) return;
+      }
+      unawaited(_preloadHistory());
+    });
   }
 
   void _openSocket() {
@@ -205,14 +375,22 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   /// The socket dropped (`closed`). Show a subtle reconnecting state and try
   /// again with a short backoff, unless the consultation is already over.
   void _scheduleReconnect() {
-    if (_status == 'completed') return;
+    if (_status == 'completed' || _chatEndedHandled || _backgrounded) return;
     setState(() => _reconnecting = true);
     _reconnectTimer?.cancel();
-    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    final secs = chatReconnectDelaySeconds(_reconnectAttempts);
     _reconnectTimer = Timer(Duration(seconds: secs), () {
-      if (!mounted || _status == 'completed') return;
+      if (!mounted ||
+          _status == 'completed' ||
+          _chatEndedHandled ||
+          _backgrounded) {
+        return;
+      }
       _reconnectAttempts++;
       _openSocket();
+      // Pull anything said while the socket was down — the server only streams
+      // live frames, so a REST history merge fills the gap.
+      unawaited(_preloadHistory());
     });
   }
 
@@ -227,7 +405,28 @@ class _ConsultationScreenState extends State<ConsultationScreen>
 
   void _addAll(List<Map<String, dynamic>> msgs) {
     for (final m in msgs) {
-      if (_seen.add('${m['id']}')) _messages.add(m);
+      final id = '${m['id']}';
+      if (_seen.contains(id)) continue;
+      // Reconcile the server copy of one of OUR still-pending optimistic
+      // bubbles (matched on body) instead of adding a duplicate — covers the
+      // race where the WS echo or a history poll arrives before `_sendBody`
+      // gets its REST response back.
+      if (m['sender_role'] == 'user') {
+        final pi = _messages.indexWhere((x) =>
+            (x['id']?.toString().startsWith('local-') ?? false) &&
+            x['pending'] == true &&
+            x['body'] == m['body']);
+        if (pi >= 0) {
+          _seen.add(id);
+          _messages[pi]
+            ..['id'] = m['id']
+            ..['created_at'] = m['created_at'] ?? _messages[pi]['created_at']
+            ..['pending'] = false
+            ..remove('failed');
+          continue;
+        }
+      }
+      if (_seen.add(id)) _messages.add(m);
     }
   }
 
@@ -237,16 +436,20 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         // Once the astrologer accepts, this flips `_chatActive` true so the
         // composer unlocks and outgoing messages are allowed.
         final wasActive = _chatActive;
+        final newStatus = '${event['status']}';
+        if (newStatus == 'completed') {
+          _markConnected();
+          unawaited(_handleChatEnded());
+          return;
+        }
         setState(() {
           _markConnected();
-          _status = '${event['status']}';
+          _status = newStatus;
         });
         // Keep the screen awake only while the chat is actually active — not
         // from initial screen entry (the "waiting for astrologer" state).
         if (!wasActive && _chatActive) {
           unawaited(_wakelock.acquire());
-        } else if (_status == 'completed') {
-          unawaited(_wakelock.release());
         }
       case 'history':
         final msgs = ((event['messages'] as List?) ?? const [])
@@ -270,11 +473,48 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       case 'closed':
         // Socket dropped. REST send still works, but show a subtle reconnecting
         // state and attempt to re-establish the live link.
+        if (_backgrounded) return; // closed on purpose; reopen on resume
         final detail = event['detail'];
         if (detail != null) debugPrint('[chat] socket closed: $detail');
-        _showDropReason(detail?.toString());
+        // A close that races our own resume-reconnect is expected noise — the
+        // just-superseded socket winding down — so don't alarm the user.
+        if (!_withinSelfReconnectWindow()) _showDropReason(detail?.toString());
         _scheduleReconnect();
     }
+  }
+
+  bool _withinSelfReconnectWindow() {
+    final at = _selfReconnectAt;
+    return at != null && clock.now().difference(at) < _selfReconnectWindow;
+  }
+
+  /// The single chat-ended path: stop every timer/reconnect, tear the socket
+  /// down, release the wakelock, and show the ended dialog exactly once.
+  Future<void> _handleChatEnded() async {
+    if (_chatEndedHandled) return;
+    _chatEndedHandled = true;
+    _reconnectTimer?.cancel();
+    _syncTimer?.cancel();
+    _closeChatSocket();
+    unawaited(_wakelock.release());
+    if (mounted) setState(() => _status = 'completed');
+    if (!mounted) return;
+    final l = AppLocalizations.of(context);
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.indigoDeep,
+        title: Text(l.consultSessionEnded, style: AppTextStyles.heading(size: 18)),
+        content: Text(l.consultChatEnded, style: AppTextStyles.body()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l.commonDone),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Surfaces WHY the chat socket dropped so a reconnect is diagnosable from
@@ -308,16 +548,66 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     final text = _msgController.text.trim();
     if (text.isEmpty || !_chatActive) return;
     _msgController.clear();
-    // Send over REST (persists + bills + broadcasts); show it immediately.
+    await _sendBody(text);
+  }
+
+  /// Optimistic send: show a local temp-id bubble ("Sending…") immediately,
+  /// then send over REST (which persists + bills + broadcasts). On success
+  /// reconcile the temp bubble to the server copy (swap id/timestamp, clear
+  /// pending) — the `_seen` set makes the echoed WS/history copy de-dup. On
+  /// error or a 402 (insufficient balance) mark it failed ("Not sent · Tap to
+  /// retry") so nothing silently disappears.
+  Future<void> _sendBody(String text) async {
+    final tempId = 'local-${clock.now().microsecondsSinceEpoch}';
+    setState(() {
+      _messages.add({
+        'id': tempId,
+        'sender_role': 'user',
+        'body': text,
+        'created_at': clock.now().toIso8601String(),
+        'pending': true,
+      });
+    });
+    _scrollToEnd();
+
     try {
       final msg = await _repo.sendMessage(widget.consultationId, text);
-      if (mounted) {
-        setState(() => _addAll([msg]));
-        _scrollToEnd();
-      }
+      if (!mounted) return;
+      final i = _messages.indexWhere((m) => m['id'] == tempId);
+      // If the WS echo / history poll already reconciled this bubble (its id
+      // is no longer the temp id), there's nothing left to do.
+      if (i < 0) return;
+      final serverId = '${msg['id']}';
+      _seen.add(serverId);
+      setState(() {
+        _messages[i]
+          ..['id'] = msg['id']
+          ..['created_at'] = msg['created_at'] ?? _messages[i]['created_at']
+          ..['pending'] = false
+          ..remove('failed');
+      });
+      _scrollToEnd();
     } on ApiException catch (e) {
-      if (mounted) setState(() => _note = e.message);
+      if (!mounted) return;
+      setState(() {
+        final i = _messages.indexWhere((m) => m['id'] == tempId);
+        if (i >= 0) {
+          _messages[i]['pending'] = false;
+          _messages[i]['failed'] = true;
+        }
+        _note = e.message;
+      });
     }
+  }
+
+  /// Re-send a message whose delivery failed (tap on its "Not sent" bubble).
+  void _retryChat(int index) {
+    if (index < 0 || index >= _messages.length) return;
+    final m = _messages[index];
+    if (m['failed'] != true) return;
+    final body = '${m['body']}';
+    setState(() => _messages.removeAt(index));
+    unawaited(_sendBody(body));
   }
 
   // ── Call / video (Agora A/V + REST heartbeat billing) ───────────────
@@ -351,6 +641,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       agora.remoteUid.addListener(_onAgoraChange);
       agora.joined.addListener(_onAgoraChange);
       agora.mediaFailure.addListener(_onAgoraChange);
+      agora.peerLeft.addListener(_onPeerLeft);
       await agora.join(grant, video: _isVideo);
       _agora = agora;
       _ended = false;
@@ -376,6 +667,40 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     setState(() {
       final failure = _agora?.mediaFailure.value;
       if (failure != null) _note = failure;
+    });
+  }
+
+  /// The astrologer's media stream came or went. A clean hang-up
+  /// ([PeerLeaveReason.quit]) ends the call immediately, attributed to the
+  /// astrologer. A genuine drop ([PeerLeaveReason.dropped]) starts a bounded
+  /// "Reconnecting…" grace window — the call ends only if they don't return
+  /// before it elapses; if they rejoin, `peerLeft` clears and the grace is
+  /// cancelled.
+  ///
+  /// Bails out once we're already ending (`_ended`) so our OWN
+  /// `leave()`/teardown — which makes Agora report the peer offline, often
+  /// NOT as a clean quit — can't surface a stray "Reconnecting…" after the
+  /// user hit End.
+  void _onPeerLeft() {
+    if (!mounted || _ended) return;
+    final reason = _agora?.peerLeft.value;
+    if (reason == null) {
+      // Peer is back — cancel the grace and drop the reconnecting banner.
+      _rtcGraceTimer?.cancel();
+      if (_peerReconnecting) setState(() => _peerReconnecting = false);
+      return;
+    }
+    if (reason == PeerLeaveReason.quit) {
+      unawaited(_endCall(endedBy: _CallEndedBy.astrologer));
+      return;
+    }
+    // Genuine network drop → hold a bounded grace window.
+    setState(() => _peerReconnecting = true);
+    _rtcGraceTimer?.cancel();
+    _rtcGraceTimer = Timer(_reconnectGrace, () {
+      if (mounted && _peerReconnecting && !_ended) {
+        unawaited(_endCall(endedBy: _CallEndedBy.astrologer));
+      }
     });
   }
 
@@ -425,8 +750,16 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         final serverElapsed = (res['elapsed_seconds'] as num?)?.toInt();
         if (serverElapsed != null) _elapsed = serverElapsed;
         _charged = '${res['amount_charged']}';
+        // Authoritative wallet balance drives the remaining-minutes readout
+        // and the low-balance banner (parsed as a string — the API serialises
+        // the Decimal as a JSON string).
+        final bal = double.tryParse('${res['wallet_balance']}');
+        if (bal != null) _walletBalance = bal;
+        _refreshLowBalance();
       });
-      if (res['should_end'] == true) _endCall(auto: true);
+      if (res['should_end'] == true) {
+        _endCall(endedBy: _CallEndedBy.timeout);
+      }
     } on ApiException catch (e) {
       if (!mounted) return;
       if (e.statusCode == 409) {
@@ -438,7 +771,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
       }
       // Surface the failure; on insufficient balance (402) end the session.
       setState(() => _note = e.message);
-      if (e.isPaymentRequired) _endCall(auto: true);
+      if (e.isPaymentRequired) _endCall(endedBy: _CallEndedBy.balance);
     } finally {
       _heartbeatInFlight = false;
     }
@@ -466,7 +799,12 @@ class _ConsultationScreenState extends State<ConsultationScreen>
         );
         return;
       }
-      if (c != null) setState(() => _charged = c.amountCharged);
+      if (c != null) {
+        setState(() {
+          _charged = c.amountCharged;
+          _absorbSessionBilling(c);
+        });
+      }
     } on ApiException catch (_) {
       // Best-effort — fall through to the heartbeat due-check below, which
       // surfaces a real problem (including a genuine 409) on its own.
@@ -485,6 +823,8 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     if (_ended) return;
     _ended = true;
     _ticker?.cancel();
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     await _agora?.leave();
     unawaited(_wakelock.release());
     if (mounted) setState(() => _live = false);
@@ -547,6 +887,8 @@ class _ConsultationScreenState extends State<ConsultationScreen>
   Future<void> _abortStartedCall(String reason) async {
     _ended = true;
     _ticker?.cancel();
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     await _agora?.leave();
     unawaited(_wakelock.release());
     try {
@@ -563,16 +905,20 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     }
   }
 
-  Future<void> _endCall({bool auto = false}) async {
+  Future<void> _endCall({_CallEndedBy endedBy = _CallEndedBy.user}) async {
     if (_ended) return; // guard against double-end (should_end + manual/402)
     _ended = true;
     _ticker?.cancel();
+    // Stop the reconnect grace and drop any "Reconnecting…" state so teardown
+    // can't leave a phantom banner behind.
+    _rtcGraceTimer?.cancel();
+    _peerReconnecting = false;
     await _agora?.leave();
     unawaited(_wakelock.release());
     if (mounted) setState(() => _live = false);
     try {
       final res = await _repo.end(widget.consultationId);
-      if (mounted) _showSummary(res, auto: auto);
+      if (mounted) _showSummary(res, endedBy: endedBy);
     } on ApiException catch (e) {
       if (mounted) setState(() => _note = e.message);
     }
@@ -630,14 +976,24 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     }
   }
 
-  void _showSummary(Map<String, dynamic> res, {required bool auto}) {
+  void _showSummary(Map<String, dynamic> res, {required _CallEndedBy endedBy}) {
     final l = AppLocalizations.of(context);
+    // Attribute the end so it never reads as a silent drop: the astrologer
+    // hung up, the balance ran out, the time cap was hit, or (default) the
+    // user ended it themselves.
+    final title = switch (endedBy) {
+      _CallEndedBy.astrologer =>
+        l.consultCallEndedBy(_astrologerName ?? l.consultTheAstrologer),
+      _CallEndedBy.balance => l.consultSessionEndedLowBalance,
+      _CallEndedBy.timeout => l.consultSessionEndedTimeUp,
+      _CallEndedBy.user => l.consultSessionEnded,
+    };
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: AppColors.indigoDeep,
         title: Text(
-          auto ? l.consultSessionEndedLowBalance : l.consultSessionEnded,
+          title,
           style: AppTextStyles.heading(size: 18),
         ),
         content: Column(
@@ -664,6 +1020,82 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     );
   }
 
+  /// Whole minutes the remaining wallet balance still buys at the current
+  /// per-minute rate — the heartbeat carries no `remaining_minutes`, so it is
+  /// derived from the authoritative `wallet_balance ÷ rate`. Null while either
+  /// figure is still unknown (before the first heartbeat / findMine).
+  int? get _remainingMinutes {
+    final bal = _walletBalance;
+    final rate = _rate;
+    if (bal == null || rate == null || rate <= 0) return null;
+    return (bal / rate).floor();
+  }
+
+  /// Recomputes (and latches) the mid-call low-balance state: true once the
+  /// remaining balance buys under a minute. Only latches while a call is live
+  /// so it can't fire on a chat or a finished call; a successful recharge
+  /// clears it explicitly in [_rechargeMidCall].
+  void _refreshLowBalance() {
+    if (_isChat || !_live || _ended) return;
+    final rem = _remainingMinutes;
+    if (rem != null && rem < 1) _lowBalance = true;
+  }
+
+  /// Mid-call recharge: open the recharge sheet WITHOUT ending the call. On
+  /// success, clear the low-balance state and refresh the wallet balance (a
+  /// non-billing `/wallet` fetch — NOT an extra heartbeat, which would bill a
+  /// spurious minute) so the remaining-minutes readout extends and the call
+  /// keeps going. Models Nakshtralogy's `_rechargeMidCall`.
+  Future<void> _rechargeMidCall() async {
+    if (_recharging) return;
+    _recharging = true;
+    try {
+      final suggested = (_rate != null && _rate! > 0) ? (_rate! * 5).ceil() : 100;
+      final added = await _showRechargeSheet(suggested);
+      if (!mounted || added == null) return;
+      try {
+        final w = await getIt<WalletRepository>().getWallet();
+        if (!mounted) return;
+        final bal = double.tryParse(w.balance);
+        setState(() {
+          if (bal != null) _walletBalance = bal;
+          // Clear the latched banner; it re-latches only if the fresh balance
+          // is still under a minute.
+          _lowBalance = false;
+          _refreshLowBalance();
+        });
+      } on ApiException catch (_) {
+        // Couldn't re-fetch the balance — still clear the banner optimistically
+        // since money was added; the next heartbeat reconciles the true figure.
+        setState(() => _lowBalance = false);
+      }
+      final l = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l.consultRechargeAdded(added)),
+        behavior: SnackBarBehavior.floating,
+      ));
+    } finally {
+      _recharging = false;
+    }
+  }
+
+  /// Presents the mid-call recharge bottom sheet and runs the Razorpay
+  /// checkout via the shared [WalletCheckout]. Returns the added amount
+  /// (as a display string) on success, or null on cancel/failure. Never ends
+  /// the call.
+  Future<String?> _showRechargeSheet(int suggested) {
+    final user = getIt<AuthCubit>().state.user;
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.indigoDeep,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _MidCallRechargeSheet(suggested: suggested, user: user),
+    );
+  }
+
   String get _timer {
     final m = (_elapsed ~/ 60).toString().padLeft(2, '0');
     final s = (_elapsed % 60).toString().padLeft(2, '0');
@@ -677,6 +1109,7 @@ class _ConsultationScreenState extends State<ConsultationScreen>
     if (!_live) return l.consultReady;
     final agora = _agora;
     if (agora == null || !agora.joined.value) return l.consultConnecting;
+    if (_peerReconnecting) return l.consultCallReconnecting;
     if (agora.remoteUid.value == null) return l.consultWaitingAstrologerJoin;
     return '$_timer  ·  ₹$_charged ${l.consultSoFar}';
   }
@@ -708,6 +1141,12 @@ class _ConsultationScreenState extends State<ConsultationScreen>
             subtitle: _statusLabel(l),
             onClose: _requestClose,
           ),
+          if (_chatActive)
+            _ChatBillingStrip(
+              used: _sessionMsgCount,
+              cap: _chatMessageCap,
+              rate: _rate,
+            ),
           if (_note != null) _NoteBar(_note!),
           Expanded(
             child: _messages.isEmpty
@@ -726,34 +1165,64 @@ class _ConsultationScreenState extends State<ConsultationScreen>
                     itemBuilder: (_, i) {
                       final m = _messages[i];
                       final mine = m['sender_role'] == 'user';
-                      return Align(
-                        alignment: mine
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 4),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
+                      final pending = m['pending'] == true;
+                      final failed = m['failed'] == true;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Align(
+                            alignment: mine
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              constraints: BoxConstraints(
+                                maxWidth:
+                                    (MediaQuery.sizeOf(context).width
+                                            .clamp(0, Responsive.readableMaxWidth)) *
+                                        0.72,
+                              ),
+                              decoration: BoxDecoration(
+                                color: mine
+                                    ? AppColors.saffron.withValues(
+                                        alpha: pending ? 0.10 : 0.18)
+                                    : AppColors.surface2,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Text(
+                                '${m['body']}',
+                                style: AppTextStyles.body(size: 14),
+                              ),
+                            ),
                           ),
-                          constraints: BoxConstraints(
-                            maxWidth:
-                                (MediaQuery.sizeOf(
-                                  context,
-                                ).width.clamp(0, Responsive.readableMaxWidth)) *
-                                0.72,
-                          ),
-                          decoration: BoxDecoration(
-                            color: mine
-                                ? AppColors.saffron.withValues(alpha: 0.18)
-                                : AppColors.surface2,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Text(
-                            '${m['body']}',
-                            style: AppTextStyles.body(size: 14),
-                          ),
-                        ),
+                          if (mine && pending)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2, bottom: 2, right: 2),
+                              child: Text(
+                                l.consultSending,
+                                textAlign: TextAlign.right,
+                                style: AppTextStyles.label(color: AppColors.ivoryFaint),
+                              ),
+                            )
+                          else if (mine && failed)
+                            GestureDetector(
+                              onTap: () => _retryChat(i),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 2, bottom: 2, right: 2),
+                                child: Text(
+                                  l.consultNotSentRetry,
+                                  textAlign: TextAlign.right,
+                                  style: AppTextStyles.label(color: AppColors.danger),
+                                ),
+                              ),
+                            )
+                          else
+                            const SizedBox(height: 4),
+                        ],
                       );
                     },
                   ),
@@ -806,23 +1275,26 @@ class _ConsultationScreenState extends State<ConsultationScreen>
                       _PartyAvatar(photoUrl: _astrologerPhotoUrl),
                       const SizedBox(height: 16),
                       if (_astrologerName != null)
-                        Text(
-                          _astrologerName!,
-                          style: AppTextStyles.heading(size: 18),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            _astrologerName!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.heading(size: 18),
+                          ),
                         ),
                       const SizedBox(height: 12),
-                      if (_live && engineJoined && remoteJoined) ...[
-                        Text(
-                          _timer,
-                          style: AppTextStyles.mono(size: 30, color: AppColors.ivory),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '₹$_charged ${l.consultSoFar}',
-                          style:
-                              AppTextStyles.body(size: 13, color: AppColors.ivoryFaint),
-                        ),
-                      ] else
+                      if (_live && engineJoined && remoteJoined)
+                        _CallBillingPanel(
+                          timer: _timer,
+                          charged: _charged,
+                          rate: _rate,
+                          walletBalance: _walletBalance,
+                          remainingMinutes: _remainingMinutes,
+                        )
+                      else
                         Text(
                           _callStatusLabel(l),
                           style: AppTextStyles.mono(
@@ -855,6 +1327,10 @@ class _ConsultationScreenState extends State<ConsultationScreen>
                 onClose: _requestClose,
               ),
               if (_note != null) _NoteBar(_note!),
+              if (_live && !_ended && _lowBalance)
+                _LowBalanceBanner(
+                  onAddMoney: _recharging ? null : _rechargeMidCall,
+                ),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(24),
@@ -925,6 +1401,338 @@ class _ConsultationScreenState extends State<ConsultationScreen>
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Who/what ended a call — drives the end-of-call attribution so a session
+/// never closes as an unexplained drop.
+enum _CallEndedBy { user, astrologer, balance, timeout }
+
+/// Formats an INR amount for display — no trailing `.00` on whole rupees,
+/// two decimals otherwise. INR only (Phase 5 has no USD/intl rule).
+String _fmtInr(double v) =>
+    v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
+
+/// Chat billing strip under the header: message counter (`used / cap` with the
+/// remaining count) + a per-message rate badge. All figures are
+/// server-sourced (`Consultation.message_count` / `Consultation.rate`).
+class _ChatBillingStrip extends StatelessWidget {
+  const _ChatBillingStrip({required this.used, required this.cap, required this.rate});
+  final int? used;
+  final int cap;
+  final double? rate;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final u = used ?? 0;
+    final left = (cap - u).clamp(0, cap);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.surface1,
+        border: Border(bottom: BorderSide(color: AppColors.borderSoft)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.forum_outlined, size: 14, color: AppColors.gold),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              l.consultSessionMsgs(u, cap, left),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim),
+            ),
+          ),
+          if (rate != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.saffron.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.saffron.withValues(alpha: 0.5)),
+              ),
+              child: Text(
+                l.consultPerMsgRate(_fmtInr(rate!)),
+                style: AppTextStyles.mono(size: 11, color: AppColors.gold),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The connected-call billing panel: `● CONNECTED`, the MM:SS timer,
+/// `₹ charged so far · ₹rate/min`, and the remaining balance / minutes.
+/// Every value is server-authoritative (heartbeat + session record), never the
+/// local ticker.
+class _CallBillingPanel extends StatelessWidget {
+  const _CallBillingPanel({
+    required this.timer,
+    required this.charged,
+    required this.rate,
+    required this.walletBalance,
+    required this.remainingMinutes,
+  });
+  final String timer;
+  final String charged;
+  final double? rate;
+  final double? walletBalance;
+  final int? remainingMinutes;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final chargedLine = rate != null
+        ? l.consultChargedRate(charged, _fmtInr(rate!))
+        : '₹$charged ${l.consultSoFar}';
+    String? remainingLine;
+    if (walletBalance != null && remainingMinutes != null) {
+      remainingLine =
+          l.consultBalanceMinutes(_fmtInr(walletBalance!), remainingMinutes!);
+    } else if (walletBalance != null) {
+      remainingLine = l.consultBalanceRemaining(_fmtInr(walletBalance!));
+    }
+    final remainingLow = (remainingMinutes ?? 99) < 2;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.indigoVoid.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: AppColors.success),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                l.consultConnectedLabel,
+                style: AppTextStyles.mono(size: 10, color: AppColors.success),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(timer, style: AppTextStyles.mono(size: 30, color: AppColors.ivory)),
+          const SizedBox(height: 2),
+          Text(chargedLine, style: AppTextStyles.body(size: 13, color: AppColors.gold)),
+          if (remainingLine != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              remainingLine,
+              style: AppTextStyles.body(
+                size: 12,
+                color: remainingLow ? AppColors.danger : AppColors.ivoryFaint,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Non-blocking mid-call banner shown when the remaining balance buys under a
+/// minute — offers "Add money" (opens the recharge sheet) rather than dropping
+/// the call. [onAddMoney] is null while a recharge is already in flight.
+class _LowBalanceBanner extends StatelessWidget {
+  const _LowBalanceBanner({required this.onAddMoney});
+  final VoidCallback? onAddMoney;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+      decoration: BoxDecoration(
+        color: AppColors.danger.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.danger.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.account_balance_wallet_outlined, size: 16, color: AppColors.danger),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              l.consultLowBalanceBanner,
+              style: AppTextStyles.body(size: 12, color: AppColors.ivory),
+            ),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: onAddMoney,
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.saffron,
+              foregroundColor: AppColors.indigoVoid,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: const Size(0, 34),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(l.consultAddMoney,
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bottom sheet for a mid-call top-up. Reuses the shared [WalletCheckout]
+/// (Razorpay) exactly like the wallet screen, but presented over the live call
+/// so recharging never ends it. Pops with the added amount (display string) on
+/// success, or null on cancel/failure.
+class _MidCallRechargeSheet extends StatefulWidget {
+  const _MidCallRechargeSheet({required this.suggested, required this.user});
+  final int suggested;
+  final AppUser? user;
+
+  @override
+  State<_MidCallRechargeSheet> createState() => _MidCallRechargeSheetState();
+}
+
+class _MidCallRechargeSheetState extends State<_MidCallRechargeSheet> {
+  static const _quick = [100, 200, 500, 1000];
+  late final TextEditingController _controller =
+      TextEditingController(text: '${widget.suggested}');
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pay(int amount) async {
+    if (_busy || amount <= 0) return;
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final user = widget.user;
+    try {
+      final txn = await getIt<WalletCheckout>().recharge(
+        amountRupees: amount,
+        name: user?.name,
+        email: user?.email,
+        contact: user?.mobile,
+      );
+      // Refresh the app-wide user so the wallet balance elsewhere is current.
+      await getIt<AuthCubit>().refreshMe();
+      // On success the sheet pops with the added amount; the caller refreshes
+      // the live billing and clears the low-balance banner.
+      navigator.pop(txn.amount.replaceAll('-', ''));
+    } on RechargeCancelled catch (e) {
+      if (mounted) {
+        setState(() => _busy = false);
+        messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        setState(() => _busy = false);
+        messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
+  Future<void> _payCustom() async {
+    final amount = int.tryParse(_controller.text.trim());
+    if (amount == null || amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).walletEnterValidAmount)),
+      );
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    await _pay(amount);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l.consultRechargeTitle, style: AppTextStyles.heading(size: 17)),
+          const SizedBox(height: 4),
+          Text(l.consultRechargeSubtitle,
+              style: AppTextStyles.body(size: 12, color: AppColors.ivoryFaint)),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              for (final amt in _quick)
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.borderMid),
+                    foregroundColor: AppColors.ivory,
+                  ),
+                  onPressed: _busy ? null : () => _pay(amt),
+                  child: Text('₹$amt'),
+                ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  enabled: !_busy,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  style: AppTextStyles.body(),
+                  decoration: InputDecoration(
+                    prefixText: '₹ ',
+                    prefixStyle: AppTextStyles.body(color: AppColors.gold),
+                    hintText: l.walletCustomAmount,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                height: 56,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.saffron,
+                    foregroundColor: AppColors.indigoVoid,
+                  ),
+                  onPressed: _busy ? null : _payCustom,
+                  child: _busy
+                      ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: AppColors.indigoVoid),
+                        )
+                      : Text(l.commonAdd),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

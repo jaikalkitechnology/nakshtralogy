@@ -51,22 +51,28 @@ async def _consultation_expiry_loop() -> None:
         await asyncio.sleep(_EXPIRY_SWEEP_INTERVAL_SECONDS)
 
 
-# Broadcasts run for hours, not seconds, so this sweep checks far less often
-# than the consultation one — it only needs to catch broadcasts that
-# crashed/disconnected without ever calling /end.
-_BROADCAST_SWEEP_INTERVAL_SECONDS = 300
+# Runs often enough that a host-abandoned broadcast is force-ended within
+# roughly BROADCAST_HEARTBEAT_GRACE_SECONDS (150s) of its heartbeat going
+# stale, not just at the 6-hour hard backstop. Still cheap — the sweep is two
+# indexed queries against a table with at most a handful of live rows.
+_BROADCAST_SWEEP_INTERVAL_SECONDS = 30
 
 
 async def _broadcast_expiry_loop() -> None:
-    """Runs for the lifetime of the app, force-ending abandoned broadcasts
-    (see broadcast_service.BROADCAST_MAX_DURATION_SECONDS). Same
-    multi-worker-safe reasoning as _consultation_expiry_loop above."""
+    """Runs for the lifetime of the app, force-ending abandoned broadcasts.
+
+    Two watchdogs, both multi-worker-safe (same reasoning as
+    _consultation_expiry_loop): the fast, heartbeat-driven one catches a host
+    whose client vanished within ~150s even across a worker restart (the
+    in-memory disconnect-grace timer can't survive that), and the 6-hour
+    staleness backstop catches anything the heartbeat path somehow missed."""
     from app.core.database import AsyncSessionLocal
     from app.services import broadcast_service
 
     while True:
         try:
             async with AsyncSessionLocal() as db:
+                await broadcast_service.expire_unhealthy_broadcasts(db)
                 await broadcast_service.expire_stale_broadcasts(db)
         except asyncio.CancelledError:
             raise

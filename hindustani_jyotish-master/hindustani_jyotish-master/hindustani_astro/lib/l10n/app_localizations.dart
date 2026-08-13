@@ -727,6 +727,456 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System default'**
   String get themeSystem;
+
+  /// No description provided for @callIncomingVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming voice call'**
+  String get callIncomingVoice;
+
+  /// No description provided for @callIncomingVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming video call'**
+  String get callIncomingVideo;
+
+  /// No description provided for @callRatePerMin.
+  ///
+  /// In en, this message translates to:
+  /// **'₹{rate}/min'**
+  String callRatePerMin(String rate);
+
+  /// No description provided for @callAutoDeclineIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-decline in {seconds}s'**
+  String callAutoDeclineIn(int seconds);
+
+  /// No description provided for @callAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get callAccept;
+
+  /// No description provided for @callDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get callDecline;
+
+  /// No description provided for @callConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get callConnecting;
+
+  /// No description provided for @callExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Call expired'**
+  String get callExpired;
+
+  /// No description provided for @callExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This call request is no longer available.'**
+  String get callExpiredBody;
+
+  /// No description provided for @callCouldNotStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Call could not start: the server did not return Agora call details.'**
+  String get callCouldNotStart;
+
+  /// No description provided for @commonSeeker.
+  ///
+  /// In en, this message translates to:
+  /// **'Seeker'**
+  String get commonSeeker;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @commonUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get commonUser;
+
+  /// No description provided for @commonEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get commonEnd;
+
+  /// No description provided for @callPermMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission is required to take this call. Enable it in Settings and try again.'**
+  String get callPermMic;
+
+  /// No description provided for @callPermMicCam.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone and camera permission is required to take this call. Enable it in Settings and try again.'**
+  String get callPermMicCam;
+
+  /// No description provided for @callAvUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Astrologer A/V not available — server Agora token missing.'**
+  String get callAvUnavailable;
+
+  /// No description provided for @callConnectFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect the call: {error}'**
+  String callConnectFailed(String error);
+
+  /// No description provided for @callEndConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End this call?'**
+  String get callEndConfirmTitle;
+
+  /// No description provided for @callEndConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The seeker will be disconnected and this session will end. This can\'t be undone.'**
+  String get callEndConfirmBody;
+
+  /// No description provided for @callEndedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Call ended by {name}'**
+  String callEndedBy(String name);
+
+  /// No description provided for @callCantConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t connect'**
+  String get callCantConnect;
+
+  /// No description provided for @callReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting…'**
+  String get callReconnecting;
+
+  /// No description provided for @callConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get callConnected;
+
+  /// No description provided for @callWaitingForSeeker.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the seeker…'**
+  String get callWaitingForSeeker;
+
+  /// No description provided for @callVideoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Call'**
+  String get callVideoTitle;
+
+  /// No description provided for @callAudioTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Call'**
+  String get callAudioTitle;
+
+  /// No description provided for @callEarningsSoFar.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings so far: ₹{amount}'**
+  String callEarningsSoFar(String amount);
+
+  /// No description provided for @callRateDotPerMin.
+  ///
+  /// In en, this message translates to:
+  /// **'· ₹{rate}/min'**
+  String callRateDotPerMin(String rate);
+
+  /// No description provided for @callPillCantConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t connect'**
+  String get callPillCantConnect;
+
+  /// No description provided for @callPillConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting'**
+  String get callPillConnecting;
+
+  /// No description provided for @callPillReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting'**
+  String get callPillReconnecting;
+
+  /// No description provided for @callPillWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get callPillWaiting;
+
+  /// No description provided for @callPillLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live · {elapsed}'**
+  String callPillLive(String elapsed);
+
+  /// No description provided for @chatReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting…'**
+  String get chatReconnecting;
+
+  /// No description provided for @chatWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with {name}'**
+  String chatWithName(String name);
+
+  /// No description provided for @chatEnded.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get chatEnded;
+
+  /// No description provided for @chatLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get chatLive;
+
+  /// No description provided for @chatWaitingNamaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the seeker to say Namaste 🙏'**
+  String get chatWaitingNamaste;
+
+  /// No description provided for @chatSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get chatSending;
+
+  /// No description provided for @chatNotSentRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent · Tap to retry'**
+  String get chatNotSentRetry;
+
+  /// No description provided for @chatReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply…'**
+  String get chatReplyHint;
+
+  /// No description provided for @chatEndedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat ended'**
+  String get chatEndedHint;
+
+  /// No description provided for @chatSendTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get chatSendTooltip;
+
+  /// No description provided for @liveDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Rashifal'**
+  String get liveDefaultTitle;
+
+  /// No description provided for @liveSetRatesFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your chat, call, and video rates before going live.'**
+  String get liveSetRatesFirst;
+
+  /// No description provided for @liveMessageSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Message sent'**
+  String get liveMessageSent;
+
+  /// No description provided for @liveMessageSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send — reconnecting to chat, try again in a moment.'**
+  String get liveMessageSendFailed;
+
+  /// No description provided for @livePinFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t pin — reconnecting to chat, try again.'**
+  String get livePinFailed;
+
+  /// No description provided for @liveSetGiftGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set gifting goal'**
+  String get liveSetGiftGoalTitle;
+
+  /// No description provided for @liveGiftGoalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 5000'**
+  String get liveGiftGoalHint;
+
+  /// No description provided for @liveEndConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'End live broadcast?'**
+  String get liveEndConfirmTitle;
+
+  /// No description provided for @liveEndConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your viewers will be disconnected and this session will end. This can\'t be undone.'**
+  String get liveEndConfirmBody;
+
+  /// No description provided for @liveStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a live session'**
+  String get liveStartTitle;
+
+  /// No description provided for @liveStartSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your followers get notified when you go live.'**
+  String get liveStartSubtitle;
+
+  /// No description provided for @liveStreamTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream title'**
+  String get liveStreamTitleLabel;
+
+  /// No description provided for @liveStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get liveStarting;
+
+  /// No description provided for @liveGiftGoalTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifting goal'**
+  String get liveGiftGoalTooltip;
+
+  /// No description provided for @liveFlipCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Flip camera'**
+  String get liveFlipCamera;
+
+  /// No description provided for @liveReconnectingVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting video…'**
+  String get liveReconnectingVideo;
+
+  /// No description provided for @liveReconnectingChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting chat…'**
+  String get liveReconnectingChat;
+
+  /// No description provided for @liveChatEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewer messages will appear here…'**
+  String get liveChatEmpty;
+
+  /// No description provided for @liveReplyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to @{name}'**
+  String liveReplyingTo(String name);
+
+  /// No description provided for @liveReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to @{name}…'**
+  String liveReplyHint(String name);
+
+  /// No description provided for @liveSayHiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say hi to your viewers…'**
+  String get liveSayHiHint;
+
+  /// No description provided for @liveWrapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That’s a wrap!'**
+  String get liveWrapTitle;
+
+  /// No description provided for @liveWrapSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here’s how your session went.'**
+  String get liveWrapSubtitle;
+
+  /// No description provided for @liveDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get liveDuration;
+
+  /// No description provided for @livePeakViewers.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak viewers'**
+  String get livePeakViewers;
+
+  /// No description provided for @liveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveBadge;
+
+  /// No description provided for @liveEndButton.
+  ///
+  /// In en, this message translates to:
+  /// **'End Live'**
+  String get liveEndButton;
+
+  /// No description provided for @liveMuteMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute microphone'**
+  String get liveMuteMic;
+
+  /// No description provided for @liveUnmuteMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute microphone'**
+  String get liveUnmuteMic;
+
+  /// No description provided for @liveGift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get liveGift;
+
+  /// No description provided for @liveAnsweringNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Answering now — '**
+  String get liveAnsweringNow;
 }
 
 class _AppLocalizationsDelegate

@@ -26,8 +26,9 @@ import asyncio
 import logging
 import uuid
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.timeutil import ensure_aware
@@ -46,6 +47,18 @@ logger = logging.getLogger(__name__)
 # going live again ("already have an active broadcast" forever) and would let
 # viewers try to join a broadcast that isn't actually running.
 BROADCAST_MAX_DURATION_SECONDS = 6 * 60 * 60  # 6 hours
+
+# The persistent (DB-backed) counterpart to the in-memory disconnect-grace
+# timer below: the broadcasting astrologer's client stamps ``last_heartbeat_at``
+# on connect and on a periodic heartbeat frame (see broadcast_chat in
+# app/api/v1/broadcasts.py). If that stamp goes stale by more than this, the
+# host has abandoned the broadcast — the background watchdog force-ends it.
+# Chosen wider than the 60s in-memory grace because the client's heartbeat
+# cadence is coarser (~30s) and this path must survive a worker restart
+# without falsely ending a genuinely-live broadcast whose only crime was that
+# the worker holding its socket cycled — mirrors consultations'
+# HEARTBEAT_GRACE_SECONDS reasoning.
+BROADCAST_HEARTBEAT_GRACE_SECONDS = 150
 
 
 class BroadcastError(Exception):
@@ -135,6 +148,7 @@ async def _force_end(
         astrologer.is_live = False
     await db.commit()
     _cancel_pending_disconnect(str(broadcast.id))
+    set_pinned_question(str(broadcast.id), None)
     await _broadcast_ended(broadcast.id, ended_by_role=None, reason=reason)
 
 
@@ -160,6 +174,149 @@ async def expire_stale_broadcasts(db: AsyncSession) -> int:
         except Exception:  # noqa: BLE001 — one bad row must not block the rest
             logger.exception("failed to force-end stale broadcast %s", broadcast.id)
     return count
+
+
+async def expire_unhealthy_broadcasts(db: AsyncSession) -> int:
+    """Force-end every `live` broadcast whose host heartbeat has gone stale
+    past BROADCAST_HEARTBEAT_GRACE_SECONDS. Returns how many were closed.
+
+    This is the persistent (DB-backed) watchdog: the in-memory disconnect-
+    grace timer (below) handles the common case within ~60s, but its
+    bookkeeping dies with the worker process holding the astrologer's socket.
+    Recording a heartbeat lets a DIFFERENT worker's sweep still catch a
+    host-abandoned broadcast — the same reason consultations record
+    last_heartbeat_at rather than relying only on presence tracking.
+
+    Only broadcasts that have received at least one heartbeat are eligible:
+    a broadcast that never stamped one is owned by the disconnect-grace timer
+    (armed at /start) and the 6-hour staleness backstop, exactly as before —
+    so this can't falsely end an older broadcast created before this feature.
+    """
+    cutoff = _now() - timedelta(seconds=BROADCAST_HEARTBEAT_GRACE_SECONDS)
+    rows = (
+        await db.execute(
+            select(LiveBroadcast).where(
+                LiveBroadcast.started_at.is_not(None),
+                LiveBroadcast.ended_at.is_(None),
+                LiveBroadcast.last_heartbeat_at.is_not(None),
+                LiveBroadcast.last_heartbeat_at < cutoff,
+            )
+        )
+    ).scalars().all()
+    count = 0
+    for broadcast in rows:
+        try:
+            await _force_end(db, broadcast, reason="connection lost")
+            count += 1
+        except Exception:  # noqa: BLE001 — one bad row must not block the rest
+            logger.exception("failed to force-end unhealthy broadcast %s", broadcast.id)
+    return count
+
+
+async def record_heartbeat(broadcast_id: uuid.UUID | str) -> None:
+    """Stamp ``last_heartbeat_at = now`` for a live broadcast — called when the
+    broadcasting astrologer's own chat socket connects and on each heartbeat
+    frame it sends. Best-effort and self-contained (opens its own session) so
+    it can be called from the WebSocket handler without threading a request
+    session through. A stamp on an already-ended broadcast is harmless (the
+    watchdog only looks at rows with ended_at IS NULL)."""
+    try:
+        bid = broadcast_id if isinstance(broadcast_id, uuid.UUID) else uuid.UUID(str(broadcast_id))
+    except ValueError:
+        return
+    from app.core.database import AsyncSessionLocal
+
+    try:
+        async with AsyncSessionLocal() as db:
+            broadcast = await db.get(LiveBroadcast, bid)
+            if broadcast is not None and is_live(broadcast):
+                broadcast.last_heartbeat_at = _now()
+                await db.commit()
+    except Exception:  # noqa: BLE001 — a heartbeat write must never break the socket
+        logger.exception("failed to record heartbeat for broadcast %s", broadcast_id)
+
+
+# ── Gift goal + gifting totals ─────────────────────────────────────────
+async def set_gift_goal(
+    db: AsyncSession, astrologer: Astrologer, broadcast_id: uuid.UUID, goal: Decimal
+) -> LiveBroadcast:
+    """Set (or clear, with 0) the gifting goal on the astrologer's own live
+    broadcast. Raises BroadcastError if it isn't theirs / isn't live."""
+    broadcast = await db.get(LiveBroadcast, broadcast_id)
+    if broadcast is None or broadcast.astrologer_id != astrologer.id:
+        raise BroadcastError("Live broadcast not found")
+    if not is_live(broadcast):
+        raise BroadcastError("Live broadcast is not active")
+    broadcast.gift_goal = goal if goal and goal > 0 else None
+    await db.commit()
+    await db.refresh(broadcast)
+    return broadcast
+
+
+async def gifting_summary(db: AsyncSession, broadcast_id: uuid.UUID | str) -> dict:
+    """Aggregate a broadcast's monetised engagement for the gift-goal progress
+    bar and the top-gifters ribbon: the running total (super chats + gifts)
+    and the top few gifters by aggregate spend. Read-only — safe to call after
+    every send to push a fresh `gift_update` frame to the room."""
+    from app.models.live_engagement import LiveEngagementEvent
+
+    try:
+        bid = broadcast_id if isinstance(broadcast_id, uuid.UUID) else uuid.UUID(str(broadcast_id))
+    except ValueError:
+        return {"total": "0.00", "goal": None, "top": []}
+
+    broadcast = await db.get(LiveBroadcast, bid)
+    goal = broadcast.gift_goal if broadcast is not None else None
+
+    total = await db.scalar(
+        select(func.coalesce(func.sum(LiveEngagementEvent.amount), 0)).where(
+            LiveEngagementEvent.broadcast_id == bid
+        )
+    )
+    rows = (
+        await db.execute(
+            select(
+                LiveEngagementEvent.user_id,
+                func.coalesce(func.sum(LiveEngagementEvent.amount), 0).label("amt"),
+            )
+            .where(LiveEngagementEvent.broadcast_id == bid)
+            .group_by(LiveEngagementEvent.user_id)
+            .order_by(func.sum(LiveEngagementEvent.amount).desc())
+            .limit(3)
+        )
+    ).all()
+    top = []
+    for user_id, amt in rows:
+        user = await db.get(User, user_id)
+        top.append(
+            {"name": (user.name if user and user.name else "Anonymous"), "amount": f"{Decimal(amt):.2f}"}
+        )
+    return {
+        "total": f"{Decimal(total or 0):.2f}",
+        "goal": (f"{Decimal(goal):.2f}" if goal is not None else None),
+        "top": top,
+    }
+
+
+# ── Pinned "Answering now" Q&A ─────────────────────────────────────────
+# In-memory per-room current pin (broadcast_id -> the pinned question payload,
+# or None). Process-local, exactly like the chat_manager room membership and
+# the disconnect-grace bookkeeping — the pin is transient live-session UI
+# state, not something worth a DB row. A viewer joining while a pin is active
+# is sent the current pin directly on connect (see broadcast_chat), so
+# late-joiners still see it despite this being per-process.
+_pinned_questions: dict[str, dict | None] = {}
+
+
+def set_pinned_question(broadcast_id: str, payload: dict | None) -> None:
+    if payload is None:
+        _pinned_questions.pop(broadcast_id, None)
+    else:
+        _pinned_questions[broadcast_id] = payload
+
+
+def get_pinned_question(broadcast_id: str) -> dict | None:
+    return _pinned_questions.get(broadcast_id)
 
 
 # ── Disconnect-triggered auto-end (fast path) ──────────────────────────
@@ -278,7 +435,7 @@ async def _end_after_grace_period(broadcast_id: str) -> None:
 
 # ── Broadcast lifecycle ─────────────────────────────────────────────────
 async def start_broadcast(
-    db: AsyncSession, astrologer: Astrologer, title: str | None
+    db: AsyncSession, astrologer: Astrologer, title: str | None, *, end_existing: bool = False
 ) -> tuple[LiveBroadcast, object]:
     if astrologer.kyc_status != KYCStatus.approved:
         raise BroadcastError("Only approved astrologers can go live")
@@ -308,6 +465,16 @@ async def start_broadcast(
     if existing is not None:
         if is_stale(existing):
             await _force_end(db, existing)
+        elif end_existing:
+            # Deliberate restart (the astrologer tapped "Go Live" again from a
+            # fresh setup screen) — auto-end their prior broadcast server-side
+            # instead of rejecting the new one, so a stream left running on
+            # another device / a previous session doesn't block them. This is
+            # NOT the concurrent double-start race: that is still caught by the
+            # row lock above, and the service default (end_existing=False)
+            # keeps rejecting a genuinely-active broadcast so an accidental
+            # double-tap can't tear down a live session.
+            await _force_end(db, existing, reason="superseded")
         else:
             raise BroadcastError("You already have an active live broadcast")
 
@@ -351,6 +518,7 @@ async def end_broadcast(
     # cancel it so it doesn't wake up later only to find the broadcast
     # already (correctly) ended.
     _cancel_pending_disconnect(str(broadcast.id))
+    set_pinned_question(str(broadcast.id), None)
     await _broadcast_ended(broadcast.id, ended_by_role="astrologer", reason=None)
     return broadcast
 

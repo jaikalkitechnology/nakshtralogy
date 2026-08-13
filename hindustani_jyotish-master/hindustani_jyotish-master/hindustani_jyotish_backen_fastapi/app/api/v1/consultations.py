@@ -116,19 +116,46 @@ async def request_consultation(body: ConsultationRequest, user: CurrentUser, db:
     # produce. expires_at lets the app locally time out the actionable
     # notification in step with the server-side expiry sweep.
     expires_at = consult.created_at + timedelta(seconds=REQUEST_EXPIRY_SECONDS)
+    seeker_name = user.name or "A seeker"
     try:
-        await push_service.notify_astrologer(
-            db,
-            astrologer.id,
-            title="New consultation request",
-            body=f"{user.name or 'A seeker'} wants a {body.type.value} consultation.",
-            data={
-                "type": "consultation_request",
-                "consultation_id": str(consult.id),
-                "expires_at": expires_at.isoformat(),
-            },
-            notification_payload=False,
-        )
+        if body.type in (ConsultationType.call, ConsultationType.video):
+            # A call/video request should RING the astrologer, not just drop a
+            # passive request card. The astro app keys on type=="incoming_call"
+            # to present a full-screen ring (+ CallKit on iOS). Agora creds are
+            # only minted at accept time (see accept_consultation), so they are
+            # NOT in this payload — the app gets them from the accept response
+            # and routes into the live call. Data-only so the astro app builds
+            # the full-screen call notification itself (native FCM auto-display
+            # can't). The 8s Requests-screen poll remains the safety net.
+            await push_service.notify_astrologer(
+                db,
+                astrologer.id,
+                title=f"Incoming {body.type.value} call",
+                body=f"{seeker_name} is calling you.",
+                data={
+                    "type": "incoming_call",
+                    "consultation_id": str(consult.id),
+                    "call_id": str(consult.id),
+                    "caller_name": seeker_name,
+                    "call_type": body.type.value,
+                    "rate": str(rate),
+                    "expires_at": expires_at.isoformat(),
+                },
+                notification_payload=False,
+            )
+        else:
+            await push_service.notify_astrologer(
+                db,
+                astrologer.id,
+                title="New consultation request",
+                body=f"{seeker_name} wants a {body.type.value} consultation.",
+                data={
+                    "type": "consultation_request",
+                    "consultation_id": str(consult.id),
+                    "expires_at": expires_at.isoformat(),
+                },
+                notification_payload=False,
+            )
     except Exception:  # noqa: BLE001 — push must never fail the request
         logger.exception("push notify_astrologer failed for consult %s", consult.id)
 
@@ -350,6 +377,73 @@ def _message_payload(msg: ConsultationMessage) -> dict:
     }
 
 
+def _presence_key(role: str, principal_id) -> str:
+    return f"{role}:{principal_id}"
+
+
+async def _push_chat_message_if_offline(
+    db, consult: Consultation, *, sender_role: str, body: str
+) -> None:
+    """Push a ``chat_message`` to the message's RECIPIENT, but ONLY when they
+    are not currently connected on this consultation's chat WebSocket — the
+    live socket already delivered it otherwise (mirrors Nakshtralogy's
+    ``_recipient_connected`` gate). Best-effort: a push failure must never
+    affect the send that triggered it.
+
+    The payload carries what the client needs to open the chat from a cold
+    tap: the consultation id + type, the sender's name, and a short preview.
+    """
+    if consult.type != ConsultationType.chat:
+        return
+    room = str(consult.id)
+    preview = (body or "").strip()[:200]
+    try:
+        if sender_role == "user":
+            recipient_key = _presence_key("astrologer", consult.astrologer_id)
+            if chat_manager.is_present(room, recipient_key):
+                return
+            sender = await db.get(User, consult.user_id)
+            sender_name = (getattr(sender, "name", None) or "A seeker")
+            await push_service.notify_astrologer(
+                db,
+                consult.astrologer_id,
+                title=sender_name,
+                body=preview or "New message",
+                data={
+                    "type": "chat_message",
+                    "consultation_id": room,
+                    "consultation_type": "chat",
+                    "sender_role": "user",
+                    "sender_name": sender_name,
+                    "preview": preview,
+                    "rate": str(consult.rate),
+                },
+            )
+        else:
+            recipient_key = _presence_key("user", consult.user_id)
+            if chat_manager.is_present(room, recipient_key):
+                return
+            sender = await db.get(Astrologer, consult.astrologer_id)
+            sender_name = (getattr(sender, "display_name", None) or "Your astrologer")
+            await push_service.notify_user(
+                db,
+                consult.user_id,
+                title=sender_name,
+                body=preview or "New message",
+                data={
+                    "type": "chat_message",
+                    "consultation_id": room,
+                    "consultation_type": "chat",
+                    "sender_role": "astrologer",
+                    "sender_name": sender_name,
+                    "preview": preview,
+                    "rate": str(consult.rate),
+                },
+            )
+    except Exception:  # noqa: BLE001 — push must never break the message send
+        logger.exception("chat_message push failed for consult %s", consult.id)
+
+
 @router.post("/consultations/{consultation_id}/messages", response_model=MessageOut, status_code=201)
 async def post_message(
     consultation_id: uuid.UUID, body: MessageCreate, principal: CurrentPrincipal, db: DBSession
@@ -370,6 +464,10 @@ async def post_message(
     await chat_manager.broadcast(str(consult.id), _message_payload(msg))
     if consult.status == ConsultationStatus.completed:
         await chat_manager.broadcast(str(consult.id), {"kind": "status", "status": "completed"})
+    # FCM fallback for a recipient who is NOT on the live socket.
+    await _push_chat_message_if_offline(
+        db, consult, sender_role=principal.role, body=body.body
+    )
     return MessageOut.model_validate(msg)
 
 
@@ -573,6 +671,10 @@ async def consultation_chat_ws(websocket: WebSocket, consultation_id: uuid.UUID)
         current_status = consult.status.value
 
     await chat_manager.connect(room, websocket)
+    # Mark this principal present so the per-message push gate knows the
+    # RECIPIENT is on the live socket and skips the (redundant) FCM push.
+    presence_key = _presence_key(role, principal_id)
+    chat_manager.mark_present(room, presence_key)
     try:
         await websocket.send_json({"kind": "status", "status": current_status})
         await websocket.send_json({"kind": "history", "messages": history})
@@ -599,9 +701,16 @@ async def consultation_chat_ws(websocket: WebSocket, consultation_id: uuid.UUID)
                     await websocket.send_json({"kind": "error", "detail": str(exc)})
                     continue
                 payload = _message_payload(msg)
+                # FCM fallback for a recipient who is NOT on the live socket.
+                await _push_chat_message_if_offline(
+                    db, consult, sender_role=role, body=body.strip()
+                )
+                await db.commit()
 
             await chat_manager.broadcast(room, payload)
     except WebSocketDisconnect:
         chat_manager.disconnect(room, websocket)
     except Exception:  # noqa: BLE001 — ensure the socket is always deregistered
         chat_manager.disconnect(room, websocket)
+    finally:
+        chat_manager.mark_absent(room, presence_key)

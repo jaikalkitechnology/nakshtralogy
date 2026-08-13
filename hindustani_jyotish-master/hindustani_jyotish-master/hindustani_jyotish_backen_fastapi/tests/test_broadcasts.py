@@ -436,3 +436,183 @@ async def test_crash_before_first_socket_connect_force_ends(client, monkeypatch)
         from app.models.astrologer import Astrologer as _A
         astro = await db.get(_A, uuid.UUID(aid))
         assert astro.is_live is False
+
+
+# ── Auto-end previous stream on a deliberate restart (Phase 6) ─────────────
+async def test_start_with_end_existing_auto_ends_prior_broadcast(client):
+    """`end_existing=True` (a deliberate "Go Live" again) auto-ends the
+    astrologer's prior still-active broadcast instead of 409-ing."""
+    aid, ah = await _approved_astrologer(client, mobile="+919766000020")
+    r1 = await client.post("/v1/broadcasts/start", json={"title": "First"}, headers=ah)
+    assert r1.status_code == 200
+    old_id = r1.json()["broadcast"]["id"]
+
+    r2 = await client.post(
+        "/v1/broadcasts/start",
+        json={"title": "Second", "end_existing": True},
+        headers=ah,
+    )
+    assert r2.status_code == 200, r2.text
+    new_id = r2.json()["broadcast"]["id"]
+    assert new_id != old_id
+
+    async with AsyncSessionLocal() as db:
+        old = await db.get(LiveBroadcast, uuid.UUID(old_id))
+        assert old.ended_at is not None
+        new = await db.get(LiveBroadcast, uuid.UUID(new_id))
+        assert new.ended_at is None
+
+
+async def test_start_without_end_existing_still_409s(client):
+    """The default (no flag) MUST keep rejecting a genuinely-active broadcast
+    so an accidental double-tap can't tear down a live session."""
+    aid, ah = await _approved_astrologer(client, mobile="+919766000021")
+    assert (
+        await client.post("/v1/broadcasts/start", json={"title": "A"}, headers=ah)
+    ).status_code == 200
+    r2 = await client.post("/v1/broadcasts/start", json={"title": "B"}, headers=ah)
+    assert r2.status_code == 409
+
+
+# ── Heartbeat watchdog (Phase 6) ───────────────────────────────────────────
+async def _set_heartbeat(broadcast_id: str, *, seconds_ago: int) -> None:
+    async with AsyncSessionLocal() as db:
+        broadcast = await db.get(LiveBroadcast, uuid.UUID(broadcast_id))
+        broadcast.last_heartbeat_at = utcnow() - timedelta(seconds=seconds_ago)
+        await db.commit()
+
+
+async def test_expire_unhealthy_force_ends_stale_heartbeat(client, monkeypatch):
+    """A live broadcast whose host heartbeat went stale past the grace window
+    is force-ended by the heartbeat watchdog (survives worker restart, unlike
+    the in-memory disconnect-grace timer)."""
+    captured: dict = {}
+
+    async def _fake_broadcast(room, payload):
+        captured.update(payload)
+
+    monkeypatch.setattr(broadcast_service.chat_manager, "broadcast", _fake_broadcast)
+
+    aid, ah = await _approved_astrologer(client, mobile="+919766000022")
+    broadcast_id = (
+        await client.post("/v1/broadcasts/start", json={}, headers=ah)
+    ).json()["broadcast"]["id"]
+    await _set_heartbeat(
+        broadcast_id, seconds_ago=broadcast_service.BROADCAST_HEARTBEAT_GRACE_SECONDS + 30
+    )
+
+    async with AsyncSessionLocal() as db:
+        count = await broadcast_service.expire_unhealthy_broadcasts(db)
+    assert count == 1
+    assert captured["kind"] == "ended"
+    assert captured["reason"] == "connection lost"
+
+    async with AsyncSessionLocal() as db:
+        broadcast = await db.get(LiveBroadcast, uuid.UUID(broadcast_id))
+        assert broadcast.ended_at is not None
+
+
+async def test_expire_unhealthy_leaves_fresh_and_heartbeatless_alone(client):
+    """A recent heartbeat, and a broadcast that never sent one, are both left
+    live by the heartbeat watchdog (the latter is owned by the disconnect-grace
+    timer + 6h backstop)."""
+    aid, ah = await _approved_astrologer(client, mobile="+919766000023")
+    fresh_id = (
+        await client.post("/v1/broadcasts/start", json={}, headers=ah)
+    ).json()["broadcast"]["id"]
+    await _set_heartbeat(fresh_id, seconds_ago=5)
+
+    aid2, ah2 = await _approved_astrologer(client, mobile="+919766000024")
+    none_id = (
+        await client.post("/v1/broadcasts/start", json={}, headers=ah2)
+    ).json()["broadcast"]["id"]  # no heartbeat ever stamped
+
+    async with AsyncSessionLocal() as db:
+        count = await broadcast_service.expire_unhealthy_broadcasts(db)
+    assert count == 0
+
+    async with AsyncSessionLocal() as db:
+        assert (await db.get(LiveBroadcast, uuid.UUID(fresh_id))).ended_at is None
+        assert (await db.get(LiveBroadcast, uuid.UUID(none_id))).ended_at is None
+
+
+async def test_record_heartbeat_stamps_live_broadcast(client):
+    aid, ah = await _approved_astrologer(client, mobile="+919766000025")
+    broadcast_id = (
+        await client.post("/v1/broadcasts/start", json={}, headers=ah)
+    ).json()["broadcast"]["id"]
+
+    async with AsyncSessionLocal() as db:
+        assert (await db.get(LiveBroadcast, uuid.UUID(broadcast_id))).last_heartbeat_at is None
+
+    await broadcast_service.record_heartbeat(broadcast_id)
+
+    async with AsyncSessionLocal() as db:
+        assert (await db.get(LiveBroadcast, uuid.UUID(broadcast_id))).last_heartbeat_at is not None
+
+
+# ── Pinned "Answering now" Q&A (Phase 6) ───────────────────────────────────
+async def test_pin_and_unpin_question_over_websocket(client):
+    aid, ah = await _approved_astrologer(client, mobile="+919766000026")
+    broadcast_id = (
+        await client.post("/v1/broadcasts/start", json={}, headers=ah)
+    ).json()["broadcast"]["id"]
+    token = create_access_token(aid, role="astrologer")
+
+    with TestClient(app) as tc:
+        with tc.websocket_connect(f"/v1/broadcasts/{broadcast_id}/chat?token={token}") as host_ws:
+            host_ws.receive_json()  # system "joined"
+            # A viewer joins mid-session.
+            with tc.websocket_connect(f"/v1/broadcasts/{broadcast_id}/chat") as viewer_ws:
+                host_ws.receive_json()  # system "joined" (viewer)
+                viewer_ws.receive_json()  # system "joined" (self)
+
+                # Host pins a viewer question.
+                host_ws.send_json({"type": "pin", "user": "Ravi", "message": "Career in 2026?"})
+                p_host = host_ws.receive_json()
+                p_viewer = viewer_ws.receive_json()
+                assert p_host["kind"] == "pinned"
+                assert p_viewer["kind"] == "pinned"
+                assert p_viewer["user"] == "Ravi"
+                assert p_viewer["message"] == "Career in 2026?"
+
+            # A late-joiner gets the current pin replayed on connect.
+            with tc.websocket_connect(f"/v1/broadcasts/{broadcast_id}/chat") as late_ws:
+                first = late_ws.receive_json()
+                assert first["kind"] == "pinned"
+                assert first["user"] == "Ravi"
+
+            # Host unpins.
+            host_ws.send_json({"type": "unpin"})
+            # Drain frames until the unpinned one (a late-joiner's system frame
+            # may arrive first on the host socket).
+            for _ in range(5):
+                frame = host_ws.receive_json()
+                if frame["kind"] == "unpinned":
+                    break
+            else:
+                raise AssertionError("never received unpinned frame")
+
+
+async def test_viewer_cannot_pin_question(client):
+    """A pin frame from a non-broadcaster socket is ignored (no fan-out)."""
+    aid, ah = await _approved_astrologer(client, mobile="+919766000027")
+    broadcast_id = (
+        await client.post("/v1/broadcasts/start", json={}, headers=ah)
+    ).json()["broadcast"]["id"]
+
+    with TestClient(app) as tc:
+        with tc.websocket_connect(f"/v1/broadcasts/{broadcast_id}/chat") as viewer_ws:
+            viewer_ws.receive_json()  # system "joined" (self)
+            # A viewer's pin control frame is swallowed entirely — it does NOT
+            # fan out as a pinned event OR as a chat (even though it carries a
+            # `message` key).
+            viewer_ws.send_json({"type": "pin", "user": "X", "message": "hi"})
+            # A normal chat still round-trips — proves the socket is alive and
+            # the pin was simply ignored, not that it errored. The very next
+            # frame must be this chat, not the ignored pin.
+            viewer_ws.send_json({"message": "hello"})
+            frame = viewer_ws.receive_json()
+            assert frame["kind"] == "chat"
+            assert frame["message"] == "hello"
+    assert broadcast_service.get_pinned_question(broadcast_id) is None
