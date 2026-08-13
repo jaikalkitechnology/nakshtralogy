@@ -727,6 +727,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System default'**
   String get themeSystem;
+
+  /// No description provided for @callIncomingVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming voice call'**
+  String get callIncomingVoice;
+
+  /// No description provided for @callIncomingVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming video call'**
+  String get callIncomingVideo;
+
+  /// No description provided for @callRatePerMin.
+  ///
+  /// In en, this message translates to:
+  /// **'₹{rate}/min'**
+  String callRatePerMin(String rate);
+
+  /// No description provided for @callAutoDeclineIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-decline in {seconds}s'**
+  String callAutoDeclineIn(int seconds);
+
+  /// No description provided for @callAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get callAccept;
+
+  /// No description provided for @callDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get callDecline;
+
+  /// No description provided for @callConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting…'**
+  String get callConnecting;
+
+  /// No description provided for @callExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Call expired'**
+  String get callExpired;
+
+  /// No description provided for @callExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This call request is no longer available.'**
+  String get callExpiredBody;
+
+  /// No description provided for @callCouldNotStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Call could not start: the server did not return Agora call details.'**
+  String get callCouldNotStart;
 }
 
 class _AppLocalizationsDelegate

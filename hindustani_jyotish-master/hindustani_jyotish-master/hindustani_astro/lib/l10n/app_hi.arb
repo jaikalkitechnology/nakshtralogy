@@ -117,5 +117,18 @@
   "profileTheme": "थीम",
   "themeDark": "डार्क",
   "themeLight": "लाइट",
-  "themeSystem": "सिस्टम डिफ़ॉल्ट"
+  "themeSystem": "सिस्टम डिफ़ॉल्ट",
+
+  "callIncomingVoice": "इनकमिंग वॉइस कॉल",
+  "callIncomingVideo": "इनकमिंग वीडियो कॉल",
+  "callRatePerMin": "₹{rate}/मिनट",
+  "@callRatePerMin": { "placeholders": { "rate": { "type": "String" } } },
+  "callAutoDeclineIn": "{seconds} सेकंड में अपने-आप अस्वीकार",
+  "@callAutoDeclineIn": { "placeholders": { "seconds": { "type": "int" } } },
+  "callAccept": "स्वीकारें",
+  "callDecline": "अस्वीकारें",
+  "callConnecting": "कनेक्ट हो रहा है…",
+  "callExpired": "कॉल समाप्त",
+  "callExpiredBody": "यह कॉल अनुरोध अब उपलब्ध नहीं है।",
+  "callCouldNotStart": "कॉल शुरू नहीं हो सकी: सर्वर ने Agora कॉल विवरण नहीं लौटाया।"
 }

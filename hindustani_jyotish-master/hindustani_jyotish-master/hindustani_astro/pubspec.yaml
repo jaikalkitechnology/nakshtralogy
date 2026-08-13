@@ -62,6 +62,9 @@ dependencies:
   google_sign_in_platform_interface: ^2.5.0
   flutter_local_notifications: ^18.0.1
   url_launcher: ^6.3.2
+  # Native CallKit (iOS) / full-screen ConnectionService (Android) incoming-call
+  # UI + PushKit VoIP token, for ringing a backgrounded/killed astrologer app.
+  flutter_callkit_incoming: ^2.5.2
 
 dev_dependencies:
   flutter_test:

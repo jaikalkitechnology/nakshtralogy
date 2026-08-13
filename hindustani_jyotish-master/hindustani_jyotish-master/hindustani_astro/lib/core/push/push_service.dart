@@ -3,17 +3,27 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show debugPrint, defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
+import '../../features/requests/ui/incoming_call_screen.dart';
 import '../../router/app_router.dart';
+import '../call/callkit_service.dart';
 
 /// Android notification channel used for local (foreground) notifications so
 /// they show with the same high-priority behaviour as background FCM ones.
 const String _kDefaultChannelId = 'hj_default_channel';
 const String _kDefaultChannelName = 'Notifications';
+
+/// High-priority call channel: an incoming-call push must ring like a call —
+/// max importance, call category, full-screen intent — even when the app is
+/// backgrounded/killed (Android). The in-app ring screen / iOS CallKit handle
+/// the foreground and iOS cases; this is the backgrounded-Android surface.
+const String _kCallChannelId = 'hj_incoming_calls';
+const String _kCallChannelName = 'Incoming calls';
 
 /// Notification-action ids for the "new consultation request" push. Wired to
 /// the same accept/decline flow as the in-app Requests screen buttons.
@@ -59,14 +69,23 @@ Future<void> _initLocalNotificationsPlugin(
     _kDefaultChannelName,
     importance: Importance.high,
   );
-  await plugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
+  const callChannel = AndroidNotificationChannel(
+    _kCallChannelId,
+    _kCallChannelName,
+    description: 'Full-screen ring for incoming voice/video calls',
+    importance: Importance.max,
+    playSound: true,
+    enableVibration: true,
+  );
+  final android = plugin.resolvePlatformSpecificImplementation<
+      AndroidFlutterLocalNotificationsPlugin>();
+  await android?.createNotificationChannel(channel);
+  await android?.createNotificationChannel(callChannel);
 }
 
 String _defaultTitleFor(String? type) => switch (type) {
       'consultation_request' => 'New consultation request',
+      'incoming_call' => 'Incoming call',
       'consultation_ended' => 'Consultation ended',
       _ => 'Notification',
     };
@@ -84,6 +103,29 @@ String _defaultTitleFor(String? type) => switch (type) {
 /// already-running/resumed app's session sidesteps a separate token-refresh
 /// dance for a background action.
 NotificationDetails _notificationDetailsFor(String? type) {
+  if (type == 'incoming_call') {
+    // Call-style: max importance + call category + full-screen intent so a
+    // backgrounded/killed Android app rings full-screen. Tapping it opens the
+    // app and presents the in-app ring (which then accepts with a live
+    // authenticated session — the astrologer app never persists an access
+    // token, so a headless background Accept can't act; see PushService docs).
+    return const NotificationDetails(
+      android: AndroidNotificationDetails(
+        _kCallChannelId,
+        _kCallChannelName,
+        channelDescription: 'Full-screen ring for incoming voice/video calls',
+        importance: Importance.max,
+        priority: Priority.max,
+        category: AndroidNotificationCategory.call,
+        fullScreenIntent: true,
+        ongoing: true,
+        autoCancel: false,
+        playSound: true,
+        enableVibration: true,
+        timeoutAfter: 60000,
+      ),
+    );
+  }
   if (type == 'consultation_request') {
     return const NotificationDetails(
       android: AndroidNotificationDetails(
@@ -229,6 +271,11 @@ class PushService {
       if (!kIsWeb) {
         FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
         await _initLocalNotifications();
+        // CallKit / VoIP bridge (native ring + Accept/Decline → live call).
+        await CallkitService().init();
+        // Cold start from tapping a call notification the background isolate
+        // raised (data-only, so FCM's getInitialMessage doesn't cover it).
+        await _handleCallLaunchFromLocalNotification();
       }
 
       final messaging = FirebaseMessaging.instance;
@@ -356,6 +403,13 @@ class PushService {
         return;
       }
 
+      // Tapping the full-screen call notification presents the in-app ring,
+      // whose Accept acts with a live authenticated session.
+      if (data['type'] == 'incoming_call') {
+        _presentRing(data);
+        return;
+      }
+
       final location = _locationForType(data['type'] as String?);
       if (location != null) _go(location);
     } catch (e) {
@@ -367,6 +421,12 @@ class PushService {
   /// automatically while the app is in the foreground.
   void _onForegroundMessage(RemoteMessage message) {
     debugPrint('[push] foreground message: ${message.data}');
+    // An incoming call in the foreground rings immediately (in-app ring on
+    // Android, native CallKit on iOS) rather than a passive tray notification.
+    if (message.data['type'] == 'incoming_call') {
+      _presentRing(Map<String, dynamic>.from(message.data));
+      return;
+    }
     if (!kIsWeb) {
       unawaited(_showLocalNotificationForMessage(flutterLocalNotificationsPlugin, message));
     }
@@ -376,8 +436,52 @@ class PushService {
   /// by `data.type`. Resilient — a missing/unknown type simply does nothing.
   void _onMessageOpened(RemoteMessage message) {
     debugPrint('[push] notification tapped: ${message.data}');
+    if (message.data['type'] == 'incoming_call') {
+      _presentRing(Map<String, dynamic>.from(message.data));
+      return;
+    }
     final location = _locationForType(message.data['type']);
     if (location != null) _go(location);
+  }
+
+  /// Presents the incoming-call ring from a push `data` payload: native CallKit
+  /// on iOS, the in-app ring screen on Android. Deduped across channels by
+  /// [IncomingCallGuard] inside each presenter.
+  void _presentRing(Map<String, dynamic> data) {
+    final callId =
+        (data['call_id'] ?? data['consultation_id'] ?? '').toString();
+    if (callId.isEmpty) return;
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      unawaited(CallkitService().showIncomingCall(data));
+      return;
+    }
+    presentIncomingCall(
+      callId: callId,
+      callerName: (data['caller_name'] ?? 'Seeker').toString(),
+      callType: (data['call_type'] ?? 'call').toString(),
+      rate: double.tryParse('${data['rate'] ?? 0}') ?? 0,
+    );
+  }
+
+  /// Cold-start case: the app was launched by tapping the full-screen call
+  /// notification the background isolate raised (data-only, so FCM's own
+  /// getInitialMessage doesn't surface it). Read the launch details and, if it
+  /// was our call notification, present the ring once the UI is ready.
+  Future<void> _handleCallLaunchFromLocalNotification() async {
+    try {
+      final details = await flutterLocalNotificationsPlugin
+          .getNotificationAppLaunchDetails();
+      if (details == null || !details.didNotificationLaunchApp) return;
+      final payload = details.notificationResponse?.payload;
+      if (payload == null || payload.isEmpty) return;
+      final data = Map<String, dynamic>.from(
+          jsonDecode(payload) as Map<String, dynamic>);
+      if (data['type'] == 'incoming_call') {
+        _presentRing(data);
+      }
+    } catch (e) {
+      debugPrint('[push] call launch-details check failed: $e');
+    }
   }
 
   /// The in-app route for a given push `type`. Returns null for unknown types.

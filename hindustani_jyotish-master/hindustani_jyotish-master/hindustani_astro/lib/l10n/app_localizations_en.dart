@@ -337,4 +337,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System default';
+
+  @override
+  String get callIncomingVoice => 'Incoming voice call';
+
+  @override
+  String get callIncomingVideo => 'Incoming video call';
+
+  @override
+  String callRatePerMin(String rate) {
+    return '₹$rate/min';
+  }
+
+  @override
+  String callAutoDeclineIn(int seconds) {
+    return 'Auto-decline in ${seconds}s';
+  }
+
+  @override
+  String get callAccept => 'Accept';
+
+  @override
+  String get callDecline => 'Decline';
+
+  @override
+  String get callConnecting => 'Connecting…';
+
+  @override
+  String get callExpired => 'Call expired';
+
+  @override
+  String get callExpiredBody => 'This call request is no longer available.';
+
+  @override
+  String get callCouldNotStart =>
+      'Call could not start: the server did not return Agora call details.';
 }

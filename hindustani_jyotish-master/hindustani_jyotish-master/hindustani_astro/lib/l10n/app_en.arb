@@ -118,5 +118,18 @@
   "profileTheme": "Appearance",
   "themeDark": "Dark",
   "themeLight": "Light",
-  "themeSystem": "System default"
+  "themeSystem": "System default",
+
+  "callIncomingVoice": "Incoming voice call",
+  "callIncomingVideo": "Incoming video call",
+  "callRatePerMin": "₹{rate}/min",
+  "@callRatePerMin": { "placeholders": { "rate": { "type": "String" } } },
+  "callAutoDeclineIn": "Auto-decline in {seconds}s",
+  "@callAutoDeclineIn": { "placeholders": { "seconds": { "type": "int" } } },
+  "callAccept": "Accept",
+  "callDecline": "Decline",
+  "callConnecting": "Connecting…",
+  "callExpired": "Call expired",
+  "callExpiredBody": "This call request is no longer available.",
+  "callCouldNotStart": "Call could not start: the server did not return Agora call details."
 }

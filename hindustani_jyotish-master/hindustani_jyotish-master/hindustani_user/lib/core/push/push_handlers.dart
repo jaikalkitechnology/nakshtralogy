@@ -18,6 +18,15 @@ void handlePushTap(RemoteMessage message) {
 
   switch (data['type']) {
     case 'consultation_accepted':
+      // Wakes the seeker's connecting screen: an accepted request (chat or
+      // call/video) deep-links straight into the live consultation.
+      final id = data['consultation_id'];
+      if (id is String && id.isNotEmpty) {
+        ctx.push('/consultation/$id', extra: _consultationType(data));
+      }
+    case 'chat_message':
+      // A new message arrived while the chat wasn't on the live socket — open
+      // the consultation so the seeker can read/reply.
       final id = data['consultation_id'];
       if (id is String && id.isNotEmpty) {
         ctx.push('/consultation/$id', extra: _consultationType(data));

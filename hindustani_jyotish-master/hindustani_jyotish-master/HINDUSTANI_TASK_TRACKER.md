@@ -22,8 +22,8 @@ and updates the **Status** here. We review each phase's diff before the next.
 | Phase | Title | Status | Depends on |
 |---|---|---|---|
 | 1 | Theme: dark-only | ✅ | — |
-| 2 | Notifications + incoming-call ring + CallKit | 🟡 | 1 |
-| 3 | Chat reliability | ⬜ | 2 |
+| 2 | Notifications + incoming-call ring + CallKit | ✅ | 1 |
+| 3 | Chat reliability | 🟡 | 2 |
 | 4 | Audio/Video call guards & polish | ⬜ | 2 |
 | 5 | Billing display during communication | ⬜ | 4 |
 | 6 | Live streaming enhancements | ⬜ | 3,4 |
