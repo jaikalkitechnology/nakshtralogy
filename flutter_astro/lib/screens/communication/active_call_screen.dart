@@ -45,6 +45,8 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
   bool _isMuted = false;
   bool _isSpeaker = false;
   bool _isVideoEnabled = true;
+  bool _localVideoOn = false;      // true once the local camera is actually capturing
+  bool _camStarting = false;
   bool _remoteJoined = false;
   int? _remoteUid;
   bool _ending = false;
@@ -104,6 +106,13 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
             ));
           }
         },
+        onLocalVideoStateChanged: (source, state, reason) {
+          // Track whether our camera is really capturing so the web "tap to
+          // start camera" fallback can hide once it's on.
+          final on = state == LocalVideoStreamState.localVideoStreamStateCapturing ||
+              state == LocalVideoStreamState.localVideoStreamStateEncoding;
+          if (mounted && on != _localVideoOn) setState(() => _localVideoOn = on);
+        },
         onUserOffline: (connection, remoteUid, reason) {
           debugPrint('Remote user left: $remoteUid reason=$reason');
           // The user intentionally hung up (quit) → end cleanly and say so,
@@ -151,8 +160,11 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
       ));
 
       if (widget.callType == 'video') {
-        await _engine!.enableVideo();
-        await _engine!.startPreview();
+        // Try to start the camera. On iOS Safari/PWA this getUserMedia call is
+        // NOT inside a user gesture, so it may be blocked (→ no preview). The
+        // "Tap to start your camera" overlay (web) lets the astrologer start it
+        // from a real tap. On native/Android this just works.
+        await _startLocalCamera();
       } else {
         await _engine!.disableVideo();
       }
@@ -189,6 +201,26 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
           backgroundColor: AppColors.error, duration: const Duration(seconds: 6),
         ));
       }
+    }
+  }
+
+  /// Enable video + start the local camera preview. On web this MUST run from a
+  /// user gesture (iOS Safari blocks getUserMedia otherwise), so it's also wired
+  /// to the "Tap to start your camera" overlay. Safe to call more than once.
+  Future<void> _startLocalCamera() async {
+    if (_engine == null || _camStarting || _localVideoOn) return;
+    _camStarting = true;
+    if (mounted) setState(() {});
+    try {
+      await _engine!.enableVideo();
+      await _engine!.startPreview();
+      // Make sure the camera track is actually published to the peer.
+      await _engine!.muteLocalVideoStream(false);
+    } catch (e) {
+      debugPrint('startLocalCamera error: $e');
+    } finally {
+      _camStarting = false;
+      if (mounted) setState(() {});
     }
   }
 
@@ -313,17 +345,42 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
                   borderRadius: BorderRadius.circular(12),
                   child: SizedBox(
                     width: 120, height: 160,
-                    child: _isVideoEnabled
-                        ? AgoraVideoView(
-                            controller: VideoViewController(
-                              rtcEngine: _engine!,
-                              canvas: const VideoCanvas(uid: 0),
+                    child: Stack(fit: StackFit.expand, children: [
+                      _isVideoEnabled
+                          ? AgoraVideoView(
+                              controller: VideoViewController(
+                                rtcEngine: _engine!,
+                                canvas: const VideoCanvas(uid: 0),
+                              ),
+                            )
+                          : Container(
+                              color: AppColors.card,
+                              child: const Center(child: Icon(Icons.videocam_off, color: AppColors.textSecondary, size: 32)),
                             ),
-                          )
-                        : Container(
-                            color: AppColors.card,
-                            child: const Center(child: Icon(Icons.videocam_off, color: AppColors.textSecondary, size: 32)),
+                      // iOS Safari/PWA blocks the camera unless it starts from a
+                      // tap — show a tap-to-start overlay until it's capturing.
+                      if (kIsWeb && _isVideoEnabled && !_localVideoOn)
+                        GestureDetector(
+                          onTap: _startLocalCamera,
+                          child: Container(
+                            color: Colors.black.withOpacity(0.72),
+                            child: Center(
+                              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                                _camStarting
+                                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.gold))
+                                    : const Icon(Icons.videocam, color: AppColors.gold, size: 26),
+                                const SizedBox(height: 6),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text('Tap to start\nyour camera',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.w600)),
+                                ),
+                              ]),
+                            ),
                           ),
+                        ),
+                    ]),
                   ),
                 ),
               ),
