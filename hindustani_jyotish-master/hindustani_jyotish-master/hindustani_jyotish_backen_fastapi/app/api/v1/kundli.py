@@ -41,20 +41,20 @@ from app.core.deps import CurrentUser, DBSession
 from app.kundli import engine as nk_engine
 from app.models.kundli import KundliReport
 from app.models.user import User
-from app.models.wallet import TransactionType
-from app.services.astro import pricing
+from app.services import nakshatralogy as nk
+from app.services.nakshatralogy import NakshatralogyError
 from app.services.wallet_service import money
-from app.services import wallet_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["kundli (full analysis)"])
 
-# The report `type` these engine-computed charts are stored under, and the
-# cosmic_services pricing key charged for a fresh compute (reused — no new
-# admin row / migration needed).
+# The report `type` these charts are stored under. (Phase B2: kundli is FREE —
+# no wallet charge — so there is no longer a pricing/charge key here.)
 _CHART_TYPE = "detailed_kundli"
-_CHARGE_KEY = "detailed_kundli"
+
+# Developer-API failure → clean 502 (kundli is free, so nothing to refund).
+_UPSTREAM_502 = "Astrology service is temporarily unavailable. Please try again."
 
 
 # ── envelope ──────────────────────────────────────────────────────────
@@ -106,11 +106,24 @@ _pdata_cache: "OrderedDict[str, dict]" = OrderedDict()
 _CACHE_MAX = 64
 
 
-def _strip_moola(bundle: dict) -> dict:
-    """Remove Moola Dasha from a full-analysis bundle (defensive; Moola is
-    excluded from Hindustani everywhere)."""
+def _strip_moola(bundle):
+    """Recursively remove every Moola-Dasha key from a bundle in place.
+
+    Drops the top-level ``moola_dasha`` section AND any nested ``moola`` /
+    ``moola_dasha`` sub-key (e.g. ``dasha_activation`` carries a ``moola``
+    lord block). Moola is excluded from Hindustani everywhere. The nakshatra
+    "Mula/Moola" and the "moolatrikona" dignity are chart *values*, never
+    dict keys, so they are untouched."""
     if isinstance(bundle, dict):
-        bundle.pop("moola_dasha", None)
+        for k in list(bundle.keys()):
+            kl = str(k).strip().lower()
+            if kl in ("moola", "moola_dasha", "moola dasha"):
+                bundle.pop(k, None)
+            else:
+                _strip_moola(bundle[k])
+    elif isinstance(bundle, list):
+        for item in bundle:
+            _strip_moola(item)
     return bundle
 
 
@@ -129,13 +142,19 @@ async def _load_report(chart_id: str, user: User, db: AsyncSession) -> KundliRep
 
 
 def _birth_inputs(report: KundliReport) -> dict:
-    """Birth details needed to recompute the chart, from the stored inputs."""
+    """Birth details needed to recompute the chart, from the stored inputs.
+
+    Accepts BOTH input shapes: the offline-engine ``/kundli/compute`` rows
+    (``tob``) and the external-provider ``/kundli/generate`` rows (``time``,
+    ISO ``dob`` — the engine's ``_parse_dob`` already normalises the date), so
+    a chart saved by either path can be reopened in the full viewer.
+    """
     inp = report.inputs_json or {}
     return {
         "name": inp.get("name") or "User",
         "gender": inp.get("gender") or "M",
         "dob": inp.get("dob") or "",
-        "tob": inp.get("tob") or "",
+        "tob": inp.get("tob") or inp.get("time") or "",
         "place": inp.get("place") or "",
     }
 
@@ -170,22 +189,21 @@ def _bundle(report: KundliReport) -> dict:
     return _strip_moola(dict(report.data_json or {}))
 
 
-# ── wallet gating ─────────────────────────────────────────────────────
+# ── developer-API request bodies ──────────────────────────────────────
 
 
-async def _guard_balance(db: AsyncSession, user: User) -> Decimal:
-    """Refuse admin-disabled service / insufficient balance up front,
-    returning the admin-configured price (same row the charge uses)."""
-    try:
-        price = await pricing.price_for_db(db, _CHARGE_KEY)
-    except pricing.ServiceDisabled:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "This service is currently unavailable.")
-    if money(user.wallet_balance) < price:
-        raise HTTPException(
-            status.HTTP_402_PAYMENT_REQUIRED,
-            f"Insufficient balance. Full Kundli costs ₹{price}.",
-        )
-    return price
+def _dev_birth(bi: dict) -> dict:
+    """Nakshatralogy developer-API birth body from birth inputs.
+
+    Gender is normalised to the provider's M/F/O set."""
+    g = (bi.get("gender") or "M").upper()
+    return {
+        "name": bi.get("name") or "User",
+        "gender": g if g in ("M", "F", "O") else "M",
+        "dob": bi.get("dob") or "",
+        "tob": bi.get("tob") or "",
+        "place": bi.get("place") or "",
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -199,35 +217,49 @@ async def kundli_health():
 
 
 # ═══════════════════════════════════════════════════════════════════
-#  1. COMPUTE + SAVE (paid) — the only wallet-charged action
+#  1. COMPUTE + SAVE — FREE (no wallet charge)
 # ═══════════════════════════════════════════════════════════════════
 
 
 @router.post("/kundli/compute")
 async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSession):
-    """Compute a full Kundli (offline engine) and save it as a paid report.
+    """Compute a full Kundli and save it. **FREE** — the user is charged nothing.
 
-    Charges the wallet once (``detailed_kundli`` price); returns the new
-    ``chart_id`` and the full analysis bundle (Moola excluded). Reopen any
-    section later for free via ``GET /kundli/{chart_id}/...``.
+    Data source, by preference:
+      * Nakshatralogy developer API (``POST /api/v2/kundli/all``) when a key is
+        configured — Nakshatralogy meters Hindustani's developer account
+        server-side; that operational cost is never passed to the end user.
+      * else the offline ported engine (``get_full_analysis``) — dev/CI-safe.
+
+    Moola Dasha is stripped either way. The bundle is persisted to
+    ``data_json`` so every ``GET /kundli/{chart_id}/...`` reopen is free.
     """
-    price = await _guard_balance(db, user)
-    try:
-        bundle = nk_engine.get_full_analysis(
-            req.name, req.gender, req.dob, req.tob, req.place, dasha_levels=2
-        )
-    except Exception as exc:
-        logger.exception("full kundli compute failed")
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, f"Chart compute failed: {exc}"
-        )
-    _strip_moola(bundle)
+    birth = {
+        "name": req.name, "gender": req.gender, "dob": req.dob,
+        "tob": req.tob, "place": req.place,
+    }
+    if nk.enabled():
+        try:
+            bundle = await nk.kundli_all(_dev_birth(birth), dasha_levels=2)
+        except NakshatralogyError:
+            logger.warning("dev-API /kundli/all failed for compute")
+            raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
+        source = "nakshatralogy"
+        engine_name = (bundle.get("chart") or {}).get("engine") or "nakshatralogy_dev_api"
+    else:
+        try:
+            bundle = nk_engine.get_full_analysis(
+                req.name, req.gender, req.dob, req.tob, req.place, dasha_levels=2
+            )
+        except Exception as exc:
+            logger.exception("full kundli compute failed")
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR, f"Chart compute failed: {exc}"
+            )
+        source = "engine"
+        engine_name = "nakshtralogy_v2"
 
-    # Charge only after a successful compute (offline, so no provider to
-    # refund — a failed compute simply never debits).
-    await wallet_service.debit_user(
-        db, user, price, type=TransactionType.report, reference_id=_CHARGE_KEY
-    )
+    _strip_moola(bundle)  # drops moola_dasha + any nested moola sub-keys
 
     report = KundliReport(
         user_id=user.id,
@@ -239,10 +271,11 @@ async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSessi
             "dob": req.dob,
             "tob": req.tob,
             "place": req.place,
-            "engine": "nakshtralogy_v2",
+            "engine": engine_name,
+            "source": source,
         },
         data_json=bundle,
-        amount_paid=price,
+        amount_paid=Decimal("0"),  # FREE — Phase B2
         expires_at=datetime.now(timezone.utc) + timedelta(days=365),
     )
     db.add(report)
@@ -253,9 +286,10 @@ async def compute_and_save(req: BirthDataRequest, user: CurrentUser, db: DBSessi
     return _ok(
         data,
         meta={
-            "amount_charged": str(money(price)),
+            "amount_charged": "0.00",  # kundli is free
             "wallet_balance": str(money(user.wallet_balance)),
-            "engine": bundle.get("chart", {}).get("engine"),
+            "engine": (bundle.get("chart") or {}).get("engine") or engine_name,
+            "source": source,
         },
     )
 
@@ -297,14 +331,23 @@ async def vimshottari(
     levels: int = Query(2, ge=1, le=6),
 ):
     report = await _load_report(chart_id, user, db)
-    # Fast path: the stored bundle already holds levels=2.
+    # Fast path: the stored bundle already holds levels=2 (free, no recompute).
     if levels == 2:
         stored = _bundle(report).get("vimshottari")
         if stored:
             return _ok(stored)
+    # Dev-API when configured, else the offline engine — both free to the user.
+    if nk.enabled():
+        try:
+            result = await nk.kundli_dasha_vimshottari(
+                _dev_birth(_birth_inputs(report)), levels
+            )
+        except NakshatralogyError:
+            raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
+        return _ok(_strip_moola(result))
     chart = _pdata_for(report)
     result = nk_engine.get_vimshottari(chart["_pdata"], chart["birth_jd"], levels)
-    return _ok(result)
+    return _ok(_strip_moola(result))
 
 
 # (Intentionally NO `/kundli/{chart_id}/dasha/moola` route — Moola excluded.)
@@ -347,9 +390,45 @@ async def gochar_range(req: GocharRangeRequest):
 # ═══════════════════════════════════════════════════════════════════
 
 
+# section-key → offline engine recompute, for reports whose stored bundle
+# predates the full engine (external-provider `/kundli/generate` rows store a
+# curated payload without these analysis blocks). Recompute is free & offline
+# (pyswisseph Moshier), consistent with the vimshottari/dasha-activation paths.
+def _recompute_section(report: KundliReport, key: str) -> dict:
+    try:
+        chart = _pdata_for(report)
+    except HTTPException:
+        return {}
+    pdata = chart["_pdata"]
+    bj = chart["birth_jd"]
+    try:
+        if key == "dosh_analysis":
+            return nk_engine.get_dosh_analysis(pdata)
+        if key == "yoga_analysis":
+            return nk_engine.get_yoga_analysis(pdata)
+        if key == "shadbala":
+            return nk_engine.get_shadbala(pdata, bj)
+        if key == "ashtakavarga":
+            return nk_engine.get_ashtakavarga(pdata)
+        if key == "aspect_matrix":
+            return nk_engine.get_aspect_matrix(pdata)
+        if key == "life_areas":
+            return nk_engine.get_life_areas(pdata)
+        if key == "bhava_strength":
+            return nk_engine.get_bhava_strength(pdata)
+        if key == "chakra_health":
+            return nk_engine.get_chakra_health(pdata)
+    except Exception:  # pragma: no cover - defensive
+        logger.exception("section recompute failed: %s", key)
+    return {}
+
+
 async def _section(chart_id: str, user: User, db: AsyncSession, key: str) -> dict:
     report = await _load_report(chart_id, user, db)
-    return _bundle(report).get(key) or {}
+    data = _bundle(report).get(key)
+    if not data:  # older/external rows — rebuild offline (free)
+        data = _recompute_section(report, key)
+    return data or {}
 
 
 @router.get("/kundli/{chart_id}/analysis/dosh")
@@ -401,9 +480,18 @@ async def dasha_activation(
         stored = _bundle(report).get("dasha_activation")
         if stored:
             return _ok(stored)
+    # Dev-API when configured, else the offline engine — both free to the user.
+    if nk.enabled():
+        try:
+            result = await nk.kundli_dasha_activation(
+                _dev_birth(_birth_inputs(report)), query_date
+            )
+        except NakshatralogyError:
+            raise HTTPException(status.HTTP_502_BAD_GATEWAY, _UPSTREAM_502)
+        return _ok(_strip_moola(result))
     chart = _pdata_for(report)
     result = nk_engine.get_dasha_activation(chart["_pdata"], chart["birth_jd"], query_date)
-    return _ok(result)
+    return _ok(_strip_moola(result))
 
 
 @router.get("/kundli/{chart_id}/analysis/chakra-health")

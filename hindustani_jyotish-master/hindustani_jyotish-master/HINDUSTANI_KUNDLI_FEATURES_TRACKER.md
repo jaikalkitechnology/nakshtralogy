@@ -18,7 +18,7 @@ Second work stream (after the comms tracker `HINDUSTANI_TASK_TRACKER.md`, all 7 
 |---|---|---|---|
 | A | Admin auto column-sync ("auto mode") + auto-everything | ✅ | — |
 | B | Kundli engine + backend router — full suite **minus Moola Dasha** | ✅ | A |
-| B2 | Source kundli from Nakshatralogy **developer API** + make it **FREE** | 🟡 | B |
+| B2 | Source kundli from Nakshatralogy **developer API** + make it **FREE** | ✅ | B |
 | C | Kundli full viewer UI (user app) — design-matched | 🟡 | B |
 
 ### PHASE B2 — developer-API source + free kundli  🟡

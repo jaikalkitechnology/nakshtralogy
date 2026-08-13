@@ -37,6 +37,13 @@ KUNDLI_PLANETS = "/api/v2/kundli/planets"
 FORECAST = "/api/v2/forecast"
 KUNDLI_MILAN = "/api/v2/reports/kundli_milan"
 
+# Developer-API full-suite + granular section endpoints (Phase B2). The
+# full-suite call returns the entire engine payload in one request; the
+# granular ones back the parametrised section endpoints (levels / query_date).
+KUNDLI_ALL = "/api/v2/kundli/all"
+KUNDLI_DASHA_VIMSHOTTARI = "/api/v2/kundli/dasha/vimshottari"
+KUNDLI_DASHA_ACTIVATION = "/api/v2/kundli/dasha-activation"
+
 # Tests inject an httpx.MockTransport here; None → real network transport.
 _transport: httpx.AsyncBaseTransport | None = None
 
@@ -83,3 +90,35 @@ async def call(path: str, payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(body, dict) or body.get("status") != "success" or not isinstance(body.get("data"), dict):
         raise NakshatralogyError("astrology service returned an unexpected response")
     return body["data"]
+
+
+# ── Kundli developer-API convenience wrappers (Phase B2) ──────────────
+#
+# Thin helpers over `call()` — they add the Bearer auth + error handling
+# (`NakshatralogyError` on any failure) already provided by `call()`, and
+# just assemble the request body from birth details. Callers still gate on
+# `enabled()` before invoking these (empty key → local engine fallback).
+
+
+async def kundli_all(birth: dict[str, Any], dasha_levels: int = 2) -> dict[str, Any]:
+    """POST /api/v2/kundli/all — the full engine suite in one call.
+
+    `birth` = {"name","gender"(M/F/O),"dob"(DD/MM/YYYY),"tob"(HH:MM),"place"}.
+    Returns the provider's `data` dict (chart, vimshottari, moola_dasha, …).
+    """
+    return await call(KUNDLI_ALL, {**birth, "dasha_levels": dasha_levels})
+
+
+async def kundli_dasha_vimshottari(birth: dict[str, Any], levels: int = 2) -> dict[str, Any]:
+    """POST /api/v2/kundli/dasha/vimshottari — Vimshottari tree at `levels`."""
+    return await call(KUNDLI_DASHA_VIMSHOTTARI, {**birth, "levels": levels})
+
+
+async def kundli_dasha_activation(
+    birth: dict[str, Any], query_date: str | None = None
+) -> dict[str, Any]:
+    """POST /api/v2/kundli/dasha-activation — active yogas/doshas for a date."""
+    payload = dict(birth)
+    if query_date:
+        payload["query_date"] = query_date
+    return await call(KUNDLI_DASHA_ACTIVATION, payload)
