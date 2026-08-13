@@ -1417,6 +1417,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get imageViewerClose;
+
+  /// Label on the pinned-question banner in a live stream — the question the astrologer is answering right now
+  ///
+  /// In en, this message translates to:
+  /// **'Answering now'**
+  String get liveAnsweringNow;
+
+  /// Label/tooltip for the top-gifters ribbon shown over a live stream
+  ///
+  /// In en, this message translates to:
+  /// **'Top gifters'**
+  String get liveTopGifters;
+
+  /// Shown over the live viewer while the host video is momentarily down and recovering
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting to video…'**
+  String get liveReconnectingVideo;
 }
 
 class _AppLocalizationsDelegate

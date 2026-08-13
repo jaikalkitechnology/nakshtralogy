@@ -261,5 +261,9 @@
   "reportsEmpty": "अभी कोई रिपोर्ट नहीं। पहली रिपोर्ट बनाने के लिए कोई अंतर्दृष्टि चलाएँ।",
   "reportsOpenPdf": "PDF खोलें",
 
-  "imageViewerClose": "बंद करें"
+  "imageViewerClose": "बंद करें",
+
+  "liveAnsweringNow": "अभी उत्तर दे रहे हैं",
+  "liveTopGifters": "शीर्ष उपहारदाता",
+  "liveReconnectingVideo": "वीडियो से पुनः कनेक्ट हो रहा है…"
 }

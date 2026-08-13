@@ -722,4 +722,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imageViewerClose => 'Close';
+
+  @override
+  String get liveAnsweringNow => 'Answering now';
+
+  @override
+  String get liveTopGifters => 'Top gifters';
+
+  @override
+  String get liveReconnectingVideo => 'Reconnecting to video…';
 }

@@ -43,6 +43,10 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
 
   final _title = TextEditingController(text: 'Evening Rashifal');
   final _compose = TextEditingController();
+
+  // The viewer the astrologer is @-tagging in their next reply (tap a viewer
+  // chat line to set it; cleared after sending or via the little chip).
+  String? _replyToName;
   // Attached to the inline compose TextField at the bottom of the live
   // overlay. History: this field spent a while exiled into a modal bottom
   // sheet (opened from a tap-to-compose pill) because the live Stack used
@@ -101,15 +105,14 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
     final text = _compose.text.trim();
     if (text.isEmpty) return;
     debugPrint('[GoLiveScreen] _sendChat: attempting to send "$text"');
-    // sendChat() now reports whether it actually had a live socket to send
-    // on — previously a send attempted with no open connection (dropped,
-    // mid-reconnect) just silently vanished with the compose field clearing
-    // as if it had gone out, which is indistinguishable from "chat is
-    // broken" from the astrologer's side. Surface it either way (success
-    // included) so it's never ambiguous whether a tap on Send actually did
-    // anything.
-    final sent = _cubit.sendChat(text);
+    // sendReply() @-tags the viewer being replied to (if any) and otherwise
+    // sends a plain line — same socket-send bool contract as before, so a
+    // send with no open connection (dropped, mid-reconnect) is surfaced
+    // rather than silently vanishing with the field cleared.
+    final tag = _replyToName;
+    final sent = _cubit.sendReply(text, toName: tag);
     _compose.clear();
+    setState(() => _replyToName = null);
     debugPrint('[GoLiveScreen] _sendChat: sent=$sent');
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -119,6 +122,49 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
         ),
       ),
     );
+  }
+
+  /// Tapping a viewer chat line targets them for the next reply (@name).
+  void _replyTo(String name) {
+    setState(() => _replyToName = name);
+    _composeFocus.requestFocus();
+  }
+
+  /// Long-pressing a viewer chat line pins it as "Answering now" for everyone.
+  void _pin(String user, String message) {
+    final sent = _cubit.pinQuestion(user, message);
+    if (!mounted) return;
+    if (!sent) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Couldn't pin — reconnecting to chat, try again.")),
+      );
+    }
+  }
+
+  /// Prompt for the gifting goal (₹). Empty/0 clears it.
+  Future<void> _editGiftGoal() async {
+    final current = _cubit.state.giftGoal;
+    final ctrl = TextEditingController(text: current > 0 ? current.toStringAsFixed(0) : '');
+    final value = await showDialog<double>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Set gifting goal'),
+        content: TextField(
+          controller: ctrl,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(prefixText: '₹ ', hintText: 'e.g. 5000'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(double.tryParse(ctrl.text.trim()) ?? 0),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (value == null) return;
+    await _cubit.setGiftGoal(value);
   }
 
   /// "End live broadcast?" confirmation — shared by the End button and the
@@ -378,6 +424,12 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    _RoundControl(
+                      icon: Icons.emoji_events_outlined,
+                      tooltip: 'Gifting goal',
+                      onTap: _editGiftGoal,
+                    ),
+                    const SizedBox(width: 10),
                     _MuteButton(agora: agora),
                     const SizedBox(width: 10),
                     _RoundControl(
@@ -389,6 +441,45 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+              // Gift goal progress + top-gifters ribbon. Always mounted, just
+              // toggled (Visibility maintainState) — same hit-test-safe
+              // convention as the reconnecting banner below.
+              Visibility(
+                visible: state.giftGoal > 0 || state.topGifters.isNotEmpty,
+                maintainState: true,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: _GiftRibbon(
+                    total: state.giftTotal,
+                    goal: state.giftGoal,
+                    topGifters: state.topGifters,
+                  ),
+                ),
+              ),
+              // Pinned "Answering now" question.
+              Visibility(
+                visible: state.hasPinned,
+                maintainState: true,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: _PinnedBanner(
+                    user: state.pinnedUser ?? '',
+                    message: state.pinnedMessage ?? '',
+                    onDone: _cubit.unpinQuestion,
+                  ),
+                ),
+              ),
+              // Media reconnect-grace banner (distinct from the chat one).
+              Visibility(
+                visible: state.mediaReconnecting,
+                maintainState: true,
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: _ReconnectingBanner(
+                    label: 'Reconnecting video…',
+                  ),
+                ),
+              ),
               // Visibility (element always mounted, maintainState so it's
               // never disposed/recreated), not `if (state.reconnecting) ...`.
               // A conditional widget swap inserts a brand-new element into
@@ -458,7 +549,19 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                         reverse: true,
                         padding: const EdgeInsets.symmetric(vertical: 6),
                         children: [
-                          for (final line in state.chat.reversed.take(8)) _ChatBubble(line: line),
+                          for (final line in state.chat.reversed.take(8))
+                            // Tap a plain viewer line to @-reply; long-press to
+                            // pin it as "Answering now". Super Chat/Gift rows
+                            // aren't tappable (nothing to reply to / pin).
+                            if (line.kind == 'chat')
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () => _replyTo(line.user),
+                                onLongPress: () => _pin(line.user, line.text ?? ''),
+                                child: _ChatBubble(line: line),
+                              )
+                            else
+                              _ChatBubble(line: line),
                         ],
                       ),
                     ),
@@ -483,35 +586,71 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                   16,
                   MediaQuery.of(context).viewInsets.bottom + 12,
                 ),
-                child: Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.35),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: AppColors.borderSoft),
-                        ),
-                        child: TextField(
-                          controller: _compose,
-                          focusNode: _composeFocus,
-                          style: AppTextStyles.body(size: 14, color: Colors.white),
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: (_) => _sendChat(),
-                          decoration: const InputDecoration(
-                            hintText: 'Say hi to your viewers…',
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none,
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    // "Replying to @name" chip — always mounted, toggled so it
+                    // never inserts a fresh element mid-frame (hit-test-safe).
+                    Visibility(
+                      visible: _replyToName != null,
+                      maintainState: true,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 6, left: 6),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.saffron.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Replying to @${_replyToName ?? ''}',
+                                  style: AppTextStyles.body(size: 12, color: Colors.white)),
+                              const SizedBox(width: 6),
+                              GestureDetector(
+                                onTap: () => setState(() => _replyToName = null),
+                                child: const Icon(Icons.close, size: 14, color: Colors.white70),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      onPressed: _sendChat,
-                      icon: const Icon(Icons.send, color: AppColors.saffron),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.35),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(color: AppColors.borderSoft),
+                            ),
+                            child: TextField(
+                              controller: _compose,
+                              focusNode: _composeFocus,
+                              style: AppTextStyles.body(size: 14, color: Colors.white),
+                              textInputAction: TextInputAction.send,
+                              onSubmitted: (_) => _sendChat(),
+                              decoration: InputDecoration(
+                                hintText: _replyToName != null
+                                    ? 'Reply to @$_replyToName…'
+                                    : 'Say hi to your viewers…',
+                                hintStyle: const TextStyle(color: Colors.white54),
+                                border: InputBorder.none,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: _sendChat,
+                          icon: const Icon(Icons.send, color: AppColors.saffron),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -902,7 +1041,8 @@ class _EventRow extends StatelessWidget {
 /// Subtle "reconnecting" indicator shown while the chat WebSocket is being
 /// re-established after an unexpected drop (see `BroadcastCubit._scheduleReconnect`).
 class _ReconnectingBanner extends StatelessWidget {
-  const _ReconnectingBanner();
+  const _ReconnectingBanner({this.label = 'Reconnecting chat…'});
+  final String label;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -923,7 +1063,132 @@ class _ReconnectingBanner extends StatelessWidget {
             child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.info),
           ),
           const SizedBox(width: 8),
-          Text('Reconnecting chat…', style: AppTextStyles.body(size: 12, color: AppColors.info)),
+          Flexible(
+            child: Text(label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.body(size: 12, color: AppColors.info)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Gift goal progress bar + top-gifters ribbon over the video scrim. Fixed
+/// light-on-dark colours (see the colour note on `_buildLive`).
+class _GiftRibbon extends StatelessWidget {
+  const _GiftRibbon({required this.total, required this.goal, required this.topGifters});
+  final double total;
+  final double goal;
+  final List<Map<String, dynamic>> topGifters;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = goal > 0 ? (total / goal).clamp(0.0, 1.0) : 0.0;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (goal > 0) ...[
+          Row(
+            children: [
+              const Icon(Icons.emoji_events, size: 14, color: AppColors.gold),
+              const SizedBox(width: 6),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: progress.toDouble(),
+                    minHeight: 8,
+                    backgroundColor: Colors.white24,
+                    valueColor: const AlwaysStoppedAnimation(AppColors.gold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text('₹${total.toStringAsFixed(0)}/₹${goal.toStringAsFixed(0)}',
+                  style: AppTextStyles.body(size: 10, color: Colors.white70)),
+            ],
+          ),
+          const SizedBox(height: 4),
+        ],
+        if (topGifters.isNotEmpty)
+          Row(
+            children: [
+              const Text('🏆', style: TextStyle(fontSize: 12)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  topGifters
+                      .take(3)
+                      .map((g) =>
+                          '${g['name'] ?? 'User'} (₹${_amt(g['amount'])})')
+                      .join('   '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.body(
+                      size: 10, weight: FontWeight.w600, color: AppColors.saffron),
+                ),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  String _amt(Object? v) => (double.tryParse('$v') ?? 0).toStringAsFixed(0);
+}
+
+/// "Answering now" pinned-question banner over the video scrim.
+class _PinnedBanner extends StatelessWidget {
+  const _PinnedBanner({required this.user, required this.message, required this.onDone});
+  final String user;
+  final String message;
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.saffron.withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.saffron.withValues(alpha: 0.7)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.push_pin, size: 15, color: AppColors.saffron),
+          const SizedBox(width: 6),
+          Expanded(
+            child: RichText(
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(children: [
+                TextSpan(
+                    text: 'Answering now — ',
+                    style: AppTextStyles.body(
+                        size: 11, weight: FontWeight.w700, color: AppColors.saffron)),
+                TextSpan(
+                    text: '$user: ',
+                    style: AppTextStyles.body(size: 11, weight: FontWeight.w600, color: Colors.white)),
+                TextSpan(text: message, style: AppTextStyles.body(size: 11, color: Colors.white70)),
+              ]),
+            ),
+          ),
+          const SizedBox(width: 6),
+          GestureDetector(
+            onTap: onDone,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.success,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text('Done',
+                  style: AppTextStyles.label(size: 10, color: Colors.white)),
+            ),
+          ),
         ],
       ),
     );

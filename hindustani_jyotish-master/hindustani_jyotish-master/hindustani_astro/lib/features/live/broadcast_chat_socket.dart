@@ -108,18 +108,24 @@ class BroadcastChatSocket {
   /// but the reconnect timer hasn't replaced it yet). Without this, a send
   /// attempted during that window vanished with no error and no signal to
   /// the caller that it never went anywhere.
-  bool send(String message) {
+  bool send(String message) => sendFrame({'message': message});
+
+  /// Send an arbitrary control/data frame (e.g. a `{"type":"heartbeat"}`
+  /// presence ping, or a `{"type":"pin", ...}` "Answering now" pin). Same
+  /// guard/return contract as [send]: false when there's no live channel to
+  /// write on, so a heartbeat/pin dropped mid-reconnect is visible to the
+  /// caller instead of silently vanishing.
+  bool sendFrame(Map<String, dynamic> frame) {
     final channel = _channel;
     if (channel == null) {
-      debugPrint('[BroadcastChatSocket:astro] send: NO CHANNEL — dropped "$message"');
+      debugPrint('[BroadcastChatSocket:astro] sendFrame: NO CHANNEL — dropped $frame');
       return false;
     }
     try {
-      channel.sink.add(jsonEncode({'message': message}));
-      debugPrint('[BroadcastChatSocket:astro] send: wrote "$message"');
+      channel.sink.add(jsonEncode(frame));
       return true;
     } catch (e) {
-      debugPrint('[BroadcastChatSocket:astro] send: sink.add threw $e — dropped "$message"');
+      debugPrint('[BroadcastChatSocket:astro] sendFrame: sink.add threw $e — dropped $frame');
       return false;
     }
   }

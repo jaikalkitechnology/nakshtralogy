@@ -268,5 +268,12 @@
   "reportsOpenPdf": "Open PDF",
 
   "imageViewerClose": "Close",
-  "@imageViewerClose": { "description": "Tooltip on the close button of the full-screen photo viewer" }
+  "@imageViewerClose": { "description": "Tooltip on the close button of the full-screen photo viewer" },
+
+  "liveAnsweringNow": "Answering now",
+  "@liveAnsweringNow": { "description": "Label on the pinned-question banner in a live stream — the question the astrologer is answering right now" },
+  "liveTopGifters": "Top gifters",
+  "@liveTopGifters": { "description": "Label/tooltip for the top-gifters ribbon shown over a live stream" },
+  "liveReconnectingVideo": "Reconnecting to video…",
+  "@liveReconnectingVideo": { "description": "Shown over the live viewer while the host video is momentarily down and recovering" }
 }

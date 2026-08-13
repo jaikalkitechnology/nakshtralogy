@@ -23,6 +23,11 @@ class BroadcastViewerState extends Equatable {
     this.sendingSuperChat = false,
     this.sendingGift = false,
     this.mediaError,
+    this.pinnedUser,
+    this.pinnedMessage,
+    this.giftTotal = 0,
+    this.giftGoal = 0,
+    this.topGifters = const [],
   });
 
   /// True until the initial `/broadcasts/{id}/join` call resolves (success
@@ -88,6 +93,21 @@ class BroadcastViewerState extends Equatable {
   /// spinner instead of "video isn't available, but chat still works."
   final String? mediaError;
 
+  // ── Phase 6: pinned Q&A + gifting ribbon ──────────────────────────────
+  /// The viewer whose question the host pinned as "Answering now" (null when
+  /// nothing is pinned) and its text — from the server's `pinned`/`unpinned`
+  /// chat frames.
+  final String? pinnedUser;
+  final String? pinnedMessage;
+  bool get hasPinned => pinnedUser != null;
+
+  /// Running gifting total (₹), the host-set goal (₹, 0 = none), and the top
+  /// gifters ribbon (`{name, amount}` maps, highest first) — from the server's
+  /// `gift_update` chat frame and the initial join payload's `gift_goal`.
+  final double giftTotal;
+  final double giftGoal;
+  final List<Map<String, dynamic>> topGifters;
+
   BroadcastViewerState copyWith({
     bool? joining,
     String? error,
@@ -110,6 +130,12 @@ class BroadcastViewerState extends Equatable {
     bool? sendingSuperChat,
     bool? sendingGift,
     String? mediaError,
+    String? pinnedUser,
+    String? pinnedMessage,
+    bool clearPinned = false,
+    double? giftTotal,
+    double? giftGoal,
+    List<Map<String, dynamic>>? topGifters,
   }) => BroadcastViewerState(
     joining: joining ?? this.joining,
     error: clearError ? null : (error ?? this.error),
@@ -132,6 +158,11 @@ class BroadcastViewerState extends Equatable {
     sendingSuperChat: sendingSuperChat ?? this.sendingSuperChat,
     sendingGift: sendingGift ?? this.sendingGift,
     mediaError: mediaError ?? this.mediaError,
+    pinnedUser: clearPinned ? null : (pinnedUser ?? this.pinnedUser),
+    pinnedMessage: clearPinned ? null : (pinnedMessage ?? this.pinnedMessage),
+    giftTotal: giftTotal ?? this.giftTotal,
+    giftGoal: giftGoal ?? this.giftGoal,
+    topGifters: topGifters ?? this.topGifters,
   );
 
   @override
@@ -154,5 +185,10 @@ class BroadcastViewerState extends Equatable {
     sendingSuperChat,
     sendingGift,
     mediaError,
+    pinnedUser,
+    pinnedMessage,
+    giftTotal,
+    giftGoal,
+    topGifters,
   ];
 }

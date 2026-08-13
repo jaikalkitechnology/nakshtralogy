@@ -722,4 +722,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get imageViewerClose => 'बंद करें';
+
+  @override
+  String get liveAnsweringNow => 'अभी उत्तर दे रहे हैं';
+
+  @override
+  String get liveTopGifters => 'शीर्ष उपहारदाता';
+
+  @override
+  String get liveReconnectingVideo => 'वीडियो से पुनः कनेक्ट हो रहा है…';
 }

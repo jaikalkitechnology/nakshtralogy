@@ -26,8 +26,8 @@ and updates the **Status** here. We review each phase's diff before the next.
 | 3 | Chat reliability | ✅ | 2 |
 | 4 | Audio/Video call guards & polish | ✅ | 2 |
 | 5 | Billing display during communication | ✅ | 4 |
-| 6 | Live streaming enhancements | 🟡 | 3,4 |
-| 7 | QA, DRY, localization, device pass | ⬜ | all |
+| 6 | Live streaming enhancements | ✅ | 3,4 |
+| 7 | QA, DRY, localization, device pass | 🟡 | all |
 
 Order: **1 → 2 → 3 → 4 → 5 → 6 → 7.** Commit per phase.
 
@@ -137,12 +137,12 @@ Order: **1 → 2 → 3 → 4 → 5 → 6 → 7.** Commit per phase.
 **Goal:** live parity with Nakshtralogy — resilient, interactive, monetised.
 **Surface:** backend + both apps. **Donor:** Nakshtralogy live tasks #10–14 (host @tag reply, auto-end + watchdog, reconnect grace, pinned Q&A, gift goal + top-gifters).
 
-- [ ] Auto-end previous streams + server watchdog for abandoned lives.
-- [ ] Auto-reconnect grace for host + viewer on a blip.
-- [ ] Pinned "Answering now" Q&A (host pins a viewer question).
-- [ ] Gift goal progress + top-gifters ribbon.
-- [ ] Host chat reply with @tag + transparent chat overlay.
-- [ ] Keep existing `awaitJoined` + `_abandonPartialStart` guards.
+- [x] Auto-end previous streams (`end_existing` flag) + server watchdog for abandoned lives (DB `last_heartbeat_at` + `expire_unhealthy_broadcasts` in the existing background loop).
+- [x] Auto-reconnect grace for host + viewer on a blip (chat-socket reconnect already present; added host media reconnect-grace + heartbeat).
+- [x] Pinned "Answering now" Q&A (WS `pin`/`unpin` control frames → `pinned`/`unpinned` events; late-joiner replay).
+- [x] Gift goal progress (`gift_goal` column + `/gift-goal` endpoint) + top-gifters ribbon (`gift_update` frame aggregating events).
+- [x] Host chat reply with @tag + transparent chat overlay (tap viewer line → @tag; overlay already translucent).
+- [x] Keep existing `awaitJoined` + `_abandonPartialStart` guards (untouched; additions are additive).
 
 **Exit:** live matches Nakshtralogy's feature set. **Commit:** `feat(hindustani): live watchdog + pinned Q&A + gift goal + @tag`.
 

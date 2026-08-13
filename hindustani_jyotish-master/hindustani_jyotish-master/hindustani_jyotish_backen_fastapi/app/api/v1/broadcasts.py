@@ -22,6 +22,7 @@ from app.schemas.broadcast import (
     BroadcastOut,
     BroadcastStartRequest,
     BroadcastStartResponse,
+    GiftGoalRequest,
 )
 from app.schemas.consultation import AgoraGrantOut
 from app.schemas.live_engagement import (
@@ -51,7 +52,9 @@ def _broadcast_out(broadcast: LiveBroadcast, astrologer: Astrologer) -> Broadcas
 @router.post("/start", response_model=BroadcastStartResponse)
 async def start_broadcast(body: BroadcastStartRequest, astrologer: CurrentAstrologer, db: DBSession):
     try:
-        broadcast, grant = await broadcast_service.start_broadcast(db, astrologer, body.title)
+        broadcast, grant = await broadcast_service.start_broadcast(
+            db, astrologer, body.title, end_existing=body.end_existing
+        )
     except broadcast_service.BroadcastError as exc:
         raise HTTPException(status.HTTP_409_CONFLICT, str(exc))
 
@@ -176,6 +179,7 @@ async def send_super_chat(
             "message": event.message,
         },
     )
+    await _broadcast_gift_update(db, broadcast_id)
     return LiveEngagementEventOut.model_validate(event)
 
 
@@ -196,7 +200,41 @@ async def send_gift(broadcast_id: uuid.UUID, body: GiftRequest, user: CurrentUse
             "gift_emoji": gift.emoji,
         },
     )
+    await _broadcast_gift_update(db, broadcast_id)
     return LiveEngagementEventOut.model_validate(event)
+
+
+async def _broadcast_gift_update(db: DBSession, broadcast_id: uuid.UUID) -> None:
+    """Fan out the refreshed gifting total / goal / top-gifters to the room so
+    the host + every viewer update their progress bar and top-gifters ribbon.
+    Best-effort — a failure here must never fail the (already-settled) send."""
+    try:
+        summary = await broadcast_service.gifting_summary(db, broadcast_id)
+        await broadcast_service.chat_manager.broadcast(
+            str(broadcast_id),
+            {
+                "kind": "gift_update",
+                "total": summary["total"],
+                "goal": summary["goal"],
+                "top": summary["top"],
+            },
+        )
+    except Exception:  # noqa: BLE001
+        logger.exception("failed to broadcast gift_update for broadcast %s", broadcast_id)
+
+
+@router.post("/{broadcast_id}/gift-goal", response_model=BroadcastOut)
+async def set_gift_goal(
+    broadcast_id: uuid.UUID, body: GiftGoalRequest, astrologer: CurrentAstrologer, db: DBSession
+):
+    """Host sets (or clears, with 0) the gifting goal for their live broadcast.
+    Fans out a fresh `gift_update` so viewers see the new goal immediately."""
+    try:
+        broadcast = await broadcast_service.set_gift_goal(db, astrologer, broadcast_id, body.goal)
+    except broadcast_service.BroadcastError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc))
+    await _broadcast_gift_update(db, broadcast_id)
+    return _broadcast_out(broadcast, astrologer)
 
 
 # ── WebSocket chat (free-text, both directions) ────────────────────────
@@ -251,7 +289,21 @@ async def broadcast_chat(websocket: WebSocket, broadcast_id: uuid.UUID):
     await broadcast_service.chat_manager.connect(room, websocket)
     if is_broadcaster:
         await broadcast_service.register_broadcaster_connected(room)
+        # Persistent (DB-backed) heartbeat — lets the watchdog force-end a
+        # host-abandoned broadcast even across a worker restart. Stamped on
+        # connect and on each heartbeat frame the client sends below.
+        await broadcast_service.record_heartbeat(broadcast_id)
     try:
+        # Late-joiner catch-up: if a "Answering now" question is currently
+        # pinned, send it straight to THIS socket so a viewer who joined mid-pin
+        # still sees it (the pin state is per-process, so a fresh join is the
+        # only reliable moment to replay it).
+        pinned = broadcast_service.get_pinned_question(room)
+        if pinned is not None:
+            try:
+                await websocket.send_json({"kind": "pinned", **pinned})
+            except Exception:  # noqa: BLE001 — never let catch-up break the join
+                logger.debug("failed to replay pinned question on join for %s", room)
         await broadcast_service.chat_manager.broadcast(
             room,
             {
@@ -262,7 +314,36 @@ async def broadcast_chat(websocket: WebSocket, broadcast_id: uuid.UUID):
         )
         while True:
             data = await websocket.receive_json()
-            text = (data or {}).get("message", "")
+            data = data or {}
+            frame_type = data.get("type")
+
+            # Control frames (heartbeat / pin / unpin) never fan out as chat,
+            # even from a non-broadcaster socket that happens to also carry a
+            # `message` key — they're handled here and swallowed. Only the
+            # broadcaster's control frames have any effect; a viewer's are a
+            # no-op.
+            if frame_type in ("heartbeat", "pin", "unpin"):
+                if not is_broadcaster:
+                    continue
+                if frame_type == "heartbeat":
+                    await broadcast_service.record_heartbeat(broadcast_id)
+                elif frame_type == "pin":
+                    # The pinned question is fanned out to everyone (host +
+                    # viewers) and cached so late-joiners get it on connect.
+                    payload = {
+                        "user": str(data.get("user") or "Viewer")[:80],
+                        "message": str(data.get("message") or "")[:300],
+                    }
+                    broadcast_service.set_pinned_question(room, payload)
+                    await broadcast_service.chat_manager.broadcast(
+                        room, {"kind": "pinned", **payload}
+                    )
+                else:  # unpin
+                    broadcast_service.set_pinned_question(room, None)
+                    await broadcast_service.chat_manager.broadcast(room, {"kind": "unpinned"})
+                continue
+
+            text = data.get("message", "")
             if text:
                 await broadcast_service.chat_manager.broadcast(
                     room, {"kind": "chat", "user": name, "message": str(text)[:300]}
