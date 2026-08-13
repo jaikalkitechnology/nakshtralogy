@@ -28,6 +28,7 @@ import WalletLedgerPage from './pages/WalletLedgerPage'
 import ReviewsPage from './pages/ReviewsPage'
 import RazorpaySettingsPage from './pages/RazorpaySettingsPage'
 import InvoicesPage from './pages/InvoicesPage'
+import TdsPage from './pages/TdsPage'
 import GoogleLoginSettingsPage from './pages/GoogleLoginSettingsPage'
 import CredentialsOverviewPage from './pages/CredentialsOverviewPage'
 import { RESOURCES } from './config/resources'
@@ -85,6 +86,7 @@ export default function App() {
             <Route path="/payouts" element={<PayoutsPage />} />
             <Route path="/refunds" element={list('refunds')} />
             <Route path="/invoices" element={<InvoicesPage />} />
+            <Route path="/tds" element={<TdsPage />} />
 
             {/* Sessions */}
             <Route path="/sessions" element={list('consultations')} />

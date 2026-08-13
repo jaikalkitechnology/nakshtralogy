@@ -32,6 +32,8 @@ import type {
   SchemaApplyResult,
   SchemaDiff,
   SchemaSyncLogEntry,
+  TdsReport,
+  TdsSettings,
   UploadResponse,
 } from './types'
 
@@ -268,6 +270,19 @@ export const adminApi = {
     const path = `/admin/invoices.csv${q ? `?q=${encodeURIComponent(q)}` : ''}`
     const { blob } = await apiDownload(path)
     downloadBlob(blob, 'invoices.csv')
+  },
+
+  // TDS on payouts (Phase I) — deduction settings (rate + PAN-required) and
+  // the challan report (per-astrologer TDS collected per FY/quarter + CSV).
+  getTdsSettings: () => api<TdsSettings>('/admin/settings/tds'),
+  saveTdsSettings: (body: TdsSettings) =>
+    api<TdsSettings>('/admin/settings/tds', { method: 'PUT', body }),
+  tdsReport: (period?: string) =>
+    api<TdsReport>(`/admin/tds/report${period ? `?period=${encodeURIComponent(period)}` : ''}`),
+  exportTdsReportCsv: async (period?: string) => {
+    const path = `/admin/tds/report.csv${period ? `?period=${encodeURIComponent(period)}` : ''}`
+    const { blob } = await apiDownload(path)
+    downloadBlob(blob, `tds-${period || 'current'}.csv`)
   },
 
   // Content media uploads — used by the Banners / Promo Videos / Astrologer

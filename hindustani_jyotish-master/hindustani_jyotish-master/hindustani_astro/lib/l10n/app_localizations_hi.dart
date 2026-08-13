@@ -703,4 +703,34 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get deleteAccountSuccess => 'आपका खाता हटा दिया गया है।';
+
+  @override
+  String get earningsAddPanTitle => 'निकासी के लिए अपना PAN जोड़ें';
+
+  @override
+  String get earningsAddPanBody =>
+      'हर भुगतान पर आपके PAN के विरुद्ध TDS काटा जाता है। निकासी से पहले अपने बैंक और PAN विवरण में एक वैध PAN जोड़ें।';
+
+  @override
+  String get earningsAddPanAction => 'PAN जोड़ें';
+
+  @override
+  String earningsTdsNote(String rate) {
+    return 'प्रत्येक भुगतान पर आपके PAN के विरुद्ध $rate% TDS काटा जाता है।';
+  }
+
+  @override
+  String get earningsRecentPayouts => 'हाल की निकासियाँ';
+
+  @override
+  String get earningsPayoutTds => 'TDS';
+
+  @override
+  String get earningsPayoutNet => 'शुद्ध भुगतान';
+
+  @override
+  String get earningsPayoutGross => 'सकल';
+
+  @override
+  String get earningsNoPayouts => 'अभी तक कोई निकासी नहीं।';
 }

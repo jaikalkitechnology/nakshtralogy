@@ -243,5 +243,15 @@
   "deleteAccountWarning": "इससे आपका ज्योतिषी खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल और KYC हटा दी जाएगी, आप ऑफ़लाइन हो जाएँगे और खोज से छिप जाएँगे, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता। पहले कोई भी शेष राशि निकाल लें और चालू परामर्श पूरे कर लें।",
   "deleteAccountTypeHint": "पुष्टि के लिए DELETE टाइप करें",
   "deleteAccountConfirm": "खाता हटाएँ",
-  "deleteAccountSuccess": "आपका खाता हटा दिया गया है।"
+  "deleteAccountSuccess": "आपका खाता हटा दिया गया है।",
+
+  "earningsAddPanTitle": "निकासी के लिए अपना PAN जोड़ें",
+  "earningsAddPanBody": "हर भुगतान पर आपके PAN के विरुद्ध TDS काटा जाता है। निकासी से पहले अपने बैंक और PAN विवरण में एक वैध PAN जोड़ें।",
+  "earningsAddPanAction": "PAN जोड़ें",
+  "earningsTdsNote": "प्रत्येक भुगतान पर आपके PAN के विरुद्ध {rate}% TDS काटा जाता है।",
+  "earningsRecentPayouts": "हाल की निकासियाँ",
+  "earningsPayoutTds": "TDS",
+  "earningsPayoutNet": "शुद्ध भुगतान",
+  "earningsPayoutGross": "सकल",
+  "earningsNoPayouts": "अभी तक कोई निकासी नहीं।"
 }

@@ -698,4 +698,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSuccess => 'Your account has been deleted.';
+
+  @override
+  String get earningsAddPanTitle => 'Add your PAN to withdraw';
+
+  @override
+  String get earningsAddPanBody =>
+      'TDS is deducted against your PAN on every payout. Add a valid PAN in your bank & PAN details before you can withdraw.';
+
+  @override
+  String get earningsAddPanAction => 'Add PAN';
+
+  @override
+  String earningsTdsNote(String rate) {
+    return '$rate% TDS is deducted against your PAN on each payout.';
+  }
+
+  @override
+  String get earningsRecentPayouts => 'Recent withdrawals';
+
+  @override
+  String get earningsPayoutTds => 'TDS';
+
+  @override
+  String get earningsPayoutNet => 'Net paid';
+
+  @override
+  String get earningsPayoutGross => 'Gross';
+
+  @override
+  String get earningsNoPayouts => 'No withdrawals yet.';
 }

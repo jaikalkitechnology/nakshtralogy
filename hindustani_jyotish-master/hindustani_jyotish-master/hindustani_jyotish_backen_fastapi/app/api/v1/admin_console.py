@@ -56,6 +56,7 @@ from app.schemas.admin_console import (
     RazorpaySettingIn,
     ReviewUpdateIn,
     SettingIn,
+    TDSSettingsIn,
     ToggleIn,
     TransactionRefundIn,
     UploadOut,
@@ -1444,6 +1445,11 @@ def _payout_row(p: AstrologerPayout) -> dict:
         "id": str(p.id), "astrologer_id": str(p.astrologer_id), "amount": str(p.amount),
         "status": p.status.value, "bank_account_last4": p.bank_account_last4,
         "ifsc": p.ifsc, "razorpay_payout_id": p.razorpay_payout_id,
+        # TDS (Phase I): amount is GROSS; net_paid is what reaches the bank.
+        "tds_rate": str(p.tds_rate or 0),
+        "tds_amount": str(p.tds_amount or 0),
+        "net_paid": str(p.net_paid) if p.net_paid is not None else str(p.amount),
+        "tds_pan": p.tds_pan,
         "paid_at": p.paid_at.isoformat() if p.paid_at else None,
         "created_at": p.created_at.isoformat(),
     }
@@ -2683,3 +2689,71 @@ async def get_gst_settings(admin: CurrentAdmin, db: DBSession):
 @router.put("/settings/gst")
 async def set_gst_settings(body: SettingIn, admin: CurrentAdmin, db: DBSession):
     return await invoice_service.set_gst_config(db, body.value)
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  Phase I — TDS on payouts: settings (rate + PAN-required) + challan report
+# ══════════════════════════════════════════════════════════════════════
+from app.services import tds_service  # noqa: E402
+
+
+@router.get("/settings/tds")
+async def get_tds_settings(admin: CurrentAdmin, db: DBSession):
+    """TDS deduction config: `rate` (fraction, 0.10 = 10%), `pan_required`
+    (block payouts without a valid PAN), `no_pan_rate` (applied instead of a
+    block when pan_required is off)."""
+    return await tds_service.resolve_tds_config(db)
+
+
+@router.put("/settings/tds")
+async def set_tds_settings(body: TDSSettingsIn, admin: CurrentAdmin, db: DBSession):
+    return await tds_service.set_tds_config(db, body.model_dump())
+
+
+@router.get("/tds/report")
+async def tds_challan_report(
+    admin: CurrentAdmin,
+    db: DBSession,
+    period: str | None = Query(
+        None, description="Financial year '2025-26' or a quarter '2025-26-Q3'. Defaults to the current FY."
+    ),
+):
+    """TDS challan summary: per-astrologer (name + PAN + gross/tds/net + count)
+    plus grand totals, for the requested FY or quarter (settled payouts)."""
+    try:
+        return await tds_service.tds_report(db, period)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+
+
+@router.get("/tds/report.csv")
+async def tds_challan_report_csv(
+    admin: CurrentAdmin,
+    db: DBSession,
+    period: str | None = Query(None),
+):
+    import csv
+    import io as _io
+
+    try:
+        report = await tds_service.tds_report(db, period)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+
+    buf = _io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["astrologer_name", "pan", "gross", "tds", "net", "payouts"])
+    for row in report["items"]:
+        writer.writerow([
+            row["astrologer_name"] or "", row["pan"] or "",
+            row["gross"], row["tds"], row["net"], row["payouts"],
+        ])
+    t = report["totals"]
+    writer.writerow([])
+    writer.writerow(["TOTAL", "", t["gross"], t["tds"], t["net"], t["payouts"]])
+    fname = f"tds-{report['period']}.csv"
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{fname}"'},
+    )

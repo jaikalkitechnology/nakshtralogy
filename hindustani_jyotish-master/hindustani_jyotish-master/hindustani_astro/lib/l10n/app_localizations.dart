@@ -1375,6 +1375,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account has been deleted.'**
   String get deleteAccountSuccess;
+
+  /// No description provided for @earningsAddPanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your PAN to withdraw'**
+  String get earningsAddPanTitle;
+
+  /// No description provided for @earningsAddPanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'TDS is deducted against your PAN on every payout. Add a valid PAN in your bank & PAN details before you can withdraw.'**
+  String get earningsAddPanBody;
+
+  /// No description provided for @earningsAddPanAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add PAN'**
+  String get earningsAddPanAction;
+
+  /// No description provided for @earningsTdsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate}% TDS is deducted against your PAN on each payout.'**
+  String earningsTdsNote(String rate);
+
+  /// No description provided for @earningsRecentPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent withdrawals'**
+  String get earningsRecentPayouts;
+
+  /// No description provided for @earningsPayoutTds.
+  ///
+  /// In en, this message translates to:
+  /// **'TDS'**
+  String get earningsPayoutTds;
+
+  /// No description provided for @earningsPayoutNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net paid'**
+  String get earningsPayoutNet;
+
+  /// No description provided for @earningsPayoutGross.
+  ///
+  /// In en, this message translates to:
+  /// **'Gross'**
+  String get earningsPayoutGross;
+
+  /// No description provided for @earningsNoPayouts.
+  ///
+  /// In en, this message translates to:
+  /// **'No withdrawals yet.'**
+  String get earningsNoPayouts;
 }
 
 class _AppLocalizationsDelegate

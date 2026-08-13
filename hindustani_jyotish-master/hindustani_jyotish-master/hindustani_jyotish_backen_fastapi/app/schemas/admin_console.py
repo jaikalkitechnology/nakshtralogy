@@ -187,6 +187,14 @@ class CommissionIn(BaseModel):
     rate: float = Field(..., ge=0, le=1)
 
 
+class TDSSettingsIn(BaseModel):
+    """TDS on payouts (Phase I). `rate`/`no_pan_rate` are fractions (0.10 = 10%);
+    `pan_required` blocks a payout when the astrologer has no valid PAN."""
+    rate: float = Field(..., ge=0, le=1)
+    pan_required: bool = True
+    no_pan_rate: float = Field(default=0.20, ge=0, le=1)
+
+
 class AgoraSettingIn(BaseModel):
     app_name: str | None = Field(default=None, max_length=120)
     app_id: str = Field(..., max_length=255)

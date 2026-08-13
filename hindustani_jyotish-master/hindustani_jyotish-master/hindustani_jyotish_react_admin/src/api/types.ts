@@ -571,3 +571,31 @@ export interface DeletedAccount {
   deleted_reason: string | null
   restore_deadline: string | null
 }
+
+// ── TDS on payouts (Phase I) ──────────────────────────────────────────
+/** TDS deduction config. Rates are fractions (0.10 = 10%). */
+export interface TdsSettings {
+  rate: number
+  pan_required: boolean
+  no_pan_rate: number
+}
+
+export interface TdsReportRow {
+  astrologer_id: string
+  astrologer_name: string | null
+  pan: string | null
+  gross: string
+  tds: string
+  net: string
+  payouts: number
+}
+
+export interface TdsReport {
+  period: string
+  financial_year: string
+  quarter: number | null
+  from: string
+  to: string
+  items: TdsReportRow[]
+  totals: { gross: string; tds: string; net: string; payouts: number; astrologers: number }
+}

@@ -35,6 +35,18 @@ class AstrologerPayout(UUIDPKMixin, TimestampMixin, Base):
     ifsc: Mapped[str | None] = mapped_column(String(16))
     razorpay_payout_id: Mapped[str | None] = mapped_column(String(64))
 
+    # TDS (Phase I) — income-tax deducted at source on the payout. `amount` is
+    # the GROSS withdrawal (already net of platform commission, which is taken
+    # at consultation settlement, never again here). TDS is withheld against the
+    # astrologer's PAN and remitted by the platform; `net_paid` is what actually
+    # reaches the bank. See app/services/tds_service.py.
+    #   net_paid = amount (gross) − tds_amount
+    tds_rate: Mapped[Decimal] = mapped_column(Numeric(6, 4), default=Decimal("0.0000"))
+    tds_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=Decimal("0.00"))
+    net_paid: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    # PAN snapshotted at request time (the challan reports against this).
+    tds_pan: Mapped[str | None] = mapped_column(String(10))
+
     # audit trail — withdrawals always require fresh biometric attestation
     biometric_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

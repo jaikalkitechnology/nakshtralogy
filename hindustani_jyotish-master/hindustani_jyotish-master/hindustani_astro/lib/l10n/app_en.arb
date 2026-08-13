@@ -244,5 +244,16 @@
   "deleteAccountWarning": "This permanently deletes your astrologer account. Your profile and KYC are removed, you are taken offline and hidden from discovery, all your sessions end, and this cannot be undone. Withdraw any balance and finish open consultations first.",
   "deleteAccountTypeHint": "Type DELETE to confirm",
   "deleteAccountConfirm": "Delete account",
-  "deleteAccountSuccess": "Your account has been deleted."
+  "deleteAccountSuccess": "Your account has been deleted.",
+
+  "earningsAddPanTitle": "Add your PAN to withdraw",
+  "earningsAddPanBody": "TDS is deducted against your PAN on every payout. Add a valid PAN in your bank & PAN details before you can withdraw.",
+  "earningsAddPanAction": "Add PAN",
+  "earningsTdsNote": "{rate}% TDS is deducted against your PAN on each payout.",
+  "@earningsTdsNote": { "placeholders": { "rate": { "type": "String" } } },
+  "earningsRecentPayouts": "Recent withdrawals",
+  "earningsPayoutTds": "TDS",
+  "earningsPayoutNet": "Net paid",
+  "earningsPayoutGross": "Gross",
+  "earningsNoPayouts": "No withdrawals yet."
 }

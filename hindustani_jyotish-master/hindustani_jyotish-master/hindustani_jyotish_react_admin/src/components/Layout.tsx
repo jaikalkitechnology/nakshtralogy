@@ -84,6 +84,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/payouts', label: 'Payouts', icon: ICON.payout },
       { to: '/refunds', label: 'Refunds', icon: ICON.refund },
       { to: '/invoices', label: 'GST Invoices', icon: ICON.book },
+      { to: '/tds', label: 'TDS & Challan', icon: ICON.book },
     ],
   },
   {

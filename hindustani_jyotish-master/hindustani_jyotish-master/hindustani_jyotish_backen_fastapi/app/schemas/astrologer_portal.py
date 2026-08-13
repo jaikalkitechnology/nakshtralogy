@@ -260,6 +260,10 @@ class EarningsOut(BaseModel):
     this_month_earnings: Decimal
     lifetime_earnings: Decimal
     consultations_this_month: int
+    # TDS (Phase I): whether a valid PAN is on file (payouts blocked without
+    # one) and the current deduction rate, so the app can prompt + explain.
+    pan_on_file: bool = True
+    tds_rate: float = 0.0
 
 
 class AstrologerProfileUpdate(BaseModel):
