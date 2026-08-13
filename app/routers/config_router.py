@@ -55,6 +55,21 @@ def get_webpush_config(
     # excluded because it is not in _WEBPUSH_PUBLIC_KEYS.
     config = {k: (stored.get(k) or "") for k in _WEBPUSH_PUBLIC_KEYS}
     configured = bool(config.get("vapid_public_key") and config.get("web_project_id"))
+
+    # Fall back to the OTHER role's web-push config when this role's is not set
+    # up. Both the user and astrologer apps live in the SAME Firebase project, so
+    # its web keys + VAPID public key work for either. This is exactly why
+    # astrologer web push worked while the user's did not — only `webpush_astro`
+    # was configured in admin. A real, separately-configured role still wins (the
+    # fallback only runs when this role's own config is incomplete).
+    if not configured:
+        other = "webpush_astro" if category == "webpush_user" else "webpush_user"
+        rows2 = db.query(PlatformSetting).filter(PlatformSetting.category == other).all()
+        stored2 = {r.key: r.value for r in rows2}
+        fb = {k: (stored2.get(k) or "") for k in _WEBPUSH_PUBLIC_KEYS}
+        if fb.get("vapid_public_key") and fb.get("web_project_id"):
+            config = fb
+            configured = True
     # The keys are also spread at the TOP LEVEL because the Flutter WebPushService
     # and the firebase-messaging-sw.js service worker read cfg['web_api_key'] /
     # cfg.web_api_key directly (not under `config`). Keeping `config` too for any

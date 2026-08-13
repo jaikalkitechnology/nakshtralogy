@@ -206,22 +206,21 @@
             ['loadedmetadata', 'canplay', 'stalled', 'suspend', 'emptied'].forEach(function (ev) {
               v.addEventListener(ev, function () { fix(v); });
             });
-            // iOS PWA: a <video> bound to a WebRTC MediaStream is often present
-            // but BLACK (the first frame never paints). Re-binding srcObject
-            // forces iOS to paint. Kicks only while it still looks black.
-            setTimeout(function () { kick(v); }, 300);
-            setTimeout(function () { kick(v); }, 1200);
-            setTimeout(function () { kick(v); }, 2500);
           }
         } catch (e) {}
       }
-      // Force the first frame on iOS by re-attaching the MediaStream. No-op once
-      // the video is actually rendering (videoWidth>0 and playing).
+      // iOS PWA: a <video> bound to a WebRTC MediaStream is often present but
+      // BLACK (the first frame never paints). Re-binding srcObject forces iOS to
+      // paint. Runs on a fast interval and is a no-op the instant the element is
+      // actually rendering; the attempt counter resets once it renders, so a
+      // later re-bind (a new remote track) gets a fresh set of tries.
       function kick(v) {
         try {
           var s = v.srcObject;
           if (!s) return;
-          if (v.videoWidth > 0 && !v.paused) return; // already rendering
+          if (v.videoWidth > 0 && !v.paused) { v.__nkKicks = 0; return; } // rendering
+          if ((v.__nkKicks || 0) >= 15) return;                          // give up
+          v.__nkKicks = (v.__nkKicks || 0) + 1;
           v.srcObject = null;
           v.srcObject = s;
           v.muted = true;
@@ -230,6 +229,8 @@
         } catch (e) {}
       }
       function scan() { document.querySelectorAll('video').forEach(fix); }
+      // Keep re-kicking any still-black video until it paints (bounded per elem).
+      setInterval(function () { document.querySelectorAll('video').forEach(kick); }, 500);
       var obs = new MutationObserver(function () { scan(); });
       if (document.body) obs.observe(document.body, { childList: true, subtree: true });
       document.addEventListener('DOMContentLoaded', function () {
