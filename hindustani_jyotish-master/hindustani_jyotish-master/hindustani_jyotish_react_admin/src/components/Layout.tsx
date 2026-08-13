@@ -83,6 +83,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/wallet-ledger', label: 'Ledger', icon: ICON.book },
       { to: '/payouts', label: 'Payouts', icon: ICON.payout },
       { to: '/refunds', label: 'Refunds', icon: ICON.refund },
+      { to: '/invoices', label: 'GST Invoices', icon: ICON.book },
     ],
   },
   {
@@ -114,6 +115,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/agora', label: 'Agora', icon: ICON.mic },
       { to: '/razorpay', label: 'Razorpay', icon: ICON.key },
       { to: '/commission', label: 'Commission', icon: ICON.percent },
+      { to: '/gst-settings', label: 'GST', icon: ICON.percent },
       { to: '/maintenance', label: 'Maintenance', icon: ICON.wrench },
       { to: '/schema-sync', label: 'Schema Sync', icon: ICON.collapse },
       { to: '/firebase-config', label: 'Firebase', icon: ICON.flame },

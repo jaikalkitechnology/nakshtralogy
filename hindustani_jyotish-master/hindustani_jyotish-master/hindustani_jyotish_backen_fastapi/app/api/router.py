@@ -14,6 +14,7 @@ from app.api.v1 import (
     broadcasts,
     consultations,
     insights,
+    invoices,
     kundli,
     public,
     users,
@@ -54,3 +55,7 @@ api_router.include_router(broadcasts.router)
 # Phase 6 — implemented (wallet recharge via Razorpay, transactions, refunds,
 # astrologer payouts). The full blueprint API surface is now live.
 api_router.include_router(wallet.router)
+
+# Phase H — GST invoices for paid consultations (user list + PDF download;
+# admin list/CSV/config lives under admin_console).
+api_router.include_router(invoices.router)

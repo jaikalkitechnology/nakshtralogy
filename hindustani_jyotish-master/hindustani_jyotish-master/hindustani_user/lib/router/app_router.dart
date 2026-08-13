@@ -6,6 +6,7 @@ import '../features/auth/ui/profile_completion_screen.dart';
 import '../features/auth/ui/splash_screen.dart';
 import '../features/auth/ui/welcome_screen.dart';
 import '../features/consultation/ui/consultation_history_screen.dart';
+import '../features/invoices/ui/invoices_screen.dart';
 import '../features/consultation/ui/consultation_screen.dart';
 import '../features/discovery/ui/astrologer_profile_screen.dart';
 import '../features/discovery/ui/astrologers_screen.dart';
@@ -85,6 +86,11 @@ GoRouter buildRouter(AuthCubit auth) {
         path: '/history',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const ConsultationHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/invoices',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const InvoicesScreen(),
       ),
       GoRoute(
         path: '/profile/edit',

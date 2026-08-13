@@ -413,6 +413,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePaymentHistory => 'Payment history';
 
   @override
+  String get profileInvoices => 'GST invoices';
+
+  @override
+  String get invoicesTitle => 'GST Invoices';
+
+  @override
+  String get invoicesEmpty =>
+      'No invoices yet. Paid consultations will appear here.';
+
+  @override
+  String get invoicesDownload => 'Download';
+
+  @override
+  String get invoicesDownloading => 'Downloading…';
+
+  @override
+  String get invoicesDownloadFailed => 'Could not download the invoice.';
+
+  @override
+  String get invoicesTotal => 'Total';
+
+  @override
+  String get invoicesTax => 'GST';
+
+  @override
   String get profileBecomeAstrologer => 'Become an astrologer';
 
   @override

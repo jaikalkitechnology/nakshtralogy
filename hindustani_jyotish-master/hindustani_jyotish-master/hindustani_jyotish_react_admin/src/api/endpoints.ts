@@ -1,4 +1,4 @@
-import { api, apiDownload, apiUpload } from './client'
+import { api, apiDownload, apiUpload, downloadBlob } from './client'
 import type { KycDocSet } from '../components/KycDocs'
 import type {
   AdminStats,
@@ -256,6 +256,19 @@ export const adminApi = {
 
   // Lightweight astrologer list for pickers (e.g. the Astrologer Videos form).
   astrologerOptions: () => api<AstrologerOption[]>('/admin/astrologers/list'),
+
+  // GST invoices (Phase H) — one per paid consultation. Download opens the
+  // stored PDF; CSV exports the filtered set. GST seller config lives in
+  // /admin/settings/gst (handled by the generic SettingsPage).
+  downloadInvoice: async (id: string, invoiceNumber: string) => {
+    const { blob } = await apiDownload(`/admin/invoices/${id}/download`)
+    downloadBlob(blob, `${invoiceNumber.replace(/\//g, '-')}.pdf`)
+  },
+  exportInvoicesCsv: async (q?: string) => {
+    const path = `/admin/invoices.csv${q ? `?q=${encodeURIComponent(q)}` : ''}`
+    const { blob } = await apiDownload(path)
+    downloadBlob(blob, 'invoices.csv')
+  },
 
   // Content media uploads — used by the Banners / Promo Videos / Astrologer
   // Videos forms to turn a file picked on disk into a hosted URL.

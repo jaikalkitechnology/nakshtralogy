@@ -9,8 +9,8 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 
-from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile, status
-from sqlalchemy import func, select
+from fastapi import APIRouter, File, Form, HTTPException, Query, Response, UploadFile, status
+from sqlalchemy import func, or_, select
 
 from app.core.deps import CurrentAdmin, DBSession
 from app.core.media import normalize_media_url
@@ -2544,3 +2544,142 @@ async def overview(admin: CurrentAdmin, db: DBSession):
         ),
         "refunds_total": await total(WalletTransaction.type == TransactionType.refund),
     }
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  Phase H — GST invoices (list / filter / download / CSV) + GST config
+# ══════════════════════════════════════════════════════════════════════
+from app.models.invoice import Invoice  # noqa: E402
+from app.services import invoice_service  # noqa: E402
+
+
+def _invoice_admin_row(inv: Invoice, buyer: User | None = None) -> dict:
+    return {
+        "id": str(inv.id),
+        "invoice_number": inv.invoice_number,
+        "user_id": str(inv.user_id),
+        "buyer_name": inv.buyer_name or (buyer.name if buyer else None),
+        "source_type": inv.source_type,
+        "source_id": str(inv.source_id) if inv.source_id else None,
+        "seller_gstin": inv.seller_gstin,
+        "taxable_value": str(inv.taxable_value or 0),
+        "tax_rate": str(inv.tax_rate or 0),
+        "cgst_amount": str(inv.cgst_amount or 0),
+        "sgst_amount": str(inv.sgst_amount or 0),
+        "igst_amount": str(inv.igst_amount or 0),
+        "total_amount": str(inv.total_amount or 0),
+        "currency": inv.currency,
+        "created_at": inv.created_at.isoformat() if inv.created_at else None,
+    }
+
+
+def _invoice_filters(q: str | None, source_type: str | None):
+    conds = []
+    if source_type:
+        conds.append(Invoice.source_type == source_type)
+    if q:
+        like = f"%{q.strip()}%"
+        conds.append(
+            or_(
+                Invoice.invoice_number.ilike(like),
+                Invoice.buyer_name.ilike(like),
+                Invoice.seller_gstin.ilike(like),
+            )
+        )
+    return conds
+
+
+@router.get("/invoices")
+async def list_invoices(
+    admin: CurrentAdmin,
+    db: DBSession,
+    page: int = Page,
+    size: int = Size,
+    q: str | None = Query(None, description="Search invoice no / buyer / GSTIN"),
+    source_type: str | None = Query(None),
+):
+    conds = _invoice_filters(q, source_type)
+    base = select(Invoice)
+    if conds:
+        base = base.where(*conds)
+    total = await db.scalar(
+        select(func.count(Invoice.id)).where(*conds) if conds else select(func.count(Invoice.id))
+    )
+    rows = (
+        await db.scalars(
+            _paginate(base.order_by(Invoice.created_at.desc()), page, size)
+        )
+    ).all()
+    return {
+        "items": [_invoice_admin_row(r) for r in rows],
+        "total": int(total or 0),
+        "page": page,
+        "size": size,
+    }
+
+
+@router.get("/invoices.csv")
+async def export_invoices_csv(
+    admin: CurrentAdmin,
+    db: DBSession,
+    q: str | None = Query(None),
+    source_type: str | None = Query(None),
+):
+    import csv
+    import io as _io
+
+    conds = _invoice_filters(q, source_type)
+    stmt = select(Invoice)
+    if conds:
+        stmt = stmt.where(*conds)
+    rows = (await db.scalars(stmt.order_by(Invoice.created_at.asc()))).all()
+
+    buf = _io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow([
+        "invoice_number", "created_at", "buyer_name", "seller_gstin",
+        "source_type", "taxable_value", "tax_rate", "cgst", "sgst", "igst",
+        "total", "currency",
+    ])
+    for inv in rows:
+        writer.writerow([
+            inv.invoice_number,
+            inv.created_at.isoformat() if inv.created_at else "",
+            inv.buyer_name or "",
+            inv.seller_gstin or "",
+            inv.source_type or "",
+            inv.taxable_value or 0, inv.tax_rate or 0,
+            inv.cgst_amount or 0, inv.sgst_amount or 0, inv.igst_amount or 0,
+            inv.total_amount or 0, inv.currency or "INR",
+        ])
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="invoices.csv"'},
+    )
+
+
+@router.get("/invoices/{invoice_id}/download")
+async def admin_download_invoice(invoice_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    inv = await db.get(Invoice, invoice_id)
+    if inv is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
+    data = storage.read_bytes(inv.pdf_key) if inv.pdf_key else None
+    if data is None:
+        data = invoice_service.render_pdf(inv)
+    fname = inv.invoice_number.replace("/", "-")
+    return Response(
+        content=data,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{fname}.pdf"'},
+    )
+
+
+@router.get("/settings/gst")
+async def get_gst_settings(admin: CurrentAdmin, db: DBSession):
+    return await invoice_service.get_gst_config(db)
+
+
+@router.put("/settings/gst")
+async def set_gst_settings(body: SettingIn, admin: CurrentAdmin, db: DBSession):
+    return await invoice_service.set_gst_config(db, body.value)

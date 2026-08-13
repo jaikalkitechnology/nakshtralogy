@@ -15,8 +15,8 @@ Builds the compliance (Tier 1) and high-value (Tier 2) gaps from `FEATURE_COMPAR
 | Phase | Tier | Title | Status | Depends |
 |---|---|---|---|---|
 | G | 1 | Account deletion (user + astro + admin) | ✅ | — |
-| H | 1 | Invoices (GST + PDF + admin) | 🟡 | — |
-| I | 1 | TDS management (PAN 10% + challan + payout) | ⬜ | H |
+| H | 1 | Invoices (GST + PDF + admin) | ✅ | — |
+| I | 1 | TDS management (PAN 10% + challan + payout) | 🟡 | H |
 | J | 2 | Specialist reports (dev-API, admin-priced) | ⬜ | — |
 | K | 2 | Notification inbox + bell badge (both apps + admin) | ⬜ | — |
 | L | 2 | FAQ + Support tickets/helpdesk (admin-managed) | ⬜ | — |

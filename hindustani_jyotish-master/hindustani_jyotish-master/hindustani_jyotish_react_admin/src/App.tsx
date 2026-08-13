@@ -27,6 +27,7 @@ import WalletTransactionsPage from './pages/WalletTransactionsPage'
 import WalletLedgerPage from './pages/WalletLedgerPage'
 import ReviewsPage from './pages/ReviewsPage'
 import RazorpaySettingsPage from './pages/RazorpaySettingsPage'
+import InvoicesPage from './pages/InvoicesPage'
 import GoogleLoginSettingsPage from './pages/GoogleLoginSettingsPage'
 import CredentialsOverviewPage from './pages/CredentialsOverviewPage'
 import { RESOURCES } from './config/resources'
@@ -83,6 +84,7 @@ export default function App() {
             <Route path="/wallet-ledger" element={<WalletLedgerPage />} />
             <Route path="/payouts" element={<PayoutsPage />} />
             <Route path="/refunds" element={list('refunds')} />
+            <Route path="/invoices" element={<InvoicesPage />} />
 
             {/* Sessions */}
             <Route path="/sessions" element={list('consultations')} />
@@ -214,6 +216,23 @@ export default function App() {
             <Route path="/agora" element={<AgoraSettingsPage />} />
             <Route path="/razorpay" element={<RazorpaySettingsPage />} />
             <Route path="/commission" element={<CommissionPage />} />
+            <Route
+              path="/gst-settings"
+              element={
+                <SettingsPage
+                  title="GST"
+                  subtitle="Seller identity + tax details printed on every GST invoice. The rate is applied GST-inclusive (place of supply unknown → CGST+SGST split). Leave GSTIN blank until registered."
+                  endpoint="/admin/settings/gst"
+                  fields={[
+                    { key: 'seller_name', label: 'Legal name', placeholder: 'Hindustani Jyotish Pvt Ltd' },
+                    { key: 'seller_gstin', label: 'Seller GSTIN', placeholder: '27ABCDE1234F1Z5' },
+                    { key: 'seller_address', label: 'Registered address', placeholder: 'City, State' },
+                    { key: 'default_rate', label: 'Default GST rate (%)', placeholder: '18' },
+                    { key: 'hsn_sac', label: 'HSN / SAC code', placeholder: '998399' },
+                  ]}
+                />
+              }
+            />
             <Route path="/maintenance" element={<MaintenancePage />} />
             <Route path="/schema-sync" element={<SchemaSyncPage />} />
             <Route path="/firebase-config" element={<FirebaseConfigPage />} />

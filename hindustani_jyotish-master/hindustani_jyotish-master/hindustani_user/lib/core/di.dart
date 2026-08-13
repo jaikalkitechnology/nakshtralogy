@@ -5,6 +5,7 @@ import '../features/discovery/discovery_repository.dart';
 import '../features/wallet/wallet_repository.dart';
 import '../features/wallet/wallet_checkout.dart';
 import '../features/insights/insights_repository.dart';
+import '../features/invoices/invoice_repository.dart';
 import '../features/config/app_config_repository.dart';
 import '../features/consultation/consultation_repository.dart';
 import '../features/home/banners_repository.dart';
@@ -35,6 +36,7 @@ void configureDependencies() {
     ..registerLazySingleton<WalletRepository>(() => WalletRepository(api))
     ..registerLazySingleton<WalletCheckout>(() => WalletCheckout(getIt<WalletRepository>()))
     ..registerLazySingleton<InsightsRepository>(() => InsightsRepository(api))
+    ..registerLazySingleton<InvoiceRepository>(() => InvoiceRepository(api))
     ..registerLazySingleton<ConsultationRepository>(() => ConsultationRepository(api))
     ..registerLazySingleton<BroadcastRepository>(() => BroadcastRepository(api))
     ..registerLazySingleton<PromoVideosRepository>(() => PromoVideosRepository(api))

@@ -138,6 +138,11 @@ class ProfileScreen extends StatelessWidget {
                 // work, e.g. push_handlers.dart's consultation_ended handler).
                 onTap: () => context.go('/wallet'),
               ),
+              _Tile(
+                icon: Icons.description_outlined,
+                label: l.profileInvoices,
+                onTap: () => context.push('/invoices'),
+              ),
               const _HelplineTile(),
               const _PrivacyPolicyTile(),
               _Tile(

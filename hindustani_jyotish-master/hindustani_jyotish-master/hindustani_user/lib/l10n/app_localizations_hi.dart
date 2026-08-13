@@ -415,6 +415,31 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profilePaymentHistory => 'भुगतान इतिहास';
 
   @override
+  String get profileInvoices => 'जीएसटी चालान';
+
+  @override
+  String get invoicesTitle => 'जीएसटी चालान';
+
+  @override
+  String get invoicesEmpty =>
+      'अभी तक कोई चालान नहीं। भुगतान किए गए परामर्श यहाँ दिखेंगे।';
+
+  @override
+  String get invoicesDownload => 'डाउनलोड';
+
+  @override
+  String get invoicesDownloading => 'डाउनलोड हो रहा है…';
+
+  @override
+  String get invoicesDownloadFailed => 'चालान डाउनलोड नहीं हो सका।';
+
+  @override
+  String get invoicesTotal => 'कुल';
+
+  @override
+  String get invoicesTax => 'जीएसटी';
+
+  @override
   String get profileBecomeAstrologer => 'ज्योतिषी बनें';
 
   @override

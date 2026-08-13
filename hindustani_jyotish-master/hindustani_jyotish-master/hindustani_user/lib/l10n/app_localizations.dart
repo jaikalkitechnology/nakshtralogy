@@ -830,6 +830,54 @@ abstract class AppLocalizations {
   /// **'Payment history'**
   String get profilePaymentHistory;
 
+  /// No description provided for @profileInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'GST invoices'**
+  String get profileInvoices;
+
+  /// No description provided for @invoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GST Invoices'**
+  String get invoicesTitle;
+
+  /// No description provided for @invoicesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices yet. Paid consultations will appear here.'**
+  String get invoicesEmpty;
+
+  /// No description provided for @invoicesDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get invoicesDownload;
+
+  /// No description provided for @invoicesDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get invoicesDownloading;
+
+  /// No description provided for @invoicesDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not download the invoice.'**
+  String get invoicesDownloadFailed;
+
+  /// No description provided for @invoicesTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get invoicesTotal;
+
+  /// No description provided for @invoicesTax.
+  ///
+  /// In en, this message translates to:
+  /// **'GST'**
+  String get invoicesTax;
+
   /// No description provided for @profileBecomeAstrologer.
   ///
   /// In en, this message translates to:

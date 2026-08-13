@@ -18,6 +18,7 @@ from app.models.kyc import AstrologerKYC  # noqa: F401
 from app.models.consultation import Consultation, ConsultationStatus, ConsultationType  # noqa: F401,E501
 from app.models.device_token import DeviceToken  # noqa: F401
 from app.models.follow import AstrologerFollow  # noqa: F401
+from app.models.invoice import Invoice  # noqa: F401
 from app.models.kundli import KundliReport  # noqa: F401
 from app.models.live_engagement import (  # noqa: F401
     EngagementKind,
@@ -59,6 +60,7 @@ __all__ = [
     "DeviceToken",
     "AstrologerFollow",
     "ConsultationMessage",
+    "Invoice",
     "KundliReport",
     "LiveBroadcast",
     "EngagementKind",
