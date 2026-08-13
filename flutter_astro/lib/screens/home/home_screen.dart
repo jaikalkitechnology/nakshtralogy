@@ -129,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // it also arrives via FCM/VoIP.
       if (!IncomingCallGuard.firstTime((data['call_id'] ?? '').toString())) return;
       Navigator.of(context).push(MaterialPageRoute(
+        settings: const RouteSettings(name: kIncomingCallRoute),
         builder: (_) => IncomingCallScreen(
           callId: data['call_id'] ?? '',
           callerName: data['caller_name'] ?? 'User',

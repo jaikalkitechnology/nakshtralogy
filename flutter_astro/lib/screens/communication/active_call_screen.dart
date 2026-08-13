@@ -115,6 +115,10 @@ class _ActiveCallScreenState extends State<ActiveCallScreen> with WidgetsBinding
         },
         onUserOffline: (connection, remoteUid, reason) {
           debugPrint('Remote user left: $remoteUid reason=$reason');
+          // Already tearing down (we hit End). leaveChannel() makes Agora report
+          // the peer offline — often not as a clean "quit" on web — which would
+          // otherwise pop a stray "Reconnecting…" right after our own end.
+          if (_ending || !mounted) return;
           // The user intentionally hung up (quit) → end cleanly and say so,
           // instead of showing "Reconnecting…". Only a network drop gets grace.
           if (reason == UserOfflineReasonType.userOfflineQuit) {

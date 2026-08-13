@@ -5,6 +5,13 @@ import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
 import 'active_call_screen.dart';
 
+/// Route names for the ringing + live call screens. Naming the routes lets a
+/// newly-accepted call clear any lingering call route off the navigator stack,
+/// so ending a call returns to the dashboard instead of a stale "previous call"
+/// screen left underneath (see openAstroActiveCall in fcm_service.dart).
+const String kIncomingCallRoute = 'incoming_call';
+const String kActiveCallRoute = 'active_call';
+
 /// De-duplicates an incoming call that arrives over more than one channel.
 /// The same call is pushed by the astrologer WebSocket AND by FCM (and VoIP),
 /// so without this the ringing screen opened twice. Every show-site asks

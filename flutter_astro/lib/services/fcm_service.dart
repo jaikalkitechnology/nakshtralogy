@@ -14,6 +14,43 @@ import '../services/callkit_service.dart';
 /// Global navigator key — set in MaterialApp so FCM can navigate from anywhere.
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+/// Open the live call screen after an ACCEPT that came from outside the app
+/// (an FCM notification action / tap, or the CallKit accept). It pushes the
+/// active-call screen while removing any ringing screen (and any previous
+/// active-call route) still sitting underneath — otherwise, when this call
+/// ends and pops, the astrologer is dropped back onto the OLD call's ringing/
+/// live UI instead of the dashboard. Only non-call routes are kept.
+void openAstroActiveCall({
+  required String callId,
+  required String channelName,
+  required String agoraToken,
+  required String agoraAppId,
+  required String callType,
+  required String peerName,
+  required double ratePerMin,
+}) {
+  final nav = navigatorKey.currentState;
+  if (nav == null) return;
+  nav.pushAndRemoveUntil(
+    MaterialPageRoute(
+      settings: const RouteSettings(name: kActiveCallRoute),
+      builder: (_) => ActiveCallScreen(
+        callId: callId,
+        channelName: channelName,
+        agoraToken: agoraToken,
+        agoraAppId: agoraAppId,
+        callType: callType,
+        peerName: peerName,
+        ratePerMin: ratePerMin,
+        isAstrologer: true,
+      ),
+    ),
+    (route) =>
+        route.settings.name != kIncomingCallRoute &&
+        route.settings.name != kActiveCallRoute,
+  );
+}
+
 /// Flutter local notifications plugin instance.
 final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
@@ -251,22 +288,15 @@ void _handleAcceptCallFromNotification(Map<String, dynamic> data) {
   ApiService().loadTokens().then((_) {
     ApiService().callAction(callId, 'accept').then((resp) {
       if (resp['statusCode'] == 200 || resp['statusCode'] == 201) {
-        final callerName = data['caller_name'] ?? 'User';
-        final callType = data['call_type'] ?? 'voice';
-        final ratePerMin = double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0;
-
-        navigatorKey.currentState?.push(MaterialPageRoute(
-          builder: (_) => ActiveCallScreen(
-            callId: callId,
-            channelName: resp['channel_name'] ?? data['channel_name'] ?? '',
-            agoraToken: resp['agora_token'] ?? data['agora_token'] ?? '',
-            agoraAppId: resp['agora_app_id'] ?? data['agora_app_id'] ?? '',
-            callType: callType,
-            peerName: callerName,
-            ratePerMin: ratePerMin,
-            isAstrologer: true,
-          ),
-        ));
+        openAstroActiveCall(
+          callId: callId,
+          channelName: resp['channel_name'] ?? data['channel_name'] ?? '',
+          agoraToken: resp['agora_token'] ?? data['agora_token'] ?? '',
+          agoraAppId: resp['agora_app_id'] ?? data['agora_app_id'] ?? '',
+          callType: data['call_type'] ?? 'voice',
+          peerName: data['caller_name'] ?? 'User',
+          ratePerMin: double.tryParse(data['rate_per_min']?.toString() ?? '0') ?? 0,
+        );
       } else {
         // Call expired or error
         debugPrint('Accept call failed: ${resp['detail']}');
@@ -296,6 +326,7 @@ void _navigateFromNotification(Map<String, dynamic> data) {
     final callId = data['call_id'];
     if (callId != null && IncomingCallGuard.firstTime(callId.toString())) {
       navigatorKey.currentState?.push(MaterialPageRoute(
+        settings: const RouteSettings(name: kIncomingCallRoute),
         builder: (_) => IncomingCallScreen(
           callId: callId,
           callerName: data['caller_name'] ?? 'User',
@@ -515,6 +546,7 @@ class FcmService {
           return;
         }
         navigatorKey.currentState?.push(MaterialPageRoute(
+          settings: const RouteSettings(name: kIncomingCallRoute),
           builder: (_) => IncomingCallScreen(
             callId: callId,
             callerName: data['caller_name'] ?? 'User',

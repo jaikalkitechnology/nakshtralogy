@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/api_service.dart';
+import '../../utils/comm_session_guard.dart';
 import '../../widgets/session_review_dialog.dart';
 import '../../widgets/recharge_sheet.dart';
 
@@ -71,6 +72,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    CommSessionGuard.enter();   // suppress the home "active session" rejoin banner
     WidgetsBinding.instance.addObserver(this);
     _initAgora();
     _startPollingCallStatus();
@@ -187,6 +189,11 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
       },
       onUserOffline: (connection, remoteUid, reason) {
         debugPrint('Remote user left: $remoteUid reason=$reason');
+        // We're already tearing down (the user hit End). Leaving the channel
+        // makes Agora report the remote peer offline — often NOT as a clean
+        // "quit" on web — which would otherwise pop a stray "Reconnecting…"
+        // right after our own end. Ignore all peer-offline events once ending.
+        if (_ending || !mounted) return;
         // The astrologer intentionally hung up (quit) → end cleanly and say so,
         // instead of showing "Reconnecting…" for the whole grace window. Only a
         // genuine network drop gets the reconnect grace.
@@ -457,6 +464,7 @@ class _CallScreenState extends State<CallScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    CommSessionGuard.leave();
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _maxTimer?.cancel();

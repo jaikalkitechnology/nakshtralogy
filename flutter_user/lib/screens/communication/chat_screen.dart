@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/constants.dart';
 import '../../services/api_service.dart';
+import '../../utils/comm_session_guard.dart';
 import '../../widgets/session_review_dialog.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -90,6 +91,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    CommSessionGuard.enter();   // suppress the home "active session" rejoin banner
     WidgetsBinding.instance.addObserver(this);
     _remainingMessages = widget.sessionMessageLimit;
     _connect();
@@ -698,6 +700,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    CommSessionGuard.leave();
     WidgetsBinding.instance.removeObserver(this);
     _sendEndSession();
     _timer?.cancel();
