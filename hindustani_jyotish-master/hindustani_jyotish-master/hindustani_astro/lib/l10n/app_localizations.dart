@@ -380,6 +380,162 @@ abstract class AppLocalizations {
   /// **'Edit profile & charges'**
   String get profileEditCharges;
 
+  /// No description provided for @profileAccountSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get profileAccountSection;
+
+  /// No description provided for @profileEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get profileEditProfile;
+
+  /// No description provided for @profileEditProfileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, bio, skills, languages, rates & photo'**
+  String get profileEditProfileSub;
+
+  /// No description provided for @profileBankPan.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank & PAN details'**
+  String get profileBankPan;
+
+  /// No description provided for @profileBankPanSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout method, bank account & PAN'**
+  String get profileBankPanSub;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @editProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update how seekers see you and what you charge.'**
+  String get editProfileSubtitle;
+
+  /// No description provided for @bankPanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank & PAN details'**
+  String get bankPanTitle;
+
+  /// No description provided for @bankPanIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payout and identity details, used for withdrawals and verification.'**
+  String get bankPanIntro;
+
+  /// No description provided for @bankPanPayoutSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout method'**
+  String get bankPanPayoutSection;
+
+  /// No description provided for @bankPanIdentitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get bankPanIdentitySection;
+
+  /// No description provided for @bankPanDocsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get bankPanDocsSection;
+
+  /// No description provided for @bankPanBankName.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank name'**
+  String get bankPanBankName;
+
+  /// No description provided for @bankPanIfsc.
+  ///
+  /// In en, this message translates to:
+  /// **'IFSC code'**
+  String get bankPanIfsc;
+
+  /// No description provided for @bankPanAccountHolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Account holder'**
+  String get bankPanAccountHolder;
+
+  /// No description provided for @bankPanAccountNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get bankPanAccountNumber;
+
+  /// No description provided for @bankPanUpiId.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI ID'**
+  String get bankPanUpiId;
+
+  /// No description provided for @bankPanPan.
+  ///
+  /// In en, this message translates to:
+  /// **'PAN number'**
+  String get bankPanPan;
+
+  /// No description provided for @bankPanAadhaar.
+  ///
+  /// In en, this message translates to:
+  /// **'Aadhaar number'**
+  String get bankPanAadhaar;
+
+  /// No description provided for @bankPanMasked.
+  ///
+  /// In en, this message translates to:
+  /// **'•••• {last4}'**
+  String bankPanMasked(String last4);
+
+  /// No description provided for @bankPanNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get bankPanNotSet;
+
+  /// No description provided for @bankPanEditCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit bank & PAN details'**
+  String get bankPanEditCta;
+
+  /// No description provided for @bankPanAddCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Add bank & PAN details'**
+  String get bankPanAddCta;
+
+  /// No description provided for @bankPanApprovalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes to bank or PAN details are submitted for admin approval and apply once approved.'**
+  String get bankPanApprovalNote;
+
+  /// No description provided for @bankPanEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t added your bank & PAN details yet.'**
+  String get bankPanEmpty;
+
+  /// No description provided for @bankPanLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your bank & PAN details.'**
+  String get bankPanLoadFailed;
+
   /// No description provided for @setTitle.
   ///
   /// In en, this message translates to:

@@ -159,6 +159,91 @@ class AppLocalizationsHi extends AppLocalizations {
   String get profileEditCharges => 'प्रोफ़ाइल और शुल्क संपादित करें';
 
   @override
+  String get profileAccountSection => 'खाता';
+
+  @override
+  String get profileEditProfile => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get profileEditProfileSub =>
+      'नाम, परिचय, विद्याएँ, भाषाएँ, दरें और फ़ोटो';
+
+  @override
+  String get profileBankPan => 'बैंक और पैन विवरण';
+
+  @override
+  String get profileBankPanSub => 'पेआउट विधि, बैंक खाता और पैन';
+
+  @override
+  String get editProfileTitle => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get editProfileSubtitle =>
+      'जिज्ञासु आपको कैसे देखें और आप क्या शुल्क लेते हैं, यह अपडेट करें।';
+
+  @override
+  String get bankPanTitle => 'बैंक और पैन विवरण';
+
+  @override
+  String get bankPanIntro =>
+      'निकासी और सत्यापन के लिए उपयोग किए जाने वाले आपके पेआउट और पहचान विवरण।';
+
+  @override
+  String get bankPanPayoutSection => 'पेआउट विधि';
+
+  @override
+  String get bankPanIdentitySection => 'पहचान';
+
+  @override
+  String get bankPanDocsSection => 'दस्तावेज़';
+
+  @override
+  String get bankPanBankName => 'बैंक का नाम';
+
+  @override
+  String get bankPanIfsc => 'IFSC कोड';
+
+  @override
+  String get bankPanAccountHolder => 'खाताधारक';
+
+  @override
+  String get bankPanAccountNumber => 'खाता संख्या';
+
+  @override
+  String get bankPanUpiId => 'UPI आईडी';
+
+  @override
+  String get bankPanPan => 'पैन नंबर';
+
+  @override
+  String get bankPanAadhaar => 'आधार नंबर';
+
+  @override
+  String bankPanMasked(String last4) {
+    return '•••• $last4';
+  }
+
+  @override
+  String get bankPanNotSet => 'सेट नहीं है';
+
+  @override
+  String get bankPanEditCta => 'बैंक और पैन विवरण संपादित करें';
+
+  @override
+  String get bankPanAddCta => 'बैंक और पैन विवरण जोड़ें';
+
+  @override
+  String get bankPanApprovalNote =>
+      'बैंक या पैन विवरण में परिवर्तन एडमिन अनुमोदन के लिए भेजे जाते हैं और अनुमोदित होने पर लागू होते हैं।';
+
+  @override
+  String get bankPanEmpty =>
+      'आपने अभी तक अपने बैंक और पैन विवरण नहीं जोड़े हैं।';
+
+  @override
+  String get bankPanLoadFailed => 'आपके बैंक और पैन विवरण लोड नहीं हो सके।';
+
+  @override
   String get setTitle => 'सेटिंग्स';
 
   @override

@@ -122,6 +122,21 @@ class AstroProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+          _sectionTitle(l.profileAccountSection),
+          const SizedBox(height: 12),
+          _navTile(
+            icon: Icons.person_outline,
+            label: l.profileEditProfile,
+            subtitle: l.profileEditProfileSub,
+            onTap: () => context.push('/profile/edit'),
+          ),
+          _navTile(
+            icon: Icons.account_balance_outlined,
+            label: l.profileBankPan,
+            subtitle: l.profileBankPanSub,
+            onTap: () => context.push('/profile/bank-pan'),
+          ),
+          const SizedBox(height: 20),
           _navTile(
             icon: Icons.history,
             label: 'Consultation History',
@@ -155,14 +170,7 @@ class AstroProfileScreen extends StatelessWidget {
           _row(l.profileChatRate, '₹${a?.rateChatPerMsg ?? '0'}/msg'),
           _row(l.profileCallRate, '₹${a?.rateCallPerMin ?? '0'}/min'),
           _row(l.profileVideoRate, '₹${a?.rateVideoPerMin ?? '0'}/min'),
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-            onPressed: () => context.push('/settings'),
-            icon: const Icon(Icons.tune),
-            label: Text(l.profileEditCharges),
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: AppColors.danger),
@@ -282,7 +290,14 @@ class AstroProfileScreen extends StatelessWidget {
     }
   }
 
-  Widget _navTile({required IconData icon, required String label, required VoidCallback onTap}) =>
+  Widget _sectionTitle(String text) =>
+      Text(text, style: AppTextStyles.heading(size: 16, color: AppColors.copperLight));
+
+  Widget _navTile(
+          {required IconData icon,
+          required String label,
+          String? subtitle,
+          required VoidCallback onTap}) =>
       Container(
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
@@ -299,7 +314,16 @@ class AstroProfileScreen extends StatelessWidget {
             ),
             child: Icon(icon, size: 18, color: AppColors.copperLight),
           ),
-          title: Text(label, style: AppTextStyles.body(size: 14)),
+          title: Text(label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.body(size: 14)),
+          subtitle: subtitle == null
+              ? null
+              : Text(subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
           trailing: Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
           onTap: onTap,
         ),

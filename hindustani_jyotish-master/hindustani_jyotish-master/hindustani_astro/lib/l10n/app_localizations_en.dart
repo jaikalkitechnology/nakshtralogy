@@ -157,6 +157,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileEditCharges => 'Edit profile & charges';
 
   @override
+  String get profileAccountSection => 'Account';
+
+  @override
+  String get profileEditProfile => 'Edit Profile';
+
+  @override
+  String get profileEditProfileSub =>
+      'Name, bio, skills, languages, rates & photo';
+
+  @override
+  String get profileBankPan => 'Bank & PAN details';
+
+  @override
+  String get profileBankPanSub => 'Payout method, bank account & PAN';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
+
+  @override
+  String get editProfileSubtitle =>
+      'Update how seekers see you and what you charge.';
+
+  @override
+  String get bankPanTitle => 'Bank & PAN details';
+
+  @override
+  String get bankPanIntro =>
+      'Your payout and identity details, used for withdrawals and verification.';
+
+  @override
+  String get bankPanPayoutSection => 'Payout method';
+
+  @override
+  String get bankPanIdentitySection => 'Identity';
+
+  @override
+  String get bankPanDocsSection => 'Documents';
+
+  @override
+  String get bankPanBankName => 'Bank name';
+
+  @override
+  String get bankPanIfsc => 'IFSC code';
+
+  @override
+  String get bankPanAccountHolder => 'Account holder';
+
+  @override
+  String get bankPanAccountNumber => 'Account number';
+
+  @override
+  String get bankPanUpiId => 'UPI ID';
+
+  @override
+  String get bankPanPan => 'PAN number';
+
+  @override
+  String get bankPanAadhaar => 'Aadhaar number';
+
+  @override
+  String bankPanMasked(String last4) {
+    return '•••• $last4';
+  }
+
+  @override
+  String get bankPanNotSet => 'Not set';
+
+  @override
+  String get bankPanEditCta => 'Edit bank & PAN details';
+
+  @override
+  String get bankPanAddCta => 'Add bank & PAN details';
+
+  @override
+  String get bankPanApprovalNote =>
+      'Changes to bank or PAN details are submitted for admin approval and apply once approved.';
+
+  @override
+  String get bankPanEmpty => 'You haven\'t added your bank & PAN details yet.';
+
+  @override
+  String get bankPanLoadFailed => 'Could not load your bank & PAN details.';
+
+  @override
   String get setTitle => 'Settings';
 
   @override

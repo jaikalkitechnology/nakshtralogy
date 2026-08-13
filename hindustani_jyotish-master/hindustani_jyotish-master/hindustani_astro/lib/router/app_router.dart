@@ -15,6 +15,8 @@ import '../features/portal/ui/consultation_history_screen.dart';
 import '../features/portal/ui/payment_history_screen.dart';
 import '../features/portal/ui/ratings_screen.dart';
 import '../features/profile/ui/astro_profile_screen.dart';
+import '../features/profile/ui/bank_pan_screen.dart';
+import '../features/profile/ui/edit_profile_screen.dart';
 import '../features/requests/ui/requests_screen.dart';
 import '../features/settings/ui/settings_screen.dart';
 
@@ -89,6 +91,16 @@ GoRouter buildRouter(AstroSessionCubit session) {
         path: '/settings',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/bank-pan',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const BankPanScreen(),
       ),
       GoRoute(
         path: '/history/consultations',
