@@ -365,5 +365,9 @@
   "reportLegal": "Legal Report",
   "reportLifePath": "Life Path Report",
   "reportCharacter": "Character Report",
-  "reportPastLife": "Past Life Report"
+  "reportPastLife": "Past Life Report",
+
+  "notificationsTitle": "Notifications",
+  "notificationsEmpty": "You have no notifications yet.",
+  "notificationsMarkAllRead": "Mark all read"
 }

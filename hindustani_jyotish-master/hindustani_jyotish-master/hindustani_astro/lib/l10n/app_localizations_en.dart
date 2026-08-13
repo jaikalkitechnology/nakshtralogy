@@ -728,4 +728,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get earningsNoPayouts => 'No withdrawals yet.';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'You have no notifications yet.';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all read';
 }

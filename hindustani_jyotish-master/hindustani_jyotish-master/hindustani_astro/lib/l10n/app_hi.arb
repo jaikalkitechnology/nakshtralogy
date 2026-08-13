@@ -253,5 +253,9 @@
   "earningsPayoutTds": "TDS",
   "earningsPayoutNet": "शुद्ध भुगतान",
   "earningsPayoutGross": "सकल",
-  "earningsNoPayouts": "अभी तक कोई निकासी नहीं।"
+  "earningsNoPayouts": "अभी तक कोई निकासी नहीं।",
+
+  "notificationsTitle": "सूचनाएँ",
+  "notificationsEmpty": "आपके पास अभी कोई सूचना नहीं है।",
+  "notificationsMarkAllRead": "सभी को पढ़ा हुआ चिह्नित करें"
 }

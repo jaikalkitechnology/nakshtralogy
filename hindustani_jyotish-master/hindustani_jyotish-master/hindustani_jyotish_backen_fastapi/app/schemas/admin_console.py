@@ -164,6 +164,16 @@ class NotificationBody(BaseModel):
     data: dict[str, str] | None = None
 
 
+class NotificationBroadcastIn(BaseModel):
+    """Admin broadcast — persist an in-app inbox row for every recipient of the
+    chosen role AND fan out a push. role: 'user' | 'astrologer' | 'all'."""
+
+    role: str = Field(default="all")
+    title: str = Field(..., max_length=120)
+    body: str = Field(..., max_length=500)
+    data: dict[str, str] | None = None
+
+
 class PayoutReferenceIn(BaseModel):
     reference: str | None = Field(default=None, max_length=64)
 

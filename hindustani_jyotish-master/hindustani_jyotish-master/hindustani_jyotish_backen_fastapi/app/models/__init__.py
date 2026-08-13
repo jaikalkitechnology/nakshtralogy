@@ -26,6 +26,10 @@ from app.models.live_engagement import (  # noqa: F401
     LiveGift,
 )
 from app.models.message import ConsultationMessage  # noqa: F401
+from app.models.notification import (  # noqa: F401
+    Notification,
+    NotificationBroadcast,
+)
 from app.models.otp import OtpCode  # noqa: F401
 from app.models.payout import AstrologerPayout, PayoutStatus  # noqa: F401
 from app.models.profile_edit import (  # noqa: F401
@@ -60,6 +64,8 @@ __all__ = [
     "DeviceToken",
     "AstrologerFollow",
     "ConsultationMessage",
+    "Notification",
+    "NotificationBroadcast",
     "Invoice",
     "KundliReport",
     "LiveBroadcast",

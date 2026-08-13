@@ -16,6 +16,7 @@ from app.api.v1 import (
     insights,
     invoices,
     kundli,
+    notifications,
     public,
     reports,
     users,
@@ -64,3 +65,9 @@ api_router.include_router(wallet.router)
 # Phase H — GST invoices for paid consultations (user list + PDF download;
 # admin list/CSV/config lives under admin_console).
 api_router.include_router(invoices.router)
+
+# Phase K — in-app notification inbox + bell badge. Rows are written by
+# push_service whenever a single-recipient push is sent; both apps read them
+# via /me/notifications (role resolved from the token). Admin broadcast lives
+# under admin_console.
+api_router.include_router(notifications.router)

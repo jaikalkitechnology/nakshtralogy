@@ -355,5 +355,9 @@
   "reportLegal": "कानूनी रिपोर्ट",
   "reportLifePath": "जीवन पथ रिपोर्ट",
   "reportCharacter": "चरित्र रिपोर्ट",
-  "reportPastLife": "पूर्वजन्म रिपोर्ट"
+  "reportPastLife": "पूर्वजन्म रिपोर्ट",
+
+  "notificationsTitle": "सूचनाएँ",
+  "notificationsEmpty": "आपके पास अभी कोई सूचना नहीं है।",
+  "notificationsMarkAllRead": "सभी को पढ़ा हुआ चिह्नित करें"
 }

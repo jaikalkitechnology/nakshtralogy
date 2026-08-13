@@ -733,4 +733,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get earningsNoPayouts => 'अभी तक कोई निकासी नहीं।';
+
+  @override
+  String get notificationsTitle => 'सूचनाएँ';
+
+  @override
+  String get notificationsEmpty => 'आपके पास अभी कोई सूचना नहीं है।';
+
+  @override
+  String get notificationsMarkAllRead => 'सभी को पढ़ा हुआ चिह्नित करें';
 }

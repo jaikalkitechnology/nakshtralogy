@@ -3,6 +3,9 @@ import type { KycDocSet } from '../components/KycDocs'
 import type {
   AdminStats,
   AgoraDiagnoseResult,
+  BroadcastRecord,
+  BroadcastResult,
+  BroadcastRole,
   Astrologer,
   AstrologerDetail,
   AstrologerEditInput,
@@ -284,6 +287,14 @@ export const adminApi = {
     const { blob } = await apiDownload(path)
     downloadBlob(blob, `tds-${period || 'current'}.csv`)
   },
+
+  // Notification broadcast (Phase K) — persist an in-app inbox row for every
+  // recipient of the chosen role AND fan out a push. Plus a log of what was
+  // recently sent.
+  broadcastNotification: (body: { role: BroadcastRole; title: string; body: string }) =>
+    api<BroadcastResult>('/admin/notifications/broadcast', { method: 'POST', body }),
+  listBroadcasts: (limit = 20) =>
+    api<{ items: BroadcastRecord[] }>(`/admin/notifications/broadcasts?limit=${limit}`),
 
   // Content media uploads — used by the Banners / Promo Videos / Astrologer
   // Videos forms to turn a file picked on disk into a hosted URL.

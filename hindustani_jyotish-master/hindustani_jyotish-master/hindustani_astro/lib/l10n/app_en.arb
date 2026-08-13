@@ -255,5 +255,9 @@
   "earningsPayoutTds": "TDS",
   "earningsPayoutNet": "Net paid",
   "earningsPayoutGross": "Gross",
-  "earningsNoPayouts": "No withdrawals yet."
+  "earningsNoPayouts": "No withdrawals yet.",
+
+  "notificationsTitle": "Notifications",
+  "notificationsEmpty": "You have no notifications yet.",
+  "notificationsMarkAllRead": "Mark all read"
 }

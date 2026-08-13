@@ -351,6 +351,44 @@ async def _send_group(
     return PushResult(sent=resp.success_count, failed=resp.failure_count)
 
 
+async def _persist_inbox(
+    db: AsyncSession,
+    *,
+    role: str,
+    recipient_id: uuid.UUID,
+    title: str,
+    body: str,
+    data: dict[str, str] | None,
+) -> None:
+    """Best-effort: also store this alert in the in-app notification inbox.
+
+    Wrapped in a SAVEPOINT so a failure rolls back only this insert and never
+    poisons the caller's transaction or breaks the outgoing push. The row is
+    flushed but NOT committed — the caller's own commit persists it, keeping
+    inbox + push atomic with whatever action triggered them.
+    """
+    try:
+        from app.models.notification import Notification
+
+        notif_type = "general"
+        if data:
+            notif_type = str(data.get("type") or data.get("kind") or "general")
+        async with db.begin_nested():
+            db.add(
+                Notification(
+                    recipient_role=role,
+                    recipient_id=recipient_id,
+                    type=notif_type,
+                    title=title,
+                    body=body,
+                    data=dict(data) if data else None,
+                )
+            )
+            await db.flush()
+    except Exception:  # noqa: BLE001 - inbox is a best-effort side channel
+        logger.warning("Failed to persist notification inbox row", exc_info=True)
+
+
 async def notify_user(
     db: AsyncSession,
     user_id: uuid.UUID,
@@ -360,6 +398,9 @@ async def notify_user(
     data: dict[str, str] | None = None,
     notification_payload: bool = True,
 ) -> PushResult:
+    await _persist_inbox(
+        db, role=OWNER_USER, recipient_id=user_id, title=title, body=body, data=data
+    )
     tokens = await _tokens_for(db, OWNER_USER, user_id)
     return await _send_to_tokens(
         db, tokens, app="user",
@@ -376,6 +417,10 @@ async def notify_astrologer(
     data: dict[str, str] | None = None,
     notification_payload: bool = True,
 ) -> PushResult:
+    await _persist_inbox(
+        db, role=OWNER_ASTROLOGER, recipient_id=astrologer_id,
+        title=title, body=body, data=data,
+    )
     tokens = await _tokens_for(db, OWNER_ASTROLOGER, astrologer_id)
     return await _send_to_tokens(
         db, tokens, app="astro",

@@ -20,6 +20,7 @@ import '../features/insights/ui/my_reports_screen.dart';
 import '../features/insights/ui/special_reports_screen.dart';
 import '../features/live/ui/live_list_screen.dart';
 import '../features/live/ui/live_viewer_screen.dart';
+import '../features/notifications/ui/notifications_screen.dart';
 import '../features/profile/ui/birth_details_screen.dart';
 import '../features/profile/ui/edit_profile_screen.dart';
 import '../features/profile/ui/profile_screen.dart';
@@ -92,6 +93,11 @@ GoRouter buildRouter(AuthCubit auth) {
         path: '/invoices',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const InvoicesScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const NotificationsScreen(),
       ),
       GoRoute(
         path: '/profile/edit',

@@ -599,3 +599,23 @@ export interface TdsReport {
   items: TdsReportRow[]
   totals: { gross: string; tds: string; net: string; payouts: number; astrologers: number }
 }
+
+// Notification broadcast (Phase K)
+export type BroadcastRole = 'user' | 'astrologer' | 'all'
+
+export interface BroadcastResult {
+  role: BroadcastRole
+  recipients: number
+  sent: number
+  failed: number
+  skipped: boolean
+}
+
+export interface BroadcastRecord {
+  id: string
+  role: BroadcastRole
+  title: string
+  body: string | null
+  recipient_count: number
+  created_at: string | null
+}

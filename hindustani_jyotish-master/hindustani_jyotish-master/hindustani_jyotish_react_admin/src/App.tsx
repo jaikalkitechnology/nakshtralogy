@@ -30,6 +30,7 @@ import RazorpaySettingsPage from './pages/RazorpaySettingsPage'
 import InvoicesPage from './pages/InvoicesPage'
 import TdsPage from './pages/TdsPage'
 import GoogleLoginSettingsPage from './pages/GoogleLoginSettingsPage'
+import BroadcastPage from './pages/BroadcastPage'
 import CredentialsOverviewPage from './pages/CredentialsOverviewPage'
 import { RESOURCES } from './config/resources'
 import { adminApi } from './api/endpoints'
@@ -92,6 +93,9 @@ export default function App() {
             <Route path="/sessions" element={list('consultations')} />
             <Route path="/chat-rooms" element={list('chatRooms')} />
             <Route path="/reviews" element={<ReviewsPage />} />
+
+            {/* Engagement */}
+            <Route path="/broadcast" element={<BroadcastPage />} />
 
             {/* Content */}
             <Route path="/coupons" element={<CouponsPage />} />

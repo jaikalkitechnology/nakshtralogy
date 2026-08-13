@@ -49,6 +49,7 @@ from app.schemas.admin_console import (
     LiveGiftIn,
     LiveGiftUpdate,
     NotificationBody,
+    NotificationBroadcastIn,
     NotificationSendIn,
     PayoutReferenceIn,
     PayoutRejectIn,
@@ -547,6 +548,103 @@ async def send_notification_to_astrologer(
     return {
         "target": "astrologer", "astrologer_id": str(astrologer_id),
         "sent": result.sent, "failed": result.failed, "skipped": result.skipped,
+    }
+
+
+@router.post("/notifications/broadcast")
+async def broadcast_notification(
+    body: NotificationBroadcastIn, admin: CurrentAdmin, db: DBSession
+):
+    """Fan out an in-app notification to a whole role + push to their devices.
+
+    role: 'user' → all customers, 'astrologer' → all astrologers, 'all' → both.
+    Writes one persisted inbox row per recipient (so it shows in their bell),
+    records the broadcast for the admin's "recently sent" list, then delivers a
+    push via push_service (skipped if Firebase isn't configured — the inbox
+    rows are still written).
+    """
+    from app.models.notification import (
+        ROLE_ASTROLOGER,
+        ROLE_USER,
+        Notification,
+        NotificationBroadcast,
+    )
+
+    role = body.role if body.role in ("user", "astrologer", "all") else "all"
+    data = body.data or None
+
+    recipients: list[tuple[str, uuid.UUID]] = []
+    if role in ("user", "all"):
+        uids = (
+            await db.scalars(select(User.id).where(User.is_active.is_(True)))
+        ).all()
+        recipients += [(ROLE_USER, uid) for uid in uids]
+    if role in ("astrologer", "all"):
+        aids = (
+            await db.scalars(
+                select(Astrologer.id).where(Astrologer.is_active.is_(True))
+            )
+        ).all()
+        recipients += [(ROLE_ASTROLOGER, aid) for aid in aids]
+
+    for rrole, rid in recipients:
+        db.add(
+            Notification(
+                recipient_role=rrole,
+                recipient_id=rid,
+                type="broadcast",
+                title=body.title,
+                body=body.body,
+                data=dict(data) if data else None,
+            )
+        )
+
+    record = NotificationBroadcast(
+        role=role, title=body.title, body=body.body, recipient_count=len(recipients)
+    )
+    db.add(record)
+    await db.commit()
+
+    # Push fan-out (best-effort; inbox rows above are already committed).
+    audience = {"user": "users", "astrologer": "astrologers", "all": "all"}[role]
+    result = await push_service.notify_audience(
+        db, audience, title=body.title, body=body.body, data=data or {}
+    )
+    return {
+        "role": role,
+        "recipients": len(recipients),
+        "sent": result.sent,
+        "failed": result.failed,
+        "skipped": result.skipped,
+    }
+
+
+@router.get("/notifications/broadcasts")
+async def list_broadcasts(
+    admin: CurrentAdmin, db: DBSession, limit: int = Query(20, ge=1, le=100)
+):
+    """Recently sent admin broadcasts (newest first)."""
+    from app.models.notification import NotificationBroadcast
+
+    rows = (
+        await db.scalars(
+            select(NotificationBroadcast)
+            .order_by(NotificationBroadcast.created_at.desc())
+            .limit(limit)
+        )
+    ).all()
+    return {
+        "items": [
+            {
+                "id": str(r.id),
+                "role": r.role,
+                "title": r.title,
+                "body": r.body,
+                "recipient_count": r.recipient_count,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
+            for r in rows
+        ]
     }
 
 

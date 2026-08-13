@@ -7,6 +7,7 @@ import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/responsive.dart';
 import '../../auth/astro_session_cubit.dart';
+import '../../notifications/notification_bell.dart';
 import '../../portal/portal_repository.dart';
 import '../dashboard_cubit.dart';
 
@@ -244,6 +245,7 @@ class _Hero extends StatelessWidget {
           ),
           Column(
             children: [
+              const NotificationBell(),
               IconButton(
                 tooltip: l.dashSettings,
                 onPressed: () => context.push('/settings'),

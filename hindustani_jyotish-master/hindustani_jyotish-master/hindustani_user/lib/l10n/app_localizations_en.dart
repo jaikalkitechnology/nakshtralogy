@@ -993,4 +993,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportPastLife => 'Past Life Report';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'You have no notifications yet.';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all read';
 }

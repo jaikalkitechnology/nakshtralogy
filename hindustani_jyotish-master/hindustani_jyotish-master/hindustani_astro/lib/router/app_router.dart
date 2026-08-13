@@ -7,6 +7,7 @@ import '../features/auth/ui/welcome_screen.dart';
 import '../features/dashboard/ui/dashboard_screen.dart';
 import '../features/dashboard/ui/home_shell.dart';
 import '../features/earnings/ui/earnings_screen.dart';
+import '../features/notifications/ui/notifications_screen.dart';
 import '../features/kyc/ui/complete_profile_screen.dart';
 import '../features/kyc/ui/kyc_form_screen.dart';
 import '../features/kyc/ui/under_review_screen.dart';
@@ -116,6 +117,11 @@ GoRouter buildRouter(AstroSessionCubit session) {
         path: '/history/payments',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const PaymentHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const NotificationsScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(navigationShell: shell),
