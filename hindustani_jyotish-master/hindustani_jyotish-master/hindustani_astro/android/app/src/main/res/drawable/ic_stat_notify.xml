@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Small monochrome status-bar notification icon (a diya flame silhouette,
+     matching the app's branding). Android requires this to be a plain white
+     shape on a transparent background — the system applies its own tinting,
+     so any colour/gradient here would just get flattened/ignored. Referenced
+     from AndroidManifest.xml via com.google.firebase.messaging.default_notification_icon
+     for FCM pushes, mirroring the existing @mipmap/ic_launcher used for local
+     (foreground) notifications in PushService. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,23c-4.42,0 -8,-3.58 -8,-8c0,-4.17 3.42,-9.92 8,-15c4.58,5.08 8,10.83 8,15C20,19.42 16.42,23 12,23z"/>
+</vector>

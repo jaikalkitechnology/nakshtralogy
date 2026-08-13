@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindustani Jyotishi — Complete UI Reference (User + Astrologer Apps)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ═══ DEEP INDIGO (primary canvas) ═══ */
+    --indigo-void: #0B0B1E;
+    --indigo-deep: #131233;
+    --indigo: #1E1B4B;
+    --indigo-mid: #2D2866;
+    --indigo-soft: #3D3680;
+    --indigo-haze: #4C32A0;
+
+    /* ═══ SAFFRON (primary action) ═══ */
+    --saffron: #F4811F;
+    --saffron-bright: #FF9838;
+    --saffron-deep: #D96510;
+    --saffron-pale: rgba(244,129,31,0.12);
+
+    /* ═══ COPPER (secondary / premium accent) ═══ */
+    --copper: #C77B4A;
+    --copper-light: #E0A878;
+    --copper-bright: #F0C9A0;
+    --copper-deep: #9C5A30;
+
+    /* ═══ GOLD (highlights, ratings, premium) ═══ */
+    --gold: #E8B547;
+    --gold-light: #F5D27D;
+    --gold-deep: #C8941A;
+
+    /* ═══ SURFACES on dark ═══ */
+    --surface-1: rgba(255,255,255,0.04);
+    --surface-2: rgba(255,255,255,0.07);
+    --surface-3: rgba(255,255,255,0.10);
+    --border-soft: rgba(224,168,120,0.18);
+    --border-mid: rgba(224,168,120,0.30);
+
+    /* ═══ TEXT ═══ */
+    --ivory: #FBF6EE;
+    --ivory-dim: rgba(251,246,238,0.72);
+    --ivory-faint: rgba(251,246,238,0.45);
+
+    /* ═══ SEMANTIC ═══ */
+    --success: #34D399;
+    --success-dim: rgba(52,211,153,0.15);
+    --danger: #F87171;
+    --danger-dim: rgba(248,113,113,0.15);
+    --info: #60A5FA;
+    --live: #FF4D6D;
+
+    /* ═══ FONTS ═══ */
+    --font-display: 'Fraunces', serif;
+    --font-deco: 'Marcellus', serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-hindi: 'Noto Sans Devanagari', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--indigo-void);
+    color: var(--ivory);
+    line-height: 1.5;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 15% 10%, rgba(76,50,160,0.25), transparent 45%),
+      radial-gradient(ellipse at 85% 90%, rgba(244,129,31,0.10), transparent 45%),
+      radial-gradient(ellipse at 50% 50%, rgba(199,123,74,0.06), transparent 60%);
+  }
+
+  /* tiny star noise overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 80% 20%, rgba(232,181,71,0.5), transparent),
+      radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 90% 60%, rgba(224,168,120,0.4), transparent);
+    background-size: 100% 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; }
+
+  /* ════════════════════ HERO ════════════════════ */
+  .hero {
+    padding: 90px 40px 50px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 18px;
+    background: var(--saffron-pale);
+    border: 1px solid var(--border-mid);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.25em;
+    color: var(--copper-light);
+    text-transform: uppercase;
+    margin-bottom: 30px; font-weight: 500;
+  }
+  .hero-eyebrow .dot {
+    width: 7px; height: 7px; background: var(--saffron);
+    border-radius: 50%; box-shadow: 0 0 12px var(--saffron);
+  }
+
+  .hero-logo-badge {
+    width: 150px; height: 150px;
+    margin: 0 auto 28px;
+    background: linear-gradient(160deg, var(--indigo-mid), var(--indigo-deep));
+    border-radius: 36px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow:
+      0 30px 70px -20px rgba(0,0,0,0.7),
+      0 0 0 1px var(--border-soft),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .hero-logo-badge::before {
+    content: '';
+    position: absolute; inset: -20px;
+    background: radial-gradient(circle, rgba(244,129,31,0.3), transparent 70%);
+    border-radius: 50%; z-index: -1;
+    animation: pulse-glow 3.5s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.12); }
+  }
+  .hero-logo-badge svg { width: 104px; height: 104px; }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 84px);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .hero h1 em { font-style: italic; color: var(--saffron); }
+
+  .hero-hindi {
+    font-family: var(--font-hindi);
+    font-size: 24px; font-weight: 500;
+    color: var(--copper-light);
+    margin-bottom: 22px;
+  }
+
+  .hero p {
+    max-width: 640px; margin: 0 auto 36px;
+    color: var(--ivory-dim); font-size: 17px;
+  }
+
+  .hero-meta {
+    display: flex; justify-content: center; gap: 38px; flex-wrap: wrap;
+    padding-top: 30px; margin-top: 8px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .meta-item { text-align: center; }
+  .meta-num {
+    font-family: var(--font-display);
+    font-size: 34px; font-weight: 600;
+    color: var(--gold); line-height: 1;
+  }
+  .meta-lbl {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ivory-faint); letter-spacing: 0.18em;
+    text-transform: uppercase; margin-top: 6px;
+  }
+
+  /* ════════════════════ SECTION ════════════════════ */
+  .section { padding: 80px 40px; max-width: 1500px; margin: 0 auto; }
+  .section-head { text-align: center; margin-bottom: 56px; }
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--saffron); letter-spacing: 0.3em;
+    text-transform: uppercase; margin-bottom: 16px; font-weight: 500;
+  }
+  .section-tag::before, .section-tag::after {
+    content: ''; width: 30px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--saffron), transparent);
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 5vw, 52px);
+    font-weight: 600; line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 14px;
+  }
+  .section-title em { font-style: italic; color: var(--saffron); }
+  .section-sub { max-width: 600px; margin: 0 auto; color: var(--ivory-dim); font-size: 16px; }
+
+  .app-divider {
+    display: flex; align-items: center; gap: 20px;
+    max-width: 1100px; margin: 30px auto 0;
+  }
+  .app-divider .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border-mid), transparent); }
+  .app-divider .label {
+    font-family: var(--font-mono); font-size: 12px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--copper-light); padding: 8px 18px;
+    border: 1px solid var(--border-mid); border-radius: 999px;
+    background: var(--surface-1);
+  }
+
+  /* ════════════════════ LOGO SHOWCASE ════════════════════ */
+  .logo-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+  }
+  .logo-cell {
+    border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-1);
+  }
+  .logo-cell-art {
+    height: 200px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .logo-cell-art svg { width: 128px; height: 128px; }
+  .lc-indigo { background: radial-gradient(circle at 50% 40%, var(--indigo-mid), var(--indigo-void)); }
+  .lc-saffron { background: linear-gradient(150deg, var(--saffron), var(--saffron-deep)); }
+  .lc-ivory { background: var(--ivory); }
+  .lc-copper { background: linear-gradient(150deg, var(--copper), var(--copper-deep)); }
+  .logo-cell-info { padding: 13px 16px; border-top: 1px solid var(--border-soft); }
+  .logo-cell-name { font-family: var(--font-display); font-size: 14px; font-weight: 600; }
+  .logo-cell-meta { font-family: var(--font-mono); font-size: 10px; color: var(--ivory-faint); margin-top: 3px; letter-spacing: 0.05em; }
+
+  /* ════════════════════ PALETTE ════════════════════ */
+  .palette-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin-bottom: 14px;
+  }
+  .swatch {
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border-soft);
+  }
+  .swatch-c { height: 84px; display: flex; align-items: flex-end; padding: 10px; }
+  .swatch-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; opacity: 0.9; }
+  .swatch-i { padding: 10px 12px; background: var(--surface-1); }
+  .swatch-n { font-family: var(--font-display); font-size: 13px; font-weight: 600; }
+  .swatch-h { font-family: var(--font-mono); font-size: 10px; color: var(--ivory-faint); margin-top: 2px; }
+
+  /* ════════════════════ PHONE FRAMES ════════════════════ */
+  .screens-flow {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 34px; padding: 16px 0;
+  }
+  .phone-wrap { text-align: center; }
+  .phone {
+    width: 300px; height: 640px;
+    background: #08080F;
+    border-radius: 42px; padding: 11px;
+    box-shadow: 0 40px 90px -30px rgba(0,0,0,0.9), 0 0 0 2px var(--border-soft);
+    position: relative; margin: 0 auto;
+  }
+  .phone::before {
+    content: ''; position: absolute; top: 11px; left: 50%;
+    transform: translateX(-50%); width: 90px; height: 22px;
+    background: #08080F; border-radius: 0 0 14px 14px; z-index: 20;
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 31px; overflow: hidden;
+    position: relative; background: var(--indigo-void);
+  }
+  .screen-scroll { width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; }
+  .screen-scroll::-webkit-scrollbar { display: none; }
+
+  .statusbar {
+    height: 38px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px 0 24px; font-size: 11px; font-weight: 700;
+    color: var(--ivory); flex-shrink: 0; position: relative; z-index: 5;
+  }
+  .statusbar.on-light { color: #1a1a2e; }
+  .sb-icons { display: flex; gap: 5px; align-items: center; font-size: 9px; }
+
+  .phone-label { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin-top: 16px; }
+  .phone-label em { font-style: italic; color: var(--saffron); }
+  .phone-desc { font-family: var(--font-mono); font-size: 9px; color: var(--ivory-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+
+  /* generic screen pieces */
+  .scr { min-height: 100%; display: flex; flex-direction: column; }
+  .scr-dark { background: linear-gradient(180deg, var(--indigo-deep), var(--indigo-void)); }
+  .scr-pad { padding: 14px 16px; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 6px 16px 14px;
+  }
+  .topbar-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; flex: 1; }
+  .topbar-title em { font-style: italic; color: var(--saffron); }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 11px;
+    background: var(--surface-2); border: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--copper-light); flex-shrink: 0;
+  }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  /* buttons */
+  .btn-saffron {
+    background: linear-gradient(135deg, var(--saffron-bright), var(--saffron-deep));
+    color: #fff; border: none; border-radius: 14px;
+    padding: 13px; font-family: var(--font-body); font-size: 13px; font-weight: 700;
+    width: 100%; cursor: pointer;
+    box-shadow: 0 10px 24px -8px rgba(244,129,31,0.6);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-ghost {
+    background: var(--surface-2); color: var(--copper-light);
+    border: 1px solid var(--border-mid); border-radius: 14px;
+    padding: 13px; font-size: 13px; font-weight: 600; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-success {
+    background: linear-gradient(135deg, var(--success), #10B981);
+    color: #04231a; border: none; border-radius: 14px;
+    padding: 12px; font-size: 12px; font-weight: 700; width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+  }
+
+  /* ════════════════════ LOGIN SCREENS ════════════════════ */
+  .login-scr {
+    background:
+      radial-gradient(ellipse at 50% 18%, rgba(76,50,160,0.4), transparent 55%),
+      linear-gradient(180deg, var(--indigo-deep), var(--indigo-void));
+    min-height: 100%; padding: 40px 24px 24px; text-align: center;
+    display: flex; flex-direction: column;
+  }
+  .login-logo {
+    width: 92px; height: 92px; margin: 14px auto 18px;
+    background: linear-gradient(160deg, var(--indigo-mid), var(--indigo-deep));
+    border-radius: 26px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 16px 40px -14px rgba(244,129,31,0.5), 0 0 0 1px var(--border-soft);
+  }
+  .login-logo svg { width: 64px; height: 64px; }
+  .login-hindi { font-family: var(--font-hindi); font-size: 14px; color: var(--copper-light); margin-bottom: 4px; }
+  .login-title { font-family: var(--font-display); font-size: 26px; font-weight: 600; line-height: 1.1; margin-bottom: 5px; }
+  .login-title em { font-style: italic; color: var(--saffron); }
+  .login-sub { font-size: 11px; color: var(--ivory-dim); margin-bottom: 26px; }
+
+  .field { text-align: left; margin-bottom: 12px; }
+  .field-lbl { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ivory-faint); margin-bottom: 5px; font-weight: 600; }
+  .field-box {
+    display: flex; align-items: center; gap: 9px;
+    padding: 12px 14px; background: var(--surface-1);
+    border: 1.5px solid var(--border-soft); border-radius: 13px;
+  }
+  .field-box.active { border-color: var(--saffron); box-shadow: 0 0 0 3px var(--saffron-pale); }
+  .field-box svg { width: 15px; height: 15px; color: var(--copper-light); flex-shrink: 0; }
+  .field-val { flex: 1; font-size: 13px; font-weight: 500; color: var(--ivory); }
+  .field-val.ph { color: var(--ivory-faint); font-weight: 400; }
+
+  .otp-row { display: flex; gap: 8px; justify-content: center; margin: 8px 0 18px; }
+  .otp-cell {
+    width: 40px; height: 48px; border-radius: 12px;
+    background: var(--surface-1); border: 1.5px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--gold);
+  }
+  .otp-cell.filled { border-color: var(--saffron); background: var(--saffron-pale); }
+
+  .login-divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: var(--ivory-faint); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.15em; }
+  .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-soft); }
+
+  .social-row { display: flex; gap: 10px; }
+  .social-btn {
+    flex: 1; padding: 11px; border-radius: 13px;
+    background: var(--surface-2); border: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 11px; font-weight: 600; color: var(--ivory);
+  }
+  .social-btn svg { width: 16px; height: 16px; }
+
+  .biometric-box {
+    margin-top: 18px; padding: 18px; border-radius: 16px;
+    background: var(--surface-1); border: 1px dashed var(--border-mid);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .biometric-ring {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--saffron-pale); border: 2px solid var(--saffron);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--saffron);
+  }
+  .biometric-ring svg { width: 28px; height: 28px; }
+
+  .login-foot { margin-top: auto; padding-top: 18px; font-size: 11px; color: var(--ivory-dim); }
+  .login-foot strong { color: var(--saffron); }
+
+  /* ════════════════════ USER HOME ════════════════════ */
+  .uhome-top {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px 14px;
+  }
+  .uavatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--copper), var(--copper-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--ivory);
+    flex-shrink: 0;
+  }
+  .uhome-greet { flex: 1; }
+  .uhome-hi { font-size: 9px; color: var(--ivory-faint); font-family: var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+  .uhome-name { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .wallet-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 11px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border-mid);
+    font-size: 12px; font-weight: 700; color: var(--gold);
+  }
+  .wallet-chip svg { width: 13px; height: 13px; color: var(--copper-light); }
+  .wallet-chip .plus { width: 17px; height: 17px; border-radius: 50%; background: var(--saffron); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+
+  .promo-card {
+    margin: 4px 16px 16px; border-radius: 18px; padding: 18px;
+    background: linear-gradient(120deg, var(--indigo-mid), var(--indigo-haze));
+    border: 1px solid var(--border-mid); position: relative; overflow: hidden;
+  }
+  .promo-card::after {
+    content: '✦'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 90px; color: rgba(232,181,71,0.15); line-height: 1;
+  }
+  .promo-eyebrow { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 5px; }
+  .promo-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; line-height: 1.15; margin-bottom: 10px; max-width: 70%; }
+  .promo-title em { font-style: italic; color: var(--gold); }
+  .promo-btn { display: inline-flex; padding: 7px 14px; background: var(--ivory); color: var(--indigo); border-radius: 999px; font-size: 10px; font-weight: 700; }
+
+  .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 16px; margin-bottom: 18px; }
+  .quick-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .quick-icon {
+    width: 52px; height: 52px; border-radius: 17px;
+    background: linear-gradient(150deg, var(--surface-3), var(--surface-1));
+    border: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: center; color: var(--gold);
+  }
+  .quick-icon svg { width: 22px; height: 22px; }
+  .quick-lbl { font-size: 8.5px; text-align: center; color: var(--ivory-dim); font-weight: 600; line-height: 1.2; }
+
+  .sec-head { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 10px; }
+  .sec-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .sec-title em { font-style: italic; color: var(--saffron); }
+  .sec-link { font-size: 10px; color: var(--saffron); font-weight: 600; font-family: var(--font-mono); }
+
+  .celeb-row { display: flex; gap: 10px; padding: 0 16px 18px; overflow-x: auto; }
+  .celeb-card {
+    flex: 0 0 130px; height: 170px; border-radius: 16px; overflow: hidden;
+    position: relative; border: 1px solid var(--border-soft);
+    background: linear-gradient(180deg, var(--indigo-mid), var(--indigo-deep));
+  }
+  .celeb-card .play {
+    position: absolute; top: 10px; left: 10px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 8px; background: rgba(0,0,0,0.5); border-radius: 999px;
+    font-size: 8px; font-weight: 700; backdrop-filter: blur(4px);
+  }
+  .celeb-card .play svg { width: 9px; height: 9px; color: var(--saffron); }
+  .celeb-photo { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44px; opacity: 0.5; }
+  .celeb-name { position: absolute; bottom: 8px; left: 10px; right: 10px; font-size: 11px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+
+  /* featured astrologer cards */
+  .feat-row { display: flex; gap: 12px; padding: 0 16px 16px; overflow-x: auto; }
+  .feat-card {
+    flex: 0 0 150px; border-radius: 18px; overflow: hidden;
+    border: 1px solid var(--border-soft); background: var(--surface-1);
+  }
+  .feat-img { height: 110px; background: linear-gradient(160deg, var(--indigo-mid), var(--indigo-deep)); position: relative; display: flex; align-items: center; justify-content: center; font-size: 40px; opacity: 0.85; }
+  .feat-live { position: absolute; top: 8px; left: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 999px; background: var(--live); font-size: 7px; font-weight: 800; letter-spacing: 0.08em; }
+  .feat-live .pulse { width: 5px; height: 5px; border-radius: 50%; background: #fff; animation: blink 1.2s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .feat-body { padding: 10px 11px; }
+  .feat-name { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .feat-tag { font-size: 8px; color: var(--copper-light); margin-bottom: 7px; }
+  .feat-rate { display: flex; align-items: center; justify-content: space-between; }
+  .feat-stars { font-size: 9px; color: var(--gold); }
+  .feat-price { font-size: 9px; font-weight: 700; color: var(--success); }
+
+  /* bottom nav */
+  .botnav {
+    position: sticky; bottom: 0; margin-top: auto;
+    display: flex; justify-content: space-around; padding: 10px 16px 16px;
+    background: linear-gradient(180deg, rgba(11,11,30,0.5), var(--indigo-void));
+    border-top: 1px solid var(--border-soft); backdrop-filter: blur(12px);
+  }
+  .botnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--ivory-faint); }
+  .botnav-item svg { width: 20px; height: 20px; }
+  .botnav-item span { font-size: 7.5px; font-family: var(--font-mono); letter-spacing: 0.05em; }
+  .botnav-item.active { color: var(--saffron); }
+
+  /* ════════════════════ ASTROLOGER LIST ════════════════════ */
+  .search-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 16px 12px; padding: 11px 14px; border-radius: 14px;
+    background: var(--surface-1); border: 1px solid var(--border-soft);
+  }
+  .search-bar svg { width: 16px; height: 16px; color: var(--saffron); }
+  .search-bar span { font-size: 12px; color: var(--ivory-faint); }
+
+  .filter-row { display: flex; gap: 8px; padding: 0 16px 14px; overflow-x: auto; }
+  .filter-chip {
+    padding: 7px 14px; border-radius: 999px; white-space: nowrap;
+    font-size: 10px; font-weight: 600; font-family: var(--font-mono); letter-spacing: 0.05em;
+    background: var(--surface-2); color: var(--ivory-dim); border: 1px solid var(--border-soft);
+  }
+  .filter-chip.active { background: linear-gradient(135deg, var(--saffron), var(--saffron-deep)); color: #fff; border-color: transparent; }
+
+  .alist { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .acard {
+    display: flex; gap: 12px; padding: 13px;
+    border-radius: 16px; background: var(--surface-1);
+    border: 1px solid var(--border-soft);
+  }
+  .acard-photo {
+    width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+    background: linear-gradient(150deg, var(--copper), var(--copper-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--ivory);
+    position: relative;
+  }
+  .acard-online { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-radius: 50%; background: var(--success); border: 2.5px solid var(--indigo-deep); }
+  .acard-info { flex: 1; min-width: 0; }
+  .acard-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .acard-skills { font-size: 9px; color: var(--copper-light); margin-bottom: 4px; line-height: 1.3; }
+  .acard-meta { display: flex; gap: 8px; font-size: 8px; color: var(--ivory-faint); margin-bottom: 6px; }
+  .acard-meta span { display: flex; align-items: center; gap: 3px; }
+  .acard-bottom { display: flex; align-items: center; gap: 6px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 4px 8px; border-radius: 999px; font-size: 8px; font-weight: 700;
+    font-family: var(--font-mono);
+  }
+  .pill-chat { background: rgba(244,129,31,0.15); color: var(--saffron-bright); }
+  .pill-call { background: rgba(96,165,250,0.15); color: var(--info); }
+  .pill-video { background: rgba(199,123,74,0.18); color: var(--copper-light); }
+  .acard-rating { margin-left: auto; display: flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; color: var(--gold); }
+
+  .acard-cta { display: flex; gap: 8px; margin-top: 10px; }
+  .mini-btn { flex: 1; padding: 9px; border-radius: 11px; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .mini-btn svg { width: 12px; height: 12px; }
+  .mini-chat { background: linear-gradient(135deg, var(--saffron), var(--saffron-deep)); color: #fff; }
+  .mini-call { background: var(--success-dim); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
+
+  /* ════════════════════ CHAT SCREEN ════════════════════ */
+  .chat-header {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    background: linear-gradient(135deg, var(--indigo-mid), var(--indigo-deep));
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .chat-h-photo { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(150deg, var(--copper), var(--copper-deep)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+  .chat-h-info { flex: 1; }
+  .chat-h-name { font-size: 13px; font-weight: 700; }
+  .chat-h-status { font-size: 8px; color: var(--success); display: flex; align-items: center; gap: 4px; }
+  .chat-h-status .dot { width: 5px; height: 5px; background: var(--success); border-radius: 50%; }
+  .chat-h-timer { font-family: var(--font-mono); font-size: 11px; color: var(--gold); font-weight: 600; }
+
+  .chat-body { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: linear-gradient(180deg, var(--indigo-void), var(--indigo-deep)); }
+  .chat-day { text-align: center; font-size: 8px; color: var(--ivory-faint); font-family: var(--font-mono); letter-spacing: 0.1em; margin: 4px 0; }
+  .bubble { max-width: 75%; padding: 9px 12px; border-radius: 14px; font-size: 11px; line-height: 1.4; }
+  .bubble-them { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--border-soft); border-bottom-left-radius: 4px; }
+  .bubble-me { align-self: flex-end; background: linear-gradient(135deg, var(--saffron), var(--saffron-deep)); color: #fff; border-bottom-right-radius: 4px; }
+  .bubble-time { font-size: 7px; opacity: 0.6; margin-top: 3px; text-align: right; }
+
+  .chat-input {
+    display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+    background: var(--indigo-deep); border-top: 1px solid var(--border-soft);
+  }
+  .chat-input-box { flex: 1; padding: 10px 14px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border-soft); font-size: 11px; color: var(--ivory-faint); }
+  .chat-send { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--saffron), var(--saffron-deep)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .chat-send svg { width: 16px; height: 16px; color: #fff; }
+  .chat-attach { color: var(--copper-light); }
+  .chat-attach svg { width: 20px; height: 20px; }
+
+  /* ════════════════════ CALL SCREEN ════════════════════ */
+  .call-scr {
+    min-height: 100%; display: flex; flex-direction: column;
+    background: radial-gradient(ellipse at 50% 30%, var(--indigo-haze), var(--indigo-void));
+    padding: 30px 20px 30px; text-align: center;
+  }
+  .call-status { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--copper-light); margin-top: 20px; }
+  .call-photo-ring {
+    width: 130px; height: 130px; border-radius: 50%; margin: 30px auto 20px;
+    background: linear-gradient(150deg, var(--copper), var(--copper-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 52px; font-weight: 700; color: var(--ivory);
+    position: relative;
+    box-shadow: 0 0 0 8px rgba(244,129,31,0.1), 0 0 0 16px rgba(244,129,31,0.05);
+  }
+  .call-photo-ring::before {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    border: 2px solid var(--saffron); opacity: 0.6;
+    animation: ring-pulse 2s ease-out infinite;
+  }
+  @keyframes ring-pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.3); opacity: 0; } }
+  .call-name { font-family: var(--font-display); font-size: 24px; font-weight: 600; margin-bottom: 6px; }
+  .call-tag { font-size: 11px; color: var(--ivory-dim); margin-bottom: 6px; }
+  .call-timer { font-family: var(--font-mono); font-size: 14px; color: var(--gold); font-weight: 600; }
+  .call-cost { font-size: 9px; color: var(--ivory-faint); margin-top: 4px; }
+
+  .call-controls { margin-top: auto; display: flex; justify-content: center; gap: 18px; padding-top: 30px; }
+  .call-ctrl { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .call-ctrl svg { width: 24px; height: 24px; }
+  .call-ctrl.mute { background: var(--surface-3); color: var(--ivory); }
+  .call-ctrl.speaker { background: var(--surface-3); color: var(--ivory); }
+  .call-ctrl.end { background: var(--live); color: #fff; box-shadow: 0 8px 24px -6px rgba(255,77,109,0.6); }
+
+  /* video call variant */
+  .vcall-scr { min-height: 100%; position: relative; background: linear-gradient(160deg, var(--indigo-mid), var(--indigo-void)); display: flex; flex-direction: column; }
+  .vcall-remote { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 90px; opacity: 0.4; position: relative; }
+  .vcall-self {
+    position: absolute; top: 50px; right: 14px; width: 84px; height: 116px;
+    border-radius: 14px; background: linear-gradient(160deg, var(--copper-deep), var(--indigo-deep));
+    border: 2px solid var(--border-mid); display: flex; align-items: center; justify-content: center;
+    font-size: 32px; opacity: 0.7; box-shadow: 0 8px 20px -6px rgba(0,0,0,0.6);
+  }
+  .vcall-topinfo { position: absolute; top: 48px; left: 14px; padding: 7px 12px; border-radius: 999px; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); display: flex; align-items: center; gap: 7px; }
+  .vcall-topinfo .nm { font-size: 11px; font-weight: 700; }
+  .vcall-topinfo .tm { font-family: var(--font-mono); font-size: 9px; color: var(--gold); }
+  .vcall-controls { padding: 20px; display: flex; justify-content: center; gap: 14px; }
+
+  /* ════════════════════ WALLET ════════════════════ */
+  .wallet-hero {
+    margin: 0 16px 18px; padding: 22px; border-radius: 22px; text-align: center;
+    background: linear-gradient(140deg, var(--saffron), var(--saffron-deep));
+    position: relative; overflow: hidden;
+  }
+  .wallet-hero::after { content: '✦'; position: absolute; right: -10px; top: -10px; font-size: 110px; color: rgba(255,255,255,0.12); }
+  .wallet-hero-lbl { font-size: 10px; color: rgba(255,255,255,0.85); font-family: var(--font-mono); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+  .wallet-hero-amt { font-family: var(--font-display); font-size: 38px; font-weight: 700; color: #fff; line-height: 1; }
+  .wallet-hero-note { margin-top: 12px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.18); font-size: 10px; display: inline-flex; align-items: center; gap: 6px; }
+
+  .amt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; padding: 0 16px; margin-bottom: 14px; }
+  .amt-cell {
+    padding: 16px 8px; border-radius: 14px; text-align: center;
+    background: var(--surface-1); border: 1px solid var(--border-soft);
+    font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--ivory);
+  }
+  .amt-cell.popular { border-color: var(--saffron); background: var(--saffron-pale); color: var(--saffron-bright); position: relative; }
+  .amt-cell .badge { position: absolute; top: -7px; left: 50%; transform: translateX(-50%); font-size: 6px; padding: 2px 6px; border-radius: 999px; background: var(--saffron); color: #fff; font-family: var(--font-mono); letter-spacing: 0.05em; white-space: nowrap; }
+
+  .custom-amt { margin: 0 16px 16px; padding: 13px 16px; border-radius: 14px; background: var(--surface-1); border: 1px solid var(--border-soft); display: flex; align-items: center; gap: 10px; }
+  .custom-amt .rupee { font-family: var(--font-display); font-size: 20px; color: var(--gold); }
+  .custom-amt span { font-size: 12px; color: var(--ivory-faint); }
+
+  /* transactions */
+  .txn { display: flex; align-items: center; gap: 11px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
+  .txn-icon { width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .txn-icon svg { width: 16px; height: 16px; }
+  .txn-icon.debit { background: var(--danger-dim); color: var(--danger); }
+  .txn-icon.credit { background: var(--success-dim); color: var(--success); }
+  .txn-info { flex: 1; min-width: 0; }
+  .txn-title { font-size: 12px; font-weight: 600; }
+  .txn-sub { font-size: 9px; color: var(--ivory-faint); margin-top: 1px; }
+  .txn-amt { font-size: 13px; font-weight: 700; font-family: var(--font-display); }
+  .txn-amt.debit { color: var(--danger); }
+  .txn-amt.credit { color: var(--success); }
+
+  /* ════════════════════ KUNDLI / COSMIC ════════════════════ */
+  .cosmic-card {
+    margin: 8px 16px 16px; padding: 22px 18px; border-radius: 22px;
+    background: var(--surface-1); border: 1px solid var(--border-mid);
+    box-shadow: 0 0 40px -10px rgba(244,129,31,0.15);
+  }
+  .cosmic-card-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--saffron); text-align: center; margin-bottom: 20px; line-height: 1.2; }
+  .cosmic-field { margin-bottom: 14px; }
+  .cosmic-field-lbl { font-size: 9px; color: var(--ivory-faint); margin-bottom: 5px; font-family: var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+  .cosmic-input {
+    display: flex; align-items: center; gap: 10px; padding: 13px 14px;
+    border-radius: 13px; border: 1px solid var(--border-mid); background: var(--surface-1);
+  }
+  .cosmic-input svg { width: 16px; height: 16px; color: var(--gold); }
+  .cosmic-input span { font-size: 12px; color: var(--ivory); flex: 1; }
+  .cosmic-input .chev { color: var(--ivory-faint); }
+  .cosmic-cta { margin-top: 6px; padding: 15px; border-radius: 14px; background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: var(--indigo-void); text-align: center; font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+  .cosmic-note { padding: 0 24px; text-align: center; font-size: 10px; color: var(--ivory-faint); font-style: italic; line-height: 1.5; }
+
+  /* kundli chart view */
+  .kundli-chart { margin: 8px 16px; aspect-ratio: 1; border: 1.5px solid var(--gold); border-radius: 8px; position: relative; background: var(--surface-1); }
+  .kundli-chart svg { width: 100%; height: 100%; }
+  .kundli-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; }
+  .kl-item { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 11px; background: var(--surface-1); border: 1px solid var(--border-soft); }
+  .kl-planet { width: 28px; height: 28px; border-radius: 8px; background: var(--saffron-pale); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .kl-text { flex: 1; }
+  .kl-name { font-size: 10px; font-weight: 600; }
+  .kl-pos { font-size: 8px; color: var(--ivory-faint); }
+
+  /* cosmic insights grid */
+  .insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px 16px; }
+  .insight-cell {
+    padding: 20px 14px; border-radius: 18px; text-align: center;
+    background: var(--surface-1); border: 1px solid var(--border-mid);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .insight-icon { width: 50px; height: 50px; border-radius: 15px; background: var(--saffron-pale); display: flex; align-items: center; justify-content: center; color: var(--gold); }
+  .insight-icon svg { width: 24px; height: 24px; }
+  .insight-name { font-size: 12px; font-weight: 700; }
+  .insight-price { padding: 4px 12px; border-radius: 999px; background: var(--surface-3); font-size: 10px; font-weight: 700; color: var(--gold); font-family: var(--font-mono); }
+
+  /* ════════════════════ LIVE STREAM ════════════════════ */
+  .live-scr { min-height: 100%; position: relative; background: linear-gradient(170deg, var(--indigo-mid), var(--indigo-void)); display: flex; flex-direction: column; }
+  .live-video { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; font-size: 80px; opacity: 0.45; }
+  .live-badge { position: absolute; top: 48px; left: 14px; display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; background: var(--live); font-size: 9px; font-weight: 800; letter-spacing: 0.08em; }
+  .live-badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: blink 1.2s infinite; }
+  .live-viewers { position: absolute; top: 48px; right: 14px; display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; background: rgba(0,0,0,0.5); font-size: 9px; font-weight: 600; backdrop-filter: blur(6px); }
+  .live-viewers svg { width: 11px; height: 11px; color: var(--copper-light); }
+  .live-host { position: absolute; top: 84px; left: 14px; display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); }
+  .live-host-photo { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(150deg, var(--copper), var(--copper-deep)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 13px; }
+  .live-host-name { font-size: 10px; font-weight: 700; }
+  .live-host-tag { font-size: 7px; color: var(--gold-light); }
+
+  .live-chat-overlay { position: absolute; bottom: 80px; left: 14px; right: 70px; display: flex; flex-direction: column; gap: 6px; }
+  .live-msg { font-size: 9px; }
+  .live-msg .u { color: var(--gold-light); font-weight: 700; }
+  .live-msg .superchat { display: inline-block; padding: 5px 9px; border-radius: 10px; background: linear-gradient(135deg, #E8689C, #C2410C); font-weight: 600; }
+
+  .live-actions { position: absolute; right: 12px; bottom: 90px; display: flex; flex-direction: column; gap: 14px; }
+  .live-act { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; color: var(--ivory); position: relative; }
+  .live-act svg { width: 20px; height: 20px; }
+  .live-act.gift { color: var(--gold); }
+  .live-bottom { padding: 12px 14px; display: flex; align-items: center; gap: 8px; }
+  .live-input { flex: 1; padding: 10px 14px; border-radius: 999px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-soft); font-size: 10px; color: var(--ivory-faint); backdrop-filter: blur(6px); }
+  .live-superchat-btn { padding: 10px 14px; border-radius: 999px; background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: var(--indigo-void); font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+
+  /* ════════════════════ PROFILE ════════════════════ */
+  .profile-hero { padding: 20px 16px 30px; text-align: center; background: linear-gradient(160deg, var(--indigo-mid), var(--indigo-deep)); position: relative; }
+  .profile-avatar { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 12px; background: linear-gradient(150deg, var(--copper), var(--copper-deep)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 32px; font-weight: 700; border: 3px solid var(--gold); box-shadow: 0 8px 24px -6px rgba(232,181,71,0.4); }
+  .profile-name { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .profile-phone { font-family: var(--font-mono); font-size: 11px; color: var(--ivory-dim); }
+  .profile-badge { display: inline-flex; margin-top: 8px; padding: 4px 12px; border-radius: 999px; background: var(--saffron-pale); border: 1px solid var(--border-mid); font-size: 9px; font-weight: 700; color: var(--gold); font-family: var(--font-mono); letter-spacing: 0.1em; }
+
+  .menu-list { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .menu-item { display: flex; align-items: center; gap: 13px; padding: 13px 14px; border-radius: 14px; background: var(--surface-1); border: 1px solid var(--border-soft); }
+  .menu-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--saffron-pale); display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; }
+  .menu-icon svg { width: 16px; height: 16px; }
+  .menu-text { flex: 1; }
+  .menu-name { font-size: 12px; font-weight: 600; }
+  .menu-sub { font-size: 9px; color: var(--ivory-faint); }
+  .menu-chev { color: var(--ivory-faint); }
+  .menu-chev svg { width: 15px; height: 15px; }
+
+  /* lang toggle */
+  .lang-toggle { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 3px; }
+  .lang-opt { padding: 5px 12px; border-radius: 999px; font-size: 10px; font-weight: 600; color: var(--ivory-dim); font-family: var(--font-mono); }
+  .lang-opt.active { background: var(--saffron); color: #fff; }
+
+  /* ════════════════════ ASTROLOGER-SPECIFIC ════════════════════ */
+  /* go live setup */
+  .golive-preview { margin: 14px 16px; aspect-ratio: 9/12; border-radius: 20px; background: linear-gradient(160deg, var(--copper-deep), var(--indigo-deep)); border: 1px solid var(--border-mid); position: relative; display: flex; align-items: center; justify-content: center; font-size: 60px; opacity: 0.85; overflow: hidden; }
+  .golive-preview .grid-overlay { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 33% 33%; }
+  .golive-settings { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .golive-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 13px; background: var(--surface-1); border: 1px solid var(--border-soft); }
+  .golive-row svg { width: 17px; height: 17px; color: var(--copper-light); }
+  .golive-row span { flex: 1; font-size: 12px; }
+  .toggle { width: 38px; height: 22px; border-radius: 999px; background: var(--saffron); position: relative; }
+  .toggle::after { content: ''; position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; }
+  .toggle.off { background: var(--surface-3); }
+  .toggle.off::after { right: auto; left: 2px; }
+
+  /* astrologer dashboard stats */
+  .astro-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
+  .astro-stat { padding: 15px; border-radius: 16px; background: var(--surface-1); border: 1px solid var(--border-soft); border-left: 3px solid var(--saffron); }
+  .astro-stat.green { border-left-color: var(--success); }
+  .astro-stat.gold { border-left-color: var(--gold); }
+  .astro-stat.copper { border-left-color: var(--copper); }
+  .astro-stat-lbl { font-size: 8px; color: var(--ivory-faint); font-family: var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+  .astro-stat-val { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1; }
+  .astro-stat-sub { font-size: 8px; margin-top: 4px; color: var(--success); }
+
+  /* online toggle big */
+  .astro-online-card { margin: 8px 16px 14px; padding: 16px; border-radius: 18px; background: linear-gradient(135deg, var(--indigo-mid), var(--indigo-haze)); border: 1px solid var(--border-mid); display: flex; align-items: center; gap: 14px; }
+  .astro-online-info { flex: 1; }
+  .astro-online-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+  .astro-online-sub { font-size: 9px; color: var(--ivory-dim); margin-top: 2px; }
+  .toggle-lg { width: 54px; height: 30px; border-radius: 999px; background: var(--success); position: relative; flex-shrink: 0; }
+  .toggle-lg::after { content: ''; position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; }
+
+  /* incoming request */
+  .request-card { margin: 8px 16px; padding: 14px; border-radius: 18px; background: var(--surface-1); border: 1px solid var(--saffron); box-shadow: 0 0 30px -8px rgba(244,129,31,0.3); }
+  .request-top { display: flex; align-items: center; gap: 11px; margin-bottom: 12px; }
+  .request-photo { width: 46px; height: 46px; border-radius: 14px; background: linear-gradient(150deg, var(--copper), var(--copper-deep)); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+  .request-info { flex: 1; }
+  .request-name { font-size: 13px; font-weight: 700; }
+  .request-type { font-size: 9px; color: var(--copper-light); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+  .request-timer { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--saffron); }
+  .request-actions { display: flex; gap: 10px; }
+  .req-btn { flex: 1; padding: 12px; border-radius: 13px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .req-accept { background: linear-gradient(135deg, var(--success), #10B981); color: #04231a; }
+  .req-decline { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(248,113,113,0.3); }
+
+  /* earnings */
+  .earn-hero { margin: 0 16px 16px; padding: 22px; border-radius: 22px; text-align: center; background: linear-gradient(140deg, var(--indigo-haze), var(--indigo-mid)); border: 1px solid var(--border-mid); position: relative; overflow: hidden; }
+  .earn-hero::after { content: '₹'; position: absolute; right: 4px; bottom: -20px; font-size: 120px; font-family: var(--font-display); color: rgba(232,181,71,0.1); }
+  .earn-lbl { font-size: 10px; color: var(--ivory-dim); font-family: var(--font-mono); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+  .earn-amt { font-family: var(--font-display); font-size: 38px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .earn-sub { font-size: 10px; color: var(--success); margin-top: 8px; }
+  .earn-withdraw { margin-top: 14px; }
+
+  .earn-breakdown { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; padding: 0 16px 14px; }
+  .earn-bd { padding: 13px 8px; border-radius: 13px; text-align: center; background: var(--surface-1); border: 1px solid var(--border-soft); }
+  .earn-bd-val { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--ivory); }
+  .earn-bd-lbl { font-size: 7px; color: var(--ivory-faint); margin-top: 3px; font-family: var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* design notes */
+  .notes-grid { max-width: 1100px; margin: 40px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 40px; }
+  .note { padding: 22px; border-radius: 18px; background: var(--surface-1); border: 1px solid var(--border-soft); border-left: 3px solid var(--saffron); }
+  .note.copper { border-left-color: var(--copper); }
+  .note.gold { border-left-color: var(--gold); }
+  .note.indigo { border-left-color: var(--indigo-haze); }
+  .note-eyebrow { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--saffron); margin-bottom: 8px; font-weight: 600; }
+  .note.copper .note-eyebrow { color: var(--copper-light); }
+  .note.gold .note-eyebrow { color: var(--gold); }
+  .note-title { font-family: var(--font-display); font-size: 19px; font-weight: 600; margin-bottom: 8px; }
+  .note-title em { font-style: italic; color: var(--saffron); }
+  .note-text { font-size: 13px; color: var(--ivory-dim); line-height: 1.6; }
+  .note-text code { font-family: var(--font-mono); font-size: 11px; background: var(--surface-3); padding: 2px 6px; border-radius: 4px; color: var(--gold-light); }
+
+  /* footer */
+  .footer { padding: 60px 40px; text-align: center; margin-top: 50px; border-top: 1px solid var(--border-soft); }
+  .footer-mark { width: 60px; height: 60px; margin: 0 auto 16px; }
+  .footer-title { font-family: var(--font-display); font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .footer-title em { font-style: italic; color: var(--saffron); }
+  .footer-meta { font-family: var(--font-mono); font-size: 10px; color: var(--ivory-faint); letter-spacing: 0.25em; text-transform: uppercase; }
+
+  @media (max-width: 768px) {
+    .notes-grid { grid-template-columns: 1fr; }
+    .section { padding: 50px 16px; }
+    .hero { padding: 50px 16px 30px; }
+  }
+</style>
+</head>
+<body>
+<!-- Global SVG gradient defs (shared by all logo instances) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="flameGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#FFD27D"/>
+      <stop offset="45%" stop-color="#F4811F"/>
+      <stop offset="100%" stop-color="#D96510"/>
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0A878"/>
+      <stop offset="100%" stop-color="#C77B4A"/>
+    </linearGradient>
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FBF6EE"/>
+      <stop offset="100%" stop-color="#F4811F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+<div class="wrapper">
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<header class="hero">
+  <div class="hero-eyebrow"><span class="dot"></span>Hindustani Jyotishi · Complete UI Reference</div>
+
+  <div class="hero-logo-badge">
+    <!-- LOGO: Diya flame + Om-inspired arc + orbit ring + star -->
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="flameGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stop-color="#FFD27D"/>
+          <stop offset="45%" stop-color="#F4811F"/>
+          <stop offset="100%" stop-color="#D96510"/>
+        </linearGradient>
+        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#E0A878"/>
+          <stop offset="100%" stop-color="#C77B4A"/>
+        </linearGradient>
+        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FBF6EE"/>
+          <stop offset="100%" stop-color="#F4811F" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- Outer orbit ring -->
+      <circle cx="60" cy="60" r="50" fill="none" stroke="url(#ringGrad)" stroke-width="2.5" opacity="0.85"/>
+      <!-- Orbit nakshatra dots -->
+      <circle cx="60" cy="10" r="3.5" fill="#E8B547"/>
+      <circle cx="103" cy="38" r="2.5" fill="#E0A878"/>
+      <circle cx="103" cy="82" r="2.5" fill="#E0A878"/>
+      <circle cx="60" cy="110" r="2.5" fill="#E0A878"/>
+      <circle cx="17" cy="82" r="2.5" fill="#E0A878"/>
+      <circle cx="17" cy="38" r="2.5" fill="#E8B547"/>
+      <!-- Inner arc (jyoti / dawn) -->
+      <path d="M 30 72 A 30 30 0 0 1 90 72" fill="none" stroke="url(#ringGrad)" stroke-width="2" opacity="0.5"/>
+      <!-- Diya flame (central) -->
+      <ellipse cx="60" cy="64" rx="11" ry="6" fill="#9C5A30" opacity="0.6"/>
+      <path d="M 60 30 C 70 44, 72 56, 60 62 C 48 56, 50 44, 60 30 Z" fill="url(#flameGrad)"/>
+      <path d="M 60 40 C 65 48, 66 55, 60 60 C 54 55, 55 48, 60 40 Z" fill="#FBF6EE" opacity="0.85"/>
+      <!-- Center glow -->
+      <circle cx="60" cy="52" r="18" fill="url(#coreGlow)" opacity="0.5"/>
+      <!-- Top star -->
+      <path d="M 60 4 L 61.5 9 L 66 10 L 61.5 11 L 60 16 L 58.5 11 L 54 10 L 58.5 9 Z" fill="#FFD27D"/>
+    </svg>
+  </div>
+
+  <div class="hero-hindi">हिन्दुस्तानी ज्योतिषी</div>
+  <h1>Hindustani <em>Jyotishi</em></h1>
+  <p>A complete UI reference for both apps — the User app (kundli, chat, calls, live streaming, wallet) and the Astrologer app (go live, attend calls, earnings, biometric login). Deep Indigo + Saffron + Copper, a cosmic-premium Hindustani identity.</p>
+
+  <div class="hero-meta">
+    <div class="meta-item"><div class="meta-num">2</div><div class="meta-lbl">Apps</div></div>
+    <div class="meta-item"><div class="meta-num">22</div><div class="meta-lbl">Screens</div></div>
+    <div class="meta-item"><div class="meta-num">3</div><div class="meta-lbl">Brand Colors</div></div>
+    <div class="meta-item"><div class="meta-num">हिं</div><div class="meta-lbl">Bilingual</div></div>
+  </div>
+</header>
+
+<!-- ════════════════════ LOGO ════════════════════ -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-tag">The New Logo</div>
+    <h2 class="section-title">Diya, orbit &amp; <em>dawn</em></h2>
+    <p class="section-sub">A central diya flame (jyoti — the inner light of knowledge), wrapped in an orbital ring of nakshatra dots (the cosmos the jyotishi reads), crowned by a guiding star.</p>
+  </div>
+
+  <div class="logo-grid">
+    <div class="logo-cell">
+      <div class="logo-cell-art lc-indigo">
+        <svg viewBox="0 0 120 120"><use href="#__logo"/></svg>
+      </div>
+      <div class="logo-cell-info"><div class="logo-cell-name">Indigo · Primary</div><div class="logo-cell-meta">APP SPLASH · DARK UI</div></div>
+    </div>
+    <div class="logo-cell">
+      <div class="logo-cell-art lc-saffron">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#FBF6EE" stroke-width="2.5" opacity="0.9"/>
+          <circle cx="60" cy="10" r="3.5" fill="#FBF6EE"/><circle cx="103" cy="38" r="2.5" fill="#FBF6EE"/><circle cx="103" cy="82" r="2.5" fill="#FBF6EE"/><circle cx="60" cy="110" r="2.5" fill="#FBF6EE"/><circle cx="17" cy="82" r="2.5" fill="#FBF6EE"/><circle cx="17" cy="38" r="2.5" fill="#FBF6EE"/>
+          <path d="M 60 30 C 70 44, 72 56, 60 62 C 48 56, 50 44, 60 30 Z" fill="#FBF6EE"/>
+          <path d="M 60 40 C 65 48, 66 55, 60 60 C 54 55, 55 48, 60 40 Z" fill="#F4811F" opacity="0.5"/>
+          <path d="M 60 4 L 61.5 9 L 66 10 L 61.5 11 L 60 16 L 58.5 11 L 54 10 L 58.5 9 Z" fill="#FBF6EE"/>
+        </svg>
+      </div>
+      <div class="logo-cell-info"><div class="logo-cell-name">Saffron · Reverse</div><div class="logo-cell-meta">HEADERS · APP ICON</div></div>
+    </div>
+    <div class="logo-cell">
+      <div class="logo-cell-art lc-ivory">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#C77B4A" stroke-width="2.5"/>
+          <circle cx="60" cy="10" r="3.5" fill="#F4811F"/><circle cx="103" cy="38" r="2.5" fill="#C77B4A"/><circle cx="103" cy="82" r="2.5" fill="#C77B4A"/><circle cx="60" cy="110" r="2.5" fill="#C77B4A"/><circle cx="17" cy="82" r="2.5" fill="#C77B4A"/><circle cx="17" cy="38" r="2.5" fill="#F4811F"/>
+          <path d="M 60 30 C 70 44, 72 56, 60 62 C 48 56, 50 44, 60 30 Z" fill="#F4811F"/>
+          <path d="M 60 40 C 65 48, 66 55, 60 60 C 54 55, 55 48, 60 40 Z" fill="#FFD27D"/>
+          <path d="M 60 4 L 61.5 9 L 66 10 L 61.5 11 L 60 16 L 58.5 11 L 54 10 L 58.5 9 Z" fill="#F4811F"/>
+        </svg>
+      </div>
+      <div class="logo-cell-info"><div class="logo-cell-name">Ivory · Light</div><div class="logo-cell-meta">DOCS · INVOICE · WEB</div></div>
+    </div>
+    <div class="logo-cell">
+      <div class="logo-cell-art lc-copper">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#FBF6EE" stroke-width="2.5" opacity="0.85"/>
+          <circle cx="60" cy="10" r="3.5" fill="#FFD27D"/><circle cx="103" cy="38" r="2.5" fill="#FBF6EE"/><circle cx="103" cy="82" r="2.5" fill="#FBF6EE"/><circle cx="60" cy="110" r="2.5" fill="#FBF6EE"/><circle cx="17" cy="82" r="2.5" fill="#FBF6EE"/><circle cx="17" cy="38" r="2.5" fill="#FFD27D"/>
+          <path d="M 60 30 C 70 44, 72 56, 60 62 C 48 56, 50 44, 60 30 Z" fill="#FFD27D"/>
+          <path d="M 60 40 C 65 48, 66 55, 60 60 C 54 55, 55 48, 60 40 Z" fill="#FBF6EE"/>
+          <path d="M 60 4 L 61.5 9 L 66 10 L 61.5 11 L 60 16 L 58.5 11 L 54 10 L 58.5 9 Z" fill="#FFD27D"/>
+        </svg>
+      </div>
+      <div class="logo-cell-info"><div class="logo-cell-name">Copper · Warm</div><div class="logo-cell-meta">PREMIUM · MARKETING</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ PALETTE ════════════════════ -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-tag">Color System</div>
+    <h2 class="section-title">Indigo, Saffron &amp; <em>Copper</em></h2>
+    <p class="section-sub">A deep cosmic indigo canvas, energised by sacred saffron actions and warmed by premium copper accents. Gold reserved for ratings &amp; premium moments.</p>
+  </div>
+
+  <div class="palette-row">
+    <div class="swatch"><div class="swatch-c" style="background:#0B0B1E"><span class="swatch-tag" style="color:#fff">VOID</span></div><div class="swatch-i"><div class="swatch-n">Indigo Void</div><div class="swatch-h">#0B0B1E</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#131233"><span class="swatch-tag" style="color:#fff">DEEP</span></div><div class="swatch-i"><div class="swatch-n">Indigo Deep</div><div class="swatch-h">#131233</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#1E1B4B"><span class="swatch-tag" style="color:#fff">BASE</span></div><div class="swatch-i"><div class="swatch-n">Indigo</div><div class="swatch-h">#1E1B4B</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#2D2866"><span class="swatch-tag" style="color:#fff">MID</span></div><div class="swatch-i"><div class="swatch-n">Indigo Mid</div><div class="swatch-h">#2D2866</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#4C32A0"><span class="swatch-tag" style="color:#fff">HAZE</span></div><div class="swatch-i"><div class="swatch-n">Indigo Haze</div><div class="swatch-h">#4C32A0</div></div></div>
+  </div>
+
+  <div class="palette-row">
+    <div class="swatch"><div class="swatch-c" style="background:#F4811F"><span class="swatch-tag" style="color:#fff">★ ACTION</span></div><div class="swatch-i"><div class="swatch-n">Saffron</div><div class="swatch-h">#F4811F</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#FF9838"><span class="swatch-tag" style="color:#fff">BRIGHT</span></div><div class="swatch-i"><div class="swatch-n">Saffron Bright</div><div class="swatch-h">#FF9838</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#D96510"><span class="swatch-tag" style="color:#fff">DEEP</span></div><div class="swatch-i"><div class="swatch-n">Saffron Deep</div><div class="swatch-h">#D96510</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#C77B4A"><span class="swatch-tag" style="color:#fff">★ COPPER</span></div><div class="swatch-i"><div class="swatch-n">Copper</div><div class="swatch-h">#C77B4A</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#E0A878"><span class="swatch-tag">LIGHT</span></div><div class="swatch-i"><div class="swatch-n">Copper Light</div><div class="swatch-h">#E0A878</div></div></div>
+  </div>
+
+  <div class="palette-row">
+    <div class="swatch"><div class="swatch-c" style="background:#E8B547"><span class="swatch-tag">★ GOLD</span></div><div class="swatch-i"><div class="swatch-n">Gold</div><div class="swatch-h">#E8B547</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#FBF6EE"><span class="swatch-tag">IVORY</span></div><div class="swatch-i"><div class="swatch-n">Ivory Text</div><div class="swatch-h">#FBF6EE</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#34D399"><span class="swatch-tag" style="color:#04231a">SUCCESS</span></div><div class="swatch-i"><div class="swatch-n">Success</div><div class="swatch-h">#34D399</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#F87171"><span class="swatch-tag" style="color:#fff">DANGER</span></div><div class="swatch-i"><div class="swatch-n">Danger</div><div class="swatch-h">#F87171</div></div></div>
+    <div class="swatch"><div class="swatch-c" style="background:#FF4D6D"><span class="swatch-tag" style="color:#fff">LIVE</span></div><div class="swatch-i"><div class="swatch-n">Live Red</div><div class="swatch-h">#FF4D6D</div></div></div>
+  </div>
+</section>
+
+<!-- placeholder for symbol reuse -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="__logo" viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="50" fill="none" stroke="url(#ringGrad)" stroke-width="2.5" opacity="0.85"/>
+    <circle cx="60" cy="10" r="3.5" fill="#E8B547"/><circle cx="103" cy="38" r="2.5" fill="#E0A878"/><circle cx="103" cy="82" r="2.5" fill="#E0A878"/><circle cx="60" cy="110" r="2.5" fill="#E0A878"/><circle cx="17" cy="82" r="2.5" fill="#E0A878"/><circle cx="17" cy="38" r="2.5" fill="#E8B547"/>
+    <path d="M 30 72 A 30 30 0 0 1 90 72" fill="none" stroke="url(#ringGrad)" stroke-width="2" opacity="0.5"/>
+    <ellipse cx="60" cy="64" rx="11" ry="6" fill="#9C5A30" opacity="0.6"/>
+    <path d="M 60 30 C 70 44, 72 56, 60 62 C 48 56, 50 44, 60 30 Z" fill="url(#flameGrad)"/>
+    <path d="M 60 40 C 65 48, 66 55, 60 60 C 54 55, 55 48, 60 40 Z" fill="#FBF6EE" opacity="0.85"/>
+    <path d="M 60 4 L 61.5 9 L 66 10 L 61.5 11 L 60 16 L 58.5 11 L 54 10 L 58.5 9 Z" fill="#FFD27D"/>
+  </symbol>
+</svg>
+
+<!-- ════════════════════ USER APP SCREENS ════════════════════ -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-tag">App One · For Seekers</div>
+    <h2 class="section-title">The <em>User</em> App</h2>
+    <p class="section-sub">Where seekers find astrologers, get their kundli read, chat &amp; call, watch live streams, and manage their wallet.</p>
+    <div class="app-divider"><span class="line"></span><span class="label">Onboarding</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 1. USER LOGIN -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="login-scr">
+          <div class="login-logo"><svg viewBox="0 0 120 120"><use href="#__logo"/></svg></div>
+          <div class="login-hindi">नमस्ते 🙏</div>
+          <div class="login-title">Create <em>Account</em></div>
+          <div class="login-sub">Sign up to begin your cosmic journey</div>
+
+          <div class="field"><div class="field-lbl">Full Name</div>
+            <div class="field-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 016-6h4a6 6 0 016 6v2"/></svg><span class="field-val">Nikita Sharma</span></div>
+          </div>
+          <div class="field"><div class="field-lbl">Mobile Number</div>
+            <div class="field-box active"><span style="font-size:13px">🇮🇳 +91</span><span class="field-val">77385 33248</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;text-align:left;margin:6px 0 18px">
+            <div style="width:18px;height:18px;border-radius:5px;background:var(--saffron);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">✓</div>
+            <span style="font-size:10px;color:var(--ivory-dim)">I accept the <strong style="color:var(--saffron)">Terms &amp; Conditions</strong></span>
+          </div>
+          <button class="btn-saffron">SIGN UP →</button>
+          <div class="login-divider">OR CONTINUE WITH</div>
+          <div class="social-row">
+            <div class="social-btn">
+              <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+              Google
+            </div>
+            <div class="social-btn">
+              <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg>
+              Apple
+            </div>
+          </div>
+          <div class="login-foot">Already have an account? <strong>Login</strong></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">1 · User <em>Sign Up</em></div>
+      <div class="phone-desc">Google · Apple · Mobile</div>
+    </div>
+
+    <!-- 2. OTP VERIFY -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="login-scr">
+          <div class="login-logo"><svg viewBox="0 0 120 120"><use href="#__logo"/></svg></div>
+          <div class="login-title">Verify Your <em>Number</em></div>
+          <div class="login-sub">We've sent a 6-digit code to<br><strong style="color:var(--ivory)">+91 77385 33248</strong></div>
+          <div class="otp-row">
+            <div class="otp-cell filled">4</div>
+            <div class="otp-cell filled">7</div>
+            <div class="otp-cell filled">2</div>
+            <div class="otp-cell">·</div>
+            <div class="otp-cell">·</div>
+            <div class="otp-cell">·</div>
+          </div>
+          <div style="font-size:10px;color:var(--ivory-dim);margin-bottom:20px">Resend code in <strong style="color:var(--gold)">58s</strong></div>
+          <button class="btn-saffron">VERIFY &amp; CONTINUE ✓</button>
+          <div style="margin-top:14px;font-size:11px;color:var(--copper-light)">Edit Phone Number</div>
+
+          <div class="biometric-box">
+            <div class="biometric-ring">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 11c0-1.5-1-3-3-3M5 13c0-3 2-5 5-5s5 2 5 5M7 16c0-2.5 1.5-4 4-4M2 8C4 5 7 3 12 3s8 2 10 5M9 19c0-1 1-2 2-2"/></svg>
+            </div>
+            <div style="font-size:11px;font-weight:700">Enable Biometric Login</div>
+            <div style="font-size:9px;color:var(--ivory-faint);text-align:center">Use fingerprint or Face ID for faster, secure access next time</div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">2 · OTP + <em>Biometric</em></div>
+      <div class="phone-desc">6-digit · fingerprint opt-in</div>
+    </div>
+
+    <!-- 3. LANGUAGE -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="login-scr">
+          <div class="login-logo"><svg viewBox="0 0 120 120"><use href="#__logo"/></svg></div>
+          <div class="login-title">Choose Your <em>Language</em></div>
+          <div class="login-sub">अपनी भाषा चुनें · Pick what feels like home</div>
+          <div style="display:flex;flex-direction:column;gap:11px;margin-top:8px">
+            <div class="field-box active" style="justify-content:space-between"><span class="field-val">English</span><span style="color:var(--saffron)">✓</span></div>
+            <div class="field-box" style="justify-content:space-between"><span class="field-val" style="font-family:var(--font-hindi)">हिन्दी</span><span style="color:var(--ivory-faint)">○</span></div>
+            <div class="field-box" style="justify-content:space-between"><span class="field-val">Malayalam · മലയാളം</span><span style="color:var(--ivory-faint)">○</span></div>
+            <div class="field-box" style="justify-content:space-between"><span class="field-val">Tamil · தமிழ்</span><span style="color:var(--ivory-faint)">○</span></div>
+            <div class="field-box" style="justify-content:space-between"><span class="field-val">Telugu · తెలుగు</span><span style="color:var(--ivory-faint)">○</span></div>
+          </div>
+          <button class="btn-saffron" style="margin-top:auto">CONTINUE →</button>
+        </div>
+      </div></div></div>
+      <div class="phone-label">3 · <em>Language</em> Pick</div>
+      <div class="phone-desc">5 languages · bilingual</div>
+    </div>
+
+  </div>
+
+  <div class="section-head" style="margin-top:60px">
+    <div class="app-divider"><span class="line"></span><span class="label">Discover &amp; Connect</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 4. USER HOME -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="uhome-top">
+            <div class="uavatar">N</div>
+            <div class="uhome-greet"><div class="uhome-hi">Namaste 🙏</div><div class="uhome-name">Nikita</div></div>
+            <div class="wallet-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M16 12h.01"/></svg>₹4,653<span class="plus">+</span></div>
+          </div>
+
+          <div class="promo-card">
+            <div class="promo-eyebrow">India's most trusted</div>
+            <div class="promo-title">Talk to verified <em>Jyotishis</em> live</div>
+            <div class="promo-btn">Explore →</div>
+          </div>
+
+          <div class="quick-grid">
+            <div class="quick-item"><div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19"/><circle cx="12" cy="12" r="4"/></svg></div><div class="quick-lbl">Daily Horoscope</div></div>
+            <div class="quick-item"><div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21.4 8 14 2 9.4h7.6z"/></svg></div><div class="quick-lbl">Planet Position</div></div>
+            <div class="quick-item"><div class="quick-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-9.5-8.5C1 9.5 2.5 6 6 6c2 0 3 1 3 1s1-1 3-1c3.5 0 5 3.5 3.5 6.5C19 16.65 12 21 12 21z"/></svg></div><div class="quick-lbl">Love Match</div></div>
+            <div class="quick-item"><div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h12a2 2 0 012 2v14H6a2 2 0 01-2-2z"/><path d="M8 8h8M8 12h6"/></svg></div><div class="quick-lbl">Detailed Kundli</div></div>
+          </div>
+
+          <div class="sec-head"><div class="sec-title">Celebrity <em>Wishes</em></div><div class="sec-link">explore →</div></div>
+          <div class="celeb-row">
+            <div class="celeb-card"><div class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH</div><div class="celeb-photo">🎬</div><div class="celeb-name">Indrans</div></div>
+            <div class="celeb-card"><div class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH</div><div class="celeb-photo">🎭</div><div class="celeb-name">Vineeth</div></div>
+          </div>
+
+          <div class="sec-head"><div class="sec-title">Featured <em>Astrologers</em></div><div class="sec-link">view all</div></div>
+          <div class="feat-row">
+            <div class="feat-card"><div class="feat-img">🧘<div class="feat-live"><span class="pulse"></span>LIVE</div></div><div class="feat-body"><div class="feat-name">Manikandan</div><div class="feat-tag">Vedic · KP</div><div class="feat-rate"><span class="feat-stars">★ 5.0</span><span class="feat-price">₹10/min</span></div></div></div>
+            <div class="feat-card"><div class="feat-img">👳</div><div class="feat-body"><div class="feat-name">Brijesh Kurup</div><div class="feat-tag">Nadi · Palmistry</div><div class="feat-rate"><span class="feat-stars">★ 4.9</span><span class="feat-price">₹8/min</span></div></div></div>
+          </div>
+
+          <div class="botnav">
+            <div class="botnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12l9-9 9 9v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg><span>HOME</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-9 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.2A8.5 8.5 0 1121 11.5z"/></svg><span>CHAT</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg><span>CALL</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21.4 8 14 2 9.4h7.6z"/></svg><span>INSIGHTS</span></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">4 · User <em>Home</em></div>
+      <div class="phone-desc">wallet · quick tools · featured</div>
+    </div>
+
+    <!-- 5. SEARCH ASTROLOGERS -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="topbar-title">Find <em>Astrologers</em></div><div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg></div></div>
+          <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span>Search name, skill, language…</span></div>
+          <div class="filter-row">
+            <div class="filter-chip active">✓ Top Rated</div>
+            <div class="filter-chip">Price ↓</div>
+            <div class="filter-chip">Price ↑</div>
+            <div class="filter-chip">Hindi</div>
+          </div>
+          <div style="padding:0 16px 10px;font-size:11px;color:var(--ivory-dim);font-family:var(--font-mono)">101 astrologers available</div>
+          <div class="alist">
+            <div class="acard">
+              <div class="acard-photo">M<div class="acard-online"></div></div>
+              <div class="acard-info">
+                <div class="acard-name">Astro Manikuttan</div>
+                <div class="acard-skills">Vedic · Gemstone · Fertility</div>
+                <div class="acard-meta"><span>🌐 Hindi Tamil</span><span>💼 21 yrs</span></div>
+                <div class="acard-bottom">
+                  <div class="pill pill-chat">💬 ₹10</div>
+                  <div class="pill pill-call">📞 ₹50</div>
+                  <div class="pill pill-video">📹 ₹140</div>
+                  <div class="acard-rating">★ 5.0</div>
+                </div>
+              </div>
+            </div>
+            <div class="acard">
+              <div class="acard-photo">P<div class="acard-online"></div></div>
+              <div class="acard-info">
+                <div class="acard-name">Prajeesh TS</div>
+                <div class="acard-skills">Vasthu · Vedic astrology</div>
+                <div class="acard-meta"><span>🌐 Malayalam</span><span>💼 30 yrs</span></div>
+                <div class="acard-bottom">
+                  <div class="pill pill-chat">💬 ₹7</div>
+                  <div class="pill pill-call">📞 ₹20</div>
+                  <div class="pill pill-video">📹 ₹25</div>
+                  <div class="acard-rating">★ 5.0</div>
+                </div>
+              </div>
+            </div>
+            <div class="acard">
+              <div class="acard-photo" style="background:linear-gradient(150deg,#9C5A30,#2D2866)">J</div>
+              <div class="acard-info">
+                <div class="acard-name">Jayaprakasan MK</div>
+                <div class="acard-skills">Palmistry · Numerology</div>
+                <div class="acard-meta"><span>🌐 Hindi English</span><span>💼 50 yrs</span></div>
+                <div class="acard-bottom">
+                  <div class="pill pill-chat">💬 ₹10</div>
+                  <div class="pill pill-call">📞 ₹50</div>
+                  <div class="acard-rating">★ 4.8</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="height:14px"></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">5 · Search <em>Astrologers</em></div>
+      <div class="phone-desc">filters · chat/call/video rates</div>
+    </div>
+
+    <!-- 6. ASTROLOGER PROFILE / CTA -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="profile-hero">
+            <div class="profile-avatar" style="background:linear-gradient(150deg,var(--copper),var(--copper-deep))">M</div>
+            <div class="profile-name">Astro Manikuttan</div>
+            <div class="profile-phone">Vedic · Gemstone · Fertility</div>
+            <div class="profile-badge">★ 5.0 · 20 REVIEWS · 21 YRS</div>
+          </div>
+          <div style="display:flex;gap:8px;padding:14px 16px">
+            <div class="astro-stat" style="flex:1;text-align:center;border-left:none;border-top:3px solid var(--saffron)"><div class="astro-stat-lbl">Chat</div><div class="astro-stat-val" style="font-size:16px;color:var(--saffron)">₹10</div><div class="astro-stat-sub" style="color:var(--ivory-faint)">per msg</div></div>
+            <div class="astro-stat" style="flex:1;text-align:center;border-left:none;border-top:3px solid var(--info)"><div class="astro-stat-lbl">Call</div><div class="astro-stat-val" style="font-size:16px;color:var(--info)">₹50</div><div class="astro-stat-sub" style="color:var(--ivory-faint)">per min</div></div>
+            <div class="astro-stat" style="flex:1;text-align:center;border-left:none;border-top:3px solid var(--copper)"><div class="astro-stat-lbl">Video</div><div class="astro-stat-val" style="font-size:16px;color:var(--copper-light)">₹140</div><div class="astro-stat-sub" style="color:var(--ivory-faint)">per min</div></div>
+          </div>
+          <div class="scr-pad" style="padding-top:0">
+            <div style="font-size:11px;color:var(--ivory-dim);line-height:1.6;padding:12px 14px;background:var(--surface-1);border-radius:14px;border:1px solid var(--border-soft)">"21 years of experience in Vedic astrology, gemstone consultation, and fertility guidance. Fluent in Hindi, Tamil &amp; Malayalam."</div>
+          </div>
+          <div style="padding:0 16px;display:flex;gap:10px">
+            <button class="btn-saffron" style="flex:1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-9 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.2A8.5 8.5 0 1121 11.5z"/></svg>Chat</button>
+            <button class="btn-success" style="flex:1;width:auto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.8 19.8 0 013 4.18 2 2 0 015 2h3a2 2 0 012 1.72 12.8 12.8 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.8 12.8 0 002.81.7A2 2 0 0122 16.92z"/></svg>Call</button>
+          </div>
+          <div style="padding:14px 16px"><div style="font-size:11px;font-weight:700;margin-bottom:8px">Recent Reviews</div>
+            <div style="padding:11px 13px;background:var(--surface-1);border-radius:13px;border:1px solid var(--border-soft);margin-bottom:8px"><div style="display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:600">Ramesh K.</span><span style="font-size:10px;color:var(--gold)">★★★★★</span></div><div style="font-size:9px;color:var(--ivory-dim);margin-top:4px">"Very accurate predictions, helped me a lot with career decisions."</div></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">6 · Astrologer <em>Profile</em></div>
+      <div class="phone-desc">rates · bio · reviews · CTA</div>
+    </div>
+
+  </div>
+</section>
+
+  <div class="section-head" style="margin-top:60px">
+    <div class="app-divider"><span class="line"></span><span class="label">Consult · Chat &amp; Call</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 7. CHAT SCREEN -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr" style="background:linear-gradient(180deg,var(--indigo-void),var(--indigo-deep))">
+          <div class="chat-header">
+            <div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>
+            <div class="chat-h-photo">P</div>
+            <div class="chat-h-info"><div class="chat-h-name">Prajeesh TS</div><div class="chat-h-status"><span class="dot"></span>online · typing…</div></div>
+            <div class="chat-h-timer">⏱ 04:32</div>
+          </div>
+          <div class="chat-body">
+            <div class="chat-day">TODAY · ₹7/MSG</div>
+            <div class="bubble bubble-them">Namaste 🙏 Welcome! Please share your birth details — date, time &amp; place.<div class="bubble-time">5:42 PM</div></div>
+            <div class="bubble bubble-me">15 Aug 1995, 6:30 AM, Mumbai<div class="bubble-time">5:43 PM ✓✓</div></div>
+            <div class="bubble bubble-them">Thank you. Your Lagna is Leo (Simha). Strong Sun placement — leadership qualities. 🌟<div class="bubble-time">5:44 PM</div></div>
+            <div class="bubble bubble-me">What about my career this year?<div class="bubble-time">5:45 PM ✓✓</div></div>
+            <div class="bubble bubble-them">Jupiter transit favours growth after October. Good time for new ventures…<div class="bubble-time">5:45 PM</div></div>
+          </div>
+          <div class="chat-input">
+            <div class="chat-attach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.4 11.05l-9 9a5 5 0 01-7.07-7.07l9-9a3.5 3.5 0 014.95 4.95l-9 9a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div>
+            <div class="chat-input-box">Type your message…</div>
+            <div class="chat-send"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20l18-8L3 4v6l13 2-13 2z"/></svg></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">7 · <em>Chat</em> Screen</div>
+      <div class="phone-desc">timer · bubbles · ₹/msg</div>
+    </div>
+
+    <!-- 8. AUDIO CALL -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="call-scr">
+          <div class="call-status">● Ongoing Consultation</div>
+          <div class="call-photo-ring">M</div>
+          <div class="call-name">Astro Manikuttan</div>
+          <div class="call-tag">Vedic · Gemstone Expert</div>
+          <div class="call-timer">⏱ 08:14</div>
+          <div class="call-cost">₹50/min · ₹407 spent</div>
+          <div class="call-controls">
+            <div class="call-ctrl mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1M12 18v4"/></svg></div>
+            <div class="call-ctrl speaker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/></svg></div>
+            <div class="call-ctrl end"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 01-6.59-6.59l2.53-2.53L8.54 3H3.03C2.45 13.18 10.82 21.55 21 20.97v-5.51z" transform="rotate(135 12 12)"/></svg></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">8 · <em>Audio</em> Call</div>
+      <div class="phone-desc">pulsing ring · live timer</div>
+    </div>
+
+    <!-- 9. VIDEO CALL -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="vcall-scr">
+          <div class="vcall-topinfo"><span class="nm">Manikuttan</span><span class="tm">⏱ 03:47</span></div>
+          <div class="vcall-self">🧑</div>
+          <div class="vcall-remote">🧘</div>
+          <div class="vcall-controls">
+            <div class="call-ctrl mute" style="width:48px;height:48px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1M12 18v4"/></svg></div>
+            <div class="call-ctrl mute" style="width:48px;height:48px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5zM1 5h15v14H1z"/></svg></div>
+            <div class="call-ctrl speaker" style="width:48px;height:48px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l22 22M9 5a3 3 0 014 2.8M15 11v0M5 10v1a7 7 0 0011 5.7"/></svg></div>
+            <div class="call-ctrl end" style="width:48px;height:48px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 01-6.59-6.59l2.53-2.53L8.54 3H3.03C2.45 13.18 10.82 21.55 21 20.97v-5.51z" transform="rotate(135 12 12)"/></svg></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">9 · <em>Video</em> Call</div>
+      <div class="phone-desc">remote + self PIP · Agora</div>
+    </div>
+
+  </div>
+
+  <div class="section-head" style="margin-top:60px">
+    <div class="app-divider"><span class="line"></span><span class="label">Kundli &amp; Cosmic Insights</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 10. GENERATE KUNDLI -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="topbar-title">Generate <em>Kundli</em></div></div>
+          <div class="cosmic-card">
+            <div class="cosmic-card-title">Kundli Calculation Details</div>
+            <div class="cosmic-field"><div class="cosmic-field-lbl">City / Place</div><div class="cosmic-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Mumbai, Maharashtra</span></div></div>
+            <div class="cosmic-field"><div class="cosmic-field-lbl">Date of Birth</div><div class="cosmic-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>15 Aug 1995</span><span class="chev">✎</span></div></div>
+            <div class="cosmic-field"><div class="cosmic-field-lbl">Time of Birth</div><div class="cosmic-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>06:30 AM</span><span class="chev">✎</span></div></div>
+            <div class="cosmic-field"><div class="cosmic-field-lbl">Ayanamsa</div><div class="cosmic-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18V9M9 18V6M15 18v-4M21 18V10"/></svg><span>Lahiri</span><span class="chev">▾</span></div></div>
+            <div class="cosmic-field"><div class="cosmic-field-lbl">Language</div><div class="cosmic-input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18 15 15 0 010-18z"/></svg><span style="font-family:var(--font-hindi)">हिन्दी</span><span class="chev">▾</span></div></div>
+            <div class="cosmic-cta">Get Kundli — ₹99</div>
+          </div>
+          <div class="cosmic-note">Note: Accurate birth details are crucial for precise Kundli calculations.</div>
+          <div style="height:16px"></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">10 · Generate <em>Kundli</em></div>
+      <div class="phone-desc">cosmic form · ₹99</div>
+    </div>
+
+    <!-- 11. KUNDLI CHART VIEW -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="topbar-title">Your <em>Kundli</em> · Leo Lagna</div></div>
+          <div class="kundli-chart">
+            <svg viewBox="0 0 200 200">
+              <rect x="2" y="2" width="196" height="196" fill="none" stroke="#E8B547" stroke-width="1.5"/>
+              <line x1="2" y1="2" x2="198" y2="198" stroke="#C77B4A" stroke-width="1"/>
+              <line x1="198" y1="2" x2="2" y2="198" stroke="#C77B4A" stroke-width="1"/>
+              <line x1="100" y1="2" x2="2" y2="100" stroke="#C77B4A" stroke-width="1"/>
+              <line x1="2" y1="100" x2="100" y2="198" stroke="#C77B4A" stroke-width="1"/>
+              <line x1="100" y1="198" x2="198" y2="100" stroke="#C77B4A" stroke-width="1"/>
+              <line x1="198" y1="100" x2="100" y2="2" stroke="#C77B4A" stroke-width="1"/>
+              <text x="100" y="40" fill="#F4811F" font-size="11" text-anchor="middle" font-weight="700">Su</text>
+              <text x="100" y="32" fill="#E0A878" font-size="7" text-anchor="middle">1</text>
+              <text x="50" y="55" fill="#E8B547" font-size="11" text-anchor="middle" font-weight="700">Ma</text>
+              <text x="150" y="55" fill="#E8B547" font-size="11" text-anchor="middle" font-weight="700">Ju</text>
+              <text x="35" y="105" fill="#FBF6EE" font-size="11" text-anchor="middle" font-weight="700">Ke</text>
+              <text x="165" y="105" fill="#FBF6EE" font-size="11" text-anchor="middle" font-weight="700">Ra</text>
+              <text x="50" y="155" fill="#E0A878" font-size="11" text-anchor="middle" font-weight="700">Ve</text>
+              <text x="150" y="155" fill="#E0A878" font-size="11" text-anchor="middle" font-weight="700">Me</text>
+              <text x="100" y="170" fill="#F4811F" font-size="11" text-anchor="middle" font-weight="700">Mo</text>
+              <text x="100" y="105" fill="#E8B547" font-size="9" text-anchor="middle" font-weight="700">Sa</text>
+            </svg>
+          </div>
+          <div class="kundli-legend">
+            <div class="kl-item"><div class="kl-planet">☉</div><div class="kl-text"><div class="kl-name">Sun · Surya</div><div class="kl-pos">Leo · House 1</div></div></div>
+            <div class="kl-item"><div class="kl-planet">☽</div><div class="kl-text"><div class="kl-name">Moon · Chandra</div><div class="kl-pos">Aquarius · H7</div></div></div>
+            <div class="kl-item"><div class="kl-planet">♂</div><div class="kl-text"><div class="kl-name">Mars · Mangal</div><div class="kl-pos">Cancer · H12</div></div></div>
+            <div class="kl-item"><div class="kl-planet">♃</div><div class="kl-text"><div class="kl-name">Jupiter · Guru</div><div class="kl-pos">Virgo · H2</div></div></div>
+          </div>
+          <div style="padding:0 16px 14px"><button class="btn-saffron">Download Full Report (PDF) ↓</button></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">11 · Kundli <em>Chart</em></div>
+      <div class="phone-desc">North-Indian chart · planets</div>
+    </div>
+
+    <!-- 12. COSMIC INSIGHTS GRID -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar" style="background:linear-gradient(135deg,var(--indigo-mid),var(--indigo-deep))"><div class="topbar-title" style="text-align:center;width:100%">Cosmic <em>Insights</em></div></div>
+          <div class="insights-grid">
+            <div class="insight-cell"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="insight-name">Daily Horoscope</div><div class="insight-price">₹29</div></div>
+            <div class="insight-cell"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h12a2 2 0 012 2v14H6a2 2 0 01-2-2z"/><path d="M8 8h8M8 12h6"/></svg></div><div class="insight-name">Detailed Kundli</div><div class="insight-price">₹99</div></div>
+            <div class="insight-cell"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg></div><div class="insight-name">Daily Prediction</div><div class="insight-price">₹29</div></div>
+            <div class="insight-cell"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21.4 8 14 2 9.4h7.6z"/></svg></div><div class="insight-name">Planet Position</div><div class="insight-price">₹79</div></div>
+            <div class="insight-cell"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-9.5-8.5C1 9.5 2.5 6 6 6c2 0 3 1 3 1s1-1 3-1c3.5 0 5 3.5 3.5 6.5C19 16.65 12 21 12 21z"/></svg></div><div class="insight-name">Love Compatibility</div><div class="insight-price">₹19</div></div>
+            <div class="insight-cell"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></svg></div><div class="insight-name">Birthday Number</div><div class="insight-price">₹19</div></div>
+          </div>
+          <div class="botnav">
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg><span>HOME</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-9 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.2A8.5 8.5 0 1121 11.5z"/></svg><span>CHAT</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.8 19.8 0 013 4.18 2 2 0 015 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg><span>CALL</span></div>
+            <div class="botnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21.4 8 14 2 9.4h7.6z"/></svg><span>INSIGHTS</span></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">12 · Cosmic <em>Insights</em></div>
+      <div class="phone-desc">6 paid reports · ₹19–99</div>
+    </div>
+
+  </div>
+
+  <div class="section-head" style="margin-top:60px">
+    <div class="app-divider"><span class="line"></span><span class="label">Live Streaming · Wallet · Profile</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 13. LIVE STREAM VIEWER -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="live-scr">
+          <div class="live-badge"><span class="pulse"></span>LIVE</div>
+          <div class="live-viewers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>1,247</div>
+          <div class="live-host">
+            <div class="live-host-photo">M</div>
+            <div><div class="live-host-name">Manikandan</div><div class="live-host-tag">Vedic Astrologer</div></div>
+          </div>
+          <div class="live-video">🧘</div>
+          <div class="live-chat-overlay">
+            <div class="live-msg"><span class="u">Ravi:</span> Namaste guruji 🙏</div>
+            <div class="live-msg"><span class="u">Priya:</span> What about Mesha rashi today?</div>
+            <div class="live-msg"><span class="superchat">⭐ Anjali · ₹100: Please read my kundli!</span></div>
+          </div>
+          <div class="live-actions">
+            <div class="live-act"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.35-9.5-8.5C1 9.5 2.5 6 6 6c2 0 3 1 3 1s1-1 3-1c3.5 0 5 3.5 3.5 6.5C19 16.65 12 21 12 21z"/></svg></div>
+            <div class="live-act gift"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="4"/><path d="M12 8v13M5 12v9h14v-9M12 8C12 5 10 3 8 3s-2 3 4 5zM12 8c0-3 2-5 4-5s2 3-4 5z"/></svg></div>
+            <div class="live-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg></div>
+          </div>
+          <div class="live-bottom">
+            <div class="live-input">Say something…</div>
+            <div class="live-superchat-btn">⭐ Super Chat</div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">13 · <em>Live</em> Stream</div>
+      <div class="phone-desc">viewers · super chat · gifts</div>
+    </div>
+
+    <!-- 14. USER WALLET -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="topbar-title">My <em>Wallet</em></div></div>
+          <div class="wallet-hero">
+            <div class="wallet-hero-lbl">Current Balance</div>
+            <div class="wallet-hero-amt">₹4,652.55</div>
+            <div class="wallet-hero-note">ⓘ Recharge now to enjoy seamless consultations</div>
+          </div>
+          <div style="padding:0 16px 8px;font-size:11px;font-weight:700;color:var(--ivory-dim)">Quick Recharge</div>
+          <div class="amt-grid">
+            <div class="amt-cell">₹50</div>
+            <div class="amt-cell">₹100</div>
+            <div class="amt-cell popular"><span class="badge">POPULAR</span>₹500</div>
+            <div class="amt-cell">₹1000</div>
+            <div class="amt-cell">₹1500</div>
+            <div class="amt-cell">₹2000</div>
+          </div>
+          <div class="custom-amt"><span class="rupee">₹</span><span>Enter custom amount</span></div>
+          <div style="padding:0 16px 14px"><button class="btn-saffron">Proceed to Payment →</button></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">14 · User <em>Wallet</em></div>
+      <div class="phone-desc">balance · recharge grid</div>
+    </div>
+
+    <!-- 15. USER PROFILE -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="profile-hero">
+            <div class="profile-avatar">N</div>
+            <div class="profile-name">Nikita Sharma</div>
+            <div class="profile-phone">+91 77385 33248</div>
+            <div style="margin-top:10px"><span class="lang-toggle"><span class="lang-opt active">EN</span><span class="lang-opt" style="font-family:var(--font-hindi)">हिं</span></span></div>
+          </div>
+          <div class="menu-list">
+            <div class="menu-item"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-9 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.2A8.5 8.5 0 1121 11.5z"/></svg></div><div class="menu-text"><div class="menu-name">Chat History</div><div class="menu-sub">Your past consultations</div></div><div class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div></div>
+            <div class="menu-item"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="menu-text"><div class="menu-name">Payment History</div><div class="menu-sub">Credits &amp; debits</div></div><div class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div></div>
+            <div class="menu-item"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/><path d="M19 8v6M22 11h-6"/></svg></div><div class="menu-text"><div class="menu-name">Become an Astrologer</div><div class="menu-sub">Join our platform</div></div><div class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div></div>
+            <div class="menu-item"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></div><div class="menu-text"><div class="menu-name">Helpline &amp; Support</div><div class="menu-sub">24×7 customer care</div></div><div class="menu-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div></div>
+            <div class="menu-item" style="border-color:rgba(248,113,113,0.3)"><div class="menu-icon" style="background:var(--danger-dim);color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></div><div class="menu-text"><div class="menu-name" style="color:var(--danger)">Logout</div></div></div>
+          </div>
+          <div style="text-align:center;font-size:9px;color:var(--ivory-faint);font-family:var(--font-mono);padding-bottom:14px">App Version 2.0.0 · हिन्दुस्तानी ज्योतिषी</div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">15 · User <em>Profile</em></div>
+      <div class="phone-desc">menu · EN/हिं toggle</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════ ASTROLOGER APP SCREENS ════════════════════ -->
+<section class="section" style="background:linear-gradient(180deg,transparent,rgba(199,123,74,0.04),transparent)">
+  <div class="section-head">
+    <div class="section-tag">App Two · For Astrologers</div>
+    <h2 class="section-title">The <em>Astrologer</em> App</h2>
+    <p class="section-sub">Where verified jyotishis go live, attend calls &amp; chats, manage availability, and track earnings — same cosmic identity, copper-accented for the professional side.</p>
+    <div class="app-divider"><span class="line"></span><span class="label">Login &amp; Dashboard</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 16. ASTROLOGER LOGIN -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="login-scr">
+          <div class="login-logo" style="box-shadow:0 16px 40px -14px rgba(199,123,74,0.6),0 0 0 1px var(--border-soft)"><svg viewBox="0 0 120 120"><use href="#__logo"/></svg></div>
+          <div class="login-hindi">ज्योतिषी लॉगिन</div>
+          <div class="login-title">Astrologer <em>Login</em></div>
+          <div class="login-sub">Welcome back, guide the seekers ✨</div>
+
+          <div class="field"><div class="field-lbl">Registered Mobile</div>
+            <div class="field-box active"><span style="font-size:13px">🇮🇳 +91</span><span class="field-val">94227 99414</span></div>
+          </div>
+          <button class="btn-saffron" style="margin-top:6px">SEND OTP →</button>
+
+          <div class="login-divider">OR LOGIN WITH</div>
+          <div class="social-row">
+            <div class="social-btn" style="flex:1">
+              <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+              Continue with Google
+            </div>
+          </div>
+
+          <div class="biometric-box" style="margin-top:22px;border-style:solid;border-color:var(--saffron);background:var(--saffron-pale)">
+            <div class="biometric-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 11c0-1.5-1-3-3-3M5 13c0-3 2-5 5-5s5 2 5 5M7 16c0-2.5 1.5-4 4-4M2 8C4 5 7 3 12 3s8 2 10 5M9 19c0-1 1-2 2-2"/></svg></div>
+            <div style="font-size:12px;font-weight:700">Tap to login with Fingerprint</div>
+            <div style="font-size:9px;color:var(--ivory-faint);text-align:center">Faster, secure access for verified astrologers</div>
+          </div>
+          <div class="login-foot">New here? <strong>Apply to become an astrologer</strong></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">16 · Astrologer <em>Login</em></div>
+      <div class="phone-desc">Google + biometric prominent</div>
+    </div>
+
+    <!-- 17. ASTROLOGER DASHBOARD -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="uhome-top">
+            <div class="uavatar">M</div>
+            <div class="uhome-greet"><div class="uhome-hi">Namaste 🙏</div><div class="uhome-name">Manikuttan G</div></div>
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></div>
+          </div>
+          <div class="astro-online-card">
+            <div class="astro-online-info"><div class="astro-online-title">You're Online</div><div class="astro-online-sub">Accepting chats, calls &amp; video</div></div>
+            <div class="toggle-lg"></div>
+          </div>
+          <div style="padding:0 16px 8px;font-size:11px;font-weight:700;color:var(--ivory-dim)">Today's Overview</div>
+          <div class="astro-stats">
+            <div class="astro-stat gold"><div class="astro-stat-lbl">Today's Earnings</div><div class="astro-stat-val" style="color:var(--gold)">₹3,240</div><div class="astro-stat-sub">↑ 18% vs yesterday</div></div>
+            <div class="astro-stat green"><div class="astro-stat-lbl">Consultations</div><div class="astro-stat-val">24</div><div class="astro-stat-sub">12 chat · 9 call · 3 video</div></div>
+            <div class="astro-stat"><div class="astro-stat-lbl">Avg Rating</div><div class="astro-stat-val" style="color:var(--gold)">4.9★</div><div class="astro-stat-sub" style="color:var(--ivory-faint)">from 312 reviews</div></div>
+            <div class="astro-stat copper"><div class="astro-stat-lbl">Followers</div><div class="astro-stat-val" style="color:var(--copper-light)">1.2k</div><div class="astro-stat-sub">+34 this week</div></div>
+          </div>
+          <div style="padding:8px 16px"><button class="btn-saffron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5zM1 5h15v14H1z"/></svg>Go Live Now</button></div>
+          <div class="botnav">
+            <div class="botnav-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12l9-9 9 9v9a2 2 0 01-2 2h-4v-7h-6v7H5a2 2 0 01-2-2z"/></svg><span>HOME</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-9 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.2A8.5 8.5 0 1121 11.5z"/></svg><span>REQUESTS</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span>EARNINGS</span></div>
+            <div class="botnav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg><span>PROFILE</span></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">17 · Astrologer <em>Dashboard</em></div>
+      <div class="phone-desc">online toggle · stats grid</div>
+    </div>
+
+    <!-- 18. GO LIVE SETUP -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="topbar-title">Go <em>Live</em></div></div>
+          <div class="golive-preview">🧘<div class="grid-overlay"></div>
+            <div style="position:absolute;top:10px;left:10px" class="live-badge"><span class="pulse"></span>PREVIEW</div>
+          </div>
+          <div style="padding:0 16px 10px"><div class="field-box active"><span class="field-val ph">Add a title — "Daily Rashifal &amp; Q&amp;A"</span></div></div>
+          <div class="golive-settings">
+            <div class="golive-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5zM1 5h15v14H1z"/></svg><span>Camera</span><div class="toggle"></div></div>
+            <div class="golive-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/></svg><span>Microphone</span><div class="toggle"></div></div>
+            <div class="golive-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9.5-8.5C1 9.5 2.5 6 6 6c2 0 3 1 3 1s1-1 3-1c3.5 0 5 3.5 3.5 6.5C19 16.65 12 21 12 21z"/></svg><span>Allow Gifts &amp; Super Chat</span><div class="toggle"></div></div>
+            <div class="golive-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg><span>Show Chat Overlay</span><div class="toggle off"></div></div>
+          </div>
+          <div style="padding:16px"><button class="btn-saffron" style="background:linear-gradient(135deg,var(--live),#C2185B);box-shadow:0 10px 24px -8px rgba(255,77,109,0.6)"><span class="pulse" style="width:7px;height:7px;border-radius:50%;background:#fff"></span>Start Live Stream</button></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">18 · Go <em>Live</em> Setup</div>
+      <div class="phone-desc">preview · toggles · start</div>
+    </div>
+
+  </div>
+
+  <div class="section-head" style="margin-top:60px">
+    <div class="app-divider"><span class="line"></span><span class="label">Attend Requests · Calls &amp; Chats</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 19. INCOMING REQUEST -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="topbar-title">Incoming <em>Requests</em></div><div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div></div>
+          <div class="request-card">
+            <div class="request-top">
+              <div class="request-photo">R</div>
+              <div class="request-info"><div class="request-name">Ravi Kumar</div><div class="request-type"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.8 19.8 0 013 4.18 2 2 0 015 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>Audio Call · ₹50/min</div></div>
+              <div class="request-timer">0:18</div>
+            </div>
+            <div class="request-actions">
+              <div class="req-btn req-decline">✕ Decline</div>
+              <div class="req-btn req-accept">✓ Accept</div>
+            </div>
+          </div>
+          <div style="padding:8px 16px;font-size:11px;font-weight:700;color:var(--ivory-dim)">Waiting Queue (3)</div>
+          <div class="alist">
+            <div class="acard" style="padding:11px"><div class="acard-photo" style="width:44px;height:44px;font-size:18px">P</div><div class="acard-info"><div class="acard-name" style="font-size:12px">Priya Nair</div><div class="acard-skills">💬 Chat request · 5 msgs</div></div><div class="pill pill-chat" style="align-self:center">₹70</div></div>
+            <div class="acard" style="padding:11px"><div class="acard-photo" style="width:44px;height:44px;font-size:18px">A</div><div class="acard-info"><div class="acard-name" style="font-size:12px">Anjali S.</div><div class="acard-skills">📹 Video request</div></div><div class="pill pill-video" style="align-self:center">₹140</div></div>
+            <div class="acard" style="padding:11px"><div class="acard-photo" style="width:44px;height:44px;font-size:18px">S</div><div class="acard-info"><div class="acard-name" style="font-size:12px">Suresh M.</div><div class="acard-skills">📞 Call request</div></div><div class="pill pill-call" style="align-self:center">₹50</div></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">19 · Incoming <em>Request</em></div>
+      <div class="phone-desc">timer · accept/decline · queue</div>
+    </div>
+
+    <!-- 20. ATTEND CHAT (astrologer side) -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr" style="background:linear-gradient(180deg,var(--indigo-void),var(--indigo-deep))">
+          <div class="chat-header">
+            <div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>
+            <div class="chat-h-photo" style="background:linear-gradient(150deg,var(--indigo-haze),var(--indigo-mid))">R</div>
+            <div class="chat-h-info"><div class="chat-h-name">Ravi Kumar</div><div class="chat-h-status"><span class="dot"></span>3/50 msgs used</div></div>
+            <div class="chat-h-timer">💰 ₹21</div>
+          </div>
+          <div class="chat-body">
+            <div class="chat-day">CLIENT EARNING · ₹7/MSG</div>
+            <div class="bubble bubble-them">Namaste guruji 🙏 I have a career question<div class="bubble-time">5:42 PM</div></div>
+            <div class="bubble bubble-me">Namaste 🙏 Please share your birth date, time &amp; place<div class="bubble-time">5:43 PM ✓✓</div></div>
+            <div class="bubble bubble-them">15 Aug 1995, 6:30 AM, Mumbai. Should I change jobs?<div class="bubble-time">5:44 PM</div></div>
+          </div>
+          <div class="chat-input">
+            <div class="chat-attach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg></div>
+            <div class="chat-input-box">Type your guidance…</div>
+            <div class="chat-send"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20l18-8L3 4v6l13 2-13 2z"/></svg></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">20 · Attend <em>Chat</em></div>
+      <div class="phone-desc">astrologer side · earning live</div>
+    </div>
+
+    <!-- 21. ATTEND CALL (astrologer side) -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="call-scr" style="background:radial-gradient(ellipse at 50% 30%,var(--copper-deep),var(--indigo-void))">
+          <div class="call-status" style="color:var(--success)">● Earning · ₹50/min</div>
+          <div class="call-photo-ring" style="background:linear-gradient(150deg,var(--indigo-haze),var(--indigo-mid))">R</div>
+          <div class="call-name">Ravi Kumar</div>
+          <div class="call-tag">Audio Consultation</div>
+          <div class="call-timer">⏱ 08:14</div>
+          <div class="call-cost" style="color:var(--success)">You've earned ₹407 this call</div>
+          <div class="call-controls">
+            <div class="call-ctrl mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1M12 18v4"/></svg></div>
+            <div class="call-ctrl speaker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/></svg></div>
+            <div class="call-ctrl end"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.46l-5.27-.61-2.52 2.52a15.05 15.05 0 01-6.59-6.59l2.53-2.53L8.54 3H3.03C2.45 13.18 10.82 21.55 21 20.97v-5.51z" transform="rotate(135 12 12)"/></svg></div>
+          </div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">21 · Attend <em>Call</em></div>
+      <div class="phone-desc">astrologer earning view</div>
+    </div>
+
+  </div>
+
+  <div class="section-head" style="margin-top:60px">
+    <div class="app-divider"><span class="line"></span><span class="label">Earnings &amp; Payout</span><span class="line"></span></div>
+  </div>
+
+  <div class="screens-flow">
+
+    <!-- 22. EARNINGS -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen"><div class="screen-scroll">
+        <div class="statusbar"><span>9:41</span><span class="sb-icons">✦ ▮▮▮ 60%</span></div>
+        <div class="scr scr-dark">
+          <div class="topbar"><div class="icon-btn" style="width:28px;height:28px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div><div class="topbar-title">My <em>Earnings</em></div></div>
+          <div class="earn-hero">
+            <div class="earn-lbl">Available for Withdrawal</div>
+            <div class="earn-amt">₹48,520</div>
+            <div class="earn-sub">↑ ₹3,240 earned today</div>
+            <div class="earn-withdraw"><button class="btn-saffron">Withdraw to Bank →</button></div>
+          </div>
+          <div style="padding:0 16px 8px;font-size:11px;font-weight:700;color:var(--ivory-dim)">This Month</div>
+          <div class="earn-breakdown">
+            <div class="earn-bd"><div class="earn-bd-val" style="color:var(--saffron)">₹84k</div><div class="earn-bd-lbl">Total</div></div>
+            <div class="earn-bd"><div class="earn-bd-val" style="color:var(--info)">312</div><div class="earn-bd-lbl">Sessions</div></div>
+            <div class="earn-bd"><div class="earn-bd-val" style="color:var(--copper-light)">68h</div><div class="earn-bd-lbl">Live Time</div></div>
+          </div>
+          <div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:var(--ivory-dim)">Recent Payouts</div>
+          <div class="txn"><div class="txn-icon credit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div><div class="txn-info"><div class="txn-title">Chat · Ravi Kumar</div><div class="txn-sub">Today, 5:45 PM · 8 msgs</div></div><div class="txn-amt credit">+₹56</div></div>
+          <div class="txn"><div class="txn-icon credit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div><div class="txn-info"><div class="txn-title">Call · Priya Nair</div><div class="txn-sub">Today, 4:12 PM · 14 min</div></div><div class="txn-amt credit">+₹700</div></div>
+          <div class="txn"><div class="txn-icon credit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 010-4h12v4"/><path d="M4 6v12a2 2 0 002 2h14v-4"/></svg></div><div class="txn-info"><div class="txn-title">Super Chat · Live</div><div class="txn-sub">Today, 2:30 PM · Anjali</div></div><div class="txn-amt credit">+₹100</div></div>
+          <div style="height:14px"></div>
+        </div>
+      </div></div></div>
+      <div class="phone-label">22 · Astrologer <em>Earnings</em></div>
+      <div class="phone-desc">withdraw · breakdown · payouts</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════ DESIGN NOTES ════════════════════ -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-tag">Design Rationale</div>
+    <h2 class="section-title">Why it <em>works</em></h2>
+  </div>
+  <div class="notes-grid">
+    <div class="note">
+      <div class="note-eyebrow">Canvas Philosophy</div>
+      <div class="note-title">Deep indigo, <em>not</em> yellow</div>
+      <div class="note-text">The old Jyotishi app mixed bright yellow headers with cosmic-dark calculators — two clashing worlds. Hindustani Jyotishi commits fully to a <code>#0B0B1E</code> indigo void everywhere, so the whole app feels like one continuous night sky. Premium, calm, mystical.</div>
+    </div>
+    <div class="note copper">
+      <div class="note-eyebrow">Two-App Distinction</div>
+      <div class="note-title">User vs <em>Astrologer</em></div>
+      <div class="note-text">Both apps share the indigo canvas and diya logo, but the User app leans saffron (action, seeking) while the Astrologer app leans copper (craft, profession). Earnings &amp; "you earned" states use green so money always reads positive.</div>
+    </div>
+    <div class="note gold">
+      <div class="note-eyebrow">Saffron = Action</div>
+      <div class="note-title">One sacred <em>accent</em></div>
+      <div class="note-text">Saffron <code>#F4811F</code> is reserved strictly for primary actions — Sign Up, Send OTP, Recharge, Start Chat. It never decorates. This makes every screen's "what do I tap" instantly obvious, and ties to the sacred saffron of Indian tradition.</div>
+    </div>
+    <div class="note indigo">
+      <div class="note-eyebrow">Gold = Premium</div>
+      <div class="note-title">Ratings &amp; <em>cosmic</em></div>
+      <div class="note-text">Gold <code>#E8B547</code> appears only for ratings (★ 5.0), wallet balances, kundli charts, and paid insight prices. It signals "this is valuable / premium," distinct from saffron's "tap me."</div>
+    </div>
+    <div class="note">
+      <div class="note-eyebrow">Trust &amp; Security</div>
+      <div class="note-title">Biometric + <em>Google</em></div>
+      <div class="note-text">Both apps offer Google login and fingerprint/Face ID. The astrologer side makes biometric extra-prominent (filled saffron card) since they log in frequently throughout the day to attend requests.</div>
+    </div>
+    <div class="note copper">
+      <div class="note-eyebrow">Bilingual by Design</div>
+      <div class="note-title">हिन्दुस्तानी <em>roots</em></div>
+      <div class="note-text">Devanagari (Noto Sans Devanagari) sits alongside the Fraunces display serif — नमस्ते, हिन्दी, ज्योतिषी appear naturally. The EN/हिं toggle is one tap. The name itself anchors the brand in Hindustani identity.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ FOOTER ════════════════════ -->
+<footer class="footer">
+  <div class="footer-mark"><svg viewBox="0 0 120 120"><use href="#__logo"/></svg></div>
+  <div class="footer-title">Hindustani <em>Jyotishi</em></div>
+  <div class="footer-meta">UI REFERENCE · USER + ASTROLOGER · DEEP INDIGO SYSTEM</div>
+</footer>
+
+</div>
+</body>
+</html>

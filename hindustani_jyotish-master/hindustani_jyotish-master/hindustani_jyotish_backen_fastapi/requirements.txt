@@ -1,0 +1,51 @@
+# ── Hindustani Jyotish · FastAPI backend ──────────────────────────────
+# Phase 1 — Foundation & Auth Layer
+
+# Web framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# Settings / validation
+pydantic==2.10.4
+pydantic-settings==2.7.1
+email-validator==2.2.0
+python-multipart==0.0.20
+
+# Database (MySQL, async)
+SQLAlchemy==2.0.36
+aiomysql==0.2.0
+alembic==1.14.0
+# Test/dev fallback driver (async SQLite)
+aiosqlite==0.20.0
+
+# Auth & security
+PyJWT==2.10.1
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+google-auth==2.37.0
+
+# HTTP client (Google JWKS, SMS gateways)
+httpx==0.28.1
+
+# Real-time A/V token minting (Agora RTC)
+agora-token-builder==1.0.0
+
+# Kundli & cosmic insights (Phase 3)
+pyswisseph==2.10.3.2          # Swiss Ephemeris — planetary positions
+reportlab==4.2.5             # PDF report generation
+
+# Server-side image compression for uploads (avatars, KYC photos, banners)
+Pillow==12.3.0
+
+# Caching / online-pool (optional; lazy-loaded)
+redis==5.2.1
+
+# Push notifications — Firebase Cloud Messaging (loaded lazily; optional in dev)
+firebase-admin==6.6.0
+
+# Error monitoring — Sentry (optional; only initialised when SENTRY_DSN is set)
+sentry-sdk[fastapi]==2.19.2
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.25.0

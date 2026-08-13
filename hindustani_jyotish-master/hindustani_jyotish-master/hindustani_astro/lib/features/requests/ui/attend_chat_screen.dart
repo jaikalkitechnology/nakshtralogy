@@ -1,0 +1,388 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:hj_core/hj_core.dart';
+
+import '../../../core/di.dart';
+import '../../../shared/widgets/cosmic_background.dart';
+import '../../../shared/widgets/session_ended_view.dart';
+import '../../portal/portal_repository.dart';
+
+/// Banner text shown while the socket is down. Kept as a constant so
+/// [_markConnected] can tell "our own reconnecting banner" apart from a real
+/// server `error` note and only clear the former.
+const _kReconnectingNote = 'Reconnecting…';
+
+/// Astrologer-side chat thread — the real-time mirror of the user's chat,
+/// over the same consultation WebSocket. Earnings accrue per user message.
+class AttendChatScreen extends StatefulWidget {
+  const AttendChatScreen({
+    super.key,
+    required this.consultationId,
+    this.userName,
+    @visibleForTesting this.socketFactory,
+  });
+  final String consultationId;
+
+  /// The seeker's display name, shown in the header. Falls back to "Seeker".
+  final String? userName;
+
+  /// Widget tests inject a controllable socket here so the reconnect path can
+  /// be driven deterministically (a real socket needs real I/O, which the
+  /// test binding fakes). Production always leaves this null. Mirrors
+  /// `GoLiveScreen.cubitOverride`.
+  final ChatSocket Function()? socketFactory;
+
+  @override
+  State<AttendChatScreen> createState() => _AttendChatScreenState();
+}
+
+class _AttendChatScreenState extends State<AttendChatScreen> with WidgetsBindingObserver {
+  final _controller = TextEditingController();
+  final _scroll = ScrollController();
+  final List<Map<String, dynamic>> _messages = [];
+  final _wakelock = getIt<WakelockService>();
+
+  ChatSocket? _chat;
+  StreamSubscription? _sub;
+  String _status = 'accepted';
+  String? _note;
+  final Set<String> _seen = {};
+
+  // Socket reconnect state. This screen used to render a "Reconnecting…"
+  // banner on `closed` and then do NOTHING — no retry ever ran, so the
+  // astrologer's chat socket stayed dead for the rest of the session while
+  // the banner claimed otherwise. Incoming messages silently stopped
+  // arriving (their own sends still worked, because those go over REST),
+  // which is exactly the "stuck on Reconnecting…" report. Mirrors the user
+  // app's consultation screen, which always had this.
+  Timer? _reconnectTimer;
+  int _reconnectAttempts = 0;
+
+  /// The last drop reason surfaced to the astrologer — repeated identical
+  /// failures during one outage are reported once.
+  String? _lastReportedDrop;
+
+  bool get _active => _status == 'accepted' || _status == 'in_progress';
+
+  /// True once a resume re-sync (see [_resyncOnResume]) finds the
+  /// consultation is no longer active — swaps the whole screen to
+  /// [SessionEndedView].
+  bool _sessionEnded = false;
+  Timer? _endedPopTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _preloadHistory();
+    _openSocket();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) unawaited(_resyncOnResume());
+  }
+
+  /// Re-syncs on resume: some platforms silently freeze a WebSocket while
+  /// backgrounded without ever delivering a `closed` event, so a stale
+  /// socket can otherwise sit dead for the rest of the session — force a
+  /// fresh connection (safe/idempotent, see [_openSocket]) and re-pull any
+  /// messages missed via REST. Also re-checks the consultation's status: the
+  /// backend auto-ends a consultation whose user-side heartbeat goes silent
+  /// for 150s, so this app can be left showing a live chat thread for a
+  /// session the server has already completed.
+  Future<void> _resyncOnResume() async {
+    if (_sessionEnded) return;
+    if (_status == 'completed') {
+      await _handleSessionEnded();
+      return;
+    }
+    _openSocket();
+    unawaited(_preloadHistory());
+    try {
+      final c = await getIt<PortalRepository>().activeConsultation(widget.consultationId);
+      if (!mounted || _sessionEnded) return;
+      if (c == null) await _handleSessionEnded();
+    } on ApiException catch (_) {
+      // Best-effort — a re-sync failure must not disrupt an otherwise-live chat.
+    }
+  }
+
+  /// The server says this consultation is no longer active. Tears the socket
+  /// down and swaps to [SessionEndedView], which auto-returns to Requests
+  /// shortly after.
+  Future<void> _handleSessionEnded() async {
+    if (_sessionEnded || !mounted) return;
+    _reconnectTimer?.cancel();
+    unawaited(_sub?.cancel());
+    _chat?.dispose();
+    unawaited(_wakelock.release());
+    setState(() {
+      _sessionEnded = true;
+      _status = 'completed';
+    });
+    _endedPopTimer = Timer(const Duration(seconds: 2), _backToRequestsNow);
+  }
+
+  void _backToRequestsNow() {
+    _endedPopTimer?.cancel();
+    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
+  }
+
+  void _openSocket() {
+    _sub?.cancel();
+    _chat?.dispose();
+    final socket = widget.socketFactory?.call() ??
+        ChatSocket(getIt<AppConfig>(), getIt<TokenStore>(), getIt<ApiClient>());
+    _chat = socket;
+    _sub = socket.stream.listen(_onEvent);
+    socket.connect(widget.consultationId);
+  }
+
+  /// Surfaces WHY the chat socket dropped, so a reconnect is diagnosable from
+  /// a screenshot instead of being an opaque "Reconnecting…". Shown once per
+  /// drop (not once per retry) so a long outage doesn't spam the screen.
+  void _showDropReason(String? detail) {
+    if (!mounted || detail == null || detail.isEmpty) return;
+    if (detail == _lastReportedDrop) return;
+    _lastReportedDrop = detail;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(detail),
+      duration: const Duration(seconds: 8),
+      backgroundColor: AppColors.danger,
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
+  /// A live frame arrived, so the link is healthy — clear the banner and the
+  /// backoff counter.
+  void _markConnected() {
+    _reconnectTimer?.cancel();
+    _reconnectAttempts = 0;
+    if (_note == _kReconnectingNote && mounted) {
+      setState(() => _note = null);
+    }
+  }
+
+  /// The socket dropped. Retry with a short backoff (~2-15s) until the chat
+  /// is over or the screen is disposed.
+  void _scheduleReconnect() {
+    if (!mounted || _status == 'completed') return;
+    setState(() => _note = _kReconnectingNote);
+    _reconnectTimer?.cancel();
+    final secs = (2 * (_reconnectAttempts + 1)).clamp(2, 15);
+    _reconnectTimer = Timer(Duration(seconds: secs), () {
+      if (!mounted || _status == 'completed') return;
+      _reconnectAttempts++;
+      _openSocket();
+      // Anything said while the socket was down never reached this client —
+      // the server only streams live frames — so pull the gap over REST.
+      unawaited(_preloadHistory());
+    });
+  }
+
+  Future<void> _preloadHistory() async {
+    // REST history makes the thread populate even if the socket is slow/down.
+    try {
+      final msgs = await getIt<PortalRepository>().messages(widget.consultationId);
+      if (mounted) setState(() => _addAll(msgs));
+    } on ApiException catch (_) {/* socket will still try */}
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _reconnectTimer?.cancel();
+    _endedPopTimer?.cancel();
+    _sub?.cancel();
+    _chat?.dispose();
+    _controller.dispose();
+    _scroll.dispose();
+    // Unconditional, mirroring the resource teardown above — release must
+    // never depend on which exit path got here, and WakelockPlus.disable()
+    // is idempotent so this is safe even if never actually acquired.
+    unawaited(_wakelock.release());
+    super.dispose();
+  }
+
+  void _addAll(List<Map<String, dynamic>> msgs) {
+    for (final m in msgs) {
+      final id = '${m['id']}';
+      if (_seen.add(id)) _messages.add(m);
+    }
+  }
+
+  void _onEvent(Map<String, dynamic> e) {
+    if (e['kind'] != 'closed') _markConnected();
+    switch (e['kind']) {
+      case 'status':
+        final wasActive = _active;
+        setState(() => _status = '${e['status']}');
+        // Keep the screen awake only while the chat is actually active — not
+        // from initial screen entry.
+        if (!wasActive && _active) {
+          unawaited(_wakelock.acquire());
+        } else if (wasActive && !_active) {
+          unawaited(_wakelock.release());
+        }
+      case 'history':
+        final msgs = ((e['messages'] as List?) ?? const []).cast<Map<String, dynamic>>();
+        setState(() => _addAll(msgs));
+        _scrollToEnd();
+      case 'message':
+        setState(() => _addAll([e]));
+        _scrollToEnd();
+      case 'error':
+        setState(() => _note = '${e['detail']}');
+      case 'closed':
+        final detail = e['detail'];
+        if (detail != null) debugPrint('[attend chat] socket closed: $detail');
+        _showDropReason(detail?.toString());
+        _scheduleReconnect();
+    }
+  }
+
+  void _scrollToEnd() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scroll.hasClients) {
+        _scroll.animateTo(_scroll.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      }
+    });
+  }
+
+  Future<void> _send() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty || !_active) return;
+    _controller.clear();
+    // Send over REST (persists + bills + broadcasts); show it immediately.
+    try {
+      final msg = await getIt<PortalRepository>().sendMessage(widget.consultationId, text);
+      if (mounted) {
+        setState(() => _addAll([msg]));
+        _scrollToEnd();
+      }
+    } on ApiException catch (e) {
+      if (mounted) setState(() => _note = e.message);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_sessionEnded) {
+      return Scaffold(
+        body: CosmicBackground(
+          child: SafeArea(child: SessionEndedView(onBackNow: _backToRequestsNow)),
+        ),
+      );
+    }
+    return Scaffold(
+      body: CosmicBackground(
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 820),
+              child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              'Chat with ${(widget.userName != null && widget.userName!.trim().isNotEmpty) ? widget.userName! : 'Seeker'}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.heading(size: 18)),
+                          Text(_status == 'completed' ? 'Ended' : 'Live',
+                              style: AppTextStyles.mono(size: 12, color: AppColors.success)),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      // Icon-only, so without this a screen reader announces
+                      // nothing.
+                      tooltip: 'Close',
+                      icon: Icon(Icons.close, color: AppColors.ivoryDim),
+                    ),
+                  ],
+                ),
+              ),
+              if (_note != null)
+                Container(
+                  width: double.infinity,
+                  color: AppColors.danger.withValues(alpha: 0.14),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Text(_note!, style: AppTextStyles.body(size: 13, color: AppColors.danger)),
+                ),
+              Expanded(
+                child: _messages.isEmpty
+                    ? Center(
+                        child: Text('Waiting for the seeker to say Namaste 🙏',
+                            style: AppTextStyles.body(color: AppColors.ivoryFaint)))
+                    : ListView.builder(
+                        controller: _scroll,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _messages.length,
+                        itemBuilder: (_, i) {
+                          final m = _messages[i];
+                          final mine = m['sender_role'] == 'astrologer';
+                          return Align(
+                            alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * 0.72),
+                              decoration: BoxDecoration(
+                                color: mine
+                                    ? AppColors.copper.withValues(alpha: 0.22)
+                                    : AppColors.surface2,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Text('${m['body']}', style: AppTextStyles.body(size: 14)),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                    12, 8, 12, MediaQuery.of(context).viewInsets.bottom + 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        enabled: _active,
+                        decoration: InputDecoration(
+                            hintText: _active ? 'Reply…' : 'Chat ended'),
+                        onSubmitted: (_) => _send(),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Icon-only, so without a tooltip a screen reader
+                    // announces nothing.
+                    IconButton.filled(
+                      tooltip: 'Send message',
+                      onPressed: _active ? _send : null,
+                      style: IconButton.styleFrom(backgroundColor: AppColors.saffron),
+                      icon: Icon(Icons.send, color: AppColors.indigoVoid),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

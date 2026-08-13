@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+media/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.DS_Store
+
+# Firebase Admin SDK keys (secret). Wildcard because the per-app/per-platform
+# keys land beside it as firebase-service-account.user.json,
+# firebase-service-account.astro.json, … — those are just as sensitive and
+# were NOT covered by the exact-name rule.
+firebase-service-account*.json
+
+# Local media/object-storage root (generated PDFs, uploads)
+static/

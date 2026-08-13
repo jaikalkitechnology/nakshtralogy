@@ -1,0 +1,200 @@
+"""FastAPI application entrypoint."""
+from __future__ import annotations
+
+import asyncio
+import contextlib
+import logging
+import pathlib
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
+from app import __version__
+from app.api.router import api_router
+from app.core.config import settings, warn_on_insecure_config
+
+logger = logging.getLogger("app.main")
+
+# How often the background sweep checks for stale `requested` consultations.
+# Well under REQUEST_EXPIRY_SECONDS (60s) so the actual expiry lands close to
+# the advertised 1-minute window rather than lagging behind it.
+_EXPIRY_SWEEP_INTERVAL_SECONDS = 10
+
+
+async def _consultation_expiry_loop() -> None:
+    """Runs for the lifetime of the app, expiring stale consultation requests.
+
+    Each worker process runs its own copy of this loop. A request is only
+    ever expired once (the row's status flips out of `requested` on the
+    first worker to process it), so redundant workers racing on the same
+    row is harmless — worst case is an occasional duplicate best-effort
+    push, which is already how every push call in this codebase degrades.
+    """
+    from app.core.database import AsyncSessionLocal
+    from app.services import consultation_service
+
+    while True:
+        try:
+            async with AsyncSessionLocal() as db:
+                await consultation_service.expire_stale_requests(db)
+                # Also close out sessions that DID start but whose client
+                # then vanished — without this they stay in_progress
+                # forever, so the final billing settlement never runs and
+                # the astrologer is never freed.
+                await consultation_service.expire_abandoned_sessions(db)
+        except asyncio.CancelledError:
+            raise
+        except Exception:  # noqa: BLE001 — the sweep must never crash the app
+            logger.exception("consultation expiry sweep failed")
+        await asyncio.sleep(_EXPIRY_SWEEP_INTERVAL_SECONDS)
+
+
+# Broadcasts run for hours, not seconds, so this sweep checks far less often
+# than the consultation one — it only needs to catch broadcasts that
+# crashed/disconnected without ever calling /end.
+_BROADCAST_SWEEP_INTERVAL_SECONDS = 300
+
+
+async def _broadcast_expiry_loop() -> None:
+    """Runs for the lifetime of the app, force-ending abandoned broadcasts
+    (see broadcast_service.BROADCAST_MAX_DURATION_SECONDS). Same
+    multi-worker-safe reasoning as _consultation_expiry_loop above."""
+    from app.core.database import AsyncSessionLocal
+    from app.services import broadcast_service
+
+    while True:
+        try:
+            async with AsyncSessionLocal() as db:
+                await broadcast_service.expire_stale_broadcasts(db)
+        except asyncio.CancelledError:
+            raise
+        except Exception:  # noqa: BLE001 — the sweep must never crash the app
+            logger.exception("broadcast expiry sweep failed")
+        await asyncio.sleep(_BROADCAST_SWEEP_INTERVAL_SECONDS)
+
+
+def _init_sentry() -> None:
+    """Initialise Sentry only when a DSN is configured. No-op otherwise.
+
+    The import is wrapped so a missing `sentry-sdk` package can never break
+    startup in dev/CI (where the optional dependency isn't installed)."""
+    if not settings.SENTRY_DSN:
+        return
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.fastapi import FastApiIntegration
+        from sentry_sdk.integrations.starlette import StarletteIntegration
+
+        sentry_sdk.init(
+            dsn=settings.SENTRY_DSN,
+            environment=settings.ENVIRONMENT,
+            integrations=[StarletteIntegration(), FastApiIntegration()],
+        )
+        logger.info("Sentry initialised for environment=%s", settings.ENVIRONMENT)
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("Sentry DSN set but init failed (%s); continuing without Sentry", exc)
+
+
+async def _seed_firebase_settings() -> None:
+    """Publish the Firebase credentials that ship in the repo into the
+    DB-backed settings the admin console reads, so it shows the real values
+    instead of "NOT CONFIGURED" for things that are in fact configured.
+
+    Idempotent (never overwrites an existing setting) and best-effort — a
+    failure here must never stop the API from starting.
+    """
+    try:
+        from app.core.database import AsyncSessionLocal
+        from app.services import firebase_seed
+
+        written = firebase_seed.seed_service_account_files()
+        async with AsyncSessionLocal() as db:
+            seeded = await firebase_seed.seed_firebase_settings(db)
+            await db.commit()
+        if seeded or written:
+            logger.info(
+                "Firebase settings seeded from repo credentials: settings=%s files=%s",
+                sorted(seeded),
+                sorted(written),
+            )
+    except Exception:  # noqa: BLE001 — startup must never fail on seeding
+        logger.exception("Firebase settings seeding failed (continuing without it)")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Tables are managed by Alembic migrations in real environments.
+    # See app.core.dev_init for the no-migration local/test bootstrap.
+    warn_on_insecure_config(settings)
+    await _seed_firebase_settings()
+    tasks = [
+        asyncio.create_task(_consultation_expiry_loop()),
+        asyncio.create_task(_broadcast_expiry_loop()),
+    ]
+    try:
+        yield
+    finally:
+        for task in tasks:
+            task.cancel()
+        for task in tasks:
+            with contextlib.suppress(asyncio.CancelledError):
+                await task
+
+
+def create_app() -> FastAPI:
+    _init_sentry()
+    app = FastAPI(
+        title=settings.APP_NAME,
+        version=__version__,
+        description=(
+            "Hindustani Jyotish — Vedic astrology platform API.\n\n"
+            "All blueprint phases implemented: auth, consultations (chat/call/"
+            "video), kundli & cosmic insights, astrologer portal + admin, live "
+            "streaming, and wallet/payments/payouts."
+        ),
+        lifespan=lifespan,
+        docs_url="/docs",
+        redoc_url="/redoc",
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origin_list,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+    from pathlib import Path
+    from fastapi.staticfiles import StaticFiles
+
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    STATIC_DIR = BASE_DIR / "static"
+
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+    print("BASE_DIR =", BASE_DIR)
+    print("STATIC_DIR =", STATIC_DIR)
+
+    @app.get("/", tags=["health"])
+    async def root():
+        return {
+            "name": settings.APP_NAME,
+            "version": __version__,
+            "environment": settings.ENVIRONMENT,
+            "docs": "/docs",
+        }
+
+    @app.get("/health", tags=["health"])
+    async def health():
+        return {"status": "ok"}
+
+    return app
+
+
+app = create_app()

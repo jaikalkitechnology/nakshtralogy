@@ -1,0 +1,43 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: hindustani_jyotish
+      MYSQL_USER: hj_user
+      MYSQL_PASSWORD: hj_password
+      MYSQL_ROOT_PASSWORD: root_password
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql+aiomysql://hj_user:hj_password@db:3306/hindustani_jyotish
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: dev
+      JWT_SECRET: dev-secret-change-me
+    ports:
+      - "8000:8000"
+    # Run migrations then start the server
+    command: >
+      sh -c "alembic upgrade head || python -m app.core.dev_init;
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  mysql_data:

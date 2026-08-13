@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Hindustani Jyotish — Astrologer console: manage consultations, go live, and track earnings.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Hindustani Jyotish — Astrologer">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Hindustani Jyotish — Astrologer</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- NO inline Firebase init here, deliberately. This page used to call
+       firebase.initializeApp() with a hardcoded config that had no `appId` at
+       all, so it could never mint a web push token. It also created the
+       DEFAULT Firebase app before Flutter booted, so the Dart-side
+       Firebase.initializeApp(options: …) — which now fetches the real,
+       admin-configured web credentials at runtime (admin console → Firebase →
+       Web app config) — could only be ignored or collide with it. The Dart
+       side is the single source of truth; firebase_core loads the JS SDK
+       itself. -->
+</head>
+<body>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <!-- Agora Web SDK (iris-web-rtc) — REQUIRED for audio/video calls and live
+       broadcasting on web. agora_rtc_engine's web support is a thin wrapper
+       over this bundle: without it every call/Go-Live screen fails at engine
+       init with an AgoraRtcException instead of connecting. Mobile builds
+       don't use this at all (they link the native SDK).
+
+       Version pinned to the one agora_rtc_engine 6.5.4 is built against (see
+       its README/example) — do not bump it independently of the plugin.
+
+       Loaded from Agora's official CDN. To remove the runtime CDN dependency,
+       download this exact file into `web/` and change src to the relative
+       path "iris-web-rtc_n450_w4220_0.8.6.js"; nothing else needs to change.
+       It is a plain (non-async) script so it is guaranteed to have executed
+       before Flutter boots below. -->
+  <script src="https://download.agora.io/sdk/release/iris-web-rtc_n450_w4220_0.8.6.js"></script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
