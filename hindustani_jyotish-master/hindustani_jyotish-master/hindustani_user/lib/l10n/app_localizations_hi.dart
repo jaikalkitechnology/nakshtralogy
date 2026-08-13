@@ -348,6 +348,51 @@ class AppLocalizationsHi extends AppLocalizations {
   String get consultSpeakerOff => 'स्पीकर बंद';
 
   @override
+  String consultSessionMsgs(Object used, Object cap, Object left) {
+    return 'सत्र: $used/$cap संदेश ($left शेष)';
+  }
+
+  @override
+  String consultPerMsgRate(Object rate) {
+    return '₹$rate/संदेश';
+  }
+
+  @override
+  String get consultConnectedLabel => 'जुड़ा हुआ';
+
+  @override
+  String consultChargedRate(Object charged, Object rate) {
+    return '₹$charged · ₹$rate/मिनट';
+  }
+
+  @override
+  String consultBalanceMinutes(Object balance, Object minutes) {
+    return 'शेष ₹$balance · ~$minutes मिनट बाकी';
+  }
+
+  @override
+  String consultBalanceRemaining(Object balance) {
+    return 'शेष ₹$balance';
+  }
+
+  @override
+  String get consultLowBalanceBanner => 'कम बैलेंस — एक मिनट से कम बचा है';
+
+  @override
+  String get consultAddMoney => 'पैसे जोड़ें';
+
+  @override
+  String get consultRechargeTitle => 'वॉलेट में पैसे जोड़ें';
+
+  @override
+  String get consultRechargeSubtitle => 'कॉल समाप्त किए बिना रिचार्ज करें।';
+
+  @override
+  String consultRechargeAdded(Object amount) {
+    return '₹$amount जोड़े गए — कॉल जारी है।';
+  }
+
+  @override
   String get profileTitle => 'प्रोफ़ाइल';
 
   @override

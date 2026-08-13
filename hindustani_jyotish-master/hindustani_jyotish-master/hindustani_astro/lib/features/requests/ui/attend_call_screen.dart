@@ -60,6 +60,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
   /// successful fetch; never fabricated.
   String? _payout;
 
+  /// The seeker's per-minute rate for this call (`Consultation.rate`), shown
+  /// as context next to the live earnings. Null until the first successful
+  /// [_resync] / when the server reports no rate.
+  String? _rate;
+
   DateTime? _connectedAt;
   Duration _elapsed = Duration.zero;
   Timer? _elapsedTicker;
@@ -164,7 +169,11 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
         await _handleSessionEnded();
         return;
       }
-      setState(() => _payout = c.astrologerPayout);
+      setState(() {
+        _payout = c.astrologerPayout;
+        final rate = double.tryParse(c.rate);
+        if (rate != null && rate > 0) _rate = c.rate;
+      });
     } on ApiException catch (_) {
       // Best-effort — a re-sync failure must not disrupt an otherwise-live call.
     }
@@ -442,8 +451,36 @@ class _AttendCallScreenState extends State<AttendCallScreen> with WidgetsBinding
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('Earnings so far: ₹$_payout',
-                              style: AppTextStyles.mono(size: 12, color: AppColors.success)),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: AppColors.success.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: AppColors.success.withValues(alpha: 0.4)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.savings_outlined,
+                                    size: 15, color: AppColors.success),
+                                const SizedBox(width: 7),
+                                // Exact "Earnings so far: ₹<payout>" text kept as
+                                // one Text node (net of commission).
+                                Text('Earnings so far: ₹$_payout',
+                                    style: AppTextStyles.mono(
+                                        size: 14,
+                                        color: AppColors.success,
+                                        weight: FontWeight.w700)),
+                                if (_rate != null) ...[
+                                  const SizedBox(width: 8),
+                                  Text('· ₹$_rate/min',
+                                      style: AppTextStyles.mono(
+                                          size: 11, color: AppColors.ivoryDim)),
+                                ],
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     if (_note != null)
