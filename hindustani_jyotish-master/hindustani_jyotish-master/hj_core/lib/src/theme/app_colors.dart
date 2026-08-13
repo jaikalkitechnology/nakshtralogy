@@ -47,13 +47,17 @@ abstract final class _Light {
 /// `AppColors.x` during build picks up the new value on the very next frame,
 /// with no call-site changes needed anywhere in either app.
 abstract final class AppColors {
-  static Brightness _brightness = Brightness.dark;
-  static bool get _isDark => _brightness == Brightness.dark;
+  // Dark-only app: brightness is hard-pinned to dark and the light palette
+  // ([_Light]) is retained but never selected. `_isDark` is a constant `true`
+  // so every canvas/surface/text getter below always returns its dark tone,
+  // regardless of what (if anything) calls [setBrightness].
+  static const Brightness _brightness = Brightness.dark;
+  static const bool _isDark = true;
 
-  /// Set once by `ThemeCubit` on startup and on every theme change. Never
-  /// call this directly outside that — it drives every `AppColors.x` read
-  /// app-wide.
-  static void setBrightness(Brightness brightness) => _brightness = brightness;
+  /// Retained for API compatibility (`ThemeCubit` still calls it). In this
+  /// dark-only build it is a deliberate no-op — the palette can never flip to
+  /// light.
+  static void setBrightness(Brightness brightness) {}
 
   static Brightness get currentBrightness => _brightness;
 

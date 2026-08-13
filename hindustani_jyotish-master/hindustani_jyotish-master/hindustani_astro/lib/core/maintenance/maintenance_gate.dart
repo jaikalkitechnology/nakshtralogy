@@ -46,8 +46,8 @@ class MaintenanceApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      // Dark-only app: a single dark theme, no light fallback/flash.
+      theme: AppTheme.dark(),
       home: MaintenanceScreen(message: message, onRetry: onRetry),
     );
   }

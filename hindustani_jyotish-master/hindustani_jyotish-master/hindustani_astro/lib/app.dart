@@ -52,9 +52,11 @@ class HindustaniAstroApp extends StatelessWidget {
                 key: ValueKey(themeState.brightness),
                 onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
                 debugShowCheckedModeBanner: false,
-                theme: AppTheme.light(),
+                // Dark-only app: a single dark theme, pinned. No light theme,
+                // no system flip — themeState is permanently dark.
+                theme: AppTheme.dark(),
                 darkTheme: AppTheme.dark(),
-                themeMode: themeState.mode,
+                themeMode: ThemeMode.dark,
                 locale: locale,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,

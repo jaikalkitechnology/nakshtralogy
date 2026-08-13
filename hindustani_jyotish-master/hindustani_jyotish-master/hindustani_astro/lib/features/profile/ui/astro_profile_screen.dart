@@ -122,8 +122,6 @@ class AstroProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const _ThemeTile(),
-          const SizedBox(height: 8),
           _navTile(
             icon: Icons.history,
             label: 'Consultation History',
@@ -328,99 +326,4 @@ class AstroProfileScreen extends StatelessWidget {
           ],
         ),
       );
-}
-
-/// Theme switcher (System default / Light / Dark). Reflects [ThemeCubit]'s
-/// current mode; picking an option in the bottom sheet persists it.
-class _ThemeTile extends StatelessWidget {
-  const _ThemeTile();
-
-  String _currentLabel(AppLocalizations l, ThemeMode mode) => switch (mode) {
-        ThemeMode.light => l.themeLight,
-        ThemeMode.dark => l.themeDark,
-        ThemeMode.system => l.themeSystem,
-      };
-
-  IconData _currentIcon(ThemeState state) => switch (state.mode) {
-        ThemeMode.light => Icons.light_mode_outlined,
-        ThemeMode.dark => Icons.dark_mode_outlined,
-        ThemeMode.system => Icons.brightness_auto_outlined,
-      };
-
-  Future<void> _open(BuildContext context) async {
-    final l = AppLocalizations.of(context);
-    final cubit = context.read<ThemeCubit>();
-    final current = cubit.state.mode;
-    final selected = await showModalBottomSheet<ThemeMode>(
-      context: context,
-      backgroundColor: AppColors.indigoDeep,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(l.profileTheme, style: AppTextStyles.heading(size: 16)),
-              ),
-            ),
-            _option(context, l.themeSystem, ThemeMode.system, current),
-            _option(context, l.themeLight, ThemeMode.light, current),
-            _option(context, l.themeDark, ThemeMode.dark, current),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-    if (selected != null) await cubit.setMode(selected);
-  }
-
-  Widget _option(BuildContext context, String label, ThemeMode mode, ThemeMode current) {
-    final active = current == mode;
-    return ListTile(
-      title: Text(label, style: AppTextStyles.body(size: 14)),
-      trailing: active ? const Icon(Icons.check, color: AppColors.saffron) : null,
-      onTap: () => Navigator.pop(context, mode),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final state = context.watch<ThemeCubit>().state;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.copperLight.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(_currentIcon(state), size: 18, color: AppColors.copperLight),
-        ),
-        title: Text(l.profileTheme, style: AppTextStyles.body(size: 14)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              _currentLabel(l, state.mode),
-              style: AppTextStyles.label(size: 12, color: AppColors.saffronBright),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
-          ],
-        ),
-        onTap: () => _open(context),
-      ),
-    );
-  }
 }
