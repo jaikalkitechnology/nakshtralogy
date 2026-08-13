@@ -14,6 +14,7 @@ from app.api.v1 import (
     broadcasts,
     consultations,
     insights,
+    kundli,
     public,
     users,
     wallet,
@@ -33,6 +34,9 @@ api_router.include_router(activity.router)
 
 # Phase 3 — implemented (kundli, planet positions, horoscope, compatibility)
 api_router.include_router(insights.router)
+# Phase B — full offline Vedic Kundli analysis suite (engine app.kundli).
+# Paid compute+save, free reopen; every Nakshtralogy analysis EXCEPT Moola.
+api_router.include_router(kundli.router)
 
 # Phase 4 — implemented (astrologer auth, KYC, portal, admin approval)
 api_router.include_router(astrologer_auth.router)

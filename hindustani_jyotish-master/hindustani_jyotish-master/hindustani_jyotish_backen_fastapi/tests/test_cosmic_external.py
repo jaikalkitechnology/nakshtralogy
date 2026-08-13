@@ -288,7 +288,9 @@ async def test_detailed_kundli_external(client, external_api):
     assert "chart_id" not in chart and "birth_jd" not in chart and "engine" not in chart
 
     assert data["vimshottari"]["dashas"][0]["planet"] == "Rahu"
-    assert data["moola_dasha"]["system"].startswith("Moola Dasha")
+    # Moola Dasha is excluded from Hindustani everywhere — even on the
+    # external-provider path _curate_kundli drops it (Phase B, STEP 3).
+    assert "moola_dasha" not in data
     # Only ACTIVE doshas/yogas are surfaced.
     assert [d["name"] for d in data["dosh_analysis"]["doshas"]] == ["Pitra Dosh"]
     assert [y["name"] for y in data["yoga_analysis"]["yogas"]] == ["Raj Yoga"]

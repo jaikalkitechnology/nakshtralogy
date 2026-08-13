@@ -17,8 +17,8 @@ Second work stream (after the comms tracker `HINDUSTANI_TASK_TRACKER.md`, all 7 
 | Phase | Title | Status | Depends on |
 |---|---|---|---|
 | A | Admin auto column-sync ("auto mode") + auto-everything | ✅ | — |
-| B | Kundli engine + backend router — full suite **minus Moola Dasha** | 🟡 | A |
-| C | Kundli full viewer UI (user app) — design-matched | ⬜ | B |
+| B | Kundli engine + backend router — full suite **minus Moola Dasha** | ✅ | A |
+| C | Kundli full viewer UI (user app) — design-matched | 🟡 | B |
 | D | Google login → persist profile picture (fix + refresh) | ⬜ | A |
 | E | Astro Edit Profile + Bank/PAN in the profile section | ⬜ | A |
 | F | Design polish to match `hindustani-jyotishi.html` + QA pass | ⬜ | B,C,D,E |

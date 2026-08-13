@@ -230,11 +230,9 @@ def _curate_kundli(raw: dict) -> dict:
         data["vimshottari"] = _pick(
             vim, ("system", "total_years", "moon_lord", "balance_yrs", "dashas")
         )
-    moola = raw.get("moola_dasha")
-    if isinstance(moola, dict):
-        data["moola_dasha"] = _pick(
-            moola, ("system", "lagna_sign", "balance_yrs", "dashas")
-        )
+    # Moola Dasha is intentionally excluded from Hindustani everywhere — no
+    # /dasha/moola endpoint, no Moola tab, no moola_dasha key in any bundle.
+    # (Dropped here so it never surfaces even on the external-provider path.)
 
     dosh = raw.get("dosh_analysis")
     if isinstance(dosh, dict):
@@ -280,7 +278,7 @@ def _curate_kundli(raw: dict) -> dict:
     if isinstance(activation, dict):
         data["dasha_activation"] = _pick(
             activation,
-            ("query_date", "vimshottari", "moola", "activated_yogas", "gochar_flags"),
+            ("query_date", "vimshottari", "activated_yogas", "gochar_flags"),
         )
 
     chakra = raw.get("chakra_health")
