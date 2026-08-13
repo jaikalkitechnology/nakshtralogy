@@ -731,4 +731,159 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveReconnectingVideo => 'Reconnecting to video…';
+
+  @override
+  String get kunFullAnalysis => 'Complete birth chart';
+
+  @override
+  String get kunOpenFullAnalysis => 'Open full analysis';
+
+  @override
+  String get kunRetry => 'Retry';
+
+  @override
+  String get kunNoData => 'No data available';
+
+  @override
+  String get kunChecked => 'Checked';
+
+  @override
+  String get kunFactors => 'Why it forms';
+
+  @override
+  String get kunCancellation => 'Cancellation';
+
+  @override
+  String get kunSummary => 'Summary';
+
+  @override
+  String get kunPlanets => 'Planets';
+
+  @override
+  String get kunKundli => 'Kundli';
+
+  @override
+  String get kunDivisions => 'Divisions';
+
+  @override
+  String get kunVimshottari => 'Vimshottari';
+
+  @override
+  String get kunGochar => 'Gochar';
+
+  @override
+  String get kunDosh => 'Dosh';
+
+  @override
+  String get kunYoga => 'Yoga';
+
+  @override
+  String get kunShadbala => 'Shadbala';
+
+  @override
+  String get kunAshtakavarga => 'Ashtakavarga';
+
+  @override
+  String get kunAspects => 'Aspects';
+
+  @override
+  String get kunBhava => 'Bhava';
+
+  @override
+  String get dashaRunning => 'RUNNING';
+
+  @override
+  String dashaBirthBalance(Object lord, Object years) {
+    return 'Birth lord: $lord · Balance: $years yrs';
+  }
+
+  @override
+  String dashaAntardashasOf(Object planet) {
+    return '$planet MD → Antardashas';
+  }
+
+  @override
+  String dashaPratyantardashasOf(Object planet) {
+    return '$planet AD → Pratyantardashas';
+  }
+
+  @override
+  String dashaSookshmaOf(Object planet) {
+    return '$planet PD → Sookshmadashas';
+  }
+
+  @override
+  String dashaSubperiodsOf(Object planet) {
+    return '$planet sub-periods';
+  }
+
+  @override
+  String get divChartsSubtitle => 'Tap any varga chart to enlarge it.';
+
+  @override
+  String get summaryLagna => 'Lagna';
+
+  @override
+  String get summaryMoon => 'Moon sign';
+
+  @override
+  String get summarySun => 'Sun sign';
+
+  @override
+  String get summaryActiveDoshas => 'Active doshas';
+
+  @override
+  String get summaryActiveYogas => 'Active yogas';
+
+  @override
+  String get gocharBest => 'Best rashi';
+
+  @override
+  String get gocharWorst => 'Weakest rashi';
+
+  @override
+  String get doshActive => 'Active doshas';
+
+  @override
+  String get yogaActive => 'Active yogas';
+
+  @override
+  String get doshNone => 'No active doshas — a clear chart.';
+
+  @override
+  String get yogaNone => 'No prominent yogas detected.';
+
+  @override
+  String get colStrength => 'Strength';
+
+  @override
+  String get shadbalaRanking => 'Planet strength ranking';
+
+  @override
+  String get shadbalaRupas => 'rupas';
+
+  @override
+  String get avSavTitle => 'Sarvashtakavarga (SAV)';
+
+  @override
+  String avSavTotal(Object total) {
+    return 'Total: $total';
+  }
+
+  @override
+  String get avBavTitle => 'Bhinnashtakavarga (BAV)';
+
+  @override
+  String get aspectsGraha => 'Graha drishti (planetary aspects)';
+
+  @override
+  String get aspectsRashi => 'Rashi drishti (sign aspects)';
+
+  @override
+  String bhavaHouse(Object n) {
+    return 'House $n';
+  }
+
+  @override
+  String get bhavaLord => 'Lord';
 }

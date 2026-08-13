@@ -1435,6 +1435,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reconnecting to video…'**
   String get liveReconnectingVideo;
+
+  /// No description provided for @kunFullAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete birth chart'**
+  String get kunFullAnalysis;
+
+  /// No description provided for @kunOpenFullAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Open full analysis'**
+  String get kunOpenFullAnalysis;
+
+  /// No description provided for @kunRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get kunRetry;
+
+  /// No description provided for @kunNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get kunNoData;
+
+  /// No description provided for @kunChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked'**
+  String get kunChecked;
+
+  /// No description provided for @kunFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it forms'**
+  String get kunFactors;
+
+  /// No description provided for @kunCancellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation'**
+  String get kunCancellation;
+
+  /// No description provided for @kunSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get kunSummary;
+
+  /// No description provided for @kunPlanets.
+  ///
+  /// In en, this message translates to:
+  /// **'Planets'**
+  String get kunPlanets;
+
+  /// No description provided for @kunKundli.
+  ///
+  /// In en, this message translates to:
+  /// **'Kundli'**
+  String get kunKundli;
+
+  /// No description provided for @kunDivisions.
+  ///
+  /// In en, this message translates to:
+  /// **'Divisions'**
+  String get kunDivisions;
+
+  /// No description provided for @kunVimshottari.
+  ///
+  /// In en, this message translates to:
+  /// **'Vimshottari'**
+  String get kunVimshottari;
+
+  /// No description provided for @kunGochar.
+  ///
+  /// In en, this message translates to:
+  /// **'Gochar'**
+  String get kunGochar;
+
+  /// No description provided for @kunDosh.
+  ///
+  /// In en, this message translates to:
+  /// **'Dosh'**
+  String get kunDosh;
+
+  /// No description provided for @kunYoga.
+  ///
+  /// In en, this message translates to:
+  /// **'Yoga'**
+  String get kunYoga;
+
+  /// No description provided for @kunShadbala.
+  ///
+  /// In en, this message translates to:
+  /// **'Shadbala'**
+  String get kunShadbala;
+
+  /// No description provided for @kunAshtakavarga.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashtakavarga'**
+  String get kunAshtakavarga;
+
+  /// No description provided for @kunAspects.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspects'**
+  String get kunAspects;
+
+  /// No description provided for @kunBhava.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhava'**
+  String get kunBhava;
+
+  /// No description provided for @dashaRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNNING'**
+  String get dashaRunning;
+
+  /// No description provided for @dashaBirthBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth lord: {lord} · Balance: {years} yrs'**
+  String dashaBirthBalance(Object lord, Object years);
+
+  /// No description provided for @dashaAntardashasOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} MD → Antardashas'**
+  String dashaAntardashasOf(Object planet);
+
+  /// No description provided for @dashaPratyantardashasOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} AD → Pratyantardashas'**
+  String dashaPratyantardashasOf(Object planet);
+
+  /// No description provided for @dashaSookshmaOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} PD → Sookshmadashas'**
+  String dashaSookshmaOf(Object planet);
+
+  /// No description provided for @dashaSubperiodsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{planet} sub-periods'**
+  String dashaSubperiodsOf(Object planet);
+
+  /// No description provided for @divChartsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap any varga chart to enlarge it.'**
+  String get divChartsSubtitle;
+
+  /// No description provided for @summaryLagna.
+  ///
+  /// In en, this message translates to:
+  /// **'Lagna'**
+  String get summaryLagna;
+
+  /// No description provided for @summaryMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon sign'**
+  String get summaryMoon;
+
+  /// No description provided for @summarySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun sign'**
+  String get summarySun;
+
+  /// No description provided for @summaryActiveDoshas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active doshas'**
+  String get summaryActiveDoshas;
+
+  /// No description provided for @summaryActiveYogas.
+  ///
+  /// In en, this message translates to:
+  /// **'Active yogas'**
+  String get summaryActiveYogas;
+
+  /// No description provided for @gocharBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Best rashi'**
+  String get gocharBest;
+
+  /// No description provided for @gocharWorst.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest rashi'**
+  String get gocharWorst;
+
+  /// No description provided for @doshActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active doshas'**
+  String get doshActive;
+
+  /// No description provided for @yogaActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active yogas'**
+  String get yogaActive;
+
+  /// No description provided for @doshNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No active doshas — a clear chart.'**
+  String get doshNone;
+
+  /// No description provided for @yogaNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No prominent yogas detected.'**
+  String get yogaNone;
+
+  /// No description provided for @colStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength'**
+  String get colStrength;
+
+  /// No description provided for @shadbalaRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Planet strength ranking'**
+  String get shadbalaRanking;
+
+  /// No description provided for @shadbalaRupas.
+  ///
+  /// In en, this message translates to:
+  /// **'rupas'**
+  String get shadbalaRupas;
+
+  /// No description provided for @avSavTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sarvashtakavarga (SAV)'**
+  String get avSavTitle;
+
+  /// No description provided for @avSavTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total: {total}'**
+  String avSavTotal(Object total);
+
+  /// No description provided for @avBavTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhinnashtakavarga (BAV)'**
+  String get avBavTitle;
+
+  /// No description provided for @aspectsGraha.
+  ///
+  /// In en, this message translates to:
+  /// **'Graha drishti (planetary aspects)'**
+  String get aspectsGraha;
+
+  /// No description provided for @aspectsRashi.
+  ///
+  /// In en, this message translates to:
+  /// **'Rashi drishti (sign aspects)'**
+  String get aspectsRashi;
+
+  /// No description provided for @bhavaHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'House {n}'**
+  String bhavaHouse(Object n);
+
+  /// No description provided for @bhavaLord.
+  ///
+  /// In en, this message translates to:
+  /// **'Lord'**
+  String get bhavaLord;
 }
 
 class _AppLocalizationsDelegate

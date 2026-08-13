@@ -19,7 +19,7 @@ Second work stream (after the comms tracker `HINDUSTANI_TASK_TRACKER.md`, all 7 
 | A | Admin auto column-sync ("auto mode") + auto-everything | ✅ | — |
 | B | Kundli engine + backend router — full suite **minus Moola Dasha** | ✅ | A |
 | B2 | Source kundli from Nakshatralogy **developer API** + make it **FREE** | ✅ | B |
-| C | Kundli full viewer UI (user app) — design-matched | 🟡 | B |
+| C | Kundli full viewer UI (user app) — design-matched | ✅ | B |
 
 ### PHASE B2 — developer-API source + free kundli  🟡
 **Finding:** Nakshatralogy's developer API is `/api/v2/*` (`Authorization: Bearer sk_live_…`). `POST /api/v2/kundli/all` → one call returns the full engine payload `{chart, vimshottari, moola_dasha, dosh_analysis, yoga_analysis, shadbala, ashtakavarga, aspect_matrix, life_areas, bhava_strength, dasha_activation, chakra_health, gochar_today}`. Hindustani's existing `app/services/nakshatralogy.py` already calls this API (the `/api/v2/kundli` alias) with the Bearer key.

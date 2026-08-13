@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -110,7 +111,7 @@ class _InsightResultBody extends StatelessWidget {
 
   List<Widget> _bodyFor(BuildContext context, AppLocalizations l) {
     final widgets = switch (kind) {
-      'kundli' => _kundliBody(l),
+      'kundli' => _kundliBody(context, l),
       'planet' => _planetBody(l),
       'love' => _loveBody(l),
       'number' => _numberBody(l),
@@ -127,10 +128,41 @@ class _InsightResultBody extends StatelessWidget {
 
   // ── Detailed kundli ────────────────────────────────────────────────────
 
-  List<Widget> _kundliBody(AppLocalizations l) {
+  /// The saved `KundliReport` id from the envelope's `report` block — the
+  /// chart_id the full analysis viewer keys off. Null for older envelopes
+  /// that carry no report block.
+  String? get _chartId {
+    final report = response['report'];
+    if (report is Map<String, dynamic> && report['id'] != null) {
+      return '${report['id']}';
+    }
+    return null;
+  }
+
+  List<Widget> _kundliBody(BuildContext context, AppLocalizations l) {
     final k = KundliResult.fromData(_data);
     final lagnaIdx = k.lagna?.signIdx;
+    final chartId = _chartId;
     return [
+      if (chartId != null) ...[
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.saffron,
+              foregroundColor: AppColors.indigoVoid,
+            ),
+            onPressed: () {
+              final router = GoRouter.of(context);
+              Navigator.of(context).pop();
+              router.push('/kundli/$chartId', extra: title);
+            },
+            icon: const Icon(Icons.auto_awesome),
+            label: Text(l.kunOpenFullAnalysis),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
       if (lagnaIdx != null && k.planets.isNotEmpty) ...[
         _SectionTitle(l.kundliChartTitle),
         KundliChart(lagnaSignIdx: lagnaIdx, planets: k.planets),

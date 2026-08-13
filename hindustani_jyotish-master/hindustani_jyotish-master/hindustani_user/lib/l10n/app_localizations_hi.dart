@@ -731,4 +731,160 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get liveReconnectingVideo => 'वीडियो से पुनः कनेक्ट हो रहा है…';
+
+  @override
+  String get kunFullAnalysis => 'संपूर्ण जन्म कुंडली';
+
+  @override
+  String get kunOpenFullAnalysis => 'पूर्ण विश्लेषण खोलें';
+
+  @override
+  String get kunRetry => 'पुनः प्रयास करें';
+
+  @override
+  String get kunNoData => 'कोई डेटा उपलब्ध नहीं';
+
+  @override
+  String get kunChecked => 'जाँचे गए';
+
+  @override
+  String get kunFactors => 'क्यों बनता है';
+
+  @override
+  String get kunCancellation => 'निवारण';
+
+  @override
+  String get kunSummary => 'सारांश';
+
+  @override
+  String get kunPlanets => 'ग्रह';
+
+  @override
+  String get kunKundli => 'कुंडली';
+
+  @override
+  String get kunDivisions => 'वर्ग';
+
+  @override
+  String get kunVimshottari => 'विंशोत्तरी';
+
+  @override
+  String get kunGochar => 'गोचर';
+
+  @override
+  String get kunDosh => 'दोष';
+
+  @override
+  String get kunYoga => 'योग';
+
+  @override
+  String get kunShadbala => 'षड्बल';
+
+  @override
+  String get kunAshtakavarga => 'अष्टकवर्ग';
+
+  @override
+  String get kunAspects => 'दृष्टि';
+
+  @override
+  String get kunBhava => 'भाव';
+
+  @override
+  String get dashaRunning => 'चालू';
+
+  @override
+  String dashaBirthBalance(Object lord, Object years) {
+    return 'जन्म स्वामी: $lord · शेष: $years वर्ष';
+  }
+
+  @override
+  String dashaAntardashasOf(Object planet) {
+    return '$planet महादशा → अंतर्दशाएँ';
+  }
+
+  @override
+  String dashaPratyantardashasOf(Object planet) {
+    return '$planet अंतर्दशा → प्रत्यंतर्दशाएँ';
+  }
+
+  @override
+  String dashaSookshmaOf(Object planet) {
+    return '$planet प्रत्यंतर्दशा → सूक्ष्मदशाएँ';
+  }
+
+  @override
+  String dashaSubperiodsOf(Object planet) {
+    return '$planet उप-अवधियाँ';
+  }
+
+  @override
+  String get divChartsSubtitle =>
+      'किसी भी वर्ग कुंडली को बड़ा करने के लिए टैप करें।';
+
+  @override
+  String get summaryLagna => 'लग्न';
+
+  @override
+  String get summaryMoon => 'चंद्र राशि';
+
+  @override
+  String get summarySun => 'सूर्य राशि';
+
+  @override
+  String get summaryActiveDoshas => 'सक्रिय दोष';
+
+  @override
+  String get summaryActiveYogas => 'सक्रिय योग';
+
+  @override
+  String get gocharBest => 'सर्वोत्तम राशि';
+
+  @override
+  String get gocharWorst => 'सबसे कमज़ोर राशि';
+
+  @override
+  String get doshActive => 'सक्रिय दोष';
+
+  @override
+  String get yogaActive => 'सक्रिय योग';
+
+  @override
+  String get doshNone => 'कोई सक्रिय दोष नहीं — स्पष्ट कुंडली।';
+
+  @override
+  String get yogaNone => 'कोई प्रमुख योग नहीं मिला।';
+
+  @override
+  String get colStrength => 'बल';
+
+  @override
+  String get shadbalaRanking => 'ग्रह बल क्रम';
+
+  @override
+  String get shadbalaRupas => 'रूप';
+
+  @override
+  String get avSavTitle => 'सर्वाष्टकवर्ग (SAV)';
+
+  @override
+  String avSavTotal(Object total) {
+    return 'कुल: $total';
+  }
+
+  @override
+  String get avBavTitle => 'भिन्नाष्टकवर्ग (BAV)';
+
+  @override
+  String get aspectsGraha => 'ग्रह दृष्टि';
+
+  @override
+  String get aspectsRashi => 'राशि दृष्टि';
+
+  @override
+  String bhavaHouse(Object n) {
+    return 'भाव $n';
+  }
+
+  @override
+  String get bhavaLord => 'स्वामी';
 }

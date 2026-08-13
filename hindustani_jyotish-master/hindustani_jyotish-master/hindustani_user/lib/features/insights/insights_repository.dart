@@ -143,6 +143,103 @@ class InsightsRepository {
     return _asMap(res, 'kundli/reports/$id');
   }
 
+  // ── Full Vedic analysis suite (Phase B `/kundli/{chart_id}/...`) ─────────
+  //
+  // Every endpoint returns the `{status, data, meta?}` envelope; these
+  // helpers hand back the already-unwrapped `data` map (or list, for the
+  // gochar range). `chartId` is the saved `KundliReport` id (the same id My
+  // Reports lists and a fresh `/kundli/generate` returns under `report.id`).
+  // No Moola method — Moola is excluded everywhere.
+
+  Map<String, dynamic> _envelope(dynamic res, String context) {
+    final m = _asMap(res, context);
+    final d = m['data'];
+    if (d is Map<String, dynamic>) return d;
+    if (d is Map) return d.cast<String, dynamic>();
+    return const <String, dynamic>{};
+  }
+
+  /// Chart only: planets + divisional charts (D1..D60) + lagna.
+  Future<Map<String, dynamic>> kundliChart(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId/chart'), 'kundli/chart');
+
+  /// Full stored bundle (all sections; Moola excluded).
+  Future<Map<String, dynamic>> kundliFull(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId'), 'kundli/full');
+
+  /// All analysis modules in one call (seeds the analysis tabs).
+  Future<Map<String, dynamic>> kundliComplete(String chartId) async => _envelope(
+      await _api.get('/kundli/$chartId/analysis/complete'), 'kundli/complete');
+
+  /// Vimshottari dasha tree, [levels] deep (MD→AD→PD→…). NO Moola.
+  Future<Map<String, dynamic>> kundliVimshottari(String chartId,
+          {int levels = 2}) async =>
+      _envelope(
+          await _api.get('/kundli/$chartId/dasha/vimshottari',
+              query: {'levels': levels}),
+          'kundli/vimshottari');
+
+  Future<Map<String, dynamic>> kundliDosh(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId/analysis/dosh'), 'kundli/dosh');
+
+  Future<Map<String, dynamic>> kundliYoga(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId/analysis/yoga'), 'kundli/yoga');
+
+  Future<Map<String, dynamic>> kundliShadbala(String chartId) async => _envelope(
+      await _api.get('/kundli/$chartId/analysis/shadbala'), 'kundli/shadbala');
+
+  Future<Map<String, dynamic>> kundliAshtakavarga(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId/analysis/ashtakavarga'),
+          'kundli/ashtakavarga');
+
+  Future<Map<String, dynamic>> kundliAspects(String chartId) async => _envelope(
+      await _api.get('/kundli/$chartId/analysis/aspects'), 'kundli/aspects');
+
+  Future<Map<String, dynamic>> kundliLifeAreas(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId/analysis/life-areas'),
+          'kundli/life-areas');
+
+  Future<Map<String, dynamic>> kundliBhava(String chartId) async =>
+      _envelope(await _api.get('/kundli/$chartId/analysis/bhava'), 'kundli/bhava');
+
+  Future<Map<String, dynamic>> kundliChakra(String chartId) async => _envelope(
+      await _api.get('/kundli/$chartId/analysis/chakra-health'),
+      'kundli/chakra-health');
+
+  /// Yogas/doshas triggered in the current (or [queryDate], DD/MM/YYYY) MD/AD.
+  Future<Map<String, dynamic>> kundliDashaActivation(String chartId,
+          {String? queryDate}) async =>
+      _envelope(
+          await _api.get('/kundli/$chartId/analysis/dasha-activation',
+              query: {'query_date': ?queryDate}),
+          'kundli/dasha-activation');
+
+  /// Transit (gochar) rashi scores for today, optionally highlighting the
+  /// native's [moonSign] (0=Aries…11=Pisces). Public, chartless.
+  Future<Map<String, dynamic>> gocharToday({int? moonSign}) async => _envelope(
+      await _api.get('/kundli/gochar/today',
+          query: {'moon_sign': ?moonSign}),
+      'kundli/gochar/today');
+
+  /// Gochar scores for a specific [date] (`YYYY-MM-DD`).
+  Future<Map<String, dynamic>> gocharDate(String date, {int? moonSign}) async =>
+      _envelope(
+          await _api.get('/kundli/gochar/date/$date',
+              query: {'moon_sign': ?moonSign}),
+          'kundli/gochar/date');
+
+  /// Daily gochar score over a `YYYY-MM-DD` range (list of {date,score,grade}).
+  Future<List<dynamic>> gocharRange(
+      {required String start, required String end, int? moonSign}) async {
+    final res = await _api.post('/kundli/gochar/range', body: {
+      'start': start,
+      'end': end,
+      'moon_sign': ?moonSign,
+    });
+    final d = _asMap(res, 'kundli/gochar/range')['data'];
+    return d is List ? d : const [];
+  }
+
   /// Admin-configured insight services and prices (`GET /cosmic-services`,
   /// public). Returns service key → price string (e.g.
   /// `{"detailed_kundli": "99.00"}`); admin-disabled services are omitted by

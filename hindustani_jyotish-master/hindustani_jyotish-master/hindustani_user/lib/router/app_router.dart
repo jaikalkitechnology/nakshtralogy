@@ -14,6 +14,7 @@ import '../features/home/home_shell.dart';
 import '../features/home/promo_video.dart';
 import '../features/home/ui/promo_video_player_screen.dart';
 import '../features/insights/ui/insights_screen.dart';
+import '../features/insights/ui/kundli_analysis_screen.dart';
 import '../features/insights/ui/my_reports_screen.dart';
 import '../features/live/ui/live_list_screen.dart';
 import '../features/live/ui/live_viewer_screen.dart';
@@ -99,6 +100,14 @@ GoRouter buildRouter(AuthCubit auth) {
         path: '/insights/reports',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const MyReportsScreen(),
+      ),
+      GoRoute(
+        path: '/kundli/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, st) => KundliAnalysisScreen(
+          chartId: st.pathParameters['id']!,
+          subjectName: st.extra is String ? st.extra as String : null,
+        ),
       ),
       GoRoute(
         path: '/promo-video',
