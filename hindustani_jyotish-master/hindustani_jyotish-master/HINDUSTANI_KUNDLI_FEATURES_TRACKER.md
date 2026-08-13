@@ -30,7 +30,7 @@ Second work stream (after the comms tracker `HINDUSTANI_TASK_TRACKER.md`, all 7 
 - [ ] Tests: dev-API path (mock httpx transport) returns full suite minus moola; no-key path uses local engine; compute charges **nothing**; reopen free.
 **Exit:** kundli data comes from Nakshatralogy's developer API (engine = fallback), free to the user, Moola excluded. **Commit:** `feat(hindustani): kundli via nakshatralogy developer API, free`.
 
-| D | Google login → persist profile picture (fix + refresh) | ⬜ | A |
+| D | Google login → persist profile picture (fix + refresh) | ✅ | A |
 | E | Astro Edit Profile + Bank/PAN in the profile section | ⬜ | A |
 | F | Design polish to match `hindustani-jyotishi.html` + QA pass | ⬜ | B,C,D,E |
 
