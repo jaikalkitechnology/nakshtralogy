@@ -13,6 +13,7 @@ import SimpleCrudPage from './pages/SimpleCrudPage'
 import CosmicServicesPage from './pages/CosmicServicesPage'
 import SettingsPage from './pages/SettingsPage'
 import MaintenancePage from './pages/MaintenancePage'
+import SchemaSyncPage from './pages/SchemaSyncPage'
 import FirebaseConfigPage from './pages/FirebaseConfigPage'
 import AgoraSettingsPage from './pages/AgoraSettingsPage'
 import WalletManagementPage from './pages/WalletManagementPage'
@@ -212,6 +213,7 @@ export default function App() {
             <Route path="/razorpay" element={<RazorpaySettingsPage />} />
             <Route path="/commission" element={<CommissionPage />} />
             <Route path="/maintenance" element={<MaintenancePage />} />
+            <Route path="/schema-sync" element={<SchemaSyncPage />} />
             <Route path="/firebase-config" element={<FirebaseConfigPage />} />
             <Route path="/google-login" element={<GoogleLoginSettingsPage />} />
           </Route>

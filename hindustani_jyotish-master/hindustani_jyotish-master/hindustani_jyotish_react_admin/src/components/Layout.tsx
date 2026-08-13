@@ -109,6 +109,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/razorpay', label: 'Razorpay', icon: ICON.key },
       { to: '/commission', label: 'Commission', icon: ICON.percent },
       { to: '/maintenance', label: 'Maintenance', icon: ICON.wrench },
+      { to: '/schema-sync', label: 'Schema Sync', icon: ICON.collapse },
       { to: '/firebase-config', label: 'Firebase', icon: ICON.flame },
       { to: '/google-login', label: 'Google Login', icon: ICON.login },
     ],

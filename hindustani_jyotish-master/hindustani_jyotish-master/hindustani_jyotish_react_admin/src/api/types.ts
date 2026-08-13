@@ -513,3 +513,47 @@ export interface ChatTranscript {
   consultation: ChatRoomConsultation
   messages: ChatMessage[]
 }
+
+// ── Database schema auto-sync ("auto mode") ──────────────────────────
+export interface SchemaMissingColumn {
+  table: string
+  column: string
+  type: string
+  ddl?: string
+  nullable?: boolean
+}
+
+export interface SchemaExtraColumn {
+  table: string
+  column: string
+}
+
+export interface SchemaDiff {
+  missing_tables: string[]
+  missing_columns: SchemaMissingColumn[]
+  extra_columns: SchemaExtraColumn[]
+  in_sync: boolean
+}
+
+export interface SchemaApplyResult {
+  dry_run: boolean
+  created_tables: string[]
+  added_columns: SchemaMissingColumn[]
+  skipped: { table: string; column: string; reason: string }[]
+  errors: unknown[]
+  extra_columns: SchemaExtraColumn[]
+  notes: string[]
+}
+
+export interface SchemaSyncLogEntry {
+  id: string
+  source: string
+  dry_run: boolean
+  created_tables: string[]
+  added_columns: SchemaMissingColumn[]
+  skipped: unknown[]
+  errors: unknown[]
+  notes: string[]
+  triggered_by: string | null
+  created_at: string | null
+}

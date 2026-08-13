@@ -6,6 +6,7 @@ from app.api.v1 import (
     admin,
     admin_console,
     admin_firebase,
+    admin_system,
     astrologer_auth,
     astrologer_portal,
     astrologers,
@@ -39,6 +40,8 @@ api_router.include_router(astrologer_portal.router)
 api_router.include_router(admin.router)
 api_router.include_router(admin_console.router)
 api_router.include_router(admin_firebase.router)
+# Admin schema auto-sync ("auto mode") — additive schema diff/apply + toggle.
+api_router.include_router(admin_system.router)
 
 # Phase 5 — implemented (live broadcasting: broadcast, viewer join, two-way
 # free-text WS chat — simplified rebuild, no gifts/super-chat)

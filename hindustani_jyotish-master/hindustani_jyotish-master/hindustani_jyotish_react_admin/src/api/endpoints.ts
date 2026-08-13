@@ -27,6 +27,9 @@ import type {
   RazorpayDiagnoseResult,
   RazorpaySettings,
   RazorpaySettingsInput,
+  SchemaApplyResult,
+  SchemaDiff,
+  SchemaSyncLogEntry,
   UploadResponse,
 } from './types'
 
@@ -151,6 +154,22 @@ export const adminApi = {
   getMaintenance: (app: MaintenanceApp) => api<MaintenanceSetting>(`/admin/settings/maintenance/${app}`),
   setMaintenance: (app: MaintenanceApp, value: MaintenanceSetting) =>
     api<MaintenanceSetting>(`/admin/settings/maintenance/${app}`, { method: 'PUT', body: { value } }),
+
+  // Database schema auto-sync ("auto mode"). Additive-only: create missing
+  // tables + add missing NULL-able columns from the models. Never drops.
+  // Backend: /admin/system/schema/*  (admin-only).
+  schemaDiff: () => api<{ status: string; data: SchemaDiff }>('/admin/system/schema/diff'),
+  schemaSync: (dryRun: boolean) =>
+    api<{ status: string; data: SchemaApplyResult }>(
+      `/admin/system/schema/sync?dry_run=${dryRun}`, { method: 'POST' },
+    ),
+  schemaAutoGet: () => api<{ status: string; data: { enabled: boolean } }>('/admin/system/schema/auto'),
+  schemaAutoSet: (enabled: boolean) =>
+    api<{ status: string; data: { enabled: boolean } }>(
+      '/admin/system/schema/auto', { method: 'POST', body: { enabled } },
+    ),
+  schemaHistory: (limit = 20) =>
+    api<{ status: string; data: SchemaSyncLogEntry[] }>(`/admin/system/schema/history?limit=${limit}`),
 
   // Firebase service-account (push notifications) — status only, never the key.
   firebaseServiceAccountStatus: () => api<FirebaseServiceAccountStatus>('/admin/firebase/service-account/status'),

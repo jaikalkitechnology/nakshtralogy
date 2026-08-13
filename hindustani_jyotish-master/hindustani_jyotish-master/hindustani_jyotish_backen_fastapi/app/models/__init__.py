@@ -31,6 +31,7 @@ from app.models.profile_edit import (  # noqa: F401
     AstrologerProfileEdit,
     ProfileEditStatus,
 )
+from app.models.schema_sync import SchemaSyncLog  # noqa: F401
 from app.models.user import User  # noqa: F401
 from app.models.wallet import (  # noqa: F401
     TransactionStatus,
@@ -68,6 +69,7 @@ __all__ = [
     "PayoutStatus",
     "AstrologerProfileEdit",
     "ProfileEditStatus",
+    "SchemaSyncLog",
     "User",
     "TransactionStatus",
     "TransactionType",
