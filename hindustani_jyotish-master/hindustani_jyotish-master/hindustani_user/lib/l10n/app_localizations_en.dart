@@ -889,4 +889,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bhavaLord => 'Lord';
+
+  @override
+  String get profileDeleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This permanently deletes your account. Your profile, birth details and saved data are removed, all your sessions end, and this cannot be undone.';
+
+  @override
+  String get deleteAccountTypeHint => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountConfirm => 'Delete account';
+
+  @override
+  String get deleteAccountSuccess => 'Your account has been deleted.';
 }

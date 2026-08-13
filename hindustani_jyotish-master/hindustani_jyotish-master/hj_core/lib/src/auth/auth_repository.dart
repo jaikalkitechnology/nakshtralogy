@@ -132,4 +132,13 @@ class AuthRepository {
     }
     await _tokens.clear();
   }
+
+  /// Permanently delete the account (`DELETE /me`) — soft-delete + anonymise
+  /// on the server. Rethrows the [ApiException] (e.g. 409 while a consultation
+  /// is in progress) so the UI can surface the reason; the local session is
+  /// cleared only after the server confirms deletion.
+  Future<void> deleteAccount() async {
+    await _api.delete('/me');
+    await _tokens.clear();
+  }
 }

@@ -47,4 +47,14 @@ class AstroAuthRepository {
     }
     await _tokens.clear();
   }
+
+  /// Permanently delete the astrologer account (`DELETE /astrologer/me`) —
+  /// soft-delete + anonymise + unpublish on the server. Rethrows the
+  /// [ApiException] (e.g. 409 with an in-progress consultation, a withdrawable
+  /// balance, or a pending payout) so the UI can show the reason; the local
+  /// session is cleared only after the server confirms deletion.
+  Future<void> deleteAccount() async {
+    await _api.delete('/astrologer/me');
+    await _tokens.clear();
+  }
 }

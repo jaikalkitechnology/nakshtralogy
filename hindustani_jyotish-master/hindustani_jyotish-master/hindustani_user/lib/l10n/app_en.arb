@@ -331,5 +331,11 @@
   "aspectsRashi": "Rashi drishti (sign aspects)",
   "bhavaHouse": "House {n}",
   "@bhavaHouse": { "placeholders": { "n": { "type": "Object" } } },
-  "bhavaLord": "Lord"
+  "bhavaLord": "Lord",
+  "profileDeleteAccount": "Delete account",
+  "deleteAccountTitle": "Delete account?",
+  "deleteAccountWarning": "This permanently deletes your account. Your profile, birth details and saved data are removed, all your sessions end, and this cannot be undone.",
+  "deleteAccountTypeHint": "Type DELETE to confirm",
+  "deleteAccountConfirm": "Delete account",
+  "deleteAccountSuccess": "Your account has been deleted."
 }

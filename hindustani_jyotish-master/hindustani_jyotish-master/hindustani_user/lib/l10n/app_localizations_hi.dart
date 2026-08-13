@@ -890,4 +890,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get bhavaLord => 'स्वामी';
+
+  @override
+  String get profileDeleteAccount => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountTitle => 'खाता हटाएँ?';
+
+  @override
+  String get deleteAccountWarning =>
+      'इससे आपका खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल, जन्म विवरण और सहेजा गया डेटा हटा दिया जाएगा, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता।';
+
+  @override
+  String get deleteAccountTypeHint => 'पुष्टि के लिए DELETE टाइप करें';
+
+  @override
+  String get deleteAccountConfirm => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountSuccess => 'आपका खाता हटा दिया गया है।';
 }

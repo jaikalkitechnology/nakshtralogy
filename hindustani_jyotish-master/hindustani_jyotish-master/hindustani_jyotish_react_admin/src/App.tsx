@@ -21,6 +21,7 @@ import AstrologerChargesPage from './pages/AstrologerChargesPage'
 import AstrologerDetailsPage from './pages/AstrologerDetailsPage'
 import CommissionPage from './pages/CommissionPage'
 import CustomersPage from './pages/CustomersPage'
+import DeletedAccountsPage from './pages/DeletedAccountsPage'
 import PayoutsPage from './pages/PayoutsPage'
 import WalletTransactionsPage from './pages/WalletTransactionsPage'
 import WalletLedgerPage from './pages/WalletLedgerPage'
@@ -66,6 +67,7 @@ export default function App() {
 
             {/* Users */}
             <Route path="/customers" element={<CustomersPage />} />
+            <Route path="/deleted-accounts" element={<DeletedAccountsPage />} />
 
             {/* Astrologers */}
             <Route path="/astrologers" element={<AstrologerDetailsPage />} />

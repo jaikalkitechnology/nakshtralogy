@@ -30,7 +30,7 @@ from app.schemas.astrologer_portal import (
 from app.schemas.auth import SimpleMessage
 from app.schemas.payout import PayoutOut, PayoutRequest
 from app.models.payout import AstrologerPayout
-from app.services import auth_service, payout_service, portal_service
+from app.services import account_deletion, auth_service, payout_service, portal_service
 from sqlalchemy import select
 
 router = APIRouter(prefix="/astrologer", tags=["astrologer portal"])
@@ -48,6 +48,25 @@ async def _me_out(astrologer, db) -> AstrologerMeOut:
 @router.get("/me", response_model=AstrologerMeOut)
 async def my_profile(astrologer: CurrentAstrologer, db: DBSession):
     return await _me_out(astrologer, db)
+
+
+@router.delete("/me", response_model=SimpleMessage)
+async def delete_me(astrologer: CurrentAstrologer, db: DBSession):
+    """Delete the astrologer account (store compliance / DPDP erasure).
+
+    Soft-delete + anonymise: PII + KYC are scrubbed, the account is
+    deactivated, unpublished (offline + hidden from discovery), all sessions
+    revoked and device tokens dropped. Refused while a consultation is in
+    progress, while a withdrawable balance remains, or while a payout is still
+    in flight. Once deleted the account can no longer log in; signing in again
+    creates a fresh account. Financial records are kept for accounting.
+    """
+    try:
+        await account_deletion.assert_astrologer_deletable(db, astrologer)
+    except account_deletion.DeletionBlocked as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, exc.reason)
+    await account_deletion.soft_delete_astrologer(db, astrologer, reason="self")
+    return SimpleMessage(detail="Your account has been deleted.")
 
 
 @router.post("/device", response_model=DeviceRegistered)

@@ -676,4 +676,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveAnsweringNow => 'Answering now — ';
+
+  @override
+  String get commonErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get profileDeleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This permanently deletes your astrologer account. Your profile and KYC are removed, you are taken offline and hidden from discovery, all your sessions end, and this cannot be undone. Withdraw any balance and finish open consultations first.';
+
+  @override
+  String get deleteAccountTypeHint => 'Type DELETE to confirm';
+
+  @override
+  String get deleteAccountConfirm => 'Delete account';
+
+  @override
+  String get deleteAccountSuccess => 'Your account has been deleted.';
 }

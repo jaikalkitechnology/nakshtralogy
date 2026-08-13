@@ -12,6 +12,8 @@ import type {
   CustomerDetail,
   CustomerEditInput,
   CustomerRow,
+  DeletedAccount,
+  DeletedAccountType,
   FirebaseApp,
   FirebaseClientConfigResult,
   FirebasePlatform,
@@ -121,6 +123,21 @@ export const adminApi = {
     api<Astrologer>(`/admin/astrologers/${id}`, { method: 'PATCH', body }),
   deleteAstrologer: (id: string) =>
     api<void>(`/admin/astrologers/${id}`, { method: 'DELETE' }),
+
+  // Account-deletion management (soft-delete + anonymise; restore within N
+  // days). Self-service deletes from the apps land here as anonymised shells;
+  // force-delete lets an admin trigger the same soft-delete, bypassing the
+  // self-delete guards.
+  listDeletedAccounts: (type: DeletedAccountType = 'all') =>
+    api<DeletedAccount[]>(`/admin/deleted-accounts?type=${type}`),
+  forceDeleteCustomer: (id: string) =>
+    api<DeletedAccount>(`/admin/customers/${id}/force-delete`, { method: 'POST' }),
+  restoreCustomer: (id: string) =>
+    api<CustomerRow>(`/admin/customers/${id}/restore`, { method: 'POST' }),
+  forceDeleteAstrologer: (id: string) =>
+    api<DeletedAccount>(`/admin/astrologers/${id}/force-delete`, { method: 'POST' }),
+  restoreAstrologer: (id: string) =>
+    api<{ id: string; name: string | null }>(`/admin/astrologers/${id}/restore`, { method: 'POST' }),
   // Replace one KYC document (photo/pan/aadhaar/aadhaar_back/bank_proof/
   // certificate) for an astrologer; returns the full refreshed doc URL set.
   uploadAstrologerKycDoc: (id: string, docType: string, file: File) =>

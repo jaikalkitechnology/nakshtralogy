@@ -236,5 +236,12 @@
   "liveMuteMic": "माइक्रोफ़ोन म्यूट करें",
   "liveUnmuteMic": "माइक्रोफ़ोन अनम्यूट करें",
   "liveGift": "गिफ़्ट",
-  "liveAnsweringNow": "अभी उत्तर दे रहे हैं — "
+  "liveAnsweringNow": "अभी उत्तर दे रहे हैं — ",
+  "commonErrorGeneric": "कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।",
+  "profileDeleteAccount": "खाता हटाएँ",
+  "deleteAccountTitle": "खाता हटाएँ?",
+  "deleteAccountWarning": "इससे आपका ज्योतिषी खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल और KYC हटा दी जाएगी, आप ऑफ़लाइन हो जाएँगे और खोज से छिप जाएँगे, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता। पहले कोई भी शेष राशि निकाल लें और चालू परामर्श पूरे कर लें।",
+  "deleteAccountTypeHint": "पुष्टि के लिए DELETE टाइप करें",
+  "deleteAccountConfirm": "खाता हटाएँ",
+  "deleteAccountSuccess": "आपका खाता हटा दिया गया है।"
 }

@@ -57,7 +57,13 @@ const ICON = {
 
 const NAV_GROUPS: NavGroup[] = [
   { heading: 'Overview', items: [{ to: '/', label: 'Dashboard', end: true, icon: ICON.dash }] },
-  { heading: 'Users', items: [{ to: '/customers', label: 'Customers', icon: ICON.users }] },
+  {
+    heading: 'Users',
+    items: [
+      { to: '/customers', label: 'Customers', icon: ICON.users },
+      { to: '/deleted-accounts', label: 'Deleted Accounts', icon: ICON.refund },
+    ],
+  },
   {
     heading: 'Astrologers',
     items: [

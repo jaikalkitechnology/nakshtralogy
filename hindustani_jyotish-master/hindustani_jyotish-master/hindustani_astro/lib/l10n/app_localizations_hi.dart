@@ -680,4 +680,27 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get liveAnsweringNow => 'अभी उत्तर दे रहे हैं — ';
+
+  @override
+  String get commonErrorGeneric =>
+      'कुछ गड़बड़ हो गई। कृपया फिर से प्रयास करें।';
+
+  @override
+  String get profileDeleteAccount => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountTitle => 'खाता हटाएँ?';
+
+  @override
+  String get deleteAccountWarning =>
+      'इससे आपका ज्योतिषी खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल और KYC हटा दी जाएगी, आप ऑफ़लाइन हो जाएँगे और खोज से छिप जाएँगे, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता। पहले कोई भी शेष राशि निकाल लें और चालू परामर्श पूरे कर लें।';
+
+  @override
+  String get deleteAccountTypeHint => 'पुष्टि के लिए DELETE टाइप करें';
+
+  @override
+  String get deleteAccountConfirm => 'खाता हटाएँ';
+
+  @override
+  String get deleteAccountSuccess => 'आपका खाता हटा दिया गया है।';
 }

@@ -557,3 +557,17 @@ export interface SchemaSyncLogEntry {
   triggered_by: string | null
   created_at: string | null
 }
+
+export type DeletedAccountType = 'all' | 'user' | 'astrologer'
+
+/** A soft-deleted (anonymised) account row from `/admin/deleted-accounts`. */
+export interface DeletedAccount {
+  type: 'user' | 'astrologer'
+  id: string
+  name: string | null
+  mobile: string | null
+  email: string | null
+  deleted_at: string | null
+  deleted_reason: string | null
+  restore_deadline: string | null
+}

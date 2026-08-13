@@ -1723,6 +1723,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lord'**
   String get bhavaLord;
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your account. Your profile, birth details and saved data are removed, all your sessions end, and this cannot be undone.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountTypeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type DELETE to confirm'**
+  String get deleteAccountTypeHint;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountSuccess;
 }
 
 class _AppLocalizationsDelegate

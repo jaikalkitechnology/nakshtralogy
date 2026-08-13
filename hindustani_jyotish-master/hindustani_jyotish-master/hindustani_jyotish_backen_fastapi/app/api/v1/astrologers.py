@@ -33,7 +33,10 @@ async def list_astrologers(
     page_size: int = Query(default=20, ge=1, le=100),
 ):
     """Approved astrologers, filterable by online/language/skill."""
-    stmt = select(Astrologer).where(Astrologer.kyc_status == KYCStatus.approved)
+    stmt = select(Astrologer).where(
+        Astrologer.kyc_status == KYCStatus.approved,
+        Astrologer.is_active.is_(True),
+    )
 
     if online is not None:
         stmt = stmt.where(Astrologer.is_online.is_(online))
@@ -58,7 +61,7 @@ async def list_astrologers(
 @router.get("/{astrologer_id}", response_model=AstrologerOut)
 async def get_astrologer(astrologer_id: uuid.UUID, db: DBSession):
     astro = await db.get(Astrologer, astrologer_id)
-    if astro is None:
+    if astro is None or not astro.is_active:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Astrologer not found"
         )

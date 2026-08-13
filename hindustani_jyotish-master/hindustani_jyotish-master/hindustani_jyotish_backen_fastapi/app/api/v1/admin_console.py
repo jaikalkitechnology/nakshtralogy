@@ -6,7 +6,7 @@ endpoint here is admin-only via the CurrentAdmin dependency.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Literal
 
 from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile, status
@@ -63,7 +63,7 @@ from app.schemas.admin_console import (
     VideoUpdate,
     WalletCreditIn,
 )
-from app.services import consultation_service, live_engagement_service, portal_service, push_service, storage
+from app.services import account_deletion, consultation_service, live_engagement_service, portal_service, push_service, storage
 from app.services.astro import pricing
 from app.schemas.astrologer import AstrologerOut
 from app.models.wallet import TransactionType as _TxnType
@@ -346,6 +346,123 @@ async def delete_customer(user_id: uuid.UUID, admin: CurrentAdmin, db: DBSession
     await db.execute(sa_update(_Astro).where(_Astro.user_id == user_id).values(user_id=None))
     await db.execute(sa_delete(User).where(User.id == user_id))
     await db.flush()
+
+
+# ── Account deletion management (soft-delete + restore) ────────────────
+def _deleted_user_row(u: User) -> dict:
+    return {
+        "type": "user", "id": str(u.id), "name": u.name,
+        "mobile": u.mobile, "email": u.email,
+        "deleted_at": u.deleted_at.isoformat() if u.deleted_at else None,
+        "deleted_reason": u.deleted_reason,
+        "restore_deadline": (
+            (u.deleted_at + timedelta(days=account_deletion.RESTORE_WINDOW_DAYS)).isoformat()
+            if u.deleted_at else None
+        ),
+    }
+
+
+def _deleted_astro_row(a: Astrologer) -> dict:
+    return {
+        "type": "astrologer", "id": str(a.id), "name": a.display_name,
+        "mobile": a.mobile, "email": a.email,
+        "deleted_at": a.deleted_at.isoformat() if a.deleted_at else None,
+        "deleted_reason": a.deleted_reason,
+        "restore_deadline": (
+            (a.deleted_at + timedelta(days=account_deletion.RESTORE_WINDOW_DAYS)).isoformat()
+            if a.deleted_at else None
+        ),
+    }
+
+
+@router.get("/deleted-accounts")
+async def deleted_accounts(
+    admin: CurrentAdmin, db: DBSession,
+    type: Literal["all", "user", "astrologer"] = Query(default="all"),
+    page: int = Page, size: int = Size,
+):
+    """Soft-deleted accounts (anonymised shells) with reason + date, plus the
+    restore deadline. Filter by ``type`` (user/astrologer/all)."""
+    out: list[dict] = []
+    if type in ("all", "user"):
+        rows = await db.scalars(
+            _paginate(
+                select(User).where(User.deleted_at.is_not(None))
+                .order_by(User.deleted_at.desc()),
+                page, size,
+            )
+        )
+        out.extend(_deleted_user_row(u) for u in rows)
+    if type in ("all", "astrologer"):
+        rows = await db.scalars(
+            _paginate(
+                select(Astrologer).where(Astrologer.deleted_at.is_not(None))
+                .order_by(Astrologer.deleted_at.desc()),
+                page, size,
+            )
+        )
+        out.extend(_deleted_astro_row(a) for a in rows)
+    out.sort(key=lambda r: r["deleted_at"] or "", reverse=True)
+    return out
+
+
+@router.post("/customers/{user_id}/force-delete")
+async def force_delete_customer(user_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Admin soft-delete (anonymise) a customer — bypasses the self-delete guards."""
+    user = await db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Customer not found")
+    await account_deletion.soft_delete_user(db, user, reason="admin")
+    return _deleted_user_row(user)
+
+
+@router.post("/customers/{user_id}/restore")
+async def restore_customer(user_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Reactivate a soft-deleted customer shell (within the restore window).
+
+    Anonymised PII is not recovered — the customer re-completes their profile.
+    """
+    user = await db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Customer not found")
+    if user.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Account is not deleted")
+    if not await account_deletion.restore_user(db, user):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            f"Restore window ({account_deletion.RESTORE_WINDOW_DAYS} days) has passed",
+        )
+    return _customer_row(user)
+
+
+@router.post("/astrologers/{astrologer_id}/force-delete")
+async def force_delete_astrologer(astrologer_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Admin soft-delete (anonymise + unpublish) an astrologer — bypasses guards."""
+    astro = await db.get(Astrologer, astrologer_id)
+    if astro is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Astrologer not found")
+    await account_deletion.soft_delete_astrologer(db, astro, reason="admin")
+    return _deleted_astro_row(astro)
+
+
+@router.post("/astrologers/{astrologer_id}/restore")
+async def restore_astrologer_account(astrologer_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    """Reactivate a soft-deleted astrologer shell (within the restore window).
+
+    Login is re-enabled but the astrologer stays KYC-rejected/offline until
+    re-verified; anonymised PII is not recovered.
+    """
+    astro = await db.get(Astrologer, astrologer_id)
+    if astro is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Astrologer not found")
+    if astro.deleted_at is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Account is not deleted")
+    if not await account_deletion.restore_astrologer(db, astro):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            f"Restore window ({account_deletion.RESTORE_WINDOW_DAYS} days) has passed",
+        )
+    return _astro_row(astro)
 
 
 # ── Push notifications (admin: broadcast or target one user/astrologer) ─

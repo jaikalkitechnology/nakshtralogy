@@ -76,6 +76,9 @@ export default function AstrologerDetailsPage(){
   const [remove,setRemove]=useState<AstrologerRow|null>(null)
   const [removing,setRemoving]=useState(false)
   const [removeError,setRemoveError]=useState<string|null>(null)
+  const [softRemove,setSoftRemove]=useState<AstrologerRow|null>(null)
+  const [softRemoving,setSoftRemoving]=useState(false)
+  const [softRemoveError,setSoftRemoveError]=useState<string|null>(null)
   const [detailId,setDetailId]=useState<string|null>(null)
 
   const filtered = paged.rows.filter(r=>{
@@ -86,6 +89,7 @@ export default function AstrologerDetailsPage(){
 
   async function act(id:string, action:'block'|'unblock'){ setBusyId(id); setActionError(null); try{ await api(`/admin/astrologers/${id}/${action}`,{method:'POST'}); await paged.reload() } catch(e){ setActionError((e as Error).message) } finally{ setBusyId(null) } }
   async function confirmDelete(){ if(!remove) return; setRemoving(true); setRemoveError(null); try{ await adminApi.deleteAstrologer(remove.id); setRemove(null); await paged.reload() } catch(e){ setRemoveError((e as Error).message) } finally{ setRemoving(false) } }
+  async function confirmSoftDelete(){ if(!softRemove) return; setSoftRemoving(true); setSoftRemoveError(null); try{ await adminApi.forceDeleteAstrologer(softRemove.id); setSoftRemove(null); await paged.reload() } catch(e){ setSoftRemoveError((e as Error).message) } finally{ setSoftRemoving(false) } }
 
   return (
     <div className="space-y-5">
@@ -127,7 +131,8 @@ export default function AstrologerDetailsPage(){
                             <button onClick={()=>setDetailId(a.id)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-raised border border-border-soft text-ivory-dim hover:text-ivory">👁</button>
                             <button onClick={()=>setEdit(a)} className="grid h-8 w-8 place-items-center rounded-full bg-surface-raised border border-border-soft text-ivory-dim hover:text-ivory"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                             <button disabled={busyId===a.id} onClick={()=>act(a.id, blocked?'unblock':'block')} className={`grid h-8 w-8 place-items-center rounded-full border text-[11px] font-bold ${blocked ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-amber-500/10 border-amber-500/20 text-amber-400'}`}>{busyId===a.id?'…':blocked?'↺':'⊘'}</button>
-                            <button onClick={()=>setRemove(a)} className="grid h-8 w-8 place-items-center rounded-full bg-red-500/10 border border-red-500/20 text-red-400">✕</button>
+                            <button onClick={()=>setSoftRemove(a)} className="grid h-8 w-8 place-items-center rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400" title="Delete & anonymise (soft — restorable)">⌦</button>
+                            <button onClick={()=>setRemove(a)} className="grid h-8 w-8 place-items-center rounded-full bg-red-500/10 border border-red-500/20 text-red-400" title="Delete permanently (hard)">✕</button>
                           </div>
                         </td>
                       </tr>
@@ -162,6 +167,7 @@ export default function AstrologerDetailsPage(){
 
       {credit && <CreditModal astrologer={credit} onClose={()=>setCredit(null)} onDone={()=>{setCredit(null); void paged.reload()}} />}
       {edit && <EditModal astrologer={edit} onClose={()=>setEdit(null)} onDone={()=>{setEdit(null); void paged.reload()}} />}
+      {softRemove && <ConfirmDialog title="Delete & anonymise astrologer" message="Soft-delete: scrubs the astrologer's personal data + KYC, takes them offline and hides them from discovery, revokes their sessions. The financial ledger is kept. Restorable from Deleted Accounts within 30 days. Continue?" confirmLabel="Delete & anonymise" busy={softRemoving} error={softRemoveError} onConfirm={confirmSoftDelete} onClose={()=>{setSoftRemove(null); setSoftRemoveError(null)}} />}
       {remove && <ConfirmDialog title="Delete astrologer" message="This permanently deletes the astrologer and all their data. Continue?" confirmLabel="Delete astrologer" busy={removing} error={removeError} onConfirm={confirmDelete} onClose={()=>{setRemove(null); setRemoveError(null)}} />}
       <DetailDrawer kind="astrologer" id={detailId} onClose={()=>setDetailId(null)} />
     </div>

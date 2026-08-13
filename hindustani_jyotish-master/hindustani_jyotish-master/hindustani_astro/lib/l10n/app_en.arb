@@ -237,5 +237,12 @@
   "liveMuteMic": "Mute microphone",
   "liveUnmuteMic": "Unmute microphone",
   "liveGift": "Gift",
-  "liveAnsweringNow": "Answering now — "
+  "liveAnsweringNow": "Answering now — ",
+  "commonErrorGeneric": "Something went wrong. Please try again.",
+  "profileDeleteAccount": "Delete account",
+  "deleteAccountTitle": "Delete account?",
+  "deleteAccountWarning": "This permanently deletes your astrologer account. Your profile and KYC are removed, you are taken offline and hidden from discovery, all your sessions end, and this cannot be undone. Withdraw any balance and finish open consultations first.",
+  "deleteAccountTypeHint": "Type DELETE to confirm",
+  "deleteAccountConfirm": "Delete account",
+  "deleteAccountSuccess": "Your account has been deleted."
 }
