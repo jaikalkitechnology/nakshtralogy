@@ -742,4 +742,58 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get notificationsMarkAllRead => 'सभी को पढ़ा हुआ चिह्नित करें';
+
+  @override
+  String get supportTitle => 'सहायता एवं समर्थन';
+
+  @override
+  String get supportFaqTab => 'सामान्य प्रश्न';
+
+  @override
+  String get supportTicketsTab => 'मेरे टिकट';
+
+  @override
+  String get supportFaqEmpty => 'अभी कोई सहायता लेख उपलब्ध नहीं है।';
+
+  @override
+  String get supportTicketsEmpty => 'आपके पास अभी कोई सहायता टिकट नहीं है।';
+
+  @override
+  String get supportRaiseTicket => 'टिकट बनाएँ';
+
+  @override
+  String get supportSubject => 'विषय';
+
+  @override
+  String get supportMessage => 'अपनी समस्या बताएँ';
+
+  @override
+  String get supportSubmit => 'भेजें';
+
+  @override
+  String get supportFillFields => 'कृपया विषय और संदेश भरें।';
+
+  @override
+  String get supportTicket => 'टिकट';
+
+  @override
+  String get supportReplyHint => 'उत्तर लिखें…';
+
+  @override
+  String get supportReopenHint => 'इस टिकट को फिर से खोलने के लिए उत्तर दें…';
+
+  @override
+  String get supportSenderYou => 'आप';
+
+  @override
+  String get supportSenderSupport => 'सहायता';
+
+  @override
+  String get supportStatusOpen => 'खुला';
+
+  @override
+  String get supportStatusPending => 'आपकी प्रतिक्रिया अपेक्षित';
+
+  @override
+  String get supportStatusClosed => 'बंद';
 }

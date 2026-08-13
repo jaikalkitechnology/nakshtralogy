@@ -122,3 +122,22 @@ class RazorpaySetting(UUIDPKMixin, TimestampMixin, Base):
     key_secret: Mapped[str] = mapped_column(String(255), nullable=False)
     webhook_secret: Mapped[str | None] = mapped_column(String(255))
     is_active: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
+
+class FAQ(UUIDPKMixin, TimestampMixin, Base):
+    """Admin-managed help content shown in each app's "Help & Support" screen
+    (Phase L). One row carries BOTH languages (en + hi) so the admin edits a
+    single entry and the public read serves the caller's language, falling back
+    to English when a translation is blank. ``app`` scopes an entry to the user
+    app, the astro app, or both."""
+
+    __tablename__ = "faqs"
+
+    app: Mapped[str] = mapped_column(String(10), default="both", nullable=False, index=True)  # user | astro | both
+    category: Mapped[str | None] = mapped_column(String(80))
+    question_en: Mapped[str] = mapped_column(Text, nullable=False)
+    answer_en: Mapped[str] = mapped_column(Text, nullable=False)
+    question_hi: Mapped[str | None] = mapped_column(Text)
+    answer_hi: Mapped[str | None] = mapped_column(Text)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

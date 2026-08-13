@@ -109,6 +109,13 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    heading: 'Support',
+    items: [
+      { to: '/faqs', label: 'FAQ', icon: ICON.book },
+      { to: '/support-tickets', label: 'Support Tickets', icon: ICON.chat },
+    ],
+  },
+  {
     heading: 'Settings',
     items: [
       { to: '/credentials', label: 'Credentials', icon: ICON.creds },

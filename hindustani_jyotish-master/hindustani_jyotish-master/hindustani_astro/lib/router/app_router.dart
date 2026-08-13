@@ -20,6 +20,8 @@ import '../features/profile/ui/bank_pan_screen.dart';
 import '../features/profile/ui/edit_profile_screen.dart';
 import '../features/requests/ui/requests_screen.dart';
 import '../features/settings/ui/settings_screen.dart';
+import '../features/support/ui/support_screen.dart';
+import '../features/support/ui/ticket_thread_screen.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(AstroSessionCubit cubit) {
@@ -122,6 +124,17 @@ GoRouter buildRouter(AstroSessionCubit session) {
         path: '/notifications',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/support',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const SupportScreen(),
+      ),
+      GoRoute(
+        path: '/support/tickets/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, st) =>
+            TicketThreadScreen(ticketId: st.pathParameters['id']!),
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(navigationShell: shell),

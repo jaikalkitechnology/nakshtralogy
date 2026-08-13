@@ -16,7 +16,7 @@ from sqlalchemy import select
 from app.core.config import settings
 from app.core.deps import DBSession
 from app.core.media import normalize_media_url
-from app.models.admin_content import AppSetting, AstrologerVideo, Banner, PromoVideo
+from app.models.admin_content import FAQ, AppSetting, AstrologerVideo, Banner, PromoVideo
 from app.models.astrologer import Astrologer
 from app.services.astro import pricing
 
@@ -149,6 +149,34 @@ async def public_support_info(db: DBSession):
         "email": value.get("email") if isinstance(value.get("email"), str) else "",
         "phone": value.get("phone") if isinstance(value.get("phone"), str) else "",
     }
+
+
+@router.get("/public/faqs/{app}")
+async def public_faqs(app: Literal["user", "astro"], db: DBSession, lang: str = "en"):
+    """Active FAQ for an app, localized. Returns entries scoped to the given
+    app OR ``both``, ordered by ``sort_order``. When ``lang`` is Hindi the
+    Hindi text is served, falling back to English per-field when a translation
+    is blank. Public, read-only — no auth (rendered in the Help & Support
+    screen)."""
+    hi = str(lang).lower().startswith("hi")
+    rows = await db.scalars(
+        select(FAQ)
+        .where(FAQ.is_active.is_(True), FAQ.app.in_((app, "both")))
+        .order_by(FAQ.sort_order.asc(), FAQ.created_at.asc())
+    )
+    items = []
+    for f in rows:
+        question = (f.question_hi or f.question_en) if hi else f.question_en
+        answer = (f.answer_hi or f.answer_en) if hi else f.answer_en
+        items.append(
+            {
+                "id": str(f.id),
+                "category": f.category,
+                "question": question,
+                "answer": answer,
+            }
+        )
+    return {"items": items, "lang": "hi" if hi else "en"}
 
 
 @router.get("/social-links")

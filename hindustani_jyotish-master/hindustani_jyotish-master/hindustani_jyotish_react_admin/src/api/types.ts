@@ -619,3 +619,59 @@ export interface BroadcastRecord {
   recipient_count: number
   created_at: string | null
 }
+
+// FAQ + support tickets (Phase L)
+export type FaqApp = 'user' | 'astro' | 'both'
+
+export interface Faq {
+  id: string
+  app: FaqApp
+  category: string | null
+  question_en: string
+  answer_en: string
+  question_hi: string | null
+  answer_hi: string | null
+  sort_order: number
+  is_active: boolean
+}
+
+export interface FaqInput {
+  app: FaqApp
+  category?: string | null
+  question_en: string
+  answer_en: string
+  question_hi?: string | null
+  answer_hi?: string | null
+  sort_order?: number
+  is_active?: boolean
+}
+
+export type TicketStatus = 'open' | 'pending' | 'closed'
+export type TicketSender = 'user' | 'astrologer' | 'admin'
+
+export interface TicketMessage {
+  id: string
+  sender: TicketSender
+  body: string
+  created_at: string | null
+}
+
+export interface SupportTicket {
+  id: string
+  subject: string
+  status: TicketStatus
+  requester_role: 'user' | 'astrologer'
+  requester_id: string
+  requester_name: string | null
+  created_at: string | null
+  updated_at: string | null
+  messages?: TicketMessage[]
+}
+
+export interface TicketList {
+  items: SupportTicket[]
+  total: number
+  counts: Record<string, number>
+  page: number
+  size: number
+}

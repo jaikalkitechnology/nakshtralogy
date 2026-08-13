@@ -21,6 +21,7 @@ from app.models.admin_content import (
     Banner,
     CosmicService,
     Coupon,
+    FAQ,
     PromoVideo,
     RazorpaySetting,
 )
@@ -30,6 +31,12 @@ from app.models.kyc import AstrologerKYC
 from app.models.live_engagement import LiveGift
 from app.models.payout import AstrologerPayout, PayoutStatus
 from app.models.profile_edit import AstrologerProfileEdit, ProfileEditStatus
+from app.models.support import (
+    STATUS_CLOSED,
+    STATUS_PENDING,
+    SupportTicket,
+    SupportTicketMessage,
+)
 from app.models.user import User
 from app.models.wallet import TransactionType, WalletTransaction
 from app.schemas.admin_console import (
@@ -65,6 +72,7 @@ from app.schemas.admin_console import (
     VideoUpdate,
     WalletCreditIn,
 )
+from app.schemas.support import FAQIn, FAQReorderIn, FAQUpdate, TicketReply
 from app.services import account_deletion, consultation_service, live_engagement_service, portal_service, push_service, storage
 from app.services.astro import pricing
 from app.schemas.astrologer import AstrologerOut
@@ -1954,6 +1962,221 @@ def _banner_row(b: Banner) -> dict:
         "id": str(b.id), "title": b.title, "image_url": b.image_url,
         "link_url": b.link_url, "position": b.position, "is_active": b.is_active,
     }
+
+
+# ── FAQ (admin CRUD, per app, en/hi) ─────────────────────────────────
+def _faq_row(f: FAQ) -> dict:
+    return {
+        "id": str(f.id),
+        "app": f.app,
+        "category": f.category,
+        "question_en": f.question_en,
+        "answer_en": f.answer_en,
+        "question_hi": f.question_hi,
+        "answer_hi": f.answer_hi,
+        "sort_order": f.sort_order,
+        "is_active": f.is_active,
+    }
+
+
+@router.get("/faqs")
+async def list_faqs(admin: CurrentAdmin, db: DBSession, app: str | None = None):
+    """All FAQ (any status), optionally filtered by ``app`` (user/astro/both)."""
+    stmt = select(FAQ)
+    if app:
+        stmt = stmt.where(FAQ.app == app)
+    rows = await db.scalars(
+        stmt.order_by(FAQ.app.asc(), FAQ.sort_order.asc(), FAQ.created_at.asc())
+    )
+    return [_faq_row(f) for f in rows]
+
+
+@router.post("/faqs", status_code=201)
+async def create_faq(body: FAQIn, admin: CurrentAdmin, db: DBSession):
+    faq = FAQ(**body.model_dump())
+    db.add(faq)
+    await db.flush()
+    await db.refresh(faq)
+    return _faq_row(faq)
+
+
+@router.patch("/faqs/{faq_id}")
+async def update_faq(faq_id: uuid.UUID, body: FAQUpdate, admin: CurrentAdmin, db: DBSession):
+    faq = await db.get(FAQ, faq_id)
+    if faq is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "FAQ not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(faq, field, value)
+    await db.flush()
+    await db.refresh(faq)
+    return _faq_row(faq)
+
+
+@router.post("/faqs/reorder")
+async def reorder_faqs(body: FAQReorderIn, admin: CurrentAdmin, db: DBSession):
+    """Bulk-set ``sort_order`` for a list of FAQ ids (drag-to-reorder)."""
+    updated = 0
+    for item in body.items:
+        try:
+            fid = uuid.UUID(item.id)
+        except ValueError:
+            continue
+        faq = await db.get(FAQ, fid)
+        if faq is not None:
+            faq.sort_order = item.sort_order
+            updated += 1
+    await db.flush()
+    return {"status": "ok", "updated": updated}
+
+
+@router.delete("/faqs/{faq_id}", status_code=204)
+async def delete_faq(faq_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    faq = await db.get(FAQ, faq_id)
+    if faq is not None:
+        await db.delete(faq)
+
+
+# ── Support tickets (admin helpdesk) ─────────────────────────────────
+def _ticket_msg_row(m: SupportTicketMessage) -> dict:
+    return {
+        "id": str(m.id),
+        "sender": m.sender,
+        "body": m.body,
+        "created_at": m.created_at.isoformat() if m.created_at else None,
+    }
+
+
+def _admin_ticket_row(t: SupportTicket, *, messages=None, requester_name=None) -> dict:
+    d = {
+        "id": str(t.id),
+        "subject": t.subject,
+        "status": t.status,
+        "requester_role": t.requester_role,
+        "requester_id": str(t.requester_id),
+        "requester_name": requester_name,
+        "created_at": t.created_at.isoformat() if t.created_at else None,
+        "updated_at": t.updated_at.isoformat() if t.updated_at else None,
+    }
+    if messages is not None:
+        d["messages"] = [_ticket_msg_row(m) for m in messages]
+    return d
+
+
+async def _requester_name(db: DBSession, t: SupportTicket) -> str | None:
+    if t.requester_role == "astrologer":
+        a = await db.get(Astrologer, t.requester_id)
+        return a.display_name if a else None
+    u = await db.get(User, t.requester_id)
+    return (u.name if u else None) or (u.mobile if u else None)
+
+
+@router.get("/support/tickets")
+async def admin_list_tickets(
+    admin: CurrentAdmin,
+    db: DBSession,
+    status_filter: str | None = Query(default=None, alias="status"),
+    role: str | None = None,
+    page: int = Page,
+    size: int = Size,
+):
+    """All tickets, newest-updated first. Filter by ``status`` and/or ``role``.
+    Also returns per-status counts for the tab badges."""
+    stmt = select(SupportTicket)
+    if status_filter:
+        stmt = stmt.where(SupportTicket.status == status_filter)
+    if role:
+        stmt = stmt.where(SupportTicket.requester_role == role)
+    total = await db.scalar(
+        select(func.count()).select_from(stmt.subquery())
+    )
+    counts = dict(
+        (
+            await db.execute(
+                select(SupportTicket.status, func.count(SupportTicket.id)).group_by(
+                    SupportTicket.status
+                )
+            )
+        ).all()
+    )
+    rows = (
+        await db.scalars(
+            stmt.order_by(SupportTicket.updated_at.desc())
+            .offset((page - 1) * size)
+            .limit(size)
+        )
+    ).all()
+    items = [
+        _admin_ticket_row(t, requester_name=await _requester_name(db, t)) for t in rows
+    ]
+    return {"items": items, "total": int(total or 0), "counts": counts,
+            "page": page, "size": size}
+
+
+@router.get("/support/tickets/{ticket_id}")
+async def admin_ticket_detail(ticket_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    t = await db.get(SupportTicket, ticket_id)
+    if t is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ticket not found")
+    msgs = (
+        await db.scalars(
+            select(SupportTicketMessage)
+            .where(SupportTicketMessage.ticket_id == t.id)
+            .order_by(SupportTicketMessage.created_at.asc())
+        )
+    ).all()
+    return _admin_ticket_row(
+        t, messages=list(msgs), requester_name=await _requester_name(db, t)
+    )
+
+
+async def _notify_requester(db: DBSession, t: SupportTicket, title: str, body: str) -> None:
+    """Best-effort push to the ticket's requester (user or astrologer)."""
+    try:
+        data = {"type": "support", "ticket_id": str(t.id)}
+        if t.requester_role == "astrologer":
+            await push_service.notify_astrologer(
+                db, t.requester_id, title=title, body=body, data=data
+            )
+        else:
+            await push_service.notify_user(
+                db, t.requester_id, title=title, body=body, data=data
+            )
+    except Exception:  # noqa: BLE001 - notification is a side channel
+        pass
+
+
+@router.post("/support/tickets/{ticket_id}/reply")
+async def admin_reply_ticket(
+    ticket_id: uuid.UUID, body: TicketReply, admin: CurrentAdmin, db: DBSession
+):
+    """Admin replies on a ticket. Moves it to ``pending`` (awaiting requester)
+    and best-effort notifies the requester."""
+    t = await db.get(SupportTicket, ticket_id)
+    if t is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ticket not found")
+    msg = SupportTicketMessage(ticket_id=t.id, sender="admin", body=body.body.strip())
+    db.add(msg)
+    if t.status != STATUS_CLOSED:
+        t.status = STATUS_PENDING
+    await _notify_requester(
+        db, t, "Support replied to your ticket", body.body.strip()[:140]
+    )
+    await db.commit()
+    await db.refresh(msg)
+    return _ticket_msg_row(msg)
+
+
+@router.post("/support/tickets/{ticket_id}/close")
+async def admin_close_ticket(ticket_id: uuid.UUID, admin: CurrentAdmin, db: DBSession):
+    t = await db.get(SupportTicket, ticket_id)
+    if t is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Ticket not found")
+    t.status = STATUS_CLOSED
+    await _notify_requester(
+        db, t, "Ticket closed", f'Your ticket "{t.subject}" has been closed.'
+    )
+    await db.commit()
+    return {"id": str(t.id), "status": t.status}
 
 
 # ── Promo / astrologer videos (CRUD) ──────────────────────────────────

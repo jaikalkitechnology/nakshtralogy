@@ -38,6 +38,12 @@ import type {
   TdsReport,
   TdsSettings,
   UploadResponse,
+  Faq,
+  FaqInput,
+  SupportTicket,
+  TicketList,
+  TicketMessage,
+  TicketStatus,
 } from './types'
 
 /**
@@ -300,4 +306,37 @@ export const adminApi = {
   // Videos forms to turn a file picked on disk into a hosted URL.
   uploadImage: (file: File) => apiUpload<UploadResponse>('/admin/uploads/image', file),
   uploadVideo: (file: File) => apiUpload<UploadResponse>('/admin/uploads/video', file),
+
+  // FAQ (admin-managed, per app, en/hi) — Phase L.
+  listFaqs: (app?: string) =>
+    api<Faq[]>(`/admin/faqs${app ? `?app=${app}` : ''}`),
+  createFaq: (body: FaqInput) => api<Faq>('/admin/faqs', { method: 'POST', body }),
+  updateFaq: (id: string, body: Partial<FaqInput>) =>
+    api<Faq>(`/admin/faqs/${id}`, { method: 'PATCH', body }),
+  deleteFaq: (id: string) => api<void>(`/admin/faqs/${id}`, { method: 'DELETE' }),
+  reorderFaqs: (items: { id: string; sort_order: number }[]) =>
+    api<{ status: string; updated: number }>('/admin/faqs/reorder', {
+      method: 'POST',
+      body: { items },
+    }),
+
+  // Support tickets / helpdesk — Phase L.
+  listTickets: (status?: TicketStatus, role?: string) => {
+    const q = new URLSearchParams()
+    if (status) q.set('status', status)
+    if (role) q.set('role', role)
+    const qs = q.toString()
+    return api<TicketList>(`/admin/support/tickets${qs ? `?${qs}` : ''}`)
+  },
+  ticketDetail: (id: string) =>
+    api<SupportTicket>(`/admin/support/tickets/${id}`),
+  replyTicket: (id: string, body: string) =>
+    api<TicketMessage>(`/admin/support/tickets/${id}/reply`, {
+      method: 'POST',
+      body: { body },
+    }),
+  closeTicket: (id: string) =>
+    api<{ id: string; status: TicketStatus }>(
+      `/admin/support/tickets/${id}/close`, { method: 'POST' },
+    ),
 }

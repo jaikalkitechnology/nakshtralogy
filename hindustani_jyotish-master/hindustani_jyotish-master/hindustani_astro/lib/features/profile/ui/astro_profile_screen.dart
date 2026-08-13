@@ -153,6 +153,11 @@ class AstroProfileScreen extends StatelessWidget {
             onTap: () => context.push('/ratings'),
           ),
           _navTile(
+            icon: Icons.help_outline,
+            label: l.supportTitle,
+            onTap: () => context.push('/support'),
+          ),
+          _navTile(
             icon: Icons.privacy_tip_outlined,
             label: 'Privacy Policy',
             onTap: () => _openPrivacyPolicy(context),

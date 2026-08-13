@@ -32,6 +32,8 @@ import TdsPage from './pages/TdsPage'
 import GoogleLoginSettingsPage from './pages/GoogleLoginSettingsPage'
 import BroadcastPage from './pages/BroadcastPage'
 import CredentialsOverviewPage from './pages/CredentialsOverviewPage'
+import FaqManager from './pages/FaqManager'
+import SupportTickets from './pages/SupportTickets'
 import { RESOURCES } from './config/resources'
 import { adminApi } from './api/endpoints'
 
@@ -174,6 +176,10 @@ export default function App() {
                 />
               }
             />
+
+            {/* Support */}
+            <Route path="/faqs" element={<FaqManager />} />
+            <Route path="/support-tickets" element={<SupportTickets />} />
 
             {/* Settings */}
             <Route path="/credentials" element={<CredentialsOverviewPage />} />

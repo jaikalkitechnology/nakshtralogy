@@ -143,6 +143,11 @@ class ProfileScreen extends StatelessWidget {
                 label: l.profileInvoices,
                 onTap: () => context.push('/invoices'),
               ),
+              _Tile(
+                icon: Icons.help_outline,
+                label: l.supportTitle,
+                onTap: () => context.push('/support'),
+              ),
               const _HelplineTile(),
               const _PrivacyPolicyTile(),
               _Tile(

@@ -19,6 +19,7 @@ from app.api.v1 import (
     notifications,
     public,
     reports,
+    support,
     users,
     wallet,
 )
@@ -71,3 +72,8 @@ api_router.include_router(invoices.router)
 # via /me/notifications (role resolved from the token). Admin broadcast lives
 # under admin_console.
 api_router.include_router(notifications.router)
+
+# Phase L — FAQ (admin-managed, per app, en/hi) + support tickets/helpdesk.
+# Public FAQ read lives in public.py; principal-facing ticket endpoints here;
+# admin FAQ CRUD + ticket management live under admin_console.
+api_router.include_router(support.router)

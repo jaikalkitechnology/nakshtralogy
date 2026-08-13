@@ -1002,4 +1002,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsMarkAllRead => 'Mark all read';
+
+  @override
+  String get supportTitle => 'Help & Support';
+
+  @override
+  String get supportFaqTab => 'FAQ';
+
+  @override
+  String get supportTicketsTab => 'My tickets';
+
+  @override
+  String get supportFaqEmpty => 'No help articles are available yet.';
+
+  @override
+  String get supportTicketsEmpty => 'You have no support tickets yet.';
+
+  @override
+  String get supportRaiseTicket => 'Raise a ticket';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportMessage => 'Describe your issue';
+
+  @override
+  String get supportSubmit => 'Submit';
+
+  @override
+  String get supportFillFields => 'Please add a subject and a message.';
+
+  @override
+  String get supportTicket => 'Ticket';
+
+  @override
+  String get supportReplyHint => 'Type a reply…';
+
+  @override
+  String get supportReopenHint => 'Reply to reopen this ticket…';
+
+  @override
+  String get supportSenderYou => 'You';
+
+  @override
+  String get supportSenderSupport => 'Support';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusPending => 'Awaiting you';
+
+  @override
+  String get supportStatusClosed => 'Closed';
 }

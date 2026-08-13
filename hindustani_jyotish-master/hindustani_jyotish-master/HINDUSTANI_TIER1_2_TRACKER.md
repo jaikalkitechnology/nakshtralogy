@@ -19,7 +19,7 @@ Builds the compliance (Tier 1) and high-value (Tier 2) gaps from `FEATURE_COMPAR
 | I | 1 | TDS management (PAN 10% + challan + payout) | ✅ | H |
 | J | 2 | Specialist reports (dev-API, admin-priced) | ✅ | — |
 | K | 2 | Notification inbox + bell badge (both apps + admin) | ✅ | — |
-| L | 2 | FAQ + Support tickets/helpdesk (admin-managed) | 🟡 | — |
+| L | 2 | FAQ + Support tickets/helpdesk (admin-managed) | ✅ | — |
 
 Order: **G → H → I → J → K → L.** Sequential (all touch `admin_console.py` + React admin). Commit per phase.
 

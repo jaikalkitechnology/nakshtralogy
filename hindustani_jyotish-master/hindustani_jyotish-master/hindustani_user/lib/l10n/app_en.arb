@@ -369,5 +369,24 @@
 
   "notificationsTitle": "Notifications",
   "notificationsEmpty": "You have no notifications yet.",
-  "notificationsMarkAllRead": "Mark all read"
+  "notificationsMarkAllRead": "Mark all read",
+
+  "supportTitle": "Help & Support",
+  "supportFaqTab": "FAQ",
+  "supportTicketsTab": "My tickets",
+  "supportFaqEmpty": "No help articles are available yet.",
+  "supportTicketsEmpty": "You have no support tickets yet.",
+  "supportRaiseTicket": "Raise a ticket",
+  "supportSubject": "Subject",
+  "supportMessage": "Describe your issue",
+  "supportSubmit": "Submit",
+  "supportFillFields": "Please add a subject and a message.",
+  "supportTicket": "Ticket",
+  "supportReplyHint": "Type a reply…",
+  "supportReopenHint": "Reply to reopen this ticket…",
+  "supportSenderYou": "You",
+  "supportSenderSupport": "Support",
+  "supportStatusOpen": "Open",
+  "supportStatusPending": "Awaiting you",
+  "supportStatusClosed": "Closed"
 }

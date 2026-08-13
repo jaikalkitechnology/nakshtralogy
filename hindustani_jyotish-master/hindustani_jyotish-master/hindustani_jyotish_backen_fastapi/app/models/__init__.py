@@ -8,6 +8,7 @@ from app.models.admin_content import (  # noqa: F401
     CosmicService,
     Coupon,
     DiscountType,
+    FAQ,
     PromoVideo,
     RazorpaySetting,
 )
@@ -37,6 +38,10 @@ from app.models.profile_edit import (  # noqa: F401
     ProfileEditStatus,
 )
 from app.models.schema_sync import SchemaSyncLog  # noqa: F401
+from app.models.support import (  # noqa: F401
+    SupportTicket,
+    SupportTicketMessage,
+)
 from app.models.user import User  # noqa: F401
 from app.models.wallet import (  # noqa: F401
     TransactionStatus,
@@ -52,6 +57,7 @@ __all__ = [
     "CosmicService",
     "Coupon",
     "DiscountType",
+    "FAQ",
     "PromoVideo",
     "RazorpaySetting",
     "Astrologer",
@@ -78,6 +84,8 @@ __all__ = [
     "AstrologerProfileEdit",
     "ProfileEditStatus",
     "SchemaSyncLog",
+    "SupportTicket",
+    "SupportTicketMessage",
     "User",
     "TransactionStatus",
     "TransactionType",

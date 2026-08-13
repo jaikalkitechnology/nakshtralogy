@@ -24,6 +24,8 @@ import '../features/notifications/ui/notifications_screen.dart';
 import '../features/profile/ui/birth_details_screen.dart';
 import '../features/profile/ui/edit_profile_screen.dart';
 import '../features/profile/ui/profile_screen.dart';
+import '../features/support/ui/support_screen.dart';
+import '../features/support/ui/ticket_thread_screen.dart';
 import '../features/wallet/ui/wallet_screen.dart';
 
 /// Bridges an [AuthCubit] stream to go_router's [refreshListenable].
@@ -98,6 +100,17 @@ GoRouter buildRouter(AuthCubit auth) {
         path: '/notifications',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/support',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const SupportScreen(),
+      ),
+      GoRoute(
+        path: '/support/tickets/:id',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, st) =>
+            TicketThreadScreen(ticketId: st.pathParameters['id']!),
       ),
       GoRoute(
         path: '/profile/edit',

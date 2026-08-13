@@ -1447,6 +1447,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark all read'**
   String get notificationsMarkAllRead;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get supportTitle;
+
+  /// No description provided for @supportFaqTab.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get supportFaqTab;
+
+  /// No description provided for @supportTicketsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get supportTicketsTab;
+
+  /// No description provided for @supportFaqEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No help articles are available yet.'**
+  String get supportFaqEmpty;
+
+  /// No description provided for @supportTicketsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no support tickets yet.'**
+  String get supportTicketsEmpty;
+
+  /// No description provided for @supportRaiseTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise a ticket'**
+  String get supportRaiseTicket;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubject;
+
+  /// No description provided for @supportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue'**
+  String get supportMessage;
+
+  /// No description provided for @supportSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get supportSubmit;
+
+  /// No description provided for @supportFillFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a subject and a message.'**
+  String get supportFillFields;
+
+  /// No description provided for @supportTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get supportTicket;
+
+  /// No description provided for @supportReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a reply…'**
+  String get supportReplyHint;
+
+  /// No description provided for @supportReopenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply to reopen this ticket…'**
+  String get supportReopenHint;
+
+  /// No description provided for @supportSenderYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportSenderYou;
+
+  /// No description provided for @supportSenderSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportSenderSupport;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting you'**
+  String get supportStatusPending;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get supportStatusClosed;
 }
 
 class _AppLocalizationsDelegate

@@ -359,5 +359,24 @@
 
   "notificationsTitle": "सूचनाएँ",
   "notificationsEmpty": "आपके पास अभी कोई सूचना नहीं है।",
-  "notificationsMarkAllRead": "सभी को पढ़ा हुआ चिह्नित करें"
+  "notificationsMarkAllRead": "सभी को पढ़ा हुआ चिह्नित करें",
+
+  "supportTitle": "सहायता एवं समर्थन",
+  "supportFaqTab": "सामान्य प्रश्न",
+  "supportTicketsTab": "मेरे टिकट",
+  "supportFaqEmpty": "अभी कोई सहायता लेख उपलब्ध नहीं है।",
+  "supportTicketsEmpty": "आपके पास अभी कोई सहायता टिकट नहीं है।",
+  "supportRaiseTicket": "टिकट बनाएँ",
+  "supportSubject": "विषय",
+  "supportMessage": "अपनी समस्या बताएँ",
+  "supportSubmit": "भेजें",
+  "supportFillFields": "कृपया विषय और संदेश भरें।",
+  "supportTicket": "टिकट",
+  "supportReplyHint": "उत्तर लिखें…",
+  "supportReopenHint": "इस टिकट को फिर से खोलने के लिए उत्तर दें…",
+  "supportSenderYou": "आप",
+  "supportSenderSupport": "सहायता",
+  "supportStatusOpen": "खुला",
+  "supportStatusPending": "आपकी प्रतिक्रिया अपेक्षित",
+  "supportStatusClosed": "बंद"
 }
