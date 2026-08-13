@@ -52,6 +52,14 @@ Order: **A → B → C → D → E → F.** A is first so any new columns from B
 > the already-ported local engine kept only as an **offline/dev fallback**. A
 > follow-up "Phase B2" wires the developer-API client + maps its response to the
 > section shapes. Moola stays excluded.
+>
+> **REVISION 2 (per user): Kundli is FREE for end users.** Remove the wallet
+> gating from the kundli compute path (no `_guard_balance`, no `debit_user`) so
+> generating/viewing a kundli costs the Hindustani user nothing. Phase B's paid
+> gating is superseded — B2 makes it free. (Nakshatralogy may still meter
+> Hindustani's developer account per call server-side; that is Hindustani's
+> operational cost, never charged to the end user.) Phase C UI must NOT paywall
+> the kundli.
 
 ## PHASE B — Kundli engine + backend router (full suite, minus Moola Dasha)  ⬜
 
