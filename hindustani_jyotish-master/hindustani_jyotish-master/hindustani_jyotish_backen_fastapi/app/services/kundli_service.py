@@ -46,8 +46,17 @@ from app.services.wallet_service import InsufficientBalance  # noqa: F401  (re-e
 # ── Billing helpers (ledger only — never trust client balances) ──────
 
 
+# Insight types that are FREE to the end user (no wallet charge). The detailed
+# kundli is free in Hindustani Jyotish — the provider cost (Nakshatralogy
+# developer API) is Hindustani's operational expense, never billed to the user.
+FREE_INSIGHT_TYPES = {"detailed_kundli"}
+
+
 async def _charge(db: AsyncSession, user: User, insight_type: str) -> Decimal:
-    """Debit the ADMIN-CONFIGURED price for this insight from the wallet."""
+    """Debit the ADMIN-CONFIGURED price for this insight from the wallet.
+    Free insight types (see FREE_INSIGHT_TYPES) never debit and cost the user 0."""
+    if insight_type in FREE_INSIGHT_TYPES:
+        return Decimal("0")
     amount = await pricing.price_for_db(db, insight_type)
     await wallet_service.debit_user(
         db, user, amount, type=TransactionType.report, reference_id=insight_type

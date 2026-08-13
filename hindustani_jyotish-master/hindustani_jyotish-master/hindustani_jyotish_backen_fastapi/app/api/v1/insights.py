@@ -76,6 +76,9 @@ async def _guard_balance(db, insight_type: str, user) -> None:
     """Pre-charge balance check against the ADMIN-CONFIGURED price (the same
     cosmic_services row the charge itself uses), refusing admin-disabled
     services up front."""
+    # Free insight types (e.g. detailed kundli) need no balance — never gate them.
+    if insight_type in kundli_service.FREE_INSIGHT_TYPES:
+        return
     try:
         price = await pricing.price_for_db(db, insight_type)
     except pricing.ServiceDisabled:

@@ -110,9 +110,13 @@ class InsightsScreen extends StatelessWidget {
                                   services.containsKey(_serviceKeys[t.$3]))
                                 _InsightTile(
                                   title: _tileTitle(l, t.$3),
-                                  price: services == null
-                                      ? t.$1
-                                      : _rupees(services[_serviceKeys[t.$3]]!),
+                                  // Kundli is free to the user (sourced from the
+                                  // Nakshatralogy developer API at no user cost).
+                                  price: t.$3 == 'kundli'
+                                      ? l.insightFree
+                                      : services == null
+                                          ? t.$1
+                                          : _rupees(services[_serviceKeys[t.$3]]!),
                                   icon: t.$2,
                                   onTap: () =>
                                       _run(context, t.$3, _tileTitle(l, t.$3)),

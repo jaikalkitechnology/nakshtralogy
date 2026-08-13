@@ -567,6 +567,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get insightDetailedKundli => 'विस्तृत कुंडली';
 
   @override
+  String get insightFree => 'मुफ़्त';
+
+  @override
   String get insightPlanetPosition => 'ग्रह स्थिति';
 
   @override

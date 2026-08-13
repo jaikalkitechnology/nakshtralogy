@@ -567,6 +567,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightDetailedKundli => 'Detailed Kundli';
 
   @override
+  String get insightFree => 'Free';
+
+  @override
   String get insightPlanetPosition => 'Planet Position';
 
   @override

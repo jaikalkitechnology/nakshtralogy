@@ -1118,6 +1118,12 @@ abstract class AppLocalizations {
   /// **'Detailed Kundli'**
   String get insightDetailedKundli;
 
+  /// No description provided for @insightFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get insightFree;
+
   /// No description provided for @insightPlanetPosition.
   ///
   /// In en, this message translates to:
