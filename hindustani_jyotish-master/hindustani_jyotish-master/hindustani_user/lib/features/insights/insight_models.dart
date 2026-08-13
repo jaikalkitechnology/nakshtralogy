@@ -497,6 +497,30 @@ class InsightReport {
   final String? pdfUrl;
 }
 
+/// One available specialist "Special Report" (Phase J) from
+/// `GET /insights/reports/catalog`: its backend type key, admin display name,
+/// price string and whether it is free.
+class SpecialReportType {
+  const SpecialReportType({
+    required this.type,
+    required this.name,
+    this.price,
+    this.free = false,
+  });
+
+  factory SpecialReportType.fromJson(Map<String, dynamic> j) => SpecialReportType(
+        type: _str(j['type']) ?? 'report',
+        name: _str(j['name']) ?? titleCaseKey(_str(j['type']) ?? 'Report'),
+        price: _str(j['price']),
+        free: j['free'] == true,
+      );
+
+  final String type; // backend key, e.g. "career"
+  final String name; // admin display name, e.g. "Career Report"
+  final String? price; // "49.00"
+  final bool free;
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 //  Full-analysis section parsers (Phase C viewer)
 //

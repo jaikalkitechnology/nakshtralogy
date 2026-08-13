@@ -129,6 +129,14 @@ class InsightsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _MyReportsCard(
+                  icon: Icons.auto_stories_outlined,
+                  title: l.specialReportsCard,
+                  subtitle: l.specialReportsCardSubtitle,
+                  onTap: () => context.push('/insights/special-reports'),
+                ),
+                const SizedBox(height: 10),
+                _MyReportsCard(
+                  icon: Icons.folder_open_outlined,
                   title: l.insightsMyReports,
                   subtitle: l.insightsMyReportsSubtitle,
                   onTap: () => context.push('/insights/reports'),
@@ -314,7 +322,11 @@ class _InsightTile extends StatelessWidget {
 
 class _MyReportsCard extends StatelessWidget {
   const _MyReportsCard(
-      {required this.title, required this.subtitle, required this.onTap});
+      {required this.icon,
+      required this.title,
+      required this.subtitle,
+      required this.onTap});
+  final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
@@ -342,7 +354,7 @@ class _MyReportsCard extends StatelessWidget {
                 color: AppColors.copperGlow,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.folder_open_outlined,
+              child: Icon(icon,
                   color: AppColors.copperLight, size: 22),
             ),
             const SizedBox(width: 14),

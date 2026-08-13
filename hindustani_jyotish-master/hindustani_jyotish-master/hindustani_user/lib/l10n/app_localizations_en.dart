@@ -933,4 +933,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSuccess => 'Your account has been deleted.';
+
+  @override
+  String get specialReportsTitle => 'Special Reports';
+
+  @override
+  String get specialReportsSubtitle =>
+      'In-depth specialist analysis for the moments that matter.';
+
+  @override
+  String get specialReportsCard => 'Special Reports';
+
+  @override
+  String get specialReportsCardSubtitle =>
+      'Career, marriage, wealth, health & more';
+
+  @override
+  String get specialReportsEmpty =>
+      'No special reports are available right now.';
+
+  @override
+  String get reportCareer => 'Career Report';
+
+  @override
+  String get reportBusiness => 'Business Report';
+
+  @override
+  String get reportEducation => 'Education Report';
+
+  @override
+  String get reportWealth => 'Wealth Report';
+
+  @override
+  String get reportDebtRecovery => 'Debt Recovery Report';
+
+  @override
+  String get reportLove => 'Love Report';
+
+  @override
+  String get reportMarriage => 'Marriage Report';
+
+  @override
+  String get reportHealth => 'Health Report';
+
+  @override
+  String get reportMentalStress => 'Mental Stress Report';
+
+  @override
+  String get reportProperty => 'Property Report';
+
+  @override
+  String get reportLegal => 'Legal Report';
+
+  @override
+  String get reportLifePath => 'Life Path Report';
+
+  @override
+  String get reportCharacter => 'Character Report';
+
+  @override
+  String get reportPastLife => 'Past Life Report';
 }

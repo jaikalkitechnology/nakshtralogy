@@ -113,6 +113,36 @@ class InsightsRepository {
     return _asMap(res, 'horoscope/birthday-number');
   }
 
+  /// Available specialist "Special Reports" (Phase J) with their
+  /// admin-configured prices (`GET /insights/reports/catalog`). Each entry is
+  /// `{type, name, price, free}`; admin-disabled types are omitted server-side.
+  Future<List<SpecialReportType>> reportsCatalog() async {
+    final res = await _api.get('/insights/reports/catalog');
+    return [
+      for (final item in _asList(res, 'insights/reports/catalog'))
+        if (item is Map<String, dynamic>) SpecialReportType.fromJson(item),
+    ];
+  }
+
+  /// Generates one specialist report of [type] for the given birth details
+  /// (`POST /insights/reports/{type}/generate`). Wallet is debited server-side
+  /// at the admin price; returns the same envelope a fresh insight does
+  /// (`data` + `report` + `pdf_url` + charge/balance).
+  Future<Map<String, dynamic>> generateReport({
+    required String type,
+    required String dob,
+    String? time,
+    String? place,
+    String? name,
+    String? gender,
+  }) async {
+    final res = await _api.post(
+      '/insights/reports/$type/generate',
+      body: _birthBody(dob: dob, time: time, place: place, name: name, gender: gender),
+    );
+    return _asMap(res, 'insights/reports/$type/generate');
+  }
+
   /// Past paid reports (newest first) with their PDF links, one page at a
   /// time (backend default/page cap mirrors `page_size`). Prefers the new
   /// `GET /insights/reports` path, falling back to the original

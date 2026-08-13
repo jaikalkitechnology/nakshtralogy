@@ -934,4 +934,63 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get deleteAccountSuccess => 'आपका खाता हटा दिया गया है।';
+
+  @override
+  String get specialReportsTitle => 'विशेष रिपोर्ट';
+
+  @override
+  String get specialReportsSubtitle =>
+      'महत्वपूर्ण क्षणों के लिए गहन विशेषज्ञ विश्लेषण।';
+
+  @override
+  String get specialReportsCard => 'विशेष रिपोर्ट';
+
+  @override
+  String get specialReportsCardSubtitle =>
+      'करियर, विवाह, धन, स्वास्थ्य और अधिक';
+
+  @override
+  String get specialReportsEmpty => 'अभी कोई विशेष रिपोर्ट उपलब्ध नहीं है।';
+
+  @override
+  String get reportCareer => 'करियर रिपोर्ट';
+
+  @override
+  String get reportBusiness => 'व्यापार रिपोर्ट';
+
+  @override
+  String get reportEducation => 'शिक्षा रिपोर्ट';
+
+  @override
+  String get reportWealth => 'धन रिपोर्ट';
+
+  @override
+  String get reportDebtRecovery => 'ऋण वसूली रिपोर्ट';
+
+  @override
+  String get reportLove => 'प्रेम रिपोर्ट';
+
+  @override
+  String get reportMarriage => 'विवाह रिपोर्ट';
+
+  @override
+  String get reportHealth => 'स्वास्थ्य रिपोर्ट';
+
+  @override
+  String get reportMentalStress => 'मानसिक तनाव रिपोर्ट';
+
+  @override
+  String get reportProperty => 'संपत्ति रिपोर्ट';
+
+  @override
+  String get reportLegal => 'कानूनी रिपोर्ट';
+
+  @override
+  String get reportLifePath => 'जीवन पथ रिपोर्ट';
+
+  @override
+  String get reportCharacter => 'चरित्र रिपोर्ट';
+
+  @override
+  String get reportPastLife => 'पूर्वजन्म रिपोर्ट';
 }

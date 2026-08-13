@@ -44,6 +44,22 @@ KUNDLI_ALL = "/api/v2/kundli/all"
 KUNDLI_DASHA_VIMSHOTTARI = "/api/v2/kundli/dasha/vimshottari"
 KUNDLI_DASHA_ACTIVATION = "/api/v2/kundli/dasha-activation"
 
+# Developer-API "Special Reports" surface (Phase J). Each key is a specialist
+# engine exposed at POST /api/v2/reports/<key> taking a single-chart birth body
+# ({"name","gender","dob","tob","place"}) and returning {"status","data",...}.
+# These are the 14 SINGLE-CHART report keys the gateway exposes (see the donor
+# app/routers/gateway_router.py SINGLE_CHART_REPORT_KEYS). The 5 combined
+# two-chart reports (kundli_milan, relationship, child_probability,
+# love_compatibility, karma_linkage) need a person1/person2 body — Kundli Milan
+# is already consumed by the existing love-compatibility flow (KUNDLI_MILAN
+# above); the remaining combined reports are intentionally NOT wired here as
+# single-chart specialist reports.
+REPORT_KEYS: tuple[str, ...] = (
+    "career", "business", "education", "wealth", "debt_recovery", "love",
+    "marriage", "health", "mental_stress", "property", "legal",
+    "life_path", "character", "past_life",
+)
+
 # Tests inject an httpx.MockTransport here; None → real network transport.
 _transport: httpx.AsyncBaseTransport | None = None
 
@@ -122,3 +138,19 @@ async def kundli_dasha_activation(
     if query_date:
         payload["query_date"] = query_date
     return await call(KUNDLI_DASHA_ACTIVATION, payload)
+
+
+# ── Special Reports developer-API wrappers (Phase J) ──────────────────
+
+
+def report_path(report_type: str) -> str:
+    """Dev-API path for one single-chart specialist report."""
+    return f"/api/v2/reports/{report_type}"
+
+
+async def report(report_type: str, birth: dict[str, Any]) -> dict[str, Any]:
+    """POST /api/v2/reports/<report_type> — one specialist report for a single
+    birth chart. `birth` = {"name","gender","dob"(DD/MM/YYYY),"tob"(HH:MM),
+    "place"}. Returns the provider's `data` dict. Callers gate on `enabled()`.
+    """
+    return await call(report_path(report_type), birth)

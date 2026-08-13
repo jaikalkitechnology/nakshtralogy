@@ -17,6 +17,7 @@ from app.api.v1 import (
     invoices,
     kundli,
     public,
+    reports,
     users,
     wallet,
 )
@@ -38,6 +39,10 @@ api_router.include_router(insights.router)
 # Phase B — full offline Vedic Kundli analysis suite (engine app.kundli).
 # Paid compute+save, free reopen; every Nakshtralogy analysis EXCEPT Moola.
 api_router.include_router(kundli.router)
+# Phase J — Specialist "Special Reports" sourced from the Nakshatralogy
+# developer API (/api/v2/reports/*), admin-priced via cosmic_services. Paid
+# generate + PDF, free reopen — mounted at /insights/reports.
+api_router.include_router(reports.router)
 
 # Phase 4 — implemented (astrologer auth, KYC, portal, admin approval)
 api_router.include_router(astrologer_auth.router)

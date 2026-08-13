@@ -1807,6 +1807,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account has been deleted.'**
   String get deleteAccountSuccess;
+
+  /// No description provided for @specialReportsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Reports'**
+  String get specialReportsTitle;
+
+  /// No description provided for @specialReportsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In-depth specialist analysis for the moments that matter.'**
+  String get specialReportsSubtitle;
+
+  /// No description provided for @specialReportsCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Reports'**
+  String get specialReportsCard;
+
+  /// No description provided for @specialReportsCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Career, marriage, wealth, health & more'**
+  String get specialReportsCardSubtitle;
+
+  /// No description provided for @specialReportsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No special reports are available right now.'**
+  String get specialReportsEmpty;
+
+  /// No description provided for @reportCareer.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Report'**
+  String get reportCareer;
+
+  /// No description provided for @reportBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Report'**
+  String get reportBusiness;
+
+  /// No description provided for @reportEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education Report'**
+  String get reportEducation;
+
+  /// No description provided for @reportWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth Report'**
+  String get reportWealth;
+
+  /// No description provided for @reportDebtRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt Recovery Report'**
+  String get reportDebtRecovery;
+
+  /// No description provided for @reportLove.
+  ///
+  /// In en, this message translates to:
+  /// **'Love Report'**
+  String get reportLove;
+
+  /// No description provided for @reportMarriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Marriage Report'**
+  String get reportMarriage;
+
+  /// No description provided for @reportHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Report'**
+  String get reportHealth;
+
+  /// No description provided for @reportMentalStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Stress Report'**
+  String get reportMentalStress;
+
+  /// No description provided for @reportProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Report'**
+  String get reportProperty;
+
+  /// No description provided for @reportLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Report'**
+  String get reportLegal;
+
+  /// No description provided for @reportLifePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Path Report'**
+  String get reportLifePath;
+
+  /// No description provided for @reportCharacter.
+  ///
+  /// In en, this message translates to:
+  /// **'Character Report'**
+  String get reportCharacter;
+
+  /// No description provided for @reportPastLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Life Report'**
+  String get reportPastLife;
 }
 
 class _AppLocalizationsDelegate

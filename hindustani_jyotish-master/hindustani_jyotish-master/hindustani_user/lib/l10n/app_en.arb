@@ -345,5 +345,25 @@
   "deleteAccountWarning": "This permanently deletes your account. Your profile, birth details and saved data are removed, all your sessions end, and this cannot be undone.",
   "deleteAccountTypeHint": "Type DELETE to confirm",
   "deleteAccountConfirm": "Delete account",
-  "deleteAccountSuccess": "Your account has been deleted."
+  "deleteAccountSuccess": "Your account has been deleted.",
+
+  "specialReportsTitle": "Special Reports",
+  "specialReportsSubtitle": "In-depth specialist analysis for the moments that matter.",
+  "specialReportsCard": "Special Reports",
+  "specialReportsCardSubtitle": "Career, marriage, wealth, health & more",
+  "specialReportsEmpty": "No special reports are available right now.",
+  "reportCareer": "Career Report",
+  "reportBusiness": "Business Report",
+  "reportEducation": "Education Report",
+  "reportWealth": "Wealth Report",
+  "reportDebtRecovery": "Debt Recovery Report",
+  "reportLove": "Love Report",
+  "reportMarriage": "Marriage Report",
+  "reportHealth": "Health Report",
+  "reportMentalStress": "Mental Stress Report",
+  "reportProperty": "Property Report",
+  "reportLegal": "Legal Report",
+  "reportLifePath": "Life Path Report",
+  "reportCharacter": "Character Report",
+  "reportPastLife": "Past Life Report"
 }

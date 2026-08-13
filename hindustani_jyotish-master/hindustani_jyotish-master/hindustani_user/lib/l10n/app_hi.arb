@@ -335,5 +335,25 @@
   "deleteAccountWarning": "इससे आपका खाता स्थायी रूप से हट जाएगा। आपकी प्रोफ़ाइल, जन्म विवरण और सहेजा गया डेटा हटा दिया जाएगा, सभी सत्र समाप्त हो जाएँगे, और इसे पूर्ववत नहीं किया जा सकता।",
   "deleteAccountTypeHint": "पुष्टि के लिए DELETE टाइप करें",
   "deleteAccountConfirm": "खाता हटाएँ",
-  "deleteAccountSuccess": "आपका खाता हटा दिया गया है।"
+  "deleteAccountSuccess": "आपका खाता हटा दिया गया है।",
+
+  "specialReportsTitle": "विशेष रिपोर्ट",
+  "specialReportsSubtitle": "महत्वपूर्ण क्षणों के लिए गहन विशेषज्ञ विश्लेषण।",
+  "specialReportsCard": "विशेष रिपोर्ट",
+  "specialReportsCardSubtitle": "करियर, विवाह, धन, स्वास्थ्य और अधिक",
+  "specialReportsEmpty": "अभी कोई विशेष रिपोर्ट उपलब्ध नहीं है।",
+  "reportCareer": "करियर रिपोर्ट",
+  "reportBusiness": "व्यापार रिपोर्ट",
+  "reportEducation": "शिक्षा रिपोर्ट",
+  "reportWealth": "धन रिपोर्ट",
+  "reportDebtRecovery": "ऋण वसूली रिपोर्ट",
+  "reportLove": "प्रेम रिपोर्ट",
+  "reportMarriage": "विवाह रिपोर्ट",
+  "reportHealth": "स्वास्थ्य रिपोर्ट",
+  "reportMentalStress": "मानसिक तनाव रिपोर्ट",
+  "reportProperty": "संपत्ति रिपोर्ट",
+  "reportLegal": "कानूनी रिपोर्ट",
+  "reportLifePath": "जीवन पथ रिपोर्ट",
+  "reportCharacter": "चरित्र रिपोर्ट",
+  "reportPastLife": "पूर्वजन्म रिपोर्ट"
 }
