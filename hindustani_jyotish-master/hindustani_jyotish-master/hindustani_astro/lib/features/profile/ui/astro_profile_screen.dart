@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/full_screen_image_viewer.dart';
 import '../../auth/astro_session_cubit.dart';
@@ -47,127 +48,129 @@ class AstroProfileScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.indigoSoft, AppColors.indigoMid, AppColors.indigoDeep],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.borderMid),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.18),
-                  blurRadius: 18,
-                  offset: const Offset(0, 8),
+          HeroGradientCard(
+            child: Row(
+              children: [
+                GestureDetector(
+                  // With a photo set, tapping the avatar opens it full screen.
+                  onTap: (photoUrl != null && photoUrl.isNotEmpty)
+                      ? () => showFullScreenImage(context,
+                          label: l.setDocPhoto, url: photoUrl)
+                      : null,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.gold, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.gold.withValues(alpha: 0.25),
+                          blurRadius: 14,
+                          spreadRadius: -2,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: AppColors.indigoMid,
+                      backgroundImage:
+                          (photoUrl != null && photoUrl.isNotEmpty) ? NetworkImage(photoUrl) : null,
+                      child: (photoUrl == null || photoUrl.isEmpty)
+                          ? Text(
+                              (a?.displayName?.isNotEmpty ?? false) ? a!.displayName![0].toUpperCase() : '🪔',
+                              style: AppTextStyles.display(size: 22),
+                            )
+                          : null,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(a?.displayName ?? l.profileAstrologer,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.display(size: 20)),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _kycChip(a?.kycStatus),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.star_rounded, size: 15, color: AppColors.gold),
+                              const SizedBox(width: 4),
+                              Text('${a?.avgRating ?? '0.00'} (${a?.reviewCount ?? 0})',
+                                  style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            child: Row(
-            children: [
-              GestureDetector(
-                // With a photo set, tapping the avatar opens it full screen.
-                onTap: (photoUrl != null && photoUrl.isNotEmpty)
-                    ? () => showFullScreenImage(context,
-                        label: l.setDocPhoto, url: photoUrl)
-                    : null,
-                child: Container(
-                  padding: const EdgeInsets.all(2.5),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.borderMid, width: 1.5),
-                  ),
-                  child: CircleAvatar(
-                  radius: 32,
-                  backgroundColor: AppColors.indigoMid,
-                  backgroundImage:
-                      (photoUrl != null && photoUrl.isNotEmpty) ? NetworkImage(photoUrl) : null,
-                  child: (photoUrl == null || photoUrl.isEmpty)
-                      ? Text(
-                          (a?.displayName?.isNotEmpty ?? false) ? a!.displayName![0].toUpperCase() : '🪔',
-                          style: AppTextStyles.display(size: 22),
-                        )
-                      : null,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(a?.displayName ?? l.profileAstrologer,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.heading(size: 18)),
-                    const SizedBox(height: 6),
-                    Row(children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
-                        ),
-                        child: Text(a?.kycStatus ?? 'pending',
-                            style: AppTextStyles.mono(size: 11, color: AppColors.success)),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
-            ],
-            ),
           ),
-          const SizedBox(height: 24),
-          _sectionTitle(l.profileAccountSection),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+          SectionLabel(l.profileAccountSection),
           _navTile(
             icon: Icons.person_outline,
+            tone: TileTone.gold,
             label: l.profileEditProfile,
             subtitle: l.profileEditProfileSub,
             onTap: () => context.push('/profile/edit'),
           ),
           _navTile(
             icon: Icons.account_balance_outlined,
+            tone: TileTone.saffron,
             label: l.profileBankPan,
             subtitle: l.profileBankPanSub,
             onTap: () => context.push('/profile/bank-pan'),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           _navTile(
             icon: Icons.history,
+            tone: TileTone.info,
             label: 'Consultation History',
             onTap: () => context.push('/history/consultations'),
           ),
           _navTile(
             icon: Icons.receipt_long,
+            tone: TileTone.info,
             label: 'Payment History',
             onTap: () => context.push('/history/payments'),
           ),
           _navTile(
             icon: Icons.star_outline,
+            tone: TileTone.gold,
             label: 'My Ratings & Reviews',
             onTap: () => context.push('/ratings'),
           ),
           _navTile(
             icon: Icons.help_outline,
+            tone: TileTone.info,
             label: l.supportTitle,
             onTap: () => context.push('/support'),
           ),
           _navTile(
-            icon: Icons.privacy_tip_outlined,
+            icon: Icons.shield_outlined,
+            tone: TileTone.gold,
             label: 'Privacy Policy',
             onTap: () => _openPrivacyPolicy(context),
           ),
           _navTile(
             icon: Icons.support_agent,
+            tone: TileTone.info,
             label: 'Helpline & Support',
             onTap: () => _openHelpline(context),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 4),
           _row(l.profileSkills, a?.skills.join(', ') ?? '—'),
           _row(l.profileLanguages, a?.languages.join(', ') ?? '—'),
           _row(l.profileExperience, l.profileYears(a?.yearsExperience ?? 0)),
@@ -297,64 +300,96 @@ class AstroProfileScreen extends StatelessWidget {
     }
   }
 
-  Widget _sectionTitle(String text) =>
-      Text(text, style: AppTextStyles.heading(size: 16, color: AppColors.copperLight));
+  /// Maps the astrologer's KYC/approval status to a premium status chip.
+  /// The label keeps the exact backend value; only the tone/icon are styled.
+  Widget _kycChip(String? status) {
+    final label = status ?? 'pending';
+    final low = label.toLowerCase();
+    if (low.contains('approv') || low.contains('verif')) {
+      return StatusChip(label, tone: ChipTone.success, icon: Icons.verified);
+    }
+    if (low.contains('reject') || low.contains('declin')) {
+      // No danger tone on StatusChip — inline pill in danger colour.
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.danger.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: AppColors.danger.withValues(alpha: 0.32)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.cancel, size: 12, color: AppColors.danger),
+            const SizedBox(width: 5),
+            Text(label,
+                style: AppTextStyles.label(
+                    size: 11, weight: FontWeight.w700, color: AppColors.danger)),
+          ],
+        ),
+      );
+    }
+    return StatusChip(label, tone: ChipTone.warn, icon: Icons.hourglass_bottom);
+  }
 
   Widget _navTile(
           {required IconData icon,
           required String label,
           String? subtitle,
+          TileTone tone = TileTone.gold,
           required VoidCallback onTap}) =>
-      Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: ListTile(
-          leading: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.copperLight.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, size: 18, color: AppColors.copperLight),
-          ),
-          title: Text(label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.body(size: 14)),
-          subtitle: subtitle == null
-              ? null
-              : Text(subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-          trailing: Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: PremiumCard(
           onTap: onTap,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              IconTile(icon, tone: tone),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(subtitle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.body(size: 12, color: AppColors.ivoryFaint)),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+            ],
+          ),
         ),
       );
 
-  Widget _row(String label, String value) => Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: Row(
-          children: [
-            Flexible(
-              child: Text(label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
-            ),
-            const Spacer(),
-            Flexible(child: Text(value, textAlign: TextAlign.right, style: AppTextStyles.body(size: 14))),
-          ],
+  Widget _row(String label, String value) => Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: PremiumCard(
+          child: Row(
+            children: [
+              Flexible(
+                child: Text(label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
+              ),
+              const Spacer(),
+              Flexible(
+                  child: Text(value,
+                      textAlign: TextAlign.right, style: AppTextStyles.body(size: 14))),
+            ],
+          ),
         ),
       );
 }

@@ -7,6 +7,7 @@ import 'package:hj_core/hj_core.dart';
 import '../../../core/di.dart';
 import '../../../core/push/pending_request_action.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../portal/portal_repository.dart';
 import 'attend_call_screen.dart';
 import 'attend_chat_screen.dart';
@@ -239,16 +240,8 @@ class _RequestsViewState extends State<_RequestsView> with WidgetsBindingObserve
                           style: AppTextStyles.display(size: 22)),
                     ),
                     if (items != null && items.isNotEmpty) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.saffron,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text('${items.length}',
-                            style: AppTextStyles.mono(size: 12, color: AppColors.indigoVoid)),
-                      ),
+                      const SizedBox(width: 10),
+                      StatusChip('${items.length}', tone: ChipTone.warn),
                     ],
                     const Spacer(),
                     IconButton(
@@ -327,6 +320,18 @@ class _RequestsViewState extends State<_RequestsView> with WidgetsBindingObserve
       );
 }
 
+/// Deterministic avatar gradients — stable saffron/gold accent tokens only
+/// (the indigo tokens are theme-swapped, so a fixed initial would lose contrast
+/// in the light theme). Picked by the requester name's hash so the same seeker
+/// always gets the same tile.
+const List<List<Color>> _kAvatarGradients = [
+  [AppColors.saffronBright, AppColors.saffronDeep],
+  [AppColors.goldLight, AppColors.goldDeep],
+  [AppColors.gold, AppColors.saffron],
+  [AppColors.saffron, AppColors.goldDeep],
+  [AppColors.saffronDeep, AppColors.gold],
+];
+
 class _RequestCard extends StatelessWidget {
   const _RequestCard({required this.c, required this.onAccept, required this.onDecline});
   final Consultation c;
@@ -339,103 +344,183 @@ class _RequestCard extends StatelessWidget {
         ConsultationType.video => Icons.videocam_outlined,
       };
 
-  /// Per-type accent — existing brand constants only: chat = info blue,
-  /// call = success green, video = premium copper.
-  Color get _accent => switch (c.type) {
-        ConsultationType.chat => AppColors.info,
-        ConsultationType.call => AppColors.success,
-        ConsultationType.video => AppColors.copperLight,
+  /// Chat reads as an info/blue conversation; live call & video read as a
+  /// "connect now" green.
+  ChipTone get _chipTone => switch (c.type) {
+        ConsultationType.chat => ChipTone.info,
+        ConsultationType.call => ChipTone.success,
+        ConsultationType.video => ChipTone.success,
       };
+
+  /// A compact, visual-only "time ago" derived from the real [createdAt] — null
+  /// when the backend didn't supply a timestamp (nothing invented).
+  String? _timeAgo() {
+    final t = c.createdAt;
+    if (t == null) return null;
+    final d = DateTime.now().difference(t);
+    if (d.isNegative) return null;
+    if (d.inSeconds < 60) return 'just now';
+    if (d.inMinutes < 60) return '${d.inMinutes}m ago';
+    if (d.inHours < 24) return '${d.inHours}h ago';
+    return '${d.inDays}d ago';
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final name = (c.userName != null && c.userName!.trim().isNotEmpty)
+        ? c.userName!.trim()
+        : l.commonSeeker;
+    final initial = name.isNotEmpty ? name.characters.first.toUpperCase() : '?';
+    final gradient = _kAvatarGradients[name.hashCode.abs() % _kAvatarGradients.length];
+    final ago = _timeAgo();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [_accent.withValues(alpha: 0.08), AppColors.surface1],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _accent.withValues(alpha: 0.30)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: _accent.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: Stack(
+          children: [
+            // Base surface — matches PremiumCard (surface2 → surface1, hairline).
+            Container(
+              padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.surface2, AppColors.surface1],
                 ),
-                child: Icon(_icon, size: 20, color: _accent),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: AppColors.borderSoft),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      (c.userName != null && c.userName!.trim().isNotEmpty)
-                          ? c.userName!
-                          : l.commonSeeker,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: _accent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(999),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Leading avatar — first initial on a deterministic
+                      // saffron/gold gradient tile.
+                      Container(
+                        width: 44,
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: gradient,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.16)),
+                        ),
+                        child: Text(
+                          initial,
+                          style: AppTextStyles.body(
+                              size: 18,
+                              weight: FontWeight.w800,
+                              color: const Color(0xFF241300)),
+                        ),
                       ),
-                      child: Text(l.reqRequestLabel(c.type.name.toUpperCase()),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.mono(size: 11, color: _accent)),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text('₹${c.rate}',
-                    style: AppTextStyles.mono(
-                        size: 13, weight: FontWeight.w700, color: AppColors.success)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: onDecline,
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.danger),
-                    foregroundColor: AppColors.danger,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.body(
+                                  size: 15, weight: FontWeight.w700),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                StatusChip(
+                                  l.reqRequestLabel(c.type.name.toUpperCase()),
+                                  tone: _chipTone,
+                                  icon: _icon,
+                                ),
+                                if (ago != null) ...[
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      ago,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTextStyles.label(
+                                          size: 11, color: AppColors.ivoryFaint),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                              color: AppColors.success.withValues(alpha: 0.28)),
+                        ),
+                        child: Text('₹${c.rate}',
+                            style: AppTextStyles.mono(
+                                size: 13,
+                                weight: FontWeight.w700,
+                                color: AppColors.success)),
+                      ),
+                    ],
                   ),
-                  child: Text(l.reqDecline),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: onDecline,
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: AppColors.danger),
+                            foregroundColor: AppColors.danger,
+                            minimumSize: const Size.fromHeight(54),
+                          ),
+                          child: Text(l.reqDecline),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: PremiumPrimaryButton(
+                          label: l.reqAccept,
+                          onPressed: onAccept,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Left accent rail — 3px saffron → transparent.
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Container(
+                width: 3,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [AppColors.saffron, Colors.transparent],
+                  ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(child: ElevatedButton(
-      // Explicit full width: the shared theme no longer forces an
-      // (invalid) infinite minimum width on every ElevatedButton.
-      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),onPressed: onAccept, child: Text(l.reqAccept))),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

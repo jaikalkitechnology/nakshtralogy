@@ -4,6 +4,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/full_screen_image_viewer.dart';
 import '../../portal/portal_repository.dart';
@@ -145,24 +146,18 @@ class _BankPanScreenState extends State<BankPanScreen> {
                 style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
           ))
         else ...[
-          _sectionTitle(l.bankPanPayoutSection),
-          const SizedBox(height: 12),
+          SectionLabel(l.bankPanPayoutSection),
           _payoutCard(l, method),
-          const SizedBox(height: 24),
-          _sectionTitle(l.bankPanIdentitySection),
-          const SizedBox(height: 12),
+          SectionLabel(l.bankPanIdentitySection),
           _identityCard(l),
-          const SizedBox(height: 24),
-          _sectionTitle(l.bankPanDocsSection),
-          const SizedBox(height: 12),
+          SectionLabel(l.bankPanDocsSection),
           _docsCard(l),
           const SizedBox(height: 24),
         ],
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+        PremiumPrimaryButton(
+          label: hasAny ? l.bankPanEditCta : l.bankPanAddCta,
           onPressed: _openEditor,
-          icon: const Icon(Icons.edit_outlined),
-          label: Text(hasAny ? l.bankPanEditCta : l.bankPanAddCta),
+          icon: Icons.edit_outlined,
         ),
         if (approved) ...[
           const SizedBox(height: 12),
@@ -185,10 +180,18 @@ class _BankPanScreenState extends State<BankPanScreen> {
   Widget _payoutCard(AppLocalizations l, String? method) {
     final isUpi = method == 'upi';
     final rows = <Widget>[];
-    rows.add(_row(
-      l.setPayoutMethodLabel,
-      method == null ? null : (isUpi ? l.setPayoutUpi : l.setPayoutBank),
-    ));
+    rows.add(
+      method == null
+          ? _row(l.setPayoutMethodLabel, null)
+          : _chipRow(
+              l.setPayoutMethodLabel,
+              StatusChip(
+                isUpi ? l.setPayoutUpi : l.setPayoutBank,
+                tone: ChipTone.info,
+                icon: isUpi ? Icons.qr_code_2 : Icons.account_balance_outlined,
+              ),
+            ),
+    );
     if (isUpi) {
       rows.add(_row(l.bankPanUpiId, _str('upi_id')));
     } else if (method == 'bank') {
@@ -216,99 +219,98 @@ class _BankPanScreenState extends State<BankPanScreen> {
       (l.setDocAadhaarBack, _str('aadhaar_back_doc_url')),
       (l.setDocBankProof, _str('bank_proof_url')),
     ];
-    return _card(
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: [for (final (label, url) in docs) _docTile(l, label, url)],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 12.0;
+        final tileWidth = (constraints.maxWidth - spacing) / 2;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            for (final (label, url) in docs)
+              SizedBox(width: tileWidth, child: _docTile(l, label, url)),
+          ],
+        );
+      },
     );
   }
 
-  /// One labeled document thumbnail; a null [url] renders a "Not uploaded"
-  /// placeholder, otherwise tapping opens the full-screen viewer.
+  /// One document card in the 2-column grid: thumbnail, name, and an uploaded /
+  /// missing status badge. A null [url] renders a placeholder; otherwise tapping
+  /// opens the full-screen viewer.
   Widget _docTile(AppLocalizations l, String label, String? url) {
-    const double side = 92;
+    final uploaded = url != null && url.isNotEmpty;
     final Widget preview;
     if (url == null || url.isEmpty) {
-      preview = Container(
-        width: side,
-        height: side,
-        decoration: BoxDecoration(
-          color: AppColors.surface2,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.image_not_supported_outlined, size: 22, color: AppColors.ivoryFaint),
-            const SizedBox(height: 6),
-            Text(l.setKycNotUploaded,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.body(size: 10, color: AppColors.ivoryFaint)),
-          ],
+      preview = AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface3,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.borderSoft),
+          ),
+          child: Icon(Icons.image_not_supported_outlined,
+              size: 26, color: AppColors.ivoryFaint),
         ),
       );
     } else {
       preview = InkWell(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         onTap: () => showFullScreenImage(context, label: label, url: url),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            url,
-            width: side,
-            height: side,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return Container(
-                width: side,
-                height: side,
+          borderRadius: BorderRadius.circular(12),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Image.network(
+              url,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return Container(
+                  color: AppColors.surface2,
+                  child: const Center(
+                    child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2)),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
                 color: AppColors.surface2,
-                child: const Center(
-                  child: SizedBox(
-                      width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: side,
-              height: side,
-              color: AppColors.surface2,
-              child: Icon(Icons.broken_image_outlined, size: 22, color: AppColors.ivoryFaint),
+                child: Icon(Icons.broken_image_outlined,
+                    size: 26, color: AppColors.ivoryFaint),
+              ),
             ),
           ),
         ),
       );
     }
-    return SizedBox(
-      width: side,
+    return PremiumCard(
+      padding: const EdgeInsets.all(10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           preview,
-          const SizedBox(height: 6),
+          const SizedBox(height: 10),
           Text(label,
               textAlign: TextAlign.center,
-              style: AppTextStyles.body(size: 11, color: AppColors.ivoryDim)),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+          const SizedBox(height: 8),
+          Center(
+            child: uploaded
+                ? const StatusChip('✓', tone: ChipTone.success, icon: Icons.check)
+                : StatusChip(l.setKycNotUploaded, tone: ChipTone.muted),
+          ),
         ],
       ),
     );
   }
 
-  Widget _sectionTitle(String text) =>
-      Text(text, style: AppTextStyles.heading(size: 16, color: AppColors.copperLight));
-
-  Widget _card({required Widget child}) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: child,
-      );
+  Widget _card({required Widget child}) => PremiumCard(child: child);
 
   /// Inserts hairline dividers between value rows.
   List<Widget> _joined(List<Widget> rows) {
@@ -355,6 +357,14 @@ class _BankPanScreenState extends State<BankPanScreen> {
   /// Label + a masked-value chip showing only the last4 the server returns.
   Widget _maskedRow(AppLocalizations l, String label, String? last4) {
     if (last4 == null || last4.isEmpty) return _row(label, null);
+    return _chipRow(
+      label,
+      StatusChip(l.bankPanMasked(last4), tone: ChipTone.muted),
+    );
+  }
+
+  /// Label on the left, a status pill on the right.
+  Widget _chipRow(String label, Widget chip) {
     return Row(
       children: [
         Flexible(
@@ -364,18 +374,7 @@ class _BankPanScreenState extends State<BankPanScreen> {
               style: AppTextStyles.body(size: 13, color: AppColors.ivoryDim)),
         ),
         const SizedBox(width: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.copperLight.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: AppColors.copperLight.withValues(alpha: 0.35)),
-          ),
-          child: Text(
-            l.bankPanMasked(last4),
-            style: AppTextStyles.mono(size: 12, color: AppColors.copperLight),
-          ),
-        ),
+        chip,
       ],
     );
   }
