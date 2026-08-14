@@ -385,7 +385,7 @@ class _RequestCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [AppColors.surface2, AppColors.surface1],
