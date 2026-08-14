@@ -58,30 +58,41 @@ class AstroProfileScreen extends StatelessWidget {
                           label: l.setDocPhoto, url: photoUrl)
                       : null,
                   child: Container(
-                    padding: const EdgeInsets.all(3),
+                    width: 68,
+                    height: 68,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.gold, width: 1.5),
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: (photoUrl == null || photoUrl.isEmpty)
+                          ? const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [AppColors.goldLight, AppColors.gold],
+                            )
+                          : null,
+                      image: (photoUrl != null && photoUrl.isNotEmpty)
+                          ? DecorationImage(
+                              image: NetworkImage(photoUrl), fit: BoxFit.cover)
+                          : null,
+                      border: Border.all(color: AppColors.gold, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.gold.withValues(alpha: 0.25),
-                          blurRadius: 14,
-                          spreadRadius: -2,
+                          color: AppColors.gold.withValues(alpha: 0.35),
+                          blurRadius: 18,
+                          spreadRadius: -4,
+                          offset: const Offset(0, 6),
                         ),
                       ],
                     ),
-                    child: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: AppColors.indigoMid,
-                      backgroundImage:
-                          (photoUrl != null && photoUrl.isNotEmpty) ? NetworkImage(photoUrl) : null,
-                      child: (photoUrl == null || photoUrl.isEmpty)
-                          ? Text(
-                              (a?.displayName?.isNotEmpty ?? false) ? a!.displayName![0].toUpperCase() : '🪔',
-                              style: AppTextStyles.display(size: 22),
-                            )
-                          : null,
-                    ),
+                    child: (photoUrl == null || photoUrl.isEmpty)
+                        ? Text(
+                            (a?.displayName?.isNotEmpty ?? false)
+                                ? a!.displayName![0].toUpperCase()
+                                : '🪔',
+                            style: AppTextStyles.display(
+                                size: 30, color: const Color(0xFF2A1A02)),
+                          )
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -92,30 +103,36 @@ class AstroProfileScreen extends StatelessWidget {
                       Text(a?.displayName ?? l.profileAstrologer,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.display(size: 20)),
+                          style: AppTextStyles.display(size: 22)),
+                      const SizedBox(height: 8),
+                      _kycChip(a?.kycStatus),
                       const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          _kycChip(a?.kycStatus),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.star_rounded, size: 15, color: AppColors.gold),
-                              const SizedBox(width: 4),
-                              Text('${a?.avgRating ?? '0.00'} (${a?.reviewCount ?? 0})',
-                                  style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-                            ],
-                          ),
-                        ],
-                      ),
+                      _ratingRow(a?.avgRating, a?.reviewCount),
                     ],
                   ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 14),
+          // Quick-stat trio — real data available on this screen (mirrors the
+          // approved mockup's three-card row; balance/consults live on the
+          // Earnings screen, so here we surface reviews, experience, specialty).
+          Row(
+            children: [
+              Expanded(
+                child: _quickStat('Rating', '${a?.avgRating ?? '0.0'}',
+                    valueColor: AppColors.gold),
+              ),
+              const SizedBox(width: 10),
+              Expanded(child: _quickStat('Reviews', '${a?.reviewCount ?? 0}')),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _quickStat(
+                    'Specialty',
+                    (a?.skills.isNotEmpty ?? false) ? a!.skills.first : '—'),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           SectionLabel(l.profileAccountSection),
@@ -302,6 +319,55 @@ class AstroProfileScreen extends StatelessWidget {
 
   /// Maps the astrologer's KYC/approval status to a premium status chip.
   /// The label keeps the exact backend value; only the tone/icon are styled.
+  /// Five-star rating row + "avg · N reviews" caption (matches the mockup),
+  /// with the caption ellipsised so it never wraps in the hero.
+  Widget _ratingRow(dynamic avg, dynamic count) {
+    final rating = double.tryParse('${avg ?? 0}') ?? 0;
+    final full = rating.floor();
+    final hasHalf = (rating - full) >= 0.5;
+    return Row(
+      children: [
+        for (var i = 0; i < 5; i++)
+          Icon(
+            i < full
+                ? Icons.star_rounded
+                : (i == full && hasHalf
+                    ? Icons.star_half_rounded
+                    : Icons.star_outline_rounded),
+            size: 15,
+            color: AppColors.gold,
+          ),
+        const SizedBox(width: 7),
+        Flexible(
+          child: Text('${avg ?? '0.0'} · ${count ?? 0} reviews',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.label(size: 11.5, color: AppColors.ivoryDim)),
+        ),
+      ],
+    );
+  }
+
+  /// A single quick-stat cell (large serif value + uppercase caption).
+  Widget _quickStat(String label, String value, {Color? valueColor}) {
+    return PremiumCard(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+      child: Column(
+        children: [
+          Text(value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.display(size: 18, color: valueColor ?? AppColors.ivory)),
+          const SizedBox(height: 4),
+          Text(label.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.label(size: 10, color: AppColors.ivoryFaint)),
+        ],
+      ),
+    );
+  }
+
   Widget _kycChip(String? status) {
     final label = status ?? 'pending';
     final low = label.toLowerCase();
