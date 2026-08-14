@@ -1,6 +1,19 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Foreground-service permissions pulled in by dependencies but NOT used by
+         this app — removed from the merged manifest so Google Play does not
+         require a foreground-service declaration for them:
+         · MEDIA_PROJECTION comes from the Agora SDK (screen-share). We only do
+           camera/audio video calls (camera + microphone FGS), never screen
+           capture, so this is unnecessary.
+         · PHONE_CALL comes from CallKit-style call plugins. The USER app never
+           runs a phone-call foreground service (only the astrologer app rings),
+           so it's removed here defensively. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" tools:node="remove"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
     <uses-permission android:name="android.permission.CAMERA"/>
