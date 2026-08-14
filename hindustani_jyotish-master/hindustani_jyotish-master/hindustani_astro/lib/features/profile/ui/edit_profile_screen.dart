@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/full_screen_image_viewer.dart';
 import '../../auth/astro_session_cubit.dart';
@@ -187,43 +188,86 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Column(
                       children: [
                         Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            GestureDetector(
-                              onTap: (photoUrl != null && photoUrl.isNotEmpty)
-                                  ? () => showFullScreenImage(context,
-                                      label: l.setDocPhoto, url: photoUrl)
-                                  : null,
-                              child: CircleAvatar(
-                                radius: 48,
-                                backgroundColor: AppColors.indigoMid,
-                                backgroundImage: (photoUrl != null && photoUrl.isNotEmpty)
-                                    ? NetworkImage(photoUrl)
-                                    : null,
-                                child: (photoUrl == null || photoUrl.isEmpty)
-                                    ? Text(
-                                        (name?.isNotEmpty ?? false) ? name![0].toUpperCase() : '🪔',
-                                        style: AppTextStyles.display(size: 30),
-                                      )
-                                    : null,
+                            // Soft outer ring.
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color: AppColors.gold.withValues(alpha: 0.12), width: 1),
+                              ),
+                              // Gold ring wrapping the avatar.
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: AppColors.gold.withValues(alpha: 0.4), width: 2),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: AppColors.goldHalo,
+                                      blurRadius: 24,
+                                      spreadRadius: -4,
+                                    ),
+                                  ],
+                                ),
+                                child: GestureDetector(
+                                  onTap: (photoUrl != null && photoUrl.isNotEmpty)
+                                      ? () => showFullScreenImage(context,
+                                          label: l.setDocPhoto, url: photoUrl)
+                                      : null,
+                                  child: CircleAvatar(
+                                    radius: 48,
+                                    backgroundColor: AppColors.indigoMid,
+                                    backgroundImage: (photoUrl != null && photoUrl.isNotEmpty)
+                                        ? NetworkImage(photoUrl)
+                                        : null,
+                                    child: (photoUrl == null || photoUrl.isEmpty)
+                                        ? Text(
+                                            (name?.isNotEmpty ?? false)
+                                                ? name![0].toUpperCase()
+                                                : '🪔',
+                                            style: AppTextStyles.display(size: 30),
+                                          )
+                                        : null,
+                                  ),
+                                ),
                               ),
                             ),
                             Positioned(
                               right: 0,
                               bottom: 0,
-                              child: Material(
-                                color: AppColors.saffron,
-                                shape: const CircleBorder(),
-                                child: InkWell(
-                                  customBorder: const CircleBorder(),
-                                  onTap: _uploading ? null : _pickAvatar,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: _uploading
-                                        ? const SizedBox(
-                                            width: 16, height: 16,
-                                            child: CircularProgressIndicator(
-                                                strokeWidth: 2, color: Colors.white))
-                                        : const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: AppColors.indigoVoid, width: 2),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: AppColors.saffronHalo,
+                                      blurRadius: 14,
+                                      spreadRadius: -3,
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: AppColors.saffron,
+                                  shape: const CircleBorder(),
+                                  child: InkWell(
+                                    customBorder: const CircleBorder(),
+                                    onTap: _uploading ? null : _pickAvatar,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: _uploading
+                                          ? const SizedBox(
+                                              width: 16, height: 16,
+                                              child: CircularProgressIndicator(
+                                                  strokeWidth: 2, color: Colors.white))
+                                          : const Icon(Icons.camera_alt,
+                                              size: 16, color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -236,63 +280,67 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  _sectionTitle(l.setAboutYou),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _name,
-                    decoration: InputDecoration(labelText: l.setDisplayName),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _bio,
-                    maxLines: 4,
-                    maxLength: 2000,
-                    decoration: InputDecoration(
-                      labelText: l.setBio,
-                      alignLabelWithHint: true,
-                      hintText: l.setBioHint,
+                  SectionLabel(l.setAboutYou),
+                  PremiumCard(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _name,
+                          decoration: _dec(l.setDisplayName),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _bio,
+                          maxLines: 4,
+                          maxLength: 2000,
+                          decoration: _dec(
+                            l.setBio,
+                            hint: l.setBioHint,
+                            alignLabelWithHint: true,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        TextField(
+                          controller: _skills,
+                          decoration: _dec(
+                            l.setSkills,
+                            hint: l.setSkillsHint,
+                            helper: l.setCommaSeparated,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: _languages,
+                          decoration: _dec(
+                            l.setLanguagesField,
+                            hint: l.setLanguagesHint,
+                            helper: l.setCommaSeparated,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _skills,
-                    decoration: InputDecoration(
-                      labelText: l.setSkills,
-                      hintText: l.setSkillsHint,
-                      helperText: l.setCommaSeparated,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _languages,
-                    decoration: InputDecoration(
-                      labelText: l.setLanguagesField,
-                      hintText: l.setLanguagesHint,
-                      helperText: l.setCommaSeparated,
+                  SectionLabel(l.setCharges),
+                  PremiumCard(
+                    child: Column(
+                      children: [
+                        _rateField(_chat, l.setChatRate, l.setPerMessage),
+                        const SizedBox(height: 16),
+                        _rateField(_call, l.setCallRate, l.setPerMinute),
+                        const SizedBox(height: 16),
+                        _rateField(_video, l.setVideoRate, l.setPerMinute),
+                        const SizedBox(height: 16),
+                        _rateField(_superChat, l.setSuperChatRate, l.setPerSuperChat,
+                            errorText: _superChatError),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 28),
-                  _sectionTitle(l.setCharges),
-                  const SizedBox(height: 12),
-                  _rateField(_chat, l.setChatRate, l.setPerMessage),
-                  const SizedBox(height: 12),
-                  _rateField(_call, l.setCallRate, l.setPerMinute),
-                  const SizedBox(height: 12),
-                  _rateField(_video, l.setVideoRate, l.setPerMinute),
-                  const SizedBox(height: 12),
-                  _rateField(_superChat, l.setSuperChatRate, l.setPerSuperChat,
-                      errorText: _superChatError),
-                  const SizedBox(height: 28),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                  PremiumPrimaryButton(
+                    label: _saving ? l.setSaving : l.setSaveChanges,
+                    icon: Icons.check,
                     onPressed: _saving ? null : _save,
-                    icon: _saving
-                        ? const SizedBox(
-                            width: 18, height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : const Icon(Icons.check),
-                    label: Text(_saving ? l.setSaving : l.setSaveChanges),
                   ),
                 ],
               ),
@@ -373,8 +421,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _ => key,
       };
 
-  Widget _sectionTitle(String text) =>
-      Text(text, style: AppTextStyles.heading(size: 16, color: AppColors.copperLight));
+  /// Shared premium field decoration — gold label, filled glassy surface,
+  /// soft copper hairline that warms to saffron on focus. Purely visual; the
+  /// fields keep their own controllers, formatters and validators.
+  InputDecoration _dec(
+    String label, {
+    String? hint,
+    String? helper,
+    String? suffix,
+    String? errorText,
+    bool alignLabelWithHint = false,
+  }) {
+    OutlineInputBorder border(Color color, [double width = 1]) => OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: color, width: width),
+        );
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      helperText: helper,
+      suffixText: suffix,
+      errorText: errorText,
+      alignLabelWithHint: alignLabelWithHint,
+      filled: true,
+      fillColor: AppColors.surface1,
+      labelStyle: AppTextStyles.label(size: 13, color: AppColors.gold),
+      floatingLabelStyle: AppTextStyles.label(size: 13, color: AppColors.saffron),
+      suffixStyle: AppTextStyles.label(size: 12, color: AppColors.gold),
+      hintStyle: AppTextStyles.body(size: 13, color: AppColors.ivoryFaint),
+      helperStyle: AppTextStyles.body(size: 11, color: AppColors.ivoryDim),
+      enabledBorder: border(AppColors.borderSoft),
+      border: border(AppColors.borderSoft),
+      focusedBorder: border(AppColors.saffron, 1.5),
+    );
+  }
 
   Widget _rateField(TextEditingController c, String label, String suffix,
           {String? errorText}) =>
@@ -382,7 +462,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         controller: c,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-        decoration:
-            InputDecoration(labelText: label, suffixText: suffix, errorText: errorText),
+        decoration: _dec(label, suffix: suffix, errorText: errorText),
       );
 }
