@@ -1,6 +1,17 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- MEDIA_PROJECTION is pulled in by the Agora SDK for screen-sharing, which
+         this app never does (only camera/audio video calls). Removed from the
+         merged manifest so Google Play does not require a media-projection
+         foreground-service declaration.
+         NOTE: FOREGROUND_SERVICE_PHONE_CALL is intentionally KEPT — the astrologer
+         app uses flutter_callkit_incoming to ring/answer VoIP calls, which runs a
+         phone-call foreground service. Declare it in Play Console as
+         "Phone call → Voice over Internet Protocol (VoIP), telecom APIs". -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" tools:node="remove"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
     <uses-permission android:name="android.permission.CAMERA"/>
