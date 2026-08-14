@@ -3,6 +3,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../support_repository.dart';
 
@@ -82,6 +83,13 @@ class _TicketThreadScreenState extends State<TicketThreadScreen> {
       appBar: AppBar(
         title: Text(t?.subject ?? l.supportTicket,
             maxLines: 1, overflow: TextOverflow.ellipsis),
+        actions: [
+          if (t != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Center(child: _statusChip(l, t.status)),
+            ),
+        ],
       ),
       body: SafeArea(
         child: CenteredMaxWidth(
@@ -149,6 +157,15 @@ class _TicketThreadScreenState extends State<TicketThreadScreen> {
   }
 }
 
+StatusChip _statusChip(AppLocalizations l, String status) {
+  final (label, tone) = switch (status) {
+    'closed' => (l.supportStatusClosed, ChipTone.muted),
+    'pending' => (l.supportStatusPending, ChipTone.info),
+    _ => (l.supportStatusOpen, ChipTone.warn),
+  };
+  return StatusChip(label, tone: tone);
+}
+
 class _Bubble extends StatelessWidget {
   const _Bubble({required this.message});
   final TicketMessage message;
@@ -161,21 +178,45 @@ class _Bubble extends StatelessWidget {
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.78,
         ),
         decoration: BoxDecoration(
-          color: mine ? AppColors.copperGlow : AppColors.surface1,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSoft),
+          gradient: mine
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.saffronGlow, AppColors.copperGlow],
+                )
+              : LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.surface2, AppColors.surface1],
+                ),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: Radius.circular(mine ? 16 : 4),
+            bottomRight: Radius.circular(mine ? 4 : 16),
+          ),
+          border: Border.all(
+            color: mine
+                ? AppColors.saffron.withValues(alpha: 0.34)
+                : AppColors.borderSoft,
+          ),
         ),
         child: Column(
           crossAxisAlignment:
               mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(mine ? l.supportSenderYou : l.supportSenderSupport,
-                style: AppTextStyles.label(size: 10, color: AppColors.ivoryDim)),
+                style: AppTextStyles.label(
+                    size: 10,
+                    weight: FontWeight.w700,
+                    color: mine
+                        ? AppColors.saffronBright
+                        : AppColors.copperLight)),
             const SizedBox(height: 4),
             Text(message.body, style: AppTextStyles.body(size: 14)),
           ],

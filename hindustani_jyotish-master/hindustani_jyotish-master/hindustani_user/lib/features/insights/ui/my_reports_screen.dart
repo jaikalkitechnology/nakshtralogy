@@ -331,77 +331,78 @@ class _ReportRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final date = _dateLabel();
-    return InkWell(
-      onTap: () => _open(context),
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderMid),
-      ),
-      child: Row(
-        children: [
-          Icon(_reportIcon(report.type), color: AppColors.saffron),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // "Planet Position — Rahul Sharma": the subject's name sits
-                // IN the title line, so whose report it is reads at a
-                // glance without opening the PDF. The name half is gold to
-                // stand apart from the service name.
-                RichText(
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(children: [
-                    TextSpan(
-                      text: reportTypeName(l, report.type),
-                      style: AppTextStyles.body(
-                          size: 15, weight: FontWeight.w700),
-                    ),
-                    if (report.subjectName != null)
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: PremiumCard(
+        onTap: () => _open(context),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconTile(_reportIcon(report.type), tone: TileTone.saffron),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // "Planet Position — Rahul Sharma": the subject's name sits
+                  // IN the title line, so whose report it is reads at a
+                  // glance without opening the PDF. The name half is gold to
+                  // stand apart from the service name.
+                  RichText(
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(children: [
                       TextSpan(
-                        text: ' — ${report.subjectName}',
+                        text: reportTypeName(l, report.type),
                         style: AppTextStyles.body(
-                            size: 15,
-                            weight: FontWeight.w700,
-                            color: AppColors.gold),
+                            size: 15, weight: FontWeight.w700),
                       ),
-                  ]),
-                ),
-                if (date != null) ...[
-                  const SizedBox(height: 2),
-                  Text(date,
-                      style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
+                      if (report.subjectName != null)
+                        TextSpan(
+                          text: ' — ${report.subjectName}',
+                          style: AppTextStyles.body(
+                              size: 15,
+                              weight: FontWeight.w700,
+                              color: AppColors.gold),
+                        ),
+                    ]),
+                  ),
+                  if (date != null || report.amount != null) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (date != null)
+                          StatusChip(date,
+                              tone: ChipTone.muted,
+                              icon: Icons.schedule_outlined),
+                        if (report.amount != null)
+                          StatusChip('₹${report.amount}',
+                              tone: ChipTone.warn),
+                      ],
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          if (report.amount != null)
-            Text('₹${report.amount}',
-                style: AppTextStyles.mono(size: 13, color: AppColors.ivory)),
-          if (report.pdfUrl != null) ...[
-            const SizedBox(width: 4),
-            IconButton(
-              tooltip: l.reportsOpenPdf,
-              icon: const Icon(Icons.picture_as_pdf_outlined,
-                  color: AppColors.gold),
-              onPressed: () => _openPdf(context),
-            ),
-            IconButton(
-              tooltip: l.insightSharePdf,
-              icon: const Icon(Icons.share_outlined,
-                  color: AppColors.copperLight),
-              onPressed: () => _sharePdf(context),
-            ),
+            if (report.pdfUrl != null) ...[
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: l.reportsOpenPdf,
+                icon: const Icon(Icons.picture_as_pdf_outlined,
+                    color: AppColors.gold),
+                onPressed: () => _openPdf(context),
+              ),
+              IconButton(
+                tooltip: l.insightSharePdf,
+                icon: const Icon(Icons.share_outlined,
+                    color: AppColors.copperLight),
+                onPressed: () => _sharePdf(context),
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
       ),
     );
   }
