@@ -4,6 +4,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../support_repository.dart';
 
@@ -97,39 +98,49 @@ class _FaqTabState extends State<_FaqTab> {
           return _Message(text: l.supportFaqEmpty);
         }
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
           itemCount: items.length,
           itemBuilder: (context, i) {
             final f = items[i];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: AppColors.surface1,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.borderSoft),
-              ),
-              child: Theme(
-                data: Theme.of(context)
-                    .copyWith(dividerColor: Colors.transparent),
-                child: ExpansionTile(
-                  iconColor: AppColors.copperLight,
-                  collapsedIconColor: AppColors.ivoryFaint,
-                  title: Text(f.question,
-                      style: AppTextStyles.body(size: 14)),
-                  subtitle: (f.category?.isNotEmpty ?? false)
-                      ? Text(f.category!,
-                          style: AppTextStyles.label(
-                              size: 11, color: AppColors.ivoryDim))
-                      : null,
-                  childrenPadding:
-                      const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  expandedAlignment: Alignment.centerLeft,
-                  expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(f.answer,
-                        style: AppTextStyles.body(
-                            size: 13, color: AppColors.ivoryDim)),
-                  ],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: PremiumCard(
+                padding: EdgeInsets.zero,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Theme(
+                    data: Theme.of(context)
+                        .copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      iconColor: AppColors.gold,
+                      collapsedIconColor: AppColors.ivoryFaint,
+                      tilePadding:
+                          const EdgeInsets.fromLTRB(14, 6, 14, 6),
+                      leading: const IconTile(Icons.help_outline,
+                          tone: TileTone.gold, size: 40),
+                      title: Text(f.question,
+                          style: AppTextStyles.body(
+                              size: 14, weight: FontWeight.w600)),
+                      subtitle: (f.category?.isNotEmpty ?? false)
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Text(f.category!,
+                                  style: AppTextStyles.label(
+                                      size: 11,
+                                      color: AppColors.ivoryDim)),
+                            )
+                          : null,
+                      childrenPadding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      expandedAlignment: Alignment.centerLeft,
+                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(f.answer,
+                            style: AppTextStyles.body(
+                                size: 13, color: AppColors.ivoryDim)),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             );
@@ -185,36 +196,44 @@ class _TicketsTabState extends State<_TicketsTab> {
     final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.saffron,
-        foregroundColor: AppColors.indigoDeep,
-        onPressed: _raise,
-        icon: const Icon(Icons.add),
-        label: Text(l.supportRaiseTicket),
-      ),
-      body: RefreshIndicator(
-        color: AppColors.saffron,
-        onRefresh: _refresh,
-        child: FutureBuilder<List<SupportTicket>>(
-          future: _future,
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.saffron),
-              );
-            }
-            final items = snap.data ?? const [];
-            if (items.isEmpty) {
-              return _Message(text: l.supportTicketsEmpty);
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-              itemCount: items.length,
-              itemBuilder: (context, i) =>
-                  _TicketTile(ticket: items[i], onReturn: _refresh),
-            );
-          },
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              color: AppColors.saffron,
+              onRefresh: _refresh,
+              child: FutureBuilder<List<SupportTicket>>(
+                future: _future,
+                builder: (context, snap) {
+                  if (snap.connectionState != ConnectionState.done) {
+                    return const Center(
+                      child:
+                          CircularProgressIndicator(color: AppColors.saffron),
+                    );
+                  }
+                  final items = snap.data ?? const [];
+                  if (items.isEmpty) {
+                    return _Message(text: l.supportTicketsEmpty);
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+                    itemCount: items.length,
+                    itemBuilder: (context, i) =>
+                        _TicketTile(ticket: items[i], onReturn: _refresh),
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: PremiumPrimaryButton(
+              label: l.supportRaiseTicket,
+              icon: Icons.add,
+              onPressed: _raise,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -227,29 +246,55 @@ class _TicketTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: ListTile(
-        title: Text(ticket.subject,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.body(size: 14)),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: _StatusChip(status: ticket.status),
-        ),
-        trailing: Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+    final updated = ticket.updatedAt;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: PremiumCard(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         onTap: () async {
           await context.push('/support/tickets/${ticket.id}');
           await onReturn();
         },
+        child: Row(
+          children: [
+            const IconTile(Icons.confirmation_number_outlined,
+                tone: TileTone.saffron, size: 40),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(ticket.subject,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.body(
+                          size: 14, weight: FontWeight.w600)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      _StatusChip(status: ticket.status),
+                      if (updated != null) ...[
+                        const SizedBox(width: 10),
+                        Text(_fmtDate(updated),
+                            style: AppTextStyles.label(
+                                size: 11, color: AppColors.ivoryFaint)),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+          ],
+        ),
       ),
     );
+  }
+
+  static String _fmtDate(DateTime d) {
+    final local = d.toLocal();
+    return '${local.day}/${local.month}/${local.year}';
   }
 }
 
@@ -260,21 +305,24 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final (label, color) = switch (status) {
-      'closed' => (l.supportStatusClosed, AppColors.ivoryDim),
-      'pending' => (l.supportStatusPending, AppColors.saffronBright),
-      _ => (l.supportStatusOpen, AppColors.copperLight),
+    final (label, tone, icon) = switch (status) {
+      'closed' => (
+          l.supportStatusClosed,
+          ChipTone.muted,
+          Icons.check_circle_outline,
+        ),
+      'pending' => (
+          l.supportStatusPending,
+          ChipTone.info,
+          Icons.hourglass_bottom,
+        ),
+      _ => (
+          l.supportStatusOpen,
+          ChipTone.warn,
+          Icons.mark_chat_unread_outlined,
+        ),
     };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-      ),
-      child: Text(label,
-          style: AppTextStyles.label(size: 11, color: color)),
-    );
+    return StatusChip(label, tone: tone, icon: icon);
   }
 }
 
@@ -381,10 +429,21 @@ class _Message extends StatelessWidget {
     return ListView(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 80, 24, 24),
-          child: Text(text,
-              textAlign: TextAlign.center,
-              style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
+          padding: const EdgeInsets.fromLTRB(24, 72, 24, 24),
+          child: PremiumCard(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+            child: Column(
+              children: [
+                const IconTile(Icons.support_agent,
+                    tone: TileTone.gold, size: 52),
+                const SizedBox(height: 16),
+                Text(text,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.body(
+                        size: 14, color: AppColors.ivoryDim)),
+              ],
+            ),
+          ),
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../models/portal_activity_item.dart';
 import '../portal_repository.dart';
@@ -80,23 +81,13 @@ class _HistoryView extends StatelessWidget {
         ],
       );
 
-  /// Refined empty state — icon medallion + message instead of a bare Text.
+  /// Refined empty state — glowing icon tile + message instead of a bare Text.
   Widget _emptyState(IconData icon, String text) => ListView(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         children: [
           const SizedBox(height: 140),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.surface2,
-                border: Border.all(color: AppColors.borderSoft),
-              ),
-              child: Icon(icon, size: 40, color: AppColors.ivoryFaint),
-            ),
-          ),
-          const SizedBox(height: 18),
+          Center(child: IconTile(icon, tone: TileTone.gold, size: 68)),
+          const SizedBox(height: 20),
           Text(text,
               textAlign: TextAlign.center,
               style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
@@ -115,76 +106,67 @@ class _HistoryRow extends StatelessWidget {
   const _HistoryRow({required this.item});
   final PortalActivityItem item;
 
-  IconData get _icon => switch (item.type) {
-        ConsultationType.call => Icons.call,
-        ConsultationType.video => Icons.videocam_outlined,
-        _ => Icons.chat_bubble_outline,
+  /// Icon + tile tone reflecting the consultation TYPE.
+  (IconData, TileTone) get _typeTile => switch (item.type) {
+        ConsultationType.call => (Icons.call, TileTone.saffron),
+        ConsultationType.video => (Icons.videocam_outlined, TileTone.gold),
+        _ => (Icons.chat_bubble_outline, TileTone.info),
       };
 
-  ({String label, Color color}) get _statusInfo => switch (item.status) {
-        ConsultationStatus.completed => (label: 'Completed', color: AppColors.success),
-        ConsultationStatus.declined => (label: 'Declined', color: AppColors.danger),
-        ConsultationStatus.cancelled => (label: 'Cancelled', color: AppColors.danger),
-        ConsultationStatus.expired => (label: 'Expired', color: AppColors.ivoryFaint),
-        ConsultationStatus.inProgress => (label: 'In progress', color: AppColors.gold),
-        ConsultationStatus.accepted => (label: 'Accepted', color: AppColors.gold),
-        _ => (label: 'Pending', color: AppColors.gold),
+  ({String label, ChipTone tone}) get _statusInfo => switch (item.status) {
+        ConsultationStatus.completed => (label: 'Completed', tone: ChipTone.success),
+        ConsultationStatus.declined => (label: 'Declined', tone: ChipTone.warn),
+        ConsultationStatus.cancelled => (label: 'Cancelled', tone: ChipTone.warn),
+        ConsultationStatus.expired => (label: 'Expired', tone: ChipTone.muted),
+        ConsultationStatus.inProgress => (label: 'In progress', tone: ChipTone.info),
+        ConsultationStatus.accepted => (label: 'Accepted', tone: ChipTone.info),
+        _ => (label: 'Pending', tone: ChipTone.muted),
       };
 
   @override
   Widget build(BuildContext context) {
     final status = _statusInfo;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderMid),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: AppColors.saffron.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(_icon, size: 20, color: AppColors.saffron),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (item.counterpartName != null && item.counterpartName!.trim().isNotEmpty)
-                      ? item.counterpartName!
-                      : 'Seeker',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
-                ),
-                const SizedBox(height: 2),
-                Text(_dateLabel(item.timestamp),
+    final (icon, tone) = _typeTile;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: PremiumCard(
+        child: Row(
+          children: [
+            IconTile(icon, tone: tone),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (item.counterpartName != null && item.counterpartName!.trim().isNotEmpty)
+                        ? item.counterpartName!
+                        : 'Seeker',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
+                    style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(_dateLabel(item.timestamp),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('₹${item.displayAmount}',
+                    style: AppTextStyles.mono(
+                        size: 14, weight: FontWeight.w700, color: AppColors.success)),
+                const SizedBox(height: 6),
+                StatusChip(status.label, tone: status.tone),
               ],
             ),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('₹${item.displayAmount}',
-                  style: AppTextStyles.mono(size: 13, color: AppColors.success)),
-              const SizedBox(height: 4),
-              Text(status.label,
-                  style: AppTextStyles.label(size: 11, color: status.color)),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -202,61 +184,51 @@ class _GiftRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(_isGift ? Icons.card_giftcard : Icons.push_pin_outlined,
-                size: 20, color: AppColors.gold),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (item.counterpartName != null && item.counterpartName!.trim().isNotEmpty)
-                      ? item.counterpartName!
-                      : 'Seeker',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _isGift
-                      ? (item.giftName != null ? 'Sent a gift · ${item.giftName}' : 'Sent a gift')
-                      : 'Super Chat',
-                  style: AppTextStyles.body(size: 12, color: AppColors.copperLight),
-                ),
-                if (!_isGift && item.message != null && item.message!.trim().isNotEmpty) ...[
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: PremiumCard(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconTile(_isGift ? Icons.card_giftcard : Icons.push_pin_outlined,
+                tone: TileTone.gold),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (item.counterpartName != null && item.counterpartName!.trim().isNotEmpty)
+                        ? item.counterpartName!
+                        : 'Seeker',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    _isGift
+                        ? (item.giftName != null ? 'Sent a gift · ${item.giftName}' : 'Sent a gift')
+                        : 'Super Chat',
+                    style: AppTextStyles.body(size: 12, color: AppColors.copperLight),
+                  ),
+                  if (!_isGift && item.message != null && item.message!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text('"${item.message}"',
+                        style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+                  ],
                   const SizedBox(height: 4),
-                  Text('"${item.message}"',
-                      style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+                  Text(_dateLabel(item.timestamp),
+                      style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
                 ],
-                const SizedBox(height: 2),
-                Text(_dateLabel(item.timestamp),
-                    style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text('+₹${item.displayAmount}',
-              style: AppTextStyles.mono(size: 13, color: AppColors.success)),
-        ],
+            const SizedBox(width: 10),
+            Text('+₹${item.displayAmount}',
+                style: AppTextStyles.mono(
+                    size: 14, weight: FontWeight.w700, color: AppColors.success)),
+          ],
+        ),
       ),
     );
   }

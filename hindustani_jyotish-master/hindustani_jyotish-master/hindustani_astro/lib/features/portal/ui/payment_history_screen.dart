@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../portal_repository.dart';
 
@@ -61,9 +62,20 @@ class _PaymentHistoryView extends StatelessWidget {
       return _emptyState(Icons.account_balance_wallet_outlined, 'No withdrawal requests yet.');
     }
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      itemCount: items.length,
-      itemBuilder: (_, i) => _PayoutRow(p: items[i]),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+      itemCount: items.length + 1,
+      itemBuilder: (_, i) {
+        if (i == 0) {
+          return SectionLabel(
+            'Withdrawals',
+            trailing: StatusChip('${items.length}', tone: ChipTone.muted),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _PayoutRow(p: items[i - 1]),
+        );
+      },
     );
   }
 
@@ -76,26 +88,20 @@ class _PaymentHistoryView extends StatelessWidget {
         ],
       );
 
-  /// Refined empty state — icon medallion + message instead of a bare Text.
+  /// Friendly empty state — a glowing gold medallion above the message.
   Widget _emptyState(IconData icon, String text) => ListView(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         children: [
-          const SizedBox(height: 140),
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.surface2,
-                border: Border.all(color: AppColors.borderSoft),
-              ),
-              child: Icon(icon, size: 40, color: AppColors.ivoryFaint),
-            ),
-          ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 120),
+          Center(child: IconTile(icon, tone: TileTone.gold, size: 76)),
+          const SizedBox(height: 22),
           Text(text,
               textAlign: TextAlign.center,
               style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
+          const SizedBox(height: 6),
+          Text('Your payout requests will appear here.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.body(size: 12.5, color: AppColors.ivoryFaint)),
         ],
       );
 }
@@ -104,15 +110,36 @@ class _PayoutRow extends StatelessWidget {
   const _PayoutRow({required this.p});
   final Map<String, dynamic> p;
 
-  ({String label, Color color}) get _statusInfo {
+  /// Status pill. The shared [StatusChip] has no danger tone, so 'failed'
+  /// renders as an inline danger-toned pill matching the same shape.
+  Widget _statusChip() {
     final status = '${p['status'] ?? ''}';
     return switch (status) {
-      'paid' => (label: 'Paid', color: AppColors.success),
-      'processing' => (label: 'Processing', color: AppColors.gold),
-      'failed' => (label: 'Failed', color: AppColors.danger),
-      _ => (label: 'Requested', color: AppColors.info),
+      'paid' => const StatusChip('Paid', tone: ChipTone.success, icon: Icons.check_circle_rounded),
+      'processing' =>
+        const StatusChip('Processing', tone: ChipTone.warn, icon: Icons.autorenew_rounded),
+      'failed' => _dangerChip('Failed', Icons.error_rounded),
+      _ => const StatusChip('Requested', tone: ChipTone.info, icon: Icons.schedule_rounded),
     };
   }
+
+  Widget _dangerChip(String label, IconData icon) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.danger.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: AppColors.danger.withValues(alpha: 0.32)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: AppColors.danger),
+            const SizedBox(width: 5),
+            Text(label,
+                style: AppTextStyles.label(size: 11, weight: FontWeight.w700, color: AppColors.danger)),
+          ],
+        ),
+      );
 
   String _dateLabel() {
     final raw = p['paid_at'] ?? p['created_at'];
@@ -125,50 +152,55 @@ class _PayoutRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = _statusInfo;
     final last4 = p['bank_account_last4'] as String?;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderMid),
-      ),
+    final title = (last4 != null && last4.isNotEmpty) ? 'Bank ••••$last4' : 'Withdrawal';
+    final date = _dateLabel();
+    return PremiumCard(
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: AppColors.saffron.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: const Icon(Icons.account_balance, size: 20, color: AppColors.saffron),
-          ),
-          const SizedBox(width: 12),
+          // A payout is money leaving the balance → outbound saffron arrow.
+          const IconTile(Icons.arrow_upward_rounded, tone: TileTone.saffron, size: 42),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  (last4 != null && last4.isNotEmpty) ? 'Bank ••••$last4' : 'Withdrawal',
+                  title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
                 ),
-                const SizedBox(height: 2),
-                Text(_dateLabel(), style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
+                if (date.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.schedule_rounded, size: 12, color: AppColors.ivoryFaint),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          date,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.mono(size: 11.5, color: AppColors.ivoryDim),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              // Payout amount is an outflow → neutral ivory tabular figures.
               Text('₹${p['amount'] ?? '0.00'}',
-                  style: AppTextStyles.mono(size: 13, color: AppColors.ivory)),
-              const SizedBox(height: 4),
-              Text(status.label, style: AppTextStyles.label(size: 11, color: status.color)),
+                  style: AppTextStyles.mono(
+                      size: 15, weight: FontWeight.w700, color: AppColors.ivory)),
+              const SizedBox(height: 6),
+              _statusChip(),
             ],
           ),
         ],

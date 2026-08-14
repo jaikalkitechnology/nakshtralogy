@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../l10n/locale_cubit.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/full_screen_image_viewer.dart';
+import '../../../shared/premium_ui.dart';
 import '../../auth/astro_session_cubit.dart';
 import '../../portal/portal_repository.dart';
 
@@ -276,13 +277,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 28),
               _sectionTitle(l.appLanguageSection),
-              const SizedBox(height: 12),
               const _LanguageTile(),
-              const SizedBox(height: 28),
               _sectionTitle(l.setCharges),
-              const SizedBox(height: 12),
               _rateField(_chat, l.setChatRate, l.setPerMessage),
               const SizedBox(height: 12),
               _rateField(_call, l.setCallRate, l.setPerMinute),
@@ -291,9 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 12),
               _rateField(_superChat, l.setSuperChatRate, l.setPerSuperChat,
                   errorText: _superChatError),
-              const SizedBox(height: 28),
               _sectionTitle(l.setAboutYou),
-              const SizedBox(height: 12),
               TextField(
                 controller: _name,
                 decoration: InputDecoration(labelText: l.setDisplayName),
@@ -327,20 +322,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   helperText: l.setCommaSeparated,
                 ),
               ),
-              const SizedBox(height: 28),
               _sectionTitle(l.setKycDocsTitle),
-              const SizedBox(height: 12),
               _kycDocumentsSection(l),
               const SizedBox(height: 28),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+              PremiumPrimaryButton(
+                label: _saving ? l.setSaving : l.setSaveChanges,
+                icon: Icons.check,
                 onPressed: _saving ? null : _save,
-                icon: _saving
-                    ? const SizedBox(
-                        width: 18, height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : const Icon(Icons.check),
-                label: Text(_saving ? l.setSaving : l.setSaveChanges),
               ),
             ],
               ),
@@ -560,15 +548,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       );
     }
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: body,
-    );
+    return PremiumCard(child: body);
   }
 
   /// One labeled document thumbnail; a null [url] renders a "Not uploaded"
@@ -656,8 +636,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _openDocViewer(String label, String url) =>
       showFullScreenImage(context, label: label, url: url);
 
-  Widget _sectionTitle(String text) =>
-      Text(text, style: AppTextStyles.heading(size: 16, color: AppColors.copperLight));
+  Widget _sectionTitle(String text) => SectionLabel(text);
 
   Widget _rateField(TextEditingController c, String label, String suffix,
           {String? errorText}) =>
@@ -727,26 +706,23 @@ class _LanguageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final locale = context.watch<LocaleCubit>().state;
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: ListTile(
-        leading: const Icon(Icons.translate, color: AppColors.copperLight),
-        title: Text(l.appLanguage, style: AppTextStyles.body(size: 15)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              _currentLabel(l, locale),
-              style: AppTextStyles.label(size: 12, color: AppColors.saffronBright),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
-          ],
-        ),
-        onTap: () => _open(context),
+    return PremiumCard(
+      onTap: () => _open(context),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          const IconTile(Icons.translate, tone: TileTone.info),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(l.appLanguage, style: AppTextStyles.body(size: 15)),
+          ),
+          Text(
+            _currentLabel(l, locale),
+            style: AppTextStyles.label(size: 12, color: AppColors.saffronBright),
+          ),
+          const SizedBox(width: 4),
+          Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+        ],
       ),
     );
   }

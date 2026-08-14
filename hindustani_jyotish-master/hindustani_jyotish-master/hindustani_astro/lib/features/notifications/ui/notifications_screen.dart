@@ -4,6 +4,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../notification_repository.dart';
 
@@ -153,7 +154,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       return _scrollMessage(_error!, AppColors.danger);
     }
     if (_items.isEmpty) {
-      return _scrollMessage(l.notificationsEmpty, AppColors.ivoryFaint);
+      return _emptyState(l);
     }
     return NotificationListener<ScrollNotification>(
       onNotification: (sn) {
@@ -187,6 +188,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _scrollMessage(String text, Color color) => ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           const SizedBox(height: 160),
           Center(
@@ -194,6 +196,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               text,
               textAlign: TextAlign.center,
               style: AppTextStyles.body(color: color),
+            ),
+          ),
+        ],
+      );
+
+  Widget _emptyState(AppLocalizations l) => ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          const SizedBox(height: 120),
+          Center(
+            child: Column(
+              children: [
+                const IconTile(Icons.notifications_none,
+                    tone: TileTone.gold, size: 64),
+                const SizedBox(height: 18),
+                Text(
+                  l.notificationsEmpty,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.body(color: AppColors.ivoryDim),
+                ),
+              ],
             ),
           ),
         ],
@@ -212,80 +235,90 @@ class _NotificationRow extends StatelessWidget {
     return '${two(d.day)}/${two(d.month)}/${d.year} ${two(d.hour)}:${two(d.minute)}';
   }
 
+  /// Maps the notification's [type] to a leading icon + tile tone so each
+  /// row reads at a glance. Presentation only — never touches the payload.
+  (IconData, TileTone) _visual() {
+    final t = notification.type;
+    if (t.startsWith('consultation')) {
+      return (Icons.forum_outlined, TileTone.info);
+    }
+    if (t.startsWith('payout')) {
+      return (Icons.account_balance_wallet_outlined, TileTone.saffron);
+    }
+    if (t == 'balance_credited') {
+      return (Icons.savings_outlined, TileTone.saffron);
+    }
+    return (Icons.notifications_none, TileTone.gold);
+  }
+
   @override
   Widget build(BuildContext context) {
     final n = notification;
     final unread = !n.isRead;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: unread
-              ? AppColors.saffron.withValues(alpha: 0.08)
-              : AppColors.surface1,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: unread
-                ? AppColors.saffron.withValues(alpha: 0.4)
-                : AppColors.borderMid,
-          ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Icon(
-                unread ? Icons.notifications_active : Icons.notifications_none,
-                color: unread ? AppColors.saffron : AppColors.ivoryDim,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    n.title,
-                    style: AppTextStyles.body(
-                      size: 14,
-                      weight: unread ? FontWeight.w700 : FontWeight.w500,
+    final (icon, tone) = _visual();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Opacity(
+        opacity: unread ? 1 : 0.66,
+        child: PremiumCard(
+          onTap: onTap,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconTile(icon, tone: tone),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            n.title,
+                            style: AppTextStyles.body(
+                              size: 14,
+                              weight:
+                                  unread ? FontWeight.w700 : FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        if (unread) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: AppColors.saffron,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ),
-                  if (n.body != null && n.body!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      n.body!,
-                      style: AppTextStyles.body(
-                          size: 13, color: AppColors.ivoryDim),
-                    ),
+                    if (n.body != null && n.body!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        n.body!,
+                        style: AppTextStyles.body(
+                            size: 13, color: AppColors.ivoryFaint),
+                      ),
+                    ],
+                    if (_timeLabel().isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _timeLabel(),
+                        style: AppTextStyles.label(
+                            size: 11, color: AppColors.ivoryFaint),
+                      ),
+                    ],
                   ],
-                  if (_timeLabel().isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      _timeLabel(),
-                      style: AppTextStyles.label(
-                          size: 11, color: AppColors.ivoryFaint),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            if (unread)
-              Container(
-                margin: const EdgeInsets.only(left: 8, top: 4),
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.saffron,
-                  shape: BoxShape.circle,
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

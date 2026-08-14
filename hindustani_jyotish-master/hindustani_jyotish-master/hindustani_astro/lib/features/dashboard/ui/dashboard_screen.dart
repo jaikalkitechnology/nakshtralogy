@@ -6,6 +6,7 @@ import 'package:hj_core/hj_core.dart';
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/responsive.dart';
+import '../../../shared/premium_ui.dart';
 import '../../auth/astro_session_cubit.dart';
 import '../../notifications/notification_bell.dart';
 import '../../portal/portal_repository.dart';
@@ -180,31 +181,22 @@ class _Hero extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final photoUrl = astro?.photoUrl;
     final name = astro?.displayName ?? l.profileAstrologer;
-    return Container(
+    return HeroGradientCard(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.indigoSoft, AppColors.indigoMid, AppColors.indigoDeep],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.borderMid),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(2.5),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.borderMid, width: 1.5),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.gold.withValues(alpha: 0.7),
+                  AppColors.saffron.withValues(alpha: 0.5),
+                ],
+              ),
             ),
             child: CircleAvatar(
             radius: 30,
@@ -222,10 +214,11 @@ class _Hero extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l.dashWelcomeBack, style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-                const SizedBox(height: 2),
+                Text(l.dashWelcomeBack,
+                    style: AppTextStyles.label(size: 11, color: AppColors.goldLight)),
+                const SizedBox(height: 3),
                 Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTextStyles.display(size: 22)),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     const Icon(Icons.star_rounded, size: 16, color: AppColors.gold),
@@ -271,13 +264,20 @@ class _Stats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final items = <(String, String, IconData, Color)>[
-      (l.statTodayEarnings, '₹${data['today_earnings']}', Icons.currency_rupee, AppColors.success),
-      (l.statBalance, '₹${data['available_balance']}', Icons.account_balance_wallet_outlined, AppColors.gold),
-      (l.statTodayConsults, '${data['today_consultations']}', Icons.today_outlined, AppColors.info),
-      (l.statTotalConsults, '${data['total_consultations']}', Icons.history, AppColors.ivory),
-      (l.statRating, (data['avg_rating'] ?? '0.00').toString(), Icons.star_rounded, AppColors.gold),
-      (l.statFollowers, '${data['follower_count']}', Icons.groups_outlined, AppColors.copperLight),
+    // (label, value, icon, valueColor, tileTone)
+    final items = <(String, String, IconData, Color, TileTone)>[
+      (l.statTodayEarnings, '₹${data['today_earnings']}', Icons.currency_rupee,
+          AppColors.success, TileTone.gold),
+      (l.statBalance, '₹${data['available_balance']}', Icons.account_balance_wallet_outlined,
+          AppColors.gold, TileTone.gold),
+      (l.statTodayConsults, '${data['today_consultations']}', Icons.today_outlined,
+          AppColors.ivory, TileTone.info),
+      (l.statTotalConsults, '${data['total_consultations']}', Icons.history,
+          AppColors.ivory, TileTone.info),
+      (l.statRating, (data['avg_rating'] ?? '0.00').toString(), Icons.star_rounded,
+          AppColors.gold, TileTone.gold),
+      (l.statFollowers, '${data['follower_count']}', Icons.groups_outlined,
+          AppColors.ivory, TileTone.saffron),
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -288,35 +288,33 @@ class _Stats extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          childAspectRatio: 1.7,
+          childAspectRatio: 1.55,
           children: [
             for (final i in items)
-              Container(
+              PremiumCard(
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [i.$4.withValues(alpha: 0.10), AppColors.surface1],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: i.$4.withValues(alpha: 0.22)),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(i.$3, size: 18, color: i.$4),
-                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(i.$1.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.label(
+                                  size: 10, color: AppColors.ivoryFaint)),
+                        ),
+                        const SizedBox(width: 8),
+                        IconTile(i.$3, tone: i.$5, size: 30),
+                      ],
+                    ),
+                    const Spacer(),
                     Text(i.$2,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.body(size: 18, weight: FontWeight.w700, color: i.$4)),
-                    const SizedBox(height: 2),
-                    Text(i.$1,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.label(size: 11, color: AppColors.ivoryDim)),
+                        style: AppTextStyles.display(size: 20, color: i.$4)),
                   ],
                 ),
               ),
@@ -336,38 +334,40 @@ class _OnlineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: online
-            ? [AppColors.success.withValues(alpha: 0.3), AppColors.indigoMid]
-            : [AppColors.indigoMid, AppColors.indigoSoft]),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: online ? AppColors.success.withValues(alpha: 0.4) : AppColors.borderSoft),
-        boxShadow: online
-            ? [
-                BoxShadow(
-                  color: AppColors.success.withValues(alpha: 0.16),
-                  blurRadius: 20,
-                  offset: const Offset(0, 6),
-                ),
-              ]
-            : null,
-      ),
+    return PremiumCard(
+      padding: const EdgeInsets.all(18),
       child: Row(
         children: [
+          IconTile(online ? Icons.podcasts : Icons.wifi_off_rounded,
+              tone: online ? TileTone.saffron : TileTone.info, size: 44),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(online ? l.dashOnline : l.dashOffline,
-                    style: AppTextStyles.heading(size: 18)),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(online ? l.dashOnline : l.dashOffline,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.heading(size: 18)),
+                    ),
+                    const SizedBox(width: 10),
+                    StatusChip(
+                      online ? l.dashOnline : l.dashOffline,
+                      tone: online ? ChipTone.success : ChipTone.muted,
+                      icon: online ? Icons.check_circle : Icons.circle_outlined,
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 4),
                 Text(online ? l.dashOnlineSubtitle : l.dashOfflineSubtitle,
                     style: AppTextStyles.body(size: 13, color: AppColors.ivoryDim)),
               ],
             ),
           ),
+          const SizedBox(width: 8),
           busy
               ? const SizedBox(width: 40, child: Center(child: CircularProgressIndicator(strokeWidth: 2)))
               : Switch(value: online, onChanged: onChanged, activeThumbColor: AppColors.success),
@@ -395,26 +395,58 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 22),
+      borderRadius: BorderRadius.circular(18),
+      child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: filled
-                ? [color.withValues(alpha: 0.24), color.withValues(alpha: 0.10)]
-                : [color.withValues(alpha: 0.08), AppColors.surface1],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: filled ? color.withValues(alpha: 0.5) : color.withValues(alpha: 0.25)),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: filled
+              ? [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.28),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                    spreadRadius: -8,
+                  ),
+                ]
+              : null,
         ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
-            Text(label, style: AppTextStyles.body(size: 14, weight: FontWeight.w600)),
-          ],
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: filled
+                  ? [color.withValues(alpha: 0.24), color.withValues(alpha: 0.10)]
+                  : [AppColors.surface2, AppColors.surface1],
+            ),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+                color: filled ? color.withValues(alpha: 0.5) : AppColors.borderSoft),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(-0.4, -0.5),
+                    radius: 1.1,
+                    colors: [
+                      color.withValues(alpha: 0.30),
+                      color.withValues(alpha: 0.08),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: color.withValues(alpha: 0.30)),
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(height: 10),
+              Text(label, style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+            ],
+          ),
         ),
       ),
     );
@@ -428,40 +460,25 @@ class _SettingsLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return InkWell(
+    return PremiumCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.copperLight.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.tune, size: 18, color: AppColors.copperLight),
+      child: Row(
+        children: [
+          const IconTile(Icons.tune, tone: TileTone.gold, size: 40),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l.dashSettings, style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(l.dashSettingsSubtitle,
+                    style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l.dashSettings, style: AppTextStyles.body(size: 14, weight: FontWeight.w600)),
-                  Text(l.dashSettingsSubtitle,
-                      style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.ivoryDim),
-          ],
-        ),
+          ),
+          Icon(Icons.chevron_right, color: AppColors.ivoryDim),
+        ],
       ),
     );
   }
