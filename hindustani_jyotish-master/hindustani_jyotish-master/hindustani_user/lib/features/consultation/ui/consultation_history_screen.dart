@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../consultation_repository.dart';
 
@@ -56,70 +57,107 @@ class _HistoryView extends StatelessWidget {
   ) {
     if (items == null) {
       final err = state.errorMessage;
-      if (err != null) return _scrollMessage(err, AppColors.danger);
+      if (err != null) {
+        return _emptyState(
+          icon: Icons.error_outline,
+          tone: TileTone.saffron,
+          title: err,
+          subtitle: 'Pull down to try again.',
+          titleColor: AppColors.danger,
+        );
+      }
       return const Center(
         child: CircularProgressIndicator(color: AppColors.saffron),
       );
     }
     if (items.isEmpty) {
-      return _scrollMessage('No consultations yet.', AppColors.ivoryFaint);
+      return _emptyState(
+        icon: Icons.history,
+        tone: TileTone.gold,
+        title: 'No consultations yet.',
+        subtitle: 'Your past chats, calls and video sessions will appear here.',
+      );
     }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: items.length,
-      itemBuilder: (_, i) => _HistoryRow(item: items[i]),
+      itemBuilder: (_, i) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: _HistoryRow(item: items[i]),
+      ),
     );
   }
 
-  Widget _scrollMessage(String text, Color color) => ListView(
-    children: [
-      const SizedBox(height: 160),
-      Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.body(color: color),
+  Widget _emptyState({
+    required IconData icon,
+    required TileTone tone,
+    required String title,
+    required String subtitle,
+    Color? titleColor,
+  }) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(28, 0, 28, 24),
+      children: [
+        const SizedBox(height: 120),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconTile(icon, tone: tone, size: 64),
+              const SizedBox(height: 20),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.heading(
+                  size: 17,
+                  color: titleColor ?? AppColors.ivory,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body(size: 13, color: AppColors.ivoryFaint),
+              ),
+            ],
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }
 
 class _HistoryRow extends StatelessWidget {
   const _HistoryRow({required this.item});
   final ActivityItem item;
 
-  IconData get _icon => switch (item.type) {
-    ConsultationType.chat => Icons.chat_bubble_outline,
-    ConsultationType.call => Icons.call,
-    ConsultationType.video => Icons.videocam_outlined,
-    null => Icons.chat_bubble_outline,
+  ({IconData icon, TileTone tone}) get _typeVisual => switch (item.type) {
+    ConsultationType.chat => (
+      icon: Icons.chat_bubble_outline,
+      tone: TileTone.info,
+    ),
+    ConsultationType.call => (icon: Icons.call, tone: TileTone.saffron),
+    ConsultationType.video => (
+      icon: Icons.videocam_outlined,
+      tone: TileTone.gold,
+    ),
+    null => (icon: Icons.chat_bubble_outline, tone: TileTone.info),
   };
 
-  ({String label, Color color}) get _statusInfo => switch (item.status) {
-    ConsultationStatus.completed => (
-      label: 'Completed',
-      color: AppColors.success,
-    ),
-    ConsultationStatus.declined => (
-      label: 'Declined',
-      color: AppColors.danger,
-    ),
-    ConsultationStatus.cancelled => (
-      label: 'Cancelled',
-      color: AppColors.danger,
-    ),
-    ConsultationStatus.expired => (
-      label: 'Expired',
-      color: AppColors.ivoryFaint,
-    ),
+  ({String label, ChipTone tone})? get _status => switch (item.status) {
+    ConsultationStatus.completed => (label: 'Completed', tone: ChipTone.success),
+    ConsultationStatus.declined => (label: 'Declined', tone: ChipTone.warn),
+    ConsultationStatus.cancelled => (label: 'Cancelled', tone: ChipTone.warn),
+    ConsultationStatus.expired => (label: 'Expired', tone: ChipTone.muted),
     ConsultationStatus.inProgress => (
       label: 'In progress',
-      color: AppColors.gold,
+      tone: ChipTone.info,
     ),
-    ConsultationStatus.accepted => (label: 'Accepted', color: AppColors.gold),
-    ConsultationStatus.requested => (label: 'Pending', color: AppColors.gold),
-    null => (label: '', color: AppColors.ivoryFaint),
+    ConsultationStatus.accepted => (label: 'Accepted', tone: ChipTone.info),
+    ConsultationStatus.requested => (label: 'Pending', tone: ChipTone.muted),
+    null => null,
   };
 
   String _dateLabel() {
@@ -130,20 +168,14 @@ class _HistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = _statusInfo;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderMid),
-      ),
+    final status = _status;
+    final visual = _typeVisual;
+    return PremiumCard(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(_icon, color: AppColors.saffron),
-          const SizedBox(width: 12),
+          IconTile(visual.icon, tone: visual.tone),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,31 +187,34 @@ class _HistoryRow extends StatelessWidget {
                       : 'Astrologer',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
+                  style: AppTextStyles.body(size: 15.5, weight: FontWeight.w700),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   _dateLabel(),
                   style: AppTextStyles.mono(
                     size: 12,
-                    color: AppColors.ivoryDim,
+                    color: AppColors.ivoryFaint,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
             children: [
+              if (status != null)
+                StatusChip(status.label, tone: status.tone),
+              const SizedBox(height: 8),
               Text(
                 '₹${item.displayAmount}',
-                style: AppTextStyles.mono(size: 13, color: AppColors.ivory),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                status.label,
-                style: AppTextStyles.label(size: 11, color: status.color),
+                style: AppTextStyles.mono(
+                  size: 13.5,
+                  weight: FontWeight.w700,
+                  color: AppColors.success,
+                ),
               ),
             ],
           ),
