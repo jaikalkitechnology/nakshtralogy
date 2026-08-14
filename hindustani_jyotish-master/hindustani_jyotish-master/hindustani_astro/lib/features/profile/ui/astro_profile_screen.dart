@@ -58,8 +58,8 @@ class AstroProfileScreen extends StatelessWidget {
                           label: l.setDocPhoto, url: photoUrl)
                       : null,
                   child: Container(
-                    width: 68,
-                    height: 68,
+                    width: 82,
+                    height: 82,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
@@ -90,7 +90,7 @@ class AstroProfileScreen extends StatelessWidget {
                                 ? a!.displayName![0].toUpperCase()
                                 : '🪔',
                             style: AppTextStyles.display(
-                                size: 30, color: const Color(0xFF2A1A02)),
+                                size: 40, color: const Color(0xFF2A1A02)),
                           )
                         : null,
                   ),
@@ -103,7 +103,7 @@ class AstroProfileScreen extends StatelessWidget {
                       Text(a?.displayName ?? l.profileAstrologer,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.display(size: 22)),
+                          style: AppTextStyles.display(size: 28)),
                       const SizedBox(height: 8),
                       _kycChip(a?.kycStatus),
                       const SizedBox(height: 10),
@@ -334,7 +334,7 @@ class AstroProfileScreen extends StatelessWidget {
                 : (i == full && hasHalf
                     ? Icons.star_half_rounded
                     : Icons.star_outline_rounded),
-            size: 15,
+            size: 18,
             color: AppColors.gold,
           ),
         const SizedBox(width: 7),
@@ -342,7 +342,7 @@ class AstroProfileScreen extends StatelessWidget {
           child: Text('${avg ?? '0.0'} · ${count ?? 0} reviews',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.label(size: 11.5, color: AppColors.ivoryDim)),
+              style: AppTextStyles.label(size: 13, color: AppColors.ivoryDim)),
         ),
       ],
     );
@@ -351,18 +351,18 @@ class AstroProfileScreen extends StatelessWidget {
   /// A single quick-stat cell (large serif value + uppercase caption).
   Widget _quickStat(String label, String value, {Color? valueColor}) {
     return PremiumCard(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       child: Column(
         children: [
           Text(value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.display(size: 18, color: valueColor ?? AppColors.ivory)),
+              style: AppTextStyles.display(size: 23, color: valueColor ?? AppColors.ivory)),
           const SizedBox(height: 4),
           Text(label.toUpperCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.label(size: 10, color: AppColors.ivoryFaint)),
+              style: AppTextStyles.label(size: 11, color: AppColors.ivoryFaint)),
         ],
       ),
     );
@@ -408,7 +408,7 @@ class AstroProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 10),
         child: PremiumCard(
           onTap: onTap,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
               IconTile(icon, tone: tone),
@@ -421,13 +421,13 @@ class AstroProfileScreen extends StatelessWidget {
                     Text(label,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+                        style: AppTextStyles.body(size: 15.5, weight: FontWeight.w700)),
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
                       Text(subtitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.body(size: 12, color: AppColors.ivoryFaint)),
+                          style: AppTextStyles.body(size: 12.5, color: AppColors.ivoryFaint)),
                     ],
                   ],
                 ),

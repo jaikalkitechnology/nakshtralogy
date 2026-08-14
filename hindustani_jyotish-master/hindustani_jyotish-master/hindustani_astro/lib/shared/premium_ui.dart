@@ -24,7 +24,7 @@ class SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(top: 22, bottom: 12),
       child: Row(
         children: [
-          Text(text, style: AppTextStyles.heading(size: 15, color: AppColors.gold)),
+          Text(text, style: AppTextStyles.heading(size: 16.5, color: AppColors.gold)),
           const SizedBox(width: 12),
           Expanded(
             child: Container(
@@ -114,7 +114,7 @@ class StatusChip extends StatelessWidget {
         ),
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(999),
@@ -123,9 +123,9 @@ class StatusChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[Icon(icon, size: 12, color: fg), const SizedBox(width: 5)],
+          if (icon != null) ...[Icon(icon, size: 13, color: fg), const SizedBox(width: 5)],
           Text(label,
-              style: AppTextStyles.label(size: 11, weight: FontWeight.w700, color: fg)),
+              style: AppTextStyles.label(size: 12, weight: FontWeight.w700, color: fg)),
         ],
       ),
     );
@@ -136,7 +136,7 @@ enum TileTone { gold, saffron, info }
 
 /// A rounded, softly-glowing icon tile used to lead rows and menu items.
 class IconTile extends StatelessWidget {
-  const IconTile(this.icon, {super.key, this.tone = TileTone.gold, this.size = 38});
+  const IconTile(this.icon, {super.key, this.tone = TileTone.gold, this.size = 44});
 
   final IconData icon;
   final TileTone tone;
@@ -225,7 +225,7 @@ class PremiumPrimaryButton extends StatelessWidget {
                   ],
                   Text(label,
                       style: AppTextStyles.body(
-                          size: 15,
+                          size: 16,
                           weight: FontWeight.w800,
                           color: const Color(0xFF241300))),
                 ],
