@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +8,8 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
-import '../../../shared/widgets/astrologer_card.dart';
 import '../../consultation/consult_actions.dart';
 import '../astrologers_cubit.dart';
 import '../discovery_repository.dart';
@@ -407,7 +408,7 @@ class _Body extends StatelessWidget {
               return const SizedBox.shrink();
             }
             final a = list[index];
-            return AstrologerCard(
+            return _AstrologerTile(
               astrologer: a,
               onTap: () => context.push('/astrologers/${a.id}'),
               onChat: () =>
@@ -437,15 +438,36 @@ class _ScrollMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       children: [
-        const SizedBox(height: 120),
-        Icon(icon, size: 48, color: color.withValues(alpha: 0.6)),
-        const SizedBox(height: 16),
+        const SizedBox(height: 110),
+        Center(
+          child: Container(
+            width: 96,
+            height: 96,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                center: const Alignment(-0.3, -0.4),
+                radius: 1.1,
+                colors: [
+                  color.withValues(alpha: 0.22),
+                  color.withValues(alpha: 0.05),
+                ],
+              ),
+              border: Border.all(color: color.withValues(alpha: 0.30)),
+            ),
+            child: Icon(icon, size: 42, color: color.withValues(alpha: 0.85)),
+          ),
+        ),
+        const SizedBox(height: 20),
         Center(
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: AppTextStyles.body(color: color),
+            style: AppTextStyles.heading(size: 15, color: AppColors.ivory),
           ),
         ),
       ],
@@ -494,6 +516,245 @@ class _SortMenu extends StatelessWidget {
         for (final e in labels.entries)
           PopupMenuItem(value: e.key, child: Text(e.value)),
       ],
+    );
+  }
+}
+
+/// Premium discovery-grid tile for a single astrologer. Presentation only —
+/// [onTap] opens the profile and the Chat/Call/Video handlers are wired
+/// straight through to the caller's consultation actions.
+class _AstrologerTile extends StatelessWidget {
+  const _AstrologerTile({
+    required this.astrologer,
+    required this.onTap,
+    required this.onChat,
+    required this.onCall,
+    required this.onVideo,
+  });
+
+  final Astrologer astrologer;
+  final VoidCallback onTap;
+  final VoidCallback onChat;
+  final VoidCallback onCall;
+  final VoidCallback onVideo;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final a = astrologer;
+    final skills = a.skills.isEmpty ? 'Vedic' : a.skills.take(2).join(' · ');
+    return PremiumCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _TileAvatar(url: a.photoUrl, online: a.isOnline, live: a.isLive),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      a.displayName ?? l.cardAstrologer,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, size: 13, color: AppColors.gold),
+                        const SizedBox(width: 3),
+                        Text(
+                          a.avgRating,
+                          style: AppTextStyles.mono(size: 11, color: AppColors.gold),
+                        ),
+                        if (a.reviewCount > 0) ...[
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              '(${a.reviewCount})',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.label(
+                                size: 11,
+                                color: AppColors.ivoryFaint,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      skills,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.label(size: 12, color: AppColors.ivoryDim),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              StatusChip(
+                a.isOnline ? l.commonOnline : l.commonOffline,
+                tone: a.isOnline ? ChipTone.success : ChipTone.muted,
+                icon: a.isOnline ? Icons.circle : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.payments_outlined, size: 15, color: AppColors.success),
+              const SizedBox(width: 6),
+              Text(
+                l.cardRatePerMin(a.rateCallPerMin),
+                style: AppTextStyles.body(
+                  size: 13,
+                  weight: FontWeight.w700,
+                  color: AppColors.success,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  l.cardYearsExp(a.yearsExperience),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.label(size: 11, color: AppColors.ivoryFaint),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Row(
+            children: [
+              _TileAction(
+                icon: Icons.chat_bubble_outline,
+                label: l.cardChat,
+                onTap: onChat,
+              ),
+              const SizedBox(width: 8),
+              _TileAction(icon: Icons.call, label: l.cardCall, onTap: onCall),
+              const SizedBox(width: 8),
+              _TileAction(
+                icon: Icons.videocam_outlined,
+                label: l.cardVideo,
+                onTap: onVideo,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Gold-ringed avatar with the existing image source + person fallback, a live
+/// ring when broadcasting and an online presence dot.
+class _TileAvatar extends StatelessWidget {
+  const _TileAvatar({this.url, required this.online, required this.live});
+  final String? url;
+  final bool online;
+  final bool live;
+
+  @override
+  Widget build(BuildContext context) {
+    final ring = live ? AppColors.live : AppColors.gold;
+    return Stack(
+      children: [
+        Container(
+          width: 54,
+          height: 54,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: live ? AppColors.live : AppColors.gold.withValues(alpha: 0.55),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: ring.withValues(alpha: 0.30),
+                blurRadius: 12,
+                spreadRadius: -1,
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: url == null
+              ? ColoredBox(
+                  color: AppColors.indigoMid,
+                  child: Icon(Icons.person, color: AppColors.copperLight),
+                )
+              : CachedNetworkImage(
+                  imageUrl: url!,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) =>
+                      const Icon(Icons.person, color: AppColors.copperLight),
+                ),
+        ),
+        if (online)
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                color: AppColors.success,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.indigoVoid, width: 2),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Compact saffron consult action (Chat / Call / Video) sized to fill its row.
+class _TileAction extends StatelessWidget {
+  const _TileAction({required this.icon, required this.label, required this.onTap});
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 9),
+            decoration: BoxDecoration(
+              color: AppColors.saffronGlow,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.saffron.withValues(alpha: 0.35)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 17, color: AppColors.saffronBright),
+                const SizedBox(height: 3),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.label(size: 10, color: AppColors.saffronBright),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

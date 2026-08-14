@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/locale_cubit.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/fullscreen_image.dart';
 import '../../auth/google_auth.dart';
@@ -34,90 +35,92 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text(l.profileTitle, style: AppTextStyles.display(size: 24)),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  GestureDetector(
-                    // Tap the avatar to view the photo full-screen with
-                    // pinch-zoom (shared viewer). No-op without a photo.
-                    onTap: (user?.avatarUrl?.isNotEmpty ?? false)
-                        ? () => showFullscreenImage(context, user!.avatarUrl!)
-                        : null,
-                    child: Container(
-                      padding: const EdgeInsets.all(2.5),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: AppColors.copperGradient,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.copperGlow,
-                            blurRadius: 16,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: 32,
-                        backgroundColor: AppColors.indigoMid,
-                        backgroundImage:
-                            (user?.avatarUrl?.isNotEmpty ?? false)
-                                ? NetworkImage(user!.avatarUrl!)
-                                : null,
-                        child: (user?.avatarUrl?.isNotEmpty ?? false)
-                            ? null
-                            : Text(
-                                (user?.name?.isNotEmpty ?? false)
-                                    ? user!.name![0].toUpperCase()
-                                    : '🙏',
-                                style: AppTextStyles.display(size: 22),
+              // ── Header: centered gold-ringed avatar + name + contact ──
+              HeroGradientCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(
+                      child: GestureDetector(
+                        // Tap the avatar to view the photo full-screen with
+                        // pinch-zoom (shared viewer). No-op without a photo.
+                        onTap: (user?.avatarUrl?.isNotEmpty ?? false)
+                            ? () => showFullscreenImage(context, user!.avatarUrl!)
+                            : null,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [AppColors.goldLight, AppColors.gold],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.gold.withValues(alpha: 0.35),
+                                blurRadius: 22,
+                                spreadRadius: -4,
+                                offset: const Offset(0, 8),
                               ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.name ?? l.profileSeeker,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.heading(size: 18),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          // Contact with its dial code (e.g. "+91 9000000000"),
-                          // falling back to email for accounts without a mobile.
-                          user?.mobile != null
-                              ? [user?.countryCode, user?.mobile]
-                                  .whereType<String>()
-                                  .join(' ')
-                              : user?.email ?? '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.mono(
-                            size: 12,
-                            color: AppColors.ivoryDim,
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 44,
+                            backgroundColor: AppColors.indigoMid,
+                            backgroundImage:
+                                (user?.avatarUrl?.isNotEmpty ?? false)
+                                    ? NetworkImage(user!.avatarUrl!)
+                                    : null,
+                            child: (user?.avatarUrl?.isNotEmpty ?? false)
+                                ? null
+                                : Text(
+                                    (user?.name?.isNotEmpty ?? false)
+                                        ? user!.name![0].toUpperCase()
+                                        : '🙏',
+                                    style: AppTextStyles.display(size: 32),
+                                  ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 14),
+                    Text(
+                      user?.name ?? l.profileSeeker,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.display(size: 24),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      // Contact with its dial code (e.g. "+91 9000000000"),
+                      // falling back to email for accounts without a mobile.
+                      user?.mobile != null
+                          ? [user?.countryCode, user?.mobile]
+                              .whereType<String>()
+                              .join(' ')
+                          : user?.email ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.mono(
+                        size: 12.5,
+                        color: AppColors.ivoryDim,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 28),
+              SectionLabel('Account'),
               _Tile(
                 // Photo / name / contact number editor (spec: these stay
                 // editable after signup, mirroring Complete Profile).
                 icon: Icons.edit_outlined,
+                tone: TileTone.saffron,
                 label: l.profileEditProfile,
                 onTap: () => context.push('/profile/edit'),
               ),
-              const _LanguageTile(),
               _Tile(
                 // Birth details moved out of signup (spec §2) — this is the
                 // permanent home where they stay editable for Kundli/insights.
@@ -125,13 +128,17 @@ class ProfileScreen extends StatelessWidget {
                 label: l.profileBirthDetails,
                 onTap: () => context.push('/profile/birth-details'),
               ),
+              const _LanguageTile(),
+              SectionLabel('Activity'),
               _Tile(
                 icon: Icons.history,
+                tone: TileTone.info,
                 label: l.profileChatCallHistory,
                 onTap: () => context.push('/history'),
               ),
               _Tile(
                 icon: Icons.receipt_long,
+                tone: TileTone.info,
                 label: l.profilePaymentHistory,
                 // /wallet is a bottom-tab branch, not a standalone route — go()
                 // switches to it (matches how other in-app redirects to wallet
@@ -140,11 +147,14 @@ class ProfileScreen extends StatelessWidget {
               ),
               _Tile(
                 icon: Icons.description_outlined,
+                tone: TileTone.info,
                 label: l.profileInvoices,
                 onTap: () => context.push('/invoices'),
               ),
+              SectionLabel('Help & more'),
               _Tile(
                 icon: Icons.help_outline,
+                tone: TileTone.info,
                 label: l.supportTitle,
                 onTap: () => context.push('/support'),
               ),
@@ -155,7 +165,7 @@ class ProfileScreen extends StatelessWidget {
                 label: l.profileAboutTerms,
               ),
               const _FollowUsSection(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.danger),
@@ -575,51 +585,88 @@ class _LanguageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final locale = context.watch<LocaleCubit>().state;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: ListTile(
-        leading: const Icon(Icons.translate, color: AppColors.copperLight),
-        title: Text(l.profileLanguage, style: AppTextStyles.body(size: 14)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: PremiumCard(
+        onTap: () => _open(context),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
           children: [
+            const IconTile(Icons.translate, tone: TileTone.saffron),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                l.profileLanguage,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.body(size: 15.5, weight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(width: 8),
             Text(
               _currentLabel(l, locale),
-              style: AppTextStyles.label(size: 12, color: AppColors.saffronBright),
+              style: AppTextStyles.label(size: 12.5, color: AppColors.saffronBright),
             ),
+            const SizedBox(width: 4),
             Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
           ],
         ),
-        onTap: () => _open(context),
       ),
     );
   }
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile({required this.icon, required this.label, this.onTap});
+  const _Tile({
+    required this.icon,
+    required this.label,
+    this.subtitle,
+    this.tone = TileTone.gold,
+    this.onTap,
+  });
   final IconData icon;
   final String label;
+  final String? subtitle;
+  final TileTone tone;
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: AppColors.copperLight),
-        title: Text(label, style: AppTextStyles.body(size: 14)),
-        trailing: Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: PremiumCard(
         onTap: onTap,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            IconTile(icon, tone: tone),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body(size: 15.5, weight: FontWeight.w700),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.body(size: 12.5, color: AppColors.ivoryFaint),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+          ],
+        ),
       ),
     );
   }

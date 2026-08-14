@@ -5,6 +5,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../wallet_checkout.dart';
 import '../wallet_repository.dart';
@@ -126,158 +127,157 @@ class _WalletViewState extends State<_WalletView> {
                     );
                   }
                   return ListView(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
                     children: [
-                      Text(l.walletTitle, style: AppTextStyles.display(size: 24)),
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
+                      Text(l.walletTitle, style: AppTextStyles.display(size: 26)),
+                      const SizedBox(height: 18),
+                      HeroGradientCard(
                         padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: AppColors.heroGradient,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.borderMid),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: AppColors.goldHalo,
-                              blurRadius: 26,
-                              spreadRadius: -8,
-                              offset: Offset(0, 10),
-                            ),
-                            BoxShadow(
-                              color: AppColors.shadowSoft,
-                              blurRadius: 18,
-                              offset: Offset(0, 8),
-                            ),
-                          ],
-                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                const Icon(
+                                const IconTile(
                                   Icons.account_balance_wallet_outlined,
-                                  color: AppColors.goldLight,
-                                  size: 16,
+                                  tone: TileTone.gold,
+                                  size: 38,
                                 ),
-                                const SizedBox(width: 6),
+                                const SizedBox(width: 12),
                                 Text(
                                   l.walletBalance,
                                   style: AppTextStyles.label(
+                                    size: 12.5,
                                     color: AppColors.ivoryDim,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 16),
                             Text(
                               '₹${w.balance}',
                               style: AppTextStyles.display(
-                                size: 38,
+                                size: 46,
                                 weight: FontWeight.w700,
-                                color: AppColors.gold,
+                                color: AppColors.success,
+                              ).copyWith(
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Text(
-                        l.walletQuickRecharge,
-                        style: AppTextStyles.heading(size: 16),
-                      ),
-                      const SizedBox(height: 10),
+                      SectionLabel(l.walletQuickRecharge),
                       Wrap(
                         spacing: 10,
                         runSpacing: 10,
                         children: [
                           for (final amt in WalletScreen._quick)
-                            OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(
-                                  color: AppColors.borderMid,
-                                ),
-                                foregroundColor: AppColors.ivory,
+                            PremiumCard(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 22,
+                                vertical: 14,
                               ),
-                              onPressed: _processing
+                              onTap: _processing
                                   ? null
                                   : () => _recharge(int.parse(amt)),
-                              child: Text('₹$amt'),
+                              child: Text(
+                                '₹$amt',
+                                style: AppTextStyles.body(
+                                  size: 15,
+                                  weight: FontWeight.w700,
+                                  color: AppColors.gold,
+                                ),
+                              ),
                             ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _customController,
-                              enabled: !_processing,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              style: AppTextStyles.body(),
-                              decoration: InputDecoration(
-                                prefixText: '₹ ',
-                                prefixStyle: AppTextStyles.body(
-                                  color: AppColors.gold,
-                                ),
-                                hintText: l.walletCustomAmount,
-                                hintStyle: AppTextStyles.body(
-                                  color: AppColors.ivoryFaint,
-                                ),
-                                filled: true,
-                                fillColor: AppColors.surface1,
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.borderSoft,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.saffron,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          SizedBox(
-                            height: 56,
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                backgroundColor: AppColors.saffron,
-                                foregroundColor: AppColors.indigoVoid,
-                              ),
-                              onPressed: _processing ? null : _rechargeCustom,
-                              child: Text(l.commonAdd),
-                            ),
-                          ),
+                      TextField(
+                        controller: _customController,
+                        enabled: !_processing,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
                         ],
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        l.walletRecentTransactions,
-                        style: AppTextStyles.heading(size: 16),
-                      ),
-                      const SizedBox(height: 8),
-                      if (w.transactions.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Text(
-                            l.walletNoTransactions,
-                            style: AppTextStyles.body(
-                              color: AppColors.ivoryFaint,
+                        style: AppTextStyles.body(size: 15),
+                        decoration: InputDecoration(
+                          prefixText: '₹ ',
+                          prefixStyle: AppTextStyles.body(
+                            size: 15,
+                            weight: FontWeight.w700,
+                            color: AppColors.gold,
+                          ),
+                          hintText: l.walletCustomAmount,
+                          hintStyle: AppTextStyles.body(
+                            color: AppColors.ivoryFaint,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.surface2,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.borderSoft,
                             ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.saffron,
+                              width: 1.5,
+                            ),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.borderSoft,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      PremiumPrimaryButton(
+                        label: l.commonAdd,
+                        icon: Icons.add_rounded,
+                        onPressed: _processing ? null : _rechargeCustom,
+                      ),
+                      SectionLabel(
+                        l.walletRecentTransactions,
+                        trailing: w.transactions.isEmpty
+                            ? null
+                            : StatusChip(
+                                '${w.transactions.length}',
+                                tone: ChipTone.muted,
+                              ),
+                      ),
+                      if (w.transactions.isEmpty)
+                        PremiumCard(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 28,
+                          ),
+                          child: Column(
+                            children: [
+                              const IconTile(
+                                Icons.receipt_long_outlined,
+                                tone: TileTone.gold,
+                                size: 52,
+                              ),
+                              const SizedBox(height: 14),
+                              Text(
+                                l.walletNoTransactions,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.body(
+                                  color: AppColors.ivoryDim,
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       else
@@ -317,46 +317,51 @@ class _TxnRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final credit = txn.isCredit;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            credit ? Icons.south_west : Icons.north_east,
-            color: credit ? AppColors.success : AppColors.copperLight,
-            size: 18,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  txn.type.replaceAll('_', ' '),
-                  style: AppTextStyles.body(size: 14, weight: FontWeight.w600),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _dateLabel(),
-                  style: AppTextStyles.mono(size: 11, color: AppColors.ivoryFaint),
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: PremiumCard(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            IconTile(
+              credit ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
+              tone: credit ? TileTone.gold : TileTone.saffron,
+              size: 42,
             ),
-          ),
-          Text(
-            '${credit ? '+' : ''}₹${txn.amount}',
-            style: AppTextStyles.mono(
-              size: 13,
-              color: credit ? AppColors.success : AppColors.ivory,
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    txn.type.replaceAll('_', ' '),
+                    style: AppTextStyles.body(
+                      size: 14.5,
+                      weight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    _dateLabel(),
+                    style: AppTextStyles.mono(
+                      size: 11,
+                      color: AppColors.ivoryFaint,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Text(
+              '${credit ? '+' : ''}₹${txn.amount}',
+              style: AppTextStyles.mono(
+                size: 14,
+                weight: FontWeight.w700,
+                color: credit ? AppColors.success : AppColors.ivory,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
