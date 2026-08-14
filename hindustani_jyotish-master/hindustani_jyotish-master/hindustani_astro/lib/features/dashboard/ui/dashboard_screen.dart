@@ -38,7 +38,6 @@ class _DashboardView extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error!))),
         builder: (context, state) {
           final cubit = context.read<DashboardCubit>();
-          final desktop = context.isDesktop;
           return RefreshIndicator(
             onRefresh: cubit.refresh,
             color: AppColors.saffron,
@@ -46,10 +45,32 @@ class _DashboardView extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               children: [
                 CenteredMaxWidth(
-                  maxWidth: context.responsive(mobile: 640, tablet: 760, desktop: 1160),
-                  child: desktop
-                      ? _DesktopBody(state: state, astro: astro, cubit: cubit)
-                      : _CompactBody(state: state, astro: astro, cubit: cubit),
+                  maxWidth: 640,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _Header(astro: astro),
+                      const SizedBox(height: 18),
+                      _OnlineCard(
+                        online: state.isOnline,
+                        busy: state.toggling,
+                        onChanged: cubit.toggleOnline,
+                      ),
+                      const SizedBox(height: 24),
+                      Text("Today's Overview",
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.heading(size: 17, color: AppColors.ivoryDim)),
+                      const SizedBox(height: 14),
+                      _StatsOrLoader(state: state, astro: astro),
+                      const SizedBox(height: 22),
+                      PremiumPrimaryButton(
+                        label: 'Go Live Now',
+                        icon: Icons.videocam_rounded,
+                        height: 58,
+                        onPressed: () => context.push('/live'),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -60,120 +81,10 @@ class _DashboardView extends StatelessWidget {
   }
 }
 
-/// Single-column layout for phones and tablets.
-class _CompactBody extends StatelessWidget {
-  const _CompactBody({required this.state, required this.astro, required this.cubit});
-  final DashboardState state;
-  final Astrologer? astro;
-  final DashboardCubit cubit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _Hero(astro: astro),
-        const SizedBox(height: 16),
-        _OnlineCard(online: state.isOnline, busy: state.toggling, onChanged: cubit.toggleOnline),
-        const SizedBox(height: 20),
-        _StatsOrLoader(state: state),
-        const SizedBox(height: 20),
-        const _ActionRow(),
-        const SizedBox(height: 12),
-        _SettingsLink(onTap: () => context.push('/settings')),
-      ],
-    );
-  }
-}
-
-/// Two-column layout that fills the extra width on desktop browsers: the
-/// profile/online/actions column on the left, the stats grid on the right.
-class _DesktopBody extends StatelessWidget {
-  const _DesktopBody({required this.state, required this.astro, required this.cubit});
-  final DashboardState state;
-  final Astrologer? astro;
-  final DashboardCubit cubit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 5,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _Hero(astro: astro),
-              const SizedBox(height: 16),
-              _OnlineCard(online: state.isOnline, busy: state.toggling, onChanged: cubit.toggleOnline),
-              const SizedBox(height: 16),
-              const _ActionRow(),
-              const SizedBox(height: 12),
-              _SettingsLink(onTap: () => context.push('/settings')),
-            ],
-          ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          flex: 6,
-          child: _StatsOrLoader(state: state),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatsOrLoader extends StatelessWidget {
-  const _StatsOrLoader({required this.state});
-  final DashboardState state;
-
-  @override
-  Widget build(BuildContext context) {
-    if (state.loading && state.data == null) {
-      return const Padding(
-        padding: EdgeInsets.all(32),
-        child: Center(child: CircularProgressIndicator(color: AppColors.saffron)),
-      );
-    }
-    if (state.data != null) return _Stats(data: state.data!);
-    return const SizedBox.shrink();
-  }
-}
-
-class _ActionRow extends StatelessWidget {
-  const _ActionRow();
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.podcasts,
-            label: l.dashGoLive,
-            color: AppColors.live,
-            filled: true,
-            onTap: () => context.push('/live'),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.inbox,
-            label: l.dashRequests,
-            color: AppColors.saffron,
-            onTap: () => context.go('/requests'),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Hero extends StatelessWidget {
-  const _Hero({required this.astro});
+/// Top row — Namaste greeting + astrologer name on the left, notification
+/// bell on the right (settings/logout live on the Profile tab).
+class _Header extends StatelessWidget {
+  const _Header({required this.astro});
   final Astrologer? astro;
 
   @override
@@ -181,150 +92,54 @@ class _Hero extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final photoUrl = astro?.photoUrl;
     final name = astro?.displayName ?? l.profileAstrologer;
-    return HeroGradientCard(
-      padding: const EdgeInsets.all(18),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(2.5),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.gold.withValues(alpha: 0.7),
-                  AppColors.saffron.withValues(alpha: 0.5),
-                ],
-              ),
-            ),
-            child: CircleAvatar(
-            radius: 30,
-            backgroundColor: AppColors.indigo,
-            backgroundImage:
-                (photoUrl != null && photoUrl.isNotEmpty) ? NetworkImage(photoUrl) : null,
-            child: (photoUrl == null || photoUrl.isEmpty)
-                ? Text(name.isNotEmpty ? name[0].toUpperCase() : '🪔',
-                    style: AppTextStyles.display(size: 22))
+    return Row(
+      children: [
+        Container(
+          width: 52,
+          height: 52,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: (photoUrl == null || photoUrl.isEmpty)
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.saffronBright, AppColors.saffronDeep],
+                  )
                 : null,
-            ),
+            image: (photoUrl != null && photoUrl.isNotEmpty)
+                ? DecorationImage(image: NetworkImage(photoUrl), fit: BoxFit.cover)
+                : null,
+            border: Border.all(color: AppColors.gold.withValues(alpha: 0.5), width: 1.5),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l.dashWelcomeBack,
-                    style: AppTextStyles.label(size: 11, color: AppColors.goldLight)),
-                const SizedBox(height: 3),
-                Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTextStyles.display(size: 22)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.star_rounded, size: 16, color: AppColors.gold),
-                    const SizedBox(width: 4),
-                    Text(astro?.avgRating ?? '0.00',
-                        style: AppTextStyles.body(size: 13, weight: FontWeight.w700, color: AppColors.gold)),
-                    Flexible(
-                      child: Text('  •  ${l.dashReviews(astro?.reviewCount ?? 0)}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Column(
+          child: (photoUrl == null || photoUrl.isEmpty)
+              ? Text(name.isNotEmpty ? name[0].toUpperCase() : '🪔',
+                  style: AppTextStyles.display(size: 22, color: Colors.white))
+              : null,
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const NotificationBell(),
-              IconButton(
-                tooltip: l.dashSettings,
-                onPressed: () => context.push('/settings'),
-                icon: Icon(Icons.settings_outlined, color: AppColors.ivoryDim),
-              ),
-              IconButton(
-                tooltip: l.commonSignOut,
-                onPressed: () => context.read<AstroSessionCubit>().logout(),
-                icon: Icon(Icons.logout, color: AppColors.ivoryDim),
-              ),
+              Text('Namaste 🙏',
+                  style: AppTextStyles.label(size: 11.5, color: AppColors.goldLight)),
+              const SizedBox(height: 3),
+              Text(name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.display(size: 22)),
             ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 8),
+        const NotificationBell(),
+      ],
     );
   }
 }
 
-class _Stats extends StatelessWidget {
-  const _Stats({required this.data});
-  final Map<String, dynamic> data;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    // (label, value, icon, valueColor, tileTone)
-    final items = <(String, String, IconData, Color, TileTone)>[
-      (l.statTodayEarnings, '₹${data['today_earnings']}', Icons.currency_rupee,
-          AppColors.success, TileTone.gold),
-      (l.statBalance, '₹${data['available_balance']}', Icons.account_balance_wallet_outlined,
-          AppColors.gold, TileTone.gold),
-      (l.statTodayConsults, '${data['today_consultations']}', Icons.today_outlined,
-          AppColors.ivory, TileTone.info),
-      (l.statTotalConsults, '${data['total_consultations']}', Icons.history,
-          AppColors.ivory, TileTone.info),
-      (l.statRating, (data['avg_rating'] ?? '0.00').toString(), Icons.star_rounded,
-          AppColors.gold, TileTone.gold),
-      (l.statFollowers, '${data['follower_count']}', Icons.groups_outlined,
-          AppColors.ivory, TileTone.saffron),
-    ];
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final cols = constraints.maxWidth > 560 ? 3 : 2;
-        return GridView.count(
-          crossAxisCount: cols,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.55,
-          children: [
-            for (final i in items)
-              PremiumCard(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(i.$1.toUpperCase(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.label(
-                                  size: 10, color: AppColors.ivoryFaint)),
-                        ),
-                        const SizedBox(width: 8),
-                        IconTile(i.$3, tone: i.$5, size: 30),
-                      ],
-                    ),
-                    const Spacer(),
-                    Text(i.$2,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.display(size: 20, color: i.$4)),
-                  ],
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
+/// Filled indigo "You're Online / Offline" card with the availability toggle.
 class _OnlineCard extends StatelessWidget {
   const _OnlineCard({required this.online, required this.busy, required this.onChanged});
   final bool online;
@@ -334,150 +149,164 @@ class _OnlineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return PremiumCard(
-      padding: const EdgeInsets.all(18),
+    return HeroGradientCard(
+      padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
       child: Row(
         children: [
-          IconTile(online ? Icons.podcasts : Icons.wifi_off_rounded,
-              tone: online ? TileTone.saffron : TileTone.info, size: 44),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(online ? l.dashOnline : l.dashOffline,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.heading(size: 18)),
-                    ),
-                    const SizedBox(width: 10),
-                    StatusChip(
-                      online ? l.dashOnline : l.dashOffline,
-                      tone: online ? ChipTone.success : ChipTone.muted,
-                      icon: online ? Icons.check_circle : Icons.circle_outlined,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
+                Text(online ? "You're Online" : "You're Offline",
+                    style: AppTextStyles.heading(size: 20)),
+                const SizedBox(height: 5),
                 Text(online ? l.dashOnlineSubtitle : l.dashOfflineSubtitle,
                     style: AppTextStyles.body(size: 13, color: AppColors.ivoryDim)),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           busy
-              ? const SizedBox(width: 40, child: Center(child: CircularProgressIndicator(strokeWidth: 2)))
-              : Switch(value: online, onChanged: onChanged, activeThumbColor: AppColors.success),
+              ? const SizedBox(
+                  width: 44,
+                  height: 30,
+                  child: Center(
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: AppColors.success))))
+              : Switch(
+                  value: online,
+                  onChanged: onChanged,
+                  activeThumbColor: Colors.white,
+                  activeTrackColor: AppColors.success,
+                ),
         ],
       ),
     );
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-    this.filled = false,
-  });
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  final bool filled;
+class _StatsOrLoader extends StatelessWidget {
+  const _StatsOrLoader({required this.state, required this.astro});
+  final DashboardState state;
+  final Astrologer? astro;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: filled
-              ? [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.28),
-                    blurRadius: 24,
-                    offset: const Offset(0, 10),
-                    spreadRadius: -8,
-                  ),
-                ]
-              : null,
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: filled
-                  ? [color.withValues(alpha: 0.24), color.withValues(alpha: 0.10)]
-                  : [AppColors.surface2, AppColors.surface1],
-            ),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-                color: filled ? color.withValues(alpha: 0.5) : AppColors.borderSoft),
-          ),
-          child: Column(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: const Alignment(-0.4, -0.5),
-                    radius: 1.1,
-                    colors: [
-                      color.withValues(alpha: 0.30),
-                      color.withValues(alpha: 0.08),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: color.withValues(alpha: 0.30)),
-                ),
-                child: Icon(icon, color: color, size: 22),
-              ),
-              const SizedBox(height: 10),
-              Text(label, style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
-            ],
-          ),
-        ),
-      ),
-    );
+    if (state.loading && state.data == null) {
+      return const Padding(
+        padding: EdgeInsets.all(32),
+        child: Center(child: CircularProgressIndicator(color: AppColors.saffron)),
+      );
+    }
+    if (state.data != null) return _Stats(data: state.data!, astro: astro);
+    return const SizedBox.shrink();
   }
 }
 
-class _SettingsLink extends StatelessWidget {
-  const _SettingsLink({required this.onTap});
-  final VoidCallback onTap;
+class _Stats extends StatelessWidget {
+  const _Stats({required this.data, required this.astro});
+  final Map<String, dynamic> data;
+  final Astrologer? astro;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return PremiumCard(
-      onTap: onTap,
-      child: Row(
+    final reviews = astro?.reviewCount ?? 0;
+    // (label, value, subtitle, accent, icon) — real data only; no invented
+    // deltas/breakdowns.
+    final items = <(String, String, String, Color, IconData)>[
+      (
+        l.statTodayEarnings,
+        '₹${data['today_earnings']}',
+        '₹${data['available_balance']} balance',
+        AppColors.gold,
+        Icons.currency_rupee,
+      ),
+      (
+        'Consultations',
+        '${data['today_consultations']}',
+        '${data['total_consultations']} lifetime',
+        AppColors.success,
+        Icons.forum_outlined,
+      ),
+      (
+        l.statRating,
+        '${data['avg_rating'] ?? '0.00'} ★',
+        '$reviews reviews',
+        AppColors.gold,
+        Icons.star_rounded,
+      ),
+      (
+        l.statFollowers,
+        '${data['follower_count']}',
+        'Total',
+        AppColors.info,
+        Icons.groups_outlined,
+      ),
+    ];
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 14,
+      crossAxisSpacing: 14,
+      childAspectRatio: 1.32,
+      children: [for (final i in items) _StatCard(i.$1, i.$2, i.$3, i.$4, i.$5)],
+    );
+  }
+}
+
+/// A single overview stat card — coloured border + accent value, an icon
+/// tile, and a faint subtitle line (matches the reference dashboard).
+class _StatCard extends StatelessWidget {
+  const _StatCard(this.label, this.value, this.subtitle, this.accent, this.icon);
+  final String label;
+  final String value;
+  final String subtitle;
+  final Color accent;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [accent.withValues(alpha: 0.10), AppColors.surface1],
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: accent.withValues(alpha: 0.32)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const IconTile(Icons.tune, tone: TileTone.gold, size: 40),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l.dashSettings, style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
-                const SizedBox(height: 2),
-                Text(l.dashSettingsSubtitle,
-                    style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(label.toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.label(size: 10.5, color: AppColors.ivoryFaint)),
+              ),
+              Icon(icon, size: 18, color: accent),
+            ],
           ),
-          Icon(Icons.chevron_right, color: AppColors.ivoryDim),
+          const Spacer(),
+          Text(value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.display(size: 24, color: accent)),
+          const SizedBox(height: 4),
+          Text(subtitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.label(size: 11, color: AppColors.success)),
         ],
       ),
     );
