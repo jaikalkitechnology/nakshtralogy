@@ -201,15 +201,18 @@ class _StatsOrLoader extends StatelessWidget {
         child: Center(child: CircularProgressIndicator(color: AppColors.saffron)),
       );
     }
-    if (state.data != null) return _Stats(data: state.data!, astro: astro);
+    if (state.data != null) {
+      return _Stats(data: state.data!, astro: astro, pending: state.pendingRequests);
+    }
     return const SizedBox.shrink();
   }
 }
 
 class _Stats extends StatelessWidget {
-  const _Stats({required this.data, required this.astro});
+  const _Stats({required this.data, required this.astro, required this.pending});
   final Map<String, dynamic> data;
   final Astrologer? astro;
+  final int? pending;
 
   @override
   Widget build(BuildContext context) {
@@ -240,11 +243,11 @@ class _Stats extends StatelessWidget {
         Icons.star_rounded,
       ),
       (
-        l.statFollowers,
-        '${data['follower_count']}',
-        'Total',
-        AppColors.info,
-        Icons.groups_outlined,
+        'Requests',
+        '${pending ?? 0}',
+        'incoming now',
+        AppColors.saffron,
+        Icons.inbox_rounded,
       ),
     ];
     return GridView.count(
