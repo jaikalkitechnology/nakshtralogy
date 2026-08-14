@@ -48,14 +48,18 @@ class RemoteAppConfig {
   /// The client id for THIS app on the current platform — keeps the platform
   /// choice in one place instead of each call site re-deriving it.
   ///
-  /// Android falls back to the web id, mirroring the server's own
-  /// resolution. That matters beyond convenience: an app build newer than
-  /// the backend would see NO `google_astro_android_client_id` key at all,
-  /// and without this fallback it would silently drop to the compiled-in
-  /// client id and ignore the admin's configuration.
+  /// On mobile this value is passed to Google Sign-In as `serverClientId`,
+  /// which MUST be an OAuth *Web application* client id — never the Android
+  /// OAuth client id (that one is matched automatically from
+  /// google-services.json and must never appear in code). So the WEB id is
+  /// preferred here; the admin's "android" field is only used when no web id
+  /// exists at all. This makes login resilient to the common admin-panel
+  /// mistake of pasting the literal *Android* OAuth client id into the
+  /// android field, which would otherwise fail with DEVELOPER_ERROR 10 — the
+  /// exact same symptom as a missing SHA-1 registration.
   String? googleClientIdFor({required bool isWeb}) => isWeb
       ? googleAstroWebClientId
-      : (googleAstroAndroidClientId ?? googleAstroWebClientId);
+      : (googleAstroWebClientId ?? googleAstroAndroidClientId);
 
   /// False when the backend has no Google client ids at all (admin console
   /// AND env both empty) — sign-in would be rejected server-side, so the

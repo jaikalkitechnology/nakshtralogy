@@ -26,6 +26,11 @@ google-auth==2.37.0
 
 # HTTP client (Google JWKS, SMS gateways)
 httpx==0.28.1
+# Google id-token verification uses google-auth's `requests` transport
+# (`from google.auth.transport import requests`). google-auth does NOT pull
+# `requests` in itself — it only arrives transitively via firebase-admin — so
+# pin it directly to keep Google login working even if that chain changes.
+requests>=2.31,<3
 
 # Real-time A/V token minting (Agora RTC)
 agora-token-builder==1.0.0
