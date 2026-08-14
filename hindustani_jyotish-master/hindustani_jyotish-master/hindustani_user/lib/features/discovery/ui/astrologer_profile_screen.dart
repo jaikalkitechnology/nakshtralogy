@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/cosmic_background.dart';
 import '../../../shared/widgets/fullscreen_image.dart';
@@ -117,6 +118,9 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
               return const Center(child: CircularProgressIndicator(color: AppColors.saffron));
             }
             final a = snap.data!;
+            // Presentation-only derivations of the same data keys.
+            final avg = double.tryParse('${_avgRatingOverride ?? a.avgRating}') ?? 0;
+            final reviews = _reviewCountOverride ?? a.reviewCount;
             return SafeArea(
               top: false,
               child: RefreshIndicator(
@@ -127,7 +131,8 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                   child: ListView(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                   children: [
-                    Center(
+                    const SizedBox(height: 12),
+                    HeroGradientCard(
                       child: Column(
                         children: [
                           GestureDetector(
@@ -137,17 +142,26 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                                 ? null
                                 : () => showFullscreenImage(context, a.photoUrl!),
                             child: Container(
-                              width: 96,
-                              height: 96,
+                              width: 104,
+                              height: 104,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.borderMid, width: 2),
+                                border: Border.all(
+                                    color: AppColors.gold.withValues(alpha: 0.55), width: 2.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.gold.withValues(alpha: 0.25),
+                                    blurRadius: 22,
+                                    spreadRadius: -4,
+                                  ),
+                                ],
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: a.photoUrl == null
                                   ? ColoredBox(
                                       color: AppColors.indigoMid,
-                                      child: Icon(Icons.person, size: 48, color: AppColors.copperLight))
+                                      child: Icon(Icons.person,
+                                          size: 52, color: AppColors.copperLight))
                                   : CachedNetworkImage(imageUrl: a.photoUrl!, fit: BoxFit.cover),
                             ),
                           ),
@@ -157,81 +171,113 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: AppTextStyles.display(size: 24)),
-                          const SizedBox(height: 6),
-                          Text(a.skills.join(' · '),
-                              style: AppTextStyles.label(color: AppColors.copperLight)),
-                          const SizedBox(height: 8),
-                          _StatusBadge(online: a.isOnline, live: a.isLive),
                           const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: _Stat(
-                                    label: 'Rating',
-                                    value: '⭐ ${_avgRatingOverride ?? a.avgRating}'),
-                              ),
-                              Flexible(
-                                child: _Stat(
-                                    label: 'Reviews',
-                                    value: '${_reviewCountOverride ?? a.reviewCount}'),
-                              ),
-                              Flexible(
-                                child: _Stat(
-                                    label: 'Experience',
-                                    value: '${a.yearsExperience} yrs'),
-                              ),
-                            ],
-                          ),
+                          _statusChip(a.isOnline, a.isLive),
+                          const SizedBox(height: 14),
+                          _StarRating(rating: avg, reviewCount: reviews),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
                     if (a.bio != null && a.bio!.isNotEmpty) ...[
-                      Text('About', style: AppTextStyles.heading(size: 16)),
-                      const SizedBox(height: 6),
-                      Text(a.bio!, style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
-                      const SizedBox(height: 20),
+                      const SectionLabel('About'),
+                      PremiumCard(
+                        child: Text(a.bio!,
+                            style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
+                      ),
                     ],
-                    Text('Languages', style: AppTextStyles.heading(size: 16)),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children: [
-                        for (final l in a.languages)
-                          Chip(label: Text(l), backgroundColor: AppColors.surface2),
-                      ],
+                    const SectionLabel('Details'),
+                    PremiumCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const IconTile(Icons.workspace_premium_rounded,
+                                  tone: TileTone.gold, size: 40),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Text('Experience',
+                                    style:
+                                        AppTextStyles.body(size: 15, weight: FontWeight.w600)),
+                              ),
+                              Text('${a.yearsExperience} yrs',
+                                  style: AppTextStyles.body(
+                                      size: 14,
+                                      weight: FontWeight.w700,
+                                      color: AppColors.gold)),
+                            ],
+                          ),
+                          if (a.languages.isNotEmpty) ...[
+                            const _DetailDivider(),
+                            _ChipBlock(label: 'Languages', items: a.languages),
+                          ],
+                          if (a.skills.isNotEmpty) ...[
+                            const _DetailDivider(),
+                            _ChipBlock(label: 'Specialities', items: a.skills),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SectionLabel('Rates'),
+                    PremiumCard(
+                      child: Column(
+                        children: [
+                          _RateLine(
+                              icon: Icons.chat_bubble_rounded,
+                              tone: TileTone.saffron,
+                              label: 'Chat',
+                              price: '₹${a.rateChatPerMsg}/msg'),
+                          const _DetailDivider(),
+                          _RateLine(
+                              icon: Icons.call_rounded,
+                              tone: TileTone.gold,
+                              label: 'Audio Call',
+                              price: '₹${a.rateCallPerMin}/min'),
+                          const _DetailDivider(),
+                          _RateLine(
+                              icon: Icons.videocam_rounded,
+                              tone: TileTone.info,
+                              label: 'Video Call',
+                              price: '₹${a.rateVideoPerMin}/min'),
+                        ],
+                      ),
                     ),
                     if (a.superChatPresets.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      Text('Super Chat', style: AppTextStyles.heading(size: 16)),
-                      const SizedBox(height: 8),
+                      const SectionLabel('Super Chat'),
                       // One Super Chat price per astrologer (like the
-                      // chat/call/video rates below). Backend storage is
+                      // chat/call/video rates above). Backend storage is
                       // still a list — the FIRST element is THE price;
                       // legacy rows may carry extra defaults, ignored here.
                       _SuperChatPriceCard(amount: a.superChatPresets.first),
                     ],
-                    const SizedBox(height: 24),
-                    Text('Consult Now', style: AppTextStyles.heading(size: 16)),
+                    const SectionLabel('Consult Now'),
+                    PremiumPrimaryButton(
+                      label: 'Chat Now',
+                      icon: Icons.chat_bubble_rounded,
+                      onPressed:
+                          _requesting ? null : () => _consult(ConsultationType.chat),
+                    ),
                     const SizedBox(height: 12),
-                    _RateCard(
-                      icon: Icons.chat_bubble_outline,
-                      label: 'Chat',
-                      price: '₹${a.rateChatPerMsg}/msg',
-                      onTap: _requesting ? null : () => _consult(ConsultationType.chat),
-                    ),
-                    _RateCard(
-                      icon: Icons.call,
-                      label: 'Audio Call',
-                      price: '₹${a.rateCallPerMin}/min',
-                      onTap: _requesting ? null : () => _consult(ConsultationType.call),
-                    ),
-                    _RateCard(
-                      icon: Icons.videocam_outlined,
-                      label: 'Video Call',
-                      price: '₹${a.rateVideoPerMin}/min',
-                      onTap: _requesting ? null : () => _consult(ConsultationType.video),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _ConsultOutlineButton(
+                            icon: Icons.call_rounded,
+                            label: 'Audio Call',
+                            onPressed:
+                                _requesting ? null : () => _consult(ConsultationType.call),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _ConsultOutlineButton(
+                            icon: Icons.videocam_rounded,
+                            label: 'Video Call',
+                            onPressed:
+                                _requesting ? null : () => _consult(ConsultationType.video),
+                          ),
+                        ),
+                      ],
                     ),
                     if (!a.isOnline)
                       Padding(
@@ -239,9 +285,7 @@ class _AstrologerProfileScreenState extends State<AstrologerProfileScreen> {
                         child: Text('This astrologer is currently offline.',
                             style: AppTextStyles.label(size: 12, color: AppColors.ivoryFaint)),
                       ),
-                    const SizedBox(height: 24),
-                    Text('Rate this astrologer', style: AppTextStyles.heading(size: 16)),
-                    const SizedBox(height: 12),
+                    const SectionLabel('Rate this astrologer'),
                     _RatingCard(
                       canRate: _canRate,
                       submitting: _submittingRating,
@@ -337,53 +381,189 @@ Future<void> showAstrologerReviewsSheet(
   );
 }
 
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.online, required this.live});
-  final bool online;
-  final bool live;
+/// The header online/live status pill, mapped onto the shared [StatusChip].
+Widget _statusChip(bool online, bool live) {
+  if (live) {
+    return const StatusChip('LIVE', tone: ChipTone.warn, icon: Icons.sensors_rounded);
+  }
+  if (online) {
+    return const StatusChip('Online', tone: ChipTone.success, icon: Icons.circle);
+  }
+  return const StatusChip('Offline', tone: ChipTone.muted, icon: Icons.circle_outlined);
+}
+
+/// A gold five-star row rendered from the average [rating] (full / half /
+/// outline), with the numeric average and the review count beside it.
+class _StarRating extends StatelessWidget {
+  const _StarRating({required this.rating, required this.reviewCount});
+  final double rating;
+  final int reviewCount;
 
   @override
   Widget build(BuildContext context) {
-    final color = live
-        ? AppColors.live
-        : online
-            ? AppColors.success
-            : AppColors.ivoryFaint;
-    final label = live
-        ? 'LIVE'
-        : online
-            ? 'Online'
-            : 'Offline';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(label, style: AppTextStyles.label(size: 11, color: color)),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 1; i <= 5; i++)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 1.5),
+            child: Icon(
+              rating >= i
+                  ? Icons.star_rounded
+                  : rating >= i - 0.5
+                      ? Icons.star_half_rounded
+                      : Icons.star_outline_rounded,
+              size: 22,
+              color: AppColors.gold,
+            ),
+          ),
+        const SizedBox(width: 8),
+        Text(rating.toStringAsFixed(1),
+            style: AppTextStyles.body(
+                size: 14, weight: FontWeight.w700, color: AppColors.gold)),
+        const SizedBox(width: 6),
+        Text('($reviewCount)',
+            style: AppTextStyles.label(size: 12, color: AppColors.ivoryDim)),
+      ],
     );
   }
 }
 
-/// The astrologer's single Super Chat price, styled like the [_RateCard]s in
-/// the "Consult Now" section (same surface/border/row layout, no chevron —
-/// it isn't tappable; Super Chats are sent from the live stream).
+/// Hairline divider between grouped rows inside a [PremiumCard].
+class _DetailDivider extends StatelessWidget {
+  const _DetailDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(vertical: 14),
+      color: AppColors.borderSoft,
+    );
+  }
+}
+
+/// A labelled cluster of pill chips (languages / specialities).
+class _ChipBlock extends StatelessWidget {
+  const _ChipBlock({required this.label, required this.items});
+  final String label;
+  final List<String> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label.toUpperCase(),
+            style: AppTextStyles.label(
+                size: 11, weight: FontWeight.w700, color: AppColors.ivoryFaint)),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [for (final it in items) StatusChip(it, tone: ChipTone.muted)],
+        ),
+      ],
+    );
+  }
+}
+
+/// A single rate row (icon tile + label + coloured price) in the Rates card.
+class _RateLine extends StatelessWidget {
+  const _RateLine({
+    required this.icon,
+    required this.tone,
+    required this.label,
+    required this.price,
+  });
+  final IconData icon;
+  final TileTone tone;
+  final String label;
+  final String price;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconTile(icon, tone: tone, size: 40),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Text(label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.body(size: 15, weight: FontWeight.w600)),
+        ),
+        Text(price,
+            style: AppTextStyles.body(
+                size: 14, weight: FontWeight.w700, color: AppColors.success)),
+      ],
+    );
+  }
+}
+
+/// A gold-bordered secondary consult action (Audio / Video).
+class _ConsultOutlineButton extends StatelessWidget {
+  const _ConsultOutlineButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onPressed != null;
+    return Opacity(
+      opacity: enabled ? 1 : 0.5,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            height: 54,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.surface1,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.gold.withValues(alpha: 0.40)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 18, color: AppColors.gold),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.body(
+                          size: 14, weight: FontWeight.w700, color: AppColors.gold)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The astrologer's single Super Chat price, on the shared [PremiumCard]
+/// surface (not tappable — Super Chats are sent from the live stream).
 class _SuperChatPriceCard extends StatelessWidget {
   const _SuperChatPriceCard({required this.amount});
   final String amount;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
+    return PremiumCard(
       child: Row(
         children: [
-          Icon(Icons.bolt, color: AppColors.gold),
+          const IconTile(Icons.bolt_rounded, tone: TileTone.gold, size: 40),
           const SizedBox(width: 14),
           Expanded(
             child: Text('Super Chat',
@@ -391,7 +571,9 @@ class _SuperChatPriceCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.body(size: 15, weight: FontWeight.w600)),
           ),
-          Text('₹$amount', style: AppTextStyles.body(size: 14, color: AppColors.success)),
+          Text('₹$amount',
+              style: AppTextStyles.body(
+                  size: 14, weight: FontWeight.w700, color: AppColors.success)),
         ],
       ),
     );
@@ -415,13 +597,7 @@ class _RatingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.borderSoft),
-      ),
+    return PremiumCard(
       child: Column(
         children: [
           Row(
@@ -434,8 +610,8 @@ class _RatingCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                     child: Icon(
-                      i <= rating ? Icons.star : Icons.star_border,
-                      size: 32,
+                      i <= rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                      size: 34,
                       color: canRate ? AppColors.gold : AppColors.ivoryFaint,
                     ),
                   ),
@@ -448,71 +624,6 @@ class _RatingCard extends StatelessWidget {
                 style: AppTextStyles.label(size: 12, color: AppColors.ivoryFaint)),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  const _Stat({required this.label, required this.value});
-  final String label;
-  final String value;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          Text(value,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.body(size: 15, weight: FontWeight.w700)),
-          const SizedBox(height: 2),
-          Text(label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.label(size: 11, color: AppColors.ivoryFaint)),
-        ],
-      ),
-    );
-  }
-}
-
-class _RateCard extends StatelessWidget {
-  const _RateCard({required this.icon, required this.label, required this.price, this.onTap});
-  final IconData icon;
-  final String label;
-  final String price;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: AppColors.saffron),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 15, weight: FontWeight.w600)),
-            ),
-            Text(price, style: AppTextStyles.body(size: 14, color: AppColors.success)),
-            const SizedBox(width: 8),
-            Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
-          ],
-        ),
       ),
     );
   }
