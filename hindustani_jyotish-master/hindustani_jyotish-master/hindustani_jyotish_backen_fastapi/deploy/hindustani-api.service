@@ -1,0 +1,47 @@
+# Hindustani Jyotish — FastAPI backend systemd unit
+# =================================================================
+# Runs the backend as a system service so it is COMPLETELY detached
+# from any terminal / SSH session. Closing the terminal no longer stops
+# it (that only happens when the server runs in the foreground and gets
+# SIGHUP). It also starts on boot and auto-restarts on crash.
+#
+# Install (run as root, adjust the two paths + User to your server):
+#   1. Put the code at /opt/hindustani/backend and create a venv:
+#        python3 -m venv /opt/hindustani/backend/.venv
+#        /opt/hindustani/backend/.venv/bin/pip install -r requirements.txt
+#   2. Put your production settings in /opt/hindustani/backend/.env
+#   3. sudo cp deploy/hindustani-api.service /etc/systemd/system/
+#   4. sudo systemctl daemon-reload
+#   5. sudo systemctl enable --now hindustani-api
+#
+# Manage:
+#   sudo systemctl status hindustani-api      # is it running?
+#   sudo systemctl restart hindustani-api     # after a deploy
+#   journalctl -u hindustani-api -f           # live logs (NOT the terminal)
+
+[Unit]
+Description=Hindustani Jyotish FastAPI backend
+After=network.target mysql.service redis-server.service
+Wants=redis-server.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/hindustani/backend
+EnvironmentFile=/opt/hindustani/backend/.env
+
+# Apply DB migrations, then start the server. `--workers` scales with CPU;
+# 2–4 is a sensible start. Uvicorn logs go to journald, not to a terminal.
+ExecStartPre=/opt/hindustani/backend/.venv/bin/alembic upgrade head
+ExecStart=/opt/hindustani/backend/.venv/bin/uvicorn app.main:app \
+    --host 0.0.0.0 --port 8000 --workers 2 --proxy-headers
+
+# Survive crashes: always restart, wait 3s between attempts.
+Restart=always
+RestartSec=3
+KillMode=mixed
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
