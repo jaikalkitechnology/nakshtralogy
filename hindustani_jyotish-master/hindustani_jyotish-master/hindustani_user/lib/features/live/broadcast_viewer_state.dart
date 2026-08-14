@@ -14,6 +14,7 @@ class BroadcastViewerState extends Equatable {
     this.messages = const [],
     this.reconnecting = false,
     this.agora,
+    this.channelJoined = false,
     this.remoteJoined = false,
     this.ended = false,
     this.endedMessage,
@@ -58,6 +59,17 @@ class BroadcastViewerState extends Equatable {
   /// The Agora engine wrapper once `join()` has set up media (null if media
   /// never became available — the chat-only view still works).
   final AgoraCallService? agora;
+
+  /// Mirrors `agora?.joined.value` — true once THIS viewer has successfully
+  /// joined the Agora channel (its own connection is up), regardless of
+  /// whether a broadcaster is present yet. Lets the waiting surface tell
+  /// "still connecting to the channel" apart from "connected, but the
+  /// astrologer isn't publishing video into it" — the latter is what a
+  /// viewer sees when the host appears live but their camera never actually
+  /// reaches Agora (stale astro build, or misconfigured Agora App ID/
+  /// Certificate). Without this split, both looked like an endless
+  /// "Connecting…" spinner.
+  final bool channelJoined;
 
   /// Mirrors `agora?.remoteUid.value != null` — kept in
   /// [BroadcastViewerState] so the widget rebuilds via `BlocBuilder` instead
@@ -120,6 +132,7 @@ class BroadcastViewerState extends Equatable {
     List<Map<String, dynamic>>? messages,
     bool? reconnecting,
     AgoraCallService? agora,
+    bool? channelJoined,
     bool? remoteJoined,
     bool? ended,
     String? endedMessage,
@@ -147,6 +160,7 @@ class BroadcastViewerState extends Equatable {
     messages: messages ?? this.messages,
     reconnecting: reconnecting ?? this.reconnecting,
     agora: agora ?? this.agora,
+    channelJoined: channelJoined ?? this.channelJoined,
     remoteJoined: remoteJoined ?? this.remoteJoined,
     ended: ended ?? this.ended,
     endedMessage: endedMessage ?? this.endedMessage,
@@ -176,6 +190,7 @@ class BroadcastViewerState extends Equatable {
     consulting,
     messages,
     reconnecting,
+    channelJoined,
     remoteJoined,
     ended,
     endedMessage,
