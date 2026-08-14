@@ -3,15 +3,18 @@
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!-- MEDIA_PROJECTION is pulled in by the Agora SDK for screen-sharing, which
-         this app never does (only camera/audio video calls). Removed from the
-         merged manifest so Google Play does not require a media-projection
-         foreground-service declaration.
-         NOTE: FOREGROUND_SERVICE_PHONE_CALL is intentionally KEPT — the astrologer
-         app uses flutter_callkit_incoming to ring/answer VoIP calls, which runs a
-         phone-call foreground service. Declare it in Play Console as
-         "Phone call → Voice over Internet Protocol (VoIP), telecom APIs". -->
+    <!-- Foreground-service permissions pulled in by dependencies but NOT used on
+         Android — removed from the merged manifest so Google Play requires no
+         foreground-service declaration:
+         · MEDIA_PROJECTION comes from the Agora SDK (screen-share). This app only
+           does camera/audio video calls, never screen capture.
+         · PHONE_CALL comes from flutter_callkit_incoming. CallKit is iOS-ONLY here
+           (callkit_service returns immediately on non-iOS); on Android the
+           incoming call is shown by the in-app IncomingCallScreen + a full-screen
+           notification, so no phone-call foreground service is ever started on
+           Android. The plugin's phoneCall service is also removed below. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" tools:node="remove"/>
     <!-- READ_PHONE_STATE is injected by the Agora SDK for legacy phone-call
          interruption detection. The app never reads phone state, and Google Play
          treats it as a sensitive "Phone" permission. Removed so Play does not
@@ -47,6 +50,15 @@
         android:label="Nakshatralogy Astrologer"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Remove flutter_callkit_incoming's Android phoneCall foreground service.
+             CallKit is used on iOS only, so this service is never started on
+             Android; stripping it (with its FOREGROUND_SERVICE_PHONE_CALL
+             permission above) leaves no phone-call foreground service for Google
+             Play to flag. The in-app IncomingCallScreen + full-screen notification
+             (USE_FULL_SCREEN_INTENT) handle Android incoming calls. -->
+        <service
+            android:name="com.hiennv.flutter_callkit_incoming.CallkitNotificationService"
+            tools:node="remove"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
