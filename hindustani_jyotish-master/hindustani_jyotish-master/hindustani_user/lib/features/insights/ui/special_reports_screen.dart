@@ -92,34 +92,15 @@ class SpecialReportsScreen extends StatelessWidget {
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
                       children: [
-                        HeroGradientCard(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const IconTile(Icons.auto_awesome_outlined,
-                                  tone: TileTone.gold, size: 52),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(l.specialReportsTitle,
-                                        style: AppTextStyles.display(size: 22)),
-                                    const SizedBox(height: 8),
-                                    Text(l.specialReportsSubtitle,
-                                        style: AppTextStyles.body(
-                                            color: AppColors.ivoryDim)),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                         SectionLabel(
-                          l.specialReportsCard,
+                          l.specialReportsTitle,
                           trailing: StatusChip('${reports.length}',
                               tone: ChipTone.warn),
                         ),
+                        Text(l.specialReportsSubtitle,
+                            style:
+                                AppTextStyles.body(color: AppColors.ivoryDim)),
+                        const SizedBox(height: 16),
                         LayoutBuilder(
                           builder: (context, constraints) {
                             final tileWidth = (constraints.maxWidth - 12) / 2;
