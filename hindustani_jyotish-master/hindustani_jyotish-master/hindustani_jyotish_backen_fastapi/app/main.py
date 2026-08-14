@@ -205,8 +205,7 @@ def create_app() -> FastAPI:
 
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-    print("BASE_DIR =", BASE_DIR)
-    print("STATIC_DIR =", STATIC_DIR)
+    logger.info("Static files mounted: BASE_DIR=%s STATIC_DIR=%s", BASE_DIR, STATIC_DIR)
 
     @app.get("/", tags=["health"])
     async def root():
