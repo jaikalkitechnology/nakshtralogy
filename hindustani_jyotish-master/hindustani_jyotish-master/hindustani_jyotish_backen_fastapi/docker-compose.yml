@@ -1,6 +1,7 @@
 services:
   db:
     image: mysql:8.0
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: hindustani_jyotish
       MYSQL_USER: hj_user
@@ -19,11 +20,13 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     ports:
       - "6379:6379"
 
   api:
     build: .
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
