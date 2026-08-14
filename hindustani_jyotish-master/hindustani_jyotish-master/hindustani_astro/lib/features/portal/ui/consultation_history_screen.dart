@@ -184,61 +184,51 @@ class _GiftRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: AppColors.gold.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(_isGift ? Icons.card_giftcard : Icons.push_pin_outlined,
-                size: 20, color: AppColors.gold),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (item.counterpartName != null && item.counterpartName!.trim().isNotEmpty)
-                      ? item.counterpartName!
-                      : 'Seeker',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _isGift
-                      ? (item.giftName != null ? 'Sent a gift · ${item.giftName}' : 'Sent a gift')
-                      : 'Super Chat',
-                  style: AppTextStyles.body(size: 12, color: AppColors.copperLight),
-                ),
-                if (!_isGift && item.message != null && item.message!.trim().isNotEmpty) ...[
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: PremiumCard(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IconTile(_isGift ? Icons.card_giftcard : Icons.push_pin_outlined,
+                tone: TileTone.gold),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (item.counterpartName != null && item.counterpartName!.trim().isNotEmpty)
+                        ? item.counterpartName!
+                        : 'Seeker',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body(size: 15, weight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    _isGift
+                        ? (item.giftName != null ? 'Sent a gift · ${item.giftName}' : 'Sent a gift')
+                        : 'Super Chat',
+                    style: AppTextStyles.body(size: 12, color: AppColors.copperLight),
+                  ),
+                  if (!_isGift && item.message != null && item.message!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text('"${item.message}"',
+                        style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+                  ],
                   const SizedBox(height: 4),
-                  Text('"${item.message}"',
-                      style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
+                  Text(_dateLabel(item.timestamp),
+                      style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
                 ],
-                const SizedBox(height: 2),
-                Text(_dateLabel(item.timestamp),
-                    style: AppTextStyles.mono(size: 12, color: AppColors.ivoryDim)),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text('+₹${item.displayAmount}',
-              style: AppTextStyles.mono(size: 13, color: AppColors.success)),
-        ],
+            const SizedBox(width: 10),
+            Text('+₹${item.displayAmount}',
+                style: AppTextStyles.mono(
+                    size: 14, weight: FontWeight.w700, color: AppColors.success)),
+          ],
+        ),
       ),
     );
   }

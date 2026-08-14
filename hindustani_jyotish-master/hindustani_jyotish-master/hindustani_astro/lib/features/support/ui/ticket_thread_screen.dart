@@ -3,6 +3,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../support_repository.dart';
 
@@ -88,10 +89,30 @@ class _TicketThreadScreenState extends State<TicketThreadScreen> {
           maxWidth: 720,
           child: Column(
             children: [
-              Expanded(child: _thread(l)),
               if (t != null)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 2),
+                  child: Row(
+                    children: [
+                      _StatusChip(status: t.status),
+                      const Spacer(),
+                      if (t.updatedAt != null)
+                        Text(_fmtDate(t.updatedAt!),
+                            style: AppTextStyles.label(
+                                size: 11, color: AppColors.ivoryFaint)),
+                    ],
+                  ),
+                ),
+              Expanded(child: _thread(l)),
+              if (t != null)
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surface1,
+                    border: Border(
+                      top: BorderSide(color: AppColors.borderSoft),
+                    ),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -149,6 +170,39 @@ class _TicketThreadScreenState extends State<TicketThreadScreen> {
   }
 }
 
+String _fmtDate(DateTime d) {
+  final local = d.toLocal();
+  return '${local.day}/${local.month}/${local.year}';
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.status});
+  final String status;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final (label, tone, icon) = switch (status) {
+      'closed' => (
+          l.supportStatusClosed,
+          ChipTone.muted,
+          Icons.check_circle_outline,
+        ),
+      'pending' => (
+          l.supportStatusPending,
+          ChipTone.info,
+          Icons.hourglass_bottom,
+        ),
+      _ => (
+          l.supportStatusOpen,
+          ChipTone.warn,
+          Icons.mark_chat_unread_outlined,
+        ),
+    };
+    return StatusChip(label, tone: tone, icon: icon);
+  }
+}
+
 class _Bubble extends StatelessWidget {
   const _Bubble({required this.message});
   final TicketMessage message;
@@ -161,22 +215,60 @@ class _Bubble extends StatelessWidget {
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.78,
         ),
         decoration: BoxDecoration(
-          color: mine ? AppColors.copperGlow : AppColors.surface1,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSoft),
+          gradient: mine
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.saffron.withValues(alpha: 0.26),
+                    AppColors.saffron.withValues(alpha: 0.10),
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.surface2, AppColors.surface1],
+                ),
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: Radius.circular(mine ? 16 : 4),
+            bottomRight: Radius.circular(mine ? 4 : 16),
+          ),
+          border: Border.all(
+            color: mine
+                ? AppColors.saffron.withValues(alpha: 0.42)
+                : AppColors.borderSoft,
+          ),
         ),
         child: Column(
           crossAxisAlignment:
               mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Text(mine ? l.supportSenderYou : l.supportSenderSupport,
-                style: AppTextStyles.label(size: 10, color: AppColors.ivoryDim)),
-            const SizedBox(height: 4),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  mine ? Icons.person_outline : Icons.support_agent,
+                  size: 12,
+                  color: mine ? AppColors.saffronBright : AppColors.ivoryFaint,
+                ),
+                const SizedBox(width: 5),
+                Text(mine ? l.supportSenderYou : l.supportSenderSupport,
+                    style: AppTextStyles.label(
+                        size: 10,
+                        weight: FontWeight.w700,
+                        color: mine
+                            ? AppColors.saffronBright
+                            : AppColors.ivoryDim)),
+              ],
+            ),
+            const SizedBox(height: 5),
             Text(message.body, style: AppTextStyles.body(size: 14)),
           ],
         ),
