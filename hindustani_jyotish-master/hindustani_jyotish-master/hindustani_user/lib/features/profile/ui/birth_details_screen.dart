@@ -3,6 +3,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 
 /// Birth date / time / place editor — relocated here from the signup Complete
@@ -95,6 +96,10 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: AppColors.borderSoft),
+    );
     return Scaffold(
       appBar: AppBar(title: Text(l.profileBirthDetails)),
       body: SafeArea(
@@ -107,7 +112,7 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
               children: [
                 Text(l.birthDetailsSubtitle,
                     style: AppTextStyles.body(color: AppColors.ivoryDim)),
-                const SizedBox(height: 24),
+                const SectionLabel('Date & time of birth'),
                 _PickerTile(
                   label: l.birthDob,
                   value: _dob == null
@@ -116,17 +121,40 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
                   icon: Icons.cake_outlined,
                   onTap: _pickDob,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 _PickerTile(
                   label: l.birthTimeOptional,
                   value: _time == null ? l.birthSelect : _time!.format(context),
                   icon: Icons.schedule,
                   onTap: _pickTime,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _place,
-                  decoration: InputDecoration(labelText: l.birthPlaceOptional),
+                const SectionLabel('Place of birth'),
+                PremiumCard(
+                  child: TextField(
+                    controller: _place,
+                    style: AppTextStyles.body(size: 15, color: AppColors.ivory),
+                    cursorColor: AppColors.saffron,
+                    decoration: InputDecoration(
+                      labelText: l.birthPlaceOptional,
+                      labelStyle:
+                          AppTextStyles.label(size: 13.5, color: AppColors.gold),
+                      floatingLabelStyle: AppTextStyles.label(
+                          size: 13.5,
+                          weight: FontWeight.w700,
+                          color: AppColors.saffron),
+                      filled: true,
+                      fillColor: AppColors.surface1,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      enabledBorder: border,
+                      border: border,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                            color: AppColors.saffron, width: 1.6),
+                      ),
+                    ),
+                  ),
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: 14),
@@ -134,18 +162,12 @@ class _BirthDetailsScreenState extends State<BirthDetailsScreen> {
                       style: AppTextStyles.body(size: 13, color: AppColors.danger)),
                 ],
                 const SizedBox(height: 28),
-                ElevatedButton(
-      // Explicit full width: the shared theme no longer forces an
-      // (invalid) infinite minimum width on every ElevatedButton.
-      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                PremiumPrimaryButton(
+                  label: l.commonSave,
+                  icon: Icons.check_rounded,
                   onPressed: _saving ? null : _save,
-                  child: _saving
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text(l.commonSave),
                 ),
+                const SizedBox(height: 8),
               ],
             ),
           ),
@@ -165,36 +187,32 @@ class _PickerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PremiumCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: AppColors.copperLight, size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(color: AppColors.ivoryDim)),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          IconTile(icon, tone: TileTone.gold, size: 42),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.label(size: 12, color: AppColors.gold)),
+                const SizedBox(height: 3),
+                Text(value,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body(size: 15, color: AppColors.ivory)),
+              ],
             ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(value,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.right,
-                  style: AppTextStyles.body(color: AppColors.ivory)),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 8),
+          Icon(Icons.chevron_right, color: AppColors.ivoryFaint, size: 20),
+        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../insight_models.dart';
 import '../insights_repository.dart';
@@ -89,14 +90,17 @@ class SpecialReportsScreen extends StatelessWidget {
                     if (reports.isEmpty) return _message(l.specialReportsEmpty);
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
                       children: [
-                        Text(l.specialReportsTitle,
-                            style: AppTextStyles.display(size: 22)),
-                        const SizedBox(height: 6),
+                        SectionLabel(
+                          l.specialReportsTitle,
+                          trailing: StatusChip('${reports.length}',
+                              tone: ChipTone.warn),
+                        ),
                         Text(l.specialReportsSubtitle,
-                            style: AppTextStyles.body(color: AppColors.ivoryDim)),
-                        const SizedBox(height: 20),
+                            style:
+                                AppTextStyles.body(color: AppColors.ivoryDim)),
+                        const SizedBox(height: 16),
                         LayoutBuilder(
                           builder: (context, constraints) {
                             final tileWidth = (constraints.maxWidth - 12) / 2;
@@ -106,7 +110,7 @@ class SpecialReportsScreen extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               mainAxisSpacing: 12,
                               crossAxisSpacing: 12,
-                              childAspectRatio: tileWidth / 124,
+                              childAspectRatio: tileWidth / 150,
                               children: [
                                 for (final r in reports)
                                   _ReportTile(
@@ -139,15 +143,19 @@ class SpecialReportsScreen extends StatelessWidget {
   }
 
   Widget _message(String text) => ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         children: [
-          const SizedBox(height: 160),
+          const SizedBox(height: 140),
+          const Center(
+            child: IconTile(Icons.auto_awesome_outlined,
+                tone: TileTone.gold, size: 68),
+          ),
+          const SizedBox(height: 18),
           Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(text,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.body(color: AppColors.ivoryFaint)),
-            ),
+            child: Text(text,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.body(color: AppColors.ivoryDim)),
           ),
         ],
       );
@@ -232,38 +240,24 @@ class _ReportTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PremiumCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.surface2, AppColors.copperGlow],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderMid),
-          boxShadow: const [
-            BoxShadow(color: AppColors.shadowSoft, blurRadius: 12, offset: Offset(0, 5)),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: AppColors.copperLight, size: 26),
-            const Spacer(),
-            Text(title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
-            const SizedBox(height: 4),
-            Text(price,
-                style: AppTextStyles.mono(
-                    size: 12, weight: FontWeight.w700, color: AppColors.gold)),
-          ],
-        ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconTile(icon, tone: TileTone.gold, size: 40),
+          const Spacer(),
+          Text(title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          if (price.isNotEmpty)
+            StatusChip(price, tone: ChipTone.warn)
+          else
+            const SizedBox.shrink(),
+        ],
       ),
     );
   }

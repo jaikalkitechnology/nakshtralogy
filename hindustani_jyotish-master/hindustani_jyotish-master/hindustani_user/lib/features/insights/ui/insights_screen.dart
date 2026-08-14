@@ -5,6 +5,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../insights_repository.dart';
 import 'insight_preflight.dart';
@@ -80,11 +81,21 @@ class InsightsScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
               children: [
-                Text(l.insightsTitle, style: AppTextStyles.display(size: 24)),
-                const SizedBox(height: 6),
-                Text(l.insightsSubtitle,
-                    style: AppTextStyles.body(color: AppColors.ivoryDim)),
-                const SizedBox(height: 20),
+                HeroGradientCard(
+                  child: Row(
+                    children: [
+                      const IconTile(Icons.auto_awesome,
+                          tone: TileTone.saffron, size: 56),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(l.insightsSubtitle,
+                            style: AppTextStyles.heading(
+                                size: 18, color: AppColors.ivory)),
+                      ),
+                    ],
+                  ),
+                ),
+                SectionLabel(l.insightsTitle),
                 BlocBuilder<_ServicesCubit, DataState<Map<String, String>>>(
                   builder: (context, state) {
                     // null while loading / after a failed fetch → show every
@@ -103,7 +114,7 @@ class InsightsScreen extends StatelessWidget {
                           physics: const NeverScrollableScrollPhysics(),
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          childAspectRatio: tileWidth / 124,
+                          childAspectRatio: tileWidth / 140,
                           children: [
                             for (final t in _tiles)
                               if (services == null ||
@@ -283,38 +294,21 @@ class _InsightTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PremiumCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.surface2, AppColors.copperGlow],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderMid),
-          boxShadow: const [
-            BoxShadow(color: AppColors.shadowSoft, blurRadius: 12, offset: Offset(0, 5)),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: AppColors.copperLight, size: 26),
-            const Spacer(),
-            Text(title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
-            const SizedBox(height: 4),
-            Text(price,
-                style: AppTextStyles.mono(
-                    size: 12, weight: FontWeight.w700, color: AppColors.gold)),
-          ],
-        ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconTile(icon, tone: TileTone.gold, size: 38),
+          const Spacer(),
+          Text(title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          StatusChip(price, tone: ChipTone.warn),
+        ],
       ),
     );
   }
@@ -333,47 +327,28 @@ class _MyReportsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PremiumCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderSoft),
-          boxShadow: const [
-            BoxShadow(color: AppColors.shadowSoft, blurRadius: 12, offset: Offset(0, 5)),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(
-                color: AppColors.copperGlow,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon,
-                  color: AppColors.copperLight, size: 22),
+      child: Row(
+        children: [
+          IconTile(icon, tone: TileTone.saffron, size: 46),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: AppTextStyles.body(size: 15, weight: FontWeight.w700)),
+                const SizedBox(height: 3),
+                Text(subtitle,
+                    style:
+                        AppTextStyles.body(size: 12.5, color: AppColors.ivoryDim)),
+              ],
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: AppTextStyles.body(size: 14, weight: FontWeight.w700)),
-                  const SizedBox(height: 2),
-                  Text(subtitle,
-                      style:
-                          AppTextStyles.body(size: 12, color: AppColors.ivoryDim)),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
-          ],
-        ),
+          ),
+          const SizedBox(width: 10),
+          Icon(Icons.chevron_right, color: AppColors.ivoryFaint),
+        ],
       ),
     );
   }

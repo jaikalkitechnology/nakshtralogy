@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../../../shared/widgets/fullscreen_image.dart';
 
@@ -129,6 +130,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  /// Premium form-field styling — gold serif-ish label, filled glass surface,
+  /// soft copper hairline that warms to saffron on focus. Presentation only:
+  /// [labelText]/[helperText]/[helperStyle] pass straight through unchanged.
+  InputDecoration _fieldDecoration(String label,
+      {String? helperText, TextStyle? helperStyle}) {
+    final base = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: AppColors.borderSoft),
+    );
+    return InputDecoration(
+      labelText: label,
+      labelStyle: AppTextStyles.label(size: 13.5, color: AppColors.gold),
+      floatingLabelStyle: AppTextStyles.label(
+          size: 13.5, weight: FontWeight.w700, color: AppColors.saffron),
+      helperText: helperText,
+      helperStyle: helperStyle,
+      filled: true,
+      fillColor: AppColors.surface1,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      enabledBorder: base,
+      border: base,
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.saffron, width: 1.6),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -146,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 Text(l.editProfileSubtitle,
                     style: AppTextStyles.body(color: AppColors.ivoryDim)),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 Center(
                   child: _PhotoPicker(
                     uploading: _uploadingPhoto,
@@ -155,41 +184,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     onTap: _pickPhoto,
                   ),
                 ),
-                const SizedBox(height: 28),
-                TextField(
-                  controller: _name,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: InputDecoration(labelText: l.completeProfileFullName),
+                const SectionLabel('Identity'),
+                PremiumCard(
+                  child: TextField(
+                    controller: _name,
+                    textCapitalization: TextCapitalization.words,
+                    style: AppTextStyles.body(size: 15, color: AppColors.ivory),
+                    cursorColor: AppColors.saffron,
+                    decoration: _fieldDecoration(l.completeProfileFullName),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CountryCodePicker(
-                      dialCode: _dialCode,
-                      enabled: !_saving,
-                      onChanged: (c) => setState(() => _dialCode = c.dialCode),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: _mobile,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(15),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: l.completeProfileContactNumber,
-                          // Surface the +91 rule up front instead of only on error.
-                          helperText:
-                              _dialCode == '+91' ? l.completeProfileMobileIndia : null,
-                          helperStyle: AppTextStyles.body(
-                              size: 11, color: AppColors.ivoryFaint),
+                const SectionLabel('Contact'),
+                PremiumCard(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CountryCodePicker(
+                        dialCode: _dialCode,
+                        enabled: !_saving,
+                        onChanged: (c) => setState(() => _dialCode = c.dialCode),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: _mobile,
+                          keyboardType: TextInputType.phone,
+                          style:
+                              AppTextStyles.body(size: 15, color: AppColors.ivory),
+                          cursorColor: AppColors.saffron,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(15),
+                          ],
+                          decoration: _fieldDecoration(
+                            l.completeProfileContactNumber,
+                            // Surface the +91 rule up front instead of only on error.
+                            helperText: _dialCode == '+91'
+                                ? l.completeProfileMobileIndia
+                                : null,
+                            helperStyle: AppTextStyles.body(
+                                size: 11, color: AppColors.ivoryFaint),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: 14),
@@ -197,18 +236,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       style: AppTextStyles.body(size: 13, color: AppColors.danger)),
                 ],
                 const SizedBox(height: 28),
-                ElevatedButton(
-      // Explicit full width: the shared theme no longer forces an
-      // (invalid) infinite minimum width on every ElevatedButton.
-      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                PremiumPrimaryButton(
+                  label: l.commonSave,
+                  icon: Icons.check_rounded,
                   onPressed: _saving ? null : _save,
-                  child: _saving
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text(l.commonSave),
                 ),
+                const SizedBox(height: 8),
               ],
             ),
           ),
@@ -242,22 +275,45 @@ class _PhotoPicker extends StatelessWidget {
       children: [
         Stack(
           children: [
-            GestureDetector(
-              // Tap the current photo to view it full-screen with pinch-zoom
-              // (shared viewer); the camera badge below stays the upload tap.
-              onTap: hasPhoto
-                  ? () => showFullscreenImage(context, avatarUrl!)
-                  : null,
-              child: CircleAvatar(
-                radius: 44,
-                backgroundColor: AppColors.surface2,
-                backgroundImage: hasPhoto ? NetworkImage(avatarUrl!) : null,
-                child: hasPhoto
-                    ? null
-                    : Text(
-                        (name?.isNotEmpty ?? false) ? name![0].toUpperCase() : '🪔',
-                        style: AppTextStyles.display(size: 28),
-                      ),
+            // Gold gradient ring hugging the avatar for a premium framed look.
+            Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: AppColors.goldGradient,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: AppColors.goldHalo,
+                    blurRadius: 24,
+                    spreadRadius: -6,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: GestureDetector(
+                // Tap the current photo to view it full-screen with pinch-zoom
+                // (shared viewer); the camera badge below stays the upload tap.
+                onTap: hasPhoto
+                    ? () => showFullscreenImage(context, avatarUrl!)
+                    : null,
+                child: CircleAvatar(
+                  radius: 44,
+                  backgroundColor: AppColors.surface2,
+                  backgroundImage: hasPhoto ? NetworkImage(avatarUrl!) : null,
+                  child: hasPhoto
+                      ? null
+                      : Text(
+                          (name?.isNotEmpty ?? false)
+                              ? name![0].toUpperCase()
+                              : '🪔',
+                          style: AppTextStyles.display(
+                              size: 28, color: AppColors.gold),
+                        ),
+                ),
               ),
             ),
             Positioned(
@@ -265,7 +321,8 @@ class _PhotoPicker extends StatelessWidget {
               bottom: 0,
               child: Material(
                 color: AppColors.saffron,
-                shape: const CircleBorder(),
+                shape: const CircleBorder(
+                    side: BorderSide(color: Colors.white, width: 2)),
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: uploading ? null : onTap,
@@ -284,10 +341,11 @@ class _PhotoPicker extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        Text(
+        const SizedBox(height: 12),
+        StatusChip(
           hasPhoto ? l.completeProfilePhotoChange : l.completeProfilePhotoAdd,
-          style: AppTextStyles.body(size: 12, color: AppColors.ivoryDim),
+          tone: hasPhoto ? ChipTone.success : ChipTone.muted,
+          icon: hasPhoto ? Icons.check_circle_outline : Icons.add_a_photo_outlined,
         ),
       ],
     );

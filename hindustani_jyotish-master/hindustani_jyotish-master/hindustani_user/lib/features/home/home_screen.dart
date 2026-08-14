@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/di.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/premium_ui.dart';
 import '../../shared/responsive.dart';
 import '../../shared/widgets/astrologer_card.dart';
 import '../discovery/discovery_repository.dart';
@@ -96,35 +97,21 @@ class _HomeView extends StatelessWidget {
               const _AdminBannersSection(),
               const SizedBox(height: 12),
               _LiveBanner(),
-              const SizedBox(height: 24),
               const _FeaturedVideosSection(),
-              const SizedBox(height: 24),
-              Text(l.homeCosmicInsights, style: AppTextStyles.heading(size: 18)),
-              const SizedBox(height: 12),
+              SectionLabel(l.homeCosmicInsights),
               _QuickTools(),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      l.homeOnlineAstrologers,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.heading(size: 18),
+              SectionLabel(
+                l.homeOnlineAstrologers,
+                trailing: TextButton(
+                  onPressed: () => context.go('/astrologers'),
+                  child: Text(
+                    l.commonSeeAll,
+                    style: AppTextStyles.label(
+                      color: AppColors.saffronBright,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => context.go('/astrologers'),
-                    child: Text(
-                      l.commonSeeAll,
-                      style: AppTextStyles.label(
-                        color: AppColors.saffronBright,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-              const SizedBox(height: 8),
               BlocBuilder<_FeaturedCubit, DataState<List<Astrologer>>>(
                 builder: (context, state) {
                   final list = state.dataOrNull;
@@ -208,20 +195,7 @@ class _PromoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: AppColors.heroGradient,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderMid),
-        boxShadow: const [
-          BoxShadow(color: AppColors.shadowSoft, blurRadius: 18, offset: Offset(0, 8)),
-        ],
-      ),
+    return HeroGradientCard(
       child: Row(
         children: [
           Expanded(
@@ -230,7 +204,7 @@ class _PromoBanner extends StatelessWidget {
               children: [
                 Text(
                   l.homePromoTitle,
-                  style: AppTextStyles.heading(size: 17),
+                  style: AppTextStyles.heading(size: 18),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -243,17 +217,8 @@ class _PromoBanner extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.goldGlow,
-              boxShadow: [
-                BoxShadow(color: AppColors.goldHalo, blurRadius: 18, spreadRadius: -2),
-              ],
-            ),
-            child: const Icon(Icons.auto_awesome, color: AppColors.gold, size: 30),
-          ),
+          const SizedBox(width: 14),
+          const IconTile(Icons.auto_awesome, size: 52),
         ],
       ),
     );
@@ -264,63 +229,54 @@ class _LiveBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return InkWell(
+    return PremiumCard(
       onTap: () => context.push('/live'),
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.live.withValues(alpha: 0.28)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.live,
-                borderRadius: BorderRadius.circular(6),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.live.withValues(alpha: 0.45),
-                    blurRadius: 12,
-                    spreadRadius: -2,
-                  ),
-                ],
-              ),
-              child: Text(
-                'LIVE',
-                style: AppTextStyles.mono(
-                  size: 11,
-                  weight: FontWeight.w700,
-                  color: Colors.white,
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.live,
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.live.withValues(alpha: 0.45),
+                  blurRadius: 12,
+                  spreadRadius: -2,
                 ),
+              ],
+            ),
+            child: Text(
+              'LIVE',
+              style: AppTextStyles.mono(
+                size: 11,
+                weight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l.homeLiveTitle,
-                    style: AppTextStyles.heading(size: 16),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l.homeLiveTitle,
+                  style: AppTextStyles.heading(size: 16),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l.homeLiveSubtitle,
+                  style: AppTextStyles.body(
+                    size: 12,
+                    color: AppColors.ivoryDim,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    l.homeLiveSubtitle,
-                    style: AppTextStyles.body(
-                      size: 12,
-                      color: AppColors.ivoryDim,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Icon(Icons.chevron_right, color: AppColors.ivoryDim),
-          ],
-        ),
+          ),
+          Icon(Icons.chevron_right, color: AppColors.ivoryDim),
+        ],
       ),
     );
   }
@@ -330,11 +286,11 @@ class _QuickTools extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final tools = <(String, IconData)>[
-      (l.toolDailyHoroscope, Icons.wb_sunny_outlined),
-      (l.toolDetailedKundli, Icons.grid_4x4),
-      (l.toolLoveMatch, Icons.favorite_border),
-      (l.toolPlanetPosition, Icons.public),
+    final tools = <(String, IconData, TileTone)>[
+      (l.toolDailyHoroscope, Icons.wb_sunny_outlined, TileTone.saffron),
+      (l.toolDetailedKundli, Icons.grid_4x4, TileTone.gold),
+      (l.toolLoveMatch, Icons.favorite_border, TileTone.saffron),
+      (l.toolPlanetPosition, Icons.public, TileTone.info),
     ];
     return GridView.count(
       crossAxisCount: 4,
@@ -342,44 +298,30 @@ class _QuickTools extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
-      childAspectRatio: 0.82,
+      childAspectRatio: 0.78,
       children: [
         for (final t in tools)
-          InkWell(
+          PremiumCard(
             onTap: () => context.go('/insights'),
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [AppColors.surface2, AppColors.copperGlow],
-                ),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.borderSoft),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(t.$2, color: AppColors.copperLight, size: 24),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        t.$1,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.label(
-                          size: 10,
-                          color: AppColors.ivoryDim,
-                        ),
-                      ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconTile(t.$2, tone: t.$3, size: 40),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: Text(
+                    t.$1,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.label(
+                      size: 10,
+                      color: AppColors.ivoryDim,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
       ],
@@ -492,8 +434,7 @@ class _FeaturedVideosSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l.homeFeaturedVideos, style: AppTextStyles.heading(size: 18)),
-            const SizedBox(height: 12),
+            SectionLabel(l.homeFeaturedVideos),
             SizedBox(
               height: 150,
               child: ListView.separated(
