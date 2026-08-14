@@ -55,10 +55,6 @@ async def request_otp(
         )
         if last_sent_at is not None:
             elapsed = (_now() - ensure_aware(last_sent_at)).total_seconds()
-            print("NOW:", _now())
-            print("LAST:", last_sent_at)
-            print("ELAPSED:", elapsed)
-            print("COOLDOWN:", settings.OTP_RESEND_COOLDOWN_SECONDS)
             # Clamp to [0, OTP_RESEND_COOLDOWN_SECONDS]. `elapsed` is only
             # trustworthy when created_at and _now() come from the exact same
             # clock — which is why created_at is set explicitly below instead

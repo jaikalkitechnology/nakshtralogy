@@ -285,7 +285,12 @@ class _LiveViewerViewState extends State<_LiveViewerView> {
               Positioned.fill(
                 child: (agora != null && remoteJoined)
                     ? IgnorePointer(child: agora.remoteView())
-                    : CosmicBackground(child: _WaitingSurface(mediaError: state.mediaError)),
+                    : CosmicBackground(
+                        child: _WaitingSurface(
+                          mediaError: state.mediaError,
+                          channelJoined: state.channelJoined,
+                        ),
+                      ),
               ),
               SafeArea(
                 child: Column(
@@ -735,7 +740,7 @@ class _LiveEndedView extends StatelessWidget {
 }
 
 class _WaitingSurface extends StatelessWidget {
-  const _WaitingSurface({this.mediaError});
+  const _WaitingSurface({this.mediaError, this.channelJoined = false});
 
   /// Null while genuinely still connecting (shows the default "Connecting…"
   /// copy). Set once Agora media has definitively failed to connect — must
@@ -745,9 +750,23 @@ class _WaitingSurface extends StatelessWidget {
   /// as an infinite loading spinner with no signal anything was wrong.
   final String? mediaError;
 
+  /// True once THIS viewer has joined the Agora channel but no broadcaster
+  /// is publishing yet. Distinguishes "still connecting to the channel" from
+  /// "connected — waiting for the astrologer's camera", so a host who looks
+  /// live but isn't actually publishing (stale astro build, or misconfigured
+  /// Agora credentials) reads as "the astrologer's video hasn't started"
+  /// instead of a misleading endless "Connecting…" spinner.
+  final bool channelJoined;
+
   @override
   Widget build(BuildContext context) {
     final failed = mediaError != null;
+    // Connected to the channel, no error, but no broadcaster stream yet.
+    final waitingForHost = !failed && channelJoined;
+    final message = mediaError ??
+        (waitingForHost
+            ? 'Waiting for the astrologer’s video…'
+            : 'Connecting to the live stream…');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -758,7 +777,7 @@ class _WaitingSurface extends StatelessWidget {
             const DiyaLogo(size: 84),
           const SizedBox(height: 20),
           Text(
-            mediaError ?? 'Connecting to the live stream…',
+            message,
             textAlign: TextAlign.center,
             style: AppTextStyles.body(color: AppColors.ivoryDim),
           ),

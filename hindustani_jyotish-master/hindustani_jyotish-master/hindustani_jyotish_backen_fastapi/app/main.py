@@ -142,7 +142,17 @@ async def _run_startup_schema_sync() -> None:
         from app.core.database import AsyncSessionLocal, engine
         from app.services import schema_sync
 
-        await schema_sync.run_startup_sync(engine, AsyncSessionLocal)
+        # Introspects every table (and ALTERs any missing columns). On a large
+        # schema this is the main thing running between uvicorn's "Waiting for
+        # application startup." and "Application startup complete." — log a
+        # human-readable marker so a slow boot reads as "working", not "hung"
+        # (especially with SQL echo on in a misconfigured local/DEBUG env).
+        logger.info("Startup schema sync: starting…")
+        result = await schema_sync.run_startup_sync(engine, AsyncSessionLocal)
+        if result is None:
+            logger.info("Startup schema sync: skipped (auto-sync disabled).")
+        else:
+            logger.info("Startup schema sync: done (%s).", result)
     except Exception:  # noqa: BLE001 — startup must never fail on schema sync
         logger.exception("startup schema sync failed (continuing without it)")
 
@@ -205,8 +215,7 @@ def create_app() -> FastAPI:
 
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-    print("BASE_DIR =", BASE_DIR)
-    print("STATIC_DIR =", STATIC_DIR)
+    logger.info("Static files mounted: BASE_DIR=%s STATIC_DIR=%s", BASE_DIR, STATIC_DIR)
 
     @app.get("/", tags=["health"])
     async def root():

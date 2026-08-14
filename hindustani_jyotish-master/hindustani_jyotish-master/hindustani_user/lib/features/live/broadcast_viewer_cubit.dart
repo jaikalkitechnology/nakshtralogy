@@ -125,7 +125,10 @@ class BroadcastViewerCubit extends Cubit<BroadcastViewerState> {
   void _onAgoraChange() {
     final agora = _agora;
     if (agora == null) return;
-    var next = state.copyWith(remoteJoined: agora.remoteUid.value != null);
+    var next = state.copyWith(
+      channelJoined: agora.joined.value,
+      remoteJoined: agora.remoteUid.value != null,
+    );
     // A fatal engine failure (rejected token, banned, connection failed) can
     // arrive at any point, including MID-stream — surface it instead of the
     // viewer silently dropping back to an eternal "Connecting…" surface.
