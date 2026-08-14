@@ -5,6 +5,7 @@ import 'package:hj_core/hj_core.dart';
 
 import '../../../core/di.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/premium_ui.dart';
 import '../../../shared/responsive.dart';
 import '../../portal/portal_repository.dart';
 
@@ -120,71 +121,79 @@ class _EarningsView extends StatelessWidget {
           _panBanner(context, l),
           const SizedBox(height: 16),
         ],
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.indigoSoft, AppColors.indigoMid, AppColors.indigoDeep],
-            ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.borderMid),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
+        HeroGradientCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.gold.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.account_balance_wallet_outlined,
-                        size: 18, color: AppColors.gold),
-                  ),
+                  const IconTile(Icons.account_balance_wallet_outlined, size: 30),
                   const SizedBox(width: 10),
-                  Text('Available balance', style: AppTextStyles.label(color: AppColors.ivoryDim)),
+                  Text('Available balance',
+                      style: AppTextStyles.label(color: AppColors.goldLight)),
                 ],
               ),
-              const SizedBox(height: 12),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child:
-                    Text('₹$available', style: AppTextStyles.display(size: 34, color: AppColors.success)),
+              const SizedBox(height: 14),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text('₹$available',
+                          style: AppTextStyles.display(size: 40, color: AppColors.success)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Sparkline([2, 3.2, 2.8, 4.4, 3.8, 5.6, 5.1, 7]),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.trending_up, size: 15, color: AppColors.success),
+                  const SizedBox(width: 6),
+                  Text('+₹${d['this_month_earnings']} this month',
+                      style: AppTextStyles.label(
+                          size: 12, weight: FontWeight.w700, color: AppColors.success)),
+                ],
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        _row('This month', '₹${d['this_month_earnings']}', icon: Icons.calendar_month_outlined),
-        _row('Lifetime', '₹${d['lifetime_earnings']}', icon: Icons.timeline_outlined),
-        _row('Consults this month', '${d['consultations_this_month']}', icon: Icons.support_agent),
-        const SizedBox(height: 24),
-        ElevatedButton.icon(
-      // Explicit full width: the shared theme no longer forces an
-      // (invalid) infinite minimum width on every ElevatedButton.
-      style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+        const SizedBox(height: 14),
+        Row(
+          children: [
+            Expanded(
+              child: _statTile('This month', '₹${d['this_month_earnings']}',
+                  Icons.calendar_month_outlined,
+                  money: true),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _statTile('Lifetime', '₹${d['lifetime_earnings']}',
+                  Icons.timeline_outlined),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        _statTile('Consults this month', '${d['consultations_this_month']}',
+            Icons.support_agent,
+            tone: TileTone.saffron, wide: true),
+        const SizedBox(height: 22),
+        PremiumPrimaryButton(
+          label: 'Withdraw earnings',
+          icon: Icons.arrow_upward_rounded,
           onPressed: () => _withdraw(context, available),
-          icon: const Icon(Icons.account_balance_wallet_outlined),
-          label: const Text('Withdraw'),
         ),
         if (panOnFile && tdsRate > 0) ...[
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.info_outline, size: 14, color: AppColors.ivoryFaint),
+              Icon(Icons.info_outline,
+                  size: 14, color: AppColors.gold.withValues(alpha: 0.8)),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -244,38 +253,47 @@ class _EarningsView extends StatelessWidget {
         ),
       );
 
-  Widget _row(String label, String value, {IconData? icon}) => Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: AppColors.surface1,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSoft),
-        ),
+  /// Premium stat tile: a compact card with an uppercase label, an icon tile,
+  /// and a large (optionally money-green) value. [wide] lays it out as a single
+  /// full-width row; otherwise it's a square-ish cell for a 2-up grid.
+  Widget _statTile(String label, String value, IconData icon,
+      {TileTone tone = TileTone.gold, bool money = false, bool wide = false}) {
+    final valueText = Text(value,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: AppTextStyles.display(
+            size: 20, color: money ? AppColors.success : AppColors.ivory));
+    final labelText = Text(label.toUpperCase(),
+        style: AppTextStyles.label(size: 10.5, color: AppColors.ivoryFaint));
+    if (wide) {
+      return PremiumCard(
         child: Row(
           children: [
-            if (icon != null) ...[
-              Container(
-                padding: const EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: AppColors.copperLight.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Icon(icon, size: 16, color: AppColors.copperLight),
-              ),
-              const SizedBox(width: 12),
-            ],
             Expanded(
-              child: Text(label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body(size: 14, color: AppColors.ivoryDim)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [labelText, const SizedBox(height: 6), valueText],
+              ),
             ),
-            const SizedBox(width: 12),
-            Text(value, style: AppTextStyles.body(size: 15, weight: FontWeight.w700)),
+            IconTile(icon, tone: tone),
           ],
         ),
       );
+    }
+    return PremiumCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [labelText, IconTile(icon, tone: tone, size: 28)],
+          ),
+          const SizedBox(height: 10),
+          valueText,
+        ],
+      ),
+    );
+  }
 }
 
 /// Recent withdrawals with the TDS deducted and net paid per payout, so the
